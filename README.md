@@ -1,0 +1,2 @@
+# abapOpenChecksJS
+another crazy idea
