@@ -8,7 +8,8 @@
   },
   "scripts": {
     "pretest": "tsc test/*.ts --module commonjs",
-    "test": "mocha"
+    "test": "mocha",
+    "posttest": "tslint *.ts test/*.ts"
   },
   "repository": {
     "type": "git",
@@ -25,6 +26,8 @@
   "homepage": "https://github.com/larshp/abapOpenChecksJS#readme",
   "devDependencies": {
     "chai": "^3.4.1",
-    "mocha": "^2.3.4"
+    "mocha": "^2.3.4",
+    "tslint": "^3.2.1",
+    "typescript": "^1.7.5"
   }
 }
