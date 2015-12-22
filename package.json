@@ -22,5 +22,9 @@
   "bugs": {
     "url": "https://github.com/larshp/abapOpenChecksJS/issues"
   },
-  "homepage": "https://github.com/larshp/abapOpenChecksJS#readme"
+  "homepage": "https://github.com/larshp/abapOpenChecksJS#readme",
+  "devDependencies": {
+    "chai": "^3.4.1",
+    "mocha": "^2.3.4"
+  }
 }
