@@ -1,0 +1,26 @@
+{
+  "name": "abap-open-checks",
+  "version": "0.0.1",
+  "description": "ABAP stuff",
+  "main": "index.js",
+  "directories": {
+    "test": "test"
+  },
+  "scripts": {
+    "pretest": "tsc test/*.ts --module commonjs",
+    "test": "mocha"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/larshp/abapOpenChecksJS.git"
+  },
+  "keywords": [
+    "ABAP"
+  ],
+  "author": "Lars Hvam Petersen",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/larshp/abapOpenChecksJS/issues"
+  },
+  "homepage": "https://github.com/larshp/abapOpenChecksJS#readme"
+}
