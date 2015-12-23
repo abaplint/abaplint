@@ -7,9 +7,9 @@
     "test": "test"
   },
   "scripts": {
-    "pretest": "tsc test/*.ts --module commonjs",
+    "pretest": "tsc test/*.ts src/*.ts --module commonjs",
     "test": "mocha",
-    "posttest": "tslint *.ts test/*.ts"
+    "posttest": "tslint *.ts test/*.ts src/*.ts"
   },
   "repository": {
     "type": "git",
@@ -29,5 +29,8 @@
     "mocha": "^2.3.4",
     "tslint": "^3.2.1",
     "typescript": "^1.7.5"
+  },
+  "dependencies": {
+    "minimist": "^1.2.0"
   }
 }
