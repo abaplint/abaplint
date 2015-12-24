@@ -9,18 +9,17 @@ import chai = require("chai");
 let expect = chai.expect;
 let fs = require("fs");
 
-describe("zhello.prog.abap", () => {
-    let tokens: Array<Token>;
+function helper(file: string): Lexer {
+    let buf = fs.readFileSync(__dirname + "/abap/" + file, "utf8");
+    let lexer = new Lexer(buf);
+    lexer.run();
+    return lexer;
+}
 
-    beforeEach(function () {
-        let buf = fs.readFileSync(__dirname + "/abap/zhello.prog.abap", "utf8");
-        let lexer: Lexer;
-        lexer = new Lexer(buf);
-        tokens = lexer.run();
-    });
-
-    describe("tokens", () => {
+describe("tokens", () => {
+    describe("zhello01.prog.abap", () => {
         it("should be 7", () => {
+            let tokens = helper("zhello01.prog.abap").get_tokens();
             expect(tokens.length).to.equals(7);
         });
     });
