@@ -8,16 +8,15 @@ export default class Lexer {
     constructor(private raw: string) {
     }
 
-    split_punctuation() {
+    private split_punctuation() {
         let result: Array<Token> = [];
 
-        for (let key in this.tokens) {
-            let token = this.tokens[key];
+        for (let token of this.tokens) {
             let str = token.get_str();
             if (str.substr(str.length - 1) === ".") {
                 token.set_str(str.substr(0, str.length - 1));
                 result.push(token);
-                let dot = new Token(this.tokens[key].get_row(), token.get_col() + str.length - 1, ".");
+                let dot = new Token(token.get_row(), token.get_col() + str.length - 1, ".");
                 result.push(dot);
             } else {
                 result.push(token);
@@ -26,7 +25,7 @@ export default class Lexer {
         this.tokens = result;
     }
 
-    to_tokens() {
+    private to_tokens() {
         let lines = this.raw.split("\n");
 
         for (let row = 0; row < lines.length; row++) {
@@ -42,18 +41,54 @@ export default class Lexer {
         }
     }
 
-    build_tokens() {
-        this.to_tokens();
-        this.split_punctuation();
+
+    private check_ok_string(str: string): boolean {
+        str = str.replace(/''/g, "");
+
+        let start = str.substr(0, 1);
+        let end = str.substr(str.length - 1);
+        if (start === "'") {
+            if (end === "'") {
+                return true;
+            } else {
+                return false;
+            }
+        } else {
+            return true;
+        }
     }
 
-    run(): Array<Token> {
+    private handle_strings() {
+        let result: Array<Token> = [];
+        let add: Token;
+
+        for (let token of this.tokens) {
+            if (add === undefined) {
+                add = token;
+            } else {
+                add.set_str(add.get_str() + " " + token.get_str());
+            }
+            if (this.check_ok_string(add.get_str())) {
+                result.push(add);
+                add = undefined;
+            }
+        }
+        this.tokens = result;
+    }
+
+    private build_tokens() {
+        this.to_tokens();
+        this.split_punctuation();
+        this.handle_strings();
+    }
+
+    public run(): Array<Token> {
         this.build_tokens();
 
         return this.tokens;
     }
 
-    get_tokens(): Array<Token> {
+    public get_tokens(): Array<Token> {
         return this.tokens;
     }
 }
