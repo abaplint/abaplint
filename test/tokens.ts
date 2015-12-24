@@ -17,22 +17,24 @@ function helper(file: string): Lexer {
 }
 
 describe("tokens", () => {
-    describe("zhello01.prog.abap", () => {
-        it("should be 7", () => {
-            let tokens = helper("zhello01.prog.abap").get_tokens();
-            expect(tokens.length).to.equals(7);
+    let tests = [
+                [ "zhello01" , 7 ],
+                [ "zhello02" , 7 ],
+                [ "zhello03" , 7 ],
+                [ "zhello04" , 7 ],
+                [ "zhello05" , 7 ],
+                [ "zhello06" , 7 ]
+                ];
+    let test: any;
+
+    for (let arr of tests) {
+        test = arr;
+        describe(test[0] + ".prog.abap", () => {
+            it("should be " + test[1], () => {
+                let tokens = helper(test[0] + ".prog.abap").get_tokens();
+                expect(tokens.length).to.equals(test[1]);
+            });
         });
-    });
-    describe("zhello02.prog.abap", () => {
-        it("should be 7", () => {
-            let tokens = helper("zhello02.prog.abap").get_tokens();
-            expect(tokens.length).to.equals(7);
-        });
-    });
-    describe("zhello03.prog.abap", () => {
-        it("should be 7", () => {
-            let tokens = helper("zhello03.prog.abap").get_tokens();
-            expect(tokens.length).to.equals(7);
-        });
-    });
+    }
+
 });
