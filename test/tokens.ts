@@ -29,11 +29,16 @@ describe("files", function() {
     ];
 
     tests.forEach(function(test) {
+        let lexer = helper(test.file + ".prog.abap");
+        let tokens = lexer.get_tokens();
+        let parser = new Parser(lexer);
+        let statements = parser.run();
+
         it(test.file + " should be " + test.tokens + " tokens", () => {
-            let lexer = helper(test.file + ".prog.abap");
-            let tokens = lexer.get_tokens();
-            let parser = new Parser(lexer);
             expect(tokens.length).to.equals(test.tokens);
+        });
+        it(test.file + " should be " + test.statements + " statements", () => {
+            expect(statements.length).to.equals(test.statements);
         });
     });
 });
