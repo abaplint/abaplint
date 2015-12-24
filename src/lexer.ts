@@ -1,11 +1,15 @@
 import Token from "./token";
-import Statement from "./statement";
-
 
 export default class Lexer {
     private tokens: Array<Token> = [];
 
     constructor(private raw: string) {
+    }
+
+    public run(): Array<Token> {
+        this.build_tokens();
+
+        return this.tokens;
     }
 
     private split_punctuation(char: string) {
@@ -81,12 +85,6 @@ export default class Lexer {
         this.split_punctuation(",");
         this.split_punctuation(":");
         this.handle_strings();
-    }
-
-    public run(): Array<Token> {
-        this.build_tokens();
-
-        return this.tokens;
     }
 
     public get_tokens(): Array<Token> {

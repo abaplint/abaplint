@@ -3,6 +3,7 @@
 /// <reference path="../typings/node/node.d.ts" />
 
 import Lexer from "../src/lexer";
+import Parser from "../src/parser";
 import Token from "../src/token";
 import chai = require("chai");
 
@@ -16,21 +17,23 @@ function helper(file: string): Lexer {
     return lexer;
 }
 
-describe("tokens", function() {
+describe("files", function() {
     let tests = [
-        {file: "zhello01", expected: 6},
-        {file: "zhello02", expected: 6},
-        {file: "zhello03", expected: 6},
-        {file: "zhello04", expected: 6},
-        {file: "zhello05", expected: 6},
-        {file: "zhello06", expected: 6},
-        {file: "zhello07", expected: 10},
+        {file: "zhello01", tokens: 6, statements: 2},
+        {file: "zhello02", tokens: 6, statements: 2},
+        {file: "zhello03", tokens: 6, statements: 2},
+        {file: "zhello04", tokens: 6, statements: 2},
+        {file: "zhello05", tokens: 6, statements: 2},
+        {file: "zhello06", tokens: 6, statements: 2},
+        {file: "zhello07", tokens: 10, statements: 3},
     ];
 
     tests.forEach(function(test) {
-        it(test.file + " should be " + test.expected, () => {
-            let tokens = helper(test.file + ".prog.abap").get_tokens();
-            expect(tokens.length).to.equals(test.expected);
+        it(test.file + " should be " + test.tokens + " tokens", () => {
+            let lexer = helper(test.file + ".prog.abap");
+            let tokens = lexer.get_tokens();
+            let parser = new Parser(lexer);
+            expect(tokens.length).to.equals(test.tokens);
         });
     });
 });

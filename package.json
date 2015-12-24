@@ -7,7 +7,7 @@
     "test": "test"
   },
   "scripts": {
-    "pretest": "tsc test/*.ts src/*.ts --module commonjs",
+    "pretest": "tsc *.ts test/*.ts src/*.ts --module commonjs",
     "test": "mocha",
     "posttest": "tslint *.ts test/*.ts src/*.ts"
   },
