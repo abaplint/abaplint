@@ -1,11 +1,21 @@
 export default class Token {
-    private row: number;
-    private column: number;
-    private str: string;
 
-    constructor(row: number, column: number, str: string) {
-        this.row = row;
-        this.column = column;
+    constructor(private row: number, private col: number, private str: string) {
+    }
+
+    get_str(): string {
+        return this.str;
+    }
+
+    set_str(str: string) {
         this.str = str;
+    }
+
+    get_row(): number {
+        return this.row;
+    }
+
+    get_col(): number {
+        return this.col;
     }
 }

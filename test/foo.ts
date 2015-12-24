@@ -1,48 +1,27 @@
 /// <reference path="typings/mocha/mocha.d.ts" />
 /// <reference path="typings/chai/chai.d.ts" />
+/// <reference path="../typings/node/node.d.ts" />
 
-/**
- * Module dependencies.
- */
+import Lexer from "../src/lexer";
+import Token from "../src/token";
 import chai = require("chai");
 
-/**
- * Globals
- */
-
 let expect = chai.expect;
+let fs = require("fs");
 
-/**
- * Unit tests
- */
-describe("User Model Unit Tests:", () => {
-
-    describe("2 + 4", () => {
-        it("should be 6", (done) => {
-            expect(2 + 4).to.equals(6);
-            done();
-        });
-
-        it("should not be 7", (done) => {
-            expect(2 + 4).to.not.equals(7);
-            done();
-        });
-    });
-});
-
-import Calculator from "../index";
-
-describe("Calculator", () => {
-    let subject: Calculator;
+describe("zhello.prog.abap", () => {
+    let tokens: Array<Token>;
 
     beforeEach(function () {
-        subject = new Calculator();
+        let buf = fs.readFileSync(__dirname + "/abap/zhello.prog.abap", "utf8");
+        let lexer: Lexer;
+        lexer = new Lexer(buf);
+        tokens = lexer.run();
     });
 
-    describe("add", () => {
-        it("should add two numbers together", () => {
-            let result: number = subject.add(2, 3);
-            expect(result).to.equals(5);
+    describe("tokens", () => {
+        it("should be 7", () => {
+            expect(tokens.length).to.equals(7);
         });
     });
 });

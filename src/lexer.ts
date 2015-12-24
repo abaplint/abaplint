@@ -3,37 +3,58 @@ import Statement from "./statement";
 
 
 export default class Lexer {
-    private raw: string;
-    private statements: Array<Statement>;
+    private tokens: Array<Token> = [];
 
-    constructor(raw: string) {
-        this.raw = raw;
+    constructor(private raw: string) {
     }
 
-    run(): Array<Statement> {
+    split_punctuation() {
+        let result: Array<Token> = [];
+
+        for (let key in this.tokens) {
+            let token = this.tokens[key];
+            let str = token.get_str();
+            if (str.substr(str.length - 1) === ".") {
+                token.set_str(str.substr(0, str.length - 1));
+                result.push(token);
+                let dot = new Token(this.tokens[key].get_row(), token.get_col() + str.length - 1, ".");
+                result.push(dot);
+            } else {
+                result.push(token);
+            }
+        }
+        this.tokens = result;
+    }
+
+
+    to_tokens() {
         let lines = this.raw.split("\n");
-        let list: Array<Token> = [];
 
         for (let row = 0; row < lines.length; row++) {
             let tokens = lines[row].split(" ");
-            let col: number = 0;
-            for (let j = 0; j < tokens.length; j++) {
-                console.log("row " + row + " token " + tokens[j]);
-
-                if (tokens[j].substr(tokens[j].length - 1) === ".") {
-                    console.log("ends");
+            let col = 0;
+            for (let key in tokens) {
+                if (tokens[key].length > 0) {
+                    let token = new Token(row, col, tokens[key]);
+                    this.tokens.push(token);
+                    col = col + tokens[key].length + 1;
                 }
-
-                let token = new Token(row, col, tokens[j]);
-                list.push(token);
             }
         }
-
-        return this.statements;
     }
 
-    get_statements(): Array<Statement> {
-        console.log("get statements");
-        return this.statements;
+    build_tokens() {
+        this.to_tokens();
+        this.split_punctuation();
+    }
+
+    run(): Array<Token> {
+        this.build_tokens();
+
+        return this.tokens;
+    }
+
+    get_tokens(): Array<Token> {
+        return this.tokens;
     }
 }
