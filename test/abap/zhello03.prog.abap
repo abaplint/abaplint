@@ -1,3 +1,3 @@
 REPORT zhello.
 
-WRITE: / 'Hello ''big'' world'.
+WRITE 'Hello ''big'' world'.

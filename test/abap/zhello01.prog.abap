@@ -1,3 +1,3 @@
 REPORT zhello.
 
-WRITE: / 'Hello'.
+WRITE 'Hello'.

@@ -16,25 +16,21 @@ function helper(file: string): Lexer {
     return lexer;
 }
 
-describe("tokens", () => {
+describe("tokens", function() {
     let tests = [
-                [ "zhello01" , 7 ],
-                [ "zhello02" , 7 ],
-                [ "zhello03" , 7 ],
-                [ "zhello04" , 7 ],
-                [ "zhello05" , 7 ],
-                [ "zhello06" , 7 ]
-                ];
-    let test: any;
+        {file: "zhello01", expected: 6},
+        {file: "zhello02", expected: 6},
+        {file: "zhello03", expected: 6},
+        {file: "zhello04", expected: 6},
+        {file: "zhello05", expected: 6},
+        {file: "zhello06", expected: 6},
+        {file: "zhello07", expected: 10},
+    ];
 
-    for (let arr of tests) {
-        test = arr;
-        describe(test[0] + ".prog.abap", () => {
-            it("should be " + test[1], () => {
-                let tokens = helper(test[0] + ".prog.abap").get_tokens();
-                expect(tokens.length).to.equals(test[1]);
-            });
+    tests.forEach(function(test) {
+        it(test.file + " should be " + test.expected, () => {
+            let tokens = helper(test.file + ".prog.abap").get_tokens();
+            expect(tokens.length).to.equals(test.expected);
         });
-    }
-
+    });
 });

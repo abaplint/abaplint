@@ -8,15 +8,15 @@ export default class Lexer {
     constructor(private raw: string) {
     }
 
-    private split_punctuation() {
+    private split_punctuation(char: string) {
         let result: Array<Token> = [];
 
         for (let token of this.tokens) {
             let str = token.get_str();
-            if (str.substr(str.length - 1) === ".") {
+            if (str.substr(str.length - 1) === char) {
                 token.set_str(str.substr(0, str.length - 1));
                 result.push(token);
-                let dot = new Token(token.get_row(), token.get_col() + str.length - 1, ".");
+                let dot = new Token(token.get_row(), token.get_col() + str.length - 1, char);
                 result.push(dot);
             } else {
                 result.push(token);
@@ -40,7 +40,6 @@ export default class Lexer {
             }
         }
     }
-
 
     private check_ok_string(str: string): boolean {
         str = str.replace(/''/g, "");
@@ -78,7 +77,9 @@ export default class Lexer {
 
     private build_tokens() {
         this.to_tokens();
-        this.split_punctuation();
+        this.split_punctuation(".");
+        this.split_punctuation(",");
+        this.split_punctuation(":");
         this.handle_strings();
     }
 
