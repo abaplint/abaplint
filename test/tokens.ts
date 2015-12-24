@@ -23,4 +23,16 @@ describe("tokens", () => {
             expect(tokens.length).to.equals(7);
         });
     });
+    describe("zhello02.prog.abap", () => {
+        it("should be 7", () => {
+            let tokens = helper("zhello02.prog.abap").get_tokens();
+            expect(tokens.length).to.equals(7);
+        });
+    });
+    describe("zhello03.prog.abap", () => {
+        it("should be 7", () => {
+            let tokens = helper("zhello03.prog.abap").get_tokens();
+            expect(tokens.length).to.equals(7);
+        });
+    });
 });

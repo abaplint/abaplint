@@ -26,7 +26,6 @@ export default class Lexer {
         this.tokens = result;
     }
 
-
     to_tokens() {
         let lines = this.raw.split("\n");
 
