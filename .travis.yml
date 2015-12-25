@@ -6,3 +6,5 @@ before_script:
   - npm install -g tsc
   - npm install -g tslint
   - tsd install
+  - cd test
+  - tsd install
