@@ -4,19 +4,14 @@ import Lexer from "./src/lexer";
 import Parser from "./src/parser";
 import Report from "./src/report";
 import Check01 from "./src/check01";
+// import * as glob from "glob";
 
 let fs = require("fs");
+let glob = require("glob");
 
-let argv = require("minimist")(process.argv.slice(2));
-let filename = argv._[0];
-if (filename === undefined) {
-    console.log("Supply filename");
-} else {
-    console.log("File: " + filename);
+function process_file(filename: string) {
+    let buf = fs.readFileSync(__dirname + "/" + filename, "utf8");
 
-    let buf = fs.readFileSync(__dirname + "/test/abap/" + filename + ".prog.abap", "utf8");
-
-//    let lexer = ;
     let parser = new Parser(new Lexer(buf));
 
     let report = new Report();
@@ -24,8 +19,18 @@ if (filename === undefined) {
     check01.run(parser.get_statements());
 
     if (report.get_count() > 0) {
-        console.error("abap-open-checks errors: " + report.get_count());
+        console.error("abap-open-checks\t" + filename + "\t" + report.get_count() + " error");
     } else {
-        console.error("abap-open-checks no errors");
+        console.log("abap-open-checks\t" + filename + "\tno errors");
+    }
+}
+
+let argv = require("minimist")(process.argv.slice(2));
+if (argv._[0] === undefined) {
+    console.log("Supply filename");
+} else {
+//    const files = ;
+    for (const file of argv._) {
+        glob.sync(file).forEach(process_file);
     }
 }
