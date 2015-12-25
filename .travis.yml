@@ -8,3 +8,4 @@ before_script:
   - tsd install
   - cd test
   - tsd install
+  - cd ..
