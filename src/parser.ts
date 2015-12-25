@@ -11,15 +11,30 @@ export default class Parser {
 
     public run(): Array<Statement> {
         let add: Array<Token> = [];
+        let pre: Array<Token> = [];
         let tokens = this.lexer.get_tokens();
         for (let token of tokens) {
             if (token.get_str() === ".") {
-                this.statements.push(new Statement(add));
+                let statement = new Statement(pre.concat(add));
+                this.statements.push(statement);
+                add = [];
+                pre = [];
+            } else if (token.get_str() === ",") {
+                let statement = new Statement(pre.concat(add));
+                this.statements.push(statement);
+                add = [];
+            } else if (token.get_str() === ":") {
+                pre = add.slice(0);
+                add = [];
             } else {
                 add.push(token);
             }
         }
 
+        return this.statements;
+    }
+
+    public get_statements(): Array<Statement> {
         return this.statements;
     }
 }
