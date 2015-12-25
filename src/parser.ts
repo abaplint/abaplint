@@ -37,4 +37,8 @@ export default class Parser {
     public get_statements(): Array<Statement> {
         return this.statements;
     }
+
+    public get_lexer(): Lexer {
+        return this.lexer;
+    }
 }

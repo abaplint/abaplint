@@ -1,3 +1,3 @@
-REPORT zhello.
+REPORT zhello04.
 
 WRITE 'Hello. world'.
