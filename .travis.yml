@@ -9,3 +9,5 @@ before_script:
   - cd test
   - tsd install
   - cd ..
+notifications:
+  email: false
