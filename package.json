@@ -2,6 +2,9 @@
   "name": "abap-open-checks",
   "version": "0.0.1",
   "description": "ABAP stuff",
+  "bin": {
+    "aoc": "./aoc"
+  },
   "main": "index.js",
   "directories": {
     "test": "test"

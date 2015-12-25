@@ -39,8 +39,8 @@ export default class Lexer {
                 if (tokens[key].length > 0) {
                     let token = new Token(row, col, tokens[key]);
                     this.tokens.push(token);
-                    col = col + tokens[key].length + 1;
                 }
+                col = col + tokens[key].length + 1;
             }
         }
     }
