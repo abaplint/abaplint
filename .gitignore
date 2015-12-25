@@ -1,3 +1,4 @@
 *.js
 test/typings/
 typings/
+npm-debug.log
