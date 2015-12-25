@@ -14,10 +14,7 @@ let fs = require("fs");
 
 function helper(file: string): Parser {
     let buf = fs.readFileSync(__dirname + "/abap/" + file, "utf8");
-    let lexer = new Lexer(buf);
-    lexer.run();
-    let parser = new Parser(lexer);
-    parser.run();
+    let parser = new Parser(new Lexer(buf));
     return parser;
 }
 

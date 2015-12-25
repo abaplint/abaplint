@@ -7,9 +7,10 @@ export default class Parser {
     private statements: Array<Statement> = [];
 
     constructor(private lexer: Lexer) {
+        this.run();
     }
 
-    public run(): Array<Statement> {
+    private run(): Array<Statement> {
         let add: Array<Token> = [];
         let pre: Array<Token> = [];
         let tokens = this.lexer.get_tokens();

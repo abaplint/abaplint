@@ -16,11 +16,8 @@ if (filename === undefined) {
 
     let buf = fs.readFileSync(__dirname + "/test/abap/" + filename + ".prog.abap", "utf8");
 
-    let lexer = new Lexer(buf);
-    lexer.run();
-
-    let parser = new Parser(lexer);
-    parser.run();
+//    let lexer = ;
+    let parser = new Parser(new Lexer(buf));
 
     let report = new Report();
     let check01 = new Check01(report);

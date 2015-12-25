@@ -4,9 +4,10 @@ export default class Lexer {
     private tokens: Array<Token> = [];
 
     constructor(private raw: string) {
+        this.run();
     }
 
-    public run(): Array<Token> {
+    private run(): Array<Token> {
         this.build_tokens();
 
         return this.tokens;
