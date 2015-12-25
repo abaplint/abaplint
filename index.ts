@@ -10,7 +10,7 @@ let fs = require("fs");
 let glob = require("glob");
 
 function process_file(filename: string) {
-    let buf = fs.readFileSync(__dirname + "/" + filename, "utf8");
+    let buf = fs.readFileSync(filename, "utf8");
 
     let parser = new Parser(new Lexer(buf));
 

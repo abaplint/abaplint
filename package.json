@@ -1,6 +1,6 @@
 {
   "name": "abap-open-checks",
-  "version": "0.0.2",
+  "version": "0.0.3",
   "description": "ABAP stuff",
   "bin": {
     "aoc": "./aoc"
@@ -29,9 +29,7 @@
   "homepage": "https://github.com/larshp/abap-open-checks#readme",
   "devDependencies": {
     "chai": "^3.4.1",
-    "mocha": "^2.3.4",
-    "tslint": "^3.2.1",
-    "typescript": "^1.7.5"
+    "mocha": "^2.3.4"
   },
   "dependencies": {
     "glob": "^6.0.2",
