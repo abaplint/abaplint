@@ -1,6 +1,6 @@
 {
   "name": "abap-open-checks",
-  "version": "0.0.3",
+  "version": "0.0.4",
   "description": "ABAP stuff",
   "bin": {
     "aoc": "./aoc"
