@@ -2,5 +2,7 @@ language: node_js
 node_js:
   - "4.1"
 before_script:
+  - npm install -g tsd
   - npm install -g tsc
   - npm install -g tslint
+  - tsd install
