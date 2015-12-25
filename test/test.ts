@@ -6,14 +6,13 @@ import Lexer from "../src/lexer";
 import Parser from "../src/parser";
 import Token from "../src/token";
 import Report from "../src/report";
-import Check01 from "../src/check01";
+import Runner from "../src/runner";
 import chai = require("chai");
 
 let expect = chai.expect;
-let fs = require("fs");
 
 function helper(file: string): Parser {
-    let buf = fs.readFileSync(__dirname + "/abap/" + file, "utf8");
+    let buf = require("fs").readFileSync("./test/abap/" + file, "utf8");
     let parser = new Parser(new Lexer(buf));
     return parser;
 }
@@ -67,13 +66,10 @@ describe("files, statements", function() {
     });
 });
 
-describe("check01", function() {
-    let statements = helper("zcheck01.prog.abap").get_statements();
-    let report = new Report();
-    let check01 = new Check01(report);
-    check01.run(statements);
+describe("zcheck01", function() {
+    let runner = new Runner("./test/abap/zcheck01.prog.abap");
 
     it("should have 1 error", () => {
-        expect(report.get_count()).to.equals(1);
+        expect(runner.get_report().get_count()).to.equals(1);
     });
 });

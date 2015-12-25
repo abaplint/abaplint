@@ -1,6 +1,8 @@
 import Statement from "./statement";
 import Check from "./check";
+import Parser from "./parser";
 import Report from "./report";
+import Issue from "./issue";
 
 export default class Check01 implements Check {
 
@@ -16,10 +18,12 @@ export default class Check01 implements Check {
         return "Start statement at tab position";
     }
 
-    public run(statements: Array<Statement>) {
-        for (let statement of statements) {
-            if (statement.get_tokens()[0].get_col() % 2 !== 0) {
-                this.report.add(this.get_description());
+    public run(filename: string, parser: Parser) {
+        for (let statement of parser.get_statements()) {
+            let token = statement.get_tokens()[0];
+            if (token.get_col() % 2 !== 0) {
+                let issue = new Issue(this, token.get_row(), token.get_col(), filename);
+                this.report.add(issue);
             }
         }
     }
