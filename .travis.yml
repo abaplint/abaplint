@@ -5,6 +5,7 @@ before_script:
   - npm install -g tsd
   - npm install -g tsc
   - npm install -g tslint
+  - tsd rate
   - tsd install
   - cd test
   - tsd install
