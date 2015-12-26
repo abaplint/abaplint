@@ -1,4 +1,4 @@
-import Check from "./check";
+import { Check } from "./checks/checks";
 
 export default class Issue {
 

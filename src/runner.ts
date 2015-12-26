@@ -3,7 +3,7 @@
 import Report from "./report";
 import Lexer from "./lexer";
 import Parser from "./parser";
-import Check01 from "./check01";
+import * as Checks from "./checks/checks";
 import * as fs from "fs";
 
 export default class Runner {
@@ -25,7 +25,7 @@ export default class Runner {
     private run(filename: string) {
         let buf = fs.readFileSync(filename, "utf8");
         let parser = new Parser(new Lexer(buf));
-        let check01 = new Check01(this.report);
+        let check01 = new Checks.Check01(this.report);
         check01.run(filename, parser);
     }
 }

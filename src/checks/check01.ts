@@ -1,9 +1,9 @@
-import Check from "./check";
-import Parser from "./parser";
-import Report from "./report";
-import Issue from "./issue";
+import { Check } from "./check";
+import Parser from "../parser";
+import Report from "../report";
+import Issue from "../issue";
 
-export default class Check01 implements Check {
+export class Check01 implements Check {
 
     constructor(private report: Report) {
 
