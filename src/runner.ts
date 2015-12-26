@@ -31,5 +31,8 @@ export default class Runner {
 
         let check02 = new Checks.Check02(this.report);
         check02.run(filename, parser);
+
+        let check03 = new Checks.Check03(this.report);
+        check03.run(filename, parser);
     }
 }

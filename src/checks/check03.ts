@@ -1,29 +1,34 @@
 import { Check } from "./check";
 import Parser from "../parser";
 import Report from "../report";
+import Token from "../token";
 import Issue from "../issue";
 
-export class Check02 implements Check {
+export class Check03 implements Check {
 
     constructor(private report: Report) { }
 
     public get_key(): string {
-        return "02";
+        return "03";
     }
 
     public get_description(): string {
-        return "Use functional writing style";
-    }
-
-    private startsWith(string: string, value: string): boolean {
-        return string.substr(0, value.length) === value;
+        return "Line contains only . or ).";
     }
 
     public run(filename: string, parser: Parser) {
         for (let statement of parser.get_statements()) {
-            let code = statement.concat_tokens().toUpperCase();
-            if(this.startsWith(code, "CALL METHOD ")) {
-                let token = statement.get_tokens()[0];
+            let line = "";
+            let token: Token;
+            let prev: number;
+            for (token of statement.get_tokens()) {
+                if (prev != token.get_row()) {
+                    line = "";
+                }
+                line = line + token.get_str();
+                prev = token.get_row();
+            }
+            if (line === ".") {
                 let issue = new Issue(this, token.get_row(), token.get_col(), filename);
                 this.report.add(issue);
             }
