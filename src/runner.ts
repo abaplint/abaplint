@@ -1,7 +1,10 @@
+/// <reference path="../typings/node/node.d.ts" />
+
 import Report from "./report";
 import Lexer from "./lexer";
 import Parser from "./parser";
 import Check01 from "./check01";
+import * as fs from "fs";
 
 export default class Runner {
     private report: Report;
@@ -20,7 +23,7 @@ export default class Runner {
     }
 
     private run(filename: string) {
-        let buf = require("fs").readFileSync(filename, "utf8");
+        let buf = fs.readFileSync(filename, "utf8");
         let parser = new Parser(new Lexer(buf));
         let check01 = new Check01(this.report);
         check01.run(filename, parser);

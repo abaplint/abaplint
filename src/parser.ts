@@ -1,6 +1,6 @@
 import Token from "./token";
 import Lexer from "./lexer";
-import Statement from "./statement/statement";
+import { Statement } from "./statements/statements";
 
 export default class Parser {
     private statements: Array<Statement> = [];

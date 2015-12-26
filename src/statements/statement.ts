@@ -1,7 +1,6 @@
 import Token from "../token";
 
-export default class Statement {
-
+export class Statement {
     constructor(private tokens: Array<Token>) {
     }
 
