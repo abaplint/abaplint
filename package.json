@@ -1,6 +1,6 @@
 {
   "name": "abaplint",
-  "version": "0.0.6",
+  "version": "0.0.7",
   "description": "ABAP stuff",
   "bin": {
     "abaplint": "./abaplint"
