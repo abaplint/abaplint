@@ -28,7 +28,7 @@ export class Check03 implements Check {
                 line = line + token.get_str();
                 prev = token.get_row();
             }
-            if (line === ".") {
+            if (line === "." || line === ").") {
                 let issue = new Issue(this, token.get_row(), token.get_col(), filename);
                 this.report.add(issue);
             }

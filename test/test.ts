@@ -82,9 +82,34 @@ describe("concat_tokens", function() {
     });
 });
 
-describe("errors", function() {
+describe("zero errors", function() {
     let tests = [
         {file: "zhello01", errors: 0},
+        {file: "zhello02", errors: 0},
+        {file: "zhello03", errors: 0},
+        {file: "zhello04", errors: 0},
+        {file: "zhello05", errors: 0},
+        {file: "zhello06", errors: 0},
+        {file: "zhello07", errors: 0},
+        {file: "zhello08", errors: 0},
+        {file: "zhello09", errors: 0},
+        {file: "zhello10", errors: 0},
+        {file: "zhello11", errors: 0},
+        {file: "zif01", errors: 0},
+        {file: "zif02", errors: 0},
+        {file: "zif03", errors: 0},
+    ];
+
+    tests.forEach(function(test) {
+        it(test.file + " should have zero errors", () => {
+            let runner = new Runner("./test/abap/" + test.file + ".prog.abap");
+            expect(runner.get_report().get_count()).to.equals(0);
+        });
+    });
+});
+
+describe("errors", function() {
+    let tests = [
         {file: "zcheck01_01", errors: 1},
         {file: "zcheck02_01", errors: 1},
         {file: "zcheck02_02", errors: 1},
@@ -93,7 +118,7 @@ describe("errors", function() {
     ];
 
     tests.forEach(function(test) {
-        it(test.file + " should have " + test.errors + " error", () => {
+        it(test.file + " should have " + test.errors + " error(s)", () => {
             let runner = new Runner("./test/abap/" + test.file + ".prog.abap");
             expect(runner.get_report().get_count()).to.equals(test.errors);
         });
