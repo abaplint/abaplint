@@ -15,17 +15,21 @@ export default class Runner {
         } else {
             this.report = new Report();
         }
-        this.run(filename);
+        this.analyze(filename);
     }
 
     public get_report(): Report {
         return this.report;
     }
 
-    private run(filename: string) {
-        let buf = fs.readFileSync(filename, "utf8");
-        let parser = new Parser(new Lexer(buf));
+    private analyze(filename: string) {
+        let code = fs.readFileSync(filename, "utf8");
+        let parser = new Parser(new Lexer(code));
+
         let check01 = new Checks.Check01(this.report);
         check01.run(filename, parser);
+
+        let check02 = new Checks.Check02(this.report);
+        check02.run(filename, parser);
     }
 }

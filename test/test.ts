@@ -18,7 +18,7 @@ function helper(file: string): Parser {
     return parser;
 }
 
-describe("files, tokens", function() {
+describe("tokens", function() {
     let tests = [
         {file: "zhello01", tokens:  6},
         {file: "zhello02", tokens:  6},
@@ -41,7 +41,7 @@ describe("files, tokens", function() {
     });
 });
 
-describe("files, statements", function() {
+describe("statements", function() {
     let tests = [
         {file: "zhello01", statements: 2},
         {file: "zhello02", statements: 2},
@@ -67,10 +67,32 @@ describe("files, statements", function() {
     });
 });
 
-describe("zcheck01", function() {
-    let runner = new Runner("./test/abap/zcheck01.prog.abap");
+describe("concat_tokens", function() {
+    let tests = [
+        "REPORT zfoo.",
+        "WRITE 'Hello'.",
+    ];
 
-    it("should have 1 error", () => {
-        expect(runner.get_report().get_count()).to.equals(1);
+    tests.forEach(function(test) {
+        it(test, () => {
+            let parser = new Parser(new Lexer(test));
+            let concat = parser.get_statements()[0].concat_tokens();
+            expect(concat).to.equals(test);
+        });
+    });
+});
+
+describe("errors", function() {
+    let tests = [
+        {file: "zhello01", errors: 0},
+        {file: "zcheck01", errors: 1},
+        {file: "zcheck02", errors: 1},
+    ];
+
+    tests.forEach(function(test) {
+        it(test.file + " should have " + test.errors + " error", () => {
+            let runner = new Runner("./test/abap/" + test.file + ".prog.abap");
+            expect(runner.get_report().get_count()).to.equals(test.errors);
+        });
     });
 });

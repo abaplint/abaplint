@@ -14,6 +14,7 @@ export default class Parser {
         let pre: Array<Token> = [];
         let tokens = this.lexer.get_tokens();
         for (let token of tokens) {
+            add.push(token);
             if (token.get_str() === ".") {
                 let statement = new Statement(pre.concat(add));
                 this.statements.push(statement);
@@ -26,8 +27,6 @@ export default class Parser {
             } else if (token.get_str() === ":") {
                 pre = add.slice(0);
                 add = [];
-            } else {
-                add.push(token);
             }
         }
 
