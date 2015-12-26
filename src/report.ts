@@ -34,7 +34,7 @@ export default class Report {
     }
 
     public output() {
-        console.log("abap-open-checks");
+        console.log("abaplint");
 
         for (let issue of this.issues) {
             this.output_issue(issue);

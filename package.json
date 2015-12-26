@@ -1,9 +1,9 @@
 {
-  "name": "abap-open-checks",
-  "version": "0.0.4",
+  "name": "abaplint",
+  "version": "0.0.5",
   "description": "ABAP stuff",
   "bin": {
-    "aoc": "./aoc"
+    "aoc": "./abaplint"
   },
   "main": "index.js",
   "directories": {
@@ -16,7 +16,7 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/larshp/abap-open-checks.git"
+    "url": "git+https://github.com/larshp/abaplint.git"
   },
   "keywords": [
     "ABAP"
@@ -24,9 +24,9 @@
   "author": "Lars Hvam Petersen",
   "license": "MIT",
   "bugs": {
-    "url": "https://github.com/larshp/abap-open-checks/issues"
+    "url": "https://github.com/larshp/abaplint/issues"
   },
-  "homepage": "https://github.com/larshp/abap-open-checks#readme",
+  "homepage": "https://github.com/larshp/abaplint#readme",
   "devDependencies": {
     "chai": "^3.4.1",
     "mocha": "^2.3.4"
