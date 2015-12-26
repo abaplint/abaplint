@@ -1,9 +1,9 @@
 {
   "name": "abaplint",
-  "version": "0.0.5",
+  "version": "0.0.6",
   "description": "ABAP stuff",
   "bin": {
-    "aoc": "./abaplint"
+    "abaplint": "./abaplint"
   },
   "main": "index.js",
   "directories": {
