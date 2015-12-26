@@ -1,4 +1,3 @@
-import Statement from "./statement";
 import Check from "./check";
 import Parser from "./parser";
 import Report from "./report";
