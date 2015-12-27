@@ -1,4 +1,4 @@
-export default class Token {
+export class Token {
 
     constructor(private row: number, private col: number, private str: string) {
     }

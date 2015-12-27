@@ -1,7 +1,7 @@
 import { Check } from "./check";
 import Parser from "../parser";
 import Report from "../report";
-import Token from "../token";
+import { Token } from "../tokens/tokens";
 import Issue from "../issue";
 
 export class Check03 implements Check {

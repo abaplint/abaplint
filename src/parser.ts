@@ -1,4 +1,4 @@
-import Token from "./token";
+import { Token } from "./tokens/tokens";
 import Lexer from "./lexer";
 import { Statement } from "./statements/statements";
 

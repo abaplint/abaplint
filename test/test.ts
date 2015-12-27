@@ -4,8 +4,6 @@
 
 import Lexer from "../src/lexer";
 import Parser from "../src/parser";
-import Token from "../src/token";
-import Report from "../src/report";
 import Runner from "../src/runner";
 import * as chai from "chai";
 import * as fs from "fs";

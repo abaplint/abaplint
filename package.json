@@ -10,9 +10,9 @@
     "test": "test"
   },
   "scripts": {
-    "pretest": "tsc *.ts test/*.ts src/*.ts src/statements/*.ts --module commonjs",
+    "pretest": "tsc *.ts test/*.ts src/*.ts src/statements/*.ts src/tokens/*.ts --module commonjs",
     "test": "mocha",
-    "posttest": "tslint *.ts test/*.ts src/*.ts src/statements/*.ts"
+    "posttest": "tslint *.ts test/*.ts src/*.ts src/statements/*.ts src/tokens/*.ts"
   },
   "repository": {
     "type": "git",

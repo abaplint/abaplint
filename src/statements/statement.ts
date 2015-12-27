@@ -1,4 +1,4 @@
-import Token from "../token";
+import { Token } from "../tokens/tokens";
 
 export class Statement {
     constructor(private tokens: Array<Token>) {

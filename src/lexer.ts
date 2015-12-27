@@ -1,4 +1,4 @@
-import Token from "./token";
+import { Token } from "./tokens/tokens";
 
 export default class Lexer {
     private tokens: Array<Token> = [];
