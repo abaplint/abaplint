@@ -1,9 +1,7 @@
-import Parser from "../parser";
+import File from "../file";
 
 export interface Check {
     get_key(): string;
     get_description(): string;
-    run(filename: string, parser: Parser);
+    run(file: File);
 }
-
-//export Check;

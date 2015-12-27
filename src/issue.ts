@@ -1,11 +1,12 @@
 import { Check } from "./checks/checks";
+import File from "./file";
 
 export default class Issue {
 
     constructor(private check: Check,
                 private row: number,
                 private col: number,
-                private filename: string) {
+                private file: File) {
     }
 
     public get_description(): string {
@@ -21,6 +22,6 @@ export default class Issue {
     }
 
     public get_filename(): string {
-        return this.filename;
+        return this.file.get_filename();
     }
 }

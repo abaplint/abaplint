@@ -1,8 +1,7 @@
 /// <reference path="../typings/node/node.d.ts" />
 
 import Report from "./report";
-import Lexer from "./lexer";
-import Parser from "./parser";
+import File from "./file";
 import * as Checks from "./checks/checks";
 import * as fs from "fs";
 
@@ -24,15 +23,16 @@ export default class Runner {
 
     private analyze(filename: string) {
         let code = fs.readFileSync(filename, "utf8");
-        let parser = new Parser(new Lexer(code));
+
+        let file = new File(filename, code);
 
         let check01 = new Checks.Check01(this.report);
-        check01.run(filename, parser);
+        check01.run(file);
 
         let check02 = new Checks.Check02(this.report);
-        check02.run(filename, parser);
+        check02.run(file);
 
         let check03 = new Checks.Check03(this.report);
-        check03.run(filename, parser);
+        check03.run(file);
     }
 }

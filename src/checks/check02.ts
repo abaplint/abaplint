@@ -1,5 +1,5 @@
 import { Check } from "./check";
-import Parser from "../parser";
+import File from "../file";
 import Report from "../report";
 import Issue from "../issue";
 
@@ -19,12 +19,12 @@ export class Check02 implements Check {
         return string.substr(0, value.length) === value;
     }
 
-    public run(filename: string, parser: Parser) {
-        for (let statement of parser.get_statements()) {
+    public run(file: File) {
+        for (let statement of file.get_statements()) {
             let code = statement.concat_tokens().toUpperCase();
             if(this.startsWith(code, "CALL METHOD ")) {
                 let token = statement.get_tokens()[0];
-                let issue = new Issue(this, token.get_row(), token.get_col(), filename);
+                let issue = new Issue(this, token.get_row(), token.get_col(), file);
                 this.report.add(issue);
             }
         }

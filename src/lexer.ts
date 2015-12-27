@@ -1,16 +1,38 @@
 import { Token } from "./tokens/tokens";
+import File from "./file";
 
 export default class Lexer {
     private tokens: Array<Token> = [];
 
-    constructor(private raw: string) {
+    constructor(private file: File) {
         this.run();
     }
 
-    private run(): Array<Token> {
-        this.build_tokens();
+    private run() {
+        this.to_tokens();
+        this.split_punctuation(".");
+        this.split_punctuation(",");
+        this.split_punctuation(":");
+        this.handle_strings();
+        this.handle_comments();
 
-        return this.tokens;
+        this.file.set_tokens(this.tokens);
+    }
+
+    private handle_comments() {
+/*        let result: Array<Token> = [];
+
+        for (let token of this.tokens) {
+            let str = token.get_str();
+            if (str.substr(0, 1) === "*") {
+                token.set_str(str.substr(0, str.length - 1));
+                result.push(dot);
+            } else {
+                result.push(token);
+            }
+        }
+        this.tokens = result;
+*/
     }
 
     private split_punctuation(char: string) {
@@ -31,7 +53,7 @@ export default class Lexer {
     }
 
     private to_tokens() {
-        let lines = this.raw.split("\n");
+        let lines = this.file.get_raw().split("\n");
 
         for (let row = 0; row < lines.length; row++) {
             let tokens = lines[row].split(" ");
@@ -80,15 +102,4 @@ export default class Lexer {
         this.tokens = result;
     }
 
-    private build_tokens() {
-        this.to_tokens();
-        this.split_punctuation(".");
-        this.split_punctuation(",");
-        this.split_punctuation(":");
-        this.handle_strings();
-    }
-
-    public get_tokens(): Array<Token> {
-        return this.tokens;
-    }
 }

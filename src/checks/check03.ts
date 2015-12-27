@@ -1,5 +1,5 @@
 import { Check } from "./check";
-import Parser from "../parser";
+import File from "../file";
 import Report from "../report";
 import { Token } from "../tokens/tokens";
 import Issue from "../issue";
@@ -16,8 +16,8 @@ export class Check03 implements Check {
         return "Line contains only . or ).";
     }
 
-    public run(filename: string, parser: Parser) {
-        for (let statement of parser.get_statements()) {
+    public run(file: File) {
+        for (let statement of file.get_statements()) {
             let line = "";
             let token: Token;
             let prev: number;
@@ -29,7 +29,7 @@ export class Check03 implements Check {
                 prev = token.get_row();
             }
             if (line === "." || line === ").") {
-                let issue = new Issue(this, token.get_row(), token.get_col(), filename);
+                let issue = new Issue(this, token.get_row(), token.get_col(), file);
                 this.report.add(issue);
             }
         }

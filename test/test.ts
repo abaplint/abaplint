@@ -2,18 +2,16 @@
 /// <reference path="typings/chai/chai.d.ts" />
 /// <reference path="../typings/node/node.d.ts" />
 
-import Lexer from "../src/lexer";
-import Parser from "../src/parser";
 import Runner from "../src/runner";
+import File from "../src/file";
 import * as chai from "chai";
 import * as fs from "fs";
 
 let expect = chai.expect;
 
-function helper(file: string): Parser {
-    let buf = fs.readFileSync("./test/abap/" + file, "utf8");
-    let parser = new Parser(new Lexer(buf));
-    return parser;
+function helper(filename: string): File {
+    let buf = fs.readFileSync("./test/abap/" + filename, "utf8");
+    return new File(filename, buf);
 }
 
 describe("tokens", function() {
@@ -31,7 +29,7 @@ describe("tokens", function() {
     ];
 
     tests.forEach(function(test) {
-        let tokens = helper(test.file + ".prog.abap").get_lexer().get_tokens();
+        let tokens = helper(test.file + ".prog.abap").get_tokens();
 
         it(test.file + " should have " + test.tokens + " tokens", () => {
             expect(tokens.length).to.equals(test.tokens);
@@ -73,8 +71,8 @@ describe("concat_tokens", function() {
 
     tests.forEach(function(test) {
         it(test, () => {
-            let parser = new Parser(new Lexer(test));
-            let concat = parser.get_statements()[0].concat_tokens();
+            let file = new File("temp.abap", test);
+            let concat = file.get_statements()[0].concat_tokens();
             expect(concat).to.equals(test);
         });
     });
