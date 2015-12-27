@@ -1,4 +1,6 @@
-export class Token {
+export abstract class Token {
+
+// TODO, add position class instead of row and col?
 
     constructor(private row: number, private col: number, private str: string) {
     }

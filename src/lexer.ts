@@ -1,8 +1,8 @@
-import { Token } from "./tokens/tokens";
+import * as Tokens from "./tokens/tokens";
 import File from "./file";
 
 export default class Lexer {
-    private tokens: Array<Token> = [];
+    private tokens: Array<Tokens.Token> = [];
 
     constructor(private file: File) {
         this.run();
@@ -20,30 +20,36 @@ export default class Lexer {
     }
 
     private handle_comments() {
-/*        let result: Array<Token> = [];
+        let result: Array<Tokens.Token> = [];
+        let ignore: number = 0;
 
         for (let token of this.tokens) {
+            if (token.get_row() === ignore) {
+                continue;
+            }
+
             let str = token.get_str();
-            if (str.substr(0, 1) === "*") {
-                token.set_str(str.substr(0, str.length - 1));
-                result.push(dot);
+            if ((str.substr(0, 1) === "*" && token.get_col() === 1)
+                    || str.substr(0, 1) === "\"") {
+                ignore = token.get_row();
+                let comment = new Tokens.Comment(token.get_row(), token.get_col(), this.file.get_raw_row(token.get_row(), token.get_col()));
+                result.push(comment);
             } else {
                 result.push(token);
             }
         }
         this.tokens = result;
-*/
     }
 
     private split_punctuation(char: string) {
-        let result: Array<Token> = [];
+        let result: Array<Tokens.Token> = [];
 
         for (let token of this.tokens) {
             let str = token.get_str();
             if (str.substr(str.length - 1) === char) {
                 token.set_str(str.substr(0, str.length - 1));
                 result.push(token);
-                let dot = new Token(token.get_row(), token.get_col() + str.length - 1, char);
+                let dot = new Tokens.Identifier(token.get_row(), token.get_col() + str.length - 1, char);
                 result.push(dot);
             } else {
                 result.push(token);
@@ -60,7 +66,7 @@ export default class Lexer {
             let col = 0;
             for (let key in tokens) {
                 if (tokens[key].length > 0) {
-                    let token = new Token(row + 1, col, tokens[key]);
+                    let token = new Tokens.Identifier(row + 1, col + 1, tokens[key]);
                     this.tokens.push(token);
                 }
                 col = col + tokens[key].length + 1;
@@ -85,8 +91,8 @@ export default class Lexer {
     }
 
     private handle_strings() {
-        let result: Array<Token> = [];
-        let add: Token;
+        let result: Array<Tokens.Token> = [];
+        let add: Tokens.Token;
 
         for (let token of this.tokens) {
             if (add === undefined) {

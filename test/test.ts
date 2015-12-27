@@ -9,6 +9,8 @@ import * as fs from "fs";
 
 let expect = chai.expect;
 
+// TODO, split this file into multiple files
+
 function helper(filename: string): File {
     let buf = fs.readFileSync("./test/abap/" + filename, "utf8");
     return new File(filename, buf);
@@ -16,16 +18,19 @@ function helper(filename: string): File {
 
 describe("tokens", function() {
     let tests = [
-        {file: "zhello01", tokens:  6},
-        {file: "zhello02", tokens:  6},
-        {file: "zhello03", tokens:  6},
-        {file: "zhello04", tokens:  6},
-        {file: "zhello05", tokens:  6},
-        {file: "zhello06", tokens:  6},
-        {file: "zhello07", tokens: 10},
-        {file: "zhello08", tokens:  9},
-        {file: "zhello09", tokens: 11},
-        {file: "zhello10", tokens: 18},
+        {file: "zhello01",   tokens:  6},
+        {file: "zhello02",   tokens:  6},
+        {file: "zhello03",   tokens:  6},
+        {file: "zhello04",   tokens:  6},
+        {file: "zhello05",   tokens:  6},
+        {file: "zhello06",   tokens:  6},
+        {file: "zhello07",   tokens: 10},
+        {file: "zhello08",   tokens:  9},
+        {file: "zhello09",   tokens: 11},
+        {file: "zhello10",   tokens: 18},
+        {file: "zcomment01", tokens:  4},
+        {file: "zcomment02", tokens:  4},
+        {file: "zcomment03", tokens:  7},
     ];
 
     tests.forEach(function(test) {
@@ -39,19 +44,22 @@ describe("tokens", function() {
 
 describe("statements", function() {
     let tests = [
-        {file: "zhello01", statements: 2},
-        {file: "zhello02", statements: 2},
-        {file: "zhello03", statements: 2},
-        {file: "zhello04", statements: 2},
-        {file: "zhello05", statements: 2},
-        {file: "zhello06", statements: 2},
-        {file: "zhello07", statements: 3},
-        {file: "zhello08", statements: 3},
-        {file: "zhello09", statements: 3},
-        {file: "zhello10", statements: 5},
-        {file: "zif01",    statements: 4},
-        {file: "zif02",    statements: 6},
-        {file: "zif03",    statements: 8},
+        {file: "zhello01",   statements: 2},
+        {file: "zhello02",   statements: 2},
+        {file: "zhello03",   statements: 2},
+        {file: "zhello04",   statements: 2},
+        {file: "zhello05",   statements: 2},
+        {file: "zhello06",   statements: 2},
+        {file: "zhello07",   statements: 3},
+        {file: "zhello08",   statements: 3},
+        {file: "zhello09",   statements: 3},
+        {file: "zhello10",   statements: 5},
+        {file: "zif01",      statements: 4},
+        {file: "zif02",      statements: 6},
+        {file: "zif03",      statements: 8},
+        {file: "zcomment01", statements: 2},
+        {file: "zcomment02", statements: 2},
+        {file: "zcomment03", statements: 3},
     ];
 
     tests.forEach(function(test) {
@@ -80,25 +88,28 @@ describe("concat_tokens", function() {
 
 describe("zero errors", function() {
     let tests = [
-        {file: "zhello01", errors: 0},
-        {file: "zhello02", errors: 0},
-        {file: "zhello03", errors: 0},
-        {file: "zhello04", errors: 0},
-        {file: "zhello05", errors: 0},
-        {file: "zhello06", errors: 0},
-        {file: "zhello07", errors: 0},
-        {file: "zhello08", errors: 0},
-        {file: "zhello09", errors: 0},
-        {file: "zhello10", errors: 0},
-        {file: "zhello11", errors: 0},
-        {file: "zif01", errors: 0},
-        {file: "zif02", errors: 0},
-        {file: "zif03", errors: 0},
+        "zhello01",
+        "zhello02",
+        "zhello03",
+        "zhello04",
+        "zhello05",
+        "zhello06",
+        "zhello07",
+        "zhello08",
+        "zhello09",
+        "zhello10",
+        "zhello11",
+        "zif01",
+        "zif02",
+        "zif03",
+        "zcomment01",
+        "zcomment02",
+        "zcomment03",
     ];
 
     tests.forEach(function(test) {
-        it(test.file + " should have zero errors", () => {
-            let runner = new Runner("./test/abap/" + test.file + ".prog.abap");
+        it(test + " should have zero errors", () => {
+            let runner = new Runner("./test/abap/" + test + ".prog.abap");
             expect(runner.get_report().get_count()).to.equals(0);
         });
     });

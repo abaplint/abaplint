@@ -16,6 +16,10 @@ export default class File {
         return this.raw;
     }
 
+    public get_raw_row(row: number, offset: number): string {
+        return this.raw.split("\n")[row - 1].substr(offset);
+    }
+
     public get_filename(): string {
         return this.filename;
     }
