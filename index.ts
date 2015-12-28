@@ -2,8 +2,6 @@
 /// <reference path="typings/glob/glob.d.ts" />
 /// <reference path="typings/minimist/minimist.d.ts" />
 
-import Lexer from "./src/lexer";
-import Parser from "./src/parser";
 import Report from "./src/report";
 import Runner from "./src/runner";
 
@@ -13,19 +11,19 @@ import * as minimist from "minimist";
 let report = new Report();
 
 function process_file(filename: string) {
-    let runner = new Runner(filename, report);
+    new Runner(filename, report);
 }
 
 let argv = minimist(process.argv.slice(2));
 
-if (argv["h"] != null || argv["help"] != null) {
+if (argv["h"] !== undefined || argv["help"] !== undefined) {
     console.log("Usage: aoc [options] [file ...]");
     console.log("");
     console.log("Options:");
     console.log("  -h, --help       display this help");
 //    console.log("  -f, --format     output format (default, json)");
     console.log("  -v, --version    current version");
-} else if (argv["v"] != null || argv["version"] != null) {
+} else if (argv["v"] !== undefined || argv["version"] !== undefined) {
 //    let pjson = require("./package.json");
 //    console.log(pjson.version);
 } else if (argv._[0] === undefined) {

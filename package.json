@@ -1,6 +1,6 @@
 {
   "name": "abaplint",
-  "version": "0.0.8",
+  "version": "0.0.9",
   "description": "ABAP stuff",
   "bin": {
     "abaplint": "./abaplint"
@@ -12,7 +12,7 @@
   "scripts": {
     "pretest": "tsc *.ts test/*.ts src/*.ts src/statements/*.ts src/tokens/*.ts --module commonjs",
     "test": "mocha",
-    "posttest": "tslint *.ts test/*.ts src/*.ts src/statements/*.ts src/tokens/*.ts"
+    "posttest": "tslint -c tslint.json *.ts test/*.ts src/*.ts src/statements/*.ts src/tokens/*.ts"
   },
   "repository": {
     "type": "git",

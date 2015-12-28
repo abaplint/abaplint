@@ -21,7 +21,7 @@ export default class Lexer {
 
     private handle_comments() {
         let result: Array<Tokens.Token> = [];
-        let ignore: number = 0;
+        let ignore = 0;
 
         for (let token of this.tokens) {
             if (token.get_row() === ignore) {
@@ -64,12 +64,12 @@ export default class Lexer {
         for (let row = 0; row < lines.length; row++) {
             let tokens = lines[row].split(" ");
             let col = 0;
-            for (let key in tokens) {
-                if (tokens[key].length > 0) {
-                    let token = new Tokens.Identifier(row + 1, col + 1, tokens[key]);
-                    this.tokens.push(token);
+            for (let token of tokens) {
+                if (token.length > 0) {
+                    let add = new Tokens.Identifier(row + 1, col + 1, token);
+                    this.tokens.push(add);
                 }
-                col = col + tokens[key].length + 1;
+                col = col + token.length + 1;
             }
         }
     }

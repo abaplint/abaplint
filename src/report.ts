@@ -14,7 +14,7 @@ export default class Report {
     public json() {
         let out = [];
 
-       for (let issue of this.issues) {
+        for (let issue of this.issues) {
             let single = { type: "issue",
                 check_name: issue.get_description(),
                 description: issue.get_description(),
@@ -23,13 +23,13 @@ export default class Report {
                     path: issue.get_filename(),
                     lines: {
                         begin: issue.get_row(),
-                        end: issue.get_row()
-                    }
-                }
+                        end: issue.get_row(),
+                    },
+                },
                 };
             out.push(single);
         }
-        let str = JSON.stringify(out, null, "  ");
+        let str = JSON.stringify(out, undefined, "  ");
         console.log(str);
     }
 
