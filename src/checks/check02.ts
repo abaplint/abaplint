@@ -23,6 +23,10 @@ export class Check02 implements Check {
         for (let statement of file.get_statements()) {
             let code = statement.concat_tokens().toUpperCase();
             if(this.startsWith(code, "CALL METHOD ")) {
+                let call = statement.get_tokens()[2].get_str();
+                if (call.match("\\)[=-]>") != undefined) {
+                    continue;
+                }
                 let token = statement.get_tokens()[0];
                 let issue = new Issue(this, token.get_row(), token.get_col(), file);
                 this.report.add(issue);
