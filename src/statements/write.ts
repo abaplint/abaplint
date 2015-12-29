@@ -5,7 +5,7 @@ export class Write extends Statement {
 
     public static match(tokens: Array<Token>): Statement {
         let str = Statement.concat(tokens).toUpperCase();
-        if (/^WRITE /.test(str)) {
+        if (/^WRITE(:?) /.test(str)) {
             return new Write(tokens);
         }
         return undefined;

@@ -4,6 +4,7 @@
 
 import Report from "./src/report";
 import Runner from "./src/runner";
+import * as fs from "fs";
 
 import * as glob from "glob";
 import * as minimist from "minimist";
@@ -24,8 +25,9 @@ if (argv["h"] !== undefined || argv["help"] !== undefined) {
 //    console.log("  -f, --format     output format (default, json)");
     console.log("  -v, --version    current version");
 } else if (argv["v"] !== undefined || argv["version"] !== undefined) {
-//    let pjson = require("./package.json");
-//    console.log(pjson.version);
+    let raw = fs.readFileSync(__dirname + "/package.json", "utf8");
+    let pjson = JSON.parse(raw);
+    console.log(pjson.version);
 } else if (argv._[0] === undefined) {
     console.log("Supply filename");
 } else {

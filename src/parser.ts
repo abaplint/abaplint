@@ -25,6 +25,12 @@ export default class Parser {
                         break;
                     }
                 }
+/*
+                if (statement instanceof Statements.Unknown) {
+                    let str = statement.concat_tokens();
+                    console.log("Unknown: " + str);
+                }
+*/
             }
 
             result.push(statement);
