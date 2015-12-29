@@ -1,12 +1,12 @@
 import { Statement } from "./statement";
 import { Token } from "../tokens/tokens";
 
-export class Data extends Statement {
+export class Function extends Statement {
 
     public static match(tokens: Array<Token>): Statement {
         let str = Statement.concat(tokens).toUpperCase();
-        if (/^DATA /.test(str)) {
-            return new Data(tokens);
+        if (/^FUNCTION /.test(str)) {
+            return new Function(tokens);
         }
         return undefined;
     }
