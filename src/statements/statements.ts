@@ -4,3 +4,7 @@ export * from "./report";
 export * from "./write";
 export * from "./unknown";
 export * from "./comment";
+export * from "./endmethod";
+export * from "./method";
+export * from "./endform";
+export * from "./form";

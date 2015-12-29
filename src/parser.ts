@@ -7,7 +7,30 @@ export default class Parser {
 
     constructor(private file: File) {
         this.run();
+
+        this.categorize();
+
         file.set_statements(this.statements);
+    }
+
+    private categorize() {
+        let result: Array<Statements.Statement> = [];
+
+        for (let statement of this.statements) {
+            if (statement instanceof Statements.Unknown) {
+                for (let st in Statements) {
+                    let known = Statements[st].match(statement.get_tokens());
+                    if (known !== undefined) {
+                        statement = known;
+                        break;
+                    }
+                }
+            }
+
+            result.push(statement);
+        }
+
+        this.statements = result;
     }
 
     private run() {

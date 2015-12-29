@@ -1,17 +1,17 @@
 import { Token } from "../tokens/tokens";
 
 export abstract class Statement {
-    constructor(private tokens: Array<Token>) {
+
+    constructor(private tokens: Array<Token>) { }
+
+    public static match(tokens: Array<Token>): Statement {
+        return undefined;
     }
 
-    public get_tokens(): Array<Token> {
-        return this.tokens;
-    }
-
-    public concat_tokens(): string {
+    public static concat(tokens: Array<Token>): string {
         let str = "";
         let prev: Token;
-        for (let token of this.tokens) {
+        for (let token of tokens) {
             if (str === "") {
                 str = token.get_str();
             } else if (prev.get_str().length + prev.get_col() === token.get_col()
@@ -24,4 +24,13 @@ export abstract class Statement {
         }
         return str;
     }
+
+    public get_tokens(): Array<Token> {
+        return this.tokens;
+    }
+
+    public concat_tokens(): string {
+        return Statement.concat(this.tokens);
+    }
+
 }
