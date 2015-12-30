@@ -11,7 +11,7 @@ export default class Report {
         return this.issues.length;
     }
 
-    public json() {
+    public json(): string {
         let out = [];
 
         for (let issue of this.issues) {
@@ -29,25 +29,22 @@ export default class Report {
                 };
             out.push(single);
         }
-        let str = JSON.stringify(out, undefined, "  ");
-        console.log(str);
+        return JSON.stringify(out, undefined, "  ");
     }
 
-    public output() {
+    public output(): string {
+        let result = "";
+
         for (let issue of this.issues) {
-            this.output_issue(issue);
+            result = result + this.output_issue(issue);
         }
-        if (this.get_count() === 0) {
-            console.log("abaplint: " + this.get_count() + " issue(s) found");
-        } else {
-            console.error("abaplint: " + this.get_count() + " issue(s) found");
-        }
+        result = result + "abaplint: " + this.get_count() + " issue(s) found\n";
+        return result;
     }
 
-    private output_issue(issue: Issue) {
-        console.error("  " +
-                      issue.get_filename() + "\t" +
-                      "line: " + issue.get_row() + "\t" +
-                      issue.get_description());
+    private output_issue(issue: Issue): string {
+        return "  " +
+            issue.get_filename() + "[" + issue.get_row() + ", " + issue.get_col() + "] \t" +
+            issue.get_description() + "\n";
     }
 }

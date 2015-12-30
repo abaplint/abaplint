@@ -34,8 +34,10 @@ if (argv["h"] !== undefined || argv["help"] !== undefined) {
     for (const file of argv._) {
         glob.sync(file).forEach(process_file);
     }
-    report.output();
-    if (report.get_count() > 0) {
-        process.exit(1);
-    }
+    let output = report.output();
+    process.stdout.write(output, () => {
+        if (report.get_count() > 0) {
+            process.exit(1);
+        }
+    });
 }
