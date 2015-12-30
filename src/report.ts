@@ -34,12 +34,14 @@ export default class Report {
     }
 
     public output() {
-        console.log("abaplint");
-
         for (let issue of this.issues) {
             this.output_issue(issue);
         }
-        console.log(this.get_count() + " issue(s) found");
+        if (this.get_count() === 0) {
+            console.log("abaplint: " + this.get_count() + " issue(s) found");
+        } else {
+            console.error("abaplint: " + this.get_count() + " issue(s) found");
+        }
     }
 
     private output_issue(issue: Issue) {

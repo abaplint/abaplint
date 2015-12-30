@@ -26,6 +26,8 @@ export default class Runner {
 
         let file = new File(filename, code);
 
+// TODO, some easier way to call all the checks
+
         let check01 = new Checks.Check01(this.report);
         check01.run(file);
 
@@ -34,5 +36,8 @@ export default class Runner {
 
         let check03 = new Checks.Check03(this.report);
         check03.run(file);
+
+        let check04 = new Checks.Check04(this.report);
+        check04.run(file);
     }
 }

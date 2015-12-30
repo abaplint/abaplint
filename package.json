@@ -1,7 +1,7 @@
 {
   "name": "abaplint",
   "version": "0.0.9",
-  "description": "ABAP stuff",
+  "description": "Linter for ABAP",
   "bin": {
     "abaplint": "./abaplint"
   },

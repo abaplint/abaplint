@@ -1,11 +1,11 @@
 import { Check } from "./checks/checks";
 import File from "./file";
+import { Token } from "./tokens/tokens";
 
 export default class Issue {
 
     constructor(private check: Check,
-                private row: number,
-                private col: number,
+                private token: Token,
                 private file: File) {
     }
 
@@ -14,11 +14,11 @@ export default class Issue {
     }
 
     public get_row(): number {
-        return this.row;
+        return this.token.get_row();
     }
 
     public get_col(): number {
-        return this.col;
+        return this.token.get_col();
     }
 
     public get_filename(): string {

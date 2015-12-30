@@ -14,6 +14,7 @@ describe("errors", function() {
         {file: "zcheck02_03", errors: 0},
         {file: "zcheck03_01", errors: 1},
         {file: "zcheck03_02", errors: 1},
+        {file: "zcheck04_01", errors: 1},
     ];
 
     tests.forEach(function(test) {

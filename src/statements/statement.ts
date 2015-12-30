@@ -33,4 +33,8 @@ export abstract class Statement {
         return Statement.concat(this.tokens);
     }
 
+    public get_terminator(): string {
+        return this.get_tokens()[this.get_tokens().length - 1].get_str();
+    }
+
 }

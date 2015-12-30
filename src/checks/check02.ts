@@ -28,7 +28,7 @@ export class Check02 implements Check {
                     continue;
                 }
                 let token = statement.get_tokens()[0];
-                let issue = new Issue(this, token.get_row(), token.get_col(), file);
+                let issue = new Issue(this, token, file);
                 this.report.add(issue);
             }
         }

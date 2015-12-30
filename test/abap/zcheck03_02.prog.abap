@@ -1,4 +1,4 @@
-REPORT zcheck03_01.
+REPORT zcheck03_02.
 
 WRITE 'hello'
 .
