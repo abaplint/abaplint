@@ -32,6 +32,7 @@ describe("count_statements", function() {
         {file: "zcomment02", statements: 2},
         {file: "zcomment03", statements: 3},
         {file: "zform01",    statements: 5},
+        {file: "zselect01",  statements: 4},
     ];
 
     tests.forEach(function(test) {

@@ -82,7 +82,7 @@ export default class Lexer {
         let start = str.substr(0, 1);
         let end = str.substr(str.length - 1);
         if (start === "'") {
-            if (end === "'") {
+            if (end === "'" && str.length > 1) {
                 return true;
             } else {
                 return false;
@@ -107,6 +107,7 @@ export default class Lexer {
                 add = undefined;
             }
         }
+
         this.tokens = result;
     }
 

@@ -52,7 +52,7 @@ export default class Parser {
                 this.statements.push(statement);
                 add = [];
                 pre = [];
-            } else if (token.get_str() === ",") {
+            } else if (token.get_str() === "," && pre.length > 0) {
                 let statement = new Statements.Unknown(pre.concat(add));
                 this.statements.push(statement);
                 add = [];
