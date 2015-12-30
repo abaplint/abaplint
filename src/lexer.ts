@@ -48,7 +48,9 @@ export default class Lexer {
             let str = token.get_str();
             if (str.substr(str.length - 1) === char) {
                 token.set_str(str.substr(0, str.length - 1));
-                result.push(token);
+                if (token.get_str() !== "") {
+                    result.push(token);
+                }
                 let dot = new Tokens.Identifier(token.get_row(), token.get_col() + str.length - 1, char);
                 result.push(dot);
             } else {

@@ -29,7 +29,7 @@ export default class Parser {
                 }
 */
             }
-
+//            console.dir(statement);
             result.push(statement);
         }
 
@@ -57,6 +57,7 @@ export default class Parser {
                 this.statements.push(statement);
                 add = [];
             } else if (token.get_str() === ":") {
+                add.pop(); // do not add colon token to statement
                 pre = add.slice(0);
                 add = [];
             }

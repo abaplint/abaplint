@@ -15,19 +15,20 @@ function helper(filename: string): File {
 
 describe("count_tokens", function() {
     let tests = [
-        {file: "zhello01",   tokens:  6},
-        {file: "zhello02",   tokens:  6},
-        {file: "zhello03",   tokens:  6},
-        {file: "zhello04",   tokens:  6},
-        {file: "zhello05",   tokens:  6},
-        {file: "zhello06",   tokens:  6},
-        {file: "zhello07",   tokens: 10},
-        {file: "zhello08",   tokens:  9},
-        {file: "zhello09",   tokens: 11},
-        {file: "zhello10",   tokens: 18},
-        {file: "zcomment01", tokens:  4},
-        {file: "zcomment02", tokens:  4},
-        {file: "zcomment03", tokens:  7},
+        {file: "zhello01",    tokens:  6},
+        {file: "zhello02",    tokens:  6},
+        {file: "zhello03",    tokens:  6},
+        {file: "zhello04",    tokens:  6},
+        {file: "zhello05",    tokens:  6},
+        {file: "zhello06",    tokens:  6},
+        {file: "zhello07",    tokens: 10},
+        {file: "zhello08",    tokens:  9},
+        {file: "zhello09",    tokens: 11},
+        {file: "zhello10",    tokens: 18},
+        {file: "zcomment01",  tokens:  4},
+        {file: "zcomment02",  tokens:  4},
+        {file: "zcomment03",  tokens:  7},
+        {file: "zcheck07_01", tokens:  7},
     ];
 
     tests.forEach(function(test) {

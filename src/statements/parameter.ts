@@ -5,7 +5,7 @@ export class Parameter extends Statement {
 
     public static match(tokens: Array<Token>): Statement {
         let str = Statement.concat(tokens).toUpperCase();
-        if (/^PARAMETER(S?)(:?) /.test(str)) {
+        if (/^PARAMETER(S?) /.test(str)) {
             return new Parameter(tokens);
         }
         return undefined;
