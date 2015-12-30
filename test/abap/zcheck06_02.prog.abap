@@ -1,0 +1,3 @@
+REPORT zcheck06_01.
+
+EXIT.
