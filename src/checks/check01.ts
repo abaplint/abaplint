@@ -26,7 +26,7 @@ export class Check01 implements Check {
 
             let token = statement.get_tokens()[0];
             if ((token.get_col() - 1) % 2 !== 0) {
-                let issue = new Issue(this, token, file);
+                let issue = new Issue(this, token.get_pos(), file);
                 this.report.add(issue);
             }
         }

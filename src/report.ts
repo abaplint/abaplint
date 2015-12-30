@@ -43,8 +43,8 @@ export default class Report {
     }
 
     private output_issue(issue: Issue): string {
-        return "  " +
-            issue.get_filename() + "[" + issue.get_row() + ", " + issue.get_col() + "] \t" +
+        return issue.get_filename() +
+            "[" + issue.get_row() + ", " + issue.get_col() + "] \t" +
             issue.get_description() + "\n";
     }
 }

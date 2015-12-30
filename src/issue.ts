@@ -1,11 +1,11 @@
 import { Check } from "./checks/checks";
 import File from "./file";
-import { Token } from "./tokens/tokens";
+import Position from "./position";
 
 export default class Issue {
 
     constructor(private check: Check,
-                private token: Token,
+                private position: Position,
                 private file: File) {
     }
 
@@ -14,11 +14,11 @@ export default class Issue {
     }
 
     public get_row(): number {
-        return this.token.get_row();
+        return this.position.get_row();
     }
 
     public get_col(): number {
-        return this.token.get_col();
+        return this.position.get_col();
     }
 
     public get_filename(): string {
