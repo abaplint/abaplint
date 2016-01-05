@@ -13,8 +13,7 @@
     "compile": "tsc *.ts **/*.ts --module commonjs",
     "pretest": "npm run compile",
     "test": "mocha",
-    "lint": "tslint -c tslint.json *.ts test/*.ts src/*.ts src/statements/*.ts src/tokens/*.ts",
-    "posttest": "npm run lint"
+    "posttest": "tslint -c tslint.json *.ts test/*.ts src/*.ts src/statements/*.ts src/tokens/*.ts"
   },
   "repository": {
     "type": "git",
