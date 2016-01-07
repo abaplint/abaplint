@@ -12,33 +12,21 @@ export class Data extends Statement {
         if (/^(CLASS-)?DATA /.test(str)) {
             return new Data(tokens, "foo");
 /*
-    str.start().match("CLASS-DATA").match("DATA");
-    if(!str.matched()) {
-        return undefined;
-    }
-    str.match_var();
-    str.start().match("TYPE").match("LIKE").match("LIKE LINE OF").match("TYPE REF TO");
-    if(str.matched()) {
-        str.match_type();
-    } else {
-        str.start().match("TYPE TABLE OF").match("TYPE STANDARD TABLE OF");
-    }
+let variable = /\w/;
+let typename = /\w/;
+let constant = /\w/;
+let start = alt("CLASS-DATA", "DATA");
+let type = alt("TYPE", "LIKE", "LIKE LINE OF", "TYPE REF TO");
+let def = seq("DEFAULT", constant);
+let length = seq("LENGTH", integer);
+let simple = seq(start, variable, type, typename, opt(def), opt(length));
 
+let typetable = alt("TYPE STANDARD TABLE OF", "TYPE TABLE OF");
+let key = "WITH DEFAULT KEY"
+let table = seq(start, variable, typetable, typename, opt(key));
 
-            let foo = /^(CLASS-)?DATA /.exec(str);
-            console.dir(foo);
-            console.dir(str.substr(foo[0].length));
-
-            let match = /^(CLASS-)?DATA (\w+) (TYPE|LIKE|LIKE LINE OF|TYPE REF TO) ([\w=>-]+)[.,]$/.exec(str);
-            if (!!match) {
-                return new Data(tokens, "foo");
-            }
-            match = /^(CLASS-)?DATA (\w+) (TYPE TABLE OF|TYPE STANDARD TABLE OF) ([\w=>-]+)[.,]$/.exec(str);
-            if (!!match) {
-                return new Data(tokens, "foo");
-            }
-
-            console.dir(str);
+let parser = alt(simple, table);
+parser.run(tokens);
 */
         }
         return undefined;
