@@ -2,7 +2,7 @@
 [![Build Status](https://travis-ci.org/larshp/abaplint.svg)](https://travis-ci.org/larshp/abaplint)
 
 # abaplint
-Linter for ABAP
+Linter for ABAP. ABAP code must be serialized using [abapGit](https://github.com/larshp/abapGit)
 
 Runs on node, can be used with [travis](https://travis-ci.org/), [codeclimate](https://codeclimate.com)([todo](https://github.com/larshp/abaplint/issues/2)) and [Atom](https://atom.io/)([todo](https://github.com/larshp/abaplint/issues/6)).
 
