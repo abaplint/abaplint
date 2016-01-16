@@ -81,6 +81,27 @@ class Optional implements IRunnable {
     }
 }
 
+class Star implements IRunnable {
+
+    constructor(private star: IRunnable) { }
+
+    public run(r: Array<Result>): Array<Result> {
+        let result = r;
+
+        let res = r;
+        let input: Array<Result> = [];
+        while (input.length !== res.length) {
+            input = res;
+            res = this.star.run(input);
+            for (let foo of res) {
+                result.push(foo);
+            }
+        }
+
+        return result;
+    }
+}
+
 class Sequence implements IRunnable {
     private list: Array<IRunnable>;
 
@@ -174,10 +195,9 @@ export function alt(first: IRunnable, ...rest: IRunnable[]): IRunnable {
 export function opt(first: IRunnable): IRunnable {
     return new Optional(first);
 }
-
-/*
-function star
-*/
+export function star(first: IRunnable): IRunnable {
+    return new Star(first);
+}
 
 export function token(s: string): Tokens.Token {
     return new Tokens.Identifier(10, 10, s);
