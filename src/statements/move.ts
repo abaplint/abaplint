@@ -5,7 +5,8 @@ export class Move extends Statement {
 
     public static match(tokens: Array<Token>): Statement {
         let str = Statement.concat(tokens).toUpperCase();
-        if (/^(MOVE|MOVE-CORRESPONDING) /.test(str)) {
+        if (/^(MOVE|MOVE-CORRESPONDING) /.test(str)
+                || /^(\w|-|<|>|->|=>|~)+ (\?)?= .*$/.test(str)) {
             return new Move(tokens);
         }
         return undefined;

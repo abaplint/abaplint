@@ -32,14 +32,17 @@ export default class Report {
         return JSON.stringify(out, undefined, "  ");
     }
 
-    public output(): string {
+    public output_errors(): string {
         let result = "";
 
         for (let issue of this.issues) {
             result = result + this.output_issue(issue);
         }
-        result = result + "abaplint: " + this.get_count() + " issue(s) found\n";
         return result;
+    }
+
+    public output_total(): string {
+        return "abaplint: " + this.get_count() + " issue(s) found\n";
     }
 
     private output_issue(issue: Issue): string {

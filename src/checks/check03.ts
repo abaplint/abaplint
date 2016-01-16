@@ -3,6 +3,7 @@ import File from "../file";
 import Report from "../report";
 import { Token } from "../tokens/tokens";
 import Issue from "../issue";
+import Position from "../position";
 
 export class Check03 implements Check {
 
@@ -17,19 +18,11 @@ export class Check03 implements Check {
     }
 
     public run(file: File) {
-        for (let statement of file.get_statements()) {
-            let line = "";
-            let token: Token;
-            let prev: number;
-            for (token of statement.get_tokens()) {
-                if (prev != token.get_row()) {
-                    line = "";
-                }
-                line = line + token.get_str();
-                prev = token.get_row();
-            }
-            if (line === "." || line === ").") {
-                let issue = new Issue(this, token.get_pos(), file);
+        let rows = file.get_raw_rows();
+        for (let i = 0; i < rows.length; i++) {
+            let trim = rows[i].trim();
+            if (trim === "." || trim === ").") {
+                let issue = new Issue(this, new Position(i, 0), file);
                 this.report.add(issue);
             }
         }

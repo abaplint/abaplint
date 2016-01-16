@@ -23,11 +23,14 @@ export default class Parser {
                         break;
                     }
                 }
-/*
+
                 if (statement instanceof Statements.Unknown) {
-                    console.log("Unknown: " + statement.concat_tokens());
+                    console.log("Unknown: " +
+                        this.file.get_filename() +
+                        ", " +
+                        statement.concat_tokens());
                 }
-*/
+
             }
 //            console.dir(statement);
             result.push(statement);

@@ -16,13 +16,22 @@ function process_file(filename: string) {
 }
 
 let argv = minimist(process.argv.slice(2));
+let format = "default";
+
+if (argv["f"] !== undefined || argv["format"] !== undefined) {
+    if (argv["f"] !== undefined) {
+        format = argv["f"];
+    } else {
+        format = argv["format"];
+    }
+}
 
 if (argv["h"] !== undefined || argv["help"] !== undefined) {
     console.log("Usage: aoc [options] [file ...]");
     console.log("");
     console.log("Options:");
     console.log("  -h, --help       display this help");
-//    console.log("  -f, --format     output format (default, json)");
+    console.log("  -f, --format     output format (default, total)");
     console.log("  -v, --version    current version");
 } else if (argv["v"] !== undefined || argv["version"] !== undefined) {
     let raw = fs.readFileSync(__dirname + "/package.json", "utf8");
@@ -34,7 +43,12 @@ if (argv["h"] !== undefined || argv["help"] !== undefined) {
     for (const file of argv._) {
         glob.sync(file).forEach(process_file);
     }
-    let output = report.output();
+    let output = "";
+    if (format === "total") {
+        output = report.output_total();
+    } else {
+        output = report.output_errors() + report.output_total();
+    }
     process.stdout.write(output, () => {
         if (report.get_count() > 0) {
             process.exit(1);
