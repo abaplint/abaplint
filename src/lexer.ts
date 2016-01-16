@@ -15,8 +15,25 @@ export default class Lexer {
         this.split_punctuation(":");
         this.handle_strings();
         this.handle_comments();
+        this.handle_pragmas();
 
         this.file.set_tokens(this.tokens);
+    }
+
+    private handle_pragmas() {
+        let result: Array<Tokens.Token> = [];
+
+        for (let token of this.tokens) {
+
+            let str = token.get_str();
+            if (str.length > 2 && str.substr(0, 2) === "##" ) {
+                let pragma = new Tokens.Pragma(token.get_row(), token.get_col(), this.file.get_raw_row(token.get_row(), token.get_col()));
+                result.push(pragma);
+            } else {
+                result.push(token);
+            }
+        }
+        this.tokens = result;
     }
 
     private handle_comments() {

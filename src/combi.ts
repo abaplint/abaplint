@@ -77,7 +77,7 @@ class Word implements IRunnable {
 
         for (let input of r) {
             if (input.length() !== 0
-                    && input.peek().get_str() === this.s) {
+                    && input.peek().get_str().toUpperCase() === this.s.toUpperCase()) {
                 result.push(input.shift());
             }
         }
@@ -185,14 +185,22 @@ class Alternative implements IRunnable {
 }
 
 export class Combi {
-    public static run(runnable: IRunnable, tokens: Array<Tokens.Token>): boolean {
-        let input = new Result(tokens);
+    public static run(runnable: IRunnable, tokens: Array<Tokens.Token>, remove = false): boolean {
+        let copy = tokens.slice();
+        if (remove === true) {
+            copy.pop();
+        }
+
+        copy = copy.filter(function (value) { return !(value instanceof Tokens.Pragma); } );
+
+        let input = new Result(copy);
 
         let result = runnable.run([input]);
         let success = false;
         for (let res of result) {
             if (res.length() === 0) {
                 success = true;
+                break;
             }
         }
 
@@ -225,8 +233,12 @@ export function regex(r: RegExp): IRunnable {
     return new Regex(r);
 }
 export function str_space(s: String): IRunnable {
-// todo
-    return new Word(s);
+    let split = s.split(" ");
+    let words: Array<IRunnable> = [];
+    for (let str of split) {
+        words.push(new Word(str));
+    }
+    return new Sequence(words);
 }
 
 export function token(s: string): Tokens.Token {

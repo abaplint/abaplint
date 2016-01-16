@@ -22,6 +22,7 @@ let tests = [
 {n: "str1", c: str("foo"),                        t: [tok("foo")],             e: true},
 {n: "str2", c: str("foo"),                        t: [tok("bar")],             e: false},
 {n: "str3", c: str("foo"),                        t: [],                       e: false},
+{n: "str4", c: str("DATA"),                       t: [tok("data")],            e: true},
 {n: "seq1", c: seq(str("foo"), str("bar")),       t: [tok("foo"), tok("bar")], e: true},
 {n: "seq2", c: seq(str("foo"), str("bar")),       t: [tok("bar"), tok("foo")], e: false},
 {n: "seq3", c: seq(str("foo"), str("bar")),       t: [tok("foo")],             e: false},
