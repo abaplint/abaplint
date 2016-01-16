@@ -1,12 +1,9 @@
 import * as Tokens from "./tokens/tokens";
 
-// empty = no matches
-// null?
-
 class Result {
     private tokens: Array<Tokens.Token>;
 
-    public setInput(a: Array<Tokens.Token>) {
+    constructor(a: Array<Tokens.Token>) {
         this.tokens = a;
     }
 
@@ -15,8 +12,9 @@ class Result {
     }
 
     public shift(): Result {
-        this.tokens.shift();
-        return this;
+        let copy = this.tokens.slice();
+        copy.shift();
+        return new Result(copy);
     }
 
     public length(): number {
@@ -35,8 +33,8 @@ class Word implements IRunnable {
     public run(r: Array<Result>): Array<Result> {
         let result: Array<Result> = [];
 
-        for(let input of r) {
-            if(input.peek().get_str() == this.s) {
+        for (let input of r) {
+            if (input.length() !== 0 && input.peek().get_str() === this.s) {
                 result.push(input.shift());
             }
         }
@@ -49,7 +47,7 @@ class Sequence implements IRunnable {
 
     constructor(list: IRunnable[]) {
         if (list.length < 2) {
-            console.log("Seq, length error");
+            console.log("Sequence, length error");
         }
         this.list = list;
     }
@@ -63,7 +61,7 @@ class Sequence implements IRunnable {
                 temp = seq.run(temp);
             }
 
-            for(let foo of temp) {
+            for (let foo of temp) {
                 result.push(foo);
             }
         }
@@ -72,43 +70,59 @@ class Sequence implements IRunnable {
     }
 }
 
-class Combi {
-    public static run(runnable: IRunnable, tokens: Array<Tokens.Token>) {
-        let input = new Result();
-        input.setInput(tokens);
+class Alternative implements IRunnable {
+    private list: Array<IRunnable>;
+
+    constructor(list: IRunnable[]) {
+        if (list.length < 2) {
+            console.log("Alternative, length error");
+        }
+        this.list = list;
+    }
+
+    public run(r: Array<Result>): Array<Result> {
+        let result: Array<Result> = [];
+
+        for (let input of r) {
+
+            for (let seq of this.list) {
+                let temp = seq.run([input]);
+
+                for (let foo of temp) {
+                    result.push(foo);
+                }
+            }
+        }
+
+        return result;
+    }
+}
+
+export class Combi {
+    public static run(runnable: IRunnable, tokens: Array<Tokens.Token>): boolean {
+        let input = new Result(tokens);
 
         let result = runnable.run([input]);
-        let success: boolean = false;
+        let success = false;
         for (let res of result) {
             if (res.length() === 0) {
                 success = true;
             }
         }
 
-        if (success === true) {
-            console.log("success");
-        } else {
-            console.log("nope");
-        }
+        return success;
     }
 }
 
-function str(s: String): IRunnable {
+export function str(s: String): IRunnable {
     return new Word(s);
 }
-function seq(first: IRunnable, ...rest: IRunnable[]): IRunnable {
+export function seq(first: IRunnable, ...rest: IRunnable[]): IRunnable {
     return new Sequence([first].concat(rest));
 }
-function token(s: string): Tokens.Token {
+export function alt(first: IRunnable, ...rest: IRunnable[]): IRunnable {
+    return new Alternative([first].concat(rest));
+}
+export function token(s: string): Tokens.Token {
     return new Tokens.Identifier(10, 10, s);
 }
-
-let foo = str("foo");
-let tokens = [token("foo")];
-console.log("test 1:");
-Combi.run(foo, tokens);
-
-foo = seq(str("foo"), str("bar"));
-tokens = [token("foo"), token("bar")];
-console.log("test 2:");
-Combi.run(foo, tokens);
