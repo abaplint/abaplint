@@ -26,6 +26,26 @@ interface IRunnable {
     run(r: Array<Result>): Array<Result>;
 }
 
+class Anything implements IRunnable {
+    public run(r: Array<Result>): Array<Result> {
+        let result: Array<Result> = [];
+        for (let input of r) {
+            let length = input.length();
+            for (let i = 0; i <= length; i++) {
+                result.push(input);
+                input = input.shift();
+            }
+        }
+        return result;
+    }
+}
+
+class Nothing implements IRunnable {
+    public run(r: Array<Result>): Array<Result> {
+        return [];
+    }
+}
+
 class Word implements IRunnable {
 
     constructor(private s: String) { }
@@ -38,6 +58,25 @@ class Word implements IRunnable {
                 result.push(input.shift());
             }
         }
+        return result;
+    }
+}
+
+class Optional implements IRunnable {
+
+    constructor(private opt: IRunnable) { }
+
+    public run(r: Array<Result>): Array<Result> {
+        let result: Array<Result> = [];
+
+        for (let input of r) {
+            result.push(input);
+            let res = this.opt.run([input]);
+            for (let foo of res) {
+                result.push(foo);
+            }
+        }
+
         return result;
     }
 }
@@ -59,6 +98,9 @@ class Sequence implements IRunnable {
             let temp = [input];
             for (let seq of this.list) {
                 temp = seq.run(temp);
+                if (temp.length === 0) {
+                    break;
+                }
             }
 
             for (let foo of temp) {
@@ -114,6 +156,12 @@ export class Combi {
     }
 }
 
+export function anything(): IRunnable {
+    return new Anything();
+}
+export function nothing(): IRunnable {
+    return new Nothing();
+}
 export function str(s: String): IRunnable {
     return new Word(s);
 }
@@ -123,6 +171,14 @@ export function seq(first: IRunnable, ...rest: IRunnable[]): IRunnable {
 export function alt(first: IRunnable, ...rest: IRunnable[]): IRunnable {
     return new Alternative([first].concat(rest));
 }
+export function opt(first: IRunnable): IRunnable {
+    return new Optional(first);
+}
+
+/*
+function star
+*/
+
 export function token(s: string): Tokens.Token {
     return new Tokens.Identifier(10, 10, s);
 }

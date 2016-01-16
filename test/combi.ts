@@ -9,27 +9,56 @@ let expect = chai.expect;
 let str = Combi.str;
 let seq = Combi.seq;
 let alt = Combi.alt;
-let token = Combi.token;
+let anything = Combi.anything;
+let tok = Combi.token;
+let nothing = Combi.nothing;
+let opt = Combi.opt;
 
 let tests = [
-{name: "str1", combi: str("foo"), tokens: [token("foo")], expect: true},
-{name: "str2", combi: str("foo"), tokens: [token("bar")], expect: false},
-{name: "str3", combi: str("foo"), tokens: [], expect: false},
-{name: "seq1", combi: seq(str("foo"), str("bar")), tokens: [token("foo"), token("bar")], expect: true},
-{name: "seq2", combi: seq(str("foo"), str("bar")), tokens: [token("bar"), token("foo")], expect: false},
-{name: "seq3", combi: seq(str("foo"), str("bar")), tokens: [token("foo")], expect: false},
-{name: "seq4", combi: seq(str("foo"), str("bar")), tokens: [], expect: false},
-{name: "alt1", combi: alt(str("foo"), str("bar")), tokens: [token("foo")], expect: true},
-{name: "alt2", combi: alt(str("foo"), str("bar")), tokens: [token("bar")], expect: true},
-{name: "alt3", combi: alt(str("foo"), str("bar")), tokens: [token("moo")], expect: false},
-{name: "alt4", combi: alt(str("foo"), str("bar")), tokens: [], expect: false},
+{n: "no1",  c: nothing(),                   t: [tok("bar")],                  e: false},
+{n: "no2",  c: nothing(),                   t: [],                            e: false},
+{n: "str1", c: str("foo"),                  t: [tok("foo")],                  e: true},
+{n: "str2", c: str("foo"),                  t: [tok("bar")],                  e: false},
+{n: "str3", c: str("foo"),                  t: [],                            e: false},
+{n: "seq1", c: seq(str("foo"), str("bar")), t: [tok("foo"), tok("bar")],      e: true},
+{n: "seq2", c: seq(str("foo"), str("bar")), t: [tok("bar"), tok("foo")],      e: false},
+{n: "seq3", c: seq(str("foo"), str("bar")), t: [tok("foo")],                  e: false},
+{n: "seq4", c: seq(str("foo"), str("bar")), t: [],                            e: false},
+{n: "alt1", c: alt(str("foo"), str("bar")), t: [tok("foo")],                  e: true},
+{n: "alt2", c: alt(str("foo"), str("bar")), t: [tok("bar")],                  e: true},
+{n: "alt3", c: alt(str("foo"), str("bar")), t: [tok("moo")],                  e: false},
+{n: "alt4", c: alt(str("foo"), str("bar")), t: [],                            e: false},
+{n: "any1", c: anything(),                  t: [tok("foo")],                  e: true},
+{n: "any2", c: anything(),                  t: [tok("foo"), tok("bar")],      e: true},
+{n: "any3", c: anything(),                  t: [],                            e: true},
+{n: "any4", c: seq(str("foo"), anything()), t: [tok("foo"), tok("bar")],      e: true},
+{n: "any4", c: seq(str("foo"), anything()), t: [tok("foo")],                  e: true},
+{n: "any5", c: seq(str("foo"), anything()), t: [],                            e: false},
+{n: "any6", c: seq(str("foo"), anything()), t: [tok("bar"), tok("bar")],      e: false},
+{n: "any7", c: seq(str("foo"), anything()), t: [tok("bar")],                  e: false},
+{n: "any8", c: seq(anything(), str("foo")), t: [tok("foo"), tok("bar")],      e: false},
+{n: "any9", c: seq(anything(), str("foo")), t: [tok("foo")],                  e: true},
+{n: "anyA", c: seq(anything(), str("foo")), t: [tok("foo"), tok("foo")],      e: true},
+{n: "anyB", c: seq(anything(), str("foo")), t: [],                            e: false},
+{n: "anyC", c: seq(anything(), str("foo")), t: [tok("bar"), tok("bar")],      e: false},
+{n: "anyD", c: seq(anything(), str("foo")), t: [tok("bar")],                  e: false},
+{n: "opt1", c: opt(str("foo")), t: [tok("foo")],                              e: true},
+{n: "opt2", c: opt(anything()), t: [tok("foo")],                              e: true},
+{n: "opt3", c: seq(opt(str("foo")), str("bar")), t: [tok("foo"), tok("bar")], e: true},
+{n: "opt4", c: seq(opt(str("foo")), str("bar")), t: [tok("bar")],             e: true},
+{n: "opt5", c: seq(opt(str("foo")), str("bar")), t: [tok("bar"), tok("bar")], e: false},
+{n: "opt6", c: seq(opt(str("foo")), str("bar")), t: [tok("foo")],             e: false},
+{n: "opt7", c: seq(str("bar"), opt(str("foo"))), t: [tok("bar"), tok("foo")], e: true},
+{n: "opt8", c: seq(str("bar"), opt(str("foo"))), t: [tok("bar")],             e: true},
+{n: "opt9", c: seq(str("bar"), opt(str("foo"))), t: [tok("foo"), tok("foo")], e: false},
+{n: "optA", c: seq(str("bar"), opt(str("foo"))), t: [tok("foo")],             e: false},
 ];
 
 describe("combi", function() {
     tests.forEach(function(test) {
-        it(test.name + " should be " + test.expect, () => {
-            let result = Combi.Combi.run(test.combi, test.tokens);
-            expect(result).to.equals(test.expect);
+        it(test.n + " should be " + test.e, () => {
+            let result = Combi.Combi.run(test.c, test.t);
+            expect(result).to.equals(test.e);
         });
     });
 });
