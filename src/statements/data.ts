@@ -1,5 +1,13 @@
 import { Statement } from "./statement";
 import { Token } from "../tokens/tokens";
+import * as Combi from "../combi";
+
+let str    = Combi.str;
+let seq    = Combi.seq;
+let alt    = Combi.alt;
+let opt    = Combi.opt;
+let reg    = Combi.regex;
+let sSpace = Combi.str_space;
 
 export class Data extends Statement {
 
@@ -8,26 +16,28 @@ export class Data extends Statement {
     }
 
     public static match(tokens: Array<Token>): Statement {
-        let str = Statement.concat(tokens).toUpperCase();
-        if (/^(CLASS-)?DATA /.test(str)) {
+        let st = Statement.concat(tokens).toUpperCase();
+        if (/^(CLASS-)?DATA /.test(st)) {
+
+            let variable = reg(/^\w+$/);
+            let typename = reg(/^\w+$/);
+            let constant = reg(/^\w+$/);
+            let integer = reg(/^\d+$/);
+            let start = alt(str("CLASS-DATA"), str("DATA"));
+            let type = seq(alt(str("TYPE"), str("LIKE")), opt(sSpace("LINE OF")), opt(sSpace("REF TO")));
+            let def = seq(str("DEFAULT"), constant);
+            let length = seq(str("LENGTH"), integer);
+            let simple = seq(start, variable, type, typename, opt(def), opt(length));
+
+            let typetable = alt(sSpace("TYPE STANDARD TABLE OF"), sSpace("TYPE TABLE OF"));
+            let key = sSpace("WITH DEFAULT KEY");
+            let table = seq(start, variable, typetable, typename, opt(key));
+
+            let statement = alt(simple, table);
+            let result = Combi.Combi.run(statement, tokens);
+            console.log("result: " + result + ", " + st);
+
             return new Data(tokens, "foo");
-/*
-let variable = /\w/;
-let typename = /\w/;
-let constant = /\w/;
-let start = alt("CLASS-DATA", "DATA");
-let type = alt("TYPE", "LIKE", "LIKE LINE OF", "TYPE REF TO");
-let def = seq("DEFAULT", constant);
-let length = seq("LENGTH", integer);
-let simple = seq(start, variable, type, typename, opt(def), opt(length));
-
-let typetable = alt("TYPE STANDARD TABLE OF", "TYPE TABLE OF");
-let key = "WITH DEFAULT KEY"
-let table = seq(start, variable, typetable, typename, opt(key));
-
-let parser = alt(simple, table);
-parser.run(tokens);
-*/
         }
         return undefined;
     }

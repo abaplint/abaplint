@@ -46,6 +46,28 @@ class Nothing implements IRunnable {
     }
 }
 
+class Regex implements IRunnable {
+
+    private regexp: RegExp;
+
+    constructor(r: RegExp) {
+        this.regexp = r;
+    }
+
+    public run(r: Array<Result>): Array<Result> {
+        let result: Array<Result> = [];
+
+        for (let input of r) {
+            if (input.length() !== 0
+                    && this.regexp.test(input.peek().get_str()) === true) {
+                result.push(input.shift());
+            }
+        }
+
+        return result;
+    }
+}
+
 class Word implements IRunnable {
 
     constructor(private s: String) { }
@@ -54,7 +76,8 @@ class Word implements IRunnable {
         let result: Array<Result> = [];
 
         for (let input of r) {
-            if (input.length() !== 0 && input.peek().get_str() === this.s) {
+            if (input.length() !== 0
+                    && input.peek().get_str() === this.s) {
                 result.push(input.shift());
             }
         }
@@ -197,6 +220,13 @@ export function opt(first: IRunnable): IRunnable {
 }
 export function star(first: IRunnable): IRunnable {
     return new Star(first);
+}
+export function regex(r: RegExp): IRunnable {
+    return new Regex(r);
+}
+export function str_space(s: String): IRunnable {
+// todo
+    return new Word(s);
 }
 
 export function token(s: string): Tokens.Token {

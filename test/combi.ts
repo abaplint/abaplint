@@ -14,6 +14,7 @@ let tok      = Combi.token;
 let nothing  = Combi.nothing;
 let opt      = Combi.opt;
 let star     = Combi.star;
+let reg      = Combi.regex;
 
 let tests = [
 {n: "no1",  c: nothing(),                         t: [tok("bar")],             e: false},
@@ -66,6 +67,10 @@ let tests = [
 {n: "stA",  c: alt(star(str("bar")), str("foo")), t: [tok("bar"), tok("bar")], e: true},
 {n: "stB",  c: alt(str("bar"), star(str("bar"))), t: [tok("bar"), tok("bar")], e: true},
 {n: "stC",  c: alt(str("foo"), star(str("bar"))), t: [tok("bar"), tok("bar")], e: true},
+{n: "reg1", c: reg(/^\w+$/),                      t: [tok("foo")],             e: true},
+{n: "reg2", c: reg(/^\w+$/),                      t: [tok("foo!!")],           e: false},
+{n: "reg3", c: reg(/^\w+$/),                      t: [tok("foo"), tok("bar")], e: false},
+{n: "reg4", c: seq(reg(/^\w+$/), reg(/^\w+$/)),   t: [tok("foo"), tok("bar")], e: true},
 ];
 
 describe("combi", function() {
