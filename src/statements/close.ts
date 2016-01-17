@@ -1,12 +1,12 @@
 import { Statement } from "./statement";
 import { Token } from "../tokens/tokens";
 
-export class Interface extends Statement {
+export class Close extends Statement {
 
     public static match(tokens: Array<Token>): Statement {
         let str = Statement.concat(tokens).toUpperCase();
-        if (/^INTERFACE(S)? /.test(str)) {
-            return new Interface(tokens);
+        if (/^CLOSE /.test(str)) {
+            return new Close(tokens);
         }
         return undefined;
     }

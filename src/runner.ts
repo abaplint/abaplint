@@ -1,5 +1,3 @@
-/// <reference path="../typings/node/node.d.ts" />
-
 import Report from "./report";
 import File from "./file";
 import * as Checks from "./checks/checks";
@@ -44,5 +42,8 @@ export default class Runner {
 
         let check07 = new Checks.Check07(this.report);
         check07.run(file);
+
+        let check08 = new Checks.Check08(this.report);
+        check08.run(file);
     }
 }

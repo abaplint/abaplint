@@ -19,6 +19,8 @@ export class Check02 implements Check {
         return string.substr(0, value.length) === value;
     }
 
+// todo, dynamic CALL METHODs
+
     public run(file: File) {
         for (let statement of file.get_statements()) {
             let code = statement.concat_tokens().toUpperCase();

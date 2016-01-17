@@ -1,6 +1,7 @@
 import Runner from "../../src/runner";
 import Report from "../../src/report";
 import File from "../../src/file";
+import * as Statements from "../../src/statements/statements";
 
 function strip_newline(input: string): string {
     let result = input;
@@ -10,7 +11,7 @@ function strip_newline(input: string): string {
     return result;
 }
 
-function build_issues(input: string, report: Report): string {
+function build_issues(input: string, report: Report, file: File): string {
     let lines = input.split("\n");
 
     for (let i = 0; i < lines.length; i++) {
@@ -20,6 +21,14 @@ function build_issues(input: string, report: Report): string {
     for (let issue of report.get_issues()) {
         let row = issue.get_row();
         lines[row - 1] = lines[row - 1] + " " + issue.get_description();
+    }
+
+    for (let statement of file.get_statements()) {
+        let token = statement.get_tokens()[0];
+        let row = token.get_row();
+        if (statement instanceof Statements.Unknown) {
+            lines[row - 1] = lines[row - 1] + " | Unknown" ;
+        }
     }
 
     return lines.join("\n");
@@ -36,7 +45,7 @@ export function run() {
     let report = runner.get_report();
 
     let el = document.getElementById("result");
-    el.innerText = build_issues(input, report);
+    el.innerText = build_issues(input, report, file);
 
     el = document.getElementById("info");
     el.innerText = "Issues: " + report.get_count();
