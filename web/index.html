@@ -2,10 +2,26 @@
 <html>
     <head>
         <title>abaplint web</title>
+        <script src="script/bundle.js"></script>
+        <link rel="stylesheet" type="text/css" href="style/style.css">
     </head>
     <body>
-        <script src="greeter.js"></script>
-        welcome to abaplint web edition
+        abaplint web edition
+        <br>
+<textarea rows="4" cols="50" id="input">
+REPORT ZHELLO.
+WRITE 'Hello World'.
+</textarea>
+        <br>
+        <button onclick="run.run()">Run</button>
+        <br>
+        <br>
+        <table border="1">
+        <tr>
+        <td><div id="abap"></div></td>
+        <td><div id="result"></div></td>
+        </tr>
+        </table>
     </body>
 </html>
 
