@@ -4,6 +4,7 @@
 
 import Report from "./src/report";
 import Runner from "./src/runner";
+import File from "./src/file";
 import * as fs from "fs";
 
 import * as glob from "glob";
@@ -12,7 +13,8 @@ import * as minimist from "minimist";
 let report = new Report();
 
 function process_file(filename: string) {
-    new Runner(filename, report);
+    let file = new File(filename, fs.readFileSync(filename, "utf8"));
+    new Runner(file, report);
 }
 
 let argv = minimist(process.argv.slice(2));

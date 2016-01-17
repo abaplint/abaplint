@@ -2,7 +2,9 @@
 /// <reference path="typings/chai/chai.d.ts" />
 
 import Runner from "../src/runner";
+import File from "../src/file";
 import * as chai from "chai";
+import * as fs from "fs";
 
 let expect = chai.expect;
 
@@ -23,7 +25,9 @@ describe("errors", function() {
 
     tests.forEach(function(test) {
         it(test.file + " should have " + test.errors + " error(s)", () => {
-            let runner = new Runner("./test/abap/" + test.file + ".prog.abap");
+            let filename = "./test/abap/" + test.file + ".prog.abap";
+            let file = new File(filename, fs.readFileSync(filename, "utf8"));
+            let runner = new Runner(file);
             expect(runner.get_report().get_count()).to.equals(test.errors);
         });
     });

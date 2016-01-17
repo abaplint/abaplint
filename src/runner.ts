@@ -3,28 +3,24 @@
 import Report from "./report";
 import File from "./file";
 import * as Checks from "./checks/checks";
-import * as fs from "fs";
 
 export default class Runner {
     private report: Report;
 
-    constructor(filename: string, report?: Report) {
+    constructor(file: File, report?: Report) {
         if (report) {
             this.report = report;
         } else {
             this.report = new Report();
         }
-        this.analyze(filename);
+        this.analyze(file);
     }
 
     public get_report(): Report {
         return this.report;
     }
 
-    private analyze(filename: string) {
-        let code = fs.readFileSync(filename, "utf8");
-
-        let file = new File(filename, code);
+    private analyze(file: File) {
 
 // TODO, some easier way to call all the checks
 
