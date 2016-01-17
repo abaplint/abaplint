@@ -11,12 +11,19 @@ describe("statement_type", function() {
     let tests = [
         {code: "REPORT zfoo.", type: Statements.Report, name: "Report"},
         {code: "WRITE 'Hello'.", type: Statements.Write, name: "Write"},
+        {code: "\" 'abc'.FOO", type: Statements.Comment, name: "Comment"},
     ];
 
     tests.forEach(function(test) {
+        let file = new File("temp.abap", test.code);
+        let slist = file.get_statements();
+
+        it("\"" + test.code + "\" should be 1 statement", () => {
+            expect(slist.length).to.equals(1);
+        });
+
         it("\"" + test.code + "\" should be " + test.name, () => {
-            let file = new File("temp.abap", test.code);
-            let compare = file.get_statements()[0] instanceof test.type;
+            let compare = slist[0] instanceof test.type;
             expect(compare).to.equals(true);
         });
     });

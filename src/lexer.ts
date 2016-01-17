@@ -26,8 +26,9 @@ export default class Lexer {
         for (let token of this.tokens) {
 
             let str = token.get_str();
-            if (str.length > 2 && str.substr(0, 2) === "##" ) {
-                let pragma = new Tokens.Pragma(token.get_row(), token.get_col(), this.file.get_raw_row(token.get_row(), token.get_col()));
+            if (str.length > 2 && str.substr(0, 1) === "#" ) {
+                let raw = this.file.get_raw_row(token.get_row(), token.get_col());
+                let pragma = new Tokens.Pragma(token.get_row(), token.get_col(), raw);
                 result.push(pragma);
             } else {
                 result.push(token);
@@ -49,12 +50,14 @@ export default class Lexer {
             if ((str.substr(0, 1) === "*" && token.get_col() === 1)
                     || str.substr(0, 1) === "\"") {
                 ignore = token.get_row();
-                let comment = new Tokens.Comment(token.get_row(), token.get_col(), this.file.get_raw_row(token.get_row(), token.get_col()));
+                let raw = this.file.get_raw_row(token.get_row(), token.get_col() - 1);
+                let comment = new Tokens.Comment(token.get_row(), token.get_col(), raw);
                 result.push(comment);
             } else {
                 result.push(token);
             }
         }
+
         this.tokens = result;
     }
 
@@ -81,6 +84,7 @@ export default class Lexer {
         let lines = this.file.get_raw().split("\n");
 
         for (let row = 0; row < lines.length; row++) {
+            lines[row] = lines[row].replace("\t", " ");
             let tokens = lines[row].split(" ");
             let col = 0;
             for (let token of tokens) {
@@ -93,11 +97,44 @@ export default class Lexer {
         }
     }
 
-    private check_ok_string(str: string): boolean {
-        str = str.replace(/''/g, "");
+    private concat_tokens(tokens: Array<Tokens.Token>): string {
+        let result = "";
+        for (let token of tokens) {
+            result = result + " " + token.get_str();
+        }
+        return result.trim();
+    }
+
+    private is_string(tokens: Array<Tokens.Token>): boolean {
+        let str = this.concat_tokens(tokens).replace(/''/g, "");
 
         let start = str.substr(0, 1);
         let end = str.substr(str.length - 1);
+
+        if (start === "'"
+                && end === "'"
+                && str.length > 1) {
+            return true;
+        }
+        return false;
+    }
+
+    private collapse(tokens: Array<Tokens.Token>): Tokens.Token {
+        let token = tokens[0];
+
+        for (let i = 1; i < tokens.length; i++) {
+            token.set_str(token.get_str() + " " + tokens[i].get_str());
+        }
+
+        return token;
+    }
+
+    private check_ok_string(tokens: Array<Tokens.Token>): boolean {
+        let str = this.concat_tokens(tokens).replace(/''/g, "");
+
+        let start = str.substr(0, 1);
+        let end = str.substr(str.length - 1);
+
         if (start === "'") {
             if (end === "'" && str.length > 1) {
                 return true;
@@ -109,21 +146,30 @@ export default class Lexer {
         }
     }
 
+// todo, hmm, this method is messed up
     private handle_strings() {
         let result: Array<Tokens.Token> = [];
-        let add: Tokens.Token;
+        let str: Array<Tokens.Token> = [];
+        let row = this.tokens[0].get_row();
 
         for (let token of this.tokens) {
-            if (add === undefined) {
-                add = token;
-            } else {
-                add.set_str(add.get_str() + " " + token.get_str());
+            if (token.get_row() !== row) {
+                result = result.concat(str);
+                str = [];
+                row = token.get_row();
             }
-            if (this.check_ok_string(add.get_str())) {
-                result.push(add);
-                add = undefined;
+
+            str.push(token);
+
+            if (this.check_ok_string(str)) {
+                if (this.is_string(str)) {
+                    str = [this.collapse(str)];
+                }
+                result = result.concat(str);
+                str = [];
             }
         }
+        result = result.concat(str);
 
         this.tokens = result;
     }

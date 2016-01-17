@@ -1,0 +1,4 @@
+REPORT zcomment05.
+
+SELECT *  FROM t005t INTO TABLE lt_test.  "#EC CI_NOWHERE
+CREATE OBJECT lo_foobar.

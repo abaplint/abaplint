@@ -7,3 +7,4 @@ export * from "./check05";
 export * from "./check06";
 export * from "./check07";
 export * from "./check08";
+export * from "./check09";

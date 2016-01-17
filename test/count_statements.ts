@@ -31,6 +31,8 @@ describe("count_statements", function() {
         {file: "zcomment01", statements: 2},
         {file: "zcomment02", statements: 2},
         {file: "zcomment03", statements: 3},
+        {file: "zcomment04", statements: 3},
+        {file: "zcomment05", statements: 4},
         {file: "zform01",    statements: 5},
         {file: "zselect01",  statements: 4},
     ];

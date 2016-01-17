@@ -24,3 +24,5 @@ data range type range of string.
 
 cl_gui_cfw=>flush( ).
 cl_gui_cfw=>flush( ) .
+
+lt_foo[] = lt_bar[].

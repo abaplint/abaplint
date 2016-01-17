@@ -45,5 +45,8 @@ export default class Runner {
 
         let check08 = new Checks.Check08(this.report);
         check08.run(file);
+
+        let check09 = new Checks.Check09(this.report);
+        check09.run(file);
     }
 }
