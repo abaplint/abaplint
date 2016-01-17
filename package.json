@@ -12,7 +12,7 @@
   "scripts": {
     "browserify": "browserify web/script/script.js -o web/script/bundle.js -s run",
     "uglify": "uglifyjs web/script/bundle.js --compress warnings=false --mangle -o web/script/bundle.js",
-    "tslint": "tslint -c tslint.json *.ts test/*.ts src/*.ts src/statements/*.ts src/tokens/*.ts web/scripts/*.ts",
+    "tslint": "tslint -c tslint.json *.ts test/*.ts src/*.ts src/statements/*.ts src/tokens/*.ts web/script/*.ts",
     "precompile": "tsc",
     "compile": "npm run browserify ",
     "postcompile": "npm run uglify",

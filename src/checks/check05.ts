@@ -18,8 +18,7 @@ export class Check05 implements Check {
 
     public run(file: File) {
         let lines = file.get_raw().split("\n");
-
-        for (let line in lines) {
+        for (let line = 0; line < lines.length; line++) {
             if (lines[line].length > 100) {
                 let issue = new Issue(this, new Position(line + 1, 1), file);
                 this.report.add(issue);

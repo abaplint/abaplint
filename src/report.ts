@@ -1,5 +1,7 @@
 import Issue from "./issue";
 
+// todo, refactor, split into different report classes
+
 export default class Report {
     private issues: Array<Issue> = [];
 
@@ -9,6 +11,10 @@ export default class Report {
 
     public get_count(): number {
         return this.issues.length;
+    }
+
+    public get_issues(): Array<Issue> {
+        return this.issues;
     }
 
     public json(): string {
