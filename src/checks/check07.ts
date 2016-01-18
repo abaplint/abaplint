@@ -17,6 +17,7 @@ export class Check07 implements Check {
 
     public run(file: File) {
         let prev = file.get_tokens[0];
+
         for (let token of file.get_tokens()) {
             if (token.get_str() === ":"
                     && prev.get_row() == token.get_row()

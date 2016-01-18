@@ -13,6 +13,7 @@ export default class Lexer {
         this.split_punctuation(".");
         this.split_punctuation(",");
         this.split_punctuation(":");
+
         this.handle_strings();
         this.handle_comments();
         this.handle_pragmas();
@@ -61,22 +62,43 @@ export default class Lexer {
         this.tokens = result;
     }
 
-    private split_punctuation(char: string) {
+// todo, simplify. loop through uisng "SEARCH FOR" instead of string split
+   private split_punctuation(char: string) {
         let result: Array<Tokens.Token> = [];
 
         for (let token of this.tokens) {
             let str = token.get_str();
-            if (str.substr(str.length - 1) === char) {
-                token.set_str(str.substr(0, str.length - 1));
-                if (token.get_str() !== "") {
-                    result.push(token);
+
+            if (str === char) {
+                result.push(token);
+                continue;
+            }
+
+            let strlist = str.split(char);
+            let row = token.get_row();
+            let col = token.get_col();
+
+            if (strlist.length > 1) {
+                for (let i = 0; i < strlist.length; i++) {
+                    let split = strlist[i];
+                    if (split.length > 0 && i === strlist.length - 1) {
+                        let add = new Tokens.Identifier(row, col, split);
+                        result.push(add);
+                    } else if (i !== strlist.length - 1) {
+                        let add = new Tokens.Identifier(row, col, split);
+                        result.push(add);
+                        if (split.length > 0) {
+                            let dot = new Tokens.Identifier(row, col + split.length , char);
+                            result.push(dot);
+                        }
+                        col = col + split.length + 1;
+                    }
                 }
-                let dot = new Tokens.Identifier(token.get_row(), token.get_col() + str.length - 1, char);
-                result.push(dot);
             } else {
                 result.push(token);
             }
         }
+
         this.tokens = result;
     }
 
@@ -97,6 +119,8 @@ export default class Lexer {
         }
     }
 
+// todo, concatenate while looking at token position,
+// space between tokens is not always correct
     private concat_tokens(tokens: Array<Tokens.Token>): string {
         let result = "";
         for (let token of tokens) {

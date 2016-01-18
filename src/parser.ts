@@ -43,6 +43,7 @@ export default class Parser {
         let add: Array<Tokens.Token> = [];
         let pre: Array<Tokens.Token> = [];
         let tokens = this.file.get_tokens();
+
         for (let token of tokens) {
             if (token instanceof Tokens.Comment) {
                 this.statements.push(new Statements.Comment([token]));
@@ -64,6 +65,11 @@ export default class Parser {
                 pre = add.slice(0);
                 add = [];
             }
+        }
+
+        if (add.length > 0) {
+            let statement = new Statements.Unknown(pre.concat(add));
+            this.statements.push(statement);
         }
     }
 }
