@@ -1,5 +1,6 @@
 [![npm version](https://badge.fury.io/js/abaplint.svg)](https://badge.fury.io/js/abaplint)
 [![Build Status](https://travis-ci.org/larshp/abaplint.svg)](https://travis-ci.org/larshp/abaplint)
+[![Dependency Status](https://david-dm.org/larshp/abaplint.svg)](https://david-dm.org/larshp/abaplint)
 
 # abaplint
 Linter for ABAP. ABAP code must be serialized using [abapGit](https://github.com/larshp/abapGit)
