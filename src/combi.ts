@@ -215,7 +215,17 @@ export function nothing(): IRunnable {
     return new Nothing();
 }
 export function str(s: String): IRunnable {
-    return new Word(s);
+    let split = s.split(" ");
+
+    if (split.length === 1) {
+        return new Word(s);
+    }
+
+    let words: Array<IRunnable> = [];
+    for (let str of split) {
+        words.push(new Word(str));
+    }
+    return new Sequence(words);
 }
 export function seq(first: IRunnable, ...rest: IRunnable[]): IRunnable {
     return new Sequence([first].concat(rest));
@@ -231,16 +241,4 @@ export function star(first: IRunnable): IRunnable {
 }
 export function regex(r: RegExp): IRunnable {
     return new Regex(r);
-}
-export function str_space(s: String): IRunnable {
-    let split = s.split(" ");
-    let words: Array<IRunnable> = [];
-    for (let str of split) {
-        words.push(new Word(str));
-    }
-    return new Sequence(words);
-}
-
-export function token(s: string): Tokens.Token {
-    return new Tokens.Identifier(10, 10, s);
 }
