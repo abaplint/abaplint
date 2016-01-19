@@ -1,13 +1,12 @@
 import { Statement } from "./statement";
 import { Token } from "../tokens/tokens";
 
-export class Move extends Statement {
+export class Break extends Statement {
 
     public static match(tokens: Array<Token>): Statement {
         let str = Statement.concat(tokens).toUpperCase();
-        if (/^(MOVE|MOVE-CORRESPONDING) /.test(str)
-                || /^(\w|-|<|>|->|=>|~)+(\+\d+)?(\[\])? (\?)?= .*$/.test(str)) {
-            return new Move(tokens);
+        if (/^BREAK/.test(str)) {
+            return new Break(tokens);
         }
         return undefined;
     }

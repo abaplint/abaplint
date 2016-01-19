@@ -34,6 +34,7 @@ export class Data extends Statement {
             let simple = seq(start, variable, opt(seq(type, typename)), opt(def), opt(length), opt(str("READ-ONLY")), opt(value));
 
             let typetable = alt(sSpace("TYPE STANDARD TABLE OF"),
+                                sSpace("TYPE STANDARD TABLE OF REF TO"),
                                 sSpace("LIKE STANDARD TABLE OF"),
                                 sSpace("TYPE TABLE OF"),
                                 sSpace("TYPE HASHED TABLE OF"),
@@ -41,6 +42,7 @@ export class Data extends Statement {
                                 sSpace("TYPE TABLE OF REF TO"));
             let key = alt(sSpace("WITH DEFAULT KEY"),
                           sSpace("WITH NON-UNIQUE DEFAULT KEY"),
+                          seq(sSpace("WITH NON-UNIQUE KEY"), star(variable)),
                           seq(sSpace("WITH UNIQUE KEY"), star(variable)));
             let initial = seq(sSpace("INITIAL SIZE"), integer);
             let table = seq(start, variable, typetable, typename, opt(key), opt(str("READ-ONLY")), opt(initial));
@@ -53,7 +55,7 @@ export class Data extends Statement {
             if (result === true) {
                 return new Data(tokens, "foo");
             }
-
+// console.dir(tokens);
         }
         return undefined;
     }
