@@ -30,6 +30,7 @@ describe("count_tokens", function() {
         {file: "zcomment02",  tokens:  4},
         {file: "zcomment03",  tokens:  7},
         {file: "zcheck07_01", tokens:  7},
+        {file: "zpragma01",   tokens: 12},
     ];
 
     tests.forEach(function(test) {

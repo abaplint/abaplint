@@ -24,6 +24,7 @@ describe("zero errors", function() {
         "zhello12",
         "zhello13",
         "zhello14",
+        "zhello15",
         "zif01",
         "zif02",
         "zif03",

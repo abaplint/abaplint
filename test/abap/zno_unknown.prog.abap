@@ -1,9 +1,18 @@
 REPORT zno_unknown.
 
+* write
 WRITE 'foobar'.
 WRITE: 'foobar'.
 WRITE: 'foobar', 'bar'.
 
+* direct call method
+cl_gui_cfw=>flush( ).
+cl_gui_cfw=>flush( ) .
+
+* move
+lt_foo[] = lt_bar[].
+
+* data
 DATA lv_foo TYPE i.
 DATA lv_foo LIKE LINE OF foo.
 DATA lv_foo LIKE lv_foo.
@@ -21,8 +30,6 @@ data char.
 data char(100).
 data sdf type table of ref to zcl_foobar.
 data range type range of string.
-
-cl_gui_cfw=>flush( ).
-cl_gui_cfw=>flush( ) .
-
-lt_foo[] = lt_bar[].
+data: lt_foo type table of bar initial size 0.
+data foobar type abap_bool read-only value ABAP_FALSE ##NO_TEXT.
+data item(4) value '  # '.

@@ -18,6 +18,7 @@ export default class Lexer {
         this.handle_comments();
         this.handle_pragmas();
 
+// console.dir(this.tokens);
         this.file.set_tokens(this.tokens);
     }
 
@@ -106,7 +107,7 @@ export default class Lexer {
         let lines = this.file.get_raw().split("\n");
 
         for (let row = 0; row < lines.length; row++) {
-            lines[row] = lines[row].replace("\t", " ");
+            lines[row] = lines[row].replace(/\t/g, " ");
             let tokens = lines[row].split(" ");
             let col = 0;
             for (let token of tokens) {
@@ -129,15 +130,21 @@ export default class Lexer {
         return result.trim();
     }
 
+    private start_ok(str: string): boolean {
+        let start = str.substr(0, 1);
+        return start === "'";
+    }
+
+    private end_ok(str: string): boolean {
+        let end = str.substr(str.length - 1);
+        return ( end === "'" && str.length > 1 ) || /\'\(\d\d\d\)$/.test(str);
+    }
+
     private is_string(tokens: Array<Tokens.Token>): boolean {
         let str = this.concat_tokens(tokens).replace(/''/g, "");
 
-        let start = str.substr(0, 1);
-        let end = str.substr(str.length - 1);
-
-        if (start === "'"
-                && end === "'"
-                && str.length > 1) {
+        if (this.start_ok(str)
+                && this.end_ok(str)) {
             return true;
         }
         return false;
@@ -156,11 +163,8 @@ export default class Lexer {
     private check_ok_string(tokens: Array<Tokens.Token>): boolean {
         let str = this.concat_tokens(tokens).replace(/''/g, "");
 
-        let start = str.substr(0, 1);
-        let end = str.substr(str.length - 1);
-
-        if (start === "'") {
-            if (end === "'" && str.length > 1) {
+        if (this.start_ok(str)) {
+            if (this.end_ok(str)) {
                 return true;
             } else {
                 return false;
