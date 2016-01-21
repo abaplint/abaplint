@@ -175,6 +175,7 @@ export default class Lexer {
     }
 
 // todo, hmm, this method is messed up
+// todo, handle "wrong ping" and string templates(pipe = |)
     private handle_strings() {
         let result: Array<Tokens.Token> = [];
         let str: Array<Tokens.Token> = [];

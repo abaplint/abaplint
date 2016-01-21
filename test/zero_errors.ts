@@ -31,6 +31,7 @@ describe("zero errors", function() {
         "zcomment01",
         "zcomment02",
         "zcomment03",
+        "zdefine01",
     ];
 
     tests.forEach(function(test) {
