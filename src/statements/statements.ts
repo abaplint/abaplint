@@ -95,3 +95,4 @@ export * from "./search";
 export * from "./selectionscreen";
 export * from "./free";
 export * from "./break";
+export * from "./selectoption";

@@ -3,27 +3,28 @@ import File from "../file";
 import Report from "../report";
 import Issue from "../issue";
 import Position from "../position";
+import * as Statements from "../statements/statements";
 
-export class Check05 implements Check {
+export class Check11 implements Check {
 
     constructor(private report: Report) { }
 
     public get_key(): string {
-        return "05";
+        return "11";
     }
 
     public get_description(): string {
-        return "Reduce line length";
+        return "Contains non 7 bit ascii character";
     }
 
     public run(file: File) {
-        let lines = file.get_raw().split("\n");
-        for (let line = 0; line < lines.length; line++) {
-            if (lines[line].length > 120) {
-                let issue = new Issue(this, new Position(line + 1, 1), file);
+        let rows = file.get_raw_rows();
+
+        for (let i = 0; i < rows.length; i++) {
+            if (/^[\u0000-\u007f]*$/.test(rows[i])) {
+                let issue = new Issue(this, new Position(i + 1, 1), file);
                 this.report.add(issue);
             }
         }
     }
-
 }
