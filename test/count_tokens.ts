@@ -26,6 +26,8 @@ describe("count_tokens", function() {
         {file: "zhello09",    tokens: 11},
         {file: "zhello10",    tokens: 18},
         {file: "zhello12",    tokens:  6},
+        {file: "zhello16",    tokens:  6},
+        {file: "zhello17",    tokens:  6},
         {file: "zcomment01",  tokens:  4},
         {file: "zcomment02",  tokens:  4},
         {file: "zcomment03",  tokens:  7},

@@ -4,6 +4,7 @@
 import * as chai from "chai";
 import * as Combi from "../src/combi";
 import * as Tokens from "../src/tokens/tokens";
+import Position from "../src/position";
 
 let expect = chai.expect;
 
@@ -21,7 +22,7 @@ function tok(s: string): Array<Tokens.Token> {
 
     let tokens: Array<Tokens.Token> = [];
     for (let st of split) {
-        tokens.push(new Tokens.Identifier(10, 10, st));
+        tokens.push(new Tokens.Identifier(new Position(10, 10), st));
     }
 
     return tokens;

@@ -1,33 +1,32 @@
 import * as Tokens from "./tokens/tokens";
 import File from "./file";
+import Position from "./position";
 
 export default class Lexer {
     private tokens: Array<Tokens.Token> = [];
 
     private modeNormal = 1;
-//    private mode_ping = 2;
+    private modePing = 2;
     private modeStr = 3;
-//    private mode_template = 4;
+    private modeTemplate = 4;
     private modeComment = 5;
 
     private m = this.modeNormal;
 
     constructor(private file: File) {
         this.run();
-// console.dir(this.tokens);
         this.file.set_tokens(this.tokens);
     }
 
     private add(s: string, row: number, col: number) {
         if (s.length > 0) {
-// console.log("create " + s);
-// todo, change token constructor to accept Position instead of row, col?
+            let pos = new Position(row, col - s.length);
             if (this.m === this.modeComment) {
-                this.tokens.push(new Tokens.Comment(row, col - s.length, s));
+                this.tokens.push(new Tokens.Comment(pos, s));
             } else if (s.substr(0, 1) === "#") {
-                this.tokens.push(new Tokens.Pragma(row, col - s.length, s));
+                this.tokens.push(new Tokens.Pragma(pos, s));
             } else {
-                this.tokens.push(new Tokens.Identifier(row, col - s.length, s));
+                this.tokens.push(new Tokens.Identifier(pos, s));
             }
         }
     }
@@ -59,6 +58,12 @@ export default class Lexer {
             } else if (char === "'" && this.m === this.modeNormal) {
                 this.m = this.modeStr;
                 before = before + char;
+            } else if (char === "`" && this.m === this.modeNormal) {
+                this.m = this.modePing;
+                before = before + char;
+            } else if (char === "|" && this.m === this.modeNormal) {
+                this.m = this.modeTemplate;
+                before = before + char;
             } else if (char === "\"" && this.m === this.modeNormal) {
                 this.m = this.modeComment;
                 before = before + char;
@@ -69,7 +74,9 @@ export default class Lexer {
                 before = before + char + ahead;
                 col = col + 1;
                 raw = raw.substr(1);
-            } else if (char === "'" && this.m === this.modeStr) {
+            } else if ((char === "'" && this.m === this.modeStr)
+                    || (char === "`" && this.m === this.modePing)
+                    || (char === "|" && this.m === this.modeTemplate)) {
                 before = before + char;
                 this.add(before, row, col + 1);
                 before = "";

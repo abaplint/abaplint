@@ -3,8 +3,8 @@ import Position from "../position";
 export abstract class Token {
     private pos: Position;
 
-    constructor(row: number, col: number, private str: string) {
-        this.pos = new Position(row, col);
+    constructor(pos: Position, private str: string) {
+        this.pos = pos;
     }
 
     public get_str(): string {
