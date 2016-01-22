@@ -2,15 +2,6 @@ language: node_js
 node_js:
   - "4.1"
 before_script:
-  - npm install -g tsd
-  - npm install -g tsc
-  - npm install -g tslint
-  - npm install -g browserify
-  - npm install -g uglify-js
-  - tsd rate
-  - tsd install
-  - cd test
-  - tsd install
-  - cd ..
+  - npm run typings
 notifications:
   email: false
