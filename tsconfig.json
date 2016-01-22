@@ -4,4 +4,8 @@
 },
 "filesGlob": [
     "./**/*.ts"
-]}
+],
+"exclude": [
+    "node_modules"
+]
+}
