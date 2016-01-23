@@ -1,5 +1,4 @@
 import Runner from "../../src/runner";
-import Report from "../../src/report";
 import File from "../../src/file";
 
 function strip_newline(input: string): string {
@@ -10,14 +9,14 @@ function strip_newline(input: string): string {
     return result;
 }
 
-function build_issues(input: string, report: Report, file: File): string {
+function build_issues(input: string, file: File): string {
     let lines = input.split("\n");
 
     for (let i = 0; i < lines.length; i++) {
         lines[i] = "" + ( i + 1 );
     }
 
-    for (let issue of report.get_issues()) {
+    for (let issue of file.get_issues()) {
         let row = issue.get_row();
         lines[row - 1] = lines[row - 1] + " " + issue.get_description();
     }
@@ -32,12 +31,11 @@ export function run() {
     document.getElementById("abap").innerText = input;
 
     let file = new File("foobar.abap", input);
-    let runner = new Runner(file);
-    let report = runner.get_report();
+    Runner.run([file]);
 
     let el = document.getElementById("result");
-    el.innerText = build_issues(input, report, file);
+    el.innerText = build_issues(input, file);
 
     el = document.getElementById("info");
-    el.innerText = "Issues: " + report.get_count();
+    el.innerText = "Issues: " + file.get_count();
 }

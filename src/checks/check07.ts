@@ -1,11 +1,8 @@
 import { Check } from "./check";
 import File from "../file";
-import Report from "../report";
 import Issue from "../issue";
 
 export class Check07 implements Check {
-
-    constructor(private report: Report) { }
 
     public get_key(): string {
         return "07";
@@ -23,7 +20,7 @@ export class Check07 implements Check {
                     && prev.get_row() == token.get_row()
                     && prev.get_col() + prev.get_str().length < token.get_col()) {
                 let issue = new Issue(this, token.get_pos(), file);
-                this.report.add(issue);
+                file.add(issue);
             }
             prev = token;
         }

@@ -33,8 +33,8 @@ describe("errors", function() {
         it(test.file + " should have " + test.errors + " error(s)", () => {
             let filename = "./test/abap/" + test.file + ".prog.abap";
             let file = new File(filename, fs.readFileSync(filename, "utf8"));
-            let runner = new Runner(file);
-            expect(runner.get_report().get_count()).to.equals(test.errors);
+            Runner.run([file]);
+            expect(file.get_count()).to.equals(test.errors);
         });
     });
 });

@@ -1,13 +1,10 @@
 import { Check } from "./check";
 import File from "../file";
-import Report from "../report";
 import Issue from "../issue";
 import Position from "../position";
 import * as Statements from "../statements/";
 
 export class Check11 implements Check {
-
-    constructor(private report: Report) { }
 
     public get_key(): string {
         return "11";
@@ -23,7 +20,7 @@ export class Check11 implements Check {
         for (let i = 0; i < rows.length; i++) {
             if (/^[\u0000-\u007f]*$/.test(rows[i]) === false) {
                 let issue = new Issue(this, new Position(i + 1, 1), file);
-                this.report.add(issue);
+                file.add(issue);
             }
         }
     }

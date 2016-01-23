@@ -1,12 +1,9 @@
 import { Check } from "./check";
 import File from "../file";
-import Report from "../report";
 import Issue from "../issue";
 import * as Statements from "../statements/";
 
 export class Check06 implements Check {
-
-    constructor(private report: Report) { }
 
     public get_key(): string {
         return "06";
@@ -32,7 +29,7 @@ export class Check06 implements Check {
                     || statement instanceof Statements.Exit)
                     && stack.length === 0) {
                 let issue = new Issue(this, statement.get_start(), file);
-                this.report.add(issue);
+                file.add(issue);
             }
         }
     }

@@ -1,11 +1,8 @@
 import { Check } from "./check";
 import File from "../file";
-import Report from "../report";
 import Issue from "../issue";
 
 export class Check02 implements Check {
-
-    constructor(private report: Report) { }
 
     public get_key(): string {
         return "02";
@@ -30,7 +27,7 @@ export class Check02 implements Check {
                     continue;
                 }
                 let issue = new Issue(this, statement.get_start(), file);
-                this.report.add(issue);
+                file.add(issue);
             }
         }
     }

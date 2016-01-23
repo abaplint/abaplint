@@ -40,8 +40,8 @@ describe("zero errors", function() {
         it(test + " should have zero errors", () => {
             let filename = "./test/abap/" + test + ".prog.abap";
             let file = new File(filename, fs.readFileSync(filename, "utf8"));
-            let runner = new Runner(file);
-            expect(runner.get_report().get_count()).to.equals(0);
+            Runner.run([file]);
+            expect(file.get_count()).to.equals(0);
         });
     });
 });

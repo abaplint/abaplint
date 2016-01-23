@@ -2,14 +2,29 @@ import { Token } from "./tokens/";
 import { Statement } from "./statements/";
 import Lexer from "./lexer";
 import Parser from "./parser";
+import Issue from "./issue";
 
 export default class File {
     private tokens: Array<Token> = [];
     private statements: Array<Statement> = [];
+    private issues: Array<Issue> = [];
 
     constructor(private filename: string, private raw: string) {
         new Lexer(this);
         new Parser(this);
+    }
+
+// todo, something wrong here, refactor?
+    public add(issue: Issue) {
+        this.issues.push(issue);
+    }
+
+    public get_count(): number {
+        return this.issues.length;
+    }
+
+    public get_issues(): Array<Issue> {
+        return this.issues;
     }
 
     public get_raw(): string {

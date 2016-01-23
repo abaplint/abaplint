@@ -1,13 +1,10 @@
 import { Check } from "./check";
 import File from "../file";
-import Report from "../report";
 import { Token } from "../tokens/";
 import Issue from "../issue";
 import * as Statements from "../statements/";
 
 export class Check04 implements Check {
-
-    constructor(private report: Report) { }
 
     public get_key(): string {
         return "04";
@@ -30,7 +27,7 @@ export class Check04 implements Check {
             let row = pos.get_row();
             if (prev === row && row !== reported) {
                 let issue = new Issue(this, pos, file);
-                this.report.add(issue);
+                file.add(issue);
                 reported = row;
             }
             prev = row;
