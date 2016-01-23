@@ -25,10 +25,10 @@ export class Check04 implements Check {
                 continue;
             }
 
-            let token = statement.get_tokens()[0];
-            let row = token.get_row();
+            let pos = statement.get_start();
+            let row = pos.get_row();
             if (prev === row) {
-                let issue = new Issue(this, token.get_pos(), file);
+                let issue = new Issue(this, pos, file);
                 this.report.add(issue);
             }
             prev = row;

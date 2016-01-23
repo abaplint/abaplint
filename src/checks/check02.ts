@@ -29,8 +29,7 @@ export class Check02 implements Check {
                 if (call.match("\\)[=-]>") != undefined) {
                     continue;
                 }
-                let token = statement.get_tokens()[0];
-                let issue = new Issue(this, token.get_pos(), file);
+                let issue = new Issue(this, statement.get_start(), file);
                 this.report.add(issue);
             }
         }

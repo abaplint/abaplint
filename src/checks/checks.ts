@@ -10,3 +10,4 @@ export * from "./check08"; // Code contains tab
 export * from "./check09"; // Parser error(Unknown statement)
 export * from "./check10"; // Missing space after colon
 export * from "./check11"; // Contains non 7 bit ascii character
+export * from "./check12"; // Statement is obsolete

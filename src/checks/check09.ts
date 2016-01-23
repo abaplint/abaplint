@@ -20,9 +20,10 @@ export class Check09 implements Check {
     public run(file: File) {
         let pos = new Position(0, 0);
         for (let statement of file.get_statements()) {
+// only report one error per row
             if (statement instanceof Statements.Unknown
-                    && pos.get_row() !== statement.get_tokens()[0].get_pos().get_row()) {
-                pos = statement.get_tokens()[0].get_pos();
+                    && pos.get_row() !== statement.get_start().get_row()) {
+                pos = statement.get_start();
                 let issue = new Issue(this, pos, file);
                 this.report.add(issue);
             }

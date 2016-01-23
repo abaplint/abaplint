@@ -21,7 +21,7 @@ export class Check11 implements Check {
         let rows = file.get_raw_rows();
 
         for (let i = 0; i < rows.length; i++) {
-            if (/^[\u0000-\u007f]*$/.test(rows[i])) {
+            if (/^[\u0000-\u007f]*$/.test(rows[i]) === false) {
                 let issue = new Issue(this, new Position(i + 1, 1), file);
                 this.report.add(issue);
             }

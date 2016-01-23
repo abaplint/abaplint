@@ -31,7 +31,7 @@ export class Check06 implements Check {
             } else if ((statement instanceof Statements.Check
                     || statement instanceof Statements.Exit)
                     && stack.length === 0) {
-                let issue = new Issue(this, statement.get_tokens()[0].get_pos(), file);
+                let issue = new Issue(this, statement.get_start(), file);
                 this.report.add(issue);
             }
         }

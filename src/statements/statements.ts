@@ -98,4 +98,8 @@ export * from "./break";
 export * from "./selectoption";
 export * from "./convert";
 export * from "./static";
+export * from "./compute";
+export * from "./multiply";
+export * from "./divide";
+
 export * from "./macro";

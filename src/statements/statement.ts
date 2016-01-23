@@ -1,4 +1,5 @@
 import { Token } from "../tokens/tokens";
+import Position from "../position";
 
 export abstract class Statement {
 
@@ -23,6 +24,10 @@ export abstract class Statement {
             prev = token;
         }
         return str;
+    }
+
+    public get_start(): Position {
+        return this.get_tokens()[0].get_pos();
     }
 
     public get_tokens(): Array<Token> {
