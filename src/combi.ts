@@ -95,9 +95,7 @@ class Optional implements IRunnable {
         for (let input of r) {
             result.push(input);
             let res = this.opt.run([input]);
-            for (let foo of res) {
-                result.push(foo);
-            }
+            result = result.concat(res);
         }
 
         return result;
@@ -113,12 +111,15 @@ class Star implements IRunnable {
 
         let res = r;
         let input: Array<Result> = [];
-        while (input.length !== res.length) {
+        while (true) {
             input = res;
             res = this.star.run(input);
-            for (let foo of res) {
-                result.push(foo);
+
+            if (res.length === 0) {
+                break;
             }
+
+            result = result.concat(res);
         }
 
         return result;
@@ -147,9 +148,7 @@ class Sequence implements IRunnable {
                 }
             }
 
-            for (let foo of temp) {
-                result.push(foo);
-            }
+            result = result.concat(temp);
         }
 
         return result;
@@ -174,9 +173,7 @@ class Alternative implements IRunnable {
             for (let seq of this.list) {
                 let temp = seq.run([input]);
 
-                for (let foo of temp) {
-                    result.push(foo);
-                }
+                result = result.concat(temp);
             }
         }
 
