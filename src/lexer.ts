@@ -57,10 +57,12 @@ export default class Lexer {
                 this.m = this.modeNormal;
             } else if (char === "'" && this.m === this.modeNormal) {
                 this.m = this.modeStr;
-                before = before + char;
+                this.add(before, row, col);
+                before = char;
             } else if (char === "`" && this.m === this.modeNormal) {
                 this.m = this.modePing;
-                before = before + char;
+                this.add(before, row, col);
+                before = char;
             } else if (char === "|" && this.m === this.modeNormal) {
                 this.m = this.modeTemplate;
                 before = before + char;
