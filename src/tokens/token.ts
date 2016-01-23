@@ -11,10 +11,6 @@ export abstract class Token {
         return this.str;
     }
 
-    public set_str(str: string) {
-        this.str = str;
-    }
-
     public get_row(): number {
         return this.pos.get_row();
     }

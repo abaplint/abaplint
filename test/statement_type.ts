@@ -11,6 +11,7 @@ describe("statement_type", function() {
     let tests = [
         {code: "REPORT zfoo.", type: Statements.Report, name: "Report"},
         {code: "WRITE 'Hello'.", type: Statements.Write, name: "Write"},
+        {code: "asdf", type: Statements.Unknown, name: "Unknown"},
         {code: "\" 'abc'.FOO", type: Statements.Comment, name: "Comment"},
     ];
 
