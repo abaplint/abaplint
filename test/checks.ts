@@ -3,6 +3,7 @@
 
 import Runner from "../src/runner";
 import File from "../src/file";
+import * as Formatters from "../src/formatters/";
 import * as chai from "chai";
 import * as fs from "fs";
 
@@ -35,6 +36,8 @@ describe("errors", function() {
             let file = new File(filename, fs.readFileSync(filename, "utf8"));
             Runner.run([file]);
             expect(file.get_count()).to.equals(test.errors);
+
+            expect(Formatters.Standard.output([file]).split("\n").length).to.equals(test.errors + 2);
         });
     });
 });
