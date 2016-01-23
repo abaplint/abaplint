@@ -26,6 +26,8 @@ export class Check12 implements Check {
                     || sta instanceof Statements.Add
                     || sta instanceof Statements.Subtract
                     || sta instanceof Statements.Multiply
+                    || ( sta instanceof Statements.Move
+                    && sta.get_tokens()[0].get_str() === 'MOVE' )
                     || sta instanceof Statements.Divide) {
                 let issue = new Issue(this, sta.get_start(), file);
                 this.report.add(issue);
