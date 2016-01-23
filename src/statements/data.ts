@@ -29,8 +29,16 @@ export class Data extends Statement {
                            opt(str("RANGE OF")));
             let def = seq(str("DEFAULT"), constant);
             let length = seq(str("LENGTH"), integer);
+            let decimals = seq(str("DECIMALS"), integer);
             let value = seq(str("VALUE"), reg(/^.+$/));
-            let simple = seq(start, variable, opt(seq(type, typename)), opt(def), opt(length), opt(str("READ-ONLY")), opt(value));
+            let simple = seq(start,
+                             variable,
+                             opt(seq(type, typename)),
+                             opt(def),
+                             opt(length),
+                             opt(decimals),
+                             opt(str("READ-ONLY")),
+                             opt(value));
 
             let typetable = alt(str("TYPE STANDARD TABLE OF"),
                                 str("TYPE STANDARD TABLE OF REF TO"),

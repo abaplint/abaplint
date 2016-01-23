@@ -33,6 +33,7 @@ describe("zero errors", function() {
         "zcomment03",
         "zdefine01",
         "zcall01",
+        "zdata01",
     ];
 
     tests.forEach(function(test) {
