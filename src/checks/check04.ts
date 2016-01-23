@@ -19,6 +19,7 @@ export class Check04 implements Check {
 
     public run(file: File) {
         let prev: number = 0;
+        let reported: number = 0;
         for (let statement of file.get_statements()) {
             let term = statement.get_terminator();
             if (statement instanceof Statements.Comment || term === ",") {
@@ -27,9 +28,10 @@ export class Check04 implements Check {
 
             let pos = statement.get_start();
             let row = pos.get_row();
-            if (prev === row) {
+            if (prev === row && row !== reported) {
                 let issue = new Issue(this, pos, file);
                 this.report.add(issue);
+                reported = row;
             }
             prev = row;
         }
