@@ -19,7 +19,10 @@
     "pretest": "npm run compile",
     "test": "mocha",
     "typings": "tsd install && cd test && tsd install && cd ..",
-    "posttest": "npm run tslint"
+    "posttest": "npm run tslint",
+    "precoverage": "istanbul cover ./node_modules/mocha/bin/_mocha --report lcovonly -- -R spec",
+    "coverage": "remap-istanbul -i coverage/coverage.json -o coverage/coverage-remap.json",
+    "postcoverage": "codecov -f coverage/coverage-remap.json"
   },
   "repository": {
     "type": "git",
@@ -44,7 +47,10 @@
     "uglify-js": "^2.6.1"
   },
   "dependencies": {
+    "codecov": "^1.0.1",
     "glob": "^6.0.4",
-    "minimist": "^1.2.0"
+    "istanbul": "^0.4.2",
+    "minimist": "^1.2.0",
+    "remap-istanbul": "^0.5.1"
   }
 }

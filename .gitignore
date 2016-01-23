@@ -1,4 +1,6 @@
 *.js
+*.js.map
 test/typings/
 typings/
+coverage/
 npm-debug.log
