@@ -131,7 +131,7 @@ class Sequence implements IRunnable {
 
     constructor(list: IRunnable[]) {
         if (list.length < 2) {
-            console.log("Sequence, length error");
+            throw new Error("Sequence, length error");
         }
         this.list = list;
     }
@@ -160,7 +160,7 @@ class Alternative implements IRunnable {
 
     constructor(list: IRunnable[]) {
         if (list.length < 2) {
-            console.log("Alternative, length error");
+            throw new Error("Alternative, length error");
         }
         this.list = list;
     }
