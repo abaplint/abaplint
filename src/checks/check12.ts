@@ -3,7 +3,7 @@ import File from "../file";
 import Report from "../report";
 import Issue from "../issue";
 import Position from "../position";
-import * as Statements from "../statements/statements";
+import * as Statements from "../statements/";
 
 export class Check12 implements Check {
 

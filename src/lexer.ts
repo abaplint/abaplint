@@ -1,4 +1,4 @@
-import * as Tokens from "./tokens/tokens";
+import * as Tokens from "./tokens/";
 import File from "./file";
 import Position from "./position";
 

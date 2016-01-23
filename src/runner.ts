@@ -1,6 +1,6 @@
 import Report from "./report";
 import File from "./file";
-import * as Checks from "./checks/checks";
+import * as Checks from "./checks/";
 
 export default class Runner {
     private report: Report;

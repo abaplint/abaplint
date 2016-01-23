@@ -1,9 +1,9 @@
 import { Check } from "./check";
 import File from "../file";
 import Report from "../report";
-import { Token } from "../tokens/tokens";
+import { Token } from "../tokens/";
 import Issue from "../issue";
-import * as Statements from "../statements/statements";
+import * as Statements from "../statements/";
 
 export class Check04 implements Check {
 

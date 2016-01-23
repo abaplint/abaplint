@@ -1,4 +1,4 @@
-import * as Tokens from "./tokens/tokens";
+import * as Tokens from "./tokens/";
 
 class Result {
     private tokens: Array<Tokens.Token>;

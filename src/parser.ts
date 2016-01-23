@@ -1,6 +1,6 @@
-import * as Tokens from "./tokens/tokens";
+import * as Tokens from "./tokens/";
 import File from "./file";
-import * as Statements from "./statements/statements";
+import * as Statements from "./statements/";
 
 export default class Parser {
     private statements: Array<Statements.Statement> = [];

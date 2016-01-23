@@ -1,4 +1,4 @@
-import { Check } from "./checks/checks";
+import { Check } from "./checks/";
 import File from "./file";
 import Position from "./position";
 

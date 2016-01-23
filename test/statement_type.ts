@@ -3,7 +3,7 @@
 
 import File from "../src/file";
 import * as chai from "chai";
-import * as Statements from "../src/statements/statements";
+import * as Statements from "../src/statements/";
 
 let expect = chai.expect;
 

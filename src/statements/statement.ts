@@ -1,4 +1,4 @@
-import { Token } from "../tokens/tokens";
+import { Token } from "../tokens/";
 import Position from "../position";
 
 export abstract class Statement {

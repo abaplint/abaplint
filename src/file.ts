@@ -1,5 +1,5 @@
-import { Token } from "./tokens/tokens";
-import { Statement } from "./statements/statements";
+import { Token } from "./tokens/";
+import { Statement } from "./statements/";
 import Lexer from "./lexer";
 import Parser from "./parser";
 

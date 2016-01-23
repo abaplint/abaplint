@@ -1,5 +1,5 @@
 import { Statement } from "./statement";
-import { Token } from "../tokens/tokens";
+import { Token } from "../tokens/";
 
 export class Set extends Statement {
 

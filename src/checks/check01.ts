@@ -2,7 +2,7 @@ import { Check } from "./check";
 import File from "../file";
 import Report from "../report";
 import Issue from "../issue";
-import * as Statements from "../statements/statements";
+import * as Statements from "../statements/";
 
 export class Check01 implements Check {
 
