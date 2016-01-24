@@ -15,6 +15,19 @@ export default class Config {
         this.config = JSON.parse(json);
     }
 
+    public static search_file(name = "abaplint.json") {
+        let json = "";
+/*
+        let file = findup(name, { cwd: ".", nocase: true });
+        if (file != null && fs.existsSync(file)) {
+            json = fs.readFileSync(file, "utf8");
+        } else {
+            json = this.get_default();
+        }
+*/
+        this.set(json);
+    }
+
     public static get_default(): string {
         let defaults: Array<string> = [];
 

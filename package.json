@@ -52,6 +52,6 @@
   },
   "dependencies": {
     "glob": "^6.0.4",
-    "minimist": "^1.2.0",
+    "minimist": "^1.2.0"
   }
 }
