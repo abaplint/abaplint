@@ -44,14 +44,14 @@
     "mocha": "^2.3.4",
     "tsd": "^0.6.5",
     "tslint": "^3.3.0",
+    "codecov": "^1.0.1",
     "typescript": "^1.7.5",
+    "istanbul": "^0.4.2",
+    "remap-istanbul": "^0.5.1",
     "uglify-js": "^2.6.1"
   },
   "dependencies": {
-    "codecov": "^1.0.1",
     "glob": "^6.0.4",
-    "istanbul": "^0.4.2",
     "minimist": "^1.2.0",
-    "remap-istanbul": "^0.5.1"
   }
 }
