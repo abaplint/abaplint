@@ -1,4 +1,4 @@
-export * from "./check";
+export * from "./rule";
 export * from "./check01"; // Start statement at tab position
 export * from "./check02"; // Use functional writing style
 export * from "./check03"; // Line contains only . or ).

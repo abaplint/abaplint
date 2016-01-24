@@ -1,9 +1,9 @@
-import { Check } from "./check";
+import { Rule } from "./rule";
 import File from "../file";
 import Issue from "../issue";
 import Position from "../position";
 
-export class Check08 implements Check {
+export class Check08 implements Rule {
 
     public get_key(): string {
         return "08";

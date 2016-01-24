@@ -1,16 +1,16 @@
-import { Check } from "./checks/";
+import { Rule } from "./rules/";
 import File from "./file";
 import Position from "./position";
 
 export default class Issue {
 
-    constructor(private check: Check,
+    constructor(private rule: Rule,
                 private position: Position,
                 private file: File) {
     }
 
     public get_description(): string {
-        return this.check.get_description();
+        return this.rule.get_description();
     }
 
     public get_row(): number {

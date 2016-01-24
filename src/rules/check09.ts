@@ -1,10 +1,10 @@
-import { Check } from "./check";
+import { Rule } from "./rule";
 import File from "../file";
 import Issue from "../issue";
 import Position from "../position";
 import * as Statements from "../statements/";
 
-export class Check09 implements Check {
+export class Check09 implements Rule {
 
     public get_key(): string {
         return "09";
