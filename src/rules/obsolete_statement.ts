@@ -6,7 +6,7 @@ import * as Statements from "../statements/";
 export class Check12 implements Rule {
 
     public get_key(): string {
-        return "12";
+        return "obsolete_statement";
     }
 
     public get_description(): string {

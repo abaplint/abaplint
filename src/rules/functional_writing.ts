@@ -5,7 +5,7 @@ import Issue from "../issue";
 export class Check02 implements Rule {
 
     public get_key(): string {
-        return "02";
+        return "functional_writing";
     }
 
     public get_description(): string {

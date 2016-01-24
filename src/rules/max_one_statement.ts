@@ -1,29 +1,36 @@
 import { Rule } from "./rule";
 import File from "../file";
+import { Token } from "../tokens/";
 import Issue from "../issue";
 import * as Statements from "../statements/";
 
-export class Check01 implements Rule {
+export class Check04 implements Rule {
 
     public get_key(): string {
-        return "01";
+        return "max_one_statement";
     }
 
     public get_description(): string {
-        return "Start statement at tab position";
+        return "Max one statement per line";
     }
 
     public run(file: File) {
+        let prev: number = 0;
+        let reported: number = 0;
         for (let statement of file.get_statements()) {
-            if (statement instanceof Statements.Comment) {
+            let term = statement.get_terminator();
+            if (statement instanceof Statements.Comment || term === ",") {
                 continue;
             }
 
             let pos = statement.get_start();
-            if ((pos.get_col() - 1) % 2 !== 0) {
+            let row = pos.get_row();
+            if (prev === row && row !== reported) {
                 let issue = new Issue(this, pos, file);
                 file.add(issue);
+                reported = row;
             }
+            prev = row;
         }
     }
 

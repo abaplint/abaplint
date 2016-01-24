@@ -6,7 +6,7 @@ import * as Statements from "../statements/";
 export class Check06 implements Rule {
 
     public get_key(): string {
-        return "06";
+        return "exit_or_check";
     }
 
     public get_description(): string {

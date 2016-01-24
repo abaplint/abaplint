@@ -7,7 +7,7 @@ import * as Statements from "../statements/";
 export class Check10 implements Rule {
 
     public get_key(): string {
-        return "10";
+        return "colon_missing_space";
     }
 
     public get_description(): string {

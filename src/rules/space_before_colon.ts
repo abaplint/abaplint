@@ -5,7 +5,7 @@ import Issue from "../issue";
 export class Check07 implements Rule {
 
     public get_key(): string {
-        return "07";
+        return "space_before_colon";
     }
 
     public get_description(): string {
