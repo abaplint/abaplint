@@ -12,6 +12,12 @@ export class Check07 implements Rule {
         return "Space before colon";
     }
 
+    public default_config() {
+        return {
+			"enabled": true
+		};
+    }
+
     public run(file: File) {
         let prev = file.get_tokens[0];
 

@@ -13,6 +13,12 @@ export class Check12 implements Rule {
         return "Statement is obsolete";
     }
 
+    public default_config() {
+        return {
+			"enabled": true
+		};
+    }
+
     public run(file: File) {
         let statements = file.get_statements();
 

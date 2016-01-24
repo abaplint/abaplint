@@ -13,6 +13,12 @@ export class Check06 implements Rule {
         return "EXIT or CHECK outside of loop";
     }
 
+    public default_config() {
+        return {
+			"enabled": true
+		};
+    }
+
     public run(file: File) {
         let stack: Array<Statements.Statement> = [];
 

@@ -8,7 +8,6 @@ export default class Parser {
     constructor(private file: File) {
         this.run();
         this.categorize();
-// console.dir(this.statements);
         file.set_statements(this.statements);
     }
 
@@ -24,14 +23,6 @@ export default class Parser {
                         break;
                     }
                 }
-/*
-                if (statement instanceof Statements.Unknown) {
-                    console.log("Unknown: " +
-                        this.file.get_filename() +
-                        ", " +
-                        statement.concat_tokens());
-                }
-*/
             }
 //            console.dir(statement);
             result.push(statement);

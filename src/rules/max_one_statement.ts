@@ -14,6 +14,12 @@ export class Check04 implements Rule {
         return "Max one statement per line";
     }
 
+    public default_config() {
+        return {
+			"enabled": true
+		};
+    }
+
     public run(file: File) {
         let prev: number = 0;
         let reported: number = 0;

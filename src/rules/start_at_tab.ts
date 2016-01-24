@@ -13,6 +13,12 @@ export class Check01 implements Rule {
         return "Start statement at tab position";
     }
 
+    public default_config() {
+        return {
+			"enabled": true
+		};
+    }
+
     public run(file: File) {
         for (let statement of file.get_statements()) {
             if (statement instanceof Statements.Comment) {

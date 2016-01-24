@@ -14,6 +14,12 @@ export class Check10 implements Rule {
         return "Missing space after colon";
     }
 
+    public default_config() {
+        return {
+			"enabled": true
+		};
+    }
+
     public run(file: File) {
         let tokens = file.get_tokens();
 

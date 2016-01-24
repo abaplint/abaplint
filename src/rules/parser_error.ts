@@ -14,6 +14,12 @@ export class Check09 implements Rule {
         return "Parser error(Unknown statement)";
     }
 
+    public default_config() {
+        return {
+			"enabled": true
+		};
+    }
+
     public run(file: File) {
         let pos = new Position(0, 0);
         for (let statement of file.get_statements()) {

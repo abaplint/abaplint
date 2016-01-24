@@ -13,6 +13,12 @@ export class Check08 implements Rule {
         return "Code contains tab";
     }
 
+    public default_config() {
+        return {
+			"enabled": true
+		};
+    }
+
     public run(file: File) {
         let lines = file.get_raw().split("\n");
         for (let line = 0; line < lines.length; line++) {

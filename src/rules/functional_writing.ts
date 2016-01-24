@@ -12,6 +12,12 @@ export class Check02 implements Rule {
         return "Use functional writing style";
     }
 
+    public default_config() {
+        return {
+			"enabled": true
+		};
+    }
+
     private startsWith(string: string, value: string): boolean {
         return string.substr(0, value.length) === value;
     }

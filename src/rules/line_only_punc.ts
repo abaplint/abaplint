@@ -14,6 +14,12 @@ export class Check03 implements Rule {
         return "Line contains only . or ).";
     }
 
+    public default_config() {
+        return {
+			"enabled": true
+		};
+    }
+
     public run(file: File) {
         let rows = file.get_raw_rows();
         for (let i = 0; i < rows.length; i++) {

@@ -14,6 +14,12 @@ export class Check11 implements Rule {
         return "Contains non 7 bit ascii character";
     }
 
+    public default_config() {
+        return {
+			"enabled": true
+		};
+    }
+
     public run(file: File) {
         let rows = file.get_raw_rows();
 
