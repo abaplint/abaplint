@@ -15,13 +15,19 @@ describe("formatters", function() {
     ];
 
     tests.forEach(function(test) {
-        it("Json", () => {
-            let filename = "./test/abap/" + test.file + ".prog.abap";
-            let file = new File(filename, fs.readFileSync(filename, "utf8"));
-            Runner.run([file]);
-            expect(file.get_count()).to.equals(test.errors);
+        let filename = "./test/abap/" + test.file + ".prog.abap";
+        let file = new File(filename, fs.readFileSync(filename, "utf8"));
+        Runner.run([file]);
 
+        it("Json", () => {
+            expect(file.get_count()).to.equals(test.errors);
             expect(Formatters.Json.output([file]).split("\n").length).to.equals(test.errors * 15 + 2);
         });
+
+        it("Standard", () => {
+            expect(file.get_count()).to.equals(test.errors);
+            expect(Formatters.Standard.output([file]).split("\n").length).to.equals(3);
+        });
+
     });
 });

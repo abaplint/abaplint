@@ -28,7 +28,7 @@ if (argv["h"] !== undefined || argv["help"] !== undefined) {
     output = output + "\n";
     output = output + "Options:\n";
     output = output + "  -h, --help       display this help\n";
-    output = output + "  -f, --format     output format (standard, total)\n";
+    output = output + "  -f, --format     output format (standard, total, json, summary)\n";
     output = output + "  -v, --version    current version\n";
 } else if (argv["v"] !== undefined || argv["version"] !== undefined) {
     let raw = fs.readFileSync(__dirname + "/../package.json", "utf8");
@@ -48,6 +48,9 @@ if (argv["h"] !== undefined || argv["help"] !== undefined) {
     switch (format) {
         case "total":
             output = Formatters.Total.output(files);
+            break;
+        case "summary":
+            output = Formatters.Summary.output(files);
             break;
         case "json":
             output = Formatters.Json.output(files);
