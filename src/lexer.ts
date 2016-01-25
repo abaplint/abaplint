@@ -23,8 +23,12 @@ export default class Lexer {
             let pos = new Position(row, col - s.length);
             if (this.m === COMMENT) {
                 this.tokens.push(new Tokens.Comment(pos, s));
+            } else if (this.m === PING || this.m === STR || this.m === TEMPLATE) {
+                this.tokens.push(new Tokens.String(pos, s));
             } else if (s.substr(0, 1) === "#") {
                 this.tokens.push(new Tokens.Pragma(pos, s));
+            } else if (s.length === 1 && (s === "." || s === ",")) {
+                this.tokens.push(new Tokens.Punctuation(pos, s));
             } else {
                 this.tokens.push(new Tokens.Identifier(pos, s));
             }
