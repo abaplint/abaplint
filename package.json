@@ -1,6 +1,6 @@
 {
   "name": "abaplint",
-  "version": "0.0.14",
+  "version": "0.0.15",
   "description": "Linter for ABAP",
   "bin": {
     "abaplint": "./abaplint"
@@ -20,7 +20,7 @@
     "test": "mocha",
     "typings": "tsd install && cd test && tsd install && cd ..",
     "posttest": "npm run tslint",
-    "clean": "find src -name \"*.js\" -type f -delete && find src -name \"*.js.map\" -type f -delete",
+    "clean": "find src -name \"*.js\" -type f -delete && find src -name \"*.js.map\" -type f -delete && find test -name \"*.js\" -type f -delete && find test -name \"*.js.map\" -type f -delete",
     "precoverage": "istanbul cover ./node_modules/mocha/bin/_mocha --report lcovonly -- -R spec",
     "coverage": "remap-istanbul -i coverage/coverage.json -o coverage/coverage-remap.json",
     "postcoverage": "codecov -f coverage/coverage-remap.json"

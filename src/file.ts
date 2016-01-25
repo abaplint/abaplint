@@ -13,13 +13,14 @@ export default class File {
 
     constructor(filename: string, raw: string) {
 // ignore all carriage returns
-        this.raw = raw.replace(/\r/g,"");
+        this.raw = raw.replace(/\r/g, "");
         this.filename = filename;
         new Lexer(this);
         new Parser(this);
     }
 
-// todo, something wrong here, refactor?
+// todo, something wrong here, refactor? the issues are also linked to
+// a file object
     public add(issue: Issue) {
         this.issues.push(issue);
     }

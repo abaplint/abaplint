@@ -31,7 +31,7 @@ if (argv["h"] !== undefined || argv["help"] !== undefined) {
     output = output + "  -f, --format     output format (standard, total)\n";
     output = output + "  -v, --version    current version\n";
 } else if (argv["v"] !== undefined || argv["version"] !== undefined) {
-    let raw = fs.readFileSync(__dirname + "/package.json", "utf8");
+    let raw = fs.readFileSync(__dirname + "/../package.json", "utf8");
     output = output + JSON.parse(raw).version + "\n";
 } else if (argv._[0] === undefined) {
     output = output + "Supply filename\n";

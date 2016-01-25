@@ -8,13 +8,13 @@ import File from "../src/file";
 
 let expect = chai.expect;
 
-describe("no_unknown", function() {
-    let filename = "zno_unknown";
-    it(filename + " should have no Unknown statements", () => {
+describe("all_unknown", function() {
+    let filename = "zall_unknown";
+    it(filename + " should only have Unknown statements", () => {
         let code = fs.readFileSync("./test/abap/" + filename + ".prog.abap", "utf8");
         let file = new File(filename, code);
         for (let statement of file.get_statements()) {
-            expect(statement instanceof Statements.Unknown).to.equals(false);
+            expect(statement instanceof Statements.Unknown).to.equals(true);
         }
     });
 });
