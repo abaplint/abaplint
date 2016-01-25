@@ -12,3 +12,4 @@ export * from "./exit_or_check";
 export * from "./line_only_punc";
 export * from "./obsolete_statement";
 export * from "./start_at_tab";
+export * from "./whitespace_end";
