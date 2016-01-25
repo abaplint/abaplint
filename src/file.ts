@@ -8,8 +8,13 @@ export default class File {
     private tokens: Array<Token> = [];
     private statements: Array<Statement> = [];
     private issues: Array<Issue> = [];
+    private raw: string = "";
+    private filename: string = "";
 
-    constructor(private filename: string, private raw: string) {
+    constructor(filename: string, raw: string) {
+// ignore all carriage returns
+        this.raw = raw.replace(/\r/g,"");
+        this.filename = filename;
         new Lexer(this);
         new Parser(this);
     }
