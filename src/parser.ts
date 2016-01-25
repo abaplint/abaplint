@@ -15,7 +15,8 @@ export default class Parser {
         let result: Array<Statements.Statement> = [];
 
         for (let statement of this.statements) {
-            if (statement instanceof Statements.Unknown) {
+            let last = statement.get_tokens()[statement.get_tokens().length - 1];
+            if (statement instanceof Statements.Unknown && last instanceof Tokens.Punctuation) {
                 for (let st in Statements) {
                     let known = Statements[st].match(statement.get_tokens());
                     if (known !== undefined) {

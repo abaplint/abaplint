@@ -13,6 +13,7 @@ describe("statement_type", function() {
         {code: "WRITE 'Hello'.", type: Statements.Write, name: "Write"},
         {code: "asdf", type: Statements.Unknown, name: "Unknown"},
         {code: "\" 'abc'.FOO", type: Statements.Comment, name: "Comment"},
+        {code: "WRITE 'Hello'", type: Statements.Unknown, name: "Unknown"},
     ];
 
     tests.forEach(function(test) {
