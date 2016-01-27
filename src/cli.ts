@@ -44,7 +44,7 @@ if (argv["h"] !== undefined || argv["help"] !== undefined) {
     }
 
     Runner.run(files);
-
+// todo, this can be done more generic
     switch (format) {
         case "total":
             output = Formatters.Total.output(files);

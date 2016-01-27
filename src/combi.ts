@@ -22,9 +22,12 @@ class Result {
     }
 }
 
-interface IRunnable {
+export interface IRunnable {
     run(r: Array<Result>): Array<Result>;
+    viz(after: Array<string>): {graph: string, nodes: Array<string> };
 }
+
+let counter = 1;
 
 class Anything implements IRunnable {
     public run(r: Array<Result>): Array<Result> {
@@ -38,11 +41,19 @@ class Anything implements IRunnable {
         }
         return result;
     }
+
+    public viz(after: Array<string>) {
+        return {graph: "anything;", nodes: [] };
+    }
 }
 
 class Nothing implements IRunnable {
     public run(r: Array<Result>): Array<Result> {
         return [];
+    }
+
+    public viz(after: Array<string>) {
+        return {graph: "nothing;", nodes: [] };
     }
 }
 
@@ -66,6 +77,13 @@ class Regex implements IRunnable {
 
         return result;
     }
+
+    public viz(after: Array<string>) {
+        let node = "node" + counter++;
+        let graph = node + " [label = \"" + this.regexp.source + "\"];\n";
+        after.forEach((a) => { graph = graph + node + " -> " + a + ";\n"; });
+        return {graph: graph, nodes: [node] };
+    }
 }
 
 class Word implements IRunnable {
@@ -83,6 +101,13 @@ class Word implements IRunnable {
         }
         return result;
     }
+
+    public viz(after: Array<string>) {
+        let node = "node" + counter++;
+        let graph = node + " [label = \"\\\"" + this.s + "\\\"\"];\n";
+        after.forEach((a) => { graph = graph + node + " -> " + a + ";\n"; });
+        return {graph: graph, nodes: [node] };
+    }
 }
 
 class Optional implements IRunnable {
@@ -99,6 +124,12 @@ class Optional implements IRunnable {
         }
 
         return result;
+    }
+
+    public viz(after: Array<string>) {
+        let res = this.opt.viz(after);
+        let nodes = res.nodes.concat(after);
+        return {graph: res.graph, nodes: nodes };
     }
 }
 
@@ -123,6 +154,14 @@ class Star implements IRunnable {
         }
 
         return result;
+    }
+
+    public viz(after: Array<string>) {
+        let res = this.star.viz(after);
+        let graph = res.graph;
+// todo, the following is probably wrong, but will work in most cases
+        res.nodes.forEach((node) => { graph = graph + node + " -> " + node + ";\n"; });
+        return {graph: graph, nodes: res.nodes };
     }
 }
 
@@ -153,6 +192,18 @@ class Sequence implements IRunnable {
 
         return result;
     }
+
+    public viz(after: Array<string>) {
+        let graph = "";
+
+        for (let i = this.list.length - 1; i >= 0; i--) {
+            let seq = this.list[i].viz(after);
+            graph = graph + seq.graph;
+            after = seq.nodes;
+        }
+
+        return {graph: graph, nodes: after };
+    }
 }
 
 class Alternative implements IRunnable {
@@ -179,9 +230,33 @@ class Alternative implements IRunnable {
 
         return result;
     }
+
+    public viz(after: Array<string>) {
+        let graph = "";
+        let nodes: Array<string> = [];
+
+        for (let opt of this.list) {
+            let res = opt.viz(after);
+            graph = graph + res.graph;
+            nodes = nodes.concat(res.nodes);
+        }
+        return {graph: graph, nodes: nodes };
+    }
 }
 
 export class Combi {
+    public static viz(runnable: IRunnable): string {
+        let result = "";
+        let graph = runnable.viz(["end"]);
+        result = "digraph g {\n" +
+            "start [label = \"Start\"];\n" +
+            "end [label = \"End\"];\n" +
+            graph.graph;
+        graph.nodes.forEach((node) => { result = result + "start -> " + node + ";\n"; } );
+        result = result + "}";
+        return result;
+    }
+
     public static run(runnable: IRunnable, tokens: Array<Tokens.Token>, remove = false): boolean {
         let copy = tokens.slice();
         if (remove === true) {

@@ -4,6 +4,7 @@
 import * as chai from "chai";
 import * as Combi from "../src/combi";
 import * as Tokens from "../src/tokens/";
+import * as Statements from "../src/statements/";
 import Position from "../src/position";
 
 let expect = chai.expect;
@@ -88,6 +89,8 @@ let tests = [
 {n: "reg2", c: reg(/^\w+$/),                      t: tok("foo!!"),   e: false},
 {n: "reg3", c: reg(/^\w+$/),                      t: tok("foo bar"), e: false},
 {n: "reg4", c: seq(reg(/^\w+$/), reg(/^\w+$/)),   t: tok("foo bar"), e: true},
+{n: "reg5", c: reg(/^(LIKE|TYPE)$/i),             t: tok("type"),    e: true},
+{n: "reg6", c: reg(/^(LIKE|TYPE)$/i),             t: tok("TYPE"),    e: true},
 ];
 
 describe("combi", function() {
@@ -95,6 +98,19 @@ describe("combi", function() {
         it(test.n + " should be " + test.e, () => {
             let result = Combi.Combi.run(test.c, test.t);
             expect(result).to.equals(test.e);
+        });
+    });
+});
+
+let viz = [
+{n: "1", c: Statements.Data.get_matcher() }
+];
+
+describe("combi vizualization", function() {
+    viz.forEach(function(v) {
+        it("test " + v.n, () => {
+            let result = Combi.Combi.viz(v.c);
+            expect(result).to.be.a("string");
         });
     });
 });

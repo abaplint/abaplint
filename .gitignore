@@ -4,3 +4,4 @@ test/typings/
 typings/
 coverage/
 npm-debug.log
+web/viz/*.txt

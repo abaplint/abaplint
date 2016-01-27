@@ -18,6 +18,7 @@
     "postcompile": "npm run uglify",
     "pretest": "npm run compile",
     "test": "mocha",
+    "viz": "node src/viz.js",
     "typings": "tsd install && cd test && tsd install && cd ..",
     "posttest": "npm run tslint",
     "clean": "find src -name \"*.js\" -type f -delete && find src -name \"*.js.map\" -type f -delete && find test -name \"*.js\" -type f -delete && find test -name \"*.js.map\" -type f -delete",
