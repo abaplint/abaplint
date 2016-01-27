@@ -1,14 +1,27 @@
 import { Statement } from "./statement";
 import { Token } from "../tokens/";
+import * as Combi from "../combi";
+
+let str  = Combi.str;
+let seq  = Combi.seq;
+// let alt  = Combi.alt;
+// let opt  = Combi.opt;
+let reg  = Combi.regex;
+let star = Combi.star;
 
 export class Assert extends Statement {
 
+    public static get_matcher(): Combi.IRunnable {
+        return seq(str("ASSERT"), star(reg(/.*/)));
+    }
+
     public static match(tokens: Array<Token>): Statement {
-        let str = Statement.concat(tokens).toUpperCase();
-        if (/^ASSERT /.test(str)) {
+        let result = Combi.Combi.run(this.get_matcher( ), tokens, true);
+        if (result === true) {
             return new Assert(tokens);
+        } else {
+            return undefined;
         }
-        return undefined;
     }
 
 }
