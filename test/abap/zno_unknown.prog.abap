@@ -74,3 +74,21 @@ SCAN ABAP-SOURCE tab1 TOKENS INTO tab2 STATEMENTS INTO tab3.
 shift lv_foo by 2 places left.
 update asdf from foo.
 types: foo type c.
+class lcl_foo definition.
+endclass.
+class lcl_foo implementation.
+method foo.
+endmethod.
+endclass.
+check 1 = 2.
+commit work.
+rollback work.
+constants: lv_foo type c value 'a'.
+OPEN DATASET foobar FOR OUTPUT.
+TRANSFER 'sfd' TO foobar.
+submit zfoobar and return.
+split lv_foo at space into table lt_foobar.
+set bit 2 of lv_foo.
+raise exception type zcx_root.
+message 'sdf' type 'S'.
+FIND FIRST OCCURRENCE OF 'boo' in lv_foo MATCH OFFSET lv_offset.
