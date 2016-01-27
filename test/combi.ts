@@ -109,7 +109,7 @@ let viz = [
 describe("combi vizualization", function() {
     viz.forEach(function(v) {
         it("test " + v.n, () => {
-            let result = Combi.Combi.viz(v.c);
+            let result = Combi.Combi.viz("test", v.c);
             expect(result).to.be.a("string");
         });
     });

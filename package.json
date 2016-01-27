@@ -18,7 +18,7 @@
     "postcompile": "npm run uglify",
     "pretest": "npm run compile",
     "test": "mocha",
-    "viz": "node src/viz.js",
+    "viz": "node src/graphs.js && node web/viz/generate.js",
     "typings": "tsd install && cd test && tsd install && cd ..",
     "posttest": "npm run tslint",
     "clean": "find src -name \"*.js\" -type f -delete && find src -name \"*.js.map\" -type f -delete && find test -name \"*.js\" -type f -delete && find test -name \"*.js.map\" -type f -delete",
@@ -42,14 +42,15 @@
   "devDependencies": {
     "browserify": "^13.0.0",
     "chai": "^3.4.1",
+    "codecov": "^1.0.1",
+    "istanbul": "^0.4.2",
     "mocha": "^2.3.4",
+    "remap-istanbul": "^0.5.1",
     "tsd": "^0.6.5",
     "tslint": "^3.3.0",
-    "codecov": "^1.0.1",
     "typescript": "^1.7.5",
-    "istanbul": "^0.4.2",
-    "remap-istanbul": "^0.5.1",
-    "uglify-js": "^2.6.1"
+    "uglify-js": "^2.6.1",
+    "viz.js": "^1.3.0"
   },
   "dependencies": {
     "glob": "^6.0.4",

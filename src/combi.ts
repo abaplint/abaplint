@@ -245,10 +245,10 @@ class Alternative implements IRunnable {
 }
 
 export class Combi {
-    public static viz(runnable: IRunnable): string {
+    public static viz(name: string, runnable: IRunnable): string {
         let result = "";
         let graph = runnable.viz(["end"]);
-        result = "digraph g {\n" +
+        result = "digraph " + name + " {\n" +
             "start [label = \"Start\"];\n" +
             "end [label = \"End\"];\n" +
             graph.graph;

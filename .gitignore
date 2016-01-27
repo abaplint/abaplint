@@ -5,3 +5,7 @@ typings/
 coverage/
 npm-debug.log
 web/viz/*.txt
+!web/viz/generate.js
+web/viz/*.txt
+web/viz/*.svg
+web/viz/*.png
