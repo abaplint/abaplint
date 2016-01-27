@@ -29,5 +29,10 @@ describe("formatters", function() {
             expect(Formatters.Standard.output([file]).split("\n").length).to.equals(3);
         });
 
+        it("Summary", () => {
+            expect(file.get_count()).to.equals(test.errors);
+            expect(Formatters.Summary.output([file]).split("\n").length).to.equals(2);
+        });
+
     });
 });

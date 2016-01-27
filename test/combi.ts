@@ -104,7 +104,9 @@ describe("combi", function() {
 });
 
 let viz = [
-{n: "1", c: Statements.Data.get_matcher() }
+{n: "1", c: Statements.Data.get_matcher() },
+{n: "2", c: anything() },
+{n: "3", c: nothing() },
 ];
 
 describe("combi vizualization", function() {

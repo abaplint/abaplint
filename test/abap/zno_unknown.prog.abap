@@ -65,3 +65,12 @@ enddo.
 describe lt_foo lines lv_lines.
 free lt_foo.
 leave to screen 0.
+assign component 'asdf' of ls_foo to <foobar>.
+at first.
+try.
+catch zcx_root.
+endtry.
+SCAN ABAP-SOURCE tab1 TOKENS INTO tab2 STATEMENTS INTO tab3.
+shift lv_foo by 2 places left.
+update asdf from foo.
+types: foo type c.
