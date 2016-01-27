@@ -36,6 +36,7 @@ let tests = [
 {n: "str2", c: str("foo"),                        t: tok("bar"),     e: false},
 {n: "str3", c: str("foo"),                        t: [],             e: false},
 {n: "str4", c: str("DATA"),                       t: tok("data"),    e: true},
+{n: "str5", c: str("foo bar"),                    t: tok("foo bar"), e: true},
 {n: "seq1", c: seq(str("foo"), str("bar")),       t: tok("foo bar"), e: true},
 {n: "seq2", c: seq(str("foo"), str("bar")),       t: tok("bar foo"), e: false},
 {n: "seq3", c: seq(str("foo"), str("bar")),       t: tok("foo"),     e: false},

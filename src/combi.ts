@@ -206,6 +206,33 @@ class Sequence implements IRunnable {
     }
 }
 
+class WordSequence implements IRunnable {
+
+    private str: String;
+
+    constructor(str: String) {
+        this.str = str;
+    }
+
+    public run(r: Array<Result>): Array<Result> {
+        let split = this.str.split(" ");
+
+        let words: Array<IRunnable> = [];
+        for (let str of split) {
+            words.push(new Word(str));
+        }
+        return (new Sequence(words)).run(r);
+
+    }
+
+    public viz(after: Array<string>) {
+        let node = "node" + counter++;
+        let graph = node + " [label = \"\\\"" + this.str + "\\\"\"];\n";
+        after.forEach((a) => { graph = graph + node + " -> " + a + ";\n"; });
+        return {graph: graph, nodes: [node] };
+    }
+}
+
 class Alternative implements IRunnable {
     private list: Array<IRunnable>;
 
@@ -291,13 +318,17 @@ export function str(s: String): IRunnable {
 
     if (split.length === 1) {
         return new Word(s);
+    } else {
+        return new WordSequence(s);
     }
 
+/*
     let words: Array<IRunnable> = [];
     for (let str of split) {
         words.push(new Word(str));
     }
     return new Sequence(words);
+*/
 }
 export function seq(first: IRunnable, ...rest: IRunnable[]): IRunnable {
     return new Sequence([first].concat(rest));

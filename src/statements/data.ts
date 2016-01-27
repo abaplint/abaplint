@@ -55,16 +55,12 @@ export class Data extends Statement {
     }
 
     public static match(tokens: Array<Token>): Statement {
-        let st = Statement.concat(tokens).toUpperCase();
-        if (/^(CLASS-)?DATA /.test(st)) {
-            let statement = this.get_matcher( );
-            let result = Combi.Combi.run(statement, tokens, true);
-            if (result === true) {
-                return new Data(tokens);
-            }
-// console.dir(tokens);
+        let result = Combi.Combi.run(this.get_matcher( ), tokens, true);
+        if (result === true) {
+            return new Data(tokens);
+        } else {
+            return undefined;
         }
-        return undefined;
     }
 
 }
