@@ -34,6 +34,16 @@ data: lt_foo type table of bar initial size 0.
 data foobar type abap_bool read-only value ABAP_FALSE ##NO_TEXT.
 data item(4) value '  # '.
 
+* append
+append 'sdf' to lt_foo.
+APPEND INITIAL LINE TO lt_lines ASSIGNING <ls_line>.
+APPEND LINES OF lt_objects TO gt_programs.
+APPEND is_definition-definition TO ls_obj_old-wdyd-defin.
+APPEND <ls_component> TO ls_obj_old-wdyc-ccomp.
+* APPEND <ls_node>-obj_name TO lt_findstrings.
+* APPEND LINES OF read_text_online( ) TO rt_repos.
+* APPEND read_controller( ls_controller_key ) TO rs_component-ctlr_metadata.
+
 * misc
 condense lv_foo.
 add 2 to lv_foo.
@@ -41,7 +51,6 @@ continue.
 rollback work.
 clear lv_foo.
 assert 1 = 0.
-append 'sdf' to lt_foo.
 concatenate space space into lv_foo.
 while 1 = 2.
 endwhile.

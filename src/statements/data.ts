@@ -1,6 +1,7 @@
 import { Statement } from "./statement";
 import { Token } from "../tokens/";
 import * as Combi from "../combi";
+import Reuse from "./reuse";
 
 let str  = Combi.str;
 let seq  = Combi.seq;
@@ -16,21 +17,17 @@ export class Data extends Statement {
     }
 
     public static get_matcher(): Combi.IRunnable {
-        let variable = reg(/^\w+(\(\d+\))?$/);
-        let typename = reg(/^\w+((->|=>|-)\w+)?$/);
-        let constant = reg(/^\w+$/);
-        let integer = reg(/^\d+$/);
         let start = reg(/^(CLASS-)?DATA$/i);
         let type = seq(reg(/^(LIKE|TYPE)$/i),
                        opt(str("LINE OF")),
                        opt(str("REF TO")),
                        opt(str("RANGE OF")));
-        let def = seq(str("DEFAULT"), constant);
-        let length = seq(str("LENGTH"), integer);
-        let decimals = seq(str("DECIMALS"), integer);
+        let def = seq(str("DEFAULT"), Reuse.constant());
+        let length = seq(str("LENGTH"), Reuse.integer());
+        let decimals = seq(str("DECIMALS"), Reuse.integer());
         let value = seq(str("VALUE"), reg(/^.+$/));
-        let simple = seq(variable,
-                         opt(seq(type, typename)),
+        let simple = seq(Reuse.variable_def(),
+                         opt(seq(type, Reuse.typename())),
                          opt(def),
                          opt(length),
                          opt(decimals),
@@ -45,11 +42,16 @@ export class Data extends Statement {
                       opt(alt(str("NON-UNIQUE"), str("UNIQUE"))),
                       opt(str("DEFAULT")),
                       str("KEY"),
-                      opt(star(variable)));
-        let initial = seq(str("INITIAL SIZE"), integer);
-        let table = seq(variable, typetable, typename, opt(key), opt(str("READ-ONLY")), opt(initial));
+                      opt(star(Reuse.variable_def())));
+        let initial = seq(str("INITIAL SIZE"), Reuse.integer());
+        let table = seq(Reuse.variable_def(),
+                        typetable,
+                        Reuse.typename(),
+                        opt(key),
+                        opt(str("READ-ONLY")),
+                        opt(initial));
 
-        let structure = seq(alt(str("BEGIN OF"), str("END OF")), variable);
+        let structure = seq(alt(str("BEGIN OF"), str("END OF")), Reuse.variable_def());
 
         return seq(start, alt(simple, table, structure));
     }

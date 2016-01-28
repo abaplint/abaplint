@@ -1,18 +1,21 @@
 import { Statement } from "./statement";
 import { Token } from "../tokens/";
 import * as Combi from "../combi";
+import Reuse from "./reuse";
 
-let str  = Combi.str;
-let seq  = Combi.seq;
-// let alt  = Combi.alt;
-// let opt  = Combi.opt;
-let reg  = Combi.regex;
-let star = Combi.star;
+let str = Combi.str;
+let opt = Combi.opt;
+let alt = Combi.alt;
+let seq = Combi.seq;
 
 export class Append extends Statement {
 
     public static get_matcher(): Combi.IRunnable {
-        return seq(str("APPEND"), star(reg(/.*/)));
+        return seq(str("APPEND"),
+                   alt(str("INITIAL LINE"), seq(opt(str("LINES OF")), Reuse.source())),
+                   str("TO"),
+                   Reuse.target(),
+                   opt(seq(str("ASSIGNING"), Reuse.field_symbol())));
     }
 
     public static match(tokens: Array<Token>): Statement {

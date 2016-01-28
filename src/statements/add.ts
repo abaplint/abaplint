@@ -1,18 +1,18 @@
 import { Statement } from "./statement";
 import { Token } from "../tokens/";
 import * as Combi from "../combi";
+import Reuse from "./reuse";
 
 let str  = Combi.str;
 let seq  = Combi.seq;
-// let alt  = Combi.alt;
-// let opt  = Combi.opt;
-let reg  = Combi.regex;
-let star = Combi.star;
 
 export class Add extends Statement {
 
     public static get_matcher(): Combi.IRunnable {
-        return seq(str("ADD"), star(reg(/.*/)));
+        return seq(str("ADD"),
+                   Reuse.integer(),
+                   str("TO"),
+                   Reuse.target());
     }
 
     public static match(tokens: Array<Token>): Statement {

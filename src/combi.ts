@@ -80,7 +80,7 @@ class Regex implements IRunnable {
 
     public viz(after: Array<string>) {
         let node = "node" + counter++;
-        let graph = node + " [label = \"" + this.regexp.source + "\"];\n";
+        let graph = node + " [label = \"" + this.regexp.source.replace("\\", "\\\\") + "\"];\n";
         after.forEach((a) => { graph = graph + node + " -> " + a + ";\n"; });
         return {graph: graph, nodes: [node] };
     }
