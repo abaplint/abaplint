@@ -16,7 +16,7 @@ export default class Reuse {
     }
 
     public static target(): Combi.IRunnable {
-        return reg(/^\w+((->|=>|-)\w+)*$/);
+        return reg(/^\w+((->|=>|-)\w+)*|<\w+>$/);
     }
 
     public static source(): Combi.IRunnable {

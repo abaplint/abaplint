@@ -7,12 +7,14 @@ let str = Combi.str;
 let opt = Combi.opt;
 let alt = Combi.alt;
 let seq = Combi.seq;
+let reg = Combi.regex;
+let star = Combi.star;
 
 export class Append extends Statement {
 
     public static get_matcher(): Combi.IRunnable {
         return seq(str("APPEND"),
-                   alt(str("INITIAL LINE"), seq(opt(str("LINES OF")), Reuse.source())),
+                   alt(str("INITIAL LINE"), seq(opt(str("LINES OF")), star(reg(/.*/)))),
                    str("TO"),
                    Reuse.target(),
                    opt(seq(str("ASSIGNING"), Reuse.field_symbol())));
