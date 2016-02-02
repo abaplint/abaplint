@@ -3,6 +3,7 @@ import * as Combi from "../combi";
 let reg = Combi.regex;
 let seq = Combi.seq;
 let alt = Combi.alt;
+let str = Combi.str;
 let star = Combi.star;
 
 export default class Reuse {
@@ -11,7 +12,8 @@ export default class Reuse {
     }
 
     public static typename(): Combi.IRunnable {
-        return seq(reg(/^\w+$/), star(seq(reg(/^(->|=>|-)$/), reg(/^\w+$/))));
+        return seq(reg(/^(\/\w+\/)?\w+$/),
+                   star(seq(reg(/^(->|=>|-)$/), reg(/^\w+$/))));
     }
 
     public static field_symbol(): Combi.IRunnable {
@@ -19,11 +21,17 @@ export default class Reuse {
     }
 
     public static target(): Combi.IRunnable {
-        return seq(alt(this.field(), this.field_symbol()), star(seq(reg(/^(->|=>|-)$/), this.field())));
+        return alt(seq(str("DATA"), str("("), this.field(), str(")")),
+                   seq(alt(this.field(), this.field_symbol()),
+                       star(seq(reg(/^(->|=>|-)$/), this.field()))));
     }
 
     public static source(): Combi.IRunnable {
-        return reg(/^(\w+((->|=>|-)\w+)?)|'.*'|<\w+>$/);
+        return alt(this.integer(),
+                   reg(/^'.*'$/),
+                   seq(alt(this.field(),
+                           this.field_symbol()),
+                       star(seq(reg(/^(->|=>|-)$/), this.field()))));
     }
 
     public static field(): Combi.IRunnable {

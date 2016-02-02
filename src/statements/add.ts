@@ -5,13 +5,12 @@ import Reuse from "./reuse";
 
 let str = Combi.str;
 let seq = Combi.seq;
-let reg = Combi.regex;
 
 export class Add extends Statement {
 
     public static get_matcher(): Combi.IRunnable {
         return seq(str("ADD"),
-                   reg(/.*/),
+                   Reuse.source(),
                    str("TO"),
                    Reuse.target());
     }

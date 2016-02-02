@@ -17,7 +17,8 @@ export class Append extends Statement {
                    alt(str("INITIAL LINE"), seq(opt(str("LINES OF")), star(reg(/.*/)))),
                    str("TO"),
                    Reuse.target(),
-                   opt(seq(str("ASSIGNING"), Reuse.field_symbol())));
+                   opt(seq(str("ASSIGNING"), Reuse.field_symbol())),
+                   opt(seq(str("REFERENCE INTO"), Reuse.target())));
     }
 
     public static match(tokens: Array<Token>): Statement {

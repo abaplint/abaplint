@@ -14,3 +14,4 @@ export * from "./obsolete_statement";
 export * from "./start_at_tab";
 export * from "./whitespace_end";
 export * from "./exporting";
+export * from "./empty";

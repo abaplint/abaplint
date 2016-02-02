@@ -12,9 +12,12 @@ cl_gui_cfw=>flush( ) .
 * move
 lt_foo[] = lt_bar[].
 
+* add
+add 2 to lv_foo.
+add zcl_class=>c_diagonal to lo_foo->mode.
+
 * misc
 condense lv_foo.
-add 2 to lv_foo.
 continue.
 rollback work.
 clear lv_foo.
