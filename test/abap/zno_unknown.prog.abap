@@ -102,3 +102,4 @@ set bit 2 of lv_foo.
 raise exception type zcx_root.
 message 'sdf' type 'S'.
 FIND FIRST OCCURRENCE OF 'boo' in lv_foo MATCH OFFSET lv_offset.
+FORMAT COLOR COL_GROUP.
