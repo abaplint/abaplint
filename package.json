@@ -1,6 +1,6 @@
 {
   "name": "abaplint",
-  "version": "0.0.15",
+  "version": "0.0.16",
   "description": "Linter for ABAP",
   "bin": {
     "abaplint": "./abaplint"
@@ -41,10 +41,10 @@
   "homepage": "https://github.com/larshp/abaplint#readme",
   "devDependencies": {
     "browserify": "^13.0.0",
-    "chai": "^3.4.1",
+    "chai": "^3.5.0",
     "codecov": "^1.0.1",
     "istanbul": "^0.4.2",
-    "mocha": "^2.3.4",
+    "mocha": "^2.4.5",
     "remap-istanbul": "^0.5.1",
     "tsd": "^0.6.5",
     "tslint": "^3.3.0",
