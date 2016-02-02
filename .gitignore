@@ -9,3 +9,4 @@ web/viz/*.txt
 web/viz/*.txt
 web/viz/*.svg
 web/viz/*.png
+web/viz/index.html
