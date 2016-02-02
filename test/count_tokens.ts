@@ -3,6 +3,7 @@
 /// <reference path="../typings/node/node.d.ts" />
 
 import File from "../src/file";
+import Lexer from "../src/lexer";
 import * as chai from "chai";
 import * as fs from "fs";
 
@@ -32,7 +33,7 @@ describe("count_tokens", function() {
         {file: "zcomment02",  tokens:  4},
         {file: "zcomment03",  tokens:  7},
         {file: "zcheck07_01", tokens:  7},
-        {file: "zpragma01",   tokens: 12},
+        {file: "zpragma01",   tokens: 14},
     ];
 
     tests.forEach(function(test) {
@@ -40,6 +41,22 @@ describe("count_tokens", function() {
 
         it(test.file + " should have " + test.tokens + " tokens", () => {
             expect(tokens.length).to.equals(test.tokens);
+        });
+    });
+});
+
+describe("count_tokens 2", function() {
+    let tests = [
+        {abap: "CALL METHOD (lv_class_name)=>jump.", tokens: 7},
+        {abap: "zcl_class=>method( ).",              tokens: 6},
+    ];
+
+    tests.forEach(function(test) {
+        let file = new File("foo.abap", test.abap);
+        new Lexer(file);
+
+        it("\"" + test.abap + "\" should have " + test.tokens + " tokens", () => {
+            expect(file.get_tokens().length).to.equals(test.tokens);
         });
     });
 });

@@ -215,14 +215,15 @@ class WordSequence implements IRunnable {
     }
 
     public run(r: Array<Result>): Array<Result> {
-        let split = this.str.split(" ");
+        let foo = this.str.replace(/-/g, " - ");
+        let split = foo.split(/[ ]/);
 
         let words: Array<IRunnable> = [];
         for (let str of split) {
             words.push(new Word(str));
         }
-        return (new Sequence(words)).run(r);
 
+        return (new Sequence(words)).run(r);
     }
 
     public viz(after: Array<string>) {
@@ -313,22 +314,14 @@ export function anything(): IRunnable {
 export function nothing(): IRunnable {
     return new Nothing();
 }
-export function str(s: String): IRunnable {
-    let split = s.split(" ");
+export function str(s: string): IRunnable {
+//    let split = s.split(" ");
 
-    if (split.length === 1) {
+    if (/[ -]/.test(s) === false) {
         return new Word(s);
     } else {
         return new WordSequence(s);
     }
-
-/*
-    let words: Array<IRunnable> = [];
-    for (let str of split) {
-        words.push(new Word(str));
-    }
-    return new Sequence(words);
-*/
 }
 export function seq(first: IRunnable, ...rest: IRunnable[]): IRunnable {
     return new Sequence([first].concat(rest));

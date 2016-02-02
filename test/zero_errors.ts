@@ -31,6 +31,7 @@ describe("zero errors", function() {
         "zcomment01",
         "zcomment02",
         "zcomment03",
+        "zmove_corresponding",
         "zdefine01",
         "zcall01",
         "zdata01",

@@ -22,14 +22,13 @@ export class Check02 implements Rule {
         return string.substr(0, value.length) === value;
     }
 
-// todo, dynamic CALL METHODs
+// todo, more on dynamic CALL METHODs
 
     public run(file: File) {
         for (let statement of file.get_statements()) {
             let code = statement.concat_tokens().toUpperCase();
             if(this.startsWith(code, "CALL METHOD ")) {
-                let call = statement.get_tokens()[2].get_str();
-                if (call.match("\\)[=-]>") != undefined) {
+                if (/\)[=-]>/.test(code) === true) {
                     continue;
                 }
                 let issue = new Issue(this, statement.get_start(), file);

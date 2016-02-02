@@ -29,7 +29,8 @@ export class Check12 implements Rule {
                     || sta instanceof Statements.Subtract
                     || sta instanceof Statements.Multiply
                     || ( sta instanceof Statements.Move
-                    && sta.get_tokens()[0].get_str() === 'MOVE' )
+                    && sta.get_tokens()[0].get_str() === 'MOVE'
+                    && sta.get_tokens()[1].get_str() !== '-' )
                     || sta instanceof Statements.Divide) {
                 let issue = new Issue(this, sta.get_start(), file);
                 file.add(issue);

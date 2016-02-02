@@ -34,10 +34,10 @@ export class Exporting implements Rule {
     }
 
     public run(file: File) {
-        let current = new Counter();
-        let stack: Array<Counter> = [];
-
         for (let statement of file.get_statements()) {
+            let current = new Counter();
+            let stack: Array<Counter> = [];
+
             for (let token of statement.get_tokens()) {
                 if (this.last_char(token.get_str()) === "(") {
                     stack.push(current);
@@ -48,6 +48,9 @@ export class Exporting implements Rule {
                         file.add(issue);
                     }
                     current = stack.pop();
+                    if (current === undefined) {
+                        current = new Counter();
+                    }
                 } else if (token.get_str() === "EXPORTING") {
                     current.exporting = true;
                     current.pos = token.get_pos();

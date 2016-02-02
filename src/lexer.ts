@@ -15,6 +15,7 @@ export default class Lexer {
 
     constructor(private file: File) {
         this.run();
+// console.dir(this.tokens);
         this.file.set_tokens(this.tokens);
     }
 
@@ -29,6 +30,18 @@ export default class Lexer {
                 this.tokens.push(new Tokens.Pragma(pos, s));
             } else if (s.length === 1 && (s === "." || s === ",")) {
                 this.tokens.push(new Tokens.Punctuation(pos, s));
+            } else if (s.length === 1 && s === "[") {
+                this.tokens.push(new Tokens.BracketLeft(pos, s));
+            } else if (s.length === 1 && s === "(") {
+                this.tokens.push(new Tokens.ParenLeft(pos, s));
+            } else if (s.length === 1 && s === "]") {
+                this.tokens.push(new Tokens.BracketRight(pos, s));
+            } else if (s.length === 1 && s === ")") {
+                this.tokens.push(new Tokens.ParenRight(pos, s));
+            } else if (s.length === 1 && s === "-") {
+                this.tokens.push(new Tokens.Dash(pos, s));
+            } else if (s.length === 2 && (s === "->" || s === "=>")) {
+                this.tokens.push(new Tokens.Arrow(pos, s));
             } else {
                 this.tokens.push(new Tokens.Identifier(pos, s));
             }
@@ -45,13 +58,27 @@ export default class Lexer {
         while (raw.length > 0) {
             let char = raw.substr(0, 1);
             let ahead = raw.substr(1, 1);
+            let bchar = before.substr(before.length - 1, 1);
 
             if ((char === " " || char === "\t") && this.m === NORMAL) {
                 this.add(before, row, col);
                 before = "";
-            } else if ( (char === "." || char === "," || char === ":") && this.m === NORMAL) {
+            } else if ( (char === "." || char === "," || char === ":" || char === "]" || char === ")" )
+                    && this.m === NORMAL) {
                 this.add(before, row, col);
                 this.add(char, row, col + 1);
+                before = "";
+            } else if ( (char === "[" || char === "(") && before.length > 0 && this.m === NORMAL) {
+                this.add(before, row, col);
+                this.add(char, row, col + 1);
+                before = "";
+            } else if ( char === "-" && before.length > 0 && ahead !== ">" && ahead !== " " && this.m === NORMAL) {
+                this.add(before, row, col);
+                this.add(char, row, col + 1);
+                before = "";
+            } else if ( char === ">" && (bchar === "-" || bchar === "=" ) && ahead !== " " && this.m === NORMAL) {
+                this.add(before.substr(0, before.length - 1), row, col - 1);
+                this.add(bchar + char, row, col + 1);
                 before = "";
             } else if (char === "\n") {
                 this.add(before, row, col);
