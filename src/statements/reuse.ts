@@ -4,6 +4,7 @@ let reg = Combi.regex;
 let seq = Combi.seq;
 let alt = Combi.alt;
 let str = Combi.str;
+let re = Combi.reuse;
 let star = Combi.star;
 
 export default class Reuse {
@@ -21,17 +22,24 @@ export default class Reuse {
     }
 
     public static target(): Combi.IRunnable {
-        return alt(seq(str("DATA"), str("("), this.field(), str(")")),
-                   seq(alt(this.field(), this.field_symbol()),
-                       star(seq(reg(/^(->|=>|-)$/), this.field()))));
+        let data = seq(str("DATA"), str("("), this.field(), str(")"));
+        return re(alt(data,
+                      seq(alt(this.field(), this.field_symbol()),
+                          star(seq(reg(/^(->|=>|-)$/), this.field())))),
+                  "target");
     }
 
     public static source(): Combi.IRunnable {
-        return alt(this.integer(),
-                   reg(/^'.*'$/),
-                   seq(alt(this.field(),
-                           this.field_symbol()),
-                       star(seq(reg(/^(->|=>|-)$/), this.field()))));
+        return re(alt(this.integer(),
+                      reg(/^'.*'$/),
+                      seq(alt(this.field(),
+                              this.field_symbol()),
+                          star(seq(reg(/^(->|=>|-)$/), this.field())))),
+                  "source");
+    }
+
+    public static boolean(): Combi.IRunnable {
+        return re(star(reg(/.*/)), "boolean");
     }
 
     public static field(): Combi.IRunnable {

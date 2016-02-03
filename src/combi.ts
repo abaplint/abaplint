@@ -236,6 +236,35 @@ class WordSequence implements IRunnable {
     }
 }
 
+export class Reuse implements IRunnable {
+    private runnable: IRunnable;
+    private name: string;
+
+    constructor(runnable: IRunnable, name: string) {
+        this.runnable = runnable;
+        this.name = name;
+    }
+
+    public run(r: Array<Result>): Array<Result> {
+        return this.runnable.run(r);
+    }
+
+    public get_runnable(): IRunnable {
+        return this.runnable;
+    }
+
+    public get_name(): string {
+        return this.name;
+    }
+
+    public viz(after: Array<string>) {
+        let node = "node" + counter++;
+        let graph = node + " [label=<<u>" + this.name + "</u>>, href=\"" + this.name + ".svg\",fontcolor=blue];\n";
+        after.forEach((a) => { graph = graph + node + " -> " + a + ";\n"; });
+        return {graph: graph, nodes: [node] };
+    }
+}
+
 class Alternative implements IRunnable {
     private list: Array<IRunnable>;
 
@@ -275,12 +304,12 @@ class Alternative implements IRunnable {
 }
 
 export class Combi {
-    public static viz(name: string, runnable: IRunnable): string {
+    public static viz(name: string, runnable: IRunnable, color = "black"): string {
         let result = "";
         let graph = runnable.viz(["end"]);
         result = "digraph " + name + " {\n" +
-            "start [label = \"Start\"];\n" +
-            "end [label = \"End\"];\n" +
+            "start [label=\"Start\",shape=box,color=" + color + "];\n" +
+            "end [label=\"End\",shape=box,color=" + color + "];\n" +
             graph.graph;
         graph.nodes.forEach((node) => { result = result + "start -> " + node + ";\n"; } );
         result = result + "}";
@@ -339,4 +368,7 @@ export function star(first: IRunnable): IRunnable {
 }
 export function regex(r: RegExp): IRunnable {
     return new Regex(r);
+}
+export function reuse(run: IRunnable, name: string): IRunnable {
+    return new Reuse(run, name);
 }
