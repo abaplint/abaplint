@@ -24,6 +24,8 @@ class Viz {
             Reuse.target(),
             Reuse.boolean(),
             Reuse.source(),
+            Reuse.method_call(),
+            Reuse.field_symbol(),
             ];
         reuse.forEach((r) => { this.handle((<Combi.Reuse>r).get_name(), (<Combi.Reuse>r).get_runnable(), "blue"); });
     }

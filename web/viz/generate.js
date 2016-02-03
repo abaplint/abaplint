@@ -22,9 +22,9 @@ for (var file of files) {
 
         var svg = file.split(".")[0] + ".svg";
 
-        index = index + "<div style=\"float:left;\">" +
-            svg + ":<br>\n" +
-            "<a href=\"" + svg + "\"><img src=\"" + svg + "\" height=\"300\"></a>\n" +
+        index = index + "<div style=\"float:left;text-align:center;\">" +
+            "<u>" + svg + "</u><br>\n" +
+            "<a href=\"" + svg + "\"><img src=\"" + svg + "\" height=\"300\"></a><br><br>\n" +
             "</div>\n";
     }
 }

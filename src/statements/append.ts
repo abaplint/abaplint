@@ -7,18 +7,18 @@ let str = Combi.str;
 let opt = Combi.opt;
 let alt = Combi.alt;
 let seq = Combi.seq;
-let reg = Combi.regex;
-let star = Combi.star;
 
 export class Append extends Statement {
 
     public static get_matcher(): Combi.IRunnable {
+        let assigning = seq(str("ASSIGNING"), Reuse.field_symbol());
+        let reference = seq(str("REFERENCE INTO"), Reuse.target());
+
         return seq(str("APPEND"),
-                   alt(str("INITIAL LINE"), seq(opt(str("LINES OF")), star(reg(/.*/)))),
+                   alt(str("INITIAL LINE"), seq(opt(str("LINES OF")), Reuse.source())),
                    str("TO"),
                    Reuse.target(),
-                   opt(seq(str("ASSIGNING"), Reuse.field_symbol())),
-                   opt(seq(str("REFERENCE INTO"), Reuse.target())));
+                   opt(alt(assigning, reference)));
     }
 
     public static match(tokens: Array<Token>): Statement {
