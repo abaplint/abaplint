@@ -80,3 +80,12 @@ endselect.
 delete lt_table index 1.
 initialization.
 select-options: foo for usr02-bname.
+at foo.
+endat.
+static foo type c.
+insert 2 into table lt_foobar.
+collect lt_table.
+EXPORT foo TO MEMORY ID 'MOO'.
+IMPORT foo TO bar FROM MEMORY ID 'MOO'.
+start-of-selection.
+field-symbol <foo> type c.

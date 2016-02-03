@@ -109,6 +109,7 @@ let viz = [
 {n: "1", c: Statements.Data.get_matcher() },
 {n: "2", c: anything() },
 {n: "3", c: nothing() },
+{n: "4", c: re(reg(/^(LIKE|TYPE)$/i), "test") },
 ];
 
 describe("combi vizualization", function() {
