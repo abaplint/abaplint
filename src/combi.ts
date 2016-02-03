@@ -157,11 +157,13 @@ class Star implements IRunnable {
     }
 
     public viz(after: Array<string>) {
-        let res = this.star.viz(after);
-        let graph = res.graph;
-// todo, the following is probably wrong, but will work in most cases
-        res.nodes.forEach((node) => { graph = graph + node + " -> " + node + ";\n"; });
-        return {graph: graph, nodes: res.nodes };
+        let dummy = "node" + counter++;
+        let graph = dummy + " [label = \"Dummy\"];\n";
+        let res = this.star.viz([dummy]);
+        graph = graph + res.graph;
+        res.nodes.forEach((node) => { graph = graph + dummy + " -> " + node + ";\n"; });
+        after.forEach((node) => { graph = graph + dummy + " -> " + node + ";\n"; });
+        return {graph: graph, nodes: res.nodes.concat(dummy) };
     }
 }
 
