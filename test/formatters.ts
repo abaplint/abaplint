@@ -11,7 +11,8 @@ let expect = chai.expect;
 
 describe("formatters", function() {
     let tests = [
-        {file: "zcheck01_01", errors: 1}
+        {file: "zcheck01_01", errors: 1},
+        {file: "zhello01", errors: 0},
     ];
 
     tests.forEach(function(test) {
@@ -19,19 +20,19 @@ describe("formatters", function() {
         let file = new File(filename, fs.readFileSync(filename, "utf8"));
         Runner.run([file]);
 
-        it("Json", () => {
+        it("Json " + test.file, () => {
             expect(file.get_count()).to.equals(test.errors);
-            expect(Formatters.Json.output([file]).split("\n").length).to.equals(test.errors * 15 + 2);
+            expect(Formatters.Json.output([file]).split("\n").length).to.equals(test.errors * 16 + 1);
         });
 
-        it("Standard", () => {
+        it("Standard " + test.file, () => {
             expect(file.get_count()).to.equals(test.errors);
-            expect(Formatters.Standard.output([file]).split("\n").length).to.equals(3);
+            expect(Formatters.Standard.output([file]).split("\n").length).to.equals(test.errors + 2);
         });
 
-        it("Summary", () => {
+        it("Summary " + test.file, () => {
             expect(file.get_count()).to.equals(test.errors);
-            expect(Formatters.Summary.output([file]).split("\n").length).to.equals(2);
+            expect(Formatters.Summary.output([file]).split("\n").length).to.equals(test.errors + 1);
         });
 
     });

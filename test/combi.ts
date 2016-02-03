@@ -17,6 +17,7 @@ let nothing  = Combi.nothing;
 let opt      = Combi.opt;
 let star     = Combi.star;
 let reg      = Combi.regex;
+let re       = Combi.reuse;
 
 function tok(s: string): Array<Tokens.Token> {
     let split = s.split(" ");
@@ -92,6 +93,7 @@ let tests = [
 {n: "reg4", c: seq(reg(/^\w+$/), reg(/^\w+$/)),   t: tok("foo bar"), e: true},
 {n: "reg5", c: reg(/^(LIKE|TYPE)$/i),             t: tok("type"),    e: true},
 {n: "reg6", c: reg(/^(LIKE|TYPE)$/i),             t: tok("TYPE"),    e: true},
+{n: "re1",  c: re(reg(/^(LIKE|TYPE)$/i), "test"), t: tok("TYPE"),    e: true},
 ];
 
 describe("combi", function() {

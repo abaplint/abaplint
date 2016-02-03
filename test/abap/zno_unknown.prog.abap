@@ -73,3 +73,10 @@ raise exception type zcx_root.
 message 'sdf' type 'S'.
 FIND FIRST OCCURRENCE OF 'boo' in lv_foo MATCH OFFSET lv_offset.
 FORMAT COLOR COL_GROUP.
+return.
+REPLACE ALL OCCURRENCES OF ';' IN lv_name WITH space.
+select * from mara.
+endselect.
+delete lt_table index 1.
+initialization.
+select-options: foo for usr02-bname.

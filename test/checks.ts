@@ -29,7 +29,8 @@ describe("errors", function() {
         {file: "zcheck11_01", errors: 1},
         {file: "zcheck12_01", errors: 6},
         {file: "zwhitespace_end_01", errors: 1},
-        {file: "zexporting", errors: 1},
+        {file: "zexporting",  errors: 1},
+        {file: "zempty",      errors: 2},
     ];
 
     tests.forEach(function(test) {
