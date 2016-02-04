@@ -237,20 +237,20 @@ class WordSequence implements IRunnable {
 }
 
 export class Reuse implements IRunnable {
-    private runnable: IRunnable;
+    private runnable: () => IRunnable;
     private name: string;
 
-    constructor(runnable: IRunnable, name: string) {
+    constructor(runnable: () => IRunnable, name: string) {
         this.runnable = runnable;
         this.name = name;
     }
 
     public run(r: Array<Result>): Array<Result> {
-        return this.runnable.run(r);
+        return this.runnable().run(r);
     }
 
     public get_runnable(): IRunnable {
-        return this.runnable;
+        return this.runnable();
     }
 
     public get_name(): string {
@@ -369,6 +369,6 @@ export function star(first: IRunnable): IRunnable {
 export function regex(r: RegExp): IRunnable {
     return new Regex(r);
 }
-export function reuse(run: IRunnable, name: string): Reuse {
+export function reuse(run: () => IRunnable, name: string): Reuse {
     return new Reuse(run, name);
 }

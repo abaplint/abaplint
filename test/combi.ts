@@ -93,7 +93,7 @@ let tests = [
 {n: "reg4", c: seq(reg(/^\w+$/), reg(/^\w+$/)),   t: tok("foo bar"), e: true},
 {n: "reg5", c: reg(/^(LIKE|TYPE)$/i),             t: tok("type"),    e: true},
 {n: "reg6", c: reg(/^(LIKE|TYPE)$/i),             t: tok("TYPE"),    e: true},
-{n: "re1",  c: re(reg(/^(LIKE|TYPE)$/i), "test"), t: tok("TYPE"),    e: true},
+{n: "re1",  c: re(() => { return str("TYPE"); }, "test"), t: tok("TYPE"),    e: true},
 ];
 
 describe("combi", function() {
@@ -106,10 +106,10 @@ describe("combi", function() {
 });
 
 let viz = [
-{n: "1", c: Statements.Data.get_matcher() },
-{n: "2", c: anything() },
-{n: "3", c: nothing() },
-{n: "4", c: re(reg(/^(LIKE|TYPE)$/i), "test") },
+  {n: "1", c: Statements.Data.get_matcher() },
+  {n: "2", c: anything() },
+  {n: "3", c: nothing() },
+  {n: "4", c: re(() => { return str("TEST"); }, "test") },
 ];
 
 describe("combi vizualization", function() {
