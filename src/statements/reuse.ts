@@ -61,6 +61,6 @@ export default class Reuse {
     }
 
     public static constant(): Combi.IRunnable {
-        return reg(/^(\w+)|('.*')|(\d+)$/);
+        return reg(/^(\w+)|('.*')|(`.*`)|(\d+)$/);
     }
 }
