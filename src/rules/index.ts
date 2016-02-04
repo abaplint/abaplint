@@ -15,3 +15,4 @@ export * from "./start_at_tab";
 export * from "./whitespace_end";
 export * from "./exporting";
 export * from "./empty";
+export * from "./sequential_blank";
