@@ -90,6 +90,9 @@ export default class Reuse {
     }
 
     public static constant(): Combi.Reuse {
-        return re(() => { return reg(/^(\w+)|('.*')|(`.*`)|(\d+)$/); }, "constant");
+        return re(() => {
+            let stri = reg(/('.*')|(`.*`)/);
+            return alt(this.field(), stri, this.integer()); },
+                  "constant");
     }
 }
