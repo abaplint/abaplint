@@ -369,6 +369,6 @@ export function star(first: IRunnable): IRunnable {
 export function regex(r: RegExp): IRunnable {
     return new Regex(r);
 }
-export function reuse(run: IRunnable, name: string): IRunnable {
+export function reuse(run: IRunnable, name: string): Reuse {
     return new Reuse(run, name);
 }

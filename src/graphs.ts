@@ -20,14 +20,9 @@ class Viz {
             }
         }
 
-        let reuse = [
-            Reuse.target(),
-            Reuse.boolean(),
-            Reuse.source(),
-            Reuse.method_call(),
-            Reuse.field_symbol(),
-            ];
-        reuse.forEach((r) => { this.handle((<Combi.Reuse>r).get_name(), (<Combi.Reuse>r).get_runnable(), "blue"); });
+        for (let foo in Reuse) {
+            this.handle(Reuse[foo]().get_name(), Reuse[foo]().get_runnable(), "blue");
+        }
     }
 }
 
