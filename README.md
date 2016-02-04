@@ -10,4 +10,4 @@ Runs on node, can be used with [travis](https://travis-ci.org/), [codeclimate](h
 
 For checking ABAP code inside the SAP system use [code inspector](http://wiki.scn.sap.com/wiki/display/ABAP/Code+Inspector) or [ATC](http://wiki.scn.sap.com/wiki/display/ABAP/ABAP+Test+Cockpit), also see project [abapOpenChecks](https://github.com/larshp/abapOpenChecks).
 
-Test online at https://larshp.github.io/abaplint/ (updated manually, currently version 0.0.16)
+Test online at https://larshp.github.io/abaplint/ (updated manually, currently version 0.0.17)
