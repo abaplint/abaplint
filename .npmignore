@@ -4,3 +4,4 @@ npm-debug.log
 *.js.map
 coverage/
 web/viz/*.txt
+web/viz/*.svg
