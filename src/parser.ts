@@ -8,7 +8,27 @@ export default class Parser {
     constructor(private file: File) {
         this.run();
         this.categorize();
+        this.macros();
         file.set_statements(this.statements);
+    }
+
+    private macros() {
+        let result: Array<Statements.Statement> = [];
+        let define = false;
+
+        for (let statement of this.statements) {
+            if (statement instanceof Statements.Define) {
+                define = true;
+            } else if (statement instanceof Statements.Enddefine) {
+                define = false;
+            } else if (statement instanceof Statements.Unknown && define === true) {
+                statement = new Statements.Macro(statement.get_tokens());
+            }
+
+            result.push(statement);
+        }
+
+        this.statements = result;
     }
 
     private categorize() {
@@ -25,7 +45,6 @@ export default class Parser {
                     }
                 }
             }
-//            console.dir(statement);
             result.push(statement);
         }
 
