@@ -103,5 +103,6 @@ export * from "./multiply";
 export * from "./divide";
 export * from "./format";
 export * from "./empty";
+export * from "./syntax_check";
 
 export * from "./macro";
