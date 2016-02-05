@@ -96,8 +96,8 @@ let tests = [
 {n: "re1",  c: re(() => { return str("TYPE"); }, "test"), t: tok("TYPE"),    e: true},
 ];
 
-describe("combi", function() {
-    tests.forEach(function(test) {
+describe("combi", () => {
+    tests.forEach((test) => {
         it(test.n + " should be " + test.e, () => {
             let result = Combi.Combi.run(test.c, test.t);
             expect(result).to.equals(test.e);
@@ -112,8 +112,8 @@ let viz = [
   {n: "4", c: re(() => { return str("TEST"); }, "test") },
 ];
 
-describe("combi vizualization", function() {
-    viz.forEach(function(v) {
+describe("combi vizualization", () => {
+    viz.forEach((v) => {
         it("test " + v.n, () => {
             let result = Combi.Combi.viz("test", v.c);
             expect(result).to.be.a("string");

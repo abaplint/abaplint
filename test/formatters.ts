@@ -9,13 +9,13 @@ import * as fs from "fs";
 
 let expect = chai.expect;
 
-describe("formatters", function() {
+describe("formatters", () => {
     let tests = [
         {file: "zcheck01_01", errors: 1},
         {file: "zhello01", errors: 0},
     ];
 
-    tests.forEach(function(test) {
+    tests.forEach((test) => {
         let filename = "./test/abap/" + test.file + ".prog.abap";
         let file = new File(filename, fs.readFileSync(filename, "utf8"));
         Runner.run([file]);

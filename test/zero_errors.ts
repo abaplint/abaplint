@@ -8,7 +8,7 @@ import * as chai from "chai";
 
 let expect = chai.expect;
 
-describe("zero errors", function() {
+describe("zero errors", () => {
     let tests = [
         "zhello01",
         "zhello02",
@@ -37,7 +37,7 @@ describe("zero errors", function() {
         "zdata01",
     ];
 
-    tests.forEach(function(test) {
+    tests.forEach((test) => {
         it(test + " should have zero errors", () => {
             let filename = "./test/abap/" + test + ".prog.abap";
             let file = new File(filename, fs.readFileSync(filename, "utf8"));

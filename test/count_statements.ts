@@ -5,15 +5,18 @@
 import File from "../src/file";
 import * as chai from "chai";
 import * as fs from "fs";
+import Runner from "../src/runner";
 
 let expect = chai.expect;
 
 function helper(filename: string): File {
     let buf = fs.readFileSync("./test/abap/" + filename, "utf8");
-    return new File(filename, buf);
+    let file = new File(filename, buf);
+    Runner.run([file]);
+    return file;
 }
 
-describe("count_statements", function() {
+describe("count_statements", () => {
     let tests = [
         {file: "zhello01",   statements: 2},
         {file: "zhello02",   statements: 2},
@@ -37,7 +40,7 @@ describe("count_statements", function() {
         {file: "zselect01",  statements: 4},
     ];
 
-    tests.forEach(function(test) {
+    tests.forEach((test) => {
         let statements = helper(test.file + ".prog.abap").get_statements();
 
         it(test.file + " should have " + test.statements + " statements", () => {

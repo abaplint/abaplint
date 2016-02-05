@@ -5,6 +5,9 @@ export default class Registry {
 
 // todo, handle scoping
     public static add_macro(name: string) {
+        if (this.is_macro(name)) {
+            return;
+        }
         this.macros.push(name.toUpperCase());
     }
 

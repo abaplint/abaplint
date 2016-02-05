@@ -9,7 +9,7 @@ import * as fs from "fs";
 
 let expect = chai.expect;
 
-describe("errors", function() {
+describe("errors", () => {
     let tests = [
         {file: "zcheck01_01", errors: 1},
         {file: "zcheck02_01", errors: 1},
@@ -34,7 +34,7 @@ describe("errors", function() {
         {file: "zsequential_blank",  errors: 1},
     ];
 
-    tests.forEach(function(test) {
+    tests.forEach((test) => {
         it(test.file + " should have " + test.errors + " error(s)", () => {
             let filename = "./test/abap/" + test.file + ".prog.abap";
             let file = new File(filename, fs.readFileSync(filename, "utf8"));

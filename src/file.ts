@@ -1,7 +1,5 @@
 import { Token } from "./tokens/";
 import { Statement } from "./statements/";
-import Lexer from "./lexer";
-import Parser from "./parser";
 import Issue from "./issue";
 
 export default class File {
@@ -12,11 +10,8 @@ export default class File {
     private filename: string = "";
 
     constructor(filename: string, raw: string) {
-// ignore all carriage returns
-        this.raw = raw.replace(/\r/g, "");
+        this.raw = raw.replace(/\r/g, ""); // ignore all carriage returns
         this.filename = filename;
-        new Lexer(this);
-        new Parser(this);
     }
 
 // todo, something wrong here, refactor? the issues are also linked to

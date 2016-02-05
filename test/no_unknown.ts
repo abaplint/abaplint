@@ -8,7 +8,7 @@ import File from "../src/file";
 
 let expect = chai.expect;
 
-describe("no_unknown", function() {
+describe("no_unknown", () => {
 
     let tests = [
         {filename: "zno_unknown"},
@@ -16,7 +16,7 @@ describe("no_unknown", function() {
         {filename: "zno_unknown_append"},
         ];
 
-    tests.forEach(function(test) {
+    tests.forEach((test) => {
         it(test.filename + " should have no Unknown statements", () => {
             let code = fs.readFileSync("./test/abap/" + test.filename + ".prog.abap", "utf8");
             let file = new File(test.filename, code);
