@@ -23,7 +23,11 @@ export default class Reuse {
     }
 
     public static field_symbol(): Combi.Reuse {
-        return re(() => { return reg(/^<(\w|_)+>$/); }, "field_symbol");
+        return re(() => { return reg(/^<\w+>$/); }, "field_symbol");
+    }
+
+    public static field_symbol_offset(): Combi.Reuse {
+        return re(() => { return reg(/^<\w+>(\+\d+)?$/); }, "field_symbol_offset");
     }
 
     public static target(): Combi.Reuse {
@@ -74,7 +78,7 @@ export default class Reuse {
 
     public static source(): Combi.Reuse {
         return re(() => {
-            let single = alt(this.field(), this.method_call(), this.field_symbol());
+            let single = alt(this.field(), this.method_call(), this.field_symbol_offset());
             let after = star(seq(this.arrow_or_dash(), this.field()));
             return alt(this.constant(), seq(single, after)); },
                   "source");
