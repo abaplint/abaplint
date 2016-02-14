@@ -4,7 +4,7 @@
 [![codecov.io](https://codecov.io/github/larshp/abaplint/coverage.svg?branch=master)](https://codecov.io/github/larshp/abaplint?branch=master)
 
 # abaplint
-Linter for ABAP. ABAP code must be serialized using [abapGit](https://github.com/larshp/abapGit)
+Linter for ABAP, code must be serialized using [abapGit](https://github.com/larshp/abapGit)
 
 Works with
 * [travis](https://travis-ci.org/) ([example](https://github.com/larshp/abaplint-test))
