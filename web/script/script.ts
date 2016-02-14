@@ -24,6 +24,21 @@ function build_issues(input: string, file: File): string {
     return lines.join("\n");
 }
 
+// todo, split this file up in frontend and backend
+// the frontend stuff does not need to be browserify'ed
+export function run_file(input: string): string {
+    let file = new File("foobar.abap", input);
+    Runner.run([file]);
+
+    let ret = "";
+    for (let issue of file.get_issues()) {
+        ret = ret + "{\"row\": \"" + issue.get_row() + "\", \"text\": \"" + issue.get_description() + "\"},";
+    }
+    ret = ret.substring(0, ret.length - 1);
+
+    return "{ \"errors\": [" + ret + "] }";
+}
+
 export function run() {
     let input = (<HTMLInputElement>document.getElementById("input")).value;
     input = strip_newline(input);
