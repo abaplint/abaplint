@@ -15,6 +15,7 @@ describe("errors", () => {
         {file: "zcheck02_01", errors: 1},
         {file: "zcheck02_02", errors: 1},
         {file: "zcheck02_03", errors: 0},
+        {file: "zcheck02_04", errors: 0},
         {file: "zcheck03_01", errors: 1},
         {file: "zcheck03_02", errors: 1},
         {file: "zcheck04_01", errors: 1},
