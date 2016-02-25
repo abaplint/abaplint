@@ -12,3 +12,4 @@ APPEND foo TO <fs>.
 APPEND read_controller( ls_controller_key ) TO rs_component-ctlr_metadata.
 APPEND INITIAL LINE TO lt_key_tab REFERENCE INTO key.
 APPEND <lv_code>+1 TO lt_commented.
+APPEND INITIAL LINE TO <ls_data>-sub ASSIGNING FIELD-SYMBOL(<ls_sub>).

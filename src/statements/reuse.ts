@@ -30,12 +30,19 @@ export default class Reuse {
         return re(() => { return reg(/^<\w+>(\+\d+)?$/); }, "field_symbol_offset");
     }
 
-    public static target(): Combi.Reuse {
+    public static inline_decl(): Combi.Reuse {
         return re(() => {
             let data = seq(str("DATA"), str("("), this.field(), str(")"));
+            let fs = seq(str("FIELD-SYMBOL"), str("("), this.field_symbol(), str(")"));
+            return alt(data, fs); },
+                  "inline_decl");
+    }
+
+    public static target(): Combi.Reuse {
+        return re(() => {
             let after = seq(alt(this.field(), this.field_symbol()),
                             star(seq(this.arrow_or_dash(), this.field())));
-            return alt(data, after); },
+            return alt(this.inline_decl(), after); },
                   "target");
     }
 

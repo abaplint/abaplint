@@ -93,7 +93,8 @@ let tests = [
 {n: "reg4", c: seq(reg(/^\w+$/), reg(/^\w+$/)),   t: tok("foo bar"), e: true},
 {n: "reg5", c: reg(/^(LIKE|TYPE)$/i),             t: tok("type"),    e: true},
 {n: "reg6", c: reg(/^(LIKE|TYPE)$/i),             t: tok("TYPE"),    e: true},
-{n: "re1",  c: re(() => { return str("TYPE"); }, "test"), t: tok("TYPE"),    e: true},
+{n: "re1",  c: re(() => { return str("TYPE"); }, "test"), t: tok("TYPE"),   e: true},
+{n: "das1",  c: str("FIELD-SYMBOL"),              t: tok("FIELD - SYMBOL"), e: true},
 ];
 
 describe("combi", () => {
