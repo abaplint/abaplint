@@ -104,5 +104,6 @@ export * from "./divide";
 export * from "./format";
 export * from "./empty";
 export * from "./syntax_check";
+export * from "./alias";
 
 export * from "./macro";
