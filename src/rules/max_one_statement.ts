@@ -4,7 +4,13 @@ import { Token } from "../tokens/";
 import Issue from "../issue";
 import * as Statements from "../statements/";
 
+class Conf {
+  public enabled: boolean = true;
+}
+
 export class Check04 implements Rule {
+
+    private conf: Conf = new Conf();
 
     public get_key(): string {
         return "max_one_statement";
@@ -14,10 +20,12 @@ export class Check04 implements Rule {
         return "Max one statement per line";
     }
 
-    public default_config() {
-        return {
-			"enabled": true
-		};
+    public get_config() {
+        return this.conf;
+    }
+
+    public set_config(conf) {
+        this.conf = conf;
     }
 
     public run(file: File) {

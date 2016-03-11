@@ -2,7 +2,13 @@ import { Rule } from "./rule";
 import File from "../file";
 import Issue from "../issue";
 
+class Conf {
+  public enabled: boolean = true;
+}
+
 export class Check02 implements Rule {
+
+    private conf: Conf = new Conf();
 
     public get_key(): string {
         return "functional_writing";
@@ -12,10 +18,12 @@ export class Check02 implements Rule {
         return "Use functional writing style";
     }
 
-    public default_config() {
-        return {
-			"enabled": true
-		};
+    public get_config() {
+        return this.conf;
+    }
+
+    public set_config(conf) {
+        this.conf = conf;
     }
 
     private startsWith(string: string, value: string): boolean {

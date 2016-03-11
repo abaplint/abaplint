@@ -9,7 +9,13 @@ class Counter {
     public pos: Position;
 }
 
+class Conf {
+  public enabled: boolean = true;
+}
+
 export class Exporting implements Rule {
+
+    private conf: Conf = new Conf();
 
     public get_key(): string {
         return "exporting";
@@ -19,10 +25,12 @@ export class Exporting implements Rule {
         return "EXPORTING can be omitted";
     }
 
-    public default_config() {
-        return {
-			"enabled": true
-		};
+    public get_config() {
+        return this.conf;
+    }
+
+    public set_config(conf) {
+        this.conf = conf;
     }
 
     private last_char(s: string): string {

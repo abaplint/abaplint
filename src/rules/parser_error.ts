@@ -4,7 +4,13 @@ import Issue from "../issue";
 import Position from "../position";
 import * as Statements from "../statements/";
 
+class Conf {
+  public enabled: boolean = true;
+}
+
 export class Check09 implements Rule {
+
+    private conf: Conf = new Conf();
 
     public get_key(): string {
         return "parser_error";
@@ -14,10 +20,12 @@ export class Check09 implements Rule {
         return "Parser error(Unknown statement)";
     }
 
-    public default_config() {
-        return {
-			"enabled": true
-		};
+    public get_config() {
+        return this.conf;
+    }
+
+    public set_config(conf) {
+        this.conf = conf;
     }
 
     public run(file: File) {

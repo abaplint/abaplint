@@ -3,6 +3,7 @@ import File from "../file";
 export interface Rule {
     get_key(): string;
     get_description(): string;
-    default_config();
+    get_config();
+    set_config(conf);
     run(file: File);
 }

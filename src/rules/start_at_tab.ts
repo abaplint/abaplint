@@ -3,7 +3,13 @@ import File from "../file";
 import Issue from "../issue";
 import * as Statements from "../statements/";
 
+class Conf {
+  public enabled: boolean = true;
+}
+
 export class Check01 implements Rule {
+
+    private conf: Conf = new Conf();
 
     public get_key(): string {
         return "start_at_tab";
@@ -13,10 +19,12 @@ export class Check01 implements Rule {
         return "Start statement at tab position";
     }
 
-    public default_config() {
-        return {
-			"enabled": true
-		};
+    public get_config() {
+        return this.conf;
+    }
+
+    public set_config(conf) {
+        this.conf = conf;
     }
 
     public run(file: File) {

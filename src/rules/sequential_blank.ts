@@ -4,7 +4,14 @@ import Issue from "../issue";
 import Position from "../position";
 import * as Statements from "../statements/";
 
+class Conf {
+  public enabled: boolean = true;
+  public lines: number = 4;
+}
+
 export class SequentialBlank implements Rule {
+
+    private conf: Conf = new Conf();
 
     public get_key(): string {
         return "sequential_blank";
@@ -14,11 +21,12 @@ export class SequentialBlank implements Rule {
         return "Sequential blank lines";
     }
 
-    public default_config() {
-        return {
-			"enabled": true,
-            "lines": 4
-		};
+    public get_config() {
+        return this.conf;
+    }
+
+    public set_config(conf) {
+        this.conf = conf;
     }
 
     public run(file: File) {
@@ -32,7 +40,7 @@ export class SequentialBlank implements Rule {
                 blanks = 0;
             }
 
-            if (blanks === 4) { // todo, configuration
+            if (blanks === this.conf.lines) {
                 let issue = new Issue(this, new Position(i + 1, 1), file);
                 file.add(issue);
             }
