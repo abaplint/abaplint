@@ -6,14 +6,21 @@ import Parser from "./parser";
 
 export default class Runner {
 
+    private static conf: Config;
+
     public static run(files: Array<File>) {
-// prioritize file types
+        this.conf = new Config(files[0].get_filename());
+
+        this.prioritize_files(files).forEach((o) => { this.analyze(o); });
+    }
+
+    private static prioritize_files(files: Array<File>): Array<File> {
         let order: Array<File> = [];
 
         files.forEach((file) => { if (/\.type\.abap$/.test(file.get_filename())) { order.push(file); } });
         files.forEach((file) => { if (order.indexOf(file) === -1 ) { order.push(file); } });
 
-        order.forEach((o) => { this.analyze(o); });
+        return order;
     }
 
     private static analyze(file: File) {
@@ -22,7 +29,7 @@ export default class Runner {
 
         for (let key in Rules) {
             let rule = new Rules[key]();
-            if (Config.read_rule(rule.get_key(), "enabled") === true) {
+            if (this.conf.read_by_key(rule.get_key(), "enabled") === true) {
                 rule.run(file);
             }
         }

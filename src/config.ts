@@ -1,31 +1,16 @@
 import * as Rules from "./rules/";
+import * as path from "path";
+import * as fs from "fs";
 
 export default class Config {
 
-    private static config = undefined;
+    private config = undefined;
 
-    public static read_rule(rule: string, key: string) {
+    public constructor(filename: string) {
+        this.search_config(path.dirname(process.cwd() + path.sep + filename) + path.sep);
         if (this.config === undefined) {
-            this.set(this.get_default());
+            this.set(Config.get_default());
         }
-        return this.config["rules"][rule][key];
-    }
-
-    public static set(json: string) {
-        this.config = JSON.parse(json);
-    }
-
-    public static search_file(name = "abaplint.json") {
-        let json = "";
-/*
-        let file = findup(name, { cwd: ".", nocase: true });
-        if (file != null && fs.existsSync(file)) {
-            json = fs.readFileSync(file, "utf8");
-        } else {
-            json = this.get_default();
-        }
-*/
-        this.set(json);
     }
 
     public static get_default(): string {
@@ -36,7 +21,37 @@ export default class Config {
             defaults.push("\"" + rule.get_key() + "\": " + JSON.stringify(rule.default_config()));
         }
 
-        return "{ \"rules\": {" + defaults.join() + "}}";
+        return "{\"rules\":\n{" + defaults.join(",\n") + "\n}}";
     }
 
+    public read_by_key(rule: string, key: string) {
+        return this.config["rules"][rule][key];
+    }
+
+    public read_by_rule(rule: string) {
+        return this.config["rules"][rule];
+    }
+
+    public set(json: string) {
+        this.config = JSON.parse(json);
+    }
+
+    private search_config(dir: string) {
+        if (typeof fs.existsSync !== "function") {
+// make sure the code also works in web browser
+            return;
+        }
+
+        let file = dir + "abaplint.json";
+        if (fs.existsSync(file)) {
+            let json = fs.readFileSync(file, "utf8");
+            this.set(json);
+            return;
+        }
+
+        let up = path.normalize(dir + ".." + path.sep);
+        if (path.normalize(up) !== dir) {
+            this.search_config(up);
+        }
+    }
 }
