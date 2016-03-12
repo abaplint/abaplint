@@ -5,6 +5,7 @@ import Position from "../position";
 
 class Conf {
   public enabled: boolean = true;
+  public length: number = 120;
 }
 
 export class Check05 implements Rule {
@@ -30,7 +31,7 @@ export class Check05 implements Rule {
     public run(file: File) {
         let lines = file.get_raw().split("\n");
         for (let line = 0; line < lines.length; line++) {
-            if (lines[line].length > 120) {
+            if (lines[line].length > this.conf.length) {
                 let issue = new Issue(this, new Position(line + 1, 1), file);
                 file.add(issue);
             }
