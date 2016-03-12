@@ -33,6 +33,8 @@ describe("errors", () => {
         {file: "exporting_01",           errors: 1},
         {file: "empty_01",               errors: 2},
         {file: "sequential_blank_01",    errors: 1},
+        {file: "definitions_top_01",     errors: 1},
+        {file: "definitions_top_02",     errors: 0},
     ];
 
     tests.forEach((test) => {
