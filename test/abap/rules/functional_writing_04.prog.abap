@@ -1,3 +1,3 @@
-REPORT zcheck02_04.
+REPORT functional_writing_04.
 
 CALL METHOD mo_plugin->('SET_FILES').

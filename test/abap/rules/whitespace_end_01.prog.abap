@@ -1,3 +1,3 @@
-REPORT zwhitespace_end_01.
+REPORT whitespace_end_01.
 
-WRITE 'hello'.   
+WRITE 'hello'.  

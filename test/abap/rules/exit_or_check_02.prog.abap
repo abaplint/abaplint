@@ -1,3 +1,3 @@
-REPORT zcheck06_01.
+REPORT exit_or_check_02.
 
 EXIT.

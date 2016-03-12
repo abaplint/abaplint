@@ -1,4 +1,4 @@
-REPORT zcheck06_01.
+REPORT exit_or_check_01.
 
 DATA: lt_usr02 TYPE TABLE OF usr02,
       ls_usr02 LIKE LINE OF lt_usr02.

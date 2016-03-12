@@ -1,3 +1,3 @@
-REPORT zcheck10_01.
+REPORT colon_missing_space_01.
 
 WRITE:/ 'foobar:'.

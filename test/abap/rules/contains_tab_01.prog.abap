@@ -1,3 +1,3 @@
-REPORT zcheck08_01.
+REPORT contains_tab_01.
 
 data: lt_file 	type solix_tab.

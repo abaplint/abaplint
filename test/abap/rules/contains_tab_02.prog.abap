@@ -1,4 +1,4 @@
-REPORT zcheck08_02.
+REPORT contains_tab_02.
 
 * file contains double tab before IF
 

@@ -1,4 +1,4 @@
-REPORT zcheck11_01.
+REPORT obsolete_statement_01.
 
 REFRESH lt_table.
 COMPUTE lv_foo = 2 + 2.
