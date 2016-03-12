@@ -8,7 +8,7 @@ class Conf {
   public enabled: boolean = true;
 }
 
-export class Check04 implements Rule {
+export class MaxOneStatement implements Rule {
 
     private conf: Conf = new Conf();
 

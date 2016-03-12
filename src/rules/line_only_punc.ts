@@ -8,7 +8,7 @@ class Conf {
   public enabled: boolean = true;
 }
 
-export class Check03 implements Rule {
+export class LineOnlyPunc implements Rule {
 
     private conf: Conf = new Conf();
 

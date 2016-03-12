@@ -11,7 +11,7 @@ let expect = chai.expect;
 
 describe("formatters", () => {
     let tests = [
-        {file: "zcheck01_01", errors: 1},
+        {file: "rules/start_at_tab_01", errors: 1},
         {file: "zhello01", errors: 0},
     ];
 

@@ -7,7 +7,7 @@ class Conf {
   public enabled: boolean = true;
 }
 
-export class Check01 implements Rule {
+export class StartAtTab implements Rule {
 
     private conf: Conf = new Conf();
 

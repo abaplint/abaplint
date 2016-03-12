@@ -8,7 +8,7 @@ class Conf {
   public enabled: boolean = true;
 }
 
-export class Check09 implements Rule {
+export class ParserError implements Rule {
 
     private conf: Conf = new Conf();
 

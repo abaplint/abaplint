@@ -8,7 +8,7 @@ class Conf {
   public enabled: boolean = true;
 }
 
-export class Check10 implements Rule {
+export class ColonMissingSpace implements Rule {
 
     private conf: Conf = new Conf();
 

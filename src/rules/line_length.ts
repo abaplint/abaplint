@@ -8,7 +8,7 @@ class Conf {
   public length: number = 120;
 }
 
-export class Check05 implements Rule {
+export class LineLength implements Rule {
 
     private conf: Conf = new Conf();
 

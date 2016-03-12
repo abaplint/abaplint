@@ -7,7 +7,7 @@ class Conf {
   public enabled: boolean = true;
 }
 
-export class Check12 implements Rule {
+export class ObsoleteStatement implements Rule {
 
     private conf = new Conf();
 

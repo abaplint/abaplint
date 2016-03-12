@@ -8,7 +8,7 @@ class Conf {
   public enabled: boolean = true;
 }
 
-export class Check11 implements Rule {
+export class sevenBitAscii implements Rule {
 
     private conf: Conf = new Conf();
 

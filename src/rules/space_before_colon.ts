@@ -6,7 +6,7 @@ class Conf {
   public enabled: boolean = true;
 }
 
-export class Check07 implements Rule {
+export class SpaceBeforeColon implements Rule {
 
     private conf: Conf = new Conf();
 

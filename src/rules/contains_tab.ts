@@ -7,7 +7,7 @@ class Conf {
   public enabled: boolean = true;
 }
 
-export class Check08 implements Rule {
+export class ContainsTab implements Rule {
 
     private conf: Conf = new Conf();
 
