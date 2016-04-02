@@ -11,6 +11,7 @@ cl_gui_cfw=>flush( ) .
 
 * move
 lt_foo[] = lt_bar[].
+<ls_output>-line+lv_spaces = 2.
 
 * add
 add 2 to lv_foo.

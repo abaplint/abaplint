@@ -1,6 +1,6 @@
 {
   "name": "abaplint",
-  "version": "0.24.0",
+  "version": "0.24.1",
   "description": "Linter for ABAP",
   "bin": {
     "abaplint": "./abaplint"
@@ -31,7 +31,8 @@
     "url": "git+https://github.com/larshp/abaplint.git"
   },
   "keywords": [
-    "ABAP"
+    "ABAP",
+    "lint"
   ],
   "author": "Lars Hvam Petersen",
   "license": "MIT",

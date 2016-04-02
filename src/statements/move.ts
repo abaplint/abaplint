@@ -7,7 +7,7 @@ export class Move extends Statement {
         let str = Statement.concat(tokens).toUpperCase();
         if (/^(MOVE|MOVE-CORRESPONDING) /.test(str)
                 || /^DATA\(\w+\) (\?)?= .*$/.test(str)
-                || /^(\w|-|<|>|->|%|&|=>|~)+(\+\d+)?(\(\d+\))?(\[\])? (\?)?= .*$/.test(str)) {
+                || /^(\w|-|<|>|->|%|&|=>|~)+(\+(\d|\w)+)?(\(\d+\))?(\[\])? (\?)?= .*$/.test(str)) {
             return new Move(tokens);
         }
         return undefined;
