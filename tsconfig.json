@@ -2,6 +2,8 @@
     "compilerOptions": {
         "module": "commonjs",
         "outDir": "build",
+        "noFallthroughCasesInSwitch": true,
+        "noImplicitReturns": true,
         "sourceMap": true
         },
     "filesGlob": [

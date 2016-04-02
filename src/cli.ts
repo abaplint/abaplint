@@ -61,6 +61,7 @@ if (argv["h"] !== undefined || argv["help"] !== undefined) {
             break;
         default:
             output = Formatters.Standard.output(files);
+            break;
     }
 }
 

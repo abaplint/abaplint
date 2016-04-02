@@ -13,7 +13,7 @@
     "browserify": "browserify build/web/script/script.js -o web/script/bundle.js -s run",
     "uglify": "uglifyjs web/script/bundle.js --compress warnings=false --mangle -o web/script/bundle.js",
     "tslint": "tslint -c tslint.json *.ts test/*.ts src/*.ts src/statements/*.ts src/formatters/*.ts src/tokens/*.ts web/script/*.ts",
-    "precompile": "tsc",
+    "precompile": "tsc --pretty",
     "compile": "npm run browserify ",
     "postcompile": "npm run uglify",
     "pretest": "npm run compile",
