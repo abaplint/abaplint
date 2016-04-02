@@ -1,6 +1,7 @@
 {
     "compilerOptions": {
         "module": "commonjs",
+        "outDir": "build",
         "sourceMap": true
         },
     "filesGlob": [

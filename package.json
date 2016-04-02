@@ -1,6 +1,6 @@
 {
   "name": "abaplint",
-  "version": "0.24.1",
+  "version": "0.24.2",
   "description": "Linter for ABAP",
   "bin": {
     "abaplint": "./abaplint"
@@ -10,19 +10,18 @@
     "test": "test"
   },
   "scripts": {
-    "browserify": "browserify web/script/script.js -o web/script/bundle.js -s run",
+    "browserify": "browserify build/web/script/script.js -o web/script/bundle.js -s run",
     "uglify": "uglifyjs web/script/bundle.js --compress warnings=false --mangle -o web/script/bundle.js",
     "tslint": "tslint -c tslint.json *.ts test/*.ts src/*.ts src/statements/*.ts src/formatters/*.ts src/tokens/*.ts web/script/*.ts",
     "precompile": "tsc",
     "compile": "npm run browserify ",
     "postcompile": "npm run uglify",
     "pretest": "npm run compile",
-    "test": "mocha",
-    "viz": "node src/graphs.js && node web/viz/generate.js",
+    "test": "mocha build/test",
+    "viz": "node build/src/graphs.js && node web/script/generate.js",
     "typings": "tsd install && cd test && tsd install && cd ..",
     "posttest": "npm run tslint",
-    "clean": "find src -name \"*.js\" -type f -delete && find src -name \"*.js.map\" -type f -delete && find test -name \"*.js\" -type f -delete && find test -name \"*.js.map\" -type f -delete",
-    "precoverage": "istanbul cover ./node_modules/mocha/bin/_mocha --report lcovonly -- -R spec",
+    "precoverage": "istanbul cover ./node_modules/mocha/bin/_mocha build/test --report lcovonly -- -R spec",
     "coverage": "remap-istanbul -i coverage/coverage.json -o coverage/coverage-remap.json",
     "postcoverage": "codecov -f coverage/coverage-remap.json"
   },

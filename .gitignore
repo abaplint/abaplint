@@ -1,6 +1,5 @@
-*.js
-*.js.map
 test/typings/
+build/
 typings/
 coverage/
 npm-debug.log
@@ -10,3 +9,4 @@ web/viz/*.txt
 web/viz/*.svg
 web/viz/*.png
 web/viz/index.html
+web/script/bundle.js
