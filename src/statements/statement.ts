@@ -3,8 +3,6 @@ import Position from "../position";
 
 export abstract class Statement {
 
-    constructor(private tokens: Array<Token>) { }
-
     public static match(tokens: Array<Token>): Statement {
         return undefined;
     }
@@ -24,6 +22,10 @@ export abstract class Statement {
             prev = token;
         }
         return str;
+    }
+
+    public constructor(private tokens: Array<Token>) {
+
     }
 
     public get_start(): Position {

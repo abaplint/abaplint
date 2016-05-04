@@ -6,13 +6,6 @@ export default class Config {
 
     private config = undefined;
 
-    public constructor(filename: string) {
-        this.search_config(path.dirname(process.cwd() + path.sep + filename) + path.sep);
-        if (this.config === undefined) {
-            this.set(Config.get_default());
-        }
-    }
-
     public static get_default(): string {
         let defaults: Array<string> = [];
 
@@ -22,6 +15,13 @@ export default class Config {
         }
 
         return "{\"rules\":\n{" + defaults.join(",\n") + "\n}}";
+    }
+
+    public constructor(filename: string) {
+        this.search_config(path.dirname(process.cwd() + path.sep + filename) + path.sep);
+        if (this.config === undefined) {
+            this.set(Config.get_default());
+        }
     }
 
     public read_by_key(rule: string, key: string) {

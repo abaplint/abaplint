@@ -12,10 +12,6 @@ let star = Combi.star;
 
 export class Data extends Statement {
 
-    constructor(tokens: Array<Token>) {
-        super(tokens);
-    }
-
     public static get_matcher(): Combi.IRunnable {
         let start = alt(str("CLASS-DATA"), str("DATA"));
         let type = seq(reg(/^(LIKE|TYPE)$/i),
@@ -64,6 +60,10 @@ export class Data extends Statement {
         } else {
             return undefined;
         }
+    }
+
+    public constructor(tokens: Array<Token>) {
+        super(tokens);
     }
 
 }
