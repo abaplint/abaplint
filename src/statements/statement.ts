@@ -1,4 +1,4 @@
-import { Token } from "../tokens/";
+import { Token, Pragma } from "../tokens/";
 import Position from "../position";
 
 export abstract class Statement {
@@ -11,6 +11,9 @@ export abstract class Statement {
         let str = "";
         let prev: Token;
         for (let token of tokens) {
+            if (token instanceof Pragma) {
+                continue;
+            }
             if (str === "") {
                 str = token.get_str();
             } else if (prev.get_str().length + prev.get_col() === token.get_col()

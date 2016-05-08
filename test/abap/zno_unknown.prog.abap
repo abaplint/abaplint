@@ -9,6 +9,13 @@ WRITE: 'foobar', 'bar'.
 cl_gui_cfw=>flush( ).
 cl_gui_cfw=>flush( ) .
 
+mo_files->add_string( iv_extra  = 'source'
+                      iv_ext    = 'xml'
+                      iv_string = lv_source ).
+mo_files->add_string( iv_extra  = 'source'
+                      iv_ext    = 'xml'
+                      iv_string = lv_source ) ##NO_TEXT.
+
 * move
 lt_foo[] = lt_bar[].
 <ls_output>-line+lv_spaces = 2.
