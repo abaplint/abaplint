@@ -47,7 +47,6 @@
     "istanbul": "^0.4.3",
     "mocha": "^2.4.5",
     "remap-istanbul": "^0.6.3",
-    "tsd": "^0.6.5",
     "tslint": "^3.9.0",
     "typescript": "^1.8.10",
     "typings": "^0.8.1",
