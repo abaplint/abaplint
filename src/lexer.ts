@@ -2,6 +2,7 @@ import * as Tokens from "./tokens/";
 import File from "./file";
 import Position from "./position";
 
+// todo, use enum instead?
 const NORMAL = 1;
 const PING = 2;
 const STR = 3;
@@ -9,17 +10,19 @@ const TEMPLATE = 4;
 const COMMENT = 5;
 
 export default class Lexer {
-    private tokens: Array<Tokens.Token> = [];
+    private static tokens: Array<Tokens.Token>;
+    private static m;
 
-    private m = NORMAL;
+    public static run(file: File): Array<Tokens.Token> {
+        this.tokens = [];
+        this.m = NORMAL;
 
-    constructor(private file: File) {
-        this.run();
-// console.dir(this.tokens);
-        this.file.set_tokens(this.tokens);
+        this.process(file.get_raw());
+
+        return this.tokens;
     }
 
-    private add(s: string, row: number, col: number) {
+    private static add(s: string, row: number, col: number) {
         if (s.length > 0) {
             let pos = new Position(row, col - s.length);
             if (this.m === COMMENT) {
@@ -48,8 +51,7 @@ export default class Lexer {
         }
     }
 
-    private run() {
-        let raw = this.file.get_raw();
+    private static process(raw: string) {
         let before = "";
 
         let row = 1;

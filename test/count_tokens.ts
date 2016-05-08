@@ -1,7 +1,6 @@
-/// <reference path="typings/mocha/mocha.d.ts" />
-/// <reference path="typings/chai/chai.d.ts" />
-/// <reference path="../typings/node/node.d.ts" />
-
+/// <reference path="./typings/mocha/mocha.d.ts"/>
+/// <reference path="./typings/chai/chai.d.ts"/>
+/// <reference path="../typings/node/node.d.ts"/>
 import File from "../src/file";
 import Lexer from "../src/lexer";
 import Runner from "../src/runner";
@@ -56,7 +55,7 @@ describe("count_tokens 2", () => {
 
     tests.forEach((test) => {
         let file = new File("foo.abap", test.abap);
-        new Lexer(file);
+        file.set_tokens(Lexer.run(file));
 
         it("\"" + test.abap + "\" should have " + test.tokens + " tokens", () => {
             expect(file.get_tokens().length).to.equals(test.tokens);

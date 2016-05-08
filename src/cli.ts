@@ -1,12 +1,10 @@
-/// <reference path="../typings/node/node.d.ts" />
-/// <reference path="../typings/glob/glob.d.ts" />
-/// <reference path="../typings/minimist/minimist.d.ts" />
-
+/// <reference path="../typings/node/node.d.ts"/>
+/// <reference path="../typings/glob/glob.d.ts"/>
+/// <reference path="../typings/minimist/minimist.d.ts"/>
 import Runner from "./runner";
 import File from "./file";
 import Config from "./config";
 import * as Formatters from "./formatters/";
-
 import * as fs from "fs";
 import * as glob from "glob";
 import * as minimist from "minimist";

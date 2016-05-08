@@ -40,7 +40,7 @@ export function run_file(input: string): string {
 }
 
 export function run() {
-    let input = (<HTMLInputElement>document.getElementById("input")).value;
+    let input = (document.getElementById("input") as HTMLInputElement).value;
     input = strip_newline(input);
 
     document.getElementById("abap").innerText = input;

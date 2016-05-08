@@ -3,16 +3,19 @@ import File from "./file";
 import * as Statements from "./statements/";
 
 export default class Parser {
-    private statements: Array<Statements.Statement> = [];
+    private static statements: Array<Statements.Statement>;
 
-    constructor(private file: File) {
-        this.run();
+    public static run(file: File): Array<Statements.Statement> {
+        this.statements = [];
+
+        this.process(file.get_tokens());
         this.categorize();
         this.macros();
-        file.set_statements(this.statements);
+
+        return this.statements;
     }
 
-    private macros() {
+    private static macros() {
         let result: Array<Statements.Statement> = [];
         let define = false;
 
@@ -31,7 +34,7 @@ export default class Parser {
         this.statements = result;
     }
 
-    private categorize() {
+    private static categorize() {
         let result: Array<Statements.Statement> = [];
 
         for (let statement of this.statements) {
@@ -51,10 +54,9 @@ export default class Parser {
         this.statements = result;
     }
 
-    private run() {
+    private static process(tokens: Array<Tokens.Token>) {
         let add: Array<Tokens.Token> = [];
         let pre: Array<Tokens.Token> = [];
-        let tokens = this.file.get_tokens();
 
         for (let token of tokens) {
             if (token instanceof Tokens.Comment) {

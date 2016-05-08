@@ -24,8 +24,9 @@ export default class Runner {
     }
 
     private static analyze(file: File) {
-        new Lexer(file);
-        new Parser(file);
+        file.set_tokens(Lexer.run(file));
+        file.set_statements(Parser.run(file));
+
         for (let key in Rules) {
             let rule = new Rules[key]();
             if (this.conf.read_by_key(rule.get_key(), "enabled") === true) {

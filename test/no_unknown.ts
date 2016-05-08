@@ -1,6 +1,5 @@
-/// <reference path="typings/mocha/mocha.d.ts" />
-/// <reference path="typings/chai/chai.d.ts" />
-
+/// <reference path="./typings/mocha/mocha.d.ts"/>
+/// <reference path="./typings/chai/chai.d.ts"/>
 import * as chai from "chai";
 import * as fs from "fs";
 import * as Statements from "../src/statements/";

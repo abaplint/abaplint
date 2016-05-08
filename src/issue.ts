@@ -4,9 +4,14 @@ import Position from "./position";
 
 export default class Issue {
 
-    constructor(private rule: Rule,
-                private position: Position,
-                private file: File) {
+    private rule: Rule;
+    private position: Position;
+    private file: File;
+
+    constructor(rule: Rule, position: Position, file: File) {
+        this.rule = rule;
+        this.position = position;
+        this.file = file;
     }
 
     public get_description(): string {

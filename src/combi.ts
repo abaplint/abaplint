@@ -88,7 +88,11 @@ class Regex implements IRunnable {
 
 class Word implements IRunnable {
 
-    constructor(private s: String) { }
+    private s: String;
+
+    constructor(s: String) {
+        this.s = s;
+    }
 
     public run(r: Array<Result>): Array<Result> {
         let result: Array<Result> = [];
@@ -112,7 +116,11 @@ class Word implements IRunnable {
 
 class Optional implements IRunnable {
 
-    constructor(private opt: IRunnable) { }
+    private opt: IRunnable;
+
+    constructor(opt: IRunnable) {
+        this.opt = opt;
+    }
 
     public run(r: Array<Result>): Array<Result> {
         let result: Array<Result> = [];
@@ -135,7 +143,11 @@ class Optional implements IRunnable {
 
 class Star implements IRunnable {
 
-    constructor(private star: IRunnable) { }
+    private star: IRunnable;
+
+    constructor(star: IRunnable) {
+        this.star = star;
+    }
 
     public run(r: Array<Result>): Array<Result> {
         let result = r;
