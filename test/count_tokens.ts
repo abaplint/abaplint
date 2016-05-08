@@ -1,6 +1,4 @@
-/// <reference path="./typings/mocha/mocha.d.ts"/>
-/// <reference path="./typings/chai/chai.d.ts"/>
-/// <reference path="../typings/node/node.d.ts"/>
+import "../typings/main.d.ts";
 import File from "../src/file";
 import Lexer from "../src/lexer";
 import Runner from "../src/runner";

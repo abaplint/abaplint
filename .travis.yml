@@ -4,6 +4,7 @@ node_js:
 before_script:
   - npm run typings
 after_success:
+  - npm run viz
   - npm run coverage
 notifications:
   email: false

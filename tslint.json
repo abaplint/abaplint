@@ -72,7 +72,7 @@
       "no-this-in-function-in-method"
       ],
     "no-null-keyword": true,
-    "no-reference": false,
+    "no-reference": true,
     "no-require-imports": true,
     "no-shadowed-variable": true,
     "no-string-literal": false,

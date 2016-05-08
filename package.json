@@ -10,6 +10,7 @@
     "test": "test"
   },
   "scripts": {
+    "prebrowserify": "cp -r typings build",
     "browserify": "browserify build/web/script/script.js -o web/script/bundle.js -s run",
     "uglify": "uglifyjs web/script/bundle.js --compress warnings=false --mangle -o web/script/bundle.js",
     "tslint": "tslint -c tslint.json *.ts test/*.ts src/*.ts src/statements/*.ts src/formatters/*.ts src/tokens/*.ts web/script/*.ts",
@@ -18,9 +19,9 @@
     "postcompile": "npm run uglify",
     "pretest": "npm run compile",
     "test": "mocha build/test",
-    "viz": "node build/src/graphs.js && node web/script/generate.js",
-    "typings": "tsd install && cd test && tsd install && cd ..",
     "posttest": "npm run tslint",
+    "viz": "mkdir -p web/viz && node build/src/graphs.js && node web/script/generate.js",
+    "typings": "typings install",
     "precoverage": "istanbul cover ./node_modules/mocha/bin/_mocha build/test --report lcovonly -- -R spec",
     "coverage": "remap-istanbul -i coverage/coverage.json -o coverage/coverage-remap.json",
     "postcoverage": "codecov -f coverage/coverage-remap.json"
@@ -49,6 +50,7 @@
     "tsd": "^0.6.5",
     "tslint": "^3.9.0",
     "typescript": "^1.8.10",
+    "typings": "^0.8.1",
     "uglify-js": "^2.6.2",
     "viz.js": "^1.3.0"
   },

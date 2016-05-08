@@ -1,5 +1,4 @@
-/// <reference path="./typings/mocha/mocha.d.ts"/>
-/// <reference path="./typings/chai/chai.d.ts"/>
+import "../typings/main.d.ts";
 import File from "../src/file";
 import Runner from "../src/runner";
 import * as chai from "chai";

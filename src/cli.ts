@@ -1,6 +1,4 @@
-/// <reference path="../typings/node/node.d.ts"/>
-/// <reference path="../typings/glob/glob.d.ts"/>
-/// <reference path="../typings/minimist/minimist.d.ts"/>
+import "../typings/main.d.ts";
 import Runner from "./runner";
 import File from "./file";
 import Config from "./config";
