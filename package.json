@@ -1,11 +1,11 @@
 {
   "name": "abaplint",
-  "version": "0.24.3",
+  "version": "0.24.4",
   "description": "Linter for ABAP",
   "bin": {
     "abaplint": "./abaplint"
   },
-  "main": "src/index.js",
+  "main": "build/src/index.js",
   "directories": {
     "test": "test"
   },
@@ -42,13 +42,13 @@
   },
   "homepage": "https://github.com/larshp/abaplint#readme",
   "devDependencies": {
-    "browserify": "^13.0.0",
+    "browserify": "^13.0.1",
     "chai": "^3.5.0",
     "codecov": "^1.0.1",
     "istanbul": "^0.4.3",
     "mocha": "^2.4.5",
     "remap-istanbul": "^0.6.3",
-    "tslint": "^3.9.0",
+    "tslint": "^3.10.1",
     "typescript": "^1.8.10",
     "typings": "^0.8.1",
     "uglify-js": "^2.6.2",
