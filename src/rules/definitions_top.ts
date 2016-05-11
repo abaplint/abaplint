@@ -4,10 +4,11 @@ import Issue from "../issue";
 import Position from "../position";
 import * as Statements from "../statements/";
 
-class Conf {
+export class DefinitionsTopConf {
   public enabled: boolean = true;
 }
 
+// todo, use enum instead?
 const ANY = 1;
 const DEFINITION = 2;
 const AFTER = 3;
@@ -15,7 +16,7 @@ const IGNORE = 4;
 
 export class DefinitionsTop implements Rule {
 
-    private conf: Conf = new Conf();
+    private conf = new DefinitionsTopConf();
 
     public get_key(): string {
         return "definitions_top";

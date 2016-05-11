@@ -2,13 +2,13 @@ import { Rule } from "./rule";
 import File from "../file";
 import Issue from "../issue";
 
-class Conf {
+export class FunctionalWritingConf {
   public enabled: boolean = true;
 }
 
 export class FunctionalWriting implements Rule {
 
-    private conf: Conf = new Conf();
+    private conf = new FunctionalWritingConf();
 
     public get_key(): string {
         return "functional_writing";

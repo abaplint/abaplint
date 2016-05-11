@@ -3,19 +3,19 @@ import File from "../file";
 import Position from "../position";
 import Issue from "../issue";
 
-class Counter {
+export class Counter {
     public exporting: boolean = false;
     public other: boolean = false;
     public pos: Position;
 }
 
-class Conf {
+export class ExportingConf {
   public enabled: boolean = true;
 }
 
 export class Exporting implements Rule {
 
-    private conf: Conf = new Conf();
+    private conf = new ExportingConf();
 
     public get_key(): string {
         return "exporting";

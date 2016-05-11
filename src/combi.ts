@@ -1,6 +1,6 @@
 import * as Tokens from "./tokens/";
 
-class Result {
+export class Result {
     private tokens: Array<Tokens.Token>;
 
     constructor(a: Array<Tokens.Token>) {

@@ -3,13 +3,13 @@ import File from "../file";
 import Issue from "../issue";
 import * as Statements from "../statements/";
 
-class Conf {
+export class ObsoleteStatementConf {
   public enabled: boolean = true;
 }
 
 export class ObsoleteStatement implements Rule {
 
-    private conf = new Conf();
+    private conf = new ObsoleteStatementConf();
 
     public get_key(): string {
         return "obsolete_statement";

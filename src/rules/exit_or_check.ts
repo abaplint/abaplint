@@ -3,13 +3,13 @@ import File from "../file";
 import Issue from "../issue";
 import * as Statements from "../statements/";
 
-class Conf {
+export class ExitOrCheckConf {
   public enabled: boolean = true;
 }
 
 export class ExitOrCheck implements Rule {
 
-    private conf: Conf = new Conf();
+    private conf = new ExitOrCheckConf();
 
     public get_key(): string {
         return "exit_or_check";

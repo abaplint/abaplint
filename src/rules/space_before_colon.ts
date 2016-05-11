@@ -2,13 +2,13 @@ import { Rule } from "./rule";
 import File from "../file";
 import Issue from "../issue";
 
-class Conf {
+export class SpaceBeforeColonConf {
   public enabled: boolean = true;
 }
 
 export class SpaceBeforeColon implements Rule {
 
-    private conf: Conf = new Conf();
+    private conf = new SpaceBeforeColonConf();
 
     public get_key(): string {
         return "space_before_colon";

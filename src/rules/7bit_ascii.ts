@@ -4,13 +4,13 @@ import Issue from "../issue";
 import Position from "../position";
 import * as Statements from "../statements/";
 
-class Conf {
+export class SevenBitAsciiConf {
   public enabled: boolean = true;
 }
 
-export class sevenBitAscii implements Rule {
+export class SevenBitAscii implements Rule {
 
-    private conf: Conf = new Conf();
+    private conf = new SevenBitAsciiConf();
 
     public get_key(): string {
         return "7bit_ascii";

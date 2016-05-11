@@ -3,13 +3,13 @@ import File from "../file";
 import Issue from "../issue";
 import * as Statements from "../statements/";
 
-class Conf {
+export class EmptyStatementConf {
   public enabled: boolean = true;
 }
 
 export class EmptyStatement implements Rule {
 
-    private conf: Conf = new Conf();
+    private conf = new EmptyStatementConf();
 
     public get_key(): string {
         return "empty_statement";

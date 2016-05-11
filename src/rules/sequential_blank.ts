@@ -4,14 +4,14 @@ import Issue from "../issue";
 import Position from "../position";
 import * as Statements from "../statements/";
 
-class Conf {
+export class SequentialBlankConf {
   public enabled: boolean = true;
   public lines: number = 4;
 }
 
 export class SequentialBlank implements Rule {
 
-    private conf: Conf = new Conf();
+    private conf = new SequentialBlankConf();
 
     public get_key(): string {
         return "sequential_blank";

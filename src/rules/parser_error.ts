@@ -4,13 +4,13 @@ import Issue from "../issue";
 import Position from "../position";
 import * as Statements from "../statements/";
 
-class Conf {
+export class ParserErrorConf {
   public enabled: boolean = true;
 }
 
 export class ParserError implements Rule {
 
-    private conf: Conf = new Conf();
+    private conf = new ParserErrorConf();
 
     public get_key(): string {
         return "parser_error";

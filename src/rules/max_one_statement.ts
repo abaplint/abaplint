@@ -4,13 +4,13 @@ import { Token } from "../tokens/";
 import Issue from "../issue";
 import * as Statements from "../statements/";
 
-class Conf {
+export class MaxOneStatementConf {
   public enabled: boolean = true;
 }
 
 export class MaxOneStatement implements Rule {
 
-    private conf: Conf = new Conf();
+    private conf = new MaxOneStatementConf();
 
     public get_key(): string {
         return "max_one_statement";

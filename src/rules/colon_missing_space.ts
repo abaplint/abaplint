@@ -4,13 +4,13 @@ import Issue from "../issue";
 import Position from "../position";
 import * as Statements from "../statements/";
 
-class Conf {
+export class ColonMissingSpaceConf {
   public enabled: boolean = true;
 }
 
 export class ColonMissingSpace implements Rule {
 
-    private conf: Conf = new Conf();
+    private conf = new ColonMissingSpaceConf();
 
     public get_key(): string {
         return "colon_missing_space";

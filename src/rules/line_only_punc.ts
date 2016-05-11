@@ -4,13 +4,13 @@ import { Token } from "../tokens/";
 import Issue from "../issue";
 import Position from "../position";
 
-class Conf {
+export class LineOnlyPuncConf {
   public enabled: boolean = true;
 }
 
 export class LineOnlyPunc implements Rule {
 
-    private conf: Conf = new Conf();
+    private conf = new LineOnlyPuncConf();
 
     public get_key(): string {
         return "line_only_punc";

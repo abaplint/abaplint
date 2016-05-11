@@ -3,13 +3,13 @@ import File from "../file";
 import Issue from "../issue";
 import * as Statements from "../statements/";
 
-class Conf {
+export class StartAtTabConf {
   public enabled: boolean = true;
 }
 
 export class StartAtTab implements Rule {
 
-    private conf: Conf = new Conf();
+    private conf = new StartAtTabConf();
 
     public get_key(): string {
         return "start_at_tab";

@@ -3,13 +3,13 @@ import File from "../file";
 import Issue from "../issue";
 import Position from "../position";
 
-class Conf {
+export class ContainsTabConf {
   public enabled: boolean = true;
 }
 
 export class ContainsTab implements Rule {
 
-    private conf: Conf = new Conf();
+    private conf = new ContainsTabConf();
 
     public get_key(): string {
         return "contains_tab";

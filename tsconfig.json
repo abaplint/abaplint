@@ -4,6 +4,7 @@
         "outDir": "build",
         "noFallthroughCasesInSwitch": true,
         "noImplicitReturns": true,
+        "declaration": true,
         "sourceMap": true
         },
     "filesGlob": [
