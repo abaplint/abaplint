@@ -35,12 +35,12 @@ export class DefinitionsTop implements Rule {
     }
 
     public run(file: File) {
-        let rows = file.get_raw_rows();
+        let rows = file.getRawRows();
         let mode = ANY;
         let issue: Issue = undefined;
 
 // todo, this needs refactoring when the paser has become better
-        for (let statement of file.get_statements()) {
+        for (let statement of file.getStatements()) {
             if (statement instanceof Statements.Form
                     || statement instanceof Statements.Method) {
                 mode = DEFINITION;

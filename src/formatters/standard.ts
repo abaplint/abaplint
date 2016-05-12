@@ -16,7 +16,7 @@ export class Standard {
 
   public static output(files: Array<File>): string {
     let issues: Array<Issue> = [];
-    files.forEach((file) => { issues = issues.concat(file.get_issues()); });
+    files.forEach((file) => { issues = issues.concat(file.getIssues()); });
 
     let tuples: Array<Tuple> = [];
     issues.forEach((issue) => { tuples = tuples.concat(this.output_tuple(issue)); });

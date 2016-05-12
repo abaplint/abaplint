@@ -18,14 +18,14 @@ let reg      = Combi.regex;
 let re       = Combi.reuse;
 
 function tok(s: string): Array<Tokens.Token> {
-    let split = s.split(" ");
+  let split = s.split(" ");
 
-    let tokens: Array<Tokens.Token> = [];
-    for (let st of split) {
-        tokens.push(new Tokens.Identifier(new Position(10, 10), st));
-    }
+  let tokens: Array<Tokens.Token> = [];
+  for (let st of split) {
+    tokens.push(new Tokens.Identifier(new Position(10, 10), st));
+  }
 
-    return tokens;
+  return tokens;
 }
 
 let tests = [
@@ -96,12 +96,12 @@ let tests = [
 ];
 
 describe("combi", () => {
-    tests.forEach((test) => {
-        it(test.n + " should be " + test.e, () => {
-            let result = Combi.Combi.run(test.c, test.t);
-            expect(result).to.equals(test.e);
-        });
+  tests.forEach((test) => {
+    it(test.n + " should be " + test.e, () => {
+      let result = Combi.Combi.run(test.c, test.t);
+      expect(result).to.equals(test.e);
     });
+  });
 });
 
 let viz = [
@@ -112,10 +112,10 @@ let viz = [
 ];
 
 describe("combi vizualization", () => {
-    viz.forEach((v) => {
-        it("test " + v.n, () => {
-            let result = Combi.Combi.viz("test", v.c);
-            expect(result).to.be.a("string");
-        });
+  viz.forEach((v) => {
+    it("test " + v.n, () => {
+      let result = Combi.Combi.viz("test", v.c);
+      expect(result).to.be.a("string");
     });
+  });
 });

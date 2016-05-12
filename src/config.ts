@@ -7,7 +7,7 @@ export default class Config {
 
   private config = undefined;
 
-  public static get_default(): string {
+  public static getDefault(): string {
     let defaults: Array<string> = [];
 
     for (let key in Rules) {
@@ -21,17 +21,17 @@ export default class Config {
   }
 
   public constructor(filename: string) {
-    this.search_config(path.dirname(process.cwd() + path.sep + filename) + path.sep);
+    this.searchConfig(path.dirname(process.cwd() + path.sep + filename) + path.sep);
     if (this.config === undefined) {
-      this.set(Config.get_default());
+      this.set(Config.getDefault());
     }
   }
 
-  public read_by_key(rule: string, key: string) {
+  public readByKey(rule: string, key: string) {
     return this.config["rules"][rule][key];
   }
 
-  public read_by_rule(rule: string) {
+  public readByRule(rule: string) {
     return this.config["rules"][rule];
   }
 
@@ -39,7 +39,7 @@ export default class Config {
     this.config = JSON.parse(json);
   }
 
-  private search_config(dir: string) {
+  private searchConfig(dir: string) {
     if (typeof fs.existsSync !== "function") {
 // make sure the code also works in web browser
       return;
@@ -54,7 +54,7 @@ export default class Config {
 
     let up = path.normalize(dir + ".." + path.sep);
     if (path.normalize(up) !== dir) {
-      this.search_config(up);
+      this.searchConfig(up);
     }
   }
 }

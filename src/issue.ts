@@ -13,7 +13,7 @@ export default class Issue {
     this.rule = rule;
     this.start = start;
     if (!end) {
-      this.end = new Position(start.getRow(), file.get_raw_rows()[start.getRow() - 1].length);
+      this.end = new Position(start.getRow(), file.getRawRows()[start.getRow() - 1].length);
     }
     this.file = file;
   }
@@ -31,6 +31,6 @@ export default class Issue {
   }
 
   public getFilename(): string {
-    return this.file.get_filename();
+    return this.file.getFilename();
   }
 }

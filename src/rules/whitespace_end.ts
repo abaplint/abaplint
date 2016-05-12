@@ -10,32 +10,32 @@ export class WhitespaceEndConf {
 
 export class WhitespaceEnd implements Rule {
 
-    private conf = new WhitespaceEndConf();
+  private conf = new WhitespaceEndConf();
 
-    public get_key(): string {
-        return "whitespace_end";
+  public get_key(): string {
+    return "whitespace_end";
+  }
+
+  public get_description(): string {
+    return "Whitespace at end of line";
+  }
+
+  public get_config() {
+    return this.conf;
+  }
+
+  public set_config(conf) {
+    this.conf = conf;
+  }
+
+  public run(file: File) {
+    let rows = file.getRawRows();
+
+    for (let i = 0; i < rows.length; i++) {
+      if (/.* $/.test(rows[i]) === true) {
+        let issue = new Issue(this, new Position(i + 1, 1), file);
+        file.add(issue);
+      }
     }
-
-    public get_description(): string {
-        return "Whitespace at end of line";
-    }
-
-    public get_config() {
-        return this.conf;
-    }
-
-    public set_config(conf) {
-        this.conf = conf;
-    }
-
-    public run(file: File) {
-        let rows = file.get_raw_rows();
-
-        for (let i = 0; i < rows.length; i++) {
-            if (/.* $/.test(rows[i]) === true) {
-                let issue = new Issue(this, new Position(i + 1, 1), file);
-                file.add(issue);
-            }
-        }
-    }
+  }
 }

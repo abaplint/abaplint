@@ -28,7 +28,7 @@ export class EmptyStatement implements Rule {
     }
 
     public run(file: File) {
-        let statements = file.get_statements();
+        let statements = file.getStatements();
 
         for (let sta of statements) {
             if (sta instanceof Statements.Empty) {

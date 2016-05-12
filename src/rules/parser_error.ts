@@ -30,7 +30,7 @@ export class ParserError implements Rule {
 
   public run(file: File) {
     let pos = new Position(0, 0);
-    for (let statement of file.get_statements()) {
+    for (let statement of file.getStatements()) {
 // only report one error per row
       if (statement instanceof Statements.Unknown
             && pos.getRow() !== statement.get_start().getRow()) {

@@ -6,7 +6,7 @@ class Linter {
   public static run(filename: string, contents: string): Issue[] {
     let file = new File(filename, contents);
     Runner.run([file]);
-    return file.get_issues();
+    return file.getIssues();
   }
 }
 

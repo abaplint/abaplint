@@ -28,7 +28,7 @@ export class ContainsTab implements Rule {
     }
 
     public run(file: File) {
-        let lines = file.get_raw().split("\n");
+        let lines = file.getRaw().split("\n");
         for (let line = 0; line < lines.length; line++) {
             if (/\t/.test(lines[line])) {
                 let issue = new Issue(this, new Position(line + 1, 1), file);

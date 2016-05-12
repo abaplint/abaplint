@@ -7,7 +7,7 @@ export class Json {
     let out = [];
 
     let issues: Array<Issue> = [];
-    files.forEach((file) => { issues = issues.concat(file.get_issues()); });
+    files.forEach((file) => { issues = issues.concat(file.getIssues()); });
 
     for (let issue of issues) {
       let single = { type: "issue",

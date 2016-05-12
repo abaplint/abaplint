@@ -30,7 +30,7 @@ export class ExitOrCheck implements Rule {
     public run(file: File) {
         let stack: Array<Statements.Statement> = [];
 
-        for (let statement of file.get_statements()) {
+        for (let statement of file.getStatements()) {
             if (statement instanceof Statements.Loop
                     || statement instanceof Statements.While
                     || statement instanceof Statements.Do) {
