@@ -34,7 +34,7 @@ export class StartAtTab implements Rule {
             }
 
             let pos = statement.get_start();
-            if ((pos.get_col() - 1) % 2 !== 0) {
+            if ((pos.getCol() - 1) % 2 !== 0) {
                 let issue = new Issue(this, pos, file);
                 file.add(issue);
             }

@@ -17,22 +17,20 @@ function build_issues(input: string, file: File): string {
     }
 
     for (let issue of file.get_issues()) {
-        let row = issue.get_row();
-        lines[row - 1] = lines[row - 1] + " " + issue.get_description();
+        let row = issue.getStart().getRow();
+        lines[row - 1] = lines[row - 1] + " " + issue.getDescription();
     }
 
     return lines.join("\n");
 }
 
-// todo, split this file up in frontend and backend
-// the frontend stuff does not need to be browserify'ed
 export function run_file(input: string): string {
     let file = new File("foobar.abap", input);
     Runner.run([file]);
 
     let ret = "";
     for (let issue of file.get_issues()) {
-        ret = ret + "{\"row\": \"" + issue.get_row() + "\", \"text\": \"" + issue.get_description() + "\"},";
+        ret = ret + "{\"row\": \"" + issue.getStart().getRow() + "\", \"text\": \"" + issue.getDescription() + "\"},";
     }
     ret = ret.substring(0, ret.length - 1);
 

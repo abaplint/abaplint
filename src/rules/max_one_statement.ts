@@ -38,7 +38,7 @@ export class MaxOneStatement implements Rule {
             }
 
             let pos = statement.get_start();
-            let row = pos.get_row();
+            let row = pos.getRow();
             if (prev === row && row !== reported) {
                 let issue = new Issue(this, pos, file);
                 file.add(issue);

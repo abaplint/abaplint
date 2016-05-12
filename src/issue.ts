@@ -4,29 +4,33 @@ import Position from "./position";
 
 export default class Issue {
 
-    private rule: Rule;
-    private position: Position;
-    private file: File;
+  private rule: Rule;
+  private start: Position;
+  private end: Position;
+  private file: File;
 
-    constructor(rule: Rule, position: Position, file: File) {
-        this.rule = rule;
-        this.position = position;
-        this.file = file;
+  constructor(rule: Rule, start: Position, file: File, end?: Position) {
+    this.rule = rule;
+    this.start = start;
+    if (!end) {
+      this.end = new Position(start.getRow(), file.get_raw_rows()[start.getRow() - 1].length);
     }
+    this.file = file;
+  }
 
-    public get_description(): string {
-        return this.rule.get_description();
-    }
+  public getDescription(): string {
+    return this.rule.get_description();
+  }
 
-    public get_row(): number {
-        return this.position.get_row();
-    }
+  public getStart(): Position {
+    return this.start;
+  }
 
-    public get_col(): number {
-        return this.position.get_col();
-    }
+  public getEnd(): Position {
+    return this.end;
+  }
 
-    public get_filename(): string {
-        return this.file.get_filename();
-    }
+  public getFilename(): string {
+    return this.file.get_filename();
+  }
 }
