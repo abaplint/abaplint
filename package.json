@@ -11,7 +11,6 @@
     "test": "test"
   },
   "scripts": {
-    "postinstall": "npm run typings",
     "prebrowserify": "cp -r typings build",
     "browserify": "browserify build/web/script/script.js -o web/script/bundle.js -s run",
     "uglify": "uglifyjs web/script/bundle.js --compress warnings=false --mangle -o web/script/bundle.js",
