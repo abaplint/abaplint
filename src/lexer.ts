@@ -18,7 +18,7 @@ export default class Lexer {
     this.m = NORMAL;
 
     this.process(file.getRaw());
-
+// console.dir(this.tokens);
     return this.tokens;
   }
 

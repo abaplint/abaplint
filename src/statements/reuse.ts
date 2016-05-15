@@ -97,7 +97,7 @@ export default class Reuse {
     }
 
     public static field(): Combi.Reuse {
-        return re(() => { return reg(/^\w+$/); }, "field");
+        return re(() => { return seq(reg(/^\w+$/), star(seq(reg(/^-$/), reg(/^\w+$/)))); }, "field");
     }
 
     public static constant(): Combi.Reuse {
