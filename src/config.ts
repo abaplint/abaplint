@@ -1,4 +1,4 @@
-import "../typings/main.d.ts";
+import "../typings/index.d.ts";
 import * as Rules from "./rules/";
 import * as path from "path";
 import * as fs from "fs";

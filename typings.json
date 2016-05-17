@@ -1,5 +1,5 @@
 {
-  "ambientDependencies": {
+  "globalDependencies": {
     "assertion-error": "registry:dt/assertion-error#1.0.0+20160316155526",
     "chai": "registry:dt/chai#3.4.0+20160317120654",
     "glob": "registry:dt/glob#5.0.10+20160317120654",
