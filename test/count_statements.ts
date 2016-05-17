@@ -1,4 +1,4 @@
-import "../typings/main.d.ts";
+import "../typings/index.d.ts";
 import File from "../src/file";
 import * as chai from "chai";
 import * as fs from "fs";
