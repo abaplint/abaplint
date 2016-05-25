@@ -12,19 +12,19 @@ export class LineOnlyPunc implements Rule {
 
   private conf = new LineOnlyPuncConf();
 
-  public get_key(): string {
+  public getKey(): string {
     return "line_only_punc";
   }
 
-  public get_description(): string {
+  public getDescription(): string {
     return "Line contains only . or ).";
   }
 
-  public get_config() {
+  public getConfig() {
     return this.conf;
   }
 
-  public set_config(conf) {
+  public setConfig(conf) {
     this.conf = conf;
   }
 

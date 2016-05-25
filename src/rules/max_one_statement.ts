@@ -12,19 +12,19 @@ export class MaxOneStatement implements Rule {
 
   private conf = new MaxOneStatementConf();
 
-  public get_key(): string {
+  public getKey(): string {
     return "max_one_statement";
   }
 
-  public get_description(): string {
+  public getDescription(): string {
     return "Max one statement per line";
   }
 
-  public get_config() {
+  public getConfig() {
     return this.conf;
   }
 
-  public set_config(conf) {
+  public setConfig(conf) {
     this.conf = conf;
   }
 

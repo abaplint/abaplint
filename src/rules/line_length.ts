@@ -12,19 +12,19 @@ export class LineLength implements Rule {
 
   private conf = new LineLengthConf();
 
-  public get_key(): string {
+  public getKey(): string {
     return "line_length";
   }
 
-  public get_description(): string {
+  public getDescription(): string {
     return "Reduce line length";
   }
 
-  public get_config() {
+  public getConfig() {
     return this.conf;
   }
 
-  public set_config(conf) {
+  public setConfig(conf) {
     this.conf = conf;
   }
 

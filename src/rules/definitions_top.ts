@@ -18,19 +18,19 @@ export class DefinitionsTop implements Rule {
 
   private conf = new DefinitionsTopConf();
 
-  public get_key(): string {
+  public getKey(): string {
     return "definitions_top";
   }
 
-  public get_description(): string {
+  public getDescription(): string {
     return "Reorder definitions to top of routine";
   }
 
-  public get_config() {
+  public getConfig() {
     return this.conf;
   }
 
-  public set_config(conf) {
+  public setConfig(conf) {
     this.conf = conf;
   }
 

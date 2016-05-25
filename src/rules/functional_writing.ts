@@ -10,19 +10,19 @@ export class FunctionalWriting implements Rule {
 
   private conf = new FunctionalWritingConf();
 
-  public get_key(): string {
+  public getKey(): string {
     return "functional_writing";
   }
 
-  public get_description(): string {
+  public getDescription(): string {
     return "Use functional writing style";
   }
 
-  public get_config() {
+  public getConfig() {
     return this.conf;
   }
 
-  public set_config(conf) {
+  public setConfig(conf) {
     this.conf = conf;
   }
 

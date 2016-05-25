@@ -17,27 +17,27 @@ export class Exporting implements Rule {
 
   private conf = new ExportingConf();
 
-  public get_key(): string {
+  public getKey(): string {
     return "exporting";
   }
 
-  public get_description(): string {
+  public getDescription(): string {
     return "EXPORTING can be omitted";
   }
 
-  public get_config() {
+  public getConfig() {
     return this.conf;
   }
 
-  public set_config(conf) {
+  public setConfig(conf) {
     this.conf = conf;
   }
 
-  private last_char(s: string): string {
+  private lastChar(s: string): string {
     return s.charAt(s.length - 1);
   }
 
-  private first_char(s: string): string {
+  private firstChar(s: string): string {
     return s.charAt(0);
   }
 
@@ -47,10 +47,10 @@ export class Exporting implements Rule {
       let stack: Array<Counter> = [];
 
       for (let token of statement.getTokens()) {
-        if (this.last_char(token.getStr()) === "(") {
+        if (this.lastChar(token.getStr()) === "(") {
           stack.push(current);
           current = new Counter();
-        } else if (this.first_char(token.getStr()) === ")") {
+        } else if (this.firstChar(token.getStr()) === ")") {
           if (current.exporting === true && current.other === false) {
             let issue = new Issue(this, current.pos, file);
             file.add(issue);

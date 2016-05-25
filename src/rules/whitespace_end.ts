@@ -12,19 +12,19 @@ export class WhitespaceEnd implements Rule {
 
   private conf = new WhitespaceEndConf();
 
-  public get_key(): string {
+  public getKey(): string {
     return "whitespace_end";
   }
 
-  public get_description(): string {
+  public getDescription(): string {
     return "Whitespace at end of line";
   }
 
-  public get_config() {
+  public getConfig() {
     return this.conf;
   }
 
-  public set_config(conf) {
+  public setConfig(conf) {
     this.conf = conf;
   }
 

@@ -12,19 +12,19 @@ export class ColonMissingSpace implements Rule {
 
   private conf = new ColonMissingSpaceConf();
 
-  public get_key(): string {
+  public getKey(): string {
     return "colon_missing_space";
   }
 
-  public get_description(): string {
+  public getDescription(): string {
     return "Missing space after colon";
   }
 
-  public get_config() {
+  public getConfig() {
     return this.conf;
   }
 
-  public set_config(conf) {
+  public setConfig(conf) {
     this.conf = conf;
   }
 

@@ -11,19 +11,19 @@ export class ExitOrCheck implements Rule {
 
   private conf = new ExitOrCheckConf();
 
-  public get_key(): string {
+  public getKey(): string {
     return "exit_or_check";
   }
 
-  public get_description(): string {
+  public getDescription(): string {
     return "EXIT or CHECK outside of loop";
   }
 
-  public get_config() {
+  public getConfig() {
     return this.conf;
   }
 
-  public set_config(conf) {
+  public setConfig(conf) {
     this.conf = conf;
   }
 

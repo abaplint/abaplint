@@ -12,19 +12,19 @@ export class StartAtTab implements Rule {
 
   private conf = new StartAtTabConf();
 
-  public get_key(): string {
+  public getKey(): string {
     return "start_at_tab";
   }
 
-  public get_description(): string {
+  public getDescription(): string {
     return "Start statement at tab position";
   }
 
-  public get_config() {
+  public getConfig() {
     return this.conf;
   }
 
-  public set_config(conf) {
+  public setConfig(conf) {
     this.conf = conf;
   }
 

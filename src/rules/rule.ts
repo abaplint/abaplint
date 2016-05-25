@@ -1,10 +1,9 @@
 import File from "../file";
 
 export interface Rule {
-// todo, rename methods, no underscore
-  get_key(): string;
-  get_description(): string;
-  get_config();
-  set_config(conf);
+  getKey(): string;
+  getDescription(): string;
+  getConfig();
+  setConfig(conf);
   run(file: File);
 }

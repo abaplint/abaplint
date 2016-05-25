@@ -10,19 +10,19 @@ export class SpaceBeforeColon implements Rule {
 
   private conf = new SpaceBeforeColonConf();
 
-  public get_key(): string {
+  public getKey(): string {
     return "space_before_colon";
   }
 
-  public get_description(): string {
+  public getDescription(): string {
     return "Space before colon";
   }
 
-  public get_config() {
+  public getConfig() {
     return this.conf;
   }
 
-  public set_config(conf) {
+  public setConfig(conf) {
     this.conf = conf;
   }
 

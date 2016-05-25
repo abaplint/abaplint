@@ -26,9 +26,9 @@ export default class Runner {
     file.setStatements(Parser.run(file));
 
     for (let key in Rules) {
-      let rule = new Rules[key]();
-      if (rule.get_key && this.conf.readByKey(rule.get_key(), "enabled") === true) {
-        rule.set_config(this.conf.readByRule(rule.get_key()));
+      let rule: Rules.Rule = new Rules[key]();
+      if (rule.getKey && this.conf.readByKey(rule.getKey(), "enabled") === true) {
+        rule.setConfig(this.conf.readByRule(rule.getKey()));
         rule.run(file);
       }
     }

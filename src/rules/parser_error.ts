@@ -12,19 +12,19 @@ export class ParserError implements Rule {
 
   private conf = new ParserErrorConf();
 
-  public get_key(): string {
+  public getKey(): string {
     return "parser_error";
   }
 
-  public get_description(): string {
+  public getDescription(): string {
     return "Parser error(Unknown statement)";
   }
 
-  public get_config() {
+  public getConfig() {
     return this.conf;
   }
 
-  public set_config(conf) {
+  public setConfig(conf) {
     this.conf = conf;
   }
 

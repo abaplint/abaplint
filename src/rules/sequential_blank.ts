@@ -13,19 +13,19 @@ export class SequentialBlank implements Rule {
 
   private conf = new SequentialBlankConf();
 
-  public get_key(): string {
+  public getKey(): string {
     return "sequential_blank";
   }
 
-  public get_description(): string {
+  public getDescription(): string {
     return "Sequential blank lines";
   }
 
-  public get_config() {
+  public getConfig() {
     return this.conf;
   }
 
-  public set_config(conf) {
+  public setConfig(conf) {
     this.conf = conf;
   }
 

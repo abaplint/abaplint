@@ -11,19 +11,19 @@ export class EmptyStatement implements Rule {
 
   private conf = new EmptyStatementConf();
 
-  public get_key(): string {
+  public getKey(): string {
     return "empty_statement";
   }
 
-  public get_description(): string {
+  public getDescription(): string {
     return "Empty statement";
   }
 
-  public get_config() {
+  public getConfig() {
     return this.conf;
   }
 
-  public set_config(conf) {
+  public setConfig(conf) {
     this.conf = conf;
   }
 

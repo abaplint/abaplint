@@ -11,19 +11,19 @@ export class ObsoleteStatement implements Rule {
 
   private conf = new ObsoleteStatementConf();
 
-  public get_key(): string {
+  public getKey(): string {
     return "obsolete_statement";
   }
 
-  public get_description(): string {
+  public getDescription(): string {
     return "Statement is obsolete";
   }
 
-  public get_config() {
+  public getConfig() {
     return this.conf;
   }
 
-  public set_config(conf) {
+  public setConfig(conf) {
     this.conf = conf;
   }
 

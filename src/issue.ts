@@ -19,7 +19,7 @@ export default class Issue {
   }
 
   public getDescription(): string {
-    return this.rule.get_description();
+    return this.rule.getDescription();
   }
 
   public getStart(): Position {

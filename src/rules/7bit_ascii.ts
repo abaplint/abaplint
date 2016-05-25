@@ -12,19 +12,19 @@ export class SevenBitAscii implements Rule {
 
   private conf = new SevenBitAsciiConf();
 
-  public get_key(): string {
+  public getKey(): string {
     return "7bit_ascii";
   }
 
-  public get_description(): string {
+  public getDescription(): string {
     return "Contains non 7 bit ascii character";
   }
 
-  public get_config() {
+  public getConfig() {
     return this.conf;
   }
 
-  public set_config(conf) {
+  public setConfig(conf) {
     this.conf = conf;
   }
 
