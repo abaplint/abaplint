@@ -15,7 +15,7 @@ describe("concat_tokens", () => {
     it(test, () => {
       let file = new File("temp.abap", test);
       Runner.run([file]);
-      let concat = file.getStatements()[0].concat_tokens();
+      let concat = file.getStatements()[0].concatTokens();
       expect(concat).to.equals(test);
     });
   });

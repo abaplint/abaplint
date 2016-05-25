@@ -46,11 +46,11 @@ export class Exporting implements Rule {
       let current = new Counter();
       let stack: Array<Counter> = [];
 
-      for (let token of statement.get_tokens()) {
-        if (this.last_char(token.get_str()) === "(") {
+      for (let token of statement.getTokens()) {
+        if (this.last_char(token.getStr()) === "(") {
           stack.push(current);
           current = new Counter();
-        } else if (this.first_char(token.get_str()) === ")") {
+        } else if (this.first_char(token.getStr()) === ")") {
           if (current.exporting === true && current.other === false) {
             let issue = new Issue(this, current.pos, file);
             file.add(issue);
@@ -59,13 +59,13 @@ export class Exporting implements Rule {
           if (current === undefined) {
             current = new Counter();
           }
-        } else if (token.get_str() === "EXPORTING") {
+        } else if (token.getStr() === "EXPORTING") {
           current.exporting = true;
-          current.pos = token.get_pos();
-        } else if (token.get_str() === "IMPORTING"
-            || token.get_str() === "RECEIVING"
-            || token.get_str() === "EXCEPTIONS"
-            || token.get_str() === "CHANGING") {
+          current.pos = token.getPos();
+        } else if (token.getStr() === "IMPORTING"
+            || token.getStr() === "RECEIVING"
+            || token.getStr() === "EXCEPTIONS"
+            || token.getStr() === "CHANGING") {
           current.other = true;
         }
       }

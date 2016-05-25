@@ -32,12 +32,12 @@ export class MaxOneStatement implements Rule {
     let prev: number = 0;
     let reported: number = 0;
     for (let statement of file.getStatements()) {
-      let term = statement.get_terminator();
+      let term = statement.getTerminator();
       if (statement instanceof Statements.Comment || term === ",") {
         continue;
       }
 
-      let pos = statement.get_start();
+      let pos = statement.getStart();
       let row = pos.getRow();
       if (prev === row && row !== reported) {
         let issue = new Issue(this, pos, file);

@@ -70,7 +70,7 @@ class Regex implements IRunnable {
 
     for (let input of r) {
       if (input.length() !== 0
-          && this.regexp.test(input.peek().get_str()) === true) {
+          && this.regexp.test(input.peek().getStr()) === true) {
         result.push(input.shift());
       }
     }
@@ -99,7 +99,7 @@ class Word implements IRunnable {
 
     for (let input of r) {
       if (input.length() !== 0
-          && input.peek().get_str().toUpperCase() === this.s.toUpperCase()) {
+          && input.peek().getStr().toUpperCase() === this.s.toUpperCase()) {
         result.push(input.shift());
       }
     }

@@ -9,19 +9,19 @@ export abstract class Token {
     this.str = str;
   }
 
-  public get_str(): string {
+  public getStr(): string {
     return this.str;
   }
 
-  public get_row(): number {
+  public getRow(): number {
     return this.pos.getRow();
   }
 
-  public get_col(): number {
+  public getCol(): number {
     return this.pos.getCol();
   }
 
-  public get_pos(): Position {
+  public getPos(): Position {
     return this.pos;
   }
 }

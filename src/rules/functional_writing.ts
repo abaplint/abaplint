@@ -32,13 +32,13 @@ export class FunctionalWriting implements Rule {
 
   public run(file: File) {
     for (let statement of file.getStatements()) {
-      let code = statement.concat_tokens().toUpperCase();
+      let code = statement.concatTokens().toUpperCase();
       if(this.startsWith(code, "CALL METHOD ")) {
         if (/\)[=-]>/.test(code) === true
             || /[=-]>\(/.test(code) === true) {
           continue;
         }
-        let issue = new Issue(this, statement.get_start(), file);
+        let issue = new Issue(this, statement.getStart(), file);
         file.add(issue);
       }
     }

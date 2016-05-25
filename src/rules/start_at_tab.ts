@@ -36,7 +36,7 @@ export class StartAtTab implements Rule {
         continue;
       }
 
-      let pos = statement.get_start();
+      let pos = statement.getStart();
       if (previous !== undefined && pos.getRow() === previous.getRow()) {
         continue;
       }

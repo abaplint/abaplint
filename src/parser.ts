@@ -25,7 +25,7 @@ export default class Parser {
       } else if (statement instanceof Statements.Enddefine) {
         define = false;
       } else if (statement instanceof Statements.Unknown && define === true) {
-        statement = new Statements.Macro(statement.get_tokens());
+        statement = new Statements.Macro(statement.getTokens());
       }
 
       result.push(statement);
@@ -38,10 +38,10 @@ export default class Parser {
     let result: Array<Statements.Statement> = [];
 
     for (let statement of this.statements) {
-      let last = statement.get_tokens()[statement.get_tokens().length - 1];
+      let last = statement.getTokens()[statement.getTokens().length - 1];
       if (statement instanceof Statements.Unknown && last instanceof Tokens.Punctuation) {
         for (let st in Statements) {
-          let known = Statements[st].match(statement.get_tokens());
+          let known = Statements[st].match(statement.getTokens());
           if (known !== undefined) {
             statement = known;
             break;
@@ -65,16 +65,16 @@ export default class Parser {
       }
 
       add.push(token);
-      if (token.get_str() === ".") {
+      if (token.getStr() === ".") {
         let statement = new Statements.Unknown(pre.concat(add));
         this.statements.push(statement);
         add = [];
         pre = [];
-      } else if (token.get_str() === "," && pre.length > 0) {
+      } else if (token.getStr() === "," && pre.length > 0) {
         let statement = new Statements.Unknown(pre.concat(add));
         this.statements.push(statement);
         add = [];
-      } else if (token.get_str() === ":") {
+      } else if (token.getStr() === ":") {
         add.pop(); // do not add colon token to statement
         pre = add.slice(0);
         add = [];

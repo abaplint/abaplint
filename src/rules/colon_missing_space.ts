@@ -33,11 +33,11 @@ export class ColonMissingSpace implements Rule {
 
     for (let i = 0; i < tokens.length; i++) {
       let token = tokens[i];
-      if (token.get_str() === ":"
+      if (token.getStr() === ":"
           && tokens[i+1] !== undefined
-          && tokens[i+1].get_row() === token.get_row()
-          && tokens[i+1].get_col() === token.get_col() + 1) {
-        let issue = new Issue(this, token.get_pos(), file);
+          && tokens[i+1].getRow() === token.getRow()
+          && tokens[i+1].getCol() === token.getCol() + 1) {
+        let issue = new Issue(this, token.getPos(), file);
         file.add(issue);
       }
     }

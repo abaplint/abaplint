@@ -7,7 +7,7 @@ export class Define extends Statement {
   public static match(tokens: Array<Token>): Statement {
     let str = Statement.concat(tokens).toUpperCase();
     if (/^DEFINE /.test(str)) {
-      Registry.addMacro(tokens[1].get_str());
+      Registry.addMacro(tokens[1].getStr());
       return new Define(tokens);
     }
     return undefined;

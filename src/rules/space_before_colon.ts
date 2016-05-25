@@ -30,10 +30,10 @@ export class SpaceBeforeColon implements Rule {
     let prev = file.getTokens[0];
 
     for (let token of file.getTokens()) {
-      if (token.get_str() === ":"
-          && prev.get_row() == token.get_row()
-          && prev.get_col() + prev.get_str().length < token.get_col()) {
-        let issue = new Issue(this, token.get_pos(), file);
+      if (token.getStr() === ":"
+          && prev.getRow() == token.getRow()
+          && prev.getCol() + prev.getStr().length < token.getCol()) {
+        let issue = new Issue(this, token.getPos(), file);
         file.add(issue);
       }
       prev = token;

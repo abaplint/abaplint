@@ -37,10 +37,10 @@ export class ObsoleteStatement implements Rule {
           || sta instanceof Statements.Subtract
           || sta instanceof Statements.Multiply
           || ( sta instanceof Statements.Move
-          && sta.get_tokens()[0].get_str() === 'MOVE'
-          && sta.get_tokens()[1].get_str() !== '-' )
+          && sta.getTokens()[0].getStr() === 'MOVE'
+          && sta.getTokens()[1].getStr() !== '-' )
           || sta instanceof Statements.Divide) {
-        let issue = new Issue(this, sta.get_start(), file);
+        let issue = new Issue(this, sta.getStart(), file);
         file.add(issue);
       }
     }
