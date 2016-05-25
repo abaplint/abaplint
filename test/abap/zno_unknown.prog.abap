@@ -44,8 +44,8 @@ tables usr02.
 translate lv_foo to upper case.
 unassign <ls_foo>.
 case lv_foo.
-    when 'foo'.
-    when others.
+  when 'foo'.
+  when others.
 endcase.
 break-point.
 do 2 times.

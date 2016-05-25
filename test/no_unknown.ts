@@ -13,6 +13,7 @@ describe("no_unknown", () => {
     {filename: "zno_unknown"},
     {filename: "zno_unknown_data"},
     {filename: "zno_unknown_append"},
+    {filename: "zno_unknown_string_template"},
     ];
 
   tests.forEach((test) => {

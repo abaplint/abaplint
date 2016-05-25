@@ -2,20 +2,21 @@ import * as Tokens from "./tokens/";
 import File from "./file";
 import Position from "./position";
 
-// todo, use enum instead?
-const NORMAL = 1;
-const PING = 2;
-const STR = 3;
-const TEMPLATE = 4;
-const COMMENT = 5;
+enum Mode {
+  Normal,
+  Ping,
+  Str,
+  Template,
+  Comment
+}
 
 export default class Lexer {
   private static tokens: Array<Tokens.Token>;
-  private static m;
+  private static m: Mode;
 
   public static run(file: File): Array<Tokens.Token> {
     this.tokens = [];
-    this.m = NORMAL;
+    this.m = Mode.Normal;
 
     this.process(file.getRaw());
 // console.dir(this.tokens);
@@ -25,9 +26,9 @@ export default class Lexer {
   private static add(s: string, row: number, col: number) {
     if (s.length > 0) {
       let pos = new Position(row, col - s.length);
-      if (this.m === COMMENT) {
+      if (this.m === Mode.Comment) {
         this.tokens.push(new Tokens.Comment(pos, s));
-      } else if (this.m === PING || this.m === STR || this.m === TEMPLATE) {
+      } else if (this.m === Mode.Ping || this.m === Mode.Str || this.m === Mode.Template) {
         this.tokens.push(new Tokens.String(pos, s));
       } else if (s.substr(0, 1) === "#") {
         this.tokens.push(new Tokens.Pragma(pos, s));
@@ -62,23 +63,23 @@ export default class Lexer {
       let ahead = raw.substr(1, 1);
       let bchar = before.substr(before.length - 1, 1);
 
-      if ((char === " " || char === "\t") && this.m === NORMAL) {
+      if ((char === " " || char === "\t") && this.m === Mode.Normal) {
         this.add(before, row, col);
         before = "";
       } else if ( (char === "." || char === "," || char === ":" || char === "]" || char === ")" )
-          && this.m === NORMAL) {
+          && this.m === Mode.Normal) {
         this.add(before, row, col);
         this.add(char, row, col + 1);
         before = "";
-      } else if ( (char === "[" || char === "(") && before.length > 0 && this.m === NORMAL) {
+      } else if ( (char === "[" || char === "(") && before.length > 0 && this.m === Mode.Normal) {
         this.add(before, row, col);
         this.add(char, row, col + 1);
         before = "";
-      } else if ( char === "-" && before.length > 0 && ahead !== ">" && ahead !== " " && this.m === NORMAL) {
+      } else if ( char === "-" && before.length > 0 && ahead !== ">" && ahead !== " " && this.m === Mode.Normal) {
         this.add(before, row, col);
         this.add(char, row, col + 1);
         before = "";
-      } else if ( char === ">" && (bchar === "-" || bchar === "=" ) && ahead !== " " && this.m === NORMAL) {
+      } else if ( char === ">" && (bchar === "-" || bchar === "=" ) && ahead !== " " && this.m === Mode.Normal) {
         this.add(before.substr(0, before.length - 1), row, col - 1);
         this.add(bchar + char, row, col + 1);
         before = "";
@@ -87,35 +88,37 @@ export default class Lexer {
         before = "";
         row = row + 1;
         col = 0;
-        this.m = NORMAL;
-      } else if (char === "'" && this.m === NORMAL) {
-        this.m = STR;
+        if (this.m !== Mode.Template) {
+          this.m = Mode.Normal;
+        }
+      } else if (char === "'" && this.m === Mode.Normal) {
+        this.m = Mode.Str;
         this.add(before, row, col);
         before = char;
-      } else if (char === "`" && this.m === NORMAL) {
-        this.m = PING;
+      } else if (char === "`" && this.m === Mode.Normal) {
+        this.m = Mode.Ping;
         this.add(before, row, col);
         before = char;
-      } else if (char === "|" && this.m === NORMAL) {
-        this.m = TEMPLATE;
+      } else if (char === "|" && this.m === Mode.Normal) {
+        this.m = Mode.Template;
         before = before + char;
-      } else if (char === "\"" && this.m === NORMAL) {
-        this.m = COMMENT;
+      } else if (char === "\"" && this.m === Mode.Normal) {
+        this.m = Mode.Comment;
         before = before + char;
-      } else if (char === "*" && col === 1 && this.m === NORMAL) {
-        this.m = COMMENT;
+      } else if (char === "*" && col === 1 && this.m === Mode.Normal) {
+        this.m = Mode.Comment;
         before = before + char;
-      } else if (char === "'" && ahead === "'" && this.m === STR) {
+      } else if (char === "'" && ahead === "'" && this.m === Mode.Str) {
         before = before + char + ahead;
         col = col + 1;
         raw = raw.substr(1);
-      } else if ((char === "'" && this.m === STR)
-          || (char === "`" && this.m === PING)
-          || (char === "|" && this.m === TEMPLATE)) {
+      } else if ((char === "'" && this.m === Mode.Str)
+          || (char === "`" && this.m === Mode.Ping)
+          || (char === "|" && this.m === Mode.Template)) {
         before = before + char;
         this.add(before, row, col + 1);
         before = "";
-        this.m = NORMAL;
+        this.m = Mode.Normal;
       } else {
         before = before + char;
       }
