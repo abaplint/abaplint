@@ -4,6 +4,8 @@ import Position from "../position";
 export abstract class Statement {
 
   private tokens: Array<Token>;
+  private children: Array<Statement>;
+  private parent: Statement;
 
   public static match(tokens: Array<Token>): Statement {
     return undefined;
@@ -31,6 +33,24 @@ export abstract class Statement {
 
   public constructor(tokens: Array<Token>) {
     this.tokens = tokens;
+    this.children = [];
+    this.parent = undefined;
+  }
+
+  public addChild(child: Statement) {
+    this.children.push(child);
+  }
+
+  public setParent(parent: Statement) {
+    this.parent = parent;
+  }
+
+  public getChildren() {
+    return this.children;
+  }
+
+  public getParent() {
+    return this.parent;
   }
 
   public getStart(): Position {
