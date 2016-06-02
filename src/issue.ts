@@ -30,7 +30,4 @@ export default class Issue {
     return this.end;
   }
 
-  public getFilename(): string {
-    return this.file.getFilename();
-  }
 }

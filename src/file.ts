@@ -14,8 +14,6 @@ export default class File {
     this.filename = filename;
   }
 
-// todo, something wrong here, refactor? the issues are also linked to
-// a file object
   public add(issue: Issue) {
     this.issues.push(issue);
   }

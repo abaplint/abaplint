@@ -1,4 +1,3 @@
-import Issue from "../issue";
 import File from "../file";
 
 export class Json {
@@ -6,23 +5,22 @@ export class Json {
   public static output(files: Array<File>): string {
     let out = [];
 
-    let issues: Array<Issue> = [];
-    files.forEach((file) => { issues = issues.concat(file.getIssues()); });
-
-    for (let issue of issues) {
-      let single = { type: "issue",
-        check_name: issue.getDescription(),
-        description: issue.getDescription(),
-        categories: ["Complexity"],
-        location: {
-          path: issue.getFilename(),
-            lines: {
-              begin: issue.getStart().getRow(),
-              end: issue.getStart().getRow(),
+    for (let file of files) {
+      for (let issue of file.getIssues()) {
+        let single = { type: "issue",
+          check_name: issue.getDescription(),
+          description: issue.getDescription(),
+          categories: ["Complexity"],
+          location: {
+            path: file.getFilename(),
+              lines: {
+                begin: issue.getStart().getRow(),
+                end: issue.getStart().getRow(),
+              },
             },
-          },
-        };
-      out.push(single);
+          };
+        out.push(single);
+      }
     }
     return JSON.stringify(out, undefined, "  ");
   }
