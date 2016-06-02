@@ -5,6 +5,7 @@ import Issue from "./issue";
 export default class File {
   private tokens: Array<Token> = [];
   private statements: Array<Statement> = [];
+  private nesting: Array<Statement> = [];
   private issues: Array<Issue> = [];
   private raw: string = "";
   private filename: string = "";
@@ -52,5 +53,13 @@ export default class File {
 
   public getStatements(): Array<Statement> {
     return this.statements;
+  }
+
+  public setNesting(nesting: Array<Statement>) {
+    this.nesting = nesting;
+  }
+
+  public getNesting(): Array<Statement> {
+    return this.nesting;
   }
 }

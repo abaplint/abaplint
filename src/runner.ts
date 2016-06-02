@@ -3,6 +3,7 @@ import Config from "./config";
 import * as Rules from "./rules/";
 import Lexer from "./lexer";
 import Parser from "./parser";
+import Nesting from "./nesting";
 
 export default class Runner {
   private static conf: Config;
@@ -24,6 +25,7 @@ export default class Runner {
   private static analyze(file: File) {
     file.setTokens(Lexer.run(file));
     file.setStatements(Parser.run(file));
+    file.setNesting(Nesting.run(file));
 
     for (let key in Rules) {
       let rule: Rules.Rule = new Rules[key]();
