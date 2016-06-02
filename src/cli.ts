@@ -43,21 +43,26 @@ if (argv["h"] !== undefined || argv["help"] !== undefined) {
     } );
   }
 
-  Runner.run(files);
+  if (files.length === 0) {
+    output = output + "No files found\n";
+  } else {
+    Runner.run(files);
+
 // todo, this can be done more generic
-  switch (format) {
-    case "total":
-      output = Formatters.Total.output(files);
-      break;
-    case "summary":
-      output = Formatters.Summary.output(files);
-      break;
-    case "json":
-      output = Formatters.Json.output(files);
-      break;
-    default:
-      output = Formatters.Standard.output(files);
-      break;
+    switch (format) {
+      case "total":
+        output = Formatters.Total.output(files);
+        break;
+      case "summary":
+        output = Formatters.Summary.output(files);
+        break;
+      case "json":
+        output = Formatters.Json.output(files);
+        break;
+      default:
+        output = Formatters.Standard.output(files);
+        break;
+    }
   }
 }
 
