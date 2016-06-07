@@ -9,7 +9,7 @@ let expect = chai.expect;
 
 describe("formatters", () => {
   let tests = [
-    {file: "rules/start_at_tab_01", errors: 1},
+    {file: "rules/7bit_ascii_01", errors: 1},
     {file: "zhello01", errors: 0},
   ];
 

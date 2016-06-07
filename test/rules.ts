@@ -1,66 +1,92 @@
 import "../typings/index.d.ts";
 import Runner from "../src/runner";
 import File from "../src/file";
-import * as Formatters from "../src/formatters/";
 import * as chai from "chai";
 import * as fs from "fs";
 
 let expect = chai.expect;
 
-describe("errors", () => {
-  let tests = [
-    {file: "7bit_ascii_01",          errors: 1},
-
-    {file: "colon_missing_space_01", errors: 1},
-
-    {file: "contains_tab_01",        errors: 1},
-    {file: "contains_tab_02",        errors: 1},
-
-    {file: "definitions_top_01",     errors: 1},
-    {file: "definitions_top_02",     errors: 0},
-
-    {file: "empty_01",               errors: 2},
-
-    {file: "exit_or_check_01",       errors: 0},
-    {file: "exit_or_check_02",       errors: 1},
-
-    {file: "exporting_01",           errors: 1},
-
-    {file: "functional_writing_01",  errors: 1},
-    {file: "functional_writing_02",  errors: 1},
-    {file: "functional_writing_03",  errors: 0},
-    {file: "functional_writing_04",  errors: 0},
-
-    {file: "obsolete_statement_01",  errors: 6},
-
-    {file: "sequential_blank_01",    errors: 1},
-
-    {file: "start_at_tab_01",        errors: 1},
-    {file: "start_at_tab_02",        errors: 1},
-    {file: "start_at_tab_03",        errors: 2},
-
-    {file: "space_before_colon_01",  errors: 1},
-
-    {file: "line_only_punc_01",      errors: 1},
-    {file: "line_only_punc_02",      errors: 1},
-
-    {file: "line_length_01",         errors: 1},
-
-    {file: "max_one_statement_01",   errors: 1},
-
-    {file: "parser_error_01",        errors: 1},
-
-    {file: "whitespace_end_01",      errors: 1},
+describe("rules", () => {
+  let checks = [
+    { check: "7bit_ascii",
+      tests: [ { file: "01", errors: 1} ],
+    },
+    { check: "colon_missing_space",
+      tests: [ { file: "01", errors: 1} ],
+    },
+    { check: "contains_tab",
+      tests: [ { file: "01", errors: 1},
+               { file: "02", errors: 1} ],
+    },
+    { check: "definitions_top",
+      tests: [ { file: "01", errors: 1},
+        { file: "02", errors: 0} ],
+    },
+    { check: "empty_statement",
+      tests: [ { file: "01", errors: 1} ],
+    },
+    { check: "exit_or_check",
+      tests: [ { file: "01", errors: 0},
+        { file: "02", errors: 1} ],
+    },
+    { check: "exporting",
+      tests: [ { file: "01", errors: 1} ],
+    },
+    { check: "functional_writing",
+      tests: [ { file: "01", errors: 1},
+        { file: "02", errors: 1},
+        { file: "03", errors: 0},
+        { file: "04", errors: 0} ],
+    },
+    { check: "obsolete_statement",
+      tests: [ { file: "01", errors: 6} ],
+    },
+    { check: "sequential_blank",
+      tests: [ { file: "01", errors: 1} ],
+    },
+    { check: "start_at_tab",
+      tests: [ { file: "01", errors: 1},
+        { file: "02", errors: 1},
+        { file: "03", errors: 2} ],
+    },
+    { check: "space_before_colon",
+      tests: [ { file: "01", errors: 1} ],
+    },
+    { check: "line_only_punc",
+      tests: [ { file: "01", errors: 1},
+        { file: "02", errors: 1} ],
+    },
+    { check: "line_length",
+      tests: [ { file: "01", errors: 1} ],
+    },
+    { check: "max_one_statement",
+      tests: [ { file: "01", errors: 1} ],
+    },
+    { check: "parser_error",
+      tests: [ { file: "01", errors: 1} ],
+    },
+    { check: "whitespace_end",
+      tests: [ { file: "01", errors: 1} ],
+    },
   ];
 
-  tests.forEach((test) => {
-    it(test.file + " should have " + test.errors + " error(s)", () => {
-      let filename = "./test/abap/rules/" + test.file + ".prog.abap";
-      let file = new File(filename, fs.readFileSync(filename, "utf8"));
-      Runner.run([file]);
-      expect(file.getIssueCount()).to.equals(test.errors);
+  checks.forEach((check) => {
+    check.tests.forEach((test) => {
+      let name = check.check + "_" + test.file;
+      it(name + " should have " + test.errors + " error(s)", () => {
+        let filename = "./test/abap/rules/" + name + ".prog.abap";
+        let file = new File(filename, fs.readFileSync(filename, "utf8"));
+        Runner.run([file]);
 
-      expect(Formatters.Standard.output([file]).split("\n").length).to.equals(test.errors + 2);
+        let count = 0;
+        for (let issue of file.getIssues()) {
+          if (issue.getKey() === check.check) {
+            count = count + 1;
+          }
+        }
+
+        expect(count).to.equals(test.errors);
+      });
     });
   });
 });

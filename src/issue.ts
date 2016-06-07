@@ -22,6 +22,10 @@ export default class Issue {
     return this.rule.getDescription();
   }
 
+  public getKey(): string {
+    return this.rule.getKey();
+  }
+
   public getStart(): Position {
     return this.start;
   }

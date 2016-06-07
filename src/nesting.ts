@@ -18,16 +18,17 @@ export default class Nesting {
           || statement instanceof Statements.Endmethod
           || statement instanceof Statements.Endcase
           || statement instanceof Statements.Enddo
-          || statement instanceof Statements.Endwhile) {
+          || statement instanceof Statements.Endwhile
+          || statement instanceof Statements.Enddefine
+          || statement instanceof Statements.Endif
+          || statement instanceof Statements.Endloop) {
         stack.pop();
         continue;
-      } else if (statement instanceof Statements.Endif) {
-        let popped = stack.pop();
-        if (popped instanceof Statements.Elseif
-            || popped instanceof Statements.Else) {
-          stack.pop();
-        }
-        continue;
+      } else if ((statement instanceof Statements.Else
+          || statement instanceof Statements.Elseif)
+          && (top instanceof Statements.If
+          || top instanceof Statements.Elseif)) {
+        stack.pop();
       } else if (top instanceof Statements.When
           && statement instanceof Statements.When) {
         stack.pop();
@@ -44,7 +45,6 @@ export default class Nesting {
         stack[stack.length - 1].addChild(statement);
         statement.setParent(stack[stack.length - 1]);
       } else {
-
         result.push(statement);
       }
 
@@ -60,7 +60,10 @@ export default class Nesting {
           || statement instanceof Statements.Elseif
           || statement instanceof Statements.Private
           || statement instanceof Statements.Protected
-          || statement instanceof Statements.Public) {
+          || statement instanceof Statements.Public
+          || statement instanceof Statements.Define
+          || statement instanceof Statements.Loop
+          ) {
         stack.push(statement);
       }
     }

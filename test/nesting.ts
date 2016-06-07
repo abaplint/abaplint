@@ -97,8 +97,8 @@ let expect = chai.expect;
             "ELSE.\n" +
             "  WRITE 'Hello'.\n" +
             "ENDIF.",
-      top: 1,
-      firstchildren: 2,
+      top: 2,
+      firstchildren: 1,
     },
     {
       n: "ELSE2",
@@ -108,8 +108,8 @@ let expect = chai.expect;
             "  WRITE 'Hello'.\n" +
             "ENDIF.\n" +
             "WRITE 'foo'.\n",
-      top: 2,
-      firstchildren: 2,
+      top: 3,
+      firstchildren: 1,
     },
     {
       n: "IF2",
@@ -148,6 +148,22 @@ let expect = chai.expect;
             "PUBLIC SECTION.\n" +
             "  DATA foo TYPE c.\n",
       top: 2,
+      firstchildren: 1,
+    },
+    {
+      n: "DEFINE",
+      code: "DEFINE foobar.\n" +
+            "  DATA foo TYPE c.\n" +
+            "END-OF-DEFINITION.\n",
+      top: 1,
+      firstchildren: 1,
+    },
+    {
+      n: "LOOP",
+      code: "LOOP AT foobar INTO moo.\n" +
+            "  DATA foo TYPE c.\n" +
+            "ENDLOOP.\n",
+      top: 1,
       firstchildren: 1,
     },
   ];
