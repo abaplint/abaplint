@@ -4,25 +4,16 @@ import * as Statements from "./statements/";
 export default class Nesting {
 
   public static run(file: File): Array<Statements.Statement> {
-/*
-  save END statements?
-
-  todo:
-    START-OF-SELECTION
-    PUBLIC SECTION
-    PRIVATE SECTION
-    PROTECTED SECTION
-    ELSEIF
-    ELSE
-*/
+// todo: save END statements?
 
     let result = [];
     let stack: Array<Statements.Statement> = [];
 
     for (let statement of file.getStatements()) {
 
-      if (statement instanceof Statements.Endif
-          || statement instanceof Statements.Endform
+      let top = stack[stack.length - 1];
+
+      if (statement instanceof Statements.Endform
           || statement instanceof Statements.Endclass
           || statement instanceof Statements.Endmethod
           || statement instanceof Statements.Endcase
@@ -30,8 +21,22 @@ export default class Nesting {
           || statement instanceof Statements.Endwhile) {
         stack.pop();
         continue;
-      } else if (stack[stack.length - 1] instanceof Statements.When
+      } else if (statement instanceof Statements.Endif) {
+        let popped = stack.pop();
+        if (popped instanceof Statements.Elseif
+            || popped instanceof Statements.Else) {
+          stack.pop();
+        }
+        continue;
+      } else if (top instanceof Statements.When
           && statement instanceof Statements.When) {
+        stack.pop();
+      } else if ((top instanceof Statements.Private
+          || top instanceof Statements.Protected
+          || top instanceof Statements.Public)
+          && (statement instanceof Statements.Private
+          || statement instanceof Statements.Protected
+          || statement instanceof Statements.Public)) {
         stack.pop();
       }
 
@@ -39,6 +44,7 @@ export default class Nesting {
         stack[stack.length - 1].addChild(statement);
         statement.setParent(stack[stack.length - 1]);
       } else {
+
         result.push(statement);
       }
 
@@ -49,7 +55,12 @@ export default class Nesting {
           || statement instanceof Statements.Case
           || statement instanceof Statements.Do
           || statement instanceof Statements.While
-          || statement instanceof Statements.When) {
+          || statement instanceof Statements.When
+          || statement instanceof Statements.Else
+          || statement instanceof Statements.Elseif
+          || statement instanceof Statements.Private
+          || statement instanceof Statements.Protected
+          || statement instanceof Statements.Public) {
         stack.push(statement);
       }
     }

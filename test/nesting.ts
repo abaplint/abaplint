@@ -90,6 +90,66 @@ let expect = chai.expect;
       top: 2,
       firstchildren: 1,
     },
+    {
+      n: "ELSE",
+      code: "IF foo = bar.\n" +
+            "  WRITE 'Hello'.\n" +
+            "ELSE.\n" +
+            "  WRITE 'Hello'.\n" +
+            "ENDIF.",
+      top: 1,
+      firstchildren: 2,
+    },
+    {
+      n: "ELSE2",
+      code: "IF foo = bar.\n" +
+            "  WRITE 'Hello'.\n" +
+            "ELSE.\n" +
+            "  WRITE 'Hello'.\n" +
+            "ENDIF.\n" +
+            "WRITE 'foo'.\n",
+      top: 2,
+      firstchildren: 2,
+    },
+    {
+      n: "IF2",
+      code: "IF foo = bar.\n" +
+            "  WRITE 'Hello'.\n" +
+            "ENDIF.\n" +
+            "WRITE 'foo'.\n",
+      top: 2,
+      firstchildren: 1,
+    },
+    {
+      n: "PRIVATE SECTION",
+      code: "PRIVATE SECTION.\n" +
+            "  DATA foo TYPE c.\n",
+      top: 1,
+      firstchildren: 1,
+    },
+    {
+      n: "PROTECTED SECTION",
+      code: "PROTECTED SECTION.\n" +
+            "  DATA foo TYPE c.\n",
+      top: 1,
+      firstchildren: 1,
+    },
+    {
+      n: "PUBLIC SECTION",
+      code: "PUBLIC SECTION.\n" +
+            "  DATA foo TYPE c.\n",
+      top: 1,
+      firstchildren: 1,
+    },
+    {
+      n: "Combined SECTIONs",
+      code: "PRIVATE SECTION.\n" +
+            "  DATA foo TYPE c.\n" +
+            "PUBLIC SECTION.\n" +
+            "  DATA foo TYPE c.\n",
+      top: 2,
+      firstchildren: 1,
+    },
   ];
 
 describe("count top nesting", () => {
