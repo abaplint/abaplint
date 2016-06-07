@@ -5,7 +5,7 @@ export class Include extends Statement {
 
     public static match(tokens: Array<Token>): Statement {
         let str = Statement.concat(tokens).toUpperCase();
-        if (/^INCLUDE /.test(str)) {
+        if (/^INCLUDE /.test(str) && !/^INCLUDE TYPE/.test(str)) {
             return new Include(tokens);
         }
         return undefined;

@@ -105,5 +105,9 @@ export * from "./format";
 export * from "./empty";
 export * from "./syntax_check";
 export * from "./alias";
+export * from "./method_def";
+export * from "./interface_def";
+export * from "./at_selection_screen";
+export * from "./include_type";
 
 export * from "./macro";

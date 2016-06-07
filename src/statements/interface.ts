@@ -5,7 +5,7 @@ export class Interface extends Statement {
 
     public static match(tokens: Array<Token>): Statement {
         let str = Statement.concat(tokens).toUpperCase();
-        if (/^INTERFACE(S)? /.test(str)) {
+        if (/^INTERFACE ? /.test(str)) {
             return new Interface(tokens);
         }
         return undefined;

@@ -66,6 +66,16 @@ let expect = chai.expect;
       firstchildren: 1,
     },
     {
+      n: "CASE2",
+      code: "CASE foo.\n" +
+            "  WHEN 'asf'.\n" +
+            "    WRITE 'Hello'.\n" +
+            "ENDCASE.\n" +
+            "WRITE foo.\n",
+      top: 2,
+      firstchildren: 1,
+    },
+    {
       n: "DO",
       code: "DO 2 TIMES.\n" +
             "WRITE 'Hello'.\n" +
@@ -166,6 +176,71 @@ let expect = chai.expect;
       top: 1,
       firstchildren: 1,
     },
+    {
+      n: "Class Sections",
+      code: "PUBLIC SECTION.\n" +
+            "  DATA mv_text TYPE string.\n" +
+            "PRIVATE SECTION.\n" +
+            "  DATA mx_previous TYPE REF TO cx_root.  \n",
+      top: 2,
+      firstchildren: 1,
+    },
+    {
+      n: "START OF SELECTION",
+      code: "START-OF-SELECTION.\n" +
+            "  PERFORM run.\n" +
+            "CLASS lcl_foobar DEFINITION.\n" +
+            "ENDCLASS.\n",
+      top: 2,
+      firstchildren: 1,
+    },
+    {
+      n: "Class with write after",
+      code: "CLASS lcl_foo DEFINITION.\n" +
+            "  PRIVATE SECTION.\n" +
+            "    DATA mx_previous TYPE REF TO cx_root.\n" +
+            "ENDCLASS.\n" +
+            "WRITE 'foobar'.",
+      top: 2,
+      firstchildren: 1,
+    },
+    {
+      n: "TRY",
+      code: "TRY.\n" +
+            "    lo_html ?= iv_chunk.\n" +
+            "  CATCH cx_sy_move_cast_error.\n" +
+            "    ASSERT 1 = 0.\n" +
+            "ENDTRY.\n",
+      top: 1,
+      firstchildren: 2,
+    },
+    {
+      n: "TRY, double CATCH",
+      code: "TRY.\n" +
+            "    lo_html ?= iv_chunk.\n" +
+            "  CATCH cx_sy_move_cast_error.\n" +
+            "    ASSERT 1 = 0.\n" +
+            "  CATCH cx_sy_move_cast_error.\n" +
+            "    ASSERT 1 = 0.\n" +
+            "ENDTRY.\n",
+      top: 1,
+      firstchildren: 3,
+    },
+    {
+      n: "AT",
+      code: "AT foobar.\n" +
+            "  lo_html ?= iv_chunk.\n" +
+            "ENDAT.\n",
+      top: 1,
+      firstchildren: 1,
+    },
+    {
+      n: "AT SELECTION-SCREEN",
+      code: "AT SELECTION-SCREEN OUTPUT.\n" +
+            "  DATA: lt_ucomm TYPE TABLE OF sy-ucomm.\n",
+      top: 1,
+      firstchildren: 1,
+    },
   ];
 
 describe("count top nesting", () => {
@@ -180,7 +255,7 @@ describe("count top nesting", () => {
 
 describe("count first top child nesting", () => {
   tests.forEach((test) => {
-    it("\"" + test.n + "\" should be " + test.top + " first child statements", () => {
+    it("\"" + test.n + "\" should be " + test.firstchildren + " first child statements", () => {
       let file = new File("temp.abap", test.code);
       Runner.run([file]);
       expect(file.getNesting()[0].getChildren().length).to.equals(test.firstchildren);

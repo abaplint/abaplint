@@ -1,12 +1,12 @@
 import { Statement } from "./statement";
 import { Token } from "../tokens/";
 
-export class At extends Statement {
+export class IncludeType extends Statement {
 
     public static match(tokens: Array<Token>): Statement {
         let str = Statement.concat(tokens).toUpperCase();
-        if (/^AT /.test(str) && !/^AT SELECTION-SCREEN/.test(str)) {
-            return new At(tokens);
+        if (/^INCLUDE TYPE/.test(str)) {
+            return new IncludeType(tokens);
         }
         return undefined;
     }

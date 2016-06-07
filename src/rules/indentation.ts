@@ -30,15 +30,63 @@ export class Indentation implements Rule {
 
   public run(file: File) {
     for (let statement of file.getStatements()) {
-      if (statement instanceof Statements.Comment) {
+// skip END statements, todo
+      if (statement instanceof Statements.Endmethod
+          || statement instanceof Statements.Endcase
+          || statement instanceof Statements.Enddo
+          || statement instanceof Statements.Endwhile
+          || statement instanceof Statements.Enddefine
+          || statement instanceof Statements.Endif
+          || statement instanceof Statements.Endtry
+          || statement instanceof Statements.Endat
+          || statement instanceof Statements.Endloop) {
+        continue;
+      } else if(this.topParent(statement)
+          && this.topParent(statement) instanceof Statements.Class
+          && /DEFINITION/.test(this.topParent(statement).concatTokens().toUpperCase())) {
+// skip class defintions
+// see https://github.com/larshp/abapGit/issues/242
+        continue;
+      } else if (statement instanceof Statements.Comment) {
+        continue;
+      } else if (statement instanceof Statements.IncludeType) {
+        continue;
+      } else if (this.familyContainsTry(statement)) {
+// todo, skipping try-catch blocks
         continue;
       }
+
       let start = this.countParents(statement) * 2 + 1;
       let first = statement.getTokens()[0];
 
       if (first.getCol() !== start) {
         file.add(new Issue(this, first.getPos(), file));
+// one finding per file, pretty printer should fix everything?
+        return;
       }
+    }
+  }
+
+  private topParent(statement: Statements.Statement) {
+    let list: Array<Statements.Statement> = [];
+
+    let parent = statement.getParent();
+    while(parent) {
+      list.push(parent);
+      parent = parent.getParent();
+    }
+
+    return list.pop();
+  }
+
+  private familyContainsTry(statement: Statements.Statement): boolean {
+    let parent = statement.getParent();
+    if (!parent) {
+      return false;
+    } else if (parent instanceof Statements.Try) {
+      return true;
+    } else {
+      return this.familyContainsTry(parent);
     }
   }
 
