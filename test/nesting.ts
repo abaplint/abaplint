@@ -195,6 +195,33 @@ let expect = chai.expect;
       firstchildren: 1,
     },
     {
+      n: "INITIALIZATION",
+      code: "INITIALIZATION.\n" +
+            "  PERFORM run.\n" +
+            "CLASS lcl_foobar DEFINITION.\n" +
+            "ENDCLASS.\n",
+      top: 2,
+      firstchildren: 1,
+    },
+    {
+      n: "INITIALIZATION2",
+      code: "AT SELECTION-SCREEN ON VALUE-REQUEST FOR a_zip.\n" +
+            "  lcl_app=>select_file( ).\n" +
+            "INITIALIZATION.\n" +
+            "  lcl_app=>initialization( ).\n",
+      top: 2,
+      firstchildren: 1,
+    },
+    {
+      n: "INITIALIZATION3",
+      code: "INITIALIZATION.\n" +
+            "  lcl_app=>initialization( ).\n" +
+            "START-OF-SELECTION.\n" +
+            "  lcl_app=>run( ).\n",
+      top: 2,
+      firstchildren: 1,
+    },
+    {
       n: "Class with write after",
       code: "CLASS lcl_foo DEFINITION.\n" +
             "  PRIVATE SECTION.\n" +

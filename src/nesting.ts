@@ -6,7 +6,6 @@ export default class Nesting {
   public static run(file: File): Array<Statements.Statement> {
 
 // todo: save END statement references?
-// todo: more events, INITIALIZATION, AT SELECTION SCREEN OUTPUT etc.
 // todo: try-catch
 
     let result = [];
@@ -63,13 +62,13 @@ export default class Nesting {
           || statement instanceof Statements.Protected
           || statement instanceof Statements.Public)) {
         stack.pop();
-      } else if (top instanceof Statements.Start
-          && (statement instanceof Statements.Class
-          || statement instanceof Statements.Form)) {
-        stack.pop();
-      } else if (top instanceof Statements.AtSelectionScreen
+      } else if ((top instanceof Statements.AtSelectionScreen
+          || top instanceof Statements.Initialization
+          || top instanceof Statements.Start)
           && (statement instanceof Statements.AtSelectionScreen
+          || statement instanceof Statements.Initialization
           || statement instanceof Statements.Class
+          || statement instanceof Statements.Start
           || statement instanceof Statements.Form)) {
         stack.pop();
       }
@@ -107,6 +106,7 @@ export default class Nesting {
           || statement instanceof Statements.Public
           || statement instanceof Statements.At
           || statement instanceof Statements.AtSelectionScreen
+          || statement instanceof Statements.Initialization
           || statement instanceof Statements.Define
           || statement instanceof Statements.Loop
           || statement instanceof Statements.Start
