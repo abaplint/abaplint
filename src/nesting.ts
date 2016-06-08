@@ -4,6 +4,7 @@ import * as Statements from "./statements/";
 export default class Nesting {
 
   public static run(file: File): Array<Statements.Statement> {
+
 // todo: save END statement references?
 // todo: more events, INITIALIZATION, AT SELECTION SCREEN OUTPUT etc.
 // todo: try-catch
@@ -91,7 +92,8 @@ export default class Nesting {
       if (statement instanceof Statements.If
           || statement instanceof Statements.Form
           || (statement instanceof Statements.Class
-          && /DEFINITION DEFERRED/.test(statement.concatTokens().toUpperCase()) === false)
+          && /DEFINITION DEFERRED/.test(statement.concatTokens().toUpperCase()) === false
+          && /DEFINITION LOCAL/.test(statement.concatTokens().toUpperCase()) === false)
           || statement instanceof Statements.Interface
           || statement instanceof Statements.Method
           || statement instanceof Statements.Case
