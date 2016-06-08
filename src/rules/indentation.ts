@@ -41,12 +41,6 @@ export class Indentation implements Rule {
           || statement instanceof Statements.Endat
           || statement instanceof Statements.Endloop) {
         continue;
-      } else if(this.topParent(statement)
-          && this.topParent(statement) instanceof Statements.Class
-          && /DEFINITION/.test(this.topParent(statement).concatTokens().toUpperCase())) {
-// skip class defintions
-// see https://github.com/larshp/abapGit/issues/242
-        continue;
       } else if (statement instanceof Statements.Comment) {
         continue;
       } else if (statement instanceof Statements.IncludeType) {
