@@ -92,6 +92,7 @@ export default class Nesting {
           || statement instanceof Statements.Form
           || (statement instanceof Statements.Class
           && /DEFINITION DEFERRED/.test(statement.concatTokens().toUpperCase()) === false
+          && /DEFINITION LOAD/.test(statement.concatTokens().toUpperCase()) === false
           && /DEFINITION LOCAL/.test(statement.concatTokens().toUpperCase()) === false)
           || statement instanceof Statements.Interface
           || statement instanceof Statements.Method
