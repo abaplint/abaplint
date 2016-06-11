@@ -10,6 +10,8 @@ describe("statement_type", () => {
   let tests = [
     {code: "REPORT zfoo.", type: Statements.Report, name: "Report"},
     {code: "WRITE 'Hello'.", type: Statements.Write, name: "Write"},
+    {code: "DO.", type: Statements.Do, name: "DO1"},
+    {code: "DO 2 TIMES.", type: Statements.Do, name: "DO2"},
     {code: "asdf", type: Statements.Unknown, name: "Unknown"},
     {code: "\" 'abc'.FOO", type: Statements.Comment, name: "Comment"},
     {code: "WRITE 'Hello'", type: Statements.Unknown, name: "Unknown"},
