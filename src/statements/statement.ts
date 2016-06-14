@@ -54,7 +54,11 @@ export abstract class Statement {
   }
 
   public getStart(): Position {
-    return this.getTokens()[0].getPos();
+    return this.tokens[0].getPos();
+  }
+
+  public getEnd(): Position {
+    return this.tokens[this.tokens.length - 1].getPos();
   }
 
   public getTokens(): Array<Token> {

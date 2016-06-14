@@ -1,11 +1,12 @@
 import { Token } from "./tokens/";
-import { Statement } from "./statements/";
+import * as Statements from "./statements/";
 import Issue from "./issue";
+import Position from "./position";
 
 export default class File {
   private tokens: Array<Token> = [];
-  private statements: Array<Statement> = [];
-  private nesting: Array<Statement> = [];
+  private statements: Array<Statements.Statement> = [];
+  private nesting: Array<Statements.Statement> = [];
   private issues: Array<Issue> = [];
   private raw: string = "";
   private filename: string = "";
@@ -16,6 +17,9 @@ export default class File {
   }
 
   public add(issue: Issue) {
+    if (this.skip(issue)) {
+      return;
+    }
     this.issues.push(issue);
   }
 
@@ -43,7 +47,7 @@ export default class File {
     this.tokens = tokens;
   }
 
-  public setStatements(statements: Array<Statement>) {
+  public setStatements(statements: Array<Statements.Statement>) {
     this.statements = statements;
   }
 
@@ -51,15 +55,56 @@ export default class File {
     return this.tokens;
   }
 
-  public getStatements(): Array<Statement> {
+  public getStatements(): Array<Statements.Statement> {
     return this.statements;
   }
 
-  public setNesting(nesting: Array<Statement>) {
+  public setNesting(nesting: Array<Statements.Statement>) {
     this.nesting = nesting;
   }
 
-  public getNesting(): Array<Statement> {
+  public getNesting(): Array<Statements.Statement> {
     return this.nesting;
+  }
+
+  private skip(issue: Issue): boolean {
+    let statement = this.positionToStatement(issue.getStart());
+    if (statement) {
+      let parents = this.buildParentList(statement);
+
+      if (parents[0] instanceof Statements.Class
+          && parents[1] instanceof Statements.Method
+          && /^ZCX_/.test(parents[0].getTokens()[1].getStr())
+          && /^CONSTRUCTOR$/i.test(parents[1].getTokens()[1].getStr())
+          ) {
+// skip class based exception, method constructor
+        return true;
+      }
+    }
+
+    return false;
+  }
+
+  private buildParentList(statement: Statements.Statement): Array<Statements.Statement> {
+    let ret = [];
+    let current = statement;
+
+    while (current.getParent()) {
+      ret.push(current.getParent());
+      current = current.getParent();
+    }
+
+    return ret.reverse();
+  }
+
+  private positionToStatement(pos: Position): Statements.Statement {
+// assumption: max one statement per line
+    for (let statement of this.statements) {
+      if (statement.getStart().getRow() <= pos.getRow()
+          && statement.getEnd().getRow() >= pos.getRow()) {
+        return statement;
+      }
+    }
+    return undefined;
   }
 }
