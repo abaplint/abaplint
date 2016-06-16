@@ -55,7 +55,6 @@ describe("rules", () => {
     { check: "line_only_punc",
       tests: [ { file: "01", errors: 1},
         { file: "02", errors: 1},
-        { file: "03", errors: 0},
         { file: "04", errors: 1} ],
     },
     { check: "line_length",

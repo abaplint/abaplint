@@ -1,7 +1,6 @@
 import { Token } from "./tokens/";
 import * as Statements from "./statements/";
 import Issue from "./issue";
-import Position from "./position";
 
 export default class File {
   private tokens: Array<Token> = [];
@@ -68,43 +67,12 @@ export default class File {
   }
 
   private skip(issue: Issue): boolean {
-    let statement = this.positionToStatement(issue.getStart());
-    if (statement) {
-      let parents = this.buildParentList(statement);
-
-      if (parents[0] instanceof Statements.Class
-          && parents[1] instanceof Statements.Method
-          && /^ZCX_/.test(parents[0].getTokens()[1].getStr())
-          && /^CONSTRUCTOR$/i.test(parents[1].getTokens()[1].getStr())
-          ) {
-// skip class based exception, method constructor
-        return true;
-      }
+// ignore global exception classes
+    if (/zcx_.*\.clas\.abap$/.test(this.filename)) {
+      return true;
     }
-
+    console.log("do not skip " + this.filename);
     return false;
   }
 
-  private buildParentList(statement: Statements.Statement): Array<Statements.Statement> {
-    let ret = [];
-    let current = statement;
-
-    while (current.getParent()) {
-      ret.push(current.getParent());
-      current = current.getParent();
-    }
-
-    return ret.reverse();
-  }
-
-  private positionToStatement(pos: Position): Statements.Statement {
-// assumption: max one statement per line
-    for (let statement of this.statements) {
-      if (statement.getStart().getRow() <= pos.getRow()
-          && statement.getEnd().getRow() >= pos.getRow()) {
-        return statement;
-      }
-    }
-    return undefined;
-  }
 }
