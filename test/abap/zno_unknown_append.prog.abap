@@ -13,3 +13,5 @@ APPEND read_controller( ls_controller_key ) TO rs_component-ctlr_metadata.
 APPEND INITIAL LINE TO lt_key_tab REFERENCE INTO key.
 APPEND <lv_code>+1 TO lt_commented.
 APPEND INITIAL LINE TO <ls_data>-sub ASSIGNING FIELD-SYMBOL(<ls_sub>).
+APPEND '000000e8' && lv_sha1 && ' HEAD' && get_null( ) && lv_reply TO lt_reply.
+APPEND 'foo' && 'bar' TO lt_foo.

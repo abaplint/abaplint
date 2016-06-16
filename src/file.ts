@@ -71,7 +71,6 @@ export default class File {
     if (/zcx_.*\.clas\.abap$/.test(this.filename)) {
       return true;
     }
-    console.log("do not skip " + this.filename);
     return false;
   }
 
