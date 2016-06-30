@@ -46,6 +46,10 @@ export default class Reuse {
               "target");
   }
 
+  public static arrow(): Combi.Reuse {
+    return re(() => { return reg(/^(->|=>)$/); }, "arrow");
+  }
+
   public static arrow_or_dash(): Combi.Reuse {
     return re(() => { return reg(/^(->|=>|-)$/); }, "arrow_or_dash");
   }
@@ -79,7 +83,7 @@ export default class Reuse {
                      opt(receiving),
                      opt(exceptions));
 
-      return seq(this.field(), str("("), alt(reg(/.*/), long), str(")")); },
+      return seq(opt(seq(this.field(), this.arrow())), this.field(), str("("), alt(reg(/.*/), long), str(")")); },
               "method_call");
     }
 
