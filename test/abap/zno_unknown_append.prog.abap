@@ -16,3 +16,4 @@ APPEND INITIAL LINE TO <ls_data>-sub ASSIGNING FIELD-SYMBOL(<ls_sub>).
 APPEND '000000e8' && lv_sha1 && ' HEAD' && get_null( ) && lv_reply TO lt_reply.
 APPEND 'foo' && 'bar' TO lt_foo.
 APPEND lo_commit->get_pretty( ) TO rt_commits.
+APPEND |foo| TO lt_foo.

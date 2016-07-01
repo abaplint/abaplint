@@ -49,6 +49,8 @@ describe("count_tokens 2", () => {
     {abap: "CALL METHOD (lv_class_name)=>jump.", tokens: 7},
     {abap: "DATA(lv_foo) = 5.",                  tokens: 7},
     {abap: "zcl_class=>method( ).",              tokens: 6},
+    {abap: "|fooobar|",                          tokens: 1},
+    {abap: "|foo{ lv_foo }obar|",                tokens: 1},
   ];
 
   tests.forEach((test) => {
