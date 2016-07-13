@@ -39,7 +39,7 @@ export class Data extends Statement {
                       opt(alt(str("NON-UNIQUE"), str("UNIQUE"))),
                       opt(str("DEFAULT")),
                       str("KEY"),
-                      opt(star(Reuse.field())));
+                      opt(star(Reuse.field_sub())));
         let initial = seq(str("INITIAL SIZE"), Reuse.integer());
         let table = seq(Reuse.field(),
                         typetable,

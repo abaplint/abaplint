@@ -1,6 +1,6 @@
 {
   "name": "abaplint",
-  "version": "0.26.7",
+  "version": "0.26.8",
   "description": "Linter for ABAP",
   "bin": {
     "abaplint": "./abaplint"
@@ -21,7 +21,7 @@
     "pretest": "npm run compile",
     "test": "mocha build/test",
     "posttest": "npm run tslint",
-    "viz": "mkdir -p web/viz && node build/src/graphs.js && node web/script/generate.js",
+    "viz": "mkdir -p web/viz && rm -f web/viz/*.txt && rm -f web/viz/*.svg && node build/src/graphs.js && node web/script/generate.js",
     "typings": "typings install",
     "precoverage": "istanbul cover ./node_modules/mocha/bin/_mocha build/test --report lcovonly -- -R spec",
     "coverage": "remap-istanbul -i coverage/coverage.json -o coverage/coverage-remap.json",

@@ -17,3 +17,8 @@ APPEND '000000e8' && lv_sha1 && ' HEAD' && get_null( ) && lv_reply TO lt_reply.
 APPEND 'foo' && 'bar' TO lt_foo.
 APPEND lo_commit->get_pretty( ) TO rt_commits.
 APPEND |foo| TO lt_foo.
+APPEND lo_commit->get_pretty( foo = bar ) TO rt_commits.
+APPEND lo_commit->get_pretty( foo = bar moo = boo ) TO rt_commits.
+APPEND lo_commit->get_pretty( 1 + 1 ) TO rt_commits.
+APPEND LINES OF explode( ii_object = lo_parent iv_deepen = iv_deepen - 1 ) TO rt_objects.
+APPEND lo_foo->call( )->chain( ) TO rt_commits.

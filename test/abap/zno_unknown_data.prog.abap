@@ -23,5 +23,4 @@ data foobar type abap_bool read-only value ABAP_FALSE ##NO_TEXT.
 data item(4) value '  # '.
 CLASS-DATA gv_out TYPE xstring.
 
-DATA: mt_stage TYPE SORTED TABLE OF ty_stage
-  WITH UNIQUE KEY file-path file-filename.
+DATA: mt_stage TYPE SORTED TABLE OF ty_stage WITH UNIQUE KEY file-path file-filename.
