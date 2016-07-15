@@ -11,7 +11,6 @@ describe("no_unknown", () => {
 
   let tests = [
     {filename: "zno_unknown"},
-    {filename: "zno_unknown_data"},
     {filename: "zno_unknown_string_template"},
     ];
 
