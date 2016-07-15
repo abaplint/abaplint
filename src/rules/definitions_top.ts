@@ -1,7 +1,6 @@
-import { Rule } from "./rule";
+import { IRule } from "./rule";
 import File from "../file";
 import Issue from "../issue";
-import Position from "../position";
 import * as Statements from "../statements/";
 
 export class DefinitionsTopConf {
@@ -14,7 +13,7 @@ const DEFINITION = 2;
 const AFTER = 3;
 const IGNORE = 4;
 
-export class DefinitionsTop implements Rule {
+export class DefinitionsTop implements IRule {
 
   private conf = new DefinitionsTopConf();
 
@@ -35,7 +34,6 @@ export class DefinitionsTop implements Rule {
   }
 
   public run(file: File) {
-    let rows = file.getRawRows();
     let mode = ANY;
     let issue: Issue = undefined;
 
@@ -60,14 +58,14 @@ export class DefinitionsTop implements Rule {
           || statement instanceof Statements.Include
           || statement instanceof Statements.Static
           || statement instanceof Statements.FieldSymbol) {
-        if (mode == AFTER) {
+        if (mode === AFTER) {
           issue = new Issue(this, statement.getStart(), file);
           mode = ANY;
         }
       } else if (statement instanceof Statements.Define) {
 // todo, currently macros will skip checking of the routine
         mode = IGNORE;
-      } else if(mode === DEFINITION) {
+      } else if (mode === DEFINITION) {
         mode = AFTER;
       }
     }

@@ -28,7 +28,7 @@ export default class Runner {
     file.setNesting(Nesting.run(file));
 
     for (let key in Rules) {
-      let rule: Rules.Rule = new Rules[key]();
+      let rule: Rules.IRule = new Rules[key]();
       if (rule.getKey && this.conf.readByKey(rule.getKey(), "enabled") === true) {
         rule.setConfig(this.conf.readByRule(rule.getKey()));
         rule.run(file);

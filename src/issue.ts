@@ -1,15 +1,15 @@
-import { Rule } from "./rules/";
+import { IRule } from "./rules/";
 import File from "./file";
 import Position from "./position";
 
 export default class Issue {
 
-  private rule: Rule;
+  private rule: IRule;
   private start: Position;
   private end: Position;
   private file: File;
 
-  constructor(rule: Rule, start: Position, file: File, end?: Position) {
+  constructor(rule: IRule, start: Position, file: File, end?: Position) {
     this.rule = rule;
     this.start = start;
     if (!end) {

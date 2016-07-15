@@ -1,14 +1,13 @@
-import { Rule } from "./rule";
+import { IRule } from "./rule";
 import File from "../file";
 import * as Statements from "../statements/";
 import Issue from "../issue";
-import Position from "../position";
 
 export class IndentationConf {
   public enabled: boolean = true;
 }
 
-export class Indentation implements Rule {
+export class Indentation implements IRule {
 
   private conf = new IndentationConf();
 
@@ -60,7 +59,7 @@ export class Indentation implements Rule {
       }
     }
   }
-
+/*
   private topParent(statement: Statements.Statement) {
     let list: Array<Statements.Statement> = [];
 
@@ -72,7 +71,7 @@ export class Indentation implements Rule {
 
     return list.pop();
   }
-
+*/
   private familyContainsTry(statement: Statements.Statement): boolean {
     let parent = statement.getParent();
     if (!parent) {

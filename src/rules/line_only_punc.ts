@@ -1,6 +1,5 @@
-import { Rule } from "./rule";
+import { IRule } from "./rule";
 import File from "../file";
-import { Token } from "../tokens/";
 import Issue from "../issue";
 import Position from "../position";
 
@@ -8,7 +7,7 @@ export class LineOnlyPuncConf {
   public enabled: boolean = true;
 }
 
-export class LineOnlyPunc implements Rule {
+export class LineOnlyPunc implements IRule {
 
   private conf = new LineOnlyPuncConf();
 

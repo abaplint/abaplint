@@ -1,4 +1,4 @@
-import { Rule } from "./rule";
+import { IRule } from "./rule";
 import File from "../file";
 import Issue from "../issue";
 
@@ -6,7 +6,7 @@ export class SpaceBeforeColonConf {
   public enabled: boolean = true;
 }
 
-export class SpaceBeforeColon implements Rule {
+export class SpaceBeforeColon implements IRule {
 
   private conf = new SpaceBeforeColonConf();
 
@@ -31,7 +31,7 @@ export class SpaceBeforeColon implements Rule {
 
     for (let token of file.getTokens()) {
       if (token.getStr() === ":"
-          && prev.getRow() == token.getRow()
+          && prev.getRow() === token.getRow()
           && prev.getCol() + prev.getStr().length < token.getCol()) {
         let issue = new Issue(this, token.getPos(), file);
         file.add(issue);

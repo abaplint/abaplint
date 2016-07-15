@@ -1,4 +1,4 @@
-import { Rule } from "./rule";
+import { IRule } from "./rule";
 import File from "../file";
 import Position from "../position";
 import Issue from "../issue";
@@ -13,7 +13,7 @@ export class ExportingConf {
   public enabled: boolean = true;
 }
 
-export class Exporting implements Rule {
+export class Exporting implements IRule {
 
   private conf = new ExportingConf();
 
@@ -23,22 +23,6 @@ export class Exporting implements Rule {
 
   public getDescription(): string {
     return "EXPORTING can be omitted";
-  }
-
-  public getConfig() {
-    return this.conf;
-  }
-
-  public setConfig(conf) {
-    this.conf = conf;
-  }
-
-  private lastChar(s: string): string {
-    return s.charAt(s.length - 1);
-  }
-
-  private firstChar(s: string): string {
-    return s.charAt(0);
   }
 
   public run(file: File) {
@@ -70,6 +54,22 @@ export class Exporting implements Rule {
         }
       }
     }
+  }
+
+  public getConfig() {
+    return this.conf;
+  }
+
+  public setConfig(conf) {
+    this.conf = conf;
+  }
+
+  private lastChar(s: string): string {
+    return s.charAt(s.length - 1);
+  }
+
+  private firstChar(s: string): string {
+    return s.charAt(0);
   }
 
 }

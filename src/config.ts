@@ -11,7 +11,7 @@ export default class Config {
     let defaults: Array<string> = [];
 
     for (let key in Rules) {
-      let rule: Rules.Rule = new Rules[key]();
+      let rule: Rules.IRule = new Rules[key]();
       if (rule.getKey) {
         defaults.push("\"" + rule.getKey() + "\": " + JSON.stringify(rule.getConfig()));
       }

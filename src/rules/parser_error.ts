@@ -1,4 +1,4 @@
-import { Rule } from "./rule";
+import { IRule } from "./rule";
 import File from "../file";
 import Issue from "../issue";
 import Position from "../position";
@@ -8,7 +8,7 @@ export class ParserErrorConf {
   public enabled: boolean = true;
 }
 
-export class ParserError implements Rule {
+export class ParserError implements IRule {
 
   private conf = new ParserErrorConf();
 

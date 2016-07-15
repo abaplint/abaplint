@@ -1,4 +1,4 @@
-import { Rule } from "./rule";
+import { IRule } from "./rule";
 import File from "../file";
 import Issue from "../issue";
 import Position from "../position";
@@ -8,7 +8,7 @@ export class LineLengthConf {
   public length: number = 120;
 }
 
-export class LineLength implements Rule {
+export class LineLength implements IRule {
 
   private conf = new LineLengthConf();
 

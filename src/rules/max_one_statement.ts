@@ -1,6 +1,5 @@
-import { Rule } from "./rule";
+import { IRule } from "./rule";
 import File from "../file";
-import { Token } from "../tokens/";
 import Issue from "../issue";
 import * as Statements from "../statements/";
 
@@ -8,7 +7,7 @@ export class MaxOneStatementConf {
   public enabled: boolean = true;
 }
 
-export class MaxOneStatement implements Rule {
+export class MaxOneStatement implements IRule {
 
   private conf = new MaxOneStatementConf();
 

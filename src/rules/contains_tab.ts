@@ -1,4 +1,4 @@
-import { Rule } from "./rule";
+import { IRule } from "./rule";
 import File from "../file";
 import Issue from "../issue";
 import Position from "../position";
@@ -7,7 +7,7 @@ export class ContainsTabConf {
   public enabled: boolean = true;
 }
 
-export class ContainsTab implements Rule {
+export class ContainsTab implements IRule {
 
   private conf = new ContainsTabConf();
 

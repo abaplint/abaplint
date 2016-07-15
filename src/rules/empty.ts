@@ -1,4 +1,4 @@
-import { Rule } from "./rule";
+import { IRule } from "./rule";
 import File from "../file";
 import Issue from "../issue";
 import * as Statements from "../statements/";
@@ -7,7 +7,7 @@ export class EmptyStatementConf {
   public enabled: boolean = true;
 }
 
-export class EmptyStatement implements Rule {
+export class EmptyStatement implements IRule {
 
   private conf = new EmptyStatementConf();
 

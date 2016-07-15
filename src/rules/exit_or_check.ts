@@ -1,4 +1,4 @@
-import { Rule } from "./rule";
+import { IRule } from "./rule";
 import File from "../file";
 import Issue from "../issue";
 import * as Statements from "../statements/";
@@ -7,7 +7,7 @@ export class ExitOrCheckConf {
   public enabled: boolean = true;
 }
 
-export class ExitOrCheck implements Rule {
+export class ExitOrCheck implements IRule {
 
   private conf = new ExitOrCheckConf();
 

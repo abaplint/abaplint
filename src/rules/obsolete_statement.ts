@@ -1,4 +1,4 @@
-import { Rule } from "./rule";
+import { IRule } from "./rule";
 import File from "../file";
 import Issue from "../issue";
 import * as Statements from "../statements/";
@@ -7,7 +7,7 @@ export class ObsoleteStatementConf {
   public enabled: boolean = true;
 }
 
-export class ObsoleteStatement implements Rule {
+export class ObsoleteStatement implements IRule {
 
   private conf = new ObsoleteStatementConf();
 
@@ -37,8 +37,8 @@ export class ObsoleteStatement implements Rule {
           || sta instanceof Statements.Subtract
           || sta instanceof Statements.Multiply
           || ( sta instanceof Statements.Move
-          && sta.getTokens()[0].getStr() === 'MOVE'
-          && sta.getTokens()[1].getStr() !== '-' )
+          && sta.getTokens()[0].getStr() === "MOVE"
+          && sta.getTokens()[1].getStr() !== "-" )
           || sta instanceof Statements.Divide) {
         let issue = new Issue(this, sta.getStart(), file);
         file.add(issue);

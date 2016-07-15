@@ -1,14 +1,13 @@
-import { Rule } from "./rule";
+import { IRule } from "./rule";
 import File from "../file";
 import Issue from "../issue";
 import Position from "../position";
-import * as Statements from "../statements/";
 
 export class SevenBitAsciiConf {
   public enabled: boolean = true;
 }
 
-export class SevenBitAscii implements Rule {
+export class SevenBitAscii implements IRule {
 
   private conf = new SevenBitAsciiConf();
 

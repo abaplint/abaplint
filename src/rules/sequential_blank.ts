@@ -1,15 +1,14 @@
-import { Rule } from "./rule";
+import { IRule } from "./rule";
 import File from "../file";
 import Issue from "../issue";
 import Position from "../position";
-import * as Statements from "../statements/";
 
 export class SequentialBlankConf {
   public enabled: boolean = true;
   public lines: number = 4;
 }
 
-export class SequentialBlank implements Rule {
+export class SequentialBlank implements IRule {
 
   private conf = new SequentialBlankConf();
 

@@ -1,6 +1,6 @@
 import File from "../file";
 
-export interface Rule {
+export interface IRule {
   getKey(): string;
   getDescription(): string;
   getConfig();
