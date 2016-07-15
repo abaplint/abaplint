@@ -1,8 +1,8 @@
-import "../typings/index.d.ts";
-import File from "../src/file";
-import Runner from "../src/runner";
+import "../../typings/index.d.ts";
+import File from "../../src/file";
+import Runner from "../../src/runner";
 import * as chai from "chai";
-import * as Statements from "../src/statements/";
+import * as Statements from "../../src/statements/";
 
 let expect = chai.expect;
 
