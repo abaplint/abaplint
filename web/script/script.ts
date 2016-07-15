@@ -24,31 +24,35 @@ function buildIssues(input: string, file: File): string {
   return lines.join("\n");
 }
 
-export function runFile(input: string): string {
-  let file = new File("foobar.abap", input);
-  Runner.run([file]);
-
-  let ret = "";
-  for (let issue of file.getIssues()) {
-    ret = ret + "{\"row\": \"" + issue.getStart().getRow() + "\", \"text\": \"" + issue.getDescription() + "\"},";
-  }
-  ret = ret.substring(0, ret.length - 1);
-
-  return "{ \"errors\": [" + ret + "] }";
-}
-
-export function run() {
+function process(): File {
   let input = (document.getElementById("input") as HTMLInputElement).value;
   input = stripNewline(input);
 
-  document.getElementById("abap").innerText = input;
-
   let file = new File("foobar.abap", input);
   Runner.run([file]);
 
+  return file;
+}
+
+export function issues() {
+  let file = process();
+
   let el = document.getElementById("result");
-  el.innerText = buildIssues(input, file);
+  el.innerText = buildIssues(file.getRaw(), file);
 
   el = document.getElementById("info");
   el.innerText = "Issues: " + file.getIssueCount();
+
+  document.getElementById("abap").innerText = file.getRaw();
+}
+
+export function tokens() {
+  let file = process();
+  let inner = "";
+
+  for (let token of file.getTokens()) {
+    inner = inner + "\"" + token.getStr() + "\"" + "<br>";
+  }
+
+  document.getElementById("info").innerHTML = inner;
 }
