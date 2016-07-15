@@ -75,7 +75,7 @@ export default class Lexer {
         this.add(before, row, col);
         this.add(char, row, col + 1);
         before = "";
-      } else if ( char === "-" && before.length > 0 && ahead !== ">" && ahead !== " " && this.m === Mode.Normal) {
+      } else if ( char === "-" && before.length >= 0 && ahead !== ">" && ahead !== " " && this.m === Mode.Normal) {
         this.add(before, row, col);
         this.add(char, row, col + 1);
         before = "";

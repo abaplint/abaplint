@@ -51,6 +51,11 @@ describe("count_tokens 2", () => {
     {abap: "zcl_class=>method( ).",              tokens: 6},
     {abap: "|fooobar|",                          tokens: 1},
     {abap: "|foo{ lv_foo }obar|",                tokens: 1},
+    {abap: "foo-bar",                            tokens: 3},
+    {abap: "foo( )-bar",                         tokens: 5},
+    {abap: "foo( )",                             tokens: 3},
+    {abap: "foo( )->bar",                        tokens: 5},
+    {abap: "foo( )->bar( )",                     tokens: 7},
   ];
 
   tests.forEach((test) => {
