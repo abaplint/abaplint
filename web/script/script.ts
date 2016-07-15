@@ -9,16 +9,34 @@ function stripNewline(input: string): string {
   return result;
 }
 
-function buildIssues(input: string, file: File): string {
+function initLines(input: string) {
   let lines = input.split("\n");
 
   for (let i = 0; i < lines.length; i++) {
     lines[i] = "" + ( i + 1 );
   }
 
+  return lines;
+}
+
+function buildIssues(input: string, file: File): string {
+  let lines = initLines(input);
+
   for (let issue of file.getIssues()) {
     let row = issue.getStart().getRow();
     lines[row - 1] = lines[row - 1] + " " + issue.getDescription();
+  }
+
+  return lines.join("\n");
+}
+
+function buildStatements(input: string, file: File): string {
+  let lines = initLines(input);
+
+  for (let statement of file.getStatements()) {
+    let row = statement.getStart().getRow();
+// getting the class name only works if uglify does not mangle names
+    lines[row - 1] = lines[row - 1] + " " + (statement.constructor + "").match(/\w+/g)[1];
   }
 
   return lines.join("\n");
@@ -37,11 +55,11 @@ function process(): File {
 export function issues() {
   let file = process();
 
-  let el = document.getElementById("result");
-  el.innerText = buildIssues(file.getRaw(), file);
-
-  el = document.getElementById("info");
+  let el = document.getElementById("info");
   el.innerText = "Issues: " + file.getIssueCount();
+
+  el = document.getElementById("result");
+  el.innerText = buildIssues(file.getRaw(), file);
 
   document.getElementById("abap").innerText = file.getRaw();
 }
@@ -55,4 +73,13 @@ export function tokens() {
   }
 
   document.getElementById("info").innerHTML = inner;
+}
+
+export function statements() {
+  let file = process();
+
+  let el = document.getElementById("result");
+  el.innerText = buildStatements(file.getRaw(), file);
+
+  document.getElementById("abap").innerText = file.getRaw();
 }
