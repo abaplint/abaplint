@@ -74,6 +74,11 @@ export default class Reuse {
     return re(() => { return alt(this.field(), this.method_call()); }, "field_or_method_call");
   }
 
+  public static where(): Combi.Reuse {
+// todo
+    return re(() => { return star(reg(/.*/)); }, "where");
+  }
+
   public static method_call(): Combi.Reuse {
     return re(() => {
       let exporting = seq(str("EXPORTING"), this.parameter_list_s());
