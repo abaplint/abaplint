@@ -17,8 +17,10 @@ export class Loop extends Statement {
                Reuse.source(),
                opt(from),
                opt(seq(alt(str("INTO"), str("ASSIGNING")), Reuse.target())),
-               where,
-               opt(str("TRANSPORTING NO FIELDS")));
+               opt(str("TRANSPORTING NO FIELDS")),
+               opt(seq(str("FROM"), Reuse.source())),
+               opt(seq(str("TO"), Reuse.source())),
+               where);
   }
 
   public static match(tokens: Array<Token>): Statement {

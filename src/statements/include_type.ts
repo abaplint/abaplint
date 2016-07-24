@@ -9,7 +9,7 @@ let seq  = Combi.seq;
 export class IncludeType extends Statement {
 
   public static get_matcher(): Combi.IRunnable {
-    return seq(str("INCLUDE TYPE"), Reuse.field());
+    return seq(str("INCLUDE TYPE"), Reuse.typename());
   }
 
   public static match(tokens: Array<Token>): Statement {
