@@ -13,16 +13,23 @@ class Viz {
   }
 
   public static run() {
-    for (let st in Statements) {
-// todo, all statements should be implemented in get_matcher
-      if (Statements[st].get_matcher !== undefined) {
-        this.handle(st.toLowerCase(), Statements[st].get_matcher());
-      }
+    for (let foo in Reuse) {
+      let name = Reuse[foo]().get_name();
+      this.handle(name, Reuse[foo]().get_runnable(), "blue");
     }
 
-    for (let foo in Reuse) {
-      this.handle(Reuse[foo]().get_name(), Reuse[foo]().get_runnable(), "blue");
+    let missing = 0;
+    for (let st in Statements) {
+      let name = st.toLowerCase();
+      if (Statements[st].get_matcher !== undefined) {
+        this.handle(name, Statements[st].get_matcher());
+      } else {
+        console.log("Missing: " + name);
+        missing++;
+      }
     }
+    console.log(missing + " top level statements missing matchers");
+// todo, when all get_matcher are implemented, the match methods can be removed?
   }
 }
 
