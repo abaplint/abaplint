@@ -75,9 +75,6 @@ endat.
 static foo type c.
 insert 2 into table lt_foobar.
 collect lt_table.
-EXPORT foo TO MEMORY ID 'MOO'.
-IMPORT foo TO bar FROM MEMORY ID 'MOO'.
 start-of-selection.
-field-symbol <foo> type c.
 SYNTAX-CHECK FOR lt_itab MESSAGE lv_mess LINE lv_lin WORD lv_wrd DIRECTORY ENTRY ls_trdir.
 ALIASES mo_files FOR lif_object~mo_files.
