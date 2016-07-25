@@ -6,6 +6,8 @@ import * as Statements from "../src/statements/";
 
 let expect = chai.expect;
 
+// todo, remove this file and move tests to /test/statements/*
+
 describe("statement_type", () => {
   let tests = [
     {code: "REPORT zfoo.", type: Statements.Report, name: "Report"},

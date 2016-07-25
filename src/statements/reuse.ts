@@ -71,7 +71,7 @@ export default class Reuse {
   }
 
   public static field_or_method_call(): Combi.Reuse {
-    return re(() => { return alt(this.field(), this.method_call()); }, "field_or_method_call");
+    return re(() => { return alt(this.field_offset(), this.method_call()); }, "field_or_method_call");
   }
 
   public static cond(): Combi.Reuse {
@@ -106,12 +106,13 @@ export default class Reuse {
   }
 
   public static source(): Combi.Reuse {
-    return re(() => {
+    let matcher = () => {
       let single = alt(this.field_or_method_call(), this.field_symbol_offset());
       let after = star(seq(this.arrow_or_dash(), this.field_or_method_call()));
       return seq(alt(this.constant(), this.string_template(), seq(single, after)),
-                 opt(seq(alt(str("&&"), this.arith_operator()), this.source()))); },
-              "source");
+                 opt(seq(alt(str("&&"), this.arith_operator()), this.source()))); };
+
+    return re(matcher, "source");
   }
 
   public static field_sub(): Combi.Reuse {
@@ -120,6 +121,11 @@ export default class Reuse {
 
   public static field(): Combi.Reuse {
     return re(() => { return reg(/^\w+$/); }, "field");
+  }
+
+  public static field_offset(): Combi.Reuse {
+// todo, handle "foo+3(4)" better than the following, see issue #58
+    return re(() => { return seq(reg(/^\w+(\+[\d\w]+)?$/), opt(seq(str("("), reg(/[\d\w]+/), str(")")))); }, "field_offset");
   }
 
   public static constant(): Combi.Reuse {
