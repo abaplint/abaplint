@@ -109,5 +109,6 @@ export * from "./method_def";
 export * from "./interface_def";
 export * from "./at_selection_screen";
 export * from "./include_type";
+export * from "./import_dynpro";
 
 export * from "./macro";

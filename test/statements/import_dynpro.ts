@@ -6,11 +6,9 @@ import * as Statements from "../../src/statements/";
 
 let expect = chai.expect;
 
-describe("EXPORT statement type", () => {
+describe("IMPORT DYNPRO statement type", () => {
   let tests = [
-    "EXPORT foo TO MEMORY ID 'MOO'.",
-    "EXPORT list = it_list TO DATA BUFFER lv_xstring COMPRESSION ON.",
-    "EXPORT mv_errty = mv_errty TO DATA BUFFER p_attributes.",
+    "IMPORT DYNPRO ls_h lt_f lt_e lt_m ID ls_dynp_id.",
     ];
 
   tests.forEach((test) => {
@@ -18,8 +16,8 @@ describe("EXPORT statement type", () => {
     Runner.run([file]);
     let slist = file.getStatements();
 
-    it("\"" + test + "\" should be Export", () => {
-      let compare = slist[0] instanceof Statements.Export;
+    it("\"" + test + "\" should be IMPORT DYNPRO", () => {
+      let compare = slist[0] instanceof Statements.ImportDynpro;
       expect(compare).to.equals(true);
     });
   });
