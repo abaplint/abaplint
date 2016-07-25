@@ -74,9 +74,9 @@ export default class Reuse {
     return re(() => { return alt(this.field(), this.method_call()); }, "field_or_method_call");
   }
 
-  public static where(): Combi.Reuse {
+  public static cond(): Combi.Reuse {
 // todo
-    return re(() => { return star(reg(/.*/)); }, "where");
+    return re(() => { return star(reg(/.*/)); }, "cond");
   }
 
   public static method_call(): Combi.Reuse {
@@ -112,11 +112,6 @@ export default class Reuse {
       return seq(alt(this.constant(), this.string_template(), seq(single, after)),
                  opt(seq(alt(str("&&"), this.arith_operator()), this.source()))); },
               "source");
-  }
-
-  public static boolean(): Combi.Reuse {
-// todo
-    return re(() => { return star(reg(/.*/)); }, "boolean");
   }
 
   public static field_sub(): Combi.Reuse {

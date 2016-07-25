@@ -12,7 +12,7 @@ function handleFolder(input) {
       var target = folder + file.split(".")[0] + ".svg";
 
       fs.writeFileSync(target, result, "utf8");
-      console.log(target);
+//      console.log(target);
 
       var svg = file.split(".")[0] + ".svg";
 

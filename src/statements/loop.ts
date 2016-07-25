@@ -11,7 +11,7 @@ let opt = Combi.opt;
 export class Loop extends Statement {
 
   public static get_matcher(): Combi.IRunnable {
-    let where = opt(seq(str("WHERE"), Reuse.where()));
+    let where = opt(seq(str("WHERE"), Reuse.cond()));
     let from = seq(str("FROM"), Reuse.integer());
     return seq(str("LOOP AT"),
                Reuse.source(),

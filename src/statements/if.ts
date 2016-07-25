@@ -9,7 +9,7 @@ let seq  = Combi.seq;
 export class If extends Statement {
 
     public static get_matcher(): Combi.IRunnable {
-        return seq(str("IF"), Reuse.boolean());
+        return seq(str("IF"), Reuse.cond());
     }
 
     public static match(tokens: Array<Token>): Statement {

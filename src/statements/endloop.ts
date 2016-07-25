@@ -11,7 +11,7 @@ export class Endloop extends Statement {
   }
 
   public static match(tokens: Array<Token>): Statement {
-    let result = Combi.Combi.run(this.get_matcher( ), tokens, true);
+    let result = Combi.Combi.run(this.get_matcher(), tokens, true);
     if (result === true) {
       return new Endloop(tokens);
     }

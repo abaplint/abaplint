@@ -9,7 +9,7 @@ let seq  = Combi.seq;
 export class Elseif extends Statement {
 
     public static get_matcher(): Combi.IRunnable {
-        return seq(str("ELSEIF"), Reuse.boolean());
+        return seq(str("ELSEIF"), Reuse.cond());
     }
 
     public static match(tokens: Array<Token>): Statement {

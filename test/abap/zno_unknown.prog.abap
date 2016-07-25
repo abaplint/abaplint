@@ -1,10 +1,5 @@
 REPORT zno_unknown.
 
-* write
-WRITE 'foobar'.
-WRITE: 'foobar'.
-WRITE: 'foobar', 'bar'.
-
 * direct call method
 cl_gui_cfw=>flush( ).
 cl_gui_cfw=>flush( ) .
@@ -20,15 +15,7 @@ mo_files->add_string( iv_extra  = 'source'
 lt_foo[] = lt_bar[].
 <ls_output>-line+lv_spaces = 2.
 
-* add
-add 2 to lv_foo.
-add zcl_class=>c_diagonal to lo_foo->mode.
-
 * misc
-condense lv_foo.
-continue.
-rollback work.
-clear lv_foo.
 assert 1 = 0.
 concatenate space space into lv_foo.
 while 1 = 2.
@@ -50,7 +37,6 @@ endcase.
 break-point.
 do 2 times.
 enddo.
-describe lt_foo lines lv_lines.
 free lt_foo.
 leave to screen 0.
 assign component 'asdf' of ls_foo to <foobar>.
