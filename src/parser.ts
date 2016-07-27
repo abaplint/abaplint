@@ -2,6 +2,7 @@ import * as Tokens from "./tokens/";
 import File from "./file";
 import * as Statements from "./statements/";
 
+/*
 class Timer {
   private times;
   private count;
@@ -36,21 +37,22 @@ class Timer {
     }
   }
 }
+*/
 
 export default class Parser {
   private static statements: Array<Statements.Statement>;
-  private static timer;
+//  private static timer;
 
   public static run(file: File): Array<Statements.Statement> {
     this.statements = [];
 
-    this.timer = new Timer();
+//    this.timer = new Timer();
 
     this.process(file.getTokens());
     this.categorize();
     this.macros();
 
-    this.timer.output(file.getFilename());
+//    this.timer.output(file.getFilename());
 
     return this.statements;
   }
@@ -82,9 +84,9 @@ export default class Parser {
       let last = statement.getTokens()[statement.getTokens().length - 1];
       if (statement instanceof Statements.Unknown && last instanceof Tokens.Punctuation) {
         for (let st in Statements) {
-          this.timer.start();
+//          this.timer.start();
           let known = Statements[st].match(statement.getTokens());
-          this.timer.stop(st);
+//          this.timer.stop(st);
           if (known !== undefined) {
             statement = known;
             break;
