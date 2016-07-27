@@ -15,9 +15,7 @@ export class Export extends Statement {
     let memory = seq(str("MEMORY ID"), Reuse.source());
     let target = alt(db, memory);
 
-// todo, replacing parameter_list_t with parameter_list_s seems to cause a infinite loop
-// or it is very slow
-    let source = alt(Reuse.parameter_list_t(), Reuse.field());
+    let source = alt(Reuse.parameter_list_s(), Reuse.source());
 
     return seq(str("EXPORT"), source, str("TO"), target, opt(str("COMPRESSION ON")));
   }
