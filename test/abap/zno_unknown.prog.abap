@@ -1,16 +1,5 @@
 REPORT zno_unknown.
 
-* direct call method
-cl_gui_cfw=>flush( ).
-cl_gui_cfw=>flush( ) .
-
-mo_files->add_string( iv_extra  = 'source'
-                      iv_ext    = 'xml'
-                      iv_string = lv_source ).
-mo_files->add_string( iv_extra  = 'source'
-                      iv_ext    = 'xml'
-                      iv_string = lv_source ) ##NO_TEXT.
-
 * move
 lt_foo[] = lt_bar[].
 <ls_output>-line+lv_spaces = 2.
@@ -43,7 +32,6 @@ at first.
 try.
 endtry.
 SCAN ABAP-SOURCE tab1 TOKENS INTO tab2 STATEMENTS INTO tab3.
-shift lv_foo by 2 places left.
 update asdf from foo.
 types: foo type c.
 class lcl_foo definition.

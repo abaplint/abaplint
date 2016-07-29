@@ -26,10 +26,6 @@ export default class Reuse {
     return re(() => { return reg(/^<\w+>$/); }, "field_symbol");
   }
 
-  public static field_symbol_offset(): Combi.Reuse {
-    return re(() => { return reg(/^<\w+>(\+\d+)?$/); }, "field_symbol_offset");
-  }
-
   public static inline_decl(): Combi.Reuse {
     return re(() => {
       let data = seq(str("DATA"), str("("), this.field(), str(")"));
@@ -71,7 +67,7 @@ export default class Reuse {
   }
 
   public static field_or_method_call(): Combi.Reuse {
-    return re(() => { return alt(this.field_offset(), this.method_call()); }, "field_or_method_call");
+    return re(() => { return alt(this.field_offset(), this.method_call_chain()); }, "field_or_method_call");
   }
 
   public static cond(): Combi.Reuse {
@@ -79,22 +75,57 @@ export default class Reuse {
     return re(() => { return star(reg(/.*/)); }, "cond");
   }
 
-  public static method_call(): Combi.Reuse {
-    return re(() => {
-      let exporting = seq(str("EXPORTING"), this.parameter_list_s());
-      let importing = seq(str("IMPORTING"), this.parameter_list_t());
-      let changing = seq(str("CHANGING"), this.parameter_list_t());
-      let receiving = seq(str("RECEIVING"), this.parameter_t());
-      let exceptions = seq(str("EXCEPTIONS"), this.parameter_list_t());   // todo
-      let long = seq(opt(exporting),
-                     opt(importing),
-                     opt(changing),
-                     opt(receiving),
-                     opt(exceptions));
+  public static function_parameters(): Combi.Reuse {
+    let exporting = seq(str("EXPORTING"), this.parameter_list_s());
+    let importing = seq(str("IMPORTING"), this.parameter_list_t());
+    let tables = seq(str("TABLES"), this.parameter_list_t());
+    let exceptions = seq(str("EXCEPTIONS"), this.parameter_list_t());   // todo
+    let long = seq(opt(exporting),
+                   opt(importing),
+                   opt(tables),
+                   opt(exceptions));
 
-      return seq(opt(seq(this.field(), this.arrow())), this.field(), str("("),
-                 alt(this.source(), this.parameter_list_s(), long), str(")")); },
-              "method_call");
+    return re(() => { return long; }, "function_parameters");
+  }
+
+  public static method_parameters(): Combi.Reuse {
+    let exporting = seq(str("EXPORTING"), this.parameter_list_s());
+    let importing = seq(str("IMPORTING"), this.parameter_list_t());
+    let changing = seq(str("CHANGING"), this.parameter_list_t());
+    let receiving = seq(str("RECEIVING"), this.parameter_t());
+    let exceptions = seq(str("EXCEPTIONS"), this.parameter_list_t());   // todo
+    let long = seq(opt(exporting),
+                   opt(importing),
+                   opt(changing),
+                   opt(receiving),
+                   opt(exceptions));
+
+    return re(() => { return long; }, "method_parameters");
+  }
+
+  public static method_call_chain(): Combi.Reuse {
+    let after = star(seq(this.arrow_or_dash(), this.method_call()));
+
+    let ret = seq(opt(seq(this.field_chain(), this.arrow())), this.method_call(), after);
+
+    return re(() => { return ret; }, "method_call_chain");
+  }
+
+  public static field_symbol_offset(): Combi.Reuse {
+    return re(() => { return reg(/^<\w+>(\+\d+)?$/); }, "field_symbol_offset");
+  }
+
+  public static field_chain(): Combi.Reuse {
+    let ret = seq(this.field(), opt(seq(this.arrow_or_dash(), this.field())));
+
+    return re(() => { return alt(ret, this.field_offset(), this.field_symbol_offset()); }, "field_chain");
+  }
+
+  public static method_call(): Combi.Reuse {
+    let ret = seq(this.field(), str("("),
+                  alt(this.source(), this.parameter_list_s(), Reuse.method_parameters()), str(")"));
+
+    return re(() => { return ret; }, "method_call");
   }
 
   public static string_template(): Combi.Reuse {
@@ -107,9 +138,8 @@ export default class Reuse {
 
   public static source(): Combi.Reuse {
     let matcher = () => {
-      let single = alt(this.field_or_method_call(), this.field_symbol_offset());
-      let after = star(seq(this.arrow_or_dash(), this.field_or_method_call()));
-      return seq(alt(this.constant(), this.string_template(), seq(single, after)),
+      let single = alt(this.method_call_chain(), this.field_chain());
+      return seq(alt(this.constant(), this.string_template(), single),
                  opt(seq(alt(str("&&"), this.arith_operator()), this.source()))); };
 
     return re(matcher, "source");

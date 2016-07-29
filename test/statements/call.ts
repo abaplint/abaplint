@@ -1,0 +1,29 @@
+import "../../typings/index.d.ts";
+import File from "../../src/file";
+import Runner from "../../src/runner";
+import * as chai from "chai";
+import * as Statements from "../../src/statements/";
+
+let expect = chai.expect;
+
+describe("CALL statement type", () => {
+  let tests = [
+    "cl_gui_cfw=>flush( ).",
+    "cl_gui_cfw=>flush( ) .",
+    "gui( )->go_home( ).",
+    "ii_client->request->set_header_field( name  = '~request_method' value = 'POST' ).",
+    "mo_files->add_string( iv_extra  = 'source' iv_ext    = 'xml' ).",
+    "mo_files->add_string( iv_extra  = 'source' ) ##NO_TEXT.",
+    ];
+
+  tests.forEach((test) => {
+    let file = new File("temp.abap", test);
+    Runner.run([file]);
+    let slist = file.getStatements();
+
+    it("\"" + test + "\" should be CALL", () => {
+      let compare = slist[0] instanceof Statements.Call;
+      expect(compare).to.equals(true);
+    });
+  });
+});
