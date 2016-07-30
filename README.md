@@ -10,7 +10,7 @@ Works with
 * [travis](https://travis-ci.org/) ([example](https://github.com/larshp/abaplint-test))
 * [Atom](https://github.com/larshp/linter-abaplint)
 * [ABAP in Eclipse](https://github.com/larshp/abaplint-eclipse)
-* [Web](https://larshp.github.io/abaplint/) (updated manually, currently version 0.23.0)
+* [Web](https://larshp.github.io/abaplint/) (updated manually, currently version 0.27.0)
 * [WABAP](https://github.com/larshp/WABAP)
 * VS Code, [#13](https://github.com/larshp/abaplint/issues/13)
 * Code Climate, [#2](https://github.com/larshp/abaplint/issues/2)
