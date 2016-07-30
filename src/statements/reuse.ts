@@ -40,7 +40,7 @@ export default class Reuse {
       let after = seq(alt(this.field(), this.field_symbol()),
                       star(seq(this.arrow_or_dash(), this.field())));
       let tableBody = seq(str("["), str("]"));
-      return seq(alt(this.inline_decl(), after), opt(tableBody), opt(this.field_offset())); },
+      return alt(this.inline_decl(), seq(after, opt(alt(tableBody, this.field_offset())))); },
               "target");
   }
 

@@ -33,6 +33,7 @@ export class Result {
 export interface IRunnable {
   run(r: Array<Result>): Array<Result>;
   viz(after: Array<string>): {graph: string, nodes: Array<string> };
+  railroad(): string;
   toStr(): string;
 }
 
@@ -64,6 +65,10 @@ class Regex implements IRunnable {
     let graph = node + " [label = \"" + this.regexp.source.replace(/\\/g, "\\\\") + "\"];\n";
     after.forEach((a) => { graph = graph + node + " -> " + a + ";\n"; });
     return {graph: graph, nodes: [node] };
+  }
+
+  public railroad() {
+    return "Railroad.Terminal(\"" + this.regexp.source.replace(/\\/g, "\\\\") + "\")";
   }
 
   public toStr() {
@@ -99,6 +104,10 @@ class Word implements IRunnable {
     return {graph: graph, nodes: [node] };
   }
 
+  public railroad() {
+    return "Railroad.Terminal('\"" + this.s + "\"')";
+  }
+
   public toStr() {
     return "\"" + this.s + "\"";
   }
@@ -128,6 +137,10 @@ class Optional implements IRunnable {
     let res = this.opt.viz(after);
     let nodes = res.nodes.concat(after);
     return {graph: res.graph, nodes: nodes };
+  }
+
+  public railroad() {
+    return "Railroad.Optional(" + this.opt.railroad() + ")";
   }
 
   public toStr() {
@@ -186,6 +199,10 @@ class Star implements IRunnable {
     return {graph: graph, nodes: res.nodes.concat(dummy) };
   }
 
+  public railroad() {
+    return "Railroad.ZeroOrMore(" + this.star.railroad() + ")";
+  }
+
   public toStr() {
     return "star(" + this.star.toStr() + ")";
   }
@@ -231,6 +248,11 @@ class Sequence implements IRunnable {
     return {graph: graph, nodes: after };
   }
 
+  public railroad() {
+    let children = this.list.map((e) => { return e.railroad(); });
+    return "Railroad.Sequence(" + children.join() + ")";
+  }
+
   public toStr() {
     let ret = "";
     for (let i of this.list) {
@@ -267,6 +289,10 @@ class WordSequence implements IRunnable {
     return {graph: graph, nodes: [node] };
   }
 
+  public railroad() {
+    return "Railroad.Terminal('\"" + this.str + "\"')";
+  }
+
   public toStr() {
     return "str(" + this.str + ")";
   }
@@ -298,6 +324,10 @@ export class Reuse implements IRunnable {
     let graph = node + " [label=<<u>" + this.name + "</u>>, href=\"reuse_" + this.name + ".svg\",fontcolor=blue];\n";
     after.forEach((a) => { graph = graph + node + " -> " + a + ";\n"; });
     return {graph: graph, nodes: [node] };
+  }
+
+  public railroad() {
+    return "Railroad.NonTerminal('" + this.name + "', '" + this.name + ".railroad.svg')";
   }
 
   public toStr() {
@@ -340,6 +370,11 @@ class Alternative implements IRunnable {
     return {graph: graph, nodes: nodes};
   }
 
+  public railroad() {
+    let children = this.list.map((e) => { return e.railroad(); });
+    return "Railroad.Choice(0, " + children.join() + ")";
+  }
+
   public toStr() {
     let ret = "";
     for (let i of this.list) {
@@ -350,15 +385,20 @@ class Alternative implements IRunnable {
 }
 
 export class Combi {
-  public static viz(name: string, runnable: IRunnable, color = "black"): string {
+  public static viz(name: string, runnable: IRunnable): string {
     let result = "";
     let graph = runnable.viz(["end"]);
     result = "digraph " + name + " {\n" +
-      "start [label=\"Start\",shape=box,color=" + color + "];\n" +
-      "end [label=\"End\",shape=box,color=" + color + "];\n" +
+      "start [label=\"Start\",shape=box];\n" +
+      "end [label=\"End\",shape=box];\n" +
       graph.graph;
     graph.nodes.forEach((node) => { result = result + "start -> " + node + ";\n"; } );
     result = result + "}";
+    return result;
+  }
+
+  public static railroad(name: string, runnable: IRunnable): string {
+    let result = "Railroad.Diagram(" + runnable.railroad() + ").toString();";
     return result;
   }
 

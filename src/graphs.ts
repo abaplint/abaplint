@@ -4,17 +4,20 @@ import Reuse from "../src/statements/reuse";
 
 import * as fs from "fs";
 
-class Viz {
+class Graph {
 
-  public static handle(prefix: string, name: string, runnable: Combi.IRunnable, color = "black") {
-    let str = Combi.Combi.viz(name, runnable, color);
-    fs.writeFileSync("./web/viz/" + prefix + name + ".txt", str, "utf8");
+  public static handle(prefix: string, name: string, runnable: Combi.IRunnable) {
+    let str = Combi.Combi.viz(name, runnable);
+    fs.writeFileSync("./web/viz/" + prefix + name + ".viz.txt", str, "utf8");
+
+    str = Combi.Combi.railroad(name, runnable);
+    fs.writeFileSync("./web/viz/" + prefix + name + ".railroad.txt", str, "utf8");
   }
 
   public static run() {
     for (let foo in Reuse) {
       let name = Reuse[foo]().get_name();
-      this.handle("reuse_", name, Reuse[foo]().get_runnable(), "blue");
+      this.handle("reuse_", name, Reuse[foo]().get_runnable());
     }
 
     let missing = 0;
@@ -32,4 +35,4 @@ class Viz {
   }
 }
 
-Viz.run();
+Graph.run();

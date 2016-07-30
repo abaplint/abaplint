@@ -48,6 +48,7 @@
     "codecov": "^1.0.1",
     "istanbul": "^0.4.4",
     "mocha": "^2.5.3",
+    "railroad-diagrams": "^1.0.0",
     "remap-istanbul": "^0.6.4",
     "tslint": "^3.14.0",
     "typescript": "^1.8.10",
