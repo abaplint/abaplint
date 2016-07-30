@@ -6,22 +6,22 @@ import * as fs from "fs";
 
 class Viz {
 
-  public static handle(folder: string, name: string, runnable: Combi.IRunnable, color = "black") {
+  public static handle(prefix: string, name: string, runnable: Combi.IRunnable, color = "black") {
     let str = Combi.Combi.viz(name, runnable, color);
-    fs.writeFileSync(folder + name + ".txt", str, "utf8");
+    fs.writeFileSync("./web/viz/" + prefix + name + ".txt", str, "utf8");
   }
 
   public static run() {
     for (let foo in Reuse) {
       let name = Reuse[foo]().get_name();
-      this.handle("./web/viz/reuse/", name, Reuse[foo]().get_runnable(), "blue");
+      this.handle("reuse_", name, Reuse[foo]().get_runnable(), "blue");
     }
 
     let missing = 0;
     for (let st in Statements) {
       let name = st.toLowerCase();
       if (Statements[st].get_matcher !== undefined) {
-        this.handle("./web/viz/", name, Statements[st].get_matcher());
+        this.handle("", name, Statements[st].get_matcher());
       } else {
         console.log("Missing: " + name);
         missing++;

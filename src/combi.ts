@@ -295,7 +295,7 @@ export class Reuse implements IRunnable {
 
   public viz(after: Array<string>) {
     let node = "node" + counter++;
-    let graph = node + " [label=<<u>" + this.name + "</u>>, href=\"" + this.name + ".svg\",fontcolor=blue];\n";
+    let graph = node + " [label=<<u>" + this.name + "</u>>, href=\"reuse_" + this.name + ".svg\",fontcolor=blue];\n";
     after.forEach((a) => { graph = graph + node + " -> " + a + ";\n"; });
     return {graph: graph, nodes: [node] };
   }

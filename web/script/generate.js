@@ -1,10 +1,13 @@
 var Viz = require("viz.js");
 var fs = require("fs");
 
-function handleFolder(input) {
-  var index = "";
-  var folder = "./web/viz/" + input;
+var statements = "";
+var reuse = "";
+
+function run() {
+  var folder = "./web/viz/";
   var files = fs.readdirSync(folder);
+
   for (var file of files) {
     if (/\.txt$/.test(file)) {
       var contents = fs.readFileSync(folder + file,"utf8");
@@ -15,17 +18,23 @@ function handleFolder(input) {
 //      console.log(target);
 
       var svg = file.split(".")[0] + ".svg";
-
-      index = index + "<div style=\"float:left;text-align:center;\">" +
+      var html = "<div style=\"float:left;text-align:center;\">" +
         "<u>" + svg + "</u><br>\n" +
-        "<a href=\"" + input + svg + "\"><img src=\"" + input + svg + "\" height=\"300\"></a><br><br>\n" +
+        "<a href=\"" + svg + "\"><img src=\"" + svg + "\" height=\"300\"></a><br><br>\n" +
         "</div>\n";
+
+      if (/^reuse_/.test(svg)) {
+        reuse = reuse + html;
+      } else {
+        statements = statements + html;
+      }
     }
   }
-  return index;
 }
 
 function generate() {
+  run();
+
   var index = "<html>\n" +
     "<head>\n" +
     "<title>abaplint syntax diagrams</title>\n" +
@@ -33,9 +42,9 @@ function generate() {
     "</head>\n" +
     "<body>\n" +
     "<h1>Statements</h1>\n";
-  index = index + handleFolder("");
+  index = index + statements;
   index = index + "<div style=\"clear:both;\">\n<h1>Reuse</h1>\n";
-  index = index + handleFolder("reuse/");
+  index = index + reuse;
   index = index + "</div>\n";
 
   index = index + "</body>\n</html>\n";
