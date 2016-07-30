@@ -14,6 +14,7 @@ function helper(filename: string): File {
   return file;
 }
 
+// todo, remove the files and inline the ABAP code here in the test
 describe("count_tokens", () => {
   let tests = [
     {file: "zhello01",    tokens:  6},
@@ -51,6 +52,7 @@ describe("count_tokens 2", () => {
     {abap: "zcl_class=>method( ).",              tokens: 6},
     {abap: "|fooobar|",                          tokens: 1},
     {abap: "|foo{ lv_foo }obar|",                tokens: 1},
+    {abap: "|foo{\n lv_foo }obar|",              tokens: 1},
     {abap: "foo-bar",                            tokens: 3},
     {abap: "foo( )-bar",                         tokens: 5},
     {abap: "foo( )",                             tokens: 3},

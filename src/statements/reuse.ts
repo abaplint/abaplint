@@ -92,8 +92,8 @@ export default class Reuse {
     let exceptions = seq(str("EXCEPTIONS"), this.parameter_list_exceptions());
     let long = seq(opt(exporting),
                    opt(importing),
-                   opt(changing),
                    opt(tables),
+                   opt(changing),
                    opt(exceptions));
 
     return re(() => { return long; }, "function_parameters");
@@ -132,8 +132,12 @@ export default class Reuse {
     return re(() => { return alt(ret, this.field_offset(), this.field_symbol_offset()); }, "field_chain");
   }
 
+  public static method_name(): Combi.Reuse {
+    return re(() => { return reg(/^\w+(~\w+)?$/); }, "method_name");
+  }
+
   public static method_call(): Combi.Reuse {
-    let ret = seq(this.field(), str("("),
+    let ret = seq(this.method_name(), str("("),
                   alt(this.source(), this.parameter_list_s(), Reuse.method_parameters()), str(")"));
 
     return re(() => { return ret; }, "method_call");

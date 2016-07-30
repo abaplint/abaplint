@@ -10,8 +10,11 @@ describe("CALL statement type", () => {
   let tests = [
     "cl_gui_cfw=>flush( ).",
     "cl_gui_cfw=>flush( ) .",
+    "lif_object~delete( ).",
     "gui( )->go_home( ).",
     "<ls_late>-obj->deserialize( iv_package = <ls_late>-package ).",
+    "CALL METHOD ('CL_OO_FACTORY')=>('CREATE_INSTANCE').",
+    "CALL METHOD lo_instance->('CREATE_CLIF_SOURCE').",
     "ii_client->request->set_header_field( name  = '~request_method' value = 'POST' ).",
     "mo_files->add_string( iv_extra  = 'source' iv_ext    = 'xml' ).",
     "mo_files->add_string( iv_extra  = 'source' ) ##NO_TEXT.",

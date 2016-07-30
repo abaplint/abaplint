@@ -6,12 +6,18 @@ import * as Combi from "../combi";
 let str = Combi.str;
 let seq = Combi.seq;
 let alt = Combi.alt;
+let opt = Combi.opt;
 
 // method call
 export class Call extends Statement {
 
   public static get_matcher(): Combi.IRunnable {
-    let call = seq(str("CALL METHOD"), Reuse.field(), Reuse.method_parameters());
+    let dyn = seq(str("("), Reuse.source(), str(")"));
+    let source = alt(Reuse.method_name(), dyn);
+
+    let method = seq(source, opt(seq(Reuse.arrow(), source)));
+
+    let call = seq(str("CALL METHOD"), method, Reuse.method_parameters());
     return alt(call, Reuse.method_call_chain());
   }
 

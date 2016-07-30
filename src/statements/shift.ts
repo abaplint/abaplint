@@ -15,10 +15,10 @@ export class Shift extends Statement {
 
     return seq(str("SHIFT"),
                Reuse.target(),
-               dir,
-               Reuse.source(),
-               opt(str("PLACES")),
-               opt(str("IN CHARACTER MODE")));
+               opt(seq(dir,
+                       Reuse.source(),
+                       opt(str("PLACES")),
+                       opt(str("IN CHARACTER MODE")))));
   }
 
   public static match(tokens: Array<Token>): Statement {
