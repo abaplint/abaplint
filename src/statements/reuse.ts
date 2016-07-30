@@ -7,6 +7,7 @@ let str = Combi.str;
 let opt = Combi.opt;
 let re = Combi.reuse;
 let star = Combi.star;
+let plus = Combi.plus;
 
 export default class Reuse {
 
@@ -59,11 +60,19 @@ export default class Reuse {
   }
 
   public static parameter_list_s(): Combi.Reuse {
-    return re(() => { return seq(this.parameter_s(), star(this.parameter_s())); }, "parameter_list_s");
+    return re(() => { return plus(this.parameter_s()); }, "parameter_list_s");
   }
 
   public static parameter_list_t(): Combi.Reuse {
-    return re(() => { return seq(this.parameter_t(), star(this.parameter_t())); }, "parameter_list_t");
+    return re(() => { return plus(this.parameter_t()); }, "parameter_list_t");
+  }
+
+  public static parameter_exception(): Combi.Reuse {
+    return re(() => { return seq(this.field(), str("="), this.integer()); }, "parameter_exception");
+  }
+
+  public static parameter_list_exceptions(): Combi.Reuse {
+    return re(() => { return plus(this.parameter_exception()); }, "parameter_list_exceptions");
   }
 
   public static field_or_method_call(): Combi.Reuse {
@@ -79,7 +88,7 @@ export default class Reuse {
     let exporting = seq(str("EXPORTING"), this.parameter_list_s());
     let importing = seq(str("IMPORTING"), this.parameter_list_t());
     let tables = seq(str("TABLES"), this.parameter_list_t());
-    let exceptions = seq(str("EXCEPTIONS"), this.parameter_list_t());   // todo
+    let exceptions = seq(str("EXCEPTIONS"), this.parameter_list_exceptions());
     let long = seq(opt(exporting),
                    opt(importing),
                    opt(tables),
@@ -93,7 +102,7 @@ export default class Reuse {
     let importing = seq(str("IMPORTING"), this.parameter_list_t());
     let changing = seq(str("CHANGING"), this.parameter_list_t());
     let receiving = seq(str("RECEIVING"), this.parameter_t());
-    let exceptions = seq(str("EXCEPTIONS"), this.parameter_list_t());   // todo
+    let exceptions = seq(str("EXCEPTIONS"), this.parameter_list_exceptions());
     let long = seq(opt(exporting),
                    opt(importing),
                    opt(changing),
@@ -155,7 +164,7 @@ export default class Reuse {
 
   public static field_offset(): Combi.Reuse {
 // todo, handle "foo+3(4)" better than the following, see issue #58
-    return re(() => { return seq(reg(/^\w+(\+[\d\w]+)?$/), opt(seq(str("("), reg(/[\d\w]+/), str(")")))); }, "field_offset");
+    return re(() => { return seq(reg(/^\w+(\+[\d\w]+)$/), opt(seq(str("("), reg(/[\d\w]+/), str(")")))); }, "field_offset");
   }
 
   public static constant(): Combi.Reuse {

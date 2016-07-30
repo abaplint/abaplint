@@ -95,7 +95,7 @@ let tests = [
 {n: "das1",  c: str("FIELD-SYMBOL"),              t: tok("FIELD - SYMBOL"), e: true},
 ];
 
-describe("combi", () => {
+describe("combi matching", () => {
   tests.forEach((test) => {
     it(test.n + " should be " + test.e, () => {
       let result = Combi.Combi.run(test.c, test.t);

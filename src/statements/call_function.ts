@@ -5,11 +5,13 @@ import * as Combi from "../combi";
 
 let str = Combi.str;
 let seq = Combi.seq;
+let opt = Combi.opt;
 
 export class CallFunction extends Statement {
 
   public static get_matcher(): Combi.IRunnable {
-    let call = seq(str("CALL FUNCTION"), Reuse.constant(), Reuse.function_parameters());
+    let starting = seq(str("STARTING NEW TASK"), Reuse.constant());
+    let call = seq(str("CALL FUNCTION"), Reuse.constant(), opt(starting), Reuse.function_parameters());
     return call;
   }
 

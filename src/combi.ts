@@ -20,11 +20,20 @@ export class Result {
   public length(): number {
     return this.tokens.length;
   }
+
+  public toStr(): string {
+    let ret = "";
+    for (let token of this.tokens) {
+      ret = ret + " " + token.getStr();
+    }
+    return ret;
+  }
 }
 
 export interface IRunnable {
   run(r: Array<Result>): Array<Result>;
   viz(after: Array<string>): {graph: string, nodes: Array<string> };
+  toStr(): string;
 }
 
 let counter = 1;
@@ -45,6 +54,10 @@ class Anything implements IRunnable {
   public viz(after: Array<string>) {
     return {graph: "anything;", nodes: [] };
   }
+
+  public toStr() {
+    return "Anything";
+  }
 }
 
 class Nothing implements IRunnable {
@@ -54,6 +67,10 @@ class Nothing implements IRunnable {
 
   public viz(after: Array<string>) {
     return {graph: "nothing;", nodes: [] };
+  }
+
+  public toStr() {
+    return "Nothing";
   }
 }
 
@@ -84,6 +101,10 @@ class Regex implements IRunnable {
     after.forEach((a) => { graph = graph + node + " -> " + a + ";\n"; });
     return {graph: graph, nodes: [node] };
   }
+
+  public toStr() {
+    return this.regexp.toString();
+  }
 }
 
 class Word implements IRunnable {
@@ -100,6 +121,7 @@ class Word implements IRunnable {
     for (let input of r) {
       if (input.length() !== 0
           && input.peek().getStr().toUpperCase() === this.s.toUpperCase()) {
+//        console.log("match, " + this.s.toUpperCase());
         result.push(input.shift());
       }
     }
@@ -111,6 +133,10 @@ class Word implements IRunnable {
     let graph = node + " [label = \"\\\"" + this.s + "\\\"\"];\n";
     after.forEach((a) => { graph = graph + node + " -> " + a + ";\n"; });
     return {graph: graph, nodes: [node] };
+  }
+
+  public toStr() {
+    return "\"" + this.s + "\"";
   }
 }
 
@@ -139,8 +165,20 @@ class Optional implements IRunnable {
     let nodes = res.nodes.concat(after);
     return {graph: res.graph, nodes: nodes };
   }
-}
 
+  public toStr() {
+    return "opt(" + this.opt.toStr() + ")";
+  }
+}
+/*
+function outputResultArray(r: Array<Result>) {
+  let cnt = 1;
+  for (let input of r) {
+    console.log(cnt + "\t" + input.toStr());
+    cnt++;
+  }
+}
+*/
 class Star implements IRunnable {
 
   private star: IRunnable;
@@ -152,6 +190,9 @@ class Star implements IRunnable {
   public run(r: Array<Result>): Array<Result> {
     let result = r;
 
+// console.log("Star input " + r.length + " " + this.star.toStr());
+// outputResultArray(r);
+
     let res = r;
     let input: Array<Result> = [];
     while (true) {
@@ -161,10 +202,13 @@ class Star implements IRunnable {
       if (res.length === 0) {
         break;
       }
-
+// console.log("\nStar add " + res.length);
+// outputResultArray(res);
       result = result.concat(res);
     }
+// console.log("\nStar return " + result.length);
 
+// console.clear();
     return result;
   }
 
@@ -176,6 +220,10 @@ class Star implements IRunnable {
     res.nodes.forEach((node) => { graph = graph + dummy + " -> " + node + ";\n"; });
     after.forEach((node) => { graph = graph + dummy + " -> " + node + ";\n"; });
     return {graph: graph, nodes: res.nodes.concat(dummy) };
+  }
+
+  public toStr() {
+    return "star(" + this.star.toStr() + ")";
   }
 }
 
@@ -218,6 +266,14 @@ class Sequence implements IRunnable {
 
     return {graph: graph, nodes: after };
   }
+
+  public toStr() {
+    let ret = "";
+    for (let i of this.list) {
+      ret = ret + i.toStr() + ",";
+    }
+    return "seq(" + ret + ")";
+  }
 }
 
 class WordSequence implements IRunnable {
@@ -245,6 +301,10 @@ class WordSequence implements IRunnable {
     let graph = node + " [label = \"\\\"" + this.str + "\\\"\"];\n";
     after.forEach((a) => { graph = graph + node + " -> " + a + ";\n"; });
     return {graph: graph, nodes: [node] };
+  }
+
+  public toStr() {
+    return "str(" + this.str + ")";
   }
 }
 
@@ -274,6 +334,10 @@ export class Reuse implements IRunnable {
     let graph = node + " [label=<<u>" + this.name + "</u>>, href=\"" + this.name + ".svg\",fontcolor=blue];\n";
     after.forEach((a) => { graph = graph + node + " -> " + a + ";\n"; });
     return {graph: graph, nodes: [node] };
+  }
+
+  public toStr() {
+    return "reuse(" + this.name + ")";
   }
 }
 
@@ -311,6 +375,14 @@ class Alternative implements IRunnable {
     }
     return {graph: graph, nodes: nodes};
   }
+
+  public toStr() {
+    let ret = "";
+    for (let i of this.list) {
+      ret = ret + i.toStr() + ",";
+    }
+    return "alt(" + ret + ")";
+  }
 }
 
 export class Combi {
@@ -336,7 +408,9 @@ export class Combi {
 
     let input = new Result(copy);
 
+// console.dir(input);
     let result = runnable.run([input]);
+//    console.log("results " + result.length);
     let success = false;
     for (let res of result) {
       if (res.length() === 0) {

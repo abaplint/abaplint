@@ -45,7 +45,7 @@ export default class Parser {
 
   public static run(file: File): Array<Statements.Statement> {
     this.statements = [];
-
+//    console.log(file.getFilename());
 //    this.timer = new Timer();
 
     this.process(file.getTokens());
@@ -82,8 +82,12 @@ export default class Parser {
 
     for (let statement of this.statements) {
       let last = statement.getTokens()[statement.getTokens().length - 1];
+//      console.dir(statement.getTokens());
       if (statement instanceof Statements.Unknown && last instanceof Tokens.Punctuation) {
         for (let st in Statements) {
+//          if (st !== "CallFunction") {
+//            continue;
+//          }
 //          this.timer.start();
           let known = Statements[st].match(statement.getTokens());
 //          this.timer.stop(st);
