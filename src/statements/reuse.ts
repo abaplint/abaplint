@@ -39,7 +39,8 @@ export default class Reuse {
     return re(() => {
       let after = seq(alt(this.field(), this.field_symbol()),
                       star(seq(this.arrow_or_dash(), this.field())));
-      return alt(this.inline_decl(), after); },
+      let tableBody = seq(str("["), str("]"));
+      return seq(alt(this.inline_decl(), after), opt(tableBody), opt(this.field_offset())); },
               "target");
   }
 
@@ -159,7 +160,7 @@ export default class Reuse {
   }
 
   public static field_offset(): Combi.Reuse {
-    let offset = seq(str("+"), reg(/^\d+$/));
+    let offset = seq(str("+"), reg(/^[\d\w]+$/), opt(seq(this.arrow_or_dash(), this.field())));
 
     return re(() => { return offset; }, "field_offset");
   }

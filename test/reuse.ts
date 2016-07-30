@@ -40,6 +40,8 @@ let tests = [
   {c: "(42)",                     r: Reuse.field_length()},
   {c: "(sy-fdpos)",               r: Reuse.field_length()},
 
+  {c: "+sy-fdpos",                r: Reuse.field_offset()},
+
   {c: "( lv_offset + 1 ) MOD 8",  r: Reuse.source()},
 ];
 
