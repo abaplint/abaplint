@@ -1,12 +1,6 @@
-import "../../typings/index.d.ts";
-import File from "../../src/file";
-import Runner from "../../src/runner";
-import * as chai from "chai";
+import {statementType} from "../utils";
 import * as Statements from "../../src/statements/";
 
-let expect = chai.expect;
-
-describe("CALL statement type", () => {
   let tests = [
     "cl_gui_cfw=>flush( ).",
     "cl_gui_cfw=>flush( ) .",
@@ -23,14 +17,4 @@ describe("CALL statement type", () => {
     "mo_files->add_string( iv_extra  = 'source' ) ##NO_TEXT.",
     ];
 
-  tests.forEach((test) => {
-    let file = new File("temp.abap", test);
-    Runner.run([file]);
-    let slist = file.getStatements();
-
-    it("\"" + test + "\" should be CALL", () => {
-      let compare = slist[0] instanceof Statements.Call;
-      expect(compare).to.equals(true);
-    });
-  });
-});
+statementType(tests, "CALL", Statements.Call);

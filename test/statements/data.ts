@@ -1,12 +1,6 @@
-import "../../typings/index.d.ts";
-import File from "../../src/file";
-import Runner from "../../src/runner";
-import * as chai from "chai";
+import {statementType} from "../utils";
 import * as Statements from "../../src/statements/";
 
-let expect = chai.expect;
-
-describe("DATA statement type", () => {
   let tests = [
     "DATA lv_foo TYPE i.",
     "DATA lv_foo LIKE LINE OF foo.",
@@ -32,14 +26,4 @@ describe("DATA statement type", () => {
     "DATA: mt_stage TYPE SORTED TABLE OF ty_stage WITH UNIQUE KEY file-path file-filename.",
     ];
 
-  tests.forEach((test) => {
-    let file = new File("temp.abap", test);
-    Runner.run([file]);
-    let slist = file.getStatements();
-
-    it("\"" + test + "\" should be DATA", () => {
-      let compare = slist[0] instanceof Statements.Data;
-      expect(compare).to.equals(true);
-    });
-  });
-});
+statementType(tests, "DATA", Statements.Data);

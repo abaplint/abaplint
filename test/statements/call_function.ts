@@ -1,12 +1,6 @@
-import "../../typings/index.d.ts";
-import File from "../../src/file";
-import Runner from "../../src/runner";
-import * as chai from "chai";
+import {statementType} from "../utils";
 import * as Statements from "../../src/statements/";
 
-let expect = chai.expect;
-
-describe("CALL FUNCTION statement type", () => {
   let tests = [
     "CALL FUNCTION 'DDIF_TTYP_GET'.",
 
@@ -62,14 +56,4 @@ describe("CALL FUNCTION statement type", () => {
     "CALL FUNCTION 'BANK_OBJ_WORKL_RELEASE_LOCKS' IN UPDATE TASK.",
     ];
 
-  tests.forEach((test) => {
-    let file = new File("temp.abap", test);
-    Runner.run([file]);
-    let slist = file.getStatements();
-
-    it("\"" + test + "\" should be CALL FUNCTION", () => {
-      let compare = slist[0] instanceof Statements.CallFunction;
-      expect(compare).to.equals(true);
-    });
-  });
-});
+statementType(tests, "CALL FUNCTION", Statements.CallFunction);

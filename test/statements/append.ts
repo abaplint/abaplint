@@ -1,12 +1,6 @@
-import "../../typings/index.d.ts";
-import File from "../../src/file";
-import Runner from "../../src/runner";
-import * as chai from "chai";
+import {statementType} from "../utils";
 import * as Statements from "../../src/statements/";
 
-let expect = chai.expect;
-
-describe("APPEND statement type", () => {
   let tests = [
     "append 'sdf' to lt_foo.",
     "APPEND INITIAL LINE TO lt_lines ASSIGNING <ls_line>.",
@@ -33,14 +27,4 @@ describe("APPEND statement type", () => {
     "APPEND lo_branch->get_data( )-sha1 TO lt_visit.",
     ];
 
-  tests.forEach((test) => {
-    let file = new File("temp.abap", test);
-    Runner.run([file]);
-    let slist = file.getStatements();
-
-    it("\"" + test + "\" should be APPEND", () => {
-      let compare = slist[0] instanceof Statements.Append;
-      expect(compare).to.equals(true);
-    });
-  });
-});
+statementType(tests, "APPEND", Statements.Append);
