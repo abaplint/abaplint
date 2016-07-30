@@ -11,6 +11,7 @@ describe("CALL statement type", () => {
     "cl_gui_cfw=>flush( ).",
     "cl_gui_cfw=>flush( ) .",
     "gui( )->go_home( ).",
+    "<ls_late>-obj->deserialize( iv_package = <ls_late>-package ).",
     "ii_client->request->set_header_field( name  = '~request_method' value = 'POST' ).",
     "mo_files->add_string( iv_extra  = 'source' iv_ext    = 'xml' ).",
     "mo_files->add_string( iv_extra  = 'source' ) ##NO_TEXT.",

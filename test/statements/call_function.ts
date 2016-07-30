@@ -23,12 +23,12 @@ describe("CALL FUNCTION statement type", () => {
     "  EXCEPTIONS\n" +
     "    version_not_found = 1\n" +
     "    reps_not_exist    = 2\n" +
-    "    OTHERS            = 3.\n",
+    "    OTHERS            = 3.",
 
     "CALL FUNCTION 'ABAP4_CALL_TRANSACTION'\n" +
     "  STARTING NEW TASK 'GIT'\n" +
     "  EXPORTING\n" +
-    "    tcode = 'SE93'.\n",
+    "    tcode = 'SE93'.",
 
     "CALL FUNCTION 'RPY_TRANSACTION_INSERT'\n" +
     "  EXPORTING\n" +
@@ -51,7 +51,13 @@ describe("CALL FUNCTION statement type", () => {
     "    illegal_type            = 6\n" +
     "    object_inconsistent     = 7\n" +
     "    db_access_error         = 8\n" +
-    "    OTHERS                  = 9.\n",
+    "    OTHERS                  = 9.",
+
+    "CALL FUNCTION 'PB_POPUP_PACKAGE_CREATE'\n" +
+    "  CHANGING\n" +
+    "    p_object_data    = ls_package_data\n" +
+    "  EXCEPTIONS\n" +
+    "    action_cancelled = 1.",
     ];
 
   tests.forEach((test) => {

@@ -87,10 +87,12 @@ export default class Reuse {
   public static function_parameters(): Combi.Reuse {
     let exporting = seq(str("EXPORTING"), this.parameter_list_s());
     let importing = seq(str("IMPORTING"), this.parameter_list_t());
+    let changing = seq(str("CHANGING"), this.parameter_list_t());
     let tables = seq(str("TABLES"), this.parameter_list_t());
     let exceptions = seq(str("EXCEPTIONS"), this.parameter_list_exceptions());
     let long = seq(opt(exporting),
                    opt(importing),
+                   opt(changing),
                    opt(tables),
                    opt(exceptions));
 
@@ -125,7 +127,7 @@ export default class Reuse {
   }
 
   public static field_chain(): Combi.Reuse {
-    let ret = seq(this.field(), opt(seq(this.arrow_or_dash(), this.field())));
+    let ret = seq(alt(this.field(), this.field_symbol()), opt(seq(this.arrow_or_dash(), this.field())));
 
     return re(() => { return alt(ret, this.field_offset(), this.field_symbol_offset()); }, "field_chain");
   }
