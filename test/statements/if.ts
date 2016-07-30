@@ -14,6 +14,8 @@ describe("IF statement type", () => {
     "IF lv_left >= strlen( mv_bits ).",
     "IF li_node IS BOUND.",
     "IF iv_str CA '/'.",
+    "IF NOT it_tpool IS INITIAL.",
+    "IF NOT it_tpool[] IS INITIAL.",
     "IF xstrlen( ls_file-file-data ) = 2.",
     "IF lines( lt_lines ) MOD 2 <> 0.",
     "IF iv_branch_name IS SUPPLIED.",

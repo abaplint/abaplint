@@ -148,13 +148,22 @@ export default class Reuse {
     return re(() => { return ret; }, "method_call_chain");
   }
 
+  public static field_offset(): Combi.Reuse {
+    let offset = seq(str("+"), reg(/^\d+$/));
+
+    return re(() => { return offset; }, "field_offset");
+  }
+
+  public static field_length(): Combi.Reuse {
+    let length = seq(str("("), reg(/^[\d\w]+$/), opt(seq(this.arrow_or_dash(), this.field())), str(")"));
+
+    return re(() => { return length; }, "field_length");
+  }
+
   public static field_chain(): Combi.Reuse {
     let ret = seq(alt(this.field(), this.field_symbol()), star(seq(this.arrow_or_dash(), this.field())));
 
-    let offset = seq(str("+"), reg(/^\d+$/));
-    let length = seq(str("("), reg(/[\d\w]+/), str(")"));
-
-    return re(() => { return seq(ret, opt(offset), opt(length)); }, "field_chain");
+    return re(() => { return seq(ret, opt(this.field_offset()), opt(this.field_length())); }, "field_chain");
   }
 
   public static method_name(): Combi.Reuse {
@@ -184,9 +193,15 @@ export default class Reuse {
 
   public static source(): Combi.Reuse {
     let matcher = () => {
-      let single = alt(seq(this.method_call_chain(), opt(seq(this.arrow_or_dash(), this.field_chain()))), this.field_chain());
-      return seq(alt(this.constant(), this.string_template(), single),
-                 opt(seq(alt(str("&&"), this.arith_operator()), this.source()))); };
+      let single = alt(seq(this.method_call_chain(), opt(seq(this.arrow_or_dash(), this.field_chain()))),
+                       this.field_chain());
+
+      let ret = seq(alt(this.constant(), this.string_template(), single),
+                    opt(seq(alt(str("&&"), this.arith_operator()), this.source())));
+
+      let tableBody = seq(str("["), str("]"));
+
+      return seq(ret, opt(tableBody)); };
 
     return re(matcher, "source");
   }
