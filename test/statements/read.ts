@@ -1,0 +1,19 @@
+import {statementType} from "../utils";
+import * as Statements from "../../src/statements/";
+
+let tests = [
+  "READ TABLE tt_fields ASSIGNING <ls_fbranch> WITH KEY tabname = 'TEXTL'.",
+  "READ TABLE lt_lengths INDEX lines( lt_lengths ) INTO lv_length.",
+  "READ TABLE lt_obj FROM lv_super TRANSPORTING NO FIELDS.",
+  "READ TABLE gt_stack ASSIGNING <ls_stack> INDEX 1.",
+  "READ TABLE mt_map WITH TABLE KEY old = iv_id INTO ls_map.",
+  "READ TABLE mt_assets TRANSPORTING NO FIELDS WITH KEY table_line = <ls_asset>-url.",
+  "READ TABLE gt_objtype_map INTO ls_objtype_map WITH TABLE KEY obj_typ = is_item-obj_type.",
+  "READ TABLE st_syntax ASSIGNING <ls_syntax> WITH KEY rulename = lv_rulename BINARY SEARCH.",
+  "READ TABLE mt_stage WITH KEY file-path = iv_path file-filename = iv_filename ASSIGNING <ls_stage>.",
+  "READ TABLE rt_data ASSIGNING FIELD-SYMBOL(<ls_data>) WITH KEY test = <ls_result>-test date = lv_date.",
+  "READ TABLE it_filter WITH KEY obj_name = sdf TRANSPORTING NO FIELDS.",
+  "READ TABLE lt_cross WITH KEY name = lv_name BINARY SEARCH TRANSPORTING NO FIELDS.",
+];
+
+statementType(tests, "READ", Statements.Read);

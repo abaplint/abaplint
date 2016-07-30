@@ -113,5 +113,8 @@ export * from "./import_dynpro";
 export * from "./call_function";
 export * from "./call_selection_screen";
 export * from "./call_transformation";
+export * from "./read_line";
+export * from "./read_textpool";
+export * from "./read_report";
 
 export * from "./macro";
