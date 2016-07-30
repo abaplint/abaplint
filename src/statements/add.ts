@@ -8,20 +8,19 @@ let seq = Combi.seq;
 
 export class Add extends Statement {
 
-    public static get_matcher(): Combi.IRunnable {
-        return seq(str("ADD"),
-                   Reuse.source(),
-                   str("TO"),
-                   Reuse.target());
-    }
+  public static get_matcher(): Combi.IRunnable {
+    return seq(str("ADD"),
+               Reuse.source(),
+               str("TO"),
+               Reuse.target());
+  }
 
-    public static match(tokens: Array<Token>): Statement {
-        let result = Combi.Combi.run(this.get_matcher( ), tokens, true);
-        if (result === true) {
-            return new Add(tokens);
-        } else {
-            return undefined;
-        }
+  public static match(tokens: Array<Token>): Statement {
+    let result = Combi.Combi.run(this.get_matcher( ), tokens, true);
+    if (result === true) {
+      return new Add(tokens);
     }
+    return undefined;
+  }
 
 }
