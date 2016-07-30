@@ -83,7 +83,7 @@ export default class Lexer {
         this.add(before.substr(0, before.length - 1), row, col - 1);
         this.add(bchar + char, row, col + 1);
         before = "";
-      } else if (char === "\n") {
+      } else if (char === "\n" && this.m !== Mode.Template) {
         this.add(before, row, col);
         before = "";
         row = row + 1;

@@ -7,11 +7,11 @@ import Runner from "../src/runner";
 
 let expect = chai.expect;
 
+// todo, remove this test, move stuff to test/statements/*.ts
 describe("no_unknown", () => {
 
   let tests = [
     {filename: "zno_unknown"},
-    {filename: "zno_unknown_string_template"},
     ];
 
   tests.forEach((test) => {

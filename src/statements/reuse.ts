@@ -144,7 +144,7 @@ export default class Reuse {
   }
 
   public static string_template(): Combi.Reuse {
-    return re(() => { return reg(/^\|.*\|$/); }, "string_template");
+    return re(() => { return reg(/^\|(.|\n)*\|$/); }, "string_template");
   }
 
   public static arith_operator(): Combi.Reuse {
