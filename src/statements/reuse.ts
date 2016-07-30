@@ -80,34 +80,44 @@ export default class Reuse {
   }
 
   public static compare(): Combi.Reuse {
-    let operator = alt(str("="),
-                       str("<>"),
-                       str("<"),
-                       str(">"),
-                       str("<="),
-                       str(">="),
-                       str("CA"),
-                       str("CO"),
-                       str("CP"),
-                       str("NP"));
+    let operator = seq(opt(str("NOT")),
+                       alt(str("="),
+                           str("<>"),
+                           str("<"),
+                           str(">"),
+                           str("<="),
+                           str(">="),
+                           str("CA"),
+                           str("CO"),
+                           str("IN"),
+                           str("CP"),
+                           str("CS"),
+                           str("NP")));
+
+    let sopt = seq(str("IS"),
+                   opt(str("NOT")),
+                   alt(str("SUPPLIED"),
+                       str("BOUND"),
+                       str("ASSIGNED"),
+                       str("INITIAL")));
 
     let ret = seq(opt(str("NOT")),
                   this.source(),
                   alt(seq(operator, this.source()),
-                      str("IS SUPPLIED"),
-                      str("IS NOT BOUND"),
-                      str("IS BOUND"),
-                      str("IS INITIAL"),
-                      str("IS NOT INITIAL")));
+                      sopt));
 
     return re(() => { return ret; }, "compare");
   }
 
   public static cond(): Combi.Reuse {
-    let operator = alt(str("AND"), str("OR"));
-    let ret = seq(this.compare(), star(seq(operator, this.compare())));
+    let matcher = () => {
+      let operator = alt(str("AND"), str("OR"));
+      let cnd = alt(this.compare(), seq(opt(str("NOT")), str("("), this.cond(), str(")")));
+      let ret = seq(cnd, star(seq(operator, cnd)));
 
-    return re(() => { return ret; }, "cond");
+      return ret; };
+
+    return re(matcher, "cond");
   }
 
   public static function_parameters(): Combi.Reuse {
@@ -196,7 +206,9 @@ export default class Reuse {
       let single = alt(seq(this.method_call_chain(), opt(seq(this.arrow_or_dash(), this.field_chain()))),
                        this.field_chain());
 
-      let ret = seq(alt(this.constant(), this.string_template(), single),
+      let paren = seq(str("("), this.source(), str(")"));
+
+      let ret = seq(alt(this.constant(), this.string_template(), single, paren),
                     opt(seq(alt(str("&&"), this.arith_operator()), this.source())));
 
       let tableBody = seq(str("["), str("]"));
@@ -211,7 +223,8 @@ export default class Reuse {
   }
 
   public static field(): Combi.Reuse {
-    return re(() => { return reg(/^\w+$/); }, "field");
+// "&1" can be used for almost anything(field names, method names etc.) in macros
+    return re(() => { return reg(/^&?\w+$/); }, "field");
   }
 
   public static constant(): Combi.Reuse {
