@@ -11,7 +11,13 @@ export class CallFunction extends Statement {
 
   public static get_matcher(): Combi.IRunnable {
     let starting = seq(str("STARTING NEW TASK"), Reuse.constant());
-    let call = seq(str("CALL FUNCTION"), Reuse.constant(), opt(starting), Reuse.function_parameters());
+
+    let call = seq(str("CALL FUNCTION"),
+                   Reuse.constant(),
+                   opt(starting),
+                   opt(str("IN UPDATE TASK")),
+                   Reuse.function_parameters());
+
     return call;
   }
 

@@ -47,7 +47,7 @@ describe("count_tokens", () => {
 
 describe("count_tokens 2", () => {
   let tests = [
-    {abap: "CALL METHOD (lv_class_name)=>jump.", tokens: 7},
+    {abap: "CALL METHOD (lv_class_name)=>jump.", tokens: 8},
     {abap: "DATA(lv_foo) = 5.",                  tokens: 7},
     {abap: "zcl_class=>method( ).",              tokens: 6},
     {abap: "|fooobar|",                          tokens: 1},
@@ -56,6 +56,7 @@ describe("count_tokens 2", () => {
     {abap: "foo-bar",                            tokens: 3},
     {abap: "foo( )-bar",                         tokens: 5},
     {abap: "foo( )",                             tokens: 3},
+    {abap: "(foo)",                              tokens: 3},
     {abap: "foo( )->bar",                        tokens: 5},
     {abap: "foo( )->bar( )",                     tokens: 7},
   ];

@@ -58,6 +58,8 @@ describe("CALL FUNCTION statement type", () => {
     "    p_object_data    = ls_package_data\n" +
     "  EXCEPTIONS\n" +
     "    action_cancelled = 1.",
+
+    "CALL FUNCTION 'BANK_OBJ_WORKL_RELEASE_LOCKS' IN UPDATE TASK.",
     ];
 
   tests.forEach((test) => {

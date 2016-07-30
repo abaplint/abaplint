@@ -13,9 +13,10 @@ export class CallTransformation extends Statement {
   public static get_matcher(): Combi.IRunnable {
     let options = seq(str("OPTIONS"), Reuse.field(), str("="), Reuse.source());
 
-    let source1 = seq(str("SOURCE"), Reuse.field(), str("="), Reuse.field());
-    let source2 = seq(str("SOURCE XML"), Reuse.source());
-    let source = alt(source1, source2);
+    let source1 = seq(Reuse.field(), str("="), Reuse.field());
+    let source2 = seq(str("XML"), Reuse.source());
+    let source3 = seq(str("("), Reuse.field(), str(")"));
+    let source = seq(str("SOURCE"), alt(source1, source2, source3));
 
     let result1 = seq(str("RESULT"), Reuse.field(), str("="), Reuse.field());
     let result2 = seq(str("RESULT XML"), Reuse.target());
