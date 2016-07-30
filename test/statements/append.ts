@@ -24,6 +24,7 @@ describe("APPEND statement type", () => {
     "APPEND 'foo' && 'bar' TO lt_foo.",
     "APPEND lo_commit->get_pretty( ) TO rt_commits.",
     "APPEND |foo| TO lt_foo.",
+    "APPEND <ls_snode>-name+11 TO rt_types.",
     "APPEND lo_commit->get_pretty( foo = bar ) TO rt_commits.",
     "APPEND lo_commit->get_pretty( foo = bar moo = boo ) TO rt_commits.",
     "APPEND lo_commit->get_pretty( 1 + 1 ) TO rt_commits.",
