@@ -10,8 +10,6 @@ let expect = chai.expect;
 let str      = Combi.str;
 let seq      = Combi.seq;
 let alt      = Combi.alt;
-let anything = Combi.anything;
-let nothing  = Combi.nothing;
 let opt      = Combi.opt;
 let star     = Combi.star;
 let reg      = Combi.regex;
@@ -29,8 +27,6 @@ function tok(s: string): Array<Tokens.Token> {
 }
 
 let tests = [
-{n: "no1",  c: nothing(),                         t: tok("bar"),     e: false},
-{n: "no2",  c: nothing(),                         t: [],             e: false},
 {n: "str1", c: str("foo"),                        t: tok("foo"),     e: true},
 {n: "str2", c: str("foo"),                        t: tok("bar"),     e: false},
 {n: "str3", c: str("foo"),                        t: [],             e: false},
@@ -44,22 +40,7 @@ let tests = [
 {n: "alt2", c: alt(str("foo"), str("bar")),       t: tok("bar"),     e: true},
 {n: "alt3", c: alt(str("foo"), str("bar")),       t: tok("moo"),     e: false},
 {n: "alt4", c: alt(str("foo"), str("bar")),       t: [],             e: false},
-{n: "any1", c: anything(),                        t: tok("foo"),     e: true},
-{n: "any2", c: anything(),                        t: tok("foo bar"), e: true},
-{n: "any3", c: anything(),                        t: [],             e: true},
-{n: "any4", c: seq(str("foo"), anything()),       t: tok("foo bar"), e: true},
-{n: "any4", c: seq(str("foo"), anything()),       t: tok("foo"),     e: true},
-{n: "any5", c: seq(str("foo"), anything()),       t: [],             e: false},
-{n: "any6", c: seq(str("foo"), anything()),       t: tok("bar bar"), e: false},
-{n: "any7", c: seq(str("foo"), anything()),       t: tok("bar"),     e: false},
-{n: "any8", c: seq(anything(), str("foo")),       t: tok("foo bar"), e: false},
-{n: "any9", c: seq(anything(), str("foo")),       t: tok("foo"),     e: true},
-{n: "anyA", c: seq(anything(), str("foo")),       t: tok("foo foo"), e: true},
-{n: "anyB", c: seq(anything(), str("foo")),       t: [],             e: false},
-{n: "anyC", c: seq(anything(), str("foo")),       t: tok("bar bar"), e: false},
-{n: "anyD", c: seq(anything(), str("foo")),       t: tok("bar"),     e: false},
 {n: "opt1", c: opt(str("foo")),                   t: tok("foo"),     e: true},
-{n: "opt2", c: opt(anything()),                   t: tok("foo"),     e: true},
 {n: "opt3", c: seq(opt(str("foo")), str("bar")),  t: tok("foo bar"), e: true},
 {n: "opt4", c: seq(opt(str("foo")), str("bar")),  t: tok("bar"),     e: true},
 {n: "opt5", c: seq(opt(str("foo")), str("bar")),  t: tok("bar bar"), e: false},
@@ -104,11 +85,10 @@ describe("combi matching", () => {
   });
 });
 
+
 let viz = [
   {n: "1", c: Statements.Data.get_matcher() },
-  {n: "2", c: anything() },
-  {n: "3", c: nothing() },
-  {n: "4", c: re(() => { return str("TEST"); }, "test") },
+  {n: "2", c: re(() => { return str("TEST"); }, "test") },
 ];
 
 describe("combi vizualization", () => {

@@ -38,42 +38,6 @@ export interface IRunnable {
 
 let counter = 1;
 
-class Anything implements IRunnable {
-  public run(r: Array<Result>): Array<Result> {
-    let result: Array<Result> = [];
-    for (let input of r) {
-      let length = input.length();
-      for (let i = 0; i <= length; i++) {
-        result.push(input);
-        input = input.shift();
-      }
-    }
-    return result;
-  }
-
-  public viz(after: Array<string>) {
-    return {graph: "anything;", nodes: [] };
-  }
-
-  public toStr() {
-    return "Anything";
-  }
-}
-
-class Nothing implements IRunnable {
-  public run(r: Array<Result>): Array<Result> {
-    return [];
-  }
-
-  public viz(after: Array<string>) {
-    return {graph: "nothing;", nodes: [] };
-  }
-
-  public toStr() {
-    return "Nothing";
-  }
-}
-
 class Regex implements IRunnable {
 
   private regexp: RegExp;
@@ -423,12 +387,6 @@ export class Combi {
   }
 }
 
-export function anything(): IRunnable {
-  return new Anything();
-}
-export function nothing(): IRunnable {
-  return new Nothing();
-}
 export function str(s: string): IRunnable {
   if (/[ -]/.test(s) === false) {
     return new Word(s);

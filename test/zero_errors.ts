@@ -33,7 +33,6 @@ describe("zero errors", () => {
     "zdefine01.prog",
     "zcall01.prog",
     "zdata01.prog",
-//    "clas/zcx_ags_error.clas",
   ];
 
   tests.forEach((test) => {
