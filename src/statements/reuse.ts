@@ -175,7 +175,7 @@ export default class Reuse {
 
   public static constant(): Combi.Reuse {
     return re(() => {
-      let stri = reg(/^('.*')|(`.*`)$/);
+      let stri = seq(reg(/^('.*')|(`.*`)$/), opt(seq(str("("), reg(/^\d\d\d$/), str(")"))));
       return alt(stri, this.integer()); },
               "constant");
   }

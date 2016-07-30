@@ -20,6 +20,11 @@ describe("CALL TRANSFORMATION statement type", () => {
       "CALL TRANSFORMATION id\n" +
       "  SOURCE (lt_stab)\n" +
       "  RESULT XML li_doc.",
+
+      "CALL TRANSFORMATION id\n" +
+      "  OPTIONS value_handling = 'accept_data_loss'\n" +
+      "  SOURCE XML mi_xml_doc\n" +
+      "  RESULT (lt_rtab).",
     ];
 
   tests.forEach((test) => {

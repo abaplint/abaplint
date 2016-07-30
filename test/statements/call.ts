@@ -12,6 +12,7 @@ describe("CALL statement type", () => {
     "cl_gui_cfw=>flush( ) .",
     "lif_object~delete( ).",
     "gui( )->go_home( ).",
+    "cl_abap_unit_assert=>assert_subrc( msg = 'Error while parsing'(001) ).",
     "CALL METHOD (lv_class_name)=>jump.",
     "<ls_late>-obj->deserialize( iv_package = <ls_late>-package ).",
     "CALL METHOD ('CL_OO_FACTORY')=>('CREATE_INSTANCE').",
