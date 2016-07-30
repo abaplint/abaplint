@@ -76,12 +76,38 @@ export default class Reuse {
   }
 
   public static field_or_method_call(): Combi.Reuse {
-    return re(() => { return alt(this.field_offset(), this.method_call_chain()); }, "field_or_method_call");
+    return re(() => { return alt(this.field_chain(), this.method_call_chain()); }, "field_or_method_call");
+  }
+
+  public static compare(): Combi.Reuse {
+    let operator = alt(str("="),
+                       str("<>"),
+                       str("<"),
+                       str(">"),
+                       str("<="),
+                       str(">="),
+                       str("CA"),
+                       str("CO"),
+                       str("CP"),
+                       str("NP"));
+
+    let ret = seq(opt(str("NOT")),
+                  this.source(),
+                  alt(seq(operator, this.source()),
+                      str("IS SUPPLIED"),
+                      str("IS NOT BOUND"),
+                      str("IS BOUND"),
+                      str("IS INITIAL"),
+                      str("IS NOT INITIAL")));
+
+    return re(() => { return ret; }, "compare");
   }
 
   public static cond(): Combi.Reuse {
-// todo
-    return re(() => { return star(reg(/.*/)); }, "cond");
+    let operator = alt(str("AND"), str("OR"));
+    let ret = seq(this.compare(), star(seq(operator, this.compare())));
+
+    return re(() => { return ret; }, "cond");
   }
 
   public static function_parameters(): Combi.Reuse {
@@ -122,14 +148,13 @@ export default class Reuse {
     return re(() => { return ret; }, "method_call_chain");
   }
 
-  public static field_symbol_offset(): Combi.Reuse {
-    return re(() => { return reg(/^<\w+>(\+\d+)?$/); }, "field_symbol_offset");
-  }
-
   public static field_chain(): Combi.Reuse {
-    let ret = seq(alt(this.field(), this.field_symbol()), opt(seq(this.arrow_or_dash(), this.field())));
+    let ret = seq(alt(this.field(), this.field_symbol()), star(seq(this.arrow_or_dash(), this.field())));
 
-    return re(() => { return alt(ret, this.field_offset(), this.field_symbol_offset()); }, "field_chain");
+    let offset = seq(str("+"), reg(/^\d+$/));
+    let length = seq(str("("), reg(/[\d\w]+/), str(")"));
+
+    return re(() => { return seq(ret, opt(offset), opt(length)); }, "field_chain");
   }
 
   public static method_name(): Combi.Reuse {
@@ -148,12 +173,18 @@ export default class Reuse {
   }
 
   public static arith_operator(): Combi.Reuse {
-    return re(() => { return reg(/^[+\-\*\/]$/); }, "arith_operator");
+    let ret = alt(str("+"),
+                  str("-"),
+                  str("*"),
+                  str("/"),
+                  str("MOD"));
+
+    return re(() => { return ret; }, "arith_operator");
   }
 
   public static source(): Combi.Reuse {
     let matcher = () => {
-      let single = alt(this.method_call_chain(), this.field_chain());
+      let single = alt(seq(this.method_call_chain(), opt(seq(this.arrow_or_dash(), this.field_chain()))), this.field_chain());
       return seq(alt(this.constant(), this.string_template(), single),
                  opt(seq(alt(str("&&"), this.arith_operator()), this.source()))); };
 
@@ -166,11 +197,6 @@ export default class Reuse {
 
   public static field(): Combi.Reuse {
     return re(() => { return reg(/^\w+$/); }, "field");
-  }
-
-  public static field_offset(): Combi.Reuse {
-// todo, handle "foo+3(4)" better than the following, see issue #58
-    return re(() => { return seq(reg(/^\w+(\+[\d\w]+)$/), opt(seq(str("("), reg(/[\d\w]+/), str(")")))); }, "field_offset");
   }
 
   public static constant(): Combi.Reuse {

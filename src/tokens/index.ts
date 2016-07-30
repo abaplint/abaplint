@@ -11,3 +11,4 @@ export * from "./paren_left";
 export * from "./paren_right";
 export * from "./dash";
 export * from "./arrow";
+export * from "./plus";
