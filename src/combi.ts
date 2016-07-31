@@ -34,12 +34,9 @@ export class Result {
 
 export interface IRunnable {
   run(r: Array<Result>): Array<Result>;
-  viz(after: Array<string>): {graph: string, nodes: Array<string> };
   railroad(): string;
   toStr(): string;
 }
-
-let counter = 1;
 
 class Regex implements IRunnable {
 
@@ -60,13 +57,6 @@ class Regex implements IRunnable {
     }
 
     return result;
-  }
-
-  public viz(after: Array<string>) {
-    let node = "node" + counter++;
-    let graph = node + " [label = \"" + this.regexp.source.replace(/\\/g, "\\\\") + "\"];\n";
-    after.forEach((a) => { graph = graph + node + " -> " + a + ";\n"; });
-    return {graph: graph, nodes: [node] };
   }
 
   public railroad() {
@@ -99,13 +89,6 @@ class Word implements IRunnable {
     return result;
   }
 
-  public viz(after: Array<string>) {
-    let node = "node" + counter++;
-    let graph = node + " [label = \"\\\"" + this.s + "\\\"\"];\n";
-    after.forEach((a) => { graph = graph + node + " -> " + a + ";\n"; });
-    return {graph: graph, nodes: [node] };
-  }
-
   public railroad() {
     return "Railroad.Terminal('\"" + this.s + "\"')";
   }
@@ -133,12 +116,6 @@ class Optional implements IRunnable {
     }
 
     return result;
-  }
-
-  public viz(after: Array<string>) {
-    let res = this.opt.viz(after);
-    let nodes = res.nodes.concat(after);
-    return {graph: res.graph, nodes: nodes };
   }
 
   public railroad() {
@@ -191,16 +168,6 @@ class Star implements IRunnable {
     return result;
   }
 
-  public viz(after: Array<string>) {
-    let dummy = "node" + counter++;
-    let graph = dummy + " [label = \"Dummy\"];\n";
-    let res = this.star.viz([dummy]);
-    graph = graph + res.graph;
-    res.nodes.forEach((node) => { graph = graph + dummy + " -> " + node + ";\n"; });
-    after.forEach((node) => { graph = graph + dummy + " -> " + node + ";\n"; });
-    return {graph: graph, nodes: res.nodes.concat(dummy) };
-  }
-
   public railroad() {
     return "Railroad.ZeroOrMore(" + this.star.railroad() + ")";
   }
@@ -220,10 +187,6 @@ class Plus implements IRunnable {
 
   public run(r: Array<Result>): Array<Result> {
     return new Sequence([this.plus, new Star(this.plus)]).run(r);
-  }
-
-  public viz(after: Array<string>) {
-    return new Sequence([this.plus, new Star(this.plus)]).viz(after);
   }
 
   public railroad() {
@@ -264,18 +227,6 @@ class Sequence implements IRunnable {
     return result;
   }
 
-  public viz(after: Array<string>) {
-    let graph = "";
-
-    for (let i = this.list.length - 1; i >= 0; i--) {
-      let seq = this.list[i].viz(after);
-      graph = graph + seq.graph;
-      after = seq.nodes;
-    }
-
-    return {graph: graph, nodes: after };
-  }
-
   public railroad() {
     let children = this.list.map((e) => { return e.railroad(); });
     return "Railroad.Sequence(" + children.join() + ")";
@@ -310,13 +261,6 @@ class WordSequence implements IRunnable {
     return (new Sequence(words)).run(r);
   }
 
-  public viz(after: Array<string>) {
-    let node = "node" + counter++;
-    let graph = node + " [label = \"\\\"" + this.str + "\\\"\"];\n";
-    after.forEach((a) => { graph = graph + node + " -> " + a + ";\n"; });
-    return {graph: graph, nodes: [node] };
-  }
-
   public railroad() {
     return "Railroad.Terminal('\"" + this.str + "\"')";
   }
@@ -347,15 +291,8 @@ export class Reuse implements IRunnable {
     return this.name;
   }
 
-  public viz(after: Array<string>) {
-    let node = "node" + counter++;
-    let graph = node + " [label=<<u>" + this.name + "</u>>, href=\"reuse_" + this.name + ".svg\",fontcolor=blue];\n";
-    after.forEach((a) => { graph = graph + node + " -> " + a + ";\n"; });
-    return {graph: graph, nodes: [node] };
-  }
-
   public railroad() {
-    return "Railroad.NonTerminal('" + this.name + "', '" + this.name + ".railroad.svg')";
+    return "Railroad.NonTerminal('" + this.name + "', 'reuse_" + this.name + ".svg')";
   }
 
   public toStr() {
@@ -384,11 +321,6 @@ class Permutation implements IRunnable {
     }
 
     return result;
-  }
-
-  public viz(after: Array<string>) {
-// todo, this is wrong
-    return new Alternative(this.original).viz(after);
   }
 
   public railroad() {
@@ -441,18 +373,6 @@ class Alternative implements IRunnable {
     return result;
   }
 
-  public viz(after: Array<string>) {
-    let graph = "";
-    let nodes: Array<string> = [];
-
-    for (let opt of this.list) {
-      let res = opt.viz(after);
-      graph = graph + res.graph;
-      nodes = nodes.concat(res.nodes);
-    }
-    return {graph: graph, nodes: nodes};
-  }
-
   public railroad() {
     let children = this.list.map((e) => { return e.railroad(); });
     return "Railroad.Choice(0, " + children.join() + ")";
@@ -468,20 +388,14 @@ class Alternative implements IRunnable {
 }
 
 export class Combi {
-  public static viz(name: string, runnable: IRunnable): string {
-    let result = "";
-    let graph = runnable.viz(["end"]);
-    result = "digraph " + name + " {\n" +
-      "start [label=\"Start\",shape=box];\n" +
-      "end [label=\"End\",shape=box];\n" +
-      graph.graph;
-    graph.nodes.forEach((node) => { result = result + "start -> " + node + ";\n"; } );
-    result = result + "}";
-    return result;
-  }
 
-  public static railroad(name: string, runnable: IRunnable): string {
-    let result = "Railroad.Diagram(" + runnable.railroad() + ").toString();";
+  public static railroad(runnable: IRunnable, complex = false): string {
+    let type = "Railroad.Diagram(";
+    if (complex === true) {
+      type = "Railroad.ComplexDiagram(";
+    }
+
+    let result = type + runnable.railroad() + ").toString();";
     return result;
   }
 

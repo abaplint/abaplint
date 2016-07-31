@@ -1,4 +1,3 @@
-var Viz = require("viz.js");
 var Railroad = require("railroad-diagrams");
 var fs = require("fs");
 
@@ -10,17 +9,9 @@ function run() {
   var files = fs.readdirSync(folder);
 
   for (var file of files) {
-    var contents = fs.readFileSync(folder + file,"utf8");
-    var run = false;
-    var add = "";
+    if (/\.txt$/.test(file)) {
+      var contents = fs.readFileSync(folder + file,"utf8");
 
-    if (/\.viz\.txt$/.test(file)) {
-      var result = Viz(contents);
-      var target = folder + file.split(".")[0] + ".viz.svg";
-      fs.writeFileSync(target, result, "utf8");
-      run = true;
-      add = "height=\"300\"";
-    } else if (/\.railroad\.txt$/.test(file)) {
       var css = "<defs>\n" +
         "<style type=\"text/css\"><![CDATA[\n" +
         "path {\n" +
@@ -35,6 +26,9 @@ function run() {
         "text.diagram-text {\n" +
         "font-size: 12px;\n" +
         "}\n" +
+        "a {\n" +
+        "fill: blue;\n" +
+        "}\n" +
         "text.diagram-arrow {\n" +
         "font-size: 16px;\n" +
         "}\n" +
@@ -47,16 +41,13 @@ function run() {
         "rect {\n" +
         "stroke-width: 3;\n" +
         "stroke: black;\n" +
-        "fill: hsl(120,100%,90%);\n" +
+        "fill: #BCBCBC;\n" +
         "}\n" +
         "path.diagram-text {\n" +
         "stroke-width: 3;\n" +
         "stroke: black;\n" +
-        "fill: white;\n" +
+        "fill: #BCBCBC;\n" +
         "cursor: help;\n" +
-        "}\n" +
-        "g.diagram-text:hover path.diagram-text {\n" +
-        "fill: #eee;\n" +
         "}\n" +
         "]]></style>\n" +
         "</defs>\n";
@@ -64,17 +55,13 @@ function run() {
       var result = eval(contents);
       result = result.replace(/<svg /, "<svg xmlns=\"http://www.w3.org/2000/svg\" xmlns:xlink=\"http://www.w3.org/1999/xlink\" ");
       result = result.replace(/<g transform/, css + "<g transform");
-      var target = folder + file.split(".")[0] + ".railroad.svg";
+      var target = folder + file.split(".")[0] + ".svg";
       fs.writeFileSync(target, result, "utf8");
-      run = true;
-      add = "width=\"300\"";
-    }
 
-    if (run === true) {
-      var svg = file.split(".")[0] + "." + file.split(".")[1] + ".svg";
+      var svg = file.split(".")[0] + ".svg";
       var html = "<div style=\"float:left;text-align:center;\">" +
         "<u>" + svg + "</u><br>\n" +
-        "<a href=\"" + svg + "\"><img src=\"" + svg + "\" " + add + "></a><br><br>\n" +
+        "<a href=\"" + svg + "\"><img src=\"" + svg + "\" width=\"300\"></a><br><br>\n" +
         "</div>\n";
 
       if (/^reuse_/.test(svg)) {

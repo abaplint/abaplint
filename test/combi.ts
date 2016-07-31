@@ -90,18 +90,3 @@ describe("combi matching", () => {
     });
   });
 });
-
-
-let viz = [
-  {n: "1", c: Statements.Data.get_matcher() },
-  {n: "2", c: re(() => { return str("TEST"); }, "test") },
-];
-
-describe("combi vizualization", () => {
-  viz.forEach((v) => {
-    it("test " + v.n, () => {
-      let result = Combi.Combi.viz("test", v.c);
-      expect(result).to.be.a("string");
-    });
-  });
-});
