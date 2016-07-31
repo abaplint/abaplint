@@ -5,20 +5,22 @@ import * as Combi from "../combi";
 
 let str = Combi.str;
 let seq = Combi.seq;
-let opt = Combi.opt;
 
-export class Transfer extends Statement {
+export class GetParameter extends Statement {
 
   public static get_matcher(): Combi.IRunnable {
-    let length = seq(str("LENGTH"), Reuse.source());
-    let ret = seq(str("TRANSFER"), Reuse.source(), str("TO"), Reuse.target(), opt(length));
+    let ret = seq(str("GET PARAMETER ID"),
+                  Reuse.source(),
+                  str("FIELD"),
+                  Reuse.target());
+
     return ret;
   }
 
   public static match(tokens: Array<Token>): Statement {
     let result = Combi.Combi.run(this.get_matcher(), tokens, true);
     if (result === true) {
-      return new Transfer(tokens);
+      return new GetParameter(tokens);
     }
     return undefined;
   }

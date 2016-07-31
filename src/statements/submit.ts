@@ -6,13 +6,17 @@ import * as Combi from "../combi";
 let str = Combi.str;
 let seq = Combi.seq;
 let opt = Combi.opt;
-let star = Combi.star;
+let per = Combi.per;
+let alt = Combi.alt;
+let plus = Combi.plus;
 
 export class Submit extends Statement {
 
   public static get_matcher(): Combi.IRunnable {
     let awith = seq(str("WITH"), Reuse.field(), str("="), Reuse.source());
-    let ret = seq(str("SUBMIT"), Reuse.source(), star(awith), opt(str("AND RETURN")));
+    let prog = alt(Reuse.source(), seq(str("("), Reuse.field_chain(), str(")")));
+    let perm = per(plus(awith), str("AND RETURN"));
+    let ret = seq(str("SUBMIT"), prog, opt(str("VIA SELECTION-SCREEN")), opt(perm));
     return ret;
   }
 

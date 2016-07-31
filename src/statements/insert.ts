@@ -12,12 +12,15 @@ export class Insert extends Statement {
 
   public static get_matcher(): Combi.IRunnable {
     let target = alt(Reuse.source(), seq(str("("), Reuse.field(), str(")")));
+    let assigning = seq(str("ASSIGNING"), Reuse.field_symbol());
 
     let ret = seq(str("INSERT"),
+                  opt(str("LINES OF")),
                   target,
                   alt(str("FROM"), str("INTO")),
                   opt(str("TABLE")),
-                  Reuse.source());
+                  Reuse.source(),
+                  opt(assigning));
 
     return ret;
   }
