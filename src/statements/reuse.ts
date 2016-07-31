@@ -94,6 +94,7 @@ export default class Reuse {
                            str("CP"),
                            str("EQ"),
                            str("NE"),
+                           str("CN"),
                            str("GE"),
                            str("GT"),
                            str("LT"),
@@ -105,6 +106,7 @@ export default class Reuse {
                    opt(str("NOT")),
                    alt(str("SUPPLIED"),
                        str("BOUND"),
+                       str("REQUESTED"),
                        str("ASSIGNED"),
                        str("INITIAL")));
 

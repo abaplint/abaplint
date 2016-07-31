@@ -11,9 +11,12 @@ let opt = Combi.opt;
 export class Export extends Statement {
 
   public static get_matcher(): Combi.IRunnable {
+    let id = seq(str("ID"), Reuse.source());
+
     let db = seq(str("DATA BUFFER"), Reuse.target());
     let memory = seq(str("MEMORY ID"), Reuse.source());
-    let target = alt(db, memory);
+    let database = seq(str("DATABASE"), Reuse.source(), str("FROM"), Reuse.source(), id);
+    let target = alt(db, memory, database);
 
     let source = alt(Reuse.parameter_list_s(), Reuse.source());
 

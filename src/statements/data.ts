@@ -21,7 +21,7 @@ export class Data extends Statement {
     let def = seq(str("DEFAULT"), Reuse.constant());
     let length = seq(str("LENGTH"), Reuse.integer());
     let decimals = seq(str("DECIMALS"), Reuse.integer());
-    let value = seq(str("VALUE"), alt(Reuse.constant(), Reuse.field()));
+    let value = seq(str("VALUE"), alt(Reuse.constant(), Reuse.field_chain()));
     let simple = seq(Reuse.field(),
                      opt(seq(str("("), Reuse.integer(), str(")"))),
                      opt(seq(type, Reuse.typename())),
@@ -31,7 +31,7 @@ export class Data extends Statement {
                      opt(str("READ-ONLY")),
                      opt(value));
 
-    let typetable = seq(str("TYPE"),
+    let typetable = seq(likeType,
                         opt(alt(str("STANDARD"), str("HASHED"), str("SORTED"))),
                         str("TABLE OF"),
                         opt(str("REF TO")));

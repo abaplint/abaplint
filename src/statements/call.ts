@@ -17,7 +17,11 @@ export class Call extends Statement {
 
     let method = seq(source, opt(seq(Reuse.arrow(), source)));
 
-    let call = seq(str("CALL METHOD"), method, Reuse.method_parameters());
+    let paren = seq(str("("),
+                    alt(Reuse.source(), Reuse.parameter_list_s(), Reuse.method_parameters()),
+                    str(")"));
+
+    let call = seq(str("CALL METHOD"), method, alt(paren, Reuse.method_parameters()));
     return alt(call, Reuse.method_call_chain());
   }
 

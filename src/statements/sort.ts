@@ -12,7 +12,13 @@ let plus = Combi.plus;
 export class Sort extends Statement {
 
   public static get_matcher(): Combi.IRunnable {
-    let by = seq(str("BY"), plus(seq(Reuse.field_sub(), opt(alt(str("ASCENDING"), str("DESCENDING"))), opt(str("AS TEXT")))));
+    let fields = plus(seq(Reuse.field_sub(), opt(alt(str("ASCENDING"), str("DESCENDING"))), opt(str("AS TEXT"))));
+
+    let dyn = seq(str("("), Reuse.source(), str(")"));
+
+    let by = seq(str("BY"),
+                 alt(fields, dyn));
+
     return seq(str("SORT"),
                Reuse.target(),
                opt(by));

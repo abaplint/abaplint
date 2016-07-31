@@ -14,6 +14,7 @@ export class Shift extends Statement {
     let dir = alt(str("LEFT DELETING LEADING"),
                   str("RIGHT DELETING TRAILING"),
                   str("RIGHT BY"),
+                  str("LEFT BY"),
                   str("BY"));
 
     return seq(str("SHIFT"),

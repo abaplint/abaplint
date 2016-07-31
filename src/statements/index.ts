@@ -116,5 +116,6 @@ export * from "./call_transformation";
 export * from "./read_line";
 export * from "./read_textpool";
 export * from "./read_report";
+export * from "./read_dataset";
 
 export * from "./macro";
