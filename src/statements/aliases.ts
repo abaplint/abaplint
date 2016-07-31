@@ -6,16 +6,16 @@ import Reuse from "./reuse";
 let str = Combi.str;
 let seq = Combi.seq;
 
-export class Function extends Statement {
+export class Aliases extends Statement {
 
   public static get_matcher(): Combi.IRunnable {
-    return seq(str("FUNCTION"), Reuse.field());
+    return seq(str("ALIASES"), Reuse.field(), str("FOR"), Reuse.field());
   }
 
   public static match(tokens: Array<Token>): Statement {
     let result = Combi.Combi.run(this.get_matcher( ), tokens, true);
     if (result === true) {
-      return new Function(tokens);
+      return new Aliases(tokens);
     }
     return undefined;
   }

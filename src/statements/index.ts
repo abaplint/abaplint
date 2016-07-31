@@ -104,7 +104,7 @@ export * from "./divide";
 export * from "./format";
 export * from "./empty";
 export * from "./syntax_check";
-export * from "./alias";
+export * from "./aliases";
 export * from "./method_def";
 export * from "./interface_def";
 export * from "./at_selection_screen";
@@ -126,5 +126,6 @@ export * from "./get_run_time";
 export * from "./get_parameter";
 export * from "./create_data";
 export * from "./set_country";
+export * from "./function";
 
 export * from "./macro";
