@@ -2,7 +2,7 @@ import {statementType} from "../utils";
 import * as Statements from "../../src/statements/";
 
 let tests = [
-  "WRITE 'foobar'.",
-  ];
+  "GET RUN TIME FIELD lv_t1.",
+];
 
-statementType(tests, "WRITE", Statements.Write);
+statementType(tests, "GET RUN TIME", Statements.GetRunTime);

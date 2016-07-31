@@ -12,7 +12,16 @@ export class Parameter extends Statement {
 
   public static get_matcher(): Combi.IRunnable {
     let para = alt(str("PARAMETER"), str("PARAMETERS"));
-    let ret = seq(para, Reuse.field(), str("TYPE"), Reuse.typename(), opt(str("OBLIGATORY")));
+    let def = seq(str("DEFAULT"), alt(Reuse.constant(), Reuse.field_chain()));
+    let radio = seq(str("RADIOBUTTON GROUP"), Reuse.field());
+    let type = seq(str("TYPE"), Reuse.typename());
+
+    let ret = seq(para,
+                  Reuse.field(),
+                  opt(type),
+                  opt(radio),
+                  opt(def),
+                  opt(str("OBLIGATORY")));
 
     return ret;
   }

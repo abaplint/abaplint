@@ -21,12 +21,12 @@ let tests = [
   "data char(100).",
   "data sdf type table of ref to zcl_foobar.",
   "data range type range of string.",
-  "data: lt_foo type table of bar initial size 0.",
-  "data: foo    type  i value -1.",
+  "data lt_foo type table of bar initial size 0.",
+  "data foo    type  i value -1.",
   "data foobar type abap_bool read-only value ABAP_FALSE ##NO_TEXT.",
   "data item(4) value '  # '.",
   "CLASS-DATA gv_out TYPE xstring.",
-  "DATA: mt_stage TYPE SORTED TABLE OF ty_stage WITH UNIQUE KEY file-path file-filename.",
+  "DATA mt_stage TYPE SORTED TABLE OF ty_stage WITH UNIQUE KEY file-path file-filename.",
 ];
 
 statementType(tests, "DATA", Statements.Data);

@@ -17,6 +17,8 @@ export function statementType(tests, description: string, type) {
       it("\"" + test + "\" should be " + description, () => {
         let compare = slist[0] instanceof type;
         expect(compare).to.equals(true);
+// assumption no colons in input
+        expect(slist[0].getTokens().length).to.equal(file.getTokens().length);
       });
     });
   });

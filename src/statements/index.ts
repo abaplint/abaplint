@@ -122,5 +122,6 @@ export * from "./get_reference";
 export * from "./insert_report";
 export * from "./insert_textpool";
 export * from "./set_bit";
+export * from "./get_run_time";
 
 export * from "./macro";
