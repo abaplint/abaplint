@@ -117,5 +117,10 @@ export * from "./read_line";
 export * from "./read_textpool";
 export * from "./read_report";
 export * from "./read_dataset";
+export * from "./get_bit";
+export * from "./get_reference";
+export * from "./insert_report";
+export * from "./insert_textpool";
+export * from "./set_bit";
 
 export * from "./macro";

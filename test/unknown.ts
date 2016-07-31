@@ -11,6 +11,7 @@ describe("unknown statements", () => {
 
   let tests =  [
     {abap: "data foo bar."},
+    {abap: "asdf."},
     {abap: "asdf asdf."},
   ];
 

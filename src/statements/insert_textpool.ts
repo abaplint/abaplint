@@ -5,19 +5,18 @@ import * as Combi from "../combi";
 
 let str = Combi.str;
 let seq = Combi.seq;
-let opt = Combi.opt;
-let alt = Combi.alt;
 
-export class Update extends Statement {
+export class InsertTextpool extends Statement {
 
   public static get_matcher(): Combi.IRunnable {
-    let target = alt(Reuse.field(), seq(str("("), Reuse.field(), str(")")));
-
-    let ret = seq(str("UPDATE"),
-                  target,
-                  str("SET"),
-                  Reuse.parameter_list_s(),
-                  opt(seq(str("WHERE"), Reuse.cond())));
+    let ret = seq(str("INSERT TEXTPOOL"),
+                  Reuse.source(),
+                  str("FROM"),
+                  Reuse.source(),
+                  str("LANGUAGE"),
+                  Reuse.source(),
+                  str("STATE"),
+                  Reuse.source());
 
     return ret;
   }
@@ -25,7 +24,7 @@ export class Update extends Statement {
   public static match(tokens: Array<Token>): Statement {
     let result = Combi.Combi.run(this.get_matcher(), tokens, true);
     if (result === true) {
-      return new Update(tokens);
+      return new InsertTextpool(tokens);
     }
     return undefined;
   }

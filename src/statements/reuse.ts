@@ -192,6 +192,10 @@ export default class Reuse {
     return re(() => { return reg(/^\w+(~\w+)?$/); }, "method_name");
   }
 
+  public static class_name(): Combi.Reuse {
+    return re(() => { return reg(/^\w+$/); }, "class_name");
+  }
+
   public static method_call(): Combi.Reuse {
     let ret = seq(this.method_name(), str("("),
                   alt(this.source(), this.parameter_list_s(), Reuse.method_parameters()), str(")"));
