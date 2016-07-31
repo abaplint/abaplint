@@ -2,7 +2,7 @@ import {statementType} from "../utils";
 import * as Statements from "../../src/statements/";
 
 let tests = [
-  "GET TIME STAMP FIELD lv_timestamp.",
+  "SET HANDLER me->on_event FOR mo_html_viewer.",
 ];
 
-statementType(tests, "GET", Statements.Get);
+statementType(tests, "SET HANDLER", Statements.SetHandler);

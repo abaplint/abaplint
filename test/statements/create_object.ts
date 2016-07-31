@@ -9,4 +9,4 @@ let tests = [
   "CREATE OBJECT ei_page TYPE lcl_gui_page_commit EXPORTING io_repo  = mo_repo io_stage = mo_stage.",
 ];
 
-statementType(tests, "CREATE", Statements.Create);
+statementType(tests, "CREATE OBJECT", Statements.CreateObject);

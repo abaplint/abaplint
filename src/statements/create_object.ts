@@ -8,7 +8,7 @@ let seq = Combi.seq;
 let opt = Combi.opt;
 let alt = Combi.alt;
 
-export class Create extends Statement {
+export class CreateObject extends Statement {
 
   public static get_matcher(): Combi.IRunnable {
     let exporting = seq(str("EXPORTING"), Reuse.parameter_list_s());
@@ -23,7 +23,7 @@ export class Create extends Statement {
   public static match(tokens: Array<Token>): Statement {
     let result = Combi.Combi.run(this.get_matcher(), tokens, true);
     if (result === true) {
-      return new Create(tokens);
+      return new CreateObject(tokens);
     }
     return undefined;
   }
