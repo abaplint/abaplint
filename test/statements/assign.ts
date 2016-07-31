@@ -7,6 +7,7 @@ import * as Statements from "../../src/statements/";
     "ASSIGN cs_tstcp-param(sy-fdpos) TO <lg_f>.",
     "ASSIGN cs_tstcp-param(sdf) TO <lg_f>.",
     "ASSIGN cs_tstcp-param TO <lg_f>.",
+    "assign lt_alv->* to <f_alv_tab>.",
     "ASSIGN lv_x TO <lv_y> CASTING.",
     ];
 

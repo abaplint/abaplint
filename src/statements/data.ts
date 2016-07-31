@@ -7,7 +7,6 @@ let str  = Combi.str;
 let seq  = Combi.seq;
 let alt  = Combi.alt;
 let opt  = Combi.opt;
-let reg  = Combi.regex;
 let star = Combi.star;
 
 export class Data extends Statement {
@@ -22,7 +21,7 @@ export class Data extends Statement {
     let def = seq(str("DEFAULT"), Reuse.constant());
     let length = seq(str("LENGTH"), Reuse.integer());
     let decimals = seq(str("DECIMALS"), Reuse.integer());
-    let value = seq(str("VALUE"), reg(/^.+$/));
+    let value = seq(str("VALUE"), alt(Reuse.constant(), Reuse.field()));
     let simple = seq(Reuse.field(),
                      opt(seq(str("("), Reuse.integer(), str(")"))),
                      opt(seq(type, Reuse.typename())),

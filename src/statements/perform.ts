@@ -11,11 +11,15 @@ let plus = Combi.plus;
 export class Perform extends Statement {
 
   public static get_matcher(): Combi.IRunnable {
+    let using = seq(str("USING"), plus(Reuse.source()));
+    let changing = seq(str("CHANGING"), plus(Reuse.source()));
+
     return seq(str("PERFORM"),
                Reuse.field(),
                opt(seq(str("IN PROGRAM"), Reuse.field())),
                opt(str("IF FOUND")),
-               opt(seq(str("USING"), plus(Reuse.source()))));
+               opt(using),
+               opt(changing));
   }
 
   public static match(tokens: Array<Token>): Statement {

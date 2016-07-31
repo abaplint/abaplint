@@ -12,7 +12,7 @@ let plus = Combi.plus;
 export default class Reuse {
 
   public static integer(): Combi.Reuse {
-    return re(() => { return reg(/^\d+$/); }, "integer");
+    return re(() => { return seq(opt(reg(/^-$/)), reg(/^\d+$/)); }, "integer");
   }
 
   public static typename(): Combi.Reuse {
@@ -92,6 +92,12 @@ export default class Reuse {
                            str("CO"),
                            str("IN"),
                            str("CP"),
+                           str("EQ"),
+                           str("NE"),
+                           str("GE"),
+                           str("GT"),
+                           str("LT"),
+                           str("LE"),
                            str("CS"),
                            str("NP")));
 
@@ -102,9 +108,12 @@ export default class Reuse {
                        str("ASSIGNED"),
                        str("INITIAL")));
 
+    let between = seq(str("BETWEEN"), Reuse.source(), str("AND"), Reuse.source());
+
     let ret = seq(opt(str("NOT")),
                   this.source(),
                   alt(seq(operator, this.source()),
+                      between,
                       sopt));
 
     return re(() => { return ret; }, "compare");
@@ -209,8 +218,11 @@ export default class Reuse {
 
       let paren = seq(str("("), this.source(), str(")"));
 
+      let after = seq(alt(str("&&"), this.arith_operator()), this.source());
+      let ref = seq(this.arrow(), str("*"));
+
       let ret = seq(alt(this.constant(), this.string_template(), single, paren),
-                    opt(seq(alt(str("&&"), this.arith_operator()), this.source())));
+                    opt(alt(ref, after)));
 
       let tableBody = seq(str("["), str("]"));
 
@@ -225,7 +237,7 @@ export default class Reuse {
 
   public static field(): Combi.Reuse {
 // "&1" can be used for almost anything(field names, method names etc.) in macros
-    return re(() => { return reg(/^&?\w+$/); }, "field");
+    return re(() => { return reg(/^&?\w+(~\w+)?$/); }, "field");
   }
 
   public static constant(): Combi.Reuse {

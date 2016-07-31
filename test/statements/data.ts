@@ -20,6 +20,7 @@ import * as Statements from "../../src/statements/";
     "data sdf type table of ref to zcl_foobar.",
     "data range type range of string.",
     "data: lt_foo type table of bar initial size 0.",
+    "data: foo    type  i value -1.",
     "data foobar type abap_bool read-only value ABAP_FALSE ##NO_TEXT.",
     "data item(4) value '  # '.",
     "CLASS-DATA gv_out TYPE xstring.",

@@ -14,14 +14,14 @@ export class Replace extends Statement {
     let option = alt(str("ALL OCCURRENCES"), str("FIRST OCCURRENCE"));
 
     return seq(str("REPLACE"),
-               option,
-               str("OF"),
+               opt(option),
+               opt(str("OF")),
                opt(str("REGEX")),
                Reuse.source(),
-               str("IN"),
-               Reuse.target(),
+               opt(seq(str("IN"), Reuse.target())),
                str("WITH"),
                Reuse.source(),
+               opt(seq(str("INTO"), Reuse.target())),
                opt(str("IGNORING CASE")));
   }
 

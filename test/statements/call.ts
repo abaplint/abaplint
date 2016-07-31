@@ -11,6 +11,7 @@ import * as Statements from "../../src/statements/";
     "<ls_late>-obj->deserialize( iv_package = <ls_late>-package ).",
     "CALL METHOD ('CL_OO_FACTORY')=>('CREATE_INSTANCE').",
     "ro_html->add( |var\"\n| ).",
+    "lo_sdf->set_cell( ip_row = 7 ip_column = 'C' ip_value = -10  ).",
     "CALL METHOD lo_instance->('CREATE_CLIF_SOURCE').",
     "ii_client->request->set_header_field( name  = '~request_method' value = 'POST' ).",
     "mo_files->add_string( iv_extra  = 'source' iv_ext    = 'xml' ).",
