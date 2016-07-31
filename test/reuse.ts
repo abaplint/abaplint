@@ -10,13 +10,13 @@ import Runner from "../src/runner";
 
 let expect = chai.expect;
 
-let str      = Combi.str;
-let seq      = Combi.seq;
-let alt      = Combi.alt;
-let opt      = Combi.opt;
-let star     = Combi.star;
-let reg      = Combi.regex;
-let re       = Combi.reuse;
+let str  = Combi.str;
+let seq  = Combi.seq;
+let alt  = Combi.alt;
+let opt  = Combi.opt;
+let star = Combi.star;
+let reg  = Combi.regex;
+let re   = Combi.reuse;
 
 function tok(s: string): Array<Tokens.Token> {
   let split = s.split(" ");
@@ -42,7 +42,13 @@ let tests = [
 
   {c: "+sy-fdpos",                r: Reuse.field_offset()},
 
-  {c: "( lv_offset + 1 ) MOD 8",  r: Reuse.source()},
+  {c: "( lv_offset + 1 ) MOD 8",          r: Reuse.source()},
+  {c: "go_stream->remaining( )",          r: Reuse.source()},
+  {c: "xstrlen( foo ) - remaining( )",    r: Reuse.source()},
+  {c: "xstrlen( foo ) - stream->rema( )", r: Reuse.source()},
+
+  {c: "method( foo )-stream->remaining( )", r: Reuse.method_call_chain()},
+  {c: "method( foo )->remaining( )",        r: Reuse.method_call_chain()},
 ];
 
 describe("Test reuse matchers", () => {

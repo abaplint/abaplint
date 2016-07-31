@@ -163,7 +163,8 @@ export default class Reuse {
   }
 
   public static method_call_chain(): Combi.Reuse {
-    let after = star(seq(this.arrow_or_dash(), this.method_call()));
+    let fields = star(seq(this.arrow_or_dash(), this.field()));
+    let after = star(seq(fields, this.arrow(), this.method_call()));
 
     let ret = seq(opt(seq(this.field_chain(), this.arrow())), this.method_call(), after);
 
@@ -209,7 +210,7 @@ export default class Reuse {
 
   public static arith_operator(): Combi.Reuse {
     let ret = alt(str("+"),
-                  str("-"),
+                  reg(/^-$/),
                   str("*"),
                   str("/"),
                   str("MOD"));
@@ -219,20 +220,26 @@ export default class Reuse {
 
   public static source(): Combi.Reuse {
     let matcher = () => {
-      let single = alt(seq(this.method_call_chain(), opt(seq(this.arrow_or_dash(), this.field_chain()))),
-                       this.field_chain());
+      let method = seq(this.method_call_chain(), opt(seq(this.arrow_or_dash(), this.field_chain())));
 
       let paren = seq(str("("), this.source(), str(")"));
 
       let after = seq(alt(str("&&"), this.arith_operator()), this.source());
       let ref = seq(this.arrow(), str("*"));
 
-      let ret = seq(alt(this.constant(), this.string_template(), single, paren),
-                    opt(alt(ref, after)));
+      let boolc = seq(str("BOOLC"), str("("), this.cond(), str(")"));
 
       let tableBody = seq(str("["), str("]"));
 
-      return seq(ret, opt(tableBody)); };
+      let ret = seq(alt(this.constant(),
+                        this.string_template(),
+                        boolc,
+                        method,
+                        this.field_chain(),
+                        paren),
+                    opt(alt(ref, after, tableBody)));
+
+      return ret; };
 
     return re(matcher, "source");
   }
