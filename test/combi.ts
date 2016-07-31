@@ -7,13 +7,14 @@ import Position from "../src/position";
 
 let expect = chai.expect;
 
-let str      = Combi.str;
-let seq      = Combi.seq;
-let alt      = Combi.alt;
-let opt      = Combi.opt;
-let star     = Combi.star;
-let reg      = Combi.regex;
-let re       = Combi.reuse;
+let str  = Combi.str;
+let seq  = Combi.seq;
+let alt  = Combi.alt;
+let opt  = Combi.opt;
+let star = Combi.star;
+let reg  = Combi.regex;
+let re   = Combi.reuse;
+let per  = Combi.per;
 
 function tok(s: string): Array<Tokens.Token> {
   let split = s.split(" ");
@@ -74,6 +75,11 @@ let tests = [
 {n: "reg6", c: reg(/^(LIKE|TYPE)$/i),             t: tok("TYPE"),    e: true},
 {n: "re1",  c: re(() => { return str("TYPE"); }, "test"), t: tok("TYPE"),   e: true},
 {n: "das1", c: str("FIELD-SYMBOL"),               t: tok("FIELD - SYMBOL"), e: true},
+{n: "per1", c: per(str("FOO"), str("BAR")),       t: tok("FOO"), e: true},
+{n: "per1", c: per(str("FOO"), str("BAR")),       t: tok("BAR"), e: true},
+{n: "per1", c: per(str("FOO"), str("BAR")),       t: tok("FOO BAR"), e: true},
+{n: "per1", c: per(str("FOO"), str("BAR")),       t: tok("BAR FOO"), e: true},
+{n: "per2", c: per(str("FOO"), str("BAR"), str("MOO")), t: tok("BAR MOO"), e: true},
 ];
 
 describe("combi matching", () => {

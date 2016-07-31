@@ -7,6 +7,7 @@ let str = Combi.str;
 let seq = Combi.seq;
 let opt = Combi.opt;
 let alt = Combi.alt;
+let per = Combi.per;
 
 export class Class extends Statement {
 
@@ -19,20 +20,19 @@ export class Class extends Statement {
     let time = alt(str("LONG"), str("MEDIUM"), str("SHORT"));
     let duration = opt(seq(str("DURATION"), time));
 
+    let blah = per(alt(str("PUBLIC"), str("LOCAL")),
+                   alt(str("FINAL"), str("ABSTRACT")),
+                   seq(str("INHERITING FROM"), Reuse.field()),
+                   create,
+                   seq(str("FOR TESTING"), risk, duration, risk),
+                   seq(str("FRIENDS"), Reuse.field()));
+
     let def = seq(str("CLASS"),
                   Reuse.field(),
                   str("DEFINITION"),
-                  opt(alt(str("PUBLIC"), str("LOCAL"))),
-                  opt(str("FINAL")),
-                  opt(str("LOAD")),
-                  opt(seq(str("INHERITING FROM"), Reuse.field())),
-                  opt(str("DEFERRED")),
-                  opt(create),
-                  opt(seq(str("FOR TESTING"), risk, duration, risk)),
-                  opt(str("FINAL")),
-                  opt(str("ABSTRACT")),
-                  opt(create),
-                  opt(seq(str("FRIENDS"), Reuse.field())));
+                  opt(alt(str("LOAD"),
+                          str("DEFERRED"),
+                          blah)));
 
     let impl = seq(str("CLASS"), Reuse.field(), str("IMPLEMENTATION"));
 

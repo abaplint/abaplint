@@ -6,15 +6,14 @@ import * as Combi from "../combi";
 let str = Combi.str;
 let opt = Combi.opt;
 let seq = Combi.seq;
-let star = Combi.star;
+let plus = Combi.plus;
 
 export class Concatenate extends Statement {
 
   public static get_matcher(): Combi.IRunnable {
     return seq(str("CONCATENATE"),
                Reuse.source(),
-               Reuse.source(),
-               star(Reuse.source()),
+               plus(Reuse.source()),
                str("INTO"),
                Reuse.target(),
                opt(str("IN BYTE MODE")),

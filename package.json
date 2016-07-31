@@ -48,7 +48,7 @@
     "codecov": "^1.0.1",
     "istanbul": "^0.4.4",
     "mocha": "^2.5.3",
-    "railroad-diagrams": "^1.0.0",
+    "railroad-diagrams": "git+https://github.com/tabatkins/railroad-diagrams#gh-pages",
     "remap-istanbul": "^0.6.4",
     "tslint": "^3.14.0",
     "typescript": "^1.8.10",
@@ -58,6 +58,7 @@
   },
   "dependencies": {
     "glob": "^7.0.5",
+    "js-combinatorics": "^0.5.2",
     "minimist": "^1.2.0"
   }
 }

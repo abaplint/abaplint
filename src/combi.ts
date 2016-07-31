@@ -1,3 +1,5 @@
+import "../typings/index.d.ts";
+import * as Combinatorics from "js-combinatorics";
 import * as Tokens from "./tokens/";
 
 export class Result {
@@ -208,6 +210,32 @@ class Star implements IRunnable {
   }
 }
 
+class Plus implements IRunnable {
+
+  private plus: IRunnable;
+
+  constructor(plus: IRunnable) {
+    this.plus = plus;
+  }
+
+  public run(r: Array<Result>): Array<Result> {
+    return new Sequence([this.plus, new Star(this.plus)]).run(r);
+  }
+
+  public viz(after: Array<string>) {
+    return new Sequence([this.plus, new Star(this.plus)]).viz(after);
+  }
+
+  public railroad() {
+    return "Railroad.OneOrMore(" + this.plus.railroad() + ")";
+  }
+
+  public toStr() {
+    return "plus(" + this.plus.toStr() + ")";
+  }
+
+}
+
 class Sequence implements IRunnable {
   private list: Array<IRunnable>;
 
@@ -335,6 +363,61 @@ export class Reuse implements IRunnable {
   }
 }
 
+class Permutation implements IRunnable {
+  private list: Array<IRunnable>;
+  private original: Array<IRunnable>;
+
+  constructor(list: IRunnable[]) {
+    if (list.length < 2) {
+      throw new Error("Permutation, length error");
+    }
+    this.original = list;
+    this.list = this.permutations(list);
+  }
+
+  public run(r: Array<Result>): Array<Result> {
+    let result: Array<Result> = r;
+
+    for (let e of this.list) {
+      let temp = e.run(r);
+      result = result.concat(temp);
+    }
+
+    return result;
+  }
+
+  public viz(after: Array<string>) {
+// todo, this is wrong
+    return new Alternative(this.original).viz(after);
+  }
+
+  public railroad() {
+    let children = this.original.map((e) => { return e.railroad(); });
+    return "Railroad.MultipleChoice(0, 'any'," + children.join() + ")";
+  }
+
+  public toStr() {
+    let children = this.list.map((e) => { return e.toStr(); });
+    return "per(" + children.join() + ")";
+  }
+
+  private permutations(list: IRunnable[]): Array<IRunnable> {
+    let res: Array<IRunnable> = [];
+
+    let comb = Combinatorics.permutationCombination(list).toArray();
+
+    for (let e of comb) {
+      if (e.length === 1) {
+        res.push(e[0]);
+      } else {
+        res.push(new Sequence(e));
+      }
+    }
+
+    return res;
+  }
+}
+
 class Alternative implements IRunnable {
   private list: Array<IRunnable>;
 
@@ -440,6 +523,9 @@ export function seq(first: IRunnable, ...rest: IRunnable[]): IRunnable {
 export function alt(first: IRunnable, ...rest: IRunnable[]): IRunnable {
   return new Alternative([first].concat(rest));
 }
+export function per(first: IRunnable, ...rest: IRunnable[]): IRunnable {
+  return new Permutation([first].concat(rest));
+}
 export function opt(first: IRunnable): IRunnable {
   return new Optional(first);
 }
@@ -450,7 +536,7 @@ export function regex(r: RegExp): IRunnable {
   return new Regex(r);
 }
 export function plus(first: IRunnable): IRunnable {
-  return seq(first, star(first));
+  return new Plus(first);
 }
 export function reuse(run: () => IRunnable, name: string): Reuse {
   return new Reuse(run, name);

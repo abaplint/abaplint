@@ -62,7 +62,7 @@ function run() {
         "</defs>\n";
 //      console.log(file);
       var result = eval(contents);
-      result = result.replace(/<svg /, "<svg xmlns=\"http://www.w3.org/2000/svg\" ");
+      result = result.replace(/<svg /, "<svg xmlns=\"http://www.w3.org/2000/svg\" xmlns:xlink=\"http://www.w3.org/1999/xlink\" ");
       result = result.replace(/<g transform/, css + "<g transform");
       var target = folder + file.split(".")[0] + ".railroad.svg";
       fs.writeFileSync(target, result, "utf8");
