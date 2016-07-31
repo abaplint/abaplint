@@ -310,6 +310,7 @@ class Permutation implements IRunnable {
     }
     this.original = list;
     this.list = this.permutations(list);
+//    console.log("permutations " + this.list.length);
   }
 
   public run(r: Array<Result>): Array<Result> {

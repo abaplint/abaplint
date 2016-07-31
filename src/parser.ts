@@ -2,7 +2,6 @@ import * as Tokens from "./tokens/";
 import File from "./file";
 import * as Statements from "./statements/";
 
-/*
 class Timer {
   private times;
   private count;
@@ -37,22 +36,25 @@ class Timer {
     }
   }
 }
-*/
 
 export default class Parser {
   private static statements: Array<Statements.Statement>;
-//  private static timer;
+  private static timer;
 
-  public static run(file: File): Array<Statements.Statement> {
+  public static run(file: File, timer = false): Array<Statements.Statement> {
     this.statements = [];
-//    console.log(file.getFilename());
-//    this.timer = new Timer();
+    if (timer) {
+      console.log(file.getFilename());
+      this.timer = new Timer();
+    }
 
     this.process(file.getTokens());
     this.categorize();
     this.macros();
 
-//    this.timer.output(file.getFilename());
+    if (timer) {
+      this.timer.output(file.getFilename());
+    }
 
     return this.statements;
   }
@@ -85,12 +87,13 @@ export default class Parser {
 //      console.dir(statement.getTokens());
       if (statement instanceof Statements.Unknown && last instanceof Tokens.Punctuation) {
         for (let st in Statements) {
-//          if (st !== "CallFunction") {
-//            continue;
-//          }
-//          this.timer.start();
+          if (this.timer) {
+            this.timer.start();
+          }
           let known = Statements[st].match(statement.getTokens());
-//          this.timer.stop(st);
+          if (this.timer) {
+            this.timer.stop(st);
+          }
           if (known !== undefined) {
             statement = known;
             break;
