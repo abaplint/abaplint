@@ -11,7 +11,7 @@ let opt = Combi.opt;
 export class Insert extends Statement {
 
   public static get_matcher(): Combi.IRunnable {
-    let target = alt(Reuse.source(), seq(str("("), Reuse.field(), str(")")));
+    let target = alt(Reuse.source(), Reuse.dynamic());
     let assigning = seq(str("ASSIGNING"), Reuse.field_symbol());
 
     let ret = seq(str("INSERT"),

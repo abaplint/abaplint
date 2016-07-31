@@ -12,10 +12,10 @@ let opt = Combi.opt;
 export class Call extends Statement {
 
   public static get_matcher(): Combi.IRunnable {
-    let dyn = seq(str("("), Reuse.source(), str(")"));
-    let source = alt(Reuse.method_name(), dyn);
+    let mname = alt(Reuse.method_name(), Reuse.dynamic());
+    let cname = alt(Reuse.class_name(), Reuse.dynamic());
 
-    let method = seq(source, opt(seq(Reuse.arrow(), source)));
+    let method = seq(opt(seq(cname, Reuse.arrow())), mname);
 
     let paren = seq(str("("),
                     alt(Reuse.source(), Reuse.parameter_list_s(), Reuse.method_parameters()),

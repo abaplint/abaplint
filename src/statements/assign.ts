@@ -12,8 +12,7 @@ export class Assign extends Statement {
 
   public static get_matcher(): Combi.IRunnable {
     let component = seq(str("COMPONENT"), Reuse.source(), str("OF STRUCTURE"), Reuse.source());
-    let dynamic = seq(str("("), Reuse.source(), str(")"));
-    let source = alt(Reuse.source(), component, dynamic);
+    let source = alt(Reuse.source(), component, Reuse.dynamic());
     return seq(str("ASSIGN"), source, str("TO"), Reuse.field_symbol(), opt(str("CASTING")));
   }
 

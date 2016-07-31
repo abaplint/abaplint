@@ -15,13 +15,11 @@ export class CallTransformation extends Statement {
 
     let source1 = seq(Reuse.field(), str("="), Reuse.field());
     let source2 = seq(str("XML"), Reuse.source());
-    let source3 = seq(str("("), Reuse.field(), str(")"));
-    let source = seq(str("SOURCE"), alt(source1, source2, source3));
+    let source = seq(str("SOURCE"), alt(source1, source2, Reuse.dynamic()));
 
     let result1 = seq(Reuse.field(), str("="), Reuse.field());
     let result2 = seq(str("XML"), Reuse.target());
-    let result3 = seq(str("("), Reuse.field(), str(")"));
-    let result = seq(str("RESULT"), alt(result1, result2, result3));
+    let result = seq(str("RESULT"), alt(result1, result2, Reuse.dynamic()));
 
     let call = seq(str("CALL TRANSFORMATION"),
                    Reuse.field(),

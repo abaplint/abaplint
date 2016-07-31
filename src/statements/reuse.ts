@@ -218,10 +218,19 @@ export default class Reuse {
     return re(() => { return ret; }, "arith_operator");
   }
 
+  public static dynamic(): Combi.Reuse {
+    let ret = seq(str("("),
+                  alt(this.field_chain(), this.constant()),
+                  str(")"));
+
+    return re(() => { return ret; }, "dynamic");
+  }
+
   public static source(): Combi.Reuse {
     let matcher = () => {
       let method = seq(this.method_call_chain(), opt(seq(this.arrow_or_dash(), this.field_chain())));
 
+// paren used for eg. "( 2 + 1 ) * 4"
       let paren = seq(str("("), this.source(), str(")"));
 
       let after = seq(alt(str("&&"), this.arith_operator()), this.source());

@@ -11,7 +11,7 @@ let alt = Combi.alt;
 export class Update extends Statement {
 
   public static get_matcher(): Combi.IRunnable {
-    let target = alt(Reuse.field(), seq(str("("), Reuse.field(), str(")")));
+    let target = alt(Reuse.field(), Reuse.dynamic());
 
     let ret = seq(str("UPDATE"),
                   target,
