@@ -76,10 +76,10 @@ let tests = [
 {n: "re1",  c: re(() => { return str("TYPE"); }, "test"), t: tok("TYPE"),   e: true},
 {n: "das1", c: str("FIELD-SYMBOL"),               t: tok("FIELD - SYMBOL"), e: true},
 {n: "per1", c: per(str("FOO"), str("BAR")),       t: tok("FOO"), e: true},
-{n: "per1", c: per(str("FOO"), str("BAR")),       t: tok("BAR"), e: true},
-{n: "per1", c: per(str("FOO"), str("BAR")),       t: tok("FOO BAR"), e: true},
-{n: "per1", c: per(str("FOO"), str("BAR")),       t: tok("BAR FOO"), e: true},
-{n: "per2", c: per(str("FOO"), str("BAR"), str("MOO")), t: tok("BAR MOO"), e: true},
+{n: "per2", c: per(str("FOO"), str("BAR")),       t: tok("BAR"), e: true},
+{n: "per3", c: per(str("FOO"), str("BAR")),       t: tok("FOO BAR"), e: true},
+{n: "per4", c: per(str("FOO"), str("BAR")),       t: tok("BAR FOO"), e: true},
+{n: "per5", c: per(str("FOO"), str("BAR"), str("MOO")), t: tok("BAR MOO"), e: true},
 ];
 
 describe("combi matching", () => {

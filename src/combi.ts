@@ -1,5 +1,4 @@
 import "../typings/index.d.ts";
-import * as Combinatorics from "js-combinatorics";
 import * as Tokens from "./tokens/";
 
 export class Result {
@@ -302,52 +301,44 @@ export class Reuse implements IRunnable {
 
 class Permutation implements IRunnable {
   private list: Array<IRunnable>;
-  private original: Array<IRunnable>;
 
   constructor(list: IRunnable[]) {
     if (list.length < 2) {
       throw new Error("Permutation, length error");
     }
-    this.original = list;
-    this.list = this.permutations(list);
-//    console.log("permutations " + this.list.length);
+    this.list = list;
   }
 
   public run(r: Array<Result>): Array<Result> {
     let result: Array<Result> = r;
 
-    for (let e of this.list) {
-      let temp = e.run(r);
-      result = result.concat(temp);
+    for (let index = 0; index < this.list.length; index++) {
+      let temp = this.list[index].run(r);
+      if (temp.length !== 0) {
+// match
+        result = result.concat(temp);
+
+        let left = this.list;
+        left.splice(index, 1);
+        if (left.length === 1) {
+          result = result.concat(left[0].run(temp));
+        } else {
+          result = result.concat(new Permutation(left).run(temp));
+        }
+      }
     }
 
     return result;
   }
 
   public railroad() {
-    let children = this.original.map((e) => { return e.railroad(); });
+    let children = this.list.map((e) => { return e.railroad(); });
     return "Railroad.MultipleChoice(0, 'any'," + children.join() + ")";
   }
 
   public toStr() {
     let children = this.list.map((e) => { return e.toStr(); });
     return "per(" + children.join() + ")";
-  }
-
-  private permutations(list: IRunnable[]): Array<IRunnable> {
-    let res: Array<IRunnable> = [];
-
-    let comb = Combinatorics.permutationCombination(list).toArray();
-
-    for (let e of comb) {
-      if (e.length === 1) {
-        res.push(e[0]);
-      } else {
-        res.push(new Sequence(e));
-      }
-    }
-
-    return res;
   }
 }
 
