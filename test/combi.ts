@@ -2,6 +2,8 @@ import "../typings/index.d.ts";
 import * as chai from "chai";
 import * as Combi from "../src/combi";
 import * as Tokens from "../src/tokens/";
+import Lexer from "../src/lexer";
+import File from "../src/file";
 import * as Statements from "../src/statements/";
 import Position from "../src/position";
 
@@ -15,71 +17,68 @@ let star = Combi.star;
 let reg  = Combi.regex;
 let re   = Combi.reuse;
 let per  = Combi.per;
+let tok  = Combi.tok;
 
-function tok(s: string): Array<Tokens.Token> {
-  let split = s.split(" ");
-
-  let tokens: Array<Tokens.Token> = [];
-  for (let st of split) {
-    tokens.push(new Tokens.Identifier(new Position(10, 10), st));
-  }
-
-  return tokens;
+function tokenize(s: string): Array<Tokens.Token> {
+  return Lexer.run(new File("foo.abap", s));
 }
 
 let tests = [
-{n: "str1", c: str("foo"),                        t: tok("foo"),     e: true},
-{n: "str2", c: str("foo"),                        t: tok("bar"),     e: false},
+{n: "str1", c: str("foo"),                        t: tokenize("foo"),     e: true},
+{n: "str2", c: str("foo"),                        t: tokenize("bar"),     e: false},
 {n: "str3", c: str("foo"),                        t: [],             e: false},
-{n: "str4", c: str("DATA"),                       t: tok("data"),    e: true},
-{n: "str5", c: str("foo bar"),                    t: tok("foo bar"), e: true},
-{n: "seq1", c: seq(str("foo"), str("bar")),       t: tok("foo bar"), e: true},
-{n: "seq2", c: seq(str("foo"), str("bar")),       t: tok("bar foo"), e: false},
-{n: "seq3", c: seq(str("foo"), str("bar")),       t: tok("foo"),     e: false},
+{n: "str4", c: str("DATA"),                       t: tokenize("data"),    e: true},
+{n: "str5", c: str("foo bar"),                    t: tokenize("foo bar"), e: true},
+{n: "seq1", c: seq(str("foo"), str("bar")),       t: tokenize("foo bar"), e: true},
+{n: "seq2", c: seq(str("foo"), str("bar")),       t: tokenize("bar foo"), e: false},
+{n: "seq3", c: seq(str("foo"), str("bar")),       t: tokenize("foo"),     e: false},
 {n: "seq4", c: seq(str("foo"), str("bar")),       t: [],             e: false},
-{n: "alt1", c: alt(str("foo"), str("bar")),       t: tok("foo"),     e: true},
-{n: "alt2", c: alt(str("foo"), str("bar")),       t: tok("bar"),     e: true},
-{n: "alt3", c: alt(str("foo"), str("bar")),       t: tok("moo"),     e: false},
+{n: "alt1", c: alt(str("foo"), str("bar")),       t: tokenize("foo"),     e: true},
+{n: "alt2", c: alt(str("foo"), str("bar")),       t: tokenize("bar"),     e: true},
+{n: "alt3", c: alt(str("foo"), str("bar")),       t: tokenize("moo"),     e: false},
 {n: "alt4", c: alt(str("foo"), str("bar")),       t: [],             e: false},
-{n: "opt1", c: opt(str("foo")),                   t: tok("foo"),     e: true},
-{n: "opt3", c: seq(opt(str("foo")), str("bar")),  t: tok("foo bar"), e: true},
-{n: "opt4", c: seq(opt(str("foo")), str("bar")),  t: tok("bar"),     e: true},
-{n: "opt5", c: seq(opt(str("foo")), str("bar")),  t: tok("bar bar"), e: false},
-{n: "opt6", c: seq(opt(str("foo")), str("bar")),  t: tok("foo"),     e: false},
-{n: "opt7", c: seq(str("bar"), opt(str("foo"))),  t: tok("bar foo"), e: true},
-{n: "opt8", c: seq(str("bar"), opt(str("foo"))),  t: tok("bar"),     e: true},
-{n: "opt9", c: seq(str("bar"), opt(str("foo"))),  t: tok("foo foo"), e: false},
-{n: "optA", c: seq(str("bar"), opt(str("foo"))),  t: tok("foo"),     e: false},
-{n: "optB", c: opt(str("foo")),                   t: tok("bar"),     e: false},
+{n: "opt1", c: opt(str("foo")),                   t: tokenize("foo"),     e: true},
+{n: "opt3", c: seq(opt(str("foo")), str("bar")),  t: tokenize("foo bar"), e: true},
+{n: "opt4", c: seq(opt(str("foo")), str("bar")),  t: tokenize("bar"),     e: true},
+{n: "opt5", c: seq(opt(str("foo")), str("bar")),  t: tokenize("bar bar"), e: false},
+{n: "opt6", c: seq(opt(str("foo")), str("bar")),  t: tokenize("foo"),     e: false},
+{n: "opt7", c: seq(str("bar"), opt(str("foo"))),  t: tokenize("bar foo"), e: true},
+{n: "opt8", c: seq(str("bar"), opt(str("foo"))),  t: tokenize("bar"),     e: true},
+{n: "opt9", c: seq(str("bar"), opt(str("foo"))),  t: tokenize("foo foo"), e: false},
+{n: "optA", c: seq(str("bar"), opt(str("foo"))),  t: tokenize("foo"),     e: false},
+{n: "optB", c: opt(str("foo")),                   t: tokenize("bar"),     e: false},
 {n: "sta1", c: star(str("bar")),                  t: [],             e: true},
-{n: "sta2", c: star(str("bar")),                  t: tok("bar"),     e: true},
-{n: "sta3", c: star(str("bar")),                  t: tok("bar bar"), e: true},
-{n: "sta4", c: star(str("foo")),                  t: tok("bar"),     e: false},
-{n: "sta5", c: star(str("foo")),                  t: tok("bar bar"), e: false},
-{n: "sta6", c: seq(star(str("bar")), str("bar")), t: tok("bar bar"), e: true},
-{n: "sta7", c: seq(star(str("bar")), str("foo")), t: tok("bar bar"), e: false},
-{n: "sta8", c: seq(star(str("foo")), str("bar")), t: tok("bar bar"), e: false},
-{n: "sta9", c: alt(star(str("bar")), str("bar")), t: tok("bar bar"), e: true},
-{n: "staA", c: alt(star(str("bar")), str("foo")), t: tok("bar bar"), e: true},
-{n: "staB", c: alt(str("bar"), star(str("bar"))), t: tok("bar bar"), e: true},
-{n: "staC", c: alt(str("foo"), star(str("bar"))), t: tok("bar bar"), e: true},
-{n: "staD", c: seq(str("foo"), star(str("bar"))), t: tok("foo bar"), e: true},
-{n: "staE", c: seq(str("foo"), star(str("bar"))), t: tok("foo bar bar"), e: true},
-{n: "staF", c: seq(str("foo"), star(str("bar"))), t: tok("foo bar bar bar"), e: true},
-{n: "staG", c: seq(str("foo"), star(str("bar"))), t: tok("foo bar bar bar bar"), e: true},
-{n: "reg1", c: reg(/^\w+$/),                      t: tok("foo"),     e: true},
-{n: "reg2", c: reg(/^\w+$/),                      t: tok("foo!!"),   e: false},
-{n: "reg3", c: reg(/^\w+$/),                      t: tok("foo bar"), e: false},
-{n: "reg4", c: seq(reg(/^\w+$/), reg(/^\w+$/)),   t: tok("foo bar"), e: true},
-{n: "reg5", c: reg(/^(LIKE|TYPE)$/i),             t: tok("type"),    e: true},
-{n: "reg6", c: reg(/^(LIKE|TYPE)$/i),             t: tok("TYPE"),    e: true},
-{n: "re1",  c: re(() => { return str("TYPE"); }, "test"), t: tok("TYPE"),   e: true},
-{n: "das1", c: str("FIELD-SYMBOL"),               t: tok("FIELD - SYMBOL"), e: true},
-{n: "per1", c: per(str("FOO"), str("BAR")),       t: tok("FOO"), e: true},
-{n: "per2", c: per(str("FOO"), str("BAR")),       t: tok("BAR"), e: true},
-{n: "per3", c: per(str("FOO"), str("BAR")),       t: tok("FOO BAR"), e: true},
-{n: "per4", c: per(str("FOO"), str("BAR")),       t: tok("BAR FOO"), e: true},
-{n: "per5", c: per(str("FOO"), str("BAR"), str("MOO")), t: tok("BAR MOO"), e: true},
+{n: "sta2", c: star(str("bar")),                  t: tokenize("bar"),     e: true},
+{n: "sta3", c: star(str("bar")),                  t: tokenize("bar bar"), e: true},
+{n: "sta4", c: star(str("foo")),                  t: tokenize("bar"),     e: false},
+{n: "sta5", c: star(str("foo")),                  t: tokenize("bar bar"), e: false},
+{n: "sta6", c: seq(star(str("bar")), str("bar")), t: tokenize("bar bar"), e: true},
+{n: "sta7", c: seq(star(str("bar")), str("foo")), t: tokenize("bar bar"), e: false},
+{n: "sta8", c: seq(star(str("foo")), str("bar")), t: tokenize("bar bar"), e: false},
+{n: "sta9", c: alt(star(str("bar")), str("bar")), t: tokenize("bar bar"), e: true},
+{n: "staA", c: alt(star(str("bar")), str("foo")), t: tokenize("bar bar"), e: true},
+{n: "staB", c: alt(str("bar"), star(str("bar"))), t: tokenize("bar bar"), e: true},
+{n: "staC", c: alt(str("foo"), star(str("bar"))), t: tokenize("bar bar"), e: true},
+{n: "staD", c: seq(str("foo"), star(str("bar"))), t: tokenize("foo bar"), e: true},
+{n: "staE", c: seq(str("foo"), star(str("bar"))), t: tokenize("foo bar bar"), e: true},
+{n: "staF", c: seq(str("foo"), star(str("bar"))), t: tokenize("foo bar bar bar"), e: true},
+{n: "staG", c: seq(str("foo"), star(str("bar"))), t: tokenize("foo bar bar bar bar"), e: true},
+{n: "reg1", c: reg(/^\w+$/),                      t: tokenize("foo"),     e: true},
+{n: "reg2", c: reg(/^\w+$/),                      t: tokenize("foo!!"),   e: false},
+{n: "reg3", c: reg(/^\w+$/),                      t: tokenize("foo bar"), e: false},
+{n: "reg4", c: seq(reg(/^\w+$/), reg(/^\w+$/)),   t: tokenize("foo bar"), e: true},
+{n: "reg5", c: reg(/^(LIKE|TYPE)$/i),             t: tokenize("type"),    e: true},
+{n: "reg6", c: reg(/^(LIKE|TYPE)$/i),             t: tokenize("TYPE"),    e: true},
+{n: "re1",  c: re(() => { return str("TYPE"); }, "test"), t: tokenize("TYPE"),   e: true},
+{n: "das1", c: str("FIELD-SYMBOL"),               t: tokenize("FIELD - SYMBOL"), e: true},
+{n: "per1", c: per(str("FOO"), str("BAR")),       t: tokenize("FOO"), e: true},
+{n: "per2", c: per(str("FOO"), str("BAR")),       t: tokenize("BAR"), e: true},
+{n: "per3", c: per(str("FOO"), str("BAR")),       t: tokenize("FOO BAR"), e: true},
+{n: "per4", c: per(str("FOO"), str("BAR")),       t: tokenize("BAR FOO"), e: true},
+{n: "per5", c: per(str("FO"), str("BA"), str("MO")),   t: tokenize("BA MO"), e: true},
+{n: "tok1", c: tok("Identifier"),                      t: tokenize("FOO"), e: true},
+{n: "tok2", c: seq(str("A"), tok("WPlusW"), str("B")), t: tokenize("A + B"), e: true},
+{n: "tok3", c: seq(str("A"), tok("Plus"), str("B")),   t: tokenize("A+B"), e: true},
 ];
 
 describe("combi matching", () => {

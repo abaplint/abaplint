@@ -54,11 +54,10 @@ describe("count_tokens", () => {
   ];
 
   tests.forEach((test) => {
-    let file = new File("foo.abap", test.abap);
-    file.setTokens(Lexer.run(file));
+    let tokens = Lexer.run(new File("foo.abap", test.abap));
 
     it("\"" + test.abap + "\" should have " + test.tokens + " tokens", () => {
-      expect(file.getTokens().length).to.equals(test.tokens);
+      expect(tokens.length).to.equals(test.tokens);
     });
   });
 });

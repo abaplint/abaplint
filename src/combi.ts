@@ -97,6 +97,41 @@ class Word implements IRunnable {
   }
 }
 
+class Token implements IRunnable {
+
+  private s: String;
+
+  constructor(s: String) {
+    this.s = s;
+  }
+
+  public run(r: Array<Result>): Array<Result> {
+    let result: Array<Result> = [];
+
+    for (let input of r) {
+//      console.dir(input.peek().constructor);
+      if (input.length() !== 0
+          && this.className(input.peek()).toUpperCase() === this.s.toUpperCase()) {
+        result.push(input.shift());
+      }
+    }
+    return result;
+  }
+
+  public railroad() {
+    return "Railroad.Terminal('Token \"" + this.s + "\"')";
+  }
+
+  public toStr() {
+    return "Token \"" + this.s + "\"";
+  }
+
+  private className(t: Tokens.Token): string {
+    let str = t.constructor.toString();
+    return str.match(/\w+/g)[1];
+  }
+}
+
 class Optional implements IRunnable {
 
   private opt: IRunnable;
@@ -434,6 +469,9 @@ export function per(first: IRunnable, ...rest: IRunnable[]): IRunnable {
 }
 export function opt(first: IRunnable): IRunnable {
   return new Optional(first);
+}
+export function tok(s: string): IRunnable {
+  return new Token(s);
 }
 export function star(first: IRunnable): IRunnable {
   return new Star(first);
