@@ -48,7 +48,11 @@ export default class Reuse {
       let after = seq(alt(this.field(), this.field_symbol()),
                       star(seq(this.arrow_or_dash(), this.field())));
 
-      return alt(this.inline_decl(), seq(after, opt(alt(this.table_body(), this.field_offset())))); },
+      let fields = seq(opt(this.field_offset()), opt(this.field_length()));
+
+      let optional = alt(this.table_body(), fields);
+
+      return alt(this.inline_decl(), seq(after, optional)); },
               "target");
   }
 
@@ -234,6 +238,9 @@ export default class Reuse {
                   tok("WDashW"),
                   str("*"),
                   str("/"),
+                  str("BIT-XOR"),
+                  str("BIT-AND"),
+                  str("BIT-OR"),
                   str("MOD"));
 
     return re(() => { return ret; }, "arith_operator");
@@ -259,7 +266,9 @@ export default class Reuse {
       let method = seq(this.method_call_chain(), opt(seq(this.arrow_or_dash(), this.field_chain())));
 
 // paren used for eg. "( 2 + 1 ) * 4"
-      let paren = seq(tok("WParenLeftW"), this.source(), tok("WParenRightW"));
+      let paren = seq(tok("WParenLeftW"),
+                      this.source(),
+                      alt(tok("WParenRightW"), tok("WParenRight")));
 
       let after = seq(alt(str("&&"), this.arith_operator()), this.source());
       let ref = seq(this.arrow(), str("*"));
@@ -293,7 +302,7 @@ export default class Reuse {
 
   public static constant(): Combi.Reuse {
     return re(() => {
-      let text = seq(tok("ParenLeft"), reg(/^\d\d\d$/), tok("ParenRightW"));
+      let text = seq(tok("ParenLeft"), reg(/^\d\d\d$/), alt(tok("ParenRightW"), tok("ParenRight")));
       let stri = seq(reg(/^('.*')|(`.*`)$/), opt(text));
       return alt(stri, this.integer()); },
               "constant");

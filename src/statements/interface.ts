@@ -5,11 +5,12 @@ import Reuse from "./reuse";
 
 let str = Combi.str;
 let seq = Combi.seq;
+let opt = Combi.opt;
 
 export class Interface extends Statement {
 
   public static get_matcher(): Combi.IRunnable {
-    return seq(str("INTERFACE"), Reuse.field());
+    return seq(str("INTERFACE"), Reuse.field(), opt(str("PUBLIC")));
   }
 
   public static match(tokens: Array<Token>): Statement {

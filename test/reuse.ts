@@ -35,6 +35,7 @@ let tests = [
   {c: "cs_tstcp-param(sy)",       r: Reuse.field_chain()},
   {c: "cs_tstcp-param(sy-fdpos)", r: Reuse.field_chain()},
   {c: "cs_tstcp(sy-fdpos)",       r: Reuse.field_chain()},
+  {c: "foobar(3)",                r: Reuse.field_chain()},
 
   {c: "(sy)",                     r: Reuse.field_length()},
   {c: "(42)",                     r: Reuse.field_length()},
@@ -42,13 +43,15 @@ let tests = [
 
   {c: "+sy-fdpos",                r: Reuse.field_offset()},
 
-  {c: " ( lv_offset + 1 ) MOD 8",          r: Reuse.source()},
-  {c: "go_stream->remaining( )",          r: Reuse.source()},
-  {c: "xstrlen( foo ) - remaining( )",    r: Reuse.source()},
-  {c: "xstrlen( foo ) - stream->rema( )", r: Reuse.source()},
+  {c: " ( lv_offset + 1 ) MOD 8",      r: Reuse.source()},
+  {c: "go_stream->remaining( )",       r: Reuse.source()},
+  {c: "xstrlen( foo ) - remaining( )", r: Reuse.source()},
+  {c: "xstrlen( foo ) - str->rema( )", r: Reuse.source()},
 
-  {c: "method( foo )-stream->remaining( )", r: Reuse.method_call_chain()},
-  {c: "method( foo )->remaining( )",        r: Reuse.method_call_chain()},
+  {c: "foobar(3)",                     r: Reuse.target()},
+
+  {c: "method( foo )-stream->rema( )", r: Reuse.method_call_chain()},
+  {c: "method( foo )->rema( )",        r: Reuse.method_call_chain()},
 ];
 
 describe("Test reuse matchers", () => {

@@ -289,6 +289,7 @@ class WordSequence implements IRunnable {
 
     let words: Array<IRunnable> = [];
     for (let str of split) {
+// todo, use Dash token
       words.push(new Word(str));
     }
 
