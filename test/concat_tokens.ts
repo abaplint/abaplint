@@ -9,6 +9,7 @@ describe("concat_tokens", () => {
   let tests = [
     "REPORT zfoo.",
     "WRITE 'Hello'.",
+    "WRITE foo-bar.",
   ];
 
   tests.forEach((test) => {

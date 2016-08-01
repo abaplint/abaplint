@@ -10,9 +10,46 @@ enum Mode {
   Comment
 }
 
+class Stream {
+  private raw: string;
+  private offset = -1;
+
+  public constructor(raw: string) {
+    this.raw = raw;
+  }
+
+  public advance(): boolean {
+    if (this.offset === this.raw.length) {
+      return false;
+    }
+    this.offset = this.offset + 1;
+    return true;
+  }
+
+  public prevChar(): string {
+    return this.raw.substr(this.offset - 1, 1);
+  }
+
+  public currentChar(): string {
+    if (this.offset < 0) {
+      return "\n"; // simulate newline at start of file to handle star(*) comments
+    }
+    return this.raw.substr(this.offset, 1);
+  }
+
+  public nextChar(): string {
+    return this.raw.substr(this.offset + 1, 1);
+  }
+
+  public nextNextChar(): string {
+    return this.raw.substr(this.offset + 1, 2);
+  }
+}
+
 export default class Lexer {
   private static tokens: Array<Tokens.Token>;
   private static m: Mode;
+  private static stream: Stream;
 
   public static run(file: File): Array<Tokens.Token> {
     this.tokens = [];
@@ -23,8 +60,10 @@ export default class Lexer {
     return this.tokens;
   }
 
-  private static add(s: string, row: number, col: number) {
+  private static add(input: string, row: number, col: number) {
+    let s = input.trim();
     if (s.length > 0) {
+// console.log("add " + col + " " + s);
       let pos = new Position(row, col - s.length);
       if (this.m === Mode.Comment) {
         this.tokens.push(new Tokens.Comment(pos, s));
@@ -55,80 +94,119 @@ export default class Lexer {
   }
 
   private static process(raw: string) {
-    let before = "";
+    let buffer = "";
+    let row = 0;
+    let col = 0;
 
-    let row = 1;
-    let col = 1;
+    this.stream = new Stream(raw);
 
-    while (raw.length > 0) {
-      let char = raw.substr(0, 1);
-      let ahead = raw.substr(1, 1);
-      let bchar = before.substr(before.length - 1, 1);
+    while (true) {
+      let current = this.stream.currentChar();
+      buffer = buffer + current;
+      let ahead = this.stream.nextChar();
+      let aahead = this.stream.nextNextChar();
+      let prev = this.stream.prevChar();
 
-      if ((char === " " || char === "\t") && this.m === Mode.Normal) {
-        this.add(before, row, col);
-        before = "";
-      } else if ( (char === "." || char === "," || char === ":" || char === "]" || char === ")" )
-          && this.m === Mode.Normal) {
-        this.add(before, row, col);
-        this.add(char, row, col + 1);
-        before = "";
-      } else if ( (char === "[" || char === "(") && before.length >= 0 && this.m === Mode.Normal) {
-        this.add(before, row, col);
-        this.add(char, row, col + 1);
-        before = "";
-      } else if ( ( char === "-" || char === "+" ) && before.length >= 0 && ahead !== ">" && ahead !== " " && this.m === Mode.Normal) {
-        this.add(before, row, col);
-        this.add(char, row, col + 1);
-        before = "";
-      } else if ( char === ">" && (bchar === "-" || bchar === "=" ) && ahead !== " " && this.m === Mode.Normal) {
-        this.add(before.substr(0, before.length - 1), row, col - 1);
-        this.add(bchar + char, row, col + 1);
-        before = "";
-      } else if (char === "\n" && this.m !== Mode.Template) {
-        this.add(before, row, col);
-        before = "";
-        row = row + 1;
-        col = 0;
-        if (this.m !== Mode.Template) {
-          this.m = Mode.Normal;
-        }
-      } else if (char === "'" && this.m === Mode.Normal) {
+// console.log("\"" + current.trim() + "\"\t\"" + ahead.trim() + "\"\t" + col);
+
+      if (ahead === "'" && this.m === Mode.Normal) {
+// start string
+        this.add(buffer, row, col);
+        buffer = "";
         this.m = Mode.Str;
-        this.add(before, row, col);
-        before = char;
-      } else if (char === "`" && this.m === Mode.Normal) {
-        this.m = Mode.Ping;
-        this.add(before, row, col);
-        before = char;
-      } else if (char === "|" && this.m === Mode.Normal) {
+      } else if (ahead === "|" && this.m === Mode.Normal) {
+// start template
+        this.add(buffer, row, col);
+        buffer = "";
         this.m = Mode.Template;
-        before = before + char;
-      } else if (char === "\"" && this.m === Mode.Normal) {
+      } else if (ahead === "`" && this.m === Mode.Normal) {
+// start ping
+        this.add(buffer, row, col);
+        buffer = "";
+        this.m = Mode.Ping;
+      } else if ((ahead === "\"" || (ahead === "*" && current === "\n"))
+          && this.m === Mode.Normal) {
+// start comment
+        this.add(buffer, row, col);
+        buffer = "";
         this.m = Mode.Comment;
-        before = before + char;
-      } else if (char === "*" && col === 1 && this.m === Mode.Normal) {
-        this.m = Mode.Comment;
-        before = before + char;
-      } else if (char === "'" && ahead === "'" && this.m === Mode.Str) {
-        before = before + char + ahead;
-        col = col + 1;
-        raw = raw.substr(1);
-      } else if ((char === "'" && this.m === Mode.Str)
-          || (char === "`" && this.m === Mode.Ping)
-          || (char === "|" && this.m === Mode.Template)) {
-        before = before + char;
-        this.add(before, row, col + 1);
-        before = "";
+
+      } else if (buffer.length > 1 && current === "`" && this.m === Mode.Ping) {
+// end of ping
+        this.add(buffer, row, col);
+        buffer = "";
         this.m = Mode.Normal;
-      } else {
-        before = before + char;
+      } else if (buffer.length > 1 && current === "|" && this.m === Mode.Template) {
+// end of template
+        this.add(buffer, row, col);
+        buffer = "";
+        this.m = Mode.Normal;
+      } else if (this.m === Mode.Str
+          && buffer.length > 1
+          && current === "'"
+          && aahead !== "''"
+          && (buffer.match(/'/g) || []).length % 2 === 0
+          && (buffer.concat(aahead).match(/'/g) || []).length % 2 === 0) {
+// end of string
+        this.add(buffer, row, col);
+        buffer = "";
+        this.m = Mode.Normal;
+
+      } else if ((ahead === " "
+          || ahead === ":"
+          || ahead === "."
+          || ahead === ","
+          || ahead === "-"
+          || ahead === "+"
+          || ahead === "("
+          || ahead === ")"
+          || ahead === "["
+          || ahead === "]"
+          || aahead === "->"
+          || aahead === "=>"
+          || ahead === "\t"
+          || ahead === "\n")
+          && this.m === Mode.Normal) {
+        this.add(buffer, row, col);
+        buffer = "";
+      } else if (ahead === "\n" && this.m !== Mode.Template) {
+        this.add(buffer, row, col);
+        buffer = "";
+        this.m = Mode.Normal;
+      } else if (current === ">"
+          && (prev === "-" || prev === "=" )
+          && ahead !== " "
+          && this.m === Mode.Normal) {
+// arrows
+        this.add(buffer, row, col);
+        buffer = "";
+      } else if ((buffer === "."
+          || buffer === ","
+          || buffer === ":"
+          || buffer === "("
+          || buffer === ")"
+          || buffer === "["
+          || buffer === "]"
+          || buffer === "+"
+          || ( buffer === "-" && ahead !== ">" ) )
+          && this.m === Mode.Normal) {
+        this.add(buffer, row, col);
+        buffer = "";
+      }
+
+      if (current === "\n") {
+        col = 1;
+        row = row + 1;
+      }
+
+      if (!this.stream.advance()) {
+        break;
       }
 
       col = col + 1;
-      raw = raw.substr(1);
     }
-    this.add(before, row, col);
+
+    this.add(buffer, row, col - 1);
   }
 
 }

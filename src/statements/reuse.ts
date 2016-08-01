@@ -210,7 +210,7 @@ export default class Reuse {
 
   public static arith_operator(): Combi.Reuse {
     let ret = alt(str("+"),
-                  reg(/^-$/),
+                  reg(/^-$/),  // todo
                   str("*"),
                   str("/"),
                   str("MOD"));
