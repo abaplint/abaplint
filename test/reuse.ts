@@ -42,7 +42,7 @@ let tests = [
 
   {c: "+sy-fdpos",                r: Reuse.field_offset()},
 
-  {c: "( lv_offset + 1 ) MOD 8",          r: Reuse.source()},
+  {c: " ( lv_offset + 1 ) MOD 8",          r: Reuse.source()},
   {c: "go_stream->remaining( )",          r: Reuse.source()},
   {c: "xstrlen( foo ) - remaining( )",    r: Reuse.source()},
   {c: "xstrlen( foo ) - stream->rema( )", r: Reuse.source()},

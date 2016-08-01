@@ -5,6 +5,7 @@ let seq = Combi.seq;
 let alt = Combi.alt;
 let str = Combi.str;
 let opt = Combi.opt;
+let tok = Combi.tok;
 let re = Combi.reuse;
 let star = Combi.star;
 let plus = Combi.plus;
@@ -12,35 +13,42 @@ let plus = Combi.plus;
 export default class Reuse {
 
   public static integer(): Combi.Reuse {
-    return re(() => { return seq(opt(reg(/^-$/)), reg(/^\d+$/)); }, "integer");
+    let ret = seq(opt(tok("WDash")), reg(/^\d+$/));
+
+    return re(() => { return ret; }, "integer");
   }
 
   public static typename(): Combi.Reuse {
-    return re(() => {
-      let start = reg(/^(\/\w+\/)?\w+$/);
-      let after = star(seq(this.arrow_or_dash(), reg(/^\w+$/)));
-      return seq(start, after); },
-              "typename");
+    let start = reg(/^(\/\w+\/)?\w+$/);
+    let after = star(seq(this.arrow_or_dash(), reg(/^\w+$/)));
+
+    let ret = seq(start, after);
+
+    return re(() => { return ret; }, "typename");
   }
 
   public static field_symbol(): Combi.Reuse {
-    return re(() => { return reg(/^<\w+>$/); }, "field_symbol");
+    let ret = reg(/^<\w+>$/);
+
+    return re(() => { return ret; }, "field_symbol");
   }
 
   public static inline_decl(): Combi.Reuse {
-    return re(() => {
-      let data = seq(str("DATA"), str("("), this.field(), str(")"));
-      let fs = seq(str("FIELD-SYMBOL"), str("("), this.field_symbol(), str(")"));
-      return alt(data, fs); },
-              "inline_decl");
+    let right = alt(tok("ParenRight"), tok("ParenRightW"));
+    let left = tok("ParenLeft");
+    let data = seq(str("DATA"), left, this.field(), right);
+    let fs = seq(str("FIELD-SYMBOL"), left, this.field_symbol(), right);
+    let ret = alt(data, fs);
+
+    return re(() => { return ret; }, "inline_decl");
   }
 
   public static target(): Combi.Reuse {
     return re(() => {
       let after = seq(alt(this.field(), this.field_symbol()),
                       star(seq(this.arrow_or_dash(), this.field())));
-      let tableBody = seq(str("["), str("]"));
-      return alt(this.inline_decl(), seq(after, opt(alt(tableBody, this.field_offset())))); },
+
+      return alt(this.inline_decl(), seq(after, opt(alt(this.table_body(), this.field_offset())))); },
               "target");
   }
 
@@ -49,7 +57,7 @@ export default class Reuse {
   }
 
   public static arrow_or_dash(): Combi.Reuse {
-    return re(() => { return reg(/^(->|=>|-)$/); }, "arrow_or_dash");
+    return re(() => { return alt(this.arrow(), tok("Dash")); }, "arrow_or_dash");
   }
 
   public static parameter_s(): Combi.Reuse {
@@ -124,7 +132,14 @@ export default class Reuse {
   public static cond(): Combi.Reuse {
     let matcher = () => {
       let operator = alt(str("AND"), str("OR"));
-      let cnd = alt(this.compare(), seq(opt(str("NOT")), str("("), this.cond(), str(")")));
+
+      let another = seq(opt(str("NOT")),
+                        tok("WParenLeftW"),
+                        this.cond(),
+                        alt(tok("WParenRightW"), tok("WParenRight")));
+
+      let cnd = alt(this.compare(), another);
+
       let ret = seq(cnd, star(seq(operator, cnd)));
 
       return ret; };
@@ -172,21 +187,25 @@ export default class Reuse {
   }
 
   public static field_offset(): Combi.Reuse {
-    let offset = seq(str("+"), reg(/^[\d\w]+$/), opt(seq(this.arrow_or_dash(), this.field())));
+    let offset = seq(tok("Plus"),
+                     reg(/^[\d\w]+$/),
+                     opt(seq(this.arrow_or_dash(), this.field())));
 
     return re(() => { return offset; }, "field_offset");
   }
 
   public static field_length(): Combi.Reuse {
-    let length = seq(str("("), reg(/^[\d\w]+$/), opt(seq(this.arrow_or_dash(), this.field())), str(")"));
+    let length = seq(tok("ParenLeft"), reg(/^[\d\w]+$/), opt(seq(this.arrow_or_dash(), this.field())), str(")"));
 
     return re(() => { return length; }, "field_length");
   }
 
   public static field_chain(): Combi.Reuse {
-    let ret = seq(alt(this.field(), this.field_symbol()), star(seq(this.arrow_or_dash(), this.field())));
+    let chain = seq(alt(this.field(), this.field_symbol()), star(seq(this.arrow_or_dash(), this.field())));
 
-    return re(() => { return seq(ret, opt(this.field_offset()), opt(this.field_length())); }, "field_chain");
+    let ret = seq(chain, opt(this.field_offset()), opt(this.field_length()));
+
+    return re(() => { return ret; }, "field_chain");
   }
 
   public static method_name(): Combi.Reuse {
@@ -198,19 +217,21 @@ export default class Reuse {
   }
 
   public static method_call(): Combi.Reuse {
-    let ret = seq(this.method_name(), str("("),
-                  alt(this.source(), this.parameter_list_s(), Reuse.method_parameters()), str(")"));
+    let ret = seq(this.method_name(),
+                  alt(tok("ParenLeftW"), tok("ParenLeft")),
+                  alt(this.source(), this.parameter_list_s(), Reuse.method_parameters()),
+                  str(")"));
 
     return re(() => { return ret; }, "method_call");
   }
 
   public static string_template(): Combi.Reuse {
-    return re(() => { return reg(/^\|(.|\n)*\|$/); }, "string_template");
+    return re(() => { return tok("StringTemplate"); }, "string_template");
   }
 
   public static arith_operator(): Combi.Reuse {
-    let ret = alt(str("+"),
-                  reg(/^-$/),  // todo
+    let ret = alt(tok("WPlusW"),
+                  tok("WDashW"),
                   str("*"),
                   str("/"),
                   str("MOD"));
@@ -219,26 +240,31 @@ export default class Reuse {
   }
 
   public static dynamic(): Combi.Reuse {
-    let ret = seq(str("("),
+    let ret = seq(alt(tok("WParenLeft"), tok("ParenLeft")),
                   alt(this.field_chain(), this.constant()),
-                  str(")"));
+                  alt(tok("ParenRightW"), tok("ParenRight")));
 
     return re(() => { return ret; }, "dynamic");
   }
+
+  public static table_body(): Combi.Reuse {
+    let ret = seq(tok("BracketLeft"), alt(tok("BracketRight"), tok("BracketRightW")));
+
+    return re(() => { return ret; }, "table_body");
+  }
+
 
   public static source(): Combi.Reuse {
     let matcher = () => {
       let method = seq(this.method_call_chain(), opt(seq(this.arrow_or_dash(), this.field_chain())));
 
 // paren used for eg. "( 2 + 1 ) * 4"
-      let paren = seq(str("("), this.source(), str(")"));
+      let paren = seq(tok("WParenLeftW"), this.source(), tok("WParenRightW"));
 
       let after = seq(alt(str("&&"), this.arith_operator()), this.source());
       let ref = seq(this.arrow(), str("*"));
 
-      let boolc = seq(str("BOOLC"), str("("), this.cond(), str(")"));
-
-      let tableBody = seq(str("["), str("]"));
+      let boolc = seq(str("BOOLC"), tok("ParenLeftW"), this.cond(), str(")"));
 
       let ret = seq(alt(this.constant(),
                         this.string_template(),
@@ -246,7 +272,7 @@ export default class Reuse {
                         method,
                         this.field_chain(),
                         paren),
-                    opt(alt(ref, after, tableBody)));
+                    opt(alt(ref, after, this.table_body())));
 
       return ret; };
 
@@ -254,7 +280,10 @@ export default class Reuse {
   }
 
   public static field_sub(): Combi.Reuse {
-    return re(() => { return seq(reg(/^\w+$/), star(seq(reg(/^-$/), reg(/^\w+$/)))); }, "field_sub");
+    let ret = seq(reg(/^\w+$/),
+                  star(seq(tok("Dash"), reg(/^\w+$/))));
+
+    return re(() => { return ret; }, "field_sub");
   }
 
   public static field(): Combi.Reuse {
@@ -264,7 +293,8 @@ export default class Reuse {
 
   public static constant(): Combi.Reuse {
     return re(() => {
-      let stri = seq(reg(/^('.*')|(`.*`)$/), opt(seq(str("("), reg(/^\d\d\d$/), str(")"))));
+      let text = seq(tok("ParenLeft"), reg(/^\d\d\d$/), tok("ParenRightW"));
+      let stri = seq(reg(/^('.*')|(`.*`)$/), opt(text));
       return alt(stri, this.integer()); },
               "constant");
   }

@@ -122,8 +122,10 @@ export default class Lexer {
 
       if (this.m === Mode.Comment) {
         tok = new Tokens.Comment(pos, s);
-      } else if (this.m === Mode.Ping || this.m === Mode.Str || this.m === Mode.Template) {
+      } else if (this.m === Mode.Ping || this.m === Mode.Str) {
         tok = new Tokens.String(pos, s);
+      } else if (this.m === Mode.Template) {
+        tok = new Tokens.StringTemplate(pos, s);
       } else if (s.substr(0, 1) === "#") {
         tok = new Tokens.Pragma(pos, s);
       } else if (s.length === 1 && (s === "." || s === ",")) {
