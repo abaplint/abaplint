@@ -90,7 +90,7 @@ export * from "./close";
 export * from "./leave";
 export * from "./initialization";
 export * from "./start";
-export * from "./end";
+export * from "./end_of_selection";
 export * from "./search";
 export * from "./selectionscreen";
 export * from "./free";
@@ -127,5 +127,7 @@ export * from "./get_parameter";
 export * from "./create_data";
 export * from "./set_country";
 export * from "./function";
+export * from "./type_pools";
+export * from "./type_pool";
 
 export * from "./macro";

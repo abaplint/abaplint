@@ -14,7 +14,7 @@ let plus = Combi.plus;
 export class MethodDef extends Statement {
 
   public static get_matcher(): Combi.IRunnable {
-    let field = reg(/^!?\w+?$/);
+    let field = reg(/^!?\w+$/);
 
     let type = alt(Reuse.type(), Reuse.type_table());
 

@@ -112,7 +112,8 @@ export default class Reuse {
                            str("LT"),
                            str("LE"),
                            str("CS"),
-                           str("NP")));
+                           str("NP"),
+                           str("LIKE")));
 
     let sopt = seq(str("IS"),
                    opt(str("NOT")),
@@ -216,6 +217,14 @@ export default class Reuse {
     return re(() => { return reg(/^\w+(~\w+)?$/); }, "method_name");
   }
 
+  public static database_table(): Combi.Reuse {
+    return re(() => { return reg(/^\w+$/); }, "database_table");
+  }
+
+  public static database_field(): Combi.Reuse {
+    return re(() => { return reg(/^\w+$/); }, "database_field");
+  }
+
   public static class_name(): Combi.Reuse {
     return re(() => { return reg(/^\w+$/); }, "class_name");
   }
@@ -298,6 +307,11 @@ export default class Reuse {
   public static field(): Combi.Reuse {
 // "&1" can be used for almost anything(field names, method names etc.) in macros
     return re(() => { return reg(/^&?\w+(~\w+)?$/); }, "field");
+  }
+
+  public static value(): Combi.Reuse {
+    let ret = seq(str("VALUE"), alt(Reuse.constant(), str("IS INITIAL"), Reuse.field_chain()));
+    return re(() => { return ret; }, "value");
   }
 
   public static type(): Combi.Reuse {

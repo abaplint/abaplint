@@ -254,8 +254,8 @@ let expect = chai.expect;
       firstchildren: 3,
     },
     {
-      n: "AT",
-      code: "AT foobar.\n" +
+      n: "AT NEW",
+      code: "AT NEW foobar.\n" +
             "  lo_html ?= iv_chunk.\n" +
             "ENDAT.\n",
       top: 1,

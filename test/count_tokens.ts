@@ -51,6 +51,7 @@ describe("count_tokens", () => {
     {abap: "set_cdata( '' ).",                    tokens: 5},
     {abap: "set_cdata( '''' ).",                  tokens: 5},
     {abap: "set_cdata( '''hello''' ).",           tokens: 5},
+    {abap: "COUNT(*)",                            tokens: 4},
   ];
 
   tests.forEach((test) => {

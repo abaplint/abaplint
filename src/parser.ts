@@ -84,7 +84,7 @@ export default class Parser {
 
     for (let statement of this.statements) {
       let last = statement.getTokens()[statement.getTokens().length - 1];
-//      console.dir(statement.getTokens());
+// console.dir(statement.getTokens());
       if (statement instanceof Statements.Unknown && last instanceof Tokens.Punctuation) {
         for (let st in Statements) {
           if (this.timer) {
@@ -102,7 +102,7 @@ export default class Parser {
       }
       result.push(statement);
     }
-
+// console.log(result);
     this.statements = result;
   }
 
