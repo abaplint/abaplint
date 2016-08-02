@@ -52,6 +52,11 @@ let tests = [
 
   {c: "method( foo )-stream->rema( )", r: Reuse.method_call_chain()},
   {c: "method( foo )->rema( )",        r: Reuse.method_call_chain()},
+
+  {c: "TYPE abap_bool DEFAULT abap_true", r: Reuse.type()},
+  {c: "TYPE lcl_perce_repo=>ty_sum_tt",   r: Reuse.type()},
+
+  {c: "TYPE STANDARD TABLE",              r: Reuse.type_table()},
 ];
 
 describe("Test reuse matchers", () => {

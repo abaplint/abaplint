@@ -270,7 +270,7 @@ export default class Reuse {
                       this.source(),
                       alt(tok("WParenRightW"), tok("WParenRight")));
 
-      let after = seq(alt(str("&&"), this.arith_operator()), this.source());
+      let after = seq(alt(str("&"), str("&&"), this.arith_operator()), this.source());
       let ref = seq(this.arrow(), str("*"));
 
       let boolc = seq(str("BOOLC"), tok("ParenLeftW"), this.cond(), str(")"));
@@ -300,9 +300,52 @@ export default class Reuse {
     return re(() => { return reg(/^&?\w+(~\w+)?$/); }, "field");
   }
 
+  public static type(): Combi.Reuse {
+    let likeType = alt(str("LIKE"), str("TYPE"));
+    let def = seq(str("DEFAULT"), alt(Reuse.constant(), Reuse.field_chain()));
+    let length = seq(str("LENGTH"), Reuse.integer());
+    let decimals = seq(str("DECIMALS"), Reuse.integer());
+
+    let type = seq(likeType,
+                   opt(alt(str("LINE OF"),
+                           str("REF TO"),
+                           str("RANGE OF"))));
+
+    let ret = seq(type,
+                  this.typename(),
+                  opt(def),
+                  opt(length),
+                  opt(decimals));
+
+    return re(() => { return ret; }, "type");
+  }
+
+  public static type_table(): Combi.Reuse {
+
+    let likeType = alt(str("LIKE"), str("TYPE"));
+
+    let typetable = seq(likeType,
+                        opt(alt(str("STANDARD"), str("HASHED"), str("SORTED"))),
+                        str("TABLE"),
+                        opt(str("OF")),
+                        opt(str("REF TO")));
+
+    let key = seq(str("WITH"),
+                  opt(alt(str("NON-UNIQUE"), str("UNIQUE"))),
+                  opt(str("DEFAULT")),
+                  str("KEY"),
+                  star(this.field_sub()));
+
+    let ret = seq(typetable,
+                  opt(this.typename()),
+                  opt(key));
+
+    return re(() => { return ret; }, "type_table");
+  }
+
   public static constant(): Combi.Reuse {
     return re(() => {
-      let text = seq(tok("ParenLeft"), reg(/^\d\d\d$/), alt(tok("ParenRightW"), tok("ParenRight")));
+      let text = seq(tok("ParenLeft"), reg(/^\w{3}$/), alt(tok("ParenRightW"), tok("ParenRight")));
       let stri = seq(reg(/^('.*')|(`.*`)$/), opt(text));
       return alt(stri, this.integer()); },
               "constant");

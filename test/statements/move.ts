@@ -11,11 +11,13 @@ let tests = [
   "wa_asdf-cur = sy-tabix * ( -1 ).",
   "move asdf to foobar(3).",
   "lv_sdf = lv_dfd BIT-XOR lv_hex.",
+  "foo = 'sdf' & 'sdf'.",
   "lv_foo = 'something'(002).",
-  "rs_data-compressed_len = xstrlen( foo ) - 2.",
-  "rs_data-compressed_len = xstrlen( foo ) - field.",
-  "rs_data-compressed_len = xstrlen( foo ) - foo( ).",
-  "rs_data-compressed_len = xstrlen( foo ) - go_stream->remaining( ).",
+  "lv_foo = 'foobar'(bl1).",
+  "rs_data-len = xstrlen( foo ) - 2.",
+  "rs_data-len = xstrlen( foo ) - field.",
+  "rs_data-len = xstrlen( foo ) - foo( ).",
+  "rs_data-len = xstrlen( foo ) - go_stream->rema( ).",
 ];
 
 statementType(tests, "MOVE", Statements.Move);
