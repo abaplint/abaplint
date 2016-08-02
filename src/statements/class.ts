@@ -22,17 +22,17 @@ export class Class extends Statement {
 
     let blah = per(alt(str("PUBLIC"), str("LOCAL")),
                    alt(str("FINAL"), str("ABSTRACT")),
-                   seq(str("INHERITING FROM"), Reuse.field()),
+                   seq(str("INHERITING FROM"), Reuse.class_name()),
                    create,
                    seq(str("FOR TESTING"), risk, duration, risk),
-                   seq(str("FRIENDS"), Reuse.field()));
+                   seq(str("FRIENDS"), Reuse.class_name()));
 
     let def = seq(str("DEFINITION"),
                   opt(alt(str("LOAD"),
                           str("DEFERRED"),
                           blah)));
 
-    return seq(str("CLASS"), Reuse.field(), alt(def, str("IMPLEMENTATION")));
+    return seq(str("CLASS"), Reuse.class_name(), alt(def, str("IMPLEMENTATION")));
   }
 
   public static match(tokens: Array<Token>): Statement {
