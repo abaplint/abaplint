@@ -20,8 +20,11 @@ export class Write extends Statement {
     let options = per(mask,
                       str("EXPONENT 0"),
                       str("NO-GROUPING"),
+                      str("NO-ZERO"),
                       str("LEFT-JUSTIFIED"),
                       seq(str("UNIT"), Reuse.source()),
+                      seq(str("DECIMALS"), Reuse.source()),
+                      seq(str("CURRENCY"), Reuse.source()),
                       str("NO-SIGN"));
 
     let ret = seq(str("WRITE"),
