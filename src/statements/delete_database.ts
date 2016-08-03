@@ -1,5 +1,4 @@
 import { Statement } from "./statement";
-import { Token } from "../tokens/";
 import * as Combi from "../combi";
 import Reuse from "./reuse";
 
@@ -17,14 +16,6 @@ export class DeleteDatabase extends Statement {
     let ret = seq(str("DELETE"), str("FROM"), source, opt(where));
 
     return ret;
-  }
-
-  public static match(tokens: Array<Token>): Statement {
-    let result = Combi.Combi.run(this.get_matcher( ), tokens, true);
-    if (result === true) {
-      return new DeleteDatabase(tokens);
-    }
-    return undefined;
   }
 
 }

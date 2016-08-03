@@ -1,5 +1,4 @@
 import { Statement } from "./statement";
-import { Token } from "../tokens/";
 import * as Combi from "../combi";
 
 let str = Combi.str;
@@ -15,14 +14,6 @@ export class TypePools extends Statement {
     let ret = seq(str("TYPE-POOLS"), fieldName);
 
     return ret;
-  }
-
-  public static match(tokens: Array<Token>): Statement {
-    let result = Combi.Combi.run(this.get_matcher(), tokens, true);
-    if (result === true) {
-      return new TypePools(tokens);
-    }
-    return undefined;
   }
 
 }

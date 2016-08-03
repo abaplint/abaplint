@@ -1,5 +1,4 @@
 import { Statement } from "./statement";
-import { Token } from "../tokens/";
 import * as Combi from "../combi";
 import Reuse from "./reuse";
 
@@ -26,14 +25,6 @@ export class Message extends Statement {
     let ret = seq(str("MESSAGE"), alt(simple, full), opt(into), opt(raising));
 
     return ret;
-  }
-
-  public static match(tokens: Array<Token>): Statement {
-    let result = Combi.Combi.run(this.get_matcher(), tokens, true);
-    if (result === true) {
-      return new Message(tokens);
-    }
-    return undefined;
   }
 
 }

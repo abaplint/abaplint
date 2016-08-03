@@ -1,5 +1,4 @@
 import { Statement } from "./statement";
-import { Token } from "../tokens/";
 import * as Combi from "../combi";
 import Reuse from "./reuse";
 
@@ -20,14 +19,6 @@ export class Perform extends Statement {
                opt(str("IF FOUND")),
                opt(using),
                opt(changing));
-  }
-
-  public static match(tokens: Array<Token>): Statement {
-    let result = Combi.Combi.run(this.get_matcher( ), tokens, true);
-    if (result === true) {
-      return new Perform(tokens);
-    }
-    return undefined;
   }
 
 }

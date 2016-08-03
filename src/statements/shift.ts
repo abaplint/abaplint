@@ -1,5 +1,4 @@
 import { Statement } from "./statement";
-import { Token } from "../tokens/";
 import Reuse from "./reuse";
 import * as Combi from "../combi";
 
@@ -23,14 +22,6 @@ export class Shift extends Statement {
                        Reuse.source(),
                        opt(str("PLACES")),
                        opt(str("IN CHARACTER MODE")))));
-  }
-
-  public static match(tokens: Array<Token>): Statement {
-    let result = Combi.Combi.run(this.get_matcher( ), tokens, true);
-    if (result === true) {
-      return new Shift(tokens);
-    }
-    return undefined;
   }
 
 }

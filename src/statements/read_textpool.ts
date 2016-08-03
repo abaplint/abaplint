@@ -1,5 +1,4 @@
 import { Statement } from "./statement";
-import { Token } from "../tokens/";
 import * as Combi from "../combi";
 import Reuse from "./reuse";
 
@@ -15,14 +14,6 @@ export class ReadTextpool extends Statement {
                Reuse.target(),
                str("LANGUAGE"),
                Reuse.source());
-  }
-
-  public static match(tokens: Array<Token>): Statement {
-    let result = Combi.Combi.run(this.get_matcher( ), tokens, true);
-    if (result === true) {
-      return new ReadTextpool(tokens);
-    }
-    return undefined;
   }
 
 }

@@ -1,5 +1,4 @@
 import { Statement } from "./statement";
-import { Token } from "../tokens/";
 import * as Combi from "../combi";
 import Reuse from "./reuse";
 
@@ -13,11 +12,4 @@ export class Interface extends Statement {
     return seq(str("INTERFACE"), Reuse.field(), opt(str("PUBLIC")));
   }
 
-  public static match(tokens: Array<Token>): Statement {
-    let result = Combi.Combi.run(this.get_matcher( ), tokens, true);
-    if (result === true) {
-      return new Interface(tokens);
-    }
-    return undefined;
-  }
 }

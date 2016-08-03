@@ -1,5 +1,4 @@
 import { Statement } from "./statement";
-import { Token } from "../tokens/";
 import Reuse from "./reuse";
 import * as Combi from "../combi";
 
@@ -18,14 +17,6 @@ export class InsertReport extends Statement {
                   opt(seq(str("PROGRAM TYPE"), Reuse.source())));
 
     return ret;
-  }
-
-  public static match(tokens: Array<Token>): Statement {
-    let result = Combi.Combi.run(this.get_matcher(), tokens, true);
-    if (result === true) {
-      return new InsertReport(tokens);
-    }
-    return undefined;
   }
 
 }

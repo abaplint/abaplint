@@ -1,5 +1,4 @@
 import { Statement } from "./statement";
-import { Token } from "../tokens/";
 import Reuse from "./reuse";
 import * as Combi from "../combi";
 
@@ -21,14 +20,6 @@ export class Constant extends Statement {
     let ret = seq(alt(str("CONSTANT"), str("CONSTANTS")), alt(def, beginEnd));
 
     return ret;
-  }
-
-  public static match(tokens: Array<Token>): Statement {
-    let result = Combi.Combi.run(this.get_matcher(), tokens, true);
-    if (result === true) {
-      return new Constant(tokens);
-    }
-    return undefined;
   }
 
 }

@@ -1,5 +1,4 @@
 import { Statement } from "./statement";
-import { Token } from "../tokens/";
 import Reuse from "./reuse";
 import * as Combi from "../combi";
 
@@ -37,14 +36,6 @@ export class Parameter extends Statement {
                   opt(perm));
 
     return ret;
-  }
-
-  public static match(tokens: Array<Token>): Statement {
-    let result = Combi.Combi.run(this.get_matcher(), tokens, true);
-    if (result === true) {
-      return new Parameter(tokens);
-    }
-    return undefined;
   }
 
 }

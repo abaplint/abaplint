@@ -1,5 +1,4 @@
 import { Statement } from "./statement";
-import { Token } from "../tokens/";
 import Reuse from "./reuse";
 import * as Combi from "../combi";
 
@@ -14,14 +13,6 @@ export class CreateData extends Statement {
     let type = alt(str("LIKE"), str("TYPE"), str("TYPE HANDLE"), str("LIKE LINE OF"));
     let ret = seq(str("CREATE DATA"), Reuse.target(), type, Reuse.source());
     return ret;
-  }
-
-  public static match(tokens: Array<Token>): Statement {
-    let result = Combi.Combi.run(this.get_matcher(), tokens, true);
-    if (result === true) {
-      return new CreateData(tokens);
-    }
-    return undefined;
   }
 
 }

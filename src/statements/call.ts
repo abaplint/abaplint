@@ -1,5 +1,4 @@
 import { Statement } from "./statement";
-import { Token } from "../tokens/";
 import Reuse from "./reuse";
 import * as Combi from "../combi";
 
@@ -23,14 +22,6 @@ export class Call extends Statement {
 
     let call = seq(str("CALL METHOD"), method, alt(paren, Reuse.method_parameters()));
     return alt(call, Reuse.method_call_chain());
-  }
-
-  public static match(tokens: Array<Token>): Statement {
-    let result = Combi.Combi.run(this.get_matcher( ), tokens, true);
-    if (result === true) {
-      return new Call(tokens);
-    }
-    return undefined;
   }
 
 }

@@ -14,14 +14,6 @@ export class Define extends Statement {
     return ret;
   }
 
-  public static match(tokens: Array<Token>): Statement {
-    let result = Combi.Combi.run(this.get_matcher(), tokens, true);
-    if (result === true) {
-      return new Define(tokens);
-    }
-    return undefined;
-  }
-
   public constructor(tokens: Array<Token>) {
     super(tokens);
 

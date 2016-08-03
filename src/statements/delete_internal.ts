@@ -1,5 +1,4 @@
 import { Statement } from "./statement";
-import { Token } from "../tokens/";
 import * as Combi from "../combi";
 import Reuse from "./reuse";
 
@@ -22,14 +21,6 @@ export class DeleteInternal extends Statement {
     let adjacent = seq(str("ADJACENT DUPLICATES FROM"), Reuse.target(), str("COMPARING"), plus(Reuse.field()));
 
     return seq(str("DELETE"), alt(table, adjacent));
-  }
-
-  public static match(tokens: Array<Token>): Statement {
-    let result = Combi.Combi.run(this.get_matcher( ), tokens, true);
-    if (result === true) {
-      return new DeleteInternal(tokens);
-    }
-    return undefined;
   }
 
 }

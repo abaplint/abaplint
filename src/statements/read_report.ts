@@ -1,5 +1,4 @@
 import { Statement } from "./statement";
-import { Token } from "../tokens/";
 import * as Combi from "../combi";
 import Reuse from "./reuse";
 
@@ -15,14 +14,6 @@ export class ReadReport extends Statement {
                str("INTO"),
                Reuse.target(),
                opt(seq(str("STATE"), Reuse.source())));
-  }
-
-  public static match(tokens: Array<Token>): Statement {
-    let result = Combi.Combi.run(this.get_matcher( ), tokens, true);
-    if (result === true) {
-      return new ReadReport(tokens);
-    }
-    return undefined;
   }
 
 }
