@@ -1,5 +1,6 @@
 import { IRule } from "./rule";
 import File from "../file";
+import { Statement, Comment } from "../statements/statement";
 import * as Statements from "../statements/";
 import Issue from "../issue";
 
@@ -40,7 +41,7 @@ export class Indentation implements IRule {
           || statement instanceof Statements.Endat
           || statement instanceof Statements.Endloop) {
         continue;
-      } else if (statement instanceof Statements.Comment) {
+      } else if (statement instanceof Comment) {
         continue;
       } else if (statement instanceof Statements.IncludeType) {
         continue;
@@ -72,7 +73,7 @@ export class Indentation implements IRule {
     return list.pop();
   }
 */
-  private familyContainsTry(statement: Statements.Statement): boolean {
+  private familyContainsTry(statement: Statement): boolean {
     let parent = statement.getParent();
     if (!parent) {
       return false;
@@ -83,7 +84,7 @@ export class Indentation implements IRule {
     }
   }
 
-  private countParents(statement: Statements.Statement): number {
+  private countParents(statement: Statement): number {
     let parent = statement.getParent();
     if (parent) {
       return 1 + this.countParents(parent);

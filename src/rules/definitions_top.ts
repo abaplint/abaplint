@@ -1,6 +1,7 @@
 import { IRule } from "./rule";
 import File from "../file";
 import Issue from "../issue";
+import {Comment} from "../statements/statement";
 import * as Statements from "../statements/";
 
 export class DefinitionsTopConf {
@@ -43,7 +44,7 @@ export class DefinitionsTop implements IRule {
           || statement instanceof Statements.Method) {
         mode = DEFINITION;
         issue = undefined;
-      } else if (statement instanceof Statements.Comment) {
+      } else if (statement instanceof Comment) {
         continue;
       } else if (statement instanceof Statements.Endform
           || statement instanceof Statements.Endmethod) {

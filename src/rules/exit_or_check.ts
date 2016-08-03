@@ -1,6 +1,7 @@
 import { IRule } from "./rule";
 import File from "../file";
 import Issue from "../issue";
+import { Statement } from "../statements/statement";
 import * as Statements from "../statements/";
 
 export class ExitOrCheckConf {
@@ -28,7 +29,7 @@ export class ExitOrCheck implements IRule {
   }
 
   public run(file: File) {
-    let stack: Array<Statements.Statement> = [];
+    let stack: Array<Statement> = [];
 
     for (let statement of file.getStatements()) {
       if (statement instanceof Statements.Loop

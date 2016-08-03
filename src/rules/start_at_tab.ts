@@ -2,7 +2,7 @@ import { IRule } from "./rule";
 import File from "../file";
 import Issue from "../issue";
 import Position from "../position";
-import * as Statements from "../statements/";
+import {Comment} from "../statements/statement";
 
 export class StartAtTabConf {
   public enabled: boolean = true;
@@ -32,7 +32,7 @@ export class StartAtTab implements IRule {
     let previous: Position = undefined;
 
     for (let statement of file.getStatements()) {
-      if (statement instanceof Statements.Comment) {
+      if (statement instanceof Comment) {
         continue;
       }
 

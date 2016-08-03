@@ -1,7 +1,7 @@
 import { IRule } from "./rule";
 import File from "../file";
 import Issue from "../issue";
-import * as Statements from "../statements/";
+import {Comment} from "../statements/statement";
 
 export class MaxOneStatementConf {
   public enabled: boolean = true;
@@ -32,7 +32,7 @@ export class MaxOneStatement implements IRule {
     let reported: number = 0;
     for (let statement of file.getStatements()) {
       let term = statement.getTerminator();
-      if (statement instanceof Statements.Comment || term === ",") {
+      if (statement instanceof Comment || term === ",") {
         continue;
       }
 

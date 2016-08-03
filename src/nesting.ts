@@ -1,15 +1,16 @@
 import File from "./file";
+import { Statement } from "./statements/statement";
 import * as Statements from "./statements/";
 
 export default class Nesting {
 
-  public static run(file: File): Array<Statements.Statement> {
+  public static run(file: File): Array<Statement> {
 
 // todo: save END statement references?
 // todo: try-catch
 
     let result = [];
-    let stack: Array<Statements.Statement> = [];
+    let stack: Array<Statement> = [];
 
     for (let statement of file.getStatements()) {
 

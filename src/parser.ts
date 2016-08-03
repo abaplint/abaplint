@@ -1,6 +1,8 @@
 import * as Tokens from "./tokens/";
 import File from "./file";
 import * as Statements from "./statements/";
+import Registry from "./registry";
+import {Statement, Unknown, Empty, Comment, MacroCall, MacroContent} from "./statements/statement";
 
 class Timer {
   private times;
@@ -38,10 +40,10 @@ class Timer {
 }
 
 export default class Parser {
-  private static statements: Array<Statements.Statement>;
+  private static statements: Array<Statement>;
   private static timer;
 
-  public static run(file: File, timer = false): Array<Statements.Statement> {
+  public static run(file: File, timer = false): Array<Statement> {
     this.statements = [];
     if (timer) {
       console.log(file.getFilename());
@@ -60,7 +62,7 @@ export default class Parser {
   }
 
   private static macros() {
-    let result: Array<Statements.Statement> = [];
+    let result: Array<Statement> = [];
     let define = false;
 
     for (let statement of this.statements) {
@@ -68,8 +70,8 @@ export default class Parser {
         define = true;
       } else if (statement instanceof Statements.Enddefine) {
         define = false;
-      } else if (statement instanceof Statements.Unknown && define === true) {
-        statement = new Statements.Macro(statement.getTokens());
+      } else if (statement instanceof Unknown && define === true) {
+        statement = new MacroContent(statement.getTokens());
       }
 
       result.push(statement);
@@ -80,12 +82,15 @@ export default class Parser {
 
 // for each statement, run statement matchers to figure out which kind of statement it is
   private static categorize() {
-    let result: Array<Statements.Statement> = [];
+    let result: Array<Statement> = [];
 
     for (let statement of this.statements) {
-      let last = statement.getTokens()[statement.getTokens().length - 1];
+      let length = statement.getTokens().length;
+      let last = statement.getTokens()[length - 1];
 // console.dir(statement.getTokens());
-      if (statement instanceof Statements.Unknown && last instanceof Tokens.Punctuation) {
+      if (length === 1 && last instanceof Tokens.Punctuation) {
+        statement = new Empty(statement.getTokens());
+      } else if (statement instanceof Unknown && last instanceof Tokens.Punctuation) {
         for (let st in Statements) {
           if (this.timer) {
             this.timer.start();
@@ -100,6 +105,13 @@ export default class Parser {
           }
         }
       }
+      if (statement instanceof Unknown) {
+        let first = statement.getTokens()[0];
+        if (Registry.isMacro(first.getStr())) {
+          statement = new MacroCall(statement.getTokens());
+        }
+      }
+
       result.push(statement);
     }
 // console.log(result);
@@ -113,18 +125,18 @@ export default class Parser {
 
     for (let token of tokens) {
       if (token instanceof Tokens.Comment) {
-        this.statements.push(new Statements.Comment([token]));
+        this.statements.push(new Comment([token]));
         continue;
       }
 
       add.push(token);
       if (token.getStr() === ".") {
-        let statement = new Statements.Unknown(pre.concat(add));
+        let statement = new Unknown(pre.concat(add));
         this.statements.push(statement);
         add = [];
         pre = [];
       } else if (token.getStr() === "," && pre.length > 0) {
-        let statement = new Statements.Unknown(pre.concat(add));
+        let statement = new Unknown(pre.concat(add));
         this.statements.push(statement);
         add = [];
       } else if (token.getStr() === ":") {
@@ -135,7 +147,7 @@ export default class Parser {
     }
 
     if (add.length > 0) {
-      let statement = new Statements.Unknown(pre.concat(add));
+      let statement = new Unknown(pre.concat(add));
       this.statements.push(statement);
     }
   }

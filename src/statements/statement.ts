@@ -72,5 +72,14 @@ export abstract class Statement {
   public getTerminator(): string {
     return this.getTokens()[this.getTokens().length - 1].getStr();
   }
-
 }
+
+export class Unknown extends Statement { }
+
+export class Comment extends Statement { }
+
+export class Empty extends Statement { }
+
+export class MacroCall extends Statement { }
+
+export class MacroContent extends Statement { }

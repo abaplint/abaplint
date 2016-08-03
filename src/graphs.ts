@@ -17,18 +17,10 @@ class Graph {
       this.handle("reuse_", name, Reuse[foo]().get_runnable(), true);
     }
 
-    let missing = 0;
     for (let st in Statements) {
       let name = st.toLowerCase();
-      if (Statements[st].get_matcher !== undefined) {
-        this.handle("", name, Statements[st].get_matcher(), false);
-      } else {
-        console.log("Missing: " + name);
-        missing++;
-      }
+      this.handle("", name, Statements[st].get_matcher(), false);
     }
-    console.log(missing + " top level statements missing matchers");
-// todo, when all get_matcher are implemented, the match methods can be removed?
   }
 }
 

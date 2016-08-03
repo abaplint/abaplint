@@ -1,9 +1,8 @@
-export * from "./statement";
+// do not include statement.ts in this file, it only contains "real" statements
+// see statement.ts for Unknown, Empty, Macro and Comment statements
 export * from "./data";
 export * from "./report";
 export * from "./write";
-export * from "./unknown";
-export * from "./comment";
 export * from "./endmethod";
 export * from "./method";
 export * from "./endform";
@@ -105,7 +104,6 @@ export * from "./compute";
 export * from "./multiply";
 export * from "./divide";
 export * from "./format";
-export * from "./empty";
 export * from "./syntax_check";
 export * from "./aliases";
 export * from "./method_def";
@@ -132,5 +130,3 @@ export * from "./set_country";
 export * from "./function";
 export * from "./type_pools";
 export * from "./type_pool";
-
-export * from "./macro";

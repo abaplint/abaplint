@@ -1,7 +1,7 @@
 import { IRule } from "./rule";
 import File from "../file";
 import Issue from "../issue";
-import * as Statements from "../statements/";
+import { Empty } from "../statements/statement";
 
 export class EmptyStatementConf {
   public enabled: boolean = true;
@@ -31,7 +31,7 @@ export class EmptyStatement implements IRule {
     let statements = file.getStatements();
 
     for (let sta of statements) {
-      if (sta instanceof Statements.Empty) {
+      if (sta instanceof Empty) {
         let issue = new Issue(this, sta.getStart(), file);
         file.add(issue);
         }

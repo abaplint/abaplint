@@ -1,11 +1,11 @@
 import { Token } from "./tokens/";
-import * as Statements from "./statements/";
+import { Statement } from "./statements/statement";
 import Issue from "./issue";
 
 export default class File {
   private tokens: Array<Token> = [];
-  private statements: Array<Statements.Statement> = [];
-  private nesting: Array<Statements.Statement> = [];
+  private statements: Array<Statement> = [];
+  private nesting: Array<Statement> = [];
   private issues: Array<Issue> = [];
   private raw: string = "";
   private filename: string = "";
@@ -46,7 +46,7 @@ export default class File {
     this.tokens = tokens;
   }
 
-  public setStatements(statements: Array<Statements.Statement>) {
+  public setStatements(statements: Array<Statement>) {
     this.statements = statements;
   }
 
@@ -54,15 +54,15 @@ export default class File {
     return this.tokens;
   }
 
-  public getStatements(): Array<Statements.Statement> {
+  public getStatements(): Array<Statement> {
     return this.statements;
   }
 
-  public setNesting(nesting: Array<Statements.Statement>) {
+  public setNesting(nesting: Array<Statement>) {
     this.nesting = nesting;
   }
 
-  public getNesting(): Array<Statements.Statement> {
+  public getNesting(): Array<Statement> {
     return this.nesting;
   }
 
