@@ -2,6 +2,7 @@ import * as Tokens from "./tokens/";
 import File from "./file";
 import * as Statements from "./statements/";
 import Registry from "./registry";
+import * as Combi from "./combi";
 import {Statement, Unknown, Empty, Comment, MacroCall, MacroContent} from "./statements/statement";
 
 class Timer {
@@ -90,14 +91,20 @@ export default class Parser {
 // console.dir(statement.getTokens());
       if (length === 1 && last instanceof Tokens.Punctuation) {
         statement = new Empty(statement.getTokens());
-      } else if (statement instanceof Unknown && last instanceof Tokens.Punctuation) {
+      } else if (statement instanceof Unknown
+          && last instanceof Tokens.Punctuation) {
         for (let st in Statements) {
           if (this.timer) {
             this.timer.start();
           }
-          let known = Statements[st].match(statement.getTokens());
+          let matcher = Statements[st].get_matcher();
+          let match = Combi.Combi.run(matcher, statement.getTokens(), true);
           if (this.timer) {
             this.timer.stop(st);
+          }
+          let known = undefined;
+          if (match === true) {
+            known = new Statements[st](statement.getTokens());
           }
           if (known !== undefined) {
             statement = known;
@@ -106,15 +113,13 @@ export default class Parser {
         }
       }
       if (statement instanceof Unknown) {
-        let first = statement.getTokens()[0];
-        if (Registry.isMacro(first.getStr())) {
+        if (Registry.isMacro(statement.getTokens()[0].getStr())) {
           statement = new MacroCall(statement.getTokens());
         }
       }
 
       result.push(statement);
     }
-// console.log(result);
     this.statements = result;
   }
 
