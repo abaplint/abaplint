@@ -6,4 +6,4 @@ let tests = [
   "UPDATE (c_tabname) SET data_str = iv_data WHERE type = iv_type AND value = iv_value.",
 ];
 
-statementType(tests, "UPDATE", Statements.Update);
+statementType(tests, "UPDATE", Statements.UpdateDatabase);

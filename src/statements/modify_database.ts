@@ -8,19 +8,14 @@ let seq = Combi.seq;
 let alt = Combi.alt;
 let opt = Combi.opt;
 
-export class Insert extends Statement {
+export class ModifyDatabase extends Statement {
 
   public static get_matcher(): Combi.IRunnable {
-    let target = alt(Reuse.source(), Reuse.dynamic());
-    let assigning = seq(str("ASSIGNING"), Reuse.field_symbol());
+    let target = alt(Reuse.field(), seq(str("("), Reuse.field(), str(")")));
 
-    let ret = seq(str("INSERT"),
-                  opt(str("LINES OF")),
+    let ret = seq(str("MODIFY"),
                   target,
-                  alt(str("FROM"), str("INTO")),
-                  opt(str("TABLE")),
-                  Reuse.source(),
-                  opt(assigning));
+                  opt(seq(str("FROM"), Reuse.source())));
 
     return ret;
   }
@@ -28,7 +23,7 @@ export class Insert extends Statement {
   public static match(tokens: Array<Token>): Statement {
     let result = Combi.Combi.run(this.get_matcher(), tokens, true);
     if (result === true) {
-      return new Insert(tokens);
+      return new ModifyDatabase(tokens);
     }
     return undefined;
   }

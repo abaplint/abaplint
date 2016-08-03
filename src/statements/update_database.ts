@@ -8,7 +8,7 @@ let seq = Combi.seq;
 let opt = Combi.opt;
 let alt = Combi.alt;
 
-export class Update extends Statement {
+export class UpdateDatabase extends Statement {
 
   public static get_matcher(): Combi.IRunnable {
     let target = alt(Reuse.field(), Reuse.dynamic());
@@ -25,7 +25,7 @@ export class Update extends Statement {
   public static match(tokens: Array<Token>): Statement {
     let result = Combi.Combi.run(this.get_matcher(), tokens, true);
     if (result === true) {
-      return new Update(tokens);
+      return new UpdateDatabase(tokens);
     }
     return undefined;
   }

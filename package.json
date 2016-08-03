@@ -15,13 +15,16 @@
     "browserify": "browserify build/web/script/script.js -o web/script/bundle.js -s run",
     "uglify": "uglifyjs web/script/bundle.js --compress warnings=false --mangle --keep-fnames -o web/script/bundle.js",
     "tslint": "tslint -c tslint.json 'src/**/*.ts'",
-    "precompile": "tsc --pretty",
+
+    "precompile": "npm run clean && tsc --pretty",
     "compile": "npm run browserify ",
     "postcompile": "npm run uglify",
+
     "pretest": "npm run compile",
-    "clean": "rm -rf build",
     "test": "mocha --recursive --reporter progress build/test",
     "posttest": "npm run tslint",
+
+    "clean": "rm -rf build",
     "viz": "mkdir -p web/viz && rm -f web/viz/*.txt && rm -f web/viz/*.svg && node build/src/graphs.js && node web/script/generate.js",
     "typings": "typings install",
     "precoverage": "istanbul cover ./node_modules/mocha/bin/_mocha build/test --report lcovonly -- -R spec",

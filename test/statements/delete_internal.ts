@@ -9,8 +9,6 @@ let tests = [
   "DELETE TABLE mt_list FROM io_repo.",
   "DELETE TABLE lt_not WITH TABLE KEY name = lv_name.",
   "DELETE lt_dists TO lv_nlen.",
-  "DELETE FROM (c_tabname) WHERE type = iv_type AND value = iv_value.",
-  "DELETE FROM vclmf WHERE vclname = lv_vclname.",
 ];
 
-statementType(tests, "DELETE", Statements.Delete);
+statementType(tests, "DELETE", Statements.DeleteInternal);

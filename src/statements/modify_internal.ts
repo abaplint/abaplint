@@ -8,7 +8,7 @@ let seq = Combi.seq;
 let alt = Combi.alt;
 let opt = Combi.opt;
 
-export class Modify extends Statement {
+export class ModifyInternal extends Statement {
 
   public static get_matcher(): Combi.IRunnable {
     let target = alt(Reuse.field(), seq(str("("), Reuse.field(), str(")")));
@@ -16,8 +16,7 @@ export class Modify extends Statement {
 
     let ret = seq(str("MODIFY"),
                   target,
-                  opt(index),
-                  opt(seq(str("FROM"), Reuse.source())));
+                  opt(seq(index, str("FROM"), Reuse.source())));
 
     return ret;
   }
@@ -25,7 +24,7 @@ export class Modify extends Statement {
   public static match(tokens: Array<Token>): Statement {
     let result = Combi.Combi.run(this.get_matcher(), tokens, true);
     if (result === true) {
-      return new Modify(tokens);
+      return new ModifyInternal(tokens);
     }
     return undefined;
   }

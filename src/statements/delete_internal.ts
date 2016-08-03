@@ -9,7 +9,7 @@ let alt = Combi.alt;
 let opt = Combi.opt;
 let plus = Combi.plus;
 
-export class Delete extends Statement {
+export class DeleteInternal extends Statement {
 
   public static get_matcher(): Combi.IRunnable {
 // todo, is READ and DELETE similar? something can be reused?
@@ -21,16 +21,13 @@ export class Delete extends Statement {
 
     let adjacent = seq(str("ADJACENT DUPLICATES FROM"), Reuse.target(), str("COMPARING"), plus(Reuse.field()));
 
-    let source = alt(Reuse.dynamic(), Reuse.field());
-    let from = seq(str("FROM"), source, opt(where));
-
-    return seq(str("DELETE"), alt(table, from, adjacent));
+    return seq(str("DELETE"), alt(table, adjacent));
   }
 
   public static match(tokens: Array<Token>): Statement {
     let result = Combi.Combi.run(this.get_matcher( ), tokens, true);
     if (result === true) {
-      return new Delete(tokens);
+      return new DeleteInternal(tokens);
     }
     return undefined;
   }
