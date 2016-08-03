@@ -50,7 +50,7 @@
     "chai": "^3.5.0",
     "codecov": "^1.0.1",
     "istanbul": "^0.4.4",
-    "mocha": "^2.5.3",
+    "mocha": "^3.0.0",
     "railroad-diagrams": "git+https://github.com/tabatkins/railroad-diagrams#gh-pages",
     "remap-istanbul": "^0.6.4",
     "tslint": "^3.14.0",
