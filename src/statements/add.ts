@@ -9,9 +9,9 @@ export class Add extends Statement {
 
   public static get_matcher(): Combi.IRunnable {
     let ret = seq(str("ADD"),
-                  Reuse.source().map(),
+                  Reuse.source(),
                   str("TO"),
-                  Reuse.target().map());
+                  Reuse.target());
 
     return ret;
   }

@@ -16,8 +16,11 @@ export default class Node {
     this.children.push(n);
   }
 
+  public setChildren(children: Array<Node>) {
+    this.children = children;
+  }
+
   public getChildren(): Array<Node> {
     return this.children;
   }
-
 }

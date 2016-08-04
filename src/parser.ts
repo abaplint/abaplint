@@ -2,7 +2,8 @@ import * as Tokens from "./tokens/";
 import File from "./file";
 import * as Statements from "./statements/";
 import Registry from "./registry";
-import * as Combi from "./combi";
+import {Combi} from "./combi";
+import Node from "./node";
 import {Statement, Unknown, Empty, Comment, MacroCall, MacroContent} from "./statements/statement";
 
 class Timer {
@@ -99,25 +100,9 @@ export default class Parser {
         statement = new Empty(statement.getTokens());
       } else if (statement instanceof Unknown
           && last instanceof Tokens.Punctuation) {
-        for (let st in Statements) {
-          if (this.timer) {
-            this.timer.start();
-          }
-
-          let matcher = Statements[st].get_matcher();
-          let match = Combi.Combi.run(matcher, this.removeLast(statement.getTokens()));
-
-          if (this.timer) {
-            this.timer.stop(st);
-          }
-          let known = undefined;
-          if (match === true) {
-            known = new Statements[st](statement.getTokens());
-          }
-          if (known !== undefined) {
-            statement = known;
-            break;
-          }
+        let res = this.match(statement);
+        if (res !== undefined) {
+          statement = res;
         }
       }
       if (statement instanceof Unknown) {
@@ -129,6 +114,24 @@ export default class Parser {
       result.push(statement);
     }
     this.statements = result;
+  }
+
+  private static match(statement: Statement): Statement {
+    for (let st in Statements) {
+      if (this.timer) {
+        this.timer.start();
+      }
+      let match = Combi.run(Statements[st].get_matcher(),
+                            this.removeLast(statement.getTokens()),
+                            new Node(st));
+      if (this.timer) {
+        this.timer.stop(st);
+      }
+      if (match === true) {
+        return new Statements[st](statement.getTokens());
+      }
+    }
+    return undefined;
   }
 
 // takes care of splitting tokens into statements, also handles chained statements

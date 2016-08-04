@@ -1,5 +1,6 @@
 import "../typings/index.d.ts";
 import * as Tokens from "./tokens/";
+import Node from "./node";
 
 export class Result {
   private tokens: Array<Tokens.Token>;
@@ -307,17 +308,11 @@ class WordSequence implements IRunnable {
 export class Reuse implements IRunnable {
   private runnable: () => IRunnable;
   private name: string;
-  private _map: boolean;
 
   constructor(runnable: () => IRunnable, name: string) {
     this.runnable = runnable;
     this.name = name;
     this._map = false;
-  }
-
-  public map(): IRunnable {
-    this._map = true;
-    return this;
   }
 
   public run(r: Array<Result>): Array<Result> {
@@ -433,7 +428,7 @@ export class Combi {
     return result;
   }
 
-  public static run(runnable: IRunnable, tokens: Array<Tokens.Token>): boolean {
+  public static run(runnable: IRunnable, tokens: Array<Tokens.Token>, parent?: Node): boolean {
     tokens = this.removePragma(tokens);
 
     let input = new Result(tokens);
@@ -443,6 +438,7 @@ export class Combi {
     let success = false;
     for (let res of result) {
       if (res.length() === 0) {
+// todo, add parent children here?
         success = true;
         break;
       }
