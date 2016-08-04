@@ -81,6 +81,12 @@ export default class Parser {
     this.statements = result;
   }
 
+  private static removeLast(tokens: Array<Tokens.Token>): Array<Tokens.Token> {
+    let copy = tokens.slice();
+    copy.pop();
+    return copy;
+  }
+
 // for each statement, run statement matchers to figure out which kind of statement it is
   private static categorize() {
     let result: Array<Statement> = [];
@@ -97,8 +103,10 @@ export default class Parser {
           if (this.timer) {
             this.timer.start();
           }
+
           let matcher = Statements[st].get_matcher();
-          let match = Combi.Combi.run(matcher, statement.getTokens(), true);
+          let match = Combi.Combi.run(matcher, this.removeLast(statement.getTokens()));
+
           if (this.timer) {
             this.timer.stop(st);
           }

@@ -8,10 +8,12 @@ let seq = Combi.seq;
 export class Add extends Statement {
 
   public static get_matcher(): Combi.IRunnable {
-    return seq(str("ADD"),
-               Reuse.source(),
-               str("TO"),
-               Reuse.target());
+    let ret = seq(str("ADD"),
+                  Reuse.source().map(),
+                  str("TO"),
+                  Reuse.target().map());
+
+    return ret;
   }
 
 }

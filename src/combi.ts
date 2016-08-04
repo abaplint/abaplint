@@ -81,7 +81,6 @@ class Word implements IRunnable {
     for (let input of r) {
       if (input.length() !== 0
           && input.peek().getStr().toUpperCase() === this.s.toUpperCase()) {
-//        console.log("match, " + this.s.toUpperCase());
         result.push(input.shift());
       }
     }
@@ -308,10 +307,17 @@ class WordSequence implements IRunnable {
 export class Reuse implements IRunnable {
   private runnable: () => IRunnable;
   private name: string;
+  private _map: boolean;
 
   constructor(runnable: () => IRunnable, name: string) {
     this.runnable = runnable;
     this.name = name;
+    this._map = false;
+  }
+
+  public map(): IRunnable {
+    this._map = true;
+    return this;
   }
 
   public run(r: Array<Result>): Array<Result> {
@@ -427,19 +433,13 @@ export class Combi {
     return result;
   }
 
-  public static run(runnable: IRunnable, tokens: Array<Tokens.Token>, remove = false): boolean {
-    let copy = tokens.slice();
-    if (remove === true) {
-      copy.pop();
-    }
+  public static run(runnable: IRunnable, tokens: Array<Tokens.Token>): boolean {
+    tokens = this.removePragma(tokens);
 
-    copy = copy.filter(function (value) { return !(value instanceof Tokens.Pragma); } );
+    let input = new Result(tokens);
 
-    let input = new Result(copy);
-
-// console.dir(input);
     let result = runnable.run([input]);
-//    console.log("results " + result.length);
+
     let success = false;
     for (let res of result) {
       if (res.length() === 0) {
@@ -449,6 +449,10 @@ export class Combi {
     }
 
     return success;
+  }
+
+  private static removePragma(tokens: Array<Tokens.Token>): Array<Tokens.Token> {
+    return tokens.filter(function (value) { return !(value instanceof Tokens.Pragma); } );
   }
 }
 
