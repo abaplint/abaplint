@@ -118,17 +118,23 @@ export default class Parser {
 
   private static match(statement: Statement): Statement {
     for (let st in Statements) {
+      /*
+      if (st !== "Add") {
+        continue;
+      }
+      */
       if (this.timer) {
         this.timer.start();
       }
+      let root = new Node(st);
       let match = Combi.run(Statements[st].get_matcher(),
                             this.removeLast(statement.getTokens()),
-                            new Node(st));
+                            root);
       if (this.timer) {
         this.timer.stop(st);
       }
       if (match === true) {
-        return new Statements[st](statement.getTokens());
+        return new Statements[st](statement.getTokens(), root);
       }
     }
     return undefined;

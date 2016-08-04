@@ -4,19 +4,39 @@ import Node from "./node";
 
 export class Result {
   private tokens: Array<Tokens.Token>;
+  private nodes: Array<Node>;
 
-  constructor(a: Array<Tokens.Token>) {
+  constructor(a: Array<Tokens.Token>, n?: Array<Node>) {
     this.tokens = a;
+    this.nodes = n;
+    if (this.nodes === undefined) {
+      this.nodes = [];
+    }
   }
 
   public peek(): Tokens.Token {
     return this.tokens[0];
   }
 
-  public shift(): Result {
+// todo, make it non optional
+  public shift(node?: Node): Result {
     let copy = this.tokens.slice();
     copy.shift();
-    return new Result(copy);
+    let cp = this.nodes.slice();
+    cp.push(node);
+    return new Result(copy, cp);
+  }
+
+  public getTokens(): Array<Tokens.Token> {
+    return this.tokens;
+  }
+
+  public getNodes(): Array<Node> {
+    return this.nodes;
+  }
+
+  public setNodes(n: Array<Node>): void {
+    this.nodes = n;
   }
 
   public length(): number {
@@ -52,7 +72,7 @@ class Regex implements IRunnable {
     for (let input of r) {
       if (input.length() !== 0
           && this.regexp.test(input.peek().getStr()) === true) {
-        result.push(input.shift());
+        result.push(input.shift(new Node("Regex", input.peek())));
       }
     }
 
@@ -82,7 +102,7 @@ class Word implements IRunnable {
     for (let input of r) {
       if (input.length() !== 0
           && input.peek().getStr().toUpperCase() === this.s.toUpperCase()) {
-        result.push(input.shift());
+        result.push(input.shift(new Node("Word", input.peek())));
       }
     }
     return result;
@@ -112,7 +132,7 @@ class Token implements IRunnable {
 //      console.dir(input.peek().constructor);
       if (input.length() !== 0
           && this.className(input.peek()).toUpperCase() === this.s.toUpperCase()) {
-        result.push(input.shift());
+        result.push(input.shift(new Node("Token", input.peek())));
       }
     }
     return result;
@@ -312,11 +332,46 @@ export class Reuse implements IRunnable {
   constructor(runnable: () => IRunnable, name: string) {
     this.runnable = runnable;
     this.name = name;
-    this._map = false;
   }
 
   public run(r: Array<Result>): Array<Result> {
-    return this.runnable().run(r);
+    let results: Array<Result> = [];
+
+    for (let input of r) {
+      let temp = this.runnable().run([input]);
+
+      let moo: Array<Result> = [];
+      for (let t of temp) {
+        let consumed = input.length() - t.length();
+        if (consumed > 0) {
+//          console.log("\nconsumed " + consumed + " " + this.name);
+          let length = t.getNodes().length;
+          let con = t.getNodes().slice(length - consumed);
+//          console.dir(con);
+//          console.log(JSON.stringify(input.getTokens(), null, 0));
+//          console.log(JSON.stringify(t.getTokens(), null, 0));
+          let re = new Node("reuse_" + this.name).setChildren(con);
+//          console.log(JSON.stringify(t.getNodes().slice(0, length - consumed), null, 0));
+          t.setNodes(t.getNodes().slice(0, length - consumed).concat([re]));
+        }
+        moo.push(t);
+      }
+
+      results = results.concat(moo);
+    }
+
+//    results = this.runnable().run(r);
+/*
+    console.log("name " + this.name);
+    for (let res of results) {
+      if (res.length() === 0) {
+        console.log("match " + this.name);
+        res.getNodes();
+        res.setNodes([new Node(this.name).setChildren(res.getNodes())]);
+      }
+    }
+*/
+    return results;
   }
 
   public get_runnable(): IRunnable {
@@ -438,7 +493,9 @@ export class Combi {
     let success = false;
     for (let res of result) {
       if (res.length() === 0) {
-// todo, add parent children here?
+        if (parent) {
+          parent.setChildren(res.getNodes());
+        }
         success = true;
         break;
       }

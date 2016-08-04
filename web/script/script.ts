@@ -42,6 +42,16 @@ function buildStatements(input: string, file: File): string {
   return lines.join("\n");
 }
 
+function buildAst(file: File): string {
+  let ret = "";
+
+  for (let statement of file.getStatements()) {
+    ret = ret + statement.getRoot().viz() + "<br>";
+  }
+
+  return ret;
+}
+
 function process(): File {
   let input = (document.getElementById("input") as HTMLInputElement).value;
   input = stripNewline(input);
@@ -80,6 +90,15 @@ export function statements() {
 
   let el = document.getElementById("result");
   el.innerText = buildStatements(file.getRaw(), file);
+
+  document.getElementById("abap").innerText = file.getRaw();
+}
+
+export function ast() {
+  let file = process();
+
+  let el = document.getElementById("info");
+  el.innerHTML = buildAst(file);
 
   document.getElementById("abap").innerText = file.getRaw();
 }
