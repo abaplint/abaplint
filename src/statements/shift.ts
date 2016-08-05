@@ -10,17 +10,18 @@ let opt = Combi.opt;
 export class Shift extends Statement {
 
   public static get_matcher(): Combi.IRunnable {
-    let dir = alt(str("LEFT DELETING LEADING"),
-                  str("RIGHT DELETING TRAILING"),
-                  str("RIGHT BY"),
-                  str("LEFT BY"),
-                  str("BY"));
+    let dir = alt(seq(alt(str("LEFT DELETING LEADING"),
+                          str("RIGHT DELETING TRAILING"),
+                          str("RIGHT BY"),
+                          str("LEFT BY"),
+                          str("BY")),
+                      Reuse.source(), opt(str("PLACES"))),
+                  str("RIGHT"),
+                  str("LEFT"));
 
     return seq(str("SHIFT"),
                Reuse.target(),
                opt(seq(dir,
-                       Reuse.source(),
-                       opt(str("PLACES")),
                        opt(str("IN CHARACTER MODE")))));
   }
 

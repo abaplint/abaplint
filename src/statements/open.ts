@@ -10,8 +10,11 @@ let alt = Combi.alt;
 export class Open extends Statement {
 
   public static get_matcher(): Combi.IRunnable {
-    let mode = alt(str("FOR OUTPUT"), str("FOR INPUT"));
-    let ret = seq(str("OPEN DATASET"), Reuse.field(), mode, opt(str("IN BINARY MODE")));
+    let direction = alt(str("FOR OUTPUT"), str("FOR INPUT"));
+    let mode = alt(str("IN BINARY MODE"), str("IN TEXT MODE"));
+    let encoding = str("ENCODING DEFAULT");
+
+    let ret = seq(str("OPEN DATASET"), Reuse.field(), direction, opt(mode), opt(encoding));
     return ret;
   }
 

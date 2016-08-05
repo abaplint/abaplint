@@ -4,6 +4,7 @@ import * as Statements from "../../src/statements/";
 let tests = [
   "SORT mt_items BY txt ASCENDING AS TEXT.",
   "SORT <fs_table> BY (lt_otab).",
+  "SORT lt_weight DESCENDING.",
   "SORT rs_component-ctlr_metadata BY def-sdf ASCENDING.",
 ];
 

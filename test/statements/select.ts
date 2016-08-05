@@ -14,6 +14,7 @@ let tests = [
   "SELECT e070~trkorr as4user FROM e070 INNER JOIN e071 ON e070~trkorr = e071~trkorr INTO TABLE gt_objects.",
   "SELECT COUNT( * ) FROM dd08l WHERE arbgb = <ls_t100>-arbgb.",
   "SELECT * INTO TABLE gt_sbook[] FROM sbook UP TO 10 ROWS.",
+  "SELECT COUNT( * ) INTO rv_count FROM foo INNER JOIN bar ON bar~field = foo~field WHERE mat_id IN it_mat_id.",
   "SELECT name INTO TABLE lt_icon FROM icon WHERE name IN s_icon ORDER BY name.",
   "SELECT * UP TO 2 ROWS FROM t005t INTO TABLE lt_test.",
 ];

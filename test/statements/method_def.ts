@@ -22,6 +22,7 @@ let tests = [
   "methods add_abap IMPORTING it_abap  TYPE STANDARD TABLE.",
   "CLASS-METHODS user IMPORTING iv_user TYPE xubname DEFAULT sy-uname.",
   "methods find_dot_abapgit RAISING lcx_exception.",
+  "METHODS add_entity EXPORTING VALUE(foobar) TYPE i.",
   "METHODS get_count IMPORTING iv_index TYPE i RETURNING VALUE(rv_value) TYPE i.",
 ];
 

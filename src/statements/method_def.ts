@@ -27,7 +27,7 @@ export class MethodDef extends Statement {
     let fieldsOrValue = seq(alt(value, field), type);
 
     let importing  = seq(str("IMPORTING"),  plus(seq(fieldsOrValue, opt(str("OPTIONAL")))));
-    let exporting  = seq(str("EXPORTING"),  plus(fieldType));
+    let exporting  = seq(str("EXPORTING"),  plus(fieldsOrValue));
     let changing   = seq(str("CHANGING"),   plus(seq(fieldType, opt(str("OPTIONAL")))));
     let returning  = seq(str("RETURNING"),  plus(fieldsValue));
     let raising    = seq(str("RAISING"),    plus(Reuse.class_name()));

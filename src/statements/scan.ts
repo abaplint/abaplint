@@ -20,7 +20,7 @@ export class Scan extends Statement {
                   statements,
                   opt(levels),
                   opt(structures),
-                  str("WITH ANALYSIS"),
+                  opt(str("WITH ANALYSIS")),
                   opt(str("WITH COMMENTS")),
                   opt(seq(str("WITH PRAGMAS"), Reuse.field())));
 

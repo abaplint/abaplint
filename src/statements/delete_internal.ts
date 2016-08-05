@@ -18,7 +18,9 @@ export class DeleteInternal extends Statement {
     let key = seq(alt(str("WITH KEY"), str("WITH TABLE KEY")), plus(Reuse.compare()));
     let table = seq(opt(str("TABLE")), Reuse.target(), alt(index, fromTo, where, key));
 
-    let adjacent = seq(str("ADJACENT DUPLICATES FROM"), Reuse.target(), str("COMPARING"), plus(Reuse.field()));
+    let adjacent = seq(str("ADJACENT DUPLICATES FROM"),
+                       Reuse.target(),
+                       opt(seq(str("COMPARING"), plus(Reuse.field()))));
 
     return seq(str("DELETE"), alt(table, adjacent));
   }

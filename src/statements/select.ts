@@ -7,6 +7,7 @@ let seq = Combi.seq;
 let opt = Combi.opt;
 let alt = Combi.alt;
 let tok = Combi.tok;
+let per = Combi.per;
 let plus = Combi.plus;
 let star = Combi.star;
 
@@ -39,19 +40,12 @@ export class Select extends Statement {
 
     let up = seq(str("UP TO"), Reuse.source(), str("ROWS"));
 
-// todo, use Permutation?
+    let perm = per(from, join, into, forAll, where, order, up);
+
     let ret = seq(str("SELECT"),
                   opt(str("SINGLE")),
                   fields,
-                  opt(up),
-                  opt(into),
-                  from,
-                  opt(join),
-                  opt(into),
-                  opt(forAll),
-                  opt(where),
-                  opt(order),
-                  opt(up));
+                  perm);
 
     return ret;
   }

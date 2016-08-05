@@ -20,6 +20,8 @@ let tests = [
   "  WITH ANALYSIS\n" +
   "  WITH COMMENTS\n" +
   "  WITH PRAGMAS    abap_true.",
+
+  "SCAN ABAP-SOURCE source TOKENS INTO tokens STATEMENTS INTO statements.",
 ];
 
 statementType(tests, "SCAN", Statements.Scan);
