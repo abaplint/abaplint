@@ -25,6 +25,14 @@ export default class Node {
     return this;
   }
 
+  public countTokens(): number {
+    let count = this.children.reduce((a, b) => { return a + b.countTokens(); }, 0);
+    if (this.token) {
+      count++;
+    }
+    return count;
+  }
+
   public getChildren(): Array<Node> {
     return this.children;
   }

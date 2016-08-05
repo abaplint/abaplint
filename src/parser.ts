@@ -97,7 +97,7 @@ export default class Parser {
       let last = statement.getTokens()[length - 1];
 // console.dir(statement.getTokens());
       if (length === 1 && last instanceof Tokens.Punctuation) {
-        statement = new Empty(statement.getTokens());
+        statement = new Empty(statement.getTokens(), new Node("Empty"));
       } else if (statement instanceof Unknown
           && last instanceof Tokens.Punctuation) {
         let res = this.match(statement);
@@ -107,7 +107,7 @@ export default class Parser {
       }
       if (statement instanceof Unknown) {
         if (Registry.isMacro(statement.getTokens()[0].getStr())) {
-          statement = new MacroCall(statement.getTokens());
+          statement = new MacroCall(statement.getTokens(), new Node("MacroCall"));
         }
       }
 
@@ -118,11 +118,11 @@ export default class Parser {
 
   private static match(statement: Statement): Statement {
     for (let st in Statements) {
-      /*
-      if (st !== "Add") {
+/*
+      if (st !== "Export") {
         continue;
       }
-      */
+*/
       if (this.timer) {
         this.timer.start();
       }
@@ -147,7 +147,7 @@ export default class Parser {
 
     for (let token of tokens) {
       if (token instanceof Tokens.Comment) {
-        this.statements.push(new Comment([token]));
+        this.statements.push(new Comment([token], new Node("Comment", token)));
         continue;
       }
 

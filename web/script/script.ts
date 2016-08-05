@@ -46,7 +46,11 @@ function buildAst(file: File): string {
   let ret = "";
 
   for (let statement of file.getStatements()) {
-    ret = ret + statement.getRoot().viz() + "<br>";
+    if (statement.getRoot()) {
+      ret = ret + statement.getRoot().viz() + "<br>";
+    } else {
+      console.log("missing root, " + statement.concatTokens());
+    }
   }
 
   return ret;

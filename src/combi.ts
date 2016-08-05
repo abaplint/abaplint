@@ -31,6 +31,10 @@ export class Result {
     return this.tokens;
   }
 
+  public popNode(): Node {
+    return this.nodes.pop();
+  }
+
   public getNodes(): Array<Node> {
     return this.nodes;
   }
@@ -346,11 +350,21 @@ export class Reuse implements IRunnable {
         if (consumed > 0) {
 //          console.log("\nconsumed " + consumed + " " + this.name);
           let length = t.getNodes().length;
-          let con = t.getNodes().slice(length - consumed);
+//          let con = t.getNodes().slice(length - consumed);
 //          console.dir(con);
 //          console.log(JSON.stringify(input.getTokens(), null, 0));
 //          console.log(JSON.stringify(t.getTokens(), null, 0));
-          let re = new Node("reuse_" + this.name).setChildren(con);
+          let re = new Node("reuse_" + this.name);
+          while (consumed > 0) {
+            let sub = t.popNode();
+/*            if (this.name === "parameter_list_s") {
+              console.log(sub.viz());
+            }
+            */
+            re.addChild(sub);
+            consumed = consumed - sub.countTokens();
+          }
+
 //          console.log(JSON.stringify(t.getNodes().slice(0, length - consumed), null, 0));
           t.setNodes(t.getNodes().slice(0, length - consumed).concat([re]));
         }
