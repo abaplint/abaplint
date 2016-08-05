@@ -24,7 +24,7 @@ export class Class extends Statement {
                    seq(str("INHERITING FROM"), Reuse.class_name()),
                    create,
                    seq(str("FOR TESTING"), risk, duration, risk),
-                   seq(str("FRIENDS"), Reuse.class_name()));
+                   seq(opt(str("GLOBAL")), str("FRIENDS"), Reuse.class_name()));
 
     let def = seq(str("DEFINITION"),
                   opt(alt(str("LOAD"),

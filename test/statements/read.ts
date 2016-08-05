@@ -14,6 +14,7 @@ let tests = [
   "READ TABLE rt_data ASSIGNING FIELD-SYMBOL(<ls_data>) WITH KEY test = <ls_result>-test date = lv_date.",
   "READ TABLE it_filter WITH KEY obj_name = sdf TRANSPORTING NO FIELDS.",
   "READ TABLE lt_cross WITH KEY name = lv_name BINARY SEARCH TRANSPORTING NO FIELDS.",
+  "READ TABLE lt_data WITH TABLE KEY k_fg COMPONENTS foo = bar TRANSPORTING NO FIELDS.",
 ];
 
 statementType(tests, "READ", Statements.Read);

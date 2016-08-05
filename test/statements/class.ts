@@ -18,6 +18,8 @@ let tests = [
   "CLASS zcl_aoc_super DEFINITION LOCAL FRIENDS ltcl_test.",
   "CLASS lcl_repo_srv DEFINITION FINAL CREATE PRIVATE FRIENDS lcl_app.",
   "CLASS lcl_object_tabl DEFINITION INHERITING FROM lcl_objects_super FINAL.",
+
+  "class zcl_foo definition public inheriting from zcl_super final create private global friends zcl_factory.",
 ];
 
 statementType(tests, "CLASS", Statements.Class);
