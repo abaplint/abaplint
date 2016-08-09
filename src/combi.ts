@@ -383,11 +383,13 @@ export class Reuse implements IRunnable {
         if (consumed > 0) {
           let length = t.getNodes().length;
           let re = new Node("reuse_" + this.name);
+          let children = [];
           while (consumed > 0) {
             let sub = t.popNode();
-            re.addChild(sub);
+            children.push(sub);
             consumed = consumed - sub.countTokens();
           }
+          re.setChildren(children.reverse());
 
           t.setNodes(t.getNodes().slice(0, length - consumed).concat([re]));
         }
