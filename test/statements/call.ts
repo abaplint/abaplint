@@ -17,6 +17,8 @@ let tests = [
   "ii_client->request->set_header_field( name  = '~request_method' value = 'POST' ).",
   "mo_files->add_string( iv_extra  = 'source' iv_ext    = 'xml' ).",
   "mo_files->add_string( iv_extra  = 'source' ) ##NO_TEXT.",
+  "CALL METHOD lo_obj->(lv_method) PARAMETER-TABLE lt_parameters.",
+  "CALL METHOD <ls_meta>-obj->(<ls_meta>-meta-handler) PARAMETER-TABLE lt_parameters.",
 ];
 
 statementType(tests, "CALL", Statements.Call);
