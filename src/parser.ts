@@ -5,6 +5,7 @@ import Registry from "./registry";
 import {Combi} from "./combi";
 import Node from "./node";
 import {Statement, Unknown, Empty, Comment, MacroCall, MacroContent} from "./statements/statement";
+import {Version} from "./version";
 
 class Timer {
   private times;
@@ -45,7 +46,7 @@ export default class Parser {
   private static statements: Array<Statement>;
   private static timer;
 
-  public static run(file: File, timer = false): Array<Statement> {
+  public static run(file: File, ver = Version.v750, timer = false): Array<Statement> {
     this.statements = [];
     if (timer) {
       console.log(file.getFilename());
@@ -53,7 +54,7 @@ export default class Parser {
     }
 
     this.process(file.getTokens());
-    this.categorize();
+    this.categorize(ver);
     this.macros();
 
     if (timer) {
@@ -89,7 +90,7 @@ export default class Parser {
   }
 
 // for each statement, run statement matchers to figure out which kind of statement it is
-  private static categorize() {
+  private static categorize(ver: Version) {
     let result: Array<Statement> = [];
 
     for (let statement of this.statements) {
@@ -100,7 +101,7 @@ export default class Parser {
         statement = new Empty(statement.getTokens(), new Node("Empty"));
       } else if (statement instanceof Unknown
           && last instanceof Tokens.Punctuation) {
-        let res = this.match(statement);
+        let res = this.match(statement, ver);
         if (res !== undefined) {
           statement = res;
         }
@@ -116,7 +117,7 @@ export default class Parser {
     this.statements = result;
   }
 
-  private static match(statement: Statement): Statement {
+  private static match(statement: Statement, ver: Version): Statement {
     for (let st in Statements) {
 /*
       if (st !== "Export") {
@@ -129,7 +130,8 @@ export default class Parser {
       let root = new Node(st);
       let match = Combi.run(Statements[st].get_matcher(),
                             this.removeLast(statement.getTokens()),
-                            root);
+                            root,
+                            ver);
       if (this.timer) {
         this.timer.stop(st);
       }

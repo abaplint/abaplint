@@ -1,4 +1,5 @@
 import * as Combi from "../combi";
+import {Version} from "../version";
 
 let reg = Combi.regex;
 let seq = Combi.seq;
@@ -6,6 +7,7 @@ let alt = Combi.alt;
 let str = Combi.str;
 let opt = Combi.opt;
 let tok = Combi.tok;
+let ver = Combi.ver;
 let re = Combi.reuse;
 let star = Combi.star;
 let plus = Combi.plus;
@@ -38,7 +40,8 @@ export default class Reuse {
     let left = tok("ParenLeft");
     let data = seq(str("DATA"), left, this.field(), right);
     let fs = seq(str("FIELD-SYMBOL"), left, this.field_symbol(), right);
-    let ret = alt(data, fs);
+
+    let ret = ver(Version.v740sp08, alt(data, fs));
 
     return re(() => { return ret; }, "inline_decl");
   }

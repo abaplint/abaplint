@@ -1,6 +1,7 @@
 import "../typings/index.d.ts";
 import * as Tokens from "./tokens/";
 import Node from "./node";
+import {Version, versionDescription} from "../src/version";
 
 export class Result {
   private tokens: Array<Tokens.Token>;
@@ -154,6 +155,38 @@ class Token implements IRunnable {
     let str = t.constructor.toString();
     return str.match(/\w+/g)[1];
   }
+}
+
+class Vers implements IRunnable {
+
+  private ver: Version;
+  private runnable: IRunnable;
+
+  constructor(ver: Version, runnable: IRunnable) {
+    this.ver = ver;
+    this.runnable = runnable;
+  }
+
+  public run(r: Array<Result>): Array<Result> {
+    if (Combi.getVersion() >= this.ver) {
+      return this.runnable.run(r);
+    } else {
+      return r;
+    }
+  }
+
+  public railroad() {
+    return "Railroad.Sequence(Railroad.Comment(\"" +
+      versionDescription(this.ver) +
+      "\"), " +
+      this.runnable.railroad() +
+      ")";
+  }
+
+  public toStr() {
+    return "Version(" + this.runnable.toStr() + ")";
+  }
+
 }
 
 class Optional implements IRunnable {
@@ -348,24 +381,14 @@ export class Reuse implements IRunnable {
       for (let t of temp) {
         let consumed = input.length() - t.length();
         if (consumed > 0) {
-//          console.log("\nconsumed " + consumed + " " + this.name);
           let length = t.getNodes().length;
-//          let con = t.getNodes().slice(length - consumed);
-//          console.dir(con);
-//          console.log(JSON.stringify(input.getTokens(), null, 0));
-//          console.log(JSON.stringify(t.getTokens(), null, 0));
           let re = new Node("reuse_" + this.name);
           while (consumed > 0) {
             let sub = t.popNode();
-/*            if (this.name === "parameter_list_s") {
-              console.log(sub.viz());
-            }
-            */
             re.addChild(sub);
             consumed = consumed - sub.countTokens();
           }
 
-//          console.log(JSON.stringify(t.getNodes().slice(0, length - consumed), null, 0));
           t.setNodes(t.getNodes().slice(0, length - consumed).concat([re]));
         }
         moo.push(t);
@@ -374,17 +397,6 @@ export class Reuse implements IRunnable {
       results = results.concat(moo);
     }
 
-//    results = this.runnable().run(r);
-/*
-    console.log("name " + this.name);
-    for (let res of results) {
-      if (res.length() === 0) {
-        console.log("match " + this.name);
-        res.getNodes();
-        res.setNodes([new Node(this.name).setChildren(res.getNodes())]);
-      }
-    }
-*/
     return results;
   }
 
@@ -487,6 +499,8 @@ class Alternative implements IRunnable {
 
 export class Combi {
 
+  private static ver: Version;
+
   public static railroad(runnable: IRunnable, complex = false): string {
     let type = "Railroad.Diagram(";
     if (complex === true) {
@@ -497,7 +511,9 @@ export class Combi {
     return result;
   }
 
-  public static run(runnable: IRunnable, tokens: Array<Tokens.Token>, parent?: Node): boolean {
+  public static run(runnable: IRunnable, tokens: Array<Tokens.Token>, parent?: Node, ver = Version.v750): boolean {
+    this.ver = ver;
+
     tokens = this.removePragma(tokens);
 
     let input = new Result(tokens);
@@ -516,6 +532,10 @@ export class Combi {
     }
 
     return success;
+  }
+
+  public static getVersion(): Version {
+    return this.ver;
   }
 
   private static removePragma(tokens: Array<Tokens.Token>): Array<Tokens.Token> {
@@ -556,4 +576,7 @@ export function plus(first: IRunnable): IRunnable {
 }
 export function reuse(run: () => IRunnable, name: string): Reuse {
   return new Reuse(run, name);
+}
+export function ver(ver: Version, first: IRunnable): IRunnable {
+  return new Vers(ver, first);
 }
