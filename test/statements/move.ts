@@ -19,6 +19,9 @@ let tests = [
   "rs_data-len = xstrlen( foo ) - field.",
   "rs_data-len = xstrlen( foo ) - foo( ).",
   "rs_data-len = xstrlen( foo ) - go_stream->rema( ).",
+  "foo = method( 2 ).",
+  "foo = method(\n 2 ).",
+  "foo = method(\n2 ).",
 ];
 
 statementType(tests, "MOVE", Statements.Move);
@@ -26,6 +29,7 @@ statementType(tests, "MOVE", Statements.Move);
 let versions = [
   {abap: "lo_foo = NEW zcl_class( ).", ver: Version.v740sp02},
   {abap: "lo_obj = CAST cl_abap_objectdescr( cl_abap_objectdescr=>describe_by_object_ref( ii_handler ) ).", ver: Version.v740sp02},
+  {abap: "DATA(lo_obj) = CAST cl_abap_objectdescr(\n cl_abap_objectdescr=>describe_by_object_ref( ii_handler ) ).", ver: Version.v740sp02},
   {abap: "foo = CORRESPONDING #( get( ) ).", ver: Version.v740sp05},
 ];
 

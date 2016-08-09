@@ -113,7 +113,7 @@ export default class Lexer {
       }
 
       let whiteAfter = false;
-      if (this.stream.nextChar() === " ") {
+      if (this.stream.nextChar() === " " || this.stream.nextChar() === "\n") {
         whiteAfter = true;
       }
 

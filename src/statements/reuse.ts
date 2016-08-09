@@ -280,10 +280,12 @@ export default class Reuse {
     let matcher = () => {
       let method = seq(this.method_call_chain(), opt(seq(this.arrow_or_dash(), this.field_chain())));
 
+      let rparen = alt(tok("WParenRightW"), tok("WParenRight"));
+
 // paren used for eg. "( 2 + 1 ) * 4"
       let paren = seq(tok("WParenLeftW"),
                       this.source(),
-                      alt(tok("WParenRightW"), tok("WParenRight")));
+                      rparen);
 
       let after = seq(alt(str("&"), str("&&"), this.arith_operator()), this.source());
       let ref = seq(this.arrow(), str("*"));
@@ -298,9 +300,23 @@ export default class Reuse {
                         paren),
                     opt(alt(ref, after, this.table_body())));
 
-      let neww = ver(Version.v740sp02, seq(str("NEW"), this.type_name(), tok("ParenLeftW"), tok("WParenRight")));
-      let cast = ver(Version.v740sp02, seq(str("CAST"), this.type_name(), tok("ParenLeftW"), this.source(), tok("WParenRight")));
-      let corr = ver(Version.v740sp05, seq(str("CORRESPONDING"), this.type_name(), tok("ParenLeftW"), this.source(), tok("WParenRight")));
+      let neww = ver(Version.v740sp02, seq(str("NEW"),
+                                           this.type_name(),
+                                           tok("ParenLeftW"),
+                                           opt(alt(Reuse.source(), Reuse.parameter_list_s())),
+                                           rparen));
+
+      let cast = ver(Version.v740sp02, seq(str("CAST"),
+                                           this.type_name(),
+                                           tok("ParenLeftW"),
+                                           this.source(),
+                                           rparen));
+
+      let corr = ver(Version.v740sp05, seq(str("CORRESPONDING"),
+                                           this.type_name(),
+                                           tok("ParenLeftW"),
+                                           this.source(),
+                                           rparen));
 
       let ret = alt(old, cast, neww, corr);
 

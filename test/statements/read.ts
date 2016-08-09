@@ -15,6 +15,7 @@ let tests = [
   "READ TABLE it_filter WITH KEY obj_name = sdf TRANSPORTING NO FIELDS.",
   "READ TABLE lt_cross WITH KEY name = lv_name BINARY SEARCH TRANSPORTING NO FIELDS.",
   "READ TABLE lt_data WITH TABLE KEY k_fg COMPONENTS foo = bar TRANSPORTING NO FIELDS.",
+  "READ TABLE lo_obj->methods WITH KEY name = ls_meta-meta-handler visibility = cl_abap_objectdescr=>public TRANSPORTING NO FIELDS.",
 ];
 
 statementType(tests, "READ", Statements.Read);
