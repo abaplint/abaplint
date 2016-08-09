@@ -41,7 +41,7 @@ export default class Reuse {
     let data = seq(str("DATA"), left, this.field(), right);
     let fs = seq(str("FIELD-SYMBOL"), left, this.field_symbol(), right);
 
-    let ret = ver(Version.v740sp08, alt(data, fs));
+    let ret = ver(Version.v740sp02, alt(data, fs));
 
     return re(() => { return ret; }, "inline_decl");
   }
@@ -232,6 +232,10 @@ export default class Reuse {
     return re(() => { return reg(/^\w+$/); }, "class_name");
   }
 
+  public static type_name(): Combi.Reuse {
+    return re(() => { return alt(reg(/^\w+$/), str("#")); }, "type_name");
+  }
+
   public static method_call(): Combi.Reuse {
     let ret = seq(this.method_name(),
                   alt(tok("ParenLeftW"), tok("ParenLeft")),
@@ -272,7 +276,6 @@ export default class Reuse {
     return re(() => { return ret; }, "table_body");
   }
 
-
   public static source(): Combi.Reuse {
     let matcher = () => {
       let method = seq(this.method_call_chain(), opt(seq(this.arrow_or_dash(), this.field_chain())));
@@ -287,13 +290,19 @@ export default class Reuse {
 
       let boolc = seq(str("BOOLC"), tok("ParenLeftW"), this.cond(), str(")"));
 
-      let ret = seq(alt(this.constant(),
+      let old = seq(alt(this.constant(),
                         this.string_template(),
                         boolc,
                         method,
                         this.field_chain(),
                         paren),
                     opt(alt(ref, after, this.table_body())));
+
+      let neww = ver(Version.v740sp02, seq(str("NEW"), this.type_name(), tok("ParenLeftW"), tok("WParenRight")));
+      let cast = ver(Version.v740sp02, seq(str("CAST"), this.type_name(), tok("ParenLeftW"), this.source(), tok("WParenRight")));
+      let corr = ver(Version.v740sp05, seq(str("CORRESPONDING"), this.type_name(), tok("ParenLeftW"), this.source(), tok("WParenRight")));
+
+      let ret = alt(old, cast, neww, corr);
 
       return ret; };
 
@@ -349,7 +358,7 @@ export default class Reuse {
 
     let key = seq(str("WITH"),
                   opt(alt(str("NON-UNIQUE"), str("UNIQUE"))),
-                  opt(str("DEFAULT")),
+                  opt(alt(str("DEFAULT"), ver(Version.v740sp02, str("EMPTY")))),
                   str("KEY"),
                   star(this.field_sub()));
 

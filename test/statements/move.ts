@@ -1,5 +1,6 @@
-import {statementType} from "../utils";
+import {statementType, statementVersion} from "../utils";
 import * as Statements from "../../src/statements/";
+import {Version} from "../../src/version";
 
 let tests = [
   "move 2 to lv_foo.",
@@ -21,3 +22,11 @@ let tests = [
 ];
 
 statementType(tests, "MOVE", Statements.Move);
+
+let versions = [
+  {abap: "lo_foo = NEW zcl_class( ).", ver: Version.v740sp02},
+  {abap: "lo_obj = CAST cl_abap_objectdescr( cl_abap_objectdescr=>describe_by_object_ref( ii_handler ) ).", ver: Version.v740sp02},
+  {abap: "foo = CORRESPONDING #( get( ) ).", ver: Version.v740sp05},
+];
+
+statementVersion(versions, "MOVE", Statements.Move);

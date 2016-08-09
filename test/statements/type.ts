@@ -1,5 +1,6 @@
-import {statementType} from "../utils";
+import {statementType, statementVersion} from "../utils";
 import * as Statements from "../../src/statements/";
+import {Version} from "../../src/version";
 
 let tests = [
   "TYPES ty_type TYPE c LENGTH 6.",
@@ -8,3 +9,9 @@ let tests = [
 ];
 
 statementType(tests, "TYPE", Statements.Type);
+
+let versions = [
+  {abap: "types tt_foo TYPE STANDARD TABLE OF ty_foo WITH EMPTY KEY.", ver: Version.v740sp02},
+];
+
+statementVersion(versions, "TYPE", Statements.Type);

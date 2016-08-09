@@ -31,7 +31,7 @@ let tests = [
 statementType(tests, "APPEND", Statements.Append);
 
 let versions = [
-  {abap: "APPEND INITIAL LINE TO <ls_data>-sub ASSIGNING FIELD-SYMBOL(<ls_sub>).", ver: Version.v740sp08},
+  {abap: "APPEND INITIAL LINE TO <ls_data>-sub ASSIGNING FIELD-SYMBOL(<ls_sub>).", ver: Version.v740sp02},
 ];
 
 statementVersion(versions, "APPEND", Statements.Append);

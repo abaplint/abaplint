@@ -126,7 +126,7 @@ export default class Lexer {
         tok = new Tokens.String(pos, s);
       } else if (this.m === Mode.Template) {
         tok = new Tokens.StringTemplate(pos, s);
-      } else if (s.substr(0, 1) === "#") {
+      } else if (s.substr(0, 1) === "#" && s.length > 1) {
         tok = new Tokens.Pragma(pos, s);
       } else if (s.length === 1 && (s === "." || s === ",")) {
         tok = new Tokens.Punctuation(pos, s);
