@@ -3,6 +3,7 @@ import * as Statements from "../../src/statements/";
 import {Version} from "../../src/version";
 
 let tests = [
+  "APPEND lt_table.",
   "append 'sdf' to lt_foo.",
   "APPEND INITIAL LINE TO lt_lines ASSIGNING <ls_line>.",
   "APPEND LINES OF lt_objects TO gt_programs.",

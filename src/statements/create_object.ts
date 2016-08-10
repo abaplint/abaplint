@@ -12,9 +12,16 @@ export class CreateObject extends Statement {
   public static get_matcher(): Combi.IRunnable {
     let exporting = seq(str("EXPORTING"), Reuse.parameter_list_s());
     let exceptions = seq(str("EXCEPTIONS"), Reuse.parameter_list_exceptions());
+    let table = seq(str("PARAMETER-TABLE"), Reuse.source());
 
     let type = seq(str("TYPE"), alt(Reuse.class_name(), Reuse.dynamic()));
-    let ret = seq(str("CREATE OBJECT"), Reuse.target(), opt(type), opt(exporting), opt(exceptions));
+
+    let ret = seq(str("CREATE OBJECT"),
+                  Reuse.target(),
+                  opt(type),
+                  opt(alt(exporting, table)),
+                  opt(exceptions));
+
     return ret;
   }
 

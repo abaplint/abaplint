@@ -9,7 +9,10 @@ let opt = Combi.opt;
 export class Report extends Statement {
 
   public static get_matcher(): Combi.IRunnable {
-    return seq(str("REPORT"), opt(Reuse.field()), opt(seq(str("LINE-SIZE"), Reuse.integer())));
+    return seq(str("REPORT"),
+               opt(Reuse.field()),
+               opt(seq(str("LINE-SIZE"), Reuse.integer())),
+               opt(seq(str("MESSAGE-ID"), Reuse.field())));
   }
 
 }

@@ -20,12 +20,13 @@ export class Read extends Statement {
 
     let components = seq(Reuse.field(), str("COMPONENTS"), plus(Reuse.compare()));
 
-    let key = seq(alt(str("WITH KEY"), str("WITH TABLE KEY")), alt(plus(Reuse.compare()), components), opt(str("BINARY SEARCH")));
+    let key = seq(alt(str("WITH KEY"), str("WITH TABLE KEY")), alt(plus(Reuse.compare()), components));
 
     let perm = per(alt(index,
                        key,
                        seq(str("FROM"), Reuse.source())),
-                   target);
+                   target,
+                   str("BINARY SEARCH"));
 
     return seq(str("READ TABLE"),
                Reuse.source(),

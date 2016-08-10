@@ -17,6 +17,7 @@ let tests = [
   "READ TABLE lt_data WITH TABLE KEY k_fg COMPONENTS foo = bar TRANSPORTING NO FIELDS.",
   "READ TABLE lo_obj->methods WITH KEY name = ls_meta-meta-handler visibility = cl_abap_objectdescr=>public TRANSPORTING NO FIELDS.",
   "READ TABLE entities REFERENCE INTO node WITH KEY name = iv_name.",
+  "READ TABLE lt_table WITH KEY field = lv_value TRANSPORTING NO FIELDS BINARY SEARCH.",
 ];
 
 statementType(tests, "READ", Statements.Read);

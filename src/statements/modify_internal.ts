@@ -13,9 +13,11 @@ export class ModifyInternal extends Statement {
     let target = alt(Reuse.field(), seq(str("("), Reuse.field(), str(")")));
     let index = seq(str("INDEX"), Reuse.source());
 
+    let transporting = seq(str("TRANSPORTING"), Reuse.field());
+
     let ret = seq(str("MODIFY"),
                   target,
-                  opt(seq(index, str("FROM"), Reuse.source())));
+                  opt(seq(index, str("FROM"), Reuse.source(), opt(transporting))));
 
     return ret;
   }

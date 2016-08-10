@@ -3,6 +3,8 @@ import * as Statements from "../../src/statements/";
 
 let tests = [
   "SET TITLEBAR 'TITLE'.",
+  "SET TITLEBAR 'TITLE_2000' WITH text-t08.",
+  "SET TITLEBAR 'TITLE_3000' OF PROGRAM sy-cprog WITH text-001.",
 ];
 
 statementType(tests, "SET TITLEBAR", Statements.SetTitlebar);

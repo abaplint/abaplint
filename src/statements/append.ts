@@ -15,9 +15,9 @@ export class Append extends Statement {
 
     return seq(str("APPEND"),
                alt(str("INITIAL LINE"), seq(opt(str("LINES OF")), Reuse.source())),
-               str("TO"),
-               Reuse.target(),
-               opt(alt(assigning, reference)));
+               opt(seq(str("TO"),
+                       Reuse.target(),
+                       opt(alt(assigning, reference)))));
   }
 
 }

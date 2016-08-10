@@ -99,7 +99,12 @@ export default class Reuse {
   }
 
   public static parameter_exception(): Combi.Reuse {
-    return re(() => { return seq(this.field(), str("="), this.integer()); }, "parameter_exception");
+    let ret = seq(this.field(),
+                  str("="),
+                  this.integer(),
+                  opt(seq(str("MESSAGE"), Reuse.target())));
+
+    return re(() => { return ret; }, "parameter_exception");
   }
 
   public static parameter_list_exceptions(): Combi.Reuse {

@@ -18,7 +18,7 @@ export class SelectionScreen extends Statement {
                          opt(seq(str("WITH FRAME"), opt(seq(str("TITLE"), Reuse.source())))));
     let endBlock = seq(str("END OF BLOCK"), blockName);
 
-    let beginScreen = seq(str("BEGIN OF SCREEN"), Reuse.integer());
+    let beginScreen = seq(str("BEGIN OF SCREEN"), Reuse.integer(), opt(str("AS SUBSCREEN")));
     let endScreen = seq(str("END OF SCREEN"), Reuse.integer());
 
     let beginLine = str("BEGIN OF LINE");
@@ -38,12 +38,18 @@ export class SelectionScreen extends Statement {
 
     let pos = seq(str("POSITION"), Reuse.integer());
 
+    let incl = seq(str("INCLUDE BLOCKS"), blockName);
+
+    let tabbed = seq(str("BEGIN OF TABBED BLOCK"), Reuse.field(), str("FOR"), Reuse.integer(), str("LINES"));
+
     let ret = seq(str("SELECTION-SCREEN"),
                   alt(comment,
                       func,
                       skip,
                       pos,
+                      incl,
                       beginBlock,
+                      tabbed,
                       endBlock,
                       beginLine,
                       endLine,

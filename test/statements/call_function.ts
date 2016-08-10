@@ -67,6 +67,26 @@ let tests = [
   " DESTINATION iv_rfc_dest\n" +
   " EXPORTING\n" +
   "   wait = abap_true.",
+
+  "CALL FUNCTION 'ZFOOBAR'\n" +
+  " IN BACKGROUND TASK\n" +
+  " EXPORTING\n" +
+  "   field = lv_value.",
+
+  "CALL FUNCTION 'RSSM_EVENT_RAISE'\n" +
+  "  DESTINATION p_rfcdes\n" +
+  "   EXPORTING\n" +
+  "    i_eventid              = p_evid\n" +
+  "    i_eventparm            = space\n" +
+  "  EXCEPTIONS\n" +
+  "    bad_eventid            = 1\n" +
+  "    eventid_does_not_exist = 2\n" +
+  "    eventid_missing        = 3\n" +
+  "    raise_failed           = 4\n" +
+  "    system_failure         = 5  MESSAGE lv_message\n" +
+  "    communication_failure  = 6  MESSAGE lv_message\n" +
+  "    resource_failure       = 7\n" +
+  "    OTHERS                 = 8.",
 ];
 
 statementType(tests, "CALL FUNCTION", Statements.CallFunction);

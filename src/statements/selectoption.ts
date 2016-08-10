@@ -6,6 +6,7 @@ let str = Combi.str;
 let seq = Combi.seq;
 let opt = Combi.opt;
 let alt = Combi.alt;
+let per = Combi.per;
 
 export class SelectOption extends Statement {
 
@@ -14,13 +15,20 @@ export class SelectOption extends Statement {
 
     let option = seq(str("OPTION"), Reuse.field());
 
+    let memory = seq(str("MEMORY ID"), Reuse.field());
+
+    let options = per(def,
+                      option,
+                      memory,
+                      str("NO-EXTENSION"),
+                      str("NO INTERVALS"),
+                      str("OBLIGATORY"));
+
     let ret = seq(str("SELECT-OPTIONS"),
                   Reuse.field(),
                   str("FOR"),
                   Reuse.field_sub(),
-                  opt(def),
-                  opt(option),
-                  opt(str("OBLIGATORY")));
+                  opt(options));
 
     return ret;
   }
