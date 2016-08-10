@@ -5,8 +5,8 @@ import Reuse from "./reuse";
 let str = Combi.str;
 let seq = Combi.seq;
 let opt = Combi.opt;
-let alt = Combi.alt;
 let tok = Combi.tok;
+let per = Combi.per;
 
 export class Message extends Statement {
 
@@ -20,9 +20,11 @@ export class Message extends Statement {
     let raising = seq(str("RAISING"), Reuse.field());
     let msgid = seq(tok("ParenLeft"), Reuse.field(), str(")"));
     let simple = seq(Reuse.source(), opt(msgid), opt(mwith), opt(type), opt(like));
-    let full = seq(id, type, num, mwith);
+    let full = seq(id, type, num);
 
-    let ret = seq(str("MESSAGE"), alt(simple, full), opt(into), opt(raising));
+    let options = per(full, mwith, into, raising, simple);
+
+    let ret = seq(str("MESSAGE"), options);
 
     return ret;
   }

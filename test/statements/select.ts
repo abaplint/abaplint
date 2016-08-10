@@ -17,6 +17,9 @@ let tests = [
   "SELECT COUNT( * ) INTO rv_count FROM foo INNER JOIN bar ON bar~field = foo~field WHERE mat_id IN it_mat_id.",
   "SELECT name INTO TABLE lt_icon FROM icon WHERE name IN s_icon ORDER BY name.",
   "SELECT * UP TO 2 ROWS FROM t005t INTO TABLE lt_test.",
+  "SELECT * FROM t006a APPENDING CORRESPONDING FIELDS OF TABLE lt_texts WHERE spras = sy-langu AND msehi = 'ASDF'.",
+  "SELECT COUNT(*) INTO dbcount FROM vbak WHERE (where_clause).",
+  "SELECT vbeln INTO CORRESPONDING FIELDS OF lt_table FROM vbak WHERE (where_clause) ORDER BY (orderby_clause).",
 ];
 
 statementType(tests, "SELECT", Statements.Select);

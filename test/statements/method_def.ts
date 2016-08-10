@@ -10,6 +10,7 @@ let tests = [
   "CLASS-METHODS export IMPORTING iv_zip    TYPE abap_bool DEFAULT abap_true.",
   "METHODS convert_int FOR TESTING RAISING lcx_exception.",
   "METHODS refresh REDEFINITION.",
+  "methods foobaaar final.",
   "methods BIND_ALV_OLE2 exceptions MISS_GUIDE.",
   "METHODS on_event FOR EVENT sapevent OF cl_gui_html_viewer.",
   "METHODS on_event FOR EVENT sapevent OF cl_gui_html_viewer IMPORTING action frame.",
@@ -24,6 +25,7 @@ let tests = [
   "methods find_dot_abapgit RAISING lcx_exception.",
   "METHODS add_entity EXPORTING VALUE(foobar) TYPE i.",
   "METHODS get_count IMPORTING iv_index TYPE i RETURNING VALUE(rv_value) TYPE i.",
+  "methods CONSTRUCTOR importing foobar type ref to /IWBEP/IF_MGW_CONV_SRV_RUNTIME raising /IWBEP/CX_MGW_TECH_EXCEPTION .",
 ];
 
 statementType(tests, "METHODS", Statements.MethodDef);

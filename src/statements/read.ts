@@ -13,7 +13,7 @@ export class Read extends Statement {
 
   public static get_matcher(): Combi.IRunnable {
     let target = alt(seq(str("ASSIGNING"), Reuse.target()),
-                     seq(str("INTO"), Reuse.target()),
+                     seq(opt(str("REFERENCE")), str("INTO"), Reuse.target()),
                      str("TRANSPORTING NO FIELDS"));
 
     let index = seq(str("INDEX"), Reuse.source());

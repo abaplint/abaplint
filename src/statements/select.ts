@@ -19,16 +19,23 @@ export class Select extends Statement {
                    alt(Reuse.dynamic(), Reuse.database_table()),
                    opt(seq(str("AS"), Reuse.database_table())));
 
-    let intoList = seq(tok("WParenLeft"), star(seq(Reuse.target(), str(","))), Reuse.target(), str(")"));
+    let intoList = seq(str("INTO"),
+                       tok("WParenLeft"),
+                       star(seq(Reuse.target(), str(","))),
+                       Reuse.target(),
+                       str(")"));
+    let intoTable = seq(alt(str("INTO"), str("APPENDING")),
+                        opt(str("CORRESPONDING FIELDS OF")),
+                        str("TABLE"),
+                        Reuse.target());
+    let intoSimple = seq(str("INTO"),
+                         opt(str("CORRESPONDING FIELDS OF")),
+                         Reuse.target());
+    let into = alt(intoList, intoTable, intoSimple);
 
-    let into = seq(str("INTO"),
-                   opt(str("CORRESPONDING FIELDS OF")),
-                   opt(str("TABLE")),
-                   alt(Reuse.target(), intoList));
+    let where = seq(str("WHERE"), alt(Reuse.cond(), Reuse.dynamic()));
 
-    let where = seq(str("WHERE"), Reuse.cond());
-
-    let order = seq(str("ORDER BY"), alt(plus(Reuse.field()), str("PRIMARY KEY")));
+    let order = seq(str("ORDER BY"), alt(plus(Reuse.field()), str("PRIMARY KEY"), Reuse.dynamic()));
 
     let forAll = seq(str("FOR ALL ENTRIES IN"), Reuse.source());
 

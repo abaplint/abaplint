@@ -1,5 +1,6 @@
-import {statementType} from "../utils";
+import {statementType, statementVersion} from "../utils";
 import * as Statements from "../../src/statements/";
+import {Version} from "../../src/version";
 
 let tests = [
   "ASSIGN COMPONENT ls_field-name OF STRUCTURE ig_file TO <lv_field>.",
@@ -12,3 +13,9 @@ let tests = [
 ];
 
 statementType(tests, "ASSIGN", Statements.Assign);
+
+let versions = [
+  {abap: "ASSIGN entity->* TO FIELD-SYMBOL(<entity>).", ver: Version.v740sp02},
+];
+
+statementVersion(versions, "ASSIGN", Statements.Assign);

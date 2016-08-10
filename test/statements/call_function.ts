@@ -62,6 +62,11 @@ let tests = [
   "   output = l_value\n" +
   " EXCEPTIONS\n" +
   "   OTHERS = 1.",
+
+  "CALL FUNCTION 'BAPI_TRANSACTION_COMMIT'\n" +
+  " DESTINATION iv_rfc_dest\n" +
+  " EXPORTING\n" +
+  "   wait = abap_true.",
 ];
 
 statementType(tests, "CALL FUNCTION", Statements.CallFunction);

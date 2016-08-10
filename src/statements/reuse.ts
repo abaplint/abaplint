@@ -35,13 +35,28 @@ export default class Reuse {
     return re(() => { return ret; }, "field_symbol");
   }
 
-  public static inline_decl(): Combi.Reuse {
+  public static inline_data(): Combi.Reuse {
     let right = alt(tok("ParenRight"), tok("ParenRightW"));
     let left = tok("ParenLeft");
     let data = seq(str("DATA"), left, this.field(), right);
+
+    let ret = ver(Version.v740sp02, data);
+
+    return re(() => { return ret; }, "inline_data");
+  }
+
+  public static inline_fs(): Combi.Reuse {
+    let right = alt(tok("ParenRight"), tok("ParenRightW"));
+    let left = tok("ParenLeft");
     let fs = seq(str("FIELD-SYMBOL"), left, this.field_symbol(), right);
 
-    let ret = ver(Version.v740sp02, alt(data, fs));
+    let ret = ver(Version.v740sp02, fs);
+
+    return re(() => { return ret; }, "inline_fs");
+  }
+
+  public static inline_decl(): Combi.Reuse {
+    let ret = ver(Version.v740sp02, alt(this.inline_data(), this.inline_fs()));
 
     return re(() => { return ret; }, "inline_decl");
   }
@@ -217,7 +232,7 @@ export default class Reuse {
   }
 
   public static method_name(): Combi.Reuse {
-    return re(() => { return reg(/^\w+(~\w+)?$/); }, "method_name");
+    return re(() => { return reg(/^(\/\w+\/)?\w+(~\w+)?$/); }, "method_name");
   }
 
   public static database_table(): Combi.Reuse {
@@ -229,7 +244,7 @@ export default class Reuse {
   }
 
   public static class_name(): Combi.Reuse {
-    return re(() => { return reg(/^\w+$/); }, "class_name");
+    return re(() => { return reg(/^(\/\w+\/)?\w+$/); }, "class_name");
   }
 
   public static type_name(): Combi.Reuse {
@@ -334,12 +349,21 @@ export default class Reuse {
 
   public static field(): Combi.Reuse {
 // "&1" can be used for almost anything(field names, method names etc.) in macros
-    return re(() => { return reg(/^&?\w+(~\w+)?$/); }, "field");
+    return re(() => { return reg(/^&?(\/\w+\/)?\w+(~\w+)?$/); }, "field");
   }
 
   public static value(): Combi.Reuse {
     let ret = seq(str("VALUE"), alt(Reuse.constant(), str("IS INITIAL"), Reuse.field_chain()));
     return re(() => { return ret; }, "value");
+  }
+
+  public static pass_by_value(): Combi.Reuse {
+    let ret = seq(str("VALUE"),
+                  tok("ParenLeft"),
+                  this.field(),
+                  tok("ParenRightW"));
+
+    return re(() => { return ret; }, "pass_byvalue");
   }
 
   public static type(): Combi.Reuse {
