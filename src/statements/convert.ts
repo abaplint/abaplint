@@ -5,22 +5,32 @@ import * as Combi from "../combi";
 let str = Combi.str;
 let seq = Combi.seq;
 let opt = Combi.opt;
+let alt = Combi.alt;
 
 export class Convert extends Statement {
 
   public static get_matcher(): Combi.IRunnable {
 
-    let ret = seq(str("CONVERT TIME STAMP"),
-                  Reuse.source(),
-                  str("TIME ZONE"),
-                  Reuse.source(),
-                  str("INTO DATE"),
-                  Reuse.target(),
-                  str("TIME"),
-                  Reuse.target(),
-                  opt(seq(str("DAYLIGHT SAVING TIME"), Reuse.target())));
+    let time = seq(str("CONVERT TIME STAMP"),
+                   Reuse.source(),
+                   str("TIME ZONE"),
+                   Reuse.source(),
+                   str("INTO DATE"),
+                   Reuse.target(),
+                   str("TIME"),
+                   Reuse.target(),
+                   opt(seq(str("DAYLIGHT SAVING TIME"), Reuse.target())));
 
-    return ret;
+    let date = seq(str("CONVERT DATE"),
+                   Reuse.source(),
+                   str("TIME"),
+                   Reuse.source(),
+                   str("INTO TIME STAMP"),
+                   Reuse.target(),
+                   str("TIME ZONE"),
+                   Reuse.source());
+
+    return alt(time, date);
   }
 
 }

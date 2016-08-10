@@ -11,6 +11,7 @@ let tests = [
   "lo_repo ?= lcl_app=>repo_srv( )->get( <ls_list>-key ).",
   "foo ?= lo_obj->/iwbep/if_mgw_dp_int_facade~get_model( ).",
   "wa_asdf-cur = sy-tabix * ( -1 ).",
+  "lv_test = ( lv_seconds / 3600 ) DIV 24.",
   "move asdf to foobar(3).",
   "lv_sdf = lv_dfd BIT-XOR lv_hex.",
   "foo = 'sdf' & 'sdf'.",

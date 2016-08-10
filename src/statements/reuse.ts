@@ -281,6 +281,7 @@ export default class Reuse {
                   str("BIT-XOR"),
                   str("BIT-AND"),
                   str("BIT-OR"),
+                  str("DIV"),
                   str("MOD"));
 
     return re(() => { return ret; }, "arith_operator");

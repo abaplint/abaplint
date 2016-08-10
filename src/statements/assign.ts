@@ -14,7 +14,13 @@ export class Assign extends Statement {
     let source = alt(Reuse.source(), component, Reuse.dynamic());
     let target = alt(Reuse.field_symbol(), Reuse.inline_fs());
 
-    let ret = seq(str("ASSIGN"), source, str("TO"), target, opt(str("CASTING")));
+    let type = seq(str("TYPE"), Reuse.dynamic());
+
+    let handle = seq(str("TYPE HANDLE"), Reuse.field());
+
+    let casting = opt(seq(str("CASTING"), opt(alt(type, handle))));
+
+    let ret = seq(str("ASSIGN"), source, str("TO"), target, casting);
 
     return ret;
   }

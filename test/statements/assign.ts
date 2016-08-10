@@ -9,6 +9,8 @@ let tests = [
   "ASSIGN cs_tstcp-param(sdf) TO <lg_f>.",
   "ASSIGN cs_tstcp-param TO <lg_f>.",
   "assign lt_alv->* to <f_alv_tab>.",
+  "ASSIGN <ls_aq_msg>-data TO <lv_data> CASTING TYPE (lv_tabname).",
+  "ASSIGN COMPONENT <ls_component>-name OF STRUCTURE <lg_data> TO <lv_data> CASTING TYPE HANDLE lo_datadescr.",
   "ASSIGN lv_x TO <lv_y> CASTING.",
 ];
 

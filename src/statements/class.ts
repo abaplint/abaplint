@@ -14,16 +14,18 @@ export class Class extends Statement {
     let create = seq(str("CREATE"), alt(str("PUBLIC"), str("PROTECTED"), str("PRIVATE")));
 
     let level = alt(str("CRITICAL"), str("HARMLESS"));
-    let risk = opt(seq(str("RISK LEVEL"), level));
+    let risk = seq(str("RISK LEVEL"), level);
 
     let time = alt(str("LONG"), str("MEDIUM"), str("SHORT"));
-    let duration = opt(seq(str("DURATION"), time));
+    let duration = seq(str("DURATION"), time);
 
     let blah = per(alt(str("PUBLIC"), str("LOCAL")),
                    alt(str("FINAL"), str("ABSTRACT")),
                    seq(str("INHERITING FROM"), Reuse.class_name()),
                    create,
-                   seq(str("FOR TESTING"), risk, duration, risk),
+                   str("FOR TESTING"),
+                   risk,
+                   duration,
                    seq(opt(str("GLOBAL")), str("FRIENDS"), Reuse.class_name()));
 
     let def = seq(str("DEFINITION"),

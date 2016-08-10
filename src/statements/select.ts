@@ -47,10 +47,10 @@ export class Select extends Statement {
 
     let up = seq(str("UP TO"), Reuse.source(), str("ROWS"));
 
-    let perm = per(from, join, into, forAll, where, order, up);
+    let perm = per(from, plus(join), into, forAll, where, order, up);
 
     let ret = seq(str("SELECT"),
-                  opt(seq(str("SINGLE"), opt(str("FOR UPDATE")))),
+                  alt(str("DISTINCT"), opt(seq(str("SINGLE"), opt(str("FOR UPDATE"))))),
                   fields,
                   perm);
 

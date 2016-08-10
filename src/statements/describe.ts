@@ -14,10 +14,12 @@ export class Describe extends Statement {
                     Reuse.source(),
                     opt(seq(str("LINES"), Reuse.target())));
 
+    let mode = alt(str("IN BYTE MODE"), str("IN CHARACTER MODE"));
+
     let field = seq(str("FIELD"),
                     Reuse.source(),
                     alt(seq(str("TYPE"), Reuse.target(), opt(seq(str("COMPONENTS"), Reuse.target()))),
-                        seq(str("LENGTH"), Reuse.target(), str("IN BYTE MODE")),
+                        seq(str("LENGTH"), Reuse.target(), mode),
                         seq(str("INTO"), Reuse.target())));
 
     let distance = seq(str("DISTANCE BETWEEN"),

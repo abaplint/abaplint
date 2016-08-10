@@ -4,6 +4,7 @@ import * as Combi from "../combi";
 
 let str = Combi.str;
 let seq = Combi.seq;
+let opt = Combi.opt;
 
 export class AuthorityCheck extends Statement {
 
@@ -11,6 +12,7 @@ export class AuthorityCheck extends Statement {
 // todo
     let ret = seq(str("AUTHORITY-CHECK OBJECT"),
                   Reuse.source(),
+                  opt(seq(str("FOR USER"), Reuse.source())),
                   str("ID"),
                   Reuse.source(),
                   str("FIELD"),

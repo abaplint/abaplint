@@ -14,7 +14,7 @@ export class ModifyDatabase extends Statement {
 
     let ret = seq(str("MODIFY"),
                   target,
-                  opt(seq(str("FROM"), Reuse.source())));
+                  opt(seq(str("FROM"), opt(str("TABLE")), Reuse.source())));
 
     return ret;
   }

@@ -12,13 +12,14 @@ export class InsertDatabase extends Statement {
   public static get_matcher(): Combi.IRunnable {
     let target = alt(Reuse.source(), Reuse.dynamic());
 
-    let ret = seq(str("INSERT"),
-                  target,
-                  opt(seq(str("FROM"),
-                          opt(str("TABLE")),
-                          Reuse.source())));
+    let from = seq(target,
+                   opt(seq(str("FROM"),
+                           opt(str("TABLE")),
+                           Reuse.source())));
 
-    return ret;
+    let into = seq(str("INTO"), target, str("VALUES"), Reuse.source());
+
+    return seq(str("INSERT"), alt(from, into));
   }
 
 }
