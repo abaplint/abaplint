@@ -19,20 +19,23 @@ export class Parameter extends Statement {
     let listbox = seq(str("AS LISTBOX VISIBLE LENGTH"), Reuse.constant());
     let cmd = seq(str("USER-COMMAND"), Reuse.field());
     let modif = seq(str("MODIF ID"), Reuse.field());
+    let match = seq(str("MATCHCODE OBJECT"), Reuse.field());
 
-    let perm = per(def, str("OBLIGATORY"));
+    let perm = per(def,
+                   str("OBLIGATORY"),
+                   match,
+                   cmd,
+                   radio,
+                   memory,
+                   modif,
+                   listbox,
+                   str("LOWER CASE"));
 
     let ret = seq(para,
                   Reuse.field(),
                   opt(type),
-                  opt(listbox),
-                  opt(str("LOWER CASE")),
                   opt(str("NO-DISPLAY")),
-                  opt(modif),
                   opt(str("AS CHECKBOX")),
-                  opt(memory),
-                  opt(radio),
-                  opt(cmd),
                   opt(perm));
 
     return ret;

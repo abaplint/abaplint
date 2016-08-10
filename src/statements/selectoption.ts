@@ -19,7 +19,8 @@ export class SelectOption extends Statement {
                   str("FOR"),
                   Reuse.field_sub(),
                   opt(def),
-                  opt(option));
+                  opt(option),
+                  opt(str("OBLIGATORY")));
 
     return ret;
   }

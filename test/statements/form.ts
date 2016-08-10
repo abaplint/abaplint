@@ -3,6 +3,7 @@ import * as Statements from "../../src/statements/";
 
 let tests = [
   "FORM name TABLES tt_fields TYPE ty_sval_tt USING pv_code TYPE clike CHANGING cs_error TYPE svale RAISING lcx_exception.",
+  "FORM send_mail USING pt_mail_data TYPE ANY TABLE.",
   "FORM exit RAISING lcx_exception.",
 ];
 

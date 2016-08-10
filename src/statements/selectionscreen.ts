@@ -25,15 +25,24 @@ export class SelectionScreen extends Statement {
     let endLine = str("END OF LINE");
 
     let comment = seq(str("COMMENT"),
+                      opt(reg(/^\/?\d+$/)),
                       str("("),
                       Reuse.integer(),
                       str(")"),
-                      Reuse.field(),
-                      str("FOR FIELD"),
-                      Reuse.field());
+                      Reuse.source(),
+                      opt(seq(str("FOR FIELD"), Reuse.field())));
+
+    let func = seq(str("FUNCTION KEY"), Reuse.integer());
+
+    let skip = seq(str("SKIP"), Reuse.integer());
+
+    let pos = seq(str("POSITION"), Reuse.integer());
 
     let ret = seq(str("SELECTION-SCREEN"),
                   alt(comment,
+                      func,
+                      skip,
+                      pos,
                       beginBlock,
                       endBlock,
                       beginLine,

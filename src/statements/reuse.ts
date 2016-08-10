@@ -247,6 +247,10 @@ export default class Reuse {
     return re(() => { return reg(/^(\/\w+\/)?\w+$/); }, "class_name");
   }
 
+  public static form_name(): Combi.Reuse {
+    return re(() => { return reg(/^\w+$/); }, "form_name");
+  }
+
   public static type_name(): Combi.Reuse {
     return re(() => { return alt(reg(/^\w+$/), str("#")); }, "type_name");
   }
@@ -391,7 +395,7 @@ export default class Reuse {
     let likeType = alt(str("LIKE"), str("TYPE"));
 
     let typetable = seq(likeType,
-                        opt(alt(str("STANDARD"), str("HASHED"), str("SORTED"))),
+                        opt(alt(str("STANDARD"), str("HASHED"), str("SORTED"), str("ANY"))),
                         str("TABLE"),
                         opt(str("OF")),
                         opt(str("REF TO")));

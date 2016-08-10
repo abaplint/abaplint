@@ -2,7 +2,7 @@ import {statementType} from "../utils";
 import * as Statements from "../../src/statements/";
 
 let tests = [
-  "FORMAT COLOR COL_GROUP.",
+  "FUNCTION-POOL ZFOOBAR MESSAGE-ID SV.",
 ];
 
-statementType(tests, "FORMAT", Statements.Format);
+statementType(tests, "FUNCTION-POOL", Statements.FunctionPool);

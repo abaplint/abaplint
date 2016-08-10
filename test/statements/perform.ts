@@ -5,6 +5,7 @@ let tests = [
   "PERFORM set_pf_status IN PROGRAM rsdbrunt IF FOUND.",
   "PERFORM create_variant USING <ls_classdf>-clsname.",
   "PERFORM upfile CHANGING p_upfile.",
+  "PERFORM sub TABLES bar USING foo.",
   "PERFORM run.",
 ];
 

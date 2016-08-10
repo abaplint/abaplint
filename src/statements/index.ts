@@ -138,3 +138,8 @@ export * from "./call_screen";
 export * from "./set_pf_status";
 export * from "./set_titlebar";
 export * from "./program";
+export * from "./function_pool";
+export * from "./module";
+export * from "./endmodule";
+export * from "./endfunction";
+export * from "./retry";

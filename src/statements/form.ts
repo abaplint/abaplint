@@ -22,7 +22,7 @@ export class Form extends Statement {
     let raising = seq(str("RAISING"), plus(Reuse.class_name()));
 
     let ret = seq(str("FORM"),
-                  fieldName,
+                  Reuse.form_name(),
                   opt(tables),
                   opt(using),
                   opt(changing),

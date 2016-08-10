@@ -11,12 +11,14 @@ export class Perform extends Statement {
 
   public static get_matcher(): Combi.IRunnable {
     let using = seq(str("USING"), plus(Reuse.source()));
+    let tables = seq(str("TABLES"), plus(Reuse.source()));
     let changing = seq(str("CHANGING"), plus(Reuse.source()));
 
     return seq(str("PERFORM"),
-               Reuse.field(),
+               Reuse.form_name(),
                opt(seq(str("IN PROGRAM"), Reuse.field())),
                opt(str("IF FOUND")),
+               opt(tables),
                opt(using),
                opt(changing));
   }

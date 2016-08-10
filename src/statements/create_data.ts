@@ -10,8 +10,14 @@ export class CreateData extends Statement {
 
   public static get_matcher(): Combi.IRunnable {
 // todo, similar to DATA or TYPES?
-    let type = alt(str("LIKE"), str("TYPE"), str("TYPE HANDLE"), str("LIKE LINE OF"));
-    let ret = seq(str("CREATE DATA"), Reuse.target(), type, Reuse.source());
+    let type = alt(str("LIKE"),
+                   str("TYPE"),
+                   str("TYPE HANDLE"),
+                   str("TYPE STANDARD TABLE OF"),
+                   str("LIKE LINE OF"));
+
+    let ret = seq(str("CREATE DATA"), Reuse.target(), type, alt(Reuse.source(), Reuse.dynamic()));
+
     return ret;
   }
 
