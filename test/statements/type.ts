@@ -5,6 +5,7 @@ import {Version} from "../../src/version";
 let tests = [
   "TYPES ty_type TYPE c LENGTH 6.",
   "TYPE ty_type TYPE c LENGTH 6.",
+  "type string1(236) TYPE c.",
   "TYPES BEGIN OF gty_icon.",
 ];
 

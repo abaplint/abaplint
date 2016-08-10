@@ -50,7 +50,7 @@ export class Select extends Statement {
     let perm = per(from, join, into, forAll, where, order, up);
 
     let ret = seq(str("SELECT"),
-                  opt(str("SINGLE")),
+                  opt(seq(str("SINGLE"), opt(str("FOR UPDATE")))),
                   fields,
                   perm);
 

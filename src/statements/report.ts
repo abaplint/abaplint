@@ -12,6 +12,9 @@ export class Report extends Statement {
     return seq(str("REPORT"),
                opt(Reuse.field()),
                opt(seq(str("LINE-SIZE"), Reuse.integer())),
+               opt(str("NO STANDARD PAGE HEADING")),
+               opt(seq(str("LINE-SIZE"), Reuse.integer())),
+               opt(seq(str("LINE-COUNT"), Reuse.integer())),
                opt(seq(str("MESSAGE-ID"), Reuse.field())));
   }
 

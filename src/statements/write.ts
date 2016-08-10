@@ -16,7 +16,10 @@ export class Write extends Statement {
 
     let mask = seq(str("USING EDIT MASK"), Reuse.source());
 
+    let to = seq(str("TO"), Reuse.target());
+
     let options = per(mask,
+                      to,
                       str("EXPONENT 0"),
                       str("NO-GROUPING"),
                       str("NO-ZERO"),
@@ -28,7 +31,7 @@ export class Write extends Statement {
 
     let ret = seq(str("WRITE"),
                   opt(alt(at, str("/"))),
-                  opt(seq(Reuse.source(), opt(seq(str("TO"), Reuse.target())))),
+                  opt(Reuse.source()),
                   opt(options));
 
     return ret;

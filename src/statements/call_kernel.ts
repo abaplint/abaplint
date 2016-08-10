@@ -4,13 +4,14 @@ import * as Combi from "../combi";
 
 let str = Combi.str;
 let seq = Combi.seq;
-let alt = Combi.alt;
-let opt = Combi.opt;
 
-export class Module extends Statement {
+export class CallKernel extends Statement {
 
   public static get_matcher(): Combi.IRunnable {
-    return seq(str("MODULE"), Reuse.form_name(), opt(alt(str("INPUT"), str("OUTPUT"))));
+
+    let ret = seq(str("CALL"), Reuse.constant());
+
+    return ret;
   }
 
 }

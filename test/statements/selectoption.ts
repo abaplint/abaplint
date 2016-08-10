@@ -7,6 +7,8 @@ let tests = [
   "SELECT-OPTIONS s_moo FOR zfoo-bar MEMORY ID zfoo.",
   "SELECT-OPTIONS s_moo FOR zfoo-bar NO-EXTENSION.",
   "SELECT-OPTIONS s_moo FOR zfoo-bar NO-EXTENSION NO INTERVALS.",
+  "SELECT-OPTIONS s_qnum FOR aqgqcat-qnum MATCHCODE OBJECT zquery.",
+  "SELECT-OPTIONS s_num FOR aqgqcat-num OBLIGATORY DEFAULT 'ASDF'.",
   "SELECT-OPTIONS s_moo FOR zfoo-bar NO INTERVALS MEMORY ID zfoo.",
   "SELECT-OPTIONS s_icon FOR icon-name DEFAULT 'foo' OPTION CP.",
 ];

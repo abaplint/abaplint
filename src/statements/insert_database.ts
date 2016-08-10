@@ -14,9 +14,9 @@ export class InsertDatabase extends Statement {
 
     let ret = seq(str("INSERT"),
                   target,
-                  str("FROM"),
-                  opt(str("TABLE")),
-                  Reuse.source());
+                  opt(seq(str("FROM"),
+                          opt(str("TABLE")),
+                          Reuse.source())));
 
     return ret;
   }

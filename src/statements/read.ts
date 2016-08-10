@@ -20,7 +20,7 @@ export class Read extends Statement {
 
     let components = seq(Reuse.field(), str("COMPONENTS"), plus(Reuse.compare()));
 
-    let key = seq(alt(str("WITH KEY"), str("WITH TABLE KEY")), alt(plus(Reuse.compare()), components));
+    let key = seq(alt(str("WITH KEY"), str("WITH TABLE KEY")), alt(plus(Reuse.compare()), components, Reuse.field_symbol()));
 
     let perm = per(alt(index,
                        key,

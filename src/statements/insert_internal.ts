@@ -12,12 +12,15 @@ export class InsertInternal extends Statement {
   public static get_matcher(): Combi.IRunnable {
     let target = alt(Reuse.source(), Reuse.dynamic());
     let assigning = seq(str("ASSIGNING"), Reuse.field_symbol());
+    let index = seq(str("INDEX"), Reuse.source());
 
     let ret = seq(str("INSERT"),
                   opt(str("LINES OF")),
                   target,
-                  str("INTO TABLE"),
+                  str("INTO"),
+                  opt(str("TABLE")),
                   Reuse.source(),
+                  opt(index),
                   opt(assigning));
 
     return ret;

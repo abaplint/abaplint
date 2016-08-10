@@ -6,4 +6,4 @@ let tests = [
   "MODIFY (c_tabname) FROM ls_content.",
 ];
 
-statementType(tests, "MODIFY", Statements.ModifyDatabase);
+statementType(tests, "MODIFY database", Statements.ModifyDatabase);

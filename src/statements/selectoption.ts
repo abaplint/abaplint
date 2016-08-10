@@ -17,9 +17,12 @@ export class SelectOption extends Statement {
 
     let memory = seq(str("MEMORY ID"), Reuse.field());
 
+    let match = seq(str("MATCHCODE OBJECT"), Reuse.field());
+
     let options = per(def,
                       option,
                       memory,
+                      match,
                       str("NO-EXTENSION"),
                       str("NO INTERVALS"),
                       str("OBLIGATORY"));

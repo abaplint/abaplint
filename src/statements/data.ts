@@ -11,9 +11,9 @@ export class Data extends Statement {
 
   public static get_matcher(): Combi.IRunnable {
     let start = alt(str("CLASS-DATA"), str("DATA"));
-
+// seq(str("("), Reuse.integer(), str(")"))
     let simple = seq(Reuse.field(),
-                     opt(seq(str("("), Reuse.integer(), str(")"))),
+                     opt(Reuse.field_length()),
                      opt(Reuse.type()),
                      opt(str("READ-ONLY")),
                      opt(Reuse.value()));

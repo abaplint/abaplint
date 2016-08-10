@@ -13,7 +13,7 @@ export class Sort extends Statement {
   public static get_matcher(): Combi.IRunnable {
     let order = alt(str("ASCENDING"), str("DESCENDING"));
 
-    let fields = plus(seq(Reuse.field_sub(),
+    let fields = plus(seq(alt(Reuse.field_sub(), Reuse.field_symbol()),
                           opt(order),
                           opt(str("AS TEXT"))));
 
@@ -22,7 +22,8 @@ export class Sort extends Statement {
 
     return seq(str("SORT"),
                Reuse.target(),
-               opt(alt(by, order)));
+               opt(alt(str("STABLE"), order)),
+               opt(by));
   }
 
 }

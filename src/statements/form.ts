@@ -14,7 +14,7 @@ export class Form extends Statement {
   public static get_matcher(): Combi.IRunnable {
     let fieldName = reg(/^\w+$/);
 
-    let field = seq(fieldName, alt(Reuse.type(), Reuse.type_table()));
+    let field = seq(fieldName, opt(alt(Reuse.type(), Reuse.type_table())));
 
     let tables = seq(str("TABLES"), plus(field));
     let using = seq(str("USING"), plus(field));

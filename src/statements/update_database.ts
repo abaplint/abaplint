@@ -20,7 +20,7 @@ export class UpdateDatabase extends Statement {
 
     let ret = seq(str("UPDATE"),
                   target,
-                  alt(from, set));
+                  opt(alt(from, set)));
 
     return ret;
   }

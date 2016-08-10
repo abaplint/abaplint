@@ -34,7 +34,7 @@ export class SelectionScreen extends Statement {
 
     let func = seq(str("FUNCTION KEY"), Reuse.integer());
 
-    let skip = seq(str("SKIP"), Reuse.integer());
+    let skip = seq(str("SKIP"), opt(Reuse.integer()));
 
     let pos = seq(str("POSITION"), Reuse.integer());
 

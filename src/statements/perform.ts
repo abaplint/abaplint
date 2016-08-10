@@ -5,6 +5,7 @@ import Reuse from "./reuse";
 let str = Combi.str;
 let seq = Combi.seq;
 let opt = Combi.opt;
+let alt = Combi.alt;
 let plus = Combi.plus;
 
 export class Perform extends Statement {
@@ -15,8 +16,8 @@ export class Perform extends Statement {
     let changing = seq(str("CHANGING"), plus(Reuse.source()));
 
     return seq(str("PERFORM"),
-               Reuse.form_name(),
-               opt(seq(str("IN PROGRAM"), Reuse.field())),
+               alt(Reuse.form_name(), Reuse.dynamic()),
+               opt(seq(str("IN PROGRAM"), opt(Reuse.field()))),
                opt(str("IF FOUND")),
                opt(tables),
                opt(using),

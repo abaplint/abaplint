@@ -146,3 +146,4 @@ export * from "./retry";
 export * from "./authority_check";
 export * from "./set_parameter";
 export * from "./get_cursor";
+export * from "./call_kernel";
