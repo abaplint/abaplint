@@ -5,6 +5,7 @@ import Lexer from "./lexer";
 import Parser from "./parser";
 import Nesting from "./nesting";
 import {Version} from "./version";
+import * as Formatters from "./formatters/";
 
 export default class Runner {
   private static conf: Config;
@@ -14,6 +15,26 @@ export default class Runner {
     this.ver = ver;
     this.conf = new Config(files[0].getFilename());
     this.prioritizeFiles(files).forEach((o) => { this.analyze(o); });
+  }
+
+  public static format(files: Array<File>, format: string): string {
+    let output = "";
+// todo, this can be done more generic
+    switch (format) {
+      case "total":
+        output = Formatters.Total.output(files);
+        break;
+      case "summary":
+        output = Formatters.Summary.output(files);
+        break;
+      case "json":
+        output = Formatters.Json.output(files);
+        break;
+      default:
+        output = Formatters.Standard.output(files);
+        break;
+    }
+    return output;
   }
 
   private static prioritizeFiles(files: Array<File>): Array<File> {
@@ -39,3 +60,6 @@ export default class Runner {
     }
   }
 }
+
+exports.File = File;
+exports.Runner = Runner;

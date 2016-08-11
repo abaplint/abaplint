@@ -12,8 +12,8 @@
   },
   "scripts": {
     "prebrowserify": "cp -r typings build",
-    "browserify": "browserify build/web/script/script.js -o web/script/bundle.js -s run",
-    "uglify": "uglifyjs web/script/bundle.js --compress warnings=false --mangle --keep-fnames -o web/script/bundle.js",
+    "browserify": "browserify build/src/runner.js -o build/bundle.js -s abaplint",
+    "uglify": "uglifyjs build/bundle.js --compress warnings=false --mangle --keep-fnames -o build/bundle.js",
     "tslint": "tslint -c tslint.json 'src/**/*.ts'",
 
     "precompile": "npm run clean && tsc --pretty",
@@ -22,14 +22,16 @@
 
     "pretest": "npm run compile",
     "test": "mocha --recursive --reporter progress build/test",
-    "posttest": "npm run tslint",
+    "posttest": "npm run tslint && cp build/bundle.js web/script/bundle.js",
 
     "clean": "rm -rf build",
-    "viz": "mkdir -p web/viz && rm -f web/viz/*.txt && rm -f web/viz/*.svg && node build/src/graphs.js && node web/script/generate.js",
     "typings": "typings install",
+
     "precoverage": "istanbul cover ./node_modules/mocha/bin/_mocha build/test --report lcovonly -- -R spec",
     "coverage": "remap-istanbul -i coverage/coverage.json -o coverage/coverage-remap.json",
-    "postcoverage": "codecov -f coverage/coverage-remap.json"
+    "postcoverage": "codecov -f coverage/coverage-remap.json",
+
+    "viz": "mkdir -p web/viz && rm -f web/viz/*.txt && rm -f web/viz/*.svg && node build/src/graphs.js && node web/script/generate.js"
   },
   "repository": {
     "type": "git",

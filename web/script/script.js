@@ -1,7 +1,6 @@
-import Runner from "../../src/runner";
-import File from "../../src/file";
+/*global abaplint*/
 
-function stripNewline(input: string): string {
+function stripNewline(input) {
   let result = input;
   while (result.substr(result.length - 1, 1) === "\n") {
     result = result.substr(0, result.length - 1);
@@ -9,7 +8,7 @@ function stripNewline(input: string): string {
   return result;
 }
 
-function initLines(input: string) {
+function initLines(input) {
   let lines = input.split("\n");
 
   for (let i = 0; i < lines.length; i++) {
@@ -19,7 +18,7 @@ function initLines(input: string) {
   return lines;
 }
 
-function buildIssues(input: string, file: File): string {
+function buildIssues(input, file) {
   let lines = initLines(input);
 
   for (let issue of file.getIssues()) {
@@ -30,7 +29,7 @@ function buildIssues(input: string, file: File): string {
   return lines.join("\n");
 }
 
-function buildStatements(input: string, file: File): string {
+function buildStatements(input, file) {
   let lines = initLines(input);
 
   for (let statement of file.getStatements()) {
@@ -42,7 +41,7 @@ function buildStatements(input: string, file: File): string {
   return lines.join("\n");
 }
 
-function buildAst(file: File): string {
+function buildAst(file) {
   let ret = "";
 
   for (let statement of file.getStatements()) {
@@ -56,17 +55,19 @@ function buildAst(file: File): string {
   return ret;
 }
 
-function process(): File {
-  let input = (document.getElementById("input") as HTMLInputElement).value;
+function process() {
+  let input = document.getElementById("input").value;
   input = stripNewline(input);
 
-  let file = new File("foobar.abap", input);
-  Runner.run([file]);
+  let file = new abaplint.File("foobar.abap", input);
+  abaplint.Runner.run([file]);
 
   return file;
 }
 
-export function issues() {
+// ---------------------
+
+function issues() {
   let file = process();
 
   let el = document.getElementById("info");
@@ -78,7 +79,7 @@ export function issues() {
   document.getElementById("abap").innerText = file.getRaw();
 }
 
-export function tokens() {
+function tokens() {
   let file = process();
   let inner = "";
 
@@ -89,7 +90,7 @@ export function tokens() {
   document.getElementById("info").innerHTML = inner;
 }
 
-export function statements() {
+function statements() {
   let file = process();
 
   let el = document.getElementById("result");
@@ -98,7 +99,7 @@ export function statements() {
   document.getElementById("abap").innerText = file.getRaw();
 }
 
-export function ast() {
+function ast() {
   let file = process();
 
   let el = document.getElementById("info");

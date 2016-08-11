@@ -2,7 +2,6 @@ import "../typings/index.d.ts";
 import Runner from "./runner";
 import File from "./file";
 import Config from "./config";
-import * as Formatters from "./formatters/";
 import * as fs from "fs";
 import * as glob from "glob";
 import * as minimist from "minimist";
@@ -47,22 +46,7 @@ if (argv["h"] !== undefined || argv["help"] !== undefined) {
     output = output + "No files found\n";
   } else {
     Runner.run(files);
-
-// todo, this can be done more generic
-    switch (format) {
-      case "total":
-        output = Formatters.Total.output(files);
-        break;
-      case "summary":
-        output = Formatters.Summary.output(files);
-        break;
-      case "json":
-        output = Formatters.Json.output(files);
-        break;
-      default:
-        output = Formatters.Standard.output(files);
-        break;
-    }
+    output = Runner.format(files, format);
   }
 }
 

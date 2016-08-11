@@ -3,6 +3,7 @@
     <head>
         <title>abaplint web</title>
         <script src="script/bundle.js"></script>
+        <script src="script/script.js"></script>
         <link rel="stylesheet" type="text/css" href="style/style.css">
         <link rel="icon" href="data:;base64,iVBORw0KGgo=">
     </head>
@@ -15,10 +16,10 @@ REPORT ZHELLO.
  WRITE 'Hello World'.
 </textarea>
         <br>
-        <button onclick="run.issues()">Issues</button>
-        <button onclick="run.tokens()">Tokens</button>
-        <button onclick="run.statements()">Statements</button>
-        <button onclick="run.ast()">AST</button>
+        <button onclick="issues()">Issues</button>
+        <button onclick="tokens()">Tokens</button>
+        <button onclick="statements()">Statements</button>
+        <button onclick="ast()">AST</button>
         <br>
         <br>
         <div id="info"></div>
