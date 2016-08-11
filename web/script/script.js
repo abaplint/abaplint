@@ -35,9 +35,12 @@ function buildStatements(file) {
 
   for (let statement of file.getStatements()) {
     let row = statement.getStart().getRow();
+    let col = statement.getStart().getCol();
+    let erow = statement.getEnd().getRow();
+    let ecol = statement.getEnd().getCol();
 // getting the class name only works if uglify does not mangle names
     output = output +
-      "<div onmouseover=\"javascript:markLine('" + row + "');\">" +
+      "<div onmouseover=\"javascript:markLine(" + row + ", " + col + ", " + erow + ", " + ecol + ");\">" +
       row + ": " +
       (statement.constructor + "").match(/\w+/g)[1] +
       "</div>\n";
@@ -112,9 +115,12 @@ function ast() {
 var editor = null;
 var _mark = null
 
-function markLine(line) {
+function markLine(line, col, eline, ecol) {
   if (_mark) _mark.clear();
-  _mark = editor.markText({line: line - 1, ch: 0}, {line: line - 1, ch: 100}, {className: "styled-background"});
+  if (!col) col = 0;
+  if (!eline) eline = line;
+  if (!ecol) ecol = 100;
+  _mark = editor.markText({line: line - 1, ch: col - 1}, {line: eline - 1, ch: ecol - 1}, {className: "styled-background"});
   editor.scrollIntoView({line: line - 1, ch: 0}, 200);
 }
 

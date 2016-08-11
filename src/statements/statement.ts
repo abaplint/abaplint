@@ -62,7 +62,9 @@ export abstract class Statement {
   }
 
   public getEnd(): Position {
-    return this.tokens[this.tokens.length - 1].getPos();
+    let last = this.tokens[this.tokens.length - 1];
+    let pos = new Position(last.getPos().getRow(), last.getPos().getCol() + last.getStr().length);
+    return pos;
   }
 
   public getTokens(): Array<Token> {
