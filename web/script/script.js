@@ -81,7 +81,7 @@ function issues() {
   let output = "";
   for (let issue of json) {
     output = output +
-      "<div onmouseover=\"javascript:markLine('" + issue.start.row + "');\">" +
+      "<div onmouseover=\"javascript:markLine(" + issue.start.row + ", " + issue.start.col + ");\">" +
       "[" + issue.start.row + ", "+ issue.start.col + "] " +
       issue.description +
       "</div>\n";
