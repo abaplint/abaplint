@@ -253,7 +253,7 @@ export default class Reuse {
   }
 
   public static form_name(): Combi.Reuse {
-    return re(() => { return reg(/^\w+$/); }, "form_name");
+    return re(() => { return seq(reg(/^\w+$/), star(seq(tok("Dash"), reg(/^\w+$/)))); }, "form_name");
   }
 
   public static type_name(): Combi.Reuse {

@@ -19,10 +19,12 @@ export class Shift extends Statement {
                   str("RIGHT"),
                   str("LEFT"));
 
+    let mode = alt(str("IN CHARACTER MODE"), str("IN BYTE MODE"));
+
     return seq(str("SHIFT"),
                Reuse.target(),
                opt(seq(dir,
-                       opt(str("IN CHARACTER MODE")))));
+                       opt(mode))));
   }
 
 }

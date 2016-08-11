@@ -5,11 +5,17 @@ import Reuse from "./reuse";
 let str = Combi.str;
 let seq = Combi.seq;
 let opt = Combi.opt;
+let alt = Combi.alt;
 
 export class IncludeType extends Statement {
 
   public static get_matcher(): Combi.IRunnable {
-    return seq(str("INCLUDE TYPE"), Reuse.typename(), opt(seq(str("AS"), Reuse.field())));
+    let ret = seq(str("INCLUDE"),
+                  alt(str("TYPE"), str("STRUCTURE")),
+                  Reuse.typename(),
+                  opt(seq(str("AS"), Reuse.field())));
+
+    return ret;
   }
 
 }

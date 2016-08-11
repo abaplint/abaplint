@@ -15,7 +15,8 @@ let tests = [
   "PARAMETERS p_mail TYPE so_dli_nam OBLIGATORY MATCHCODE OBJECT zfoobar.",
   "PARAMETERS p_backfn TYPE text40 NO-DISPLAY.",
   "PARAMETERS cb_errl AS CHECKBOX DEFAULT 'X'.",
-  "PARAMETER p_top  TYPE i DEFAULT 100 OBLIGATORY."
+  "PARAMETER p_top  TYPE i DEFAULT 100 OBLIGATORY.",
+  "PARAMETERS p_aid LIKE toaom-archiv_id OBLIGATORY.",
 ];
 
 statementType(tests, "PARAMETER", Statements.Parameter);

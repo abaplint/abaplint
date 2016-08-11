@@ -20,7 +20,10 @@ export class MethodDef extends Statement {
     let fieldsValue = seq(Reuse.pass_by_value(), type);
     let fieldsOrValue = seq(alt(Reuse.pass_by_value(), field), type);
 
-    let importing  = seq(str("IMPORTING"),  plus(seq(fieldsOrValue, opt(str("OPTIONAL")))));
+    let importing  = seq(str("IMPORTING"),
+                         plus(seq(fieldsOrValue, opt(str("OPTIONAL")))),
+                         opt(seq(str("PREFERRED PARAMETER"), field)));
+
     let exporting  = seq(str("EXPORTING"),  plus(fieldsOrValue));
     let changing   = seq(str("CHANGING"),   plus(seq(fieldType, opt(str("OPTIONAL")))));
     let returning  = seq(str("RETURNING"),  plus(fieldsValue));

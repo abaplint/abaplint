@@ -30,7 +30,9 @@ export class Describe extends Statement {
                        Reuse.target(),
                        str("IN BYTE MODE"));
 
-    return seq(str("DESCRIBE"), alt(table, field, distance));
+    let mask = seq(str("FIELD"), Reuse.source(), str("EDIT MASK"), Reuse.target());
+
+    return seq(str("DESCRIBE"), alt(table, field, mask, distance));
   }
 
 }

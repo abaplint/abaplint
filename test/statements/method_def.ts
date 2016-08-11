@@ -26,6 +26,7 @@ let tests = [
   "METHODS add_entity EXPORTING VALUE(foobar) TYPE i.",
   "METHODS get_count IMPORTING iv_index TYPE i RETURNING VALUE(rv_value) TYPE i.",
   "methods CONSTRUCTOR importing foobar type ref to /IWBEP/IF_MGW_CONV_SRV_RUNTIME raising /IWBEP/CX_MGW_TECH_EXCEPTION .",
+  "methods ADD importing OBJ type ANY optional CONTEXT type SIMPLE optional preferred parameter OBJ.",
 ];
 
 statementType(tests, "METHODS", Statements.MethodDef);

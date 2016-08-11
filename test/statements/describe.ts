@@ -8,6 +8,7 @@ let tests = [
   "DESCRIBE FIELD ls_data LENGTH lv_max_length_line IN BYTE MODE.",
   "DESCRIBE FIELD cv_data LENGTH lv_length IN CHARACTER MODE.",
   "describe field <item> type typ.",
+  "describe field e_field edit mask l_mask.",
   "describe field <fs> type l_typ components l_num.",
 ];
 
