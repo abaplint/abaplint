@@ -9,7 +9,7 @@
     <script src="script/abap.js"></script>
     <script src="script/mark-selection.js"></script>
     <link rel="stylesheet" href="style/codemirror.css">
-    <link rel="stylesheet" href="style/seti.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.6.3/css/font-awesome.css">
     <link rel="stylesheet" href="style/mbo.css">
     <link rel="icon" href="data:;base64,iVBORw0KGgo=">
   </head>
@@ -17,11 +17,11 @@
 
 <div style="position: absolute; top: 0px; left: 0px; right: 0px; height: 40px; line-height: 40px;">
 abaplint web |
-<a href="#" onclick="issues();return false;">issues</a> |
-<a href="#" onclick="tokens();return false;">tokens</a> |
-<a href="#" onclick="statements();return false;">statements</a> |
-<a href="#" onclick="ast();return false;">ast</a> |
-<a href="./viz/">syntax diagrams</a>
+<a href="#" onclick="issues();return false;"><i class="fa fa-exclamation fa-lg"></i> Issues</a> |
+<a href="#" onclick="tokens();return false;"><i class="fa fa-ellipsis-h fa-lg"></i> Tokens</a> |
+<a href="#" onclick="statements();return false;"><i class="fa fa-list fa-lg"></i> Statements</a> |
+<a href="#" onclick="ast();return false;"><i class="fa fa-tree fa-lg"></i> AST</a> |
+<a href="./viz/"><i class="fa fa-code fa-lg"></i> Syntax Diagrams</a>
 </div>
 
 <div style="position: absolute; top: 40px; bottom: 0px; left: 0px; right: 0px;">
