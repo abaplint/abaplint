@@ -243,7 +243,7 @@ export default class Lexer {
           && current === "'"
           && aahead !== "''"
           && (buf.match(/'/g) || []).length % 2 === 0
-          && (buf.concat(aahead).match(/'/g) || []).length % 2 === 0) {
+          && (buf.concat(ahead).match(/'/g) || []).length % 2 === 0) {
 // end of string
         this.add();
         this.m = Mode.Normal;

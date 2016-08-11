@@ -343,7 +343,13 @@ export default class Reuse {
                                            this.source(),
                                            rparen));
 
-      let ret = alt(old, cast, neww, corr);
+      let conv = ver(Version.v740sp02, seq(str("CONV"),
+                                           this.type_name(),
+                                           tok("ParenLeftW"),
+                                           this.source(),
+                                           rparen));
+
+      let ret = alt(old, cast, neww, corr, conv);
 
       return ret; };
 
