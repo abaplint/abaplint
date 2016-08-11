@@ -15,22 +15,20 @@
     "browserify": "browserify build/src/runner.js -o build/bundle.js -s abaplint",
     "uglify": "uglifyjs build/bundle.js --compress warnings=false --mangle --keep-fnames -o build/bundle.js",
     "tslint": "tslint -c tslint.json 'src/**/*.ts'",
-
     "precompile": "npm run clean && tsc --pretty",
     "compile": "npm run browserify ",
     "postcompile": "npm run uglify",
-
     "pretest": "npm run compile",
     "test": "mocha --recursive --reporter progress build/test",
-    "posttest": "npm run tslint && cp build/bundle.js web/script/bundle.js",
-
+    "posttest": "npm run tslint && npm run web",
     "clean": "rm -rf build",
     "typings": "typings install",
-
     "precoverage": "istanbul cover ./node_modules/mocha/bin/_mocha build/test --report lcovonly -- -R spec",
     "coverage": "remap-istanbul -i coverage/coverage.json -o coverage/coverage-remap.json",
     "postcoverage": "codecov -f coverage/coverage-remap.json",
-
+    "preweb": "cp build/bundle.js web/script/bundle.js",
+    "web": "cp node_modules/codemirror/lib/codemirror.js web/script/codemirror.js",
+    "postweb": "cp node_modules/codemirror/theme/seti.css web/style/seti.css",
     "viz": "mkdir -p web/viz && rm -f web/viz/*.txt && rm -f web/viz/*.svg && node build/src/graphs.js && node web/script/generate.js"
   },
   "repository": {
@@ -51,6 +49,7 @@
     "browserify": "^13.1.0",
     "chai": "^3.5.0",
     "codecov": "^1.0.1",
+    "codemirror": "^5.17.0",
     "istanbul": "^0.4.4",
     "mocha": "^3.0.2",
     "railroad-diagrams": "git+https://github.com/tabatkins/railroad-diagrams#gh-pages",

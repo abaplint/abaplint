@@ -8,3 +8,5 @@ web/viz/**/*.txt
 web/viz/**/*.svg
 web/viz/index.html
 web/script/bundle.js
+web/script/codemirror.js
+web/style/seti.css
