@@ -1,4 +1,5 @@
 /*global abaplint*/
+/*global CodeMirror*/
 
 function stripNewline(input) {
   let result = input;
@@ -29,16 +30,20 @@ function buildIssues(input, file) {
   return lines.join("\n");
 }
 
-function buildStatements(input, file) {
-  let lines = initLines(input);
+function buildStatements(file) {
+  let output = "";
 
   for (let statement of file.getStatements()) {
     let row = statement.getStart().getRow();
 // getting the class name only works if uglify does not mangle names
-    lines[row - 1] = lines[row - 1] + " " + (statement.constructor + "").match(/\w+/g)[1];
+    output = output +
+      "<div onmouseover=\"javascript:markLine('" + row + "');\">" +
+      row + ": " +
+      (statement.constructor + "").match(/\w+/g)[1] +
+      "</div>\n";
   }
 
-  return lines.join("\n");
+  return output;
 }
 
 function buildAst(file) {
@@ -56,7 +61,7 @@ function buildAst(file) {
 }
 
 function process() {
-  let input = document.getElementById("input").value;
+  let input = editor.getValue();
   input = stripNewline(input);
 
   let file = new abaplint.File("foobar.abap", input);
@@ -69,14 +74,16 @@ function process() {
 
 function issues() {
   let file = process();
-
-  let el = document.getElementById("info");
-  el.innerText = "Issues: " + file.getIssueCount();
-
-  el = document.getElementById("result");
-  el.innerText = buildIssues(file.getRaw(), file);
-
-  document.getElementById("abap").innerText = file.getRaw();
+  let json = JSON.parse(abaplint.Runner.format([file], "json"));
+  let output = "";
+  for (let issue of json) {
+    output = output +
+      "<div onmouseover=\"javascript:markLine('" + issue.start.row + "');\">" +
+      "[" + issue.start.row + ", "+ issue.start.col + "] " +
+      issue.description +
+      "</div>\n";
+  }
+  document.getElementById("info").innerHTML = output;
 }
 
 function tokens() {
@@ -92,18 +99,34 @@ function tokens() {
 
 function statements() {
   let file = process();
-
-  let el = document.getElementById("result");
-  el.innerText = buildStatements(file.getRaw(), file);
-
-  document.getElementById("abap").innerText = file.getRaw();
+  document.getElementById("info").innerHTML = buildStatements(file);
 }
 
 function ast() {
   let file = process();
-
-  let el = document.getElementById("info");
-  el.innerHTML = buildAst(file);
-
-  document.getElementById("abap").innerText = file.getRaw();
+  document.getElementById("info").innerHTML = buildAst(file);
 }
+
+// ---------------------
+
+var editor = null;
+var _mark = null
+
+function markLine(line) {
+  if (_mark) _mark.clear();
+  _mark = editor.markText({line: line - 1, ch: 0}, {line: line - 1, ch: 100}, {className: "styled-background"});
+  editor.scrollIntoView({line: line - 1, ch: 0}, 200);
+}
+
+function initEditor() {
+  editor = CodeMirror.fromTextArea(document.getElementById("input"), {
+    lineNumbers: true,
+    mode: "javascript",
+    theme: "mbo",
+    tabSize: 2,
+    styleSelectedText: true,
+    mode: "abap"
+  });
+}
+
+initEditor();

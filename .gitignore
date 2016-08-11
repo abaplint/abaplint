@@ -11,3 +11,5 @@ web/script/bundle.js
 web/script/codemirror.js
 web/style/seti.css
 web/script/abap.js
+web/script/mark-selection.js
+web/style/mbo.css

@@ -17,7 +17,7 @@ export default class Runner {
     this.prioritizeFiles(files).forEach((o) => { this.analyze(o); });
   }
 
-  public static format(files: Array<File>, format: string): string {
+  public static format(files: Array<File>, format?: string): string {
     let output = "";
 // todo, this can be done more generic
     switch (format) {

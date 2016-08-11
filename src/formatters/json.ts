@@ -7,18 +7,18 @@ export class Json {
 
     for (let file of files) {
       for (let issue of file.getIssues()) {
-        let single = { type: "issue",
-          check_name: issue.getDescription(),
+        let single = {
           description: issue.getDescription(),
-          categories: ["Complexity"],
-          location: {
-            path: file.getFilename(),
-              lines: {
-                begin: issue.getStart().getRow(),
-                end: issue.getStart().getRow(),
-              },
-            },
-          };
+          file: file.getFilename(),
+          start: {
+            row: issue.getStart().getRow(),
+            col: issue.getStart().getCol(),
+          },
+          end: {
+            row: issue.getEnd().getRow(),
+            col: issue.getEnd().getCol(),
+          },
+        };
         out.push(single);
       }
     }

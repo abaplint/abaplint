@@ -3,24 +3,27 @@
   <head>
     <title>abaplint web</title>
     <script src="script/bundle.js"></script>
-    <script src="script/script.js"></script>
+
     <link rel="stylesheet" type="text/css" href="style/style.css">
     <script src="script/codemirror.js"></script>
     <script src="script/abap.js"></script>
+    <script src="script/mark-selection.js"></script>
     <link rel="stylesheet" href="style/codemirror.css">
     <link rel="stylesheet" href="style/seti.css">
+    <link rel="stylesheet" href="style/mbo.css">
     <link rel="icon" href="data:;base64,iVBORw0KGgo=">
   </head>
   <body>
-    <a href="https://github.com/larshp/abaplint"><img style="position: absolute; top: 0; right: 0; border: 0;" src="https://camo.githubusercontent.com/e7bbb0521b397edbd5fe43e7f760759336b5e05f/68747470733a2f2f73332e616d617a6f6e6177732e636f6d2f6769746875622f726962626f6e732f666f726b6d655f72696768745f677265656e5f3030373230302e706e67" alt="Fork me on GitHub" data-canonical-src="https://s3.amazonaws.com/github/ribbons/forkme_right_green_007200.png"></a>
-    <div style="position: absolute; top: 0px; left: 0px; right: 0px; height: 40px; line-height: 40px;">
-    abaplint web edition |
-    <a href="#" onclick="issues();return false;">issues</a> |
-    <a href="#" onclick="tokens();return false;">tokens</a> |
-    <a href="#" onclick="statements();return false;">statements</a> |
-    <a href="#" onclick="ast();return false;">ast</a> |
-    <a href="./viz/">syntax diagrams</a>
-    </div>
+
+<div style="position: absolute; top: 0px; left: 0px; right: 0px; height: 40px; line-height: 40px;">
+abaplint web |
+<a href="#" onclick="issues();return false;">issues</a> |
+<a href="#" onclick="tokens();return false;">tokens</a> |
+<a href="#" onclick="statements();return false;">statements</a> |
+<a href="#" onclick="ast();return false;">ast</a> |
+<a href="./viz/">syntax diagrams</a>
+</div>
+
 <div style="position: absolute; top: 40px; bottom: 0px; left: 0px; right: 0px;">
 
 <div style="position: absolute; top: 0px; bottom: 0px; box-sizing: border-box; left: 0px; width: 50%; padding-right: 3px;">
@@ -30,27 +33,13 @@ REPORT ZHELLO.
 </textarea>
 </div>
 
-  <div style="position: absolute; top: 0px; bottom: 0px; box-sizing: border-box; left: 50%; width: 50%; padding-right: 3px;">
-    <div id="info"></div>
-    <table border="1">
-    <tr>
-    <td><pre><div id="result"></div></pre></td>
-    <td><pre><div id="abap"></div></pre></td>
-    </tr>
-    </table>
+<div style="position: absolute; overflow: scroll; top: 0px; bottom: 0px; box-sizing: border-box; left: 50%; width: 50%; padding-right: 3px;">
+<div id="info"></div>
 </div>
 
 </div>
 
-<script>
-  var editor = CodeMirror.fromTextArea(document.getElementById("input"), {
-    lineNumbers: true,
-    mode: "javascript",
-    theme: "seti",
-    tabSize: 2,
-    mode: "abap"
-  });
-</script>
+<script src="script/script.js"></script>
 
   </body>
 </html>
