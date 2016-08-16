@@ -1,6 +1,5 @@
 import "../typings/index.d.ts";
 import * as chai from "chai";
-import * as fs from "fs";
 import { Unknown } from "../src/statements/statement";
 import File from "../src/file";
 import Runner from "../src/runner";
@@ -24,5 +23,6 @@ describe("unknown statements", () => {
         expect(statement instanceof Unknown).to.equals(true);
       }
     }
-  )});
+  );
+  });
 });

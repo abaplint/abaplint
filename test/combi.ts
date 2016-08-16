@@ -4,8 +4,6 @@ import * as Combi from "../src/combi";
 import * as Tokens from "../src/tokens/";
 import Lexer from "../src/lexer";
 import File from "../src/file";
-import * as Statements from "../src/statements/";
-import Position from "../src/position";
 
 let expect = chai.expect;
 

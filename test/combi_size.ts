@@ -2,7 +2,6 @@ import "../typings/index.d.ts";
 import * as chai from "chai";
 import * as Combi from "../src/combi";
 import * as Tokens from "../src/tokens/";
-import * as Statements from "../src/statements/";
 import Reuse from "../src/statements/reuse";
 import Position from "../src/position";
 
@@ -10,11 +9,8 @@ let expect = chai.expect;
 
 let str      = Combi.str;
 let seq      = Combi.seq;
-let alt      = Combi.alt;
 let opt      = Combi.opt;
 let star     = Combi.star;
-let reg      = Combi.regex;
-let re       = Combi.reuse;
 
 function tok(s: string): Array<Tokens.Token> {
   let split = s.split(" ");
