@@ -56,7 +56,7 @@ if (argv["h"] !== undefined || argv["help"] !== undefined) {
   let raw = fs.readFileSync(__dirname + "/../../package.json", "utf8");
   output = output + JSON.parse(raw).version + "\n";
 } else if (argv["d"] !== undefined || argv["default"] !== undefined) {
-  output = output + Config.getDefault() + "\n";
+  output = output + JSON.stringify(Config.getDefault().get()) + "\n";
 } else if (argv._[0] === undefined) {
   output = output + "Supply filename\n";
 } else {
