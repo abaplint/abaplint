@@ -4,6 +4,7 @@ import * as Rules from "./rules/";
 import Lexer from "./lexer";
 import Parser from "./parser";
 import Nesting from "./nesting";
+import {Version} from "./version";
 import * as Formatters from "./formatters/";
 
 export default class Runner {
@@ -60,3 +61,5 @@ export default class Runner {
 
 exports.File = File;
 exports.Runner = Runner;
+exports.Config = Config;
+exports.Version = Version;
