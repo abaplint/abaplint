@@ -3,6 +3,7 @@ import Runner from "./runner";
 import File from "./file";
 import Config from "./config";
 import * as fs from "fs";
+import * as path from "path";
 import * as glob from "glob";
 import * as minimist from "minimist";
 
@@ -10,6 +11,30 @@ let argv = minimist(process.argv.slice(2));
 let format = "default";
 let output = "";
 let files: Array<File> = [];
+
+function searchConfig(filename: string): Config {
+  let json = searchUp(path.dirname(process.cwd() + path.sep + filename) + path.sep);
+  if (json === undefined) {
+    return Config.getDefault();
+  } else {
+    return new Config(json);
+  }
+}
+
+function searchUp(dir: string): string {
+  let file = dir + "abaplint.json";
+  if (fs.existsSync(file)) {
+    return fs.readFileSync(file, "utf8");
+  }
+
+  let up = path.normalize(dir + ".." + path.sep);
+  if (path.normalize(up) !== dir) {
+    return searchUp(up);
+  }
+
+  return undefined;
+}
+
 
 if (argv["f"] !== undefined || argv["format"] !== undefined) {
   if (argv["f"] !== undefined) {
@@ -20,7 +45,7 @@ if (argv["f"] !== undefined || argv["format"] !== undefined) {
 }
 
 if (argv["h"] !== undefined || argv["help"] !== undefined) {
-  output = output + "Usage: aoc [options] [file ...]\n";
+  output = output + "Usage: abaplint [options] [file ...]\n";
   output = output + "\n";
   output = output + "Options:\n";
   output = output + "  -h, --help       display this help\n";
@@ -28,7 +53,7 @@ if (argv["h"] !== undefined || argv["help"] !== undefined) {
   output = output + "  -v, --version    current version\n";
   output = output + "  -d, --default    show default configuration\n";
 } else if (argv["v"] !== undefined || argv["version"] !== undefined) {
-  let raw = fs.readFileSync(__dirname + "/../package.json", "utf8");
+  let raw = fs.readFileSync(__dirname + "/../../package.json", "utf8");
   output = output + JSON.parse(raw).version + "\n";
 } else if (argv["d"] !== undefined || argv["default"] !== undefined) {
   output = output + Config.getDefault() + "\n";
@@ -45,7 +70,8 @@ if (argv["h"] !== undefined || argv["help"] !== undefined) {
   if (files.length === 0) {
     output = output + "No files found\n";
   } else {
-    Runner.run(files);
+    let config = searchConfig(files[0].getFilename());
+    Runner.run(files, config);
     output = Runner.format(files, format);
   }
 }

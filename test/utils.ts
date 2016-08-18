@@ -1,5 +1,6 @@
 import "../typings/index.d.ts";
 import File from "../src/file";
+import Config from "../src/config";
 import Runner from "../src/runner";
 import * as chai from "chai";
 import {Version} from "../src/version";
@@ -11,7 +12,9 @@ let expect = chai.expect;
 
 function run(abap: string, text: string, type, version = Version.v750) {
   let file = new File("temp.abap", abap);
-  Runner.run([file], version);
+  let config = Config.getDefault();
+  config.setVersion(version);
+  Runner.run([file], config);
   let slist = file.getStatements();
 
   it(text, () => {

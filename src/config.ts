@@ -1,13 +1,13 @@
 import "../typings/index.d.ts";
 import * as Rules from "./rules/";
-import * as path from "path";
-import * as fs from "fs";
+import {Version} from "./version";
 
 export default class Config {
 
   private config = undefined;
+  private ver: Version;
 
-  public static getDefault(): string {
+  public static getDefault(): Config {
     let defaults: Array<string> = [];
 
     for (let key in Rules) {
@@ -17,14 +17,18 @@ export default class Config {
       }
     }
 
-    return "{\"rules\":\n{" + defaults.join(",\n") + "\n}}";
+    let json = "{\"rules\":\n{" + defaults.join(",\n") + "\n}}";
+    let conf = new Config(json);
+    conf.setVersion(Version.v750);
+    return conf;
   }
 
-  public constructor(filename: string) {
-    this.searchConfig(path.dirname(process.cwd() + path.sep + filename) + path.sep);
-    if (this.config === undefined) {
-      this.set(Config.getDefault());
-    }
+  public constructor(json: string) {
+    this.config = JSON.parse(json);
+  }
+
+  public get() {
+    return this.config;
   }
 
   public readByKey(rule: string, key: string) {
@@ -35,26 +39,11 @@ export default class Config {
     return this.config["rules"][rule];
   }
 
-  public set(json: string) {
-    this.config = JSON.parse(json);
+  public getVersion(): Version {
+    return this.ver;
   }
 
-  private searchConfig(dir: string) {
-    if (typeof fs.existsSync !== "function") {
-// make sure the code also works in web browser
-      return;
-    }
-
-    let file = dir + "abaplint.json";
-    if (fs.existsSync(file)) {
-      let json = fs.readFileSync(file, "utf8");
-      this.set(json);
-      return;
-    }
-
-    let up = path.normalize(dir + ".." + path.sep);
-    if (path.normalize(up) !== dir) {
-      this.searchConfig(up);
-    }
+  public setVersion(ver: Version): void {
+    this.ver = ver;
   }
 }

@@ -4,16 +4,13 @@ import * as Rules from "./rules/";
 import Lexer from "./lexer";
 import Parser from "./parser";
 import Nesting from "./nesting";
-import {Version} from "./version";
 import * as Formatters from "./formatters/";
 
 export default class Runner {
   private static conf: Config;
-  private static ver: Version;
 
-  public static run(files: Array<File>, ver = Version.v750) {
-    this.ver = ver;
-    this.conf = new Config(files[0].getFilename());
+  public static run(files: Array<File>, conf?: Config) {
+    this.conf = conf ? conf : Config.getDefault();
     this.prioritizeFiles(files).forEach((o) => { this.analyze(o); });
   }
 
@@ -48,7 +45,7 @@ export default class Runner {
 
   private static analyze(file: File) {
     file.setTokens(Lexer.run(file));
-    file.setStatements(Parser.run(file, this.ver));
+    file.setStatements(Parser.run(file, this.conf.getVersion()));
     file.setNesting(Nesting.run(file));
 
     for (let key in Rules) {
