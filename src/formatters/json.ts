@@ -22,7 +22,7 @@ export class Json {
         out.push(single);
       }
     }
-    return JSON.stringify(out, undefined, "  ");
+    return JSON.stringify(out) + "\n";
   }
 
 }

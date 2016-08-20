@@ -20,7 +20,7 @@ describe("formatters", () => {
 
     it("Json " + test.file, () => {
       expect(file.getIssueCount()).to.equals(test.errors);
-      expect(Formatters.Json.output([file]).split("\n").length).to.equals(test.errors * 13 + 1);
+      expect(Formatters.Json.output([file]).split("\n").length).to.equals(2);
     });
 
     it("Standard " + test.file, () => {
