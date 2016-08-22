@@ -277,6 +277,7 @@ export default class Reuse {
     let ret = alt(tok("WPlusW"),
                   tok("WDashW"),
                   str("*"),
+                  str("**"),
                   str("/"),
                   str("BIT-XOR"),
                   str("BIT-AND"),
