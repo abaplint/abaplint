@@ -12,7 +12,7 @@ let reg = Combi.regex;
 export class Write extends Statement {
 
   public static get_matcher(): Combi.IRunnable {
-    let at = seq(str("AT"), reg(/^\/?\d+$/));
+    let at = seq(opt(str("AT")), reg(/^\/?\d+$/));
 
     let mask = seq(str("USING EDIT MASK"), Reuse.source());
 
@@ -26,6 +26,7 @@ export class Write extends Statement {
                       str("LEFT-JUSTIFIED"),
                       seq(str("UNIT"), Reuse.source()),
                       seq(str("DECIMALS"), Reuse.source()),
+                      seq(str("COLOR"), Reuse.source()),
                       seq(str("CURRENCY"), Reuse.source()),
                       str("NO-SIGN"));
 

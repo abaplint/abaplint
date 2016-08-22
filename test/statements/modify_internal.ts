@@ -6,6 +6,7 @@ let tests = [
   "modify lt_table index sy-index from item.",
   "MODIFY lt_table INDEX SY-TABIX.",
   "modify lt_table.",
+  "MODIFY TABLE mt_map FROM ls_map.",
   "MODIFY gt_alv FROM ls_alv INDEX ls_rows-index.",
   "MODIFY ct_col INDEX sy-tabix FROM ls_col TRANSPORTING field.",
 ];

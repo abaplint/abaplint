@@ -7,6 +7,7 @@ let seq = Combi.seq;
 let opt = Combi.opt;
 let alt = Combi.alt;
 let per = Combi.per;
+let plus = Combi.plus;
 
 export class Class extends Statement {
 
@@ -26,7 +27,7 @@ export class Class extends Statement {
                    str("FOR TESTING"),
                    risk,
                    duration,
-                   seq(opt(str("GLOBAL")), str("FRIENDS"), Reuse.class_name()));
+                   seq(opt(str("GLOBAL")), str("FRIENDS"), plus(Reuse.class_name())));
 
     let def = seq(str("DEFINITION"),
                   opt(alt(str("LOAD"),

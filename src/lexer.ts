@@ -234,7 +234,7 @@ export default class Lexer {
 // end of ping
         this.add();
         this.m = Mode.Normal;
-      } else if (buf.length > 1 && current === "|" && this.m === Mode.Template) {
+      } else if (buf.length > 1 && current === "|" && prev !== "\\" && this.m === Mode.Template) {
 // end of template
         this.add();
         this.m = Mode.Normal;

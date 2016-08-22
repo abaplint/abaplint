@@ -18,7 +18,7 @@ export class Import extends Statement {
     let source = alt(buffer, memory, database);
 
     let to = plus(seq(Reuse.source(), str("TO"), Reuse.target()));
-    let target = alt(Reuse.parameter_list_t(), to);
+    let target = alt(Reuse.parameter_list_t(), to, Reuse.dynamic());
 
     return seq(str("IMPORT"), target, str("FROM"), source);
   }

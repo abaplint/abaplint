@@ -13,6 +13,7 @@ export class Shift extends Statement {
     let dir = alt(seq(alt(str("LEFT DELETING LEADING"),
                           str("RIGHT DELETING TRAILING"),
                           str("RIGHT BY"),
+                          str("LEFT CIRCULAR BY"),
                           str("LEFT BY"),
                           str("BY")),
                       Reuse.source(), opt(str("PLACES"))),

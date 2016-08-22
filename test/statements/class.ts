@@ -20,6 +20,7 @@ let tests = [
   "CLASS lcl_repo_srv DEFINITION FINAL CREATE PRIVATE FRIENDS lcl_app.",
   "CLASS lcl_object_tabl DEFINITION INHERITING FROM lcl_objects_super FINAL.",
 
+  "class ZCL_c1 definition public create public global friends ZCL_c2 ZCL_c3.",
   "class zcl_foo definition public inheriting from zcl_super final create private global friends zcl_factory.",
 ];
 

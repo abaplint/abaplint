@@ -54,11 +54,17 @@ export default class Reuse {
 
     return re(() => { return ret; }, "inline_fs");
   }
-
+/*
   public static inline_decl(): Combi.Reuse {
     let ret = ver(Version.v740sp02, alt(this.inline_data(), this.inline_fs()));
 
     return re(() => { return ret; }, "inline_decl");
+  }
+*/
+  public static fs_target(): Combi.Reuse {
+    return re(() => {
+      return alt(this.inline_fs(), this.field_symbol()); },
+              "fs_target");
   }
 
   public static target(): Combi.Reuse {
@@ -70,7 +76,7 @@ export default class Reuse {
 
       let optional = alt(this.table_body(), fields);
 
-      return alt(this.inline_decl(), seq(after, optional)); },
+      return alt(this.inline_data(), this.inline_fs(), seq(after, optional)); },
               "target");
   }
 

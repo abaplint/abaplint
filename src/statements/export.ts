@@ -17,7 +17,7 @@ export class Export extends Statement {
     let database = seq(str("DATABASE"), Reuse.source(), str("FROM"), Reuse.source(), id);
     let target = alt(db, memory, database);
 
-    let source = alt(Reuse.parameter_list_s(), Reuse.source());
+    let source = alt(Reuse.parameter_list_s(), Reuse.source(), Reuse.dynamic());
 
     return seq(str("EXPORT"), source, str("TO"), target, opt(str("COMPRESSION ON")));
   }

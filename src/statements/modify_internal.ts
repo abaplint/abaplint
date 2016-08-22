@@ -5,6 +5,7 @@ import * as Combi from "../combi";
 let str = Combi.str;
 let seq = Combi.seq;
 let opt = Combi.opt;
+let alt = Combi.alt;
 
 export class ModifyInternal extends Statement {
 
@@ -20,7 +21,12 @@ export class ModifyInternal extends Statement {
                   Reuse.target(),
                   opt(options));
 
-    return ret;
+    let ret2 = seq(str("MODIFY"),
+                   str("TABLE"),
+                   Reuse.target(),
+                   from);
+
+    return alt(ret, ret2);
   }
 
 }

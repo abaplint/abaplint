@@ -10,7 +10,9 @@ let tests = [
   "WRITE pv_qty UNIT pv_uom TO lv_text1.",
   "write <item> to lv_value no-grouping no-sign decimals 10.",
   "WRITE AT /10 'sdf'.",
+  "WRITE 'Hello' COLOR 6.",
   "WRITE AT 10 'sdf'.",
+  "WRITE 25 'hello'.",
   "WRITE /.",
 ];
 
