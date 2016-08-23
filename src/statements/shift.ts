@@ -14,6 +14,7 @@ export class Shift extends Statement {
                           str("RIGHT DELETING TRAILING"),
                           str("RIGHT BY"),
                           str("LEFT CIRCULAR BY"),
+                          str("LEFT UP TO"),
                           str("LEFT BY"),
                           str("BY")),
                       Reuse.source(), opt(str("PLACES"))),

@@ -23,6 +23,7 @@ export class Find extends Statement {
                   opt(seq(str("MATCH OFFSET"), Reuse.target())),
                   opt(seq(str("MATCH COUNT"), Reuse.target())),
                   opt(seq(str("MATCH LENGTH"), Reuse.target())),
+                  opt(seq(str("RESULTS"), Reuse.target())),
                   opt(seq(str("SUBMATCHES"), plus(Reuse.target()))));
 
     return ret;

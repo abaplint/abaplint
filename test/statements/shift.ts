@@ -9,6 +9,7 @@ let tests = [
 //  "SHIFT lv_content BY 1022 PLACES LEFT IN BYTE MODE.",  todo
   "SHIFT l_xstr LEFT DELETING LEADING cl_abap_char_utilities=>byte_order_mark_utf8 IN BYTE MODE.",
   "SHIFT lv_syindex RIGHT DELETING TRAILING space.",
+  "SHIFT classname LEFT UP TO '='.",
 ];
 
 statementType(tests, "SHIFT", Statements.Shift);

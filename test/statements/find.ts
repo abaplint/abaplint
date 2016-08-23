@@ -10,6 +10,7 @@ let tests = [
   "FIND ALL OCCURRENCES OF REGEX 'sdf' IN io_tab->sett-name IGNORING CASE MATCH COUNT lv_match.",
   "FIND ALL OCCURRENCES OF '/' IN <ls_folder>-path MATCH COUNT <ls_folder>-count.",
   "FIND REGEX '(.*/)(.*)' IN iv_str SUBMATCHES lv_path rv_filename.",
+  "find first occurrence of regex 'foo' in me->line match count l_cnt results result_tab.",
 ];
 
 statementType(tests, "FIND", Statements.Find);

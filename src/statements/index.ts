@@ -1,4 +1,5 @@
-// do not include statement.ts in this file, it only contains "real" statements
+// do not include statement.ts in this file.
+// this file only contains "real" statements
 // see statement.ts for Unknown, Empty, Macro and Comment statements
 export * from "./data";
 export * from "./report";
@@ -149,3 +150,5 @@ export * from "./get_cursor";
 export * from "./call_kernel";
 export * from "./call_transaction";
 export * from "./unpack";
+export * from "./skip";
+export * from "./uline";

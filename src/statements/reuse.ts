@@ -54,13 +54,7 @@ export default class Reuse {
 
     return re(() => { return ret; }, "inline_fs");
   }
-/*
-  public static inline_decl(): Combi.Reuse {
-    let ret = ver(Version.v740sp02, alt(this.inline_data(), this.inline_fs()));
 
-    return re(() => { return ret; }, "inline_decl");
-  }
-*/
   public static fs_target(): Combi.Reuse {
     return re(() => {
       return alt(this.inline_fs(), this.field_symbol()); },
@@ -215,7 +209,24 @@ export default class Reuse {
     let fields = star(seq(this.arrow_or_dash(), this.field()));
     let after = star(seq(fields, this.arrow(), this.method_call()));
 
-    let ret = seq(opt(seq(this.field_chain(), this.arrow())), this.method_call(), after);
+    let rparen = alt(tok("WParenRightW"), tok("WParenRight"));
+
+    let neww = ver(Version.v740sp02, seq(str("NEW"),
+                                         this.type_name(),
+                                         tok("ParenLeftW"),
+                                         opt(alt(Reuse.source(), Reuse.parameter_list_s())),
+                                         rparen));
+
+    let cast = ver(Version.v740sp02, seq(str("CAST"),
+                                         this.type_name(),
+                                         tok("ParenLeftW"),
+                                         this.source(),
+                                         rparen));
+
+    let ret = seq(alt(seq(opt(seq(this.field_chain(), this.arrow())), this.method_call()),
+                      neww,
+                      cast),
+                  after);
 
     return re(() => { return ret; }, "method_call_chain");
   }
@@ -332,18 +343,6 @@ export default class Reuse {
                         paren),
                     opt(alt(ref, after, this.table_body())));
 
-      let neww = ver(Version.v740sp02, seq(str("NEW"),
-                                           this.type_name(),
-                                           tok("ParenLeftW"),
-                                           opt(alt(Reuse.source(), Reuse.parameter_list_s())),
-                                           rparen));
-
-      let cast = ver(Version.v740sp02, seq(str("CAST"),
-                                           this.type_name(),
-                                           tok("ParenLeftW"),
-                                           this.source(),
-                                           rparen));
-
       let corr = ver(Version.v740sp05, seq(str("CORRESPONDING"),
                                            this.type_name(),
                                            tok("ParenLeftW"),
@@ -356,7 +355,7 @@ export default class Reuse {
                                            this.source(),
                                            rparen));
 
-      let ret = alt(old, cast, neww, corr, conv);
+      let ret = alt(old, corr, conv);
 
       return ret; };
 

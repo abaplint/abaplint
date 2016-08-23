@@ -25,6 +25,7 @@ let tests = [
   "rs_data-len = xstrlen( foo ) - go_stream->rema( ).",
   "foo = method( 2 ).",
   "foo = method(\n 2 ).",
+  "rv_res = ( iv_x BIT-AND iv_y ) BIT-OR ( iv_x BIT-AND iv_z ).",
   "foo = method(\n2 ).",
 ];
 
@@ -36,6 +37,7 @@ let versions = [
   {abap: "DATA(lo_obj) = CAST cl_abap_objectdescr(\n cl_abap_objectdescr=>describe_by_object_ref( ii_handler ) ).", ver: Version.v740sp02},
   {abap: "foo = CORRESPONDING #( get( ) ).", ver: Version.v740sp05},
   {abap: "lv_commit = CONV #( iv_branch ).", ver: Version.v740sp02},
+  {abap: "lv_xstr = CAST cl_sxml_string_writer( li_writer )->get_output( ).", ver: Version.v740sp02},
   {abap: "lv_commit = lo_repo->get_branch( CONV #( iv_branch ) )->get_data( )-sha1.", ver: Version.v740sp02},
 ];
 
