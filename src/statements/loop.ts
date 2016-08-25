@@ -20,7 +20,9 @@ export class Loop extends Statement {
 
     let to = seq(str("TO"), Reuse.source());
 
-    let options = per(into, from, to, where);
+    let usingKey = seq(str("USING KEY"), Reuse.source());
+
+    let options = per(into, from, to, where, usingKey);
 
     return seq(str("LOOP AT"),
                Reuse.source(),

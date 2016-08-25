@@ -5,6 +5,7 @@ import * as Combi from "../combi";
 let str = Combi.str;
 let seq = Combi.seq;
 let alt = Combi.alt;
+let opt = Combi.opt;
 
 export class CreateData extends Statement {
 
@@ -16,7 +17,13 @@ export class CreateData extends Statement {
                    str("TYPE STANDARD TABLE OF"),
                    str("LIKE LINE OF"));
 
-    let ret = seq(str("CREATE DATA"), Reuse.target(), type, alt(Reuse.source(), Reuse.dynamic()));
+    let key = str("WITH DEFAULT KEY");
+
+    let ret = seq(str("CREATE DATA"),
+                  Reuse.target(),
+                  type,
+                  alt(Reuse.source(), Reuse.dynamic()),
+                  opt(key));
 
     return ret;
   }

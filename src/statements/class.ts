@@ -14,7 +14,7 @@ export class Class extends Statement {
   public static get_matcher(): Combi.IRunnable {
     let create = seq(str("CREATE"), alt(str("PUBLIC"), str("PROTECTED"), str("PRIVATE")));
 
-    let level = alt(str("CRITICAL"), str("HARMLESS"));
+    let level = alt(str("CRITICAL"), str("HARMLESS"), str("DANGEROUS"));
     let risk = seq(str("RISK LEVEL"), level);
 
     let time = alt(str("LONG"), str("MEDIUM"), str("SHORT"));

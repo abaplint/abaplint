@@ -18,7 +18,7 @@ export class CallFunction extends Statement {
     let options = alt(starting, update, background, dest);
 
     let call = seq(str("CALL FUNCTION"),
-                   alt(Reuse.constant(), Reuse.field()),
+                   alt(Reuse.constant(), Reuse.field_chain()),
                    opt(options),
                    Reuse.function_parameters());
 

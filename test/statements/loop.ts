@@ -12,6 +12,7 @@ let tests = [
   "LOOP AT it_tokens ASSIGNING <ls_token> FROM sdf TO to.",
   "LOOP AT lt_lines ASSIGNING <ls_line> WHERE moo = boo.",
   "LOOP AT it_order REFERENCE INTO foo.",
+  "LOOP AT lt_catalog INTO ls_component USING KEY is_key WHERE is_key = abap_true.",
 ];
 
 statementType(tests, "LOOP", Statements.Loop);

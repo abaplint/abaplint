@@ -26,6 +26,7 @@ let tests = [
   "data foobar type abap_bool read-only value ABAP_FALSE ##NO_TEXT.",
   "data item(4) value '  # '.",
   "CLASS-DATA gv_out TYPE xstring.",
+  "DATA ls_field_cat_comp  LIKE LINE OF <ls_object_table>-field_catalog.",
   "DATA mt_stage TYPE SORTED TABLE OF ty_stage WITH UNIQUE KEY file-path file-filename.",
 ];
 

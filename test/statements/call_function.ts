@@ -87,6 +87,13 @@ let tests = [
   "    communication_failure  = 6  MESSAGE lv_message\n" +
   "    resource_failure       = 7\n" +
   "    OTHERS                 = 8.",
+
+  "CALL FUNCTION <ls_object_method>-methodname\n" +
+  "  EXPORTING\n" +
+  "    iv_client = lv_client\n" +
+  "  TABLES\n" +
+  "    tt_e071   = lt_cts_object_entry\n" +
+  "    tt_e071k  = lt_cts_key.",
 ];
 
 statementType(tests, "CALL FUNCTION", Statements.CallFunction);

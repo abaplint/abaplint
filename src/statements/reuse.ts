@@ -433,7 +433,7 @@ export default class Reuse {
                            str("RANGE OF"))));
 
     let ret = seq(type,
-                  this.typename(),
+                  this.field_chain(),
                   opt(def),
                   opt(length),
                   opt(decimals));
