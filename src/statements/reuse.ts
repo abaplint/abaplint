@@ -246,7 +246,15 @@ export default class Reuse {
   }
 
   public static field_chain(): Combi.Reuse {
-    let chain = seq(alt(this.field(), this.field_symbol()), star(seq(this.arrow_or_dash(), this.field())));
+    let fcond = seq(this.field(), str("="), this.source());
+
+    let tableExpr = ver(Version.v740sp02, seq(tok("BracketLeftW"),
+                                              alt(this.constant(), plus(fcond)),
+                                              str("]")));
+
+    let chain = seq(alt(this.field(), this.field_symbol()),
+                    opt(tableExpr),
+                    star(seq(this.arrow_or_dash(), this.field())));
 
     let ret = seq(chain, opt(this.field_offset()), opt(this.field_length()));
 
@@ -355,7 +363,32 @@ export default class Reuse {
                                            this.source(),
                                            rparen));
 
-      let ret = alt(old, corr, conv);
+      let fieldList = seq(this.field(), str("="), this.source());
+
+      let value = ver(Version.v740sp02, seq(str("VALUE"),
+                                            this.type_name(),
+                                            tok("ParenLeftW"),
+                                            alt(this.source(), plus(fieldList)),
+                                            rparen));
+
+      let when = seq(str("WHEN"), this.cond(), str("THEN"), this.source());
+
+      let elsee = seq(str("ELSE"), this.source());
+
+      let cond = ver(Version.v740sp02, seq(str("COND"),
+                                           this.type_name(),
+                                           tok("ParenLeftW"),
+                                           plus(when),
+                                           opt(elsee),
+                                           rparen));
+
+      let reff = ver(Version.v740sp02, seq(str("REF"),
+                                           this.type_name(),
+                                           tok("ParenLeftW"),
+                                           this.source(),
+                                           rparen));
+
+      let ret = alt(old, corr, conv, value, cond, reff);
 
       return ret; };
 
