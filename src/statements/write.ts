@@ -7,6 +7,7 @@ let seq = Combi.seq;
 let opt = Combi.opt;
 let alt = Combi.alt;
 let per = Combi.per;
+let tok = Combi.tok;
 let reg = Combi.regex;
 
 export class Write extends Statement {
@@ -26,12 +27,14 @@ export class Write extends Statement {
                       str("LEFT-JUSTIFIED"),
                       seq(str("UNIT"), Reuse.source()),
                       seq(str("DECIMALS"), Reuse.source()),
-                      seq(str("COLOR"), Reuse.source()),
+                      seq(str("COLOR"), opt(str("=")), Reuse.source(), opt(str("INVERSE"))),
                       seq(str("CURRENCY"), Reuse.source()),
                       str("NO-SIGN"));
 
+    let complex = seq(str("/"), opt(seq(tok("ParenLeft"), reg(/^\d+$/), tok("ParenRightW"))));
+
     let ret = seq(str("WRITE"),
-                  opt(alt(at, str("/"))),
+                  opt(alt(at, complex)),
                   opt(Reuse.source()),
                   opt(options));
 
