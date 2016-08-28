@@ -40,6 +40,7 @@ let versions = [
   {abap: "lv_value = REF #( attribute_value ).", ver: Version.v740sp02},
   {abap: "ev_filename = mt_files[ 1 ]-key-obj_name.", ver: Version.v740sp02},
   {abap: "land_text = countries[ land1 = lv_foo ]-landx50.", ver: Version.v740sp02},
+  {abap: "DATA(lt_tkey) = VALUE cvt_selops( ( option = 'EQ' sign   = 'I' low    = 'sdf' ) ).", ver: Version.v740sp02},
   {abap: "lv_xstr = CAST cl_sxml_string_writer( li_writer )->get_output( ).", ver: Version.v740sp02},
   {abap: "lv_value = COND #( WHEN type_kind = 'r' THEN 's' WHEN type_kind = 'h' THEN 'b' ELSE 'sd' ).", ver: Version.v740sp02},
   {abap: "lv_commit = lo_repo->get_branch( CONV #( iv_branch ) )->get_data( )-sha1.", ver: Version.v740sp02},

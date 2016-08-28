@@ -368,7 +368,9 @@ export default class Reuse {
       let value = ver(Version.v740sp02, seq(str("VALUE"),
                                             this.type_name(),
                                             tok("ParenLeftW"),
-                                            alt(this.source(), plus(fieldList)),
+                                            alt(this.source(),
+                                                plus(fieldList),
+                                                plus(seq(tok("WParenLeftW"), plus(fieldList), tok("WParenRightW")))),
                                             rparen));
 
       let when = seq(str("WHEN"), this.cond(), str("THEN"), this.source());

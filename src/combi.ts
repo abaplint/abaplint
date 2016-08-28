@@ -144,7 +144,7 @@ class Token implements IRunnable {
   }
 
   public railroad() {
-    return "Railroad.Terminal('Token \"" + this.s + "\"')";
+    return "Railroad.Terminal('!\"" + this.s + "\"')";
   }
 
   public toStr() {
