@@ -19,6 +19,7 @@ export default class Nesting {
 // todo, refactor
       if (statement instanceof Statements.Endform
           || statement instanceof Statements.Endmethod
+          || statement instanceof Statements.EndModule
           || statement instanceof Statements.Enddo
           || statement instanceof Statements.Endwhile
           || statement instanceof Statements.Enddefine
@@ -70,6 +71,7 @@ export default class Nesting {
           || statement instanceof Statements.Initialization
           || statement instanceof Statements.Class
           || statement instanceof Statements.Start
+          || statement instanceof Statements.Module
           || statement instanceof Statements.Form)) {
         stack.pop();
       }
@@ -91,6 +93,7 @@ export default class Nesting {
 
       if (statement instanceof Statements.If
           || statement instanceof Statements.Form
+          || statement instanceof Statements.Module
           || (statement instanceof Statements.Class
           && /DEFINITION DEFERRED/.test(statement.concatTokens().toUpperCase()) === false
           && /DEFINITION LOAD/.test(statement.concatTokens().toUpperCase()) === false

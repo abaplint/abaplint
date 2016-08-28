@@ -195,6 +195,16 @@ let expect = chai.expect;
       firstchildren: 1,
     },
     {
+      n: "START-OF-SELECTION 2",
+      code: "START-OF-SELECTION.\n" +
+            "  lcl_app=>run( ).\n" +
+            "MODULE status_2000 OUTPUT.\n" +
+            "  lcl_app=>status_2000( ).\n" +
+            "ENDMODULE.\n",
+      top: 2,
+      firstchildren: 1,
+    },
+    {
       n: "INITIALIZATION",
       code: "INITIALIZATION.\n" +
             "  PERFORM run.\n" +
