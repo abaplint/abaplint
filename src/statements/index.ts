@@ -128,7 +128,7 @@ export * from "./get_run_time";
 export * from "./get_parameter";
 export * from "./create_data";
 export * from "./set_country";
-export * from "./function";
+export * from "./function_module";
 export * from "./type_pools";
 export * from "./type_pool";
 export * from "./wait";

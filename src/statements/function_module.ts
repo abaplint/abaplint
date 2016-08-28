@@ -5,7 +5,7 @@ import Reuse from "./reuse";
 let str = Combi.str;
 let seq = Combi.seq;
 
-export class Function extends Statement {
+export class FunctionModule extends Statement {
 
   public static get_matcher(): Combi.IRunnable {
     return seq(str("FUNCTION"), Reuse.field());

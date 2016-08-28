@@ -23,7 +23,7 @@
     "posttest": "npm run tslint && npm run web",
     "clean": "rm -rf build",
     "typings": "typings install",
-    "precoverage": "istanbul cover ./node_modules/mocha/bin/_mocha build/test --report lcovonly -- -R spec",
+    "precoverage": "istanbul cover ./node_modules/mocha/bin/_mocha build/test --report lcovonly -- -R spec --recursive",
     "coverage": "remap-istanbul -i coverage/coverage.json -o coverage/coverage-remap.json",
     "postcoverage": "codecov -f coverage/coverage-remap.json",
     "preweb": "cp build/bundle.js web/script/bundle.js",
