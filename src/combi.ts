@@ -144,7 +144,15 @@ class Token implements IRunnable {
   }
 
   public railroad() {
-    return "Railroad.Terminal('!\"" + this.s + "\"')";
+    let text = this.s;
+
+    for (let token in Tokens) {
+      if (token === this.s && Tokens[token].railroad) {
+        text = Tokens[token].railroad();
+        break;
+      }
+    }
+    return "Railroad.Terminal('!\"" + text + "\"')";
   }
 
   public toStr() {
