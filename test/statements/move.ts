@@ -22,9 +22,12 @@ let tests = [
   "lv_maxint = 2 ** 31 - 1.",
   "lv_moo = |foo \\| bar|.",
   "rs_data-len = xstrlen( foo ) - foo( ).",
+  "iv_f = - lv_maxint.",
   "rs_data-len = xstrlen( foo ) - go_stream->rema( ).",
   "foo = method( 2 ).",
   "foo = method(\n 2 ).",
+  "rv_res = BIT-NOT iv_x.",
+  "rv_res = ( iv_x BIT-AND iv_y ) BIT-OR ( ( BIT-NOT iv_x ) BIT-AND iv_z ).",
   "rv_res = ( iv_x BIT-AND iv_y ) BIT-OR ( iv_x BIT-AND iv_z ).",
   "foo = method(\n2 ).",
 ];

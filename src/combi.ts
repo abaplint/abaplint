@@ -517,7 +517,10 @@ export class Combi {
       type = "Railroad.ComplexDiagram(";
     }
 
-    let result = type + runnable.railroad() + ").toString();";
+    let result = "Railroad.Diagram.INTERNAL_ALIGNMENT = 'left';\n" +
+      type +
+      runnable.railroad() +
+      ").toString();";
     return result;
   }
 

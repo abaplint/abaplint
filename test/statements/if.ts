@@ -26,6 +26,7 @@ let tests = [
   "IF out EQ abap_false.",
   "IF ( lv_offset + 1 ) MOD 8 = 0.",
   "IF is_item-obj_name IS INITIAL.",
+  "IF iv_f < - lv_maxint OR iv_f > lv_maxint.",
   "IF foo = bar OR moo = boo.",
 ];
 

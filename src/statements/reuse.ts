@@ -266,7 +266,7 @@ export default class Reuse {
   }
 
   public static database_table(): Combi.Reuse {
-    return re(() => { return reg(/^\w+$/); }, "database_table");
+    return re(() => { return reg(/^(\/\w+\/)?\w+$/); }, "database_table");
   }
 
   public static database_field(): Combi.Reuse {
@@ -343,11 +343,13 @@ export default class Reuse {
 
       let boolc = seq(str("BOOLC"), tok("ParenLeftW"), this.cond(), str(")"));
 
+      let prefix = alt(tok("WDashW"), str("BIT-NOT"));
+
       let old = seq(alt(this.constant(),
                         this.string_template(),
                         boolc,
                         method,
-                        this.field_chain(),
+                        seq(opt(prefix), this.field_chain()),
                         paren),
                     opt(alt(ref, after, this.table_body())));
 
