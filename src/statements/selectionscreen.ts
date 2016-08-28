@@ -30,7 +30,8 @@ export class SelectionScreen extends Statement {
                       Reuse.integer(),
                       str(")"),
                       opt(Reuse.source()),
-                      opt(seq(str("FOR FIELD"), Reuse.field())));
+                      opt(seq(str("FOR FIELD"), Reuse.field())),
+                      opt(seq(str("MODIF ID"), Reuse.field())));
 
     let func = seq(str("FUNCTION KEY"), Reuse.integer());
 

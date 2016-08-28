@@ -18,6 +18,7 @@ let tests = [
   "SELECTION-SCREEN COMMENT (60) cmt_dump FOR FIELD cb_dump.",
   "SELECTION-SCREEN COMMENT (30) FOR FIELD p_del.",
   "SELECTION-SCREEN COMMENT 5(13) text-002 FOR FIELD p_non.",
+  "selection-screen comment (24) txt_path  for field p_path  modif id pth.",
   "SELECTION-SCREEN COMMENT /1(35) text-001.",
 ];
 
