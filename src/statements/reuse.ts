@@ -240,7 +240,10 @@ export default class Reuse {
   }
 
   public static field_length(): Combi.Reuse {
-    let length = seq(tok("ParenLeft"), reg(/^[\d\w]+$/), opt(seq(this.arrow_or_dash(), this.field())), str(")"));
+    let length = seq(tok("ParenLeft"),
+                     reg(/^[\d\w]+$/),
+                     opt(seq(this.arrow_or_dash(), this.field())),
+                     alt(tok("ParenRightW"), tok("ParenRight")));
 
     return re(() => { return length; }, "field_length");
   }
