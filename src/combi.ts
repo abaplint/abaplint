@@ -179,7 +179,7 @@ class Vers implements IRunnable {
     if (Combi.getVersion() >= this.ver) {
       return this.runnable.run(r);
     } else {
-      return r;
+      return [];
     }
   }
 

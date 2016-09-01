@@ -22,3 +22,20 @@ export function versionDescription(v: Version): string {
       return "Unknown version";
   }
 }
+
+export function versionText(s: string): Version {
+  switch (s) {
+    case "v702":
+      return Version.v702;
+    case "v740sp02":
+      return Version.v740sp02;
+    case "v740sp05":
+      return Version.v740sp05;
+    case "v740sp08":
+      return Version.v740sp08;
+    case "v750":
+      return Version.v750;
+    default:
+      throw "unknown version";
+  }
+}

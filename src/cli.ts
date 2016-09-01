@@ -2,6 +2,7 @@ import "../typings/index.d.ts";
 import Runner from "./runner";
 import File from "./file";
 import Config from "./config";
+import {versionText} from "./version";
 import * as fs from "fs";
 import * as path from "path";
 import * as glob from "glob";
@@ -51,6 +52,7 @@ if (argv["h"] !== undefined || argv["help"] !== undefined) {
   output = output + "  -h, --help       display this help\n";
   output = output + "  -f, --format     output format (standard, total, json, summary)\n";
   output = output + "  -v, --version    current version\n";
+  output = output + "  -a               specify ABAP version\n";
   output = output + "  -d, --default    show default configuration\n";
 } else if (argv["v"] !== undefined || argv["version"] !== undefined) {
   let raw = fs.readFileSync(__dirname + "/../../package.json", "utf8");
@@ -71,6 +73,10 @@ if (argv["h"] !== undefined || argv["help"] !== undefined) {
     output = output + "No files found\n";
   } else {
     let config = searchConfig(files[0].getFilename());
+    
+    if (argv["a"]) {
+      config.setVersion(versionText(argv["a"]));
+    }
     Runner.run(files, config);
     output = Runner.format(files, format);
   }
