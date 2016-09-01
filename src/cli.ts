@@ -73,7 +73,7 @@ if (argv["h"] !== undefined || argv["help"] !== undefined) {
     output = output + "No files found\n";
   } else {
     let config = searchConfig(files[0].getFilename());
-    
+
     if (argv["a"]) {
       config.setVersion(versionText(argv["a"]));
     }
