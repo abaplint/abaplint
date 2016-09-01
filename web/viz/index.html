@@ -62,6 +62,7 @@ a:visited {
 <br>
 <b>Statements</b><br>
 <div id="sidenav_statements">Loading</div>
+<br>
 <b>Reuse</b><br>
 <div id="sidenav_reuse">Loading</div>
 </div>
@@ -90,7 +91,6 @@ function renderSidenav() {
   for(let i of json.statements) {
     html = html + "<a href=\"javascript:setFilter('" + i + "');\">" + i + "</a><br>";
   }
-  html = html + "<br>";
   document.getElementById("sidenav_statements").innerHTML = html;
   
   html = "";
