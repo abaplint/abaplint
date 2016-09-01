@@ -4,9 +4,9 @@ typings/
 coverage/
 npm-debug.log
 !web/viz/generate.js
+web/viz/data.json
 web/viz/**/*.txt
 web/viz/**/*.svg
-web/viz/index.html
 web/script/bundle.js
 web/script/codemirror.js
 web/style/seti.css
