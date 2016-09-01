@@ -19,6 +19,7 @@ export class Parameter extends Statement {
     let listbox = seq(str("AS LISTBOX VISIBLE LENGTH"), Reuse.constant());
     let cmd = seq(str("USER-COMMAND"), Reuse.field());
     let modif = seq(str("MODIF ID"), Reuse.field());
+    let visible = seq(str("VISIBLE LENGTH"), Reuse.constant());
     let match = seq(str("MATCHCODE OBJECT"), Reuse.field());
 
     let perm = per(def,
@@ -29,6 +30,7 @@ export class Parameter extends Statement {
                    memory,
                    modif,
                    listbox,
+                   visible,
                    str("LOWER CASE"));
 
     let ret = seq(para,

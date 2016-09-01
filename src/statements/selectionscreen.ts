@@ -15,10 +15,15 @@ export class SelectionScreen extends Statement {
 
     let beginBlock = seq(str("BEGIN OF BLOCK"),
                          blockName,
-                         opt(seq(str("WITH FRAME"), opt(seq(str("TITLE"), Reuse.source())))));
+                         opt(str("WITH FRAME")),
+                         opt(seq(str("TITLE"), Reuse.source())));
     let endBlock = seq(str("END OF BLOCK"), blockName);
 
-    let beginScreen = seq(str("BEGIN OF SCREEN"), Reuse.integer(), opt(str("AS SUBSCREEN")));
+    let beginScreen = seq(str("BEGIN OF SCREEN"),
+                          Reuse.integer(),
+                          opt(str("AS SUBSCREEN")),
+                          opt(seq(str("TITLE"), Reuse.source())));
+
     let endScreen = seq(str("END OF SCREEN"), Reuse.integer());
 
     let beginLine = str("BEGIN OF LINE");
