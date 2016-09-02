@@ -1,10 +1,19 @@
 language: node_js
 node_js:
-  - "6"
+- '6'
 before_script:
-  - npm run typings
+- npm run typings
 after_success:
-  - npm run viz
-  - npm run coverage
+- npm run viz
+- npm run coverage
 notifications:
   email: false
+deploy:
+  provider: script
+  script: "./travis.sh"
+  skip_cleanup: true
+  on:
+    branch: master
+env:
+  global:
+    secure: S5ZvucLDAszanmPyf666RwdpjxzGkh5GZ6Iq7KK2ib6jEsNequbkjGQDwwr1oJDXZx6FpPJKj/+jsPoUCAZ5xWyPRMIw+U+37uNjNZV+bn1S7vN8ZmXFlcoQDGhT2BUNNBpxcSvcuiZQDgamOMTZNnV9jyXxAyKB41MymfbNvedTMF8FYbNIqNZtMpZJQjC8IAIEdyLbe+jU2lq4pQdmckjP/mNWnw7VEdNKvQ/4qpdOKV4Oh1JTZUS+Odbs4uhDlQbdzqS8yUpFjpwExXDUZUvXgCpLnZl3q8uKfIgjDbdLRfBK1OXD1nd5Pgwfsd355i3afxW3LN2yOQxVgIg+CFyUrWeyBQfv8Ls11LzJ7SX64Lh61sHQ0ld1KJxu5xxz21ynZW/Oej0D4q8Kp8GKO8UWKtmy0NB0YVUplnydSxFqToNkort1ER6+ZyD5ns6YKJ6H37CPqMiohO6isjQ05gdSmEDpYlj1g5LUyg6RgK7u5gWnBvyshiNJ0oG/3ary/alMKkYDU/EMfxBNGyBkgN/LZm6HeyiMvyH5bgFnWh8h+4/BjfrHyuWt8aNG0XinQw5lzU+7h8haabNm/pe8UKhJbpwsr0JBs29RIZJfkHVoe0pPK7tNmvLKoBitn+am+0k1dRCcH806l5K67fKIVY+M49KbuWkxRZkKXhXpL2I=
