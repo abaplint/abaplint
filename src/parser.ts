@@ -7,73 +7,34 @@ import Node from "./node";
 import {Statement, Unknown, Empty, Comment, MacroCall, MacroContent} from "./statements/statement";
 import {Version} from "./version";
 
-class Timer {
-  private times;
-  private count;
-  private startTime: number;
-
-  public constructor() {
-    this.times = {};
-    this.count = {};
-  }
-
-  public start(): void {
-    this.startTime = new Date().getTime();
-  }
-
-  public stop(name: string): void {
-    let end = new Date().getTime();
-    let time = end - this.startTime;
-    if (this.times[name]) {
-      this.times[name] = this.times[name] + time;
-      this.count[name] = this.count[name] + 1;
-    } else {
-      this.times[name] = time;
-      this.count[name] = 1;
-    }
-  }
-
-  public output(filename: string) {
-    for (let name in this.times) {
-      if (this.times[name] > 100) {
-        console.log(name + "\t" + this.times[name] + "ms\t" + this.count[name] + "\t" + filename);
-      }
-    }
-  }
-}
-
 export default class Parser {
   private static statements: Array<Statement>;
-  private static timer;
   private static map;
 
-  public static run(file: File, ver = Version.v750, timer = false): Array<Statement> {
+  public static run(file: File, ver = Version.v750): Array<Statement> {
     this.statements = [];
 
     if (!this.map) {
       this.initialize();
     }
 
-    if (timer) {
-      this.timer = new Timer();
-    }
-
     this.process(file.getTokens());
     this.categorize(ver);
     this.macros();
-
-    if (timer) {
-      this.timer.output(file.getFilename());
-    }
 
     return this.statements;
   }
 
   private static initialize() {
-    for (let st in Statements) {
-      console.log(st + ": " + Statements[st].get_matcher().first());
-    }
     this.map = {};
+    for (let st in Statements) {
+      let first = Statements[st].get_matcher().first();
+      if (this.map[first]) {
+        this.map[first].push(st);
+      } else {
+        this.map[first] = [st];
+      }
+    }
   }
 
   private static macros() {
@@ -130,18 +91,18 @@ export default class Parser {
   }
 
   private static match(statement: Statement, ver: Version): Statement {
-    for (let st in Statements) {
-      if (this.timer) {
-        this.timer.start();
-      }
+    let test = this.map[statement.getTokens()[0].getStr().toUpperCase()];
+    if (test) {
+      test = test.concat(this.map[""]);
+    } else {
+      test = this.map[""];
+    }
+    for (let st of test) {
       let root = new Node(st);
       let match = Combi.run(Statements[st].get_matcher(),
                             this.removeLast(statement.getTokens()),
                             root,
                             ver);
-      if (this.timer) {
-        this.timer.stop(st);
-      }
       if (match === true) {
         return new Statements[st](statement.getTokens(), root);
       }

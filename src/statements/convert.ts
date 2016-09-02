@@ -11,7 +11,7 @@ export class Convert extends Statement {
 
   public static get_matcher(): Combi.IRunnable {
 
-    let time = seq(str("CONVERT TIME STAMP"),
+    let time = seq(str("TIME STAMP"),
                    Reuse.source(),
                    str("TIME ZONE"),
                    Reuse.source(),
@@ -21,7 +21,7 @@ export class Convert extends Statement {
                    Reuse.target(),
                    opt(seq(str("DAYLIGHT SAVING TIME"), Reuse.target())));
 
-    let date = seq(str("CONVERT DATE"),
+    let date = seq(str("DATE"),
                    Reuse.source(),
                    str("TIME"),
                    Reuse.source(),
@@ -30,7 +30,7 @@ export class Convert extends Statement {
                    str("TIME ZONE"),
                    Reuse.source());
 
-    return alt(time, date);
+    return seq(str("CONVERT"), alt(time, date));
   }
 
 }

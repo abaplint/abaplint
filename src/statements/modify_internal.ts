@@ -17,16 +17,14 @@ export class ModifyInternal extends Statement {
 
     let options = seq(opt(from), index, opt(from), opt(transporting));
 
-    let ret = seq(str("MODIFY"),
-                  Reuse.target(),
+    let ret = seq(Reuse.target(),
                   opt(options));
 
-    let ret2 = seq(str("MODIFY"),
-                   str("TABLE"),
+    let ret2 = seq(str("TABLE"),
                    Reuse.target(),
                    from);
 
-    return alt(ret, ret2);
+    return seq(str("MODIFY"), alt(ret, ret2));
   }
 
 }

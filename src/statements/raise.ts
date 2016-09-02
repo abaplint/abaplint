@@ -10,14 +10,12 @@ let opt = Combi.opt;
 export class Raise extends Statement {
 
   public static get_matcher(): Combi.IRunnable {
-    let simple = seq(str("RAISE"), Reuse.field());
-
-    let clas = seq(str("RAISE EXCEPTION"),
+    let clas = seq(str("EXCEPTION"),
                    opt(str("TYPE")),
                    Reuse.class_name(),
                    opt(seq(str("EXPORTING"), Reuse.parameter_list_s())));
 
-    return alt(simple, clas);
+    return seq(str("RAISE"), alt(Reuse.field(), clas));
   }
 
 }

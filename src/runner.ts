@@ -9,15 +9,10 @@ import * as Formatters from "./formatters/";
 
 export default class Runner {
   private static conf: Config;
-  private static time: number;
 
   public static run(files: Array<File>, conf?: Config) {
-    this.time = 0;
-
     this.conf = conf ? conf : Config.getDefault();
     this.prioritizeFiles(files).forEach((o) => { this.analyze(o); });
-
-//    console.log("parsing: " + this.time + "ms");
   }
 
   public static version(): string {
@@ -56,9 +51,7 @@ export default class Runner {
 
   private static analyze(file: File) {
     file.setTokens(Lexer.run(file));
-    let start = new Date().getTime();
     file.setStatements(Parser.run(file, this.conf.getVersion()));
-    this.time = this.time + new Date().getTime() - start;
     file.setNesting(Nesting.run(file));
 
     for (let key in Rules) {
