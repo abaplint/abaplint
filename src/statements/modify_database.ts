@@ -10,7 +10,7 @@ let opt = Combi.opt;
 export class ModifyDatabase extends Statement {
 
   public static get_matcher(): Combi.IRunnable {
-    let target = alt(Reuse.field(), Reuse.dynamic());
+    let target = alt(Reuse.database_table(), Reuse.dynamic());
 
     let ret = seq(str("MODIFY"),
                   target,

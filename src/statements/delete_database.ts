@@ -11,7 +11,7 @@ export class DeleteDatabase extends Statement {
 
   public static get_matcher(): Combi.IRunnable {
     let where = seq(str("WHERE"), alt(Reuse.cond(), Reuse.dynamic()));
-    let source = alt(Reuse.dynamic(), Reuse.field());
+    let source = alt(Reuse.dynamic(), Reuse.database_table());
 
     let ret = seq(str("DELETE"), str("FROM"), source, opt(where));
 

@@ -10,7 +10,7 @@ let alt = Combi.alt;
 export class UpdateDatabase extends Statement {
 
   public static get_matcher(): Combi.IRunnable {
-    let target = alt(Reuse.field(), Reuse.dynamic());
+    let target = alt(Reuse.database_table(), Reuse.dynamic());
 
     let set = seq(str("SET"),
                   Reuse.parameter_list_s(),

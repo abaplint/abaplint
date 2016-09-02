@@ -10,7 +10,7 @@ let opt = Combi.opt;
 export class InsertDatabase extends Statement {
 
   public static get_matcher(): Combi.IRunnable {
-    let target = alt(Reuse.source(), Reuse.dynamic());
+    let target = alt(Reuse.database_table(), Reuse.dynamic());
 
     let from = seq(target,
                    opt(seq(str("FROM"),
