@@ -16,7 +16,7 @@
     "uglify": "uglifyjs build/bundle.js --compress warnings=false --mangle --keep-fnames -o build/bundle.js",
     "tslint": "tslint -c tslint.json 'src/**/*.ts' 'test/**/*.ts'",
     "precompile": "npm run clean && tsc --pretty",
-    "compile": "npm run browserify ",
+    "compile": "./version.sh && npm run browserify",
     "postcompile": "npm run uglify",
     "pretest": "npm run compile",
     "test": "mocha --recursive --reporter progress build/test",
