@@ -32,12 +32,18 @@ export class ExitOrCheck implements IRule {
     let stack: Array<Statement> = [];
 
     for (let statement of file.getStatements()) {
+// todo, use AST instead
+// todo, more work around SELECT
       if (statement instanceof Statements.Loop
           || statement instanceof Statements.While
+          || (statement instanceof Statements.Select
+            && / SINGLE /.test(statement.concatTokens()) === false
+            && / TABLE /.test(statement.concatTokens()) === false)
           || statement instanceof Statements.Do) {
         stack.push(statement);
       } else if (statement instanceof Statements.Endloop
           || statement instanceof Statements.Endwhile
+          || statement instanceof Statements.Endselect
           || statement instanceof Statements.Enddo) {
         stack.pop();
       } else if ((statement instanceof Statements.Check
