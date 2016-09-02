@@ -45,11 +45,16 @@ class Timer {
 export default class Parser {
   private static statements: Array<Statement>;
   private static timer;
+  private static map;
 
   public static run(file: File, ver = Version.v750, timer = false): Array<Statement> {
     this.statements = [];
+
+    if (!this.map) {
+      this.initialize();
+    }
+
     if (timer) {
-      console.log(file.getFilename());
       this.timer = new Timer();
     }
 
@@ -62,6 +67,13 @@ export default class Parser {
     }
 
     return this.statements;
+  }
+
+  private static initialize() {
+    for (let st in Statements) {
+      console.log(st + ": " + Statements[st].get_matcher().first());
+    }
+    this.map = {};
   }
 
   private static macros() {
@@ -119,11 +131,6 @@ export default class Parser {
 
   private static match(statement: Statement, ver: Version): Statement {
     for (let st in Statements) {
-/*
-      if (st !== "Export") {
-        continue;
-      }
-*/
       if (this.timer) {
         this.timer.start();
       }

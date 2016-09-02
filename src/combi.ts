@@ -61,6 +61,8 @@ export interface IRunnable {
   run(r: Array<Result>): Array<Result>;
   railroad(): string;
   toStr(): string;
+// return first keyword, blank if not applicable  
+  first(): string;
 }
 
 class Regex implements IRunnable {
@@ -91,13 +93,17 @@ class Regex implements IRunnable {
   public toStr() {
     return this.regexp.toString();
   }
+
+  public first() {
+    return "";
+  }
 }
 
 class Word implements IRunnable {
 
-  private s: String;
+  private s: string;
 
-  constructor(s: String) {
+  constructor(s: string) {
     this.s = s;
   }
 
@@ -119,6 +125,10 @@ class Word implements IRunnable {
 
   public toStr() {
     return "\"" + this.s + "\"";
+  }
+
+  public first() {
+    return this.s;
   }
 }
 
@@ -159,6 +169,10 @@ class Token implements IRunnable {
     return "Token \"" + this.s + "\"";
   }
 
+  public first() {
+    return "";
+  }
+
   private className(t: Tokens.Token): string {
     let str = t.constructor.toString();
     return str.match(/\w+/g)[1];
@@ -195,6 +209,9 @@ class Vers implements IRunnable {
     return "Version(" + this.runnable.toStr() + ")";
   }
 
+  public first() {
+    return "";
+  }
 }
 
 class Optional implements IRunnable {
@@ -224,16 +241,12 @@ class Optional implements IRunnable {
   public toStr() {
     return "opt(" + this.opt.toStr() + ")";
   }
-}
-/*
-function outputResultArray(r: Array<Result>) {
-  let cnt = 1;
-  for (let input of r) {
-    console.log(cnt + "\t" + input.toStr());
-    cnt++;
+
+  public first() {
+    return "";
   }
 }
-*/
+
 class Star implements IRunnable {
 
   private star: IRunnable;
@@ -274,6 +287,10 @@ class Star implements IRunnable {
   public toStr() {
     return "star(" + this.star.toStr() + ")";
   }
+
+  public first() {
+    return "";
+  }
 }
 
 class Plus implements IRunnable {
@@ -296,6 +313,9 @@ class Plus implements IRunnable {
     return "plus(" + this.plus.toStr() + ")";
   }
 
+  public first() {
+    return this.plus.first();
+  }
 }
 
 class Sequence implements IRunnable {
@@ -338,27 +358,31 @@ class Sequence implements IRunnable {
     }
     return "seq(" + ret + ")";
   }
+
+  public first() {
+    return this.list[0].first();
+  }
 }
 
 class WordSequence implements IRunnable {
 
   private str: String;
+  private words: Array<IRunnable> = [];
 
   constructor(str: String) {
     this.str = str;
-  }
 
-  public run(r: Array<Result>): Array<Result> {
     let foo = this.str.replace(/-/g, " - ");
     let split = foo.split(/[ ]/);
 
-    let words: Array<IRunnable> = [];
-    for (let str of split) {
+    for (let st of split) {
 // todo, use Dash token
-      words.push(new Word(str));
+      this.words.push(new Word(st));
     }
+  }
 
-    return (new Sequence(words)).run(r);
+  public run(r: Array<Result>): Array<Result> {
+    return (new Sequence(this.words)).run(r);
   }
 
   public railroad() {
@@ -367,6 +391,10 @@ class WordSequence implements IRunnable {
 
   public toStr() {
     return "str(" + this.str + ")";
+  }
+
+  public first() {
+    return this.words[0].first();
   }
 }
 
@@ -425,6 +453,10 @@ export class Reuse implements IRunnable {
   public toStr() {
     return "reuse(" + this.name + ")";
   }
+
+  public first() {
+    return "";
+  }
 }
 
 class Permutation implements IRunnable {
@@ -468,6 +500,10 @@ class Permutation implements IRunnable {
     let children = this.list.map((e) => { return e.toStr(); });
     return "per(" + children.join() + ")";
   }
+
+  public first() {
+    return "";
+  }
 }
 
 class Alternative implements IRunnable {
@@ -504,6 +540,10 @@ class Alternative implements IRunnable {
       ret = ret + i.toStr() + ",";
     }
     return "alt(" + ret + ")";
+  }
+
+  public first() {
+    return "";
   }
 }
 
