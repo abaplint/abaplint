@@ -31,4 +31,8 @@ export class Form extends Statement {
     return ret;
   }
 
+  public isStructure() {
+    return true;
+  }
+
 }

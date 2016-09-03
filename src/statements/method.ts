@@ -11,4 +11,8 @@ export class Method extends Statement {
     return seq(str("METHOD"), reg(/[\w~]+/));
   }
 
+  public isStructure() {
+    return true;
+  }
+
 }

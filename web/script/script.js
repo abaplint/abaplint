@@ -52,6 +52,8 @@ function buildStatements(file) {
 function buildAst(file) {
   let ret = "";
 
+  ret = file.getRoot().viz();
+/*
   for (let statement of file.getStatements()) {
     if (statement.getRoot()) {
       ret = ret + statement.getRoot().viz() + "<br>";
@@ -59,7 +61,7 @@ function buildAst(file) {
       console.log("missing root, " + statement.concatTokens());
     }
   }
-
+*/
   return ret;
 }
 
@@ -133,7 +135,7 @@ function run() {
     styleSelectedText: true,
     mode: "abap"
   });
-  
+
   document.getElementById("abaplintver").innerHTML = abaplint.Runner.version();
 }
 

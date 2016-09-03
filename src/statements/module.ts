@@ -13,4 +13,12 @@ export class Module extends Statement {
     return seq(str("MODULE"), Reuse.form_name(), opt(alt(str("INPUT"), str("OUTPUT"))));
   }
 
+  public isStructure() {
+    return true;
+  }
+
+  public isValidParent(s) {
+    return s === undefined;
+  }
+
 }

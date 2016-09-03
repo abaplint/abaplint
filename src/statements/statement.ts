@@ -1,26 +1,38 @@
 import { Token, Pragma } from "../tokens/";
 import Position from "../position";
-import {BasicNode} from ".././node";
+import {StatementNode} from ".././node";
 
 export abstract class Statement {
+// todo, perhaps the tokens var can be removed, and root BasicNode used instead
   private tokens: Array<Token>;
 
+// todo, variable "parent" + "children" to be removed? use AST instead
   private children: Array<Statement>;
-
-// todo, variable "parent" to be removed? use AST instead
   private parent: Statement;
 
-  private root: BasicNode;
+  private root: StatementNode;
 
-  public constructor(tokens: Array<Token>, root: BasicNode) {
+  public constructor(tokens: Array<Token>, root: StatementNode) {
     this.tokens   = tokens;
     this.children = [];
     this.parent   = undefined;
     this.root     = root;
   }
 
-  public getRoot(): BasicNode {
+  public getRoot(): StatementNode {
     return this.root;
+  }
+
+  public isStructure(): boolean {
+    return false;
+  }
+
+  public isValidParent(s: Statement): boolean {
+    return true;
+  }
+
+  public isEnd() {
+    return false;
   }
 
   public addChild(child: Statement) {

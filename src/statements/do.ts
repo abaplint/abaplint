@@ -12,4 +12,8 @@ export class Do extends Statement {
     return seq(str("DO"), opt(seq(Reuse.source(), str("TIMES"))));
   }
 
+  public isStructure() {
+    return true;
+  }
+
 }

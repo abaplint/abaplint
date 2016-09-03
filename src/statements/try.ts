@@ -9,4 +9,8 @@ export class Try extends Statement {
     return str("TRY");
   }
 
+  public isStructure() {
+    return true;
+  }
+
 }

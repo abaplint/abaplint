@@ -1,4 +1,5 @@
 import { Statement } from "./statement";
+import { Try } from "./try";
 import Reuse from "./reuse";
 import * as Combi from "../combi";
 
@@ -11,6 +12,14 @@ export class Catch extends Statement {
 
   public static get_matcher(): Combi.IRunnable {
     return seq(str("CATCH"), plus(Reuse.field()), opt(seq(str("INTO"), Reuse.target())));
+  }
+
+  public isStructure() {
+    return true;
+  }
+
+  public isValidParent(s) {
+    return s instanceof Try;
   }
 
 }

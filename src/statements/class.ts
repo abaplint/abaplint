@@ -37,4 +37,18 @@ export class Class extends Statement {
     return seq(str("CLASS"), Reuse.class_name(), alt(def, str("IMPLEMENTATION")));
   }
 
+  public isStructure() {
+    if (/DEFINITION DEFERRED/.test(this.concatTokens().toUpperCase())
+        || /DEFINITION LOAD/.test(this.concatTokens().toUpperCase())
+        || /DEFINITION LOCAL/.test(this.concatTokens().toUpperCase())) {
+      return false;
+    }
+
+    return true;
+  }
+
+  public isValidParent(s) {
+    return s === undefined;
+  }
+
 }

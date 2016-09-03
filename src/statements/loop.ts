@@ -29,4 +29,8 @@ export class Loop extends Statement {
                opt(options));
   }
 
+  public isStructure() {
+    return true;
+  }
+
 }

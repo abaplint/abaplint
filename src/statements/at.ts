@@ -17,4 +17,8 @@ export class At extends Statement {
     return ret;
   }
 
+  public isStructure() {
+    return true;
+  }
+
 }

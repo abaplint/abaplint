@@ -11,4 +11,8 @@ export class Case extends Statement {
     return seq(str("CASE"), Reuse.source());
   }
 
+  public isStructure() {
+    return true;
+  }
+
 }

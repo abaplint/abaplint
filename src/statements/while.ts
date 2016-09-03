@@ -11,4 +11,8 @@ export class While extends Statement {
     return seq(str("WHILE"), Reuse.cond());
   }
 
+  public isStructure() {
+    return true;
+  }
+
 }

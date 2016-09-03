@@ -19,4 +19,12 @@ export class AtSelectionScreen extends Statement {
     return ret;
   }
 
+  public isStructure() {
+    return true;
+  }
+
+  public isValidParent(s) {
+    return s === undefined;
+  }
+
 }

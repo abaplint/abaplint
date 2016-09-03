@@ -1,4 +1,5 @@
 import { Statement } from "./statement";
+import { If } from "./if";
 import * as Combi from "../combi";
 import Reuse from "./reuse";
 
@@ -9,6 +10,14 @@ export class Elseif extends Statement {
 
   public static get_matcher(): Combi.IRunnable {
     return seq(str("ELSEIF"), Reuse.cond());
+  }
+
+  public isStructure() {
+    return true;
+  }
+
+  public isValidParent(s) {
+    return s instanceof If;
   }
 
 }

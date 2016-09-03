@@ -9,4 +9,12 @@ export class Start extends Statement {
     return str("START-OF-SELECTION");
   }
 
+  public isStructure() {
+    return true;
+  }
+
+  public isValidParent(s) {
+    return s === undefined;
+  }
+
 }

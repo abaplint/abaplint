@@ -1,12 +1,14 @@
 import { Token } from "./tokens/";
 import { Statement } from "./statements/statement";
 import Issue from "./issue";
+import { RootNode } from "./node";
 
 export default class File {
   private tokens: Array<Token> = [];
   private statements: Array<Statement> = [];
   private nesting: Array<Statement> = [];
   private issues: Array<Issue> = [];
+  private root: RootNode;
   private raw: string = "";
   private filename: string = "";
 
@@ -20,6 +22,14 @@ export default class File {
       return;
     }
     this.issues.push(issue);
+  }
+
+  public setRoot(r: RootNode) {
+    this.root = r;
+  }
+
+  public getRoot(): RootNode {
+    return this.root;
   }
 
   public getIssueCount(): number {

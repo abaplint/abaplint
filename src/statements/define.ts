@@ -19,4 +19,8 @@ export class Define extends Statement {
     Registry.addMacro(tokens[1].getStr());
   }
 
+  public isStructure() {
+    return true;
+  }
+
 }

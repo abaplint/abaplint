@@ -9,4 +9,12 @@ export class Initialization extends Statement {
     return str("INITIALIZATION");
   }
 
+  public isStructure() {
+    return true;
+  }
+
+  public isValidParent(s) {
+    return s === undefined;
+  }
+
 }
