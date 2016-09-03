@@ -1,5 +1,4 @@
 import { Statement } from "./statement";
-import { Token } from "../tokens/";
 import Registry from "../registry";
 import * as Combi from "../combi";
 import Reuse from "./reuse";
@@ -14,8 +13,8 @@ export class Define extends Statement {
     return ret;
   }
 
-  public constructor(tokens: Array<Token>) {
-    super(tokens);
+  public constructor(tokens, root) {
+    super(tokens, root);
 
     Registry.addMacro(tokens[1].getStr());
   }

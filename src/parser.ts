@@ -27,8 +27,10 @@ export default class Parser {
 
   private static initialize() {
     this.map = {};
+
     for (let st in Statements) {
       let first = Statements[st].get_matcher().first();
+
       if (this.map[first]) {
         this.map[first].push(st);
       } else {
@@ -47,7 +49,7 @@ export default class Parser {
       } else if (statement instanceof Statements.Enddefine) {
         define = false;
       } else if (statement instanceof Unknown && define === true) {
-        statement = new MacroContent(statement.getTokens());
+        statement = new MacroContent(statement.getTokens(), new StatementNode("MacroContent"));
       }
 
       result.push(statement);
@@ -74,15 +76,11 @@ export default class Parser {
         statement = new Empty(statement.getTokens(), new StatementNode("Empty"));
       } else if (statement instanceof Unknown
           && last instanceof Tokens.Punctuation) {
-        let res = this.match(statement, ver);
-        if (res !== undefined) {
-          statement = res;
-        }
+        statement = this.match(statement, ver);
       }
-      if (statement instanceof Unknown) {
-        if (Registry.isMacro(statement.getTokens()[0].getStr())) {
-          statement = new MacroCall(statement.getTokens(), new StatementNode("MacroCall"));
-        }
+      if (statement instanceof Unknown &&
+          Registry.isMacro(statement.getTokens()[0].getStr())) {
+        statement = new MacroCall(statement.getTokens(), new StatementNode("MacroCall"));
       }
 
       result.push(statement);
@@ -92,11 +90,8 @@ export default class Parser {
 
   private static match(statement: Statement, ver: Version): Statement {
     let test = this.map[statement.getTokens()[0].getStr().toUpperCase()];
-    if (test) {
-      test = test.concat(this.map[""]);
-    } else {
-      test = this.map[""];
-    }
+    test = test ? test.concat(this.map[""]) : this.map[""];
+
     for (let st of test) {
       let root = new StatementNode(st);
       let match = Combi.run(Statements[st].get_matcher(),
@@ -107,13 +102,14 @@ export default class Parser {
         return new Statements[st](statement.getTokens(), root);
       }
     }
-    return undefined;
+    return statement;
   }
 
 // takes care of splitting tokens into statements, also handles chained statements
   private static process(tokens: Array<Tokens.Token>) {
     let add: Array<Tokens.Token> = [];
     let pre: Array<Tokens.Token> = [];
+    let ukn = (t) => { this.statements.push(new Unknown(t, new StatementNode("Unknown"))); };
 
     for (let token of tokens) {
       if (token instanceof Tokens.Comment) {
@@ -123,13 +119,11 @@ export default class Parser {
 
       add.push(token);
       if (token.getStr() === ".") {
-        let statement = new Unknown(pre.concat(add));
-        this.statements.push(statement);
+        ukn(pre.concat(add));
         add = [];
         pre = [];
       } else if (token.getStr() === "," && pre.length > 0) {
-        let statement = new Unknown(pre.concat(add));
-        this.statements.push(statement);
+        ukn(pre.concat(add));
         add = [];
       } else if (token.getStr() === ":") {
         add.pop(); // do not add colon token to statement
@@ -139,8 +133,7 @@ export default class Parser {
     }
 
     if (add.length > 0) {
-      let statement = new Unknown(pre.concat(add));
-      this.statements.push(statement);
+      ukn(pre.concat(add));
     }
   }
 }

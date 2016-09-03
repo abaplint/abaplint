@@ -6,32 +6,13 @@ export abstract class Statement {
   private tokens: Array<Token>;
 
   private children: Array<Statement>;
-// todo, variable "parent" to be removed?  
+
+// todo, variable "parent" to be removed? use AST instead
   private parent: Statement;
 
   private root: BasicNode;
 
-  public static concat(tokens: Array<Token>): string {
-    let str = "";
-    let prev: Token;
-    for (let token of tokens) {
-      if (token instanceof Pragma) {
-        continue;
-      }
-      if (str === "") {
-        str = token.getStr();
-      } else if (prev.getStr().length + prev.getCol() === token.getCol()
-          && prev.getRow() === token.getRow()) {
-        str = str + token.getStr();
-      } else {
-        str = str + " " + token.getStr();
-      }
-      prev = token;
-    }
-    return str;
-  }
-
-  public constructor(tokens: Array<Token>, root?: BasicNode) {
+  public constructor(tokens: Array<Token>, root: BasicNode) {
     this.tokens   = tokens;
     this.children = [];
     this.parent   = undefined;
@@ -64,7 +45,10 @@ export abstract class Statement {
 
   public getEnd(): Position {
     let last = this.tokens[this.tokens.length - 1];
-    let pos = new Position(last.getPos().getRow(), last.getPos().getCol() + last.getStr().length);
+
+    let pos = new Position(last.getPos().getRow(),
+                           last.getPos().getCol() + last.getStr().length);
+
     return pos;
   }
 
@@ -73,7 +57,23 @@ export abstract class Statement {
   }
 
   public concatTokens(): string {
-    return Statement.concat(this.tokens);
+    let str = "";
+    let prev: Token;
+    for (let token of this.tokens) {
+      if (token instanceof Pragma) {
+        continue;
+      }
+      if (str === "") {
+        str = token.getStr();
+      } else if (prev.getStr().length + prev.getCol() === token.getCol()
+          && prev.getRow() === token.getRow()) {
+        str = str + token.getStr();
+      } else {
+        str = str + " " + token.getStr();
+      }
+      prev = token;
+    }
+    return str;
   }
 
   public getTerminator(): string {
