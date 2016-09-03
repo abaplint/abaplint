@@ -18,4 +18,8 @@ export class Enddo extends Statement {
     return s instanceof Do;
   }
 
+  public indentationStart() {
+    return -2;
+  }
+
 }

@@ -15,4 +15,8 @@ export class Case extends Statement {
     return true;
   }
 
+  public indentationEnd() {
+    return 2;
+  }
+
 }

@@ -18,4 +18,12 @@ export class Private extends Statement {
     return s instanceof Class;
   }
 
+  public indentationSetStart() {
+    return 2;
+  }
+
+  public indentationSetEnd() {
+    return 4;
+  }
+
 }

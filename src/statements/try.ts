@@ -13,4 +13,8 @@ export class Try extends Statement {
     return true;
   }
 
+  public indentationEnd() {
+    return 4;
+  }
+
 }

@@ -18,4 +18,8 @@ export class Endmethod extends Statement {
     return s instanceof Method;
   }
 
+  public indentationStart() {
+    return -2;
+  }
+
 }

@@ -18,4 +18,8 @@ export class Endtry extends Statement {
     return s instanceof Try;
   }
 
+  public indentationStart() {
+    return -4;
+  }
+
 }

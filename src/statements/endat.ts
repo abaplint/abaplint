@@ -16,4 +16,8 @@ export class Endat extends Statement {
     return s instanceof At;
   }
 
+  public indentationStart(prev) {
+    return -2;
+  }
+
 }

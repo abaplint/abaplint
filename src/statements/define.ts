@@ -23,4 +23,8 @@ export class Define extends Statement {
     return true;
   }
 
+  public indentationEnd() {
+    return 2;
+  }
+
 }

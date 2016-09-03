@@ -33,4 +33,8 @@ export class Loop extends Statement {
     return true;
   }
 
+  public indentationEnd() {
+    return 2;
+  }
+
 }

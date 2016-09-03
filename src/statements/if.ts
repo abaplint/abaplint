@@ -15,4 +15,8 @@ export class If extends Statement {
     return true;
   }
 
+  public indentationEnd() {
+    return 2;
+  }
+
 }

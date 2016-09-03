@@ -21,4 +21,15 @@ export class When extends Statement {
     return s instanceof Case;
   }
 
+  public indentationStart(prev) {
+    if (!(prev instanceof Case)) {
+      return -2;
+    }
+    return 0;
+  }
+
+  public indentationEnd(prev) {
+    return 2;
+  }
+
 }

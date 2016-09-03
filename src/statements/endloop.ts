@@ -18,4 +18,8 @@ export class Endloop extends Statement {
     return s instanceof Loop;
   }
 
+  public indentationStart() {
+    return -2;
+  }
+
 }

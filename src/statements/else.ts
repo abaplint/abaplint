@@ -16,4 +16,12 @@ export class Else extends Statement {
     return s instanceof If;
   }
 
+  public indentationStart() {
+    return -2;
+  }
+
+  public indentationEnd() {
+    return 2;
+  }
+
 }

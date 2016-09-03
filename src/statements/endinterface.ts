@@ -16,4 +16,8 @@ export class Endinterface extends Statement {
     return s instanceof Interface;
   }
 
+  public indentationStart(prev) {
+    return -2;
+  }
+
 }

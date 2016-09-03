@@ -18,4 +18,8 @@ export class Enddefine extends Statement {
     return s instanceof Define;
   }
 
+  public indentationStart() {
+    return -2;
+  }
+
 }

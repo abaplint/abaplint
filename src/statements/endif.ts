@@ -16,4 +16,8 @@ export class Endif extends Statement {
     return s instanceof If;
   }
 
+  public indentationStart() {
+    return -2;
+  }
+
 }

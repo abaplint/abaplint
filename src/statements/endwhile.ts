@@ -18,4 +18,8 @@ export class Endwhile extends Statement {
     return s instanceof While;
   }
 
+  public indentationStart() {
+    return -2;
+  }
+
 }

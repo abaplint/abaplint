@@ -18,4 +18,8 @@ export class Endform extends Statement {
     return s instanceof Form;
   }
 
+  public indentationStart() {
+    return -2;
+  }
+
 }

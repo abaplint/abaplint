@@ -35,6 +35,22 @@ export abstract class Statement {
     return false;
   }
 
+  public indentationStart(prev: Statement): number {
+    return 0;
+  }
+
+  public indentationEnd(prev: Statement): number {
+    return 0;
+  }
+
+  public indentationSetEnd(): number {
+    return -1;
+  }
+
+  public indentationSetStart(): number {
+    return -1;
+  }
+
   public addChild(child: Statement) {
     this.children.push(child);
   }

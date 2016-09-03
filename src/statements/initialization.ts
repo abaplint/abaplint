@@ -17,4 +17,12 @@ export class Initialization extends Statement {
     return s === undefined;
   }
 
+  public indentationSetStart() {
+    return 0;
+  }
+
+  public indentationSetEnd() {
+    return 2;
+  }
+
 }

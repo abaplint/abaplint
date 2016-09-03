@@ -35,4 +35,8 @@ export class Form extends Statement {
     return true;
   }
 
+  public indentationEnd() {
+    return 2;
+  }
+
 }

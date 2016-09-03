@@ -12,4 +12,8 @@ export class Interface extends Statement {
     return seq(str("INTERFACE"), Reuse.field(), opt(str("PUBLIC")));
   }
 
+  public indentationEnd(prev) {
+    return 2;
+  }
+
 }

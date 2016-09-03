@@ -18,4 +18,8 @@ export class Endcase extends Statement {
     return s instanceof Case;
   }
 
+  public indentationStart() {
+    return -4;
+  }
+
 }

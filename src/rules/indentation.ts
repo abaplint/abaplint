@@ -1,7 +1,7 @@
 import { IRule } from "./rule";
 import File from "../file";
-import { Statement, Comment } from "../statements/statement";
-import * as Statements from "../statements/";
+import { Comment } from "../statements/statement";
+import { IncludeType } from "../statements/include_type";
 import Issue from "../issue";
 
 export class IndentationConf {
@@ -28,58 +28,37 @@ export class Indentation implements IRule {
     this.conf = conf;
   }
 
-// todo: rewrite
-// 2 methods in statement class to determine number of spaces
   public run(file: File) {
+
+    let current = 0;
+    let prev;
+
     for (let statement of file.getStatements()) {
-// skip END statements, todo
-      if (statement instanceof Statements.Endmethod
-          || statement instanceof Statements.Endcase
-          || statement instanceof Statements.Enddo
-          || statement instanceof Statements.Endwhile
-          || statement instanceof Statements.Enddefine
-          || statement instanceof Statements.Endif
-          || statement instanceof Statements.Endtry
-          || statement instanceof Statements.Endat
-          || statement instanceof Statements.Endloop) {
-        continue;
-      } else if (statement instanceof Comment) {
-        continue;
-      } else if (statement instanceof Statements.IncludeType) {
-        continue;
-      } else if (this.familyContainsTry(statement)) {
-// todo, skipping try-catch blocks
+      if (statement instanceof Comment
+          || statement instanceof IncludeType) {
         continue;
       }
 
-      let start = this.countParents(statement) * 2 + 1;
+      current = current + statement.indentationStart(prev);
+      if (statement.indentationSetStart() > -1) {
+        current = statement.indentationSetStart();
+      }
+
       let first = statement.getTokens()[0];
 
-      if (first.getCol() !== start) {
+      if (first.getCol() !== current + 1) {
         file.add(new Issue(this, first.getPos(), file));
 // one finding per file, pretty printer should fix everything?
         return;
       }
+
+      current = current + statement.indentationEnd(prev);
+      if (statement.indentationSetEnd() > -1) {
+        current = statement.indentationSetEnd();
+      }
+
+      prev = statement;
     }
   }
 
-  private familyContainsTry(statement: Statement): boolean {
-    let parent = statement.getParent();
-    if (!parent) {
-      return false;
-    } else if (parent instanceof Statements.Try) {
-      return true;
-    } else {
-      return this.familyContainsTry(parent);
-    }
-  }
-
-  private countParents(statement: Statement): number {
-    let parent = statement.getParent();
-    if (parent) {
-      return 1 + this.countParents(parent);
-    } else {
-      return 0;
-    }
-  }
 }
