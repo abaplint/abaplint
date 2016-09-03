@@ -28,6 +28,8 @@ export class Indentation implements IRule {
     this.conf = conf;
   }
 
+// todo: rewrite
+// 2 methods in statement class to determine number of spaces
   public run(file: File) {
     for (let statement of file.getStatements()) {
 // skip END statements, todo
@@ -60,19 +62,7 @@ export class Indentation implements IRule {
       }
     }
   }
-/*
-  private topParent(statement: Statements.Statement) {
-    let list: Array<Statements.Statement> = [];
 
-    let parent = statement.getParent();
-    while(parent) {
-      list.push(parent);
-      parent = parent.getParent();
-    }
-
-    return list.pop();
-  }
-*/
   private familyContainsTry(statement: Statement): boolean {
     let parent = statement.getParent();
     if (!parent) {

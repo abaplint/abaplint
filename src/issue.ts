@@ -26,6 +26,10 @@ export default class Issue {
     return this.rule.getKey();
   }
 
+  public getRule(): IRule {
+    return this.rule;
+  }
+
   public getStart(): Position {
     return this.start;
   }

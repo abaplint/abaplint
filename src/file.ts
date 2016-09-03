@@ -4,12 +4,13 @@ import Issue from "./issue";
 import { RootNode } from "./node";
 
 export default class File {
+  private raw: string = "";
   private tokens: Array<Token> = [];
   private statements: Array<Statement> = [];
-  private nesting: Array<Statement> = [];
-  private issues: Array<Issue> = [];
   private root: RootNode;
-  private raw: string = "";
+
+  private issues: Array<Issue> = [];
+
   private filename: string = "";
 
   constructor(filename: string, raw: string) {
@@ -66,14 +67,6 @@ export default class File {
 
   public getStatements(): Array<Statement> {
     return this.statements;
-  }
-
-  public setNesting(nesting: Array<Statement>) {
-    this.nesting = nesting;
-  }
-
-  public getNesting(): Array<Statement> {
-    return this.nesting;
   }
 
   private skip(issue: Issue): boolean {

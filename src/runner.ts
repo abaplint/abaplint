@@ -52,7 +52,7 @@ export default class Runner {
   private static analyze(file: File) {
     file.setTokens(Lexer.run(file));
     file.setStatements(Parser.run(file, this.conf.getVersion()));
-    file.setNesting(Nesting.run(file));
+    Nesting.run(file); // tood, to be removed
     file.setRoot(Nesting.run2(file));
 
     for (let key in Rules) {
