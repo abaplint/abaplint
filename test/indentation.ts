@@ -11,7 +11,9 @@ let tests = [
   {abap: "  add 2 to lv_foo.", cnt: 1},
   {abap: "IF foo = bar.\nmoo = 1.", cnt: 1},
   {abap: "IF foo = bar.\n  moo = 1.", cnt: 0},
-  {abap: "WHILE foo = bar.\n  moo = 1.", cnt: 0},
+  {abap: "WHILE foo = bar.\n  moo = 1.\nENDWHILE.", cnt: 0},
+  {abap: "DO 2 TIMES.\n  moo = 1.\nENDDO.", cnt: 0},
+  {abap: "FUNCTION zfunction.\n  moo = 1.\nENDFUNCTION.", cnt: 0},
   {abap: "METHOD bar.\n  moo = 1.", cnt: 0},
   {abap: "CLASS bar IMPLEMENTATION.\n  moo = 1.", cnt: 0},
   {abap: "ENDCLASS.", cnt: 0},
@@ -29,6 +31,9 @@ let tests = [
   {abap: "SELECT * FROM vbak INTO ls_vbak.\n  WRITE 'foo'.\nENDSELECT.", cnt: 0},
   {abap: "CLASS foo IMPLEMENTATION.\n  PRIVATE SECTION.\n    foo().", cnt: 0},
   {abap: "CLASS foo IMPLEMENTATION.\n  PRIVATE SECTION.\n    foo().\nENDCLASS.", cnt: 0},
+  {abap: "AT SELECTION-SCREEN OUTPUT.\n  WRITE 'sdf'.", cnt: 0},
+  {abap: "IF foo = bar.\n  WRITE 'sdf'.\nELSEIF moo = boo.\n  WRITE 'sdf'.", cnt: 0},
+  {abap: "INTERFACE zif_swag_handler PUBLIC.\n  METHODS meta.\nENDINTERFACE.", cnt: 0},
 ];
 
 describe("test indentation rule", () => {

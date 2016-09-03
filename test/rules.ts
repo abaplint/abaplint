@@ -82,6 +82,7 @@ describe("rules", () => {
 
         let count = 0;
         for (let issue of file.getIssues()) {
+          issue.getDescription();
           if (issue.getKey() === check.check) {
             count = count + 1;
           }

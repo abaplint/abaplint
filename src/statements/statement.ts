@@ -6,16 +6,10 @@ export abstract class Statement {
 // todo, perhaps the tokens var can be removed, and root BasicNode used instead
   private tokens: Array<Token>;
 
-// todo, variable "parent" + "children" to be removed? use AST instead
-  private children: Array<Statement>;
-  private parent: Statement;
-
   private root: StatementNode;
 
   public constructor(tokens: Array<Token>, root: StatementNode) {
     this.tokens   = tokens;
-    this.children = [];
-    this.parent   = undefined;
     this.root     = root;
   }
 
@@ -49,22 +43,6 @@ export abstract class Statement {
 
   public indentationSetStart(): number {
     return -1;
-  }
-
-  public addChild(child: Statement) {
-    this.children.push(child);
-  }
-
-  public setParent(parent: Statement) {
-    this.parent = parent;
-  }
-
-  public getChildren() {
-    return this.children;
-  }
-
-  public getParent() {
-    return this.parent;
   }
 
   public getStart(): Position {

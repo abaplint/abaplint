@@ -18,4 +18,8 @@ export class Endfunction extends Statement {
     return s instanceof FunctionModule;
   }
 
+  public indentationStart() {
+    return -2;
+  }
+
 }

@@ -11,4 +11,8 @@ export class FunctionModule extends Statement {
     return seq(str("FUNCTION"), Reuse.field());
   }
 
+  public indentationEnd() {
+    return 2;
+  }
+
 }

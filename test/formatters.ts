@@ -1,7 +1,6 @@
 import "../typings/index.d.ts";
 import Runner from "../src/runner";
 import File from "../src/file";
-import * as Formatters from "../src/formatters/";
 import * as chai from "chai";
 import * as fs from "fs";
 
@@ -20,17 +19,22 @@ describe("formatters", () => {
 
     it("Json " + test.file, () => {
       expect(file.getIssueCount()).to.equals(test.errors);
-      expect(Formatters.Json.output([file]).split("\n").length).to.equals(2);
+      expect(Runner.format([file], "json").split("\n").length).to.equals(2);
     });
 
     it("Standard " + test.file, () => {
       expect(file.getIssueCount()).to.equals(test.errors);
-      expect(Formatters.Standard.output([file]).split("\n").length).to.equals(test.errors + 2);
+      expect(Runner.format([file]).split("\n").length).to.equals(test.errors + 2);
     });
 
     it("Summary " + test.file, () => {
       expect(file.getIssueCount()).to.equals(test.errors);
-      expect(Formatters.Summary.output([file]).split("\n").length).to.equals(test.errors + 1);
+      expect(Runner.format([file], "summary").split("\n").length).to.equals(test.errors + 1);
+    });
+
+    it("Total " + test.file, () => {
+      expect(file.getIssueCount()).to.equals(test.errors);
+      expect(Runner.format([file], "total").split("\n").length).to.equals(2);
     });
 
   });
