@@ -52,8 +52,7 @@ export default class Runner {
   private static analyze(file: File) {
     file.setTokens(Lexer.run(file));
     file.setStatements(Parser.run(file, this.conf.getVersion()));
-    Nesting.run(file); // tood, to be removed
-    file.setRoot(Nesting.run2(file));
+    file.setRoot(Nesting.run(file));
 
     for (let key in Rules) {
       let rule: Rules.IRule = new Rules[key]();
