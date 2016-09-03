@@ -51,6 +51,10 @@ export class Class extends Statement {
     return s === undefined;
   }
 
+  public indentationSetStart() {
+    return this.isStructure() ? 0 : -1;
+  }
+
   public indentationEnd() {
     return this.isStructure() ? 2 : 0;
   }

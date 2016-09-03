@@ -57,4 +57,17 @@ export class Select extends Statement {
     return ret;
   }
 
+  public isStructure() {
+    if (/ SINGLE /.test(this.concatTokens().toUpperCase())
+        || / TABLE /.test(this.concatTokens().toUpperCase())) {
+      return false;
+    }
+
+    return true;
+  }
+
+  public indentationEnd() {
+    return this.isStructure() ? 2 : 0;
+  }
+
 }

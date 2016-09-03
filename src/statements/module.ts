@@ -21,4 +21,12 @@ export class Module extends Statement {
     return s === undefined;
   }
 
+  public indentationSetStart() {
+    return 0;
+  }
+
+  public indentationEnd() {
+    return 2;
+  }
+
 }

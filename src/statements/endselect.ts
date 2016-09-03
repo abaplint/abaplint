@@ -16,4 +16,8 @@ export class Endselect extends Statement {
     return s.isStructure() && s instanceof Select;
   }
 
+  public indentationStart() {
+    return -2;
+  }
+
 }
