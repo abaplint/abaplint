@@ -1,14 +1,15 @@
 import { Token, Pragma } from "../tokens/";
 import Position from "../position";
-import Node from ".././node";
+import {BasicNode} from ".././node";
 
 export abstract class Statement {
   private tokens: Array<Token>;
 
   private children: Array<Statement>;
+// todo, variable "parent" to be removed?  
   private parent: Statement;
 
-  private root: Node;
+  private root: BasicNode;
 
   public static concat(tokens: Array<Token>): string {
     let str = "";
@@ -30,14 +31,14 @@ export abstract class Statement {
     return str;
   }
 
-  public constructor(tokens: Array<Token>, root?: Node) {
+  public constructor(tokens: Array<Token>, root?: BasicNode) {
     this.tokens   = tokens;
     this.children = [];
     this.parent   = undefined;
     this.root     = root;
   }
 
-  public getRoot(): Node {
+  public getRoot(): BasicNode {
     return this.root;
   }
 

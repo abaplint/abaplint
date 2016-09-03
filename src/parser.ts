@@ -3,7 +3,7 @@ import File from "./file";
 import * as Statements from "./statements/";
 import Registry from "./registry";
 import {Combi} from "./combi";
-import Node from "./node";
+import {StatementNode} from "./node";
 import {Statement, Unknown, Empty, Comment, MacroCall, MacroContent} from "./statements/statement";
 import {Version} from "./version";
 
@@ -71,7 +71,7 @@ export default class Parser {
       let last = statement.getTokens()[length - 1];
 // console.dir(statement.getTokens());
       if (length === 1 && last instanceof Tokens.Punctuation) {
-        statement = new Empty(statement.getTokens(), new Node("Empty"));
+        statement = new Empty(statement.getTokens(), new StatementNode("Empty"));
       } else if (statement instanceof Unknown
           && last instanceof Tokens.Punctuation) {
         let res = this.match(statement, ver);
@@ -81,7 +81,7 @@ export default class Parser {
       }
       if (statement instanceof Unknown) {
         if (Registry.isMacro(statement.getTokens()[0].getStr())) {
-          statement = new MacroCall(statement.getTokens(), new Node("MacroCall"));
+          statement = new MacroCall(statement.getTokens(), new StatementNode("MacroCall"));
         }
       }
 
@@ -98,7 +98,7 @@ export default class Parser {
       test = this.map[""];
     }
     for (let st of test) {
-      let root = new Node(st);
+      let root = new StatementNode(st);
       let match = Combi.run(Statements[st].get_matcher(),
                             this.removeLast(statement.getTokens()),
                             root,
@@ -117,7 +117,7 @@ export default class Parser {
 
     for (let token of tokens) {
       if (token instanceof Tokens.Comment) {
-        this.statements.push(new Comment([token], new Node("Comment", token)));
+        this.statements.push(new Comment([token], new StatementNode("Comment")));
         continue;
       }
 

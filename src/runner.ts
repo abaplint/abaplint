@@ -53,6 +53,7 @@ export default class Runner {
     file.setTokens(Lexer.run(file));
     file.setStatements(Parser.run(file, this.conf.getVersion()));
     file.setNesting(Nesting.run(file));
+    Nesting.run2(file);
 
     for (let key in Rules) {
       let rule: Rules.IRule = new Rules[key]();

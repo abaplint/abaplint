@@ -4,6 +4,10 @@ import * as Statements from "./statements/";
 
 export default class Nesting {
 
+  public static run2(file: File): Array<Statement> {
+    return [];
+  }
+
   public static run(file: File): Array<Statement> {
 
 // todo: save END statement references?

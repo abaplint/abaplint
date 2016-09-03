@@ -1,13 +1,11 @@
 import { Token } from "./tokens/token";
 
-export default class Node {
+export abstract class BasicNode {
   private name: string;
-  private children: Array<Node>;
-  private token: Token;
+  private children: Array<BasicNode>;
 
-  public constructor(name: string, token?: Token) {
+  public constructor(name: string) {
     this.name     = name;
-    this.token    = token;
     this.children = [];
   }
 
@@ -15,36 +13,62 @@ export default class Node {
     return this.name;
   }
 
-  public addChild(n: Node): Node {
+  public addChild(n: BasicNode): BasicNode {
     this.children.push(n);
     return this;
   }
 
-  public setChildren(children: Array<Node>): Node {
+  public setChildren(children: Array<BasicNode>): BasicNode {
     this.children = children;
     return this;
   }
 
-  public countTokens(): number {
-    let count = this.children.reduce((a, b) => { return a + b.countTokens(); }, 0);
-    if (this.token) {
-      count++;
-    }
-    return count;
-  }
-
-  public getChildren(): Array<Node> {
+  public getChildren(): Array<BasicNode> {
     return this.children;
   }
 
+  public abstract vizName(): string;
+
   public viz(): string {
-    let children = this.children.map((e) => { return e.viz(); } );
-    let name = this.name;
-    if (this.token) {
-      name = name + " (\"" + this.token.getStr() + "\")";
-    }
-    let ret = "<ul><li>" + name + children.join("") + "</li></ul>";
+    let children = this.getChildren().map((e) => { return e.viz(); } );
+    let ret = "<ul><li>" + this.vizName() + children.join("") + "</li></ul>";
 
     return ret;
+  }
+}
+
+export class StatementNode extends BasicNode {
+  public vizName() {
+    return "Statement: " + super.getName();
+  }
+}
+
+export abstract class CountableNode extends BasicNode {
+  public countTokens(): number {
+    let count = this.getChildren().reduce((a, b) => { return a + (b as CountableNode).countTokens(); }, 0);
+    return count;
+  }
+}
+
+export class ReuseNode extends CountableNode {
+  public vizName() {
+    return "Reuse: " + super.getName();
+  }
+}
+
+export class TokenNode extends CountableNode {
+  private token: Token;
+
+  public constructor(name: string, token: Token) {
+    super(name);
+    this.token = token;
+  }
+
+  public countTokens(): number {
+    return super.countTokens() + 1;
+  }
+
+  public vizName() {
+    return "Token: " + super.getName() + " (\"" + this.token.getStr() + "\")";
   }
 }

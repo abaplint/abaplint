@@ -1,13 +1,13 @@
 import "../typings/index.d.ts";
 import * as Tokens from "./tokens/";
-import Node from "./node";
+import {TokenNode, BasicNode, ReuseNode, CountableNode} from "./node";
 import {Version, versionDescription} from "../src/version";
 
 export class Result {
   private tokens: Array<Tokens.Token>;
-  private nodes: Array<Node>;
+  private nodes: Array<CountableNode>;
 
-  constructor(a: Array<Tokens.Token>, n?: Array<Node>) {
+  constructor(a: Array<Tokens.Token>, n?: Array<CountableNode>) {
     this.tokens = a;
     this.nodes = n;
     if (this.nodes === undefined) {
@@ -20,7 +20,7 @@ export class Result {
   }
 
 // todo, make it non optional
-  public shift(node?: Node): Result {
+  public shift(node?: CountableNode): Result {
     let copy = this.tokens.slice();
     copy.shift();
     let cp = this.nodes.slice();
@@ -32,15 +32,15 @@ export class Result {
     return this.tokens;
   }
 
-  public popNode(): Node {
+  public popNode(): CountableNode {
     return this.nodes.pop();
   }
 
-  public getNodes(): Array<Node> {
+  public getNodes(): Array<CountableNode> {
     return this.nodes;
   }
 
-  public setNodes(n: Array<Node>): void {
+  public setNodes(n: Array<CountableNode>): void {
     this.nodes = n;
   }
 
@@ -79,7 +79,7 @@ class Regex implements IRunnable {
     for (let input of r) {
       if (input.length() !== 0
           && this.regexp.test(input.peek().getStr()) === true) {
-        result.push(input.shift(new Node("Regex", input.peek())));
+        result.push(input.shift(new TokenNode("Regex", input.peek())));
       }
     }
 
@@ -113,7 +113,7 @@ class Word implements IRunnable {
     for (let input of r) {
       if (input.length() !== 0
           && input.peek().getStr().toUpperCase() === this.s.toUpperCase()) {
-        result.push(input.shift(new Node("Word", input.peek())));
+        result.push(input.shift(new TokenNode("Word", input.peek())));
       }
     }
     return result;
@@ -147,7 +147,7 @@ class Token implements IRunnable {
 //      console.dir(input.peek().constructor);
       if (input.length() !== 0
           && this.className(input.peek()).toUpperCase() === this.s.toUpperCase()) {
-        result.push(input.shift(new Node("Token", input.peek())));
+        result.push(input.shift(new TokenNode("Token", input.peek())));
       }
     }
     return result;
@@ -418,7 +418,7 @@ export class Reuse implements IRunnable {
         let consumed = input.length() - t.length();
         if (consumed > 0) {
           let length = t.getNodes().length;
-          let re = new Node("reuse_" + this.name);
+          let re = new ReuseNode(this.name);
           let children = [];
           while (consumed > 0) {
             let sub = t.popNode();
@@ -564,7 +564,7 @@ export class Combi {
     return result;
   }
 
-  public static run(runnable: IRunnable, tokens: Array<Tokens.Token>, parent?: Node, ver = Version.v750): boolean {
+  public static run(runnable: IRunnable, tokens: Array<Tokens.Token>, parent?: BasicNode, ver = Version.v750): boolean {
     this.ver = ver;
 
     tokens = this.removePragma(tokens);
