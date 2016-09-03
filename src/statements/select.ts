@@ -59,6 +59,7 @@ export class Select extends Statement {
 
   public isStructure() {
     if (/ SINGLE /.test(this.concatTokens().toUpperCase())
+        || / COUNT\(/.test(this.concatTokens().toUpperCase())
         || / TABLE /.test(this.concatTokens().toUpperCase())) {
       return false;
     }

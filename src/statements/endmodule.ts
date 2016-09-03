@@ -18,4 +18,8 @@ export class EndModule extends Statement {
     return s instanceof Module;
   }
 
+  public indentationStart() {
+    return -2;
+  }
+
 }
