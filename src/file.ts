@@ -5,6 +5,8 @@ import { RootNode } from "./node";
 
 export default class File {
   private raw: string = "";
+
+// todo, split the File into ParsedFile and IssuesFile?
   private tokens: Array<Token> = [];
   private statements: Array<Statement> = [];
   private root: RootNode;

@@ -16,13 +16,14 @@
   <body>
 
 <div style="position: absolute; top: 0px; left: 0px; right: 0px; height: 40px; line-height: 40px;">
-abaplint web |
+abaplint web <div style="display: inline-block;" id="abaplintver"></div> |
 <a href="#" onclick="issues();return false;"><i class="fa fa-exclamation fa-lg"></i> Issues</a> |
 <a href="#" onclick="tokens();return false;"><i class="fa fa-ellipsis-h fa-lg"></i> Tokens</a> |
 <a href="#" onclick="statements();return false;"><i class="fa fa-list fa-lg"></i> Statements</a> |
 <a href="#" onclick="ast();return false;"><i class="fa fa-tree fa-lg"></i> AST</a> |
-<a href="./viz/"><i class="fa fa-code fa-lg"></i> Syntax Diagrams</a> | 
-<div style="display: inline-block;" id="abaplintver"></div>
+<a href="#" onclick="types();return false;"><i class="fa fa-binoculars fa-lg"></i> Types</a> |
+<a href="#" onclick="downport();return false;"><i class="fa fa-arrow-circle-o-down fa-lg"></i> Downport</a> |
+<a href="./viz/"><i class="fa fa-code fa-lg"></i> Syntax Diagrams</a> |
 </div>
 
 <div style="position: absolute; top: 40px; bottom: 0px; left: 0px; right: 0px;">
@@ -31,6 +32,10 @@ abaplint web |
 <textarea id="input">
 REPORT ZHELLO.
  WRITE 'Hello World'.
+
+LOOP AT lt_foo ASSIGNING FIELD-SYMBOL(<ls_foo>).
+  WRITE 'bar'.
+ENDLOOP.
 </textarea>
 </div>
 

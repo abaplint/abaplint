@@ -20,6 +20,16 @@ export default class Runner {
     return "{{ VERSION }}";
   }
 
+  public static downport(file: File): File {
+    let ret = new File("result.abap", "todo sdf");
+// todo, auto validate 702 code after downport?
+    return ret;
+  }
+
+  public static types(file: File): string {
+    return "types, todo";
+  }
+
   public static format(files: Array<File>, format?: string): string {
     let output = "";
 // todo, this can be done more generic

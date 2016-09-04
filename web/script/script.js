@@ -50,19 +50,7 @@ function buildStatements(file) {
 }
 
 function buildAst(file) {
-  let ret = "";
-
-  ret = file.getRoot().viz();
-/*
-  for (let statement of file.getStatements()) {
-    if (statement.getRoot()) {
-      ret = ret + statement.getRoot().viz() + "<br>";
-    } else {
-      console.log("missing root, " + statement.concatTokens());
-    }
-  }
-*/
-  return ret;
+  return file.getRoot().viz();
 }
 
 function process() {
@@ -110,6 +98,16 @@ function statements() {
 function ast() {
   let file = process();
   document.getElementById("info").innerHTML = buildAst(file);
+}
+
+function downport() {
+  let file = abaplint.Runner.downport(process());
+  document.getElementById("info").innerHTML = '<pre>' + file.getRaw() + '</pre>';
+}
+
+function types() {
+  let info = abaplint.Runner.types(process());
+  document.getElementById("info").innerHTML = info;
 }
 
 // ---------------------
