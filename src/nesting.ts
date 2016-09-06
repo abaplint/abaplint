@@ -1,4 +1,4 @@
-import File from "./file";
+import {File} from "./file";
 import {RootNode, StructureNode} from "./node";
 
 export default class Nesting {

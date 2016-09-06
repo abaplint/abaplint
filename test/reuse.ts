@@ -2,7 +2,7 @@ import "../typings/index.d.ts";
 import * as chai from "chai";
 import * as Combi from "../src/combi";
 import Reuse from "../src/statements/reuse";
-import File from "../src/file";
+import {File} from "../src/file";
 import Runner from "../src/runner";
 
 let expect = chai.expect;

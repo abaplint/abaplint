@@ -1,8 +1,8 @@
 import "../typings/index.d.ts";
 import * as chai from "chai";
-import { Indentation } from "../src/rules/indentation";
+import {Indentation} from "../src/rules/indentation";
 import Runner from "../src/runner";
-import File from "../src/file";
+import {File} from "../src/file";
 
 let expect = chai.expect;
 

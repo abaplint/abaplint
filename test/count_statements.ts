@@ -1,5 +1,5 @@
 import "../typings/index.d.ts";
-import File from "../src/file";
+import {File} from "../src/file";
 import * as chai from "chai";
 import * as fs from "fs";
 import Runner from "../src/runner";

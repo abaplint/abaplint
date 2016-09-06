@@ -1,7 +1,7 @@
-import { IRule } from "./rule";
-import File from "../file";
-import { Comment } from "../statements/statement";
-import { IncludeType } from "../statements/include_type";
+import {IRule} from "./rule";
+import {File} from "../file";
+import {Comment} from "../statements/statement";
+import {IncludeType} from "../statements/include_type";
 import Issue from "../issue";
 
 export class IndentationConf {

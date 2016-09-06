@@ -1,7 +1,7 @@
 import "../typings/index.d.ts";
 import * as chai from "chai";
 import Runner from "../src/runner";
-import File from "../src/file";
+import {File} from "../src/file";
 
 let expect = chai.expect;
 

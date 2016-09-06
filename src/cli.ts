@@ -1,6 +1,6 @@
 import "../typings/index.d.ts";
 import Runner from "./runner";
-import File from "./file";
+import {File} from "./file";
 import Config from "./config";
 import {versionText} from "./version";
 import * as fs from "fs";

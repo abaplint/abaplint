@@ -3,7 +3,7 @@ import { Statement } from "./statements/statement";
 import Issue from "./issue";
 import { RootNode } from "./node";
 
-export default class File {
+export class File {
   private raw: string = "";
 
 // todo, split the File into ParsedFile and IssuesFile?

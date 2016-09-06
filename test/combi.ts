@@ -3,7 +3,7 @@ import * as chai from "chai";
 import * as Combi from "../src/combi";
 import * as Tokens from "../src/tokens/";
 import Lexer from "../src/lexer";
-import File from "../src/file";
+import {File} from "../src/file";
 
 let expect = chai.expect;
 

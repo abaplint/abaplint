@@ -1,5 +1,5 @@
 import * as Tokens from "./tokens/";
-import File from "./file";
+import {File} from "./file";
 import * as Statements from "./statements/";
 import Registry from "./registry";
 import {Combi} from "./combi";

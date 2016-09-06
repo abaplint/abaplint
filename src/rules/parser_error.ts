@@ -1,8 +1,8 @@
-import { IRule } from "./rule";
-import File from "../file";
+import {IRule} from "./rule";
+import {File} from "../file";
 import Issue from "../issue";
 import Position from "../position";
-import { Unknown } from "../statements/statement";
+import {Unknown} from "../statements/statement";
 
 export class ParserErrorConf {
   public enabled: boolean = true;

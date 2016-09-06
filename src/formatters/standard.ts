@@ -1,6 +1,6 @@
 import Issue from "../issue";
-import File from "../file";
-import { Total } from "./total";
+import {File} from "../file";
+import {Total} from "./total";
 
 class Tuple {
   public filename: string;

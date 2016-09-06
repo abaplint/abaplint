@@ -1,4 +1,4 @@
-import File from "../file";
+import {File} from "../file";
 
 export interface IRule {
   getKey(): string;

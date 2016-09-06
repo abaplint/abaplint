@@ -120,6 +120,10 @@ export class TokenNode extends CountableNode {
     this.token = token;
   }
 
+  public getToken(): Token {
+    return this.token;
+  }
+
   public countTokens(): number {
     return super.countTokens() + 1;
   }

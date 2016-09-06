@@ -1,10 +1,11 @@
-import File from "./file";
+import {File} from "./file";
 import Config from "./config";
 import * as Rules from "./rules/";
 import Lexer from "./lexer";
 import Parser from "./parser";
 import Nesting from "./nesting";
 import {Version} from "./version";
+import * as Types from "./types";
 import * as Formatters from "./formatters/";
 
 export default class Runner {
@@ -26,28 +27,22 @@ export default class Runner {
     return ret;
   }
 
-  public static types(file: File): string {
-    return "types, todo";
+  public static types(file: File) {
+    return Types.Analyze.run(file);
   }
 
   public static format(files: Array<File>, format?: string): string {
-    let output = "";
 // todo, this can be done more generic
     switch (format) {
       case "total":
-        output = Formatters.Total.output(files);
-        break;
+        return Formatters.Total.output(files);
       case "summary":
-        output = Formatters.Summary.output(files);
-        break;
+        return Formatters.Summary.output(files);
       case "json":
-        output = Formatters.Json.output(files);
-        break;
+        return Formatters.Json.output(files);
       default:
-        output = Formatters.Standard.output(files);
-        break;
+        return Formatters.Standard.output(files);
     }
-    return output;
   }
 
   private static prioritizeFiles(files: Array<File>): Array<File> {

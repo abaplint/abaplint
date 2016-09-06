@@ -1,5 +1,5 @@
-import { IRule } from "./rule";
-import File from "../file";
+import {IRule} from "./rule";
+import {File} from "../file";
 import Position from "../position";
 import Issue from "../issue";
 
