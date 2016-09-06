@@ -1,6 +1,6 @@
 import {IRule} from "./rule";
-import {File} from "../file";
-import Issue from "../issue";
+import {ParsedFile} from "../file";
+import {Issue} from "../issue";
 import Position from "../position";
 
 export class WhitespaceEndConf {
@@ -27,14 +27,17 @@ export class WhitespaceEnd implements IRule {
     this.conf = conf;
   }
 
-  public run(file: File) {
+  public run(file: ParsedFile) {
+    let issues: Array<Issue> = [];
     let rows = file.getRawRows();
 
     for (let i = 0; i < rows.length; i++) {
       if (/.* $/.test(rows[i]) === true) {
         let issue = new Issue(this, new Position(i + 1, 1), file);
-        file.add(issue);
+        issues.push(issue);
       }
     }
+
+    return issues;
   }
 }

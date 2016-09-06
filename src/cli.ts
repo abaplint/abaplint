@@ -1,6 +1,7 @@
 import "../typings/index.d.ts";
 import Runner from "./runner";
 import {File} from "./file";
+import {Issue} from "./issue";
 import Config from "./config";
 import {versionText} from "./version";
 import * as fs from "fs";
@@ -12,6 +13,7 @@ let argv = minimist(process.argv.slice(2));
 let format = "default";
 let output = "";
 let files: Array<File> = [];
+let issues: Array<Issue> = [];
 
 function searchConfig(filename: string): Config {
   let json = searchUp(path.dirname(process.cwd() + path.sep + filename) + path.sep);
@@ -76,16 +78,13 @@ if (argv["h"] !== undefined || argv["help"] !== undefined) {
     if (argv["a"]) {
       config.setVersion(versionText(argv["a"]));
     }
-    Runner.run(files, config);
-    output = Runner.format(files, format);
+    issues = Runner.run(files, config);
+    output = Runner.format(issues, format);
   }
 }
 
 process.stdout.write(output, () => {
-  let count = 0;
-  files.forEach((file) => { count = count + file.getIssues().length; });
-
-  if (count > 0) {
+  if (issues.length > 0) {
     process.exit(1);
   }
 });

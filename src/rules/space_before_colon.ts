@@ -1,6 +1,6 @@
 import {IRule} from "./rule";
-import {File} from "../file";
-import Issue from "../issue";
+import {ParsedFile} from "../file";
+import {Issue} from "../issue";
 
 export class SpaceBeforeColonConf {
   public enabled: boolean = true;
@@ -26,7 +26,8 @@ export class SpaceBeforeColon implements IRule {
     this.conf = conf;
   }
 
-  public run(file: File) {
+  public run(file: ParsedFile) {
+    let issues: Array<Issue> = [];
     let prev = file.getTokens[0];
 
     for (let token of file.getTokens()) {
@@ -34,10 +35,12 @@ export class SpaceBeforeColon implements IRule {
           && prev.getRow() === token.getRow()
           && prev.getCol() + prev.getStr().length < token.getCol()) {
         let issue = new Issue(this, token.getPos(), file);
-        file.add(issue);
+        issues.push(issue);
       }
       prev = token;
     }
+
+    return issues;
   }
 
 }

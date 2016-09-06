@@ -38,10 +38,9 @@ let tests = [
 
 describe("test indentation rule", () => {
   tests.forEach((test) => {
-    let file = new File("temp.abap", test.abap);
-    Runner.run([file]);
+    let issues = Runner.run([new File("temp.abap", test.abap)]);
 
-    let issues = file.getIssues().filter((i) => { return i.getRule() instanceof Indentation; });
+    issues = issues.filter((i) => { return i.getRule() instanceof Indentation; });
     it("\"" + test.abap + "\" should have " + test.cnt + " issue(s)", () => {
       expect(issues.length).to.equals(test.cnt);
     });

@@ -1,6 +1,6 @@
 import {IRule} from "./rule";
-import {File} from "../file";
-import Issue from "../issue";
+import {ParsedFile} from "../file";
+import {Issue} from "../issue";
 import Position from "../position";
 
 export class SevenBitAsciiConf {
@@ -8,7 +8,6 @@ export class SevenBitAsciiConf {
 }
 
 export class SevenBitAscii implements IRule {
-
   private conf = new SevenBitAsciiConf();
 
   public getKey(): string {
@@ -27,14 +26,17 @@ export class SevenBitAscii implements IRule {
     this.conf = conf;
   }
 
-  public run(file: File) {
+  public run(file: ParsedFile) {
     let rows = file.getRawRows();
+    let output: Array<Issue> = [];
 
     for (let i = 0; i < rows.length; i++) {
       if (/^[\u0000-\u007f]*$/.test(rows[i]) === false) {
         let issue = new Issue(this, new Position(i + 1, 1), file);
-        file.add(issue);
+        output.push(issue);
       }
     }
+
+    return output;
   }
 }

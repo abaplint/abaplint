@@ -1,15 +1,14 @@
 import "../typings/index.d.ts";
-import {File} from "../src/file";
+import {File, ParsedFile} from "../src/file";
 import * as chai from "chai";
 import * as fs from "fs";
 import Runner from "../src/runner";
 
 let expect = chai.expect;
 
-function helper(filename: string): File {
+function helper(filename: string): ParsedFile {
   let buf = fs.readFileSync("./test/abap/" + filename, "utf8");
-  let file = new File(filename, buf);
-  Runner.run([file]);
+  let file = Runner.parse([new File(filename, buf)])[0];
   return file;
 }
 

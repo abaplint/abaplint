@@ -1,12 +1,9 @@
-import {File} from "../file";
+import {Issue} from "../issue";
 
 export class Total {
 
-  public static output(files: Array<File>): string {
-    let count = 0;
-    files.forEach((file) => { count = count + file.getIssues().length; });
-
-    return "abaplint: " + count + " issue(s) found\n";
+  public static output(issues: Array<Issue>): string {
+    return "abaplint: " + issues.length + " issue(s) found\n";
   }
 
 }

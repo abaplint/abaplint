@@ -11,10 +11,8 @@ import {Unknown} from "../src/statements/statement";
 let expect = chai.expect;
 
 function run(abap: string, text: string, type, version = Version.v750) {
-  let file = new File("temp.abap", abap);
-  let config = Config.getDefault();
-  config.setVersion(version);
-  Runner.run([file], config);
+  let config = Config.getDefault().setVersion(version);
+  let file = Runner.parse([new File("temp.abap", abap)], config)[0];
   let slist = file.getStatements();
 
   it(text, () => {

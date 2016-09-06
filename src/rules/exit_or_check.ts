@@ -1,6 +1,6 @@
 import {IRule} from "./rule";
-import {File} from "../file";
-import Issue from "../issue";
+import {ParsedFile} from "../file";
+import {Issue} from "../issue";
 import { Statement } from "../statements/statement";
 import * as Statements from "../statements/";
 
@@ -28,8 +28,9 @@ export class ExitOrCheck implements IRule {
     this.conf = conf;
   }
 
-  public run(file: File) {
+  public run(file: ParsedFile) {
     let stack: Array<Statement> = [];
+    let issues: Array<Issue> = [];
 
     for (let statement of file.getStatements()) {
       if (statement instanceof Statements.Loop
@@ -46,9 +47,11 @@ export class ExitOrCheck implements IRule {
           || statement instanceof Statements.Exit)
           && stack.length === 0) {
         let issue = new Issue(this, statement.getStart(), file);
-        file.add(issue);
+        issues.push(issue);
       }
     }
+
+    return issues;
   }
 
 }

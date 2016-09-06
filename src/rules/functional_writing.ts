@@ -1,6 +1,6 @@
 import {IRule} from "./rule";
-import {File} from "../file";
-import Issue from "../issue";
+import {ParsedFile} from "../file";
+import {Issue} from "../issue";
 
 export class FunctionalWritingConf {
   public enabled: boolean = true;
@@ -26,7 +26,9 @@ export class FunctionalWriting implements IRule {
     this.conf = conf;
   }
 
-  public run(file: File) {
+  public run(file: ParsedFile) {
+    let issues: Array<Issue> = [];
+
     for (let statement of file.getStatements()) {
       let code = statement.concatTokens().toUpperCase();
       if (this.startsWith(code, "CALL METHOD ")) {
@@ -35,9 +37,11 @@ export class FunctionalWriting implements IRule {
           continue;
         }
         let issue = new Issue(this, statement.getStart(), file);
-        file.add(issue);
+        issues.push(issue);
       }
     }
+
+    return issues;
   }
 
   private startsWith(str: string, value: string): boolean {

@@ -1,6 +1,6 @@
 import {IRule} from "./rule";
-import {File} from "../file";
-import Issue from "../issue";
+import {ParsedFile} from "../file";
+import {Issue} from "../issue";
 import * as Statements from "../statements/";
 
 export class ObsoleteStatementConf {
@@ -27,7 +27,8 @@ export class ObsoleteStatement implements IRule {
     this.conf = conf;
   }
 
-  public run(file: File) {
+  public run(file: ParsedFile) {
+    let issues: Array<Issue> = [];
     let statements = file.getStatements();
 
     for (let sta of statements) {
@@ -41,8 +42,10 @@ export class ObsoleteStatement implements IRule {
           && sta.getTokens()[1].getStr() !== "-" )
           || sta instanceof Statements.Divide) {
         let issue = new Issue(this, sta.getStart(), file);
-        file.add(issue);
+        issues.push(issue);
       }
     }
+
+    return issues;
   }
 }

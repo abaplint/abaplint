@@ -1,26 +1,25 @@
-import {File} from "../file";
+import {Issue} from "../issue";
 
 export class Json {
 
-  public static output(files: Array<File>): string {
+// todo, change all formatters to non static, so they can implement an interface?
+  public static output(issues: Array<Issue>): string {
     let out = [];
 
-    for (let file of files) {
-      for (let issue of file.getIssues()) {
-        let single = {
-          description: issue.getDescription(),
-          file: file.getFilename(),
-          start: {
-            row: issue.getStart().getRow(),
-            col: issue.getStart().getCol(),
-          },
-          end: {
-            row: issue.getEnd().getRow(),
-            col: issue.getEnd().getCol(),
-          },
-        };
-        out.push(single);
-      }
+    for (let issue of issues) {
+      let single = {
+        description: issue.getDescription(),
+        file: issue.getFile().getFilename(),
+        start: {
+          row: issue.getStart().getRow(),
+          col: issue.getStart().getCol(),
+        },
+        end: {
+          row: issue.getEnd().getRow(),
+          col: issue.getEnd().getCol(),
+        },
+      };
+      out.push(single);
     }
     return JSON.stringify(out) + "\n";
   }

@@ -1,12 +1,12 @@
-import {File} from "./file";
+import {ParsedFile} from "./file";
 import {Token} from "./tokens/token";
 import {BasicNode, StructureNode, ReuseNode, TokenNode} from "./node";
 
 // all types determined for "source" and "target" AST nodes
 
 export class Result {
-  private types;
-  private variables;
+//  private types;
+//  private variables;
   private sources: Array<ReuseNode>;
 
   constructor(sources: Array<ReuseNode>) {
@@ -24,7 +24,7 @@ export class Result {
 
 export class Analyze {
 
-  public static run(file: File): Result {
+  public static run(file: ParsedFile): Result {
     let res = new Result(this.findSources(file.getRoot()));
 
     return res;
@@ -35,7 +35,7 @@ export class Analyze {
 
     if (n instanceof StructureNode) {
       res = res.concat(this.findSources((n as StructureNode).getStart().getRoot()));
-    } else if (n instanceof ReuseNode && n.getName() == "source") {
+    } else if (n instanceof ReuseNode && n.getName() === "source") {
       return [n as ReuseNode];
     }
 

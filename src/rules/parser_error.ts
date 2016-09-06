@@ -1,6 +1,6 @@
 import {IRule} from "./rule";
-import {File} from "../file";
-import Issue from "../issue";
+import {ParsedFile} from "../file";
+import {Issue} from "../issue";
 import Position from "../position";
 import {Unknown} from "../statements/statement";
 
@@ -28,7 +28,8 @@ export class ParserError implements IRule {
     this.conf = conf;
   }
 
-  public run(file: File) {
+  public run(file: ParsedFile) {
+    let issues: Array<Issue> = [];
     let pos = new Position(0, 0);
     for (let statement of file.getStatements()) {
 // only report one error per row
@@ -36,9 +37,11 @@ export class ParserError implements IRule {
             && pos.getRow() !== statement.getStart().getRow()) {
         pos = statement.getStart();
         let issue = new Issue(this, pos, file);
-        file.add(issue);
+        issues.push(issue);
       }
     }
+
+    return issues;
   }
 
 }

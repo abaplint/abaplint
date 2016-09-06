@@ -1,6 +1,6 @@
 import {IRule} from "./rule";
-import {File} from "../file";
-import Issue from "../issue";
+import {ParsedFile} from "../file";
+import {Issue} from "../issue";
 import {Comment} from "../statements/statement";
 
 export class MaxOneStatementConf {
@@ -27,7 +27,8 @@ export class MaxOneStatement implements IRule {
     this.conf = conf;
   }
 
-  public run(file: File) {
+  public run(file: ParsedFile) {
+    let issues: Array<Issue> = [];
     let prev: number = 0;
     let reported: number = 0;
     for (let statement of file.getStatements()) {
@@ -40,11 +41,12 @@ export class MaxOneStatement implements IRule {
       let row = pos.getRow();
       if (prev === row && row !== reported) {
         let issue = new Issue(this, pos, file);
-        file.add(issue);
+        issues.push(issue);
         reported = row;
       }
       prev = row;
     }
+    return issues;
   }
 
 }

@@ -1,6 +1,6 @@
 import {IRule} from "./rule";
-import {File} from "../file";
-import Issue from "../issue";
+import {ParsedFile} from "../file";
+import {Issue} from "../issue";
 import Position from "../position";
 
 export class LineOnlyPuncConf {
@@ -27,15 +27,17 @@ export class LineOnlyPunc implements IRule {
     this.conf = conf;
   }
 
-  public run(file: File) {
+  public run(file: ParsedFile) {
+    let issues: Array<Issue> = [];
     let rows = file.getRawRows();
     for (let i = 0; i < rows.length; i++) {
       let trim = rows[i].trim();
       if (trim === "." || trim === ").") {
         let issue = new Issue(this, new Position(i + 1, 0), file);
-        file.add(issue);
+        issues.push(issue);
       }
     }
+    return issues;
   }
 
 }

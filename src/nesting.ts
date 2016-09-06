@@ -1,13 +1,13 @@
-import {File} from "./file";
 import {RootNode, StructureNode} from "./node";
+import {Statement} from "./statements/statement";
 
 export default class Nesting {
 
-  public static run(file: File): RootNode {
-    let root = new RootNode(file.getFilename());
+  public static run(filename: string, statements: Array<Statement>): RootNode {
+    let root = new RootNode(filename);
 
     let current = root;
-    for (let statement of file.getStatements()) {
+    for (let statement of statements) {
 
 // check if bubbling is needed
       if (current instanceof StructureNode

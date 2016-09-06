@@ -13,8 +13,11 @@ let tests = [
 
 describe("types - count sources", () => {
   tests.forEach((test) => {
+    let file = Runner.parse([new File("temp.abap", test.abap)])[0];
+    /*
     let file = new File("temp.abap", test.abap);
     Runner.run([file]);
+    */
     let result = Runner.types(file);
 
     it("\"" + test.abap + "\" should have " + test.cnt, () => {

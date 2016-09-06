@@ -77,11 +77,13 @@ describe("rules", () => {
       let name = check.check + "_" + test.file;
       it(name + " should have " + test.errors + " error(s)", () => {
         let filename = "./test/abap/rules/" + name + ".prog.abap";
-        let file = new File(filename, fs.readFileSync(filename, "utf8"));
+/*        let file = new File(filename, fs.readFileSync(filename, "utf8"));
         Runner.run([file]);
+        */
+        let issues = Runner.run([new File(filename, fs.readFileSync(filename, "utf8"))]);
 
         let count = 0;
-        for (let issue of file.getIssues()) {
+        for (let issue of issues) {
           issue.getDescription();
           if (issue.getKey() === check.check) {
             count = count + 1;

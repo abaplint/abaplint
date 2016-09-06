@@ -1,8 +1,8 @@
-import { IRule } from "./rules/";
+import {IRule} from "./rules/";
 import {File} from "./file";
 import Position from "./position";
 
-export default class Issue {
+export class Issue {
 
   private rule: IRule;
   private start: Position;
@@ -36,6 +36,10 @@ export default class Issue {
 
   public getEnd(): Position {
     return this.end;
+  }
+
+  public getFile(): File {
+    return this.file;
   }
 
 }

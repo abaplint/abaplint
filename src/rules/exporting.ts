@@ -1,7 +1,7 @@
 import {IRule} from "./rule";
-import {File} from "../file";
+import {ParsedFile} from "../file";
 import Position from "../position";
-import Issue from "../issue";
+import {Issue} from "../issue";
 
 export class Counter {
     public exporting: boolean = false;
@@ -25,7 +25,9 @@ export class Exporting implements IRule {
     return "EXPORTING can be omitted";
   }
 
-  public run(file: File) {
+  public run(file: ParsedFile) {
+    let issues: Array<Issue> = [];
+
     for (let statement of file.getStatements()) {
       let current = new Counter();
       let stack: Array<Counter> = [];
@@ -37,7 +39,7 @@ export class Exporting implements IRule {
         } else if (this.firstChar(token.getStr()) === ")") {
           if (current.exporting === true && current.other === false) {
             let issue = new Issue(this, current.pos, file);
-            file.add(issue);
+            issues.push(issue);
           }
           current = stack.pop();
           if (current === undefined) {
@@ -54,6 +56,8 @@ export class Exporting implements IRule {
         }
       }
     }
+
+    return issues;
   }
 
   public getConfig() {

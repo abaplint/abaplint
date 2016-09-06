@@ -39,8 +39,8 @@ describe("zero errors", () => {
     it(test + " should have zero errors", () => {
       let filename = "./test/abap/" + test + ".abap";
       let file = new File(filename, fs.readFileSync(filename, "utf8"));
-      Runner.run([file]);
-      expect(file.getIssueCount()).to.equals(0);
+      let issues = Runner.run([file]);
+      expect(issues.length).to.equals(0);
     });
   });
 });

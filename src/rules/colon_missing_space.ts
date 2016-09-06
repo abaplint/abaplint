@@ -1,6 +1,6 @@
 import {IRule} from "./rule";
-import {File} from "../file";
-import Issue from "../issue";
+import {ParsedFile} from "../file";
+import {Issue} from "../issue";
 
 export class ColonMissingSpaceConf {
   public enabled: boolean = true;
@@ -26,8 +26,9 @@ export class ColonMissingSpace implements IRule {
     this.conf = conf;
   }
 
-  public run(file: File) {
+  public run(file: ParsedFile) {
     let tokens = file.getTokens();
+    let issues: Array<Issue> = [];
 
     for (let i = 0; i < tokens.length; i++) {
       let token = tokens[i];
@@ -36,8 +37,10 @@ export class ColonMissingSpace implements IRule {
           && tokens[i + 1].getRow() === token.getRow()
           && tokens[i + 1].getCol() === token.getCol() + 1) {
         let issue = new Issue(this, token.getPos(), file);
-        file.add(issue);
+        issues.push(issue);
       }
     }
+
+    return issues;
   }
 }

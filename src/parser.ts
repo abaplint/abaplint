@@ -1,5 +1,4 @@
 import * as Tokens from "./tokens/";
-import {File} from "./file";
 import * as Statements from "./statements/";
 import Registry from "./registry";
 import {Combi} from "./combi";
@@ -11,14 +10,14 @@ export default class Parser {
   private static statements: Array<Statement>;
   private static map;
 
-  public static run(file: File, ver = Version.v750): Array<Statement> {
+  public static run(tokens: Array<Tokens.Token>, ver = Version.v750): Array<Statement> {
     this.statements = [];
 
     if (!this.map) {
       this.initialize();
     }
 
-    this.process(file.getTokens());
+    this.process(tokens);
     this.categorize(ver);
     this.macros();
 

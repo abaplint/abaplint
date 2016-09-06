@@ -1,9 +1,10 @@
-import {File} from "../file";
+import {ParsedFile} from "../file";
+import {Issue} from "../issue";
 
 export interface IRule {
   getKey(): string;
   getDescription(): string;
   getConfig();
   setConfig(conf);
-  run(file: File);
+  run(file: ParsedFile): Array<Issue>;
 }

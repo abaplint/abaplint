@@ -43,7 +43,8 @@ export default class Config {
     return this.ver;
   }
 
-  public setVersion(ver: Version): void {
+  public setVersion(ver: Version): Config {
     this.ver = ver;
+    return this;
   }
 }

@@ -1,6 +1,6 @@
 import {IRule} from "./rule";
-import {File} from "../file";
-import Issue from "../issue";
+import {ParsedFile} from "../file";
+import {Issue} from "../issue";
 import {Comment} from "../statements/statement";
 import * as Statements from "../statements/";
 
@@ -34,9 +34,10 @@ export class DefinitionsTop implements IRule {
     this.conf = conf;
   }
 
-  public run(file: File) {
+  public run(file: ParsedFile) {
     let mode = ANY;
     let issue: Issue = undefined;
+    let issues: Array<Issue> = [];
 
 // todo, this needs refactoring when the paser has become better
     for (let statement of file.getStatements()) {
@@ -50,7 +51,7 @@ export class DefinitionsTop implements IRule {
           || statement instanceof Statements.Endmethod) {
         mode = ANY;
         if (issue !== undefined) {
-          file.add(issue);
+          issues.push(issue);
           issue = undefined;
         }
       } else if (statement instanceof Statements.Data
@@ -70,5 +71,7 @@ export class DefinitionsTop implements IRule {
         mode = AFTER;
       }
     }
+
+    return issues;
   }
 }

@@ -1,6 +1,6 @@
 import {IRule} from "./rule";
-import {File} from "../file";
-import Issue from "../issue";
+import {ParsedFile} from "../file";
+import {Issue} from "../issue";
 import Position from "../position";
 
 export class LineLengthConf {
@@ -28,14 +28,17 @@ export class LineLength implements IRule {
     this.conf = conf;
   }
 
-  public run(file: File) {
+  public run(file: ParsedFile) {
+    let issues: Array<Issue> = [];
     let lines = file.getRaw().split("\n");
     for (let line = 0; line < lines.length; line++) {
       if (lines[line].length > this.conf.length) {
         let issue = new Issue(this, new Position(line + 1, 1), file);
-        file.add(issue);
+        issues.push(issue);
       }
     }
+
+    return issues;
   }
 
 }

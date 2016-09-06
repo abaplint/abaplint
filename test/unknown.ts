@@ -16,8 +16,11 @@ describe("unknown statements", () => {
 
   tests.forEach((test) => {
     it("\"" + test.abap + "\" should be unknown", () => {
+      let file = Runner.parse([new File("temp.abap", test.abap)])[0];
+      /*
       let file = new File("foo.abap", test.abap);
       Runner.run([file]);
+      */
       expect(file.getStatements().length).to.equals(1);
       for (let statement of file.getStatements()) {
         expect(statement instanceof Unknown).to.equals(true);

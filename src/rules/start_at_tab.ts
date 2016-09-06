@@ -1,6 +1,6 @@
 import {IRule} from "./rule";
-import {File} from "../file";
-import Issue from "../issue";
+import {ParsedFile} from "../file";
+import {Issue} from "../issue";
 import Position from "../position";
 import {Comment} from "../statements/statement";
 
@@ -28,7 +28,8 @@ export class StartAtTab implements IRule {
     this.conf = conf;
   }
 
-  public run(file: File) {
+  public run(file: ParsedFile) {
+    let issues: Array<Issue> = [];
     let previous: Position = undefined;
 
     for (let statement of file.getStatements()) {
@@ -42,10 +43,12 @@ export class StartAtTab implements IRule {
       }
       if ((pos.getCol() - 1) % 2 !== 0) {
         let issue = new Issue(this, pos, file);
-        file.add(issue);
+        issues.push(issue);
       }
       previous = pos;
     }
+
+    return issues;
   }
 
 }

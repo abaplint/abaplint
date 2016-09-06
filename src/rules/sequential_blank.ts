@@ -1,6 +1,6 @@
 import {IRule} from "./rule";
-import {File} from "../file";
-import Issue from "../issue";
+import {ParsedFile} from "../file";
+import {Issue} from "../issue";
 import Position from "../position";
 
 export class SequentialBlankConf {
@@ -28,7 +28,8 @@ export class SequentialBlank implements IRule {
     this.conf = conf;
   }
 
-  public run(file: File) {
+  public run(file: ParsedFile) {
+    let issues: Array<Issue> = [];
     let rows = file.getRawRows();
     let blanks = 0;
 
@@ -41,8 +42,10 @@ export class SequentialBlank implements IRule {
 
       if (blanks === this.conf.lines) {
         let issue = new Issue(this, new Position(i + 1, 1), file);
-        file.add(issue);
+        issues.push(issue);
       }
     }
+
+    return issues;
   }
 }

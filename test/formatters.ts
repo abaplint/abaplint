@@ -14,27 +14,21 @@ describe("formatters", () => {
 
   tests.forEach((test) => {
     let filename = "./test/abap/" + test.file + ".prog.abap";
-    let file = new File(filename, fs.readFileSync(filename, "utf8"));
-    Runner.run([file]);
+    let issues = Runner.run([new File(filename, fs.readFileSync(filename, "utf8"))]);
 
     it("Json " + test.file, () => {
-      expect(file.getIssueCount()).to.equals(test.errors);
-      expect(Runner.format([file], "json").split("\n").length).to.equals(2);
+      expect(issues.length).to.equals(test.errors);
+      expect(Runner.format(issues, "json").split("\n").length).to.equals(2);
     });
 
     it("Standard " + test.file, () => {
-      expect(file.getIssueCount()).to.equals(test.errors);
-      expect(Runner.format([file]).split("\n").length).to.equals(test.errors + 2);
-    });
-
-    it("Summary " + test.file, () => {
-      expect(file.getIssueCount()).to.equals(test.errors);
-      expect(Runner.format([file], "summary").split("\n").length).to.equals(test.errors + 1);
+      expect(issues.length).to.equals(test.errors);
+      expect(Runner.format(issues).split("\n").length).to.equals(test.errors + 2);
     });
 
     it("Total " + test.file, () => {
-      expect(file.getIssueCount()).to.equals(test.errors);
-      expect(Runner.format([file], "total").split("\n").length).to.equals(2);
+      expect(issues.length).to.equals(test.errors);
+      expect(Runner.format(issues, "total").split("\n").length).to.equals(2);
     });
 
   });

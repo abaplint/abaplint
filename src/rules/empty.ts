@@ -1,6 +1,6 @@
 import {IRule} from "./rule";
-import {File} from "../file";
-import Issue from "../issue";
+import {ParsedFile} from "../file";
+import {Issue} from "../issue";
 import { Empty } from "../statements/statement";
 
 export class EmptyStatementConf {
@@ -27,14 +27,16 @@ export class EmptyStatement implements IRule {
     this.conf = conf;
   }
 
-  public run(file: File) {
+  public run(file: ParsedFile) {
     let statements = file.getStatements();
+    let issues: Array<Issue> = [];
 
     for (let sta of statements) {
       if (sta instanceof Empty) {
         let issue = new Issue(this, sta.getStart(), file);
-        file.add(issue);
-        }
+        issues.push(issue);
       }
+    }
+    return issues;
   }
 }

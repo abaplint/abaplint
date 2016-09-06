@@ -1,5 +1,4 @@
-import Issue from "../issue";
-import {File} from "../file";
+import {Issue} from "../issue";
 import {Total} from "./total";
 
 class Tuple {
@@ -14,17 +13,15 @@ class Tuple {
 
 export class Standard {
 
-  public static output(files: Array<File>): string {
+  public static output(issues: Array<Issue>): string {
     let tuples: Array<Tuple> = [];
-    for (let file of files) {
-      for (let issue of file.getIssues()) {
-        tuples.push(this.build_tuple(file, issue));
-      }
+    for (let issue of issues) {
+      tuples.push(this.build_tuple(issue));
     }
 
     let result = this.columns(tuples);
 
-    return result + Total.output(files);
+    return result + Total.output(issues);
   }
 
   private static columns(tuples: Array<Tuple>): string {
@@ -48,8 +45,8 @@ export class Standard {
     return output + " - ";
   }
 
-  private static build_tuple(file: File, issue: Issue): Tuple {
-    return new Tuple(file.getFilename() +
+  private static build_tuple(issue: Issue): Tuple {
+    return new Tuple(issue.getFile().getFilename() +
                      "[" + issue.getStart().getRow() + ", " + issue.getStart().getCol() + "]",
                      issue.getDescription());
   }

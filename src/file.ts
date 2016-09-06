@@ -1,46 +1,14 @@
-import { Token } from "./tokens/";
-import { Statement } from "./statements/statement";
-import Issue from "./issue";
-import { RootNode } from "./node";
+import {Token} from "./tokens/";
+import {Statement} from "./statements/statement";
+import {RootNode} from "./node";
 
 export class File {
   private raw: string = "";
-
-// todo, split the File into ParsedFile and IssuesFile?
-  private tokens: Array<Token> = [];
-  private statements: Array<Statement> = [];
-  private root: RootNode;
-
-  private issues: Array<Issue> = [];
-
   private filename: string = "";
 
   constructor(filename: string, raw: string) {
     this.raw = raw.replace(/\r/g, ""); // ignore all carriage returns
     this.filename = filename;
-  }
-
-  public add(issue: Issue) {
-    if (this.skip(issue)) {
-      return;
-    }
-    this.issues.push(issue);
-  }
-
-  public setRoot(r: RootNode) {
-    this.root = r;
-  }
-
-  public getRoot(): RootNode {
-    return this.root;
-  }
-
-  public getIssueCount(): number {
-    return this.issues.length;
-  }
-
-  public getIssues(): Array<Issue> {
-    return this.issues;
   }
 
   public getRaw(): string {
@@ -55,28 +23,30 @@ export class File {
     return this.filename;
   }
 
-  public setTokens(tokens: Array<Token>) {
-    this.tokens = tokens;
-  }
+}
 
-  public setStatements(statements: Array<Statement>) {
+export class ParsedFile extends File {
+
+  private tokens: Array<Token> = [];
+  private statements: Array<Statement> = [];
+  private root: RootNode;
+
+  public constructor(filename, raw, tokens, statements, root) {
+    super(filename, raw);
+    this.tokens     = tokens;
     this.statements = statements;
+    this.root       = root;
   }
 
   public getTokens(): Array<Token> {
     return this.tokens;
   }
 
+  public getRoot(): RootNode {
+    return this.root;
+  }
+
   public getStatements(): Array<Statement> {
     return this.statements;
   }
-
-  private skip(issue: Issue): boolean {
-// ignore global exception classes
-    if (/zcx_.*\.clas\.abap$/.test(this.filename)) {
-      return true;
-    }
-    return false;
-  }
-
 }
