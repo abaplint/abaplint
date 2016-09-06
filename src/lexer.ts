@@ -33,8 +33,8 @@ class Buffer {
 class Stream {
   private raw: string;
   private offset = -1;
-  private row = 0;
-  private col = 0;
+  private row;
+  private col;
 
   public constructor(raw: string) {
     this.raw = raw;

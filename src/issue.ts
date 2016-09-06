@@ -3,13 +3,12 @@ import {File} from "./file";
 import Position from "./position";
 
 export class Issue {
-
   private rule: IRule;
   private start: Position;
   private end: Position;
   private file: File;
 
-  constructor(rule: IRule, start: Position, file: File, end?: Position) {
+  public constructor(rule: IRule, start: Position, file: File, end?: Position) {
     this.rule = rule;
     this.start = start;
     if (!end) {
@@ -41,5 +40,4 @@ export class Issue {
   public getFile(): File {
     return this.file;
   }
-
 }

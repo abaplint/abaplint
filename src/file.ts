@@ -3,8 +3,8 @@ import {Statement} from "./statements/statement";
 import {RootNode} from "./node";
 
 export class File {
-  private raw: string = "";
-  private filename: string = "";
+  private raw: string;
+  private filename: string;
 
   constructor(filename: string, raw: string) {
     this.raw = raw.replace(/\r/g, ""); // ignore all carriage returns
@@ -22,13 +22,12 @@ export class File {
   public getFilename(): string {
     return this.filename;
   }
-
 }
 
 export class ParsedFile extends File {
 
-  private tokens: Array<Token> = [];
-  private statements: Array<Statement> = [];
+  private tokens: Array<Token>;
+  private statements: Array<Statement>;
   private root: RootNode;
 
   public constructor(filename, raw, tokens, statements, root) {

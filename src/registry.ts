@@ -1,7 +1,7 @@
 
 export default class Registry {
 
-private static macros: Array<string> = [];
+  private static macros: Array<string> = [];
 
 // todo, handle scoping
   public static addMacro(name: string) {
