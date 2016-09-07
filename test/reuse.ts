@@ -43,13 +43,8 @@ describe("Test reuse matchers", () => {
     }
     it(test.c + " should " + not + "match " + test.r.get_name(), () => {
       let file = Runner.parse([new File("temp.abap", test.c)])[0];
-      /*
-      let file = new File("temp.abap", test.c);
-      Runner.run([file]);
-      */
-// console.dir(file.getTokens());
       let match = Combi.Combi.run(test.r.get_runnable(), file.getTokens());
-      expect(match).to.equals(test.e);
+      expect(match !== undefined).to.equals(test.e);
     });
   });
 });

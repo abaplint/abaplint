@@ -61,7 +61,7 @@ export interface IRunnable {
   run(r: Array<Result>): Array<Result>;
   railroad(): string;
   toStr(): string;
-// return first keyword, blank if not applicable  
+// return first keyword, blank if not applicable
   first(): string;
 }
 
@@ -564,7 +564,7 @@ export class Combi {
     return result;
   }
 
-  public static run(runnable: IRunnable, tokens: Array<Tokens.Token>, parent?: BasicNode, ver = Version.v750): boolean {
+  public static run(runnable: IRunnable, tokens: Array<Tokens.Token>, ver = Version.v750): BasicNode[] {
     this.ver = ver;
 
     tokens = this.removePragma(tokens);
@@ -573,18 +573,13 @@ export class Combi {
 
     let result = runnable.run([input]);
 
-    let success = false;
     for (let res of result) {
       if (res.length() === 0) {
-        if (parent) {
-          parent.setChildren(res.getNodes());
-        }
-        success = true;
-        break;
+        return res.getNodes();
       }
     }
 
-    return success;
+    return undefined;
   }
 
   public static getVersion(): Version {

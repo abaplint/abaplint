@@ -84,7 +84,7 @@ describe("combi matching", () => {
   tests.forEach((test) => {
     it(test.n + " should be " + test.e, () => {
       let result = Combi.Combi.run(test.c, test.t);
-      expect(result).to.equals(test.e);
+      expect(result !== undefined).to.equals(test.e);
     });
   });
 });

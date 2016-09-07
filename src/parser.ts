@@ -92,12 +92,11 @@ export default class Parser {
     test = test ? test.concat(this.map[""]) : this.map[""];
 
     for (let st of test) {
-      let root = new StatementNode(st);
       let match = Combi.run(Statements[st].get_matcher(),
                             this.removeLast(statement.getTokens()),
-                            root,
                             ver);
-      if (match === true) {
+      if (match) {
+        let root = new StatementNode(st).setChildren(match);
         return new Statements[st](statement.getTokens(), root);
       }
     }
