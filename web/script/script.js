@@ -9,28 +9,6 @@ function stripNewline(input) {
   return result;
 }
 
-function initLines(input) {
-  let lines = input.split("\n");
-
-  for (let i = 0; i < lines.length; i++) {
-    lines[i] = "" + ( i + 1 );
-  }
-
-  return lines;
-}
-
-/*
-function buildIssues(input, file) {
-  let lines = initLines(input);
-
-  for (let issue of file.getIssues()) {
-    let row = issue.getStart().getRow();
-    lines[row - 1] = lines[row - 1] + " " + issue.getDescription();
-  }
-
-  return lines.join("\n");
-}
-*/
 function buildStatements(file) {
   let output = "";
 
@@ -122,7 +100,7 @@ function types() {
 // ---------------------
 
 var editor = null;
-var _mark = null
+var _mark = null;
 
 function markLine(line, col, eline, ecol) {
   if (_mark) _mark.clear();
@@ -138,7 +116,6 @@ function markLine(line, col, eline, ecol) {
 function run() {
   editor = CodeMirror.fromTextArea(document.getElementById("input"), {
     lineNumbers: true,
-    mode: "javascript",
     theme: "mbo",
     tabSize: 2,
     styleSelectedText: true,
