@@ -19,6 +19,7 @@ function initLines(input) {
   return lines;
 }
 
+/*
 function buildIssues(input, file) {
   let lines = initLines(input);
 
@@ -29,7 +30,7 @@ function buildIssues(input, file) {
 
   return lines.join("\n");
 }
-
+*/
 function buildStatements(file) {
   let output = "";
 
@@ -40,7 +41,8 @@ function buildStatements(file) {
     let ecol = statement.getEnd().getCol();
 // getting the class name only works if uglify does not mangle names
     output = output +
-      "<div onmouseover=\"javascript:markLine(" + row + ", " + col + ", " + erow + ", " + ecol + ");\">" +
+      "<div onmouseover=\"javascript:markLine(" +
+      row + ", " + col + ", " + erow + ", " + ecol + ");\">" +
       row + ": " +
       (statement.constructor + "").match(/\w+/g)[1] +
       "</div>\n";
@@ -58,20 +60,27 @@ function process() {
   input = stripNewline(input);
 
   let file = new abaplint.File("foobar.abap", input);
-  abaplint.Runner.run([file]);
+  return abaplint.Runner.run([file]);
+}
 
-  return file;
+function parse() {
+  let input = editor.getValue();
+  input = stripNewline(input);
+
+  let file = new abaplint.File("foobar.abap", input);
+  return abaplint.Runner.parse([file])[0];
 }
 
 // ---------------------
 
 function issues() {
-  let file = process();
-  let json = JSON.parse(abaplint.Runner.format([file], "json"));
+  let issues = process();
+  let json = JSON.parse(abaplint.Runner.format(issues, "json"));
   let output = "";
   for (let issue of json) {
     output = output +
-      "<div onmouseover=\"javascript:markLine(" + issue.start.row + ", " + issue.start.col + ");\">" +
+      "<div onmouseover=\"javascript:markLine(" + issue.start.row + ", " +
+      issue.start.col + ");\">" +
       "[" + issue.start.row + ", "+ issue.start.col + "] " +
       issue.description +
       "</div>\n";
@@ -80,7 +89,7 @@ function issues() {
 }
 
 function tokens() {
-  let file = process();
+  let file = parse();
   let inner = "";
 
   for (let token of file.getTokens()) {
@@ -91,22 +100,22 @@ function tokens() {
 }
 
 function statements() {
-  let file = process();
+  let file = parse();
   document.getElementById("info").innerHTML = buildStatements(file);
 }
 
 function ast() {
-  let file = process();
+  let file = parse();
   document.getElementById("info").innerHTML = buildAst(file);
 }
 
 function downport() {
-  let file = abaplint.Runner.downport(process());
+  let file = abaplint.Runner.downport(parse())[0];
   document.getElementById("info").innerHTML = '<pre>' + file.getRaw() + '</pre>';
 }
 
 function types() {
-  let info = abaplint.Runner.types(process());
+  let info = abaplint.Runner.types(parse());
   document.getElementById("info").innerHTML = info;
 }
 
@@ -120,7 +129,9 @@ function markLine(line, col, eline, ecol) {
   if (!col) col = 0;
   if (!eline) eline = line;
   if (!ecol) ecol = 100;
-  _mark = editor.markText({line: line - 1, ch: col - 1}, {line: eline - 1, ch: ecol - 1}, {className: "styled-background"});
+  _mark = editor.markText({line: line - 1, ch: col - 1},
+                          {line: eline - 1, ch: ecol - 1},
+                          {className: "styled-background"});
   editor.scrollIntoView({line: line - 1, ch: 0}, 200);
 }
 
