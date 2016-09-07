@@ -4,7 +4,7 @@ import {Statement} from "./statements/statement";
 export default class Nesting {
 
   public static run(filename: string, statements: Array<Statement>): RootNode {
-    let root = new RootNode(filename);
+    let root = new RootNode();
 
     let current = root;
     for (let statement of statements) {
@@ -24,7 +24,7 @@ export default class Nesting {
         (current as StructureNode).setEnd(statement);
         current = current.getParent();
       } else {
-        current.addChild(statement.getRoot());
+        current.addChild(statement);
       }
     }
 

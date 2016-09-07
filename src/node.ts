@@ -1,18 +1,16 @@
 import { Token } from "./tokens/token";
 import { Statement } from "./statements/statement";
 
+function className(cla) {
+  return (cla.constructor + "").match(/\w+/g)[1];
+}
+
 export abstract class BasicNode {
-  private name: string;
+  protected children: Array<BasicNode>;
   private parent: BasicNode;
-  private children: Array<BasicNode>;
 
-  public constructor(name: string) {
-    this.name     = name;
+  public constructor() {
     this.children = [];
-  }
-
-  public getName(): string {
-    return this.name;
   }
 
   public addChild(n: BasicNode): BasicNode {
@@ -25,6 +23,7 @@ export abstract class BasicNode {
     return this.parent;
   }
 
+// todo, not sure this is needed
   public setParent(p: BasicNode): void {
     this.parent = p;
   }
@@ -51,13 +50,13 @@ export abstract class BasicNode {
 
 export class RootNode extends BasicNode {
   public vizName() {
-    return "Root: " + super.getName();
+    return "Root";
   }
 }
 
-export class StatementNode extends BasicNode {
+export abstract class StatementNode extends BasicNode {
   public vizName() {
-    return "Statement: " + super.getName();
+    return "Statement: " + className(this);
   }
 }
 
@@ -66,7 +65,7 @@ export class StructureNode extends BasicNode {
   private end: Statement;
 
   public constructor(st: Statement) {
-    super(st.getRoot().getName());
+    super();
     this.start = st;
   }
 
@@ -83,16 +82,17 @@ export class StructureNode extends BasicNode {
   }
 
   public vizName() {
-    return "Structure: " + this.start.getRoot().getName();
+    return "Structure: start, todo";
   }
 
   public viz(): string {
     let children = this.getChildren().map((e) => { return e.viz(); } );
 
+    console.log(this.start.constructor);
     let ret = "<ul><li>" + this.vizName() +
-      "<ul><li>Start: " + this.start.getRoot().viz() + "</li></ul>" +
+      "<ul><li>Start: " + this.start.viz() + "</li></ul>" +
       "<ul><li>Body: " + children.join("") + "</li></ul>" +
-      "<ul><li>End: " + ( this.end ? this.end.getRoot().viz() : "" ) + "</li></ul>" +
+      "<ul><li>End: " + ( this.end ? this.end.viz() : "" ) + "</li></ul>" +
       "</li></ul>";
 
     return ret;
@@ -107,16 +107,29 @@ export abstract class CountableNode extends BasicNode {
 }
 
 export class ReuseNode extends CountableNode {
+  private name: string;
+
+  public constructor(name: string) {
+    super();
+    this.name = name;
+  }
+
+  public getName() {
+    return this.name;
+  }
+
   public vizName() {
-    return "Reuse: " + super.getName();
+    return "Reuse: " + this.name;
   }
 }
 
 export class TokenNode extends CountableNode {
   private token: Token;
+  private name: string;
 
   public constructor(name: string, token: Token) {
-    super(name);
+    super();
+    this.name = name;
     this.token = token;
   }
 
@@ -129,6 +142,11 @@ export class TokenNode extends CountableNode {
   }
 
   public vizName() {
-    return "Token: " + super.getName() + " (\"" + this.token.getStr() + "\")";
+    return "Token: " +
+      className(this.token) +
+      " " +
+      this.name +
+      " (\"" + this.token.getStr() +
+      "\")";
   }
 }

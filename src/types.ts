@@ -1,6 +1,7 @@
 import {ParsedFile} from "./file";
 import {Token} from "./tokens/token";
 import {BasicNode, StructureNode, ReuseNode, TokenNode, StatementNode} from "./node";
+import * as Statements from "./statements/";
 
 // all types determined for "source" and "target" AST nodes
 
@@ -55,7 +56,7 @@ export class Analyze {
 
   private static findData(n: BasicNode): Array<StatementNode> {
     return this.walk<StatementNode>(n, (b) => {
-        if (b instanceof StatementNode && b.getName() === "Data") {
+        if (b instanceof Statements.Data) {
           return [b as StatementNode];
         } else {
           return [];
@@ -65,7 +66,7 @@ export class Analyze {
 
   private static findTypes(n: BasicNode): Array<StatementNode> {
     return this.walk<StatementNode>(n, (b) => {
-        if (b instanceof StatementNode && b.getName() === "Type") {
+        if (b instanceof Statements.Type) {
           return [b as StatementNode];
         } else {
           return [];
@@ -77,7 +78,7 @@ export class Analyze {
     let res: Array<T> = [];
 
     if (n instanceof StructureNode) {
-      res = res.concat(this.walk((n as StructureNode).getStart().getRoot(), f));
+      res = res.concat(this.walk((n as StructureNode).getStart(), f));
     } else {
       let tmp = f(n);
       if (tmp.length > 0) {
@@ -93,7 +94,7 @@ export class Analyze {
 
   private static findSources(n: BasicNode): Array<ReuseNode> {
     return this.walk<ReuseNode>(n, (b) => {
-        if (b instanceof ReuseNode && b.getName() === "source") {
+        if (b instanceof ReuseNode && (b as ReuseNode).getName() === "source") {
           return [b as ReuseNode];
         } else {
           return [];

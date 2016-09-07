@@ -1,20 +1,15 @@
 import { Token, Pragma } from "../tokens/";
 import Position from "../position";
-import {StatementNode} from ".././node";
+import {BasicNode, StatementNode} from ".././node";
 
-export abstract class Statement {
-// todo, perhaps the tokens var can be removed, and root BasicNode used instead
+export abstract class Statement extends StatementNode {
+// todo, perhaps the tokens var can be removed, and children used instead
   private tokens: Array<Token>;
 
-  private root: StatementNode;
-
-  public constructor(tokens: Array<Token>, root: StatementNode) {
-    this.tokens   = tokens;
-    this.root     = root;
-  }
-
-  public getRoot(): StatementNode {
-    return this.root;
+  public constructor(tokens: Array<Token>, children: Array<BasicNode>) {
+    super();
+    this.tokens = tokens;
+    this.children = children;
   }
 
   public isStructure(): boolean {

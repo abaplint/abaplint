@@ -2,7 +2,6 @@ import * as Tokens from "./tokens/";
 import * as Statements from "./statements/";
 import Registry from "./registry";
 import {Combi} from "./combi";
-import {StatementNode} from "./node";
 import {Statement, Unknown, Empty, Comment, MacroCall, MacroContent} from "./statements/statement";
 import {Version} from "./version";
 
@@ -48,7 +47,7 @@ export default class Parser {
       } else if (statement instanceof Statements.Enddefine) {
         define = false;
       } else if (statement instanceof Unknown && define === true) {
-        statement = new MacroContent(statement.getTokens(), new StatementNode("MacroContent"));
+        statement = new MacroContent(statement.getTokens(), []);
       }
 
       result.push(statement);
@@ -72,14 +71,14 @@ export default class Parser {
       let last = statement.getTokens()[length - 1];
 // console.dir(statement.getTokens());
       if (length === 1 && last instanceof Tokens.Punctuation) {
-        statement = new Empty(statement.getTokens(), new StatementNode("Empty"));
+        statement = new Empty(statement.getTokens(), []);
       } else if (statement instanceof Unknown
           && last instanceof Tokens.Punctuation) {
         statement = this.match(statement, ver);
       }
       if (statement instanceof Unknown &&
           Registry.isMacro(statement.getTokens()[0].getStr())) {
-        statement = new MacroCall(statement.getTokens(), new StatementNode("MacroCall"));
+        statement = new MacroCall(statement.getTokens(), []);
       }
 
       result.push(statement);
@@ -96,8 +95,8 @@ export default class Parser {
                             this.removeLast(statement.getTokens()),
                             ver);
       if (match) {
-        let root = new StatementNode(st).setChildren(match);
-        return new Statements[st](statement.getTokens(), root);
+//        let root = new StatementNode(st).setChildren(match);
+        return new Statements[st](statement.getTokens(), match);
       }
     }
     return statement;
@@ -107,11 +106,11 @@ export default class Parser {
   private static process(tokens: Array<Tokens.Token>) {
     let add: Array<Tokens.Token> = [];
     let pre: Array<Tokens.Token> = [];
-    let ukn = (t) => { this.statements.push(new Unknown(t, new StatementNode("Unknown"))); };
+    let ukn = (t) => { this.statements.push(new Unknown(t, [])); };
 
     for (let token of tokens) {
       if (token instanceof Tokens.Comment) {
-        this.statements.push(new Comment([token], new StatementNode("Comment")));
+        this.statements.push(new Comment([token], []));
         continue;
       }
 
