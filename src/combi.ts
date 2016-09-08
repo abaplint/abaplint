@@ -414,7 +414,7 @@ export abstract class Reuse implements IRunnable {
         let consumed = input.length() - t.length();
         if (consumed > 0) {
           let length = t.getNodes().length;
-          let re = new ReuseNode(this.get_name());
+          let re = new ReuseNode(this);
           let children = [];
           while (consumed > 0) {
             let sub = t.popNode();
@@ -436,17 +436,16 @@ export abstract class Reuse implements IRunnable {
 
   public abstract get_runnable(): IRunnable;
 
-// todo, remove this method?
-  public get_name(): string {
+  public getName(): string {
     return className(this);
   }
 
   public railroad() {
-    return "Railroad.NonTerminal('" + this.get_name() + "', 'reuse_" + this.get_name() + ".svg')";
+    return "Railroad.NonTerminal('" + this.getName() + "', 'reuse_" + this.getName() + ".svg')";
   }
 
   public toStr() {
-    return "reuse(" + this.get_name() + ")";
+    return "reuse(" + this.getName() + ")";
   }
 
   public first() {
@@ -585,6 +584,8 @@ export class Combi {
     return tokens.filter(function (value) { return !(value instanceof Tokens.Pragma); } );
   }
 }
+
+// -----------------------------------------------------------------------------
 
 export function str(s: string): IRunnable {
   if (/[ -]/.test(s) === false) {

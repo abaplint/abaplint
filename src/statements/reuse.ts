@@ -17,7 +17,7 @@ export class Integer extends Combi.Reuse {
   }
 }
 
-// todo, replace with field chain?
+// todo, replace with FieldChain?
 export class TypeDefName extends Combi.Reuse {
   public get_runnable() {
     let start = reg(/^(\/\w+\/)?\w+$/);

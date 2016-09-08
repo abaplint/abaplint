@@ -1,5 +1,6 @@
 import {ParsedFile} from "./file";
 import {Token} from "./tokens/token";
+import * as Reuse from "./statements/reuse";
 import {BasicNode, StructureNode, ReuseNode, TokenNode, StatementNode} from "./node";
 import * as Statements from "./statements/";
 
@@ -94,8 +95,7 @@ export class Analyze {
 
   private static findSources(n: BasicNode): Array<ReuseNode> {
     return this.walk<ReuseNode>(n, (b) => {
-// todo, to be changed to "instanceof Reuse.Source" instead
-        if (b instanceof ReuseNode && (b as ReuseNode).getName() === "Source") {
+        if (b instanceof ReuseNode && (b as ReuseNode).getReuse() instanceof Reuse.Source) {
           return [b as ReuseNode];
         } else {
           return [];

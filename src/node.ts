@@ -1,5 +1,6 @@
-import { Token } from "./tokens/token";
-import { Statement } from "./statements/statement";
+import {Token} from "./tokens/token";
+import {Reuse} from "./combi";
+import {Statement} from "./statements/statement";
 
 function className(cla) {
   return (cla.constructor + "").match(/\w+/g)[1];
@@ -107,19 +108,23 @@ export abstract class CountableNode extends BasicNode {
 }
 
 export class ReuseNode extends CountableNode {
-  private name: string;
+  private reuse: Reuse;
 
-  public constructor(name: string) {
+  public constructor(reuse: Reuse) {
     super();
-    this.name = name;
+    this.reuse = reuse;
+  }
+
+  public getReuse(): Reuse {
+    return this.reuse;
   }
 
   public getName() {
-    return this.name;
+    return className(this.reuse);
   }
 
   public vizName() {
-    return "Reuse: " + this.name;
+    return "Reuse: " + this.getName();
   }
 }
 
