@@ -411,14 +411,14 @@ export class Reuse implements IRunnable {
     let results: Array<Result> = [];
 
     for (let input of r) {
-      let temp = this.runnable().run([input]);
+      let temp = this.get_runnable().run([input]);
 
       let moo: Array<Result> = [];
       for (let t of temp) {
         let consumed = input.length() - t.length();
         if (consumed > 0) {
           let length = t.getNodes().length;
-          let re = new ReuseNode(this.name);
+          let re = new ReuseNode(this.get_name());
           let children = [];
           while (consumed > 0) {
             let sub = t.popNode();
@@ -437,7 +437,11 @@ export class Reuse implements IRunnable {
 
     return results;
   }
+/*
+  public abstract get_runnable(): IRunnable;
 
+  public abstract get_name(): string;
+*/
   public get_runnable(): IRunnable {
     return this.runnable();
   }
@@ -447,11 +451,11 @@ export class Reuse implements IRunnable {
   }
 
   public railroad() {
-    return "Railroad.NonTerminal('" + this.name + "', 'reuse_" + this.name + ".svg')";
+    return "Railroad.NonTerminal('" + this.get_name() + "', 'reuse_" + this.get_name() + ".svg')";
   }
 
   public toStr() {
-    return "reuse(" + this.name + ")";
+    return "reuse(" + this.get_name() + ")";
   }
 
   public first() {
