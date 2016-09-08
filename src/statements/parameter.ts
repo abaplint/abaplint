@@ -14,7 +14,7 @@ export class Parameter extends Statement {
     let para = alt(str("PARAMETER"), str("PARAMETERS"));
     let def = seq(str("DEFAULT"), alt(Reuse.constant(), Reuse.field_chain()));
     let radio = seq(str("RADIOBUTTON GROUP"), Reuse.field());
-    let type = seq(alt(str("TYPE"), str("LIKE")), Reuse.typename());
+    let type = seq(alt(str("TYPE"), str("LIKE")), Reuse.field_chain());
     let memory = seq(str("MEMORY ID"), Reuse.field());
     let listbox = seq(str("AS LISTBOX VISIBLE LENGTH"), Reuse.constant());
     let cmd = seq(str("USER-COMMAND"), Reuse.field());

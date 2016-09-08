@@ -11,19 +11,10 @@ let ver = Combi.ver;
 let star = Combi.star;
 let plus = Combi.plus;
 
+// todo, different approach(classes) for tok()?
 export class Integer extends Combi.Reuse {
   public get_runnable() {
     return seq(opt(tok("WDash")), reg(/^\d+$/));
-  }
-}
-
-// todo, replace with FieldChain?
-export class TypeDefName extends Combi.Reuse {
-  public get_runnable() {
-    let start = reg(/^(\/\w+\/)?\w+$/);
-    let after = star(seq(Reuse.arrow_or_dash(), reg(/^\w+$/)));
-
-    return seq(start, after);
   }
 }
 
@@ -37,7 +28,7 @@ export class InlineData extends Combi.Reuse {
   public get_runnable() {
     let right = alt(tok("ParenRight"), tok("ParenRightW"));
     let left = tok("ParenLeft");
-    let data = seq(str("DATA"), left, Reuse.field(), right);
+    let data = seq(str("DATA"), left, new Field(), right);
 
     return ver(Version.v740sp02, data);
   }
@@ -47,7 +38,7 @@ export class InlineFS extends Combi.Reuse {
   public get_runnable() {
     let right = alt(tok("ParenRight"), tok("ParenRightW"));
     let left = tok("ParenLeft");
-    let fs = seq(str("FIELD-SYMBOL"), left, Reuse.field_symbol(), right);
+    let fs = seq(str("FIELD-SYMBOL"), left, new FieldSymbol(), right);
 
     return ver(Version.v740sp02, fs);
   }
@@ -55,20 +46,20 @@ export class InlineFS extends Combi.Reuse {
 
 export class FSTarget extends Combi.Reuse {
   public get_runnable() {
-    return alt(Reuse.inline_fs(), Reuse.field_symbol());
+    return alt(new InlineFS(), new FieldSymbol());
   }
 }
 
 export class Target extends Combi.Reuse {
   public get_runnable() {
-    let after = seq(alt(Reuse.field(), Reuse.field_symbol()),
-                    star(seq(Reuse.arrow_or_dash(), Reuse.field())));
+    let after = seq(alt(new Field(), new FieldSymbol()),
+                    star(seq(new ArrowOrDash(), new Field())));
 
-    let fields = seq(opt(Reuse.field_offset()), opt(Reuse.field_length()));
+    let fields = seq(opt(new FieldOffset()), opt(new FieldLength()));
 
-    let optional = alt(Reuse.table_body(), fields);
+    let optional = alt(new TableBody(), fields);
 
-    return alt(Reuse.inline_data(), Reuse.inline_fs(), seq(after, optional));
+    return alt(new InlineData(), new InlineFS(), seq(after, optional));
   }
 }
 
@@ -80,52 +71,52 @@ export class Arrow extends Combi.Reuse {
 
 export class ArrowOrDash extends Combi.Reuse {
   public get_runnable() {
-    return alt(Reuse.arrow(), tok("Dash"));
+    return alt(new Arrow(), tok("Dash"));
   }
 }
 
 export class ParameterS extends Combi.Reuse {
   public get_runnable() {
-    return seq(Reuse.field(), str("="), Reuse.source());
+    return seq(new Field(), str("="), new Source());
   }
 }
 
 export class ParameterT extends Combi.Reuse {
   public get_runnable() {
-    return seq(Reuse.field(), str("="), Reuse.target());
+    return seq(new Field(), str("="), new Target());
   }
 }
 
 export class ParameterListS extends Combi.Reuse {
   public get_runnable() {
-    return plus(Reuse.parameter_s());
+    return plus(new ParameterS());
   }
 }
 
 export class ParameterListT extends Combi.Reuse {
   public get_runnable() {
-    return plus(Reuse.parameter_t());
+    return plus(new ParameterT());
   }
 }
 
 export class ParameterException extends Combi.Reuse {
   public get_runnable() {
-    return seq(Reuse.field(),
+    return seq(new Field(),
                str("="),
-               Reuse.integer(),
-               opt(seq(str("MESSAGE"), Reuse.target())));
+               new Integer(),
+               opt(seq(str("MESSAGE"), new Target())));
   }
 }
 
 export class ParameterListExceptions extends Combi.Reuse {
   public get_runnable() {
-    return plus(Reuse.parameter_exception());
+    return plus(new ParameterException());
   }
 }
 
 export class FieldOrMethodCall extends Combi.Reuse {
   public get_runnable() {
-    return alt(Reuse.field_chain(), Reuse.method_call_chain());
+    return alt(new FieldChain(), new MethodCallChain());
   }
 }
 
@@ -161,11 +152,11 @@ export class Compare extends Combi.Reuse {
                        str("ASSIGNED"),
                        str("INITIAL")));
 
-    let between = seq(str("BETWEEN"), Reuse.source(), str("AND"), Reuse.source());
+    let between = seq(str("BETWEEN"), new Source(), str("AND"), new Source());
 
     let ret = seq(opt(str("NOT")),
-                  Reuse.source(),
-                  alt(seq(operator, Reuse.source()),
+                  new Source(),
+                  alt(seq(operator, new Source()),
                       between,
                       sopt));
 
@@ -179,10 +170,10 @@ export class Cond extends Combi.Reuse {
 
     let another = seq(opt(str("NOT")),
                       tok("WParenLeftW"),
-                      Reuse.cond(),
+                      new Cond(),
                       alt(tok("WParenRightW"), tok("WParenRight")));
 
-    let cnd = alt(Reuse.compare(), another);
+    let cnd = alt(new Compare(), another);
 
     let ret = seq(cnd, star(seq(operator, cnd)));
 
@@ -192,11 +183,11 @@ export class Cond extends Combi.Reuse {
 
 export class FunctionParameters extends Combi.Reuse {
   public get_runnable() {
-    let exporting = seq(str("EXPORTING"), Reuse.parameter_list_s());
-    let importing = seq(str("IMPORTING"), Reuse.parameter_list_t());
-    let changing = seq(str("CHANGING"), Reuse.parameter_list_t());
-    let tables = seq(str("TABLES"), Reuse.parameter_list_t());
-    let exceptions = seq(str("EXCEPTIONS"), Reuse.parameter_list_exceptions());
+    let exporting = seq(str("EXPORTING"), new ParameterListS());
+    let importing = seq(str("IMPORTING"), new ParameterListT());
+    let changing = seq(str("CHANGING"), new ParameterListT());
+    let tables = seq(str("TABLES"), new ParameterListT());
+    let exceptions = seq(str("EXCEPTIONS"), new ParameterListExceptions());
     let long = seq(opt(exporting),
                    opt(importing),
                    opt(tables),
@@ -209,11 +200,11 @@ export class FunctionParameters extends Combi.Reuse {
 
 export class MethodParameters extends Combi.Reuse {
   public get_runnable() {
-    let exporting = seq(str("EXPORTING"), Reuse.parameter_list_s());
-    let importing = seq(str("IMPORTING"), Reuse.parameter_list_t());
-    let changing = seq(str("CHANGING"), Reuse.parameter_list_t());
-    let receiving = seq(str("RECEIVING"), Reuse.parameter_t());
-    let exceptions = seq(str("EXCEPTIONS"), Reuse.parameter_list_exceptions());
+    let exporting = seq(str("EXPORTING"), new ParameterListS());
+    let importing = seq(str("IMPORTING"), new ParameterListT());
+    let changing = seq(str("CHANGING"), new ParameterListT());
+    let receiving = seq(str("RECEIVING"), new ParameterT());
+    let exceptions = seq(str("EXCEPTIONS"), new ParameterListExceptions());
     let long = seq(opt(exporting),
                    opt(importing),
                    opt(changing),
@@ -226,24 +217,24 @@ export class MethodParameters extends Combi.Reuse {
 
 export class MethodCallChain extends Combi.Reuse {
   public get_runnable() {
-    let fields = star(seq(Reuse.arrow_or_dash(), Reuse.field()));
-    let after = star(seq(fields, Reuse.arrow(), Reuse.method_call()));
+    let fields = star(seq(new ArrowOrDash(), new Field()));
+    let after = star(seq(fields, new Arrow(), new MethodCall()));
 
     let rparen = alt(tok("WParenRightW"), tok("WParenRight"));
 
     let neww = ver(Version.v740sp02, seq(str("NEW"),
-                                         Reuse.type_name(),
+                                         new TypeName(),
                                          tok("ParenLeftW"),
-                                         opt(alt(Reuse.source(), Reuse.parameter_list_s())),
+                                         opt(alt(new Source(), new ParameterListS())),
                                          rparen));
 
     let cast = ver(Version.v740sp02, seq(str("CAST"),
-                                         Reuse.type_name(),
+                                         new TypeName(),
                                          tok("ParenLeftW"),
-                                         Reuse.source(),
+                                         new Source(),
                                          rparen));
 
-    let ret = seq(alt(seq(opt(seq(Reuse.field_chain(), Reuse.arrow())), Reuse.method_call()),
+    let ret = seq(alt(seq(opt(seq(new FieldChain(), new Arrow())), new MethodCall()),
                       neww,
                       cast),
                   after);
@@ -256,7 +247,7 @@ export class FieldOffset extends Combi.Reuse {
   public get_runnable() {
     let offset = seq(tok("Plus"),
                      reg(/^[\d\w]+$/),
-                     opt(seq(Reuse.arrow_or_dash(), Reuse.field())));
+                     opt(seq(new ArrowOrDash(), new Field())));
 
     return offset;
   }
@@ -266,7 +257,7 @@ export class FieldLength extends Combi.Reuse {
   public get_runnable() {
     let length = seq(tok("ParenLeft"),
                      reg(/^[\d\w]+$/),
-                     opt(seq(Reuse.arrow_or_dash(), Reuse.field())),
+                     opt(seq(new ArrowOrDash(), new Field())),
                      alt(tok("ParenRightW"), tok("ParenRight")));
 
     return length;
@@ -275,17 +266,18 @@ export class FieldLength extends Combi.Reuse {
 
 export class FieldChain extends Combi.Reuse {
   public get_runnable() {
-    let fcond = seq(Reuse.field(), str("="), Reuse.source());
+    let fcond = seq(new Field(), str("="), new Source());
 
-    let tableExpr = ver(Version.v740sp02, seq(tok("BracketLeftW"),
-                                              alt(Reuse.constant(), plus(fcond)),
-                                              str("]")));
+    let tableExpr = ver(Version.v740sp02,
+                        seq(tok("BracketLeftW"),
+                            alt(new Constant(), plus(fcond)),
+                            str("]")));
 
-    let chain = seq(alt(Reuse.field(), Reuse.field_symbol()),
+    let chain = seq(alt(new Field(), new FieldSymbol()),
                     opt(tableExpr),
-                    star(seq(Reuse.arrow_or_dash(), Reuse.field())));
+                    star(seq(new ArrowOrDash(), new Field())));
 
-    let ret = seq(chain, opt(Reuse.field_offset()), opt(Reuse.field_length()));
+    let ret = seq(chain, opt(new FieldOffset()), opt(new FieldLength()));
 
     return ret;
   }
@@ -329,9 +321,9 @@ export class TypeName extends Combi.Reuse {
 
 export class MethodCall extends Combi.Reuse {
   public get_runnable() {
-    let ret = seq(Reuse.method_name(),
+    let ret = seq(new MethodName(),
                   alt(tok("ParenLeftW"), tok("ParenLeft")),
-                  alt(Reuse.source(), Reuse.parameter_list_s(), Reuse.method_parameters()),
+                  alt(new Source(), new ParameterListS(), new MethodParameters()),
                   str(")"));
 
     return ret;
@@ -364,7 +356,7 @@ export class ArithOperator extends Combi.Reuse {
 export class Dynamic extends Combi.Reuse {
   public get_runnable() {
     let ret = seq(alt(tok("WParenLeft"), tok("ParenLeft")),
-                  alt(Reuse.field_chain(), Reuse.constant()),
+                  alt(new FieldChain(), new Constant()),
                   alt(tok("ParenRightW"), tok("ParenRight")));
 
     return ret;
@@ -381,67 +373,67 @@ export class TableBody extends Combi.Reuse {
 
 export class Source extends Combi.Reuse {
   public get_runnable() {
-    let method = seq(Reuse.method_call_chain(), opt(seq(Reuse.arrow_or_dash(), Reuse.field_chain())));
+    let method = seq(new MethodCallChain(), opt(seq(new ArrowOrDash(), new FieldChain())));
 
     let rparen = alt(tok("WParenRightW"), tok("WParenRight"));
 
 // paren used for eg. "( 2 + 1 ) * 4"
     let paren = seq(tok("WParenLeftW"),
-                    Reuse.source(),
+                    new Source(),
                     rparen);
 
-    let after = seq(alt(str("&"), str("&&"), Reuse.arith_operator()), Reuse.source());
-    let ref = seq(Reuse.arrow(), str("*"));
+    let after = seq(alt(str("&"), str("&&"), new ArithOperator()), new Source());
+    let ref = seq(new Arrow(), str("*"));
 
-    let boolc = seq(str("BOOLC"), tok("ParenLeftW"), Reuse.cond(), str(")"));
+    let boolc = seq(str("BOOLC"), tok("ParenLeftW"), new Cond(), str(")"));
 
     let prefix = alt(tok("WDashW"), str("BIT-NOT"));
 
-    let old = seq(alt(Reuse.constant(),
-                      Reuse.string_template(),
+    let old = seq(alt(new Constant(),
+                      new StringTemplate(),
                       boolc,
                       method,
-                      seq(opt(prefix), Reuse.field_chain()),
+                      seq(opt(prefix), new FieldChain()),
                       paren),
-                  opt(alt(ref, after, Reuse.table_body())));
+                  opt(alt(ref, after, new TableBody())));
 
     let corr = ver(Version.v740sp05, seq(str("CORRESPONDING"),
-                                         Reuse.type_name(),
+                                         new TypeName(),
                                          tok("ParenLeftW"),
-                                         Reuse.source(),
+                                         new Source(),
                                          rparen));
 
     let conv = ver(Version.v740sp02, seq(str("CONV"),
-                                         Reuse.type_name(),
+                                         new TypeName(),
                                          tok("ParenLeftW"),
-                                         Reuse.source(),
+                                         new Source(),
                                          rparen));
 
-    let fieldList = seq(Reuse.field(), str("="), Reuse.source());
+    let fieldList = seq(new Field(), str("="), new Source());
 
     let value = ver(Version.v740sp02, seq(str("VALUE"),
-                                          Reuse.type_name(),
+                                          new TypeName(),
                                           tok("ParenLeftW"),
-                                          alt(Reuse.source(),
+                                          alt(new Source(),
                                               plus(fieldList),
                                               plus(seq(tok("WParenLeftW"), plus(fieldList), tok("WParenRightW")))),
                                           rparen));
 
-    let when = seq(str("WHEN"), Reuse.cond(), str("THEN"), Reuse.source());
+    let when = seq(str("WHEN"), new Cond(), str("THEN"), new Source());
 
-    let elsee = seq(str("ELSE"), Reuse.source());
+    let elsee = seq(str("ELSE"), new Source());
 
     let cond = ver(Version.v740sp02, seq(str("COND"),
-                                         Reuse.type_name(),
+                                         new TypeName(),
                                          tok("ParenLeftW"),
                                          plus(when),
                                          opt(elsee),
                                          rparen));
 
     let reff = ver(Version.v740sp02, seq(str("REF"),
-                                         Reuse.type_name(),
+                                         new TypeName(),
                                          tok("ParenLeftW"),
-                                         Reuse.source(),
+                                         new Source(),
                                          rparen));
 
     let ret = alt(old, corr, conv, value, cond, reff);
@@ -468,7 +460,7 @@ export class Field extends Combi.Reuse {
 
 export class Value extends Combi.Reuse {
   public get_runnable() {
-    let ret = seq(str("VALUE"), alt(Reuse.constant(), str("IS INITIAL"), Reuse.field_chain()));
+    let ret = seq(str("VALUE"), alt(new Constant(), str("IS INITIAL"), new FieldChain()));
     return ret;
   }
 }
@@ -477,7 +469,7 @@ export class PassByValue extends Combi.Reuse {
   public get_runnable() {
     let ret = seq(str("VALUE"),
                   tok("ParenLeft"),
-                  Reuse.field(),
+                  new Field(),
                   tok("ParenRightW"));
     return ret;
   }
@@ -486,9 +478,9 @@ export class PassByValue extends Combi.Reuse {
 export class Type extends Combi.Reuse {
   public get_runnable() {
     let likeType = alt(str("LIKE"), str("TYPE"));
-    let def = seq(str("DEFAULT"), alt(Reuse.constant(), Reuse.field_chain()));
-    let length = seq(str("LENGTH"), Reuse.integer());
-    let decimals = seq(str("DECIMALS"), Reuse.integer());
+    let def = seq(str("DEFAULT"), alt(new Constant(), new FieldChain()));
+    let length = seq(str("LENGTH"), new Integer());
+    let decimals = seq(str("DECIMALS"), new Integer());
 
     let type = seq(likeType,
                    opt(alt(str("LINE OF"),
@@ -496,7 +488,7 @@ export class Type extends Combi.Reuse {
                            str("RANGE OF"))));
 
     let ret = seq(type,
-                  Reuse.field_chain(),
+                  new FieldChain(),
                   opt(def),
                   opt(length),
                   opt(decimals));
@@ -519,10 +511,10 @@ export class TypeTable extends Combi.Reuse {
                   opt(alt(str("NON-UNIQUE"), str("UNIQUE"))),
                   opt(alt(str("DEFAULT"), ver(Version.v740sp02, str("EMPTY")))),
                   str("KEY"),
-                  star(Reuse.field_sub()));
+                  star(new FieldSub()));
 
     let ret = seq(typetable,
-                  opt(Reuse.typename()),
+                  opt(new TypeName()),
                   opt(key));
 
     return ret;
@@ -533,7 +525,7 @@ export class Constant extends Combi.Reuse {
   public get_runnable() {
     let text = seq(tok("ParenLeft"), reg(/^\w{3}$/), alt(tok("ParenRightW"), tok("ParenRight")));
     let stri = seq(reg(/^('.*')|(`.*`)$/), opt(text));
-    return alt(stri, Reuse.integer());
+    return alt(stri, new Integer());
   }
 }
 
@@ -551,7 +543,6 @@ export default class Reuse {
   public static type(): Combi.Reuse { return new Type(); }
   public static type_table(): Combi.Reuse { return new TypeTable(); }
   public static constant(): Combi.Reuse { return new Constant(); }
-  public static typename(): Combi.Reuse { return new TypeDefName(); }
   public static field_symbol(): Combi.Reuse { return new FieldSymbol(); }
   public static inline_data(): Combi.Reuse { return new InlineData(); }
   public static inline_fs(): Combi.Reuse { return new InlineFS(); }

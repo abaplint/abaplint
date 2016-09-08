@@ -12,7 +12,7 @@ export class IncludeType extends Statement {
   public static get_matcher(): Combi.IRunnable {
     let ret = seq(str("INCLUDE"),
                   alt(str("TYPE"), str("STRUCTURE")),
-                  Reuse.typename(),
+                  Reuse.type_name(),
                   opt(seq(str("AS"), Reuse.field())));
 
     return ret;
