@@ -94,7 +94,8 @@ export class Analyze {
 
   private static findSources(n: BasicNode): Array<ReuseNode> {
     return this.walk<ReuseNode>(n, (b) => {
-        if (b instanceof ReuseNode && (b as ReuseNode).getName() === "source") {
+// todo, to be changed to "instanceof Reuse.Source" instead
+        if (b instanceof ReuseNode && (b as ReuseNode).getName() === "Source") {
           return [b as ReuseNode];
         } else {
           return [];

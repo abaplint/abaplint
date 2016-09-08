@@ -13,7 +13,6 @@ let alt  = Combi.alt;
 let opt  = Combi.opt;
 let star = Combi.star;
 let reg  = Combi.regex;
-let re   = Combi.reuse;
 let per  = Combi.per;
 let tok  = Combi.tok;
 
@@ -67,7 +66,6 @@ let tests = [
 {n: "reg4", c: seq(reg(/^\w+$/), reg(/^\w+$/)),   t: tokenize("foo bar"), e: true},
 {n: "reg5", c: reg(/^(LIKE|TYPE)$/i),             t: tokenize("type"),    e: true},
 {n: "reg6", c: reg(/^(LIKE|TYPE)$/i),             t: tokenize("TYPE"),    e: true},
-{n: "re1",  c: re(() => { return str("TYPE"); }, "test"), t: tokenize("TYPE"),   e: true},
 {n: "das1", c: str("FIELD-SYMBOL"),                    t: tokenize("FIELD - SYMBOL"), e: true},
 {n: "per1", c: per(str("FOO"), str("BAR")),            t: tokenize("FOO"), e: true},
 {n: "per2", c: per(str("FOO"), str("BAR")),            t: tokenize("BAR"), e: true},

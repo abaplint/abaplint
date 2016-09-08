@@ -398,15 +398,11 @@ class WordSequence implements IRunnable {
   }
 }
 
-export class Reuse implements IRunnable {
-  private runnable: () => IRunnable;
-  private name: string;
+function className(cla) {
+  return (cla.constructor + "").match(/\w+/g)[1];
+}
 
-  constructor(runnable: () => IRunnable, name: string) {
-    this.runnable = runnable;
-    this.name = name;
-  }
-
+export abstract class Reuse implements IRunnable {
   public run(r: Array<Result>): Array<Result> {
     let results: Array<Result> = [];
 
@@ -437,17 +433,12 @@ export class Reuse implements IRunnable {
 
     return results;
   }
-/*
+
   public abstract get_runnable(): IRunnable;
 
-  public abstract get_name(): string;
-*/
-  public get_runnable(): IRunnable {
-    return this.runnable();
-  }
-
+// todo, remove this method?
   public get_name(): string {
-    return this.name;
+    return className(this);
   }
 
   public railroad() {
@@ -625,9 +616,6 @@ export function regex(r: RegExp): IRunnable {
 }
 export function plus(first: IRunnable): IRunnable {
   return new Plus(first);
-}
-export function reuse(run: () => IRunnable, name: string): Reuse {
-  return new Reuse(run, name);
 }
 export function ver(ver: Version, first: IRunnable): IRunnable {
   return new Vers(ver, first);
