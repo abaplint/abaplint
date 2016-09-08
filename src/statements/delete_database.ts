@@ -1,6 +1,6 @@
 import { Statement } from "./statement";
 import * as Combi from "../combi";
-import Reuse from "./reuse";
+import * as Reuse from "./reuse";
 
 let str = Combi.str;
 let seq = Combi.seq;
@@ -10,8 +10,8 @@ let opt = Combi.opt;
 export class DeleteDatabase extends Statement {
 
   public static get_matcher(): Combi.IRunnable {
-    let where = seq(str("WHERE"), alt(Reuse.cond(), Reuse.dynamic()));
-    let source = alt(Reuse.dynamic(), Reuse.database_table());
+    let where = seq(str("WHERE"), alt(new Reuse.Cond(), new Reuse.Dynamic()));
+    let source = alt(new Reuse.Dynamic(), new Reuse.DatabaseTable());
 
     let ret = seq(str("DELETE"), str("FROM"), source, opt(where));
 

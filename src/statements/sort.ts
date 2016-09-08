@@ -1,5 +1,5 @@
 import { Statement } from "./statement";
-import Reuse from "./reuse";
+import * as Reuse from "./reuse";
 import * as Combi from "../combi";
 
 let str = Combi.str;
@@ -13,15 +13,15 @@ export class Sort extends Statement {
   public static get_matcher(): Combi.IRunnable {
     let order = alt(str("ASCENDING"), str("DESCENDING"));
 
-    let fields = plus(seq(alt(Reuse.field_sub(), Reuse.field_symbol()),
+    let fields = plus(seq(alt(new Reuse.FieldSub(), new Reuse.FieldSymbol()),
                           opt(order),
                           opt(str("AS TEXT"))));
 
     let by = seq(str("BY"),
-                 alt(fields, Reuse.dynamic()));
+                 alt(fields, new Reuse.Dynamic()));
 
     return seq(str("SORT"),
-               Reuse.target(),
+               new Reuse.Target(),
                opt(alt(str("STABLE"), order)),
                opt(by));
   }

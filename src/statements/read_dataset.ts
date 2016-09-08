@@ -1,6 +1,6 @@
 import { Statement } from "./statement";
 import * as Combi from "../combi";
-import Reuse from "./reuse";
+import * as Reuse from "./reuse";
 
 let str = Combi.str;
 let seq = Combi.seq;
@@ -10,12 +10,12 @@ export class ReadDataset extends Statement {
 
   public static get_matcher(): Combi.IRunnable {
     return seq(str("READ DATASET"),
-               Reuse.source(),
+               new Reuse.Source(),
                str("INTO"),
-               Reuse.target(),
-               opt(seq(str("MAXIMUM LENGTH"), Reuse.target())),
-               opt(seq(str("ACTUAL LENGTH"), Reuse.target())),
-               opt(seq(str("LENGTH"), Reuse.target())));
+               new Reuse.Target(),
+               opt(seq(str("MAXIMUM LENGTH"), new Reuse.Target())),
+               opt(seq(str("ACTUAL LENGTH"), new Reuse.Target())),
+               opt(seq(str("LENGTH"), new Reuse.Target())));
   }
 
 }

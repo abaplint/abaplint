@@ -1,6 +1,6 @@
 import { Statement } from "./statement";
 import * as Combi from "../combi";
-import Reuse from "./reuse";
+import * as Reuse from "./reuse";
 
 let str = Combi.str;
 let seq = Combi.seq;
@@ -15,9 +15,9 @@ export class Write extends Statement {
   public static get_matcher(): Combi.IRunnable {
     let at = seq(opt(str("AT")), reg(/^\/?\d+$/));
 
-    let mask = seq(str("USING EDIT MASK"), Reuse.source());
+    let mask = seq(str("USING EDIT MASK"), new Reuse.Source());
 
-    let to = seq(str("TO"), Reuse.target());
+    let to = seq(str("TO"), new Reuse.Target());
 
     let options = per(mask,
                       to,
@@ -25,17 +25,17 @@ export class Write extends Statement {
                       str("NO-GROUPING"),
                       str("NO-ZERO"),
                       str("LEFT-JUSTIFIED"),
-                      seq(str("UNIT"), Reuse.source()),
-                      seq(str("DECIMALS"), Reuse.source()),
-                      seq(str("COLOR"), opt(str("=")), Reuse.source(), opt(str("INVERSE"))),
-                      seq(str("CURRENCY"), Reuse.source()),
+                      seq(str("UNIT"), new Reuse.Source()),
+                      seq(str("DECIMALS"), new Reuse.Source()),
+                      seq(str("COLOR"), opt(str("=")), new Reuse.Source(), opt(str("INVERSE"))),
+                      seq(str("CURRENCY"), new Reuse.Source()),
                       str("NO-SIGN"));
 
     let complex = seq(str("/"), opt(seq(tok("ParenLeft"), reg(/^\d+$/), tok("ParenRightW"))));
 
     let ret = seq(str("WRITE"),
                   opt(alt(at, complex)),
-                  opt(Reuse.source()),
+                  opt(new Reuse.Source()),
                   opt(options));
 
     return ret;

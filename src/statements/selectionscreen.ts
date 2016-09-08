@@ -1,6 +1,6 @@
 import { Statement } from "./statement";
 import * as Combi from "../combi";
-import Reuse from "./reuse";
+import * as Reuse from "./reuse";
 
 let str = Combi.str;
 let seq = Combi.seq;
@@ -16,15 +16,15 @@ export class SelectionScreen extends Statement {
     let beginBlock = seq(str("BEGIN OF BLOCK"),
                          blockName,
                          opt(str("WITH FRAME")),
-                         opt(seq(str("TITLE"), Reuse.source())));
+                         opt(seq(str("TITLE"), new Reuse.Source())));
     let endBlock = seq(str("END OF BLOCK"), blockName);
 
     let beginScreen = seq(str("BEGIN OF SCREEN"),
-                          Reuse.integer(),
+                          new Reuse.Integer(),
                           opt(str("AS SUBSCREEN")),
-                          opt(seq(str("TITLE"), Reuse.source())));
+                          opt(seq(str("TITLE"), new Reuse.Source())));
 
-    let endScreen = seq(str("END OF SCREEN"), Reuse.integer());
+    let endScreen = seq(str("END OF SCREEN"), new Reuse.Integer());
 
     let beginLine = str("BEGIN OF LINE");
     let endLine = str("END OF LINE");
@@ -32,21 +32,25 @@ export class SelectionScreen extends Statement {
     let comment = seq(str("COMMENT"),
                       opt(reg(/^\/?\d+$/)),
                       str("("),
-                      Reuse.integer(),
+                      new Reuse.Integer(),
                       str(")"),
-                      opt(Reuse.source()),
-                      opt(seq(str("FOR FIELD"), Reuse.field())),
-                      opt(seq(str("MODIF ID"), Reuse.field())));
+                      opt(new Reuse.Source()),
+                      opt(seq(str("FOR FIELD"), new Reuse.Field())),
+                      opt(seq(str("MODIF ID"), new Reuse.Field())));
 
-    let func = seq(str("FUNCTION KEY"), Reuse.integer());
+    let func = seq(str("FUNCTION KEY"), new Reuse.Integer());
 
-    let skip = seq(str("SKIP"), opt(Reuse.integer()));
+    let skip = seq(str("SKIP"), opt(new Reuse.Integer()));
 
-    let pos = seq(str("POSITION"), Reuse.integer());
+    let pos = seq(str("POSITION"), new Reuse.Integer());
 
     let incl = seq(str("INCLUDE BLOCKS"), blockName);
 
-    let tabbed = seq(str("BEGIN OF TABBED BLOCK"), Reuse.field(), str("FOR"), Reuse.integer(), str("LINES"));
+    let tabbed = seq(str("BEGIN OF TABBED BLOCK"),
+                     new Reuse.Field(),
+                     str("FOR"),
+                     new Reuse.Integer(),
+                     str("LINES"));
 
     let ret = seq(str("SELECTION-SCREEN"),
                   alt(comment,

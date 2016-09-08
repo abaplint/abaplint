@@ -1,5 +1,5 @@
 import { Statement } from "./statement";
-import Reuse from "./reuse";
+import * as Reuse from "./reuse";
 import * as Combi from "../combi";
 
 let str = Combi.str;
@@ -8,7 +8,7 @@ let seq = Combi.seq;
 export class GetCursor extends Statement {
 
   public static get_matcher(): Combi.IRunnable {
-    let ret = seq(str("GET CURSOR FIELD"), Reuse.target());
+    let ret = seq(str("GET CURSOR FIELD"), new Reuse.Target());
     return ret;
   }
 

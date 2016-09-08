@@ -1,5 +1,5 @@
 import { Statement } from "./statement";
-import Reuse from "./reuse";
+import * as Reuse from "./reuse";
 import * as Combi from "../combi";
 
 let str = Combi.str;
@@ -10,12 +10,12 @@ export class Report extends Statement {
 
   public static get_matcher(): Combi.IRunnable {
     return seq(str("REPORT"),
-               opt(Reuse.field()),
-               opt(seq(str("LINE-SIZE"), Reuse.integer())),
+               opt(new Reuse.Field()),
+               opt(seq(str("LINE-SIZE"), new Reuse.Integer())),
                opt(str("NO STANDARD PAGE HEADING")),
-               opt(seq(str("LINE-SIZE"), Reuse.integer())),
-               opt(seq(str("LINE-COUNT"), Reuse.integer())),
-               opt(seq(str("MESSAGE-ID"), Reuse.field())));
+               opt(seq(str("LINE-SIZE"), new Reuse.Integer())),
+               opt(seq(str("LINE-COUNT"), new Reuse.Integer())),
+               opt(seq(str("MESSAGE-ID"), new Reuse.Field())));
   }
 
 }

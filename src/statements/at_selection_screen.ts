@@ -1,5 +1,5 @@
 import { Statement } from "./statement";
-import Reuse from "./reuse";
+import * as Reuse from "./reuse";
 import * as Combi from "../combi";
 
 let str = Combi.str;
@@ -11,9 +11,9 @@ export class AtSelectionScreen extends Statement {
 
   public static get_matcher(): Combi.IRunnable {
     let output = str("OUTPUT");
-    let value = seq(str("ON VALUE-REQUEST FOR"), Reuse.field());
+    let value = seq(str("ON VALUE-REQUEST FOR"), new Reuse.Field());
     let exit = str("ON EXIT-COMMAND");
-    let field = seq(str("ON"), Reuse.field());
+    let field = seq(str("ON"), new Reuse.Field());
     let ret = seq(str("AT SELECTION-SCREEN"), opt(alt(output, value, exit, field)));
 
     return ret;

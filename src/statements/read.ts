@@ -1,6 +1,6 @@
 import { Statement } from "./statement";
 import * as Combi from "../combi";
-import Reuse from "./reuse";
+import * as Reuse from "./reuse";
 
 let str = Combi.str;
 let seq = Combi.seq;
@@ -12,24 +12,27 @@ let per = Combi.per;
 export class Read extends Statement {
 
   public static get_matcher(): Combi.IRunnable {
-    let target = alt(seq(str("ASSIGNING"), Reuse.target()),
-                     seq(opt(str("REFERENCE")), str("INTO"), Reuse.target()),
+    let target = alt(seq(str("ASSIGNING"), new Reuse.Target()),
+                     seq(opt(str("REFERENCE")), str("INTO"), new Reuse.Target()),
                      str("TRANSPORTING NO FIELDS"));
 
-    let index = seq(str("INDEX"), Reuse.source());
+    let index = seq(str("INDEX"), new Reuse.Source());
 
-    let components = seq(Reuse.field(), str("COMPONENTS"), plus(Reuse.compare()));
+    let components = seq(new Reuse.Field(), str("COMPONENTS"), plus(new Reuse.Compare()));
 
-    let key = seq(alt(str("WITH KEY"), str("WITH TABLE KEY")), alt(plus(Reuse.compare()), components, Reuse.field_symbol()));
+    let key = seq(alt(str("WITH KEY"), str("WITH TABLE KEY")),
+                  alt(plus(new Reuse.Compare()),
+                      components,
+                      new Reuse.FieldSymbol()));
 
     let perm = per(alt(index,
                        key,
-                       seq(str("FROM"), Reuse.source())),
+                       seq(str("FROM"), new Reuse.Source())),
                    target,
                    str("BINARY SEARCH"));
 
     return seq(str("READ TABLE"),
-               Reuse.source(),
+               new Reuse.Source(),
                opt(perm));
   }
 

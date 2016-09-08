@@ -1,6 +1,6 @@
 import { Statement } from "./statement";
 import * as Combi from "../combi";
-import Reuse from "./reuse";
+import * as Reuse from "./reuse";
 
 let str = Combi.str;
 let seq = Combi.seq;
@@ -12,15 +12,15 @@ export class DeleteInternal extends Statement {
 
   public static get_matcher(): Combi.IRunnable {
 // todo, is READ and DELETE similar? something can be reused?
-    let index = seq(str("INDEX"), Reuse.source());
-    let fromTo = seq(opt(seq(str("FROM"), Reuse.source())), opt(seq(str("TO"), Reuse.source())));
-    let where = seq(str("WHERE"), Reuse.cond());
-    let key = seq(alt(str("WITH KEY"), str("WITH TABLE KEY")), plus(Reuse.compare()));
-    let table = seq(opt(str("TABLE")), Reuse.target(), alt(index, fromTo, where, key));
+    let index = seq(str("INDEX"), new Reuse.Source());
+    let fromTo = seq(opt(seq(str("FROM"), new Reuse.Source())), opt(seq(str("TO"), new Reuse.Source())));
+    let where = seq(str("WHERE"), new Reuse.Cond());
+    let key = seq(alt(str("WITH KEY"), str("WITH TABLE KEY")), plus(new Reuse.Compare()));
+    let table = seq(opt(str("TABLE")), new Reuse.Target(), alt(index, fromTo, where, key));
 
     let adjacent = seq(str("ADJACENT DUPLICATES FROM"),
-                       Reuse.target(),
-                       opt(seq(str("COMPARING"), plus(Reuse.field()))));
+                       new Reuse.Target(),
+                       opt(seq(str("COMPARING"), plus(new Reuse.Field()))));
 
     return seq(str("DELETE"), alt(table, adjacent));
   }

@@ -1,5 +1,5 @@
 import { Statement } from "./statement";
-import Reuse from "./reuse";
+import * as Reuse from "./reuse";
 import * as Combi from "../combi";
 
 let str = Combi.str;
@@ -10,13 +10,13 @@ export class CallSelectionScreen extends Statement {
 
   public static get_matcher(): Combi.IRunnable {
     let starting = seq(str("STARTING AT"),
-                       Reuse.source(),
-                       Reuse.source(),
+                       new Reuse.Source(),
+                       new Reuse.Source(),
                        str("ENDING AT"),
-                       Reuse.source(),
-                       Reuse.source());
+                       new Reuse.Source(),
+                       new Reuse.Source());
 
-    let call = seq(str("CALL SELECTION-SCREEN"), Reuse.source(), opt(starting));
+    let call = seq(str("CALL SELECTION-SCREEN"), new Reuse.Source(), opt(starting));
     return call;
   }
 

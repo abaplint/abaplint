@@ -1,5 +1,5 @@
 import { Statement } from "./statement";
-import Reuse from "./reuse";
+import * as Reuse from "./reuse";
 import * as Combi from "../combi";
 
 let str = Combi.str;
@@ -9,15 +9,15 @@ export class SyntaxCheck extends Statement {
 
   public static get_matcher(): Combi.IRunnable {
     let ret = seq(str("SYNTAX-CHECK FOR"),
-                  Reuse.source(),
+                  new Reuse.Source(),
                   str("MESSAGE"),
-                  Reuse.target(),
+                  new Reuse.Target(),
                   str("LINE"),
-                  Reuse.target(),
+                  new Reuse.Target(),
                   str("WORD"),
-                  Reuse.target(),
+                  new Reuse.Target(),
                   str("DIRECTORY ENTRY"),
-                  Reuse.source());
+                  new Reuse.Source());
 
     return ret;
   }

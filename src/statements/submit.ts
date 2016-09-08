@@ -1,5 +1,5 @@
 import { Statement } from "./statement";
-import Reuse from "./reuse";
+import * as Reuse from "./reuse";
 import * as Combi from "../combi";
 
 let str = Combi.str;
@@ -12,8 +12,8 @@ let plus = Combi.plus;
 export class Submit extends Statement {
 
   public static get_matcher(): Combi.IRunnable {
-    let awith = seq(str("WITH"), Reuse.field(), str("="), Reuse.source());
-    let prog = alt(Reuse.source(), seq(str("("), Reuse.field_chain(), str(")")));
+    let awith = seq(str("WITH"), new Reuse.Field(), str("="), new Reuse.Source());
+    let prog = alt(new Reuse.Source(), seq(str("("), new Reuse.FieldChain(), str(")")));
     let perm = per(plus(awith), str("AND RETURN"));
     let ret = seq(str("SUBMIT"), prog, opt(str("VIA SELECTION-SCREEN")), opt(perm));
     return ret;

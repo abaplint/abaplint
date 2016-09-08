@@ -1,5 +1,5 @@
 import { Statement } from "./statement";
-import Reuse from "./reuse";
+import * as Reuse from "./reuse";
 import * as Combi from "../combi";
 
 let str = Combi.str;
@@ -10,7 +10,9 @@ let opt = Combi.opt;
 export class Module extends Statement {
 
   public static get_matcher(): Combi.IRunnable {
-    return seq(str("MODULE"), Reuse.form_name(), opt(alt(str("INPUT"), str("OUTPUT"))));
+    return seq(str("MODULE"),
+               new Reuse.FormName(),
+               opt(alt(str("INPUT"), str("OUTPUT"))));
   }
 
   public isStructure() {

@@ -1,6 +1,6 @@
 import { Statement } from "./statement";
 import * as Combi from "../combi";
-import Reuse from "./reuse";
+import * as Reuse from "./reuse";
 
 let str = Combi.str;
 let seq = Combi.seq;
@@ -10,8 +10,8 @@ export class FunctionPool extends Statement {
 
   public static get_matcher(): Combi.IRunnable {
     return seq(str("FUNCTION-POOL"),
-               Reuse.field(),
-               opt(seq(str("MESSAGE-ID"), Reuse.source())));
+               new Reuse.Field(),
+               opt(seq(str("MESSAGE-ID"), new Reuse.Source())));
   }
 
 }

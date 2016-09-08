@@ -1,5 +1,5 @@
 import { Statement } from "./statement";
-import Reuse from "./reuse";
+import * as Reuse from "./reuse";
 import * as Combi from "../combi";
 
 let str = Combi.str;
@@ -20,9 +20,9 @@ export class CreateData extends Statement {
     let key = str("WITH DEFAULT KEY");
 
     let ret = seq(str("CREATE DATA"),
-                  Reuse.target(),
+                  new Reuse.Target(),
                   type,
-                  alt(Reuse.source(), Reuse.dynamic()),
+                  alt(new Reuse.Source(), new Reuse.Dynamic()),
                   opt(key));
 
     return ret;

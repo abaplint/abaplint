@@ -1,8 +1,11 @@
 import * as Combi from "../src/combi";
 import * as Statements from "../src/statements/";
-import Reuse from "../src/statements/reuse";
-
+import * as Reuse from "../src/statements/reuse";
 import * as fs from "fs";
+
+function className(cla) {
+  return (cla.constructor + "").match(/\w+/g)[1];
+}
 
 class Graph {
 
@@ -13,8 +16,8 @@ class Graph {
 
   public static run() {
     for (let foo in Reuse) {
-      let name = Reuse[foo]().get_name();
-      this.handle("reuse_", name, Reuse[foo]().get_runnable(), true);
+      let name = className(new Reuse[foo]()).toLowerCase();
+      this.handle("reuse_", name, new Reuse[foo]().get_runnable(), true);
     }
 
     for (let st in Statements) {

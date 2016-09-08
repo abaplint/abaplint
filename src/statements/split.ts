@@ -1,6 +1,6 @@
 import { Statement } from "./statement";
 import * as Combi from "../combi";
-import Reuse from "./reuse";
+import * as Reuse from "./reuse";
 
 let str = Combi.str;
 let seq = Combi.seq;
@@ -10,12 +10,12 @@ let plus = Combi.plus;
 export class Split extends Statement {
 
   public static get_matcher(): Combi.IRunnable {
-    let into = alt(seq(str("TABLE"), Reuse.target()), plus(Reuse.target()));
+    let into = alt(seq(str("TABLE"), new Reuse.Target()), plus(new Reuse.Target()));
 
     let ret = seq(str("SPLIT"),
-                  Reuse.source(),
+                  new Reuse.Source(),
                   str("AT"),
-                  Reuse.source(),
+                  new Reuse.Source(),
                   str("INTO"),
                   into);
     return ret;

@@ -1,5 +1,5 @@
 import { Statement } from "./statement";
-import Reuse from "./reuse";
+import * as Reuse from "./reuse";
 import * as Combi from "../combi";
 
 let str = Combi.str;
@@ -9,11 +9,11 @@ let opt = Combi.opt;
 export class SetTitlebar extends Statement {
 
   public static get_matcher(): Combi.IRunnable {
-    let wit = seq(str("WITH"), Reuse.source());
+    let wit = seq(str("WITH"), new Reuse.Source());
 
-    let program = seq(str("OF PROGRAM"), Reuse.source());
+    let program = seq(str("OF PROGRAM"), new Reuse.Source());
 
-    let ret = seq(str("SET TITLEBAR"), Reuse.source(), opt(program), opt(wit));
+    let ret = seq(str("SET TITLEBAR"), new Reuse.Source(), opt(program), opt(wit));
 
     return ret;
   }

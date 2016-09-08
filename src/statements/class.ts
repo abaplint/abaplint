@@ -1,6 +1,6 @@
 import { Statement } from "./statement";
 import * as Combi from "../combi";
-import Reuse from "./reuse";
+import * as Reuse from "./reuse";
 
 let str = Combi.str;
 let seq = Combi.seq;
@@ -22,19 +22,19 @@ export class Class extends Statement {
 
     let blah = per(alt(str("PUBLIC"), str("LOCAL")),
                    alt(str("FINAL"), str("ABSTRACT")),
-                   seq(str("INHERITING FROM"), Reuse.class_name()),
+                   seq(str("INHERITING FROM"), new Reuse.ClassName()),
                    create,
                    str("FOR TESTING"),
                    risk,
                    duration,
-                   seq(opt(str("GLOBAL")), str("FRIENDS"), plus(Reuse.class_name())));
+                   seq(opt(str("GLOBAL")), str("FRIENDS"), plus(new Reuse.ClassName())));
 
     let def = seq(str("DEFINITION"),
                   opt(alt(str("LOAD"),
                           str("DEFERRED"),
                           blah)));
 
-    return seq(str("CLASS"), Reuse.class_name(), alt(def, str("IMPLEMENTATION")));
+    return seq(str("CLASS"), new Reuse.ClassName(), alt(def, str("IMPLEMENTATION")));
   }
 
   public isStructure() {

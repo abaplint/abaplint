@@ -1,5 +1,5 @@
 import { Statement } from "./statement";
-import Reuse from "./reuse";
+import * as Reuse from "./reuse";
 import * as Combi from "../combi";
 
 let str = Combi.str;
@@ -12,7 +12,9 @@ export class FieldSymbol extends Statement {
 
   public static get_matcher(): Combi.IRunnable {
 // todo, reuse type definition from DATA
-    return seq(alt(str("FIELD-SYMBOL"), str("FIELD-SYMBOLS")), Reuse.field_symbol(), star(reg(/.*/)));
+    return seq(alt(str("FIELD-SYMBOL"), str("FIELD-SYMBOLS")),
+               new Reuse.FieldSymbol(),
+               star(reg(/.*/)));
   }
 
 }

@@ -1,5 +1,5 @@
 import { Statement } from "./statement";
-import Reuse from "./reuse";
+import * as Reuse from "./reuse";
 import * as Combi from "../combi";
 
 let str = Combi.str;
@@ -13,20 +13,20 @@ export class Find extends Statement {
 
   public static get_matcher(): Combi.IRunnable {
     let options = per(str("IGNORING CASE"),
-                      seq(str("MATCH OFFSET"), Reuse.target()),
-                      seq(str("MATCH COUNT"), Reuse.target()),
-                      seq(str("MATCH LENGTH"), Reuse.target()),
-                      seq(str("RESULTS"), Reuse.target()),
-                      seq(str("SUBMATCHES"), plus(Reuse.target())));
+                      seq(str("MATCH OFFSET"), new Reuse.Target()),
+                      seq(str("MATCH COUNT"), new Reuse.Target()),
+                      seq(str("MATCH LENGTH"), new Reuse.Target()),
+                      seq(str("RESULTS"), new Reuse.Target()),
+                      seq(str("SUBMATCHES"), plus(new Reuse.Target())));
 
     let ret = seq(str("FIND"),
                   opt(alt(str("FIRST OCCURRENCE OF"),
                           str("ALL OCCURRENCES OF"))),
                   opt(str("REGEX")),
-                  Reuse.source(),
+                  new Reuse.Source(),
                   str("IN"),
                   opt(str("TABLE")),
-                  Reuse.source(),
+                  new Reuse.Source(),
                   opt(options));
 
     return ret;

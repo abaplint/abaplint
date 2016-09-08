@@ -1,6 +1,6 @@
 import { Statement } from "./statement";
 import * as Combi from "../combi";
-import Reuse from "./reuse";
+import * as Reuse from "./reuse";
 
 let str = Combi.str;
 let seq = Combi.seq;
@@ -16,36 +16,36 @@ export class Select extends Statement {
   public static get_matcher(): Combi.IRunnable {
 
     let from = seq(str("FROM"),
-                   alt(Reuse.dynamic(), Reuse.database_table()),
-                   opt(seq(str("AS"), Reuse.database_table())));
+                   alt(new Reuse.Dynamic(), new Reuse.DatabaseTable()),
+                   opt(seq(str("AS"), new Reuse.DatabaseTable())));
 
     let intoList = seq(str("INTO"),
                        tok("WParenLeft"),
-                       star(seq(Reuse.target(), str(","))),
-                       Reuse.target(),
+                       star(seq(new Reuse.Target(), str(","))),
+                       new Reuse.Target(),
                        str(")"));
     let intoTable = seq(alt(str("INTO"), str("APPENDING")),
                         opt(str("CORRESPONDING FIELDS OF")),
                         str("TABLE"),
-                        Reuse.target());
+                        new Reuse.Target());
     let intoSimple = seq(str("INTO"),
                          opt(str("CORRESPONDING FIELDS OF")),
-                         Reuse.target());
+                         new Reuse.Target());
     let into = alt(intoList, intoTable, intoSimple);
 
-    let where = seq(str("WHERE"), alt(Reuse.cond(), Reuse.dynamic()));
+    let where = seq(str("WHERE"), alt(new Reuse.Cond(), new Reuse.Dynamic()));
 
-    let order = seq(str("ORDER BY"), alt(plus(Reuse.field()), str("PRIMARY KEY"), Reuse.dynamic()));
+    let order = seq(str("ORDER BY"), alt(plus(new Reuse.Field()), str("PRIMARY KEY"), new Reuse.Dynamic()));
 
-    let forAll = seq(str("FOR ALL ENTRIES IN"), Reuse.source());
+    let forAll = seq(str("FOR ALL ENTRIES IN"), new Reuse.Source());
 
     let count = seq(str("COUNT"), alt(tok("ParenLeft"), tok("ParenLeftW")), str("*"), str(")"));
 
-    let fields = alt(str("*"), count, plus(Reuse.field()));
+    let fields = alt(str("*"), count, plus(new Reuse.Field()));
 
-    let join = seq(str("INNER JOIN"), Reuse.database_table(), str("ON"), plus(Reuse.cond()));
+    let join = seq(str("INNER JOIN"), new Reuse.DatabaseTable(), str("ON"), plus(new Reuse.Cond()));
 
-    let up = seq(str("UP TO"), Reuse.source(), str("ROWS"));
+    let up = seq(str("UP TO"), new Reuse.Source(), str("ROWS"));
 
     let perm = per(from, plus(join), into, forAll, where, order, up);
 

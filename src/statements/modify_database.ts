@@ -1,5 +1,5 @@
 import { Statement } from "./statement";
-import Reuse from "./reuse";
+import * as Reuse from "./reuse";
 import * as Combi from "../combi";
 
 let str = Combi.str;
@@ -10,11 +10,11 @@ let opt = Combi.opt;
 export class ModifyDatabase extends Statement {
 
   public static get_matcher(): Combi.IRunnable {
-    let target = alt(Reuse.database_table(), Reuse.dynamic());
+    let target = alt(new Reuse.DatabaseTable(), new Reuse.Dynamic());
 
     let ret = seq(str("MODIFY"),
                   target,
-                  seq(str("FROM"), opt(str("TABLE")), Reuse.source()));
+                  seq(str("FROM"), opt(str("TABLE")), new Reuse.Source()));
 
     return ret;
   }

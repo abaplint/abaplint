@@ -1,5 +1,5 @@
 import { Statement } from "./statement";
-import Reuse from "./reuse";
+import * as Reuse from "./reuse";
 import * as Combi from "../combi";
 
 let str = Combi.str;
@@ -14,11 +14,11 @@ export class MethodDef extends Statement {
   public static get_matcher(): Combi.IRunnable {
     let field = reg(/^!?(\/\w+\/)?\w+$/);
 
-    let type = alt(Reuse.type(), Reuse.type_table());
+    let type = alt(new Reuse.Type(), new Reuse.TypeTable());
 
     let fieldType = seq(field, type);
-    let fieldsValue = seq(Reuse.pass_by_value(), type);
-    let fieldsOrValue = seq(alt(Reuse.pass_by_value(), field), type);
+    let fieldsValue = seq(new Reuse.PassByValue(), type);
+    let fieldsOrValue = seq(alt(new Reuse.PassByValue(), field), type);
 
     let importing  = seq(str("IMPORTING"),
                          plus(seq(fieldsOrValue, opt(str("OPTIONAL")))),
@@ -27,7 +27,7 @@ export class MethodDef extends Statement {
     let exporting  = seq(str("EXPORTING"),  plus(fieldsOrValue));
     let changing   = seq(str("CHANGING"),   plus(seq(fieldType, opt(str("OPTIONAL")))));
     let returning  = seq(str("RETURNING"),  plus(fieldsValue));
-    let raising    = seq(str("RAISING"),    plus(Reuse.class_name()));
+    let raising    = seq(str("RAISING"),    plus(new Reuse.ClassName()));
     let exceptions = seq(str("EXCEPTIONS"), plus(reg(/^\w+?$/)));
 
     let parameters = seq(opt(alt(str("ABSTRACT"), str("FINAL"), str("FOR TESTING"))),
@@ -38,13 +38,13 @@ export class MethodDef extends Statement {
                          opt(alt(raising, exceptions)));
 
     let event = seq(str("FOR EVENT"),
-                    Reuse.field(),
+                    new Reuse.Field(),
                     str("OF"),
-                    Reuse.field(),
+                    new Reuse.Field(),
                     opt(seq(str("IMPORTING"), plus(field))));
 
     let ret = seq(alt(str("CLASS-METHODS"), str("METHODS")),
-                  Reuse.field(),
+                  new Reuse.Field(),
                   alt(event, parameters, str("REDEFINITION")));
 
     return ret;

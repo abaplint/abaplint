@@ -1,5 +1,5 @@
 import { Statement } from "./statement";
-import Reuse from "./reuse";
+import * as Reuse from "./reuse";
 import * as Combi from "../combi";
 
 let str = Combi.str;
@@ -14,15 +14,15 @@ export class Form extends Statement {
   public static get_matcher(): Combi.IRunnable {
     let fieldName = reg(/^\w+$/);
 
-    let field = seq(fieldName, opt(alt(Reuse.type(), Reuse.type_table())));
+    let field = seq(fieldName, opt(alt(new Reuse.Type(), new Reuse.TypeTable())));
 
     let tables = seq(str("TABLES"), plus(field));
     let using = seq(str("USING"), plus(field));
     let changing = seq(str("CHANGING"), plus(field));
-    let raising = seq(str("RAISING"), plus(Reuse.class_name()));
+    let raising = seq(str("RAISING"), plus(new Reuse.ClassName()));
 
     let ret = seq(str("FORM"),
-                  Reuse.form_name(),
+                  new Reuse.FormName(),
                   opt(tables),
                   opt(using),
                   opt(changing),

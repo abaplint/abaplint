@@ -1,5 +1,5 @@
 import { Statement } from "./statement";
-import Reuse from "./reuse";
+import * as Reuse from "./reuse";
 import * as Combi from "../combi";
 
 let str = Combi.str;
@@ -11,26 +11,26 @@ export class Describe extends Statement {
 
   public static get_matcher(): Combi.IRunnable {
     let table = seq(str("TABLE"),
-                    Reuse.source(),
-                    opt(seq(str("LINES"), Reuse.target())));
+                    new Reuse.Source(),
+                    opt(seq(str("LINES"), new Reuse.Target())));
 
     let mode = alt(str("IN BYTE MODE"), str("IN CHARACTER MODE"));
 
     let field = seq(str("FIELD"),
-                    Reuse.source(),
-                    alt(seq(str("TYPE"), Reuse.target(), opt(seq(str("COMPONENTS"), Reuse.target()))),
-                        seq(str("LENGTH"), Reuse.target(), mode),
-                        seq(str("INTO"), Reuse.target())));
+                    new Reuse.Source(),
+                    alt(seq(str("TYPE"), new Reuse.Target(), opt(seq(str("COMPONENTS"), new Reuse.Target()))),
+                        seq(str("LENGTH"), new Reuse.Target(), mode),
+                        seq(str("INTO"), new Reuse.Target())));
 
     let distance = seq(str("DISTANCE BETWEEN"),
-                       Reuse.source(),
+                       new Reuse.Source(),
                        str("AND"),
-                       Reuse.source(),
+                       new Reuse.Source(),
                        str("INTO"),
-                       Reuse.target(),
+                       new Reuse.Target(),
                        str("IN BYTE MODE"));
 
-    let mask = seq(str("FIELD"), Reuse.source(), str("EDIT MASK"), Reuse.target());
+    let mask = seq(str("FIELD"), new Reuse.Source(), str("EDIT MASK"), new Reuse.Target());
 
     return seq(str("DESCRIBE"), alt(table, field, mask, distance));
   }

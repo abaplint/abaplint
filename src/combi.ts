@@ -441,7 +441,7 @@ export abstract class Reuse implements IRunnable {
   }
 
   public railroad() {
-    return "Railroad.NonTerminal('" + this.getName() + "', 'reuse_" + this.getName() + ".svg')";
+    return "Railroad.NonTerminal('" + this.getName() + "', 'reuse_" + this.getName().toLowerCase() + ".svg')";
   }
 
   public toStr() {

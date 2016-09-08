@@ -1,5 +1,5 @@
 import { Statement } from "./statement";
-import Reuse from "./reuse";
+import * as Reuse from "./reuse";
 import * as Combi from "../combi";
 
 let str = Combi.str;
@@ -12,23 +12,23 @@ export class Convert extends Statement {
   public static get_matcher(): Combi.IRunnable {
 
     let time = seq(str("TIME STAMP"),
-                   Reuse.source(),
+                   new Reuse.Source(),
                    str("TIME ZONE"),
-                   Reuse.source(),
+                   new Reuse.Source(),
                    str("INTO DATE"),
-                   Reuse.target(),
+                   new Reuse.Target(),
                    str("TIME"),
-                   Reuse.target(),
-                   opt(seq(str("DAYLIGHT SAVING TIME"), Reuse.target())));
+                   new Reuse.Target(),
+                   opt(seq(str("DAYLIGHT SAVING TIME"), new Reuse.Target())));
 
     let date = seq(str("DATE"),
-                   Reuse.source(),
+                   new Reuse.Source(),
                    str("TIME"),
-                   Reuse.source(),
+                   new Reuse.Source(),
                    str("INTO TIME STAMP"),
-                   Reuse.target(),
+                   new Reuse.Target(),
                    str("TIME ZONE"),
-                   Reuse.source());
+                   new Reuse.Source());
 
     return seq(str("CONVERT"), alt(time, date));
   }

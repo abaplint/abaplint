@@ -1,6 +1,6 @@
 import { Statement } from "./statement";
 import * as Combi from "../combi";
-import Reuse from "./reuse";
+import * as Reuse from "./reuse";
 
 let str = Combi.str;
 let seq = Combi.seq;
@@ -16,11 +16,11 @@ export class Replace extends Statement {
                opt(option),
                opt(str("OF")),
                opt(str("REGEX")),
-               Reuse.source(),
-               opt(seq(str("IN"), Reuse.target())),
+               new Reuse.Source(),
+               opt(seq(str("IN"), new Reuse.Target())),
                str("WITH"),
-               Reuse.source(),
-               opt(seq(str("INTO"), Reuse.target())),
+               new Reuse.Source(),
+               opt(seq(str("INTO"), new Reuse.Target())),
                opt(str("IGNORING CASE")));
   }
 

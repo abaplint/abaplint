@@ -1,5 +1,5 @@
 import { Statement } from "./statement";
-import Reuse from "./reuse";
+import * as Reuse from "./reuse";
 import * as Combi from "../combi";
 
 let str = Combi.str;
@@ -9,12 +9,12 @@ export class ImportDynpro extends Statement {
 
   public static get_matcher(): Combi.IRunnable {
     return seq(str("IMPORT DYNPRO"),
-               Reuse.target(),
-               Reuse.target(),
-               Reuse.target(),
-               Reuse.target(),
+               new Reuse.Target(),
+               new Reuse.Target(),
+               new Reuse.Target(),
+               new Reuse.Target(),
                str("ID"),
-               Reuse.source());
+               new Reuse.Source());
   }
 
 }

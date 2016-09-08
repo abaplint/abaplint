@@ -1,5 +1,5 @@
 import { Statement } from "./statement";
-import Reuse from "./reuse";
+import * as Reuse from "./reuse";
 import * as Combi from "../combi";
 
 let str = Combi.str;
@@ -12,13 +12,13 @@ export class AuthorityCheck extends Statement {
   public static get_matcher(): Combi.IRunnable {
 
     let id = seq(str("ID"),
-                 Reuse.source(),
+                 new Reuse.Source(),
                  str("FIELD"),
-                 Reuse.source());
+                 new Reuse.Source());
 
     let ret = seq(str("AUTHORITY-CHECK OBJECT"),
-                  Reuse.source(),
-                  opt(seq(str("FOR USER"), Reuse.source())),
+                  new Reuse.Source(),
+                  opt(seq(str("FOR USER"), new Reuse.Source())),
                   plus(id));
 
     return ret;

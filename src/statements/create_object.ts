@@ -1,5 +1,5 @@
 import { Statement } from "./statement";
-import Reuse from "./reuse";
+import * as Reuse from "./reuse";
 import * as Combi from "../combi";
 
 let str = Combi.str;
@@ -10,14 +10,14 @@ let alt = Combi.alt;
 export class CreateObject extends Statement {
 
   public static get_matcher(): Combi.IRunnable {
-    let exporting = seq(str("EXPORTING"), Reuse.parameter_list_s());
-    let exceptions = seq(str("EXCEPTIONS"), Reuse.parameter_list_exceptions());
-    let table = seq(str("PARAMETER-TABLE"), Reuse.source());
+    let exporting = seq(str("EXPORTING"), new Reuse.ParameterListS());
+    let exceptions = seq(str("EXCEPTIONS"), new Reuse.ParameterListExceptions());
+    let table = seq(str("PARAMETER-TABLE"), new Reuse.Source());
 
-    let type = seq(str("TYPE"), alt(Reuse.class_name(), Reuse.dynamic()));
+    let type = seq(str("TYPE"), alt(new Reuse.ClassName(), new Reuse.Dynamic()));
 
     let ret = seq(str("CREATE OBJECT"),
-                  Reuse.target(),
+                  new Reuse.Target(),
                   opt(type),
                   opt(alt(exporting, table)),
                   opt(exceptions));

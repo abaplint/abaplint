@@ -1,5 +1,5 @@
 import { Statement } from "./statement";
-import Reuse from "./reuse";
+import * as Reuse from "./reuse";
 import * as Combi from "../combi";
 
 let str = Combi.str;
@@ -10,15 +10,15 @@ let plus = Combi.plus;
 export class Import extends Statement {
 
   public static get_matcher(): Combi.IRunnable {
-    let id = seq(str("ID"), Reuse.source());
+    let id = seq(str("ID"), new Reuse.Source());
 
-    let buffer = seq(str("DATA BUFFER"), Reuse.source());
-    let memory = seq(str("MEMORY ID"), Reuse.source());
-    let database = seq(str("DATABASE"), Reuse.source(), str("TO"), Reuse.target(), id);
+    let buffer = seq(str("DATA BUFFER"), new Reuse.Source());
+    let memory = seq(str("MEMORY ID"), new Reuse.Source());
+    let database = seq(str("DATABASE"), new Reuse.Source(), str("TO"), new Reuse.Target(), id);
     let source = alt(buffer, memory, database);
 
-    let to = plus(seq(Reuse.source(), str("TO"), Reuse.target()));
-    let target = alt(Reuse.parameter_list_t(), to, Reuse.dynamic());
+    let to = plus(seq(new Reuse.Source(), str("TO"), new Reuse.Target()));
+    let target = alt(new Reuse.ParameterListT(), to, new Reuse.Dynamic());
 
     return seq(str("IMPORT"), target, str("FROM"), source);
   }

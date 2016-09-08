@@ -1,5 +1,5 @@
 import { Statement } from "./statement";
-import Reuse from "./reuse";
+import * as Reuse from "./reuse";
 import * as Combi from "../combi";
 
 let str = Combi.str;
@@ -17,14 +17,14 @@ export class Shift extends Statement {
                           str("LEFT UP TO"),
                           str("LEFT BY"),
                           str("BY")),
-                      Reuse.source(), opt(str("PLACES"))),
+                      new Reuse.Source(), opt(str("PLACES"))),
                   str("RIGHT"),
                   str("LEFT"));
 
     let mode = alt(str("IN CHARACTER MODE"), str("IN BYTE MODE"));
 
     return seq(str("SHIFT"),
-               Reuse.target(),
+               new Reuse.Target(),
                opt(seq(dir,
                        opt(mode))));
   }

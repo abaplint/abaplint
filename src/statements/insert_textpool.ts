@@ -1,5 +1,5 @@
 import { Statement } from "./statement";
-import Reuse from "./reuse";
+import * as Reuse from "./reuse";
 import * as Combi from "../combi";
 
 let str = Combi.str;
@@ -9,13 +9,13 @@ export class InsertTextpool extends Statement {
 
   public static get_matcher(): Combi.IRunnable {
     let ret = seq(str("INSERT TEXTPOOL"),
-                  Reuse.source(),
+                  new Reuse.Source(),
                   str("FROM"),
-                  Reuse.source(),
+                  new Reuse.Source(),
                   str("LANGUAGE"),
-                  Reuse.source(),
+                  new Reuse.Source(),
                   str("STATE"),
-                  Reuse.source());
+                  new Reuse.Source());
 
     return ret;
   }

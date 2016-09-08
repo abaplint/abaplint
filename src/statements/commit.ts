@@ -8,7 +8,8 @@ let opt = Combi.opt;
 export class Commit extends Statement {
 
   public static get_matcher(): Combi.IRunnable {
-    return seq(str("COMMIT WORK"), opt(str("AND WAIT")));
+    return seq(str("COMMIT WORK"),
+               opt(str("AND WAIT")));
   }
 
 }

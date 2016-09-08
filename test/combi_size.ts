@@ -2,7 +2,7 @@ import "../typings/index.d.ts";
 import * as chai from "chai";
 import * as Combi from "../src/combi";
 import * as Tokens from "../src/tokens/";
-import Reuse from "../src/statements/reuse";
+import * as Reuse from "../src/statements/reuse";
 import Position from "../src/position";
 
 let expect = chai.expect;
@@ -28,24 +28,24 @@ function res(s: string) {
 }
 
 let resultSize = [
-  {c: str("TEST"),                        in: [res("")],                          len: 0},
-  {c: str("TEST"),                        in: [res("TEST")],                      len: 1},
-  {c: str("TEST"),                        in: [res("FOO")],                       len: 0},
-  {c: str("TEST"),                        in: [res("FOO"), res("TEST")],          len: 1},
-  {c: seq(str("TEST"), str("FOO")),       in: [res("TEST FOO")],                  len: 1},
-  {c: seq(str("TEST"), str("FOO")),       in: [res("TEST BAR")],                  len: 0},
-  {c: seq(str("TEST"), str("FOO")),       in: [res("TEST FOO"), res("TEST BAR")], len: 1},
-  {c: star(str("TEST")),                  in: [res("TEST TEST TEST")],            len: 4},
-  {c: star(seq(str("TEST"), str("FOO"))), in: [res("TEST FOO")],                  len: 2},
-  {c: star(seq(str("TEST"), str("FOO"))), in: [res("TEST FOO"), res("ASDF")],     len: 3},
-  {c: opt(str("TEST")),                   in: [res("TEST")],                      len: 2},
-  {c: star(Reuse.parameter_list_s()),     in: [res("TEST")],                      len: 1},
-  {c: star(Reuse.parameter_list_s()),     in: [res("TEST BOO MOO")],              len: 1},
-  {c: star(Reuse.parameter_list_s()),     in: [res("TEST = MOO")],                len: 2},
-  {c: seq(str("TEST"), Reuse.source()),   in: [res("TEST MOO")],                  len: 1},
-  {c: Reuse.parameter_s(),                in: [res("TEST = MOO")],                len: 1},
-  {c: Reuse.source(),                     in: [res("TEST")],                      len: 1},
-  {c: Reuse.field_chain(),                in: [res("TEST")],                      len: 1},
+  {c: str("TEST"),                          in: [res("")],                          len: 0},
+  {c: str("TEST"),                          in: [res("TEST")],                      len: 1},
+  {c: str("TEST"),                          in: [res("FOO")],                       len: 0},
+  {c: str("TEST"),                          in: [res("FOO"), res("TEST")],          len: 1},
+  {c: seq(str("TEST"), str("FOO")),         in: [res("TEST FOO")],                  len: 1},
+  {c: seq(str("TEST"), str("FOO")),         in: [res("TEST BAR")],                  len: 0},
+  {c: seq(str("TEST"), str("FOO")),         in: [res("TEST FOO"), res("TEST BAR")], len: 1},
+  {c: star(str("TEST")),                    in: [res("TEST TEST TEST")],            len: 4},
+  {c: star(seq(str("TEST"), str("FOO"))),   in: [res("TEST FOO")],                  len: 2},
+  {c: star(seq(str("TEST"), str("FOO"))),   in: [res("TEST FOO"), res("ASDF")],     len: 3},
+  {c: opt(str("TEST")),                     in: [res("TEST")],                      len: 2},
+  {c: star(new Reuse.ParameterListS()),     in: [res("TEST")],                      len: 1},
+  {c: star(new Reuse.ParameterListS()),     in: [res("TEST BOO MOO")],              len: 1},
+  {c: star(new Reuse.ParameterListS()),     in: [res("TEST = MOO")],                len: 2},
+  {c: seq(str("TEST"), new Reuse.Source()), in: [res("TEST MOO")],                  len: 1},
+  {c: new Reuse.ParameterS(),               in: [res("TEST = MOO")],                len: 1},
+  {c: new Reuse.Source(),                   in: [res("TEST")],                      len: 1},
+  {c: new Reuse.FieldChain(),               in: [res("TEST")],                      len: 1},
 ];
 
 describe("combi Result size", () => {

@@ -1,5 +1,5 @@
 import { Statement } from "./statement";
-import Reuse from "./reuse";
+import * as Reuse from "./reuse";
 import * as Combi from "../combi";
 
 let str = Combi.str;
@@ -9,7 +9,7 @@ let alt = Combi.alt;
 export class Break extends Statement {
 
   public static get_matcher(): Combi.IRunnable {
-    return alt(str("BREAK-POINT"), seq(str("BREAK"), Reuse.field()));
+    return alt(str("BREAK-POINT"), seq(str("BREAK"), new Reuse.Field()));
   }
 
 }

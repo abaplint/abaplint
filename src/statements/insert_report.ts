@@ -1,5 +1,5 @@
 import { Statement } from "./statement";
-import Reuse from "./reuse";
+import * as Reuse from "./reuse";
 import * as Combi from "../combi";
 
 let str = Combi.str;
@@ -10,11 +10,11 @@ export class InsertReport extends Statement {
 
   public static get_matcher(): Combi.IRunnable {
     let ret = seq(str("INSERT REPORT"),
-                  Reuse.source(),
+                  new Reuse.Source(),
                   str("FROM"),
-                  Reuse.source(),
-                  opt(seq(str("STATE"), Reuse.source())),
-                  opt(seq(str("PROGRAM TYPE"), Reuse.source())));
+                  new Reuse.Source(),
+                  opt(seq(str("STATE"), new Reuse.Source())),
+                  opt(seq(str("PROGRAM TYPE"), new Reuse.Source())));
 
     return ret;
   }

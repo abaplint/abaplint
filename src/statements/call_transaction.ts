@@ -1,5 +1,5 @@
 import { Statement } from "./statement";
-import Reuse from "./reuse";
+import * as Reuse from "./reuse";
 import * as Combi from "../combi";
 
 let str = Combi.str;
@@ -11,7 +11,7 @@ export class CallTransaction extends Statement {
   public static get_matcher(): Combi.IRunnable {
 
     let ret = seq(str("CALL TRANSACTION"),
-                  Reuse.source(),
+                  new Reuse.Source(),
                   opt(str("AND SKIP FIRST SCREEN")));
 
     return ret;

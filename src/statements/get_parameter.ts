@@ -1,5 +1,5 @@
 import { Statement } from "./statement";
-import Reuse from "./reuse";
+import * as Reuse from "./reuse";
 import * as Combi from "../combi";
 
 let str = Combi.str;
@@ -9,9 +9,9 @@ export class GetParameter extends Statement {
 
   public static get_matcher(): Combi.IRunnable {
     let ret = seq(str("GET PARAMETER ID"),
-                  Reuse.source(),
+                  new Reuse.Source(),
                   str("FIELD"),
-                  Reuse.target());
+                  new Reuse.Target());
 
     return ret;
   }

@@ -1,6 +1,6 @@
 import { Statement } from "./statement";
 import * as Combi from "../combi";
-import Reuse from "./reuse";
+import * as Reuse from "./reuse";
 
 let str = Combi.str;
 let seq = Combi.seq;
@@ -9,11 +9,11 @@ export class ReadTextpool extends Statement {
 
   public static get_matcher(): Combi.IRunnable {
     return seq(str("READ TEXTPOOL"),
-               Reuse.source(),
+               new Reuse.Source(),
                str("INTO"),
-               Reuse.target(),
+               new Reuse.Target(),
                str("LANGUAGE"),
-               Reuse.source());
+               new Reuse.Source());
   }
 
 }

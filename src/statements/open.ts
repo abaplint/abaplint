@@ -1,5 +1,5 @@
 import { Statement } from "./statement";
-import Reuse from "./reuse";
+import * as Reuse from "./reuse";
 import * as Combi from "../combi";
 
 let str = Combi.str;
@@ -14,7 +14,12 @@ export class Open extends Statement {
     let mode = alt(str("IN BINARY MODE"), str("IN TEXT MODE"));
     let encoding = str("ENCODING DEFAULT");
 
-    let ret = seq(str("OPEN DATASET"), Reuse.field(), direction, opt(mode), opt(encoding));
+    let ret = seq(str("OPEN DATASET"),
+                  new Reuse.Field(),
+                  direction,
+                  opt(mode),
+                  opt(encoding));
+
     return ret;
   }
 

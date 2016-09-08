@@ -1,5 +1,5 @@
 import { Statement } from "./statement";
-import Reuse from "./reuse";
+import * as Reuse from "./reuse";
 import * as Combi from "../combi";
 
 let str = Combi.str;
@@ -11,19 +11,19 @@ let opt = Combi.opt;
 export class Call extends Statement {
 
   public static get_matcher(): Combi.IRunnable {
-    let mname = alt(Reuse.method_name(), Reuse.dynamic());
-    let cname = alt(Reuse.field_chain(), Reuse.dynamic());
+    let mname = alt(new Reuse.MethodName(), new Reuse.Dynamic());
+    let cname = alt(new Reuse.FieldChain(), new Reuse.Dynamic());
 
-    let method = seq(opt(seq(cname, Reuse.arrow())), mname);
+    let method = seq(opt(seq(cname, new Reuse.Arrow())), mname);
 
     let paren = seq(str("("),
-                    alt(Reuse.source(), Reuse.parameter_list_s(), Reuse.method_parameters()),
+                    alt(new Reuse.Source(), new Reuse.ParameterListS(), new Reuse.MethodParameters()),
                     str(")"));
 
-    let dynamic = seq(str("PARAMETER-TABLE"), Reuse.source());
+    let dynamic = seq(str("PARAMETER-TABLE"), new Reuse.Source());
 
-    let call = seq(str("CALL METHOD"), method, alt(paren, Reuse.method_parameters(), dynamic));
-    return alt(call, Reuse.method_call_chain());
+    let call = seq(str("CALL METHOD"), method, alt(paren, new Reuse.MethodParameters(), dynamic));
+    return alt(call, new Reuse.MethodCallChain());
   }
 
 }

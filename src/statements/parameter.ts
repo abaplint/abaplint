@@ -1,5 +1,5 @@
 import { Statement } from "./statement";
-import Reuse from "./reuse";
+import * as Reuse from "./reuse";
 import * as Combi from "../combi";
 
 let str = Combi.str;
@@ -12,15 +12,15 @@ export class Parameter extends Statement {
 
   public static get_matcher(): Combi.IRunnable {
     let para = alt(str("PARAMETER"), str("PARAMETERS"));
-    let def = seq(str("DEFAULT"), alt(Reuse.constant(), Reuse.field_chain()));
-    let radio = seq(str("RADIOBUTTON GROUP"), Reuse.field());
-    let type = seq(alt(str("TYPE"), str("LIKE")), Reuse.field_chain());
-    let memory = seq(str("MEMORY ID"), Reuse.field());
-    let listbox = seq(str("AS LISTBOX VISIBLE LENGTH"), Reuse.constant());
-    let cmd = seq(str("USER-COMMAND"), Reuse.field());
-    let modif = seq(str("MODIF ID"), Reuse.field());
-    let visible = seq(str("VISIBLE LENGTH"), Reuse.constant());
-    let match = seq(str("MATCHCODE OBJECT"), Reuse.field());
+    let def = seq(str("DEFAULT"), alt(new Reuse.Constant(), new Reuse.FieldChain()));
+    let radio = seq(str("RADIOBUTTON GROUP"), new Reuse.Field());
+    let type = seq(alt(str("TYPE"), str("LIKE")), new Reuse.FieldChain());
+    let memory = seq(str("MEMORY ID"), new Reuse.Field());
+    let listbox = seq(str("AS LISTBOX VISIBLE LENGTH"), new Reuse.Constant());
+    let cmd = seq(str("USER-COMMAND"), new Reuse.Field());
+    let modif = seq(str("MODIF ID"), new Reuse.Field());
+    let visible = seq(str("VISIBLE LENGTH"), new Reuse.Constant());
+    let match = seq(str("MATCHCODE OBJECT"), new Reuse.Field());
 
     let perm = per(def,
                    str("OBLIGATORY"),
@@ -34,7 +34,7 @@ export class Parameter extends Statement {
                    str("LOWER CASE"));
 
     let ret = seq(para,
-                  Reuse.field(),
+                  new Reuse.Field(),
                   opt(type),
                   opt(str("NO-DISPLAY")),
                   opt(str("AS CHECKBOX")),

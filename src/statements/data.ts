@@ -1,6 +1,6 @@
 import { Statement } from "./statement";
 import * as Combi from "../combi";
-import Reuse from "./reuse";
+import * as Reuse from "./reuse";
 
 let str  = Combi.str;
 let seq  = Combi.seq;
@@ -11,20 +11,20 @@ export class Data extends Statement {
 
   public static get_matcher(): Combi.IRunnable {
     let start = alt(str("CLASS-DATA"), str("DATA"));
-// seq(str("("), Reuse.integer(), str(")"))
-    let simple = seq(Reuse.field(),
-                     opt(Reuse.field_length()),
-                     opt(Reuse.type()),
-                     opt(str("READ-ONLY")),
-                     opt(Reuse.value()));
 
-    let initial = seq(str("INITIAL SIZE"), Reuse.integer());
-    let table = seq(Reuse.field(),
-                    Reuse.type_table(),
+    let simple = seq(new Reuse.Field(),
+                     opt(new Reuse.FieldLength()),
+                     opt(new Reuse.Type()),
+                     opt(str("READ-ONLY")),
+                     opt(new Reuse.Value()));
+
+    let initial = seq(str("INITIAL SIZE"), new Reuse.Integer());
+    let table = seq(new Reuse.Field(),
+                    new Reuse.TypeTable(),
                     opt(str("READ-ONLY")),
                     opt(initial));
 
-    let structure = seq(alt(str("BEGIN OF"), str("END OF")), Reuse.field());
+    let structure = seq(alt(str("BEGIN OF"), str("END OF")), new Reuse.Field());
 
     return seq(start, alt(simple, table, structure));
   }

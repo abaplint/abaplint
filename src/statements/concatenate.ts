@@ -1,5 +1,5 @@
 import { Statement } from "./statement";
-import Reuse from "./reuse";
+import * as Reuse from "./reuse";
 import * as Combi from "../combi";
 
 let str = Combi.str;
@@ -11,13 +11,13 @@ export class Concatenate extends Statement {
 
   public static get_matcher(): Combi.IRunnable {
     return seq(str("CONCATENATE"),
-               Reuse.source(),
-               plus(Reuse.source()),
+               new Reuse.Source(),
+               plus(new Reuse.Source()),
                str("INTO"),
-               Reuse.target(),
+               new Reuse.Target(),
                opt(str("IN BYTE MODE")),
                opt(str("RESPECTING BLANKS")),
-               opt(seq(str("SEPARATED BY"), Reuse.source())));
+               opt(seq(str("SEPARATED BY"), new Reuse.Source())));
   }
 
 }

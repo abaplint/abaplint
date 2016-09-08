@@ -1,5 +1,5 @@
 import { Statement } from "./statement";
-import Reuse from "./reuse";
+import * as Reuse from "./reuse";
 import * as Combi from "../combi";
 
 let str = Combi.str;
@@ -9,7 +9,9 @@ let opt = Combi.opt;
 export class SetPFStatus extends Statement {
 
   public static get_matcher(): Combi.IRunnable {
-    let ret = seq(str("SET PF-STATUS"), Reuse.source(), opt(seq(str("EXCLUDING"), Reuse.source())));
+    let ret = seq(str("SET PF-STATUS"),
+                  new Reuse.Source(),
+                  opt(seq(str("EXCLUDING"), new Reuse.Source())));
 
     return ret;
   }
