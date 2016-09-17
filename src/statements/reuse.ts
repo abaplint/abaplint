@@ -315,7 +315,10 @@ export class FormName extends Combi.Reuse {
 
 export class TypeName extends Combi.Reuse {
   public get_runnable() {
-    return alt(reg(/^\w+$/), str("#"));
+    let name = reg(/^\w+$/);
+    let cla = seq(name, new Arrow());
+    let field = seq(tok("Dash"), name);
+    return alt(seq(opt(cla), name, opt(field)), str("#"));
   }
 }
 

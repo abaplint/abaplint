@@ -27,6 +27,7 @@ let tests = [
   "data item(4) value '  # '.",
   "CLASS-DATA gv_out TYPE xstring.",
   "DATA ls_field_cat_comp  LIKE LINE OF <ls_object_table>-field_catalog.",
+  "DATA lt_ucomm TYPE TABLE OF sy-ucomm.",
   "DATA mt_stage TYPE SORTED TABLE OF ty_stage WITH UNIQUE KEY file-path file-filename.",
 ];
 
