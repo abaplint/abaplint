@@ -18,7 +18,6 @@ export class MethodDef extends Statement {
 
     let type = alt(new Reuse.Type(), new Reuse.TypeTable());
 
-    let fieldType = seq(field, type);
     let fieldsValue = seq(new Reuse.PassByValue(), type);
     let fieldsOrValue = seq(alt(new Reuse.PassByValue(), field), type);
 
@@ -32,7 +31,7 @@ export class MethodDef extends Statement {
                         alt(tok(ParenRight), tok(ParenRightW)));
 
     let exporting  = seq(str("EXPORTING"),  plus(fieldsOrValue));
-    let changing   = seq(str("CHANGING"),   plus(seq(fieldType, opt(str("OPTIONAL")))));
+    let changing   = seq(str("CHANGING"),   plus(seq(fieldsOrValue, opt(str("OPTIONAL")))));
     let returning  = seq(str("RETURNING"),  plus(fieldsValue));
     let raising    = seq(str("RAISING"),    plus(alt(resumable, new Reuse.ClassName())));
     let exceptions = seq(str("EXCEPTIONS"), plus(reg(/^\w+?$/)));

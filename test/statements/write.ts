@@ -17,6 +17,8 @@ let tests = [
   "WRITE AT 10 'sdf'.",
   "WRITE 25 'hello'.",
   "WRITE /.",
+  "WRITE lv_date DD/MM/YYYY.",
+  "WRITE lv_time ENVIRONMENT TIME FORMAT.",
 ];
 
 statementType(tests, "WRITE", Statements.Write);

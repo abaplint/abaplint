@@ -24,6 +24,8 @@ let tests = [
   "IF lv_statement IN mt_range.",
   "IF iv_branch_name IS SUPPLIED.",
   "IF out EQ abap_false.",
+  "IF is_foo O lv_bar.",
+  "IF lv_filename NS '.xls'.",
   "IF ( lv_offset + 1 ) MOD 8 = 0.",
   "IF is_item-obj_name IS INITIAL.",
   "IF iv_f < - lv_maxint OR iv_f > lv_maxint.",

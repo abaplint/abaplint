@@ -26,6 +26,7 @@ export class Class extends Statement {
                    create,
                    str("FOR TESTING"),
                    risk,
+                   str("SHARED MEMORY ENABLED"),
                    duration,
                    seq(opt(str("GLOBAL")), str("FRIENDS"), plus(new Reuse.ClassName())));
 

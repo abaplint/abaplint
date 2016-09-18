@@ -141,7 +141,11 @@ export class Compare extends Combi.Reuse {
                            str("LT"),
                            str("LE"),
                            str("CS"),
+                           str("NS"),
                            str("NP"),
+                           str("O"), // hex comparison operator
+                           str("Z"), // hex comparison operator
+                           str("M"), // hex comparison operator
                            str("LIKE")));
 
     let sopt = seq(str("IS"),

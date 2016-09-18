@@ -28,6 +28,7 @@ let tests = [
   "methods CONSTRUCTOR importing foobar type ref to /IWBEP/IF_MGW_CONV_SRV_RUNTIME raising /IWBEP/CX_MGW_TECH_EXCEPTION .",
   "methods ADD importing OBJ type ANY optional CONTEXT type SIMPLE optional preferred parameter OBJ.",
   "METHODS check_input RAISING resumable(zcx_exception).",
+  "class-methods SET_CELL_VALUE_IN_EXCEL changing value(CV_CELL_WIDTH) type I optional.",
 ];
 
 statementType(tests, "METHODS", Statements.MethodDef);

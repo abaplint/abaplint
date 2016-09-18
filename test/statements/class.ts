@@ -24,6 +24,8 @@ let tests = [
 
   "class ZCL_c1 definition public create public global friends ZCL_c2 ZCL_c3.",
   "class zcl_foo definition public inheriting from zcl_super final create private global friends zcl_factory.",
+
+  "class ZCL_SHARED_MEMORY_ROOT definition public final create public shared memory enabled.",
 ];
 
 statementType(tests, "CLASS", Statements.Class);

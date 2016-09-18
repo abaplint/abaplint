@@ -26,6 +26,8 @@ export class Write extends Statement {
                       str("NO-GROUPING"),
                       str("NO-ZERO"),
                       str("LEFT-JUSTIFIED"),
+                      str("ENVIRONMENT TIME FORMAT"),
+                      reg(/^[YMD]{2,4}\/?[YMD]{2,4}\/?[YMD]{2,4}$/),
                       seq(str("UNIT"), new Reuse.Source()),
                       seq(str("DECIMALS"), new Reuse.Source()),
                       seq(str("COLOR"), opt(str("=")), new Reuse.Source(), opt(str("INVERSE"))),
