@@ -1,6 +1,7 @@
 import * as Combi from "../combi";
 import {Version} from "../version";
 
+import {Arrow} from "../tokens/";
 import {Dash, WDash, WDashW} from "../tokens/";
 import {Plus, WPlusW} from "../tokens/";
 import {BracketLeft, BracketRight, BracketRightW, BracketLeftW} from "../tokens/";
@@ -68,15 +69,9 @@ export class Target extends Combi.Reuse {
   }
 }
 
-export class Arrow extends Combi.Reuse {
-  public get_runnable() {
-    return reg(/^(->|=>)$/);
-  }
-}
-
 export class ArrowOrDash extends Combi.Reuse {
   public get_runnable() {
-    return alt(new Arrow(), tok(Dash));
+    return alt(tok(Arrow), tok(Dash));
   }
 }
 
@@ -223,7 +218,7 @@ export class MethodParameters extends Combi.Reuse {
 export class MethodCallChain extends Combi.Reuse {
   public get_runnable() {
     let fields = star(seq(new ArrowOrDash(), new Field()));
-    let after = star(seq(fields, new Arrow(), new MethodCall()));
+    let after = star(seq(fields, tok(Arrow), new MethodCall()));
 
     let rparen = alt(tok(WParenRightW), tok(WParenRight));
 
@@ -239,7 +234,7 @@ export class MethodCallChain extends Combi.Reuse {
                                          new Source(),
                                          rparen));
 
-    let ret = seq(alt(seq(opt(seq(new FieldChain(), new Arrow())), new MethodCall()),
+    let ret = seq(alt(seq(opt(seq(new FieldChain(), tok(Arrow))), new MethodCall()),
                       neww,
                       cast),
                   after);
@@ -321,7 +316,7 @@ export class FormName extends Combi.Reuse {
 export class TypeName extends Combi.Reuse {
   public get_runnable() {
     let name = reg(/^\w+$/);
-    let cla = seq(name, new Arrow());
+    let cla = seq(name, tok(Arrow));
     let field = seq(tok(Dash), name);
     return alt(seq(opt(cla), name, opt(field)), str("#"));
   }
@@ -391,7 +386,7 @@ export class Source extends Combi.Reuse {
                     rparen);
 
     let after = seq(alt(str("&"), str("&&"), new ArithOperator()), new Source());
-    let ref = seq(new Arrow(), str("*"));
+    let ref = seq(tok(Arrow), str("*"));
 
     let boolc = seq(str("BOOLC"), tok(ParenLeftW), new Cond(), str(")"));
 

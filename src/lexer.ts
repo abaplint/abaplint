@@ -191,7 +191,15 @@ export default class Lexer {
           tok = new Tokens.Plus(pos, s);
         }
       } else if (s.length === 2 && (s === "->" || s === "=>")) {
-        tok = new Tokens.Arrow(pos, s);
+        if (whiteBefore && whiteAfter) {
+          tok = new Tokens.WArrowW(pos, s);
+        } else if (whiteBefore) {
+          tok = new Tokens.WArrow(pos, s);
+        } else if (whiteAfter) {
+          tok = new Tokens.ArrowW(pos, s);
+        } else {
+          tok = new Tokens.Arrow(pos, s);
+        }
       } else {
         tok = new Tokens.Identifier(pos, s);
       }
