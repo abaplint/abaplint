@@ -6,11 +6,12 @@
 # abaplint
 Linter for ABAP, code must be serialized using [abapGit](https://github.com/larshp/abapGit)
 
+[Try it online](https://larshp.github.io/abaplint/)
+
 Works with
 * [travis](https://travis-ci.org/) ([example](https://github.com/larshp/abaplint-test))
 * [Atom](https://github.com/larshp/linter-abaplint)
 * [ABAP in Eclipse](https://github.com/larshp/abaplint-eclipse)
-* [Web](https://larshp.github.io/abaplint/)
 * [WABAP](https://github.com/larshp/WABAP)
 * VS Code, [#13](https://github.com/larshp/abaplint/issues/13)
 * [abaplint.org](http://abaplint.org/)
