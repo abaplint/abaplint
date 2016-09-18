@@ -20,6 +20,7 @@ let tests = [
   "SELECT * FROM t006a APPENDING CORRESPONDING FIELDS OF TABLE lt_texts WHERE spras = sy-langu AND msehi = 'ASDF'.",
   "SELECT COUNT(*) INTO dbcount FROM vbak WHERE (where_clause).",
   "SELECT COUNT(*) FROM /bobf/act_conf WHERE name = 'ZFOO'.",
+  "SELECT * FROM zfoobar CLIENT SPECIFIED INTO TABLE rt_data WHERE mandt = '111'.",
   "SELECT vbeln INTO CORRESPONDING FIELDS OF lt_table FROM vbak WHERE (where_clause) ORDER BY (orderby_clause).",
   "SELECT SINGLE FOR UPDATE * FROM ZFOOBAR WHERE NAME_ID = lv_name.",
 ];

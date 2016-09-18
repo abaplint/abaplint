@@ -16,7 +16,7 @@ export class UpdateDatabase extends Statement {
                   new Reuse.ParameterListS(),
                   opt(seq(str("WHERE"), new Reuse.Cond())));
 
-    let from = seq(str("FROM"), new Reuse.Source());
+    let from = seq(str("FROM"), opt(str("TABLE")), new Reuse.Source());
 
     let ret = seq(str("UPDATE"),
                   target,

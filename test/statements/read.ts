@@ -11,6 +11,7 @@ let tests = [
   "READ TABLE gt_objtype_map INTO ls_objtype_map WITH TABLE KEY obj_typ = is_item-obj_type.",
   "READ TABLE st_syntax ASSIGNING <ls_syntax> WITH KEY rulename = lv_rulename BINARY SEARCH.",
   "READ TABLE mt_stage WITH KEY file-path = iv_path file-filename = iv_filename ASSIGNING <ls_stage>.",
+  "READ TABLE lt_foo INTO ls_foo INDEX sy-tfill TRANSPORTING row.",
   "READ TABLE rt_data ASSIGNING FIELD-SYMBOL(<ls_data>) WITH KEY test = <ls_result>-test date = lv_date.",
   "READ TABLE it_filter WITH KEY obj_name = sdf TRANSPORTING NO FIELDS.",
   "READ TABLE lt_cross WITH KEY name = lv_name BINARY SEARCH TRANSPORTING NO FIELDS.",

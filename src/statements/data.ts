@@ -12,19 +12,18 @@ export class Data extends Statement {
   public static get_matcher(): Combi.IRunnable {
     let start = alt(str("CLASS-DATA"), str("DATA"));
 
-    let simple = seq(new Reuse.SimpleName(),
-                     opt(new Reuse.FieldLength()),
+    let simple = seq(opt(new Reuse.FieldLength()),
                      opt(new Reuse.Type()),
                      opt(str("READ-ONLY")),
                      opt(new Reuse.Value()));
 
     let initial = seq(str("INITIAL SIZE"), new Reuse.Integer());
-    let table = seq(new Reuse.SimpleName(),
-                    new Reuse.TypeTable(),
+
+    let table = seq(new Reuse.TypeTable(),
                     opt(str("READ-ONLY")),
                     opt(initial));
 
-    return seq(start, alt(simple, table));
+    return seq(start, new Reuse.SimpleName(), alt(simple, table));
   }
 
 }

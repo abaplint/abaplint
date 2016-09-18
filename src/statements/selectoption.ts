@@ -19,10 +19,13 @@ export class SelectOption extends Statement {
 
     let match = seq(str("MATCHCODE OBJECT"), new Reuse.Field());
 
+    let modif = seq(str("MODIF ID"), new Reuse.Field());
+
     let options = per(def,
                       option,
                       memory,
                       match,
+                      modif,
                       str("NO-EXTENSION"),
                       str("NO INTERVALS"),
                       str("OBLIGATORY"));

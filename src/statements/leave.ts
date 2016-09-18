@@ -11,6 +11,7 @@ export class Leave extends Statement {
   public static get_matcher(): Combi.IRunnable {
     return seq(str("LEAVE"),
                alt(str("TO CURRENT TRANSACTION"),
+                   str("TO LIST-PROCESSING"),
                    seq(str("TO TRANSACTION"), new Reuse.Source()),
                    str("PROGRAM"),
                    seq(str("TO SCREEN"), new Reuse.Integer())));

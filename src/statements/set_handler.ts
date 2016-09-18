@@ -11,7 +11,7 @@ export class SetHandler extends Statement {
     let ret = seq(str("SET HANDLER"),
                   new Reuse.Target(),
                   str("FOR"),
-                  new Reuse.Target());
+                  new Reuse.Source());
 
     return ret;
   }

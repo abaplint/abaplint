@@ -27,6 +27,7 @@ let tests = [
   "METHODS get_count IMPORTING iv_index TYPE i RETURNING VALUE(rv_value) TYPE i.",
   "methods CONSTRUCTOR importing foobar type ref to /IWBEP/IF_MGW_CONV_SRV_RUNTIME raising /IWBEP/CX_MGW_TECH_EXCEPTION .",
   "methods ADD importing OBJ type ANY optional CONTEXT type SIMPLE optional preferred parameter OBJ.",
+  "METHODS check_input RAISING resumable(zcx_exception).",
 ];
 
 statementType(tests, "METHODS", Statements.MethodDef);

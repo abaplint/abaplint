@@ -18,6 +18,7 @@ let tests = [
   "PARAMETERS cb_errl AS CHECKBOX DEFAULT 'X'.",
   "PARAMETER p_top  TYPE i DEFAULT 100 OBLIGATORY.",
   "PARAMETERS p_aid LIKE toaom-archiv_id OBLIGATORY.",
+  "PARAMETERS p_file(128) TYPE c LOWER CASE OBLIGATORY DEFAULT 'C:\filename.xls'.",
 ];
 
 statementType(tests, "PARAMETER", Statements.Parameter);

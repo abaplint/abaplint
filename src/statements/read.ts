@@ -29,6 +29,7 @@ export class Read extends Statement {
                        key,
                        seq(str("FROM"), new Reuse.Source())),
                    target,
+                   seq(str("TRANSPORTING"), plus(new Reuse.Field())),
                    str("BINARY SEARCH"));
 
     return seq(str("READ TABLE"),

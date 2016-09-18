@@ -3,6 +3,7 @@ import * as Statements from "../../src/statements/";
 
 let tests = [
   "INTERFACE lif_gui_page.",
+  "interface ZIF_FOO load.",
   "interface ZIF_something public.",
 ];
 

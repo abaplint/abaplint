@@ -11,7 +11,8 @@ export class InterfaceDef extends Statement {
 
   public static get_matcher(): Combi.IRunnable {
     let abstract = alt(seq(str("ABSTRACT METHODS"), new Reuse.Field()),
-                       str("ALL METHODS ABSTRACT"));
+                       str("ALL METHODS ABSTRACT"),
+                       str("PARTIALLY IMPLEMENTED"));
 
     return seq(str("INTERFACES"),
                new Reuse.Field(),

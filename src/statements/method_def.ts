@@ -1,11 +1,13 @@
-import { Statement } from "./statement";
+import {Statement} from "./statement";
 import * as Reuse from "./reuse";
 import * as Combi from "../combi";
+import {ParenLeft, ParenRight, ParenRightW} from "../tokens/";
 
 let str = Combi.str;
 let seq = Combi.seq;
 let alt = Combi.alt;
 let opt = Combi.opt;
+let tok = Combi.tok;
 let reg = Combi.regex;
 let plus = Combi.plus;
 
@@ -24,10 +26,15 @@ export class MethodDef extends Statement {
                          plus(seq(fieldsOrValue, opt(str("OPTIONAL")))),
                          opt(seq(str("PREFERRED PARAMETER"), field)));
 
+    let resumable = seq(str("RESUMABLE"),
+                        tok(ParenLeft),
+                        new Reuse.ClassName(),
+                        alt(tok(ParenRight), tok(ParenRightW)));
+
     let exporting  = seq(str("EXPORTING"),  plus(fieldsOrValue));
     let changing   = seq(str("CHANGING"),   plus(seq(fieldType, opt(str("OPTIONAL")))));
     let returning  = seq(str("RETURNING"),  plus(fieldsValue));
-    let raising    = seq(str("RAISING"),    plus(new Reuse.ClassName()));
+    let raising    = seq(str("RAISING"),    plus(alt(resumable, new Reuse.ClassName())));
     let exceptions = seq(str("EXCEPTIONS"), plus(reg(/^\w+?$/)));
 
     let parameters = seq(opt(alt(str("ABSTRACT"), str("FINAL"), str("FOR TESTING"))),

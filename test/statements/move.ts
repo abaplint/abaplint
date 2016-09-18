@@ -47,6 +47,10 @@ let versions = [
   {abap: "lv_xstr = CAST cl_sxml_string_writer( li_writer )->get_output( ).", ver: Version.v740sp02},
   {abap: "lv_value = COND #( WHEN type_kind = 'r' THEN 's' WHEN type_kind = 'h' THEN 'b' ELSE 'sd' ).", ver: Version.v740sp02},
   {abap: "lv_commit = lo_repo->get_branch( CONV #( iv_branch ) )->get_data( )-sha1.", ver: Version.v740sp02},
+  {abap: "foo = gt_det[ <lv_row> ].", ver: Version.v740sp02},
+  {abap: "foo = li_foo->create( VALUE #( ) ).", ver: Version.v740sp02},
+  {abap: "foo = mi_foo->update( CORRESPONDING #( get( ) EXCEPT field ) ).", ver: Version.v740sp05},
+  {abap: "foo = CORRESPONDING #( <ls_data> MAPPING country = coun currency = curr ).", ver: Version.v740sp05},
 ];
 
 statementVersion(versions, "MOVE", Statements.Move);

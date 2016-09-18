@@ -48,7 +48,9 @@ export class Select extends Statement {
 
     let up = seq(str("UP TO"), new Reuse.Source(), str("ROWS"));
 
-    let perm = per(from, plus(join), into, forAll, where, order, up);
+    let client = str("CLIENT SPECIFIED");
+
+    let perm = per(from, plus(join), into, forAll, where, order, up, client);
 
     let ret = seq(str("SELECT"),
                   alt(str("DISTINCT"), opt(seq(str("SINGLE"), opt(str("FOR UPDATE"))))),

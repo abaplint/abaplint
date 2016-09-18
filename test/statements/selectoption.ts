@@ -6,6 +6,7 @@ let tests = [
   "SELECT-OPTIONS s_trkorr FOR e070-trkorr OBLIGATORY.",
   "SELECT-OPTIONS s_moo FOR zfoo-bar MEMORY ID zfoo.",
   "SELECT-OPTIONS s_moo FOR zfoo-bar NO-EXTENSION.",
+  "SELECT-OPTIONS s_matnr FOR mara-matnr MODIF ID sel.",
   "SELECT-OPTIONS s_moo FOR zfoo-bar NO-EXTENSION NO INTERVALS.",
   "SELECT-OPTIONS s_qnum FOR aqgqcat-qnum MATCHCODE OBJECT zquery.",
   "SELECT-OPTIONS s_num FOR aqgqcat-num OBLIGATORY DEFAULT 'ASDF'.",

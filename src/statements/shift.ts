@@ -19,7 +19,8 @@ export class Shift extends Statement {
                           str("BY")),
                       new Reuse.Source(), opt(str("PLACES"))),
                   str("RIGHT"),
-                  str("LEFT"));
+                  str("LEFT"),
+                  seq(str("BY"), new Reuse.Source(), str("PLACES LEFT")));
 
     let mode = alt(str("IN CHARACTER MODE"), str("IN BYTE MODE"));
 

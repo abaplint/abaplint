@@ -35,6 +35,7 @@ export class Parameter extends Statement {
 
     let ret = seq(para,
                   new Reuse.Field(),
+                  opt(new Reuse.FieldLength()),
                   opt(type),
                   opt(str("NO-DISPLAY")),
                   opt(str("AS CHECKBOX")),

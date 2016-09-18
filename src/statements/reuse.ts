@@ -270,7 +270,7 @@ export class FieldChain extends Combi.Reuse {
 
     let tableExpr = ver(Version.v740sp02,
                         seq(tok(BracketLeftW),
-                            alt(new Constant(), plus(fcond)),
+                            alt(new Source(), plus(fcond)),
                             str("]")));
 
     let chain = seq(alt(new Field(), new FieldSymbol()),
@@ -406,10 +406,14 @@ export class Source extends Combi.Reuse {
                       paren),
                   opt(alt(ref, after, new TableBody())));
 
+    let mapping = seq(str("MAPPING"), plus(seq(new Field(), str("="), new Field())));
+
     let corr = ver(Version.v740sp05, seq(str("CORRESPONDING"),
                                          new TypeName(),
                                          tok(ParenLeftW),
                                          new Source(),
+                                         opt(seq(str("EXCEPT"), new Field())),
+                                         opt(mapping),
                                          rparen));
 
     let conv = ver(Version.v740sp02, seq(str("CONV"),
@@ -423,9 +427,9 @@ export class Source extends Combi.Reuse {
     let value = ver(Version.v740sp02, seq(str("VALUE"),
                                           new TypeName(),
                                           tok(ParenLeftW),
-                                          alt(new Source(),
-                                              plus(fieldList),
-                                              plus(seq(tok(WParenLeftW), plus(fieldList), tok(WParenRightW)))),
+                                          opt(alt(new Source(),
+                                                  plus(fieldList),
+                                                  plus(seq(tok(WParenLeftW), plus(fieldList), tok(WParenRightW))))),
                                           rparen));
 
     let when = seq(str("WHEN"), new Cond(), str("THEN"), new Source());
