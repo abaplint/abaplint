@@ -301,6 +301,12 @@ export class DatabaseField extends Combi.Reuse {
   }
 }
 
+export class SimpleName extends Combi.Reuse {
+  public get_runnable() {
+    return reg(/^\w+$/);
+  }
+}
+
 export class ClassName extends Combi.Reuse {
   public get_runnable() {
     return reg(/^(\/\w+\/)?\w+$/);

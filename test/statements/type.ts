@@ -9,7 +9,6 @@ let tests = [
   "TYPES ty_foo_tt TYPE STANDARD TABLE OF lcl_repo=>ty_repo-key WITH DEFAULT KEY.",
   "TYPES ty_foo_tt TYPE STANDARD TABLE OF ty_repo-key WITH DEFAULT KEY.",
   "type string1(236) TYPE c.",
-  "TYPES BEGIN OF gty_icon.",
 ];
 
 statementType(tests, "TYPE", Statements.Type);

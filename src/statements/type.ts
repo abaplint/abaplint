@@ -10,13 +10,11 @@ let opt = Combi.opt;
 export class Type extends Statement {
 
   public static get_matcher(): Combi.IRunnable {
-    let def = seq(new Reuse.TypeName(),
+    let def = seq(new Reuse.SimpleName(),
                   opt(new Reuse.FieldLength()),
                   alt(new Reuse.Type(), new Reuse.TypeTable()));
 
-    let beginEnd = seq(alt(str("BEGIN OF"), str("END OF")), new Reuse.TypeName());
-
-    let ret = seq(alt(str("TYPE"), str("TYPES")), alt(def, beginEnd));
+    let ret = seq(alt(str("TYPE"), str("TYPES")), def);
 
     return ret;
   }
