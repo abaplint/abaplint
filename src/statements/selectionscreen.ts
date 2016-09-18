@@ -1,12 +1,14 @@
-import { Statement } from "./statement";
+import {Statement} from "./statement";
 import * as Combi from "../combi";
 import * as Reuse from "./reuse";
+import {ParenLeft, WParenLeft, ParenRightW} from "../tokens";
 
 let str = Combi.str;
 let seq = Combi.seq;
 let alt = Combi.alt;
 let opt = Combi.opt;
 let reg = Combi.regex;
+let tok = Combi.tok;
 
 export class SelectionScreen extends Statement {
 
@@ -31,9 +33,9 @@ export class SelectionScreen extends Statement {
 
     let comment = seq(str("COMMENT"),
                       opt(reg(/^\/?\d+$/)),
-                      str("("),
+                      alt(tok(ParenLeft), tok(WParenLeft)),
                       new Reuse.Integer(),
-                      str(")"),
+                      tok(ParenRightW),
                       opt(new Reuse.Source()),
                       opt(seq(str("FOR FIELD"), new Reuse.Field())),
                       opt(seq(str("MODIF ID"), new Reuse.Field())));

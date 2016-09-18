@@ -1,7 +1,7 @@
 import {Statement} from "./statement";
 import * as Reuse from "./reuse";
 import * as Combi from "../combi";
-import {Arrow} from "../tokens/";
+import {Arrow, ParenLeftW} from "../tokens/";
 
 let str = Combi.str;
 let seq = Combi.seq;
@@ -18,7 +18,7 @@ export class Call extends Statement {
 
     let method = seq(opt(seq(cname, tok(Arrow))), mname);
 
-    let paren = seq(str("("),
+    let paren = seq(tok(ParenLeftW),
                     alt(new Reuse.Source(), new Reuse.ParameterListS(), new Reuse.MethodParameters()),
                     str(")"));
 

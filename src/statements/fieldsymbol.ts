@@ -1,4 +1,4 @@
-import { Statement } from "./statement";
+import {Statement} from "./statement";
 import * as Reuse from "./reuse";
 import * as Combi from "../combi";
 
@@ -14,7 +14,7 @@ export class FieldSymbol extends Statement {
 // todo, reuse type definition from DATA
     return seq(alt(str("FIELD-SYMBOL"), str("FIELD-SYMBOLS")),
                new Reuse.FieldSymbol(),
-               star(reg(/.*/)));
+               star(reg(/^.*$/)));
   }
 
 }
