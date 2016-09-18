@@ -153,7 +153,6 @@ class Token implements IRunnable {
     let result: Array<Result> = [];
 
     for (let input of r) {
-//      console.dir(input.peek().constructor);
       if (input.length() !== 0
           && className(input.peek()).toUpperCase() === this.s.toUpperCase()) {
         result.push(input.shift(new TokenNode("Token", input.peek())));
@@ -181,13 +180,6 @@ class Token implements IRunnable {
   public first() {
     return "";
   }
-
-/*
-  private className(t: Tokens.Token): string {
-    let str = t.constructor.toString();
-    return str.match(/\w+/g)[1];
-  }
-  */
 }
 
 class Vers implements IRunnable {
@@ -269,9 +261,6 @@ class Star implements IRunnable {
   public run(r: Array<Result>): Array<Result> {
     let result = r;
 
-// console.log("Star input " + r.length + " " + this.star.toStr());
-// outputResultArray(r);
-
     let res = r;
     let input: Array<Result> = [];
     while (true) {
@@ -281,13 +270,10 @@ class Star implements IRunnable {
       if (res.length === 0) {
         break;
       }
-// console.log("\nStar add " + res.length);
-// outputResultArray(res);
+
       result = result.concat(res);
     }
-// console.log("\nStar return " + result.length);
 
-// console.clear();
     return result;
   }
 

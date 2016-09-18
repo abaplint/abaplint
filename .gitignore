@@ -9,6 +9,7 @@ web/viz/**/*.txt
 web/viz/**/*.svg
 web/script/bundle.js
 web/script/codemirror.js
+web/style/codemirror.css
 web/style/seti.css
 web/script/abap.js
 web/script/mark-selection.js

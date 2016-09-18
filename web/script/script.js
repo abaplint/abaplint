@@ -122,6 +122,8 @@ function run() {
     mode: "abap"
   });
 
+  editor.setSize(null, "100%");
+
   document.getElementById("abaplintver").innerHTML = abaplint.Runner.version();
 }
 
