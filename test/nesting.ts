@@ -285,10 +285,6 @@ describe("count top nesting", () => {
   tests.forEach((test) => {
     it("\"" + test.n + "\" should be " + test.top + " top statements", () => {
       let file = Runner.parse([new File("temp.abap", test.code)])[0];
-      /*
-      let file = new File("temp.abap", test.code);
-      Runner.run([file]);
-      */
       expect(file.getRoot().getChildren().length).to.equals(test.top);
     });
   });
@@ -298,10 +294,6 @@ describe("count first top child nesting", () => {
   tests.forEach((test) => {
     it("\"" + test.n + "\" should be " + test.firstchildren + " first child statements", () => {
       let file = Runner.parse([new File("temp.abap", test.code)])[0];
-      /*
-      let file = new File("temp.abap", test.code);
-      Runner.run([file]);
-*/
       let count = 0;
       if (file.getRoot().getChildren()[0] instanceof StructureNode) {
         count = file.getRoot().getChildren()[0].getChildren().length;

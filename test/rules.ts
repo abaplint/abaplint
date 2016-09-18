@@ -8,23 +8,6 @@ let expect = chai.expect;
 
 describe("rules", () => {
   let checks = [
-    { check: "7bit_ascii",
-      tests: [ { file: "01", errors: 1} ],
-    },
-    { check: "colon_missing_space",
-      tests: [ { file: "01", errors: 1} ],
-    },
-    { check: "contains_tab",
-      tests: [ { file: "01", errors: 1},
-               { file: "02", errors: 1} ],
-    },
-    { check: "definitions_top",
-      tests: [ { file: "01", errors: 1},
-        { file: "02", errors: 0} ],
-    },
-    { check: "empty_statement",
-      tests: [ { file: "01", errors: 1} ],
-    },
     { check: "exit_or_check",
       tests: [ { file: "01", errors: 0},
         { file: "02", errors: 1},
@@ -77,9 +60,6 @@ describe("rules", () => {
       let name = check.check + "_" + test.file;
       it(name + " should have " + test.errors + " error(s)", () => {
         let filename = "./test/abap/rules/" + name + ".prog.abap";
-/*        let file = new File(filename, fs.readFileSync(filename, "utf8"));
-        Runner.run([file]);
-        */
         let issues = Runner.run([new File(filename, fs.readFileSync(filename, "utf8"))]);
 
         let count = 0;

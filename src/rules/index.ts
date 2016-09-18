@@ -14,7 +14,7 @@ export * from "./obsolete_statement";
 export * from "./start_at_tab";
 export * from "./whitespace_end";
 export * from "./exporting";
-export * from "./empty";
+export * from "./empty_statement";
 export * from "./sequential_blank";
 export * from "./definitions_top";
 export * from "./indentation";

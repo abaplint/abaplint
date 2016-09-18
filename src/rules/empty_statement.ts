@@ -1,7 +1,7 @@
 import {IRule} from "./rule";
 import {ParsedFile} from "../file";
 import {Issue} from "../issue";
-import { Empty } from "../statements/statement";
+import {Empty} from "../statements/statement";
 
 export class EmptyStatementConf {
   public enabled: boolean = true;

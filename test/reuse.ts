@@ -37,10 +37,8 @@ let tests = [
 
 describe("Test reuse matchers", () => {
   tests.forEach((test) => {
-    let not = "";
-    if (test.e === false) {
-      not = "not ";
-    }
+    let not = test.e === true ? "" : "not ";
+
     it(test.c + " should " + not + "match " + test.r.getName(), () => {
       let file = Runner.parse([new File("temp.abap", test.c)])[0];
       let match = Combi.Combi.run(test.r.get_runnable(), file.getTokens());

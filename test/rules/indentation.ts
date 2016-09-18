@@ -1,10 +1,5 @@
-import "../typings/index.d.ts";
-import * as chai from "chai";
-import {Indentation} from "../src/rules/indentation";
-import Runner from "../src/runner";
-import {File} from "../src/file";
-
-let expect = chai.expect;
+import {Indentation} from "../../src/rules/indentation";
+import {testRule} from "../utils";
 
 let tests = [
   {abap: "add 2 to lv_foo.", cnt: 0},
@@ -36,13 +31,4 @@ let tests = [
   {abap: "INTERFACE zif_swag_handler PUBLIC.\n  METHODS meta.\nENDINTERFACE.", cnt: 0},
 ];
 
-describe("test indentation rule", () => {
-  tests.forEach((test) => {
-    let issues = Runner.run([new File("temp.abap", test.abap)]);
-
-    issues = issues.filter((i) => { return i.getRule() instanceof Indentation; });
-    it("\"" + test.abap + "\" should have " + test.cnt + " issue(s)", () => {
-      expect(issues.length).to.equals(test.cnt);
-    });
-  });
-});
+testRule(tests, "test indentation rule", Indentation);

@@ -7,10 +7,10 @@ import Position from "../src/position";
 
 let expect = chai.expect;
 
-let str      = Combi.str;
-let seq      = Combi.seq;
-let opt      = Combi.opt;
-let star     = Combi.star;
+let str  = Combi.str;
+let seq  = Combi.seq;
+let opt  = Combi.opt;
+let star = Combi.star;
 
 function tok(s: string): Array<Tokens.Token> {
   let split = s.split(" ");
