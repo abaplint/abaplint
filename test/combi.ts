@@ -4,6 +4,7 @@ import * as Combi from "../src/combi";
 import * as Tokens from "../src/tokens/";
 import Lexer from "../src/lexer";
 import {File} from "../src/file";
+import {Identifier, WPlusW, Plus} from "../src/tokens/";
 
 let expect = chai.expect;
 
@@ -66,16 +67,16 @@ let tests = [
 {n: "reg4", c: seq(reg(/^\w+$/), reg(/^\w+$/)),   t: tokenize("foo bar"), e: true},
 {n: "reg5", c: reg(/^(LIKE|TYPE)$/i),             t: tokenize("type"),    e: true},
 {n: "reg6", c: reg(/^(LIKE|TYPE)$/i),             t: tokenize("TYPE"),    e: true},
-{n: "das1", c: str("FIELD-SYMBOL"),                    t: tokenize("FIELD - SYMBOL"), e: true},
-{n: "per1", c: per(str("FOO"), str("BAR")),            t: tokenize("FOO"), e: true},
-{n: "per2", c: per(str("FOO"), str("BAR")),            t: tokenize("BAR"), e: true},
-{n: "per3", c: per(str("FOO"), str("BAR")),            t: tokenize("FOO BAR"), e: true},
-{n: "per4", c: per(str("FOO"), str("BAR")),            t: tokenize("BAR FOO"), e: true},
-{n: "per5", c: per(str("FO"), str("BA"), str("MO")),   t: tokenize("BA MO"), e: true},
-{n: "per6", c: per(str("FOO"), str("BAR")),            t: tokenize("MOO"), e: false},
-{n: "tok1", c: tok("Identifier"),                      t: tokenize("FOO"), e: true},
-{n: "tok2", c: seq(str("A"), tok("WPlusW"), str("B")), t: tokenize("A + B"), e: true},
-{n: "tok3", c: seq(str("A"), tok("Plus"), str("B")),   t: tokenize("A+B"), e: true},
+{n: "das1", c: str("FIELD-SYMBOL"),                  t: tokenize("FIELD - SYMBOL"), e: true},
+{n: "per1", c: per(str("FOO"), str("BAR")),          t: tokenize("FOO"), e: true},
+{n: "per2", c: per(str("FOO"), str("BAR")),          t: tokenize("BAR"), e: true},
+{n: "per3", c: per(str("FOO"), str("BAR")),          t: tokenize("FOO BAR"), e: true},
+{n: "per4", c: per(str("FOO"), str("BAR")),          t: tokenize("BAR FOO"), e: true},
+{n: "per5", c: per(str("FO"), str("BA"), str("MO")), t: tokenize("BA MO"), e: true},
+{n: "per6", c: per(str("FOO"), str("BAR")),          t: tokenize("MOO"), e: false},
+{n: "tok1", c: tok(Identifier),                      t: tokenize("FOO"), e: true},
+{n: "tok2", c: seq(str("A"), tok(WPlusW), str("B")), t: tokenize("A + B"), e: true},
+{n: "tok3", c: seq(str("A"), tok(Plus), str("B")),   t: tokenize("A+B"), e: true},
 ];
 
 describe("combi matching", () => {

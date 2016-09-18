@@ -1,5 +1,6 @@
 import "../typings/index.d.ts";
 import * as Tokens from "./tokens/";
+import Position from "./position";
 import {TokenNode, BasicNode, ReuseNode, CountableNode} from "./node";
 import {Version, versionDescription} from "../src/version";
 
@@ -132,6 +133,14 @@ class Word implements IRunnable {
   }
 }
 
+function className(cla) {
+  return (cla.constructor + "").match(/\w+/g)[1];
+}
+
+function functionName(fun) {
+  return (fun + "").match(/\w+/g)[1];
+}
+
 class Token implements IRunnable {
 
   private s: String;
@@ -146,7 +155,7 @@ class Token implements IRunnable {
     for (let input of r) {
 //      console.dir(input.peek().constructor);
       if (input.length() !== 0
-          && this.className(input.peek()).toUpperCase() === this.s.toUpperCase()) {
+          && className(input.peek()).toUpperCase() === this.s.toUpperCase()) {
         result.push(input.shift(new TokenNode("Token", input.peek())));
       }
     }
@@ -173,10 +182,12 @@ class Token implements IRunnable {
     return "";
   }
 
+/*
   private className(t: Tokens.Token): string {
     let str = t.constructor.toString();
     return str.match(/\w+/g)[1];
   }
+  */
 }
 
 class Vers implements IRunnable {
@@ -398,10 +409,6 @@ class WordSequence implements IRunnable {
   }
 }
 
-function className(cla) {
-  return (cla.constructor + "").match(/\w+/g)[1];
-}
-
 export abstract class Reuse implements IRunnable {
   public run(r: Array<Result>): Array<Result> {
     let results: Array<Result> = [];
@@ -606,8 +613,8 @@ export function per(first: IRunnable, ...rest: IRunnable[]): IRunnable {
 export function opt(first: IRunnable): IRunnable {
   return new Optional(first);
 }
-export function tok(s: string): IRunnable {
-  return new Token(s);
+export function tok(t: new (p: Position, s: string) => any): IRunnable {
+  return new Token(functionName(t));
 }
 export function star(first: IRunnable): IRunnable {
   return new Star(first);

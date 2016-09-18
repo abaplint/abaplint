@@ -1,6 +1,7 @@
-import { Statement } from "./statement";
+import {Statement} from "./statement";
 import * as Combi from "../combi";
 import * as Reuse from "./reuse";
+import {WParenLeft, ParenLeft, ParenLeftW} from "../tokens/";
 
 let str = Combi.str;
 let seq = Combi.seq;
@@ -20,7 +21,7 @@ export class Select extends Statement {
                    opt(seq(str("AS"), new Reuse.DatabaseTable())));
 
     let intoList = seq(str("INTO"),
-                       tok("WParenLeft"),
+                       tok(WParenLeft),
                        star(seq(new Reuse.Target(), str(","))),
                        new Reuse.Target(),
                        str(")"));
@@ -39,7 +40,7 @@ export class Select extends Statement {
 
     let forAll = seq(str("FOR ALL ENTRIES IN"), new Reuse.Source());
 
-    let count = seq(str("COUNT"), alt(tok("ParenLeft"), tok("ParenLeftW")), str("*"), str(")"));
+    let count = seq(str("COUNT"), alt(tok(ParenLeft), tok(ParenLeftW)), str("*"), str(")"));
 
     let fields = alt(str("*"), count, plus(new Reuse.Field()));
 
