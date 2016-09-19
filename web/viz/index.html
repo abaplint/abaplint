@@ -16,10 +16,13 @@ a:visited {
 
 @media print
 {
-    .no-print {
-        display: none !important;
-        width: 0px !important;
-    }
+  .sidenav-print {
+    display: none !important;
+    width: 0px !important;
+  }
+  .main-print {
+    margin-left: 0px !important;
+  }
 }
 
 .sidenav {
@@ -64,7 +67,7 @@ a:visited {
 <body>
 
 <div>
-<div id="mySidenav" class="sidenav no-print">
+<div id="mySidenav" class="sidenav sidenav-print">
 <h3>abaplint</h3>
 <input type="text" id="filter" oninput="javascript:inputChanged();" onfocus="javascript:focusFilter()"></input><br>
 <br>
@@ -75,7 +78,7 @@ a:visited {
 <div id="sidenav_reuse">Loading</div>
 </div>
 
-<div id="main" class="main">Loading</div>
+<div id="main" class="main main-print">Loading</div>
 
 <script language="javascript">
 let json = {};
@@ -132,7 +135,7 @@ function renderMain(filter) {
     }
   }
   if (reuse !== "") {
-    html = html + "<h1>Reuse</h1>" + reuse;
+    html = html + "<div style=\"page-break-before: always;\"><h1>Reuse</h1>" + reuse + "</div>";
   }
 
   document.getElementById("main").innerHTML = html;

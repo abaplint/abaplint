@@ -317,12 +317,14 @@ class Plus implements IRunnable {
 
 class Sequence implements IRunnable {
   private list: Array<IRunnable>;
+  private stack: boolean;
 
-  constructor(list: IRunnable[]) {
+  constructor(list: IRunnable[], stack = false) {
     if (list.length < 2) {
       throw new Error("Sequence, length error");
     }
     this.list = list;
+    this.stack = stack;
   }
 
   public run(r: Array<Result>): Array<Result> {
@@ -345,7 +347,11 @@ class Sequence implements IRunnable {
 
   public railroad() {
     let children = this.list.map((e) => { return e.railroad(); });
-    return "Railroad.Sequence(" + children.join() + ")";
+    if (this.stack === true) {
+      return "Railroad.Stack(" + children.join() + ")";
+    } else {
+      return "Railroad.Sequence(" + children.join() + ")";
+    }
   }
 
   public toStr() {
@@ -589,6 +595,9 @@ export function str(s: string): IRunnable {
 }
 export function seq(first: IRunnable, ...rest: IRunnable[]): IRunnable {
   return new Sequence([first].concat(rest));
+}
+export function seqs(first: IRunnable, ...rest: IRunnable[]): IRunnable {
+  return new Sequence([first].concat(rest), true);
 }
 export function alt(first: IRunnable, ...rest: IRunnable[]): IRunnable {
   return new Alternative([first].concat(rest));

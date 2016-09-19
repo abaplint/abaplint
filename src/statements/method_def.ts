@@ -5,6 +5,7 @@ import {ParenLeft, ParenRight, ParenRightW} from "../tokens/";
 
 let str = Combi.str;
 let seq = Combi.seq;
+let seqs = Combi.seqs;
 let alt = Combi.alt;
 let opt = Combi.opt;
 let tok = Combi.tok;
@@ -31,12 +32,12 @@ export class MethodDef extends Statement {
     let raising    = seq(str("RAISING"),    plus(alt(resumable, new Reuse.ClassName())));
     let exceptions = seq(str("EXCEPTIONS"), plus(reg(/^\w+?$/)));
 
-    let parameters = seq(opt(alt(str("ABSTRACT"), str("FINAL"), str("FOR TESTING"))),
-                         opt(importing),
-                         opt(exporting),
-                         opt(changing),
-                         opt(returning),
-                         opt(alt(raising, exceptions)));
+    let parameters = seqs(opt(alt(str("ABSTRACT"), str("FINAL"), str("FOR TESTING"))),
+                          opt(importing),
+                          opt(exporting),
+                          opt(changing),
+                          opt(returning),
+                          opt(alt(raising, exceptions)));
 
     let event = seq(str("FOR EVENT"),
                     new Reuse.Field(),
