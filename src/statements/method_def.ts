@@ -16,13 +16,8 @@ export class MethodDef extends Statement {
   public static get_matcher(): Combi.IRunnable {
     let field = reg(/^!?(\/\w+\/)?\w+$/);
 
-    let type = alt(new Reuse.Type(), new Reuse.TypeTable());
-
-    let fieldsValue = seq(new Reuse.PassByValue(), type);
-    let fieldsOrValue = seq(alt(new Reuse.PassByValue(), field), type);
-
     let importing  = seq(str("IMPORTING"),
-                         plus(seq(fieldsOrValue, opt(str("OPTIONAL")))),
+                         plus(seq(new Reuse.MethodParam(), opt(str("OPTIONAL")))),
                          opt(seq(str("PREFERRED PARAMETER"), field)));
 
     let resumable = seq(str("RESUMABLE"),
@@ -30,9 +25,9 @@ export class MethodDef extends Statement {
                         new Reuse.ClassName(),
                         alt(tok(ParenRight), tok(ParenRightW)));
 
-    let exporting  = seq(str("EXPORTING"),  plus(fieldsOrValue));
-    let changing   = seq(str("CHANGING"),   plus(seq(fieldsOrValue, opt(str("OPTIONAL")))));
-    let returning  = seq(str("RETURNING"),  plus(fieldsValue));
+    let exporting  = seq(str("EXPORTING"),  plus(new Reuse.MethodParam()));
+    let changing   = seq(str("CHANGING"),   plus(seq(new Reuse.MethodParam(), opt(str("OPTIONAL")))));
+    let returning  = seq(str("RETURNING"),  new Reuse.MethodParam());
     let raising    = seq(str("RAISING"),    plus(alt(resumable, new Reuse.ClassName())));
     let exceptions = seq(str("EXCEPTIONS"), plus(reg(/^\w+?$/)));
 

@@ -14,15 +14,23 @@ a:visited {
   color: #808BA0;
 }
 
+@media print
+{
+    .no-print {
+        display: none !important;
+        width: 0px !important;
+    }
+}
+
 .sidenav {
   width: 260px;
-  height: 100%; 
-  position: fixed; 
-  z-index: 1; 
+  height: 100%;
+  position: fixed;
+  z-index: 1;
   top: 0;
   left: 0;
   overflow: scroll;
-  background-color: #333; 
+  background-color: #333;
   color: #808BA0;
   padding-top: 0px;
   padding-left: 5px;
@@ -56,7 +64,7 @@ a:visited {
 <body>
 
 <div>
-<div id="mySidenav" class="sidenav">
+<div id="mySidenav" class="sidenav no-print">
 <h3>abaplint</h3>
 <input type="text" id="filter" oninput="javascript:inputChanged();" onfocus="javascript:focusFilter()"></input><br>
 <br>
@@ -87,12 +95,12 @@ function setFilter(filter) {
 
 function renderSidenav() {
   let html = "";
-  
+
   for(let i of json.statements) {
     html = html + "<a href=\"javascript:setFilter('" + i + "');\">" + i + "</a><br>";
   }
   document.getElementById("sidenav_statements").innerHTML = html;
-  
+
   html = "";
   for(let i of json.reuse) {
     html = html + "<a href=\"javascript:setFilter('" + i.substring(6) + "');\">" + i.substring(6) + "</a><br>";
@@ -102,12 +110,13 @@ function renderSidenav() {
 
 function renderMain(filter) {
   let html = "";
-  
+
   let statements = "";
   for(let i of json.statements) {
     if (!filter || i.toLowerCase().startsWith(filter.toLowerCase())) {
-      statements = statements + "<u>" + i.toUpperCase() + "</u><br>" + 
-        "<a href=\"" + i + ".svg\"><img src=\"" + i + ".svg\"></a><br>";
+      statements = statements + "<div style=\"page-break-inside:avoid;\">" +
+        "<u>" + i.toUpperCase() + "</u><br>" +
+        "<a href=\"" + i + ".svg\"><img src=\"" + i + ".svg\"></a></div><br>";
     }
   }
   if (statements !== "") {
@@ -117,8 +126,9 @@ function renderMain(filter) {
   let reuse = "";
   for(let i of json.reuse) {
     if (!filter || i.substring(6).toLowerCase().startsWith(filter.toLowerCase())) {
-      reuse = reuse + "<u>" + i.substring(6).toUpperCase() + "</u><br>" + 
-        "<a href=\"" + i + ".svg\"><img src=\"" + i + ".svg\"></a><br>";
+      reuse = reuse + "<div style=\"page-break-inside:avoid;\">" +
+        "<u>" + i.substring(6).toUpperCase() + "</u><br>" +
+        "<a href=\"" + i + ".svg\"><img src=\"" + i + ".svg\"></a></div><br>";
     }
   }
   if (reuse !== "") {
@@ -144,7 +154,7 @@ function handler(evt) {
 
 function run() {
   document.getElementById("filter").focus();
-  
+
   let oReq = new XMLHttpRequest();
   oReq.addEventListener("load", handler);
   oReq.open("GET", "./data.json");

@@ -185,6 +185,16 @@ export class Cond extends Combi.Reuse {
   }
 }
 
+export class MethodParam extends Combi.Reuse {
+  public get_runnable() {
+    let field = reg(/^!?(\/\w+\/)?\w+$/);
+    let type = alt(new Type(), new TypeTable());
+    let fieldsOrValue = seq(alt(new PassByValue(), field), type);
+
+    return fieldsOrValue;
+  }
+}
+
 export class FunctionParameters extends Combi.Reuse {
   public get_runnable() {
     let exporting = seq(str("EXPORTING"), new ParameterListS());
