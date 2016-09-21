@@ -55,7 +55,11 @@ export class DefinitionsTop implements IRule {
           issue = undefined;
         }
       } else if (statement instanceof Statements.Data
+          || statement instanceof Statements.DataBegin
+          || statement instanceof Statements.DataEnd
           || statement instanceof Statements.Type
+          || statement instanceof Statements.TypeBegin
+          || statement instanceof Statements.TypeEnd
           || statement instanceof Statements.Constant
           || statement instanceof Statements.Include
           || statement instanceof Statements.Static
