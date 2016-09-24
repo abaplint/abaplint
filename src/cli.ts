@@ -1,4 +1,3 @@
-import "../typings/index.d.ts";
 import Runner from "./runner";
 import {File} from "./file";
 import {Issue} from "./issue";

@@ -1,4 +1,3 @@
-import "../typings/index.d.ts";
 import {File} from "../src/file";
 import Config from "../src/config";
 import Runner from "../src/runner";

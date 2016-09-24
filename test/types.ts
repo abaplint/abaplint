@@ -1,4 +1,3 @@
-import "../typings/index.d.ts";
 import * as chai from "chai";
 import Runner from "../src/runner";
 import {Result} from "../src/types";

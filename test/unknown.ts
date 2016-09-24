@@ -1,4 +1,3 @@
-import "../typings/index.d.ts";
 import * as chai from "chai";
 import {Unknown} from "../src/statements/statement";
 import {File} from "../src/file";

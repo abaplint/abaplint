@@ -1,4 +1,3 @@
-import "../typings/index.d.ts";
 import * as Tokens from "./tokens/";
 import Position from "./position";
 import {TokenNode, BasicNode, ReuseNode, CountableNode} from "./node";

@@ -1,4 +1,3 @@
-import "../typings/index.d.ts";
 import {File} from "../src/file";
 import Lexer from "../src/lexer";
 import * as chai from "chai";

@@ -1,4 +1,3 @@
-import "../typings/index.d.ts";
 import * as chai from "chai";
 import * as Combi from "../src/combi";
 import * as Reuse from "../src/statements/reuse";

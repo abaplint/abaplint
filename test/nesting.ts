@@ -1,4 +1,3 @@
-import "../typings/index.d.ts";
 import {File} from "../src/file";
 import {StructureNode} from "../src/node";
 import Runner from "../src/runner";

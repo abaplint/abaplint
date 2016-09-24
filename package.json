@@ -1,6 +1,6 @@
 {
   "name": "abaplint",
-  "version": "0.28.2",
+  "version": "0.28.3",
   "description": "Linter for ABAP",
   "bin": {
     "abaplint": "./abaplint"
@@ -11,7 +11,6 @@
     "test": "test"
   },
   "scripts": {
-    "prebrowserify": "cp -r typings build",
     "browserify": "browserify build/src/runner.js -o build/bundle.js -s abaplint",
     "uglify": "uglifyjs build/bundle.js --compress warnings=false --mangle --keep-fnames -o build/bundle.js",
     "tslint": "tslint -c tslint.json 'src/**/*.ts' 'test/**/*.ts'",
@@ -22,7 +21,6 @@
     "test": "mocha --recursive --reporter progress build/test",
     "posttest": "npm run tslint && npm run web",
     "clean": "rm -rf build",
-    "typings": "typings install",
     "precoverage": "istanbul cover ./node_modules/mocha/bin/_mocha build/test --report lcovonly -- -R spec --recursive",
     "coverage": "remap-istanbul -i coverage/coverage.json -o coverage/coverage-remap.json",
     "postcoverage": "codecov -f coverage/coverage-remap.json",
@@ -46,22 +44,28 @@
   },
   "homepage": "https://github.com/larshp/abaplint#readme",
   "devDependencies": {
+    "@types/assertion-error": "^1.0.30",
+    "@types/chai": "^3.4.33",
+    "@types/glob": "^5.0.30",
+    "@types/minimatch": "^2.0.29",
+    "@types/minimist": "^1.1.29",
+    "@types/mocha": "^2.2.32",
+    "@types/node": "^6.0.41",
     "browserify": "^13.1.0",
     "chai": "^3.5.0",
     "codecov": "^1.0.1",
-    "codemirror": "^5.18.2",
+    "codemirror": "^5.19.0",
     "codemirror-abap": "^0.1.8",
     "istanbul": "^0.4.5",
     "mocha": "^3.0.2",
     "railroad-diagrams": "git+https://github.com/tabatkins/railroad-diagrams#gh-pages",
     "remap-istanbul": "^0.6.4",
     "tslint": "^3.15.1",
-    "typescript": "^1.8.10",
-    "typings": "^1.3.3",
+    "typescript": "^2.0.3",
     "uglify-js": "^2.7.3"
   },
   "dependencies": {
-    "glob": "^7.0.6",
+    "glob": "^7.1.0",
     "minimist": "^1.2.0"
   }
 }

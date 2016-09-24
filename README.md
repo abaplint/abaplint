@@ -22,6 +22,4 @@ For checking ABAP code inside the ABAP system use [code inspector](http://wiki.s
 ### Building
 `npm install`
 
-`npm run typings`
-
 `npm test`

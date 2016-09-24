@@ -1,8 +1,6 @@
 language: node_js
 node_js:
 - '6'
-before_script:
-- npm run typings
 after_success:
 - npm run viz
 - npm run coverage

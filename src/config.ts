@@ -1,4 +1,3 @@
-import "../typings/index.d.ts";
 import * as Rules from "./rules/";
 import {Version} from "./version";
 
