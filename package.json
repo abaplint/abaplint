@@ -55,7 +55,7 @@
     "chai": "^3.5.0",
     "codecov": "^1.0.1",
     "codemirror": "^5.19.0",
-    "codemirror-abap": "^0.1.8",
+    "codemirror-abap": "^0.1.9",
     "istanbul": "^0.4.5",
     "mocha": "^3.0.2",
     "railroad-diagrams": "git+https://github.com/tabatkins/railroad-diagrams#gh-pages",
