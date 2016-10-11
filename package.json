@@ -59,7 +59,7 @@
     "istanbul": "^0.4.5",
     "mocha": "^3.0.2",
     "railroad-diagrams": "git+https://github.com/tabatkins/railroad-diagrams#gh-pages",
-    "remap-istanbul": "^0.6.4",
+    "remap-istanbul": "^0.7.0",
     "tslint": "^3.15.1",
     "typescript": "^2.0.3",
     "uglify-js": "^2.7.3"
