@@ -10,6 +10,7 @@ let tests = [
   "SHIFT l_xstr LEFT DELETING LEADING cl_abap_char_utilities=>byte_order_mark_utf8 IN BYTE MODE.",
   "SHIFT lv_syindex RIGHT DELETING TRAILING space.",
   "SHIFT lv_cols BY 1 PLACES LEFT.",
+  "SHIFT lv_temp UP TO '/' LEFT.",
   "SHIFT classname LEFT UP TO '='.",
 ];
 

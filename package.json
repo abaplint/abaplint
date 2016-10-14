@@ -1,6 +1,6 @@
 {
   "name": "abaplint",
-  "version": "0.28.3",
+  "version": "0.28.4",
   "description": "Linter for ABAP",
   "bin": {
     "abaplint": "./abaplint"
@@ -65,7 +65,7 @@
     "uglify-js": "^2.7.3"
   },
   "dependencies": {
-    "glob": "^7.1.0",
+    "glob": "^7.1.1",
     "minimist": "^1.2.0"
   }
 }
