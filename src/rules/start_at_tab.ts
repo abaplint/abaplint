@@ -3,6 +3,7 @@ import {ParsedFile} from "../file";
 import {Issue} from "../issue";
 import Position from "../position";
 import {Comment} from "../statements/statement";
+import {TypeBegin, TypeEnd} from "../statements/";
 
 export class StartAtTabConf {
   public enabled: boolean = true;
@@ -30,12 +31,20 @@ export class StartAtTab implements IRule {
 
   public run(file: ParsedFile) {
     let issues: Array<Issue> = [];
+    let inType = false;
     let previous: Position = undefined;
 
     for (let statement of file.getStatements()) {
       if (statement instanceof Comment) {
         continue;
+      } else if (statement instanceof TypeBegin) {
+        inType = true;
+      } else if (statement instanceof TypeEnd) {
+        inType = false;
+      } else if (inType) {
+        continue;
       }
+
 
       let pos = statement.getStart();
       if (previous !== undefined && pos.getRow() === previous.getRow()) {
