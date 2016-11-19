@@ -57,7 +57,7 @@
     "codemirror": "^5.19.0",
     "codemirror-abap": "^0.1.9",
     "istanbul": "^0.4.5",
-    "mocha": "^3.0.2",
+    "mocha": "^3.1.2",
     "railroad-diagrams": "git+https://github.com/tabatkins/railroad-diagrams#gh-pages",
     "remap-istanbul": "^0.7.0",
     "tslint": "^4.0.0",
