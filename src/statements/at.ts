@@ -21,7 +21,7 @@ export class At extends Statement {
     return true;
   }
 
-  public indentationEnd(prev) {
+  public indentationEnd(_prev) {
     return 2;
   }
 

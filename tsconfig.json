@@ -4,6 +4,8 @@
         "outDir": "build",
         "noFallthroughCasesInSwitch": true,
         "noImplicitReturns": true,
+        "noUnusedParameters": true,
+        "noUnusedLocals": true,
         "declaration": true,
         "sourceMap": true
         },

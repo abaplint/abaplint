@@ -21,7 +21,7 @@ describe("unknown statements", () => {
       for (let statement of file.getStatements()) {
         expect(statement instanceof Unknown).to.equals(true);
       }
-    }
+    },
   );
   });
 });

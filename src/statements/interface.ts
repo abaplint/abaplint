@@ -15,7 +15,7 @@ export class Interface extends Statement {
                opt(alt(str("PUBLIC"), str("LOAD"))));
   }
 
-  public indentationEnd(prev) {
+  public indentationEnd(_prev) {
     return 2;
   }
 

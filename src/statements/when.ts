@@ -30,7 +30,7 @@ export class When extends Statement {
     return 0;
   }
 
-  public indentationEnd(prev) {
+  public indentationEnd(_prev) {
     return 2;
   }
 

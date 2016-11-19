@@ -7,7 +7,7 @@ enum Mode {
   Ping,
   Str,
   Template,
-  Comment
+  Comment,
 }
 
 class Buffer {

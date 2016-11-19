@@ -3,7 +3,7 @@ import {Statement} from "./statements/statement";
 
 export default class Nesting {
 
-  public static run(filename: string, statements: Array<Statement>): RootNode {
+  public static run(statements: Array<Statement>): RootNode {
     let root = new RootNode();
 
     let current = root;

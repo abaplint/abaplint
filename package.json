@@ -1,6 +1,6 @@
 {
   "name": "abaplint",
-  "version": "0.28.5",
+  "version": "0.28.6",
   "description": "Linter for ABAP",
   "bin": {
     "abaplint": "./abaplint"
@@ -45,13 +45,13 @@
   "homepage": "https://github.com/larshp/abaplint#readme",
   "devDependencies": {
     "@types/assertion-error": "^1.0.30",
-    "@types/chai": "^3.4.33",
+    "@types/chai": "^3.4.34",
     "@types/glob": "^5.0.30",
     "@types/minimatch": "^2.0.29",
     "@types/minimist": "^1.1.29",
-    "@types/mocha": "^2.2.32",
-    "@types/node": "^6.0.41",
-    "browserify": "^13.1.0",
+    "@types/mocha": "^2.2.33",
+    "@types/node": "^6.0.48",
+    "browserify": "^13.1.1",
     "chai": "^3.5.0",
     "codecov": "^1.0.1",
     "codemirror": "^5.19.0",
@@ -61,8 +61,8 @@
     "railroad-diagrams": "git+https://github.com/tabatkins/railroad-diagrams#gh-pages",
     "remap-istanbul": "^0.7.0",
     "tslint": "^4.0.0",
-    "typescript": "^2.0.3",
-    "uglify-js": "^2.7.3"
+    "typescript": "^2.0.10",
+    "uglify-js": "^2.7.4"
   },
   "dependencies": {
     "glob": "^7.1.1",

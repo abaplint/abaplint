@@ -16,7 +16,7 @@ export abstract class Statement extends StatementNode {
     return false;
   }
 
-  public isValidParent(s: Statement): boolean {
+  public isValidParent(_s: Statement): boolean {
     return true;
   }
 
@@ -24,11 +24,11 @@ export abstract class Statement extends StatementNode {
     return false;
   }
 
-  public indentationStart(prev: Statement): number {
+  public indentationStart(_prev: Statement): number {
     return 0;
   }
 
-  public indentationEnd(prev: Statement): number {
+  public indentationEnd(_prev: Statement): number {
     return 0;
   }
 

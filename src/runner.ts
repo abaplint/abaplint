@@ -25,7 +25,7 @@ export default class Runner {
     this.prioritizeFiles(files).forEach((f) => {
       let tokens = Lexer.run(f);
       let statements = Parser.run(tokens, conf.getVersion());
-      let root = Nesting.run(f.getFilename(), statements);
+      let root = Nesting.run(statements);
 
       ret.push(new ParsedFile(f.getFilename(), f.getRaw(), tokens, statements, root));
     });
@@ -50,15 +50,17 @@ export default class Runner {
   }
 
   public static version(): string {
-// magic, see build script
+// magic, see build script "version.sh"
     return "{{ VERSION }}";
   }
 
+/*
   public static downport(files: Array<ParsedFile>): Array<File> {
     let ret = new File("result.abap", "todo sdf");
 // todo, auto validate 702 code after downport?
     return [ret];
   }
+*/
 
   public static types(file: ParsedFile) {
     return Types.Analyze.run(file);
