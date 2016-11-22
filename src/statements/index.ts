@@ -63,7 +63,7 @@ export * from "./define";
 export * from "./enddefine";
 export * from "./find";
 export * from "./move";
-export * from "./get_time_stamp";
+export * from "./get_time";
 export * from "./set_handler";
 export * from "./private";
 export * from "./protected";
