@@ -94,6 +94,12 @@ let tests = [
   "  TABLES\n" +
   "    tt_e071   = lt_cts_object_entry\n" +
   "    tt_e071k  = lt_cts_key.",
+
+  "CALL FUNCTION 'WDYC_GET_OBJECT'\n" +
+  "  PARAMETER-TABLE\n" +
+  "  lt_fm_param\n" +
+  "  EXCEPTION-TABLE\n" +
+  "  lt_fm_exception.\n",
 ];
 
 statementType(tests, "CALL FUNCTION", Statements.CallFunction);

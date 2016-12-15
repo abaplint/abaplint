@@ -17,10 +17,13 @@ export class CallFunction extends Statement {
 
     let options = alt(starting, update, background, dest);
 
+    let dynamic = seq(str("PARAMETER-TABLE"), new Reuse.Source(),
+                      opt(seq(str("EXCEPTION-TABLE"), new Reuse.Source())));
+
     let call = seq(str("CALL FUNCTION"),
                    alt(new Reuse.Constant(), new Reuse.FieldChain()),
                    opt(options),
-                   new Reuse.FunctionParameters());
+                   alt(new Reuse.FunctionParameters(), dynamic));
 
     return call;
   }
