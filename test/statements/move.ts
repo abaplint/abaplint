@@ -50,6 +50,7 @@ let versions = [
   {abap: "foo = gt_det[ <lv_row> ].", ver: Version.v740sp02},
   {abap: "foo = li_foo->create( VALUE #( ) ).", ver: Version.v740sp02},
   {abap: "foo = mi_foo->update( CORRESPONDING #( get( ) EXCEPT field ) ).", ver: Version.v740sp05},
+  {abap: "foo = VALUE /bobf/t_frw_name( ).", ver: Version.v740sp02},
   {abap: "foo = CORRESPONDING #( <ls_data> MAPPING country = coun currency = curr ).", ver: Version.v740sp05},
 ];
 

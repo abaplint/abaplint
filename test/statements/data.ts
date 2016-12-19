@@ -17,6 +17,7 @@ let tests = [
   "Data foo(89) type c.",
   "data foo type char100.",
   "data foo100 type c length 100.",
+  "DATA lv_int TYPE c LENGTH c_length.",
   "data char.",
   "data char(100).",
   "data sdf type table of ref to zcl_foobar.",

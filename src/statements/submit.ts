@@ -14,7 +14,8 @@ export class Submit extends Statement {
   public static get_matcher(): Combi.IRunnable {
     let awith = seq(str("WITH"), new Reuse.Field(), str("="), new Reuse.Source());
     let prog = alt(new Reuse.Source(), new Reuse.Dynamic());
-    let perm = per(plus(awith), str("AND RETURN"));
+    let job = seq(str("VIA JOB"), new Reuse.Source(), str("NUMBER"), new Reuse.Source());
+    let perm = per(plus(awith), str("AND RETURN"), job);
     let ret = seq(str("SUBMIT"), prog, opt(str("VIA SELECTION-SCREEN")), opt(perm));
     return ret;
   }
