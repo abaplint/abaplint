@@ -6,6 +6,7 @@ let tests = [
   "create data wa like line of <f_excel_tab>.",
   "CREATE DATA lr_tab_ref TYPE STANDARD TABLE OF (pv_tabname).",
   "CREATE DATA lr_format TYPE STANDARD TABLE OF (<ls_foo>-tabname) WITH DEFAULT KEY.",
+  "CREATE DATA lr_area TYPE REF TO zcl_area.",
   "CREATE DATA wo_data   TYPE HANDLE lo_table.",
 ];
 

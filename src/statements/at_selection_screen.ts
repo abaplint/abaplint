@@ -11,7 +11,7 @@ export class AtSelectionScreen extends Statement {
 
   public static get_matcher(): Combi.IRunnable {
     let output = str("OUTPUT");
-    let value = seq(str("ON VALUE-REQUEST FOR"), new Reuse.Field());
+    let value = seq(str("ON VALUE-REQUEST FOR"), new Reuse.FieldSub());
     let exit = str("ON EXIT-COMMAND");
     let field = seq(str("ON"), new Reuse.Field());
     let ret = seq(str("AT SELECTION-SCREEN"), opt(alt(output, value, exit, field)));

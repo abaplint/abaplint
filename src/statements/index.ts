@@ -49,6 +49,7 @@ export * from "./commit";
 export * from "./rollback";
 export * from "./delete_internal";
 export * from "./delete_database";
+export * from "./delete_dataset";
 export * from "./split";
 export * from "./sort";
 export * from "./replace";

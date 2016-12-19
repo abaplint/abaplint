@@ -13,6 +13,7 @@ let tests = [
   "methods foobaaar final.",
   "methods BIND_ALV_OLE2 exceptions MISS_GUIDE.",
   "METHODS on_event FOR EVENT sapevent OF cl_gui_html_viewer.",
+  "methods ADAPT_PARAMETERS final redefinition .",
   "METHODS on_event FOR EVENT sapevent OF cl_gui_html_viewer IMPORTING action frame.",
   "METHODS methodblah IMPORTING is_clskey TYPE sdf RAISING lcx_foo cx_bar.",
   "METHODS add IMPORTING foo TYPE string OPTIONAL bar TYPE string OPTIONAL.",

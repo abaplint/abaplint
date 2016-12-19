@@ -6,6 +6,7 @@ let str = Combi.str;
 let seq = Combi.seq;
 let alt = Combi.alt;
 let opt = Combi.opt;
+let per = Combi.per;
 
 export class Replace extends Statement {
 
@@ -18,9 +19,8 @@ export class Replace extends Statement {
                opt(str("REGEX")),
                new Reuse.Source(),
                opt(seq(str("IN"), new Reuse.Target())),
-               str("WITH"),
-               new Reuse.Source(),
-               opt(seq(str("INTO"), new Reuse.Target())),
+               per(seq(str("WITH"), new Reuse.Source()),
+                   seq(str("INTO"), new Reuse.Target())),
                opt(str("IGNORING CASE")));
   }
 

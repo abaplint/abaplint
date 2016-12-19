@@ -14,6 +14,7 @@ export class CreateData extends Statement {
     let type = alt(str("LIKE"),
                    str("TYPE"),
                    str("TYPE HANDLE"),
+                   str("TYPE REF TO"),
                    str("TYPE STANDARD TABLE OF"),
                    str("LIKE LINE OF"));
 
