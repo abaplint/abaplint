@@ -29,6 +29,7 @@ export class Write extends Statement {
                       str("ENVIRONMENT TIME FORMAT"),
                       reg(/^[YMD]{2,4}\/?[YMD]{2,4}\/?[YMD]{2,4}$/),
                       seq(str("UNIT"), new Reuse.Source()),
+                      str("INTENSIFIED OFF"),
                       seq(str("DECIMALS"), new Reuse.Source()),
                       seq(str("COLOR"), opt(str("=")), new Reuse.Source(), opt(str("INVERSE"))),
                       seq(str("CURRENCY"), new Reuse.Source()),

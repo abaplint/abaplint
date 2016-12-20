@@ -15,14 +15,17 @@ export class InsertInternal extends Statement {
     let index = seq(str("INDEX"), new Reuse.Source());
     let initial = str("INITIAL LINE");
 
-    let ret = seq(str("INSERT"),
-                  alt(initial,
-                      seq(opt(str("LINES OF")), target)),
-                  str("INTO"),
+    let foo = seq(str("INTO"),
                   opt(str("TABLE")),
                   new Reuse.Source(),
                   opt(index),
                   opt(assigning));
+
+    let ret = seq(str("INSERT"),
+                  alt(initial,
+                      new Reuse.Target(),
+                      seq(opt(str("LINES OF")), target)),
+                  alt(index, foo));
 
     return ret;
   }

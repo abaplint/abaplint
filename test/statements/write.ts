@@ -17,6 +17,7 @@ let tests = [
   "WRITE AT 10 'sdf'.",
   "WRITE 25 'hello'.",
   "WRITE /.",
+  "WRITE space COLOR lv_col INTENSIFIED OFF.",
   "WRITE lv_date DD/MM/YYYY.",
   "WRITE lv_time ENVIRONMENT TIME FORMAT.",
 ];

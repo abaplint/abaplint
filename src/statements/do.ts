@@ -9,7 +9,12 @@ let seq = Combi.seq;
 export class Do extends Statement {
 
   public static get_matcher(): Combi.IRunnable {
-    return seq(str("DO"), opt(seq(new Reuse.Source(), str("TIMES"))));
+    let vary = seq(str("VARYING FIELD FROM"),
+                   new Reuse.Source(),
+                   str("NEXT"),
+                   new Reuse.Source());
+
+    return seq(str("DO"), opt(seq(new Reuse.Source(), str("TIMES"), opt(vary))));
   }
 
   public isStructure() {
