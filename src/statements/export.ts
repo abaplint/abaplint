@@ -6,6 +6,7 @@ let str = Combi.str;
 let seq = Combi.seq;
 let alt = Combi.alt;
 let opt = Combi.opt;
+let plus = Combi.plus;
 
 export class Export extends Statement {
 
@@ -14,10 +15,17 @@ export class Export extends Statement {
 
     let db = seq(str("DATA BUFFER"), new Reuse.Target());
     let memory = seq(str("MEMORY ID"), new Reuse.Source());
-    let database = seq(str("DATABASE"), new Reuse.Source(), str("FROM"), new Reuse.Source(), id);
+
+    let database = seq(str("DATABASE"),
+                       new Reuse.Source(),
+                       opt(seq(str("FROM"), new Reuse.Source())),
+                       id);
+
     let target = alt(db, memory, database);
 
-    let source = alt(new Reuse.ParameterListS(), new Reuse.Source(), new Reuse.Dynamic());
+    let source = alt(new Reuse.ParameterListS(),
+                     plus(new Reuse.Source()),
+                     new Reuse.Dynamic());
 
     return seq(str("EXPORT"), source, str("TO"), target, opt(str("COMPRESSION ON")));
   }

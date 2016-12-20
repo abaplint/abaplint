@@ -11,11 +11,18 @@ export class ModifyInternal extends Statement {
 
   public static get_matcher(): Combi.IRunnable {
     let index = seq(str("INDEX"), new Reuse.Source());
+
     let from = seq(str("FROM"), new Reuse.Source());
 
     let transporting = seq(str("TRANSPORTING"), new Reuse.Field());
 
-    let options = seq(opt(from), index, opt(from), opt(transporting));
+// make sure this does not conflict with MODIFY database
+    let options = alt(seq(index, from),
+                      index,
+                      seq(from, transporting),
+                      seq(from, index),
+                      seq(index, from, transporting));
+
 
     let ret = seq(new Reuse.Target(),
                   opt(options));

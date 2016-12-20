@@ -544,7 +544,7 @@ export class TypeTable extends Combi.Reuse {
     let old = seq(new TypeName(),
                   str("OCCURS"),
                   new Integer(),
-                  str("WITH HEADER LINE"));
+                  opt(str("WITH HEADER LINE")));
 
     let ret = seq(likeType,
                   alt(old, typetable));

@@ -30,6 +30,7 @@ let tests = [
   "DATA ls_field_cat_comp  LIKE LINE OF <ls_object_table>-field_catalog.",
   "DATA lt_ucomm TYPE TABLE OF sy-ucomm.",
   "DATA tab LIKE foobar OCCURS 0 WITH HEADER LINE.",
+  "DATA tab LIKE foobar OCCURS 0.",
   "DATA tab TYPE foobar OCCURS 0 WITH HEADER LINE.",
   "DATA mt_stage TYPE SORTED TABLE OF ty_stage WITH UNIQUE KEY file-path file-filename.",
 ];
