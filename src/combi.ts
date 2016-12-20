@@ -8,6 +8,8 @@ export class Result {
   private nodes: Array<CountableNode>;
 
   constructor(a: Array<Tokens.Token>, n?: Array<CountableNode>) {
+// tokens: not yet matched
+// nodes: matched tokens
     this.tokens = a;
     this.nodes = n;
     if (this.nodes === undefined) {
@@ -113,6 +115,7 @@ class Word implements IRunnable {
     for (let input of r) {
       if (input.length() !== 0
           && input.peek().getStr().toUpperCase() === this.s.toUpperCase()) {
+//        console.log("match, " + this.s + result.length);
         result.push(input.shift(new TokenNode("Word", input.peek())));
       }
     }
@@ -272,7 +275,7 @@ class Star implements IRunnable {
 
       result = result.concat(res);
     }
-
+//    console.dir(result);
     return result;
   }
 
@@ -404,7 +407,9 @@ export abstract class Reuse implements IRunnable {
   public run(r: Array<Result>): Array<Result> {
     let results: Array<Result> = [];
 
+//    console.dir(r);
     for (let input of r) {
+//      console.dir(input);
       let temp = this.get_runnable().run([input]);
 
       let moo: Array<Result> = [];
@@ -428,7 +433,7 @@ export abstract class Reuse implements IRunnable {
 
       results = results.concat(moo);
     }
-
+//    console.dir(results);
     return results;
   }
 
@@ -564,7 +569,7 @@ export class Combi {
     let input = new Result(tokens);
 
     let result = runnable.run([input]);
-
+//    console.dir(result.length);
     for (let res of result) {
       if (res.length() === 0) {
         return res.getNodes();

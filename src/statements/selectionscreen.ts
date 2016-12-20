@@ -23,7 +23,7 @@ export class SelectionScreen extends Statement {
 
     let beginScreen = seq(str("BEGIN OF SCREEN"),
                           new Reuse.Integer(),
-                          opt(str("AS SUBSCREEN")),
+                          opt(seq(str("AS"), alt(str("WINDOW"), str("SUBSCREEN")))),
                           opt(seq(str("TITLE"), new Reuse.Source())));
 
     let endScreen = seq(str("END OF SCREEN"), new Reuse.Integer());
@@ -39,6 +39,16 @@ export class SelectionScreen extends Statement {
                       opt(new Reuse.Source()),
                       opt(seq(str("FOR FIELD"), new Reuse.Field())),
                       opt(seq(str("MODIF ID"), new Reuse.Field())));
+
+    let tab = seq(str("TAB"),
+                  tok(WParenLeft),
+                  new Reuse.Integer(),
+                  tok(ParenRightW),
+                  new Reuse.Field(),
+                  str("USER-COMMAND"),
+                  new Reuse.Field(),
+                  str("DEFAULT SCREEN"),
+                  new Reuse.Integer());
 
     let func = seq(str("FUNCTION KEY"), new Reuse.Integer());
 
@@ -60,6 +70,7 @@ export class SelectionScreen extends Statement {
                       skip,
                       pos,
                       incl,
+                      tab,
                       beginBlock,
                       tabbed,
                       endBlock,

@@ -528,21 +528,26 @@ export class TypeTable extends Combi.Reuse {
   public get_runnable() {
     let likeType = alt(str("LIKE"), str("TYPE"));
 
-    let typetable = seq(likeType,
-                        opt(alt(str("STANDARD"), str("HASHED"), str("SORTED"), str("ANY"))),
-                        str("TABLE"),
-                        opt(str("OF")),
-                        opt(str("REF TO")));
-
     let key = seq(str("WITH"),
                   opt(alt(str("NON-UNIQUE"), str("UNIQUE"))),
                   opt(alt(str("DEFAULT"), ver(Version.v740sp02, str("EMPTY")))),
                   str("KEY"),
                   star(new FieldSub()));
 
-    let ret = seq(typetable,
-                  opt(new TypeName()),
-                  opt(key));
+    let typetable = seq(opt(alt(str("STANDARD"), str("HASHED"), str("SORTED"), str("ANY"))),
+                        str("TABLE"),
+                        opt(str("OF")),
+                        opt(str("REF TO")),
+                        opt(new TypeName()),
+                        opt(key));
+
+    let old = seq(new TypeName(),
+                  str("OCCURS"),
+                  new Integer(),
+                  str("WITH HEADER LINE"));
+
+    let ret = seq(likeType,
+                  alt(old, typetable));
 
     return ret;
   }

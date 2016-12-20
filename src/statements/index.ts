@@ -50,6 +50,7 @@ export * from "./rollback";
 export * from "./delete_internal";
 export * from "./delete_database";
 export * from "./delete_dataset";
+export * from "./free_memory";
 export * from "./split";
 export * from "./sort";
 export * from "./replace";
