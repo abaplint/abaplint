@@ -5,6 +5,7 @@ export default class Config {
 
   private config = undefined;
   private ver: Version;
+  private progress: boolean;
 
   public static getDefault(): Config {
     let defaults: Array<string> = [];
@@ -45,5 +46,13 @@ export default class Config {
   public setVersion(ver: Version): Config {
     this.ver = ver;
     return this;
+  }
+
+  public getShowProgress(): boolean {
+    return this.progress;
+  }
+
+  public setShowProgress(s: boolean) {
+    this.progress = s;
   }
 }

@@ -23,6 +23,9 @@ export default class Runner {
     conf = conf ? conf : Config.getDefault();
 
     this.prioritizeFiles(files).forEach((f) => {
+      if (conf.getShowProgress()) {
+        console.log("Lexing and parsing: " + f.getFilename());
+      }
       let tokens = Lexer.run(f);
       let statements = Parser.run(tokens, conf.getVersion());
       let root = Nesting.run(statements);

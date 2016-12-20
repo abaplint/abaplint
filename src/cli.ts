@@ -54,6 +54,7 @@ if (argv["h"] !== undefined || argv["help"] !== undefined) {
   output = output + "  -f, --format     output format (standard, total, json, summary)\n";
   output = output + "  -v, --version    current version\n";
   output = output + "  -a [abap]        specify ABAP version\n";
+  output = output + "  -s               show progress\n";
   output = output + "  -d, --default    show default configuration\n";
 } else if (argv["v"] !== undefined || argv["version"] !== undefined) {
   output = output + Runner.version() + "\n";
@@ -76,6 +77,9 @@ if (argv["h"] !== undefined || argv["help"] !== undefined) {
 
     if (argv["a"]) {
       config.setVersion(versionText(argv["a"]));
+    }
+    if (argv["s"]) {
+      config.setShowProgress(true);
     }
     issues = Runner.run(files, config);
     output = Runner.format(issues, format);
