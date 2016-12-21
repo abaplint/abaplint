@@ -12,7 +12,6 @@ class Tuple {
 }
 
 export class Standard {
-
   public static output(issues: Array<Issue>): string {
     let tuples: Array<Tuple> = [];
     for (let issue of issues) {

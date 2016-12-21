@@ -76,6 +76,8 @@ export default class Runner {
         return Formatters.Total.output(issues);
       case "json":
         return Formatters.Json.output(issues);
+      case "code":
+        return Formatters.Code.output(issues);
       default:
         return Formatters.Standard.output(issues);
     }
