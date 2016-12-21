@@ -31,14 +31,14 @@ export class Parameter extends Statement {
                    modif,
                    listbox,
                    visible,
+                   str("NO-DISPLAY"),
+                   str("AS CHECKBOX"),
                    str("LOWER CASE"));
 
     let ret = seq(para,
                   new Reuse.Field(),
                   opt(new Reuse.FieldLength()),
                   opt(type),
-                  opt(str("NO-DISPLAY")),
-                  opt(str("AS CHECKBOX")),
                   opt(perm));
 
     return ret;

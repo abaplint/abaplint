@@ -56,6 +56,8 @@ export * from "./endcatch";
 export * from "./assign_local_copy";
 export * from "./set_extended_check";
 export * from "./split";
+export * from "./new_line";
+export * from "./free_object";
 export * from "./sort";
 export * from "./replace";
 export * from "./condense";

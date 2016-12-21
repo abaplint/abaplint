@@ -11,6 +11,7 @@ let tests = [
   "PARAMETERS write TYPE asdf AS LISTBOX VISIBLE LENGTH 40 LOWER CASE OBLIGATORY DEFAULT 'sdf'.",
   "PARAMETER p_local  RADIOBUTTON GROUP g1.",
   "PARAMETERS p_path  TYPE string LOWER CASE MODIF ID pat.",
+  "parameter p_def type c default ' ' as checkbox.",
   "PARAMETERS rb_down RADIOBUTTON GROUP rb1 USER-COMMAND space.",
   "PARAMETERS p_mail TYPE so_dli_nam OBLIGATORY MATCHCODE OBJECT zfoobar.",
   "PARAMETER p_url  TYPE string LOWER CASE VISIBLE LENGTH 40.",

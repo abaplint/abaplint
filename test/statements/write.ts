@@ -17,7 +17,9 @@ let tests = [
   "WRITE AT 10 'sdf'.",
   "WRITE 25 'hello'.",
   "WRITE /.",
+  "write l_x right-justified to ls_dump.",
   "WRITE space COLOR lv_col INTENSIFIED OFF.",
+  "write lv_val to lv_res currency lv_cur round lv_round no-sign no-zero.",
   "WRITE lv_date DD/MM/YYYY.",
   "WRITE lv_time ENVIRONMENT TIME FORMAT.",
 ];

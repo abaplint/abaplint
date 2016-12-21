@@ -4,6 +4,8 @@ import * as Combi from "../combi";
 
 let str = Combi.str;
 let seq = Combi.seq;
+let opt = Combi.opt;
+let alt = Combi.alt;
 
 export class SetHandler extends Statement {
 
@@ -11,7 +13,8 @@ export class SetHandler extends Statement {
     let ret = seq(str("SET HANDLER"),
                   new Reuse.Target(),
                   str("FOR"),
-                  new Reuse.Source());
+                  alt(str("ALL INSTANCES"), new Reuse.Source()),
+                  opt(seq(str("ACTIVATION"), new Reuse.Source())));
 
     return ret;
   }

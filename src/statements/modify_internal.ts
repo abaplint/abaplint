@@ -16,12 +16,14 @@ export class ModifyInternal extends Statement {
 
     let transporting = seq(str("TRANSPORTING"), new Reuse.Field());
 
+    let where = seq(str("WHERE"), new Reuse.Cond());
+
 // make sure this does not conflict with MODIFY database
     let options = alt(seq(index, from),
                       index,
-                      seq(from, transporting),
-                      seq(from, index),
-                      seq(index, from, transporting));
+                      seq(from, transporting, opt(where)),
+                      seq(from, index, opt(transporting)),
+                      seq(index, from, opt(transporting)));
 
 
     let ret = seq(new Reuse.Target(),
