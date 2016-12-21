@@ -54,6 +54,7 @@ export * from "./free_memory";
 export * from "./catch_system_exceptions";
 export * from "./endcatch";
 export * from "./assign_local_copy";
+export * from "./set_extended_check";
 export * from "./split";
 export * from "./sort";
 export * from "./replace";

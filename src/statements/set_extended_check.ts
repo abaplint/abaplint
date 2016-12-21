@@ -1,15 +1,16 @@
 import { Statement } from "./statement";
 import * as Combi from "../combi";
-import * as Reuse from "./reuse";
 
 let str = Combi.str;
 let seq = Combi.seq;
-let opt = Combi.opt;
+let alt = Combi.alt;
 
-export class Skip extends Statement {
+export class SetExtendedCheck extends Statement {
 
   public static get_matcher(): Combi.IRunnable {
-    return seq(str("SKIP"), opt(new Reuse.Source()));
+    let ret = seq(str("SET EXTENDED CHECK"), alt(str("OFF"), str("ON")));
+
+    return ret;
   }
 
 }

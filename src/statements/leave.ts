@@ -5,16 +5,18 @@ import * as Reuse from "./reuse";
 let str = Combi.str;
 let seq = Combi.seq;
 let alt = Combi.alt;
+let opt = Combi.opt;
 
 export class Leave extends Statement {
 
   public static get_matcher(): Combi.IRunnable {
     return seq(str("LEAVE"),
-               alt(str("TO CURRENT TRANSACTION"),
-                   str("TO LIST-PROCESSING"),
-                   seq(str("TO TRANSACTION"), new Reuse.Source()),
-                   str("PROGRAM"),
-                   seq(str("TO SCREEN"), new Reuse.Integer())));
+               opt(alt(str("TO CURRENT TRANSACTION"),
+                       str("TO LIST-PROCESSING"),
+                       str("SCREEN"),
+                       seq(str("TO TRANSACTION"), new Reuse.Source()),
+                       str("PROGRAM"),
+                       seq(str("TO SCREEN"), new Reuse.Source()))));
   }
 
 }

@@ -68,6 +68,12 @@ let tests = [
   " EXPORTING\n" +
   "   wait = abap_true.",
 
+  "CALL FUNCTION 'FM_NAME'\n" +
+  " EXPORTING\n" +
+  "   input = value\n" +
+  " EXCEPTIONS\n" +
+  "   OTHERS.",
+
   "CALL FUNCTION 'ZFOOBAR'\n" +
   " IN BACKGROUND TASK\n" +
   " EXPORTING\n" +
