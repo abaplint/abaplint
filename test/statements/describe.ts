@@ -6,6 +6,7 @@ let tests = [
   "describe distance between <fgs> and <sdf> into l_int in byte mode.",
   "describe field <item> into td.",
   "DESCRIBE FIELD ls_data LENGTH lv_max_length_line IN BYTE MODE.",
+  "describe field lv_field length len in character mode type itype.",
   "DESCRIBE FIELD cv_data LENGTH lv_length IN CHARACTER MODE.",
   "describe field <item> type typ.",
   "describe field e_field edit mask l_mask.",

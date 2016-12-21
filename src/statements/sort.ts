@@ -13,7 +13,11 @@ export class Sort extends Statement {
   public static get_matcher(): Combi.IRunnable {
     let order = alt(str("ASCENDING"), str("DESCENDING"));
 
-    let fields = plus(seq(alt(new Reuse.FieldSub(), new Reuse.FieldSymbol()),
+    let sel = alt(new Reuse.FieldSub(),
+                  new Reuse.FieldSymbol(),
+                  new Reuse.Dynamic());
+
+    let fields = plus(seq(sel,
                           opt(order),
                           opt(str("AS TEXT"))));
 

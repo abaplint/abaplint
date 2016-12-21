@@ -11,11 +11,12 @@ export class Format extends Statement {
 
   public static get_matcher(): Combi.IRunnable {
     let eq = seq(str("="), new Reuse.Source());
+    let value = alt(eq, new Reuse.Field());
 
     let options = per(str("RESET"),
-                      seq(str("INTENSIFIED"), eq),
-                      seq(str("INVERSE"), eq),
-                      seq(str("COLOR"), alt(eq, new Reuse.Field())));
+                      seq(str("INTENSIFIED"), value),
+                      seq(str("INVERSE"), value),
+                      seq(str("COLOR"), value));
     return seq(str("FORMAT"), options);
   }
 

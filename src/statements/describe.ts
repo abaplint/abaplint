@@ -6,6 +6,7 @@ let str = Combi.str;
 let seq = Combi.seq;
 let opt = Combi.opt;
 let alt = Combi.alt;
+let per = Combi.per;
 
 export class Describe extends Statement {
 
@@ -18,7 +19,7 @@ export class Describe extends Statement {
 
     let field = seq(str("FIELD"),
                     new Reuse.Source(),
-                    alt(seq(str("TYPE"), new Reuse.Target(), opt(seq(str("COMPONENTS"), new Reuse.Target()))),
+                    per(seq(str("TYPE"), new Reuse.Target(), opt(seq(str("COMPONENTS"), new Reuse.Target()))),
                         seq(str("LENGTH"), new Reuse.Target(), mode),
                         seq(str("INTO"), new Reuse.Target())));
 

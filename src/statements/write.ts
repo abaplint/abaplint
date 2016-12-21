@@ -22,9 +22,10 @@ export class Write extends Statement {
 
     let options = per(mask,
                       to,
-                      str("EXPONENT 0"),
+                      seq(str("EXPONENT"), new Reuse.Source()),
                       str("NO-GROUPING"),
                       str("NO-ZERO"),
+                      str("NO-GAP"),
                       str("LEFT-JUSTIFIED"),
                       str("RIGHT-JUSTIFIED"),
                       seq(str("ROUND"), new Reuse.Source()),

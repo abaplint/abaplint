@@ -15,7 +15,8 @@ export class InsertDatabase extends Statement {
     let from = seq(target,
                    opt(seq(str("FROM"),
                            opt(str("TABLE")),
-                           new Reuse.Source())));
+                           new Reuse.Source(),
+                           opt(str("ACCEPTING DUPLICATE KEYS")))));
 
     let into = seq(str("INTO"), target, str("VALUES"), new Reuse.Source());
 
