@@ -6,6 +6,7 @@ let tests = [
   "FORM send_mail USING pt_mail_data TYPE ANY TABLE.",
   "FORM foobar USING workarea.",
   "FORM top-of-page.",
+  "FORM name USING foo VALUE(bar).",
   "FORM exit RAISING lcx_exception.",
 ];
 

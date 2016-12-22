@@ -53,6 +53,7 @@ export * from "./set_locale";
 export * from "./commit";
 export * from "./summary";
 export * from "./on_change";
+export * from "./at_user_command";
 export * from "./position";
 export * from "./new_page";
 export * from "./load_of_program";

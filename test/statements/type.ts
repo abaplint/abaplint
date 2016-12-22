@@ -5,6 +5,7 @@ import {Version} from "../../src/version";
 let tests = [
   "TYPES ty_type TYPE c LENGTH 6.",
   "TYPE ty_type TYPE c LENGTH 6.",
+  "TYPES dummy.",
   "TYPES ty_foo_tt TYPE STANDARD TABLE OF lcl_repo=>ty_repo WITH DEFAULT KEY.",
   "TYPES ty_foo_tt TYPE STANDARD TABLE OF lcl_repo=>ty_repo-key WITH DEFAULT KEY.",
   "TYPES ty_foo_tt TYPE STANDARD TABLE OF ty_repo-key WITH DEFAULT KEY.",

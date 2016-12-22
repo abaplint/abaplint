@@ -5,6 +5,7 @@ let tests = [
   "READ TABLE tt_fields ASSIGNING <ls_fbranch> WITH KEY tabname = 'TEXTL'.",
   "READ TABLE lt_lengths INDEX lines( lt_lengths ) INTO lv_length.",
   "READ TABLE lt_obj FROM lv_super TRANSPORTING NO FIELDS.",
+  "READ TABLE lt_table WITH KEY foo-bar BINARY SEARCH.",
   "READ TABLE gt_stack ASSIGNING <ls_stack> INDEX 1.",
   "READ TABLE mt_map WITH TABLE KEY old = iv_id INTO ls_map.",
   "READ TABLE mt_assets TRANSPORTING NO FIELDS WITH KEY table_line = <ls_asset>-url.",

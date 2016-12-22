@@ -20,8 +20,11 @@ export class ModifyInternal extends Statement {
     let where = seq(str("WHERE"), new Reuse.Cond());
 
 // make sure this does not conflict with MODIFY database
+// todo, refactor
     let options = alt(seq(index, from),
                       index,
+                      seq(transporting, where),
+                      seq(index, transporting),
                       seq(from, transporting, opt(where)),
                       seq(from, index, opt(transporting)),
                       seq(index, from, opt(transporting)));

@@ -479,10 +479,16 @@ export class FieldSub extends Combi.Reuse {
   }
 }
 
+export class IncludeName extends Combi.Reuse {
+  public get_runnable() {
+    return reg(/^<?(\/\w+\/)?\w+(~\w+)?>?$/);
+  }
+}
+
 export class Field extends Combi.Reuse {
   public get_runnable() {
 // "&1" can be used for almost anything(field names, method names etc.) in macros
-    return reg(/^&?(\/\w+\/)?\w+(~\w+)?$/);
+    return reg(/^&?\*?(\/\w+\/)?\w+(~\w+)?$/);
   }
 }
 

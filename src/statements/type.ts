@@ -12,7 +12,7 @@ export class Type extends Statement {
   public static get_matcher(): Combi.IRunnable {
     let def = seq(new Reuse.SimpleName(),
                   opt(new Reuse.FieldLength()),
-                  alt(new Reuse.Type(), new Reuse.TypeTable()));
+                  opt(alt(new Reuse.Type(), new Reuse.TypeTable())));
 
     let ret = seq(alt(str("TYPE"), str("TYPES")), def);
 

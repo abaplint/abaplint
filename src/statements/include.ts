@@ -8,6 +8,6 @@ let opt = Combi.opt;
 
 export class Include extends Statement {
   public static get_matcher(): Combi.IRunnable {
-    return seq(str("INCLUDE"), new Reuse.Field(), opt(str("IF FOUND")));
+    return seq(str("INCLUDE"), new Reuse.IncludeName(), opt(str("IF FOUND")));
   }
 }

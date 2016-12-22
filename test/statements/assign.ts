@@ -9,6 +9,7 @@ let tests = [
   "ASSIGN cs_tstcp-param(sdf) TO <lg_f>.",
   "ASSIGN cs_tstcp-param TO <lg_f>.",
   "ASSIGN lo_obj->('HAS_ATTRIBUTES') TO <lv_has_attributes>.",
+  "ASSIGN *foobar TO <INITIAL>.",
   "ASSIGN (classname)=>type TO <local_type>.",
   "assign lt_alv->* to <f_alv_tab>.",
   "ASSIGN <ls_aq_msg>-data TO <lv_data> CASTING TYPE (lv_tabname).",

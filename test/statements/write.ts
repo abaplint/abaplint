@@ -15,6 +15,7 @@ let tests = [
   "WRITE 'Hello' COLOR 6.",
   "write /(100) 'foobar'.",
   "write mark as checkbox.",
+  "WRITE foo INPUT ON.",
   "write line_horizontal_line as line no-gap.",
   "write sym_minus_box as symbol no-gap.",
   "write /(100) 'foobar' color = 4.",
