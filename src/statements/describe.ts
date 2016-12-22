@@ -21,6 +21,8 @@ export class Describe extends Statement {
                     new Reuse.Source(),
                     per(seq(str("TYPE"), new Reuse.Target(), opt(seq(str("COMPONENTS"), new Reuse.Target()))),
                         seq(str("LENGTH"), new Reuse.Target(), mode),
+                        seq(str("DECIMALS"), new Reuse.Target()),
+                        seq(str("EDIT MASK"), new Reuse.Target()),
                         seq(str("INTO"), new Reuse.Target())));
 
     let distance = seq(str("DISTANCE BETWEEN"),
@@ -31,9 +33,7 @@ export class Describe extends Statement {
                        new Reuse.Target(),
                        mode);
 
-    let mask = seq(str("FIELD"), new Reuse.Source(), str("EDIT MASK"), new Reuse.Target());
-
-    return seq(str("DESCRIBE"), alt(table, field, mask, distance));
+    return seq(str("DESCRIBE"), alt(table, field, distance));
   }
 
 }

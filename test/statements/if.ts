@@ -9,6 +9,7 @@ let tests = [
   "IF foo NE 0.",
   "IF go_gui IS NOT BOUND.",
   "IF lv_left >= strlen( mv_bits ).",
+  "if foobar na 'C'.",
   "IF li_node IS BOUND.",
   "IF sy-tabix BETWEEN from AND to.",
   "IF iv_str CA '/'.",

@@ -71,6 +71,7 @@ export class SelectionScreen extends Statement {
                       pos,
                       incl,
                       tab,
+                      str("ULINE"),
                       beginBlock,
                       tabbed,
                       endBlock,

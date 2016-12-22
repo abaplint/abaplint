@@ -9,8 +9,11 @@ let opt = Combi.opt;
 export class SetPFStatus extends Statement {
 
   public static get_matcher(): Combi.IRunnable {
+    let program = seq(str("OF PROGRAM"), new Reuse.Source());
+
     let ret = seq(str("SET PF-STATUS"),
                   new Reuse.Source(),
+                  opt(program),
                   opt(seq(str("EXCLUDING"), new Reuse.Source())));
 
     return ret;

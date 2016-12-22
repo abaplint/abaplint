@@ -13,6 +13,7 @@ export class Find extends Statement {
 
   public static get_matcher(): Combi.IRunnable {
     let options = per(str("IGNORING CASE"),
+                      str("RESPECTING CASE"),
                       seq(str("MATCH OFFSET"), new Reuse.Target()),
                       seq(str("MATCH COUNT"), new Reuse.Target()),
                       seq(str("MATCH LENGTH"), new Reuse.Target()),

@@ -12,6 +12,7 @@ let tests = [
   "FIND REGEX '(.*/)(.*)' IN iv_str SUBMATCHES lv_path rv_filename.",
   "find first occurrence of regex 'foo' in me->line match count l_cnt results result_tab.",
   "FIND ALL OCCURRENCES OF '<style' IN iv_str MATCH COUNT lv_style_tag_open IGNORING CASE.",
+  "find value in text respecting case match offset off match length len.",
 ];
 
 statementType(tests, "FIND", Statements.Find);

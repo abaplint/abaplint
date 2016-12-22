@@ -142,6 +142,7 @@ export class Compare extends Combi.Reuse {
                            str("LE"),
                            str("CS"),
                            str("NS"),
+                           str("NA"),
                            str("NP"),
                            str("O"), // hex comparison operator
                            str("Z"), // hex comparison operator

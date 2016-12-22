@@ -16,6 +16,8 @@ export class Format extends Statement {
     let options = per(str("RESET"),
                       seq(str("INTENSIFIED"), value),
                       seq(str("INVERSE"), value),
+                      seq(str("HOTSPOT"), value),
+                      seq(str("INPUT"), value),
                       seq(str("COLOR"), value));
     return seq(str("FORMAT"), options);
   }

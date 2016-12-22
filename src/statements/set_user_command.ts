@@ -5,10 +5,12 @@ import * as Combi from "../combi";
 let str = Combi.str;
 let seq = Combi.seq;
 
-export class FreeMemory extends Statement {
+export class SetUserCommand extends Statement {
 
   public static get_matcher(): Combi.IRunnable {
-    return seq(str("FREE MEMORY ID"), new Reuse.Source());
+    let ret = seq(str("SET USER-COMMAND"), new Reuse.Source());
+
+    return ret;
   }
 
 }
