@@ -4,8 +4,8 @@ import * as Combi from "../combi";
 
 let str = Combi.str;
 let seq = Combi.seq;
-let opt = Combi.opt;
 let alt = Combi.alt;
+let per = Combi.per;
 
 export class NewPage extends Statement {
 
@@ -15,8 +15,10 @@ export class NewPage extends Statement {
     let print = seq(str("PRINT"), alt(str("OFF"), str("ON")));
 
     return seq(str("NEW-PAGE"),
-               opt(print),
-               opt(line));
+               per(print,
+                   str("NO-TITLE"),
+                   str("NO-HEADING"),
+                   line));
   }
 
 }

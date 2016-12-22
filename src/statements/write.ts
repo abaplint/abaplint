@@ -29,6 +29,7 @@ export class Write extends Statement {
                       str("LEFT-JUSTIFIED"),
                       str("AS LINE"),
                       str("AS ICON"),
+                      str("AS CHECKBOX"),
                       str("AS SYMBOL"),
                       str("RIGHT-JUSTIFIED"),
                       seq(str("ROUND"), new Reuse.Source()),

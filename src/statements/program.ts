@@ -4,11 +4,17 @@ import * as Combi from "../combi";
 
 let str = Combi.str;
 let seq = Combi.seq;
+let opt = Combi.opt;
+let per = Combi.per;
 
 export class Program extends Statement {
 
   public static get_matcher(): Combi.IRunnable {
-    return seq(str("PROGRAM"), new Reuse.Field());
+    let message = seq(str("MESSAGE-ID"), new Reuse.Source());
+    let size = seq(str("LINE-SIZE"), new Reuse.Source());
+    let options = per(message, size);
+
+    return seq(str("PROGRAM"), new Reuse.Field(), opt(options));
   }
 
 }

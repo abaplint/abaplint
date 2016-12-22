@@ -2,8 +2,7 @@ import {statementType} from "../utils";
 import * as Statements from "../../src/statements/";
 
 let tests = [
-  "COLLECT WA_VBBE INTO IT_VBBE.",
-  "COLLECT users.",
+  "LOAD-OF-PROGRAM.",
 ];
 
-statementType(tests, "COLLECT", Statements.Collect);
+statementType(tests, "LOAD-OF-PROGRAM", Statements.LoadOfProgram);

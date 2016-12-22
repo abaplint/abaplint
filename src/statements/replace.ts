@@ -21,7 +21,8 @@ export class Replace extends Statement {
                opt(seq(str("IN"), new Reuse.Target())),
                per(seq(str("WITH"), new Reuse.Source()),
                    seq(str("INTO"), new Reuse.Target())),
-               opt(str("IGNORING CASE")));
+               opt(str("IGNORING CASE")),
+               opt(str("IN CHARACTER MODE")));
   }
 
 }

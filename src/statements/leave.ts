@@ -13,6 +13,7 @@ export class Leave extends Statement {
     return seq(str("LEAVE"),
                opt(alt(str("TO CURRENT TRANSACTION"),
                        str("TO LIST-PROCESSING"),
+                       str("LIST-PROCESSING"),
                        str("SCREEN"),
                        seq(str("TO TRANSACTION"), new Reuse.Source()),
                        str("PROGRAM"),

@@ -4,6 +4,7 @@ import * as Combi from "../combi";
 
 let str = Combi.str;
 let seq = Combi.seq;
+let opt = Combi.opt;
 
 export class SetLocale extends Statement {
 
@@ -12,7 +13,7 @@ export class SetLocale extends Statement {
 
     let ret = seq(str("SET LOCALE LANGUAGE"),
                   new Reuse.Source(),
-                  country);
+                  opt(country));
 
     return ret;
   }

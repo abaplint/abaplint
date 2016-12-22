@@ -3,6 +3,7 @@ import * as Statements from "../../src/statements/";
 
 let tests = [
   "new-page line-size lv_width.",
+  "NEW-PAGE NO-TITLE NO-HEADING.",
   "new-page print off.",
 ];
 

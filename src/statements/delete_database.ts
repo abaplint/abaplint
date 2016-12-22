@@ -12,7 +12,8 @@ export class DeleteDatabase extends Statement {
   public static get_matcher(): Combi.IRunnable {
     let where = seq(str("WHERE"), alt(new Reuse.Cond(), new Reuse.Dynamic()));
     let source = alt(new Reuse.Dynamic(), new Reuse.DatabaseTable());
-    let from = seq(str("FROM"), source, opt(where));
+    let client = str("CLIENT SPECIFIED");
+    let from = seq(str("FROM"), source, opt(client), opt(where));
 
     let table = seq(source, str("FROM TABLE"), new Reuse.Source());
 
