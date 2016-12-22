@@ -4,14 +4,12 @@ import * as Combi from "../combi";
 
 let str = Combi.str;
 let seq = Combi.seq;
-let opt = Combi.opt;
 
-export class GetCursor extends Statement {
+export class Hide extends Statement {
 
   public static get_matcher(): Combi.IRunnable {
-    let line = seq(str("LINE"), new Reuse.Target());
-    let ret = seq(str("GET CURSOR FIELD"), new Reuse.Target(), opt(line));
-    return ret;
+    return seq(str("HIDE"),
+               new Reuse.Source());
   }
 
 }

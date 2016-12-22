@@ -16,14 +16,16 @@ export class UpdateDatabase extends Statement {
                   new Reuse.ParameterListS(),
                   opt(seq(str("WHERE"), new Reuse.Cond())));
 
+    let fromTable = seq(str("FROM"),
+                        opt(str("TABLE")),
+                        new Reuse.Source());
+
     let from = seq(opt(str("CLIENT SPECIFIED")),
-                   str("FROM"),
-                   opt(str("TABLE")),
-                   new Reuse.Source());
+                   opt(fromTable));
 
     let ret = seq(str("UPDATE"),
                   target,
-                  opt(alt(from, set)));
+                  alt(from, set));
 
     return ret;
   }

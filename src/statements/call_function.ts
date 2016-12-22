@@ -6,6 +6,7 @@ let str = Combi.str;
 let seq = Combi.seq;
 let opt = Combi.opt;
 let alt = Combi.alt;
+let per = Combi.per;
 
 export class CallFunction extends Statement {
 
@@ -15,7 +16,7 @@ export class CallFunction extends Statement {
     let background = str("IN BACKGROUND TASK");
     let dest = seq(str("DESTINATION"), new Reuse.Source());
 
-    let options = alt(starting, update, background, dest);
+    let options = alt(starting, update, per(background, dest));
 
     let dynamic = seq(str("PARAMETER-TABLE"), new Reuse.Source(),
                       opt(seq(str("EXCEPTION-TABLE"), new Reuse.Source())));

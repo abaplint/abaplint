@@ -14,7 +14,8 @@ export class ModifyDatabase extends Statement {
 
     let ret = seq(str("MODIFY"),
                   target,
-                  seq(str("FROM"), opt(str("TABLE")), new Reuse.Source()));
+                  alt(seq(str("FROM"), opt(str("TABLE")), new Reuse.Source()),
+                      str("CLIENT SPECIFIED")));
 
     return ret;
   }

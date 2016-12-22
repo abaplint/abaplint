@@ -29,7 +29,7 @@ export class Describe extends Statement {
                        new Reuse.Source(),
                        str("INTO"),
                        new Reuse.Target(),
-                       str("IN BYTE MODE"));
+                       mode);
 
     let mask = seq(str("FIELD"), new Reuse.Source(), str("EDIT MASK"), new Reuse.Target());
 

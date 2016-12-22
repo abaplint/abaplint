@@ -12,11 +12,15 @@ export class InsertDatabase extends Statement {
   public static get_matcher(): Combi.IRunnable {
     let target = alt(new Reuse.DatabaseTable(), new Reuse.Dynamic());
 
+    let client = str("CLIENT SPECIFIED");
+
+    let f = seq(str("FROM"),
+                opt(str("TABLE")),
+                new Reuse.Source(),
+                opt(str("ACCEPTING DUPLICATE KEYS")));
+
     let from = seq(target,
-                   opt(seq(str("FROM"),
-                           opt(str("TABLE")),
-                           new Reuse.Source(),
-                           opt(str("ACCEPTING DUPLICATE KEYS")))));
+                   opt(alt(f, client)));
 
     let into = seq(str("INTO"), target, str("VALUES"), new Reuse.Source());
 

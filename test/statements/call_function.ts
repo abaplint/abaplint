@@ -64,6 +64,12 @@ let tests = [
   "   OTHERS = 1.",
 
   "CALL FUNCTION 'BAPI_TRANSACTION_COMMIT'\n" +
+  " IN BACKGROUND TASK\n" +
+  " DESTINATION iv_rfc_dest\n" +
+  " EXPORTING\n" +
+  "   wait = abap_true.",
+
+  "CALL FUNCTION 'BAPI_TRANSACTION_COMMIT'\n" +
   " DESTINATION iv_rfc_dest\n" +
   " EXPORTING\n" +
   "   wait = abap_true.",
