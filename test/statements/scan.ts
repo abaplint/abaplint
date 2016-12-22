@@ -19,7 +19,15 @@ let tests = [
   "  STRUCTURES      INTO mt_structures\n" +
   "  WITH ANALYSIS\n" +
   "  WITH COMMENTS\n" +
-  "  WITH PRAGMAS    abap_true.",
+  "  WITH PRAGMAS abap_true.",
+
+  "scan abap-source lt_source\n" +
+  "  tokens     into tokens\n" +
+  "  statements into statements\n" +
+  "  keywords   from keywords\n" +
+  "  with analysis\n" +
+  "  with includes\n" +
+  "  without trmac.",
 
   "SCAN ABAP-SOURCE source TOKENS INTO tokens STATEMENTS INTO statements.",
 ];

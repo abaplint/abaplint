@@ -17,11 +17,11 @@ export class Perform extends Statement {
 
     return seq(str("PERFORM"),
                alt(new Reuse.FormName(), new Reuse.Dynamic()),
-               opt(seq(str("IN PROGRAM"), opt(new Reuse.Field()))),
-               opt(str("IF FOUND")),
+               opt(seq(str("IN PROGRAM"), alt(new Reuse.Dynamic(), opt(new Reuse.Field())))),
                opt(tables),
                opt(using),
-               opt(changing));
+               opt(changing),
+               opt(str("IF FOUND")));
   }
 
 }

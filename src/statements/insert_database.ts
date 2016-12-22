@@ -22,7 +22,11 @@ export class InsertDatabase extends Statement {
     let from = seq(target,
                    opt(alt(f, client)));
 
-    let into = seq(str("INTO"), target, str("VALUES"), new Reuse.Source());
+    let into = seq(str("INTO"),
+                   target,
+                   opt(str("CLIENT SPECIFIED")),
+                   str("VALUES"),
+                   new Reuse.Source());
 
     return seq(str("INSERT"), alt(from, into));
   }

@@ -13,6 +13,7 @@ export class Scan extends Statement {
     let statements = seq(str("STATEMENTS INTO"), new Reuse.Target());
     let levels = seq(str("LEVELS INTO"), new Reuse.Target());
     let structures = seq(str("STRUCTURES INTO"), new Reuse.Target());
+    let keywords = seq(str("KEYWORDS FROM"), new Reuse.Source());
 
     let ret = seq(str("SCAN ABAP-SOURCE"),
                   new Reuse.Source(),
@@ -20,8 +21,11 @@ export class Scan extends Statement {
                   statements,
                   opt(levels),
                   opt(structures),
+                  opt(keywords),
                   opt(str("WITH ANALYSIS")),
                   opt(str("WITH COMMENTS")),
+                  opt(str("WITH INCLUDES")),
+                  opt(str("WITHOUT TRMAC")),
                   opt(seq(str("WITH PRAGMAS"), new Reuse.Field())));
 
     return ret;

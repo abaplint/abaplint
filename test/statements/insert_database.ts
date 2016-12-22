@@ -6,6 +6,7 @@ let tests = [
   "INSERT zfoo.",
   "INSERT INTO zuser VALUES ls_user.",
   "INSERT zfoo CLIENT SPECIFIED.",
+  "INSERT INTO ztable client specified VALUES ls_values.",
   "insert zdata from table lt_table accepting duplicate keys.",
   "INSERT (c_tabname) FROM ls_table.",
 ];

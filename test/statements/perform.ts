@@ -6,6 +6,7 @@ let tests = [
   "PERFORM create_variant USING <ls_classdf>-clsname.",
   "PERFORM upfile CHANGING p_upfile.",
   "PERFORM (lv_form) IN PROGRAM.",
+  "perform (lv_form) in program (lv_prog) changing lv_foo if found.",
   "PERFORM sub TABLES bar USING foo.",
   "PERFORM run.",
 ];
