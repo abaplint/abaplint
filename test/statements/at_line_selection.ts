@@ -2,8 +2,7 @@ import {statementType} from "../utils";
 import * as Statements from "../../src/statements/";
 
 let tests = [
-  "ULINE.",
-  "ULINE /(80).",
+  "AT LINE-SELECTION.",
 ];
 
-statementType(tests, "ULINE", Statements.Uline);
+statementType(tests, "AT LINE-SELECTION", Statements.AtLineSelection);

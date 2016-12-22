@@ -20,6 +20,8 @@ export class Write extends Statement {
 
     let to = seq(str("TO"), new Reuse.Target());
 
+    let colorOpt = alt(str("INVERSE"), str("INTENSIFIED"));
+
     let options = per(mask,
                       to,
                       seq(str("EXPONENT"), new Reuse.Source()),
@@ -39,7 +41,7 @@ export class Write extends Statement {
                       seq(str("UNIT"), new Reuse.Source()),
                       str("INTENSIFIED OFF"),
                       seq(str("DECIMALS"), new Reuse.Source()),
-                      seq(str("COLOR"), opt(str("=")), new Reuse.Source(), opt(str("INVERSE"))),
+                      seq(str("COLOR"), opt(str("=")), new Reuse.Source(), opt(colorOpt)),
                       seq(str("CURRENCY"), new Reuse.Source()),
                       str("NO-SIGN"));
 

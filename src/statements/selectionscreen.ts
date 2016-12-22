@@ -7,6 +7,7 @@ let str = Combi.str;
 let seq = Combi.seq;
 let alt = Combi.alt;
 let opt = Combi.opt;
+let per = Combi.per;
 let reg = Combi.regex;
 let tok = Combi.tok;
 
@@ -31,14 +32,17 @@ export class SelectionScreen extends Statement {
     let beginLine = str("BEGIN OF LINE");
     let endLine = str("END OF LINE");
 
+    let commentOpt = per(seq(str("FOR FIELD"), new Reuse.Field()),
+                         seq(str("MODIF ID"), new Reuse.Field()));
+
     let comment = seq(str("COMMENT"),
                       opt(reg(/^\/?\d+$/)),
                       alt(tok(ParenLeft), tok(WParenLeft)),
                       new Reuse.Integer(),
                       tok(ParenRightW),
                       opt(new Reuse.Source()),
-                      opt(seq(str("FOR FIELD"), new Reuse.Field())),
-                      opt(seq(str("MODIF ID"), new Reuse.Field())));
+                      opt(commentOpt));
+
 
     let tab = seq(str("TAB"),
                   tok(WParenLeft),
