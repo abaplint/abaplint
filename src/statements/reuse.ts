@@ -15,6 +15,7 @@ let str = Combi.str;
 let opt = Combi.opt;
 let tok = Combi.tok;
 let ver = Combi.ver;
+let per = Combi.per;
 let star = Combi.star;
 let plus = Combi.plus;
 
@@ -547,12 +548,12 @@ export class TypeTable extends Combi.Reuse {
                         opt(str("OF")),
                         opt(str("REF TO")),
                         opt(new TypeName()),
+                        opt(str("WITH HEADER LINE")),
                         opt(key));
 
     let old = seq(new TypeName(),
-                  str("OCCURS"),
-                  new Integer(),
-                  opt(str("WITH HEADER LINE")));
+                  per(seq(str("OCCURS"), new Integer()),
+                      str("WITH HEADER LINE")));
 
     let ret = seq(likeType,
                   alt(old, typetable));

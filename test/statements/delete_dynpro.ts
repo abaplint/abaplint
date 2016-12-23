@@ -2,9 +2,7 @@ import {statementType} from "../utils";
 import * as Statements from "../../src/statements/";
 
 let tests = [
-  "ULINE.",
-  "ULINE (92).",
-  "ULINE /(80).",
+  "DELETE DYNPRO lv_dyn.",
 ];
 
-statementType(tests, "ULINE", Statements.Uline);
+statementType(tests, "DELETE DYNPRO", Statements.DeleteDynpro);

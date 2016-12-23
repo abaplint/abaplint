@@ -2,9 +2,7 @@ import {statementType} from "../utils";
 import * as Statements from "../../src/statements/";
 
 let tests = [
-  "ULINE.",
-  "ULINE (92).",
-  "ULINE /(80).",
+  "DETAIL.",
 ];
 
-statementType(tests, "ULINE", Statements.Uline);
+statementType(tests, "DETAIL", Statements.Detail);

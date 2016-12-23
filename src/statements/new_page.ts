@@ -16,7 +16,7 @@ export class NewPage extends Statement {
 
     return seq(str("NEW-PAGE"),
                per(print,
-                   str("NO-TITLE"),
+                   alt(str("NO-TITLE"), str("WITH-TITLE")),
                    str("NO-HEADING"),
                    line));
   }

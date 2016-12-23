@@ -26,6 +26,7 @@ let tests = [
   "write lv_int_value to lv_ext_value exponent lv_exponent.",
   "WRITE AT 10 'sdf'.",
   "WRITE 25 'hello'.",
+  "WRITE (4) lv_var NO-GAP.",
   "WRITE /.",
   "write l_x right-justified to ls_dump.",
   "WRITE space COLOR lv_col INTENSIFIED OFF.",

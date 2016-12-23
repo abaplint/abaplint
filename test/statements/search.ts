@@ -2,9 +2,7 @@ import {statementType} from "../utils";
 import * as Statements from "../../src/statements/";
 
 let tests = [
-  "ULINE.",
-  "ULINE (92).",
-  "ULINE /(80).",
+  "SEARCH foo-bar FOR '/' STARTING AT 2.",
 ];
 
-statementType(tests, "ULINE", Statements.Uline);
+statementType(tests, "SEARCH", Statements.Search);

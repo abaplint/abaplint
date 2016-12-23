@@ -13,6 +13,7 @@ let tests = [
   "data foo type ref to ZCL_FOOBAR.",
   "data foo type ref to ZCL_FOOBAR .",
   "data lt_foo LIKE STANDARD TABLE OF ld_font_family.",
+  "data lt_data type table of d020s with header line.",
   "DATA sdf TYPE c ##NEEDED.",
   "Data foo(89) type c.",
   "data foo type char100.",

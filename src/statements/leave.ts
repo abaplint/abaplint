@@ -10,9 +10,11 @@ let opt = Combi.opt;
 export class Leave extends Statement {
 
   public static get_matcher(): Combi.IRunnable {
+    let ret = seq(str("AND RETURN TO SCREEN"), new Reuse.Source());
+
     return seq(str("LEAVE"),
                opt(alt(str("TO CURRENT TRANSACTION"),
-                       str("TO LIST-PROCESSING"),
+                       seq(str("TO LIST-PROCESSING"), opt(ret)),
                        str("LIST-PROCESSING"),
                        str("SCREEN"),
                        seq(str("TO TRANSACTION"), new Reuse.Source()),

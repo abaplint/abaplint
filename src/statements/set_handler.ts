@@ -13,9 +13,9 @@ export class SetHandler extends Statement {
   public static get_matcher(): Combi.IRunnable {
     let ret = seq(str("SET HANDLER"),
                   plus(new Reuse.Target()),
-                  str("FOR"),
-                  alt(str("ALL INSTANCES"), new Reuse.Source()),
-                  opt(seq(str("ACTIVATION"), new Reuse.Source())));
+                  opt(seq(str("FOR"),
+                          alt(str("ALL INSTANCES"), new Reuse.Source()),
+                          opt(seq(str("ACTIVATION"), new Reuse.Source())))));
 
     return ret;
   }

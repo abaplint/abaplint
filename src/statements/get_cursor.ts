@@ -13,7 +13,10 @@ export class GetCursor extends Statement {
 
     let field = seq(str("FIELD"), new Reuse.Target());
 
-    let ret = seq(str("GET CURSOR"), per(line, field));
+    let offset = seq(str("OFFSET"), new Reuse.Target());
+
+    let ret = seq(str("GET CURSOR"),
+                  per(line, field, offset));
 
     return ret;
   }

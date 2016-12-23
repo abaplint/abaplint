@@ -1,7 +1,7 @@
 import {Statement} from "./statement";
 import * as Combi from "../combi";
 import * as Reuse from "./reuse";
-import {ParenLeft, ParenRightW} from "../tokens/";
+import {ParenLeft, ParenRightW, WParenLeft} from "../tokens/";
 
 let str = Combi.str;
 let seq = Combi.seq;
@@ -45,7 +45,8 @@ export class Write extends Statement {
                       seq(str("CURRENCY"), new Reuse.Source()),
                       str("NO-SIGN"));
 
-    let complex = seq(str("/"), opt(seq(tok(ParenLeft), reg(/^\d+$/), tok(ParenRightW))));
+    let complex = alt(seq(str("/"), opt(seq(tok(ParenLeft), reg(/^\d+$/), tok(ParenRightW)))),
+                      seq(tok(WParenLeft), reg(/^\d+$/), tok(ParenRightW)));
 
     let ret = seq(str("WRITE"),
                   opt(alt(at, complex)),
