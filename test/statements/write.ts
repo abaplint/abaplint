@@ -6,6 +6,7 @@ let tests = [
   "WRITE / 'hello'.",
   "WRITE lv_row TO lv_char.",
   "write lc_val to lv_time USING EDIT MASK '__:__:__'.",
+  "WRITE lv_flag AS CHECKBOX INPUT OFF NO-GAP.",
   "WRITE lv_value TO lv_value_c EXPONENT 0 NO-GROUPING NO-SIGN.",
   "WRITE pv_qty UNIT pv_uom TO lv_text1.",
   "write <item> to lv_value no-grouping no-sign decimals 10.",

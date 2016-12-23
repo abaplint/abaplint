@@ -122,6 +122,7 @@ export * from "./close_cursor";
 export * from "./leave";
 export * from "./initialization";
 export * from "./start";
+export * from "./export_dynpro";
 export * from "./end_of_selection";
 export * from "./search";
 export * from "./selectionscreen";

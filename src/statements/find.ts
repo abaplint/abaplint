@@ -23,7 +23,7 @@ export class Find extends Statement {
     let ret = seq(str("FIND"),
                   opt(alt(str("FIRST OCCURRENCE OF"),
                           str("ALL OCCURRENCES OF"))),
-                  opt(str("REGEX")),
+                  opt(alt(str("REGEX"), str("SUBSTRING"))),
                   new Reuse.Source(),
                   str("IN"),
                   opt(str("TABLE")),

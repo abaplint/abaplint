@@ -15,6 +15,11 @@ export class InsertInternal extends Statement {
     let index = seq(str("INDEX"), new Reuse.Source());
     let initial = str("INITIAL LINE");
 
+    let from = seq(str("FROM"),
+                   new Reuse.Source(),
+                   str("TO"),
+                   new Reuse.Source());
+
     let foo = seq(str("INTO"),
                   opt(str("TABLE")),
                   new Reuse.Source(),
@@ -24,7 +29,9 @@ export class InsertInternal extends Statement {
     let ret = seq(str("INSERT"),
                   alt(initial,
                       new Reuse.Target(),
-                      seq(opt(str("LINES OF")), target)),
+                      seq(opt(str("LINES OF")),
+                          target,
+                          opt(from))),
                   alt(index, foo));
 
     return ret;

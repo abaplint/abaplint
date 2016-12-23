@@ -34,6 +34,8 @@ export class Select extends Statement {
                          new Reuse.Target());
     let into = alt(intoList, intoTable, intoSimple);
 
+    let aas = seq(str("AS"), new Reuse.Field());
+
     let where = seq(str("WHERE"), alt(new Reuse.Cond(), new Reuse.Dynamic()));
 
     let order = seq(str("ORDER BY"), alt(plus(new Reuse.Field()), str("PRIMARY KEY"), new Reuse.Dynamic()));
@@ -44,7 +46,12 @@ export class Select extends Statement {
 
     let fields = alt(str("*"), count, plus(new Reuse.Field()));
 
-    let join = seq(str("INNER JOIN"), new Reuse.DatabaseTable(), str("ON"), plus(new Reuse.Cond()));
+    let join = seq(opt(str("INNER")),
+                   str("JOIN"),
+                   new Reuse.DatabaseTable(),
+                   opt(aas),
+                   str("ON"),
+                   plus(new Reuse.Cond()));
 
     let up = seq(str("UP TO"), new Reuse.Source(), str("ROWS"));
 

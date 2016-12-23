@@ -12,7 +12,9 @@ export class Program extends Statement {
   public static get_matcher(): Combi.IRunnable {
     let message = seq(str("MESSAGE-ID"), new Reuse.Source());
     let size = seq(str("LINE-SIZE"), new Reuse.Source());
-    let options = per(message, size);
+    let heading = str("NO STANDARD PAGE HEADING");
+    let line = seq(str("LINE-SIZE"), new Reuse.Source());
+    let options = per(message, size, heading, line);
 
     return seq(str("PROGRAM"), new Reuse.Field(), opt(options));
   }

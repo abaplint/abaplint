@@ -125,6 +125,7 @@ export class Compare extends Combi.Reuse {
     let operator = seq(opt(str("NOT")),
                        alt(str("="),
                            str("<>"),
+                           str("><"),
                            str("<"),
                            str(">"),
                            str("<="),

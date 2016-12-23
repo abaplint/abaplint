@@ -85,7 +85,15 @@ export default class Runner {
   public static issues(files: Array<ParsedFile>, conf: Config): Array<Issue> {
     let issues: Array<Issue> = [];
 
+    let bar = undefined;
+    if (conf.getShowProgress()) {
+      bar = new ProgressBar(":percent - Finding Issues - :filename",
+                            {total: files.length});
+    }
+
     for (let file of files) {
+      if (bar) { bar.tick({filename: file.getFilename()}); }
+
       for (let key in Rules) {
         let rule: Rules.IRule = new Rules[key]();
         if (rule.getKey && conf.readByKey(rule.getKey(), "enabled") === true) {

@@ -1,7 +1,7 @@
 import { Statement } from "./statement";
 import * as Reuse from "./reuse";
 import * as Combi from "../combi";
-import {ParenLeft, ParenRight} from "../tokens/";
+import {ParenLeft, ParenRight, ParenRightW} from "../tokens/";
 
 let str = Combi.str;
 let seq = Combi.seq;
@@ -16,7 +16,10 @@ export class Form extends Statement {
   public static get_matcher(): Combi.IRunnable {
     let fieldName = reg(/^\w+$/);
 
-    let value = seq(str("VALUE"), tok(ParenLeft), fieldName, tok(ParenRight));
+    let value = seq(str("VALUE"),
+                    tok(ParenLeft),
+                    fieldName,
+                    alt(tok(ParenRight), tok(ParenRightW)));
 
     let field = seq(alt(fieldName, value), opt(alt(new Reuse.Type(), new Reuse.TypeTable())));
 

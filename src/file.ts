@@ -25,7 +25,8 @@ export class File {
 }
 
 export class ParsedFile extends File {
-
+// tokens vs statements: pragmas are part of tokens but not in statements
+// todo: need some better way of handling pragmas
   private tokens: Array<Token>;
   private statements: Array<Statement>;
   private root: RootNode;
