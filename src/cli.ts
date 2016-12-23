@@ -65,8 +65,7 @@ if (argv["h"] !== undefined || argv["help"] !== undefined) {
 } else {
   for (const file of argv._) {
     glob.sync(file, {nosort: true}).forEach((filename) => {
-      let file = new File(filename, fs.readFileSync(filename, "utf8"));
-      files.push(file);
+      files.push(new File(filename, fs.readFileSync(filename, "utf8")));
     } );
   }
 
