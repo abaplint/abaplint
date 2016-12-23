@@ -20,6 +20,7 @@ export class SyntaxCheck extends Statement {
     let messageId = seq(str("MESSAGE-ID"), new Reuse.Target());
     let message = seq(str("MESSAGE"), new Reuse.Target());
     let id = seq(str("ID"), new Reuse.Field(), str("TABLE"), new Reuse.Target());
+    let replacing = seq(str("REPLACING"), new Reuse.Target());
 
     let syntax = seq(str("SYNTAX-CHECK FOR"),
                      new Reuse.Source(),
@@ -31,6 +32,7 @@ export class SyntaxCheck extends Statement {
                      str("WORD"),
                      new Reuse.Target(),
                      opt(program),
+                     opt(replacing),
                      str("DIRECTORY ENTRY"),
                      new Reuse.Source(),
                      opt(frame),

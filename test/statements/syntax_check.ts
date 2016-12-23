@@ -27,6 +27,21 @@ let tests = [
   "    WORD       lv_word\n" +
   "    OFFSET     lv_offset\n" +
   "    MESSAGE-ID lv_id.",
+
+  "SYNTAX-CHECK FOR source_code\n" +
+  "  MESSAGE lv_message\n" +
+  "  LINE    lv_line\n" +
+  "  OFFSET  lv_offset\n" +
+  "  WORD    lv_word\n" +
+  "  PROGRAM lv_progname\n" +
+  "  REPLACING lv_replace\n" +
+  "  DIRECTORY ENTRY lv_directory\n" +
+  "  FRAME ENTRY lv_frame\n" +
+  "  INCLUDE lv_include\n" +
+  "  MESSAGE-ID lv_id\n" +
+  "  ID main_id TABLE lt_main\n" +
+  "  ID warn_id TABLE lt_warn\n" +
+  "  ID desc_id TABLE lt_desc.",
 ];
 
 statementType(tests, "SYNTAX-CHECK", Statements.SyntaxCheck);

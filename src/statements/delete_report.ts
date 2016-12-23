@@ -12,7 +12,7 @@ export class DeleteReport extends Statement {
     let state = seq(str("STATE"), new Reuse.Source());
 
     return seq(str("DELETE REPORT"),
-               new Reuse.IncludeName(),
+               new Reuse.Source(),
                opt(state));
   }
 

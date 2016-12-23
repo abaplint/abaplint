@@ -109,9 +109,17 @@ let tests = [
 
   "CALL FUNCTION 'WDYC_GET_OBJECT'\n" +
   "  PARAMETER-TABLE\n" +
-  "  lt_fm_param\n" +
+  "    lt_fm_param\n" +
   "  EXCEPTION-TABLE\n" +
-  "  lt_fm_exception.\n",
+  "    lt_fm_exception.\n",
+
+  "CALL FUNCTION 'DYNPRO_DISPLAY'\n" +
+  "  EXPORTING\n" +
+  "    PROGRAM   = lv_program\n" +
+  "    DYNPRO    = lv_dynpro\n" +
+  "    FIELDNAME = lv_field\n" +
+  "  EXCEPTIONS\n" +
+  "    DYNPRO_NOT_FOUND.",
 ];
 
 statementType(tests, "CALL FUNCTION", Statements.CallFunction);

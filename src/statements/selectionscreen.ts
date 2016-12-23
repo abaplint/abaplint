@@ -26,7 +26,8 @@ export class SelectionScreen extends Statement {
     let beginScreen = seq(str("BEGIN OF SCREEN"),
                           new Reuse.Integer(),
                           opt(seq(str("AS"), alt(str("WINDOW"), str("SUBSCREEN")))),
-                          opt(seq(str("TITLE"), new Reuse.Source())));
+                          opt(seq(str("TITLE"), new Reuse.Source())),
+                          opt(str("NO INTERVALS")));
 
     let endScreen = seq(str("END OF SCREEN"), new Reuse.Integer());
 
