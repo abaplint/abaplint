@@ -3,18 +3,20 @@ import Position from "../position";
 import {BasicNode, StatementNode, TokenNode, ReuseNode} from ".././node";
 
 export abstract class Statement extends StatementNode {
-// todo, perhaps the tokens var can be removed, and children used instead
-  private tokens: Array<Token>;
 
-  public constructor(tokens: Array<Token>, children: Array<BasicNode>) {
+  public constructor(children: Array<BasicNode>) {
     super();
-    this.tokens = tokens;
     this.children = children;
+
+    if (children.length === 0) {
+      throw "statement: zero children";
+    }
 
     // validate child nodes
     children.forEach((c) => {
       if (!(c instanceof TokenNode || c instanceof ReuseNode)) {
-        throw "statement: not tokennode";
+//        console.trace();
+        throw "statement: not token or reuse node";
       }
     });
   }
@@ -48,11 +50,12 @@ export abstract class Statement extends StatementNode {
   }
 
   public getStart(): Position {
-    return this.tokens[0].getPos();
+    return this.getTokens()[0].getPos();
   }
 
   public getEnd(): Position {
-    let last = this.tokens[this.tokens.length - 1];
+    let tokens = this.getTokens();
+    let last = tokens[tokens.length - 1];
 
     let pos = new Position(last.getPos().getRow(),
                            last.getPos().getCol() + last.getStr().length);
@@ -61,13 +64,19 @@ export abstract class Statement extends StatementNode {
   }
 
   public getTokens(): Array<Token> {
-    return this.tokens;
+    let tokens: Array<Token> = [];
+
+    this.getChildren().forEach((c) => {
+      tokens = tokens.concat(this.toTokens(c));
+    });
+
+    return tokens;
   }
 
   public concatTokens(): string {
     let str = "";
     let prev: Token;
-    for (let token of this.tokens) {
+    for (let token of this.getTokens()) {
       if (token instanceof Pragma) {
         continue;
       }
@@ -87,6 +96,25 @@ export abstract class Statement extends StatementNode {
   public getTerminator(): string {
     return this.getTokens()[this.getTokens().length - 1].getStr();
   }
+
+  private toTokens(b: BasicNode): Array<Token> {
+    let tokens: Array<Token> = [];
+
+    if (b instanceof TokenNode) {
+      tokens.push((b as TokenNode).getToken());
+    }
+
+    b.getChildren().forEach((c) => {
+      if (c instanceof TokenNode) {
+        tokens.push((c as TokenNode).getToken());
+      } else {
+        tokens = tokens.concat(this.toTokens(c));
+      }
+    });
+
+    return tokens;
+  }
+
 }
 
 export class Unknown extends Statement { }

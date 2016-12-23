@@ -565,7 +565,6 @@ export class Combi {
     this.ver = ver;
 
     tokens = this.removePragma(tokens);
-
     let input = new Result(tokens);
 
     let result = runnable.run([input]);

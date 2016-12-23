@@ -1,6 +1,7 @@
 import * as Tokens from "./tokens/";
 import * as Statements from "./statements/";
 import {Combi} from "./combi";
+import {TokenNode} from "./node";
 import {Statement, Unknown, Empty, Comment, MacroContent} from "./statements/statement";
 import {Version} from "./version";
 
@@ -36,6 +37,14 @@ export default class Parser {
     }
   }
 
+  private static tokensToNodes(tokens: Array<Tokens.Token>): Array<TokenNode> {
+    let ret: Array<TokenNode> = [];
+
+    tokens.forEach((t) => {ret.push(new TokenNode("Unknown", t)); });
+
+    return ret;
+  }
+
   private static macros() {
     let result: Array<Statement> = [];
     let define = false;
@@ -46,7 +55,7 @@ export default class Parser {
       } else if (statement instanceof Statements.Enddefine) {
         define = false;
       } else if (statement instanceof Unknown && define === true) {
-        statement = new MacroContent(statement.getTokens(), []);
+        statement = new MacroContent(this.tokensToNodes(statement.getTokens()));
       }
 
       result.push(statement);
@@ -68,9 +77,9 @@ export default class Parser {
     for (let statement of this.statements) {
       let length = statement.getTokens().length;
       let last = statement.getTokens()[length - 1];
-// console.dir(statement.getTokens());
+
       if (length === 1 && last instanceof Tokens.Punctuation) {
-        statement = new Empty(statement.getTokens(), []);
+        statement = new Empty(this.tokensToNodes(statement.getTokens()));
       } else if (statement instanceof Unknown
           && last instanceof Tokens.Punctuation) {
         statement = this.match(statement, ver);
@@ -86,12 +95,14 @@ export default class Parser {
     test = test ? test.concat(this.map[""]) : this.map[""];
 
     for (let st of test) {
+      let tokens = statement.getTokens();
+
       let match = Combi.run(Statements[st].get_matcher(),
-                            this.removeLast(statement.getTokens()),
+                            this.removeLast(tokens),
                             ver);
       if (match) {
-//        let root = new StatementNode(st).setChildren(match);
-        return new Statements[st](statement.getTokens(), match);
+        let last = tokens[tokens.length - 1];
+        return new Statements[st](match.concat(new TokenNode("Terminator", last)));
       }
     }
     return statement;
@@ -101,11 +112,11 @@ export default class Parser {
   private static process(tokens: Array<Tokens.Token>) {
     let add: Array<Tokens.Token> = [];
     let pre: Array<Tokens.Token> = [];
-    let ukn = (t) => { this.statements.push(new Unknown(t, [])); };
+    let ukn = (t) => { this.statements.push(new Unknown(this.tokensToNodes(t))); };
 
     for (let token of tokens) {
       if (token instanceof Tokens.Comment) {
-        this.statements.push(new Comment([token], []));
+        this.statements.push(new Comment(this.tokensToNodes([token])));
         continue;
       }
 

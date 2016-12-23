@@ -1,4 +1,4 @@
-import {Token} from "./tokens/";
+import {Token, Pragma} from "./tokens/";
 import {Statement} from "./statements/statement";
 import {RootNode} from "./node";
 
@@ -37,8 +37,18 @@ export class ParsedFile extends File {
     this.root       = root;
   }
 
-  public getTokens(): Array<Token> {
-    return this.tokens;
+  public getTokens(withPragmas = true): Array<Token> {
+    if (withPragmas === true) {
+      return this.tokens;
+    } else {
+      let tokens = [];
+      this.tokens.forEach((t) => {
+        if (!(t instanceof Pragma)) {
+          tokens.push(t);
+        }
+      });
+      return tokens;
+    }
   }
 
   public getRoot(): RootNode {

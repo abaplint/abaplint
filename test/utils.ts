@@ -18,7 +18,7 @@ function run(abap: string, text: string, type, version = Version.v750) {
     let compare = slist[0] instanceof type;
     expect(compare).to.equals(true);
 // assumption: no colons in input
-    expect(slist[0].getTokens().length).to.equal(file.getTokens().length);
+    expect(slist[0].getTokens().length).to.equal(file.getTokens(false).length);
   });
 }
 

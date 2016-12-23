@@ -1,3 +1,4 @@
+import * as Tokens from "./tokens/";
 import {File, ParsedFile} from "./file";
 import Config from "./config";
 import * as Rules from "./rules/";
@@ -6,6 +7,7 @@ import Parser from "./parser";
 import {Issue} from "./issue";
 import Nesting from "./nesting";
 import Registry from "./registry";
+import {TokenNode} from "./node";
 import {Version} from "./version";
 import {Define} from "./statements";
 import {MacroCall, Unknown, Statement} from "./statements/statement";
@@ -69,7 +71,7 @@ export default class Runner {
       f.getStatements().forEach((s) => {
         if (s instanceof Unknown &&
             reg.isMacro(s.getTokens()[0].getStr())) {
-          statements.push(new MacroCall(s.getTokens(), []));
+          statements.push(new MacroCall(this.tokensToNodes(s.getTokens())));
         } else {
           statements.push(s);
         }
@@ -135,6 +137,13 @@ export default class Runner {
     return false;
   }
 
+  private static tokensToNodes(tokens: Array<Tokens.Token>): Array<TokenNode> {
+    let ret: Array<TokenNode> = [];
+
+    tokens.forEach((t) => {ret.push(new TokenNode("Unknown", t)); });
+
+    return ret;
+  }
 }
 
 exports.File = File;
