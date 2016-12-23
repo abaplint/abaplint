@@ -6,6 +6,7 @@ let tests = [
   "AT SELECTION-SCREEN OUTPUT.",
   "AT SELECTION-SCREEN ON EXIT-COMMAND.",
   "AT SELECTION-SCREEN ON VALUE-REQUEST FOR so_foo-low.",
+  "at selection-screen on radiobutton group grp1.",
   "AT SELECTION-SCREEN ON p_trkorr.",
   "AT SELECTION-SCREEN ON VALUE-REQUEST FOR p_path.",
 ];

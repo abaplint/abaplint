@@ -21,7 +21,8 @@ export class Class extends Statement {
     let duration = seq(str("DURATION"), time);
 
     let blah = per(alt(str("PUBLIC"), str("LOCAL")),
-                   alt(str("FINAL"), str("ABSTRACT")),
+                   str("FINAL"),
+                   str("ABSTRACT"),
                    seq(str("INHERITING FROM"), new Reuse.ClassName()),
                    create,
                    str("FOR TESTING"),

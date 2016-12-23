@@ -21,10 +21,13 @@ export class SelectOption extends Statement {
 
     let modif = seq(str("MODIF ID"), new Reuse.Field());
 
+    let visible = seq(str("VISIBLE LENGTH"), new Reuse.Source());
+
     let options = per(def,
                       option,
                       memory,
                       match,
+                      visible,
                       modif,
                       str("NO-EXTENSION"),
                       str("NO INTERVALS"),

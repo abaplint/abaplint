@@ -10,7 +10,8 @@ let opt = Combi.opt;
 export class Raise extends Statement {
 
   public static get_matcher(): Combi.IRunnable {
-    let clas = seq(str("EXCEPTION"),
+    let clas = seq(opt(str("RESUMABLE")),
+                   str("EXCEPTION"),
                    opt(str("TYPE")),
                    new Reuse.ClassName(),
                    opt(seq(str("EXPORTING"), new Reuse.ParameterListS())));

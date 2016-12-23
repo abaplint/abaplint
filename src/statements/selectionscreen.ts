@@ -19,7 +19,8 @@ export class SelectionScreen extends Statement {
     let beginBlock = seq(str("BEGIN OF BLOCK"),
                          blockName,
                          opt(str("WITH FRAME")),
-                         opt(seq(str("TITLE"), new Reuse.Source())));
+                         opt(seq(str("TITLE"), new Reuse.Source())),
+                         opt(str("NO INTERVALS")));
     let endBlock = seq(str("END OF BLOCK"), blockName);
 
     let beginScreen = seq(str("BEGIN OF SCREEN"),

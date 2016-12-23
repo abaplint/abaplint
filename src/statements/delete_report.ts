@@ -1,15 +1,14 @@
 import { Statement } from "./statement";
-import * as Reuse from "./reuse";
 import * as Combi from "../combi";
+import * as Reuse from "./reuse";
 
 let str = Combi.str;
 let seq = Combi.seq;
 
-export class Close extends Statement {
+export class DeleteReport extends Statement {
 
   public static get_matcher(): Combi.IRunnable {
-    let ret = seq(str("CLOSE DATASET"), new Reuse.Field());
-    return ret;
+    return seq(str("DELETE REPORT"), new Reuse.IncludeName());
   }
 
 }

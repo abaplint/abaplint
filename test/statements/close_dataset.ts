@@ -5,4 +5,4 @@ let tests = [
   "CLOSE DATASET lv_default_file_name.",
 ];
 
-statementType(tests, "CLOSE", Statements.Close);
+statementType(tests, "CLOSE", Statements.CloseDataset);
