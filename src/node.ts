@@ -8,7 +8,6 @@ function className(cla) {
 
 export abstract class BasicNode {
   protected children: Array<BasicNode>;
-  private parent: BasicNode;
 
   public constructor() {
     this.children = [];
@@ -16,21 +15,10 @@ export abstract class BasicNode {
 
   public addChild(n: BasicNode): BasicNode {
     this.children.push(n);
-    n.setParent(this);
     return this;
   }
 
-  public getParent(): BasicNode {
-    return this.parent;
-  }
-
-// todo, not sure this is needed
-  public setParent(p: BasicNode): void {
-    this.parent = p;
-  }
-
   public setChildren(children: Array<BasicNode>): BasicNode {
-// todo, set parents?
     this.children = children;
     return this;
   }

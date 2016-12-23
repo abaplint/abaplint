@@ -1,6 +1,6 @@
 import { Token, Pragma } from "../tokens/";
 import Position from "../position";
-import {BasicNode, StatementNode} from ".././node";
+import {BasicNode, StatementNode, TokenNode, ReuseNode} from ".././node";
 
 export abstract class Statement extends StatementNode {
 // todo, perhaps the tokens var can be removed, and children used instead
@@ -11,7 +11,12 @@ export abstract class Statement extends StatementNode {
     this.tokens = tokens;
     this.children = children;
 
-    // todo, error if all children are not TokenNodes?
+    // validate child nodes
+    children.forEach((c) => {
+      if (!(c instanceof TokenNode || c instanceof ReuseNode)) {
+        throw "statement: not tokennode";
+      }
+    });
   }
 
   public isStructure(): boolean {
