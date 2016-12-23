@@ -30,8 +30,8 @@ export class ParsedFile extends File {
   private statements: Array<Statement>;
   private root: RootNode;
 
-  public constructor(filename, raw, tokens, statements, root) {
-    super(filename, raw);
+  public constructor(f, tokens, statements, root) {
+    super(f.getFilename(), f.getRaw());
     this.tokens     = tokens;
     this.statements = statements;
     this.root       = root;

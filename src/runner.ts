@@ -8,13 +8,18 @@ import Nesting from "./nesting";
 import {Version} from "./version";
 import * as Types from "./types";
 import * as Formatters from "./formatters/";
+import * as ProgressBar from "progress";
 
 export default class Runner {
 
   public static run(files: Array<File>, conf?: Config): Array<Issue> {
     conf = conf ? conf : Config.getDefault();
 
-    return this.issues(this.parse(files, conf), conf);
+// deprecate prioritization, new macro handling instead
+    let prioritized = this.prioritizeFiles(files);
+    let parsed = this.parse(prioritized, conf);
+
+    return this.issues(parsed, conf);
   }
 
   public static parse(files: Array<File>, conf?: Config): Array<ParsedFile> {
@@ -22,15 +27,20 @@ export default class Runner {
 
     conf = conf ? conf : Config.getDefault();
 
-    this.prioritizeFiles(files).forEach((f) => {
-      if (conf.getShowProgress()) {
-        console.log("Lexing and parsing: " + f.getFilename());
-      }
+    let bar = undefined;
+    if (conf.getShowProgress()) {
+      bar = new ProgressBar(":percent - Lexing and parsing - :filename",
+                            {total: files.length});
+    }
+
+    files.forEach((f) => {
+      if (bar) { bar.tick({filename: f.getFilename()}); }
+
       let tokens = Lexer.run(f);
       let statements = Parser.run(tokens, conf.getVersion());
       let root = Nesting.run(statements);
 
-      ret.push(new ParsedFile(f.getFilename(), f.getRaw(), tokens, statements, root));
+      ret.push(new ParsedFile(f, tokens, statements, root));
     });
 
     return ret;
