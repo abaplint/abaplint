@@ -1,8 +1,7 @@
 import * as Tokens from "./tokens/";
 import * as Statements from "./statements/";
-import Registry from "./registry";
 import {Combi} from "./combi";
-import {Statement, Unknown, Empty, Comment, MacroCall, MacroContent} from "./statements/statement";
+import {Statement, Unknown, Empty, Comment, MacroContent} from "./statements/statement";
 import {Version} from "./version";
 
 export default class Parser {
@@ -75,10 +74,6 @@ export default class Parser {
       } else if (statement instanceof Unknown
           && last instanceof Tokens.Punctuation) {
         statement = this.match(statement, ver);
-      }
-      if (statement instanceof Unknown &&
-          Registry.isMacro(statement.getTokens()[0].getStr())) {
-        statement = new MacroCall(statement.getTokens(), []);
       }
 
       result.push(statement);

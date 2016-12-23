@@ -48,4 +48,8 @@ export class ParsedFile extends File {
   public getStatements(): Array<Statement> {
     return this.statements;
   }
+
+  public setStatements(s: Array<Statement>): void {
+    this.statements = s;
+  }
 }

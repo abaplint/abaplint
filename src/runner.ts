@@ -5,7 +5,10 @@ import Lexer from "./lexer";
 import Parser from "./parser";
 import {Issue} from "./issue";
 import Nesting from "./nesting";
+import Registry from "./registry";
 import {Version} from "./version";
+import {Define} from "./statements";
+import {MacroCall, Unknown, Statement} from "./statements/statement";
 import * as Types from "./types";
 import * as Formatters from "./formatters/";
 import * as ProgressBar from "progress";
@@ -15,9 +18,9 @@ export default class Runner {
   public static run(files: Array<File>, conf?: Config): Array<Issue> {
     conf = conf ? conf : Config.getDefault();
 
-// deprecate prioritization, new macro handling instead
-    let prioritized = this.prioritizeFiles(files);
-    let parsed = this.parse(prioritized, conf);
+    let parsed = this.parse(files, conf);
+
+    parsed = this.fixMacros(parsed);
 
     return this.issues(parsed, conf);
   }
@@ -34,16 +37,47 @@ export default class Runner {
     }
 
     files.forEach((f) => {
-      if (bar) { bar.tick({filename: f.getFilename()}); }
+      if (!this.skip(f)) {
+        if (bar) { bar.tick({filename: f.getFilename()}); }
 
-      let tokens = Lexer.run(f);
-      let statements = Parser.run(tokens, conf.getVersion());
-      let root = Nesting.run(statements);
+        let tokens = Lexer.run(f);
+        let statements = Parser.run(tokens, conf.getVersion());
+        let root = Nesting.run(statements);
 
-      ret.push(new ParsedFile(f, tokens, statements, root));
+        ret.push(new ParsedFile(f, tokens, statements, root));
+      }
     });
 
     return ret;
+  }
+
+  public static fixMacros(files: Array<ParsedFile>): Array<ParsedFile> {
+// todo: copies all statements? (memory)
+
+    let reg = new Registry();
+
+    files.forEach((f) => {
+      f.getStatements().forEach((s) => {
+        if (s instanceof Define) {
+          reg.addMacro(s.getTokens()[1].getStr());
+        }
+      });
+    });
+
+    files.forEach((f) => {
+      let statements: Array<Statement> = [];
+      f.getStatements().forEach((s) => {
+        if (s instanceof Unknown &&
+            reg.isMacro(s.getTokens()[0].getStr())) {
+          statements.push(new MacroCall(s.getTokens(), []));
+        } else {
+          statements.push(s);
+        }
+      });
+      f.setStatements(statements);
+    });
+
+    return files;
   }
 
   public static issues(files: Array<ParsedFile>, conf: Config): Array<Issue> {
@@ -91,16 +125,6 @@ export default class Runner {
       default:
         return Formatters.Standard.output(issues);
     }
-  }
-
-  private static prioritizeFiles(files: Array<File>): Array<File> {
-    let order: Array<File> = [];
-
-// process TYPE-POOLS first
-    files.forEach((file) => { if (/\.type\.abap$/i.test(file.getFilename())) { order.push(file); } });
-    files.forEach((file) => { if (order.indexOf(file) === -1 ) { if (!this.skip(file)) { order.push(file); } } });
-
-    return order;
   }
 
   private static skip(file: File): boolean {
