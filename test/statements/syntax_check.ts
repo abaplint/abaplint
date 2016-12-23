@@ -16,6 +16,17 @@ let tests = [
   "  MESSAGE-ID lv_message\n" +
   "  ID warn_id TABLE lt_warnings\n" +
   "  ID desc_id TABLE lt_error.",
+
+  "SYNTAX-CHECK FOR\n" +
+  "    DYNPRO     l_dynp-h\n" +
+  "               l_dynp-f\n" +
+  "               l_dynp-e\n" +
+  "               l_dynp-m\n" +
+  "    MESSAGE    lv_message\n" +
+  "    LINE       lv_line\n" +
+  "    WORD       lv_word\n" +
+  "    OFFSET     lv_offset\n" +
+  "    MESSAGE-ID lv_id.",
 ];
 
 statementType(tests, "SYNTAX-CHECK", Statements.SyntaxCheck);

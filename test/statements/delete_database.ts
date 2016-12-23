@@ -8,6 +8,7 @@ let tests = [
   "DELETE FROM ZFOOBAR CLIENT SPECIFIED WHERE MANDT = SY-MANDT.",
   "DELETE zfoo FROM TABLE mt_delete.",
   "DELETE (c_tabname) FROM <wa>.",
+  "delete zfoo client specified from table lt_tab.",
 ];
 
 statementType(tests, "DELETE", Statements.DeleteDatabase);

@@ -4,16 +4,16 @@ import * as Combi from "../combi";
 
 let str = Combi.str;
 let seq = Combi.seq;
-let opt = Combi.opt;
 
-export class GetBadi extends Statement {
+export class FetchNext extends Statement {
 
   public static get_matcher(): Combi.IRunnable {
-    let filters = seq(str("FILTERS"), new Reuse.ParameterListS());
-
-    let ret = seq(str("GET BADI"),
+    let ret = seq(str("FETCH NEXT CURSOR"),
+                  new Reuse.Source(),
+                  str("INTO TABLE"),
                   new Reuse.Target(),
-                  opt(filters));
+                  str("PACKAGE SIZE"),
+                  new Reuse.Source());
 
     return ret;
   }

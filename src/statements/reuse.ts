@@ -15,7 +15,6 @@ let str = Combi.str;
 let opt = Combi.opt;
 let tok = Combi.tok;
 let ver = Combi.ver;
-let per = Combi.per;
 let star = Combi.star;
 let plus = Combi.plus;
 
@@ -487,6 +486,13 @@ export class IncludeName extends Combi.Reuse {
   }
 }
 
+export class MessageClass extends Combi.Reuse {
+  public get_runnable() {
+// "&1" can be used for almost anything(field names, method names etc.) in macros
+    return reg(/^(\/\w+\/)?\w+#?$/);
+  }
+}
+
 export class Field extends Combi.Reuse {
   public get_runnable() {
 // "&1" can be used for almost anything(field names, method names etc.) in macros
@@ -552,8 +558,8 @@ export class TypeTable extends Combi.Reuse {
                         opt(key));
 
     let old = seq(new TypeName(),
-                  per(seq(str("OCCURS"), new Integer()),
-                      str("WITH HEADER LINE")));
+                  seq(str("OCCURS"), new Integer()),
+                  opt(str("WITH HEADER LINE")));
 
     let ret = seq(likeType,
                   alt(old, typetable));

@@ -56,8 +56,9 @@ export class Select extends Statement {
     let up = seq(str("UP TO"), new Reuse.Source(), str("ROWS"));
 
     let client = str("CLIENT SPECIFIED");
+    let bypass = str("BYPASSING BUFFER");
 
-    let perm = per(from, plus(join), into, forAll, where, order, up, client);
+    let perm = per(from, plus(join), into, forAll, where, order, up, client, bypass);
 
     let ret = seq(str("SELECT"),
                   alt(str("DISTINCT"), opt(seq(str("SINGLE"), opt(str("FOR UPDATE"))))),

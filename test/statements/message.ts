@@ -10,6 +10,7 @@ let tests = [
     "WITH lr_return->message_v1 lr_return->message_v2 lr_return->message_v3 lr_return->message_v4.",
   "MESSAGE e800(zfoobar) INTO lv_message.",
   "message e059(0k) with 'error' raising fatal.",
+  "message i420(foo#) with lv_var.",
 ];
 
 statementType(tests, "MESSAGE", Statements.Message);
