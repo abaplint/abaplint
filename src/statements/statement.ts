@@ -10,6 +10,8 @@ export abstract class Statement extends StatementNode {
     super();
     this.tokens = tokens;
     this.children = children;
+
+    // todo, error if all children are not TokenNodes?
   }
 
   public isStructure(): boolean {
