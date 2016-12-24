@@ -21,7 +21,8 @@ export class CallFunction extends Statement {
     let dynamic = seq(str("PARAMETER-TABLE"), new Reuse.Source(),
                       opt(seq(str("EXCEPTION-TABLE"), new Reuse.Source())));
 
-    let call = seq(str("CALL FUNCTION"),
+    let call = seq(str("CALL"),
+                   alt(str("FUNCTION"), str("CUSTOMER-FUNCTION")),
                    alt(new Reuse.Constant(), new Reuse.FieldChain()),
                    opt(options),
                    alt(new Reuse.FunctionParameters(), dynamic));

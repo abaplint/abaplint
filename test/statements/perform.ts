@@ -10,6 +10,7 @@ let tests = [
   "perform (lv_form) in program (lv_prog) changing lv_foo if found.",
   "PERFORM sub TABLES bar USING foo.",
   "PERFORM run.",
+  "PERFORM run(zfoobar).",
 ];
 
 statementType(tests, "PERFORM", Statements.Perform);

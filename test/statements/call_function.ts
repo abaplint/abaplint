@@ -113,6 +113,8 @@ let tests = [
   "  EXCEPTION-TABLE\n" +
   "    lt_fm_exception.\n",
 
+  "CALL CUSTOMER-FUNCTION '001'.",
+
   "CALL FUNCTION 'DYNPRO_DISPLAY'\n" +
   "  EXPORTING\n" +
   "    PROGRAM   = lv_program\n" +

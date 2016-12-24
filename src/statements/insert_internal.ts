@@ -12,6 +12,7 @@ export class InsertInternal extends Statement {
   public static get_matcher(): Combi.IRunnable {
     let target = alt(new Reuse.Source(), new Reuse.Dynamic());
     let assigning = seq(str("ASSIGNING"), new Reuse.FSTarget());
+    let ref = seq(str("REFERENCE INTO"), new Reuse.Target());
     let index = seq(str("INDEX"), new Reuse.Source());
     let initial = str("INITIAL LINE");
 
@@ -23,6 +24,7 @@ export class InsertInternal extends Statement {
     let foo = seq(str("INTO"),
                   opt(str("TABLE")),
                   new Reuse.Source(),
+                  opt(ref),
                   opt(index),
                   opt(assigning));
 

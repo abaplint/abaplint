@@ -14,7 +14,8 @@ export class InsertDatabase extends Statement {
 
     let client = str("CLIENT SPECIFIED");
 
-    let f = seq(str("FROM"),
+    let f = seq(opt(client),
+                str("FROM"),
                 opt(str("TABLE")),
                 new Reuse.Source(),
                 opt(str("ACCEPTING DUPLICATE KEYS")));

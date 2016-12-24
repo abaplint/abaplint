@@ -8,6 +8,7 @@ let tests = [
   "gui( )->go_home( ).",
   "cl_abap_unit_assert=>assert_subrc( msg = 'Error while parsing'(001) ).",
   "CALL METHOD (lv_class_name)=>jump.",
+  "call badi lr_badi->method importing ev_foo = lv_moo ev_bar = lv_boo.",
   "<ls_late>-obj->deserialize( iv_package = <ls_late>-package ).",
   "CALL METHOD ('CL_OO_FACTORY')=>('CREATE_INSTANCE').",
   "ro_html->add( |var\"\n| ).",

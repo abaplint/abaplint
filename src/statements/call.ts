@@ -24,7 +24,11 @@ export class Call extends Statement {
 
     let dynamic = seq(str("PARAMETER-TABLE"), new Reuse.Source());
 
-    let call = seq(str("CALL METHOD"), method, alt(paren, new Reuse.MethodParameters(), dynamic));
+    let call = seq(str("CALL"),
+                   alt(str("METHOD"), str("BADI")),
+                   method,
+                   alt(paren, new Reuse.MethodParameters(), dynamic));
+
     return alt(call, new Reuse.MethodCallChain());
   }
 

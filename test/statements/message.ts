@@ -11,6 +11,7 @@ let tests = [
   "MESSAGE e800(zfoobar) INTO lv_message.",
   "message e059(0k) with 'error' raising fatal.",
   "message i420(foo#) with lv_var.",
+  "MESSAGE i420(foo@) WITH foo bar.",
 ];
 
 statementType(tests, "MESSAGE", Statements.Message);

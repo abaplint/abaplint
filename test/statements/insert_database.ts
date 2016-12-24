@@ -8,7 +8,8 @@ let tests = [
   "INSERT zfoo CLIENT SPECIFIED.",
   "INSERT INTO ztable client specified VALUES ls_values.",
   "insert zdata from table lt_table accepting duplicate keys.",
-  "INSERT (c_tabname) FROM ls_table.",
+  "INSERT (c_tabname) FROM ls_foobar.",
+  "INSERT (c_tabname) CLIENT SPECIFIED FROM TABLE lt_table.",
 ];
 
 statementType(tests, "INSERT", Statements.InsertDatabase);

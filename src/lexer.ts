@@ -254,8 +254,11 @@ export default class Lexer {
           && (buf.concat(ahead).match(/'/g) || []).length % 2 === 0) {
 // end of string
         this.add();
-        this.m = Mode.Normal;
-
+        if (ahead === "\"") {
+          this.m = Mode.Comment;
+        } else {
+          this.m = Mode.Normal;
+        }
       } else if ((ahead === " "
           || ahead === ":"
           || ahead === "."

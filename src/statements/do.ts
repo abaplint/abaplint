@@ -9,7 +9,9 @@ let seq = Combi.seq;
 export class Do extends Statement {
 
   public static get_matcher(): Combi.IRunnable {
-    let vary = seq(str("VARYING FIELD FROM"),
+    let vary = seq(str("VARYING"),
+                   new Reuse.Target(),
+                   str("FROM"),
                    new Reuse.Source(),
                    str("NEXT"),
                    new Reuse.Source());

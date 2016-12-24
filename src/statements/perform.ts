@@ -1,7 +1,7 @@
 import { Statement } from "./statement";
 import * as Combi from "../combi";
 import * as Reuse from "./reuse";
-import {ParenLeft, ParenRightW} from "../tokens/";
+import {ParenLeft, ParenRightW, ParenRight} from "../tokens/";
 
 let str = Combi.str;
 let seq = Combi.seq;
@@ -17,7 +17,12 @@ export class Perform extends Statement {
     let using = seq(str("USING"), plus(new Reuse.Source()));
     let tables = seq(str("TABLES"), plus(new Reuse.Source()));
     let changing = seq(str("CHANGING"), plus(new Reuse.Source()));
-    let short = seq(new Reuse.FormName(), tok(ParenLeft), program, tok(ParenRightW));
+
+    let short = seq(new Reuse.FormName(),
+                    tok(ParenLeft),
+                    program,
+                    alt(tok(ParenRightW), tok(ParenRight)));
+
     let full = seq(alt(new Reuse.FormName(), new Reuse.Dynamic()),
                    opt(seq(str("IN PROGRAM"), alt(new Reuse.Dynamic(), opt(program)))));
 

@@ -25,9 +25,16 @@ export class Assign extends Statement {
 
     let handle = seq(str("TYPE HANDLE"), new Reuse.Field());
 
-    let casting = opt(seq(str("CASTING"), opt(alt(type, handle))));
+    let range = seq(str("RANGE"), new Reuse.Field());
 
-    let ret = seq(str("ASSIGN"), source, str("TO"), new Reuse.FSTarget(), casting);
+    let casting = opt(seq(str("CASTING"), opt(alt(type, range, handle))));
+
+    let ret = seq(str("ASSIGN"),
+                  opt(seq(new Reuse.Target(), str("INCREMENT"))),
+                  source,
+                  str("TO"),
+                  new Reuse.FSTarget(),
+                  casting);
 
     return ret;
   }

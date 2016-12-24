@@ -15,6 +15,7 @@ let tests = [
   "ASSIGN <ls_aq_msg>-data TO <lv_data> CASTING TYPE (lv_tabname).",
   "ASSIGN COMPONENT <ls_component>-name OF STRUCTURE <lg_data> TO <lv_data> CASTING TYPE HANDLE lo_datadescr.",
   "ASSIGN lv_x TO <lv_y> CASTING.",
+  "ASSIGN foo-bar INCREMENT lv_count TO <fs> CASTING RANGE ls_obj.",
 ];
 
 statementType(tests, "ASSIGN", Statements.Assign);

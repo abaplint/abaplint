@@ -25,7 +25,7 @@ describe("count_tokens", () => {
     {abap: "* this is a comment",                 tokens: 1},
     {abap: "\" this is a comment",                tokens: 1},
     {abap: "WRITE 'hello'. \" this is a comment", tokens: 4},
-    {abap: "data foobar type abap_bool read-only value ABAP_FALSE ##NO_TEXT.", tokens: 11},
+    {abap: "data read-only value ##NO_TEXT.",     tokens: 7},
     {abap: "CALL METHOD (lv_class_name)=>jump.",  tokens: 8},
     {abap: "foo=>jump( ).",                       tokens: 6},
     {abap: "foo->jump( ).",                       tokens: 6},
@@ -53,7 +53,10 @@ describe("count_tokens", () => {
     {abap: "set_cdata( '''hello''' ).",           tokens: 5},
     {abap: "COUNT(*)",                            tokens: 4},
     {abap: "INCLUDE <OBJECT>.",                   tokens: 3},
+    {abap: "'foo'\"-> comment",                   tokens: 2},
     {abap: "'/SAP/PUBLIC/zgit/' 'script.js'",     tokens: 2},
+    {abap: "2\" comment",                         tokens: 2},
+    {abap: "'foo'\" comment",                     tokens: 2},
   ];
 
   tests.forEach((test) => {
