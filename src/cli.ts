@@ -3,6 +3,7 @@ import {File, ParsedFile} from "./file";
 import {Issue} from "./issue";
 import Config from "./config";
 import {versionText} from "./version";
+import * as ProgressBar from "progress";
 import * as fs from "fs";
 import * as path from "path";
 import * as glob from "glob";
@@ -48,13 +49,19 @@ function displayHelp(): string {
   return output;
 }
 
-function loadFiles(args): Array<File> {
-  let files: Array<File> = [];
+function loadFileNames(args): Array<string> {
+  let files: Array<string> = [];
   for (const file of args) {
-    glob.sync(file, {nosort: true}).forEach((filename) => {
-      files.push(new File(filename, fs.readFileSync(filename, "utf8")));
-    } );
+    files = files.concat(glob.sync(file, {nosort: true}));
   }
+  return files;
+}
+
+function loadFiles(input: Array<string>): Array<File> {
+  let files: Array<File> = [];
+  input.forEach((filename) => {
+    files.push(new File(filename, fs.readFileSync(filename, "utf8")));
+  } );
   return files;
 }
 
@@ -62,7 +69,7 @@ function run() {
   let argv = minimist(process.argv.slice(2));
   let format = "default";
   let output = "";
-  let files: Array<File> = [];
+//  let files: Array<File> = [];
   let issues: Array<Issue> = [];
 
   if (argv["f"] !== undefined || argv["format"] !== undefined) {
@@ -82,12 +89,12 @@ function run() {
   } else if (argv._[0] === undefined) {
     output = output + "Supply filename\n";
   } else {
-    files = loadFiles(argv._);
+    let files = loadFileNames(argv._);
 
     if (files.length === 0) {
       output = output + "No files found\n";
     } else {
-      let config = searchConfig(files[0].getFilename());
+      let config = searchConfig(files[0]);
 
       if (argv["a"]) {
         config.setVersion(versionText(argv["a"]));
@@ -97,14 +104,20 @@ function run() {
       }
       if (argv["m"] && os.cpus().length > 1) {
 // multithreading currently only works with default config
-        issues = master(files);
+        master(files);
       } else {
-        issues = Runner.run(files, config);
+        issues = Runner.run(loadFiles(files), config);
+        output = Runner.format(issues, format);
       }
-      output = Runner.format(issues, format);
     }
   }
 
+  if (output.length > 0) {
+    sendOutput(output, issues);
+  }
+}
+
+function sendOutput(output, issues) {
   process.stdout.write(output, () => {
     if (issues.length > 0) {
       process.exit(1);
@@ -112,38 +125,46 @@ function run() {
   });
 }
 
-
-function master(files): Array<Issue> {
+function master(files: Array<string>): void {
   let parsed: Array<ParsedFile> = [];
+  let count = 0;
 
-  let worker = cluster.fork();
+  let bar = new ProgressBar(":percent - Lexing and parsing",
+                            {total: files.length});
 
-  worker.on("message", function(msg) {
-    console.log("master, message received from worker");
-    parsed.push(msg);
+  for (let i = 0; i < os.cpus().length; i++) {
+    if (files.length > 0) {
+      cluster.fork().send(files.pop());
+      count = count + 1;
+      bar.tick();
+    }
+  }
+
+  cluster.on("message", function(work, msg) {
+//    console.log("master, message received from worker");
+    parsed = parsed.concat(msg);
+    if (files.length > 0) {
+      work.send(files.pop());
+      bar.tick();
+    } else {
+      work.kill();
+    }
   });
-  worker.send(files[0]);
 
   cluster.on("exit", function() {
-    // when the master has no more workers alive it
-    // todo
+    count = count - 1;
+    if (count === 0) {
+      console.log("all workers exited");
+    }
   });
-
-  return [];
 }
 
 function worker() {
-  console.log("I am the thread:" + process.pid);
-// todo
-  process.on("message", function(file) {
-//    console.dir(file);
-    let f = new File(file.filename, file.raw);
-    let res = Runner.parse([f])[0];
-    console.dir(res.getTokens());
-    console.dir(res.getStatements());
-    console.dir(res.getStatements()[0].getChildren());
-    console.dir(res.getRoot());
-    process.send(res);
+  process.on("message", function(filename) {
+//    let res =
+    Runner.parse(loadFiles([filename]));
+// todo, return result to master thread
+    process.send([]);
   });
 }
 

@@ -82,8 +82,10 @@ export default class Runner {
     return files;
   }
 
-  public static issues(files: Array<ParsedFile>, conf: Config): Array<Issue> {
+  public static issues(files: Array<ParsedFile>, conf?: Config): Array<Issue> {
     let issues: Array<Issue> = [];
+
+    conf = conf ? conf : Config.getDefault();
 
     let bar = undefined;
     if (conf.getShowProgress()) {
