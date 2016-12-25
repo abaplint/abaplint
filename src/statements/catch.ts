@@ -1,5 +1,5 @@
-import { Statement } from "./statement";
-import { Try } from "./try";
+import {Statement} from "./statement";
+import {Try} from "./try";
 import * as Reuse from "./reuse";
 import * as Combi from "../combi";
 

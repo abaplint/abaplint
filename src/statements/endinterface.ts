@@ -1,5 +1,5 @@
-import { Statement } from "./statement";
-import { Interface } from "./interface";
+import {Statement} from "./statement";
+import {Interface} from "./interface";
 import * as Combi from "../combi";
 
 export class Endinterface extends Statement {

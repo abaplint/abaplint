@@ -1,5 +1,5 @@
-import { Statement } from "./statement";
-import { CatchSystemExceptions } from "./catch_system_exceptions";
+import {Statement} from "./statement";
+import {CatchSystemExceptions} from "./catch_system_exceptions";
 import * as Combi from "../combi";
 
 let str = Combi.str;

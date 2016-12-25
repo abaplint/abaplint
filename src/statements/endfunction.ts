@@ -1,5 +1,5 @@
-import { Statement } from "./statement";
-import { FunctionModule } from "./function_module";
+import {Statement} from "./statement";
+import {FunctionModule} from "./function_module";
 import * as Combi from "../combi";
 
 let str = Combi.str;

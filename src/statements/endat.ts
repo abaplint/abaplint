@@ -1,5 +1,5 @@
-import { Statement } from "./statement";
-import { At } from "./at";
+import {Statement} from "./statement";
+import {At} from "./at";
 import * as Combi from "../combi";
 
 export class Endat extends Statement {

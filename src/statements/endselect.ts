@@ -1,5 +1,5 @@
-import { Statement } from "./statement";
-import { Select } from "./select";
+import {Statement} from "./statement";
+import {Select} from "./select";
 import * as Combi from "../combi";
 
 export class Endselect extends Statement {

@@ -1,5 +1,5 @@
-import { Statement } from "./statement";
-import { Do } from "./do";
+import {Statement} from "./statement";
+import {Do} from "./do";
 import * as Combi from "../combi";
 
 let str = Combi.str;

@@ -1,5 +1,5 @@
-import { Statement } from "./statement";
-import { While } from "./while";
+import {Statement} from "./statement";
+import {While} from "./while";
 import * as Combi from "../combi";
 
 let str = Combi.str;

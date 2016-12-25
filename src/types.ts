@@ -57,22 +57,22 @@ export class Analyze {
 
   private static findData(n: BasicNode): Array<StatementNode> {
     return this.walk<StatementNode>(n, (b) => {
-        if (b instanceof Statements.Data) {
-          return [b as StatementNode];
-        } else {
-          return [];
-        }
-      });
+      if (b instanceof Statements.Data) {
+        return [b as StatementNode];
+      } else {
+        return [];
+      }
+    });
   }
 
   private static findTypes(n: BasicNode): Array<StatementNode> {
     return this.walk<StatementNode>(n, (b) => {
-        if (b instanceof Statements.Type) {
-          return [b as StatementNode];
-        } else {
-          return [];
-        }
-      });
+      if (b instanceof Statements.Type) {
+        return [b as StatementNode];
+      } else {
+        return [];
+      }
+    });
   }
 
   private static walk<T>(n: BasicNode, f: (n: BasicNode) => Array<T>): Array<T> {
@@ -95,12 +95,12 @@ export class Analyze {
 
   private static findSources(n: BasicNode): Array<ReuseNode> {
     return this.walk<ReuseNode>(n, (b) => {
-        if (b instanceof ReuseNode && (b as ReuseNode).getReuse() instanceof Reuse.Source) {
-          return [b as ReuseNode];
-        } else {
-          return [];
-        }
-      });
+      if (b instanceof ReuseNode && (b as ReuseNode).getReuse() instanceof Reuse.Source) {
+        return [b as ReuseNode];
+      } else {
+        return [];
+      }
+    });
   }
 
   private static findFirstToken(n: BasicNode): Token {

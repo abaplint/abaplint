@@ -4,7 +4,7 @@ export enum Version {
   v740sp05,
   v740sp08,
   v750,
-};
+}
 
 export function versionDescription(v: Version): string {
   switch (v) {

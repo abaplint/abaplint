@@ -1,5 +1,5 @@
-import { Statement } from "./statement";
-import { Case } from "./case";
+import {Statement} from "./statement";
+import {Case} from "./case";
 import * as Combi from "../combi";
 import * as Reuse from "./reuse";
 

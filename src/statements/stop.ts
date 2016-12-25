@@ -1,4 +1,4 @@
-import { Statement } from "./statement";
+import {Statement} from "./statement";
 import * as Combi from "../combi";
 
 let str = Combi.str;

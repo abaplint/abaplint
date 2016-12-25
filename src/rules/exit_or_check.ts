@@ -1,7 +1,7 @@
 import {IRule} from "./rule";
 import {ParsedFile} from "../file";
 import {Issue} from "../issue";
-import { Statement } from "../statements/statement";
+import {Statement} from "../statements/statement";
 import * as Statements from "../statements/";
 
 export class ExitOrCheckConf {

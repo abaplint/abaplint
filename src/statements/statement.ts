@@ -1,4 +1,4 @@
-import { Token, Pragma } from "../tokens/";
+import {Token, Pragma} from "../tokens/";
 import Position from "../position";
 import {BasicNode, StatementNode, TokenNode, ReuseNode} from ".././node";
 

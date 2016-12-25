@@ -1,5 +1,31 @@
 {
+  "rulesDirectory": "node_modules/tslint-eslint-rules/dist/rules",
   "rules": {
+    "no-constant-condition": true,
+    "no-duplicate-case": true,
+    "no-empty-character-class": true,
+    "no-extra-boolean-cast": true,
+    "no-extra-semi": true,
+    "use-isnan": true,
+    "no-unexpected-multiline": true,
+    "no-sparse-arrays": true,
+    "ter-arrow-body-style": [true, "always"],
+    "ter-arrow-parens": [true],
+    "ter-arrow-spacing": [true],
+    "brace-style": [
+      true,
+      "1tbs",
+      {
+        "allowSingleLine": true
+      }
+    ],
+    "object-curly-spacing": [
+      true,
+      "never"
+    ],
+    "ter-indent": [true, 2, { "SwitchCase": 1 }],
+
+
     "align": [
       true,
       "parameters",
@@ -136,6 +162,7 @@
       }
     ],
     "use-isnan": true,
+    "no-empty-interface": true,
     "variable-name": [
       true,
       "check-format",

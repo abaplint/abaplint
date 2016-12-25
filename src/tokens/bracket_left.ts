@@ -1,4 +1,4 @@
-import { Token } from "./token";
+import {Token} from "./token";
 
 export class BracketLeft extends Token {
   public static railroad(): string {

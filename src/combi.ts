@@ -265,7 +265,7 @@ class Star implements IRunnable {
 
     let res = r;
     let input: Array<Result> = [];
-    while (true) {
+    for ( ; ; ) {
       input = res;
       res = this.star.run(input);
 

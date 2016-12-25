@@ -25,13 +25,14 @@ export class Standard {
 
   private static columns(tuples: Array<Tuple>): string {
     let max = 0;
-    tuples.forEach((tuple) => { if (max < tuple.filename.length) { max = tuple.filename.length; }; });
+    tuples.forEach((tuple) => { if (max < tuple.filename.length) { max = tuple.filename.length; } });
 
     let result = "";
     tuples.forEach((tuple) => {
       result = result +
         this.pad(tuple.filename, max - tuple.filename.length) +
-        tuple.description + "\n"; });
+        tuple.description + "\n";
+    });
 
     return result;
   }

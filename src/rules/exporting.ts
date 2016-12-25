@@ -4,9 +4,9 @@ import Position from "../position";
 import {Issue} from "../issue";
 
 export class Counter {
-    public exporting: boolean = false;
-    public other: boolean = false;
-    public pos: Position;
+  public exporting: boolean = false;
+  public other: boolean = false;
+  public pos: Position;
 }
 
 export class ExportingConf {

@@ -42,13 +42,13 @@ export function statementVersion(tests, description: string, type) {
 
 export function testRule(tests, description: string, rule: new () => any) {
   describe(description, () => {
-  tests.forEach((test) => {
-    let issues = Runner.run([new File("temp.abap", test.abap)]);
+    tests.forEach((test) => {
+      let issues = Runner.run([new File("temp.abap", test.abap)]);
 
-    issues = issues.filter((i) => { return i.getRule() instanceof rule; });
-    it("\"" + test.abap + "\" should have " + test.cnt + " issue(s)", () => {
-      expect(issues.length).to.equals(test.cnt);
+      issues = issues.filter((i) => { return i.getRule() instanceof rule; });
+      it("\"" + test.abap + "\" should have " + test.cnt + " issue(s)", () => {
+        expect(issues.length).to.equals(test.cnt);
+      });
     });
   });
-});
 }

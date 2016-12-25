@@ -212,7 +212,7 @@ export default class Lexer {
     this.stream = new Stream(raw);
     this.buffer = new Buffer();
 
-    while (true) {
+    for ( ; ; ) {
       let current = this.stream.currentChar();
       this.buffer.add(current);
       let buf = this.buffer.get();
