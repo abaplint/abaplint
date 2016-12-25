@@ -19,13 +19,18 @@ export class CreateData extends Statement {
                    str("LIKE STANDARD TABLE OF"),
                    str("LIKE LINE OF"));
 
+    let length = seq(str("LENGTH"), new Reuse.Source());
+    let decimals = seq(str("DECIMALS"), new Reuse.Source());
+
     let key = str("WITH DEFAULT KEY");
 
     let ret = seq(str("CREATE DATA"),
                   new Reuse.Target(),
                   type,
                   alt(new Reuse.Source(), new Reuse.Dynamic()),
-                  opt(key));
+                  opt(key),
+                  opt(length),
+                  opt(decimals));
 
     return ret;
   }

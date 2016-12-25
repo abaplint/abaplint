@@ -23,8 +23,7 @@ export class Convert extends Statement {
 
     let date = seq(str("DATE"),
                    new Reuse.Source(),
-                   str("TIME"),
-                   new Reuse.Source(),
+                   opt(seq(str("TIME"), new Reuse.Source())),
                    str("INTO TIME STAMP"),
                    new Reuse.Target(),
                    str("TIME ZONE"),

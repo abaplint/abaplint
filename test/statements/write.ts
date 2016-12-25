@@ -33,6 +33,9 @@ let tests = [
   "write lv_val to lv_res currency lv_cur round lv_round no-sign no-zero.",
   "WRITE lv_date DD/MM/YYYY.",
   "WRITE lv_time ENVIRONMENT TIME FORMAT.",
+  "write / lv_ts time zone sy-zonlo.",
+  "write icon_message_error as icon hotspot.",
+  "write / lv_foo under text-001.",
 ];
 
 statementType(tests, "WRITE", Statements.Write);

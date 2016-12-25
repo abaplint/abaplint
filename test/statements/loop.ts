@@ -13,6 +13,7 @@ let tests = [
   "LOOP AT lt_lines ASSIGNING <ls_line> WHERE moo = boo.",
   "LOOP AT it_order REFERENCE INTO foo.",
   "LOOP AT lt_catalog INTO ls_component USING KEY is_key WHERE is_key = abap_true.",
+  "loop at it_foo assigning <bar> casting.",
 ];
 
 statementType(tests, "LOOP", Statements.Loop);

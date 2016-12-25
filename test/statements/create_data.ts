@@ -9,6 +9,8 @@ let tests = [
   "CREATE DATA lr_format TYPE STANDARD TABLE OF (<ls_foo>-tabname) WITH DEFAULT KEY.",
   "CREATE DATA lr_area TYPE REF TO zcl_area.",
   "CREATE DATA wo_data   TYPE HANDLE lo_table.",
+  "CREATE DATA result TYPE n LENGTH lv_length.",
+  "CREATE DATA result TYPE p LENGTH lv_length DECIMALS lv_decimals.",
 ];
 
 statementType(tests, "CREATE DATA", Statements.CreateData);

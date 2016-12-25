@@ -34,7 +34,8 @@ export class Assign extends Statement {
                   source,
                   str("TO"),
                   new Reuse.FSTarget(),
-                  casting);
+                  casting,
+                  opt(range));
 
     return ret;
   }

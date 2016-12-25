@@ -13,7 +13,9 @@ export class Loop extends Statement {
   public static get_matcher(): Combi.IRunnable {
     let where = seq(str("WHERE"), new Reuse.Cond());
 
-    let into = alt(seq(alt(seq(opt(str("REFERENCE")), str("INTO")), str("ASSIGNING")), new Reuse.Target()),
+    let into = alt(seq(alt(seq(opt(str("REFERENCE")), str("INTO")), str("ASSIGNING")),
+                       new Reuse.Target(),
+                       opt(str("CASTING"))),
                    str("TRANSPORTING NO FIELDS"));
 
     let from = seq(str("FROM"), new Reuse.Source());
