@@ -37,7 +37,18 @@ export class ParsedFile extends File {
     this.statements = statements;
     this.root       = root;
   }
+/*
+  public static fromJSON(str: string): ParsedFile {
+    let json = JSON.parse(str);
 
+    let file: File = new File(json.filename, json.raw);
+    let tokens: Array<Token> = undefined;
+    let statements: Array<Statement> = undefined;
+    let root: RootNode = undefined;
+
+    return new ParsedFile(file, tokens, statements, root);
+  }
+*/
   public getTokens(withPragmas = true): Array<Token> {
     if (withPragmas === true) {
       return this.tokens;
@@ -63,4 +74,15 @@ export class ParsedFile extends File {
   public setStatements(s: Array<Statement>): void {
     this.statements = s;
   }
+/*
+  private statementsToTokens(): Array<Token> {
+    let ret: Array<Token> = [];
+
+    this.getStatements().forEach((s) => {
+      ret = ret.concat(s.getTokens());
+    });
+
+    return ret;
+  }
+*/
 }

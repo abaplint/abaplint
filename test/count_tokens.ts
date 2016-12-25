@@ -1,5 +1,6 @@
 import {File} from "../src/file";
 import Lexer from "../src/lexer";
+import Runner from "../src/runner";
 import * as chai from "chai";
 
 let expect = chai.expect;
@@ -57,13 +58,19 @@ describe("count_tokens", () => {
     {abap: "'/SAP/PUBLIC/zgit/' 'script.js'",     tokens: 2},
     {abap: "2\" comment",                         tokens: 2},
     {abap: "'foo'\" comment",                     tokens: 2},
+    {abap: "foo: bar, moo.",                      tokens: 6},
   ];
 
   tests.forEach((test) => {
-    let tokens = Lexer.run(new File("foo.abap", test.abap));
+    let file = new File("foo.abap", test.abap);
+    let tokens = Lexer.run(file);
 
     it("\"" + test.abap + "\" should have " + test.tokens + " tokens", () => {
       expect(tokens.length).to.equals(test.tokens);
+    });
+
+    it("\"" + test.abap + "\" should match parsed file token count", () => {
+      expect(tokens.length).to.equals(Runner.parse([file])[0].getTokens().length);
     });
   });
 });
