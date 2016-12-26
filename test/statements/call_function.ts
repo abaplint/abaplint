@@ -136,6 +136,11 @@ let tests = [
   "  STARTING NEW TASK name\n" +
   "  DESTINATION IN GROUP DEFAULT\n" +
   "  CALLING callback ON END OF TASK.",
+
+  "CALL FUNCTION 'ZFOOBAR'\n" +
+  "  STARTING NEW TASK ls_foo-clsname\n" +
+  "  DESTINATION IN GROUP p_group\n" +
+  "  PERFORMING callback ON END OF TASK.",
 ];
 
 statementType(tests, "CALL FUNCTION", Statements.CallFunction);

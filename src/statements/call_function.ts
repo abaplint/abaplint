@@ -12,13 +12,14 @@ export class CallFunction extends Statement {
 
   public static get_matcher(): Combi.IRunnable {
     let starting = seq(str("STARTING NEW TASK"),
-                       alt(new Reuse.Constant(), new Reuse.Field()));
+                       alt(new Reuse.Constant(), new Reuse.FieldSub()));
     let update = str("IN UPDATE TASK");
     let background = str("IN BACKGROUND TASK");
     let dest = seq(str("DESTINATION"), opt(str("IN GROUP")), new Reuse.Source());
     let calling = seq(str("CALLING"), new Reuse.FormName(), str("ON END OF TASK"));
+    let performing = seq(str("PERFORMING"), new Reuse.FormName(), str("ON END OF TASK"));
 
-    let options = per(starting, update, background, dest, calling);
+    let options = per(starting, update, background, dest, calling, performing);
 
     let dynamic = seq(str("PARAMETER-TABLE"), new Reuse.Source(),
                       opt(seq(str("EXCEPTION-TABLE"), new Reuse.Source())));

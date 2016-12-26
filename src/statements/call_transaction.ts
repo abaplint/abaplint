@@ -17,6 +17,7 @@ export class CallTransaction extends Statement {
                   opt(str("WITH AUTHORITY-CHECK")),
                   opt(seq(str("USING"), new Reuse.Source())),
                   opt(seq(str("MODE"), new Reuse.Source())),
+                  opt(seq(str("UPDATE"), new Reuse.Source())),
                   opt(str("AND SKIP FIRST SCREEN")),
                   opt(options));
 

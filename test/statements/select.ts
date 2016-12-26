@@ -27,6 +27,9 @@ let tests = [
   "SELECT vbeln INTO CORRESPONDING FIELDS OF lt_table FROM vbak WHERE (where_clause) ORDER BY (orderby_clause).",
   "SELECT SINGLE FOR UPDATE * FROM ZFOOBAR WHERE NAME_ID = lv_name.",
   "SELECT * FROM zfoo BYPASSING BUFFER INTO TABLE lt_table WHERE foo = lv_bar.",
+  "SELECT SINGLE MAX( version ) FROM zfoo INTO lv_version.",
+  "SELECT SINGLE MAX( version ) FROM zfoo INTO lv_version BYPASSING BUFFER WHERE " +
+    "expression = ls_foobar-expression AND ( moo = 'A' OR boo = 'I' ).",
 //  "SELECT * FROM zfoo INTO ls_bar UP TO 1 ROWS WHERE  moo = boo AND (lt_where) AND bar = foo.",
 ];
 

@@ -5,17 +5,20 @@ import * as Combi from "../combi";
 let str = Combi.str;
 let seq = Combi.seq;
 let opt = Combi.opt;
+let per = Combi.per;
 
 export class SetPFStatus extends Statement {
 
   public static get_matcher(): Combi.IRunnable {
     let program = seq(str("OF PROGRAM"), new Reuse.Source());
 
+    let options = per(program,
+                      str("IMMEDIATELY"),
+                      seq(str("EXCLUDING"), new Reuse.Source()));
+
     let ret = seq(str("SET PF-STATUS"),
                   new Reuse.Source(),
-                  opt(program),
-                  opt(str("IMMEDIATELY")),
-                  opt(seq(str("EXCLUDING"), new Reuse.Source())));
+                  opt(options));
 
     return ret;
   }

@@ -12,6 +12,7 @@ let tests = [
   "message e059(0k) with 'error' raising fatal.",
   "message i420(foo#) with lv_var.",
   "MESSAGE i420(foo@) WITH foo bar.",
+  "MESSAGE i420(foo/) WITH foo bar.",
   "message id sy-msgid type 'I' number sy-msgno display like 'E' with sy-msgv1 sy-msgv2 sy-msgv3 sy-msgv4.",
   "message id sy-msgid type 'I' number sy-msgno display like 'E'.",
   "message id sy-msgid type 'I' number sy-msgno.",

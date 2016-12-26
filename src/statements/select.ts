@@ -43,8 +43,10 @@ export class Select extends Statement {
     let forAll = seq(str("FOR ALL ENTRIES IN"), new Reuse.Source());
 
     let count = seq(str("COUNT"), alt(tok(ParenLeft), tok(ParenLeftW)), str("*"), str(")"));
+    let max = seq(str("MAX"), alt(tok(ParenLeft), tok(ParenLeftW)), new Reuse.Field(), str(")"));
+    let min = seq(str("MIN"), alt(tok(ParenLeft), tok(ParenLeftW)), new Reuse.Field(), str(")"));
 
-    let fields = alt(str("*"), count, plus(new Reuse.Field()));
+    let fields = alt(str("*"), count, max, min, plus(new Reuse.Field()));
 
     let join = seq(opt(str("INNER")),
                    str("JOIN"),
