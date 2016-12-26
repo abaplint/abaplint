@@ -516,11 +516,9 @@ class Alternative implements IRunnable {
   public run(r: Array<Result>): Array<Result> {
     let result: Array<Result> = [];
 
-    for (let input of r) {
-      for (let seq of this.list) {
-        let temp = seq.run([input]);
-        result = result.concat(temp);
-      }
+    for (let seq of this.list) {
+      let temp = seq.run(r);
+      result = result.concat(temp);
     }
 
     return result;

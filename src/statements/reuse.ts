@@ -290,8 +290,6 @@ export class FieldChain extends Combi.Reuse {
                             alt(new Source(), plus(fcond)),
                             str("]")));
 
-//    let body = seq(tok(BracketLeft), str("]"));
-
     let chain = seq(alt(new Field(), new FieldSymbol()),
                     opt(tableExpr),
                     star(seq(new ArrowOrDash(), new Field())));
@@ -394,7 +392,6 @@ export class Dynamic extends Combi.Reuse {
 export class TableBody extends Combi.Reuse {
   public get_runnable() {
     let ret = seq(tok(BracketLeft), alt(tok(BracketRight), tok(BracketRightW)));
-
     return ret;
   }
 }
@@ -536,7 +533,8 @@ export class Type extends Combi.Reuse {
                   new FieldChain(),
                   opt(def),
                   opt(length),
-                  opt(decimals));
+                  opt(decimals),
+                  opt(new TableBody()));
 
     return ret;
   }
@@ -545,6 +543,8 @@ export class Type extends Combi.Reuse {
 export class TypeTable extends Combi.Reuse {
   public get_runnable() {
     let likeType = alt(str("LIKE"), str("TYPE"));
+
+    let header = str("WITH HEADER LINE");
 
     let key = seq(str("WITH"),
                   opt(alt(str("NON-UNIQUE"), str("UNIQUE"))),
@@ -557,12 +557,14 @@ export class TypeTable extends Combi.Reuse {
                         opt(str("OF")),
                         opt(str("REF TO")),
                         opt(new TypeName()),
-                        opt(str("WITH HEADER LINE")),
+                        opt(header),
                         opt(key));
 
+    let occurs = seq(str("OCCURS"), new Integer());
+
     let old = seq(new TypeName(),
-                  seq(str("OCCURS"), new Integer()),
-                  opt(str("WITH HEADER LINE")));
+                  alt(seq(occurs, opt(header)),
+                      header));
 
     let ret = seq(likeType,
                   alt(old, typetable));

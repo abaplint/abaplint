@@ -11,6 +11,7 @@ let str  = Combi.str;
 let seq  = Combi.seq;
 let alt  = Combi.alt;
 let opt  = Combi.opt;
+let plus = Combi.plus;
 let star = Combi.star;
 let reg  = Combi.regex;
 let per  = Combi.per;
@@ -33,7 +34,12 @@ let tests = [
 {n: "alt1", c: alt(str("foo"), str("bar")),       t: tokenize("foo"),     e: true},
 {n: "alt2", c: alt(str("foo"), str("bar")),       t: tokenize("bar"),     e: true},
 {n: "alt3", c: alt(str("foo"), str("bar")),       t: tokenize("moo"),     e: false},
-{n: "alt4", c: alt(str("foo"), str("bar")),       t: [],             e: false},
+{n: "alt4", c: alt(str("foo"), str("bar")),       t: [],                  e: false},
+{n: "alt5", c: alt(str("foo"), str("bar")),       t: tokenize("foo foo"), e: false},
+{n: "alt6", c: alt(str("bar"), opt(str("foo"))),  t: tokenize("foo foo"), e: false},
+{n: "alt7", c: alt(str("bar"), plus(str("foo"))), t: tokenize("foo foo"), e: true},
+{n: "alt8", c: alt(str("foo"), str("bar")),       t: tokenize("foo bar"), e: false},
+{n: "alt9", c: alt(str("foo"), str("bar")),       t: tokenize("bar foo"), e: false},
 {n: "opt1", c: opt(str("foo")),                   t: tokenize("foo"),     e: true},
 {n: "opt3", c: seq(opt(str("foo")), str("bar")),  t: tokenize("foo bar"), e: true},
 {n: "opt4", c: seq(opt(str("foo")), str("bar")),  t: tokenize("bar"),     e: true},
@@ -70,9 +76,14 @@ let tests = [
 {n: "per1", c: per(str("FOO"), str("BAR")),          t: tokenize("FOO"), e: true},
 {n: "per2", c: per(str("FOO"), str("BAR")),          t: tokenize("BAR"), e: true},
 {n: "per3", c: per(str("FOO"), str("BAR")),          t: tokenize("FOO BAR"), e: true},
-{n: "per4", c: per(str("FOO"), str("BAR")),          t: tokenize("BAR FOO"), e: true},
-{n: "per5", c: per(str("FO"), str("BA"), str("MO")), t: tokenize("BA MO"), e: true},
-{n: "per6", c: per(str("FOO"), str("BAR")),          t: tokenize("MOO"), e: false},
+{n: "per4", c: per(str("FOO"), str("BAR")),          t: tokenize("FOO FOO BAR"), e: false},
+{n: "per5", c: per(str("FOO"), str("BAR")),          t: tokenize("BAR FOO"), e: true},
+{n: "per6", c: per(str("FO"), str("BA"), str("MO")), t: tokenize("BA MO"), e: true},
+{n: "per7", c: per(str("FO"), str("BA"), str("MO")), t: tokenize("MO BA"), e: true},
+{n: "per8", c: per(str("FOO"), str("BAR")),          t: tokenize("MOO"), e: false},
+{n: "per9", c: per(str("FOO"), str("BAR")),          t: tokenize("FOO BAR FOO"), e: false},
+{n: "per9", c: per(str("FOO"), str("BAR")),          t: tokenize("FOO FOO"), e: false},
+{n: "per9", c: per(str("FOO"), str("BAR")),          t: tokenize("BAR BAR"), e: false},
 {n: "tok1", c: tok(Identifier),                      t: tokenize("FOO"), e: true},
 {n: "tok2", c: seq(str("A"), tok(WPlusW), str("B")), t: tokenize("A + B"), e: true},
 {n: "tok3", c: seq(str("A"), tok(Plus), str("B")),   t: tokenize("A+B"), e: true},
