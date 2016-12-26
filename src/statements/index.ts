@@ -111,6 +111,7 @@ export * from "./endinterface";
 export * from "./parameter";
 export * from "./include";
 export * from "./collect";
+export * from "./get_dataset";
 export * from "./tables";
 export * from "./add";
 export * from "./describe";

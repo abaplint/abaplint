@@ -10,6 +10,9 @@ let tests = [
   "AT SELECTION-SCREEN ON p_trkorr.",
   "AT SELECTION-SCREEN ON VALUE-REQUEST FOR p_path.",
   "AT SELECTION-SCREEN ON BLOCK part1.",
+  "AT SELECTION-SCREEN ON HELP-REQUEST FOR field.",
+  "AT SELECTION-SCREEN ON HELP-REQUEST FOR foo-low.",
+  "AT SELECTION-SCREEN ON END OF foo.",
 ];
 
 statementType(tests, "AT SELECTION-SCREEN", Statements.AtSelectionScreen);

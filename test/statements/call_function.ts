@@ -131,6 +131,11 @@ let tests = [
   "  EXCEPTIONS\n" +
   "    version_not_found = constant\n" +
   "    OTHERS            = 3.",
+
+  "CALL FUNCTION 'ZFOOBAR'\n" +
+  "  STARTING NEW TASK name\n" +
+  "  DESTINATION IN GROUP DEFAULT\n" +
+  "  CALLING callback ON END OF TASK.",
 ];
 
 statementType(tests, "CALL FUNCTION", Statements.CallFunction);

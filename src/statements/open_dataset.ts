@@ -6,6 +6,7 @@ let str = Combi.str;
 let seq = Combi.seq;
 let opt = Combi.opt;
 let alt = Combi.alt;
+let per = Combi.per;
 
 export class Open extends Statement {
 
@@ -19,8 +20,7 @@ export class Open extends Statement {
                   new Reuse.Field(),
                   direction,
                   opt(mode),
-                  opt(encoding),
-                  opt(pos));
+                  opt(per(encoding, pos)));
 
     return ret;
   }

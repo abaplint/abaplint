@@ -15,6 +15,7 @@ export class InsertReport extends Statement {
                   new Reuse.Source(),
                   opt(seq(str("STATE"), new Reuse.Source())),
                   opt(seq(str("EXTENSION TYPE"), new Reuse.Source())),
+                  opt(seq(str("DIRECTORY ENTRY"), new Reuse.Source())),
                   opt(seq(str("PROGRAM TYPE"), new Reuse.Source())));
 
     return ret;

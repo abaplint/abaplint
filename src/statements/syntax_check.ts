@@ -4,7 +4,6 @@ import * as Combi from "../combi";
 
 let str = Combi.str;
 let seq = Combi.seq;
-let opt = Combi.opt;
 let alt = Combi.alt;
 let per = Combi.per;
 let plus = Combi.plus;
@@ -25,20 +24,17 @@ export class SyntaxCheck extends Statement {
     let directory = seq(str("DIRECTORY ENTRY"), new Reuse.Source());
 
     let syntax = seq(new Reuse.Source(),
-                     str("MESSAGE"),
-                     new Reuse.Target(),
-                     str("LINE"),
-                     new Reuse.Target(),
-                     opt(offset),
-                     str("WORD"),
-                     new Reuse.Target(),
-                     opt(per(program,
-                             replacing,
-                             directory,
-                             frame,
-                             include,
-                             messageId,
-                             plus(id))));
+                     per(message,
+                         line,
+                         word,
+                         offset,
+                         program,
+                         replacing,
+                         directory,
+                         frame,
+                         include,
+                         messageId,
+                         plus(id)));
 
     let dynpro = seq(str("DYNPRO"),
                      new Reuse.Source(),

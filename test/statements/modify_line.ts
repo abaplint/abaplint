@@ -7,6 +7,7 @@ let tests = [
   "modify line lineno.",
   "modify line 2.",
   "MODIFY LINE 2 INDEX 0 FIELD VALUE val.",
+  "modify line 1 index 0 field value foo bar boo.",
 ];
 
 statementType(tests, "MODIFY LINE", Statements.ModifyLine);

@@ -14,6 +14,7 @@ let tests = [
   "replace section offset lv_off length 1 of <src> with char.",
   "REPLACE ALL OCCURRENCES OF `''` IN TABLE code WITH `bar`.",
   "replace all occurrences of '0' in section length lv_len OF lv_val with ` `.",
+  "REPLACE ALL OCCURRENCES OF REGEX regx IN foo WITH repl RESPECTING CASE.",
 ];
 
 statementType(tests, "REPLACE", Statements.Replace);

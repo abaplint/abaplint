@@ -46,6 +46,8 @@ let tests = [
   "SYNTAX-CHECK FOR lt_report MESSAGE mess LINE lin WORD wrd PROGRAM lv_gen_repid.",
 
   "SYNTAX-CHECK FOR code MESSAGE mess LINE lin WORD wrd ID 'MSG' TABLE warnings PROGRAM sy-repid.",
+
+  "syntax-check for source message mess line lin program prog word word include incl.",
 ];
 
 statementType(tests, "SYNTAX-CHECK", Statements.SyntaxCheck);

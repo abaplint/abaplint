@@ -4,14 +4,19 @@ import * as Combi from "../combi";
 
 let str = Combi.str;
 let seq = Combi.seq;
-let opt = Combi.opt;
+let per = Combi.per;
+let plus = Combi.plus;
 
 export class Get extends Statement {
 
   public static get_matcher(): Combi.IRunnable {
+    let fields = seq(str("FIELDS"), plus(new Reuse.Field()));
+
+    let options = per(str("LATE"), fields);
+
     let ret = seq(str("GET"),
                   new Reuse.Target(),
-                  opt(str("LATE")));
+                  options);
 
     return ret;
   }

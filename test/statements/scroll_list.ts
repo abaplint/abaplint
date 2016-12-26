@@ -7,6 +7,8 @@ let tests = [
   "scroll list to last page line lv_line.",
   "scroll list to first page.",
   "scroll list backward.",
+  "scroll list forward.",
+  "SCROLL LIST TO FIRST PAGE INDEX SY-LSIND.",
 ];
 
 statementType(tests, "SCROLL LIST", Statements.ScrollList);

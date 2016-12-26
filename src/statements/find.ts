@@ -16,6 +16,7 @@ export class Find extends Statement {
                       str("RESPECTING CASE"),
                       str("IN BYTE MODE"),
                       seq(str("MATCH OFFSET"), new Reuse.Target()),
+                      seq(str("MATCH LINE"), new Reuse.Target()),
                       seq(str("MATCH COUNT"), new Reuse.Target()),
                       seq(str("MATCH LENGTH"), new Reuse.Target()),
                       seq(str("RESULTS"), new Reuse.Target()),

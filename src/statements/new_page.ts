@@ -13,6 +13,7 @@ export class NewPage extends Statement {
     let line = seq(str("LINE-SIZE"), new Reuse.Source());
     let print = seq(str("PRINT"), alt(str("OFF"), str("ON")));
     let parameters = seq(str("PARAMETERS"), new Reuse.Source());
+    let archive = seq(str("ARCHIVE PARAMETERS"), new Reuse.Source());
     let lineCount = seq(str("LINE-COUNT"), new Reuse.Source());
 
     return seq(str("NEW-PAGE"),
@@ -21,6 +22,7 @@ export class NewPage extends Statement {
                    alt(str("NO-HEADING"), str("WITH-HEADING")),
                    str("NO DIALOG"),
                    parameters,
+                   archive,
                    lineCount,
                    line));
   }

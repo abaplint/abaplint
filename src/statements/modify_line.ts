@@ -6,12 +6,13 @@ let str = Combi.str;
 let seq = Combi.seq;
 let alt = Combi.alt;
 let opt = Combi.opt;
+let plus = Combi.plus;
 
 export class ModifyLine extends Statement {
 
   public static get_matcher(): Combi.IRunnable {
 
-    let field = seq(str("FIELD VALUE"), new Reuse.Source());
+    let field = seq(str("FIELD VALUE"), plus(new Reuse.Source()));
     let from = seq(str("FROM"), new Reuse.Source());
     let index = seq(str("INDEX"), new Reuse.Source());
 

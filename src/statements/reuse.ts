@@ -272,9 +272,11 @@ export class FieldOffset extends Combi.Reuse {
 
 export class FieldLength extends Combi.Reuse {
   public get_runnable() {
+    let normal = seq(reg(/^[\d\w]+$/),
+                     opt(seq(new ArrowOrDash(), new Field())));
+
     let length = seq(tok(ParenLeft),
-                     reg(/^[\d\w]+$/),
-                     opt(seq(new ArrowOrDash(), new Field())),
+                     alt(normal, str("*")),
                      alt(tok(ParenRightW), tok(ParenRight)));
 
     return length;
@@ -500,19 +502,20 @@ export class Field extends Combi.Reuse {
   }
 }
 
-export class Value extends Combi.Reuse {
+export class PassByValue extends Combi.Reuse {
   public get_runnable() {
-    let ret = seq(str("VALUE"), alt(new Constant(), str("IS INITIAL"), new FieldChain()));
-    return ret;
+    let value = seq(str("VALUE"),
+                    tok(ParenLeft),
+                    new Field(),
+                    alt(tok(ParenRight), tok(ParenRightW)));
+
+    return value;
   }
 }
 
-export class PassByValue extends Combi.Reuse {
+export class Value extends Combi.Reuse {
   public get_runnable() {
-    let ret = seq(str("VALUE"),
-                  tok(ParenLeft),
-                  new Field(),
-                  tok(ParenRightW));
+    let ret = seq(str("VALUE"), alt(new Constant(), str("IS INITIAL"), new FieldChain()));
     return ret;
   }
 }

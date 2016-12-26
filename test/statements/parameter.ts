@@ -12,6 +12,7 @@ let tests = [
   "PARAMETER p_local  RADIOBUTTON GROUP g1.",
   "PARAMETERS p_path  TYPE string LOWER CASE MODIF ID pat.",
   "parameter p_def type c default ' ' as checkbox.",
+  "parameters p_size default 1000 type i.",
   "PARAMETERS rb_down RADIOBUTTON GROUP rb1 USER-COMMAND space.",
   "PARAMETERS p_mail TYPE so_dli_nam OBLIGATORY MATCHCODE OBJECT zfoobar.",
   "PARAMETER p_url  TYPE string LOWER CASE VISIBLE LENGTH 40.",
@@ -20,6 +21,7 @@ let tests = [
   "PARAMETER p_top  TYPE i DEFAULT 100 OBLIGATORY.",
   "PARAMETERS p_aid LIKE toaom-archiv_id OBLIGATORY.",
   "PARAMETERS p_file(128) TYPE c LOWER CASE OBLIGATORY DEFAULT 'C:\filename.xls'.",
+  "PARAMETERS p_mail TYPE c LENGTH 40 LOWER CASE.",
 ];
 
 statementType(tests, "PARAMETER", Statements.Parameter);

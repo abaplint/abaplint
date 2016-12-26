@@ -21,13 +21,13 @@ export class Assign extends Statement {
                      component,
                      seq(new Reuse.Dynamic(), opt(seq(tok(Arrow), new Reuse.Field()))));
 
-    let type = seq(str("TYPE"), new Reuse.Dynamic());
+    let type = seq(str("TYPE"), alt(new Reuse.Dynamic(), new Reuse.Source()));
 
     let handle = seq(str("TYPE HANDLE"), new Reuse.Field());
 
     let range = seq(str("RANGE"), new Reuse.Field());
 
-    let casting = opt(seq(str("CASTING"), opt(alt(type, range, handle))));
+    let casting = seq(opt(str("CASTING")), opt(alt(type, range, handle)));
 
     let ret = seq(str("ASSIGN"),
                   opt(seq(new Reuse.Target(), str("INCREMENT"))),

@@ -20,12 +20,15 @@ export class Parameter extends Statement {
     let cmd = seq(str("USER-COMMAND"), new Reuse.Field());
     let modif = seq(str("MODIF ID"), new Reuse.Field());
     let visible = seq(str("VISIBLE LENGTH"), new Reuse.Constant());
+    let length = seq(str("LENGTH"), new Reuse.Constant());
     let match = seq(str("MATCHCODE OBJECT"), new Reuse.Field());
 
-    let perm = per(def,
+    let perm = per(type,
+                   def,
                    str("OBLIGATORY"),
                    match,
                    cmd,
+                   length,
                    radio,
                    memory,
                    modif,
@@ -38,7 +41,6 @@ export class Parameter extends Statement {
     let ret = seq(para,
                   new Reuse.Field(),
                   opt(new Reuse.FieldLength()),
-                  opt(type),
                   opt(perm));
 
     return ret;

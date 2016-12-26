@@ -9,6 +9,7 @@ let tests = [
   "NEW-PAGE LINE-COUNT 15.",
   "NEW-PAGE WITH-HEADING.",
   "NEW-PAGE PRINT ON PARAMETERS params NO DIALOG.",
+  "NEW-PAGE NO-TITLE NO-HEADING PRINT ON PARAMETERS par ARCHIVE PARAMETERS arc NO DIALOG.",
 ];
 
 statementType(tests, "NEW-PAGE", Statements.NewPage);

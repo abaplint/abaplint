@@ -11,7 +11,11 @@ let per = Combi.per;
 export class SelectOption extends Statement {
 
   public static get_matcher(): Combi.IRunnable {
-    let def = seq(str("DEFAULT"), alt(new Reuse.Constant(), new Reuse.FieldChain()));
+    let to = seq(str("TO"), new Reuse.Constant());
+
+    let def = seq(str("DEFAULT"),
+                  alt(new Reuse.Constant(), new Reuse.FieldChain()),
+                  opt(to));
 
     let option = seq(str("OPTION"), new Reuse.Field());
 
@@ -31,6 +35,7 @@ export class SelectOption extends Statement {
                       modif,
                       str("NO-EXTENSION"),
                       str("NO INTERVALS"),
+                      str("NO-DISPLAY"),
                       str("OBLIGATORY"));
 
     let ret = seq(str("SELECT-OPTIONS"),

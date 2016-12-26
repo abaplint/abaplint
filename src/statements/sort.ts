@@ -18,8 +18,7 @@ export class Sort extends Statement {
                   new Reuse.Dynamic());
 
     let fields = plus(seq(sel,
-                          opt(order),
-                          opt(str("AS TEXT"))));
+                          opt(order)));
 
     let by = seq(str("BY"),
                  alt(fields, new Reuse.Dynamic()));
@@ -27,7 +26,8 @@ export class Sort extends Statement {
     return seq(str("SORT"),
                new Reuse.Target(),
                opt(alt(str("STABLE"), order)),
-               opt(by));
+               opt(by),
+               opt(str("AS TEXT")));
   }
 
 }

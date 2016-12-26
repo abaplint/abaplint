@@ -15,6 +15,7 @@ let tests = [
   "FIND ALL OCCURRENCES OF '<style' IN iv_str MATCH COUNT lv_style_tag_open IGNORING CASE.",
   "find value in text respecting case match offset off match length len.",
   "find foo-bar in xdata in byte mode match offset moff.",
+  "FIND 'foo' IN TABLE lt_foobar MATCH LINE idx.",
 ];
 
 statementType(tests, "FIND", Statements.Find);
