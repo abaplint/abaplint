@@ -6,6 +6,7 @@ let str = Combi.str;
 let seq = Combi.seq;
 let opt = Combi.opt;
 let alt = Combi.alt;
+let per = Combi.per;
 
 export class Convert extends Statement {
 
@@ -21,9 +22,10 @@ export class Convert extends Statement {
                    new Reuse.Target(),
                    opt(seq(str("DAYLIGHT SAVING TIME"), new Reuse.Target())));
 
-    let date = seq(str("DATE"),
-                   new Reuse.Source(),
-                   opt(seq(str("TIME"), new Reuse.Source())),
+    let dat = seq(str("DATE"), new Reuse.Source());
+    let tim = seq(str("TIME"), new Reuse.Source());
+
+    let date = seq(per(dat, tim),
                    str("INTO TIME STAMP"),
                    new Reuse.Target(),
                    str("TIME ZONE"),

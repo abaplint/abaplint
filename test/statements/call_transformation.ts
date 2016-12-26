@@ -23,6 +23,11 @@ let tests = [
   "CALL TRANSFORMATION id\n" +
   "  SOURCE XML lv_json\n" +
   "  RESULT data = <lg_comp>.",
+
+  "CALL TRANSFORMATION foo\n" +
+  "  SOURCE bar = moo\n" +
+  "  RESULT XML lv_xml\n" +
+  "  OPTIONS xml_header = 'NO'.",
 ];
 
 statementType(tests, "CALL TRANSFORMATION", Statements.CallTransformation);

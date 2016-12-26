@@ -42,6 +42,10 @@ let tests = [
   "  ID main_id TABLE lt_main\n" +
   "  ID warn_id TABLE lt_warn\n" +
   "  ID desc_id TABLE lt_desc.",
+
+  "SYNTAX-CHECK FOR lt_report MESSAGE mess LINE lin WORD wrd PROGRAM lv_gen_repid.",
+
+  "SYNTAX-CHECK FOR code MESSAGE mess LINE lin WORD wrd ID 'MSG' TABLE warnings PROGRAM sy-repid.",
 ];
 
 statementType(tests, "SYNTAX-CHECK", Statements.SyntaxCheck);

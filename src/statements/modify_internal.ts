@@ -15,7 +15,8 @@ export class ModifyInternal extends Statement {
 
     let from = seq(str("FROM"), new Reuse.Source());
 
-    let transporting = seq(str("TRANSPORTING"), plus(new Reuse.Field()));
+    let transporting = seq(str("TRANSPORTING"),
+                           alt(plus(new Reuse.Field()), new Reuse.Dynamic()));
 
     let where = seq(str("WHERE"), new Reuse.Cond());
 

@@ -4,13 +4,15 @@ import * as Reuse from "./reuse";
 
 let str = Combi.str;
 let seq = Combi.seq;
+let alt = Combi.alt;
 
 export class Wait extends Statement {
 
   public static get_matcher(): Combi.IRunnable {
-    return seq(str("WAIT UP TO"),
-               new Reuse.Source(),
-               str("SECONDS"));
+    let up = seq(str("UP TO"), new Reuse.Source(), str("SECONDS"));
+    let until = seq(str("UNTIL"), new Reuse.Cond());
+
+    return seq(str("WAIT"), alt(up, until));
   }
 
 }

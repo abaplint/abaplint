@@ -17,9 +17,11 @@ export class ReadLine extends Statement {
                     new Reuse.Target(),
                     opt(seq(str("INTO"), new Reuse.Target())));
 
+    let index = seq(str("INDEX"), new Reuse.Source());
+
     return seq(str("READ LINE"),
                new Reuse.Source(),
-               opt(alt(val, field)));
+               opt(alt(val, index, field)));
   }
 
 }

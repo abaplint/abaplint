@@ -4,7 +4,7 @@ import * as Combi from "../combi";
 
 let str = Combi.str;
 let seq = Combi.seq;
-let opt = Combi.opt;
+let per = Combi.per;
 
 export class Scan extends Statement {
 
@@ -14,19 +14,20 @@ export class Scan extends Statement {
     let levels = seq(str("LEVELS INTO"), new Reuse.Target());
     let structures = seq(str("STRUCTURES INTO"), new Reuse.Target());
     let keywords = seq(str("KEYWORDS FROM"), new Reuse.Source());
+    let pragmas = seq(str("WITH PRAGMAS"), new Reuse.Field());
 
     let ret = seq(str("SCAN ABAP-SOURCE"),
                   new Reuse.Source(),
-                  tokens,
-                  statements,
-                  opt(levels),
-                  opt(structures),
-                  opt(keywords),
-                  opt(str("WITH ANALYSIS")),
-                  opt(str("WITH COMMENTS")),
-                  opt(str("WITH INCLUDES")),
-                  opt(str("WITHOUT TRMAC")),
-                  opt(seq(str("WITH PRAGMAS"), new Reuse.Field())));
+                  per(tokens,
+                      levels,
+                      statements,
+                      structures,
+                      keywords,
+                      str("WITH ANALYSIS"),
+                      str("WITH COMMENTS"),
+                      str("WITH INCLUDES"),
+                      str("WITHOUT TRMAC"),
+                      pragmas));
 
     return ret;
   }

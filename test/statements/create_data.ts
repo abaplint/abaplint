@@ -11,6 +11,7 @@ let tests = [
   "CREATE DATA wo_data   TYPE HANDLE lo_table.",
   "CREATE DATA result TYPE n LENGTH lv_length.",
   "CREATE DATA result TYPE p LENGTH lv_length DECIMALS lv_decimals.",
+  "CREATE DATA dref.",
 ];
 
 statementType(tests, "CREATE DATA", Statements.CreateData);

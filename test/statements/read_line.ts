@@ -6,6 +6,7 @@ let tests = [
   "read line sy-index field value lv_val into lv_target.",
   "READ LINE sy-index FIELD VALUE mark.",
   "READ LINE sy-index.",
+  "READ LINE 2 INDEX 0.",
 ];
 
 statementType(tests, "READ LINE", Statements.ReadLine);

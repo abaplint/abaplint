@@ -26,8 +26,7 @@ export class CreateData extends Statement {
 
     let ret = seq(str("CREATE DATA"),
                   new Reuse.Target(),
-                  type,
-                  alt(new Reuse.Source(), new Reuse.Dynamic()),
+                  opt(seq(type, alt(new Reuse.Source(), new Reuse.Dynamic()))),
                   opt(key),
                   opt(length),
                   opt(decimals));

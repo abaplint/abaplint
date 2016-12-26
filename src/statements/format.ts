@@ -18,6 +18,7 @@ export class Format extends Statement {
                       seq(str("INTENSIFIED"), opt(value)),
                       seq(str("INVERSE"), value),
                       seq(str("HOTSPOT"), value),
+                      seq(str("FRAMES"), value),
                       seq(str("INPUT"), value),
                       seq(str("COLOR"), value, opt(str("ON"))));
     return seq(str("FORMAT"), options);

@@ -4,6 +4,7 @@ import * as Statements from "../../src/statements/";
 let tests = [
   "CALL SELECTION-SCREEN 1001.",
   "CALL SELECTION-SCREEN DYNNR STARTING AT 5 5 ENDING AT 60 8.",
+  "CALL SELECTION-SCREEN 200 STARTING AT 5 15.",
 ];
 
 statementType(tests, "CALL SELECTION-SCREEN", Statements.CallSelectionScreen);

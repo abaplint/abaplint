@@ -31,7 +31,8 @@ export class Perform extends Statement {
                opt(tables),
                opt(using),
                opt(changing),
-               opt(str("IF FOUND")));
+               opt(str("IF FOUND")),
+               opt(str("ON COMMIT")));
   }
 
 }

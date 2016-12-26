@@ -6,12 +6,13 @@ let str = Combi.str;
 let seq = Combi.seq;
 let opt = Combi.opt;
 let alt = Combi.alt;
-let star = Combi.star;
+let per = Combi.per;
+let plus = Combi.plus;
 
 export class SyntaxCheck extends Statement {
 
   public static get_matcher(): Combi.IRunnable {
-    let program = seq(str("PROGRAM"), new Reuse.Target());
+    let program = seq(str("PROGRAM"), new Reuse.Source());
     let offset = seq(str("OFFSET"), new Reuse.Target());
     let frame = seq(str("FRAME ENTRY"), new Reuse.Target());
     let include = seq(str("INCLUDE"), new Reuse.Target());
@@ -19,11 +20,11 @@ export class SyntaxCheck extends Statement {
     let word = seq(str("WORD"), new Reuse.Target());
     let messageId = seq(str("MESSAGE-ID"), new Reuse.Target());
     let message = seq(str("MESSAGE"), new Reuse.Target());
-    let id = seq(str("ID"), new Reuse.Field(), str("TABLE"), new Reuse.Target());
+    let id = seq(str("ID"), new Reuse.Source(), str("TABLE"), new Reuse.Target());
     let replacing = seq(str("REPLACING"), new Reuse.Target());
+    let directory = seq(str("DIRECTORY ENTRY"), new Reuse.Source());
 
-    let syntax = seq(str("SYNTAX-CHECK FOR"),
-                     new Reuse.Source(),
+    let syntax = seq(new Reuse.Source(),
                      str("MESSAGE"),
                      new Reuse.Target(),
                      str("LINE"),
@@ -31,16 +32,15 @@ export class SyntaxCheck extends Statement {
                      opt(offset),
                      str("WORD"),
                      new Reuse.Target(),
-                     opt(program),
-                     opt(replacing),
-                     str("DIRECTORY ENTRY"),
-                     new Reuse.Source(),
-                     opt(frame),
-                     opt(include),
-                     opt(messageId),
-                     star(id));
+                     opt(per(program,
+                             replacing,
+                             directory,
+                             frame,
+                             include,
+                             messageId,
+                             plus(id))));
 
-    let dynpro = seq(str("SYNTAX-CHECK FOR DYNPRO"),
+    let dynpro = seq(str("DYNPRO"),
                      new Reuse.Source(),
                      new Reuse.Source(),
                      new Reuse.Source(),
@@ -51,7 +51,7 @@ export class SyntaxCheck extends Statement {
                      offset,
                      messageId);
 
-    return alt(syntax, dynpro);
+    return seq(str("SYNTAX-CHECK FOR"), alt(syntax, dynpro));
   }
 
 }

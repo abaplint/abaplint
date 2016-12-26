@@ -2,8 +2,7 @@ import {statementType} from "../utils";
 import * as Statements from "../../src/statements/";
 
 let tests = [
-  "CLEANUP INTO l_cx.",
-  "CLEANUP.",
+  "SET RUN TIME CLOCK RESOLUTION LOW.",
 ];
 
-statementType(tests, "CLEANUP", Statements.Cleanup);
+statementType(tests, "SET RUN TIME", Statements.SetRunTime);

@@ -4,8 +4,8 @@ import * as Combi from "../combi";
 
 let str = Combi.str;
 let seq = Combi.seq;
-let opt = Combi.opt;
 let alt = Combi.alt;
+let per = Combi.per;
 
 export class CallTransformation extends Statement {
 
@@ -22,9 +22,9 @@ export class CallTransformation extends Statement {
 
     let call = seq(str("CALL TRANSFORMATION"),
                    new Reuse.Field(),
-                   opt(options),
-                   source,
-                   result);
+                   per(options,
+                       source,
+                       result));
     return call;
   }
 

@@ -4,12 +4,14 @@ import * as Reuse from "./reuse";
 
 let str = Combi.str;
 let seq = Combi.seq;
+let opt = Combi.opt;
 
 export class Cleanup extends Statement {
 
   public static get_matcher(): Combi.IRunnable {
-    return seq(str("CLEANUP INTO"),
-               new Reuse.Target());
+    let into = seq(str("INTO"), new Reuse.Target());
+
+    return seq(str("CLEANUP"), opt(into));
   }
 
 }

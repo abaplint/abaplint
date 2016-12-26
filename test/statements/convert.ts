@@ -6,6 +6,7 @@ let tests = [
   "CONVERT TIME STAMP obj->stru~created TIME ZONE sy-zonlo INTO DATE lv_date TIME lv_time.",
   "CONVERT DATE lv_date TIME lv_time INTO TIME STAMP rv_time TIME ZONE '      '.",
   "CONVERT DATE iv_date INTO TIME STAMP lv_stamp TIME ZONE lv_zone.",
+  "convert time t date d into time stamp lv_ts time zone 'UTC   '.",
 ];
 
 statementType(tests, "CONVERT", Statements.Convert);

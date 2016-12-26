@@ -10,13 +10,13 @@ export class GetCursor extends Statement {
 
   public static get_matcher(): Combi.IRunnable {
     let line = seq(str("LINE"), new Reuse.Target());
-
     let field = seq(str("FIELD"), new Reuse.Target());
-
     let offset = seq(str("OFFSET"), new Reuse.Target());
+    let value = seq(str("VALUE"), new Reuse.Target());
+    let length = seq(str("LENGTH"), new Reuse.Target());
 
     let ret = seq(str("GET CURSOR"),
-                  per(line, field, offset));
+                  per(line, field, offset, value, length));
 
     return ret;
   }

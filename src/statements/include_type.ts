@@ -10,10 +10,15 @@ let alt = Combi.alt;
 export class IncludeType extends Statement {
 
   public static get_matcher(): Combi.IRunnable {
+    let tas = seq(str("AS"), new Reuse.Field());
+
+    let renaming = seq(str("RENAMING WITH SUFFIX"), new Reuse.Source());
+
     let ret = seq(str("INCLUDE"),
                   alt(str("TYPE"), str("STRUCTURE")),
                   new Reuse.TypeName(),
-                  opt(seq(str("AS"), new Reuse.Field())));
+                  opt(tas),
+                  opt(renaming));
 
     return ret;
   }

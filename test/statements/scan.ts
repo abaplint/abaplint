@@ -29,7 +29,9 @@ let tests = [
   "  with includes\n" +
   "  without trmac.",
 
-  "SCAN ABAP-SOURCE source TOKENS INTO tokens STATEMENTS INTO statements.",
+  "SCAN ABAP-SOURCE src TOKENS INTO tokens STATEMENTS INTO statements.",
+
+  "scan abap-source src with analysis tokens into tokens statements into stmts.",
 ];
 
 statementType(tests, "SCAN", Statements.Scan);

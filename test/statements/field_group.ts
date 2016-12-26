@@ -2,8 +2,7 @@ import {statementType} from "../utils";
 import * as Statements from "../../src/statements/";
 
 let tests = [
-  "CLEANUP INTO l_cx.",
-  "CLEANUP.",
+  "FIELD-GROUPS test.",
 ];
 
-statementType(tests, "CLEANUP", Statements.Cleanup);
+statementType(tests, "FIELD GROUP", Statements.FieldGroup);

@@ -9,14 +9,13 @@ let opt = Combi.opt;
 export class CallSelectionScreen extends Statement {
 
   public static get_matcher(): Combi.IRunnable {
-    let starting = seq(str("STARTING AT"),
-                       new Reuse.Source(),
-                       new Reuse.Source(),
-                       str("ENDING AT"),
-                       new Reuse.Source(),
-                       new Reuse.Source());
+    let ending = seq(str("ENDING AT"), new Reuse.Source(), new Reuse.Source());
+    let starting = seq(str("STARTING AT"), new Reuse.Source(), new Reuse.Source());
 
-    let call = seq(str("CALL SELECTION-SCREEN"), new Reuse.Source(), opt(starting));
+    let at = seq(starting, opt(ending));
+
+    let call = seq(str("CALL SELECTION-SCREEN"), new Reuse.Source(), opt(at));
+
     return call;
   }
 

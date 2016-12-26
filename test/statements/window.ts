@@ -2,8 +2,7 @@ import {statementType} from "../utils";
 import * as Statements from "../../src/statements/";
 
 let tests = [
-  "CLEANUP INTO l_cx.",
-  "CLEANUP.",
+  "WINDOW STARTING AT 1 1 ENDING AT 2 2.",
 ];
 
-statementType(tests, "CLEANUP", Statements.Cleanup);
+statementType(tests, "WINDOW", Statements.Window);

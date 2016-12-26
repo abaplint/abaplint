@@ -11,9 +11,11 @@ let per = Combi.per;
 export class Replace extends Statement {
 
   public static get_matcher(): Combi.IRunnable {
+    let length = seq(str("LENGTH"), new Reuse.Source());
+
     let option = alt(str("ALL OCCURRENCES"),
                      str("FIRST OCCURRENCE"),
-                     seq(str("SECTION OFFSET"), new Reuse.Source()));
+                     seq(str("SECTION OFFSET"), new Reuse.Source(), opt(length)));
 
     return seq(str("REPLACE"),
                opt(option),

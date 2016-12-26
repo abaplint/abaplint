@@ -6,6 +6,7 @@ let tests = [
   "get cursor line l.",
   "GET CURSOR OFFSET off.",
   "GET CURSOR FIELD gv_field.",
+  "GET CURSOR LINE lin OFFSET off VALUE val LENGTH len.",
 ];
 
 statementType(tests, "GET CURSOR", Statements.GetCursor);

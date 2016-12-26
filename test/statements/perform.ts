@@ -11,6 +11,7 @@ let tests = [
   "PERFORM sub TABLES bar USING foo.",
   "PERFORM run.",
   "PERFORM run(zfoobar).",
+  "PERFORM send ON COMMIT.",
 ];
 
 statementType(tests, "PERFORM", Statements.Perform);

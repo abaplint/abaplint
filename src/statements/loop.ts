@@ -11,10 +11,13 @@ let per = Combi.per;
 export class Loop extends Statement {
 
   public static get_matcher(): Combi.IRunnable {
-    let where = seq(str("WHERE"), new Reuse.Cond());
+    let where = seq(str("WHERE"), alt(new Reuse.Cond(), new Reuse.Dynamic()));
+
+    let group = seq(str("GROUP BY"), new Reuse.FieldSub());
 
     let into = alt(seq(alt(seq(opt(str("REFERENCE")), str("INTO")), str("ASSIGNING")),
                        new Reuse.Target(),
+                       opt(group),
                        opt(str("CASTING"))),
                    str("TRANSPORTING NO FIELDS"));
 
@@ -26,9 +29,11 @@ export class Loop extends Statement {
 
     let options = per(into, from, to, where, usingKey);
 
-    return seq(str("LOOP AT"),
-               new Reuse.Source(),
-               opt(options));
+    let at = seq(str("AT"),
+                 new Reuse.Source(),
+                 opt(options));
+
+    return seq(str("LOOP"), opt(at));
   }
 
   public isStructure() {

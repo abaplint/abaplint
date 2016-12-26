@@ -8,6 +8,7 @@ let tests = [
   "SUBMIT zmoo WITH p_foo EQ bar WITH p_bar EQ foo.",
   "SUBMIT zfoobar WITH s_print = iv_tddest WITH s_pnow = 'X' VIA JOB 'BKG' NUMBER lv_number AND RETURN.",
   "SUBMIT (progname) AND RETURN WITH p_backfn = filename WITH rb_back  = 'X'.",
+  "SUBMIT zfoo VIA SELECTION-SCREEN WITH SELECTION-TABLE tab AND RETURN.",
 ];
 
 statementType(tests, "SUBMIT", Statements.Submit);
