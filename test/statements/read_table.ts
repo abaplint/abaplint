@@ -23,6 +23,7 @@ let tests = [
   "READ TABLE entities REFERENCE INTO node WITH KEY name = iv_name.",
   "READ TABLE lt_table WITH KEY field = lv_value TRANSPORTING NO FIELDS BINARY SEARCH.",
   "READ TABLE lt_data WITH KEY <fs>.",
+  "READ TABLE itab FROM line INTO line COMPARING col2.",
 ];
 
 statementType(tests, "READ", Statements.Read);

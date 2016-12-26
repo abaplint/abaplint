@@ -3,6 +3,7 @@ import * as Statements from "../../src/statements/";
 
 let tests = [
   "EDITOR-CALL FOR lv_source DISPLAY-MODE TITLE lv_title.",
+  "EDITOR-CALL FOR REPORT 'ZFOO'.",
 ];
 
 statementType(tests, "EDITOR-CALL", Statements.EditorCall);

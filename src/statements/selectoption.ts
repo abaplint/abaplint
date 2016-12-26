@@ -36,7 +36,7 @@ export class SelectOption extends Statement {
     let ret = seq(str("SELECT-OPTIONS"),
                   new Reuse.Field(),
                   str("FOR"),
-                  new Reuse.FieldSub(),
+                  alt(new Reuse.FieldSub(), new Reuse.Dynamic()),
                   opt(options));
 
     return ret;

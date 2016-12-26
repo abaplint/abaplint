@@ -27,6 +27,7 @@ let tests = [
   "selection-screen comment (24) txt_path  for field p_path  modif id pth.",
   "SELECTION-SCREEN BEGIN OF SCREEN 1002 TITLE s_title.",
   "SELECTION-SCREEN COMMENT /1(35) text-001.",
+  "SELECTION-SCREEN BEGIN OF SCREEN 1000 AS SUBSCREEN NESTING LEVEL 3.",
 ];
 
 statementType(tests, "SELECTION-SCREEN", Statements.SelectionScreen);

@@ -17,6 +17,7 @@ let tests = [
   "loop at lt_data into <ls_data> where (condition).",
   "LOOP.",
   "LOOP AT itab INTO wa GROUP BY wa-column.",
+  "LOOP AT GROUP group INTO member.",
 ];
 
 statementType(tests, "LOOP", Statements.Loop);

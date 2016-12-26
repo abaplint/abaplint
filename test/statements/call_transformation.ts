@@ -28,6 +28,20 @@ let tests = [
   "  SOURCE bar = moo\n" +
   "  RESULT XML lv_xml\n" +
   "  OPTIONS xml_header = 'NO'.",
+
+  "CALL TRANSFORMATION id\n" +
+  "  SOURCE foo = bar\n" +
+  "         moo = boo\n" +
+  "  RESULT XML lv_xml.",
+
+  "CALL TRANSFORMATION id\n" +
+  "  SOURCE foo = 'sdf'\n" +
+  "         moo = boo\n" +
+  "  RESULT XML lv_xml.",
+
+  "CALL TRANSFORMATION (tran)\n" +
+  "  SOURCE root = bar\n" +
+  "  RESULT XML result.",
 ];
 
 statementType(tests, "CALL TRANSFORMATION", Statements.CallTransformation);

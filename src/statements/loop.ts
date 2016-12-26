@@ -30,6 +30,7 @@ export class Loop extends Statement {
     let options = per(into, from, to, where, usingKey);
 
     let at = seq(str("AT"),
+                 opt(str("GROUP")),
                  new Reuse.Source(),
                  opt(options));
 

@@ -13,6 +13,7 @@ let tests = [
   "SELECT-OPTIONS s_num FOR aqgqcat-num OBLIGATORY DEFAULT 'ASDF'.",
   "SELECT-OPTIONS s_moo FOR zfoo-bar NO INTERVALS MEMORY ID zfoo.",
   "SELECT-OPTIONS s_icon FOR icon-name DEFAULT 'foo' OPTION CP.",
+  "SELECT-OPTIONS foo FOR (foo=>bar).",
 ];
 
 statementType(tests, "SELECT-OPTIONS", Statements.SelectOption);

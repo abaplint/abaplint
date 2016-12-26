@@ -20,7 +20,8 @@ export class Write extends Statement {
 
     let to = seq(str("TO"), new Reuse.Target());
 
-    let colorOpt = alt(str("INVERSE"), str("INTENSIFIED"));
+    let colorOpt = alt(seq(str("INVERSE"), opt(str("ON"))),
+                       str("INTENSIFIED"));
 
     let options = per(mask,
                       to,
@@ -49,7 +50,9 @@ export class Write extends Statement {
                       str("NO-SIGN"));
 
     let complex = alt(seq(str("/"), opt(seq(tok(ParenLeft), reg(/^\d+$/), tok(ParenRightW)))),
-                      seq(tok(WParenLeft), reg(/^\d+$/), tok(ParenRightW)));
+                      seq(tok(WParenLeft), reg(/^\d+$/), tok(ParenRightW)),
+                      seq(reg(/^\/?\d+$/), tok(ParenLeft), reg(/^\d+$/), tok(ParenRightW)),
+                      seq(str("AT"), str("/"), tok(ParenLeft), reg(/^\d+$/), tok(ParenRightW)));
 
     let ret = seq(str("WRITE"),
                   opt(alt(at, complex)),

@@ -27,6 +27,7 @@ let tests = [
   "APPEND LINES OF explode( ii_object = lo_parent iv_deepen = iv_deepen - 1 ) TO rt_objects.",
   "APPEND lo_foo->call( )->chain( ) TO rt_commits.",
   "APPEND lo_branch->get_data( )-sha1 TO lt_visit.",
+  "APPEND LINES OF foobar FROM 2 TO 3 TO result.",
 ];
 
 statementType(tests, "APPEND", Statements.Append);

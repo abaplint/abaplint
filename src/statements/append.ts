@@ -13,8 +13,11 @@ export class Append extends Statement {
     let assigning = seq(str("ASSIGNING"), new Reuse.Target());
     let reference = seq(str("REFERENCE INTO"), new Reuse.Target());
 
+    let range = seq(str("FROM"), new Reuse.Source(), str("TO"), new Reuse.Source);
+
     return seq(str("APPEND"),
                alt(str("INITIAL LINE"), seq(opt(str("LINES OF")), new Reuse.Source())),
+               opt(range),
                opt(seq(str("TO"),
                        new Reuse.Target(),
                        opt(alt(assigning, reference)))));

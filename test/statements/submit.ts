@@ -9,6 +9,10 @@ let tests = [
   "SUBMIT zfoobar WITH s_print = iv_tddest WITH s_pnow = 'X' VIA JOB 'BKG' NUMBER lv_number AND RETURN.",
   "SUBMIT (progname) AND RETURN WITH p_backfn = filename WITH rb_back  = 'X'.",
   "SUBMIT zfoo VIA SELECTION-SCREEN WITH SELECTION-TABLE tab AND RETURN.",
+  "submit zfoo exporting list to memory and return.",
+  "submit zfoo via job jname number jnumber to sap-spool spool parameters params \n" +
+    "archive parameters aparams without spool dynpro and return.",
+  "SUBMIT (name) LINE-SIZE width LINE-COUNT length AND RETURN.",
 ];
 
 statementType(tests, "SUBMIT", Statements.Submit);

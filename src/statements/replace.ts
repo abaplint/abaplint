@@ -22,7 +22,7 @@ export class Replace extends Statement {
                opt(str("OF")),
                opt(str("REGEX")),
                new Reuse.Source(),
-               opt(seq(str("IN"), new Reuse.Target())),
+               opt(seq(str("IN"), opt(str("TABLE")), new Reuse.Target())),
                per(seq(str("WITH"), new Reuse.Source()),
                    seq(str("INTO"), new Reuse.Target())),
                opt(str("IGNORING CASE")),

@@ -59,6 +59,8 @@ describe("count_tokens", () => {
     {abap: "2\" comment",                         tokens: 2},
     {abap: "'foo'\" comment",                     tokens: 2},
     {abap: "foo: bar, moo.",                      tokens: 6},
+    {abap: "`''`",                                tokens: 1},
+    {abap: "`bar`",                               tokens: 1},
   ];
 
   tests.forEach((test) => {

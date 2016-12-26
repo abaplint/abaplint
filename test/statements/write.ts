@@ -36,6 +36,10 @@ let tests = [
   "write / lv_ts time zone sy-zonlo.",
   "write icon_message_error as icon hotspot.",
   "write / lv_foo under text-001.",
+  "write 60(1) sy-vline.",
+  "write /3(50) sdf.",
+  "write at /(20) wa_str-name.",
+  "WRITE 'hello' HOTSPOT COLOR 5 INVERSE ON.",
 ];
 
 statementType(tests, "WRITE", Statements.Write);

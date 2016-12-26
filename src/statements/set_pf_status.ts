@@ -14,6 +14,7 @@ export class SetPFStatus extends Statement {
     let ret = seq(str("SET PF-STATUS"),
                   new Reuse.Source(),
                   opt(program),
+                  opt(str("IMMEDIATELY")),
                   opt(seq(str("EXCLUDING"), new Reuse.Source())));
 
     return ret;

@@ -23,11 +23,14 @@ export class SelectionScreen extends Statement {
                          opt(str("NO INTERVALS")));
     let endBlock = seq(str("END OF BLOCK"), blockName);
 
+    let nesting = seq(str("NESTING LEVEL"), new Reuse.Source());
+
     let beginScreen = seq(str("BEGIN OF SCREEN"),
                           new Reuse.Integer(),
                           opt(seq(str("AS"), alt(str("WINDOW"), str("SUBSCREEN")))),
                           opt(seq(str("TITLE"), new Reuse.Source())),
-                          opt(str("NO INTERVALS")));
+                          opt(str("NO INTERVALS")),
+                          opt(nesting));
 
     let endScreen = seq(str("END OF SCREEN"), new Reuse.Integer());
 

@@ -12,8 +12,10 @@ let per = Combi.per;
 export class Read extends Statement {
 
   public static get_matcher(): Combi.IRunnable {
+    let comparing = seq(str("COMPARING"), new Reuse.Field());
+
     let target = alt(seq(str("ASSIGNING"), new Reuse.Target()),
-                     seq(opt(str("REFERENCE")), str("INTO"), new Reuse.Target()),
+                     seq(opt(str("REFERENCE")), str("INTO"), new Reuse.Target(), opt(comparing)),
                      str("TRANSPORTING NO FIELDS"));
 
     let index = seq(str("INDEX"), new Reuse.Source());

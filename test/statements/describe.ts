@@ -15,6 +15,7 @@ let tests = [
   "DESCRIBE DISTANCE BETWEEN lv_foo AND lv_bar INTO ld_shift IN CHARACTER MODE.",
   "describe field e_field edit mask l_mask.",
   "describe field <fs> type l_typ components l_num.",
+  "describe list number of lines lv_lines.",
 ];
 
 statementType(tests, "DESCRIBE", Statements.Describe);

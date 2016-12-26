@@ -12,6 +12,7 @@ let tests = [
   "SHIFT lv_cols BY 1 PLACES LEFT.",
   "SHIFT lv_temp UP TO '/' LEFT.",
   "SHIFT classname LEFT UP TO '='.",
+  "SHIFT bytes BY places PLACES RIGHT IN BYTE MODE.",
 ];
 
 statementType(tests, "SHIFT", Statements.Shift);

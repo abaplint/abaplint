@@ -36,7 +36,9 @@ export class Describe extends Statement {
                        new Reuse.Target(),
                        mode);
 
-    return seq(str("DESCRIBE"), alt(table, field, distance));
+    let list = seq(str("LIST NUMBER OF LINES"), new Reuse.Target());
+
+    return seq(str("DESCRIBE"), alt(table, field, distance, list));
   }
 
 }

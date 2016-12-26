@@ -12,6 +12,7 @@ let tests = [
   "REPLACE REGEX '([^/])\s*$' IN filename WITH '$1/' .",
   "REPLACE ALL OCCURRENCES OF REGEX 'sdf' IN cv_xml WITH 'sdf' IGNORING CASE.",
   "replace section offset lv_off length 1 of <src> with char.",
+  "REPLACE ALL OCCURRENCES OF `''` IN TABLE code WITH `bar`.",
 ];
 
 statementType(tests, "REPLACE", Statements.Replace);
