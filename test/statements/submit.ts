@@ -13,6 +13,7 @@ let tests = [
   "submit zfoo via job jname number jnumber to sap-spool spool parameters params \n" +
     "archive parameters aparams without spool dynpro and return.",
   "SUBMIT (name) LINE-SIZE width LINE-COUNT length AND RETURN.",
+  "submit zfoo with moo = stru-sdf with bar = stru-sdff via selection-screen and return.",
 ];
 
 statementType(tests, "SUBMIT", Statements.Submit);

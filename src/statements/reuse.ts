@@ -15,6 +15,7 @@ let str = Combi.str;
 let opt = Combi.opt;
 let tok = Combi.tok;
 let ver = Combi.ver;
+// let per = Combi.per;
 let star = Combi.star;
 let plus = Combi.plus;
 
@@ -103,7 +104,7 @@ export class ParameterException extends Combi.Reuse {
   public get_runnable() {
     return seq(new Field(),
                str("="),
-               new Integer(),
+               reg(/^[\w\d]+$/),
                opt(seq(str("MESSAGE"), new Target())));
   }
 }
@@ -288,6 +289,8 @@ export class FieldChain extends Combi.Reuse {
                         seq(tok(BracketLeftW),
                             alt(new Source(), plus(fcond)),
                             str("]")));
+
+//    let body = seq(tok(BracketLeft), str("]"));
 
     let chain = seq(alt(new Field(), new FieldSymbol()),
                     opt(tableExpr),

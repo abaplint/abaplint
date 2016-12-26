@@ -20,8 +20,10 @@ export class AtSelectionScreen extends Statement {
 
     let radio = seq(str("ON RADIOBUTTON GROUP"), new Reuse.Field());
 
+    let block = seq(str("ON BLOCK"), new Reuse.Field());
+
     let ret = seq(str("AT SELECTION-SCREEN"),
-                  opt(alt(output, value, radio, exit, field)));
+                  opt(alt(output, value, radio, exit, field, block)));
 
     return ret;
   }

@@ -122,6 +122,15 @@ let tests = [
   "    FIELDNAME = lv_field\n" +
   "  EXCEPTIONS\n" +
   "    DYNPRO_NOT_FOUND.",
+
+  "CALL FUNCTION 'TYPD_GET_OBJECT'\n" +
+  "  EXPORTING\n" +
+  "    typdname          = lv_typdname\n" +
+  "  TABLES\n" +
+  "    psmodisrc         = lt_psmodisrc\n" +
+  "  EXCEPTIONS\n" +
+  "    version_not_found = constant\n" +
+  "    OTHERS            = 3.",
 ];
 
 statementType(tests, "CALL FUNCTION", Statements.CallFunction);

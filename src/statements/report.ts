@@ -13,7 +13,7 @@ export class Report extends Statement {
     let heading = str("NO STANDARD PAGE HEADING");
     let size = seq(str("LINE-SIZE"), new Reuse.Integer());
     let count = seq(str("LINE-COUNT"), new Reuse.Integer());
-    let message = seq(str("MESSAGE-ID"), new Reuse.Field());
+    let message = seq(str("MESSAGE-ID"), new Reuse.MessageClass());
 
     return seq(str("REPORT"),
                opt(new Reuse.Field()),

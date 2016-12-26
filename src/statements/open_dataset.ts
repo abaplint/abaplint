@@ -13,12 +13,14 @@ export class Open extends Statement {
     let direction = alt(str("FOR OUTPUT"), str("FOR INPUT"));
     let mode = alt(str("IN BINARY MODE"), str("IN TEXT MODE"));
     let encoding = str("ENCODING DEFAULT");
+    let pos = seq(str("AT POSITION"), new Reuse.Source());
 
     let ret = seq(str("OPEN DATASET"),
                   new Reuse.Field(),
                   direction,
                   opt(mode),
-                  opt(encoding));
+                  opt(encoding),
+                  opt(pos));
 
     return ret;
   }

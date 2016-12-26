@@ -12,16 +12,23 @@ export class Replace extends Statement {
 
   public static get_matcher(): Combi.IRunnable {
     let length = seq(str("LENGTH"), new Reuse.Source());
+    let offset = seq(str("OFFSET"), new Reuse.Source());
 
-    let option = alt(str("ALL OCCURRENCES"),
-                     str("FIRST OCCURRENCE"),
-                     seq(str("SECTION OFFSET"), new Reuse.Source(), opt(length)));
+    let section = seq(opt(str("IN")),
+                      str("SECTION"),
+                      per(offset, length),
+                      str("OF"),
+                      new Reuse.Source());
+
+    let source = seq(opt(str("OF")),
+                     opt(str("REGEX")),
+                     new Reuse.Source());
+
+    let occ = alt(str("ALL OCCURRENCES"),
+                  str("FIRST OCCURRENCE"));
 
     return seq(str("REPLACE"),
-               opt(option),
-               opt(str("OF")),
-               opt(str("REGEX")),
-               new Reuse.Source(),
+               per(section, seq(opt(occ), source)),
                opt(seq(str("IN"), opt(str("TABLE")), new Reuse.Target())),
                per(seq(str("WITH"), new Reuse.Source()),
                    seq(str("INTO"), new Reuse.Target())),

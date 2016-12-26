@@ -13,6 +13,7 @@ let tests = [
   "REPLACE ALL OCCURRENCES OF REGEX 'sdf' IN cv_xml WITH 'sdf' IGNORING CASE.",
   "replace section offset lv_off length 1 of <src> with char.",
   "REPLACE ALL OCCURRENCES OF `''` IN TABLE code WITH `bar`.",
+  "replace all occurrences of '0' in section length lv_len OF lv_val with ` `.",
 ];
 
 statementType(tests, "REPLACE", Statements.Replace);

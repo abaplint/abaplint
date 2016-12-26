@@ -42,6 +42,16 @@ let tests = [
   "CALL TRANSFORMATION (tran)\n" +
   "  SOURCE root = bar\n" +
   "  RESULT XML result.",
+
+  "CALL TRANSFORMATION id\n" +
+  "  SOURCE XML xmlstr\n" +
+  "  RESULT foo = bar\n" +
+  "         moo = boo.",
+
+  "CALL TRANSFORMATION id\n" +
+  "  PARAMETERS mode = 'LO'\n" +
+  "  SOURCE simple_struc = simple_struc\n" +
+  "  RESULT XML lv_bar.",
 ];
 
 statementType(tests, "CALL TRANSFORMATION", Statements.CallTransformation);

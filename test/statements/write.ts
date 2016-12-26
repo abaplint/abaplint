@@ -40,6 +40,9 @@ let tests = [
   "write /3(50) sdf.",
   "write at /(20) wa_str-name.",
   "WRITE 'hello' HOTSPOT COLOR 5 INVERSE ON.",
+  "write 2(50) text-003 color col intensified on.",
+  "WRITE AT (len) fill COLOR lv_col.",
+  "write lv_val to lv_ext style lv_style no-zero no-sign.",
 ];
 
 statementType(tests, "WRITE", Statements.Write);

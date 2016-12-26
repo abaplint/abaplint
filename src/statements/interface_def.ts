@@ -6,17 +6,24 @@ let str = Combi.str;
 let seq = Combi.seq;
 let opt = Combi.opt;
 let alt = Combi.alt;
+let plus = Combi.plus;
 
 export class InterfaceDef extends Statement {
 
   public static get_matcher(): Combi.IRunnable {
-    let abstract = alt(seq(str("ABSTRACT METHODS"), new Reuse.Field()),
-                       str("ALL METHODS ABSTRACT"),
-                       str("PARTIALLY IMPLEMENTED"));
+    let val = seq(new Reuse.Field(), str("="), new Reuse.Source());
+
+    let dataValues = seq(str("DATA VALUES"),
+                         plus(val));
+
+    let options = alt(seq(str("ABSTRACT METHODS"), new Reuse.Field()),
+                      str("ALL METHODS ABSTRACT"),
+                      str("PARTIALLY IMPLEMENTED"));
 
     return seq(str("INTERFACES"),
                new Reuse.Field(),
-               opt(abstract));
+               opt(options),
+               opt(dataValues));
   }
 
 }

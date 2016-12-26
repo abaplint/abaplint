@@ -63,7 +63,7 @@ export class SelectionScreen extends Statement {
 
     let skip = seq(str("SKIP"), opt(new Reuse.Integer()));
 
-    let pos = seq(str("POSITION"), new Reuse.Integer());
+    let pos = seq(str("POSITION"), new Reuse.Source());
 
     let incl = seq(str("INCLUDE BLOCKS"), blockName);
 

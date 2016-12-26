@@ -12,6 +12,7 @@ export class CallTransformation extends Statement {
 
   public static get_matcher(): Combi.IRunnable {
     let options = seq(str("OPTIONS"), new Reuse.Field(), str("="), new Reuse.Source());
+    let parameters = seq(str("PARAMETERS"), new Reuse.Field(), str("="), new Reuse.Source());
 
     let field = seq(new Reuse.Field(), str("="), new Reuse.Source());
 
@@ -19,11 +20,12 @@ export class CallTransformation extends Statement {
     let source = seq(str("SOURCE"), alt(plus(field), source2, new Reuse.Dynamic()));
 
     let result2 = seq(str("XML"), new Reuse.Target());
-    let result = seq(str("RESULT"), alt(field, result2, new Reuse.Dynamic()));
+    let result = seq(str("RESULT"), alt(plus(field), result2, new Reuse.Dynamic()));
 
     let call = seq(str("CALL TRANSFORMATION"),
                    alt(new Reuse.Field(), new Reuse.Dynamic()),
                    per(options,
+                       parameters,
                        source,
                        result));
     return call;

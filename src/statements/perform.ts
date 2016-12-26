@@ -13,18 +13,21 @@ let plus = Combi.plus;
 export class Perform extends Statement {
 
   public static get_matcher(): Combi.IRunnable {
-    let program = new Reuse.Field();
+    let programName = new Reuse.Field();
     let using = seq(str("USING"), plus(new Reuse.Source()));
     let tables = seq(str("TABLES"), plus(new Reuse.Source()));
     let changing = seq(str("CHANGING"), plus(new Reuse.Source()));
 
     let short = seq(new Reuse.FormName(),
                     tok(ParenLeft),
-                    program,
+                    programName,
                     alt(tok(ParenRightW), tok(ParenRight)));
 
+    let program = seq(str("IN PROGRAM"), opt(alt(new Reuse.Dynamic(), programName)));
+
     let full = seq(alt(new Reuse.FormName(), new Reuse.Dynamic()),
-                   opt(seq(str("IN PROGRAM"), alt(new Reuse.Dynamic(), opt(program)))));
+                   opt(seq(program,
+                           opt(str("IF FOUND")))));
 
     return seq(str("PERFORM"),
                alt(short, full),

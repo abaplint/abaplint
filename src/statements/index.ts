@@ -126,7 +126,7 @@ export * from "./shift";
 export * from "./transfer";
 export * from "./subtract";
 export * from "./unassign";
-export * from "./open";
+export * from "./open_dataset";
 export * from "./close_dataset";
 export * from "./close_cursor";
 export * from "./leave";

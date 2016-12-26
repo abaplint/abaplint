@@ -12,6 +12,7 @@ let tests = [
   "PERFORM run.",
   "PERFORM run(zfoobar).",
   "PERFORM send ON COMMIT.",
+  "perform moo in program zbar if found using foo changing bar.",
 ];
 
 statementType(tests, "PERFORM", Statements.Perform);

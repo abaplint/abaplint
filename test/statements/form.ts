@@ -10,6 +10,8 @@ let tests = [
   "FORM name USING VALUE(INDEX) LIKE SY-TABIX.",
   "FORM name USING foo VALUE(bar).",
   "FORM exit RAISING lcx_exception.",
+  "FORM foobar USING    blah LIKE LINE OF gt_foo.",
+//  "FORM foobar CHANGING blah LIKE gt_foo[].",
 ];
 
 statementType(tests, "FORM", Statements.Form);

@@ -34,6 +34,8 @@ let tests = [
   "DATA tab LIKE foobar OCCURS 0.",
   "DATA tab TYPE foobar OCCURS 0 WITH HEADER LINE.",
   "DATA mt_stage TYPE SORTED TABLE OF ty_stage WITH UNIQUE KEY file-path file-filename.",
+//  "data foo like bar[].",
+//  "DATA lt_list TYPE ddictype WITH HEADER LINE.",
 ];
 
 statementType(tests, "DATA", Statements.Data);

@@ -31,11 +31,12 @@ export class Submit extends Statement {
                    archive,
                    str("TO SAP-SPOOL"),
                    str("WITHOUT SPOOL DYNPRO"),
+                   str("VIA SELECTION-SCREEN"),
                    exporting,
                    str("AND RETURN"),
                    job);
 
-    let ret = seq(str("SUBMIT"), prog, opt(str("VIA SELECTION-SCREEN")), opt(perm));
+    let ret = seq(str("SUBMIT"), prog, opt(perm));
 
     return ret;
   }
