@@ -123,6 +123,11 @@ export class FieldOrMethodCall extends Combi.Reuse {
 
 export class Compare extends Combi.Reuse {
   public get_runnable() {
+    let val = alt(new FieldSub(), new Constant());
+
+    let list = seq(tok(WParenLeft), val, plus(seq(str(","), val)), tok(ParenRightW));
+    let inn = seq(opt(str("NOT")), str("IN"), alt(new Source(), list));
+
     let operator = seq(opt(str("NOT")),
                        alt(str("="),
                            str("<>"),
@@ -131,9 +136,9 @@ export class Compare extends Combi.Reuse {
                            str(">"),
                            str("<="),
                            str(">="),
+                           str("=>"),
                            str("CA"),
                            str("CO"),
-                           str("IN"),
                            str("CP"),
                            str("EQ"),
                            str("NE"),
@@ -164,6 +169,7 @@ export class Compare extends Combi.Reuse {
     let ret = seq(opt(str("NOT")),
                   new Source(),
                   alt(seq(operator, new Source()),
+                      inn,
                       between,
                       sopt));
 
@@ -491,7 +497,7 @@ export class IncludeName extends Combi.Reuse {
 export class MessageClass extends Combi.Reuse {
   public get_runnable() {
 // "&1" can be used for almost anything(field names, method names etc.) in macros
-    return reg(/^(\/\w+\/)?\w+#?@?\/?$/);
+    return reg(/^(\/\w+\/)?\w+#?@?\/?!?$/);
   }
 }
 

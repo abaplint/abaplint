@@ -25,11 +25,12 @@ export class Convert extends Statement {
     let dat = seq(str("DATE"), new Reuse.Source());
     let tim = seq(str("TIME"), new Reuse.Source());
 
+    let stamp = seq(str("INTO TIME STAMP"), new Reuse.Target());
+    let zone = seq(str("TIME ZONE"), new Reuse.Source());
+    let invert = seq(str("INTO INVERTED-DATE"), new Reuse.Target());
+
     let date = seq(per(dat, tim),
-                   str("INTO TIME STAMP"),
-                   new Reuse.Target(),
-                   str("TIME ZONE"),
-                   new Reuse.Source());
+                   per(stamp, zone, invert));
 
     return seq(str("CONVERT"), alt(time, date));
   }

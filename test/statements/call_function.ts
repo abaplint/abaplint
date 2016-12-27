@@ -141,6 +141,13 @@ let tests = [
   "  STARTING NEW TASK ls_foo-clsname\n" +
   "  DESTINATION IN GROUP p_group\n" +
   "  PERFORMING callback ON END OF TASK.",
+/*
+  "CALL FUNCTION 'OWN_LOGICAL_SYSTEM_GET'\n" +
+  "  IMPORTING\n" +
+  "    OWN_LOGICAL_SYSTEM = lv_own\n" +
+  "  EXCEPTIONS\n" +
+  "    OTHERS             = GC_FOO-SYSTEM.",
+*/
 ];
 
 statementType(tests, "CALL FUNCTION", Statements.CallFunction);

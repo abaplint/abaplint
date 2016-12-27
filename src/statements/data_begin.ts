@@ -14,7 +14,10 @@ export class DataBegin extends Statement {
 
     let occurs = seq(str("OCCURS"), new Reuse.Integer());
 
-    let structure = seq(str("BEGIN OF"), new Reuse.SimpleName(), opt(occurs));
+    let structure = seq(str("BEGIN OF"),
+                        opt(str("COMMON PART")),
+                        new Reuse.SimpleName(),
+                        opt(occurs));
 
     return seq(start, structure);
   }

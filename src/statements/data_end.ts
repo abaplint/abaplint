@@ -11,7 +11,8 @@ export class DataEnd extends Statement {
   public static get_matcher(): Combi.IRunnable {
     let start = alt(str("CLASS-DATA"), str("DATA"));
 
-    let structure = seq(str("END OF"), new Reuse.SimpleName());
+    let structure = seq(str("END OF"),
+                        alt(new Reuse.SimpleName(), str("COMMON PART")));
 
     return seq(start, structure);
   }

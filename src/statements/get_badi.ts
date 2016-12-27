@@ -10,10 +10,12 @@ export class GetBadi extends Statement {
 
   public static get_matcher(): Combi.IRunnable {
     let filters = seq(str("FILTERS"), new Reuse.ParameterListS());
+    let context = seq(str("CONTEXT"), new Reuse.Source());
 
     let ret = seq(str("GET BADI"),
                   new Reuse.Target(),
-                  opt(filters));
+                  opt(filters),
+                  opt(context));
 
     return ret;
   }

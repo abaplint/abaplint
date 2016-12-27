@@ -22,6 +22,7 @@ export class Submit extends Statement {
     let archive = seq(str("ARCHIVE PARAMETERS"), new Reuse.Source());
     let lineSize = seq(str("LINE-SIZE"), new Reuse.Source());
     let lineCount = seq(str("LINE-COUNT"), new Reuse.Source());
+    let user = seq(str("USER"), new Reuse.Source());
 
     let perm = per(plus(awith),
                    withTab,
@@ -29,6 +30,7 @@ export class Submit extends Statement {
                    lineSize,
                    lineCount,
                    archive,
+                   user,
                    str("TO SAP-SPOOL"),
                    str("WITHOUT SPOOL DYNPRO"),
                    str("VIA SELECTION-SCREEN"),

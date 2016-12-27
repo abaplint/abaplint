@@ -36,6 +36,8 @@ export class Select extends Statement {
 
     let aas = seq(str("AS"), new Reuse.Field());
 
+    let pack = seq(str("PACKAGE SIZE"), new Reuse.Source());
+
     let where = seq(str("WHERE"), alt(new Reuse.Cond(), new Reuse.Dynamic()));
 
     let order = seq(str("ORDER BY"), alt(plus(new Reuse.Field()), str("PRIMARY KEY"), new Reuse.Dynamic()));
@@ -46,7 +48,12 @@ export class Select extends Statement {
     let max = seq(str("MAX"), alt(tok(ParenLeft), tok(ParenLeftW)), new Reuse.Field(), str(")"));
     let min = seq(str("MIN"), alt(tok(ParenLeft), tok(ParenLeftW)), new Reuse.Field(), str(")"));
 
-    let fields = alt(str("*"), count, max, min, plus(new Reuse.Field()));
+    let fields = alt(str("*"),
+                     new Reuse.Dynamic(),
+                     count,
+                     max,
+                     min,
+                     plus(new Reuse.Field()));
 
     let join = seq(opt(str("INNER")),
                    str("JOIN"),
@@ -60,7 +67,7 @@ export class Select extends Statement {
     let client = str("CLIENT SPECIFIED");
     let bypass = str("BYPASSING BUFFER");
 
-    let perm = per(from, plus(join), into, forAll, where, order, up, client, bypass);
+    let perm = per(from, plus(join), into, forAll, where, order, up, client, bypass, pack);
 
     let ret = seq(str("SELECT"),
                   alt(str("DISTINCT"), opt(seq(str("SINGLE"), opt(str("FOR UPDATE"))))),

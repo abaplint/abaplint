@@ -14,7 +14,8 @@ let tests = [
   "SELECT e070~trkorr as4user FROM e070 INNER JOIN e071 ON e070~trkorr = e071~trkorr INTO TABLE gt_objects.",
   "SELECT COUNT( * ) FROM dd08l WHERE arbgb = <ls_t100>-arbgb.",
   "SELECT * INTO TABLE gt_sbook[] FROM sbook UP TO 10 ROWS.",
-  "SELECT zfoo~bar zbar~foo INTO TABLE rt_data FROM zfoo JOIN zbar ON field1 = field1 FOR ALL ENTRIES IN it_matnr WHERE blah = lv_value.",
+  "SELECT zfoo~bar zbar~foo INTO TABLE rt_data FROM zfoo JOIN zbar ON field1 = field1 FOR ALL " +
+    "ENTRIES IN it_matnr WHERE blah = lv_value.",
   "SELECT COUNT( * ) INTO rv_count FROM foo INNER JOIN bar ON bar~field = foo~field WHERE mat_id IN it_mat_id.",
   "SELECT name INTO TABLE lt_icon FROM icon WHERE name IN s_icon ORDER BY name.",
   "SELECT * UP TO 2 ROWS FROM t005t INTO TABLE lt_test.",
@@ -30,6 +31,11 @@ let tests = [
   "SELECT SINGLE MAX( version ) FROM zfoo INTO lv_version.",
   "SELECT SINGLE MAX( version ) FROM zfoo INTO lv_version BYPASSING BUFFER WHERE " +
     "expression = ls_foobar-expression AND ( moo = 'A' OR boo = 'I' ).",
+  "SELECT (lv_fields) FROM (gc_table) INTO CORRESPONDING FIELDS OF TABLE <lt_moo> " +
+    "FOR ALL ENTRIES IN it_salesdoc_header WHERE foo = bar-foo.",
+  "SELECT * FROM zfoo INTO TABLE lt_tab WHERE SPRAS IN (SY-LANGU,'E') AND MENU EQ 'BAR'.",
+  "SELECT * FROM foo INTO CORRESPONDING FIELDS OF TABLE lt_foo PACKAGE SIZE 100 WHERE moo = stru-value1 AND boo = stru-value2.",
+  "SELECT sdfs FROM basdf WHERE name is null.",
 //  "SELECT * FROM zfoo INTO ls_bar UP TO 1 ROWS WHERE  moo = boo AND (lt_where) AND bar = foo.",
 ];
 

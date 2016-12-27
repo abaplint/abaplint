@@ -12,6 +12,7 @@ let tests = [
   "CREATE DATA result TYPE n LENGTH lv_length.",
   "CREATE DATA result TYPE p LENGTH lv_length DECIMALS lv_decimals.",
   "CREATE DATA dref.",
+  "CREATE DATA result LIKE TABLE OF <ls>.",
 ];
 
 statementType(tests, "CREATE DATA", Statements.CreateData);

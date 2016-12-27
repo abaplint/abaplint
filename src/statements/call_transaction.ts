@@ -11,6 +11,7 @@ export class CallTransaction extends Statement {
   public static get_matcher(): Combi.IRunnable {
 
     let options = seq(str("OPTIONS FROM"), new Reuse.Source());
+    let messages = seq(str("MESSAGES INTO"), new Reuse.Target());
 
     let ret = seq(str("CALL TRANSACTION"),
                   new Reuse.Source(),
@@ -19,7 +20,8 @@ export class CallTransaction extends Statement {
                   opt(seq(str("MODE"), new Reuse.Source())),
                   opt(seq(str("UPDATE"), new Reuse.Source())),
                   opt(str("AND SKIP FIRST SCREEN")),
-                  opt(options));
+                  opt(options),
+                  opt(messages));
 
     return ret;
   }

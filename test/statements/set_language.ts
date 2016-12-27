@@ -2,8 +2,7 @@ import {statementType} from "../utils";
 import * as Statements from "../../src/statements/";
 
 let tests = [
-  "DATA end of foo.",
-  "DATA END OF COMMON PART.",
+  "SET LANGUAGE SY-LANGU.",
 ];
 
-statementType(tests, "DATA END", Statements.DataEnd);
+statementType(tests, "SET LANGUAGE", Statements.SetLanguage);

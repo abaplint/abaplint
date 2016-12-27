@@ -107,6 +107,8 @@ export * from "./enhancement_section";
 export * from "./end_enhancement_section";
 export * from "./set_handler";
 export * from "./private";
+export * from "./set_language";
+export * from "./call_dialog";
 export * from "./protected";
 export * from "./public";
 export * from "./interface";

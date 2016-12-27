@@ -17,6 +17,8 @@ export class Perform extends Statement {
     let using = seq(str("USING"), plus(new Reuse.Source()));
     let tables = seq(str("TABLES"), plus(new Reuse.Source()));
     let changing = seq(str("CHANGING"), plus(new Reuse.Source()));
+    let level = seq(str("LEVEL"), new Reuse.Source());
+    let commit = seq(str("ON COMMIT"), opt(level));
 
     let short = seq(new Reuse.FormName(),
                     tok(ParenLeft),
@@ -35,7 +37,7 @@ export class Perform extends Statement {
                opt(using),
                opt(changing),
                opt(str("IF FOUND")),
-               opt(str("ON COMMIT")));
+               opt(commit));
   }
 
 }
