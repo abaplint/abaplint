@@ -18,6 +18,7 @@ let tests = [
   "ASSIGN foo-bar INCREMENT lv_count TO <fs> CASTING RANGE ls_obj.",
   "ASSIGN lt_word INCREMENT 1 TO <word> RANGE struc.",
   "assign text+i(1) to <x> type 'X'.",
+  "assign textline+tmp(*) to <fs>.",
 ];
 
 statementType(tests, "ASSIGN", Statements.Assign);

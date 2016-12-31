@@ -36,6 +36,15 @@ let tests = [
   "SELECT * FROM zfoo INTO TABLE lt_tab WHERE SPRAS IN (SY-LANGU,'E') AND MENU EQ 'BAR'.",
   "SELECT * FROM foo INTO CORRESPONDING FIELDS OF TABLE lt_foo PACKAGE SIZE 100 WHERE moo = stru-value1 AND boo = stru-value2.",
   "SELECT sdfs FROM basdf WHERE name is null.",
+
+  "SELECT marc~matnr marc~werks marc~herkl\n" +
+  "       mara~ntgew mara~gewei marc~beskz\n" +
+  "  FROM marc JOIN mara ON marc~matnr = mara~matnr\n" +
+  "  INTO TABLE rt_data\n" +
+  "  FOR ALL ENTRIES IN it_matnr\n" +
+  "  WHERE mara~matnr = it_matnr-matnr\n" +
+  "  AND marc~werks = iv_werks.",
+
 //  "SELECT * FROM zfoo INTO ls_bar UP TO 1 ROWS WHERE  moo = boo AND (lt_where) AND bar = foo.",
 ];
 

@@ -1,27 +1,28 @@
 import {Statement} from "./statement";
 import * as Reuse from "./reuse";
 import * as Combi from "../combi";
+import {ParenLeft, ParenRight, ParenRightW} from "../tokens/";
 
 let str = Combi.str;
 let seq = Combi.seq;
 let alt = Combi.alt;
 let opt = Combi.opt;
-let optPrio = Combi.optPrio;
-let reg = Combi.regex;
+let tok = Combi.tok;
 let plus = Combi.plus;
 
 export class Form extends Statement {
 
   public static get_matcher(): Combi.IRunnable {
-    let fieldName = reg(/^\w+$/);
 
-    let field = seq(alt(fieldName, new Reuse.PassByValue()),
-                    optPrio(alt(new Reuse.Type(), new Reuse.TypeTable())));
+    let resume = seq(str("RESUMABLE"),
+                     tok(ParenLeft),
+                     new Reuse.ClassName(),
+                     alt(tok(ParenRight), tok(ParenRightW)));
 
-    let tables = seq(str("TABLES"), plus(field));
-    let using = seq(str("USING"), plus(field));
-    let changing = seq(str("CHANGING"), plus(field));
-    let raising = seq(str("RAISING"), plus(new Reuse.ClassName()));
+    let tables = seq(str("TABLES"), plus(new Reuse.FormParam()));
+    let using = seq(str("USING"), plus(new Reuse.FormParam()));
+    let changing = seq(str("CHANGING"), plus(new Reuse.FormParam()));
+    let raising = seq(str("RAISING"), plus(alt(new Reuse.ClassName(), resume)));
 
     let ret = seq(str("FORM"),
                   new Reuse.FormName(),

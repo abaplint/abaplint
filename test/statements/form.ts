@@ -42,6 +42,7 @@ let tests = [
     "foo bar\n" +
     "bar bar.",
 //  "FORM foobar CHANGING blah LIKE gt_foo[].",
+  "FORM back RAISING RESUMABLE(zcx_exception).",
 ];
 
 statementType(tests, "FORM", Statements.Form);

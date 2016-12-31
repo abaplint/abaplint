@@ -16,6 +16,7 @@ let opt = Combi.opt;
 let tok = Combi.tok;
 let ver = Combi.ver;
 // let per = Combi.per;
+let optPrio = Combi.optPrio;
 let star = Combi.star;
 let plus = Combi.plus;
 
@@ -125,7 +126,11 @@ export class Compare extends Combi.Reuse {
   public get_runnable() {
     let val = alt(new FieldSub(), new Constant());
 
-    let list = seq(tok(WParenLeft), val, plus(seq(str(","), val)), tok(ParenRightW));
+    let list = seq(tok(WParenLeft),
+                   val,
+                   plus(seq(str(","), val)),
+                   alt(tok(ParenRightW), tok(ParenRight)));
+
     let inn = seq(opt(str("NOT")), str("IN"), alt(new Source(), list));
 
     let operator = seq(opt(str("NOT")),
@@ -191,6 +196,16 @@ export class Cond extends Combi.Reuse {
     let ret = seq(cnd, star(seq(operator, cnd)));
 
     return ret;
+  }
+}
+
+export class FormParam extends Combi.Reuse {
+  public get_runnable() {
+    let fieldName = reg(/^\w+$/);
+    let field = seq(alt(fieldName, new PassByValue()),
+                    optPrio(alt(new Type(), new TypeTable())));
+
+    return field;
   }
 }
 
