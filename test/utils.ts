@@ -23,7 +23,9 @@ function run(abap: string, text: string, type, version = Version.v750) {
 }
 
 export function statementType(tests, description: string, type) {
-  describe(description + " statement type", () => {
+  describe(description + " statement type", function() {
+// note that timeout() only works inside function()
+    this.timeout(200); // tslint:disable-line
     tests.forEach((test) => {
       run(test, "\"" + test + "\" should be " + description, type);
     });
@@ -31,7 +33,9 @@ export function statementType(tests, description: string, type) {
 }
 
 export function statementVersion(tests, description: string, type) {
-  describe(description + " statement version,", () => {
+  describe(description + " statement version,", function() {
+// note that timeout() only works inside function()
+    this.timeout(200); // tslint:disable-line
     tests.forEach((test) => {
       run(test.abap, "\"" + test.abap + "\" should be " + description, type, test.ver);
 // should fail in previous version
@@ -41,7 +45,9 @@ export function statementVersion(tests, description: string, type) {
 }
 
 export function testRule(tests, description: string, rule: new () => any) {
-  describe(description, () => {
+  describe(description, function() {
+// note that timeout() only works inside function()
+    this.timeout(200); // tslint:disable-line
     tests.forEach((test) => {
       let issues = Runner.run([new File("temp.abap", test.abap)]);
 

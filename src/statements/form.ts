@@ -6,6 +6,7 @@ let str = Combi.str;
 let seq = Combi.seq;
 let alt = Combi.alt;
 let opt = Combi.opt;
+let optPrio = Combi.optPrio;
 let reg = Combi.regex;
 let plus = Combi.plus;
 
@@ -15,7 +16,7 @@ export class Form extends Statement {
     let fieldName = reg(/^\w+$/);
 
     let field = seq(alt(fieldName, new Reuse.PassByValue()),
-                    opt(alt(new Reuse.Type(), new Reuse.TypeTable())));
+                    optPrio(alt(new Reuse.Type(), new Reuse.TypeTable())));
 
     let tables = seq(str("TABLES"), plus(field));
     let using = seq(str("USING"), plus(field));

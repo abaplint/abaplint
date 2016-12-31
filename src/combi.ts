@@ -219,6 +219,47 @@ class Vers implements IRunnable {
   }
 }
 
+class OptionalPriority implements IRunnable {
+
+  private opt: IRunnable;
+
+  constructor(opt: IRunnable) {
+    this.opt = opt;
+  }
+
+  public run(r: Array<Result>): Array<Result> {
+    let result: Array<Result> = [];
+
+    for (let input of r) {
+      let res = this.opt.run([input]);
+      if (res.length > 1) {
+        result.push(input);
+        result = result.concat(res);
+      } else if (res.length === 0) {
+        result.push(input);
+      } else if (res[0].length < input.length) {
+        result = result.concat(res);
+      } else {
+        result.push(input);
+      }
+    }
+
+    return result;
+  }
+
+  public railroad() {
+    return "Railroad.Optional(" + this.opt.railroad() + ")";
+  }
+
+  public toStr() {
+    return "opt(" + this.opt.toStr() + ")";
+  }
+
+  public first() {
+    return "";
+  }
+}
+
 class Optional implements IRunnable {
 
   private opt: IRunnable;
@@ -608,6 +649,9 @@ export function per(first: IRunnable, ...rest: IRunnable[]): IRunnable {
 }
 export function opt(first: IRunnable): IRunnable {
   return new Optional(first);
+}
+export function optPrio(first: IRunnable): IRunnable {
+  return new OptionalPriority(first);
 }
 export function tok(t: new (p: Position, s: string) => any): IRunnable {
   return new Token(functionName(t));

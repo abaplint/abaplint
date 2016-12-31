@@ -11,6 +11,36 @@ let tests = [
   "FORM name USING foo VALUE(bar).",
   "FORM exit RAISING lcx_exception.",
   "FORM foobar USING    blah LIKE LINE OF gt_foo.",
+  "form foobar using\n" +
+    "foo type bar\n" +
+    "foo type bar\n" +
+    "foo type bar\n" +
+    "foo type bar\n" +
+    "foo type bar\n" +
+    "foo type bar\n" +
+    "foo type bar\n" +
+    "foo type bar\n" +
+    "foo type bar\n" +
+    "foo type bar\n" +
+    "foo type bar\n" +
+    "foo type bar\n" +
+    "foo type bar\n" +
+    "bar type bar.",
+  "form foobar using\n" +
+    "foo bar\n" +
+    "foo bar\n" +
+    "foo bar\n" +
+    "foo bar\n" +
+    "foo bar\n" +
+    "foo bar\n" +
+    "foo bar\n" +
+    "foo bar\n" +
+    "foo bar\n" +
+    "foo bar\n" +
+    "foo bar\n" +
+    "foo bar\n" +
+    "foo bar\n" +
+    "bar bar.",
 //  "FORM foobar CHANGING blah LIKE gt_foo[].",
 ];
 

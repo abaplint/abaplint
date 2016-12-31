@@ -52,6 +52,13 @@ let versions = [
   {abap: "foo = li_foo->create( VALUE #( ) ).", ver: Version.v740sp02},
   {abap: "foo = mi_foo->update( CORRESPONDING #( get( ) EXCEPT field ) ).", ver: Version.v740sp05},
   {abap: "foo = VALUE /bobf/t_frw_name( ).", ver: Version.v740sp02},
+  {abap: "foo = VALUE #(\n" +
+    "( col1 = 11 col2 = 211 col3 = 311 )\n" +
+    "( col1 = 11 col2 = 212 col3 = 312 )\n" +
+    "( col1 = 12 col2 = 221 col3 = 321 )\n" +
+    "( col1 = 12 col2 = 222 col3 = 322 )\n" +
+    "( col1 = 13 col2 = 231 col3 = 331 )\n" +
+    "( col1 = 13 col2 = 232 col3 = 332 ) ).", ver: Version.v740sp02},
   {abap: "foo = CORRESPONDING #( <ls_data> MAPPING country = coun currency = curr ).", ver: Version.v740sp05},
 ];
 
