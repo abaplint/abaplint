@@ -15,6 +15,11 @@ export class Scan extends Statement {
     let structures = seq(str("STRUCTURES INTO"), new Reuse.Target());
     let keywords = seq(str("KEYWORDS FROM"), new Reuse.Source());
     let pragmas = seq(str("WITH PRAGMAS"), new Reuse.Field());
+    let overflow = seq(str("OVERFLOW INTO"), new Reuse.Target());
+    let message = seq(str("MESSAGE INTO"), new Reuse.Target());
+    let include = seq(str("INCLUDE PROGRAM FROM"), new Reuse.Source());
+    let frame = seq(str("FRAME PROGRAM FROM"), new Reuse.Source());
+    let program = seq(str("PROGRAM FROM"), new Reuse.Source());
 
     let ret = seq(str("SCAN ABAP-SOURCE"),
                   new Reuse.Source(),
@@ -23,6 +28,11 @@ export class Scan extends Statement {
                       statements,
                       structures,
                       keywords,
+                      overflow,
+                      message,
+                      include,
+                      frame,
+                      program,
                       str("WITH ANALYSIS"),
                       str("WITH COMMENTS"),
                       str("WITH INCLUDES"),

@@ -141,6 +141,14 @@ let tests = [
   "  STARTING NEW TASK ls_foo-clsname\n" +
   "  DESTINATION IN GROUP p_group\n" +
   "  PERFORMING callback ON END OF TASK.",
+
+  "call function 'ZFOOBAR'\n" +
+  "  exceptions\n" +
+  "   no_auth               = 1\n" +
+  "   system_failure        = 2  message msgtext\n" +
+  "   communication_failure = 3  message msgtext\n" +
+  "   others.",
+
 /*
   "CALL FUNCTION 'OWN_LOGICAL_SYSTEM_GET'\n" +
   "  IMPORTING\n" +

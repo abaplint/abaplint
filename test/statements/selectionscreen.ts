@@ -29,6 +29,8 @@ let tests = [
   "SELECTION-SCREEN COMMENT /1(35) text-001.",
   "SELECTION-SCREEN BEGIN OF SCREEN 1000 AS SUBSCREEN NESTING LEVEL 3.",
   "selection-screen position lv_pos.",
+  "selection-screen begin of screen 4000 title title as window.",
+  "SELECTION-SCREEN BEGIN OF TABBED BLOCK tab1 FOR 10 LINES NO INTERVALS.",
 ];
 
 statementType(tests, "SELECTION-SCREEN", Statements.SelectionScreen);

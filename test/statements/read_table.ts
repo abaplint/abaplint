@@ -24,6 +24,7 @@ let tests = [
   "READ TABLE lt_table WITH KEY field = lv_value TRANSPORTING NO FIELDS BINARY SEARCH.",
   "READ TABLE lt_data WITH KEY <fs>.",
   "READ TABLE itab FROM line INTO line COMPARING col2.",
+  "READ TABLE lt_tab WITH KEY <ls_foo>-name BINARY SEARCH TRANSPORTING NO FIELDS.",
 ];
 
 statementType(tests, "READ", Statements.Read);

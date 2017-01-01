@@ -55,8 +55,9 @@ export class Select extends Statement {
                      min,
                      plus(new Reuse.Field()));
 
-    let join = seq(opt(str("INNER")),
-                   str("JOIN"),
+    let joinType = seq(opt(alt(str("INNER"), str("LEFT OUTER"))), str("JOIN"));
+
+    let join = seq(joinType,
                    new Reuse.DatabaseTable(),
                    opt(aas),
                    str("ON"),

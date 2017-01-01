@@ -6,6 +6,7 @@ let str = Combi.str;
 let seq = Combi.seq;
 let alt = Combi.alt;
 let per = Combi.per;
+let opt = Combi.opt;
 let plus = Combi.plus;
 
 export class SyntaxCheck extends Statement {
@@ -44,8 +45,8 @@ export class SyntaxCheck extends Statement {
                      message,
                      line,
                      word,
-                     offset,
-                     messageId);
+                     opt(offset),
+                     opt(messageId));
 
     return seq(str("SYNTAX-CHECK FOR"), alt(syntax, dynpro));
   }

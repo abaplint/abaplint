@@ -25,12 +25,14 @@ export class SelectionScreen extends Statement {
 
     let nesting = seq(str("NESTING LEVEL"), new Reuse.Source());
 
+    let scrOptions = per(seq(str("AS"), alt(str("WINDOW"), str("SUBSCREEN"))),
+                         seq(str("TITLE"), new Reuse.Source()),
+                         str("NO INTERVALS"),
+                         nesting);
+
     let beginScreen = seq(str("BEGIN OF SCREEN"),
                           new Reuse.Integer(),
-                          opt(seq(str("AS"), alt(str("WINDOW"), str("SUBSCREEN")))),
-                          opt(seq(str("TITLE"), new Reuse.Source())),
-                          opt(str("NO INTERVALS")),
-                          opt(nesting));
+                          opt(scrOptions));
 
     let endScreen = seq(str("END OF SCREEN"), new Reuse.Integer());
 
@@ -71,7 +73,8 @@ export class SelectionScreen extends Statement {
                      new Reuse.Field(),
                      str("FOR"),
                      new Reuse.Integer(),
-                     str("LINES"));
+                     str("LINES"),
+                     opt(str("NO INTERVALS")));
 
     let ret = seq(str("SELECTION-SCREEN"),
                   alt(comment,

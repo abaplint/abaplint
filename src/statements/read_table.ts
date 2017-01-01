@@ -25,8 +25,7 @@ export class Read extends Statement {
     let key = seq(alt(str("WITH KEY"), str("WITH TABLE KEY")),
                   alt(plus(new Reuse.Compare()),
                       components,
-                      new Reuse.FieldSub(),
-                      new Reuse.FieldSymbol()));
+                      new Reuse.Source()));
 
     let perm = per(alt(index,
                        key,

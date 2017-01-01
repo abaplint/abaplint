@@ -15,7 +15,7 @@ export class DeleteDatabase extends Statement {
     let client = str("CLIENT SPECIFIED");
     let from = seq(str("FROM"), source, opt(client), opt(where));
 
-    let table = seq(alt(source, new Reuse.Dynamic()),
+    let table = seq(source,
                     opt(str("CLIENT SPECIFIED")),
                     str("FROM"),
                     opt(str("TABLE")),

@@ -9,6 +9,7 @@ let tests = [
   "scroll list backward.",
   "scroll list forward.",
   "SCROLL LIST TO FIRST PAGE INDEX SY-LSIND.",
+  "SCROLL LIST INDEX sy-lsind TO COLUMN sy-staco.",
 ];
 
 statementType(tests, "SCROLL LIST", Statements.ScrollList);

@@ -32,6 +32,36 @@ let tests = [
   "SCAN ABAP-SOURCE src TOKENS INTO tokens STATEMENTS INTO statements.",
 
   "scan abap-source src with analysis tokens into tokens statements into stmts.",
+
+  "SCAN ABAP-SOURCE buffer\n" +
+  "  TOKENS      INTO tokens\n" +
+  "  STATEMENTS  INTO statements\n" +
+  "  OVERFLOW    INTO overflow\n" +
+  "  KEYWORDS FROM keywrods\n" +
+  "  MESSAGE  INTO message\n" +
+  "  WITHOUT TRMAC\n" +
+  "  WITH ANALYSIS.",
+
+  "scan abap-source buffer\n" +
+  "  tokens     into tokens\n" +
+  "  statements into statements\n" +
+  "  keywords from keywords\n" +
+  "  include program from shift_old_include\n" +
+  "  frame program from shift_old_main\n" +
+  "  levels   into levels\n" +
+  "  with analysis\n" +
+  "  with includes\n" +
+  "  without trmac.",
+
+  "SCAN ABAP-SOURCE buffer\n" +
+  "  TOKENS     INTO tokens\n" +
+  "  STATEMENTS INTO statements\n" +
+  "  OVERFLOW   INTO overflow\n" +
+  "  KEYWORDS   FROM keywords\n" +
+  "  PROGRAM    FROM program\n" +
+  "  MESSAGE    INTO message\n" +
+  "  WITHOUT TRMAC\n" +
+  "  WITH ANALYSIS.",
 ];
 
 statementType(tests, "SCAN", Statements.Scan);

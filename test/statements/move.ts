@@ -31,6 +31,8 @@ let tests = [
   "rv_res = ( iv_x BIT-AND iv_y ) BIT-OR ( ( BIT-NOT iv_x ) BIT-AND iv_z ).",
   "rv_res = ( iv_x BIT-AND iv_y ) BIT-OR ( iv_x BIT-AND iv_z ).",
   "foo = method(\n2 ).",
+  "index1 = index2 = index1 - 1.",
+  "move-corresponding ls_usbapilink to lr_usbapilink_cd->*.",
 ];
 
 statementType(tests, "MOVE", Statements.Move);

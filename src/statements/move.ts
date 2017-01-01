@@ -6,6 +6,7 @@ let str = Combi.str;
 let seq = Combi.seq;
 let alt = Combi.alt;
 let opt = Combi.opt;
+let plus = Combi.plus;
 
 export class Move extends Statement {
 
@@ -16,8 +17,10 @@ export class Move extends Statement {
                    str("TO"),
                    new Reuse.Target());
 
+    let equals = alt(str("="), str("?="));
+
 // todo, move ?= to CAST?
-    let eq = seq(new Reuse.Target(), alt(str("="), str("?=")), new Reuse.Source());
+    let eq = seq(plus(seq(new Reuse.Target(), equals)), new Reuse.Source());
 
     return alt(move, eq);
   }

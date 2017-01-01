@@ -43,6 +43,7 @@ let tests = [
   "write 2(50) text-003 color col intensified on.",
   "WRITE AT (len) fill COLOR lv_col.",
   "write lv_val to lv_ext style lv_style no-zero no-sign.",
+  "WRITE / lv_bar INPUT.",
 ];
 
 statementType(tests, "WRITE", Statements.Write);

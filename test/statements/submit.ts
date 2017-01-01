@@ -15,6 +15,7 @@ let tests = [
   "SUBMIT (name) LINE-SIZE width LINE-COUNT length AND RETURN.",
   "submit zfoo with moo = stru-sdf with bar = stru-sdff via selection-screen and return.",
   "SUBMIT zfoo AND RETURN USER SY-UNAME VIA JOB name NUMBER count.",
+  "submit zfoo with field eq lv_value sign lv_sign and return.",
 ];
 
 statementType(tests, "SUBMIT", Statements.Submit);

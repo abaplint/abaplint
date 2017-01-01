@@ -4,7 +4,7 @@ import * as Reuse from "./reuse";
 
 let str = Combi.str;
 let seq = Combi.seq;
-let alt = Combi.alt;
+let per = Combi.per;
 let opt = Combi.opt;
 
 export class ReadLine extends Statement {
@@ -19,9 +19,11 @@ export class ReadLine extends Statement {
 
     let index = seq(str("INDEX"), new Reuse.Source());
 
+    let page = seq(str("OF PAGE"), new Reuse.Source());
+
     return seq(str("READ LINE"),
                new Reuse.Source(),
-               opt(alt(val, index, field)));
+               opt(per(val, index, field, page)));
   }
 
 }

@@ -37,6 +37,7 @@ let tests = [
   "data foo like bar[].",
   "DATA lt_list TYPE ddictype WITH HEADER LINE.",
   "DATA ret TYPE TABLE OF bapiret2 WITH HEADER LINE.",
+//  "DATA ret TYPE TABLE OF foobar INITIAL SIZE 10 WITH HEADER LINE.",
 ];
 
 statementType(tests, "DATA", Statements.Data);

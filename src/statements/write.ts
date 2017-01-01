@@ -28,7 +28,7 @@ export class Write extends Statement {
                       seq(str("EXPONENT"), new Reuse.Source()),
                       str("NO-GROUPING"),
                       str("NO-ZERO"),
-                      seq(str("INPUT"), alt(str("ON"), str("OFF"))),
+                      seq(str("INPUT"), opt(alt(str("ON"), str("OFF")))),
                       str("NO-GAP"),
                       str("LEFT-JUSTIFIED"),
                       str("AS LINE"),

@@ -65,7 +65,9 @@ export class Target extends Combi.Reuse {
 
     let fields = seq(opt(new FieldOffset()), opt(new FieldLength()));
 
-    let optional = alt(new TableBody(), fields);
+    let ref = seq(tok(Arrow), str("*"));
+
+    let optional = alt(new TableBody(), fields, ref);
 
     return alt(new InlineData(), new InlineFS(), seq(after, optional));
   }
@@ -225,7 +227,7 @@ export class FunctionParameters extends Combi.Reuse {
     let importing = seq(str("IMPORTING"), new ParameterListT());
     let changing = seq(str("CHANGING"), new ParameterListT());
     let tables = seq(str("TABLES"), new ParameterListT());
-    let exceptions = seq(str("EXCEPTIONS"), alt(new ParameterListExceptions(), new Field()));
+    let exceptions = seq(str("EXCEPTIONS"), opt(new ParameterListExceptions()), opt(new Field()));
     let long = seq(opt(exporting),
                    opt(importing),
                    opt(tables),

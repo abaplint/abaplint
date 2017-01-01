@@ -4,14 +4,17 @@ import * as Combi from "../combi";
 
 let str = Combi.str;
 let seq = Combi.seq;
+let opt = Combi.opt;
 let alt = Combi.alt;
 
 export class Static extends Statement {
 
   public static get_matcher(): Combi.IRunnable {
+    let type = seq(opt(new Reuse.FieldLength()), new Reuse.Type());
+
     let ret = seq(alt(str("STATIC"), str("STATICS")),
-                  new Reuse.Field(),
-                  alt(new Reuse.Type(), new Reuse.TypeTable()));
+                  new Reuse.SimpleName(),
+                  opt(alt(type, new Reuse.TypeTable())));
 
     return ret;
   }
