@@ -54,6 +54,7 @@ let versions = [
   {abap: "foo = li_foo->create( VALUE #( ) ).", ver: Version.v740sp02},
   {abap: "foo = mi_foo->update( CORRESPONDING #( get( ) EXCEPT field ) ).", ver: Version.v740sp05},
   {abap: "foo = VALUE /bobf/t_frw_name( ).", ver: Version.v740sp02},
+  {abap: "foo = switch #( i_popup when abap_true then c_popup when abap_false then c_full ).", ver: Version.v740sp02},
 /*
   {abap: "foo = VALUE #(\n" +
     "( col1 = 11 col2 = 211 col3 = 311 )\n" +

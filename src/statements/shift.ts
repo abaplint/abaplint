@@ -6,31 +6,22 @@ let str = Combi.str;
 let seq = Combi.seq;
 let alt = Combi.alt;
 let opt = Combi.opt;
+let per = Combi.per;
 
 export class Shift extends Statement {
 
   public static get_matcher(): Combi.IRunnable {
-    let dir = alt(seq(alt(str("LEFT DELETING LEADING"),
-                          str("RIGHT DELETING TRAILING"),
-                          str("RIGHT BY"),
-                          str("LEFT CIRCULAR BY"),
-                          str("LEFT UP TO"),
-                          str("LEFT BY"),
-                          str("BY")),
-                      new Reuse.Source(), opt(str("PLACES"))),
-                  str("RIGHT"),
-                  seq(opt(seq(str("UP TO"), new Reuse.Source())), str("LEFT")),
-                  seq(str("BY"),
-                      new Reuse.Source(),
-                      str("PLACES"),
-                      alt(str("LEFT"), str("RIGHT"))));
+    let deleting = seq(str("DELETING"), alt(str("LEADING"), str("TRAILING")), new Reuse.Source());
+    let up = seq(str("UP TO"), new Reuse.Source());
+    let mode = seq(str("IN"), alt(str("CHARACTER"), str("BYTE")), str("MODE"));
+    let dir = alt(str("LEFT"), str("RIGHT"));
+    let by = seq(str("BY"), new Reuse.Source(), opt(str("PLACES")));
 
-    let mode = alt(str("IN CHARACTER MODE"), str("IN BYTE MODE"));
+    let options = per(deleting, up, mode, dir, by, str("CIRCULAR"));
 
     return seq(str("SHIFT"),
                new Reuse.Target(),
-               opt(seq(dir,
-                       opt(mode))));
+               options);
   }
 
 }

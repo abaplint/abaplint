@@ -3,7 +3,7 @@ import {Version} from "../version";
 
 import {Arrow} from "../tokens/";
 import {Dash, WDash, WDashW} from "../tokens/";
-import {Plus, WPlusW} from "../tokens/";
+import {Plus, WPlusW, WAt} from "../tokens/";
 import {BracketLeft, BracketRight, BracketRightW, BracketLeftW} from "../tokens/";
 import {ParenRight, ParenRightW, WParenRight, WParenRightW} from "../tokens/";
 import {ParenLeft, ParenLeftW, WParenLeft, WParenLeftW} from "../tokens/";
@@ -173,9 +173,10 @@ export class Compare extends Combi.Reuse {
 
     let between = seq(str("BETWEEN"), new Source(), str("AND"), new Source());
 
+// todo: @foo is only possible in SELECT, not in normal IFs
     let ret = seq(opt(str("NOT")),
                   new Source(),
-                  alt(seq(operator, new Source()),
+                  alt(seq(operator, opt(ver(Version.v740sp02, tok(WAt))), new Source()),
                       inn,
                       between,
                       sopt));
@@ -463,6 +464,14 @@ export class Source extends Combi.Reuse {
                                          new Source(),
                                          rparen));
 
+    let swhen = seq(str("WHEN"), new Source(), str("THEN"), new Source());
+    let swit = ver(Version.v740sp02, seq(str("SWITCH"),
+                                         new TypeName(),
+                                         tok(ParenLeftW),
+                                         new Source(),
+                                         plus(swhen),
+                                         rparen));
+
     let fieldList = seq(new Field(), str("="), new Source());
 
     let value = ver(Version.v740sp02, seq(str("VALUE"),
@@ -490,7 +499,7 @@ export class Source extends Combi.Reuse {
                                          new Source(),
                                          rparen));
 
-    let ret = alt(old, corr, conv, value, cond, reff);
+    let ret = alt(old, corr, conv, value, cond, reff, swit);
 
     return ret;
   }
@@ -574,7 +583,7 @@ export class TypeTable extends Combi.Reuse {
 
     let key = seq(str("WITH"),
                   opt(alt(str("NON-UNIQUE"), str("UNIQUE"))),
-                  opt(alt(str("DEFAULT"), ver(Version.v740sp02, str("EMPTY")))),
+                  opt(alt(str("DEFAULT"), str("SORTED"), ver(Version.v740sp02, str("EMPTY")))),
                   str("KEY"),
                   star(new FieldSub()));
 

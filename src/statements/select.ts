@@ -1,7 +1,8 @@
 import {Statement} from "./statement";
 import * as Combi from "../combi";
 import * as Reuse from "./reuse";
-import {WParenLeft, ParenLeft, ParenLeftW} from "../tokens/";
+import {WParenLeft, ParenLeft, ParenLeftW, WAt} from "../tokens/";
+import {Version} from "../version";
 
 let str = Combi.str;
 let seq = Combi.seq;
@@ -9,6 +10,7 @@ let opt = Combi.opt;
 let alt = Combi.alt;
 let tok = Combi.tok;
 let per = Combi.per;
+let ver = Combi.ver;
 let plus = Combi.plus;
 let star = Combi.star;
 
@@ -28,9 +30,11 @@ export class Select extends Statement {
     let intoTable = seq(alt(str("INTO"), str("APPENDING")),
                         opt(str("CORRESPONDING FIELDS OF")),
                         str("TABLE"),
+                        opt(ver(Version.v740sp02, tok(WAt))),
                         new Reuse.Target());
     let intoSimple = seq(str("INTO"),
                          opt(str("CORRESPONDING FIELDS OF")),
+                         opt(ver(Version.v740sp02, tok(WAt))),
                          new Reuse.Target());
     let into = alt(intoList, intoTable, intoSimple);
 

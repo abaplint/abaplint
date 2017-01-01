@@ -37,6 +37,9 @@ let tests = [
   "SELECT * FROM foo INTO CORRESPONDING FIELDS OF TABLE lt_foo PACKAGE SIZE 100 WHERE moo = stru-value1 AND boo = stru-value2.",
   "SELECT sdfs FROM basdf WHERE name is null.",
   "select foo~bname bar~name_first into table lt_table from foo left outer join bar on foo~mandt = bar~mandt and foo~bname = bar~bname.",
+  "SELECT SINGLE node_key FROM snwd_bpa INTO @DATA(node_key).",
+  "SELECT SINGLE node_key FROM snwd_bpa INTO @DATA(node_key) WHERE bp_id = @lv_bp_id.",
+  "SELECT node_key INTO CORRESPONDING FIELDS OF @<entity> FROM snwd_so WHERE (where_clause) ORDER BY (orderby_clause).",
 
   "SELECT marc~matnr marc~werks marc~herkl\n" +
   "       mara~ntgew mara~gewei marc~beskz\n" +

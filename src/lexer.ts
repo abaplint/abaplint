@@ -190,6 +190,16 @@ export default class Lexer {
         } else {
           tok = new Tokens.Plus(pos, s);
         }
+      } else if (s.length === 1 && s === "@") {
+        if (whiteBefore && whiteAfter) {
+          tok = new Tokens.WAtW(pos, s);
+        } else if (whiteBefore) {
+          tok = new Tokens.WAt(pos, s);
+        } else if (whiteAfter) {
+          tok = new Tokens.AtW(pos, s);
+        } else {
+          tok = new Tokens.At(pos, s);
+        }
       } else if (s.length === 2 && (s === "->" || s === "=>")) {
         if (whiteBefore && whiteAfter) {
           tok = new Tokens.WArrowW(pos, s);
@@ -269,11 +279,13 @@ export default class Lexer {
           || ahead === ")"
           || ahead === "["
           || ahead === "]"
+          || ( ahead === "@" && buf.trim().length === 0 )
           || aahead === "->"
           || aahead === "=>"
           || ahead === "\t"
           || ahead === "\n")
           && this.m === Mode.Normal) {
+//        console.dir(buf);
         this.add();
       } else if (ahead === "\n" && this.m !== Mode.Template) {
         this.add();
@@ -292,6 +304,7 @@ export default class Lexer {
           || buf === "["
           || buf === "]"
           || buf === "+"
+          || buf === "@"
           || ( buf === "-" && ahead !== ">" ) )
           && this.m === Mode.Normal) {
         this.add();

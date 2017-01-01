@@ -37,6 +37,10 @@ let tests = [
   "data foo like bar[].",
   "DATA lt_list TYPE ddictype WITH HEADER LINE.",
   "DATA ret TYPE TABLE OF bapiret2 WITH HEADER LINE.",
+  "data mt_field TYPE TABLE OF ty_view_field " +
+    "WITH NON-UNIQUE SORTED KEY view_fieldname COMPONENTS view_fieldname " +
+    "WITH NON-UNIQUE SORTED KEY no_case COMPONENTS no_case.",
+
 //  "DATA ret TYPE TABLE OF foobar INITIAL SIZE 10 WITH HEADER LINE.",
 ];
 
