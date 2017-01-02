@@ -16,6 +16,7 @@ export class CreateData extends Statement {
                    str("TYPE HANDLE"),
                    str("TYPE REF TO"),
                    str("LIKE TABLE OF"),
+                   str("TYPE TABLE OF"),
                    str("TYPE STANDARD TABLE OF"),
                    str("LIKE STANDARD TABLE OF"),
                    str("LIKE LINE OF"));

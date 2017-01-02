@@ -11,6 +11,8 @@ let per = Combi.per;
 export class Convert extends Statement {
 
   public static get_matcher(): Combi.IRunnable {
+    let intoTime = seq(str("TIME"), new Reuse.Target());
+    let daylight = seq(str("DAYLIGHT SAVING TIME"), new Reuse.Target());
 
     let time = seq(str("TIME STAMP"),
                    new Reuse.Source(),
@@ -18,9 +20,7 @@ export class Convert extends Statement {
                    new Reuse.Source(),
                    str("INTO DATE"),
                    new Reuse.Target(),
-                   str("TIME"),
-                   new Reuse.Target(),
-                   opt(seq(str("DAYLIGHT SAVING TIME"), new Reuse.Target())));
+                   opt(seq(intoTime, opt(daylight))));
 
     let dat = seq(str("DATE"), new Reuse.Source());
     let tim = seq(str("TIME"), new Reuse.Source());

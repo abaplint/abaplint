@@ -5,11 +5,14 @@ import * as Combi from "../combi";
 let str = Combi.str;
 let seq = Combi.seq;
 let alt = Combi.alt;
+let opt = Combi.opt;
 
 export class FetchNext extends Statement {
 
   public static get_matcher(): Combi.IRunnable {
-    let table = seq(str("INTO TABLE"),
+    let table = seq(str("INTO"),
+                    opt(str("CORRESPONDING FIELDS OF")),
+                    str("TABLE"),
                     new Reuse.Target(),
                     str("PACKAGE SIZE"),
                     new Reuse.Source());

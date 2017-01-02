@@ -5,6 +5,8 @@ import * as Combi from "../combi";
 let str = Combi.str;
 let opt = Combi.opt;
 let seq = Combi.seq;
+let per = Combi.per;
+let plus = Combi.plus;
 
 export class Do extends Statement {
 
@@ -16,7 +18,9 @@ export class Do extends Statement {
                    str("NEXT"),
                    new Reuse.Source());
 
-    return seq(str("DO"), opt(seq(new Reuse.Source(), str("TIMES"), opt(vary))));
+    let times = seq(new Reuse.Source(), str("TIMES"));
+
+    return seq(str("DO"), opt(per(plus(vary), times)));
   }
 
   public isStructure() {

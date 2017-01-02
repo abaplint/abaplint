@@ -21,9 +21,11 @@ export class ReadLine extends Statement {
 
     let page = seq(str("OF PAGE"), new Reuse.Source());
 
+    let current = str("OF CURRENT PAGE");
+
     return seq(str("READ LINE"),
                new Reuse.Source(),
-               opt(per(val, index, field, page)));
+               opt(per(val, index, field, page, current)));
   }
 
 }

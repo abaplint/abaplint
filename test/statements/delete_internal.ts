@@ -12,6 +12,7 @@ let tests = [
   "DELETE TABLE mt_list FROM io_repo.",
   "DELETE TABLE lt_not WITH TABLE KEY name = lv_name.",
   "DELETE lt_dists TO lv_nlen.",
+  "DELETE ADJACENT DUPLICATES FROM <lt_data> COMPARING (lv_name).",
 ];
 
 statementType(tests, "DELETE", Statements.DeleteInternal);

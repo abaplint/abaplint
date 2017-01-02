@@ -16,6 +16,7 @@ let tests = [
   "MODIFY gt_alv FROM ls_alv INDEX ls_rows-index.",
   "MODIFY ct_col INDEX sy-tabix FROM ls_col TRANSPORTING field.",
   "modify ct_data from <ls_data> transporting (name).",
+  "MODIFY ct_data TRANSPORTING field.",
 ];
 
 statementType(tests, "MODIFY internal", Statements.ModifyInternal);

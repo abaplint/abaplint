@@ -18,6 +18,7 @@ let tests = [
   "describe field <fs> type l_typ components l_num.",
   "describe list number of lines lv_lines.",
   "describe list index sy-index number of lines row.",
+  "DESCRIBE FIELD lv_foo LENGTH lv_len.",
 ];
 
 statementType(tests, "DESCRIBE", Statements.Describe);

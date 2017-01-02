@@ -8,6 +8,7 @@ let tests = [
   "READ LINE sy-index.",
   "READ LINE 2 INDEX 0.",
   "read line ls_header-linno of page ls_header-pagno index sy-lsind field value <lv_val>.",
+  "READ LINE lv_line OF CURRENT PAGE.",
 ];
 
 statementType(tests, "READ LINE", Statements.ReadLine);

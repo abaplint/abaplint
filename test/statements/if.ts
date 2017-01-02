@@ -32,6 +32,7 @@ let tests = [
   "IF is_item-obj_name IS INITIAL.",
   "IF iv_f < - lv_maxint OR iv_f > lv_maxint.",
   "IF foo = bar OR moo = boo.",
+  "IF <field> NOT BETWEEN ls_foo-low AND ls_foo-high.",
 ];
 
 statementType(tests, "IF", Statements.If);

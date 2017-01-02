@@ -13,7 +13,7 @@ export class Submit extends Statement {
 
   public static get_matcher(): Combi.IRunnable {
     let sign = seq(str("SIGN"), new Reuse.Source());
-    let eq = alt(str("="), str("EQ"), str("IN"), str("NE"));
+    let eq = alt(str("="), str("EQ"), str("IN"), str("NE"), str("INCL"));
     let awith = seq(str("WITH"), new Reuse.Field(), eq, new Reuse.Source(), opt(sign));
     let prog = alt(new Reuse.Source(), new Reuse.Dynamic());
     let job = seq(str("VIA JOB"), new Reuse.Source(), str("NUMBER"), new Reuse.Source());
@@ -24,6 +24,8 @@ export class Submit extends Statement {
     let lineSize = seq(str("LINE-SIZE"), new Reuse.Source());
     let lineCount = seq(str("LINE-COUNT"), new Reuse.Source());
     let user = seq(str("USER"), new Reuse.Source());
+    let sset = seq(str("USING SELECTION-SET"), new Reuse.Source());
+    let free = seq(str("WITH FREE SELECTIONS"), new Reuse.Source());
 
     let perm = per(plus(awith),
                    withTab,
@@ -32,6 +34,8 @@ export class Submit extends Statement {
                    lineCount,
                    archive,
                    user,
+                   sset,
+                   free,
                    str("TO SAP-SPOOL"),
                    str("WITHOUT SPOOL DYNPRO"),
                    str("VIA SELECTION-SCREEN"),

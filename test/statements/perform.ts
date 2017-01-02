@@ -14,6 +14,7 @@ let tests = [
   "PERFORM send ON COMMIT.",
   "perform moo in program zbar if found using foo changing bar.",
   "PERFORM moo ON COMMIT LEVEL lv_level.",
+  "PERFORM moo ON ROLLBACK.",
 ];
 
 statementType(tests, "PERFORM", Statements.Perform);

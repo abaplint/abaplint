@@ -30,13 +30,16 @@ export class Replace extends Statement {
     let occ = alt(str("ALL OCCURRENCES"),
                   str("FIRST OCCURRENCE"));
 
+    let mode = alt(str("IN CHARACTER MODE"),
+                   str("IN BYTE MODE"));
+
     return seq(str("REPLACE"),
                per(section, seq(opt(occ), source)),
                opt(seq(str("IN"), opt(str("TABLE")), new Reuse.Target())),
                per(seq(str("WITH"), new Reuse.Source()),
                    seq(str("INTO"), new Reuse.Target())),
                opt(cas),
-               opt(str("IN CHARACTER MODE")));
+               opt(mode));
   }
 
 }

@@ -10,6 +10,7 @@ let tests = [
   "format color off intensified off inverse off hotspot off input off.",
   "format intensified = 0 color = 0 inverse = 0.",
   "FORMAT FRAMES OFF.",
+  "FORMAT COLOR lv_col INVERSE.",
 ];
 
 statementType(tests, "FORMAT", Statements.Format);

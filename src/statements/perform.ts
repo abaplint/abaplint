@@ -18,7 +18,8 @@ export class Perform extends Statement {
     let tables = seq(str("TABLES"), plus(new Reuse.Source()));
     let changing = seq(str("CHANGING"), plus(new Reuse.Source()));
     let level = seq(str("LEVEL"), new Reuse.Source());
-    let commit = seq(str("ON COMMIT"), opt(level));
+    let commit = alt(seq(str("ON COMMIT"), opt(level)),
+                     str("ON ROLLBACK"));
 
     let short = seq(new Reuse.FormName(),
                     tok(ParenLeft),

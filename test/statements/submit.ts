@@ -16,6 +16,8 @@ let tests = [
   "submit zfoo with moo = stru-sdf with bar = stru-sdff via selection-screen and return.",
   "SUBMIT zfoo AND RETURN USER SY-UNAME VIA JOB name NUMBER count.",
   "submit zfoo with field eq lv_value sign lv_sign and return.",
+  "SUBMIT zfoo VIA SELECTION-SCREEN AND RETURN WITH p_add INCL boo WITH p_sub INCL moo.",
+  "submit (lv_report) with kunnr = lv_kunnr with bukrs = lv_bukrs using selection-set lv_set with free selections lt_free and return.",
 ];
 
 statementType(tests, "SUBMIT", Statements.Submit);

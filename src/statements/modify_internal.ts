@@ -24,7 +24,7 @@ export class ModifyInternal extends Statement {
 // todo, refactor
     let options = alt(seq(index, from),
                       index,
-                      seq(transporting, where),
+                      seq(transporting, opt(where)),
                       seq(index, transporting),
                       seq(from, transporting, opt(where)),
                       seq(from, index, opt(transporting)),

@@ -4,16 +4,14 @@ import * as Reuse from "./reuse";
 
 let str = Combi.str;
 let seq = Combi.seq;
-let opt = Combi.opt;
 
-export class LogPoint extends Statement {
+export class AddCorresponding extends Statement {
 
   public static get_matcher(): Combi.IRunnable {
-    let subkey = seq(str("SUBKEY"), new Reuse.Source());
-
-    let ret = seq(str("LOG-POINT ID"),
+    let ret = seq(str("ADD-CORRESPONDING"),
                   new Reuse.Source(),
-                  opt(subkey));
+                  str("TO"),
+                  new Reuse.Target());
 
     return ret;
   }

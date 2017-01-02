@@ -8,6 +8,7 @@ let tests = [
   "CONVERT DATE iv_date INTO TIME STAMP lv_stamp TIME ZONE lv_zone.",
   "convert time t date d into time stamp lv_ts time zone 'UTC   '.",
   "CONVERT DATE SY-DATUM INTO INVERTED-DATE lv_inv.",
+  "CONVERT TIME STAMP iv_timestamp TIME ZONE iv_timezone INTO DATE lv_date.",
 ];
 
 statementType(tests, "CONVERT", Statements.Convert);

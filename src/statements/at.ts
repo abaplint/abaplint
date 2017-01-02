@@ -9,7 +9,9 @@ let alt = Combi.alt;
 export class At extends Statement {
 
   public static get_matcher(): Combi.IRunnable {
-    let field = alt(new Reuse.FieldSub(), new Reuse.Dynamic());
+    let field = alt(new Reuse.FieldSub(),
+                    new Reuse.Dynamic(),
+                    new Reuse.FieldSymbol());
 
     let atNew = seq(str("NEW"), field);
     let atEnd = seq(str("END OF"), field);

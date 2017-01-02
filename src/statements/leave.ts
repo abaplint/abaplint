@@ -12,12 +12,16 @@ export class Leave extends Statement {
   public static get_matcher(): Combi.IRunnable {
     let ret = seq(str("AND RETURN TO SCREEN"), new Reuse.Source());
 
+    let transaction = seq(str("TO TRANSACTION"),
+                          new Reuse.Source(),
+                          opt(str("AND SKIP FIRST SCREEN")));
+
     return seq(str("LEAVE"),
                opt(alt(str("TO CURRENT TRANSACTION"),
                        seq(str("TO LIST-PROCESSING"), opt(ret)),
                        str("LIST-PROCESSING"),
                        str("SCREEN"),
-                       seq(str("TO TRANSACTION"), new Reuse.Source()),
+                       transaction,
                        str("PROGRAM"),
                        seq(str("TO SCREEN"), new Reuse.Source()))));
   }

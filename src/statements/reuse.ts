@@ -171,7 +171,7 @@ export class Compare extends Combi.Reuse {
                        str("ASSIGNED"),
                        str("INITIAL")));
 
-    let between = seq(str("BETWEEN"), new Source(), str("AND"), new Source());
+    let between = seq(opt(str("NOT")), str("BETWEEN"), new Source(), str("AND"), new Source());
 
 // todo: @foo is only possible in SELECT, not in normal IFs
     let ret = seq(opt(str("NOT")),
