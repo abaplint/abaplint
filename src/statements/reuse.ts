@@ -176,7 +176,7 @@ export class Compare extends Combi.Reuse {
 // todo: @foo is only possible in SELECT, not in normal IFs
     let ret = seq(opt(str("NOT")),
                   new Source(),
-                  alt(seq(operator, opt(ver(Version.v740sp02, tok(WAt))), new Source()),
+                  alt(seq(operator, opt(ver(Version.v740sp05, tok(WAt))), new Source()),
                       inn,
                       between,
                       sopt));

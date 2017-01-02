@@ -30,11 +30,11 @@ export class Select extends Statement {
     let intoTable = seq(alt(str("INTO"), str("APPENDING")),
                         opt(str("CORRESPONDING FIELDS OF")),
                         str("TABLE"),
-                        opt(ver(Version.v740sp02, tok(WAt))),
+                        opt(ver(Version.v740sp05, tok(WAt))),
                         new Reuse.Target());
     let intoSimple = seq(str("INTO"),
                          opt(str("CORRESPONDING FIELDS OF")),
-                         opt(ver(Version.v740sp02, tok(WAt))),
+                         opt(ver(Version.v740sp05, tok(WAt))),
                          new Reuse.Target());
     let into = alt(intoList, intoTable, intoSimple);
 
