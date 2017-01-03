@@ -7,6 +7,7 @@ import {Plus, WPlusW, WAt} from "../tokens/";
 import {BracketLeft, BracketRight, BracketRightW, BracketLeftW} from "../tokens/";
 import {ParenRight, ParenRightW, WParenRight, WParenRightW} from "../tokens/";
 import {ParenLeft, ParenLeftW, WParenLeft, WParenLeftW} from "../tokens/";
+import {WBracketRight, WBracketRightW} from "../tokens/";
 
 let reg = Combi.regex;
 let seq = Combi.seq;
@@ -61,6 +62,7 @@ export class FSTarget extends Combi.Reuse {
 export class Target extends Combi.Reuse {
   public get_runnable() {
     let after = seq(alt(new Field(), new FieldSymbol()),
+                    opt(new TableExpression()),
                     star(seq(new ArrowOrDash(), new Field())));
 
     let fields = seq(opt(new FieldOffset()), opt(new FieldLength()));
@@ -196,7 +198,10 @@ export class Cond extends Combi.Reuse {
 
     let cnd = alt(new Compare(), another);
 
-    let ret = seq(cnd, star(seq(operator, cnd)));
+    let predicate = ver(Version.v740sp08, seq(opt(str("NOT")), new MethodCallChain()));
+
+    let ret = alt(seq(cnd, star(seq(operator, cnd))),
+                  predicate);
 
     return ret;
   }
@@ -309,15 +314,8 @@ export class FieldLength extends Combi.Reuse {
 
 export class FieldChain extends Combi.Reuse {
   public get_runnable() {
-    let fcond = seq(new Field(), str("="), new Source());
-
-    let tableExpr = ver(Version.v740sp02,
-                        seq(tok(BracketLeftW),
-                            alt(new Source(), plus(fcond)),
-                            str("]")));
-
     let chain = seq(alt(new Field(), new FieldSymbol()),
-                    opt(tableExpr),
+                    opt(new TableExpression()),
                     star(seq(new ArrowOrDash(), new Field())));
 
     let ret = seq(chain, opt(new FieldOffset()), opt(new FieldLength()));
@@ -412,6 +410,18 @@ export class Dynamic extends Combi.Reuse {
                   alt(tok(ParenRightW), tok(ParenRight)));
 
     return ret;
+  }
+}
+
+export class TableExpression extends Combi.Reuse {
+  public get_runnable() {
+    let fields = plus(seq(new Field(), str("="), new Source()));
+    let key = seq(str("KEY"), new Field());
+    let ret = seq(tok(BracketLeftW),
+                  alt(new Source(), seq(opt(key), fields)),
+                  alt(tok(WBracketRight),
+                      tok(WBracketRightW)));
+    return ver(Version.v740sp02, ret);
   }
 }
 

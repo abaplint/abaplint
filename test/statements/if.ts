@@ -33,6 +33,9 @@ let tests = [
   "IF iv_f < - lv_maxint OR iv_f > lv_maxint.",
   "IF foo = bar OR moo = boo.",
   "IF <field> NOT BETWEEN ls_foo-low AND ls_foo-high.",
+  "IF ( foo = bar ).",
+  "IF lcl_foo=>check( ).",
+  "if not line_exists( added[ function = iv_function ] ).",
 ];
 
 statementType(tests, "IF", Statements.If);

@@ -39,7 +39,7 @@ export function statementVersion(tests, description: string, type) {
     tests.forEach((test) => {
       run(test.abap, "\"" + test.abap + "\" should be " + description, type, test.ver);
 // should fail in previous version
-      run(test.abap, "\"" + test.abap + "\" should be Unknown", Unknown, test.ver - 1);
+      run(test.abap, "\"" + test.abap + "\" should not work in lower version", Unknown, test.ver - 1);
     });
   });
 }

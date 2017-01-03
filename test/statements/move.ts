@@ -65,6 +65,8 @@ let versions = [
     "( col1 = 13 col2 = 232 col3 = 332 ) ).", ver: Version.v740sp02},
 */
   {abap: "foo = CORRESPONDING #( <ls_data> MAPPING country = coun currency = curr ).", ver: Version.v740sp05},
+  {abap: "ct_usage[ id = c_excel ]-enabled = abap_false.", ver: Version.v740sp02},
+  {abap: "ct_usage[ KEY name id = c_excel ]-enabled = abap_false.", ver: Version.v740sp02},
 ];
 
 statementVersion(versions, "MOVE", Statements.Move);
