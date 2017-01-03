@@ -10,7 +10,7 @@ let seq = Combi.seq;
 export class Append extends Statement {
 
   public static get_matcher(): Combi.IRunnable {
-    let assigning = seq(str("ASSIGNING"), new Reuse.Target());
+    let assigning = seq(str("ASSIGNING"), new Reuse.FSTarget());
     let reference = seq(str("REFERENCE INTO"), new Reuse.Target());
 
     let range = seq(str("FROM"), new Reuse.Source(), str("TO"), new Reuse.Source);

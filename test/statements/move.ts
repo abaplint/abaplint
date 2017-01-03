@@ -60,6 +60,8 @@ let versions = [
   {abap: "foo = switch #( i_popup when abap_true then c_popup when abap_false then c_full ).", ver: Version.v740sp02},
 
   {abap: "foo = VALUE #( ( col1 = 13 col2 = 232 col3 = 332 ) ).", ver: Version.v740sp02},
+  {abap: "excluded = value #( ( b_01 ) ).", ver: Version.v740sp02},
+//  {abap: "excluded = value #( ( b_01 ) ( b_02 ) ).", ver: Version.v740sp02},
 
 /* bad performance, rewrite "class Plus" in parser combinator?
   {abap: "foo = VALUE #(\n" +
@@ -73,6 +75,7 @@ let versions = [
   {abap: "foo = CORRESPONDING #( <ls_data> MAPPING country = coun currency = curr ).", ver: Version.v740sp05},
   {abap: "ct_usage[ id = c_excel ]-enabled = abap_false.", ver: Version.v740sp02},
   {abap: "ct_usage[ KEY name id = c_excel ]-enabled = abap_false.", ver: Version.v740sp02},
+  {abap: "e_object->mt_toolbar[ function = <tb>-function ]-disabled = abap_true.", ver: Version.v740sp02},
 ];
 
 statementVersion(versions, "MOVE", Statements.Move);
