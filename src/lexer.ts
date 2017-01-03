@@ -108,7 +108,7 @@ export default class Lexer {
       let row = this.stream.getRow();
 
       let whiteBefore = false;
-      if (this.stream.prevChar() === " ") {
+      if (this.stream.prevChar() === " " || this.stream.prevChar() === "\n") {
         whiteBefore = true;
       }
 

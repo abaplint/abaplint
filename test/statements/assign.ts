@@ -19,6 +19,7 @@ let tests = [
   "ASSIGN lt_word INCREMENT 1 TO <word> RANGE struc.",
   "assign text+i(1) to <x> type 'X'.",
   "assign textline+tmp(*) to <fs>.",
+  "assign falv->fcat[ fieldname = fieldname ] to field-symbol(<fcat>).",
 ];
 
 statementType(tests, "ASSIGN", Statements.Assign);

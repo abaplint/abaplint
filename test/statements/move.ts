@@ -33,6 +33,9 @@ let tests = [
   "foo = method(\n2 ).",
   "index1 = index2 = index1 - 1.",
   "move-corresponding ls_usbapilink to lr_usbapilink_cd->*.",
+  "lv_chunk = iv_line+<match>-offset.",
+  "lv_chunk = iv_line(<match>-length).",
+  "lv_chunk = iv_line+<match>-offset(<match>-length).",
 ];
 
 statementType(tests, "MOVE", Statements.Move);
@@ -55,7 +58,10 @@ let versions = [
   {abap: "foo = mi_foo->update( CORRESPONDING #( get( ) EXCEPT field ) ).", ver: Version.v740sp05},
   {abap: "foo = VALUE /bobf/t_frw_name( ).", ver: Version.v740sp02},
   {abap: "foo = switch #( i_popup when abap_true then c_popup when abap_false then c_full ).", ver: Version.v740sp02},
-/*
+
+  {abap: "foo = VALUE #( ( col1 = 13 col2 = 232 col3 = 332 ) ).", ver: Version.v740sp02},
+
+/* bad performance, rewrite "class Plus" in parser combinator?
   {abap: "foo = VALUE #(\n" +
     "( col1 = 11 col2 = 211 col3 = 311 )\n" +
     "( col1 = 11 col2 = 212 col3 = 312 )\n" +

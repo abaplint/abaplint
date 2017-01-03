@@ -36,6 +36,7 @@ let tests = [
   "IF ( foo = bar ).",
   "IF lcl_foo=>check( ).",
   "if not line_exists( added[ function = iv_function ] ).",
+  "if foo = bar and line_exists( fcat[ fieldname = 'MOO' ] ).",
 ];
 
 statementType(tests, "IF", Statements.If);

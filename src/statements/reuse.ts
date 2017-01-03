@@ -175,13 +175,17 @@ export class Compare extends Combi.Reuse {
 
     let between = seq(opt(str("NOT")), str("BETWEEN"), new Source(), str("AND"), new Source());
 
+    let predicate = ver(Version.v740sp08, seq(opt(str("NOT")), new MethodCallChain()));
+
 // todo: @foo is only possible in SELECT, not in normal IFs
-    let ret = seq(opt(str("NOT")),
-                  new Source(),
-                  alt(seq(operator, opt(ver(Version.v740sp05, tok(WAt))), new Source()),
-                      inn,
-                      between,
-                      sopt));
+    let rett = seq(opt(str("NOT")),
+                   new Source(),
+                   alt(seq(operator, opt(ver(Version.v740sp05, tok(WAt))), new Source()),
+                       inn,
+                       between,
+                       sopt));
+
+    let ret = alt(predicate, rett);
 
     return ret;
   }
@@ -198,10 +202,7 @@ export class Cond extends Combi.Reuse {
 
     let cnd = alt(new Compare(), another);
 
-    let predicate = ver(Version.v740sp08, seq(opt(str("NOT")), new MethodCallChain()));
-
-    let ret = alt(seq(cnd, star(seq(operator, cnd))),
-                  predicate);
+    let ret = seq(cnd, star(seq(operator, cnd)));
 
     return ret;
   }
@@ -292,7 +293,7 @@ export class MethodCallChain extends Combi.Reuse {
 export class FieldOffset extends Combi.Reuse {
   public get_runnable() {
     let offset = seq(tok(Plus),
-                     reg(/^[\d\w]+$/),
+                     alt(reg(/^[\d\w]+$/), new FieldSymbol()),
                      opt(seq(new ArrowOrDash(), new Field())));
 
     return offset;
@@ -301,7 +302,7 @@ export class FieldOffset extends Combi.Reuse {
 
 export class FieldLength extends Combi.Reuse {
   public get_runnable() {
-    let normal = seq(reg(/^[\d\w]+$/),
+    let normal = seq(alt(reg(/^[\d\w]+$/), new FieldSymbol()),
                      opt(seq(new ArrowOrDash(), new Field())));
 
     let length = seq(tok(ParenLeft),
@@ -316,7 +317,7 @@ export class FieldChain extends Combi.Reuse {
   public get_runnable() {
     let chain = seq(alt(new Field(), new FieldSymbol()),
                     opt(new TableExpression()),
-                    star(seq(new ArrowOrDash(), new Field())));
+                    star(seq(new ArrowOrDash(), new Field(), opt(new TableExpression()))));
 
     let ret = seq(chain, opt(new FieldOffset()), opt(new FieldLength()));
 

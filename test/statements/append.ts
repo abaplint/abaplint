@@ -28,12 +28,12 @@ let tests = [
   "APPEND lo_foo->call( )->chain( ) TO rt_commits.",
   "APPEND lo_branch->get_data( )-sha1 TO lt_visit.",
   "APPEND LINES OF foobar FROM 2 TO 3 TO result.",
+  "APPEND INITIAL LINE TO <ls_data>-sub ASSIGNING FIELD-SYMBOL(<ls_sub>).",
 ];
 
 statementType(tests, "APPEND", Statements.Append);
 
 let versions = [
-  {abap: "APPEND INITIAL LINE TO <ls_data>-sub ASSIGNING FIELD-SYMBOL(<ls_sub>).", ver: Version.v740sp02},
   {abap: "APPEND VALUE #( key = is_key meta = it_meta ) TO mt_files.", ver: Version.v740sp02},
 ];
 
