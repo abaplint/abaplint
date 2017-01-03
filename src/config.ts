@@ -32,7 +32,9 @@ export default class Config {
   }
 
   public readByKey(rule: string, key: string) {
-    return this.config["rules"][rule][key];
+// todo: when reading enabled for a rule that is not in abaplint.json
+//       should the rule be enabled by default?
+    return this.config["rules"][rule] ? this.config["rules"][rule][key] : undefined;
   }
 
   public readByRule(rule: string) {
