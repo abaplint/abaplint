@@ -13,6 +13,7 @@ let tests = [
   "AT SELECTION-SCREEN ON HELP-REQUEST FOR field.",
   "AT SELECTION-SCREEN ON HELP-REQUEST FOR foo-low.",
   "AT SELECTION-SCREEN ON END OF foo.",
+  "AT SELECTION-SCREEN ON foo-bar.",
 ];
 
 statementType(tests, "AT SELECTION-SCREEN", Statements.AtSelectionScreen);

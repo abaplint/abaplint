@@ -16,7 +16,7 @@ export class AtSelectionScreen extends Statement {
 
     let exit = str("ON EXIT-COMMAND");
 
-    let field = seq(str("ON"), new Reuse.Field());
+    let field = seq(str("ON"), new Reuse.FieldSub());
 
     let end = seq(str("ON END OF"), new Reuse.Field());
 

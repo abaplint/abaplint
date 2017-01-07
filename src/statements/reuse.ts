@@ -228,6 +228,19 @@ export class MethodParam extends Combi.Reuse {
   }
 }
 
+export class ReceiveParameters extends Combi.Reuse {
+  public get_runnable() {
+    let importing = seq(str("IMPORTING"), new ParameterListT());
+    let tables = seq(str("TABLES"), new ParameterListT());
+    let exceptions = seq(str("EXCEPTIONS"), opt(new ParameterListExceptions()), opt(new Field()));
+    let long = seq(opt(importing),
+                   opt(tables),
+                   opt(exceptions));
+
+    return long;
+  }
+}
+
 export class FunctionParameters extends Combi.Reuse {
   public get_runnable() {
     let exporting = seq(str("EXPORTING"), new ParameterListS());
@@ -598,7 +611,7 @@ export class TypeTable extends Combi.Reuse {
                   str("KEY"),
                   star(new FieldSub()));
 
-    let typetable = seq(opt(alt(str("STANDARD"), str("HASHED"), str("SORTED"), str("ANY"))),
+    let typetable = seq(opt(alt(str("STANDARD"), str("HASHED"), str("INDEX"), str("SORTED"), str("ANY"))),
                         str("TABLE"),
                         opt(str("OF")),
                         opt(str("REF TO")),

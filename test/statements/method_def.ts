@@ -30,6 +30,7 @@ let tests = [
   "methods ADD importing OBJ type ANY optional CONTEXT type SIMPLE optional preferred parameter OBJ.",
   "METHODS check_input RAISING resumable(zcx_exception).",
   "class-methods SET_CELL_VALUE_IN_EXCEL changing value(CV_CELL_WIDTH) type I optional.",
+  "methods foo importing it_foo type INDEX TABLE.",
 ];
 
 statementType(tests, "METHODS", Statements.MethodDef);

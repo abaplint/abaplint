@@ -23,6 +23,7 @@ export class NewPage extends Statement {
                    str("NO DIALOG"),
                    parameters,
                    archive,
+                   str("NEW-SECTION"),
                    lineCount,
                    line));
   }

@@ -20,12 +20,12 @@ export class UpdateDatabase extends Statement {
                         opt(str("TABLE")),
                         new Reuse.Source());
 
-    let from = seq(opt(str("CLIENT SPECIFIED")),
-                   opt(fromTable));
+    let client = str("CLIENT SPECIFIED");
 
     let ret = seq(str("UPDATE"),
                   target,
-                  alt(from, set));
+                  opt(client),
+                  opt(alt(fromTable, set)));
 
     return ret;
   }

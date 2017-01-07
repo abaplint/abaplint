@@ -13,7 +13,7 @@ export class Loop extends Statement {
   public static get_matcher(): Combi.IRunnable {
     let where = seq(str("WHERE"), alt(new Reuse.Cond(), new Reuse.Dynamic()));
 
-    let group = seq(str("GROUP BY"), new Reuse.FieldSub());
+    let group = seq(str("GROUP BY"), new Reuse.Source());
 
     let into = alt(seq(alt(seq(opt(str("REFERENCE")), str("INTO")), str("ASSIGNING")),
                        new Reuse.Target(),
