@@ -1,4 +1,5 @@
 foo.abap
+node_modules/
 worklist.txt
 test/typings/
 build/
