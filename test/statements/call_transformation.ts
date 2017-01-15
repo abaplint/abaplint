@@ -52,6 +52,15 @@ let tests = [
   "  PARAMETERS mode = 'LO'\n" +
   "  SOURCE simple_struc = simple_struc\n" +
   "  RESULT XML lv_bar.",
+
+  "CALL TRANSFORMATION (foo)\n" +
+  "  SOURCE root = im_data\n" +
+  "  OPTIONS xml_header = 'no'\n" +
+  "          value_handling  = 'move'\n" +
+  "          technical_types = 'ignore'\n" +
+  "          initial_components = 'suppress'\n" +
+  "          data_refs = 'heap-or-create'\n" +
+  "  RESULT XML lv_.",
 ];
 
 statementType(tests, "CALL TRANSFORMATION", Statements.CallTransformation);

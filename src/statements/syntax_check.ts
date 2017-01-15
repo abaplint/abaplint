@@ -24,7 +24,8 @@ export class SyntaxCheck extends Statement {
     let replacing = seq(str("REPLACING"), new Reuse.Target());
     let directory = seq(str("DIRECTORY ENTRY"), new Reuse.Source());
 
-    let syntax = seq(new Reuse.Source(),
+    let syntax = seq(opt(str("PROGRAM")),
+                     new Reuse.Source(),
                      per(message,
                          line,
                          word,

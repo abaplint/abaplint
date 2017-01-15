@@ -23,11 +23,15 @@ export class Scan extends Statement {
     let includeProgram = seq(str("INCLUDE PROGRAM FROM"), new Reuse.Source());
     let frame = seq(str("FRAME PROGRAM FROM"), new Reuse.Source());
     let program = seq(str("PROGRAM FROM"), new Reuse.Source());
+    let from = seq(str("FROM"), new Reuse.Source());
+    let to = seq(str("TO"), new Reuse.Source());
 
     let ret = seq(str("SCAN ABAP-SOURCE"),
                   new Reuse.Source(),
                   per(tokens,
                       levels,
+                      from,
+                      to,
                       statements,
                       structures,
                       keywords,

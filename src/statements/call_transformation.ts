@@ -11,10 +11,10 @@ let plus = Combi.plus;
 export class CallTransformation extends Statement {
 
   public static get_matcher(): Combi.IRunnable {
-    let options = seq(str("OPTIONS"), new Reuse.Field(), str("="), new Reuse.Source());
-    let parameters = seq(str("PARAMETERS"), new Reuse.Field(), str("="), new Reuse.Source());
-
     let field = seq(new Reuse.Field(), str("="), new Reuse.Source());
+
+    let options = seq(str("OPTIONS"), plus(field));
+    let parameters = seq(str("PARAMETERS"), field);
 
     let source2 = seq(str("XML"), new Reuse.Source());
     let source = seq(str("SOURCE"), alt(plus(field), source2, new Reuse.Dynamic()));

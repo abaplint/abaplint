@@ -56,6 +56,13 @@ let tests = [
   "  MESSAGE message\n" +
   "  LINE    line\n" +
   "  WORD    word.",
+
+  "SYNTAX-CHECK FOR PROGRAM prog\n" +
+  "  MESSAGE   message\n" +
+  "  LINE      line\n" +
+  "  WORD      word\n" +
+  "  REPLACING replacing.",
+
 ];
 
 statementType(tests, "SYNTAX-CHECK", Statements.SyntaxCheck);

@@ -82,6 +82,12 @@ let tests = [
   "  word            into WORD\n" +
   "  line            into LINE\n" +
   "  with includes.",
+
+  "SCAN ABAP-SOURCE buffer\n" +
+  "  FROM start\n" +
+  "  TO   end\n" +
+  "  TOKENS     INTO tokens\n" +
+  "  STATEMENTS INTO statements.",
 ];
 
 statementType(tests, "SCAN", Statements.Scan);
