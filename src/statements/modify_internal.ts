@@ -36,7 +36,8 @@ export class ModifyInternal extends Statement {
 
     let ret2 = seq(str("TABLE"),
                    new Reuse.Target(),
-                   from);
+                   from,
+                   opt(transporting));
 
     return seq(str("MODIFY"), alt(ret, ret2));
   }

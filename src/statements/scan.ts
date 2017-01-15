@@ -37,6 +37,8 @@ export class Scan extends Statement {
                       str("WITH COMMENTS"),
                       str("WITH INCLUDES"),
                       str("WITHOUT TRMAC"),
+                      str("WITH DECLARATIONS"),
+                      str("WITH BLOCKS"),
                       pragmas));
 
     return ret;

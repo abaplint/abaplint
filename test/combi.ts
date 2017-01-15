@@ -87,6 +87,13 @@ let tests = [
 {n: "tok1", c: tok(Identifier),                      t: tokenize("FOO"), e: true},
 {n: "tok2", c: seq(str("A"), tok(WPlusW), str("B")), t: tokenize("A + B"), e: true},
 {n: "tok3", c: seq(str("A"), tok(Plus), str("B")),   t: tokenize("A+B"), e: true},
+{n: "plus1", c: plus(str("A")),                      t: tokenize("A"), e: true},
+{n: "plus2", c: plus(str("A")),                      t: tokenize("A A"), e: true},
+{n: "plus3", c: plus(str("A")),                      t: tokenize(""), e: false},
+{n: "plus4", c: plus(str("A")),                      t: tokenize("B"), e: false},
+{n: "plus5", c: plus(str("A")),                      t: tokenize("A B"), e: false},
+{n: "plus6", c: seq(plus(str("A")), str("B")),       t: tokenize("A B"), e: true},
+{n: "plus7", c: seq(plus(str("A")), str("B")),       t: tokenize("A A B"), e: true},
 ];
 
 describe("combi matching", () => {

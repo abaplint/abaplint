@@ -33,7 +33,7 @@ export class Write extends Statement {
                       str("LEFT-JUSTIFIED"),
                       str("AS LINE"),
                       str("AS ICON"),
-                      str("HOTSPOT"),
+                      seq(str("HOTSPOT"), opt(alt(str("ON"), str("OFF")))),
                       str("AS CHECKBOX"),
                       str("AS SYMBOL"),
                       str("RIGHT-JUSTIFIED"),

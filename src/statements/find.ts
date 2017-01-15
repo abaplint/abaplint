@@ -15,6 +15,7 @@ export class Find extends Statement {
     let options = per(str("IGNORING CASE"),
                       str("RESPECTING CASE"),
                       str("IN BYTE MODE"),
+                      str("IN CHARACTER MODE"),
                       seq(str("MATCH OFFSET"), new Reuse.Target()),
                       seq(str("MATCH LINE"), new Reuse.Target()),
                       seq(str("MATCH COUNT"), new Reuse.Target()),
@@ -22,13 +23,16 @@ export class Find extends Statement {
                       seq(str("RESULTS"), new Reuse.Target()),
                       seq(str("SUBMATCHES"), plus(new Reuse.Target())));
 
+    let before = alt(str("TABLE"),
+                     seq(str("SECTION OFFSET"), new Reuse.Source(), str("OF")));
+
     let ret = seq(str("FIND"),
                   opt(alt(str("FIRST OCCURRENCE OF"),
                           str("ALL OCCURRENCES OF"))),
                   opt(alt(str("REGEX"), str("SUBSTRING"))),
                   new Reuse.Source(),
                   str("IN"),
-                  opt(str("TABLE")),
+                  opt(before),
                   new Reuse.Source(),
                   opt(options));
 

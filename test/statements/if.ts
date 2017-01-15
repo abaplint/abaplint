@@ -37,6 +37,33 @@ let tests = [
   "IF lcl_foo=>check( ).",
   "if not line_exists( added[ function = iv_function ] ).",
   "if foo = bar and line_exists( fcat[ fieldname = 'MOO' ] ).",
+
+  "IF ( foo-bar CP 'a' ) OR \n" +
+  "  ( foo-bar CP 'a' ) OR \n" +
+  "  ( foo-bar CP 'a' ) OR \n" +
+  "  ( foo-bar CP 'a' ) OR \n" +
+  "  ( foo-bar CP 'a' ) OR \n" +
+  "  ( foo-bar CP 'a' ) OR \n" +
+  "  ( foo-bar CP 'a' ) OR \n" +
+  "  ( foo-bar CP 'a' ) OR \n" +
+  "  ( foo-bar CP 'a' ) OR \n" +
+  "  ( foo-bar CP 'a' ) OR \n" +
+  "  ( foo-bar CP 'a' ) OR \n" +
+  "  ( foo-bar CP 'a' ) OR \n" +
+  "  ( foo-bar CP 'a' ) OR \n" +
+  "  ( foo-bar CP 'a' ) OR \n" +
+  "  ( foo-bar CP 'a' ) OR \n" +
+  "  ( foo-bar CP 'a' ) OR \n" +
+  "  ( foo-bar CP 'a' ) OR \n" +
+  "  ( foo-bar CP 'a' ) OR \n" +
+  "  ( foo-bar CP 'a' ) OR \n" +
+  "  ( foo-bar CP 'a' ) OR \n" +
+  "  ( foo-bar CP 'a' ) OR \n" +
+  "  ( foo-bar CP 'a' ) OR \n" +
+  "  ( foo-bar CP 'a' ) OR \n" +
+  "  ( foo-bar CP 'a' ) OR \n" +
+  "  ( foo-bar CP 'a' ) OR \n" +
+  "  ( foo-bar CP 'a' ).",
 ];
 
 statementType(tests, "IF", Statements.If);

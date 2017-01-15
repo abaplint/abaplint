@@ -14,7 +14,7 @@ export class Method extends Statement {
 
     let kernel = seq(str("BY KERNEL MODULE"),
                      name,
-                     alt(str("FAIL"), str("IGNORE")));
+                     opt(alt(str("FAIL"), str("IGNORE"))));
 
     return seq(str("METHOD"), name, opt(kernel));
   }

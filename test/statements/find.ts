@@ -16,6 +16,8 @@ let tests = [
   "find value in text respecting case match offset off match length len.",
   "find foo-bar in xdata in byte mode match offset moff.",
   "FIND 'foo' IN TABLE lt_foobar MATCH LINE idx.",
+  "FIND 'foo' IN SECTION OFFSET 100 OF text IGNORING CASE MATCH OFFSET moff.",
+  "FIND REGEX '[^A-Za-z0-9_]' IN str IN CHARACTER MODE.",
 ];
 
 statementType(tests, "FIND", Statements.Find);

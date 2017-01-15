@@ -17,6 +17,7 @@ let tests = [
   "MODIFY ct_col INDEX sy-tabix FROM ls_col TRANSPORTING field.",
   "modify ct_data from <ls_data> transporting (name).",
   "MODIFY ct_data TRANSPORTING field.",
+  "MODIFY TABLE me->properties FROM prop TRANSPORTING text.",
 ];
 
 statementType(tests, "MODIFY internal", Statements.ModifyInternal);

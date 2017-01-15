@@ -21,7 +21,7 @@ export class Replace extends Statement {
                       new Reuse.Source());
 
     let source = seq(opt(str("OF")),
-                     opt(str("REGEX")),
+                     opt(alt(str("REGEX"), str("SUBSTRING"))),
                      new Reuse.Source());
 
     let cas = alt(str("IGNORING CASE"),

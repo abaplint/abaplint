@@ -62,6 +62,16 @@ let tests = [
   "  MESSAGE    INTO message\n" +
   "  WITHOUT TRMAC\n" +
   "  WITH ANALYSIS.",
+
+  "SCAN ABAP-SOURCE buffer\n" +
+  "  TOKENS      INTO         tokens\n" +
+  "  STATEMENTS  INTO         statements\n" +
+  "  INCLUDE     PROGRAM FROM include\n" +
+  "  FRAME       PROGRAM FROM frame\n" +
+  "  WITH COMMENTS\n" +
+  "  WITH DECLARATIONS\n" +
+  "  WITH BLOCKS\n" +
+  "  WITH INCLUDES.",
 ];
 
 statementType(tests, "SCAN", Statements.Scan);

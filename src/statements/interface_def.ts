@@ -16,7 +16,7 @@ export class InterfaceDef extends Statement {
     let dataValues = seq(str("DATA VALUES"),
                          plus(val));
 
-    let options = alt(seq(str("ABSTRACT METHODS"), new Reuse.Field()),
+    let options = alt(seq(str("ABSTRACT METHODS"), plus(new Reuse.Field())),
                       str("ALL METHODS ABSTRACT"),
                       str("PARTIALLY IMPLEMENTED"));
 
