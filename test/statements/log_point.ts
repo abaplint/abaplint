@@ -5,6 +5,7 @@ let tests = [
   "LOG-POINT ID foobar SUBKEY subkey.",
   "LOG-POINT ID foobar.",
   "LOG-POINT ID foobar SUBKEY 'sub' FIELDS 'foobar'.",
+  "LOG-POINT ID foobar SUBKEY 'sub' FIELDS 'foo' 'bar'.",
 ];
 
 statementType(tests, "LOG-POINT", Statements.LogPoint);

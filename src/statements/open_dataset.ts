@@ -13,14 +13,16 @@ export class Open extends Statement {
   public static get_matcher(): Combi.IRunnable {
     let direction = alt(str("FOR OUTPUT"), str("FOR INPUT"));
     let mode = alt(str("IN BINARY MODE"), str("IN TEXT MODE"));
-    let encoding = str("ENCODING DEFAULT");
+    let encoding = seq(str("ENCODING"), new Reuse.Source());
     let pos = seq(str("AT POSITION"), new Reuse.Source());
+    let message = seq(str("MESSAGE"), new Reuse.Target());
+    let ignoring = str("IGNORING CONVERSION ERRORS");
 
     let ret = seq(str("OPEN DATASET"),
                   new Reuse.Field(),
                   direction,
                   opt(mode),
-                  opt(per(encoding, pos)));
+                  opt(per(encoding, pos, message, ignoring)));
 
     return ret;
   }

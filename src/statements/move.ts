@@ -11,11 +11,14 @@ let plus = Combi.plus;
 export class Move extends Statement {
 
   public static get_matcher(): Combi.IRunnable {
+    let keeping = str("KEEPING TARGET LINES");
+
     let move = seq(alt(seq(str("MOVE"), opt(str("EXACT"))),
                        str("MOVE-CORRESPONDING")),
                    new Reuse.Source(),
                    str("TO"),
-                   new Reuse.Target());
+                   new Reuse.Target(),
+                   opt(keeping));
 
     let equals = alt(str("="), str("?="));
 

@@ -64,6 +64,7 @@ describe("count_tokens", () => {
     {abap: "(foo@)",                              tokens: 3},
     {abap: "INTO @DATA(node_key)",                tokens: 6},
     {abap: "@DATA(node_key)",                     tokens: 5},
+//    {abap: "WRITE `\"foo``\"bar`",                tokens: 2},
   ];
 
   tests.forEach((test) => {

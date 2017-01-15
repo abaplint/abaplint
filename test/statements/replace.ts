@@ -17,6 +17,7 @@ let tests = [
   "REPLACE ALL OCCURRENCES OF REGEX regx IN foo WITH repl RESPECTING CASE.",
   "REPLACE SECTION OFFSET lv_offset LENGTH 1 OF lv_bytes WITH lv_with IN BYTE MODE.",
   "REPLACE ALL OCCURRENCES OF SUBSTRING '#' IN foo-bar WITH '##'.",
+  "REPLACE ALL OCCURRENCES OF '@' IN foo WITH 'at' REPLACEMENT COUNT count.",
 ];
 
 statementType(tests, "REPLACE", Statements.Replace);

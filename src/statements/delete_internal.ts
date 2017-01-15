@@ -23,7 +23,7 @@ export class DeleteInternal extends Statement {
 
     let adjacent = seq(str("ADJACENT DUPLICATES FROM"),
                        new Reuse.Target(),
-                       opt(seq(str("COMPARING"), alt(plus(new Reuse.Field()), new Reuse.Dynamic()))),
+                       opt(seq(str("COMPARING"), plus(alt(new Reuse.Field(), new Reuse.Dynamic())))),
                        opt(seq(str("USING KEY"), new Reuse.Field())));
 
     return seq(str("DELETE"), alt(table, adjacent));

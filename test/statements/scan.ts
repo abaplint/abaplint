@@ -72,6 +72,16 @@ let tests = [
   "  WITH DECLARATIONS\n" +
   "  WITH BLOCKS\n" +
   "  WITH INCLUDES.",
+
+  "scan abap-source buffer\n" +
+  "  statements      into STATEMENTS\n" +
+  "  tokens          into TOKENS\n" +
+  "  include program from PROGRAM\n" +
+  "  message         into MESSAGE\n" +
+  "  include         into include\n" +
+  "  word            into WORD\n" +
+  "  line            into LINE\n" +
+  "  with includes.",
 ];
 
 statementType(tests, "SCAN", Statements.Scan);

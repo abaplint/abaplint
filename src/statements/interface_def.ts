@@ -18,6 +18,7 @@ export class InterfaceDef extends Statement {
 
     let options = alt(seq(str("ABSTRACT METHODS"), plus(new Reuse.Field())),
                       str("ALL METHODS ABSTRACT"),
+                      str("ALL METHODS FINAL"),
                       str("PARTIALLY IMPLEMENTED"));
 
     return seq(str("INTERFACES"),

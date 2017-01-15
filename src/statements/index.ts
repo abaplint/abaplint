@@ -107,6 +107,7 @@ export * from "./enhancement_section";
 export * from "./end_enhancement_section";
 export * from "./set_handler";
 export * from "./set_left";
+export * from "./load_report";
 export * from "./private";
 export * from "./system_call";
 export * from "./set_language";

@@ -27,6 +27,8 @@ export class Replace extends Statement {
     let cas = alt(str("IGNORING CASE"),
                   str("RESPECTING CASE"));
 
+    let repl = seq(str("REPLACEMENT COUNT"), new Reuse.Target());
+
     let occ = alt(str("ALL OCCURRENCES"),
                   str("FIRST OCCURRENCE"));
 
@@ -39,7 +41,8 @@ export class Replace extends Statement {
                per(seq(str("WITH"), new Reuse.Source()),
                    seq(str("INTO"), new Reuse.Target())),
                opt(cas),
-               opt(mode));
+               opt(mode),
+               opt(repl));
   }
 
 }

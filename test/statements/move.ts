@@ -33,6 +33,7 @@ let tests = [
   "foo = method(\n2 ).",
   "index1 = index2 = index1 - 1.",
   "move-corresponding ls_usbapilink to lr_usbapilink_cd->*.",
+  "MOVE-CORRESPONDING bar TO bar KEEPING TARGET LINES.",
   "lv_chunk = iv_line+<match>-offset.",
   "lv_chunk = iv_line(<match>-length).",
   "lv_chunk = iv_line+<match>-offset(<match>-length).",

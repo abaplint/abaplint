@@ -7,6 +7,7 @@ let tests = [
   "interfaces zif_foo all methods abstract.",
   "interfaces zif_foo abstract methods ACTIVATE DEACTIVATE.",
   "interfaces zif_foo data values HEIGHT = 100 WIDTH = 100.",
+  "interfaces zif_foo all methods final.",
 ];
 
 statementType(tests, "INTERFACES", Statements.InterfaceDef);
