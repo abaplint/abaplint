@@ -330,7 +330,7 @@ export class FieldChain extends Combi.Reuse {
   public get_runnable() {
     let chain = seq(alt(new Field(), new FieldSymbol()),
                     opt(new TableExpression()),
-                    star(seq(new ArrowOrDash(), new Field(), opt(new TableExpression()))));
+                    star(seq(new ArrowOrDash(), new FieldAll(), opt(new TableExpression()))));
 
     let ret = seq(chain, opt(new FieldOffset()), opt(new FieldLength()));
 
@@ -551,10 +551,19 @@ export class MessageClass extends Combi.Reuse {
   }
 }
 
+export class FieldAll extends Combi.Reuse {
+  public get_runnable() {
+// "&1" can be used for almost anything(field names, method names etc.) in macros
+// field names with only digits should not be possible
+    return reg(/^&?\*?(\/\w+\/)?\w+(~\w+)?$/);
+  }
+}
+
 export class Field extends Combi.Reuse {
   public get_runnable() {
 // "&1" can be used for almost anything(field names, method names etc.) in macros
-    return reg(/^&?\*?(\/\w+\/)?\w+(~\w+)?$/);
+// field names with only digits should not be possible
+    return reg(/^[&_]?\*?(\/\w+\/)?\d*[a-zA-Z]\w*(~\w+)?$/);
   }
 }
 

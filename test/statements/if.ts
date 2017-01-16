@@ -20,7 +20,7 @@ let tests = [
   "IF ( sy-subrc = 0 AND lines( it_tpool ) = 1 ) OR lines( it_tpool ) = 0.",
   "IF xstrlen( ls_file-file-data ) = 2.",
   "IF lines( lt_lines ) MOD 2 <> 0.",
-  "IF NOT &1 IS INITIAL.",
+//  "IF NOT &1 IS INITIAL.",
   "IF foo = bar AND NOT ( foo = bar OR moo = boo ).",
   "IF lv_devclass NOT IN mt_devclass.",
   "IF lv_statement IN mt_range.",

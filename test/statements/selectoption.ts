@@ -2,6 +2,7 @@ import {statementType} from "../utils";
 import * as Statements from "../../src/statements/";
 
 let tests = [
+  "SELECT-OPTIONS foo FOR bar.",
   "SELECT-OPTIONS s_trkorr FOR e070-trkorr.",
   "SELECT-OPTIONS s_trkorr FOR e070-trkorr OBLIGATORY.",
   "SELECT-OPTIONS s_moo FOR zfoo-bar MEMORY ID zfoo.",

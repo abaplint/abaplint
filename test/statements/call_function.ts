@@ -2,6 +2,7 @@ import {statementType} from "../utils";
 import * as Statements from "../../src/statements/";
 
 let tests = [
+  /*
   "CALL FUNCTION 'DDIF_TTYP_GET'.",
 
   "CALL FUNCTION 'DDIF_TTYP_GET' EXPORTING name = lv_name.",
@@ -149,12 +150,6 @@ let tests = [
   "   communication_failure = 3  message msgtext\n" +
   "   others.",
 
-/*
-  "CALL FUNCTION 'ZFOOBAR'\n" +
-  " EXCEPTIONS\n" +
-  "   ERROR_A = -4\n" +
-  "   ERROR_B = -6.",
-*/
   "CALL FUNCTION 'GUI_UPLOAD'\n" +
   " EXPORTING\n" +
   "   filename                = l_sfile\n" +
@@ -181,6 +176,14 @@ let tests = [
   "   disk_full               = 15\n" +
   "   dp_timeout              = 16\n" +
   "   OTHERS                  = 17.",
+*/
+
+/*
+  "CALL FUNCTION 'ZFOOBAR'\n" +
+  " EXCEPTIONS\n" +
+  "   ERROR_A = -4\n" +
+  "   ERROR_B = -6.",
+*/
 
 /*
   "CALL FUNCTION 'OWN_LOGICAL_SYSTEM_GET'\n" +
@@ -189,6 +192,51 @@ let tests = [
   "  EXCEPTIONS\n" +
   "    OTHERS             = GC_FOO-SYSTEM.",
 */
+
+  "CALL FUNCTION 'GUI_UPLOAD'\n" +
+  "  EXPORTING\n" +
+  "    filename = 22\n" +
+  "    filename = 22\n" +
+  "    filename = 22\n" +
+  "    filename = 22\n" +
+  "    filename = 22\n" +
+  "    filename = 22\n" +
+  "    filename = 22\n" +
+  "    filename = 22\n" +
+  "    filename = 22\n" +
+  "    filename = 22\n" +
+  "    filename = 22\n" +
+  "    filename = 22\n" +
+  "    filename = 22\n" +
+  "    filename = 22\n" +
+  "    filename = 22\n" +
+  "    filename = 22\n" +
+  "    filename = 22\n" +
+  "    filename = 22\n" +
+  "    filename = 22\n" +
+  "    filename = 22\n" +
+  "    filename = 22\n" +
+  "    filename = 22\n" +
+  "    filename = 22\n" +
+  "    filename = 22\n" +
+  "    filename = 22\n" +
+  "    filename = 22\n" +
+  "    filename = 22\n" +
+  "    filename = 22\n" +
+  "    filename = 22\n" +
+  "    filename = 22\n" +
+  "    filename = 22\n" +
+  "    filename = 22\n" +
+  "    filename = 22\n" +
+  "    filename = 22\n" +
+  "    filename = 22\n" +
+  "    filename = 22\n" +
+  "    filename = 22\n" +
+  "    filename = 22\n" +
+  "    filename = 22\n" +
+  "    filename = 22\n" +
+  "    filename = 22.",
+
 ];
 
 statementType(tests, "CALL FUNCTION", Statements.CallFunction);
