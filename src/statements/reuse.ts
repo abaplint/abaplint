@@ -221,8 +221,7 @@ export class FormParam extends Combi.Reuse {
 export class MethodParam extends Combi.Reuse {
   public get_runnable() {
     let field = reg(/^!?(\/\w+\/)?\w+$/);
-    let type = alt(new Type(), new TypeTable());
-    let fieldsOrValue = seq(alt(new PassByValue(), field), type);
+    let fieldsOrValue = seq(alt(new PassByValue(), field), new TypeParam());
 
     return fieldsOrValue;
   }
@@ -605,6 +604,22 @@ export class Type extends Combi.Reuse {
                   opt(new TableBody()));
 
     return ret;
+  }
+}
+
+export class TypeParam extends Combi.Reuse {
+  public get_runnable() {
+    let def = seq(str("DEFAULT"), alt(new Constant(), new FieldChain()));
+
+    let table = seq(alt(str("STANDARD"), str("HASHED"), str("INDEX"), str("SORTED"), str("ANY")),
+                    str("TABLE"));
+
+    let ret = seq(opt(seq(table, str("OF"))),
+                  opt(str("REF TO")),
+                  new TypeName(),
+                  opt(def));
+
+    return seq(str("TYPE"), alt(table, ret));
   }
 }
 

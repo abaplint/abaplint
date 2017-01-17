@@ -53,6 +53,10 @@ let tests = [
   {c: "bar",                              r: new Reuse.FieldSub(),        e: true},
   {c: "-",                                r: new Reuse.FieldSub(),        e: false},
   {c: "foo type string",                  r: new Reuse.MethodParam(),     e: true},
+  {c: "type string",                      r: new Reuse.Type(),            e: true},
+  {c: "type string",                      r: new Reuse.TypeTable(),       e: false},
+  {c: "type index table",                 r: new Reuse.Type(),            e: false},
+  {c: "type index table",                 r: new Reuse.TypeTable(),       e: true},
 ];
 
 describe("Test reuse matchers", () => {

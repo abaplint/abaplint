@@ -101,6 +101,7 @@ let tests = [
 {n: "oprio2", c: optPrio(str("B")),                  t: tokenize("A"),              e: false, len: 1},
 // {n: "oprio3", c: seq(str("B"), optPrio(str("A"))),   t: tokenize("B A"),            e: true, len: 1},
 {n: "oprio4", c: seq(str("B"), optPrio(str("A"))),   t: tokenize("B B"),            e: false, len: 1},
+{n: "foo1", c: alt(seq(str("A"), str("A")), seq(str("A"), str("B"))),   t: tokenize("A A"),            e: true, len: 1},
 ];
 
 describe("combi matching -", () => {
