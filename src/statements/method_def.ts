@@ -11,6 +11,7 @@ let opt = Combi.opt;
 let tok = Combi.tok;
 let reg = Combi.regex;
 let plus = Combi.plus;
+// let optPrio = Combi.optPrio;
 
 export class MethodDef extends Statement {
 

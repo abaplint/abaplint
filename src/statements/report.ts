@@ -17,7 +17,7 @@ export class Report extends Statement {
 
     return seq(str("REPORT"),
                opt(new Reuse.Field()),
-               per(heading, size, count, message));
+               opt(per(heading, size, count, message)));
 
   }
 

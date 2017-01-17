@@ -16,6 +16,7 @@ let tests = [
   "methods ADAPT_PARAMETERS final redefinition .",
   "METHODS on_event FOR EVENT sapevent OF cl_gui_html_viewer IMPORTING action frame.",
   "METHODS methodblah IMPORTING is_clskey TYPE sdf RAISING lcx_foo cx_bar.",
+  "METHODS add IMPORTING foo TYPE string OPTIONAL.",
   "METHODS add IMPORTING foo TYPE string OPTIONAL bar TYPE string OPTIONAL.",
   "CLASS-METHODS handler FOR EVENT message OF cl_ci_test_root IMPORTING !p_checksum_1.",
   "methods CONVERT changing !CO_sdf type ref to ZCL_sdf optional.",
@@ -31,6 +32,36 @@ let tests = [
   "METHODS check_input RAISING resumable(zcx_exception).",
   "class-methods SET_CELL_VALUE_IN_EXCEL changing value(CV_CELL_WIDTH) type I optional.",
   "methods foo importing it_foo type INDEX TABLE.",
+/*
+  "methods CONSTRUCTOR\n" +
+  "  importing\n" +
+  "    foo type index table optional\n" +
+  "    foo type index table optional\n" +
+  "    foo type index table optional\n" +
+  "    foo type index table optional\n" +
+  "    foo type index table optional\n" +
+  "    foo type index table optional\n" +
+  "    foo type index table optional\n" +
+  "    foo type index table optional\n" +
+  "    foo type index table optional\n" +
+  "    foo type index table optional\n" +
+  "    foo type index table optional\n" +
+  "    foo type index table optional\n" +
+  "    foo type index table optional\n" +
+  "    foo type index table optional\n" +
+  "    foo type index table optional\n" +
+  "    foo type index table optional\n" +
+  "    foo type index table optional\n" +
+  "    foo type index table optional\n" +
+  "    foo type index table optional\n" +
+  "    foo type index table optional\n" +
+  "    foo type index table optional\n" +
+  "    foo type index table optional\n" +
+  "    foo type index table optional\n" +
+  "    foo type index table optional\n" +
+  "    foo type index table optional\n" +
+  "    foo type index table optional.",
+*/
 ];
 
 statementType(tests, "METHODS", Statements.MethodDef);

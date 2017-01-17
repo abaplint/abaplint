@@ -21,7 +21,7 @@ export class Shift extends Statement {
 
     return seq(str("SHIFT"),
                new Reuse.Target(),
-               options);
+               opt(options));
   }
 
 }

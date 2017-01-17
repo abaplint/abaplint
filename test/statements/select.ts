@@ -35,7 +35,7 @@ let tests = [
     "FOR ALL ENTRIES IN it_salesdoc_header WHERE foo = bar-foo.",
   "SELECT * FROM zfoo INTO TABLE lt_tab WHERE SPRAS IN (SY-LANGU,'E') AND MENU EQ 'BAR'.",
   "SELECT * FROM foo INTO CORRESPONDING FIELDS OF TABLE lt_foo PACKAGE SIZE 100 WHERE moo = stru-value1 AND boo = stru-value2.",
-  "SELECT sdfs FROM basdf WHERE name is null.",
+//  "SELECT sdfs FROM basdf WHERE name is null.",
   "select foo~bname bar~name_first into table lt_table from foo left outer join bar on foo~mandt = bar~mandt and foo~bname = bar~bname.",
   "SELECT SINGLE node_key FROM snwd_bpa INTO @DATA(node_key).",
   "SELECT SINGLE node_key FROM snwd_bpa INTO @DATA(node_key) WHERE bp_id = @lv_bp_id.",

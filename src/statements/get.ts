@@ -5,6 +5,7 @@ import * as Combi from "../combi";
 let str = Combi.str;
 let seq = Combi.seq;
 let per = Combi.per;
+let opt = Combi.opt;
 let plus = Combi.plus;
 
 export class Get extends Statement {
@@ -16,7 +17,7 @@ export class Get extends Statement {
 
     let ret = seq(str("GET"),
                   new Reuse.Target(),
-                  options);
+                  opt(options));
 
     return ret;
   }

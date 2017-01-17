@@ -237,6 +237,8 @@ class OptionalPriority implements IRunnable {
       if (res.length > 1) {
         result.push(input);
         result = result.concat(res);
+//      } else if (res.length === 1) {
+//        result = result.concat(res);
       } else if (res.length === 0) {
         result.push(input);
       } else if (res[0].length < input.length) {
@@ -244,6 +246,10 @@ class OptionalPriority implements IRunnable {
       } else {
         result.push(input);
       }
+/*
+      console.dir(res);
+      console.dir(result);
+*/
     }
 
     return result;
@@ -510,10 +516,16 @@ class Permutation implements IRunnable {
   }
 
   public run(r: Array<Result>): Array<Result> {
-    let result: Array<Result> = r;
+    let result: Array<Result> = [];
 
     for (let index = 0; index < this.list.length; index++) {
       let temp = this.list[index].run(r);
+/*
+console.dir(r);
+console.log(this.list[index].toStr());
+console.dir(temp);
+console.log("sdf");
+*/
       if (temp.length !== 0) {
 // match
         result = result.concat(temp);
@@ -527,7 +539,10 @@ class Permutation implements IRunnable {
         }
       }
     }
-
+/*
+console.log("per result");
+console.dir(result);
+*/
     return result;
   }
 
