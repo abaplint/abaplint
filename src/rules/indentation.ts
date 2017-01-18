@@ -1,6 +1,6 @@
 import {IRule} from "./rule";
 import {ParsedFile} from "../file";
-import {Comment} from "../statements/statement";
+import {Comment, MacroContent} from "../statements/statement";
 import {IncludeType} from "../statements/include_type";
 import {Issue} from "../issue";
 
@@ -35,6 +35,7 @@ export class Indentation implements IRule {
 
     for (let statement of file.getStatements()) {
       if (statement instanceof Comment
+          || statement instanceof MacroContent
           || statement instanceof IncludeType) {
         continue;
       }

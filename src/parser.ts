@@ -54,7 +54,7 @@ export default class Parser {
         define = true;
       } else if (statement instanceof Statements.Enddefine) {
         define = false;
-      } else if (statement instanceof Unknown && define === true) {
+      } else if (!(statement instanceof Comment) && define === true) {
         statement = new MacroContent(this.tokensToNodes(statement.getTokens()));
       }
 
