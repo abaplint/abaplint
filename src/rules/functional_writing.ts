@@ -33,7 +33,8 @@ export class FunctionalWriting implements IRule {
       let code = statement.concatTokens().toUpperCase();
       if (this.startsWith(code, "CALL METHOD ")) {
         if (/\)[=-]>/.test(code) === true
-            || /[=-]>\(/.test(code) === true) {
+            || /[=-]>\(/.test(code) === true
+            || this.startsWith(code, "CALL METHOD (")) {
           continue;
         }
         let issue = new Issue(this, statement.getStart(), file);
