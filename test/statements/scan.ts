@@ -88,6 +88,12 @@ let tests = [
   "  TO   end\n" +
   "  TOKENS     INTO tokens\n" +
   "  STATEMENTS INTO statements.",
+
+  "SCAN ABAP-SOURCE lt_code\n" +
+  "  TOKENS INTO lt_tokens\n" +
+  "  STATEMENTS INTO lt_statements\n" +
+  "  WITH ANALYSIS\n" +
+  "  WITH PRAGMAS '*'.",
 ];
 
 statementType(tests, "SCAN", Statements.Scan);

@@ -17,7 +17,7 @@ export class Scan extends Statement {
     let structures = seq(str("STRUCTURES INTO"), new Reuse.Target());
     let include = seq(str("INCLUDE INTO"), new Reuse.Target());
     let keywords = seq(str("KEYWORDS FROM"), new Reuse.Source());
-    let pragmas = seq(str("WITH PRAGMAS"), new Reuse.Field());
+    let pragmas = seq(str("WITH PRAGMAS"), new Reuse.Source());
     let overflow = seq(str("OVERFLOW INTO"), new Reuse.Target());
     let message = seq(str("MESSAGE INTO"), new Reuse.Target());
     let includeProgram = seq(str("INCLUDE PROGRAM FROM"), new Reuse.Source());
