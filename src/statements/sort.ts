@@ -5,9 +5,10 @@ import * as Combi from "../combi";
 let str = Combi.str;
 let seq = Combi.seq;
 let opt = Combi.opt;
-let optPrio = Combi.optPrio;
 let alt = Combi.alt;
+let per = Combi.per;
 let plus = Combi.plus;
+let optPrio = Combi.optPrio;
 
 export class Sort extends Statement {
 
@@ -18,15 +19,14 @@ export class Sort extends Statement {
                   new Reuse.FieldSymbol(),
                   new Reuse.Dynamic());
 
-    let fields = plus(seq(sel,
-                          optPrio(order)));
+    let fields = plus(seq(sel, optPrio(order)));
 
     let by = seq(str("BY"), fields);
 
+    let target = seq(new Reuse.Target(), opt(alt(str("STABLE"), order)));
+
     return seq(str("SORT"),
-               new Reuse.Target(),
-               opt(alt(str("STABLE"), order)),
-               opt(by),
+               per(by, target),
                opt(str("AS TEXT")));
   }
 

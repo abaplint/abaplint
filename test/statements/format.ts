@@ -11,6 +11,9 @@ let tests = [
   "format intensified = 0 color = 0 inverse = 0.",
   "FORMAT FRAMES OFF.",
   "FORMAT COLOR lv_col INVERSE.",
+  "FORMAT COLOR 3 INTENSIFIED.",
+  "FORMAT COLOR col_foo OFF.",
+  "FORMAT INTENSIFIED OFF.",
 ];
 
 statementType(tests, "FORMAT", Statements.Format);

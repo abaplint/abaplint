@@ -39,7 +39,7 @@ export class Parameter extends Statement {
                    str("LOWER CASE"));
 
     let ret = seq(para,
-                  new Reuse.Field(),
+                  new Reuse.FieldSub(),
                   opt(new Reuse.FieldLength()),
                   opt(perm));
 

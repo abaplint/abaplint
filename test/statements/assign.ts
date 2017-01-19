@@ -20,6 +20,8 @@ let tests = [
   "assign text+i(1) to <x> type 'X'.",
   "assign textline+tmp(*) to <fs>.",
   "assign falv->fcat[ fieldname = fieldname ] to field-symbol(<fcat>).",
+  "ASSIGN TABLE FIELD (bar) TO <foo>.",
+//  "ASSIGN (FOO) TO <Z-BAR>.",
 ];
 
 statementType(tests, "ASSIGN", Statements.Assign);

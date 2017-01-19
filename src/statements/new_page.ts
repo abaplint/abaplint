@@ -6,6 +6,7 @@ let str = Combi.str;
 let seq = Combi.seq;
 let alt = Combi.alt;
 let per = Combi.per;
+let opt = Combi.opt;
 
 export class NewPage extends Statement {
 
@@ -17,15 +18,15 @@ export class NewPage extends Statement {
     let lineCount = seq(str("LINE-COUNT"), new Reuse.Source());
 
     return seq(str("NEW-PAGE"),
-               per(print,
-                   alt(str("NO-TITLE"), str("WITH-TITLE")),
-                   alt(str("NO-HEADING"), str("WITH-HEADING")),
-                   str("NO DIALOG"),
-                   parameters,
-                   archive,
-                   str("NEW-SECTION"),
-                   lineCount,
-                   line));
+               opt(per(print,
+                       alt(str("NO-TITLE"), str("WITH-TITLE")),
+                       alt(str("NO-HEADING"), str("WITH-HEADING")),
+                       str("NO DIALOG"),
+                       parameters,
+                       archive,
+                       str("NEW-SECTION"),
+                       lineCount,
+                       line)));
   }
 
 }

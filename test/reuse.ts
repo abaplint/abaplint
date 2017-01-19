@@ -57,6 +57,7 @@ let tests = [
   {c: "type string",                      r: new Reuse.TypeTable(),       e: false},
   {c: "type index table",                 r: new Reuse.Type(),            e: false},
   {c: "type index table",                 r: new Reuse.TypeTable(),       e: true},
+//  {c: "<Z-BAR>",                          r: new Reuse.FieldSymbol(),     e: true},
 ];
 
 describe("Test reuse matchers", () => {

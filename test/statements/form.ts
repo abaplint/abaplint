@@ -43,6 +43,7 @@ let tests = [
     "bar bar.",
 //  "FORM foobar CHANGING blah LIKE gt_foo[].",
   "FORM back RAISING RESUMABLE(zcx_exception).",
+  "FORM name USING foo like tab value(I_*BSEG) like BSEG value(I_BSEG) like BSEG.",
 ];
 
 statementType(tests, "FORM", Statements.Form);

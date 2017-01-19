@@ -15,6 +15,7 @@ let tests = [
   "perform moo in program zbar if found using foo changing bar.",
   "PERFORM moo ON COMMIT LEVEL lv_level.",
   "PERFORM moo ON ROLLBACK.",
+  "PERFORM read_*table(zfoo) USING code.",
 ];
 
 statementType(tests, "PERFORM", Statements.Perform);

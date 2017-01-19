@@ -17,8 +17,11 @@ export class Assign extends Statement {
                         str("OF STRUCTURE"),
                         new Reuse.Source());
 
+    let tableField = seq(str("TABLE FIELD"), new Reuse.Dynamic());
+
     let source = alt(seq(new Reuse.Source(), opt(seq(tok(Arrow), new Reuse.Dynamic()))),
                      component,
+                     tableField,
                      seq(new Reuse.Dynamic(), opt(seq(tok(Arrow), new Reuse.Field()))));
 
     let type = seq(str("TYPE"), alt(new Reuse.Dynamic(), new Reuse.Source()));
