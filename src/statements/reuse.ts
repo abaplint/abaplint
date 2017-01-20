@@ -246,7 +246,7 @@ export class FunctionParameters extends Combi.Reuse {
     let importing = seq(str("IMPORTING"), new ParameterListT());
     let changing = seq(str("CHANGING"), new ParameterListT());
     let tables = seq(str("TABLES"), new ParameterListT());
-    let exceptions = seq(str("EXCEPTIONS"), opt(new ParameterListExceptions()), opt(new Field()));
+    let exceptions = seq(str("EXCEPTIONS"), opt(alt(new ParameterListExceptions(), new Field())));
     let long = seq(opt(exporting),
                    opt(importing),
                    opt(tables),
