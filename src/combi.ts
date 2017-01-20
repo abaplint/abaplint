@@ -241,7 +241,7 @@ class OptionalPriority implements IRunnable {
 //        result = result.concat(res);
       } else if (res.length === 0) {
         result.push(input);
-      } else if (res[0].length < input.length) {
+      } else if (res[0].length() < input.length()) {
         result = result.concat(res);
       } else {
         result.push(input);

@@ -328,10 +328,10 @@ export class FieldLength extends Combi.Reuse {
 export class FieldChain extends Combi.Reuse {
   public get_runnable() {
     let chain = seq(alt(new Field(), new FieldSymbol()),
-                    opt(new TableExpression()),
+                    optPrio(new TableExpression()),
                     star(seq(new ArrowOrDash(), new FieldAll(), opt(new TableExpression()))));
 
-    let ret = seq(chain, opt(new FieldOffset()), opt(new FieldLength()));
+    let ret = seq(chain, optPrio(new FieldOffset()), optPrio(new FieldLength()));
 
     return ret;
   }
@@ -384,9 +384,11 @@ export class TypeName extends Combi.Reuse {
 
 export class MethodCall extends Combi.Reuse {
   public get_runnable() {
+    let white = seq(tok(ParenLeftW), alt(new Source(), new ParameterListS(), new MethodParameters()));
+    let noWhite = seq(tok(ParenLeft), new ConstantString());
+
     let ret = seq(new MethodName(),
-                  alt(tok(ParenLeftW), tok(ParenLeft)),
-                  alt(new Source(), new ParameterListS(), new MethodParameters()),
+                  alt(white, noWhite),
                   str(")"));
 
     return ret;
@@ -656,10 +658,18 @@ export class TypeTable extends Combi.Reuse {
   }
 }
 
-export class Constant extends Combi.Reuse {
+export class ConstantString extends Combi.Reuse {
   public get_runnable() {
     let text = seq(tok(ParenLeft), reg(/^\w{3}$/), alt(tok(ParenRightW), tok(ParenRight)));
     let stri = seq(reg(/^('.*')|(`.*`)$/), opt(text));
-    return alt(stri, new Integer());
+    return stri;
+  }
+}
+
+export class Constant extends Combi.Reuse {
+  public get_runnable() {
+//    let text = seq(tok(ParenLeft), reg(/^\w{3}$/), alt(tok(ParenRightW), tok(ParenRight)));
+//    let stri = seq(reg(/^('.*')|(`.*`)$/), opt(text));
+    return alt(new ConstantString(), new Integer());
   }
 }

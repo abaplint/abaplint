@@ -20,6 +20,7 @@ let tests = [
   "mo_files->add_string( iv_extra  = 'source' ) ##NO_TEXT.",
   "CALL METHOD lo_obj->(lv_method) PARAMETER-TABLE lt_parameters.",
   "CALL METHOD <ls_meta>-obj->(<ls_meta>-meta-handler) PARAMETER-TABLE lt_parameters.",
+  "ro_html->add('<thead><tr>').",
 ];
 
 statementType(tests, "CALL", Statements.Call);

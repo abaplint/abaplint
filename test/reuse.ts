@@ -21,6 +21,7 @@ let tests = [
   {c: "go_stream->remaining( )",          r: new Reuse.Source(),          e: true},
   {c: "xstrlen( foo ) - remaining( )",    r: new Reuse.Source(),          e: true},
   {c: "xstrlen( foo ) - str->rema( )",    r: new Reuse.Source(),          e: true},
+  {c: "foo(2)",                           r: new Reuse.Source(),          e: true},
   {c: "foobar(3)",                        r: new Reuse.Target(),          e: true},
   {c: "method( foo )-stream->rema( )",    r: new Reuse.MethodCallChain(), e: true},
   {c: "method( foo )->rema( )",           r: new Reuse.MethodCallChain(), e: true},
@@ -29,6 +30,7 @@ let tests = [
   {c: "method asdf( )",                   r: new Reuse.MethodCall(),      e: false},
   {c: "method a( )",                      r: new Reuse.MethodCall(),      e: false},
   {c: "method ( )",                       r: new Reuse.MethodCall(),      e: false},
+  {c: "foo(2)",                           r: new Reuse.MethodCall(),      e: false},
   {c: "TYPE abap_bool DEFAULT abap_true", r: new Reuse.Type(),            e: true},
   {c: "TYPE lcl_perce_repo=>ty_sum_tt",   r: new Reuse.Type(),            e: true},
   {c: "TYPE STANDARD TABLE",              r: new Reuse.TypeTable(),       e: true},
@@ -47,6 +49,7 @@ let tests = [
   {c: "22foo",                            r: new Reuse.FieldChain(),      e: true},
   {c: "foo22",                            r: new Reuse.FieldChain(),      e: true},
   {c: "text-001",                         r: new Reuse.FieldChain(),      e: true},
+  {c: "foo(2)",                           r: new Reuse.FieldChain(),      e: true},
   {c: "e070-trkorr",                      r: new Reuse.FieldSub(),        e: true},
   {c: "foo",                              r: new Reuse.FieldSub(),        e: true},
   {c: "s_trkorr",                         r: new Reuse.FieldSub(),        e: true},
@@ -64,7 +67,7 @@ describe("Test reuse matchers", () => {
   tests.forEach((test) => {
     let not = test.e === true ? "" : "not ";
 
-    it(test.c + " should " + not + "match " + test.r.getName(), () => {
+    it("\"" + test.c + "\" should " + not + "match " + test.r.getName(), () => {
       let file = Runner.parse([new File("temp.abap", test.c)])[0];
       let match = Combi.Combi.run(test.r.get_runnable(), file.getTokens());
       expect(match !== undefined).to.equals(test.e);

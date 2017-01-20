@@ -37,6 +37,7 @@ let tests = [
   "IF lcl_foo=>check( ).",
   "if not line_exists( added[ function = iv_function ] ).",
   "if foo = bar and line_exists( fcat[ fieldname = 'MOO' ] ).",
+  "IF foo(2) = 12 OR foo(2) = 12.",
 //  "IF foo BYTE-CO bar.",
 
   "IF ( foo-bar CP 'a' ) OR \n" +
@@ -65,6 +66,25 @@ let tests = [
   "  ( foo-bar CP 'a' ) OR \n" +
   "  ( foo-bar CP 'a' ) OR \n" +
   "  ( foo-bar CP 'a' ).",
+
+  "IF foo(2) = 12\n" +
+  "  OR foo(2) = 12\n" +
+  "  OR foo(2) = 12\n" +
+  "  OR foo(2) = 12\n" +
+  "  OR foo(2) = 12\n" +
+  "  OR foo(2) = 12\n" +
+  "  OR foo(2) = 12\n" +
+  "  OR foo(2) = 12\n" +
+  "  OR foo(2) = 12\n" +
+  "  OR foo(2) = 12\n" +
+  "  OR foo(2) = 12\n" +
+  "  OR foo(2) = 12\n" +
+  "  OR foo(2) = 12\n" +
+  "  OR foo(2) = 12\n" +
+  "  OR foo(2) = 12\n" +
+  "  OR foo(2) = 12\n" +
+  "  OR foo(2) = 12\n" +
+  "  OR foo(2) = 12.",
 ];
 
 statementType(tests, "IF", Statements.If);

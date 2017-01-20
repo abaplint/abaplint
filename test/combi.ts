@@ -97,9 +97,9 @@ let tests = [
 {n: "plus5", c: plus(str("A")),                      t: tokenize("A B"),            e: false},
 {n: "plus6", c: seq(plus(str("A")), str("B")),       t: tokenize("A B"),            e: true, len: 1},
 {n: "plus7", c: seq(plus(str("A")), str("B")),       t: tokenize("A A B"),          e: true},
-// {n: "oprio1", c: optPrio(str("A")),                  t: tokenize("A"),              e: true, len: 1},
+{n: "oprio1", c: optPrio(str("A")),                  t: tokenize("A"),              e: true, len: 1},
 {n: "oprio2", c: optPrio(str("B")),                  t: tokenize("A"),              e: false, len: 1},
-// {n: "oprio3", c: seq(str("B"), optPrio(str("A"))),   t: tokenize("B A"),            e: true, len: 1},
+{n: "oprio3", c: seq(str("B"), optPrio(str("A"))),   t: tokenize("B A"),            e: true, len: 1},
 {n: "oprio4", c: seq(str("B"), optPrio(str("A"))),   t: tokenize("B B"),            e: false, len: 1},
 {n: "foo1", c: alt(seq(str("A"), str("A")), seq(str("A"), str("B"))),   t: tokenize("A A"),            e: true, len: 1},
 ];
