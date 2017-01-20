@@ -471,7 +471,7 @@ export class Source extends Combi.Reuse {
                       method,
                       seq(opt(prefix), new FieldChain()),
                       paren),
-                  opt(alt(ref, after, new TableBody())));
+                  optPrio(alt(ref, after, new TableBody())));
 
     let mapping = seq(str("MAPPING"), plus(seq(new Field(), str("="), new Field())));
 

@@ -3,6 +3,7 @@ import * as Statements from "../../src/statements/";
 import {Version} from "../../src/version";
 
 let tests = [
+
   "move 2 to lv_foo.",
   "move exact c_val to l_int.",
   "lv_foo = 2.",
@@ -37,6 +38,22 @@ let tests = [
   "lv_chunk = iv_line+<match>-offset.",
   "lv_chunk = iv_line(<match>-length).",
   "lv_chunk = iv_line+<match>-offset(<match>-length).",
+
+  "lv_foo = 'bar' && 'foo' && 'foo' && 'foo' && 'foo' && 'foo' &&\n" +
+  "  'foo' && 'foo' && 'foo' && 'foo' && 'foo' && 'foo' && 'foo' &&\n" +
+  "  'foo' && 'foo' && 'foo' && 'foo' && 'foo' && 'foo' && 'foo' &&\n" +
+  "  'foo' && 'foo' && 'foo' && 'foo' && 'foo' && 'foo' && 'foo' &&\n" +
+  "  'foo' && 'foo' && 'foo' && 'foo' && 'foo' && 'foo' && 'foo' &&\n" +
+  "  'foo' && 'foo' && 'foo' && 'foo' && 'foo' && 'foo' && 'foo' &&\n" +
+  "  'foo' && 'foo' && 'foo' && 'foo' && 'foo' && 'foo' && 'foo' &&\n" +
+  "  'foo' && 'foo' && 'foo' && 'foo' && 'foo' && 'foo' && 'foo' &&\n" +
+  "  'foo' && 'foo' && 'foo' && 'foo' && 'foo' && 'foo' && 'foo' &&\n" +
+  "  'foo' && 'foo' && 'foo' && 'foo' && 'foo' && 'foo' && 'foo' &&\n" +
+  "  'foo' && 'foo' && 'foo' && 'foo' && 'foo' && 'foo' && 'foo' &&\n" +
+  "  'foo' && 'foo' && 'foo' && 'foo' && 'foo' && 'foo' && 'foo' &&\n" +
+  "  'foo' && 'foo' && 'foo' && 'foo' && 'foo' && 'foo' && 'foo' &&\n" +
+  "  'foo' && 'foo' && 'foo' && 'foo' && 'foo' && 'foo' && 'foo' &&\n" +
+  "  'foo' && 'foo' && 'foo' && 'foo' && 'foo' && 'foo' && 'foo'.",
 ];
 
 statementType(tests, "MOVE", Statements.Move);
@@ -64,7 +81,6 @@ let versions = [
   {abap: "excluded = value #( ( b_01 ) ).", ver: Version.v740sp02},
 //  {abap: "excluded = value #( ( b_01 ) ( b_02 ) ).", ver: Version.v740sp02},
 
-/* bad performance, rewrite "class Plus" in parser combinator?
   {abap: "foo = VALUE #(\n" +
     "( col1 = 11 col2 = 211 col3 = 311 )\n" +
     "( col1 = 11 col2 = 212 col3 = 312 )\n" +
@@ -72,7 +88,7 @@ let versions = [
     "( col1 = 12 col2 = 222 col3 = 322 )\n" +
     "( col1 = 13 col2 = 231 col3 = 331 )\n" +
     "( col1 = 13 col2 = 232 col3 = 332 ) ).", ver: Version.v740sp02},
-*/
+
   {abap: "foo = CORRESPONDING #( <ls_data> MAPPING country = coun currency = curr ).", ver: Version.v740sp05},
   {abap: "ct_usage[ id = c_excel ]-enabled = abap_false.", ver: Version.v740sp02},
   {abap: "ct_usage[ KEY name id = c_excel ]-enabled = abap_false.", ver: Version.v740sp02},
