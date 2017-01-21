@@ -22,7 +22,9 @@ export class Call extends Statement {
                     alt(new Reuse.Source(), new Reuse.ParameterListS(), new Reuse.MethodParameters()),
                     str(")"));
 
-    let dynamic = seq(str("PARAMETER-TABLE"), new Reuse.Source());
+    let dynamicPar = seq(str("PARAMETER-TABLE"), new Reuse.Source());
+    let dynamicExc = seq(str("EXCEPTION-TABLE"), new Reuse.Source());
+    let dynamic = seq(dynamicPar, opt(dynamicExc));
 
     let call = seq(str("CALL"),
                    alt(str("METHOD"), str("BADI")),

@@ -22,15 +22,14 @@ export class Assign extends Statement {
     let source = alt(seq(new Reuse.Source(), opt(seq(tok(Arrow), new Reuse.Dynamic()))),
                      component,
                      tableField,
-                     seq(new Reuse.Dynamic(), opt(seq(tok(Arrow), new Reuse.Field()))));
+                     seq(new Reuse.Dynamic(), opt(seq(tok(Arrow), alt(new Reuse.Field(), new Reuse.Dynamic())))));
 
     let type = seq(str("TYPE"), alt(new Reuse.Dynamic(), new Reuse.Source()));
-
     let handle = seq(str("TYPE HANDLE"), new Reuse.Field());
-
     let range = seq(str("RANGE"), new Reuse.Field());
+    let decimals = seq(str("DECIMALS"), new Reuse.Field());
 
-    let casting = seq(opt(str("CASTING")), opt(alt(type, range, handle)));
+    let casting = seq(opt(str("CASTING")), opt(alt(type, range, handle, decimals)));
 
     let ret = seq(str("ASSIGN"),
                   opt(seq(new Reuse.Target(), str("INCREMENT"))),

@@ -10,7 +10,7 @@ let opt = Combi.opt;
 export class FetchNext extends Statement {
 
   public static get_matcher(): Combi.IRunnable {
-    let table = seq(str("INTO"),
+    let table = seq(alt(str("INTO"), str("APPENDING")),
                     opt(str("CORRESPONDING FIELDS OF")),
                     str("TABLE"),
                     new Reuse.Target(),

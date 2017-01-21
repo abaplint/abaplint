@@ -40,7 +40,7 @@ let tests = [
   "data mt_field TYPE TABLE OF ty_view_field " +
     "WITH NON-UNIQUE SORTED KEY view_fieldname COMPONENTS view_fieldname " +
     "WITH NON-UNIQUE SORTED KEY no_case COMPONENTS no_case.",
-
+  "DATA %id TYPE flag.",
 //  "DATA ret TYPE TABLE OF foobar INITIAL SIZE 10 WITH HEADER LINE.",
 ];
 

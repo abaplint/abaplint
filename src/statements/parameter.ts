@@ -13,7 +13,7 @@ export class Parameter extends Statement {
   public static get_matcher(): Combi.IRunnable {
     let para = alt(str("PARAMETER"), str("PARAMETERS"));
     let def = seq(str("DEFAULT"), alt(new Reuse.Constant(), new Reuse.FieldChain()));
-    let radio = seq(str("RADIOBUTTON GROUP"), new Reuse.Field());
+    let radio = seq(str("RADIOBUTTON GROUP"), new Reuse.RadioGroupName());
     let type = seq(alt(str("TYPE"), str("LIKE")), new Reuse.FieldChain());
     let memory = seq(str("MEMORY ID"), new Reuse.Field());
     let listbox = seq(str("AS LISTBOX VISIBLE LENGTH"), new Reuse.Constant());

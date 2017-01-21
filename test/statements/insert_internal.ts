@@ -4,6 +4,7 @@ import {Version} from "../../src/version";
 
 let tests = [
   "INSERT INITIAL LINE INTO ct_diff INDEX lv_index.",
+  "INSERT INITIAL LINE INTO bar ASSIGNING <sdf> INDEX lv_tabix.",
   "insert initial line into lt_table reference into lr_ref index lv_index.",
   "INSERT ls_stage INTO TABLE mt_stage.",
   "INSERT <ls_list>-icfhandler INTO TABLE rt_list.",

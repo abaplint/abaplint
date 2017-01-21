@@ -12,7 +12,7 @@ export class Convert extends Statement {
 
   public static get_matcher(): Combi.IRunnable {
     let intoTime = seq(str("TIME"), new Reuse.Target());
-    let daylight = seq(str("DAYLIGHT SAVING TIME"), new Reuse.Target());
+    let daylight = seq(str("DAYLIGHT SAVING TIME"), new Reuse.Source());
 
     let time = seq(str("TIME STAMP"),
                    new Reuse.Source(),
@@ -30,7 +30,7 @@ export class Convert extends Statement {
     let invert = seq(str("INTO INVERTED-DATE"), new Reuse.Target());
 
     let date = seq(per(dat, tim),
-                   per(stamp, zone, invert));
+                   per(daylight, stamp, zone, invert));
 
     return seq(str("CONVERT"), alt(time, date));
   }

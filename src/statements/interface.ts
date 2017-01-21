@@ -10,9 +10,11 @@ let alt = Combi.alt;
 export class Interface extends Statement {
 
   public static get_matcher(): Combi.IRunnable {
+    let options = alt(str("PUBLIC"), str("LOAD"), str("DEFERRED"));
+
     return seq(str("INTERFACE"),
                new Reuse.Field(),
-               opt(alt(str("PUBLIC"), str("LOAD"))));
+               opt(options));
   }
 
   public indentationEnd(_prev) {

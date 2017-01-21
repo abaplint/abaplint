@@ -33,7 +33,7 @@ export class Class extends Statement {
 
     let def = seq(str("DEFINITION"),
                   opt(alt(str("LOAD"),
-                          str("DEFERRED"),
+                          seq(str("DEFERRED"), opt(str("PUBLIC"))),
                           blah)));
 
     return seq(str("CLASS"), new Reuse.ClassName(), alt(def, str("IMPLEMENTATION")));

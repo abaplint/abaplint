@@ -19,6 +19,7 @@ let tests = [
   "describe list number of lines lv_lines.",
   "describe list index sy-index number of lines row.",
   "DESCRIBE FIELD lv_foo LENGTH lv_len.",
+  "describe table lt_tab kind lv_kind.",
 ];
 
 statementType(tests, "DESCRIBE", Statements.Describe);

@@ -2,7 +2,6 @@ import {statementType} from "../utils";
 import * as Statements from "../../src/statements/";
 
 let tests = [
-  /*
   "CALL FUNCTION 'DDIF_TTYP_GET'.",
 
   "CALL FUNCTION 'DDIF_TTYP_GET' EXPORTING name = lv_name.",
@@ -143,12 +142,14 @@ let tests = [
   "  DESTINATION IN GROUP p_group\n" +
   "  PERFORMING callback ON END OF TASK.",
 
+/*
   "call function 'ZFOOBAR'\n" +
   "  exceptions\n" +
   "   no_auth               = 1\n" +
   "   system_failure        = 2  message msgtext\n" +
   "   communication_failure = 3  message msgtext\n" +
   "   others.",
+*/
 
   "CALL FUNCTION 'GUI_UPLOAD'\n" +
   " EXPORTING\n" +
@@ -176,7 +177,6 @@ let tests = [
   "   disk_full               = 15\n" +
   "   dp_timeout              = 16\n" +
   "   OTHERS                  = 17.",
-*/
 
 /*
   "CALL FUNCTION 'ZFOOBAR'\n" +
@@ -237,6 +237,10 @@ let tests = [
   "    filename = 22\n" +
   "    filename = 22.",
 
+  "CALL FUNCTION 'ZMOO' \n" +
+  "  IN BACKGROUND TASK AS SEPARATE UNIT\n" +
+  "    EXPORTING\n" +
+  "      foo = bar.",
 ];
 
 statementType(tests, "CALL FUNCTION", Statements.CallFunction);

@@ -11,9 +11,12 @@ let per = Combi.per;
 export class Describe extends Statement {
 
   public static get_matcher(): Combi.IRunnable {
+    let tlines = seq(str("LINES"), new Reuse.Target());
+    let kind = seq(str("KIND"), new Reuse.Target());
+
     let table = seq(str("TABLE"),
                     new Reuse.Source(),
-                    opt(seq(str("LINES"), new Reuse.Target())));
+                    per(tlines, kind));
 
     let mode = alt(str("IN BYTE MODE"), str("IN CHARACTER MODE"));
 

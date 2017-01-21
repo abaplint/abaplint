@@ -38,6 +38,7 @@ let tests = [
   {c: "22",                               r: new Reuse.Constant(),        e: true},
   {c: "22",                               r: new Reuse.Field(),           e: false},
   {c: "s_bar",                            r: new Reuse.Field(),           e: true},
+  {c: "1250_data",                        r: new Reuse.Field(),           e: true},
   {c: "foo",                              r: new Reuse.Field(),           e: true},
   {c: "zquery",                           r: new Reuse.Field(),           e: true},
   {c: "_foobar",                          r: new Reuse.Field(),           e: true},

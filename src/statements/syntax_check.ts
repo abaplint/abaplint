@@ -16,6 +16,7 @@ export class SyntaxCheck extends Statement {
     let offset = seq(str("OFFSET"), new Reuse.Target());
     let frame = seq(str("FRAME ENTRY"), new Reuse.Target());
     let include = seq(str("INCLUDE"), new Reuse.Target());
+    let trace = seq(str("TRACE-TABLE"), new Reuse.Target());
     let line = seq(str("LINE"), new Reuse.Target());
     let word = seq(str("WORD"), new Reuse.Target());
     let messageId = seq(str("MESSAGE-ID"), new Reuse.Target());
@@ -36,6 +37,7 @@ export class SyntaxCheck extends Statement {
                          frame,
                          include,
                          messageId,
+                         trace,
                          plus(id)));
 
     let dynpro = seq(str("DYNPRO"),

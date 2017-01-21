@@ -6,6 +6,7 @@ let str = Combi.str;
 let seq = Combi.seq;
 let alt = Combi.alt;
 let opt = Combi.opt;
+let per = Combi.per;
 
 export class InsertInternal extends Statement {
 
@@ -15,18 +16,17 @@ export class InsertInternal extends Statement {
     let ref = seq(str("REFERENCE INTO"), new Reuse.Target());
     let index = seq(str("INDEX"), new Reuse.Source());
     let initial = str("INITIAL LINE");
+    let into = seq(str("INTO"), opt(str("TABLE")), new Reuse.Source());
 
     let from = seq(str("FROM"),
                    new Reuse.Source(),
                    str("TO"),
                    new Reuse.Source());
 
-    let foo = seq(str("INTO"),
-                  opt(str("TABLE")),
-                  new Reuse.Source(),
-                  opt(ref),
-                  opt(index),
-                  opt(assigning));
+    let foo = per(into,
+                  ref,
+                  index,
+                  assigning);
 
     let ret = seq(str("INSERT"),
                   alt(initial,
@@ -34,7 +34,7 @@ export class InsertInternal extends Statement {
                       seq(opt(str("LINES OF")),
                           target,
                           opt(from))),
-                  alt(index, foo));
+                  foo);
 
     return ret;
   }

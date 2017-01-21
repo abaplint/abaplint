@@ -11,6 +11,7 @@ let tests = [
   "CONCATENATE <ls_node>-chmod <ls_node>-name INTO lv_string SEPARATED BY space.",
   "CONCATENATE lv_result lv_base+lv_offset(lv_len) INTO lv_result IN BYTE MODE.",
   "CONCATENATE '/SAP/PUBLIC/zgit/' 'script.js' INTO lv_url.",
+  "CONCATENATE LINES OF tab INTO <fs> SEPARATED BY lv_sep RESPECTING BLANKS.",
 ];
 
 statementType(tests, "CONCATENATE", Statements.Concatenate);

@@ -4,16 +4,17 @@ import * as Reuse from "./reuse";
 
 let str = Combi.str;
 let seq = Combi.seq;
-let opt = Combi.opt;
+let per = Combi.per;
 
 export class ReadReport extends Statement {
 
   public static get_matcher(): Combi.IRunnable {
+    let state = seq(str("STATE"), new Reuse.Source());
+    let into = seq(str("INTO"), new Reuse.Target());
+
     return seq(str("READ REPORT"),
                new Reuse.Source(),
-               str("INTO"),
-               new Reuse.Target(),
-               opt(seq(str("STATE"), new Reuse.Source())));
+               per(state, into));
   }
 
 }

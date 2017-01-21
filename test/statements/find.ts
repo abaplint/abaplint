@@ -18,6 +18,9 @@ let tests = [
   "FIND 'foo' IN TABLE lt_foobar MATCH LINE idx.",
   "FIND 'foo' IN SECTION OFFSET 100 OF text IGNORING CASE MATCH OFFSET moff.",
   "FIND REGEX '[^A-Za-z0-9_]' IN str IN CHARACTER MODE.",
+  "FIND 'foo' IN TABLE tab FROM cline MATCH LINE cline.",
+  "FIND FIRST OCCURRENCE OF REGEX lv_pattern IN SECTION OFFSET lv_offset LENGTH lv_strlen OF bar.",
+  "find first occurrence of 'foo' in table lt_tab from line + 1 match line lv_res.",
 ];
 
 statementType(tests, "FIND", Statements.Find);

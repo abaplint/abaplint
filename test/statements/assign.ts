@@ -21,6 +21,8 @@ let tests = [
   "assign textline+tmp(*) to <fs>.",
   "assign falv->fcat[ fieldname = fieldname ] to field-symbol(<fcat>).",
   "ASSIGN TABLE FIELD (bar) TO <foo>.",
+  "assign (class)=>(attr) to <f>.",
+  "ASSIGN COMPONENT col OF STRUCTURE <ls_data> TO <lv_field> CASTING DECIMALS lv_dec.",
 //  "ASSIGN (FOO) TO <Z-BAR>.",
 ];
 

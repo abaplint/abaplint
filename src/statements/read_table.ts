@@ -6,6 +6,7 @@ let str = Combi.str;
 let seq = Combi.seq;
 let alt = Combi.alt;
 let opt = Combi.opt;
+let optPrio = Combi.optPrio;
 let plus = Combi.plus;
 let per = Combi.per;
 
@@ -25,7 +26,7 @@ export class Read extends Statement {
     let key = seq(alt(str("WITH KEY"), str("WITH TABLE KEY")),
                   alt(plus(new Reuse.Compare()),
                       components,
-                      new Reuse.Source()));
+                      seq(optPrio(str("=")), new Reuse.Source())));
 
     let perm = per(alt(index,
                        key,

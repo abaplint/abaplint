@@ -18,11 +18,12 @@ export class ModifyLine extends Statement {
     let value = seq(str("FIELD VALUE"), plus(new Reuse.Source()));
     let format = seq(str("FIELD FORMAT"), new Reuse.Source(), opt(form));
     let from = seq(str("FROM"), new Reuse.Source());
+    let lineValue = seq(str("LINE VALUE FROM"), new Reuse.Source());
     let index = seq(str("INDEX"), new Reuse.Source());
     let page = seq(str("OF PAGE"), new Reuse.Source());
     let lineFormat = str("LINE FORMAT INPUT OFF");
 
-    let options = per(index, value, from, format, page, lineFormat);
+    let options = per(index, value, from, format, page, lineFormat, lineValue);
 
     let ret = seq(str("MODIFY"),
                   alt(str("CURRENT LINE"),

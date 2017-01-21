@@ -11,7 +11,7 @@ export class AssignLocalCopy extends Statement {
   public static get_matcher(): Combi.IRunnable {
 
     let ret = seq(str("ASSIGN LOCAL COPY OF"),
-                  opt(str("INITIAL LINE OF")),
+                  opt(seq(str("INITIAL"), opt(str("LINE OF")))),
                   new Reuse.Source(),
                   str("TO"),
                   new Reuse.FieldSymbol());

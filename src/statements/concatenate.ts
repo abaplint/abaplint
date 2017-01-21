@@ -6,6 +6,7 @@ let str = Combi.str;
 let opt = Combi.opt;
 let seq = Combi.seq;
 let alt = Combi.alt;
+let per = Combi.per;
 let plus = Combi.plus;
 
 export class Concatenate extends Statement {
@@ -14,15 +15,17 @@ export class Concatenate extends Statement {
     let mode = seq(str("IN"),
                    alt(str("BYTE"), str("CHARACTER")),
                    str("MODE"));
+    let blanks = str("RESPECTING BLANKS");
+    let sep = seq(str("SEPARATED BY"), new Reuse.Source());
+
+    let options = per(mode, blanks, sep);
 
     return seq(str("CONCATENATE"),
                new Reuse.Source(),
                plus(new Reuse.Source()),
                str("INTO"),
                new Reuse.Target(),
-               opt(mode),
-               opt(str("RESPECTING BLANKS")),
-               opt(seq(str("SEPARATED BY"), new Reuse.Source())));
+               opt(options));
   }
 
 }

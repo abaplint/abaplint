@@ -15,7 +15,7 @@ export class LogPoint extends Statement {
     let fields = seq(str("FIELDS"), plus(new Reuse.Source()));
 
     let ret = seq(str("LOG-POINT ID"),
-                  new Reuse.Source(),
+                  new Reuse.SimpleName(),
                   opt(subkey),
                   opt(fields));
 

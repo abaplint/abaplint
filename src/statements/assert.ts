@@ -12,7 +12,7 @@ export class Assert extends Statement {
   public static get_matcher(): Combi.IRunnable {
     let fields = seq(str("FIELDS"), plus(new Reuse.Source()));
     let subkey = seq(str("SUBKEY"), new Reuse.Source());
-    let id = seq(str("ID"), new Reuse.Field());
+    let id = seq(str("ID"), new Reuse.SimpleName());
 
     return seq(str("ASSERT"),
                opt(id),

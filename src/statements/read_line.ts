@@ -6,6 +6,8 @@ let str = Combi.str;
 let seq = Combi.seq;
 let per = Combi.per;
 let opt = Combi.opt;
+let alt = Combi.alt;
+let plus = Combi.plus;
 
 export class ReadLine extends Statement {
 
@@ -13,9 +15,10 @@ export class ReadLine extends Statement {
     let val = seq(str("LINE VALUE INTO"),
                   new Reuse.Target());
 
+    let fields = seq(new Reuse.Target(), opt(seq(str("INTO"), new Reuse.Target())));
+
     let field = seq(str("FIELD VALUE"),
-                    new Reuse.Target(),
-                    opt(seq(str("INTO"), new Reuse.Target())));
+                    plus(fields));
 
     let index = seq(str("INDEX"), new Reuse.Source());
 
@@ -23,8 +26,8 @@ export class ReadLine extends Statement {
 
     let current = str("OF CURRENT PAGE");
 
-    return seq(str("READ LINE"),
-               new Reuse.Source(),
+    return seq(str("READ"),
+               alt(str("CURRENT LINE"), seq(str("LINE"), new Reuse.Source())),
                opt(per(val, index, field, page, current)));
   }
 

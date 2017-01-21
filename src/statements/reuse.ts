@@ -355,9 +355,15 @@ export class DatabaseField extends Combi.Reuse {
   }
 }
 
+export class RadioGroupName extends Combi.Reuse {
+  public get_runnable() {
+    return reg(/^[\w\d%]+$/);
+  }
+}
+
 export class SimpleName extends Combi.Reuse {
   public get_runnable() {
-    return reg(/^\w+$/);
+    return reg(/^[\w%]+$/);
   }
 }
 
@@ -367,9 +373,15 @@ export class ClassName extends Combi.Reuse {
   }
 }
 
+export class MacroName extends Combi.Reuse {
+  public get_runnable() {
+    return seq(reg(/^[\w%][\w\*]*$/), star(seq(tok(Dash), reg(/^\w+$/))));
+  }
+}
+
 export class FormName extends Combi.Reuse {
   public get_runnable() {
-    return seq(reg(/^\w[\w\*]*$/), star(seq(tok(Dash), reg(/^\w+$/))));
+    return seq(reg(/^[\w%][\w\*]*$/), star(seq(tok(Dash), reg(/^\w+$/))));
   }
 }
 
@@ -564,7 +576,7 @@ export class Field extends Combi.Reuse {
   public get_runnable() {
 // "&1" can be used for almost anything(field names, method names etc.) in macros
 // field names with only digits should not be possible
-    return reg(/^[&_]?\*?(\/\w+\/)?\d*[a-zA-Z][\w\*]*(~\w+)?$/);
+    return reg(/^[&_]?\*?(\/\w+\/)?\d*[a-zA-Z_][\w\*]*(~\w+)?$/);
   }
 }
 
@@ -621,7 +633,9 @@ export class TypeParam extends Combi.Reuse {
                   new TypeName(),
                   opt(def));
 
-    return seq(str("TYPE"), alt(table, ret));
+    let like = seq(str("LIKE"), new FieldChain());
+
+    return alt(seq(str("TYPE"), alt(table, ret)), like);
   }
 }
 

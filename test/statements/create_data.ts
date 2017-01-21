@@ -14,6 +14,7 @@ let tests = [
   "CREATE DATA dref.",
   "CREATE DATA result LIKE TABLE OF <ls>.",
   "CREATE DATA result TYPE TABLE OF (ls_foo-bar).",
+//  "CREATE DATA result TYPE STANDARD TABLE OF (foo) WITH NON-UNIQUE KEY (bar)."
 ];
 
 statementType(tests, "CREATE DATA", Statements.CreateData);

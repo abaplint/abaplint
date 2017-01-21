@@ -63,6 +63,19 @@ let tests = [
   "  WORD      word\n" +
   "  REPLACING replacing.",
 
+  "syntax-check for l_source\n" +
+  "  directory entry lv_entry\n" +
+  "  include     lv_include\n" +
+  "  message     lv_message\n" +
+  "  message-id  lv_id\n" +
+  "  line        lv_line\n" +
+  "  word        lv_word\n" +
+  "  offset      lv_offset\n" +
+  "  trace-table lv_trace\n" +
+  "  id          var1 table DUMMY_TAB\n" +
+  "  id          var2 table DUMMY_TAB\n" +
+  "  id          var3 table DUMMY_TAB.",
+
 ];
 
 statementType(tests, "SYNTAX-CHECK", Statements.SyntaxCheck);

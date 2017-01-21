@@ -23,6 +23,7 @@ let tests = [
   "PARAMETERS p_file(128) TYPE c LOWER CASE OBLIGATORY DEFAULT 'C:\filename.xls'.",
   "PARAMETERS p_mail TYPE c LENGTH 40 LOWER CASE.",
   "PARAMETERS moo-boo LIKE foo-bar.",
+  "parameters foo radiobutton group 123.",
 ];
 
 statementType(tests, "PARAMETER", Statements.Parameter);

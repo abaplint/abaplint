@@ -21,6 +21,7 @@ let tests = [
   "CALL METHOD lo_obj->(lv_method) PARAMETER-TABLE lt_parameters.",
   "CALL METHOD <ls_meta>-obj->(<ls_meta>-meta-handler) PARAMETER-TABLE lt_parameters.",
   "ro_html->add('<thead><tr>').",
+  "CALL METHOD (class)=>(meth) PARAMETER-TABLE ptab EXCEPTION-TABLE etab.",
 ];
 
 statementType(tests, "CALL", Statements.Call);

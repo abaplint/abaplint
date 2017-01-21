@@ -11,6 +11,7 @@ let tests = [
   "modify line 2 of page lv_pagno index sy-lsind field format <lv_format> inverse = lv_inverse.",
   "modify line ls_row-linno of page ls_row-pagno index sy-lsind field value gv_mark from lv_selected.",
   "modify line l_index index sy-lsind line format input off.",
+  "MODIFY LINE foo-bar INDEX 0 LINE VALUE FROM l_bar.",
 ];
 
 statementType(tests, "MODIFY LINE", Statements.ModifyLine);

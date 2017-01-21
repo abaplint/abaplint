@@ -16,6 +16,7 @@ let tests = [
   "PERFORM moo ON COMMIT LEVEL lv_level.",
   "PERFORM moo ON ROLLBACK.",
   "PERFORM read_*table(zfoo) USING code.",
+  "PERFORM %run IN PROGRAM (L_REPID) CHANGING foo.",
 ];
 
 statementType(tests, "PERFORM", Statements.Perform);

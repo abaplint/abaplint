@@ -45,6 +45,7 @@ let tests = [
   "write lv_val to lv_ext style lv_style no-zero no-sign.",
   "WRITE / lv_bar INPUT.",
   "WRITE icon_tools AS ICON HOTSPOT ON COLOR COL_NORMAL.",
+  "write val to text(len) using no edit mask.",
 ];
 
 statementType(tests, "WRITE", Statements.Write);

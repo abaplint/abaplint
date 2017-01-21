@@ -16,7 +16,9 @@ export class Write extends Statement {
   public static get_matcher(): Combi.IRunnable {
     let at = seq(opt(str("AT")), reg(/^\/?\d+$/));
 
-    let mask = seq(str("USING EDIT MASK"), new Reuse.Source());
+    let mask = seq(str("USING"),
+                   alt(str("NO EDIT MASK"),
+                       seq(str("EDIT MASK"), new Reuse.Source())));
 
     let to = seq(str("TO"), new Reuse.Target());
 

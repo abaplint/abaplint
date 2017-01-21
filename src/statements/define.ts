@@ -8,7 +8,7 @@ let seq = Combi.seq;
 export class Define extends Statement {
 
   public static get_matcher(): Combi.IRunnable {
-    let ret = seq(str("DEFINE"), new Reuse.Field());
+    let ret = seq(str("DEFINE"), new Reuse.MacroName());
     return ret;
   }
 

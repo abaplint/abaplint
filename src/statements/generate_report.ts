@@ -16,8 +16,9 @@ export class GenerateReport extends Statement {
     let include = seq(str("INCLUDE"), new Reuse.Target());
     let line = seq(str("LINE"), new Reuse.Target());
     let word = seq(str("WORD"), new Reuse.Target());
+    let offset = seq(str("OFFSET"), new Reuse.Target());
 
-    let options = per(without, message, include, line, word);
+    let options = per(without, message, include, line, word, offset);
 
     let ret = seq(str("GENERATE REPORT"),
                   new Reuse.Source(),

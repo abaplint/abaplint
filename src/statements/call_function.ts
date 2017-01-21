@@ -18,8 +18,9 @@ export class CallFunction extends Statement {
     let dest = seq(str("DESTINATION"), opt(str("IN GROUP")), new Reuse.Source());
     let calling = seq(str("CALLING"), new Reuse.FormName(), str("ON END OF TASK"));
     let performing = seq(str("PERFORMING"), new Reuse.FormName(), str("ON END OF TASK"));
+    let separate = str("AS SEPARATE UNIT");
 
-    let options = per(starting, update, background, dest, calling, performing);
+    let options = per(starting, update, background, dest, calling, performing, separate);
 
     let dynamic = seq(str("PARAMETER-TABLE"), new Reuse.Source(),
                       opt(seq(str("EXCEPTION-TABLE"), new Reuse.Source())));

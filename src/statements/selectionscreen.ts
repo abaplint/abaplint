@@ -42,22 +42,29 @@ export class SelectionScreen extends Statement {
     let commentOpt = per(seq(str("FOR FIELD"), new Reuse.Field()),
                          seq(str("MODIF ID"), new Reuse.Field()));
 
+    let position = seq(opt(reg(/^\/?\d+$/)),
+                       alt(tok(ParenLeft), tok(WParenLeft)),
+                       new Reuse.Integer(),
+                       tok(ParenRightW));
+
     let comment = seq(str("COMMENT"),
-                      opt(reg(/^\/?\d+$/)),
-                      alt(tok(ParenLeft), tok(WParenLeft)),
-                      new Reuse.Integer(),
-                      tok(ParenRightW),
+                      position,
                       opt(new Reuse.Source()),
                       opt(commentOpt));
 
+    let command = seq(str("USER-COMMAND"), new Reuse.Field());
+
+    let push = seq(str("PUSHBUTTON"),
+                   position,
+                   new Reuse.Source(),
+                   command);
 
     let tab = seq(str("TAB"),
                   tok(WParenLeft),
                   new Reuse.Integer(),
                   tok(ParenRightW),
                   new Reuse.Field(),
-                  str("USER-COMMAND"),
-                  new Reuse.Field(),
+                  command,
                   str("DEFAULT SCREEN"),
                   new Reuse.Integer());
 
@@ -82,6 +89,7 @@ export class SelectionScreen extends Statement {
                       skip,
                       pos,
                       incl,
+                      push,
                       tab,
                       str("ULINE"),
                       beginBlock,

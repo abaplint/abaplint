@@ -40,9 +40,7 @@ export class Replace extends Statement {
                opt(seq(str("IN"), opt(str("TABLE")), new Reuse.Target())),
                per(seq(str("WITH"), new Reuse.Source()),
                    seq(str("INTO"), new Reuse.Target())),
-               opt(cas),
-               opt(mode),
-               opt(repl));
+               opt(per(cas, mode, repl)));
   }
 
 }

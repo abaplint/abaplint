@@ -16,7 +16,7 @@ export class Move extends Statement {
     let move = seq(alt(seq(str("MOVE"), opt(str("EXACT"))),
                        str("MOVE-CORRESPONDING")),
                    new Reuse.Source(),
-                   str("TO"),
+                   alt(str("TO"), str("?TO")),
                    new Reuse.Target(),
                    opt(keeping));
 
