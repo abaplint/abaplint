@@ -50,7 +50,7 @@
     "@types/minimatch": "^2.0.29",
     "@types/minimist": "^1.1.29",
     "@types/mocha": "^2.2.35",
-    "@types/node": "^6.0.54",
+    "@types/node": "^7.0.0",
     "@types/progress": "^1.1.28",
     "browserify": "^13.1.1",
     "chai": "^3.5.0",
