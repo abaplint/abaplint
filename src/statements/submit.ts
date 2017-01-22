@@ -25,6 +25,7 @@ export class Submit extends Statement {
     let lineCount = seq(str("LINE-COUNT"), new Reuse.Source());
     let user = seq(str("USER"), new Reuse.Source());
     let sset = seq(str("USING SELECTION-SET"), new Reuse.Source());
+    let ssetp = seq(str("USING SELECTION-SETS OF PROGRAM"), new Reuse.Source());
     let free = seq(str("WITH FREE SELECTIONS"), new Reuse.Source());
 
     let perm = per(plus(awith),
@@ -35,6 +36,7 @@ export class Submit extends Statement {
                    archive,
                    user,
                    sset,
+                   ssetp,
                    free,
                    str("TO SAP-SPOOL"),
                    str("WITHOUT SPOOL DYNPRO"),

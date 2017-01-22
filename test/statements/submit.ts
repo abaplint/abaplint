@@ -18,6 +18,7 @@ let tests = [
   "submit zfoo with field eq lv_value sign lv_sign and return.",
   "SUBMIT zfoo VIA SELECTION-SCREEN AND RETURN WITH p_add INCL boo WITH p_sub INCL moo.",
   "submit (lv_report) with kunnr = lv_kunnr with bukrs = lv_bukrs using selection-set lv_set with free selections lt_free and return.",
+  "submit (lv_report) via selection-screen and return using selection-sets of program l_prog with free selections l_expressions.",
 ];
 
 statementType(tests, "SUBMIT", Statements.Submit);

@@ -61,6 +61,12 @@ let tests = [
   "          initial_components = 'suppress'\n" +
   "          data_refs = 'heap-or-create'\n" +
   "  RESULT XML lv_.",
+
+  "CALL TRANSFORMATION foo\n" +
+  "  PARAMETERS id = id \n" +
+  "             toggle = '1' \n" +
+  "  SOURCE XML lv_source\n" +
+  "  RESULT XML lv_result.",
 ];
 
 statementType(tests, "CALL TRANSFORMATION", Statements.CallTransformation);

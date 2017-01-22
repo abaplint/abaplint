@@ -33,6 +33,7 @@ export class SelectOption extends Statement {
                       match,
                       visible,
                       modif,
+                      str("LOWER CASE"),
                       str("NO-EXTENSION"),
                       str("NO INTERVALS"),
                       str("NO-DISPLAY"),

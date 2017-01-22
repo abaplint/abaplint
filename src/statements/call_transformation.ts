@@ -14,7 +14,7 @@ export class CallTransformation extends Statement {
     let field = seq(new Reuse.Field(), str("="), new Reuse.Source());
 
     let options = seq(str("OPTIONS"), plus(field));
-    let parameters = seq(str("PARAMETERS"), field);
+    let parameters = seq(str("PARAMETERS"), plus(field));
 
     let source2 = seq(str("XML"), new Reuse.Source());
     let source = seq(str("SOURCE"), alt(plus(field), source2, new Reuse.Dynamic()));

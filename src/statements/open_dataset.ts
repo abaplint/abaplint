@@ -11,8 +11,12 @@ let per = Combi.per;
 export class Open extends Statement {
 
   public static get_matcher(): Combi.IRunnable {
+    let mode = alt(str("IN BINARY MODE"),
+                   str("IN TEXT MODE"),
+                   str("IN LEGACY TEXT MODE"),
+                   str("IN LEGACY BINARY MODE"));
+
     let direction = alt(str("FOR OUTPUT"), str("FOR INPUT"));
-    let mode = alt(str("IN BINARY MODE"), str("IN TEXT MODE"));
     let encoding = seq(str("ENCODING"), new Reuse.Source());
     let pos = seq(str("AT POSITION"), new Reuse.Source());
     let message = seq(str("MESSAGE"), new Reuse.Target());

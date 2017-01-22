@@ -120,6 +120,7 @@ export * from "./protected";
 export * from "./public";
 export * from "./demand";
 export * from "./supply";
+export * from "./fields";
 export * from "./set_margin";
 export * from "./call_database";
 export * from "./contexts";

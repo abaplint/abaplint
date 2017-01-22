@@ -17,8 +17,10 @@ export class GenerateReport extends Statement {
     let line = seq(str("LINE"), new Reuse.Target());
     let word = seq(str("WORD"), new Reuse.Target());
     let offset = seq(str("OFFSET"), new Reuse.Target());
+    let headers = str("WITH PRECOMPILED HEADERS");
+    let test = str("WITH TEST CODE");
 
-    let options = per(without, message, include, line, word, offset);
+    let options = per(without, message, include, line, word, offset, headers, test);
 
     let ret = seq(str("GENERATE REPORT"),
                   new Reuse.Source(),

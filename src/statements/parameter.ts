@@ -34,6 +34,7 @@ export class Parameter extends Statement {
                    modif,
                    listbox,
                    visible,
+                   str("VALUE CHECK"),
                    str("NO-DISPLAY"),
                    str("AS CHECKBOX"),
                    str("LOWER CASE"));

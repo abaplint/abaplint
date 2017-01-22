@@ -24,6 +24,7 @@ let tests = [
   "PARAMETERS p_mail TYPE c LENGTH 40 LOWER CASE.",
   "PARAMETERS moo-boo LIKE foo-bar.",
   "parameters foo radiobutton group 123.",
+  "PARAMETERS foo TYPE bar-moo VALUE CHECK DEFAULT '*'.",
 ];
 
 statementType(tests, "PARAMETER", Statements.Parameter);

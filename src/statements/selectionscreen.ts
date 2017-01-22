@@ -1,7 +1,7 @@
 import {Statement} from "./statement";
 import * as Combi from "../combi";
 import * as Reuse from "./reuse";
-import {ParenLeft, WParenLeft, ParenRightW} from "../tokens";
+import {ParenLeft, WParenLeft, ParenRightW, ParenRight} from "../tokens";
 
 let str = Combi.str;
 let seq = Combi.seq;
@@ -45,7 +45,7 @@ export class SelectionScreen extends Statement {
     let position = seq(opt(reg(/^\/?\d+$/)),
                        alt(tok(ParenLeft), tok(WParenLeft)),
                        new Reuse.Integer(),
-                       tok(ParenRightW));
+                       alt(tok(ParenRightW), tok(ParenRight)));
 
     let comment = seq(str("COMMENT"),
                       position,
@@ -59,14 +59,15 @@ export class SelectionScreen extends Statement {
                    new Reuse.Source(),
                    command);
 
+    let def = seq(str("DEFAULT SCREEN"), new Reuse.Integer());
+
     let tab = seq(str("TAB"),
                   tok(WParenLeft),
                   new Reuse.Integer(),
                   tok(ParenRightW),
                   new Reuse.Field(),
                   command,
-                  str("DEFAULT SCREEN"),
-                  new Reuse.Integer());
+                  opt(def));
 
     let func = seq(str("FUNCTION KEY"), new Reuse.Integer());
 
@@ -83,6 +84,8 @@ export class SelectionScreen extends Statement {
                      str("LINES"),
                      opt(str("NO INTERVALS")));
 
+    let uline = seq(str("ULINE"), opt(position));
+
     let ret = seq(str("SELECTION-SCREEN"),
                   alt(comment,
                       func,
@@ -91,7 +94,7 @@ export class SelectionScreen extends Statement {
                       incl,
                       push,
                       tab,
-                      str("ULINE"),
+                      uline,
                       beginBlock,
                       tabbed,
                       endBlock,

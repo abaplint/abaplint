@@ -32,7 +32,9 @@ export class Convert extends Statement {
     let date = seq(per(dat, tim),
                    per(daylight, stamp, zone, invert));
 
-    return seq(str("CONVERT"), alt(time, date));
+    let inv = seq(str("INVERTED-DATE"), new Reuse.Source(), str("INTO DATE"), new Reuse.Target());
+
+    return seq(str("CONVERT"), alt(time, date, inv));
   }
 
 }

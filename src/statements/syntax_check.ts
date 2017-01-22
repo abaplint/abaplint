@@ -24,6 +24,7 @@ export class SyntaxCheck extends Statement {
     let id = seq(str("ID"), new Reuse.Source(), str("TABLE"), new Reuse.Target());
     let replacing = seq(str("REPLACING"), new Reuse.Target());
     let directory = seq(str("DIRECTORY ENTRY"), new Reuse.Source());
+    let dump = seq(str("SHORTDUMP-ID"), new Reuse.Source());
 
     let syntax = seq(opt(str("PROGRAM")),
                      new Reuse.Source(),
@@ -38,6 +39,7 @@ export class SyntaxCheck extends Statement {
                          include,
                          messageId,
                          trace,
+                         dump,
                          plus(id)));
 
     let dynpro = seq(str("DYNPRO"),

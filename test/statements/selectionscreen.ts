@@ -32,6 +32,8 @@ let tests = [
   "selection-screen begin of screen 4000 title title as window.",
   "SELECTION-SCREEN BEGIN OF TABBED BLOCK tab1 FOR 10 LINES NO INTERVALS.",
   "selection-screen pushbutton /1(50) text-001 user-command us01.",
+  "SELECTION-SCREEN ULINE /1(72).",
+  "SELECTION-SCREEN TAB (20) button1 USER-COMMAND push1.",
 ];
 
 statementType(tests, "SELECTION-SCREEN", Statements.SelectionScreen);

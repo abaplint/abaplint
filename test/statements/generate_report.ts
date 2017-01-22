@@ -17,6 +17,10 @@ let tests = [
   "  LINE    lv_line\n" +
   "  WORD    lv_word\n" +
   "  OFFSET  lv_offset.",
+
+  "GENERATE REPORT l_name WITH PRECOMPILED HEADERS.",
+
+  "GENERATE REPORT l_name WITH PRECOMPILED HEADERS WITH TEST CODE.",
 ];
 
 statementType(tests, "GENERATE REPORT", Statements.GenerateReport);

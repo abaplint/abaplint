@@ -18,6 +18,7 @@ let tests = [
   "select-options bar for foo no-display.",
   "SELECT-OPTIONS s_foo FOR bar DEFAULT 'AA' TO 'ZZ'.",
   "SELECT-OPTIONS s_bar FOR foo-bar NO-EXTENSION OBLIGATORY.",
+  "SELECT-OPTIONS s_att FOR _att NO INTERVALS LOWER CASE.",
 ];
 
 statementType(tests, "SELECT-OPTIONS", Statements.SelectOption);

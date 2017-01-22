@@ -16,6 +16,7 @@ export class CallTransaction extends Statement {
     let ret = seq(str("CALL TRANSACTION"),
                   new Reuse.Source(),
                   opt(str("WITH AUTHORITY-CHECK")),
+                  opt(str("WITHOUT AUTHORITY-CHECK")),
                   opt(seq(str("USING"), new Reuse.Source())),
                   opt(seq(str("MODE"), new Reuse.Source())),
                   opt(seq(str("UPDATE"), new Reuse.Source())),

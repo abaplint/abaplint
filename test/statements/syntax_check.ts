@@ -76,6 +76,16 @@ let tests = [
   "  id          var2 table DUMMY_TAB\n" +
   "  id          var3 table DUMMY_TAB.",
 
+  "SYNTAX-CHECK FOR l_source\n" +
+  "  MESSAGE        l_message\n" +
+  "  LINE           l_line\n" +
+  "  WORD           l_word\n" +
+  "  PROGRAM        l_program\n" +
+  "  INCLUDE        l_include\n" +
+  "  MESSAGE-ID     l_message_id\n" +
+  "  SHORTDUMP-ID   l_dump\n" +
+  "  ID 'MSG' TABLE l_msg.",
+
 ];
 
 statementType(tests, "SYNTAX-CHECK", Statements.SyntaxCheck);
