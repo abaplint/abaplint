@@ -5,6 +5,7 @@ import * as Combi from "../combi";
 let str = Combi.str;
 let seq = Combi.seq;
 let opt = Combi.opt;
+let alt = Combi.alt;
 
 export class CallTransaction extends Statement {
 
@@ -13,10 +14,11 @@ export class CallTransaction extends Statement {
     let options = seq(str("OPTIONS FROM"), new Reuse.Source());
     let messages = seq(str("MESSAGES INTO"), new Reuse.Target());
 
+    let auth = seq(alt(str("WITH"), str("WITHOUT")), str("AUTHORITY-CHECK"));
+
     let ret = seq(str("CALL TRANSACTION"),
                   new Reuse.Source(),
-                  opt(str("WITH AUTHORITY-CHECK")),
-                  opt(str("WITHOUT AUTHORITY-CHECK")),
+                  opt(auth),
                   opt(seq(str("USING"), new Reuse.Source())),
                   opt(seq(str("MODE"), new Reuse.Source())),
                   opt(seq(str("UPDATE"), new Reuse.Source())),
