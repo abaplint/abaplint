@@ -19,13 +19,14 @@ let tests = [
   "READ TABLE it_filter WITH KEY obj_name = sdf TRANSPORTING NO FIELDS.",
   "READ TABLE lt_cross WITH KEY name = lv_name BINARY SEARCH TRANSPORTING NO FIELDS.",
   "READ TABLE lt_data WITH TABLE KEY k_fg COMPONENTS foo = bar TRANSPORTING NO FIELDS.",
-  "READ TABLE lo_obj->methods WITH KEY name = ls_meta-meta-handler visibility = cl_abap_objectdescr=>public TRANSPORTING NO FIELDS.",
+  "READ TABLE lo_obj->methods WITH KEY name = ls_meta-meta-hand visi = cl_abap=>public TRANSPORTING NO FIELDS.",
   "READ TABLE entities REFERENCE INTO node WITH KEY name = iv_name.",
   "READ TABLE lt_table WITH KEY field = lv_value TRANSPORTING NO FIELDS BINARY SEARCH.",
   "READ TABLE lt_data WITH KEY <fs>.",
   "READ TABLE itab FROM line INTO line COMPARING col2.",
   "READ TABLE lt_tab WITH KEY <ls_foo>-name BINARY SEARCH TRANSPORTING NO FIELDS.",
   "READ TABLE lt_tab WITH KEY = foo-bar.",
+  "READ TABLE <tab> WITH KEY (gc_field) = lv_field TRANSPORTING NO FIELDS.",
 ];
 
 statementType(tests, "READ", Statements.Read);

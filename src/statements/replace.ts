@@ -29,6 +29,8 @@ export class Replace extends Statement {
 
     let repl = seq(str("REPLACEMENT COUNT"), new Reuse.Target());
 
+    let leng = seq(str("LENGTH"), new Reuse.Target());
+
     let occ = alt(str("ALL OCCURRENCES"),
                   str("FIRST OCCURRENCE"));
 
@@ -40,7 +42,7 @@ export class Replace extends Statement {
                opt(seq(str("IN"), opt(str("TABLE")), new Reuse.Target())),
                per(seq(str("WITH"), new Reuse.Source()),
                    seq(str("INTO"), new Reuse.Target())),
-               opt(per(cas, mode, repl)));
+               opt(per(cas, mode, repl, leng)));
   }
 
 }

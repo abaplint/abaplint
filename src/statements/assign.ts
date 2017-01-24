@@ -27,7 +27,7 @@ export class Assign extends Statement {
     let type = seq(str("TYPE"), alt(new Reuse.Dynamic(), new Reuse.Source()));
     let handle = seq(str("TYPE HANDLE"), new Reuse.Field());
     let range = seq(str("RANGE"), new Reuse.Field());
-    let decimals = seq(str("DECIMALS"), new Reuse.Field());
+    let decimals = seq(str("DECIMALS"), new Reuse.Source());
 
     let casting = seq(opt(str("CASTING")), opt(alt(type, range, handle, decimals)));
 

@@ -9,6 +9,7 @@ let tests = [
   "import field1 field2 field3 from database foobar(sv) id func_key \n" +
     "accepting padding IGNORING CONVERSION ERRORS ACCEPTING TRUNCATION.",
   "IMPORT mv_errty = mv_errty FROM DATA BUFFER p_attributes.",
+  "IMPORT dir INTO dir FROM DATABASE bar(ix) ID foo TO moo.",
 ];
 
 statementType(tests, "IMPORT", Statements.Import);

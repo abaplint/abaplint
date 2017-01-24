@@ -26,8 +26,11 @@ export class Find extends Statement {
                       seq(str("RESULTS"), new Reuse.Target()),
                       seq(str("SUBMATCHES"), plus(new Reuse.Target())));
 
+    let sectionLength = seq(str("SECTION LENGTH"), new Reuse.Source(), str("OF"));
+
     let before = seq(opt(alt(str("TABLE"),
-                             str("SECTION OFFSET"))),
+                             str("SECTION OFFSET"),
+                             sectionLength)),
                      new Reuse.Source());
 
     let ret = seq(str("FIND"),

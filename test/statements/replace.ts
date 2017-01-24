@@ -20,6 +20,7 @@ let tests = [
   "REPLACE ALL OCCURRENCES OF '@' IN foo WITH 'at' REPLACEMENT COUNT count.",
   "REPLACE REGEX `blah` IN <line> WITH 'moo'.",
   "REPLACE ALL OCCURRENCES OF '?' IN foo WITH space IN CHARACTER MODE IGNORING CASE.",
+  "replace lv_foo with lv_space into lv_command length lv_length.",
 ];
 
 statementType(tests, "REPLACE", Statements.Replace);

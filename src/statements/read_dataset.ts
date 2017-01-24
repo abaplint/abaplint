@@ -13,7 +13,7 @@ export class ReadDataset extends Statement {
                new Reuse.Source(),
                str("INTO"),
                new Reuse.Target(),
-               opt(seq(str("MAXIMUM LENGTH"), new Reuse.Target())),
+               opt(seq(str("MAXIMUM LENGTH"), new Reuse.Source())),
                opt(seq(str("ACTUAL LENGTH"), new Reuse.Target())),
                opt(seq(str("LENGTH"), new Reuse.Target())));
   }

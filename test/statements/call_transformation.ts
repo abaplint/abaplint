@@ -67,6 +67,12 @@ let tests = [
   "             toggle = '1' \n" +
   "  SOURCE XML lv_source\n" +
   "  RESULT XML lv_result.",
+
+  "call transformation (lv_name)\n" +
+  "  parameters (lt_par)\n" +
+  "  objects (lt_obj)\n" +
+  "  source xml lv_xml\n" +
+  "  result xml rv_res.",
 ];
 
 statementType(tests, "CALL TRANSFORMATION", Statements.CallTransformation);

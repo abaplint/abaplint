@@ -35,10 +35,12 @@ let tests = [
   "IF <field> NOT BETWEEN ls_foo-low AND ls_foo-high.",
   "IF ( foo = bar ).",
   "IF lcl_foo=>check( ).",
+  "IF bar =< foo.",
   "if not line_exists( added[ function = iv_function ] ).",
   "if foo = bar and line_exists( fcat[ fieldname = 'MOO' ] ).",
   "IF foo(2) = 12 OR foo(2) = 12.",
-//  "IF foo BYTE-CO bar.",
+  "IF foo BYTE-CO bar.",
+  "IF data BYTE-NS end.",
 
   "IF ( foo-bar CP 'a' ) OR \n" +
   "  ( foo-bar CP 'a' ) OR \n" +

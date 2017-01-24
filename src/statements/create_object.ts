@@ -6,6 +6,7 @@ let str = Combi.str;
 let seq = Combi.seq;
 let opt = Combi.opt;
 let alt = Combi.alt;
+let per = Combi.per;
 
 export class CreateObject extends Statement {
 
@@ -18,8 +19,7 @@ export class CreateObject extends Statement {
 
     let ret = seq(str("CREATE OBJECT"),
                   new Reuse.Target(),
-                  opt(type),
-                  opt(area),
+                  opt(per(type, area)),
                   opt(alt(exporting, table)),
                   opt(exceptions));
 

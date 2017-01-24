@@ -9,6 +9,7 @@ let tests = [
   "CREATE OBJECT ei_page TYPE lcl_gui_page_commit EXPORTING io_repo  = mo_repo io_stage = mo_stage.",
   "CREATE OBJECT lo_ref TYPE (lv_classname) PARAMETER-TABLE lt_otab.",
   "CREATE OBJECT lo_root AREA HANDLE lo_area.",
+  "CREATE OBJECT lo_root AREA HANDLE io_handle TYPE (lv_name) EXPORTING iv_name = lv_name.",
 ];
 
 statementType(tests, "CREATE OBJECT", Statements.CreateObject);

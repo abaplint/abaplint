@@ -10,6 +10,7 @@ let tests = [
   "RAISE EXCEPTION TYPE /iwbep/cx_mgw_not_impl_exc EXPORTING textid = \n" +
     "/iwbep/cx_mgw_not_impl_exc=>method_not_implemented method = 'CREATE_DEEP_ENTITY'.",
   "RAISE RESUMABLE EXCEPTION TYPE zcx_error EXPORTING textid = zcx_error=>some_values_too_high.",
+  "RAISE EXCEPTION me->dd_sobject_store-exception.",
 ];
 
 statementType(tests, "RAISE", Statements.Raise);

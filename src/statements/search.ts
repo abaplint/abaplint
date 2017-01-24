@@ -11,6 +11,7 @@ export class Search extends Statement {
 
   public static get_matcher(): Combi.IRunnable {
     let starting = seq(str("STARTING AT"), new Reuse.Source());
+    let ending = seq(str("ENDING AT"), new Reuse.Source());
 
     let mode = alt(str("IN BYTE MODE"), str("IN CHARACTER MODE"));
 
@@ -19,7 +20,8 @@ export class Search extends Statement {
                   str("FOR"),
                   new Reuse.Source(),
                   opt(mode),
-                  opt(starting));
+                  opt(starting),
+                  opt(ending));
 
     return ret;
   }

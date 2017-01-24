@@ -13,7 +13,9 @@ export class ModifyLine extends Statement {
 
   public static get_matcher(): Combi.IRunnable {
 
-    let form = seq(str("INVERSE ="), new Reuse.Source());
+    let form = seq(alt(str("INVERSE"), str("INPUT")),
+                   str("="),
+                   new Reuse.Source());
 
     let value = seq(str("FIELD VALUE"), plus(new Reuse.Source()));
     let format = seq(str("FIELD FORMAT"), new Reuse.Source(), opt(form));

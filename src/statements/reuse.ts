@@ -146,6 +146,7 @@ export class Compare extends Combi.Reuse {
                            str("<="),
                            str(">="),
                            str("=>"),
+                           str("=<"),
                            str("CA"),
                            str("CO"),
                            str("CP"),
@@ -160,6 +161,12 @@ export class Compare extends Combi.Reuse {
                            str("NS"),
                            str("NA"),
                            str("NP"),
+                           str("BYTE-CO"),
+                           str("BYTE-CA"),
+                           str("BYTE-CS"),
+                           str("BYTE-CN"),
+                           str("BYTE-NA"),
+                           str("BYTE-NS"),
                            str("O"), // hex comparison operator
                            str("Z"), // hex comparison operator
                            str("M"), // hex comparison operator
@@ -231,8 +238,10 @@ export class ReceiveParameters extends Combi.Reuse {
   public get_runnable() {
     let importing = seq(str("IMPORTING"), new ParameterListT());
     let tables = seq(str("TABLES"), new ParameterListT());
+    let changing = seq(str("CHANGING"), new ParameterListT());
     let exceptions = seq(str("EXCEPTIONS"), opt(new ParameterListExceptions()), opt(new Field()));
     let long = seq(opt(importing),
+                   opt(changing),
                    opt(tables),
                    opt(exceptions));
 
@@ -375,7 +384,7 @@ export class ClassName extends Combi.Reuse {
 
 export class MacroName extends Combi.Reuse {
   public get_runnable() {
-    return seq(reg(/^[\w%][\w\*]*$/), star(seq(tok(Dash), reg(/^\w+$/))));
+    return seq(reg(/^[\w%][\w\*]*>?$/), star(seq(tok(Dash), reg(/^\w+$/))));
   }
 }
 

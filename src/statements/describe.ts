@@ -16,7 +16,7 @@ export class Describe extends Statement {
 
     let table = seq(str("TABLE"),
                     new Reuse.Source(),
-                    per(tlines, kind));
+                    opt(per(tlines, kind)));
 
     let mode = alt(str("IN BYTE MODE"), str("IN CHARACTER MODE"));
 

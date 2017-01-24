@@ -20,7 +20,8 @@ export class Append extends Statement {
                opt(range),
                opt(seq(str("TO"),
                        new Reuse.Target(),
-                       opt(alt(assigning, reference)))));
+                       opt(alt(assigning, reference)))),
+               opt(str("CASTING")));
   }
 
 }

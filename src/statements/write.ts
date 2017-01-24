@@ -30,6 +30,7 @@ export class Write extends Statement {
                       seq(str("EXPONENT"), new Reuse.Source()),
                       str("NO-GROUPING"),
                       str("NO-ZERO"),
+                      str("CENTERED"),
                       seq(str("INPUT"), opt(alt(str("ON"), str("OFF")))),
                       str("NO-GAP"),
                       str("LEFT-JUSTIFIED"),
@@ -43,6 +44,7 @@ export class Write extends Statement {
                       seq(str("UNDER"), new Reuse.Source()),
                       seq(str("STYLE"), new Reuse.Source()),
                       seq(str("ROUND"), new Reuse.Source()),
+                      seq(str("QUICKINFO"), new Reuse.Source()),
                       str("ENVIRONMENT TIME FORMAT"),
                       reg(/^[YMD]{2,4}\/?[YMD]{2,4}\/?[YMD]{2,4}$/i),
                       seq(str("UNIT"), new Reuse.Source()),
@@ -59,7 +61,7 @@ export class Write extends Statement {
 
     let ret = seq(str("WRITE"),
                   opt(alt(at, complex)),
-                  opt(new Reuse.Source()),
+                  opt(alt(new Reuse.Source(), new Reuse.Dynamic())),
                   opt(options));
 
     return ret;

@@ -4,7 +4,7 @@ import * as Combi from "../combi";
 
 let str = Combi.str;
 let seq = Combi.seq;
-let opt = Combi.opt;
+let per = Combi.per;
 
 export class GenerateSubroutine extends Statement {
 
@@ -18,11 +18,7 @@ export class GenerateSubroutine extends Statement {
 
     let ret = seq(str("GENERATE SUBROUTINE POOL"),
                   new Reuse.Source(),
-                  name,
-                  opt(message),
-                  opt(line),
-                  opt(word),
-                  opt(offset));
+                  per(name, message, line, word, offset));
 
     return ret;
   }

@@ -21,6 +21,8 @@ let tests = [
   "FIND 'foo' IN TABLE tab FROM cline MATCH LINE cline.",
   "FIND FIRST OCCURRENCE OF REGEX lv_pattern IN SECTION OFFSET lv_offset LENGTH lv_strlen OF bar.",
   "find first occurrence of 'foo' in table lt_tab from line + 1 match line lv_res.",
+  "FIND FIRST OCCURRENCE OF SUBSTRING 'BLAH' IN SECTION LENGTH 20 OF lv_foo MATCH COUNT l_count.",
+  "FIND blah IN SECTION LENGTH 1 OF lv_value.",
 ];
 
 statementType(tests, "FIND", Statements.Find);

@@ -21,10 +21,14 @@ export class Read extends Statement {
 
     let index = seq(str("INDEX"), new Reuse.Source());
 
-    let components = seq(new Reuse.Field(), str("COMPONENTS"), plus(new Reuse.Compare()));
+    let compare = seq(alt(new Reuse.FieldSub(), new Reuse.Dynamic()),
+                      str("="),
+                      new Reuse.Source());
+
+    let components = seq(new Reuse.Field(), str("COMPONENTS"), plus(compare));
 
     let key = seq(alt(str("WITH KEY"), str("WITH TABLE KEY")),
-                  alt(plus(new Reuse.Compare()),
+                  alt(plus(compare),
                       components,
                       seq(optPrio(str("=")), new Reuse.Source())));
 

@@ -6,6 +6,7 @@ let str = Combi.str;
 let seq = Combi.seq;
 let alt = Combi.alt;
 let opt = Combi.opt;
+let per = Combi.per;
 let plus = Combi.plus;
 
 export class Export extends Statement {
@@ -15,11 +16,11 @@ export class Export extends Statement {
 
     let db = seq(str("DATA BUFFER"), new Reuse.Target());
     let memory = seq(str("MEMORY ID"), new Reuse.Source());
+    let from = seq(str("FROM"), new Reuse.Source());
 
     let database = seq(str("DATABASE"),
                        new Reuse.Source(),
-                       opt(seq(str("FROM"), new Reuse.Source())),
-                       id);
+                       per(from, id));
 
     let target = alt(db, memory, database);
 

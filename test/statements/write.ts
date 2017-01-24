@@ -46,6 +46,9 @@ let tests = [
   "WRITE / lv_bar INPUT.",
   "WRITE icon_tools AS ICON HOTSPOT ON COLOR COL_NORMAL.",
   "write val to text(len) using no edit mask.",
+  "WRITE AT (lv_at) lv_name COLOR COL_HEADING QUICKINFO lv_info.",
+  "WRITE 1(4) 'FOO' CENTERED.",
+  "WRITE ('CL_FOO=>BAR') TO lv_value.",
 ];
 
 statementType(tests, "WRITE", Statements.Write);

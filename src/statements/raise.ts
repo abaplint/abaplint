@@ -13,7 +13,7 @@ export class Raise extends Statement {
     let clas = seq(opt(str("RESUMABLE")),
                    str("EXCEPTION"),
                    opt(str("TYPE")),
-                   new Reuse.ClassName(),
+                   new Reuse.Source(),
                    opt(seq(str("EXPORTING"), new Reuse.ParameterListS())));
 
     return seq(str("RAISE"), alt(new Reuse.Field(), clas));

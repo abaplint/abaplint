@@ -23,6 +23,7 @@ let tests = [
   "ASSIGN TABLE FIELD (bar) TO <foo>.",
   "assign (class)=>(attr) to <f>.",
   "ASSIGN COMPONENT col OF STRUCTURE <ls_data> TO <lv_field> CASTING DECIMALS lv_dec.",
+  "ASSIGN COMPONENT col OF STRUCTURE <ls_data> TO <lv_field> CASTING DECIMALS <ls_curr>-currdec.",
 //  "ASSIGN (FOO) TO <Z-BAR>.",
 ];
 
