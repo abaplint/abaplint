@@ -52,7 +52,7 @@
     "@types/mocha": "^2.2.35",
     "@types/node": "^7.0.0",
     "@types/progress": "^1.1.28",
-    "browserify": "^13.1.1",
+    "browserify": "^14.0.0",
     "chai": "^3.5.0",
     "codecov": "^1.0.1",
     "codemirror": "^5.19.0",
