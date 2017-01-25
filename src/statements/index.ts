@@ -109,6 +109,7 @@ export * from "./set_handler";
 export * from "./set_left";
 export * from "./pack";
 export * from "./exec_sql";
+export * from "./open_cursor";
 export * from "./communication";
 export * from "./generate_subroutine";
 export * from "./reject";

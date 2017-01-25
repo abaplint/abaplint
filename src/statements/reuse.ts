@@ -16,7 +16,7 @@ let str = Combi.str;
 let opt = Combi.opt;
 let tok = Combi.tok;
 let ver = Combi.ver;
-// let per = Combi.per;
+let per = Combi.per;
 let optPrio = Combi.optPrio;
 let star = Combi.star;
 let plus = Combi.plus;
@@ -169,8 +169,7 @@ export class Compare extends Combi.Reuse {
                            str("BYTE-NS"),
                            str("O"), // hex comparison operator
                            str("Z"), // hex comparison operator
-                           str("M"), // hex comparison operator
-                           str("LIKE")));
+                           str("M")));
 
     let sopt = seq(str("IS"),
                    opt(str("NOT")),
@@ -182,19 +181,57 @@ export class Compare extends Combi.Reuse {
 
     let between = seq(opt(str("NOT")), str("BETWEEN"), new Source(), str("AND"), new Source());
 
-    let predicate = ver(Version.v740sp08, seq(opt(str("NOT")), new MethodCallChain()));
+    let predicate = ver(Version.v740sp08, new MethodCallChain());
 
-// todo: @foo is only possible in SELECT, not in normal IFs
-    let rett = seq(opt(str("NOT")),
-                   new Source(),
-                   alt(seq(operator, opt(ver(Version.v740sp05, tok(WAt))), new Source()),
+    let rett = seq(new Source(),
+                   alt(seq(operator, new Source()),
                        inn,
                        between,
                        sopt));
 
-    let ret = alt(predicate, rett);
+    let ret = seq(opt(str("NOT")), alt(predicate, rett));
 
     return ret;
+  }
+}
+
+export class SQLCompare extends Combi.Reuse {
+  public get_runnable() {
+    let val = alt(new FieldSub(), new Constant());
+
+    let list = seq(tok(WParenLeft),
+                   val,
+                   plus(seq(str(","), val)),
+                   alt(tok(ParenRightW), tok(ParenRight)));
+
+    let inn = seq(str("IN"), alt(new Source(), list));
+
+    let operator = alt(str("="),
+                       str("<>"),
+                       str("><"),
+                       str("<"),
+                       str(">"),
+                       str("<="),
+                       str(">="),
+                       str("EQ"),
+                       str("NE"),
+                       str("GE"),
+                       str("GT"),
+                       str("LT"),
+                       str("LE"),
+                       str("LIKE"));
+
+    let between = seq(str("BETWEEN"), new Source(), str("AND"), new Source());
+
+    let rett = seq(new Source(),
+                   alt(seq(operator, opt(ver(Version.v740sp05, tok(WAt))), new Source()),
+                       inn,
+                       between,
+                       str("IS NULL")));
+
+    let ret = rett;
+
+    return alt(ret, new Dynamic());
   }
 }
 
@@ -208,6 +245,23 @@ export class Cond extends Combi.Reuse {
                       alt(tok(WParenRightW), tok(WParenRight)));
 
     let cnd = alt(new Compare(), another);
+
+    let ret = seq(cnd, star(seq(operator, cnd)));
+
+    return ret;
+  }
+}
+
+export class SQLCond extends Combi.Reuse {
+  public get_runnable() {
+    let operator = alt(str("AND"), str("OR"));
+
+    let another = seq(opt(str("NOT")),
+                      tok(WParenLeftW),
+                      new SQLCond(),
+                      alt(tok(WParenRightW), tok(WParenRight)));
+
+    let cnd = alt(new SQLCompare(), another);
 
     let ret = seq(cnd, star(seq(operator, cnd)));
 
@@ -694,5 +748,76 @@ export class Constant extends Combi.Reuse {
 //    let text = seq(tok(ParenLeft), reg(/^\w{3}$/), alt(tok(ParenRightW), tok(ParenRight)));
 //    let stri = seq(reg(/^('.*')|(`.*`)$/), opt(text));
     return alt(new ConstantString(), new Integer());
+  }
+}
+
+export class Select extends Combi.Reuse {
+  public get_runnable() {
+
+    let aas = seq(str("AS"), new Field());
+
+    let from = seq(str("FROM"),
+                   opt(tok(WParenLeftW)),
+                   alt(new Dynamic(), new DatabaseTable()),
+                   opt(aas));
+
+    let intoList = seq(str("INTO"),
+                       tok(WParenLeft),
+                       star(seq(new Target(), str(","))),
+                       new Target(),
+                       str(")"));
+    let intoTable = seq(alt(str("INTO"), str("APPENDING")),
+                        opt(str("CORRESPONDING FIELDS OF")),
+                        str("TABLE"),
+                        opt(ver(Version.v740sp05, tok(WAt))),
+                        new Target());
+    let intoSimple = seq(str("INTO"),
+                         opt(str("CORRESPONDING FIELDS OF")),
+                         opt(ver(Version.v740sp05, tok(WAt))),
+                         new Target());
+    let into = alt(intoList, intoTable, intoSimple);
+
+    let pack = seq(str("PACKAGE SIZE"), new Source());
+
+    let where = seq(str("WHERE"), new SQLCond());
+
+    let order = seq(str("ORDER BY"), alt(plus(new Field()), str("PRIMARY KEY"), new Dynamic()));
+
+    let forAll = seq(str("FOR ALL ENTRIES IN"), new Source());
+
+    let count = seq(str("COUNT"), alt(tok(ParenLeft), tok(ParenLeftW)), str("*"), str(")"));
+    let max = seq(str("MAX"), alt(tok(ParenLeft), tok(ParenLeftW)), new Field(), str(")"));
+    let min = seq(str("MIN"), alt(tok(ParenLeft), tok(ParenLeftW)), new Field(), str(")"));
+
+    let fields = alt(str("*"),
+                     new Dynamic(),
+                     count,
+                     max,
+                     min,
+                     plus(new Field()));
+
+    let joinType = seq(opt(alt(str("INNER"), str("LEFT OUTER"), str("LEFT"))), str("JOIN"));
+
+    let join = seq(joinType,
+                   new DatabaseTable(),
+                   opt(aas),
+                   str("ON"),
+                   plus(new SQLCond()));
+
+    let up = seq(str("UP TO"), new Source(), str("ROWS"));
+
+    let client = str("CLIENT SPECIFIED");
+    let bypass = str("BYPASSING BUFFER");
+
+    let source = seq(from, star(join), opt(tok(WParenRightW)));
+
+    let perm = per(source, into, forAll, where, order, up, client, bypass, pack);
+
+    let ret = seq(str("SELECT"),
+                  alt(str("DISTINCT"), opt(seq(str("SINGLE"), opt(str("FOR UPDATE"))))),
+                  fields,
+                  perm);
+
+    return ret;
   }
 }
