@@ -223,11 +223,13 @@ export class SQLCompare extends Combi.Reuse {
 
     let between = seq(str("BETWEEN"), new Source(), str("AND"), new Source());
 
+    let nul = seq(str("IS"), opt(str("NOT")), str("NULL"));
+
     let rett = seq(new Source(),
                    alt(seq(operator, opt(ver(Version.v740sp05, tok(WAt))), new Source()),
                        inn,
                        between,
-                       str("IS NULL")));
+                       nul));
 
     let ret = rett;
 
@@ -761,21 +763,22 @@ export class Select extends Combi.Reuse {
                    alt(new Dynamic(), new DatabaseTable()),
                    opt(aas));
 
-    let intoList = seq(str("INTO"),
-                       tok(WParenLeft),
+    let intoList = seq(tok(WParenLeft),
                        star(seq(new Target(), str(","))),
                        new Target(),
                        str(")"));
+    let intoSimple = seq(opt(str("CORRESPONDING FIELDS OF")),
+                         opt(ver(Version.v740sp05, tok(WAt))),
+                         new Target());
+
     let intoTable = seq(alt(str("INTO"), str("APPENDING")),
                         opt(str("CORRESPONDING FIELDS OF")),
                         str("TABLE"),
                         opt(ver(Version.v740sp05, tok(WAt))),
                         new Target());
-    let intoSimple = seq(str("INTO"),
-                         opt(str("CORRESPONDING FIELDS OF")),
-                         opt(ver(Version.v740sp05, tok(WAt))),
-                         new Target());
-    let into = alt(intoList, intoTable, intoSimple);
+
+
+    let into = alt(seq(str("INTO"), alt(intoList, intoSimple)), intoTable);
 
     let pack = seq(str("PACKAGE SIZE"), new Source());
 
@@ -791,10 +794,7 @@ export class Select extends Combi.Reuse {
 
     let fields = alt(str("*"),
                      new Dynamic(),
-                     count,
-                     max,
-                     min,
-                     plus(new Field()));
+                     plus(alt(new Field(), count, max, min)));
 
     let joinType = seq(opt(alt(str("INNER"), str("LEFT OUTER"), str("LEFT"))), str("JOIN"));
 

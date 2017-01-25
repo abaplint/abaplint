@@ -56,6 +56,8 @@ let tests = [
 
   "SELECT sdfs FROM basdf WHERE name is null.",
   "SELECT * FROM zfoo INTO ls_bar UP TO 1 ROWS WHERE moo = boo AND (lt_where) AND bar = foo.",
+  "select count(*) into (count) from ztab where bar is not null.",
+  "SELECT num MAX( count ) COUNT( * ) INTO TABLE lt_tab FROM zfoo.",
 ];
 
 statementType(tests, "SELECT", Statements.Select);
