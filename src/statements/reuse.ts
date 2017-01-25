@@ -788,7 +788,7 @@ export class Select extends Combi.Reuse {
 
     let forAll = seq(str("FOR ALL ENTRIES IN"), new Source());
 
-    let count = seq(str("COUNT"), alt(tok(ParenLeft), tok(ParenLeftW)), str("*"), str(")"));
+    let count = seq(str("COUNT"), alt(tok(ParenLeft), tok(ParenLeftW)), opt(str("DISTINCT")), alt(str("*"), new Field()), str(")"));
     let max = seq(str("MAX"), alt(tok(ParenLeft), tok(ParenLeftW)), new Field(), str(")"));
     let min = seq(str("MIN"), alt(tok(ParenLeft), tok(ParenLeftW)), new Field(), str(")"));
 
@@ -811,7 +811,9 @@ export class Select extends Combi.Reuse {
 
     let source = seq(from, star(join), opt(tok(WParenRightW)));
 
-    let perm = per(source, into, forAll, where, order, up, client, bypass, pack);
+    let group = seq(str("GROUP BY"), new Field());
+
+    let perm = per(source, into, forAll, where, order, up, client, bypass, pack, group);
 
     let ret = seq(str("SELECT"),
                   alt(str("DISTINCT"), opt(seq(str("SINGLE"), opt(str("FOR UPDATE"))))),

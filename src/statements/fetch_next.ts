@@ -18,7 +18,9 @@ export class FetchNext extends Statement {
                     new Reuse.Target(),
                     opt(size));
 
-    let record = seq(str("INTO"), new Reuse.Target());
+    let record = seq(str("INTO"),
+                     opt(str("CORRESPONDING FIELDS OF")),
+                     new Reuse.Target());
 
     let ret = seq(str("FETCH NEXT CURSOR"),
                   new Reuse.Source(),

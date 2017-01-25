@@ -94,6 +94,19 @@ let tests = [
   "  STATEMENTS INTO lt_statements\n" +
   "  WITH ANALYSIS\n" +
   "  WITH PRAGMAS '*'.",
+
+  "SCAN ABAP-SOURCE buffer\n" +
+  "  TOKENS          INTO l_tokens\n" +
+  "  STATEMENTS      INTO ls_statements\n" +
+  "  LEVELS          INTO l_levels\n" +
+  "  KEYWORDS        FROM l_keywords\n" +
+  "  INCLUDE PROGRAM FROM l_include\n" +
+  "  FRAME PROGRAM   FROM l_frame\n" +
+  "  WITH ANALYSIS\n" +
+  "  WITH INCLUDES\n" +
+  "  WITHOUT TRMAC\n" +
+  "  ENHANCEMENTS INTO l_enh\n" +
+  "  INCLUDE INTO l_incl.",
 ];
 
 statementType(tests, "SCAN", Statements.Scan);

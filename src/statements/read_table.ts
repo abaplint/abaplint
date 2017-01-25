@@ -25,7 +25,7 @@ export class Read extends Statement {
                       str("="),
                       new Reuse.Source());
 
-    let components = seq(new Reuse.Field(), str("COMPONENTS"), plus(compare));
+    let components = seq(alt(new Reuse.Field(), new Reuse.Dynamic()), str("COMPONENTS"), plus(compare));
 
     let key = seq(alt(str("WITH KEY"), str("WITH TABLE KEY")),
                   alt(plus(compare),

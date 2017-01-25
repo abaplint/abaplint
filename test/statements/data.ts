@@ -41,6 +41,7 @@ let tests = [
     "WITH NON-UNIQUE SORTED KEY view_fieldname COMPONENTS view_fieldname " +
     "WITH NON-UNIQUE SORTED KEY no_case COMPONENTS no_case.",
   "DATA %id TYPE flag.",
+  "class-data gv_var type zfoo value 'FOO' read-only .",
 //  "DATA ret TYPE TABLE OF foobar INITIAL SIZE 10 WITH HEADER LINE.",
 ];
 

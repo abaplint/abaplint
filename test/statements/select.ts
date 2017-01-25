@@ -54,10 +54,18 @@ let tests = [
   "  WHERE foo~blah IN lt_blah\n" +
   "  AND   foo~sdf IN lt_sdf.",
 
+  "select unit FROM zfoobar INTO TABLE lt_tab \n" +
+  "  UP TO lv_max ROWS\n" +
+  "  WHERE dest_name IN lv_dest\n" +
+  "  and ( unit = asdf\n" +
+  "  OR    unit = fooo )\n" +
+  "  GROUP BY unit_id.",
+
   "SELECT sdfs FROM basdf WHERE name is null.",
   "SELECT * FROM zfoo INTO ls_bar UP TO 1 ROWS WHERE moo = boo AND (lt_where) AND bar = foo.",
   "select count(*) into (count) from ztab where bar is not null.",
   "SELECT num MAX( count ) COUNT( * ) INTO TABLE lt_tab FROM zfoo.",
+  "SELECT COUNT( DISTINCT id ) FROM zfoo INTO lv_cnt.",
 ];
 
 statementType(tests, "SELECT", Statements.Select);

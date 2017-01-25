@@ -16,6 +16,7 @@ export class Scan extends Statement {
     let levels = seq(str("LEVELS INTO"), new Reuse.Target());
     let structures = seq(str("STRUCTURES INTO"), new Reuse.Target());
     let include = seq(str("INCLUDE INTO"), new Reuse.Target());
+    let enh = seq(str("ENHANCEMENTS INTO"), new Reuse.Target());
     let keywords = seq(str("KEYWORDS FROM"), new Reuse.Source());
     let pragmas = seq(str("WITH PRAGMAS"), new Reuse.Source());
     let overflow = seq(str("OVERFLOW INTO"), new Reuse.Target());
@@ -42,6 +43,7 @@ export class Scan extends Statement {
                       includeProgram,
                       include,
                       frame,
+                      enh,
                       program,
                       str("WITH ANALYSIS"),
                       str("WITH COMMENTS"),

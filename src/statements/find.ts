@@ -22,7 +22,7 @@ export class Find extends Statement {
                       seq(str("MATCH LINE"), new Reuse.Target()),
                       seq(str("MATCH COUNT"), new Reuse.Target()),
                       seq(str("MATCH LENGTH"), new Reuse.Target()),
-                      seq(str("LENGTH"), new Reuse.Target()),
+                      seq(str("LENGTH"), new Reuse.Source()),
                       seq(str("RESULTS"), new Reuse.Target()),
                       seq(str("SUBMATCHES"), plus(new Reuse.Target())));
 

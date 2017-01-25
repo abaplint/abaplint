@@ -14,6 +14,7 @@ let tests = [
   "DELETE lt_dists TO lv_nlen.",
   "DELETE ADJACENT DUPLICATES FROM <lt_data> COMPARING (lv_name).",
   "DELETE ADJACENT DUPLICATES FROM <lt_data> COMPARING (foo) (bar).",
+  "DELETE ADJACENT DUPLICATES FROM lt_tab COMPARING foo-moo boo-loo.",
 ];
 
 statementType(tests, "DELETE", Statements.DeleteInternal);

@@ -17,10 +17,11 @@ export class Export extends Statement {
     let db = seq(str("DATA BUFFER"), new Reuse.Target());
     let memory = seq(str("MEMORY ID"), new Reuse.Source());
     let from = seq(str("FROM"), new Reuse.Source());
+    let client = seq(str("CLIENT"), new Reuse.Source());
 
     let database = seq(str("DATABASE"),
                        new Reuse.Source(),
-                       per(from, id));
+                       per(from, client, id));
 
     let target = alt(db, memory, database);
 

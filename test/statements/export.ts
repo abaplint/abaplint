@@ -10,6 +10,7 @@ let tests = [
   "export lt_dump to database LTCX(LT) id ls_key.",
   "EXPORT p1 = is_option TO DATABASE indx(xl) FROM ws_indx ID ws_indx-srtfd.",
   "EXPORT tab = tab TO DATABASE foo(tx) ID bar FROM moo.",
+  "EXPORT foo = lt_foo TO DATABASE indx(rt) FROM indx_wa CLIENT sy-mandt ID lv_id.",
 ];
 
 statementType(tests, "EXPORT", Statements.Export);
