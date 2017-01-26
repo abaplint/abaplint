@@ -233,7 +233,9 @@ export class SQLCompare extends Combi.Reuse {
 
     let ret = rett;
 
-    return alt(ret, new Dynamic());
+    let exists = seq(str("EXISTS"), str("("), new Select(), str(")"));
+
+    return alt(ret, new Dynamic(), exists);
   }
 }
 
@@ -538,13 +540,13 @@ export class Source extends Combi.Reuse {
     let after = seq(alt(str("&"), str("&&"), new ArithOperator()), new Source());
     let ref = seq(tok(Arrow), str("*"));
 
-    let boolc = seq(str("BOOLC"), tok(ParenLeftW), new Cond(), str(")"));
+    let bool = seq(alt(str("BOOLC"), str("XSDBOOL")), tok(ParenLeftW), new Cond(), str(")"));
 
     let prefix = alt(tok(WDashW), str("BIT-NOT"));
 
     let old = seq(alt(new Constant(),
                       new StringTemplate(),
-                      boolc,
+                      bool,
                       method,
                       seq(opt(prefix), new FieldChain()),
                       paren),
@@ -782,6 +784,8 @@ export class Select extends Combi.Reuse {
 
     let pack = seq(str("PACKAGE SIZE"), new Source());
 
+    let connection = seq(str("CONNECTION"), new Dynamic());
+
     let where = seq(str("WHERE"), new SQLCond());
 
     let order = seq(str("ORDER BY"), alt(plus(new Field()), str("PRIMARY KEY"), new Dynamic()));
@@ -813,7 +817,7 @@ export class Select extends Combi.Reuse {
 
     let group = seq(str("GROUP BY"), new Field());
 
-    let perm = per(source, into, forAll, where, order, up, client, bypass, pack, group);
+    let perm = per(source, into, forAll, where, order, up, client, bypass, pack, group, connection);
 
     let ret = seq(str("SELECT"),
                   alt(str("DISTINCT"), opt(seq(str("SINGLE"), opt(str("FOR UPDATE"))))),

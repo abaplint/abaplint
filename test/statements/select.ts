@@ -61,11 +61,18 @@ let tests = [
   "  OR    unit = fooo )\n" +
   "  GROUP BY unit_id.",
 
+  "SELECT foo bar FROM ztab AS t\n" +
+  "  INTO CORRESPONDING FIELDS OF TABLE result\n" +
+  "  WHERE lang = lv_lang\n" +
+  "  AND EXISTS ( SELECT * FROM zother AS s\n" +
+  "    WHERE s~type = t~type AND field = 'X' ).",
+
   "SELECT sdfs FROM basdf WHERE name is null.",
   "SELECT * FROM zfoo INTO ls_bar UP TO 1 ROWS WHERE moo = boo AND (lt_where) AND bar = foo.",
   "select count(*) into (count) from ztab where bar is not null.",
   "SELECT num MAX( count ) COUNT( * ) INTO TABLE lt_tab FROM zfoo.",
   "SELECT COUNT( DISTINCT id ) FROM zfoo INTO lv_cnt.",
+  "SELECT SINGLE id FROM ztab connection (lv_con) INTO lv_id.",
 ];
 
 statementType(tests, "SELECT", Statements.Select);

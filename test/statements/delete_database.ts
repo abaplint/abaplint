@@ -9,7 +9,9 @@ let tests = [
   "DELETE zfoo FROM TABLE mt_delete.",
   "DELETE (c_tabname) FROM <wa>.",
   "delete zfoo client specified from table lt_tab.",
-  "DELETE FROM zfoobar WHERE timestamp < l_timestampl AND state IN (c_value1, c_value2).",
+  "DELETE FROM zfoo WHERE timestamp < l_timestampl AND state IN (c_value1, c_value2).",
+  "DELETE FROM zfoo WHERE bar LIKE 'FOO'.",
+  "delete from zfoo where id is not null.",
 ];
 
 statementType(tests, "DELETE", Statements.DeleteDatabase);

@@ -14,12 +14,14 @@ export class DeleteInternal extends Statement {
 // todo, is READ and DELETE similar? something can be reused?
     let index = seq(str("INDEX"), new Reuse.Source());
 
+    let using = seq(str("USING KEY"), new Reuse.SimpleName());
+
     let fromTo = seq(opt(seq(str("FROM"), new Reuse.Source())),
                      opt(seq(str("TO"), new Reuse.Source())));
 
     let where = seq(str("WHERE"), new Reuse.Cond());
     let key = seq(alt(str("WITH KEY"), str("WITH TABLE KEY")), plus(new Reuse.Compare()));
-    let table = seq(opt(str("TABLE")), new Reuse.Target(), alt(index, fromTo, key), opt(where));
+    let table = seq(opt(str("TABLE")), new Reuse.Target(), alt(index, using, fromTo, key), opt(where));
 
     let adjacent = seq(str("ADJACENT DUPLICATES FROM"),
                        new Reuse.Target(),

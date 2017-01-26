@@ -32,6 +32,7 @@ export class Replace extends Statement {
     let leng = seq(str("LENGTH"), new Reuse.Target());
 
     let occ = alt(str("ALL OCCURRENCES"),
+                  str("ALL OCCURENCES"),
                   str("FIRST OCCURRENCE"));
 
     let mode = alt(str("IN CHARACTER MODE"),

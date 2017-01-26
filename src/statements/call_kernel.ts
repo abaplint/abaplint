@@ -4,6 +4,7 @@ import * as Combi from "../combi";
 
 let str = Combi.str;
 let seq = Combi.seq;
+let alt = Combi.alt;
 let star = Combi.star;
 
 export class CallKernel extends Statement {
@@ -15,7 +16,9 @@ export class CallKernel extends Statement {
                     str("FIELD"),
                     new Reuse.Source());
 
-    let ret = seq(str("CALL"), new Reuse.Constant(), star(field));
+    let ret = seq(str("CALL"),
+                  alt(new Reuse.Constant(), new Reuse.Field()),
+                  star(field));
 
     return ret;
   }

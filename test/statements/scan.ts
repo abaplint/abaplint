@@ -107,6 +107,21 @@ let tests = [
   "  WITHOUT TRMAC\n" +
   "  ENHANCEMENTS INTO l_enh\n" +
   "  INCLUDE INTO l_incl.",
+
+  "scan abap-source buffer\n" +
+  "  frame program   from lv_frame\n" +
+  "  include program from lv_program\n" +
+  "  tokens          into lv_tokens\n" +
+  "  statements      into lv_statements\n" +
+  "  with includes\n" +
+  "  with explicit enhancements\n" +
+  "  with implicit enhancements\n" +
+  "  with inactive enhancements\n" +
+  "  enhancement options into lv_eoptions\n" +
+  "  enhancements        into lv_enh\n" +
+  "  levels              into lv_levels\n" +
+  "  replacing                lv_replacing\n" +
+  "  id 'RENH' table lv_tab.",
 ];
 
 statementType(tests, "SCAN", Statements.Scan);

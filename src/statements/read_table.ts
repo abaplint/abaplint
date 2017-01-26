@@ -21,7 +21,7 @@ export class Read extends Statement {
 
     let index = seq(str("INDEX"), new Reuse.Source());
 
-    let compare = seq(alt(new Reuse.FieldSub(), new Reuse.Dynamic()),
+    let compare = seq(alt(seq(new Reuse.FieldSub(), opt(new Reuse.FieldLength())), new Reuse.Dynamic()),
                       str("="),
                       new Reuse.Source());
 

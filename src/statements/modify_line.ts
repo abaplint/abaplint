@@ -23,9 +23,10 @@ export class ModifyLine extends Statement {
     let lineValue = seq(str("LINE VALUE FROM"), new Reuse.Source());
     let index = seq(str("INDEX"), new Reuse.Source());
     let page = seq(str("OF PAGE"), new Reuse.Source());
+    let ocp = str("OF CURRENT PAGE");
     let lineFormat = str("LINE FORMAT INPUT OFF");
 
-    let options = per(index, value, from, format, page, lineFormat, lineValue);
+    let options = per(index, value, from, format, page, lineFormat, lineValue, ocp);
 
     let ret = seq(str("MODIFY"),
                   alt(str("CURRENT LINE"),

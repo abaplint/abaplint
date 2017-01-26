@@ -14,7 +14,9 @@ export class Submit extends Statement {
   public static get_matcher(): Combi.IRunnable {
     let sign = seq(str("SIGN"), new Reuse.Source());
     let eq = alt(str("="), str("EQ"), str("IN"), str("NE"), str("INCL"));
-    let awith = seq(str("WITH"), new Reuse.Field(), eq, new Reuse.Source(), opt(sign));
+    let compare = seq(eq, new Reuse.Source());
+    let between = seq(str("BETWEEN"), new Reuse.Source(), str("AND"), new Reuse.Source());
+    let awith = seq(str("WITH"), new Reuse.Field(), alt(compare, between));
     let prog = alt(new Reuse.Source(), new Reuse.Dynamic());
     let job = seq(str("VIA JOB"), new Reuse.Source(), str("NUMBER"), new Reuse.Source());
     let exporting = str("EXPORTING LIST TO MEMORY");
@@ -38,6 +40,7 @@ export class Submit extends Statement {
                    sset,
                    ssetp,
                    free,
+                   sign,
                    str("TO SAP-SPOOL"),
                    str("WITHOUT SPOOL DYNPRO"),
                    str("VIA SELECTION-SCREEN"),

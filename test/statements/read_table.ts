@@ -28,6 +28,7 @@ let tests = [
   "READ TABLE lt_tab WITH KEY = foo-bar.",
   "READ TABLE <tab> WITH KEY (gc_field) = lv_field TRANSPORTING NO FIELDS.",
   "READ TABLE <tab> TRANSPORTING NO FIELDS WITH KEY (lv_key) COMPONENTS (lv_comp) = <lv_field>.",
+  "READ TABLE data TRANSPORTING NO FIELDS WITH KEY line(6) = 'foo'.",
 ];
 
 statementType(tests, "READ", Statements.Read);

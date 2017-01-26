@@ -47,11 +47,7 @@ export class SyntaxCheck extends Statement {
                      new Reuse.Source(),
                      new Reuse.Source(),
                      new Reuse.Source(),
-                     message,
-                     line,
-                     word,
-                     opt(offset),
-                     opt(messageId));
+                     per(message, line, word, offset, messageId));
 
     return seq(str("SYNTAX-CHECK FOR"), alt(syntax, dynpro));
   }

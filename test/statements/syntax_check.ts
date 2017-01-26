@@ -28,6 +28,16 @@ let tests = [
   "    OFFSET     lv_offset\n" +
   "    MESSAGE-ID lv_id.",
 
+  "SYNTAX-CHECK FOR DYNPRO\n" +
+  "  dynpro->header\n" +
+  "  dynpro->fields\n" +
+  "  dynpro->flow\n" +
+  "  dynpro->params\n" +
+  "  MESSAGE lv_msg\n" +
+  "  MESSAGE-ID lv_id\n" +
+  "  LINE lv_line\n" +
+  "  WORD lv_word.",
+
   "SYNTAX-CHECK FOR source_code\n" +
   "  MESSAGE lv_message\n" +
   "  LINE    lv_line\n" +
