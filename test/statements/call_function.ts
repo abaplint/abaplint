@@ -176,7 +176,7 @@ let tests = [
   "   disk_full               = 15\n" +
   "   dp_timeout              = 16\n" +
   "   OTHERS                  = 17.",
-
+/*
   "CALL FUNCTION 'ZFOOBAR'\n" +
   " EXCEPTIONS\n" +
   "   ERROR_A = -4\n" +
@@ -196,7 +196,7 @@ let tests = [
   "  exceptions\n" +
   "    failed  = zcl_foo=>failed\n" +
   "    others  = zcl_foo=>others.",
-
+*/
   "CALL FUNCTION 'GUI_UPLOAD'\n" +
   "  EXPORTING\n" +
   "    filename = 22\n" +

@@ -109,7 +109,8 @@ export class ParameterException extends Combi.Reuse {
   public get_runnable() {
     return seq(new Field(),
                str("="),
-               alt(new Constant, new FieldSub(), new FieldChain()),
+//               alt(new Constant, new FieldSub(), new FieldChain()),
+               new SimpleName(),
                opt(seq(str("MESSAGE"), new Target())));
   }
 }
