@@ -18,12 +18,21 @@ export class Export extends Statement {
     let memory = seq(str("MEMORY ID"), new Reuse.Source());
     let from = seq(str("FROM"), new Reuse.Source());
     let client = seq(str("CLIENT"), new Reuse.Source());
+    let table = seq(str("INTERNAL TABLE"), new Reuse.Target());
+
+    let shared = seq(str("SHARED MEMORY"),
+                     new Reuse.Field(),
+                     str("("),
+                     new Reuse.Field(),
+                     str(")"),
+                     str("ID"),
+                     new Reuse.Field());
 
     let database = seq(str("DATABASE"),
                        new Reuse.Source(),
                        per(from, client, id));
 
-    let target = alt(db, memory, database);
+    let target = alt(db, memory, database, table, shared);
 
     let source = alt(new Reuse.ParameterListS(),
                      plus(new Reuse.Source()),

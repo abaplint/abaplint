@@ -13,8 +13,8 @@ export class UpdateDatabase extends Statement {
     let target = alt(new Reuse.DatabaseTable(), new Reuse.Dynamic());
 
     let set = seq(str("SET"),
-                  new Reuse.ParameterListS(),
-                  opt(seq(str("WHERE"), new Reuse.Cond())));
+                  alt(new Reuse.ParameterListS(), new Reuse.Dynamic()),
+                  opt(seq(str("WHERE"), new Reuse.SQLCond())));
 
     let fromTable = seq(str("FROM"),
                         opt(str("TABLE")),

@@ -23,7 +23,7 @@ export class Open extends Statement {
     let bom = str("SKIPPING BYTE-ORDER MARK");
 
     let ret = seq(str("OPEN DATASET"),
-                  new Reuse.Field(),
+                  new Reuse.Target(),
                   direction,
                   per(mode, encoding, pos, message, ignoring, bom));
 

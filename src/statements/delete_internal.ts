@@ -28,7 +28,9 @@ export class DeleteInternal extends Statement {
                        opt(seq(str("COMPARING"), plus(alt(new Reuse.FieldSub(), new Reuse.Dynamic())))),
                        opt(seq(str("USING KEY"), new Reuse.Field())));
 
-    return seq(str("DELETE"), alt(table, adjacent));
+    let fs = seq(new Reuse.FieldSymbol(), where);
+
+    return seq(str("DELETE"), alt(table, adjacent, fs));
   }
 
 }

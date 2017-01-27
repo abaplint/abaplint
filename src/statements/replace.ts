@@ -28,6 +28,8 @@ export class Replace extends Statement {
                   str("RESPECTING CASE"));
 
     let repl = seq(str("REPLACEMENT COUNT"), new Reuse.Target());
+    let replo = seq(str("REPLACEMENT OFFSET"), new Reuse.Target());
+    let repll = seq(str("REPLACEMENT LENGTH"), new Reuse.Target());
 
     let leng = seq(str("LENGTH"), new Reuse.Target());
 
@@ -43,7 +45,7 @@ export class Replace extends Statement {
                opt(seq(str("IN"), opt(str("TABLE")), new Reuse.Target())),
                per(seq(str("WITH"), new Reuse.Source()),
                    seq(str("INTO"), new Reuse.Target())),
-               opt(per(cas, mode, repl, leng)));
+               opt(per(cas, mode, repl, replo, repll, leng)));
   }
 
 }

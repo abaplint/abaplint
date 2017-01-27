@@ -56,6 +56,7 @@ export class Scan extends Statement {
                       str("WITHOUT TRMAC"),
                       str("WITH DECLARATIONS"),
                       str("WITH BLOCKS"),
+                      str("WITH LIST TOKENIZATION"),
                       str("WITH EXPLICIT ENHANCEMENTS"),
                       str("WITH IMPLICIT ENHANCEMENTS"),
                       str("WITH INACTIVE ENHANCEMENTS"),

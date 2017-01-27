@@ -22,6 +22,8 @@ let tests = [
   "REPLACE ALL OCCURRENCES OF '?' IN foo WITH space IN CHARACTER MODE IGNORING CASE.",
   "replace lv_foo with lv_space into lv_command length lv_length.",
   "replace all occurences of `1` in lv_foo with lv_bar.",
+  "REPLACE FIRST OCCURRENCE OF lv_str IN SECTION OFFSET lv_offset OF lv_of WITH lv_with IN BYTE MODE REPLACEMENT OFFSET lv_offset.",
+  "replace first occurrence of foo-bar in lv_source with moo-boo replacement offset lv_offset replacement length lv_length ignoring case.",
 ];
 
 statementType(tests, "REPLACE", Statements.Replace);

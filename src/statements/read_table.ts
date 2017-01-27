@@ -21,7 +21,7 @@ export class Read extends Statement {
 
     let index = seq(str("INDEX"), new Reuse.Source());
 
-    let compare = seq(alt(seq(new Reuse.FieldSub(), opt(new Reuse.FieldLength())), new Reuse.Dynamic()),
+    let compare = seq(alt(new Reuse.Target(), new Reuse.Dynamic()),
                       str("="),
                       new Reuse.Source());
 
@@ -32,9 +32,13 @@ export class Read extends Statement {
                       components,
                       seq(optPrio(str("=")), new Reuse.Source())));
 
+    let using = seq(str("USING KEY"), alt(new Reuse.Field(), new Reuse.Dynamic()));
+
+    let from = seq(str("FROM"), new Reuse.Source(), opt(using));
+
     let perm = per(alt(index,
                        key,
-                       seq(str("FROM"), new Reuse.Source())),
+                       from),
                    target,
                    str("CASTING"),
                    seq(str("TRANSPORTING"), plus(new Reuse.Field())),

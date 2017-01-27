@@ -122,6 +122,14 @@ let tests = [
   "  levels              into lv_levels\n" +
   "  replacing                lv_replacing\n" +
   "  id 'RENH' table lv_tab.",
+
+  "scan abap-source buffer\n" +
+  "  tokens     into l_tokens\n" +
+  "  statements into l_statements\n" +
+  "  with analysis\n" +
+  "  without trmac\n" +
+  "  with list tokenization\n" +
+  "  with pragmas '*'.",
 ];
 
 statementType(tests, "SCAN", Statements.Scan);

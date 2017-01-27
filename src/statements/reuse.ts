@@ -109,7 +109,7 @@ export class ParameterException extends Combi.Reuse {
   public get_runnable() {
     return seq(new Field(),
                str("="),
-               reg(/^[\w\d]+$/),
+               alt(new Constant, new FieldSub(), new FieldChain()),
                opt(seq(str("MESSAGE"), new Target())));
   }
 }
@@ -627,7 +627,7 @@ export class IncludeName extends Combi.Reuse {
 export class MessageClass extends Combi.Reuse {
   public get_runnable() {
 // "&1" can be used for almost anything(field names, method names etc.) in macros
-    return reg(/^(\/\w+\/)?\w+#?@?\/?!?$/);
+    return reg(/^>?(\/\w+\/)?\w+#?@?\/?!?&?>?$/);
   }
 }
 
@@ -795,10 +795,11 @@ export class Select extends Combi.Reuse {
     let count = seq(str("COUNT"), alt(tok(ParenLeft), tok(ParenLeftW)), opt(str("DISTINCT")), alt(str("*"), new Field()), str(")"));
     let max = seq(str("MAX"), alt(tok(ParenLeft), tok(ParenLeftW)), new Field(), str(")"));
     let min = seq(str("MIN"), alt(tok(ParenLeft), tok(ParenLeftW)), new Field(), str(")"));
+    let sum = seq(str("SUM"), alt(tok(ParenLeft), tok(ParenLeftW)), new Field(), str(")"));
 
     let fields = alt(str("*"),
                      new Dynamic(),
-                     plus(alt(new Field(), count, max, min)));
+                     plus(alt(new Field(), count, max, min, sum)));
 
     let joinType = seq(opt(alt(str("INNER"), str("LEFT OUTER"), str("LEFT"))), str("JOIN"));
 

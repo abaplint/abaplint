@@ -10,6 +10,7 @@ let tests = [
     "accepting padding IGNORING CONVERSION ERRORS ACCEPTING TRUNCATION.",
   "IMPORT mv_errty = mv_errty FROM DATA BUFFER p_attributes.",
   "IMPORT dir INTO dir FROM DATABASE bar(ix) ID foo TO moo.",
+  "IMPORT foo = bar[] FROM INTERNAL TABLE tab.",
 ];
 
 statementType(tests, "IMPORT", Statements.Import);

@@ -73,6 +73,7 @@ let tests = [
   "SELECT num MAX( count ) COUNT( * ) INTO TABLE lt_tab FROM zfoo.",
   "SELECT COUNT( DISTINCT id ) FROM zfoo INTO lv_cnt.",
   "SELECT SINGLE id FROM ztab connection (lv_con) INTO lv_id.",
+  "SELECT SUM( value ) FROM table INTO lv_count.",
 ];
 
 statementType(tests, "SELECT", Statements.Select);

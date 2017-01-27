@@ -146,11 +146,10 @@ let tests = [
   "call function 'ZFOOBAR'\n" +
   "  exceptions\n" +
   "   no_auth               = 1\n" +
-  "   system_failure        = 2  message msgtext\n" +
-  "   communication_failure = 3  message msgtext\n" +
+  "   system_failure        = 2 message msgtext\n" +
+  "   communication_failure = 3 message msgtext\n" +
   "   others.",
 */
-
   "CALL FUNCTION 'GUI_UPLOAD'\n" +
   " EXPORTING\n" +
   "   filename                = l_sfile\n" +
@@ -178,20 +177,25 @@ let tests = [
   "   dp_timeout              = 16\n" +
   "   OTHERS                  = 17.",
 
-/*
   "CALL FUNCTION 'ZFOOBAR'\n" +
   " EXCEPTIONS\n" +
   "   ERROR_A = -4\n" +
   "   ERROR_B = -6.",
-*/
 
-/*
   "CALL FUNCTION 'OWN_LOGICAL_SYSTEM_GET'\n" +
   "  IMPORTING\n" +
   "    OWN_LOGICAL_SYSTEM = lv_own\n" +
   "  EXCEPTIONS\n" +
   "    OTHERS             = GC_FOO-SYSTEM.",
-*/
+
+  "call function 'FOOBAR'\n" +
+  "  exporting\n" +
+  "    header  = header\n" +
+  "  tables\n" +
+  "    details = details\n" +
+  "  exceptions\n" +
+  "    failed  = zcl_foo=>failed\n" +
+  "    others  = zcl_foo=>others.",
 
   "CALL FUNCTION 'GUI_UPLOAD'\n" +
   "  EXPORTING\n" +

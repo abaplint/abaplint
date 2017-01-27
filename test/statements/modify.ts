@@ -24,6 +24,8 @@ let tests = [
   "MODIFY TABLE me->properties FROM prop TRANSPORTING text.",
   "MODIFY ls_foo-interface FROM ls_inter.",
   "MODIFY lt_tab FROM <data> INDEX sy-tabix ASSIGNING <fs>.",
+  "MODIFY ct_data FROM <ls_data> TRANSPORTING (b1) (b2).",
+  "MODIFY TABLE lt_obj FROM ls_obj TRANSPORTING foo-bar type.",
 ];
 
 statementType(tests, "MODIFY", Statements.Modify);

@@ -21,13 +21,14 @@ export class Import extends Statement {
 
     let buffer = seq(str("DATA BUFFER"), new Reuse.Source());
     let memory = seq(str("MEMORY ID"), new Reuse.Source());
+    let table = seq(str("INTERNAL TABLE"), new Reuse.Source());
 
     let database = seq(str("DATABASE"),
                        new Reuse.Source(),
                        per(dto, id),
                        opt(options));
 
-    let source = alt(buffer, memory, database);
+    let source = alt(buffer, memory, database, table);
 
     let to = plus(seq(new Reuse.Source(),
                       alt(str("TO"), str("INTO")),

@@ -16,6 +16,7 @@ let tests = [
   "DELETE ADJACENT DUPLICATES FROM <lt_data> COMPARING (foo) (bar).",
   "DELETE ADJACENT DUPLICATES FROM lt_tab COMPARING foo-moo boo-loo.",
   "DELETE lt_data USING KEY key_name WHERE bar = i_bar.",
+//  "DELETE <fs> WHERE (l_where).",
 ];
 
 statementType(tests, "DELETE", Statements.DeleteInternal);

@@ -18,6 +18,9 @@ let tests = [
   "message id sy-msgid type 'I' number sy-msgno display like 'E'.",
   "message id sy-msgid type 'I' number sy-msgno.",
   "MESSAGE w100(foo#) WITH ls_msg-msgv1.",
+  "MESSAGE e001(a&) WITH lv_par1.",
+  "MESSAGE e001(a>) RAISING exists.",
+  "MESSAGE x001(>1) WITH 'foo'.",
 ];
 
 statementType(tests, "MESSAGE", Statements.Message);

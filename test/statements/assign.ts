@@ -24,6 +24,7 @@ let tests = [
   "assign (class)=>(attr) to <f>.",
   "ASSIGN COMPONENT col OF STRUCTURE <ls_data> TO <lv_field> CASTING DECIMALS lv_dec.",
   "ASSIGN COMPONENT col OF STRUCTURE <ls_data> TO <lv_field> CASTING DECIMALS <ls_curr>-currdec.",
+  "assign data to <data> casting like bar.",
 //  "ASSIGN (FOO) TO <Z-BAR>.",
 ];
 

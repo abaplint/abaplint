@@ -29,6 +29,9 @@ let tests = [
   "READ TABLE <tab> WITH KEY (gc_field) = lv_field TRANSPORTING NO FIELDS.",
   "READ TABLE <tab> TRANSPORTING NO FIELDS WITH KEY (lv_key) COMPONENTS (lv_comp) = <lv_field>.",
   "READ TABLE data TRANSPORTING NO FIELDS WITH KEY line(6) = 'foo'.",
+  "read table tab assigning <fs> binary search with key node->from = lv_from_.",
+  "READ TABLE tab FROM ls_val USING KEY primary_key TRANSPORTING NO FIELDS.",
+  "READ TABLE <tab> FROM <line> USING KEY (key) TRANSPORTING NO FIELDS.",
 ];
 
 statementType(tests, "READ", Statements.Read);

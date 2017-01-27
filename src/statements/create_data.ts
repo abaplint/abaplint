@@ -11,6 +11,8 @@ export class CreateData extends Statement {
 
   public static get_matcher(): Combi.IRunnable {
 // todo, similar to DATA or TYPES?
+    let area = seq(str("AREA HANDLE"), new Reuse.Source());
+
     let type = alt(str("LIKE"),
                    str("TYPE"),
                    str("TYPE HANDLE"),
@@ -34,6 +36,7 @@ export class CreateData extends Statement {
 
     let ret = seq(str("CREATE DATA"),
                   new Reuse.Target(),
+                  opt(area),
                   opt(seq(type, alt(new Reuse.Source(), new Reuse.Dynamic()))),
                   opt(key),
                   opt(length),

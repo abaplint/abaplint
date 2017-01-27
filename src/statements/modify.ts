@@ -15,7 +15,7 @@ export class Modify extends Statement {
     let index = seq(str("INDEX"), new Reuse.Source());
     let from = seq(str("FROM"), opt(str("TABLE")), new Reuse.Source());
     let transporting = seq(str("TRANSPORTING"),
-                           alt(plus(new Reuse.Field()), new Reuse.Dynamic()));
+                           plus(alt(new Reuse.FieldSub(), new Reuse.Dynamic())));
     let where = seq(str("WHERE"), new Reuse.Cond());
     let client = str("CLIENT SPECIFIED");
     let assigning = seq(str("ASSIGNING"), new Reuse.FSTarget());

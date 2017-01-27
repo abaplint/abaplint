@@ -17,7 +17,8 @@ let tests = [
   "CREATE DATA lr_data TYPE LINE OF (type_ddic).",
   "CREATE DATA lr_data LIKE HASHED TABLE OF <lv_buf> WITH UNIQUE KEY (lv_key).",
   "CREATE DATA result TYPE STANDARD TABLE OF (foo) WITH NON-UNIQUE KEY (bar).",
-//  "CREATE DATA lv_ref AREA HANDLE lr_instance LIKE lt_foo.",
+  "create data foo-bar area handle lv_hdl like lv_bar.",
+  "CREATE DATA lv_ref AREA HANDLE lr_instance LIKE lt_foo.",
 ];
 
 statementType(tests, "CREATE DATA", Statements.CreateData);

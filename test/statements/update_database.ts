@@ -11,7 +11,8 @@ let tests = [
   "UPDATE usr02 SET foo = 'bar' WHERE moo = lv_boo.",
   "UPDATE (c_tabname) SET data_str = iv_data WHERE type = iv_type AND value = iv_value.",
   "UPDATE zfoo CLIENT SPECIFIED SET foo = bar WHERE moo = space.",
-//  "UPDATE zfoo CLIENT SPECIFIED SET foo = bar WHERE moo = SPACE OR boo IS NULL.",
+  "UPDATE zfoo SET (l_string).",
+  "UPDATE zfoo CLIENT SPECIFIED SET foo = bar WHERE moo = SPACE OR boo IS NULL.",
 ];
 
 statementType(tests, "UPDATE", Statements.UpdateDatabase);
