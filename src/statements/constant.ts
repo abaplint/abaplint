@@ -15,7 +15,7 @@ export class Constant extends Statement {
 
     let def = seq(fieldName, opt(new Reuse.FieldLength()), opt(new Reuse.Type()), new Reuse.Value());
 
-    let beginEnd = seq(alt(str("BEGIN OF"), str("END OF")), fieldName);
+    let beginEnd = seq(alt(str("BEGIN"), str("END")), str("OF"), fieldName);
 
     let ret = seq(alt(str("CONSTANT"), str("CONSTANTS")), alt(def, beginEnd));
 

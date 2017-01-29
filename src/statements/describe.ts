@@ -18,7 +18,7 @@ export class Describe extends Statement {
                     new Reuse.Source(),
                     opt(per(tlines, kind)));
 
-    let mode = alt(str("IN BYTE MODE"), str("IN CHARACTER MODE"));
+    let mode = seq(str("IN"), alt(str("BYTE"), str("CHARACTER")), str("MODE"));
 
     let field = seq(str("FIELD"),
                     new Reuse.Source(),

@@ -12,6 +12,8 @@ let tests = [
   "SORT lt_list ASCENDING BY id ASCENDING.",
   "SORT BY foo bar.",
   "SORT lt_text AS TEXT.",
+  "SORT lt_tab ASCENDING STABLE.",
+  "sort lt_tab as text ascending by field.",
 
   "SORT data BY\n" +
   "  (foo-f01)\n" +

@@ -4,7 +4,6 @@ import * as Combi from "../combi";
 
 let str = Combi.str;
 let seq = Combi.seq;
-let opt = Combi.opt;
 let alt = Combi.alt;
 let per = Combi.per;
 let plus = Combi.plus;
@@ -23,11 +22,11 @@ export class Sort extends Statement {
 
     let by = seq(str("BY"), fields);
 
-    let target = seq(new Reuse.Target(), opt(alt(str("STABLE"), order)));
+    let target = seq(new Reuse.Target(),
+                     per(order, by, str("STABLE"), str("AS TEXT")));
 
     return seq(str("SORT"),
-               per(by, target),
-               opt(str("AS TEXT")));
+               alt(by, target));
   }
 
 }

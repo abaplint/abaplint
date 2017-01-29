@@ -6,14 +6,15 @@ let str = Combi.str;
 let seq = Combi.seq;
 let alt = Combi.alt;
 let per = Combi.per;
+let opt = Combi.opt;
 
 export class Open extends Statement {
 
   public static get_matcher(): Combi.IRunnable {
-    let mode = alt(str("IN BINARY MODE"),
-                   str("IN TEXT MODE"),
-                   str("IN LEGACY TEXT MODE"),
-                   str("IN LEGACY BINARY MODE"));
+    let mode = seq(str("IN"),
+                   opt(str("LEGACY")),
+                   alt(str("BINARY MODE"),
+                       str("TEXT MODE")));
 
     let direction = alt(str("FOR OUTPUT"), str("FOR INPUT"));
     let encoding = seq(str("ENCODING"), new Reuse.Source());
