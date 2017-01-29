@@ -764,6 +764,22 @@ export class Constant extends Combi.Reuse {
   }
 }
 
+export class SQLJoin extends Combi.Reuse {
+  public get_runnable() {
+    let aas = seq(str("AS"), new Field());
+
+    let joinType = seq(opt(alt(str("INNER"), str("LEFT OUTER"), str("LEFT"))), str("JOIN"));
+
+    let join = seq(joinType,
+                   new DatabaseTable(),
+                   opt(aas),
+                   str("ON"),
+                   plus(new SQLCond()));
+
+    return join;
+  }
+}
+
 export class Select extends Combi.Reuse {
   public get_runnable() {
 
@@ -810,20 +826,12 @@ export class Select extends Combi.Reuse {
                      new Dynamic(),
                      plus(alt(new Field(), count, max, min, sum)));
 
-    let joinType = seq(opt(alt(str("INNER"), str("LEFT OUTER"), str("LEFT"))), str("JOIN"));
-
-    let join = seq(joinType,
-                   new DatabaseTable(),
-                   opt(aas),
-                   str("ON"),
-                   plus(new SQLCond()));
-
     let up = seq(str("UP TO"), new Source(), str("ROWS"));
 
     let client = str("CLIENT SPECIFIED");
     let bypass = str("BYPASSING BUFFER");
 
-    let source = seq(from, star(join), opt(tok(WParenRightW)));
+    let source = seq(from, star(new SQLJoin()), opt(tok(WParenRightW)));
 
     let group = seq(str("GROUP BY"), new Field());
 
