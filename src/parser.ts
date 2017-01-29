@@ -78,7 +78,8 @@ export default class Parser {
       let length = statement.getTokens().length;
       let last = statement.getTokens()[length - 1];
 
-      if (length === 1 && last instanceof Tokens.Punctuation) {
+      if (length === 1
+          && last instanceof Tokens.Punctuation) {
         statement = new Empty(this.tokensToNodes(statement.getTokens()));
       } else if (statement instanceof Unknown
           && last instanceof Tokens.Punctuation) {
@@ -98,6 +99,10 @@ export default class Parser {
     let tokens = statement.getTokens();
     let last = tokens[tokens.length - 1];
     tokens = this.removePragma(this.removeLast(tokens));
+    if (tokens.length === 0) {
+      return new Empty(this.tokensToNodes(this.removePragma(statement.getTokens())));
+    }
+
     let test = this.map[tokens[0].getStr().toUpperCase()];
     test = test ? test.concat(this.map[""]) : this.map[""];
 
