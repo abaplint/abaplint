@@ -619,14 +619,13 @@ export class Combi {
     return result;
   }
 
+// assumption: no pgragmas supplied in tokens input
   public static run(runnable: IRunnable, tokens: Array<Tokens.Token>, ver = Version.v750): BasicNode[] {
     this.ver = ver;
 
-    tokens = this.removePragma(tokens);
     let input = new Result(tokens);
-
     let result = runnable.run([input]);
-//    console.dir(result.length);
+
     for (let res of result) {
       if (res.length() === 0) {
         return res.getNodes();
@@ -640,9 +639,6 @@ export class Combi {
     return this.ver;
   }
 
-  private static removePragma(tokens: Array<Tokens.Token>): Array<Tokens.Token> {
-    return tokens.filter(function (value) { return !(value instanceof Tokens.Pragma); } );
-  }
 }
 
 // -----------------------------------------------------------------------------

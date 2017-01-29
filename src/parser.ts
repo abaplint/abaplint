@@ -90,18 +90,22 @@ export default class Parser {
     this.statements = result;
   }
 
+  private static removePragma(tokens: Array<Tokens.Token>): Array<Tokens.Token> {
+    return tokens.filter(function (value) { return !(value instanceof Tokens.Pragma); } );
+  }
+
   private static match(statement: Statement, ver: Version): Statement {
-    let test = this.map[statement.getTokens()[0].getStr().toUpperCase()];
+    let tokens = statement.getTokens();
+    let last = tokens[tokens.length - 1];
+    tokens = this.removePragma(this.removeLast(tokens));
+    let test = this.map[tokens[0].getStr().toUpperCase()];
     test = test ? test.concat(this.map[""]) : this.map[""];
 
     for (let st of test) {
-      let tokens = statement.getTokens();
-
       let match = Combi.run(Statements[st].get_matcher(),
-                            this.removeLast(tokens),
+                            tokens,
                             ver);
       if (match) {
-        let last = tokens[tokens.length - 1];
         return new Statements[st](match.concat(new TokenNode("Terminator", last)));
       }
     }
