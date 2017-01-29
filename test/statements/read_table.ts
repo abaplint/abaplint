@@ -32,6 +32,7 @@ let tests = [
   "read table tab assigning <fs> binary search with key node->from = lv_from_.",
   "READ TABLE tab FROM ls_val USING KEY primary_key TRANSPORTING NO FIELDS.",
   "READ TABLE <tab> FROM <line> USING KEY (key) TRANSPORTING NO FIELDS.",
+  "READ TABLE tab ASSIGNING <wa> with key path = iv_path.",
 ];
 
 statementType(tests, "READ", Statements.Read);

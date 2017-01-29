@@ -11,6 +11,7 @@ let tests = [
   "IMPORT mv_errty = mv_errty FROM DATA BUFFER p_attributes.",
   "IMPORT dir INTO dir FROM DATABASE bar(ix) ID foo TO moo.",
   "IMPORT foo = bar[] FROM INTERNAL TABLE tab.",
+  "IMPORT data TO lt_data FROM SHARED MEMORY indx(aa) ID lv_key.",
 ];
 
 statementType(tests, "IMPORT", Statements.Import);

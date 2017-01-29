@@ -67,6 +67,13 @@ let tests = [
   "  AND EXISTS ( SELECT * FROM zother AS s\n" +
   "    WHERE s~type = t~type AND field = 'X' ).",
 
+  "SELECT * FROM zfoo \n" +
+  "  UP TO 1000 ROWS \n" +
+  "  INTO TABLE lt_result \n" +
+  "  WHERE name = iv_name\n" +
+  "  AND moo NOT IN ( SELECT msgnr FROM zbar\n" +
+  "    WHERE name = iv_name ).",
+
   "SELECT sdfs FROM basdf WHERE name is null.",
   "SELECT * FROM zfoo INTO ls_bar UP TO 1 ROWS WHERE moo = boo AND (lt_where) AND bar = foo.",
   "select count(*) into (count) from ztab where bar is not null.",

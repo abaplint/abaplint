@@ -196,6 +196,12 @@ export class Compare extends Combi.Reuse {
   }
 }
 
+export class SQLFieldName extends Combi.Reuse {
+  public get_runnable() {
+    return reg(/^[\w~]+$/);
+  }
+}
+
 export class SQLCompare extends Combi.Reuse {
   public get_runnable() {
     let val = alt(new FieldSub(), new Constant());
@@ -205,7 +211,9 @@ export class SQLCompare extends Combi.Reuse {
                    plus(seq(str(","), val)),
                    alt(tok(ParenRightW), tok(ParenRight)));
 
-    let inn = seq(str("IN"), alt(new Source(), list));
+    let subSelect = seq(str("("), new Select(), str(")"));
+
+    let inn = seq(opt(str("NOT")), str("IN"), alt(new Source(), list, subSelect));
 
     let operator = alt(str("="),
                        str("<>"),
@@ -226,7 +234,7 @@ export class SQLCompare extends Combi.Reuse {
 
     let nul = seq(str("IS"), opt(str("NOT")), str("NULL"));
 
-    let rett = seq(new Source(),
+    let rett = seq(new SQLFieldName(),
                    alt(seq(operator, opt(ver(Version.v740sp05, tok(WAt))), new Source()),
                        inn,
                        between,
@@ -234,7 +242,7 @@ export class SQLCompare extends Combi.Reuse {
 
     let ret = rett;
 
-    let exists = seq(str("EXISTS"), str("("), new Select(), str(")"));
+    let exists = seq(str("EXISTS"), subSelect);
 
     return alt(ret, new Dynamic(), exists);
   }

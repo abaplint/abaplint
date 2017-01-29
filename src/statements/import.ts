@@ -19,6 +19,14 @@ export class Import extends Statement {
                       str("IGNORING CONVERSION ERRORS"),
                       str("ACCEPTING TRUNCATION"));
 
+    let shared = seq(str("SHARED MEMORY"),
+                     new Reuse.Field(),
+                     str("("),
+                     new Reuse.Field(),
+                     str(")"),
+                     str("ID"),
+                     new Reuse.Field());
+
     let buffer = seq(str("DATA BUFFER"), new Reuse.Source());
     let memory = seq(str("MEMORY ID"), new Reuse.Source());
     let table = seq(str("INTERNAL TABLE"), new Reuse.Source());
@@ -28,7 +36,7 @@ export class Import extends Statement {
                        per(dto, id),
                        opt(options));
 
-    let source = alt(buffer, memory, database, table);
+    let source = alt(buffer, memory, database, table, shared);
 
     let to = plus(seq(new Reuse.Source(),
                       alt(str("TO"), str("INTO")),
