@@ -625,7 +625,7 @@ export class Combi {
 
     let input = new Result(tokens);
     let result = runnable.run([input]);
-
+//    console.log("res: " + result.length);
     for (let res of result) {
       if (res.length() === 0) {
         return res.getNodes();

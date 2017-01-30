@@ -282,11 +282,31 @@ export class SQLCond extends Combi.Reuse {
   }
 }
 
+export class FormParamType extends Combi.Reuse {
+  public get_runnable() {
+    let def = seq(str("DEFAULT"), alt(new Constant(), new FieldChain()));
+
+    let table = seq(alt(str("STANDARD"), str("HASHED"), str("INDEX"), str("SORTED"), str("ANY")),
+                    str("TABLE"));
+
+    let ret = seq(optPrio(seq(table, str("OF"))),
+                  optPrio(str("REF TO")),
+                  new TypeName(),
+                  opt(def));
+
+    let like = seq(str("LIKE"), new FieldChain());
+
+    return alt(seq(str("TYPE"), alt(table, ret)), like);
+  }
+}
+
 export class FormParam extends Combi.Reuse {
   public get_runnable() {
-    let fieldName = reg(/^\w+$/);
+// do not allow parameters to be named TYPE or LIKE, this is a workaround
+// as type is an allowed name for a parameter in ABAP
+    let fieldName = reg(/^(?!type$|like$)\w+$/i);
     let field = seq(alt(fieldName, new PassByValue()),
-                    optPrio(alt(new Type(), new TypeTable())));
+                    optPrio(new FormParamType));
 
     return field;
   }
