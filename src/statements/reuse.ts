@@ -463,6 +463,12 @@ export class SimpleName extends Combi.Reuse {
   }
 }
 
+export class NamespaceSimpleName extends Combi.Reuse {
+  public get_runnable() {
+    return reg(/^(\/\w+\/)?[\w%]+$/);
+  }
+}
+
 export class ClassName extends Combi.Reuse {
   public get_runnable() {
     return reg(/^(\/\w+\/)?\w+$/);
