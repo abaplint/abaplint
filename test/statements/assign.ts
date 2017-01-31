@@ -26,6 +26,7 @@ let tests = [
   "ASSIGN COMPONENT col OF STRUCTURE <ls_data> TO <lv_field> CASTING DECIMALS <ls_curr>-currdec.",
   "assign data to <data> casting like bar.",
   "ASSIGN <ls_data> TO <ls_/foo/bar>.",
+  "ASSIGN COMPONENT lv_name OF STRUCTURE iv_input TO <target> CASTING TYPE HANDLE <foo>-type.",
 //  "ASSIGN (FOO) TO <Z-BAR>.",
 ];
 

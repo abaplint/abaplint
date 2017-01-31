@@ -5,6 +5,7 @@ let tests = [
   "CONSTANTS c_cluster_type TYPE c VALUE 'C'.",
   "constants lc_empty type string value is initial.",
   "constants c_oo_class(7)      VALUE 'foobar'.",
+  "constants /foo/bar type string value 'val'.",
 ];
 
 statementType(tests, "CONSTANT", Statements.Constant);

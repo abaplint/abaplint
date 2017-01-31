@@ -6,6 +6,7 @@ let tests = [
   "search foo for bar in byte mode.",
   "search foo for bar in character mode starting at lv_start.",
   "search foo for 'a' starting at 1 ending at 2.",
+  "SEARCH foo FOR tag STARTING AT lv_start IN BYTE MODE.",
 ];
 
 statementType(tests, "SEARCH", Statements.Search);

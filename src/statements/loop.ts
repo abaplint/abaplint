@@ -25,7 +25,7 @@ export class Loop extends Statement {
 
     let to = seq(str("TO"), new Reuse.Source());
 
-    let usingKey = seq(str("USING KEY"), new Reuse.Source());
+    let usingKey = seq(str("USING KEY"), alt(new Reuse.Source(), new Reuse.Dynamic()));
 
     let options = per(into, from, to, where, usingKey);
 

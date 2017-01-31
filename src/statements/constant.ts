@@ -6,16 +6,13 @@ let str = Combi.str;
 let seq = Combi.seq;
 let alt = Combi.alt;
 let opt = Combi.opt;
-let reg = Combi.regex;
 
 export class Constant extends Statement {
 
   public static get_matcher(): Combi.IRunnable {
-    let fieldName = reg(/^\w+$/);
+    let def = seq(new Reuse.NamespaceSimpleName(), opt(new Reuse.FieldLength()), opt(new Reuse.Type()), new Reuse.Value());
 
-    let def = seq(fieldName, opt(new Reuse.FieldLength()), opt(new Reuse.Type()), new Reuse.Value());
-
-    let beginEnd = seq(alt(str("BEGIN"), str("END")), str("OF"), fieldName);
+    let beginEnd = seq(alt(str("BEGIN"), str("END")), str("OF"), new Reuse.NamespaceSimpleName());
 
     let ret = seq(alt(str("CONSTANT"), str("CONSTANTS")), alt(def, beginEnd));
 

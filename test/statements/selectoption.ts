@@ -19,6 +19,7 @@ let tests = [
   "SELECT-OPTIONS s_foo FOR bar DEFAULT 'AA' TO 'ZZ'.",
   "SELECT-OPTIONS s_bar FOR foo-bar NO-EXTENSION OBLIGATORY.",
   "SELECT-OPTIONS s_att FOR _att NO INTERVALS LOWER CASE.",
+  "SELECT-OPTIONS s_id FOR /foo/bar-id NO INTERVALS.",
 ];
 
 statementType(tests, "SELECT-OPTIONS", Statements.SelectOption);

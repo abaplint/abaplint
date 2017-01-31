@@ -6,6 +6,7 @@ let str = Combi.str;
 let seq = Combi.seq;
 let opt = Combi.opt;
 let alt = Combi.alt;
+let per = Combi.per;
 
 export class Search extends Statement {
 
@@ -19,9 +20,7 @@ export class Search extends Statement {
                   new Reuse.Source(),
                   str("FOR"),
                   new Reuse.Source(),
-                  opt(mode),
-                  opt(starting),
-                  opt(ending));
+                  opt(per(mode, starting, ending)));
 
     return ret;
   }

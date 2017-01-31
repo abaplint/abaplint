@@ -19,6 +19,7 @@ let tests = [
   "LOOP AT itab INTO wa GROUP BY wa-column.",
   "LOOP AT GROUP group INTO member.",
   "LOOP AT itab INTO DATA(wa) GROUP BY ( sy-tabix - 1 ) DIV n + 1.",
+  "LOOP AT <tab> ASSIGNING <data> USING KEY (lv_name) WHERE (lv_where).",
 ];
 
 statementType(tests, "LOOP", Statements.Loop);

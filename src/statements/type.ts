@@ -10,7 +10,7 @@ let opt = Combi.opt;
 export class Type extends Statement {
 
   public static get_matcher(): Combi.IRunnable {
-    let def = seq(new Reuse.SimpleName(),
+    let def = seq(new Reuse.NamespaceSimpleName(),
                   opt(new Reuse.FieldLength()),
                   opt(alt(new Reuse.Type(), new Reuse.TypeTable())));
 

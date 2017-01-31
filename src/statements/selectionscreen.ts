@@ -14,7 +14,7 @@ let tok = Combi.tok;
 export class SelectionScreen extends Statement {
 
   public static get_matcher(): Combi.IRunnable {
-    let blockName = reg(/^\w+$/);
+    let blockName = new Reuse.FieldSub();
 
     let beginBlock = seq(str("BEGIN OF BLOCK"),
                          blockName,
@@ -52,12 +52,15 @@ export class SelectionScreen extends Statement {
                       opt(new Reuse.Source()),
                       opt(commentOpt));
 
-    let command = seq(str("USER-COMMAND"), new Reuse.Field());
+    let command = seq(str("USER-COMMAND"), alt(new Reuse.Field(), new Reuse.Constant()));
+
+    let visible = seq(str("VISIBLE LENGTH"), reg(/^\d+$/));
 
     let push = seq(str("PUSHBUTTON"),
                    position,
                    new Reuse.Source(),
-                   command);
+                   command,
+                   opt(visible));
 
     let def = seq(str("DEFAULT SCREEN"), new Reuse.Integer());
 
@@ -86,6 +89,8 @@ export class SelectionScreen extends Statement {
 
     let uline = seq(str("ULINE"), opt(position));
 
+    let param = seq(str("INCLUDE PARAMETERS"), new Reuse.Field());
+
     let ret = seq(str("SELECTION-SCREEN"),
                   alt(comment,
                       func,
@@ -100,6 +105,7 @@ export class SelectionScreen extends Statement {
                       endBlock,
                       beginLine,
                       endLine,
+                      param,
                       beginScreen,
                       endScreen));
 

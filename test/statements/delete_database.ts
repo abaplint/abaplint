@@ -12,6 +12,7 @@ let tests = [
   "DELETE FROM zfoo WHERE timestamp < l_timestampl AND state IN (c_value1, c_value2).",
   "DELETE FROM zfoo WHERE bar LIKE 'FOO'.",
   "delete from zfoo where id is not null.",
+  "DELETE FROM /foo/bar CONNECTION (con) WHERE id = lv_id.",
 ];
 
 statementType(tests, "DELETE", Statements.DeleteDatabase);

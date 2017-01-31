@@ -14,6 +14,7 @@ let tests = [
   "FORM back RAISING RESUMABLE(zcx_exception).",
   "FORM name USING foo like tab value(I_*BSEG) like BSEG value(I_BSEG) like BSEG.",
   "FORM read USING iv_foo TYPE /name/type.",
+//  "FORM read TABLES et_tab STRUCTURE /foo/bar.",
   "FORM /foo/bar.",
   "FORM foo-bar.",
   "FORM foo--bar.",

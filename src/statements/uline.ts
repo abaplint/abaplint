@@ -16,7 +16,7 @@ export class Uline extends Statement {
   public static get_matcher(): Combi.IRunnable {
     let right = alt(tok(ParenRight), tok(ParenRightW));
 
-    let pos = alt(seq(reg(/^\/\d?$/),
+    let pos = alt(seq(reg(/^(\/\d?|\d)$/),
                       opt(seq(tok(ParenLeft), reg(/^\d+$/), right))),
                   seq(tok(WParenLeft), reg(/^\d+$/), right));
 

@@ -467,7 +467,7 @@ export class SimpleName extends Combi.Reuse {
 
 export class NamespaceSimpleName extends Combi.Reuse {
   public get_runnable() {
-    return reg(/^(\/\w+\/)?[\w%]+$/);
+    return reg(/^((\/\w+\/)|(\/\w+\/)?[\w%]+)$/);
   }
 }
 
@@ -648,13 +648,13 @@ export class Source extends Combi.Reuse {
 
 export class Modif extends Combi.Reuse {
   public get_runnable() {
-    return reg(/^\w{3}$/);
+    return reg(/^\w{1,3}$/);
   }
 }
 
 export class FieldSub extends Combi.Reuse {
   public get_runnable() {
-    let ret = seq(reg(/^\w+$/),
+    let ret = seq(reg(/^(\/\w+\/)?\w+$/),
                   star(seq(tok(Dash), reg(/^\w+$/))));
 
     return ret;

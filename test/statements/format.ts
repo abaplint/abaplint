@@ -14,6 +14,7 @@ let tests = [
   "FORMAT COLOR 3 INTENSIFIED.",
   "FORMAT COLOR col_foo OFF.",
   "FORMAT INTENSIFIED OFF.",
+  "FORMAT HOTSPOT.",
 ];
 
 statementType(tests, "FORMAT", Statements.Format);
