@@ -304,9 +304,7 @@ export class FormParamType extends Combi.Reuse {
 
 export class FormParam extends Combi.Reuse {
   public get_runnable() {
-// do not allow parameters to be named TYPE or LIKE, this is a workaround
-// as type is an allowed name for a parameter in ABAP
-    let fieldName = reg(/^(?!type$|like$)\w+$/i);
+    let fieldName = reg(/^\w+$/i);
     let field = seq(alt(fieldName, new PassByValue()),
                     optPrio(new FormParamType));
 
