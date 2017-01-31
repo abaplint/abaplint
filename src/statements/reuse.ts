@@ -18,6 +18,7 @@ let tok = Combi.tok;
 let ver = Combi.ver;
 let per = Combi.per;
 let optPrio = Combi.optPrio;
+let altPrio = Combi.altPrio;
 let star = Combi.star;
 let plus = Combi.plus;
 
@@ -289,14 +290,15 @@ export class FormParamType extends Combi.Reuse {
     let table = seq(alt(str("STANDARD"), str("HASHED"), str("INDEX"), str("SORTED"), str("ANY")),
                     str("TABLE"));
 
-    let ret = seq(optPrio(seq(table, str("OF"))),
-                  optPrio(str("REF TO")),
+    let tabseq = seq(table, optPrio(seq(str("OF"), new TypeName)));
+
+    let ret = seq(optPrio(str("REF TO")),
                   new TypeName(),
                   opt(def));
 
     let like = seq(str("LIKE"), new FieldChain());
 
-    return alt(seq(str("TYPE"), alt(table, ret)), like);
+    return alt(seq(str("TYPE"), altPrio(tabseq, ret)), like);
   }
 }
 

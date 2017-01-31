@@ -602,6 +602,52 @@ class Alternative implements IRunnable {
   }
 }
 
+// prioritized alternative, skip others if match found
+class AlternativePriority implements IRunnable {
+  private list: Array<IRunnable>;
+
+  constructor(list: IRunnable[]) {
+    if (list.length < 2) {
+      throw new Error("Alternative, length error");
+    }
+    this.list = list;
+  }
+
+  public run(r: Array<Result>): Array<Result> {
+    let result: Array<Result> = [];
+
+    for (let seq of this.list) {
+//      console.log(seq.toStr());
+      let temp = seq.run(r);
+
+      result = result.concat(temp);
+
+      if (temp.length > 0) {
+        break;
+      }
+    }
+
+    return result;
+  }
+
+  public railroad() {
+    let children = this.list.map((e) => { return e.railroad(); });
+    return "Railroad.Choice(0, " + children.join() + ")";
+  }
+
+  public toStr() {
+    let ret = "";
+    for (let i of this.list) {
+      ret = ret + i.toStr() + ",";
+    }
+    return "alt(" + ret + ")";
+  }
+
+  public first() {
+    return "";
+  }
+}
+
 export class Combi {
 
   private static ver: Version;
@@ -658,6 +704,9 @@ export function seqs(first: IRunnable, ...rest: IRunnable[]): IRunnable {
 }
 export function alt(first: IRunnable, ...rest: IRunnable[]): IRunnable {
   return new Alternative([first].concat(rest));
+}
+export function altPrio(first: IRunnable, ...rest: IRunnable[]): IRunnable {
+  return new AlternativePriority([first].concat(rest));
 }
 export function per(first: IRunnable, ...rest: IRunnable[]): IRunnable {
   return new Permutation([first].concat(rest));

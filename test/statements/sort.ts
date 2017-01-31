@@ -14,6 +14,7 @@ let tests = [
   "SORT lt_text AS TEXT.",
   "SORT lt_tab ASCENDING STABLE.",
   "sort lt_tab as text ascending by field.",
+  "SORT lt_table.",
 
   "SORT data BY\n" +
   "  (foo-f01)\n" +

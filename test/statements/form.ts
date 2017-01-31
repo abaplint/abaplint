@@ -59,6 +59,30 @@ let tests = [
   "  it_foo09 TYPE ANY TABLE\n" +
   "  it_foo10 TYPE ANY TABLE\n" +
   "  it_foo11 TYPE ANY TABLE.",
+
+  "FORM action USING\n" +
+  "  foo TYPE STANDARD TABLE\n" +
+  "  foo TYPE STANDARD TABLE\n" +
+  "  foo TYPE STANDARD TABLE\n" +
+  "  foo TYPE STANDARD TABLE\n" +
+  "  foo TYPE STANDARD TABLE\n" +
+  "  foo TYPE STANDARD TABLE\n" +
+  "  foo TYPE STANDARD TABLE\n" +
+  "  foo TYPE STANDARD TABLE\n" +
+  "  foo TYPE STANDARD TABLE\n" +
+  "  foo TYPE STANDARD TABLE\n" +
+  "  foo TYPE STANDARD TABLE\n" +
+  "  foo TYPE STANDARD TABLE\n" +
+  "  foo TYPE STANDARD TABLE\n" +
+  "  foo TYPE STANDARD TABLE\n" +
+  "  foo TYPE STANDARD TABLE\n" +
+  "  foo TYPE STANDARD TABLE\n" +
+  "  foo TYPE STANDARD TABLE\n" +
+  "  foo TYPE STANDARD TABLE\n" +
+  "  foo TYPE STANDARD TABLE\n" +
+  "  foo TYPE STANDARD TABLE\n" +
+  "  foo TYPE STANDARD TABLE\n" +
+  "  foo TYPE STANDARD TABLE.",
 ];
 
 statementType(tests, "FORM", Statements.Form);

@@ -6,6 +6,7 @@ let str = Combi.str;
 let seq = Combi.seq;
 let alt = Combi.alt;
 let per = Combi.per;
+let opt = Combi.opt;
 let plus = Combi.plus;
 let optPrio = Combi.optPrio;
 
@@ -26,7 +27,7 @@ export class Sort extends Statement {
                      per(order, by, str("STABLE"), str("AS TEXT")));
 
     return seq(str("SORT"),
-               alt(by, target));
+               opt(alt(by, target)));
   }
 
 }
