@@ -27,10 +27,10 @@ export class CreateData extends Statement {
 
     let length = seq(str("LENGTH"), new Reuse.Source());
     let decimals = seq(str("DECIMALS"), new Reuse.Source());
+    let uniq = alt(str("UNIQUE"), str("NON-UNIQUE"));
+    let def = seq(opt(uniq), str("DEFAULT KEY"));
 
-    let def = str("DEFAULT KEY");
-
-    let kdef = seq(alt(str("UNIQUE"), str("NON-UNIQUE")), str("KEY"), new Reuse.Dynamic());
+    let kdef = seq(uniq, str("KEY"), new Reuse.Dynamic());
 
     let key = seq(str("WITH"), alt(def, kdef));
 

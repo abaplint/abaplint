@@ -25,8 +25,7 @@ export class Open extends Statement {
 
     let ret = seq(str("OPEN DATASET"),
                   new Reuse.Target(),
-                  direction,
-                  per(mode, encoding, pos, message, ignoring, bom));
+                  per(direction, mode, encoding, pos, message, ignoring, bom));
 
     return ret;
   }

@@ -18,7 +18,7 @@ export class Parameter extends Statement {
     let memory = seq(str("MEMORY ID"), new Reuse.Field());
     let listbox = seq(str("AS LISTBOX VISIBLE LENGTH"), new Reuse.Constant());
     let cmd = seq(str("USER-COMMAND"), new Reuse.Field());
-    let modif = seq(str("MODIF ID"), new Reuse.Field());
+    let modif = seq(str("MODIF ID"), new Reuse.Modif());
     let visible = seq(str("VISIBLE LENGTH"), new Reuse.Constant());
     let length = seq(str("LENGTH"), new Reuse.Constant());
     let match = seq(str("MATCHCODE OBJECT"), new Reuse.Field());

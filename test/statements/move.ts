@@ -7,6 +7,7 @@ let tests = [
   "move 2 to lv_foo.",
   "move exact c_val to l_int.",
   "MOVE foo ?TO bar.",
+  "MOVE '2' TO %bar.",
   "lv_foo = 2.",
   "rs_data-raw = gv_out.",
   "rv_bool = boolc( sy-subrc = 0 ).",
@@ -39,6 +40,7 @@ let tests = [
   "lv_chunk = iv_line+<match>-offset.",
   "lv_chunk = iv_line(<match>-length).",
   "lv_chunk = iv_line+<match>-offset(<match>-length).",
+  "ls_/foo/bar-visible = 'X'.",
 
   "lv_foo = 'bar' && 'foo' && 'foo' && 'foo' && 'foo' && 'foo' &&\n" +
   "  'foo' && 'foo' && 'foo' && 'foo' && 'foo' && 'foo' && 'foo' &&\n" +

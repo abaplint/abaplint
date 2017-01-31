@@ -19,6 +19,7 @@ let tests = [
   "CREATE DATA result TYPE STANDARD TABLE OF (foo) WITH NON-UNIQUE KEY (bar).",
   "create data foo-bar area handle lv_hdl like lv_bar.",
   "CREATE DATA lv_ref AREA HANDLE lr_instance LIKE lt_foo.",
+  "CREATE DATA lr_data TYPE STANDARD TABLE OF (name) WITH NON-UNIQUE DEFAULT KEY.",
 ];
 
 statementType(tests, "CREATE DATA", Statements.CreateData);

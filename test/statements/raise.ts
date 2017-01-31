@@ -11,6 +11,7 @@ let tests = [
     "/iwbep/cx_mgw_not_impl_exc=>method_not_implemented method = 'CREATE_DEEP_ENTITY'.",
   "RAISE RESUMABLE EXCEPTION TYPE zcx_error EXPORTING textid = zcx_error=>some_values_too_high.",
   "RAISE EXCEPTION me->dd_sobject_store-exception.",
+  "RAISE EXCEPTION lr_/foo/cx_bar.",
 ];
 
 statementType(tests, "RAISE", Statements.Raise);

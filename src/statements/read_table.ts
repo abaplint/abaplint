@@ -34,12 +34,13 @@ export class Read extends Statement {
 
     let using = seq(str("USING KEY"), alt(new Reuse.Field(), new Reuse.Dynamic()));
 
-    let from = seq(str("FROM"), new Reuse.Source(), opt(using));
+    let from = seq(str("FROM"), new Reuse.Source());
 
     let perm = per(alt(index,
                        key,
                        from),
                    target,
+                   using,
                    str("CASTING"),
                    seq(str("TRANSPORTING"), plus(new Reuse.Field())),
                    str("BINARY SEARCH"));

@@ -25,6 +25,7 @@ let tests = [
   "PARAMETERS moo-boo LIKE foo-bar.",
   "parameters foo radiobutton group 123.",
   "PARAMETERS foo TYPE bar-moo VALUE CHECK DEFAULT '*'.",
+  "PARAMETER moo TYPE /foo/bar MODIF ID 011.",
 ];
 
 statementType(tests, "PARAMETER", Statements.Parameter);

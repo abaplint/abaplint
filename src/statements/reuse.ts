@@ -30,7 +30,7 @@ export class Integer extends Combi.Reuse {
 
 export class FieldSymbol extends Combi.Reuse {
   public get_runnable() {
-    return reg(/^<\w+>$/);
+    return reg(/^<[\w\/]+>$/);
   }
 }
 
@@ -473,7 +473,7 @@ export class NamespaceSimpleName extends Combi.Reuse {
 
 export class ClassName extends Combi.Reuse {
   public get_runnable() {
-    return reg(/^(\/\w+\/)?\w+$/);
+    return reg(/^\w*(\/\w{3,}\/)?\w+$/);
   }
 }
 
@@ -485,7 +485,7 @@ export class MacroName extends Combi.Reuse {
 
 export class FormName extends Combi.Reuse {
   public get_runnable() {
-    return seq(reg(/^[\w%][\w\*]*$/), star(seq(tok(Dash), reg(/^\w+$/))));
+    return seq(reg(/^[\w%\/][\w\*\/]*$/), star(seq(tok(Dash), opt(reg(/^\w+$/)))));
   }
 }
 
@@ -646,6 +646,12 @@ export class Source extends Combi.Reuse {
   }
 }
 
+export class Modif extends Combi.Reuse {
+  public get_runnable() {
+    return reg(/^\w{3}$/);
+  }
+}
+
 export class FieldSub extends Combi.Reuse {
   public get_runnable() {
     let ret = seq(reg(/^\w+$/),
@@ -680,7 +686,7 @@ export class Field extends Combi.Reuse {
   public get_runnable() {
 // "&1" can be used for almost anything(field names, method names etc.) in macros
 // field names with only digits should not be possible
-    return reg(/^[&_]?\*?(\/\w+\/)?\d*[a-zA-Z_][\w\*]*(~\w+)?$/);
+    return reg(/^[&_]?\*?\w*(\/\w+\/)?\d*[a-zA-Z_%][\w\*%]*(~\w+)?$/);
   }
 }
 

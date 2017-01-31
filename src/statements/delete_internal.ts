@@ -6,6 +6,7 @@ let str = Combi.str;
 let seq = Combi.seq;
 let alt = Combi.alt;
 let opt = Combi.opt;
+let per = Combi.per;
 let plus = Combi.plus;
 
 export class DeleteInternal extends Statement {
@@ -20,8 +21,14 @@ export class DeleteInternal extends Statement {
                      opt(seq(str("TO"), new Reuse.Source())));
 
     let where = seq(str("WHERE"), new Reuse.Cond());
-    let key = seq(alt(str("WITH KEY"), str("WITH TABLE KEY")), plus(new Reuse.Compare()));
-    let table = seq(opt(str("TABLE")), new Reuse.Target(), alt(index, using, fromTo, key), opt(where));
+
+    let key = seq(str("WITH TABLE KEY"),
+                  opt(seq(new Reuse.SimpleName(), str("COMPONENTS"))),
+                  plus(new Reuse.Compare()));
+
+    let table = seq(opt(str("TABLE")),
+                    new Reuse.Target(),
+                    alt(per(index, using), fromTo, key), opt(where));
 
     let adjacent = seq(str("ADJACENT DUPLICATES FROM"),
                        new Reuse.Target(),

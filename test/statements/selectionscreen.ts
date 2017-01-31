@@ -34,6 +34,7 @@ let tests = [
   "selection-screen pushbutton /1(50) text-001 user-command us01.",
   "SELECTION-SCREEN ULINE /1(72).",
   "SELECTION-SCREEN TAB (20) button1 USER-COMMAND push1.",
+  "SELECTION-SCREEN COMMENT 3(20) FOR FIELD fboo MODIF ID 004.",
 ];
 
 statementType(tests, "SELECTION-SCREEN", Statements.SelectionScreen);

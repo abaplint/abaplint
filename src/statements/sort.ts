@@ -24,10 +24,10 @@ export class Sort extends Statement {
     let by = seq(str("BY"), fields);
 
     let target = seq(new Reuse.Target(),
-                     per(order, by, str("STABLE"), str("AS TEXT")));
+                     opt(per(order, by, str("STABLE"), str("AS TEXT"))));
 
     return seq(str("SORT"),
-               opt(alt(by, target)));
+               alt(by, target));
   }
 
 }

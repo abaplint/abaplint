@@ -40,7 +40,7 @@ export class SelectionScreen extends Statement {
     let endLine = str("END OF LINE");
 
     let commentOpt = per(seq(str("FOR FIELD"), new Reuse.Field()),
-                         seq(str("MODIF ID"), new Reuse.Field()));
+                         seq(str("MODIF ID"), new Reuse.Modif()));
 
     let position = seq(opt(reg(/^\/?\d+$/)),
                        alt(tok(ParenLeft), tok(WParenLeft)),

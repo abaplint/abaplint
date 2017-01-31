@@ -33,6 +33,7 @@ let tests = [
   "READ TABLE tab FROM ls_val USING KEY primary_key TRANSPORTING NO FIELDS.",
   "READ TABLE <tab> FROM <line> USING KEY (key) TRANSPORTING NO FIELDS.",
   "READ TABLE tab ASSIGNING <wa> with key path = iv_path.",
+  "READ TABLE lt_tab INTO ls_tab INDEX sy-tabix + 1 USING KEY name.",
 ];
 
 statementType(tests, "READ", Statements.Read);
