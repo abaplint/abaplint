@@ -39,6 +39,8 @@ let tests = [
   "SELECT SINGLE node_key FROM snwd_bpa INTO @DATA(node_key).",
   "SELECT SINGLE node_key FROM snwd_bpa INTO @DATA(node_key) WHERE bp_id = @lv_bp_id.",
   "SELECT node_key INTO CORRESPONDING FIELDS OF @<entity> FROM snwd_so WHERE (where_clause) ORDER BY (orderby_clause).",
+  "SELECT field INTO l_val FROM table WHERE field1 IN var AND field2 LT sy-datum AND field3 GT sy-datum AND NOT field4 = 'X'.",
+  "SELECT * INTO data FROM table WHERE name LIKE l_name ESCAPE '!' AND text NOT LIKE l_text ESCAPE '!'.",
 
   "SELECT marc~matnr marc~werks marc~herkl\n" +
   "       mara~ntgew mara~gewei marc~beskz\n" +

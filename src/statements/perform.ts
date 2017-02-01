@@ -8,6 +8,7 @@ let seq = Combi.seq;
 let opt = Combi.opt;
 let alt = Combi.alt;
 let tok = Combi.tok;
+let per = Combi.per;
 let plus = Combi.plus;
 
 export class Perform extends Statement {
@@ -28,16 +29,17 @@ export class Perform extends Statement {
 
     let program = seq(str("IN PROGRAM"), opt(alt(new Reuse.Dynamic(), programName)));
 
+    let found = str("IF FOUND");
+
     let full = seq(alt(new Reuse.FormName(), new Reuse.Dynamic()),
-                   opt(seq(program,
-                           opt(str("IF FOUND")))));
+                   opt(program));
 
     return seq(str("PERFORM"),
-               alt(short, full),
+               per(alt(short, full), found),
                opt(tables),
                opt(using),
                opt(changing),
-               opt(str("IF FOUND")),
+               opt(found),
                opt(commit));
   }
 

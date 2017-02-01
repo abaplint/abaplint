@@ -21,11 +21,13 @@ export class CreateData extends Statement {
                    str("TYPE TABLE OF"),
                    str("TYPE STANDARD TABLE OF"),
                    str("LIKE HASHED TABLE OF"),
+                   str("TYPE HASHED TABLE OF"),
                    str("LIKE STANDARD TABLE OF"),
                    str("LIKE LINE OF"),
                    str("TYPE LINE OF"));
 
     let length = seq(str("LENGTH"), new Reuse.Source());
+    let initial = seq(str("INITIAL SIZE"), new Reuse.Source());
     let decimals = seq(str("DECIMALS"), new Reuse.Source());
     let uniq = alt(str("UNIQUE"), str("NON-UNIQUE"));
     let def = seq(opt(uniq), str("DEFAULT KEY"));
@@ -39,6 +41,7 @@ export class CreateData extends Statement {
                   opt(area),
                   opt(seq(type, alt(new Reuse.Source(), new Reuse.Dynamic()))),
                   opt(key),
+                  opt(initial),
                   opt(length),
                   opt(decimals));
 

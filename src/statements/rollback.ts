@@ -9,7 +9,8 @@ let alt = Combi.alt;
 export class Rollback extends Statement {
 
   public static get_matcher(): Combi.IRunnable {
-    let connection = seq(str("CONNECTION"), new Reuse.Dynamic());
+    let connection = seq(str("CONNECTION"),
+                         alt(new Reuse.Dynamic(), new Reuse.Field()));
 
     return seq(str("ROLLBACK"), alt(str("WORK"), connection));
   }

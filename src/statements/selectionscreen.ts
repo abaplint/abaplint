@@ -39,8 +39,13 @@ export class SelectionScreen extends Statement {
     let beginLine = str("BEGIN OF LINE");
     let endLine = str("END OF LINE");
 
+    let modif = seq(str("MODIF ID"), new Reuse.Modif());
+
+    let visible = seq(str("VISIBLE LENGTH"), reg(/^\d+$/));
+
     let commentOpt = per(seq(str("FOR FIELD"), new Reuse.Field()),
-                         seq(str("MODIF ID"), new Reuse.Modif()));
+                         modif,
+                         visible);
 
     let position = seq(opt(reg(/^\/?\d+$/)),
                        alt(tok(ParenLeft), tok(WParenLeft)),
@@ -54,12 +59,11 @@ export class SelectionScreen extends Statement {
 
     let command = seq(str("USER-COMMAND"), alt(new Reuse.Field(), new Reuse.Constant()));
 
-    let visible = seq(str("VISIBLE LENGTH"), reg(/^\d+$/));
-
     let push = seq(str("PUSHBUTTON"),
                    position,
                    new Reuse.Source(),
                    command,
+                   opt(modif),
                    opt(visible));
 
     let def = seq(str("DEFAULT SCREEN"), new Reuse.Integer());
@@ -68,7 +72,7 @@ export class SelectionScreen extends Statement {
                   tok(WParenLeft),
                   new Reuse.Integer(),
                   tok(ParenRightW),
-                  new Reuse.Field(),
+                  new Reuse.FieldSub(),
                   command,
                   opt(def));
 

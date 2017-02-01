@@ -228,16 +228,18 @@ export class SQLCompare extends Combi.Reuse {
                        str("GE"),
                        str("GT"),
                        str("LT"),
-                       str("LE"),
-                       str("LIKE"));
+                       str("LE"));
 
     let between = seq(str("BETWEEN"), new Source(), str("AND"), new Source());
+
+    let like = seq(opt(str("NOT")), str("LIKE"), new Source(), optPrio(seq(str("ESCAPE"), new Source())));
 
     let nul = seq(str("IS"), opt(str("NOT")), str("NULL"));
 
     let rett = seq(new SQLFieldName(),
                    alt(seq(operator, opt(ver(Version.v740sp05, tok(WAt))), new Source()),
                        inn,
+                       like,
                        between,
                        nul));
 
@@ -270,12 +272,11 @@ export class SQLCond extends Combi.Reuse {
   public get_runnable() {
     let operator = alt(str("AND"), str("OR"));
 
-    let another = seq(opt(str("NOT")),
-                      tok(WParenLeftW),
-                      new SQLCond(),
-                      alt(tok(WParenRightW), tok(WParenRight)));
+    let paren = seq(tok(WParenLeftW),
+                    new SQLCond(),
+                    alt(tok(WParenRightW), tok(WParenRight)));
 
-    let cnd = alt(new SQLCompare(), another);
+    let cnd = seq(optPrio(str("NOT")), alt(new SQLCompare(), paren));
 
     let ret = seq(cnd, star(seq(operator, cnd)));
 

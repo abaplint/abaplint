@@ -16,9 +16,8 @@ export class Report extends Statement {
     let message = seq(str("MESSAGE-ID"), new Reuse.MessageClass());
 
     return seq(str("REPORT"),
-               opt(new Reuse.Field()),
+               opt(new Reuse.NamespaceSimpleName()),
                opt(per(heading, size, count, message)));
-
   }
 
 }

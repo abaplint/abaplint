@@ -9,6 +9,8 @@ let tests = [
   "REPORT zfoobar NO STANDARD PAGE HEADING LINE-SIZE 1023 LINE-COUNT 600.",
   "REPORT zabapgit.",
   "report zfoobar message-id s#.",
+  "REPORT /foo/123.",
+  "REPORT /foo/bar.",
 ];
 
 statementType(tests, "REPORT", Statements.Report);

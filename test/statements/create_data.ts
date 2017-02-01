@@ -20,6 +20,8 @@ let tests = [
   "create data foo-bar area handle lv_hdl like lv_bar.",
   "CREATE DATA lv_ref AREA HANDLE lr_instance LIKE lt_foo.",
   "CREATE DATA lr_data TYPE STANDARD TABLE OF (name) WITH NON-UNIQUE DEFAULT KEY.",
+  "CREATE DATA lr_data LIKE STANDARD TABLE OF <l_data> INITIAL SIZE l_size.",
+  "CREATE DATA lr_data TYPE HASHED TABLE OF (mv_tabname) WITH UNIQUE KEY (lt_key).",
 ];
 
 statementType(tests, "CREATE DATA", Statements.CreateData);

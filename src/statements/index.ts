@@ -71,6 +71,7 @@ export * from "./delete_report";
 export * from "./controls";
 export * from "./at_line_selection";
 export * from "./new_page";
+export * from "./set_dataset";
 export * from "./get_property";
 export * from "./scroll_list";
 export * from "./load_of_program";

@@ -16,7 +16,7 @@ export class Open extends Statement {
                    alt(str("BINARY MODE"),
                        str("TEXT MODE")));
 
-    let direction = alt(str("FOR OUTPUT"), str("FOR INPUT"));
+    let direction = seq(str("FOR"), alt(str("OUTPUT"), str("INPUT"), str("APPENDING")));
     let encoding = seq(str("ENCODING"), new Reuse.Source());
     let pos = seq(str("AT POSITION"), new Reuse.Source());
     let message = seq(str("MESSAGE"), new Reuse.Target());

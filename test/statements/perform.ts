@@ -17,6 +17,7 @@ let tests = [
   "PERFORM moo ON ROLLBACK.",
   "PERFORM read_*table(zfoo) USING code.",
   "PERFORM %run IN PROGRAM (L_REPID) CHANGING foo.",
+  "PERFORM foo(zbar) IF FOUND USING l_data CHANGING l_chg.",
 ];
 
 statementType(tests, "PERFORM", Statements.Perform);
