@@ -67,6 +67,7 @@ export * from "./at_user_command";
 export * from "./position";
 export * from "./resume";
 export * from "./stop";
+export * from "./get_pf_status";
 export * from "./delete_report";
 export * from "./controls";
 export * from "./at_line_selection";

@@ -751,8 +751,8 @@ export class TypeParam extends Combi.Reuse {
 export class TypeTable extends Combi.Reuse {
   public get_runnable() {
     let likeType = alt(str("LIKE"), str("TYPE"));
-
     let header = str("WITH HEADER LINE");
+    let initial = seq(str("INITIAL SIZE"), new Constant());
 
     let key = seq(str("WITH"),
                   opt(alt(str("NON-UNIQUE"), str("UNIQUE"))),
@@ -766,6 +766,7 @@ export class TypeTable extends Combi.Reuse {
                         opt(str("REF TO")),
                         opt(new TypeName()),
                         opt(header),
+                        opt(initial),
                         opt(key));
 
     let occurs = seq(str("OCCURS"), new Integer());

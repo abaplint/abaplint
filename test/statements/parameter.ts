@@ -26,6 +26,7 @@ let tests = [
   "parameters foo radiobutton group 123.",
   "PARAMETERS foo TYPE bar-moo VALUE CHECK DEFAULT '*'.",
   "PARAMETER moo TYPE /foo/bar MODIF ID 011.",
+  "PARAMETERS p_bar TYPE /foo/bar AS LISTBOX USER-COMMAND baar VISIBLE LENGTH 35.",
 ];
 
 statementType(tests, "PARAMETER", Statements.Parameter);

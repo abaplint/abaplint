@@ -12,6 +12,7 @@ let tests = [
   "IMPORT dir INTO dir FROM DATABASE bar(ix) ID foo TO moo.",
   "IMPORT foo = bar[] FROM INTERNAL TABLE tab.",
   "IMPORT data TO lt_data FROM SHARED MEMORY indx(aa) ID lv_key.",
+  "IMPORT tab = data FROM DATABASE /foo/bar(tg) TO ls_target CLIENT '000' ID lc_id.",
 ];
 
 statementType(tests, "IMPORT", Statements.Import);

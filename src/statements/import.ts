@@ -14,6 +14,7 @@ export class Import extends Statement {
   public static get_matcher(): Combi.IRunnable {
     let id = seq(str("ID"), new Reuse.Source());
     let dto = seq(str("TO"), new Reuse.Target());
+    let client = seq(str("CLIENT"), new Reuse.Source());
 
     let options = per(str("ACCEPTING PADDING"),
                       str("IGNORING CONVERSION ERRORS"),
@@ -33,7 +34,7 @@ export class Import extends Statement {
 
     let database = seq(str("DATABASE"),
                        new Reuse.Source(),
-                       per(dto, id),
+                       per(dto, id, client),
                        opt(options));
 
     let source = alt(buffer, memory, database, table, shared);

@@ -16,7 +16,7 @@ export class Parameter extends Statement {
     let radio = seq(str("RADIOBUTTON GROUP"), new Reuse.RadioGroupName());
     let type = seq(alt(str("TYPE"), str("LIKE")), new Reuse.FieldChain());
     let memory = seq(str("MEMORY ID"), new Reuse.Field());
-    let listbox = seq(str("AS LISTBOX VISIBLE LENGTH"), new Reuse.Constant());
+    let listbox = str("AS LISTBOX");
     let cmd = seq(str("USER-COMMAND"), new Reuse.Field());
     let modif = seq(str("MODIF ID"), new Reuse.Modif());
     let visible = seq(str("VISIBLE LENGTH"), new Reuse.Constant());
