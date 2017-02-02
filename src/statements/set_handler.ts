@@ -11,11 +11,14 @@ let plus = Combi.plus;
 export class SetHandler extends Statement {
 
   public static get_matcher(): Combi.IRunnable {
+    let activation = seq(str("ACTIVATION"), new Reuse.Source());
+
+    let fo = seq(str("FOR"), alt(str("ALL INSTANCES"), new Reuse.Source()));
+
     let ret = seq(str("SET HANDLER"),
                   plus(new Reuse.Target()),
-                  opt(seq(str("FOR"),
-                          alt(str("ALL INSTANCES"), new Reuse.Source()),
-                          opt(seq(str("ACTIVATION"), new Reuse.Source())))));
+                  opt(fo),
+                  opt(activation));
 
     return ret;
   }

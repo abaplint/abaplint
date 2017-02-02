@@ -14,7 +14,8 @@ export class Static extends Statement {
 
     let ret = seq(alt(str("STATIC"), str("STATICS")),
                   new Reuse.SimpleName(),
-                  opt(alt(type, new Reuse.TypeTable())));
+                  opt(alt(type, new Reuse.TypeTable())),
+                  opt(new Reuse.Value()));
 
     return ret;
   }

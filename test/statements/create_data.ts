@@ -22,6 +22,7 @@ let tests = [
   "CREATE DATA lr_data TYPE STANDARD TABLE OF (name) WITH NON-UNIQUE DEFAULT KEY.",
   "CREATE DATA lr_data LIKE STANDARD TABLE OF <l_data> INITIAL SIZE l_size.",
   "CREATE DATA lr_data TYPE HASHED TABLE OF (mv_tabname) WITH UNIQUE KEY (lt_key).",
+  "create data lt_ref type sorted table of (iv_tabname) with unique key foo bar.",
 ];
 
 statementType(tests, "CREATE DATA", Statements.CreateData);

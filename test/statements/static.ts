@@ -6,6 +6,7 @@ let tests = [
   "STATICS st_obj_serializer_map TYPE SORTED TABLE OF ty_obj_serializer_map WITH UNIQUE KEY item.",
   "statics tx_title(40) type c.",
   "statics l_heading.",
+  "STATICS sv_first TYPE abap_bool VALUE abap_true.",
 ];
 
 statementType(tests, "STATIC", Statements.Static);

@@ -7,6 +7,7 @@ let tests = [
   "set handler handler1 handler2 for all instances.",
   "SET HANDLER me->link_click FOR alv->get_event( ).",
   "set handler foobar.",
+  "SET HANDLER foobar ACTIVATION ' '.",
 ];
 
 statementType(tests, "SET HANDLER", Statements.SetHandler);

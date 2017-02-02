@@ -22,6 +22,7 @@ export class Parameter extends Statement {
     let visible = seq(str("VISIBLE LENGTH"), new Reuse.Constant());
     let length = seq(str("LENGTH"), new Reuse.Constant());
     let match = seq(str("MATCHCODE OBJECT"), new Reuse.Field());
+    let decimals = seq(str("DECIMALS"), new Reuse.Source());
 
     let perm = per(type,
                    def,
@@ -29,6 +30,7 @@ export class Parameter extends Statement {
                    match,
                    cmd,
                    length,
+                   decimals,
                    radio,
                    memory,
                    modif,

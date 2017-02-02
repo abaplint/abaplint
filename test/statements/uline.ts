@@ -10,6 +10,7 @@ let tests = [
   "ULINE AT (c_line_size).",
   "ULINE AT /1(80) .",
   "ULINE AT 3(12).",
+  "ULINE /10.",
 ];
 
 statementType(tests, "ULINE", Statements.Uline);

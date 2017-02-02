@@ -6,6 +6,7 @@ let str = Combi.str;
 let seq = Combi.seq;
 let alt = Combi.alt;
 let opt = Combi.opt;
+let plus = Combi.plus;
 
 export class CreateData extends Statement {
 
@@ -19,9 +20,11 @@ export class CreateData extends Statement {
                    str("TYPE REF TO"),
                    str("LIKE TABLE OF"),
                    str("TYPE TABLE OF"),
-                   str("TYPE STANDARD TABLE OF"),
+                   str("TYPE SORTED TABLE OF"),
+                   str("LIKE SORTED TABLE OF"),
                    str("LIKE HASHED TABLE OF"),
                    str("TYPE HASHED TABLE OF"),
+                   str("TYPE STANDARD TABLE OF"),
                    str("LIKE STANDARD TABLE OF"),
                    str("LIKE LINE OF"),
                    str("TYPE LINE OF"));
@@ -32,7 +35,7 @@ export class CreateData extends Statement {
     let uniq = alt(str("UNIQUE"), str("NON-UNIQUE"));
     let def = seq(opt(uniq), str("DEFAULT KEY"));
 
-    let kdef = seq(uniq, str("KEY"), new Reuse.Dynamic());
+    let kdef = seq(uniq, str("KEY"), alt(plus(new Reuse.Field()), new Reuse.Dynamic()));
 
     let key = seq(str("WITH"), alt(def, kdef));
 
