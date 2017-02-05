@@ -63,6 +63,8 @@ export class DefinitionsTop implements IRule {
           || statement instanceof Statements.Constant
           || statement instanceof Statements.Include
           || statement instanceof Statements.Static
+          || statement instanceof Statements.StaticBegin
+          || statement instanceof Statements.StaticEnd
           || statement instanceof Statements.FieldSymbol) {
         if (mode === AFTER) {
           issue = new Issue(this, statement.getStart(), file);
