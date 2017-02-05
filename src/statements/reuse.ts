@@ -785,15 +785,15 @@ export class TypeTable extends Combi.Reuse {
 export class ConstantString extends Combi.Reuse {
   public get_runnable() {
     let text = seq(tok(ParenLeft), reg(/^\w{3}$/), alt(tok(ParenRightW), tok(ParenRight)));
-    let stri = seq(reg(/^('.*')|(`.*`)$/), opt(text));
+    let constant = reg(/^('.*')|(`.*`)$/);
+    let concat = seq(str("&"), constant);
+    let stri = seq(constant, star(concat), opt(text));
     return stri;
   }
 }
 
 export class Constant extends Combi.Reuse {
   public get_runnable() {
-//    let text = seq(tok(ParenLeft), reg(/^\w{3}$/), alt(tok(ParenRightW), tok(ParenRight)));
-//    let stri = seq(reg(/^('.*')|(`.*`)$/), opt(text));
     return alt(new ConstantString(), new Integer());
   }
 }
