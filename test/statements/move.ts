@@ -41,6 +41,7 @@ let tests = [
   "lv_chunk = iv_line(<match>-length).",
   "lv_chunk = iv_line+<match>-offset(<match>-length).",
   "ls_/foo/bar-visible = 'X'.",
+  "lv_type = mr_property->*-data-type.",
 
   "lv_foo = 'bar' && 'foo' && 'foo' && 'foo' && 'foo' && 'foo' &&\n" +
   "  'foo' && 'foo' && 'foo' && 'foo' && 'foo' && 'foo' && 'foo' &&\n" +

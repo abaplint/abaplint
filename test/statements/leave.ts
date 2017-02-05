@@ -13,6 +13,7 @@ let tests = [
   "LEAVE TO LIST-PROCESSING.",
   "LEAVE PROGRAM.",
   "LEAVE TO TRANSACTION lv_tcode AND SKIP FIRST SCREEN.",
+  "leave list-processing and return to screen 0.",
 ];
 
 statementType(tests, "LEAVE", Statements.Leave);

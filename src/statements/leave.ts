@@ -18,7 +18,7 @@ export class Leave extends Statement {
 
     return seq(str("LEAVE"),
                opt(alt(str("TO CURRENT TRANSACTION"),
-                       seq(str("TO LIST-PROCESSING"), opt(ret)),
+                       seq(opt(str("TO")), str("LIST-PROCESSING"), opt(ret)),
                        str("LIST-PROCESSING"),
                        str("SCREEN"),
                        transaction,

@@ -38,7 +38,13 @@ export class Export extends Statement {
                      plus(new Reuse.Source()),
                      new Reuse.Dynamic());
 
-    return seq(str("EXPORT"), source, str("TO"), target, opt(str("COMPRESSION ON")));
+    let compression = seq(str("COMPRESSION"), alt(str("ON"), str("OFF")));
+
+    return seq(str("EXPORT"),
+               source,
+               str("TO"),
+               target,
+               opt(compression));
   }
 
 }

@@ -15,8 +15,7 @@ export class FetchNext extends Statement {
     let table = seq(alt(str("INTO"), str("APPENDING")),
                     opt(str("CORRESPONDING FIELDS OF")),
                     str("TABLE"),
-                    new Reuse.Target(),
-                    opt(size));
+                    new Reuse.Target());
 
     let record = seq(str("INTO"),
                      opt(str("CORRESPONDING FIELDS OF")),
@@ -24,7 +23,8 @@ export class FetchNext extends Statement {
 
     let ret = seq(str("FETCH NEXT CURSOR"),
                   new Reuse.Source(),
-                  alt(record, table));
+                  alt(record, table),
+                  opt(size));
 
     return ret;
   }

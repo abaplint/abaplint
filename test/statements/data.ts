@@ -42,7 +42,9 @@ let tests = [
     "WITH NON-UNIQUE SORTED KEY no_case COMPONENTS no_case.",
   "DATA %id TYPE flag.",
   "class-data gv_var type zfoo value 'FOO' read-only .",
+  "DATA /foo/bar TYPE /foo/bar.",
 //  "DATA ret TYPE TABLE OF foobar INITIAL SIZE 10 WITH HEADER LINE.",
+//  "DATA range TYPE RANGE OF char30 WITH HEADER LINE.",
 ];
 
 statementType(tests, "DATA", Statements.Data);

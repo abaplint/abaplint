@@ -13,6 +13,7 @@ let tests = [
   "EXPORT foo = lt_foo TO DATABASE indx(rt) FROM indx_wa CLIENT sy-mandt ID lv_id.",
   "EXPORT foo = <bar> TO INTERNAL TABLE tab.",
   "EXPORT tab = lt_tab TO SHARED MEMORY bar(aa) ID lv_id.",
+  "EXPORT size = l_size TO DATA BUFFER ls_foo-data COMPRESSION OFF.",
 ];
 
 statementType(tests, "EXPORT", Statements.Export);

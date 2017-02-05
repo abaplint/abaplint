@@ -40,9 +40,10 @@ export class Describe extends Statement {
                        mode);
 
     let lines = seq(str("NUMBER OF LINES"), new Reuse.Target());
+    let line = seq(str("LINE"), new Reuse.Source(), str("PAGE"), new Reuse.Target());
     let index = seq(str("INDEX"), new Reuse.Target());
 
-    let list = seq(str("LIST"), per(lines, index));
+    let list = seq(str("LIST"), per(lines, index, line));
 
     return seq(str("DESCRIBE"), alt(table, field, distance, list));
   }

@@ -6,6 +6,7 @@ let str = Combi.str;
 let seq = Combi.seq;
 let opt = Combi.opt;
 let per = Combi.per;
+let optPrio = Combi.optPrio;
 
 export class Program extends Statement {
 
@@ -16,7 +17,7 @@ export class Program extends Statement {
     let line = seq(str("LINE-SIZE"), new Reuse.Source());
     let options = per(message, size, heading, line);
 
-    return seq(str("PROGRAM"), new Reuse.Field(), opt(options));
+    return seq(str("PROGRAM"), optPrio(new Reuse.Field()), opt(options));
   }
 
 }

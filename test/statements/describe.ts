@@ -21,6 +21,7 @@ let tests = [
   "DESCRIBE FIELD lv_foo LENGTH lv_len.",
   "describe table lt_tab kind lv_kind.",
   "DESCRIBE TABLE lt_foo.",
+  "DESCRIBE LIST LINE sy-lilli PAGE lv_page.",
 ];
 
 statementType(tests, "DESCRIBE", Statements.Describe);

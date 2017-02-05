@@ -16,6 +16,8 @@ export class Open extends Statement {
                    alt(str("BINARY MODE"),
                        str("TEXT MODE")));
 
+    let code = seq(str("CODE PAGE"), new Reuse.Source());
+
     let direction = seq(str("FOR"), alt(str("OUTPUT"), str("INPUT"), str("APPENDING")));
     let encoding = seq(str("ENCODING"), new Reuse.Source());
     let pos = seq(str("AT POSITION"), new Reuse.Source());
@@ -25,7 +27,7 @@ export class Open extends Statement {
 
     let ret = seq(str("OPEN DATASET"),
                   new Reuse.Target(),
-                  per(direction, mode, encoding, pos, message, ignoring, bom));
+                  per(direction, mode, encoding, pos, message, ignoring, bom, code));
 
     return ret;
   }

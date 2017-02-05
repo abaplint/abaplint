@@ -305,7 +305,7 @@ export class FormParamType extends Combi.Reuse {
 
 export class FormParam extends Combi.Reuse {
   public get_runnable() {
-    let fieldName = reg(/^\w+$/i);
+    let fieldName = seq(reg(/^\w+$/), optPrio(seq(tok(Dash), reg(/^\w+$/))));
     let field = seq(alt(fieldName, new PassByValue()),
                     optPrio(new FormParamType));
 
@@ -424,9 +424,10 @@ export class FieldLength extends Combi.Reuse {
 
 export class FieldChain extends Combi.Reuse {
   public get_runnable() {
+
     let chain = seq(alt(new Field(), new FieldSymbol()),
                     optPrio(new TableExpression()),
-                    star(seq(new ArrowOrDash(), new FieldAll(), opt(new TableExpression()))));
+                    star(seq(new ArrowOrDash(), alt(str("*"), new FieldAll()), opt(new TableExpression()))));
 
     let ret = seq(chain, optPrio(new FieldOffset()), optPrio(new FieldLength()));
 
@@ -564,7 +565,9 @@ export class TableBody extends Combi.Reuse {
 
 export class Source extends Combi.Reuse {
   public get_runnable() {
-    let method = seq(new MethodCallChain(), opt(seq(new ArrowOrDash(), new FieldChain())));
+    let ref = seq(tok(Arrow), str("*"));
+
+    let method = seq(new MethodCallChain(), optPrio(seq(new ArrowOrDash(), new FieldChain())));
 
     let rparen = alt(tok(WParenRightW), tok(WParenRight));
 
@@ -574,7 +577,6 @@ export class Source extends Combi.Reuse {
                     rparen);
 
     let after = seq(alt(str("&"), str("&&"), new ArithOperator()), new Source());
-    let ref = seq(tok(Arrow), str("*"));
 
     let bool = seq(alt(str("BOOLC"), str("XSDBOOL")), tok(ParenLeftW), new Cond(), str(")"));
 

@@ -23,7 +23,7 @@ export class Data extends Statement {
                     opt(str("READ-ONLY")),
                     opt(initial));
 
-    return seq(start, new Reuse.SimpleName(), alt(simple, table));
+    return seq(start, new Reuse.NamespaceSimpleName(), alt(simple, table));
   }
 
 }

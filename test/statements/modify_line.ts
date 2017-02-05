@@ -14,6 +14,7 @@ let tests = [
   "MODIFY LINE foo-bar INDEX 0 LINE VALUE FROM l_bar.",
   "MODIFY CURRENT LINE FIELD VALUE gv_line FIELD FORMAT lv_format INPUT = lv_input.",
   "MODIFY LINE l_line OF CURRENT PAGE LINE FORMAT INPUT OFF.",
+  "MODIFY LINE line FIELD FORMAT new INTENSIFIED ON.",
 ];
 
 statementType(tests, "MODIFY LINE", Statements.ModifyLine);

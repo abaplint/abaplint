@@ -19,7 +19,11 @@ export class Form extends Statement {
                      new Reuse.ClassName(),
                      alt(tok(ParenRight), tok(ParenRightW)));
 
-    let tables = seq(str("TABLES"), plus(new Reuse.FormParam()));
+    let stru = seq(new Reuse.SimpleName(),
+                   str("STRUCTURE"),
+                   new Reuse.NamespaceSimpleName());
+
+    let tables = seq(str("TABLES"), plus(alt(new Reuse.FormParam(), stru)));
     let using = seq(str("USING"), plus(new Reuse.FormParam()));
     let changing = seq(str("CHANGING"), plus(new Reuse.FormParam()));
     let raising = seq(str("RAISING"), plus(alt(new Reuse.ClassName(), resume)));
