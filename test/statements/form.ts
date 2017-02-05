@@ -89,6 +89,27 @@ let tests = [
   "  foo TYPE STANDARD TABLE\n" +
   "  foo TYPE STANDARD TABLE\n" +
   "  foo TYPE STANDARD TABLE.",
+
+  "form action tables\n" +
+  "  foo structure bar\n" +
+  "  foo structure bar\n" +
+  "  foo structure bar\n" +
+  "  foo structure bar\n" +
+  "  foo structure bar\n" +
+  "  foo structure bar\n" +
+  "  foo structure bar\n" +
+  "  foo structure bar\n" +
+  "  using\n" +
+  "  moo like boo\n" +
+  "  moo like boo\n" +
+  "  moo like boo\n" +
+  "  moo like boo\n" +
+  "  moo like boo\n" +
+  "  moo like boo\n" +
+  "  moo like boo\n" +
+  "  moo like boo\n" +
+  "  moo like boo\n" +
+  "  moo like boo.",
 ];
 
 statementType(tests, "FORM", Statements.Form);

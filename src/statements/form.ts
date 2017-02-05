@@ -8,6 +8,7 @@ let seq = Combi.seq;
 let alt = Combi.alt;
 let opt = Combi.opt;
 let tok = Combi.tok;
+let altPrio = Combi.altPrio;
 let plus = Combi.plus;
 
 export class Form extends Statement {
@@ -23,7 +24,7 @@ export class Form extends Statement {
                    str("STRUCTURE"),
                    new Reuse.NamespaceSimpleName());
 
-    let tables = seq(str("TABLES"), plus(alt(new Reuse.FormParam(), stru)));
+    let tables = seq(str("TABLES"), plus(altPrio(stru, new Reuse.FormParam())));
     let using = seq(str("USING"), plus(new Reuse.FormParam()));
     let changing = seq(str("CHANGING"), plus(new Reuse.FormParam()));
     let raising = seq(str("RAISING"), plus(alt(new Reuse.ClassName(), resume)));
