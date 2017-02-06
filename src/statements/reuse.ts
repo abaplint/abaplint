@@ -305,8 +305,10 @@ export class FormParamType extends Combi.Reuse {
 
 export class FormParam extends Combi.Reuse {
   public get_runnable() {
-    let fieldName = seq(reg(/^\w+$/), optPrio(seq(tok(Dash), reg(/^\w+$/))));
-    let field = seq(alt(fieldName, new PassByValue()),
+//    let fieldName = seq(reg(/^\w+$/), optPrio(seq(tok(Dash), reg(/^\w+$/))));
+    let name = reg(/^\w+$/);
+//    let dashed = seq(reg(/^\w+$/), tok(Dash), reg(/^\w+$/));
+    let field = seq(altPrio(new PassByValue(), name),
                     optPrio(new FormParamType));
 
     return field;

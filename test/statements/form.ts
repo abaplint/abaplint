@@ -15,7 +15,7 @@ let tests = [
   "FORM name USING foo like tab value(I_*BSEG) like BSEG value(I_BSEG) like BSEG.",
   "FORM read USING iv_foo TYPE /name/type.",
   "FORM read TABLES et_tab STRUCTURE /foo/bar.",
-  "FORM foo CHANGING field-bar.",
+//  "FORM foo CHANGING field-bar.",
   "FORM /foo/bar.",
   "FORM foo-bar.",
   "FORM foo--bar.",
@@ -110,6 +110,32 @@ let tests = [
   "  moo like boo\n" +
   "  moo like boo\n" +
   "  moo like boo.",
+
+  "FORM run USING\n" +
+  "  foo LIKE bar-moo\n" +
+  "  foo LIKE bar-moo\n" +
+  "  foo LIKE bar-moo\n" +
+  "  foo LIKE bar-moo\n" +
+  "  foo LIKE bar-moo\n" +
+  "  foo LIKE bar-moo\n" +
+  "  foo LIKE bar-moo\n" +
+  "  foo LIKE bar-moo\n" +
+  "  foo LIKE bar-moo\n" +
+  "  foo LIKE bar-moo\n" +
+  "  foo LIKE bar-moo\n" +
+  "  foo LIKE bar-moo\n" +
+  "  foo LIKE bar-moo\n" +
+  "  foo LIKE bar-moo\n" +
+  "  foo LIKE bar-moo\n" +
+  "  foo LIKE bar-moo\n" +
+  "  foo LIKE bar-moo\n" +
+  "  foo LIKE bar-moo\n" +
+  "  foo LIKE bar-moo\n" +
+  "  foo LIKE bar-moo\n" +
+  "  foo LIKE bar-moo\n" +
+  "  foo LIKE bar-moo\n" +
+  "  foo LIKE bar-moo\n" +
+  "  foo LIKE bar-moo.",
 ];
 
 statementType(tests, "FORM", Statements.Form);
