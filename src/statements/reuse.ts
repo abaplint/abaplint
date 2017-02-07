@@ -706,7 +706,7 @@ export class PassByValue extends Combi.Reuse {
 
 export class Value extends Combi.Reuse {
   public get_runnable() {
-    let ret = seq(str("VALUE"), alt(new Constant(), str("IS INITIAL"), new FieldChain()));
+    let ret = seq(str("VALUE"), alt(new Source(), str("IS INITIAL")));
     return ret;
   }
 }
@@ -789,9 +789,12 @@ export class TypeTable extends Combi.Reuse {
 export class ConstantString extends Combi.Reuse {
   public get_runnable() {
     let text = seq(tok(ParenLeft), reg(/^\w{3}$/), alt(tok(ParenRightW), tok(ParenRight)));
+    /*
     let constant = reg(/^('.*')|(`.*`)$/);
     let concat = seq(str("&"), constant);
     let stri = seq(constant, star(concat), opt(text));
+    */
+    let stri = seq(reg(/^('.*')|(`.*`)$/), opt(text));
     return stri;
   }
 }

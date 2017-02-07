@@ -6,14 +6,21 @@ let str = Combi.str;
 let seq = Combi.seq;
 let opt = Combi.opt;
 let plus = Combi.plus;
+let optPrio = Combi.optPrio;
 
 export class CallDialog extends Statement {
 
   public static get_matcher(): Combi.IRunnable {
-    let values = seq(new Reuse.Target(), opt(seq(str("FROM"), new Reuse.Source())));
-    let exporting = seq(str("EXPORTING"), plus(values));
+    let from = seq(new Reuse.FieldSub(), optPrio(seq(str("FROM"), new Reuse.Field())));
+    let exporting = seq(str("EXPORTING"), plus(from));
 
-    let ret = seq(str("CALL DIALOG"), new Reuse.Constant(), opt(exporting));
+    let to = seq(new Reuse.Field(), optPrio(seq(str("TO"), new Reuse.Field())));
+    let importing = seq(str("IMPORTING"), plus(to));
+
+    let ret = seq(str("CALL DIALOG"),
+                  new Reuse.Constant(),
+                  opt(exporting),
+                  opt(importing));
 
     return ret;
   }

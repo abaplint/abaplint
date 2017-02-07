@@ -43,6 +43,12 @@ let tests = [
   "ls_/foo/bar-visible = 'X'.",
   "lv_type = mr_property->*-data-type.",
 
+  "lv_foo = `foo` & `foo` & `foo` & `foo` & `foo` & `foo` & \n" +
+    "`foo` & `foo` & `foo` & `foo` & `foo` & `foo` & `foo` & \n" +
+    "`foo` & `foo` & `foo` & `foo` & `foo` & `foo` & `foo` & \n" +
+    "`foo` & `foo` & `foo` & `foo` & `foo` & `foo` & `foo` & \n" +
+    "`foo` & `foo` & `foo` & `foo` & `foo`.",
+
   "lv_foo = 'bar' && 'foo' && 'foo' && 'foo' && 'foo' && 'foo' &&\n" +
   "  'foo' && 'foo' && 'foo' && 'foo' && 'foo' && 'foo' && 'foo' &&\n" +
   "  'foo' && 'foo' && 'foo' && 'foo' && 'foo' && 'foo' && 'foo' &&\n" +
