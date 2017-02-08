@@ -94,6 +94,7 @@ export class SelectionScreen extends Statement {
     let uline = seq(str("ULINE"), opt(position));
 
     let param = seq(str("INCLUDE PARAMETERS"), new Reuse.Field());
+    let iso = seq(str("INCLUDE SELECT-OPTIONS"), new Reuse.Field());
 
     let ret = seq(str("SELECTION-SCREEN"),
                   alt(comment,
@@ -101,6 +102,7 @@ export class SelectionScreen extends Statement {
                       skip,
                       pos,
                       incl,
+                      iso,
                       push,
                       tab,
                       uline,

@@ -6,6 +6,7 @@ let str = Combi.str;
 let seq = Combi.seq;
 let alt = Combi.alt;
 let opt = Combi.opt;
+let reg = Combi.regex;
 
 export class AtSelectionScreen extends Statement {
 
@@ -22,7 +23,7 @@ export class AtSelectionScreen extends Statement {
 
     let radio = seq(str("ON RADIOBUTTON GROUP"), new Reuse.Field());
 
-    let block = seq(str("ON BLOCK"), new Reuse.Field());
+    let block = seq(str("ON BLOCK"), reg(/^\w+$/));
 
     let help = seq(str("ON HELP-REQUEST FOR"), new Reuse.FieldSub());
 

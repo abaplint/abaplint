@@ -16,7 +16,7 @@ export class DataBegin extends Statement {
 
     let structure = seq(str("BEGIN OF"),
                         opt(str("COMMON PART")),
-                        new Reuse.SimpleName(),
+                        new Reuse.NamespaceSimpleName(),
                         opt(occurs));
 
     return seq(start, structure);

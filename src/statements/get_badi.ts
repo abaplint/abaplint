@@ -15,9 +15,9 @@ export class GetBadi extends Statement {
 
     let ret = seq(str("GET BADI"),
                   new Reuse.Target(),
+                  opt(type),
                   opt(filters),
-                  opt(context),
-                  opt(type));
+                  opt(context));
 
     return ret;
   }

@@ -469,7 +469,7 @@ export class SimpleName extends Combi.Reuse {
 
 export class NamespaceSimpleName extends Combi.Reuse {
   public get_runnable() {
-    return reg(/^((\/\w+\/)|(\/\w+\/)?[\w%]+)$/);
+    return reg(/^((\w*\/\w+\/)|(\w*\/\w+\/)?[\w%]+)$/);
   }
 }
 
@@ -874,7 +874,7 @@ export class Select extends Combi.Reuse {
 
     let source = seq(from, star(new SQLJoin()), opt(tok(WParenRightW)));
 
-    let group = seq(str("GROUP BY"), new Field());
+    let group = seq(str("GROUP BY"), alt(new Field(), new Dynamic()));
 
     let perm = per(source, into, forAll, where, order, up, client, bypass, pack, group, connection);
 

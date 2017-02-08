@@ -43,6 +43,7 @@ let tests = [
   "DATA %id TYPE flag.",
   "class-data gv_var type zfoo value 'FOO' read-only .",
   "DATA /foo/bar TYPE /foo/bar.",
+  "DATA lr_/foo/cx_bar TYPE REF TO /foo/bar.",
 //  "DATA ret TYPE TABLE OF foobar INITIAL SIZE 10 WITH HEADER LINE.",
 //  "DATA range TYPE RANGE OF char30 WITH HEADER LINE.",
 ];

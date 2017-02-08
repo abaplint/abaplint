@@ -15,7 +15,7 @@ export class DataEnd extends Statement {
     let common = seq(str("COMMON PART"), optPrio(new Reuse.SimpleName()));
 
     let structure = seq(str("END OF"),
-                        alt(common, new Reuse.SimpleName()));
+                        alt(common, new Reuse.NamespaceSimpleName()));
 
     return seq(start, structure);
   }
