@@ -9,7 +9,7 @@ let alt = Combi.alt;
 export class TypeEnd extends Statement {
 
   public static get_matcher(): Combi.IRunnable {
-    let end = seq(str("END OF"), new Reuse.SimpleName());
+    let end = seq(str("END OF"), new Reuse.NamespaceSimpleName());
 
     let ret = seq(alt(str("TYPE"), str("TYPES")), end);
 

@@ -13,6 +13,7 @@ let tests = [
   "INSERT ls_theme INTO _themes_for_templates INDEX 1.",
   "INSERT LINES OF lt_comp INTO TABLE components.",
   "INSERT LINES OF lt_table FROM lv_from TO lv_to INTO TABLE lt_result.",
+  "INSERT LINES OF lt_table FROM lv_from INTO TABLE et_merge_table.",
 ];
 
 statementType(tests, "INSERT", Statements.InsertInternal);

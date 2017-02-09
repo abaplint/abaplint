@@ -9,7 +9,7 @@ let alt = Combi.alt;
 export class TypeBegin extends Statement {
 
   public static get_matcher(): Combi.IRunnable {
-    let begin = seq(str("BEGIN OF"), new Reuse.SimpleName());
+    let begin = seq(str("BEGIN OF"), new Reuse.NamespaceSimpleName());
 
     let ret = seq(alt(str("TYPE"), str("TYPES")), begin);
 

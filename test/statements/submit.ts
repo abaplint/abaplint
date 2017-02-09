@@ -20,6 +20,8 @@ let tests = [
   "submit (lv_report) with kunnr = lv_kunnr with bukrs = lv_bukrs using selection-set lv_set with free selections lt_free and return.",
   "submit (lv_report) via selection-screen and return using selection-sets of program l_prog with free selections l_expressions.",
   "SUBMIT zfoo WITH SELECTION-TABLE lt_para WITH type BETWEEN 'A' AND 'B' WITH call = 'X' AND RETURN.",
+  "SUBMIT zfoo TO SAP-SPOOL WITHOUT SPOOL DYNPRO KEEP IN SPOOL 'X' IMMEDIATELY 'X' DESTINATION 'LP01' AND RETURN.",
+  "SUBMIT /foo/bar USING SELECTION-SCREEN '1000' VIA SELECTION-SCREEN WITH foo EQ 'X'.",
 ];
 
 statementType(tests, "SUBMIT", Statements.Submit);

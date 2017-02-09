@@ -13,7 +13,7 @@ export class Static extends Statement {
     let type = seq(opt(new Reuse.FieldLength()), new Reuse.Type());
 
     let ret = seq(alt(str("STATIC"), str("STATICS")),
-                  new Reuse.SimpleName(),
+                  new Reuse.NamespaceSimpleName(),
                   opt(alt(type, new Reuse.TypeTable())),
                   opt(new Reuse.Value()));
 

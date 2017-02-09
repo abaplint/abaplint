@@ -16,7 +16,7 @@ export class Read extends Statement {
     let comparing = seq(str("COMPARING"), new Reuse.Field());
 
     let target = alt(seq(str("ASSIGNING"), new Reuse.FSTarget()),
-                     seq(opt(str("REFERENCE")), str("INTO"), new Reuse.Target(), opt(comparing)),
+                     seq(opt(str("REFERENCE")), str("INTO"), new Reuse.Target()),
                      str("TRANSPORTING NO FIELDS"));
 
     let index = seq(str("INDEX"), new Reuse.Source());
@@ -41,6 +41,7 @@ export class Read extends Statement {
                        from),
                    target,
                    using,
+                   comparing,
                    str("CASTING"),
                    seq(str("TRANSPORTING"), plus(new Reuse.Field())),
                    str("BINARY SEARCH"));

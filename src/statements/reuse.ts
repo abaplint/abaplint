@@ -64,7 +64,7 @@ export class Target extends Combi.Reuse {
   public get_runnable() {
     let after = seq(alt(new Field(), new FieldSymbol()),
                     opt(new TableExpression()),
-                    star(seq(new ArrowOrDash(), new Field(), opt(new TableExpression()))));
+                    star(seq(new ArrowOrDash(), alt(str("*"), new FieldAll()), opt(new TableExpression()))));
 
     let fields = seq(opt(new FieldOffset()), opt(new FieldLength()));
 

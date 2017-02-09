@@ -34,6 +34,7 @@ let tests = [
   "READ TABLE <tab> FROM <line> USING KEY (key) TRANSPORTING NO FIELDS.",
   "READ TABLE tab ASSIGNING <wa> with key path = iv_path.",
   "READ TABLE lt_tab INTO ls_tab INDEX sy-tabix + 1 USING KEY name.",
+  "READ TABLE lt_tab INTO ls_tab INDEX lv_tabix COMPARING id.",
 ];
 
 statementType(tests, "READ", Statements.Read);

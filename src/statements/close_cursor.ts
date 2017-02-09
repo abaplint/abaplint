@@ -8,7 +8,7 @@ let seq = Combi.seq;
 export class CloseCursor extends Statement {
 
   public static get_matcher(): Combi.IRunnable {
-    let ret = seq(str("CLOSE CURSOR"), new Reuse.Field());
+    let ret = seq(str("CLOSE CURSOR"), new Reuse.Target());
     return ret;
   }
 

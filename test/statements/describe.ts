@@ -22,6 +22,7 @@ let tests = [
   "describe table lt_tab kind lv_kind.",
   "DESCRIBE TABLE lt_foo.",
   "DESCRIBE LIST LINE sy-lilli PAGE lv_page.",
+  "DESCRIBE LIST PAGE 1 TOP-LINES lv_top.",
 ];
 
 statementType(tests, "DESCRIBE", Statements.Describe);

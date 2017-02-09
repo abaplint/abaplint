@@ -22,7 +22,9 @@ export class Modify extends Statement {
 
     let target = seq(opt(str("TABLE")), alt(new Reuse.Target(), new Reuse.Dynamic()));
 
-    let options = per(from, index, transporting, where, client, assigning);
+    let conn = seq(str("CONNECTION"), new Reuse.Dynamic());
+
+    let options = per(conn, from, index, transporting, where, client, assigning);
 
     return seq(str("MODIFY"), target, opt(options));
   }

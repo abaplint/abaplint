@@ -24,10 +24,11 @@ export class Open extends Statement {
     let message = seq(str("MESSAGE"), new Reuse.Target());
     let ignoring = str("IGNORING CONVERSION ERRORS");
     let bom = str("SKIPPING BYTE-ORDER MARK");
+    let type = seq(str("TYPE"), new Reuse.Source());
 
     let ret = seq(str("OPEN DATASET"),
                   new Reuse.Target(),
-                  per(direction, mode, encoding, pos, message, ignoring, bom, code));
+                  per(direction, type, mode, encoding, pos, message, ignoring, bom, code));
 
     return ret;
   }

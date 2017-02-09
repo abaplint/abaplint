@@ -7,6 +7,7 @@ let seq = Combi.seq;
 let opt = Combi.opt;
 let alt = Combi.alt;
 let per = Combi.per;
+let reg = Combi.regex;
 
 export class Parameter extends Statement {
 
@@ -17,7 +18,7 @@ export class Parameter extends Statement {
     let type = seq(alt(str("TYPE"), str("LIKE")), new Reuse.FieldChain());
     let memory = seq(str("MEMORY ID"), new Reuse.Field());
     let listbox = str("AS LISTBOX");
-    let cmd = seq(str("USER-COMMAND"), new Reuse.Field());
+    let cmd = seq(str("USER-COMMAND"), reg(/^\w+$/));
     let modif = seq(str("MODIF ID"), new Reuse.Modif());
     let visible = seq(str("VISIBLE LENGTH"), new Reuse.Constant());
     let length = seq(str("LENGTH"), new Reuse.Constant());

@@ -17,7 +17,7 @@ export class Submit extends Statement {
     let compare = seq(eq, new Reuse.Source());
     let between = seq(str("BETWEEN"), new Reuse.Source(), str("AND"), new Reuse.Source());
     let awith = seq(str("WITH"), new Reuse.Field(), alt(compare, between));
-    let prog = alt(new Reuse.Source(), new Reuse.Dynamic());
+    let prog = alt(new Reuse.NamespaceSimpleName(), new Reuse.Dynamic());
     let job = seq(str("VIA JOB"), new Reuse.Source(), str("NUMBER"), new Reuse.Source());
     let exporting = str("EXPORTING LIST TO MEMORY");
     let withTab = seq(str("WITH SELECTION-TABLE"), new Reuse.Source());
@@ -28,7 +28,12 @@ export class Submit extends Statement {
     let user = seq(str("USER"), new Reuse.Source());
     let sset = seq(str("USING SELECTION-SET"), new Reuse.Source());
     let ssetp = seq(str("USING SELECTION-SETS OF PROGRAM"), new Reuse.Source());
+    let uss = seq(str("USING SELECTION-SCREEN"), new Reuse.Source());
     let free = seq(str("WITH FREE SELECTIONS"), new Reuse.Source());
+
+    let keep = seq(str("KEEP IN SPOOL"), new Reuse.Source());
+    let imm = seq(str("IMMEDIATELY"), new Reuse.Source());
+    let dest = seq(str("DESTINATION"), new Reuse.Source());
 
     let perm = per(plus(awith),
                    withTab,
@@ -39,8 +44,12 @@ export class Submit extends Statement {
                    user,
                    sset,
                    ssetp,
+                   keep,
+                   imm,
+                   dest,
                    free,
                    sign,
+                   uss,
                    str("TO SAP-SPOOL"),
                    str("WITHOUT SPOOL DYNPRO"),
                    str("VIA SELECTION-SCREEN"),
