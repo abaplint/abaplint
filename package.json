@@ -1,6 +1,6 @@
 {
   "name": "abaplint",
-  "version": "0.29.15",
+  "version": "0.29.16",
   "description": "Linter for ABAP",
   "bin": {
     "abaplint": "./abaplint"
@@ -63,7 +63,7 @@
     "remap-istanbul": "^0.9.0",
     "tslint": "^4.4.2",
     "tslint-eslint-rules": "^3.3.0",
-    "typescript": "^2.1.5",
+    "typescript": "^2.1.6",
     "uglify-js": "^2.7.5"
   },
   "dependencies": {
