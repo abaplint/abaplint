@@ -27,12 +27,14 @@ export default class Parser {
     this.map = {};
 
     for (let st in Statements) {
-      let first = Statements[st].get_matcher().first();
+      if (typeof Statements[st].get_matcher === "function") {
+        let first = Statements[st].get_matcher().first();
 
-      if (this.map[first]) {
-        this.map[first].push(st);
-      } else {
-        this.map[first] = [st];
+        if (this.map[first]) {
+          this.map[first].push(st);
+        } else {
+          this.map[first] = [st];
+        }
       }
     }
   }

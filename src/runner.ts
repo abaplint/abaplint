@@ -97,10 +97,12 @@ export default class Runner {
       if (bar) { bar.tick({filename: file.getFilename()}); }
 
       for (let key in Rules) {
-        let rule: Rules.IRule = new Rules[key]();
-        if (rule.getKey && conf.readByKey(rule.getKey(), "enabled") === true) {
-          rule.setConfig(conf.readByRule(rule.getKey()));
-          issues = issues.concat(rule.run(file));
+        if (typeof Rules[key] === "function") {
+          let rule: Rules.IRule = new Rules[key]();
+          if (rule.getKey && conf.readByKey(rule.getKey(), "enabled") === true) {
+            rule.setConfig(conf.readByRule(rule.getKey()));
+            issues = issues.concat(rule.run(file));
+          }
         }
       }
     }
