@@ -62,6 +62,7 @@ export class DefinitionsTop implements IRule {
           || statement instanceof Statements.TypeEnd
           || statement instanceof Statements.Constant
           || statement instanceof Statements.Include
+          || statement instanceof Statements.IncludeType
           || statement instanceof Statements.Static
           || statement instanceof Statements.StaticBegin
           || statement instanceof Statements.StaticEnd

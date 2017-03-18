@@ -11,6 +11,7 @@ let tests = [
 
   {abap: "CLEAR lt_table.", cnt: 0},
   {abap: "lv_foo = 2 + 2.", cnt: 0},
+  {abap: "MOVE EXACT is_status-installed_release TO lv_number.", cnt: 0},
   {abap: "lv_foo = lv_foo - 1.", cnt: 0},
   {abap: "lv_foo = lv_foo * 2.", cnt: 0},
   {abap: "lv_foo = lv_foo / 2.", cnt: 0},

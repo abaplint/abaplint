@@ -39,7 +39,8 @@ export class ObsoleteStatement implements IRule {
           || sta instanceof Statements.Multiply
           || ( sta instanceof Statements.Move
           && sta.getTokens()[0].getStr() === "MOVE"
-          && sta.getTokens()[1].getStr() !== "-" )
+          && sta.getTokens()[1].getStr() !== "-"
+          && sta.getTokens()[1].getStr() !== "EXACT" )
           || sta instanceof Statements.Divide) {
         let issue = new Issue(this, sta.getStart(), file);
         issues.push(issue);
