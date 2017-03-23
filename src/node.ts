@@ -77,7 +77,7 @@ export class StructureNode extends BasicNode {
   public viz(): string {
     let children = this.getChildren().map((e) => { return e.viz(); } );
 
-    console.log(this.start.constructor);
+//    console.log(this.start.constructor);
     let ret = "<ul><li>" + this.vizName() +
       "<ul><li>Start: " + this.start.viz() + "</li></ul>" +
       "<ul><li>Body: " + children.join("") + "</li></ul>" +

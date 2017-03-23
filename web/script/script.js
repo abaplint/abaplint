@@ -88,13 +88,14 @@ function ast() {
 }
 
 function downport() {
-  let file = abaplint.Runner.downport(parse())[0];
+  let file = abaplint.Runner.downport([parse()])[0];
   document.getElementById("info").innerHTML = '<pre>' + file.getRaw() + '</pre>';
 }
 
 function types() {
   let info = abaplint.Runner.types(parse());
-  document.getElementById("info").innerHTML = info;
+  console.dir(info);
+  document.getElementById("info").innerHTML = "see javascript console";
 }
 
 // ---------------------
