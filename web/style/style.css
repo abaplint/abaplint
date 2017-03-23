@@ -9,3 +9,8 @@ a:link {
 a:visited {
     color: blue;
 }
+
+/* used for highlighting issues via mouseover */
+.styled-background {
+    background-color: #00F;
+}

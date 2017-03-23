@@ -104,6 +104,7 @@ var editor = null;
 var _mark = null;
 
 function markLine(line, col, eline, ecol) {
+  console.log("mark");
   if (_mark) _mark.clear();
   if (!col) col = 0;
   if (!eline) eline = line;
