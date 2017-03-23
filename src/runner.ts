@@ -9,6 +9,7 @@ import Nesting from "./nesting";
 import Registry from "./registry";
 import {TokenNode} from "./node";
 import {Version} from "./version";
+import {Downport} from "./downport";
 import {Define} from "./statements";
 import {MacroCall, Unknown, Statement} from "./statements/statement";
 import * as Types from "./types";
@@ -16,6 +17,8 @@ import * as Formatters from "./formatters/";
 import * as ProgressBar from "progress";
 
 export default class Runner {
+
+// todo, create constructor, which can set Config?
 
   public static run(files: Array<File>, conf?: Config): Array<Issue> {
     conf = conf ? conf : Config.getDefault();
@@ -115,13 +118,9 @@ export default class Runner {
     return "{{ VERSION }}";
   }
 
-/*
   public static downport(files: Array<ParsedFile>): Array<File> {
-    let ret = new File("result.abap", "todo sdf");
-// todo, auto validate 702 code after downport?
-    return [ret];
+    return Downport.run(files);
   }
-*/
 
   public static types(file: ParsedFile) {
     return Types.Analyze.run(file);

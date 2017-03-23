@@ -69,7 +69,6 @@ function run() {
   let argv = minimist(process.argv.slice(2));
   let format = "default";
   let output = "";
-//  let files: Array<File> = [];
   let issues: Array<Issue> = [];
 
   if (argv["f"] !== undefined || argv["format"] !== undefined) {
