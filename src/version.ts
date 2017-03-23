@@ -1,4 +1,7 @@
+// todo, refactor, this can be done smarter somehow?
+
 export enum Version {
+  v700,
   v702,
   v740sp02,
   v740sp05,
@@ -8,6 +11,8 @@ export enum Version {
 
 export function versionDescription(v: Version): string {
   switch (v) {
+    case Version.v700:
+      return "v700";
     case Version.v702:
       return "v702";
     case Version.v740sp02:
@@ -25,6 +30,8 @@ export function versionDescription(v: Version): string {
 
 export function versionText(s: string): Version {
   switch (s) {
+    case "v700":
+      return Version.v700;
     case "v702":
       return Version.v702;
     case "v740sp02":

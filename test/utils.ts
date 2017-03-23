@@ -2,7 +2,7 @@ import {File} from "../src/file";
 import Config from "../src/config";
 import Runner from "../src/runner";
 import * as chai from "chai";
-import {Version} from "../src/version";
+import {Version, versionDescription} from "../src/version";
 import {Unknown} from "../src/statements/statement";
 
 // utils for testing
@@ -40,7 +40,11 @@ export function statementVersion(tests, description: string, type) {
     tests.forEach((test) => {
       run(test.abap, "\"" + test.abap + "\" should be " + description, type, test.ver);
 // should fail in previous version
-      run(test.abap, "\"" + test.abap + "\" should not work in lower version", Unknown, test.ver - 1);
+      let lower = test.ver - 1;
+      run(test.abap,
+          "\"" + test.abap + "\" should not work in lower version(" + versionDescription(lower) + ")",
+          Unknown,
+          lower);
     });
   });
 }

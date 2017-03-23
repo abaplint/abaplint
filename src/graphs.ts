@@ -16,13 +16,17 @@ class Graph {
 
   public static run() {
     for (let foo in Reuse) {
-      let name = className(new Reuse[foo]()).toLowerCase();
-      this.handle("reuse_", name, new Reuse[foo]().get_runnable(), true);
+      if (typeof Reuse[foo] === "function") {
+        let name = className(new Reuse[foo]()).toLowerCase();
+        this.handle("reuse_", name, new Reuse[foo]().get_runnable(), true);
+      }
     }
 
     for (let st in Statements) {
       let name = st.toLowerCase();
-      this.handle("", name, Statements[st].get_matcher(), false);
+      if (typeof Statements[st].get_matcher === "function") {
+        this.handle("", name, Statements[st].get_matcher(), false);
+      }
     }
   }
 }

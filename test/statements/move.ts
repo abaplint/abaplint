@@ -71,6 +71,7 @@ let tests = [
 statementType(tests, "MOVE", Statements.Move);
 
 let versions = [
+  {abap: "lo_foo = |hello|.", ver: Version.v702},
   {abap: "lo_foo = NEW zcl_class( ).", ver: Version.v740sp02},
   {abap: "lo_obj = CAST cl_abap_objectdescr( cl_abap_objectdescr=>describe_by_object_ref( ii_handler ) ).", ver: Version.v740sp02},
   {abap: "DATA(lo_obj) = CAST cl_abap_objectdescr(\n cl_abap_objectdescr=>describe_by_object_ref( ii_handler ) ).", ver: Version.v740sp02},

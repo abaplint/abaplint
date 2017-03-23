@@ -515,7 +515,7 @@ export class MethodCall extends Combi.Reuse {
 
 export class StringTemplate extends Combi.Reuse {
   public get_runnable() {
-    return tok(StringTemplate);
+    return ver(Version.v702, tok(StringTemplate));
   }
 }
 
@@ -580,7 +580,11 @@ export class Source extends Combi.Reuse {
 
     let after = seq(alt(str("&"), str("&&"), new ArithOperator()), new Source());
 
-    let bool = seq(alt(str("BOOLC"), str("XSDBOOL")), tok(ParenLeftW), new Cond(), str(")"));
+    let bool = seq(alt(ver(Version.v702, str("BOOLC")),
+                       ver(Version.v740sp08, str("XSDBOOL"))),
+                   tok(ParenLeftW),
+                   new Cond(),
+                   str(")"));
 
     let prefix = alt(tok(WDashW), str("BIT-NOT"));
 
