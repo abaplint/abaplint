@@ -87,9 +87,14 @@ function ast() {
   document.getElementById("info").innerHTML = buildAst(file);
 }
 
+function escape(str) {
+  return str.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
+}
+
 function downport() {
   let file = abaplint.Runner.downport([parse()])[0];
-  document.getElementById("info").innerHTML = '<pre>' + file.getRaw() + '</pre>';
+  console.dir(file.getRaw());
+  document.getElementById("info").innerHTML = '<pre>' + escape(file.getRaw()) + '</pre>';
 }
 
 function types() {
