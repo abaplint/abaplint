@@ -64,7 +64,7 @@
     "tslint": "^4.5.1",
     "tslint-eslint-rules": "^3.5.1",
     "typescript": "^2.2.1",
-    "uglify-js": "^2.8.11"
+    "uglify-js": "^2.8.18"
   },
   "dependencies": {
     "glob": "^7.1.1",
