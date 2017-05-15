@@ -43,7 +43,10 @@ export default class Runner {
 
     files.forEach((f) => {
       if (!this.skip(f)) {
-        if (bar) { bar.tick({filename: f.getFilename()}); }
+        if (bar) {
+          bar.tick({filename: f.getFilename()});
+          bar.render();
+        }
 
         let tokens = Lexer.run(f);
         let statements = Parser.run(tokens, conf.getVersion());
@@ -97,7 +100,10 @@ export default class Runner {
     }
 
     for (let file of files) {
-      if (bar) { bar.tick({filename: file.getFilename()}); }
+      if (bar) {
+        bar.tick({filename: file.getFilename()});
+        bar.render();
+      }
 
       for (let key in Rules) {
         if (typeof Rules[key] === "function") {

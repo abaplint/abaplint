@@ -136,6 +136,7 @@ function master(files: Array<string>): void {
       cluster.fork().send(files.pop());
       count = count + 1;
       bar.tick();
+      bar.render();
     }
   }
 
@@ -145,6 +146,7 @@ function master(files: Array<string>): void {
     if (files.length > 0) {
       work.send(files.pop());
       bar.tick();
+      bar.render();
     } else {
       work.kill();
     }
