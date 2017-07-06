@@ -188,16 +188,16 @@ class Token implements IRunnable {
 
 class Vers implements IRunnable {
 
-  private ver: Version;
+  private version: Version;
   private runnable: IRunnable;
 
-  constructor(ver: Version, runnable: IRunnable) {
-    this.ver = ver;
+  constructor(version: Version, runnable: IRunnable) {
+    this.version = version;
     this.runnable = runnable;
   }
 
   public run(r: Array<Result>): Array<Result> {
-    if (Combi.getVersion() >= this.ver) {
+    if (Combi.getVersion() >= this.version) {
       return this.runnable.run(r);
     } else {
       return [];
@@ -206,7 +206,7 @@ class Vers implements IRunnable {
 
   public railroad() {
     return "Railroad.Sequence(Railroad.Comment(\"" +
-      versionDescription(this.ver) +
+      versionDescription(this.version) +
       "\"), " +
       this.runnable.railroad() +
       ")";
@@ -223,17 +223,17 @@ class Vers implements IRunnable {
 
 class OptionalPriority implements IRunnable {
 
-  private opt: IRunnable;
+  private optional: IRunnable;
 
-  constructor(opt: IRunnable) {
-    this.opt = opt;
+  constructor(optional: IRunnable) {
+    this.optional = optional;
   }
 
   public run(r: Array<Result>): Array<Result> {
     let result: Array<Result> = [];
 
     for (let input of r) {
-      let res = this.opt.run([input]);
+      let res = this.optional.run([input]);
       if (res.length > 1) {
         result.push(input);
         result = result.concat(res);
@@ -256,11 +256,11 @@ class OptionalPriority implements IRunnable {
   }
 
   public railroad() {
-    return "Railroad.Optional(" + this.opt.railroad() + ")";
+    return "Railroad.Optional(" + this.optional.railroad() + ")";
   }
 
   public toStr() {
-    return "opt(" + this.opt.toStr() + ")";
+    return "opt(" + this.optional.toStr() + ")";
   }
 
   public first() {
@@ -270,10 +270,10 @@ class OptionalPriority implements IRunnable {
 
 class Optional implements IRunnable {
 
-  private opt: IRunnable;
+  private optional: IRunnable;
 
-  constructor(opt: IRunnable) {
-    this.opt = opt;
+  constructor(optional: IRunnable) {
+    this.optional = optional;
   }
 
   public run(r: Array<Result>): Array<Result> {
@@ -281,7 +281,7 @@ class Optional implements IRunnable {
 
     for (let input of r) {
       result.push(input);
-      let res = this.opt.run([input]);
+      let res = this.optional.run([input]);
       result = result.concat(res);
     }
 
@@ -289,11 +289,11 @@ class Optional implements IRunnable {
   }
 
   public railroad() {
-    return "Railroad.Optional(" + this.opt.railroad() + ")";
+    return "Railroad.Optional(" + this.optional.railroad() + ")";
   }
 
   public toStr() {
-    return "opt(" + this.opt.toStr() + ")";
+    return "opt(" + this.optional.toStr() + ")";
   }
 
   public first() {
@@ -303,10 +303,10 @@ class Optional implements IRunnable {
 
 class Star implements IRunnable {
 
-  private star: IRunnable;
+  private sta: IRunnable;
 
-  constructor(star: IRunnable) {
-    this.star = star;
+  constructor(sta: IRunnable) {
+    this.sta = sta;
   }
 
   public run(r: Array<Result>): Array<Result> {
@@ -316,7 +316,7 @@ class Star implements IRunnable {
     let input: Array<Result> = [];
     for ( ; ; ) {
       input = res;
-      res = this.star.run(input);
+      res = this.sta.run(input);
 
       if (res.length === 0) {
         break;
@@ -329,11 +329,11 @@ class Star implements IRunnable {
   }
 
   public railroad() {
-    return "Railroad.ZeroOrMore(" + this.star.railroad() + ")";
+    return "Railroad.ZeroOrMore(" + this.sta.railroad() + ")";
   }
 
   public toStr() {
-    return "star(" + this.star.toStr() + ")";
+    return "star(" + this.sta.toStr() + ")";
   }
 
   public first() {
@@ -343,26 +343,26 @@ class Star implements IRunnable {
 
 class Plus implements IRunnable {
 
-  private plus: IRunnable;
+  private plu: IRunnable;
 
-  constructor(plus: IRunnable) {
-    this.plus = plus;
+  constructor(plu: IRunnable) {
+    this.plu = plu;
   }
 
   public run(r: Array<Result>): Array<Result> {
-    return new Sequence([this.plus, new Star(this.plus)]).run(r);
+    return new Sequence([this.plu, new Star(this.plu)]).run(r);
   }
 
   public railroad() {
-    return "Railroad.OneOrMore(" + this.plus.railroad() + ")";
+    return "Railroad.OneOrMore(" + this.plu.railroad() + ")";
   }
 
   public toStr() {
-    return "plus(" + this.plus.toStr() + ")";
+    return "plus(" + this.plu.toStr() + ")";
   }
 
   public first() {
-    return this.plus.first();
+    return this.plu.first();
   }
 }
 
@@ -383,8 +383,8 @@ class Sequence implements IRunnable {
 
     for (let input of r) {
       let temp = [input];
-      for (let seq of this.list) {
-        temp = seq.run(temp);
+      for (let sequence of this.list) {
+        temp = sequence.run(temp);
         if (temp.length === 0) {
           break;
         }
@@ -420,13 +420,13 @@ class Sequence implements IRunnable {
 
 class WordSequence implements IRunnable {
 
-  private str: String;
+  private stri: String;
   private words: Array<IRunnable> = [];
 
-  constructor(str: String) {
-    this.str = str;
+  constructor(stri: String) {
+    this.stri = stri;
 
-    let foo = this.str.replace(/-/g, " - ");
+    let foo = this.stri.replace(/-/g, " - ");
     let split = foo.split(/[ ]/);
 
     for (let st of split) {
@@ -440,11 +440,11 @@ class WordSequence implements IRunnable {
   }
 
   public railroad() {
-    return "Railroad.Terminal('\"" + this.str + "\"')";
+    return "Railroad.Terminal('\"" + this.stri + "\"')";
   }
 
   public toStr() {
-    return "str(" + this.str + ")";
+    return "str(" + this.stri + ")";
   }
 
   public first() {
@@ -574,10 +574,8 @@ class Alternative implements IRunnable {
   public run(r: Array<Result>): Array<Result> {
     let result: Array<Result> = [];
 
-    for (let seq of this.list) {
-//      console.log(seq.toStr());
-      let temp = seq.run(r);
-
+    for (let sequ of this.list) {
+      let temp = sequ.run(r);
       result = result.concat(temp);
     }
 
@@ -616,9 +614,9 @@ class AlternativePriority implements IRunnable {
   public run(r: Array<Result>): Array<Result> {
     let result: Array<Result> = [];
 
-    for (let seq of this.list) {
+    for (let sequ of this.list) {
 //      console.log(seq.toStr());
-      let temp = seq.run(r);
+      let temp = sequ.run(r);
 
       result = result.concat(temp);
 
@@ -666,8 +664,8 @@ export class Combi {
   }
 
 // assumption: no pgragmas supplied in tokens input
-  public static run(runnable: IRunnable, tokens: Array<Tokens.Token>, ver = Version.v750): BasicNode[] {
-    this.ver = ver;
+  public static run(runnable: IRunnable, tokens: Array<Tokens.Token>, version = Version.v750): BasicNode[] {
+    this.ver = version;
 
     let input = new Result(tokens);
     let result = runnable.run([input]);
@@ -729,6 +727,6 @@ export function regex(r: RegExp): IRunnable {
 export function plus(first: IRunnable): IRunnable {
   return new Plus(first);
 }
-export function ver(ver: Version, first: IRunnable): IRunnable {
-  return new Vers(ver, first);
+export function ver(version: Version, first: IRunnable): IRunnable {
+  return new Vers(version, first);
 }

@@ -61,7 +61,7 @@
     "mocha": "^3.4.1",
     "railroad-diagrams": "git+https://github.com/tabatkins/railroad-diagrams#gh-pages",
     "remap-istanbul": "^0.9.1",
-    "tslint": "^5.0.0",
+    "tslint": "^5.5.0",
     "tslint-eslint-rules": "^4.0.0",
     "typescript": "^2.4.1",
     "uglify-js": "^3.0.23"
