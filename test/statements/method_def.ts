@@ -33,6 +33,8 @@ let tests = [
   "class-methods SET_CELL_VALUE_IN_EXCEL changing value(CV_CELL_WIDTH) type I optional.",
   "methods foo importing it_foo type INDEX TABLE.",
   "class-methods get importing bar like lcl_cla=>field.",
+  "METHODS method1 DEFAULT FAIL.",
+  "METHODS method2 DEFAULT IGNORE.",
 
   "methods CONSTRUCTOR\n" +
   "  importing\n" +

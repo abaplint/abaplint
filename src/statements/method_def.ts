@@ -33,7 +33,9 @@ export class MethodDef extends Statement {
     let raising    = seq(str("RAISING"),    plus(alt(resumable, new Reuse.ClassName())));
     let exceptions = seq(str("EXCEPTIONS"), plus(reg(/^\w+?$/)));
 
-    let parameters = seqs(opt(alt(str("ABSTRACT"), str("FINAL"), str("FOR TESTING"))),
+    let def = seq(str("DEFAULT"), alt(str("FAIL"), str("IGNORE")));
+
+    let parameters = seqs(opt(alt(str("ABSTRACT"), str("FINAL"), str("FOR TESTING"), def)),
                           opt(importing),
                           opt(exporting),
                           opt(changing),
