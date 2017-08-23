@@ -1,5 +1,6 @@
-import {statementType} from "../utils";
+import {statementType, statementVersion} from "../utils";
 import * as Statements from "../../src/statements/";
+import {Version} from "../../src/version";
 
 let tests = [
   "raise exception type zcx_root.",
@@ -15,3 +16,13 @@ let tests = [
 ];
 
 statementType(tests, "RAISE", Statements.Raise);
+
+
+let versions = [
+  {abap: "RAISE EXCEPTION TYPE zcx_foobar MESSAGE ID sy-msgid TYPE sy-msgty" +
+    " NUMBER sy-msgno WITH sy-msgv1 sy-msgv2 sy-msgv3 sy-msgv4.", ver: Version.v750},
+  {abap: "RAISE EXCEPTION TYPE zcx_foobar MESSAGE ID 'ZFOO' TYPE 'E' NUMBER 001.", ver: Version.v750},
+  {abap: "RAISE EXCEPTION TYPE zcx_foobar MESSAGE ID 'ZFOO' TYPE 'E' NUMBER 001 WITH bar.", ver: Version.v750},
+];
+
+statementVersion(versions, "RAISE", Statements.Raise);
