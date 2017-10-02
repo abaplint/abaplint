@@ -29,6 +29,7 @@ let tests = [
   {abap: "AT SELECTION-SCREEN OUTPUT.\n  WRITE 'sdf'.", cnt: 0},
   {abap: "IF foo = bar.\n  WRITE 'sdf'.\nELSEIF moo = boo.\n  WRITE 'sdf'.", cnt: 0},
   {abap: "INTERFACE zif_swag_handler PUBLIC.\n  METHODS meta.\nENDINTERFACE.", cnt: 0},
+  {abap: "TRY.\n  CLEANUP.\nENDTRY.", cnt: 0},
 ];
 
 testRule(tests, "test indentation rule", Indentation);
