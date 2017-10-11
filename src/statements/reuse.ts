@@ -745,8 +745,11 @@ export class TypeParam extends Combi.Reuse {
     let table = seq(alt(str("STANDARD"), str("HASHED"), str("INDEX"), str("SORTED"), str("ANY")),
                     str("TABLE"));
 
-    let ret = seq(opt(seq(table, str("OF"))),
-                  opt(str("REF TO")),
+    let foo = seq(opt(seq(table, str("OF"))), opt(str("REF TO")));
+
+    let typeLine = str("LINE OF");
+
+    let ret = seq(alt(foo, typeLine),
                   new TypeName(),
                   opt(def));
 

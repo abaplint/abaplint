@@ -34,6 +34,7 @@ let tests = [
   "methods foo importing it_foo type INDEX TABLE.",
   "class-methods get importing bar like lcl_cla=>field.",
   "METHODS method1 DEFAULT FAIL.",
+  "METHODS foo IMPORTING inp TYPE LINE OF bar.",
   "METHODS method2 DEFAULT IGNORE.",
 
   "methods CONSTRUCTOR\n" +
