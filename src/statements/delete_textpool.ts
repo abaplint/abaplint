@@ -10,10 +10,12 @@ export class DeleteTextpool extends Statement {
 
   public static get_matcher(): Combi.IRunnable {
     let language = seq(str("LANGUAGE"), new Reuse.Source());
+    let state = seq(str("STATE"), new Reuse.Source());
 
     return seq(str("DELETE TEXTPOOL"),
                new Reuse.Source(),
-               opt(language));
+               opt(language),
+               opt(state));
   }
 
 }
