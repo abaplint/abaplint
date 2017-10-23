@@ -54,7 +54,7 @@
     "@types/progress": "^2.0.0",
     "browserify": "^14.4.0",
     "chai": "^4.1.1",
-    "codecov": "^2.3.0",
+    "codecov": "^3.0.0",
     "codemirror": "^5.28.0",
     "codemirror-abap": "^0.1.9",
     "istanbul": "^0.4.5",
