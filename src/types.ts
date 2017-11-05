@@ -1,7 +1,6 @@
 import {ParsedFile} from "./file";
-import {Token} from "./tokens/token";
 import * as Reuse from "./statements/reuse";
-import {BasicNode, StructureNode, ReuseNode, TokenNode, StatementNode} from "./node";
+import {BasicNode, StructureNode, ReuseNode, StatementNode} from "./node";
 import * as Statements from "./statements/";
 
 // all types determined for "source" and "target" AST nodes
@@ -102,7 +101,7 @@ export class Analyze {
       }
     });
   }
-
+/*
   private static findFirstToken(n: BasicNode): Token {
     if (n instanceof TokenNode) {
       return (n as TokenNode).getToken();
@@ -114,4 +113,5 @@ export class Analyze {
 
     throw new Error("error, findFirstToken");
   }
+*/
 }
