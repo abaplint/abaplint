@@ -872,7 +872,7 @@ export class Select extends Combi.Reuse {
 
     let fields = alt(str("*"),
                      new Dynamic(),
-                     plus(alt(new Field(), count, max, min, sum)));
+                     plus(alt(seq(new Field(), opt(ver(Version.v740sp05, str(",")))), count, max, min, sum)));
 
     let up = seq(str("UP TO"), new Source(), str("ROWS"));
 

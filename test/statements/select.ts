@@ -42,6 +42,12 @@ let tests = [
   "SELECT field INTO l_val FROM table WHERE field1 IN var AND field2 LT sy-datum AND field3 GT sy-datum AND NOT field4 = 'X'.",
   "SELECT * INTO data FROM table WHERE name LIKE l_name ESCAPE '!' AND text NOT LIKE l_text ESCAPE '!'.",
 
+  "SELECT SINGLE * FROM sflight INTO CORRESPONDING FIELDS OF @return WHERE carrid = @i_flight_number.",
+  "SELECT SINGLE * FROM sflight INTO @return WHERE carrid = @i_flight_number.",
+  "SELECT SINGLE carrid, connid FROM sflight INTO @return.",
+  "SELECT SINGLE carrid, connid, fldate FROM sflight INTO CORRESPONDING FIELDS OF @return WHERE carrid = @i_flight_number.",
+  "SELECT SINGLE carrid, connid, fldate FROM sflight INTO CORRESPONDING FIELDS OF @DATA(return) WHERE carrid = @i_flight_number.",
+
   "SELECT marc~matnr marc~werks marc~herkl\n" +
   "       mara~ntgew mara~gewei marc~beskz\n" +
   "  FROM marc JOIN mara ON marc~matnr = mara~matnr\n" +
