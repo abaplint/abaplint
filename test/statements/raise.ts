@@ -22,6 +22,7 @@ let versions = [
   {abap: "RAISE EXCEPTION TYPE zcx_foobar MESSAGE ID sy-msgid TYPE sy-msgty" +
     " NUMBER sy-msgno WITH sy-msgv1 sy-msgv2 sy-msgv3 sy-msgv4.", ver: Version.v750},
   {abap: "RAISE EXCEPTION TYPE zcx_foobar MESSAGE ID 'ZFOO' TYPE 'E' NUMBER 001.", ver: Version.v750},
+  {abap: "RAISE EXCEPTION TYPE zcx_bar MESSAGE e000(zp_foo) WITH lv_moo.", ver: Version.v750},
   {abap: "RAISE EXCEPTION TYPE zcx_foobar MESSAGE ID 'ZFOO' TYPE 'E' NUMBER 001 WITH bar.", ver: Version.v750},
 ];
 

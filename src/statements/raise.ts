@@ -15,12 +15,11 @@ export class Raise extends Statement {
   public static get_matcher(): Combi.IRunnable {
     let wit  = seq(str("WITH"), plus(new Reuse.Source()));
 
-    let mess = seq(str("MESSAGE ID"),
-                   new Reuse.Source(),
-                   str("TYPE"),
-                   new Reuse.Source(),
-                   str("NUMBER"),
-                   new Reuse.Source(),
+    let mess1 = seq(str("ID"), new Reuse.Source(), str("TYPE"), new Reuse.Source(), str("NUMBER"), new Reuse.Source());
+    let mess2 = seq(new Reuse.Field(), str("("), new Reuse.Field(), str(")"));
+
+    let mess = seq(str("MESSAGE"),
+                   alt(mess1, mess2),
                    opt(wit));
 
     let exporting = seq(str("EXPORTING"), new Reuse.ParameterListS());
