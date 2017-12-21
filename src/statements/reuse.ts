@@ -627,6 +627,7 @@ export class Source extends Combi.Reuse {
                                           tok(ParenLeftW),
                                           opt(alt(new Source(),
                                                   plus(fieldList),
+                                                  plus(seq(tok(WParenLeftW), plus(new Source()), tok(WParenRightW))),
                                                   plus(seq(tok(WParenLeftW), plus(fieldList), tok(WParenRightW))))),
                                           rparen));
 

@@ -92,7 +92,8 @@ let versions = [
 
   {abap: "foo = VALUE #( ( col1 = 13 col2 = 232 col3 = 332 ) ).", ver: Version.v740sp02},
   {abap: "excluded = value #( ( b_01 ) ).", ver: Version.v740sp02},
-//  {abap: "excluded = value #( ( b_01 ) ( b_02 ) ).", ver: Version.v740sp02},
+  {abap: "excluded = value #( ( foo = b_01 ) ( bar = b_02 ) ).", ver: Version.v740sp02},
+  {abap: "excluded = value #( ( b_01 ) ( b_02 ) ).", ver: Version.v740sp02},
 
   {abap: "foo = VALUE #(\n" +
     "( col1 = 11 col2 = 211 col3 = 311 )\n" +
