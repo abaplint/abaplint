@@ -89,6 +89,8 @@ let tests = [
   "SELECT COUNT( DISTINCT id ) FROM zfoo INTO lv_cnt.",
   "SELECT SINGLE id FROM ztab connection (lv_con) INTO lv_id.",
   "SELECT SUM( value ) FROM table INTO lv_count.",
+
+  "SELECT carrid, connid FROM sflight INTO CORRESPONDING FIELDS OF TABLE @flight FOR ALL ENTRIES IN @carriers.",
 ];
 
 statementType(tests, "SELECT", Statements.Select);

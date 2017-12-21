@@ -863,7 +863,7 @@ export class Select extends Combi.Reuse {
 
     let order = seq(str("ORDER BY"), alt(plus(new Field()), str("PRIMARY KEY"), new Dynamic()));
 
-    let forAll = seq(str("FOR ALL ENTRIES IN"), new Source());
+    let forAll = seq(str("FOR ALL ENTRIES IN"), opt(ver(Version.v740sp05, tok(WAt))), new Source());
 
     let count = seq(str("COUNT"), alt(tok(ParenLeft), tok(ParenLeftW)), opt(str("DISTINCT")), alt(str("*"), new Field()), str(")"));
     let max = seq(str("MAX"), alt(tok(ParenLeft), tok(ParenLeftW)), new Field(), str(")"));
