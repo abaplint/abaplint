@@ -103,6 +103,7 @@ export default class Lexer {
 
   private static add() {
     let s = this.buffer.get().trim();
+
     if (s.length > 0) {
       let col = this.stream.getCol();
       let row = this.stream.getRow();
@@ -222,6 +223,8 @@ export default class Lexer {
     this.stream = new Stream(raw);
     this.buffer = new Buffer();
 
+    let escaped = 0;
+
     for ( ; ; ) {
       let current = this.stream.currentChar();
       this.buffer.add(current);
@@ -247,12 +250,15 @@ export default class Lexer {
 // start comment
         this.add();
         this.m = Mode.Comment;
-
       } else if (buf.length > 1 && current === "`" && this.m === Mode.Ping) {
 // end of ping
         this.add();
         this.m = Mode.Normal;
-      } else if (buf.length > 1 && current === "|" && prev !== "\\" && this.m === Mode.Template) {
+      } else if (this.m === Mode.Template && current === "{" && prev !== "\\") {
+        escaped = escaped + 1;
+      } else if (this.m === Mode.Template && escaped && current === "}" && prev !== "\\") {
+        escaped = escaped - 1;
+      } else if (buf.length > 1 && current === "|" && prev !== "\\" && escaped === 0 && this.m === Mode.Template) {
 // end of template
         this.add();
         this.m = Mode.Normal;
