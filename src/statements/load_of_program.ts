@@ -9,4 +9,20 @@ export class LoadOfProgram extends Statement {
     return str("LOAD-OF-PROGRAM");
   }
 
+  public isStructure() {
+    return true;
+  }
+
+  public isValidParent(s) {
+    return s === undefined;
+  }
+
+  public indentationSetStart() {
+    return 0;
+  }
+
+  public indentationSetEnd() {
+    return 2;
+  }
+
 }

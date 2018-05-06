@@ -16,6 +16,7 @@ let tests = [
   {abap: "START-OF-SELECTION.\n  PERFORM run.\nFORM foo.", cnt: 0},
   {abap: "START-OF-SELECTION.\n  PERFORM run.\nCLASS foo IMPLEMENTATION.", cnt: 0},
   {abap: "START-OF-SELECTION.\n  PERFORM run.\nMODULE foo OUTPUT.", cnt: 0},
+  {abap: "LOAD-OF-PROGRAM.\n  button_1 = 'Prefixes'(002).", cnt: 0},
   {abap: "MODULE foo OUTPUT.\n  foo = boo.", cnt: 0},
   {abap: "MODULE foo OUTPUT.\nfoo = boo.", cnt: 1},
   {abap: "CLASS foo IMPLEMENTATION.\n  PRIVATE SECTION.\n", cnt: 0},
