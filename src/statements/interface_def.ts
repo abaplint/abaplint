@@ -1,4 +1,5 @@
 import {Statement} from "./statement";
+import {Version} from "../version";
 import * as Combi from "../combi";
 import * as Reuse from "./reuse";
 
@@ -6,6 +7,7 @@ let str = Combi.str;
 let seq = Combi.seq;
 let opt = Combi.opt;
 let alt = Combi.alt;
+let ver = Combi.ver;
 let plus = Combi.plus;
 
 export class InterfaceDef extends Statement {
@@ -19,7 +21,7 @@ export class InterfaceDef extends Statement {
     let options = alt(seq(str("ABSTRACT METHODS"), plus(new Reuse.Field())),
                       str("ALL METHODS ABSTRACT"),
                       str("ALL METHODS FINAL"),
-                      str("PARTIALLY IMPLEMENTED"));
+                      ver(Version.v740sp02, str("PARTIALLY IMPLEMENTED")));
 
     return seq(str("INTERFACES"),
                new Reuse.Field(),

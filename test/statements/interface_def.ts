@@ -1,5 +1,6 @@
-import {statementType} from "../utils";
+import {statementType, statementVersion} from "../utils";
 import * as Statements from "../../src/statements/";
+import {Version} from "../../src/version";
 
 let tests = [
   "INTERFACES lif_gui_page ABSTRACT METHODS render.",
@@ -11,3 +12,9 @@ let tests = [
 ];
 
 statementType(tests, "INTERFACES", Statements.InterfaceDef);
+
+let versions = [
+  {abap: "INTERFACES zif_foo PARTIALLY IMPLEMENTED.", ver: Version.v740sp02},
+];
+
+statementVersion(versions, "INTERFACES", Statements.InterfaceDef);
