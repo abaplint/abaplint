@@ -1,0 +1,15 @@
+title: abaplint documentation
+highlighter: rouge
+collections_dir: collections
+collections:
+  development:
+    output: true
+defaults:
+  - scope:
+      path: ""
+    values:
+      layout: "default"
+  - scope:
+      path: "_development"
+    values:
+      layout: "development"
