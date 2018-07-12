@@ -66,5 +66,7 @@ Similar to https://github.com/larshp/abapOpenChecks/wiki/ZCL_AOC_CHECK_17
 ## Configuration
 
 run 'abaplint -h'
+
 it will show "  -d, --default    show default configuration" which will output the default configuration file
+
 then place the file as 'abaplint.json' in the root folder of the repo
