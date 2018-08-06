@@ -1,5 +1,6 @@
-import {statementType} from "../utils";
+import {statementType, statementVersion} from "../utils";
 import * as Statements from "../../src/statements/";
+import {Version} from "../../src/version";
 
 let tests = [
   "loop at foo.",
@@ -23,3 +24,9 @@ let tests = [
 ];
 
 statementType(tests, "LOOP", Statements.Loop);
+
+let versions = [
+  {abap: "LOOP AT lt_packages ASSIGNING FIELD-SYMBOL(<package>).", ver: Version.v740sp02},
+];
+
+statementVersion(versions, "LOOP", Statements.Loop);
