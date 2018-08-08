@@ -8,6 +8,7 @@ enum Mode {
   Str,
   Template,
   Comment,
+  Pragma,
 }
 
 class Buffer {
@@ -245,11 +246,19 @@ export default class Lexer {
 // start ping
         this.add();
         this.m = Mode.Ping;
+      } else if (aahead === "##" && this.m === Mode.Normal) {
+// start pragma
+        this.add();
+        this.m = Mode.Pragma;
       } else if ((ahead === "\"" || (ahead === "*" && current === "\n"))
           && this.m === Mode.Normal) {
 // start comment
         this.add();
         this.m = Mode.Comment;
+      } else if (this.m === Mode.Pragma && ( ahead === "," || ahead === "." ) ) {
+// end of pragma
+        this.add();
+        this.m = Mode.Normal;
       } else if (buf.length > 1 && current === "`" && this.m === Mode.Ping) {
 // end of ping
         this.add();

@@ -48,6 +48,8 @@ let tests = [
   "SELECT SINGLE carrid, connid, fldate FROM sflight INTO CORRESPONDING FIELDS OF @return WHERE carrid = @i_flight_number.",
   "SELECT SINGLE carrid, connid, fldate FROM sflight INTO CORRESPONDING FIELDS OF @DATA(return) WHERE carrid = @i_flight_number.",
 
+  "SELECT * FROM zags_objects INTO TABLE @DATA(rt_list) WHERE repo = '345' ##SELECT_FAE_WITH_LOB[DATA_RAW].",
+
   "SELECT marc~matnr marc~werks marc~herkl\n" +
   "       mara~ntgew mara~gewei marc~beskz\n" +
   "  FROM marc JOIN mara ON marc~matnr = mara~matnr\n" +

@@ -75,6 +75,8 @@ describe("count_tokens", () => {
     {abap: "WRITE |{ '|' }|",                     tokens: 2},
     {abap: "WRITE |{ |sdf| }|",                   tokens: 2},
     {abap: "WRITE |{ |{ |{ lv_bar }| }| }|",      tokens: 2},
+    {abap: "FOO ##SELECT_FAE_WITH_LOB[ASDF].",    tokens: 3},
+    {abap: "FOO ##SELECT_FAE_WITH_LOB[ASDF]",     tokens: 2},
 //    {abap: "WRITE `a``b`",                        tokens: 2},
 //    {abap: "WRITE `\"foo``\"bar`",                tokens: 2},
   ];
