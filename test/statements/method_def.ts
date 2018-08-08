@@ -1,5 +1,6 @@
-import {statementType} from "../utils";
+import {statementType, statementVersion} from "../utils";
 import * as Statements from "../../src/statements/";
+import {Version} from "../../src/version";
 
 let tests = [
   "CLASS-METHODS status IMPORTING io_repo TYPE REF TO lcl_repo.",
@@ -69,3 +70,10 @@ let tests = [
 ];
 
 statementType(tests, "METHODS", Statements.MethodDef);
+
+
+let versions = [
+  {abap: "METHODS method2 DEFAULT IGNORE.", ver: Version.v740sp08},
+];
+
+statementVersion(versions, "METHODS", Statements.MethodDef);

@@ -1,3 +1,4 @@
+import {Version} from "../version";
 import {Statement} from "./statement";
 import * as Reuse from "./reuse";
 import * as Combi from "../combi";
@@ -9,6 +10,7 @@ let seqs = Combi.seqs;
 let alt = Combi.alt;
 let opt = Combi.opt;
 let tok = Combi.tok;
+let ver = Combi.ver;
 let reg = Combi.regex;
 let plus = Combi.plus;
 // let optPrio = Combi.optPrio;
@@ -33,7 +35,7 @@ export class MethodDef extends Statement {
     let raising    = seq(str("RAISING"),    plus(alt(resumable, new Reuse.ClassName())));
     let exceptions = seq(str("EXCEPTIONS"), plus(reg(/^\w+?$/)));
 
-    let def = seq(str("DEFAULT"), alt(str("FAIL"), str("IGNORE")));
+    let def = ver(Version.v740sp08, seq(str("DEFAULT"), alt(str("FAIL"), str("IGNORE"))));
 
     let parameters = seqs(opt(alt(str("ABSTRACT"), str("FINAL"), str("FOR TESTING"), def)),
                           opt(importing),
