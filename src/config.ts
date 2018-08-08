@@ -1,10 +1,11 @@
 import * as Rules from "./rules/";
-import {Version} from "./version";
+import {Version, versionToText, textToVersion} from "./version";
 
 export default class Config {
 
+  private static defaultVersion = Version.v750;
+
   private config = undefined;
-  private ver: Version;
   private progress: boolean;
 
   public static getDefault(): Config {
@@ -19,9 +20,10 @@ export default class Config {
       }
     }
 
-    let json = "{\"rules\":\n{" + defaults.join(",\n") + "\n}}";
+    let json = "{\"version\": \"" +
+      versionToText(Config.defaultVersion) +
+      "\", \"rules\":\n{" + defaults.join(",\n") + "\n}}";
     let conf = new Config(json);
-    conf.setVersion(Version.v750);
     return conf;
   }
 
@@ -44,11 +46,14 @@ export default class Config {
   }
 
   public getVersion(): Version {
-    return this.ver;
+    if (this.config["version"] === undefined) {
+      return Config.defaultVersion;
+    }
+    return textToVersion(this.config["version"]);
   }
 
   public setVersion(ver: Version): Config {
-    this.ver = ver;
+    this.config["version"] = versionToText(ver);
     return this;
   }
 

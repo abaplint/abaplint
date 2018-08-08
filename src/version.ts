@@ -9,7 +9,7 @@ export enum Version {
   v750,
 }
 
-export function versionDescription(v: Version): string {
+export function versionToText(v: Version): string {
   switch (v) {
     case Version.v700:
       return "v700";
@@ -28,7 +28,7 @@ export function versionDescription(v: Version): string {
   }
 }
 
-export function versionText(s: string): Version {
+export function textToVersion(s: string): Version {
   switch (s) {
     case "v700":
       return Version.v700;
@@ -43,6 +43,6 @@ export function versionText(s: string): Version {
     case "v750":
       return Version.v750;
     default:
-      throw "unknown version";
+      throw "unknown version: " + s;
   }
 }

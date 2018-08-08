@@ -1,7 +1,7 @@
 import * as Tokens from "./tokens/";
 import Position from "./position";
 import {TokenNode, BasicNode, ReuseNode, CountableNode} from "./node";
-import {Version, versionDescription} from "../src/version";
+import {Version, versionToText} from "../src/version";
 
 export class Result {
   private tokens: Array<Tokens.Token>;
@@ -206,7 +206,7 @@ class Vers implements IRunnable {
 
   public railroad() {
     return "Railroad.Sequence(Railroad.Comment(\"" +
-      versionDescription(this.version) +
+      versionToText(this.version) +
       "\"), " +
       this.runnable.railroad() +
       ")";

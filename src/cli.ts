@@ -2,7 +2,7 @@ import Runner from "./runner";
 import {File, ParsedFile} from "./file";
 import {Issue} from "./issue";
 import Config from "./config";
-import {versionText} from "./version";
+import {textToVersion} from "./version";
 import * as ProgressBar from "progress";
 import * as fs from "fs";
 import * as path from "path";
@@ -96,7 +96,7 @@ function run() {
       let config = searchConfig(files[0]);
 
       if (argv["a"]) {
-        config.setVersion(versionText(argv["a"]));
+        config.setVersion(textToVersion(argv["a"]));
       }
       if (argv["s"]) {
         config.setShowProgress(true);
