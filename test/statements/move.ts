@@ -95,6 +95,11 @@ let versions = [
   {abap: "excluded = value #( ( foo = b_01 ) ( bar = b_02 ) ).", ver: Version.v740sp02},
   {abap: "excluded = value #( ( b_01 ) ( b_02 ) ).", ver: Version.v740sp02},
 
+  {abap: "DATA(lt_tadir) = VALUE tt_tadir( FOR ls_object IN it_objects (\n" +
+    "pgmid = ls_object-pgmid\n" +
+    "object = ls_object-object\n" +
+    "obj_name = ls_object-obj_name ) ).", ver: Version.v740sp05},
+
   {abap: "foo = VALUE #(\n" +
     "( col1 = 11 col2 = 211 col3 = 311 )\n" +
     "( col1 = 11 col2 = 212 col3 = 312 )\n" +

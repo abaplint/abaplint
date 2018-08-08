@@ -34,6 +34,15 @@ export class FieldSymbol extends Combi.Reuse {
   }
 }
 
+export class For extends Combi.Reuse {
+  public get_runnable() {
+    let fieldList = seq(new Field(), str("="), new Source());
+    let fields = seq(tok(WParenLeftW), plus(fieldList), tok(WParenRightW));
+    let f = seq(str("FOR"), new Target(), str("IN"), new Source(), fields);
+    return ver(Version.v740sp05, f);
+  }
+}
+
 export class InlineData extends Combi.Reuse {
   public get_runnable() {
     let right = alt(tok(ParenRight), tok(ParenRightW));
@@ -626,6 +635,7 @@ export class Source extends Combi.Reuse {
                                           new TypeName(),
                                           tok(ParenLeftW),
                                           opt(alt(new Source(),
+                                                  new For(),
                                                   plus(fieldList),
                                                   plus(seq(tok(WParenLeftW), plus(new Source()), tok(WParenRightW))),
                                                   plus(seq(tok(WParenLeftW), plus(fieldList), tok(WParenRightW))))),
