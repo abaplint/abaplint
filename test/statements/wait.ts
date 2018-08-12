@@ -1,5 +1,6 @@
-import {statementType} from "../utils";
+import {statementType, statementVersion} from "../utils";
 import * as Statements from "../../src/statements/";
+import {Version} from "../../src/version";
 
 let tests = [
   "WAIT UP TO 1 SECONDS.",
@@ -9,3 +10,9 @@ let tests = [
 ];
 
 statementType(tests, "WAIT", Statements.Wait);
+
+let versions = [
+  {abap: "WAIT FOR PUSH CHANNELS UNTIL ms_message IS NOT INITIAL UP TO iv_timeout SECONDS.", ver: Version.v750},
+];
+
+statementVersion(versions, "WAIT", Statements.Wait);
