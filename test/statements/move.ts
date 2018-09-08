@@ -90,6 +90,8 @@ let versions = [
   {abap: "foo = mi_foo->update( CORRESPONDING #( get( ) EXCEPT field ) ).", ver: Version.v740sp05},
   {abap: "foo = VALUE /bobf/t_frw_name( ).", ver: Version.v740sp02},
   {abap: "foo = switch #( i_popup when abap_true then c_popup when abap_false then c_full ).", ver: Version.v740sp02},
+  {abap: "_locale = SWITCH #( i_locale WHEN `` THEN get_locale( ) ELSE i_locale ).", ver: Version.v740sp02},
+  {abap: "r_source = VALUE #( BASE r_source ( source_line ) ).", ver: Version.v740sp02},
 
   {abap: "foo = VALUE #( ( col1 = 13 col2 = 232 col3 = 332 ) ).", ver: Version.v740sp02},
   {abap: "excluded = value #( ( b_01 ) ).", ver: Version.v740sp02},
@@ -113,6 +115,7 @@ let versions = [
   {abap: "ct_usage[ id = c_excel ]-enabled = abap_false.", ver: Version.v740sp02},
   {abap: "ct_usage[ KEY name id = c_excel ]-enabled = abap_false.", ver: Version.v740sp02},
   {abap: "e_object->mt_toolbar[ function = <tb>-function ]-disabled = abap_true.", ver: Version.v740sp02},
+  {abap: "ro_elem = VALUE #( char_table[ char = lv_char ]-elem DEFAULT NEW lcl_lisp_char( lv_char ) ).", ver: Version.v740sp02},
 ];
 
 statementVersion(versions, "MOVE", Statements.Move);

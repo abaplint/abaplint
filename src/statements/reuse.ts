@@ -22,7 +22,7 @@ let altPrio = Combi.altPrio;
 let star = Combi.star;
 let plus = Combi.plus;
 
-// todo: split this file into 1 file per class in new directory
+// todo: split this file into 1 file per class in new directory "expressions"
 
 export class Integer extends Combi.Reuse {
   public get_runnable() {
@@ -630,18 +630,23 @@ export class Source extends Combi.Reuse {
                                          tok(ParenLeftW),
                                          new Source(),
                                          plus(swhen),
+                                         opt(seq(str("ELSE"), new Source())),
                                          rparen));
 
     let fieldList = seq(new Field(), str("="), new Source());
 
+    let base = seq(str("BASE"), new Source());
+
+    let strucOrTab = seq(opt(base), alt(plus(fieldList),
+                                        plus(seq(tok(WParenLeftW), plus(new Source()), tok(WParenRightW))),
+                                        plus(seq(tok(WParenLeftW), plus(fieldList), tok(WParenRightW)))));
+
     let value = ver(Version.v740sp02, seq(str("VALUE"),
                                           new TypeName(),
                                           tok(ParenLeftW),
-                                          opt(alt(seq(new Source(), opt(str("OPTIONAL"))),
+                                          opt(alt(seq(new Source(), opt(alt(str("OPTIONAL"), seq(str("DEFAULT"), new Source())))),
                                                   new For(),
-                                                  plus(fieldList),
-                                                  plus(seq(tok(WParenLeftW), plus(new Source()), tok(WParenRightW))),
-                                                  plus(seq(tok(WParenLeftW), plus(fieldList), tok(WParenRightW))))),
+                                                  strucOrTab)),
                                           rparen));
 
     let when = seq(str("WHEN"), new Cond(), str("THEN"), new Source());
