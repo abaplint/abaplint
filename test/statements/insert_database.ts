@@ -10,6 +10,8 @@ let tests = [
   "insert zdata from table lt_table accepting duplicate keys.",
   "INSERT (c_tabname) FROM ls_foobar.",
   "INSERT (c_tabname) CLIENT SPECIFIED FROM TABLE lt_table.",
+  "INSERT (mv_tabname) CONNECTION default FROM ig_row.",
+  "INSERT (mv_tabname) CONNECTION (mv_connection_key) FROM ig_row.",
 ];
 
 statementType(tests, "INSERT", Statements.InsertDatabase);

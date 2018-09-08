@@ -14,7 +14,10 @@ export class InsertDatabase extends Statement {
 
     let client = str("CLIENT SPECIFIED");
 
+    let conn = seq(str("CONNECTION"), alt(new Reuse.Source(), new Reuse.Dynamic()));
+
     let f = seq(opt(client),
+                opt(conn),
                 str("FROM"),
                 opt(str("TABLE")),
                 new Reuse.Source(),

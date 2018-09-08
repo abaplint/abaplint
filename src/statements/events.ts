@@ -11,7 +11,9 @@ let plus = Combi.plus;
 export class Events extends Statement {
 
   public static get_matcher(): Combi.IRunnable {
-    let exporting = seq(str("EXPORTING"), plus(new Reuse.MethodParam()));
+    let par = seq(new Reuse.MethodParam(), opt(str("OPTIONAL")));
+
+    let exporting = seq(str("EXPORTING"), plus(par));
 
     return seq(alt(str("CLASS-EVENTS"), str("EVENTS")), new Reuse.Field(), opt(exporting));
   }

@@ -36,6 +36,7 @@ let tests = [
   "IF ( foo = bar ).",
   "IF lcl_foo=>check( ).",
   "IF bar =< foo.",
+  "if child is INSTANCE OF cl_gui_container.",
   "if not line_exists( added[ function = iv_function ] ).",
   "if foo = bar and line_exists( fcat[ fieldname = 'MOO' ] ).",
   "IF foo(2) = 12 OR foo(2) = 12.",

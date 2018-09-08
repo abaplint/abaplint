@@ -22,6 +22,8 @@ let altPrio = Combi.altPrio;
 let star = Combi.star;
 let plus = Combi.plus;
 
+// todo: split this file into 1 file per class in new directory
+
 export class Integer extends Combi.Reuse {
   public get_runnable() {
     return seq(opt(tok(WDash)), reg(/^\d+$/));
@@ -186,6 +188,7 @@ export class Compare extends Combi.Reuse {
                    opt(str("NOT")),
                    alt(str("SUPPLIED"),
                        str("BOUND"),
+                       ver(Version.v750, seq(str("INSTANCE OF"), new Source())),
                        str("REQUESTED"),
                        str("ASSIGNED"),
                        str("INITIAL")));
@@ -634,7 +637,7 @@ export class Source extends Combi.Reuse {
     let value = ver(Version.v740sp02, seq(str("VALUE"),
                                           new TypeName(),
                                           tok(ParenLeftW),
-                                          opt(alt(new Source(),
+                                          opt(alt(seq(new Source(), opt(str("OPTIONAL"))),
                                                   new For(),
                                                   plus(fieldList),
                                                   plus(seq(tok(WParenLeftW), plus(new Source()), tok(WParenRightW))),

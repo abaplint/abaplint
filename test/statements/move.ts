@@ -79,6 +79,7 @@ let versions = [
   {abap: "lv_commit = CONV #( iv_branch ).", ver: Version.v740sp02},
   {abap: "lv_value = REF #( attribute_value ).", ver: Version.v740sp02},
   {abap: "ev_filename = mt_files[ 1 ]-key-obj_name.", ver: Version.v740sp02},
+  {abap: "DATA(new_level) = VALUE #( mt_levels[ random_int ] OPTIONAL ).", ver: Version.v740sp02},
   {abap: "land_text = countries[ land1 = lv_foo ]-landx50.", ver: Version.v740sp02},
   {abap: "DATA(lt_tkey) = VALUE cvt_selops( ( option = 'EQ' sign   = 'I' low    = 'sdf' ) ).", ver: Version.v740sp02},
   {abap: "lv_xstr = CAST cl_sxml_string_writer( li_writer )->get_output( ).", ver: Version.v740sp02},

@@ -242,3 +242,4 @@ export * from "./type_begin";
 export * from "./type_end";
 export * from "./raise_event";
 export * from "./cleanup";
+export * from "./create_ole";

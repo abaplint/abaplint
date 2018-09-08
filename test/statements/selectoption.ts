@@ -21,6 +21,7 @@ let tests = [
   "SELECT-OPTIONS s_att FOR _att NO INTERVALS LOWER CASE.",
   "SELECT-OPTIONS s_id FOR /foo/bar-id NO INTERVALS.",
   "SELECT-OPTIONS so_fr FOR from MODIF ID 123.",
+  "SELECT-OPTIONS s_startd FOR w_startd DEFAULT sy-datum TO sy-datum.",
 ];
 
 statementType(tests, "SELECT-OPTIONS", Statements.SelectOption);
