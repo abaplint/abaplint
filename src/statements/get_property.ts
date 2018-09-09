@@ -1,22 +1,18 @@
 import {Statement} from "./statement";
 import * as Reuse from "./reuse";
-import * as Combi from "../combi";
-
-let str = Combi.str;
-let seq = Combi.seq;
-let opt = Combi.opt;
+import {str, seq, opt, IRunnable} from "../combi";
 
 export class GetProperty extends Statement {
 
-  public static get_matcher(): Combi.IRunnable {
+  public static get_matcher(): IRunnable {
     let exporting = seq(str("EXPORTING"), new Reuse.ParameterListS());
 
     let ret = seq(str("GET PROPERTY OF"),
                   new Reuse.FieldSub(),
-                  new Reuse.Field(),
+                  new Reuse.Source(),
                   str("="),
                   new Reuse.Source(),
-                  str("NO FLUSH"),
+                  opt(str("NO FLUSH")),
                   opt(exporting));
 
     return ret;

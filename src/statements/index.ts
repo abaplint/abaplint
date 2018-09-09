@@ -244,3 +244,4 @@ export * from "./raise_event";
 export * from "./cleanup";
 export * from "./create_ole";
 export * from "./call_ole";
+export * from "./set_property";

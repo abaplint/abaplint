@@ -9,9 +9,12 @@ export class CallOLE extends Statement {
 
     let exporting = seq(str("EXPORTING"), plus(fields));
 
+    let rc = seq(str("="), new Reuse.Target());
+
     let ret = seq(str("CALL METHOD OF"),
                   new Reuse.Source(),
                   new Reuse.Constant(),
+                  opt(rc),
                   opt(exporting));
 
     return ret;
