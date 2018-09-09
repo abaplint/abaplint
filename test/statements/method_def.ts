@@ -37,7 +37,6 @@ let tests = [
   "METHODS method1 DEFAULT FAIL.",
   "METHODS foo IMPORTING inp TYPE LINE OF bar.",
   "METHODS method2 DEFAULT IGNORE.",
-
   "methods CONSTRUCTOR\n" +
   "  importing\n" +
   "    foo type index table optional\n" +
@@ -66,7 +65,6 @@ let tests = [
   "    foo type index table optional\n" +
   "    foo type index table optional\n" +
   "    foo type index table optional.",
-
 ];
 
 statementType(tests, "METHODS", Statements.MethodDef);

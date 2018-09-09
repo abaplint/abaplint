@@ -635,7 +635,7 @@ export class Source extends Combi.Reuse {
                                          opt(seq(str("ELSE"), new Source())),
                                          rparen));
 
-    let fieldList = seq(new Field(), str("="), new Source());
+    let fieldList = seq(new FieldSub(), str("="), new Source());
 
     let alet = seq(str("LET"), plus(fieldList), str("IN"));
 

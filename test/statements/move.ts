@@ -122,6 +122,7 @@ let versions = [
   {abap: "ct_usage[ KEY name id = c_excel ]-enabled = abap_false.", ver: Version.v740sp02},
   {abap: "e_object->mt_toolbar[ function = <tb>-function ]-disabled = abap_true.", ver: Version.v740sp02},
   {abap: "ro_elem = VALUE #( char_table[ char = lv_char ]-elem DEFAULT NEW lcl_lisp_char( lv_char ) ).", ver: Version.v740sp08},
+  {abap: "color = VALUE #( ( color-col = color_on ) ).", ver: Version.v740sp02},
 ];
 
 statementVersion(versions, "MOVE", Statements.Move);
