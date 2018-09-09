@@ -65,8 +65,8 @@ export class FSTarget extends Combi.Reuse {
 export class Target extends Combi.Reuse {
   public get_runnable() {
     let after = seq(alt(new Field(), new FieldSymbol()),
-                    opt(new TableExpression()),
-                    star(seq(new ArrowOrDash(), alt(str("*"), new FieldAll()), opt(new TableExpression()))));
+                    star(new TableExpression()),
+                    star(seq(new ArrowOrDash(), alt(str("*"), new FieldAll()), star(new TableExpression()))));
 
     let fields = seq(opt(new FieldOffset()), opt(new FieldLength()));
 
@@ -275,7 +275,7 @@ export class For extends Combi.Reuse {
   public get_runnable() {
     let inn = seq(str("IN"), new Source());
     let then = seq(str("THEN"), new Source());
-    let whil = seq(str("WHILE"), new Cond());
+    let whil = seq(alt(str("UNTIL"), str("WHILE")), new Cond());
     let itera = seq(str("="), new Source(), opt(then), whil);
     let f = seq(str("FOR"), alt(new Field(), new FieldSymbol()), alt(itera, inn));
     return ver(Version.v740sp05, plus(f));
@@ -332,7 +332,7 @@ export class FormParam extends Combi.Reuse {
 export class MethodParam extends Combi.Reuse {
   public get_runnable() {
     let field = reg(/^!?(\/\w+\/)?\w+$/);
-    let fieldsOrValue = seq(alt(new PassByValue(), field), new TypeParam());
+    let fieldsOrValue = seq(alt(new PassByValue(), new PassByReference(), field), new TypeParam());
 
     return fieldsOrValue;
   }
@@ -442,8 +442,8 @@ export class FieldChain extends Combi.Reuse {
   public get_runnable() {
 
     let chain = seq(alt(new Field(), new FieldSymbol()),
-                    optPrio(new TableExpression()),
-                    star(seq(new ArrowOrDash(), alt(str("*"), new FieldAll()), opt(new TableExpression()))));
+                    optPrio(plus(new TableExpression())),
+                    star(seq(new ArrowOrDash(), alt(str("*"), new FieldAll()), opt(plus(new TableExpression())))));
 
     let ret = seq(chain, optPrio(new FieldOffset()), optPrio(new FieldLength()));
 
@@ -739,6 +739,17 @@ export class Field extends Combi.Reuse {
 export class PassByValue extends Combi.Reuse {
   public get_runnable() {
     let value = seq(str("VALUE"),
+                    tok(ParenLeft),
+                    new Field(),
+                    alt(tok(ParenRight), tok(ParenRightW)));
+
+    return value;
+  }
+}
+
+export class PassByReference extends Combi.Reuse {
+  public get_runnable() {
+    let value = seq(str("REFERENCE"),
                     tok(ParenLeft),
                     new Field(),
                     alt(tok(ParenRight), tok(ParenRightW)));

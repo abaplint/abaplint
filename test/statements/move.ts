@@ -42,6 +42,7 @@ let tests = [
   "ls_/foo/bar-visible = 'X'.",
   "lv_type = mr_property->*-data-type.",
   "lr_ref->*-length = ls_type-length.",
+  "x = column - '0.5'.",
   "e_flag-4 = 'X'.",
 
   "lv_foo = `foo` & `foo` & `foo` & `foo` & `foo` & `foo` & \n" +
@@ -125,6 +126,10 @@ let versions = [
   {abap: "foo = VALUE #( ( ) ).", ver: Version.v740sp02},
   {abap: "DATA(message) = COND #( LET len = strlen( i_message ) IN WHEN len > 0 THEN 'sdf' ).", ver: Version.v740sp02},
   {abap: "r_list = VALUE #( FOR <attribute> IN sdf->attributes ( <attribute>-name ) ).", ver: Version.v740sp05},
+  {abap: "thesum = thesum + me->matrix[ x ] * i_matrix->matrix[ j ].", ver: Version.v740sp02},
+  {abap: "thesum = thesum + me->matrix[ x ][ j ] * i_matrix->matrix[ j ][ y ].", ver: Version.v740sp02},
+  {abap: "foo = CONV decfloat16( _num_samples ).", ver: Version.v740sp02},
+  {abap: "t->matrix[ 1 ][ 4 ] = i_rotate_about_line->x.", ver: Version.v740sp02},
 ];
 
 statementVersion(versions, "MOVE", Statements.Move);

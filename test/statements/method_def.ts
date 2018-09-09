@@ -68,6 +68,7 @@ let tests = [
   "METHODS format_message importing id like sy-msgid.",
   "METHODS format_message importing id like sy-msgid default sy-msgid.",
   "METHODS format_message importing lang type langu default '-'.",
+  "CLASS-METHODS name IMPORTING REFERENCE(i_center) TYPE REF TO zcl_bar.",
 ];
 
 statementType(tests, "METHODS", Statements.MethodDef);
