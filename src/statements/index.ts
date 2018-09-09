@@ -245,3 +245,7 @@ export * from "./cleanup";
 export * from "./create_ole";
 export * from "./call_ole";
 export * from "./set_property";
+export * from "./test_injection";
+export * from "./end_test_injection";
+export * from "./test_seam";
+export * from "./end_test_seam";

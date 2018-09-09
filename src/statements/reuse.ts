@@ -277,7 +277,7 @@ export class For extends Combi.Reuse {
     let then = seq(str("THEN"), new Source());
     let whil = seq(str("WHILE"), new Cond());
     let itera = seq(str("="), new Source(), opt(then), whil);
-    let f = seq(str("FOR"), new Field(), alt(itera, inn));
+    let f = seq(str("FOR"), alt(new Field(), new FieldSymbol()), alt(itera, inn));
     return ver(Version.v740sp05, plus(f));
   }
 }
@@ -642,7 +642,7 @@ export class Source extends Combi.Reuse {
     let base = seq(str("BASE"), new Source());
 
     let tab = seq(opt(new For()),
-                  alt(plus(seq(tok(WParenLeftW), plus(new Source()), tok(WParenRightW))),
+                  alt(plus(seq(tok(WParenLeftW), star(new Source()), tok(WParenRightW))),
                       plus(seq(tok(WParenLeftW), plus(fieldList), tok(WParenRightW)))));
 
     let strucOrTab = seq(opt(alet), opt(base),
@@ -665,6 +665,7 @@ export class Source extends Combi.Reuse {
     let cond = ver(Version.v740sp02, seq(str("COND"),
                                          new TypeName(),
                                          tok(ParenLeftW),
+                                         opt(alet),
                                          plus(when),
                                          opt(elsee),
                                          rparen));
@@ -791,7 +792,7 @@ export class TypeParam extends Combi.Reuse {
                   new TypeName(),
                   opt(def));
 
-    let like = seq(str("LIKE"), new FieldChain());
+    let like = seq(str("LIKE"), new FieldChain(), opt(def));
 
     return alt(seq(str("TYPE"), alt(table, ret)), like);
   }

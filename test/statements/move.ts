@@ -3,7 +3,6 @@ import * as Statements from "../../src/statements/";
 import {Version} from "../../src/version";
 
 let tests = [
-
   "move 2 to lv_foo.",
   "move exact c_val to l_int.",
   "MOVE foo ?TO bar.",
@@ -123,6 +122,9 @@ let versions = [
   {abap: "e_object->mt_toolbar[ function = <tb>-function ]-disabled = abap_true.", ver: Version.v740sp02},
   {abap: "ro_elem = VALUE #( char_table[ char = lv_char ]-elem DEFAULT NEW lcl_lisp_char( lv_char ) ).", ver: Version.v740sp08},
   {abap: "color = VALUE #( ( color-col = color_on ) ).", ver: Version.v740sp02},
+  {abap: "foo = VALUE #( ( ) ).", ver: Version.v740sp02},
+  {abap: "DATA(message) = COND #( LET len = strlen( i_message ) IN WHEN len > 0 THEN 'sdf' ).", ver: Version.v740sp02},
+  {abap: "r_list = VALUE #( FOR <attribute> IN sdf->attributes ( <attribute>-name ) ).", ver: Version.v740sp05},
 ];
 
 statementVersion(versions, "MOVE", Statements.Move);

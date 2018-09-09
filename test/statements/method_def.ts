@@ -65,6 +65,9 @@ let tests = [
   "    foo type index table optional\n" +
   "    foo type index table optional\n" +
   "    foo type index table optional.",
+  "METHODS format_message importing id like sy-msgid.",
+  "METHODS format_message importing id like sy-msgid default sy-msgid.",
+  "METHODS format_message importing lang type langu default '-'.",
 ];
 
 statementType(tests, "METHODS", Statements.MethodDef);
