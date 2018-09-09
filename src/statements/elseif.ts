@@ -1,14 +1,11 @@
 import {Statement} from "./statement";
 import {If} from "./if";
-import * as Combi from "../combi";
+import {str, seq, IRunnable} from "../combi";
 import * as Reuse from "./reuse";
-
-let str  = Combi.str;
-let seq  = Combi.seq;
 
 export class Elseif extends Statement {
 
-  public static get_matcher(): Combi.IRunnable {
+  public static get_matcher(): IRunnable {
     return seq(str("ELSEIF"), new Reuse.Cond());
   }
 

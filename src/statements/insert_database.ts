@@ -1,15 +1,10 @@
 import {Statement} from "./statement";
 import * as Reuse from "./reuse";
-import * as Combi from "../combi";
-
-let str = Combi.str;
-let seq = Combi.seq;
-let alt = Combi.alt;
-let opt = Combi.opt;
+import {str, seq, alt, opt, IRunnable} from "../combi";
 
 export class InsertDatabase extends Statement {
 
-  public static get_matcher(): Combi.IRunnable {
+  public static get_matcher(): IRunnable {
     let target = alt(new Reuse.DatabaseTable(), new Reuse.Dynamic());
 
     let client = str("CLIENT SPECIFIED");

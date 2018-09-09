@@ -1,16 +1,10 @@
 import {Statement} from "./statement";
 import * as Reuse from "./reuse";
-import * as Combi from "../combi";
-
-let str = Combi.str;
-let seq = Combi.seq;
-let opt = Combi.opt;
-let alt = Combi.alt;
-let per = Combi.per;
+import {str, seq, opt, alt, per, IRunnable} from "../combi";
 
 export class CreateObject extends Statement {
 
-  public static get_matcher(): Combi.IRunnable {
+  public static get_matcher(): IRunnable {
     let exporting = seq(str("EXPORTING"), new Reuse.ParameterListS());
     let exceptions = seq(str("EXCEPTIONS"), new Reuse.ParameterListExceptions());
     let table = seq(str("PARAMETER-TABLE"), new Reuse.Source());

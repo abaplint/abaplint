@@ -1,15 +1,10 @@
 import {Statement} from "./statement";
 import * as Reuse from "./reuse";
-import * as Combi from "../combi";
-
-let str = Combi.str;
-let seq = Combi.seq;
-let alt = Combi.alt;
-let star = Combi.star;
+import {str, seq, alt, star, IRunnable} from "../combi";
 
 export class CallKernel extends Statement {
 
-  public static get_matcher(): Combi.IRunnable {
+  public static get_matcher(): IRunnable {
 
     let field = seq(str("ID"),
                     new Reuse.Source(),

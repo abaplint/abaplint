@@ -1,17 +1,10 @@
 import {Statement} from "./statement";
 import * as Reuse from "./reuse";
-import * as Combi from "../combi";
-
-let str = Combi.str;
-let seq = Combi.seq;
-let opt = Combi.opt;
-let alt = Combi.alt;
-let per = Combi.per;
-let plus = Combi.plus;
+import {str, seq, opt, alt, per, plus, IRunnable} from "../combi";
 
 export class Find extends Statement {
 
-  public static get_matcher(): Combi.IRunnable {
+  public static get_matcher(): IRunnable {
     let options = per(str("IGNORING CASE"),
                       str("RESPECTING CASE"),
                       str("IN BYTE MODE"),

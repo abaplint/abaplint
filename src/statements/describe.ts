@@ -1,16 +1,10 @@
 import {Statement} from "./statement";
 import * as Reuse from "./reuse";
-import * as Combi from "../combi";
-
-let str = Combi.str;
-let seq = Combi.seq;
-let opt = Combi.opt;
-let alt = Combi.alt;
-let per = Combi.per;
+import {str, seq, opt, alt, per, IRunnable} from "../combi";
 
 export class Describe extends Statement {
 
-  public static get_matcher(): Combi.IRunnable {
+  public static get_matcher(): IRunnable {
     let tlines = seq(str("LINES"), new Reuse.Target());
     let kind = seq(str("KIND"), new Reuse.Target());
 

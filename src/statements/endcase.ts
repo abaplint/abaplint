@@ -1,12 +1,10 @@
 import {Statement} from "./statement";
 import {Case} from "./case";
-import * as Combi from "../combi";
-
-let str = Combi.str;
+import {str, IRunnable} from "../combi";
 
 export class Endcase extends Statement {
 
-  public static get_matcher(): Combi.IRunnable {
+  public static get_matcher(): IRunnable {
     return str("ENDCASE");
   }
 

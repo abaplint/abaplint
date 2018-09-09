@@ -1,17 +1,10 @@
 import {Statement} from "./statement";
 import * as Reuse from "./reuse";
-import * as Combi from "../combi";
-
-let str = Combi.str;
-let opt = Combi.opt;
-let seq = Combi.seq;
-let alt = Combi.alt;
-let per = Combi.per;
-let plus = Combi.plus;
+import {str, opt, seq, alt, per, plus, IRunnable} from "../combi";
 
 export class Concatenate extends Statement {
 
-  public static get_matcher(): Combi.IRunnable {
+  public static get_matcher(): IRunnable {
     let mode = seq(str("IN"),
                    alt(str("BYTE"), str("CHARACTER")),
                    str("MODE"));

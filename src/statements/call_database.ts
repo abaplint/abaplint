@@ -1,15 +1,10 @@
 import {Statement} from "./statement";
 import * as Reuse from "./reuse";
-import * as Combi from "../combi";
-
-let str = Combi.str;
-let seq = Combi.seq;
-let opt = Combi.opt;
-let alt = Combi.alt;
+import {str, seq, opt, alt, IRunnable} from "../combi";
 
 export class CallDatabase extends Statement {
 
-  public static get_matcher(): Combi.IRunnable {
+  public static get_matcher(): IRunnable {
     let exporting = seq(str("EXPORTING"), new Reuse.ParameterListS());
     let importing = seq(str("IMPORTING"), new Reuse.ParameterListT());
     let expl = seq(opt(exporting), opt(importing));

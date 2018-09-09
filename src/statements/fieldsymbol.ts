@@ -1,16 +1,10 @@
 import {Statement} from "./statement";
 import * as Reuse from "./reuse";
-import * as Combi from "../combi";
-
-let str = Combi.str;
-let seq = Combi.seq;
-let reg = Combi.regex;
-let alt = Combi.alt;
-let star = Combi.star;
+import {str, seq, regex as reg, alt, star, IRunnable} from "../combi";
 
 export class FieldSymbol extends Statement {
 
-  public static get_matcher(): Combi.IRunnable {
+  public static get_matcher(): IRunnable {
 // todo, reuse type definition from DATA
     return seq(alt(str("FIELD-SYMBOL"), str("FIELD-SYMBOLS")),
                new Reuse.FieldSymbol(),

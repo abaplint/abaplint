@@ -1,17 +1,10 @@
 import {Statement} from "./statement";
-import * as Combi from "../combi";
+import {str, seq, alt, opt, per, plus, IRunnable} from "../combi";
 import * as Reuse from "./reuse";
-
-let str = Combi.str;
-let seq = Combi.seq;
-let alt = Combi.alt;
-let opt = Combi.opt;
-let per = Combi.per;
-let plus = Combi.plus;
 
 export class DeleteInternal extends Statement {
 
-  public static get_matcher(): Combi.IRunnable {
+  public static get_matcher(): IRunnable {
 // todo, is READ and DELETE similar? something can be reused?
     let index = seq(str("INDEX"), new Reuse.Source());
 

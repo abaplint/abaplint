@@ -1,16 +1,10 @@
 import {Statement} from "./statement";
 import * as Reuse from "./reuse";
-import * as Combi from "../combi";
-
-let str = Combi.str;
-let per = Combi.per;
-let alt = Combi.alt;
-let seq = Combi.seq;
-let opt = Combi.opt;
+import {str, per, alt, seq, opt, IRunnable} from "../combi";
 
 export class Format extends Statement {
 
-  public static get_matcher(): Combi.IRunnable {
+  public static get_matcher(): IRunnable {
     let eq = seq(str("="), new Reuse.Source());
     let value = alt(eq, new Reuse.Source());
     let toggle = alt(str("ON"), str("OFF"));

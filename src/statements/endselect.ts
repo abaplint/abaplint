@@ -1,11 +1,11 @@
 import {Statement} from "./statement";
 import {Select} from "./select";
-import * as Combi from "../combi";
+import {str, IRunnable} from "../combi";
 
 export class Endselect extends Statement {
 
-  public static get_matcher(): Combi.IRunnable {
-    return Combi.str("ENDSELECT");
+  public static get_matcher(): IRunnable {
+    return str("ENDSELECT");
   }
 
   public isEnd() {

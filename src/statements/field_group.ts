@@ -1,14 +1,10 @@
 import {Statement} from "./statement";
 import * as Reuse from "./reuse";
-import * as Combi from "../combi";
-
-let str = Combi.str;
-let seq = Combi.seq;
-let plus = Combi.plus;
+import {str, seq, plus, IRunnable} from "../combi";
 
 export class FieldGroup extends Statement {
 
-  public static get_matcher(): Combi.IRunnable {
+  public static get_matcher(): IRunnable {
     return seq(str("FIELD-GROUPS"),
                plus(new Reuse.Field()));
   }

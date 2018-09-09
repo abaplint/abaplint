@@ -1,16 +1,10 @@
 import {Statement} from "./statement";
 import * as Reuse from "./reuse";
-import * as Combi from "../combi";
-
-let str = Combi.str;
-let seq = Combi.seq;
-let alt = Combi.alt;
-let opt = Combi.opt;
-let reg = Combi.regex;
+import {str, seq, alt, opt, regex as reg, IRunnable} from "../combi";
 
 export class AtSelectionScreen extends Statement {
 
-  public static get_matcher(): Combi.IRunnable {
+  public static get_matcher(): IRunnable {
     let output = str("OUTPUT");
 
     let value = seq(str("ON VALUE-REQUEST FOR"), new Reuse.FieldSub());

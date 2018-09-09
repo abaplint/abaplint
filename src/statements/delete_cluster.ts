@@ -1,15 +1,11 @@
 import {Statement} from "./statement";
-import * as Combi from "../combi";
+import {str, seq, tok, IRunnable} from "../combi";
 import * as Reuse from "./reuse";
 import {ParenLeft, ParenRightW} from "../tokens/";
 
-let str = Combi.str;
-let seq = Combi.seq;
-let tok = Combi.tok;
-
 export class DeleteCluster extends Statement {
 
-  public static get_matcher(): Combi.IRunnable {
+  public static get_matcher(): IRunnable {
     return seq(str("DELETE FROM DATABASE"),
                new Reuse.SimpleName(),
                tok(ParenLeft),

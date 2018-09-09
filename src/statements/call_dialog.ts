@@ -1,16 +1,10 @@
 import {Statement} from "./statement";
 import * as Reuse from "./reuse";
-import * as Combi from "../combi";
-
-let str = Combi.str;
-let seq = Combi.seq;
-let opt = Combi.opt;
-let plus = Combi.plus;
-let optPrio = Combi.optPrio;
+import {str, seq, opt, plus, optPrio, IRunnable} from "../combi";
 
 export class CallDialog extends Statement {
 
-  public static get_matcher(): Combi.IRunnable {
+  public static get_matcher(): IRunnable {
     let from = seq(new Reuse.FieldSub(), optPrio(seq(str("FROM"), new Reuse.Field())));
     let exporting = seq(str("EXPORTING"), plus(from));
 

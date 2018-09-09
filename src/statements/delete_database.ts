@@ -1,15 +1,10 @@
 import {Statement} from "./statement";
-import * as Combi from "../combi";
+import {str, seq, alt, opt, IRunnable} from "../combi";
 import * as Reuse from "./reuse";
-
-let str = Combi.str;
-let seq = Combi.seq;
-let alt = Combi.alt;
-let opt = Combi.opt;
 
 export class DeleteDatabase extends Statement {
 
-  public static get_matcher(): Combi.IRunnable {
+  public static get_matcher(): IRunnable {
     let where = seq(str("WHERE"), alt(new Reuse.SQLCond(), new Reuse.Dynamic()));
     let source = alt(new Reuse.Dynamic(), new Reuse.DatabaseTable());
     let client = str("CLIENT SPECIFIED");

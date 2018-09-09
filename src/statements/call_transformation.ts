@@ -1,16 +1,10 @@
 import {Statement} from "./statement";
 import * as Reuse from "./reuse";
-import * as Combi from "../combi";
-
-let str = Combi.str;
-let seq = Combi.seq;
-let alt = Combi.alt;
-let per = Combi.per;
-let plus = Combi.plus;
+import {str, seq, alt, per, plus, IRunnable} from "../combi";
 
 export class CallTransformation extends Statement {
 
-  public static get_matcher(): Combi.IRunnable {
+  public static get_matcher(): IRunnable {
     let field = seq(new Reuse.Field(), str("="), new Reuse.Source());
 
     let options = seq(str("OPTIONS"), plus(field));

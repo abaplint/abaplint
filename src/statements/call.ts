@@ -1,18 +1,12 @@
 import {Statement} from "./statement";
 import * as Reuse from "./reuse";
-import * as Combi from "../combi";
+import {str, seq, alt, opt, tok, IRunnable} from "../combi";
 import {Arrow, ParenLeftW} from "../tokens/";
-
-let str = Combi.str;
-let seq = Combi.seq;
-let alt = Combi.alt;
-let opt = Combi.opt;
-let tok = Combi.tok;
 
 // method call
 export class Call extends Statement {
 
-  public static get_matcher(): Combi.IRunnable {
+  public static get_matcher(): IRunnable {
     let mname = alt(new Reuse.MethodName(), new Reuse.Dynamic());
     let cname = alt(new Reuse.FieldChain(), new Reuse.Dynamic());
 

@@ -1,14 +1,10 @@
 import {Statement} from "./statement";
 import * as Reuse from "./reuse";
-import * as Combi from "../combi";
-
-let str = Combi.str;
-let seq = Combi.seq;
-let per = Combi.per;
+import {str, seq, per, IRunnable} from "../combi";
 
 export class GenerateSubroutine extends Statement {
 
-  public static get_matcher(): Combi.IRunnable {
+  public static get_matcher(): IRunnable {
     let name = seq(str("NAME"), new Reuse.Source());
     let message = seq(str("MESSAGE"), new Reuse.Target());
     let messageid = seq(str("MESSAGE-ID"), new Reuse.Target());

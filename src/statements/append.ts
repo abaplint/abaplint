@@ -1,15 +1,10 @@
 import {Statement} from "./statement";
-import * as Combi from "../combi";
+import {str, opt, alt, seq, IRunnable} from "../combi";
 import * as Reuse from "./reuse";
-
-let str = Combi.str;
-let opt = Combi.opt;
-let alt = Combi.alt;
-let seq = Combi.seq;
 
 export class Append extends Statement {
 
-  public static get_matcher(): Combi.IRunnable {
+  public static get_matcher(): IRunnable {
     let assigning = seq(str("ASSIGNING"), new Reuse.FSTarget());
     let reference = seq(str("REFERENCE INTO"), new Reuse.Target());
     let sorted = seq(str("SORTED BY"), new Reuse.Field());

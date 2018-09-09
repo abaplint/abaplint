@@ -1,12 +1,10 @@
 import {Statement} from "./statement";
 import {Define} from "./define";
-import * as Combi from "../combi";
-
-let str = Combi.str;
+import {str, IRunnable} from "../combi";
 
 export class Enddefine extends Statement {
 
-  public static get_matcher(): Combi.IRunnable {
+  public static get_matcher(): IRunnable {
     return str("END-OF-DEFINITION");
   }
 

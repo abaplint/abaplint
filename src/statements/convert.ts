@@ -1,15 +1,10 @@
 import {Statement} from "./statement";
 import * as Reuse from "./reuse";
-import * as Combi from "../combi";
-
-let str = Combi.str;
-let seq = Combi.seq;
-let alt = Combi.alt;
-let per = Combi.per;
+import {str, seq, alt, per, IRunnable} from "../combi";
 
 export class Convert extends Statement {
 
-  public static get_matcher(): Combi.IRunnable {
+  public static get_matcher(): IRunnable {
     let intoTime = seq(str("TIME"), new Reuse.Target());
     let intoDate = seq(str("DATE"), new Reuse.Target());
     let into = seq(str("INTO"), per(intoTime, intoDate));

@@ -1,12 +1,10 @@
 import {Statement} from "./statement";
 import {Do} from "./do";
-import * as Combi from "../combi";
-
-let str = Combi.str;
+import {str, IRunnable} from "../combi";
 
 export class Enddo extends Statement {
 
-  public static get_matcher(): Combi.IRunnable {
+  public static get_matcher(): IRunnable {
     return str("ENDDO");
   }
 

@@ -1,11 +1,11 @@
 import {Statement} from "./statement";
 import {Interface} from "./interface";
-import * as Combi from "../combi";
+import {str, IRunnable} from "../combi";
 
 export class Endinterface extends Statement {
 
-  public static get_matcher(): Combi.IRunnable {
-    return Combi.str("ENDINTERFACE");
+  public static get_matcher(): IRunnable {
+    return str("ENDINTERFACE");
   }
 
   public isEnd() {

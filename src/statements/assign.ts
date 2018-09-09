@@ -1,17 +1,11 @@
 import {Statement} from "./statement";
 import * as Reuse from "./reuse";
-import * as Combi from "../combi";
+import {str, seq, alt, opt, tok, IRunnable} from "../combi";
 import {Arrow} from "../tokens/";
-
-let str = Combi.str;
-let seq = Combi.seq;
-let alt = Combi.alt;
-let opt = Combi.opt;
-let tok = Combi.tok;
 
 export class Assign extends Statement {
 
-  public static get_matcher(): Combi.IRunnable {
+  public static get_matcher(): IRunnable {
     let component = seq(str("COMPONENT"),
                         new Reuse.Source(),
                         str("OF STRUCTURE"),

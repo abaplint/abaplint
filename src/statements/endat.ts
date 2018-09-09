@@ -1,11 +1,11 @@
 import {Statement} from "./statement";
 import {At} from "./at";
-import * as Combi from "../combi";
+import {str, IRunnable} from "../combi";
 
 export class Endat extends Statement {
 
-  public static get_matcher(): Combi.IRunnable {
-    return Combi.str("ENDAT");
+  public static get_matcher(): IRunnable {
+    return str("ENDAT");
   }
 
   public isEnd() {

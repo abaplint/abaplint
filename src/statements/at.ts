@@ -1,14 +1,10 @@
 import {Statement} from "./statement";
 import * as Reuse from "./reuse";
-import * as Combi from "../combi";
-
-let str = Combi.str;
-let seq = Combi.seq;
-let alt = Combi.alt;
+import {str, seq, alt, IRunnable} from "../combi";
 
 export class At extends Statement {
 
-  public static get_matcher(): Combi.IRunnable {
+  public static get_matcher(): IRunnable {
     let field = alt(new Reuse.FieldSub(),
                     new Reuse.Dynamic(),
                     new Reuse.FieldSymbol());
