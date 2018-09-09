@@ -68,11 +68,14 @@ function issues() {
 
 function tokens() {
   let file = parse();
-  let inner = "";
-
+  
+  let inner = "<table>";
   for (let token of file.getTokens()) {
-    inner = inner + "\"" + token.getStr() + "\"" + "<br>";
+    inner = inner + "<tr><td>\"" + 
+      token.getStr() + "\"</td><td>" + 
+      token.constructor.name + "</td></tr>";
   }
+  inner = inner + "</table>";
 
   document.getElementById("info").innerHTML = inner;
 }

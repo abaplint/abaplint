@@ -1,6 +1,6 @@
-import {File} from "../src/file";
-import Lexer from "../src/lexer";
-import Runner from "../src/runner";
+import {File} from "../../src/file";
+import Lexer from "../../src/lexer";
+import Runner from "../../src/runner";
 import * as chai from "chai";
 
 let expect = chai.expect;

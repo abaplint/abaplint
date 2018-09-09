@@ -73,6 +73,7 @@ let tests = [
 {n: "reg4", c: seq(reg(/^\w+$/), reg(/^\w+$/)),      t: tokenize("foo bar"),        e: true},
 {n: "reg5", c: reg(/^(LIKE|TYPE)$/i),                t: tokenize("type"),           e: true},
 {n: "reg6", c: reg(/^(LIKE|TYPE)$/i),                t: tokenize("TYPE"),           e: true},
+{n: "reg7", c: reg(/^#?\w+$/),                       t: tokenize("#1"),             e: true},
 {n: "das1", c: str("FIELD-SYMBOL"),                  t: tokenize("FIELD - SYMBOL"), e: true},
 {n: "per1", c: per(str("FOO"), str("BAR")),          t: tokenize("FOO"),            e: true, len: 1},
 {n: "per2", c: per(str("FOO"), str("BAR")),          t: tokenize("BAR"),            e: true},

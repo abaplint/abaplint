@@ -243,3 +243,4 @@ export * from "./type_end";
 export * from "./raise_event";
 export * from "./cleanup";
 export * from "./create_ole";
+export * from "./call_ole";
