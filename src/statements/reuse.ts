@@ -36,15 +36,6 @@ export class FieldSymbol extends Combi.Reuse {
   }
 }
 
-export class For extends Combi.Reuse {
-  public get_runnable() {
-    let fieldList = seq(new Field(), str("="), new Source());
-    let fields = seq(tok(WParenLeftW), plus(fieldList), tok(WParenRightW));
-    let f = seq(str("FOR"), new Target(), str("IN"), new Source(), fields);
-    return ver(Version.v740sp05, f);
-  }
-}
-
 export class InlineData extends Combi.Reuse {
   public get_runnable() {
     let right = alt(tok(ParenRight), tok(ParenRightW));
@@ -277,6 +268,17 @@ export class Cond extends Combi.Reuse {
     let ret = seq(cnd, star(seq(operator, cnd)));
 
     return ret;
+  }
+}
+
+export class For extends Combi.Reuse {
+  public get_runnable() {
+    let inn = seq(str("IN"), new Source());
+    let then = seq(str("THEN"), new Source());
+    let whil = seq(str("WHILE"), new Cond());
+    let itera = seq(str("="), new Source(), opt(then), whil);
+    let f = seq(str("FOR"), new Field(), alt(itera, inn));
+    return ver(Version.v740sp05, plus(f));
   }
 }
 
@@ -635,17 +637,24 @@ export class Source extends Combi.Reuse {
 
     let fieldList = seq(new Field(), str("="), new Source());
 
+    let alet = seq(str("LET"), plus(fieldList), str("IN"));
+
     let base = seq(str("BASE"), new Source());
 
-    let strucOrTab = seq(opt(base), alt(plus(fieldList),
-                                        plus(seq(tok(WParenLeftW), plus(new Source()), tok(WParenRightW))),
-                                        plus(seq(tok(WParenLeftW), plus(fieldList), tok(WParenRightW)))));
+    let tab = seq(opt(new For()),
+                  alt(plus(seq(tok(WParenLeftW), plus(new Source()), tok(WParenRightW))),
+                      plus(seq(tok(WParenLeftW), plus(fieldList), tok(WParenRightW)))));
+
+    let strucOrTab = seq(opt(alet), opt(base),
+                         alt(plus(fieldList),
+                             tab));
+
+    let tabdef = ver(Version.v740sp08, alt(str("OPTIONAL"), seq(str("DEFAULT"), new Source())));
 
     let value = ver(Version.v740sp02, seq(str("VALUE"),
                                           new TypeName(),
                                           tok(ParenLeftW),
-                                          opt(alt(seq(new Source(), opt(alt(str("OPTIONAL"), seq(str("DEFAULT"), new Source())))),
-                                                  new For(),
+                                          opt(alt(seq(new Source(), opt(tabdef)),
                                                   strucOrTab)),
                                           rparen));
 
@@ -666,7 +675,17 @@ export class Source extends Combi.Reuse {
                                          new Source(),
                                          rparen));
 
-    let ret = alt(old, corr, conv, value, cond, reff, swit);
+    let filter = ver(Version.v740sp08,
+                     seq(str("FILTER"),
+                         new TypeName(),
+                         tok(ParenLeftW),
+                         new Source(),
+                         opt(str("EXCEPT")),
+                         opt(seq(str("USING KEY"), new Field())),
+                         seq(str("WHERE"), new Cond()),
+                         rparen));
+
+    let ret = alt(old, corr, conv, value, cond, reff, swit, filter);
 
     return ret;
   }

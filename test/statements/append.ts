@@ -37,6 +37,10 @@ statementType(tests, "APPEND", Statements.Append);
 let versions = [
   {abap: "APPEND VALUE #( key = is_key meta = it_meta ) TO mt_files.", ver: Version.v740sp02},
   {abap: "APPEND INITIAL LINE TO <ls_data>-sub ASSIGNING FIELD-SYMBOL(<ls_sub>).", ver: Version.v740sp02},
+  {abap: "APPEND VALUE #( LET type = ztcl_alog_test_utl=>get_random_log_type( ) IN\n" +
+    "text = ztcl_alog_test_utl=>get_random_log_text( )\n" +
+    "type = type\n" +
+    "description = type->mv_description ) TO lt_test.", ver: Version.v740sp02},
 ];
 
 statementVersion(versions, "APPEND", Statements.Append);
