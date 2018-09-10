@@ -10,7 +10,7 @@ export class CallFunction extends Statement {
     let update = str("IN UPDATE TASK");
     let background = str("IN BACKGROUND TASK");
     let dest = seq(str("DESTINATION"), opt(str("IN GROUP")), new Reuse.Source());
-    let calling = seq(str("CALLING"), new Reuse.FormName(), str("ON END OF TASK"));
+    let calling = seq(str("CALLING"), new Reuse.MethodName(), str("ON END OF TASK"));
     let performing = seq(str("PERFORMING"), new Reuse.FormName(), str("ON END OF TASK"));
     let separate = str("AS SEPARATE UNIT");
 

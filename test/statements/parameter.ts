@@ -29,6 +29,7 @@ let tests = [
   "PARAMETERS p_bar TYPE /foo/bar AS LISTBOX USER-COMMAND baar VISIBLE LENGTH 35.",
   "PARAMETERS value TYPE p LENGTH 5 DECIMALS 1.",
   "PARAMETERS p_foo USER-COMMAND 01 AS CHECKBOX.",
+  "PARAMETERS p_data01 LIKE (p_type01) MODIF ID 01 VALUE CHECK.",
 ];
 
 statementType(tests, "PARAMETER", Statements.Parameter);

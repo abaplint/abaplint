@@ -245,6 +245,20 @@ let tests = [
   "  IN BACKGROUND TASK AS SEPARATE UNIT\n" +
   "    EXPORTING\n" +
   "      foo = bar.",
+
+  "CALL FUNCTION 'Z_BOOK_PARALLEL_DEMO'\n" +
+  "STARTING NEW TASK lv_task\n" +
+  "DESTINATION IN GROUP DEFAULT\n" +
+  "CALLING zif_book_parallel~on_task_complete ON END OF TASK\n" +
+  "EXPORTING\n" +
+  "  tiknr                 = mv_tiknr\n" +
+  "  dateiname             = lv_file\n" +
+  "EXCEPTIONS\n" +
+  "  communication_failure = 1 MESSAGE lv_text\n" +
+  "  system_failure        = 2 MESSAGE lv_text\n" +
+  "  ressource_failure     = 3\n" +
+  "  OTHERS                = 4.",
+
 ];
 
 statementType(tests, "CALL FUNCTION", Statements.CallFunction);

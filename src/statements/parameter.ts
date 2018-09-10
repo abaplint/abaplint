@@ -8,7 +8,7 @@ export class Parameter extends Statement {
     let para = alt(str("PARAMETER"), str("PARAMETERS"));
     let def = seq(str("DEFAULT"), alt(new Reuse.Constant(), new Reuse.FieldChain()));
     let radio = seq(str("RADIOBUTTON GROUP"), new Reuse.RadioGroupName());
-    let type = seq(alt(str("TYPE"), str("LIKE")), new Reuse.FieldChain());
+    let type = seq(alt(str("TYPE"), str("LIKE")), alt(new Reuse.FieldChain(), new Reuse.Dynamic()));
     let memory = seq(str("MEMORY ID"), new Reuse.Field());
     let listbox = str("AS LISTBOX");
     let cmd = seq(str("USER-COMMAND"), reg(/^\w+$/));

@@ -249,3 +249,4 @@ export * from "./test_injection";
 export * from "./end_test_injection";
 export * from "./test_seam";
 export * from "./end_test_seam";
+export * from "./delete_memory";

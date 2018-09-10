@@ -7,6 +7,7 @@ let tests = [
   "WAIT UNTIL foo >= bar.",
   "WAIT UNTIL foo >= bar UP TO 1 SECONDS.",
   "WAIT FOR MESSAGING CHANNELS UNTIL foobar = abap_true UP TO 10 SECONDS.",
+  "WAIT FOR ASYNCHRONOUS TASKS UNTIL mv_tasks_running < mv_max_tasks.",
 ];
 
 statementType(tests, "WAIT", Statements.Wait);
