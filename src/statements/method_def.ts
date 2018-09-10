@@ -1,23 +1,12 @@
 import {Version} from "../version";
 import {Statement} from "./statement";
 import * as Reuse from "./reuse";
-import * as Combi from "../combi";
+import {str, seq, seqs, alt, opt, tok, ver, regex as reg, plus, IRunnable} from "../combi";
 import {ParenLeft, ParenRight, ParenRightW} from "../tokens/";
-
-let str = Combi.str;
-let seq = Combi.seq;
-let seqs = Combi.seqs;
-let alt = Combi.alt;
-let opt = Combi.opt;
-let tok = Combi.tok;
-let ver = Combi.ver;
-let reg = Combi.regex;
-let plus = Combi.plus;
-// let optPrio = Combi.optPrio;
 
 export class MethodDef extends Statement {
 
-  public static get_matcher(): Combi.IRunnable {
+  public static get_matcher(): IRunnable {
     let field = reg(/^!?(\/\w+\/)?\w+$/);
 
     let importing  = seq(str("IMPORTING"),

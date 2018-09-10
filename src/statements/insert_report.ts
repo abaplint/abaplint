@@ -1,15 +1,10 @@
 import {Statement} from "./statement";
 import * as Reuse from "./reuse";
-import * as Combi from "../combi";
-
-let str = Combi.str;
-let seq = Combi.seq;
-let opt = Combi.opt;
-let per = Combi.per;
+import {str, seq, opt, per, IRunnable} from "../combi";
 
 export class InsertReport extends Statement {
 
-  public static get_matcher(): Combi.IRunnable {
+  public static get_matcher(): IRunnable {
     let options = per(seq(str("STATE"), new Reuse.Source()),
                       seq(str("EXTENSION TYPE"), new Reuse.Source()),
                       seq(str("DIRECTORY ENTRY"), new Reuse.Source()),

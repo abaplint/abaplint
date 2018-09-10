@@ -1,19 +1,11 @@
 import {Statement} from "./statement";
-import * as Combi from "../combi";
+import {str, seq, opt, alt, per, tok, regex as reg, IRunnable} from "../combi";
 import * as Reuse from "./reuse";
 import {ParenLeft, ParenRightW, WParenLeft} from "../tokens/";
 
-let str = Combi.str;
-let seq = Combi.seq;
-let opt = Combi.opt;
-let alt = Combi.alt;
-let per = Combi.per;
-let tok = Combi.tok;
-let reg = Combi.regex;
-
 export class Write extends Statement {
 
-  public static get_matcher(): Combi.IRunnable {
+  public static get_matcher(): IRunnable {
     let at = seq(opt(str("AT")), reg(/^\/?\d+$/));
 
     let mask = seq(str("USING"),

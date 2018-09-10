@@ -1,18 +1,11 @@
 import {Statement} from "./statement";
 import * as Reuse from "./reuse";
-import * as Combi from "../combi";
+import {str, seq, alt, opt, ver, plus, IRunnable} from "../combi";
 import {Version} from "../../src/version";
-
-let str = Combi.str;
-let seq = Combi.seq;
-let alt = Combi.alt;
-let opt = Combi.opt;
-let ver = Combi.ver;
-let plus = Combi.plus;
 
 export class Raise extends Statement {
 
-  public static get_matcher(): Combi.IRunnable {
+  public static get_matcher(): IRunnable {
     let wit  = seq(str("WITH"), plus(new Reuse.Source()));
 
     let mess1 = seq(str("ID"), new Reuse.Source(), str("TYPE"), new Reuse.Source(), str("NUMBER"), new Reuse.Source());

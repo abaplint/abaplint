@@ -1,17 +1,11 @@
 import {Statement} from "./statement";
-import * as Combi from "../combi";
+import {str, seq, opt, tok, per, IRunnable} from "../combi";
 import * as Reuse from "./reuse";
 import {ParenLeft} from "../tokens";
 
-let str = Combi.str;
-let seq = Combi.seq;
-let opt = Combi.opt;
-let tok = Combi.tok;
-let per = Combi.per;
-
 export class Message extends Statement {
 
-  public static get_matcher(): Combi.IRunnable {
+  public static get_matcher(): IRunnable {
     let like = seq(str("DISPLAY LIKE"), new Reuse.Source());
     let type = seq(str("TYPE"), new Reuse.Source());
     let id = seq(str("ID"), new Reuse.Source());

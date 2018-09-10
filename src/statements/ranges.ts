@@ -1,14 +1,10 @@
 import {Statement} from "./statement";
 import * as Reuse from "./reuse";
-import * as Combi from "../combi";
-
-let str = Combi.str;
-let seq = Combi.seq;
-let opt = Combi.opt;
+import {str, seq, opt, IRunnable} from "../combi";
 
 export class Ranges extends Statement {
 
-  public static get_matcher(): Combi.IRunnable {
+  public static get_matcher(): IRunnable {
     let occurs = seq(str("OCCURS"), new Reuse.Source());
 
     return seq(str("RANGES"),

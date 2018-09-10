@@ -1,16 +1,10 @@
 import {Statement} from "./statement";
 import * as Reuse from "./reuse";
-import * as Combi from "../combi";
-
-let str = Combi.str;
-let seq = Combi.seq;
-let alt = Combi.alt;
-let opt = Combi.opt;
-let per = Combi.per;
+import {str, seq, alt, opt, per, IRunnable} from "../combi";
 
 export class Shift extends Statement {
 
-  public static get_matcher(): Combi.IRunnable {
+  public static get_matcher(): IRunnable {
     let deleting = seq(str("DELETING"), alt(str("LEADING"), str("TRAILING")), new Reuse.Source());
     let up = seq(str("UP TO"), new Reuse.Source());
     let mode = seq(str("IN"), alt(str("CHARACTER"), str("BYTE")), str("MODE"));

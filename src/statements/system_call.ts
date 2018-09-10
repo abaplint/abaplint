@@ -1,14 +1,9 @@
 import {Statement} from "./statement";
-import * as Combi from "../combi";
-
-let str = Combi.str;
-let seq = Combi.seq;
-let reg = Combi.regex;
-let plus = Combi.plus;
+import {str, seq, regex as reg, plus, IRunnable} from "../combi";
 
 export class SystemCall extends Statement {
 
-  public static get_matcher(): Combi.IRunnable {
+  public static get_matcher(): IRunnable {
     let anyy = reg(/^.+$/);
 
     return seq(str("SYSTEM-CALL"),

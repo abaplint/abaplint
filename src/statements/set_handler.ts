@@ -1,16 +1,10 @@
 import {Statement} from "./statement";
 import * as Reuse from "./reuse";
-import * as Combi from "../combi";
-
-let str = Combi.str;
-let seq = Combi.seq;
-let opt = Combi.opt;
-let alt = Combi.alt;
-let plus = Combi.plus;
+import {str, seq, opt, alt, plus, IRunnable} from "../combi";
 
 export class SetHandler extends Statement {
 
-  public static get_matcher(): Combi.IRunnable {
+  public static get_matcher(): IRunnable {
     let activation = seq(str("ACTIVATION"), new Reuse.Source());
 
     let fo = seq(str("FOR"), alt(str("ALL INSTANCES"), new Reuse.Source()));

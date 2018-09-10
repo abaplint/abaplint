@@ -1,16 +1,10 @@
 import {Statement} from "./statement";
 import * as Reuse from "./reuse";
-import * as Combi from "../combi";
-
-let str = Combi.str;
-let seq = Combi.seq;
-let alt = Combi.alt;
-let per = Combi.per;
-let opt = Combi.opt;
+import {str, seq, alt, per, opt, IRunnable} from "../combi";
 
 export class Open extends Statement {
 
-  public static get_matcher(): Combi.IRunnable {
+  public static get_matcher(): IRunnable {
     let mode = seq(str("IN"),
                    opt(str("LEGACY")),
                    alt(str("BINARY MODE"),

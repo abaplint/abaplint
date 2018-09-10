@@ -1,18 +1,10 @@
 import {Statement} from "./statement";
 import * as Reuse from "./reuse";
-import * as Combi from "../combi";
-
-let str = Combi.str;
-let seq = Combi.seq;
-let alt = Combi.alt;
-let per = Combi.per;
-let opt = Combi.opt;
-let plus = Combi.plus;
-let optPrio = Combi.optPrio;
+import {str, seq, alt, per, opt, plus, optPrio, IRunnable} from "../combi";
 
 export class Sort extends Statement {
 
-  public static get_matcher(): Combi.IRunnable {
+  public static get_matcher(): IRunnable {
     let order = alt(str("ASCENDING"), str("DESCENDING"));
 
     let sel = alt(new Reuse.FieldSub(),

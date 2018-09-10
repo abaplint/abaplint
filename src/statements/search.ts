@@ -1,16 +1,10 @@
 import {Statement} from "./statement";
-import * as Combi from "../combi";
+import {str, seq, opt, alt, per, IRunnable} from "../combi";
 import * as Reuse from "./reuse";
-
-let str = Combi.str;
-let seq = Combi.seq;
-let opt = Combi.opt;
-let alt = Combi.alt;
-let per = Combi.per;
 
 export class Search extends Statement {
 
-  public static get_matcher(): Combi.IRunnable {
+  public static get_matcher(): IRunnable {
     let starting = seq(str("STARTING AT"), new Reuse.Source());
     let ending = seq(str("ENDING AT"), new Reuse.Source());
     let mark = str("AND MARK");

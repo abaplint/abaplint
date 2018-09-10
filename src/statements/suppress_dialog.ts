@@ -1,11 +1,9 @@
 import {Statement} from "./statement";
-import * as Combi from "../combi";
-
-let str = Combi.str;
+import {str, IRunnable} from "../combi";
 
 export class SuppressDialog extends Statement {
 
-  public static get_matcher(): Combi.IRunnable {
+  public static get_matcher(): IRunnable {
     let ret = str("SUPPRESS DIALOG");
     return ret;
   }

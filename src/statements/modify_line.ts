@@ -1,17 +1,10 @@
 import {Statement} from "./statement";
 import * as Reuse from "./reuse";
-import * as Combi from "../combi";
-
-let str = Combi.str;
-let seq = Combi.seq;
-let alt = Combi.alt;
-let opt = Combi.opt;
-let per = Combi.per;
-let plus = Combi.plus;
+import {str, seq, alt, opt, per, plus, IRunnable} from "../combi";
 
 export class ModifyLine extends Statement {
 
-  public static get_matcher(): Combi.IRunnable {
+  public static get_matcher(): IRunnable {
 
     let form = seq(alt(str("INVERSE"), str("INPUT")),
                    str("="),

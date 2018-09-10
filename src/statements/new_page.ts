@@ -1,16 +1,10 @@
 import {Statement} from "./statement";
 import * as Reuse from "./reuse";
-import * as Combi from "../combi";
-
-let str = Combi.str;
-let seq = Combi.seq;
-let alt = Combi.alt;
-let per = Combi.per;
-let opt = Combi.opt;
+import {str, seq, alt, per, opt, IRunnable} from "../combi";
 
 export class NewPage extends Statement {
 
-  public static get_matcher(): Combi.IRunnable {
+  public static get_matcher(): IRunnable {
     let line = seq(str("LINE-SIZE"), new Reuse.Source());
     let print = seq(str("PRINT"), alt(str("OFF"), str("ON")));
     let parameters = seq(str("PARAMETERS"), new Reuse.Source());

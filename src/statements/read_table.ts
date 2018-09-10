@@ -1,18 +1,10 @@
 import {Statement} from "./statement";
-import * as Combi from "../combi";
+import {str, seq, alt, opt, optPrio, plus, per, IRunnable} from "../combi";
 import * as Reuse from "./reuse";
-
-let str = Combi.str;
-let seq = Combi.seq;
-let alt = Combi.alt;
-let opt = Combi.opt;
-let optPrio = Combi.optPrio;
-let plus = Combi.plus;
-let per = Combi.per;
 
 export class Read extends Statement {
 
-  public static get_matcher(): Combi.IRunnable {
+  public static get_matcher(): IRunnable {
     let comparing = seq(str("COMPARING"), new Reuse.Field());
 
     let target = alt(seq(str("ASSIGNING"), new Reuse.FSTarget()),

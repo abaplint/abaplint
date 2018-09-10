@@ -1,13 +1,9 @@
 import {Statement} from "./statement";
-import * as Combi from "../combi";
-
-let str = Combi.str;
-let seq = Combi.seq;
-let alt = Combi.alt;
+import {str, seq, alt, IRunnable} from "../combi";
 
 export class SetRunTime extends Statement {
 
-  public static get_matcher(): Combi.IRunnable {
+  public static get_matcher(): IRunnable {
     let clock = seq(str("CLOCK RESOLUTION"), alt(str("LOW"), str("HIGH")));
 
     let analyzer = seq(str("ANALYZER"), alt(str("ON"), str("OFF")));

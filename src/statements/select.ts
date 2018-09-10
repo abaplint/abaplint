@@ -1,10 +1,10 @@
 import {Statement} from "./statement";
-import * as Combi from "../combi";
+import {IRunnable} from "../combi";
 import * as Reuse from "./reuse";
 
 export class Select extends Statement {
 
-  public static get_matcher(): Combi.IRunnable {
+  public static get_matcher(): IRunnable {
     return new Reuse.Select();
   }
 

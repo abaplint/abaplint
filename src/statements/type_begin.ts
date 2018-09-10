@@ -1,14 +1,10 @@
 import {Statement} from "./statement";
 import * as Reuse from "./reuse";
-import * as Combi from "../combi";
-
-let str = Combi.str;
-let seq = Combi.seq;
-let alt = Combi.alt;
+import {str, seq, alt, IRunnable} from "../combi";
 
 export class TypeBegin extends Statement {
 
-  public static get_matcher(): Combi.IRunnable {
+  public static get_matcher(): IRunnable {
     let begin = seq(str("BEGIN OF"), new Reuse.NamespaceSimpleName());
 
     let ret = seq(alt(str("TYPE"), str("TYPES")), begin);

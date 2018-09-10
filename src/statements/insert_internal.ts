@@ -1,16 +1,10 @@
 import {Statement} from "./statement";
 import * as Reuse from "./reuse";
-import * as Combi from "../combi";
-
-let str = Combi.str;
-let seq = Combi.seq;
-let alt = Combi.alt;
-let opt = Combi.opt;
-let per = Combi.per;
+import {str, seq, alt, opt, per, IRunnable} from "../combi";
 
 export class InsertInternal extends Statement {
 
-  public static get_matcher(): Combi.IRunnable {
+  public static get_matcher(): IRunnable {
     let target = alt(new Reuse.Source(), new Reuse.Dynamic());
     let assigning = seq(str("ASSIGNING"), new Reuse.FSTarget());
     let ref = seq(str("REFERENCE INTO"), new Reuse.Target());

@@ -1,14 +1,9 @@
 import {Statement} from "./statement";
-import * as Combi from "../combi";
-
-let str = Combi.str;
-let seq = Combi.seq;
-let opt = Combi.opt;
-let alt = Combi.alt;
+import {str, seq, opt, alt, IRunnable} from "../combi";
 
 export class NewLine extends Statement {
 
-  public static get_matcher(): Combi.IRunnable {
+  public static get_matcher(): IRunnable {
     return seq(str("NEW-LINE"),
                opt(alt(str("SCROLLING"), str("NO-SCROLLING"))));
   }

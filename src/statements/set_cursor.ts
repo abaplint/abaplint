@@ -1,14 +1,10 @@
 import {Statement} from "./statement";
 import * as Reuse from "./reuse";
-import * as Combi from "../combi";
-
-let str = Combi.str;
-let seq = Combi.seq;
-let per = Combi.per;
+import {str, seq, per, IRunnable} from "../combi";
 
 export class SetCursor extends Statement {
 
-  public static get_matcher(): Combi.IRunnable {
+  public static get_matcher(): IRunnable {
     let line = seq(str("LINE"), new Reuse.Source());
     let offset = seq(str("OFFSET"), new Reuse.Source());
     let field = seq(str("FIELD"), new Reuse.Source());

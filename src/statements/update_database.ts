@@ -1,15 +1,10 @@
 import {Statement} from "./statement";
 import * as Reuse from "./reuse";
-import * as Combi from "../combi";
-
-let str = Combi.str;
-let seq = Combi.seq;
-let opt = Combi.opt;
-let alt = Combi.alt;
+import {str, seq, opt, alt, IRunnable} from "../combi";
 
 export class UpdateDatabase extends Statement {
 
-  public static get_matcher(): Combi.IRunnable {
+  public static get_matcher(): IRunnable {
     let target = alt(new Reuse.DatabaseTable(), new Reuse.Dynamic());
 
     let set = seq(str("SET"),

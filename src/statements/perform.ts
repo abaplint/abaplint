@@ -1,19 +1,11 @@
 import {Statement} from "./statement";
-import * as Combi from "../combi";
+import {str, seq, opt, alt, tok, per, plus, IRunnable} from "../combi";
 import * as Reuse from "./reuse";
 import {ParenLeft, ParenRightW, ParenRight} from "../tokens/";
 
-let str = Combi.str;
-let seq = Combi.seq;
-let opt = Combi.opt;
-let alt = Combi.alt;
-let tok = Combi.tok;
-let per = Combi.per;
-let plus = Combi.plus;
-
 export class Perform extends Statement {
 
-  public static get_matcher(): Combi.IRunnable {
+  public static get_matcher(): IRunnable {
     let programName = new Reuse.Field();
     let using = seq(str("USING"), plus(new Reuse.Source()));
     let tables = seq(str("TABLES"), plus(new Reuse.Source()));

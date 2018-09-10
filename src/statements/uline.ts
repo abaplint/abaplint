@@ -1,19 +1,11 @@
 import {Statement} from "./statement";
-import * as Combi from "../combi";
+import {str, seq, opt, tok, alt, regex as reg, optPrio, IRunnable} from "../combi";
 import * as Reuse from "./reuse";
 import {ParenLeft, ParenRight, WParenLeft, ParenRightW} from "../tokens/";
 
-let str = Combi.str;
-let seq = Combi.seq;
-let opt = Combi.opt;
-let tok = Combi.tok;
-let alt = Combi.alt;
-let reg = Combi.regex;
-let optPrio = Combi.optPrio;
-
 export class Uline extends Statement {
 
-  public static get_matcher(): Combi.IRunnable {
+  public static get_matcher(): IRunnable {
     let right = alt(tok(ParenRight), tok(ParenRightW));
 
     let pos = alt(seq(reg(/^(\/\d*|\d+)$/),

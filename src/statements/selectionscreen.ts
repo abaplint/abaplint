@@ -1,19 +1,11 @@
 import {Statement} from "./statement";
-import * as Combi from "../combi";
+import {str, seq, alt, opt, per, regex as reg, tok, IRunnable} from "../combi";
 import * as Reuse from "./reuse";
 import {ParenLeft, WParenLeft, ParenRightW, ParenRight} from "../tokens";
 
-let str = Combi.str;
-let seq = Combi.seq;
-let alt = Combi.alt;
-let opt = Combi.opt;
-let per = Combi.per;
-let reg = Combi.regex;
-let tok = Combi.tok;
-
 export class SelectionScreen extends Statement {
 
-  public static get_matcher(): Combi.IRunnable {
+  public static get_matcher(): IRunnable {
     let blockName = new Reuse.FieldSub();
 
     let beginBlock = seq(str("BEGIN OF BLOCK"),

@@ -1,16 +1,10 @@
 import {Statement} from "./statement";
-import * as Combi from "../combi";
+import {str, seq, alt, opt, plus, IRunnable} from "../combi";
 import * as Reuse from "./reuse";
-
-let str = Combi.str;
-let seq = Combi.seq;
-let alt = Combi.alt;
-let opt = Combi.opt;
-let plus = Combi.plus;
 
 export class Move extends Statement {
 
-  public static get_matcher(): Combi.IRunnable {
+  public static get_matcher(): IRunnable {
     let keeping = str("KEEPING TARGET LINES");
 
     let move = seq(alt(seq(str("MOVE"), opt(str("EXACT"))),

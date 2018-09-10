@@ -1,14 +1,10 @@
 import {Statement} from "./statement";
 import * as Reuse from "./reuse";
-import * as Combi from "../combi";
-
-let str = Combi.str;
-let seq = Combi.seq;
-let opt = Combi.opt;
+import {str, seq, opt, IRunnable} from "../combi";
 
 export class Receive extends Statement {
 
-  public static get_matcher(): Combi.IRunnable {
+  public static get_matcher(): IRunnable {
     let ret = seq(str("RECEIVE RESULTS FROM FUNCTION"),
                   new Reuse.Constant(),
                   opt(str("KEEPING TASK")),

@@ -1,13 +1,10 @@
 import {Statement} from "./statement";
 import * as Reuse from "./reuse";
-import * as Combi from "../combi";
-
-let str = Combi.str;
-let seq = Combi.seq;
+import {str, seq, IRunnable} from "../combi";
 
 export class SetCountry extends Statement {
 
-  public static get_matcher(): Combi.IRunnable {
+  public static get_matcher(): IRunnable {
     let ret = seq(str("SET COUNTRY"), new Reuse.Source());
     return ret;
   }

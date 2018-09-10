@@ -1,16 +1,10 @@
 import {Statement} from "./statement";
-import * as Combi from "../combi";
+import {str, seq, alt, opt, per, IRunnable} from "../combi";
 import * as Reuse from "./reuse";
-
-let str = Combi.str;
-let seq = Combi.seq;
-let alt = Combi.alt;
-let opt = Combi.opt;
-let per = Combi.per;
 
 export class Loop extends Statement {
 
-  public static get_matcher(): Combi.IRunnable {
+  public static get_matcher(): IRunnable {
     let where = seq(str("WHERE"), alt(new Reuse.Cond(), new Reuse.Dynamic()));
 
     let group = seq(str("GROUP BY"), new Reuse.Source());

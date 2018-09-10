@@ -1,17 +1,10 @@
 import {Statement} from "./statement";
 import * as Reuse from "./reuse";
-import * as Combi from "../combi";
-
-let str = Combi.str;
-let seq = Combi.seq;
-let opt = Combi.opt;
-let alt = Combi.alt;
-let per = Combi.per;
-let reg = Combi.regex;
+import {str, seq, opt, alt, per, regex as reg, IRunnable} from "../combi";
 
 export class Parameter extends Statement {
 
-  public static get_matcher(): Combi.IRunnable {
+  public static get_matcher(): IRunnable {
     let para = alt(str("PARAMETER"), str("PARAMETERS"));
     let def = seq(str("DEFAULT"), alt(new Reuse.Constant(), new Reuse.FieldChain()));
     let radio = seq(str("RADIOBUTTON GROUP"), new Reuse.RadioGroupName());

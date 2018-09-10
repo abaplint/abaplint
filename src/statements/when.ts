@@ -1,15 +1,11 @@
 import {Statement} from "./statement";
 import {Case} from "./case";
-import * as Combi from "../combi";
+import {str, seq, star, IRunnable} from "../combi";
 import * as Reuse from "./reuse";
-
-let str = Combi.str;
-let seq = Combi.seq;
-let star = Combi.star;
 
 export class When extends Statement {
 
-  public static get_matcher(): Combi.IRunnable {
+  public static get_matcher(): IRunnable {
     return seq(str("WHEN"),
                new Reuse.Source(),
                star(seq(str("OR"), new Reuse.Source())));

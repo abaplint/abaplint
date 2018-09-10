@@ -1,15 +1,10 @@
 import {Statement} from "./statement";
 import * as Reuse from "./reuse";
-import * as Combi from "../combi";
-
-let str = Combi.str;
-let seq = Combi.seq;
-let opt = Combi.opt;
-let plus = Combi.plus;
+import {str, seq, opt, plus, IRunnable} from "../combi";
 
 export class SetTitlebar extends Statement {
 
-  public static get_matcher(): Combi.IRunnable {
+  public static get_matcher(): IRunnable {
     let wit = seq(str("WITH"), plus(new Reuse.Source()));
 
     let program = seq(str("OF PROGRAM"), new Reuse.Source());

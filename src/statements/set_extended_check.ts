@@ -1,13 +1,9 @@
 import {Statement} from "./statement";
-import * as Combi from "../combi";
-
-let str = Combi.str;
-let seq = Combi.seq;
-let alt = Combi.alt;
+import {str, seq, alt, IRunnable} from "../combi";
 
 export class SetExtendedCheck extends Statement {
 
-  public static get_matcher(): Combi.IRunnable {
+  public static get_matcher(): IRunnable {
     let ret = seq(str("SET EXTENDED CHECK"), alt(str("OFF"), str("ON")));
 
     return ret;

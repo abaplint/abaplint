@@ -1,17 +1,10 @@
 import {Statement} from "./statement";
 import * as Reuse from "./reuse";
-import * as Combi from "../combi";
-
-let str = Combi.str;
-let seq = Combi.seq;
-let opt = Combi.opt;
-let per = Combi.per;
-let alt = Combi.alt;
-let plus = Combi.plus;
+import {str, seq, opt, per, alt, plus, IRunnable} from "../combi";
 
 export class Submit extends Statement {
 
-  public static get_matcher(): Combi.IRunnable {
+  public static get_matcher(): IRunnable {
     let sign = seq(str("SIGN"), new Reuse.Source());
     let eq = alt(str("="), str("EQ"), str("IN"), str("NE"), str("INCL"));
     let compare = seq(eq, new Reuse.Source());

@@ -1,17 +1,10 @@
 import {Statement} from "./statement";
-import * as Combi from "../combi";
+import {str, seq, per, opt, alt, plus, IRunnable} from "../combi";
 import * as Reuse from "./reuse";
-
-let str = Combi.str;
-let seq = Combi.seq;
-let per = Combi.per;
-let opt = Combi.opt;
-let alt = Combi.alt;
-let plus = Combi.plus;
 
 export class ReadLine extends Statement {
 
-  public static get_matcher(): Combi.IRunnable {
+  public static get_matcher(): IRunnable {
     let val = seq(str("LINE VALUE INTO"),
                   new Reuse.Target());
 

@@ -1,17 +1,10 @@
 import {Statement} from "./statement";
 import * as Reuse from "./reuse";
-import * as Combi from "../combi";
-
-let str = Combi.str;
-let seq = Combi.seq;
-let alt = Combi.alt;
-let per = Combi.per;
-let opt = Combi.opt;
-let plus = Combi.plus;
+import {str, seq, alt, per, opt, plus, IRunnable} from "../combi";
 
 export class SyntaxCheck extends Statement {
 
-  public static get_matcher(): Combi.IRunnable {
+  public static get_matcher(): IRunnable {
     let program = seq(str("PROGRAM"), new Reuse.Source());
     let offset = seq(str("OFFSET"), new Reuse.Target());
     let frame = seq(str("FRAME ENTRY"), new Reuse.Target());

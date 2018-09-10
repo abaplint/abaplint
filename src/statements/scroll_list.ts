@@ -1,15 +1,10 @@
 import {Statement} from "./statement";
-import * as Combi from "../combi";
+import {str, seq, alt, per, IRunnable} from "../combi";
 import * as Reuse from "./reuse";
-
-let str = Combi.str;
-let seq = Combi.seq;
-let alt = Combi.alt;
-let per = Combi.per;
 
 export class ScrollList extends Statement {
 
-  public static get_matcher(): Combi.IRunnable {
+  public static get_matcher(): IRunnable {
     let index = seq(str("INDEX"), new Reuse.Source());
     let line = seq(str("LINE"), new Reuse.Source());
     let column = seq(str("TO COLUMN"), new Reuse.Source());
