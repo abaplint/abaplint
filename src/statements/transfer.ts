@@ -1,6 +1,7 @@
 import {Statement} from "./statement";
 import * as Reuse from "./reuse";
 import {str, seq, opt, IRunnable} from "../combi";
+import {Target} from "../expressions";
 
 export class Transfer extends Statement {
 
@@ -11,7 +12,7 @@ export class Transfer extends Statement {
     let ret = seq(str("TRANSFER"),
                   new Reuse.Source(),
                   str("TO"),
-                  new Reuse.Target(),
+                  new Target(),
                   opt(length));
 
     return ret;

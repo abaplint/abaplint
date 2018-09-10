@@ -2,12 +2,13 @@ import * as Combi from "../combi";
 import {Version} from "../version";
 
 import {Arrow} from "../tokens/";
-import {Dash, WDash, WDashW} from "../tokens/";
+import {Dash, WDashW} from "../tokens/";
 import {Plus, WPlusW, WAt} from "../tokens/";
 import {BracketLeft, BracketRight, BracketRightW, BracketLeftW} from "../tokens/";
 import {ParenRight, ParenRightW, WParenRight, WParenRightW} from "../tokens/";
 import {ParenLeft, ParenLeftW, WParenLeft, WParenLeftW} from "../tokens/";
 import {WBracketRight, WBracketRightW} from "../tokens/";
+import {Integer, FieldSymbol, Target} from "../expressions/";
 
 let reg = Combi.regex;
 let seq = Combi.seq;
@@ -23,60 +24,6 @@ let star = Combi.star;
 let plus = Combi.plus;
 
 // todo: split this file into 1 file per class in new directory "expressions"
-
-export class Integer extends Combi.Reuse {
-  public get_runnable() {
-    return seq(opt(tok(WDash)), reg(/^\d+$/));
-  }
-}
-
-export class FieldSymbol extends Combi.Reuse {
-  public get_runnable() {
-    return reg(/^<[\w\/]+>$/);
-  }
-}
-
-export class InlineData extends Combi.Reuse {
-  public get_runnable() {
-    let right = alt(tok(ParenRight), tok(ParenRightW));
-    let left = tok(ParenLeft);
-    let data = seq(str("DATA"), left, new Field(), right);
-
-    return ver(Version.v740sp02, data);
-  }
-}
-
-export class InlineFS extends Combi.Reuse {
-  public get_runnable() {
-    let right = alt(tok(ParenRight), tok(ParenRightW));
-    let left = tok(ParenLeft);
-    let fs = seq(str("FIELD-SYMBOL"), left, new FieldSymbol(), right);
-
-    return ver(Version.v740sp02, fs);
-  }
-}
-
-export class FSTarget extends Combi.Reuse {
-  public get_runnable() {
-    return alt(new InlineFS(), new FieldSymbol());
-  }
-}
-
-export class Target extends Combi.Reuse {
-  public get_runnable() {
-    let after = seq(alt(new Field(), new FieldSymbol()),
-                    star(new TableExpression()),
-                    star(seq(new ArrowOrDash(), alt(str("*"), new FieldAll()), star(new TableExpression()))));
-
-    let fields = seq(opt(new FieldOffset()), opt(new FieldLength()));
-
-    let ref = seq(tok(Arrow), str("*"));
-
-    let optional = alt(new TableBody(), fields, ref);
-
-    return alt(new InlineData(), new InlineFS(), seq(after, optional));
-  }
-}
 
 export class ArrowOrDash extends Combi.Reuse {
   public get_runnable() {

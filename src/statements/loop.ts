@@ -1,6 +1,7 @@
 import {Statement} from "./statement";
 import {str, seq, alt, opt, per, IRunnable} from "../combi";
 import * as Reuse from "./reuse";
+import {FSTarget, Target} from "../expressions";
 
 export class Loop extends Statement {
 
@@ -9,9 +10,9 @@ export class Loop extends Statement {
 
     let group = seq(str("GROUP BY"), new Reuse.Source());
 
-    let into = seq(opt(str("REFERENCE")), str("INTO"), new Reuse.Target());
+    let into = seq(opt(str("REFERENCE")), str("INTO"), new Target());
 
-    let assigning = seq(str("ASSIGNING"), new Reuse.FSTarget());
+    let assigning = seq(str("ASSIGNING"), new FSTarget());
 
     let target = alt(seq(alt(into, assigning),
                          opt(group),

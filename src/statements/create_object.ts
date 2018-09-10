@@ -1,6 +1,7 @@
 import {Statement} from "./statement";
 import * as Reuse from "./reuse";
 import {str, seq, opt, alt, per, IRunnable} from "../combi";
+import {Target} from "../expressions";
 
 export class CreateObject extends Statement {
 
@@ -12,7 +13,7 @@ export class CreateObject extends Statement {
     let type = seq(str("TYPE"), alt(new Reuse.ClassName(), new Reuse.Dynamic()));
 
     let ret = seq(str("CREATE OBJECT"),
-                  new Reuse.Target(),
+                  new Target(),
                   opt(per(type, area)),
                   opt(alt(exporting, table)),
                   opt(exceptions));

@@ -1,6 +1,7 @@
 import {Statement} from "./statement";
 import * as Reuse from "./reuse";
 import {str, seq, IRunnable} from "../combi";
+import {Target} from "../expressions";
 
 export class GetBit extends Statement {
 
@@ -10,7 +11,7 @@ export class GetBit extends Statement {
                   str("OF"),
                   new Reuse.Source(),
                   str("INTO"),
-                  new Reuse.Target());
+                  new Target());
 
     return ret;
   }

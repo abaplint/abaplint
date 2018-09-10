@@ -1,6 +1,7 @@
 import {Statement} from "./statement";
 import * as Reuse from "./reuse";
 import {str, seq, alt, opt, per, IRunnable} from "../combi";
+import {Target} from "../expressions";
 
 export class Shift extends Statement {
 
@@ -14,7 +15,7 @@ export class Shift extends Statement {
     let options = per(deleting, up, mode, dir, by, str("CIRCULAR"));
 
     return seq(str("SHIFT"),
-               new Reuse.Target(),
+               new Target(),
                opt(options));
   }
 

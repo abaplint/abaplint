@@ -1,16 +1,16 @@
 import {Statement} from "./statement";
-import * as Reuse from "./reuse";
 import {str, seq, per, IRunnable} from "../combi";
+import {Target} from "../expressions";
 
 export class GetCursor extends Statement {
 
   public static get_matcher(): IRunnable {
-    let line = seq(str("LINE"), new Reuse.Target());
-    let field = seq(str("FIELD"), new Reuse.Target());
-    let offset = seq(str("OFFSET"), new Reuse.Target());
-    let value = seq(str("VALUE"), new Reuse.Target());
-    let length = seq(str("LENGTH"), new Reuse.Target());
-    let area = seq(str("AREA"), new Reuse.Target());
+    let line = seq(str("LINE"), new Target());
+    let field = seq(str("FIELD"), new Target());
+    let offset = seq(str("OFFSET"), new Target());
+    let value = seq(str("VALUE"), new Target());
+    let length = seq(str("LENGTH"), new Target());
+    let area = seq(str("AREA"), new Target());
 
     let ret = seq(str("GET CURSOR"),
                   per(line, field, offset, value, length, area));

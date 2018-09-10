@@ -1,6 +1,7 @@
 import {Statement} from "./statement";
 import * as Reuse from "./reuse";
 import {str, seq, opt, IRunnable} from "../combi";
+import {FieldSymbol} from "../expressions";
 
 export class AssignLocalCopy extends Statement {
 
@@ -10,7 +11,7 @@ export class AssignLocalCopy extends Statement {
                   opt(seq(str("INITIAL"), opt(str("LINE OF")))),
                   new Reuse.Source(),
                   str("TO"),
-                  new Reuse.FieldSymbol());
+                  new FieldSymbol());
 
     return ret;
   }

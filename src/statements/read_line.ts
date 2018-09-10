@@ -1,14 +1,15 @@
 import {Statement} from "./statement";
 import {str, seq, per, opt, alt, plus, IRunnable} from "../combi";
 import * as Reuse from "./reuse";
+import {Target} from "../expressions";
 
 export class ReadLine extends Statement {
 
   public static get_matcher(): IRunnable {
     let val = seq(str("LINE VALUE INTO"),
-                  new Reuse.Target());
+                  new Target());
 
-    let fields = seq(new Reuse.Target(), opt(seq(str("INTO"), new Reuse.Target())));
+    let fields = seq(new Target(), opt(seq(str("INTO"), new Target())));
 
     let field = seq(str("FIELD VALUE"),
                     plus(fields));

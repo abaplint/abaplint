@@ -1,6 +1,7 @@
 import {Statement} from "./statement";
 import * as Reuse from "./reuse";
 import {str, seq, opt, IRunnable} from "../combi";
+import {Target} from "../expressions";
 
 export class GetPFStatus extends Statement {
 
@@ -9,7 +10,7 @@ export class GetPFStatus extends Statement {
     let excl = seq(str("EXCLUDING"), new Reuse.Source());
 
     let ret = seq(str("GET PF-STATUS"),
-                  new Reuse.Target(),
+                  new Target(),
                   opt(program),
                   opt(excl));
 

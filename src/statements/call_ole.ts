@@ -1,6 +1,7 @@
 import {Statement} from "./statement";
 import * as Reuse from "./reuse";
 import {str, seq, opt, regex, plus, IRunnable} from "../combi";
+import {Target} from "../expressions";
 
 export class CallOLE extends Statement {
 
@@ -9,7 +10,7 @@ export class CallOLE extends Statement {
 
     let exporting = seq(str("EXPORTING"), plus(fields));
 
-    let rc = seq(str("="), new Reuse.Target());
+    let rc = seq(str("="), new Target());
 
     let ret = seq(str("CALL METHOD OF"),
                   new Reuse.Source(),

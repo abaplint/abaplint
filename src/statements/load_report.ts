@@ -1,6 +1,7 @@
 import {Statement} from "./statement";
 import {str, seq, IRunnable} from "../combi";
 import * as Reuse from "./reuse";
+import {Target} from "../expressions";
 
 export class LoadReport extends Statement {
 
@@ -10,7 +11,7 @@ export class LoadReport extends Statement {
                   str("PART"),
                   new Reuse.Source(),
                   str("INTO"),
-                  new Reuse.Target());
+                  new Target());
 
     return ret;
   }

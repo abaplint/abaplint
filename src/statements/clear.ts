@@ -1,6 +1,7 @@
 import {Statement} from "./statement";
 import {str, seq, opt, alt, IRunnable} from "../combi";
 import * as Reuse from "./reuse";
+import {Target} from "../expressions";
 
 export class Clear extends Statement {
 
@@ -11,7 +12,7 @@ export class Clear extends Statement {
                    str("IN BYTE MODE"));
 
     return seq(str("CLEAR"),
-               new Reuse.Target(),
+               new Target(),
                opt(wit),
                opt(mode));
   }

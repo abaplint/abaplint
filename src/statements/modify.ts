@@ -1,6 +1,7 @@
 import {Statement} from "./statement";
 import * as Reuse from "./reuse";
 import {str, seq, opt, alt, per, plus, IRunnable} from "../combi";
+import {FSTarget, Target} from "../expressions";
 
 export class Modify extends Statement {
 
@@ -11,9 +12,9 @@ export class Modify extends Statement {
                            plus(alt(new Reuse.FieldSub(), new Reuse.Dynamic())));
     let where = seq(str("WHERE"), new Reuse.Cond());
     let client = str("CLIENT SPECIFIED");
-    let assigning = seq(str("ASSIGNING"), new Reuse.FSTarget());
+    let assigning = seq(str("ASSIGNING"), new FSTarget());
 
-    let target = seq(opt(str("TABLE")), alt(new Reuse.Target(), new Reuse.Dynamic()));
+    let target = seq(opt(str("TABLE")), alt(new Target(), new Reuse.Dynamic()));
 
     let conn = seq(str("CONNECTION"), new Reuse.Dynamic());
 

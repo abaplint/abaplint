@@ -1,19 +1,20 @@
 import {Statement} from "./statement";
 import {str, seq, alt, opt, optPrio, plus, per, IRunnable} from "../combi";
 import * as Reuse from "./reuse";
+import {FSTarget, Target} from "../expressions";
 
 export class Read extends Statement {
 
   public static get_matcher(): IRunnable {
     let comparing = seq(str("COMPARING"), new Reuse.Field());
 
-    let target = alt(seq(str("ASSIGNING"), new Reuse.FSTarget()),
-                     seq(opt(str("REFERENCE")), str("INTO"), new Reuse.Target()),
+    let target = alt(seq(str("ASSIGNING"), new FSTarget()),
+                     seq(opt(str("REFERENCE")), str("INTO"), new Target()),
                      str("TRANSPORTING NO FIELDS"));
 
     let index = seq(str("INDEX"), new Reuse.Source());
 
-    let compare = seq(alt(new Reuse.Target(), new Reuse.Dynamic()),
+    let compare = seq(alt(new Target(), new Reuse.Dynamic()),
                       str("="),
                       new Reuse.Source());
 

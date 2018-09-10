@@ -1,6 +1,7 @@
 import {Statement} from "./statement";
 import * as Reuse from "./reuse";
 import {str, seq, IRunnable} from "../combi";
+import {Target} from "../expressions";
 
 export class GetParameter extends Statement {
 
@@ -8,7 +9,7 @@ export class GetParameter extends Statement {
     let ret = seq(str("GET PARAMETER ID"),
                   new Reuse.Source(),
                   str("FIELD"),
-                  new Reuse.Target());
+                  new Target());
 
     return ret;
   }

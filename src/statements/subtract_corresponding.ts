@@ -1,6 +1,7 @@
 import {Statement} from "./statement";
 import * as Reuse from "./reuse";
 import {str, seq, IRunnable} from "../combi";
+import {Target} from "../expressions";
 
 export class SubtractCorresponding extends Statement {
 
@@ -8,7 +9,7 @@ export class SubtractCorresponding extends Statement {
     return seq(str("SUBTRACT-CORRESPONDING"),
                new Reuse.Source(),
                str("FROM"),
-               new Reuse.Target());
+               new Target());
   }
 
 }

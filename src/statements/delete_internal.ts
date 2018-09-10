@@ -1,6 +1,8 @@
 import {Statement} from "./statement";
 import {str, seq, alt, opt, per, plus, IRunnable} from "../combi";
 import * as Reuse from "./reuse";
+import {FieldSymbol} from "../expressions";
+import {Target} from "../expressions";
 
 export class DeleteInternal extends Statement {
 
@@ -20,15 +22,15 @@ export class DeleteInternal extends Statement {
                   plus(new Reuse.Compare()));
 
     let table = seq(opt(str("TABLE")),
-                    new Reuse.Target(),
+                    new Target(),
                     alt(per(index, using), fromTo, key), opt(where));
 
     let adjacent = seq(str("ADJACENT DUPLICATES FROM"),
-                       new Reuse.Target(),
+                       new Target(),
                        opt(seq(str("COMPARING"), plus(alt(new Reuse.FieldSub(), new Reuse.Dynamic())))),
                        opt(seq(str("USING KEY"), new Reuse.Field())));
 
-    let fs = seq(new Reuse.FieldSymbol(), where);
+    let fs = seq(new FieldSymbol(), where);
 
     return seq(str("DELETE"), alt(table, adjacent, fs));
   }

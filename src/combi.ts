@@ -452,13 +452,12 @@ class WordSequence implements IRunnable {
   }
 }
 
+// todo, rename to "Expression" ?
 export abstract class Reuse implements IRunnable {
   public run(r: Array<Result>): Array<Result> {
     let results: Array<Result> = [];
 
-//    console.dir(r);
     for (let input of r) {
-//      console.dir(input);
       let temp = this.get_runnable().run([input]);
 
       let moo: Array<Result> = [];

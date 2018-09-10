@@ -1,6 +1,7 @@
 import {Statement} from "./statement";
 import {str, seq, alt, opt, plus, IRunnable} from "../combi";
 import * as Reuse from "./reuse";
+import {Target} from "../expressions";
 
 export class Move extends Statement {
 
@@ -11,13 +12,13 @@ export class Move extends Statement {
                        str("MOVE-CORRESPONDING")),
                    new Reuse.Source(),
                    alt(str("TO"), str("?TO")),
-                   new Reuse.Target(),
+                   new Target(),
                    opt(keeping));
 
     let equals = alt(str("="), str("?="));
 
 // todo, move ?= to CAST?
-    let eq = seq(plus(seq(new Reuse.Target(), equals)), new Reuse.Source());
+    let eq = seq(plus(seq(new Target(), equals)), new Reuse.Source());
 
     return alt(move, eq);
   }

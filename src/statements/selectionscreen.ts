@@ -2,6 +2,7 @@ import {Statement} from "./statement";
 import {str, seq, alt, opt, per, regex as reg, tok, IRunnable} from "../combi";
 import * as Reuse from "./reuse";
 import {ParenLeft, WParenLeft, ParenRightW, ParenRight} from "../tokens";
+import {Integer} from "../expressions";
 
 export class SelectionScreen extends Statement {
 
@@ -23,10 +24,10 @@ export class SelectionScreen extends Statement {
                          nesting);
 
     let beginScreen = seq(str("BEGIN OF SCREEN"),
-                          new Reuse.Integer(),
+                          new Integer(),
                           opt(scrOptions));
 
-    let endScreen = seq(str("END OF SCREEN"), new Reuse.Integer());
+    let endScreen = seq(str("END OF SCREEN"), new Integer());
 
     let beginLine = str("BEGIN OF LINE");
     let endLine = str("END OF LINE");
@@ -41,7 +42,7 @@ export class SelectionScreen extends Statement {
 
     let position = seq(opt(reg(/^\/?\d+$/)),
                        alt(tok(ParenLeft), tok(WParenLeft)),
-                       new Reuse.Integer(),
+                       new Integer(),
                        alt(tok(ParenRightW), tok(ParenRight)));
 
     let comment = seq(str("COMMENT"),
@@ -58,19 +59,19 @@ export class SelectionScreen extends Statement {
                    opt(modif),
                    opt(visible));
 
-    let def = seq(str("DEFAULT SCREEN"), new Reuse.Integer());
+    let def = seq(str("DEFAULT SCREEN"), new Integer());
 
     let tab = seq(str("TAB"),
                   tok(WParenLeft),
-                  new Reuse.Integer(),
+                  new Integer(),
                   tok(ParenRightW),
                   new Reuse.FieldSub(),
                   command,
                   opt(def));
 
-    let func = seq(str("FUNCTION KEY"), new Reuse.Integer());
+    let func = seq(str("FUNCTION KEY"), new Integer());
 
-    let skip = seq(str("SKIP"), opt(new Reuse.Integer()));
+    let skip = seq(str("SKIP"), opt(new Integer()));
 
     let pos = seq(str("POSITION"), new Reuse.Source());
 
@@ -79,7 +80,7 @@ export class SelectionScreen extends Statement {
     let tabbed = seq(str("BEGIN OF TABBED BLOCK"),
                      new Reuse.Field(),
                      str("FOR"),
-                     new Reuse.Integer(),
+                     new Integer(),
                      str("LINES"),
                      opt(str("NO INTERVALS")));
 

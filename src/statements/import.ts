@@ -1,12 +1,13 @@
 import {Statement} from "./statement";
 import * as Reuse from "./reuse";
 import {str, seq, opt, alt, per, plus, IRunnable} from "../combi";
+import {Target} from "../expressions";
 
 export class Import extends Statement {
 
   public static get_matcher(): IRunnable {
     let id = seq(str("ID"), new Reuse.Source());
-    let dto = seq(str("TO"), new Reuse.Target());
+    let dto = seq(str("TO"), new Target());
     let client = seq(str("CLIENT"), new Reuse.Source());
 
     let options = per(str("ACCEPTING PADDING"),
@@ -34,12 +35,12 @@ export class Import extends Statement {
 
     let to = plus(seq(new Reuse.Source(),
                       alt(str("TO"), str("INTO")),
-                      new Reuse.Target()));
+                      new Target()));
 
     let target = alt(new Reuse.ParameterListT(),
                      to,
                      new Reuse.Dynamic(),
-                     plus(new Reuse.Target()));
+                     plus(new Target()));
 
     return seq(str("IMPORT"), target, str("FROM"), source);
   }

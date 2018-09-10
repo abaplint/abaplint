@@ -1,6 +1,7 @@
 import {Statement} from "./statement";
 import {str, seq, opt, alt, per, tok, regex as reg, IRunnable} from "../combi";
 import * as Reuse from "./reuse";
+import {Target} from "../expressions";
 import {ParenLeft, ParenRightW, WParenLeft} from "../tokens/";
 
 export class Write extends Statement {
@@ -12,7 +13,7 @@ export class Write extends Statement {
                    alt(str("NO EDIT MASK"),
                        seq(str("EDIT MASK"), new Reuse.Source())));
 
-    let to = seq(str("TO"), new Reuse.Target());
+    let to = seq(str("TO"), new Target());
 
     let colorOpt = alt(seq(str("INVERSE"), opt(str("ON"))),
                        seq(str("INTENSIFIED"), opt(str("ON"))));

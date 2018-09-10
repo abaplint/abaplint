@@ -2,6 +2,7 @@ import {Statement} from "./statement";
 import * as Reuse from "./reuse";
 import {str, seq, alt, opt, tok, IRunnable} from "../combi";
 import {Arrow} from "../tokens/";
+import {FSTarget, Target} from "../expressions";
 
 export class Assign extends Statement {
 
@@ -27,10 +28,10 @@ export class Assign extends Statement {
     let casting = seq(opt(str("CASTING")), opt(alt(type, like, range, handle, decimals)));
 
     let ret = seq(str("ASSIGN"),
-                  opt(seq(new Reuse.Target(), str("INCREMENT"))),
+                  opt(seq(new Target(), str("INCREMENT"))),
                   source,
                   str("TO"),
-                  new Reuse.FSTarget(),
+                  new FSTarget(),
                   casting,
                   opt(range));
 

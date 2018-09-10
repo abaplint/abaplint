@@ -1,6 +1,7 @@
 import {Statement} from "./statement";
 import {str, seq, alt, opt, per, IRunnable} from "../combi";
 import * as Reuse from "./reuse";
+import {Target} from "../expressions";
 
 export class Replace extends Statement {
 
@@ -21,11 +22,11 @@ export class Replace extends Statement {
     let cas = alt(str("IGNORING CASE"),
                   str("RESPECTING CASE"));
 
-    let repl = seq(str("REPLACEMENT COUNT"), new Reuse.Target());
-    let replo = seq(str("REPLACEMENT OFFSET"), new Reuse.Target());
-    let repll = seq(str("REPLACEMENT LENGTH"), new Reuse.Target());
+    let repl = seq(str("REPLACEMENT COUNT"), new Target());
+    let replo = seq(str("REPLACEMENT OFFSET"), new Target());
+    let repll = seq(str("REPLACEMENT LENGTH"), new Target());
 
-    let leng = seq(str("LENGTH"), new Reuse.Target());
+    let leng = seq(str("LENGTH"), new Target());
 
     let occ = alt(str("ALL OCCURRENCES"),
                   str("ALL OCCURENCES"),
@@ -36,9 +37,9 @@ export class Replace extends Statement {
 
     return seq(str("REPLACE"),
                per(section, seq(opt(occ), source)),
-               opt(seq(str("IN"), opt(str("TABLE")), new Reuse.Target())),
+               opt(seq(str("IN"), opt(str("TABLE")), new Target())),
                per(seq(str("WITH"), new Reuse.Source()),
-                   seq(str("INTO"), new Reuse.Target())),
+                   seq(str("INTO"), new Target())),
                opt(per(cas, mode, repl, replo, repll, leng)));
   }
 

@@ -1,6 +1,7 @@
 import {Statement} from "./statement";
 import * as Reuse from "./reuse";
 import {str, seq, opt, alt, per, plus, IRunnable} from "../combi";
+import {Target} from "../expressions";
 
 export class Find extends Statement {
 
@@ -11,13 +12,13 @@ export class Find extends Statement {
                       str("IN CHARACTER MODE"),
                       seq(str("OF"), new Reuse.Source()),
                       seq(str("FROM"), new Reuse.Source()),
-                      seq(str("MATCH OFFSET"), new Reuse.Target()),
-                      seq(str("MATCH LINE"), new Reuse.Target()),
-                      seq(str("MATCH COUNT"), new Reuse.Target()),
-                      seq(str("MATCH LENGTH"), new Reuse.Target()),
+                      seq(str("MATCH OFFSET"), new Target()),
+                      seq(str("MATCH LINE"), new Target()),
+                      seq(str("MATCH COUNT"), new Target()),
+                      seq(str("MATCH LENGTH"), new Target()),
                       seq(str("LENGTH"), new Reuse.Source()),
-                      seq(str("RESULTS"), new Reuse.Target()),
-                      seq(str("SUBMATCHES"), plus(new Reuse.Target())));
+                      seq(str("RESULTS"), new Target()),
+                      seq(str("SUBMATCHES"), plus(new Target())));
 
     let sectionLength = seq(str("SECTION LENGTH"), new Reuse.Source(), str("OF"));
 

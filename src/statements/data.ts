@@ -1,6 +1,7 @@
 import {Statement} from "./statement";
 import {str, seq, alt, opt, per, IRunnable} from "../combi";
 import * as Reuse from "./reuse";
+import {Integer} from "../expressions";
 
 export class Data extends Statement {
 
@@ -11,7 +12,7 @@ export class Data extends Statement {
                      opt(new Reuse.Type()),
                      opt(per(str("READ-ONLY"), new Reuse.Value())));
 
-    let initial = seq(str("INITIAL SIZE"), new Reuse.Integer());
+    let initial = seq(str("INITIAL SIZE"), new Integer());
 
     let table = seq(new Reuse.TypeTable(),
                     opt(str("READ-ONLY")),

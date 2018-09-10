@@ -1,13 +1,14 @@
 import {Statement} from "./statement";
 import * as Reuse from "./reuse";
 import {str, seq, opt, alt, IRunnable} from "../combi";
+import {Target} from "../expressions";
 
 export class CallTransaction extends Statement {
 
   public static get_matcher(): IRunnable {
 
     let options = seq(str("OPTIONS FROM"), new Reuse.Source());
-    let messages = seq(str("MESSAGES INTO"), new Reuse.Target());
+    let messages = seq(str("MESSAGES INTO"), new Target());
 
     let auth = seq(alt(str("WITH"), str("WITHOUT")), str("AUTHORITY-CHECK"));
 

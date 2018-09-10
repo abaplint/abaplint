@@ -1,6 +1,7 @@
 import {Statement} from "./statement";
 import * as Reuse from "./reuse";
 import {str, seq, alt, opt, IRunnable} from "../combi";
+import {Target} from "../expressions";
 
 export class FetchNext extends Statement {
 
@@ -10,11 +11,11 @@ export class FetchNext extends Statement {
     let table = seq(alt(str("INTO"), str("APPENDING")),
                     opt(str("CORRESPONDING FIELDS OF")),
                     str("TABLE"),
-                    new Reuse.Target());
+                    new Target());
 
     let record = seq(str("INTO"),
                      opt(str("CORRESPONDING FIELDS OF")),
-                     new Reuse.Target());
+                     new Target());
 
     let ret = seq(str("FETCH NEXT CURSOR"),
                   new Reuse.Source(),

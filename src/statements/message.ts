@@ -2,6 +2,7 @@ import {Statement} from "./statement";
 import {str, seq, opt, tok, per, IRunnable} from "../combi";
 import * as Reuse from "./reuse";
 import {ParenLeft} from "../tokens";
+import {Target} from "../expressions";
 
 export class Message extends Statement {
 
@@ -10,7 +11,7 @@ export class Message extends Statement {
     let type = seq(str("TYPE"), new Reuse.Source());
     let id = seq(str("ID"), new Reuse.Source());
     let num = seq(str("NUMBER"), new Reuse.Source());
-    let into = seq(str("INTO"), new Reuse.Target());
+    let into = seq(str("INTO"), new Target());
     let mwith = seq(str("WITH"), new Reuse.Source(), opt(new Reuse.Source()), opt(new Reuse.Source()), opt(new Reuse.Source()));
     let raising = seq(str("RAISING"), new Reuse.Field());
     let msgid = seq(tok(ParenLeft), new Reuse.MessageClass(), str(")"));

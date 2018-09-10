@@ -1,16 +1,16 @@
 import {Statement} from "./statement";
-import * as Reuse from "./reuse";
 import {str, seq, opt, IRunnable} from "../combi";
+import {Target} from "../expressions";
 
 export class GetLocale extends Statement {
 
   public static get_matcher(): IRunnable {
-    let country = seq(str("COUNTRY"), new Reuse.Target());
+    let country = seq(str("COUNTRY"), new Target());
 
-    let modifier = seq(str("MODIFIER"), new Reuse.Target());
+    let modifier = seq(str("MODIFIER"), new Target());
 
     let ret = seq(str("GET LOCALE LANGUAGE"),
-                  new Reuse.Target(),
+                  new Target(),
                   country,
                   opt(modifier));
 

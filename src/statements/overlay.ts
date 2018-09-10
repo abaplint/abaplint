@@ -1,6 +1,7 @@
 import {Statement} from "./statement";
 import * as Reuse from "./reuse";
 import {str, seq, opt, IRunnable} from "../combi";
+import {Target} from "../expressions";
 
 export class Overlay extends Statement {
 
@@ -8,7 +9,7 @@ export class Overlay extends Statement {
     let only = seq(str("ONLY"), new Reuse.Source());
 
     let ret = seq(str("OVERLAY"),
-                  new Reuse.Target(),
+                  new Target(),
                   str("WITH"),
                   new Reuse.Source(),
                   opt(only));

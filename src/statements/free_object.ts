@@ -1,12 +1,12 @@
 import {Statement} from "./statement";
-import * as Reuse from "./reuse";
 import {str, seq, opt, IRunnable} from "../combi";
+import {Target} from "../expressions";
 
 export class FreeObject extends Statement {
 
   public static get_matcher(): IRunnable {
     return seq(str("FREE OBJECT"),
-               new Reuse.Target(),
+               new Target(),
                opt(str("NO FLUSH")));
   }
 

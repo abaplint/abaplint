@@ -1,6 +1,7 @@
 import {Statement} from "./statement";
 import * as Reuse from "./reuse";
 import {str, seq, IRunnable} from "../combi";
+import {Target} from "../expressions";
 
 export class GetReference extends Statement {
 
@@ -8,7 +9,7 @@ export class GetReference extends Statement {
     let ret = seq(str("GET REFERENCE OF"),
                   new Reuse.Source(),
                   str("INTO"),
-                  new Reuse.Target());
+                  new Target());
 
     return ret;
   }

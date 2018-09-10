@@ -1,6 +1,7 @@
 import {Statement} from "./statement";
 import * as Reuse from "./reuse";
 import {str, seq, opt, alt, plus, IRunnable} from "../combi";
+import {Target} from "../expressions";
 
 export class SetHandler extends Statement {
 
@@ -10,7 +11,7 @@ export class SetHandler extends Statement {
     let fo = seq(str("FOR"), alt(str("ALL INSTANCES"), new Reuse.Source()));
 
     let ret = seq(str("SET HANDLER"),
-                  plus(new Reuse.Target()),
+                  plus(new Target()),
                   opt(fo),
                   opt(activation));
 

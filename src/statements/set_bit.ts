@@ -1,6 +1,7 @@
 import {Statement} from "./statement";
 import * as Reuse from "./reuse";
 import {str, seq, opt, IRunnable} from "../combi";
+import {Target} from "../expressions";
 
 export class SetBit extends Statement {
 
@@ -8,7 +9,7 @@ export class SetBit extends Statement {
     let ret = seq(str("SET BIT"),
                   new Reuse.Source(),
                   str("OF"),
-                  new Reuse.Target(),
+                  new Target(),
                   opt(seq(str("TO"), new Reuse.Source())));
 
     return ret;

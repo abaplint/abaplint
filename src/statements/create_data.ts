@@ -1,6 +1,7 @@
 import {Statement} from "./statement";
 import * as Reuse from "./reuse";
 import {str, seq, alt, opt, plus, IRunnable} from "../combi";
+import {Target} from "../expressions";
 
 export class CreateData extends Statement {
 
@@ -34,7 +35,7 @@ export class CreateData extends Statement {
     let key = seq(str("WITH"), alt(def, kdef));
 
     let ret = seq(str("CREATE DATA"),
-                  new Reuse.Target(),
+                  new Target(),
                   opt(area),
                   opt(seq(type, alt(new Reuse.Source(), new Reuse.Dynamic()))),
                   opt(key),

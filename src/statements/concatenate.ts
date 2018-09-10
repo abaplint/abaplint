@@ -1,6 +1,7 @@
 import {Statement} from "./statement";
 import * as Reuse from "./reuse";
 import {str, opt, seq, alt, per, plus, IRunnable} from "../combi";
+import {Target} from "../expressions";
 
 export class Concatenate extends Statement {
 
@@ -17,7 +18,7 @@ export class Concatenate extends Statement {
                new Reuse.Source(),
                plus(new Reuse.Source()),
                str("INTO"),
-               new Reuse.Target(),
+               new Target(),
                opt(options));
   }
 

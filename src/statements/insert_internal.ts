@@ -1,13 +1,14 @@
 import {Statement} from "./statement";
 import * as Reuse from "./reuse";
 import {str, seq, alt, opt, per, IRunnable} from "../combi";
+import {FSTarget, Target} from "../expressions";
 
 export class InsertInternal extends Statement {
 
   public static get_matcher(): IRunnable {
     let target = alt(new Reuse.Source(), new Reuse.Dynamic());
-    let assigning = seq(str("ASSIGNING"), new Reuse.FSTarget());
-    let ref = seq(str("REFERENCE INTO"), new Reuse.Target());
+    let assigning = seq(str("ASSIGNING"), new FSTarget());
+    let ref = seq(str("REFERENCE INTO"), new Target());
     let index = seq(str("INDEX"), new Reuse.Source());
     let initial = str("INITIAL LINE");
     let into = seq(str("INTO"), opt(str("TABLE")), new Reuse.Source());
@@ -29,7 +30,7 @@ export class InsertInternal extends Statement {
 
     let ret = seq(str("INSERT"),
                   alt(initial,
-                      new Reuse.Target(),
+                      new Target(),
                       lines),
                   foo);
 

@@ -1,6 +1,7 @@
 import {Statement} from "./statement";
 import * as Reuse from "./reuse";
 import {str, seq, IRunnable} from "../combi";
+import {Target} from "../expressions";
 
 export class GenerateDynpro extends Statement {
 
@@ -13,11 +14,11 @@ export class GenerateDynpro extends Statement {
                   str("ID"),
                   new Reuse.Source(),
                   str("MESSAGE"),
-                  new Reuse.Target(),
+                  new Target(),
                   str("LINE"),
-                  new Reuse.Target(),
+                  new Target(),
                   str("WORD"),
-                  new Reuse.Target());
+                  new Target());
 
     return ret;
   }

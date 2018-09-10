@@ -1,13 +1,14 @@
 import {Statement} from "./statement";
 import * as Reuse from "./reuse";
 import {str, seq, alt, IRunnable} from "../combi";
+import {FieldSymbol} from "../expressions";
 
 export class At extends Statement {
 
   public static get_matcher(): IRunnable {
     let field = alt(new Reuse.FieldSub(),
                     new Reuse.Dynamic(),
-                    new Reuse.FieldSymbol());
+                    new FieldSymbol());
 
     let atNew = seq(str("NEW"), field);
     let atEnd = seq(str("END OF"), field);
