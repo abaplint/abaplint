@@ -1,6 +1,6 @@
 import * as Combi from "../src/combi";
 import * as Statements from "../src/statements/";
-import * as Reuse from "../src/expressions";
+import * as Expressions from "../src/expressions";
 import * as fs from "fs";
 
 function className(cla) {
@@ -15,10 +15,10 @@ class Graph {
   }
 
   public static run() {
-    for (let foo in Reuse) {
-      if (typeof Reuse[foo] === "function") {
-        let name = className(new Reuse[foo]()).toLowerCase();
-        this.handle("reuse_", name, new Reuse[foo]().get_runnable(), true);
+    for (let foo in Expressions) {
+      if (typeof Expressions[foo] === "function") {
+        let name = className(new Expressions[foo]()).toLowerCase();
+        this.handle("expression_", name, new Expressions[foo]().get_runnable(), true);
       }
     }
 

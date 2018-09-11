@@ -6,8 +6,8 @@ var fs = require("fs");
 function run() {
   let json = {};
   json.statements = [];
-  json.reuse = [];
-  
+  json.expressions = [];
+
   let folder = "./web/viz/";
   let files = fs.readdirSync(folder);
 
@@ -63,20 +63,20 @@ function run() {
 
       let name = file.split(".")[0];
 
-      if (/^reuse_/.test(name)) {
-        json.reuse.push(name);
+      if (/^expression_/.test(name)) {
+        json.expressions.push(name);
       } else {
         json.statements.push(name);
       }
     }
   }
-  
+
   return json;
 }
 
 function generate() {
   let json = run();
-  
+
   fs.writeFileSync("./web/viz/data.json", JSON.stringify(json), "utf8");
 }
 

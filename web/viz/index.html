@@ -74,7 +74,7 @@ a:visited {
 <b>Statements</b><br>
 <div id="sidenav_statements">Loading</div>
 <br>
-<b>Reuse</b><br>
+<b>Expressions</b><br>
 <div id="sidenav_reuse">Loading</div>
 </div>
 
@@ -105,8 +105,8 @@ function renderSidenav() {
   document.getElementById("sidenav_statements").innerHTML = html;
 
   html = "";
-  for(let i of json.reuse) {
-    html = html + "<a href=\"javascript:setFilter('" + i.substring(6) + "');\">" + i.substring(6) + "</a><br>";
+  for(let i of json.expressions) {
+    html = html + "<a href=\"javascript:setFilter('" + i.substring(11) + "');\">" + i.substring(11) + "</a><br>";
   }
   document.getElementById("sidenav_reuse").innerHTML = html;
 }
@@ -126,16 +126,16 @@ function renderMain(filter) {
     html = "<h1>Statements</h1>" + statements;
   }
 
-  let reuse = "";
-  for(let i of json.reuse) {
-    if (!filter || i.substring(6).toLowerCase().startsWith(filter.toLowerCase())) {
-      reuse = reuse + "<div style=\"page-break-inside:avoid;\">" +
-        "<u>" + i.substring(6).toUpperCase() + "</u><br>" +
+  let expressions = "";
+  for(let i of json.expressions) {
+    if (!filter || i.substring(11).toLowerCase().startsWith(filter.toLowerCase())) {
+      expressions = expressions + "<div style=\"page-break-inside:avoid;\">" +
+        "<u>" + i.substring(11).toUpperCase() + "</u><br>" +
         "<a href=\"" + i + ".svg\"><img src=\"" + i + ".svg\"></a></div><br>";
     }
   }
-  if (reuse !== "") {
-    html = html + "<div style=\"page-break-before: always;\"><h1>Reuse</h1>" + reuse + "</div>";
+  if (expressions !== "") {
+    html = html + "<div style=\"page-break-before: always;\"><h1>Expressions</h1>" + expressions + "</div>";
   }
 
   document.getElementById("main").innerHTML = html;
