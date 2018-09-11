@@ -1,11 +1,11 @@
 import {Statement} from "./statement";
-import * as Reuse from "./reuse";
 import {str, seq, IRunnable} from "../combi";
+import {Cond} from "../expressions";
 
 export class While extends Statement {
 
   public static get_matcher(): IRunnable {
-    return seq(str("WHILE"), new Reuse.Cond());
+    return seq(str("WHILE"), new Cond());
   }
 
   public isStructure() {

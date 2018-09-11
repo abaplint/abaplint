@@ -1,25 +1,24 @@
 import {Statement} from "./statement";
 import {str, seq, alt, opt, per, plus, IRunnable} from "../combi";
-import * as Reuse from "./reuse";
 import {FieldSymbol} from "../expressions";
-import {Target} from "../expressions";
+import {Target, Source, Dynamic, Compare, Cond, SimpleName, Field, FieldSub} from "../expressions";
 
 export class DeleteInternal extends Statement {
 
   public static get_matcher(): IRunnable {
 // todo, is READ and DELETE similar? something can be reused?
-    let index = seq(str("INDEX"), new Reuse.Source());
+    let index = seq(str("INDEX"), new Source());
 
-    let using = seq(str("USING KEY"), alt(new Reuse.SimpleName(), new Reuse.Dynamic()));
+    let using = seq(str("USING KEY"), alt(new SimpleName(), new Dynamic()));
 
-    let fromTo = seq(opt(seq(str("FROM"), new Reuse.Source())),
-                     opt(seq(str("TO"), new Reuse.Source())));
+    let fromTo = seq(opt(seq(str("FROM"), new Source())),
+                     opt(seq(str("TO"), new Source())));
 
-    let where = seq(str("WHERE"), alt(new Reuse.Cond(), new Reuse.Dynamic()));
+    let where = seq(str("WHERE"), alt(new Cond(), new Dynamic()));
 
     let key = seq(str("WITH TABLE KEY"),
-                  opt(seq(new Reuse.SimpleName(), str("COMPONENTS"))),
-                  plus(new Reuse.Compare()));
+                  opt(seq(new SimpleName(), str("COMPONENTS"))),
+                  plus(new Compare()));
 
     let table = seq(opt(str("TABLE")),
                     new Target(),
@@ -27,8 +26,8 @@ export class DeleteInternal extends Statement {
 
     let adjacent = seq(str("ADJACENT DUPLICATES FROM"),
                        new Target(),
-                       opt(seq(str("COMPARING"), plus(alt(new Reuse.FieldSub(), new Reuse.Dynamic())))),
-                       opt(seq(str("USING KEY"), new Reuse.Field())));
+                       opt(seq(str("COMPARING"), plus(alt(new FieldSub(), new Dynamic())))),
+                       opt(seq(str("USING KEY"), new Field())));
 
     let fs = seq(new FieldSymbol(), where);
 

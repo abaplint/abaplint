@@ -1,6 +1,6 @@
 import {seq, opt, tok, star, alt, str, Reuse, IRunnable} from "../combi";
-import {Field, TableExpression, FieldAll, ArrowOrDash, FieldOffset, FieldLength, TableBody} from "../statements/reuse";
-import {FieldSymbol, InlineData, InlineFS} from "./";
+import {Field, TableExpression, FieldAll, FieldOffset, FieldLength, TableBody} from "./";
+import {FieldSymbol, InlineData, InlineFS, ArrowOrDash} from "./";
 import {Arrow} from "../tokens/";
 
 export class Target extends Reuse {

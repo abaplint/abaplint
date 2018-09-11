@@ -1,45 +1,44 @@
 import {Statement} from "./statement";
-import * as Reuse from "./reuse";
 import {str, seq, opt, alt, per, plus, IRunnable} from "../combi";
-import {Target} from "../expressions";
+import {Target, Source, ParameterListT, Dynamic, Field} from "../expressions";
 
 export class Import extends Statement {
 
   public static get_matcher(): IRunnable {
-    let id = seq(str("ID"), new Reuse.Source());
+    let id = seq(str("ID"), new Source());
     let dto = seq(str("TO"), new Target());
-    let client = seq(str("CLIENT"), new Reuse.Source());
+    let client = seq(str("CLIENT"), new Source());
 
     let options = per(str("ACCEPTING PADDING"),
                       str("IGNORING CONVERSION ERRORS"),
                       str("ACCEPTING TRUNCATION"));
 
     let shared = seq(str("SHARED MEMORY"),
-                     new Reuse.Field(),
+                     new Field(),
                      str("("),
-                     new Reuse.Field(),
+                     new Field(),
                      str(")"),
                      str("ID"),
-                     new Reuse.Field());
+                     new Field());
 
-    let buffer = seq(str("DATA BUFFER"), new Reuse.Source());
-    let memory = seq(str("MEMORY ID"), new Reuse.Source());
-    let table = seq(str("INTERNAL TABLE"), new Reuse.Source());
+    let buffer = seq(str("DATA BUFFER"), new Source());
+    let memory = seq(str("MEMORY ID"), new Source());
+    let table = seq(str("INTERNAL TABLE"), new Source());
 
     let database = seq(str("DATABASE"),
-                       new Reuse.Source(),
+                       new Source(),
                        per(dto, id, client),
                        opt(options));
 
     let source = alt(buffer, memory, database, table, shared);
 
-    let to = plus(seq(new Reuse.Source(),
+    let to = plus(seq(new Source(),
                       alt(str("TO"), str("INTO")),
                       new Target()));
 
-    let target = alt(new Reuse.ParameterListT(),
+    let target = alt(new ParameterListT(),
                      to,
-                     new Reuse.Dynamic(),
+                     new Dynamic(),
                      plus(new Target()));
 
     return seq(str("IMPORT"), target, str("FROM"), source);

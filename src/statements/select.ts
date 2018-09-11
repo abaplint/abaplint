@@ -1,11 +1,11 @@
 import {Statement} from "./statement";
 import {IRunnable} from "../combi";
-import * as Reuse from "./reuse";
+import {Select as eSelect} from "../expressions";
 
 export class Select extends Statement {
 
   public static get_matcher(): IRunnable {
-    return new Reuse.Select();
+    return new eSelect();
   }
 
   public isStructure() {

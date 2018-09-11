@@ -1,19 +1,19 @@
 import {Statement} from "./statement";
-import * as Reuse from "./reuse";
 import {str, seq, opt, alt, IRunnable} from "../combi";
+import {Source, DatabaseTable, Dynamic, ParameterListS, SQLCond} from "../expressions";
 
 export class UpdateDatabase extends Statement {
 
   public static get_matcher(): IRunnable {
-    let target = alt(new Reuse.DatabaseTable(), new Reuse.Dynamic());
+    let target = alt(new DatabaseTable(), new Dynamic());
 
     let set = seq(str("SET"),
-                  alt(new Reuse.ParameterListS(), new Reuse.Dynamic()),
-                  opt(seq(str("WHERE"), new Reuse.SQLCond())));
+                  alt(new ParameterListS(), new Dynamic()),
+                  opt(seq(str("WHERE"), new SQLCond())));
 
     let fromTable = seq(str("FROM"),
                         opt(str("TABLE")),
-                        new Reuse.Source());
+                        new Source());
 
     let client = str("CLIENT SPECIFIED");
 

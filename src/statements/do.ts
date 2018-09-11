@@ -1,7 +1,6 @@
 import {Statement} from "./statement";
-import * as Reuse from "./reuse";
 import {str, opt, seq, per, plus, IRunnable} from "../combi";
-import {Target} from "../expressions";
+import {Target, Source} from "../expressions";
 
 export class Do extends Statement {
 
@@ -9,11 +8,11 @@ export class Do extends Statement {
     let vary = seq(str("VARYING"),
                    new Target(),
                    str("FROM"),
-                   new Reuse.Source(),
+                   new Source(),
                    str("NEXT"),
-                   new Reuse.Source());
+                   new Source());
 
-    let times = seq(new Reuse.Source(), str("TIMES"));
+    let times = seq(new Source(), str("TIMES"));
 
     return seq(str("DO"), opt(per(plus(vary), times)));
   }

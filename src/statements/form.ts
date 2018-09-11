@@ -1,7 +1,7 @@
 import {Statement} from "./statement";
-import * as Reuse from "./reuse";
 import {str, seq, alt, opt, tok, altPrio, plus, IRunnable} from "../combi";
 import {ParenLeft, ParenRight, ParenRightW} from "../tokens/";
+import {ClassName, SimpleName, NamespaceSimpleName, FormParam, FormName} from "../expressions";
 
 export class Form extends Statement {
 
@@ -9,20 +9,20 @@ export class Form extends Statement {
 
     let resume = seq(str("RESUMABLE"),
                      tok(ParenLeft),
-                     new Reuse.ClassName(),
+                     new ClassName(),
                      alt(tok(ParenRight), tok(ParenRightW)));
 
-    let stru = seq(new Reuse.SimpleName(),
+    let stru = seq(new SimpleName(),
                    str("STRUCTURE"),
-                   new Reuse.NamespaceSimpleName());
+                   new NamespaceSimpleName());
 
-    let tables = seq(str("TABLES"), plus(altPrio(stru, new Reuse.FormParam())));
-    let using = seq(str("USING"), plus(new Reuse.FormParam()));
-    let changing = seq(str("CHANGING"), plus(new Reuse.FormParam()));
-    let raising = seq(str("RAISING"), plus(alt(new Reuse.ClassName(), resume)));
+    let tables = seq(str("TABLES"), plus(altPrio(stru, new FormParam())));
+    let using = seq(str("USING"), plus(new FormParam()));
+    let changing = seq(str("CHANGING"), plus(new FormParam()));
+    let raising = seq(str("RAISING"), plus(alt(new ClassName(), resume)));
 
     let ret = seq(str("FORM"),
-                  new Reuse.FormName(),
+                  new FormName(),
                   opt(tables),
                   opt(using),
                   opt(changing),

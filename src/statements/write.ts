@@ -1,7 +1,6 @@
 import {Statement} from "./statement";
 import {str, seq, opt, alt, per, tok, regex as reg, IRunnable} from "../combi";
-import * as Reuse from "./reuse";
-import {Target} from "../expressions";
+import {Target, Source, Dynamic} from "../expressions";
 import {ParenLeft, ParenRightW, WParenLeft} from "../tokens/";
 
 export class Write extends Statement {
@@ -11,7 +10,7 @@ export class Write extends Statement {
 
     let mask = seq(str("USING"),
                    alt(str("NO EDIT MASK"),
-                       seq(str("EDIT MASK"), new Reuse.Source())));
+                       seq(str("EDIT MASK"), new Source())));
 
     let to = seq(str("TO"), new Target());
 
@@ -20,7 +19,7 @@ export class Write extends Statement {
 
     let options = per(mask,
                       to,
-                      seq(str("EXPONENT"), new Reuse.Source()),
+                      seq(str("EXPONENT"), new Source()),
                       str("NO-GROUPING"),
                       str("NO-ZERO"),
                       str("CENTERED"),
@@ -33,18 +32,18 @@ export class Write extends Statement {
                       str("AS CHECKBOX"),
                       str("AS SYMBOL"),
                       str("RIGHT-JUSTIFIED"),
-                      seq(str("TIME ZONE"), new Reuse.Source()),
-                      seq(str("UNDER"), new Reuse.Source()),
-                      seq(str("STYLE"), new Reuse.Source()),
-                      seq(str("ROUND"), new Reuse.Source()),
-                      seq(str("QUICKINFO"), new Reuse.Source()),
+                      seq(str("TIME ZONE"), new Source()),
+                      seq(str("UNDER"), new Source()),
+                      seq(str("STYLE"), new Source()),
+                      seq(str("ROUND"), new Source()),
+                      seq(str("QUICKINFO"), new Source()),
                       str("ENVIRONMENT TIME FORMAT"),
                       reg(/^[YMD]{2,4}\/?[YMD]{2,4}\/?[YMD]{2,4}$/i),
-                      seq(str("UNIT"), new Reuse.Source()),
+                      seq(str("UNIT"), new Source()),
                       str("INTENSIFIED OFF"),
-                      seq(str("DECIMALS"), new Reuse.Source()),
-                      seq(str("COLOR"), opt(str("=")), new Reuse.Source(), opt(colorOpt)),
-                      seq(str("CURRENCY"), new Reuse.Source()),
+                      seq(str("DECIMALS"), new Source()),
+                      seq(str("COLOR"), opt(str("=")), new Source(), opt(colorOpt)),
+                      seq(str("CURRENCY"), new Source()),
                       str("NO-SIGN"));
 
     let complex = alt(seq(str("/"), opt(seq(tok(ParenLeft), reg(/^\d+$/), tok(ParenRightW)))),
@@ -54,7 +53,7 @@ export class Write extends Statement {
 
     let ret = seq(str("WRITE"),
                   opt(alt(at, complex)),
-                  opt(alt(new Reuse.Source(), new Reuse.Dynamic())),
+                  opt(alt(new Source(), new Dynamic())),
                   opt(options));
 
     return ret;

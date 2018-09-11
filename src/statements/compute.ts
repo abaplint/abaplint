@@ -1,7 +1,6 @@
 import {Statement} from "./statement";
-import * as Reuse from "./reuse";
 import {str, seq, opt, IRunnable} from "../combi";
-import {Target} from "../expressions";
+import {Target, Source} from "../expressions";
 
 export class Compute extends Statement {
 
@@ -10,7 +9,7 @@ export class Compute extends Statement {
                opt(str("EXACT")),
                new Target(),
                str("="),
-               new Reuse.Source());
+               new Source());
   }
 
 }

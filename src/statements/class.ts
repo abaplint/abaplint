@@ -1,6 +1,6 @@
 import {Statement} from "./statement";
 import {str, seq, opt, alt, per, plus, IRunnable} from "../combi";
-import * as Reuse from "./reuse";
+import {ClassName} from "../expressions";
 
 export class Class extends Statement {
 
@@ -16,20 +16,20 @@ export class Class extends Statement {
     let blah = per(alt(str("PUBLIC"), str("LOCAL")),
                    str("FINAL"),
                    str("ABSTRACT"),
-                   seq(str("INHERITING FROM"), new Reuse.ClassName()),
+                   seq(str("INHERITING FROM"), new ClassName()),
                    create,
                    str("FOR TESTING"),
                    risk,
                    str("SHARED MEMORY ENABLED"),
                    duration,
-                   seq(opt(str("GLOBAL")), str("FRIENDS"), plus(new Reuse.ClassName())));
+                   seq(opt(str("GLOBAL")), str("FRIENDS"), plus(new ClassName())));
 
     let def = seq(str("DEFINITION"),
                   opt(alt(str("LOAD"),
                           seq(str("DEFERRED"), opt(str("PUBLIC"))),
                           blah)));
 
-    return seq(str("CLASS"), new Reuse.ClassName(), alt(def, str("IMPLEMENTATION")));
+    return seq(str("CLASS"), new ClassName(), alt(def, str("IMPLEMENTATION")));
   }
 
   public isStructure() {

@@ -1,36 +1,35 @@
 import {Statement} from "./statement";
-import * as Reuse from "./reuse";
 import {str, seq, alt, opt, per, plus, IRunnable} from "../combi";
-import {Target} from "../expressions";
+import {Target, Source, ParameterListS, Field, Dynamic} from "../expressions";
 
 export class Export extends Statement {
 
   public static get_matcher(): IRunnable {
-    let id = seq(str("ID"), new Reuse.Source());
+    let id = seq(str("ID"), new Source());
 
     let db = seq(str("DATA BUFFER"), new Target());
-    let memory = seq(str("MEMORY ID"), new Reuse.Source());
-    let from = seq(str("FROM"), new Reuse.Source());
-    let client = seq(str("CLIENT"), new Reuse.Source());
+    let memory = seq(str("MEMORY ID"), new Source());
+    let from = seq(str("FROM"), new Source());
+    let client = seq(str("CLIENT"), new Source());
     let table = seq(str("INTERNAL TABLE"), new Target());
 
     let shared = seq(str("SHARED MEMORY"),
-                     new Reuse.Field(),
+                     new Field(),
                      str("("),
-                     new Reuse.Field(),
+                     new Field(),
                      str(")"),
                      str("ID"),
-                     new Reuse.Field());
+                     new Field());
 
     let database = seq(str("DATABASE"),
-                       new Reuse.Source(),
+                       new Source(),
                        per(from, client, id));
 
     let target = alt(db, memory, database, table, shared);
 
-    let source = alt(new Reuse.ParameterListS(),
-                     plus(new Reuse.Source()),
-                     new Reuse.Dynamic());
+    let source = alt(new ParameterListS(),
+                     plus(new Source()),
+                     new Dynamic());
 
     let compression = seq(str("COMPRESSION"), alt(str("ON"), str("OFF")));
 

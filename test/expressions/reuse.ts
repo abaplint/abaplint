@@ -1,9 +1,8 @@
 import * as chai from "chai";
-import * as Combi from "../src/combi";
-import * as Reuse from "../src/statements/reuse";
-import {File} from "../src/file";
-import Runner from "../src/runner";
-import {Integer, Target} from "../src/expressions/";
+import * as Combi from "../../src/combi";
+import * as Reuse from "../../src/expressions";
+import {File} from "../../src/file";
+import Runner from "../../src/runner";
 
 let expect = chai.expect;
 
@@ -23,7 +22,7 @@ let tests = [
   {c: "xstrlen( foo ) - remaining( )",    r: new Reuse.Source(),          e: true},
   {c: "xstrlen( foo ) - str->rema( )",    r: new Reuse.Source(),          e: true},
   {c: "foo(2)",                           r: new Reuse.Source(),          e: true},
-  {c: "foobar(3)",                        r: new Target(),          e: true},
+  {c: "foobar(3)",                        r: new Reuse.Target(),          e: true},
   {c: "method( foo )-stream->rema( )",    r: new Reuse.MethodCallChain(), e: true},
   {c: "method( foo )->rema( )",           r: new Reuse.MethodCallChain(), e: true},
   {c: "method( )",                        r: new Reuse.MethodCall(),      e: true},
@@ -35,7 +34,7 @@ let tests = [
   {c: "TYPE abap_bool DEFAULT abap_true", r: new Reuse.Type(),            e: true},
   {c: "TYPE lcl_perce_repo=>ty_sum_tt",   r: new Reuse.Type(),            e: true},
   {c: "TYPE STANDARD TABLE",              r: new Reuse.TypeTable(),       e: true},
-  {c: "22",                               r: new Integer(),         e: true},
+  {c: "22",                               r: new Reuse.Integer(),         e: true},
   {c: "22",                               r: new Reuse.Constant(),        e: true},
   {c: "22",                               r: new Reuse.Field(),           e: false},
   {c: "s_bar",                            r: new Reuse.Field(),           e: true},

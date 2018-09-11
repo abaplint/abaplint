@@ -1,8 +1,9 @@
 import * as chai from "chai";
 import * as Combi from "../src/combi";
 import * as Tokens from "../src/tokens/";
-import * as Reuse from "../src/statements/reuse";
+import * as Reuse from "../src/expressions";
 import Position from "../src/position";
+import {ParameterS} from "../src/expressions";
 
 let expect = chai.expect;
 
@@ -42,7 +43,7 @@ let resultSize = [
   {c: star(new Reuse.ParameterListS()),     in: [res("TEST BOO MOO")],              len: 1},
   {c: star(new Reuse.ParameterListS()),     in: [res("TEST = MOO")],                len: 2},
   {c: seq(str("TEST"), new Reuse.Source()), in: [res("TEST MOO")],                  len: 1},
-  {c: new Reuse.ParameterS(),               in: [res("TEST = MOO")],                len: 1},
+  {c: new ParameterS(),               in: [res("TEST = MOO")],                len: 1},
   {c: new Reuse.Source(),                   in: [res("TEST")],                      len: 1},
   {c: new Reuse.FieldChain(),               in: [res("TEST")],                      len: 1},
 ];

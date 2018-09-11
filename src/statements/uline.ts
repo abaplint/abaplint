@@ -1,7 +1,7 @@
 import {Statement} from "./statement";
 import {str, seq, opt, tok, alt, regex as reg, optPrio, IRunnable} from "../combi";
-import * as Reuse from "./reuse";
 import {ParenLeft, ParenRight, WParenLeft, ParenRightW} from "../tokens/";
+import {Dynamic} from "../expressions";
 
 export class Uline extends Statement {
 
@@ -12,7 +12,7 @@ export class Uline extends Statement {
                       opt(seq(tok(ParenLeft), reg(/^\d+$/), right))),
                   seq(tok(WParenLeft), reg(/^\d+$/), right));
 
-    return seq(str("ULINE"), optPrio(str("AT")), opt(alt(pos, new Reuse.Dynamic())));
+    return seq(str("ULINE"), optPrio(str("AT")), opt(alt(pos, new Dynamic())));
   }
 
 }

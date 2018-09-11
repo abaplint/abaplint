@@ -1,14 +1,13 @@
 import {Statement} from "./statement";
 import {Try} from "./try";
-import * as Reuse from "./reuse";
 import {str, opt, seq, plus, IRunnable} from "../combi";
-import {Target} from "../expressions";
+import {Target, Field} from "../expressions";
 
 export class Catch extends Statement {
 
   public static get_matcher(): IRunnable {
     return seq(str("CATCH"),
-               plus(new Reuse.Field()),
+               plus(new Field()),
                opt(seq(str("INTO"), new Target())));
   }
 

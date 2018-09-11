@@ -1,6 +1,6 @@
 import * as Combi from "../src/combi";
 import * as Statements from "../src/statements/";
-import * as Reuse from "../src/statements/reuse";
+import * as Reuse from "../src/expressions";
 import * as fs from "fs";
 
 function className(cla) {

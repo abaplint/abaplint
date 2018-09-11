@@ -1,12 +1,12 @@
 import {Statement} from "./statement";
 import {If} from "./if";
 import {str, seq, IRunnable} from "../combi";
-import * as Reuse from "./reuse";
+import {Cond} from "../expressions";
 
 export class Elseif extends Statement {
 
   public static get_matcher(): IRunnable {
-    return seq(str("ELSEIF"), new Reuse.Cond());
+    return seq(str("ELSEIF"), new Cond());
   }
 
   public isStructure() {

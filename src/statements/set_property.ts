@@ -1,16 +1,16 @@
 import {Statement} from "./statement";
-import * as Reuse from "./reuse";
 import {seq, str, IRunnable} from "../combi";
+import {Source, Constant} from "../expressions";
 
 export class SetProperty extends Statement {
 
   public static get_matcher(): IRunnable {
 
     let ret = seq(str("SET PROPERTY OF"),
-                  new Reuse.Source(),
-                  new Reuse.Constant,
+                  new Source(),
+                  new Constant,
                   str("="),
-                  new Reuse.Source());
+                  new Source());
 
     return ret;
   }

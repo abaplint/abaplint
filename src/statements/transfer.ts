@@ -1,16 +1,15 @@
 import {Statement} from "./statement";
-import * as Reuse from "./reuse";
 import {str, seq, opt, IRunnable} from "../combi";
-import {Target} from "../expressions";
+import {Target, Source} from "../expressions";
 
 export class Transfer extends Statement {
 
   public static get_matcher(): IRunnable {
     let length = seq(str("LENGTH"),
-                     new Reuse.Source());
+                     new Source());
 
     let ret = seq(str("TRANSFER"),
-                  new Reuse.Source(),
+                  new Source(),
                   str("TO"),
                   new Target(),
                   opt(length));

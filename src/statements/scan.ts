@@ -1,7 +1,6 @@
 import {Statement} from "./statement";
-import * as Reuse from "./reuse";
 import {str, seq, per, IRunnable} from "../combi";
-import {Target} from "../expressions";
+import {Target, Source} from "../expressions";
 
 export class Scan extends Statement {
 
@@ -15,20 +14,20 @@ export class Scan extends Statement {
     let include = seq(str("INCLUDE INTO"), new Target());
     let enh = seq(str("ENHANCEMENTS INTO"), new Target());
     let enhO = seq(str("ENHANCEMENT OPTIONS INTO"), new Target());
-    let keywords = seq(str("KEYWORDS FROM"), new Reuse.Source());
-    let pragmas = seq(str("WITH PRAGMAS"), new Reuse.Source());
+    let keywords = seq(str("KEYWORDS FROM"), new Source());
+    let pragmas = seq(str("WITH PRAGMAS"), new Source());
     let overflow = seq(str("OVERFLOW INTO"), new Target());
     let message = seq(str("MESSAGE INTO"), new Target());
-    let includeProgram = seq(str("INCLUDE PROGRAM FROM"), new Reuse.Source());
-    let frame = seq(str("FRAME PROGRAM FROM"), new Reuse.Source());
-    let program = seq(str("PROGRAM FROM"), new Reuse.Source());
-    let from = seq(str("FROM"), new Reuse.Source());
-    let to = seq(str("TO"), new Reuse.Source());
-    let replacing = seq(str("REPLACING"), new Reuse.Source());
-    let id = seq(str("ID"), new Reuse.Source(), str("TABLE"), new Reuse.Source());
+    let includeProgram = seq(str("INCLUDE PROGRAM FROM"), new Source());
+    let frame = seq(str("FRAME PROGRAM FROM"), new Source());
+    let program = seq(str("PROGRAM FROM"), new Source());
+    let from = seq(str("FROM"), new Source());
+    let to = seq(str("TO"), new Source());
+    let replacing = seq(str("REPLACING"), new Source());
+    let id = seq(str("ID"), new Source(), str("TABLE"), new Source());
 
     let ret = seq(str("SCAN ABAP-SOURCE"),
-                  new Reuse.Source(),
+                  new Source(),
                   per(tokens,
                       levels,
                       from,

@@ -1,16 +1,16 @@
 import {Statement} from "./statement";
 import {str, seq, IRunnable} from "../combi";
-import * as Reuse from "./reuse";
+import {Source} from "../expressions";
 
 export class Window extends Statement {
 
   public static get_matcher(): IRunnable {
     return seq(str("WINDOW STARTING AT"),
-               new Reuse.Source(),
-               new Reuse.Source(),
+               new Source(),
+               new Source(),
                str("ENDING AT"),
-               new Reuse.Source(),
-               new Reuse.Source());
+               new Source(),
+               new Source());
   }
 
 }

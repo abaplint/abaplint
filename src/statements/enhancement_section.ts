@@ -1,14 +1,14 @@
 import {Statement} from "./statement";
-import * as Reuse from "./reuse";
 import {str, seq, opt, IRunnable} from "../combi";
+import {Field} from "../expressions";
 
 export class EnhancementSection extends Statement {
 
   public static get_matcher(): IRunnable {
     return seq(str("ENHANCEMENT-SECTION"),
-               new Reuse.Field(),
+               new Field(),
                str("SPOTS"),
-               new Reuse.Field(),
+               new Field(),
                opt(str("STATIC")));
   }
 

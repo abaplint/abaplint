@@ -1,11 +1,11 @@
 import {Statement} from "./statement";
 import {str, seq, IRunnable} from "../combi";
-import * as Reuse from "./reuse";
+import {MacroName} from "../expressions";
 
 export class Define extends Statement {
 
   public static get_matcher(): IRunnable {
-    let ret = seq(str("DEFINE"), new Reuse.MacroName());
+    let ret = seq(str("DEFINE"), new MacroName());
     return ret;
   }
 

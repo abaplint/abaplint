@@ -1,20 +1,20 @@
 import {Statement} from "./statement";
-import * as Reuse from "./reuse";
 import {str, seq, opt, per, IRunnable} from "../combi";
+import {Source} from "../expressions";
 
 export class InsertReport extends Statement {
 
   public static get_matcher(): IRunnable {
-    let options = per(seq(str("STATE"), new Reuse.Source()),
-                      seq(str("EXTENSION TYPE"), new Reuse.Source()),
-                      seq(str("DIRECTORY ENTRY"), new Reuse.Source()),
-                      seq(str("PROGRAM TYPE"), new Reuse.Source()),
+    let options = per(seq(str("STATE"), new Source()),
+                      seq(str("EXTENSION TYPE"), new Source()),
+                      seq(str("DIRECTORY ENTRY"), new Source()),
+                      seq(str("PROGRAM TYPE"), new Source()),
                       str("KEEPING DIRECTORY ENTRY"));
 
     let ret = seq(str("INSERT REPORT"),
-                  new Reuse.Source(),
+                  new Source(),
                   str("FROM"),
-                  new Reuse.Source(),
+                  new Source(),
                   opt(options));
 
     return ret;

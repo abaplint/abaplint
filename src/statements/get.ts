@@ -1,12 +1,11 @@
 import {Statement} from "./statement";
-import * as Reuse from "./reuse";
 import {str, seq, per, opt, plus, IRunnable} from "../combi";
-import {Target} from "../expressions";
+import {Target, Field} from "../expressions";
 
 export class Get extends Statement {
 
   public static get_matcher(): IRunnable {
-    let fields = seq(str("FIELDS"), plus(new Reuse.Field()));
+    let fields = seq(str("FIELDS"), plus(new Field()));
 
     let options = per(str("LATE"), fields);
 

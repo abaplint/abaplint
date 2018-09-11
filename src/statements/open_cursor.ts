@@ -1,7 +1,6 @@
 import {Statement} from "./statement";
-import * as Reuse from "./reuse";
 import {str, seq, optPrio, IRunnable} from "../combi";
-import {Target} from "../expressions";
+import {Target, Select} from "../expressions";
 
 export class OpenCursor extends Statement {
 
@@ -10,7 +9,7 @@ export class OpenCursor extends Statement {
                   optPrio(str("WITH HOLD")),
                   new Target(),
                   str("FOR"),
-                  new Reuse.Select());
+                  new Select());
 
     return ret;
   }

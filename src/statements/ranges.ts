@@ -1,16 +1,16 @@
 import {Statement} from "./statement";
-import * as Reuse from "./reuse";
 import {str, seq, opt, IRunnable} from "../combi";
+import {Source, SimpleName, FieldSub} from "../expressions";
 
 export class Ranges extends Statement {
 
   public static get_matcher(): IRunnable {
-    let occurs = seq(str("OCCURS"), new Reuse.Source());
+    let occurs = seq(str("OCCURS"), new Source());
 
     return seq(str("RANGES"),
-               new Reuse.SimpleName(),
+               new SimpleName(),
                str("FOR"),
-               new Reuse.FieldSub(),
+               new FieldSub(),
                opt(occurs));
   }
 

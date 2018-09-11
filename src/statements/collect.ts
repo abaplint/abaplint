@@ -1,7 +1,6 @@
 import {Statement} from "./statement";
 import {str, seq, opt, IRunnable} from "../combi";
-import * as Reuse from "./reuse";
-import {Target} from "../expressions";
+import {Target, Source} from "../expressions";
 
 export class Collect extends Statement {
 
@@ -9,7 +8,7 @@ export class Collect extends Statement {
     let into = seq(str("INTO"), new Target());
 
     return seq(str("COLLECT"),
-               new Reuse.Source(),
+               new Source(),
                opt(into));
   }
 

@@ -1,7 +1,6 @@
 import {Statement} from "./statement";
-import * as Reuse from "./reuse";
 import {str, seq, alt, opt, IRunnable} from "../combi";
-import {Integer} from "../expressions";
+import {Integer, SimpleName} from "../expressions";
 
 export class StaticBegin extends Statement {
 
@@ -10,7 +9,7 @@ export class StaticBegin extends Statement {
 
     let ret = seq(alt(str("STATIC"), str("STATICS")),
                   str("BEGIN OF"),
-                  new Reuse.SimpleName(),
+                  new SimpleName(),
                   opt(occurs));
 
     return ret;

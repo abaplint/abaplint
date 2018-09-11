@@ -1,13 +1,12 @@
 import {Statement} from "./statement";
-import * as Reuse from "./reuse";
 import {str, seq, IRunnable} from "../combi";
-import {Target} from "../expressions";
+import {Target, Source} from "../expressions";
 
 export class SubtractCorresponding extends Statement {
 
   public static get_matcher(): IRunnable {
     return seq(str("SUBTRACT-CORRESPONDING"),
-               new Reuse.Source(),
+               new Source(),
                str("FROM"),
                new Target());
   }

@@ -1,18 +1,18 @@
 import {Statement} from "./statement";
-import * as Reuse from "./reuse";
 import {str, seq, opt, IRunnable} from "../combi";
+import {Source} from "../expressions";
 
 export class InsertTextpool extends Statement {
 
   public static get_matcher(): IRunnable {
-    let state = seq(str("STATE"), new Reuse.Source());
+    let state = seq(str("STATE"), new Source());
 
     let ret = seq(str("INSERT TEXTPOOL"),
-                  new Reuse.Source(),
+                  new Source(),
                   str("FROM"),
-                  new Reuse.Source(),
+                  new Source(),
                   str("LANGUAGE"),
-                  new Reuse.Source(),
+                  new Source(),
                   opt(state));
 
     return ret;

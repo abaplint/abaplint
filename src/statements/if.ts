@@ -1,11 +1,11 @@
 import {Statement} from "./statement";
 import {str, seq, IRunnable} from "../combi";
-import * as Reuse from "./reuse";
+import {Cond} from "../expressions";
 
 export class If extends Statement {
 
   public static get_matcher(): IRunnable {
-    return seq(str("IF"), new Reuse.Cond());
+    return seq(str("IF"), new Cond());
   }
 
   public isStructure() {

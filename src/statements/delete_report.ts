@@ -1,14 +1,14 @@
 import {Statement} from "./statement";
 import {str, seq, opt, IRunnable} from "../combi";
-import * as Reuse from "./reuse";
+import {Source} from "../expressions";
 
 export class DeleteReport extends Statement {
 
   public static get_matcher(): IRunnable {
-    let state = seq(str("STATE"), new Reuse.Source());
+    let state = seq(str("STATE"), new Source());
 
     return seq(str("DELETE REPORT"),
-               new Reuse.Source(),
+               new Source(),
                opt(state));
   }
 

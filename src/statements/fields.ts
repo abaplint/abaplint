@@ -1,11 +1,11 @@
 import {Statement} from "./statement";
-import * as Reuse from "./reuse";
 import {str, seq, IRunnable} from "../combi";
+import {FieldSub} from "../expressions";
 
 export class Fields extends Statement {
 
   public static get_matcher(): IRunnable {
-    return seq(str("FIELDS"), new Reuse.FieldSub());
+    return seq(str("FIELDS"), new FieldSub());
   }
 
 }

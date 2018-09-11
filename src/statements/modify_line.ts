@@ -1,6 +1,6 @@
 import {Statement} from "./statement";
-import * as Reuse from "./reuse";
 import {str, seq, alt, opt, per, plus, IRunnable} from "../combi";
+import {Source} from "../expressions";
 
 export class ModifyLine extends Statement {
 
@@ -8,14 +8,14 @@ export class ModifyLine extends Statement {
 
     let form = seq(alt(str("INVERSE"), str("INPUT")),
                    str("="),
-                   new Reuse.Source());
+                   new Source());
 
-    let value = seq(str("FIELD VALUE"), plus(new Reuse.Source()));
-    let format = seq(str("FIELD FORMAT"), new Reuse.Source(), opt(form));
-    let from = seq(str("FROM"), new Reuse.Source());
-    let lineValue = seq(str("LINE VALUE FROM"), new Reuse.Source());
-    let index = seq(str("INDEX"), new Reuse.Source());
-    let page = seq(str("OF PAGE"), new Reuse.Source());
+    let value = seq(str("FIELD VALUE"), plus(new Source()));
+    let format = seq(str("FIELD FORMAT"), new Source(), opt(form));
+    let from = seq(str("FROM"), new Source());
+    let lineValue = seq(str("LINE VALUE FROM"), new Source());
+    let index = seq(str("INDEX"), new Source());
+    let page = seq(str("OF PAGE"), new Source());
     let ocp = str("OF CURRENT PAGE");
     let lineFormat = str("LINE FORMAT INPUT OFF");
     let intensified = str("INTENSIFIED ON");
@@ -24,7 +24,7 @@ export class ModifyLine extends Statement {
 
     let ret = seq(str("MODIFY"),
                   alt(str("CURRENT LINE"),
-                      seq(str("LINE"), new Reuse.Source())),
+                      seq(str("LINE"), new Source())),
                   opt(options));
 
     return ret;

@@ -1,5 +1,5 @@
 import {ParsedFile} from "./file";
-import * as Reuse from "./statements/reuse";
+import * as Reuse from "./expressions";
 import {BasicNode, StructureNode, ReuseNode, StatementNode} from "./node";
 import * as Statements from "./statements/";
 

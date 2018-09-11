@@ -1,7 +1,6 @@
 import {Statement} from "./statement";
 import {str, seq, alt, opt, IRunnable} from "../combi";
-import * as Reuse from "./reuse";
-import {Integer} from "../expressions";
+import {Integer, NamespaceSimpleName} from "../expressions";
 
 export class DataBegin extends Statement {
 
@@ -12,7 +11,7 @@ export class DataBegin extends Statement {
 
     let structure = seq(str("BEGIN OF"),
                         opt(str("COMMON PART")),
-                        new Reuse.NamespaceSimpleName(),
+                        new NamespaceSimpleName(),
                         opt(occurs));
 
     return seq(start, structure);

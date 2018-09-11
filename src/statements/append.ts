@@ -1,19 +1,18 @@
 import {Statement} from "./statement";
 import {str, opt, alt, seq, IRunnable} from "../combi";
-import * as Reuse from "./reuse";
-import {FSTarget, Target} from "../expressions";
+import {FSTarget, Target, Field, Source} from "../expressions";
 
 export class Append extends Statement {
 
   public static get_matcher(): IRunnable {
     let assigning = seq(str("ASSIGNING"), new FSTarget());
     let reference = seq(str("REFERENCE INTO"), new Target());
-    let sorted = seq(str("SORTED BY"), new Reuse.Field());
+    let sorted = seq(str("SORTED BY"), new Field());
 
-    let range = seq(str("FROM"), new Reuse.Source(), str("TO"), new Reuse.Source);
+    let range = seq(str("FROM"), new Source(), str("TO"), new Source);
 
     return seq(str("APPEND"),
-               alt(str("INITIAL LINE"), seq(opt(str("LINES OF")), new Reuse.Source())),
+               alt(str("INITIAL LINE"), seq(opt(str("LINES OF")), new Source())),
                opt(range),
                opt(seq(str("TO"),
                        new Target(),

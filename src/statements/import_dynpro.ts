@@ -1,7 +1,6 @@
 import {Statement} from "./statement";
-import * as Reuse from "./reuse";
 import {str, seq, IRunnable} from "../combi";
-import {Target} from "../expressions";
+import {Target, Source} from "../expressions";
 
 export class ImportDynpro extends Statement {
 
@@ -12,7 +11,7 @@ export class ImportDynpro extends Statement {
                new Target(),
                new Target(),
                str("ID"),
-               new Reuse.Source());
+               new Source());
   }
 
 }

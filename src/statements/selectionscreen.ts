@@ -1,25 +1,24 @@
 import {Statement} from "./statement";
 import {str, seq, alt, opt, per, regex as reg, tok, IRunnable} from "../combi";
-import * as Reuse from "./reuse";
 import {ParenLeft, WParenLeft, ParenRightW, ParenRight} from "../tokens";
-import {Integer} from "../expressions";
+import {Integer, Source, Field, FieldSub, Modif, Constant} from "../expressions";
 
 export class SelectionScreen extends Statement {
 
   public static get_matcher(): IRunnable {
-    let blockName = new Reuse.FieldSub();
+    let blockName = new FieldSub();
 
     let beginBlock = seq(str("BEGIN OF BLOCK"),
                          blockName,
                          opt(str("WITH FRAME")),
-                         opt(seq(str("TITLE"), new Reuse.Source())),
+                         opt(seq(str("TITLE"), new Source())),
                          opt(str("NO INTERVALS")));
     let endBlock = seq(str("END OF BLOCK"), blockName);
 
-    let nesting = seq(str("NESTING LEVEL"), new Reuse.Source());
+    let nesting = seq(str("NESTING LEVEL"), new Source());
 
     let scrOptions = per(seq(str("AS"), alt(str("WINDOW"), str("SUBSCREEN"))),
-                         seq(str("TITLE"), new Reuse.Source()),
+                         seq(str("TITLE"), new Source()),
                          str("NO INTERVALS"),
                          nesting);
 
@@ -32,11 +31,11 @@ export class SelectionScreen extends Statement {
     let beginLine = str("BEGIN OF LINE");
     let endLine = str("END OF LINE");
 
-    let modif = seq(str("MODIF ID"), new Reuse.Modif());
+    let modif = seq(str("MODIF ID"), new Modif());
 
     let visible = seq(str("VISIBLE LENGTH"), reg(/^\d+$/));
 
-    let commentOpt = per(seq(str("FOR FIELD"), new Reuse.Field()),
+    let commentOpt = per(seq(str("FOR FIELD"), new Field()),
                          modif,
                          visible);
 
@@ -47,14 +46,14 @@ export class SelectionScreen extends Statement {
 
     let comment = seq(str("COMMENT"),
                       position,
-                      opt(new Reuse.Source()),
+                      opt(new Source()),
                       opt(commentOpt));
 
-    let command = seq(str("USER-COMMAND"), alt(new Reuse.Field(), new Reuse.Constant()));
+    let command = seq(str("USER-COMMAND"), alt(new Field(), new Constant()));
 
     let push = seq(str("PUSHBUTTON"),
                    position,
-                   new Reuse.Source(),
+                   new Source(),
                    command,
                    opt(modif),
                    opt(visible));
@@ -65,7 +64,7 @@ export class SelectionScreen extends Statement {
                   tok(WParenLeft),
                   new Integer(),
                   tok(ParenRightW),
-                  new Reuse.FieldSub(),
+                  new FieldSub(),
                   command,
                   opt(def));
 
@@ -73,12 +72,12 @@ export class SelectionScreen extends Statement {
 
     let skip = seq(str("SKIP"), opt(new Integer()));
 
-    let pos = seq(str("POSITION"), new Reuse.Source());
+    let pos = seq(str("POSITION"), new Source());
 
     let incl = seq(str("INCLUDE BLOCKS"), blockName);
 
     let tabbed = seq(str("BEGIN OF TABBED BLOCK"),
-                     new Reuse.Field(),
+                     new Field(),
                      str("FOR"),
                      new Integer(),
                      str("LINES"),
@@ -86,8 +85,8 @@ export class SelectionScreen extends Statement {
 
     let uline = seq(str("ULINE"), opt(position));
 
-    let param = seq(str("INCLUDE PARAMETERS"), new Reuse.Field());
-    let iso = seq(str("INCLUDE SELECT-OPTIONS"), new Reuse.Field());
+    let param = seq(str("INCLUDE PARAMETERS"), new Field());
+    let iso = seq(str("INCLUDE SELECT-OPTIONS"), new Field());
 
     let ret = seq(str("SELECTION-SCREEN"),
                   alt(comment,

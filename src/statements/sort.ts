@@ -1,16 +1,15 @@
 import {Statement} from "./statement";
-import * as Reuse from "./reuse";
 import {str, seq, alt, per, opt, plus, optPrio, IRunnable} from "../combi";
-import {FieldSymbol, Target} from "../expressions";
+import {FieldSymbol, Target, FieldSub, Dynamic} from "../expressions";
 
 export class Sort extends Statement {
 
   public static get_matcher(): IRunnable {
     let order = alt(str("ASCENDING"), str("DESCENDING"));
 
-    let sel = alt(new Reuse.FieldSub(),
+    let sel = alt(new FieldSub(),
                   new FieldSymbol(),
-                  new Reuse.Dynamic());
+                  new Dynamic());
 
     let fields = plus(seq(sel, optPrio(order)));
 

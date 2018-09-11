@@ -1,7 +1,6 @@
 import {Statement} from "./statement";
 import {str, seq, per, opt, alt, plus, IRunnable} from "../combi";
-import * as Reuse from "./reuse";
-import {Target} from "../expressions";
+import {Target, Source} from "../expressions";
 
 export class ReadLine extends Statement {
 
@@ -14,14 +13,14 @@ export class ReadLine extends Statement {
     let field = seq(str("FIELD VALUE"),
                     plus(fields));
 
-    let index = seq(str("INDEX"), new Reuse.Source());
+    let index = seq(str("INDEX"), new Source());
 
-    let page = seq(str("OF PAGE"), new Reuse.Source());
+    let page = seq(str("OF PAGE"), new Source());
 
     let current = str("OF CURRENT PAGE");
 
     return seq(str("READ"),
-               alt(str("CURRENT LINE"), seq(str("LINE"), new Reuse.Source())),
+               alt(str("CURRENT LINE"), seq(str("LINE"), new Source())),
                opt(per(val, index, field, page, current)));
   }
 

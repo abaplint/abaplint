@@ -1,17 +1,17 @@
 import {Statement} from "./statement";
 import {str, seq, opt, alt, IRunnable} from "../combi";
-import * as Reuse from "./reuse";
+import {Source, Field, TypeName} from "../expressions";
 
 export class IncludeType extends Statement {
 
   public static get_matcher(): IRunnable {
-    let tas = seq(str("AS"), new Reuse.Field());
+    let tas = seq(str("AS"), new Field());
 
-    let renaming = seq(str("RENAMING WITH SUFFIX"), new Reuse.Source());
+    let renaming = seq(str("RENAMING WITH SUFFIX"), new Source());
 
     let ret = seq(str("INCLUDE"),
                   alt(str("TYPE"), str("STRUCTURE")),
-                  new Reuse.TypeName(),
+                  new TypeName(),
                   opt(tas),
                   opt(renaming));
 

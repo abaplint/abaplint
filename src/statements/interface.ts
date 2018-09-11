@@ -1,6 +1,6 @@
 import {Statement} from "./statement";
 import {str, seq, opt, alt, IRunnable} from "../combi";
-import * as Reuse from "./reuse";
+import {Field} from "../expressions";
 
 export class Interface extends Statement {
 
@@ -8,7 +8,7 @@ export class Interface extends Statement {
     let options = alt(str("PUBLIC"), str("LOAD"), str("DEFERRED"));
 
     return seq(str("INTERFACE"),
-               new Reuse.Field(),
+               new Field(),
                opt(options));
   }
 

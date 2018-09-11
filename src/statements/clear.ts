@@ -1,12 +1,11 @@
 import {Statement} from "./statement";
 import {str, seq, opt, alt, IRunnable} from "../combi";
-import * as Reuse from "./reuse";
-import {Target} from "../expressions";
+import {Target, Source} from "../expressions";
 
 export class Clear extends Statement {
 
   public static get_matcher(): IRunnable {
-    let wit = seq(str("WITH"), new Reuse.Source());
+    let wit = seq(str("WITH"), new Source());
 
     let mode = alt(str("IN CHARACTER MODE"),
                    str("IN BYTE MODE"));

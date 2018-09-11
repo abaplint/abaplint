@@ -1,14 +1,13 @@
 import {Statement} from "./statement";
-import * as Reuse from "./reuse";
 import {str, seq, opt, IRunnable} from "../combi";
-import {Target} from "../expressions";
+import {Target, ParameterListS, Source, Dynamic} from "../expressions";
 
 export class GetBadi extends Statement {
 
   public static get_matcher(): IRunnable {
-    let filters = seq(str("FILTERS"), new Reuse.ParameterListS());
-    let context = seq(str("CONTEXT"), new Reuse.Source());
-    let type = seq(str("TYPE"), new Reuse.Dynamic());
+    let filters = seq(str("FILTERS"), new ParameterListS());
+    let context = seq(str("CONTEXT"), new Source());
+    let type = seq(str("TYPE"), new Dynamic());
 
     let ret = seq(str("GET BADI"),
                   new Target(),

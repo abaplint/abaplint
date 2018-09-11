@@ -1,12 +1,11 @@
 import {Statement} from "./statement";
-import * as Reuse from "./reuse";
 import {str, seq, alt, per, opt, plus, IRunnable} from "../combi";
-import {Target} from "../expressions";
+import {Target, Source} from "../expressions";
 
 export class SyntaxCheck extends Statement {
 
   public static get_matcher(): IRunnable {
-    let program = seq(str("PROGRAM"), new Reuse.Source());
+    let program = seq(str("PROGRAM"), new Source());
     let offset = seq(str("OFFSET"), new Target());
     let frame = seq(str("FRAME ENTRY"), new Target());
     let include = seq(str("INCLUDE"), new Target());
@@ -15,13 +14,13 @@ export class SyntaxCheck extends Statement {
     let word = seq(str("WORD"), new Target());
     let messageId = seq(str("MESSAGE-ID"), new Target());
     let message = seq(str("MESSAGE"), new Target());
-    let id = seq(str("ID"), new Reuse.Source(), str("TABLE"), new Target());
+    let id = seq(str("ID"), new Source(), str("TABLE"), new Target());
     let replacing = seq(str("REPLACING"), new Target());
-    let directory = seq(str("DIRECTORY ENTRY"), new Reuse.Source());
-    let dump = seq(str("SHORTDUMP-ID"), new Reuse.Source());
+    let directory = seq(str("DIRECTORY ENTRY"), new Source());
+    let dump = seq(str("SHORTDUMP-ID"), new Source());
 
     let syntax = seq(opt(str("PROGRAM")),
-                     new Reuse.Source(),
+                     new Source(),
                      per(message,
                          line,
                          word,
@@ -37,10 +36,10 @@ export class SyntaxCheck extends Statement {
                          plus(id)));
 
     let dynpro = seq(str("DYNPRO"),
-                     new Reuse.Source(),
-                     new Reuse.Source(),
-                     new Reuse.Source(),
-                     new Reuse.Source(),
+                     new Source(),
+                     new Source(),
+                     new Source(),
+                     new Source(),
                      per(message, line, word, offset, messageId));
 
     return seq(str("SYNTAX-CHECK FOR"), alt(syntax, dynpro));

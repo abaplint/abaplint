@@ -1,22 +1,22 @@
 import {Statement} from "./statement";
-import * as Reuse from "./reuse";
 import {str, seq, opt, alt, per, regex as reg, IRunnable} from "../combi";
+import {Source, Constant, FieldChain, Dynamic, Field, FieldLength, FieldSub, RadioGroupName, Modif} from "../expressions";
 
 export class Parameter extends Statement {
 
   public static get_matcher(): IRunnable {
     let para = alt(str("PARAMETER"), str("PARAMETERS"));
-    let def = seq(str("DEFAULT"), alt(new Reuse.Constant(), new Reuse.FieldChain()));
-    let radio = seq(str("RADIOBUTTON GROUP"), new Reuse.RadioGroupName());
-    let type = seq(alt(str("TYPE"), str("LIKE")), alt(new Reuse.FieldChain(), new Reuse.Dynamic()));
-    let memory = seq(str("MEMORY ID"), new Reuse.Field());
+    let def = seq(str("DEFAULT"), alt(new Constant(), new FieldChain()));
+    let radio = seq(str("RADIOBUTTON GROUP"), new RadioGroupName());
+    let type = seq(alt(str("TYPE"), str("LIKE")), alt(new FieldChain(), new Dynamic()));
+    let memory = seq(str("MEMORY ID"), new Field());
     let listbox = str("AS LISTBOX");
     let cmd = seq(str("USER-COMMAND"), reg(/^\w+$/));
-    let modif = seq(str("MODIF ID"), new Reuse.Modif());
-    let visible = seq(str("VISIBLE LENGTH"), new Reuse.Constant());
-    let length = seq(str("LENGTH"), new Reuse.Constant());
-    let match = seq(str("MATCHCODE OBJECT"), new Reuse.Field());
-    let decimals = seq(str("DECIMALS"), new Reuse.Source());
+    let modif = seq(str("MODIF ID"), new Modif());
+    let visible = seq(str("VISIBLE LENGTH"), new Constant());
+    let length = seq(str("LENGTH"), new Constant());
+    let match = seq(str("MATCHCODE OBJECT"), new Field());
+    let decimals = seq(str("DECIMALS"), new Source());
 
     let perm = per(type,
                    def,
@@ -36,8 +36,8 @@ export class Parameter extends Statement {
                    str("LOWER CASE"));
 
     let ret = seq(para,
-                  new Reuse.FieldSub(),
-                  opt(new Reuse.FieldLength()),
+                  new FieldSub(),
+                  opt(new FieldLength()),
                   opt(perm));
 
     return ret;

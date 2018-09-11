@@ -1,12 +1,11 @@
 import {Statement} from "./statement";
-import * as Reuse from "./reuse";
 import {str, seq, per, IRunnable} from "../combi";
-import {Target} from "../expressions";
+import {Target, Source} from "../expressions";
 
 export class GenerateSubroutine extends Statement {
 
   public static get_matcher(): IRunnable {
-    let name = seq(str("NAME"), new Reuse.Source());
+    let name = seq(str("NAME"), new Source());
     let message = seq(str("MESSAGE"), new Target());
     let messageid = seq(str("MESSAGE-ID"), new Target());
     let line = seq(str("LINE"), new Target());
@@ -15,7 +14,7 @@ export class GenerateSubroutine extends Statement {
 
 
     let ret = seq(str("GENERATE SUBROUTINE POOL"),
-                  new Reuse.Source(),
+                  new Source(),
                   per(name, message, line, word, offset, messageid));
 
     return ret;

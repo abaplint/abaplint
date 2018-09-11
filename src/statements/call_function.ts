@@ -1,29 +1,29 @@
 import {Statement} from "./statement";
-import * as Reuse from "./reuse";
 import {str, seq, opt, alt, per, IRunnable} from "../combi";
+import {Constant, FieldSub, FormName, MethodName, Source, FunctionParameters, FieldChain} from "../expressions";
 
 export class CallFunction extends Statement {
 
   public static get_matcher(): IRunnable {
     let starting = seq(str("STARTING NEW TASK"),
-                       alt(new Reuse.Constant(), new Reuse.FieldSub()));
+                       alt(new Constant(), new FieldSub()));
     let update = str("IN UPDATE TASK");
     let background = str("IN BACKGROUND TASK");
-    let dest = seq(str("DESTINATION"), opt(str("IN GROUP")), new Reuse.Source());
-    let calling = seq(str("CALLING"), new Reuse.MethodName(), str("ON END OF TASK"));
-    let performing = seq(str("PERFORMING"), new Reuse.FormName(), str("ON END OF TASK"));
+    let dest = seq(str("DESTINATION"), opt(str("IN GROUP")), new Source());
+    let calling = seq(str("CALLING"), new MethodName(), str("ON END OF TASK"));
+    let performing = seq(str("PERFORMING"), new FormName(), str("ON END OF TASK"));
     let separate = str("AS SEPARATE UNIT");
 
     let options = per(starting, update, background, dest, calling, performing, separate);
 
-    let dynamic = seq(str("PARAMETER-TABLE"), new Reuse.Source(),
-                      opt(seq(str("EXCEPTION-TABLE"), new Reuse.Source())));
+    let dynamic = seq(str("PARAMETER-TABLE"), new Source(),
+                      opt(seq(str("EXCEPTION-TABLE"), new Source())));
 
     let call = seq(str("CALL"),
                    alt(str("FUNCTION"), str("CUSTOMER-FUNCTION")),
-                   alt(new Reuse.Constant(), new Reuse.FieldChain()),
+                   alt(new Constant(), new FieldChain()),
                    opt(options),
-                   alt(new Reuse.FunctionParameters(), dynamic));
+                   alt(new FunctionParameters(), dynamic));
 
     return call;
   }

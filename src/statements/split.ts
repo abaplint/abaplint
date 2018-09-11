@@ -1,7 +1,6 @@
 import {Statement} from "./statement";
 import {str, seq, alt, plus, IRunnable} from "../combi";
-import * as Reuse from "./reuse";
-import {Target} from "../expressions";
+import {Target, Source} from "../expressions";
 
 export class Split extends Statement {
 
@@ -9,9 +8,9 @@ export class Split extends Statement {
     let into = alt(seq(str("TABLE"), new Target()), plus(new Target()));
 
     let ret = seq(str("SPLIT"),
-                  new Reuse.Source(),
+                  new Source(),
                   str("AT"),
-                  new Reuse.Source(),
+                  new Source(),
                   str("INTO"),
                   into);
     return ret;

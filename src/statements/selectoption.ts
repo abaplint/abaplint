@@ -1,11 +1,11 @@
 import {Statement} from "./statement";
 import {str, seq, opt, alt, per, IRunnable} from "../combi";
-import * as Reuse from "./reuse";
+import {Source, FieldChain, Constant, Field, Modif, FieldSub, Dynamic} from "../expressions";
 
 export class SelectOption extends Statement {
 
   public static get_matcher(): IRunnable {
-    let sourc = alt(new Reuse.Constant(), new Reuse.FieldChain());
+    let sourc = alt(new Constant(), new FieldChain());
 
     let to = seq(str("TO"), sourc);
 
@@ -13,15 +13,15 @@ export class SelectOption extends Statement {
                   sourc,
                   opt(to));
 
-    let option = seq(str("OPTION"), new Reuse.Field());
+    let option = seq(str("OPTION"), new Field());
 
-    let memory = seq(str("MEMORY ID"), new Reuse.Field());
+    let memory = seq(str("MEMORY ID"), new Field());
 
-    let match = seq(str("MATCHCODE OBJECT"), new Reuse.Field());
+    let match = seq(str("MATCHCODE OBJECT"), new Field());
 
-    let modif = seq(str("MODIF ID"), new Reuse.Modif());
+    let modif = seq(str("MODIF ID"), new Modif());
 
-    let visible = seq(str("VISIBLE LENGTH"), new Reuse.Source());
+    let visible = seq(str("VISIBLE LENGTH"), new Source());
 
     let options = per(def,
                       option,
@@ -36,9 +36,9 @@ export class SelectOption extends Statement {
                       str("OBLIGATORY"));
 
     let ret = seq(str("SELECT-OPTIONS"),
-                  new Reuse.Field(),
+                  new Field(),
                   str("FOR"),
-                  alt(new Reuse.FieldSub(), new Reuse.Dynamic()),
+                  alt(new FieldSub(), new Dynamic()),
                   opt(options));
 
     return ret;

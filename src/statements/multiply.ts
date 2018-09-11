@@ -1,7 +1,6 @@
 import {Statement} from "./statement";
-import * as Reuse from "./reuse";
 import {str, seq, IRunnable} from "../combi";
-import {Target} from "../expressions";
+import {Target, Source} from "../expressions";
 
 export class Multiply extends Statement {
 
@@ -9,7 +8,7 @@ export class Multiply extends Statement {
     return seq(str("MULTIPLY"),
                new Target(),
                str("BY"),
-               new Reuse.Source());
+               new Source());
   }
 
 }

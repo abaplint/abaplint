@@ -1,7 +1,6 @@
 import {Statement} from "./statement";
-import * as Reuse from "./reuse";
 import {str, seq, alt, IRunnable} from "../combi";
-import {Target} from "../expressions";
+import {Target, Source} from "../expressions";
 
 export class Translate extends Statement {
 
@@ -10,7 +9,7 @@ export class Translate extends Statement {
                   alt(str("UPPER"), str("LOWER")),
                   str("CASE"));
 
-    let using = seq(str("USING"), new Reuse.Source());
+    let using = seq(str("USING"), new Source());
 
     return seq(str("TRANSLATE"),
                new Target(),

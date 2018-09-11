@@ -1,14 +1,13 @@
 import {Statement} from "./statement";
 import {str, seq, alt, opt, per, IRunnable} from "../combi";
-import * as Reuse from "./reuse";
-import {FSTarget, Target} from "../expressions";
+import {FSTarget, Target, Cond, Dynamic, Source} from "../expressions";
 
 export class Loop extends Statement {
 
   public static get_matcher(): IRunnable {
-    let where = seq(str("WHERE"), alt(new Reuse.Cond(), new Reuse.Dynamic()));
+    let where = seq(str("WHERE"), alt(new Cond(), new Dynamic()));
 
-    let group = seq(str("GROUP BY"), new Reuse.Source());
+    let group = seq(str("GROUP BY"), new Source());
 
     let into = seq(opt(str("REFERENCE")), str("INTO"), new Target());
 
@@ -19,17 +18,17 @@ export class Loop extends Statement {
                          opt(str("CASTING"))),
                      str("TRANSPORTING NO FIELDS"));
 
-    let from = seq(str("FROM"), new Reuse.Source());
+    let from = seq(str("FROM"), new Source());
 
-    let to = seq(str("TO"), new Reuse.Source());
+    let to = seq(str("TO"), new Source());
 
-    let usingKey = seq(str("USING KEY"), alt(new Reuse.Source(), new Reuse.Dynamic()));
+    let usingKey = seq(str("USING KEY"), alt(new Source(), new Dynamic()));
 
     let options = per(target, from, to, where, usingKey);
 
     let at = seq(str("AT"),
                  opt(str("GROUP")),
-                 new Reuse.Source(),
+                 new Source(),
                  opt(options));
 
     return seq(str("LOOP"), opt(at));

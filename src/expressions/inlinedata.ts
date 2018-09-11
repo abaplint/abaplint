@@ -1,6 +1,6 @@
 import {alt, str, seq, tok, ver, Reuse, IRunnable} from "../combi";
 import {ParenRight, ParenRightW, ParenLeft} from "../tokens/";
-import {Field} from "../statements/reuse";
+import {Field} from "./";
 import {Version} from "../version";
 
 export class InlineData extends Reuse {
