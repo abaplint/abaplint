@@ -1,6 +1,7 @@
 import {Statement} from "./statement";
-import {str, seq, alt, per, opt, plus, IRunnable} from "../combi";
+import {verNot, str, seq, alt, per, opt, plus, IRunnable} from "../combi";
 import {Target, Source} from "../expressions";
+import {Version} from "../version";
 
 export class SyntaxCheck extends Statement {
 
@@ -42,7 +43,9 @@ export class SyntaxCheck extends Statement {
                      new Source(),
                      per(message, line, word, offset, messageId));
 
-    return seq(str("SYNTAX-CHECK FOR"), alt(syntax, dynpro));
+    let ret = seq(str("SYNTAX-CHECK FOR"), alt(syntax, dynpro));
+
+    return verNot(Version.Cloud, ret);
   }
 
 }

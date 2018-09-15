@@ -1,6 +1,7 @@
 import {Statement} from "./statement";
-import {str, seq, opt, per, IRunnable} from "../combi";
+import {verNot, str, seq, opt, per, IRunnable} from "../combi";
 import {Target} from "../expressions";
+import {Version} from "../version";
 
 export class GetDataset extends Statement {
 
@@ -12,7 +13,7 @@ export class GetDataset extends Statement {
                   new Target(),
                   opt(per(position, attr)));
 
-    return ret;
+    return verNot(Version.Cloud, ret);
   }
 
 }

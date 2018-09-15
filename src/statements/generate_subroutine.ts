@@ -1,6 +1,7 @@
 import {Statement} from "./statement";
-import {str, seq, per, IRunnable} from "../combi";
+import {verNot, str, seq, per, IRunnable} from "../combi";
 import {Target, Source} from "../expressions";
+import {Version} from "../version";
 
 export class GenerateSubroutine extends Statement {
 
@@ -17,7 +18,7 @@ export class GenerateSubroutine extends Statement {
                   new Source(),
                   per(name, message, line, word, offset, messageid));
 
-    return ret;
+    return verNot(Version.Cloud, ret);
   }
 
 }

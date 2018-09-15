@@ -1,6 +1,7 @@
 import {Statement} from "./statement";
-import {str, alt, seq, IRunnable} from "../combi";
+import {verNot, str, alt, seq, IRunnable} from "../combi";
 import {Source} from "../expressions";
+import {Version} from "../version";
 
 export class PrintControl extends Statement {
 
@@ -8,7 +9,9 @@ export class PrintControl extends Statement {
     let index = seq(str("INDEX-LINE"), new Source);
     let func = seq(str("FUNCTION"), new Source);
 
-    return seq(str("PRINT-CONTROL"), alt(index, func));
+    let ret = seq(str("PRINT-CONTROL"), alt(index, func));
+
+    return verNot(Version.Cloud, ret);
   }
 
 }

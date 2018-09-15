@@ -1,6 +1,7 @@
 import {Statement} from "./statement";
-import {str, seq, opt, alt, plus, IRunnable} from "../combi";
+import {verNot, str, seq, opt, alt, plus, IRunnable} from "../combi";
 import {Source} from "../expressions";
+import {Version} from "../version";
 
 export class AuthorityCheck extends Statement {
 
@@ -17,7 +18,7 @@ export class AuthorityCheck extends Statement {
                   opt(seq(str("FOR USER"), new Source())),
                   plus(id));
 
-    return ret;
+    return verNot(Version.Cloud, ret);
   }
 
 }

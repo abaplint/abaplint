@@ -1,7 +1,8 @@
 import {Statement} from "./statement";
-import {str, seq, alt, opt, per, regex as reg, tok, IRunnable} from "../combi";
+import {verNot, str, seq, alt, opt, per, regex as reg, tok, IRunnable} from "../combi";
 import {ParenLeft, WParenLeft, ParenRightW, ParenRight} from "../tokens";
 import {Integer, Source, Field, FieldSub, Modif, Constant} from "../expressions";
+import {Version} from "../version";
 
 export class SelectionScreen extends Statement {
 
@@ -107,7 +108,7 @@ export class SelectionScreen extends Statement {
                       beginScreen,
                       endScreen));
 
-    return ret;
+    return verNot(Version.Cloud, ret);
   }
 
 }

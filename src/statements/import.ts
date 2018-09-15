@@ -1,6 +1,7 @@
 import {Statement} from "./statement";
-import {str, seq, opt, alt, per, plus, IRunnable} from "../combi";
+import {verNot, str, seq, opt, alt, per, plus, IRunnable} from "../combi";
 import {Target, Source, ParameterListT, Dynamic, Field} from "../expressions";
+import {Version} from "../version";
 
 export class Import extends Statement {
 
@@ -41,7 +42,9 @@ export class Import extends Statement {
                      new Dynamic(),
                      plus(new Target()));
 
-    return seq(str("IMPORT"), target, str("FROM"), source);
+    let ret = seq(str("IMPORT"), target, str("FROM"), source);
+
+    return verNot(Version.Cloud, ret);
   }
 
 }

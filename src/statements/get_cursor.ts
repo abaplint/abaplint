@@ -1,6 +1,7 @@
 import {Statement} from "./statement";
-import {str, seq, per, IRunnable} from "../combi";
+import {verNot, str, seq, per, IRunnable} from "../combi";
 import {Target} from "../expressions";
+import {Version} from "../version";
 
 export class GetCursor extends Statement {
 
@@ -15,7 +16,7 @@ export class GetCursor extends Statement {
     let ret = seq(str("GET CURSOR"),
                   per(line, field, offset, value, length, area));
 
-    return ret;
+    return verNot(Version.Cloud, ret);
   }
 
 }

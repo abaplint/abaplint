@@ -1,8 +1,9 @@
 import {Statement} from "./statement";
-import {str, IRunnable} from "../combi";
+import {verNot, str, IRunnable} from "../combi";
+import {Version} from "../version";
 
 export class SetUpdateTask extends Statement {
   public static get_matcher(): IRunnable {
-    return str("SET UPDATE TASK LOCAL");
+    return verNot(Version.Cloud, str("SET UPDATE TASK LOCAL"));
   }
 }

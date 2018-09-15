@@ -1,6 +1,7 @@
 import {Statement} from "./statement";
-import {str, seq, opt, alt, per, IRunnable} from "../combi";
+import {verNot, str, seq, opt, alt, per, IRunnable} from "../combi";
 import {Target, Source} from "../expressions";
+import {Version} from "../version";
 
 export class Describe extends Statement {
 
@@ -41,7 +42,9 @@ export class Describe extends Statement {
 
     let list = seq(str("LIST"), per(lines, index, line, page, top));
 
-    return seq(str("DESCRIBE"), alt(table, field, distance, list));
+    let ret = seq(str("DESCRIBE"), alt(table, field, distance, list));
+
+    return verNot(Version.Cloud, ret);
   }
 
 }

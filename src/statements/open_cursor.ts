@@ -1,6 +1,7 @@
 import {Statement} from "./statement";
-import {str, seq, optPrio, IRunnable} from "../combi";
+import {verNot, str, seq, optPrio, IRunnable} from "../combi";
 import {Target, Select} from "../expressions";
+import {Version} from "../version";
 
 export class OpenCursor extends Statement {
 
@@ -11,7 +12,7 @@ export class OpenCursor extends Statement {
                   str("FOR"),
                   new Select());
 
-    return ret;
+    return verNot(Version.Cloud, ret);
   }
 
 }

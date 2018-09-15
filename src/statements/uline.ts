@@ -1,7 +1,8 @@
 import {Statement} from "./statement";
-import {str, seq, opt, tok, alt, regex as reg, optPrio, IRunnable} from "../combi";
+import {verNot, str, seq, opt, tok, alt, regex as reg, optPrio, IRunnable} from "../combi";
 import {ParenLeft, ParenRight, WParenLeft, ParenRightW} from "../tokens/";
 import {Dynamic} from "../expressions";
+import {Version} from "../version";
 
 export class Uline extends Statement {
 
@@ -12,7 +13,9 @@ export class Uline extends Statement {
                       opt(seq(tok(ParenLeft), reg(/^\d+$/), right))),
                   seq(tok(WParenLeft), reg(/^\d+$/), right));
 
-    return seq(str("ULINE"), optPrio(str("AT")), opt(alt(pos, new Dynamic())));
+    let ret = seq(str("ULINE"), optPrio(str("AT")), opt(alt(pos, new Dynamic())));
+
+    return verNot(Version.Cloud, ret);
   }
 
 }

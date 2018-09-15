@@ -1,12 +1,15 @@
 import {Statement} from "./statement";
-import {str, seq, IRunnable} from "../combi";
+import {verNot, str, seq, IRunnable} from "../combi";
 import {Field} from "../expressions";
+import {Version} from "../version";
 
 export class Contexts extends Statement {
 
   public static get_matcher(): IRunnable {
-    return seq(str("CONTEXTS"),
-               new Field());
+    let ret = seq(str("CONTEXTS"),
+                  new Field());
+
+    return verNot(Version.Cloud, ret);
   }
 
 }

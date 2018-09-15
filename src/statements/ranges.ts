@@ -1,17 +1,20 @@
 import {Statement} from "./statement";
-import {str, seq, opt, IRunnable} from "../combi";
+import {verNot, str, seq, opt, IRunnable} from "../combi";
 import {Source, SimpleName, FieldSub} from "../expressions";
+import {Version} from "../version";
 
 export class Ranges extends Statement {
 
   public static get_matcher(): IRunnable {
     let occurs = seq(str("OCCURS"), new Source());
 
-    return seq(str("RANGES"),
-               new SimpleName(),
-               str("FOR"),
-               new FieldSub(),
-               opt(occurs));
+    let ret = seq(str("RANGES"),
+                  new SimpleName(),
+                  str("FOR"),
+                  new FieldSub(),
+                  opt(occurs));
+
+    return verNot(Version.Cloud, ret);
   }
 
 }

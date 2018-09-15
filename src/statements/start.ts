@@ -1,10 +1,11 @@
 import {Statement} from "./statement";
-import {str, IRunnable} from "../combi";
+import {verNot, str, IRunnable} from "../combi";
+import {Version} from "../version";
 
 export class Start extends Statement {
 
   public static get_matcher(): IRunnable {
-    return str("START-OF-SELECTION");
+    return verNot(Version.Cloud, str("START-OF-SELECTION"));
   }
 
   public isStructure() {

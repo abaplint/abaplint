@@ -1,6 +1,7 @@
 import {Statement} from "./statement";
-import {str, seq, opt, IRunnable} from "../combi";
+import {verNot, str, seq, opt, IRunnable} from "../combi";
 import {Target, Source} from "../expressions";
+import {Version} from "../version";
 
 export class CreateOLE extends Statement {
 
@@ -11,7 +12,7 @@ export class CreateOLE extends Statement {
                   opt(str("NO FLUSH")),
                   opt(str("QUEUE-ONLY")));
 
-    return ret;
+    return verNot(Version.Cloud, ret);
   }
 
 }

@@ -1,16 +1,19 @@
 import {Statement} from "./statement";
-import {str, seq, IRunnable} from "../combi";
+import {verNot, str, seq, IRunnable} from "../combi";
 import {Source} from "../expressions";
+import {Version} from "../version";
 
 export class Window extends Statement {
 
   public static get_matcher(): IRunnable {
-    return seq(str("WINDOW STARTING AT"),
-               new Source(),
-               new Source(),
-               str("ENDING AT"),
-               new Source(),
-               new Source());
+    let ret = seq(str("WINDOW STARTING AT"),
+                  new Source(),
+                  new Source(),
+                  str("ENDING AT"),
+                  new Source(),
+                  new Source());
+
+    return verNot(Version.Cloud, ret);
   }
 
 }

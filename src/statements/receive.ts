@@ -1,6 +1,7 @@
 import {Statement} from "./statement";
-import {str, seq, opt, IRunnable} from "../combi";
+import {verNot, str, seq, opt, IRunnable} from "../combi";
 import {Constant, ReceiveParameters} from "../expressions";
+import {Version} from "../version";
 
 export class Receive extends Statement {
 
@@ -10,7 +11,7 @@ export class Receive extends Statement {
                   opt(str("KEEPING TASK")),
                   new ReceiveParameters());
 
-    return ret;
+    return verNot(Version.Cloud, ret);
   }
 
 }

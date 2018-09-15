@@ -1,6 +1,7 @@
 import {Statement} from "./statement";
-import {str, per, alt, seq, opt, IRunnable} from "../combi";
+import {verNot, str, per, alt, seq, opt, IRunnable} from "../combi";
 import {Source} from "../expressions";
+import {Version} from "../version";
 
 export class Format extends Statement {
 
@@ -16,7 +17,10 @@ export class Format extends Statement {
                       seq(str("FRAMES"), value),
                       seq(str("INPUT"), value),
                       seq(str("COLOR"), value, opt(toggle)));
-    return seq(str("FORMAT"), options);
+
+    let ret = seq(str("FORMAT"), options);
+
+    return verNot(Version.Cloud, ret);
   }
 
 }

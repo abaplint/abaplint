@@ -1,5 +1,5 @@
 import {Statement} from "./statement";
-import {str, seq, alt, opt, ver, plus, IRunnable} from "../combi";
+import {verNot, str, seq, alt, opt, ver, plus, IRunnable} from "../combi";
 import {Version} from "../version";
 import {Source, Field, ParameterListS} from "../expressions";
 
@@ -23,7 +23,9 @@ export class Raise extends Statement {
                    new Source(),
                    opt(alt(exporting, ver(Version.v750, mess))));
 
-    return seq(str("RAISE"), alt(new Field(), clas));
+    let ret = seq(str("RAISE"), alt(new Field(), clas));
+
+    return verNot(Version.Cloud, ret);
   }
 
 }

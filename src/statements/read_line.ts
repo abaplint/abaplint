@@ -1,6 +1,7 @@
 import {Statement} from "./statement";
-import {str, seq, per, opt, alt, plus, IRunnable} from "../combi";
+import {verNot, str, seq, per, opt, alt, plus, IRunnable} from "../combi";
 import {Target, Source} from "../expressions";
+import {Version} from "../version";
 
 export class ReadLine extends Statement {
 
@@ -19,9 +20,11 @@ export class ReadLine extends Statement {
 
     let current = str("OF CURRENT PAGE");
 
-    return seq(str("READ"),
-               alt(str("CURRENT LINE"), seq(str("LINE"), new Source())),
-               opt(per(val, index, field, page, current)));
+    let ret = seq(str("READ"),
+                  alt(str("CURRENT LINE"), seq(str("LINE"), new Source())),
+                  opt(per(val, index, field, page, current)));
+
+    return verNot(Version.Cloud, ret);
   }
 
 }

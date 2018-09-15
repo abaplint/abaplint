@@ -1,6 +1,7 @@
 import {Statement} from "./statement";
-import {str, seq, IRunnable} from "../combi";
+import {verNot, str, seq, IRunnable} from "../combi";
 import {Target, Source} from "../expressions";
+import {Version} from "../version";
 
 export class LoadReport extends Statement {
 
@@ -12,7 +13,7 @@ export class LoadReport extends Statement {
                   str("INTO"),
                   new Target());
 
-    return ret;
+    return verNot(Version.Cloud, ret);
   }
 
 }

@@ -1,11 +1,13 @@
 import {Statement} from "./statement";
 import {Module} from "./module";
-import {str, IRunnable} from "../combi";
+import {verNot, str, IRunnable} from "../combi";
+import {Version} from "../version";
 
 export class EndModule extends Statement {
 
   public static get_matcher(): IRunnable {
-    return str("ENDMODULE");
+    let ret = str("ENDMODULE");
+    return verNot(Version.Cloud, ret);
   }
 
   public isEnd() {

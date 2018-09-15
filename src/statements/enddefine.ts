@@ -1,11 +1,13 @@
 import {Statement} from "./statement";
 import {Define} from "./define";
-import {str, IRunnable} from "../combi";
+import {verNot, str, IRunnable} from "../combi";
+import {Version} from "../version";
 
 export class Enddefine extends Statement {
 
   public static get_matcher(): IRunnable {
-    return str("END-OF-DEFINITION");
+    let ret = str("END-OF-DEFINITION");
+    return verNot(Version.Cloud, ret);
   }
 
   public isEnd() {

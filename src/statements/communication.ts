@@ -1,6 +1,7 @@
 import {Statement} from "./statement";
-import {str, seq, alt, opt, IRunnable} from "../combi";
+import {verNot, str, seq, alt, opt, IRunnable} from "../combi";
 import {Target, Source} from "../expressions";
+import {Version} from "../version";
 
 export class Communication extends Statement {
 
@@ -24,8 +25,10 @@ export class Communication extends Statement {
                       str("RECEIVED"),
                       new Target());
 
-    return seq(str("COMMUNICATION"),
-               alt(init, allocate, send, deallocate, receive, accept));
+    let ret = seq(str("COMMUNICATION"),
+                  alt(init, allocate, send, deallocate, receive, accept));
+
+    return verNot(Version.Cloud, ret);
   }
 
 }

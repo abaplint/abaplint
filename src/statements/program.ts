@@ -1,6 +1,7 @@
 import {Statement} from "./statement";
-import {str, seq, opt, per, optPrio, IRunnable} from "../combi";
+import {verNot, str, seq, opt, per, optPrio, IRunnable} from "../combi";
 import {Source, Field} from "../expressions";
+import {Version} from "../version";
 
 export class Program extends Statement {
 
@@ -11,7 +12,9 @@ export class Program extends Statement {
     let line = seq(str("LINE-SIZE"), new Source());
     let options = per(message, size, heading, line);
 
-    return seq(str("PROGRAM"), optPrio(new Field()), opt(options));
+    let ret = seq(str("PROGRAM"), optPrio(new Field()), opt(options));
+
+    return verNot(Version.Cloud, ret);
   }
 
 }

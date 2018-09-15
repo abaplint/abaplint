@@ -1,6 +1,7 @@
 import {Statement} from "./statement";
-import {str, seq, alt, per, opt, IRunnable} from "../combi";
+import {verNot, str, seq, alt, per, opt, IRunnable} from "../combi";
 import {Target, Source} from "../expressions";
+import {Version} from "../version";
 
 export class Open extends Statement {
 
@@ -24,7 +25,7 @@ export class Open extends Statement {
                   new Target(),
                   per(direction, type, mode, encoding, pos, message, ignoring, bom, code));
 
-    return ret;
+    return verNot(Version.Cloud, ret);
   }
 
 }

@@ -1,11 +1,13 @@
 import {Statement} from "./statement";
 import {CatchSystemExceptions} from "./catch_system_exceptions";
-import {str, IRunnable} from "../combi";
+import {verNot, str, IRunnable} from "../combi";
+import {Version} from "../version";
 
 export class EndCatch extends Statement {
 
   public static get_matcher(): IRunnable {
-    return str("ENDCATCH");
+    let ret = str("ENDCATCH");
+    return verNot(Version.Cloud, ret);
   }
 
   public isEnd() {

@@ -1,6 +1,7 @@
 import {Statement} from "./statement";
-import {str, seq, opt, alt, IRunnable} from "../combi";
+import {verNot, str, seq, opt, alt, IRunnable} from "../combi";
 import {Dynamic, Source, ParameterListS, ParameterListT} from "../expressions";
+import {Version} from "../version";
 
 export class CallDatabase extends Statement {
 
@@ -18,7 +19,7 @@ export class CallDatabase extends Statement {
                   opt(connection),
                   alt(expl, tab));
 
-    return ret;
+    return verNot(Version.Cloud, ret);
   }
 
 }

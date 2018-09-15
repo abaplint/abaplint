@@ -1,11 +1,13 @@
 import {Statement} from "./statement";
-import {str, IRunnable} from "../combi";
+import {verNot, str, IRunnable} from "../combi";
+import {Version} from "../version";
 
 export class SuppressDialog extends Statement {
 
   public static get_matcher(): IRunnable {
     let ret = str("SUPPRESS DIALOG");
-    return ret;
+
+    return verNot(Version.Cloud, ret);
   }
 
 }

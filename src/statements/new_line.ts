@@ -1,11 +1,14 @@
 import {Statement} from "./statement";
-import {str, seq, opt, alt, IRunnable} from "../combi";
+import {verNot, str, seq, opt, alt, IRunnable} from "../combi";
+import {Version} from "../version";
 
 export class NewLine extends Statement {
 
   public static get_matcher(): IRunnable {
-    return seq(str("NEW-LINE"),
-               opt(alt(str("SCROLLING"), str("NO-SCROLLING"))));
+    let ret = seq(str("NEW-LINE"),
+                  opt(alt(str("SCROLLING"), str("NO-SCROLLING"))));
+
+    return verNot(Version.Cloud, ret);
   }
 
 }

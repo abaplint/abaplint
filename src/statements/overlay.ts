@@ -1,6 +1,7 @@
 import {Statement} from "./statement";
-import {str, seq, opt, IRunnable} from "../combi";
+import {verNot, str, seq, opt, IRunnable} from "../combi";
 import {Target, Source} from "../expressions";
+import {Version} from "../version";
 
 export class Overlay extends Statement {
 
@@ -13,7 +14,7 @@ export class Overlay extends Statement {
                   new Source(),
                   opt(only));
 
-    return ret;
+    return verNot(Version.Cloud, ret);
   }
 
 }

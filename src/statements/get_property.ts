@@ -1,6 +1,7 @@
 import {Statement} from "./statement";
-import {str, seq, opt, IRunnable} from "../combi";
+import {verNot, str, seq, opt, IRunnable} from "../combi";
 import {Source, ParameterListS, FieldSub} from "../expressions";
+import {Version} from "../version";
 
 export class GetProperty extends Statement {
 
@@ -15,7 +16,7 @@ export class GetProperty extends Statement {
                   opt(str("NO FLUSH")),
                   opt(exporting));
 
-    return ret;
+    return verNot(Version.Cloud, ret);
   }
 
 }

@@ -1,6 +1,7 @@
 import {Statement} from "./statement";
-import {str, seq, per, IRunnable} from "../combi";
+import {verNot, str, seq, per, IRunnable} from "../combi";
 import {Target, Source} from "../expressions";
+import {Version} from "../version";
 
 export class Scan extends Statement {
 
@@ -59,7 +60,7 @@ export class Scan extends Statement {
                       pragmas,
                       id));
 
-    return ret;
+    return verNot(Version.Cloud, ret);
   }
 
 }

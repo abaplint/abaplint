@@ -1,6 +1,7 @@
 import {Statement} from "./statement";
-import {str, seq, opt, alt, per, IRunnable} from "../combi";
+import {verNot, str, seq, opt, alt, per, IRunnable} from "../combi";
 import {Source} from "../expressions";
+import {Version} from "../version";
 
 export class Search extends Statement {
 
@@ -17,7 +18,7 @@ export class Search extends Statement {
                   new Source(),
                   opt(per(mode, starting, ending, mark)));
 
-    return ret;
+    return verNot(Version.Cloud, ret);
   }
 
 }

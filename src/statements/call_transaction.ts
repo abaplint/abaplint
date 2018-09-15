@@ -1,6 +1,7 @@
 import {Statement} from "./statement";
-import {str, seq, opt, alt, IRunnable} from "../combi";
+import {verNot, str, seq, opt, alt, IRunnable} from "../combi";
 import {Target, Source} from "../expressions";
+import {Version} from "../version";
 
 export class CallTransaction extends Statement {
 
@@ -21,7 +22,7 @@ export class CallTransaction extends Statement {
                   opt(options),
                   opt(messages));
 
-    return ret;
+    return verNot(Version.Cloud, ret);
   }
 
 }

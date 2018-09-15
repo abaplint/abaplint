@@ -1,6 +1,7 @@
 import {Statement} from "./statement";
-import {str, seq, opt, plus, IRunnable} from "../combi";
+import {verNot, str, seq, opt, plus, IRunnable} from "../combi";
 import {Source, NamespaceSimpleName} from "../expressions";
+import {Version} from "../version";
 
 export class LogPoint extends Statement {
 
@@ -14,7 +15,7 @@ export class LogPoint extends Statement {
                   opt(subkey),
                   opt(fields));
 
-    return ret;
+    return verNot(Version.Cloud, ret);
   }
 
 }

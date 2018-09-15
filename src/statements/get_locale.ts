@@ -1,6 +1,7 @@
 import {Statement} from "./statement";
-import {str, seq, opt, IRunnable} from "../combi";
+import {verNot, str, seq, opt, IRunnable} from "../combi";
 import {Target} from "../expressions";
+import {Version} from "../version";
 
 export class GetLocale extends Statement {
 
@@ -14,7 +15,7 @@ export class GetLocale extends Statement {
                   country,
                   opt(modifier));
 
-    return ret;
+    return verNot(Version.Cloud, ret);
   }
 
 }

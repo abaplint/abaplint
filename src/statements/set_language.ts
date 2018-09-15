@@ -1,6 +1,7 @@
 import {Statement} from "./statement";
-import {str, seq, IRunnable} from "../combi";
+import {verNot, str, seq, IRunnable} from "../combi";
 import {Source} from "../expressions";
+import {Version} from "../version";
 
 export class SetLanguage extends Statement {
 
@@ -8,7 +9,7 @@ export class SetLanguage extends Statement {
     let ret = seq(str("SET LANGUAGE"),
                   new Source());
 
-    return ret;
+    return verNot(Version.Cloud, ret);
   }
 
 }

@@ -1,6 +1,7 @@
 import {Statement} from "./statement";
-import {str, seq, opt, IRunnable} from "../combi";
+import {verNot, str, seq, opt, IRunnable} from "../combi";
 import {Source} from "../expressions";
+import {Version} from "../version";
 
 export class InsertTextpool extends Statement {
 
@@ -15,7 +16,7 @@ export class InsertTextpool extends Statement {
                   new Source(),
                   opt(state));
 
-    return ret;
+    return verNot(Version.Cloud, ret);
   }
 
 }

@@ -1,11 +1,13 @@
 import {Statement} from "./statement";
 import {At} from "./at";
-import {str, IRunnable} from "../combi";
+import {verNot, str, IRunnable} from "../combi";
+import {Version} from "../version";
 
 export class Endat extends Statement {
 
   public static get_matcher(): IRunnable {
-    return str("ENDAT");
+    let ret = str("ENDAT");
+    return verNot(Version.Cloud, ret);
   }
 
   public isEnd() {

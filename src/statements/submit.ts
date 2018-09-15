@@ -1,6 +1,7 @@
 import {Statement} from "./statement";
-import {str, seq, opt, per, alt, plus, IRunnable} from "../combi";
+import {verNot, str, seq, opt, per, alt, plus, IRunnable} from "../combi";
 import {Source, NamespaceSimpleName, Dynamic, Field} from "../expressions";
+import {Version} from "../version";
 
 export class Submit extends Statement {
 
@@ -52,7 +53,7 @@ export class Submit extends Statement {
 
     let ret = seq(str("SUBMIT"), prog, opt(perm));
 
-    return ret;
+    return verNot(Version.Cloud, ret);
   }
 
 }

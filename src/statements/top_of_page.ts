@@ -1,11 +1,13 @@
 import {Statement} from "./statement";
-import {str, opt, seq, IRunnable} from "../combi";
+import {verNot, str, opt, seq, IRunnable} from "../combi";
+import {Version} from "../version";
 
 export class TopOfPage extends Statement {
 
   public static get_matcher(): IRunnable {
-    return seq(str("TOP-OF-PAGE"),
-               opt(str("DURING LINE-SELECTION")));
+    let ret = seq(str("TOP-OF-PAGE"), opt(str("DURING LINE-SELECTION")));
+
+    return verNot(Version.Cloud, ret);
   }
 
 }

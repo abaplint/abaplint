@@ -1,5 +1,6 @@
 import {Statement} from "./statement";
-import {str, seq, alt, IRunnable} from "../combi";
+import {verNot, str, seq, alt, IRunnable} from "../combi";
+import {Version} from "../version";
 
 export class SetRunTime extends Statement {
 
@@ -10,7 +11,7 @@ export class SetRunTime extends Statement {
 
     let ret = seq(str("SET RUN TIME"), alt(clock, analyzer));
 
-    return ret;
+    return verNot(Version.Cloud, ret);
   }
 
 }

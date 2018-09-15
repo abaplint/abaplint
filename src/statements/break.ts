@@ -1,6 +1,7 @@
 import {Statement} from "./statement";
-import {str, seq, opt, alt, IRunnable} from "../combi";
+import {verNot, str, seq, opt, alt, IRunnable} from "../combi";
 import {Field, Source} from "../expressions";
+import {Version} from "../version";
 
 export class Break extends Statement {
 
@@ -9,8 +10,10 @@ export class Break extends Statement {
     let next = str("AT NEXT APPLICATION STATEMENT");
     let log = new Source();
 
-    return alt(seq(str("BREAK-POINT"), opt(alt(id, next, log))),
-               seq(str("BREAK"), new Field()));
+    let ret = alt(seq(str("BREAK-POINT"), opt(alt(id, next, log))),
+                  seq(str("BREAK"), new Field()));
+
+    return verNot(Version.Cloud, ret);
   }
 
 }

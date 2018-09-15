@@ -1,6 +1,7 @@
 import {Statement} from "./statement";
-import {str, seq, opt, alt, IRunnable} from "../combi";
+import {verNot, str, seq, opt, alt, IRunnable} from "../combi";
 import {Source, Field, TypeName} from "../expressions";
+import {Version} from "../version";
 
 export class IncludeType extends Statement {
 
@@ -15,7 +16,7 @@ export class IncludeType extends Statement {
                   opt(tas),
                   opt(renaming));
 
-    return ret;
+    return verNot(Version.Cloud, ret);
   }
 
 }

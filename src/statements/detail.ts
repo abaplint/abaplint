@@ -1,8 +1,11 @@
 import {Statement} from "./statement";
-import {str, IRunnable} from "../combi";
+import {verNot, str, IRunnable} from "../combi";
+import {Version} from "../version";
 
 export class Detail extends Statement {
   public static get_matcher(): IRunnable {
-    return str("DETAIL");
+    let ret = str("DETAIL");
+
+    return verNot(Version.Cloud, ret);
   }
 }

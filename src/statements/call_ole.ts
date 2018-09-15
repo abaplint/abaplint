@@ -1,6 +1,7 @@
 import {Statement} from "./statement";
-import {str, seq, opt, regex, plus, IRunnable} from "../combi";
+import {verNot, str, seq, opt, regex, plus, IRunnable} from "../combi";
 import {Target, Source, Constant} from "../expressions";
+import {Version} from "../version";
 
 export class CallOLE extends Statement {
 
@@ -17,7 +18,7 @@ export class CallOLE extends Statement {
                   opt(rc),
                   opt(exporting));
 
-    return ret;
+    return verNot(Version.Cloud, ret);
   }
 
 }

@@ -1,6 +1,7 @@
 import {Statement} from "./statement";
-import {str, seq, alt, opt, IRunnable} from "../combi";
+import {verNot, str, seq, alt, opt, IRunnable} from "../combi";
 import {Integer, SimpleName} from "../expressions";
+import {Version} from "../version";
 
 export class StaticBegin extends Statement {
 
@@ -12,7 +13,7 @@ export class StaticBegin extends Statement {
                   new SimpleName(),
                   opt(occurs));
 
-    return ret;
+    return verNot(Version.Cloud, ret);
   }
 
 }

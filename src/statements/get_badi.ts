@@ -1,6 +1,7 @@
 import {Statement} from "./statement";
-import {str, seq, opt, IRunnable} from "../combi";
+import {verNot, str, seq, opt, IRunnable} from "../combi";
 import {Target, ParameterListS, Source, Dynamic} from "../expressions";
+import {Version} from "../version";
 
 export class GetBadi extends Statement {
 
@@ -15,7 +16,7 @@ export class GetBadi extends Statement {
                   opt(filters),
                   opt(context));
 
-    return ret;
+    return verNot(Version.Cloud, ret);
   }
 
 }

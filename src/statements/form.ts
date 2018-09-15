@@ -1,7 +1,8 @@
 import {Statement} from "./statement";
-import {str, seq, alt, opt, tok, altPrio, plus, IRunnable} from "../combi";
+import {verNot, str, seq, alt, opt, tok, altPrio, plus, IRunnable} from "../combi";
 import {ParenLeft, ParenRight, ParenRightW} from "../tokens/";
 import {ClassName, SimpleName, NamespaceSimpleName, FormParam, FormName} from "../expressions";
+import {Version} from "../version";
 
 export class Form extends Statement {
 
@@ -28,7 +29,7 @@ export class Form extends Statement {
                   opt(changing),
                   opt(raising));
 
-    return ret;
+    return verNot(Version.Cloud, ret);
   }
 
   public isStructure() {

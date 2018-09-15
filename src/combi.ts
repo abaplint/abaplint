@@ -221,6 +221,41 @@ class Vers implements IRunnable {
   }
 }
 
+class VersNot implements IRunnable {
+
+  private version: Version;
+  private runnable: IRunnable;
+
+  constructor(version: Version, runnable: IRunnable) {
+    this.version = version;
+    this.runnable = runnable;
+  }
+
+  public run(r: Array<Result>): Array<Result> {
+    if (Combi.getVersion() !== this.version) {
+      return this.runnable.run(r);
+    } else {
+      return [];
+    }
+  }
+
+  public railroad() {
+    return "Railroad.Sequence(Railroad.Comment(\"not " +
+      versionToText(this.version) +
+      "\"), " +
+      this.runnable.railroad() +
+      ")";
+  }
+
+  public toStr() {
+    return "VersionNot(" + this.runnable.toStr() + ")";
+  }
+
+  public first() {
+    return "";
+  }
+}
+
 class OptionalPriority implements IRunnable {
 
   private optional: IRunnable;
@@ -728,4 +763,7 @@ export function plus(first: IRunnable): IRunnable {
 }
 export function ver(version: Version, first: IRunnable): IRunnable {
   return new Vers(version, first);
+}
+export function verNot(version: Version, first: IRunnable): IRunnable {
+  return new VersNot(version, first);
 }

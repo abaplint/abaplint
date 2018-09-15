@@ -1,13 +1,16 @@
 import {Statement} from "./statement";
-import {str, seq, alt, opt, IRunnable} from "../combi";
+import {verNot, str, seq, alt, opt, IRunnable} from "../combi";
 import {FormName} from "../expressions";
+import {Version} from "../version";
 
 export class Module extends Statement {
 
   public static get_matcher(): IRunnable {
-    return seq(str("MODULE"),
-               new FormName(),
-               opt(alt(str("INPUT"), str("OUTPUT"))));
+    let ret = seq(str("MODULE"),
+                  new FormName(),
+                  opt(alt(str("INPUT"), str("OUTPUT"))));
+
+    return verNot(Version.Cloud, ret);
   }
 
   public isStructure() {

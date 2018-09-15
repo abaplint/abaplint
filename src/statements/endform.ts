@@ -1,11 +1,14 @@
 import {Statement} from "./statement";
 import {Form} from "./form";
-import {str, IRunnable} from "../combi";
+import {verNot, str, IRunnable} from "../combi";
+import {Version} from "../version";
 
 export class Endform extends Statement {
 
   public static get_matcher(): IRunnable {
-    return str("ENDFORM");
+    let ret = str("ENDFORM");
+
+    return verNot(Version.Cloud, ret);
   }
 
   public isEnd() {

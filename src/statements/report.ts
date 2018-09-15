@@ -1,6 +1,7 @@
 import {Statement} from "./statement";
-import {str, seq, opt, per, IRunnable} from "../combi";
+import {verNot, str, seq, opt, per, IRunnable} from "../combi";
 import {Integer, MessageClass, NamespaceSimpleName} from "../expressions";
+import {Version} from "../version";
 
 export class Report extends Statement {
 
@@ -10,9 +11,11 @@ export class Report extends Statement {
     let count = seq(str("LINE-COUNT"), new Integer());
     let message = seq(str("MESSAGE-ID"), new MessageClass());
 
-    return seq(str("REPORT"),
-               opt(new NamespaceSimpleName()),
-               opt(per(heading, size, count, message)));
+    let ret = seq(str("REPORT"),
+                  opt(new NamespaceSimpleName()),
+                  opt(per(heading, size, count, message)));
+
+    return verNot(Version.Cloud, ret);
   }
 
 }

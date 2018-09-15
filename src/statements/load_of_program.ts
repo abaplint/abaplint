@@ -1,10 +1,13 @@
 import {Statement} from "./statement";
-import {str, IRunnable} from "../combi";
+import {verNot, str, IRunnable} from "../combi";
+import {Version} from "../version";
 
 export class LoadOfProgram extends Statement {
 
   public static get_matcher(): IRunnable {
-    return str("LOAD-OF-PROGRAM");
+    let ret = str("LOAD-OF-PROGRAM");
+
+    return verNot(Version.Cloud, ret);
   }
 
   public isStructure() {

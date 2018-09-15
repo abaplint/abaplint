@@ -1,6 +1,7 @@
 import {Statement} from "./statement";
-import {str, seq, opt, IRunnable} from "../combi";
+import {verNot, str, seq, opt, IRunnable} from "../combi";
 import {Target, Source} from "../expressions";
+import {Version} from "../version";
 
 export class Transfer extends Statement {
 
@@ -14,7 +15,7 @@ export class Transfer extends Statement {
                   new Target(),
                   opt(length));
 
-    return ret;
+    return verNot(Version.Cloud, ret);
   }
 
 }

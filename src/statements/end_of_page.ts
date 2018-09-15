@@ -1,10 +1,13 @@
 import {Statement} from "./statement";
-import {str, IRunnable} from "../combi";
+import {verNot, str, IRunnable} from "../combi";
+import {Version} from "../version";
 
 export class EndOfPage extends Statement {
 
   public static get_matcher(): IRunnable {
-    return str("END-OF-PAGE");
+    let ret = str("END-OF-PAGE");
+
+    return verNot(Version.Cloud, ret);
   }
 
 }

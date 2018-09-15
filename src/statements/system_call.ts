@@ -1,13 +1,15 @@
 import {Statement} from "./statement";
-import {str, seq, regex as reg, plus, IRunnable} from "../combi";
+import {verNot, str, seq, regex as reg, plus, IRunnable} from "../combi";
+import {Version} from "../version";
 
 export class SystemCall extends Statement {
 
   public static get_matcher(): IRunnable {
     let anyy = reg(/^.+$/);
 
-    return seq(str("SYSTEM-CALL"),
-               plus(anyy));
+    let ret = seq(str("SYSTEM-CALL"), plus(anyy));
+
+    return verNot(Version.Cloud, ret);
   }
 
 }

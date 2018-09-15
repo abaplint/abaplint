@@ -1,6 +1,7 @@
 import {Statement} from "./statement";
-import {str, seq, IRunnable} from "../combi";
+import {verNot, str, seq, IRunnable} from "../combi";
 import {Target, Source} from "../expressions";
+import {Version} from "../version";
 
 export class GenerateDynpro extends Statement {
 
@@ -19,7 +20,7 @@ export class GenerateDynpro extends Statement {
                   str("WORD"),
                   new Target());
 
-    return ret;
+    return verNot(Version.Cloud, ret);
   }
 
 }

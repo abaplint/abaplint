@@ -1,6 +1,7 @@
 import {Statement} from "./statement";
-import {str, seq, opt, per, IRunnable} from "../combi";
+import {verNot, str, seq, opt, per, IRunnable} from "../combi";
 import {Source} from "../expressions";
+import {Version} from "../version";
 
 export class InsertReport extends Statement {
 
@@ -17,7 +18,7 @@ export class InsertReport extends Statement {
                   new Source(),
                   opt(options));
 
-    return ret;
+    return verNot(Version.Cloud, ret);
   }
 
 }

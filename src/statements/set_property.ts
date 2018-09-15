@@ -1,6 +1,7 @@
 import {Statement} from "./statement";
-import {seq, str, IRunnable} from "../combi";
+import {verNot, seq, str, IRunnable} from "../combi";
 import {Source, Constant} from "../expressions";
+import {Version} from "../version";
 
 export class SetProperty extends Statement {
 
@@ -12,7 +13,7 @@ export class SetProperty extends Statement {
                   str("="),
                   new Source());
 
-    return ret;
+    return verNot(Version.Cloud, ret);
   }
 
 }

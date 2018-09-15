@@ -1,10 +1,11 @@
 import {Statement} from "./statement";
-import {str, IRunnable} from "../combi";
+import {verNot, str, IRunnable} from "../combi";
+import {Version} from "../version";
 
 export class AtUserCommand extends Statement {
 
   public static get_matcher(): IRunnable {
-    return str("AT USER-COMMAND");
+    return verNot(Version.Cloud, str("AT USER-COMMAND"));
   }
 
   public isStructure() {

@@ -1,6 +1,7 @@
 import {Statement} from "./statement";
-import {str, seq, alt, opt, regex as reg, IRunnable} from "../combi";
+import {verNot, str, seq, alt, opt, regex as reg, IRunnable} from "../combi";
 import {FieldSub, Field} from "../expressions";
+import {Version} from "../version";
 
 export class AtSelectionScreen extends Statement {
 
@@ -24,7 +25,7 @@ export class AtSelectionScreen extends Statement {
     let ret = seq(str("AT SELECTION-SCREEN"),
                   opt(alt(output, value, radio, exit, field, end, help, block)));
 
-    return ret;
+    return verNot(Version.Cloud, ret);
   }
 
   public isStructure() {

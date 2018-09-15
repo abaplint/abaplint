@@ -7,6 +7,7 @@ export enum Version {
   v740sp05,
   v740sp08,
   v750,
+  Cloud,
 }
 
 export function versionToText(v: Version): string {
@@ -23,6 +24,8 @@ export function versionToText(v: Version): string {
       return "v740sp08";
     case Version.v750:
       return "v750";
+    case Version.Cloud:
+      return "Cloud";
     default:
       return "Unknown version";
   }
@@ -42,6 +45,8 @@ export function textToVersion(s: string): Version {
       return Version.v740sp08;
     case "v750":
       return Version.v750;
+    case "Cloud":
+      return Version.Cloud;
     default:
       throw "unknown version: " + s;
   }

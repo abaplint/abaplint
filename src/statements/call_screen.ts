@@ -1,6 +1,7 @@
 import {Statement} from "./statement";
-import {str, seq, opt, IRunnable} from "../combi";
+import {verNot, str, seq, opt, IRunnable} from "../combi";
 import {Source} from "../expressions";
+import {Version} from "../version";
 
 export class CallScreen extends Statement {
 
@@ -8,9 +9,9 @@ export class CallScreen extends Statement {
     let starting = seq(str("STARTING AT"), new Source(), new Source());
     let ending = seq(str("ENDING AT"), new Source(), new Source());
 
-    let call = seq(str("CALL SCREEN"), new Source(), opt(seq(starting, opt(ending))));
+    let ret = seq(str("CALL SCREEN"), new Source(), opt(seq(starting, opt(ending))));
 
-    return call;
+    return verNot(Version.Cloud, ret);
   }
 
 }

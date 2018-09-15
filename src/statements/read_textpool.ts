@@ -1,6 +1,7 @@
 import {Statement} from "./statement";
-import {str, seq, per, IRunnable} from "../combi";
+import {verNot, str, seq, per, IRunnable} from "../combi";
 import {Target, Source} from "../expressions";
+import {Version} from "../version";
 
 export class ReadTextpool extends Statement {
 
@@ -9,9 +10,11 @@ export class ReadTextpool extends Statement {
     let into = seq(str("INTO"), new Target());
     let state = seq(str("STATE"), new Source());
 
-    return seq(str("READ TEXTPOOL"),
-               new Source(),
-               per(into, language, state));
+    let ret = seq(str("READ TEXTPOOL"),
+                  new Source(),
+                  per(into, language, state));
+
+    return verNot(Version.Cloud, ret);
   }
 
 }

@@ -1,6 +1,7 @@
 import {Statement} from "./statement";
-import {str, seq, opt, plus, optPrio, IRunnable} from "../combi";
+import {verNot, str, seq, opt, plus, optPrio, IRunnable} from "../combi";
 import {Field, FieldSub, Constant} from "../expressions";
+import {Version} from "../version";
 
 export class CallDialog extends Statement {
 
@@ -16,7 +17,7 @@ export class CallDialog extends Statement {
                   opt(exporting),
                   opt(importing));
 
-    return ret;
+    return verNot(Version.Cloud, ret);
   }
 
 }

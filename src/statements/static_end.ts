@@ -1,6 +1,7 @@
 import {Statement} from "./statement";
-import {str, seq, alt, IRunnable} from "../combi";
+import {verNot, str, seq, alt, IRunnable} from "../combi";
 import {SimpleName} from "../expressions";
+import {Version} from "../version";
 
 export class StaticEnd extends Statement {
 
@@ -9,7 +10,7 @@ export class StaticEnd extends Statement {
                   str("END OF"),
                   new SimpleName());
 
-    return ret;
+    return verNot(Version.Cloud, ret);
   }
 
 }

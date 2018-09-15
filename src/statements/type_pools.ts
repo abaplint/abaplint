@@ -1,5 +1,6 @@
 import {Statement} from "./statement";
-import {str, seq, regex as reg, IRunnable} from "../combi";
+import {verNot, str, seq, regex as reg, IRunnable} from "../combi";
+import {Version} from "../version";
 
 // type pool usage
 export class TypePools extends Statement {
@@ -9,7 +10,7 @@ export class TypePools extends Statement {
 
     let ret = seq(str("TYPE-POOLS"), fieldName);
 
-    return ret;
+    return verNot(Version.Cloud, ret);
   }
 
 }

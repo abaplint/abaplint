@@ -1,5 +1,6 @@
 import {Statement} from "./statement";
-import {str, seq, IRunnable} from "../combi";
+import {str, seq, IRunnable, verNot} from "../combi";
+import {Version} from "../version";
 import {Target, Source} from "../expressions";
 
 export class AddCorresponding extends Statement {
@@ -10,7 +11,7 @@ export class AddCorresponding extends Statement {
                   str("TO"),
                   new Target());
 
-    return ret;
+    return verNot(Version.Cloud, ret);
   }
 
 }

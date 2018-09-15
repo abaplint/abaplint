@@ -1,5 +1,5 @@
 import {Statement} from "./statement";
-import {str, seq, opt, alt, ver, IRunnable} from "../combi";
+import {verNot, str, seq, opt, alt, ver, IRunnable} from "../combi";
 import {Version} from "../version";
 import {Source, Cond} from "../expressions";
 
@@ -16,7 +16,9 @@ export class Wait extends Statement {
 
     let until = seq(opt(type), str("UNTIL"), new Cond(), opt(up));
 
-    return seq(str("WAIT"), alt(until, up));
+    let ret = seq(str("WAIT"), alt(until, up));
+
+    return verNot(Version.Cloud, ret);
   }
 
 }

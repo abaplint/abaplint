@@ -1,6 +1,7 @@
 import {Statement} from "./statement";
-import {str, seq, alt, star, IRunnable} from "../combi";
+import {verNot, str, seq, alt, star, IRunnable} from "../combi";
 import {Source, Constant, Field} from "../expressions";
+import {Version} from "../version";
 
 export class CallKernel extends Statement {
 
@@ -15,7 +16,7 @@ export class CallKernel extends Statement {
                   alt(new Constant(), new Field()),
                   star(field));
 
-    return ret;
+    return verNot(Version.Cloud, ret);
   }
 
 }

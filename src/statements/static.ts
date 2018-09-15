@@ -1,6 +1,7 @@
 import {Statement} from "./statement";
-import {str, seq, opt, alt, IRunnable} from "../combi";
+import {verNot, str, seq, opt, alt, IRunnable} from "../combi";
 import {Value, Type, FieldLength, NamespaceSimpleName, TypeTable} from "../expressions";
+import {Version} from "../version";
 
 export class Static extends Statement {
 
@@ -12,7 +13,7 @@ export class Static extends Statement {
                   opt(alt(type, new TypeTable())),
                   opt(new Value()));
 
-    return ret;
+    return verNot(Version.Cloud, ret);
   }
 
 }

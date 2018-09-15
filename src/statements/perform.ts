@@ -1,7 +1,8 @@
 import {Statement} from "./statement";
-import {str, seq, opt, alt, tok, per, plus, IRunnable} from "../combi";
+import {verNot, str, seq, opt, alt, tok, per, plus, IRunnable} from "../combi";
 import {ParenLeft, ParenRightW, ParenRight} from "../tokens/";
 import {Source, Field, Dynamic, FormName} from "../expressions";
+import {Version} from "../version";
 
 export class Perform extends Statement {
 
@@ -26,13 +27,15 @@ export class Perform extends Statement {
     let full = seq(alt(new FormName(), new Dynamic()),
                    opt(program));
 
-    return seq(str("PERFORM"),
-               per(alt(short, full), found),
-               opt(tables),
-               opt(using),
-               opt(changing),
-               opt(found),
-               opt(commit));
+    let ret = seq(str("PERFORM"),
+                  per(alt(short, full), found),
+                  opt(tables),
+                  opt(using),
+                  opt(changing),
+                  opt(found),
+                  opt(commit));
+
+    return verNot(Version.Cloud, ret);
   }
 
 }

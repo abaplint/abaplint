@@ -1,6 +1,7 @@
 import {Statement} from "./statement";
-import {str, seq, per, IRunnable} from "../combi";
+import {verNot, str, seq, per, IRunnable} from "../combi";
 import {Target, Source} from "../expressions";
+import {Version} from "../version";
 
 export class ReadReport extends Statement {
 
@@ -9,9 +10,11 @@ export class ReadReport extends Statement {
     let into = seq(str("INTO"), new Target());
     let maximum = seq(str("MAXIMUM WIDTH INTO"), new Target());
 
-    return seq(str("READ REPORT"),
-               new Source(),
-               per(state, into, maximum));
+    let ret = seq(str("READ REPORT"),
+                  new Source(),
+                  per(state, into, maximum));
+
+    return verNot(Version.Cloud, ret);
   }
 
 }

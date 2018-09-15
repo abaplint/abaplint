@@ -1,6 +1,7 @@
 import {Statement} from "./statement";
-import {str, seq, IRunnable} from "../combi";
+import {verNot, str, seq, IRunnable} from "../combi";
 import {Target, Source} from "../expressions";
+import {Version} from "../version";
 
 export class GetParameter extends Statement {
 
@@ -10,7 +11,7 @@ export class GetParameter extends Statement {
                   str("FIELD"),
                   new Target());
 
-    return ret;
+    return verNot(Version.Cloud, ret);
   }
 
 }

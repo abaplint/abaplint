@@ -1,14 +1,17 @@
 import {Statement} from "./statement";
-import {str, seq, IRunnable} from "../combi";
+import {verNot, str, seq, IRunnable} from "../combi";
 import {Target, Source} from "../expressions";
+import {Version} from "../version";
 
 export class Multiply extends Statement {
 
   public static get_matcher(): IRunnable {
-    return seq(str("MULTIPLY"),
-               new Target(),
-               str("BY"),
-               new Source());
+    let ret = seq(str("MULTIPLY"),
+                  new Target(),
+                  str("BY"),
+                  new Source());
+
+    return verNot(Version.Cloud, ret);
   }
 
 }

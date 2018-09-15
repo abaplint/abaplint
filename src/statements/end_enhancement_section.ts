@@ -1,10 +1,13 @@
 import {Statement} from "./statement";
-import {str, IRunnable} from "../combi";
+import {verNot, str, IRunnable} from "../combi";
+import {Version} from "../version";
 
 export class EndEnhancementSection extends Statement {
 
   public static get_matcher(): IRunnable {
-    return str("END-ENHANCEMENT-SECTION");
+    let ret = str("END-ENHANCEMENT-SECTION");
+
+    return verNot(Version.Cloud, ret);
   }
 
 }

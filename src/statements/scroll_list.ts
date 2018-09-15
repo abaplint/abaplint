@@ -1,6 +1,7 @@
 import {Statement} from "./statement";
-import {str, seq, alt, per, IRunnable} from "../combi";
+import {verNot, str, seq, alt, per, IRunnable} from "../combi";
 import {Source} from "../expressions";
+import {Version} from "../version";
 
 export class ScrollList extends Statement {
 
@@ -20,7 +21,7 @@ export class ScrollList extends Statement {
                       column,
                       line));
 
-    return ret;
+    return verNot(Version.Cloud, ret);
   }
 
 }

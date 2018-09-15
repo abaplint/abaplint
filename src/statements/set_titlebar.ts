@@ -1,6 +1,7 @@
 import {Statement} from "./statement";
-import {str, seq, opt, plus, IRunnable} from "../combi";
+import {verNot, str, seq, opt, plus, IRunnable} from "../combi";
 import {Source} from "../expressions";
+import {Version} from "../version";
 
 export class SetTitlebar extends Statement {
 
@@ -11,7 +12,7 @@ export class SetTitlebar extends Statement {
 
     let ret = seq(str("SET TITLEBAR"), new Source(), opt(program), opt(wit));
 
-    return ret;
+    return verNot(Version.Cloud, ret);
   }
 
 }

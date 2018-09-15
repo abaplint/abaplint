@@ -1,6 +1,7 @@
 import {Statement} from "./statement";
-import {str, seq, opt, alt, per, IRunnable} from "../combi";
+import {verNot, str, seq, opt, alt, per, IRunnable} from "../combi";
 import {Source, FieldChain, Constant, Field, Modif, FieldSub, Dynamic} from "../expressions";
+import {Version} from "../version";
 
 export class SelectOption extends Statement {
 
@@ -41,7 +42,7 @@ export class SelectOption extends Statement {
                   alt(new FieldSub(), new Dynamic()),
                   opt(options));
 
-    return ret;
+    return verNot(Version.Cloud, ret);
   }
 
 }

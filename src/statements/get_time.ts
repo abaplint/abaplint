@@ -6,6 +6,7 @@ export class GetTime extends Statement {
 
   public static get_matcher(): IRunnable {
     let options = seq(alt(str("STAMP FIELD"), str("FIELD")), new Target());
+
     return seq(str("GET TIME"), opt(options));
   }
 

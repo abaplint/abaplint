@@ -1,6 +1,7 @@
 import {Statement} from "./statement";
-import {str, seq, opt, alt, per, regex as reg, IRunnable} from "../combi";
+import {verNot, str, seq, opt, alt, per, regex as reg, IRunnable} from "../combi";
 import {Source, Constant, FieldChain, Dynamic, Field, FieldLength, FieldSub, RadioGroupName, Modif} from "../expressions";
+import {Version} from "../version";
 
 export class Parameter extends Statement {
 
@@ -40,7 +41,7 @@ export class Parameter extends Statement {
                   opt(new FieldLength()),
                   opt(perm));
 
-    return ret;
+    return verNot(Version.Cloud, ret);
   }
 
 }

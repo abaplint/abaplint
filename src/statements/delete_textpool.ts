@@ -1,6 +1,7 @@
 import {Statement} from "./statement";
-import {str, seq, opt, IRunnable} from "../combi";
+import {verNot, str, seq, opt, IRunnable} from "../combi";
 import {Source} from "../expressions";
+import {Version} from "../version";
 
 export class DeleteTextpool extends Statement {
 
@@ -8,10 +9,12 @@ export class DeleteTextpool extends Statement {
     let language = seq(str("LANGUAGE"), new Source());
     let state = seq(str("STATE"), new Source());
 
-    return seq(str("DELETE TEXTPOOL"),
-               new Source(),
-               opt(language),
-               opt(state));
+    let ret = seq(str("DELETE TEXTPOOL"),
+                  new Source(),
+                  opt(language),
+                  opt(state));
+
+    return verNot(Version.Cloud, ret);
   }
 
 }

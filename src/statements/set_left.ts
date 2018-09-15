@@ -1,10 +1,11 @@
 import {Statement} from "./statement";
-import {str, IRunnable} from "../combi";
+import {verNot, str, IRunnable} from "../combi";
+import {Version} from "../version";
 
 export class SetLeft extends Statement {
 
   public static get_matcher(): IRunnable {
-    return str("SET LEFT SCROLL-BOUNDARY");
+    return verNot(Version.Cloud, str("SET LEFT SCROLL-BOUNDARY"));
   }
 
 }

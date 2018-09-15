@@ -1,7 +1,8 @@
 import {Statement} from "./statement";
-import {str, seq, opt, alt, per, tok, regex as reg, IRunnable} from "../combi";
+import {verNot, str, seq, opt, alt, per, tok, regex as reg, IRunnable} from "../combi";
 import {Target, Source, Dynamic} from "../expressions";
 import {ParenLeft, ParenRightW, WParenLeft} from "../tokens/";
+import {Version} from "../version";
 
 export class Write extends Statement {
 
@@ -56,7 +57,7 @@ export class Write extends Statement {
                   opt(alt(new Source(), new Dynamic())),
                   opt(options));
 
-    return ret;
+    return verNot(Version.Cloud, ret);
   }
 
 }
