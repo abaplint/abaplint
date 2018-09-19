@@ -45,7 +45,7 @@
   "homepage": "https://github.com/larshp/abaplint#readme",
   "devDependencies": {
     "@types/chai": "^4.1.4",
-    "@types/glob": "^5.0.30",
+    "@types/glob": "^7.1.0",
     "@types/minimatch": "^3.0.0",
     "@types/minimist": "^1.2.0",
     "@types/mocha": "^5.2.5",
