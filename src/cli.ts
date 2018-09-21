@@ -49,7 +49,7 @@ function displayHelp(): string {
 function loadFileNames(args): Array<string> {
   let files: Array<string> = [];
   for (const file of args) {
-    files = files.concat(glob.sync(file, {nosort: true}));
+    files = files.concat(glob.sync(file, {nosort: true, nodir: true}));
   }
   return files;
 }
@@ -98,8 +98,7 @@ function run() {
       if (argv["s"]) {
         config.setShowProgress(true);
       }
-      let runner = new Runner(config);
-      issues = runner.run(loadFiles(files));
+      issues = new Runner(config).run(loadFiles(files));
       output = Formatter.format(issues, format);
     }
   }

@@ -2,12 +2,13 @@ import * as chai from "chai";
 import Runner from "../src/runner";
 import {Result} from "../src/types";
 import {File} from "../src/file";
+import * as Types from "../src/types";
 
 let expect = chai.expect;
 
 function run(abap: string): Result {
   let file = new Runner().parse([new File("temp.abap", abap)])[0];
-  return Runner.types(file);
+  return Types.Analyze.run(file);
 }
 
 let sourcesTests = [

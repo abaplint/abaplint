@@ -8,10 +8,9 @@ import {Issue} from "./issue";
 import Nesting from "./nesting";
 import Registry from "./registry";
 import {TokenNode} from "./node";
-import {Version} from "./version";
+// import {Version} from "./version";
 import {Define} from "./statements";
 import {MacroCall, Unknown, Statement} from "./statements/statement";
-import * as Types from "./types";
 import * as ProgressBar from "progress";
 
 export default class Runner {
@@ -21,10 +20,6 @@ export default class Runner {
   public static version(): string {
     // magic, see build script "version.sh"
     return "{{ VERSION }}";
-  }
-
-  public static types(file: ParsedFile) {
-    return Types.Analyze.run(file);
   }
 
   constructor(conf?: Config) {
@@ -49,7 +44,7 @@ export default class Runner {
     }
 
     files.forEach((f) => {
-      if (!this.skip(f)) {
+      if (!this.skip(f.getFilename())) {
         if (bar) {
           bar.tick({filename: f.getFilename()});
           bar.render();
@@ -66,36 +61,7 @@ export default class Runner {
     return ret;
   }
 
-  public fixMacros(files: Array<ParsedFile>): Array<ParsedFile> {
-// todo: copies all statements? (memory)
-
-    let reg = new Registry();
-
-    files.forEach((f) => {
-      f.getStatements().forEach((s) => {
-        if (s instanceof Define) {
-          reg.addMacro(s.getTokens()[1].getStr());
-        }
-      });
-    });
-
-    files.forEach((f) => {
-      let statements: Array<Statement> = [];
-      f.getStatements().forEach((s) => {
-        if (s instanceof Unknown &&
-            reg.isMacro(s.getTokens()[0].getStr())) {
-          statements.push(new MacroCall(this.tokensToNodes(s.getTokens())));
-        } else {
-          statements.push(s);
-        }
-      });
-      f.setStatements(statements);
-    });
-
-    return files;
-  }
-
-  public issues(files: Array<ParsedFile>): Array<Issue> {
+  private issues(files: Array<ParsedFile>): Array<Issue> {
     let issues: Array<Issue> = [];
 
     let bar = undefined;
@@ -124,9 +90,41 @@ export default class Runner {
     return issues;
   }
 
-  private skip(file: File): boolean {
+  private fixMacros(files: Array<ParsedFile>): Array<ParsedFile> {
+// todo: copies all statements? (memory)
+
+    let reg = new Registry();
+
+    files.forEach((f) => {
+      f.getStatements().forEach((s) => {
+        if (s instanceof Define) {
+          reg.addMacro(s.getTokens()[1].getStr());
+        }
+      });
+    });
+
+    files.forEach((f) => {
+      let statements: Array<Statement> = [];
+      f.getStatements().forEach((s) => {
+        if (s instanceof Unknown &&
+            reg.isMacro(s.getTokens()[0].getStr())) {
+          statements.push(new MacroCall(this.tokensToNodes(s.getTokens())));
+        } else {
+          statements.push(s);
+        }
+      });
+      f.setStatements(statements);
+    });
+
+    return files;
+  }
+
+  private skip(filename: string): boolean {
 // ignore global exception classes, todo?
-    if (/zcx_.*\.clas\.abap$/.test(file.getFilename())) {
+    if (/zcx_.*\.clas\.abap$/.test(filename)) {
+      return true;
+    }
+    if (!/.*\.abap$/.test(filename)) {
       return true;
     }
     return false;
@@ -134,14 +132,14 @@ export default class Runner {
 
   private tokensToNodes(tokens: Array<Tokens.Token>): Array<TokenNode> {
     let ret: Array<TokenNode> = [];
-
     tokens.forEach((t) => {ret.push(new TokenNode("Unknown", t)); });
-
     return ret;
   }
 }
 
+/*
 exports.File = File;
 exports.Runner = Runner;
 exports.Config = Config;
 exports.Version = Version;
+*/

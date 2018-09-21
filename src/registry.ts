@@ -1,12 +1,33 @@
-import {Object} from "./objects";
+import {Object, Class} from "./objects";
 
 export default class Registry {
 
   private macros: Array<string> = [];
   private objects: Array<Object> = [];
 
-  public addObject(obj: Object) {
+  public add(obj: Object) {
     this.objects.push(obj);
+  }
+
+  public findOrCreate(name: string, type: string): Object {
+    for (let obj of this.objects) {
+      if (obj.getType() === type && obj.getName() === name) {
+        return obj;
+      }
+    }
+
+    let add = undefined;
+    switch(type) {
+      case "CLAS":
+        add = new Class(name, "todo");
+        break;
+      default:
+        throw "Unknown object type: " + type;
+    }
+
+    this.objects.push(add);
+
+    return add;
   }
 
 // todo, handle scoping for macros
