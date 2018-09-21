@@ -6,7 +6,7 @@ import {File} from "../src/file";
 let expect = chai.expect;
 
 function run(abap: string): Result {
-  let file = Runner.parse([new File("temp.abap", abap)])[0];
+  let file = new Runner().parse([new File("temp.abap", abap)])[0];
   return Runner.types(file);
 }
 

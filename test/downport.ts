@@ -13,14 +13,14 @@ let tests = [
 ];
 
 function run(abap: string): number {
-  let parsed = Runner.parse([new File("temp.abap", abap)]);
+  let parsed = new Runner().parse([new File("temp.abap", abap)]);
 
   let downed = Runner.downport(parsed);
 
   let config = Config.getDefault();
   config.setVersion(Version.v700);
 
-  let issues = Runner.run(downed, config).filter(
+  let issues = new Runner(config).run(downed).filter(
     (e) => { return e.getKey() === new ParserError().getKey(); });
 
   return issues.length;

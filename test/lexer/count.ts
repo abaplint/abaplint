@@ -90,7 +90,7 @@ describe("count_tokens", () => {
     });
 
     it("\"" + test.abap + "\" should match parsed file token count", () => {
-      expect(tokens.length).to.equals(Runner.parse([file])[0].getTokens().length);
+      expect(tokens.length).to.equals(new Runner().parse([file])[0].getTokens().length);
     });
   });
 });

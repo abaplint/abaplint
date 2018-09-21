@@ -105,7 +105,8 @@ function run() {
 // multithreading currently only works with default config
         master(files);
       } else {
-        issues = Runner.run(loadFiles(files), config);
+        let runner = new Runner(config);
+        issues = runner.run(loadFiles(files));
         output = Runner.format(issues, format);
       }
     }
@@ -160,17 +161,4 @@ function master(files: Array<string>): void {
   });
 }
 
-function worker() {
-  process.on("message", function(filename) {
-//    let res =
-    Runner.parse(loadFiles([filename]));
-// todo, return result to master thread
-    process.send([]);
-  });
-}
-
-if (cluster.isMaster) {
-  run();
-} else {
-  worker();
-}
+run();

@@ -18,25 +18,53 @@ import * as ProgressBar from "progress";
 
 export default class Runner {
 
-// todo, create constructor, which can set Config?
+  private conf: Config;
 
-  public static run(files: Array<File>, conf?: Config): Array<Issue> {
-    conf = conf ? conf : Config.getDefault();
+  public static version(): string {
+    // magic, see build script "version.sh"
+    return "{{ VERSION }}";
+  }
 
-    let parsed = this.parse(files, conf);
+  public static downport(files: Array<ParsedFile>): Array<File> {
+    return Downport.run(files);
+  }
+
+  public static types(file: ParsedFile) {
+    return Types.Analyze.run(file);
+  }
+
+  public static format(issues: Array<Issue>, format?: string): string {
+    // todo, this can be done more generic
+    // todo, move this somewhere else, this is output
+    switch (format) {
+      case "total":
+        return Formatters.Total.output(issues);
+      case "json":
+        return Formatters.Json.output(issues);
+      case "code":
+        return Formatters.Code.output(issues);
+      default:
+        return Formatters.Standard.output(issues);
+    }
+  }
+
+  constructor(conf?: Config) {
+    this.conf = conf ? conf : Config.getDefault();
+  }
+
+  public run(files: Array<File>): Array<Issue> {
+    let parsed = this.parse(files);
 
     parsed = this.fixMacros(parsed);
 
-    return this.issues(parsed, conf);
+    return this.issues(parsed);
   }
 
-  public static parse(files: Array<File>, conf?: Config): Array<ParsedFile> {
+  public parse(files: Array<File>): Array<ParsedFile> {
     let ret: Array<ParsedFile> = [];
 
-    conf = conf ? conf : Config.getDefault();
-
     let bar = undefined;
-    if (conf.getShowProgress()) {
+    if (this.conf.getShowProgress()) {
       bar = new ProgressBar(":percent - Lexing and parsing - :filename",
                             {total: files.length});
     }
@@ -49,7 +77,7 @@ export default class Runner {
         }
 
         let tokens = Lexer.run(f);
-        let statements = Parser.run(tokens, conf.getVersion());
+        let statements = Parser.run(tokens, this.conf.getVersion());
         let root = Nesting.run(statements);
 
         ret.push(new ParsedFile(f, tokens, statements, root));
@@ -59,7 +87,7 @@ export default class Runner {
     return ret;
   }
 
-  public static fixMacros(files: Array<ParsedFile>): Array<ParsedFile> {
+  public fixMacros(files: Array<ParsedFile>): Array<ParsedFile> {
 // todo: copies all statements? (memory)
 
     let reg = new Registry();
@@ -88,13 +116,11 @@ export default class Runner {
     return files;
   }
 
-  public static issues(files: Array<ParsedFile>, conf?: Config): Array<Issue> {
+  public issues(files: Array<ParsedFile>): Array<Issue> {
     let issues: Array<Issue> = [];
 
-    conf = conf ? conf : Config.getDefault();
-
     let bar = undefined;
-    if (conf.getShowProgress()) {
+    if (this.conf.getShowProgress()) {
       bar = new ProgressBar(":percent - Finding Issues - :filename",
                             {total: files.length});
     }
@@ -108,8 +134,8 @@ export default class Runner {
       for (let key in Rules) {
         if (typeof Rules[key] === "function") {
           let rule: Rules.IRule = new Rules[key]();
-          if (rule.getKey && conf.readByKey(rule.getKey(), "enabled") === true) {
-            rule.setConfig(conf.readByRule(rule.getKey()));
+          if (rule.getKey && this.conf.readByKey(rule.getKey(), "enabled") === true) {
+            rule.setConfig(this.conf.readByRule(rule.getKey()));
             issues = issues.concat(rule.run(file));
           }
         }
@@ -119,42 +145,15 @@ export default class Runner {
     return issues;
   }
 
-  public static version(): string {
-// magic, see build script "version.sh"
-    return "{{ VERSION }}";
-  }
-
-  public static downport(files: Array<ParsedFile>): Array<File> {
-    return Downport.run(files);
-  }
-
-  public static types(file: ParsedFile) {
-    return Types.Analyze.run(file);
-  }
-
-  public static format(issues: Array<Issue>, format?: string): string {
-// todo, this can be done more generic
-    switch (format) {
-      case "total":
-        return Formatters.Total.output(issues);
-      case "json":
-        return Formatters.Json.output(issues);
-      case "code":
-        return Formatters.Code.output(issues);
-      default:
-        return Formatters.Standard.output(issues);
-    }
-  }
-
-  private static skip(file: File): boolean {
-// ignore global exception classes
+  private skip(file: File): boolean {
+// ignore global exception classes, todo?
     if (/zcx_.*\.clas\.abap$/.test(file.getFilename())) {
       return true;
     }
     return false;
   }
 
-  private static tokensToNodes(tokens: Array<Tokens.Token>): Array<TokenNode> {
+  private tokensToNodes(tokens: Array<Tokens.Token>): Array<TokenNode> {
     let ret: Array<TokenNode> = [];
 
     tokens.forEach((t) => {ret.push(new TokenNode("Unknown", t)); });

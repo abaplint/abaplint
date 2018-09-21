@@ -1,9 +1,15 @@
+import {Object} from "./objects";
 
 export default class Registry {
 
   private macros: Array<string> = [];
+  private objects: Array<Object> = [];
 
-// todo, handle scoping
+  public addObject(obj: Object) {
+    this.objects.push(obj);
+  }
+
+// todo, handle scoping for macros
   public addMacro(name: string) {
     if (this.isMacro(name)) {
       return;
