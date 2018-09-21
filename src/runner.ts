@@ -9,11 +9,9 @@ import Nesting from "./nesting";
 import Registry from "./registry";
 import {TokenNode} from "./node";
 import {Version} from "./version";
-import {Downport} from "./downport";
 import {Define} from "./statements";
 import {MacroCall, Unknown, Statement} from "./statements/statement";
 import * as Types from "./types";
-import * as Formatters from "./formatters/";
 import * as ProgressBar from "progress";
 
 export default class Runner {
@@ -25,27 +23,8 @@ export default class Runner {
     return "{{ VERSION }}";
   }
 
-  public static downport(files: Array<ParsedFile>): Array<File> {
-    return Downport.run(files);
-  }
-
   public static types(file: ParsedFile) {
     return Types.Analyze.run(file);
-  }
-
-  public static format(issues: Array<Issue>, format?: string): string {
-    // todo, this can be done more generic
-    // todo, move this somewhere else, this is output
-    switch (format) {
-      case "total":
-        return Formatters.Total.output(issues);
-      case "json":
-        return Formatters.Json.output(issues);
-      case "code":
-        return Formatters.Code.output(issues);
-      default:
-        return Formatters.Standard.output(issues);
-    }
   }
 
   constructor(conf?: Config) {

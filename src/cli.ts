@@ -1,15 +1,13 @@
 import Runner from "./runner";
-import {File, ParsedFile} from "./file";
+import {File} from "./file";
 import {Issue} from "./issue";
 import Config from "./config";
 import {textToVersion} from "./version";
-import * as ProgressBar from "progress";
+import {Formatter} from "./formatters";
 import * as fs from "fs";
 import * as path from "path";
 import * as glob from "glob";
 import * as minimist from "minimist";
-import * as cluster from "cluster";
-import * as os from "os";
 
 function searchConfig(filename: string): Config {
   let json = searchUp(path.dirname(process.cwd() + path.sep + filename) + path.sep);
@@ -44,7 +42,6 @@ function displayHelp(): string {
   output = output + "  -v, --version    current version\n";
   output = output + "  -a [abap]        specify ABAP version\n";
   output = output + "  -s               show progress\n";
-  output = output + "  -m               enable multithreading\n";
   output = output + "  -d, --default    show default configuration\n";
   return output;
 }
@@ -101,14 +98,9 @@ function run() {
       if (argv["s"]) {
         config.setShowProgress(true);
       }
-      if (argv["m"] && os.cpus().length > 1) {
-// multithreading currently only works with default config
-        master(files);
-      } else {
-        let runner = new Runner(config);
-        issues = runner.run(loadFiles(files));
-        output = Runner.format(issues, format);
-      }
+      let runner = new Runner(config);
+      issues = runner.run(loadFiles(files));
+      output = Formatter.format(issues, format);
     }
   }
 
@@ -121,42 +113,6 @@ function sendOutput(output, issues) {
   process.stdout.write(output, () => {
     if (issues.length > 0) {
       process.exit(1);
-    }
-  });
-}
-
-function master(files: Array<string>): void {
-  let parsed: Array<ParsedFile> = [];
-  let count = 0;
-
-  let bar = new ProgressBar(":percent - Lexing and parsing",
-                            {total: files.length});
-
-  for (let i = 0; i < os.cpus().length; i++) {
-    if (files.length > 0) {
-      cluster.fork().send(files.pop());
-      count = count + 1;
-      bar.tick();
-      bar.render();
-    }
-  }
-
-  cluster.on("message", function(work, msg) {
-//    console.log("master, message received from worker");
-    parsed = parsed.concat(msg);
-    if (files.length > 0) {
-      work.send(files.pop());
-      bar.tick();
-      bar.render();
-    } else {
-      work.kill();
-    }
-  });
-
-  cluster.on("exit", function() {
-    count = count - 1;
-    if (count === 0) {
-      console.log("all workers exited");
     }
   });
 }
