@@ -1,7 +1,7 @@
 import {IRule} from "./rule";
-import {ParsedFile} from "../file";
 import Position from "../position";
 import {Issue} from "../issue";
+import {ABAPObject} from "../objects";
 
 export class Counter {
   public exporting: boolean = false;
@@ -25,34 +25,41 @@ export class Exporting implements IRule {
     return "EXPORTING can be omitted";
   }
 
-  public run(file: ParsedFile) {
+  public run(obj) {
+    if (!(obj instanceof ABAPObject)) {
+      return [];
+    }
+
+    let abap = obj as ABAPObject;
     let issues: Array<Issue> = [];
 
-    for (let statement of file.getStatements()) {
-      let current = new Counter();
-      let stack: Array<Counter> = [];
+    for (let file of abap.getParsed()) {
+      for (let statement of file.getStatements()) {
+        let current = new Counter();
+        let stack: Array<Counter> = [];
 
-      for (let token of statement.getTokens()) {
-        if (this.lastChar(token.getStr()) === "(") {
-          stack.push(current);
-          current = new Counter();
-        } else if (this.firstChar(token.getStr()) === ")") {
-          if (current.exporting === true && current.other === false) {
-            let issue = new Issue(this, file, current.pos);
-            issues.push(issue);
-          }
-          current = stack.pop();
-          if (current === undefined) {
+        for (let token of statement.getTokens()) {
+          if (this.lastChar(token.getStr()) === "(") {
+            stack.push(current);
             current = new Counter();
+          } else if (this.firstChar(token.getStr()) === ")") {
+            if (current.exporting === true && current.other === false) {
+              let issue = new Issue(this, file, current.pos);
+              issues.push(issue);
+            }
+            current = stack.pop();
+            if (current === undefined) {
+              current = new Counter();
+            }
+          } else if (token.getStr() === "EXPORTING") {
+            current.exporting = true;
+            current.pos = token.getPos();
+          } else if (token.getStr() === "IMPORTING"
+              || token.getStr() === "RECEIVING"
+              || token.getStr() === "EXCEPTIONS"
+              || token.getStr() === "CHANGING") {
+            current.other = true;
           }
-        } else if (token.getStr() === "EXPORTING") {
-          current.exporting = true;
-          current.pos = token.getPos();
-        } else if (token.getStr() === "IMPORTING"
-            || token.getStr() === "RECEIVING"
-            || token.getStr() === "EXCEPTIONS"
-            || token.getStr() === "CHANGING") {
-          current.other = true;
         }
       }
     }

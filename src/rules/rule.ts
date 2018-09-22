@@ -1,4 +1,4 @@
-import {ParsedFile} from "../file";
+import {Object} from "../objects/";
 import {Issue} from "../issue";
 
 export interface IRule {
@@ -6,5 +6,5 @@ export interface IRule {
   getDescription(): string;
   getConfig();
   setConfig(conf);
-  run(file: ParsedFile): Array<Issue>;
+  run(obj: Object): Array<Issue>;
 }

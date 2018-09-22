@@ -1,12 +1,8 @@
-import * as Tokens from "./abap/tokens/";
 import {File, ParsedFile} from "./file";
 import Config from "./config";
 import * as Rules from "./rules/";
 import {Issue} from "./issue";
 import Registry from "./registry";
-import {TokenNode} from "./abap/node";
-import {Define} from "./abap/statements";
-import {MacroCall, Unknown, Statement} from "./abap/statements/statement";
 import * as ProgressBar from "progress";
 import {GenericError} from "./rules/";
 
@@ -14,8 +10,8 @@ export default class Runner {
 
   private conf: Config;
   private reg: Registry;
-  private files: Array<File>;
-  private parsed: Array<ParsedFile>;
+  private files: Array<File>; // todo, redundant? in Registry?
+  private parsed: boolean;
   private generic: Array<Issue>;
 
   public static version(): string {
@@ -27,16 +23,53 @@ export default class Runner {
     this.conf = conf ? conf : Config.getDefault();
     this.reg = new Registry();
     this.files = files;
-    this.parsed = [];
+    this.parsed = false;
     this.generic = [];
   }
 
   public parse(): Array<ParsedFile> {
-    if (this.parsed.length > 0) {
-      return this.parsed;
+// todo, consider if this method should return anything, use reg instead for fetching stuff?
+// return reg?
+    if (this.parsed === true) {
+      return this.reg.getParsedFiles();
+    }
+    this.parseInternal();
+    return this.reg.getParsedFiles();
+  }
+
+  public findIssues(): Array<Issue> {
+    if (this.parsed === false) {
+      this.parseInternal();
     }
 
-    this.addToRegistry();
+    let issues: Array<Issue> = [];
+    issues = this.generic.slice(0);
+
+    let objects = this.reg.getObjects();
+
+    let bar = new Progress(this.conf,
+                           ":percent - Finding Issues - :object",
+                           {total: objects.length});
+
+    for (let obj of objects) {
+      bar.tick({object: obj.getType() + " " + obj.getName()});
+
+      for (let key in Rules) {
+        if (typeof Rules[key] === "function") {
+          let rule: Rules.IRule = new Rules[key]();
+          if (rule.getKey && this.conf.readByKey(rule.getKey(), "enabled") === true) {
+            rule.setConfig(this.conf.readByRule(rule.getKey()));
+            issues = issues.concat(rule.run(obj));
+          }
+        }
+      }
+    }
+
+    return issues;
+  }
+
+  private parseInternal(): void {
+    this.addObjectsToRegistry();
 
     let objects = this.reg.getABAPObjects();
 
@@ -46,72 +79,20 @@ export default class Runner {
 
     objects.forEach((obj) => {
       bar.tick({object: obj.getType() + " " + obj.getName()});
-      this.parsed = this.parsed.concat(obj.parse(this.conf.getVersion()));
+      obj.parseFirstPass(this.conf.getVersion(), this.reg);
     });
 
-    this.parsed = this.fixMacros(this.parsed);
-
-    return this.parsed;
-  }
-
-  public findIssues(): Array<Issue> {
-    if (this.parsed.length === 0) {
-      this.parse();
-    }
-
-    let issues: Array<Issue> = [];
-    issues = this.generic.slice(0);
-
-    let bar = new Progress(this.conf,
-                           ":percent - Finding Issues - :filename",
-                           {total: this.parsed.length});
-
-    for (let file of this.parsed) {
-      bar.tick({filename: file.getFilename()});
-
-      for (let key in Rules) {
-        if (typeof Rules[key] === "function") {
-          let rule: Rules.IRule = new Rules[key]();
-          if (rule.getKey && this.conf.readByKey(rule.getKey(), "enabled") === true) {
-            rule.setConfig(this.conf.readByRule(rule.getKey()));
-            issues = issues.concat(rule.run(file));
-          }
-        }
-      }
-    }
-
-    return issues;
-  }
-
-  private fixMacros(files: Array<ParsedFile>): Array<ParsedFile> {
-    files.forEach((f) => {
-      f.getStatements().forEach((s) => {
-        if (s instanceof Define) {
-          this.reg.addMacro(s.getTokens()[1].getStr());
-        }
-      });
+    objects.forEach((obj) => {
+      obj.parseSecondPass(this.reg);
     });
 
-    files.forEach((f) => {
-      let statements: Array<Statement> = [];
-      f.getStatements().forEach((s) => {
-        if (s instanceof Unknown && this.reg.isMacro(s.getTokens()[0].getStr())) {
-          statements.push(new MacroCall(this.tokensToNodes(s.getTokens())));
-        } else {
-          statements.push(s);
-        }
-      });
-      f.setStatements(statements);
-    });
-
-    return files;
+    this.parsed = true;
   }
 
-  private addToRegistry() {
+  private addObjectsToRegistry(): void {
     this.files.forEach((f) => {
       try {
-        let obj = this.reg.findOrCreate(f.getObjectName(), f.getObjectType());
-        obj.addFile(f);
+        this.reg.findOrCreate(f.getObjectName(), f.getObjectType()).addFile(f);
       } catch (error) {
 // todo, this does not respect the configuration
         this.generic.push(new Issue(new GenericError(error), f));
@@ -119,11 +100,6 @@ export default class Runner {
     });
   }
 
-  private tokensToNodes(tokens: Array<Tokens.Token>): Array<TokenNode> {
-    let ret: Array<TokenNode> = [];
-    tokens.forEach((t) => {ret.push(new TokenNode("Unknown", t)); });
-    return ret;
-  }
 }
 
 class Progress {

@@ -1,5 +1,4 @@
 import {IRule} from "./rule";
-import {ParsedFile} from "../file";
 
 export class GenericErrorConf {
   public enabled: boolean = true;
@@ -30,7 +29,7 @@ export class GenericError implements IRule {
     this.conf = conf;
   }
 
-  public run(_file: ParsedFile) {
+  public run(_obj) {
     return [];
   }
 

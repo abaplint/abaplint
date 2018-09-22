@@ -1,7 +1,7 @@
 import {IRule} from "./rule";
-import {ParsedFile} from "../file";
 import {Issue} from "../issue";
 import Position from "../position";
+import {ABAPObject} from "../objects";
 
 export class LineOnlyPuncConf {
   public enabled: boolean = true;
@@ -27,16 +27,25 @@ export class LineOnlyPunc implements IRule {
     this.conf = conf;
   }
 
-  public run(file: ParsedFile) {
+  public run(obj) {
+    if (!(obj instanceof ABAPObject)) {
+      return [];
+    }
+
+    let abap = obj as ABAPObject;
     let issues: Array<Issue> = [];
-    let rows = file.getRawRows();
-    for (let i = 0; i < rows.length; i++) {
-      let trim = rows[i].trim();
-      if (trim === "." || trim === ").") {
-        let issue = new Issue(this, file, new Position(i + 1, 0));
-        issues.push(issue);
+
+    for (let file of abap.getParsed()) {
+      let rows = file.getRawRows();
+      for (let i = 0; i < rows.length; i++) {
+        let trim = rows[i].trim();
+        if (trim === "." || trim === ").") {
+          let issue = new Issue(this, file, new Position(i + 1, 0));
+          issues.push(issue);
+        }
       }
     }
+
     return issues;
   }
 

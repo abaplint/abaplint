@@ -1,7 +1,7 @@
 import {IRule} from "./rule";
-import {ParsedFile} from "../file";
 import {Issue} from "../issue";
 import Position from "../position";
+import {ABAPObject} from "../objects";
 
 export class SevenBitAsciiConf {
   public enabled: boolean = true;
@@ -26,14 +26,22 @@ export class SevenBitAscii implements IRule {
     this.conf = conf;
   }
 
-  public run(file: ParsedFile) {
-    let rows = file.getRawRows();
+  public run(obj) {
+    if (!(obj instanceof ABAPObject)) {
+      return [];
+    }
+
+    let abap = obj as ABAPObject;
     let output: Array<Issue> = [];
 
-    for (let i = 0; i < rows.length; i++) {
-      if (/^[\u0000-\u007f]*$/.test(rows[i]) === false) {
-        let issue = new Issue(this, file, new Position(i + 1, 1));
-        output.push(issue);
+    for (let file of abap.getParsed()) {
+      let rows = file.getRawRows();
+
+      for (let i = 0; i < rows.length; i++) {
+        if (/^[\u0000-\u007f]*$/.test(rows[i]) === false) {
+          let issue = new Issue(this, file, new Position(i + 1, 1));
+          output.push(issue);
+        }
       }
     }
 

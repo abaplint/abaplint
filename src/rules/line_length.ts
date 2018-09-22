@@ -1,7 +1,7 @@
 import {IRule} from "./rule";
-import {ParsedFile} from "../file";
 import {Issue} from "../issue";
 import Position from "../position";
+import {ABAPObject} from "../objects";
 
 export class LineLengthConf {
   public enabled: boolean = true;
@@ -28,13 +28,21 @@ export class LineLength implements IRule {
     this.conf = conf;
   }
 
-  public run(file: ParsedFile) {
+  public run(obj) {
+    if (!(obj instanceof ABAPObject)) {
+      return [];
+    }
+
+    let abap = obj as ABAPObject;
     let issues: Array<Issue> = [];
-    let lines = file.getRaw().split("\n");
-    for (let line = 0; line < lines.length; line++) {
-      if (lines[line].length > this.conf.length) {
-        let issue = new Issue(this, file, new Position(line + 1, 1));
-        issues.push(issue);
+
+    for (let file of abap.getParsed()) {
+      let lines = file.getRaw().split("\n");
+      for (let line = 0; line < lines.length; line++) {
+        if (lines[line].length > this.conf.length) {
+          let issue = new Issue(this, file, new Position(line + 1, 1));
+          issues.push(issue);
+        }
       }
     }
 

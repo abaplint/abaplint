@@ -1,7 +1,7 @@
 import {IRule} from "./rule";
-import {ParsedFile} from "../file";
 import {Issue} from "../issue";
 import Position from "../position";
+import {ABAPObject} from "../objects";
 
 export class WhitespaceEndConf {
   public enabled: boolean = true;
@@ -27,14 +27,22 @@ export class WhitespaceEnd implements IRule {
     this.conf = conf;
   }
 
-  public run(file: ParsedFile) {
-    let issues: Array<Issue> = [];
-    let rows = file.getRawRows();
+  public run(obj) {
+    if (!(obj instanceof ABAPObject)) {
+      return [];
+    }
 
-    for (let i = 0; i < rows.length; i++) {
-      if (/.* $/.test(rows[i]) === true) {
-        let issue = new Issue(this, file, new Position(i + 1, 1));
-        issues.push(issue);
+    let abap = obj as ABAPObject;
+    let issues: Array<Issue> = [];
+
+    for (let file of abap.getParsed()) {
+      let rows = file.getRawRows();
+
+      for (let i = 0; i < rows.length; i++) {
+        if (/.* $/.test(rows[i]) === true) {
+          let issue = new Issue(this, file, new Position(i + 1, 1));
+          issues.push(issue);
+        }
       }
     }
 

@@ -1,7 +1,7 @@
 import {IRule} from "./rule";
-import {ParsedFile} from "../file";
 import {Issue} from "../issue";
 import Position from "../position";
+import {ABAPObject} from "../objects";
 
 export class SequentialBlankConf {
   public enabled: boolean = true;
@@ -28,21 +28,29 @@ export class SequentialBlank implements IRule {
     this.conf = conf;
   }
 
-  public run(file: ParsedFile) {
+  public run(obj) {
+    if (!(obj instanceof ABAPObject)) {
+      return [];
+    }
+
+    let abap = obj as ABAPObject;
     let issues: Array<Issue> = [];
-    let rows = file.getRawRows();
-    let blanks = 0;
 
-    for (let i = 0; i < rows.length; i++) {
-      if (rows[i] === "") {
-        blanks++;
-      } else {
-        blanks = 0;
-      }
+    for (let file of abap.getParsed()) {
+      let rows = file.getRawRows();
+      let blanks = 0;
 
-      if (blanks === this.conf.lines) {
-        let issue = new Issue(this, file, new Position(i + 1, 1));
-        issues.push(issue);
+      for (let i = 0; i < rows.length; i++) {
+        if (rows[i] === "") {
+          blanks++;
+        } else {
+          blanks = 0;
+        }
+
+        if (blanks === this.conf.lines) {
+          let issue = new Issue(this, file, new Position(i + 1, 1));
+          issues.push(issue);
+        }
       }
     }
 

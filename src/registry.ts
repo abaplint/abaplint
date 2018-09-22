@@ -1,5 +1,6 @@
 import * as Objects from "./objects";
 import {ABAPObject} from "./objects";
+import {ParsedFile} from "./file";
 
 export default class Registry {
 
@@ -12,6 +13,12 @@ export default class Registry {
 
   public getABAPObjects(): Array<ABAPObject> {
     return this.objects.filter((obj) => { return obj instanceof ABAPObject; }) as Array<ABAPObject>;
+  }
+
+  public getParsedFiles(): Array<ParsedFile> {
+    let ret: Array<ParsedFile> = [];
+    this.getABAPObjects().forEach((a) => {ret = ret.concat(a.getParsed()); });
+    return ret;
   }
 
   public findOrCreate(name: string, type: string): Objects.Object {

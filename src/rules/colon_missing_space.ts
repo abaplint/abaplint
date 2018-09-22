@@ -1,6 +1,6 @@
 import {IRule} from "./rule";
-import {ParsedFile} from "../file";
 import {Issue} from "../issue";
+import {ABAPObject} from "../objects";
 
 export class ColonMissingSpaceConf {
   public enabled: boolean = true;
@@ -26,18 +26,26 @@ export class ColonMissingSpace implements IRule {
     this.conf = conf;
   }
 
-  public run(file: ParsedFile) {
-    let tokens = file.getTokens();
+  public run(obj) {
+    if (!(obj instanceof ABAPObject)) {
+      return [];
+    }
+
+    let abap = obj as ABAPObject;
     let issues: Array<Issue> = [];
 
-    for (let i = 0; i < tokens.length; i++) {
-      let token = tokens[i];
-      if (token.getStr() === ":"
-          && tokens[i + 1] !== undefined
-          && tokens[i + 1].getRow() === token.getRow()
-          && tokens[i + 1].getCol() === token.getCol() + 1) {
-        let issue = new Issue(this, file, token.getPos());
-        issues.push(issue);
+    for (let file of abap.getParsed()) {
+      let tokens = file.getTokens();
+
+      for (let i = 0; i < tokens.length; i++) {
+        let token = tokens[i];
+        if (token.getStr() === ":"
+            && tokens[i + 1] !== undefined
+            && tokens[i + 1].getRow() === token.getRow()
+            && tokens[i + 1].getCol() === token.getCol() + 1) {
+          let issue = new Issue(this, file, token.getPos());
+          issues.push(issue);
+        }
       }
     }
 
