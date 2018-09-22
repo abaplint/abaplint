@@ -1,5 +1,7 @@
-export * from "./class";
 export * from "./object";
+export * from "./abap_object";
+
+export * from "./class";
 export * from "./package";
 export * from "./message_class";
 export * from "./interface";

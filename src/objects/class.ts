@@ -1,6 +1,6 @@
-import {Object} from "./object";
+import {ABAPObject} from "./";
 
-export class Class extends Object {
+export class Class extends ABAPObject {
 
   public getType(): string {
     return "CLAS";

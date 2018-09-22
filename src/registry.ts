@@ -1,12 +1,17 @@
 import * as Objects from "./objects";
+import {ABAPObject} from "./objects";
 
 export default class Registry {
 
   private macros: Array<string> = [];
   private objects: Array<Objects.Object> = [];
 
-  public add(obj: Objects.Object) {
-    this.objects.push(obj);
+  public getObjects(): Array<Objects.Object> {
+    return this.objects;
+  }
+
+  public getABAPObjects(): Array<ABAPObject> {
+    return this.objects.filter((obj) => { return obj instanceof ABAPObject; }) as Array<ABAPObject>;
   }
 
   public findOrCreate(name: string, type: string): Objects.Object {

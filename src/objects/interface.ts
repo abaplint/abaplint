@@ -1,6 +1,6 @@
-import {Object} from "./object";
+import {ABAPObject} from "./";
 
-export class Interface extends Object {
+export class Interface extends ABAPObject {
 
   public getType(): string {
     return "INTF";

@@ -1,13 +1,13 @@
 import {File} from "../file";
 
 export abstract class Object {
+  protected files: File[];
   private name: string;
   private package: string;
-  private files: File[];
 
   public abstract getType(): string;
 
-  constructor(name: string, devPackage: string) {
+  public constructor(name: string, devPackage: string) {
     this.name = name;
     this.package = devPackage;
     this.files = [];

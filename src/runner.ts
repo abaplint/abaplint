@@ -2,13 +2,9 @@ import * as Tokens from "./tokens/";
 import {File, ParsedFile} from "./file";
 import Config from "./config";
 import * as Rules from "./rules/";
-import Lexer from "./lexer";
-import Parser from "./parser";
 import {Issue} from "./issue";
-import Nesting from "./nesting";
 import Registry from "./registry";
 import {TokenNode} from "./node";
-// import {Version} from "./version";
 import {Define} from "./statements";
 import {MacroCall, Unknown, Statement} from "./statements/statement";
 import * as ProgressBar from "progress";
@@ -42,20 +38,15 @@ export default class Runner {
 
     this.addToRegistry();
 
+    let objects = this.reg.getABAPObjects();
+
     let bar = new Progress(this.conf,
-                           ":percent - Lexing and parsing - :filename",
-                           {total: this.files.length});
+                           ":percent - Lexing and parsing - :object",
+                           {total: objects.length});
 
-    this.files.forEach((f) => {
-      bar.tick({filename: f.getFilename()});
-
-      if (!this.skip(f.getFilename())) {
-        let tokens = Lexer.run(f);
-        let statements = Parser.run(tokens, this.conf.getVersion());
-        let root = Nesting.run(statements);
-
-        this.parsed.push(new ParsedFile(f, tokens, statements, root));
-      }
+    objects.forEach((obj) => {
+      bar.tick({object: obj.getType() + " " + obj.getName()});
+      this.parsed = this.parsed.concat(obj.parse(this.conf.getVersion()));
     });
 
     this.parsed = this.fixMacros(this.parsed);
@@ -126,19 +117,6 @@ export default class Runner {
         this.generic.push(new Issue(new GenericError(error), f));
       }
     });
-  }
-
-  private skip(filename: string): boolean {
-// ignore global exception classes, todo?
-// the auto generated classes are crap, move logic to skip into the rules intead
-    if (/zcx_.*\.clas\.abap$/.test(filename)) {
-      return true;
-    }
-
-    if (!/.*\.abap$/.test(filename)) {
-      return true;
-    }
-    return false;
   }
 
   private tokensToNodes(tokens: Array<Tokens.Token>): Array<TokenNode> {
