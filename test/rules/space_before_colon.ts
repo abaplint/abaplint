@@ -1,5 +1,5 @@
 import {SpaceBeforeColon} from "../../src/rules/space_before_colon";
-import {testRule} from "../utils";
+import {testRule} from "./utils";
 
 let tests = [
   {abap: "WRITE : 'foo'.", cnt: 1},

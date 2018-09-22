@@ -1,5 +1,5 @@
 import {FunctionalWriting} from "../../src/rules/functional_writing";
-import {testRule} from "../utils";
+import {testRule} from "./utils";
 
 let tests = [
   {abap: "CALL METHOD zcl_class=>method( ).", cnt: 1},

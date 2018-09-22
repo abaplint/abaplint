@@ -1,5 +1,5 @@
 import {MaxOneStatement} from "../../src/rules/max_one_statement";
-import {testRule} from "../utils";
+import {testRule} from "./utils";
 
 let tests = [
   {abap: "WRITE 'hello'.  WRITE 'world'.  WRITE 'world'.", cnt: 1},

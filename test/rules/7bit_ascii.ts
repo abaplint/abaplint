@@ -1,5 +1,5 @@
 import {SevenBitAscii} from "../../src/rules/7bit_ascii";
-import {testRule} from "../utils";
+import {testRule} from "./utils";
 
 let tests = [
   {abap: "WRITE: / 'æøå'.", cnt: 1},

@@ -1,13 +1,11 @@
 import {File} from "../src/file";
 import Config from "../src/config";
 import Runner from "../src/runner";
-import * as chai from "chai";
+import {expect} from "chai";
 import {Version, versionToText} from "../src/version";
 import {Unknown} from "../src/abap/statements/statement";
 
 // utils for testing
-
-let expect = chai.expect;
 
 function run(abap: string, text: string, type, version = Version.v750) {
   let config = Config.getDefault().setVersion(version);
@@ -45,21 +43,6 @@ export function statementVersion(tests, description: string, type) {
           "\"" + test.abap + "\" should not work in lower version(" + versionToText(lower) + ")",
           Unknown,
           lower);
-    });
-  });
-}
-
-export function testRule(tests, description: string, rule: new () => any) {
-  describe(description, function() {
-// note that timeout() only works inside function()
-    this.timeout(200); // tslint:disable-line
-    tests.forEach((test) => {
-      let issues = new Runner([new File("cl_foo.clas.abap", test.abap)]).findIssues();
-
-      issues = issues.filter((i) => { return i.getRule() instanceof rule; });
-      it("\"" + test.abap + "\" should have " + test.cnt + " issue(s)", () => {
-        expect(issues.length).to.equals(test.cnt);
-      });
     });
   });
 }

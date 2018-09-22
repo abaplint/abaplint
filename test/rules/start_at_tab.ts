@@ -1,5 +1,5 @@
 import {StartAtTab} from "../../src/rules/start_at_tab";
-import {testRule} from "../utils";
+import {testRule} from "./utils";
 
 let tests = [
   {abap: " WRITE 'foobar'.", cnt: 1},

@@ -1,5 +1,5 @@
 import {Indentation} from "../../src/rules/indentation";
-import {testRule} from "../utils";
+import {testRule} from "./utils";
 
 let tests = [
   {abap: "add 2 to lv_foo.", cnt: 0},

@@ -1,7 +1,7 @@
 import {File} from "../file";
 
 export abstract class Object {
-  protected files: File[];
+  protected files: Array<File>;
   private name: string;
   private package: string;
 
@@ -23,6 +23,10 @@ export abstract class Object {
 
   public addFile(file: File) {
     this.files.push(file);
+  }
+
+  public getFiles(): Array<File> {
+    return this.files;
   }
 
 }

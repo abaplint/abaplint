@@ -10,10 +10,18 @@ export class Issue {
 
   public constructor(rule: IRule, file: File, start?: Position, end?: Position) {
     this.rule = rule;
-    this.start = start ? start : new Position(1, 1);
-    if (!end) {
-      this.end = new Position(start.getRow(), file.getRawRows()[start.getRow() - 1].length);
+
+    this.start = start;
+    if (!this.start) {
+      this.start = new Position(1, 1);
     }
+
+    if (!end) {
+      this.end = new Position(
+        this.start.getRow(),
+        file.getRawRows()[this.start.getRow() - 1].length);
+    }
+
     this.file = file;
   }
 

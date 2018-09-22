@@ -1,5 +1,5 @@
 import {EmptyStatement} from "../../src/rules/empty_statement";
-import {testRule} from "../utils";
+import {testRule} from "./utils";
 
 let tests = [
   {abap: "types: foo type c.  .", cnt: 1},

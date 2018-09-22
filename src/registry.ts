@@ -72,6 +72,18 @@ export default class Registry {
       case "W3MI":
         add = new Objects.WebMIME(name, "todo");
         break;
+      case "DCLS":
+        add = new Objects.DataControl(name, "todo");
+        break;
+      case "DDLS":
+        add = new Objects.DataDefinition(name, "todo");
+        break;
+      case "XSLT":
+        add = new Objects.Transformation(name, "todo");
+        break;
+      case "ENQU":
+        add = new Objects.LockObject(name, "todo");
+        break;
       default:
         throw new Error("Unknown object type: " + type);
     }

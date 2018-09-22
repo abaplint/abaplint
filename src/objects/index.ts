@@ -15,3 +15,7 @@ export * from "./mime_object";
 export * from "./icf_service";
 export * from "./transaction";
 export * from "./web_mime";
+export * from "./transformation";
+export * from "./lock_object";
+export * from "./data_control";
+export * from "./data_definition";

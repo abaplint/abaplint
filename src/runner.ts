@@ -29,7 +29,7 @@ export default class Runner {
 
   public parse(): Array<ParsedFile> {
 // todo, consider if this method should return anything, use reg instead for fetching stuff?
-// return reg?
+// return reg? only called from "/test"
     if (this.parsed === true) {
       return this.reg.getParsedFiles();
     }
@@ -59,7 +59,7 @@ export default class Runner {
           let rule: Rules.IRule = new Rules[key]();
           if (rule.getKey && this.conf.readByKey(rule.getKey(), "enabled") === true) {
             rule.setConfig(this.conf.readByRule(rule.getKey()));
-            issues = issues.concat(rule.run(obj));
+            issues = issues.concat(rule.run(obj, this.reg, this.conf.getVersion()));
           }
         }
       }
