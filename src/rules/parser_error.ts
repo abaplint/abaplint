@@ -36,7 +36,7 @@ export class ParserError implements IRule {
       if (statement instanceof Unknown
             && pos.getRow() !== statement.getStart().getRow()) {
         pos = statement.getStart();
-        let issue = new Issue(this, pos, file);
+        let issue = new Issue(this, file, pos);
         issues.push(issue);
       }
     }

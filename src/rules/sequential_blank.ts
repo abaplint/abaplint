@@ -41,7 +41,7 @@ export class SequentialBlank implements IRule {
       }
 
       if (blanks === this.conf.lines) {
-        let issue = new Issue(this, new Position(i + 1, 1), file);
+        let issue = new Issue(this, file, new Position(i + 1, 1));
         issues.push(issue);
       }
     }

@@ -8,9 +8,9 @@ export class Issue {
   private end: Position;
   private file: File;
 
-  public constructor(rule: IRule, start: Position, file: File, end?: Position) {
+  public constructor(rule: IRule, file: File, start?: Position, end?: Position) {
     this.rule = rule;
-    this.start = start;
+    this.start = start ? start : new Position(1, 1);
     if (!end) {
       this.end = new Position(start.getRow(), file.getRawRows()[start.getRow() - 1].length);
     }

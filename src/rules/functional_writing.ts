@@ -37,7 +37,7 @@ export class FunctionalWriting implements IRule {
             || this.startsWith(code, "CALL METHOD (")) {
           continue;
         }
-        let issue = new Issue(this, statement.getStart(), file);
+        let issue = new Issue(this, file, statement.getStart());
         issues.push(issue);
       }
     }

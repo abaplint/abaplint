@@ -32,7 +32,7 @@ export class ContainsTab implements IRule {
     let lines = file.getRaw().split("\n");
     for (let line = 0; line < lines.length; line++) {
       if (/\t/.test(lines[line])) {
-        let issue = new Issue(this, new Position(line + 1, 1), file);
+        let issue = new Issue(this, file, new Position(line + 1, 1));
         issues.push(issue);
       }
     }

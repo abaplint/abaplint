@@ -33,7 +33,7 @@ export class EmptyStatement implements IRule {
 
     for (let sta of statements) {
       if (sta instanceof Empty) {
-        let issue = new Issue(this, sta.getStart(), file);
+        let issue = new Issue(this, file, sta.getStart());
         issues.push(issue);
       }
     }

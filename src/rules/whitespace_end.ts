@@ -33,7 +33,7 @@ export class WhitespaceEnd implements IRule {
 
     for (let i = 0; i < rows.length; i++) {
       if (/.* $/.test(rows[i]) === true) {
-        let issue = new Issue(this, new Position(i + 1, 1), file);
+        let issue = new Issue(this, file, new Position(i + 1, 1));
         issues.push(issue);
       }
     }

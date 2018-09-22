@@ -31,7 +31,7 @@ export class Breakpoint implements IRule {
 
     for (let statement of file.getStatements()) {
       if (statement instanceof Statements.Break) {
-        issues.push(new Issue(this, statement.getStart(), file));
+        issues.push(new Issue(this, file, statement.getStart()));
       }
     }
 

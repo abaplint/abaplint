@@ -38,7 +38,7 @@ export class Exporting implements IRule {
           current = new Counter();
         } else if (this.firstChar(token.getStr()) === ")") {
           if (current.exporting === true && current.other === false) {
-            let issue = new Issue(this, current.pos, file);
+            let issue = new Issue(this, file, current.pos);
             issues.push(issue);
           }
           current = stack.pop();

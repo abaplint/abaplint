@@ -12,6 +12,7 @@ import {TokenNode} from "./node";
 import {Define} from "./statements";
 import {MacroCall, Unknown, Statement} from "./statements/statement";
 import * as ProgressBar from "progress";
+import {GenericError} from "./rules/";
 
 export default class Runner {
 
@@ -19,6 +20,7 @@ export default class Runner {
   private reg: Registry;
   private files: Array<File>;
   private parsed: Array<ParsedFile>;
+  private generic: Array<Issue>;
 
   public static version(): string {
     // magic, see build script "version.sh"
@@ -30,6 +32,7 @@ export default class Runner {
     this.reg = new Registry();
     this.files = files;
     this.parsed = [];
+    this.generic = [];
   }
 
   public parse(): Array<ParsedFile> {
@@ -66,6 +69,7 @@ export default class Runner {
     }
 
     let issues: Array<Issue> = [];
+    issues = this.generic.slice(0);
 
     let bar = new Progress(this.conf,
                            ":percent - Finding Issues - :filename",
@@ -114,8 +118,13 @@ export default class Runner {
 
   private addToRegistry() {
     this.files.forEach((f) => {
-      let obj = this.reg.findOrCreate(f.getObjectName(), f.getObjectType());
-      obj.addFile(f);
+      try {
+        let obj = this.reg.findOrCreate(f.getObjectName(), f.getObjectType());
+        obj.addFile(f);
+      } catch (error) {
+// todo, this does not respect the configuration
+        this.generic.push(new Issue(new GenericError(error), f));
+      }
     });
   }
 

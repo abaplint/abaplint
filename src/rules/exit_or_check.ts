@@ -46,7 +46,7 @@ export class ExitOrCheck implements IRule {
       } else if ((statement instanceof Statements.Check
           || statement instanceof Statements.Exit)
           && stack.length === 0) {
-        let issue = new Issue(this, statement.getStart(), file);
+        let issue = new Issue(this, file, statement.getStart());
         issues.push(issue);
       }
     }

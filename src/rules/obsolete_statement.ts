@@ -42,7 +42,7 @@ export class ObsoleteStatement implements IRule {
           && sta.getTokens()[1].getStr() !== "-"
           && sta.getTokens()[1].getStr() !== "EXACT" )
           || sta instanceof Statements.Divide) {
-        let issue = new Issue(this, sta.getStart(), file);
+        let issue = new Issue(this, file, sta.getStart());
         issues.push(issue);
       }
     }

@@ -19,3 +19,4 @@ export * from "./sequential_blank";
 export * from "./definitions_top";
 export * from "./indentation";
 export * from "./breakpoint";
+export * from "./generic";

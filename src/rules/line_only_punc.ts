@@ -33,7 +33,7 @@ export class LineOnlyPunc implements IRule {
     for (let i = 0; i < rows.length; i++) {
       let trim = rows[i].trim();
       if (trim === "." || trim === ").") {
-        let issue = new Issue(this, new Position(i + 1, 0), file);
+        let issue = new Issue(this, file, new Position(i + 1, 0));
         issues.push(issue);
       }
     }

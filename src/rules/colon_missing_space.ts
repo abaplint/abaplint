@@ -36,7 +36,7 @@ export class ColonMissingSpace implements IRule {
           && tokens[i + 1] !== undefined
           && tokens[i + 1].getRow() === token.getRow()
           && tokens[i + 1].getCol() === token.getCol() + 1) {
-        let issue = new Issue(this, token.getPos(), file);
+        let issue = new Issue(this, file, token.getPos());
         issues.push(issue);
       }
     }

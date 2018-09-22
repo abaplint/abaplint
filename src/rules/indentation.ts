@@ -48,7 +48,7 @@ export class Indentation implements IRule {
       let first = statement.getTokens()[0];
 
       if (first.getCol() !== current + 1) {
-        issues.push(new Issue(this, first.getPos(), file));
+        issues.push(new Issue(this, file, first.getPos()));
 // one finding per file, pretty printer should fix everything?
         return issues;
       }

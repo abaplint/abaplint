@@ -40,7 +40,7 @@ export class MaxOneStatement implements IRule {
       let pos = statement.getStart();
       let row = pos.getRow();
       if (prev === row && row !== reported) {
-        let issue = new Issue(this, pos, file);
+        let issue = new Issue(this, file, pos);
         issues.push(issue);
         reported = row;
       }

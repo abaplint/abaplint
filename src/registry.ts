@@ -1,15 +1,15 @@
-import {Object, Class} from "./objects";
+import * as Objects from "./objects";
 
 export default class Registry {
 
   private macros: Array<string> = [];
-  private objects: Array<Object> = [];
+  private objects: Array<Objects.Object> = [];
 
-  public add(obj: Object) {
+  public add(obj: Objects.Object) {
     this.objects.push(obj);
   }
 
-  public findOrCreate(name: string, type: string): Object {
+  public findOrCreate(name: string, type: string): Objects.Object {
     for (let obj of this.objects) {
       if (obj.getType() === type && obj.getName() === name) {
         return obj;
@@ -19,11 +19,49 @@ export default class Registry {
     let add = undefined;
     switch (type) {
       case "CLAS":
-        add = new Class(name, "todo");
+        add = new Objects.Class(name, "todo");
+        break;
+      case "DEVC":
+        add = new Objects.Package(name, "todo");
+        break;
+      case "MSAG":
+        add = new Objects.MessageClass(name, "todo");
+        break;
+      case "INTF":
+        add = new Objects.Interface(name, "todo");
+        break;
+      case "DTEL":
+        add = new Objects.DataElement(name, "todo");
+        break;
+      case "TABL":
+        add = new Objects.Table(name, "todo");
+        break;
+      case "TTYP":
+        add = new Objects.TableType(name, "todo");
+        break;
+      case "DOMA":
+        add = new Objects.Domain(name, "todo");
+        break;
+      case "PROG":
+        add = new Objects.Program(name, "todo");
+        break;
+      case "SMIM":
+        add = new Objects.MIMEObject(name, "todo");
+        break;
+      case "FUGR":
+        add = new Objects.FunctionGroup(name, "todo");
+        break;
+      case "TRAN":
+        add = new Objects.Transaction(name, "todo");
+        break;
+      case "SICF":
+        add = new Objects.ICFService(name, "todo");
+        break;
+      case "W3MI":
+        add = new Objects.WebMIME(name, "todo");
         break;
       default:
-        console.trace();
-        throw "Unknown object type: " + type;
+        throw new Error("Unknown object type: " + type);
     }
 
     this.objects.push(add);

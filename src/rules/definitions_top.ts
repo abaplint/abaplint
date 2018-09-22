@@ -68,7 +68,7 @@ export class DefinitionsTop implements IRule {
           || statement instanceof Statements.StaticEnd
           || statement instanceof Statements.FieldSymbol) {
         if (mode === AFTER) {
-          issue = new Issue(this, statement.getStart(), file);
+          issue = new Issue(this, file, statement.getStart());
           mode = ANY;
         }
       } else if (statement instanceof Statements.Define) {

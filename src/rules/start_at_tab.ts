@@ -51,7 +51,7 @@ export class StartAtTab implements IRule {
         continue;
       }
       if ((pos.getCol() - 1) % 2 !== 0) {
-        let issue = new Issue(this, pos, file);
+        let issue = new Issue(this, file, pos);
         issues.push(issue);
       }
       previous = pos;
