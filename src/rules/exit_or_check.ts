@@ -1,8 +1,8 @@
 import {IRule} from "./rule";
 import {ParsedFile} from "../file";
 import {Issue} from "../issue";
-import {Statement} from "../statements/statement";
-import * as Statements from "../statements/";
+import {Statement} from "../abap/statements/statement";
+import * as Statements from "../abap/statements/";
 
 export class ExitOrCheckConf {
   public enabled: boolean = true;

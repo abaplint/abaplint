@@ -1,5 +1,5 @@
 import {statementType} from "../utils";
-import * as Statements from "../../src/statements/";
+import * as Statements from "../../src/abap/statements/";
 
 let tests = [
   "CONSTANTS c_cluster_type TYPE c VALUE 'C'.",

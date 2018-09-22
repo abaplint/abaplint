@@ -1,5 +1,5 @@
 import {statementType, statementVersion} from "../utils";
-import * as Statements from "../../src/statements/";
+import * as Statements from "../../src/abap/statements/";
 import {Version} from "../../src/version";
 
 let tests = [

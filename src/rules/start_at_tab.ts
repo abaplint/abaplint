@@ -2,8 +2,8 @@ import {IRule} from "./rule";
 import {ParsedFile} from "../file";
 import {Issue} from "../issue";
 import Position from "../position";
-import {Comment} from "../statements/statement";
-import {TypeBegin, TypeEnd} from "../statements/";
+import {Comment} from "../abap/statements/statement";
+import {TypeBegin, TypeEnd} from "../abap/statements/";
 
 export class StartAtTabConf {
   public enabled: boolean = true;

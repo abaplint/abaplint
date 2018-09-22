@@ -2,7 +2,7 @@ import {IRule} from "./rule";
 import {ParsedFile} from "../file";
 import {Issue} from "../issue";
 import Position from "../position";
-import {Unknown} from "../statements/statement";
+import {Unknown} from "../abap/statements/statement";
 
 export class ParserErrorConf {
   public enabled: boolean = true;

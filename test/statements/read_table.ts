@@ -1,5 +1,5 @@
 import {statementType} from "../utils";
-import * as Statements from "../../src/statements/";
+import * as Statements from "../../src/abap/statements/";
 
 let tests = [
   "READ TABLE tt_fields ASSIGNING <ls_fbranch> WITH KEY tabname = 'TEXTL'.",

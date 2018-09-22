@@ -1,5 +1,5 @@
 import {File} from "../../src/file";
-import Lexer from "../../src/lexer";
+import Lexer from "../../src/abap/lexer";
 import Runner from "../../src/runner";
 import * as chai from "chai";
 

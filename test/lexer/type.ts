@@ -1,7 +1,7 @@
 import {expect} from "chai";
 import {File} from "../../src/file";
-import Lexer from "../../src/lexer";
-import * as Tokens from "../../src/tokens";
+import Lexer from "../../src/abap/lexer";
+import * as Tokens from "../../src/abap/tokens";
 
 let tests = [
   {abap: "foo", type: Tokens.Identifier},

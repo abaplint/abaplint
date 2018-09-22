@@ -1,9 +1,9 @@
 import {Object} from "./";
 import {ParsedFile} from "../file";
-import Lexer from "../lexer";
-import Parser from "../parser";
+import Lexer from "../abap/lexer";
+import Parser from "../abap/parser";
 import {Version} from "../version";
-import Nesting from "../nesting";
+import Nesting from "../abap/nesting";
 
 export abstract class ABAPObject extends Object {
 

@@ -1,7 +1,7 @@
 import {IRule} from "./rule";
 import {ParsedFile} from "../file";
 import {Issue} from "../issue";
-import * as Statements from "../statements/";
+import * as Statements from "../abap/statements/";
 
 export class ObsoleteStatementConf {
   public enabled: boolean = true;

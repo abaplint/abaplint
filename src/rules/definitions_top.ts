@@ -1,8 +1,8 @@
 import {IRule} from "./rule";
 import {ParsedFile} from "../file";
 import {Issue} from "../issue";
-import {Comment} from "../statements/statement";
-import * as Statements from "../statements/";
+import {Comment} from "../abap/statements/statement";
+import * as Statements from "../abap/statements/";
 
 export class DefinitionsTopConf {
   public enabled: boolean = true;

@@ -1,5 +1,5 @@
 import {File} from "../src/file";
-import {StructureNode} from "../src/node";
+import {StructureNode} from "../src/abap/node";
 import Runner from "../src/runner";
 import * as chai from "chai";
 

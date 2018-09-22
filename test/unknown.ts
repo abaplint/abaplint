@@ -1,5 +1,5 @@
 import * as chai from "chai";
-import {Unknown} from "../src/statements/statement";
+import {Unknown} from "../src/abap/statements/statement";
 import {File} from "../src/file";
 import Runner from "../src/runner";
 

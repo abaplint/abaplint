@@ -1,7 +1,7 @@
 import {IRule} from "./rule";
 import {ParsedFile} from "../file";
-import {Comment, MacroContent} from "../statements/statement";
-import {IncludeType} from "../statements/include_type";
+import {Comment, MacroContent} from "../abap/statements/statement";
+import {IncludeType} from "../abap/statements/include_type";
 import {Issue} from "../issue";
 
 export class IndentationConf {

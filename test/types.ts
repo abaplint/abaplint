@@ -1,8 +1,8 @@
 import * as chai from "chai";
 import Runner from "../src/runner";
-import {Result} from "../src/types";
+import {Result} from "../src/abap/types";
 import {File} from "../src/file";
-import * as Types from "../src/types";
+import * as Types from "../src/abap/types";
 
 let expect = chai.expect;
 

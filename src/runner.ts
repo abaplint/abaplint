@@ -1,12 +1,12 @@
-import * as Tokens from "./tokens/";
+import * as Tokens from "./abap/tokens/";
 import {File, ParsedFile} from "./file";
 import Config from "./config";
 import * as Rules from "./rules/";
 import {Issue} from "./issue";
 import Registry from "./registry";
-import {TokenNode} from "./node";
-import {Define} from "./statements";
-import {MacroCall, Unknown, Statement} from "./statements/statement";
+import {TokenNode} from "./abap/node";
+import {Define} from "./abap/statements";
+import {MacroCall, Unknown, Statement} from "./abap/statements/statement";
 import * as ProgressBar from "progress";
 import {GenericError} from "./rules/";
 

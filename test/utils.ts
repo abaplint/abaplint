@@ -3,7 +3,7 @@ import Config from "../src/config";
 import Runner from "../src/runner";
 import * as chai from "chai";
 import {Version, versionToText} from "../src/version";
-import {Unknown} from "../src/statements/statement";
+import {Unknown} from "../src/abap/statements/statement";
 
 // utils for testing
 

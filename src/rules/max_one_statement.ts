@@ -1,7 +1,7 @@
 import {IRule} from "./rule";
 import {ParsedFile} from "../file";
 import {Issue} from "../issue";
-import {Comment} from "../statements/statement";
+import {Comment} from "../abap/statements/statement";
 
 export class MaxOneStatementConf {
   public enabled: boolean = true;

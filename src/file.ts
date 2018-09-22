@@ -1,6 +1,6 @@
-import {Token, Pragma} from "./tokens/";
-import {Statement} from "./statements/statement";
-import {RootNode} from "./node";
+import {Token, Pragma} from "./abap/tokens/";
+import {Statement} from "./abap/statements/statement";
+import {RootNode} from "./abap/node";
 
 export class File {
   private raw: string;
