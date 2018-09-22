@@ -7,7 +7,7 @@ import * as Types from "../src/types";
 let expect = chai.expect;
 
 function run(abap: string): Result {
-  let file = new Runner().parse([new File("temp.abap", abap)])[0];
+  let file = new Runner([new File("cl_foo.clas.abap", abap)]).parse()[0];
   return Types.Analyze.run(file);
 }
 

@@ -22,6 +22,18 @@ export class File {
   public getFilename(): string {
     return this.filename;
   }
+
+  public getObjectType(): string {
+    let base = this.getFilename().split("/").reverse()[0];
+    let split = base.split(".");
+    return split[1].toUpperCase();
+  }
+
+  public getObjectName(): string {
+    let base = this.getFilename().split("/").reverse()[0];
+    let split = base.split(".");
+    return split[0].toUpperCase();
+  }
 }
 
 export class ParsedFile extends File {

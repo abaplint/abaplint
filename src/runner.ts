@@ -16,65 +16,63 @@ import * as ProgressBar from "progress";
 export default class Runner {
 
   private conf: Config;
+  private reg: Registry;
+  private files: Array<File>;
+  private parsed: Array<ParsedFile>;
 
   public static version(): string {
     // magic, see build script "version.sh"
     return "{{ VERSION }}";
   }
 
-  constructor(conf?: Config) {
+  constructor(files: Array<File>, conf?: Config) {
     this.conf = conf ? conf : Config.getDefault();
+    this.reg = new Registry();
+    this.files = files;
+    this.parsed = [];
   }
 
-  public run(files: Array<File>): Array<Issue> {
-    let parsed = this.parse(files);
-
-    parsed = this.fixMacros(parsed);
-
-    return this.issues(parsed);
-  }
-
-  public parse(files: Array<File>): Array<ParsedFile> {
-    let ret: Array<ParsedFile> = [];
-
-    let bar = undefined;
-    if (this.conf.getShowProgress()) {
-      bar = new ProgressBar(":percent - Lexing and parsing - :filename",
-                            {total: files.length});
+  public parse(): Array<ParsedFile> {
+    if (this.parsed.length > 0) {
+      return this.parsed;
     }
 
-    files.forEach((f) => {
-      if (!this.skip(f.getFilename())) {
-        if (bar) {
-          bar.tick({filename: f.getFilename()});
-          bar.render();
-        }
+    this.addToRegistry();
 
+    let bar = new Progress(this.conf,
+                           ":percent - Lexing and parsing - :filename",
+                           {total: this.files.length});
+
+    this.files.forEach((f) => {
+      bar.tick({filename: f.getFilename()});
+
+      if (!this.skip(f.getFilename())) {
         let tokens = Lexer.run(f);
         let statements = Parser.run(tokens, this.conf.getVersion());
         let root = Nesting.run(statements);
 
-        ret.push(new ParsedFile(f, tokens, statements, root));
+        this.parsed.push(new ParsedFile(f, tokens, statements, root));
       }
     });
 
-    return ret;
+    this.parsed = this.fixMacros(this.parsed);
+
+    return this.parsed;
   }
 
-  private issues(files: Array<ParsedFile>): Array<Issue> {
-    let issues: Array<Issue> = [];
-
-    let bar = undefined;
-    if (this.conf.getShowProgress()) {
-      bar = new ProgressBar(":percent - Finding Issues - :filename",
-                            {total: files.length});
+  public findIssues(): Array<Issue> {
+    if (this.parsed.length === 0) {
+      this.parse();
     }
 
-    for (let file of files) {
-      if (bar) {
-        bar.tick({filename: file.getFilename()});
-        bar.render();
-      }
+    let issues: Array<Issue> = [];
+
+    let bar = new Progress(this.conf,
+                           ":percent - Finding Issues - :filename",
+                           {total: this.parsed.length});
+
+    for (let file of this.parsed) {
+      bar.tick({filename: file.getFilename()});
 
       for (let key in Rules) {
         if (typeof Rules[key] === "function") {
@@ -91,14 +89,10 @@ export default class Runner {
   }
 
   private fixMacros(files: Array<ParsedFile>): Array<ParsedFile> {
-// todo: copies all statements? (memory)
-
-    let reg = new Registry();
-
     files.forEach((f) => {
       f.getStatements().forEach((s) => {
         if (s instanceof Define) {
-          reg.addMacro(s.getTokens()[1].getStr());
+          this.reg.addMacro(s.getTokens()[1].getStr());
         }
       });
     });
@@ -106,8 +100,7 @@ export default class Runner {
     files.forEach((f) => {
       let statements: Array<Statement> = [];
       f.getStatements().forEach((s) => {
-        if (s instanceof Unknown &&
-            reg.isMacro(s.getTokens()[0].getStr())) {
+        if (s instanceof Unknown && this.reg.isMacro(s.getTokens()[0].getStr())) {
           statements.push(new MacroCall(this.tokensToNodes(s.getTokens())));
         } else {
           statements.push(s);
@@ -119,11 +112,20 @@ export default class Runner {
     return files;
   }
 
+  private addToRegistry() {
+    this.files.forEach((f) => {
+      let obj = this.reg.findOrCreate(f.getObjectName(), f.getObjectType());
+      obj.addFile(f);
+    });
+  }
+
   private skip(filename: string): boolean {
 // ignore global exception classes, todo?
+// the auto generated classes are crap, move logic to skip into the rules intead
     if (/zcx_.*\.clas\.abap$/.test(filename)) {
       return true;
     }
+
     if (!/.*\.abap$/.test(filename)) {
       return true;
     }
@@ -135,6 +137,25 @@ export default class Runner {
     tokens.forEach((t) => {ret.push(new TokenNode("Unknown", t)); });
     return ret;
   }
+}
+
+class Progress {
+
+  private bar = undefined;
+
+  constructor(conf: Config, text: string, options: any) {
+    if (conf.getShowProgress()) {
+      this.bar = new ProgressBar(text, options);
+    }
+  }
+
+  public tick(options: any) {
+    if (this.bar) {
+      this.bar.tick(options);
+      this.bar.render();
+    }
+  }
+
 }
 
 /*

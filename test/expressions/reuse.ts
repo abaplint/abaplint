@@ -71,7 +71,7 @@ describe("Test reuse matchers", () => {
     let not = test.e === true ? "" : "not ";
 
     it("\"" + test.c + "\" should " + not + "match " + test.r.getName(), () => {
-      let file = new Runner().parse([new File("temp.abap", test.c)])[0];
+      let file = new Runner([new File("cl_foo.clas.abap", test.c)]).parse()[0];
       let match = Combi.Combi.run(test.r.get_runnable(), file.getTokens());
       expect(match !== undefined).to.equals(test.e);
     });

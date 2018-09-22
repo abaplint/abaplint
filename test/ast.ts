@@ -13,7 +13,7 @@ let tests = [
 
 describe("ast count root children", () => {
   tests.forEach((test) => {
-    let file = new Runner().parse([new File("temp.abap", test.abap)])[0];
+    let file = new Runner([new File("cl_foo.clas.abap", test.abap)]).parse()[0];
     let slist = file.getStatements();
     it("\"" + test.abap + "\" should have " + test.cnt, () => {
       expect(slist[0].getChildren().length).to.equals(test.cnt);

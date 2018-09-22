@@ -17,11 +17,12 @@ export default class Registry {
     }
 
     let add = undefined;
-    switch(type) {
+    switch (type) {
       case "CLAS":
         add = new Class(name, "todo");
         break;
       default:
+        console.trace();
         throw "Unknown object type: " + type;
     }
 

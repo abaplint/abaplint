@@ -98,7 +98,7 @@ function run() {
       if (argv["s"]) {
         config.setShowProgress(true);
       }
-      issues = new Runner(config).run(loadFiles(files));
+      issues = new Runner(loadFiles(files), config).findIssues();
       output = Formatter.format(issues, format);
     }
   }

@@ -11,7 +11,7 @@ let expect = chai.expect;
 
 function run(abap: string, text: string, type, version = Version.v750) {
   let config = Config.getDefault().setVersion(version);
-  let file = new Runner(config).parse([new File("temp.abap", abap)])[0];
+  let file = new Runner([new File("cl_foo.clas.abap", abap)], config).parse()[0];
   let slist = file.getStatements();
 
   it(text, () => {
@@ -54,7 +54,7 @@ export function testRule(tests, description: string, rule: new () => any) {
 // note that timeout() only works inside function()
     this.timeout(200); // tslint:disable-line
     tests.forEach((test) => {
-      let issues = new Runner().run([new File("temp.abap", test.abap)]);
+      let issues = new Runner([new File("cl_foo.clas.abap", test.abap)]).findIssues();
 
       issues = issues.filter((i) => { return i.getRule() instanceof rule; });
       it("\"" + test.abap + "\" should have " + test.cnt + " issue(s)", () => {

@@ -12,7 +12,7 @@ describe("formatters", () => {
   ];
 
   tests.forEach((test) => {
-    let issues = new Runner().run([new File("temp.abap", test.abap)]);
+    let issues = new Runner([new File("cl_foo.clas.abap", test.abap)]).findIssues();
 
     it("Json " + test.abap, () => {
       expect(issues.length).to.equals(test.errors);

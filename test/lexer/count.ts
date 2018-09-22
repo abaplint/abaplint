@@ -82,7 +82,7 @@ describe("count_tokens", () => {
   ];
 
   tests.forEach((test) => {
-    let file = new File("foo.abap", test.abap);
+    let file = new File("cl_foo.clas.abap", test.abap);
     let tokens = Lexer.run(file);
 
     it("\"" + test.abap + "\" should have " + test.tokens + " tokens", () => {
@@ -90,7 +90,7 @@ describe("count_tokens", () => {
     });
 
     it("\"" + test.abap + "\" should match parsed file token count", () => {
-      expect(tokens.length).to.equals(new Runner().parse([file])[0].getTokens().length);
+      expect(tokens.length).to.equals(new Runner([file]).parse()[0].getTokens().length);
     });
   });
 });
