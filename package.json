@@ -27,7 +27,7 @@
     "preweb": "cp build/bundle.js web/script/bundle.js",
     "web": "cp node_modules/codemirror/lib/codemirror.js web/script/ && cp node_modules/codemirror/addon/selection/mark-selection.js web/script/ && cp node_modules/codemirror/lib/codemirror.css web/style/",
     "postweb": "cp node_modules/codemirror/theme/mbo.css web/style/ && cp node_modules/codemirror-abap/build/abap.js web/script/",
-    "viz": "mkdir -p web/viz && rm -f web/viz/*.txt && rm -f web/viz/*.svg && node build/src/graphs.js && node web/script/generate.js && rm -f web/viz/*.txt"
+    "viz": "mkdir -p web/viz && rm -f web/viz/*.txt && rm -f web/viz/*.svg && node build/src/abap/graphs.js && node web/script/generate.js && rm -f web/viz/*.txt"
   },
   "repository": {
     "type": "git",

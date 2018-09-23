@@ -34,26 +34,22 @@ function buildAst(file) {
 }
 
 function process() {
-  let input = editor.getValue();
-  input = stripNewline(input);
-
-  let file = new abaplint.File("foobar.abap", input);
-  return abaplint.Runner.run([file]);
+  let input = stripNewline(editor.getValue());
+  let file = new abaplint.File("foobar.clas.abap", input);
+  return new abaplint.Runner([file]).findIssues();
 }
 
 function parse() {
-  let input = editor.getValue();
-  input = stripNewline(input);
-
-  let file = new abaplint.File("foobar.abap", input);
-  return abaplint.Runner.parse([file])[0];
+  let input = stripNewline(editor.getValue());
+  let file = new abaplint.File("foobar.clas.abap", input);
+  return new abaplint.Runner([file]).parse()[0];
 }
 
 // ---------------------
 
 function issues() {
   let issues = process();
-  let json = JSON.parse(abaplint.Runner.format(issues, "json"));
+  let json = JSON.parse(abaplint.Formatter.format(issues, "json"));
   let output = "";
   for (let issue of json) {
     output = output +
@@ -68,11 +64,11 @@ function issues() {
 
 function tokens() {
   let file = parse();
-  
+
   let inner = "<table>";
   for (let token of file.getTokens()) {
-    inner = inner + "<tr><td>\"" + 
-      token.getStr() + "\"</td><td>" + 
+    inner = inner + "<tr><td>\"" +
+      token.getStr() + "\"</td><td>" +
       token.constructor.name + "</td></tr>";
   }
   inner = inner + "</table>";
@@ -94,25 +90,12 @@ function escape(str) {
   return str.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
 }
 
-function downport() {
-  let file = abaplint.Runner.downport([parse()])[0];
-  console.dir(file.getRaw());
-  document.getElementById("info").innerHTML = '<pre>' + escape(file.getRaw()) + '</pre>';
-}
-
-function types() {
-  let info = abaplint.Runner.types(parse());
-  console.dir(info);
-  document.getElementById("info").innerHTML = "see javascript console";
-}
-
 // ---------------------
 
 var editor = null;
 var _mark = null;
 
 function markLine(line, col, eline, ecol) {
-  console.log("mark");
   if (_mark) _mark.clear();
   if (!col) col = 0;
   if (!eline) eline = line;
@@ -133,7 +116,6 @@ function run() {
   });
 
   editor.setSize(null, "100%");
-
   document.getElementById("abaplintver").innerHTML = abaplint.Runner.version();
 }
 

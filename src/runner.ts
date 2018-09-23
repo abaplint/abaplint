@@ -3,6 +3,8 @@ import Config from "./config";
 import * as Rules from "./rules/";
 import {Issue} from "./issue";
 import Registry from "./registry";
+import {Version} from "./version";
+import {Formatter} from "./formatters/";
 import * as ProgressBar from "progress";
 import {GenericError} from "./rules/";
 
@@ -121,9 +123,9 @@ class Progress {
 
 }
 
-/*
+// this part is required for the web things to work
 exports.File = File;
 exports.Runner = Runner;
 exports.Config = Config;
 exports.Version = Version;
-*/
+exports.Formatter = Formatter;
