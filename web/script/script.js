@@ -1,6 +1,8 @@
 /*global abaplint*/
 /*global CodeMirror*/
 
+let config = new abaplint.Config.getDefault();
+
 function stripNewline(input) {
   let result = input;
   while (result.substr(result.length - 1, 1) === "\n") {
@@ -36,13 +38,13 @@ function buildAst(file) {
 function process() {
   let input = stripNewline(editor.getValue());
   let file = new abaplint.File("foobar.clas.abap", input);
-  return new abaplint.Runner([file]).findIssues();
+  return new abaplint.Runner([file], config).findIssues();
 }
 
 function parse() {
   let input = stripNewline(editor.getValue());
   let file = new abaplint.File("foobar.clas.abap", input);
-  return new abaplint.Runner([file]).parse()[0];
+  return new abaplint.Runner([file], config).parse()[0];
 }
 
 // ---------------------
@@ -106,6 +108,26 @@ function markLine(line, col, eline, ecol) {
   editor.scrollIntoView({line: line - 1, ch: 0}, 200);
 }
 
+function changeVersion(evt) {
+  config.setVersion(abaplint.textToVersion(evt.target.value));
+}
+
+function popuplateVersionDropdown() {
+  let options = "";
+  for(let version in abaplint.Version) {
+    if (!isNaN(Number(version))) {
+      let selected = "";
+      if (abaplint.Config.defaultVersion + "" === version + "") { // huh?
+        selected = " selected";
+      }
+      options = options + "<option value=\"" + abaplint.Version[version] + "\"" + selected + ">" +
+        abaplint.Version[version] + "</option>\n";
+    }
+  }
+  document.getElementById("version_dropdown").innerHTML = options;
+  document.getElementById("version_dropdown").onchange = changeVersion;
+}
+
 function run() {
   editor = CodeMirror.fromTextArea(document.getElementById("input"), {
     lineNumbers: true,
@@ -114,7 +136,7 @@ function run() {
     styleSelectedText: true,
     mode: "abap"
   });
-
+  popuplateVersionDropdown();
   editor.setSize(null, "100%");
   document.getElementById("abaplintver").innerHTML = abaplint.Runner.version();
 }

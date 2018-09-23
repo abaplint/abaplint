@@ -27,7 +27,7 @@ export function versionToText(v: Version): string {
     case Version.Cloud:
       return "Cloud";
     default:
-      return "Unknown version";
+      throw "Unknown version: " + v;
   }
 }
 
@@ -48,6 +48,6 @@ export function textToVersion(s: string): Version {
     case "Cloud":
       return Version.Cloud;
     default:
-      throw "unknown version: " + s;
+      throw "Unknown version: " + s;
   }
 }
