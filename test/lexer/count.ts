@@ -1,9 +1,7 @@
 import {File} from "../../src/file";
 import Lexer from "../../src/abap/lexer";
 import Runner from "../../src/runner";
-import * as chai from "chai";
-
-let expect = chai.expect;
+import {expect} from "chai";
 
 describe("count_tokens", () => {
   let tests = [

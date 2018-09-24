@@ -1,11 +1,9 @@
-import * as chai from "chai";
+import {expect} from "chai";
 import * as Combi from "../src/abap/combi";
 import * as Tokens from "../src/abap/tokens/";
 import Lexer from "../src/abap/lexer";
 import {File} from "../src/file";
 import {Identifier, WPlusW, Plus} from "../src/abap/tokens/";
-
-let expect = chai.expect;
 
 let str  = Combi.str;
 let per  = Combi.per;

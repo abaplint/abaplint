@@ -1,10 +1,8 @@
-import * as chai from "chai";
+import {expect} from "chai";
 import Runner from "../src/runner";
 import {Result} from "../src/abap/types";
 import {File} from "../src/file";
 import * as Types from "../src/abap/types";
-
-let expect = chai.expect;
 
 function run(abap: string): Result {
   let file = new Runner([new File("cl_foo.clas.abap", abap)]).parse()[0];

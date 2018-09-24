@@ -1,10 +1,8 @@
 // import {File, ParsedFile} from "../src/file";
 // import Runner from "../src/runner";
-import * as chai from "chai";
+import {expect} from "chai";
 
 // todo
-
-let expect = chai.expect;
 
 // let raw = 'hello';
 //  "IF foo = bar.";

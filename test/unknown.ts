@@ -1,9 +1,7 @@
-import * as chai from "chai";
+import {expect} from "chai";
 import {Unknown} from "../src/abap/statements/statement";
 import {File} from "../src/file";
 import Runner from "../src/runner";
-
-let expect = chai.expect;
 
 describe("unknown statements", () => {
   let tests =  [

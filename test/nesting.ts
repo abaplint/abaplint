@@ -1,9 +1,7 @@
 import {File} from "../src/file";
 import {StructureNode} from "../src/abap/node";
 import Runner from "../src/runner";
-import * as chai from "chai";
-
-let expect = chai.expect;
+import {expect} from "chai";
 
 let tests = [
   {

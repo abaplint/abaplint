@@ -1,8 +1,6 @@
 import {File} from "../src/file";
 import Runner from "../src/runner";
-import * as chai from "chai";
-
-let expect = chai.expect;
+import {expect} from "chai";
 
 describe("concat_tokens", () => {
   let tests = [

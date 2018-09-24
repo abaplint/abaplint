@@ -1,9 +1,7 @@
 import Runner from "../src/runner";
 import {File} from "../src/file";
 import {Formatter} from "../src/formatters";
-import * as chai from "chai";
-
-let expect = chai.expect;
+import {expect} from "chai";
 
 describe("formatters", () => {
   let tests = [

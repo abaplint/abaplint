@@ -1,10 +1,8 @@
-import * as chai from "chai";
+import {expect} from "chai";
 import * as Combi from "../../src/abap/combi";
 import * as Reuse from "../../src/abap/expressions";
 import {File} from "../../src/file";
 import Runner from "../../src/runner";
-
-let expect = chai.expect;
 
 let tests = [
   {c: "cs_tstcp",                         r: new Reuse.FieldChain(),      e: true},
