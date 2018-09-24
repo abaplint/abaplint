@@ -1,14 +1,13 @@
-import {IRule} from "./rule";
 import {Issue} from "../issue";
 import Position from "../position";
-import {ABAPObject} from "../objects";
+import {ABAPRule} from "./abap_rule";
 
 export class SequentialBlankConf {
   public enabled: boolean = true;
   public lines: number = 4;
 }
 
-export class SequentialBlank implements IRule {
+export class SequentialBlank extends ABAPRule {
 
   private conf = new SequentialBlankConf();
 
@@ -28,29 +27,22 @@ export class SequentialBlank implements IRule {
     this.conf = conf;
   }
 
-  public run(obj) {
-    if (!(obj instanceof ABAPObject)) {
-      return [];
-    }
-
-    let abap = obj as ABAPObject;
+  public runParsed(file) {
     let issues: Array<Issue> = [];
 
-    for (let file of abap.getParsed()) {
-      let rows = file.getRawRows();
-      let blanks = 0;
+    let rows = file.getRawRows();
+    let blanks = 0;
 
-      for (let i = 0; i < rows.length; i++) {
-        if (rows[i] === "") {
-          blanks++;
-        } else {
-          blanks = 0;
-        }
+    for (let i = 0; i < rows.length; i++) {
+      if (rows[i] === "") {
+        blanks++;
+      } else {
+        blanks = 0;
+      }
 
-        if (blanks === this.conf.lines) {
-          let issue = new Issue(this, file, new Position(i + 1, 1));
-          issues.push(issue);
-        }
+      if (blanks === this.conf.lines) {
+        let issue = new Issue(this, file, new Position(i + 1, 1));
+        issues.push(issue);
       }
     }
 

@@ -1,13 +1,12 @@
-import {IRule} from "./rule";
 import {Issue} from "../issue";
 import * as Statements from "../abap/statements/";
-import {ABAPObject} from "../objects";
+import {ABAPRule} from "./abap_rule";
 
 export class ObsoleteStatementConf {
   public enabled: boolean = true;
 }
 
-export class ObsoleteStatement implements IRule {
+export class ObsoleteStatement extends ABAPRule {
 
   private conf = new ObsoleteStatementConf();
 
@@ -27,31 +26,24 @@ export class ObsoleteStatement implements IRule {
     this.conf = conf;
   }
 
-  public run(obj) {
-    if (!(obj instanceof ABAPObject)) {
-      return [];
-    }
-
-    let abap = obj as ABAPObject;
+  public runParsed(file) {
     let issues: Array<Issue> = [];
 
-    for (let file of abap.getParsed()) {
-      let statements = file.getStatements();
+    let statements = file.getStatements();
 
-      for (let sta of statements) {
-        if (sta instanceof Statements.Refresh
-            || sta instanceof Statements.Compute
-            || sta instanceof Statements.Add
-            || sta instanceof Statements.Subtract
-            || sta instanceof Statements.Multiply
-            || ( sta instanceof Statements.Move
-            && sta.getTokens()[0].getStr() === "MOVE"
-            && sta.getTokens()[1].getStr() !== "-"
-            && sta.getTokens()[1].getStr() !== "EXACT" )
-            || sta instanceof Statements.Divide) {
-          let issue = new Issue(this, file, sta.getStart());
-          issues.push(issue);
-        }
+    for (let sta of statements) {
+      if (sta instanceof Statements.Refresh
+          || sta instanceof Statements.Compute
+          || sta instanceof Statements.Add
+          || sta instanceof Statements.Subtract
+          || sta instanceof Statements.Multiply
+          || ( sta instanceof Statements.Move
+          && sta.getTokens()[0].getStr() === "MOVE"
+          && sta.getTokens()[1].getStr() !== "-"
+          && sta.getTokens()[1].getStr() !== "EXACT" )
+          || sta instanceof Statements.Divide) {
+        let issue = new Issue(this, file, sta.getStart());
+        issues.push(issue);
       }
     }
 

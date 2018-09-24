@@ -1,13 +1,12 @@
-import {IRule} from "./rule";
 import {Issue} from "../issue";
 import Position from "../position";
-import {ABAPObject} from "../objects";
+import {ABAPRule} from "./abap_rule";
 
 export class ContainsTabConf {
   public enabled: boolean = true;
 }
 
-export class ContainsTab implements IRule {
+export class ContainsTab extends ABAPRule {
 
   private conf = new ContainsTabConf();
 
@@ -27,21 +26,14 @@ export class ContainsTab implements IRule {
     this.conf = conf;
   }
 
-  public run(obj) {
-    if (!(obj instanceof ABAPObject)) {
-      return [];
-    }
-
-    let abap = obj as ABAPObject;
+  public runParsed(file) {
     let issues: Array<Issue> = [];
 
-    for (let file of abap.getParsed()) {
-      let lines = file.getRaw().split("\n");
-      for (let line = 0; line < lines.length; line++) {
-        if (/\t/.test(lines[line])) {
-          let issue = new Issue(this, file, new Position(line + 1, 1));
-          issues.push(issue);
-        }
+    let lines = file.getRaw().split("\n");
+    for (let line = 0; line < lines.length; line++) {
+      if (/\t/.test(lines[line])) {
+        let issue = new Issue(this, file, new Position(line + 1, 1));
+        issues.push(issue);
       }
     }
 

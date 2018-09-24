@@ -1,13 +1,12 @@
-import {IRule} from "./rule";
 import {Issue} from "../issue";
 import * as Statements from "../abap/statements";
-import {ABAPObject} from "../objects";
+import {ABAPRule} from "./abap_rule";
 
 export class BreakpointConf {
   public enabled: boolean = true;
 }
 
-export class Breakpoint implements IRule {
+export class Breakpoint extends ABAPRule {
   private conf = new BreakpointConf();
 
   public getKey(): string {
@@ -26,19 +25,12 @@ export class Breakpoint implements IRule {
     this.conf = conf;
   }
 
-  public run(obj) {
-    if (!(obj instanceof ABAPObject)) {
-      return [];
-    }
-
-    let abap = obj as ABAPObject;
+  public runParsed(file) {
     let issues: Array<Issue> = [];
 
-    for (let file of abap.getParsed()) {
-      for (let statement of file.getStatements()) {
-        if (statement instanceof Statements.Break) {
-          issues.push(new Issue(this, file, statement.getStart()));
-        }
+    for (let statement of file.getStatements()) {
+      if (statement instanceof Statements.Break) {
+        issues.push(new Issue(this, file, statement.getStart()));
       }
     }
 

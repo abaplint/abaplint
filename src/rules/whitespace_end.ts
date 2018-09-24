@@ -1,13 +1,12 @@
-import {IRule} from "./rule";
 import {Issue} from "../issue";
 import Position from "../position";
-import {ABAPObject} from "../objects";
+import {ABAPRule} from "./abap_rule";
 
 export class WhitespaceEndConf {
   public enabled: boolean = true;
 }
 
-export class WhitespaceEnd implements IRule {
+export class WhitespaceEnd extends ABAPRule {
 
   private conf = new WhitespaceEndConf();
 
@@ -27,22 +26,15 @@ export class WhitespaceEnd implements IRule {
     this.conf = conf;
   }
 
-  public run(obj) {
-    if (!(obj instanceof ABAPObject)) {
-      return [];
-    }
-
-    let abap = obj as ABAPObject;
+  public runParsed(file) {
     let issues: Array<Issue> = [];
 
-    for (let file of abap.getParsed()) {
-      let rows = file.getRawRows();
+    let rows = file.getRawRows();
 
-      for (let i = 0; i < rows.length; i++) {
-        if (/.* $/.test(rows[i]) === true) {
-          let issue = new Issue(this, file, new Position(i + 1, 1));
-          issues.push(issue);
-        }
+    for (let i = 0; i < rows.length; i++) {
+      if (/.* $/.test(rows[i]) === true) {
+        let issue = new Issue(this, file, new Position(i + 1, 1));
+        issues.push(issue);
       }
     }
 

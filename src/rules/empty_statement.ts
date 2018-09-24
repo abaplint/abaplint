@@ -1,13 +1,12 @@
-import {IRule} from "./rule";
 import {Issue} from "../issue";
 import {Empty} from "../abap/statements/statement";
-import {ABAPObject} from "../objects";
+import {ABAPRule} from "./abap_rule";
 
 export class EmptyStatementConf {
   public enabled: boolean = true;
 }
 
-export class EmptyStatement implements IRule {
+export class EmptyStatement extends ABAPRule {
 
   private conf = new EmptyStatementConf();
 
@@ -27,22 +26,15 @@ export class EmptyStatement implements IRule {
     this.conf = conf;
   }
 
-  public run(obj) {
-    if (!(obj instanceof ABAPObject)) {
-      return [];
-    }
-
-    let abap = obj as ABAPObject;
+  public runParsed(file) {
     let issues: Array<Issue> = [];
 
-    for (let file of abap.getParsed()) {
-      let statements = file.getStatements();
+    let statements = file.getStatements();
 
-      for (let sta of statements) {
-        if (sta instanceof Empty) {
-          let issue = new Issue(this, file, sta.getStart());
-          issues.push(issue);
-        }
+    for (let sta of statements) {
+      if (sta instanceof Empty) {
+        let issue = new Issue(this, file, sta.getStart());
+        issues.push(issue);
       }
     }
 
