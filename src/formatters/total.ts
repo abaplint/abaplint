@@ -1,8 +1,9 @@
 import {Issue} from "../issue";
+import {IFormatter} from "./iformatter";
 
-export class Total {
+export class Total implements IFormatter {
 
-  public static output(issues: Array<Issue>): string {
+  public output(issues: Array<Issue>): string {
     return "abaplint: " + issues.length + " issue(s) found\n";
   }
 

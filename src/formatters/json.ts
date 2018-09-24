@@ -1,9 +1,9 @@
 import {Issue} from "../issue";
+import {IFormatter} from "./iformatter";
 
-export class Json {
+export class Json implements IFormatter {
 
-// todo, change all formatters to non static, so they can implement an interface?
-  public static output(issues: Array<Issue>): string {
+  public output(issues: Array<Issue>): string {
     let out = [];
 
     for (let issue of issues) {

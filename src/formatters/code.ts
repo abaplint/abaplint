@@ -1,8 +1,11 @@
 import {Issue} from "../issue";
 import {Total} from "./total";
+import {IFormatter} from "./iformatter";
 
-export class Code {
-  public static output(issues: Array<Issue>): string {
+// for CodeClimate output?
+
+export class Code implements IFormatter {
+  public output(issues: Array<Issue>): string {
 
     let result = "";
     for (let issue of issues) {
@@ -20,6 +23,6 @@ export class Code {
       result = result + text;
     }
 
-    return result + Total.output(issues);
+    return result + new Total().output(issues);
   }
 }

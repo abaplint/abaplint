@@ -6,13 +6,13 @@ export class Formatter {
   // todo, this can be done more generic
     switch (format) {
       case "total":
-        return Formatters.Total.output(issues);
+        return new Formatters.Total().output(issues);
       case "json":
-        return Formatters.Json.output(issues);
+        return new Formatters.Json().output(issues);
       case "code":
-        return Formatters.Code.output(issues);
+        return new Formatters.Code().output(issues);
       default:
-        return Formatters.Standard.output(issues);
+        return new Formatters.Standard().output(issues);
     }
   }
 }
