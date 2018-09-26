@@ -1,13 +1,16 @@
 import {Statement} from "./statement";
-import {str, seq, alt, opt, plus, IRunnable} from "../combi";
+import {verNot, str, seq, alt, opt, plus, IRunnable} from "../combi";
 import {Target, Source} from "../expressions";
+import {Version} from "../../version";
 
 export class Move extends Statement {
 
   public static get_matcher(): IRunnable {
     let keeping = str("KEEPING TARGET LINES");
 
-    let move = seq(alt(seq(str("MOVE"), opt(str("EXACT"))),
+    let mov = verNot(Version.Cloud, str("MOVE"));
+
+    let move = seq(alt(seq(mov, opt(str("EXACT"))),
                        str("MOVE-CORRESPONDING")),
                    new Source(),
                    alt(str("TO"), str("?TO")),
