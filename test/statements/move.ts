@@ -130,6 +130,9 @@ let versions = [
   {abap: "thesum = thesum + me->matrix[ x ][ j ] * i_matrix->matrix[ j ][ y ].", ver: Version.v740sp02},
   {abap: "foo = CONV decfloat16( _num_samples ).", ver: Version.v740sp02},
   {abap: "t->matrix[ 1 ][ 4 ] = i_rotate_about_line->x.", ver: Version.v740sp02},
+  {abap: "DATA(asdf) = VALUE zfoo(\n" +
+    "FOR ls_sdf IN  lt_sdf WHERE ( classtype = '001' AND classnum = 'SOMETHING' )\n" +
+    "( ls_sdf ) ).", ver: Version.v740sp05},
 ];
 
 statementVersion(versions, "MOVE", Statements.Move);
