@@ -93,6 +93,9 @@ let tests = [
   "SELECT SUM( value ) FROM table INTO lv_count.",
 
   "SELECT carrid, connid FROM sflight INTO CORRESPONDING FIELDS OF TABLE @flight FOR ALL ENTRIES IN @carriers.",
+  "SELECT SINGLE blah INTO lv_blah FROM dbtable WHERE posid = foo-bar AND field IN ( '02', '30' ).",
+
+  "SELECT matnr, werks FROM ztable INTO TABLE @DATA(lt_result) WHERE matnr IN @s_matnr AND werks IN @s_werks.",
 ];
 
 statementType(tests, "SELECT", Statements.Select);

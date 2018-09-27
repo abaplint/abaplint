@@ -37,19 +37,24 @@ export class Source extends Reuse {
 
     let mapping = seq(str("MAPPING"), plus(seq(new Field(), str("="), new Field())));
 
+    let baseParen = seq(str("BASE"), tok(WParenLeftW), new Source(), tok(WParenRightW));
+
     let corr = ver(Version.v740sp05, seq(str("CORRESPONDING"),
                                          new TypeName(),
                                          tok(ParenLeftW),
+                                         opt(baseParen),
                                          new Source(),
                                          opt(seq(str("EXCEPT"), new Field())),
                                          opt(mapping),
                                          rparen));
 
+    let arith = seq(new ArithOperator(), new Source());
+
     let conv = ver(Version.v740sp02, seq(str("CONV"),
                                          new TypeName(),
                                          tok(ParenLeftW),
                                          new Source(),
-                                         rparen));
+                                         rparen, opt(arith)));
 
     let swhen = seq(str("WHEN"), new Source(), str("THEN"), new Source());
     let swit = ver(Version.v740sp02, seq(str("SWITCH"),
@@ -101,6 +106,12 @@ export class Source extends Reuse {
                                          new Source(),
                                          rparen));
 
+    let exact = ver(Version.v740sp02, seq(str("EXACT"),
+                                          new TypeName(),
+                                          tok(ParenLeftW),
+                                          new Source(),
+                                          rparen));
+
     let filter = ver(Version.v740sp08,
                      seq(str("FILTER"),
                          new TypeName(),
@@ -111,7 +122,7 @@ export class Source extends Reuse {
                          seq(str("WHERE"), new Cond()),
                          rparen));
 
-    let ret = alt(old, corr, conv, value, cond, reff, swit, filter);
+    let ret = alt(old, corr, conv, value, cond, reff, exact, swit, filter);
 
     return ret;
   }

@@ -1,20 +1,20 @@
 import {seq, opt, ver, tok, plus, alt, optPrio, str, Reuse, IRunnable} from "../combi";
 import {FieldSub, Constant, Source, SQLFieldName, Dynamic, Select} from "./";
-import {WParenLeft, ParenRightW, ParenRight, WAt} from "../tokens/";
+import {WParenLeft, ParenRightW, ParenRight, WAt, WParenLeftW, WParenRight} from "../tokens/";
 import {Version} from "../../version";
 
 export class SQLCompare extends Reuse {
   public get_runnable(): IRunnable {
     let val = alt(new FieldSub(), new Constant());
 
-    let list = seq(tok(WParenLeft),
+    let list = seq(alt(tok(WParenLeft), tok(WParenLeftW)),
                    val,
                    plus(seq(str(","), val)),
-                   alt(tok(ParenRightW), tok(ParenRight)));
+                   alt(tok(WParenRight), tok(ParenRightW), tok(ParenRight)));
 
     let subSelect = seq(str("("), new Select(), str(")"));
 
-    let inn = seq(opt(str("NOT")), str("IN"), alt(new Source(), list, subSelect));
+    let inn = seq(opt(str("NOT")), str("IN"), alt(seq(opt(tok(WAt)), new Source()), list, subSelect));
 
     let operator = alt(str("="),
                        str("<>"),

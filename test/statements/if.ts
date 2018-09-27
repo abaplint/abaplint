@@ -88,6 +88,9 @@ let tests = [
   "  OR foo(2) = 12\n" +
   "  OR foo(2) = 12\n" +
   "  OR foo(2) = 12.",
+
+  "IF NOT line_exists( lt_eord[ KEY primary_key COMPONENTS matnr = <ls_excel>-matnr \n" +
+    "werks = <ls_excel>-werks lifnr = <ls_excel>-lifnr ] ).",
 ];
 
 statementType(tests, "IF", Statements.If);

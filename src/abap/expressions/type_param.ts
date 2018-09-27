@@ -16,7 +16,7 @@ export class TypeParam extends Reuse {
                   new TypeName(),
                   opt(def));
 
-    let like = seq(str("LIKE"), new FieldChain(), opt(def));
+    let like = seq(str("LIKE"), opt(str("LINE OF")), new FieldChain(), opt(def));
 
     return alt(seq(str("TYPE"), alt(table, ret)), like);
   }

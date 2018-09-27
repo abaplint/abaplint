@@ -8,7 +8,7 @@ export class TableExpression extends Reuse {
     let fields = plus(seq(new Field(), str("="), new Source()));
     let key = seq(str("KEY"), new Field());
     let ret = seq(tok(BracketLeftW),
-                  alt(new Source(), seq(opt(key), fields)),
+                  alt(new Source(), seq(opt(key), opt(str("COMPONENTS")), fields)),
                   alt(tok(WBracketRight),
                       tok(WBracketRightW)));
     return ver(Version.v740sp02, ret);
