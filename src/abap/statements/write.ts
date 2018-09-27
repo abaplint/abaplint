@@ -47,9 +47,10 @@ export class Write extends Statement {
                       seq(str("CURRENCY"), new Source()),
                       str("NO-SIGN"));
 
+// todo, is AT just an optional token?
     let complex = alt(seq(str("/"), opt(seq(tok(ParenLeft), reg(/^\d+$/), tok(ParenRightW)))),
                       seq(opt(str("AT")), tok(WParenLeft), reg(/^[\w\d]+$/), tok(ParenRightW)),
-                      seq(reg(/^\/?\d+$/), tok(ParenLeft), reg(/^\d+$/), tok(ParenRightW)),
+                      seq(opt(str("AT")), reg(/^\/?\d+$/), tok(ParenLeft), reg(/^\d+$/), tok(ParenRightW)),
                       seq(str("AT"), str("/"), tok(ParenLeft), reg(/^[\w\d]+$/), tok(ParenRightW)));
 
     let ret = seq(str("WRITE"),

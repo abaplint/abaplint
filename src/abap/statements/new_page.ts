@@ -9,6 +9,7 @@ export class NewPage extends Statement {
     let line = seq(str("LINE-SIZE"), new Source());
     let print = seq(str("PRINT"), alt(str("OFF"), str("ON")));
     let parameters = seq(str("PARAMETERS"), new Source());
+    let destination = seq(str("DESTINATION"), new Source());
     let archive = seq(str("ARCHIVE PARAMETERS"), new Source());
     let lineCount = seq(str("LINE-COUNT"), new Source());
 
@@ -18,6 +19,7 @@ export class NewPage extends Statement {
                           alt(str("NO-HEADING"), str("WITH-HEADING")),
                           str("NO DIALOG"),
                           parameters,
+                          destination,
                           archive,
                           str("NEW-SECTION"),
                           lineCount,

@@ -136,6 +136,7 @@ let versions = [
 //  {abap: "et_blah = VALUE #( field = 2 ( id = c_bac ) ( id = c_gen ) ).", ver: Version.v740sp02},
   {abap: "foo = EXACT #( blah ).", ver: Version.v740sp02},
   {abap: "DATA(lv_end_date) = CONV zcreated( ms_periods-end_d ) + 235959.", ver: Version.v740sp02},
+  {abap: "MOVE-CORRESPONDING gt_input TO gt_output EXPANDING NESTED TABLES KEEPING TARGET LINES.", ver: Version.v740sp05},
 ];
 
 statementVersion(versions, "MOVE", Statements.Move);

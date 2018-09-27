@@ -49,6 +49,7 @@ let tests = [
   "WRITE AT (lv_at) lv_name COLOR COL_HEADING QUICKINFO lv_info.",
   "WRITE 1(4) 'FOO' CENTERED.",
   "WRITE ('CL_FOO=>BAR') TO lv_value.",
+  "WRITE AT 125(6) foo-bar COLOR COL_POSITIVE CENTERED.",
 ];
 
 statementType(tests, "WRITE", Statements.Write);
