@@ -73,7 +73,7 @@ export class Source extends Reuse {
 
     let tab = seq(opt(new For()),
                   alt(plus(seq(tok(WParenLeftW), star(new Source()), tok(WParenRightW))),
-                      plus(seq(tok(WParenLeftW), plus(fieldList), tok(WParenRightW)))));
+                      seq(star(fieldList), plus(seq(tok(WParenLeftW), plus(fieldList), tok(WParenRightW))))));
 
     let strucOrTab = seq(opt(alet), opt(base),
                          alt(plus(fieldList),
