@@ -44,10 +44,11 @@ export class Select extends Reuse {
     let max = seq(str("MAX"), alt(tok(ParenLeft), tok(ParenLeftW)), new Field(), str(")"));
     let min = seq(str("MIN"), alt(tok(ParenLeft), tok(ParenLeftW)), new Field(), str(")"));
     let sum = seq(str("SUM"), alt(tok(ParenLeft), tok(ParenLeftW)), new Field(), str(")"));
+    let avg = seq(str("AVG"), alt(tok(ParenLeft), tok(ParenLeftW)), new Field(), str(")"));
 
     let fields = alt(str("*"),
                      new Dynamic(),
-                     plus(alt(seq(new Field(), opt(ver(Version.v740sp05, str(",")))), count, max, min, sum)));
+                     plus(alt(seq(new Field(), opt(ver(Version.v740sp05, str(",")))), count, max, min, sum, avg)));
 
     let up = seq(str("UP TO"), new Source(), str("ROWS"));
 

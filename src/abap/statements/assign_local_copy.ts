@@ -1,6 +1,6 @@
 import {Statement} from "./statement";
-import {str, seq, opt, IRunnable} from "../combi";
-import {FieldSymbol, Source} from "../expressions";
+import {str, seq, opt, IRunnable, alt} from "../combi";
+import {FieldSymbol, Source, Dynamic} from "../expressions";
 
 export class AssignLocalCopy extends Statement {
 
@@ -8,7 +8,7 @@ export class AssignLocalCopy extends Statement {
 
     let ret = seq(str("ASSIGN LOCAL COPY OF"),
                   opt(seq(str("INITIAL"), opt(str("LINE OF")))),
-                  new Source(),
+                  alt(new Source(), new Dynamic()),
                   str("TO"),
                   new FieldSymbol());
 

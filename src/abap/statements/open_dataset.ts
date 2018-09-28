@@ -20,10 +20,11 @@ export class Open extends Statement {
     let ignoring = str("IGNORING CONVERSION ERRORS");
     let bom = str("SKIPPING BYTE-ORDER MARK");
     let type = seq(str("TYPE"), new Source());
+    let feed = str("WITH SMART LINEFEED");
 
     let ret = seq(str("OPEN DATASET"),
                   new Target(),
-                  per(direction, type, mode, encoding, pos, message, ignoring, bom, code));
+                  per(direction, type, mode, encoding, pos, message, ignoring, bom, code, feed));
 
     return verNot(Version.Cloud, ret);
   }

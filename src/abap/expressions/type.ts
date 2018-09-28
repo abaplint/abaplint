@@ -13,12 +13,11 @@ export class Type extends Reuse {
                            str("REF TO"),
                            str("RANGE OF"))));
 
+    let options = seq(opt(def), opt(length), opt(decimals), opt(new TableBody()));
+
     let ret = seq(type,
                   new FieldChain(),
-                  opt(def),
-                  opt(length),
-                  opt(decimals),
-                  opt(new TableBody()));
+                  alt(options, str("WITH HEADER LINE")));
 
     return ret;
   }

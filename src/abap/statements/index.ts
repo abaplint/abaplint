@@ -251,3 +251,4 @@ export * from "./test_seam";
 export * from "./end_test_seam";
 export * from "./delete_memory";
 export * from "./provide";
+export * from "./endexec";

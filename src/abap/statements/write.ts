@@ -13,23 +13,21 @@ export class Write extends Statement {
                    alt(str("NO EDIT MASK"),
                        seq(str("EDIT MASK"), new Source())));
 
+    let onoff = alt(str("ON"), str("OFF"));
+
     let to = seq(str("TO"), new Target());
-
-    let colorOpt = alt(seq(str("INVERSE"), opt(str("ON"))),
-                       seq(str("INTENSIFIED"), opt(str("ON"))));
-
     let options = per(mask,
                       to,
                       seq(str("EXPONENT"), new Source()),
                       str("NO-GROUPING"),
                       str("NO-ZERO"),
                       str("CENTERED"),
-                      seq(str("INPUT"), opt(alt(str("ON"), str("OFF")))),
+                      seq(str("INPUT"), opt(onoff)),
                       str("NO-GAP"),
                       str("LEFT-JUSTIFIED"),
                       str("AS LINE"),
                       str("AS ICON"),
-                      seq(str("HOTSPOT"), opt(alt(str("ON"), str("OFF")))),
+                      seq(str("HOTSPOT"), opt(onoff)),
                       str("AS CHECKBOX"),
                       str("AS SYMBOL"),
                       str("RIGHT-JUSTIFIED"),
@@ -41,9 +39,10 @@ export class Write extends Statement {
                       str("ENVIRONMENT TIME FORMAT"),
                       reg(/^[YMD]{2,4}\/?[YMD]{2,4}\/?[YMD]{2,4}$/i),
                       seq(str("UNIT"), new Source()),
-                      str("INTENSIFIED OFF"),
+                      seq(str("INTENSIFIED"), opt(onoff)),
                       seq(str("DECIMALS"), new Source()),
-                      seq(str("COLOR"), opt(str("=")), new Source(), opt(colorOpt)),
+                      seq(str("INVERSE"), opt(str("ON"))),
+                      seq(str("COLOR"), opt(str("=")), new Source()),
                       seq(str("CURRENCY"), new Source()),
                       str("NO-SIGN"));
 

@@ -9,11 +9,14 @@ export class Uline extends Statement {
   public static get_matcher(): IRunnable {
     let right = alt(tok(ParenRight), tok(ParenRightW));
 
+    // todo, reuse the AT thing in ULINE and WRITE?
     let pos = alt(seq(reg(/^(\/\d*|\d+)$/),
                       opt(seq(tok(ParenLeft), reg(/^\d+$/), right))),
                   seq(tok(WParenLeft), reg(/^\d+$/), right));
 
-    let ret = seq(str("ULINE"), optPrio(str("AT")), opt(alt(pos, new Dynamic())));
+    let dyn = seq(opt(str("/")), new Dynamic());
+
+    let ret = seq(str("ULINE"), optPrio(str("AT")), opt(alt(pos, dyn)));
 
     return verNot(Version.Cloud, ret);
   }

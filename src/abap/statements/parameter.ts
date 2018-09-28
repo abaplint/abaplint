@@ -10,7 +10,7 @@ export class Parameter extends Statement {
     let def = seq(str("DEFAULT"), alt(new Constant(), new FieldChain()));
     let radio = seq(str("RADIOBUTTON GROUP"), new RadioGroupName());
     let type = seq(alt(str("TYPE"), str("LIKE")), alt(new FieldChain(), new Dynamic()));
-    let memory = seq(str("MEMORY ID"), new Field());
+    let memory = seq(str("MEMORY ID"), reg(/^[\w\d]+$/));
     let listbox = str("AS LISTBOX");
     let cmd = seq(str("USER-COMMAND"), reg(/^\w+$/));
     let modif = seq(str("MODIF ID"), new Modif());

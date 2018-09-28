@@ -14,7 +14,8 @@ let tests = [
   "EXPORT foo = <bar> TO INTERNAL TABLE tab.",
   "EXPORT tab = lt_tab TO SHARED MEMORY bar(aa) ID lv_id.",
   "EXPORT size = l_size TO DATA BUFFER ls_foo-data COMPRESSION OFF.",
-//  "EXPORT lv_flag FROM lv_flag TO SHARED BUFFER indx(ar) ID 'BLAH'.",
+  "EXPORT data_tab FROM it_data TO DATABASE foobar(fo) FROM gs_field ID key USING var.",
+  "EXPORT lv_flag FROM lv_flag TO SHARED BUFFER indx(ar) ID 'BLAH'.",
 ];
 
 statementType(tests, "EXPORT", Statements.Export);

@@ -1,5 +1,5 @@
 import {Statement} from "./statement";
-import {verNot, str, seq, per, IRunnable} from "../combi";
+import {verNot, str, seq, per, IRunnable, opt} from "../combi";
 import {Target} from "../expressions";
 import {Version} from "../../version";
 
@@ -14,7 +14,7 @@ export class GetCursor extends Statement {
     let area = seq(str("AREA"), new Target());
 
     let ret = seq(str("GET CURSOR"),
-                  per(line, field, offset, value, length, area));
+                  per(line, opt(str("DISPLAY")), field, offset, value, length, area));
 
     return verNot(Version.Cloud, ret);
   }

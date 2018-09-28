@@ -6,6 +6,7 @@ let tests = [
   "constants lc_empty type string value is initial.",
   "constants c_oo_class(7)      VALUE 'foobar'.",
   "constants /foo/bar type string value 'val'.",
+  "CONSTANTS $blah TYPE syst-msgty VALUE 'I'.",
   "CONSTANTS lc_foo TYPE string VALUE `foo` & `bar`.",
 ];
 
