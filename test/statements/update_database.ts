@@ -13,6 +13,7 @@ let tests = [
   "UPDATE zfoo CLIENT SPECIFIED SET foo = bar WHERE moo = space.",
   "UPDATE zfoo SET (l_string).",
   "UPDATE zfoo CLIENT SPECIFIED SET foo = bar WHERE moo = SPACE OR boo IS NULL.",
+  "UPDATE vekp SET tarag = @lv_tarag, ntvol = @lv_ntvol WHERE venum = @ls_update-venum.",
 ];
 
 statementType(tests, "UPDATE", Statements.UpdateDatabase);

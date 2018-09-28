@@ -1,14 +1,18 @@
 import {Statement} from "./statement";
-import {str, seq, opt, alt, IRunnable} from "../combi";
-import {Source, DatabaseTable, Dynamic, ParameterListS, SQLCond} from "../expressions";
+import {str, seq, opt, alt, IRunnable, star, tok} from "../combi";
+import {Source, DatabaseTable, Dynamic, Field, SQLCond} from "../expressions";
+import {WAt} from "../tokens/";
 
 export class UpdateDatabase extends Statement {
 
   public static get_matcher(): IRunnable {
     let target = alt(new DatabaseTable(), new Dynamic());
 
+    let param = seq(new Field(), str("="), opt(tok(WAt)), new Source());
+    let parameters = seq(param, star(seq(opt(str(",")), param)));
+
     let set = seq(str("SET"),
-                  alt(new ParameterListS(), new Dynamic()),
+                  alt(parameters, new Dynamic()),
                   opt(seq(str("WHERE"), new SQLCond())));
 
     let fromTable = seq(str("FROM"),

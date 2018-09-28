@@ -56,7 +56,7 @@ export class Select extends Reuse {
 
     let source = seq(from, star(new SQLJoin()), opt(tok(WParenRightW)));
 
-    let group = seq(str("GROUP BY"), alt(new Field(), new Dynamic()));
+    let group = seq(str("GROUP BY"), plus(alt(new Field(), new Dynamic())));
 
     let perm = per(source, into, forAll, where, order, up, client, bypass, pack, group, connection);
 

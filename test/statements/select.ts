@@ -91,11 +91,11 @@ let tests = [
   "SELECT COUNT( DISTINCT id ) FROM zfoo INTO lv_cnt.",
   "SELECT SINGLE id FROM ztab connection (lv_con) INTO lv_id.",
   "SELECT SUM( value ) FROM table INTO lv_count.",
-
   "SELECT carrid, connid FROM sflight INTO CORRESPONDING FIELDS OF TABLE @flight FOR ALL ENTRIES IN @carriers.",
   "SELECT SINGLE blah INTO lv_blah FROM dbtable WHERE posid = foo-bar AND field IN ( '02', '30' ).",
-
   "SELECT matnr, werks FROM ztable INTO TABLE @DATA(lt_result) WHERE matnr IN @s_matnr AND werks IN @s_werks.",
+  "select posnr min( edatu ) into table li_vbep from vbep where vbeln = li_vbbe-vbeln and wmeng > 0 group by vbeln posnr.",
+  "select netwr from vbakuk into l_netwr where vbeln = l_vbeln and vbtyp in ('C').",
 ];
 
 statementType(tests, "SELECT", Statements.Select);

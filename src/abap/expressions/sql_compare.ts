@@ -1,4 +1,4 @@
-import {seq, opt, ver, tok, plus, alt, optPrio, str, Reuse, IRunnable} from "../combi";
+import {seq, opt, ver, tok, star, alt, optPrio, str, Reuse, IRunnable} from "../combi";
 import {FieldSub, Constant, Source, SQLFieldName, Dynamic, Select} from "./";
 import {WParenLeft, ParenRightW, ParenRight, WAt, WParenLeftW, WParenRight} from "../tokens/";
 import {Version} from "../../version";
@@ -9,7 +9,7 @@ export class SQLCompare extends Reuse {
 
     let list = seq(alt(tok(WParenLeft), tok(WParenLeftW)),
                    val,
-                   plus(seq(str(","), val)),
+                   star(seq(str(","), val)),
                    alt(tok(WParenRight), tok(ParenRightW), tok(ParenRight)));
 
     let subSelect = seq(str("("), new Select(), str(")"));
