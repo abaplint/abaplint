@@ -1,13 +1,13 @@
 import {Statement} from "./statement";
-import {verNot, str, seq, opt, per, IRunnable, tok} from "../combi";
+import {verNot, str, seq, opt, per, alt, IRunnable, tok} from "../combi";
 import {Integer, MessageClass, NamespaceSimpleName} from "../expressions";
 import {Version} from "../../version";
-import {ParenLeft, ParenRightW} from "../tokens";
+import {ParenLeft, ParenRightW, ParenRight} from "../tokens";
 
 export class Report extends Statement {
 
   public static get_matcher(): IRunnable {
-    let more = seq(tok(ParenLeft), new Integer(), tok(ParenRightW));
+    let more = seq(tok(ParenLeft), new Integer(), alt(tok(ParenRightW), tok(ParenRight)));
     let heading = str("NO STANDARD PAGE HEADING");
     let size = seq(str("LINE-SIZE"), new Integer());
     let count = seq(str("LINE-COUNT"), new Integer(), opt(more));

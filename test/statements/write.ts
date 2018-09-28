@@ -50,6 +50,7 @@ let tests = [
   "WRITE 1(4) 'FOO' CENTERED.",
   "WRITE ('CL_FOO=>BAR') TO lv_value.",
   "WRITE AT 125(6) foo-bar COLOR COL_POSITIVE CENTERED.",
+  "write at GI_GEN_H_MSG-HOTSPOT_COL ICON_REPLACE as icon.",
 ];
 
 statementType(tests, "WRITE", Statements.Write);

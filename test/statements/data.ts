@@ -44,6 +44,7 @@ let tests = [
   "class-data gv_var type zfoo value 'FOO' read-only .",
   "DATA /foo/bar TYPE /foo/bar.",
   "DATA lr_/foo/cx_bar TYPE REF TO /foo/bar.",
+  "DATA li_data(200) TYPE c OCCURS 0 WITH HEADER LINE.",
 //  "DATA ret TYPE TABLE OF foobar INITIAL SIZE 10 WITH HEADER LINE.",
 //  "DATA range TYPE RANGE OF char30 WITH HEADER LINE.",
 //  "data mepo1313-evers like ekpo-evers.",

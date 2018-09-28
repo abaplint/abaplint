@@ -1,6 +1,6 @@
 import {Statement} from "./statement";
 import {verNot, str, seq, opt, alt, per, tok, regex as reg, IRunnable} from "../combi";
-import {Target, Source, Dynamic} from "../expressions";
+import {Target, Source, Dynamic, FieldSub} from "../expressions";
 import {ParenLeft, ParenRightW, WParenLeft} from "../tokens/";
 import {Version} from "../../version";
 
@@ -51,6 +51,7 @@ export class Write extends Statement {
     let complex = alt(seq(str("/"), opt(seq(tok(ParenLeft), reg(/^\d+$/), tok(ParenRightW)))),
                       seq(opt(str("AT")), tok(WParenLeft), reg(/^[\w\d]+$/), tok(ParenRightW)),
                       seq(opt(str("AT")), reg(/^\/?\d+$/), tok(ParenLeft), reg(/^\d+$/), tok(ParenRightW)),
+                      seq(str("AT"), new FieldSub()),
                       seq(str("AT"), str("/"), tok(ParenLeft), reg(/^[\w\d]+$/), tok(ParenRightW)));
 
     let ret = seq(str("WRITE"),
