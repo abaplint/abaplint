@@ -1,22 +1,34 @@
 import {Token, Pragma} from "../abap/tokens/";
 import {Statement} from "../abap/statements/statement";
 import {RootNode} from "../abap/node";
-import {MemoryFile} from "./memory_file";
+import {AbstractFile} from "./abstract_file";
+import {IFile} from "./ifile";
 
 // todo: rename to ABAPFile
-export class ParsedFile extends MemoryFile {
+export class ParsedFile extends AbstractFile {
   // tokens vs statements: pragmas are part of tokens but not in statements
   // todo: need some better way of handling pragmas
   private tokens: Array<Token>;
   private statements: Array<Statement>;
   private root: RootNode;
+  private file: IFile;
 
-  public constructor(f, tokens, statements, root) {
-    super(f.getFilename(), f.getRaw());
+  public constructor(file: IFile, tokens: Array<Token>, statements: Array<Statement>, root: RootNode) {
+    super(file.getFilename());
+    this.file       = file;
     this.tokens     = tokens;
     this.statements = statements;
     this.root       = root;
   }
+
+  public getRaw(): string {
+    return this.file.getRaw();
+  }
+
+  public getRawRows(): Array<string> {
+    return this.file.getRawRows();
+  }
+
   /*
     public static fromJSON(str: string): ParsedFile {
       let json = JSON.parse(str);
