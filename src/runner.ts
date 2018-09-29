@@ -9,10 +9,8 @@ import * as ProgressBar from "progress";
 import {GenericError} from "./rules/";
 
 export default class Runner {
-
   private conf: Config;
   private reg: Registry;
-  private files: Array<IFile>; // todo, redundant? in Registry?
   private parsed: boolean;
   private generic: Array<Issue>;
 
@@ -24,9 +22,10 @@ export default class Runner {
   constructor(files: Array<IFile>, conf?: Config) {
     this.conf = conf ? conf : Config.getDefault();
     this.reg = new Registry();
-    this.files = files;
     this.parsed = false;
     this.generic = [];
+
+    this.addObjectsToRegistry(files);
   }
 
   public parse(): Array<ParsedFile> {
@@ -71,8 +70,6 @@ export default class Runner {
   }
 
   private parseInternal(): void {
-    this.addObjectsToRegistry();
-
     let objects = this.reg.getABAPObjects();
 
     let bar = new Progress(this.conf,
@@ -91,8 +88,8 @@ export default class Runner {
     this.parsed = true;
   }
 
-  private addObjectsToRegistry(): void {
-    this.files.forEach((f) => {
+  private addObjectsToRegistry(files: Array<IFile>): void {
+    files.forEach((f) => {
       try {
         this.reg.findOrCreate(f.getObjectName(), f.getObjectType()).addFile(f);
       } catch (error) {

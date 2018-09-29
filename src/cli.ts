@@ -42,6 +42,7 @@ function displayHelp(): string {
   output = output + "  -v, --version    current version\n";
   output = output + "  -a [abap]        specify ABAP version\n";
   output = output + "  -s               show progress\n";
+  output = output + "  -m               show memory usage\n";
   output = output + "  -d, --default    show default configuration\n";
   return output;
 }
@@ -101,6 +102,10 @@ function run() {
       issues = new Runner(loadFiles(files), config).findIssues();
       output = Formatter.format(issues, format);
     }
+  }
+
+  if (argv["m"]) {
+    output = output + JSON.stringify(process.memoryUsage());
   }
 
   if (output.length > 0) {
