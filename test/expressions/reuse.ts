@@ -1,7 +1,7 @@
 import {expect} from "chai";
 import * as Combi from "../../src/abap/combi";
 import * as Reuse from "../../src/abap/expressions";
-import {File} from "../../src/file";
+import {File} from "../../src/files";
 import Runner from "../../src/runner";
 
 let tests = [

@@ -1,5 +1,5 @@
 import {Object} from "./";
-import {ParsedFile} from "../file";
+import {ParsedFile} from "../files";
 import Lexer from "../abap/lexer";
 import Parser from "../abap/parser";
 import {Version} from "../version";

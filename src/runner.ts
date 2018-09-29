@@ -1,4 +1,4 @@
-import {File, ParsedFile} from "./file";
+import {File, ParsedFile} from "./files";
 import Config from "./config";
 import * as Rules from "./rules/";
 import {Issue} from "./issue";

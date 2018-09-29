@@ -1,5 +1,5 @@
 import Runner from "../src/runner";
-import {File} from "../src/file";
+import {File} from "../src/files";
 import {Formatter} from "../src/formatters";
 import {expect} from "chai";
 

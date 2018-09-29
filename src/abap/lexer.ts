@@ -1,5 +1,5 @@
 import * as Tokens from "./tokens/";
-import {File} from "../file";
+import {File} from "../files";
 import Position from "../position";
 
 enum Mode {

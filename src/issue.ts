@@ -1,5 +1,5 @@
 import {IRule} from "./rules/";
-import {File} from "./file";
+import {File} from "./files";
 import Position from "./position";
 
 export class Issue {

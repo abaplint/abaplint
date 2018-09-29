@@ -1,6 +1,6 @@
 import * as Objects from "./objects";
 import {ABAPObject} from "./objects";
-import {ParsedFile} from "./file";
+import {ParsedFile} from "./files";
 
 export default class Registry {
 

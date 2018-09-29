@@ -1,7 +1,7 @@
 import {IRule} from ".";
 import {ABAPObject} from "../objects";
 import {Issue} from "../issue";
-import {ParsedFile} from "../file";
+import {ParsedFile} from "../files";
 
 export abstract class ABAPRule implements IRule {
 

@@ -1,4 +1,4 @@
-import {File} from "../../src/file";
+import {File} from "../../src/files";
 import Lexer from "../../src/abap/lexer";
 import Runner from "../../src/runner";
 import {expect} from "chai";

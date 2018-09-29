@@ -1,4 +1,4 @@
-import {File} from "../file";
+import {File} from "../files";
 
 export abstract class Object {
   protected files: Array<File>;

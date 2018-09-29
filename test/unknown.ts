@@ -1,6 +1,6 @@
 import {expect} from "chai";
 import {Unknown} from "../src/abap/statements/statement";
-import {File} from "../src/file";
+import {File} from "../src/files";
 import Runner from "../src/runner";
 
 describe("unknown statements", () => {

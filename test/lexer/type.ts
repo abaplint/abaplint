@@ -1,5 +1,5 @@
 import {expect} from "chai";
-import {File} from "../../src/file";
+import {File} from "../../src/files";
 import Lexer from "../../src/abap/lexer";
 import * as Tokens from "../../src/abap/tokens";
 

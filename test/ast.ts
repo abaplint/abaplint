@@ -1,6 +1,6 @@
 import {expect} from "chai";
 import Runner from "../src/runner";
-import {File} from "../src/file";
+import {File} from "../src/files";
 
 let tests = [
   {abap: "add 2 to lv_foo.", cnt: 5},

@@ -1,4 +1,4 @@
-import {File} from "../src/file";
+import {File} from "../src/files";
 import {StructureNode} from "../src/abap/node";
 import Runner from "../src/runner";
 import {expect} from "chai";

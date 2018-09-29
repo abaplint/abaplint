@@ -1,4 +1,4 @@
-import {ParsedFile} from "../file";
+import {ParsedFile} from "../files";
 import * as Reuse from "./expressions";
 import {BasicNode, StructureNode, ReuseNode, StatementNode} from "./node";
 import * as Statements from "./statements/";

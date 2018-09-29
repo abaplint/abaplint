@@ -2,7 +2,7 @@ import {expect} from "chai";
 import * as Combi from "../src/abap/combi";
 import * as Tokens from "../src/abap/tokens/";
 import Lexer from "../src/abap/lexer";
-import {File} from "../src/file";
+import {File} from "../src/files";
 import {Identifier, WPlusW, Plus} from "../src/abap/tokens/";
 
 let str  = Combi.str;

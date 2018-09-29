@@ -1,5 +1,5 @@
 import Runner from "./runner";
-import {File} from "./file";
+import {File} from "./files";
 import {Issue} from "./issue";
 import Config from "./config";
 import {textToVersion} from "./version";

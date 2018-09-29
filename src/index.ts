@@ -1,4 +1,4 @@
-import {File} from "./file";
+import {File} from "./files";
 import Runner from "./runner";
 import {Issue} from "./issue";
 import Config from "./config";
