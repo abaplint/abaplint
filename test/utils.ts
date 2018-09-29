@@ -1,4 +1,4 @@
-import {File} from "../src/files";
+import {MemoryFile} from "../src/files";
 import Config from "../src/config";
 import Runner from "../src/runner";
 import {expect} from "chai";
@@ -9,7 +9,7 @@ import {Unknown} from "../src/abap/statements/statement";
 
 function run(abap: string, text: string, type, version = Version.v750) {
   let config = Config.getDefault().setVersion(version);
-  let file = new Runner([new File("cl_foo.clas.abap", abap)], config).parse()[0];
+  let file = new Runner([new MemoryFile("cl_foo.clas.abap", abap)], config).parse()[0];
   let slist = file.getStatements();
 
   it(text, () => {

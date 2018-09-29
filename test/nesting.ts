@@ -1,4 +1,4 @@
-import {File} from "../src/files";
+import {MemoryFile} from "../src/files";
 import {StructureNode} from "../src/abap/node";
 import Runner from "../src/runner";
 import {expect} from "chai";
@@ -281,7 +281,7 @@ let tests = [
 describe("count top nesting", () => {
   tests.forEach((test) => {
     it("\"" + test.n + "\" should be " + test.top + " top statements", () => {
-      let file = new Runner([new File("cl_foo.clas.abap", test.code)]).parse()[0];
+      let file = new Runner([new MemoryFile("cl_foo.clas.abap", test.code)]).parse()[0];
       expect(file.getRoot().getChildren().length).to.equals(test.top);
     });
   });
@@ -290,7 +290,7 @@ describe("count top nesting", () => {
 describe("count first top child nesting", () => {
   tests.forEach((test) => {
     it("\"" + test.n + "\" should be " + test.firstchildren + " first child statements", () => {
-      let file = new Runner([new File("cl_foo.clas.abap", test.code)]).parse()[0];
+      let file = new Runner([new MemoryFile("cl_foo.clas.abap", test.code)]).parse()[0];
       let count = 0;
       if (file.getRoot().getChildren()[0] instanceof StructureNode) {
         count = file.getRoot().getChildren()[0].getChildren().length;

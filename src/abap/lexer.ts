@@ -1,5 +1,5 @@
 import * as Tokens from "./tokens/";
-import {File} from "../files";
+import {IFile} from "../files";
 import Position from "../position";
 
 enum Mode {
@@ -93,7 +93,7 @@ export default class Lexer {
   private static stream: Stream;
   private static buffer: Buffer;
 
-  public static run(file: File): Array<Tokens.Token> {
+  public static run(file: IFile): Array<Tokens.Token> {
     this.tokens = [];
     this.m = Mode.Normal;
 

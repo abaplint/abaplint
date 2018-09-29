@@ -1,4 +1,4 @@
-import {File} from "./files";
+import {MemoryFile} from "./files";
 import Runner from "./runner";
 import {Issue} from "./issue";
 import Config from "./config";
@@ -7,4 +7,4 @@ import {Formatter} from "./formatters";
 
 // file used to build typings, index.d.ts
 
-export = {File, Issue, Runner, Config, Version, Formatter};
+export = {MemoryFile, Issue, Runner, Config, Version, Formatter};

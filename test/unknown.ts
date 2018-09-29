@@ -1,6 +1,6 @@
 import {expect} from "chai";
 import {Unknown} from "../src/abap/statements/statement";
-import {File} from "../src/files";
+import {MemoryFile} from "../src/files";
 import Runner from "../src/runner";
 
 describe("unknown statements", () => {
@@ -13,7 +13,7 @@ describe("unknown statements", () => {
 
   tests.forEach((abap) => {
     it("\"" + abap + "\" should be unknown", () => {
-      let file = new Runner([new File("cl_foo.clas.abap", abap)]).parse()[0];
+      let file = new Runner([new MemoryFile("cl_foo.clas.abap", abap)]).parse()[0];
 
       expect(file.getStatements().length).to.equals(1);
       for (let statement of file.getStatements()) {

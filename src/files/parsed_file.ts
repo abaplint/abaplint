@@ -1,10 +1,10 @@
 import {Token, Pragma} from "../abap/tokens/";
 import {Statement} from "../abap/statements/statement";
 import {RootNode} from "../abap/node";
-import {File} from "./file";
+import {MemoryFile} from "./memory_file";
 
 // todo: rename to ABAPFile
-export class ParsedFile extends File {
+export class ParsedFile extends MemoryFile {
   // tokens vs statements: pragmas are part of tokens but not in statements
   // todo: need some better way of handling pragmas
   private tokens: Array<Token>;

@@ -1,7 +1,7 @@
 import {expect} from "chai";
 import * as Combi from "../../src/abap/combi";
 import * as Reuse from "../../src/abap/expressions";
-import {File} from "../../src/files";
+import {MemoryFile} from "../../src/files";
 import Runner from "../../src/runner";
 
 let tests = [
@@ -69,7 +69,7 @@ describe("Test reuse matchers", () => {
     let not = test.e === true ? "" : "not ";
 
     it("\"" + test.c + "\" should " + not + "match " + test.r.getName(), () => {
-      let file = new Runner([new File("cl_foo.clas.abap", test.c)]).parse()[0];
+      let file = new Runner([new MemoryFile("cl_foo.clas.abap", test.c)]).parse()[0];
       let match = Combi.Combi.run(test.r.get_runnable(), file.getTokens());
       expect(match !== undefined).to.equals(test.e);
     });

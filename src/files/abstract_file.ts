@@ -1,18 +1,10 @@
-export class File {
-  private raw: string;
+import {IFile} from "./ifile";
+
+export abstract class AbstractFile implements IFile {
   private filename: string;
 
-  constructor(filename: string, raw: string) {
-    this.raw = raw.replace(/\r/g, ""); // ignore all carriage returns
+  constructor(filename: string) {
     this.filename = filename;
-  }
-
-  public getRaw(): string {
-    return this.raw;
-  }
-
-  public getRawRows(): Array<string> {
-    return this.raw.split("\n");
   }
 
   public getFilename(): string {
@@ -30,4 +22,7 @@ export class File {
     let split = base.split(".");
     return split[0].toUpperCase();
   }
+
+  public abstract getRaw(): string;
+  public abstract getRawRows(): Array<string>;
 }

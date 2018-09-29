@@ -1,4 +1,4 @@
-import {File} from "../../src/files";
+import {MemoryFile} from "../../src/files";
 import Lexer from "../../src/abap/lexer";
 import Runner from "../../src/runner";
 import {expect} from "chai";
@@ -80,7 +80,7 @@ describe("count_tokens", () => {
   ];
 
   tests.forEach((test) => {
-    let file = new File("cl_foo.clas.abap", test.abap);
+    let file = new MemoryFile("cl_foo.clas.abap", test.abap);
     let tokens = Lexer.run(file);
 
     it("\"" + test.abap + "\" should have " + test.tokens + " tokens", () => {

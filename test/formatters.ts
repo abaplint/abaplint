@@ -1,5 +1,5 @@
 import Runner from "../src/runner";
-import {File} from "../src/files";
+import {MemoryFile} from "../src/files";
 import {Formatter} from "../src/formatters";
 import {expect} from "chai";
 
@@ -10,7 +10,7 @@ describe("formatters", () => {
   ];
 
   tests.forEach((test) => {
-    let issues = new Runner([new File("cl_foo.clas.abap", test.abap)]).findIssues();
+    let issues = new Runner([new MemoryFile("cl_foo.clas.abap", test.abap)]).findIssues();
 
     it("Json " + test.abap, () => {
       expect(issues.length).to.equals(test.errors);

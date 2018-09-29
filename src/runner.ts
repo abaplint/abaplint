@@ -1,4 +1,4 @@
-import {File, ParsedFile} from "./files";
+import {IFile, MemoryFile, ParsedFile} from "./files";
 import Config from "./config";
 import * as Rules from "./rules/";
 import {Issue} from "./issue";
@@ -12,7 +12,7 @@ export default class Runner {
 
   private conf: Config;
   private reg: Registry;
-  private files: Array<File>; // todo, redundant? in Registry?
+  private files: Array<IFile>; // todo, redundant? in Registry?
   private parsed: boolean;
   private generic: Array<Issue>;
 
@@ -21,7 +21,7 @@ export default class Runner {
     return "{{ VERSION }}";
   }
 
-  constructor(files: Array<File>, conf?: Config) {
+  constructor(files: Array<IFile>, conf?: Config) {
     this.conf = conf ? conf : Config.getDefault();
     this.reg = new Registry();
     this.files = files;
@@ -124,7 +124,7 @@ class Progress {
 }
 
 // this part is required for the web things to work
-exports.File = File;
+exports.File = MemoryFile;
 exports.Runner = Runner;
 exports.Config = Config;
 exports.Version = Version;

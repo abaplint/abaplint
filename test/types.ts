@@ -1,11 +1,11 @@
 import {expect} from "chai";
 import Runner from "../src/runner";
 import {Result} from "../src/abap/types";
-import {File} from "../src/files";
+import {MemoryFile} from "../src/files";
 import * as Types from "../src/abap/types";
 
 function run(abap: string): Result {
-  let file = new Runner([new File("cl_foo.clas.abap", abap)]).parse()[0];
+  let file = new Runner([new MemoryFile("cl_foo.clas.abap", abap)]).parse()[0];
   return Types.Analyze.run(file);
 }
 

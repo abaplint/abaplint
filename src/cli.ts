@@ -1,5 +1,5 @@
 import Runner from "./runner";
-import {File} from "./files";
+import {MemoryFile} from "./files";
 import {Issue} from "./issue";
 import Config from "./config";
 import {textToVersion} from "./version";
@@ -54,10 +54,10 @@ function loadFileNames(args): Array<string> {
   return files;
 }
 
-function loadFiles(input: Array<string>): Array<File> {
-  let files: Array<File> = [];
+function loadFiles(input: Array<string>): Array<MemoryFile> {
+  let files: Array<MemoryFile> = [];
   input.forEach((filename) => {
-    files.push(new File(filename, fs.readFileSync(filename, "utf8")));
+    files.push(new MemoryFile(filename, fs.readFileSync(filename, "utf8")));
   } );
   return files;
 }

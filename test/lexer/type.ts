@@ -1,5 +1,5 @@
 import {expect} from "chai";
-import {File} from "../../src/files";
+import {MemoryFile} from "../../src/files";
 import Lexer from "../../src/abap/lexer";
 import * as Tokens from "../../src/abap/tokens";
 
@@ -13,7 +13,7 @@ let tests = [
 
 describe("lexer types", () => {
   tests.forEach((test) => {
-    let tokens = Lexer.run(new File("foo.abap", test.abap));
+    let tokens = Lexer.run(new MemoryFile("foo.abap", test.abap));
 
     it("\"" + test.abap + "\" should be " + test.type["name"], () => {
       expect(tokens.length).to.equals(1);
