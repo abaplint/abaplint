@@ -5,7 +5,7 @@ export class MemoryFile extends AbstractFile {
 
   constructor(filename: string, raw: string) {
     super(filename);
-    this.raw = raw.replace(/\r/g, ""); // ignore all carriage returns
+    this.raw = raw;
   }
 
   public getRaw(): string {

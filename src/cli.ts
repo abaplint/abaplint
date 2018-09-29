@@ -1,11 +1,12 @@
 import Runner from "./runner";
-import {MemoryFile} from "./files";
+import {IFile, CompressedFile, MemoryFile} from "./files";
 import {Issue} from "./issue";
 import Config from "./config";
 import {textToVersion} from "./version";
 import {Formatter} from "./formatters";
 import * as fs from "fs";
 import * as path from "path";
+import * as zlib from "zlib";
 import * as glob from "glob";
 import * as minimist from "minimist";
 
@@ -42,6 +43,7 @@ function displayHelp(): string {
   output = output + "  -v, --version    current version\n";
   output = output + "  -a [abap]        specify ABAP version\n";
   output = output + "  -s               show progress\n";
+  output = output + "  -c               compress files in memory\n";
   output = output + "  -m               show memory usage\n";
   output = output + "  -d, --default    show default configuration\n";
   return output;
@@ -55,15 +57,23 @@ function loadFileNames(args): Array<string> {
   return files;
 }
 
-function loadFiles(input: Array<string>): Array<MemoryFile> {
-  let files: Array<MemoryFile> = [];
-  input.forEach((filename) => {
-    files.push(new MemoryFile(filename, fs.readFileSync(filename, "utf8")));
-  } );
+async function loadFiles(compress: boolean, input: Array<string>): Promise<Array<IFile>> {
+  let files: Array<IFile> = [];
+  for (const filename of input) {
+// note that readFileSync is typically faster than async readFile,
+// https://medium.com/@adamhooper/node-synchronous-code-runs-faster-than-asynchronous-code-b0553d5cf54e
+    const raw = fs.readFileSync(filename, "utf8").replace(/\r/g, ""); // ignore all carriage returns
+    // tslint:disable-next-line:no-constant-condition
+    if (compress) {
+      files.push(new CompressedFile(filename, zlib.deflateSync(raw).toString("base64")));
+    } else {
+      files.push(new MemoryFile(filename, raw));
+    }
+  }
   return files;
 }
 
-function run() {
+async function run() {
   let argv = minimist(process.argv.slice(2));
   let format = "default";
   let output = "";
@@ -99,7 +109,10 @@ function run() {
       if (argv["s"]) {
         config.setShowProgress(true);
       }
-      issues = new Runner(loadFiles(files), config).findIssues();
+      let compress = argv["c"] ? true : false;
+
+      let loaded = await loadFiles(compress, files);
+      issues = new Runner(loaded, config).findIssues();
       output = Formatter.format(issues, format);
     }
   }
@@ -108,9 +121,7 @@ function run() {
     output = output + JSON.stringify(process.memoryUsage());
   }
 
-  if (output.length > 0) {
-    sendOutput(output, issues);
-  }
+  return {output, issues};
 }
 
 function sendOutput(output, issues) {
@@ -121,4 +132,11 @@ function sendOutput(output, issues) {
   });
 }
 
-run();
+run().then(({output, issues}) => {
+  if (output.length > 0) {
+    sendOutput(output, issues);
+  }
+}).catch((err) => {
+  console.dir(err);
+  process.exit();
+});
