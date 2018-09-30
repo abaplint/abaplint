@@ -6,7 +6,6 @@
     "no-empty-character-class": true,
     "no-extra-boolean-cast": true,
     "no-extra-semi": true,
-    "use-isnan": true,
     "no-unexpected-multiline": true,
     "no-sparse-arrays": true,
     "ter-arrow-body-style": [true, "always"],
@@ -63,25 +62,14 @@
       140
     ],
     "member-access": true,
-    "member-ordering": [
-      true,
-      "public-before-private",
-      "static-before-instance",
-      "variables-before-functions"
-    ],
+    "member-ordering": false,
     "no-angle-bracket-type-assertion": true,
     "no-any": false,
     "no-arg": true,
     "no-bitwise": true,
     "no-conditional-assignment": true,
     "no-consecutive-blank-lines": false,
-    "no-console": [
-      true,
-      "debug",
-      "info",
-      "time",
-      "timeEnd"
-    ],
+    "no-console": false,
     "no-construct": true,
     "no-debugger": true,
     "no-duplicate-variable": true,

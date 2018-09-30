@@ -1,3 +1,4 @@
-#!/usr/bin/env node
+#!/bin/sh
+":" //# comment; exec /usr/bin/env node --experimental-worker "$0" "$@"
 
 require("./build/src/cli");

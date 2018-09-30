@@ -125,19 +125,16 @@ async function run() {
   return {output, issues};
 }
 
-function sendOutput(output, issues) {
-  process.stdout.write(output, () => {
-    if (issues.length > 0) {
-      process.exit(1);
-    }
-  });
-}
-
 run().then(({output, issues}) => {
   if (output.length > 0) {
-    sendOutput(output, issues);
+    process.stdout.write(output, () => {
+      if (issues.length > 0) {
+        process.exit(1);
+      }
+    });
   }
+  process.exit();
 }).catch((err) => {
   console.dir(err);
-  process.exit();
+  process.exit(1);
 });

@@ -33,6 +33,10 @@
     "type": "git",
     "url": "git+https://github.com/larshp/abaplint.git"
   },
+  "engines": {
+    "node": ">=10.5.0",
+    "npm": ">= 6.0.0"
+  },
   "keywords": [
     "ABAP",
     "lint"
