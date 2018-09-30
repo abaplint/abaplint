@@ -65,6 +65,7 @@ async function loadFiles(compress: boolean, input: Array<string>): Promise<Array
     const raw = fs.readFileSync(filename, "utf8").replace(/\r/g, ""); // ignore all carriage returns
     // tslint:disable-next-line:no-constant-condition
     if (compress) {
+// todo, util.promisify(zlib.deflate) does not seem to work?
       files.push(new CompressedFile(filename, zlib.deflateSync(raw).toString("base64")));
     } else {
       files.push(new MemoryFile(filename, raw));
