@@ -25,3 +25,6 @@ For checking ABAP code inside the ABAP system use [code inspector](http://wiki.s
 `npm install`
 
 `npm test`
+
+### Parsing vs standard ABAP
+* Spaces required after string literals and before right parenthesis
