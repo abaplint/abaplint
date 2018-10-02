@@ -1,6 +1,7 @@
 import {Issue} from "../issue";
 import Position from "../position";
-import {Unknown} from "../abap/statements/statement";
+import * as Tokens from "../abap/tokens";
+import {Unknown, Statement} from "../abap/statements/statement";
 import {ABAPRule} from "./abap_rule";
 
 export class ParserErrorConf {
@@ -19,6 +20,17 @@ export class ParserError extends ABAPRule {
     return "Parser error(Unknown statement)";
   }
 
+  public getMessage(num): string {
+    switch (num) {
+      case 1:
+        return this.getDescription();
+      case 2:
+        return "Missing space after string or character literal";
+      default:
+        throw new Error();
+    }
+  }
+
   public getConfig() {
     return this.conf;
   }
@@ -35,13 +47,31 @@ export class ParserError extends ABAPRule {
 // only report one error per row
       if (statement instanceof Unknown
             && pos.getRow() !== statement.getStart().getRow()) {
+
+        let message = this.missingSpace(statement) ? 2 : 1;
+
         pos = statement.getStart();
-        let issue = new Issue(this, file, 1, pos);
+        let issue = new Issue(this, file, message, pos);
         issues.push(issue);
       }
     }
 
     return issues;
+  }
+
+  private missingSpace(statement: Statement): boolean {
+    const tokens = statement.getTokens();
+    for (let i = 0; i < tokens.length - 1; i++) {
+      const current = tokens[ i ];
+      const next = tokens[ i + 1 ];
+      if ( current.getRow() === next.getRow() &&
+          current.getCol() + current.getStr().length === next.getCol() &&
+          current instanceof Tokens.String && next.getStr() === ")") {
+        return true;
+      }
+    }
+
+    return false;
   }
 
 }

@@ -20,7 +20,7 @@ let tests = [
   "mo_files->add_string( iv_extra  = 'source' ) ##NO_TEXT.",
   "CALL METHOD lo_obj->(lv_method) PARAMETER-TABLE lt_parameters.",
   "CALL METHOD <ls_meta>-obj->(<ls_meta>-meta-handler) PARAMETER-TABLE lt_parameters.",
-  "ro_html->add('<thead><tr>').",
+  "ro_html->add( '<thead><tr>' ).",
   "CALL METHOD (class)=>(meth) PARAMETER-TABLE ptab EXCEPTION-TABLE etab.",
   "zcl_demo_customer=>get( |{ zcl_demo_salesorder=>get( |{ it_key_tab[ name = 'SalesOrderId' ]-value }| )->get_kunnr( ) }| )->" +
     "zif_gw_methods~map_to_entity( REF #( er_entity ) ).",
