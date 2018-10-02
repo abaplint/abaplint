@@ -8,7 +8,7 @@ export class Json implements IFormatter {
 
     for (let issue of issues) {
       let single = {
-        description: issue.getDescription(),
+        description: issue.getMessage(),
         file: issue.getFile().getFilename(),
         start: {
           row: issue.getStart().getRow(),

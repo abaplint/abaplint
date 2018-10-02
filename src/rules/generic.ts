@@ -21,6 +21,10 @@ export class GenericError implements IRule {
     return this.text;
   }
 
+  public getMessage(_number): string {
+    return this.text;
+  }
+
   public getConfig() {
     return this.conf;
   }

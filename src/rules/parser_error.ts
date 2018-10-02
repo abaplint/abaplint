@@ -36,7 +36,7 @@ export class ParserError extends ABAPRule {
       if (statement instanceof Unknown
             && pos.getRow() !== statement.getStart().getRow()) {
         pos = statement.getStart();
-        let issue = new Issue(this, file, pos);
+        let issue = new Issue(this, file, 1, pos);
         issues.push(issue);
       }
     }

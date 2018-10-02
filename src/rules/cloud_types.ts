@@ -19,6 +19,10 @@ export class CloudTypes implements IRule {
     return "Object type not supported in cloud";
   }
 
+  public getMessage(_number): string {
+    return this.getDescription();
+  }
+
   public getConfig() {
     return this.conf;
   }
@@ -44,7 +48,7 @@ export class CloudTypes implements IRule {
       return [];
     }
 
-    return [new Issue(this, obj.getFiles()[0])];
+    return [new Issue(this, obj.getFiles()[0], 1)];
   }
 
 }

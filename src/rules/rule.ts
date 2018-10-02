@@ -8,5 +8,6 @@ export interface IRule {
   getDescription(): string;
   getConfig();
   setConfig(conf);
+  getMessage(message: number): string;
   run(obj: Object, reg: Registry, ver: Version): Array<Issue>;
 }

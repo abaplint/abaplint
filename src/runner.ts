@@ -94,7 +94,7 @@ export default class Runner {
         this.reg.findOrCreate(f.getObjectName(), f.getObjectType()).addFile(f);
       } catch (error) {
 // todo, this does not respect the configuration
-        this.generic.push(new Issue(new GenericError(error), f));
+        this.generic.push(new Issue(new GenericError(error), f, 1));
       }
     });
   }

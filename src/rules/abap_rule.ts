@@ -10,6 +10,11 @@ export abstract class ABAPRule implements IRule {
   public abstract getConfig();
   public abstract setConfig(conf);
 
+  public getMessage(_number) {
+// quick fix for introducing getMessage method
+    return this.getDescription();
+  }
+
   public abstract runParsed(file: ParsedFile);
 
   public run(obj) {

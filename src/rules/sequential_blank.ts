@@ -41,7 +41,7 @@ export class SequentialBlank extends ABAPRule {
       }
 
       if (blanks === this.conf.lines) {
-        let issue = new Issue(this, file, new Position(i + 1, 1));
+        let issue = new Issue(this, file, 1, new Position(i + 1, 1));
         issues.push(issue);
       }
     }

@@ -17,7 +17,7 @@ export class Code implements IFormatter {
       let text = issue.getFile().getFilename() +
                  "[" + issue.getStart().getRow() + ", " +
                  issue.getStart().getCol() + "] - " +
-                 issue.getDescription() + " - " +
+                 issue.getMessage() + " - " +
                  code + "\n";
 
       result = result + text;

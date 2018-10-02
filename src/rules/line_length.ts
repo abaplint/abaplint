@@ -33,7 +33,7 @@ export class LineLength extends ABAPRule {
     let lines = file.getRaw().split("\n");
     for (let line = 0; line < lines.length; line++) {
       if (lines[line].length > this.conf.length) {
-        let issue = new Issue(this, file, new Position(line + 1, 1));
+        let issue = new Issue(this, file, 1, new Position(line + 1, 1));
         issues.push(issue);
       }
     }

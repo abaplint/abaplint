@@ -32,7 +32,7 @@ export class SevenBitAscii extends ABAPRule {
 
     for (let i = 0; i < rows.length; i++) {
       if (/^[\u0000-\u007f]*$/.test(rows[i]) === false) {
-        let issue = new Issue(this, file, new Position(i + 1, 1));
+        let issue = new Issue(this, file, 1, new Position(i + 1, 1));
         output.push(issue);
       }
     }

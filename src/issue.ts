@@ -7,9 +7,11 @@ export class Issue {
   private start: Position;
   private end: Position;
   private file: IFile;
+  private message: number;
 
-  public constructor(rule: IRule, file: IFile, start?: Position, end?: Position) {
+  public constructor(rule: IRule, file: IFile, message: number, start?: Position, end?: Position) {
     this.rule = rule;
+    this.message = message;
 
     this.start = start;
     if (!this.start) {
@@ -25,8 +27,12 @@ export class Issue {
     this.file = file;
   }
 
-  public getDescription(): string {
+  public getRuleDescription(): string {
     return this.rule.getDescription();
+  }
+
+  public getMessage(): string {
+    return this.rule.getMessage(this.message);
   }
 
   public getKey(): string {
