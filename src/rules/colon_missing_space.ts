@@ -1,5 +1,6 @@
 import {Issue} from "../issue";
 import {ABAPRule} from "./abap_rule";
+import {ParsedFile} from "../files";
 
 export class ColonMissingSpaceConf {
   public enabled: boolean = true;
@@ -25,7 +26,7 @@ export class ColonMissingSpace extends ABAPRule {
     this.conf = conf;
   }
 
-  public runParsed(file) {
+  public runParsed(file: ParsedFile) {
     let issues: Array<Issue> = [];
 
     let tokens = file.getTokens();
@@ -36,7 +37,7 @@ export class ColonMissingSpace extends ABAPRule {
           && tokens[i + 1] !== undefined
           && tokens[i + 1].getRow() === token.getRow()
           && tokens[i + 1].getCol() === token.getCol() + 1) {
-        let issue = new Issue(this, file, token.getPos());
+        let issue = new Issue(this, file, 1, token.getPos());
         issues.push(issue);
       }
     }

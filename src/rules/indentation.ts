@@ -2,6 +2,7 @@ import {Comment, MacroContent} from "../abap/statements/statement";
 import {IncludeType} from "../abap/statements/include_type";
 import {Issue} from "../issue";
 import {ABAPRule} from "./abap_rule";
+import {ParsedFile} from "../files";
 
 export class IndentationConf {
   public enabled: boolean = true;
@@ -27,7 +28,7 @@ export class Indentation extends ABAPRule {
     this.conf = conf;
   }
 
-  public runParsed(file): Array<Issue> {
+  public runParsed(file: ParsedFile): Array<Issue> {
     let issues: Array<Issue> = [];
 
     let current = 0;
@@ -48,7 +49,7 @@ export class Indentation extends ABAPRule {
       let first = statement.getTokens()[0];
 
       if (first.getCol() !== current + 1) {
-        issues.push(new Issue(this, file, first.getPos()));
+        issues.push(new Issue(this, file, 1, first.getPos()));
 // one finding per file, pretty printer should fix everything?
         return issues;
       }

@@ -1,5 +1,6 @@
 import {Issue} from "../issue";
 import {ABAPRule} from "./abap_rule";
+import {ParsedFile} from "../files";
 
 export class FunctionalWritingConf {
   public enabled: boolean = true;
@@ -25,7 +26,7 @@ export class FunctionalWriting extends ABAPRule {
     this.conf = conf;
   }
 
-  public runParsed(file) {
+  public runParsed(file: ParsedFile) {
     let issues: Array<Issue> = [];
 
     for (let statement of file.getStatements()) {
@@ -36,7 +37,7 @@ export class FunctionalWriting extends ABAPRule {
             || this.startsWith(code, "CALL METHOD (")) {
           continue;
         }
-        let issue = new Issue(this, file, statement.getStart());
+        let issue = new Issue(this, file, 1, statement.getStart());
         issues.push(issue);
       }
     }

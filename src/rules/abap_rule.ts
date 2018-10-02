@@ -15,7 +15,7 @@ export abstract class ABAPRule implements IRule {
     return this.getDescription();
   }
 
-  public abstract runParsed(file: ParsedFile);
+  public abstract runParsed(file: ParsedFile): Array<Issue>;
 
   public run(obj) {
 

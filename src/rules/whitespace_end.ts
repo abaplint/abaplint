@@ -1,6 +1,7 @@
 import {Issue} from "../issue";
 import Position from "../position";
 import {ABAPRule} from "./abap_rule";
+import {ParsedFile} from "../files";
 
 export class WhitespaceEndConf {
   public enabled: boolean = true;
@@ -26,7 +27,7 @@ export class WhitespaceEnd extends ABAPRule {
     this.conf = conf;
   }
 
-  public runParsed(file) {
+  public runParsed(file: ParsedFile) {
     let issues: Array<Issue> = [];
 
     let rows = file.getRawRows();
