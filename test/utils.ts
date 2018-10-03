@@ -7,7 +7,7 @@ import {Unknown} from "../src/abap/statements/statement";
 
 // utils for testing
 
-function run(abap: string, text: string, type, version = Version.v750) {
+function run(abap: string, text: string, type: any, version = Version.v750) {
   let config = Config.getDefault().setVersion(version);
   let file = new Runner([new MemoryFile("cl_foo.clas.abap", abap)], config).parse()[0];
   let slist = file.getStatements();
@@ -21,21 +21,21 @@ function run(abap: string, text: string, type, version = Version.v750) {
   });
 }
 
-export function statementType(tests, description: string, type) {
+export function statementType(tests: any, description: string, type: any) {
   describe(description + " statement type", function() {
 // note that timeout() only works inside function()
     this.timeout(200); // tslint:disable-line
-    tests.forEach((test) => {
+    tests.forEach((test: any) => {
       run(test, "\"" + test + "\" should be " + description, type);
     });
   });
 }
 
-export function statementVersion(tests, description: string, type) {
+export function statementVersion(tests: any, description: string, type: any) {
   describe(description + " statement version,", function() {
 // note that timeout() only works inside function()
     this.timeout(200); // tslint:disable-line
-    tests.forEach((test) => {
+    tests.forEach((test: any) => {
       run(test.abap, "\"" + test.abap + "\" should be " + description, type, test.ver);
 // should fail in previous version
       let lower = test.ver - 1;

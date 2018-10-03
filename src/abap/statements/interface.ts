@@ -12,7 +12,7 @@ export class Interface extends Statement {
                opt(options));
   }
 
-  public indentationEnd(_prev) {
+  public indentationEnd(_prev: Statement) {
     return 2;
   }
 

@@ -12,11 +12,11 @@ export class Endinterface extends Statement {
     return true;
   }
 
-  public isValidParent(s) {
+  public isValidParent(s: Statement) {
     return s instanceof Interface;
   }
 
-  public indentationStart(_prev) {
+  public indentationStart(_prev: Statement) {
     return -2;
   }
 

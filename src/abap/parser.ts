@@ -7,7 +7,7 @@ import {Version} from "../version";
 
 export default class Parser {
   private static statements: Array<Statement>;
-  private static map;
+  private static map: any;
 
   public static run(tokens: Array<Tokens.Token>, ver = Version.v750): Array<Statement> {
     this.statements = [];
@@ -123,7 +123,7 @@ export default class Parser {
   private static process(tokens: Array<Tokens.Token>) {
     let add: Array<Tokens.Token> = [];
     let pre: Array<Tokens.Token> = [];
-    let ukn = (t) => { this.statements.push(new Unknown(this.tokensToNodes(t))); };
+    let ukn = (t: Tokens.Token[]) => { this.statements.push(new Unknown(this.tokensToNodes(t))); };
 
     for (let token of tokens) {
       if (token instanceof Tokens.Comment) {

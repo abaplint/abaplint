@@ -22,14 +22,14 @@ export class SpaceBeforeColon extends ABAPRule {
     return this.conf;
   }
 
-  public setConfig(conf) {
+  public setConfig(conf: SpaceBeforeColonConf) {
     this.conf = conf;
   }
 
   public runParsed(file: ParsedFile) {
     let issues: Array<Issue> = [];
 
-    let prev = file.getTokens[0];
+    let prev = file.getTokens()[0];
 
     for (let token of file.getTokens()) {
       if (token.getStr() === ":" && !prev) {

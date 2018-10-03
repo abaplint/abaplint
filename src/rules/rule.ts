@@ -6,8 +6,8 @@ import Registry from "../registry";
 export interface IRule {
   getKey(): string;
   getDescription(): string;
-  getConfig();
-  setConfig(conf);
+  getConfig(): void;
+  setConfig(conf: any): void;
   getMessage(num: number): string;
   run(obj: Object, reg: Registry, ver: Version): Array<Issue>;
 }

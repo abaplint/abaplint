@@ -2,6 +2,8 @@ import {IRule} from "./rule";
 import {Issue} from "../issue";
 import {Version} from "../version";
 import * as Objects from "../objects";
+import {Object} from "../objects";
+import Registry from "../registry";
 
 export class CloudTypesConf {
   public enabled: boolean = true;
@@ -19,7 +21,7 @@ export class CloudTypes implements IRule {
     return "Object type not supported in cloud";
   }
 
-  public getMessage(_number): string {
+  public getMessage(_number: number): string {
     return this.getDescription();
   }
 
@@ -27,11 +29,11 @@ export class CloudTypes implements IRule {
     return this.conf;
   }
 
-  public setConfig(conf) {
+  public setConfig(conf: CloudTypesConf) {
     this.conf = conf;
   }
 
-  public run(obj, _reg, ver) {
+  public run(obj: Object, _reg: Registry, ver: Version): Array<Issue> {
     if (ver !== Version.Cloud
         || obj instanceof Objects.Class
         || obj instanceof Objects.Interface

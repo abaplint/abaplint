@@ -17,7 +17,7 @@ export class Module extends Statement {
     return true;
   }
 
-  public isValidParent(s) {
+  public isValidParent(s: Statement) {
     return s === undefined;
   }
 

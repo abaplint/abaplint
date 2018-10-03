@@ -23,7 +23,7 @@ export class WhitespaceEnd extends ABAPRule {
     return this.conf;
   }
 
-  public setConfig(conf) {
+  public setConfig(conf: WhitespaceEndConf) {
     this.conf = conf;
   }
 

@@ -2,6 +2,7 @@ import {Issue} from "../issue";
 import {Statement} from "../abap/statements/statement";
 import * as Statements from "../abap/statements/";
 import {ABAPRule} from "./abap_rule";
+import {ParsedFile} from "../files";
 
 export class ExitOrCheckConf {
   public enabled: boolean = true;
@@ -23,11 +24,11 @@ export class ExitOrCheck extends ABAPRule {
     return this.conf;
   }
 
-  public setConfig(conf) {
+  public setConfig(conf: ExitOrCheckConf) {
     this.conf = conf;
   }
 
-  public runParsed(file) {
+  public runParsed(file: ParsedFile) {
     let issues: Array<Issue> = [];
 
     let stack: Array<Statement> = [];

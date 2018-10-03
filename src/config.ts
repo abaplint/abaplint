@@ -5,7 +5,7 @@ export default class Config {
 
   private static defaultVersion = Version.v750;
 
-  private config = undefined;
+  private config: any = undefined;
   private progress: boolean; // todo, this does not really belong here
 
   public static getDefault(): Config {

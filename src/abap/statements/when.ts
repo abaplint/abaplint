@@ -15,18 +15,18 @@ export class When extends Statement {
     return true;
   }
 
-  public isValidParent(s) {
+  public isValidParent(s: Statement) {
     return s instanceof Case;
   }
 
-  public indentationStart(prev) {
+  public indentationStart(prev: Statement) {
     if (!(prev instanceof Case)) {
       return -2;
     }
     return 0;
   }
 
-  public indentationEnd(_prev) {
+  public indentationEnd(_prev: Statement) {
     return 2;
   }
 

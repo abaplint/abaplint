@@ -45,7 +45,7 @@ export class ParsedFile extends AbstractFile {
     if (withPragmas === true) {
       return this.tokens;
     } else {
-      let tokens = [];
+      let tokens: Array<Token> = [];
       this.tokens.forEach((t) => {
         if (!(t instanceof Pragma)) {
           tokens.push(t);

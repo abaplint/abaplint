@@ -1,4 +1,6 @@
 import {IRule} from "./rule";
+import {Object} from "../objects";
+import {Issue} from "../issue";
 
 export class GenericErrorConf {
   public enabled: boolean = true;
@@ -21,7 +23,7 @@ export class GenericError implements IRule {
     return this.text;
   }
 
-  public getMessage(_number): string {
+  public getMessage(_number: number): string {
     return this.text;
   }
 
@@ -29,11 +31,11 @@ export class GenericError implements IRule {
     return this.conf;
   }
 
-  public setConfig(conf) {
+  public setConfig(conf: GenericErrorConf) {
     this.conf = conf;
   }
 
-  public run(_obj) {
+  public run(_obj: Object): Array<Issue> {
     return [];
   }
 

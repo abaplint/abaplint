@@ -1,6 +1,7 @@
 import {Issue} from "../issue";
 import Position from "../position";
 import {ABAPRule} from "./abap_rule";
+import {ParsedFile} from "../files";
 
 export class ContainsTabConf {
   public enabled: boolean = true;
@@ -22,11 +23,11 @@ export class ContainsTab extends ABAPRule {
     return this.conf;
   }
 
-  public setConfig(conf) {
+  public setConfig(conf: ContainsTabConf) {
     this.conf = conf;
   }
 
-  public runParsed(file) {
+  public runParsed(file: ParsedFile) {
     let issues: Array<Issue> = [];
 
     let lines = file.getRaw().split("\n");

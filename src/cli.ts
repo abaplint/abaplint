@@ -49,7 +49,7 @@ function displayHelp(): string {
   return output;
 }
 
-function loadFileNames(args): Array<string> {
+function loadFileNames(args: string[]): Array<string> {
   let files: Array<string> = [];
   for (const file of args) {
     files = files.concat(glob.sync(file, {nosort: true, nodir: true}));

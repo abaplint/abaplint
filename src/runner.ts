@@ -103,7 +103,7 @@ export default class Runner {
 
 class Progress {
 
-  private bar = undefined;
+  private bar: ProgressBar = undefined;
 
   constructor(conf: Config, text: string, options: any) {
     if (conf.getShowProgress()) {

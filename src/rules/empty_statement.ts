@@ -1,6 +1,7 @@
 import {Issue} from "../issue";
 import {Empty} from "../abap/statements/statement";
 import {ABAPRule} from "./abap_rule";
+import {ParsedFile} from "../files";
 
 export class EmptyStatementConf {
   public enabled: boolean = true;
@@ -22,11 +23,11 @@ export class EmptyStatement extends ABAPRule {
     return this.conf;
   }
 
-  public setConfig(conf) {
+  public setConfig(conf: EmptyStatementConf) {
     this.conf = conf;
   }
 
-  public runParsed(file) {
+  public runParsed(file: ParsedFile) {
     let issues: Array<Issue> = [];
 
     let statements = file.getStatements();
