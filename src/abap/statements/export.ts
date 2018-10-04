@@ -34,13 +34,15 @@ export class Export extends Statement {
                      new Dynamic());
 
     let compression = seq(str("COMPRESSION"), alt(str("ON"), str("OFF")));
+    let hint = seq(str("CODE PAGE HINT"), new Source());
 
     return seq(str("EXPORT"),
                source,
                opt(from),
                str("TO"),
                target,
-               opt(compression));
+               opt(compression),
+               opt(hint));
   }
 
 }

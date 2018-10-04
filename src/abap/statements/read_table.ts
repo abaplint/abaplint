@@ -5,7 +5,7 @@ import {FSTarget, Target, Field, Source, Dynamic} from "../expressions";
 export class Read extends Statement {
 
   public static get_matcher(): IRunnable {
-    let comparing = seq(str("COMPARING"), new Field());
+    let comparing = seq(str("COMPARING"), plus(new Field()));
 
     let target = alt(seq(str("ASSIGNING"), new FSTarget()),
                      seq(opt(str("REFERENCE")), str("INTO"), new Target()),

@@ -1,5 +1,5 @@
 import {seq, str, opt, optPrio, altPrio, alt, Reuse, IRunnable} from "../combi";
-import {Constant, FieldChain, TypeName} from "./";
+import {Constant, FieldChain, TypeName, TableBody} from "./";
 
 export class FormParamType extends Reuse {
   public get_runnable(): IRunnable {
@@ -14,7 +14,7 @@ export class FormParamType extends Reuse {
                   new TypeName(),
                   opt(def));
 
-    let like = seq(str("LIKE"), new FieldChain());
+    let like = seq(str("LIKE"), new FieldChain(), opt(new TableBody()));
 
     return alt(seq(str("TYPE"), altPrio(tabseq, ret)), like);
   }

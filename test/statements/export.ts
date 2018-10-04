@@ -16,6 +16,7 @@ let tests = [
   "EXPORT size = l_size TO DATA BUFFER ls_foo-data COMPRESSION OFF.",
   "EXPORT data_tab FROM it_data TO DATABASE foobar(fo) FROM gs_field ID key USING var.",
   "EXPORT lv_flag FROM lv_flag TO SHARED BUFFER indx(ar) ID 'BLAH'.",
+  "EXPORT itab = l_log_itab TO DATABASE foobar(aa) ID l_key FROM l_wa code page hint l_settings-field.",
 ];
 
 statementType(tests, "EXPORT", Statements.Export);

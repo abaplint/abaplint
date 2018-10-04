@@ -13,7 +13,7 @@ export class Select extends Reuse {
                    alt(new Dynamic(), new DatabaseTable()),
                    opt(aas));
 
-    let intoList = seq(tok(WParenLeft),
+    let intoList = seq(alt(tok(WParenLeft), tok(WParenLeftW)),
                        star(seq(new Target(), str(","))),
                        new Target(),
                        str(")"));

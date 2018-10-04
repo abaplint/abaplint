@@ -136,6 +136,9 @@ let tests = [
   "  foo LIKE bar-moo\n" +
   "  foo LIKE bar-moo\n" +
   "  foo LIKE bar-moo.",
+
+  "FORM alv CHANGING pi_list LIKE gi_excel[].",
+//  "FORM moo USING boo-vbeln bar-vbtyp.",
 ];
 
 statementType(tests, "FORM", Statements.Form);

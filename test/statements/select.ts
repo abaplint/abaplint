@@ -75,14 +75,14 @@ let tests = [
   "  INTO CORRESPONDING FIELDS OF TABLE result\n" +
   "  WHERE lang = lv_lang\n" +
   "  AND EXISTS ( SELECT * FROM zother AS s\n" +
-  "    WHERE s~type = t~type AND field = 'X' ).",
+  "  WHERE s~type = t~type AND field = 'X' ).",
 
   "SELECT * FROM zfoo \n" +
   "  UP TO 1000 ROWS \n" +
   "  INTO TABLE lt_result \n" +
   "  WHERE name = iv_name\n" +
   "  AND moo NOT IN ( SELECT msgnr FROM zbar\n" +
-  "    WHERE name = iv_name ).",
+  "  WHERE name = iv_name ).",
 
   "SELECT sdfs FROM basdf WHERE name is null.",
   "SELECT * FROM zfoo INTO ls_bar UP TO 1 ROWS WHERE moo = boo AND (lt_where) AND bar = foo.",
@@ -96,6 +96,26 @@ let tests = [
   "SELECT matnr, werks FROM ztable INTO TABLE @DATA(lt_result) WHERE matnr IN @s_matnr AND werks IN @s_werks.",
   "select posnr min( edatu ) into table li_vbep from vbep where vbeln = li_vbbe-vbeln and wmeng > 0 group by vbeln posnr.",
   "select netwr from vbakuk into l_netwr where vbeln = l_vbeln and vbtyp in ('C').",
+
+  "SELECT SINGLE ebeln ebelp\n" +
+  "  INTO ( lv_ebeln , lv_ebeln )\n" +
+  "  FROM ekpo\n" +
+  "  BYPASSING BUFFER\n" +
+  "  WHERE ebeln = lv_ebeln\n" +
+  "  AND matnr = is_data-matnr\n" +
+  "  AND lgort = is_data-lgort.",
+
+  /*
+  "SELECT * FROM ztable\n" +
+  "  INTO CORRESPONDING FIELDS OF TABLE gt_table\n" +
+  "  WHERE group = gv_group\n" +
+  "  AND matkl <= gs_header-matkl\n" +
+  "  AND version IN  ('', g_header-version)\n" +
+  "  AND portal  IN ('', g_portal(5))\n" +
+  "  ORDER BY field1 DESCENDING\n" +
+  "  field2 DESCENDING.",
+*/
+
 ];
 
 statementType(tests, "SELECT", Statements.Select);

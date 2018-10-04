@@ -32,6 +32,7 @@ let tests = [
   "PARAMETERS p_data01 LIKE (p_type01) MODIF ID 01 VALUE CHECK.",
   "parameters bar like sy-ucomm.",
   "parameters bar like sy-ucomm memory id 123.",
+  "PARAMETERS p_layout TYPE slis_vari MEMORY ID sy-repid NO-DISPLAY.",
 ];
 
 statementType(tests, "PARAMETER", Statements.Parameter);

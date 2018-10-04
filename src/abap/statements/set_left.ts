@@ -1,11 +1,13 @@
 import {Statement} from "./statement";
-import {verNot, str, IRunnable} from "../combi";
+import {verNot, str, IRunnable, opt, seq} from "../combi";
 import {Version} from "../../version";
+import {Source} from "../expressions";
 
 export class SetLeft extends Statement {
 
   public static get_matcher(): IRunnable {
-    return verNot(Version.Cloud, str("SET LEFT SCROLL-BOUNDARY"));
+    let column = seq(str("COLUMN"), new Source());
+    return verNot(Version.Cloud, seq(str("SET LEFT SCROLL-BOUNDARY"), opt(column)));
   }
 
 }

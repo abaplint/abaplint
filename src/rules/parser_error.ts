@@ -65,7 +65,7 @@ export class ParserError extends ABAPRule {
     for (let i = 0; i < tokens.length - 1; i++) {
       const current = tokens[ i ];
       const next = tokens[ i + 1 ];
-      if ( current.getRow() === next.getRow() &&
+      if (current.getRow() === next.getRow() &&
           current.getCol() + current.getStr().length === next.getCol() &&
           current instanceof Tokens.String && next.getStr() === ")") {
         return true;
