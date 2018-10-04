@@ -22,7 +22,7 @@ export class ColonMissingSpace extends ABAPRule {
     return this.conf;
   }
 
-  public setConfig(conf) {
+  public setConfig(conf: ColonMissingSpaceConf) {
     this.conf = conf;
   }
 

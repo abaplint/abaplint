@@ -12,7 +12,7 @@ export class Enddo extends Statement {
     return true;
   }
 
-  public isValidParent(s) {
+  public isValidParent(s: Statement) {
     return s instanceof Do;
   }
 

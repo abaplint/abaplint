@@ -42,7 +42,7 @@ export class Class extends Statement {
     return true;
   }
 
-  public isValidParent(s) {
+  public isValidParent(s: Statement) {
     return s === undefined;
   }
 

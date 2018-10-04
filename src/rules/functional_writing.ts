@@ -22,7 +22,7 @@ export class FunctionalWriting extends ABAPRule {
     return this.conf;
   }
 
-  public setConfig(conf) {
+  public setConfig(conf: FunctionalWritingConf) {
     this.conf = conf;
   }
 

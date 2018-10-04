@@ -24,7 +24,7 @@ export class Indentation extends ABAPRule {
     return this.conf;
   }
 
-  public setConfig(conf) {
+  public setConfig(conf: IndentationConf) {
     this.conf = conf;
   }
 

@@ -1,6 +1,7 @@
 import {Issue} from "../issue";
 import Position from "../position";
 import {ABAPRule} from "./abap_rule";
+import {ParsedFile} from "../files";
 
 export class SevenBitAsciiConf {
   public enabled: boolean = true;
@@ -21,11 +22,11 @@ export class SevenBitAscii extends ABAPRule {
     return this.conf;
   }
 
-  public setConfig(conf) {
+  public setConfig(conf: SevenBitAsciiConf) {
     this.conf = conf;
   }
 
-  public runParsed(file) {
+  public runParsed(file: ParsedFile) {
     let output: Array<Issue> = [];
 
     let rows = file.getRawRows();

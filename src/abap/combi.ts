@@ -137,11 +137,11 @@ class Word implements IRunnable {
   }
 }
 
-function className(cla) {
+function className(cla: any) {
   return (cla.constructor + "").match(/\w+/g)[1];
 }
 
-function functionName(fun) {
+function functionName(fun: any) {
   return (fun + "").match(/\w+/g)[1];
 }
 
@@ -169,8 +169,9 @@ class Token implements IRunnable {
     let text = this.s;
 
     for (let token in Tokens) {
-      if (token === this.s && Tokens[token].railroad) {
-        text = Tokens[token].railroad();
+      const toke: any = Tokens;
+      if (token === this.s && toke[token].railroad) {
+        text = toke[token].railroad();
         break;
       }
     }

@@ -7,7 +7,7 @@ import {Version} from "../version";
 
 export default class Parser {
   private static statements: Array<Statement>;
-  private static map;
+  private static map: any;
 
   public static run(tokens: Array<Tokens.Token>, ver = Version.v750): Array<Statement> {
     this.statements = [];
@@ -27,8 +27,9 @@ export default class Parser {
     this.map = {};
 
     for (let st in Statements) {
-      if (typeof Statements[st].get_matcher === "function") {
-        let first = Statements[st].get_matcher().first();
+      const stat: any = Statements;
+      if (typeof stat[st].get_matcher === "function") {
+        let first = stat[st].get_matcher().first();
 
         if (this.map[first]) {
           this.map[first].push(st);
@@ -109,11 +110,12 @@ export default class Parser {
     test = test ? test.concat(this.map[""]) : this.map[""];
 
     for (let st of test) {
-      let match = Combi.run(Statements[st].get_matcher(),
+      const stat: any = Statements;
+      let match = Combi.run(stat[st].get_matcher(),
                             tokens,
                             ver);
       if (match) {
-        return new Statements[st](match.concat(new TokenNode("Terminator", last)));
+        return new stat[st](match.concat(new TokenNode("Terminator", last)));
       }
     }
     return statement;
@@ -123,7 +125,7 @@ export default class Parser {
   private static process(tokens: Array<Tokens.Token>) {
     let add: Array<Tokens.Token> = [];
     let pre: Array<Tokens.Token> = [];
-    let ukn = (t) => { this.statements.push(new Unknown(this.tokensToNodes(t))); };
+    let ukn = (t: Tokens.Token[]) => { this.statements.push(new Unknown(this.tokensToNodes(t))); };
 
     for (let token of tokens) {
       if (token instanceof Tokens.Comment) {

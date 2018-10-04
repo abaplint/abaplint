@@ -25,7 +25,7 @@ export class StartAtTab extends ABAPRule {
     return this.conf;
   }
 
-  public setConfig(conf) {
+  public setConfig(conf: StartAtTabConf) {
     this.conf = conf;
   }
 

@@ -3,6 +3,7 @@ import Position from "../position";
 import * as Tokens from "../abap/tokens";
 import {Unknown, Statement} from "../abap/statements/statement";
 import {ABAPRule} from "./abap_rule";
+import {ParsedFile} from "../files";
 
 export class ParserErrorConf {
   public enabled: boolean = true;
@@ -20,7 +21,7 @@ export class ParserError extends ABAPRule {
     return "Parser error(Unknown statement)";
   }
 
-  public getMessage(num): string {
+  public getMessage(num: number): string {
     switch (num) {
       case 1:
         return this.getDescription();
@@ -35,11 +36,11 @@ export class ParserError extends ABAPRule {
     return this.conf;
   }
 
-  public setConfig(conf) {
+  public setConfig(conf: ParserErrorConf) {
     this.conf = conf;
   }
 
-  public runParsed(file) {
+  public runParsed(file: ParsedFile) {
     let issues: Array<Issue> = [];
 
     let pos = new Position(0, 0);

@@ -23,7 +23,7 @@ export class MaxOneStatement extends ABAPRule {
     return this.conf;
   }
 
-  public setConfig(conf) {
+  public setConfig(conf: MaxOneStatementConf) {
     this.conf = conf;
   }
 
