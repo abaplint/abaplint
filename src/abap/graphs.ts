@@ -3,7 +3,7 @@ import * as Statements from "./statements/";
 import * as Expressions from "./expressions";
 import * as fs from "fs";
 
-function className(cla) {
+function className(cla: any) {
   return (cla.constructor + "").match(/\w+/g)[1];
 }
 
@@ -16,16 +16,18 @@ class Graph {
 
   public static run() {
     for (let foo in Expressions) {
-      if (typeof Expressions[foo] === "function") {
-        let name = className(new Expressions[foo]()).toLowerCase();
-        this.handle("expression_", name, new Expressions[foo]().get_runnable(), true);
+      const expr: any = Expressions;
+      if (typeof expr[foo] === "function") {
+        let name = className(new expr[foo]()).toLowerCase();
+        this.handle("expression_", name, new expr[foo]().get_runnable(), true);
       }
     }
 
     for (let st in Statements) {
       let name = st.toLowerCase();
-      if (typeof Statements[st].get_matcher === "function") {
-        this.handle("", name, Statements[st].get_matcher(), false);
+      const stat: any = Statements;
+      if (typeof stat[st].get_matcher === "function") {
+        this.handle("", name, stat[st].get_matcher(), false);
       }
     }
   }

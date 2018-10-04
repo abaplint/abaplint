@@ -12,8 +12,9 @@ export default class Config {
     let defaults: Array<string> = [];
 
     for (let key in Rules) {
-      if (typeof Rules[key] === "function") {
-        let rule: Rules.IRule = new Rules[key]();
+      const rul: any = Rules;
+      if (typeof rul[key] === "function") {
+        let rule: Rules.IRule = new rul[key]();
         if (rule.getKey) {
           defaults.push("\"" + rule.getKey() + "\": " + JSON.stringify(rule.getConfig()));
         }

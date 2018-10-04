@@ -2,7 +2,7 @@ import {Token} from "./tokens/token";
 import {Reuse} from "./combi";
 import {Statement} from "./statements/statement";
 
-function className(cla) {
+function className(cla: any) {
   return (cla.constructor + "").match(/\w+/g)[1];
 }
 

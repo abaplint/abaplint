@@ -56,8 +56,9 @@ export default class Runner {
       bar.tick({object: obj.getType() + " " + obj.getName()});
 
       for (let key in Rules) {
-        if (typeof Rules[key] === "function") {
-          let rule: Rules.IRule = new Rules[key]();
+        const rul: any = Rules;
+        if (typeof rul[key] === "function") {
+          let rule: Rules.IRule = new rul[key]();
           if (rule.getKey && this.conf.readByKey(rule.getKey(), "enabled") === true) {
             rule.setConfig(this.conf.readByRule(rule.getKey()));
             issues = issues.concat(rule.run(obj, this.reg, this.conf.getVersion()));
