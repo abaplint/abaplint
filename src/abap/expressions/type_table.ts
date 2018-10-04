@@ -1,4 +1,4 @@
-import {seq, opt, alt, str, ver, star, Reuse, IRunnable} from "../combi";
+import {seq, opt, alt, str, ver, star, per, Reuse, IRunnable} from "../combi";
 import {Constant, FieldSub, TypeName, Integer} from "./";
 import {Version} from "../../version";
 
@@ -19,8 +19,7 @@ export class TypeTable extends Reuse {
                         opt(str("OF")),
                         opt(str("REF TO")),
                         opt(new TypeName()),
-                        opt(header),
-                        opt(initial),
+                        opt(per(header, initial)),
                         opt(key));
 
     let occurs = seq(str("OCCURS"), new Integer());

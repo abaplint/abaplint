@@ -16,6 +16,7 @@ export class CallOLE extends Statement {
                   new Source(),
                   new Constant(),
                   opt(rc),
+                  opt(str("NO FLUSH")),
                   opt(exporting));
 
     return verNot(Version.Cloud, ret);

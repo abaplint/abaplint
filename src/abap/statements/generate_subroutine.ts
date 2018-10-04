@@ -12,11 +12,11 @@ export class GenerateSubroutine extends Statement {
     let line = seq(str("LINE"), new Target());
     let word = seq(str("WORD"), new Target());
     let offset = seq(str("OFFSET"), new Target());
-
+    let short = seq(str("SHORTDUMP-ID"), new Target());
 
     let ret = seq(str("GENERATE SUBROUTINE POOL"),
                   new Source(),
-                  per(name, message, line, word, offset, messageid));
+                  per(name, message, line, word, offset, messageid, short));
 
     return verNot(Version.Cloud, ret);
   }

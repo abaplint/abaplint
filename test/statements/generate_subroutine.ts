@@ -17,6 +17,11 @@ let tests = [
   "GENERATE SUBROUTINE POOL lt_source NAME l_name.",
 
   "GENERATE SUBROUTINE POOL lt_source\n" +
+  "  NAME lv_name\n" +
+  "  MESSAGE lv_message\n" +
+  "  SHORTDUMP-ID lv_sort.",
+
+  "GENERATE SUBROUTINE POOL lt_source\n" +
   "  NAME       l_name\n" +
   "  MESSAGE-ID l_id\n" +
   "  MESSAGE    l_message\n" +

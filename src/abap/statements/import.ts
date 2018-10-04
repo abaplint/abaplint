@@ -12,6 +12,7 @@ export class Import extends Statement {
 
     let options = per(str("ACCEPTING PADDING"),
                       str("IGNORING CONVERSION ERRORS"),
+                      str("IGNORING STRUCTURE BOUNDARIES"),
                       str("ACCEPTING TRUNCATION"));
 
     let shared = seq(str("SHARED MEMORY"),
@@ -28,8 +29,7 @@ export class Import extends Statement {
 
     let database = seq(str("DATABASE"),
                        new Source(),
-                       per(dto, id, client),
-                       opt(options));
+                       per(dto, id, client));
 
     let source = alt(buffer, memory, database, table, shared);
 
@@ -42,7 +42,7 @@ export class Import extends Statement {
                      new Dynamic(),
                      plus(new Target()));
 
-    let ret = seq(str("IMPORT"), target, str("FROM"), source);
+    let ret = seq(str("IMPORT"), target, str("FROM"), source, opt(options));
 
     return verNot(Version.Cloud, ret);
   }

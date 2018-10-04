@@ -10,6 +10,7 @@ let tests = [
   "AT END OF (ls_foo-field).",
   "AT NEW <foo>.",
   "AT END OF <bar>.",
+  "AT group.",
 ];
 
 statementType(tests, "AT", Statements.At);

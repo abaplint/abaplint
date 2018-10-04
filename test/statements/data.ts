@@ -48,7 +48,8 @@ let tests = [
   "DATA lr_range type range of type WITH HEADER LINE.",
   "data $field type c.",
   "data $fie$ld type c.",
-//  "DATA ret TYPE TABLE OF foobar INITIAL SIZE 10 WITH HEADER LINE.",
+  "data lt_foo type standard table of snodetext initial size 0 with header line.",
+  "DATA ret TYPE TABLE OF foobar INITIAL SIZE 10 WITH HEADER LINE.",
 //  "DATA range TYPE RANGE OF char30 WITH HEADER LINE.",
 //  "data mepo1313-evers like ekpo-evers.",
 ];

@@ -1,5 +1,5 @@
 import {Statement} from "./statement";
-import {verNot, str, seq, alt, IRunnable} from "../combi";
+import {verNot, str, seq, alt, IRunnable, regex} from "../combi";
 import {FieldSymbol, FieldSub, Dynamic} from "../expressions";
 import {Version} from "../../version";
 
@@ -12,8 +12,9 @@ export class At extends Statement {
 
     let atNew = seq(str("NEW"), field);
     let atEnd = seq(str("END OF"), field);
+    let group = regex(/^\w+$/);
 
-    let ret = seq(str("AT"), alt(str("FIRST"), str("LAST"), atNew, atEnd));
+    let ret = seq(str("AT"), alt(group, str("FIRST"), str("LAST"), atNew, atEnd));
 
     return verNot(Version.Cloud, ret);
   }

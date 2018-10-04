@@ -17,7 +17,8 @@ export class ModifyLine extends Statement {
     let index = seq(str("INDEX"), new Source());
     let page = seq(str("OF PAGE"), new Source());
     let ocp = str("OF CURRENT PAGE");
-    let lineFormat = str("LINE FORMAT INPUT OFF");
+    let lineFormat = seq(str("LINE FORMAT"),
+                         alt(str("INPUT OFF"), str("RESET")));
     let intensified = str("INTENSIFIED ON");
 
     let options = per(index, value, from, format, page, lineFormat, lineValue, ocp, intensified);
