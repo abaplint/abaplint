@@ -50,7 +50,7 @@ export class Select extends Reuse {
                      new Dynamic(),
                      plus(alt(seq(new Field(), opt(ver(Version.v740sp05, str(",")))), count, max, min, sum, avg)));
 
-    let up = seq(str("UP TO"), new Source(), str("ROWS"));
+    let up = seq(str("UP TO"), opt(ver(Version.v740sp05, tok(WAt))), new Source(), str("ROWS"));
 
     let client = str("CLIENT SPECIFIED");
     let bypass = str("BYPASSING BUFFER");

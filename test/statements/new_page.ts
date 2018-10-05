@@ -13,6 +13,16 @@ let tests = [
   "NEW-PAGE PRINT ON PARAMETERS params NO DIALOG NEW-SECTION.",
   "NEW-PAGE.",
   "NEW-PAGE PRINT ON DESTINATION 'NULL' NO DIALOG LINE-SIZE 0252 LINE-COUNT 0065.",
+
+  "NEW-PAGE PRINT ON\n" +
+  "  DESTINATION 'LOCAL'\n" +
+  "  COVER TEXT gv_text\n" +
+  "  LIST AUTHORITY 'AUTH'\n" +
+  "  IMMEDIATELY ' '\n" +
+  "  KEEP IN SPOOL 'X'\n" +
+  "  LINE-SIZE 182\n" +
+  "  LINE-COUNT 65\n" +
+  "  NO DIALOG.",
 ];
 
 statementType(tests, "NEW-PAGE", Statements.NewPage);

@@ -29,6 +29,7 @@ let tests = [
   "APPEND lo_branch->get_data( )-sha1 TO lt_visit.",
   "APPEND LINES OF foobar FROM 2 TO 3 TO result.",
   "APPEND INITIAL LINE TO lt_tab ASSIGNING <fs> CASTING.",
+  "append it_foo assigning <ls_foo>.",
   "APPEND ls_field->node TO <ls_data>-fields SORTED BY table_line.",
   "APPEND CORRESPONDING #( BASE ( VALUE #( account = lv_account ) ) ls_ms04 ) TO lt_foo.",
 ];

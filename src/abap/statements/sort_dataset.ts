@@ -1,8 +1,8 @@
 import {Statement} from "./statement";
-import {str, seq, alt, per, opt, plus, optPrio, IRunnable} from "../combi";
-import {FieldSymbol, Target, FieldSub, Dynamic} from "../expressions";
+import {str, seq, alt, opt, plus, optPrio, IRunnable} from "../combi";
+import {FieldSymbol, FieldSub, Dynamic} from "../expressions";
 
-export class Sort extends Statement {
+export class SortDataset extends Statement {
 
   public static get_matcher(): IRunnable {
     let order = alt(str("ASCENDING"), str("DESCENDING"));
@@ -15,10 +15,7 @@ export class Sort extends Statement {
 
     let by = seq(str("BY"), fields);
 
-    let target = seq(new Target(),
-                     opt(per(order, by, str("STABLE"), str("AS TEXT"))));
-
-    return seq(str("SORT"), target);
+    return seq(str("SORT"), opt(by));
   }
 
 }

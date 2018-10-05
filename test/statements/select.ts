@@ -116,6 +116,12 @@ let tests = [
   "  field2 DESCENDING.",
 */
 
+  "SELECT * FROM ztable\n" +
+  "  UP TO @lv_count ROWS\n" +
+  "  INTO TABLE @DATA(lt_data)\n" +
+  "  WHERE status = ' '\n" +
+  "  ORDER BY change ASCENDING.",
+
 ];
 
 statementType(tests, "SELECT", Statements.Select);

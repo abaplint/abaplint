@@ -26,7 +26,7 @@ export class ParserError extends ABAPRule {
       case 1:
         return this.getDescription();
       case 2:
-        return "Missing space after string or character literal";
+        return "Missing space between string or character literal and parentheses";
       default:
         throw new Error();
     }
@@ -67,7 +67,8 @@ export class ParserError extends ABAPRule {
       const next = tokens[ i + 1 ];
       if (current.getRow() === next.getRow() &&
           current.getCol() + current.getStr().length === next.getCol() &&
-          current instanceof Tokens.String && next.getStr() === ")") {
+          (current instanceof Tokens.String && next.getStr() === ")"
+          || current.getStr() === "(" && next instanceof Tokens.String)) {
         return true;
       }
     }

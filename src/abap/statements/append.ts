@@ -14,9 +14,8 @@ export class Append extends Statement {
     return seq(str("APPEND"),
                alt(str("INITIAL LINE"), seq(opt(str("LINES OF")), new Source())),
                opt(range),
-               opt(seq(str("TO"),
-                       new Target(),
-                       opt(alt(assigning, reference)))),
+               opt(seq(str("TO"), new Target())),
+               opt(alt(assigning, reference)),
                opt(str("CASTING")),
                opt(sorted));
   }
