@@ -122,6 +122,7 @@ let tests = [
   "  WHERE status = ' '\n" +
   "  ORDER BY change ASCENDING.",
 
+  "SELECT field FROM table INTO TABLE @DATA(lt_result) WHERE moo IN ( @gc_foo , @gc_bar ).",
 ];
 
 statementType(tests, "SELECT", Statements.Select);

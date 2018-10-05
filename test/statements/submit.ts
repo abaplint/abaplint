@@ -22,6 +22,11 @@ let tests = [
   "SUBMIT zfoo WITH SELECTION-TABLE lt_para WITH type BETWEEN 'A' AND 'B' WITH call = 'X' AND RETURN.",
   "SUBMIT zfoo TO SAP-SPOOL WITHOUT SPOOL DYNPRO KEEP IN SPOOL 'X' IMMEDIATELY 'X' DESTINATION 'LP01' AND RETURN.",
   "SUBMIT /foo/bar USING SELECTION-SCREEN '1000' VIA SELECTION-SCREEN WITH foo EQ 'X'.",
+
+  "SUBMIT zblah\n" +
+  "  WITH p_bukrs = p_bukrs\n" +
+  "  WITH SELECTION-TABLE lt_belnr\n" +
+  "  WITH p_list = p_list.",
 ];
 
 statementType(tests, "SUBMIT", Statements.Submit);

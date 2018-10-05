@@ -10,11 +10,11 @@ export class Submit extends Statement {
     let eq = alt(str("="), str("EQ"), str("IN"), str("NE"), str("INCL"));
     let compare = seq(eq, new Source());
     let between = seq(str("BETWEEN"), new Source(), str("AND"), new Source());
-    let awith = seq(str("WITH"), new Field(), alt(compare, between));
+    let selectionTable = seq(str("SELECTION-TABLE"), new Source());
+    let awith = seq(str("WITH"), alt(seq(new Field(), alt(compare, between)), selectionTable));
     let prog = alt(new NamespaceSimpleName(), new Dynamic());
     let job = seq(str("VIA JOB"), new Source(), str("NUMBER"), new Source());
     let exporting = str("EXPORTING LIST TO MEMORY");
-    let withTab = seq(str("WITH SELECTION-TABLE"), new Source());
     let spool = seq(str("SPOOL PARAMETERS"), new Source());
     let archive = seq(str("ARCHIVE PARAMETERS"), new Source());
     let lineSize = seq(str("LINE-SIZE"), new Source());
@@ -30,7 +30,6 @@ export class Submit extends Statement {
     let dest = seq(str("DESTINATION"), new Source());
 
     let perm = per(plus(awith),
-                   withTab,
                    spool,
                    lineSize,
                    lineCount,

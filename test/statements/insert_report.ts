@@ -8,6 +8,7 @@ let tests = [
   "INSERT REPORT lv_name FROM tab EXTENSION TYPE ext DIRECTORY ENTRY entry.",
   "INSERT REPORT lv_name FROM tab EXTENSION TYPE ext STATE 'A'.",
   "insert report lv_name from tab state 'A' extension type 'CM' KEEPING DIRECTORY ENTRY.",
+  "INSERT REPORT name FROM prog UNICODE ENABLING 'X'.",
 ];
 
 statementType(tests, "INSERT REPORT", Statements.InsertReport);

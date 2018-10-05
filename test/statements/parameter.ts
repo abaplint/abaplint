@@ -33,6 +33,7 @@ let tests = [
   "parameters bar like sy-ucomm.",
   "parameters bar like sy-ucomm memory id 123.",
   "PARAMETERS p_layout TYPE slis_vari MEMORY ID sy-repid NO-DISPLAY.",
+  "PARAMETERS %blah RADIOBUTTON GROUP func MODIF ID old DEFAULT 'X'.",
 ];
 
 statementType(tests, "PARAMETER", Statements.Parameter);

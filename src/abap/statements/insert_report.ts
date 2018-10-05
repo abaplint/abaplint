@@ -9,6 +9,7 @@ export class InsertReport extends Statement {
     let options = per(seq(str("STATE"), new Source()),
                       seq(str("EXTENSION TYPE"), new Source()),
                       seq(str("DIRECTORY ENTRY"), new Source()),
+                      seq(str("UNICODE ENABLING"), new Source()),
                       seq(str("PROGRAM TYPE"), new Source()),
                       str("KEEPING DIRECTORY ENTRY"));
 

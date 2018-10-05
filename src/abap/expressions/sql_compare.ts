@@ -5,7 +5,7 @@ import {Version} from "../../version";
 
 export class SQLCompare extends Reuse {
   public get_runnable(): IRunnable {
-    let val = alt(new FieldSub(), new Constant());
+    let val = alt(seq(opt(ver(Version.v740sp05, tok(WAt))), new FieldSub()), new Constant());
 
     let list = seq(alt(tok(WParenLeft), tok(WParenLeftW)),
                    val,
@@ -14,7 +14,9 @@ export class SQLCompare extends Reuse {
 
     let subSelect = seq(str("("), new Select(), str(")"));
 
-    let inn = seq(opt(str("NOT")), str("IN"), alt(seq(opt(tok(WAt)), new Source()), list, subSelect));
+    let inn = seq(opt(str("NOT")),
+                  str("IN"),
+                  alt(seq(opt(ver(Version.v740sp05, tok(WAt))), new Source()), list, subSelect));
 
     let operator = alt(str("="),
                        str("<>"),

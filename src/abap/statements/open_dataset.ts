@@ -18,13 +18,15 @@ export class Open extends Statement {
     let pos = seq(str("AT POSITION"), new Source());
     let message = seq(str("MESSAGE"), new Target());
     let ignoring = str("IGNORING CONVERSION ERRORS");
+    let replacement = seq(str("REPLACEMENT CHARACTER"), new Source());
     let bom = str("SKIPPING BYTE-ORDER MARK");
+    let wbom = str("WITH BYTE-ORDER MARK");
     let type = seq(str("TYPE"), new Source());
     let feed = str("WITH SMART LINEFEED");
 
     let ret = seq(str("OPEN DATASET"),
                   new Target(),
-                  per(direction, type, mode, encoding, pos, message, ignoring, bom, code, feed));
+                  per(direction, type, mode, wbom, replacement, encoding, pos, message, ignoring, bom, code, feed));
 
     return verNot(Version.Cloud, ret);
   }
