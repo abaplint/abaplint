@@ -9,6 +9,7 @@ import * as path from "path";
 import * as zlib from "zlib";
 import * as glob from "glob";
 import * as minimist from "minimist";
+import * as ProgressBar from "progress";
 
 function searchConfig(filename: string): Config {
   let json = searchUp(path.dirname(process.cwd() + path.sep + filename) + path.sep);
@@ -57,8 +58,14 @@ function loadFileNames(args: string[]): Array<string> {
   return files;
 }
 
-async function loadFiles(compress: boolean, input: Array<string>): Promise<Array<IFile>> {
+async function loadFiles(compress: boolean, input: Array<string>, progress: boolean): Promise<Array<IFile>> {
   let files: Array<IFile> = [];
+  let bar: ProgressBar = undefined;
+
+  if (progress) {
+    bar = new ProgressBar(":percent - Reading files - :filename", {total: input.length});
+  }
+
   for (const filename of input) {
 // note that readFileSync is typically faster than async readFile,
 // https://medium.com/@adamhooper/node-synchronous-code-runs-faster-than-asynchronous-code-b0553d5cf54e
@@ -69,6 +76,11 @@ async function loadFiles(compress: boolean, input: Array<string>): Promise<Array
       files.push(new CompressedFile(filename, zlib.deflateSync(raw).toString("base64")));
     } else {
       files.push(new MemoryFile(filename, raw));
+    }
+
+    if (bar) {
+      bar.tick({filename: filename});
+      bar.render();
     }
   }
   return files;
@@ -112,7 +124,7 @@ async function run() {
       }
       let compress = argv["c"] ? true : false;
 
-      let loaded = await loadFiles(compress, files);
+      let loaded = await loadFiles(compress, files, config.getShowProgress());
       issues = new Runner(loaded, config).findIssues();
       output = Formatter.format(issues, format);
     }
