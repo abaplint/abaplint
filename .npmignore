@@ -2,6 +2,7 @@ typings/
 npm-debug.log
 *.js.map
 coverage/
+docs/*
 web/*
 build/test/*
 test/*
