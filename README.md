@@ -30,3 +30,12 @@ Node 10
 
 ### Parsing vs standard ABAP
 * Spaces required after string literals and before right parenthesis
+* CALL FUNCTION EXCEPTIONS must be well formed, eg not
+```abap
+  CALL FUNCTION 'RFC_PING'
+    EXCEPTIONS
+      OTHERS.
+
+  CALL FUNCTION 'RFC_PING'
+    EXCEPTIONS = 2.
+```
