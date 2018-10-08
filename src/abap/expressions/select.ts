@@ -36,7 +36,9 @@ export class Select extends Reuse {
 
     let where = seq(str("WHERE"), new SQLCond());
 
-    let order = seq(str("ORDER BY"), alt(plus(new Field()), str("PRIMARY KEY"), new Dynamic()));
+    let ding = alt(str("ASCENDING"), str("DESCENDING"));
+
+    let order = seq(str("ORDER BY"), alt(plus(seq(new Field(), opt(ding))), str("PRIMARY KEY"), new Dynamic()));
 
     let forAll = seq(str("FOR ALL ENTRIES IN"), opt(ver(Version.v740sp05, tok(WAt))), new Source());
 

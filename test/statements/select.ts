@@ -105,6 +105,7 @@ let tests = [
   "  AND matnr = is_data-matnr\n" +
   "  AND lgort = is_data-lgort.",
 
+  // todo
   /*
   "SELECT * FROM ztable\n" +
   "  INTO CORRESPONDING FIELDS OF TABLE gt_table\n" +
@@ -115,6 +116,13 @@ let tests = [
   "  ORDER BY field1 DESCENDING\n" +
   "  field2 DESCENDING.",
 */
+
+  "SELECT * FROM /space/table INTO TABLE lt_result\n" +
+  "  WHERE field1 = value\n" +
+  "  AND ( field4 = 'AA' OR field4 = 'BB' )\n" +
+  "  AND field2 => gv_moo\n" +
+  "  AND field3 <= gv_bar\n" +
+  "  ORDER BY field1 field2 DESCENDING.",
 
   "SELECT * FROM ztable\n" +
   "  UP TO @lv_count ROWS\n" +

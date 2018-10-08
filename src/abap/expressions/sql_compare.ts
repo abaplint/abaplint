@@ -24,6 +24,7 @@ export class SQLCompare extends Reuse {
                        str("<"),
                        str(">"),
                        str("<="),
+                       str("=>"),
                        str(">="),
                        str("EQ"),
                        str("NE"),
