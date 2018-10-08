@@ -12,6 +12,8 @@ let tests = [
   "ULINE AT 3(12).",
   "ULINE AT /(right).",
   "ULINE /10.",
+// todo
+//  "ULINE AT column(length).",
 ];
 
 statementType(tests, "ULINE", Statements.Uline);

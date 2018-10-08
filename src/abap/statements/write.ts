@@ -13,7 +13,7 @@ export class Write extends Statement {
                    alt(str("NO EDIT MASK"),
                        seq(str("EDIT MASK"), new Source())));
 
-    let onoff = alt(str("ON"), str("OFF"));
+    let onoff = alt(alt(str("ON"), str("OFF")), seq(str("="), new FieldSub()));
 
     let to = seq(str("TO"), new Target());
     let options = per(mask,

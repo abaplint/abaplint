@@ -79,7 +79,7 @@ async function loadFiles(compress: boolean, input: Array<string>, progress: bool
     }
 
     if (bar) {
-      bar.tick({filename: filename});
+      bar.tick({filename: path.basename(filename)});
       bar.render();
     }
   }

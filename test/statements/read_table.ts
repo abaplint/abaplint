@@ -43,7 +43,7 @@ let tests = [
   "  COMPARING foo moo\n" +
   "  TRANSPORTING NO FIELDS.",
 
-
+  "READ TABLE lt_tab FROM lv_line INTO lv_target COMPARING fields-field.",
 ];
 
 statementType(tests, "READ", Statements.Read);

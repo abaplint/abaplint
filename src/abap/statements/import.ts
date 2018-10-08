@@ -15,13 +15,14 @@ export class Import extends Statement {
                       str("IGNORING STRUCTURE BOUNDARIES"),
                       str("ACCEPTING TRUNCATION"));
 
-    let shared = seq(str("SHARED MEMORY"),
+    let shared = seq(str("SHARED"),
+                     alt(str("MEMORY"), str("BUFFER")),
                      new Field(),
                      str("("),
                      new Field(),
                      str(")"),
                      str("ID"),
-                     new Field());
+                     new Source());
 
     let buffer = seq(str("DATA BUFFER"), new Source());
     let memory = seq(str("MEMORY ID"), new Source());

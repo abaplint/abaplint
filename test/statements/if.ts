@@ -91,6 +91,9 @@ let tests = [
 
   "IF NOT line_exists( lt_eord[ KEY primary_key COMPONENTS matnr = <ls_excel>-matnr \n" +
     "werks = <ls_excel>-werks lifnr = <ls_excel>-lifnr ] ).",
+  "IF alv? = ''.",
+// todo
+//  "IF ?alv? = ''.",
 ];
 
 statementType(tests, "IF", Statements.If);

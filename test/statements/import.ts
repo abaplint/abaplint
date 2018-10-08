@@ -17,6 +17,8 @@ let tests = [
   "IMPORT moo TO boo FROM DATABASE bar(ix) ID idmoo\n" +
   "  ignoring conversion errors\n" +
   "  ignoring structure boundaries.",
+  "IMPORT p TO moo FROM SHARED BUFFER indx(a1) ID 'MOO'.",
+  "IMPORT moo = ls_boo FROM SHARED BUFFER indx(a1) ID 'BAR'.",
 ];
 
 statementType(tests, "IMPORT", Statements.Import);

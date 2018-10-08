@@ -1,13 +1,13 @@
 import {Statement} from "./statement";
 import {str, seq, alt, per, opt, plus, optPrio, IRunnable} from "../combi";
-import {FieldSymbol, Target, FieldSub, Dynamic} from "../expressions";
+import {FieldSymbol, Target, Dynamic, FieldChain} from "../expressions";
 
 export class Sort extends Statement {
 
   public static get_matcher(): IRunnable {
     let order = alt(str("ASCENDING"), str("DESCENDING"));
 
-    let sel = alt(new FieldSub(),
+    let sel = alt(new FieldChain(),
                   new FieldSymbol(),
                   new Dynamic());
 

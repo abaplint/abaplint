@@ -10,6 +10,7 @@ let tests = [
   "CLEAR ct_source[].",
   "CLEAR value+l_pos(*).",
   "CLEAR <l_byte> WITH byte IN BYTE MODE.",
+  "CLEAR $foo$.",
 ];
 
 statementType(tests, "CLEAR", Statements.Clear);

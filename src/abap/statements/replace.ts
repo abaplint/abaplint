@@ -34,12 +34,13 @@ export class Replace extends Statement {
     let mode = alt(str("IN CHARACTER MODE"),
                    str("IN BYTE MODE"));
 
+    let wit = seq(str("WITH"), new Source());
+    let into = seq(str("INTO"), new Target());
+
     return seq(str("REPLACE"),
                per(section, seq(opt(occ), source)),
                opt(seq(str("IN"), opt(str("TABLE")), new Target())),
-               per(seq(str("WITH"), new Source()),
-                   seq(str("INTO"), new Target())),
-               opt(per(cas, mode, repl, replo, repll, leng)));
+               opt(per(wit, into, cas, mode, repl, replo, repll, leng)));
   }
 
 }

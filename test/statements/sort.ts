@@ -56,6 +56,8 @@ let tests = [
   "  (foo-f19d) DESCENDING\n" +
   "  (foo-f20)\n" +
   "  (foo-f20d) DESCENDING.",
+
+  "SORT table BY ref->num.",
 ];
 
 statementType(tests, "SORT", Statements.Sort);

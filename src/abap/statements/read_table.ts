@@ -1,11 +1,11 @@
 import {Statement} from "./statement";
 import {str, seq, alt, opt, optPrio, plus, per, IRunnable} from "../combi";
-import {FSTarget, Target, Field, Source, Dynamic} from "../expressions";
+import {FSTarget, Target, Field, Source, Dynamic, FieldSub} from "../expressions";
 
 export class Read extends Statement {
 
   public static get_matcher(): IRunnable {
-    let comparing = seq(str("COMPARING"), plus(new Field()));
+    let comparing = seq(str("COMPARING"), plus(new FieldSub()));
 
     let target = alt(seq(str("ASSIGNING"), new FSTarget()),
                      seq(opt(str("REFERENCE")), str("INTO"), new Target()),

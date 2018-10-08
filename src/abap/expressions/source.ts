@@ -118,6 +118,7 @@ export class Source extends Reuse {
                          tok(ParenLeftW),
                          new Source(),
                          opt(str("EXCEPT")),
+                         opt(seq(str("IN"), new Source())),
                          opt(seq(str("USING KEY"), new Field())),
                          seq(str("WHERE"), new Cond()),
                          rparen));

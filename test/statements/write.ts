@@ -52,6 +52,8 @@ let tests = [
   "WRITE AT 125(6) foo-bar COLOR COL_POSITIVE CENTERED.",
   "WRITE / 'bar' INTENSIFIED.",
   "write at GI_GEN_H_MSG-HOTSPOT_COL ICON_REPLACE as icon.",
+  "WRITE value CURRENCY cur TO s.",
+  "WRITE AT (length) lv_text COLOR = var1 INTENSIFIED = var2 HOTSPOT = var3.",
 ];
 
 statementType(tests, "WRITE", Statements.Write);
