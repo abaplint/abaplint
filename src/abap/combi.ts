@@ -63,6 +63,7 @@ export interface IRunnable {
   run(r: Array<Result>): Array<Result>;
   railroad(): string;
   toStr(): string;
+  listKeywords(): string[];
 // return first keyword, blank if not applicable
   first(): string;
 }
@@ -73,6 +74,10 @@ class Regex implements IRunnable {
 
   constructor(r: RegExp) {
     this.regexp = r;
+  }
+
+  public listKeywords(): string[] {
+    return [];
   }
 
   public run(r: Array<Result>): Array<Result> {
@@ -109,6 +114,10 @@ class Word implements IRunnable {
 
   constructor(s: string) {
     this.s = s;
+  }
+
+  public listKeywords(): string[] {
+    return [this.s];
   }
 
   public run(r: Array<Result>): Array<Result> {
@@ -151,6 +160,10 @@ class Token implements IRunnable {
 
   constructor(s: String) {
     this.s = s;
+  }
+
+  public listKeywords(): string[] {
+    return [];
   }
 
   public run(r: Array<Result>): Array<Result> {
@@ -197,6 +210,10 @@ class Vers implements IRunnable {
     this.runnable = runnable;
   }
 
+  public listKeywords(): string[] {
+    return this.runnable.listKeywords();
+  }
+
   public run(r: Array<Result>): Array<Result> {
     if (Combi.getVersion() >= this.version) {
       return this.runnable.run(r);
@@ -232,6 +249,10 @@ class VersNot implements IRunnable {
     this.runnable = runnable;
   }
 
+  public listKeywords(): string[] {
+    return this.runnable.listKeywords();
+  }
+
   public run(r: Array<Result>): Array<Result> {
     if (Combi.getVersion() !== this.version) {
       return this.runnable.run(r);
@@ -263,6 +284,10 @@ class OptionalPriority implements IRunnable {
 
   constructor(optional: IRunnable) {
     this.optional = optional;
+  }
+
+  public listKeywords(): string[] {
+    return this.optional.listKeywords();
   }
 
   public run(r: Array<Result>): Array<Result> {
@@ -312,6 +337,10 @@ class Optional implements IRunnable {
     this.optional = optional;
   }
 
+  public listKeywords(): string[] {
+    return this.optional.listKeywords();
+  }
+
   public run(r: Array<Result>): Array<Result> {
     let result: Array<Result> = [];
 
@@ -343,6 +372,10 @@ class Star implements IRunnable {
 
   constructor(sta: IRunnable) {
     this.sta = sta;
+  }
+
+  public listKeywords(): string[] {
+    return this.sta.listKeywords();
   }
 
   public run(r: Array<Result>): Array<Result> {
@@ -385,6 +418,10 @@ class Plus implements IRunnable {
     this.plu = plu;
   }
 
+  public listKeywords(): string[] {
+    return this.plu.listKeywords();
+  }
+
   public run(r: Array<Result>): Array<Result> {
     return new Sequence([this.plu, new Star(this.plu)]).run(r);
   }
@@ -412,6 +449,14 @@ class Sequence implements IRunnable {
     }
     this.list = list;
     this.stack = stack;
+  }
+
+  public listKeywords(): string[] {
+    let ret: string[] = [];
+    for (let i of this.list) {
+      ret = ret.concat(i.listKeywords());
+    }
+    return ret;
   }
 
   public run(r: Array<Result>): Array<Result> {
@@ -471,6 +516,11 @@ class WordSequence implements IRunnable {
     }
   }
 
+  public listKeywords(): string[] {
+// todo, will this work?
+    return [this.stri.toString()];
+  }
+
   public run(r: Array<Result>): Array<Result> {
     return (new Sequence(this.words)).run(r);
   }
@@ -523,6 +573,11 @@ export abstract class Reuse implements IRunnable {
 
   public abstract get_runnable(): IRunnable;
 
+  public listKeywords(): string[] {
+// do not recurse, all Expressions are evaluated only on first level
+    return [];
+  }
+
   public getName(): string {
     return className(this);
   }
@@ -548,6 +603,14 @@ class Permutation implements IRunnable {
       throw new Error("Permutation, length error");
     }
     this.list = list;
+  }
+
+  public listKeywords(): string[] {
+    let ret: string[] = [];
+    for (let i of this.list) {
+      ret = ret.concat(i.listKeywords());
+    }
+    return ret;
   }
 
   public run(r: Array<Result>): Array<Result> {
@@ -606,6 +669,14 @@ class Alternative implements IRunnable {
     this.list = list;
   }
 
+  public listKeywords(): string[] {
+    let ret: string[] = [];
+    for (let i of this.list) {
+      ret = ret.concat(i.listKeywords());
+    }
+    return ret;
+  }
+
   public run(r: Array<Result>): Array<Result> {
     let result: Array<Result> = [];
 
@@ -646,6 +717,14 @@ class AlternativePriority implements IRunnable {
     this.list = list;
   }
 
+  public listKeywords(): string[] {
+    let ret: string[] = [];
+    for (let i of this.list) {
+      ret = ret.concat(i.listKeywords());
+    }
+    return ret;
+  }
+
   public run(r: Array<Result>): Array<Result> {
     let result: Array<Result> = [];
 
@@ -682,6 +761,7 @@ class AlternativePriority implements IRunnable {
 }
 
 export class Combi {
+// todo, change this to be instantiated, constructor(runnable) ?
 
   private static ver: Version;
 
@@ -696,6 +776,11 @@ export class Combi {
       runnable.railroad() +
       ").toString();";
     return result;
+  }
+
+  public static listKeywords(runnable: IRunnable): string[] {
+// todo, move these walkers of the syntax tree to some abstraction?
+    return runnable.listKeywords();
   }
 
 // assumption: no pgragmas supplied in tokens input

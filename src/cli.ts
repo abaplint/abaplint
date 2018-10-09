@@ -10,6 +10,7 @@ import * as zlib from "zlib";
 import * as glob from "glob";
 import * as minimist from "minimist";
 import * as ProgressBar from "progress";
+import {KeywordList} from "./abap/keyword_list";
 
 function searchConfig(filename: string): Config {
   let json = searchUp(path.dirname(process.cwd() + path.sep + filename) + path.sep);
@@ -44,6 +45,7 @@ function displayHelp(): string {
   output = output + "  -v, --version    current version\n";
   output = output + "  -a [abap]        specify ABAP version\n";
   output = output + "  -s               show progress\n";
+  output = output + "  -k               output keywords\n";
   output = output + "  -c               compress files in memory\n";
   output = output + "  -m               show memory usage\n";
   output = output + "  -d, --default    show default configuration\n";
@@ -106,6 +108,8 @@ async function run() {
     output = output + Runner.version() + "\n";
   } else if (argv["d"] !== undefined || argv["default"] !== undefined) {
     output = output + JSON.stringify(Config.getDefault().get()) + "\n";
+  } else if (argv["k"] !== undefined) {
+    KeywordList.get();
   } else if (argv._[0] === undefined) {
     output = output + "Supply filename\n";
   } else {
