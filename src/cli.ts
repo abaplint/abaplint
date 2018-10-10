@@ -10,7 +10,7 @@ import * as zlib from "zlib";
 import * as glob from "glob";
 import * as minimist from "minimist";
 import * as ProgressBar from "progress";
-import {KeywordList} from "./abap/keyword_list";
+import {Keywords} from "./abap/keywords";
 
 function searchConfig(filename: string): Config {
   let json = searchUp(path.dirname(process.cwd() + path.sep + filename) + path.sep);
@@ -109,7 +109,7 @@ async function run() {
   } else if (argv["d"] !== undefined || argv["default"] !== undefined) {
     output = output + JSON.stringify(Config.getDefault().get()) + "\n";
   } else if (argv["k"] !== undefined) {
-    KeywordList.get();
+    output = output + JSON.stringify(Keywords.get(), undefined, 2);
   } else if (argv._[0] === undefined) {
     output = output + "Supply filename\n";
   } else {

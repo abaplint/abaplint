@@ -780,7 +780,10 @@ export class Combi {
 
   public static listKeywords(runnable: IRunnable): string[] {
 // todo, move these walkers of the syntax tree to some abstraction?
-    return runnable.listKeywords();
+    let res = runnable.listKeywords();
+// remove duplicates
+    res = res.filter((x, i, a) => { return a.indexOf(x) === i; });
+    return res;
   }
 
 // assumption: no pgragmas supplied in tokens input
