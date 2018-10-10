@@ -15,12 +15,12 @@ export abstract class Statement extends StatementNode {
     // validate child nodes
     children.forEach((c) => {
       if (!(c instanceof TokenNode || c instanceof ReuseNode)) {
-//        console.trace();
         throw "statement: not token or reuse node";
       }
     });
   }
 
+  /*
   public isStructure(): boolean {
     return false;
   }
@@ -48,6 +48,7 @@ export abstract class Statement extends StatementNode {
   public indentationSetStart(): number {
     return -1;
   }
+  */
 
   public getStart(): Position {
     return this.getTokens()[0].getPos();

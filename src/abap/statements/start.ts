@@ -8,20 +8,4 @@ export class Start extends Statement {
     return verNot(Version.Cloud, str("START-OF-SELECTION"));
   }
 
-  public isStructure() {
-    return true;
-  }
-
-  public isValidParent(s: Statement) {
-    return s === undefined;
-  }
-
-  public indentationSetStart() {
-    return 0;
-  }
-
-  public indentationSetEnd() {
-    return 2;
-  }
-
 }

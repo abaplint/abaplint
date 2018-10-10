@@ -1,7 +1,5 @@
-import {Indentation} from "../../src/rules/indentation";
-import {testRule} from "./utils";
 
-let tests = [
+let foobar = [
   {abap: "add 2 to lv_foo.", cnt: 0},
   {abap: "  add 2 to lv_foo.", cnt: 1},
   {abap: "IF foo = bar.\nmoo = 1.", cnt: 1},
@@ -33,4 +31,4 @@ let tests = [
   {abap: "TRY.\n  CLEANUP.\nENDTRY.", cnt: 0},
 ];
 
-testRule(tests, "test indentation rule", Indentation);
+// todo

@@ -11,12 +11,4 @@ export class Case extends Statement {
                new Source());
   }
 
-  public isStructure() {
-    return true;
-  }
-
-  public indentationEnd() {
-    return 2;
-  }
-
 }

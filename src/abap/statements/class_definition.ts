@@ -2,7 +2,7 @@ import {Statement} from "./statement";
 import {str, seq, opt, alt, per, plus, IRunnable} from "../combi";
 import {ClassName} from "../expressions";
 
-export class Class extends Statement {
+export class ClassDefinition extends Statement {
 
   public static get_matcher(): IRunnable {
     let create = seq(str("CREATE"), alt(str("PUBLIC"), str("PROTECTED"), str("PRIVATE")));
@@ -29,29 +29,7 @@ export class Class extends Statement {
                           seq(str("DEFERRED"), opt(str("PUBLIC"))),
                           blah)));
 
-    return seq(str("CLASS"), new ClassName(), alt(def, str("IMPLEMENTATION")));
-  }
-
-  public isStructure() {
-    if (/DEFINITION DEFERRED/.test(this.concatTokens().toUpperCase())
-        || /DEFINITION LOAD/.test(this.concatTokens().toUpperCase())
-        || /DEFINITION LOCAL/.test(this.concatTokens().toUpperCase())) {
-      return false;
-    }
-
-    return true;
-  }
-
-  public isValidParent(s: Statement) {
-    return s === undefined;
-  }
-
-  public indentationSetStart() {
-    return this.isStructure() ? 0 : -1;
-  }
-
-  public indentationEnd() {
-    return this.isStructure() ? 2 : 0;
+    return seq(str("CLASS"), new ClassName(), def);
   }
 
 }

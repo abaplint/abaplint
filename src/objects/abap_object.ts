@@ -3,7 +3,6 @@ import {ParsedFile} from "../files";
 import Lexer from "../abap/lexer";
 import Parser from "../abap/parser";
 import {Version} from "../version";
-import Nesting from "../abap/nesting";
 import Registry from "../registry";
 import {Define} from "../abap/statements";
 import {TokenNode} from "../abap/node";
@@ -25,9 +24,8 @@ export abstract class ABAPObject extends Object {
       if (!this.skip(f.getFilename())) {
         let tokens = Lexer.run(f);
         let statements = Parser.run(tokens, ver);
-        let root = Nesting.run(statements);
 
-        this.parsed.push(new ParsedFile(f, tokens, statements, root));
+        this.parsed.push(new ParsedFile(f, tokens, statements));
       }
     });
 

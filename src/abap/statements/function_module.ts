@@ -8,8 +8,4 @@ export class FunctionModule extends Statement {
     return seq(str("FUNCTION"), new Field());
   }
 
-  public indentationEnd() {
-    return 2;
-  }
-
 }

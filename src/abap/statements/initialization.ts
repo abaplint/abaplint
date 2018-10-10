@@ -8,20 +8,4 @@ export class Initialization extends Statement {
     return verNot(Version.Cloud, str("INITIALIZATION"));
   }
 
-  public isStructure() {
-    return true;
-  }
-
-  public isValidParent(s: Statement) {
-    return s === undefined;
-  }
-
-  public indentationSetStart() {
-    return 0;
-  }
-
-  public indentationSetEnd() {
-    return 2;
-  }
-
 }

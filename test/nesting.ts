@@ -1,7 +1,3 @@
-import {MemoryFile} from "../src/files";
-import {StructureNode} from "../src/abap/node";
-import Runner from "../src/runner";
-import {expect} from "chai";
 
 let tests = [
   {
@@ -278,6 +274,9 @@ let tests = [
   },
 ];
 
+// todo
+
+/*
 describe("count top nesting", () => {
   tests.forEach((test) => {
     it("\"" + test.n + "\" should be " + test.top + " top statements", () => {
@@ -300,3 +299,4 @@ describe("count first top child nesting", () => {
     });
   });
 });
+*/

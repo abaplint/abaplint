@@ -1,5 +1,4 @@
 import {Statement} from "./statement";
-import {Form} from "./form";
 import {verNot, str, IRunnable} from "../combi";
 import {Version} from "../../version";
 
@@ -9,18 +8,6 @@ export class Endform extends Statement {
     let ret = str("ENDFORM");
 
     return verNot(Version.Cloud, ret);
-  }
-
-  public isEnd() {
-    return true;
-  }
-
-  public isValidParent(s: Statement) {
-    return s instanceof Form;
-  }
-
-  public indentationStart() {
-    return -2;
   }
 
 }

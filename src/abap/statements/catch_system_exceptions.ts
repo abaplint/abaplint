@@ -12,20 +12,4 @@ export class CatchSystemExceptions extends Statement {
     return verNot(Version.Cloud, ret);
   }
 
-  public isStructure() {
-    return true;
-  }
-
-  public isValidParent() {
-    return true;
-  }
-
-  public indentationStart() {
-    return -2;
-  }
-
-  public indentationEnd() {
-    return 2;
-  }
-
 }

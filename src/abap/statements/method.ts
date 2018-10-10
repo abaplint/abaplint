@@ -13,12 +13,4 @@ export class Method extends Statement {
     return seq(str("METHOD"), name, opt(kernel));
   }
 
-  public isStructure() {
-    return true;
-  }
-
-  public indentationEnd() {
-    return 2;
-  }
-
 }

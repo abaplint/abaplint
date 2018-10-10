@@ -1,6 +1,5 @@
 import {Token, Pragma} from "../abap/tokens/";
 import {Statement} from "../abap/statements/statement";
-import {RootNode} from "../abap/node";
 import {AbstractFile} from "./abstract_file";
 import {IFile} from "./ifile";
 
@@ -10,15 +9,13 @@ export class ParsedFile extends AbstractFile {
   // todo: need some better way of handling pragmas
   private tokens: Array<Token>;
   private statements: Array<Statement>;
-  private root: RootNode;
   private file: IFile;
 
-  public constructor(file: IFile, tokens: Array<Token>, statements: Array<Statement>, root: RootNode) {
+  public constructor(file: IFile, tokens: Array<Token>, statements: Array<Statement>) {
     super(file.getFilename());
     this.file       = file;
     this.tokens     = tokens;
     this.statements = statements;
-    this.root       = root;
   }
 
   public getRaw(): string {
@@ -53,10 +50,6 @@ export class ParsedFile extends AbstractFile {
       });
       return tokens;
     }
-  }
-
-  public getRoot(): RootNode {
-    return this.root;
   }
 
   public getStatements(): Array<Statement> {

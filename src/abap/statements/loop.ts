@@ -34,12 +34,4 @@ export class Loop extends Statement {
     return seq(str("LOOP"), opt(at));
   }
 
-  public isStructure() {
-    return true;
-  }
-
-  public indentationEnd() {
-    return 2;
-  }
-
 }

@@ -10,12 +10,4 @@ export class Define extends Statement {
     return verNot(Version.Cloud, ret);
   }
 
-  public isStructure() {
-    return true;
-  }
-
-  public indentationEnd() {
-    return 2;
-  }
-
 }

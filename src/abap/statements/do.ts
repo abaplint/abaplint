@@ -17,12 +17,4 @@ export class Do extends Statement {
     return seq(str("DO"), opt(per(plus(vary), times)));
   }
 
-  public isStructure() {
-    return true;
-  }
-
-  public indentationEnd() {
-    return 2;
-  }
-
 }

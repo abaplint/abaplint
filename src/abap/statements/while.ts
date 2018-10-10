@@ -10,12 +10,4 @@ export class While extends Statement {
     return seq(str("WHILE"), new Cond(), opt(vary));
   }
 
-  public isStructure() {
-    return true;
-  }
-
-  public indentationEnd() {
-    return 2;
-  }
-
 }

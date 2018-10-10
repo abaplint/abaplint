@@ -8,12 +8,4 @@ export class If extends Statement {
     return seq(str("IF"), new Cond());
   }
 
-  public isStructure() {
-    return true;
-  }
-
-  public indentationEnd() {
-    return 2;
-  }
-
 }

@@ -32,16 +32,4 @@ export class Form extends Statement {
     return verNot(Version.Cloud, ret);
   }
 
-  public isStructure() {
-    return true;
-  }
-
-  public indentationSetStart() {
-    return 0;
-  }
-
-  public indentationEnd() {
-    return 2;
-  }
-
 }

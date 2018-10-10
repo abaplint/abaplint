@@ -19,12 +19,4 @@ export class At extends Statement {
     return verNot(Version.Cloud, ret);
   }
 
-  public isStructure() {
-    return true;
-  }
-
-  public indentationEnd(_prev: Statement) {
-    return 2;
-  }
-
 }

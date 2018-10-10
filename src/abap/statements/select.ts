@@ -8,22 +8,4 @@ export class Select extends Statement {
     return new eSelect();
   }
 
-  public isStructure() {
-    if (/ SINGLE /.test(this.concatTokens().toUpperCase())
-        || / COUNT\(/.test(this.concatTokens().toUpperCase())
-        || / MAX\(/.test(this.concatTokens().toUpperCase())
-        || / AVG\(/.test(this.concatTokens().toUpperCase())
-        || / MIN\(/.test(this.concatTokens().toUpperCase())
-        || / SUM\(/.test(this.concatTokens().toUpperCase())
-        || / TABLE /.test(this.concatTokens().toUpperCase())) {
-      return false;
-    }
-
-    return true;
-  }
-
-  public indentationEnd() {
-    return this.isStructure() ? 2 : 0;
-  }
-
 }

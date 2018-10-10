@@ -2,7 +2,6 @@ import {statementType} from "../utils";
 import * as Statements from "../../src/abap/statements/";
 
 let tests = [
-  "CLASS foobar IMPLEMENTATION.",
   "CLASS lcl_gui DEFINITION DEFERRED.",
   "CLASS lcl_xml DEFINITION ABSTRACT.",
   "CLASS zcl_foo_super DEFINITION LOAD.",
@@ -32,4 +31,4 @@ let tests = [
   "class ZCL_SHARED_MEMORY_ROOT definition public final create public shared memory enabled.",
 ];
 
-statementType(tests, "CLASS", Statements.Class);
+statementType(tests, "CLASS", Statements.ClassDefinition);

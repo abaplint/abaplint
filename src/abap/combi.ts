@@ -83,8 +83,6 @@ class Regex implements IRunnable {
   public run(r: Array<Result>): Array<Result> {
     let result: Array<Result> = [];
 
-//    console.log(this.regexp.toString());
-
     for (let input of r) {
       if (input.length() !== 0
           && this.regexp.test(input.peek().getStr()) === true) {
