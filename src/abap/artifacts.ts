@@ -1,5 +1,7 @@
 import * as Statements from "./statements";
 import * as Expressions from "./expressions";
+import * as Structures from "./structures";
+import {Structure} from "./structures/_structure";
 import {Combi, Reuse} from "./combi";
 
 export interface IKeyword {
@@ -39,9 +41,29 @@ class List {
   }
 }
 
-export class Keywords {
+export class Artifacts {
 
-  public static get(): IKeyword[] {
+  /*
+todo
+getStatements
+getTokens
+getExpressions
+*/
+
+  public static getStructures(): Structure[] {
+    let ret: Structure[] = [];
+
+    for (let key in Structures) {
+      const list: any = Structures;
+      if (typeof list[key] === "function") {
+        ret.push(new list[key]());
+      }
+    }
+
+    return ret;
+  }
+
+  public static getKeywords(): IKeyword[] {
     let list: List = new List();
 
     for (let st in Statements) {
