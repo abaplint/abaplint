@@ -1,7 +1,7 @@
 import {Statement} from "./statement";
 import {str, IRunnable} from "../combi";
 
-export class Endloop extends Statement {
+export class EndLoop extends Statement {
 
   public static get_matcher(): IRunnable {
     return str("ENDLOOP");

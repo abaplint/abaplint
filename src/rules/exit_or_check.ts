@@ -39,10 +39,10 @@ export class ExitOrCheck extends ABAPRule {
           || statement instanceof Statements.Select
           || statement instanceof Statements.Do) {
         stack.push(statement);
-      } else if (statement instanceof Statements.Endloop
-          || statement instanceof Statements.Endwhile
-          || statement instanceof Statements.Endselect
-          || statement instanceof Statements.Enddo) {
+      } else if (statement instanceof Statements.EndLoop
+          || statement instanceof Statements.EndWhile
+          || statement instanceof Statements.EndSelect
+          || statement instanceof Statements.EndDo) {
         stack.pop();
       } else if ((statement instanceof Statements.Check
           || statement instanceof Statements.Exit)

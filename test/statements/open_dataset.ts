@@ -25,4 +25,4 @@ let tests = [
   "  REPLACEMENT CHARACTER c_non_unicode.",
 ];
 
-statementType(tests, "OPEN", Statements.Open);
+statementType(tests, "OPEN", Statements.OpenDataset);

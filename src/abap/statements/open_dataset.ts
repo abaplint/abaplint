@@ -3,7 +3,7 @@ import {verNot, str, seq, alt, per, opt, IRunnable} from "../combi";
 import {Target, Source} from "../expressions";
 import {Version} from "../../version";
 
-export class Open extends Statement {
+export class OpenDataset extends Statement {
 
   public static get_matcher(): IRunnable {
     let mode = seq(str("IN"),

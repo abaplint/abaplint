@@ -11,7 +11,7 @@ export class ClassDefinition extends Structure {
                    opt(seq(sta(Statements.Protected), definitions)),
                    opt(seq(sta(Statements.Private), definitions)));
 
-    return beginEnd(sta(Statements.ClassDefinition), body, sta(Statements.Endclass));
+    return beginEnd(sta(Statements.ClassDefinition), body, sta(Statements.EndClass));
   }
 
 }
