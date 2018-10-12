@@ -4,7 +4,7 @@ import {FSTarget, Target, Cond, Dynamic, Source} from "../expressions";
 
 export class Loop extends Statement {
 
-  public get_matcher(): IRunnable {
+  public getMatcher(): IRunnable {
     let where = seq(str("WHERE"), alt(new Cond(), new Dynamic()));
 
     let group = seq(str("GROUP BY"), new Source());

@@ -5,7 +5,7 @@ import {Version} from "../../version";
 
 export class GetParameter extends Statement {
 
-  public get_matcher(): IRunnable {
+  public getMatcher(): IRunnable {
     let ret = seq(str("GET PARAMETER ID"),
                   new Source(),
                   str("FIELD"),

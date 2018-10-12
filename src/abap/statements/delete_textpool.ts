@@ -5,7 +5,7 @@ import {Version} from "../../version";
 
 export class DeleteTextpool extends Statement {
 
-  public get_matcher(): IRunnable {
+  public getMatcher(): IRunnable {
     let language = seq(str("LANGUAGE"), new Source());
     let state = seq(str("STATE"), new Source());
 

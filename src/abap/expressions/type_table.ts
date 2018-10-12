@@ -3,7 +3,7 @@ import {Constant, FieldSub, TypeName, Integer} from "./";
 import {Version} from "../../version";
 
 export class TypeTable extends Expression {
-  public get_runnable(): IRunnable {
+  public getRunnable(): IRunnable {
     let likeType = alt(str("LIKE"), str("TYPE"));
     let header = str("WITH HEADER LINE");
     let initial = seq(str("INITIAL SIZE"), new Constant());

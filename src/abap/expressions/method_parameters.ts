@@ -2,7 +2,7 @@ import {seq, opt, str, Expression, IRunnable} from "../combi";
 import {ParameterListS, ParameterListT, ParameterListExceptions, ParameterT} from "./";
 
 export class MethodParameters extends Expression {
-  public get_runnable(): IRunnable {
+  public getRunnable(): IRunnable {
     let exporting = seq(str("EXPORTING"), new ParameterListS());
     let importing = seq(str("IMPORTING"), new ParameterListT());
     let changing = seq(str("CHANGING"), new ParameterListT());

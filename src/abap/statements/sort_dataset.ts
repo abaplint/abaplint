@@ -4,7 +4,7 @@ import {FieldSymbol, FieldSub, Dynamic} from "../expressions";
 
 export class SortDataset extends Statement {
 
-  public get_matcher(): IRunnable {
+  public getMatcher(): IRunnable {
     let order = alt(str("ASCENDING"), str("DESCENDING"));
 
     let sel = alt(new FieldSub(),

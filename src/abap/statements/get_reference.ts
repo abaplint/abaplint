@@ -5,7 +5,7 @@ import {Version} from "../../version";
 
 export class GetReference extends Statement {
 
-  public get_matcher(): IRunnable {
+  public getMatcher(): IRunnable {
     let ret = seq(str("GET REFERENCE OF"),
                   new Source(),
                   str("INTO"),

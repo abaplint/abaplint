@@ -4,7 +4,7 @@ import {Field} from "../expressions";
 
 export class TestSeam extends Statement {
 
-  public get_matcher(): IRunnable {
+  public getMatcher(): IRunnable {
     return seq(str("TEST-SEAM"), new Field());
   }
 

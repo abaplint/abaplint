@@ -4,7 +4,7 @@ import {Source, Dynamic} from "../expressions";
 
 export class Commit extends Statement {
 
-  public get_matcher(): IRunnable {
+  public getMatcher(): IRunnable {
     let work = seq(str("WORK"), opt(str("AND WAIT")));
 
     let connection = seq(str("CONNECTION"), alt(new Source(), new Dynamic()));

@@ -5,7 +5,7 @@ import {Version} from "../../version";
 
 export class SetLanguage extends Statement {
 
-  public get_matcher(): IRunnable {
+  public getMatcher(): IRunnable {
     let ret = seq(str("SET LANGUAGE"),
                   new Source());
 

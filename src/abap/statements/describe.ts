@@ -5,7 +5,7 @@ import {Version} from "../../version";
 
 export class Describe extends Statement {
 
-  public get_matcher(): IRunnable {
+  public getMatcher(): IRunnable {
     let tlines = seq(str("LINES"), new Target());
     let kind = seq(str("KIND"), new Target());
 

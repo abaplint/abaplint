@@ -70,7 +70,7 @@ describe("Test reuse matchers", () => {
 
     it("\"" + test.c + "\" should " + not + "match " + test.r.getName(), () => {
       let file = new Runner([new MemoryFile("cl_foo.clas.abap", test.c)]).parse()[0];
-      let match = Combi.Combi.run(test.r.get_runnable(), file.getTokens());
+      let match = Combi.Combi.run(test.r.getRunnable(), file.getTokens());
       expect(match !== undefined).to.equals(test.e);
     });
   });

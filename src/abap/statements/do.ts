@@ -4,7 +4,7 @@ import {Target, Source} from "../expressions";
 
 export class Do extends Statement {
 
-  public get_matcher(): IRunnable {
+  public getMatcher(): IRunnable {
     let vary = seq(str("VARYING"),
                    new Target(),
                    str("FROM"),

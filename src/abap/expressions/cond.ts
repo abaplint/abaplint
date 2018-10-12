@@ -3,7 +3,7 @@ import {WParenLeftW, WParenRightW, WParenRight} from "../tokens/";
 import {Compare} from "./";
 
 export class Cond extends Expression {
-  public get_runnable(): IRunnable {
+  public getRunnable(): IRunnable {
     let operator = alt(str("AND"), str("OR"));
 
     let another = seq(opt(str("NOT")),

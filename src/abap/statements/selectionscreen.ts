@@ -6,7 +6,7 @@ import {Version} from "../../version";
 
 export class SelectionScreen extends Statement {
 
-  public get_matcher(): IRunnable {
+  public getMatcher(): IRunnable {
     let blockName = new FieldSub();
 
     let beginBlock = seq(str("BEGIN OF BLOCK"),

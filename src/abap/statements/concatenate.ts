@@ -4,7 +4,7 @@ import {Target, Source} from "../expressions";
 
 export class Concatenate extends Statement {
 
-  public get_matcher(): IRunnable {
+  public getMatcher(): IRunnable {
     let mode = seq(str("IN"),
                    alt(str("BYTE"), str("CHARACTER")),
                    str("MODE"));

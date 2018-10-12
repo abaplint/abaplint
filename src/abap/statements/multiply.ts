@@ -5,7 +5,7 @@ import {Version} from "../../version";
 
 export class Multiply extends Statement {
 
-  public get_matcher(): IRunnable {
+  public getMatcher(): IRunnable {
     let ret = seq(str("MULTIPLY"),
                   new Target(),
                   str("BY"),

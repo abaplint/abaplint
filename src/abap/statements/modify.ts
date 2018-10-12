@@ -4,7 +4,7 @@ import {FSTarget, Target, Source, Dynamic, Cond, FieldSub} from "../expressions"
 
 export class Modify extends Statement {
 
-  public get_matcher(): IRunnable {
+  public getMatcher(): IRunnable {
     let index = seq(str("INDEX"), new Source());
     let from = seq(str("FROM"), opt(str("TABLE")), new Source());
     let transporting = seq(str("TRANSPORTING"),

@@ -4,7 +4,7 @@ import {Target, Source} from "../expressions";
 
 export class Shift extends Statement {
 
-  public get_matcher(): IRunnable {
+  public getMatcher(): IRunnable {
     let deleting = seq(str("DELETING"), alt(str("LEADING"), str("TRAILING")), new Source());
     let up = seq(str("UP TO"), new Source());
     let mode = seq(str("IN"), alt(str("CHARACTER"), str("BYTE")), str("MODE"));

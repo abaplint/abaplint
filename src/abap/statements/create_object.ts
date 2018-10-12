@@ -4,7 +4,7 @@ import {Target, ParameterListS, ParameterListExceptions, Source, ClassName, Dyna
 
 export class CreateObject extends Statement {
 
-  public get_matcher(): IRunnable {
+  public getMatcher(): IRunnable {
     let exporting = seq(str("EXPORTING"), new ParameterListS());
     let exceptions = seq(str("EXCEPTIONS"), new ParameterListExceptions());
     let table = seq(str("PARAMETER-TABLE"), new Source());

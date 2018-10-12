@@ -5,7 +5,7 @@ import {Version} from "../../version";
 
 export class GenerateSubroutine extends Statement {
 
-  public get_matcher(): IRunnable {
+  public getMatcher(): IRunnable {
     let name = seq(str("NAME"), new Source());
     let message = seq(str("MESSAGE"), new Target());
     let messageid = seq(str("MESSAGE-ID"), new Target());

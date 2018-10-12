@@ -5,7 +5,7 @@ import {Version} from "../../version";
 
 export class Leave extends Statement {
 
-  public get_matcher(): IRunnable {
+  public getMatcher(): IRunnable {
     let retu = seq(str("AND RETURN TO SCREEN"), new Source());
 
     let transaction = seq(str("TO TRANSACTION"),

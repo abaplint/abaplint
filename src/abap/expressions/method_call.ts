@@ -3,7 +3,7 @@ import {ParenLeftW, WParenRight, WParenRightW} from "../tokens/";
 import {Source, MethodName, ParameterListS, MethodParameters} from "./";
 
 export class MethodCall extends Expression {
-  public get_runnable(): IRunnable {
+  public getRunnable(): IRunnable {
     let white = seq(tok(ParenLeftW), alt(new Source(), new ParameterListS(), new MethodParameters()));
 
     let ret = seq(new MethodName(),

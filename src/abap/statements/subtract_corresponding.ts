@@ -5,7 +5,7 @@ import {Version} from "../../version";
 
 export class SubtractCorresponding extends Statement {
 
-  public get_matcher(): IRunnable {
+  public getMatcher(): IRunnable {
     let ret = seq(str("SUBTRACT-CORRESPONDING"),
                   new Source(),
                   str("FROM"),

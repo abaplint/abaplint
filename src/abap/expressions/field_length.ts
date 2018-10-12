@@ -3,7 +3,7 @@ import {ParenLeft, ParenRightW, ParenRight} from "../tokens/";
 import {FieldSymbol, Field, ArrowOrDash} from "./";
 
 export class FieldLength extends Expression {
-  public get_runnable(): IRunnable {
+  public getRunnable(): IRunnable {
     let normal = seq(alt(reg(/^[\d\w]+$/), new FieldSymbol()),
                      opt(seq(new ArrowOrDash(), new Field())));
 

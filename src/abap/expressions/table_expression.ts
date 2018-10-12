@@ -4,7 +4,7 @@ import {Source, Field} from "./";
 import {Version} from "../../version";
 
 export class TableExpression extends Expression {
-  public get_runnable(): IRunnable {
+  public getRunnable(): IRunnable {
     let fields = plus(seq(new Field(), str("="), new Source()));
     let key = seq(str("KEY"), new Field());
     let ret = seq(tok(BracketLeftW),

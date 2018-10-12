@@ -4,7 +4,7 @@ import {Version} from "../../version";
 
 export class Endat extends Statement {
 
-  public get_matcher(): IRunnable {
+  public getMatcher(): IRunnable {
     let ret = str("ENDAT");
     return verNot(Version.Cloud, ret);
   }

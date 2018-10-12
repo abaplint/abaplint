@@ -4,7 +4,7 @@ import {Version} from "../../version";
 
 export class AtLineSelection extends Statement {
 
-  public get_matcher(): IRunnable {
+  public getMatcher(): IRunnable {
     return verNot(Version.Cloud, str("AT LINE-SELECTION"));
   }
 

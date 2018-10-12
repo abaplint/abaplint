@@ -5,7 +5,7 @@ import {Version} from "../../version";
 
 export class CallTransaction extends Statement {
 
-  public get_matcher(): IRunnable {
+  public getMatcher(): IRunnable {
 
     let options = seq(str("OPTIONS FROM"), new Source());
     let messages = seq(str("MESSAGES INTO"), new Target());

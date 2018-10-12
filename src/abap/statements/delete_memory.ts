@@ -5,7 +5,7 @@ import {Version} from "../../version";
 
 export class DeleteMemory extends Statement {
 
-  public get_matcher(): IRunnable {
+  public getMatcher(): IRunnable {
     let ret = seq(str("DELETE FROM MEMORY ID"), new Source());
 
     return verNot(Version.Cloud, ret);

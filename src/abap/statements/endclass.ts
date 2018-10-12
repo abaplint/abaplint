@@ -3,7 +3,7 @@ import {str, IRunnable} from "../combi";
 
 export class EndClass extends Statement {
 
-  public get_matcher(): IRunnable {
+  public getMatcher(): IRunnable {
     return str("ENDCLASS");
   }
 

@@ -4,7 +4,7 @@ import {Field} from "../expressions";
 
 export class FunctionModule extends Statement {
 
-  public get_matcher(): IRunnable {
+  public getMatcher(): IRunnable {
     return seq(str("FUNCTION"), new Field());
   }
 

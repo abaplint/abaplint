@@ -5,7 +5,7 @@ import {Version} from "../../version";
 
 export class Parameter extends Statement {
 
-  public get_matcher(): IRunnable {
+  public getMatcher(): IRunnable {
     let para = alt(str("PARAMETER"), str("PARAMETERS"));
     let def = seq(str("DEFAULT"), alt(new Constant(), new FieldChain()));
     let radio = seq(str("RADIOBUTTON GROUP"), new RadioGroupName());

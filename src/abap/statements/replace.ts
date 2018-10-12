@@ -4,7 +4,7 @@ import {Target, Source} from "../expressions";
 
 export class Replace extends Statement {
 
-  public get_matcher(): IRunnable {
+  public getMatcher(): IRunnable {
     let length = seq(str("LENGTH"), new Source());
     let offset = seq(str("OFFSET"), new Source());
 

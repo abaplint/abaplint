@@ -5,7 +5,7 @@ import {Version} from "../../version";
 
 export class Compute extends Statement {
 
-  public get_matcher(): IRunnable {
+  public getMatcher(): IRunnable {
     let ret = seq(str("COMPUTE"),
                   opt(str("EXACT")),
                   new Target(),

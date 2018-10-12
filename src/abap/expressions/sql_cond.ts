@@ -3,7 +3,7 @@ import {WParenLeftW, WParenRightW, WParenRight} from "../tokens/";
 import {SQLCompare} from "./";
 
 export class SQLCond extends Expression {
-  public get_runnable(): IRunnable {
+  public getRunnable(): IRunnable {
     let operator = alt(str("AND"), str("OR"));
 
     let paren = seq(tok(WParenLeftW),

@@ -5,7 +5,7 @@ import {Version} from "../../version";
 
 export class DeleteReport extends Statement {
 
-  public get_matcher(): IRunnable {
+  public getMatcher(): IRunnable {
     let state = seq(str("STATE"), new Source());
 
     let ret = seq(str("DELETE REPORT"),

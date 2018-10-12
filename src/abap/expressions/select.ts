@@ -4,7 +4,7 @@ import {Field, DatabaseTable, Dynamic, Target, Source, SQLCond, SQLJoin} from ".
 import {Version} from "../../version";
 
 export class Select extends Expression {
-  public get_runnable(): IRunnable {
+  public getRunnable(): IRunnable {
 
     let aas = seq(str("AS"), new Field());
 

@@ -95,20 +95,12 @@ export class Artifacts {
   public static getKeywords(): IKeyword[] {
     let list: List = new List();
 
-// todo, refactor
     for (let stat of this.getStatements()) {
-      list.add(Combi.listKeywords(stat.get_matcher()), "statement_" + className(stat));
+      list.add(Combi.listKeywords(stat.getMatcher()), "statement_" + className(stat));
     }
-    /*
-    for (let st in Statements) {
-      const stat: any = Statements;
-      if (typeof stat[st].get_matcher === "function") {
-        list.add(Combi.listKeywords(stat[st].get_matcher()), "statement_" + st);
-      }
-    }
-*/
+
     for (let expr of this.getExpressions()) {
-      list.add(Combi.listKeywords(expr.get_runnable()), "expression_" + className(expr));
+      list.add(Combi.listKeywords(expr.getRunnable()), "expression_" + className(expr));
     }
 
     return list.get();

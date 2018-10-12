@@ -2,7 +2,7 @@ import {seq, opt, alt, str, Expression, IRunnable} from "../combi";
 import {Constant, FieldChain, TypeName} from "./";
 
 export class TypeParam extends Expression {
-  public get_runnable(): IRunnable {
+  public getRunnable(): IRunnable {
     let def = seq(str("DEFAULT"), alt(new Constant(), new FieldChain()));
 
     let table = seq(alt(str("STANDARD"), str("HASHED"), str("INDEX"), str("SORTED"), str("ANY")),

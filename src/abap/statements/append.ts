@@ -4,7 +4,7 @@ import {FSTarget, Target, Field, Source} from "../expressions";
 
 export class Append extends Statement {
 
-  public get_matcher(): IRunnable {
+  public getMatcher(): IRunnable {
     let assigning = seq(str("ASSIGNING"), new FSTarget());
     let reference = seq(str("REFERENCE INTO"), new Target());
     let sorted = seq(str("SORTED BY"), new Field());

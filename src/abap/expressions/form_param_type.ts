@@ -2,7 +2,7 @@ import {seq, str, opt, optPrio, altPrio, alt, Expression, IRunnable} from "../co
 import {Constant, FieldChain, TypeName, TableBody} from "./";
 
 export class FormParamType extends Expression {
-  public get_runnable(): IRunnable {
+  public getRunnable(): IRunnable {
     let def = seq(str("DEFAULT"), alt(new Constant(), new FieldChain()));
 
     let table = seq(alt(str("STANDARD"), str("HASHED"), str("INDEX"), str("SORTED"), str("ANY")),

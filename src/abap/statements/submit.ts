@@ -5,7 +5,7 @@ import {Version} from "../../version";
 
 export class Submit extends Statement {
 
-  public get_matcher(): IRunnable {
+  public getMatcher(): IRunnable {
     let sign = seq(str("SIGN"), new Source());
     let eq = alt(str("="), str("EQ"), str("IN"), str("NE"), str("INCL"));
     let compare = seq(eq, new Source());

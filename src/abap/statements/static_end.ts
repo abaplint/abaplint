@@ -5,7 +5,7 @@ import {Version} from "../../version";
 
 export class StaticEnd extends Statement {
 
-  public get_matcher(): IRunnable {
+  public getMatcher(): IRunnable {
     let ret = seq(alt(str("STATIC"), str("STATICS")),
                   str("END OF"),
                   new SimpleName());

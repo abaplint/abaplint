@@ -5,7 +5,7 @@ import {Version} from "../../version";
 
 export class CallScreen extends Statement {
 
-  public get_matcher(): IRunnable {
+  public getMatcher(): IRunnable {
     let starting = seq(str("STARTING AT"), new Source(), new Source());
     let ending = seq(str("ENDING AT"), new Source(), new Source());
 

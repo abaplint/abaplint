@@ -5,7 +5,7 @@ import {Version} from "../../version";
 
 export class InsertTextpool extends Statement {
 
-  public get_matcher(): IRunnable {
+  public getMatcher(): IRunnable {
     let state = seq(str("STATE"), new Source());
     let language = seq(str("LANGUAGE"), new Source());
 

@@ -6,7 +6,7 @@ import {Version} from "../../version";
 
 export class Write extends Statement {
 
-  public get_matcher(): IRunnable {
+  public getMatcher(): IRunnable {
     let at = seq(opt(str("AT")), reg(/^\/?\d+$/));
 
     let mask = seq(str("USING"),

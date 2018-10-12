@@ -5,7 +5,7 @@ import {Source, Cond} from "../expressions";
 
 export class Wait extends Statement {
 
-  public get_matcher(): IRunnable {
+  public getMatcher(): IRunnable {
     let up = seq(str("UP TO"), new Source(), str("SECONDS"));
 
     let channels = seq(alt(str("MESSAGING"), ver(Version.v750, str("PUSH"))), str("CHANNELS"));

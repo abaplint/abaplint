@@ -4,7 +4,7 @@ import {WParenLeft, ParenRightW, ParenRight, WAt, WParenLeftW, WParenRight} from
 import {Version} from "../../version";
 
 export class SQLCompare extends Expression {
-  public get_runnable(): IRunnable {
+  public getRunnable(): IRunnable {
     let val = alt(seq(opt(ver(Version.v740sp05, tok(WAt))), new FieldSub()), new Constant());
 
     let list = seq(alt(tok(WParenLeft), tok(WParenLeftW)),

@@ -5,7 +5,7 @@ import {Version} from "../../version";
 
 export class ReadTextpool extends Statement {
 
-  public get_matcher(): IRunnable {
+  public getMatcher(): IRunnable {
     let language = seq(str("LANGUAGE"), new Source());
     let into = seq(str("INTO"), new Target());
     let state = seq(str("STATE"), new Source());

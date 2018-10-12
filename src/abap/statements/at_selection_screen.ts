@@ -5,7 +5,7 @@ import {Version} from "../../version";
 
 export class AtSelectionScreen extends Statement {
 
-  public get_matcher(): IRunnable {
+  public getMatcher(): IRunnable {
     let output = str("OUTPUT");
 
     let value = seq(str("ON VALUE-REQUEST FOR"), new FieldSub());

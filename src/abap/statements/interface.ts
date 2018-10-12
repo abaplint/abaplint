@@ -4,7 +4,7 @@ import {Field} from "../expressions";
 
 export class Interface extends Statement {
 
-  public get_matcher(): IRunnable {
+  public getMatcher(): IRunnable {
     let options = alt(str("PUBLIC"), str("LOAD"), str("DEFERRED"));
 
     return seq(str("INTERFACE"),

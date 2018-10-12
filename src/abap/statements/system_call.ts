@@ -4,7 +4,7 @@ import {Version} from "../../version";
 
 export class SystemCall extends Statement {
 
-  public get_matcher(): IRunnable {
+  public getMatcher(): IRunnable {
     let anyy = reg(/^.+$/);
 
     let ret = seq(str("SYSTEM-CALL"), plus(anyy));

@@ -5,7 +5,7 @@ import {Version} from "../../version";
 
 export class GenerateDynpro extends Statement {
 
-  public get_matcher(): IRunnable {
+  public getMatcher(): IRunnable {
     let ret = seq(str("GENERATE DYNPRO"),
                   new Source(),
                   new Source(),

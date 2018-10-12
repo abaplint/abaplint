@@ -4,7 +4,7 @@ import {ParameterListS, ArrowOrDash, Field, FieldChain, MethodCall, Source, Type
 import {Version} from "../../version";
 
 export class MethodCallChain extends Expression {
-  public get_runnable(): IRunnable {
+  public getRunnable(): IRunnable {
     let fields = star(seq(new ArrowOrDash(), new Field()));
     let after = star(seq(fields, tok(Arrow), new MethodCall()));
 

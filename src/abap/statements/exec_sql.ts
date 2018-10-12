@@ -5,7 +5,7 @@ import {Version} from "../../version";
 
 export class ExecSQL extends Statement {
 
-  public get_matcher(): IRunnable {
+  public getMatcher(): IRunnable {
     let performing = seq(str("PERFORMING"), new SimpleName());
 
     let ret = seq(str("EXEC SQL"), opt(performing));

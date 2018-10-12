@@ -5,7 +5,7 @@ import {Version} from "../../version";
 
 export class Get extends Statement {
 
-  public get_matcher(): IRunnable {
+  public getMatcher(): IRunnable {
     let fields = seq(str("FIELDS"), plus(new Field()));
 
     let options = per(str("LATE"), fields);

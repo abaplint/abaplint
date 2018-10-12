@@ -4,7 +4,7 @@ import {Field} from "./";
 import {Version} from "../../version";
 
 export class InlineData extends Expression {
-  public get_runnable(): IRunnable {
+  public getRunnable(): IRunnable {
     let right = alt(tok(ParenRight), tok(ParenRightW));
     let left = tok(ParenLeft);
     let data = seq(str("DATA"), left, new Field(), right);

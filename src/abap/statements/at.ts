@@ -5,7 +5,7 @@ import {Version} from "../../version";
 
 export class At extends Statement {
 
-  public get_matcher(): IRunnable {
+  public getMatcher(): IRunnable {
     let field = alt(new FieldSub(),
                     new Dynamic(),
                     new FieldSymbol());

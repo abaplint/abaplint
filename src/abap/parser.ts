@@ -12,12 +12,7 @@ import {Token} from "./tokens/";
 function className(cla: any) {
   return (cla.constructor + "").match(/\w+/g)[1];
 }
-/*
-interface MapItem {
-  name: string;
-  matcher: IRunnable;
-}
-*/
+
 class Map {
   private map: {[index: string]: Array<string> };
 
@@ -25,7 +20,7 @@ class Map {
     this.map = {};
 
     for (let stat of Artifacts.getStatements()) {
-      const first = stat.get_matcher().first();
+      const first = stat.getMatcher().first();
 
       if (this.map[first]) {
         this.map[first].push(className(stat));
@@ -134,8 +129,7 @@ export default class Parser {
     }
 
     for (let st of this.map.lookup(tokens[0])) {
-// todo, reuse instead of instantiating new statement each time
-      let match = Combi.run(Artifacts.newStatement(st).get_matcher(),
+      let match = Combi.run(Artifacts.newStatement(st).getMatcher(),
                             tokens,
                             ver);
       if (match) {

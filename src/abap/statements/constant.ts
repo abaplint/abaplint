@@ -4,7 +4,7 @@ import {NamespaceSimpleName, FieldLength, Type, Value} from "../expressions";
 
 export class Constant extends Statement {
 
-  public get_matcher(): IRunnable {
+  public getMatcher(): IRunnable {
     let def = seq(new NamespaceSimpleName(), opt(new FieldLength()), opt(new Type()), new Value());
 
     let beginEnd = seq(alt(str("BEGIN"), str("END")), str("OF"), new NamespaceSimpleName());

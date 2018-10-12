@@ -4,7 +4,7 @@ import {Constant, FieldSub, FormName, MethodName, Source, FunctionParameters, Fi
 
 export class CallFunction extends Statement {
 
-  public get_matcher(): IRunnable {
+  public getMatcher(): IRunnable {
     let starting = seq(str("STARTING NEW TASK"),
                        alt(new Constant(), new FieldSub()));
     let update = str("IN UPDATE TASK");

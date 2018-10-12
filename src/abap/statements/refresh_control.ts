@@ -5,7 +5,7 @@ import {Version} from "../../version";
 
 export class RefreshControl extends Statement {
 
-  public get_matcher(): IRunnable {
+  public getMatcher(): IRunnable {
     let ret = seq(str("REFRESH CONTROL"),
                   new Source(),
                   str("FROM SCREEN"),

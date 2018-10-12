@@ -4,7 +4,7 @@ import {Target, Source} from "../expressions";
 
 export class ConvertText extends Statement {
 
-  public get_matcher(): IRunnable {
+  public getMatcher(): IRunnable {
     return seq(str("CONVERT TEXT"),
                new Source(),
                str("INTO SORTABLE CODE"),

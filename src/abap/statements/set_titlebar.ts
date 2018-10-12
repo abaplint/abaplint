@@ -5,7 +5,7 @@ import {Version} from "../../version";
 
 export class SetTitlebar extends Statement {
 
-  public get_matcher(): IRunnable {
+  public getMatcher(): IRunnable {
     let wit = seq(str("WITH"), plus(new Source()));
 
     let program = seq(str("OF PROGRAM"), new Source());

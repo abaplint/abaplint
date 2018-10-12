@@ -3,7 +3,7 @@ import {StringTemplate as tString} from "../tokens/";
 import {Version} from "../../version";
 
 export class StringTemplate extends Expression {
-  public get_runnable(): IRunnable {
+  public getRunnable(): IRunnable {
     return ver(Version.v702, tok(tString));
   }
 }

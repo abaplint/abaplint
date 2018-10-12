@@ -1,7 +1,7 @@
 import {regex as reg, Expression, IRunnable} from "../combi";
 
 export class RadioGroupName extends Expression {
-  public get_runnable(): IRunnable {
+  public getRunnable(): IRunnable {
     return reg(/^[\w\d%]+$/);
   }
 }

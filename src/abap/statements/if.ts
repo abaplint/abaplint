@@ -4,7 +4,7 @@ import {Cond} from "../expressions";
 
 export class If extends Statement {
 
-  public get_matcher(): IRunnable {
+  public getMatcher(): IRunnable {
     return seq(str("IF"), new Cond());
   }
 

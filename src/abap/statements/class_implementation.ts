@@ -4,7 +4,7 @@ import {ClassName} from "../expressions";
 
 export class ClassImplementation extends Statement {
 
-  public get_matcher(): IRunnable {
+  public getMatcher(): IRunnable {
     return seq(str("CLASS"), new ClassName(), str("IMPLEMENTATION"));
   }
 

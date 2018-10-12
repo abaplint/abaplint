@@ -4,7 +4,7 @@ import {Version} from "../../version";
 
 export class EndOfDefinition extends Statement {
 
-  public get_matcher(): IRunnable {
+  public getMatcher(): IRunnable {
     let ret = str("END-OF-DEFINITION");
     return verNot(Version.Cloud, ret);
   }

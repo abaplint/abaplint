@@ -5,7 +5,7 @@ import {Version} from "../../version";
 
 export class CallKernel extends Statement {
 
-  public get_matcher(): IRunnable {
+  public getMatcher(): IRunnable {
 
     let field = seq(str("ID"),
                     new Source(),

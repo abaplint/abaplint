@@ -4,7 +4,7 @@ import {Cond, Source, Target} from "../expressions";
 
 export class While extends Statement {
 
-  public get_matcher(): IRunnable {
+  public getMatcher(): IRunnable {
     let vary = seq(str("VARY"), new Target(), str("FROM"), new Source(), str("NEXT"), new Source());
 
     return seq(str("WHILE"), new Cond(), opt(vary));

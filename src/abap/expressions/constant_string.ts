@@ -2,7 +2,7 @@ import {seq, opt, tok, alt, regex as reg, Expression, IRunnable} from "../combi"
 import {ParenLeft, ParenRightW, ParenRight} from "../tokens/";
 
 export class ConstantString extends Expression {
-  public get_runnable(): IRunnable {
+  public getRunnable(): IRunnable {
     let text = seq(tok(ParenLeft), reg(/^\w{3}$/), alt(tok(ParenRightW), tok(ParenRight)));
     /*
     let constant = reg(/^('.*')|(`.*`)$/);

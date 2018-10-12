@@ -5,7 +5,7 @@ import {Version} from "../../version";
 
 export class GetCursor extends Statement {
 
-  public get_matcher(): IRunnable {
+  public getMatcher(): IRunnable {
     let line = seq(str("LINE"), new Target());
     let field = seq(str("FIELD"), new Target());
     let offset = seq(str("OFFSET"), new Target());

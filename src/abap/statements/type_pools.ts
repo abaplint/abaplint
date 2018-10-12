@@ -5,7 +5,7 @@ import {Version} from "../../version";
 // type pool usage
 export class TypePools extends Statement {
 
-  public get_matcher(): IRunnable {
+  public getMatcher(): IRunnable {
     let fieldName = reg(/^\w+$/);
 
     let ret = seq(str("TYPE-POOLS"), fieldName);

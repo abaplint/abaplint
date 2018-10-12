@@ -2,7 +2,7 @@ import {seq, opt, alt, str, Expression, IRunnable} from "../combi";
 import {Constant, FieldChain, Source, Integer, TableBody} from "./";
 
 export class Type extends Expression {
-  public get_runnable(): IRunnable {
+  public getRunnable(): IRunnable {
     let likeType = alt(str("LIKE"), str("TYPE"));
     let def = seq(str("DEFAULT"), alt(new Constant(), new FieldChain()));
     let length = seq(str("LENGTH"), new Source());

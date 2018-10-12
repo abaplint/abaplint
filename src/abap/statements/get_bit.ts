@@ -4,7 +4,7 @@ import {Target, Source} from "../expressions";
 
 export class GetBit extends Statement {
 
-  public get_matcher(): IRunnable {
+  public getMatcher(): IRunnable {
     let ret = seq(str("GET BIT"),
                   new Source(),
                   str("OF"),

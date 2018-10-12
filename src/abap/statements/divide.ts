@@ -5,7 +5,7 @@ import {Version} from "../../version";
 
 export class Divide extends Statement {
 
-  public get_matcher(): IRunnable {
+  public getMatcher(): IRunnable {
     let ret = seq(str("DIVIDE"),
                   new Target(),
                   str("BY"),

@@ -4,7 +4,7 @@ import {Version} from "../../version";
 
 export class SetRunTime extends Statement {
 
-  public get_matcher(): IRunnable {
+  public getMatcher(): IRunnable {
     let clock = seq(str("CLOCK RESOLUTION"), alt(str("LOW"), str("HIGH")));
 
     let analyzer = seq(str("ANALYZER"), alt(str("ON"), str("OFF")));

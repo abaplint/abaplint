@@ -541,7 +541,7 @@ export abstract class Expression implements IRunnable {
     let results: Array<Result> = [];
 
     for (let input of r) {
-      let temp = this.get_runnable().run([input]);
+      let temp = this.getRunnable().run([input]);
 
       let moo: Array<Result> = [];
       for (let t of temp) {
@@ -568,7 +568,7 @@ export abstract class Expression implements IRunnable {
     return results;
   }
 
-  public abstract get_runnable(): IRunnable;
+  public abstract getRunnable(): IRunnable;
 
   public listKeywords(): string[] {
 // do not recurse, all Expressions are evaluated only on first level

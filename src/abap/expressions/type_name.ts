@@ -2,7 +2,7 @@ import {seq, alt, str, opt, tok, regex as reg, Expression, IRunnable} from "../c
 import {Arrow, Dash} from "../tokens/";
 
 export class TypeName extends Expression {
-  public get_runnable(): IRunnable {
+  public getRunnable(): IRunnable {
     let name = reg(/^(\/\w+\/)?\w+$/);
     let cla = seq(name, tok(Arrow));
     let field = seq(tok(Dash), name);

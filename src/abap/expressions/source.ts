@@ -5,7 +5,7 @@ import {FieldChain, Field, TableBody, TypeName, ArrowOrDash, FieldSub, For} from
 import {Version} from "../../version";
 
 export class Source extends Expression {
-  public get_runnable(): IRunnable {
+  public getRunnable(): IRunnable {
     let ref = seq(tok(Arrow), str("*"));
 
     let method = seq(new MethodCallChain(), optPrio(seq(new ArrowOrDash(), new FieldChain())));

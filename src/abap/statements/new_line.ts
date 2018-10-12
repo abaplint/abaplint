@@ -4,7 +4,7 @@ import {Version} from "../../version";
 
 export class NewLine extends Statement {
 
-  public get_matcher(): IRunnable {
+  public getMatcher(): IRunnable {
     let ret = seq(str("NEW-LINE"),
                   opt(alt(str("SCROLLING"), str("NO-SCROLLING"))));
 

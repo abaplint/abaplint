@@ -5,7 +5,7 @@ import {Version} from "../../version";
 
 export class SetMargin extends Statement {
 
-  public get_matcher(): IRunnable {
+  public getMatcher(): IRunnable {
     let ret = seq(str("SET MARGIN"),
                   new Source(),
                   new Source());

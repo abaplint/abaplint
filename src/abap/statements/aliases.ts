@@ -4,7 +4,7 @@ import {Field} from "../expressions";
 
 export class Aliases extends Statement {
 
-  public get_matcher(): IRunnable {
+  public getMatcher(): IRunnable {
     return seq(str("ALIASES"),
                new Field(),
                str("FOR"),

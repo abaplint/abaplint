@@ -3,7 +3,7 @@ import {Source, Field, FieldSymbol, Cond} from "./";
 import {Version} from "../../version";
 
 export class For extends Expression {
-  public get_runnable(): IRunnable {
+  public getRunnable(): IRunnable {
     let where = seq(str("WHERE"), new Cond());
     let inn = seq(str("IN"), new Source(), opt(where));
     let then = seq(str("THEN"), new Source());

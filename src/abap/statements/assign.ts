@@ -5,7 +5,7 @@ import {FSTarget, Target, Source, Dynamic, Field} from "../expressions";
 
 export class Assign extends Statement {
 
-  public get_matcher(): IRunnable {
+  public getMatcher(): IRunnable {
     let component = seq(str("COMPONENT"),
                         new Source(),
                         str("OF STRUCTURE"),

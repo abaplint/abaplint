@@ -4,7 +4,7 @@ import {NamespaceSimpleName, FieldLength, Type as eType, TypeTable} from "../exp
 
 export class Type extends Statement {
 
-  public get_matcher(): IRunnable {
+  public getMatcher(): IRunnable {
     let def = seq(new NamespaceSimpleName(),
                   opt(new FieldLength()),
                   opt(alt(new eType(), new TypeTable())));

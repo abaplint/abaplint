@@ -5,7 +5,7 @@ import {Version} from "../../version";
 
 export class Communication extends Statement {
 
-  public get_matcher(): IRunnable {
+  public getMatcher(): IRunnable {
     let length = seq(str("LENGTH"), new Target());
 
     let init = seq(str("INIT ID"), new Source(), str("DESTINATION"), new Target());

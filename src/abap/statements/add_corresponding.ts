@@ -5,7 +5,7 @@ import {Target, Source} from "../expressions";
 
 export class AddCorresponding extends Statement {
 
-  public get_matcher(): IRunnable {
+  public getMatcher(): IRunnable {
     let ret = seq(str("ADD-CORRESPONDING"),
                   new Source(),
                   str("TO"),

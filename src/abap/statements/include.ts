@@ -4,7 +4,7 @@ import {IncludeName} from "../expressions";
 import {Version} from "../../version";
 
 export class Include extends Statement {
-  public get_matcher(): IRunnable {
+  public getMatcher(): IRunnable {
     let ret = seq(str("INCLUDE"), new IncludeName(), opt(str("IF FOUND")));
 
     return verNot(Version.Cloud, ret);

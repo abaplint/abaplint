@@ -4,7 +4,7 @@ import {Target} from "../expressions";
 
 export class Condense extends Statement {
 
-  public get_matcher(): IRunnable {
+  public getMatcher(): IRunnable {
     return seq(str("CONDENSE"),
                new Target(),
                opt(str("NO-GAPS")));

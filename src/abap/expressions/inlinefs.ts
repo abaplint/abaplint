@@ -4,7 +4,7 @@ import {FieldSymbol} from "./";
 import {Version} from "../../version";
 
 export class InlineFS extends Expression {
-  public get_runnable(): IRunnable {
+  public getRunnable(): IRunnable {
     let right = alt(tok(ParenRight), tok(ParenRightW));
     let left = tok(ParenLeft);
     let fs = seq(str("FIELD-SYMBOL"), left, new FieldSymbol(), right);

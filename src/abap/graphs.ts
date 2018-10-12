@@ -1,7 +1,6 @@
 import * as Combi from "./combi";
-import * as Statements from "./statements/";
-import * as Expressions from "./expressions";
 import * as fs from "fs";
+import {Artifacts} from "./artifacts";
 
 // todo, move this method to somewhere under web/viz?
 
@@ -11,27 +10,23 @@ function className(cla: any) {
 
 class Graph {
 
-  public static writeRunnable(prefix: string, name: string, runnable: Combi.IRunnable, complex: boolean) {
-    let str = Combi.Combi.railroad(runnable, complex);
-    fs.writeFileSync("./web/viz/" + prefix + name + ".txt", str, "utf8");
-  }
-
   public static run() {
-    for (let foo in Expressions) {
-      const expr: any = Expressions;
-      if (typeof expr[foo] === "function") {
-        let name = className(new expr[foo]());
-        this.writeRunnable("expression_", name, new expr[foo]().get_runnable(), true);
-      }
+    for (let expr of Artifacts.getExpressions()) {
+      this.writeRunnable("expression_" + className(expr), expr.getRunnable(), true);
     }
 
-    for (let st in Statements) {
-      const stat: any = Statements;
-      if (typeof stat[st].get_matcher === "function") {
-        this.writeRunnable("statement_", st, stat[st].get_matcher(), false);
-      }
+    for (let stat of Artifacts.getStatements()) {
+      this.writeRunnable("statement_" + className(stat), stat.getMatcher(), false);
     }
+
+// todo, getStructures
   }
+
+  private static writeRunnable(name: string, runnable: Combi.IRunnable, complex: boolean) {
+    let str = Combi.Combi.railroad(runnable, complex);
+    fs.writeFileSync("./web/viz/" + name + ".txt", str, "utf8");
+  }
+
 }
 
 Graph.run();

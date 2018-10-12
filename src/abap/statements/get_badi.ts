@@ -5,7 +5,7 @@ import {Version} from "../../version";
 
 export class GetBadi extends Statement {
 
-  public get_matcher(): IRunnable {
+  public getMatcher(): IRunnable {
     let filters = seq(str("FILTERS"), new ParameterListS());
     let context = seq(str("CONTEXT"), new Source());
     let type = seq(str("TYPE"), new Dynamic());

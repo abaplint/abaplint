@@ -4,7 +4,7 @@ import {Version} from "../../version";
 
 export class SetExtendedCheck extends Statement {
 
-  public get_matcher(): IRunnable {
+  public getMatcher(): IRunnable {
     let ret = seq(str("SET EXTENDED CHECK"), alt(str("OFF"), str("ON")));
 
     return verNot(Version.Cloud, ret);

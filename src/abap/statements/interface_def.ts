@@ -5,7 +5,7 @@ import {Source, Field} from "../expressions";
 
 export class InterfaceDef extends Statement {
 
-  public get_matcher(): IRunnable {
+  public getMatcher(): IRunnable {
     let val = seq(new Field(), str("="), new Source());
 
     let dataValues = seq(str("DATA VALUES"),

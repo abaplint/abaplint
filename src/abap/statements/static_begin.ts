@@ -5,7 +5,7 @@ import {Version} from "../../version";
 
 export class StaticBegin extends Statement {
 
-  public get_matcher(): IRunnable {
+  public getMatcher(): IRunnable {
     let occurs = seq(str("OCCURS"), new Integer());
 
     let ret = seq(alt(str("STATIC"), str("STATICS")),

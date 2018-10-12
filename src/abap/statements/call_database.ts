@@ -5,7 +5,7 @@ import {Version} from "../../version";
 
 export class CallDatabase extends Statement {
 
-  public get_matcher(): IRunnable {
+  public getMatcher(): IRunnable {
     let exporting = seq(str("EXPORTING"), new ParameterListS());
     let importing = seq(str("IMPORTING"), new ParameterListT());
     let expl = seq(opt(exporting), opt(importing));

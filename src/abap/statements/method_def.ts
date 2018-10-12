@@ -6,7 +6,7 @@ import {MethodParam, Field, ClassName} from "../expressions";
 
 export class MethodDef extends Statement {
 
-  public get_matcher(): IRunnable {
+  public getMatcher(): IRunnable {
     let field = reg(/^!?(\/\w+\/)?\w+$/);
 
     let importing  = seq(str("IMPORTING"),

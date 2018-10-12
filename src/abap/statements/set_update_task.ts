@@ -3,7 +3,7 @@ import {verNot, str, IRunnable} from "../combi";
 import {Version} from "../../version";
 
 export class SetUpdateTask extends Statement {
-  public get_matcher(): IRunnable {
+  public getMatcher(): IRunnable {
     return verNot(Version.Cloud, str("SET UPDATE TASK LOCAL"));
   }
 }

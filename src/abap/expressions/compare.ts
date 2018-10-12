@@ -4,7 +4,7 @@ import {WParenLeft, ParenRightW, ParenRight} from "../tokens/";
 import {Version} from "../../version";
 
 export class Compare extends Expression {
-  public get_runnable(): IRunnable {
+  public getRunnable(): IRunnable {
     let val = alt(new FieldSub(), new Constant());
 
     let list = seq(tok(WParenLeft),

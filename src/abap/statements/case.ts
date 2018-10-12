@@ -5,7 +5,7 @@ import {Source} from "../expressions";
 
 export class Case extends Statement {
 
-  public get_matcher(): IRunnable {
+  public getMatcher(): IRunnable {
     return seq(str("CASE"),
                opt(ver(Version.v750, str("TYPE OF"))),
                new Source());

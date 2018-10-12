@@ -22,7 +22,7 @@ export abstract class Statement extends StatementNode {
     return this;
   }
 
-  public abstract get_matcher(): IRunnable;
+  public abstract getMatcher(): IRunnable;
 
   /*
   public isStructure(): boolean {
@@ -123,37 +123,37 @@ export abstract class Statement extends StatementNode {
 }
 
 export class Unknown extends Statement {
-  public get_matcher(): IRunnable {
+  public getMatcher(): IRunnable {
     throw new Error("Unknown Statement, get_matcher");
   }
 }
 
 export class Comment extends Statement {
-  public get_matcher(): IRunnable {
+  public getMatcher(): IRunnable {
     throw new Error("Comment Statement, get_matcher");
   }
 }
 
 export class Empty extends Statement {
-  public get_matcher(): IRunnable {
+  public getMatcher(): IRunnable {
     throw new Error("Empty Statement, get_matcher");
   }
 }
 
 export class MacroCall extends Statement {
-  public get_matcher(): IRunnable {
+  public getMatcher(): IRunnable {
     throw new Error("MacroCall Statement, get_matcher");
   }
 }
 
 export class MacroContent extends Statement {
-  public get_matcher(): IRunnable {
+  public getMatcher(): IRunnable {
     throw new Error("MacroContent Statement, get_matcher");
   }
 }
 
 export class NativeSQL extends Statement {
-  public get_matcher(): IRunnable {
+  public getMatcher(): IRunnable {
     throw new Error("NativeSQL Statement, get_matcher");
   }
 }

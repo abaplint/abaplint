@@ -3,7 +3,7 @@ import {ParenLeft, ParenRight, ParenRightW} from "../tokens/";
 import {Field} from "./";
 
 export class PassByValue extends Expression {
-  public get_runnable(): IRunnable {
+  public getRunnable(): IRunnable {
     let value = seq(str("VALUE"),
                     tok(ParenLeft),
                     new Field(),

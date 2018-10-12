@@ -6,7 +6,7 @@ import {Version} from "../../version";
 
 export class Perform extends Statement {
 
-  public get_matcher(): IRunnable {
+  public getMatcher(): IRunnable {
     let programName = new Field();
     let using = seq(str("USING"), plus(new Source()));
     let tables = seq(str("TABLES"), plus(new Source()));

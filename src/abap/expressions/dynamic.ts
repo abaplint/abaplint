@@ -3,7 +3,7 @@ import {WParenLeft, ParenLeft, ParenRightW, ParenRight} from "../tokens/";
 import {FieldChain, Constant} from "./";
 
 export class Dynamic extends Expression {
-  public get_runnable(): IRunnable {
+  public getRunnable(): IRunnable {
     let ret = seq(alt(tok(WParenLeft), tok(ParenLeft)),
                   alt(new FieldChain(), new Constant()),
                   alt(tok(ParenRightW), tok(ParenRight)));

@@ -5,7 +5,7 @@ import {Version} from "../../version";
 
 export class FetchNext extends Statement {
 
-  public get_matcher(): IRunnable {
+  public getMatcher(): IRunnable {
     let size = seq(str("PACKAGE SIZE"), new Source());
 
     let table = seq(alt(str("INTO"), str("APPENDING")),

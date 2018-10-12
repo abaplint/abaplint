@@ -5,7 +5,7 @@ import {Version} from "../../version";
 
 export class Pack extends Statement {
 
-  public get_matcher(): IRunnable {
+  public getMatcher(): IRunnable {
     let ret = seq(str("PACK"), new Source(), str("TO"), new Target());
 
     return verNot(Version.Cloud, ret);

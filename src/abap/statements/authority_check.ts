@@ -5,7 +5,7 @@ import {Version} from "../../version";
 
 export class AuthorityCheck extends Statement {
 
-  public get_matcher(): IRunnable {
+  public getMatcher(): IRunnable {
 
     let field = seq(str("FIELD"), new Source());
 

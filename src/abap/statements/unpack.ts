@@ -5,7 +5,7 @@ import {Version} from "../../version";
 
 export class Unpack extends Statement {
 
-  public get_matcher(): IRunnable {
+  public getMatcher(): IRunnable {
     let ret = seq(str("UNPACK"),
                   new Source(),
                   str("TO"),

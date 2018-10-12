@@ -5,7 +5,7 @@ import {Version} from "../../version";
 
 export class Controls extends Statement {
 
-  public get_matcher(): IRunnable {
+  public getMatcher(): IRunnable {
     let tableview = seq(str("TABLEVIEW USING SCREEN"), new Source());
     let tabstrip = str("TABSTRIP");
     let type = seq(str("TYPE"), alt(tableview, tabstrip));

@@ -5,7 +5,7 @@ import {Version} from "../../version";
 
 export class ScrollList extends Statement {
 
-  public get_matcher(): IRunnable {
+  public getMatcher(): IRunnable {
     let index = seq(str("INDEX"), new Source());
     let line = seq(str("LINE"), new Source());
     let column = seq(str("TO COLUMN"), new Source());

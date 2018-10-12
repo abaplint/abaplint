@@ -4,7 +4,7 @@ import {Dynamic, Field} from "../expressions";
 
 export class Rollback extends Statement {
 
-  public get_matcher(): IRunnable {
+  public getMatcher(): IRunnable {
     let connection = seq(str("CONNECTION"),
                          alt(new Dynamic(), new Field()));
 

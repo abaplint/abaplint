@@ -5,7 +5,7 @@ import {Version} from "../../version";
 
 export class GenerateReport extends Statement {
 
-  public get_matcher(): IRunnable {
+  public getMatcher(): IRunnable {
 
     let without = str("WITHOUT SELECTION-SCREEN");
     let message = seq(str("MESSAGE"), new Target());

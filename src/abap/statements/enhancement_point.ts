@@ -5,7 +5,7 @@ import {Version} from "../../version";
 
 export class EnhancementPoint extends Statement {
 
-  public get_matcher(): IRunnable {
+  public getMatcher(): IRunnable {
     let ret = seq(str("ENHANCEMENT-POINT"),
                   new FieldSub(),
                   str("SPOTS"),

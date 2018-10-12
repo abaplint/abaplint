@@ -4,7 +4,7 @@ import {Target, Source} from "../expressions";
 
 export class Clear extends Statement {
 
-  public get_matcher(): IRunnable {
+  public getMatcher(): IRunnable {
     let wit = seq(str("WITH"), new Source());
 
     let mode = alt(str("IN CHARACTER MODE"),

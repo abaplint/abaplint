@@ -4,7 +4,7 @@ import {Field} from "../expressions";
 
 export class TestInjection extends Statement {
 
-  public get_matcher(): IRunnable {
+  public getMatcher(): IRunnable {
     return seq(str("TEST-INJECTION"), new Field());
   }
 

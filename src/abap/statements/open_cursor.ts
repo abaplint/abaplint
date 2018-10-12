@@ -5,7 +5,7 @@ import {Version} from "../../version";
 
 export class OpenCursor extends Statement {
 
-  public get_matcher(): IRunnable {
+  public getMatcher(): IRunnable {
     let ret = seq(str("OPEN CURSOR"),
                   optPrio(str("WITH HOLD")),
                   new Target(),

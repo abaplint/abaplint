@@ -4,7 +4,7 @@ import {ClassName} from "../expressions";
 
 export class ClassDefinition extends Statement {
 
-  public get_matcher(): IRunnable {
+  public getMatcher(): IRunnable {
     let create = seq(str("CREATE"), alt(str("PUBLIC"), str("PROTECTED"), str("PRIVATE")));
 
     let level = alt(str("CRITICAL"), str("HARMLESS"), str("DANGEROUS"));

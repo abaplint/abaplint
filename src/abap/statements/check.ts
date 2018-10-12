@@ -4,7 +4,7 @@ import {Cond} from "../expressions";
 
 export class Check extends Statement {
 
-  public get_matcher(): IRunnable {
+  public getMatcher(): IRunnable {
     let ret = seq(str("CHECK"), new Cond());
 
     return ret;

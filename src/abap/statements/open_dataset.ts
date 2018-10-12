@@ -5,7 +5,7 @@ import {Version} from "../../version";
 
 export class OpenDataset extends Statement {
 
-  public get_matcher(): IRunnable {
+  public getMatcher(): IRunnable {
     let mode = seq(str("IN"),
                    opt(str("LEGACY")),
                    alt(str("BINARY MODE"),
