@@ -1,10 +1,10 @@
-import {plus, ver, seq, opt, tok, str, alt, star, optPrio, Reuse, IRunnable} from "../combi";
+import {plus, ver, seq, opt, tok, str, alt, star, optPrio, Expression, IRunnable} from "../combi";
 import {Arrow, WParenLeftW, WParenRightW, WParenRight, WDashW, ParenLeftW} from "../tokens/";
 import {MethodCallChain, ArithOperator, Cond, Constant, StringTemplate} from "./";
 import {FieldChain, Field, TableBody, TypeName, ArrowOrDash, FieldSub, For} from "./";
 import {Version} from "../../version";
 
-export class Source extends Reuse {
+export class Source extends Expression {
   public get_runnable(): IRunnable {
     let ref = seq(tok(Arrow), str("*"));
 

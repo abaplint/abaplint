@@ -1,7 +1,7 @@
-import {seq, opt, tok, regex as reg, Reuse, IRunnable} from "../combi";
+import {seq, opt, tok, regex as reg, Expression, IRunnable} from "../combi";
 import {WDash} from "../tokens/";
 
-export class Integer extends Reuse {
+export class Integer extends Expression {
   public get_runnable(): IRunnable {
     return seq(opt(tok(WDash)), reg(/^\d+$/));
   }

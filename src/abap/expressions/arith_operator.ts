@@ -1,7 +1,7 @@
-import {str, tok, alt, Reuse, IRunnable} from "../combi";
+import {str, tok, alt, Expression, IRunnable} from "../combi";
 import {WPlusW, WDashW} from "../tokens/";
 
-export class ArithOperator extends Reuse {
+export class ArithOperator extends Expression {
   public get_runnable(): IRunnable {
     let ret = alt(tok(WPlusW),
                   tok(WDashW),

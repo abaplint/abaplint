@@ -1,9 +1,9 @@
-import {alt, str, seq, tok, ver, Reuse, IRunnable} from "../combi";
+import {alt, str, seq, tok, ver, Expression, IRunnable} from "../combi";
 import {ParenRight, ParenRightW, ParenLeft} from "../tokens/";
 import {Field} from "./";
 import {Version} from "../../version";
 
-export class InlineData extends Reuse {
+export class InlineData extends Expression {
   public get_runnable(): IRunnable {
     let right = alt(tok(ParenRight), tok(ParenRightW));
     let left = tok(ParenLeft);

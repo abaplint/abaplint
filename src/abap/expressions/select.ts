@@ -1,9 +1,9 @@
-import {seq, per, opt, alt, tok, str, ver, star, plus, Reuse, IRunnable} from "../combi";
+import {seq, per, opt, alt, tok, str, ver, star, plus, Expression, IRunnable} from "../combi";
 import {WParenLeftW, WAt, WParenRightW, ParenLeft, WParenLeft, ParenLeftW} from "../tokens/";
 import {Field, DatabaseTable, Dynamic, Target, Source, SQLCond, SQLJoin} from "./";
 import {Version} from "../../version";
 
-export class Select extends Reuse {
+export class Select extends Expression {
   public get_runnable(): IRunnable {
 
     let aas = seq(str("AS"), new Field());

@@ -1,6 +1,6 @@
-import {regex as reg, Reuse, IRunnable} from "../combi";
+import {regex as reg, Expression, IRunnable} from "../combi";
 
-export class Modif extends Reuse {
+export class Modif extends Expression {
   public get_runnable(): IRunnable {
     return reg(/^\w{1,3}$/);
   }

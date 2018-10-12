@@ -127,3 +127,5 @@ export class Empty extends Statement { }
 export class MacroCall extends Statement { }
 
 export class MacroContent extends Statement { }
+
+export class NativeSQL extends Statement { }

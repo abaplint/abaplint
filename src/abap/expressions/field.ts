@@ -1,6 +1,6 @@
-import {regex as reg, Reuse, IRunnable} from "../combi";
+import {regex as reg, Expression, IRunnable} from "../combi";
 
-export class Field extends Reuse {
+export class Field extends Expression {
   public get_runnable(): IRunnable {
 // "&1" can be used for almost anything(field names, method names etc.) in macros
 // field names with only digits should not be possible

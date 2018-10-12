@@ -1,7 +1,7 @@
-import {seq, opt, alt, str, Reuse, IRunnable} from "../combi";
+import {seq, opt, alt, str, Expression, IRunnable} from "../combi";
 import {Constant, FieldChain, TypeName} from "./";
 
-export class TypeParam extends Reuse {
+export class TypeParam extends Expression {
   public get_runnable(): IRunnable {
     let def = seq(str("DEFAULT"), alt(new Constant(), new FieldChain()));
 

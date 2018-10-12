@@ -6,4 +6,4 @@ let tests = [
   "EXEC SQL PERFORMING name.",
 ];
 
-statementType(tests, "EXEC SQL", Statements.ExecSql);
+statementType(tests, "EXEC SQL", Statements.ExecSQL);

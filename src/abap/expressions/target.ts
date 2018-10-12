@@ -1,9 +1,9 @@
-import {seq, opt, tok, star, alt, str, Reuse, IRunnable} from "../combi";
+import {seq, opt, tok, star, alt, str, Expression, IRunnable} from "../combi";
 import {Field, TableExpression, FieldAll, FieldOffset, FieldLength, TableBody} from "./";
 import {FieldSymbol, InlineData, InlineFS, ArrowOrDash} from "./";
 import {Arrow} from "../tokens/";
 
-export class Target extends Reuse {
+export class Target extends Expression {
   public get_runnable(): IRunnable {
     let after = seq(alt(new Field(), new FieldSymbol()),
                     star(new TableExpression()),

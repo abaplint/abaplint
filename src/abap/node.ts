@@ -1,5 +1,5 @@
 import {Token} from "./tokens/token";
-import {Reuse} from "./combi";
+import {Expression} from "./combi";
 import {Statement} from "./statements/statement";
 
 function className(cla: any) {
@@ -96,14 +96,14 @@ export abstract class CountableNode extends BasicNode {
 }
 
 export class ReuseNode extends CountableNode {
-  private reuse: Reuse;
+  private reuse: Expression;
 
-  public constructor(reuse: Reuse) {
+  public constructor(reuse: Expression) {
     super();
     this.reuse = reuse;
   }
 
-  public getReuse(): Reuse {
+  public getReuse(): Expression {
     return this.reuse;
   }
 

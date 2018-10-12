@@ -1,7 +1,7 @@
-import {alt, Reuse, IRunnable} from "../combi";
+import {alt, Expression, IRunnable} from "../combi";
 import {ConstantString, Integer} from "./";
 
-export class Constant extends Reuse {
+export class Constant extends Expression {
   public get_runnable(): IRunnable {
     return alt(new ConstantString(), new Integer());
   }

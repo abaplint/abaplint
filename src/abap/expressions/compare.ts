@@ -1,9 +1,9 @@
-import {seq, opt, ver, tok, plus, alt, str, Reuse, IRunnable} from "../combi";
+import {seq, opt, ver, tok, plus, alt, str, Expression, IRunnable} from "../combi";
 import {FieldSub, Constant, Source, MethodCallChain} from "./";
 import {WParenLeft, ParenRightW, ParenRight} from "../tokens/";
 import {Version} from "../../version";
 
-export class Compare extends Reuse {
+export class Compare extends Expression {
   public get_runnable(): IRunnable {
     let val = alt(new FieldSub(), new Constant());
 

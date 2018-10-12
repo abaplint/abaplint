@@ -1,9 +1,9 @@
-import {seq, opt, tok, alt, plus, ver, str, Reuse, IRunnable} from "../combi";
+import {seq, opt, tok, alt, plus, ver, str, Expression, IRunnable} from "../combi";
 import {BracketLeftW, WBracketRight, WBracketRightW} from "../tokens/";
 import {Source, Field} from "./";
 import {Version} from "../../version";
 
-export class TableExpression extends Reuse {
+export class TableExpression extends Expression {
   public get_runnable(): IRunnable {
     let fields = plus(seq(new Field(), str("="), new Source()));
     let key = seq(str("KEY"), new Field());

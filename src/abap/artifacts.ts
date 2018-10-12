@@ -2,7 +2,7 @@ import * as Statements from "./statements";
 import * as Expressions from "./expressions";
 import * as Structures from "./structures";
 import {Structure} from "./structures/_structure";
-import {Combi, Reuse} from "./combi";
+import {Combi, Expression} from "./combi";
 
 export interface IKeyword {
   word: string;
@@ -41,13 +41,15 @@ class List {
   }
 }
 
+function className(cla: any) {
+  return (cla.constructor + "").match(/\w+/g)[1];
+}
+
 export class Artifacts {
 
   /*
-todo
+todo:
 getStatements
-getTokens
-getExpressions
 */
 
   public static getStructures(): Structure[] {
@@ -63,9 +65,23 @@ getExpressions
     return ret;
   }
 
+  public static getExpressions(): Expression[] {
+    let ret: Expression[] = [];
+
+    for (let key in Expressions) {
+      const list: any = Expressions;
+      if (typeof list[key] === "function") {
+        ret.push(new list[key]());
+      }
+    }
+
+    return ret;
+  }
+
   public static getKeywords(): IKeyword[] {
     let list: List = new List();
 
+// todo, refactor
     for (let st in Statements) {
       const stat: any = Statements;
       if (typeof stat[st].get_matcher === "function") {
@@ -73,12 +89,8 @@ getExpressions
       }
     }
 
-    for (let foo in Expressions) {
-      const expr: any = Expressions;
-      if (typeof expr[foo] === "function") {
-        const e: Reuse = new expr[foo]();
-        list.add(Combi.listKeywords(e.get_runnable()), foo);
-      }
+    for (let expr of this.getExpressions()) {
+      list.add(Combi.listKeywords(expr.get_runnable()), "expression_" + className(expr));
     }
 
     return list.get();

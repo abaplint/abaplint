@@ -1,8 +1,8 @@
-import {seq, opt, str, alt, ver, plus, Reuse, IRunnable} from "../combi";
+import {seq, opt, str, alt, ver, plus, Expression, IRunnable} from "../combi";
 import {Source, Field, FieldSymbol, Cond} from "./";
 import {Version} from "../../version";
 
-export class For extends Reuse {
+export class For extends Expression {
   public get_runnable(): IRunnable {
     let where = seq(str("WHERE"), new Cond());
     let inn = seq(str("IN"), new Source(), opt(where));

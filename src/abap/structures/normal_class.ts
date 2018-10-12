@@ -153,17 +153,13 @@ export class NormalClass extends Structure {
                     sta(Statements.UpdateDatabase),
                     sta(Statements.Wait),
                     sta(Statements.Write),
-                    // todo
-                    /*
+                    new Structures.ExecSQL(),
+                    new Structures.Define(),
                     new Structures.Loop(this),
-                    new Structures.ExecSQL(this),
                     new Structures.TestInjection(this),
-                    new Structures.Define(this),
-                    new Structures.Data(this),
                     new Structures.Case(this),
                     new Structures.CatchSystemExceptions(this),
                     new Structures.Try(this),
-                    */
                     new Structures.While(this),
                     new Structures.Do(this),
                     new Structures.If(this)));

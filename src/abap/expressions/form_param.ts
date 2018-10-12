@@ -1,7 +1,7 @@
-import {seq, altPrio, optPrio, regex as reg, Reuse, IRunnable} from "../combi";
+import {seq, altPrio, optPrio, regex as reg, Expression, IRunnable} from "../combi";
 import {PassByValue, FormParamType} from "./";
 
-export class FormParam extends Reuse {
+export class FormParam extends Expression {
   public get_runnable(): IRunnable {
 //    let fieldName = seq(reg(/^\w+$/), optPrio(seq(tok(Dash), reg(/^\w+$/))));
     let name = reg(/^\w+$/);

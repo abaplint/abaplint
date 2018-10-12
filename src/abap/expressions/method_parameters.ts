@@ -1,7 +1,7 @@
-import {seq, opt, str, Reuse, IRunnable} from "../combi";
+import {seq, opt, str, Expression, IRunnable} from "../combi";
 import {ParameterListS, ParameterListT, ParameterListExceptions, ParameterT} from "./";
 
-export class MethodParameters extends Reuse {
+export class MethodParameters extends Expression {
   public get_runnable(): IRunnable {
     let exporting = seq(str("EXPORTING"), new ParameterListS());
     let importing = seq(str("IMPORTING"), new ParameterListT());

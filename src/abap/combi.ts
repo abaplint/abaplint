@@ -536,8 +536,7 @@ class WordSequence implements IRunnable {
   }
 }
 
-// todo, rename to "Expression" ?
-export abstract class Reuse implements IRunnable {
+export abstract class Expression implements IRunnable {
   public run(r: Array<Result>): Array<Result> {
     let results: Array<Result> = [];
 

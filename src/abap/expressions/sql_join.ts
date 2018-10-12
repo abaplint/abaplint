@@ -1,7 +1,7 @@
-import {seq, opt, alt, plus, str, Reuse, IRunnable} from "../combi";
+import {seq, opt, alt, plus, str, Expression, IRunnable} from "../combi";
 import {DatabaseTable, Field, SQLCond} from "./";
 
-export class SQLJoin extends Reuse {
+export class SQLJoin extends Expression {
   public get_runnable(): IRunnable {
     let aas = seq(str("AS"), new Field());
 

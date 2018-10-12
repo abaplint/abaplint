@@ -1,7 +1,7 @@
-import {plus, Reuse, IRunnable} from "../combi";
+import {plus, Expression, IRunnable} from "../combi";
 import {ParameterException} from "./";
 
-export class ParameterListExceptions extends Reuse {
+export class ParameterListExceptions extends Expression {
   public get_runnable(): IRunnable {
     return plus(new ParameterException());
   }

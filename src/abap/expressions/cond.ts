@@ -1,8 +1,8 @@
-import {seq, opt, tok, alt, str, star, Reuse, IRunnable} from "../combi";
+import {seq, opt, tok, alt, str, star, Expression, IRunnable} from "../combi";
 import {WParenLeftW, WParenRightW, WParenRight} from "../tokens/";
 import {Compare} from "./";
 
-export class Cond extends Reuse {
+export class Cond extends Expression {
   public get_runnable(): IRunnable {
     let operator = alt(str("AND"), str("OR"));
 

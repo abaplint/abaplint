@@ -1,9 +1,9 @@
-import {seq, opt, str, tok, ver, star, alt, Reuse, IRunnable} from "../combi";
+import {seq, opt, str, tok, ver, star, alt, Expression, IRunnable} from "../combi";
 import {Arrow, WParenRightW, WParenRight, ParenLeftW} from "../tokens/";
 import {ParameterListS, ArrowOrDash, Field, FieldChain, MethodCall, Source, TypeName} from "./";
 import {Version} from "../../version";
 
-export class MethodCallChain extends Reuse {
+export class MethodCallChain extends Expression {
   public get_runnable(): IRunnable {
     let fields = star(seq(new ArrowOrDash(), new Field()));
     let after = star(seq(fields, tok(Arrow), new MethodCall()));

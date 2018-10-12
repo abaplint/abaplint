@@ -1,7 +1,7 @@
-import {seq, opt, str, Reuse, IRunnable} from "../combi";
+import {seq, opt, str, Expression, IRunnable} from "../combi";
 import {Field, SimpleName, Target} from "./";
 
-export class ParameterException extends Reuse {
+export class ParameterException extends Expression {
   public get_runnable(): IRunnable {
     return seq(new Field(),
                str("="),

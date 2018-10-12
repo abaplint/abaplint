@@ -1,9 +1,9 @@
-import {seq, opt, ver, tok, star, alt, optPrio, str, Reuse, IRunnable} from "../combi";
+import {seq, opt, ver, tok, star, alt, optPrio, str, Expression, IRunnable} from "../combi";
 import {FieldSub, Constant, Source, SQLFieldName, Dynamic, Select} from "./";
 import {WParenLeft, ParenRightW, ParenRight, WAt, WParenLeftW, WParenRight} from "../tokens/";
 import {Version} from "../../version";
 
-export class SQLCompare extends Reuse {
+export class SQLCompare extends Expression {
   public get_runnable(): IRunnable {
     let val = alt(seq(opt(ver(Version.v740sp05, tok(WAt))), new FieldSub()), new Constant());
 

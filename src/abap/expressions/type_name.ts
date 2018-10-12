@@ -1,7 +1,7 @@
-import {seq, alt, str, opt, tok, regex as reg, Reuse, IRunnable} from "../combi";
+import {seq, alt, str, opt, tok, regex as reg, Expression, IRunnable} from "../combi";
 import {Arrow, Dash} from "../tokens/";
 
-export class TypeName extends Reuse {
+export class TypeName extends Expression {
   public get_runnable(): IRunnable {
     let name = reg(/^(\/\w+\/)?\w+$/);
     let cla = seq(name, tok(Arrow));

@@ -1,8 +1,8 @@
-import {seq, alt, str, tok, Reuse, IRunnable} from "../combi";
+import {seq, alt, str, tok, Expression, IRunnable} from "../combi";
 import {ParenLeft, ParenRight, ParenRightW} from "../tokens/";
 import {Field} from "./";
 
-export class PassByValue extends Reuse {
+export class PassByValue extends Expression {
   public get_runnable(): IRunnable {
     let value = seq(str("VALUE"),
                     tok(ParenLeft),

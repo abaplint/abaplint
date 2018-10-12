@@ -1,8 +1,8 @@
-import {seq, opt, alt, str, ver, star, per, Reuse, IRunnable} from "../combi";
+import {seq, opt, alt, str, ver, star, per, Expression, IRunnable} from "../combi";
 import {Constant, FieldSub, TypeName, Integer} from "./";
 import {Version} from "../../version";
 
-export class TypeTable extends Reuse {
+export class TypeTable extends Expression {
   public get_runnable(): IRunnable {
     let likeType = alt(str("LIKE"), str("TYPE"));
     let header = str("WITH HEADER LINE");

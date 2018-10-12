@@ -3,13 +3,15 @@ import * as Statements from "./statements/";
 import * as Expressions from "./expressions";
 import * as fs from "fs";
 
+// todo, move this method to somewhere under web/viz?
+
 function className(cla: any) {
   return (cla.constructor + "").match(/\w+/g)[1];
 }
 
 class Graph {
 
-  public static handle(prefix: string, name: string, runnable: Combi.IRunnable, complex: boolean) {
+  public static writeRunnable(prefix: string, name: string, runnable: Combi.IRunnable, complex: boolean) {
     let str = Combi.Combi.railroad(runnable, complex);
     fs.writeFileSync("./web/viz/" + prefix + name + ".txt", str, "utf8");
   }
@@ -18,16 +20,15 @@ class Graph {
     for (let foo in Expressions) {
       const expr: any = Expressions;
       if (typeof expr[foo] === "function") {
-        let name = className(new expr[foo]()).toLowerCase();
-        this.handle("expression_", name, new expr[foo]().get_runnable(), true);
+        let name = className(new expr[foo]());
+        this.writeRunnable("expression_", name, new expr[foo]().get_runnable(), true);
       }
     }
 
     for (let st in Statements) {
-      let name = st.toLowerCase();
       const stat: any = Statements;
       if (typeof stat[st].get_matcher === "function") {
-        this.handle("", name, stat[st].get_matcher(), false);
+        this.writeRunnable("statement_", st, stat[st].get_matcher(), false);
       }
     }
   }

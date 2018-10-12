@@ -1,7 +1,7 @@
-import {seq, str, opt, optPrio, altPrio, alt, Reuse, IRunnable} from "../combi";
+import {seq, str, opt, optPrio, altPrio, alt, Expression, IRunnable} from "../combi";
 import {Constant, FieldChain, TypeName, TableBody} from "./";
 
-export class FormParamType extends Reuse {
+export class FormParamType extends Expression {
   public get_runnable(): IRunnable {
     let def = seq(str("DEFAULT"), alt(new Constant(), new FieldChain()));
 

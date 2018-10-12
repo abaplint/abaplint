@@ -1,6 +1,6 @@
-import {regex as reg, Reuse, IRunnable} from "../combi";
+import {regex as reg, Expression, IRunnable} from "../combi";
 
-export class SQLFieldName extends Reuse {
+export class SQLFieldName extends Expression {
   public get_runnable(): IRunnable {
     return reg(/^[\w~]+$/);
   }

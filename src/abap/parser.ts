@@ -20,6 +20,7 @@ export default class Parser {
 
     this.process(tokens);
     this.categorize(ver);
+// todo, also handle NativeSQL after EXECSQL statements
     this.macros();
 
     return this.statements;
@@ -62,7 +63,7 @@ export default class Parser {
     for (let statement of this.statements) {
       if (statement instanceof Statements.Define) {
         define = true;
-      } else if (statement instanceof Statements.Enddefine) {
+      } else if (statement instanceof Statements.EndOfDefinition) {
         define = false;
       } else if (!(statement instanceof Comment) && define === true) {
         statement = new MacroContent(this.tokensToNodes(statement.getTokens()));

@@ -1,8 +1,8 @@
-import {seq, opt, alt, str, tok, regex as reg, Reuse, IRunnable} from "../combi";
+import {seq, opt, alt, str, tok, regex as reg, Expression, IRunnable} from "../combi";
 import {ParenLeft, ParenRightW, ParenRight} from "../tokens/";
 import {FieldSymbol, Field, ArrowOrDash} from "./";
 
-export class FieldLength extends Reuse {
+export class FieldLength extends Expression {
   public get_runnable(): IRunnable {
     let normal = seq(alt(reg(/^[\d\w]+$/), new FieldSymbol()),
                      opt(seq(new ArrowOrDash(), new Field())));

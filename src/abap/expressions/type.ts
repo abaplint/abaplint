@@ -1,7 +1,7 @@
-import {seq, opt, alt, str, Reuse, IRunnable} from "../combi";
+import {seq, opt, alt, str, Expression, IRunnable} from "../combi";
 import {Constant, FieldChain, Source, Integer, TableBody} from "./";
 
-export class Type extends Reuse {
+export class Type extends Expression {
   public get_runnable(): IRunnable {
     let likeType = alt(str("LIKE"), str("TYPE"));
     let def = seq(str("DEFAULT"), alt(new Constant(), new FieldChain()));

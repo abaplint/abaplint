@@ -1,7 +1,7 @@
-import {seq, opt, optPrio, alt, str, plus, star, Reuse, IRunnable} from "../combi";
+import {seq, opt, optPrio, alt, str, plus, star, Expression, IRunnable} from "../combi";
 import {Field, FieldSymbol, TableExpression, ArrowOrDash, FieldAll, FieldOffset, FieldLength} from "./";
 
-export class FieldChain extends Reuse {
+export class FieldChain extends Expression {
   public get_runnable(): IRunnable {
 
     let chain = seq(alt(new Field(), new FieldSymbol()),

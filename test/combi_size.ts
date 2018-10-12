@@ -1,9 +1,8 @@
 import {expect} from "chai";
 import * as Combi from "../src/abap/combi";
 import * as Tokens from "../src/abap/tokens/";
-import * as Reuse from "../src/abap/expressions";
+import * as Expressions from "../src/abap/expressions";
 import Position from "../src/position";
-import {ParameterS} from "../src/abap/expressions";
 
 let str  = Combi.str;
 let seq  = Combi.seq;
@@ -37,13 +36,13 @@ let resultSize = [
   {c: star(seq(str("TEST"), str("FOO"))),   in: [res("TEST FOO")],                  len: 2},
   {c: star(seq(str("TEST"), str("FOO"))),   in: [res("TEST FOO"), res("ASDF")],     len: 3},
   {c: opt(str("TEST")),                     in: [res("TEST")],                      len: 2},
-  {c: star(new Reuse.ParameterListS()),     in: [res("TEST")],                      len: 1},
-  {c: star(new Reuse.ParameterListS()),     in: [res("TEST BOO MOO")],              len: 1},
-  {c: star(new Reuse.ParameterListS()),     in: [res("TEST = MOO")],                len: 2},
-  {c: seq(str("TEST"), new Reuse.Source()), in: [res("TEST MOO")],                  len: 1},
-  {c: new ParameterS(),               in: [res("TEST = MOO")],                len: 1},
-  {c: new Reuse.Source(),                   in: [res("TEST")],                      len: 1},
-  {c: new Reuse.FieldChain(),               in: [res("TEST")],                      len: 1},
+  {c: star(new Expressions.ParameterListS()),     in: [res("TEST")],                      len: 1},
+  {c: star(new Expressions.ParameterListS()),     in: [res("TEST BOO MOO")],              len: 1},
+  {c: star(new Expressions.ParameterListS()),     in: [res("TEST = MOO")],                len: 2},
+  {c: seq(str("TEST"), new Expressions.Source()), in: [res("TEST MOO")],                  len: 1},
+  {c: new Expressions.ParameterS(),               in: [res("TEST = MOO")],                len: 1},
+  {c: new Expressions.Source(),                   in: [res("TEST")],                      len: 1},
+  {c: new Expressions.FieldChain(),               in: [res("TEST")],                      len: 1},
 ];
 
 describe("combi Result size", () => {

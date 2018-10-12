@@ -1,8 +1,8 @@
-import {str, alt, seq, optPrio, star, tok, Reuse, IRunnable} from "../combi";
+import {str, alt, seq, optPrio, star, tok, Expression, IRunnable} from "../combi";
 import {WParenLeftW, WParenRightW, WParenRight} from "../tokens/";
 import {SQLCompare} from "./";
 
-export class SQLCond extends Reuse {
+export class SQLCond extends Expression {
   public get_runnable(): IRunnable {
     let operator = alt(str("AND"), str("OR"));
 
