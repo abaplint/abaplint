@@ -3,6 +3,7 @@ import * as Expressions from "./expressions";
 import * as Structures from "./structures";
 import {Structure} from "./structures/_structure";
 import {Combi, Expression} from "./combi";
+import {Statement} from "./statements/statement";
 
 export interface IKeyword {
   word: string;
@@ -78,14 +79,37 @@ getStatements
     return ret;
   }
 
+  public static getStatements(): Statement[] {
+    let ret: Statement[] = [];
+
+    for (let key in Statements) {
+      const list: any = Statements;
+      if (typeof list[key] === "function") {
+        ret.push(new list[key]());
+      }
+    }
+
+    return ret;
+  }
+
+  public static newStatement(name: string): Statement {
+    const list: any = Statements;
+    return new list[name]();
+  }
+
   public static getKeywords(): IKeyword[] {
     let list: List = new List();
 
 // todo, refactor
+/*
+    for (let stat of this.getStatements()) {
+      list.add(Combi.listKeywords(stat.get_matcher()), "statement_" + st);
+    }
+    */
     for (let st in Statements) {
       const stat: any = Statements;
       if (typeof stat[st].get_matcher === "function") {
-        list.add(Combi.listKeywords(stat[st].get_matcher()), st);
+        list.add(Combi.listKeywords(stat[st].get_matcher()), "statement_" + st);
       }
     }
 

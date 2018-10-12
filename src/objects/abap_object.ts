@@ -43,7 +43,7 @@ export abstract class ABAPObject extends Object {
       let statements: Array<Statement> = [];
       f.getStatements().forEach((s) => {
         if (s instanceof Unknown && reg.isMacro(s.getTokens()[0].getStr())) {
-          statements.push(new MacroCall(this.tokensToNodes(s.getTokens())));
+          statements.push(new MacroCall().setChildren(this.tokensToNodes(s.getTokens())));
         } else {
           statements.push(s);
         }

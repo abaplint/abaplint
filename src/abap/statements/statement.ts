@@ -4,8 +4,7 @@ import {BasicNode, StatementNode, TokenNode, ReuseNode} from "../node";
 
 export abstract class Statement extends StatementNode {
 
-  public constructor(children: Array<BasicNode>) {
-    super();
+  public setChildren(children: Array<BasicNode>): Statement {
     this.children = children;
 
     if (children.length === 0) {
@@ -18,6 +17,8 @@ export abstract class Statement extends StatementNode {
         throw "statement: not token or reuse node";
       }
     });
+
+    return this;
   }
 
   /*

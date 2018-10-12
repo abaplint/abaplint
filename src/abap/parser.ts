@@ -6,6 +6,7 @@ import {Statement, Unknown, Empty, Comment, MacroContent} from "./statements/sta
 import {Version} from "../version";
 import {Structure} from "./structures/_structure";
 import {ClassImplementation} from "./structures";
+import {Artifacts} from "./artifacts";
 
 export default class Parser {
   private static statements: Array<Statement>;
@@ -34,10 +35,11 @@ export default class Parser {
   private static initialize() {
     this.map = {};
 
+// todo, use Artifacts instead
     for (let st in Statements) {
       const stat: any = Statements;
       if (typeof stat[st].get_matcher === "function") {
-        let first = stat[st].get_matcher().first();
+        const first = stat[st].get_matcher().first();
 
         if (this.map[first]) {
           this.map[first].push(st);
@@ -66,7 +68,7 @@ export default class Parser {
       } else if (statement instanceof Statements.EndOfDefinition) {
         define = false;
       } else if (!(statement instanceof Comment) && define === true) {
-        statement = new MacroContent(this.tokensToNodes(statement.getTokens()));
+        statement = new MacroContent().setChildren(this.tokensToNodes(statement.getTokens()));
       }
 
       result.push(statement);
@@ -91,7 +93,7 @@ export default class Parser {
 
       if (length === 1
           && last instanceof Tokens.Punctuation) {
-        statement = new Empty(this.tokensToNodes(statement.getTokens()));
+        statement = new Empty().setChildren(this.tokensToNodes(statement.getTokens()));
       } else if (statement instanceof Unknown
           && last instanceof Tokens.Punctuation) {
         statement = this.match(statement, ver);
@@ -111,19 +113,21 @@ export default class Parser {
     let last = tokens[tokens.length - 1];
     tokens = this.removePragma(this.removeLast(tokens));
     if (tokens.length === 0) {
-      return new Empty(this.tokensToNodes(this.removePragma(statement.getTokens())));
+      return new Empty().setChildren(this.tokensToNodes(this.removePragma(statement.getTokens())));
     }
 
     let test = this.map[tokens[0].getStr().toUpperCase()];
     test = test ? test.concat(this.map[""]) : this.map[""];
 
     for (let st of test) {
+// todo, use Artifacts instead
       const stat: any = Statements;
       let match = Combi.run(stat[st].get_matcher(),
                             tokens,
                             ver);
       if (match) {
-        return new stat[st](match.concat(new TokenNode("Terminator", last)));
+//        return new stat[st]().setChildren(match.concat(new TokenNode("Terminator", last)));
+        return Artifacts.newStatement(st).setChildren(match.concat(new TokenNode("Terminator", last)));
       }
     }
     return statement;
@@ -133,11 +137,11 @@ export default class Parser {
   private static process(tokens: Array<Tokens.Token>) {
     let add: Array<Tokens.Token> = [];
     let pre: Array<Tokens.Token> = [];
-    let ukn = (t: Tokens.Token[]) => { this.statements.push(new Unknown(this.tokensToNodes(t))); };
+    let ukn = (t: Tokens.Token[]) => { this.statements.push(new Unknown().setChildren(this.tokensToNodes(t))); };
 
     for (let token of tokens) {
       if (token instanceof Tokens.Comment) {
-        this.statements.push(new Comment(this.tokensToNodes([token])));
+        this.statements.push(new Comment().setChildren(this.tokensToNodes([token])));
         continue;
       }
 
