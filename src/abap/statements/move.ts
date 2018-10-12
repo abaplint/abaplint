@@ -5,7 +5,7 @@ import {Version} from "../../version";
 
 export class Move extends Statement {
 
-  public static get_matcher(): IRunnable {
+  public get_matcher(): IRunnable {
     let keeping = ver(Version.v740sp05, str("KEEPING TARGET LINES"));
     let expanding = ver(Version.v740sp05, str("EXPANDING NESTED TABLES"));
 

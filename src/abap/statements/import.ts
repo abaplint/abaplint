@@ -5,7 +5,7 @@ import {Version} from "../../version";
 
 export class Import extends Statement {
 
-  public static get_matcher(): IRunnable {
+  public get_matcher(): IRunnable {
     let id = seq(str("ID"), new Source());
     let dto = seq(str("TO"), new Target());
     let client = seq(str("CLIENT"), new Source());

@@ -4,7 +4,7 @@ import {Source, DatabaseTable, Dynamic} from "../expressions";
 
 export class InsertDatabase extends Statement {
 
-  public static get_matcher(): IRunnable {
+  public get_matcher(): IRunnable {
     let target = alt(new DatabaseTable(), new Dynamic());
 
     let client = str("CLIENT SPECIFIED");

@@ -5,7 +5,7 @@ import {Version} from "../../version";
 
 export class NewPage extends Statement {
 
-  public static get_matcher(): IRunnable {
+  public get_matcher(): IRunnable {
     let line = seq(str("LINE-SIZE"), new Source());
     let print = seq(str("PRINT"), alt(str("OFF"), str("ON")));
     let parameters = seq(str("PARAMETERS"), new Source());

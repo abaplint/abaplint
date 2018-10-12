@@ -5,7 +5,7 @@ import {Version} from "../../version";
 
 export class ReadLine extends Statement {
 
-  public static get_matcher(): IRunnable {
+  public get_matcher(): IRunnable {
     let val = seq(str("LINE VALUE INTO"),
                   new Target());
 

@@ -4,7 +4,7 @@ import {Version} from "../../version";
 
 export class SetBlank extends Statement {
 
-  public static get_matcher(): IRunnable {
+  public get_matcher(): IRunnable {
     let onOff = alt(str("ON"), str("OFF"));
 
     let ret = seq(str("SET BLANK LINES"), onOff);

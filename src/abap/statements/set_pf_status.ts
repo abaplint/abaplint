@@ -5,7 +5,7 @@ import {Version} from "../../version";
 
 export class SetPFStatus extends Statement {
 
-  public static get_matcher(): IRunnable {
+  public get_matcher(): IRunnable {
     let program = seq(str("OF PROGRAM"), new Source());
 
     let options = per(program,

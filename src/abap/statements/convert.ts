@@ -4,7 +4,7 @@ import {Target, Source} from "../expressions";
 
 export class Convert extends Statement {
 
-  public static get_matcher(): IRunnable {
+  public get_matcher(): IRunnable {
     let intoTime = seq(str("TIME"), new Target());
     let intoDate = seq(str("DATE"), new Target());
     let into = seq(str("INTO"), per(intoTime, intoDate));

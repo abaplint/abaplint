@@ -4,7 +4,7 @@ import {FieldSymbol} from "../expressions";
 
 export class Unassign extends Statement {
 
-  public static get_matcher(): IRunnable {
+  public get_matcher(): IRunnable {
     return seq(str("UNASSIGN"), new FieldSymbol());
   }
 

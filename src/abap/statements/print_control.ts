@@ -5,7 +5,7 @@ import {Version} from "../../version";
 
 export class PrintControl extends Statement {
 
-  public static get_matcher(): IRunnable {
+  public get_matcher(): IRunnable {
     let index = seq(str("INDEX-LINE"), new Source);
     let func = seq(str("FUNCTION"), new Source);
 

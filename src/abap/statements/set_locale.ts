@@ -5,7 +5,7 @@ import {Version} from "../../version";
 
 export class SetLocale extends Statement {
 
-  public static get_matcher(): IRunnable {
+  public get_matcher(): IRunnable {
     let country = seq(str("COUNTRY"), new Source());
 
     let modifier = seq(str("MODIFIER"), new Source());

@@ -5,7 +5,7 @@ import {Version} from "../../version";
 
 export class CatchSystemExceptions extends Statement {
 
-  public static get_matcher(): IRunnable {
+  public get_matcher(): IRunnable {
     let ret = seq(str("CATCH SYSTEM-EXCEPTIONS"),
                   plus(seq(new Field(), str("="), new Integer())));
 

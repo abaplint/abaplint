@@ -5,7 +5,7 @@ import {Version} from "../../version";
 
 export class Overlay extends Statement {
 
-  public static get_matcher(): IRunnable {
+  public get_matcher(): IRunnable {
     let only = seq(str("ONLY"), new Source());
 
     let ret = seq(str("OVERLAY"),

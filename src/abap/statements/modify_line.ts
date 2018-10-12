@@ -4,7 +4,7 @@ import {Source} from "../expressions";
 
 export class ModifyLine extends Statement {
 
-  public static get_matcher(): IRunnable {
+  public get_matcher(): IRunnable {
 
     let form = seq(alt(str("INVERSE"), str("INPUT")),
                    str("="),

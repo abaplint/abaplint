@@ -5,7 +5,7 @@ import {Version} from "../../version";
 
 export class Provide extends Statement {
 
-  public static get_matcher(): IRunnable {
+  public get_matcher(): IRunnable {
 
     let list = str("*");
 

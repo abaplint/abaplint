@@ -4,7 +4,7 @@ import {Version} from "../../version";
 
 export class Start extends Statement {
 
-  public static get_matcher(): IRunnable {
+  public get_matcher(): IRunnable {
     return verNot(Version.Cloud, str("START-OF-SELECTION"));
   }
 

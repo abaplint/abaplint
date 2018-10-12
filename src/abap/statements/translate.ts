@@ -4,7 +4,7 @@ import {Target, Source} from "../expressions";
 
 export class Translate extends Statement {
 
-  public static get_matcher(): IRunnable {
+  public get_matcher(): IRunnable {
     let cas = seq(str("TO"),
                   alt(str("UPPER"), str("LOWER")),
                   str("CASE"));

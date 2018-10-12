@@ -4,7 +4,7 @@ import {Version} from "../../version";
 
 export class Endform extends Statement {
 
-  public static get_matcher(): IRunnable {
+  public get_matcher(): IRunnable {
     let ret = str("ENDFORM");
 
     return verNot(Version.Cloud, ret);

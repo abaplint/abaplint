@@ -4,7 +4,7 @@ import {SimpleName, NamespaceSimpleName} from "../expressions";
 
 export class DataEnd extends Statement {
 
-  public static get_matcher(): IRunnable {
+  public get_matcher(): IRunnable {
     let start = alt(str("CLASS-DATA"), str("DATA"));
 
     let common = seq(str("COMMON PART"), optPrio(new SimpleName()));

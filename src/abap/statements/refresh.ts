@@ -5,7 +5,7 @@ import {Version} from "../../version";
 
 export class Refresh extends Statement {
 
-  public static get_matcher(): IRunnable {
+  public get_matcher(): IRunnable {
     let ret = seq(str("REFRESH"), new Target());
 
     return verNot(Version.Cloud, ret);

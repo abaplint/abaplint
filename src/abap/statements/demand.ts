@@ -5,7 +5,7 @@ import {Version} from "../../version";
 
 export class Demand extends Statement {
 
-  public static get_matcher(): IRunnable {
+  public get_matcher(): IRunnable {
     let field = seq(new Field(), str("="), new Target());
 
     let messages = seq(str("MESSAGES INTO"), new Target());

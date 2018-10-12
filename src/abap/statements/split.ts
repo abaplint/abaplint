@@ -4,7 +4,7 @@ import {Target, Source} from "../expressions";
 
 export class Split extends Statement {
 
-  public static get_matcher(): IRunnable {
+  public get_matcher(): IRunnable {
     let into = alt(seq(str("TABLE"), new Target()), plus(new Target()));
 
     let ret = seq(str("SPLIT"),

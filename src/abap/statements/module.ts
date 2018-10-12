@@ -5,7 +5,7 @@ import {Version} from "../../version";
 
 export class Module extends Statement {
 
-  public static get_matcher(): IRunnable {
+  public get_matcher(): IRunnable {
     let ret = seq(str("MODULE"),
                   new FormName(),
                   opt(alt(str("INPUT"), str("OUTPUT"))));

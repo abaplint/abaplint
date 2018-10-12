@@ -5,7 +5,7 @@ import {Version} from "../../version";
 
 export class SelectOption extends Statement {
 
-  public static get_matcher(): IRunnable {
+  public get_matcher(): IRunnable {
     let sourc = alt(new Constant(), new FieldChain());
 
     let to = seq(str("TO"), sourc);

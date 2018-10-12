@@ -5,7 +5,7 @@ import {Version} from "../../version";
 
 export class Ranges extends Statement {
 
-  public static get_matcher(): IRunnable {
+  public get_matcher(): IRunnable {
     let occurs = seq(str("OCCURS"), new Source());
 
     let ret = seq(str("RANGES"),

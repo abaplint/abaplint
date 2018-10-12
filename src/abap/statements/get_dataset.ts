@@ -5,7 +5,7 @@ import {Version} from "../../version";
 
 export class GetDataset extends Statement {
 
-  public static get_matcher(): IRunnable {
+  public get_matcher(): IRunnable {
     let position = seq(str("POSITION"), new Target());
     let attr = seq(str("ATTRIBUTES"), new Target());
 

@@ -5,7 +5,7 @@ import {Target, Source, Field, MessageClass} from "../expressions";
 
 export class Message extends Statement {
 
-  public static get_matcher(): IRunnable {
+  public get_matcher(): IRunnable {
     let like = seq(str("DISPLAY LIKE"), new Source());
     let type = seq(str("TYPE"), new Source());
     let id = seq(str("ID"), new Source());

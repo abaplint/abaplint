@@ -4,7 +4,7 @@ import {Cond} from "../expressions";
 
 export class Elseif extends Statement {
 
-  public static get_matcher(): IRunnable {
+  public get_matcher(): IRunnable {
     return seq(str("ELSEIF"), new Cond());
   }
 

@@ -5,7 +5,7 @@ import {Version} from "../../version";
 
 export class InsertReport extends Statement {
 
-  public static get_matcher(): IRunnable {
+  public get_matcher(): IRunnable {
     let options = per(seq(str("STATE"), new Source()),
                       seq(str("EXTENSION TYPE"), new Source()),
                       seq(str("DIRECTORY ENTRY"), new Source()),

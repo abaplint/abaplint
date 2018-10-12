@@ -4,7 +4,7 @@ import {Version} from "../../version";
 
 export class SuppressDialog extends Statement {
 
-  public static get_matcher(): IRunnable {
+  public get_matcher(): IRunnable {
     let ret = str("SUPPRESS DIALOG");
 
     return verNot(Version.Cloud, ret);

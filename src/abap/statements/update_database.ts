@@ -5,7 +5,7 @@ import {WAt} from "../tokens/";
 
 export class UpdateDatabase extends Statement {
 
-  public static get_matcher(): IRunnable {
+  public get_matcher(): IRunnable {
     let target = alt(new DatabaseTable(), new Dynamic());
 
     let param = seq(new Field(), str("="), opt(tok(WAt)), new Source());

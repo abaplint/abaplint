@@ -5,7 +5,7 @@ import {Source, Field, ParameterListS} from "../expressions";
 
 export class Raise extends Statement {
 
-  public static get_matcher(): IRunnable {
+  public get_matcher(): IRunnable {
     let wit  = seq(str("WITH"), plus(new Source()));
 
     let mess1 = seq(str("ID"), new Source(), str("TYPE"), new Source(), str("NUMBER"), new Source());

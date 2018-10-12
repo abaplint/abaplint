@@ -5,7 +5,7 @@ import {Version} from "../../version";
 
 export class LoadReport extends Statement {
 
-  public static get_matcher(): IRunnable {
+  public get_matcher(): IRunnable {
     let ret = seq(str("LOAD REPORT"),
                   new Source(),
                   str("PART"),

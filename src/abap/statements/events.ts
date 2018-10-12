@@ -4,7 +4,7 @@ import {MethodParam, Field} from "../expressions";
 
 export class Events extends Statement {
 
-  public static get_matcher(): IRunnable {
+  public get_matcher(): IRunnable {
     let par = seq(new MethodParam(), opt(str("OPTIONAL")));
 
     let exporting = seq(str("EXPORTING"), plus(par));

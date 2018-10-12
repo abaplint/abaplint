@@ -5,7 +5,7 @@ import {Version} from "../../version";
 
 export class Format extends Statement {
 
-  public static get_matcher(): IRunnable {
+  public get_matcher(): IRunnable {
     let eq = seq(str("="), new Source());
     let value = alt(eq, new Source());
     let toggle = alt(str("ON"), str("OFF"));

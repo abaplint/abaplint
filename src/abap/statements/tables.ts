@@ -5,7 +5,7 @@ import {Version} from "../../version";
 
 export class Tables extends Statement {
 
-  public static get_matcher(): IRunnable {
+  public get_matcher(): IRunnable {
     let ret = seq(str("TABLES"), new Field());
 
     return verNot(Version.Cloud, ret);

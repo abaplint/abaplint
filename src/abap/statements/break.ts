@@ -5,7 +5,7 @@ import {Version} from "../../version";
 
 export class Break extends Statement {
 
-  public static get_matcher(): IRunnable {
+  public get_matcher(): IRunnable {
     let id = seq(str("ID"), new Field());
     let next = str("AT NEXT APPLICATION STATEMENT");
     let log = new Source();

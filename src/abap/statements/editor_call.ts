@@ -5,7 +5,7 @@ import {Version} from "../../version";
 
 export class EditorCall extends Statement {
 
-  public static get_matcher(): IRunnable {
+  public get_matcher(): IRunnable {
     let title = seq(str("TITLE"), new Source());
 
     let options = per(str("DISPLAY-MODE"), title);

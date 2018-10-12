@@ -6,7 +6,7 @@ import {Source, MethodName, Dynamic, FieldChain, ParameterListS, MethodParameter
 // method call
 export class Call extends Statement {
 
-  public static get_matcher(): IRunnable {
+  public get_matcher(): IRunnable {
     let mname = alt(new MethodName(), new Dynamic());
     let cname = alt(new FieldChain(), new Dynamic());
 

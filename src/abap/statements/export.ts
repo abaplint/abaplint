@@ -5,7 +5,7 @@ import {Target, Source, ParameterListS, Field, Dynamic} from "../expressions";
 // todo, cloud, split?
 export class Export extends Statement {
 
-  public static get_matcher(): IRunnable {
+  public get_matcher(): IRunnable {
     let id = seq(str("ID"), new Source());
 
     let db = seq(str("DATA BUFFER"), new Target());

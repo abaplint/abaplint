@@ -5,7 +5,7 @@ import {Version} from "../../version";
 
 export class ReadDataset extends Statement {
 
-  public static get_matcher(): IRunnable {
+  public get_matcher(): IRunnable {
     let ret = seq(str("READ DATASET"),
                   new Source(),
                   str("INTO"),

@@ -4,7 +4,7 @@ import {FSTarget, Target, Source, Dynamic} from "../expressions";
 
 export class InsertInternal extends Statement {
 
-  public static get_matcher(): IRunnable {
+  public get_matcher(): IRunnable {
     let target = alt(new Source(), new Dynamic());
     let assigning = seq(str("ASSIGNING"), new FSTarget());
     let ref = seq(str("REFERENCE INTO"), new Target());

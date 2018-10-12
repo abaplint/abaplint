@@ -4,7 +4,7 @@ import {FieldSymbol, Source, Dynamic} from "../expressions";
 
 export class AssignLocalCopy extends Statement {
 
-  public static get_matcher(): IRunnable {
+  public get_matcher(): IRunnable {
 
     let ret = seq(str("ASSIGN LOCAL COPY OF"),
                   opt(seq(str("INITIAL"), opt(str("LINE OF")))),

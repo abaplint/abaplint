@@ -5,7 +5,7 @@ import {Version} from "../../version";
 
 export class CreateOLE extends Statement {
 
-  public static get_matcher(): IRunnable {
+  public get_matcher(): IRunnable {
     let ret = seq(str("CREATE OBJECT"),
                   new Target(),
                   new Source(),

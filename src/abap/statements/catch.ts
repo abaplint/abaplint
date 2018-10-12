@@ -4,7 +4,7 @@ import {Target, Field} from "../expressions";
 
 export class Catch extends Statement {
 
-  public static get_matcher(): IRunnable {
+  public get_matcher(): IRunnable {
     return seq(str("CATCH"),
                plus(new Field()),
                opt(seq(str("INTO"), new Target())));

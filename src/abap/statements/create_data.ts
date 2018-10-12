@@ -4,7 +4,7 @@ import {Target, Source, Dynamic, Field} from "../expressions";
 
 export class CreateData extends Statement {
 
-  public static get_matcher(): IRunnable {
+  public get_matcher(): IRunnable {
 // todo, similar to DATA or TYPES?
     let area = seq(str("AREA HANDLE"), new Source());
 

@@ -4,7 +4,7 @@ import {Source, Dynamic, SQLCond, DatabaseTable} from "../expressions";
 
 export class DeleteDatabase extends Statement {
 
-  public static get_matcher(): IRunnable {
+  public get_matcher(): IRunnable {
     let where = seq(str("WHERE"), alt(new SQLCond(), new Dynamic()));
     let source = alt(new Dynamic(), new DatabaseTable());
     let client = str("CLIENT SPECIFIED");

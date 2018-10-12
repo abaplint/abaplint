@@ -4,7 +4,7 @@ import {Integer, FieldLength, Type, Value, TypeTable, NamespaceSimpleName} from 
 
 export class Data extends Statement {
 
-  public static get_matcher(): IRunnable {
+  public get_matcher(): IRunnable {
     let start = alt(str("CLASS-DATA"), str("DATA"));
 
     let simple = seq(opt(new Type()),

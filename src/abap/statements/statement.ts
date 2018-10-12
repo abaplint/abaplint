@@ -1,6 +1,7 @@
 import {Token, Pragma} from "../tokens/";
 import Position from "../../position";
 import {BasicNode, StatementNode, TokenNode, ReuseNode} from "../node";
+import {IRunnable} from "../combi";
 
 export abstract class Statement extends StatementNode {
 
@@ -20,6 +21,8 @@ export abstract class Statement extends StatementNode {
 
     return this;
   }
+
+  public abstract get_matcher(): IRunnable;
 
   /*
   public isStructure(): boolean {
@@ -119,14 +122,38 @@ export abstract class Statement extends StatementNode {
 
 }
 
-export class Unknown extends Statement { }
+export class Unknown extends Statement {
+  public get_matcher(): IRunnable {
+    throw new Error("Unknown Statement, get_matcher");
+  }
+}
 
-export class Comment extends Statement { }
+export class Comment extends Statement {
+  public get_matcher(): IRunnable {
+    throw new Error("Comment Statement, get_matcher");
+  }
+}
 
-export class Empty extends Statement { }
+export class Empty extends Statement {
+  public get_matcher(): IRunnable {
+    throw new Error("Empty Statement, get_matcher");
+  }
+}
 
-export class MacroCall extends Statement { }
+export class MacroCall extends Statement {
+  public get_matcher(): IRunnable {
+    throw new Error("MacroCall Statement, get_matcher");
+  }
+}
 
-export class MacroContent extends Statement { }
+export class MacroContent extends Statement {
+  public get_matcher(): IRunnable {
+    throw new Error("MacroContent Statement, get_matcher");
+  }
+}
 
-export class NativeSQL extends Statement { }
+export class NativeSQL extends Statement {
+  public get_matcher(): IRunnable {
+    throw new Error("NativeSQL Statement, get_matcher");
+  }
+}

@@ -7,16 +7,51 @@ import {Version} from "../version";
 import {Structure} from "./structures/_structure";
 import {ClassImplementation} from "./structures";
 import {Artifacts} from "./artifacts";
+import {Token} from "./tokens/";
+
+function className(cla: any) {
+  return (cla.constructor + "").match(/\w+/g)[1];
+}
+/*
+interface MapItem {
+  name: string;
+  matcher: IRunnable;
+}
+*/
+class Map {
+  private map: {[index: string]: Array<string> };
+
+  public constructor() {
+    this.map = {};
+
+    for (let stat of Artifacts.getStatements()) {
+      const first = stat.get_matcher().first();
+
+      if (this.map[first]) {
+        this.map[first].push(className(stat));
+      } else {
+        this.map[first] = [className(stat)];
+      }
+    }
+  }
+
+  public lookup(token: Token): Array<string> {
+    let res = this.map[token.getStr().toUpperCase()];
+    res = res ? res.concat(this.map[""]) : this.map[""];
+    return res;
+  }
+}
 
 export default class Parser {
   private static statements: Array<Statement>;
-  private static map: any;
+// todo, move this map to separate local class
+  private static map: Map;
 
   public static run(tokens: Array<Tokens.Token>, ver = Version.v750): Array<Statement> {
     this.statements = [];
 
     if (!this.map) {
-      this.initialize();
+      this.map = new Map();
     }
 
     this.process(tokens);
@@ -30,24 +65,6 @@ export default class Parser {
   public static runStructure(_list: Array<Statement>): Structure {
 // todo
     return new ClassImplementation();
-  }
-
-  private static initialize() {
-    this.map = {};
-
-// todo, use Artifacts instead
-    for (let st in Statements) {
-      const stat: any = Statements;
-      if (typeof stat[st].get_matcher === "function") {
-        const first = stat[st].get_matcher().first();
-
-        if (this.map[first]) {
-          this.map[first].push(st);
-        } else {
-          this.map[first] = [st];
-        }
-      }
-    }
   }
 
   private static tokensToNodes(tokens: Array<Tokens.Token>): Array<TokenNode> {
@@ -116,17 +133,12 @@ export default class Parser {
       return new Empty().setChildren(this.tokensToNodes(this.removePragma(statement.getTokens())));
     }
 
-    let test = this.map[tokens[0].getStr().toUpperCase()];
-    test = test ? test.concat(this.map[""]) : this.map[""];
-
-    for (let st of test) {
-// todo, use Artifacts instead
-      const stat: any = Statements;
-      let match = Combi.run(stat[st].get_matcher(),
+    for (let st of this.map.lookup(tokens[0])) {
+// todo, reuse instead of instantiating new statement each time
+      let match = Combi.run(Artifacts.newStatement(st).get_matcher(),
                             tokens,
                             ver);
       if (match) {
-//        return new stat[st]().setChildren(match.concat(new TokenNode("Terminator", last)));
         return Artifacts.newStatement(st).setChildren(match.concat(new TokenNode("Terminator", last)));
       }
     }

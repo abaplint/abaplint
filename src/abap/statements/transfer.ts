@@ -5,7 +5,7 @@ import {Version} from "../../version";
 
 export class Transfer extends Statement {
 
-  public static get_matcher(): IRunnable {
+  public get_matcher(): IRunnable {
     let length = seq(str("LENGTH"),
                      new Source());
 

@@ -6,7 +6,7 @@ import {ParenLeft, ParenRightW, ParenRight} from "../tokens";
 
 export class Report extends Statement {
 
-  public static get_matcher(): IRunnable {
+  public get_matcher(): IRunnable {
     let more = seq(tok(ParenLeft), new Integer(), alt(tok(ParenRightW), tok(ParenRight)));
     let heading = str("NO STANDARD PAGE HEADING");
     let size = seq(str("LINE-SIZE"), new Integer());

@@ -5,7 +5,7 @@ import {Version} from "../../version";
 
 export class Supply extends Statement {
 
-  public static get_matcher(): IRunnable {
+  public get_matcher(): IRunnable {
     let field = seq(new Field(), str("="), new Source());
 
     let ret = seq(str("SUPPLY"),

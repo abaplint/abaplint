@@ -6,7 +6,7 @@ import {Version} from "../../version";
 
 export class DeleteCluster extends Statement {
 
-  public static get_matcher(): IRunnable {
+  public get_matcher(): IRunnable {
     let client = seq(str("CLIENT"), new Source());
 
     let ret = seq(str("DELETE FROM DATABASE"),

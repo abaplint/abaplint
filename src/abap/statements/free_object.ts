@@ -5,7 +5,7 @@ import {Version} from "../../version";
 
 export class FreeObject extends Statement {
 
-  public static get_matcher(): IRunnable {
+  public get_matcher(): IRunnable {
     let ret = seq(str("FREE OBJECT"),
                   new Target(),
                   opt(str("NO FLUSH")));

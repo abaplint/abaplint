@@ -3,7 +3,7 @@ import {str, IRunnable} from "../combi";
 
 export class Private extends Statement {
 
-  public static get_matcher(): IRunnable {
+  public get_matcher(): IRunnable {
     return str("PRIVATE SECTION");
   }
 

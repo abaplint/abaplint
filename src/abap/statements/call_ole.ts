@@ -5,7 +5,7 @@ import {Version} from "../../version";
 
 export class CallOLE extends Statement {
 
-  public static get_matcher(): IRunnable {
+  public get_matcher(): IRunnable {
     let fields = seq(regex(/^#?\w+$/), str("="), new Source());
 
     let exporting = seq(str("EXPORTING"), plus(fields));

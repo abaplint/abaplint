@@ -5,7 +5,7 @@ import {Version} from "../../version";
 
 export class GetProperty extends Statement {
 
-  public static get_matcher(): IRunnable {
+  public get_matcher(): IRunnable {
     let exporting = seq(str("EXPORTING"), new ParameterListS());
 
     let ret = seq(str("GET PROPERTY OF"),

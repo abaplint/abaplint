@@ -5,7 +5,7 @@ import {Version} from "../../version";
 
 export class LogPoint extends Statement {
 
-  public static get_matcher(): IRunnable {
+  public get_matcher(): IRunnable {
     let subkey = seq(str("SUBKEY"), new Source());
 
     let fields = seq(str("FIELDS"), plus(new Source()));

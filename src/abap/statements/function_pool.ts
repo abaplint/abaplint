@@ -4,7 +4,7 @@ import {Source, Field} from "../expressions";
 
 export class FunctionPool extends Statement {
 
-  public static get_matcher(): IRunnable {
+  public get_matcher(): IRunnable {
     return seq(str("FUNCTION-POOL"),
                new Field(),
                opt(seq(str("MESSAGE-ID"), new Source())));

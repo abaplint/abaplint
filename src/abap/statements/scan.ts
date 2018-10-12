@@ -5,7 +5,7 @@ import {Version} from "../../version";
 
 export class Scan extends Statement {
 
-  public static get_matcher(): IRunnable {
+  public get_matcher(): IRunnable {
     let tokens = seq(str("TOKENS INTO"), new Target());
     let word = seq(str("WORD INTO"), new Target());
     let line = seq(str("LINE INTO"), new Target());

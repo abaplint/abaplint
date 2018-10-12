@@ -5,7 +5,7 @@ import {Source} from "../expressions";
 
 export class SetLeft extends Statement {
 
-  public static get_matcher(): IRunnable {
+  public get_matcher(): IRunnable {
     let column = seq(str("COLUMN"), new Source());
     return verNot(Version.Cloud, seq(str("SET LEFT SCROLL-BOUNDARY"), opt(column)));
   }

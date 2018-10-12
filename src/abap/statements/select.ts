@@ -4,7 +4,7 @@ import {Select as eSelect} from "../expressions";
 
 export class Select extends Statement {
 
-  public static get_matcher(): IRunnable {
+  public get_matcher(): IRunnable {
     return new eSelect();
   }
 

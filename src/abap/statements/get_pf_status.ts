@@ -5,7 +5,7 @@ import {Version} from "../../version";
 
 export class GetPFStatus extends Statement {
 
-  public static get_matcher(): IRunnable {
+  public get_matcher(): IRunnable {
     let program = seq(str("PROGRAM"), new Source());
     let excl = seq(str("EXCLUDING"), new Source());
 

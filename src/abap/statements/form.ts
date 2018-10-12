@@ -6,7 +6,7 @@ import {Version} from "../../version";
 
 export class Form extends Statement {
 
-  public static get_matcher(): IRunnable {
+  public get_matcher(): IRunnable {
 
     let resume = seq(str("RESUMABLE"),
                      tok(ParenLeft),

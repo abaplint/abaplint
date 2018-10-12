@@ -5,7 +5,7 @@ import {Target, Source, Dynamic, Compare, Cond, SimpleName, Field, FieldSub} fro
 
 export class DeleteInternal extends Statement {
 
-  public static get_matcher(): IRunnable {
+  public get_matcher(): IRunnable {
 // todo, is READ and DELETE similar? something can be reused?
     let index = seq(str("INDEX"), new Source());
 

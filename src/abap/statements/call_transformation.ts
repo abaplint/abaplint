@@ -4,7 +4,7 @@ import {Target, Field, Source, Dynamic} from "../expressions";
 
 export class CallTransformation extends Statement {
 
-  public static get_matcher(): IRunnable {
+  public get_matcher(): IRunnable {
     let field = seq(new Field(), str("="), new Source());
 
     let options = seq(str("OPTIONS"), plus(field));

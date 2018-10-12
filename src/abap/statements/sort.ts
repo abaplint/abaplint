@@ -4,7 +4,7 @@ import {FieldSymbol, Target, Dynamic, FieldChain} from "../expressions";
 
 export class Sort extends Statement {
 
-  public static get_matcher(): IRunnable {
+  public get_matcher(): IRunnable {
     let order = alt(str("ASCENDING"), str("DESCENDING"));
 
     let sel = alt(new FieldChain(),

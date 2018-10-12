@@ -4,7 +4,7 @@ import {Target, Source} from "../expressions";
 
 export class SetHandler extends Statement {
 
-  public static get_matcher(): IRunnable {
+  public get_matcher(): IRunnable {
     let activation = seq(str("ACTIVATION"), new Source());
 
     let fo = seq(str("FOR"), alt(str("ALL INSTANCES"), new Source()));

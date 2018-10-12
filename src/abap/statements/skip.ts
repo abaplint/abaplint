@@ -5,7 +5,7 @@ import {Version} from "../../version";
 
 export class Skip extends Statement {
 
-  public static get_matcher(): IRunnable {
+  public get_matcher(): IRunnable {
     let ret = seq(str("SKIP"),
                   opt(str("TO LINE")),
                   opt(new Source()));

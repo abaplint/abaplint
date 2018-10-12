@@ -4,7 +4,7 @@ import {Target, Source} from "../expressions";
 
 export class Find extends Statement {
 
-  public static get_matcher(): IRunnable {
+  public get_matcher(): IRunnable {
     let options = per(str("IGNORING CASE"),
                       str("RESPECTING CASE"),
                       str("IN BYTE MODE"),

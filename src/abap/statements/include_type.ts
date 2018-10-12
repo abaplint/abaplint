@@ -5,7 +5,7 @@ import {Version} from "../../version";
 
 export class IncludeType extends Statement {
 
-  public static get_matcher(): IRunnable {
+  public get_matcher(): IRunnable {
     let tas = seq(str("AS"), new Field());
 
     let renaming = seq(str("RENAMING WITH SUFFIX"), new Source());

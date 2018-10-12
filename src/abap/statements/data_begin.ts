@@ -4,7 +4,7 @@ import {Integer, NamespaceSimpleName} from "../expressions";
 
 export class DataBegin extends Statement {
 
-  public static get_matcher(): IRunnable {
+  public get_matcher(): IRunnable {
     let start = alt(str("CLASS-DATA"), str("DATA"));
 
     let occurs = seq(str("OCCURS"), new Integer());

@@ -5,7 +5,7 @@ import {Version} from "../../version";
 
 export class Receive extends Statement {
 
-  public static get_matcher(): IRunnable {
+  public get_matcher(): IRunnable {
     let ret = seq(str("RECEIVE RESULTS FROM FUNCTION"),
                   new Constant(),
                   opt(str("KEEPING TASK")),
