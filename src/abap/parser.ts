@@ -4,8 +4,6 @@ import {Combi} from "./combi";
 import {TokenNode} from "./node";
 import {Statement, Unknown, Empty, Comment, MacroContent} from "./statements/statement";
 import {Version} from "../version";
-import {Structure} from "./structures/_structure";
-import {ClassImplementation} from "./structures";
 import {Artifacts} from "./artifacts";
 import {Token} from "./tokens/";
 
@@ -55,11 +53,6 @@ export default class Parser {
     this.macros();
 
     return this.statements;
-  }
-
-  public static runStructure(_list: Array<Statement>): Structure {
-// todo
-    return new ClassImplementation();
   }
 
   private static tokensToNodes(tokens: Array<Tokens.Token>): Array<TokenNode> {

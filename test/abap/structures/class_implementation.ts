@@ -3,10 +3,11 @@ import * as Structures from "../../../src/abap/structures";
 import {Statement} from "../../../src/abap/statements/statement";
 import Runner from "../../../src/runner";
 import {MemoryFile} from "../../../src/files";
-import Parser from "../../../src/abap/parser";
 
 let cases = [
   {abap: "CLASS zfoo IMPLEMENTATION. ENDCLASS."},
+  {abap: "CLASS zfoo IMPLEMENTATION. METHOD foo. ENDMETHOD. ENDCLASS."},
+  {abap: "CLASS zfoo IMPLEMENTATION. METHOD foo. moo = boo. ENDMETHOD. ENDCLASS."},
 ];
 
 function run(abap: string): Statement[] {
@@ -15,8 +16,13 @@ function run(abap: string): Statement[] {
 }
 
 describe("Structure type", function() {
-  cases.forEach((c: any) => {
-    const structure = Parser.runStructure(run(c.abap));
-    expect(structure).to.be.instanceof(Structures.ClassImplementation);
+  cases.forEach((c: {abap: string}) => {
+    it(c.abap, function () {
+      const statements = run(c.abap);
+      const length = statements.length;
+      const match = new Structures.ClassImplementation().getMatcher().run(statements);
+      expect(match.error).to.equal(false);
+      expect(match.matched.length).to.equal(length);
+    });
   });
 });

@@ -7,7 +7,7 @@ export class ClassImplementation extends Structure {
 
   public getMatcher(): IStructureRunnable {
     let method = beginEnd(sta(Statements.Method),
-                          sub(new Structures.Normal()),
+                          star(sub(new Structures.Normal())),
                           sta(Statements.Endmethod));
 
     let body = star(method);
