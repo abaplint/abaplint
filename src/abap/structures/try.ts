@@ -1,19 +1,15 @@
 import * as Statements from "../statements";
 import {Structure} from "./_structure";
-import {star, IStructureRunnable, sta, beginEnd, seq, opt} from "./_combi";
+import {star, IStructureRunnable, sta, beginEnd, seq, opt, sub} from "./_combi";
+import {Normal} from "./normal";
 
 export class Try extends Structure {
-  private body: IStructureRunnable;
-
-  public constructor(body: IStructureRunnable) {
-    super();
-    this.body = body;
-  }
 
   public getMatcher(): IStructureRunnable {
-    let cat = seq(sta(Statements.Catch), star(this.body));
-    let cleanup = seq(sta(Statements.Cleanup), star(this.body));
-    let block = seq(star(this.body), star(cat), opt(cleanup));
+    let normal = star(sub(new Normal()));
+    let cat = seq(sta(Statements.Catch), normal);
+    let cleanup = seq(sta(Statements.Cleanup), normal);
+    let block = seq(normal, star(cat), opt(cleanup));
 
     return beginEnd(sta(Statements.Try),
                     block,

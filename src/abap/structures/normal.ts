@@ -1,9 +1,9 @@
 import * as Structures from "./";
 import * as Statements from "../statements";
 import {Structure} from "./_structure";
-import {alt, IStructureRunnable, star, sta} from "./_combi";
+import {alt, IStructureRunnable, star, sta, sub} from "./_combi";
 
-export class NormalClass extends Structure {
+export class Normal extends Structure {
 
   public getMatcher(): IStructureRunnable {
     return star(alt(sta(Statements.AddCorresponding),
@@ -153,16 +153,16 @@ export class NormalClass extends Structure {
                     sta(Statements.UpdateDatabase),
                     sta(Statements.Wait),
                     sta(Statements.Write),
-                    new Structures.ExecSQL(),
-                    new Structures.Define(),
-                    new Structures.Loop(this),
-                    new Structures.TestInjection(this),
-                    new Structures.Case(this),
-                    new Structures.CatchSystemExceptions(this),
-                    new Structures.Try(this),
-                    new Structures.While(this),
-                    new Structures.Do(this),
-                    new Structures.If(this)));
+                    sub(new Structures.Define()),
+                    sub(new Structures.Loop()),
+                    sub(new Structures.TestInjection()),
+                    sub(new Structures.Case()),
+                    sub(new Structures.CatchSystemExceptions()),
+                    sub(new Structures.Try()),
+                    sub(new Structures.While()),
+                    sub(new Structures.Do()),
+                    sub(new Structures.If()),
+                    sub(new Structures.ExecSQL())));
   }
 
 }

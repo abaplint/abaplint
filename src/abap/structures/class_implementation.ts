@@ -1,13 +1,13 @@
 import * as Statements from "../statements";
 import {Structure} from "./_structure";
 import * as Structures from "./";
-import {star, IStructureRunnable, sta, beginEnd} from "./_combi";
+import {star, IStructureRunnable, sta, beginEnd, sub} from "./_combi";
 
 export class ClassImplementation extends Structure {
 
   public getMatcher(): IStructureRunnable {
     let method = beginEnd(sta(Statements.Method),
-                          new Structures.NormalClass(),
+                          sub(new Structures.Normal()),
                           sta(Statements.Endmethod));
 
     let body = star(method);

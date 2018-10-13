@@ -4,13 +4,13 @@ import {Artifacts} from "./artifacts";
 
 // todo, move this method to somewhere under web/viz?
 
-function className(cla: any) {
+function className(cla: any): string {
   return (cla.constructor + "").match(/\w+/g)[1];
 }
 
 class Graph {
 
-  public static run() {
+  public static run(): void {
     for (let expr of Artifacts.getExpressions()) {
       this.writeRunnable("expression_" + className(expr), expr.getRunnable(), true);
     }
@@ -19,12 +19,20 @@ class Graph {
       this.writeRunnable("statement_" + className(stat), stat.getMatcher(), false);
     }
 
-// todo, getStructures
+    for (let stru of Artifacts.getStructures()) {
+      let str = "Railroad.Diagram.INTERNAL_ALIGNMENT = 'left';\n" +
+        "Railroad.Diagram(" + stru.getMatcher().toRailroad() + ").toString();";
+      this.writeFile("structure_" + className(stru), str);
+    }
   }
 
-  private static writeRunnable(name: string, runnable: Combi.IRunnable, complex: boolean) {
+  private static writeRunnable(name: string, runnable: Combi.IRunnable, complex: boolean): void {
     let str = Combi.Combi.railroad(runnable, complex);
-    fs.writeFileSync("./web/viz/" + name + ".txt", str, "utf8");
+    this.writeFile(name, str);
+  }
+
+  private static writeFile(name: string, contents: string) {
+    fs.writeFileSync("./web/viz/" + name + ".txt", contents, "utf8");
   }
 
 }

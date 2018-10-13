@@ -1,11 +1,11 @@
 import * as Structures from "./";
 import {Structure} from "./_structure";
-import {seq, IStructureRunnable} from "./_combi";
+import {seq, IStructureRunnable, sub} from "./_combi";
 
 export class ClassGlobal extends Structure {
 
   public getMatcher(): IStructureRunnable {
-    return seq(new Structures.ClassDefinition(), new Structures.ClassImplementation());
+    return seq(sub(new Structures.ClassDefinition()), sub(new Structures.ClassImplementation()));
   }
 
 }

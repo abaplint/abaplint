@@ -1,3 +1,5 @@
+import {Structure} from "./_structure";
+
 export interface IStructureRunnable {
   toRailroad(): string;
 }
@@ -14,7 +16,7 @@ class Sequence implements IStructureRunnable {
 
   public toRailroad() {
     const children = this.list.map((e) => { return e.toRailroad(); });
-    return "seq(" + children.join(",") + ")";
+    return "Railroad.Sequence(" + children.join() + ")";
   }
 }
 
@@ -30,7 +32,7 @@ class Alternative implements IStructureRunnable {
 
   public toRailroad() {
     let children = this.list.map((e) => { return e.toRailroad(); });
-    return "alt(" + children.join(",") + ")";
+    return "Railroad.Choice(0, " + children.join() + ")";
   }
 }
 
@@ -42,7 +44,7 @@ class Optional implements IStructureRunnable {
   }
 
   public toRailroad() {
-    return "opt(" + this.obj.toRailroad() + ")";
+    return "Railroad.Optional(" + this.obj.toRailroad() + ")";
   }
 }
 
@@ -50,12 +52,28 @@ class Star implements IStructureRunnable {
   private obj: IStructureRunnable;
 
   constructor(obj: IStructureRunnable) {
+    if (obj === undefined) {
+      throw new Error("Star, input undefined");
+    }
     this.obj = obj;
   }
 
   public toRailroad() {
-    return "star(" + this.obj.toRailroad() + ")";
+    return "Railroad.ZeroOrMore(" + this.obj.toRailroad() + ")";
   }
+}
+
+class SubStructure implements IStructureRunnable {
+  private s: Structure;
+
+  constructor(s: Structure) {
+    this.s = s;
+  }
+
+  public toRailroad() {
+    return "Railroad.NonTerminal('" + this.s.constructor.name + "', 'structure_" + this.s.constructor.name + ".svg')";
+  }
+
 }
 
 class Statement implements IStructureRunnable {
@@ -66,12 +84,13 @@ class Statement implements IStructureRunnable {
   }
 
   public toRailroad() {
-    return this.className(this.obj);
+    return "Railroad.Terminal('" + this.className(this.obj) + "', 'statement_" + this.className(this.obj) + ".svg')";
   }
 
   private className(cla: any) {
     return (cla + "").match(/\w+/g)[1];
   }
+
 }
 
 class BeginEnd implements IStructureRunnable {
@@ -86,7 +105,8 @@ class BeginEnd implements IStructureRunnable {
   }
 
   public toRailroad() {
-    return "BeginEnd(" + this.begin.toRailroad() + ", " + this.body.toRailroad() + ", " + this.end.toRailroad() + ")";
+    let children = [this.begin.toRailroad(), this.body.toRailroad(), this.end.toRailroad()];
+    return "Railroad.Sequence(" + children + ")";
   }
 }
 
@@ -112,4 +132,8 @@ export function star(s: IStructureRunnable): IStructureRunnable {
 
 export function sta(s: Object): IStructureRunnable {
   return new Statement(s);
+}
+
+export function sub(s: Structure): IStructureRunnable {
+  return new SubStructure(s);
 }

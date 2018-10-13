@@ -758,11 +758,12 @@ class AlternativePriority implements IRunnable {
 }
 
 export class Combi {
-// todo, change this to be instantiated, constructor(runnable) ?
+// todo, change this class to be instantiated, constructor(runnable) ?
 
   private static ver: Version;
 
   public static railroad(runnable: IRunnable, complex = false): string {
+// todo, move method to graph.js?
     let type = "Railroad.Diagram(";
     if (complex === true) {
       type = "Railroad.ComplexDiagram(";

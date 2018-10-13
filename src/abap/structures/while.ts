@@ -1,18 +1,13 @@
 import * as Statements from "../statements";
 import {Structure} from "./_structure";
-import {star, IStructureRunnable, sta, beginEnd} from "./_combi";
+import {star, IStructureRunnable, sta, beginEnd, sub} from "./_combi";
+import {Normal} from "./normal";
 
 export class While extends Structure {
-  private body: IStructureRunnable;
-
-  public constructor(body: IStructureRunnable) {
-    super();
-    this.body = body;
-  }
 
   public getMatcher(): IStructureRunnable {
     return beginEnd(sta(Statements.While),
-                    star(this.body),
+                    star(sub(new Normal())),
                     sta(Statements.EndWhile));
   }
 
