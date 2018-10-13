@@ -580,7 +580,7 @@ export abstract class Expression implements IRunnable {
   }
 
   public railroad() {
-    return "Railroad.NonTerminal('" + this.getName() + "', 'expression_" + this.getName().toLowerCase() + ".svg')";
+    return "Railroad.NonTerminal('" + this.getName() + "', 'expression_" + this.getName() + ".svg')";
   }
 
   public toStr() {

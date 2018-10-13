@@ -7,6 +7,7 @@ function run() {
   let json = {};
   json.statements = [];
   json.expressions = [];
+  json.structures = [];
 
   let folder = "./web/viz/";
   let files = fs.readdirSync(folder);
@@ -65,6 +66,8 @@ function run() {
 
       if (/^expression_/.test(name)) {
         json.expressions.push(name);
+      } else if (/^structure_/.test(name)) {
+        json.structures.push(name);
       } else {
         json.statements.push(name);
       }
