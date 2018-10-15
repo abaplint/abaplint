@@ -4,6 +4,7 @@ import Runner from "../src/runner";
 import {expect} from "chai";
 import {Version, versionToText} from "../src/version";
 import {Unknown} from "../src/abap/statements/statement";
+import {Structure} from "../src/abap/structures/_structure";
 
 // utils for testing
 
@@ -18,6 +19,21 @@ function run(abap: string, text: string, type: any, version = Version.v750) {
     expect(compare).to.equals(true);
 // assumption: no colons in input
     expect(slist[0].getTokens().length).to.equal(file.getTokens(false).length);
+  });
+}
+
+export function structureType(cas: {abap: string}[], expected: Structure): void {
+  describe("Structure type", function() {
+    cas.forEach((c: {abap: string}) => {
+      it(c.abap, function () {
+        let file = new Runner([new MemoryFile("cl_foo.clas.abap", c.abap)]).parse()[0];
+        const statements = file.getStatements();
+        const length = statements.length;
+        const match = expected.getMatcher().run(statements);
+        expect(match.error).to.equal(false);
+        expect(match.matched.length).to.equal(length);
+      });
+    });
   });
 }
 
