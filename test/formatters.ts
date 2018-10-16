@@ -5,12 +5,12 @@ import {expect} from "chai";
 
 describe("formatters", () => {
   let tests = [
-    {abap: "foo bar", errors: 1},
+    {abap: "foo bar", errors: 2},
     {abap: "WRITE 'Hello'.", errors: 0},
   ];
 
   tests.forEach((test) => {
-    let issues = new Runner([new MemoryFile("cl_foo.clas.abap", test.abap)]).findIssues();
+    let issues = new Runner([new MemoryFile("any.prog.abap", test.abap)]).findIssues();
 
     it("Json " + test.abap, () => {
       expect(issues.length).to.equals(test.errors);

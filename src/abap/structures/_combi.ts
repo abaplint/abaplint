@@ -5,6 +5,7 @@ export interface IMatch {
   matched: Array<Statement>;
   unmatched: Array<Statement>;
   error: boolean;
+  errorDescription: string;
 }
 
 export interface IStructureRunnable {
@@ -33,12 +34,12 @@ class Sequence implements IStructureRunnable {
     for (let i of this.list) {
       let match = i.run(inn);
       if (match.error) {
-        return {matched: [], unmatched: statements, error: true};
+        return {matched: [], unmatched: statements, error: true, errorDescription: match.errorDescription};
       }
       out = out.concat(match.matched);
       inn = match.unmatched;
     }
-    return {matched: out, unmatched: inn, error: false};
+    return {matched: out, unmatched: inn, error: false, errorDescription: ""};
   }
 }
 
@@ -64,7 +65,8 @@ class Alternative implements IStructureRunnable {
         return match;
       }
     }
-    return {matched: [], unmatched: statements, error: true};
+    let children = this.list.map((e) => { return e.constructor.name; });
+    return {matched: [], unmatched: statements, error: true, errorDescription: "Expected " + children.join(" or ")};
   }
 }
 
@@ -107,7 +109,7 @@ class Star implements IStructureRunnable {
     while (true) {
       let match = this.obj.run(inn);
       if (match.error === true || inn.length === 0) {
-        return {matched: out, unmatched: inn, error: false};
+        return {matched: out, unmatched: inn, error: false, errorDescription: ""};
       }
       out = out.concat(match.matched);
       inn = match.unmatched;
@@ -130,6 +132,7 @@ class SubStructure implements IStructureRunnable {
     let ret = this.s.getMatcher().run(statements);
     if (ret.matched.length === 0) {
       ret.error = true;
+      ret.errorDescription = "Expected " + this.s.constructor.name;
     }
     return ret;
   }
@@ -152,11 +155,11 @@ class SubStatement implements IStructureRunnable {
 
   public run(statements: Array<Statement>): IMatch {
     if (statements.length === 0) {
-      return {matched: [], unmatched: [], error: true};
+      return {matched: [], unmatched: [], error: true, errorDescription: "Expected " + this.className(this.obj)};
     } else if (statements[0] instanceof this.obj) {
-      return {matched: [statements[0]], unmatched: statements.splice(1), error: false};
+      return {matched: [statements[0]], unmatched: statements.splice(1), error: false, errorDescription: ""};
     } else {
-      return {matched: [], unmatched: statements, error: true};
+      return {matched: [], unmatched: statements, error: true, errorDescription: "Expected " + this.className(this.obj)};
     }
   }
 }
@@ -169,7 +172,6 @@ export function alt(first: IStructureRunnable, ...rest: IStructureRunnable[]): I
   return new Alternative([first].concat(rest));
 }
 
-// todo, is this obsolete, just use Sequence instead?
 export function beginEnd(begin: IStructureRunnable, body: IStructureRunnable, end: IStructureRunnable): IStructureRunnable {
   return new Sequence([begin, body, end]);
 }

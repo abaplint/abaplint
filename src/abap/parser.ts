@@ -6,6 +6,11 @@ import {Statement, Unknown, Empty, Comment, MacroContent} from "./statements/sta
 import {Version} from "../version";
 import {Artifacts} from "./artifacts";
 import {Token} from "./tokens/";
+import {ParsedFile} from "../files";
+import {GenericError} from "../rules";
+import {Structure} from "./structures/_structure";
+import * as Structures from "./structures/";
+import {Issue} from "../issue";
 
 function className(cla: any) {
   return (cla.constructor + "").match(/\w+/g)[1];
@@ -53,6 +58,31 @@ export default class Parser {
     this.macros();
 
     return this.statements;
+  }
+
+  public static findStructureForFile(filename: string): Structure {
+    if (filename.match(/\.clas\.abap$/)) {
+      return new Structures.ClassGlobal();
+    } else if (filename.match(/\.intf\.abap$/)) {
+      return new Structures.Interface();
+    } else {
+// todo
+      return new Structures.Any();
+    }
+  }
+
+  public static runStructure(file: ParsedFile): Array<Issue> {
+    const structure = this.findStructureForFile(file.getFilename());
+    const result = structure.getMatcher().run(file.getStatements().slice());
+    if (result.error) {
+      return [new Issue(new GenericError(result.errorDescription), file, 1)];
+    }
+    if (result.unmatched.length > 0) {
+      const statement = result.unmatched[0];
+      const descr = "Unexpected " + statement.constructor.name;
+      return [new Issue(new GenericError(descr), file, statement.getStart().getRow())];
+    }
+    return [];
   }
 
   private static tokensToNodes(tokens: Array<Tokens.Token>): Array<TokenNode> {

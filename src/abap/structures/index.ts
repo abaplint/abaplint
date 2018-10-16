@@ -4,6 +4,8 @@ export * from "./class_global";
 export * from "./normal";
 export * from "./if";
 export * from "./do";
+export * from "./any";
+export * from "./interface";
 export * from "./while";
 export * from "./loop";
 export * from "./exec_sql";

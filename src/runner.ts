@@ -7,6 +7,7 @@ import {Version, textToVersion} from "./version";
 import {Formatter} from "./formatters/";
 import * as ProgressBar from "progress";
 import {GenericError} from "./rules/";
+import Parser from "./abap/parser";
 
 export default class Runner {
   private conf: Config;
@@ -86,6 +87,12 @@ export default class Runner {
       obj.parseSecondPass(this.reg);
     });
 
+    for (let obj of objects) {
+      for (let file of obj.getParsed()) {
+        this.generic = this.generic.concat(Parser.runStructure(file));
+      }
+    }
+
     this.parsed = true;
   }
 
@@ -102,6 +109,7 @@ export default class Runner {
 
 }
 
+// todo, implement this with events instead, so it works on both node and web
 class Progress {
 
   private bar: ProgressBar = undefined;

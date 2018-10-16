@@ -2,11 +2,13 @@ import * as Structures from "./";
 import * as Statements from "../statements";
 import {Structure} from "./_structure";
 import {alt, IStructureRunnable, star, sta, sub} from "./_combi";
+import {Comment} from "../statements/statement";
 
 export class Normal extends Structure {
 
   public getMatcher(): IStructureRunnable {
-    return star(alt(sta(Statements.AddCorresponding),
+    return star(alt(sta(Comment),
+                    sta(Statements.AddCorresponding),
                     sta(Statements.Add),
                     sta(Statements.Append),
                     sta(Statements.Assert),
