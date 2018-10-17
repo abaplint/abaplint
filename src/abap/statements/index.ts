@@ -52,6 +52,8 @@ export * from "./class_implementation";
 export * from "./translate";
 export * from "./exit";
 export * from "./endcase";
+export * from "./constant_begin";
+export * from "./constant_end";
 export * from "./when";
 export * from "./continue";
 export * from "./assign";

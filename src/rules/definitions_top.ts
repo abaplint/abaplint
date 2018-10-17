@@ -62,6 +62,8 @@ export class DefinitionsTop extends ABAPRule {
           || statement instanceof Statements.TypeBegin
           || statement instanceof Statements.TypeEnd
           || statement instanceof Statements.Constant
+          || statement instanceof Statements.ConstantBegin
+          || statement instanceof Statements.ConstantEnd
           || statement instanceof Statements.Include
           || statement instanceof Statements.IncludeType
           || statement instanceof Statements.Static

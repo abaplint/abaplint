@@ -11,6 +11,7 @@ import {GenericError} from "../rules";
 import {Structure} from "./structures/_structure";
 import * as Structures from "./structures/";
 import {Issue} from "../issue";
+import {Comment as StatementComment} from "./statements/statement";
 
 function className(cla: any) {
   return (cla.constructor + "").match(/\w+/g)[1];
@@ -73,7 +74,8 @@ export default class Parser {
 
   public static runStructure(file: ParsedFile): Array<Issue> {
     const structure = this.findStructureForFile(file.getFilename());
-    const result = structure.getMatcher().run(file.getStatements().slice());
+    let statements = file.getStatements().slice().filter((s) => { return !(s instanceof StatementComment); });
+    const result = structure.getMatcher().run(statements);
     if (result.error) {
       return [new Issue(new GenericError(result.errorDescription), file, 1)];
     }

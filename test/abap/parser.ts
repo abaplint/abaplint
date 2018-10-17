@@ -5,6 +5,7 @@ import {expect} from "chai";
 
 const cases = [
   {abap: "DO 2 TIMES. ENDDO.", filename: "foo.prog.abap", errors: 0},
+  {abap: "DO 2 TIMES.\n*comment\nENDDO.", filename: "foo.prog.abap", errors: 0},
   {abap: "DO 2 TIMES.", filename: "foo.prog.abap", errors: 1},
 ];
 

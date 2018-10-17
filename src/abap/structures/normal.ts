@@ -2,12 +2,12 @@ import * as Structures from "./";
 import * as Statements from "../statements";
 import {Structure} from "./_structure";
 import {alt, IStructureRunnable, star, sta, sub} from "./_combi";
-import {Comment} from "../statements/statement";
+import {MacroCall} from "../statements/statement";
 
 export class Normal extends Structure {
 
   public getMatcher(): IStructureRunnable {
-    return star(alt(sta(Comment),
+    return star(alt(sta(MacroCall),
                     sta(Statements.AddCorresponding),
                     sta(Statements.Add),
                     sta(Statements.Append),
@@ -44,6 +44,7 @@ export class Normal extends Structure {
                     sta(Statements.CreateData),
                     sta(Statements.CreateObject),
                     sta(Statements.CreateOLE),
+                    sta(Statements.Data),
                     sta(Statements.DeleteCluster),
                     sta(Statements.DeleteDatabase),
                     sta(Statements.DeleteDataset),
@@ -100,10 +101,12 @@ export class Normal extends Structure {
                     sta(Statements.OpenDataset),
                     sta(Statements.Overlay),
                     sta(Statements.Pack),
+                    sta(Statements.Perform),
                     sta(Statements.Position),
                     sta(Statements.PrintControl),
                     sta(Statements.RaiseEvent),
                     sta(Statements.Raise),
+                    sta(Statements.Read),
                     sta(Statements.ReadDataset),
                     sta(Statements.ReadLine),
                     sta(Statements.ReadReport),
@@ -117,6 +120,7 @@ export class Normal extends Structure {
                     sta(Statements.Scan),
                     sta(Statements.ScrollList),
                     sta(Statements.Search),
+                    sta(Statements.Select),
                     sta(Statements.SetBit),
                     sta(Statements.SetBlank),
                     sta(Statements.SetCountry),
@@ -139,6 +143,7 @@ export class Normal extends Structure {
                     sta(Statements.Skip),
                     sta(Statements.SortDataset),
                     sta(Statements.Sort),
+                    sta(Statements.Static),
                     sta(Statements.Split),
                     sta(Statements.Stop),
                     sta(Statements.Submit),
@@ -148,6 +153,7 @@ export class Normal extends Structure {
                     sta(Statements.SyntaxCheck),
                     sta(Statements.SystemCall),
                     sta(Statements.Transfer),
+                    sta(Statements.Translate),
                     sta(Statements.Type),
                     sta(Statements.Uline),
                     sta(Statements.Unassign),
@@ -161,6 +167,11 @@ export class Normal extends Structure {
                     sub(new Structures.Case()),
                     sub(new Structures.CatchSystemExceptions()),
                     sub(new Structures.Try()),
+                    sub(new Structures.Constants()),
+                    sub(new Structures.Types()),
+                    sub(new Structures.Statics()),
+                    sub(new Structures.Select()),
+                    sub(new Structures.Data()),
                     sub(new Structures.While()),
                     sub(new Structures.Do()),
                     sub(new Structures.If()),
