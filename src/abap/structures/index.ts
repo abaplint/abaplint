@@ -8,6 +8,7 @@ export * from "./types";
 export * from "./select";
 export * from "./statics";
 export * from "./any";
+export * from "./on_change";
 export * from "./interface";
 export * from "./function_module";
 export * from "./while";

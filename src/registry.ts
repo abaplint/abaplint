@@ -29,9 +29,13 @@ export default class Registry {
     }
 
     let add = undefined;
+// todo, refactor
     switch (type) {
       case "CLAS":
         add = new Objects.Class(name, "todo");
+        break;
+      case "TYPE":
+        add = new Objects.TypePool(name, "todo");
         break;
       case "DEVC":
         add = new Objects.Package(name, "todo");

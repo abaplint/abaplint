@@ -24,9 +24,7 @@ export class ClassDefinition extends Statement {
                    duration,
                    seq(opt(str("GLOBAL")), str("FRIENDS"), plus(new ClassName())));
 
-    let def = seq(str("DEFINITION"),
-                  opt(alt(str("LOAD"),
-                          blah)));
+    let def = seq(str("DEFINITION"), opt(blah));
 
     return seq(str("CLASS"), new ClassName(), def);
   }

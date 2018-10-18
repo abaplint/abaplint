@@ -9,6 +9,7 @@ export * from "./data_element";
 export * from "./table";
 export * from "./table_type";
 export * from "./domain";
+export * from "./type_pool";
 export * from "./function_group";
 export * from "./program";
 export * from "./mime_object";

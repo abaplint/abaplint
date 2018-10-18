@@ -87,6 +87,7 @@ export default class Runner {
       obj.parseSecondPass(this.reg);
     });
 
+// todo, add progress indicator here
     for (let obj of objects) {
       for (let file of obj.getParsed()) {
         this.generic = this.generic.concat(Parser.runStructure(file));

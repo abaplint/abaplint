@@ -5,7 +5,7 @@ import {Field} from "../expressions";
 export class Interface extends Statement {
 
   public getMatcher(): IRunnable {
-    let options = alt(str("PUBLIC"), str("LOAD"), str("DEFERRED"));
+    let options = alt(str("PUBLIC"), str("DEFERRED"));
 
     return seq(str("INTERFACE"),
                new Field(),

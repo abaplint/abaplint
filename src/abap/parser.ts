@@ -12,6 +12,7 @@ import {Structure} from "./structures/_structure";
 import * as Structures from "./structures/";
 import {Issue} from "../issue";
 import {Comment as StatementComment} from "./statements/statement";
+import {EndSelect} from "./statements/";
 
 function className(cla: any) {
   return (cla.constructor + "").match(/\w+/g)[1];
@@ -74,7 +75,18 @@ export default class Parser {
 
   public static runStructure(file: ParsedFile): Array<Issue> {
     const structure = this.findStructureForFile(file.getFilename());
-    let statements = file.getStatements().slice().filter((s) => { return !(s instanceof StatementComment); });
+    let statements = file.getStatements().slice().filter((s) => { return !(s instanceof StatementComment || s instanceof Empty); });
+    const unknowns = file.getStatements().slice().filter((s) => { return s instanceof Unknown; });
+    if (unknowns.length > 0) {
+      return [new Issue(new GenericError("Unknown statements, skipping structure"), file, 1)];
+    }
+
+// todo !!!!!!!!!!!!!
+    const end = file.getStatements().slice().filter((s) => { return s instanceof EndSelect; });
+    if (end.length > 0) {
+      return [new Issue(new GenericError("todo, EndSelect"), file, 1)];
+    }
+
     const result = structure.getMatcher().run(statements);
     if (result.error) {
       return [new Issue(new GenericError(result.errorDescription), file, 1)];
@@ -82,7 +94,7 @@ export default class Parser {
     if (result.unmatched.length > 0) {
       const statement = result.unmatched[0];
       const descr = "Unexpected " + statement.constructor.name;
-      return [new Issue(new GenericError(descr), file, statement.getStart().getRow())];
+      return [new Issue(new GenericError(descr), file, 1, statement.getStart())];
     }
     return [];
   }

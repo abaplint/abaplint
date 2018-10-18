@@ -1,13 +1,15 @@
 import * as Statements from "../statements";
 import {Structure} from "./_structure";
-import {star, IStructureRunnable, sta, beginEnd, alt, sub} from "./_combi";
-import {Normal, At} from ".";
+import {star, IStructureRunnable, sta, beginEnd, sub, alt} from "./_combi";
+import {Normal, OnChange} from ".";
 
 export class Loop extends Structure {
 
   public getMatcher(): IStructureRunnable {
+    let body = alt(sub(new Normal), sub(new OnChange));
+
     return beginEnd(sta(Statements.Loop),
-                    star(alt(sub(new Normal), sub(new At))),
+                    star(body),
                     sta(Statements.EndLoop));
   }
 
