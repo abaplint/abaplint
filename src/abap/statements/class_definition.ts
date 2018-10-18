@@ -26,7 +26,6 @@ export class ClassDefinition extends Statement {
 
     let def = seq(str("DEFINITION"),
                   opt(alt(str("LOAD"),
-                          seq(str("DEFERRED"), opt(str("PUBLIC"))),
                           blah)));
 
     return seq(str("CLASS"), new ClassName(), def);

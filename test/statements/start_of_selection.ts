@@ -5,4 +5,4 @@ let tests = [
   "START-OF-SELECTION.",
 ];
 
-statementType(tests, "START", Statements.Start);
+statementType(tests, "START-OF-SELECTION", Statements.StartOfSelection);

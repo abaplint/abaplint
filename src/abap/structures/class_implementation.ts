@@ -1,7 +1,7 @@
 import * as Statements from "../statements";
 import {Structure} from "./_structure";
 import * as Structures from "./";
-import {star, IStructureRunnable, sta, beginEnd, sub} from "./_combi";
+import {star, IStructureRunnable, sta, alt, beginEnd, sub} from "./_combi";
 
 export class ClassImplementation extends Structure {
 
@@ -10,7 +10,8 @@ export class ClassImplementation extends Structure {
                           star(sub(new Structures.Normal())),
                           sta(Statements.Endmethod));
 
-    let body = star(method);
+// the DEFINE statement is allowed between local method implementations, but not global?
+    let body = star(alt(sub(new Structures.Define()), method));
 
     return beginEnd(sta(Statements.ClassImplementation),
                     body,

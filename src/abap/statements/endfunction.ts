@@ -1,7 +1,7 @@
 import {Statement} from "./statement";
 import {str, IRunnable} from "../combi";
 
-export class Endfunction extends Statement {
+export class EndFunction extends Statement {
 
   public getMatcher(): IRunnable {
     return str("ENDFUNCTION");

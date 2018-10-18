@@ -9,6 +9,7 @@ export class ClassDefinition extends Structure {
     let definitions = star(alt(sta(Statements.MethodDef),
                                sta(Statements.InterfaceDef),
                                sta(Statements.Data),
+                               sta(Statements.Events),
                                sta(Statements.Constant),
                                sta(Statements.Aliases),
                                sub(new Types()),

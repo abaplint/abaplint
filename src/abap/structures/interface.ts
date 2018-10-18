@@ -8,6 +8,7 @@ export class Interface extends Structure {
   public getMatcher(): IStructureRunnable {
     let definitions = star(alt(sta(Statements.MethodDef),
                                sta(Statements.Data),
+                               sta(Statements.Events),
                                sta(Statements.Constant),
                                sub(new Types()),
                                sub(new Constants()),
