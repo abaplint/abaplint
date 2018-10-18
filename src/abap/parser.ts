@@ -2,7 +2,7 @@ import * as Tokens from "./tokens/";
 import * as Statements from "./statements/";
 import {Combi} from "./combi";
 import {TokenNode} from "./node";
-import {Statement, Unknown, Empty, Comment, MacroContent} from "./statements/statement";
+import {Statement, Unknown, Empty, Comment, MacroContent, NativeSQL} from "./statements/statement";
 import {Version} from "../version";
 import {Artifacts} from "./artifacts";
 import {Token} from "./tokens/";
@@ -56,8 +56,8 @@ export default class Parser {
 
     this.process(tokens);
     this.categorize(ver);
-// todo, also handle NativeSQL after EXECSQL statements
     this.macros();
+    this.nativeSQL();
 
     return this.statements;
   }
@@ -118,6 +118,25 @@ export default class Parser {
         define = false;
       } else if (!(statement instanceof Comment) && define === true) {
         statement = new MacroContent().setChildren(this.tokensToNodes(statement.getTokens()));
+      }
+
+      result.push(statement);
+    }
+
+    this.statements = result;
+  }
+
+  private static nativeSQL() {
+    let result: Array<Statement> = [];
+    let sql = false;
+
+    for (let statement of this.statements) {
+      if (statement instanceof Statements.ExecSQL) {
+        sql = true;
+      } else if (statement instanceof Statements.EndExec) {
+        sql = false;
+      } else if (!(statement instanceof Comment) && sql === true) {
+        statement = new NativeSQL().setChildren(this.tokensToNodes(statement.getTokens()));
       }
 
       result.push(statement);
