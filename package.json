@@ -19,7 +19,7 @@
     "postcompile": "sh version.sh",
     "pretest": "npm run compile",
     "test": "mocha --recursive --reporter progress build/test",
-    "posttest": "npm run tslint && npm run web",
+    "posttest": "npm run tslint",
     "precoverage": "tsc --sourceMap && istanbul cover ./node_modules/mocha/bin/_mocha build/test --report lcovonly -- -R spec --recursive",
     "coverage": "remap-istanbul -i coverage/coverage.json -o coverage/coverage-remap.json",
     "postcoverage": "codecov -f coverage/coverage-remap.json",

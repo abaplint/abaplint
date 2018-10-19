@@ -30,7 +30,7 @@ export class SelectLoop extends Expression {
     let order = seq(str("ORDER BY"), alt(plus(seq(new SQLFieldName(), opt(ding))), str("PRIMARY KEY"), new Dynamic()));
 
     let comma = opt(ver(Version.v740sp05, str(",")));
-    let someField = alt(new SQLFieldName(), new SQLAggregation);
+    let someField = seq(alt(new SQLFieldName(), new SQLAggregation), comma);
     let fieldList = seq(star(someField), new SQLFieldName(), comma, star(someField));
 
     let fields = alt(str("*"),
