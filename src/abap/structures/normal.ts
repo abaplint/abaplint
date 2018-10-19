@@ -119,6 +119,7 @@ export class Normal extends Structure {
                     sta(Statements.Refresh),
                     sta(Statements.Replace),
                     sta(Statements.Resume),
+                    sta(Statements.Retry),
                     sta(Statements.Return),
                     sta(Statements.Rollback),
                     sta(Statements.Scan),

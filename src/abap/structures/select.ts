@@ -6,7 +6,7 @@ import {Normal} from "./normal";
 export class Select extends Structure {
 
   public getMatcher(): IStructureRunnable {
-    return beginEnd(sta(Statements.Select),
+    return beginEnd(sta(Statements.SelectLoop),
                     star(sub(new Normal())),
                     sta(Statements.EndSelect));
   }

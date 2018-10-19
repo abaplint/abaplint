@@ -12,7 +12,6 @@ import {Structure} from "./structures/_structure";
 import * as Structures from "./structures/";
 import {Issue} from "../issue";
 import {Comment as StatementComment} from "./statements/statement";
-import {EndSelect} from "./statements/";
 
 function className(cla: any) {
   return (cla.constructor + "").match(/\w+/g)[1];
@@ -79,12 +78,6 @@ export default class Parser {
     const unknowns = file.getStatements().slice().filter((s) => { return s instanceof Unknown; });
     if (unknowns.length > 0) {
       return [new Issue(new GenericError("Unknown statements, skipping structure"), file, 1)];
-    }
-
-// todo !!!!!!!!!!!!!
-    const end = file.getStatements().slice().filter((s) => { return s instanceof EndSelect; });
-    if (end.length > 0) {
-      return [new Issue(new GenericError("todo, EndSelect"), file, 1)];
     }
 
     const result = structure.getMatcher().run(statements);
