@@ -42,7 +42,7 @@ export class SelectLoop extends Expression {
 
     let up = seq(str("UP TO"), opt(ver(Version.v740sp05, tok(WAt))), new Source(), str("ROWS"));
 
-//    let pack = seq(str("PACKAGE SIZE"), new Source());
+    let pack = seq(str("PACKAGE SIZE"), new Source());
 
     let forAll = seq(str("FOR ALL ENTRIES IN"), opt(ver(Version.v740sp05, tok(WAt))), new Source());
 
@@ -50,7 +50,11 @@ export class SelectLoop extends Expression {
 
     let group = seq(str("GROUP BY"), plus(alt(new SQLFieldName(), new Dynamic())));
 
-    let perm = per(source, into, where, up, order, client, bypass, group, forAll);
+// hmm, this is bad
+    let appending = seq(str("APPENDING TABLE"), new Target(), str("FROM"), new DatabaseTable(), pack);
+    let intoTable = seq(str("INTO CORRESPONDING FIELDS OF TABLE"), new Target(), pack);
+
+    let perm = per(source, into, where, up, order, client, bypass, group, forAll, appending, intoTable);
 
     let ret = seq(str("SELECT"),
                   fields,
