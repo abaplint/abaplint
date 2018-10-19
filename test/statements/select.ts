@@ -25,7 +25,6 @@ let tests = [
     "INTO CORRESPONDING FIELDS OF TABLE rt_data.",
   "SELECT COUNT(*) FROM /bobf/act_conf WHERE name = 'ZFOO'.",
   "SELECT * FROM zfoobar CLIENT SPECIFIED INTO TABLE rt_data WHERE mandt = '111'.",
-  "SELECT vbeln INTO CORRESPONDING FIELDS OF lt_table FROM vbak WHERE (where_clause) ORDER BY (orderby_clause).",
   "SELECT SINGLE FOR UPDATE * FROM ZFOOBAR WHERE NAME_ID = lv_name.",
   "SELECT * FROM zfoo BYPASSING BUFFER INTO TABLE lt_table WHERE foo = lv_bar.",
   "SELECT SINGLE MAX( version ) FROM zfoo INTO lv_version.",
@@ -38,9 +37,6 @@ let tests = [
   "select foo~bname bar~name_first into table lt_table from foo left outer join bar on foo~mandt = bar~mandt and foo~bname = bar~bname.",
   "SELECT SINGLE node_key FROM snwd_bpa INTO @DATA(node_key).",
   "SELECT SINGLE node_key FROM snwd_bpa INTO @DATA(node_key) WHERE bp_id = @lv_bp_id.",
-  "SELECT node_key INTO CORRESPONDING FIELDS OF @<entity> FROM snwd_so WHERE (where_clause) ORDER BY (orderby_clause).",
-  "SELECT field INTO l_val FROM table WHERE field1 IN var AND field2 LT sy-datum AND field3 GT sy-datum AND NOT field4 = 'X'.",
-  "SELECT * INTO data FROM table WHERE name LIKE l_name ESCAPE '!' AND text NOT LIKE l_text ESCAPE '!'.",
 
   "SELECT SINGLE * FROM sflight INTO CORRESPONDING FIELDS OF @return WHERE carrid = @i_flight_number.",
   "SELECT SINGLE * FROM sflight INTO @return WHERE carrid = @i_flight_number.",
@@ -84,7 +80,6 @@ let tests = [
   "  AND moo NOT IN ( SELECT msgnr FROM zbar\n" +
   "  WHERE name = iv_name ).",
 
-  "SELECT sdfs FROM basdf WHERE name is null.",
   "SELECT * FROM zfoo INTO ls_bar UP TO 1 ROWS WHERE moo = boo AND (lt_where) AND bar = foo.",
   "select count(*) into (count) from ztab where bar is not null.",
   "SELECT num MAX( count ) COUNT( * ) INTO TABLE lt_tab FROM zfoo.",
@@ -95,7 +90,6 @@ let tests = [
   "SELECT SINGLE blah INTO lv_blah FROM dbtable WHERE posid = foo-bar AND field IN ( '02', '30' ).",
   "SELECT matnr, werks FROM ztable INTO TABLE @DATA(lt_result) WHERE matnr IN @s_matnr AND werks IN @s_werks.",
   "select posnr min( edatu ) into table li_vbep from vbep where vbeln = li_vbbe-vbeln and wmeng > 0 group by vbeln posnr.",
-  "select netwr from vbakuk into l_netwr where vbeln = l_vbeln and vbtyp in ('C').",
 
   "SELECT SINGLE ebeln ebelp\n" +
   "  INTO ( lv_ebeln , lv_ebeln )\n" +

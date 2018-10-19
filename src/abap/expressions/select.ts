@@ -27,7 +27,6 @@ export class Select extends Expression {
                         opt(ver(Version.v740sp05, tok(WAt))),
                         new Target());
 
-
     let into = alt(seq(str("INTO"), alt(intoList, intoSimple)), intoTable);
 
     let pack = seq(str("PACKAGE SIZE"), new Source());

@@ -36,7 +36,7 @@ export class ExitOrCheck extends ABAPRule {
     for (let statement of file.getStatements()) {
       if (statement instanceof Statements.Loop
           || statement instanceof Statements.While
-          || statement instanceof Statements.Select
+          || statement instanceof Statements.SelectLoop
           || statement instanceof Statements.Do) {
         stack.push(statement);
       } else if (statement instanceof Statements.EndLoop
