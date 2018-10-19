@@ -1,6 +1,6 @@
 import {seq, per, opt, alt, tok, str, ver, star, plus, Expression, IRunnable, regex} from "../combi";
 import {WParenLeftW, WAt, WParenRightW, WParenLeft} from "../tokens/";
-import {Field, DatabaseTable, Dynamic, Target, SQLCond, SQLJoin} from "./";
+import {Field, DatabaseTable, Dynamic, Target, Source, SQLCond, SQLJoin} from "./";
 import {Version} from "../../version";
 
 export class SelectLoop extends Expression {
@@ -29,7 +29,7 @@ export class SelectLoop extends Expression {
 
     let order = seq(str("ORDER BY"), alt(plus(seq(new Field(), opt(ding))), str("PRIMARY KEY"), new Dynamic()));
 
-    let name = regex(/^(?!(?:SINGLE|INTO)$)\w+$/i);
+    let name = regex(/^(?!(?:SINGLE|INTO|APPENDING|FROM)$)\w+(~\w+)?$/i);
 
     let fields = alt(str("*"),
                      new Dynamic(),
@@ -38,11 +38,17 @@ export class SelectLoop extends Expression {
     let client = str("CLIENT SPECIFIED");
     let bypass = str("BYPASSING BUFFER");
 
+    let up = seq(str("UP TO"), opt(ver(Version.v740sp05, tok(WAt))), new Source(), str("ROWS"));
+
+//    let pack = seq(str("PACKAGE SIZE"), new Source());
+
+    let forAll = seq(str("FOR ALL ENTRIES IN"), opt(ver(Version.v740sp05, tok(WAt))), new Source());
+
     let source = seq(from, star(new SQLJoin()), opt(tok(WParenRightW)));
 
     let group = seq(str("GROUP BY"), plus(alt(new Field(), new Dynamic())));
 
-    let perm = per(source, into, where, order, client, bypass, group);
+    let perm = per(source, into, where, up, order, client, bypass, group, forAll);
 
     let ret = seq(str("SELECT"),
                   fields,

@@ -29,8 +29,6 @@ export class Select extends Expression {
 
     let into = alt(seq(str("INTO"), alt(intoList, intoSimple)), intoTable);
 
-    let pack = seq(str("PACKAGE SIZE"), new Source());
-
     let connection = seq(str("CONNECTION"), new Dynamic());
 
     let where = seq(str("WHERE"), new SQLCond());
@@ -60,7 +58,7 @@ export class Select extends Expression {
 
     let group = seq(str("GROUP BY"), plus(alt(new Field(), new Dynamic())));
 
-    let perm = per(source, into, forAll, where, order, up, client, bypass, pack, group, connection);
+    let perm = per(source, into, forAll, where, order, up, client, bypass, group, connection);
 
     let ret = seq(str("SELECT"),
                   alt(str("DISTINCT"), opt(seq(str("SINGLE"), opt(str("FOR UPDATE"))))),
