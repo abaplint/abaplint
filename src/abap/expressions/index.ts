@@ -18,6 +18,7 @@ export * from "./sql_field_name";
 export * from "./sql_compare";
 export * from "./cond";
 export * from "./for";
+export * from "./sql_aggregation";
 export * from "./sql_cond";
 export * from "./form_param_type";
 export * from "./form_param";

@@ -13,13 +13,11 @@ let tests = [
   "SELECT * FROM zfoo INTO ls_bar UP TO 1 ROWS WHERE moo = boo AND (lt_where) AND bar = foo.",
   "select field1 field2 into corresponding fields of gt_target from zfoo for all entries in lt_table where number = lt_table-number.",
   "SELECT p~field1 p~field2 INTO (lv_field1, lv_field2) FROM ztab AS p WHERE p~field = lv_field.",
+  "select field count(*) into (l_field, l_count) from ztab where field = bar group by number.",
 
 // todo
-  /*
-  "select field count(*) into (l_field, l_count) from ztab where field = bar group by number.",
-  "select field appending table lt_tab from ztable package size 10 where foo = 'B'.",
-  "SELECT * FROM foo INTO CORRESPONDING FIELDS OF TABLE lt_foo PACKAGE SIZE 100 WHERE moo = stru-value1 AND boo = stru-value2.",
-  */
+//  "select field appending table lt_tab from ztable package size 10 where foo = 'B'.",
+//  "SELECT * FROM foo INTO CORRESPONDING FIELDS OF TABLE lt_foo PACKAGE SIZE 100 WHERE moo = stru-value1 AND boo = stru-value2.",
 ];
 
 statementType(tests, "SELECT loop", Statements.SelectLoop);

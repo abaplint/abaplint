@@ -1,6 +1,6 @@
 import {seq, per, opt, alt, tok, str, ver, star, plus, Expression, IRunnable} from "../combi";
-import {WParenLeftW, WAt, WParenRightW, ParenLeft, WParenLeft, ParenLeftW} from "../tokens/";
-import {Field, DatabaseTable, Dynamic, Target, Source, SQLCond, SQLJoin} from "./";
+import {WParenLeftW, WAt, WParenRightW, WParenLeft} from "../tokens/";
+import {Field, DatabaseTable, Dynamic, Target, Source, SQLCond, SQLJoin, SQLAggregation} from "./";
 import {Version} from "../../version";
 
 export class Select extends Expression {
@@ -39,15 +39,9 @@ export class Select extends Expression {
 
     let forAll = seq(str("FOR ALL ENTRIES IN"), opt(ver(Version.v740sp05, tok(WAt))), new Source());
 
-    let count = seq(str("COUNT"), alt(tok(ParenLeft), tok(ParenLeftW)), opt(str("DISTINCT")), alt(str("*"), new Field()), str(")"));
-    let max = seq(str("MAX"), alt(tok(ParenLeft), tok(ParenLeftW)), new Field(), str(")"));
-    let min = seq(str("MIN"), alt(tok(ParenLeft), tok(ParenLeftW)), new Field(), str(")"));
-    let sum = seq(str("SUM"), alt(tok(ParenLeft), tok(ParenLeftW)), new Field(), str(")"));
-    let avg = seq(str("AVG"), alt(tok(ParenLeft), tok(ParenLeftW)), new Field(), str(")"));
-
     let fields = alt(str("*"),
                      new Dynamic(),
-                     plus(alt(seq(new Field(), opt(ver(Version.v740sp05, str(",")))), count, max, min, sum, avg)));
+                     plus(alt(seq(new Field(), opt(ver(Version.v740sp05, str(",")))), new SQLAggregation())));
 
     let up = seq(str("UP TO"), opt(ver(Version.v740sp05, tok(WAt))), new Source(), str("ROWS"));
 
