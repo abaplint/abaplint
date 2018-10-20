@@ -88,6 +88,8 @@ export default class Registry {
       case "ENQU":
         add = new Objects.LockObject(name, "todo");
         break;
+      case "ABAP":
+        throw new Error("Add type in filename, eg zclass.clas.abap or zprogram.prog.abap");
       default:
         throw new Error("Unknown object type: " + type);
     }
