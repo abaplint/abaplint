@@ -41,10 +41,10 @@ export class SQLCompare extends Expression {
 
     let source = seq(opt(ver(Version.v740sp05, tok(WAt))), new Source());
 
-    let all = seq(str("ALL"), subSelect);
+    let sub = seq(alt(str("ALL"), str("ANY"), str("SOME")), subSelect);
 
     let rett = seq(new SQLFieldName(),
-                   alt(seq(operator, alt(source, all)),
+                   alt(seq(operator, alt(source, sub)),
                        inn,
                        like,
                        between,
