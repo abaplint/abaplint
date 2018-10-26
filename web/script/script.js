@@ -37,13 +37,13 @@ function buildAst(file) {
 
 function process() {
   let input = stripNewline(editor.getValue());
-  let file = new abaplint.File("foobar.clas.abap", input);
+  let file = new abaplint.File("foobar.prog.abap", input);
   return new abaplint.Runner([file], config).findIssues();
 }
 
 function parse() {
   let input = stripNewline(editor.getValue());
-  let file = new abaplint.File("foobar.clas.abap", input);
+  let file = new abaplint.File("foobar.prog.abap", input);
   return new abaplint.Runner([file], config).parse()[0];
 }
 
