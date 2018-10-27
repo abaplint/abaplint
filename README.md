@@ -12,11 +12,10 @@ Linter for ABAP, code must be serialized using [abapGit](https://github.com/lars
 
 Works with
 * [travis](https://travis-ci.org/) ([example](https://github.com/larshp/abaplint-test))
-* [Atom](https://github.com/larshp/linter-abaplint)
+* [Atom](https://atom.io/packages/linter-abaplint) ([source](https://github.com/larshp/linter-abaplint))
 * [ABAP in Eclipse](https://github.com/larshp/abaplint-eclipse)
-* [WABAP](https://github.com/larshp/WABAP)
-* VS Code, [#13](https://github.com/larshp/abaplint/issues/13)
-* [abaplint.org](http://abaplint.org/)
+* [VS Code](https://marketplace.visualstudio.com/items?itemName=larshp.vscode-abaplint), ([source](https://github.com/abaplint/vscode-abaplint))
+* [Github App](https://github.com/apps/abaplint)
 
 For checking ABAP code inside the ABAP system use [code inspector](http://wiki.scn.sap.com/wiki/display/ABAP/Code+Inspector) or [ATC](http://wiki.scn.sap.com/wiki/display/ABAP/ABAP+Test+Cockpit), also see project [abapOpenChecks](https://github.com/larshp/abapOpenChecks).
 
