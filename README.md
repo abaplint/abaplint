@@ -11,7 +11,6 @@ Linter for ABAP, code must be serialized using [abapGit](https://github.com/lars
 [Try it online](https://larshp.github.io/abaplint/)
 
 Works with
-* [travis](https://travis-ci.org/) ([example](https://github.com/larshp/abaplint-test))
 * [Atom](https://atom.io/packages/linter-abaplint) ([source](https://github.com/larshp/linter-abaplint))
 * [ABAP in Eclipse](https://github.com/larshp/abaplint-eclipse)
 * [VS Code](https://marketplace.visualstudio.com/items?itemName=larshp.vscode-abaplint), ([source](https://github.com/abaplint/vscode-abaplint))
