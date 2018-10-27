@@ -7,7 +7,7 @@ export class Submit extends Statement {
 
   public getMatcher(): IRunnable {
     let sign = seq(str("SIGN"), new Source());
-    let eq = alt(str("="), str("EQ"), str("IN"), str("NE"), str("INCL"));
+    let eq = alt(str("="), str("EQ"), str("IN"), str("NE"), str("CP"), str("INCL"));
     let compare = seq(eq, new Source());
     let between = seq(str("BETWEEN"), new Source(), str("AND"), new Source());
     let selectionTable = seq(str("SELECTION-TABLE"), new Source());

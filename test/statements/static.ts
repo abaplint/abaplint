@@ -8,6 +8,7 @@ let tests = [
   "statics l_heading.",
   "STATICS sv_first TYPE abap_bool VALUE abap_true.",
   "STATICS asdf/foo/bar TYPE i.",
+  "STATICS stat(255).",
 ];
 
 statementType(tests, "STATIC", Statements.Static);

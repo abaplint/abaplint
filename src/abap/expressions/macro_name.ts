@@ -3,6 +3,6 @@ import {Dash} from "../tokens/";
 
 export class MacroName extends Expression {
   public getRunnable(): IRunnable {
-    return seq(reg(/^[\w%][\w\*]*>?$/), star(seq(tok(Dash), reg(/^\w+$/))));
+    return seq(reg(/^[\w\*%\?]+>?$/), star(seq(tok(Dash), reg(/^\w+$/))));
   }
 }

@@ -9,7 +9,7 @@ export class Program extends Statement {
     let message = seq(str("MESSAGE-ID"), new Source());
     let size = seq(str("LINE-SIZE"), new Source());
     let heading = str("NO STANDARD PAGE HEADING");
-    let line = seq(str("LINE-SIZE"), new Source());
+    let line = seq(str("LINE-COUNT"), new Source());
     let options = per(message, size, heading, line);
 
     let ret = seq(str("PROGRAM"), optPrio(new Field()), opt(options));

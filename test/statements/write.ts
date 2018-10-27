@@ -54,6 +54,8 @@ let tests = [
   "write at GI_GEN_H_MSG-HOTSPOT_COL ICON_REPLACE as icon.",
   "WRITE value CURRENCY cur TO s.",
   "WRITE AT (length) lv_text COLOR = var1 INTENSIFIED = var2 HOTSPOT = var3.",
+  "WRITE (16) foo COLOR = r INVERSE = i.",
+  "WRITE 'sdf' TO table INDEX index.",
 ];
 
 statementType(tests, "WRITE", Statements.Write);

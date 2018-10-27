@@ -53,8 +53,9 @@ export class SelectLoop extends Expression {
 // hmm, this is bad
     let appending = seq(str("APPENDING TABLE"), new Target(), str("FROM"), new DatabaseTable(), pack);
     let intoTable = seq(str("INTO CORRESPONDING FIELDS OF TABLE"), new Target(), pack);
+    let intoTab = seq(str("INTO TABLE"), new Target(), pack);
 
-    let perm = per(source, into, where, up, order, client, bypass, group, forAll, appending, intoTable);
+    let perm = per(source, into, where, up, order, client, bypass, group, forAll, appending, intoTable, intoTab);
 
     let ret = seq(str("SELECT"),
                   fields,

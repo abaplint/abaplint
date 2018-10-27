@@ -40,8 +40,9 @@ export class Write extends Statement {
                       reg(/^[YMD]{2,4}\/?[YMD]{2,4}\/?[YMD]{2,4}$/i),
                       seq(str("UNIT"), new Source()),
                       seq(str("INTENSIFIED"), opt(onoff)),
+                      seq(str("INDEX"), new Source()),
                       seq(str("DECIMALS"), new Source()),
-                      seq(str("INVERSE"), opt(str("ON"))),
+                      seq(str("INVERSE"), opt(onoff)),
                       seq(str("COLOR"), opt(str("=")), new Source()),
                       seq(str("CURRENCY"), new Source()),
                       str("NO-SIGN"));

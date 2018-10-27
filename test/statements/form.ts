@@ -138,6 +138,9 @@ let tests = [
   "  foo LIKE bar-moo.",
 
   "FORM alv CHANGING pi_list LIKE gi_excel[].",
+
+  "FORM formname USING $var $lang$sdf$ $lang$sdf.",
+
 //  "FORM moo USING boo-vbeln bar-vbtyp.",
 ];
 

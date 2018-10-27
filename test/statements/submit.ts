@@ -27,6 +27,11 @@ let tests = [
   "  WITH p_bukrs = p_bukrs\n" +
   "  WITH SELECTION-TABLE lt_belnr\n" +
   "  WITH p_list = p_list.",
+
+  "SUBMIT zfoo AND RETURN\n" +
+  "  WITH s_type = lv_type\n" +
+  "  WITH s_name CP name.",
+
 ];
 
 statementType(tests, "SUBMIT", Statements.Submit);

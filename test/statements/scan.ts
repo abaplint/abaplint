@@ -130,6 +130,18 @@ let tests = [
   "  without trmac\n" +
   "  with list tokenization\n" +
   "  with pragmas '*'.",
+
+  "SCAN ABAP-SOURCE lt_source[] \n" +
+  "  TOKENS     INTO lt_tokens[]\n" +
+  "  STATEMENTS INTO lt_statements[]\n" +
+  "  KEYWORDS   FROM lt_keywords\n" +
+  "  MESSAGE    INTO lv_message\n" +
+  "  WORD       INTO lv_word\n" +
+  "  LINE       INTO lv_line\n" +
+  "  OFFSET     INTO lv_offset\n" +
+  "  WITHOUT    TRMAC\n" +
+  "  WITH INCLUDES.",
+
 ];
 
 statementType(tests, "SCAN", Statements.Scan);

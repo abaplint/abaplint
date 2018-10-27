@@ -13,6 +13,7 @@ export class Scan extends Statement {
     let levels = seq(str("LEVELS INTO"), new Target());
     let structures = seq(str("STRUCTURES INTO"), new Target());
     let include = seq(str("INCLUDE INTO"), new Target());
+    let offset = seq(str("OFFSET INTO"), new Target());
     let enh = seq(str("ENHANCEMENTS INTO"), new Target());
     let enhO = seq(str("ENHANCEMENT OPTIONS INTO"), new Target());
     let keywords = seq(str("KEYWORDS FROM"), new Source());
@@ -38,6 +39,7 @@ export class Scan extends Statement {
                       keywords,
                       word,
                       line,
+                      offset,
                       overflow,
                       message,
                       includeProgram,

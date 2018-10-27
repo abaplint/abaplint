@@ -15,6 +15,7 @@ export class Normal extends Structure {
                     sta(Statements.AssignLocalCopy),
                     sta(Statements.Assign),
                     sta(Statements.AuthorityCheck),
+                    sta(Statements.Back),
                     sta(Statements.Break),
                     sta(Statements.CallDatabase),
                     sta(Statements.CallDialog),
