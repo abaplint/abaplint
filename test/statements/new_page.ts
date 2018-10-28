@@ -23,6 +23,13 @@ let tests = [
   "  LINE-SIZE 182\n" +
   "  LINE-COUNT 65\n" +
   "  NO DIALOG.",
+
+  "NEW-PAGE PRINT ON\n" +
+  "  LIST DATASET lv_name\n" +
+  "  COVER TEXT   lv_title\n" +
+  "  IMMEDIATELY  ' '\n" +
+  "  NEW LIST IDENTIFICATION 'X'\n" +
+  "  NO DIALOG.",
 ];
 
 statementType(tests, "NEW-PAGE", Statements.NewPage);

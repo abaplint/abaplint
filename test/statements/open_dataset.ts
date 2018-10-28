@@ -23,6 +23,7 @@ let tests = [
   "OPEN DATASET file FOR OUTPUT IN TEXT MODE ENCODING DEFAULT\n" +
   "  IGNORING CONVERSION ERRORS\n" +
   "  REPLACEMENT CHARACTER c_non_unicode.",
+  "OPEN DATASET file FOR OUTPUT IN TEXT MODE ENCODING UTF-8 WITH WINDOWS LINEFEED.",
 ];
 
 statementType(tests, "OPEN", Statements.OpenDataset);

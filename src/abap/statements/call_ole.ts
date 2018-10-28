@@ -17,6 +17,7 @@ export class CallOLE extends Statement {
                   new Constant(),
                   opt(rc),
                   opt(str("NO FLUSH")),
+                  opt(str("QUEUEONLY")),
                   opt(exporting));
 
     return verNot(Version.Cloud, ret);

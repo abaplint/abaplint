@@ -1,6 +1,6 @@
 import {Statement} from "./statement";
 import {str, seq, opt, alt, per, IRunnable} from "../combi";
-import {Constant, FieldSub, FormName, MethodName, Source, FunctionParameters, FieldChain} from "../expressions";
+import {Constant, FieldSub, FormName, MethodName, Source, FunctionParameters, FunctionName} from "../expressions";
 
 export class CallFunction extends Statement {
 
@@ -8,7 +8,8 @@ export class CallFunction extends Statement {
     let starting = seq(str("STARTING NEW TASK"),
                        alt(new Constant(), new FieldSub()));
     let update = str("IN UPDATE TASK");
-    let background = str("IN BACKGROUND TASK");
+    let unit = seq(str("UNIT"), new Source());
+    let background = seq(str("IN BACKGROUND"), alt(str("TASK"), unit));
     let dest = seq(str("DESTINATION"), opt(str("IN GROUP")), new Source());
     let calling = seq(str("CALLING"), new MethodName(), str("ON END OF TASK"));
     let performing = seq(str("PERFORMING"), new FormName(), str("ON END OF TASK"));
@@ -21,7 +22,7 @@ export class CallFunction extends Statement {
 
     let call = seq(str("CALL"),
                    alt(str("FUNCTION"), str("CUSTOMER-FUNCTION")),
-                   alt(new Constant(), new FieldChain()),
+                   new FunctionName(),
                    opt(options),
                    alt(new FunctionParameters(), dynamic));
 

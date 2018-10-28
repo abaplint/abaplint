@@ -22,6 +22,11 @@ let tests = [
   "  EXCEPTIONS\n" +
   "    OTHERS = 1.",
 
+  "receive results from function gc_fm\n" +
+  "  keeping task\n" +
+  "  importing\n" +
+  "    ev_char = lv_char.",
+
 ];
 
 statementType(tests, "RECEIVE", Statements.Receive);

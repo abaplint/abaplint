@@ -27,6 +27,7 @@ let tests = [
   "MODIFY ct_data FROM <ls_data> TRANSPORTING (b1) (b2).",
   "MODIFY TABLE lt_obj FROM ls_obj TRANSPORTING foo-bar type.",
   "MODIFY (lv_table) CONNECTION (lv_db) FROM TABLE it_data.",
+//  "MODIFY CURRENT LINE LINE FORMAT COLOR COL_KEY RESET.",
 ];
 
 statementType(tests, "MODIFY", Statements.Modify);

@@ -12,6 +12,7 @@ export class DataBegin extends Statement {
     let structure = seq(str("BEGIN OF"),
                         opt(str("COMMON PART")),
                         new NamespaceSimpleName(),
+                        opt(str("READ-ONLY")),
                         opt(occurs));
 
     return seq(start, structure);

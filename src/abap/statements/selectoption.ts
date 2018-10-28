@@ -30,6 +30,7 @@ export class SelectOption extends Statement {
                       match,
                       visible,
                       modif,
+                      str("NO DATABASE SELECTION"),
                       str("LOWER CASE"),
                       str("NO-EXTENSION"),
                       str("NO INTERVALS"),

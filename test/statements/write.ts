@@ -56,6 +56,8 @@ let tests = [
   "WRITE AT (length) lv_text COLOR = var1 INTENSIFIED = var2 HOTSPOT = var3.",
   "WRITE (16) foo COLOR = r INVERSE = i.",
   "WRITE 'sdf' TO table INDEX index.",
+  "WRITE AT pos(length) symbol AS SYMBOL NO-GAP.",
+  "WRITE AT lv_pos(4) lv_icon AS ICON.",
 ];
 
 statementType(tests, "WRITE", Statements.Write);

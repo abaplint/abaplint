@@ -18,6 +18,7 @@ let tests = [
   "PERFORM read_*table(zfoo) USING code.",
   "PERFORM %run IN PROGRAM (L_REPID) CHANGING foo.",
   "PERFORM foo(zbar) IF FOUND USING l_data CHANGING l_chg.",
+  "PERFORM foo?.",
 ];
 
 statementType(tests, "PERFORM", Statements.Perform);

@@ -133,7 +133,9 @@ let tests = [
 
   "SELECT field FROM table INTO TABLE @DATA(lt_result) WHERE moo IN ( @gc_foo , @gc_bar ).",
   "SELECT kunnr APPENDING CORRESPONDING FIELDS OF TABLE lt_record FROM tab WHERE field = a_field.",
-  "SELECT  pernr FROM pa0002 INTO TABLE lt_pernr UP TO 100 ROWS WHERE pernr = SOME ( select pernr FROM pa9510 ).",
+  "SELECT pernr FROM pa0002 INTO TABLE lt_pernr UP TO 100 ROWS WHERE pernr = SOME ( select pernr FROM pa9510 ).",
+  "SELECT * FROM table INTO TABLE lt_tab WHERE field LIKE search ESCAPE '#'.",
+  "SELECT * FROM table INTO TABLE lt_tab %_HINTS ORACLE 'FIRST_ROWS'.",
 ];
 
 statementType(tests, "SELECT", Statements.Select);

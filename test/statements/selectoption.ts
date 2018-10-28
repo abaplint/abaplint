@@ -23,6 +23,7 @@ let tests = [
   "SELECT-OPTIONS so_fr FOR from MODIF ID 123.",
   "SELECT-OPTIONS s_startd FOR w_startd DEFAULT sy-datum TO sy-datum.",
   "SELECT-OPTIONS sp$00004 FOR moo-boo MEMORY ID foo.",
+  "SELECT-OPTIONS s_name FOR field NO DATABASE SELECTION.",
 ];
 
 statementType(tests, "SELECT-OPTIONS", Statements.SelectOption);

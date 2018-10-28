@@ -7,7 +7,7 @@ export class Submit extends Statement {
 
   public getMatcher(): IRunnable {
     let sign = seq(str("SIGN"), new Source());
-    let eq = alt(str("="), str("EQ"), str("IN"), str("NE"), str("CP"), str("INCL"));
+    let eq = alt(str("="), str("EQ"), str("IN"), str("NE"), str("CP"), str("GE"), str("LE"), str("INCL"));
     let compare = seq(eq, new Source());
     let between = seq(str("BETWEEN"), new Source(), str("AND"), new Source());
     let selectionTable = seq(str("SELECTION-TABLE"), new Source());
@@ -24,6 +24,9 @@ export class Submit extends Statement {
     let ssetp = seq(str("USING SELECTION-SETS OF PROGRAM"), new Source());
     let uss = seq(str("USING SELECTION-SCREEN"), new Source());
     let free = seq(str("WITH FREE SELECTIONS"), new Source());
+    let newList = seq(str("NEW LIST IDENTIFICATION"), new Source());
+    let layout = seq(str("LAYOUT"), new Source());
+    let cover = seq(str("SAP COVER PAGE"), new Source());
 
     let keep = seq(str("KEEP IN SPOOL"), new Source());
     let imm = seq(str("IMMEDIATELY"), new Source());
@@ -38,9 +41,12 @@ export class Submit extends Statement {
                    sset,
                    ssetp,
                    keep,
+                   cover,
                    imm,
+                   layout,
                    dest,
                    free,
+                   newList,
                    sign,
                    uss,
                    str("TO SAP-SPOOL"),

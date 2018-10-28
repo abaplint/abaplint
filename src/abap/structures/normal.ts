@@ -86,6 +86,7 @@ export class Normal extends Structure {
                     sta(Statements.Hide),
                     sta(Statements.ImportDynpro),
                     sta(Statements.Import),
+                    sta(Statements.Infotypes),
                     sta(Statements.Include), // include does not have to be at top level
                     sta(Statements.InsertDatabase),
                     sta(Statements.InsertInternal),

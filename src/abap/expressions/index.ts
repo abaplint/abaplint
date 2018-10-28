@@ -4,6 +4,8 @@ export * from "./inlinedata";
 export * from "./inlinefs";
 export * from "./fstarget";
 export * from "./target";
+export * from "./sql_hints";
+export * from "./function_name";
 export * from "./select_loop";
 export * from "./arrowordash";
 export * from "./parameter_s";

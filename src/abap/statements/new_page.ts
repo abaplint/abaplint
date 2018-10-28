@@ -16,6 +16,8 @@ export class NewPage extends Statement {
     let immediately = seq(str("IMMEDIATELY"), new Source());
     let keep = seq(str("KEEP IN SPOOL"), new Source());
     let listAuth = seq(str("LIST AUTHORITY"), new Source());
+    let dataset = seq(str("LIST DATASET"), new Source());
+    let newList = seq(str("NEW LIST IDENTIFICATION"), new Source());
 
     let ret = seq(str("NEW-PAGE"),
                   opt(per(print,
@@ -25,6 +27,8 @@ export class NewPage extends Statement {
                           parameters,
                           listAuth,
                           immediately,
+                          dataset,
+                          newList,
                           keep,
                           destination,
                           coverText,

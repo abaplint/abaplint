@@ -23,10 +23,11 @@ export class OpenDataset extends Statement {
     let wbom = str("WITH BYTE-ORDER MARK");
     let type = seq(str("TYPE"), new Source());
     let feed = str("WITH SMART LINEFEED");
+    let windows = str("WITH WINDOWS LINEFEED");
 
     let ret = seq(str("OPEN DATASET"),
                   new Target(),
-                  per(direction, type, mode, wbom, replacement, encoding, pos, message, ignoring, bom, code, feed));
+                  per(direction, type, mode, wbom, replacement, encoding, pos, message, ignoring, bom, code, feed, windows));
 
     return verNot(Version.Cloud, ret);
   }

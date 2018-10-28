@@ -47,12 +47,17 @@ export class Write extends Statement {
                       seq(str("CURRENCY"), new Source()),
                       str("NO-SIGN"));
 
+    let wlength = seq(tok(WParenLeft), reg(/^[\w\d]+$/), tok(ParenRightW));
+    let length = seq(tok(ParenLeft), reg(/^[\w\d]+$/), tok(ParenRightW));
+
 // todo, is AT just an optional token?
-    let complex = alt(seq(str("/"), opt(seq(tok(ParenLeft), reg(/^\d+$/), tok(ParenRightW)))),
-                      seq(opt(str("AT")), tok(WParenLeft), reg(/^[\w\d]+$/), tok(ParenRightW)),
-                      seq(opt(str("AT")), reg(/^\/?\d+$/), tok(ParenLeft), reg(/^\d+$/), tok(ParenRightW)),
-                      seq(str("AT"), new FieldSub()),
-                      seq(str("AT"), str("/"), tok(ParenLeft), reg(/^[\w\d]+$/), tok(ParenRightW)));
+// todo, clean up
+// todo, move to expression?
+    let complex = alt(seq(str("/"), opt(length)),
+                      seq(opt(str("AT")), wlength),
+                      seq(opt(str("AT")), reg(/^\/?\d+$/), length),
+                      seq(str("AT"), new FieldSub(), opt(length)),
+                      seq(str("AT"), str("/"), length));
 
     let ret = seq(str("WRITE"),
                   opt(alt(at, complex)),

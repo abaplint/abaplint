@@ -1,13 +1,13 @@
 import {Statement} from "./statement";
 import {verNot, str, seq, opt, IRunnable} from "../combi";
-import {Constant, ReceiveParameters} from "../expressions";
+import {ReceiveParameters, FunctionName} from "../expressions";
 import {Version} from "../../version";
 
 export class Receive extends Statement {
 
   public getMatcher(): IRunnable {
     let ret = seq(str("RECEIVE RESULTS FROM FUNCTION"),
-                  new Constant(),
+                  new FunctionName(),
                   opt(str("KEEPING TASK")),
                   new ReceiveParameters());
 

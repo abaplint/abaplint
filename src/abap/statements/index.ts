@@ -40,6 +40,7 @@ export * from "./return";
 export * from "./endwhile";
 export * from "./constant";
 export * from "./catch";
+export * from "./infotypes";
 export * from "./message";
 export * from "./read_table";
 export * from "./endloop";

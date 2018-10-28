@@ -1,5 +1,5 @@
 import {Statement} from "./statement";
-import {str, seq, alt, opt, tok, IRunnable} from "../combi";
+import {str, seq, alt, opt, tok, per, IRunnable} from "../combi";
 import {Arrow} from "../tokens/";
 import {FSTarget, Target, Source, Dynamic, Field} from "../expressions";
 
@@ -24,7 +24,7 @@ export class Assign extends Statement {
     let range = seq(str("RANGE"), new Field());
     let decimals = seq(str("DECIMALS"), new Source());
 
-    let casting = seq(opt(str("CASTING")), opt(alt(type, like, range, handle, decimals)));
+    let casting = seq(opt(str("CASTING")), opt(alt(like, range, handle, per(type, decimals))));
 
     let ret = seq(str("ASSIGN"),
                   opt(seq(new Target(), str("INCREMENT"))),

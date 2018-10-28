@@ -20,6 +20,7 @@ let tests = [
   "FORM foo-bar.",
   "FORM foo--bar.",
   "FORM foo--.",
+  "FORM foo?.",
 
   "form foobar using\n" +
   "  foo type bar\n" +

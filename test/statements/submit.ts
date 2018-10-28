@@ -22,6 +22,7 @@ let tests = [
   "SUBMIT zfoo WITH SELECTION-TABLE lt_para WITH type BETWEEN 'A' AND 'B' WITH call = 'X' AND RETURN.",
   "SUBMIT zfoo TO SAP-SPOOL WITHOUT SPOOL DYNPRO KEEP IN SPOOL 'X' IMMEDIATELY 'X' DESTINATION 'LP01' AND RETURN.",
   "SUBMIT /foo/bar USING SELECTION-SCREEN '1000' VIA SELECTION-SCREEN WITH foo EQ 'X'.",
+  "SUBMIT zsdfsdf WITH num EQ lv_num WITH date GE '00000000'.",
 
   "SUBMIT zblah\n" +
   "  WITH p_bukrs = p_bukrs\n" +
@@ -31,6 +32,18 @@ let tests = [
   "SUBMIT zfoo AND RETURN\n" +
   "  WITH s_type = lv_type\n" +
   "  WITH s_name CP name.",
+
+  "submit zfoobar\n" +
+  "  with field1 EQ lv_field1\n" +
+  "  with field2 EQ lv_field2\n" +
+  "  via job lv_jobname number lv_jobcount\n" +
+  "  to sap-spool destination lv_device\n" +
+  "               immediately ' '\n" +
+  "               new list identification 'X'\n" +
+  "               layout 'X_65_80'\n" +
+  "               sap cover page 'N'\n" +
+  "               without spool dynpro\n" +
+  "  and return.",
 
 ];
 

@@ -12,6 +12,7 @@ export class Import extends Statement {
 
     let options = per(str("ACCEPTING PADDING"),
                       str("IGNORING CONVERSION ERRORS"),
+                      str("IN CHAR-TO-HEX MODE"),
                       str("IGNORING STRUCTURE BOUNDARIES"),
                       str("ACCEPTING TRUNCATION"));
 

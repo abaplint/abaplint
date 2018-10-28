@@ -17,6 +17,7 @@ let tests = [
   "EXPORT data_tab FROM it_data TO DATABASE foobar(fo) FROM gs_field ID key USING var.",
   "EXPORT lv_flag FROM lv_flag TO SHARED BUFFER indx(ar) ID 'BLAH'.",
   "EXPORT itab = l_log_itab TO DATABASE foobar(aa) ID l_key FROM l_wa code page hint l_settings-field.",
+//  "EXPORT <wa> = <wa> TO DATABASE foobar(aa) ID me->name FROM l_wa.",
 ];
 
 statementType(tests, "EXPORT", Statements.Export);

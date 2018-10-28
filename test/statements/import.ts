@@ -19,6 +19,7 @@ let tests = [
   "  ignoring structure boundaries.",
   "IMPORT p TO moo FROM SHARED BUFFER indx(a1) ID 'MOO'.",
   "IMPORT moo = ls_boo FROM SHARED BUFFER indx(a1) ID 'BAR'.",
+  "IMPORT foo TO bar FROM DATABASE moo(aa) CLIENT lv_client ID lv_id IN CHAR-TO-HEX MODE.",
 ];
 
 statementType(tests, "IMPORT", Statements.Import);

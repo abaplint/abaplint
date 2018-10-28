@@ -27,6 +27,7 @@ let tests = [
   "assign data to <data> casting like bar.",
   "ASSIGN <ls_data> TO <ls_/foo/bar>.",
   "ASSIGN COMPONENT lv_name OF STRUCTURE iv_input TO <target> CASTING TYPE HANDLE <foo>-type.",
+  "ASSIGN <field_x> TO <field> TYPE <fs>-inttype DECIMALS <fs>-decimals.",
 //  "ASSIGN (FOO) TO <Z-BAR>.",
 ];
 
