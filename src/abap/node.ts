@@ -134,6 +134,9 @@ export class TokenNode extends CountableNode {
     return super.countTokens() + 1;
   }
 
+// todo
+//  public getName
+
   public vizName() {
     return "Token: " +
       className(this.token) +
