@@ -11,6 +11,25 @@ function stripNewline(input) {
   return result;
 }
 
+function outputNodes(nodes) {
+  let ret = "<ul>";
+  for (let node of nodes) {
+    let extra = "";
+    switch(node.constructor.name) {
+      case "TokenNode":
+        extra = node.name + ", \"" + node.getToken().getStr() + "\"";
+        break;
+      case "ReuseNode":
+        extra = "<a href=\"./viz/expression_" + node.getName() + ".svg\">" + node.getName() + "</a>" +
+          outputNodes(node.getChildren());
+        break;
+    }
+
+    ret = ret + "<li>" + node.constructor.name + ", " + extra + "</li>";
+  }
+  return ret + "</ul>";
+}
+
 function buildStatements(file) {
   let output = "";
 
@@ -21,11 +40,13 @@ function buildStatements(file) {
     let ecol = statement.getEnd().getCol();
 // getting the class name only works if uglify does not mangle names
     output = output +
-      "<div onmouseover=\"javascript:markLine(" +
+      "<b><div onmouseover=\"javascript:markLine(" +
       row + ", " + col + ", " + erow + ", " + ecol + ");\">" +
       row + ": " +
-      (statement.constructor + "").match(/\w+/g)[1] +
-      "</div>\n";
+      "<a href=\"./viz/statement_" + statement.constructor.name + ".svg\">" +
+      statement.constructor.name +
+      "</a>" +
+      "</div></b>\n" + outputNodes(statement.getChildren());
   }
 
   return output;
