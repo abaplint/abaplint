@@ -26,7 +26,7 @@
     "preweb": "npm run browserify && npm run uglify && cp build/bundle.js web/script/bundle.js",
     "web": "cp node_modules/codemirror/lib/codemirror.js web/script/ && cp node_modules/codemirror/addon/selection/mark-selection.js web/script/ && cp node_modules/codemirror/lib/codemirror.css web/style/",
     "postweb": "cp node_modules/codemirror/theme/mbo.css web/style/ && cp node_modules/codemirror-abap/build/abap.js web/script/",
-    "viz": "mkdir -p web/viz && rm -f web/viz/*.txt && rm -f web/viz/*.svg && node build/src/abap/graphs.js && node web/script/generate.js && rm -f web/viz/*.txt"
+    "web.syntax": "mkdir -p web/syntax && rm -f web/syntax/*.txt && rm -f web/syntax/*.svg && node build/src/abap/graphs.js && node web/script/generate.js && rm -f web/syntax/*.txt"
   },
   "repository": {
     "type": "git",

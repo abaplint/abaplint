@@ -32,7 +32,7 @@ class Graph {
   }
 
   private static writeFile(name: string, contents: string) {
-    fs.writeFileSync("./web/viz/" + name + ".txt", contents, "utf8");
+    fs.writeFileSync("./web/syntax/" + name + ".txt", contents, "utf8");
   }
 
 }

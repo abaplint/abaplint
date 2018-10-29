@@ -8,10 +8,10 @@ build/
 typings/
 coverage/
 npm-debug.log
-!web/viz/generate.js
-web/viz/data.json
-web/viz/**/*.txt
-web/viz/**/*.svg
+!web/syntax/generate.js
+web/syntax/data.json
+web/syntax/**/*.txt
+web/syntax/**/*.svg
 web/script/bundle.js
 web/script/codemirror.js
 web/style/codemirror.css

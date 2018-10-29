@@ -9,7 +9,7 @@ function run() {
   json.expressions = [];
   json.structures = [];
 
-  let folder = "./web/viz/";
+  let folder = "./web/syntax/";
   let files = fs.readdirSync(folder);
 
   for (let file of files) {
@@ -80,7 +80,7 @@ function run() {
 function generate() {
   let json = run();
 
-  fs.writeFileSync("./web/viz/data.json", JSON.stringify(json), "utf8");
+  fs.writeFileSync("./web/syntax/data.json", JSON.stringify(json), "utf8");
 }
 
 generate();
