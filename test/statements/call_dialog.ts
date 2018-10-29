@@ -10,6 +10,12 @@ let tests = [
   "    i_foo FROM i_foo\n" +
   "  IMPORTING\n" +
   "    e_bar TO e_bar.",
+
+  "call dialog 'DIALOG'\n" +
+  "  exporting\n" +
+  "    field1 from value\n" +
+  "    field2 from 'FOO'.",
+
 ];
 
 statementType(tests, "CALL DIALOG", Statements.CallDialog);

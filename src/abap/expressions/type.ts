@@ -1,4 +1,4 @@
-import {seq, opt, alt, str, Expression, IRunnable} from "../combi";
+import {seq, opt, alt, str, per, Expression, IRunnable} from "../combi";
 import {Constant, FieldChain, Source, Integer, TableBody} from "./";
 
 export class Type extends Expression {
@@ -13,10 +13,11 @@ export class Type extends Expression {
                            str("REF TO"),
                            str("RANGE OF"))));
 
-    let options = seq(opt(def), opt(length), opt(decimals), opt(new TableBody()));
+    let options = seq(opt(def), opt(per(length, decimals)));
 
     let ret = seq(type,
                   new FieldChain(),
+                  opt(new TableBody()),
                   alt(options, str("WITH HEADER LINE")));
 
     return ret;

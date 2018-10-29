@@ -40,7 +40,7 @@ export class SelectionScreen extends Statement {
                          modif,
                          visible);
 
-    let position = seq(opt(reg(/^\/?\d+$/)),
+    let position = seq(opt(reg(/^\/?[\d\w]+$/)),
                        alt(tok(ParenLeft), tok(WParenLeft)),
                        new Integer(),
                        alt(tok(ParenRightW), tok(ParenRight)));

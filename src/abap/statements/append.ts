@@ -9,7 +9,8 @@ export class Append extends Statement {
     let reference = seq(str("REFERENCE INTO"), new Target());
     let sorted = seq(str("SORTED BY"), new Field());
 
-    let range = seq(str("FROM"), new Source(), str("TO"), new Source);
+    let range = seq(opt(seq(str("FROM"), new Source())),
+                    opt(seq(str("TO"), new Source)));
 
     return seq(str("APPEND"),
                alt(str("INITIAL LINE"), seq(opt(str("LINES OF")), new Source())),

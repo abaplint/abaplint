@@ -25,8 +25,6 @@ export class Replace extends Statement {
     let replo = seq(str("REPLACEMENT OFFSET"), new Target());
     let repll = seq(str("REPLACEMENT LENGTH"), new Target());
 
-    let leng = seq(str("LENGTH"), new Target());
-
     let occ = alt(str("ALL OCCURRENCES"),
                   str("ALL OCCURENCES"),
                   str("FIRST OCCURRENCE"));
@@ -40,7 +38,7 @@ export class Replace extends Statement {
     return seq(str("REPLACE"),
                per(section, seq(opt(occ), source)),
                opt(seq(str("IN"), opt(str("TABLE")), new Target())),
-               opt(per(wit, into, cas, mode, repl, replo, repll, leng)));
+               opt(per(wit, into, cas, mode, repl, replo, repll, length)));
   }
 
 }

@@ -13,6 +13,7 @@ let tests = [
   "DELETE FROM zfoo WHERE bar LIKE 'FOO'.",
   "delete from zfoo where id is not null.",
   "DELETE FROM /foo/bar CONNECTION (con) WHERE id = lv_id.",
+  "delete table connection (lc_db) from table itab.",
 ];
 
 statementType(tests, "DELETE", Statements.DeleteDatabase);

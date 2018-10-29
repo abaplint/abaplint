@@ -20,10 +20,12 @@ export class UpdateDatabase extends Statement {
                         new Source());
 
     let client = str("CLIENT SPECIFIED");
+    let connection = seq(str("CONNECTION"), new Dynamic());
 
     let ret = seq(str("UPDATE"),
                   target,
                   opt(client),
+                  opt(connection),
                   opt(alt(fromTable, set)));
 
     return ret;

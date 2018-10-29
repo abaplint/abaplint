@@ -50,6 +50,7 @@ let tests = [
   "data $fie$ld type c.",
   "data lt_foo type standard table of snodetext initial size 0 with header line.",
   "DATA ret TYPE TABLE OF foobar INITIAL SIZE 10 WITH HEADER LINE.",
+  "data foo type p decimals 0 length 4.",
 // todo
 //  "DATA lt_tab OCCURS 10.",
 //  "DATA range TYPE RANGE OF char30 WITH HEADER LINE.",

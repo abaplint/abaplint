@@ -3,6 +3,7 @@ import * as Statements from "../../src/abap/statements/";
 
 let tests = [
   "LOCAL foo.",
+  "LOCAL moo[].",
   "LOCAL foo-bar.",
 ];
 

@@ -25,6 +25,7 @@ let tests = [
   "REPLACE FIRST OCCURRENCE OF lv_str IN SECTION OFFSET lv_offset OF lv_of WITH lv_with IN BYTE MODE REPLACEMENT OFFSET lv_offset.",
   "replace first occurrence of foo-bar in lv_source with moo-boo replacement offset lv_offset replacement length lv_length ignoring case.",
   "REPLACE foo LENGTH lv_len2 WITH space INTO lv_result.",
+  "REPLACE 'AA' LENGTH 2 WITH something INTO target.",
 ];
 
 statementType(tests, "REPLACE", Statements.Replace);

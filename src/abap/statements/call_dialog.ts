@@ -1,12 +1,12 @@
 import {Statement} from "./statement";
 import {verNot, str, seq, opt, plus, optPrio, IRunnable} from "../combi";
-import {Field, FieldSub, Constant} from "../expressions";
+import {Field, FieldSub, Constant, Source} from "../expressions";
 import {Version} from "../../version";
 
 export class CallDialog extends Statement {
 
   public getMatcher(): IRunnable {
-    let from = seq(new FieldSub(), optPrio(seq(str("FROM"), new Field())));
+    let from = seq(new FieldSub(), optPrio(seq(str("FROM"), new Source())));
     let exporting = seq(str("EXPORTING"), plus(from));
 
     let to = seq(new Field(), optPrio(seq(str("TO"), new Field())));

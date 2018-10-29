@@ -8,10 +8,11 @@ export class Describe extends Statement {
   public getMatcher(): IRunnable {
     let tlines = seq(str("LINES"), new Target());
     let kind = seq(str("KIND"), new Target());
+    let occurs = seq(str("OCCURS"), new Target());
 
     let table = seq(str("TABLE"),
                     new Source(),
-                    opt(per(tlines, kind)));
+                    opt(per(tlines, kind, occurs)));
 
     let mode = seq(str("IN"), alt(str("BYTE"), str("CHARACTER")), str("MODE"));
 

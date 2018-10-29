@@ -1,12 +1,13 @@
 import {Statement} from "./statement";
 import {verNot, str, seq, IRunnable} from "../combi";
-import {Source} from "../expressions";
 import {Version} from "../../version";
+import {Field} from "../expressions";
 
-export class CloseDataset extends Statement {
+export class Put extends Statement {
 
   public getMatcher(): IRunnable {
-    let ret = seq(str("CLOSE DATASET"), new Source());
+    let ret = seq(str("PUT"), new Field());
+
     return verNot(Version.Cloud, ret);
   }
 

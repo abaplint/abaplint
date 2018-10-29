@@ -5,6 +5,7 @@ import {Version} from "../../src/version";
 let tests = [
   "move 2 to lv_foo.",
   "move exact c_val to l_int.",
+  "MOVE-CORRESPONDING EXACT <res> TO ls_line.",
   "MOVE foo ?TO bar.",
   "MOVE '2' TO %bar.",
   "lv_foo = 2.",

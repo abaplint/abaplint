@@ -1,7 +1,7 @@
 import {Statement} from "./statement";
 import {str, seq, alt, opt, tok, per, IRunnable} from "../combi";
 import {Arrow} from "../tokens/";
-import {FSTarget, Target, Source, Dynamic, Field} from "../expressions";
+import {FSTarget, Target, Source, Dynamic, Field, FieldSub} from "../expressions";
 
 export class Assign extends Statement {
 
@@ -21,7 +21,7 @@ export class Assign extends Statement {
     let type = seq(str("TYPE"), alt(new Dynamic(), new Source()));
     let like = seq(str("LIKE"), alt(new Dynamic(), new Source()));
     let handle = seq(str("TYPE HANDLE"), new Source());
-    let range = seq(str("RANGE"), new Field());
+    let range = seq(str("RANGE"), new FieldSub());
     let decimals = seq(str("DECIMALS"), new Source());
 
     let casting = seq(opt(str("CASTING")), opt(alt(like, range, handle, per(type, decimals))));

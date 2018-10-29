@@ -12,6 +12,7 @@ let tests = [
   "INSERT (c_tabname) CLIENT SPECIFIED FROM TABLE lt_table.",
   "INSERT (mv_tabname) CONNECTION default FROM ig_row.",
   "INSERT (mv_tabname) CONNECTION (mv_connection_key) FROM ig_row.",
+  "insert into ztable client specified connection (l_db) values entry.",
 ];
 
 statementType(tests, "INSERT", Statements.InsertDatabase);

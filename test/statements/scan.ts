@@ -142,6 +142,26 @@ let tests = [
   "  WITHOUT    TRMAC\n" +
   "  WITH INCLUDES.",
 
+  "scan abap-source prog->lines\n" +
+  "  frame program from prog->name\n" +
+  "  include program from prog->name\n" +
+  "  preserving identifier escaping\n" +
+  "  with comments\n" +
+  "  with includes\n" +
+  "  with type-pools\n" +
+  "  with pragmas lv_pragma\n" +
+  "  tokens       into lv_tokens\n" +
+  "  statements   into lv_statements\n" +
+  "  levels       into lv_levels\n" +
+  "  structures   into lv_structures\n" +
+  "  enhancements into lv_enhancements\n" +
+  "  line         into lv_line\n" +
+  "  word         into lv_word\n" +
+  "  offset       into lv_offset\n" +
+  "  message      into lv_message\n" +
+  "  include      into lv_include\n" +
+  "  id lv_id table lv_table.",
+
 ];
 
 statementType(tests, "SCAN", Statements.Scan);

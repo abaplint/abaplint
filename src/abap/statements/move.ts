@@ -11,8 +11,8 @@ export class Move extends Statement {
 
     let mov = verNot(Version.Cloud, str("MOVE"));
 
-    let move = seq(alt(seq(mov, opt(str("EXACT"))),
-                       str("MOVE-CORRESPONDING")),
+    let move = seq(alt(mov, str("MOVE-CORRESPONDING")),
+                   opt(str("EXACT")),
                    new Source(),
                    alt(str("TO"), str("?TO")),
                    new Target(),
@@ -21,7 +21,7 @@ export class Move extends Statement {
 
     let equals = alt(str("="), str("?="));
 
-// todo, move ?= to CAST?
+// todo, move "?=" to CAST?
     let eq = seq(plus(seq(new Target(), equals)), new Source());
 
     return alt(move, eq);

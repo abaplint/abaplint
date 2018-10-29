@@ -24,6 +24,7 @@ export class InsertDatabase extends Statement {
     let into = seq(str("INTO"),
                    target,
                    opt(str("CLIENT SPECIFIED")),
+                   opt(conn),
                    str("VALUES"),
                    new Source());
 

@@ -8,12 +8,13 @@ export class DeleteDatabase extends Statement {
     let where = seq(str("WHERE"), alt(new SQLCond(), new Dynamic()));
     let source = alt(new Dynamic(), new DatabaseTable());
     let client = str("CLIENT SPECIFIED");
-    let con = seq(str("CONNECTION"), new Dynamic());
+    let connection = seq(str("CONNECTION"), new Dynamic());
 
-    let from = seq(str("FROM"), source, opt(client), opt(con), opt(where));
+    let from = seq(str("FROM"), source, opt(client), opt(connection), opt(where));
 
     let table = seq(source,
-                    opt(str("CLIENT SPECIFIED")),
+                    opt(client),
+                    opt(connection),
                     str("FROM"),
                     opt(str("TABLE")),
                     new Source());

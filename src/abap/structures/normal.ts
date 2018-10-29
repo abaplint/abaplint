@@ -108,6 +108,7 @@ export class Normal extends Structure {
                     sta(Statements.Pack),
                     sta(Statements.Perform),
                     sta(Statements.Position),
+                    sta(Statements.Put),
                     sta(Statements.PrintControl),
                     sta(Statements.RaiseEvent),
                     sta(Statements.Raise),

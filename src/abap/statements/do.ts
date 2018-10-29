@@ -5,12 +5,15 @@ import {Target, Source} from "../expressions";
 export class Do extends Statement {
 
   public getMatcher(): IRunnable {
+    let range = seq(str("RANGE"), new Source());
+
     let vary = seq(str("VARYING"),
                    new Target(),
                    str("FROM"),
                    new Source(),
                    str("NEXT"),
-                   new Source());
+                   new Source(),
+                   opt(range));
 
     let times = seq(new Source(), str("TIMES"));
 

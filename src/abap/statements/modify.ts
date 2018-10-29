@@ -15,7 +15,7 @@ export class Modify extends Statement {
 
     let target = seq(opt(str("TABLE")), alt(new Target(), new Dynamic()));
 
-    let conn = seq(str("CONNECTION"), new Dynamic());
+    let conn = seq(str("CONNECTION"), alt(new Dynamic(), new Source()));
 
     let options = per(conn, from, index, transporting, where, client, assigning);
 

@@ -18,11 +18,12 @@ export class ModifyLine extends Statement {
     let page = seq(str("OF PAGE"), new Source());
     let ocp = str("OF CURRENT PAGE");
     let lineFormat = seq(str("LINE FORMAT"),
-                         alt(str("INPUT OFF"), str("RESET")));
+                         alt(str("INPUT OFF"), str("RESET"), str("INTENSIFIED")));
     let onOff = alt(str("ON"), str("OFF"));
     let intensified = seq(str("INTENSIFIED"), onOff);
+    let color = seq(str("COLOR"), new Source());
 
-    let options = per(index, value, from, format, page, lineFormat, lineValue, ocp, intensified);
+    let options = per(index, value, from, format, page, lineFormat, lineValue, ocp, intensified, color);
 
     let ret = seq(str("MODIFY"),
                   alt(str("CURRENT LINE"),
