@@ -8,7 +8,7 @@
 
 Linter for ABAP, code must be serialized using [abapGit](https://github.com/larshp/abapGit)
 
-[Try it online](https://larshp.github.io/abaplint/)
+[Try it online](https://playground.abaplint.org)
 
 Works with
 * [VS Code](https://marketplace.visualstudio.com/items?itemName=larshp.vscode-abaplint) ([source](https://github.com/abaplint/vscode-abaplint))
