@@ -31,7 +31,7 @@
     "web.playground": "cp node_modules/codemirror/lib/codemirror.js web/playground/script/ && cp node_modules/codemirror/addon/selection/mark-selection.js web/playground/script/ && cp node_modules/codemirror/lib/codemirror.css web/playground/style/",
     "postweb.playground": "cp node_modules/codemirror/theme/mbo.css web/playground/style/ && cp node_modules/codemirror-abap/build/abap.js web/playground/script/",
 
-    "web.syntax": "mkdir -p web/syntax && rm -f web/syntax/*.txt && rm -f web/syntax/*.svg && node build/src/abap/graphs.js && node web/generate.js && rm -f web/syntax/*.txt"
+    "web.syntax": "sh web/syntax.sh"
   },
   "repository": {
     "type": "git",

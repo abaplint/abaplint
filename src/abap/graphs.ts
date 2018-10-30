@@ -2,7 +2,7 @@ import * as Combi from "./combi";
 import * as fs from "fs";
 import {Artifacts} from "./artifacts";
 
-// todo, move this method to somewhere under web/viz?
+// todo, move this method to somewhere under web/syntax?
 
 function className(cla: any): string {
   return (cla.constructor + "").match(/\w+/g)[1];
@@ -32,7 +32,7 @@ class Graph {
   }
 
   private static writeFile(name: string, contents: string) {
-    fs.writeFileSync("./web/syntax/" + name + ".txt", contents, "utf8");
+    fs.writeFileSync("./syntax/" + name + ".txt", contents, "utf8");
   }
 
 }

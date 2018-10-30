@@ -1,5 +1,7 @@
 "use strict";
 
+// used for generating "syntax"
+
 var Railroad = require("railroad-diagrams");
 var fs = require("fs");
 
@@ -9,7 +11,7 @@ function run() {
   json.expressions = [];
   json.structures = [];
 
-  let folder = "./web/syntax/";
+  let folder = "./syntax/";
   let files = fs.readdirSync(folder);
 
   for (let file of files) {
@@ -80,7 +82,7 @@ function run() {
 function generate() {
   let json = run();
 
-  fs.writeFileSync("./web/syntax/data.json", JSON.stringify(json), "utf8");
+  fs.writeFileSync("./syntax/data.json", JSON.stringify(json), "utf8");
 }
 
 generate();
