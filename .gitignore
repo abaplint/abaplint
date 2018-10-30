@@ -3,9 +3,7 @@ foo.abap
 node_modules/
 worklist.txt
 .worklist.txt.swp
-test/typings/
 build/
-typings/
 coverage/
 npm-debug.log
 .alm/
