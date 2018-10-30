@@ -27,9 +27,10 @@
 
     "browserify": "browserify build/src/runner.js -o build/bundle.js -s abaplint",
     "uglify": "uglifyjs build/bundle.js --compress warnings=false --mangle --keep-fnames -o build/bundle.js",
-    "preweb.playground": "npm run browserify && npm run uglify && cp build/bundle.js web/playground/script/bundle.js",
-    "web.playground": "cp node_modules/codemirror/lib/codemirror.js web/playground/script/ && cp node_modules/codemirror/addon/selection/mark-selection.js web/playground/script/ && cp node_modules/codemirror/lib/codemirror.css web/playground/style/",
-    "postweb.playground": "cp node_modules/codemirror/theme/mbo.css web/playground/style/ && cp node_modules/codemirror-abap/build/abap.js web/playground/script/",
+
+    "preweb.playground": "npm run browserify",
+    "web.playground": "npm run uglify",
+    "postweb.playground": "sh web/playground.sh",
 
     "web.syntax": "sh web/syntax.sh"
   },
