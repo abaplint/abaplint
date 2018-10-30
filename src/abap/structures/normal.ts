@@ -178,6 +178,7 @@ export class Normal extends Structure {
                     sub(new Structures.Loop()),
                     sub(new Structures.TestInjection()),
                     sub(new Structures.Case()),
+                    sub(new Structures.Provide()),
                     sub(new Structures.CatchSystemExceptions()),
                     sub(new Structures.Try()),
                     sub(new Structures.At()),

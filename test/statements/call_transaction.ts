@@ -10,6 +10,7 @@ let tests = [
   "CALL TRANSACTION 'FOO' USING BDCDATA MODE 'E' UPDATE 'A'.",
   "CALL TRANSACTION 'FOO' USING BDCDATA MODE lv_mode MESSAGES INTO lt_messages.",
   "CALL TRANSACTION 'FOO' WITHOUT AUTHORITY-CHECK USING lt_data OPTIONS FROM ls_opt MESSAGES INTO lt_mess.",
+  "CALL TRANSACTION 'FOO' USING mt_bdcdata UPDATE 'S' MODE 'E'.",
 ];
 
 statementType(tests, "CALL TRANSACTION", Statements.CallTransaction);

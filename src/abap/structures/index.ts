@@ -14,6 +14,7 @@ export * from "./function_module";
 export * from "./while";
 export * from "./module";
 export * from "./form";
+export * from "./provide";
 export * from "./loop";
 export * from "./at";
 export * from "./data";

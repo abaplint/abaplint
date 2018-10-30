@@ -77,7 +77,7 @@ export default class Parser {
     let statements = file.getStatements().slice().filter((s) => { return !(s instanceof StatementComment || s instanceof Empty); });
     const unknowns = file.getStatements().slice().filter((s) => { return s instanceof Unknown; });
     if (unknowns.length > 0) {
-      return [new Issue(new GenericError("Unknown statements, skipping structure"), file, 1)];
+      return [];
     }
 
     const result = structure.getMatcher().run(statements);

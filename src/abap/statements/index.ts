@@ -13,6 +13,7 @@ export * from "./do";
 export * from "./while";
 export * from "./loop";
 export * from "./check";
+export * from "./endprovide";
 export * from "./if";
 export * from "./convert_text";
 export * from "./log_point";

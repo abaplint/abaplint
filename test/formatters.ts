@@ -5,7 +5,7 @@ import {expect} from "chai";
 
 describe("formatters", () => {
   let tests = [
-    {abap: "foo bar", errors: 2},
+    {abap: "foo bar", errors: 1},
     {abap: "WRITE 'Hello'.", errors: 0},
   ];
 

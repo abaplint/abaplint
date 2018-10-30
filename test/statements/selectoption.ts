@@ -24,6 +24,7 @@ let tests = [
   "SELECT-OPTIONS s_startd FOR w_startd DEFAULT sy-datum TO sy-datum.",
   "SELECT-OPTIONS sp$00004 FOR moo-boo MEMORY ID foo.",
   "SELECT-OPTIONS s_name FOR field NO DATABASE SELECTION.",
+//  "select-options date for <fs_booking>-date.",
 ];
 
 statementType(tests, "SELECT-OPTIONS", Statements.SelectOption);

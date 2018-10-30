@@ -20,6 +20,7 @@ let tests = [
   "  WHERE field < wa-field\n" +
   "  AND max >= ALL ( select max FROM  ztable WHERE field = wa-field ) ORDER BY field.",
   "select * from (name) into table <table> package size lv_size where (lv_where).",
+//  "select field1 field2 into corresponding fields of table lt_tab from ztab package size 250 where flag = 'N' and id in s_docnum.",
 ];
 
 statementType(tests, "SELECT loop", Statements.SelectLoop);

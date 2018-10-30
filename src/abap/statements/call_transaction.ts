@@ -1,5 +1,5 @@
 import {Statement} from "./statement";
-import {verNot, str, seq, opt, alt, IRunnable} from "../combi";
+import {verNot, str, seq, opt, alt, per, IRunnable} from "../combi";
 import {Target, Source} from "../expressions";
 import {Version} from "../../version";
 
@@ -16,8 +16,7 @@ export class CallTransaction extends Statement {
                   new Source(),
                   opt(auth),
                   opt(seq(str("USING"), new Source())),
-                  opt(seq(str("MODE"), new Source())),
-                  opt(seq(str("UPDATE"), new Source())),
+                  opt(per(seq(str("UPDATE"), new Source()), seq(str("MODE"), new Source()))),
                   opt(str("AND SKIP FIRST SCREEN")),
                   opt(options),
                   opt(messages));

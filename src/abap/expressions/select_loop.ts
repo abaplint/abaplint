@@ -50,7 +50,7 @@ export class SelectLoop extends Expression {
 
     let group = seq(str("GROUP BY"), plus(alt(new SQLFieldName(), new Dynamic())));
 
-// hmm, this is bad
+// hmm, this is bad, PACKAGE SIZE is not part of the non-loop?
     let appending = seq(str("APPENDING TABLE"), new Target(), str("FROM"), new DatabaseTable(), pack);
     let intoTable = seq(str("INTO CORRESPONDING FIELDS OF TABLE"), new Target(), pack);
     let intoTab = seq(str("INTO TABLE"), new Target(), pack);
