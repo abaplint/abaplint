@@ -1,6 +1,7 @@
 import {Statement} from "./statement";
-import {str, seq, alt, opt, plus, optPrio, IRunnable} from "../combi";
+import {verNot, str, seq, alt, opt, plus, optPrio, IRunnable} from "../combi";
 import {FieldSymbol, FieldSub, Dynamic} from "../expressions";
+import {Version} from "../../version";
 
 export class SortDataset extends Statement {
 
@@ -15,7 +16,9 @@ export class SortDataset extends Statement {
 
     let by = seq(str("BY"), fields);
 
-    return seq(str("SORT"), opt(by));
+    let ret = seq(str("SORT"), opt(by));
+
+    return verNot(Version.Cloud, ret);
   }
 
 }

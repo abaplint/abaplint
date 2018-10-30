@@ -1,6 +1,7 @@
 import {Statement} from "./statement";
-import {str, seq, opt, alt, per, IRunnable} from "../combi";
+import {verNot, str, seq, opt, alt, per, IRunnable} from "../combi";
 import {Constant, FieldSub, FormName, MethodName, Source, FunctionParameters, FunctionName} from "../expressions";
+import {Version} from "../../version";
 
 export class CallFunction extends Statement {
 
@@ -21,7 +22,7 @@ export class CallFunction extends Statement {
                       opt(seq(str("EXCEPTION-TABLE"), new Source())));
 
     let call = seq(str("CALL"),
-                   alt(str("FUNCTION"), str("CUSTOMER-FUNCTION")),
+                   alt(str("FUNCTION"), verNot(Version.Cloud, str("CUSTOMER-FUNCTION"))),
                    new FunctionName(),
                    opt(options),
                    alt(new FunctionParameters(), dynamic));

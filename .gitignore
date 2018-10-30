@@ -8,15 +8,4 @@ build/
 typings/
 coverage/
 npm-debug.log
-!web/syntax/generate.js
-web/syntax/data.json
-web/syntax/**/*.txt
-web/syntax/**/*.svg
-web/playground/script/bundle.js
-web/playground/script/codemirror.js
-web/playground/style/codemirror.css
-web/playground/style/seti.css
-web/playground/script/abap.js
-web/playground/script/mark-selection.js
-web/playground/style/mbo.css
 .alm/

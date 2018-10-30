@@ -1,6 +1,7 @@
 import {Statement} from "./statement";
-import {str, seq, opt, IRunnable, alt} from "../combi";
+import {verNot, str, seq, opt, IRunnable, alt} from "../combi";
 import {FieldSymbol, Source, Dynamic} from "../expressions";
+import {Version} from "../../version";
 
 export class AssignLocalCopy extends Statement {
 
@@ -12,7 +13,7 @@ export class AssignLocalCopy extends Statement {
                   str("TO"),
                   new FieldSymbol());
 
-    return ret;
+    return verNot(Version.Cloud, ret);
   }
 
 }

@@ -7,6 +7,7 @@ export class DeleteDatabase extends Statement {
   public getMatcher(): IRunnable {
     let where = seq(str("WHERE"), alt(new SQLCond(), new Dynamic()));
     let source = alt(new Dynamic(), new DatabaseTable());
+// todo, client specified and connection not possible in Cloud
     let client = str("CLIENT SPECIFIED");
     let connection = seq(str("CONNECTION"), new Dynamic());
 

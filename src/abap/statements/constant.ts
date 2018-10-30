@@ -7,9 +7,7 @@ export class Constant extends Statement {
   public getMatcher(): IRunnable {
     let def = seq(new NamespaceSimpleName(), opt(new FieldLength()), opt(new Type()), new Value());
 
-    let beginEnd = seq(alt(str("BEGIN"), str("END")), str("OF"), new NamespaceSimpleName());
-
-    let ret = seq(alt(str("CONSTANT"), str("CONSTANTS")), alt(def, beginEnd));
+    let ret = seq(alt(str("CONSTANT"), str("CONSTANTS")), def);
 
     return ret;
   }

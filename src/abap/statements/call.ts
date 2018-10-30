@@ -20,6 +20,7 @@ export class Call extends Statement {
     let dynamicExc = seq(str("EXCEPTION-TABLE"), new Source());
     let dynamic = seq(dynamicPar, opt(dynamicExc));
 
+// todo, move BADI to new statement, plus it is not Cloud relevant
     let call = seq(str("CALL"),
                    alt(str("METHOD"), str("BADI")),
                    method,

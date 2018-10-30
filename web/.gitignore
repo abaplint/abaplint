@@ -1,0 +1,10 @@
+syntax/data.json
+syntax/**/*.txt
+syntax/**/*.svg
+playground/script/bundle.js
+playground/script/codemirror.js
+playground/style/codemirror.css
+playground/style/seti.css
+playground/script/abap.js
+playground/script/mark-selection.js
+playground/style/mbo.css
