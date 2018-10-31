@@ -22,17 +22,19 @@ class Graph {
     for (let stru of Artifacts.getStructures()) {
       let str = "Railroad.Diagram.INTERNAL_ALIGNMENT = 'left';\n" +
         "Railroad.Diagram(" + stru.getMatcher().toRailroad() + ").toString();";
-      this.writeFile("structure_" + className(stru), str);
+      let using = stru.getMatcher().getUsing();
+      this.writeFile("structure_" + className(stru), str, using);
     }
   }
 
   private static writeRunnable(name: string, runnable: Combi.IRunnable, complex: boolean): void {
     let str = Combi.Combi.railroad(runnable, complex);
-    this.writeFile(name, str);
+    this.writeFile(name, str, runnable.getUsing());
   }
 
-  private static writeFile(name: string, railroad: string) {
-    let json = {railroad};
+  private static writeFile(name: string, railroad: string, using: string[]) {
+    let unique = using.filter((v, i, a) => { return a.indexOf(v) === i; });
+    let json = {railroad, using: unique.sort()};
     fs.writeFileSync("./syntax/" + name + ".json", JSON.stringify(json, undefined, 2), "utf8");
   }
 

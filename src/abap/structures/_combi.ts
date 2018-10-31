@@ -10,6 +10,7 @@ export interface IMatch {
 
 export interface IStructureRunnable {
   toRailroad(): string;
+  getUsing(): string[];
   run(statements: Array<Statement>): IMatch;
 }
 
@@ -26,6 +27,10 @@ class Sequence implements IStructureRunnable {
   public toRailroad() {
     const children = this.list.map((e) => { return e.toRailroad(); });
     return "Railroad.Sequence(" + children.join() + ")";
+  }
+
+  public getUsing() {
+    return this.list.reduce((a, c) => { return a.concat(c.getUsing()); }, []);
   }
 
   public run(statements: Array<Statement>): IMatch {
@@ -58,6 +63,10 @@ class Alternative implements IStructureRunnable {
     return "Railroad.Choice(0, " + children.join() + ")";
   }
 
+  public getUsing() {
+    return this.list.reduce((a, c) => { return a.concat(c.getUsing()); }, []);
+  }
+
   public run(statements: Array<Statement>): IMatch {
     for (let i of this.list) {
       const match = i.run(statements);
@@ -81,6 +90,10 @@ class Optional implements IStructureRunnable {
     return "Railroad.Optional(" + this.obj.toRailroad() + ")";
   }
 
+  public getUsing() {
+    return this.obj.getUsing();
+  }
+
   public run(statements: Array<Statement>): IMatch {
     let ret = this.obj.run(statements);
     ret.error = false;
@@ -100,6 +113,10 @@ class Star implements IStructureRunnable {
 
   public toRailroad() {
     return "Railroad.ZeroOrMore(" + this.obj.toRailroad() + ")";
+  }
+
+  public getUsing() {
+    return this.obj.getUsing();
   }
 
   public run(statements: Array<Statement>): IMatch {
@@ -128,6 +145,10 @@ class SubStructure implements IStructureRunnable {
     return "Railroad.NonTerminal('" + this.s.constructor.name + "', 'structure_" + this.s.constructor.name + ".svg')";
   }
 
+  public getUsing() {
+    return ["structure_" + this.s.constructor.name];
+  }
+
   public run(statements: Array<Statement>): IMatch {
     let ret = this.s.getMatcher().run(statements);
     if (ret.matched.length === 0) {
@@ -146,20 +167,24 @@ class SubStatement implements IStructureRunnable {
   }
 
   public toRailroad() {
-    return "Railroad.Terminal('" + this.className(this.obj) + "', 'statement_" + this.className(this.obj) + ".svg')";
+    return "Railroad.Terminal('" + this.className() + "', 'statement_" + this.className() + ".svg')";
   }
 
-  private className(cla: any) {
-    return (cla + "").match(/\w+/g)[1];
+  public getUsing() {
+    return ["statement_" + this.className()];
+  }
+
+  private className() {
+    return (this.obj + "").match(/\w+/g)[1];
   }
 
   public run(statements: Array<Statement>): IMatch {
     if (statements.length === 0) {
-      return {matched: [], unmatched: [], error: true, errorDescription: "Expected " + this.className(this.obj)};
+      return {matched: [], unmatched: [], error: true, errorDescription: "Expected " + this.className()};
     } else if (statements[0] instanceof this.obj) {
       return {matched: [statements[0]], unmatched: statements.splice(1), error: false, errorDescription: ""};
     } else {
-      return {matched: [], unmatched: statements, error: true, errorDescription: "Expected " + this.className(this.obj)};
+      return {matched: [], unmatched: statements, error: true, errorDescription: "Expected " + this.className()};
     }
   }
 }

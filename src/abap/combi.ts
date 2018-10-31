@@ -63,6 +63,7 @@ export interface IRunnable {
   run(r: Array<Result>): Array<Result>;
   railroad(): string;
   toStr(): string;
+  getUsing(): string[];
   listKeywords(): string[];
 // return first keyword, blank if not applicable
   first(): string;
@@ -77,6 +78,10 @@ class Regex implements IRunnable {
   }
 
   public listKeywords(): string[] {
+    return [];
+  }
+
+  public getUsing(): string[] {
     return [];
   }
 
@@ -116,6 +121,10 @@ class Word implements IRunnable {
 
   public listKeywords(): string[] {
     return [this.s];
+  }
+
+  public getUsing(): string[] {
+    return [];
   }
 
   public run(r: Array<Result>): Array<Result> {
@@ -161,6 +170,10 @@ class Token implements IRunnable {
   }
 
   public listKeywords(): string[] {
+    return [];
+  }
+
+  public getUsing(): string[] {
     return [];
   }
 
@@ -220,6 +233,10 @@ class Vers implements IRunnable {
     }
   }
 
+  public getUsing(): string[] {
+    return this.runnable.getUsing();
+  }
+
   public railroad() {
     return "Railroad.Sequence(Railroad.Comment(\"" +
       versionToText(this.version) +
@@ -249,6 +266,10 @@ class VersNot implements IRunnable {
 
   public listKeywords(): string[] {
     return this.runnable.listKeywords();
+  }
+
+  public getUsing(): string[] {
+    return this.runnable.getUsing();
   }
 
   public run(r: Array<Result>): Array<Result> {
@@ -286,6 +307,10 @@ class OptionalPriority implements IRunnable {
 
   public listKeywords(): string[] {
     return this.optional.listKeywords();
+  }
+
+  public getUsing(): string[] {
+    return this.optional.getUsing();
   }
 
   public run(r: Array<Result>): Array<Result> {
@@ -339,6 +364,10 @@ class Optional implements IRunnable {
     return this.optional.listKeywords();
   }
 
+  public getUsing(): string[] {
+    return this.optional.getUsing();
+  }
+
   public run(r: Array<Result>): Array<Result> {
     let result: Array<Result> = [];
 
@@ -374,6 +403,10 @@ class Star implements IRunnable {
 
   public listKeywords(): string[] {
     return this.sta.listKeywords();
+  }
+
+  public getUsing(): string[] {
+    return this.sta.getUsing();
   }
 
   public run(r: Array<Result>): Array<Result> {
@@ -420,6 +453,10 @@ class Plus implements IRunnable {
     return this.plu.listKeywords();
   }
 
+  public getUsing(): string[] {
+    return this.plu.getUsing();
+  }
+
   public run(r: Array<Result>): Array<Result> {
     return new Sequence([this.plu, new Star(this.plu)]).run(r);
   }
@@ -455,6 +492,10 @@ class Sequence implements IRunnable {
       ret = ret.concat(i.listKeywords());
     }
     return ret;
+  }
+
+  public getUsing(): string[] {
+    return this.list.reduce((a, c) => { return a.concat(c.getUsing()); }, []);
   }
 
   public run(r: Array<Result>): Array<Result> {
@@ -519,6 +560,10 @@ class WordSequence implements IRunnable {
     return [this.stri.toString()];
   }
 
+  public getUsing(): string[] {
+    return [];
+  }
+
   public run(r: Array<Result>): Array<Result> {
     return (new Sequence(this.words)).run(r);
   }
@@ -575,6 +620,10 @@ export abstract class Expression implements IRunnable {
     return [];
   }
 
+  public getUsing(): string[] {
+    return ["expression_" + this.getName()];
+  }
+
   public getName(): string {
     return className(this);
   }
@@ -610,17 +659,15 @@ class Permutation implements IRunnable {
     return ret;
   }
 
+  public getUsing() {
+    return this.list.reduce((a, c) => { return a.concat(c.getUsing()); }, []);
+  }
+
   public run(r: Array<Result>): Array<Result> {
     let result: Array<Result> = [];
 
     for (let index = 0; index < this.list.length; index++) {
       let temp = this.list[index].run(r);
-/*
-console.dir(r);
-console.log(this.list[index].toStr());
-console.dir(temp);
-console.log("sdf");
-*/
       if (temp.length !== 0) {
 // match
         result = result.concat(temp);
@@ -634,10 +681,6 @@ console.log("sdf");
         }
       }
     }
-/*
-console.log("per result");
-console.dir(result);
-*/
     return result;
   }
 
@@ -672,6 +715,10 @@ class Alternative implements IRunnable {
       ret = ret.concat(i.listKeywords());
     }
     return ret;
+  }
+
+  public getUsing() {
+    return this.list.reduce((a, c) => { return a.concat(c.getUsing()); }, []);
   }
 
   public run(r: Array<Result>): Array<Result> {
@@ -720,6 +767,10 @@ class AlternativePriority implements IRunnable {
       ret = ret.concat(i.listKeywords());
     }
     return ret;
+  }
+
+  public getUsing() {
+    return this.list.reduce((a, c) => { return a.concat(c.getUsing()); }, []);
   }
 
   public run(r: Array<Result>): Array<Result> {
