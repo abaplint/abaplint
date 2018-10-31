@@ -12,6 +12,8 @@ Linter for ABAP, code must be serialized using [abapGit](https://github.com/lars
 
 [Syntax Diagrams](https://syntax.abaplint.org)
 
+[Documentation](https://docs.abaplint.org)
+
 Works with
 * [VS Code](https://marketplace.visualstudio.com/items?itemName=larshp.vscode-abaplint) ([source](https://github.com/abaplint/vscode-abaplint))
 * [Atom](https://atom.io/packages/linter-abaplint) ([source](https://github.com/larshp/linter-abaplint))
