@@ -31,8 +31,9 @@ class Graph {
     this.writeFile(name, str);
   }
 
-  private static writeFile(name: string, contents: string) {
-    fs.writeFileSync("./syntax/" + name + ".txt", contents, "utf8");
+  private static writeFile(name: string, railroad: string) {
+    let json = {railroad};
+    fs.writeFileSync("./syntax/" + name + ".json", JSON.stringify(json, undefined, 2), "utf8");
   }
 
 }

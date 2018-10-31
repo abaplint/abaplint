@@ -15,8 +15,8 @@ function run() {
   let files = fs.readdirSync(folder);
 
   for (let file of files) {
-    if (/\.txt$/.test(file)) {
-      let contents = fs.readFileSync(folder + file,"utf8");
+    if (/\.json$/.test(file)) {
+      let contents = JSON.parse(fs.readFileSync(folder + file,"utf8"));
 
       let css = "<defs>\n" +
         "<style type=\"text/css\"><![CDATA[\n" +
@@ -58,7 +58,7 @@ function run() {
         "]]></style>\n" +
         "</defs>\n";
 //      console.log(file);
-      let result = eval(contents);
+      let result = eval(contents.railroad);
       result = result.replace(/<svg /, "<svg xmlns=\"http://www.w3.org/2000/svg\" xmlns:xlink=\"http://www.w3.org/1999/xlink\" ");
       result = result.replace(/<g transform/, css + "<g transform");
       let target = folder + file.split(".")[0] + ".svg";
@@ -82,7 +82,7 @@ function run() {
 function generate() {
   let json = run();
 
-  fs.writeFileSync("./syntax/data.json", JSON.stringify(json), "utf8");
+  fs.writeFileSync("./syntax/data.json", JSON.stringify(json, null, 2), "utf8");
 }
 
 generate();
