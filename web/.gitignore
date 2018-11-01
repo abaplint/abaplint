@@ -1,4 +1,5 @@
 syntax/*.json
 syntax/**/*.txt
 syntax/**/*.svg
+syntax/data.json.js
 playground/script/bundle.js

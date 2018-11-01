@@ -81,8 +81,7 @@ function run() {
 
 function generate() {
   let json = run();
-
-  fs.writeFileSync("./syntax/data.json", JSON.stringify(json, null, 2), "utf8");
+  fs.writeFileSync("./syntax/data.json.js", "data = " + JSON.stringify(json, null, 2) + ";", "utf8");
 }
 
 generate();

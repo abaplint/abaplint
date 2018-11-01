@@ -69,22 +69,10 @@ function render() {
   renderMain();
 }
 
-function handler(evt) {
-  if (evt.target.status === 200) {
-    json = JSON.parse(evt.target.responseText);
-    render();
-  } else {
-    alert("REST call failed, status: " + evt.target.status);
-  }
-}
-
 function run() {
   document.getElementById("filter").focus();
-
-  let oReq = new XMLHttpRequest();
-  oReq.addEventListener("load", handler);
-  oReq.open("GET", "./data.json");
-  oReq.send();
+  json = data;
+  render();
 }
 
 run();
