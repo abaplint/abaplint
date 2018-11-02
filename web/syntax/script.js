@@ -85,6 +85,8 @@ function renderSyntax(type, name) {
   if (next) {
     html = html + "<b>Next</b>: <a href=\"#/" + type + "/" + next.name + "\">" + next.name + "</a><br>\n";
   }
+  let filename = found.name.replace(/(.)([A-Z])/, "$1_$2").toLowerCase();
+  html = html + "<a href=\"https://github.com/larshp/abaplint/blob/master/src/abap/" + found.type + "s/" + filename + ".ts\">Source</a><br>";
 
   let use = found.using.map((e) => { return "<a href=\"#/" + e + "\">" + e + "</a>"; });
   let by = found.used_by.map((e) => { return "<a href=\"#/" + e + "\">" + e + "</a>"; });
