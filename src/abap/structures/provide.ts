@@ -6,9 +6,9 @@ import {Normal} from ".";
 export class Provide extends Structure {
 
   public getMatcher(): IStructureRunnable {
-    return beginEnd(sta(Statements.Loop),
+    return beginEnd(sta(Statements.Provide),
                     star(sub(new Normal())),
-                    sta(Statements.EndLoop));
+                    sta(Statements.EndProvide));
   }
 
 }
