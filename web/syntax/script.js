@@ -67,24 +67,30 @@ function renderSyntax(type, name) {
   let prev = {};
   let next = {};
   let list = json[type+"s"];
-  for (let index in list) {
+  for(let index = 0; index < list.length; index++) {
     if (list[index].name === name) {
       found = list[index];
       prev = list[index - 1];
       next = list[index + 1];
+      break;
     }
   }
 
-  let html = "<h1>" + type + ": " + name + "</h1>\n" + found.svg + "<br>\n" +
-  "<b>Using</b>: " + found.using.join(", ") + "<br>\n" +
-  "<b>Used by</b>: todo<br>\n";
+  let html = "<h1>" + type + ": " + name + "</h1>\n";
 
+  html = html + "<a href=\"#\">Home</a><br>\n";
   if (prev) {
-    html = html + "<b>Prev</b>: " + prev.name + "<br>\n";
+    html = html + "<b>Prev</b>: <a href=\"#/" + type + "/" + prev.name + "\">" + prev.name + "</a><br>\n";
   }
   if (next) {
-    html = html + "<b>Next</b>: " + next.name + "<br>\n";
+    html = html + "<b>Next</b>: <a href=\"#/" + type + "/" + next.name + "\">" + next.name + "</a><br>\n";
   }
+
+  let use = found.using.map((e) => { return "<a href=\"#/" + e + "\">" + e + "</a>"; });
+
+  html = html + found.svg + "<br>\n" +
+    "<b>Using</b>: " + use.join(", ") + "<br>\n" +
+    "<b>Used by</b>: todo<br>\n";
 
   document.getElementById("body").innerHTML = html;
 }

@@ -621,7 +621,7 @@ export abstract class Expression implements IRunnable {
   }
 
   public getUsing(): string[] {
-    return ["expression_" + this.getName()];
+    return ["expression/" + this.getName()];
   }
 
   public getName(): string {

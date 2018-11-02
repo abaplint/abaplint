@@ -146,7 +146,7 @@ class SubStructure implements IStructureRunnable {
   }
 
   public getUsing() {
-    return ["structure_" + this.s.constructor.name];
+    return ["structure/" + this.s.constructor.name];
   }
 
   public run(statements: Array<Statement>): IMatch {
@@ -171,7 +171,7 @@ class SubStatement implements IStructureRunnable {
   }
 
   public getUsing() {
-    return ["statement_" + this.className()];
+    return ["statement/" + this.className()];
   }
 
   private className() {

@@ -22,6 +22,12 @@ interface ICollection {
   structures: IData[];
 }
 
+function compareString(a: IData, b: IData): number {
+  if (a.name < b.name) { return -1; }
+  if (a.name > b.name) { return 1; }
+  return 0;
+}
+
 class Graph {
 
   public static run(): void {
@@ -49,6 +55,10 @@ class Graph {
         railroad: str,
         using: sort(using)});
     }
+
+    res.expressions.sort(compareString);
+    res.statements.sort(compareString);
+    res.structures.sort(compareString);
 
     return res;
   }
