@@ -58,19 +58,44 @@ function generateSVG(input) {
   return result;
 }
 
+function findUsedBy(object, file) {
+  let ret = [];
+  let search = object.type + "/" + object.name;
+  for(let obj of file.structures) {
+    if (obj.using.indexOf(search) >= 0) {
+      ret.push(obj.type + "/" + obj.name);
+    }
+  }
+  for(let obj of file.expressions) {
+    if (obj.using.indexOf(search) >= 0) {
+      ret.push(obj.type + "/" + obj.name);
+    }
+  }
+  for(let obj of file.statements) {
+    if (obj.using.indexOf(search) >= 0) {
+      ret.push(obj.type + "/" + obj.name);
+    }
+  }
+  return ret;
+}
+
 function run() {
 
   let file = JSON.parse(fs.readFileSync(folder + "generated.json", "utf8"));
 
   for (let index in file.structures) {
     file.structures[index].svg = generateSVG(file.structures[index]);
+    file.structures[index].used_by = findUsedBy(file.structures[index], file);
   }
   for (let index in file.statements) {
     file.statements[index].svg = generateSVG(file.statements[index]);
+    file.statements[index].used_by = findUsedBy(file.statements[index], file);
   }
   for (let index in file.expressions) {
     file.expressions[index].svg = generateSVG(file.expressions[index]);
+    file.expressions[index].used_by = findUsedBy(file.expressions[index], file);
   }
+
   return file;
 }
 

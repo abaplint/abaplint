@@ -87,10 +87,11 @@ function renderSyntax(type, name) {
   }
 
   let use = found.using.map((e) => { return "<a href=\"#/" + e + "\">" + e + "</a>"; });
+  let by = found.used_by.map((e) => { return "<a href=\"#/" + e + "\">" + e + "</a>"; });
 
   html = html + found.svg + "<br>\n" +
     "<b>Using</b>: " + use.join(", ") + "<br>\n" +
-    "<b>Used by</b>: todo<br>\n";
+    "<b>Used by</b>: " + by.join(", ") + "<br>\n";
 
   document.getElementById("body").innerHTML = html;
 }
