@@ -20,7 +20,7 @@ function outputNodes(nodes) {
         extra = node.name + ", \"" + node.getToken().getStr() + "\"";
         break;
       case "ReuseNode":
-        extra = "<a href=\"./viz/expression_" + node.getName() + ".svg\">" + node.getName() + "</a>" +
+        extra = "<a href=\"https://syntax.abaplint.org/#/expression/" + node.getName() + "\">" + node.getName() + "</a>" +
           outputNodes(node.getChildren());
         break;
     }
@@ -43,7 +43,7 @@ function buildStatements(file) {
       "<b><div onmouseover=\"javascript:markLine(" +
       row + ", " + col + ", " + erow + ", " + ecol + ");\">" +
       row + ": " +
-      "<a href=\"./viz/statement_" + statement.constructor.name + ".svg\">" +
+      "<a href=\"https://syntax.abaplint.org/#/statement/" + statement.constructor.name + "\">" +
       statement.constructor.name +
       "</a>" +
       "</div></b>\n" + outputNodes(statement.getChildren());
