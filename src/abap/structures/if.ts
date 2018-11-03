@@ -1,15 +1,16 @@
 import * as Statements from "../statements";
 import {Structure} from "./_structure";
 import {star, IStructureRunnable, sta, opt, seq, beginEnd, sub} from "./_combi";
-import {Normal} from "./normal";
+import {Body} from "./body";
+import {Elseif} from "./elseif";
+import {Else} from "./else";
 
 export class If extends Structure {
 
   public getMatcher(): IStructureRunnable {
-    let body = star(sub(new Normal()));
-    let els = seq(sta(Statements.Else), body);
-    let elseif = seq(sta(Statements.ElseIf), body);
-    let contents = seq(body, star(elseif), opt(els));
+    let contents = seq(opt(sub(new Body())),
+                       star(sub(new Elseif())),
+                       opt(sub(new Else())));
 
     return beginEnd(sta(Statements.If),
                     contents,

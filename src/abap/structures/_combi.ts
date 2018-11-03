@@ -224,7 +224,7 @@ class SubStatement implements IStructureRunnable {
   }
 
   public toRailroad() {
-    return "Railroad.Terminal('" + this.className() + "', '#/statement/" + this.className() + "')";
+    return "Railroad.Terminal('" + this.className().toUpperCase() + "', '#/statement/" + this.className() + "')";
   }
 
   public getUsing() {
@@ -232,7 +232,7 @@ class SubStatement implements IStructureRunnable {
   }
 
   private className() {
-    return (this.obj + "").match(/\w+/g)[1].toUpperCase();
+    return (this.obj + "").match(/\w+/g)[1];
   }
 
   public run(statements: Array<Statement>): IMatch {
@@ -241,7 +241,7 @@ class SubStatement implements IStructureRunnable {
         matched: [],
         unmatched: [],
         error: true,
-        errorDescription: "Expected " + this.className(),
+        errorDescription: "Expected " + this.className().toUpperCase(),
         errorMatched: 0};
     } else if (statements[0] instanceof this.obj) {
       return {
@@ -255,7 +255,7 @@ class SubStatement implements IStructureRunnable {
         matched: [],
         unmatched: statements,
         error: true,
-        errorDescription: "Expected " + this.className(),
+        errorDescription: "Expected " + this.className().toUpperCase(),
         errorMatched: 0};
     }
   }
