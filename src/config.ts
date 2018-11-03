@@ -6,7 +6,6 @@ export default class Config {
   private static defaultVersion = Version.v750;
 
   private config: any = undefined;
-  private progress: boolean; // todo, this does not really belong here
 
   public static getDefault(): Config {
     let defaults: Array<string> = [];
@@ -58,11 +57,4 @@ export default class Config {
     return this;
   }
 
-  public getShowProgress(): boolean {
-    return this.progress;
-  }
-
-  public setShowProgress(s: boolean) {
-    this.progress = s;
-  }
 }

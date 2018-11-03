@@ -2,10 +2,24 @@ import * as Objects from "./objects";
 import {ABAPObject} from "./objects";
 import {ABAPFile, IFile} from "./files";
 import Config from "./config";
-import * as ProgressBar from "progress";
 import {Issue} from "./issue";
 import {GenericError} from "./rules/";
 import * as Rules from "./rules/";
+
+export interface IProgress {
+  set(total: number, text: string): void;
+  tick(info: any): void;
+}
+
+class NoProgress implements IProgress {
+  public set(_total: number, _text: string): undefined {
+    return undefined;
+  }
+
+  public tick(_options: any): undefined {
+    return undefined;
+  }
+}
 
 export default class Registry {
 
@@ -60,22 +74,20 @@ export default class Registry {
     return this.dirty;
   }
 
-  public findIssues(): Array<Issue> {
+  public findIssues(progress?: IProgress): Array<Issue> {
     if (this.isDirty()) {
-      this.parse();
+      this.parse(progress);
     }
+    progress = progress ? progress : new NoProgress();
 
     let issues: Array<Issue> = [];
     issues = this.issues.slice(0);
 
     let objects = this.getObjects();
 
-    let bar = new Progress(this.conf,
-                           ":percent - Finding Issues - :object",
-                           {total: objects.length});
-
+    progress.set(objects.length, ":percent - Finding Issues - :object");
     for (let obj of objects) {
-      bar.tick({object: obj.getType() + " " + obj.getName()});
+      progress.tick({object: obj.getType() + " " + obj.getName()});
 // todo, move somewhere else
       for (let key in Rules) {
         const rul: any = Rules;
@@ -92,22 +104,23 @@ export default class Registry {
     return issues;
   }
 
-  public parse(): Registry {
+  public parse(progress?: IProgress): Registry {
     if (!this.isDirty()) {
       return this;
     }
+    progress = progress ? progress : new NoProgress();
 
     let objects = this.getABAPObjects();
 
-    let bar = new Progress(this.conf, ":percent - Lexing and parsing - :object", {total: objects.length});
+    progress.set(objects.length, ":percent - Lexing and parsing - :object");
     objects.forEach((obj) => {
-      bar.tick({object: obj.getType() + " " + obj.getName()});
+      progress.tick({object: obj.getType() + " " + obj.getName()});
       obj.parseFirstPass(this.conf.getVersion(), this);
     });
 
-    bar = new Progress(this.conf, ":percent - Second pass - :object", {total: objects.length});
+    progress.set(objects.length, ":percent - Second pass - :object");
     objects.forEach((obj) => {
-      bar.tick({object: obj.getType() + " " + obj.getName()});
+      progress.tick({object: obj.getType() + " " + obj.getName()});
       this.issues = this.issues.concat(obj.parseSecondPass(this));
     });
 
@@ -209,22 +222,4 @@ export default class Registry {
     return false;
   }
 
-}
-
-// todo, implement this with events instead, so it works on both node and web
-class Progress {
-  private bar: ProgressBar = undefined;
-
-  constructor(conf: Config, text: string, options: any) {
-    if (conf.getShowProgress()) {
-      this.bar = new ProgressBar(text, options);
-    }
-  }
-
-  public tick(options: any) {
-    if (this.bar) {
-      this.bar.tick(options);
-      this.bar.render();
-    }
-  }
 }

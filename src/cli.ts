@@ -9,9 +9,9 @@ import * as path from "path";
 import * as zlib from "zlib";
 import * as glob from "glob";
 import * as minimist from "minimist";
-import * as ProgressBar from "progress";
 import {Artifacts} from "./abap/artifacts";
-import Registry from "./registry";
+import Registry, {IProgress} from "./registry";
+import * as ProgressBar from "progress";
 
 function searchConfig(filename: string): Config {
   let json = searchUp(path.dirname(process.cwd() + path.sep + filename) + path.sep);
@@ -124,14 +124,11 @@ async function run() {
       if (argv["a"]) {
         config.setVersion(textToVersion(argv["a"]));
       }
-      if (argv["s"]) {
-        config.setShowProgress(true);
-      }
       let compress = argv["c"] ? true : false;
 
-      let loaded = await loadFiles(compress, files, config.getShowProgress());
-//      issues = new Runner(loaded, config).findIssues();
-      issues = new Registry(config).addFiles(loaded).findIssues();
+      let loaded = await loadFiles(compress, files, argv["s"]);
+      let progress = argv["s"] ? new Progress() : undefined;
+      issues = new Registry(config).addFiles(loaded).findIssues(progress);
       output = Formatter.format(issues, format);
     }
   }
@@ -156,3 +153,18 @@ run().then(({output, issues}) => {
   console.dir(err);
   process.exit(1);
 });
+
+class Progress implements IProgress {
+  private bar: ProgressBar = undefined;
+
+  public set(total: number, text: string) {
+    this.bar = new ProgressBar(text, {total});
+  }
+
+  public tick(options: any) {
+    if (this.bar) {
+      this.bar.tick(options);
+      this.bar.render();
+    }
+  }
+}
