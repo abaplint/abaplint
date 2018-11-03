@@ -79,6 +79,10 @@ function findUsedBy(object, file) {
   return ret;
 }
 
+function filename(name) {
+  return name.replace(/(.)([A-Z])/, "$1_$2").toLowerCase() + ".ts";
+}
+
 function run() {
 
   let file = JSON.parse(fs.readFileSync(folder + "generated.json", "utf8"));
@@ -86,14 +90,17 @@ function run() {
   for (let index in file.structures) {
     file.structures[index].svg = generateSVG(file.structures[index]);
     file.structures[index].used_by = findUsedBy(file.structures[index], file);
+    file.structures[index].filename = filename(file.structures[index].name);
   }
   for (let index in file.statements) {
     file.statements[index].svg = generateSVG(file.statements[index]);
     file.statements[index].used_by = findUsedBy(file.statements[index], file);
+    file.statements[index].filename = filename(file.statements[index].name);
   }
   for (let index in file.expressions) {
     file.expressions[index].svg = generateSVG(file.expressions[index]);
     file.expressions[index].used_by = findUsedBy(file.expressions[index], file);
+    file.expressions[index].filename = filename(file.expressions[index].name);
   }
 
   return file;
