@@ -6,6 +6,7 @@ export interface IMatch {
   unmatched: Array<Statement>;
   error: boolean;
   errorDescription: string;
+  errorMatched: number;
 }
 
 export interface IStructureRunnable {
@@ -39,12 +40,23 @@ class Sequence implements IStructureRunnable {
     for (let i of this.list) {
       let match = i.run(inn);
       if (match.error) {
-        return {matched: [], unmatched: statements, error: true, errorDescription: match.errorDescription};
+        return {
+          matched: [],
+          unmatched: statements,
+          error: true,
+          errorDescription: match.errorDescription,
+          errorMatched: out.length};
       }
       out = out.concat(match.matched);
       inn = match.unmatched;
     }
-    return {matched: out, unmatched: inn, error: false, errorDescription: ""};
+    return {
+      matched: out,
+      unmatched: inn,
+      error: false,
+      errorDescription: "",
+      errorMatched: 0,
+    };
   }
 }
 
@@ -68,14 +80,36 @@ class Alternative implements IStructureRunnable {
   }
 
   public run(statements: Array<Statement>): IMatch {
+    let count = 0;
+    let countError = "";
     for (let i of this.list) {
       const match = i.run(statements);
       if (match.error === false) {
         return match;
       }
+      if (match.errorMatched > count) {
+        countError = match.errorDescription;
+        count = match.errorMatched;
+      }
     }
-    let children = this.list.map((e) => { return e.constructor.name; });
-    return {matched: [], unmatched: statements, error: true, errorDescription: "Expected " + children.join(" or ")};
+    let children = this.list.map((e) => { return e.constructor.name.toUpperCase(); });
+    if (count === 0) {
+      return {
+        matched: [],
+        unmatched: statements,
+        error: true,
+        errorDescription: "Expected " + children.join(" or "),
+        errorMatched: count,
+      };
+    } else {
+      return {
+        matched: [],
+        unmatched: statements,
+        error: true,
+        errorDescription: countError,
+        errorMatched: count,
+      };
+    }
   }
 }
 
@@ -125,8 +159,32 @@ class Star implements IStructureRunnable {
     // tslint:disable-next-line:no-constant-condition
     while (true) {
       let match = this.obj.run(inn);
-      if (match.error === true || inn.length === 0) {
-        return {matched: out, unmatched: inn, error: false, errorDescription: ""};
+      if (inn.length === 0) {
+        return {
+          matched: out,
+          unmatched: inn,
+          error: false,
+          errorDescription: "",
+          errorMatched: 0,
+        };
+      } else if (match.error === true) {
+        if (match.errorMatched > 0) {
+          return {
+            matched: out,
+            unmatched: inn,
+            error: true,
+            errorDescription: match.errorDescription,
+            errorMatched: match.errorMatched,
+          };
+        } else {
+          return {
+            matched: out,
+            unmatched: inn,
+            error: false,
+            errorDescription: "",
+            errorMatched: 0,
+          };
+        }
       }
       out = out.concat(match.matched);
       inn = match.unmatched;
@@ -153,7 +211,6 @@ class SubStructure implements IStructureRunnable {
     let ret = this.s.getMatcher().run(statements);
     if (ret.matched.length === 0) {
       ret.error = true;
-      ret.errorDescription = "Expected " + this.s.constructor.name;
     }
     return ret;
   }
@@ -175,16 +232,31 @@ class SubStatement implements IStructureRunnable {
   }
 
   private className() {
-    return (this.obj + "").match(/\w+/g)[1];
+    return (this.obj + "").match(/\w+/g)[1].toUpperCase();
   }
 
   public run(statements: Array<Statement>): IMatch {
     if (statements.length === 0) {
-      return {matched: [], unmatched: [], error: true, errorDescription: "Expected " + this.className()};
+      return {
+        matched: [],
+        unmatched: [],
+        error: true,
+        errorDescription: "Expected " + this.className(),
+        errorMatched: 0};
     } else if (statements[0] instanceof this.obj) {
-      return {matched: [statements[0]], unmatched: statements.splice(1), error: false, errorDescription: ""};
+      return {
+        matched: [statements[0]],
+        unmatched: statements.splice(1),
+        error: false,
+        errorDescription: "",
+        errorMatched: 0};
     } else {
-      return {matched: [], unmatched: statements, error: true, errorDescription: "Expected " + this.className()};
+      return {
+        matched: [],
+        unmatched: statements,
+        error: true,
+        errorDescription: "Expected " + this.className(),
+        errorMatched: 0};
     }
   }
 }

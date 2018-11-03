@@ -77,6 +77,7 @@ export default class Parser {
     let statements = file.getStatements().slice().filter((s) => { return !(s instanceof StatementComment || s instanceof Empty); });
     const unknowns = file.getStatements().slice().filter((s) => { return s instanceof Unknown; });
     if (unknowns.length > 0) {
+// do not parse structure, file contains unknown statements(parser errors)
       return [];
     }
 
@@ -86,7 +87,7 @@ export default class Parser {
     }
     if (result.unmatched.length > 0) {
       const statement = result.unmatched[0];
-      const descr = "Unexpected " + statement.constructor.name;
+      const descr = "Unexpected " + statement.constructor.name.toUpperCase();
       return [new Issue(new GenericError(descr), file, 1, statement.getStart())];
     }
     return [];
