@@ -41,7 +41,7 @@ export class MaxOneStatement extends ABAPRule {
       let pos = statement.getStart();
       let row = pos.getRow();
       if (prev === row && row !== reported) {
-        let issue = new Issue(this, file, 1, pos);
+        let issue = new Issue({rule: this, file, message: 1, start: pos});
         issues.push(issue);
         reported = row;
       }

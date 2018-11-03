@@ -43,16 +43,16 @@ export class ParserError extends ABAPRule {
   public runParsed(file: ParsedFile) {
     let issues: Array<Issue> = [];
 
-    let pos = new Position(0, 0);
+    let start = new Position(0, 0);
     for (let statement of file.getStatements()) {
 // only report one error per row
       if (statement instanceof Unknown
-            && pos.getRow() !== statement.getStart().getRow()) {
+            && start.getRow() !== statement.getStart().getRow()) {
 
         let message = this.missingSpace(statement) ? 2 : 1;
 
-        pos = statement.getStart();
-        let issue = new Issue(this, file, message, pos);
+        start = statement.getStart();
+        let issue = new Issue({rule: this, file, message, start});
         issues.push(issue);
       }
     }

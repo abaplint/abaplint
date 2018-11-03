@@ -34,7 +34,7 @@ export class WhitespaceEnd extends ABAPRule {
 
     for (let i = 0; i < rows.length; i++) {
       if (/.* $/.test(rows[i]) === true) {
-        let issue = new Issue(this, file, 1, new Position(i + 1, 1));
+        let issue = new Issue({rule: this, file, message: 1, start: new Position(i + 1, 1)});
         issues.push(issue);
       }
     }

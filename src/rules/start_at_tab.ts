@@ -51,7 +51,7 @@ export class StartAtTab extends ABAPRule {
         continue;
       }
       if ((pos.getCol() - 1) % 2 !== 0) {
-        let issue = new Issue(this, file, 1, pos);
+        let issue = new Issue({rule: this, file, message: 1, start: pos});
         issues.push(issue);
       }
       previous = pos;

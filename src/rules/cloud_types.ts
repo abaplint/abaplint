@@ -50,7 +50,7 @@ export class CloudTypes implements IRule {
       return [];
     }
 
-    return [new Issue(this, obj.getFiles()[0], 1)];
+    return [new Issue({rule: this, file: obj.getFiles()[0], message: 1})];
   }
 
 }

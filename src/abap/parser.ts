@@ -83,12 +83,12 @@ export default class Parser {
 
     const result = structure.getMatcher().run(statements);
     if (result.error) {
-      return [new Issue(new GenericError(result.errorDescription), file, 1)];
+      return [new Issue({rule: new GenericError(result.errorDescription), file, message: 1})];
     }
     if (result.unmatched.length > 0) {
       const statement = result.unmatched[0];
       const descr = "Unexpected " + statement.constructor.name.toUpperCase();
-      return [new Issue(new GenericError(descr), file, 1, statement.getStart())];
+      return [new Issue({rule: new GenericError(descr), file, message: 1, start: statement.getStart()})];
     }
     return [];
   }

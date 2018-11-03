@@ -43,7 +43,7 @@ export class ObsoleteStatement extends ABAPRule {
           && sta.getTokens()[1].getStr() !== "-"
           && sta.getTokens()[1].getStr() !== "EXACT" )
           || sta instanceof Statements.Divide) {
-        let issue = new Issue(this, file, 1, sta.getStart());
+        let issue = new Issue({rule: this, file, message: 1, start: sta.getStart()});
         issues.push(issue);
       }
     }

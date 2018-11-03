@@ -71,7 +71,7 @@ export class DefinitionsTop extends ABAPRule {
           || statement instanceof Statements.StaticEnd
           || statement instanceof Statements.FieldSymbol) {
         if (mode === AFTER) {
-          issue = new Issue(this, file, 1, statement.getStart());
+          issue = new Issue({rule: this, file, message: 1, start: statement.getStart()});
           mode = ANY;
         }
       } else if (statement instanceof Statements.Define) {

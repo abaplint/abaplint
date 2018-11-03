@@ -104,9 +104,10 @@ function statements() {
   document.getElementById("info").innerHTML = buildStatements(file);
 }
 
-function ast() {
+function structure() {
   let file = parse();
   document.getElementById("info").innerHTML = buildAst(file);
+  // todo
 }
 
 function escape(str) {

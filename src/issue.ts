@@ -2,6 +2,14 @@ import {IRule} from "./rules/";
 import {IFile} from "./files";
 import Position from "./position";
 
+interface IssueData {
+  rule: IRule;
+  file: IFile;
+  message: number;
+  start?: Position;
+  end?: Position;
+}
+
 export class Issue {
   private rule: IRule;
   private start: Position;
@@ -9,22 +17,22 @@ export class Issue {
   private file: IFile;
   private message: number;
 
-  public constructor(rule: IRule, file: IFile, message: number, start?: Position, end?: Position) {
-    this.rule = rule;
-    this.message = message;
+  public constructor(data: IssueData) {
+    this.rule = data.rule;
+    this.message = data.message;
 
-    this.start = start;
+    this.start = data.start;
     if (!this.start) {
       this.start = new Position(1, 1);
     }
 
-    if (!end) {
+    if (!data.end) {
       this.end = new Position(
         this.start.getRow(),
-        file.getRawRows()[this.start.getRow() - 1].length);
+        data.file.getRawRows()[this.start.getRow() - 1].length);
     }
 
-    this.file = file;
+    this.file = data.file;
   }
 
   public getRuleDescription(): string {
