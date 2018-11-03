@@ -3,7 +3,7 @@ import Position from "../position";
 import {Comment} from "../abap/statements/statement";
 import {TypeBegin, TypeEnd} from "../abap/statements/";
 import {ABAPRule} from "./abap_rule";
-import {ParsedFile} from "../files";
+import {ABAPFile} from "../files";
 
 export class StartAtTabConf {
   public enabled: boolean = true;
@@ -29,7 +29,7 @@ export class StartAtTab extends ABAPRule {
     this.conf = conf;
   }
 
-  public runParsed(file: ParsedFile) {
+  public runParsed(file: ABAPFile) {
     let issues: Array<Issue> = [];
 
     let inType = false;

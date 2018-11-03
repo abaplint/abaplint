@@ -1,7 +1,7 @@
 import {Issue} from "../issue";
 import Position from "../position";
 import {ABAPRule} from "./abap_rule";
-import {ParsedFile} from "../files";
+import {ABAPFile} from "../files";
 
 export class SequentialBlankConf {
   public enabled: boolean = true;
@@ -28,7 +28,7 @@ export class SequentialBlank extends ABAPRule {
     this.conf = conf;
   }
 
-  public runParsed(file: ParsedFile) {
+  public runParsed(file: ABAPFile) {
     let issues: Array<Issue> = [];
 
     let rows = file.getRawRows();

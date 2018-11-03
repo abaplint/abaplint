@@ -1,7 +1,7 @@
 import {Issue} from "../issue";
 import * as Statements from "../abap/statements";
 import {ABAPRule} from "./abap_rule";
-import {ParsedFile} from "../files";
+import {ABAPFile} from "../files";
 
 export class BreakpointConf {
   public enabled: boolean = true;
@@ -26,7 +26,7 @@ export class Breakpoint extends ABAPRule {
     this.conf = conf;
   }
 
-  public runParsed(file: ParsedFile) {
+  public runParsed(file: ABAPFile) {
     let issues: Array<Issue> = [];
 
     for (let statement of file.getStatements()) {

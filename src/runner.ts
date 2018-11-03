@@ -1,4 +1,4 @@
-import {IFile, MemoryFile, ParsedFile} from "./files";
+import {IFile, MemoryFile, ABAPFile} from "./files";
 import Config from "./config";
 import * as Rules from "./rules/";
 import {Issue} from "./issue";
@@ -7,7 +7,6 @@ import {Version, textToVersion} from "./version";
 import {Formatter} from "./formatters/";
 import * as ProgressBar from "progress";
 import {GenericError} from "./rules/";
-import Parser from "./abap/parser";
 
 export default class Runner {
   private conf: Config;
@@ -29,7 +28,7 @@ export default class Runner {
     this.addObjectsToRegistry(files);
   }
 
-  public parse(): Array<ParsedFile> {
+  public parse(): Array<ABAPFile> {
 // todo, consider if this method should return anything, use reg instead for fetching stuff?
 // return reg? only called from "/test"
     if (this.parsed === true) {
@@ -74,28 +73,17 @@ export default class Runner {
   private parseInternal(): void {
     let objects = this.reg.getABAPObjects();
 
-    let bar = new Progress(this.conf,
-                           ":percent - Lexing and parsing - :object",
-                           {total: objects.length});
-
+    let bar = new Progress(this.conf, ":percent - Lexing and parsing - :object", {total: objects.length});
     objects.forEach((obj) => {
       bar.tick({object: obj.getType() + " " + obj.getName()});
       obj.parseFirstPass(this.conf.getVersion(), this.reg);
     });
 
+    bar = new Progress(this.conf, ":percent - Second pass - :object", {total: objects.length});
     objects.forEach((obj) => {
+      bar.tick({object: obj.getType() + " " + obj.getName()});
       obj.parseSecondPass(this.reg);
     });
-
-    bar = new Progress(this.conf,
-                       ":percent - Adding structure - :object",
-                       {total: objects.length});
-    for (let obj of objects) {
-      bar.tick({object: obj.getType() + " " + obj.getName()});
-      for (let file of obj.getParsed()) {
-        this.generic = this.generic.concat(Parser.runStructure(file));
-      }
-    }
 
     this.parsed = true;
   }

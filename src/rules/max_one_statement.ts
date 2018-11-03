@@ -1,7 +1,7 @@
 import {Issue} from "../issue";
 import {Comment} from "../abap/statements/statement";
 import {ABAPRule} from "./abap_rule";
-import {ParsedFile} from "../files";
+import {ABAPFile} from "../files";
 
 export class MaxOneStatementConf {
   public enabled: boolean = true;
@@ -27,7 +27,7 @@ export class MaxOneStatement extends ABAPRule {
     this.conf = conf;
   }
 
-  public runParsed(file: ParsedFile) {
+  public runParsed(file: ABAPFile) {
     let issues: Array<Issue> = [];
 
     let prev: number = 0;

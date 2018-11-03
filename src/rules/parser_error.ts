@@ -3,7 +3,7 @@ import Position from "../position";
 import * as Tokens from "../abap/tokens";
 import {Unknown, Statement} from "../abap/statements/statement";
 import {ABAPRule} from "./abap_rule";
-import {ParsedFile} from "../files";
+import {ABAPFile} from "../files";
 
 export class ParserErrorConf {
   public enabled: boolean = true;
@@ -40,7 +40,7 @@ export class ParserError extends ABAPRule {
     this.conf = conf;
   }
 
-  public runParsed(file: ParsedFile) {
+  public runParsed(file: ABAPFile) {
     let issues: Array<Issue> = [];
 
     let start = new Position(0, 0);

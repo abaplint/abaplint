@@ -1,7 +1,7 @@
 import Position from "../position";
 import {Issue} from "../issue";
 import {ABAPRule} from "./abap_rule";
-import {ParsedFile} from "../files";
+import {ABAPFile} from "../files";
 
 export class Counter {
   public exporting: boolean = false;
@@ -25,7 +25,7 @@ export class Exporting extends ABAPRule {
     return "EXPORTING can be omitted";
   }
 
-  public runParsed(file: ParsedFile) {
+  public runParsed(file: ABAPFile) {
     let issues: Array<Issue> = [];
 
     for (let statement of file.getStatements()) {

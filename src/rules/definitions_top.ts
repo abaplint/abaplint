@@ -2,7 +2,7 @@ import {Issue} from "../issue";
 import {Comment} from "../abap/statements/statement";
 import * as Statements from "../abap/statements/";
 import {ABAPRule} from "./abap_rule";
-import {ParsedFile} from "../files";
+import {ABAPFile} from "../files";
 
 export class DefinitionsTopConf {
   public enabled: boolean = true;
@@ -34,7 +34,7 @@ export class DefinitionsTop extends ABAPRule {
     this.conf = conf;
   }
 
-  public runParsed(file: ParsedFile) {
+  public runParsed(file: ABAPFile) {
     let issues: Array<Issue> = [];
 
     let mode = ANY;

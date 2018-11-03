@@ -1,6 +1,6 @@
 import {Issue} from "../issue";
 import {ABAPRule} from "./abap_rule";
-import {ParsedFile} from "../files";
+import {ABAPFile} from "../files";
 
 export class FunctionalWritingConf {
   public enabled: boolean = true;
@@ -26,7 +26,7 @@ export class FunctionalWriting extends ABAPRule {
     this.conf = conf;
   }
 
-  public runParsed(file: ParsedFile) {
+  public runParsed(file: ABAPFile) {
     let issues: Array<Issue> = [];
 
     for (let statement of file.getStatements()) {

@@ -1,6 +1,6 @@
 import * as Objects from "./objects";
 import {ABAPObject} from "./objects";
-import {ParsedFile} from "./files";
+import {ABAPFile} from "./files";
 
 export default class Registry {
 
@@ -15,8 +15,8 @@ export default class Registry {
     return this.objects.filter((obj) => { return obj instanceof ABAPObject; }) as Array<ABAPObject>;
   }
 
-  public getParsedFiles(): Array<ParsedFile> {
-    let ret: Array<ParsedFile> = [];
+  public getParsedFiles(): Array<ABAPFile> {
+    let ret: Array<ABAPFile> = [];
     this.getABAPObjects().forEach((a) => {ret = ret.concat(a.getParsed()); });
     return ret;
   }

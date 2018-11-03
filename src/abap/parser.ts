@@ -6,7 +6,7 @@ import {Statement, Unknown, Empty, Comment, MacroContent, NativeSQL} from "./sta
 import {Version} from "../version";
 import {Artifacts} from "./artifacts";
 import {Token} from "./tokens/";
-import {ParsedFile} from "../files";
+import {ABAPFile} from "../files";
 import {GenericError} from "../rules";
 import {Structure} from "./structures/_structure";
 import * as Structures from "./structures/";
@@ -72,7 +72,7 @@ export default class Parser {
     }
   }
 
-  public static runStructure(file: ParsedFile): Array<Issue> {
+  public static runStructure(file: ABAPFile): Array<Issue> {
     const structure = this.findStructureForFile(file.getFilename());
     let statements = file.getStatements().slice().filter((s) => { return !(s instanceof StatementComment || s instanceof Empty); });
     const unknowns = file.getStatements().slice().filter((s) => { return s instanceof Unknown; });

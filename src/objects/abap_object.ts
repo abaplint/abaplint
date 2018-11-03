@@ -1,5 +1,5 @@
 import {Object} from "./";
-import {ParsedFile} from "../files";
+import {ABAPFile} from "../files";
 import Lexer from "../abap/lexer";
 import Parser from "../abap/parser";
 import {Version} from "../version";
@@ -8,9 +8,10 @@ import {Define} from "../abap/statements";
 import {TokenNode} from "../abap/node";
 import {Token} from "../abap/tokens/";
 import {Statement, Unknown, MacroCall} from "../abap/statements/statement";
+import {Issue} from "../issue";
 
 export abstract class ABAPObject extends Object {
-  private parsed: Array<ParsedFile>;
+  private parsed: Array<ABAPFile>;
 
   public constructor(name: string, devPackage: string) {
     super(name, devPackage);
@@ -25,7 +26,7 @@ export abstract class ABAPObject extends Object {
         let tokens = Lexer.run(f);
         let statements = Parser.run(tokens, ver);
 
-        this.parsed.push(new ParsedFile(f, tokens, statements));
+        this.parsed.push(new ABAPFile(f, tokens, statements));
       }
     });
 
@@ -38,7 +39,7 @@ export abstract class ABAPObject extends Object {
     });
   }
 
-  public parseSecondPass(reg: Registry): Array<ParsedFile> {
+  public parseSecondPass(reg: Registry): Issue[] {
     this.parsed.forEach((f) => {
       let statements: Array<Statement> = [];
       f.getStatements().forEach((s) => {
@@ -51,10 +52,16 @@ export abstract class ABAPObject extends Object {
       f.setStatements(statements);
     });
 
-    return this.parsed;
+    let ret: Issue[] = [];
+    this.parsed.forEach((f) => {
+// todo, set structure in file
+      ret = ret.concat(Parser.runStructure(f));
+    });
+
+    return ret;
   }
 
-  public getParsed(): Array<ParsedFile> {
+  public getParsed(): Array<ABAPFile> {
     return this.parsed;
   }
 

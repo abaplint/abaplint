@@ -1,7 +1,7 @@
 import {IRule} from ".";
 import {ABAPObject, Object} from "../objects";
 import {Issue} from "../issue";
-import {ParsedFile} from "../files";
+import {ABAPFile} from "../files";
 
 export abstract class ABAPRule implements IRule {
 
@@ -15,7 +15,7 @@ export abstract class ABAPRule implements IRule {
     return this.getDescription();
   }
 
-  public abstract runParsed(file: ParsedFile): Array<Issue>;
+  public abstract runParsed(file: ABAPFile): Array<Issue>;
 
   public run(obj: Object) {
 
