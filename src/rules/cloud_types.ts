@@ -3,7 +3,7 @@ import {Issue} from "../issue";
 import {Version} from "../version";
 import * as Objects from "../objects";
 import {Object} from "../objects";
-import Registry from "../registry";
+import {Registry} from "../registry";
 
 export class CloudTypesConf {
   public enabled: boolean = true;

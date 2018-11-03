@@ -10,7 +10,7 @@ import * as zlib from "zlib";
 import * as glob from "glob";
 import * as minimist from "minimist";
 import {Artifacts} from "./abap/artifacts";
-import Registry, {IProgress} from "./registry";
+import {Registry, IProgress} from "./registry";
 import * as ProgressBar from "progress";
 
 function searchConfig(filename: string): Config {

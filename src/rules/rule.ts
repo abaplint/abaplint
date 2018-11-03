@@ -1,7 +1,7 @@
 import {Object} from "../objects/";
 import {Issue} from "../issue";
 import {Version} from "../version";
-import Registry from "../registry";
+import {Registry} from "../registry";
 
 export interface IRule {
   getKey(): string;

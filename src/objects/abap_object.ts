@@ -4,7 +4,7 @@ import Lexer from "../abap/lexer";
 import StatementParser from "../abap/statement_parser";
 import StructureParser from "../abap/structure_parser";
 import {Version} from "../version";
-import Registry from "../registry";
+import {Registry} from "../registry";
 import {Define} from "../abap/statements";
 import {TokenNode} from "../abap/node";
 import {Token} from "../abap/tokens/";

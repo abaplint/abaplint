@@ -2,7 +2,7 @@ import Config from "./config";
 import {MemoryFile} from "./files";
 import {Version, textToVersion} from "./version";
 import {Formatter} from "./formatters/";
-import Registry from "./registry";
+import {Registry} from "./registry";
 
 export default class Runner {
   public static version(): string {

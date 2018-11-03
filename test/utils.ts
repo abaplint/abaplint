@@ -6,7 +6,7 @@ import {Unknown} from "../src/abap/statements/statement";
 import {Structure} from "../src/abap/structures/_structure";
 import Lexer from "../src/abap/lexer";
 import StatementParser from "../src/abap/statement_parser";
-import Registry from "../src/registry";
+import {Registry} from "../src/registry";
 
 // utils for testing
 

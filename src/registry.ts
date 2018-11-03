@@ -21,7 +21,7 @@ class NoProgress implements IProgress {
   }
 }
 
-export default class Registry {
+export class Registry {
 
   private macros: Array<string> = [];
   private objects: Array<Objects.Object> = [];
@@ -37,11 +37,14 @@ export default class Registry {
     return this.objects;
   }
 
+  public getConfig() {
+    return this.conf;
+  }
+
   public getABAPObjects(): Array<ABAPObject> {
     return this.objects.filter((obj) => { return obj instanceof ABAPObject; }) as Array<ABAPObject>;
   }
 
-// todo, is this method needed?
   public getParsedFiles(): Array<ABAPFile> {
     let ret: Array<ABAPFile> = [];
     this.getABAPObjects().forEach((a) => {ret = ret.concat(a.getParsed()); });
@@ -58,7 +61,6 @@ export default class Registry {
       try {
         this.findOrCreate(f.getObjectName(), f.getObjectType()).addFile(f);
       } catch (error) {
-// todo, this does not respect the configuration
         this.issues.push(new Issue({rule: new GenericError(error), file: f, message: 1}));
       }
     });
@@ -80,9 +82,7 @@ export default class Registry {
     }
     progress = progress ? progress : new NoProgress();
 
-    let issues: Array<Issue> = [];
-    issues = this.issues.slice(0);
-
+    let issues = this.issues.slice(0);
     let objects = this.getObjects();
 
     progress.set(objects.length, ":percent - Finding Issues - :object");
