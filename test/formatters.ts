@@ -1,7 +1,6 @@
-import Runner from "../src/runner";
-import {MemoryFile} from "../src/files";
 import {Formatter} from "../src/formatters";
 import {expect} from "chai";
+import {findIssues} from "./utils";
 
 describe("formatters", () => {
   let tests = [
@@ -11,7 +10,7 @@ describe("formatters", () => {
   ];
 
   tests.forEach((test) => {
-    let issues = new Runner([new MemoryFile("any.prog.abap", test.abap)]).findIssues();
+    let issues = findIssues(test.abap);
 
     it(test.abap, () => {
       expect(issues.length).to.equals(test.errors);

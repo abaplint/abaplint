@@ -1,9 +1,7 @@
-import Runner from "../../src/runner";
-import {MemoryFile} from "../../src/files";
 import * as Structures from "../../src/abap/structures/";
 import {expect} from "chai";
 import {Structure} from "../../src/abap/structures/_structure";
-import {getStatements} from "../utils";
+import {getStatements, parse} from "../utils";
 import StructureParser from "../../src/abap/structure_parser";
 
 const cases = [
@@ -43,7 +41,7 @@ const parser = [
 describe("Structure, test error messages, parser", function() {
   parser.forEach((c: {abap: string, error: string}) => {
     it(c.abap, function () {
-      const file = new Runner([new MemoryFile("foo.prog.abap", c.abap)]).parse()[0];
+      const file = parse(c.abap);
       const issues = StructureParser.run(file);
       if (c.error === "") {
         expect(issues.length).to.equal(0);

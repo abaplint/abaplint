@@ -11,6 +11,7 @@ import * as glob from "glob";
 import * as minimist from "minimist";
 import * as ProgressBar from "progress";
 import {Artifacts} from "./abap/artifacts";
+import Registry from "./registry";
 
 function searchConfig(filename: string): Config {
   let json = searchUp(path.dirname(process.cwd() + path.sep + filename) + path.sep);
@@ -129,7 +130,8 @@ async function run() {
       let compress = argv["c"] ? true : false;
 
       let loaded = await loadFiles(compress, files, config.getShowProgress());
-      issues = new Runner(loaded, config).findIssues();
+//      issues = new Runner(loaded, config).findIssues();
+      issues = new Registry(config).addFiles(loaded).findIssues();
       output = Formatter.format(issues, format);
     }
   }

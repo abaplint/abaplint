@@ -1,12 +1,12 @@
 import {MemoryFile} from "../src/files";
 import Config from "../src/config";
-import Runner from "../src/runner";
 import {expect} from "chai";
 import {Version, versionToText} from "../src/version";
 import {Unknown} from "../src/abap/statements/statement";
 import {Structure} from "../src/abap/structures/_structure";
 import Lexer from "../src/abap/lexer";
 import StatementParser from "../src/abap/statement_parser";
+import Registry from "../src/registry";
 
 // utils for testing
 
@@ -18,12 +18,19 @@ export function getStatements(abap: string, version = Version.v750) {
   return StatementParser.run(getTokens(abap), version);
 }
 
+export function findIssues(abap: string) {
+  let file = new MemoryFile("cl_foo.prog.abap", abap);
+  return new Registry().addFile(file).findIssues();
+}
+
+export function parse(abap: string, config?: Config) {
+  let file = new MemoryFile("cl_foo.prog.abap", abap);
+  return new Registry(config).addFile(file).parse().getParsedFiles()[0];
+}
+
 function run(abap: string, text: string, type: any, version = Version.v750) {
   let config = Config.getDefault().setVersion(version);
-  let file = new Runner([new MemoryFile("cl_foo.clas.abap", abap)], config).parse()[0];
-
-//  let tokens = Lexer.run(new MemoryFile("cl_foo.clas.abap", abap));
-//  let slist = Parser.run(getTokens(abap), version)
+  let file = parse(abap, config);
   let slist = file.getStatements();
 
   it(text, () => {
@@ -38,7 +45,7 @@ export function structureType(cas: {abap: string}[], expected: Structure): void 
   describe("Structure type", function() {
     cas.forEach((c: {abap: string}) => {
       it(c.abap, function () {
-        let file = new Runner([new MemoryFile("cl_foo.clas.abap", c.abap)]).parse()[0];
+        let file = parse(c.abap); // new Runner([new MemoryFile("cl_foo.clas.abap", c.abap)]).parse()[0];
         const statements = file.getStatements();
         const length = statements.length;
         const match = expected.getMatcher().run(statements.slice());

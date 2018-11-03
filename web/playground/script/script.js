@@ -59,13 +59,13 @@ function buildAst(file) {
 function process() {
   let input = stripNewline(editor.getValue());
   let file = new abaplint.File("foobar.prog.abap", input);
-  return new abaplint.Runner([file], config).findIssues();
+  return new abaplint.Registry(config).addFile(file).findIssues();
 }
 
 function parse() {
   let input = stripNewline(editor.getValue());
   let file = new abaplint.File("foobar.prog.abap", input);
-  return new abaplint.Runner([file], config).parse()[0];
+  return new abaplint.Registry(config).addFile(file).parse().getParsedFiles()[0];
 }
 
 // ---------------------

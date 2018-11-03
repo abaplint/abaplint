@@ -4,7 +4,8 @@ import {Issue} from "./issue";
 import Config from "./config";
 import {Version} from "./version";
 import {Formatter} from "./formatters";
+import Registry from "./registry";
 
 // file used to build typings, index.d.ts
 
-export = {MemoryFile, Issue, Runner, Config, Version, Formatter};
+export = {MemoryFile, Issue, Runner, Config, Version, Formatter, Registry};

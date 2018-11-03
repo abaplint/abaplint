@@ -1,11 +1,23 @@
 import * as Objects from "./objects";
 import {ABAPObject} from "./objects";
-import {ABAPFile} from "./files";
+import {ABAPFile, IFile} from "./files";
+import Config from "./config";
+import * as ProgressBar from "progress";
+import {Issue} from "./issue";
+import {GenericError} from "./rules/";
+import * as Rules from "./rules/";
 
 export default class Registry {
 
   private macros: Array<string> = [];
   private objects: Array<Objects.Object> = [];
+  private dirty = false;
+  private conf: Config;
+  private issues: Issue[] = [];
+
+  constructor(conf?: Config) {
+    this.conf = conf ? conf : Config.getDefault();
+  }
 
   public getObjects(): Array<Objects.Object> {
     return this.objects;
@@ -22,7 +34,87 @@ export default class Registry {
     return ret;
   }
 
-  public findOrCreate(name: string, type: string): Objects.Object {
+  public addFile(file: IFile): Registry {
+    return this.addFiles([file]);
+  }
+
+  public addFiles(files: Array<IFile>): Registry {
+    this.setDirty();
+    files.forEach((f) => {
+      try {
+        this.findOrCreate(f.getObjectName(), f.getObjectType()).addFile(f);
+      } catch (error) {
+// todo, this does not respect the configuration
+        this.issues.push(new Issue({rule: new GenericError(error), file: f, message: 1}));
+      }
+    });
+    return this;
+  }
+
+  public setDirty() {
+    this.dirty = true;
+    this.issues = [];
+  }
+
+  public isDirty(): boolean {
+    return this.dirty;
+  }
+
+  public findIssues(): Array<Issue> {
+    if (this.isDirty()) {
+      this.parse();
+    }
+
+    let issues: Array<Issue> = [];
+    issues = this.issues.slice(0);
+
+    let objects = this.getObjects();
+
+    let bar = new Progress(this.conf,
+                           ":percent - Finding Issues - :object",
+                           {total: objects.length});
+
+    for (let obj of objects) {
+      bar.tick({object: obj.getType() + " " + obj.getName()});
+// todo, move somewhere else
+      for (let key in Rules) {
+        const rul: any = Rules;
+        if (typeof rul[key] === "function") {
+          let rule: Rules.IRule = new rul[key]();
+          if (rule.getKey && this.conf.readByKey(rule.getKey(), "enabled") === true) {
+            rule.setConfig(this.conf.readByRule(rule.getKey()));
+            issues = issues.concat(rule.run(obj, this, this.conf.getVersion()));
+          }
+        }
+      }
+    }
+
+    return issues;
+  }
+
+  public parse(): Registry {
+    if (!this.isDirty()) {
+      return this;
+    }
+
+    let objects = this.getABAPObjects();
+
+    let bar = new Progress(this.conf, ":percent - Lexing and parsing - :object", {total: objects.length});
+    objects.forEach((obj) => {
+      bar.tick({object: obj.getType() + " " + obj.getName()});
+      obj.parseFirstPass(this.conf.getVersion(), this);
+    });
+
+    bar = new Progress(this.conf, ":percent - Second pass - :object", {total: objects.length});
+    objects.forEach((obj) => {
+      bar.tick({object: obj.getType() + " " + obj.getName()});
+      this.issues = this.issues.concat(obj.parseSecondPass(this));
+    });
+
+    return this;
+  }
+
+  private findOrCreate(name: string, type: string): Objects.Object {
     for (let obj of this.objects) { // todo, this is slow
       if (obj.getType() === type && obj.getName() === name) {
         return obj;
@@ -30,7 +122,7 @@ export default class Registry {
     }
 
     let add = undefined;
-// todo, refactor
+// todo, refactor this somewhere else
     switch (type) {
       case "CLAS":
         add = new Objects.Class(name);
@@ -100,8 +192,8 @@ export default class Registry {
     return add;
   }
 
-// todo, handle scoping for macros
   public addMacro(name: string) {
+// todo, handle scoping for macros
     if (this.isMacro(name)) {
       return;
     }
@@ -117,4 +209,22 @@ export default class Registry {
     return false;
   }
 
+}
+
+// todo, implement this with events instead, so it works on both node and web
+class Progress {
+  private bar: ProgressBar = undefined;
+
+  constructor(conf: Config, text: string, options: any) {
+    if (conf.getShowProgress()) {
+      this.bar = new ProgressBar(text, options);
+    }
+  }
+
+  public tick(options: any) {
+    if (this.bar) {
+      this.bar.tick(options);
+      this.bar.render();
+    }
+  }
 }
