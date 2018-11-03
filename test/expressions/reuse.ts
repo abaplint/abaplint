@@ -1,8 +1,7 @@
 import {expect} from "chai";
 import * as Combi from "../../src/abap/combi";
 import * as Reuse from "../../src/abap/expressions";
-import {MemoryFile} from "../../src/files";
-import Runner from "../../src/runner";
+import {getTokens} from "../utils";
 
 let tests = [
   {c: "cs_tstcp",                         r: new Reuse.FieldChain(),      e: true},
@@ -69,8 +68,8 @@ describe("Test reuse matchers", () => {
     let not = test.e === true ? "" : "not ";
 
     it("\"" + test.c + "\" should " + not + "match " + test.r.getName(), () => {
-      let file = new Runner([new MemoryFile("cl_foo.clas.abap", test.c)]).parse()[0];
-      let match = Combi.Combi.run(test.r.getRunnable(), file.getTokens());
+      let tokens = getTokens(test.c);
+      let match = Combi.Combi.run(test.r.getRunnable(), tokens);
       expect(match !== undefined).to.equals(test.e);
     });
   });

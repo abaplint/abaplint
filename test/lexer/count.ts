@@ -1,7 +1,5 @@
-import {MemoryFile} from "../../src/files";
-import Lexer from "../../src/abap/lexer";
-import Runner from "../../src/runner";
 import {expect} from "chai";
+import {getTokens} from "../utils";
 
 describe("count_tokens", () => {
   let tests = [
@@ -80,15 +78,11 @@ describe("count_tokens", () => {
   ];
 
   tests.forEach((test) => {
-    let file = new MemoryFile("cl_foo.clas.abap", test.abap);
-    let tokens = Lexer.run(file);
+    let tokens = getTokens(test.abap);
 
     it("\"" + test.abap + "\" should have " + test.tokens + " tokens", () => {
       expect(tokens.length).to.equals(test.tokens);
     });
 
-    it("\"" + test.abap + "\" should match parsed file token count", () => {
-      expect(tokens.length).to.equals(new Runner([file]).parse()[0].getTokens().length);
-    });
   });
 });

@@ -1,17 +1,11 @@
-import * as Tokens from "./tokens/";
-import * as Statements from "./statements/";
+import * as Tokens from "./tokens";
+import * as Statements from "./statements";
 import {Combi} from "./combi";
 import {TokenNode} from "./node";
 import {Statement, Unknown, Empty, Comment, MacroContent, NativeSQL} from "./statements/statement";
 import {Version} from "../version";
 import {Artifacts} from "./artifacts";
-import {Token} from "./tokens/";
-import {ABAPFile} from "../files";
-import {GenericError} from "../rules";
-import {Structure} from "./structures/_structure";
-import * as Structures from "./structures/";
-import {Issue} from "../issue";
-import {Comment as StatementComment} from "./statements/statement";
+import {Token} from "./tokens";
 
 function className(cla: any) {
   return (cla.constructor + "").match(/\w+/g)[1];
@@ -41,7 +35,7 @@ class Map {
   }
 }
 
-export default class Parser {
+export default class StatementParser {
   private static statements: Array<Statement>;
 // todo, move this map to separate local class
   private static map: Map;
@@ -59,38 +53,6 @@ export default class Parser {
     this.nativeSQL();
 
     return this.statements;
-  }
-
-  public static findStructureForFile(filename: string): Structure {
-    if (filename.match(/\.clas\.abap$/)) {
-      return new Structures.ClassGlobal();
-    } else if (filename.match(/\.intf\.abap$/)) {
-      return new Structures.Interface();
-    } else {
-// todo
-      return new Structures.Any();
-    }
-  }
-
-  public static runStructure(file: ABAPFile): Array<Issue> {
-    const structure = this.findStructureForFile(file.getFilename());
-    let statements = file.getStatements().slice().filter((s) => { return !(s instanceof StatementComment || s instanceof Empty); });
-    const unknowns = file.getStatements().slice().filter((s) => { return s instanceof Unknown; });
-    if (unknowns.length > 0) {
-// do not parse structure, file contains unknown statements(parser errors)
-      return [];
-    }
-
-    const result = structure.getMatcher().run(statements);
-    if (result.error) {
-      return [new Issue({rule: new GenericError(result.errorDescription), file, message: 1})];
-    }
-    if (result.unmatched.length > 0) {
-      const statement = result.unmatched[0];
-      const descr = "Unexpected " + statement.constructor.name.toUpperCase();
-      return [new Issue({rule: new GenericError(descr), file, message: 1, start: statement.getStart()})];
-    }
-    return [];
   }
 
   private static tokensToNodes(tokens: Array<Tokens.Token>): Array<TokenNode> {

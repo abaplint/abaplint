@@ -5,12 +5,25 @@ import {expect} from "chai";
 import {Version, versionToText} from "../src/version";
 import {Unknown} from "../src/abap/statements/statement";
 import {Structure} from "../src/abap/structures/_structure";
+import Lexer from "../src/abap/lexer";
+import StatementParser from "../src/abap/statement_parser";
 
 // utils for testing
+
+export function getTokens(abap: string) {
+  return Lexer.run(new MemoryFile("cl_foo.clas.abap", abap));
+}
+
+export function getStatements(abap: string, version = Version.v750) {
+  return StatementParser.run(getTokens(abap), version);
+}
 
 function run(abap: string, text: string, type: any, version = Version.v750) {
   let config = Config.getDefault().setVersion(version);
   let file = new Runner([new MemoryFile("cl_foo.clas.abap", abap)], config).parse()[0];
+
+//  let tokens = Lexer.run(new MemoryFile("cl_foo.clas.abap", abap));
+//  let slist = Parser.run(getTokens(abap), version)
   let slist = file.getStatements();
 
   it(text, () => {

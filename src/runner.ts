@@ -82,7 +82,7 @@ export default class Runner {
     bar = new Progress(this.conf, ":percent - Second pass - :object", {total: objects.length});
     objects.forEach((obj) => {
       bar.tick({object: obj.getType() + " " + obj.getName()});
-      obj.parseSecondPass(this.reg);
+      this.generic = this.generic.concat(obj.parseSecondPass(this.reg));
     });
 
     this.parsed = true;

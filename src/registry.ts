@@ -15,6 +15,7 @@ export default class Registry {
     return this.objects.filter((obj) => { return obj instanceof ABAPObject; }) as Array<ABAPObject>;
   }
 
+// todo, is this method needed?
   public getParsedFiles(): Array<ABAPFile> {
     let ret: Array<ABAPFile> = [];
     this.getABAPObjects().forEach((a) => {ret = ret.concat(a.getParsed()); });
@@ -22,7 +23,7 @@ export default class Registry {
   }
 
   public findOrCreate(name: string, type: string): Objects.Object {
-    for (let obj of this.objects) {
+    for (let obj of this.objects) { // todo, this is slow
       if (obj.getType() === type && obj.getName() === name) {
         return obj;
       }
@@ -32,61 +33,61 @@ export default class Registry {
 // todo, refactor
     switch (type) {
       case "CLAS":
-        add = new Objects.Class(name, "todo");
+        add = new Objects.Class(name);
         break;
       case "TYPE":
-        add = new Objects.TypePool(name, "todo");
+        add = new Objects.TypePool(name);
         break;
       case "DEVC":
-        add = new Objects.Package(name, "todo");
+        add = new Objects.Package(name);
         break;
       case "MSAG":
-        add = new Objects.MessageClass(name, "todo");
+        add = new Objects.MessageClass(name);
         break;
       case "INTF":
-        add = new Objects.Interface(name, "todo");
+        add = new Objects.Interface(name);
         break;
       case "DTEL":
-        add = new Objects.DataElement(name, "todo");
+        add = new Objects.DataElement(name);
         break;
       case "TABL":
-        add = new Objects.Table(name, "todo");
+        add = new Objects.Table(name);
         break;
       case "TTYP":
-        add = new Objects.TableType(name, "todo");
+        add = new Objects.TableType(name);
         break;
       case "DOMA":
-        add = new Objects.Domain(name, "todo");
+        add = new Objects.Domain(name);
         break;
       case "PROG":
-        add = new Objects.Program(name, "todo");
+        add = new Objects.Program(name);
         break;
       case "SMIM":
-        add = new Objects.MIMEObject(name, "todo");
+        add = new Objects.MIMEObject(name);
         break;
       case "FUGR":
-        add = new Objects.FunctionGroup(name, "todo");
+        add = new Objects.FunctionGroup(name);
         break;
       case "TRAN":
-        add = new Objects.Transaction(name, "todo");
+        add = new Objects.Transaction(name);
         break;
       case "SICF":
-        add = new Objects.ICFService(name, "todo");
+        add = new Objects.ICFService(name);
         break;
       case "W3MI":
-        add = new Objects.WebMIME(name, "todo");
+        add = new Objects.WebMIME(name);
         break;
       case "DCLS":
-        add = new Objects.DataControl(name, "todo");
+        add = new Objects.DataControl(name);
         break;
       case "DDLS":
-        add = new Objects.DataDefinition(name, "todo");
+        add = new Objects.DataDefinition(name);
         break;
       case "XSLT":
-        add = new Objects.Transformation(name, "todo");
+        add = new Objects.Transformation(name);
         break;
       case "ENQU":
-        add = new Objects.LockObject(name, "todo");
+        add = new Objects.LockObject(name);
         break;
       case "ABAP":
         throw new Error("Add type in filename, eg zclass.clas.abap or zprogram.prog.abap");

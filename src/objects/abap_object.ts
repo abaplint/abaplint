@@ -1,7 +1,8 @@
 import {Object} from "./";
 import {ABAPFile} from "../files";
 import Lexer from "../abap/lexer";
-import Parser from "../abap/parser";
+import StatementParser from "../abap/statement_parser";
+import StructureParser from "../abap/structure_parser";
 import {Version} from "../version";
 import Registry from "../registry";
 import {Define} from "../abap/statements";
@@ -13,8 +14,8 @@ import {Issue} from "../issue";
 export abstract class ABAPObject extends Object {
   private parsed: Array<ABAPFile>;
 
-  public constructor(name: string, devPackage: string) {
-    super(name, devPackage);
+  public constructor(name: string) {
+    super(name);
     this.parsed = [];
   }
 
@@ -24,7 +25,7 @@ export abstract class ABAPObject extends Object {
     this.files.forEach((f) => {
       if (!this.skip(f.getFilename())) {
         let tokens = Lexer.run(f);
-        let statements = Parser.run(tokens, ver);
+        let statements = StatementParser.run(tokens, ver);
 
         this.parsed.push(new ABAPFile(f, tokens, statements));
       }
@@ -55,7 +56,7 @@ export abstract class ABAPObject extends Object {
     let ret: Issue[] = [];
     this.parsed.forEach((f) => {
 // todo, set structure in file
-      ret = ret.concat(Parser.runStructure(f));
+      ret = ret.concat(StructureParser.run(f));
     });
 
     return ret;
@@ -74,6 +75,7 @@ export abstract class ABAPObject extends Object {
   private skip(filename: string): boolean {
     // ignore global exception classes, todo?
     // the auto generated classes are crap, move logic to skip into the rules intead
+    // todo, this should be defined by the rules, not this class
     if (/zcx_.*\.clas\.abap$/.test(filename)) {
       return true;
     }

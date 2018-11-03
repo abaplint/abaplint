@@ -3,7 +3,8 @@ import {MemoryFile} from "../../src/files";
 import * as Structures from "../../src/abap/structures/";
 import {expect} from "chai";
 import {Structure} from "../../src/abap/structures/_structure";
-import Parser from "../../src/abap/parser";
+import {getStatements} from "../utils";
+import StructureParser from "../../src/abap/structure_parser";
 
 const cases = [
   {abap: "IF foo = bar.", error: "Expected ENDIF", structure: new Structures.If(), errorMatched: 1},
@@ -15,8 +16,7 @@ const cases = [
 describe("Structure, test error messages, specific", function() {
   cases.forEach((c: {abap: string, error: string, structure: Structure, errorMatched: number}) => {
     it(c.abap, function () {
-      const file = new Runner([new MemoryFile("foo.prog.abap", c.abap)]).parse()[0];
-      const result = c.structure.getMatcher().run(file.getStatements());
+      const result = c.structure.getMatcher().run(getStatements(c.abap));
       expect(result.error).to.equal(true);
       expect(result.errorMatched).to.equal(c.errorMatched);
       expect(result.errorDescription).to.equal(c.error);
@@ -34,6 +34,9 @@ const parser = [
   {abap: "IF foo = bar. IF moo = boo.", error: "Expected ENDIF"},
   {abap: "IF foo = bar. IF moo = boo. ENDIF.", error: "Expected ENDIF"},
   {abap: "CLASS zfoo DEFINITION. PUBLIC SECTION. ENDCLASS.", error: ""},
+  {abap: "DO 2 TIMES. ENDDO.", error: ""},
+  {abap: "DO 2 TIMES.\n*comment\nENDDO.", error: ""},
+  {abap: "DO 2 TIMES.", error: "Expected ENDDO"},
   {abap: "CLASS zfoo DEFINITION. PUBLIC SECTION. WRITE asdf. ENDCLASS.", error: "Expected ENDCLASS"},
 ];
 
@@ -41,7 +44,7 @@ describe("Structure, test error messages, parser", function() {
   parser.forEach((c: {abap: string, error: string}) => {
     it(c.abap, function () {
       const file = new Runner([new MemoryFile("foo.prog.abap", c.abap)]).parse()[0];
-      const issues = Parser.runStructure(file);
+      const issues = StructureParser.run(file);
       if (c.error === "") {
         expect(issues.length).to.equal(0);
       } else {

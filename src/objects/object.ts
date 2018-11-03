@@ -3,22 +3,16 @@ import {IFile} from "../files";
 export abstract class Object {
   protected files: Array<IFile>;
   private name: string;
-  private package: string;
 
   public abstract getType(): string;
 
-  public constructor(name: string, devPackage: string) {
+  public constructor(name: string) {
     this.name = name;
-    this.package = devPackage;
     this.files = [];
   }
 
   public getName(): string {
     return this.name;
-  }
-
-  public getPackage() {
-    return this.package;
   }
 
   public addFile(file: IFile) {
@@ -28,5 +22,17 @@ export abstract class Object {
   public getFiles(): Array<IFile> {
     return this.files;
   }
+/*
+  public removeFile(_file: IFile) {
+    throw new Error("todo");
+  }
 
+  public updateFile(_file: IFile) {
+    throw new Error("todo");
+  }
+
+  public getPackage() {
+    throw new Error("todo, determine from file paths?");
+  }
+*/
 }

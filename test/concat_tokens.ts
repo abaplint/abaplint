@@ -1,6 +1,5 @@
-import {MemoryFile} from "../src/files";
-import Runner from "../src/runner";
 import {expect} from "chai";
+import {getStatements} from "./utils";
 
 describe("concat_tokens", () => {
   let tests = [
@@ -11,8 +10,8 @@ describe("concat_tokens", () => {
 
   tests.forEach((test) => {
     it(test, () => {
-      let file = new Runner([new MemoryFile("cl_foo.clas.abap", test)]).parse()[0];
-      let concat = file.getStatements()[0].concatTokens();
+      let statements = getStatements(test);
+      let concat = statements[0].concatTokens();
       expect(concat).to.equals(test);
     });
   });
