@@ -1,7 +1,7 @@
 import {Pragma} from "../tokens";
 import {Token} from "../tokens/_token";
 import Position from "../../position";
-import {BasicNode, StatementNode, TokenNode, ReuseNode} from "../node";
+import {BasicNode, StatementNode, TokenNode, ExpressionNode} from "../node";
 import {IRunnable} from "../combi";
 
 export abstract class Statement extends StatementNode {
@@ -15,8 +15,8 @@ export abstract class Statement extends StatementNode {
 
     // validate child nodes
     children.forEach((c) => {
-      if (!(c instanceof TokenNode || c instanceof ReuseNode)) {
-        throw "statement: not token or reuse node";
+      if (!(c instanceof TokenNode || c instanceof ExpressionNode)) {
+        throw "statement: not token or expression node";
       }
     });
 

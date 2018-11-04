@@ -1,4 +1,4 @@
-import {structureType} from "../../utils";
+import {structureType} from "../../_utils";
 import {ClassGlobal} from "../../../src/abap/structures";
 
 let cases = [

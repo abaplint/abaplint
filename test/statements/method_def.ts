@@ -1,4 +1,4 @@
-import {statementType, statementVersion} from "../utils";
+import {statementType, statementVersion} from "../_utils";
 import * as Statements from "../../src/abap/statements/";
 import {Version} from "../../src/version";
 

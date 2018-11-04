@@ -34,7 +34,7 @@ function outputNodes(nodes) {
       case "TokenNode":
         extra = node.name + ", \"" + node.getToken().getStr() + "\"";
         break;
-      case "ReuseNode":
+      case "ExpressionNode":
         extra = linkToExpression(node) + outputNodes(node.getChildren());
         break;
     }

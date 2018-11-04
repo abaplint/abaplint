@@ -1,6 +1,6 @@
 import {Formatter} from "../src/formatters/_format";
 import {expect} from "chai";
-import {findIssues} from "./utils";
+import {findIssues} from "./_utils";
 
 describe("formatters", () => {
   let tests = [

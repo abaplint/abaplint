@@ -1,10 +1,6 @@
 import {Token} from "./tokens/_token";
 import {Expression} from "./combi";
 
-function className(cla: any) {
-  return (cla.constructor + "").match(/\w+/g)[1];
-}
-
 export abstract class BasicNode {
   protected children: Array<BasicNode>;
 
@@ -25,22 +21,10 @@ export abstract class BasicNode {
   public getChildren(): Array<BasicNode> {
     return this.children;
   }
-
-  public abstract vizName(): string;
-
-// todo, this method should be deleted? it is frontend
-  public viz(): string {
-    let children = this.getChildren().map((e) => { return e.viz(); } );
-    let ret = "<ul><li>" + this.vizName() + children.join("") + "</li></ul>";
-
-    return ret;
-  }
 }
 
 export abstract class StatementNode extends BasicNode {
-  public vizName() {
-    return "Statement: " + className(this);
-  }
+
 }
 
 export class StructureNode extends BasicNode {
@@ -49,14 +33,6 @@ export class StructureNode extends BasicNode {
     super();
   }
 
-  public vizName() {
-    return "Structure: todo";
-  }
-
-  public viz(): string {
-    let ret = "StructureNode, todo<br>";
-    return ret;
-  }
 }
 
 export abstract class CountableNode extends BasicNode {
@@ -66,25 +42,22 @@ export abstract class CountableNode extends BasicNode {
   }
 }
 
-export class ReuseNode extends CountableNode {
-  private reuse: Expression;
+export class ExpressionNode extends CountableNode {
+  private expression: Expression;
 
-  public constructor(reuse: Expression) {
+  public constructor(expression: Expression) {
     super();
-    this.reuse = reuse;
+    this.expression = expression;
   }
 
-  public getReuse(): Expression {
-    return this.reuse;
+  public getExpression(): Expression {
+    return this.expression;
   }
 
   public getName() {
-    return className(this.reuse);
+    return this.expression.constructor.name;
   }
 
-  public vizName() {
-    return "Reuse: " + this.getName();
-  }
 }
 
 export class TokenNode extends CountableNode {
@@ -93,6 +66,7 @@ export class TokenNode extends CountableNode {
 
   public constructor(name: string, token: Token) {
     super();
+// todo, can name be removed, and instead use token.constructor.name?
     this.name = name;
     this.token = token;
   }
@@ -105,15 +79,8 @@ export class TokenNode extends CountableNode {
     return super.countTokens() + 1;
   }
 
-// todo
-//  public getName
-
-  public vizName() {
-    return "Token: " +
-      className(this.token) +
-      " " +
-      this.name +
-      " (\"" + this.token.getStr() +
-      "\")";
+  public getName(): string {
+    return this.name;
   }
+
 }

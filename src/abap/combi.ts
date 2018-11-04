@@ -1,7 +1,7 @@
 import * as Tokens from "./tokens";
 import {Token as Tokens_Token} from "./tokens/_token";
 import Position from "../position";
-import {TokenNode, BasicNode, ReuseNode, CountableNode} from "./node";
+import {TokenNode, BasicNode, ExpressionNode, CountableNode} from "./node";
 import {Version, versionToText} from "../version";
 
 export class Result {
@@ -595,7 +595,7 @@ export abstract class Expression implements IRunnable {
         let consumed = input.length() - t.length();
         if (consumed > 0) {
           let length = t.getNodes().length;
-          let re = new ReuseNode(this);
+          let re = new ExpressionNode(this);
           let children = [];
           while (consumed > 0) {
             let sub = t.popNode();

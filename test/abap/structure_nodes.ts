@@ -1,7 +1,7 @@
 import * as Structures from "../../src/abap/structures/";
 import * as Statements from "../../src/abap/statements/";
 import {expect} from "chai";
-import {parse} from "../utils";
+import {parse} from "../_utils";
 
 describe("Structure, test generated nodes", function() {
   it("Test 01", function () {

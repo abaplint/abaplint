@@ -1,7 +1,7 @@
 import {expect} from "chai";
-import {MemoryFile} from "../../src/files";
-import Lexer from "../../src/abap/lexer";
-import * as Tokens from "../../src/abap/tokens";
+import {MemoryFile} from "../../../src/files";
+import Lexer from "../../../src/abap/lexer";
+import * as Tokens from "../../../src/abap/tokens";
 
 let tests = [
   {abap: "foo", type: Tokens.Identifier},

@@ -1,9 +1,9 @@
 import {expect} from "chai";
-import * as Combi from "../src/abap/combi";
-import * as Tokens from "../src/abap/tokens/";
-import * as Expressions from "../src/abap/expressions";
-import Position from "../src/position";
-import {Token} from "../src/abap/tokens/_token";
+import * as Combi from "../../src/abap/combi";
+import * as Tokens from "../../src/abap/tokens";
+import * as Expressions from "../../src/abap/expressions";
+import Position from "../../src/position";
+import {Token} from "../../src/abap/tokens/_token";
 
 let str  = Combi.str;
 let seq  = Combi.seq;
