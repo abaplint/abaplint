@@ -18,6 +18,11 @@ export function getStatements(abap: string, version = Version.v750) {
   return StatementParser.run(getTokens(abap), version);
 }
 
+export function findIssues(abap: string) {
+  let file = new MemoryFile("cl_foo.prog.abap", abap);
+  return new Registry().addFile(file).findIssues();
+}
+
 export function parse(abap: string, config?: Config) {
   let file = new MemoryFile("cl_foo.prog.abap", abap);
   return new Registry(config).addFile(file).parse().getABAPFiles()[0];
