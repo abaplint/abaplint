@@ -1,5 +1,5 @@
 import {statementType} from "../_utils";
-import * as Statements from "../../src/abap/statements/";
+import * as Statements from "../../../src/abap/statements/";
 
 let tests = [
   "FORM name TABLES tt_fields TYPE ty_sval_tt USING pv_code TYPE clike \n" +

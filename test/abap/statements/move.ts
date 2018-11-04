@@ -1,6 +1,6 @@
 import {statementType, statementVersion} from "../_utils";
-import * as Statements from "../../src/abap/statements/";
-import {Version} from "../../src/version";
+import * as Statements from "../../../src/abap/statements/";
+import {Version} from "../../../src/version";
 
 let tests = [
   "move 2 to lv_foo.",

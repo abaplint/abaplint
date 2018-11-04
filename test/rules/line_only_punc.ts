@@ -1,5 +1,5 @@
 import {LineOnlyPunc} from "../../src/rules/line_only_punc";
-import {testRule} from "./utils";
+import {testRule} from "./_utils";
 
 let tests = [
   {abap: "zcl_class=>method(\n).", cnt: 1},

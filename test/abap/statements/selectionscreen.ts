@@ -1,5 +1,5 @@
 import {statementType} from "../_utils";
-import * as Statements from "../../src/abap/statements/";
+import * as Statements from "../../../src/abap/statements/";
 
 let tests = [
   "SELECTION-SCREEN BEGIN OF BLOCK b1 WITH FRAME TITLE TEXT-001.",

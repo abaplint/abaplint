@@ -1,5 +1,5 @@
 import {statementType} from "../_utils";
-import * as Statements from "../../src/abap/statements/";
+import * as Statements from "../../../src/abap/statements/";
 
 let tests = [
   "CREATE DATA et_table LIKE io_grid->mt_outtab.",

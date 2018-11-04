@@ -1,6 +1,6 @@
 import {statementType, statementVersion} from "../_utils";
-import * as Statements from "../../src/abap/statements/";
-import {Version} from "../../src/version";
+import * as Statements from "../../../src/abap/statements/";
+import {Version} from "../../../src/version";
 
 let tests = [
   "INSERT INITIAL LINE INTO ct_diff INDEX lv_index.",

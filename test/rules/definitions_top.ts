@@ -1,5 +1,5 @@
 import {DefinitionsTop} from "../../src/rules/definitions_top";
-import {testRule} from "./utils";
+import {testRule} from "./_utils";
 
 let tests = [
   {abap: "FORM foobar.\ndata: lt_file type foo.\nwrite 'hello'.\nDATA int type i.\nENDFORM.", cnt: 1},

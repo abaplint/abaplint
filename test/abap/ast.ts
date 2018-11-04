@@ -1,5 +1,5 @@
 import {expect} from "chai";
-import {getStatements} from "../_utils";
+import {getStatements} from "./_utils";
 
 // todo, rename and move somewhere under /test/abap/
 

@@ -1,5 +1,5 @@
 import {ParserError} from "../../src/rules/parser_error";
-import {testRule} from "./utils";
+import {testRule} from "./_utils";
 
 let tests = [
   {abap: "blah blah.", cnt: 1},

@@ -1,5 +1,5 @@
 import {SequentialBlank} from "../../src/rules/sequential_blank";
-import {testRule} from "./utils";
+import {testRule} from "./_utils";
 
 let tests = [
   {abap: "\n\n\n\n", cnt: 1},

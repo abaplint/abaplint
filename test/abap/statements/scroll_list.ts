@@ -1,5 +1,5 @@
 import {statementType} from "../_utils";
-import * as Statements from "../../src/abap/statements/";
+import * as Statements from "../../../src/abap/statements/";
 
 let tests = [
   "SCROLL LIST INDEX lv_index TO FIRST PAGE LINE lv_line.",

@@ -1,5 +1,5 @@
 import {Breakpoint} from "../../src/rules/breakpoint";
-import {testRule} from "./utils";
+import {testRule} from "./_utils";
 
 let tests = [
   {abap: "break-point.", cnt: 1},

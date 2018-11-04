@@ -1,5 +1,5 @@
 import {ColonMissingSpace} from "../../src/rules/colon_missing_space";
-import {testRule} from "./utils";
+import {testRule} from "./_utils";
 
 let tests = [
   {abap: "WRITE:/ 'foobar'.", cnt: 1},

@@ -1,6 +1,6 @@
 import {statementType, statementVersion} from "../_utils";
-import * as Statements from "../../src/abap/statements/";
-import {Version} from "../../src/version";
+import * as Statements from "../../../src/abap/statements/";
+import {Version} from "../../../src/version";
 
 let tests = [
   "CLASS-METHODS status IMPORTING io_repo TYPE REF TO lcl_repo.",

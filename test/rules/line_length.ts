@@ -1,5 +1,5 @@
 import {LineLength} from "../../src/rules/line_length";
-import {testRule} from "./utils";
+import {testRule} from "./_utils";
 
 let tests = [
   {abap: "hello hello hello hello hello hello hello hello hello " +

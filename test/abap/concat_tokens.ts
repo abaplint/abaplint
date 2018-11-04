@@ -1,5 +1,5 @@
 import {expect} from "chai";
-import {getStatements} from "../_utils";
+import {getStatements} from "./_utils";
 
 describe("concat_tokens", () => {
   let tests = [

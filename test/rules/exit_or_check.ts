@@ -1,5 +1,5 @@
 import {ExitOrCheck} from "../../src/rules/exit_or_check";
-import {testRule} from "./utils";
+import {testRule} from "./_utils";
 
 let tests = [
   {abap: "LOOP AT lt_usr02 INTO ls_usr02.\nEXIT.\nENDLOOP.", cnt: 0},

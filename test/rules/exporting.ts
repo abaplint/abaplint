@@ -1,5 +1,5 @@
 import {Exporting} from "../../src/rules/exporting";
-import {testRule} from "./utils";
+import {testRule} from "./_utils";
 
 let tests = [
   {abap: "zcl_class=>methodname( EXPORTING iv_foo = '23' ).", cnt: 1},

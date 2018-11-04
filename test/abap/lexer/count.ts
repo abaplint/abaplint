@@ -1,5 +1,5 @@
 import {expect} from "chai";
-import {getTokens} from "../../_utils";
+import {getTokens} from "../_utils";
 
 describe("count_tokens", () => {
   let tests = [

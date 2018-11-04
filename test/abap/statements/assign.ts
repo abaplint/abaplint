@@ -1,6 +1,6 @@
 import {statementType, statementVersion} from "../_utils";
-import * as Statements from "../../src/abap/statements/";
-import {Version} from "../../src/version";
+import * as Statements from "../../../src/abap/statements/";
+import {Version} from "../../../src/version";
 
 let tests = [
   "ASSIGN COMPONENT ls_field-name OF STRUCTURE ig_file TO <lv_field>.",

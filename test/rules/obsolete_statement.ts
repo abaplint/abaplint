@@ -1,5 +1,5 @@
 import {ObsoleteStatement} from "../../src/rules/obsolete_statement";
-import {testRule} from "./utils";
+import {testRule} from "./_utils";
 
 let tests = [
   {abap: "REFRESH lt_table.", cnt: 1},

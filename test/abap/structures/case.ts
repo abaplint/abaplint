@@ -1,4 +1,4 @@
-import {structureType} from "../../_utils";
+import {structureType} from "../_utils";
 import {Case} from "../../../src/abap/structures";
 
 let cases = [

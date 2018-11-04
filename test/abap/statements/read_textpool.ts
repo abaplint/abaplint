@@ -1,5 +1,5 @@
 import {statementType} from "../_utils";
-import * as Statements from "../../src/abap/statements/";
+import * as Statements from "../../../src/abap/statements/";
 
 let tests = [
   "READ TEXTPOOL lv_cp INTO lt_tpool LANGUAGE mv_language.",

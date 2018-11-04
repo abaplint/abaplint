@@ -1,5 +1,5 @@
 import {ContainsTab} from "../../src/rules/contains_tab";
-import {testRule} from "./utils";
+import {testRule} from "./_utils";
 
 let tests = [
   {abap: "data: lt_file\ttype solix_tab.", cnt: 1},

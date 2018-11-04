@@ -1,7 +1,7 @@
 import {expect} from "chai";
 import * as Combi from "../../../src/abap/combi";
 import * as Expressions from "../../../src/abap/expressions";
-import {getTokens} from "../../_utils";
+import {getTokens} from "../_utils";
 
 let tests = [
   {c: "cs_tstcp",                         r: new Expressions.FieldChain(),      e: true},

@@ -1,6 +1,6 @@
 import {statementType, statementVersion} from "../_utils";
-import * as Statements from "../../src/abap/statements/";
-import {Version} from "../../src/version";
+import * as Statements from "../../../src/abap/statements/";
+import {Version} from "../../../src/version";
 
 let tests = [
   "raise exception type zcx_root.",
