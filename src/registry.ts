@@ -5,9 +5,8 @@ import {ABAPFile} from "./files";
 import Config from "./config";
 import {Issue} from "./issue";
 import {GenericError} from "./rules/";
-import {IRule} from "./rules/_rule";
-import * as Rules from "./rules/";
 import {IFile} from "./files/_ifile";
+import {Artifacts} from "./artifacts";
 
 export interface IProgress {
   set(total: number, text: string): void;
@@ -94,15 +93,10 @@ export class Registry {
     progress.set(objects.length, ":percent - Finding Issues - :object");
     for (let obj of objects) {
       progress.tick({object: obj.getType() + " " + obj.getName()});
-// todo, move somewhere else
-      for (let key in Rules) {
-        const rul: any = Rules;
-        if (typeof rul[key] === "function") {
-          let rule: IRule = new rul[key]();
-          if (rule.getKey && this.conf.readByKey(rule.getKey(), "enabled") === true) {
-            rule.setConfig(this.conf.readByRule(rule.getKey()));
-            issues = issues.concat(rule.run(obj, this, this.conf.getVersion()));
-          }
+      for (let rule of Artifacts.getRules()) {
+        if (this.conf.readByKey(rule.getKey(), "enabled") === true) {
+          rule.setConfig(this.conf.readByRule(rule.getKey()));
+          issues = issues.concat(rule.run(obj, this, this.conf.getVersion()));
         }
       }
     }
