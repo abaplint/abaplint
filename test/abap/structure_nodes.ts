@@ -45,4 +45,13 @@ describe("Structure, test generated nodes", function() {
     expect(result.node.getChildren().length).to.equal(3);
   });
 
+  /*
+  it("Test 06", function () {
+    const result = new Structures.Any().runFile(parse("moo = boo. loo = foo."));
+    expect(result.node).to.be.instanceof(Structures.Any);
+    expect(result.node.getChildren().length).to.equal(2);
+    let count = result.node.getChildren()[0].getChildren().length + result.node.getChildren()[1].getChildren().length;
+    expect(count).to.equal(2);
+  });
+*/
 });

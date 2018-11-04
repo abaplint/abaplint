@@ -24,4 +24,5 @@ export abstract class Structure extends StructureNode {
 
     return {issues: [], node: this};
   }
+
 }
