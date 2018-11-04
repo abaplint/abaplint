@@ -1,6 +1,5 @@
 import {Token} from "./tokens/_token";
 import {Expression} from "./combi";
-import {Statement} from "./statements/_statement";
 
 function className(cla: any) {
   return (cla.constructor + "").match(/\w+/g)[1];
@@ -29,17 +28,12 @@ export abstract class BasicNode {
 
   public abstract vizName(): string;
 
+// todo, this method should be deleted? it is frontend
   public viz(): string {
     let children = this.getChildren().map((e) => { return e.viz(); } );
     let ret = "<ul><li>" + this.vizName() + children.join("") + "</li></ul>";
 
     return ret;
-  }
-}
-
-export class RootNode extends BasicNode {
-  public vizName() {
-    return "Root";
   }
 }
 
@@ -50,40 +44,17 @@ export abstract class StatementNode extends BasicNode {
 }
 
 export class StructureNode extends BasicNode {
-  private start: Statement;
-  private end: Statement;
 
-  public constructor(st: Statement) {
+  public constructor() {
     super();
-    this.start = st;
-  }
-
-  public getStart(): Statement {
-    return this.start;
-  }
-
-  public setEnd(e: Statement) {
-    this.end = e;
-  }
-
-  public getEnd(): Statement {
-    return this.end;
   }
 
   public vizName() {
-    return "Structure: start, todo";
+    return "Structure: todo";
   }
 
   public viz(): string {
-    let children = this.getChildren().map((e) => { return e.viz(); } );
-
-//    console.log(this.start.constructor);
-    let ret = "<ul><li>" + this.vizName() +
-      "<ul><li>Start: " + this.start.viz() + "</li></ul>" +
-      "<ul><li>Body: " + children.join("") + "</li></ul>" +
-      "<ul><li>End: " + ( this.end ? this.end.viz() : "" ) + "</li></ul>" +
-      "</li></ul>";
-
+    let ret = "StructureNode, todo<br>";
     return ret;
   }
 }

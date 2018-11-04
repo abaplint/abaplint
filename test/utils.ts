@@ -48,7 +48,7 @@ export function structureType(cas: {abap: string}[], expected: Structure): void 
         let file = parse(c.abap); // new Runner([new MemoryFile("cl_foo.clas.abap", c.abap)]).parse()[0];
         const statements = file.getStatements();
         const length = statements.length;
-        const match = expected.getMatcher().run(statements.slice());
+        const match = expected.getMatcher().run(statements.slice(), expected);
 
         expect(match.errorDescription).to.equal("");
         expect(length).to.equal(statements.length);

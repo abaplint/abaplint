@@ -91,11 +91,6 @@ export class Artifacts {
     return add;
   }
 
-  public static getObjects(): undefined {
-// todo
-    return undefined;
-  }
-
   public static getFormatters(): undefined {
 // todo
     return undefined;

@@ -60,6 +60,7 @@ export class Result {
   }
 }
 
+// todo, rename to IStatementRunnable ?
 export interface IRunnable {
   run(r: Array<Result>): Array<Result>;
   railroad(): string;

@@ -3,7 +3,7 @@ import * as Formatters from ".";
 
 export class Formatter {
   public static format(issues: Array<Issue>, format?: string): string {
-  // todo, this can be done more generic
+  // todo, this can be done more generic, move to artifacts.ts?
     switch (format) {
       case "total":
         return new Formatters.Total().output(issues);

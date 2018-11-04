@@ -3,6 +3,7 @@ import {expect} from "chai";
 import {Structure} from "../../src/abap/structures/_structure";
 import {getStatements, parse} from "../utils";
 import StructureParser from "../../src/abap/structure_parser";
+import {StructureNode} from "../../src/abap/node";
 
 const cases = [
   {abap: "IF foo = bar.", error: "Expected ENDIF", structure: new Structures.If(), errorMatched: 1},
@@ -14,7 +15,7 @@ const cases = [
 describe("Structure, test error messages, specific", function() {
   cases.forEach((c: {abap: string, error: string, structure: Structure, errorMatched: number}) => {
     it(c.abap, function () {
-      const result = c.structure.getMatcher().run(getStatements(c.abap));
+      const result = c.structure.getMatcher().run(getStatements(c.abap), new StructureNode());
       expect(result.error).to.equal(true);
       expect(result.errorMatched).to.equal(c.errorMatched);
       expect(result.errorDescription).to.equal(c.error);
@@ -42,7 +43,7 @@ describe("Structure, test error messages, parser", function() {
   parser.forEach((c: {abap: string, error: string}) => {
     it(c.abap, function () {
       const file = parse(c.abap);
-      const issues = StructureParser.run(file);
+      const issues = StructureParser.run(file).issues;
       if (c.error === "") {
         expect(issues.length).to.equal(0);
       } else {
