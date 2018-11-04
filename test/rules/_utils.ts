@@ -1,5 +1,5 @@
 import {expect} from "chai";
-import {findIssues} from "../_utils";
+import {findIssues} from "../abap/_utils";
 
 export function testRule(tests: any, description: string, rule: new () => any) {
   describe(description, function () {
