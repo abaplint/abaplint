@@ -1,5 +1,5 @@
-import {IRule} from "./_rule";
-import {Object} from "../objects/_object";
+import {IRule} from "./_irule";
+import {IObject} from "../objects/_iobject";
 import {ABAPObject} from "../objects/_abap_object";
 import {Issue} from "../issue";
 import {ABAPFile} from "../files";
@@ -18,7 +18,7 @@ export abstract class ABAPRule implements IRule {
 
   public abstract runParsed(file: ABAPFile): Array<Issue>;
 
-  public run(obj: Object) {
+  public run(obj: IObject) {
 
     if (!(obj instanceof ABAPObject)) {
       return [];

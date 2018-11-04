@@ -1,4 +1,4 @@
-import {IRule} from "./rules/_rule";
+import {IRule} from "./rules/_irule";
 import {IFile} from "./files/_ifile";
 import Position from "./position";
 

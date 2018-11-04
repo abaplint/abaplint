@@ -1,4 +1,4 @@
-import {Object} from "./_object";
+import {AObject} from "./_aobject";
 import {ABAPFile} from "../files";
 import Lexer from "../abap/lexer";
 import StatementParser from "../abap/statement_parser";
@@ -11,7 +11,7 @@ import {Token} from "../abap/tokens/_token";
 import {Statement, Unknown, MacroCall} from "../abap/statements/_statement";
 import {Issue} from "../issue";
 
-export abstract class ABAPObject extends Object {
+export abstract class ABAPObject extends AObject {
   private parsed: Array<ABAPFile>;
 
   public constructor(name: string) {

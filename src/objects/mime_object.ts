@@ -1,6 +1,6 @@
-import {Object} from "./_object";
+import {AObject} from "./_aobject";
 
-export class MIMEObject extends Object {
+export class MIMEObject extends AObject {
 
   public getType(): string {
     return "SMIM";

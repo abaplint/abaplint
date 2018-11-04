@@ -1,6 +1,6 @@
-import {Object} from "./_object";
+import {AObject} from "./_aobject";
 
-export class ICFService extends Object {
+export class ICFService extends AObject {
 
   public getType(): string {
     return "SICF";

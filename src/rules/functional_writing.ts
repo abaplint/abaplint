@@ -1,5 +1,5 @@
 import {Issue} from "../issue";
-import {ABAPRule} from "./abap_rule";
+import {ABAPRule} from "./_abap_rule";
 import {ABAPFile} from "../files";
 
 export class FunctionalWritingConf {

@@ -1,6 +1,6 @@
-import {Object} from "./_object";
+import {AObject} from "./_aobject";
 
-export class Table extends Object {
+export class Table extends AObject {
 
   public getType(): string {
     return "TABL";

@@ -1,6 +1,6 @@
 import * as Rules from "./rules/";
 import {Version, versionToText, textToVersion} from "./version";
-import {IRule} from "./rules/_rule";
+import {IRule} from "./rules/_irule";
 
 export default class Config {
 

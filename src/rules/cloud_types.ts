@@ -1,8 +1,8 @@
-import {IRule} from "./_rule";
+import {IRule} from "./_irule";
 import {Issue} from "../issue";
 import {Version} from "../version";
 import * as Objects from "../objects";
-import {Object} from "../objects/_object";
+import {IObject} from "../objects/_iobject";
 import {Registry} from "../registry";
 
 export class CloudTypesConf {
@@ -33,8 +33,8 @@ export class CloudTypes implements IRule {
     this.conf = conf;
   }
 
-  public run(obj: Object, _reg: Registry, ver: Version): Array<Issue> {
-    if (ver !== Version.Cloud
+  public run(obj: IObject, reg: Registry): Array<Issue> {
+    if (reg.getConfig().getVersion() !== Version.Cloud
         || obj instanceof Objects.Class
         || obj instanceof Objects.Interface
         || obj instanceof Objects.MessageClass

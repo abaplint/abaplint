@@ -1,6 +1,6 @@
-import {Object} from "./_object";
+import {AObject} from "./_aobject";
 
-export class MessageClass extends Object {
+export class MessageClass extends AObject {
 
   public getType(): string {
     return "MSAG";

@@ -1,13 +1,13 @@
-import * as Objects from "./objects";
+import {IObject} from "./objects/_iobject";
+import {IRule} from "./rules/_irule";
+import {IFile} from "./files/_ifile";
 import {ABAPObject} from "./objects/_abap_object";
-import {Object} from "./objects/_object";
 import {ABAPFile} from "./files";
 import Config from "./config";
 import {Issue} from "./issue";
 import {GenericError} from "./rules/";
-import {IFile} from "./files/_ifile";
 import {Artifacts} from "./artifacts";
-import {IRule} from "./rules/_rule";
+
 
 export interface IProgress {
   set(total: number, text: string): void;
@@ -25,18 +25,17 @@ class NoProgress implements IProgress {
 }
 
 export class Registry {
-
-  private macros: Array<string> = [];
-  private objects: Array<Object> = [];
   private dirty = false;
   private conf: Config;
+  private macros: string[] = [];
+  private objects: IObject[] = [];
   private issues: Issue[] = [];
 
   constructor(conf?: Config) {
     this.conf = conf ? conf : Config.getDefault();
   }
 
-  public getObjects(): Array<Object> {
+  public getObjects(): Array<IObject> {
     return this.objects;
   }
 
@@ -89,7 +88,7 @@ export class Registry {
     progress = progress ? progress : new NoProgress();
 
     let issues = this.issues.slice(0);
-    let objects = this.getObjects();
+    const objects = this.getObjects();
 
     let rules: IRule[] = [];
     for (let rule of Artifacts.getRules()) {
@@ -103,7 +102,7 @@ export class Registry {
     for (let obj of objects) {
       progress.tick({object: obj.getType() + " " + obj.getName()});
       for (let rule of rules) {
-        issues = issues.concat(rule.run(obj, this, this.conf.getVersion()));
+        issues = issues.concat(rule.run(obj, this));
       }
     }
 
@@ -116,7 +115,7 @@ export class Registry {
     }
     progress = progress ? progress : new NoProgress();
 
-    let objects = this.getABAPObjects();
+    const objects = this.getABAPObjects();
 
     progress.set(objects.length, ":percent - Lexing and parsing - :object");
     objects.forEach((obj) => {
@@ -150,81 +149,15 @@ export class Registry {
     return false;
   }
 
-  private findOrCreate(name: string, type: string): Object {
+  private findOrCreate(name: string, type: string): IObject {
     for (let obj of this.objects) { // todo, this is slow
       if (obj.getType() === type && obj.getName() === name) {
         return obj;
       }
     }
 
-    let add: Object = undefined;
-// todo, refactor this somewhere else
-    switch (type) {
-      case "CLAS":
-        add = new Objects.Class(name);
-        break;
-      case "TYPE":
-        add = new Objects.TypePool(name);
-        break;
-      case "DEVC":
-        add = new Objects.Package(name);
-        break;
-      case "MSAG":
-        add = new Objects.MessageClass(name);
-        break;
-      case "INTF":
-        add = new Objects.Interface(name);
-        break;
-      case "DTEL":
-        add = new Objects.DataElement(name);
-        break;
-      case "TABL":
-        add = new Objects.Table(name);
-        break;
-      case "TTYP":
-        add = new Objects.TableType(name);
-        break;
-      case "DOMA":
-        add = new Objects.Domain(name);
-        break;
-      case "PROG":
-        add = new Objects.Program(name);
-        break;
-      case "SMIM":
-        add = new Objects.MIMEObject(name);
-        break;
-      case "FUGR":
-        add = new Objects.FunctionGroup(name);
-        break;
-      case "TRAN":
-        add = new Objects.Transaction(name);
-        break;
-      case "SICF":
-        add = new Objects.ICFService(name);
-        break;
-      case "W3MI":
-        add = new Objects.WebMIME(name);
-        break;
-      case "DCLS":
-        add = new Objects.DataControl(name);
-        break;
-      case "DDLS":
-        add = new Objects.DataDefinition(name);
-        break;
-      case "XSLT":
-        add = new Objects.Transformation(name);
-        break;
-      case "ENQU":
-        add = new Objects.LockObject(name);
-        break;
-      case "ABAP":
-        throw new Error("Add type in filename, eg zclass.clas.abap or zprogram.prog.abap");
-      default:
-        throw new Error("Unknown object type: " + type);
-    }
-
+    const add = Artifacts.newObject(name, type);
     this.objects.push(add);
-
     return add;
   }
 

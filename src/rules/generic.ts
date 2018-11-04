@@ -1,5 +1,5 @@
-import {IRule} from "./_rule";
-import {Object} from "../objects/_object";
+import {IRule} from "./_irule";
+import {IObject} from "../objects/_iobject";
 import {Issue} from "../issue";
 
 export class GenericErrorConf {
@@ -35,7 +35,7 @@ export class GenericError implements IRule {
     this.conf = conf;
   }
 
-  public run(_obj: Object): Array<Issue> {
+  public run(_obj: IObject): Array<Issue> {
     return [];
   }
 
