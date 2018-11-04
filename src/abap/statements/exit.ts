@@ -1,4 +1,4 @@
-import {Statement} from "./statement";
+import {Statement} from "./_statement";
 import {str, opt, seq, IRunnable} from "../combi";
 
 export class Exit extends Statement {

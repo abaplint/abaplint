@@ -1,13 +1,14 @@
 import * as Tokens from "./tokens";
+import {Token as Tokens_Token} from "./tokens/_token";
 import Position from "../position";
 import {TokenNode, BasicNode, ReuseNode, CountableNode} from "./node";
 import {Version, versionToText} from "../version";
 
 export class Result {
-  private tokens: Array<Tokens.Token>;
+  private tokens: Array<Tokens_Token>;
   private nodes: Array<CountableNode>;
 
-  constructor(a: Array<Tokens.Token>, n?: Array<CountableNode>) {
+  constructor(a: Array<Tokens_Token>, n?: Array<CountableNode>) {
 // tokens: not yet matched
 // nodes: matched tokens
     this.tokens = a;
@@ -17,7 +18,7 @@ export class Result {
     }
   }
 
-  public peek(): Tokens.Token {
+  public peek(): Tokens_Token {
     return this.tokens[0];
   }
 
@@ -30,7 +31,7 @@ export class Result {
     return new Result(copy, cp);
   }
 
-  public getTokens(): Array<Tokens.Token> {
+  public getTokens(): Array<Tokens_Token> {
     return this.tokens;
   }
 
@@ -836,7 +837,7 @@ export class Combi {
   }
 
 // assumption: no pgragmas supplied in tokens input
-  public static run(runnable: IRunnable, tokens: Array<Tokens.Token>, version = Version.v750): BasicNode[] {
+  public static run(runnable: IRunnable, tokens: Array<Tokens_Token>, version = Version.v750): BasicNode[] {
     this.ver = version;
 
     let input = new Result(tokens);

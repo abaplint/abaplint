@@ -1,4 +1,4 @@
-import {Statement} from "./statement";
+import {Statement} from "./_statement";
 import {str, seq, alt, opt, tok, IRunnable} from "../combi";
 import {Arrow, ParenLeftW} from "../tokens/";
 import {Source, MethodName, Dynamic, FieldChain, ParameterListS, MethodParameters, MethodCallChain} from "../expressions";

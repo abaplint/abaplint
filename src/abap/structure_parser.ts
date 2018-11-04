@@ -1,10 +1,10 @@
 import {ABAPFile} from "../files";
 import {GenericError} from "../rules";
-import {Unknown, Empty} from "./statements/statement";
+import {Unknown, Empty} from "./statements/_statement";
 import {Structure} from "./structures/_structure";
 import * as Structures from "./structures/";
 import {Issue} from "../issue";
-import {Comment as StatementComment} from "./statements/statement";
+import {Comment as StatementComment} from "./statements/_statement";
 
 export default class StructureParser {
 

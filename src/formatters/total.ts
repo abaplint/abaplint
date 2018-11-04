@@ -1,5 +1,5 @@
 import {Issue} from "../issue";
-import {IFormatter} from "./iformatter";
+import {IFormatter} from "./_iformatter";
 
 export class Total implements IFormatter {
 

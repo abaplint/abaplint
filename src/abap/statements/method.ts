@@ -1,4 +1,4 @@
-import {Statement} from "./statement";
+import {Statement} from "./_statement";
 import {str, seq, opt, alt, regex as reg, IRunnable} from "../combi";
 
 export class Method extends Statement {

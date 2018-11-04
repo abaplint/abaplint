@@ -1,4 +1,4 @@
-import {Object} from "../objects/";
+import {Object} from "../objects/_object";
 import {Issue} from "../issue";
 import {Version} from "../version";
 import {Registry} from "../registry";

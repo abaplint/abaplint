@@ -1,4 +1,5 @@
-import {Token, Pragma} from "../tokens/";
+import {Pragma} from "../tokens";
+import {Token} from "../tokens/_token";
 import Position from "../../position";
 import {BasicNode, StatementNode, TokenNode, ReuseNode} from "../node";
 import {IRunnable} from "../combi";

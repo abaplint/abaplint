@@ -1,6 +1,6 @@
 import {Issue} from "../issue";
 import {Total} from "./total";
-import {IFormatter} from "./iformatter";
+import {IFormatter} from "./_iformatter";
 
 class Tuple {
   public filename: string;

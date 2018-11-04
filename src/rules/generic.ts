@@ -1,5 +1,5 @@
-import {IRule} from "./rule";
-import {Object} from "../objects";
+import {IRule} from "./_rule";
+import {Object} from "../objects/_object";
 import {Issue} from "../issue";
 
 export class GenericErrorConf {

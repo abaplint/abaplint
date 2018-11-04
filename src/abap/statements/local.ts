@@ -1,4 +1,4 @@
-import {Statement} from "./statement";
+import {Statement} from "./_statement";
 import {verNot, str, seq, IRunnable, opt} from "../combi";
 import {FieldSub, TableBody} from "../expressions";
 import {Version} from "../../version";

@@ -1,4 +1,4 @@
-import {Token} from "./token";
+import {Token} from "./_token";
 
 export class ParenRight extends Token {
   public static railroad(): string {

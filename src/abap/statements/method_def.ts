@@ -1,5 +1,5 @@
 import {Version} from "../../version";
-import {Statement} from "./statement";
+import {Statement} from "./_statement";
 import {str, seq, seqs, alt, opt, tok, ver, regex as reg, plus, IRunnable} from "../combi";
 import {ParenLeft, ParenRight, ParenRightW} from "../tokens/";
 import {MethodParam, Field, ClassName} from "../expressions";

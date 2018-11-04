@@ -1,5 +1,5 @@
 import * as Statements from "../statements";
-import {MacroContent} from "../statements/statement";
+import {MacroContent} from "../statements/_statement";
 import {Structure} from "./_structure";
 import {star, IStructureRunnable, sta, beginEnd} from "./_combi";
 

@@ -2,7 +2,7 @@ import * as Structures from "./";
 import * as Statements from "../statements";
 import {Structure} from "./_structure";
 import {alt, IStructureRunnable, sta, sub} from "./_combi";
-import {MacroCall} from "../statements/statement";
+import {MacroCall} from "../statements/_statement";
 
 export class Normal extends Structure {
 

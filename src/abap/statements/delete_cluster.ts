@@ -1,4 +1,4 @@
-import {Statement} from "./statement";
+import {Statement} from "./_statement";
 import {verNot, str, seq, tok, opt, IRunnable} from "../combi";
 import {ParenLeft, ParenRightW} from "../tokens/";
 import {Source, SimpleName} from "../expressions";

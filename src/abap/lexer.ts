@@ -1,6 +1,7 @@
 import * as Tokens from "./tokens/";
-import {IFile} from "../files";
+import {IFile} from "../files/_ifile";
 import Position from "../position";
+import {Token} from "./tokens/_token";
 
 enum Mode {
   Normal,
@@ -88,12 +89,12 @@ class Stream {
 }
 
 export default class Lexer {
-  private static tokens: Array<Tokens.Token>;
+  private static tokens: Array<Token>;
   private static m: Mode;
   private static stream: Stream;
   private static buffer: Buffer;
 
-  public static run(file: IFile): Array<Tokens.Token> {
+  public static run(file: IFile): Array<Token> {
     this.tokens = [];
     this.m = Mode.Normal;
 
@@ -119,7 +120,7 @@ export default class Lexer {
         whiteAfter = true;
       }
 
-      let tok: Tokens.Token;
+      let tok: Token;
       let pos = new Position(row, col - s.length);
 
       if (this.m === Mode.Comment) {

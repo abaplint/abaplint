@@ -1,4 +1,4 @@
-import {Statement} from "./statement";
+import {Statement} from "./_statement";
 import {str, seq, alt, opt, optPrio, plus, per, IRunnable} from "../combi";
 import {FSTarget, Target, Field, Source, Dynamic, FieldSub} from "../expressions";
 

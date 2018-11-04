@@ -1,6 +1,6 @@
-import {Token} from "./tokens/token";
+import {Token} from "./tokens/_token";
 import {Expression} from "./combi";
-import {Statement} from "./statements/statement";
+import {Statement} from "./statements/_statement";
 
 function className(cla: any) {
   return (cla.constructor + "").match(/\w+/g)[1];

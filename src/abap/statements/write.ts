@@ -1,4 +1,4 @@
-import {Statement} from "./statement";
+import {Statement} from "./_statement";
 import {verNot, str, seq, opt, alt, per, tok, regex as reg, IRunnable} from "../combi";
 import {Target, Source, Dynamic, FieldSub} from "../expressions";
 import {ParenLeft, ParenRightW, WParenLeft} from "../tokens/";

@@ -1,4 +1,4 @@
-import {Object} from "./";
+import {Object} from "./_object";
 import {ABAPFile} from "../files";
 import Lexer from "../abap/lexer";
 import StatementParser from "../abap/statement_parser";
@@ -7,8 +7,8 @@ import {Version} from "../version";
 import {Registry} from "../registry";
 import {Define} from "../abap/statements";
 import {TokenNode} from "../abap/node";
-import {Token} from "../abap/tokens/";
-import {Statement, Unknown, MacroCall} from "../abap/statements/statement";
+import {Token} from "../abap/tokens/_token";
+import {Statement, Unknown, MacroCall} from "../abap/statements/_statement";
 import {Issue} from "../issue";
 
 export abstract class ABAPObject extends Object {

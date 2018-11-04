@@ -3,7 +3,7 @@ import Runner from "./runner";
 import {Issue} from "./issue";
 import Config from "./config";
 import {Version} from "./version";
-import {Formatter} from "./formatters";
+import {Formatter} from "./formatters/_format";
 import {Registry} from "./registry";
 
 // file used to build typings, index.d.ts

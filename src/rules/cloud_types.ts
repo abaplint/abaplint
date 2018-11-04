@@ -1,8 +1,8 @@
-import {IRule} from "./rule";
+import {IRule} from "./_rule";
 import {Issue} from "../issue";
 import {Version} from "../version";
 import * as Objects from "../objects";
-import {Object} from "../objects";
+import {Object} from "../objects/_object";
 import {Registry} from "../registry";
 
 export class CloudTypesConf {

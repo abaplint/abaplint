@@ -1,6 +1,6 @@
 import {Issue} from "../issue";
 import Position from "../position";
-import {Comment} from "../abap/statements/statement";
+import {Comment} from "../abap/statements/_statement";
 import {TypeBegin, TypeEnd} from "../abap/statements/";
 import {ABAPRule} from "./abap_rule";
 import {ABAPFile} from "../files";

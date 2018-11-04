@@ -1,4 +1,4 @@
-import {Formatter} from "../src/formatters";
+import {Formatter} from "../src/formatters/_format";
 import {expect} from "chai";
 import {findIssues} from "./utils";
 

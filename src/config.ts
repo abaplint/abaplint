@@ -1,5 +1,6 @@
 import * as Rules from "./rules/";
 import {Version, versionToText, textToVersion} from "./version";
+import {IRule} from "./rules/_rule";
 
 export default class Config {
 
@@ -13,7 +14,7 @@ export default class Config {
     for (let key in Rules) {
       const rul: any = Rules;
       if (typeof rul[key] === "function") {
-        let rule: Rules.IRule = new rul[key]();
+        let rule: IRule = new rul[key]();
         if (rule.getKey) {
           defaults.push("\"" + rule.getKey() + "\": " + JSON.stringify(rule.getConfig()));
         }

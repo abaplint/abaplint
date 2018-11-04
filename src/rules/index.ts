@@ -1,5 +1,3 @@
-export * from "./rule";
-
 export * from "./7bit_ascii";
 export * from "./contains_tab";
 export * from "./functional_writing";

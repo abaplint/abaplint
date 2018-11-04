@@ -1,4 +1,4 @@
-import {IFile} from "../files";
+import {IFile} from "../files/_ifile";
 
 export abstract class Object {
   protected files: Array<IFile>;

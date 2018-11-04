@@ -1,4 +1,4 @@
-import {AbstractFile} from "./abstract_file";
+import {AbstractFile} from "./_abstract_file";
 import * as zlib from "zlib";
 
 export class CompressedFile extends AbstractFile {

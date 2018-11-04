@@ -1,4 +1,4 @@
-import {Statement} from "./statement";
+import {Statement} from "./_statement";
 import {verNot, str, seq, alt, opt, tok, altPrio, plus, IRunnable} from "../combi";
 import {ParenLeft, ParenRight, ParenRightW} from "../tokens/";
 import {ClassName, SimpleName, NamespaceSimpleName, FormParam, FormName} from "../expressions";

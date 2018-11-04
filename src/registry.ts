@@ -1,10 +1,13 @@
 import * as Objects from "./objects";
-import {ABAPObject} from "./objects";
-import {ABAPFile, IFile} from "./files";
+import {ABAPObject} from "./objects/_abap_object";
+import {Object} from "./objects/_object";
+import {ABAPFile} from "./files";
 import Config from "./config";
 import {Issue} from "./issue";
 import {GenericError} from "./rules/";
+import {IRule} from "./rules/_rule";
 import * as Rules from "./rules/";
+import {IFile} from "./files/_ifile";
 
 export interface IProgress {
   set(total: number, text: string): void;
@@ -24,7 +27,7 @@ class NoProgress implements IProgress {
 export class Registry {
 
   private macros: Array<string> = [];
-  private objects: Array<Objects.Object> = [];
+  private objects: Array<Object> = [];
   private dirty = false;
   private conf: Config;
   private issues: Issue[] = [];
@@ -33,7 +36,7 @@ export class Registry {
     this.conf = conf ? conf : Config.getDefault();
   }
 
-  public getObjects(): Array<Objects.Object> {
+  public getObjects(): Array<Object> {
     return this.objects;
   }
 
@@ -45,7 +48,10 @@ export class Registry {
     return this.objects.filter((obj) => { return obj instanceof ABAPObject; }) as Array<ABAPObject>;
   }
 
-  public getParsedFiles(): Array<ABAPFile> {
+  public getParsedFiles(progress?: IProgress): Array<ABAPFile> {
+    if (this.isDirty()) {
+      this.parse(progress);
+    }
     let ret: Array<ABAPFile> = [];
     this.getABAPObjects().forEach((a) => {ret = ret.concat(a.getParsed()); });
     return ret;
@@ -92,7 +98,7 @@ export class Registry {
       for (let key in Rules) {
         const rul: any = Rules;
         if (typeof rul[key] === "function") {
-          let rule: Rules.IRule = new rul[key]();
+          let rule: IRule = new rul[key]();
           if (rule.getKey && this.conf.readByKey(rule.getKey(), "enabled") === true) {
             rule.setConfig(this.conf.readByRule(rule.getKey()));
             issues = issues.concat(rule.run(obj, this, this.conf.getVersion()));
@@ -127,14 +133,31 @@ export class Registry {
     return this;
   }
 
-  private findOrCreate(name: string, type: string): Objects.Object {
+  public addMacro(name: string) {
+// todo, handle scoping for macros
+    if (this.isMacro(name)) {
+      return;
+    }
+    this.macros.push(name.toUpperCase());
+  }
+
+  public isMacro(name: string): boolean {
+    for (let mac of this.macros) {
+      if (mac === name.toUpperCase()) {
+        return true;
+      }
+    }
+    return false;
+  }
+
+  private findOrCreate(name: string, type: string): Object {
     for (let obj of this.objects) { // todo, this is slow
       if (obj.getType() === type && obj.getName() === name) {
         return obj;
       }
     }
 
-    let add = undefined;
+    let add: Object = undefined;
 // todo, refactor this somewhere else
     switch (type) {
       case "CLAS":
@@ -203,23 +226,6 @@ export class Registry {
     this.objects.push(add);
 
     return add;
-  }
-
-  public addMacro(name: string) {
-// todo, handle scoping for macros
-    if (this.isMacro(name)) {
-      return;
-    }
-    this.macros.push(name.toUpperCase());
-  }
-
-  public isMacro(name: string): boolean {
-    for (let mac of this.macros) {
-      if (mac === name.toUpperCase()) {
-        return true;
-      }
-    }
-    return false;
   }
 
 }

@@ -1,9 +1,9 @@
 import Runner from "./runner";
-import {IFile, CompressedFile, MemoryFile} from "./files";
+import {CompressedFile, MemoryFile} from "./files";
 import {Issue} from "./issue";
 import Config from "./config";
 import {textToVersion} from "./version";
-import {Formatter} from "./formatters";
+import {Formatter} from "./formatters/_format";
 import * as fs from "fs";
 import * as path from "path";
 import * as zlib from "zlib";
@@ -12,6 +12,7 @@ import * as minimist from "minimist";
 import {Artifacts} from "./abap/artifacts";
 import {Registry, IProgress} from "./registry";
 import * as ProgressBar from "progress";
+import {IFile} from "./files/_ifile";
 
 function searchConfig(filename: string): Config {
   let json = searchUp(path.dirname(process.cwd() + path.sep + filename) + path.sep);

@@ -1,7 +1,8 @@
-import {Token, Pragma} from "../abap/tokens";
-import {Statement} from "../abap/statements/statement";
-import {AbstractFile} from "./abstract_file";
-import {IFile} from "./ifile";
+import {Pragma} from "../abap/tokens";
+import {Token} from "../abap/tokens/_token";
+import {Statement} from "../abap/statements/_statement";
+import {AbstractFile} from "./_abstract_file";
+import {IFile} from "./_ifile";
 
 // todo: rename to ABAPFile
 export class ABAPFile extends AbstractFile {

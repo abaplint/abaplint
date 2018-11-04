@@ -3,7 +3,7 @@ import * as Expressions from "./expressions";
 import * as Structures from "./structures";
 import {Structure} from "./structures/_structure";
 import {Combi, Expression} from "./combi";
-import {Statement} from "./statements/statement";
+import {Statement} from "./statements/_statement";
 
 export interface IKeyword {
   word: string;

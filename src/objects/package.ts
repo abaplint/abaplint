@@ -1,4 +1,4 @@
-import {Object} from "./object";
+import {Object} from "./_object";
 
 export class Package extends Object {
 

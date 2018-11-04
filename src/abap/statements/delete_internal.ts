@@ -1,4 +1,4 @@
-import {Statement} from "./statement";
+import {Statement} from "./_statement";
 import {str, seq, alt, opt, per, plus, IRunnable} from "../combi";
 import {FieldSymbol} from "../expressions";
 import {Target, Source, Dynamic, Compare, Cond, SimpleName, Field, FieldSub} from "../expressions";

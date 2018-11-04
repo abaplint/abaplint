@@ -1,4 +1,4 @@
-import {Statement} from "./statement";
+import {Statement} from "./_statement";
 import {IRunnable} from "../combi";
 import {seq, opt} from "../combi";
 import {Select as eSelect, SQLHints} from "../expressions";

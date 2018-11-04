@@ -1,4 +1,4 @@
-import {Statement} from "./statement";
+import {Statement} from "./_statement";
 import {str, seq, opt, alt, IRunnable, star, tok} from "../combi";
 import {Source, DatabaseTable, Dynamic, Field, SQLCond} from "../expressions";
 import {WAt} from "../tokens/";

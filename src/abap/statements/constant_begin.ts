@@ -1,4 +1,4 @@
-import {Statement} from "./statement";
+import {Statement} from "./_statement";
 import {str, seq, IRunnable} from "../combi";
 import {NamespaceSimpleName} from "../expressions";
 

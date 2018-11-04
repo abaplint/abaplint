@@ -3,16 +3,17 @@ import * as Combi from "../src/abap/combi";
 import * as Tokens from "../src/abap/tokens/";
 import * as Expressions from "../src/abap/expressions";
 import Position from "../src/position";
+import {Token} from "../src/abap/tokens/_token";
 
 let str  = Combi.str;
 let seq  = Combi.seq;
 let opt  = Combi.opt;
 let star = Combi.star;
 
-function tok(s: string): Array<Tokens.Token> {
+function tok(s: string): Array<Token> {
   let split = s.split(" ");
 
-  let tokens: Array<Tokens.Token> = [];
+  let tokens: Array<Token> = [];
   for (let st of split) {
     tokens.push(new Tokens.Identifier(new Position(10, 10), st));
   }

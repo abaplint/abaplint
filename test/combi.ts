@@ -1,9 +1,9 @@
 import {expect} from "chai";
 import * as Combi from "../src/abap/combi";
-import * as Tokens from "../src/abap/tokens/";
 import Lexer from "../src/abap/lexer";
 import {MemoryFile} from "../src/files";
 import {Identifier, WPlusW, Plus} from "../src/abap/tokens/";
+import {Token} from "../src/abap/tokens/_token";
 
 let str  = Combi.str;
 let per  = Combi.per;
@@ -16,7 +16,7 @@ let reg  = Combi.regex;
 let tok  = Combi.tok;
 let optPrio = Combi.optPrio;
 
-function tokenize(s: string): Array<Tokens.Token> {
+function tokenize(s: string): Array<Token> {
   return Lexer.run(new MemoryFile("foo.abap", s));
 }
 

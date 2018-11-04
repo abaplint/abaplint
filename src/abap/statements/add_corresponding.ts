@@ -1,4 +1,4 @@
-import {Statement} from "./statement";
+import {Statement} from "./_statement";
 import {str, seq, IRunnable, verNot} from "../combi";
 import {Version} from "../../version";
 import {Target, Source} from "../expressions";

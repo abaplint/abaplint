@@ -1,4 +1,4 @@
-import {ABAPObject} from "./";
+import {ABAPObject} from "./_abap_object";
 
 export class Program extends ABAPObject {
 

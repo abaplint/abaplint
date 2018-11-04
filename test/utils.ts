@@ -2,7 +2,7 @@ import {MemoryFile} from "../src/files";
 import Config from "../src/config";
 import {expect} from "chai";
 import {Version, versionToText} from "../src/version";
-import {Unknown} from "../src/abap/statements/statement";
+import {Unknown} from "../src/abap/statements/_statement";
 import {Structure} from "../src/abap/structures/_structure";
 import Lexer from "../src/abap/lexer";
 import StatementParser from "../src/abap/statement_parser";

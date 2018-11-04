@@ -1,7 +1,7 @@
 import Config from "./config";
 import {MemoryFile} from "./files";
 import {Version, textToVersion} from "./version";
-import {Formatter} from "./formatters/";
+import {Formatter} from "./formatters/_format";
 import {Registry} from "./registry";
 
 export default class Runner {

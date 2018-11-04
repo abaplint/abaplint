@@ -1,4 +1,4 @@
-import {AbstractFile} from "./abstract_file";
+import {AbstractFile} from "./_abstract_file";
 
 export class MemoryFile extends AbstractFile {
   private raw: string;

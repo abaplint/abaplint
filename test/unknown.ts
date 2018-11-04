@@ -1,5 +1,5 @@
 import {expect} from "chai";
-import {Unknown} from "../src/abap/statements/statement";
+import {Unknown} from "../src/abap/statements/_statement";
 import {getStatements} from "./utils";
 
 describe("unknown statements", () => {

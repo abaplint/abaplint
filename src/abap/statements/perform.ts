@@ -1,4 +1,4 @@
-import {Statement} from "./statement";
+import {Statement} from "./_statement";
 import {verNot, str, seq, opt, alt, tok, per, plus, IRunnable} from "../combi";
 import {ParenLeft, ParenRightW, ParenRight} from "../tokens/";
 import {Source, Field, Dynamic, FormName} from "../expressions";

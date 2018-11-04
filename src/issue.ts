@@ -1,5 +1,5 @@
-import {IRule} from "./rules/";
-import {IFile} from "./files";
+import {IRule} from "./rules/_rule";
+import {IFile} from "./files/_ifile";
 import Position from "./position";
 
 interface IssueData {

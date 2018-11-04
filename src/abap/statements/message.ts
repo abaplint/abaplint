@@ -1,4 +1,4 @@
-import {Statement} from "./statement";
+import {Statement} from "./_statement";
 import {str, seq, opt, tok, per, IRunnable} from "../combi";
 import {ParenLeft} from "../tokens";
 import {Target, Source, Field, MessageClass} from "../expressions";

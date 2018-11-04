@@ -1,5 +1,5 @@
 import {Issue} from "../issue";
-import {Statement} from "../abap/statements/statement";
+import {Statement} from "../abap/statements/_statement";
 import * as Statements from "../abap/statements/";
 import {ABAPRule} from "./abap_rule";
 import {ABAPFile} from "../files";

@@ -1,5 +1,6 @@
-import {IRule} from ".";
-import {ABAPObject, Object} from "../objects";
+import {IRule} from "./_rule";
+import {Object} from "../objects/_object";
+import {ABAPObject} from "../objects/_abap_object";
 import {Issue} from "../issue";
 import {ABAPFile} from "../files";
 

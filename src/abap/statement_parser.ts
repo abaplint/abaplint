@@ -2,10 +2,10 @@ import * as Tokens from "./tokens";
 import * as Statements from "./statements";
 import {Combi} from "./combi";
 import {TokenNode} from "./node";
-import {Statement, Unknown, Empty, Comment, MacroContent, NativeSQL} from "./statements/statement";
+import {Statement, Unknown, Empty, Comment, MacroContent, NativeSQL} from "./statements/_statement";
 import {Version} from "../version";
 import {Artifacts} from "./artifacts";
-import {Token} from "./tokens";
+import {Token} from "./tokens/_token";
 
 function className(cla: any) {
   return (cla.constructor + "").match(/\w+/g)[1];
@@ -40,7 +40,7 @@ export default class StatementParser {
 // todo, move this map to separate local class
   private static map: Map;
 
-  public static run(tokens: Array<Tokens.Token>, ver = Version.v750): Array<Statement> {
+  public static run(tokens: Array<Token>, ver = Version.v750): Array<Statement> {
     this.statements = [];
 
     if (!this.map) {
@@ -55,7 +55,7 @@ export default class StatementParser {
     return this.statements;
   }
 
-  private static tokensToNodes(tokens: Array<Tokens.Token>): Array<TokenNode> {
+  private static tokensToNodes(tokens: Array<Token>): Array<TokenNode> {
     let ret: Array<TokenNode> = [];
 
     tokens.forEach((t) => {ret.push(new TokenNode("Unknown", t)); });
@@ -101,7 +101,7 @@ export default class StatementParser {
     this.statements = result;
   }
 
-  private static removeLast(tokens: Array<Tokens.Token>): Array<Tokens.Token> {
+  private static removeLast(tokens: Array<Token>): Array<Token> {
     let copy = tokens.slice();
     copy.pop();
     return copy;
@@ -128,7 +128,7 @@ export default class StatementParser {
     this.statements = result;
   }
 
-  private static removePragma(tokens: Array<Tokens.Token>): Array<Tokens.Token> {
+  private static removePragma(tokens: Array<Token>): Array<Token> {
     return tokens.filter(function (value) { return !(value instanceof Tokens.Pragma); } );
   }
 
@@ -152,10 +152,10 @@ export default class StatementParser {
   }
 
 // takes care of splitting tokens into statements, also handles chained statements
-  private static process(tokens: Array<Tokens.Token>) {
-    let add: Array<Tokens.Token> = [];
-    let pre: Array<Tokens.Token> = [];
-    let ukn = (t: Tokens.Token[]) => { this.statements.push(new Unknown().setChildren(this.tokensToNodes(t))); };
+  private static process(tokens: Array<Token>) {
+    let add: Array<Token> = [];
+    let pre: Array<Token> = [];
+    let ukn = (t: Token[]) => { this.statements.push(new Unknown().setChildren(this.tokensToNodes(t))); };
 
     for (let token of tokens) {
       if (token instanceof Tokens.Comment) {

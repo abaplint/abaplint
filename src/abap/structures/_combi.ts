@@ -1,5 +1,5 @@
 import {Structure} from "./_structure";
-import {Statement} from "../statements/statement";
+import {Statement} from "../statements/_statement";
 
 export interface IMatch {
   matched: Array<Statement>;

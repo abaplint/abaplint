@@ -1,4 +1,4 @@
-import {Statement} from "./statement";
+import {Statement} from "./_statement";
 import {IRunnable} from "../combi";
 import {SelectLoop as eSelectLoop} from "../expressions";
 

@@ -1,7 +1,7 @@
 import {Issue} from "../issue";
 import Position from "../position";
 import * as Tokens from "../abap/tokens";
-import {Unknown, Statement} from "../abap/statements/statement";
+import {Unknown, Statement} from "../abap/statements/_statement";
 import {ABAPRule} from "./abap_rule";
 import {ABAPFile} from "../files";
 

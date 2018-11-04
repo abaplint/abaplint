@@ -1,4 +1,4 @@
-import {Statement} from "./statement";
+import {Statement} from "./_statement";
 import {str, seq, alt, optPrio, IRunnable} from "../combi";
 import {SimpleName, NamespaceSimpleName} from "../expressions";
 

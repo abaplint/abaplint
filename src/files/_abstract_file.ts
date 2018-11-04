@@ -1,4 +1,4 @@
-import {IFile} from "./ifile";
+import {IFile} from "./_ifile";
 
 export abstract class AbstractFile implements IFile {
   private filename: string;
