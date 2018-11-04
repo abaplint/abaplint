@@ -47,7 +47,7 @@ export class Registry {
     return this.objects.filter((obj) => { return obj instanceof ABAPObject; }) as Array<ABAPObject>;
   }
 
-  public getParsedFiles(progress?: IProgress): Array<ABAPFile> {
+  public getABAPFiles(progress?: IProgress): Array<ABAPFile> {
     if (this.isDirty()) {
       this.parse(progress);
     }

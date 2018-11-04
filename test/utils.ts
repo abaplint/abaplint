@@ -25,7 +25,7 @@ export function findIssues(abap: string) {
 
 export function parse(abap: string, config?: Config) {
   let file = new MemoryFile("cl_foo.prog.abap", abap);
-  return new Registry(config).addFile(file).parse().getParsedFiles()[0];
+  return new Registry(config).addFile(file).parse().getABAPFiles()[0];
 }
 
 function run(abap: string, text: string, type: any, version = Version.v750) {

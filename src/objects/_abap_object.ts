@@ -55,8 +55,9 @@ export abstract class ABAPObject extends AObject {
 
     let ret: Issue[] = [];
     this.parsed.forEach((f) => {
-// todo, set structure in file
-      ret = ret.concat(StructureParser.run(f).issues);
+      let result = StructureParser.run(f);
+      f.setStructure(result.node);
+      ret = ret.concat(result.issues);
     });
 
     return ret;

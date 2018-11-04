@@ -30,4 +30,19 @@ describe("Structure, test generated nodes", function() {
     expect(result.node.getChildren()[1]).to.be.instanceof(Structures.Body);
     expect(result.node.getChildren()[1].getChildren().length).to.equal(2);
   });
+
+  it("Test 04", function () {
+    const result = new Structures.If().runFile(parse("IF foo = boo. ENDIF."));
+    expect(result.node).to.be.instanceof(Structures.If);
+    expect(result.node.getChildren().length).to.equal(2);
+    expect(result.node.getChildren()[0]).to.be.instanceof(Statements.If);
+    expect(result.node.getChildren()[1]).to.be.instanceof(Statements.EndIf);
+  });
+
+  it("Test 05", function () {
+    const result = new Structures.If().runFile(parse("IF foo = boo. moo = boo. ENDIF."));
+    expect(result.node).to.be.instanceof(Structures.If);
+    expect(result.node.getChildren().length).to.equal(3);
+  });
+
 });

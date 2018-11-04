@@ -1,6 +1,8 @@
 import {expect} from "chai";
 import {getStatements} from "./utils";
 
+// todo, rename and move somewhere under /test/abap/
+
 let tests = [
   {abap: "add 2 to lv_foo.", cnt: 5},
   {abap: "CONCATENATE lv_tmp iv_pack INTO lv_xstring IN BYTE MODE.", cnt: 9},

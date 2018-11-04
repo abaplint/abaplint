@@ -3,6 +3,7 @@ import {Token} from "../abap/tokens/_token";
 import {Statement} from "../abap/statements/_statement";
 import {AbstractFile} from "./_abstract_file";
 import {IFile} from "./_ifile";
+import {StructureNode} from "../abap/node";
 
 // todo: rename to ABAPFile
 export class ABAPFile extends AbstractFile {
@@ -10,6 +11,7 @@ export class ABAPFile extends AbstractFile {
   // todo: need some better way of handling pragmas
   private tokens: Array<Token>;
   private statements: Array<Statement>;
+  private structure: StructureNode;
   private file: IFile;
 
   public constructor(file: IFile, tokens: Array<Token>, statements: Array<Statement>) {
@@ -25,6 +27,14 @@ export class ABAPFile extends AbstractFile {
 
   public getRawRows(): Array<string> {
     return this.file.getRawRows();
+  }
+
+  public setStructure(node: StructureNode) {
+    this.structure = node;
+  }
+
+  public getStructure(): StructureNode {
+    return this.structure;
   }
 
   /*

@@ -16,7 +16,6 @@ export default class StructureParser {
 // do not parse structure, file contains unknown statements(parser errors)
       return {issues: [], node: undefined};
     }
-
     return structure.runFile(file, statements);
   }
 

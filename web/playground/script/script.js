@@ -11,6 +11,21 @@ function stripNewline(input) {
   return result;
 }
 
+function linkToStatement(statement) {
+  return "<a href=\"https://syntax.abaplint.org/#/statement/" + statement.constructor.name + "\">" +
+    statement.constructor.name + "</a>";
+}
+
+function linkToStructure(structure) {
+  return "<a href=\"https://syntax.abaplint.org/#/structure/" + structure.constructor.name + "\">" +
+    structure.constructor.name + "</a>";
+}
+
+function linkToExpression(expression) {
+  return "<a href=\"https://syntax.abaplint.org/#/expression/" + expression.getName() + "\">" +
+    expression.getName() + "</a>";
+}
+
 function outputNodes(nodes) {
   let ret = "<ul>";
   for (let node of nodes) {
@@ -20,8 +35,7 @@ function outputNodes(nodes) {
         extra = node.name + ", \"" + node.getToken().getStr() + "\"";
         break;
       case "ReuseNode":
-        extra = "<a href=\"https://syntax.abaplint.org/#/expression/" + node.getName() + "\">" + node.getName() + "</a>" +
-          outputNodes(node.getChildren());
+        extra = linkToExpression(node) + outputNodes(node.getChildren());
         break;
     }
 
@@ -43,17 +57,23 @@ function buildStatements(file) {
       "<b><div onmouseover=\"javascript:markLine(" +
       row + ", " + col + ", " + erow + ", " + ecol + ");\">" +
       row + ": " +
-      "<a href=\"https://syntax.abaplint.org/#/statement/" + statement.constructor.name + "\">" +
-      statement.constructor.name +
-      "</a>" +
+      linkToStatement(statement) +
       "</div></b>\n" + outputNodes(statement.getChildren());
   }
 
   return output;
 }
 
-function buildAst(file) {
-  return file.getRoot().viz();
+function buildStructure(nodes) {
+  let output = "<ul>";
+  for(let node of nodes) {
+    if (node instanceof abaplint.Nodes.StructureNode) {
+      output = output + "<li>" + linkToStructure(node) + ", Structure " + buildStructure(node.getChildren()) + "</li>";
+    } else if (node instanceof abaplint.Nodes.StatementNode) {
+      output = output + "<li>" + linkToStatement(node) + ", Statement</li>";
+    }
+  }
+  return output + "</ul>";
 }
 
 function process() {
@@ -65,7 +85,7 @@ function process() {
 function parse() {
   let input = stripNewline(editor.getValue());
   let file = new abaplint.File("foobar.prog.abap", input);
-  return new abaplint.Registry(config).addFile(file).parse().getParsedFiles()[0];
+  return new abaplint.Registry(config).addFile(file).parse().getABAPFiles()[0];
 }
 
 // ---------------------
@@ -100,14 +120,11 @@ function tokens() {
 }
 
 function statements() {
-  let file = parse();
-  document.getElementById("info").innerHTML = buildStatements(file);
+  document.getElementById("info").innerHTML = buildStatements(parse());
 }
 
 function structure() {
-  let file = parse();
-  document.getElementById("info").innerHTML = buildAst(file);
-  // todo
+  document.getElementById("info").innerHTML = buildStructure([parse().getStructure()]);
 }
 
 function escape(str) {
