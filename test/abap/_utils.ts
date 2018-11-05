@@ -7,6 +7,7 @@ import {Structure} from "../../src/abap/structures/_structure";
 import Lexer from "../../src/abap/lexer";
 import StatementParser from "../../src/abap/statement_parser";
 import {Registry} from "../../src/registry";
+import {StructureNode} from "../../src/abap/node";
 
 // utils for testing
 
@@ -45,10 +46,10 @@ export function structureType(cas: {abap: string}[], expected: Structure): void 
   describe("Structure type", function() {
     cas.forEach((c: {abap: string}) => {
       it(c.abap, function () {
-        let file = parse(c.abap); // new Runner([new MemoryFile("cl_foo.clas.abap", c.abap)]).parse()[0];
+        let file = parse(c.abap);
         const statements = file.getStatements();
         const length = statements.length;
-        const match = expected.getMatcher().run(statements.slice(), expected);
+        const match = expected.getMatcher().run(statements.slice(), new StructureNode(expected));
 
         expect(match.errorDescription).to.equal("");
         expect(length).to.equal(statements.length);

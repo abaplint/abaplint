@@ -1,6 +1,6 @@
 import {Structure} from "./_structure";
 import {Statement} from "../statements/_statement";
-import {StructureNode} from "../node";
+import {StructureNode, INode} from "../node";
 
 export interface IMatch {
   matched: Array<Statement>;
@@ -13,7 +13,7 @@ export interface IMatch {
 export interface IStructureRunnable {
   toRailroad(): string;
   getUsing(): string[];
-  run(statements: Array<Statement>, parent: StructureNode): IMatch;
+  run(statements: Array<Statement>, parent: INode): IMatch;
 }
 
 class Sequence implements IStructureRunnable {
@@ -35,7 +35,7 @@ class Sequence implements IStructureRunnable {
     return this.list.reduce((a, c) => { return a.concat(c.getUsing()); }, []);
   }
 
-  public run(statements: Array<Statement>, parent: StructureNode): IMatch {
+  public run(statements: Array<Statement>, parent: INode): IMatch {
     let inn = statements;
     let out: Array<Statement> = [];
     for (let i of this.list) {
@@ -81,7 +81,7 @@ class Alternative implements IStructureRunnable {
     return this.list.reduce((a, c) => { return a.concat(c.getUsing()); }, []);
   }
 
-  public run(statements: Array<Statement>, parent: StructureNode): IMatch {
+  public run(statements: Array<Statement>, parent: INode): IMatch {
     let count = 0;
     let countError = "";
     for (let i of this.list) {
@@ -130,7 +130,7 @@ class Optional implements IStructureRunnable {
     return this.obj.getUsing();
   }
 
-  public run(statements: Array<Statement>, parent: StructureNode): IMatch {
+  public run(statements: Array<Statement>, parent: INode): IMatch {
     let ret = this.obj.run(statements, parent);
     ret.error = false;
     return ret;
@@ -155,7 +155,7 @@ class Star implements IStructureRunnable {
     return this.obj.getUsing();
   }
 
-  public run(statements: Array<Statement>, parent: StructureNode): IMatch {
+  public run(statements: Array<Statement>, parent: INode): IMatch {
     let inn = statements;
     let out: Array<Statement> = [];
     // tslint:disable-next-line:no-constant-condition
@@ -209,12 +209,13 @@ class SubStructure implements IStructureRunnable {
     return ["structure/" + this.s.constructor.name];
   }
 
-  public run(statements: Array<Statement>, parent: StructureNode): IMatch {
-    let ret = this.s.getMatcher().run(statements, this.s);
+  public run(statements: Array<Statement>, parent: INode): IMatch {
+    let nparent = new StructureNode(this.s);
+    let ret = this.s.getMatcher().run(statements, nparent);
     if (ret.matched.length === 0) {
       ret.error = true;
     } else {
-      parent.addChild(this.s);
+      parent.addChild(nparent);
     }
     return ret;
   }
@@ -239,7 +240,7 @@ class SubStatement implements IStructureRunnable {
     return (this.obj + "").match(/\w+/g)[1];
   }
 
-  public run(statements: Array<Statement>, parent: StructureNode): IMatch {
+  public run(statements: Array<Statement>, parent: INode): IMatch {
     if (statements.length === 0) {
       return {
         matched: [],

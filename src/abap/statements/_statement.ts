@@ -1,7 +1,7 @@
 import {Pragma} from "../tokens";
 import {Token} from "../tokens/_token";
 import Position from "../../position";
-import {BasicNode, StatementNode, TokenNode, ExpressionNode} from "../node";
+import {BasicNode, StatementNode, TokenNode, ExpressionNode, INode} from "../node";
 import {IRunnable} from "../combi";
 
 export abstract class Statement extends StatementNode {
@@ -103,16 +103,16 @@ export abstract class Statement extends StatementNode {
     return this.getTokens()[this.getTokens().length - 1].getStr();
   }
 
-  private toTokens(b: BasicNode): Array<Token> {
+  private toTokens(b: INode): Array<Token> {
     let tokens: Array<Token> = [];
 
     if (b instanceof TokenNode) {
-      tokens.push((b as TokenNode).getToken());
+      tokens.push((b as TokenNode).get());
     }
 
     b.getChildren().forEach((c) => {
       if (c instanceof TokenNode) {
-        tokens.push((c as TokenNode).getToken());
+        tokens.push((c as TokenNode).get());
       } else {
         tokens = tokens.concat(this.toTokens(c));
       }

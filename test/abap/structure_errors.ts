@@ -15,7 +15,8 @@ const cases = [
 describe("Structure, test error messages, specific", function() {
   cases.forEach((c: {abap: string, error: string, structure: Structure, errorMatched: number}) => {
     it(c.abap, function () {
-      const result = c.structure.getMatcher().run(getStatements(c.abap), new StructureNode());
+// todo, refactor?
+      const result = c.structure.getMatcher().run(getStatements(c.abap), new StructureNode(c.structure));
       expect(result.error).to.equal(true);
       expect(result.errorMatched).to.equal(c.errorMatched);
       expect(result.errorDescription).to.equal(c.error);
