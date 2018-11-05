@@ -30,13 +30,13 @@ export class StartAtTab extends ABAPRule {
   }
 
   public runParsed(file: ABAPFile) {
-    let issues: Array<Issue> = [];
+    let issues: Issue[] = [];
 
     let inType = false;
     let previous: Position = undefined;
 
     for (let statement of file.getStatements()) {
-      if (statement instanceof Comment) {
+      if (statement.get() instanceof Comment) {
         continue;
       } else if (statement.get() instanceof TypeBegin) {
         inType = true;

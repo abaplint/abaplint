@@ -48,19 +48,20 @@ export class StatementNode extends BasicNode {
     return this.statement;
   }
 
-  public setChildren(children: Array<INode>): StatementNode {
-    this.children = children;
-
+  public setChildren(children: INode[]): StatementNode {
     if (children.length === 0) {
       throw "statement: zero children";
     }
-
+// commented to optimize performance
+/*
     // validate child nodes
     children.forEach((c) => {
       if (!(c instanceof TokenNode || c instanceof ExpressionNode)) {
         throw "statement: not token or expression node";
       }
     });
+*/
+    this.children = children;
 
     return this;
   }

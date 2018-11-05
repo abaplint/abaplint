@@ -33,7 +33,7 @@ export abstract class ABAPObject extends AObject {
 
     this.parsed.forEach((f) => {
       f.getStatements().forEach((s) => {
-        if (s instanceof Define) {
+        if (s.get() instanceof Define) {
           reg.addMacro(s.getTokens()[1].getStr());
         }
       });
@@ -44,7 +44,7 @@ export abstract class ABAPObject extends AObject {
     this.parsed.forEach((f) => {
       let statements: StatementNode[] = [];
       f.getStatements().forEach((s) => {
-        if (s instanceof Unknown && reg.isMacro(s.getTokens()[0].getStr())) {
+        if (s.get() instanceof Unknown && reg.isMacro(s.getTokens()[0].getStr())) {
           statements.push(new StatementNode(new MacroCall()).setChildren(this.tokensToNodes(s.getTokens())));
         } else {
           statements.push(s);
