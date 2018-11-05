@@ -22,8 +22,8 @@ function linkToStructure(structure) {
 }
 
 function linkToExpression(expression) {
-  return "<a href=\"https://syntax.abaplint.org/#/expression/" + expression.getName() + "\">" +
-    expression.getName() + "</a>";
+  return "<a href=\"https://syntax.abaplint.org/#/expression/" + expression.constructor.name + "\">" +
+    expression.constructor.name + "</a>";
 }
 
 function outputNodes(nodes) {
@@ -32,10 +32,10 @@ function outputNodes(nodes) {
     let extra = "";
     switch(node.constructor.name) {
       case "TokenNode":
-        extra = node.name + ", \"" + node.getToken().getStr() + "\"";
+        extra = node.get().constructor.name + ", \"" + node.get().getStr() + "\"";
         break;
       case "ExpressionNode":
-        extra = linkToExpression(node) + outputNodes(node.getChildren());
+        extra = linkToExpression(node.get()) + outputNodes(node.getChildren());
         break;
     }
 
@@ -57,7 +57,7 @@ function buildStatements(file) {
       "<b><div onmouseover=\"javascript:markLine(" +
       row + ", " + col + ", " + erow + ", " + ecol + ");\">" +
       row + ": " +
-      linkToStatement(statement) +
+      linkToStatement(statement.get()) +
       "</div></b>\n" + outputNodes(statement.getChildren());
   }
 
@@ -68,9 +68,9 @@ function buildStructure(nodes) {
   let output = "<ul>";
   for(let node of nodes) {
     if (node instanceof abaplint.Nodes.StructureNode) {
-      output = output + "<li>" + linkToStructure(node) + ", Structure " + buildStructure(node.getChildren()) + "</li>";
+      output = output + "<li>" + linkToStructure(node.get()) + ", Structure " + buildStructure(node.getChildren()) + "</li>";
     } else if (node instanceof abaplint.Nodes.StatementNode) {
-      output = output + "<li>" + linkToStatement(node) + ", Statement</li>";
+      output = output + "<li>" + linkToStatement(node.get()) + ", Statement</li>";
     }
   }
   return output + "</ul>";

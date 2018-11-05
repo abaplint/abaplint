@@ -290,9 +290,8 @@ describe("structure combi, complex1", function() {
     expect(match.unmatched.length).to.equal(0);
     expect(match.error).to.equal(false);
     expect(parent.getChildren().length).to.equal(2);
-// todo
-//    expect(parent.getChildren()[0].getChildren().length).to.equal(1);
-//    expect(parent.getChildren()[1].getChildren().length).to.equal(1);
+    expect(parent.getChildren()[0].getChildren().length).to.equal(1);
+    expect(parent.getChildren()[1].getChildren().length).to.equal(1);
   });
 
 });

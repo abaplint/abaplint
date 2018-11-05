@@ -130,13 +130,6 @@ export class StatementNode extends BasicNode {
 
     return tokens;
   }
-
-  /*
-  public get(): undefined {
-// todo
-    return undefined;
-  }
-  */
 }
 
 export class StructureNode extends BasicNode {
@@ -171,20 +164,13 @@ export class ExpressionNode extends CountableNode {
   public get() {
     return this.expression;
   }
-
-  public getName() {
-    return this.expression.constructor.name;
-  }
 }
 
 export class TokenNode extends CountableNode {
   private token: Token;
-  private name: string;
 
-  public constructor(name: string, token: Token) {
+  public constructor(token: Token) {
     super();
-// todo, can name be removed, and instead use token.constructor.name?
-    this.name = name;
     this.token = token;
   }
 
@@ -194,9 +180,5 @@ export class TokenNode extends CountableNode {
 
   public countTokens(): number {
     return super.countTokens() + 1;
-  }
-
-  public getName(): string {
-    return this.name;
   }
 }

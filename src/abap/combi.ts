@@ -93,7 +93,7 @@ class Regex implements IRunnable {
     for (let input of r) {
       if (input.length() !== 0
           && this.regexp.test(input.peek().getStr()) === true) {
-        result.push(input.shift(new TokenNode("Regex", input.peek())));
+        result.push(input.shift(new TokenNode(input.peek())));
       }
     }
 
@@ -136,7 +136,7 @@ class Word implements IRunnable {
       if (input.length() !== 0
           && input.peek().getStr().toUpperCase() === this.s.toUpperCase()) {
 //        console.log("match, " + this.s + result.length);
-        result.push(input.shift(new TokenNode("Word", input.peek())));
+        result.push(input.shift(new TokenNode(input.peek())));
       }
     }
     return result;
@@ -185,7 +185,7 @@ class Token implements IRunnable {
     for (let input of r) {
       if (input.length() !== 0
           && className(input.peek()).toUpperCase() === this.s.toUpperCase()) {
-        result.push(input.shift(new TokenNode("Token", input.peek())));
+        result.push(input.shift(new TokenNode(input.peek())));
       }
     }
     return result;

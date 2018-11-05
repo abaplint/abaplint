@@ -69,7 +69,7 @@ export abstract class ABAPObject extends AObject {
 
   private tokensToNodes(tokens: Array<Token>): Array<TokenNode> {
     let ret: Array<TokenNode> = [];
-    tokens.forEach((t) => {ret.push(new TokenNode("Unknown", t)); });
+    tokens.forEach((t) => {ret.push(new TokenNode(t)); });
     return ret;
   }
 

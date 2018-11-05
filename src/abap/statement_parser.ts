@@ -57,7 +57,7 @@ export default class StatementParser {
   private static tokensToNodes(tokens: Array<Token>): Array<TokenNode> {
     let ret: Array<TokenNode> = [];
 
-    tokens.forEach((t) => {ret.push(new TokenNode("Unknown", t)); });
+    tokens.forEach((t) => {ret.push(new TokenNode(t)); });
 
     return ret;
   }
@@ -144,7 +144,7 @@ export default class StatementParser {
                             tokens,
                             ver);
       if (match) {
-        return new StatementNode(Artifacts.newStatement(st)).setChildren(match.concat(new TokenNode("Terminator", last)));
+        return new StatementNode(Artifacts.newStatement(st)).setChildren(match.concat(new TokenNode(last)));
       }
     }
     return statement;
