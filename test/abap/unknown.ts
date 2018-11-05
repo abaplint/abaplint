@@ -16,7 +16,7 @@ describe("unknown statements", () => {
 
       expect(statements.length).to.equals(1);
       for (let statement of statements) {
-        expect(statement instanceof Unknown).to.equals(true);
+        expect(statement.get() instanceof Unknown).to.equals(true);
       }
     },
   );

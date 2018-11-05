@@ -30,7 +30,7 @@ export class Breakpoint extends ABAPRule {
     let issues: Array<Issue> = [];
 
     for (let statement of file.getStatements()) {
-      if (statement instanceof Statements.Break) {
+      if (statement.get() instanceof Statements.Break) {
         issues.push(new Issue({rule: this, file, message: 1, start: statement.getStart()}));
       }
     }

@@ -1,20 +1,19 @@
 import {Pragma} from "../abap/tokens";
 import {Token} from "../abap/tokens/_token";
-import {Statement} from "../abap/statements/_statement";
 import {AbstractFile} from "./_abstract_file";
 import {IFile} from "./_ifile";
-import {StructureNode} from "../abap/node";
+import {StructureNode, StatementNode} from "../abap/node";
 
 // todo: rename to ABAPFile
 export class ABAPFile extends AbstractFile {
   // tokens vs statements: pragmas are part of tokens but not in statements
   // todo: need some better way of handling pragmas
   private tokens: Array<Token>;
-  private statements: Array<Statement>;
+  private statements: StatementNode[];
   private structure: StructureNode;
   private file: IFile;
 
-  public constructor(file: IFile, tokens: Array<Token>, statements: Array<Statement>) {
+  public constructor(file: IFile, tokens: Array<Token>, statements: StatementNode[]) {
     super(file.getFilename());
     this.file       = file;
     this.tokens     = tokens;
@@ -63,11 +62,11 @@ export class ABAPFile extends AbstractFile {
     }
   }
 
-  public getStatements(): Array<Statement> {
+  public getStatements(): StatementNode[] {
     return this.statements;
   }
 
-  public setStatements(s: Array<Statement>): void {
+  public setStatements(s: StatementNode[]): void {
     this.statements = s;
   }
   /*

@@ -1,6 +1,5 @@
 import {IStructureRunnable} from "./_combi";
-import {StructureNode} from "../node";
-import {Statement} from "../statements/_statement";
+import {StructureNode, StatementNode} from "../node";
 import {Issue} from "../../issue";
 import {GenericError} from "../../rules";
 import {ABAPFile} from "../../files";
@@ -8,7 +7,7 @@ import {ABAPFile} from "../../files";
 export abstract class Structure  {
   public abstract getMatcher(): IStructureRunnable;
 
-  public runFile(file: ABAPFile, statements?: Statement[]): {issues: Array<Issue>, node: StructureNode} {
+  public runFile(file: ABAPFile, statements?: StatementNode[]): {issues: Array<Issue>, node: StructureNode} {
     statements = statements ? statements : file.getStatements();
 
     let parent = new StructureNode(this);
@@ -19,7 +18,7 @@ export abstract class Structure  {
     }
     if (result.unmatched.length > 0) {
       const statement = result.unmatched[0];
-      const descr = "Unexpected " + statement.constructor.name.toUpperCase();
+      const descr = "Unexpected " + statement.get().constructor.name.toUpperCase();
       return {issues: [new Issue({rule: new GenericError(descr), file, message: 1, start: statement.getStart()})], node: undefined};
     }
 

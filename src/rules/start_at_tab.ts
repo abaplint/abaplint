@@ -38,9 +38,9 @@ export class StartAtTab extends ABAPRule {
     for (let statement of file.getStatements()) {
       if (statement instanceof Comment) {
         continue;
-      } else if (statement instanceof TypeBegin) {
+      } else if (statement.get() instanceof TypeBegin) {
         inType = true;
-      } else if (statement instanceof TypeEnd) {
+      } else if (statement.get() instanceof TypeEnd) {
         inType = false;
       } else if (inType) {
         continue;

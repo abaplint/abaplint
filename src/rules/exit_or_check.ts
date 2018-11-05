@@ -1,8 +1,8 @@
 import {Issue} from "../issue";
-import {Statement} from "../abap/statements/_statement";
 import * as Statements from "../abap/statements/";
 import {ABAPRule} from "./_abap_rule";
 import {ABAPFile} from "../files";
+import {StatementNode} from "../abap/node";
 
 export class ExitOrCheckConf {
   public enabled: boolean = true;
@@ -29,23 +29,23 @@ export class ExitOrCheck extends ABAPRule {
   }
 
   public runParsed(file: ABAPFile) {
-    let issues: Array<Issue> = [];
+    let issues: Issue[] = [];
 
-    let stack: Array<Statement> = [];
+    let stack: StatementNode[] = [];
 
     for (let statement of file.getStatements()) {
-      if (statement instanceof Statements.Loop
-          || statement instanceof Statements.While
-          || statement instanceof Statements.SelectLoop
-          || statement instanceof Statements.Do) {
+      if (statement.get() instanceof Statements.Loop
+          || statement.get() instanceof Statements.While
+          || statement.get() instanceof Statements.SelectLoop
+          || statement.get() instanceof Statements.Do) {
         stack.push(statement);
-      } else if (statement instanceof Statements.EndLoop
-          || statement instanceof Statements.EndWhile
-          || statement instanceof Statements.EndSelect
-          || statement instanceof Statements.EndDo) {
+      } else if (statement.get() instanceof Statements.EndLoop
+          || statement.get() instanceof Statements.EndWhile
+          || statement.get() instanceof Statements.EndSelect
+          || statement.get() instanceof Statements.EndDo) {
         stack.pop();
-      } else if ((statement instanceof Statements.Check
-          || statement instanceof Statements.Exit)
+      } else if ((statement.get() instanceof Statements.Check
+          || statement.get() instanceof Statements.Exit)
           && stack.length === 0) {
         let issue = new Issue({rule: this, file, message: 1, start: statement.getStart()});
         issues.push(issue);

@@ -42,39 +42,39 @@ export class DefinitionsTop extends ABAPRule {
 
 // todo, this needs refactoring when the paser has become better
     for (let statement of file.getStatements()) {
-      if (statement instanceof Statements.Form
-          || statement instanceof Statements.Method) {
+      if (statement.get() instanceof Statements.Form
+          || statement.get() instanceof Statements.Method) {
         mode = DEFINITION;
         issue = undefined;
-      } else if (statement instanceof Comment) {
+      } else if (statement.get() instanceof Comment) {
         continue;
-      } else if (statement instanceof Statements.Endform
-          || statement instanceof Statements.Endmethod) {
+      } else if (statement.get() instanceof Statements.Endform
+          || statement.get() instanceof Statements.Endmethod) {
         mode = ANY;
         if (issue !== undefined) {
           issues.push(issue);
           issue = undefined;
         }
-      } else if (statement instanceof Statements.Data
-          || statement instanceof Statements.DataBegin
-          || statement instanceof Statements.DataEnd
-          || statement instanceof Statements.Type
-          || statement instanceof Statements.TypeBegin
-          || statement instanceof Statements.TypeEnd
-          || statement instanceof Statements.Constant
-          || statement instanceof Statements.ConstantBegin
-          || statement instanceof Statements.ConstantEnd
-          || statement instanceof Statements.Include
-          || statement instanceof Statements.IncludeType
-          || statement instanceof Statements.Static
-          || statement instanceof Statements.StaticBegin
-          || statement instanceof Statements.StaticEnd
-          || statement instanceof Statements.FieldSymbol) {
+      } else if (statement.get() instanceof Statements.Data
+          || statement.get() instanceof Statements.DataBegin
+          || statement.get() instanceof Statements.DataEnd
+          || statement.get() instanceof Statements.Type
+          || statement.get() instanceof Statements.TypeBegin
+          || statement.get() instanceof Statements.TypeEnd
+          || statement.get() instanceof Statements.Constant
+          || statement.get() instanceof Statements.ConstantBegin
+          || statement.get() instanceof Statements.ConstantEnd
+          || statement.get() instanceof Statements.Include
+          || statement.get() instanceof Statements.IncludeType
+          || statement.get() instanceof Statements.Static
+          || statement.get() instanceof Statements.StaticBegin
+          || statement.get() instanceof Statements.StaticEnd
+          || statement.get() instanceof Statements.FieldSymbol) {
         if (mode === AFTER) {
           issue = new Issue({rule: this, file, message: 1, start: statement.getStart()});
           mode = ANY;
         }
-      } else if (statement instanceof Statements.Define) {
+      } else if (statement.get() instanceof Statements.Define) {
 // todo, currently macros will skip checking of the routine
         mode = IGNORE;
       } else if (mode === DEFINITION) {

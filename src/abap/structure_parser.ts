@@ -10,8 +10,12 @@ export default class StructureParser {
 
   public static run(file: ABAPFile): {issues: Array<Issue>, node: StructureNode} {
     const structure = this.findStructureForFile(file.getFilename());
-    let statements = file.getStatements().slice().filter((s) => { return !(s instanceof StatementComment || s instanceof Empty); });
-    const unknowns = file.getStatements().slice().filter((s) => { return s instanceof Unknown; });
+// todo, comments and empty statements will not be part of the structure
+// is this a problem?
+    let statements = file.getStatements().slice().filter((s) => {
+      return !(s.get() instanceof StatementComment || s.get() instanceof Empty);
+    });
+    const unknowns = file.getStatements().slice().filter((s) => { return s.get() instanceof Unknown; });
     if (unknowns.length > 0) {
 // do not parse structure, file contains unknown statements(parser errors)
       return {issues: [], node: undefined};

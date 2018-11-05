@@ -1,10 +1,9 @@
 import {Structure} from "./_structure";
-import {Statement} from "../statements/_statement";
-import {StructureNode, INode} from "../node";
+import {StructureNode, INode, StatementNode} from "../node";
 
 export interface IMatch {
-  matched: Array<Statement>;
-  unmatched: Array<Statement>;
+  matched: StatementNode[];
+  unmatched: StatementNode[];
   error: boolean;
   errorDescription: string;
   errorMatched: number;
@@ -13,7 +12,7 @@ export interface IMatch {
 export interface IStructureRunnable {
   toRailroad(): string;
   getUsing(): string[];
-  run(statements: Array<Statement>, parent: INode): IMatch;
+  run(statements: StatementNode[], parent: INode): IMatch;
 }
 
 class Sequence implements IStructureRunnable {
@@ -35,9 +34,9 @@ class Sequence implements IStructureRunnable {
     return this.list.reduce((a, c) => { return a.concat(c.getUsing()); }, []);
   }
 
-  public run(statements: Array<Statement>, parent: INode): IMatch {
+  public run(statements: StatementNode[], parent: INode): IMatch {
     let inn = statements;
-    let out: Array<Statement> = [];
+    let out: StatementNode[] = [];
     for (let i of this.list) {
       let match = i.run(inn, parent);
       if (match.error) {
@@ -81,7 +80,7 @@ class Alternative implements IStructureRunnable {
     return this.list.reduce((a, c) => { return a.concat(c.getUsing()); }, []);
   }
 
-  public run(statements: Array<Statement>, parent: INode): IMatch {
+  public run(statements: StatementNode[], parent: INode): IMatch {
     let count = 0;
     let countError = "";
     for (let i of this.list) {
@@ -130,7 +129,7 @@ class Optional implements IStructureRunnable {
     return this.obj.getUsing();
   }
 
-  public run(statements: Array<Statement>, parent: INode): IMatch {
+  public run(statements: StatementNode[], parent: INode): IMatch {
     let ret = this.obj.run(statements, parent);
     ret.error = false;
     return ret;
@@ -155,9 +154,9 @@ class Star implements IStructureRunnable {
     return this.obj.getUsing();
   }
 
-  public run(statements: Array<Statement>, parent: INode): IMatch {
+  public run(statements: StatementNode[], parent: INode): IMatch {
     let inn = statements;
-    let out: Array<Statement> = [];
+    let out: StatementNode[] = [];
     // tslint:disable-next-line:no-constant-condition
     while (true) {
       let match = this.obj.run(inn, parent);
@@ -209,7 +208,7 @@ class SubStructure implements IStructureRunnable {
     return ["structure/" + this.s.constructor.name];
   }
 
-  public run(statements: Array<Statement>, parent: INode): IMatch {
+  public run(statements: StatementNode[], parent: INode): IMatch {
     let nparent = new StructureNode(this.s);
     let ret = this.s.getMatcher().run(statements, nparent);
     if (ret.matched.length === 0) {
@@ -240,7 +239,7 @@ class SubStatement implements IStructureRunnable {
     return (this.obj + "").match(/\w+/g)[1];
   }
 
-  public run(statements: Array<Statement>, parent: INode): IMatch {
+  public run(statements: StatementNode[], parent: INode): IMatch {
     if (statements.length === 0) {
       return {
         matched: [],
@@ -249,7 +248,7 @@ class SubStatement implements IStructureRunnable {
         errorDescription: "Expected " + this.className().toUpperCase(),
         errorMatched: 0,
       };
-    } else if (statements[0] instanceof this.obj) {
+    } else if (statements[0].get() instanceof this.obj) {
       parent.addChild(statements[0]);
       return {
         matched: [statements[0]],

@@ -6,9 +6,9 @@ import StructureParser from "../abap/structure_parser";
 import {Version} from "../version";
 import {Registry} from "../registry";
 import {Define} from "../abap/statements";
-import {TokenNode} from "../abap/node";
+import {TokenNode, StatementNode} from "../abap/node";
 import {Token} from "../abap/tokens/_token";
-import {Statement, Unknown, MacroCall} from "../abap/statements/_statement";
+import {Unknown, MacroCall} from "../abap/statements/_statement";
 import {Issue} from "../issue";
 
 export abstract class ABAPObject extends AObject {
@@ -42,10 +42,10 @@ export abstract class ABAPObject extends AObject {
 
   public parseSecondPass(reg: Registry): Issue[] {
     this.parsed.forEach((f) => {
-      let statements: Array<Statement> = [];
+      let statements: StatementNode[] = [];
       f.getStatements().forEach((s) => {
         if (s instanceof Unknown && reg.isMacro(s.getTokens()[0].getStr())) {
-          statements.push(new MacroCall().setChildren(this.tokensToNodes(s.getTokens())));
+          statements.push(new StatementNode(new MacroCall()).setChildren(this.tokensToNodes(s.getTokens())));
         } else {
           statements.push(s);
         }

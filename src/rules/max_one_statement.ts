@@ -34,7 +34,7 @@ export class MaxOneStatement extends ABAPRule {
     let reported: number = 0;
     for (let statement of file.getStatements()) {
       let term = statement.getTerminator();
-      if (statement instanceof Comment || term === ",") {
+      if (statement.get() instanceof Comment || term === ",") {
         continue;
       }
 

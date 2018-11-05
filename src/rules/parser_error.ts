@@ -1,9 +1,10 @@
 import {Issue} from "../issue";
 import Position from "../position";
 import * as Tokens from "../abap/tokens";
-import {Unknown, Statement} from "../abap/statements/_statement";
+import {Unknown} from "../abap/statements/_statement";
 import {ABAPRule} from "./_abap_rule";
 import {ABAPFile} from "../files";
+import {StatementNode} from "../abap/node";
 
 export class ParserErrorConf {
   public enabled: boolean = true;
@@ -46,7 +47,7 @@ export class ParserError extends ABAPRule {
     let start = new Position(0, 0);
     for (let statement of file.getStatements()) {
 // only report one error per row
-      if (statement instanceof Unknown
+      if (statement.get() instanceof Unknown
             && start.getRow() !== statement.getStart().getRow()) {
 
         let message = this.missingSpace(statement) ? 2 : 1;
@@ -60,7 +61,7 @@ export class ParserError extends ABAPRule {
     return issues;
   }
 
-  private missingSpace(statement: Statement): boolean {
+  private missingSpace(statement: StatementNode): boolean {
     const tokens = statement.getTokens();
     for (let i = 0; i < tokens.length - 1; i++) {
       const current = tokens[ i ];

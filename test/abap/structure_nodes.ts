@@ -10,14 +10,14 @@ describe("Structure, test generated nodes", function() {
     expect(result.node).to.not.equal(undefined);
     expect(result.node.get()).to.be.instanceof(Structures.Else);
     expect(result.node.getChildren().length).to.equal(1);
-    expect(result.node.getChildren()[0]).to.be.instanceof(Statements.Else);
+    expect(result.node.getChildren()[0].get()).to.be.instanceof(Statements.Else);
   });
 
   it("Test 02", function () {
     const result = new Structures.Else().runFile(parse("ELSE. moo = boo."));
     expect(result.node.get()).to.be.instanceof(Structures.Else);
     expect(result.node.getChildren().length).to.equal(2);
-    expect(result.node.getChildren()[0]).to.be.instanceof(Statements.Else);
+    expect(result.node.getChildren()[0].get()).to.be.instanceof(Statements.Else);
     expect(result.node.getChildren()[1].get()).to.be.instanceof(Structures.Body);
     expect(result.node.getChildren()[1].getChildren().length).to.equal(1);
   });
@@ -26,7 +26,7 @@ describe("Structure, test generated nodes", function() {
     const result = new Structures.Else().runFile(parse("ELSE. moo = boo. loo = foo."));
     expect(result.node.get()).to.be.instanceof(Structures.Else);
     expect(result.node.getChildren().length).to.equal(2);
-    expect(result.node.getChildren()[0]).to.be.instanceof(Statements.Else);
+    expect(result.node.getChildren()[0].get()).to.be.instanceof(Statements.Else);
     expect(result.node.getChildren()[1].get()).to.be.instanceof(Structures.Body);
     expect(result.node.getChildren()[1].getChildren().length).to.equal(2);
   });
@@ -35,8 +35,8 @@ describe("Structure, test generated nodes", function() {
     const result = new Structures.If().runFile(parse("IF foo = boo. ENDIF."));
     expect(result.node.get()).to.be.instanceof(Structures.If);
     expect(result.node.getChildren().length).to.equal(2);
-    expect(result.node.getChildren()[0]).to.be.instanceof(Statements.If);
-    expect(result.node.getChildren()[1]).to.be.instanceof(Statements.EndIf);
+    expect(result.node.getChildren()[0].get()).to.be.instanceof(Statements.If);
+    expect(result.node.getChildren()[1].get()).to.be.instanceof(Statements.EndIf);
   });
 
   it("Test 05", function () {

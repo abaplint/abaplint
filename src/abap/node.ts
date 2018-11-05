@@ -1,7 +1,9 @@
 import {Token} from "./tokens/_token";
 import {Expression} from "./combi";
 import {Structure} from "./structures/_structure";
-// import {Statement} from "./statements/_statement";
+import {Statement} from "./statements/_statement";
+import {Pragma} from "./tokens";
+import Position from "../position";
 
 export interface INode {
   addChild(n: INode): INode;
@@ -34,11 +36,107 @@ export abstract class BasicNode implements INode {
   }
 }
 
-export abstract class StatementNode extends BasicNode {
+export class StatementNode extends BasicNode {
+  private statement: Statement;
+
+  public constructor(statement: Statement) {
+    super();
+    this.statement = statement;
+  }
+
+  public get() {
+    return this.statement;
+  }
+
+  public setChildren(children: Array<INode>): StatementNode {
+    this.children = children;
+
+    if (children.length === 0) {
+      throw "statement: zero children";
+    }
+
+    // validate child nodes
+    children.forEach((c) => {
+      if (!(c instanceof TokenNode || c instanceof ExpressionNode)) {
+        throw "statement: not token or expression node";
+      }
+    });
+
+    return this;
+  }
+
+  public getStart(): Position {
+    return this.getTokens()[0].getPos();
+  }
+
+  public getEnd(): Position {
+    let tokens = this.getTokens();
+    let last = tokens[tokens.length - 1];
+
+    let pos = new Position(last.getPos().getRow(),
+                           last.getPos().getCol() + last.getStr().length);
+
+    return pos;
+  }
+
+  public getTokens(): Array<Token> {
+    let tokens: Array<Token> = [];
+
+    this.getChildren().forEach((c) => {
+      tokens = tokens.concat(this.toTokens(c));
+    });
+
+    return tokens;
+  }
+
+  public concatTokens(): string {
+    let str = "";
+    let prev: Token;
+    for (let token of this.getTokens()) {
+      if (token instanceof Pragma) {
+        continue;
+      }
+      if (str === "") {
+        str = token.getStr();
+      } else if (prev.getStr().length + prev.getCol() === token.getCol()
+          && prev.getRow() === token.getRow()) {
+        str = str + token.getStr();
+      } else {
+        str = str + " " + token.getStr();
+      }
+      prev = token;
+    }
+    return str;
+  }
+
+  public getTerminator(): string {
+    return this.getTokens()[this.getTokens().length - 1].getStr();
+  }
+
+  private toTokens(b: INode): Array<Token> {
+    let tokens: Array<Token> = [];
+
+    if (b instanceof TokenNode) {
+      tokens.push((b as TokenNode).get());
+    }
+
+    b.getChildren().forEach((c) => {
+      if (c instanceof TokenNode) {
+        tokens.push((c as TokenNode).get());
+      } else {
+        tokens = tokens.concat(this.toTokens(c));
+      }
+    });
+
+    return tokens;
+  }
+
+  /*
   public get(): undefined {
 // todo
     return undefined;
   }
+  */
 }
 
 export class StructureNode extends BasicNode {
@@ -52,7 +150,6 @@ export class StructureNode extends BasicNode {
   public get() {
     return this.structure;
   }
-
 }
 
 // todo, delete this, to be implemented elsewhere
@@ -78,7 +175,6 @@ export class ExpressionNode extends CountableNode {
   public getName() {
     return this.expression.constructor.name;
   }
-
 }
 
 export class TokenNode extends CountableNode {
@@ -103,5 +199,4 @@ export class TokenNode extends CountableNode {
   public getName(): string {
     return this.name;
   }
-
 }

@@ -35,8 +35,7 @@ function run(abap: string, text: string, type: any, version = Version.v750) {
   let slist = file.getStatements();
 
   it(text, () => {
-    let compare = slist[0] instanceof type;
-    expect(compare).to.equals(true);
+    expect(slist[0].get()).to.be.instanceof(type);
 // assumption: no colons in input
     expect(slist[0].getTokens().length).to.equal(file.getTokens(false).length);
   });

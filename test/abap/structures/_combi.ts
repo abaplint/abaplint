@@ -2,8 +2,9 @@ import {expect} from "chai";
 import {opt, sta, star, seq, alt, sub, beginEnd} from "../../../src/abap/structures/_combi";
 import * as Statements from "../../../src/abap/statements";
 import * as Structures from "../../../src/abap/structures";
-import {BasicNode} from "../../../src/abap/node";
+import {BasicNode, StatementNode} from "../../../src/abap/node";
 import {Structure} from "../../../src/abap/structures/_structure";
+import {Statement} from "../../../src/abap/statements/_statement";
 
 class DummyNode extends BasicNode {
   public get(): undefined {
@@ -11,22 +12,26 @@ class DummyNode extends BasicNode {
   }
 }
 
+function toNodes(statements: Statement[]): StatementNode[] {
+  return statements.map((e) => { return new StatementNode(e); });
+}
+
 describe("structure combi statement", function() {
   let sta1 = sta(Statements.Move);
 
   it("sta1 match", function() {
     const parent = new DummyNode();
-    const match = sta1.run([new Statements.Move()], parent);
+    const match = sta1.run(toNodes([new Statements.Move()]), parent);
     expect(match.matched.length).to.equal(1);
     expect(match.unmatched.length).to.equal(0);
     expect(match.error).to.equal(false);
     expect(parent.getChildren().length).to.equal(1);
-    expect(parent.getChildren()[0]).to.be.instanceof(Statements.Move);
+    expect(parent.getChildren()[0].get()).to.be.instanceof(Statements.Move);
   });
 
   it("sta1 not match", function() {
     const parent = new DummyNode();
-    const match = sta1.run([new Statements.Do()], parent);
+    const match = sta1.run(toNodes([new Statements.Do()]), parent);
     expect(match.matched.length).to.equal(0);
     expect(match.unmatched.length).to.equal(1);
     expect(match.error).to.equal(true);
@@ -34,7 +39,7 @@ describe("structure combi statement", function() {
 
   it("sta1 multi", function() {
     const parent = new DummyNode();
-    const match = sta1.run([new Statements.Move(), new Statements.Move()], parent);
+    const match = sta1.run(toNodes([new Statements.Move(), new Statements.Move()]), parent);
     expect(match.matched.length).to.equal(1);
     expect(match.unmatched.length).to.equal(1);
     expect(match.error).to.equal(false);
@@ -55,7 +60,7 @@ describe("structure combi opt", function() {
 
   it("opt1 match", function() {
     const parent = new DummyNode();
-    const match = opt1.run([new Statements.Move()], parent);
+    const match = opt1.run(toNodes([new Statements.Move()]), parent);
     expect(match.matched.length).to.equal(1);
     expect(match.unmatched.length).to.equal(0);
     expect(match.error).to.equal(false);
@@ -64,7 +69,7 @@ describe("structure combi opt", function() {
 
   it("opt1 not match", function() {
     const parent = new DummyNode();
-    const match = opt1.run([new Statements.Do()], parent);
+    const match = opt1.run(toNodes([new Statements.Do()]), parent);
     expect(match.matched.length).to.equal(0);
     expect(match.unmatched.length).to.equal(1);
     expect(match.error).to.equal(false);
@@ -73,7 +78,7 @@ describe("structure combi opt", function() {
 
   it("opt1 multi", function() {
     const parent = new DummyNode();
-    const match = opt1.run([new Statements.Move(), new Statements.Move()], parent);
+    const match = opt1.run(toNodes([new Statements.Move(), new Statements.Move()]), parent);
     expect(match.matched.length).to.equal(1);
     expect(match.unmatched.length).to.equal(1);
     expect(match.error).to.equal(false);
@@ -95,7 +100,7 @@ describe("structure combi star", function() {
 
   it("star1 match", function() {
     const parent = new DummyNode();
-    const match = star1.run([new Statements.Move()], parent);
+    const match = star1.run(toNodes([new Statements.Move()]), parent);
     expect(match.matched.length).to.equal(1);
     expect(match.unmatched.length).to.equal(0);
     expect(match.error).to.equal(false);
@@ -104,7 +109,7 @@ describe("structure combi star", function() {
 
   it("star1 not match", function() {
     const parent = new DummyNode();
-    const match = star1.run([new Statements.Do()], parent);
+    const match = star1.run(toNodes([new Statements.Do()]), parent);
     expect(match.matched.length).to.equal(0);
     expect(match.unmatched.length).to.equal(1);
     expect(match.error).to.equal(false);
@@ -113,7 +118,7 @@ describe("structure combi star", function() {
 
   it("star1 multi1", function() {
     const parent = new DummyNode();
-    const match = star1.run([new Statements.Move(), new Statements.Move()], parent);
+    const match = star1.run(toNodes([new Statements.Move(), new Statements.Move()]), parent);
     expect(match.matched.length).to.equal(2);
     expect(match.unmatched.length).to.equal(0);
     expect(match.error).to.equal(false);
@@ -122,7 +127,7 @@ describe("structure combi star", function() {
 
   it("star1 multi2", function() {
     const parent = new DummyNode();
-    const match = star1.run([new Statements.Move(), new Statements.Move(), new Statements.Do()], parent);
+    const match = star1.run(toNodes([new Statements.Move(), new Statements.Move(), new Statements.Do()]), parent);
     expect(match.matched.length).to.equal(2);
     expect(match.unmatched.length).to.equal(1);
     expect(match.error).to.equal(false);
@@ -144,7 +149,7 @@ describe("structure combi seq", function() {
 
   it("seq1 match", function() {
     const parent = new DummyNode();
-    const match = seq1.run([new Statements.Move(), new Statements.Do()], parent);
+    const match = seq1.run(toNodes([new Statements.Move(), new Statements.Do()]), parent);
     expect(match.matched.length).to.equal(2);
     expect(match.unmatched.length).to.equal(0);
     expect(match.error).to.equal(false);
@@ -153,7 +158,7 @@ describe("structure combi seq", function() {
 
   it("seq1 not match", function() {
     const parent = new DummyNode();
-    const match = seq1.run([new Statements.Do()], parent);
+    const match = seq1.run(toNodes([new Statements.Do()]), parent);
     expect(match.matched.length).to.equal(0);
     expect(match.unmatched.length).to.equal(1);
     expect(match.error).to.equal(true);
@@ -162,7 +167,7 @@ describe("structure combi seq", function() {
 
   it("seq1 multi2", function() {
     const parent = new DummyNode();
-    const match = seq1.run([new Statements.Move(), new Statements.Do(), new Statements.Do()], parent);
+    const match = seq1.run(toNodes([new Statements.Move(), new Statements.Do(), new Statements.Do()]), parent);
     expect(match.matched.length).to.equal(2);
     expect(match.unmatched.length).to.equal(1);
     expect(match.error).to.equal(false);
@@ -184,7 +189,7 @@ describe("structure combi alt", function() {
 
   it("alt1 match1", function() {
     const parent = new DummyNode();
-    const match = alt1.run([new Statements.Move()], parent);
+    const match = alt1.run(toNodes([new Statements.Move()]), parent);
     expect(match.matched.length).to.equal(1);
     expect(match.unmatched.length).to.equal(0);
     expect(match.error).to.equal(false);
@@ -193,7 +198,7 @@ describe("structure combi alt", function() {
 
   it("alt1 match2", function() {
     const parent = new DummyNode();
-    const match = alt1.run([new Statements.Do()], parent);
+    const match = alt1.run(toNodes([new Statements.Do()]), parent);
     expect(match.matched.length).to.equal(1);
     expect(match.unmatched.length).to.equal(0);
     expect(match.error).to.equal(false);
@@ -202,7 +207,7 @@ describe("structure combi alt", function() {
 
   it("alt1 not match", function() {
     const parent = new DummyNode();
-    const match = alt1.run([new Statements.Call()], parent);
+    const match = alt1.run(toNodes([new Statements.Call()]), parent);
     expect(match.matched.length).to.equal(0);
     expect(match.unmatched.length).to.equal(1);
     expect(match.error).to.equal(true);
@@ -211,7 +216,7 @@ describe("structure combi alt", function() {
 
   it("alt1 multi2", function() {
     const parent = new DummyNode();
-    const match = alt1.run([new Statements.Move(), new Statements.Do()], parent);
+    const match = alt1.run(toNodes([new Statements.Move(), new Statements.Do()]), parent);
     expect(match.matched.length).to.equal(1);
     expect(match.unmatched.length).to.equal(1);
     expect(match.error).to.equal(false);
@@ -233,7 +238,7 @@ describe("structure combi sub structure", function() {
 
   it("sub1 match", function() {
     const parent = new DummyNode();
-    const match = sub1.run([new Statements.Move()], parent);
+    const match = sub1.run(toNodes([new Statements.Move()]), parent);
     expect(match.matched.length).to.equal(1);
     expect(match.unmatched.length).to.equal(0);
     expect(match.error).to.equal(false);
@@ -242,7 +247,7 @@ describe("structure combi sub structure", function() {
 
   it("sub1 no match", function() {
     const parent = new DummyNode();
-    const match = sub1.run([new Statements.ClassDefinition()], parent);
+    const match = sub1.run(toNodes([new Statements.ClassDefinition()]), parent);
     expect(match.matched.length).to.equal(0);
     expect(match.unmatched.length).to.equal(1);
     expect(match.error).to.equal(true);
@@ -255,7 +260,7 @@ describe("structure combi beginEnd", function() {
 
   it("beginEnd, match", function() {
     const parent = new DummyNode();
-    const match = sub1.run([new Statements.Do(), new Statements.EndDo(), new Statements.EndDo()], parent);
+    const match = sub1.run(toNodes([new Statements.Do(), new Statements.EndDo(), new Statements.EndDo()]), parent);
     expect(match.matched.length).to.equal(3);
     expect(match.unmatched.length).to.equal(0);
     expect(match.error).to.equal(false);
@@ -263,7 +268,7 @@ describe("structure combi beginEnd", function() {
 
   it("beginEnd, no match", function() {
     const parent = new DummyNode();
-    const match = sub1.run([new Statements.ClassDefinition()], parent);
+    const match = sub1.run(toNodes([new Statements.ClassDefinition()]), parent);
     expect(match.matched.length).to.equal(0);
     expect(match.unmatched.length).to.equal(1);
     expect(match.error).to.equal(true);
@@ -280,7 +285,7 @@ describe("structure combi, complex1", function() {
 
   it("complex1 match", function() {
     const parent = new DummyNode();
-    const match = sub1.run([new Statements.Move(), new Statements.Move()], parent);
+    const match = sub1.run(toNodes([new Statements.Move(), new Statements.Move()]), parent);
     expect(match.matched.length).to.equal(2);
     expect(match.unmatched.length).to.equal(0);
     expect(match.error).to.equal(false);
@@ -297,7 +302,7 @@ describe("structure combi, complex2", function() {
 
   it("complex2 match", function() {
     const parent = new DummyNode();
-    const match = sub1.run([new Statements.Move(), new Statements.Move()], parent);
+    const match = sub1.run(toNodes([new Statements.Move(), new Statements.Move()]), parent);
     expect(match.matched.length).to.equal(2);
     expect(match.unmatched.length).to.equal(0);
     expect(match.error).to.equal(false);

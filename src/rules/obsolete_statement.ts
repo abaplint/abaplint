@@ -33,16 +33,16 @@ export class ObsoleteStatement extends ABAPRule {
     let statements = file.getStatements();
 
     for (let sta of statements) {
-      if (sta instanceof Statements.Refresh
-          || sta instanceof Statements.Compute
-          || sta instanceof Statements.Add
-          || sta instanceof Statements.Subtract
-          || sta instanceof Statements.Multiply
-          || ( sta instanceof Statements.Move
+      if (sta.get() instanceof Statements.Refresh
+          || sta.get() instanceof Statements.Compute
+          || sta.get() instanceof Statements.Add
+          || sta.get() instanceof Statements.Subtract
+          || sta.get() instanceof Statements.Multiply
+          || ( sta.get() instanceof Statements.Move
           && sta.getTokens()[0].getStr() === "MOVE"
           && sta.getTokens()[1].getStr() !== "-"
           && sta.getTokens()[1].getStr() !== "EXACT" )
-          || sta instanceof Statements.Divide) {
+          || sta.get() instanceof Statements.Divide) {
         let issue = new Issue({rule: this, file, message: 1, start: sta.getStart()});
         issues.push(issue);
       }
