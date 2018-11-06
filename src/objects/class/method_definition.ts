@@ -1,6 +1,7 @@
 import {StatementNode} from "../../abap/nodes";
 import {MethodDef} from "../../abap/statements";
 import {MethodName} from "../../abap/expressions";
+import {MethodParameters} from "./method_parameters";
 
 export enum Scope {
   Private = 1,
@@ -11,6 +12,12 @@ export enum Scope {
 export class MethodDefinition {
   private scope: Scope;
   private name: string;
+  private parameters: MethodParameters;
+
+// todo:
+// abstract
+// final
+// redefinition
 
   constructor(node: StatementNode, scope: Scope) {
     if (!(node.get() instanceof MethodDef)) {
@@ -18,6 +25,7 @@ export class MethodDefinition {
     }
     this.name = node.findFirstExpression(MethodName).getFirstToken().get().getStr();
     this.scope = scope;
+    this.parameters = new MethodParameters(node);
   }
 
   public getName() {
@@ -27,4 +35,9 @@ export class MethodDefinition {
   public getScope() {
     return this.scope;
   }
+
+  public getParameters() {
+    return this.parameters;
+  }
+
 }

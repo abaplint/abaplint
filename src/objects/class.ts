@@ -10,6 +10,9 @@ export class Class extends ABAPObject {
     return "CLAS";
   }
 
+// todo:
+// isAbstract
+
   public isException(): boolean {
     for (let file of this.files) {
       if (file.getObjectName().match(/^zcx_.*$/i)) {

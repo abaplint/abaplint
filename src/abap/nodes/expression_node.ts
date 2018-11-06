@@ -27,6 +27,22 @@ export class ExpressionNode extends CountableNode {
     return undefined;
   }
 
+  public findAllExpressions(type: any): ExpressionNode[] {
+    let ret: ExpressionNode[] = [];
+    for (let child of this.getChildren()) {
+      if (child.get() instanceof type) {
+        ret.push(child as ExpressionNode);
+      } else if (child instanceof TokenNode) {
+        continue;
+      } else if (child instanceof ExpressionNode) {
+        ret = ret.concat(child.findAllExpressions(type));
+      } else {
+        throw new Error("findAllExpressions, unexpected type");
+      }
+    }
+    return ret;
+  }
+
   public findFirstExpression(type: any): ExpressionNode {
     for (let child of this.getChildren()) {
       if (child.get() instanceof type) {
