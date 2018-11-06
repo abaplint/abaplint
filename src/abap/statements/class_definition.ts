@@ -1,6 +1,6 @@
 import {Statement} from "./_statement";
 import {str, seq, opt, alt, per, plus, IRunnable} from "../combi";
-import {ClassName} from "../expressions";
+import {ClassName, SuperClassName} from "../expressions";
 
 export class ClassDefinition extends Statement {
 
@@ -16,7 +16,7 @@ export class ClassDefinition extends Statement {
     let blah = per(alt(str("PUBLIC"), str("LOCAL")),
                    str("FINAL"),
                    str("ABSTRACT"),
-                   seq(str("INHERITING FROM"), new ClassName()),
+                   seq(str("INHERITING FROM"), new SuperClassName()),
                    create,
                    str("FOR TESTING"),
                    risk,

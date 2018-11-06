@@ -1,5 +1,6 @@
 import {ABAPObject} from "./_abap_object";
-import * as Statements from "../abap/statements/";
+import {ClassDefinition} from "../abap/statements/";
+import {SuperClassName} from "../abap/expressions/";
 
 export class Class extends ABAPObject {
 
@@ -17,16 +18,12 @@ export class Class extends ABAPObject {
   }
 
   public getSuperClass(): string {
-    let files = this.getParsedFiles();
+    const files = this.getParsedFiles();
     if (files.length > 1) {
       throw new Error("class.ts, getSuperClass todo: handle multiple files");
     }
-
-    let node = files[0].getStructure();
-    // todo
-    node.findFirstStatement(Statements.ClassDefinition);
-
-    return undefined;
+    const node = files[0].getStructure();
+    return node.findFirstStatement(ClassDefinition).findFirstExpression(SuperClassName).getFirstToken().get().getStr();
   }
 
   /*

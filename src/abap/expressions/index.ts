@@ -19,6 +19,7 @@ export * from "./compare";
 export * from "./sql_field_name";
 export * from "./sql_compare";
 export * from "./cond";
+export * from "./super_class_name";
 export * from "./for";
 export * from "./sql_aggregation";
 export * from "./sql_cond";

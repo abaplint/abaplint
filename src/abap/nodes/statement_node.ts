@@ -5,6 +5,7 @@ import Position from "../../position";
 import {Token} from "../tokens/_token";
 import {Pragma} from "../tokens/pragma";
 import {TokenNode} from "./token_node";
+import {ExpressionNode} from "./expression_node";
 
 export class StatementNode extends BasicNode {
   private statement: Statement;
@@ -82,6 +83,24 @@ export class StatementNode extends BasicNode {
 
   public getTerminator(): string {
     return this.getTokens()[this.getTokens().length - 1].getStr();
+  }
+
+  public findFirstExpression(type: any): ExpressionNode {
+    for (let child of this.getChildren()) {
+      if (child.get() instanceof type) {
+        return child as ExpressionNode;
+      } else if (child instanceof TokenNode) {
+        continue;
+      } else if (child instanceof ExpressionNode) {
+        let res = child.findFirstExpression(type);
+        if (res) {
+          return res;
+        }
+      } else {
+        throw new Error("findFirstExpression, unexpected type");
+      }
+    }
+    return undefined;
   }
 
   private toTokens(b: INode): Array<Token> {

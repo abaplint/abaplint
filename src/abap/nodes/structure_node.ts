@@ -14,7 +14,23 @@ export class StructureNode extends BasicNode {
     return this.structure;
   }
 
-  public findFirstStatement(_type: any): StatementNode {
+  public findFirstStatement(type: any): StatementNode {
+
+    for (let child of this.getChildren()) {
+      if (child.get() instanceof type) {
+        return child as StatementNode;
+      } else if (child instanceof StatementNode) {
+        continue;
+      } else if (child instanceof StructureNode) {
+        let res = child.findFirstStatement(type);
+        if (res) {
+          return res;
+        }
+      } else {
+        throw new Error("findFirstStatement, unexpected type");
+      }
+    }
+
     return undefined;
   }
 }
