@@ -1,5 +1,5 @@
 import {IStructureRunnable} from "./_combi";
-import {StructureNode, StatementNode} from "../node";
+import {StructureNode, StatementNode} from "../nodes/";
 import {Issue} from "../../issue";
 import {GenericError} from "../../rules";
 import {ABAPFile} from "../../files";

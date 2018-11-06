@@ -3,7 +3,7 @@ import {expect} from "chai";
 import {Structure} from "../../src/abap/structures/_structure";
 import {getStatements, parse} from "./_utils";
 import StructureParser from "../../src/abap/structure_parser";
-import {StructureNode} from "../../src/abap/node";
+import {StructureNode} from "../../src/abap/nodes/";
 
 const cases = [
   {abap: "IF foo = bar.", error: "Expected ENDIF", structure: new Structures.If(), errorMatched: 1},

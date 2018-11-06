@@ -1,5 +1,5 @@
 import {ABAPObject} from "./_abap_object";
-import * as Statements from "../abap/Statements/";
+import * as Statements from "../abap/statements/";
 
 export class Class extends ABAPObject {
 

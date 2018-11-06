@@ -7,7 +7,7 @@ import {Structure} from "../../src/abap/structures/_structure";
 import Lexer from "../../src/abap/lexer";
 import StatementParser from "../../src/abap/statement_parser";
 import {Registry} from "../../src/registry";
-import {StructureNode} from "../../src/abap/node";
+import {StructureNode} from "../../src/abap/nodes/";
 
 // utils for testing
 

@@ -3,7 +3,7 @@ import {MemoryFile} from "./files";
 import {Version, textToVersion} from "./version";
 import {Formatter} from "./formatters/_format";
 import {Registry} from "./registry";
-import * as Nodes from "./abap/node";
+import * as Nodes from "./abap/nodes/";
 
 // todo, rename this file to index_web.ts? and index.ts to index_node.ts, or something
 // todo, move version() to Registry class?

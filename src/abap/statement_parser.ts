@@ -1,7 +1,7 @@
 import * as Tokens from "./tokens";
 import * as Statements from "./statements";
 import {Combi} from "./combi";
-import {TokenNode, StatementNode} from "./node";
+import {TokenNode, StatementNode} from "./nodes/";
 import {Unknown, Empty, Comment, MacroContent, NativeSQL} from "./statements/_statement";
 import {Version} from "../version";
 import {Artifacts} from "./artifacts";

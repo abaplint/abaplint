@@ -1,5 +1,6 @@
 import {Structure} from "./_structure";
-import {StructureNode, INode, StatementNode} from "../node";
+import {StructureNode, StatementNode} from "../nodes/";
+import {INode} from "../nodes/_inode";
 
 export interface IMatch {
   matched: StatementNode[];

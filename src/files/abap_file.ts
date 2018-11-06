@@ -2,7 +2,7 @@ import {Pragma} from "../abap/tokens";
 import {Token} from "../abap/tokens/_token";
 import {AbstractFile} from "./_abstract_file";
 import {IFile} from "./_ifile";
-import {StructureNode, StatementNode} from "../abap/node";
+import {StructureNode, StatementNode} from "../abap/nodes/";
 
 // todo: rename to ABAPFile
 export class ABAPFile extends AbstractFile {

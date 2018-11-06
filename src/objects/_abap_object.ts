@@ -6,7 +6,7 @@ import StructureParser from "../abap/structure_parser";
 import {Version} from "../version";
 import {Registry} from "../registry";
 import {Define} from "../abap/statements";
-import {TokenNode, StatementNode} from "../abap/node";
+import {TokenNode, StatementNode} from "../abap/nodes/";
 import {Token} from "../abap/tokens/_token";
 import {Unknown, MacroCall} from "../abap/statements/_statement";
 import {Issue} from "../issue";

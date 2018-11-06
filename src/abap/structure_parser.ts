@@ -4,7 +4,7 @@ import {Structure} from "./structures/_structure";
 import * as Structures from "./structures/";
 import {Issue} from "../issue";
 import {Comment as StatementComment} from "./statements/_statement";
-import {StructureNode} from "./node";
+import {StructureNode} from "./nodes/";
 
 export default class StructureParser {
 

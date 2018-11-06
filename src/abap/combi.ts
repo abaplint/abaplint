@@ -1,8 +1,10 @@
 import * as Tokens from "./tokens";
 import {Token as Tokens_Token} from "./tokens/_token";
 import Position from "../position";
-import {TokenNode, BasicNode, ExpressionNode, CountableNode} from "./node";
+import {TokenNode, ExpressionNode} from "./nodes/";
 import {Version, versionToText} from "../version";
+import {CountableNode} from "./nodes/_countable_node";
+import {INode} from "./nodes/_inode";
 
 export class Result {
   private tokens: Array<Tokens_Token>;
@@ -838,7 +840,7 @@ export class Combi {
   }
 
 // assumption: no pgragmas supplied in tokens input
-  public static run(runnable: IRunnable, tokens: Array<Tokens_Token>, version = Version.v750): BasicNode[] {
+  public static run(runnable: IRunnable, tokens: Array<Tokens_Token>, version = Version.v750): INode[] {
     this.ver = version;
 
     let input = new Result(tokens);

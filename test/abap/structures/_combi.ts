@@ -2,9 +2,10 @@ import {expect} from "chai";
 import {opt, sta, star, seq, alt, sub, beginEnd} from "../../../src/abap/structures/_combi";
 import * as Statements from "../../../src/abap/statements";
 import * as Structures from "../../../src/abap/structures";
-import {BasicNode, StatementNode} from "../../../src/abap/node";
+import {StatementNode} from "../../../src/abap/nodes/";
 import {Structure} from "../../../src/abap/structures/_structure";
 import {Statement} from "../../../src/abap/statements/_statement";
+import {BasicNode} from "../../../src/abap/nodes/_basic_node";
 
 class DummyNode extends BasicNode {
   public get(): undefined {

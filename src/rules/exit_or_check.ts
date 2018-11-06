@@ -2,7 +2,7 @@ import {Issue} from "../issue";
 import * as Statements from "../abap/statements/";
 import {ABAPRule} from "./_abap_rule";
 import {ABAPFile} from "../files";
-import {StatementNode} from "../abap/node";
+import {StatementNode} from "../abap/nodes/";
 
 export class ExitOrCheckConf {
   public enabled: boolean = true;
