@@ -62,7 +62,6 @@ export * from "./message_class";
 export * from "./field_all";
 export * from "./field";
 export * from "./pass_by_value";
-export * from "./pass_by_reference";
 export * from "./value";
 export * from "./type";
 export * from "./type_param";

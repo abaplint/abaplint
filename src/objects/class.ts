@@ -17,6 +17,8 @@ export class Class extends ABAPObject {
     for (let file of this.files) {
       if (file.getObjectName().match(/^zcx_.*$/i)) {
         return true;
+      } else {
+        return false;
       }
     }
     return false;
@@ -43,10 +45,12 @@ export class Class extends ABAPObject {
 
   private getMain(): StructureNode {
     const files = this.getParsedFiles();
-    if (files.length > 1) {
-      throw new Error("class.ts, getMain todo: handle multiple files");
+    for (let file of files) {
+      if (file.getFilename().match(/\.clas\.abap$/)) {
+        return file.getStructure();
+      }
     }
-    return files[0].getStructure();
+    throw new Error("class.ts, getMain: Could not find main file");
   }
 
   /*
