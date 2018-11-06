@@ -39,6 +39,12 @@ export class Registry {
     return this.objects;
   }
 
+  /*
+  public getObject(): IObject {
+todo
+  }
+  */
+
   public getConfig() {
     return this.conf;
   }

@@ -23,10 +23,9 @@ export abstract class ABAPObject extends AObject {
     this.parsed = [];
 
     this.files.forEach((f) => {
-      if (!this.skip(f.getFilename())) {
+      if (/.*\.abap$/.test(f.getFilename())) {
         let tokens = Lexer.run(f);
         let statements = StatementParser.run(tokens, ver);
-
         this.parsed.push(new ABAPFile(f, tokens, statements));
       }
     });
@@ -71,20 +70,6 @@ export abstract class ABAPObject extends AObject {
     let ret: Array<TokenNode> = [];
     tokens.forEach((t) => {ret.push(new TokenNode(t)); });
     return ret;
-  }
-
-  private skip(filename: string): boolean {
-    // ignore global exception classes, todo?
-    // the auto generated classes are crap, move logic to skip into the rules intead
-    // todo, this should be defined by the rules, not this class
-    if (/zcx_.*\.clas\.abap$/.test(filename)) {
-      return true;
-    }
-
-    if (!/.*\.abap$/.test(filename)) {
-      return true;
-    }
-    return false;
   }
 
 }

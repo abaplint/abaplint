@@ -3,6 +3,7 @@ import {IObject} from "../objects/_iobject";
 import {ABAPObject} from "../objects/_abap_object";
 import {Issue} from "../issue";
 import {ABAPFile} from "../files";
+import {Class} from "../objects";
 
 export abstract class ABAPRule implements IRule {
 
@@ -26,6 +27,10 @@ export abstract class ABAPRule implements IRule {
 
     let abap = obj as ABAPObject;
     let output: Array<Issue> = [];
+
+    if (abap instanceof Class && (abap as Class).isException()) {
+      return [];
+    }
 
     for (let file of abap.getParsed()) {
       output = output.concat(this.runParsed(file));
