@@ -55,6 +55,7 @@ export class MethodParameterNames implements IRule {
   private checkMethod(method: MethodDefinition, obj: IObject): Issue[] {
     let ret: Issue[] = [];
 
+// todo: move expected values to configuration
     for (let param of method.getParameters().getImporting()) {
       ret = ret.concat(this.checkParameter(param, "^I._.*$", obj));
     }
@@ -74,11 +75,12 @@ export class MethodParameterNames implements IRule {
   private checkParameter(param: MethodParameter, expected: string, obj: IObject): Issue[] {
     let ret: Issue[] = [];
     let regex = new RegExp(expected, "i");
+    let name = param.getName();
 
-    if (regex.test(param.getName()) === false) {
+    if (regex.test(name) === false) {
 // todo, find the right file
-// todo, find the right start position
-      let issue = new Issue({file: obj.getFiles()[0], message: "Bad method parameter name", start: param.getPosition()});
+      const message = "Bad method parameter name \"" + name + "\" expected \"" + expected + "\"";
+      let issue = new Issue({file: obj.getFiles()[0], message, start: param.getPosition()});
       ret.push(issue);
     }
 
