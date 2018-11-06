@@ -1,24 +1,20 @@
-import {IRule} from "./rules/_irule";
 import {IFile} from "./files/_ifile";
 import Position from "./position";
 
 interface IssueData {
-  rule: IRule;
   file: IFile;
-  message: number;
+  message: string;
   start?: Position;
   end?: Position;
 }
 
 export class Issue {
-  private rule: IRule;
   private start: Position;
   private end: Position;
   private file: IFile;
-  private message: number;
+  private message: string;
 
   public constructor(data: IssueData) {
-    this.rule = data.rule;
     this.message = data.message;
 
     this.start = data.start;
@@ -36,7 +32,7 @@ export class Issue {
   }
 
   public getMessage(): string {
-    return this.rule.getMessage(this.message);
+    return this.message;
   }
 
   public getStart(): Position {

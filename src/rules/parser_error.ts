@@ -22,17 +22,6 @@ export class ParserError extends ABAPRule {
     return "Parser error(Unknown statement)";
   }
 
-  public getMessage(num: number): string {
-    switch (num) {
-      case 1:
-        return this.getDescription();
-      case 2:
-        return "Missing space between string or character literal and parentheses";
-      default:
-        throw new Error();
-    }
-  }
-
   public getConfig() {
     return this.conf;
   }
@@ -50,10 +39,11 @@ export class ParserError extends ABAPRule {
       if (statement.get() instanceof Unknown
             && start.getRow() !== statement.getStart().getRow()) {
 
-        let message = this.missingSpace(statement) ? 2 : 1;
+        let message = this.missingSpace(statement) ?
+          "Missing space between string or character literal and parentheses" : this.getDescription();
 
         start = statement.getStart();
-        let issue = new Issue({rule: this, file, message, start});
+        let issue = new Issue({file, message, start});
         issues.push(issue);
       }
     }

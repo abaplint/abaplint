@@ -37,7 +37,7 @@ export class FunctionalWriting extends ABAPRule {
             || this.startsWith(code, "CALL METHOD (")) {
           continue;
         }
-        let issue = new Issue({rule: this, file, message: 1, start: statement.getStart()});
+        let issue = new Issue({file, message: this.getDescription(), start: statement.getStart()});
         issues.push(issue);
       }
     }

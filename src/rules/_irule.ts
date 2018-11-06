@@ -8,6 +8,5 @@ export interface IRule {
   getDescription(): string;
   getConfig(): void;
   setConfig(conf: any): void;
-  getMessage(num: number): string;
   run(obj: IObject, reg: Registry): Issue[];
 }

@@ -22,10 +22,6 @@ export class MethodParameterNames implements IRule {
     return "Method Parameter Names";
   }
 
-  public getMessage() {
-    return "Bad method parameter name";
-  }
-
   public getConfig() {
     return this.conf;
   }
@@ -82,7 +78,7 @@ export class MethodParameterNames implements IRule {
     if (regex.test(param.getName()) === false) {
 // todo, find the right file
 // todo, find the right start position
-      let issue = new Issue({rule: this, file: obj.getFiles()[0], message: 1, start: param.getPosition()});
+      let issue = new Issue({file: obj.getFiles()[0], message: "Bad method parameter name", start: param.getPosition()});
       ret.push(issue);
     }
 

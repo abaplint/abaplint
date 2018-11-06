@@ -31,7 +31,7 @@ export class Breakpoint extends ABAPRule {
 
     for (let statement of file.getStatements()) {
       if (statement.get() instanceof Statements.Break) {
-        issues.push(new Issue({rule: this, file, message: 1, start: statement.getStart()}));
+        issues.push(new Issue({file, message: this.getDescription(), start: statement.getStart()}));
       }
     }
 

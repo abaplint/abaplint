@@ -5,7 +5,6 @@ import {ABAPObject} from "./objects/_abap_object";
 import {ABAPFile} from "./files";
 import Config from "./config";
 import {Issue} from "./issue";
-import {GenericError} from "./rules/";
 import {Artifacts} from "./artifacts";
 
 
@@ -72,7 +71,7 @@ todo
       try {
         this.findOrCreate(f.getObjectName(), f.getObjectType()).addFile(f);
       } catch (error) {
-        this.issues.push(new Issue({rule: new GenericError(error), file: f, message: 1}));
+        this.issues.push(new Issue({file: f, message: error}));
       }
     });
     return this;

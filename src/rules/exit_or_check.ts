@@ -47,7 +47,7 @@ export class ExitOrCheck extends ABAPRule {
       } else if ((statement.get() instanceof Statements.Check
           || statement.get() instanceof Statements.Exit)
           && stack.length === 0) {
-        let issue = new Issue({rule: this, file, message: 1, start: statement.getStart()});
+        let issue = new Issue({file, message: this.getDescription(), start: statement.getStart()});
         issues.push(issue);
       }
     }
