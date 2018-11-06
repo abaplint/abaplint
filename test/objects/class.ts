@@ -35,7 +35,7 @@ describe("Objects, class, getName", () => {
 
 describe("Objects, class, getSuperClass", () => {
 
-  it("test", () => {
+  it("test, positive", () => {
     const abap = "class ZCL_WITH_SUPER definition public inheriting from ZCL_SUPER final create public.\n" +
       "ENDCLASS.\n" +
       "CLASS ZCL_WITH_SUPER IMPLEMENTATION.\n" +
@@ -43,6 +43,24 @@ describe("Objects, class, getSuperClass", () => {
     const reg = new Registry().addFile(new MemoryFile("zcl_with_super.clas.abap", abap)).parse();
     const clas = reg.getABAPObjects()[0] as Class;
     expect(clas.getSuperClass()).to.equal("ZCL_SUPER");
+  });
+
+
+  it("test, negative", () => {
+    const abap = "class ZCL_WITH_SUPER definition public final create public.\n" +
+      "ENDCLASS.\n" +
+      "CLASS ZCL_WITH_SUPER IMPLEMENTATION.\n" +
+      "ENDCLASS.";
+    const reg = new Registry().addFile(new MemoryFile("zcl_with_super.clas.abap", abap)).parse();
+    const clas = reg.getABAPObjects()[0] as Class;
+    expect(clas.getSuperClass()).to.equal(undefined);
+  });
+
+  it("test, parser error", () => {
+    const abap = "parser error";
+    const reg = new Registry().addFile(new MemoryFile("zcl_with_super.clas.abap", abap)).parse();
+    const clas = reg.getABAPObjects()[0] as Class;
+    expect(clas.getSuperClass()).to.equal(undefined);
   });
 
 });

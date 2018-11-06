@@ -23,7 +23,12 @@ export class Class extends ABAPObject {
       throw new Error("class.ts, getSuperClass todo: handle multiple files");
     }
     const node = files[0].getStructure();
-    return node.findFirstStatement(ClassDefinition).findFirstExpression(SuperClassName).getFirstToken().get().getStr();
+    if (!node) {
+      return undefined;
+    }
+
+    const token = node.findFirstStatement(ClassDefinition).findFirstExpression(SuperClassName);
+    return token ? token.getFirstToken().get().getStr() : undefined;
   }
 
   /*
