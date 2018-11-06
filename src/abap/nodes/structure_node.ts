@@ -15,7 +15,6 @@ export class StructureNode extends BasicNode {
   }
 
   public findFirstStatement(type: any): StatementNode {
-
     for (let child of this.getChildren()) {
       if (child.get() instanceof type) {
         return child as StatementNode;
@@ -30,7 +29,41 @@ export class StructureNode extends BasicNode {
         throw new Error("findFirstStatement, unexpected type");
       }
     }
-
     return undefined;
   }
+
+  public findAllStatements(type: any): StatementNode[] {
+    let ret: StatementNode[] = [];
+    for (let child of this.getChildren()) {
+      if (child.get() instanceof type) {
+        ret.push(child as StatementNode);
+      } else if (child instanceof StatementNode) {
+        continue;
+      } else if (child instanceof StructureNode) {
+        ret = ret.concat(child.findAllStatements(type));
+      } else {
+        throw new Error("findFirstStructure, unexpected type");
+      }
+    }
+    return ret;
+  }
+
+  public findFirstStructure(type: any): StructureNode {
+    for (let child of this.getChildren()) {
+      if (child.get() instanceof type) {
+        return child as StructureNode;
+      } else if (child instanceof StatementNode) {
+        continue;
+      } else if (child instanceof StructureNode) {
+        let res = child.findFirstStructure(type);
+        if (res) {
+          return res;
+        }
+      } else {
+        throw new Error("findFirstStructure, unexpected type");
+      }
+    }
+    return undefined;
+  }
+
 }

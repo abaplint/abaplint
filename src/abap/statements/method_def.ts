@@ -2,7 +2,7 @@ import {Version} from "../../version";
 import {Statement} from "./_statement";
 import {str, seq, seqs, alt, opt, tok, ver, regex as reg, plus, IRunnable} from "../combi";
 import {ParenLeft, ParenRight, ParenRightW} from "../tokens/";
-import {MethodParam, Field, ClassName} from "../expressions";
+import {MethodParam, Field, ClassName, MethodName} from "../expressions";
 
 export class MethodDef extends Statement {
 
@@ -40,7 +40,7 @@ export class MethodDef extends Statement {
                     opt(seq(str("IMPORTING"), plus(field))));
 
     let ret = seq(alt(str("CLASS-METHODS"), str("METHODS")),
-                  new Field(),
+                  new MethodName(),
                   alt(event, parameters, seq(opt(str("FINAL")), str("REDEFINITION"))));
 
     return ret;

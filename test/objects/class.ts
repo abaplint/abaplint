@@ -64,3 +64,30 @@ describe("Objects, class, getSuperClass", () => {
   });
 
 });
+
+describe("Objects, class, getMethodDefinitions", () => {
+  it("test, positive", () => {
+    const abap = "CLASS zcl_with_super DEFINITION PUBLIC CREATE PUBLIC.\n" +
+    "  PUBLIC SECTION.\n" +
+    "  PROTECTED SECTION.\n" +
+    "  PRIVATE SECTION.\n" +
+    "    METHODS method1.\n" +
+    "ENDCLASS.\n" +
+    "CLASS ZCL_WITH_SUPER IMPLEMENTATION.\n" +
+    "  METHOD method1.\n" +
+    "  ENDMETHOD.\n" +
+    "ENDCLASS.";
+
+    const reg = new Registry().addFile(new MemoryFile("zcl_with_super.clas.abap", abap)).parse();
+    const clas = reg.getABAPObjects()[0] as Class;
+    expect(clas.getMethodDefinitions().getPrivate().length).to.equal(1);
+    expect(clas.getMethodDefinitions().getPrivate()[0].getName()).to.equal("method1");
+  });
+
+  it("test, parser error", () => {
+    const reg = new Registry().addFile(new MemoryFile("zcl_with_super.clas.abap", "parser error")).parse();
+    const clas = reg.getABAPObjects()[0] as Class;
+    expect(clas.getMethodDefinitions()).to.equal(undefined);
+  });
+
+});

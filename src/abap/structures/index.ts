@@ -29,3 +29,7 @@ export * from "./case";
 export * from "./try";
 export * from "./normal";
 export * from "./catch_system_exceptions";
+export * from "./class_section";
+export * from "./private_section";
+export * from "./public_section";
+export * from "./protected_section";

@@ -1,6 +1,8 @@
 import {ABAPObject} from "./_abap_object";
 import {ClassDefinition} from "../abap/statements/";
 import {SuperClassName} from "../abap/expressions/";
+import {MethodDefinitions} from "./class/method_definitions";
+import {StructureNode} from "../abap/nodes";
 
 export class Class extends ABAPObject {
 
@@ -18,11 +20,7 @@ export class Class extends ABAPObject {
   }
 
   public getSuperClass(): string {
-    const files = this.getParsedFiles();
-    if (files.length > 1) {
-      throw new Error("class.ts, getSuperClass todo: handle multiple files");
-    }
-    const node = files[0].getStructure();
+    const node = this.getMain();
     if (!node) {
       return undefined;
     }
@@ -31,9 +29,31 @@ export class Class extends ABAPObject {
     return token ? token.getFirstToken().get().getStr() : undefined;
   }
 
+  public getMethodDefinitions(): MethodDefinitions {
+    const node = this.getMain();
+    if (!node) {
+      return undefined;
+    }
+
+    return new MethodDefinitions(node);
+  }
+
+  private getMain(): StructureNode {
+    const files = this.getParsedFiles();
+    if (files.length > 1) {
+      throw new Error("class.ts, getMain todo: handle multiple files");
+    }
+    return files[0].getStructure();
+  }
+
   /*
-  public getMethodDefinitions(): string {
-    return "todo, some other typing, shared with interface";
+  public getSignature() {
+// return everything, attributes + methods + events?
+  }
+
+  public isAbstract(): boolean {
+// todo
+    return false;
   }
 
   public getMethodImplementation(_name: string): StructureNode {

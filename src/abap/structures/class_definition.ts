@@ -1,28 +1,16 @@
 import * as Statements from "../statements";
-import {seq, opt, star, beginEnd, alt, sta, sub, IStructureRunnable} from "./_combi";
+import {seq, opt, beginEnd, sta, sub, IStructureRunnable} from "./_combi";
 import {Structure} from "./_structure";
-import {Types, Data, Constants} from ".";
+import {PrivateSection} from "./private_section";
+import {ProtectedSection} from "./protected_section";
+import {PublicSection} from "./public_section";
 
 export class ClassDefinition extends Structure {
 
   public getMatcher(): IStructureRunnable {
-    let definitions = star(alt(sta(Statements.MethodDef),
-                               sta(Statements.InterfaceDef),
-                               sta(Statements.Data),
-                               sta(Statements.Events),
-                               sta(Statements.Constant),
-                               sta(Statements.Aliases),
-                               sta(Statements.TypePools),
-                               sta(Statements.InterfaceLoad),
-                               sta(Statements.ClassDefinitionLoad),
-                               sub(new Types()),
-                               sub(new Constants()),
-                               sub(new Data()),
-                               sta(Statements.Type)));
-
-    let body = seq(opt(seq(sta(Statements.Public), definitions)),
-                   opt(seq(sta(Statements.Protected), definitions)),
-                   opt(seq(sta(Statements.Private), definitions)));
+    let body = seq(opt(sub(new PublicSection())),
+                   opt(sub(new ProtectedSection())),
+                   opt(sub(new PrivateSection())));
 
     return beginEnd(sta(Statements.ClassDefinition), body, sta(Statements.EndClass));
   }

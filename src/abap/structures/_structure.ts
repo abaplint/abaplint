@@ -4,6 +4,7 @@ import {Issue} from "../../issue";
 import {GenericError} from "../../rules";
 import {ABAPFile} from "../../files";
 
+// todo, this should also have an interface
 export abstract class Structure  {
   public abstract getMatcher(): IStructureRunnable;
 
