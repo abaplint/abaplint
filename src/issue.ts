@@ -35,20 +35,8 @@ export class Issue {
     this.file = data.file;
   }
 
-  public getRuleDescription(): string {
-    return this.rule.getDescription();
-  }
-
   public getMessage(): string {
     return this.rule.getMessage(this.message);
-  }
-
-  public getKey(): string {
-    return this.rule.getKey();
-  }
-
-  public getRule(): IRule {
-    return this.rule;
   }
 
   public getStart(): Position {
