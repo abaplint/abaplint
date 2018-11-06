@@ -1,6 +1,6 @@
-import {AObject} from "./_aobject";
+import {AbstractObject} from "./_abstract_object";
 
-export class DataElement extends AObject {
+export class DataElement extends AbstractObject {
 
   public getType(): string {
     return "DTEL";

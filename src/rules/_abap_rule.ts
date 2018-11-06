@@ -32,7 +32,7 @@ export abstract class ABAPRule implements IRule {
       return [];
     }
 
-    for (let file of abap.getParsed()) {
+    for (let file of abap.getParsedFiles()) {
       output = output.concat(this.runParsed(file));
     }
 

@@ -1,6 +1,6 @@
-import {AObject} from "./_aobject";
+import {AbstractObject} from "./_abstract_object";
 
-export class DataDefinition extends AObject {
+export class DataDefinition extends AbstractObject {
 
   public getType(): string {
     return "DDLS";

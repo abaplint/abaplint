@@ -1,4 +1,4 @@
-import {AObject} from "./_aobject";
+import {AbstractObject} from "./_abstract_object";
 import {ABAPFile} from "../files";
 import Lexer from "../abap/lexer";
 import StatementParser from "../abap/statement_parser";
@@ -11,7 +11,7 @@ import {Token} from "../abap/tokens/_token";
 import {Unknown, MacroCall} from "../abap/statements/_statement";
 import {Issue} from "../issue";
 
-export abstract class ABAPObject extends AObject {
+export abstract class ABAPObject extends AbstractObject {
   private parsed: Array<ABAPFile>;
 
   public constructor(name: string) {
@@ -62,7 +62,7 @@ export abstract class ABAPObject extends AObject {
     return ret;
   }
 
-  public getParsed(): Array<ABAPFile> {
+  public getParsedFiles(): Array<ABAPFile> {
     return this.parsed;
   }
 

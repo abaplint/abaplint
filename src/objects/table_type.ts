@@ -1,6 +1,6 @@
-import {AObject} from "./_aobject";
+import {AbstractObject} from "./_abstract_object";
 
-export class TableType extends AObject {
+export class TableType extends AbstractObject {
 
   public getType(): string {
     return "TTYP";

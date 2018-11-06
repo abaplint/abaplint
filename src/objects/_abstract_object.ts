@@ -1,7 +1,7 @@
 import {IFile} from "../files/_ifile";
 import {IObject} from "./_iobject";
 
-export abstract class AObject implements IObject {
+export abstract class AbstractObject implements IObject {
   protected files: Array<IFile>;
   private name: string;
 

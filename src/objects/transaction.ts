@@ -1,6 +1,6 @@
-import {AObject} from "./_aobject";
+import {AbstractObject} from "./_abstract_object";
 
-export class Transaction extends AObject {
+export class Transaction extends AbstractObject {
 
   public getType(): string {
     return "TRAN";

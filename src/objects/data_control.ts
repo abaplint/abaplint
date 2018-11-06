@@ -1,6 +1,6 @@
-import {AObject} from "./_aobject";
+import {AbstractObject} from "./_abstract_object";
 
-export class DataControl extends AObject {
+export class DataControl extends AbstractObject {
 
   public getType(): string {
     return "DCLS";

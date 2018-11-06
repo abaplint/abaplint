@@ -6,4 +6,10 @@ export class Interface extends ABAPObject {
     return "INTF";
   }
 
+  /*
+  public getMethodDefinitions(): string {
+    return "todo, some other typing, shared with class";
+  }
+  */
+
 }

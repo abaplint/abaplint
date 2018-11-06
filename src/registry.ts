@@ -58,7 +58,7 @@ todo
       this.parse(progress);
     }
     let ret: Array<ABAPFile> = [];
-    this.getABAPObjects().forEach((a) => {ret = ret.concat(a.getParsed()); });
+    this.getABAPObjects().forEach((a) => {ret = ret.concat(a.getParsedFiles()); });
     return ret;
   }
 

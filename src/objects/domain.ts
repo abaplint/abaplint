@@ -1,6 +1,6 @@
-import {AObject} from "./_aobject";
+import {AbstractObject} from "./_abstract_object";
 
-export class Domain extends AObject {
+export class Domain extends AbstractObject {
 
   public getType(): string {
     return "DOMA";

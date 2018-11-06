@@ -1,6 +1,6 @@
-import {AObject} from "./_aobject";
+import {AbstractObject} from "./_abstract_object";
 
-export class LockObject extends AObject {
+export class LockObject extends AbstractObject {
 
   public getType(): string {
     return "ENQU";

@@ -144,6 +144,10 @@ export class StructureNode extends BasicNode {
   public get() {
     return this.structure;
   }
+
+  public findFirstStatement(_type: any): StatementNode {
+    return undefined;
+  }
 }
 
 // todo, delete this, to be implemented elsewhere
