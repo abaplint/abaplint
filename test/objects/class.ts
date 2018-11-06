@@ -2,6 +2,7 @@ import {expect} from "chai";
 import {Registry} from "../../src/registry";
 import {MemoryFile} from "../../src/files/memory_file";
 import {Class} from "../../src/objects";
+import {Scope} from "../../src/objects/class/method_definition";
 
 describe("Objects, class, isException", () => {
 
@@ -82,6 +83,7 @@ describe("Objects, class, getMethodDefinitions", () => {
     const clas = reg.getABAPObjects()[0] as Class;
     expect(clas.getMethodDefinitions().getPrivate().length).to.equal(1);
     expect(clas.getMethodDefinitions().getPrivate()[0].getName()).to.equal("method1");
+    expect(clas.getMethodDefinitions().getPrivate()[0].getScope()).to.equal(Scope.Private);
   });
 
   it("test, parser error", () => {
