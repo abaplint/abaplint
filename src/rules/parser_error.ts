@@ -5,6 +5,8 @@ import {Unknown} from "../abap/statements/_statement";
 import {ABAPRule} from "./_abap_rule";
 import {ABAPFile} from "../files";
 import {StatementNode} from "../abap/nodes/";
+import {Registry} from "../registry";
+import {versionToText} from "../version";
 
 export class ParserErrorConf {
   public enabled: boolean = true;
@@ -30,7 +32,7 @@ export class ParserError extends ABAPRule {
     this.conf = conf;
   }
 
-  public runParsed(file: ABAPFile) {
+  public runParsed(file: ABAPFile, reg: Registry) {
     let issues: Array<Issue> = [];
 
     let start = new Position(0, 0);
@@ -40,7 +42,8 @@ export class ParserError extends ABAPRule {
             && start.getRow() !== statement.getStart().getRow()) {
 
         let message = this.missingSpace(statement) ?
-          "Missing space between string or character literal and parentheses" : this.getDescription();
+          "Missing space between string or character literal and parentheses" :
+          this.getDescription() + ", ABAP version " + versionToText(reg.getConfig().getVersion());
 
         start = statement.getStart();
         let issue = new Issue({file, message, start});

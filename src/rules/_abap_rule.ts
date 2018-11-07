@@ -4,6 +4,7 @@ import {ABAPObject} from "../objects/_abap_object";
 import {Issue} from "../issue";
 import {ABAPFile} from "../files";
 import {Class} from "../objects";
+import {Registry} from "../registry";
 
 export abstract class ABAPRule implements IRule {
 
@@ -12,9 +13,9 @@ export abstract class ABAPRule implements IRule {
   public abstract getConfig(): void;
   public abstract setConfig(conf: any): void;
 
-  public abstract runParsed(file: ABAPFile): Array<Issue>;
+  public abstract runParsed(file: ABAPFile, reg: Registry): Array<Issue>;
 
-  public run(obj: IObject) {
+  public run(obj: IObject, reg: Registry) {
 
     if (!(obj instanceof ABAPObject)) {
       return [];
@@ -28,7 +29,7 @@ export abstract class ABAPRule implements IRule {
     }
 
     for (let file of abap.getParsedFiles()) {
-      output = output.concat(this.runParsed(file));
+      output = output.concat(this.runParsed(file, reg));
     }
 
     return output;
