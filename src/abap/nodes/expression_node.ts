@@ -21,11 +21,9 @@ export class ExpressionNode extends CountableNode {
         return child;
       } else if (child instanceof ExpressionNode) {
         return child.getFirstToken();
-      } else {
-        throw new Error("getFirstToken, unexpected type");
       }
     }
-    return undefined;
+    throw new Error("getFirstToken, unexpected type");
   }
 
   public getAllTokens(): Token[] {
