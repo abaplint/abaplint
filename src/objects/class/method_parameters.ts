@@ -1,7 +1,7 @@
 import {StatementNode} from "../../abap/nodes/statement_node";
 import {MethodDef} from "../../abap/statements/method_def";
 import {MethodParameter} from "./method_parameter";
-import {MethodDefImporting, MethodParam, MethodDefExporting, MethodDefChanging} from "../../abap/expressions";
+import {MethodDefImporting, MethodParam, MethodDefExporting, MethodDefChanging, MethodDefReturning} from "../../abap/expressions";
 import {ExpressionNode}  from "../../abap/nodes";
 
 export class MethodParameters {
@@ -9,7 +9,7 @@ export class MethodParameters {
   private exporting: MethodParameter[];
   private changing: MethodParameter[];
   private returning: MethodParameter;
-  private exceptions: string[];
+  private exceptions: string[]; // todo, not filled
 
   constructor(node: StatementNode) {
     if (!(node.get() instanceof MethodDef)) {
@@ -62,8 +62,10 @@ export class MethodParameters {
       this.add(this.changing, changing);
     }
 
-// todo:
-// this.returning = undefined;
+    let returning = node.findFirstExpression(MethodDefReturning);
+    if (returning) {
+      this.returning = new MethodParameter(returning.findFirstExpression(MethodParam));
+    }
 
 // todo:
 // this.exceptions = [];

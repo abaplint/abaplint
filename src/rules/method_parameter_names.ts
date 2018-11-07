@@ -8,6 +8,10 @@ import {Registry} from "../registry";
 
 export class MethodParameterNamesConf {
   public enabled: boolean = true;
+  public importing: string = "^I._.*$";
+  public returning: string = "^R._.*$";
+  public changing: string = "^C._.*$";
+  public exporting: string = "^E._.*$";
 }
 
 export class MethodParameterNames implements IRule {
@@ -55,19 +59,20 @@ export class MethodParameterNames implements IRule {
   private checkMethod(method: MethodDefinition, obj: IObject): Issue[] {
     let ret: Issue[] = [];
 
-// todo: move expected values to configuration
-    for (let param of method.getParameters().getImporting()) {
-      ret = ret.concat(this.checkParameter(param, "^I._.*$", obj));
+    const parameters = method.getParameters();
+    for (let param of parameters.getImporting()) {
+      ret = ret.concat(this.checkParameter(param, this.conf.importing, obj));
     }
-    for (let param of method.getParameters().getExporting()) {
-      ret = ret.concat(this.checkParameter(param, "^E._.*$", obj));
+    for (let param of parameters.getExporting()) {
+      ret = ret.concat(this.checkParameter(param, this.conf.exporting, obj));
     }
-    for (let param of method.getParameters().getChanging()) {
-      ret = ret.concat(this.checkParameter(param, "^C._.*$", obj));
+    for (let param of parameters.getChanging()) {
+      ret = ret.concat(this.checkParameter(param, this.conf.changing, obj));
     }
-
-// todo, handle returning, also in method_parameters.ts
-//    method.getParameters().getReturning();
+    let returning = parameters.getReturning();
+    if (returning) {
+      ret = ret.concat(this.checkParameter(returning, this.conf.returning, obj));
+    }
 
     return ret;
   }
@@ -78,8 +83,8 @@ export class MethodParameterNames implements IRule {
     let name = param.getName();
 
     if (regex.test(name) === false) {
-// todo, find the right file
       const message = "Bad method parameter name \"" + name + "\" expected \"" + expected + "\"";
+// todo, find the right file
       let issue = new Issue({file: obj.getFiles()[0], message, start: param.getPosition()});
       ret.push(issue);
     }
