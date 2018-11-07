@@ -1,6 +1,7 @@
 import {CountableNode} from "./_countable_node";
 import {Expression} from "../combi";
 import {TokenNode} from "./token_node";
+import {Token} from "../tokens/_token";
 
 export class ExpressionNode extends CountableNode {
   private expression: Expression;
@@ -27,7 +28,23 @@ export class ExpressionNode extends CountableNode {
     return undefined;
   }
 
-  public findAllExpressions(type: any): ExpressionNode[] {
+  public getAllTokens(): Token[] {
+    let ret: Token[] = [];
+
+    for (let child of this.getChildren()) {
+      if (child instanceof TokenNode) {
+        ret.push(child.get());
+      } else if (child instanceof ExpressionNode) {
+        ret = ret.concat(child.getAllTokens());
+      } else {
+        throw new Error("getAllTokens, unexpected type");
+      }
+    }
+
+    return ret;
+  }
+
+  public findAllExpressions(type: new () => Expression): ExpressionNode[] {
     let ret: ExpressionNode[] = [];
     for (let child of this.getChildren()) {
       if (child.get() instanceof type) {
@@ -43,7 +60,7 @@ export class ExpressionNode extends CountableNode {
     return ret;
   }
 
-  public findFirstExpression(type: any): ExpressionNode {
+  public findFirstExpression(type: new () => Expression): ExpressionNode {
     for (let child of this.getChildren()) {
       if (child.get() instanceof type) {
         return child as ExpressionNode;

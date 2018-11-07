@@ -6,6 +6,7 @@ import {Token} from "../tokens/_token";
 import {Pragma} from "../tokens/pragma";
 import {TokenNode} from "./token_node";
 import {ExpressionNode} from "./expression_node";
+import {Expression} from "../combi";
 
 export class StatementNode extends BasicNode {
   private statement: Statement;
@@ -85,7 +86,7 @@ export class StatementNode extends BasicNode {
     return this.getTokens()[this.getTokens().length - 1].getStr();
   }
 
-  public findFirstExpression(type: any): ExpressionNode {
+  public findFirstExpression(type: new () => Expression): ExpressionNode {
     for (let child of this.getChildren()) {
       if (child.get() instanceof type) {
         return child as ExpressionNode;
@@ -101,6 +102,22 @@ export class StatementNode extends BasicNode {
       }
     }
     return undefined;
+  }
+
+  public findAllExpressions(type: new () => Expression): ExpressionNode[] {
+    let ret: ExpressionNode[] = [];
+    for (let child of this.getChildren()) {
+      if (child.get() instanceof type) {
+        ret.push(child as ExpressionNode);
+      } else if (child instanceof TokenNode) {
+        continue;
+      } else if (child instanceof ExpressionNode) {
+        ret = ret.concat(child.findAllExpressions(type));
+      } else {
+        throw new Error("findAllExpressions, unexpected type");
+      }
+    }
+    return ret;
   }
 
   private toTokens(b: INode): Array<Token> {

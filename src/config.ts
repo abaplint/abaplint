@@ -54,6 +54,9 @@ export default class Config {
   }
 
   public setVersion(ver: Version): Config {
+    if (ver === undefined) {
+      return this;
+    }
     this.config["version"] = versionToText(ver);
     return this;
   }
