@@ -1,6 +1,7 @@
 import {BasicNode} from "./_basic_node";
 import {Structure} from "../structures/_structure";
 import {StatementNode} from "./statement_node";
+import {Statement} from "../statements/_statement";
 
 export class StructureNode extends BasicNode {
   private structure: Structure;
@@ -14,7 +15,7 @@ export class StructureNode extends BasicNode {
     return this.structure;
   }
 
-  public findFirstStatement(type: any): StatementNode {
+  public findFirstStatement(type: new () => Statement): StatementNode {
     for (let child of this.getChildren()) {
       if (child.get() instanceof type) {
         return child as StatementNode;
@@ -32,7 +33,7 @@ export class StructureNode extends BasicNode {
     return undefined;
   }
 
-  public findAllStatements(type: any): StatementNode[] {
+  public findAllStatements(type: new () => Statement): StatementNode[] {
     let ret: StatementNode[] = [];
     for (let child of this.getChildren()) {
       if (child.get() instanceof type) {
@@ -48,7 +49,7 @@ export class StructureNode extends BasicNode {
     return ret;
   }
 
-  public findFirstStructure(type: any): StructureNode {
+  public findFirstStructure(type: new () => Structure): StructureNode {
     for (let child of this.getChildren()) {
       if (child.get() instanceof type) {
         return child as StructureNode;
