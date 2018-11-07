@@ -44,7 +44,9 @@ export class MethodParameterNames implements IRule {
       if (obj.isException()) {
         return [];
       }
-      methods = obj.getMethodDefinitions().getAll();
+      if (obj.getMethodDefinitions()) {
+        methods = obj.getMethodDefinitions().getAll();
+      }
     } else if (obj instanceof Interface) {
       methods = obj.getMethodDefinitions();
     }
