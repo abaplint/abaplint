@@ -22,6 +22,7 @@ export abstract class Token {
     return this.pos.getCol();
   }
 
+// todo, rename to getPosition to align across?
   public getPos(): Position {
     return this.pos;
   }

@@ -19,3 +19,4 @@ export * from "./breakpoint";
 export * from "./cloud_types";
 export * from "./method_parameter_names";
 export * from "./inline_data_old_versions";
+export * from "./local_variable_names";

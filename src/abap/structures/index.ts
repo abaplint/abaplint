@@ -19,6 +19,7 @@ export * from "./module";
 export * from "./form";
 export * from "./provide";
 export * from "./loop";
+export * from "./method";
 export * from "./at";
 export * from "./data";
 export * from "./constants";

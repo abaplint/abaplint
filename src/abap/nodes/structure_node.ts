@@ -15,6 +15,24 @@ export class StructureNode extends BasicNode {
     return this.structure;
   }
 
+  public findParent(node: StatementNode): StructureNode {
+    for (let child of this.getChildren()) {
+      if (child === node) {
+        return this;
+      } else if (child instanceof StatementNode) {
+        continue;
+      } else if (child instanceof StructureNode) {
+        let res = child.findParent(node);
+        if (res) {
+          return res;
+        }
+      } else {
+        throw new Error("findParent, unexpected type");
+      }
+    }
+    return undefined;
+  }
+
   public findFirstStatement(type: new () => Statement): StatementNode {
     for (let child of this.getChildren()) {
       if (child.get() instanceof type) {
@@ -44,6 +62,22 @@ export class StructureNode extends BasicNode {
         ret = ret.concat(child.findAllStatements(type));
       } else {
         throw new Error("findFirstStructure, unexpected type");
+      }
+    }
+    return ret;
+  }
+
+  public findAllStructures(type: new () => Structure): StructureNode[] {
+    let ret: StructureNode[] = [];
+    for (let child of this.getChildren()) {
+      if (child.get() instanceof type) {
+        ret.push(child as StructureNode);
+      } else if (child instanceof StatementNode) {
+        continue;
+      } else if (child instanceof StructureNode) {
+        ret = ret.concat(child.findAllStructures(type));
+      } else {
+        throw new Error("findAllStructures, unexpected type");
       }
     }
     return ret;
