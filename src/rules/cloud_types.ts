@@ -46,7 +46,7 @@ export class CloudTypes implements IRule {
       return [];
     }
 
-    return [new Issue({file: obj.getFiles()[0], message: this.getDescription()})];
+    return [new Issue({file: obj.getFiles()[0], code: this.getKey(), message: this.getDescription()})];
   }
 
 }

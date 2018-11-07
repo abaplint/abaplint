@@ -34,7 +34,7 @@ export class LineOnlyPunc extends ABAPRule {
     for (let i = 0; i < rows.length; i++) {
       let trim = rows[i].trim();
       if (trim === "." || trim === ").") {
-        let issue = new Issue({file, message: this.getDescription(), start: new Position(i + 1, 0)});
+        let issue = new Issue({file, message: this.getDescription(), code: this.getKey(), start: new Position(i + 1, 0)});
         issues.push(issue);
       }
     }

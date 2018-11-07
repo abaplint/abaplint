@@ -71,7 +71,7 @@ todo
       try {
         this.findOrCreate(f.getObjectName(), f.getObjectType()).addFile(f);
       } catch (error) {
-        this.issues.push(new Issue({file: f, message: error}));
+        this.issues.push(new Issue({file: f, message: error, code: "registry_add"}));
       }
     });
     return this;

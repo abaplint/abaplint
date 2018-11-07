@@ -85,7 +85,7 @@ export class MethodParameterNames implements IRule {
     if (regex.test(name) === false) {
       const message = "Bad method parameter name \"" + name + "\" expected \"" + expected + "\"";
 // todo, find the right file
-      let issue = new Issue({file: obj.getFiles()[0], message, start: param.getPosition()});
+      let issue = new Issue({file: obj.getFiles()[0], message, code: this.getKey(), start: param.getPosition()});
       ret.push(issue);
     }
 

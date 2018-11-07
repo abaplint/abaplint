@@ -33,7 +33,7 @@ export class ContainsTab extends ABAPRule {
     let lines = file.getRaw().split("\n");
     for (let line = 0; line < lines.length; line++) {
       if (/\t/.test(lines[line])) {
-        let issue = new Issue({file, message: this.getDescription(), start: new Position(line + 1, 1)});
+        let issue = new Issue({file, message: this.getDescription(), code: this.getKey(), start: new Position(line + 1, 1)});
         issues.push(issue);
       }
     }

@@ -46,7 +46,7 @@ export class ParserError extends ABAPRule {
           this.getDescription() + ", ABAP version " + versionToText(reg.getConfig().getVersion());
 
         start = statement.getStart();
-        let issue = new Issue({file, message, start});
+        let issue = new Issue({file, message, code: this.getKey(), start});
         issues.push(issue);
       }
     }
