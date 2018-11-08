@@ -109,7 +109,7 @@ async function run() {
   } else if (argv["v"] !== undefined || argv["version"] !== undefined) {
     output = output + Runner.version() + "\n";
   } else if (argv["d"] !== undefined || argv["default"] !== undefined) {
-    output = output + JSON.stringify(Config.getDefault().get()) + "\n";
+    output = output + JSON.stringify(Config.getDefault().get(), undefined, 2) + "\n";
   } else if (argv["k"] !== undefined) {
     output = output + JSON.stringify(Artifacts.getKeywords(), undefined, 2);
   } else if (argv._[0] === undefined) {
