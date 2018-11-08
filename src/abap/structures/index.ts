@@ -28,6 +28,7 @@ export * from "./test_injection";
 export * from "./define";
 export * from "./case";
 export * from "./try";
+export * from "./catch";
 export * from "./normal";
 export * from "./catch_system_exceptions";
 export * from "./class_section";
