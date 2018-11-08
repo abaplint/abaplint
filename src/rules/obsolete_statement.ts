@@ -2,6 +2,7 @@ import {Issue} from "../issue";
 import * as Statements from "../abap/statements/";
 import {ABAPRule} from "./_abap_rule";
 import {ABAPFile} from "../files";
+import {Compare} from "../abap/expressions";
 
 export class ObsoleteStatementConf {
   public enabled: boolean = true;
@@ -43,8 +44,14 @@ export class ObsoleteStatement extends ABAPRule {
           && sta.getTokens()[1].getStr() !== "-"
           && sta.getTokens()[1].getStr() !== "EXACT" )
           || sta.get() instanceof Statements.Divide) {
-        let issue = new Issue({file, message: this.getDescription(), code: this.getKey(), start: sta.getStart()});
-        issues.push(issue);
+        issues.push(new Issue({file, message: this.getDescription(), code: this.getKey(), start: sta.getStart()}));
+      }
+
+      for (let compare of sta.findAllExpressions(Compare)) {
+        let token = compare.findDirectTokenByText("REQUESTED");
+        if (token) {
+          issues.push(new Issue({file, message: "IS REQUESTED is obsolete", code: this.getKey(), start: token.getPos()}));
+        }
       }
     }
 

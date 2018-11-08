@@ -42,6 +42,21 @@ export class ExpressionNode extends CountableNode {
     return ret;
   }
 
+  public findDirectTokenByText(text: string): Token {
+    for (let child of this.getChildren()) {
+      if (child instanceof TokenNode) {
+        if (child.get().getStr() === text) {
+          return child.get();
+        }
+      } else if (child instanceof ExpressionNode) {
+        continue;
+      } else {
+        throw new Error("findDirectTokenByText, unexpected type");
+      }
+    }
+    return undefined;
+  }
+
   public findAllExpressions(type: new () => Expression): ExpressionNode[] {
     let ret: ExpressionNode[] = [];
     for (let child of this.getChildren()) {
