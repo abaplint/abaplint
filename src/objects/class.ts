@@ -1,8 +1,7 @@
 import {ABAPObject} from "./_abap_object";
-import {ClassDefinition} from "../abap/statements/";
-import {SuperClassName} from "../abap/expressions/";
-import {MethodDefinitions} from "./class/method_definitions";
 import {StructureNode} from "../abap/nodes";
+import {ClassDefinition} from "./class/class_definition";
+import {MethodDefinitions} from "./class/method_definitions";
 
 export class Class extends ABAPObject {
 
@@ -10,9 +9,7 @@ export class Class extends ABAPObject {
     return "CLAS";
   }
 
-// todo:
-// isAbstract
-
+// todo, move this method, requires testing
   public isException(): boolean {
     for (let file of this.files) {
       if (file.getObjectName().match(/^zcx_.*$/i)) {
@@ -25,25 +22,19 @@ export class Class extends ABAPObject {
   }
 
   public getSuperClass(): string {
-    const node = this.getMain();
-    if (!node) {
-      return undefined;
-    }
-
-    const token = node.findFirstStatement(ClassDefinition).findFirstExpression(SuperClassName);
-    return token ? token.getFirstToken().get().getStr() : undefined;
+    return new ClassDefinition(this.getMain()).getSuperClass();
   }
 
   public getMethodDefinitions(): MethodDefinitions {
-    const node = this.getMain();
-    if (!node) {
-      return undefined;
-    }
-
-    return new MethodDefinitions(node);
+    return new ClassDefinition(this.getMain()).getMethodDefinitions();
   }
-
+/*
+  public getLocalClasses(): ClassDefinition[] {
+    return []
+  }
+*/
   private getMain(): StructureNode {
+// todo, overrride addFile instead of looping through it again?
     const files = this.getParsedFiles();
     for (let file of files) {
       if (file.getFilename().match(/\.clas\.abap$/)) {
@@ -52,20 +43,5 @@ export class Class extends ABAPObject {
     }
     throw new Error("class.ts, getMain: Could not find main file");
   }
-
-  /*
-  public getSignature() {
-// return everything, attributes + methods + events?
-  }
-
-  public isAbstract(): boolean {
-// todo
-    return false;
-  }
-
-  public getMethodImplementation(_name: string): StructureNode {
-    return undefined;
-  }
-*/
 
 }

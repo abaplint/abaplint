@@ -48,6 +48,11 @@ todo
     return this.conf;
   }
 
+  public setConfig(conf: Config) {
+    this.setDirty();
+    this.conf = conf;
+  }
+
   public getABAPObjects(): Array<ABAPObject> {
     return this.objects.filter((obj) => { return obj instanceof ABAPObject; }) as Array<ABAPObject>;
   }
