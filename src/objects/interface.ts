@@ -1,7 +1,8 @@
 import {ABAPObject} from "./_abap_object";
-import {MethodDefinition, Scope} from "./class/method_definition";
+import {MethodDefinition} from "./class/method_definition";
 import {MethodDef} from "../abap/statements";
 import {StructureNode} from "../abap/nodes";
+import {Scope} from "./class/scope";
 
 export class Interface extends ABAPObject {
 

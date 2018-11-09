@@ -2,7 +2,7 @@ import {expect} from "chai";
 import {Registry} from "../../src/registry";
 import {MemoryFile} from "../../src/files/memory_file";
 import {Interface} from "../../src/objects";
-import {Scope} from "../../src/objects/class/method_definition";
+import {Scope} from "../../src/objects/class/scope";
 
 describe("Objects, interface, getMethodDefinitions", () => {
   it("test, positive", () => {
