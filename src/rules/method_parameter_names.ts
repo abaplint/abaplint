@@ -2,8 +2,8 @@ import {Issue} from "../issue";
 import {IRule} from "./_irule";
 import {IObject} from "../objects/_iobject";
 import {Class, Interface} from "../objects";
-import {MethodDefinition} from "../objects/class/method_definition";
-import {MethodParameter} from "../objects/class/method_parameter";
+import {MethodDefinition} from "../abap/types/method_definition";
+import {MethodParameter} from "../abap/types/method_parameter";
 import {Registry} from "../registry";
 
 export class MethodParameterNamesConf {

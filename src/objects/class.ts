@@ -1,7 +1,7 @@
 import {ABAPObject} from "./_abap_object";
 import {StructureNode} from "../abap/nodes";
-import {ClassDefinition} from "./class/class_definition";
-import {MethodDefinitions} from "./class/method_definitions";
+import {ClassDefinition} from "../abap/types/class_definition";
+import {MethodDefinitions} from "../abap/types/method_definitions";
 
 export class Class extends ABAPObject {
 

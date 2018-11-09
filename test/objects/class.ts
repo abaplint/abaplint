@@ -2,7 +2,7 @@ import {expect} from "chai";
 import {Registry} from "../../src/registry";
 import {MemoryFile} from "../../src/files/memory_file";
 import {Class} from "../../src/objects";
-import {Scope} from "../../src/objects/class/scope";
+import {Scope} from "../../src/abap/types/scope";
 
 describe("Objects, class, isException", () => {
 
