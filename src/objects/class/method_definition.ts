@@ -2,12 +2,7 @@ import {StatementNode} from "../../abap/nodes";
 import {MethodDef} from "../../abap/statements";
 import {MethodName} from "../../abap/expressions";
 import {MethodParameters} from "./method_parameters";
-
-export enum Scope {
-  Private = 1,
-  Protected,
-  Public,
-}
+import {Scope} from "./scope";
 
 export class MethodDefinition {
   private scope: Scope;

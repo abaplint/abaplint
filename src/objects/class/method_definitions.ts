@@ -1,8 +1,9 @@
-import {MethodDefinition, Scope} from "./method_definition";
+import {MethodDefinition} from "./method_definition";
 import {StructureNode} from "../../abap/nodes";
 import {ClassDefinition} from "../../abap/structures/class_definition";
 import {PrivateSection, ProtectedSection, PublicSection} from "../../abap/structures";
 import {MethodDef} from "../../abap/statements";
+import {Scope} from "./scope";
 
 export class MethodDefinitions {
   private pri: MethodDefinition[];

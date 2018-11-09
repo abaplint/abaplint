@@ -3,6 +3,7 @@ import {ClassDefinition as ClassDefinitionStru} from "../../abap/structures";
 import {MethodDefinitions} from "./method_definitions";
 import {SuperClassName} from "../../abap/expressions";
 import {ClassDefinition as ClassDefinitionStat} from "../../abap/statements";
+import {ClassAttributes} from "./class_attributes";
 
 export class ClassDefinition {
   private node: StructureNode;
@@ -27,6 +28,12 @@ export class ClassDefinition {
     if (!this.node) { return undefined; }
     const token = this.node.findFirstStatement(ClassDefinitionStat).findFirstExpression(SuperClassName);
     return token ? token.getFirstToken().get().getStr() : undefined;
+  }
+
+  public getAttributes(): ClassAttributes {
+    if (!this.node) { return undefined; }
+// todo
+    return undefined;
   }
 
   /*
@@ -60,8 +67,7 @@ export class ClassDefinition {
   }
 
   getEvents
-  getAttributes
-  getImplementing
+  getInterfaces / getImplementing
 
   public getMethodImplementation(_name: string): StructureNode {
     return undefined;
