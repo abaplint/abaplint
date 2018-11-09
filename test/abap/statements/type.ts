@@ -13,6 +13,8 @@ let tests = [
   "types tt_table TYPE TABLE OF ty_field WITH NON-UNIQUE SORTED KEY bar COMPONENTS foo bar.",
   "TYPES /foo/ TYPE i.",
   "TYPES /foo/bar TYPE i.",
+  "TYPES bar TYPE p LENGTH 5 DECIMALS 2.",
+  "TYPES moo TYPE p DECIMALS 2 LENGTH 5.",
   "TYPES ty_bar TYPE STANDARD TABLE OF /foo/bar INITIAL SIZE 0 WITH DEFAULT KEY.",
 ];
 
