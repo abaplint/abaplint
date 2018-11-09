@@ -1,5 +1,4 @@
 import {StructureNode} from "../../abap/nodes";
-import {ClassDefinition as ClassDefinitionStru} from "../../abap/structures";
 import {MethodDefinitions} from "./method_definitions";
 import {SuperClassName} from "../../abap/expressions";
 import {ClassDefinition as ClassDefinitionStat} from "../../abap/statements";
@@ -9,13 +8,6 @@ export class ClassDefinition {
   private node: StructureNode;
 
   constructor(node: StructureNode) {
-    if (node) {
-      this.node = node.findFirstStructure(ClassDefinitionStru);
-      if (node === undefined) {
-        throw new Error("Class, constructor unexpected node type");
-      }
-    }
-
     this.node = node;
   }
 
@@ -32,14 +24,10 @@ export class ClassDefinition {
 
   public getAttributes(): ClassAttributes {
     if (!this.node) { return undefined; }
-// todo
-    return undefined;
+    return new ClassAttributes(this.node);
   }
 
   /*
-  public getSignature() {
-// return everything, attributes + methods + events?
-  }
 
   public isAbstract(): boolean {
 // todo
@@ -66,9 +54,11 @@ export class ClassDefinition {
     return false;
   }
 
-  getEvents
-  getInterfaces / getImplementing
+  public getEvents() {
 
+  public getImplementing() {
+
+  ???
   public getMethodImplementation(_name: string): StructureNode {
     return undefined;
   }

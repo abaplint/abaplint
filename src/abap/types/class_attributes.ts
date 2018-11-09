@@ -1,7 +1,9 @@
 import {ClassAttribute} from "./class_attribute";
 import {ClassConstant} from "./class_constant";
-import {ClassDefinition} from "../../abap/structures";
+import * as Structures from "../../abap/structures";
+import * as Statements from "../../abap/statements";
 import {StructureNode} from "../../abap/nodes";
+import {Scope} from "./scope";
 
 
 export class ClassAttributes {
@@ -10,10 +12,9 @@ export class ClassAttributes {
   private constants: ClassConstant[];
 
   constructor(node: StructureNode) {
-    if (!(node instanceof ClassDefinition)) {
-      throw new Error("ClassAttributes, unexpected node type");
-    }
-
+    this.static = [];
+    this.instance = [];
+    this.constants = [];
     this.parse(node);
   }
 
@@ -29,19 +30,28 @@ export class ClassAttributes {
     return this.constants;
   }
 
-  private parse(_node: StructureNode) {
-    throw new Error("todo");
-    /*
-    let pri = node.findFirstStructure(PrivateSection);
-    if (pri) {
-      let defs = pri.findAllStatements(Statements.Data);
-      for (let def of defs) {
-        this.instance.push(new ClassAttribute());
-      }
+  private parse(node: StructureNode) {
+    let cdef = node.findFirstStructure(Structures.ClassDefinition);
+    if (!cdef) {
+      throw new Error("MethodDefinition, expected ClassDefinition as part of input node");
     }
-    */
 
-// todo
+    this.parseSection(cdef.findFirstStructure(Structures.PublicSection), Scope.Public);
+    this.parseSection(cdef.findFirstStructure(Structures.PrivateSection), Scope.Private);
+    this.parseSection(cdef.findFirstStructure(Structures.ProtectedSection), Scope.Protected);
+
+  }
+
+  private parseSection(node: StructureNode, scope: Scope) {
+    if (!node) { return; }
+
+    let defs = node.findAllStatements(Statements.Data);
+    for (let def of defs) {
+// todo, instance or static?
+      this.instance.push(new ClassAttribute(def, scope));
+    }
+
+// todo, handle constants
   }
 
 }

@@ -1,11 +1,11 @@
 import {Type} from "./type";
 
-export class Constant {
+export class Attribute {
   private name: string;
   private type: Type;
 
-  constructor() {
-    this.name = undefined;
+  constructor(name: string) {
+    this.name = name;
     this.type = undefined;
   }
 

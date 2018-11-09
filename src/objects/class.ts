@@ -2,6 +2,7 @@ import {ABAPObject} from "./_abap_object";
 import {StructureNode} from "../abap/nodes";
 import {ClassDefinition} from "../abap/types/class_definition";
 import {MethodDefinitions} from "../abap/types/method_definitions";
+import {ClassAttributes} from "../abap/types/class_attributes";
 
 export class Class extends ABAPObject {
 
@@ -28,6 +29,13 @@ export class Class extends ABAPObject {
   public getMethodDefinitions(): MethodDefinitions {
     return new ClassDefinition(this.getMain()).getMethodDefinitions();
   }
+
+  public getAttributes(): ClassAttributes {
+    return new ClassDefinition(this.getMain()).getAttributes();
+  }
+
+// todo, add dirty flag so things can be cached
+
 /*
   public getLocalClasses(): ClassDefinition[] {
     return []

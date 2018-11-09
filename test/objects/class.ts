@@ -93,3 +93,33 @@ describe("Objects, class, getMethodDefinitions", () => {
   });
 
 });
+
+describe("Objects, class, getAttributes", () => {
+
+  it("test, positive", () => {
+    const abap = "CLASS zcl_foobar DEFINITION PUBLIC CREATE PUBLIC.\n" +
+    "  PUBLIC SECTION.\n" +
+    "  PROTECTED SECTION.\n" +
+    "  PRIVATE SECTION.\n" +
+    "    DATA moo TYPE i.\n" +
+    "ENDCLASS.\n" +
+    "CLASS zcl_foobar IMPLEMENTATION.\n" +
+    "ENDCLASS.";
+
+    const reg = new Registry().addFile(new MemoryFile("zcl_foobar.clas.abap", abap)).parse();
+    const clas = reg.getABAPObjects()[0] as Class;
+    expect(clas.getAttributes()).to.not.equal(undefined);
+    expect(clas.getAttributes().getInstance().length).to.equal(1);
+    expect(clas.getAttributes().getInstance()[0].getName()).to.equal("moo");
+    expect(clas.getAttributes().getInstance()[0].getScope()).to.equal(Scope.Private);
+  });
+
+// todo, one test for each section, plus data/static/constant
+
+  it("test, parser error", () => {
+    const reg = new Registry().addFile(new MemoryFile("zcl_foobar.clas.abap", "parser error")).parse();
+    const clas = reg.getABAPObjects()[0] as Class;
+    expect(clas.getAttributes()).to.equal(undefined);
+  });
+
+});
