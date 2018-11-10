@@ -1,6 +1,6 @@
 import {seq, per, opt, alt, tok, str, ver, star, plus, Expression, IRunnable} from "../combi";
 import {WParenLeftW, WAt, WParenRightW, WParenLeft} from "../tokens/";
-import {Field, DatabaseTable, Dynamic, Target, Source, SQLCond, SQLJoin} from "./";
+import {Field, DatabaseTable, Dynamic, Target, Source, SQLCond, SQLJoin, SQLCDSParameters} from "./";
 import {Version} from "../../version";
 import {SQLFieldList} from "./sql_field_list";
 
@@ -11,7 +11,7 @@ export class Select extends Expression {
 
     let from = seq(str("FROM"),
                    opt(tok(WParenLeftW)),
-                   alt(new Dynamic(), new DatabaseTable()),
+                   alt(new Dynamic(), seq(new DatabaseTable(), opt(new SQLCDSParameters()))),
                    opt(aas));
 
     let intoList = seq(alt(tok(WParenLeft), tok(WParenLeftW)),

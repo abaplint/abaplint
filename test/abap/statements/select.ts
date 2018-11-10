@@ -137,6 +137,7 @@ let tests = [
   "SELECT * FROM table INTO TABLE lt_tab WHERE field LIKE search ESCAPE '#'.",
   "SELECT * FROM table INTO TABLE lt_tab %_HINTS ORACLE 'FIRST_ROWS'.",
   "SELECT SINGLE FROM table FIELDS field INTO @DATA(lv_field).",
+  "SELECT * FROM cds_view( param2 = @lv_val2, param = @lv_val1 ).",
 ];
 
 statementType(tests, "SELECT", Statements.Select);

@@ -5,6 +5,8 @@ export * from "./inlinefs";
 export * from "./fstarget";
 export * from "./sql_field_list";
 export * from "./target";
+export * from "./let";
+export * from "./sql_cds_parameters";
 export * from "./sql_hints";
 export * from "./function_name";
 export * from "./select_loop";

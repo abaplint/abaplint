@@ -260,7 +260,11 @@ export default class Lexer {
 // end of pragma
         this.add();
         this.m = Mode.Normal;
-      } else if (buf.length > 1 && current === "`" && this.m === Mode.Ping) {
+      } else if (buf.length > 1 && current === "`" && this.m === Mode.Ping
+          && current === "`"
+          && aahead !== "``"
+          && (buf.match(/`/g) || []).length % 2 === 0
+          && (buf.concat(ahead).match(/`/g) || []).length % 2 === 0) {
 // end of ping
         this.add();
         this.m = Mode.Normal;

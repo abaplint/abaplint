@@ -1,6 +1,6 @@
 import {plus, ver, seq, opt, tok, str, alt, star, optPrio, Expression, IRunnable} from "../combi";
 import {Arrow, WParenLeftW, WParenRightW, WParenRight, WDashW, ParenLeftW} from "../tokens/";
-import {MethodCallChain, ArithOperator, Cond, Constant, StringTemplate} from "./";
+import {MethodCallChain, ArithOperator, Cond, Constant, StringTemplate, Let} from "./";
 import {FieldChain, Field, TableBody, TypeName, ArrowOrDash, FieldSub, For} from "./";
 import {Version} from "../../version";
 
@@ -67,15 +67,13 @@ export class Source extends Expression {
 
     let fieldList = seq(new FieldSub(), str("="), new Source());
 
-    let alet = seq(str("LET"), plus(fieldList), str("IN"));
-
     let base = seq(str("BASE"), new Source());
 
     let tab = seq(opt(new For()),
                   alt(plus(seq(tok(WParenLeftW), star(new Source()), tok(WParenRightW))),
                       seq(star(fieldList), plus(seq(tok(WParenLeftW), plus(fieldList), tok(WParenRightW))))));
 
-    let strucOrTab = seq(opt(alet), opt(base),
+    let strucOrTab = seq(opt(new Let()), opt(base),
                          alt(plus(fieldList),
                              tab));
 
@@ -95,7 +93,7 @@ export class Source extends Expression {
     let cond = ver(Version.v740sp02, seq(str("COND"),
                                          new TypeName(),
                                          tok(ParenLeftW),
-                                         opt(alet),
+                                         opt(new Let()),
                                          plus(when),
                                          opt(elsee),
                                          rparen));
@@ -123,7 +121,24 @@ export class Source extends Expression {
                          seq(str("WHERE"), new Cond()),
                          rparen));
 
-    let ret = alt(old, corr, conv, value, cond, reff, exact, swit, filter);
+    let reduce = ver(Version.v740sp08,
+                     seq(str("REDUCE"),
+                         new TypeName(),
+                         tok(ParenLeftW),
+                         str("INIT"),
+                         new Field(),
+                         str("="),
+                         new Source(),
+                         new For(),
+                         new Let(),
+                         str("NEXT"),
+                         new Field(),
+                         str("="),
+                         new Source(),
+                         rparen,
+                         opt(after)));
+
+    let ret = alt(old, corr, conv, value, cond, reff, exact, swit, filter, reduce);
 
     return ret;
   }
