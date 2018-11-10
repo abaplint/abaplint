@@ -28,6 +28,32 @@ let tests = [
     "author: \"{ <ls_commit>-author }\", sha1: \"{ <ls_commit>-sha1(7) }\", tag: \"{ concat_lines_of( table = <ls_commit>-" +
     "tags sep   = ` | ` ) }\"\});| ).",
   "lcl_foo=>bar( !name = !moo ).",
+
+  "CALL METHOD lo_foo->bar\n" +
+  "  IMPORTING\n" +
+  "    field1 = DATA(lv_field1).",
+
+  "CALL METHOD lo_foo->bar\n" +
+  "  IMPORTING\n" +
+  "    field1 = DATA(lv_field1)\n" +
+  "    field1 = DATA(lv_field1)\n" +
+  "    field1 = DATA(lv_field1)\n" +
+  "    field1 = DATA(lv_field1)\n" +
+  "    field1 = DATA(lv_field1)\n" +
+  "    field1 = DATA(lv_field1)\n" +
+  "    field1 = DATA(lv_field1)\n" +
+  "    field1 = DATA(lv_field1)\n" +
+  "    field1 = DATA(lv_field1)\n" +
+  "    field1 = DATA(lv_field1)\n" +
+  "    field1 = DATA(lv_field1)\n" +
+  "    field1 = DATA(lv_field1)\n" +
+  "    field1 = DATA(lv_field1)\n" +
+  "    field1 = DATA(lv_field1)\n" +
+  "    field1 = DATA(lv_field1)\n" +
+  "    field1 = DATA(lv_field1)\n" +
+  "    field1 = DATA(lv_field1)\n" +
+  "    field1 = DATA(lv_field1)\n" +
+  "    field1 = DATA(lv_field1).",
 ];
 
 statementType(tests, "CALL", Statements.Call);

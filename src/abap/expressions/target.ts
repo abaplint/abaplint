@@ -1,4 +1,4 @@
-import {seq, opt, tok, star, alt, str, Expression, IRunnable} from "../combi";
+import {seq, opt, tok, star, alt, str, altPrio, Expression, IRunnable} from "../combi";
 import {Field, TableExpression, FieldAll, FieldOffset, FieldLength, TableBody} from "./";
 import {FieldSymbol, InlineData, InlineFS, ArrowOrDash} from "./";
 import {Arrow} from "../tokens/";
@@ -15,6 +15,6 @@ export class Target extends Expression {
 
     let optional = alt(new TableBody(), fields, ref);
 
-    return alt(new InlineData(), new InlineFS(), seq(after, optional));
+    return altPrio(new InlineData(), new InlineFS(), seq(after, optional));
   }
 }
