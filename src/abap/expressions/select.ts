@@ -1,7 +1,8 @@
 import {seq, per, opt, alt, tok, str, ver, star, plus, Expression, IRunnable} from "../combi";
 import {WParenLeftW, WAt, WParenRightW, WParenLeft} from "../tokens/";
-import {Field, DatabaseTable, Dynamic, Target, Source, SQLCond, SQLJoin, SQLAggregation} from "./";
+import {Field, DatabaseTable, Dynamic, Target, Source, SQLCond, SQLJoin} from "./";
 import {Version} from "../../version";
+import {SQLFieldList} from "./sql_field_list";
 
 export class Select extends Expression {
   public getRunnable(): IRunnable {
@@ -38,11 +39,11 @@ export class Select extends Expression {
     let order = seq(str("ORDER BY"), alt(plus(seq(new Field(), opt(ding))), str("PRIMARY KEY"), new Dynamic()));
 
     let forAll = seq(str("FOR ALL ENTRIES IN"), opt(ver(Version.v740sp05, tok(WAt))), new Source());
-
+/*
     let fields = alt(str("*"),
                      new Dynamic(),
                      plus(alt(seq(new Field(), opt(ver(Version.v740sp05, str(",")))), new SQLAggregation())));
-
+*/
     let up = seq(str("UP TO"), opt(ver(Version.v740sp05, tok(WAt))), new Source(), str("ROWS"));
 
     let client = str("CLIENT SPECIFIED");
@@ -52,11 +53,13 @@ export class Select extends Expression {
 
     let group = seq(str("GROUP BY"), plus(alt(new Field(), new Dynamic())));
 
-    let perm = per(source, into, forAll, where, order, up, client, bypass, group, connection);
+    let fields = seq(str("FIELDS"), new SQLFieldList());
+
+    let perm = per(source, into, forAll, where, order, up, client, bypass, group, fields, connection);
 
     let ret = seq(str("SELECT"),
                   alt(str("DISTINCT"), opt(seq(str("SINGLE"), opt(str("FOR UPDATE"))))),
-                  fields,
+                  opt(new SQLFieldList()),
                   perm);
 
     return ret;

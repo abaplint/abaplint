@@ -1,7 +1,7 @@
 import {Structure} from "./_structure";
 import * as Statements from "../statements";
 import {star, alt, sta, sub, IStructureRunnable} from "./_combi";
-import {Types, Data, Constants} from ".";
+import {Types, Data, Constants, TypeEnum} from ".";
 
 export class SectionContents extends Structure {
 
@@ -18,6 +18,7 @@ export class SectionContents extends Structure {
                     sta(Statements.ClassDefinitionLoad),
                     sub(new Types()),
                     sub(new Constants()),
+                    sub(new TypeEnum()),
                     sub(new Data()),
                     sta(Statements.Type)));
   }
