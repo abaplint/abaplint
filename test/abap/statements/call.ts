@@ -27,6 +27,7 @@ let tests = [
   "ro_html->add( |{ escape_branch( <ls_commit>-branch ) }.commit(\{message: \"{escape_message( <ls_commit>-message ) }\", " +
     "author: \"{ <ls_commit>-author }\", sha1: \"{ <ls_commit>-sha1(7) }\", tag: \"{ concat_lines_of( table = <ls_commit>-" +
     "tags sep   = ` | ` ) }\"\});| ).",
+  "lcl_foo=>bar( !name = !moo ).",
 ];
 
 statementType(tests, "CALL", Statements.Call);

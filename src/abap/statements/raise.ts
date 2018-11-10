@@ -21,7 +21,7 @@ export class Raise extends Statement {
                    str("EXCEPTION"),
                    opt(str("TYPE")),
                    new Source(),
-                   opt(ver(Version.v750, mess)),
+                   opt(alt(ver(Version.v750, mess), ver(Version.v752, str("USING MESSAGE")))),
                    opt(exporting));
 
     let ret = seq(str("RAISE"), alt(new Field(), clas));

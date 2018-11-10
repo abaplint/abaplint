@@ -71,6 +71,8 @@ let tests = [
   "CLASS-METHODS name IMPORTING REFERENCE(i_center) TYPE REF TO zcl_bar.",
   "METHODS blah IMPORTING is_blah LIKE LINE OF mt_blah.",
   "methods DESTRUCTOR NOT AT END OF MODE.",
+  "methods name exporting !out type %_C_POINTER.",
+  "METHODS run IMPORTING parameter TYPE zif_definitions~ty_type.",
 ];
 
 statementType(tests, "METHODS", Statements.MethodDef);

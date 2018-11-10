@@ -7,6 +7,9 @@ export enum Version {
   v740sp05,
   v740sp08,
   v750,
+  v751,
+  v752,
+  v753,
   Cloud,
 }
 
@@ -24,6 +27,12 @@ export function versionToText(v: Version): string {
       return "v740sp08";
     case Version.v750:
       return "v750";
+    case Version.v751:
+      return "v751";
+    case Version.v752:
+      return "v752";
+    case Version.v753:
+      return "v753";
     case Version.Cloud:
       return "Cloud";
     default:
@@ -45,6 +54,12 @@ export function textToVersion(s: string): Version {
       return Version.v740sp08;
     case "v750":
       return Version.v750;
+    case "v751":
+      return Version.v751;
+    case "v752":
+      return Version.v752;
+    case "v753":
+      return Version.v753;
     case "Cloud":
       return Version.Cloud;
     default:

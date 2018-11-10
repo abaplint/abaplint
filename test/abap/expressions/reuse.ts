@@ -3,6 +3,8 @@ import * as Combi from "../../../src/abap/combi";
 import * as Expressions from "../../../src/abap/expressions";
 import {getTokens} from "../_utils";
 
+// todo, refactor to separate files, one for each expression
+
 let tests = [
   {c: "cs_tstcp",                         r: new Expressions.FieldChain(),      e: true},
   {c: "cs_tstcp-param",                   r: new Expressions.FieldChain(),      e: true},
@@ -60,6 +62,8 @@ let tests = [
   {c: "type string",                      r: new Expressions.TypeTable(),       e: false},
   {c: "type index table",                 r: new Expressions.Type(),            e: false},
   {c: "type index table",                 r: new Expressions.TypeTable(),       e: true},
+  {c: "type index table",                 r: new Expressions.TypeTable(),       e: true},
+  {c: "%_C_POINTER",                      r: new Expressions.TypeName(),        e: true},
 //  {c: "<Z-BAR>",                          r: new Expressions.FieldSymbol(),     e: true},
 ];
 

@@ -16,6 +16,7 @@ let tests = [
   "TYPES bar TYPE p LENGTH 5 DECIMALS 2.",
   "TYPES moo TYPE p DECIMALS 2 LENGTH 5.",
   "TYPES ty_bar TYPE STANDARD TABLE OF /foo/bar INITIAL SIZE 0 WITH DEFAULT KEY.",
+  "TYPES name TYPE STANDARD TABLE OF something WITH NON-UNIQUE KEY !name.",
 ];
 
 statementType(tests, "TYPE", Statements.Type);

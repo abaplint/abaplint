@@ -25,6 +25,7 @@ let versions = [
   {abap: "RAISE EXCEPTION TYPE zcx_foobar MESSAGE ID 'ZFOO' TYPE 'E' NUMBER 001.", ver: Version.v750},
   {abap: "RAISE EXCEPTION TYPE zcx_bar MESSAGE e000(zp_foo) WITH lv_moo.", ver: Version.v750},
   {abap: "RAISE EXCEPTION TYPE zcx_foobar MESSAGE ID 'ZFOO' TYPE 'E' NUMBER 001 WITH bar.", ver: Version.v750},
+  {abap: "RAISE EXCEPTION TYPE zcx_foobar USING MESSAGE.", ver: Version.v752},
 ];
 
 statementVersion(versions, "RAISE", Statements.Raise);

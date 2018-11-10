@@ -4,7 +4,7 @@ import {IRule} from "./rules/_irule";
 
 export default class Config {
 
-  private static defaultVersion = Version.v750;
+  private static defaultVersion = Version.v753;
 
   private config: any = undefined;
 
