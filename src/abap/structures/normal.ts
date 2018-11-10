@@ -196,6 +196,7 @@ export class Normal extends Structure {
                sub(new Structures.Statics()),
                sub(new Structures.Select()),
                sub(new Structures.Data()),
+               sub(new Structures.TypeEnum()),
                sub(new Structures.While()),
                sub(new Structures.Do()),
                sub(new Structures.If()),

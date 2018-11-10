@@ -8,6 +8,9 @@ let tests = [
   "constants /foo/bar type string value 'val'.",
   "CONSTANTS $blah TYPE syst-msgty VALUE 'I'.",
   "CONSTANTS lc_foo TYPE string VALUE `foo` & `bar`.",
+  "CONSTANTS id1 TYPE x LENGTH 2 VALUE '1122'.",
+  "CONSTANTS id2 VALUE '1122' TYPE x LENGTH 2.",
+  "CONSTANTS id3 VALUE '1122' LENGTH 2 TYPE x.",
 ];
 
 statementType(tests, "CONSTANT", Statements.Constant);

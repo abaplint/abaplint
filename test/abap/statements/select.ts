@@ -136,6 +136,7 @@ let tests = [
   "SELECT pernr FROM pa0002 INTO TABLE lt_pernr UP TO 100 ROWS WHERE pernr = SOME ( select pernr FROM pa9510 ).",
   "SELECT * FROM table INTO TABLE lt_tab WHERE field LIKE search ESCAPE '#'.",
   "SELECT * FROM table INTO TABLE lt_tab %_HINTS ORACLE 'FIRST_ROWS'.",
+//  "SELECT SINGLE FROM table FIELDS field INTO @DATA(lv_field).",
 ];
 
 statementType(tests, "SELECT", Statements.Select);

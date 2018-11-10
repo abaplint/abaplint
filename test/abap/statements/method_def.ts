@@ -70,6 +70,7 @@ let tests = [
   "METHODS format_message importing lang type langu default '-'.",
   "CLASS-METHODS name IMPORTING REFERENCE(i_center) TYPE REF TO zcl_bar.",
   "METHODS blah IMPORTING is_blah LIKE LINE OF mt_blah.",
+  "methods DESTRUCTOR NOT AT END OF MODE.",
 ];
 
 statementType(tests, "METHODS", Statements.MethodDef);

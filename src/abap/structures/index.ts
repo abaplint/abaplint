@@ -7,6 +7,7 @@ export * from "./do";
 export * from "./types";
 export * from "./select";
 export * from "./statics";
+export * from "./type_enum";
 export * from "./any";
 export * from "./elseif";
 export * from "./else";

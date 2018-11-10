@@ -34,7 +34,9 @@ export class MethodDef extends Statement {
 
     let ret = seq(alt(str("CLASS-METHODS"), str("METHODS")),
                   new MethodName(),
-                  alt(event, parameters, seq(opt(str("FINAL")), str("REDEFINITION"))));
+                  alt(event, parameters,
+                      str("NOT AT END OF MODE"),
+                      seq(opt(str("FINAL")), str("REDEFINITION"))));
 
     return ret;
   }

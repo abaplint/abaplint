@@ -13,6 +13,7 @@ let tests = [
   "RAISE RESUMABLE EXCEPTION TYPE zcx_error EXPORTING textid = zcx_error=>some_values_too_high.",
   "RAISE EXCEPTION me->dd_sobject_store-exception.",
   "RAISE EXCEPTION lr_/foo/cx_bar.",
+  "RAISE EXCEPTION TYPE cx_error MESSAGE e004(clas) EXPORTING previous = lx_error.",
 ];
 
 statementType(tests, "RAISE", Statements.Raise);
