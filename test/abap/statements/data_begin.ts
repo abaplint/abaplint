@@ -7,7 +7,6 @@ let tests = [
   "DATA BEGIN OF COMMON PART blah.",
   "DATA BEGIN OF status_/foo/bar.",
   "DATA BEGIN OF /foo/bar.",
-  "CLASS-DATA BEGIN OF blah READ-ONLY.",
 ];
 
 statementType(tests, "DATA BEGIN", Statements.DataBegin);

@@ -9,6 +9,8 @@ export * from "./method";
 export * from "./endform";
 export * from "./form";
 export * from "./class_data";
+export * from "./class_data_begin";
+export * from "./class_data_end";
 export * from "./select_loop";
 export * from "./do";
 export * from "./while";

@@ -11,6 +11,7 @@ export * from "./test_seam";
 export * from "./type_enum";
 export * from "./any";
 export * from "./elseif";
+export * from "./class_data";
 export * from "./else";
 export * from "./body";
 export * from "./on_change";

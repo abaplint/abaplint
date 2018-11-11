@@ -2,9 +2,10 @@ import {Statement} from "./_statement";
 import {str, seq, opt, IRunnable} from "../combi";
 import {Integer, NamespaceSimpleName} from "../expressions";
 
-export class DataBegin extends Statement {
+export class ClassDataBegin extends Statement {
 
   public getMatcher(): IRunnable {
+
     let occurs = seq(str("OCCURS"), new Integer());
 
     let structure = seq(str("BEGIN OF"),
@@ -13,7 +14,7 @@ export class DataBegin extends Statement {
                         opt(str("READ-ONLY")),
                         opt(occurs));
 
-    return seq(str("DATA"), structure);
+    return seq(str("CLASS-DATA"), structure);
   }
 
 }

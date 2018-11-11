@@ -6,7 +6,7 @@ export class Data extends Structure {
 
   public getMatcher(): IStructureRunnable {
     return beginEnd(sta(Statements.DataBegin),
-                    star(alt(sta(Statements.Data), sub(new Data), sta(Statements.IncludeType))),
+                    star(alt(sta(Statements.Data), sub(new Data()), sta(Statements.IncludeType))),
                     sta(Statements.DataEnd));
   }
 
