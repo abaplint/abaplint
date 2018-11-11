@@ -146,10 +146,13 @@ run().then(({output, issues}) => {
     process.stdout.write(output, () => {
       if (issues.length > 0) {
         process.exit(1);
+      } else {
+        process.exit();
       }
     });
+  } else {
+    process.exit();
   }
-  process.exit();
 }).catch((err) => {
   console.dir(err);
   process.exit(1);
