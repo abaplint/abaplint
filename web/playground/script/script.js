@@ -1,7 +1,7 @@
 /*global abaplint*/
 /*global CodeMirror*/
 
-let config = new abaplint.Config.getDefault();
+let config = abaplint.Config.getDefault();
 
 function stripNewline(input) {
   let result = input;
