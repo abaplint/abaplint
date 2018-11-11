@@ -6,8 +6,8 @@ import {Version} from "../../version";
 export class PrintControl extends Statement {
 
   public getMatcher(): IRunnable {
-    let index = seq(str("INDEX-LINE"), new Source);
-    let func = seq(str("FUNCTION"), new Source);
+    let index = seq(str("INDEX-LINE"), new Source());
+    let func = seq(str("FUNCTION"), new Source());
 
     let ret = seq(str("PRINT-CONTROL"), alt(index, func));
 

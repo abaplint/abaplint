@@ -7,7 +7,7 @@ export class FormParam extends Expression {
     let name = reg(/^[\w$]+$/);
 //    let dashed = seq(reg(/^\w+$/), tok(Dash), reg(/^\w+$/));
     let field = seq(altPrio(new PassByValue(), name),
-                    optPrio(new FormParamType));
+                    optPrio(new FormParamType()));
 
     return field;
   }

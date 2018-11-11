@@ -8,7 +8,7 @@ export class FormParamType extends Expression {
     let table = seq(alt(str("STANDARD"), str("HASHED"), str("INDEX"), str("SORTED"), str("ANY")),
                     str("TABLE"));
 
-    let tabseq = seq(table, optPrio(seq(str("OF"), new TypeName)));
+    let tabseq = seq(table, optPrio(seq(str("OF"), new TypeName())));
 
     let ret = seq(optPrio(str("REF TO")),
                   new TypeName(),

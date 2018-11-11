@@ -17,7 +17,7 @@ export class MethodParam extends Expression {
 
     let fieldsOrValue = seq(alt(value,
                                 ref,
-                                new MethodParamName),
+                                new MethodParamName()),
                             new TypeParam());
 
     return fieldsOrValue;

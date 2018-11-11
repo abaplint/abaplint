@@ -9,7 +9,7 @@ export class SetProperty extends Statement {
 
     let ret = seq(str("SET PROPERTY OF"),
                   new Source(),
-                  new Constant,
+                  new Constant(),
                   str("="),
                   new Source());
 
