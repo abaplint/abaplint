@@ -1,7 +1,7 @@
 /*global abaplint*/
 /*global CodeMirror*/
 
-let config = abaplint.Config.getDefault();
+let registry = new abaplint.Registry().addFile(new abaplint.File("foobar.prog.abap", "dummy"));
 
 function stripNewline(input) {
   let result = input;
@@ -76,16 +76,16 @@ function buildStructure(nodes) {
   return output + "</ul>";
 }
 
-function process() {
-  let input = stripNewline(editor.getValue());
+function process(val = undefined) {
+  let input = stripNewline(val ? val : editor.getValue());
   let file = new abaplint.File("foobar.prog.abap", input);
-  return new abaplint.Registry(config).addFile(file).findIssues();
+  return registry.updateFile(file).findIssues();
 }
 
 function parse() {
   let input = stripNewline(editor.getValue());
   let file = new abaplint.File("foobar.prog.abap", input);
-  return new abaplint.Registry(config).addFile(file).parse().getABAPFiles()[0];
+  return registry.updateFile(file).parse().getABAPFiles()[0];
 }
 
 // ---------------------
@@ -148,7 +148,9 @@ function markLine(line, col, eline, ecol) {
 }
 
 function changeVersion(evt) {
-  config.setVersion(abaplint.textToVersion(evt.target.value));
+  let conf = registry.getConfig();
+  conf.setVersion(abaplint.textToVersion(evt.target.value));
+  registry.setConfig(conf);
 }
 
 function popuplateVersionDropdown() {
@@ -167,11 +169,28 @@ function popuplateVersionDropdown() {
   document.getElementById("version_dropdown").onchange = changeVersion;
 }
 
+function validator(text, options) {
+  let ret = [];
+  for (let issue of process(text)) {
+    const hint = {
+      message: issue.getMessage(),
+      severity: "error",
+      from: CodeMirror.Pos(issue.getStart().getRow() - 1, issue.getStart().getCol()),
+      to: CodeMirror.Pos(issue.getEnd().getRow() - 1, issue.getEnd().getCol())
+    };
+    ret.push(hint);
+  }
+  return ret;
+}
+
 function run() {
+  CodeMirror.registerHelper("lint", "abap", validator);
   editor = CodeMirror.fromTextArea(document.getElementById("input"), {
     lineNumbers: true,
+    lint: true,
     theme: "mbo",
     tabSize: 2,
+    gutters: ["CodeMirror-lint-markers"],
     styleSelectedText: true,
     mode: "abap"
   });

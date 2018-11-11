@@ -4,6 +4,7 @@ import {IObject} from "./_iobject";
 export abstract class AbstractObject implements IObject {
   protected files: Array<IFile>;
   private name: string;
+// todo, dirty flag?
 
   public abstract getType(): string;
 
@@ -22,6 +23,26 @@ export abstract class AbstractObject implements IObject {
 
   public getFiles(): Array<IFile> {
     return this.files;
+  }
+
+  public removeFile(file: IFile): void {
+    for (let i = 0; i < this.files.length; i++) {
+      if (this.files[i].getFilename() === file.getFilename()) {
+        this.files.splice(i, 1);
+        return;
+      }
+    }
+    throw new Error("removeFile: file not found");
+  }
+
+  public updateFile(file: IFile) {
+    for (let i = 0; i < this.files.length; i++) {
+      if (this.files[i].getFilename() === file.getFilename()) {
+        this.files[i] = file;
+        return;
+      }
+    }
+    throw new Error("updateFile: file not found");
   }
 /*
   public removeFile(_file: IFile) {

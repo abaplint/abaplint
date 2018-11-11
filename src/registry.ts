@@ -67,7 +67,24 @@ todo
   }
 
   public addFile(file: IFile): Registry {
+    this.setDirty();
     return this.addFiles([file]);
+  }
+
+  public updateFile(file: IFile): Registry {
+    this.setDirty();
+    this.find(file.getObjectName(), file.getObjectType()).updateFile(file);
+    return this;
+  }
+
+  public removeFile(file: IFile): Registry {
+    this.setDirty();
+    let obj = this.find(file.getObjectName(), file.getObjectType());
+    obj.removeFile(file);
+    if (obj.getFiles().length === 0) {
+      this.removeObject(obj);
+    }
+    return this;
   }
 
   public addFiles(files: Array<IFile>): Registry {
@@ -160,15 +177,37 @@ todo
   }
 
   private findOrCreate(name: string, type: string): IObject {
-    for (let obj of this.objects) { // todo, this is slow
-      if (obj.getType() === type && obj.getName() === name) {
-        return obj;
-      }
+    let found = this.find(name, type, true);
+    if (found) {
+      return found;
     }
 
     const add = Artifacts.newObject(name, type);
     this.objects.push(add);
     return add;
+  }
+
+  private removeObject(remove: IObject): void {
+    for (let i = 0; i < this.objects.length; i++) {
+      if (this.objects[i] === remove) {
+        this.objects.splice(i, 1);
+        return;
+      }
+    }
+    throw new Error("removeObject: object not found");
+  }
+
+  private find(name: string, type: string, ignoreError = false): IObject {
+    for (let obj of this.objects) { // todo, this is slow
+      if (obj.getType() === type && obj.getName() === name) {
+        return obj;
+      }
+    }
+    if (ignoreError === false) {
+      throw new Error("find: object not found");
+    } else {
+      return undefined;
+    }
   }
 
 }
