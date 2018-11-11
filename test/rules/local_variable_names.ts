@@ -63,4 +63,26 @@ describe("Rule: local variable names", function() {
     let issues = findIssues(abap);
     expect(issues.length).to.equal(1);
   });
+
+  it("issue, local constant", function () {
+    const abap = "FORM foobar. CONSTANTS foo TYPE c VALUE 'A' LENGTH 1. ENDFORM.";
+    let issues = findIssues(abap);
+    expect(issues.length).to.equal(1);
+  });
+
+  it("ok, local constant", function () {
+    const abap = "FORM foobar. CONSTANTS lc_foo TYPE c VALUE 'A' LENGTH 1. ENDFORM.";
+    let issues = findIssues(abap);
+    expect(issues.length).to.equal(0);
+  });
+
+  it("ok, local constant structure", function () {
+    const abap = "FORM foobar. CONSTANTS: BEGIN OF lc_parameter_type,\n" +
+      "import TYPE vepparamtype VALUE 'I',\n" +
+      "export TYPE vepparamtype VALUE 'O',\n" +
+      "END OF lc_parameter_type. ENDFORM.";
+    let issues = findIssues(abap);
+    expect(issues.length).to.equal(0);
+  });
+
 });

@@ -30,7 +30,7 @@ export class ClassAttributes {
     return this.constants;
   }
 
-  private parse(node: StructureNode) {
+  private parse(node: StructureNode): void {
     let cdef = node.findFirstStructure(Structures.ClassDefinition);
     if (!cdef) {
       throw new Error("MethodDefinition, expected ClassDefinition as part of input node");
@@ -42,13 +42,17 @@ export class ClassAttributes {
 
   }
 
-  private parseSection(node: StructureNode, scope: Scope) {
+  private parseSection(node: StructureNode, scope: Scope): void {
     if (!node) { return; }
 
     let defs = node.findAllStatements(Statements.Data);
     for (let def of defs) {
-// todo, instance or static?
       this.instance.push(new ClassAttribute(def, scope));
+    }
+
+    defs = node.findAllStatements(Statements.ClassData);
+    for (let def of defs) {
+      this.static.push(new ClassAttribute(def, scope));
     }
 
 // todo, handle constants

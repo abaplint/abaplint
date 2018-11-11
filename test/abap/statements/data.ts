@@ -8,7 +8,6 @@ let tests = [
   "DATA lv_foo TYPE REF TO cl_foobar.",
   "DATA lv_foo TYPE TABLE OF i.",
   "DATA lv_foo TYPE zcl_class=>typedef.",
-  "class-data EOL type CHAR01 value CL_ABAP_CHAR_UTILITIES=>CR_LF.",
   "DATA lv_foo LIKE sy-tabix.",
   "data foo type ref to ZCL_FOOBAR.",
   "data foo type ref to ZCL_FOOBAR .",
@@ -27,7 +26,6 @@ let tests = [
   "data foo    type  i value -1.",
   "data foobar type abap_bool read-only value ABAP_FALSE ##NO_TEXT.",
   "data item(4) value '  # '.",
-  "CLASS-DATA gv_out TYPE xstring.",
   "DATA ls_field_cat_comp  LIKE LINE OF <ls_object_table>-field_catalog.",
   "DATA lt_ucomm TYPE TABLE OF sy-ucomm.",
   "DATA tab LIKE foobar OCCURS 0 WITH HEADER LINE.",
@@ -41,7 +39,6 @@ let tests = [
     "WITH NON-UNIQUE SORTED KEY view_fieldname COMPONENTS view_fieldname " +
     "WITH NON-UNIQUE SORTED KEY no_case COMPONENTS no_case.",
   "DATA %id TYPE flag.",
-  "class-data gv_var type zfoo value 'FOO' read-only .",
   "DATA /foo/bar TYPE /foo/bar.",
   "DATA lr_/foo/cx_bar TYPE REF TO /foo/bar.",
   "DATA li_data(200) TYPE c OCCURS 0 WITH HEADER LINE.",

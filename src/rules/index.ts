@@ -21,3 +21,4 @@ export * from "./mix_returning";
 export * from "./method_parameter_names";
 export * from "./inline_data_old_versions";
 export * from "./local_variable_names";
+export * from "./class_attribute_names";

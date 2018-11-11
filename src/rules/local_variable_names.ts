@@ -11,6 +11,7 @@ import {Token} from "../abap/tokens/_token";
 export class LocalVariableNamesConf {
   public enabled: boolean = true;
   public expectedData: string = "^L._.*$";
+  public expectedConstant: string = "^LC_.*$";
   public expectedFS: string = "^<L._.*>$";
 }
 
@@ -81,6 +82,15 @@ export class LocalVariableNames extends ABAPRule {
       ret = ret.concat(this.checkName(token, file, this.conf.expectedFS));
     }
 
+    let constants = structure.findAllStatements(Statements.Constant);
+    for (let constant of constants) {
+      if (structure.findParent(constant).get() instanceof Structures.Constants) {
+        continue; // inside DATA BEGIN OF
+      }
+      const token = constant.findFirstExpression(Expressions.NamespaceSimpleName).getFirstToken().get();
+      ret = ret.concat(this.checkName(token, file, this.conf.expectedConstant));
+    }
+
 // todo: inline data, inline field symbols
 // todo: DATA BEGIN OF
 
@@ -92,7 +102,7 @@ export class LocalVariableNames extends ABAPRule {
     const regex = new RegExp(expected, "i");
     const name = token.getStr();
     if (regex.test(name) === false) {
-      const message = "Bad local variable name \"" + name + "\" expected \"" + expected + "\"";
+      const message = "Bad local name \"" + name + "\" expected \"" + expected + "/i\"";
       let issue = new Issue({file, message, code: this.getKey(), start: token.getPos()});
       ret.push(issue);
     }

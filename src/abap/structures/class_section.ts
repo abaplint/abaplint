@@ -10,6 +10,7 @@ export class SectionContents extends Structure {
     return star(alt(sta(Statements.MethodDef),
                     sta(Statements.InterfaceDef),
                     sta(Statements.Data),
+                    sta(Statements.ClassData),
                     sta(Statements.Events),
                     sta(Statements.Constant),
                     sta(Statements.Aliases),

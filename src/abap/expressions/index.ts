@@ -6,6 +6,7 @@ export * from "./fstarget";
 export * from "./sql_field_list";
 export * from "./target";
 export * from "./let";
+export * from "./data_definition";
 export * from "./sql_cds_parameters";
 export * from "./sql_hints";
 export * from "./function_name";

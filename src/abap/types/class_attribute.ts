@@ -9,16 +9,15 @@ export class ClassAttribute extends Attribute {
   private readOnly: boolean;
 
   constructor(node: StatementNode, scope: Scope) {
-    if (!(node.get() instanceof Statements.Data)) {
+    if (!(node.get() instanceof Statements.Data) && !(node.get() instanceof Statements.ClassData)) {
       throw new Error("ClassAttribute, unexpected node");
     }
 
-    let name = node.findFirstExpression(Expressions.NamespaceSimpleName).getFirstToken().get().getStr();
+    const token = node.findFirstExpression(Expressions.NamespaceSimpleName).getFirstToken().get();
 
-    super(name);
+    super(token.getStr(), token.getPos());
     this.scope = scope;
     this.readOnly = undefined;
-
   }
 
   public getScope() {

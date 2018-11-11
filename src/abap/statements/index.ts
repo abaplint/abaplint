@@ -8,6 +8,7 @@ export * from "./endmethod";
 export * from "./method";
 export * from "./endform";
 export * from "./form";
+export * from "./class_data";
 export * from "./select_loop";
 export * from "./do";
 export * from "./while";

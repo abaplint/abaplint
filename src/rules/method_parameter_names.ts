@@ -8,6 +8,7 @@ import {Registry} from "../registry";
 
 export class MethodParameterNamesConf {
   public enabled: boolean = true;
+  public ignoreExceptions: boolean = true;
   public importing: string = "^I._.*$";
   public returning: string = "^R._.*$";
   public changing: string = "^C._.*$";
@@ -41,12 +42,13 @@ export class MethodParameterNames implements IRule {
 // todo, consider local classes(PROG, FUGR, CLAS)
 
     if (obj instanceof Class) {
-      if (obj.isException()) {
+      if (this.conf.ignoreExceptions && obj.isException()) {
         return [];
       }
-      if (obj.getMethodDefinitions()) {
-        methods = obj.getMethodDefinitions().getAll();
+      if (obj.getMethodDefinitions() === undefined) {
+        return [];
       }
+      methods = obj.getMethodDefinitions().getAll();
     } else if (obj instanceof Interface) {
       methods = obj.getMethodDefinitions();
     }
@@ -85,7 +87,7 @@ export class MethodParameterNames implements IRule {
     let name = param.getName();
 
     if (regex.test(name) === false) {
-      const message = "Bad method parameter name \"" + name + "\" expected \"" + expected + "\"";
+      const message = "Bad method parameter name \"" + name + "\" expected \"" + expected + "/i\"";
 // todo, find the right file
       let issue = new Issue({file: obj.getFiles()[0], message, code: this.getKey(), start: param.getPosition()});
       ret.push(issue);
