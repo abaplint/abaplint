@@ -162,7 +162,7 @@ class Progress implements IProgress {
   private bar: ProgressBar = undefined;
 
   public set(total: number, text: string) {
-    this.bar = new ProgressBar(text, {total});
+    this.bar = new ProgressBar(text, {total, renderThrottle: 100});
   }
 
   public tick(options: any) {
