@@ -1,6 +1,6 @@
 import * as Tokens from "./tokens/";
 import {IFile} from "../files/_ifile";
-import Position from "../position";
+import {Position} from "../position";
 import {Token} from "./tokens/_token";
 
 enum Mode {
@@ -88,7 +88,7 @@ class Stream {
   }
 }
 
-export default class Lexer {
+export class Lexer {
   private static tokens: Array<Token>;
   private static m: Mode;
   private static stream: Stream;

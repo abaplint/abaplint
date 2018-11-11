@@ -1,4 +1,4 @@
-import Position from "../../position";
+import {Position} from "../../position";
 
 // todo, should this be an interface instead?
 export abstract class Token {

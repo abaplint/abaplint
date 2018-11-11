@@ -3,7 +3,7 @@ import {IRule} from "./rules/_irule";
 import {IFile} from "./files/_ifile";
 import {ABAPObject} from "./objects/_abap_object";
 import {ABAPFile} from "./files";
-import Config from "./config";
+import {Config} from "./config";
 import {Issue} from "./issue";
 import {Artifacts} from "./artifacts";
 

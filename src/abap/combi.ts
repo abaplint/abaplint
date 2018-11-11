@@ -1,6 +1,6 @@
 import * as Tokens from "./tokens";
 import {Token as Tokens_Token} from "./tokens/_token";
-import Position from "../position";
+import {Position} from "../position";
 import {TokenNode, ExpressionNode} from "./nodes/";
 import {Version, versionToText} from "../version";
 import {CountableNode} from "./nodes/_countable_node";

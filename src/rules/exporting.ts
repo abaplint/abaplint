@@ -1,4 +1,4 @@
-import Position from "../position";
+import {Position} from "../position";
 import {Issue} from "../issue";
 import {ABAPRule} from "./_abap_rule";
 import {ABAPFile} from "../files";

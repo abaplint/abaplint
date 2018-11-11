@@ -1,5 +1,5 @@
 import {Issue} from "../issue";
-import Position from "../position";
+import {Position} from "../position";
 import * as Tokens from "../abap/tokens";
 import {Unknown} from "../abap/statements/_statement";
 import {ABAPRule} from "./_abap_rule";

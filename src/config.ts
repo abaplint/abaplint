@@ -2,7 +2,7 @@ import * as Rules from "./rules/";
 import {Version, versionToText, textToVersion} from "./version";
 import {IRule} from "./rules/_irule";
 
-export default class Config {
+export class Config {
 
   private static defaultVersion = Version.v753;
 

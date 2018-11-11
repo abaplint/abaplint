@@ -6,7 +6,7 @@ import {Issue} from "../issue";
 import {Comment as StatementComment} from "./statements/_statement";
 import {StructureNode} from "./nodes/";
 
-export default class StructureParser {
+export class StructureParser {
 
   public static run(file: ABAPFile): {issues: Array<Issue>, node: StructureNode} {
     const structure = this.findStructureForFile(file.getFilename());

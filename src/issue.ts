@@ -1,5 +1,5 @@
 import {IFile} from "./files/_ifile";
-import Position from "./position";
+import {Position} from "./position";
 
 interface IssueData {
   file: IFile;

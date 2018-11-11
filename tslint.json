@@ -9,6 +9,7 @@
     "no-unexpected-multiline": true,
     "no-sparse-arrays": true,
     "new-parens": true,
+    "no-default-export": true,
     "ter-arrow-body-style": [true, "always"],
     "ter-arrow-parens": [true],
     "ter-arrow-spacing": [true],

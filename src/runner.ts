@@ -1,4 +1,4 @@
-import Config from "./config";
+import {Config} from "./config";
 import {MemoryFile} from "./files";
 import {Version, textToVersion} from "./version";
 import {Formatter} from "./formatters/_format";
@@ -8,7 +8,7 @@ import * as Nodes from "./abap/nodes/";
 // todo, rename this file to index_web.ts? and index.ts to index_node.ts, or something
 // todo, move version() to Registry class?
 
-export default class Runner {
+export class Runner {
   public static version(): string {
     // magic, see build script "version.sh"
     return "{{ VERSION }}";

@@ -1,6 +1,6 @@
 import {expect} from "chai";
 import * as Combi from "../../src/abap/combi";
-import Lexer from "../../src/abap/lexer";
+import {Lexer} from "../../src/abap/lexer";
 import {MemoryFile} from "../../src/files";
 import {Identifier, WPlusW, Plus} from "../../src/abap/tokens";
 import {Token} from "../../src/abap/tokens/_token";

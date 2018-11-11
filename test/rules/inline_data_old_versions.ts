@@ -3,7 +3,7 @@ import {Registry} from "../../src/registry";
 import {expect} from "chai";
 import {InlineDataOldVersions} from "../../src/rules/inline_data_old_versions";
 import {Version} from "../../src/version";
-import Config from "../../src/config";
+import {Config} from "../../src/config";
 
 function findIssues(abap: string, version?: Version) {
   let config = Config.getDefault().setVersion(version);

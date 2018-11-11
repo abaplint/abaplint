@@ -1,4 +1,4 @@
-export default class Position {
+export class Position {
   private row: number;
   private col: number;
 

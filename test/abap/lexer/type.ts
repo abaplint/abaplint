@@ -1,6 +1,6 @@
 import {expect} from "chai";
 import {MemoryFile} from "../../../src/files";
-import Lexer from "../../../src/abap/lexer";
+import {Lexer} from "../../../src/abap/lexer";
 import * as Tokens from "../../../src/abap/tokens";
 
 let tests = [

@@ -1,7 +1,7 @@
-import Runner from "./runner";
+import {Runner} from "./runner";
 import {CompressedFile, MemoryFile} from "./files";
 import {Issue} from "./issue";
-import Config from "./config";
+import {Config} from "./config";
 import {textToVersion} from "./version";
 import {Formatter} from "./formatters/_format";
 import * as fs from "fs";

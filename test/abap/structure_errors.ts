@@ -2,7 +2,7 @@ import * as Structures from "../../src/abap/structures/";
 import {expect} from "chai";
 import {Structure} from "../../src/abap/structures/_structure";
 import {getStatements, parse} from "./_utils";
-import StructureParser from "../../src/abap/structure_parser";
+import {StructureParser} from "../../src/abap/structure_parser";
 import {StructureNode} from "../../src/abap/nodes/";
 
 const cases = [

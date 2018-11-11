@@ -1,5 +1,5 @@
 import {Type} from "./type";
-import Position from "../../position";
+import {Position} from "../../position";
 
 
 export class Attribute {

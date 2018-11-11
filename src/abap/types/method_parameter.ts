@@ -1,6 +1,6 @@
 import {ExpressionNode} from "../../abap/nodes";
 import {MethodParam, MethodParamName} from "../../abap/expressions";
-import Position from "../../position";
+import {Position} from "../../position";
 import {Type} from "./type";
 
 export class MethodParameter {

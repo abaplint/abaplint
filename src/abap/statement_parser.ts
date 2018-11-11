@@ -35,7 +35,7 @@ class Map {
   }
 }
 
-export default class StatementParser {
+export class StatementParser {
   private static statements: StatementNode[];
   private static map: Map;
 
