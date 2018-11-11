@@ -1,17 +1,17 @@
+import * as fs from "fs";
+import * as path from "path";
+import * as zlib from "zlib";
+import * as glob from "glob";
+import * as minimist from "minimist";
+import * as ProgressBar from "progress";
 import {Runner} from "./runner";
 import {CompressedFile, MemoryFile} from "./files";
 import {Issue} from "./issue";
 import {Config} from "./config";
 import {textToVersion} from "./version";
 import {Formatter} from "./formatters/_format";
-import * as fs from "fs";
-import * as path from "path";
-import * as zlib from "zlib";
-import * as glob from "glob";
-import * as minimist from "minimist";
 import {Artifacts} from "./abap/artifacts";
 import {Registry, IProgress} from "./registry";
-import * as ProgressBar from "progress";
 import {IFile} from "./files/_ifile";
 
 function searchConfig(filename: string): Config {
