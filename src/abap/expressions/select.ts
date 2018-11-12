@@ -36,7 +36,7 @@ export class Select extends Expression {
 
     let ding = alt(str("ASCENDING"), str("DESCENDING"));
 
-    let order = seq(str("ORDER BY"), alt(plus(seq(new Field(), opt(ding))), str("PRIMARY KEY"), new Dynamic()));
+    let order = seq(str("ORDER BY"), alt(plus(seq(new Field(), opt(ding), opt(str(",")))), str("PRIMARY KEY"), new Dynamic()));
 
     let forAll = seq(str("FOR ALL ENTRIES IN"), opt(ver(Version.v740sp05, tok(WAt))), new Source());
 /*
