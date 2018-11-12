@@ -93,7 +93,9 @@ let tests = [
     "werks = <ls_excel>-werks lifnr = <ls_excel>-lifnr ] ).",
   "IF alv? = ''.",
   "IF gi_tab-field* = 'X'.",
-// todo
+  "if not line_exists( outputs[ table_line->alv = io_alv ] ).",
+
+  // todo
 //  "IF ?alv? = ''.",
 ];
 

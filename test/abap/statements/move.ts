@@ -67,6 +67,8 @@ let tests = [
   "  'foo' && 'foo' && 'foo' && 'foo' && 'foo' && 'foo' && 'foo' &&\n" +
   "  'foo' && 'foo' && 'foo' && 'foo' && 'foo' && 'foo' && 'foo' &&\n" +
   "  'foo' && 'foo' && 'foo' && 'foo' && 'foo' && 'foo' && 'foo'.",
+
+  "gs_structure-field$01 = 'val'.",
 ];
 
 statementType(tests, "MOVE", Statements.Move);
@@ -139,12 +141,17 @@ let versions = [
   {abap: "DATA(lv_end_date) = CONV zcreated( ms_periods-end_d ) + 235959.", ver: Version.v740sp02},
   {abap: "MOVE-CORRESPONDING gt_input TO gt_output EXPANDING NESTED TABLES KEEPING TARGET LINES.", ver: Version.v740sp05},
   {abap: "target[] = FILTER #( lt_tab[] IN lt_tab2[] WHERE field = var ).", ver: Version.v740sp08},
-
+  {abap: "lt_result = CORRESPONDING table_type( lt_input DISCARDING DUPLICATES ).", ver: Version.v751},
   {abap: "DATA(result) = REDUCE string(\n" +
     "  INIT text = ``\n" +
     "  FOR i = 0 UNTIL i >= xstrlen( source )\n" +
     "  LET char = CONV string( source+i(1) ) IN\n" +
     "  NEXT text = text && |{ char } | ).", ver: Version.v740sp08},
+
+  {abap: "ro_type = SWITCH #( LET rnd = lo_rnd->get( ) IN rnd\n" +
+  "  WHEN 3 THEN zcl_log=>go_error\n" +
+  "  WHEN 4 THEN zcl_log=>go_debug ).", ver: Version.v740sp02},
+
 ];
 
 statementVersion(versions, "MOVE", Statements.Move);

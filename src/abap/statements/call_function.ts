@@ -1,6 +1,6 @@
 import {Statement} from "./_statement";
 import {verNot, str, seq, opt, alt, per, IRunnable} from "../combi";
-import {Constant, FieldSub, FormName, MethodName, Source, FunctionParameters, FunctionName} from "../expressions";
+import {Constant, FieldSub, FormName, Source, FunctionParameters, FunctionName, FieldChain} from "../expressions";
 import {Version} from "../../version";
 
 export class CallFunction extends Statement {
@@ -12,7 +12,7 @@ export class CallFunction extends Statement {
     let unit = seq(str("UNIT"), new Source());
     let background = seq(str("IN BACKGROUND"), alt(str("TASK"), unit));
     let dest = seq(str("DESTINATION"), opt(str("IN GROUP")), new Source());
-    let calling = seq(str("CALLING"), new MethodName(), str("ON END OF TASK"));
+    let calling = seq(str("CALLING"), new FieldChain(), str("ON END OF TASK"));
     let performing = seq(str("PERFORMING"), new FormName(), str("ON END OF TASK"));
     let separate = str("AS SEPARATE UNIT");
 

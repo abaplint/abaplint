@@ -138,7 +138,7 @@ let tests = [
   "SELECT * FROM table INTO TABLE lt_tab %_HINTS ORACLE 'FIRST_ROWS'.",
   "SELECT SINGLE FROM table FIELDS field INTO @DATA(lv_field).",
   "SELECT * FROM cds_view( param2 = @lv_val2, param = @lv_val1 ).",
-//  "SELECT SINGLE @abap_true FROM dd03l INTO @DATA(lv_exists) WHERE tabname = @lv_tabname AND as4local = 'A'.",
+  "SELECT SINGLE @abap_true FROM dd03l INTO @DATA(lv_exists) WHERE tabname = @lv_tabname AND as4local = 'A'.",
 ];
 
 statementType(tests, "SELECT", Statements.Select);

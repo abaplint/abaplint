@@ -263,6 +263,11 @@ let tests = [
   "  exporting\n" +
   "    foo = bar.",
 
+  "call function 'ZNAME'\n" +
+  "  destination 'NONE'\n" +
+  "  starting new task 'ZFOO'\n" +
+  "  calling <out>->end_of_task on end of task.",
+
 ];
 
 statementType(tests, "CALL FUNCTION", Statements.CallFunction);

@@ -39,6 +39,8 @@ export class Source extends Expression {
 
     let baseParen = seq(str("BASE"), tok(WParenLeftW), new Source(), tok(WParenRightW));
 
+    let discarding = ver(Version.v751, str("DISCARDING DUPLICATES"));
+
     let corr = ver(Version.v740sp05, seq(str("CORRESPONDING"),
                                          new TypeName(),
                                          tok(ParenLeftW),
@@ -46,6 +48,7 @@ export class Source extends Expression {
                                          new Source(),
                                          opt(seq(str("EXCEPT"), new Field())),
                                          opt(mapping),
+                                         opt(discarding),
                                          rparen));
 
     let arith = seq(new ArithOperator(), new Source());
@@ -60,6 +63,7 @@ export class Source extends Expression {
     let swit = ver(Version.v740sp02, seq(str("SWITCH"),
                                          new TypeName(),
                                          tok(ParenLeftW),
+                                         opt(new Let()),
                                          new Source(),
                                          plus(swhen),
                                          opt(seq(str("ELSE"), new Source())),
