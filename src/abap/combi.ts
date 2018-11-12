@@ -244,7 +244,7 @@ class Vers implements IRunnable {
   public railroad() {
     return "Railroad.Sequence(Railroad.Comment(\"" +
       versionToText(this.version) +
-      "\"), " +
+      "\", {}), " +
       this.runnable.railroad() +
       ")";
   }
@@ -287,7 +287,7 @@ class VersNot implements IRunnable {
   public railroad() {
     return "Railroad.Sequence(Railroad.Comment(\"not " +
       versionToText(this.version) +
-      "\"), " +
+      "\", {}), " +
       this.runnable.railroad() +
       ")";
   }
