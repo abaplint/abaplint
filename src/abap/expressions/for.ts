@@ -1,6 +1,7 @@
 import {seq, opt, str, alt, ver, plus, Expression, IRunnable} from "../combi";
 import {Source, Field, FieldSymbol, Cond} from "./";
 import {Version} from "../../version";
+import {Let} from "./let";
 
 export class For extends Expression {
   public getRunnable(): IRunnable {
@@ -10,6 +11,6 @@ export class For extends Expression {
     let whil = seq(alt(str("UNTIL"), str("WHILE")), new Cond());
     let itera = seq(str("="), new Source(), opt(then), whil);
     let f = seq(str("FOR"), alt(new Field(), new FieldSymbol()), alt(itera, inn));
-    return ver(Version.v740sp05, plus(f));
+    return ver(Version.v740sp05, plus(seq(f, opt(new Let()))));
   }
 }

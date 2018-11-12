@@ -1,6 +1,6 @@
 import {Statement} from "./_statement";
 import {str, seq, alt, opt, IRunnable} from "../combi";
-import {Source, DatabaseTable, Dynamic} from "../expressions";
+import {Source, DatabaseTable, Dynamic, SQLSource} from "../expressions";
 
 export class InsertDatabase extends Statement {
 
@@ -15,7 +15,7 @@ export class InsertDatabase extends Statement {
                 opt(conn),
                 str("FROM"),
                 opt(str("TABLE")),
-                new Source(),
+                new SQLSource(),
                 opt(str("ACCEPTING DUPLICATE KEYS")));
 
     let from = seq(target,

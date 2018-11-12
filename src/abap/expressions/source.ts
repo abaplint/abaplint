@@ -134,7 +134,6 @@ export class Source extends Expression {
                          str("="),
                          new Source(),
                          new For(),
-                         new Let(),
                          str("NEXT"),
                          new Field(),
                          str("="),

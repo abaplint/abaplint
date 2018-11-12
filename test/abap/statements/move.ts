@@ -69,6 +69,7 @@ let tests = [
   "  'foo' && 'foo' && 'foo' && 'foo' && 'foo' && 'foo' && 'foo'.",
 
   "gs_structure-field$01 = 'val'.",
+//  "DATA(ints) = NEW tyt_integer( ( 1 ) ( 2 ) ( 3 ) ).",
 ];
 
 statementType(tests, "MOVE", Statements.Move);
@@ -149,8 +150,15 @@ let versions = [
     "  NEXT text = text && |{ char } | ).", ver: Version.v740sp08},
 
   {abap: "ro_type = SWITCH #( LET rnd = lo_rnd->get( ) IN rnd\n" +
-  "  WHEN 3 THEN zcl_log=>go_error\n" +
-  "  WHEN 4 THEN zcl_log=>go_debug ).", ver: Version.v740sp02},
+    "  WHEN 3 THEN zcl_log=>go_error\n" +
+    "  WHEN 4 THEN zcl_log=>go_debug ).", ver: Version.v740sp02},
+
+  {abap: "DATA(new_cells) = VALUE tty_cell(\n" +
+    "FOR cell IN cells\n" +
+    "LET alive_neighbours = get_alive( )\n" +
+    "IN ( col   = cell-col\n" +
+    "     row   = cell-row\n" +
+    "     alive = rule( ) ) ).", ver: Version.v740sp05},
 
 ];
 
