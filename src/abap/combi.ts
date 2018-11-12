@@ -633,7 +633,7 @@ export abstract class Expression implements IRunnable {
   }
 
   public railroad() {
-    return "Railroad.NonTerminal('" + this.getName() + "', '#/expression/" + this.getName() + "')";
+    return "Railroad.NonTerminal('" + this.getName() + "', {href: '#/expression/" + this.getName() + "'})";
   }
 
   public toStr() {

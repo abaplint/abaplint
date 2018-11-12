@@ -202,7 +202,7 @@ class SubStructure implements IStructureRunnable {
   }
 
   public toRailroad() {
-    return "Railroad.NonTerminal('" + this.s.constructor.name + "', '#/structure/" + this.s.constructor.name + "')";
+    return "Railroad.NonTerminal('" + this.s.constructor.name + "', {href: '#/structure/" + this.s.constructor.name + "'})";
   }
 
   public getUsing() {
@@ -229,7 +229,7 @@ class SubStatement implements IStructureRunnable {
   }
 
   public toRailroad() {
-    return "Railroad.Terminal('" + this.className() + "', '#/statement/" + this.className() + "')";
+    return "Railroad.Terminal('" + this.className() + "', {href: '#/statement/" + this.className() + "'})";
   }
 
   public getUsing() {
