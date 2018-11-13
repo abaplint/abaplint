@@ -1,8 +1,8 @@
-import {seq, per, opt, alt, tok, str, ver, star, plus, Expression, IRunnable} from "../combi";
-import {WParenLeftW, WAt, WParenRightW, WParenLeft} from "../tokens/";
-import {Field, DatabaseTable, Dynamic, Target, Source, SQLCond, SQLJoin, SQLCDSParameters} from "./";
-import {Version} from "../../version";
+import {seq, per, opt, alt, tok, str, star, plus, Expression, IRunnable} from "../combi";
+import {WParenLeftW, WParenRightW, WParenLeft} from "../tokens/";
+import {Field, DatabaseTable, Dynamic, SQLCond, SQLJoin, SQLCDSParameters, SQLSource} from "./";
 import {SQLFieldList} from "./sql_field_list";
+import {SQLTarget} from "./sql_target";
 
 export class Select extends Expression {
   public getRunnable(): IRunnable {
@@ -15,18 +15,16 @@ export class Select extends Expression {
                    opt(aas));
 
     let intoList = seq(alt(tok(WParenLeft), tok(WParenLeftW)),
-                       star(seq(new Target(), str(","))),
-                       new Target(),
+                       star(seq(new SQLTarget(), str(","))),
+                       new SQLTarget(),
                        str(")"));
     let intoSimple = seq(opt(str("CORRESPONDING FIELDS OF")),
-                         opt(ver(Version.v740sp05, tok(WAt))),
-                         new Target());
+                         new SQLTarget());
 
     let intoTable = seq(alt(str("INTO"), str("APPENDING")),
                         opt(str("CORRESPONDING FIELDS OF")),
                         str("TABLE"),
-                        opt(ver(Version.v740sp05, tok(WAt))),
-                        new Target());
+                        new SQLTarget());
 
     let into = alt(seq(str("INTO"), alt(intoList, intoSimple)), intoTable);
 
@@ -38,13 +36,9 @@ export class Select extends Expression {
 
     let order = seq(str("ORDER BY"), alt(plus(seq(new Field(), opt(ding), opt(str(",")))), str("PRIMARY KEY"), new Dynamic()));
 
-    let forAll = seq(str("FOR ALL ENTRIES IN"), opt(ver(Version.v740sp05, tok(WAt))), new Source());
-/*
-    let fields = alt(str("*"),
-                     new Dynamic(),
-                     plus(alt(seq(new Field(), opt(ver(Version.v740sp05, str(",")))), new SQLAggregation())));
-*/
-    let up = seq(str("UP TO"), opt(ver(Version.v740sp05, tok(WAt))), new Source(), str("ROWS"));
+    let forAll = seq(str("FOR ALL ENTRIES IN"), new SQLSource());
+
+    let up = seq(str("UP TO"), new SQLSource(), str("ROWS"));
 
     let client = str("CLIENT SPECIFIED");
     let bypass = str("BYPASSING BUFFER");

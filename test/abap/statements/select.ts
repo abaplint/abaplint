@@ -140,6 +140,8 @@ let tests = [
   "SELECT * FROM cds_view( param2 = @lv_val2, param = @lv_val1 ).",
   "SELECT SINGLE @abap_true FROM dd03l INTO @DATA(lv_exists) WHERE tabname = @lv_tabname AND as4local = 'A'.",
   "SELECT field1, field2 FROM ztab INTO TABLE @DATA(lt_result) WHERE field = @lv_field ORDER BY field1, field2.",
+  "SELECT field FROM tab INTO TABLE @rt_delta WHERE clas IN ( 'VALUE1' , 'VALUE2' ) ORDER BY clas.",
+  "SELECT SINGLE a, b INTO (@ls_foo-b, @ls_foo-a) FROM table.",
 ];
 
 statementType(tests, "SELECT", Statements.Select);

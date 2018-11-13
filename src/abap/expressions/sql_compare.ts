@@ -1,6 +1,6 @@
 import {seq, opt, ver, tok, star, alt, optPrio, str, Expression, IRunnable} from "../combi";
 import {FieldSub, Constant, Source, SQLFieldName, Dynamic, Select} from "./";
-import {WParenLeft, ParenRightW, ParenRight, WAt, WParenLeftW, WParenRight} from "../tokens/";
+import {WParenLeft, WAt, WParenLeftW} from "../tokens/";
 import {Version} from "../../version";
 
 export class SQLCompare extends Expression {
@@ -10,7 +10,7 @@ export class SQLCompare extends Expression {
     let list = seq(alt(tok(WParenLeft), tok(WParenLeftW)),
                    val,
                    star(seq(str(","), val)),
-                   alt(tok(WParenRight), tok(ParenRightW), tok(ParenRight)));
+                   str(")"));
 
     let subSelect = seq(str("("), new Select(), str(")"));
 
