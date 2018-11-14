@@ -1,12 +1,12 @@
 import {Statement} from "./_statement";
 import {verNot, str, seq, alt, opt, IRunnable, regex} from "../combi";
-import {FieldSymbol, FieldSub, Dynamic, FieldLength} from "../expressions";
+import {FieldSymbol, FieldSub, Dynamic, FieldLength, FieldOffset} from "../expressions";
 import {Version} from "../../version";
 
 export class At extends Statement {
 
   public getMatcher(): IRunnable {
-    let field = alt(seq(new FieldSub(), opt(new FieldLength())),
+    let field = alt(seq(new FieldSub(), opt(new FieldOffset()), opt(new FieldLength())),
                     new Dynamic(),
                     new FieldSymbol());
 

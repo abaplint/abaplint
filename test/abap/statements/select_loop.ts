@@ -21,6 +21,12 @@ let tests = [
   "  AND max >= ALL ( select max FROM  ztable WHERE field = wa-field ) ORDER BY field.",
   "select * from (name) into table <table> package size lv_size where (lv_where).",
 //  "select field1 field2 into corresponding fields of table lt_tab from ztab package size 250 where flag = 'N' and id in s_docnum.",
+
+  "SELECT field1 field2\n" +
+  "  APPENDING CORRESPONDING FIELDS OF TABLE gt_data\n" +
+  "  FROM ztable PACKAGE SIZE 10\n" +
+  "  FOR ALL ENTRIES IN lt_input \n" +
+  "  WHERE field = lt_input-field.",
 ];
 
 statementType(tests, "SELECT loop", Statements.SelectLoop);

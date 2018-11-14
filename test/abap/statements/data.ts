@@ -66,6 +66,9 @@ let tests = [
   "DATA foo16 DECIMALS 2 TYPE p VALUE 1.",
   "DATA foo17 VALUE 1 LENGTH 5 TYPE p DECIMALS 2.",
   "DATA foo18 VALUE 1 DECIMALS 2 TYPE p LENGTH 5.",
+  "DATA *foo.",
+  "DATA bar*.",
+  "DATA moo*boo.",
 
 // todo
 //  "DATA lt_tab OCCURS 10.",

@@ -160,6 +160,13 @@ let versions = [
     "     row   = cell-row\n" +
     "     alive = rule( ) ) ).", ver: Version.v740sp05},
 
+  {abap: "ls_line = CORRESPONDING #( is_data\n" +
+    "  MAPPING\n" +
+    "    field1 = lv_field1\n" +
+    "    field2 = lv_field2\n" +
+    "  EXCEPT\n" +
+    "    field3 ).", ver: Version.v740sp05},
+
 ];
 
 statementVersion(versions, "MOVE", Statements.Move);

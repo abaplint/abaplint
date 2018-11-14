@@ -142,6 +142,7 @@ let tests = [
   "SELECT field1, field2 FROM ztab INTO TABLE @DATA(lt_result) WHERE field = @lv_field ORDER BY field1, field2.",
   "SELECT field FROM tab INTO TABLE @rt_delta WHERE clas IN ( 'VALUE1' , 'VALUE2' ) ORDER BY clas.",
   "SELECT SINGLE a, b INTO (@ls_foo-b, @ls_foo-a) FROM table.",
+  "SELECT SINGLE 'X' FROM ztable INTO @DATA(lv_exist) WHERE field = 'F'.",
 ];
 
 statementType(tests, "SELECT", Statements.Select);

@@ -1,7 +1,8 @@
 import {seq, per, opt, alt, tok, str, ver, star, plus, Expression, IRunnable} from "../combi";
 import {WParenLeftW, WAt, WParenRightW, WParenLeft} from "../tokens/";
-import {Field, DatabaseTable, Dynamic, Target, Source, SQLCond, SQLJoin, SQLFieldName, SQLAggregation} from "./";
+import {Field, DatabaseTable, Dynamic, Target, Source, SQLCond, SQLJoin, SQLFieldName, SQLTarget, SQLAggregation} from "./";
 import {Version} from "../../version";
+import {SQLSource} from "./sql_source";
 
 export class SelectLoop extends Expression {
   public getRunnable(): IRunnable {
@@ -33,6 +34,7 @@ export class SelectLoop extends Expression {
     let someField = seq(alt(new SQLFieldName(), new SQLAggregation()), comma);
     let fieldList = seq(star(someField), new SQLFieldName(), comma, star(someField));
 
+// todo, use SQLFieldList instead
     let fields = alt(str("*"),
                      new Dynamic(),
                      fieldList);
@@ -40,22 +42,28 @@ export class SelectLoop extends Expression {
     let client = str("CLIENT SPECIFIED");
     let bypass = str("BYPASSING BUFFER");
 
-    let up = seq(str("UP TO"), opt(ver(Version.v740sp05, tok(WAt))), new Source(), str("ROWS"));
+    let up = seq(str("UP TO"), new SQLSource(), str("ROWS"));
 
     let pack = seq(str("PACKAGE SIZE"), new Source());
 
-    let forAll = seq(str("FOR ALL ENTRIES IN"), opt(ver(Version.v740sp05, tok(WAt))), new Source());
+    let forAll = seq(str("FOR ALL ENTRIES IN"), new SQLSource());
 
     let source = seq(from, star(new SQLJoin()), opt(tok(WParenRightW)));
 
     let group = seq(str("GROUP BY"), plus(alt(new SQLFieldName(), new Dynamic())));
 
 // hmm, this is bad, PACKAGE SIZE is not part of the non-loop?
-    let appending = seq(str("APPENDING TABLE"), new Target(), str("FROM"), new DatabaseTable(), pack);
-    let intoTable = seq(str("INTO CORRESPONDING FIELDS OF TABLE"), new Target(), pack);
-    let intoTab = seq(str("INTO TABLE"), new Target(), pack);
+    let appending = seq(str("APPENDING"),
+                        opt(str("CORRESPONDING FIELDS OF")),
+                        str("TABLE"),
+                        new SQLTarget(),
+                        str("FROM"),
+                        new DatabaseTable(),
+                        pack);
 
-    let perm = per(source, into, where, up, order, client, bypass, group, forAll, appending, intoTable, intoTab);
+    let intoTab = seq(str("INTO"), opt(str("CORRESPONDING FIELDS OF")), str("TABLE"), new SQLTarget(), pack);
+
+    let perm = per(source, where, up, order, client, bypass, group, forAll, alt(appending, intoTab, into));
 
     let ret = seq(str("SELECT"),
                   fields,

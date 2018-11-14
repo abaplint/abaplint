@@ -46,8 +46,8 @@ export class Source extends Expression {
                                          tok(ParenLeftW),
                                          opt(baseParen),
                                          new Source(),
-                                         opt(seq(str("EXCEPT"), new Field())),
                                          opt(mapping),
+                                         opt(seq(str("EXCEPT"), new Field())),
                                          opt(discarding),
                                          rparen));
 

@@ -15,6 +15,7 @@ export class SelectOption extends Statement {
                   opt(to));
 
     let option = seq(str("OPTION"), new Field());
+    let sign = seq(str("SIGN"), new Field());
 
     let memory = seq(str("MEMORY ID"), new Field());
 
@@ -26,6 +27,7 @@ export class SelectOption extends Statement {
 
     let options = per(def,
                       option,
+                      sign,
                       memory,
                       match,
                       visible,

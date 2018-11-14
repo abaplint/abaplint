@@ -30,6 +30,21 @@ let tests = [
   "  IMMEDIATELY  ' '\n" +
   "  NEW LIST IDENTIFICATION 'X'\n" +
   "  NO DIALOG.",
+
+  "NEW-PAGE\n" +
+  "  PRINT ON\n" +
+  "  LINE-SIZE               123\n" +
+  "  LIST NAME               lv_name\n" +
+  "  LIST AUTHORITY          lv_auth\n" +
+  "  DESTINATION             lv_dest\n" +
+  "  COVER TEXT              lv_cover_text\n" +
+  "  LIST DATASET            lv_list_dataset\n" +
+  "  IMMEDIATELY             lv_immediately\n" +
+  "  NEW LIST IDENTIFICATION lv_new_list_id\n" +
+  "  KEEP IN SPOOL           lv_keep\n" +
+  "  LAYOUT                  lv_layot\n" +
+  "  SAP COVER PAGE          lv_cover_page\n" +
+  "  NO DIALOG.",
 ];
 
 statementType(tests, "NEW-PAGE", Statements.NewPage);

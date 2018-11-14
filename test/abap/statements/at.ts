@@ -12,6 +12,7 @@ let tests = [
   "AT END OF <bar>.",
   "AT group.",
   "AT END OF field(10).",
+  "AT NEW field+4(2).",
 ];
 
 statementType(tests, "AT", Statements.At);

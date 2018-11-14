@@ -15,8 +15,9 @@ export class Sort extends Statement {
 
     let by = seq(str("BY"), fields);
 
-    let target = seq(new Target(),
-                     opt(per(order, by, str("STABLE"), str("AS TEXT"))));
+    let normal = seq(new Target(), opt(per(order, by, str("STABLE"), str("AS TEXT"))));
+
+    let target = alt(normal, str("AS TEXT"));
 
     return seq(str("SORT"), target);
   }

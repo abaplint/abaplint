@@ -2,6 +2,7 @@ import {alt, str, plus, seq, opt, ver, tok, Expression, IRunnable} from "../comb
 import {Dynamic, Field, SQLAggregation} from ".";
 import {Version} from "../../version";
 import {WAt} from "../tokens/";
+import {Constant} from "./constant";
 
 export class SQLFieldList extends Expression {
   public getRunnable(): IRunnable {
@@ -11,6 +12,6 @@ export class SQLFieldList extends Expression {
 
     return alt(str("*"),
                new Dynamic(),
-               plus(alt(seq(alt(new Field(), abap), comma), new SQLAggregation())));
+               plus(alt(seq(alt(new Field(), abap, new Constant()), comma), new SQLAggregation())));
   }
 }

@@ -58,6 +58,7 @@ let tests = [
   "  (foo-f20d) DESCENDING.",
 
   "SORT table BY ref->num.",
+  "SORT AS TEXT.",
 ];
 
 statementType(tests, "SORT", Statements.Sort);

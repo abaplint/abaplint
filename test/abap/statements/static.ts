@@ -9,6 +9,8 @@ let tests = [
   "STATICS sv_first TYPE abap_bool VALUE abap_true.",
   "STATICS asdf/foo/bar TYPE i.",
   "STATICS stat(255).",
+  "STATICS lv_stat1 TYPE c LENGTH 1.",
+  "STATICS lv_stat2 LENGTH 1 TYPE c.",
 ];
 
 statementType(tests, "STATIC", Statements.Static);

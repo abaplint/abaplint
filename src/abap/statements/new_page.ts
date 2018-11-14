@@ -13,10 +13,13 @@ export class NewPage extends Statement {
     let archive = seq(str("ARCHIVE PARAMETERS"), new Source());
     let lineCount = seq(str("LINE-COUNT"), new Source());
     let coverText = seq(str("COVER TEXT"), new Source());
+    let coverPage = seq(str("SAP COVER PAGE"), new Source());
     let immediately = seq(str("IMMEDIATELY"), new Source());
     let keep = seq(str("KEEP IN SPOOL"), new Source());
+    let layout = seq(str("LAYOUT"), new Source());
     let listAuth = seq(str("LIST AUTHORITY"), new Source());
     let dataset = seq(str("LIST DATASET"), new Source());
+    let name = seq(str("LIST NAME"), new Source());
     let newList = seq(str("NEW LIST IDENTIFICATION"), new Source());
 
     let ret = seq(str("NEW-PAGE"),
@@ -28,8 +31,11 @@ export class NewPage extends Statement {
                           listAuth,
                           immediately,
                           dataset,
+                          coverPage,
                           newList,
                           keep,
+                          name,
+                          layout,
                           destination,
                           coverText,
                           archive,
