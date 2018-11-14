@@ -68,6 +68,7 @@ let tests = [
   "  'foo' && 'foo' && 'foo' && 'foo' && 'foo' && 'foo' && 'foo' &&\n" +
   "  'foo' && 'foo' && 'foo' && 'foo' && 'foo' && 'foo' && 'foo'.",
 
+  "MOVE foo(+100) TO bar.",
   "gs_structure-field$01 = 'val'.",
 //  "DATA(ints) = NEW tyt_integer( ( 1 ) ( 2 ) ( 3 ) ).",
 ];
@@ -166,6 +167,11 @@ let versions = [
     "    field2 = lv_field2\n" +
     "  EXCEPT\n" +
     "    field3 ).", ver: Version.v740sp05},
+
+  {abap: "lt_range = VALUE #( sign = 'I' option = 'EQ' ( low = 'VAL1' )\n" +
+    "( low = 'VAL2' )\n" +
+    "option = 'NE' ( low = 'VAL3' )\n" +
+    "( low = 'VAL4' ) ).", ver: Version.v740sp02},
 
 ];
 

@@ -27,6 +27,12 @@ let tests = [
   "  FROM ztable PACKAGE SIZE 10\n" +
   "  FOR ALL ENTRIES IN lt_input \n" +
   "  WHERE field = lt_input-field.",
+
+  "SELECT field1 field2\n" +
+  "  APPENDING CORRESPONDING FIELDS OF TABLE gt_data\n" +
+  "  PACKAGE SIZE 10 FROM ztable\n" +
+  "  FOR ALL ENTRIES IN lt_input \n" +
+  "  WHERE field = lt_input-field.",
 ];
 
 statementType(tests, "SELECT loop", Statements.SelectLoop);

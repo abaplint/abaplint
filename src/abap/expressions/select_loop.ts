@@ -52,14 +52,14 @@ export class SelectLoop extends Expression {
 
     let group = seq(str("GROUP BY"), plus(alt(new SQLFieldName(), new Dynamic())));
 
+    let from2 = seq(str("FROM"), new DatabaseTable());
+
 // hmm, this is bad, PACKAGE SIZE is not part of the non-loop?
     let appending = seq(str("APPENDING"),
                         opt(str("CORRESPONDING FIELDS OF")),
                         str("TABLE"),
                         new SQLTarget(),
-                        str("FROM"),
-                        new DatabaseTable(),
-                        pack);
+                        alt(seq(from2, pack), seq(pack, from2)));
 
     let intoTab = seq(str("INTO"), opt(str("CORRESPONDING FIELDS OF")), str("TABLE"), new SQLTarget(), pack);
 

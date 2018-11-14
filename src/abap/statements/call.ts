@@ -8,7 +8,7 @@ export class Call extends Statement {
 
   public getMatcher(): IRunnable {
     let mname = alt(new MethodName(), new Dynamic());
-    let cname = alt(new FieldChain(), new Dynamic());
+    let cname = alt(new FieldChain(), new MethodCallChain(), new Dynamic());
 
     let method = seq(opt(seq(cname, tok(Arrow))), mname);
 

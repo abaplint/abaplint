@@ -36,13 +36,11 @@ let tests = [
   "select foo~bname bar~name_first into table lt_table from foo left outer join bar on foo~mandt = bar~mandt and foo~bname = bar~bname.",
   "SELECT SINGLE node_key FROM snwd_bpa INTO @DATA(node_key).",
   "SELECT SINGLE node_key FROM snwd_bpa INTO @DATA(node_key) WHERE bp_id = @lv_bp_id.",
-
   "SELECT SINGLE * FROM sflight INTO CORRESPONDING FIELDS OF @return WHERE carrid = @i_flight_number.",
   "SELECT SINGLE * FROM sflight INTO @return WHERE carrid = @i_flight_number.",
   "SELECT SINGLE carrid, connid FROM sflight INTO @return.",
   "SELECT SINGLE carrid, connid, fldate FROM sflight INTO CORRESPONDING FIELDS OF @return WHERE carrid = @i_flight_number.",
   "SELECT SINGLE carrid, connid, fldate FROM sflight INTO CORRESPONDING FIELDS OF @DATA(return) WHERE carrid = @i_flight_number.",
-
   "SELECT * FROM zags_objects INTO TABLE @DATA(rt_list) WHERE repo = '345' ##SELECT_FAE_WITH_LOB[DATA_RAW].",
 
   "SELECT marc~matnr marc~werks marc~herkl\n" +
@@ -143,6 +141,7 @@ let tests = [
   "SELECT field FROM tab INTO TABLE @rt_delta WHERE clas IN ( 'VALUE1' , 'VALUE2' ) ORDER BY clas.",
   "SELECT SINGLE a, b INTO (@ls_foo-b, @ls_foo-a) FROM table.",
   "SELECT SINGLE 'X' FROM ztable INTO @DATA(lv_exist) WHERE field = 'F'.",
+  "SELECT SINGLE field INTO lv_total FROM ztab WHERE invts = ( SELECT MIN( invts ) FROM table2 WHERE field = lv_value ).",
 ];
 
 statementType(tests, "SELECT", Statements.Select);

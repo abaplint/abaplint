@@ -54,6 +54,11 @@ let tests = [
   "    field1 = DATA(lv_field1)\n" +
   "    field1 = DATA(lv_field1)\n" +
   "    field1 = DATA(lv_field1).",
+
+  "CALL METHOD lr_salv->get_sorts( )->add_sort(\n" +
+  "  EXPORTING\n" +
+  "    columnname = 'COLUMN'\n" +
+  "    subtotal   = if_salv_c_bool_sap=>true ).",
 ];
 
 statementType(tests, "CALL", Statements.Call);
