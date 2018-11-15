@@ -1,7 +1,8 @@
 import {Statement} from "./_statement";
-import {verNot, str, ver, seq, alt, opt, plus, IRunnable} from "../combi";
+import {verNot, str, tok, ver, seq, alt, opt, plus, IRunnable} from "../combi";
 import {Target, Source} from "../expressions";
 import {Version} from "../../version";
+import {WPlus, WDash} from "../tokens";
 
 export class Move extends Statement {
 
@@ -20,8 +21,8 @@ export class Move extends Statement {
                    opt(keeping));
 
     let calcAssign = ver(Version.Cloud,
-                         alt(str("+="),
-                             str("-="),
+                         alt(seq(tok(WPlus), str("=")),
+                             seq(tok(WDash), str("=")),
                              str("/="),
                              str("*=")));
 
