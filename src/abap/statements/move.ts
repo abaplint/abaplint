@@ -19,7 +19,13 @@ export class Move extends Statement {
                    opt(expanding),
                    opt(keeping));
 
-    let equals = alt(str("="), str("?="));
+    let calcAssign = ver(Version.Cloud,
+                         alt(str("+="),
+                             str("-="),
+                             str("/="),
+                             str("*=")));
+
+    let equals = alt(alt(str("="), str("?=")), calcAssign);
 
 // todo, move "?=" to CAST?
     let eq = seq(plus(seq(new Target(), equals)), new Source());

@@ -11,6 +11,7 @@ let tests = [
   "CONSTANTS id1 TYPE x LENGTH 2 VALUE '1122'.",
   "CONSTANTS id2 VALUE '1122' TYPE x LENGTH 2.",
   "CONSTANTS id3 VALUE '1122' LENGTH 2 TYPE x.",
+  "CONSTANTS lc_price TYPE p DECIMALS 4 VALUE '0.01'.",
 ];
 
 statementType(tests, "CONSTANT", Statements.Constant);

@@ -112,7 +112,9 @@ function tokens() {
   for (let token of file.getTokens()) {
     inner = inner + "<tr><td>\"" +
       token.getStr() + "\"</td><td>" +
-      token.constructor.name + "</td></tr>";
+      token.constructor.name + "</td><td>" +
+      token.getRow() + "</td><td>" +
+      token.getCol() + "</td></tr>";
   }
   inner = inner + "</table>";
 
