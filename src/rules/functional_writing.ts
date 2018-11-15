@@ -1,9 +1,11 @@
 import {Issue} from "../issue";
 import {ABAPRule} from "./_abap_rule";
 import {ABAPFile} from "../files";
+import * as Statements from "../abap/statements";
 
 export class FunctionalWritingConf {
   public enabled: boolean = true;
+  public ignoreExceptions: boolean = true;
 }
 
 export class FunctionalWriting extends ABAPRule {
@@ -28,10 +30,16 @@ export class FunctionalWriting extends ABAPRule {
 
   public runParsed(file: ABAPFile) {
     let issues: Array<Issue> = [];
+    let exception = false;
 
     for (let statement of file.getStatements()) {
       let code = statement.concatTokens().toUpperCase();
-      if (this.startsWith(code, "CALL METHOD ")) {
+
+      if (statement.get() instanceof Statements.ClassImplementation && code.match(/^CLASS .?CX/i) && this.conf.ignoreExceptions) {
+        exception = true;
+      } else if (statement.get() instanceof Statements.EndClass) {
+        exception = false;
+      } else if (exception === false && this.startsWith(code, "CALL METHOD ")) {
         if (/\)[=-]>/.test(code) === true
             || /[=-]>\(/.test(code) === true
             || this.startsWith(code, "CALL METHOD (")) {
