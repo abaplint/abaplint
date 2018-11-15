@@ -6,16 +6,39 @@ import {Scope} from "../../src/abap/types/scope";
 
 describe("Objects, class, isException", () => {
 
+  it("false, parser error", () => {
+    const reg = new Registry().addFile(new MemoryFile("cl_foo.clas.abap", "WRITE foo.")).parse();
+    const clas = reg.getABAPObjects()[0] as Class;
+    expect(clas.isException()).to.equal(false);
+  });
+
   it("false", () => {
-    const reg = new Registry().addFile(new MemoryFile("cl_foo.clas.abap", "foo bar"));
+    const abap = "CLASS zcl_abapgit_moo DEFINITION PUBLIC\n" +
+      "FINAL CREATE PUBLIC.\n" +
+      "ENDCLASS.\n" +
+      "CLASS zcl_abapgit_moo IMPLEMENTATION.\n" +
+      "ENDCLASS.";
+    const reg = new Registry().addFile(new MemoryFile("zcl_abapgit_moo.clas.abap", abap)).parse();
+    expect(reg.findIssues().length).to.equal(0);
     const clas = reg.getABAPObjects()[0] as Class;
     expect(clas.isException()).to.equal(false);
   });
 
   it("true", () => {
-    const reg = new Registry().addFile(new MemoryFile("zcx_foo.clas.abap", "foo bar"));
+    const abap = "CLASS zcx_abapgit_cancel DEFINITION PUBLIC\n" +
+      "INHERITING FROM cx_static_check FINAL CREATE PUBLIC.\n" +
+      "ENDCLASS.\n" +
+      "CLASS zcx_abapgit_cancel IMPLEMENTATION.\n" +
+      "ENDCLASS.";
+    const reg = new Registry().addFile(new MemoryFile("zcx_foo.clas.abap", abap)).parse();
     const clas = reg.getABAPObjects()[0] as Class;
     expect(clas.isException()).to.equal(true);
+  });
+
+  it("not parsed", () => {
+    const reg = new Registry().addFile(new MemoryFile("zcx_foo.clas.abap", "foo bar"));
+    const clas = reg.getABAPObjects()[0] as Class;
+    expect(() => { clas.isException(); }).to.throw();
   });
 
 });

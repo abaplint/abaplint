@@ -10,16 +10,23 @@ export class Class extends ABAPObject {
     return "CLAS";
   }
 
-// todo, move this method, requires testing
+// todo, move some of these methods to ABAPObject?
+  public getMainClass(): ClassDefinition {
+    return new ClassDefinition(this.getMain());
+  }
+
+  public getAllClasses(): ClassDefinition[] {
+    throw new Error("todo, getAllClasses");
+  }
+
+  public getLocalClasses(): ClassDefinition[] {
+    throw new Error("todo, getAllClasses");
+  }
+
+// -------------------
+
   public isException(): boolean {
-    for (let file of this.files) {
-      if (file.getObjectName().match(/^zcx_.*$/i)) {
-        return true;
-      } else {
-        return false;
-      }
-    }
-    return false;
+    return new ClassDefinition(this.getMain()).isException();
   }
 
   public getSuperClass(): string {
@@ -45,11 +52,15 @@ export class Class extends ABAPObject {
 // todo, overrride addFile instead of looping through it again?
     const files = this.getParsedFiles();
     for (let file of files) {
-      if (file.getFilename().match(/\.clas\.abap$/)) {
+      if (file.getFilename().match(/\.clas\.abap$/i)) {
         return file.getStructure();
       }
     }
-    throw new Error("class.ts, getMain: Could not find main file");
+    if (files.length === 0) {
+      throw new Error("class.ts, getMain: Could not find main file, parsed empty");
+    } else {
+      throw new Error("class.ts, getMain: Could not find main file");
+    }
   }
 
 }

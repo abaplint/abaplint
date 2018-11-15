@@ -27,6 +27,16 @@ export class ClassDefinition {
     return new ClassAttributes(this.node);
   }
 
+// todo, this logic is not correct
+  public isException(): boolean {
+    const superClass = this.getSuperClass();
+    if (superClass && superClass.match(/^.?cx_.*$/i)) {
+      return true;
+    } else {
+      return false;
+    }
+  }
+
   /*
 
   public isAbstract(): boolean {
