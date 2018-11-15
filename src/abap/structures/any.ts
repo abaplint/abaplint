@@ -13,6 +13,7 @@ export class Any extends Structure {
                     sta(Statements.Parameter),
                     sta(Statements.Get),
                     sta(Statements.Initialization),
+                    sta(Statements.InterfaceDeferred),
                     sta(Statements.SelectionScreen),
                     sta(Statements.SelectOption),
                     sta(Statements.AtSelectionScreen),

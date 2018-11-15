@@ -5,6 +5,7 @@ import {MethodDefinitions} from "../abap/types/method_definitions";
 import {ClassAttributes} from "../abap/types/class_attributes";
 
 export class Class extends ABAPObject {
+// todo, add dirty flag so things can be cached?
 
   public getType(): string {
     return "CLAS";
@@ -26,28 +27,23 @@ export class Class extends ABAPObject {
 // -------------------
 
   public isException(): boolean {
-    return new ClassDefinition(this.getMain()).isException();
+    return this.getMainClass().isException();
   }
 
   public getSuperClass(): string {
-    return new ClassDefinition(this.getMain()).getSuperClass();
+    return this.getMainClass().getSuperClass();
   }
 
   public getMethodDefinitions(): MethodDefinitions {
-    return new ClassDefinition(this.getMain()).getMethodDefinitions();
+    return this.getMainClass().getMethodDefinitions();
   }
 
   public getAttributes(): ClassAttributes {
-    return new ClassDefinition(this.getMain()).getAttributes();
+    return this.getMainClass().getAttributes();
   }
 
-// todo, add dirty flag so things can be cached
+// --------------------
 
-/*
-  public getLocalClasses(): ClassDefinition[] {
-    return []
-  }
-*/
   private getMain(): StructureNode {
 // todo, overrride addFile instead of looping through it again?
     const files = this.getParsedFiles();
