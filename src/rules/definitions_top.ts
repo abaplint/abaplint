@@ -38,7 +38,7 @@ export class DefinitionsTop extends ABAPRule {
     let issues: Array<Issue> = [];
 
     let mode = ANY;
-    let issue: Issue = undefined;
+    let issue: Issue | undefined = undefined;
 
 // todo, this needs refactoring when the paser has become better
     for (let statement of file.getStatements()) {

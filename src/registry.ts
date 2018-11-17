@@ -73,7 +73,8 @@ todo
 
   public updateFile(file: IFile): Registry {
     this.setDirty();
-    this.find(file.getObjectName(), file.getObjectType()).updateFile(file);
+    let obj = this.find(file.getObjectName(), file.getObjectType());
+    obj.updateFile(file);
     return this;
   }
 
@@ -140,19 +141,19 @@ todo
     if (!this.isDirty()) {
       return this;
     }
-    progress = progress ? progress : new NoProgress();
+    const pro = progress ? progress : new NoProgress();
 
     const objects = this.getABAPObjects();
 
-    progress.set(objects.length, ":percent - Lexing and parsing - :object");
+    pro.set(objects.length, ":percent - Lexing and parsing - :object");
     objects.forEach((obj) => {
-      progress.tick({object: obj.getType() + " " + obj.getName()});
+      pro.tick({object: obj.getType() + " " + obj.getName()});
       obj.parseFirstPass(this.conf.getVersion(), this);
     });
 
-    progress.set(objects.length, ":percent - Second pass - :object");
+    pro.set(objects.length, ":percent - Second pass - :object");
     objects.forEach((obj) => {
-      progress.tick({object: obj.getType() + " " + obj.getName()});
+      pro.tick({object: obj.getType() + " " + obj.getName()});
       this.issues = this.issues.concat(obj.parseSecondPass(this));
     });
 
@@ -177,17 +178,20 @@ todo
   }
 
   private findOrCreate(name: string, type: string): IObject {
-    let found = this.find(name, type, true);
-    if (found) {
-      return found;
+    try {
+      return this.find(name, type);
+    } catch {
+      const add = Artifacts.newObject(name, type);
+      this.objects.push(add);
+      return add;
     }
-
-    const add = Artifacts.newObject(name, type);
-    this.objects.push(add);
-    return add;
   }
 
-  private removeObject(remove: IObject): void {
+  private removeObject(remove: IObject | undefined): void {
+    if (remove === undefined) {
+      return;
+    }
+
     for (let i = 0; i < this.objects.length; i++) {
       if (this.objects[i] === remove) {
         this.objects.splice(i, 1);
@@ -197,17 +201,13 @@ todo
     throw new Error("removeObject: object not found");
   }
 
-  private find(name: string, type: string, ignoreError = false): IObject {
+  private find(name: string, type: string): IObject {
     for (let obj of this.objects) { // todo, this is slow
       if (obj.getType() === type && obj.getName() === name) {
         return obj;
       }
     }
-    if (ignoreError === false) {
-      throw new Error("find: object not found");
-    } else {
-      return undefined;
-    }
+    throw new Error("find: object not found");
   }
 
 }

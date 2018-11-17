@@ -36,22 +36,22 @@ export class Class extends ABAPObject {
 
 // -------------------
 
-  public isException(): boolean {
+  public isException(): boolean | undefined  {
     if (!this.getMainClass()) { return undefined; }
     return this.getMainClass().isException();
   }
 
-  public getSuperClass(): string {
+  public getSuperClass(): string | undefined  {
     if (!this.getMainClass()) { return undefined; }
     return this.getMainClass().getSuperClass();
   }
 
-  public getMethodDefinitions(): MethodDefinitions {
+  public getMethodDefinitions(): MethodDefinitions | undefined  {
     if (!this.getMainClass()) { return undefined; }
     return this.getMainClass().getMethodDefinitions();
   }
 
-  public getAttributes(): ClassAttributes {
+  public getAttributes(): ClassAttributes | undefined {
     if (!this.getMainClass()) { return undefined; }
     return this.getMainClass().getAttributes();
   }

@@ -29,7 +29,7 @@ export class Exporting extends ABAPRule {
     let issues: Array<Issue> = [];
 
     for (let statement of file.getStatements()) {
-      let current = new Counter();
+      let current: Counter | undefined = new Counter();
       let stack: Array<Counter> = [];
 
       for (let token of statement.getTokens()) {

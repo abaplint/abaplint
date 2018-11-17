@@ -53,7 +53,7 @@ export class Config {
     return textToVersion(this.config["version"]);
   }
 
-  public setVersion(ver: Version): Config {
+  public setVersion(ver: Version | undefined): Config {
     if (ver === undefined) {
       return this;
     }

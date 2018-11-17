@@ -33,7 +33,7 @@ export class StartAtTab extends ABAPRule {
     let issues: Issue[] = [];
 
     let inType = false;
-    let previous: Position = undefined;
+    let previous: Position | undefined = undefined;
 
     for (let statement of file.getStatements()) {
       if (statement.get() instanceof Comment) {
