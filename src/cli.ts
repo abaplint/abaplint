@@ -23,7 +23,7 @@ function searchConfig(filename: string): Config {
   }
 }
 
-function searchUp(dir: string): string {
+function searchUp(dir: string): string | undefined {
   let file = dir + "abaplint.json";
   if (fs.existsSync(file)) {
     return fs.readFileSync(file, "utf8");
@@ -64,7 +64,7 @@ function loadFileNames(args: string[]): Array<string> {
 
 async function loadFiles(compress: boolean, input: Array<string>, progress: boolean): Promise<Array<IFile>> {
   let files: Array<IFile> = [];
-  let bar: ProgressBar = undefined;
+  let bar: ProgressBar | undefined = undefined;
 
   if (progress) {
     bar = new ProgressBar(":percent - Reading files - :filename", {total: input.length});
@@ -159,7 +159,7 @@ run().then(({output, issues}) => {
 });
 
 class Progress implements IProgress {
-  private bar: ProgressBar = undefined;
+  private bar: ProgressBar;
 
   public set(total: number, text: string) {
     this.bar = new ProgressBar(text, {total, renderThrottle: 100});

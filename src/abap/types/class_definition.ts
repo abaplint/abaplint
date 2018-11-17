@@ -15,18 +15,19 @@ export class ClassDefinition {
     this.node = node;
   }
 
-  public getMethodDefinitions(): MethodDefinitions {
+  public getMethodDefinitions(): MethodDefinitions | undefined {
     if (!this.node) { return undefined; }
     return new MethodDefinitions(this.node);
   }
 
-  public getSuperClass(): string {
+  public getSuperClass(): string | undefined {
     if (!this.node) { return undefined; }
-    const token = this.node.findFirstStatement(Statements.ClassDefinition).findFirstExpression(SuperClassName);
+    const found = this.node.findFirstStatement(Statements.ClassDefinition);
+    const token = found ? found.findFirstExpression(SuperClassName) : undefined;
     return token ? token.getFirstToken().get().getStr() : undefined;
   }
 
-  public getAttributes(): ClassAttributes {
+  public getAttributes(): ClassAttributes | undefined {
     if (!this.node) { return undefined; }
     return new ClassAttributes(this.node);
   }

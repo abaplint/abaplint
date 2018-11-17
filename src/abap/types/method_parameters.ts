@@ -8,7 +8,7 @@ export class MethodParameters {
   private importing: MethodParameter[];
   private exporting: MethodParameter[];
   private changing: MethodParameter[];
-  private returning: MethodParameter;
+  private returning: MethodParameter | undefined;
   private exceptions: string[]; // todo, not filled
 
   constructor(node: StatementNode) {

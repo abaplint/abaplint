@@ -16,7 +16,7 @@ export class StructureNode extends BasicNode {
     return this.structure;
   }
 
-  public findParent(node: StatementNode): StructureNode {
+  public findParent(node: StatementNode): StructureNode | undefined {
     for (let child of this.getChildren()) {
       if (child === node) {
         return this;
@@ -34,7 +34,7 @@ export class StructureNode extends BasicNode {
     return undefined;
   }
 
-  public findFirstStatement(type: new () => Statement): StatementNode {
+  public findFirstStatement(type: new () => Statement): StatementNode | undefined {
     for (let child of this.getChildren()) {
       if (child.get() instanceof type) {
         return child as StatementNode;
@@ -95,7 +95,7 @@ export class StructureNode extends BasicNode {
     return ret;
   }
 
-  public findFirstStructure(type: new () => Structure): StructureNode {
+  public findFirstStructure(type: new () => Structure): StructureNode | undefined {
     if (this.get() instanceof type) {
       return this;
     }

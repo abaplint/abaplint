@@ -1,6 +1,7 @@
 import {Structure} from "./_structure";
 import {StructureNode, StatementNode} from "../nodes/";
 import {INode} from "../nodes/_inode";
+import {Statement} from "../statements/_statement";
 
 export interface IMatch {
   matched: StatementNode[];
@@ -222,9 +223,9 @@ class SubStructure implements IStructureRunnable {
 }
 
 class SubStatement implements IStructureRunnable {
-  private obj: any;
+  private obj: new () => Statement;
 
-  constructor(obj: any) {
+  constructor(obj: new () => Statement) {
     this.obj = obj;
   }
 
@@ -237,6 +238,7 @@ class SubStatement implements IStructureRunnable {
   }
 
   private className() {
+    // @ts-ignore
     return (this.obj + "").match(/\w+/g)[1];
   }
 
@@ -290,7 +292,7 @@ export function star(s: IStructureRunnable): IStructureRunnable {
   return new Star(s);
 }
 
-export function sta(s: Object): IStructureRunnable {
+export function sta(s: new () => Statement): IStructureRunnable {
   return new SubStatement(s);
 }
 

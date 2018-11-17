@@ -37,19 +37,20 @@ export class LocalVariableNames extends ABAPRule {
 
   public runParsed(file: ABAPFile): Issue[] {
     let ret: Issue[] = [];
+    let stru = file.getStructure();
 
-    if (file.getStructure() == undefined) {
+    if (stru == undefined) {
       return [];
     }
 
 // inside METHOD, FORM, FUNCTION MODULE
-    for (let node of file.getStructure().findAllStructures(Structures.Form)) {
+    for (let node of stru.findAllStructures(Structures.Form)) {
       ret = ret.concat(this.checkLocals(node, file));
     }
-    for (let node of file.getStructure().findAllStructures(Structures.Method)) {
+    for (let node of stru.findAllStructures(Structures.Method)) {
       ret = ret.concat(this.checkLocals(node, file));
     }
-    for (let node of file.getStructure().findAllStructures(Structures.FunctionModule)) {
+    for (let node of stru.findAllStructures(Structures.FunctionModule)) {
       ret = ret.concat(this.checkLocals(node, file));
     }
 
@@ -63,32 +64,46 @@ export class LocalVariableNames extends ABAPRule {
 
     let data = structure.findAllStatements(Statements.Data);
     for (let dat of data) {
-      if (structure.findParent(dat).get() instanceof Structures.Data) {
+      let parent = structure.findParent(dat);
+      if (parent && parent.get() instanceof Structures.Data) {
         continue; // inside DATA BEGIN OF
       }
-      const token = dat.findFirstExpression(Expressions.NamespaceSimpleName).getFirstToken().get();
-      ret = ret.concat(this.checkName(token, file, this.conf.expectedData));
+      const found = dat.findFirstExpression(Expressions.NamespaceSimpleName);
+      if (found) {
+        const token = found.getFirstToken().get();
+        ret = ret.concat(this.checkName(token, file, this.conf.expectedData));
+      }
     }
 
     let datab = structure.findAllStatements(Statements.DataBegin);
     for (let dat of datab) {
-      const token = dat.findFirstExpression(Expressions.NamespaceSimpleName).getFirstToken().get();
-      ret = ret.concat(this.checkName(token, file, this.conf.expectedData));
+      const found = dat.findFirstExpression(Expressions.NamespaceSimpleName);
+      if (found) {
+        const token = found.getFirstToken().get();
+        ret = ret.concat(this.checkName(token, file, this.conf.expectedData));
+      }
     }
 
     let fieldsymbols = structure.findAllStatements(Statements.FieldSymbol);
     for (let fieldsymbol of fieldsymbols) {
-      const token = fieldsymbol.findFirstExpression(Expressions.FieldSymbol).getFirstToken().get();
-      ret = ret.concat(this.checkName(token, file, this.conf.expectedFS));
+      const found = fieldsymbol.findFirstExpression(Expressions.FieldSymbol);
+      if (found) {
+        const token = found.getFirstToken().get();
+        ret = ret.concat(this.checkName(token, file, this.conf.expectedFS));
+      }
     }
 
     let constants = structure.findAllStatements(Statements.Constant);
     for (let constant of constants) {
-      if (structure.findParent(constant).get() instanceof Structures.Constants) {
+      let parent = structure.findParent(constant);
+      if (parent && parent.get() instanceof Structures.Constants) {
         continue; // inside DATA BEGIN OF
       }
-      const token = constant.findFirstExpression(Expressions.NamespaceSimpleName).getFirstToken().get();
-      ret = ret.concat(this.checkName(token, file, this.conf.expectedConstant));
+      let found = constant.findFirstExpression(Expressions.NamespaceSimpleName);
+      if (found) {
+        const token = found.getFirstToken().get();
+        ret = ret.concat(this.checkName(token, file, this.conf.expectedConstant));
+      }
     }
 
 // todo: inline data, inline field symbols

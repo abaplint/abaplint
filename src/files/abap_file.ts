@@ -10,7 +10,7 @@ export class ABAPFile extends AbstractFile {
   // todo: need some better way of handling pragmas
   private tokens: Array<Token>;
   private statements: StatementNode[];
-  private structure: StructureNode;
+  private structure: StructureNode | undefined;
   private file: IFile;
 
   public constructor(file: IFile, tokens: Array<Token>, statements: StatementNode[]) {
@@ -28,11 +28,11 @@ export class ABAPFile extends AbstractFile {
     return this.file.getRawRows();
   }
 
-  public setStructure(node: StructureNode) {
+  public setStructure(node?: StructureNode) {
     this.structure = node;
   }
 
-  public getStructure(): StructureNode {
+  public getStructure(): StructureNode | undefined {
     return this.structure;
   }
 

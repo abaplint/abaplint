@@ -20,9 +20,10 @@ export class Issue {
     this.message = data.message;
     this.code = data.code;
 
-    this.start = data.start;
-    if (!this.start) {
+    if (!data.start) {
       this.start = new Position(1, 1);
+    } else {
+      this.start = data.start;
     }
 
     if (!data.end) {

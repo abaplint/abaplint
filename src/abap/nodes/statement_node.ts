@@ -64,14 +64,14 @@ export class StatementNode extends BasicNode {
 
   public concatTokens(): string {
     let str = "";
-    let prev: Token;
+    let prev: Token | undefined;
     for (let token of this.getTokens()) {
       if (token instanceof Pragma) {
         continue;
       }
       if (str === "") {
         str = token.getStr();
-      } else if (prev.getStr().length + prev.getCol() === token.getCol()
+      } else if (prev && prev.getStr().length + prev.getCol() === token.getCol()
           && prev.getRow() === token.getRow()) {
         str = str + token.getStr();
       } else {
@@ -97,7 +97,7 @@ export class StatementNode extends BasicNode {
     throw new Error("getFirstToken, unexpected type");
   }
 
-  public findFirstExpression(type: new () => Expression): ExpressionNode {
+  public findFirstExpression(type: new () => Expression): ExpressionNode | undefined {
     for (let child of this.getChildren()) {
       if (child.get() instanceof type) {
         return child as ExpressionNode;

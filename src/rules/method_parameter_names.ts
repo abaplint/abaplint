@@ -45,10 +45,11 @@ export class MethodParameterNames implements IRule {
       if (this.conf.ignoreExceptions && obj.isException()) {
         return [];
       }
-      if (obj.getMethodDefinitions() === undefined) {
+      let definitions = obj.getMethodDefinitions();
+      if (definitions === undefined) {
         return [];
       }
-      methods = obj.getMethodDefinitions().getAll();
+      methods = definitions.getAll();
     } else if (obj instanceof Interface) {
       methods = obj.getMethodDefinitions();
     }

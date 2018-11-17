@@ -12,23 +12,36 @@ export class Class extends ABAPObject {
     return "CLAS";
   }
 
-  public getMainClass(): ClassDefinition {
-    if (!this.getMain()) {
+  public getMainClass(): ClassDefinition | undefined {
+    let main = this.getMain();
+    if (!main) {
       return undefined;
     }
-    return new ClassDefinition(this.getMain().findFirstStructure(Structures.ClassDefinition));
+    let found = main.findFirstStructure(Structures.ClassDefinition);
+    if (!found) {
+      return undefined;
+    }
+    return new ClassDefinition(found);
   }
 
   public getAllClasses(): ClassDefinition[] {
-    return this.getLocalClasses().concat(this.getMainClass());
+    let main = this.getMainClass();
+    let ret = this.getLocalClasses();
+    if (main !== undefined) {
+      ret.push(main);
+    }
+    return ret;
   }
 
   public getLocalClasses(): ClassDefinition[] {
     let ret: ClassDefinition[] = [];
     for (let file of this.getParsedFiles()) {
-      let nodes = file.getStructure().findAllStructures(Structures.ClassDefinition);
-      for (let node of nodes) {
-        ret.push(new ClassDefinition(node));
+      let stru = file.getStructure();
+      if (stru) {
+        let nodes = stru.findAllStructures(Structures.ClassDefinition);
+        for (let node of nodes) {
+          ret.push(new ClassDefinition(node));
+        }
       }
     }
     return ret;
@@ -37,28 +50,32 @@ export class Class extends ABAPObject {
 // -------------------
 
   public isException(): boolean | undefined  {
-    if (!this.getMainClass()) { return undefined; }
-    return this.getMainClass().isException();
+    let main = this.getMainClass();
+    if (!main) { return undefined; }
+    return main.isException();
   }
 
   public getSuperClass(): string | undefined  {
-    if (!this.getMainClass()) { return undefined; }
-    return this.getMainClass().getSuperClass();
+    let main = this.getMainClass();
+    if (!main) { return undefined; }
+    return main.getSuperClass();
   }
 
   public getMethodDefinitions(): MethodDefinitions | undefined  {
-    if (!this.getMainClass()) { return undefined; }
-    return this.getMainClass().getMethodDefinitions();
+    let main = this.getMainClass();
+    if (!main) { return undefined; }
+    return main.getMethodDefinitions();
   }
 
   public getAttributes(): ClassAttributes | undefined {
-    if (!this.getMainClass()) { return undefined; }
-    return this.getMainClass().getAttributes();
+    let main = this.getMainClass();
+    if (!main) { return undefined; }
+    return main.getAttributes();
   }
 
 // --------------------
 
-  private getMain(): StructureNode {
+  private getMain(): StructureNode | undefined {
 // todo, overrride addFile instead of looping through it again?
     const files = this.getParsedFiles();
     for (let file of files) {

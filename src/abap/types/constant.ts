@@ -1,19 +1,19 @@
-import {Type} from "./type";
+// import {Type} from "./type";
 
 export class Constant {
-  private name: string;
-  private type: Type;
+//  private name: string;
+//  private type: Type;
 
   constructor() {
-    this.name = undefined;
-    this.type = undefined;
+//    this.name = undefined;
+//    this.type = undefined;
   }
 
   public getName() {
-    return this.name;
+    throw new Error("getName, todo");
   }
 
   public getType() {
-    return this.type;
+    throw new Error("getType, todo");
   }
 }

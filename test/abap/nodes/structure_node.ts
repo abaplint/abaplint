@@ -12,7 +12,9 @@ describe("Structure node", () => {
     let found = top.findFirstStatement(Statements.ClassDefinition);
 
     expect(found).to.not.equal(undefined);
-    expect(found.get()).to.be.instanceof(Statements.ClassDefinition);
+    if (found) {
+      expect(found.get()).to.be.instanceof(Statements.ClassDefinition);
+    }
   });
 
   it("findFirstStatement, not found", () => {

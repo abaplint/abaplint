@@ -104,9 +104,13 @@ describe("Objects, class, getMethodDefinitions", () => {
 
     const reg = new Registry().addFile(new MemoryFile("zcl_with_super.clas.abap", abap)).parse();
     const clas = reg.getABAPObjects()[0] as Class;
-    expect(clas.getMethodDefinitions().getPrivate().length).to.equal(1);
-    expect(clas.getMethodDefinitions().getPrivate()[0].getName()).to.equal("method1");
-    expect(clas.getMethodDefinitions().getPrivate()[0].getScope()).to.equal(Scope.Private);
+    expect(clas.getMethodDefinitions()).to.not.equal(undefined);
+    let methods = clas.getMethodDefinitions();
+    if (methods !== undefined) {
+      expect(methods.getPrivate().length).to.equal(1);
+      expect(methods.getPrivate()[0].getName()).to.equal("method1");
+      expect(methods.getPrivate()[0].getScope()).to.equal(Scope.Private);
+    }
   });
 
   it("test, parser error", () => {
@@ -132,10 +136,13 @@ describe("Objects, class, getAttributes", () => {
     const reg = new Registry().addFile(new MemoryFile("zcl_foobar.clas.abap", abap)).parse();
     const clas = reg.getABAPObjects()[0] as Class;
     expect(clas.getAttributes()).to.not.equal(undefined);
-    expect(clas.getAttributes().getInstance().length).to.equal(1);
-    expect(clas.getAttributes().getInstance()[0].getName()).to.equal("moo");
-    expect(clas.getAttributes().getInstance()[0].getScope()).to.equal(Scope.Private);
-    expect(clas.getAttributes().getStatic().length).to.equal(0);
+    let attr = clas.getAttributes();
+    if (attr !== undefined) {
+      expect(attr.getInstance().length).to.equal(1);
+      expect(attr.getInstance()[0].getName()).to.equal("moo");
+      expect(attr.getInstance()[0].getScope()).to.equal(Scope.Private);
+      expect(attr.getStatic().length).to.equal(0);
+    }
   });
 
   it("test, positive, static", () => {
@@ -151,10 +158,14 @@ describe("Objects, class, getAttributes", () => {
     const reg = new Registry().addFile(new MemoryFile("zcl_foobar.clas.abap", abap)).parse();
     const clas = reg.getABAPObjects()[0] as Class;
     expect(clas.getAttributes()).to.not.equal(undefined);
-    expect(clas.getAttributes().getStatic().length).to.equal(1);
-    expect(clas.getAttributes().getStatic()[0].getName()).to.equal("moo");
-    expect(clas.getAttributes().getStatic()[0].getScope()).to.equal(Scope.Private);
-    expect(clas.getAttributes().getInstance().length).to.equal(0);
+    let attr = clas.getAttributes();
+    if (attr !== undefined) {
+      expect(attr.getStatic().length).to.equal(1);
+      expect(attr.getStatic().length).to.equal(1);
+      expect(attr.getStatic()[0].getName()).to.equal("moo");
+      expect(attr.getStatic()[0].getScope()).to.equal(Scope.Private);
+      expect(attr.getInstance().length).to.equal(0);
+    }
   });
 
 // todo, one test for each section, plus data/static/constant

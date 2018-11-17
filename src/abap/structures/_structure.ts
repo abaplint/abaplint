@@ -7,7 +7,7 @@ import {ABAPFile} from "../../files";
 export abstract class Structure  {
   public abstract getMatcher(): IStructureRunnable;
 
-  public runFile(file: ABAPFile, statements?: StatementNode[]): {issues: Array<Issue>, node: StructureNode} {
+  public runFile(file: ABAPFile, statements?: StatementNode[]): {issues: Issue[], node?: StructureNode} {
     statements = statements ? statements : file.getStatements();
 
     let parent = new StructureNode(this);

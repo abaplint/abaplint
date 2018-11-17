@@ -42,7 +42,7 @@ export class ClassAttributes {
 
   }
 
-  private parseSection(node: StructureNode, scope: Scope): void {
+  private parseSection(node: StructureNode | undefined, scope: Scope): void {
     if (!node) { return; }
 
     let defs = node.findAllStatements(Statements.Data);

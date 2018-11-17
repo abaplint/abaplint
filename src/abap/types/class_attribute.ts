@@ -6,7 +6,7 @@ import {StatementNode} from "../nodes";
 
 export class ClassAttribute extends Attribute {
   private scope: Scope;
-  private readOnly: boolean;
+//  private readOnly: boolean;
 
   constructor(node: StatementNode, scope: Scope) {
     if (!(node.get() instanceof Statements.Data) && !(node.get() instanceof Statements.ClassData)) {
@@ -17,16 +17,16 @@ export class ClassAttribute extends Attribute {
 
     super(token.getStr(), token.getPos());
     this.scope = scope;
-    this.readOnly = undefined;
+//    this.readOnly = undefined;
   }
 
   public getScope() {
     return this.scope;
   }
-
+/*
   public isReadOnly() {
     return this.readOnly;
   }
-
+*/
 
 }

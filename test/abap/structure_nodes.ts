@@ -8,48 +8,65 @@ describe("Structure, test generated nodes", function() {
     const result = new Structures.Else().runFile(parse("ELSE."));
     expect(result.issues.length).to.equal(0);
     expect(result.node).to.not.equal(undefined);
-    expect(result.node.get()).to.be.instanceof(Structures.Else);
-    expect(result.node.getChildren().length).to.equal(1);
-    expect(result.node.getChildren()[0].get()).to.be.instanceof(Statements.Else);
+    if (result.node) {
+      expect(result.node.get()).to.be.instanceof(Structures.Else);
+      expect(result.node.getChildren().length).to.equal(1);
+      expect(result.node.getChildren()[0].get()).to.be.instanceof(Statements.Else);
+    }
   });
 
   it("Test 02", function () {
     const result = new Structures.Else().runFile(parse("ELSE. moo = boo."));
-    expect(result.node.get()).to.be.instanceof(Structures.Else);
-    expect(result.node.getChildren().length).to.equal(2);
-    expect(result.node.getChildren()[0].get()).to.be.instanceof(Statements.Else);
-    expect(result.node.getChildren()[1].get()).to.be.instanceof(Structures.Body);
-    expect(result.node.getChildren()[1].getChildren().length).to.equal(1);
+    expect(result.node).to.not.equal(undefined);
+    if (result.node) {
+      expect(result.node.get()).to.be.instanceof(Structures.Else);
+      expect(result.node.getChildren().length).to.equal(2);
+      expect(result.node.getChildren()[0].get()).to.be.instanceof(Statements.Else);
+      expect(result.node.getChildren()[1].get()).to.be.instanceof(Structures.Body);
+      expect(result.node.getChildren()[1].getChildren().length).to.equal(1);
+    }
   });
 
   it("Test 03", function () {
     const result = new Structures.Else().runFile(parse("ELSE. moo = boo. loo = foo."));
-    expect(result.node.get()).to.be.instanceof(Structures.Else);
-    expect(result.node.getChildren().length).to.equal(2);
-    expect(result.node.getChildren()[0].get()).to.be.instanceof(Statements.Else);
-    expect(result.node.getChildren()[1].get()).to.be.instanceof(Structures.Body);
-    expect(result.node.getChildren()[1].getChildren().length).to.equal(2);
+    expect(result.node).to.not.equal(undefined);
+    if (result.node) {
+      expect(result.node.get()).to.be.instanceof(Structures.Else);
+      expect(result.node.getChildren().length).to.equal(2);
+      expect(result.node.getChildren()[0].get()).to.be.instanceof(Statements.Else);
+      expect(result.node.getChildren()[1].get()).to.be.instanceof(Structures.Body);
+      expect(result.node.getChildren()[1].getChildren().length).to.equal(2);
+    }
   });
 
   it("Test 04", function () {
     const result = new Structures.If().runFile(parse("IF foo = boo. ENDIF."));
-    expect(result.node.get()).to.be.instanceof(Structures.If);
-    expect(result.node.getChildren().length).to.equal(2);
-    expect(result.node.getChildren()[0].get()).to.be.instanceof(Statements.If);
-    expect(result.node.getChildren()[1].get()).to.be.instanceof(Statements.EndIf);
+    expect(result.node).to.not.equal(undefined);
+    if (result.node) {
+      expect(result.node.get()).to.be.instanceof(Structures.If);
+      expect(result.node.getChildren().length).to.equal(2);
+      expect(result.node.getChildren()[0].get()).to.be.instanceof(Statements.If);
+      expect(result.node.getChildren()[1].get()).to.be.instanceof(Statements.EndIf);
+    }
   });
 
   it("Test 05", function () {
     const result = new Structures.If().runFile(parse("IF foo = boo. moo = boo. ENDIF."));
-    expect(result.node.get()).to.be.instanceof(Structures.If);
-    expect(result.node.getChildren().length).to.equal(3);
+    expect(result.node).to.not.equal(undefined);
+    if (result.node) {
+      expect(result.node.get()).to.be.instanceof(Structures.If);
+      expect(result.node.getChildren().length).to.equal(3);
+    }
   });
 
   it("Test 06", function () {
     const result = new Structures.Any().runFile(parse("moo = boo. loo = foo."));
-    expect(result.node.get()).to.be.instanceof(Structures.Any);
-    expect(result.node.getChildren().length).to.equal(2);
-    let count = result.node.getChildren()[0].getChildren().length + result.node.getChildren()[1].getChildren().length;
-    expect(count).to.equal(2);
+    expect(result.node).to.not.equal(undefined);
+    if (result.node) {
+      expect(result.node.get()).to.be.instanceof(Structures.Any);
+      expect(result.node.getChildren().length).to.equal(2);
+      let count = result.node.getChildren()[0].getChildren().length + result.node.getChildren()[1].getChildren().length;
+      expect(count).to.equal(2);
+    }
   });
 });

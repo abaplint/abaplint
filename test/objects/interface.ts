@@ -45,7 +45,10 @@ describe("Objects, interface, getMethodParameters", () => {
     const reg = new Registry().addFile(new MemoryFile("zif_foobar.intf.abap", abap)).parse();
     const intf = reg.getABAPObjects()[0] as Interface;
     expect(intf.getMethodDefinitions().length).to.equal(1);
-    expect(intf.getMethodDefinitions()[0].getParameters().getReturning()).to.not.equal(undefined);
-    expect(intf.getMethodDefinitions()[0].getParameters().getReturning().getName()).to.equal("rv_foo");
+    const returning = intf.getMethodDefinitions()[0].getParameters().getReturning();
+    expect(returning).to.not.equal(undefined);
+    if (returning) {
+      expect(returning.getName()).to.equal("rv_foo");
+    }
   });
 });

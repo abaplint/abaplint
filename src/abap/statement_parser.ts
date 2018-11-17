@@ -8,6 +8,7 @@ import {Artifacts} from "./artifacts";
 import {Token} from "./tokens/_token";
 
 function className(cla: any) {
+  // @ts-ignore
   return (cla.constructor + "").match(/\w+/g)[1];
 }
 

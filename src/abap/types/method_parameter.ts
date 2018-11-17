@@ -1,18 +1,18 @@
 import {ExpressionNode} from "../../abap/nodes";
 import {MethodParam, MethodParamName} from "../../abap/expressions";
 import {Position} from "../../position";
-import {Type} from "./type";
+// import {Type} from "./type";
 
 export class MethodParameter {
   private name: string;
   private position: Position;
-  private type: Type;
+//  private type: Type;
 
   constructor(node: ExpressionNode) {
     if (!(node.get() instanceof MethodParam)) {
       throw new Error("MethodDefinition, expected MethodDef as part of input node");
     }
-    this.type = undefined;
+//    this.type = undefined;
 
     this.parse(node);
   }
@@ -24,7 +24,7 @@ export class MethodParameter {
   }
 
   public getType() {
-    return this.type;
+    throw new Error("getType: todo");
   }
 
   public getPosition() {
