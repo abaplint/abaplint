@@ -1,13 +1,17 @@
 import {StructureNode} from "../../abap/nodes";
 import {MethodDefinitions} from "./method_definitions";
 import {SuperClassName} from "../../abap/expressions";
-import {ClassDefinition as ClassDefinitionStat} from "../../abap/statements";
+import * as Statements from "../../abap/statements";
+import * as Structures from "../../abap/structures";
 import {ClassAttributes} from "./class_attributes";
 
 export class ClassDefinition {
   private node: StructureNode;
 
   constructor(node: StructureNode) {
+    if (!(node.get() instanceof Structures.ClassDefinition)) {
+      throw new Error("ClassDefinition, unexpected node type");
+    }
     this.node = node;
   }
 
@@ -18,7 +22,7 @@ export class ClassDefinition {
 
   public getSuperClass(): string {
     if (!this.node) { return undefined; }
-    const token = this.node.findFirstStatement(ClassDefinitionStat).findFirstExpression(SuperClassName);
+    const token = this.node.findFirstStatement(Statements.ClassDefinition).findFirstExpression(SuperClassName);
     return token ? token.getFirstToken().get().getStr() : undefined;
   }
 

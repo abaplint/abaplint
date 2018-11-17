@@ -9,7 +9,7 @@ describe("Objects, class, isException", () => {
   it("false, parser error", () => {
     const reg = new Registry().addFile(new MemoryFile("cl_foo.clas.abap", "WRITE foo.")).parse();
     const clas = reg.getABAPObjects()[0] as Class;
-    expect(clas.isException()).to.equal(false);
+    expect(clas.getMainClass()).to.equal(undefined);
   });
 
   it("false", () => {

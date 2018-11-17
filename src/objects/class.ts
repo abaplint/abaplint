@@ -1,5 +1,6 @@
 import {ABAPObject} from "./_abap_object";
 import {StructureNode} from "../abap/nodes";
+import * as Structures from "../abap/structures";
 import {ClassDefinition} from "../abap/types/class_definition";
 import {MethodDefinitions} from "../abap/types/method_definitions";
 import {ClassAttributes} from "../abap/types/class_attributes";
@@ -11,34 +12,47 @@ export class Class extends ABAPObject {
     return "CLAS";
   }
 
-// todo, move some of these methods to ABAPObject?
   public getMainClass(): ClassDefinition {
-    return new ClassDefinition(this.getMain());
+    if (!this.getMain()) {
+      return undefined;
+    }
+    return new ClassDefinition(this.getMain().findFirstStructure(Structures.ClassDefinition));
   }
 
   public getAllClasses(): ClassDefinition[] {
-    throw new Error("todo, getAllClasses");
+    return this.getLocalClasses().concat(this.getMainClass());
   }
 
   public getLocalClasses(): ClassDefinition[] {
-    throw new Error("todo, getAllClasses");
+    let ret: ClassDefinition[] = [];
+    for (let file of this.getParsedFiles()) {
+      let nodes = file.getStructure().findAllStructures(Structures.ClassDefinition);
+      for (let node of nodes) {
+        ret.push(new ClassDefinition(node));
+      }
+    }
+    return ret;
   }
 
 // -------------------
 
   public isException(): boolean {
+    if (!this.getMainClass()) { return undefined; }
     return this.getMainClass().isException();
   }
 
   public getSuperClass(): string {
+    if (!this.getMainClass()) { return undefined; }
     return this.getMainClass().getSuperClass();
   }
 
   public getMethodDefinitions(): MethodDefinitions {
+    if (!this.getMainClass()) { return undefined; }
     return this.getMainClass().getMethodDefinitions();
   }
 
   public getAttributes(): ClassAttributes {
+    if (!this.getMainClass()) { return undefined; }
     return this.getMainClass().getAttributes();
   }
 

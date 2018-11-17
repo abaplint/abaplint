@@ -1,7 +1,7 @@
 import {MethodDefinition} from "./method_definition";
 import {StructureNode} from "../../abap/nodes";
 import {ClassDefinition} from "../../abap/structures/class_definition";
-import {PrivateSection, ProtectedSection, PublicSection} from "../../abap/structures";
+import * as Structures from "../../abap/structures";
 import {MethodDef} from "../../abap/statements";
 import {Scope} from "./scope";
 
@@ -36,10 +36,10 @@ export class MethodDefinitions {
   private parse(node: StructureNode) {
     let cdef = node.findFirstStructure(ClassDefinition);
     if (!cdef) {
-      throw new Error("MethodDefinition, expected ClassDefinition as part of input node");
+      throw new Error("MethodDefinitions, expected ClassDefinition as part of input node");
     }
 
-    let pri = cdef.findFirstStructure(PrivateSection);
+    let pri = cdef.findFirstStructure(Structures.PrivateSection);
     if (pri) {
       let defs = pri.findAllStatements(MethodDef);
       for (let def of defs) {
@@ -47,7 +47,7 @@ export class MethodDefinitions {
       }
     }
 
-    let pro = node.findFirstStructure(ProtectedSection);
+    let pro = node.findFirstStructure(Structures.ProtectedSection);
     if (pro) {
       let defs = pro.findAllStatements(MethodDef);
       for (let def of defs) {
@@ -55,7 +55,7 @@ export class MethodDefinitions {
       }
     }
 
-    let pub = node.findFirstStructure(PublicSection);
+    let pub = node.findFirstStructure(Structures.PublicSection);
     if (pub) {
       let defs = pub.findAllStatements(MethodDef);
       for (let def of defs) {
