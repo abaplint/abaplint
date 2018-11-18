@@ -8,7 +8,7 @@ import {INode} from "./nodes/_inode";
 
 export class Result {
   private tokens: Array<Tokens_Token>;
-  private nodes: Array<CountableNode>;
+  private nodes: Array<CountableNode> | undefined;
 
   constructor(a: Array<Tokens_Token>, n?: Array<CountableNode>) {
 // tokens: not yet matched
@@ -28,20 +28,32 @@ export class Result {
   public shift(node?: CountableNode): Result {
     let copy = this.tokens.slice();
     copy.shift();
-    let cp = this.nodes.slice();
-    cp.push(node);
-    return new Result(copy, cp);
+    if (this.nodes) {
+      let cp = this.nodes.slice();
+      if (node) {
+        cp.push(node);
+      }
+      return new Result(copy, cp);
+    } else {
+      throw new Error("shift, error");
+    }
   }
 
   public getTokens(): Array<Tokens_Token> {
     return this.tokens;
   }
 
-  public popNode(): CountableNode {
+  public popNode(): CountableNode | undefined {
+    if (!this.nodes) {
+      throw new Error("popNode, error");
+    }
     return this.nodes.pop();
   }
 
   public getNodes(): Array<CountableNode> {
+    if (!this.nodes) {
+      throw new Error("getNodes, error");
+    }
     return this.nodes;
   }
 
@@ -158,10 +170,12 @@ class Word implements IRunnable {
 }
 
 function className(cla: any) {
+  // @ts-ignore
   return (cla.constructor + "").match(/\w+/g)[1];
 }
 
 function functionName(fun: any) {
+  // @ts-ignore
   return (fun + "").match(/\w+/g)[1];
 }
 
@@ -499,7 +513,7 @@ class Sequence implements IRunnable {
   }
 
   public getUsing(): string[] {
-    return this.list.reduce((a, c) => { return a.concat(c.getUsing()); }, []);
+    return this.list.reduce((a, c) => { return a.concat(c.getUsing()); }, [] as string[]);
   }
 
   public run(r: Array<Result>): Array<Result> {
@@ -598,11 +612,13 @@ export abstract class Expression implements IRunnable {
         if (consumed > 0) {
           let length = t.getNodes().length;
           let re = new ExpressionNode(this);
-          let children = [];
+          let children: CountableNode[] = [];
           while (consumed > 0) {
             let sub = t.popNode();
-            children.push(sub);
-            consumed = consumed - sub.countTokens();
+            if (sub) {
+              children.push(sub);
+              consumed = consumed - sub.countTokens();
+            }
           }
           re.setChildren(children.reverse());
 
@@ -664,7 +680,7 @@ class Permutation implements IRunnable {
   }
 
   public getUsing() {
-    return this.list.reduce((a, c) => { return a.concat(c.getUsing()); }, []);
+    return this.list.reduce((a, c) => { return a.concat(c.getUsing()); }, [] as string[]);
   }
 
   public run(r: Array<Result>): Array<Result> {
@@ -722,7 +738,7 @@ class Alternative implements IRunnable {
   }
 
   public getUsing() {
-    return this.list.reduce((a, c) => { return a.concat(c.getUsing()); }, []);
+    return this.list.reduce((a, c) => { return a.concat(c.getUsing()); }, [] as string[]);
   }
 
   public run(r: Array<Result>): Array<Result> {
@@ -774,7 +790,7 @@ class AlternativePriority implements IRunnable {
   }
 
   public getUsing() {
-    return this.list.reduce((a, c) => { return a.concat(c.getUsing()); }, []);
+    return this.list.reduce((a, c) => { return a.concat(c.getUsing()); }, [] as string[]);
   }
 
   public run(r: Array<Result>): Array<Result> {
@@ -840,7 +856,7 @@ export class Combi {
   }
 
 // assumption: no pgragmas supplied in tokens input
-  public static run(runnable: IRunnable, tokens: Array<Tokens_Token>, version = Version.v750): INode[] {
+  public static run(runnable: IRunnable, tokens: Array<Tokens_Token>, version = Version.v750): INode[] | undefined {
     this.ver = version;
 
     let input = new Result(tokens);

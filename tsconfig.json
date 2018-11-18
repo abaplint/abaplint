@@ -8,7 +8,7 @@
         "noUnusedLocals": true,
         "noImplicitAny": true,
         "declaration": true,
-        "strictNullChecks": false,
+        "strictNullChecks": true,
         "strictFunctionTypes": true,
         "alwaysStrict": true,
         "target": "es2017",

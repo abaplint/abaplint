@@ -42,7 +42,7 @@ export class ExpressionNode extends CountableNode {
     return ret;
   }
 
-  public findDirectTokenByText(text: string): Token {
+  public findDirectTokenByText(text: string): Token | undefined {
     for (let child of this.getChildren()) {
       if (child instanceof TokenNode) {
         if (child.get().getStr() === text) {
@@ -73,7 +73,7 @@ export class ExpressionNode extends CountableNode {
     return ret;
   }
 
-  public findFirstExpression(type: new () => Expression): ExpressionNode {
+  public findFirstExpression(type: new () => Expression): ExpressionNode | undefined {
     for (let child of this.getChildren()) {
       if (child.get() instanceof type) {
         return child as ExpressionNode;

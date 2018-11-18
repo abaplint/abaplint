@@ -18,7 +18,11 @@ export class MethodDefinition {
     if (!(node.get() instanceof MethodDef)) {
       throw new Error("MethodDefinition, expected MethodDef as part of input node");
     }
-    this.name = node.findFirstExpression(MethodName).getFirstToken().get().getStr();
+    let found = node.findFirstExpression(MethodName);
+    if (found === undefined) {
+      throw new Error("MethodDefinition, expected MethodDef as part of input node");
+    }
+    this.name = found.getFirstToken().get().getStr();
     this.scope = scope;
     this.parameters = new MethodParameters(node);
   }

@@ -18,7 +18,7 @@ export interface IStructureRunnable {
 }
 
 class Sequence implements IStructureRunnable {
-  private list: Array<IStructureRunnable>;
+  private list: IStructureRunnable[];
 
   constructor(list: IStructureRunnable[]) {
     if (list.length < 2) {
@@ -32,8 +32,8 @@ class Sequence implements IStructureRunnable {
     return "Railroad.Sequence(" + children.join() + ")";
   }
 
-  public getUsing() {
-    return this.list.reduce((a, c) => { return a.concat(c.getUsing()); }, []);
+  public getUsing(): string[] {
+    return this.list.reduce((a, c) => { return a.concat(c.getUsing()); }, [] as string[]);
   }
 
   public run(statements: StatementNode[], parent: INode): IMatch {
@@ -79,7 +79,7 @@ class Alternative implements IStructureRunnable {
   }
 
   public getUsing() {
-    return this.list.reduce((a, c) => { return a.concat(c.getUsing()); }, []);
+    return this.list.reduce((a, c) => { return a.concat(c.getUsing()); }, [] as string[]);
   }
 
   public run(statements: StatementNode[], parent: INode): IMatch {

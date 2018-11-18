@@ -12,8 +12,11 @@ export class ClassAttribute extends Attribute {
     if (!(node.get() instanceof Statements.Data) && !(node.get() instanceof Statements.ClassData)) {
       throw new Error("ClassAttribute, unexpected node");
     }
-
-    const token = node.findFirstExpression(Expressions.NamespaceSimpleName).getFirstToken().get();
+    const found = node.findFirstExpression(Expressions.NamespaceSimpleName);
+    if (found === undefined) {
+      throw new Error("ClassAttribute, unexpected node");
+    }
+    const token = found.getFirstToken().get();
 
     super(token.getStr(), token.getPos());
     this.scope = scope;

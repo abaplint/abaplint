@@ -64,7 +64,10 @@ export class MethodParameters {
 
     let returning = node.findFirstExpression(MethodDefReturning);
     if (returning) {
-      this.returning = new MethodParameter(returning.findFirstExpression(MethodParam));
+      const found = returning.findFirstExpression(MethodParam);
+      if (found) {
+        this.returning = new MethodParameter(found);
+      }
     }
 
 // todo:
