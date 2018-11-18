@@ -6,12 +6,12 @@ import {Version} from "../../version";
 export class GetDataset extends Statement {
 
   public getMatcher(): IRunnable {
-    let position = seq(str("POSITION"), new Target());
-    let attr = seq(str("ATTRIBUTES"), new Target());
+    const position = seq(str("POSITION"), new Target());
+    const attr = seq(str("ATTRIBUTES"), new Target());
 
-    let ret = seq(str("GET DATASET"),
-                  new Target(),
-                  opt(per(position, attr)));
+    const ret = seq(str("GET DATASET"),
+                    new Target(),
+                    opt(per(position, attr)));
 
     return verNot(Version.Cloud, ret);
   }

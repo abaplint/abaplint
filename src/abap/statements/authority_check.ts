@@ -7,16 +7,16 @@ export class AuthorityCheck extends Statement {
 
   public getMatcher(): IRunnable {
 
-    let field = seq(str("FIELD"), new Source());
+    const field = seq(str("FIELD"), new Source());
 
-    let id = seq(str("ID"),
-                 new Source(),
-                 alt(field, str("DUMMY")));
+    const id = seq(str("ID"),
+                   new Source(),
+                   alt(field, str("DUMMY")));
 
-    let ret = seq(str("AUTHORITY-CHECK OBJECT"),
-                  new Source(),
-                  opt(seq(str("FOR USER"), new Source())),
-                  plus(id));
+    const ret = seq(str("AUTHORITY-CHECK OBJECT"),
+                    new Source(),
+                    opt(seq(str("FOR USER"), new Source())),
+                    plus(id));
 
     return verNot(Version.Cloud, ret);
   }

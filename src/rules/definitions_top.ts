@@ -35,13 +35,13 @@ export class DefinitionsTop extends ABAPRule {
   }
 
   public runParsed(file: ABAPFile) {
-    let issues: Array<Issue> = [];
+    const issues: Array<Issue> = [];
 
     let mode = ANY;
     let issue: Issue | undefined = undefined;
 
 // todo, this needs refactoring when the paser has become better
-    for (let statement of file.getStatements()) {
+    for (const statement of file.getStatements()) {
       if (statement.get() instanceof Statements.Form
           || statement.get() instanceof Statements.Method) {
         mode = DEFINITION;

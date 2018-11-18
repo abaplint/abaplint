@@ -1,7 +1,7 @@
 import {statementType} from "../_utils";
 import * as Statements from "../../../src/abap/statements/";
 
-let tests = [
+const tests = [
   "GET CURSOR FIELD f LINE l.",
   "get cursor line l.",
   "GET CURSOR OFFSET off.",

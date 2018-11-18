@@ -6,23 +6,23 @@ import {Version} from "../../version";
 export class ReadLine extends Statement {
 
   public getMatcher(): IRunnable {
-    let val = seq(str("LINE VALUE INTO"),
-                  new Target());
+    const val = seq(str("LINE VALUE INTO"),
+                    new Target());
 
-    let fields = seq(new Target(), opt(seq(str("INTO"), new Target())));
+    const fields = seq(new Target(), opt(seq(str("INTO"), new Target())));
 
-    let field = seq(str("FIELD VALUE"),
-                    plus(fields));
+    const field = seq(str("FIELD VALUE"),
+                      plus(fields));
 
-    let index = seq(str("INDEX"), new Source());
+    const index = seq(str("INDEX"), new Source());
 
-    let page = seq(str("OF PAGE"), new Source());
+    const page = seq(str("OF PAGE"), new Source());
 
-    let current = str("OF CURRENT PAGE");
+    const current = str("OF CURRENT PAGE");
 
-    let ret = seq(str("READ"),
-                  alt(str("CURRENT LINE"), seq(str("LINE"), new Source())),
-                  opt(per(val, index, field, page, current)));
+    const ret = seq(str("READ"),
+                    alt(str("CURRENT LINE"), seq(str("LINE"), new Source())),
+                    opt(per(val, index, field, page, current)));
 
     return verNot(Version.Cloud, ret);
   }

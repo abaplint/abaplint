@@ -1,7 +1,7 @@
 import {statementType} from "../_utils";
 import * as Statements from "../../../src/abap/statements/";
 
-let tests = [
+const tests = [
   "CLASS lcl_xml DEFINITION ABSTRACT.",
   "CLASS zcl_foo DEFINITION ABSTRACT FINAL.",
 

@@ -5,7 +5,7 @@ import {Version} from "../../version";
 
 export class Include extends Statement {
   public getMatcher(): IRunnable {
-    let ret = seq(str("INCLUDE"), new IncludeName(), opt(str("IF FOUND")));
+    const ret = seq(str("INCLUDE"), new IncludeName(), opt(str("IF FOUND")));
 
     return verNot(Version.Cloud, ret);
   }

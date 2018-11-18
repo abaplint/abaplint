@@ -1,7 +1,7 @@
 import {statementType} from "../_utils";
 import * as Statements from "../../../src/abap/statements/";
 
-let tests = [
+const tests = [
   "READ LINE lv_line LINE VALUE INTO lv_text.",
   "read line sy-index field value lv_val into lv_target.",
   "READ LINE sy-index FIELD VALUE mark.",

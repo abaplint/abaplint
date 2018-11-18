@@ -1,7 +1,7 @@
 import {statementType} from "../_utils";
 import * as Statements from "../../../src/abap/statements/";
 
-let tests = [
+const tests = [
   "SELECT-OPTIONS foo FOR bar.",
   "SELECT-OPTIONS s_trkorr FOR e070-trkorr.",
   "SELECT-OPTIONS s_trkorr FOR e070-trkorr OBLIGATORY.",

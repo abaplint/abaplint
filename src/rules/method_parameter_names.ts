@@ -45,7 +45,7 @@ export class MethodParameterNames implements IRule {
       if (this.conf.ignoreExceptions && obj.isException()) {
         return [];
       }
-      let definitions = obj.getMethodDefinitions();
+      const definitions = obj.getMethodDefinitions();
       if (definitions === undefined) {
         return [];
       }
@@ -54,7 +54,7 @@ export class MethodParameterNames implements IRule {
       methods = obj.getMethodDefinitions();
     }
 
-    for (let method of methods) {
+    for (const method of methods) {
       ret = ret.concat(this.checkMethod(method, obj));
     }
 
@@ -65,16 +65,16 @@ export class MethodParameterNames implements IRule {
     let ret: Issue[] = [];
 
     const parameters = method.getParameters();
-    for (let param of parameters.getImporting()) {
+    for (const param of parameters.getImporting()) {
       ret = ret.concat(this.checkParameter(param, this.conf.importing, obj));
     }
-    for (let param of parameters.getExporting()) {
+    for (const param of parameters.getExporting()) {
       ret = ret.concat(this.checkParameter(param, this.conf.exporting, obj));
     }
-    for (let param of parameters.getChanging()) {
+    for (const param of parameters.getChanging()) {
       ret = ret.concat(this.checkParameter(param, this.conf.changing, obj));
     }
-    let returning = parameters.getReturning();
+    const returning = parameters.getReturning();
     if (returning) {
       ret = ret.concat(this.checkParameter(returning, this.conf.returning, obj));
     }
@@ -83,14 +83,14 @@ export class MethodParameterNames implements IRule {
   }
 
   private checkParameter(param: MethodParameter, expected: string, obj: IObject): Issue[] {
-    let ret: Issue[] = [];
-    let regex = new RegExp(expected, "i");
-    let name = param.getName();
+    const ret: Issue[] = [];
+    const regex = new RegExp(expected, "i");
+    const name = param.getName();
 
     if (regex.test(name) === false) {
       const message = "Bad method parameter name \"" + name + "\" expected \"" + expected + "/i\"";
 // todo, find the right file
-      let issue = new Issue({file: obj.getFiles()[0], message, code: this.getKey(), start: param.getPosition()});
+      const issue = new Issue({file: obj.getFiles()[0], message, code: this.getKey(), start: param.getPosition()});
       ret.push(issue);
     }
 

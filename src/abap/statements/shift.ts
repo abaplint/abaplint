@@ -5,13 +5,13 @@ import {Target, Source} from "../expressions";
 export class Shift extends Statement {
 
   public getMatcher(): IRunnable {
-    let deleting = seq(str("DELETING"), alt(str("LEADING"), str("TRAILING")), new Source());
-    let up = seq(str("UP TO"), new Source());
-    let mode = seq(str("IN"), alt(str("CHARACTER"), str("BYTE")), str("MODE"));
-    let dir = alt(str("LEFT"), str("RIGHT"));
-    let by = seq(str("BY"), new Source(), opt(str("PLACES")));
+    const deleting = seq(str("DELETING"), alt(str("LEADING"), str("TRAILING")), new Source());
+    const up = seq(str("UP TO"), new Source());
+    const mode = seq(str("IN"), alt(str("CHARACTER"), str("BYTE")), str("MODE"));
+    const dir = alt(str("LEFT"), str("RIGHT"));
+    const by = seq(str("BY"), new Source(), opt(str("PLACES")));
 
-    let options = per(deleting, up, mode, dir, by, str("CIRCULAR"));
+    const options = per(deleting, up, mode, dir, by, str("CIRCULAR"));
 
     return seq(str("SHIFT"),
                new Target(),

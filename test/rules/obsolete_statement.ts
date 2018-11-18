@@ -1,7 +1,7 @@
 import {ObsoleteStatement} from "../../src/rules/obsolete_statement";
 import {testRule} from "./_utils";
 
-let tests = [
+const tests = [
   {abap: "REFRESH lt_table.", cnt: 1},
   {abap: "COMPUTE lv_foo = 2 + 2.", cnt: 1},
   {abap: "SUBTRACT 2 FROM lv_foo.", cnt: 1},

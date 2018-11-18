@@ -1,7 +1,7 @@
 import {statementType} from "../_utils";
 import * as Statements from "../../../src/abap/statements/";
 
-let tests = [
+const tests = [
   "FIND REGEX 'blah' IN lv_statement SUBMATCHES lv_name.",
   "FIND FIRST OCCURRENCE OF REGEX lo_regex IN <ls_diff>-local.",
   "FIND FIRST OCCURRENCE OF '.' IN lv_code_line MATCH OFFSET lv_offs.",

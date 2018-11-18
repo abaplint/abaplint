@@ -1,7 +1,7 @@
 import {statementType} from "../_utils";
 import * as Statements from "../../../src/abap/statements/";
 
-let tests = [
+const tests = [
   "include type t_type.",
   "INCLUDE STRUCTURE zfoo.",
   "include type t_type as something.",

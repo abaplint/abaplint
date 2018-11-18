@@ -1,7 +1,7 @@
 import {statementType} from "../_utils";
 import * as Statements from "../../../src/abap/statements/";
 
-let tests = [
+const tests = [
   "WINDOW STARTING AT 1 1 ENDING AT 2 2.",
 ];
 

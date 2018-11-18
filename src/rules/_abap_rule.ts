@@ -21,14 +21,14 @@ export abstract class ABAPRule implements IRule {
       return [];
     }
 
-    let abap = obj as ABAPObject;
+    const abap = obj as ABAPObject;
     let output: Array<Issue> = [];
 
     if (abap instanceof Class && (abap as Class).isException()) {
       return [];
     }
 
-    for (let file of abap.getParsedFiles()) {
+    for (const file of abap.getParsedFiles()) {
       output = output.concat(this.runParsed(file, reg));
     }
 

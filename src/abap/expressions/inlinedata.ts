@@ -5,9 +5,9 @@ import {Version} from "../../version";
 
 export class InlineData extends Expression {
   public getRunnable(): IRunnable {
-    let right = alt(tok(ParenRight), tok(ParenRightW));
-    let left = tok(ParenLeft);
-    let data = seq(str("DATA"), left, new Field(), right);
+    const right = alt(tok(ParenRight), tok(ParenRightW));
+    const left = tok(ParenLeft);
+    const data = seq(str("DATA"), left, new Field(), right);
 
     return ver(Version.v740sp02, data);
   }

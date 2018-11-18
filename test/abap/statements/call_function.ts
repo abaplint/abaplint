@@ -1,7 +1,7 @@
 import {statementType} from "../_utils";
 import * as Statements from "../../../src/abap/statements/";
 
-let tests = [
+const tests = [
   "CALL FUNCTION 'DDIF_TTYP_GET'.",
 
   "CALL FUNCTION 'DDIF_TTYP_GET' EXPORTING name = lv_name.",

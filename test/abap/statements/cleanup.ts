@@ -1,7 +1,7 @@
 import {statementType} from "../_utils";
 import * as Statements from "../../../src/abap/statements/";
 
-let tests = [
+const tests = [
   "CLEANUP INTO l_cx.",
   "CLEANUP.",
 ];

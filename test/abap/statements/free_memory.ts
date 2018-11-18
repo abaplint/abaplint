@@ -1,7 +1,7 @@
 import {statementType} from "../_utils";
 import * as Statements from "../../../src/abap/statements/";
 
-let tests = [
+const tests = [
   "free memory id ls_structure.",
   "free memory id 'ALV_SUBMIT_TO_SPOOL'.",
 ];

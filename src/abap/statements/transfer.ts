@@ -6,14 +6,14 @@ import {Version} from "../../version";
 export class Transfer extends Statement {
 
   public getMatcher(): IRunnable {
-    let length = seq(str("LENGTH"),
-                     new Source());
+    const length = seq(str("LENGTH"),
+                       new Source());
 
-    let ret = seq(str("TRANSFER"),
-                  new Source(),
-                  str("TO"),
-                  new Target(),
-                  opt(length));
+    const ret = seq(str("TRANSFER"),
+                    new Source(),
+                    str("TO"),
+                    new Target(),
+                    opt(length));
 
     return verNot(Version.Cloud, ret);
   }

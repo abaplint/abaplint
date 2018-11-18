@@ -5,9 +5,9 @@ import {Version} from "../../version";
 export class SystemCall extends Statement {
 
   public getMatcher(): IRunnable {
-    let anyy = reg(/^.+$/);
+    const anyy = reg(/^.+$/);
 
-    let ret = seq(str("SYSTEM-CALL"), plus(anyy));
+    const ret = seq(str("SYSTEM-CALL"), plus(anyy));
 
     return verNot(Version.Cloud, ret);
   }

@@ -1,7 +1,7 @@
 import {statementType} from "../_utils";
 import * as Statements from "../../../src/abap/statements/";
 
-let tests = [
+const tests = [
   "LOAD REPORT lv_prog PART 'HEAD' INTO lt_head.",
 ];
 

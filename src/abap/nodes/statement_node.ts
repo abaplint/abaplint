@@ -43,11 +43,11 @@ export class StatementNode extends BasicNode {
   }
 
   public getEnd(): Position {
-    let tokens = this.getTokens();
-    let last = tokens[tokens.length - 1];
+    const tokens = this.getTokens();
+    const last = tokens[tokens.length - 1];
 
-    let pos = new Position(last.getPos().getRow(),
-                           last.getPos().getCol() + last.getStr().length);
+    const pos = new Position(last.getPos().getRow(),
+                             last.getPos().getCol() + last.getStr().length);
 
     return pos;
   }
@@ -65,7 +65,7 @@ export class StatementNode extends BasicNode {
   public concatTokens(): string {
     let str = "";
     let prev: Token | undefined;
-    for (let token of this.getTokens()) {
+    for (const token of this.getTokens()) {
       if (token instanceof Pragma) {
         continue;
       }
@@ -87,7 +87,7 @@ export class StatementNode extends BasicNode {
   }
 
   public getFirstToken(): TokenNode {
-    for (let child of this.getChildren()) {
+    for (const child of this.getChildren()) {
       if (child instanceof TokenNode) {
         return child;
       } else if (child instanceof ExpressionNode) {
@@ -98,13 +98,13 @@ export class StatementNode extends BasicNode {
   }
 
   public findFirstExpression(type: new () => Expression): ExpressionNode | undefined {
-    for (let child of this.getChildren()) {
+    for (const child of this.getChildren()) {
       if (child.get() instanceof type) {
         return child as ExpressionNode;
       } else if (child instanceof TokenNode) {
         continue;
       } else if (child instanceof ExpressionNode) {
-        let res = child.findFirstExpression(type);
+        const res = child.findFirstExpression(type);
         if (res) {
           return res;
         }
@@ -117,7 +117,7 @@ export class StatementNode extends BasicNode {
 
   public findAllExpressions(type: new () => Expression): ExpressionNode[] {
     let ret: ExpressionNode[] = [];
-    for (let child of this.getChildren()) {
+    for (const child of this.getChildren()) {
       if (child.get() instanceof type) {
         ret.push(child as ExpressionNode);
       } else if (child instanceof TokenNode) {

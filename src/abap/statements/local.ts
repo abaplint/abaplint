@@ -6,7 +6,7 @@ import {Version} from "../../version";
 export class Local extends Statement {
 
   public getMatcher(): IRunnable {
-    let ret = seq(str("LOCAL"), new FieldSub(), opt(new TableBody()));
+    const ret = seq(str("LOCAL"), new FieldSub(), opt(new TableBody()));
 
     return verNot(Version.Cloud, ret);
   }

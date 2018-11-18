@@ -6,12 +6,12 @@ import {Version} from "../../version";
 export class EnhancementPoint extends Statement {
 
   public getMatcher(): IRunnable {
-    let ret = seq(str("ENHANCEMENT-POINT"),
-                  new FieldSub(),
-                  str("SPOTS"),
-                  new Field(),
-                  opt(str("STATIC")),
-                  opt(str("INCLUDE BOUND")));
+    const ret = seq(str("ENHANCEMENT-POINT"),
+                    new FieldSub(),
+                    str("SPOTS"),
+                    new Field(),
+                    opt(str("STATIC")),
+                    opt(str("INCLUDE BOUND")));
 
     return verNot(Version.Cloud, ret);
   }

@@ -1,7 +1,7 @@
 import {statementType} from "../_utils";
 import * as Statements from "../../../src/abap/statements/";
 
-let tests = [
+const tests = [
   "SET TITLEBAR 'TITLE'.",
   "SET TITLEBAR 'TITLE_2000' WITH text-t08.",
   "set titlebar 'T00' with field1 field2.",

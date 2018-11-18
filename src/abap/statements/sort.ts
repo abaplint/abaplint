@@ -5,19 +5,19 @@ import {FieldSymbol, Target, Dynamic, FieldChain} from "../expressions";
 export class Sort extends Statement {
 
   public getMatcher(): IRunnable {
-    let order = alt(str("ASCENDING"), str("DESCENDING"));
+    const order = alt(str("ASCENDING"), str("DESCENDING"));
 
-    let sel = alt(new FieldChain(),
-                  new FieldSymbol(),
-                  new Dynamic());
+    const sel = alt(new FieldChain(),
+                    new FieldSymbol(),
+                    new Dynamic());
 
-    let fields = plus(seq(sel, optPrio(order)));
+    const fields = plus(seq(sel, optPrio(order)));
 
-    let by = seq(str("BY"), fields);
+    const by = seq(str("BY"), fields);
 
-    let normal = seq(new Target(), opt(per(order, by, str("STABLE"), str("AS TEXT"))));
+    const normal = seq(new Target(), opt(per(order, by, str("STABLE"), str("AS TEXT"))));
 
-    let target = alt(normal, str("AS TEXT"));
+    const target = alt(normal, str("AS TEXT"));
 
     return seq(str("SORT"), target);
   }

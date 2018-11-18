@@ -2,7 +2,7 @@ import {statementType, statementVersion} from "../_utils";
 import * as Statements from "../../../src/abap/statements/";
 import {Version} from "../../../src/version";
 
-let tests = [
+const tests = [
   "INTERFACES lif_gui_page ABSTRACT METHODS render.",
   "INTERFACES zif_foo PARTIALLY IMPLEMENTED.",
   "interfaces zif_foo all methods abstract.",
@@ -14,7 +14,7 @@ let tests = [
 
 statementType(tests, "INTERFACES", Statements.InterfaceDef);
 
-let versions = [
+const versions = [
   {abap: "INTERFACES zif_foo PARTIALLY IMPLEMENTED.", ver: Version.v740sp02},
 ];
 

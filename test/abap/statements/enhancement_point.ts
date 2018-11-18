@@ -1,7 +1,7 @@
 import {statementType} from "../_utils";
 import * as Statements from "../../../src/abap/statements/";
 
-let tests = [
+const tests = [
   "ENHANCEMENT-POINT point SPOTS spot.",
   "ENHANCEMENT-POINT point SPOTS spot STATIC.",
   "ENHANCEMENT-POINT foo-bar SPOTS spot.",

@@ -24,8 +24,8 @@ export abstract class ABAPObject extends AbstractObject {
 
     this.files.forEach((f) => {
       if (/.*\.abap$/.test(f.getFilename())) {
-        let tokens = Lexer.run(f);
-        let statements = StatementParser.run(tokens, ver);
+        const tokens = Lexer.run(f);
+        const statements = StatementParser.run(tokens, ver);
         this.parsed.push(new ABAPFile(f, tokens, statements));
       }
     });
@@ -41,7 +41,7 @@ export abstract class ABAPObject extends AbstractObject {
 
   public parseSecondPass(reg: Registry): Issue[] {
     this.parsed.forEach((f) => {
-      let statements: StatementNode[] = [];
+      const statements: StatementNode[] = [];
       f.getStatements().forEach((s) => {
         if (s.get() instanceof Unknown && reg.isMacro(s.getTokens()[0].getStr())) {
           statements.push(new StatementNode(new MacroCall()).setChildren(this.tokensToNodes(s.getTokens())));
@@ -54,7 +54,7 @@ export abstract class ABAPObject extends AbstractObject {
 
     let ret: Issue[] = [];
     this.parsed.forEach((f) => {
-      let result = StructureParser.run(f);
+      const result = StructureParser.run(f);
       f.setStructure(result.node);
       ret = ret.concat(result.issues);
     });
@@ -67,7 +67,7 @@ export abstract class ABAPObject extends AbstractObject {
   }
 
   private tokensToNodes(tokens: Array<Token>): Array<TokenNode> {
-    let ret: Array<TokenNode> = [];
+    const ret: Array<TokenNode> = [];
     tokens.forEach((t) => {ret.push(new TokenNode(t)); });
     return ret;
   }

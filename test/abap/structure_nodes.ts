@@ -65,7 +65,7 @@ describe("Structure, test generated nodes", function() {
     if (result.node) {
       expect(result.node.get()).to.be.instanceof(Structures.Any);
       expect(result.node.getChildren().length).to.equal(2);
-      let count = result.node.getChildren()[0].getChildren().length + result.node.getChildren()[1].getChildren().length;
+      const count = result.node.getChildren()[0].getChildren().length + result.node.getChildren()[1].getChildren().length;
       expect(count).to.equal(2);
     }
   });

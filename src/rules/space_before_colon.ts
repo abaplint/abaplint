@@ -27,18 +27,18 @@ export class SpaceBeforeColon extends ABAPRule {
   }
 
   public runParsed(file: ABAPFile) {
-    let issues: Array<Issue> = [];
+    const issues: Array<Issue> = [];
 
     let prev = file.getTokens()[0];
 
-    for (let token of file.getTokens()) {
+    for (const token of file.getTokens()) {
       if (token.getStr() === ":" && !prev) {
-        let issue = new Issue({file, message: this.getDescription(), code: this.getKey(), start: token.getPos()});
+        const issue = new Issue({file, message: this.getDescription(), code: this.getKey(), start: token.getPos()});
         issues.push(issue);
       } else if (token.getStr() === ":"
           && prev.getRow() === token.getRow()
           && prev.getCol() + prev.getStr().length < token.getCol()) {
-        let issue = new Issue({file, message: this.getDescription(), code: this.getKey(), start: token.getPos()});
+        const issue = new Issue({file, message: this.getDescription(), code: this.getKey(), start: token.getPos()});
         issues.push(issue);
       }
       prev = token;

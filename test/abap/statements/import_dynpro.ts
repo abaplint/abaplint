@@ -1,7 +1,7 @@
 import {statementType} from "../_utils";
 import * as Statements from "../../../src/abap/statements/";
 
-let tests = [
+const tests = [
   "IMPORT DYNPRO ls_h lt_f lt_e lt_m ID ls_dynp_id.",
 ];
 

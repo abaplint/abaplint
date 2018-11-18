@@ -2,7 +2,7 @@ import {statementType, statementVersion} from "../_utils";
 import * as Statements from "../../../src/abap/statements/";
 import {Version} from "../../../src/version";
 
-let tests = [
+const tests = [
   "CLASS-METHODS status IMPORTING io_repo TYPE REF TO lcl_repo.",
   "CLASS-METHODS get_message RETURNING VALUE(rv_message) TYPE string RAISING lcx_exception.",
   "CLASS-METHODS expo IMPORTING io_rep TYPE REF TO lcl_repo it_fil TYPE scts_tadir OPTIONAL.",
@@ -78,7 +78,7 @@ let tests = [
 statementType(tests, "METHODS", Statements.MethodDef);
 
 
-let versions = [
+const versions = [
   {abap: "METHODS method2 DEFAULT IGNORE.", ver: Version.v740sp08},
 ];
 

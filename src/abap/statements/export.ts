@@ -6,35 +6,35 @@ import {Target, Source, ParameterListS, Field, Dynamic} from "../expressions";
 export class Export extends Statement {
 
   public getMatcher(): IRunnable {
-    let id = seq(str("ID"), new Source());
+    const id = seq(str("ID"), new Source());
 
-    let db = seq(str("DATA BUFFER"), new Target());
-    let memory = seq(str("MEMORY ID"), new Source());
-    let from = seq(str("FROM"), new Source());
-    let using = seq(str("USING"), new Source());
-    let client = seq(str("CLIENT"), new Source());
-    let table = seq(str("INTERNAL TABLE"), new Target());
+    const db = seq(str("DATA BUFFER"), new Target());
+    const memory = seq(str("MEMORY ID"), new Source());
+    const from = seq(str("FROM"), new Source());
+    const using = seq(str("USING"), new Source());
+    const client = seq(str("CLIENT"), new Source());
+    const table = seq(str("INTERNAL TABLE"), new Target());
 
-    let shared = seq(alt(str("SHARED MEMORY"), str("SHARED BUFFER")),
-                     new Field(),
-                     str("("),
-                     new Field(),
-                     str(")"),
-                     str("ID"),
-                     new Source());
+    const shared = seq(alt(str("SHARED MEMORY"), str("SHARED BUFFER")),
+                       new Field(),
+                       str("("),
+                       new Field(),
+                       str(")"),
+                       str("ID"),
+                       new Source());
 
-    let database = seq(str("DATABASE"),
-                       new Source(),
-                       per(from, client, id, using));
+    const database = seq(str("DATABASE"),
+                         new Source(),
+                         per(from, client, id, using));
 
-    let target = alt(db, memory, database, table, shared);
+    const target = alt(db, memory, database, table, shared);
 
-    let source = alt(new ParameterListS(),
-                     plus(new Source()),
-                     new Dynamic());
+    const source = alt(new ParameterListS(),
+                       plus(new Source()),
+                       new Dynamic());
 
-    let compression = seq(str("COMPRESSION"), alt(str("ON"), str("OFF")));
-    let hint = seq(str("CODE PAGE HINT"), new Source());
+    const compression = seq(str("COMPRESSION"), alt(str("ON"), str("OFF")));
+    const hint = seq(str("CODE PAGE HINT"), new Source());
 
     return seq(str("EXPORT"),
                source,

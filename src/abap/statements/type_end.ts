@@ -5,9 +5,9 @@ import {NamespaceSimpleName} from "../expressions";
 export class TypeEnd extends Statement {
 
   public getMatcher(): IRunnable {
-    let end = seq(str("END OF"), new NamespaceSimpleName());
+    const end = seq(str("END OF"), new NamespaceSimpleName());
 
-    let ret = seq(alt(str("TYPE"), str("TYPES")), end);
+    const ret = seq(alt(str("TYPE"), str("TYPES")), end);
 
     return ret;
   }

@@ -1,7 +1,7 @@
 import {statementType} from "../_utils";
 import * as Statements from "../../../src/abap/statements/";
 
-let tests = [
+const tests = [
   "DATA lv_foo TYPE i.",
   "DATA lv_foo LIKE LINE OF foo.",
   "DATA lv_foo LIKE lv_foo.",

@@ -6,9 +6,9 @@ import {Version} from "../../version";
 export class TypePools extends Statement {
 
   public getMatcher(): IRunnable {
-    let fieldName = reg(/^\w+$/);
+    const fieldName = reg(/^\w+$/);
 
-    let ret = seq(str("TYPE-POOLS"), fieldName);
+    const ret = seq(str("TYPE-POOLS"), fieldName);
 
     return verNot(Version.Cloud, ret);
   }

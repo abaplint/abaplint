@@ -5,7 +5,7 @@ import {Target} from "./target";
 
 export class SQLTarget extends Expression {
   public getRunnable(): IRunnable {
-    let at = ver(Version.v740sp05, seq(alt(tok(WAt), tok(At)), new Target()));
+    const at = ver(Version.v740sp05, seq(alt(tok(WAt), tok(At)), new Target()));
 
     return alt(new Target(), at);
   }

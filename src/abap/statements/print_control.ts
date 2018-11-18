@@ -6,10 +6,10 @@ import {Version} from "../../version";
 export class PrintControl extends Statement {
 
   public getMatcher(): IRunnable {
-    let index = seq(str("INDEX-LINE"), new Source());
-    let func = seq(str("FUNCTION"), new Source());
+    const index = seq(str("INDEX-LINE"), new Source());
+    const func = seq(str("FUNCTION"), new Source());
 
-    let ret = seq(str("PRINT-CONTROL"), alt(index, func));
+    const ret = seq(str("PRINT-CONTROL"), alt(index, func));
 
     return verNot(Version.Cloud, ret);
   }

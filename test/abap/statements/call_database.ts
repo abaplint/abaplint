@@ -1,7 +1,7 @@
 import {statementType} from "../_utils";
 import * as Statements from "../../../src/abap/statements/";
 
-let tests = [
+const tests = [
   "CALL DATABASE PROCEDURE ('ZFOO')\n" +
   "  EXPORTING foo = bar\n" +
   "  IMPORTING moo = boo.",

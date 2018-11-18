@@ -6,8 +6,8 @@ import {Version} from "../../version";
 export class CatchSystemExceptions extends Statement {
 
   public getMatcher(): IRunnable {
-    let ret = seq(str("CATCH SYSTEM-EXCEPTIONS"),
-                  plus(seq(new Field(), str("="), new Integer())));
+    const ret = seq(str("CATCH SYSTEM-EXCEPTIONS"),
+                    plus(seq(new Field(), str("="), new Integer())));
 
     return verNot(Version.Cloud, ret);
   }

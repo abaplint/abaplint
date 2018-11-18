@@ -29,15 +29,15 @@ export class InlineDataOldVersions extends ABAPRule {
   }
 
   public runParsed(file: ABAPFile, reg: Registry) {
-    let issues: Array<Issue> = [];
+    const issues: Array<Issue> = [];
 
     if (reg.getConfig().getVersion() >= Version.v740sp02) {
       return [];
     }
 
-    for (let statement of file.getStatements()) {
+    for (const statement of file.getStatements()) {
 // when parsed in old versions these expressions are NOT InlineData
-      for (let target of statement.findAllExpressions(Target)) {
+      for (const target of statement.findAllExpressions(Target)) {
         const tokens = target.getAllTokens();
         if (tokens.length !== 4) {
           continue;
@@ -52,7 +52,7 @@ export class InlineDataOldVersions extends ABAPRule {
           continue;
         }
 
-        let message = "Inline DATA not possible in " + versionToText(reg.getConfig().getVersion());
+        const message = "Inline DATA not possible in " + versionToText(reg.getConfig().getVersion());
         issues.push(new Issue({file, message, code: this.getKey(), start: tokens[0].getPos()}));
       }
     }

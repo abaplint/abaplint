@@ -1,7 +1,7 @@
 import {ExitOrCheck} from "../../src/rules/exit_or_check";
 import {testRule} from "./_utils";
 
-let tests = [
+const tests = [
   {abap: "LOOP AT lt_usr02 INTO ls_usr02.\nEXIT.\nENDLOOP.", cnt: 0},
   {abap: "EXIT.", cnt: 1},
   {abap: "CHECK foo = bar.", cnt: 1},

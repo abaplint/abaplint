@@ -1,7 +1,7 @@
 import {statementType} from "../_utils";
 import * as Statements from "../../../src/abap/statements/";
 
-let tests = [
+const tests = [
   "ON CHANGE OF structure-field.",
   "ON CHANGE OF gt_tab-field1 OR gt_tab-field2.",
 ];

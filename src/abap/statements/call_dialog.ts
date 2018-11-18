@@ -6,16 +6,16 @@ import {Version} from "../../version";
 export class CallDialog extends Statement {
 
   public getMatcher(): IRunnable {
-    let from = seq(new FieldSub(), optPrio(seq(str("FROM"), new Source())));
-    let exporting = seq(str("EXPORTING"), plus(from));
+    const from = seq(new FieldSub(), optPrio(seq(str("FROM"), new Source())));
+    const exporting = seq(str("EXPORTING"), plus(from));
 
-    let to = seq(new Field(), optPrio(seq(str("TO"), new Field())));
-    let importing = seq(str("IMPORTING"), plus(to));
+    const to = seq(new Field(), optPrio(seq(str("TO"), new Field())));
+    const importing = seq(str("IMPORTING"), plus(to));
 
-    let ret = seq(str("CALL DIALOG"),
-                  new Constant(),
-                  opt(exporting),
-                  opt(importing));
+    const ret = seq(str("CALL DIALOG"),
+                    new Constant(),
+                    opt(exporting),
+                    opt(importing));
 
     return verNot(Version.Cloud, ret);
   }

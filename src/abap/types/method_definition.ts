@@ -18,7 +18,7 @@ export class MethodDefinition {
     if (!(node.get() instanceof MethodDef)) {
       throw new Error("MethodDefinition, expected MethodDef as part of input node");
     }
-    let found = node.findFirstExpression(MethodName);
+    const found = node.findFirstExpression(MethodName);
     if (found === undefined) {
       throw new Error("MethodDefinition, expected MethodDef as part of input node");
     }

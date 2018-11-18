@@ -4,15 +4,15 @@ import {SQLCompare} from "./";
 
 export class SQLCond extends Expression {
   public getRunnable(): IRunnable {
-    let operator = alt(str("AND"), str("OR"));
+    const operator = alt(str("AND"), str("OR"));
 
-    let paren = seq(tok(WParenLeftW),
-                    new SQLCond(),
-                    alt(tok(WParenRightW), tok(WParenRight)));
+    const paren = seq(tok(WParenLeftW),
+                      new SQLCond(),
+                      alt(tok(WParenRightW), tok(WParenRight)));
 
-    let cnd = seq(optPrio(str("NOT")), alt(new SQLCompare(), paren));
+    const cnd = seq(optPrio(str("NOT")), alt(new SQLCompare(), paren));
 
-    let ret = seq(cnd, star(seq(operator, cnd)));
+    const ret = seq(cnd, star(seq(operator, cnd)));
 
     return ret;
   }

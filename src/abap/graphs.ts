@@ -5,7 +5,7 @@ import {Artifacts} from "./artifacts";
 // todo, move this method to somewhere under web/syntax?
 
 function sort(data: string[]): string[] {
-  let unique = data.filter((v, i, a) => { return a.indexOf(v) === i; });
+  const unique = data.filter((v, i, a) => { return a.indexOf(v) === i; });
   return unique.sort();
 }
 
@@ -35,20 +35,20 @@ class Graph {
   }
 
   private static buildData(): ICollection {
-    let res: ICollection = {expressions: [], statements: [], structures: []};
+    const res: ICollection = {expressions: [], statements: [], structures: []};
 
-    for (let expr of Artifacts.getExpressions()) {
+    for (const expr of Artifacts.getExpressions()) {
       res.expressions.push(this.buildRunnable(expr.constructor.name, "expression", expr.getRunnable(), true));
     }
 
-    for (let stat of Artifacts.getStatements()) {
+    for (const stat of Artifacts.getStatements()) {
       res.statements.push(this.buildRunnable(stat.constructor.name, "statement", stat.getMatcher(), false));
     }
 
-    for (let stru of Artifacts.getStructures()) {
-      let str = "Railroad.Diagram.INTERNAL_ALIGNMENT = 'left';\n" +
+    for (const stru of Artifacts.getStructures()) {
+      const str = "Railroad.Diagram.INTERNAL_ALIGNMENT = 'left';\n" +
         "Railroad.Diagram(" + stru.getMatcher().toRailroad() + ").toString();";
-      let using = stru.getMatcher().getUsing();
+      const using = stru.getMatcher().getUsing();
       res.structures.push({
         name: stru.constructor.name,
         type: "structure",

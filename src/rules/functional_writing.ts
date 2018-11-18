@@ -29,11 +29,11 @@ export class FunctionalWriting extends ABAPRule {
   }
 
   public runParsed(file: ABAPFile) {
-    let issues: Array<Issue> = [];
+    const issues: Array<Issue> = [];
     let exception = false;
 
-    for (let statement of file.getStatements()) {
-      let code = statement.concatTokens().toUpperCase();
+    for (const statement of file.getStatements()) {
+      const code = statement.concatTokens().toUpperCase();
 
       if (statement.get() instanceof Statements.ClassImplementation && code.match(/^CLASS .?CX/i) && this.conf.ignoreExceptions) {
         exception = true;
@@ -45,7 +45,7 @@ export class FunctionalWriting extends ABAPRule {
             || this.startsWith(code, "CALL METHOD (")) {
           continue;
         }
-        let issue = new Issue({file, message: this.getDescription(), code: this.getKey(), start: statement.getStart()});
+        const issue = new Issue({file, message: this.getDescription(), code: this.getKey(), start: statement.getStart()});
         issues.push(issue);
       }
     }

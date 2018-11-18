@@ -5,9 +5,9 @@ import {Version} from "../../version";
 
 export class InlineFS extends Expression {
   public getRunnable(): IRunnable {
-    let right = alt(tok(ParenRight), tok(ParenRightW));
-    let left = tok(ParenLeft);
-    let fs = seq(str("FIELD-SYMBOL"), left, new FieldSymbol(), right);
+    const right = alt(tok(ParenRight), tok(ParenRightW));
+    const left = tok(ParenLeft);
+    const fs = seq(str("FIELD-SYMBOL"), left, new FieldSymbol(), right);
 
     return ver(Version.v740sp02, fs);
   }

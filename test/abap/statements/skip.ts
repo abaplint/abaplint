@@ -1,7 +1,7 @@
 import {statementType} from "../_utils";
 import * as Statements from "../../../src/abap/statements/";
 
-let tests = [
+const tests = [
   "SKIP.",
   "SKIP TO LINE 12.",
   "SKIP 1.",

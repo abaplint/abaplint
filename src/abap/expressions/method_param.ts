@@ -5,20 +5,20 @@ import {ParenLeft, ParenRight, ParenRightW} from "../tokens/";
 
 export class MethodParam extends Expression {
   public getRunnable(): IRunnable {
-    let ref = seq(str("REFERENCE"),
-                  tok(ParenLeft),
-                  new MethodParamName(),
-                  alt(tok(ParenRight), tok(ParenRightW)));
-
-    let value = seq(str("VALUE"),
+    const ref = seq(str("REFERENCE"),
                     tok(ParenLeft),
                     new MethodParamName(),
                     alt(tok(ParenRight), tok(ParenRightW)));
 
-    let fieldsOrValue = seq(alt(value,
-                                ref,
-                                new MethodParamName()),
-                            new TypeParam());
+    const value = seq(str("VALUE"),
+                      tok(ParenLeft),
+                      new MethodParamName(),
+                      alt(tok(ParenRight), tok(ParenRightW)));
+
+    const fieldsOrValue = seq(alt(value,
+                                  ref,
+                                  new MethodParamName()),
+                              new TypeParam());
 
     return fieldsOrValue;
   }

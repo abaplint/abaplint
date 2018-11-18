@@ -5,7 +5,7 @@ import {Version} from "../../version";
 export class EndOfPage extends Statement {
 
   public getMatcher(): IRunnable {
-    let ret = str("END-OF-PAGE");
+    const ret = str("END-OF-PAGE");
 
     return verNot(Version.Cloud, ret);
   }

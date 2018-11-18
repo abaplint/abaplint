@@ -6,9 +6,9 @@ import {Version} from "../../version";
 export class OnChange extends Statement {
 
   public getMatcher(): IRunnable {
-    let or = seq(str("OR"), new Target());
+    const or = seq(str("OR"), new Target());
 
-    let ret = seq(str("ON CHANGE OF"), new Target(), star(or));
+    const ret = seq(str("ON CHANGE OF"), new Target(), star(or));
 
     return verNot(Version.Cloud, ret);
   }

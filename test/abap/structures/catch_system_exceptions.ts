@@ -1,7 +1,7 @@
 import {structureType} from "../_utils";
 import {CatchSystemExceptions} from "../../../src/abap/structures";
 
-let cases = [
+const cases = [
   {abap: "CATCH SYSTEM-EXCEPTIONS code = 4. ENDCATCH."},
 ];
 

@@ -18,7 +18,7 @@ function toNodes(statements: Statement[]): StatementNode[] {
 }
 
 describe("structure combi statement", function() {
-  let sta1 = sta(Statements.Move);
+  const sta1 = sta(Statements.Move);
 
   it("sta1 match", function() {
     const parent = new DummyNode();

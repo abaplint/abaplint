@@ -6,7 +6,7 @@ import {Version} from "../../version";
 export class Define extends Statement {
 
   public getMatcher(): IRunnable {
-    let ret = seq(str("DEFINE"), new MacroName());
+    const ret = seq(str("DEFINE"), new MacroName());
     return verNot(Version.Cloud, ret);
   }
 

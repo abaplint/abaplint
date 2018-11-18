@@ -1,7 +1,7 @@
 import {structureType} from "../_utils";
 import {Case} from "../../../src/abap/structures";
 
-let cases = [
+const cases = [
   {abap: "CASE moo. ENDCASE."},
   {abap: "CASE moo. WHEN 2. ENDCASE."},
   {abap: "CASE moo. WHEN OTHERS. ENDCASE."},

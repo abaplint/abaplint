@@ -6,14 +6,14 @@ import {Version} from "../../version";
 export class LogPoint extends Statement {
 
   public getMatcher(): IRunnable {
-    let subkey = seq(str("SUBKEY"), new Source());
+    const subkey = seq(str("SUBKEY"), new Source());
 
-    let fields = seq(str("FIELDS"), plus(new Source()));
+    const fields = seq(str("FIELDS"), plus(new Source()));
 
-    let ret = seq(str("LOG-POINT ID"),
-                  new NamespaceSimpleName(),
-                  opt(subkey),
-                  opt(fields));
+    const ret = seq(str("LOG-POINT ID"),
+                    new NamespaceSimpleName(),
+                    opt(subkey),
+                    opt(fields));
 
     return verNot(Version.Cloud, ret);
   }

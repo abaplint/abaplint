@@ -6,8 +6,8 @@ import {Normal} from "./normal";
 export class Catch extends Structure {
 
   public getMatcher(): IStructureRunnable {
-    let normal = star(sub(new Normal()));
-    let cat = seq(sta(Statements.Catch), normal);
+    const normal = star(sub(new Normal()));
+    const cat = seq(sta(Statements.Catch), normal);
 
     return cat;
   }

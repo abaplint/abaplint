@@ -6,7 +6,7 @@ import {Version} from "../../version";
 export class FreeMemory extends Statement {
 
   public getMatcher(): IRunnable {
-    let ret = seq(str("FREE MEMORY ID"), new Source());
+    const ret = seq(str("FREE MEMORY ID"), new Source());
 
     return verNot(Version.Cloud, ret);
   }

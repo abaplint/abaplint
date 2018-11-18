@@ -6,19 +6,19 @@ import {Version} from "../../version";
 export class CallOLE extends Statement {
 
   public getMatcher(): IRunnable {
-    let fields = seq(regex(/^#?\w+$/), str("="), new Source());
+    const fields = seq(regex(/^#?\w+$/), str("="), new Source());
 
-    let exporting = seq(str("EXPORTING"), plus(fields));
+    const exporting = seq(str("EXPORTING"), plus(fields));
 
-    let rc = seq(str("="), new Target());
+    const rc = seq(str("="), new Target());
 
-    let ret = seq(str("CALL METHOD OF"),
-                  new Source(),
-                  new Constant(),
-                  opt(rc),
-                  opt(str("NO FLUSH")),
-                  opt(str("QUEUEONLY")),
-                  opt(exporting));
+    const ret = seq(str("CALL METHOD OF"),
+                    new Source(),
+                    new Constant(),
+                    opt(rc),
+                    opt(str("NO FLUSH")),
+                    opt(str("QUEUEONLY")),
+                    opt(exporting));
 
     return verNot(Version.Cloud, ret);
   }

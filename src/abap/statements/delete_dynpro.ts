@@ -6,7 +6,7 @@ import {Version} from "../../version";
 export class DeleteDynpro extends Statement {
 
   public getMatcher(): IRunnable {
-    let ret = seq(str("DELETE DYNPRO"), new Source());
+    const ret = seq(str("DELETE DYNPRO"), new Source());
 
     return verNot(Version.Cloud, ret);
   }

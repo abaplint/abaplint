@@ -6,11 +6,11 @@ import {Version} from "../../version";
 export class DeleteReport extends Statement {
 
   public getMatcher(): IRunnable {
-    let state = seq(str("STATE"), new Source());
+    const state = seq(str("STATE"), new Source());
 
-    let ret = seq(str("DELETE REPORT"),
-                  new Source(),
-                  opt(state));
+    const ret = seq(str("DELETE REPORT"),
+                    new Source(),
+                    opt(state));
 
     return verNot(Version.Cloud, ret);
   }

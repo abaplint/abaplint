@@ -6,13 +6,13 @@ export class ClassDataBegin extends Statement {
 
   public getMatcher(): IRunnable {
 
-    let occurs = seq(str("OCCURS"), new Integer());
+    const occurs = seq(str("OCCURS"), new Integer());
 
-    let structure = seq(str("BEGIN OF"),
-                        opt(str("COMMON PART")),
-                        new NamespaceSimpleName(),
-                        opt(str("READ-ONLY")),
-                        opt(occurs));
+    const structure = seq(str("BEGIN OF"),
+                          opt(str("COMMON PART")),
+                          new NamespaceSimpleName(),
+                          opt(str("READ-ONLY")),
+                          opt(occurs));
 
     return seq(str("CLASS-DATA"), structure);
   }

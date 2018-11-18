@@ -28,17 +28,17 @@ export class TryWithoutCatch extends ABAPRule {
   }
 
   public runParsed(file: ABAPFile, _reg: Registry) {
-    let issues: Array<Issue> = [];
+    const issues: Array<Issue> = [];
 
     const stru = file.getStructure();
     if (stru === undefined) {
       return [];
     }
 
-    let tries = stru.findAllStructures(Try);
+    const tries = stru.findAllStructures(Try);
 
-    for (let t of tries) {
-      let c = t.findFirstStructure(Catch);
+    for (const t of tries) {
+      const c = t.findFirstStructure(Catch);
       if (c === undefined) {
         issues.push(new Issue({
           file,

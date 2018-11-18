@@ -8,13 +8,13 @@ export class Code implements IFormatter {
   public output(issues: Array<Issue>): string {
 
     let result = "";
-    for (let issue of issues) {
+    for (const issue of issues) {
       let code = issue.getFile().getRawRows()[issue.getStart().getRow() - 1];
       if (code) {
         code = code.trim();
       }
 
-      let text = issue.getFile().getFilename() +
+      const text = issue.getFile().getFilename() +
                  "[" + issue.getStart().getRow() + ", " +
                  issue.getStart().getCol() + "] - " +
                  issue.getMessage() + " - " +

@@ -1,7 +1,7 @@
 import {structureType} from "../_utils";
 import {If} from "../../../src/abap/structures";
 
-let cases = [
+const cases = [
   {abap: "IF foo = bar. ENDIF."},
   {abap: "IF foo = bar. WRITE 'bar'. ENDIF."},
   {abap: "IF foo = bar. ELSE. ENDIF."},

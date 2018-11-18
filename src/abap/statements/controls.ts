@@ -6,10 +6,10 @@ import {Version} from "../../version";
 export class Controls extends Statement {
 
   public getMatcher(): IRunnable {
-    let tableview = seq(str("TABLEVIEW USING SCREEN"), new Source());
-    let tabstrip = str("TABSTRIP");
-    let type = seq(str("TYPE"), alt(tableview, tabstrip));
-    let ret = seq(str("CONTROLS"), new Target(), type);
+    const tableview = seq(str("TABLEVIEW USING SCREEN"), new Source());
+    const tabstrip = str("TABSTRIP");
+    const type = seq(str("TYPE"), alt(tableview, tabstrip));
+    const ret = seq(str("CONTROLS"), new Target(), type);
 
     return verNot(Version.Cloud, ret);
   }

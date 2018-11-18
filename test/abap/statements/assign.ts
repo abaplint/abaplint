@@ -2,7 +2,7 @@ import {statementType, statementVersion} from "../_utils";
 import * as Statements from "../../../src/abap/statements/";
 import {Version} from "../../../src/version";
 
-let tests = [
+const tests = [
   "ASSIGN COMPONENT ls_field-name OF STRUCTURE ig_file TO <lv_field>.",
   "ASSIGN ('(SAPLSIFP)TTAB') TO <lg_any>.",
   "ASSIGN cs_tstcp-param(sy-fdpos) TO <lg_f>.",
@@ -34,7 +34,7 @@ let tests = [
 
 statementType(tests, "ASSIGN", Statements.Assign);
 
-let versions = [
+const versions = [
   {abap: "ASSIGN entity->* TO FIELD-SYMBOL(<entity>).", ver: Version.v740sp02},
   {abap: "ASSIGN it_cols_width[ KEY primary_key col = lv_col ] TO FIELD-SYMBOL(<ls_cols_width>).", ver: Version.v740sp02},
   {abap: "ASSIGN lt_table[ table_line->guid = lv_guid ] TO <target>.", ver: Version.v740sp02},

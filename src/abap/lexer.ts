@@ -104,11 +104,11 @@ export class Lexer {
   }
 
   private static add() {
-    let s = this.buffer.get().trim();
+    const s = this.buffer.get().trim();
 
     if (s.length > 0) {
-      let col = this.stream.getCol();
-      let row = this.stream.getRow();
+      const col = this.stream.getCol();
+      const row = this.stream.getRow();
 
       let whiteBefore = false;
       if (this.stream.prevChar() === " " || this.stream.prevChar() === "\n") {
@@ -121,7 +121,7 @@ export class Lexer {
       }
 
       let tok: Token;
-      let pos = new Position(row, col - s.length);
+      const pos = new Position(row, col - s.length);
 
       if (this.m === Mode.Comment) {
         tok = new Tokens.Comment(pos, s);
@@ -228,12 +228,12 @@ export class Lexer {
     let escaped = 0;
 
     for ( ; ; ) {
-      let current = this.stream.currentChar();
+      const current = this.stream.currentChar();
       this.buffer.add(current);
-      let buf = this.buffer.get();
-      let ahead = this.stream.nextChar();
-      let aahead = this.stream.nextNextChar();
-      let prev = this.stream.prevChar();
+      const buf = this.buffer.get();
+      const ahead = this.stream.nextChar();
+      const aahead = this.stream.nextNextChar();
+      const prev = this.stream.prevChar();
 
       if (ahead === "'" && this.m === Mode.Normal) {
 // start string

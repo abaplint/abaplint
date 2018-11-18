@@ -3,13 +3,13 @@ import {ParenLeft, ParenRightW, ParenRight} from "../tokens/";
 
 export class ConstantString extends Expression {
   public getRunnable(): IRunnable {
-    let text = seq(tok(ParenLeft), reg(/^\w{3}$/), alt(tok(ParenRightW), tok(ParenRight)));
+    const text = seq(tok(ParenLeft), reg(/^\w{3}$/), alt(tok(ParenRightW), tok(ParenRight)));
     /*
     let constant = reg(/^('.*')|(`.*`)$/);
     let concat = seq(str("&"), constant);
     let stri = seq(constant, star(concat), opt(text));
     */
-    let stri = seq(reg(/^('.*')|(`.*`)$/), opt(text));
+    const stri = seq(reg(/^('.*')|(`.*`)$/), opt(text));
     return stri;
   }
 }

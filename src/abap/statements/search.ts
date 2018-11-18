@@ -6,17 +6,17 @@ import {Version} from "../../version";
 export class Search extends Statement {
 
   public getMatcher(): IRunnable {
-    let starting = seq(str("STARTING AT"), new Source());
-    let ending = seq(str("ENDING AT"), new Source());
-    let mark = str("AND MARK");
+    const starting = seq(str("STARTING AT"), new Source());
+    const ending = seq(str("ENDING AT"), new Source());
+    const mark = str("AND MARK");
 
-    let mode = alt(str("IN BYTE MODE"), str("IN CHARACTER MODE"));
+    const mode = alt(str("IN BYTE MODE"), str("IN CHARACTER MODE"));
 
-    let ret = seq(str("SEARCH"),
-                  new Source(),
-                  str("FOR"),
-                  new Source(),
-                  opt(per(mode, starting, ending, mark)));
+    const ret = seq(str("SEARCH"),
+                    new Source(),
+                    str("FOR"),
+                    new Source(),
+                    opt(per(mode, starting, ending, mark)));
 
     return verNot(Version.Cloud, ret);
   }

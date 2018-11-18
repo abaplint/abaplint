@@ -10,7 +10,7 @@ export abstract class Structure  {
   public runFile(file: ABAPFile, statements?: StatementNode[]): {issues: Issue[], node?: StructureNode} {
     statements = statements ? statements : file.getStatements();
 
-    let parent = new StructureNode(this);
+    const parent = new StructureNode(this);
     const result = this.getMatcher().run(statements, parent);
 
     if (result.error) {

@@ -1,7 +1,7 @@
 import {statementType} from "../_utils";
 import * as Statements from "../../../src/abap/statements/";
 
-let tests = [
+const tests = [
   "CALL TRANSFORMATION id\n" +
   "  SOURCE data = is_data\n" +
   "  RESULT XML rv_xml.",

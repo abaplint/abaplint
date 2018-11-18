@@ -6,7 +6,7 @@ export class ConstantBegin extends Statement {
 
   public getMatcher(): IRunnable {
 
-    let ret = seq(str("CONSTANTS"), str("BEGIN"), str("OF"), new NamespaceSimpleName());
+    const ret = seq(str("CONSTANTS"), str("BEGIN"), str("OF"), new NamespaceSimpleName());
 
     return ret;
   }

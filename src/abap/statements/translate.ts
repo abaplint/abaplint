@@ -5,11 +5,11 @@ import {Target, Source} from "../expressions";
 export class Translate extends Statement {
 
   public getMatcher(): IRunnable {
-    let cas = seq(str("TO"),
-                  alt(str("UPPER"), str("LOWER")),
-                  str("CASE"));
+    const cas = seq(str("TO"),
+                    alt(str("UPPER"), str("LOWER")),
+                    str("CASE"));
 
-    let using = seq(str("USING"), new Source());
+    const using = seq(str("USING"), new Source());
 
     return seq(str("TRANSLATE"),
                new Target(),

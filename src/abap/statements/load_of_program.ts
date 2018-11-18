@@ -5,7 +5,7 @@ import {Version} from "../../version";
 export class LoadOfProgram extends Statement {
 
   public getMatcher(): IRunnable {
-    let ret = str("LOAD-OF-PROGRAM");
+    const ret = str("LOAD-OF-PROGRAM");
 
     return verNot(Version.Cloud, ret);
   }

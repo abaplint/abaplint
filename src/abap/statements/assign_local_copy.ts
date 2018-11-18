@@ -7,11 +7,11 @@ export class AssignLocalCopy extends Statement {
 
   public getMatcher(): IRunnable {
 
-    let ret = seq(str("ASSIGN LOCAL COPY OF"),
-                  opt(seq(str("INITIAL"), opt(str("LINE OF")))),
-                  alt(new Source(), new Dynamic()),
-                  str("TO"),
-                  new FieldSymbol());
+    const ret = seq(str("ASSIGN LOCAL COPY OF"),
+                    opt(seq(str("INITIAL"), opt(str("LINE OF")))),
+                    alt(new Source(), new Dynamic()),
+                    str("TO"),
+                    new FieldSymbol());
 
     return verNot(Version.Cloud, ret);
   }

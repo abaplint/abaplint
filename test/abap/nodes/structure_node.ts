@@ -6,10 +6,10 @@ import * as Statements from "../../../src/abap/statements";
 describe("Structure node", () => {
 
   it("findFirstStatement, found", () => {
-    let top = new StructureNode(new Structures.ClassDefinition());
+    const top = new StructureNode(new Structures.ClassDefinition());
     top.addChild(new StatementNode(new Statements.ClassDefinition()));
 
-    let found = top.findFirstStatement(Statements.ClassDefinition);
+    const found = top.findFirstStatement(Statements.ClassDefinition);
 
     expect(found).to.not.equal(undefined);
     if (found) {
@@ -18,10 +18,10 @@ describe("Structure node", () => {
   });
 
   it("findFirstStatement, not found", () => {
-    let top = new StructureNode(new Structures.ClassDefinition());
+    const top = new StructureNode(new Structures.ClassDefinition());
     top.addChild(new StatementNode(new Statements.Do()));
 
-    let found = top.findFirstStatement(Statements.ClassDefinition);
+    const found = top.findFirstStatement(Statements.ClassDefinition);
 
     expect(found).to.equal(undefined);
   });

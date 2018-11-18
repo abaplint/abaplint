@@ -3,7 +3,7 @@ import {Source, FieldSub} from "./";
 
 export class Let extends Expression {
   public getRunnable(): IRunnable {
-    let fieldList = seq(new FieldSub(), str("="), new Source());
+    const fieldList = seq(new FieldSub(), str("="), new Source());
     return seq(str("LET"), plus(fieldList), str("IN"));
   }
 }

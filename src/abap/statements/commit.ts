@@ -5,9 +5,9 @@ import {Source, Dynamic} from "../expressions";
 export class Commit extends Statement {
 
   public getMatcher(): IRunnable {
-    let work = seq(str("WORK"), opt(str("AND WAIT")));
+    const work = seq(str("WORK"), opt(str("AND WAIT")));
 
-    let connection = seq(str("CONNECTION"), alt(new Source(), new Dynamic()));
+    const connection = seq(str("CONNECTION"), alt(new Source(), new Dynamic()));
 
     return seq(str("COMMIT"), alt(work, connection));
   }

@@ -28,13 +28,13 @@ export class EmptyStatement extends ABAPRule {
   }
 
   public runParsed(file: ABAPFile) {
-    let issues: Array<Issue> = [];
+    const issues: Array<Issue> = [];
 
-    let statements = file.getStatements();
+    const statements = file.getStatements();
 
-    for (let sta of statements) {
+    for (const sta of statements) {
       if (sta.get() instanceof Empty) {
-        let issue = new Issue({file, code: this.getKey(), message: this.getDescription(), start: sta.getStart()});
+        const issue = new Issue({file, code: this.getKey(), message: this.getDescription(), start: sta.getStart()});
         issues.push(issue);
       }
     }

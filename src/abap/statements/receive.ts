@@ -6,10 +6,10 @@ import {Version} from "../../version";
 export class Receive extends Statement {
 
   public getMatcher(): IRunnable {
-    let ret = seq(str("RECEIVE RESULTS FROM FUNCTION"),
-                  new FunctionName(),
-                  opt(str("KEEPING TASK")),
-                  new ReceiveParameters());
+    const ret = seq(str("RECEIVE RESULTS FROM FUNCTION"),
+                    new FunctionName(),
+                    opt(str("KEEPING TASK")),
+                    new ReceiveParameters());
 
     return verNot(Version.Cloud, ret);
   }

@@ -6,15 +6,15 @@ import {Version} from "../../version";
 export class GetBadi extends Statement {
 
   public getMatcher(): IRunnable {
-    let filters = seq(str("FILTERS"), new ParameterListS());
-    let context = seq(str("CONTEXT"), new Source());
-    let type = seq(str("TYPE"), new Dynamic());
+    const filters = seq(str("FILTERS"), new ParameterListS());
+    const context = seq(str("CONTEXT"), new Source());
+    const type = seq(str("TYPE"), new Dynamic());
 
-    let ret = seq(str("GET BADI"),
-                  new Target(),
-                  opt(type),
-                  opt(filters),
-                  opt(context));
+    const ret = seq(str("GET BADI"),
+                    new Target(),
+                    opt(type),
+                    opt(filters),
+                    opt(context));
 
     return verNot(Version.Cloud, ret);
   }

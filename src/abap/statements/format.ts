@@ -6,19 +6,19 @@ import {Version} from "../../version";
 export class Format extends Statement {
 
   public getMatcher(): IRunnable {
-    let eq = seq(str("="), new Source());
-    let value = alt(eq, new Source());
-    let toggle = alt(str("ON"), str("OFF"));
+    const eq = seq(str("="), new Source());
+    const value = alt(eq, new Source());
+    const toggle = alt(str("ON"), str("OFF"));
 
-    let options = per(str("RESET"),
-                      seq(str("INTENSIFIED"), opt(value)),
-                      seq(str("INVERSE"), opt(value)),
-                      seq(str("HOTSPOT"), opt(value)),
-                      seq(str("FRAMES"), value),
-                      seq(str("INPUT"), value),
-                      seq(str("COLOR"), value, opt(toggle)));
+    const options = per(str("RESET"),
+                        seq(str("INTENSIFIED"), opt(value)),
+                        seq(str("INVERSE"), opt(value)),
+                        seq(str("HOTSPOT"), opt(value)),
+                        seq(str("FRAMES"), value),
+                        seq(str("INPUT"), value),
+                        seq(str("COLOR"), value, opt(toggle)));
 
-    let ret = seq(str("FORMAT"), options);
+    const ret = seq(str("FORMAT"), options);
 
     return verNot(Version.Cloud, ret);
   }

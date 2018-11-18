@@ -1,7 +1,7 @@
 import {statementType} from "../_utils";
 import * as Statements from "../../../src/abap/statements/";
 
-let tests = [
+const tests = [
   "REPORT zabapgit LINE-SIZE 100.",
   "REPORT.",
   "REPORT zfoobar MESSAGE-ID zfoo.",

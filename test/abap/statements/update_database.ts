@@ -1,7 +1,7 @@
 import {statementType} from "../_utils";
 import * as Statements from "../../../src/abap/statements/";
 
-let tests = [
+const tests = [
   "UPDATE usr02 SET foo = 'bar'.",
   "UPDATE zfoo FROM ls_foo.",
   "UPDATE zfoo.",

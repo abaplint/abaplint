@@ -6,24 +6,24 @@ import {Version} from "../../version";
 export class AtSelectionScreen extends Statement {
 
   public getMatcher(): IRunnable {
-    let output = str("OUTPUT");
+    const output = str("OUTPUT");
 
-    let value = seq(str("ON VALUE-REQUEST FOR"), new FieldSub());
+    const value = seq(str("ON VALUE-REQUEST FOR"), new FieldSub());
 
-    let exit = str("ON EXIT-COMMAND");
+    const exit = str("ON EXIT-COMMAND");
 
-    let field = seq(str("ON"), new FieldSub());
+    const field = seq(str("ON"), new FieldSub());
 
-    let end = seq(str("ON END OF"), new Field());
+    const end = seq(str("ON END OF"), new Field());
 
-    let radio = seq(str("ON RADIOBUTTON GROUP"), new Field());
+    const radio = seq(str("ON RADIOBUTTON GROUP"), new Field());
 
-    let block = seq(str("ON BLOCK"), reg(/^\w+$/));
+    const block = seq(str("ON BLOCK"), reg(/^\w+$/));
 
-    let help = seq(str("ON HELP-REQUEST FOR"), new FieldSub());
+    const help = seq(str("ON HELP-REQUEST FOR"), new FieldSub());
 
-    let ret = seq(str("AT SELECTION-SCREEN"),
-                  opt(alt(output, value, radio, exit, field, end, help, block)));
+    const ret = seq(str("AT SELECTION-SCREEN"),
+                    opt(alt(output, value, radio, exit, field, end, help, block)));
 
     return verNot(Version.Cloud, ret);
   }

@@ -3,7 +3,7 @@ import {Integer} from "./";
 
 export class Decimals extends Expression {
   public getRunnable(): IRunnable {
-    let ret = seq(str("DECIMALS"), new Integer());
+    const ret = seq(str("DECIMALS"), new Integer());
     return ret;
   }
 }

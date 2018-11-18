@@ -8,9 +8,9 @@ import {PublicSection} from "./public_section";
 export class ClassDefinition extends Structure {
 
   public getMatcher(): IStructureRunnable {
-    let body = seq(opt(sub(new PublicSection())),
-                   opt(sub(new ProtectedSection())),
-                   opt(sub(new PrivateSection())));
+    const body = seq(opt(sub(new PublicSection())),
+                     opt(sub(new ProtectedSection())),
+                     opt(sub(new PrivateSection())));
 
     return beginEnd(sta(Statements.ClassDefinition), body, sta(Statements.EndClass));
   }

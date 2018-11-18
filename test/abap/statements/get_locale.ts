@@ -1,7 +1,7 @@
 import {statementType} from "../_utils";
 import * as Statements from "../../../src/abap/statements/";
 
-let tests = [
+const tests = [
   "GET LOCALE LANGUAGE lang COUNTRY cntry MODIFIER mod.",
 ];
 

@@ -1,7 +1,7 @@
 import {FunctionalWriting} from "../../src/rules/functional_writing";
 import {testRule} from "./_utils";
 
-let tests = [
+const tests = [
   {abap: "CALL METHOD zcl_class=>method( ).", cnt: 1},
   {abap: "CalL METHOD zcl_class=>method( ).", cnt: 1},
   {abap: "CALL METHOD (lv_class_name)=>jump.", cnt: 0},

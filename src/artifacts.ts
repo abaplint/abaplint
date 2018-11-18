@@ -7,11 +7,11 @@ export class Artifacts {
   private static objectMap: any;
 
   public static getRules(): IRule[] {
-    let ret: IRule[] = [];
-    for (let key in Rules) {
+    const ret: IRule[] = [];
+    for (const key in Rules) {
       const list: any = Rules;
       if (typeof list[key] === "function") {
-        let rule: IRule = new list[key]();
+        const rule: IRule = new list[key]();
 // note that configuration is also exported from rules
         if (rule.getKey) {
           ret.push(rule);
@@ -44,10 +44,10 @@ export class Artifacts {
 
   private static buildObjectMap() {
     this.objectMap = [];
-    for (let key in Objects) {
+    for (const key in Objects) {
       const list: any = Objects;
       if (typeof list[key] === "function") {
-        let obj = new list[key]("ASDF");
+        const obj = new list[key]("ASDF");
         this.objectMap[obj.getType()] = list[key];
       }
     }

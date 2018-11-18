@@ -4,8 +4,8 @@ import {expect} from "chai";
 import {TryWithoutCatch} from "../../src/rules/try_without_catch";
 
 function findIssues(abap: string) {
-  let reg = new Registry().addFile(new MemoryFile("zfoo.prog.abap", abap)).parse();
-  let rule = new TryWithoutCatch();
+  const reg = new Registry().addFile(new MemoryFile("zfoo.prog.abap", abap)).parse();
+  const rule = new TryWithoutCatch();
   return rule.run(reg.getObjects()[0], reg);
 }
 

@@ -2,7 +2,7 @@ import {statementType, statementVersion} from "../_utils";
 import * as Statements from "../../../src/abap/statements/";
 import {Version} from "../../../src/version";
 
-let tests = [
+const tests = [
   "loop at foo.",
   "loop at foo into bar.",
   "LOOP AT lt_lines ASSIGNING <ls_line>.",
@@ -25,7 +25,7 @@ let tests = [
 
 statementType(tests, "LOOP", Statements.Loop);
 
-let versions = [
+const versions = [
   {abap: "LOOP AT lt_packages ASSIGNING FIELD-SYMBOL(<package>).", ver: Version.v740sp02},
 ];
 

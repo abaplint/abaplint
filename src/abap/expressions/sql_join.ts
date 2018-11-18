@@ -3,15 +3,15 @@ import {DatabaseTable, Field, SQLCond} from "./";
 
 export class SQLJoin extends Expression {
   public getRunnable(): IRunnable {
-    let aas = seq(str("AS"), new Field());
+    const aas = seq(str("AS"), new Field());
 
-    let joinType = seq(opt(alt(str("INNER"), str("LEFT OUTER"), str("LEFT"))), str("JOIN"));
+    const joinType = seq(opt(alt(str("INNER"), str("LEFT OUTER"), str("LEFT"))), str("JOIN"));
 
-    let join = seq(joinType,
-                   new DatabaseTable(),
-                   opt(aas),
-                   str("ON"),
-                   plus(new SQLCond()));
+    const join = seq(joinType,
+                     new DatabaseTable(),
+                     opt(aas),
+                     str("ON"),
+                     plus(new SQLCond()));
 
     return join;
   }

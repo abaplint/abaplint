@@ -5,9 +5,9 @@ import {Source, NamespaceSimpleName, Cond} from "../expressions";
 export class Assert extends Statement {
 
   public getMatcher(): IRunnable {
-    let fields = seq(str("FIELDS"), plus(new Source()));
-    let subkey = seq(str("SUBKEY"), new Source());
-    let id = seq(str("ID"), new NamespaceSimpleName());
+    const fields = seq(str("FIELDS"), plus(new Source()));
+    const subkey = seq(str("SUBKEY"), new Source());
+    const id = seq(str("ID"), new NamespaceSimpleName());
 
     return seq(str("ASSERT"),
                opt(id),

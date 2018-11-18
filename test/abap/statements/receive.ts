@@ -1,7 +1,7 @@
 import {statementType} from "../_utils";
 import * as Statements from "../../../src/abap/statements/";
 
-let tests = [
+const tests = [
   "RECEIVE RESULTS FROM FUNCTION 'ZFOOBAR'\n" +
   " IMPORTING\n" +
   "   ev_foo      = lv_del\n" +

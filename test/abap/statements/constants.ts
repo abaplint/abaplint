@@ -1,7 +1,7 @@
 import {statementType} from "../_utils";
 import * as Statements from "../../../src/abap/statements/";
 
-let tests = [
+const tests = [
   "CONSTANTS c_cluster_type TYPE c VALUE 'C'.",
   "constants lc_empty type string value is initial.",
   "constants c_oo_class(7)      VALUE 'foobar'.",

@@ -5,28 +5,28 @@ import {Source, DatabaseTable, Dynamic, SQLSource} from "../expressions";
 export class InsertDatabase extends Statement {
 
   public getMatcher(): IRunnable {
-    let target = alt(new DatabaseTable(), new Dynamic());
+    const target = alt(new DatabaseTable(), new Dynamic());
 
-    let client = str("CLIENT SPECIFIED");
+    const client = str("CLIENT SPECIFIED");
 
-    let conn = seq(str("CONNECTION"), alt(new Source(), new Dynamic()));
+    const conn = seq(str("CONNECTION"), alt(new Source(), new Dynamic()));
 
-    let f = seq(opt(client),
-                opt(conn),
-                str("FROM"),
-                opt(str("TABLE")),
-                new SQLSource(),
-                opt(str("ACCEPTING DUPLICATE KEYS")));
+    const f = seq(opt(client),
+                  opt(conn),
+                  str("FROM"),
+                  opt(str("TABLE")),
+                  new SQLSource(),
+                  opt(str("ACCEPTING DUPLICATE KEYS")));
 
-    let from = seq(target,
-                   opt(alt(f, client)));
+    const from = seq(target,
+                     opt(alt(f, client)));
 
-    let into = seq(str("INTO"),
-                   target,
-                   opt(str("CLIENT SPECIFIED")),
-                   opt(conn),
-                   str("VALUES"),
-                   new Source());
+    const into = seq(str("INTO"),
+                     target,
+                     opt(str("CLIENT SPECIFIED")),
+                     opt(conn),
+                     str("VALUES"),
+                     new Source());
 
     return seq(str("INSERT"), alt(from, into));
   }

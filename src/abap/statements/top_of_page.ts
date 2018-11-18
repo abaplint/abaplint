@@ -5,7 +5,7 @@ import {Version} from "../../version";
 export class TopOfPage extends Statement {
 
   public getMatcher(): IRunnable {
-    let ret = seq(str("TOP-OF-PAGE"), opt(str("DURING LINE-SELECTION")));
+    const ret = seq(str("TOP-OF-PAGE"), opt(str("DURING LINE-SELECTION")));
 
     return verNot(Version.Cloud, ret);
   }

@@ -4,13 +4,13 @@ import {FieldSymbol, Field, ArrowOrDash} from "./";
 
 export class FieldLength extends Expression {
   public getRunnable(): IRunnable {
-    let normal = seq(opt(tok(Plus)),
-                     alt(reg(/^[\d\w]+$/), new FieldSymbol()),
-                     opt(seq(new ArrowOrDash(), new Field())));
+    const normal = seq(opt(tok(Plus)),
+                       alt(reg(/^[\d\w]+$/), new FieldSymbol()),
+                       opt(seq(new ArrowOrDash(), new Field())));
 
-    let length = seq(tok(ParenLeft),
-                     alt(normal, str("*")),
-                     alt(tok(ParenRightW), tok(ParenRight)));
+    const length = seq(tok(ParenLeft),
+                       alt(normal, str("*")),
+                       alt(tok(ParenRightW), tok(ParenRight)));
 
     return length;
   }

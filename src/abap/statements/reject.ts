@@ -6,7 +6,7 @@ import {Version} from "../../version";
 export class Reject extends Statement {
 
   public getMatcher(): IRunnable {
-    let ret = seq(str("REJECT"), opt(new Source()));
+    const ret = seq(str("REJECT"), opt(new Source()));
 
     return verNot(Version.Cloud, ret);
   }

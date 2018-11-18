@@ -6,7 +6,7 @@ import {Version} from "../../version";
 export class GetRunTime extends Statement {
 
   public getMatcher(): IRunnable {
-    let ret = seq(str("GET RUN TIME FIELD"), new Target());
+    const ret = seq(str("GET RUN TIME FIELD"), new Target());
 
     return verNot(Version.Cloud, ret);
   }

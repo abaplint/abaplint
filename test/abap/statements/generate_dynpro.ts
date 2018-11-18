@@ -1,7 +1,7 @@
 import {statementType} from "../_utils";
 import * as Statements from "../../../src/abap/statements/";
 
-let tests = [
+const tests = [
   "GENERATE DYNPRO H F E M ID key MESSAGE field1 LINE field2 WORD field3.",
 ];
 

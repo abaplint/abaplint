@@ -6,9 +6,9 @@ import {Version} from "../../src/version";
 import {Config} from "../../src/config";
 
 function findIssues(abap: string, version?: Version) {
-  let config = Config.getDefault().setVersion(version);
-  let reg = new Registry(config).addFile(new MemoryFile("zfoo.prog.abap", abap)).parse();
-  let rule = new InlineDataOldVersions();
+  const config = Config.getDefault().setVersion(version);
+  const reg = new Registry(config).addFile(new MemoryFile("zfoo.prog.abap", abap)).parse();
+  const rule = new InlineDataOldVersions();
   return rule.run(reg.getObjects()[0], reg);
 }
 

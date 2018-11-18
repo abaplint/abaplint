@@ -1,7 +1,7 @@
 import {statementType} from "../_utils";
 import * as Statements from "../../../src/abap/statements/";
 
-let tests = [
+const tests = [
   "call dialog 'ZDIALOG' exporting foo from bar.",
   "CALL DIALOG 'ZDIALOG' EXPORTING field stru-field tcode moo FROM boo.",
 

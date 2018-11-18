@@ -6,13 +6,13 @@ import {Version} from "../../version";
 export class Get extends Statement {
 
   public getMatcher(): IRunnable {
-    let fields = seq(str("FIELDS"), plus(new Field()));
+    const fields = seq(str("FIELDS"), plus(new Field()));
 
-    let options = per(str("LATE"), fields);
+    const options = per(str("LATE"), fields);
 
-    let ret = seq(str("GET"),
-                  new Target(),
-                  opt(options));
+    const ret = seq(str("GET"),
+                    new Target(),
+                    opt(options));
 
     return verNot(Version.Cloud, ret);
   }

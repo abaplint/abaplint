@@ -5,7 +5,7 @@ import {Target} from "../expressions";
 export class GetTime extends Statement {
 
   public getMatcher(): IRunnable {
-    let options = seq(alt(str("STAMP FIELD"), str("FIELD")), new Target());
+    const options = seq(alt(str("STAMP FIELD"), str("FIELD")), new Target());
 
     return seq(str("GET TIME"), opt(options));
   }

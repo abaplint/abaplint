@@ -16,7 +16,7 @@ export class ExpressionNode extends CountableNode {
   }
 
   public getFirstToken(): TokenNode {
-    for (let child of this.getChildren()) {
+    for (const child of this.getChildren()) {
       if (child instanceof TokenNode) {
         return child;
       } else if (child instanceof ExpressionNode) {
@@ -29,7 +29,7 @@ export class ExpressionNode extends CountableNode {
   public getAllTokens(): Token[] {
     let ret: Token[] = [];
 
-    for (let child of this.getChildren()) {
+    for (const child of this.getChildren()) {
       if (child instanceof TokenNode) {
         ret.push(child.get());
       } else if (child instanceof ExpressionNode) {
@@ -43,7 +43,7 @@ export class ExpressionNode extends CountableNode {
   }
 
   public findDirectTokenByText(text: string): Token | undefined {
-    for (let child of this.getChildren()) {
+    for (const child of this.getChildren()) {
       if (child instanceof TokenNode) {
         if (child.get().getStr() === text) {
           return child.get();
@@ -59,7 +59,7 @@ export class ExpressionNode extends CountableNode {
 
   public findAllExpressions(type: new () => Expression): ExpressionNode[] {
     let ret: ExpressionNode[] = [];
-    for (let child of this.getChildren()) {
+    for (const child of this.getChildren()) {
       if (child.get() instanceof type) {
         ret.push(child as ExpressionNode);
       } else if (child instanceof TokenNode) {
@@ -74,13 +74,13 @@ export class ExpressionNode extends CountableNode {
   }
 
   public findFirstExpression(type: new () => Expression): ExpressionNode | undefined {
-    for (let child of this.getChildren()) {
+    for (const child of this.getChildren()) {
       if (child.get() instanceof type) {
         return child as ExpressionNode;
       } else if (child instanceof TokenNode) {
         continue;
       } else if (child instanceof ExpressionNode) {
-        let res = child.findFirstExpression(type);
+        const res = child.findFirstExpression(type);
         if (res) {
           return res;
         }

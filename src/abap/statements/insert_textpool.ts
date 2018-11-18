@@ -6,15 +6,15 @@ import {Version} from "../../version";
 export class InsertTextpool extends Statement {
 
   public getMatcher(): IRunnable {
-    let state = seq(str("STATE"), new Source());
-    let language = seq(str("LANGUAGE"), new Source());
+    const state = seq(str("STATE"), new Source());
+    const language = seq(str("LANGUAGE"), new Source());
 
-    let ret = seq(str("INSERT TEXTPOOL"),
-                  new Source(),
-                  str("FROM"),
-                  new Source(),
-                  opt(language),
-                  opt(state));
+    const ret = seq(str("INSERT TEXTPOOL"),
+                    new Source(),
+                    str("FROM"),
+                    new Source(),
+                    opt(language),
+                    opt(state));
 
     return verNot(Version.Cloud, ret);
   }

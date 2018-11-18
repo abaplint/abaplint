@@ -29,11 +29,11 @@ export class ObsoleteStatement extends ABAPRule {
   }
 
   public runParsed(file: ABAPFile) {
-    let issues: Array<Issue> = [];
+    const issues: Array<Issue> = [];
 
-    let statements = file.getStatements();
+    const statements = file.getStatements();
 
-    for (let sta of statements) {
+    for (const sta of statements) {
       if (sta.get() instanceof Statements.Refresh
           || sta.get() instanceof Statements.Compute
           || sta.get() instanceof Statements.Add
@@ -47,8 +47,8 @@ export class ObsoleteStatement extends ABAPRule {
         issues.push(new Issue({file, message: this.getDescription(), code: this.getKey(), start: sta.getStart()}));
       }
 
-      for (let compare of sta.findAllExpressions(Compare)) {
-        let token = compare.findDirectTokenByText("REQUESTED");
+      for (const compare of sta.findAllExpressions(Compare)) {
+        const token = compare.findDirectTokenByText("REQUESTED");
         if (token) {
           issues.push(new Issue({file, message: "IS REQUESTED is obsolete", code: this.getKey(), start: token.getPos()}));
         }

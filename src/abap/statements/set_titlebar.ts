@@ -6,11 +6,11 @@ import {Version} from "../../version";
 export class SetTitlebar extends Statement {
 
   public getMatcher(): IRunnable {
-    let wit = seq(str("WITH"), plus(new Source()));
+    const wit = seq(str("WITH"), plus(new Source()));
 
-    let program = seq(str("OF PROGRAM"), new Source());
+    const program = seq(str("OF PROGRAM"), new Source());
 
-    let ret = seq(str("SET TITLEBAR"), new Source(), opt(program), opt(wit));
+    const ret = seq(str("SET TITLEBAR"), new Source(), opt(program), opt(wit));
 
     return verNot(Version.Cloud, ret);
   }

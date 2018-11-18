@@ -16,9 +16,9 @@ export class Interface extends ABAPObject {
       return [];
     }
 
-    let ret = [];
-    let defs = node.findAllStatements(MethodDef);
-    for (let def of defs) {
+    const ret = [];
+    const defs = node.findAllStatements(MethodDef);
+    for (const def of defs) {
       ret.push(new MethodDefinition(def, Scope.Public));
     }
     return ret;

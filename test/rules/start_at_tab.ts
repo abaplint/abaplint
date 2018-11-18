@@ -1,7 +1,7 @@
 import {StartAtTab} from "../../src/rules/start_at_tab";
 import {testRule} from "./_utils";
 
-let tests = [
+const tests = [
   {abap: " WRITE 'foobar'.", cnt: 1},
   {abap: " WRITE 'foobar'.\n WRITE 'moo'.", cnt: 2},
   {abap: "WRITE 'foobar'.", cnt: 0},

@@ -1,7 +1,7 @@
 import {statementType} from "../_utils";
 import * as Statements from "../../../src/abap/statements/";
 
-let tests = [
+const tests = [
   "SUBMIT zdemo WITH rb_down = abap_true WITH rb_show = abap_false AND RETURN.",
   "SUBMIT (wa_report-progname) VIA SELECTION-SCREEN AND RETURN.",
   "submit zreport and return with bar in foo with dark = 'X'.",

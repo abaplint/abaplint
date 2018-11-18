@@ -6,8 +6,8 @@ import {Version} from "../../version";
 export class FieldGroup extends Statement {
 
   public getMatcher(): IRunnable {
-    let ret = seq(str("FIELD-GROUPS"),
-                  plus(new Field()));
+    const ret = seq(str("FIELD-GROUPS"),
+                    plus(new Field()));
 
     return verNot(Version.Cloud, ret);
   }

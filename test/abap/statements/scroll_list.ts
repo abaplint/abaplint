@@ -1,7 +1,7 @@
 import {statementType} from "../_utils";
 import * as Statements from "../../../src/abap/statements/";
 
-let tests = [
+const tests = [
   "SCROLL LIST INDEX lv_index TO FIRST PAGE LINE lv_line.",
   "SCROLL LIST INDEX sy-lsind TO PAGE sy-cpage LINE sy-staro.",
   "scroll list to last page line lv_line.",

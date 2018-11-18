@@ -26,10 +26,10 @@ export class Result {
 
 // todo, make it non optional
   public shift(node?: CountableNode): Result {
-    let copy = this.tokens.slice();
+    const copy = this.tokens.slice();
     copy.shift();
     if (this.nodes) {
-      let cp = this.nodes.slice();
+      const cp = this.nodes.slice();
       if (node) {
         cp.push(node);
       }
@@ -67,7 +67,7 @@ export class Result {
 
   public toStr(): string {
     let ret = "";
-    for (let token of this.tokens) {
+    for (const token of this.tokens) {
       ret = ret + " " + token.getStr();
     }
     return ret;
@@ -102,9 +102,9 @@ class Regex implements IRunnable {
   }
 
   public run(r: Array<Result>): Array<Result> {
-    let result: Array<Result> = [];
+    const result: Array<Result> = [];
 
-    for (let input of r) {
+    for (const input of r) {
       if (input.length() !== 0
           && this.regexp.test(input.peek().getStr()) === true) {
         result.push(input.shift(new TokenNode(input.peek())));
@@ -144,9 +144,9 @@ class Word implements IRunnable {
   }
 
   public run(r: Array<Result>): Array<Result> {
-    let result: Array<Result> = [];
+    const result: Array<Result> = [];
 
-    for (let input of r) {
+    for (const input of r) {
       if (input.length() !== 0
           && input.peek().getStr().toUpperCase() === this.s.toUpperCase()) {
 //        console.log("match, " + this.s + result.length);
@@ -196,9 +196,9 @@ class Token implements IRunnable {
   }
 
   public run(r: Array<Result>): Array<Result> {
-    let result: Array<Result> = [];
+    const result: Array<Result> = [];
 
-    for (let input of r) {
+    for (const input of r) {
       if (input.length() !== 0
           && className(input.peek()).toUpperCase() === this.s.toUpperCase()) {
         result.push(input.shift(new TokenNode(input.peek())));
@@ -210,7 +210,7 @@ class Token implements IRunnable {
   public railroad() {
     let text = this.s;
 
-    for (let token in Tokens) {
+    for (const token in Tokens) {
       const toke: any = Tokens;
       if (token === this.s && toke[token].railroad) {
         text = toke[token].railroad();
@@ -334,8 +334,8 @@ class OptionalPriority implements IRunnable {
   public run(r: Array<Result>): Array<Result> {
     let result: Array<Result> = [];
 
-    for (let input of r) {
-      let res = this.optional.run([input]);
+    for (const input of r) {
+      const res = this.optional.run([input]);
       if (res.length > 1) {
         result.push(input);
         result = result.concat(res);
@@ -389,9 +389,9 @@ class Optional implements IRunnable {
   public run(r: Array<Result>): Array<Result> {
     let result: Array<Result> = [];
 
-    for (let input of r) {
+    for (const input of r) {
       result.push(input);
-      let res = this.optional.run([input]);
+      const res = this.optional.run([input]);
       result = result.concat(res);
     }
 
@@ -506,7 +506,7 @@ class Sequence implements IRunnable {
 
   public listKeywords(): string[] {
     let ret: string[] = [];
-    for (let i of this.list) {
+    for (const i of this.list) {
       ret = ret.concat(i.listKeywords());
     }
     return ret;
@@ -519,9 +519,9 @@ class Sequence implements IRunnable {
   public run(r: Array<Result>): Array<Result> {
     let result: Array<Result> = [];
 
-    for (let input of r) {
+    for (const input of r) {
       let temp = [input];
-      for (let sequence of this.list) {
+      for (const sequence of this.list) {
         temp = sequence.run(temp);
         if (temp.length === 0) {
           break;
@@ -535,7 +535,7 @@ class Sequence implements IRunnable {
   }
 
   public railroad() {
-    let children = this.list.map((e) => { return e.railroad(); });
+    const children = this.list.map((e) => { return e.railroad(); });
     if (this.stack === true) {
       return "Railroad.Stack(" + children.join() + ")";
     } else {
@@ -545,7 +545,7 @@ class Sequence implements IRunnable {
 
   public toStr() {
     let ret = "";
-    for (let i of this.list) {
+    for (const i of this.list) {
       ret = ret + i.toStr() + ",";
     }
     return "seq(" + ret + ")";
@@ -564,10 +564,10 @@ class WordSequence implements IRunnable {
   constructor(stri: String) {
     this.stri = stri;
 
-    let foo = this.stri.replace(/-/g, " - ");
-    let split = foo.split(/[ ]/);
+    const foo = this.stri.replace(/-/g, " - ");
+    const split = foo.split(/[ ]/);
 
-    for (let st of split) {
+    for (const st of split) {
 // todo, use Dash token
       this.words.push(new Word(st));
     }
@@ -603,18 +603,18 @@ export abstract class Expression implements IRunnable {
   public run(r: Array<Result>): Array<Result> {
     let results: Array<Result> = [];
 
-    for (let input of r) {
-      let temp = this.getRunnable().run([input]);
+    for (const input of r) {
+      const temp = this.getRunnable().run([input]);
 
-      let moo: Array<Result> = [];
-      for (let t of temp) {
+      const moo: Array<Result> = [];
+      for (const t of temp) {
         let consumed = input.length() - t.length();
         if (consumed > 0) {
-          let length = t.getNodes().length;
-          let re = new ExpressionNode(this);
-          let children: CountableNode[] = [];
+          const length = t.getNodes().length;
+          const re = new ExpressionNode(this);
+          const children: CountableNode[] = [];
           while (consumed > 0) {
-            let sub = t.popNode();
+            const sub = t.popNode();
             if (sub) {
               children.push(sub);
               consumed = consumed - sub.countTokens();
@@ -673,7 +673,7 @@ class Permutation implements IRunnable {
 
   public listKeywords(): string[] {
     let ret: string[] = [];
-    for (let i of this.list) {
+    for (const i of this.list) {
       ret = ret.concat(i.listKeywords());
     }
     return ret;
@@ -687,12 +687,12 @@ class Permutation implements IRunnable {
     let result: Array<Result> = [];
 
     for (let index = 0; index < this.list.length; index++) {
-      let temp = this.list[index].run(r);
+      const temp = this.list[index].run(r);
       if (temp.length !== 0) {
 // match
         result = result.concat(temp);
 
-        let left = this.list;
+        const left = this.list;
         left.splice(index, 1);
         if (left.length === 1) {
           result = result.concat(left[0].run(temp));
@@ -705,12 +705,12 @@ class Permutation implements IRunnable {
   }
 
   public railroad() {
-    let children = this.list.map((e) => { return e.railroad(); });
+    const children = this.list.map((e) => { return e.railroad(); });
     return "Railroad.MultipleChoice(0, 'any'," + children.join() + ")";
   }
 
   public toStr() {
-    let children = this.list.map((e) => { return e.toStr(); });
+    const children = this.list.map((e) => { return e.toStr(); });
     return "per(" + children.join() + ")";
   }
 
@@ -731,7 +731,7 @@ class Alternative implements IRunnable {
 
   public listKeywords(): string[] {
     let ret: string[] = [];
-    for (let i of this.list) {
+    for (const i of this.list) {
       ret = ret.concat(i.listKeywords());
     }
     return ret;
@@ -744,8 +744,8 @@ class Alternative implements IRunnable {
   public run(r: Array<Result>): Array<Result> {
     let result: Array<Result> = [];
 
-    for (let sequ of this.list) {
-      let temp = sequ.run(r);
+    for (const sequ of this.list) {
+      const temp = sequ.run(r);
       result = result.concat(temp);
     }
 
@@ -753,13 +753,13 @@ class Alternative implements IRunnable {
   }
 
   public railroad() {
-    let children = this.list.map((e) => { return e.railroad(); });
+    const children = this.list.map((e) => { return e.railroad(); });
     return "Railroad.Choice(0, " + children.join() + ")";
   }
 
   public toStr() {
     let ret = "";
-    for (let i of this.list) {
+    for (const i of this.list) {
       ret = ret + i.toStr() + ",";
     }
     return "alt(" + ret + ")";
@@ -783,7 +783,7 @@ class AlternativePriority implements IRunnable {
 
   public listKeywords(): string[] {
     let ret: string[] = [];
-    for (let i of this.list) {
+    for (const i of this.list) {
       ret = ret.concat(i.listKeywords());
     }
     return ret;
@@ -796,9 +796,9 @@ class AlternativePriority implements IRunnable {
   public run(r: Array<Result>): Array<Result> {
     let result: Array<Result> = [];
 
-    for (let sequ of this.list) {
+    for (const sequ of this.list) {
 //      console.log(seq.toStr());
-      let temp = sequ.run(r);
+      const temp = sequ.run(r);
 
       result = result.concat(temp);
 
@@ -811,13 +811,13 @@ class AlternativePriority implements IRunnable {
   }
 
   public railroad() {
-    let children = this.list.map((e) => { return e.railroad(); });
+    const children = this.list.map((e) => { return e.railroad(); });
     return "Railroad.Choice(0, " + children.join() + ")";
   }
 
   public toStr() {
     let ret = "";
-    for (let i of this.list) {
+    for (const i of this.list) {
       ret = ret + i.toStr() + ",";
     }
     return "alt(" + ret + ")";
@@ -840,7 +840,7 @@ export class Combi {
       type = "Railroad.ComplexDiagram(";
     }
 
-    let result = "Railroad.Diagram.INTERNAL_ALIGNMENT = 'left';\n" +
+    const result = "Railroad.Diagram.INTERNAL_ALIGNMENT = 'left';\n" +
       type +
       runnable.railroad() +
       ").toString();";
@@ -859,10 +859,10 @@ export class Combi {
   public static run(runnable: IRunnable, tokens: Array<Tokens_Token>, version = Version.v750): INode[] | undefined {
     this.ver = version;
 
-    let input = new Result(tokens);
-    let result = runnable.run([input]);
+    const input = new Result(tokens);
+    const result = runnable.run([input]);
 //    console.log("res: " + result.length);
-    for (let res of result) {
+    for (const res of result) {
       if (res.length() === 0) {
         return res.getNodes();
       }

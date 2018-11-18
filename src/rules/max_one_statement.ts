@@ -28,20 +28,20 @@ export class MaxOneStatement extends ABAPRule {
   }
 
   public runParsed(file: ABAPFile) {
-    let issues: Array<Issue> = [];
+    const issues: Array<Issue> = [];
 
     let prev: number = 0;
     let reported: number = 0;
-    for (let statement of file.getStatements()) {
-      let term = statement.getTerminator();
+    for (const statement of file.getStatements()) {
+      const term = statement.getTerminator();
       if (statement.get() instanceof Comment || term === ",") {
         continue;
       }
 
-      let pos = statement.getStart();
-      let row = pos.getRow();
+      const pos = statement.getStart();
+      const row = pos.getRow();
       if (prev === row && row !== reported) {
-        let issue = new Issue({file, message: this.getDescription(), code: this.getKey(), start: pos});
+        const issue = new Issue({file, message: this.getDescription(), code: this.getKey(), start: pos});
         issues.push(issue);
         reported = row;
       }

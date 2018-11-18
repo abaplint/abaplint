@@ -6,7 +6,7 @@ import {Field} from "../expressions";
 export class Put extends Statement {
 
   public getMatcher(): IRunnable {
-    let ret = seq(str("PUT"), new Field());
+    const ret = seq(str("PUT"), new Field());
 
     return verNot(Version.Cloud, ret);
   }

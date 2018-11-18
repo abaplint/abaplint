@@ -18,8 +18,8 @@ class List {
   }
 
   public add(keywords: string[], source: string): void {
-    for (let w of keywords) {
-      let index = this.find(w);
+    for (const w of keywords) {
+      const index = this.find(w);
       if (index >= 0) {
         this.words[index].source.push(source);
       } else {
@@ -50,9 +50,9 @@ function className(cla: any) {
 export class Artifacts {
 
   public static getStructures(): Structure[] {
-    let ret: Structure[] = [];
+    const ret: Structure[] = [];
 
-    for (let key in Structures) {
+    for (const key in Structures) {
       const list: any = Structures;
       if (typeof list[key] === "function") {
         ret.push(new list[key]());
@@ -63,9 +63,9 @@ export class Artifacts {
   }
 
   public static getExpressions(): Expression[] {
-    let ret: Expression[] = [];
+    const ret: Expression[] = [];
 
-    for (let key in Expressions) {
+    for (const key in Expressions) {
       const list: any = Expressions;
       if (typeof list[key] === "function") {
         ret.push(new list[key]());
@@ -76,9 +76,9 @@ export class Artifacts {
   }
 
   public static getStatements(): Statement[] {
-    let ret: Statement[] = [];
+    const ret: Statement[] = [];
 
-    for (let key in Statements) {
+    for (const key in Statements) {
       const list: any = Statements;
       if (typeof list[key] === "function") {
         ret.push(new list[key]());
@@ -96,13 +96,13 @@ export class Artifacts {
   }
 
   public static getKeywords(): IKeyword[] {
-    let list: List = new List();
+    const list: List = new List();
 
-    for (let stat of this.getStatements()) {
+    for (const stat of this.getStatements()) {
       list.add(Combi.listKeywords(stat.getMatcher()), "statement_" + className(stat));
     }
 
-    for (let expr of this.getExpressions()) {
+    for (const expr of this.getExpressions()) {
       list.add(Combi.listKeywords(expr.getRunnable()), "expression_" + className(expr));
     }
 

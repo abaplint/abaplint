@@ -1,7 +1,7 @@
 import {statementType} from "../_utils";
 import * as Statements from "../../../src/abap/statements/";
 
-let tests = [
+const tests = [
   "concatenate space space into lv_foo.",
   "CONCATENATE lv_tmp iv_pack INTO lv_xstring IN BYTE MODE.",
   "CONCATENATE lv_tmp iv_pack INTO lv_xstring IN CHARACTER MODE.",

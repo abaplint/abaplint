@@ -7,16 +7,16 @@ import {ParenLeft, ParenRightW, ParenRight} from "../tokens";
 export class Report extends Statement {
 
   public getMatcher(): IRunnable {
-    let more = seq(tok(ParenLeft), new Integer(), alt(tok(ParenRightW), tok(ParenRight)));
-    let heading = str("NO STANDARD PAGE HEADING");
-    let size = seq(str("LINE-SIZE"), new Integer());
-    let count = seq(str("LINE-COUNT"), new Integer(), opt(more));
-    let message = seq(str("MESSAGE-ID"), new MessageClass());
-    let database = seq(str("USING DATABASE"), new Field());
+    const more = seq(tok(ParenLeft), new Integer(), alt(tok(ParenRightW), tok(ParenRight)));
+    const heading = str("NO STANDARD PAGE HEADING");
+    const size = seq(str("LINE-SIZE"), new Integer());
+    const count = seq(str("LINE-COUNT"), new Integer(), opt(more));
+    const message = seq(str("MESSAGE-ID"), new MessageClass());
+    const database = seq(str("USING DATABASE"), new Field());
 
-    let ret = seq(str("REPORT"),
-                  opt(new NamespaceSimpleName()),
-                  opt(per(heading, size, count, database, message)));
+    const ret = seq(str("REPORT"),
+                    opt(new NamespaceSimpleName()),
+                    opt(per(heading, size, count, database, message)));
 
     return verNot(Version.Cloud, ret);
   }

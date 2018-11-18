@@ -6,13 +6,13 @@ import {Version} from "../../version";
 export class Overlay extends Statement {
 
   public getMatcher(): IRunnable {
-    let only = seq(str("ONLY"), new Source());
+    const only = seq(str("ONLY"), new Source());
 
-    let ret = seq(str("OVERLAY"),
-                  new Target(),
-                  str("WITH"),
-                  new Source(),
-                  opt(only));
+    const ret = seq(str("OVERLAY"),
+                    new Target(),
+                    str("WITH"),
+                    new Source(),
+                    opt(only));
 
     return verNot(Version.Cloud, ret);
   }

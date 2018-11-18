@@ -1,7 +1,7 @@
 import {structureType} from "../_utils";
 import {Try} from "../../../src/abap/structures";
 
-let cases = [
+const cases = [
   {abap: "TRY. ENDTRY."},
   {abap: "TRY. CATCH cx_moo. ENDTRY."},
   {abap: "TRY. CATCH cx_moo. CATCH cx_boo. ENDTRY."},

@@ -6,9 +6,9 @@ import {Version} from "../../version";
 export class Module extends Statement {
 
   public getMatcher(): IRunnable {
-    let ret = seq(str("MODULE"),
-                  new FormName(),
-                  opt(alt(str("INPUT"), str("OUTPUT"))));
+    const ret = seq(str("MODULE"),
+                    new FormName(),
+                    opt(alt(str("INPUT"), str("OUTPUT"))));
 
     return verNot(Version.Cloud, ret);
   }

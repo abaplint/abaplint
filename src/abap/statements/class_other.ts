@@ -6,10 +6,10 @@ export class ClassOther extends Statement {
 
   public getMatcher(): IRunnable {
 
-    let def = seq(str("DEFERRED"),
-                  opt(str("PUBLIC")));
+    const def = seq(str("DEFERRED"),
+                    opt(str("PUBLIC")));
 
-    let local = seq(str("LOCAL FRIENDS"), plus(new ClassName()));
+    const local = seq(str("LOCAL FRIENDS"), plus(new ClassName()));
 
     return seq(str("CLASS"), new ClassName(), str("DEFINITION"), alt(def, local));
   }

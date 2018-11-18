@@ -6,14 +6,14 @@ import {Version} from "../../version";
 export class EditorCall extends Statement {
 
   public getMatcher(): IRunnable {
-    let title = seq(str("TITLE"), new Source());
+    const title = seq(str("TITLE"), new Source());
 
-    let options = per(str("DISPLAY-MODE"), title);
+    const options = per(str("DISPLAY-MODE"), title);
 
-    let ret = seq(str("EDITOR-CALL FOR"),
-                  opt(str("REPORT")),
-                  new Source(),
-                  opt(options));
+    const ret = seq(str("EDITOR-CALL FOR"),
+                    opt(str("REPORT")),
+                    new Source(),
+                    opt(options));
 
     return verNot(Version.Cloud, ret);
   }

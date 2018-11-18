@@ -1,7 +1,7 @@
 import {statementType} from "../_utils";
 import * as Statements from "../../../src/abap/statements/";
 
-let tests = [
+const tests = [
   "SET PF-STATUS 'STATUS_0004'.",
   "SET PF-STATUS 'STATUS_0004' EXCLUDING lt_fcode.",
   "set pf-status 'FOO' of program 'ZFOO' excluding lt_exc.",

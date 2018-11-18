@@ -1,7 +1,7 @@
 import {statementType} from "../_utils";
 import * as Statements from "../../../src/abap/statements/";
 
-let tests = [
+const tests = [
   "INSERT tactz FROM TABLE lt_tactz.",
   "INSERT zfoo.",
   "INSERT INTO zuser VALUES ls_user.",

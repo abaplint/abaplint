@@ -1,7 +1,7 @@
 import {statementType} from "../_utils";
 import * as Statements from "../../../src/abap/statements/";
 
-let tests = [
+const tests = [
   "COMMUNICATION INIT ID c DESTINATION dest.",
   "COMMUNICATION ALLOCATE ID c.",
   "COMMUNICATION SEND ID c BUFFER connect.",

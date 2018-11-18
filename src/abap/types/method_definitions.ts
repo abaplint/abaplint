@@ -34,31 +34,31 @@ export class MethodDefinitions {
   }
 
   private parse(node: StructureNode) {
-    let cdef = node.findFirstStructure(ClassDefinition);
+    const cdef = node.findFirstStructure(ClassDefinition);
     if (!cdef) {
       throw new Error("MethodDefinitions, expected ClassDefinition as part of input node");
     }
 
-    let pri = cdef.findFirstStructure(Structures.PrivateSection);
+    const pri = cdef.findFirstStructure(Structures.PrivateSection);
     if (pri) {
-      let defs = pri.findAllStatements(MethodDef);
-      for (let def of defs) {
+      const defs = pri.findAllStatements(MethodDef);
+      for (const def of defs) {
         this.pri.push(new MethodDefinition(def, Scope.Private));
       }
     }
 
-    let pro = node.findFirstStructure(Structures.ProtectedSection);
+    const pro = node.findFirstStructure(Structures.ProtectedSection);
     if (pro) {
-      let defs = pro.findAllStatements(MethodDef);
-      for (let def of defs) {
+      const defs = pro.findAllStatements(MethodDef);
+      for (const def of defs) {
         this.pro.push(new MethodDefinition(def, Scope.Protected));
       }
     }
 
-    let pub = node.findFirstStructure(Structures.PublicSection);
+    const pub = node.findFirstStructure(Structures.PublicSection);
     if (pub) {
-      let defs = pub.findAllStatements(MethodDef);
-      for (let def of defs) {
+      const defs = pub.findAllStatements(MethodDef);
+      for (const def of defs) {
         this.pub.push(new MethodDefinition(def, Scope.Public));
       }
     }

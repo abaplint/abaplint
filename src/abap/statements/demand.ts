@@ -6,15 +6,15 @@ import {Version} from "../../version";
 export class Demand extends Statement {
 
   public getMatcher(): IRunnable {
-    let field = seq(new Field(), str("="), new Target());
+    const field = seq(new Field(), str("="), new Target());
 
-    let messages = seq(str("MESSAGES INTO"), new Target());
+    const messages = seq(str("MESSAGES INTO"), new Target());
 
-    let ret = seq(str("DEMAND"),
-                  plus(field),
-                  str("FROM CONTEXT"),
-                  new Field(),
-                  opt(messages));
+    const ret = seq(str("DEMAND"),
+                    plus(field),
+                    str("FROM CONTEXT"),
+                    new Field(),
+                    opt(messages));
 
     return verNot(Version.Cloud, ret);
   }

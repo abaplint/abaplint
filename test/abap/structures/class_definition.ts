@@ -1,7 +1,7 @@
 import {structureType} from "../_utils";
 import {ClassDefinition} from "../../../src/abap/structures";
 
-let cases = [
+const cases = [
   {abap: "CLASS zfoo DEFINITION. ENDCLASS."},
   {abap: "CLASS zfoo DEFINITION. PUBLIC SECTION. CONSTANTS foo TYPE i VALUE 2. ENDCLASS."},
   {abap: "CLASS zfoo DEFINITION. PRIVATE SECTION. CONSTANTS foo TYPE i VALUE 2. ENDCLASS."},

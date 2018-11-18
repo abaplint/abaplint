@@ -5,7 +5,7 @@ import {Version} from "../../version";
 export class EndOn extends Statement {
 
   public getMatcher(): IRunnable {
-    let ret = str("ENDON");
+    const ret = str("ENDON");
     return verNot(Version.Cloud, ret);
   }
 

@@ -3,7 +3,7 @@ import {MethodParam} from ".";
 
 export class MethodDefImporting extends Expression  {
   public getRunnable(): IRunnable {
-    let field = reg(/^!?(\/\w+\/)?\w+$/);
+    const field = reg(/^!?(\/\w+\/)?\w+$/);
 
     return seq(str("IMPORTING"),
                plus(seq(new MethodParam(), opt(str("OPTIONAL")))),

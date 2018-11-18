@@ -39,8 +39,8 @@ class Sequence implements IStructureRunnable {
   public run(statements: StatementNode[], parent: INode): IMatch {
     let inn = statements;
     let out: StatementNode[] = [];
-    for (let i of this.list) {
-      let match = i.run(inn, parent);
+    for (const i of this.list) {
+      const match = i.run(inn, parent);
       if (match.error) {
         return {
           matched: [],
@@ -74,7 +74,7 @@ class Alternative implements IStructureRunnable {
   }
 
   public toRailroad() {
-    let children = this.list.map((e) => { return e.toRailroad(); });
+    const children = this.list.map((e) => { return e.toRailroad(); });
     return "Railroad.Choice(0, " + children.join() + ")";
   }
 
@@ -85,7 +85,7 @@ class Alternative implements IStructureRunnable {
   public run(statements: StatementNode[], parent: INode): IMatch {
     let count = 0;
     let countError = "";
-    for (let i of this.list) {
+    for (const i of this.list) {
       const match = i.run(statements, parent);
       if (match.error === false) {
         return match;
@@ -95,7 +95,7 @@ class Alternative implements IStructureRunnable {
         count = match.errorMatched;
       }
     }
-    let children = this.list.map((e) => { return e.constructor.name.toUpperCase(); });
+    const children = this.list.map((e) => { return e.constructor.name.toUpperCase(); });
     if (count === 0) {
       return {
         matched: [],
@@ -132,7 +132,7 @@ class Optional implements IStructureRunnable {
   }
 
   public run(statements: StatementNode[], parent: INode): IMatch {
-    let ret = this.obj.run(statements, parent);
+    const ret = this.obj.run(statements, parent);
     ret.error = false;
     return ret;
   }
@@ -161,7 +161,7 @@ class Star implements IStructureRunnable {
     let out: StatementNode[] = [];
     // tslint:disable-next-line:no-constant-condition
     while (true) {
-      let match = this.obj.run(inn, parent);
+      const match = this.obj.run(inn, parent);
       if (inn.length === 0) {
         return {
           matched: out,
@@ -211,8 +211,8 @@ class SubStructure implements IStructureRunnable {
   }
 
   public run(statements: StatementNode[], parent: INode): IMatch {
-    let nparent = new StructureNode(this.s);
-    let ret = this.s.getMatcher().run(statements, nparent);
+    const nparent = new StructureNode(this.s);
+    const ret = this.s.getMatcher().run(statements, nparent);
     if (ret.matched.length === 0) {
       ret.error = true;
     } else {

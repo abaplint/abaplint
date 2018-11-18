@@ -5,16 +5,16 @@ import * as Expressions from "../../src/abap/expressions";
 import {Position} from "../../src/position";
 import {Token} from "../../src/abap/tokens/_token";
 
-let str  = Combi.str;
-let seq  = Combi.seq;
-let opt  = Combi.opt;
-let star = Combi.star;
+const str  = Combi.str;
+const seq  = Combi.seq;
+const opt  = Combi.opt;
+const star = Combi.star;
 
 function tok(s: string): Array<Token> {
-  let split = s.split(" ");
+  const split = s.split(" ");
 
-  let tokens: Array<Token> = [];
-  for (let st of split) {
+  const tokens: Array<Token> = [];
+  for (const st of split) {
     tokens.push(new Tokens.Identifier(new Position(10, 10), st));
   }
 
@@ -25,7 +25,7 @@ function res(s: string) {
   return new Combi.Result(tok(s));
 }
 
-let resultSize = [
+const resultSize = [
   {c: str("TEST"),                          in: [res("")],                          len: 0},
   {c: str("TEST"),                          in: [res("TEST")],                      len: 1},
   {c: str("TEST"),                          in: [res("FOO")],                       len: 0},
@@ -49,7 +49,7 @@ let resultSize = [
 describe("combi Result size", () => {
   resultSize.forEach((test) => {
     it(test.c.toStr() + " should be size " + test.len, () => {
-      let result = test.c.run(test.in);
+      const result = test.c.run(test.in);
       expect(result.length).to.equals(test.len);
     });
   });

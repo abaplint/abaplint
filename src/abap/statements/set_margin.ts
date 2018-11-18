@@ -6,9 +6,9 @@ import {Version} from "../../version";
 export class SetMargin extends Statement {
 
   public getMatcher(): IRunnable {
-    let ret = seq(str("SET MARGIN"),
-                  new Source(),
-                  new Source());
+    const ret = seq(str("SET MARGIN"),
+                    new Source(),
+                    new Source());
 
     return verNot(Version.Cloud, ret);
   }

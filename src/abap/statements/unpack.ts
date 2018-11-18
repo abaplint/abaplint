@@ -6,10 +6,10 @@ import {Version} from "../../version";
 export class Unpack extends Statement {
 
   public getMatcher(): IRunnable {
-    let ret = seq(str("UNPACK"),
-                  new Source(),
-                  str("TO"),
-                  new Target());
+    const ret = seq(str("UNPACK"),
+                    new Source(),
+                    str("TO"),
+                    new Target());
 
     return verNot(Version.Cloud, ret);
   }

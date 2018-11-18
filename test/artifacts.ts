@@ -5,7 +5,7 @@ import {Class} from "../src/objects";
 describe("Top level artifacts", () => {
 
   it("CLAS", () => {
-    let obj = Artifacts.newObject("ZCL_FOOBAR", "CLAS");
+    const obj = Artifacts.newObject("ZCL_FOOBAR", "CLAS");
     expect(obj).to.be.instanceof(Class);
   });
 

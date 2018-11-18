@@ -76,6 +76,7 @@
     "no-debugger": true,
     "no-duplicate-variable": true,
     "no-empty": true,
+    "prefer-const": true,
     "no-eval": true,
     "no-inferrable-types": false,
     "no-internal-module": true,

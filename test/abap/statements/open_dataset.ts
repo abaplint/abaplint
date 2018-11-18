@@ -1,7 +1,7 @@
 import {statementType} from "../_utils";
 import * as Statements from "../../../src/abap/statements/";
 
-let tests = [
+const tests = [
   "OPEN DATASET lv_file_name FOR OUTPUT IN BINARY MODE.",
   "OPEN DATASET lv_element FOR INPUT IN TEXT MODE ENCODING DEFAULT.",
   "OPEN DATASET file FOR INPUT IN BINARY MODE.",

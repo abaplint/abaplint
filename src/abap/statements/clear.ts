@@ -5,10 +5,10 @@ import {Target, Source} from "../expressions";
 export class Clear extends Statement {
 
   public getMatcher(): IRunnable {
-    let wit = seq(str("WITH"), new Source());
+    const wit = seq(str("WITH"), new Source());
 
-    let mode = alt(str("IN CHARACTER MODE"),
-                   str("IN BYTE MODE"));
+    const mode = alt(str("IN CHARACTER MODE"),
+                     str("IN BYTE MODE"));
 
     return seq(str("CLEAR"),
                new Target(),

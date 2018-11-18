@@ -73,14 +73,14 @@ todo
 
   public updateFile(file: IFile): Registry {
     this.setDirty();
-    let obj = this.find(file.getObjectName(), file.getObjectType());
+    const obj = this.find(file.getObjectName(), file.getObjectType());
     obj.updateFile(file);
     return this;
   }
 
   public removeFile(file: IFile): Registry {
     this.setDirty();
-    let obj = this.find(file.getObjectName(), file.getObjectType());
+    const obj = this.find(file.getObjectName(), file.getObjectType());
     obj.removeFile(file);
     if (obj.getFiles().length === 0) {
       this.removeObject(obj);
@@ -118,8 +118,8 @@ todo
     let issues = this.issues.slice(0);
     const objects = this.getObjects();
 
-    let rules: IRule[] = [];
-    for (let rule of Artifacts.getRules()) {
+    const rules: IRule[] = [];
+    for (const rule of Artifacts.getRules()) {
       if (this.conf.readByKey(rule.getKey(), "enabled") === true) {
         rule.setConfig(this.conf.readByRule(rule.getKey()));
         rules.push(rule);
@@ -127,9 +127,9 @@ todo
     }
 
     progress.set(objects.length, ":percent - Finding Issues - :object");
-    for (let obj of objects) {
+    for (const obj of objects) {
       progress.tick({object: obj.getType() + " " + obj.getName()});
-      for (let rule of rules) {
+      for (const rule of rules) {
         issues = issues.concat(rule.run(obj, this));
       }
     }
@@ -169,7 +169,7 @@ todo
   }
 
   public isMacro(name: string): boolean {
-    for (let mac of this.macros) {
+    for (const mac of this.macros) {
       if (mac === name.toUpperCase()) {
         return true;
       }
@@ -202,7 +202,7 @@ todo
   }
 
   private find(name: string, type: string): IObject {
-    for (let obj of this.objects) { // todo, this is slow
+    for (const obj of this.objects) { // todo, this is slow
       if (obj.getType() === type && obj.getName() === name) {
         return obj;
       }

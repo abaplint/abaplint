@@ -6,13 +6,13 @@ import {Version} from "../../version";
 export class DeleteTextpool extends Statement {
 
   public getMatcher(): IRunnable {
-    let language = seq(str("LANGUAGE"), new Source());
-    let state = seq(str("STATE"), new Source());
+    const language = seq(str("LANGUAGE"), new Source());
+    const state = seq(str("STATE"), new Source());
 
-    let ret = seq(str("DELETE TEXTPOOL"),
-                  new Source(),
-                  opt(language),
-                  opt(state));
+    const ret = seq(str("DELETE TEXTPOOL"),
+                    new Source(),
+                    opt(language),
+                    opt(state));
 
     return verNot(Version.Cloud, ret);
   }

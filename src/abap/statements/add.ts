@@ -6,10 +6,10 @@ import {Target, Source} from "../expressions";
 export class Add extends Statement {
 
   public getMatcher(): IRunnable {
-    let ret = seq(str("ADD"),
-                  new Source(),
-                  str("TO"),
-                  new Target());
+    const ret = seq(str("ADD"),
+                    new Source(),
+                    str("TO"),
+                    new Target());
 
     return verNot(Version.Cloud, ret);
   }

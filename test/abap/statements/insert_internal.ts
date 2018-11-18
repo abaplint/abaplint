@@ -2,7 +2,7 @@ import {statementType, statementVersion} from "../_utils";
 import * as Statements from "../../../src/abap/statements/";
 import {Version} from "../../../src/version";
 
-let tests = [
+const tests = [
   "INSERT INITIAL LINE INTO ct_diff INDEX lv_index.",
   "INSERT INITIAL LINE INTO bar ASSIGNING <sdf> INDEX lv_tabix.",
   "insert initial line into lt_table reference into lr_ref index lv_index.",
@@ -19,7 +19,7 @@ let tests = [
 statementType(tests, "INSERT", Statements.InsertInternal);
 
 
-let versions = [
+const versions = [
   {abap: "INSERT NEW zcl_foobar( ) INTO TABLE lt_tab ASSIGNING FIELD-SYMBOL(<fs>).", ver: Version.v740sp02},
 ];
 

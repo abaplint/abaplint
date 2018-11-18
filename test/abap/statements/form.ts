@@ -1,7 +1,7 @@
 import {statementType} from "../_utils";
 import * as Statements from "../../../src/abap/statements/";
 
-let tests = [
+const tests = [
   "FORM name TABLES tt_fields TYPE ty_sval_tt USING pv_code TYPE clike \n" +
     "CHANGING cs_error TYPE svale RAISING lcx_exception.",
   "FORM send_mail USING pt_mail_data TYPE ANY TABLE.",

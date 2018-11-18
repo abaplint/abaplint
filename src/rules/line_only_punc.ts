@@ -29,19 +29,19 @@ export class LineOnlyPunc extends ABAPRule {
   }
 
   public runParsed(file: ABAPFile) {
-    let issues: Array<Issue> = [];
+    const issues: Array<Issue> = [];
     let exception = false;
 
-    let rows = file.getRawRows();
+    const rows = file.getRawRows();
     for (let i = 0; i < rows.length; i++) {
-      let trim = rows[i].trim();
+      const trim = rows[i].trim();
 
       if (trim.match(/^CLASS .?CX/i) && this.conf.ignoreExceptions) {
         exception = true;
       } else if (trim.match(/^ENDCLASS/i)) {
         exception = false;
       } else if ((trim === "." || trim === ").") && exception === false) {
-        let issue = new Issue({file, message: this.getDescription(), code: this.getKey(), start: new Position(i + 1, 0)});
+        const issue = new Issue({file, message: this.getDescription(), code: this.getKey(), start: new Position(i + 1, 0)});
         issues.push(issue);
       }
     }

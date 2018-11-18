@@ -6,15 +6,15 @@ import {Version} from "../../version";
 export class GetProperty extends Statement {
 
   public getMatcher(): IRunnable {
-    let exporting = seq(str("EXPORTING"), new ParameterListS());
+    const exporting = seq(str("EXPORTING"), new ParameterListS());
 
-    let ret = seq(str("GET PROPERTY OF"),
-                  new FieldSub(),
-                  new Source(),
-                  str("="),
-                  new Source(),
-                  opt(str("NO FLUSH")),
-                  opt(exporting));
+    const ret = seq(str("GET PROPERTY OF"),
+                    new FieldSub(),
+                    new Source(),
+                    str("="),
+                    new Source(),
+                    opt(str("NO FLUSH")),
+                    opt(exporting));
 
     return verNot(Version.Cloud, ret);
   }

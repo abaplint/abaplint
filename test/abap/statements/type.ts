@@ -2,7 +2,7 @@ import {statementType, statementVersion} from "../_utils";
 import * as Statements from "../../../src/abap/statements/";
 import {Version} from "../../../src/version";
 
-let tests = [
+const tests = [
   "TYPES ty_type TYPE c LENGTH 6.",
   "TYPE ty_type TYPE c LENGTH 6.",
   "TYPES dummy.",
@@ -21,7 +21,7 @@ let tests = [
 
 statementType(tests, "TYPE", Statements.Type);
 
-let versions = [
+const versions = [
   {abap: "types tt_foo TYPE STANDARD TABLE OF ty_foo WITH EMPTY KEY.", ver: Version.v740sp02},
 ];
 

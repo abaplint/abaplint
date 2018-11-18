@@ -7,11 +7,11 @@ export class SetProperty extends Statement {
 
   public getMatcher(): IRunnable {
 
-    let ret = seq(str("SET PROPERTY OF"),
-                  new Source(),
-                  new Constant(),
-                  str("="),
-                  new Source());
+    const ret = seq(str("SET PROPERTY OF"),
+                    new Source(),
+                    new Constant(),
+                    str("="),
+                    new Source());
 
     return verNot(Version.Cloud, ret);
   }

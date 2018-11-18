@@ -6,45 +6,45 @@ import {Version} from "../../version";
 export class Import extends Statement {
 
   public getMatcher(): IRunnable {
-    let id = seq(str("ID"), new Source());
-    let dto = seq(str("TO"), new Target());
-    let client = seq(str("CLIENT"), new Source());
+    const id = seq(str("ID"), new Source());
+    const dto = seq(str("TO"), new Target());
+    const client = seq(str("CLIENT"), new Source());
 
-    let options = per(str("ACCEPTING PADDING"),
-                      str("IGNORING CONVERSION ERRORS"),
-                      str("IN CHAR-TO-HEX MODE"),
-                      str("IGNORING STRUCTURE BOUNDARIES"),
-                      str("ACCEPTING TRUNCATION"));
+    const options = per(str("ACCEPTING PADDING"),
+                        str("IGNORING CONVERSION ERRORS"),
+                        str("IN CHAR-TO-HEX MODE"),
+                        str("IGNORING STRUCTURE BOUNDARIES"),
+                        str("ACCEPTING TRUNCATION"));
 
-    let shared = seq(str("SHARED"),
-                     alt(str("MEMORY"), str("BUFFER")),
-                     new Field(),
-                     str("("),
-                     new Field(),
-                     str(")"),
-                     str("ID"),
-                     new Source());
+    const shared = seq(str("SHARED"),
+                       alt(str("MEMORY"), str("BUFFER")),
+                       new Field(),
+                       str("("),
+                       new Field(),
+                       str(")"),
+                       str("ID"),
+                       new Source());
 
-    let buffer = seq(str("DATA BUFFER"), new Source());
-    let memory = seq(str("MEMORY ID"), new Source());
-    let table = seq(str("INTERNAL TABLE"), new Source());
+    const buffer = seq(str("DATA BUFFER"), new Source());
+    const memory = seq(str("MEMORY ID"), new Source());
+    const table = seq(str("INTERNAL TABLE"), new Source());
 
-    let database = seq(str("DATABASE"),
-                       new Source(),
-                       per(dto, id, client));
+    const database = seq(str("DATABASE"),
+                         new Source(),
+                         per(dto, id, client));
 
-    let source = alt(buffer, memory, database, table, shared);
+    const source = alt(buffer, memory, database, table, shared);
 
-    let to = plus(seq(new Source(),
-                      alt(str("TO"), str("INTO")),
-                      new Target()));
+    const to = plus(seq(new Source(),
+                        alt(str("TO"), str("INTO")),
+                        new Target()));
 
-    let target = alt(new ParameterListT(),
-                     to,
-                     new Dynamic(),
-                     plus(new Target()));
+    const target = alt(new ParameterListT(),
+                       to,
+                       new Dynamic(),
+                       plus(new Target()));
 
-    let ret = seq(str("IMPORT"), target, str("FROM"), source, opt(options));
+    const ret = seq(str("IMPORT"), target, str("FROM"), source, opt(options));
 
     return verNot(Version.Cloud, ret);
   }

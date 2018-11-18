@@ -1,7 +1,7 @@
 import {WhitespaceEnd} from "../../src/rules/whitespace_end";
 import {testRule} from "./_utils";
 
-let tests = [
+const tests = [
   {abap: "WRITE 'hello'.", cnt: 0},
   {abap: "WRITE 'hello'.  ", cnt: 1},
 ];

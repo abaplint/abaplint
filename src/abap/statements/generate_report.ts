@@ -7,20 +7,20 @@ export class GenerateReport extends Statement {
 
   public getMatcher(): IRunnable {
 
-    let without = str("WITHOUT SELECTION-SCREEN");
-    let message = seq(str("MESSAGE"), new Target());
-    let include = seq(str("INCLUDE"), new Target());
-    let line = seq(str("LINE"), new Target());
-    let word = seq(str("WORD"), new Target());
-    let offset = seq(str("OFFSET"), new Target());
-    let headers = str("WITH PRECOMPILED HEADERS");
-    let test = str("WITH TEST CODE");
+    const without = str("WITHOUT SELECTION-SCREEN");
+    const message = seq(str("MESSAGE"), new Target());
+    const include = seq(str("INCLUDE"), new Target());
+    const line = seq(str("LINE"), new Target());
+    const word = seq(str("WORD"), new Target());
+    const offset = seq(str("OFFSET"), new Target());
+    const headers = str("WITH PRECOMPILED HEADERS");
+    const test = str("WITH TEST CODE");
 
-    let options = per(without, message, include, line, word, offset, headers, test);
+    const options = per(without, message, include, line, word, offset, headers, test);
 
-    let ret = seq(str("GENERATE REPORT"),
-                  new Source(),
-                  opt(options));
+    const ret = seq(str("GENERATE REPORT"),
+                    new Source(),
+                    opt(options));
 
     return verNot(Version.Cloud, ret);
   }

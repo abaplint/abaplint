@@ -6,9 +6,9 @@ import {Version} from "../../version";
 export class Skip extends Statement {
 
   public getMatcher(): IRunnable {
-    let ret = seq(str("SKIP"),
-                  opt(str("TO LINE")),
-                  opt(new Source()));
+    const ret = seq(str("SKIP"),
+                    opt(str("TO LINE")),
+                    opt(new Source()));
 
     return verNot(Version.Cloud, ret);
   }

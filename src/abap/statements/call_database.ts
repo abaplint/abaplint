@@ -6,18 +6,18 @@ import {Version} from "../../version";
 export class CallDatabase extends Statement {
 
   public getMatcher(): IRunnable {
-    let exporting = seq(str("EXPORTING"), new ParameterListS());
-    let importing = seq(str("IMPORTING"), new ParameterListT());
-    let expl = seq(opt(exporting), opt(importing));
+    const exporting = seq(str("EXPORTING"), new ParameterListS());
+    const importing = seq(str("IMPORTING"), new ParameterListT());
+    const expl = seq(opt(exporting), opt(importing));
 
-    let tab = seq(str("PARAMETER-TABLE"), new Source());
+    const tab = seq(str("PARAMETER-TABLE"), new Source());
 
-    let connection = seq(str("CONNECTION"), new Dynamic());
+    const connection = seq(str("CONNECTION"), new Dynamic());
 
-    let ret = seq(str("CALL DATABASE PROCEDURE"),
-                  new Dynamic(),
-                  opt(connection),
-                  alt(expl, tab));
+    const ret = seq(str("CALL DATABASE PROCEDURE"),
+                    new Dynamic(),
+                    opt(connection),
+                    alt(expl, tab));
 
     return verNot(Version.Cloud, ret);
   }

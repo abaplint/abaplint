@@ -1,7 +1,7 @@
 import {statementType} from "../_utils";
 import * as Statements from "../../../src/abap/statements/";
 
-let tests = [
+const tests = [
   "FORMAT COLOR lv_col.",
   "format color lv_col intensified off.",
   "format color lv_col intensified on.",

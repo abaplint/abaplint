@@ -1,7 +1,7 @@
 import {statementType} from "../_utils";
 import * as Statements from "../../../src/abap/statements/";
 
-let tests = [
+const tests = [
   "READ TABLE tt_fields ASSIGNING <ls_fbranch> WITH KEY tabname = 'TEXTL'.",
   "READ TABLE lt_lengths INDEX lines( lt_lengths ) INTO lv_length.",
   "READ TABLE lt_obj FROM lv_super TRANSPORTING NO FIELDS.",

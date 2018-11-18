@@ -3,14 +3,14 @@ import {expect} from "chai";
 import {findIssues} from "./abap/_utils";
 
 describe("formatters", () => {
-  let tests = [
+  const tests = [
     {abap: "foo bar", errors: 1},
     {abap: "IF foo = bar.", errors: 1},
     {abap: "WRITE 'Hello'.", errors: 0},
   ];
 
   tests.forEach((test) => {
-    let issues = findIssues(test.abap);
+    const issues = findIssues(test.abap);
 
     it(test.abap, () => {
       expect(issues.length).to.equals(test.errors);

@@ -47,22 +47,22 @@ export class MethodParameters {
 
   private parse(node: StatementNode): void {
 
-    let importing = node.findFirstExpression(MethodDefImporting);
+    const importing = node.findFirstExpression(MethodDefImporting);
     if (importing) {
       this.add(this.importing, importing);
     }
 
-    let exporting = node.findFirstExpression(MethodDefExporting);
+    const exporting = node.findFirstExpression(MethodDefExporting);
     if (exporting) {
       this.add(this.exporting, exporting);
     }
 
-    let changing = node.findFirstExpression(MethodDefChanging);
+    const changing = node.findFirstExpression(MethodDefChanging);
     if (changing) {
       this.add(this.changing, changing);
     }
 
-    let returning = node.findFirstExpression(MethodDefReturning);
+    const returning = node.findFirstExpression(MethodDefReturning);
     if (returning) {
       const found = returning.findFirstExpression(MethodParam);
       if (found) {
@@ -76,8 +76,8 @@ export class MethodParameters {
   }
 
   private add(target: MethodParameter[], source: ExpressionNode): void {
-    let params = source.findAllExpressions(MethodParam);
-    for (let param of params) {
+    const params = source.findAllExpressions(MethodParam);
+    for (const param of params) {
       target.push(new MethodParameter(param));
     }
   }

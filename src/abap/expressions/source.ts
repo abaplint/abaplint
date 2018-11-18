@@ -6,142 +6,142 @@ import {Version} from "../../version";
 
 export class Source extends Expression {
   public getRunnable(): IRunnable {
-    let ref = seq(tok(Arrow), str("*"));
+    const ref = seq(tok(Arrow), str("*"));
 
-    let method = seq(new MethodCallChain(), optPrio(seq(new ArrowOrDash(), new FieldChain())));
+    const method = seq(new MethodCallChain(), optPrio(seq(new ArrowOrDash(), new FieldChain())));
 
-    let rparen = alt(tok(WParenRightW), tok(WParenRight));
+    const rparen = alt(tok(WParenRightW), tok(WParenRight));
 
 // paren used for eg. "( 2 + 1 ) * 4"
-    let paren = seq(tok(WParenLeftW),
-                    new Source(),
-                    rparen);
+    const paren = seq(tok(WParenLeftW),
+                      new Source(),
+                      rparen);
 
-    let after = seq(alt(str("&"), str("&&"), new ArithOperator()), new Source());
+    const after = seq(alt(str("&"), str("&&"), new ArithOperator()), new Source());
 
-    let bool = seq(alt(ver(Version.v702, str("BOOLC")),
-                       ver(Version.v740sp08, str("XSDBOOL"))),
-                   tok(ParenLeftW),
-                   new Cond(),
-                   str(")"));
+    const bool = seq(alt(ver(Version.v702, str("BOOLC")),
+                         ver(Version.v740sp08, str("XSDBOOL"))),
+                     tok(ParenLeftW),
+                     new Cond(),
+                     str(")"));
 
-    let prefix = alt(tok(WDashW), str("BIT-NOT"));
+    const prefix = alt(tok(WDashW), str("BIT-NOT"));
 
-    let old = seq(alt(new Constant(),
-                      new StringTemplate(),
-                      bool,
-                      method,
-                      seq(opt(prefix), new FieldChain()),
-                      paren),
-                  optPrio(alt(ref, after, new TableBody())));
+    const old = seq(alt(new Constant(),
+                        new StringTemplate(),
+                        bool,
+                        method,
+                        seq(opt(prefix), new FieldChain()),
+                        paren),
+                    optPrio(alt(ref, after, new TableBody())));
 
-    let mapping = seq(str("MAPPING"), plus(seq(new Field(), str("="), new Field())));
+    const mapping = seq(str("MAPPING"), plus(seq(new Field(), str("="), new Field())));
 
-    let baseParen = seq(str("BASE"), tok(WParenLeftW), new Source(), tok(WParenRightW));
+    const baseParen = seq(str("BASE"), tok(WParenLeftW), new Source(), tok(WParenRightW));
 
-    let discarding = ver(Version.v751, str("DISCARDING DUPLICATES"));
+    const discarding = ver(Version.v751, str("DISCARDING DUPLICATES"));
 
-    let corr = ver(Version.v740sp05, seq(str("CORRESPONDING"),
-                                         new TypeName(),
-                                         tok(ParenLeftW),
-                                         opt(baseParen),
-                                         new Source(),
-                                         opt(mapping),
-                                         opt(seq(str("EXCEPT"), new Field())),
-                                         opt(discarding),
-                                         rparen));
+    const corr = ver(Version.v740sp05, seq(str("CORRESPONDING"),
+                                           new TypeName(),
+                                           tok(ParenLeftW),
+                                           opt(baseParen),
+                                           new Source(),
+                                           opt(mapping),
+                                           opt(seq(str("EXCEPT"), new Field())),
+                                           opt(discarding),
+                                           rparen));
 
-    let arith = seq(new ArithOperator(), new Source());
+    const arith = seq(new ArithOperator(), new Source());
 
-    let conv = ver(Version.v740sp02, seq(str("CONV"),
-                                         new TypeName(),
-                                         tok(ParenLeftW),
-                                         new Source(),
-                                         rparen, opt(arith)));
+    const conv = ver(Version.v740sp02, seq(str("CONV"),
+                                           new TypeName(),
+                                           tok(ParenLeftW),
+                                           new Source(),
+                                           rparen, opt(arith)));
 
-    let swhen = seq(str("WHEN"), new Source(), str("THEN"), new Source());
-    let swit = ver(Version.v740sp02, seq(str("SWITCH"),
-                                         new TypeName(),
-                                         tok(ParenLeftW),
-                                         opt(new Let()),
-                                         new Source(),
-                                         plus(swhen),
-                                         opt(seq(str("ELSE"), new Source())),
-                                         rparen));
+    const swhen = seq(str("WHEN"), new Source(), str("THEN"), new Source());
+    const swit = ver(Version.v740sp02, seq(str("SWITCH"),
+                                           new TypeName(),
+                                           tok(ParenLeftW),
+                                           opt(new Let()),
+                                           new Source(),
+                                           plus(swhen),
+                                           opt(seq(str("ELSE"), new Source())),
+                                           rparen));
 
-    let fieldList = seq(new FieldSub(), str("="), new Source());
+    const fieldList = seq(new FieldSub(), str("="), new Source());
 
-    let base = seq(str("BASE"), new Source());
+    const base = seq(str("BASE"), new Source());
 
-    let tab = seq(opt(new For()),
-                  alt(plus(seq(tok(WParenLeftW), star(new Source()), tok(WParenRightW))),
-                      plus(seq(star(fieldList), seq(tok(WParenLeftW), plus(fieldList), tok(WParenRightW))))));
+    const tab = seq(opt(new For()),
+                    alt(plus(seq(tok(WParenLeftW), star(new Source()), tok(WParenRightW))),
+                        plus(seq(star(fieldList), seq(tok(WParenLeftW), plus(fieldList), tok(WParenRightW))))));
 
-    let strucOrTab = seq(opt(new Let()), opt(base),
-                         alt(plus(fieldList),
-                             tab));
+    const strucOrTab = seq(opt(new Let()), opt(base),
+                           alt(plus(fieldList),
+                               tab));
 
-    let tabdef = ver(Version.v740sp08, alt(str("OPTIONAL"), seq(str("DEFAULT"), new Source())));
+    const tabdef = ver(Version.v740sp08, alt(str("OPTIONAL"), seq(str("DEFAULT"), new Source())));
 
-    let value = ver(Version.v740sp02, seq(str("VALUE"),
-                                          new TypeName(),
-                                          tok(ParenLeftW),
-                                          opt(alt(seq(new Source(), opt(tabdef)),
-                                                  strucOrTab)),
-                                          rparen));
+    const value = ver(Version.v740sp02, seq(str("VALUE"),
+                                            new TypeName(),
+                                            tok(ParenLeftW),
+                                            opt(alt(seq(new Source(), opt(tabdef)),
+                                                    strucOrTab)),
+                                            rparen));
 
-    let when = seq(str("WHEN"), new Cond(), str("THEN"), new Source());
+    const when = seq(str("WHEN"), new Cond(), str("THEN"), new Source());
 
-    let elsee = seq(str("ELSE"), new Source());
+    const elsee = seq(str("ELSE"), new Source());
 
-    let cond = ver(Version.v740sp02, seq(str("COND"),
-                                         new TypeName(),
-                                         tok(ParenLeftW),
-                                         opt(new Let()),
-                                         plus(when),
-                                         opt(elsee),
-                                         rparen));
+    const cond = ver(Version.v740sp02, seq(str("COND"),
+                                           new TypeName(),
+                                           tok(ParenLeftW),
+                                           opt(new Let()),
+                                           plus(when),
+                                           opt(elsee),
+                                           rparen));
 
-    let reff = ver(Version.v740sp02, seq(str("REF"),
-                                         new TypeName(),
-                                         tok(ParenLeftW),
-                                         new Source(),
-                                         rparen));
+    const reff = ver(Version.v740sp02, seq(str("REF"),
+                                           new TypeName(),
+                                           tok(ParenLeftW),
+                                           new Source(),
+                                           rparen));
 
-    let exact = ver(Version.v740sp02, seq(str("EXACT"),
-                                          new TypeName(),
-                                          tok(ParenLeftW),
-                                          new Source(),
-                                          rparen));
+    const exact = ver(Version.v740sp02, seq(str("EXACT"),
+                                            new TypeName(),
+                                            tok(ParenLeftW),
+                                            new Source(),
+                                            rparen));
 
-    let filter = ver(Version.v740sp08,
-                     seq(str("FILTER"),
-                         new TypeName(),
-                         tok(ParenLeftW),
-                         new Source(),
-                         opt(str("EXCEPT")),
-                         opt(seq(str("IN"), new Source())),
-                         opt(seq(str("USING KEY"), new Field())),
-                         seq(str("WHERE"), new Cond()),
-                         rparen));
+    const filter = ver(Version.v740sp08,
+                       seq(str("FILTER"),
+                           new TypeName(),
+                           tok(ParenLeftW),
+                           new Source(),
+                           opt(str("EXCEPT")),
+                           opt(seq(str("IN"), new Source())),
+                           opt(seq(str("USING KEY"), new Field())),
+                           seq(str("WHERE"), new Cond()),
+                           rparen));
 
-    let reduce = ver(Version.v740sp08,
-                     seq(str("REDUCE"),
-                         new TypeName(),
-                         tok(ParenLeftW),
-                         str("INIT"),
-                         new Field(),
-                         str("="),
-                         new Source(),
-                         new For(),
-                         str("NEXT"),
-                         new Field(),
-                         str("="),
-                         new Source(),
-                         rparen,
-                         opt(after)));
+    const reduce = ver(Version.v740sp08,
+                       seq(str("REDUCE"),
+                           new TypeName(),
+                           tok(ParenLeftW),
+                           str("INIT"),
+                           new Field(),
+                           str("="),
+                           new Source(),
+                           new For(),
+                           str("NEXT"),
+                           new Field(),
+                           str("="),
+                           new Source(),
+                           rparen,
+                           opt(after)));
 
-    let ret = alt(old, corr, conv, value, cond, reff, exact, swit, filter, reduce);
+    const ret = alt(old, corr, conv, value, cond, reff, exact, swit, filter, reduce);
 
     return ret;
   }

@@ -1,7 +1,7 @@
 import {statementType} from "../_utils";
 import * as Statements from "../../../src/abap/statements/";
 
-let tests = [
+const tests = [
   "GET BADI lo_foobar.",
   "GET BADI lo_foobar FILTERS foo = bar.",
   "GET BADI l_badi CONTEXT me.",

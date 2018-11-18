@@ -7,19 +7,19 @@ export class CallTransaction extends Statement {
 
   public getMatcher(): IRunnable {
 
-    let options = seq(str("OPTIONS FROM"), new Source());
-    let messages = seq(str("MESSAGES INTO"), new Target());
+    const options = seq(str("OPTIONS FROM"), new Source());
+    const messages = seq(str("MESSAGES INTO"), new Target());
 
-    let auth = seq(alt(str("WITH"), str("WITHOUT")), str("AUTHORITY-CHECK"));
+    const auth = seq(alt(str("WITH"), str("WITHOUT")), str("AUTHORITY-CHECK"));
 
-    let ret = seq(str("CALL TRANSACTION"),
-                  new Source(),
-                  opt(auth),
-                  opt(seq(str("USING"), new Source())),
-                  opt(per(seq(str("UPDATE"), new Source()), seq(str("MODE"), new Source()))),
-                  opt(str("AND SKIP FIRST SCREEN")),
-                  opt(options),
-                  opt(messages));
+    const ret = seq(str("CALL TRANSACTION"),
+                    new Source(),
+                    opt(auth),
+                    opt(seq(str("USING"), new Source())),
+                    opt(per(seq(str("UPDATE"), new Source()), seq(str("MODE"), new Source()))),
+                    opt(str("AND SKIP FIRST SCREEN")),
+                    opt(options),
+                    opt(messages));
 
     return verNot(Version.Cloud, ret);
   }

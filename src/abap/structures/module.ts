@@ -6,9 +6,9 @@ import {Normal} from "./normal";
 export class Module extends Structure {
 
   public getMatcher(): IStructureRunnable {
-    let body = alt(sub(new Normal()),
-                   sta(Statements.Ranges),
-                   sta(Statements.Tables));
+    const body = alt(sub(new Normal()),
+                     sta(Statements.Ranges),
+                     sta(Statements.Tables));
 
     return beginEnd(sta(Statements.Module),
                     star(body),

@@ -6,13 +6,13 @@ import {Version} from "../../version";
 export class ReadReport extends Statement {
 
   public getMatcher(): IRunnable {
-    let state = seq(str("STATE"), new Source());
-    let into = seq(str("INTO"), new Target());
-    let maximum = seq(str("MAXIMUM WIDTH INTO"), new Target());
+    const state = seq(str("STATE"), new Source());
+    const into = seq(str("INTO"), new Target());
+    const maximum = seq(str("MAXIMUM WIDTH INTO"), new Target());
 
-    let ret = seq(str("READ REPORT"),
-                  new Source(),
-                  per(state, into, maximum));
+    const ret = seq(str("READ REPORT"),
+                    new Source(),
+                    per(state, into, maximum));
 
     return verNot(Version.Cloud, ret);
   }

@@ -5,7 +5,7 @@ import {getTokens} from "../_utils";
 
 // todo, refactor to separate files, one for each expression
 
-let tests = [
+const tests = [
   {c: "cs_tstcp",                         r: new Expressions.FieldChain(),      e: true},
   {c: "cs_tstcp-param",                   r: new Expressions.FieldChain(),      e: true},
   {c: "cs_tstcp-param(sy)",               r: new Expressions.FieldChain(),      e: true},
@@ -69,11 +69,11 @@ let tests = [
 
 describe("Test expression matchers", () => {
   tests.forEach((test) => {
-    let not = test.e === true ? "" : "not ";
+    const not = test.e === true ? "" : "not ";
 
     it("\"" + test.c + "\" should " + not + "match " + test.r.getName(), () => {
-      let tokens = getTokens(test.c);
-      let match = Combi.Combi.run(test.r.getRunnable(), tokens);
+      const tokens = getTokens(test.c);
+      const match = Combi.Combi.run(test.r.getRunnable(), tokens);
       expect(match !== undefined).to.equals(test.e);
     });
   });

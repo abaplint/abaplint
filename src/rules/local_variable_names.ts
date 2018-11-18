@@ -37,20 +37,20 @@ export class LocalVariableNames extends ABAPRule {
 
   public runParsed(file: ABAPFile): Issue[] {
     let ret: Issue[] = [];
-    let stru = file.getStructure();
+    const stru = file.getStructure();
 
     if (stru == undefined) {
       return [];
     }
 
 // inside METHOD, FORM, FUNCTION MODULE
-    for (let node of stru.findAllStructures(Structures.Form)) {
+    for (const node of stru.findAllStructures(Structures.Form)) {
       ret = ret.concat(this.checkLocals(node, file));
     }
-    for (let node of stru.findAllStructures(Structures.Method)) {
+    for (const node of stru.findAllStructures(Structures.Method)) {
       ret = ret.concat(this.checkLocals(node, file));
     }
-    for (let node of stru.findAllStructures(Structures.FunctionModule)) {
+    for (const node of stru.findAllStructures(Structures.FunctionModule)) {
       ret = ret.concat(this.checkLocals(node, file));
     }
 
@@ -62,9 +62,9 @@ export class LocalVariableNames extends ABAPRule {
 
 // data, field symbols
 
-    let data = structure.findAllStatements(Statements.Data);
-    for (let dat of data) {
-      let parent = structure.findParent(dat);
+    const data = structure.findAllStatements(Statements.Data);
+    for (const dat of data) {
+      const parent = structure.findParent(dat);
       if (parent && parent.get() instanceof Structures.Data) {
         continue; // inside DATA BEGIN OF
       }
@@ -75,8 +75,8 @@ export class LocalVariableNames extends ABAPRule {
       }
     }
 
-    let datab = structure.findAllStatements(Statements.DataBegin);
-    for (let dat of datab) {
+    const datab = structure.findAllStatements(Statements.DataBegin);
+    for (const dat of datab) {
       const found = dat.findFirstExpression(Expressions.NamespaceSimpleName);
       if (found) {
         const token = found.getFirstToken().get();
@@ -84,8 +84,8 @@ export class LocalVariableNames extends ABAPRule {
       }
     }
 
-    let fieldsymbols = structure.findAllStatements(Statements.FieldSymbol);
-    for (let fieldsymbol of fieldsymbols) {
+    const fieldsymbols = structure.findAllStatements(Statements.FieldSymbol);
+    for (const fieldsymbol of fieldsymbols) {
       const found = fieldsymbol.findFirstExpression(Expressions.FieldSymbol);
       if (found) {
         const token = found.getFirstToken().get();
@@ -93,13 +93,13 @@ export class LocalVariableNames extends ABAPRule {
       }
     }
 
-    let constants = structure.findAllStatements(Statements.Constant);
-    for (let constant of constants) {
-      let parent = structure.findParent(constant);
+    const constants = structure.findAllStatements(Statements.Constant);
+    for (const constant of constants) {
+      const parent = structure.findParent(constant);
       if (parent && parent.get() instanceof Structures.Constants) {
         continue; // inside DATA BEGIN OF
       }
-      let found = constant.findFirstExpression(Expressions.NamespaceSimpleName);
+      const found = constant.findFirstExpression(Expressions.NamespaceSimpleName);
       if (found) {
         const token = found.getFirstToken().get();
         ret = ret.concat(this.checkName(token, file, this.conf.expectedConstant));
@@ -113,12 +113,12 @@ export class LocalVariableNames extends ABAPRule {
   }
 
   private checkName(token: Token, file: ABAPFile, expected: string): Issue[] {
-    let ret: Issue[] = [];
+    const ret: Issue[] = [];
     const regex = new RegExp(expected, "i");
     const name = token.getStr();
     if (regex.test(name) === false) {
       const message = "Bad local name \"" + name + "\" expected \"" + expected + "/i\"";
-      let issue = new Issue({file, message, code: this.getKey(), start: token.getPos()});
+      const issue = new Issue({file, message, code: this.getKey(), start: token.getPos()});
       ret.push(issue);
     }
     return ret;

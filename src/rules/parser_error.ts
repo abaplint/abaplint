@@ -33,20 +33,20 @@ export class ParserError extends ABAPRule {
   }
 
   public runParsed(file: ABAPFile, reg: Registry) {
-    let issues: Array<Issue> = [];
+    const issues: Array<Issue> = [];
 
     let start = new Position(0, 0);
-    for (let statement of file.getStatements()) {
+    for (const statement of file.getStatements()) {
 // only report one error per row
       if (statement.get() instanceof Unknown
             && start.getRow() !== statement.getStart().getRow()) {
 
-        let message = this.missingSpace(statement) ?
+        const message = this.missingSpace(statement) ?
           "Missing space between string or character literal and parentheses" :
           this.getDescription() + ", ABAP version " + versionToText(reg.getConfig().getVersion());
 
         start = statement.getStart();
-        let issue = new Issue({file, message, code: this.getKey(), start});
+        const issue = new Issue({file, message, code: this.getKey(), start});
         issues.push(issue);
       }
     }

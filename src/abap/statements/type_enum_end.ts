@@ -5,13 +5,13 @@ import {NamespaceSimpleName} from "../expressions";
 export class TypeEnumEnd extends Statement {
 
   public getMatcher(): IRunnable {
-    let structure = seq(str("STRUCTURE"), new NamespaceSimpleName());
+    const structure = seq(str("STRUCTURE"), new NamespaceSimpleName());
 
-    let em = seq(str("ENUM"), new NamespaceSimpleName(), opt(structure));
+    const em = seq(str("ENUM"), new NamespaceSimpleName(), opt(structure));
 
-    let end = seq(str("END OF"), em);
+    const end = seq(str("END OF"), em);
 
-    let ret = seq(str("TYPES"), end);
+    const ret = seq(str("TYPES"), end);
 
     return ret;
   }

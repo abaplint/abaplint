@@ -6,11 +6,11 @@ import {Version} from "../../version";
 export class OpenCursor extends Statement {
 
   public getMatcher(): IRunnable {
-    let ret = seq(str("OPEN CURSOR"),
-                  optPrio(str("WITH HOLD")),
-                  new Target(),
-                  str("FOR"),
-                  new Select());
+    const ret = seq(str("OPEN CURSOR"),
+                    optPrio(str("WITH HOLD")),
+                    new Target(),
+                    str("FOR"),
+                    new Select());
 
     return verNot(Version.Cloud, ret);
   }

@@ -52,7 +52,7 @@ export class ABAPFile extends AbstractFile {
     if (withPragmas === true) {
       return this.tokens;
     } else {
-      let tokens: Array<Token> = [];
+      const tokens: Array<Token> = [];
       this.tokens.forEach((t) => {
         if (!(t instanceof Pragma)) {
           tokens.push(t);

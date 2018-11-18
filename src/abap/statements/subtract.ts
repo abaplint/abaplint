@@ -6,10 +6,10 @@ import {Version} from "../../version";
 export class Subtract extends Statement {
 
   public getMatcher(): IRunnable {
-    let ret = seq(str("SUBTRACT"),
-                  new Source(),
-                  str("FROM"),
-                  new Target());
+    const ret = seq(str("SUBTRACT"),
+                    new Source(),
+                    str("FROM"),
+                    new Target());
 
     return verNot(Version.Cloud, ret);
   }

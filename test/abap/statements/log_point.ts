@@ -1,7 +1,7 @@
 import {statementType} from "../_utils";
 import * as Statements from "../../../src/abap/statements/";
 
-let tests = [
+const tests = [
   "LOG-POINT ID foobar SUBKEY subkey.",
   "LOG-POINT ID __foobar__ SUBKEY subkey.",
   "LOG-POINT ID foobar.",

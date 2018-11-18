@@ -6,15 +6,15 @@ import {Version} from "../../version";
 export class GetCursor extends Statement {
 
   public getMatcher(): IRunnable {
-    let line = seq(str("LINE"), new Target());
-    let field = seq(str("FIELD"), new Target());
-    let offset = seq(str("OFFSET"), new Target());
-    let value = seq(str("VALUE"), new Target());
-    let length = seq(str("LENGTH"), new Target());
-    let area = seq(str("AREA"), new Target());
+    const line = seq(str("LINE"), new Target());
+    const field = seq(str("FIELD"), new Target());
+    const offset = seq(str("OFFSET"), new Target());
+    const value = seq(str("VALUE"), new Target());
+    const length = seq(str("LENGTH"), new Target());
+    const area = seq(str("AREA"), new Target());
 
-    let ret = seq(str("GET CURSOR"),
-                  per(line, opt(str("DISPLAY")), field, offset, value, length, area));
+    const ret = seq(str("GET CURSOR"),
+                    per(line, opt(str("DISPLAY")), field, offset, value, length, area));
 
     return verNot(Version.Cloud, ret);
   }

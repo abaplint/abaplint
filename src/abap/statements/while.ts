@@ -5,7 +5,7 @@ import {Cond, Source, Target} from "../expressions";
 export class While extends Statement {
 
   public getMatcher(): IRunnable {
-    let vary = seq(str("VARY"), new Target(), str("FROM"), new Source(), str("NEXT"), new Source());
+    const vary = seq(str("VARY"), new Target(), str("FROM"), new Source(), str("NEXT"), new Source());
 
     return seq(str("WHILE"), new Cond(), opt(vary));
   }

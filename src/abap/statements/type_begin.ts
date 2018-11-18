@@ -6,9 +6,9 @@ export class TypeBegin extends Statement {
 
   public getMatcher(): IRunnable {
 
-    let begin = seq(str("BEGIN OF"), new NamespaceSimpleName());
+    const begin = seq(str("BEGIN OF"), new NamespaceSimpleName());
 
-    let ret = seq(alt(str("TYPE"), str("TYPES")), begin);
+    const ret = seq(alt(str("TYPE"), str("TYPES")), begin);
 
     return ret;
   }

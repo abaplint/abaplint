@@ -27,13 +27,13 @@ export class SevenBitAscii extends ABAPRule {
   }
 
   public runParsed(file: ABAPFile) {
-    let output: Array<Issue> = [];
+    const output: Array<Issue> = [];
 
-    let rows = file.getRawRows();
+    const rows = file.getRawRows();
 
     for (let i = 0; i < rows.length; i++) {
       if (/^[\u0000-\u007f]*$/.test(rows[i]) === false) {
-        let issue = new Issue({file, message: this.getDescription(), code: this.getKey(), start: new Position(i + 1, 1)});
+        const issue = new Issue({file, message: this.getDescription(), code: this.getKey(), start: new Position(i + 1, 1)});
         output.push(issue);
       }
     }

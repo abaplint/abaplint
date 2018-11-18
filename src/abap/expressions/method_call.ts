@@ -4,11 +4,11 @@ import {Source, MethodName, ParameterListS, MethodParameters} from "./";
 
 export class MethodCall extends Expression {
   public getRunnable(): IRunnable {
-    let white = seq(tok(ParenLeftW), alt(new Source(), new ParameterListS(), new MethodParameters()));
+    const white = seq(tok(ParenLeftW), alt(new Source(), new ParameterListS(), new MethodParameters()));
 
-    let ret = seq(new MethodName(),
-                  white,
-                  alt(tok(WParenRight), tok(WParenRightW)));
+    const ret = seq(new MethodName(),
+                    white,
+                    alt(tok(WParenRight), tok(WParenRightW)));
 
     return ret;
   }

@@ -4,9 +4,9 @@ import {FieldChain, Constant} from "./";
 
 export class Dynamic extends Expression {
   public getRunnable(): IRunnable {
-    let ret = seq(alt(tok(WParenLeft), tok(ParenLeft)),
-                  alt(new FieldChain(), new Constant()),
-                  alt(tok(ParenRightW), tok(ParenRight)));
+    const ret = seq(alt(tok(WParenLeft), tok(ParenLeft)),
+                    alt(new FieldChain(), new Constant()),
+                    alt(tok(ParenRightW), tok(ParenRight)));
 
     return ret;
   }

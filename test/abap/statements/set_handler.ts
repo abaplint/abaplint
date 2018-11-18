@@ -1,7 +1,7 @@
 import {statementType} from "../_utils";
 import * as Statements from "../../../src/abap/statements/";
 
-let tests = [
+const tests = [
   "SET HANDLER me->on_event FOR mo_html_viewer.",
   "set handler handle_grid_drag for all instances activation ' '.",
   "set handler handler1 handler2 for all instances.",

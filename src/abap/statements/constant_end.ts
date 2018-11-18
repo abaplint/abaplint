@@ -5,7 +5,7 @@ import {NamespaceSimpleName} from "../expressions";
 export class ConstantEnd extends Statement {
 
   public getMatcher(): IRunnable {
-    let ret = seq(str("CONSTANTS"), str("END"), str("OF"), new NamespaceSimpleName());
+    const ret = seq(str("CONSTANTS"), str("END"), str("OF"), new NamespaceSimpleName());
 
     return ret;
   }

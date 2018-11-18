@@ -1,7 +1,7 @@
 import {statementType} from "../_utils";
 import * as Statements from "../../../src/abap/statements/";
 
-let tests = [
+const tests = [
   "MESSAGE 'Saved' TYPE 'S'.",
   "MESSAGE 'Fill URL' TYPE 'S' DISPLAY LIKE 'E'.",
   "MESSAGE ID msgid TYPE msgty NUMBER msgno.",

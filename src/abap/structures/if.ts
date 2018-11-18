@@ -8,9 +8,9 @@ import {Else} from "./else";
 export class If extends Structure {
 
   public getMatcher(): IStructureRunnable {
-    let contents = seq(opt(sub(new Body())),
-                       star(sub(new Elseif())),
-                       opt(sub(new Else())));
+    const contents = seq(opt(sub(new Body())),
+                         star(sub(new Elseif())),
+                         opt(sub(new Else())));
 
     return beginEnd(sta(Statements.If),
                     contents,

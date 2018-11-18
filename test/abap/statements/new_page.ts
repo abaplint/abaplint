@@ -1,7 +1,7 @@
 import {statementType} from "../_utils";
 import * as Statements from "../../../src/abap/statements/";
 
-let tests = [
+const tests = [
   "new-page line-size lv_width.",
   "NEW-PAGE NO-TITLE NO-HEADING.",
   "NEW-PAGE WITH-TITLE.",

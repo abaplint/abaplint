@@ -5,22 +5,22 @@ import {Source, Dynamic, SQLCond, DatabaseTable} from "../expressions";
 export class DeleteDatabase extends Statement {
 
   public getMatcher(): IRunnable {
-    let where = seq(str("WHERE"), alt(new SQLCond(), new Dynamic()));
-    let source = alt(new Dynamic(), new DatabaseTable());
+    const where = seq(str("WHERE"), alt(new SQLCond(), new Dynamic()));
+    const source = alt(new Dynamic(), new DatabaseTable());
 // todo, client specified and connection not possible in Cloud
-    let client = str("CLIENT SPECIFIED");
-    let connection = seq(str("CONNECTION"), new Dynamic());
+    const client = str("CLIENT SPECIFIED");
+    const connection = seq(str("CONNECTION"), new Dynamic());
 
-    let from = seq(str("FROM"), source, opt(client), opt(connection), opt(where));
+    const from = seq(str("FROM"), source, opt(client), opt(connection), opt(where));
 
-    let table = seq(source,
-                    opt(client),
-                    opt(connection),
-                    str("FROM"),
-                    opt(str("TABLE")),
-                    new Source());
+    const table = seq(source,
+                      opt(client),
+                      opt(connection),
+                      str("FROM"),
+                      opt(str("TABLE")),
+                      new Source());
 
-    let ret = seq(str("DELETE"), alt(from, table));
+    const ret = seq(str("DELETE"), alt(from, table));
 
     return ret;
   }

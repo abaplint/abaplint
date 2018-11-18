@@ -6,7 +6,7 @@ import {Version} from "../../version";
 export class SetScreen extends Statement {
 
   public getMatcher(): IRunnable {
-    let ret = seq(str("SET SCREEN"), new Source());
+    const ret = seq(str("SET SCREEN"), new Source());
     return verNot(Version.Cloud, ret);
   }
 

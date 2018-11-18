@@ -6,12 +6,12 @@ import {Version} from "../../version";
 export class Supply extends Statement {
 
   public getMatcher(): IRunnable {
-    let field = seq(new Field(), str("="), new Source());
+    const field = seq(new Field(), str("="), new Source());
 
-    let ret = seq(str("SUPPLY"),
-                  plus(field),
-                  str("TO CONTEXT"),
-                  new Field());
+    const ret = seq(str("SUPPLY"),
+                    plus(field),
+                    str("TO CONTEXT"),
+                    new Field());
 
     return verNot(Version.Cloud, ret);
   }

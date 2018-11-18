@@ -13,7 +13,7 @@ export class ClassImplementation extends Structure {
                           */
 
 // the DEFINE statement is allowed between local method implementations, but not global?
-    let body = star(alt(sub(new Structures.Define()), sub(new Structures.Method())));
+    const body = star(alt(sub(new Structures.Define()), sub(new Structures.Method())));
 
     return beginEnd(sta(Statements.ClassImplementation),
                     body,

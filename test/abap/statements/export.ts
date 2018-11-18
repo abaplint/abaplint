@@ -1,7 +1,7 @@
 import {statementType} from "../_utils";
 import * as Statements from "../../../src/abap/statements/";
 
-let tests = [
+const tests = [
   "EXPORT foo TO MEMORY ID 'MOO'.",
   "EXPORT list = it_list TO DATA BUFFER lv_xstring COMPRESSION ON.",
   "EXPORT mv_errty = mv_errty TO DATA BUFFER p_attributes.",

@@ -6,7 +6,7 @@ import {Version} from "../../version";
 export class SetUserCommand extends Statement {
 
   public getMatcher(): IRunnable {
-    let ret = seq(str("SET USER-COMMAND"), new Source());
+    const ret = seq(str("SET USER-COMMAND"), new Source());
 
     return verNot(Version.Cloud, ret);
   }

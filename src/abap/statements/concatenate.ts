@@ -5,13 +5,13 @@ import {Target, Source} from "../expressions";
 export class Concatenate extends Statement {
 
   public getMatcher(): IRunnable {
-    let mode = seq(str("IN"),
-                   alt(str("BYTE"), str("CHARACTER")),
-                   str("MODE"));
-    let blanks = str("RESPECTING BLANKS");
-    let sep = seq(str("SEPARATED BY"), new Source());
+    const mode = seq(str("IN"),
+                     alt(str("BYTE"), str("CHARACTER")),
+                     str("MODE"));
+    const blanks = str("RESPECTING BLANKS");
+    const sep = seq(str("SEPARATED BY"), new Source());
 
-    let options = per(mode, blanks, sep);
+    const options = per(mode, blanks, sep);
 
     return seq(str("CONCATENATE"),
                new Source(),

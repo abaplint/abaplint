@@ -6,8 +6,8 @@ import {Version} from "../../version";
 export class Contexts extends Statement {
 
   public getMatcher(): IRunnable {
-    let ret = seq(str("CONTEXTS"),
-                  new Field());
+    const ret = seq(str("CONTEXTS"),
+                    new Field());
 
     return verNot(Version.Cloud, ret);
   }

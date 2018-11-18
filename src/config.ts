@@ -9,22 +9,22 @@ export class Config {
   private config: any = undefined;
 
   public static getDefault(): Config {
-    let defaults: Array<string> = [];
+    const defaults: Array<string> = [];
 
-    for (let key in Rules) {
+    for (const key in Rules) {
       const rul: any = Rules;
       if (typeof rul[key] === "function") {
-        let rule: IRule = new rul[key]();
+        const rule: IRule = new rul[key]();
         if (rule.getKey) {
           defaults.push("\"" + rule.getKey() + "\": " + JSON.stringify(rule.getConfig()));
         }
       }
     }
 
-    let json = "{\"version\": \"" +
+    const json = "{\"version\": \"" +
       versionToText(Config.defaultVersion) +
       "\", \"rules\":\n{" + defaults.join(",\n") + "\n}}";
-    let conf = new Config(json);
+    const conf = new Config(json);
     return conf;
   }
 

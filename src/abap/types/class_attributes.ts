@@ -31,7 +31,7 @@ export class ClassAttributes {
   }
 
   private parse(node: StructureNode): void {
-    let cdef = node.findFirstStructure(Structures.ClassDefinition);
+    const cdef = node.findFirstStructure(Structures.ClassDefinition);
     if (!cdef) {
       throw new Error("MethodDefinition, expected ClassDefinition as part of input node");
     }
@@ -46,12 +46,12 @@ export class ClassAttributes {
     if (!node) { return; }
 
     let defs = node.findAllStatements(Statements.Data);
-    for (let def of defs) {
+    for (const def of defs) {
       this.instance.push(new ClassAttribute(def, scope));
     }
 
     defs = node.findAllStatements(Statements.ClassData);
-    for (let def of defs) {
+    for (const def of defs) {
       this.static.push(new ClassAttribute(def, scope));
     }
 

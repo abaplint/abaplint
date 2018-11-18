@@ -29,11 +29,11 @@ export class ExitOrCheck extends ABAPRule {
   }
 
   public runParsed(file: ABAPFile) {
-    let issues: Issue[] = [];
+    const issues: Issue[] = [];
 
-    let stack: StatementNode[] = [];
+    const stack: StatementNode[] = [];
 
-    for (let statement of file.getStatements()) {
+    for (const statement of file.getStatements()) {
       if (statement.get() instanceof Statements.Loop
           || statement.get() instanceof Statements.While
           || statement.get() instanceof Statements.SelectLoop
@@ -47,7 +47,7 @@ export class ExitOrCheck extends ABAPRule {
       } else if ((statement.get() instanceof Statements.Check
           || statement.get() instanceof Statements.Exit)
           && stack.length === 0) {
-        let issue = new Issue({file, message: this.getDescription(), code: this.getKey(), start: statement.getStart()});
+        const issue = new Issue({file, message: this.getDescription(), code: this.getKey(), start: statement.getStart()});
         issues.push(issue);
       }
     }

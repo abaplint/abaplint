@@ -6,7 +6,7 @@ import {Version} from "../../version";
 export class SetCountry extends Statement {
 
   public getMatcher(): IRunnable {
-    let ret = seq(str("SET COUNTRY"), new Source());
+    const ret = seq(str("SET COUNTRY"), new Source());
 
     return verNot(Version.Cloud, ret);
   }

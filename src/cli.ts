@@ -15,7 +15,7 @@ import {Registry, IProgress} from "./registry";
 import {IFile} from "./files/_ifile";
 
 function searchConfig(filename: string): Config {
-  let json = searchUp(path.dirname(process.cwd() + path.sep + filename) + path.sep);
+  const json = searchUp(path.dirname(process.cwd() + path.sep + filename) + path.sep);
   if (json === undefined) {
     return Config.getDefault();
   } else {
@@ -24,12 +24,12 @@ function searchConfig(filename: string): Config {
 }
 
 function searchUp(dir: string): string | undefined {
-  let file = dir + "abaplint.json";
+  const file = dir + "abaplint.json";
   if (fs.existsSync(file)) {
     return fs.readFileSync(file, "utf8");
   }
 
-  let up = path.normalize(dir + ".." + path.sep);
+  const up = path.normalize(dir + ".." + path.sep);
   if (path.normalize(up) !== dir) {
     return searchUp(up);
   }
@@ -63,7 +63,7 @@ function loadFileNames(args: string[]): Array<string> {
 }
 
 async function loadFiles(compress: boolean, input: Array<string>, progress: boolean): Promise<Array<IFile>> {
-  let files: Array<IFile> = [];
+  const files: Array<IFile> = [];
   let bar: ProgressBar | undefined = undefined;
 
   if (progress) {
@@ -91,7 +91,7 @@ async function loadFiles(compress: boolean, input: Array<string>, progress: bool
 }
 
 async function run() {
-  let argv = minimist(process.argv.slice(2));
+  const argv = minimist(process.argv.slice(2));
   let format = "default";
   let output = "";
   let issues: Array<Issue> = [];
@@ -115,20 +115,20 @@ async function run() {
   } else if (argv._[0] === undefined) {
     output = output + "Supply filename\n";
   } else {
-    let files = loadFileNames(argv._);
+    const files = loadFileNames(argv._);
 
     if (files.length === 0) {
       output = output + "No files found\n";
     } else {
-      let config = searchConfig(files[0]);
+      const config = searchConfig(files[0]);
 
       if (argv["a"]) {
         config.setVersion(textToVersion(argv["a"]));
       }
-      let compress = argv["c"] ? true : false;
+      const compress = argv["c"] ? true : false;
 
-      let loaded = await loadFiles(compress, files, argv["s"]);
-      let progress = argv["s"] ? new Progress() : undefined;
+      const loaded = await loadFiles(compress, files, argv["s"]);
+      const progress = argv["s"] ? new Progress() : undefined;
       issues = new Registry(config).addFiles(loaded).findIssues(progress);
       output = Formatter.format(issues, format);
     }

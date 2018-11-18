@@ -6,7 +6,7 @@ import {Version} from "../../version";
 export class CloseDataset extends Statement {
 
   public getMatcher(): IRunnable {
-    let ret = seq(str("CLOSE DATASET"), new Source());
+    const ret = seq(str("CLOSE DATASET"), new Source());
     return verNot(Version.Cloud, ret);
   }
 

@@ -6,12 +6,12 @@ import {Version} from "../../version";
 export class StaticBegin extends Statement {
 
   public getMatcher(): IRunnable {
-    let occurs = seq(str("OCCURS"), new Integer());
+    const occurs = seq(str("OCCURS"), new Integer());
 
-    let ret = seq(alt(str("STATIC"), str("STATICS")),
-                  str("BEGIN OF"),
-                  new SimpleName(),
-                  opt(occurs));
+    const ret = seq(alt(str("STATIC"), str("STATICS")),
+                    str("BEGIN OF"),
+                    new SimpleName(),
+                    opt(occurs));
 
     return verNot(Version.Cloud, ret);
   }

@@ -1,7 +1,7 @@
 import {statementType} from "../_utils";
 import * as Statements from "../../../src/abap/statements/";
 
-let tests = [
+const tests = [
   "describe table lt_foo lines lv_lines.",
   "describe distance between <fgs> and <sdf> into l_int in byte mode.",
   "describe field <item> into td.",

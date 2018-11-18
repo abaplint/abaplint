@@ -12,7 +12,7 @@ export class StructureParser {
     const structure = this.findStructureForFile(file.getFilename());
 // todo, comments and empty statements will not be part of the structure
 // is this a problem?
-    let statements = file.getStatements().slice().filter((s) => {
+    const statements = file.getStatements().slice().filter((s) => {
       return !(s.get() instanceof StatementComment || s.get() instanceof Empty);
     });
     const unknowns = file.getStatements().slice().filter((s) => { return s.get() instanceof Unknown; });

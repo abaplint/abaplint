@@ -1,7 +1,7 @@
 import {statementType} from "../_utils";
 import * as Statements from "../../../src/abap/statements/";
 
-let tests = [
+const tests = [
   "CALL TRANSACTION 'FOO'.",
   "CALL TRANSACTION 'FOO' AND SKIP FIRST SCREEN.",
   "CALL TRANSACTION 'FOO' WITH AUTHORITY-CHECK AND SKIP FIRST SCREEN.",

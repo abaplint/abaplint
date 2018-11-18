@@ -1,7 +1,7 @@
 import {statementType} from "../_utils";
 import * as Statements from "../../../src/abap/statements/";
 
-let tests = [
+const tests = [
   "SORT mt_items BY txt ASCENDING AS TEXT.",
   "SORT <fs_table> BY (lt_otab).",
   "SORT lt_weight DESCENDING.",

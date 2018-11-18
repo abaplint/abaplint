@@ -1,7 +1,7 @@
 import {statementType} from "../_utils";
 import * as Statements from "../../../src/abap/statements/";
 
-let tests = [
+const tests = [
   "PERFORM set_pf_status IN PROGRAM rsdbrunt IF FOUND.",
   "PERFORM create_variant USING <ls_classdf>-clsname.",
   "PERFORM upfile CHANGING p_upfile.",

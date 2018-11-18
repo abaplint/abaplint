@@ -2,7 +2,7 @@ import {expect} from "chai";
 import {getStatements} from "./_utils";
 
 describe("concat_tokens", () => {
-  let tests = [
+  const tests = [
     "REPORT zfoo.",
     "WRITE 'Hello'.",
     "WRITE foo-bar.",
@@ -10,8 +10,8 @@ describe("concat_tokens", () => {
 
   tests.forEach((test) => {
     it(test, () => {
-      let statements = getStatements(test);
-      let concat = statements[0].concatTokens();
+      const statements = getStatements(test);
+      const concat = statements[0].concatTokens();
       expect(concat).to.equals(test);
     });
   });

@@ -1,7 +1,7 @@
 import {statementType} from "../_utils";
 import * as Statements from "../../../src/abap/statements/";
 
-let tests = [
+const tests = [
   "IMPORT foo TO bar FROM MEMORY ID 'MOO'.",
   "IMPORT p1 = ls_option FROM DATABASE indx(xl) TO ws_indx ID ws_indx-srtfd.",
   "IMPORT (lt_export) FROM DATA BUFFER cv_attributes.",

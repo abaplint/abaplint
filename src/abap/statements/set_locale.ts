@@ -6,14 +6,14 @@ import {Version} from "../../version";
 export class SetLocale extends Statement {
 
   public getMatcher(): IRunnable {
-    let country = seq(str("COUNTRY"), new Source());
+    const country = seq(str("COUNTRY"), new Source());
 
-    let modifier = seq(str("MODIFIER"), new Source());
+    const modifier = seq(str("MODIFIER"), new Source());
 
-    let ret = seq(str("SET LOCALE LANGUAGE"),
-                  new Source(),
-                  opt(country),
-                  opt(modifier));
+    const ret = seq(str("SET LOCALE LANGUAGE"),
+                    new Source(),
+                    opt(country),
+                    opt(modifier));
 
     return verNot(Version.Cloud, ret);
   }

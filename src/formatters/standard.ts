@@ -15,12 +15,12 @@ class Tuple {
 export class Standard implements IFormatter {
 
   public output(issues: Array<Issue>): string {
-    let tuples: Array<Tuple> = [];
-    for (let issue of issues) {
+    const tuples: Array<Tuple> = [];
+    for (const issue of issues) {
       tuples.push(this.build_tuple(issue));
     }
 
-    let result = this.columns(tuples);
+    const result = this.columns(tuples);
 
     return result + new Total().output(issues);
   }

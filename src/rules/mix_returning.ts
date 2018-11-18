@@ -30,13 +30,13 @@ export class MixReturning extends ABAPRule {
   }
 
   public runParsed(file: ABAPFile): Issue[] {
-    let ret: Issue[] = [];
-    let stru = file.getStructure();
+    const ret: Issue[] = [];
+    const stru = file.getStructure();
     if (stru == undefined) {
       return [];
     }
 
-    for (let def of stru.findAllStatements(Statements.MethodDef)) {
+    for (const def of stru.findAllStatements(Statements.MethodDef)) {
       if (!def.findFirstExpression(Expressions.MethodDefReturning)) {
         continue;
       }

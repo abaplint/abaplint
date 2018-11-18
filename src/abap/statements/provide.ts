@@ -7,27 +7,27 @@ export class Provide extends Statement {
 
   public getMatcher(): IRunnable {
 
-    let list = str("*");
+    const list = str("*");
 
-    let fields = seq(str("FIELDS"),
-                     list,
-                     str("FROM"),
-                     new Source(),
-                     str("INTO"),
-                     new Target(),
-                     str("VALID"),
-                     new Field(),
-                     str("BOUNDS"),
-                     new Field(),
-                     str("AND"),
-                     new Field());
+    const fields = seq(str("FIELDS"),
+                       list,
+                       str("FROM"),
+                       new Source(),
+                       str("INTO"),
+                       new Target(),
+                       str("VALID"),
+                       new Field(),
+                       str("BOUNDS"),
+                       new Field(),
+                       str("AND"),
+                       new Field());
 
-    let ret = seq(str("PROVIDE"),
-                  plus(fields),
-                  str("BETWEEN"),
-                  new Field(),
-                  str("AND"),
-                  new Field());
+    const ret = seq(str("PROVIDE"),
+                    plus(fields),
+                    str("BETWEEN"),
+                    new Field(),
+                    str("AND"),
+                    new Field());
 
     return verNot(Version.Cloud, ret);
   }

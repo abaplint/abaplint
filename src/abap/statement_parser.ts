@@ -18,7 +18,7 @@ class Map {
   public constructor() {
     this.map = {};
 
-    for (let stat of Artifacts.getStatements()) {
+    for (const stat of Artifacts.getStatements()) {
       const first = stat.getMatcher().first();
 
       if (this.map[first]) {
@@ -56,7 +56,7 @@ export class StatementParser {
   }
 
   private static tokensToNodes(tokens: Array<Token>): Array<TokenNode> {
-    let ret: Array<TokenNode> = [];
+    const ret: Array<TokenNode> = [];
 
     tokens.forEach((t) => {ret.push(new TokenNode(t)); });
 
@@ -64,7 +64,7 @@ export class StatementParser {
   }
 
   private static macros() {
-    let result: StatementNode[] = [];
+    const result: StatementNode[] = [];
     let define = false;
 
     for (let statement of this.statements) {
@@ -83,7 +83,7 @@ export class StatementParser {
   }
 
   private static nativeSQL() {
-    let result: StatementNode[] = [];
+    const result: StatementNode[] = [];
     let sql = false;
 
     for (let statement of this.statements) {
@@ -102,18 +102,18 @@ export class StatementParser {
   }
 
   private static removeLast(tokens: Array<Token>): Array<Token> {
-    let copy = tokens.slice();
+    const copy = tokens.slice();
     copy.pop();
     return copy;
   }
 
 // for each statement, run statement matchers to figure out which kind of statement it is
   private static categorize(ver: Version) {
-    let result: StatementNode[] = [];
+    const result: StatementNode[] = [];
 
     for (let statement of this.statements) {
-      let length = statement.getTokens().length;
-      let last = statement.getTokens()[length - 1];
+      const length = statement.getTokens().length;
+      const last = statement.getTokens()[length - 1];
 
       if (length === 1
           && last instanceof Tokens.Punctuation) {
@@ -134,16 +134,16 @@ export class StatementParser {
 
   private static match(statement: StatementNode, ver: Version): StatementNode {
     let tokens = statement.getTokens();
-    let last = tokens[tokens.length - 1];
+    const last = tokens[tokens.length - 1];
     tokens = this.removePragma(this.removeLast(tokens));
     if (tokens.length === 0) {
       return new StatementNode(new Empty()).setChildren(this.tokensToNodes(this.removePragma(statement.getTokens())));
     }
 
-    for (let st of this.map.lookup(tokens[0])) {
-      let match = Combi.run(Artifacts.newStatement(st).getMatcher(),
-                            tokens,
-                            ver);
+    for (const st of this.map.lookup(tokens[0])) {
+      const match = Combi.run(Artifacts.newStatement(st).getMatcher(),
+                              tokens,
+                              ver);
       if (match) {
         return new StatementNode(Artifacts.newStatement(st)).setChildren(match.concat(new TokenNode(last)));
       }
@@ -155,9 +155,9 @@ export class StatementParser {
   private static process(tokens: Array<Token>) {
     let add: Array<Token> = [];
     let pre: Array<Token> = [];
-    let ukn = (t: Token[]) => { this.statements.push(new StatementNode(new Unknown()).setChildren(this.tokensToNodes(t))); };
+    const ukn = (t: Token[]) => { this.statements.push(new StatementNode(new Unknown()).setChildren(this.tokensToNodes(t))); };
 
-    for (let token of tokens) {
+    for (const token of tokens) {
       if (token instanceof Tokens.Comment) {
         this.statements.push(new StatementNode(new Comment()).setChildren(this.tokensToNodes([token])));
         continue;

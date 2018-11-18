@@ -6,9 +6,9 @@ import {Constant} from "./constant";
 
 export class SQLFieldList extends Expression {
   public getRunnable(): IRunnable {
-    let comma = opt(ver(Version.v740sp05, str(",")));
+    const comma = opt(ver(Version.v740sp05, str(",")));
 
-    let abap = ver(Version.v740sp05, seq(tok(WAt), new Field()));
+    const abap = ver(Version.v740sp05, seq(tok(WAt), new Field()));
 
     return alt(str("*"),
                new Dynamic(),

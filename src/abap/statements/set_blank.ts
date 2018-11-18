@@ -5,9 +5,9 @@ import {Version} from "../../version";
 export class SetBlank extends Statement {
 
   public getMatcher(): IRunnable {
-    let onOff = alt(str("ON"), str("OFF"));
+    const onOff = alt(str("ON"), str("OFF"));
 
-    let ret = seq(str("SET BLANK LINES"), onOff);
+    const ret = seq(str("SET BLANK LINES"), onOff);
 
     return verNot(Version.Cloud, ret);
   }

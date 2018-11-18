@@ -4,10 +4,10 @@ import {IFormatter} from "./_iformatter";
 export class Json implements IFormatter {
 
   public output(issues: Array<Issue>): string {
-    let out = [];
+    const out = [];
 
-    for (let issue of issues) {
-      let single = {
+    for (const issue of issues) {
+      const single = {
         description: issue.getMessage(),
         file: issue.getFile().getFilename(),
         start: {

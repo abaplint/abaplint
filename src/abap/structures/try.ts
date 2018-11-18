@@ -7,9 +7,9 @@ import {Catch} from "./catch";
 export class Try extends Structure {
 
   public getMatcher(): IStructureRunnable {
-    let normal = star(sub(new Normal()));
-    let cleanup = seq(sta(Statements.Cleanup), normal);
-    let block = seq(normal, star(sub(new Catch())), opt(cleanup));
+    const normal = star(sub(new Normal()));
+    const cleanup = seq(sta(Statements.Cleanup), normal);
+    const block = seq(normal, star(sub(new Catch())), opt(cleanup));
 
     return beginEnd(sta(Statements.Try),
                     block,

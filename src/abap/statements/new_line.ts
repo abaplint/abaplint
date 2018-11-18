@@ -5,8 +5,8 @@ import {Version} from "../../version";
 export class NewLine extends Statement {
 
   public getMatcher(): IRunnable {
-    let ret = seq(str("NEW-LINE"),
-                  opt(alt(str("SCROLLING"), str("NO-SCROLLING"))));
+    const ret = seq(str("NEW-LINE"),
+                    opt(alt(str("SCROLLING"), str("NO-SCROLLING"))));
 
     return verNot(Version.Cloud, ret);
   }

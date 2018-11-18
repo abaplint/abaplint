@@ -3,16 +3,16 @@ import {ParameterListS, ParameterListT, ParameterListExceptions, ParameterT} fro
 
 export class MethodParameters extends Expression {
   public getRunnable(): IRunnable {
-    let exporting = seq(str("EXPORTING"), new ParameterListS());
-    let importing = seq(str("IMPORTING"), new ParameterListT());
-    let changing = seq(str("CHANGING"), new ParameterListT());
-    let receiving = seq(str("RECEIVING"), new ParameterT());
-    let exceptions = seq(str("EXCEPTIONS"), new ParameterListExceptions());
-    let long = seq(opt(exporting),
-                   opt(importing),
-                   opt(changing),
-                   opt(receiving),
-                   opt(exceptions));
+    const exporting = seq(str("EXPORTING"), new ParameterListS());
+    const importing = seq(str("IMPORTING"), new ParameterListT());
+    const changing = seq(str("CHANGING"), new ParameterListT());
+    const receiving = seq(str("RECEIVING"), new ParameterT());
+    const exceptions = seq(str("EXCEPTIONS"), new ParameterListExceptions());
+    const long = seq(opt(exporting),
+                     opt(importing),
+                     opt(changing),
+                     opt(receiving),
+                     opt(exceptions));
 
     return long;
   }

@@ -1,7 +1,7 @@
 import {statementType} from "../_utils";
 import * as Statements from "../../../src/abap/statements/";
 
-let tests = [
+const tests = [
   "SHIFT ls_param-field.",
   "SHIFT lv_range LEFT BY sy-fdpos PLACES.",
   "SHIFT lv_qty RIGHT.",

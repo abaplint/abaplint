@@ -1,7 +1,7 @@
 import {statementType} from "../_utils";
 import * as Statements from "../../../src/abap/statements/";
 
-let tests = [
+const tests = [
   "ASSERT <lv_field> IS ASSIGNED.",
   "ASSERT CONDITION 0 = 1.",
   "ASSERT ID user_mgnt_law CONDITION lv_in_central EQ 'X'.",

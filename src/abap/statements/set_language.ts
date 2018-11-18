@@ -6,8 +6,8 @@ import {Version} from "../../version";
 export class SetLanguage extends Statement {
 
   public getMatcher(): IRunnable {
-    let ret = seq(str("SET LANGUAGE"),
-                  new Source());
+    const ret = seq(str("SET LANGUAGE"),
+                    new Source());
 
     return verNot(Version.Cloud, ret);
   }

@@ -1,7 +1,7 @@
 import {statementType} from "../_utils";
 import * as Statements from "../../../src/abap/statements/";
 
-let tests = [
+const tests = [
   "get dataset p_filename position lv_size.",
   "GET DATASET me->mv_file ATTRIBUTES ls_attr.",
 ];

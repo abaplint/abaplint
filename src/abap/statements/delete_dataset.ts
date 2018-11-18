@@ -6,7 +6,7 @@ import {Version} from "../../version";
 export class DeleteDataset extends Statement {
 
   public getMatcher(): IRunnable {
-    let ret = seq(str("DELETE DATASET"), new Source());
+    const ret = seq(str("DELETE DATASET"), new Source());
 
     return verNot(Version.Cloud, ret);
   }

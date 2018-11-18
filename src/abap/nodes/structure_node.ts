@@ -17,13 +17,13 @@ export class StructureNode extends BasicNode {
   }
 
   public findParent(node: StatementNode): StructureNode | undefined {
-    for (let child of this.getChildren()) {
+    for (const child of this.getChildren()) {
       if (child === node) {
         return this;
       } else if (child instanceof StatementNode) {
         continue;
       } else if (child instanceof StructureNode) {
-        let res = child.findParent(node);
+        const res = child.findParent(node);
         if (res) {
           return res;
         }
@@ -35,13 +35,13 @@ export class StructureNode extends BasicNode {
   }
 
   public findFirstStatement(type: new () => Statement): StatementNode | undefined {
-    for (let child of this.getChildren()) {
+    for (const child of this.getChildren()) {
       if (child.get() instanceof type) {
         return child as StatementNode;
       } else if (child instanceof StatementNode) {
         continue;
       } else if (child instanceof StructureNode) {
-        let res = child.findFirstStatement(type);
+        const res = child.findFirstStatement(type);
         if (res) {
           return res;
         }
@@ -53,7 +53,7 @@ export class StructureNode extends BasicNode {
   }
 
   public getFirstToken(): TokenNode {
-    for (let child of this.getChildren()) {
+    for (const child of this.getChildren()) {
       if (child instanceof StatementNode) {
         return child.getFirstToken();
       } else if (child instanceof StructureNode) {
@@ -65,7 +65,7 @@ export class StructureNode extends BasicNode {
 
   public findAllStatements(type: new () => Statement): StatementNode[] {
     let ret: StatementNode[] = [];
-    for (let child of this.getChildren()) {
+    for (const child of this.getChildren()) {
       if (child.get() instanceof type) {
         ret.push(child as StatementNode);
       } else if (child instanceof StatementNode) {
@@ -81,7 +81,7 @@ export class StructureNode extends BasicNode {
 
   public findAllStructures(type: new () => Structure): StructureNode[] {
     let ret: StructureNode[] = [];
-    for (let child of this.getChildren()) {
+    for (const child of this.getChildren()) {
       if (child.get() instanceof type) {
         ret.push(child as StructureNode);
       } else if (child instanceof StatementNode) {
@@ -99,13 +99,13 @@ export class StructureNode extends BasicNode {
     if (this.get() instanceof type) {
       return this;
     }
-    for (let child of this.getChildren()) {
+    for (const child of this.getChildren()) {
       if (child.get() instanceof type) {
         return child as StructureNode;
       } else if (child instanceof StatementNode) {
         continue;
       } else if (child instanceof StructureNode) {
-        let res = child.findFirstStructure(type);
+        const res = child.findFirstStructure(type);
         if (res) {
           return res;
         }

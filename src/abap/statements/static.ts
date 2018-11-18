@@ -6,13 +6,13 @@ import {Version} from "../../version";
 export class Static extends Statement {
 
   public getMatcher(): IRunnable {
-    let p = opt(per(new Type(), new Value(), new Length()));
+    const p = opt(per(new Type(), new Value(), new Length()));
 
-    let type = seq(opt(new FieldLength()), p);
+    const type = seq(opt(new FieldLength()), p);
 
-    let ret = seq(alt(str("STATIC"), str("STATICS")),
-                  new NamespaceSimpleName(),
-                  alt(type, new TypeTable()));
+    const ret = seq(alt(str("STATIC"), str("STATICS")),
+                    new NamespaceSimpleName(),
+                    alt(type, new TypeTable()));
 
     return verNot(Version.Cloud, ret);
   }

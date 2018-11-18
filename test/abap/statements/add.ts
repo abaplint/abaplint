@@ -1,7 +1,7 @@
 import {statementType} from "../_utils";
 import * as Statements from "../../../src/abap/statements/";
 
-let tests = [
+const tests = [
   "add 2 to lv_foo.",
   "add zcl_class=>c_diagonal to lo_foo->mode.",
 ];

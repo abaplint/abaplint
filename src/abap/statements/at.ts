@@ -6,15 +6,15 @@ import {Version} from "../../version";
 export class At extends Statement {
 
   public getMatcher(): IRunnable {
-    let field = alt(seq(new FieldSub(), opt(new FieldOffset()), opt(new FieldLength())),
-                    new Dynamic(),
-                    new FieldSymbol());
+    const field = alt(seq(new FieldSub(), opt(new FieldOffset()), opt(new FieldLength())),
+                      new Dynamic(),
+                      new FieldSymbol());
 
-    let atNew = seq(str("NEW"), field);
-    let atEnd = seq(str("END OF"), field);
-    let group = regex(/^\w+$/);
+    const atNew = seq(str("NEW"), field);
+    const atEnd = seq(str("END OF"), field);
+    const group = regex(/^\w+$/);
 
-    let ret = seq(str("AT"), alt(group, str("FIRST"), str("LAST"), atNew, atEnd));
+    const ret = seq(str("AT"), alt(group, str("FIRST"), str("LAST"), atNew, atEnd));
 
     return verNot(Version.Cloud, ret);
   }

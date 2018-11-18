@@ -1,7 +1,7 @@
 import {statementType} from "../_utils";
 import * as Statements from "../../../src/abap/statements/";
 
-let tests = [
+const tests = [
   "CREATE OBJECT lo_obj.",
   "CREATE OBJECT go_lencode EXPORTING it_lengths = lt_lengths.",
   "CREATE OBJECT mo_plugin TYPE (ls_objtype_map-plugin_class).",

@@ -1,7 +1,7 @@
 import {statementType} from "../_utils";
 import * as Statements from "../../../src/abap/statements/";
 
-let tests = [
+const tests = [
   "IF foo = bar.",
   "IF foo = bar AND moo = boo.",
   "IF lv_column_s CN sy-abcde.",

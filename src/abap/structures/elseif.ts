@@ -6,8 +6,8 @@ import {Body} from "./body";
 export class Elseif extends Structure {
 
   public getMatcher(): IStructureRunnable {
-    let body = opt(sub(new Body()));
-    let elseif = seq(sta(Statements.ElseIf), body);
+    const body = opt(sub(new Body()));
+    const elseif = seq(sta(Statements.ElseIf), body);
     return elseif;
   }
 

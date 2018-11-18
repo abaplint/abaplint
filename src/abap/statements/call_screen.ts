@@ -6,10 +6,10 @@ import {Version} from "../../version";
 export class CallScreen extends Statement {
 
   public getMatcher(): IRunnable {
-    let starting = seq(str("STARTING AT"), new Source(), new Source());
-    let ending = seq(str("ENDING AT"), new Source(), new Source());
+    const starting = seq(str("STARTING AT"), new Source(), new Source());
+    const ending = seq(str("ENDING AT"), new Source(), new Source());
 
-    let ret = seq(str("CALL SCREEN"), new Source(), opt(seq(starting, opt(ending))));
+    const ret = seq(str("CALL SCREEN"), new Source(), opt(seq(starting, opt(ending))));
 
     return verNot(Version.Cloud, ret);
   }

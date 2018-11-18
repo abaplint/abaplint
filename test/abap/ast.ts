@@ -3,7 +3,7 @@ import {getStatements} from "./_utils";
 
 // todo, rename and move somewhere under /test/abap/
 
-let tests = [
+const tests = [
   {abap: "add 2 to lv_foo.", cnt: 5},
   {abap: "CONCATENATE lv_tmp iv_pack INTO lv_xstring IN BYTE MODE.", cnt: 9},
   {abap: "EXPORT list = it_list TO DATA BUFFER lv_xstring.", cnt: 7},
@@ -12,7 +12,7 @@ let tests = [
 
 describe("ast count root children, statement", () => {
   tests.forEach((test) => {
-    let slist = getStatements(test.abap);
+    const slist = getStatements(test.abap);
     it("\"" + test.abap + "\" should have " + test.cnt, () => {
       expect(slist[0].getChildren().length).to.equals(test.cnt);
     });

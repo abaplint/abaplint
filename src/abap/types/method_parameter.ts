@@ -32,7 +32,7 @@ export class MethodParameter {
   }
 
   private parse(node: ExpressionNode) {
-    let name = node.findFirstExpression(MethodParamName);
+    const name = node.findFirstExpression(MethodParamName);
     if (!name) {
       throw new Error("method_parameter.ts, todo, handle pass by value and reference");
     }

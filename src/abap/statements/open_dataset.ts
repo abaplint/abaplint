@@ -6,28 +6,28 @@ import {Version} from "../../version";
 export class OpenDataset extends Statement {
 
   public getMatcher(): IRunnable {
-    let mode = seq(str("IN"),
-                   opt(str("LEGACY")),
-                   alt(str("BINARY MODE"),
-                       str("TEXT MODE")));
+    const mode = seq(str("IN"),
+                     opt(str("LEGACY")),
+                     alt(str("BINARY MODE"),
+                         str("TEXT MODE")));
 
-    let code = seq(str("CODE PAGE"), new Source());
+    const code = seq(str("CODE PAGE"), new Source());
 
-    let direction = seq(str("FOR"), alt(str("OUTPUT"), str("INPUT"), str("APPENDING")));
-    let encoding = seq(str("ENCODING"), new Source());
-    let pos = seq(str("AT POSITION"), new Source());
-    let message = seq(str("MESSAGE"), new Target());
-    let ignoring = str("IGNORING CONVERSION ERRORS");
-    let replacement = seq(str("REPLACEMENT CHARACTER"), new Source());
-    let bom = str("SKIPPING BYTE-ORDER MARK");
-    let wbom = str("WITH BYTE-ORDER MARK");
-    let type = seq(str("TYPE"), new Source());
-    let feed = str("WITH SMART LINEFEED");
-    let windows = str("WITH WINDOWS LINEFEED");
+    const direction = seq(str("FOR"), alt(str("OUTPUT"), str("INPUT"), str("APPENDING")));
+    const encoding = seq(str("ENCODING"), new Source());
+    const pos = seq(str("AT POSITION"), new Source());
+    const message = seq(str("MESSAGE"), new Target());
+    const ignoring = str("IGNORING CONVERSION ERRORS");
+    const replacement = seq(str("REPLACEMENT CHARACTER"), new Source());
+    const bom = str("SKIPPING BYTE-ORDER MARK");
+    const wbom = str("WITH BYTE-ORDER MARK");
+    const type = seq(str("TYPE"), new Source());
+    const feed = str("WITH SMART LINEFEED");
+    const windows = str("WITH WINDOWS LINEFEED");
 
-    let ret = seq(str("OPEN DATASET"),
-                  new Target(),
-                  per(direction, type, mode, wbom, replacement, encoding, pos, message, ignoring, bom, code, feed, windows));
+    const ret = seq(str("OPEN DATASET"),
+                    new Target(),
+                    per(direction, type, mode, wbom, replacement, encoding, pos, message, ignoring, bom, code, feed, windows));
 
     return verNot(Version.Cloud, ret);
   }

@@ -4,7 +4,7 @@ import {WAt} from "../tokens/";
 
 export class SQLCDSParameters extends Expression {
   public getRunnable(): IRunnable {
-    let param = seq(new Field(), str("="), tok(WAt), new Field());
+    const param = seq(new Field(), str("="), tok(WAt), new Field());
     return seq(str("("), param, star(seq(str(","), param)), str(")"));
   }
 }

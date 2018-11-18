@@ -6,7 +6,7 @@ describe("Registry", () => {
 
   it("Parse ABAP file", () => {
     const file = new MemoryFile("zfoobar.prog.abap", "IF moo = boo. ENDIF.");
-    let abap = new Registry().addFile(file).parse().getABAPFiles();
+    const abap = new Registry().addFile(file).parse().getABAPFiles();
     expect(abap.length).to.equal(1);
     expect(abap[0].getStatements().length).to.equal(2);
     expect(abap[0].getStructure()).to.not.equal(undefined);
@@ -28,13 +28,13 @@ describe("Registry", () => {
 
   it("Update unknown file, 1", () => {
     const file = new MemoryFile("zfoobar.prog.abap", "IF moo = boo. ENDIF.");
-    let registry = new Registry();
+    const registry = new Registry();
     expect(() => { registry.updateFile(file); }).to.throw("find: object not found");
   });
 
   it("Update unknown file, 2", () => {
     const file = new MemoryFile("zfoobar.clas.abap", "WRITE hello.");
-    let registry = new Registry().addFile(file);
+    const registry = new Registry().addFile(file);
     const update = new MemoryFile("zfoobar.clas.testclasses.abap", "WRITE hello..");
     expect(() => { registry.updateFile(update); }).to.throw("updateFile: file not found");
   });
@@ -42,7 +42,7 @@ describe("Registry", () => {
   it("Remove files", () => {
     const file1 = new MemoryFile("zfoobar.clas.abap", "WRITE hello.");
     const file2 = new MemoryFile("zfoobar.clas.testclasses.abap", "WRITE hello..");
-    let registry = new Registry().addFiles([file1, file2]);
+    const registry = new Registry().addFiles([file1, file2]);
 
     expect(registry.getABAPObjects().length).to.equal(1);
     expect(registry.getABAPObjects()[0].getFiles().length).to.equal(2);

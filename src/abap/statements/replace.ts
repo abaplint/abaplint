@@ -5,35 +5,35 @@ import {Target, Source} from "../expressions";
 export class Replace extends Statement {
 
   public getMatcher(): IRunnable {
-    let length = seq(str("LENGTH"), new Source());
-    let offset = seq(str("OFFSET"), new Source());
+    const length = seq(str("LENGTH"), new Source());
+    const offset = seq(str("OFFSET"), new Source());
 
-    let section = seq(opt(str("IN")),
-                      str("SECTION"),
-                      per(offset, length),
-                      str("OF"),
-                      new Source());
+    const section = seq(opt(str("IN")),
+                        str("SECTION"),
+                        per(offset, length),
+                        str("OF"),
+                        new Source());
 
-    let source = seq(opt(str("OF")),
-                     opt(alt(str("REGEX"), str("SUBSTRING"))),
-                     new Source());
+    const source = seq(opt(str("OF")),
+                       opt(alt(str("REGEX"), str("SUBSTRING"))),
+                       new Source());
 
-    let cas = alt(str("IGNORING CASE"),
-                  str("RESPECTING CASE"));
+    const cas = alt(str("IGNORING CASE"),
+                    str("RESPECTING CASE"));
 
-    let repl = seq(str("REPLACEMENT COUNT"), new Target());
-    let replo = seq(str("REPLACEMENT OFFSET"), new Target());
-    let repll = seq(str("REPLACEMENT LENGTH"), new Target());
+    const repl = seq(str("REPLACEMENT COUNT"), new Target());
+    const replo = seq(str("REPLACEMENT OFFSET"), new Target());
+    const repll = seq(str("REPLACEMENT LENGTH"), new Target());
 
-    let occ = alt(str("ALL OCCURRENCES"),
-                  str("ALL OCCURENCES"),
-                  str("FIRST OCCURRENCE"));
+    const occ = alt(str("ALL OCCURRENCES"),
+                    str("ALL OCCURENCES"),
+                    str("FIRST OCCURRENCE"));
 
-    let mode = alt(str("IN CHARACTER MODE"),
-                   str("IN BYTE MODE"));
+    const mode = alt(str("IN CHARACTER MODE"),
+                     str("IN BYTE MODE"));
 
-    let wit = seq(str("WITH"), new Source());
-    let into = seq(str("INTO"), new Target());
+    const wit = seq(str("WITH"), new Source());
+    const into = seq(str("INTO"), new Target());
 
     return seq(str("REPLACE"),
                per(section, seq(opt(occ), source)),

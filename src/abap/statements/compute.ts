@@ -6,11 +6,11 @@ import {Version} from "../../version";
 export class Compute extends Statement {
 
   public getMatcher(): IRunnable {
-    let ret = seq(str("COMPUTE"),
-                  opt(str("EXACT")),
-                  new Target(),
-                  str("="),
-                  new Source());
+    const ret = seq(str("COMPUTE"),
+                    opt(str("EXACT")),
+                    new Target(),
+                    str("="),
+                    new Source());
 
     return verNot(Version.Cloud, ret);
   }

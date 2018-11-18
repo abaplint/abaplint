@@ -6,10 +6,10 @@ import {Normal} from "./normal";
 export class FunctionModule extends Structure {
 
   public getMatcher(): IStructureRunnable {
-    let body = alt(sta(Statements.Tables),
-                   sta(Statements.TypePools),
-                   sta(Statements.Ranges),
-                   sub(new Normal()));
+    const body = alt(sta(Statements.Tables),
+                     sta(Statements.TypePools),
+                     sta(Statements.Ranges),
+                     sub(new Normal()));
 
     return beginEnd(sta(Statements.FunctionModule),
                     star(body),

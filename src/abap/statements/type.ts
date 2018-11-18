@@ -5,13 +5,13 @@ import {NamespaceSimpleName, FieldLength, Type as eType, TypeTable, Decimals, Le
 export class Type extends Statement {
 
   public getMatcher(): IRunnable {
-    let simple = per(new eType(), new Decimals(), new Length());
+    const simple = per(new eType(), new Decimals(), new Length());
 
-    let def = seq(new NamespaceSimpleName(),
-                  opt(new FieldLength()),
-                  opt(alt(simple, new TypeTable())));
+    const def = seq(new NamespaceSimpleName(),
+                    opt(new FieldLength()),
+                    opt(alt(simple, new TypeTable())));
 
-    let ret = seq(alt(str("TYPE"), str("TYPES")), def);
+    const ret = seq(alt(str("TYPE"), str("TYPES")), def);
 
     return ret;
   }

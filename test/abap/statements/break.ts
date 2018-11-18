@@ -1,7 +1,7 @@
 import {statementType} from "../_utils";
 import * as Statements from "../../../src/abap/statements/";
 
-let tests = [
+const tests = [
   "break-point.",
   "break-point id foo.",
   "BREAK-POINT AT NEXT APPLICATION STATEMENT.",

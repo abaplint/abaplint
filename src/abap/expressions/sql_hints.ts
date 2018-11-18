@@ -3,7 +3,7 @@ import {Constant} from "./constant";
 
 export class SQLHints extends Expression {
   public getRunnable(): IRunnable {
-    let ret = seq(str("%_HINTS"), str("ORACLE"), new Constant());
+    const ret = seq(str("%_HINTS"), str("ORACLE"), new Constant());
     return ret;
   }
 }

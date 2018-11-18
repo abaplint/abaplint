@@ -6,13 +6,13 @@ import {Version} from "../../version";
 export class ReadTextpool extends Statement {
 
   public getMatcher(): IRunnable {
-    let language = seq(str("LANGUAGE"), new Source());
-    let into = seq(str("INTO"), new Target());
-    let state = seq(str("STATE"), new Source());
+    const language = seq(str("LANGUAGE"), new Source());
+    const into = seq(str("INTO"), new Target());
+    const state = seq(str("STATE"), new Source());
 
-    let ret = seq(str("READ TEXTPOOL"),
-                  new Source(),
-                  per(into, language, state));
+    const ret = seq(str("READ TEXTPOOL"),
+                    new Source(),
+                    per(into, language, state));
 
     return verNot(Version.Cloud, ret);
   }

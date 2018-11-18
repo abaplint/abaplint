@@ -1,7 +1,7 @@
 import {statementType} from "../_utils";
 import * as Statements from "../../../src/abap/statements/";
 
-let tests = [
+const tests = [
   "LEAVE TO SCREEN 1001.",
   "LEAVE.",
   "LEAVE TO SCREEN '1234'.",

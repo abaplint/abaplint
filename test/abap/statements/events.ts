@@ -1,7 +1,7 @@
 import {statementType} from "../_utils";
 import * as Statements from "../../../src/abap/statements/";
 
-let tests = [
+const tests = [
   "EVENTS foobar.",
   "events CHANGE_PRESSED exporting value(index) type i.",
   "class-events foo exporting value(CONTEXT) type blah.",

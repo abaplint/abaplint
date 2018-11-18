@@ -2,7 +2,7 @@ import {statementType, statementVersion} from "../_utils";
 import * as Statements from "../../../src/abap/statements/";
 import {Version} from "../../../src/version";
 
-let tests = [
+const tests = [
   "WAIT UP TO 1 SECONDS.",
   "WAIT UNTIL foo >= bar.",
   "WAIT UNTIL foo >= bar UP TO 1 SECONDS.",
@@ -12,7 +12,7 @@ let tests = [
 
 statementType(tests, "WAIT", Statements.Wait);
 
-let versions = [
+const versions = [
   {abap: "WAIT FOR PUSH CHANNELS UNTIL ms_message IS NOT INITIAL UP TO iv_timeout SECONDS.", ver: Version.v750},
 ];
 

@@ -1,7 +1,7 @@
 import {statementType} from "../_utils";
 import * as Statements from "../../../src/abap/statements/";
 
-let tests = [
+const tests = [
   "MODIFY LINE sy-index FIELD VALUE lv_val FROM gc_false.",
   "MODIFY CURRENT LINE FIELD VALUE mark FROM space.",
   "modify line lineno.",

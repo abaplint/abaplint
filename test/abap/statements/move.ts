@@ -2,7 +2,7 @@ import {statementType, statementVersion} from "../_utils";
 import * as Statements from "../../../src/abap/statements/";
 import {Version} from "../../../src/version";
 
-let tests = [
+const tests = [
   "move 2 to lv_foo.",
   "move exact c_val to l_int.",
   "MOVE-CORRESPONDING EXACT <res> TO ls_line.",
@@ -75,7 +75,7 @@ let tests = [
 
 statementType(tests, "MOVE", Statements.Move);
 
-let versions = [
+const versions = [
   {abap: "lo_foo = |hello|.", ver: Version.v702},
   {abap: "lo_foo = NEW zcl_class( ).", ver: Version.v740sp02},
   {abap: "lo_obj = CAST cl_abap_objectdescr( cl_abap_objectdescr=>describe_by_object_ref( ii_handler ) ).", ver: Version.v740sp02},

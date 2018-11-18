@@ -6,44 +6,44 @@ import {Version} from "../../version";
 export class SelectOption extends Statement {
 
   public getMatcher(): IRunnable {
-    let sourc = alt(new Constant(), new FieldChain());
+    const sourc = alt(new Constant(), new FieldChain());
 
-    let to = seq(str("TO"), sourc);
+    const to = seq(str("TO"), sourc);
 
-    let def = seq(str("DEFAULT"),
-                  sourc,
-                  opt(to));
+    const def = seq(str("DEFAULT"),
+                    sourc,
+                    opt(to));
 
-    let option = seq(str("OPTION"), new Field());
-    let sign = seq(str("SIGN"), new Field());
+    const option = seq(str("OPTION"), new Field());
+    const sign = seq(str("SIGN"), new Field());
 
-    let memory = seq(str("MEMORY ID"), new Field());
+    const memory = seq(str("MEMORY ID"), new Field());
 
-    let match = seq(str("MATCHCODE OBJECT"), new Field());
+    const match = seq(str("MATCHCODE OBJECT"), new Field());
 
-    let modif = seq(str("MODIF ID"), new Modif());
+    const modif = seq(str("MODIF ID"), new Modif());
 
-    let visible = seq(str("VISIBLE LENGTH"), new Source());
+    const visible = seq(str("VISIBLE LENGTH"), new Source());
 
-    let options = per(def,
-                      option,
-                      sign,
-                      memory,
-                      match,
-                      visible,
-                      modif,
-                      str("NO DATABASE SELECTION"),
-                      str("LOWER CASE"),
-                      str("NO-EXTENSION"),
-                      str("NO INTERVALS"),
-                      str("NO-DISPLAY"),
-                      str("OBLIGATORY"));
+    const options = per(def,
+                        option,
+                        sign,
+                        memory,
+                        match,
+                        visible,
+                        modif,
+                        str("NO DATABASE SELECTION"),
+                        str("LOWER CASE"),
+                        str("NO-EXTENSION"),
+                        str("NO INTERVALS"),
+                        str("NO-DISPLAY"),
+                        str("OBLIGATORY"));
 
-    let ret = seq(str("SELECT-OPTIONS"),
-                  new Field(),
-                  str("FOR"),
-                  alt(new FieldSub(), new Dynamic()),
-                  opt(options));
+    const ret = seq(str("SELECT-OPTIONS"),
+                    new Field(),
+                    str("FOR"),
+                    alt(new FieldSub(), new Dynamic()),
+                    opt(options));
 
     return verNot(Version.Cloud, ret);
   }

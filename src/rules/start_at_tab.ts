@@ -30,12 +30,12 @@ export class StartAtTab extends ABAPRule {
   }
 
   public runParsed(file: ABAPFile) {
-    let issues: Issue[] = [];
+    const issues: Issue[] = [];
 
     let inType = false;
     let previous: Position | undefined = undefined;
 
-    for (let statement of file.getStatements()) {
+    for (const statement of file.getStatements()) {
       if (statement.get() instanceof Comment) {
         continue;
       } else if (statement.get() instanceof TypeBegin) {
@@ -46,12 +46,12 @@ export class StartAtTab extends ABAPRule {
         continue;
       }
 
-      let pos = statement.getStart();
+      const pos = statement.getStart();
       if (previous !== undefined && pos.getRow() === previous.getRow()) {
         continue;
       }
       if ((pos.getCol() - 1) % 2 !== 0) {
-        let issue = new Issue({file, message: this.getDescription(), code: this.getKey(), start: pos});
+        const issue = new Issue({file, message: this.getDescription(), code: this.getKey(), start: pos});
         issues.push(issue);
       }
       previous = pos;

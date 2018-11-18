@@ -2,7 +2,7 @@ import {statementType, statementVersion} from "../_utils";
 import * as Statements from "../../../src/abap/statements/";
 import {Version} from "../../../src/version";
 
-let tests = [
+const tests = [
   "APPEND lt_table.",
   "append 'sdf' to lt_foo.",
   "APPEND INITIAL LINE TO lt_lines ASSIGNING <ls_line>.",
@@ -38,7 +38,7 @@ let tests = [
 
 statementType(tests, "APPEND", Statements.Append);
 
-let versions = [
+const versions = [
   {abap: "APPEND VALUE #( key = is_key meta = it_meta ) TO mt_files.", ver: Version.v740sp02},
   {abap: "APPEND INITIAL LINE TO <ls_data>-sub ASSIGNING FIELD-SYMBOL(<ls_sub>).", ver: Version.v740sp02},
   {abap: "APPEND VALUE #( LET type = ztcl_alog_test_utl=>get_random_log_type( ) IN\n" +

@@ -20,19 +20,19 @@ export function getStatements(abap: string, version = Version.v750) {
 }
 
 export function findIssues(abap: string) {
-  let file = new MemoryFile("cl_foo.prog.abap", abap);
+  const file = new MemoryFile("cl_foo.prog.abap", abap);
   return new Registry().addFile(file).findIssues();
 }
 
 export function parse(abap: string, config?: Config) {
-  let file = new MemoryFile("cl_foo.prog.abap", abap);
+  const file = new MemoryFile("cl_foo.prog.abap", abap);
   return new Registry(config).addFile(file).parse().getABAPFiles()[0];
 }
 
 function run(abap: string, text: string, type: any, version = Version.v750) {
-  let config = Config.getDefault().setVersion(version);
-  let file = parse(abap, config);
-  let slist = file.getStatements();
+  const config = Config.getDefault().setVersion(version);
+  const file = parse(abap, config);
+  const slist = file.getStatements();
 
   it(text, () => {
     expect(slist[0].get()).to.be.instanceof(type);
@@ -45,7 +45,7 @@ export function structureType(cas: {abap: string}[], expected: Structure): void 
   describe("Structure type", function() {
     cas.forEach((c: {abap: string}) => {
       it(c.abap, function () {
-        let file = parse(c.abap);
+        const file = parse(c.abap);
         const statements = file.getStatements();
         const length = statements.length;
         const match = expected.getMatcher().run(statements.slice(), new StructureNode(expected));
@@ -76,7 +76,7 @@ export function statementVersion(tests: any, description: string, type: any) {
     tests.forEach((test: any) => {
       run(test.abap, "\"" + test.abap + "\" should be " + description, type, test.ver);
 // should fail in previous version
-      let lower = test.ver - 1;
+      const lower = test.ver - 1;
       run(test.abap,
           "\"" + test.abap + "\" should not work in lower version(" + versionToText(lower) + ")",
           Unknown,

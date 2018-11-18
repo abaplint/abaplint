@@ -1,7 +1,7 @@
 import {statementType} from "../_utils";
 import * as Statements from "../../../src/abap/statements/";
 
-let tests = [
+const tests = [
   "SELECT foo FROM ztable.",
   "SELECT sdfs FROM basdf WHERE name is null.",
   "select netwr from vbakuk into l_netwr where vbeln = l_vbeln and vbtyp in ('C').",

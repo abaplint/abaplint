@@ -5,7 +5,7 @@ import {Target, Source} from "../expressions";
 export class Collect extends Statement {
 
   public getMatcher(): IRunnable {
-    let into = seq(str("INTO"), new Target());
+    const into = seq(str("INTO"), new Target());
 
     return seq(str("COLLECT"),
                new Source(),

@@ -1,7 +1,7 @@
 import {statementType} from "../_utils";
 import * as Statements from "../../../src/abap/statements/";
 
-let tests = [
+const tests = [
   "COLLECT WA_VBBE INTO IT_VBBE.",
   "COLLECT users.",
 ];

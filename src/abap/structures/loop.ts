@@ -6,7 +6,7 @@ import {Normal, OnChange} from ".";
 export class Loop extends Structure {
 
   public getMatcher(): IStructureRunnable {
-    let body = alt(sub(new Normal()), sub(new OnChange()));
+    const body = alt(sub(new Normal()), sub(new OnChange()));
 
     return beginEnd(sta(Statements.Loop),
                     star(body),

@@ -2,7 +2,7 @@ import {expect} from "chai";
 import {getTokens} from "../_utils";
 
 describe("count_tokens", () => {
-  let tests = [
+  const tests = [
     {abap: "WRITE 'Hello'.",                      tokens: 3},
     {abap: "* com\n* ano",                        tokens: 2},
     {abap: "WRITE\n'Hello'.",                     tokens: 3},
@@ -79,7 +79,7 @@ describe("count_tokens", () => {
   ];
 
   tests.forEach((test) => {
-    let tokens = getTokens(test.abap);
+    const tokens = getTokens(test.abap);
 
     it("\"" + test.abap + "\" should have " + test.tokens + " tokens", () => {
       expect(tokens.length).to.equals(test.tokens);

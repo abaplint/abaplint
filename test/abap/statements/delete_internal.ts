@@ -1,7 +1,7 @@
 import {statementType} from "../_utils";
 import * as Statements from "../../../src/abap/statements/";
 
-let tests = [
+const tests = [
   "DELETE mt_stack INDEX lv_index.",
   "delete ztable from sy-index where bname = <foobar>-bname.",
   "DELETE lt_lengths FROM lv_nlen + 1.",

@@ -1,7 +1,7 @@
 import {statementType} from "../_utils";
 import * as Statements from "../../../src/abap/statements/";
 
-let tests = [
+const tests = [
   "CALL METHOD OF lv_charts 'Add'.",
   "CALL METHOD OF io_app_obj 'Run' EXPORTING foo = bar.",
   "CALL METHOD OF io_app_obj 'Run' EXPORTING foo = 'sdf'.",

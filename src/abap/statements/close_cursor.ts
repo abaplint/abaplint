@@ -6,7 +6,7 @@ import {Version} from "../../version";
 export class CloseCursor extends Statement {
 
   public getMatcher(): IRunnable {
-    let ret = seq(str("CLOSE CURSOR"), new Target());
+    const ret = seq(str("CLOSE CURSOR"), new Target());
     return verNot(Version.Cloud, ret);
   }
 

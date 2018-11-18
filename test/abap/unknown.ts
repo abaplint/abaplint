@@ -3,7 +3,7 @@ import {Unknown} from "../../src/abap/statements/_statement";
 import {getStatements} from "./_utils";
 
 describe("unknown statements", () => {
-  let tests =  [
+  const tests =  [
     "data foo bar.",
     "asdf.",
     "asdf",
@@ -12,10 +12,10 @@ describe("unknown statements", () => {
 
   tests.forEach((abap) => {
     it("\"" + abap + "\" should be unknown", () => {
-      let statements = getStatements(abap);
+      const statements = getStatements(abap);
 
       expect(statements.length).to.equals(1);
-      for (let statement of statements) {
+      for (const statement of statements) {
         expect(statement.get() instanceof Unknown).to.equals(true);
       }
     },

@@ -6,9 +6,9 @@ import {Version} from "../../version";
 export class StaticEnd extends Statement {
 
   public getMatcher(): IRunnable {
-    let ret = seq(alt(str("STATIC"), str("STATICS")),
-                  str("END OF"),
-                  new SimpleName());
+    const ret = seq(alt(str("STATIC"), str("STATICS")),
+                    str("END OF"),
+                    new SimpleName());
 
     return verNot(Version.Cloud, ret);
   }

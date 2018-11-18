@@ -6,26 +6,26 @@ import {Version} from "../../version";
 export class CallFunction extends Statement {
 
   public getMatcher(): IRunnable {
-    let starting = seq(str("STARTING NEW TASK"),
-                       alt(new Constant(), new FieldSub()));
-    let update = str("IN UPDATE TASK");
-    let unit = seq(str("UNIT"), new Source());
-    let background = seq(str("IN BACKGROUND"), alt(str("TASK"), unit));
-    let dest = seq(str("DESTINATION"), opt(str("IN GROUP")), new Source());
-    let calling = seq(str("CALLING"), new FieldChain(), str("ON END OF TASK"));
-    let performing = seq(str("PERFORMING"), new FormName(), str("ON END OF TASK"));
-    let separate = str("AS SEPARATE UNIT");
+    const starting = seq(str("STARTING NEW TASK"),
+                         alt(new Constant(), new FieldSub()));
+    const update = str("IN UPDATE TASK");
+    const unit = seq(str("UNIT"), new Source());
+    const background = seq(str("IN BACKGROUND"), alt(str("TASK"), unit));
+    const dest = seq(str("DESTINATION"), opt(str("IN GROUP")), new Source());
+    const calling = seq(str("CALLING"), new FieldChain(), str("ON END OF TASK"));
+    const performing = seq(str("PERFORMING"), new FormName(), str("ON END OF TASK"));
+    const separate = str("AS SEPARATE UNIT");
 
-    let options = per(starting, update, background, dest, calling, performing, separate);
+    const options = per(starting, update, background, dest, calling, performing, separate);
 
-    let dynamic = seq(str("PARAMETER-TABLE"), new Source(),
-                      opt(seq(str("EXCEPTION-TABLE"), new Source())));
+    const dynamic = seq(str("PARAMETER-TABLE"), new Source(),
+                        opt(seq(str("EXCEPTION-TABLE"), new Source())));
 
-    let call = seq(str("CALL"),
-                   alt(str("FUNCTION"), verNot(Version.Cloud, str("CUSTOMER-FUNCTION"))),
-                   new FunctionName(),
-                   opt(options),
-                   alt(new FunctionParameters(), dynamic));
+    const call = seq(str("CALL"),
+                     alt(str("FUNCTION"), verNot(Version.Cloud, str("CUSTOMER-FUNCTION"))),
+                     new FunctionName(),
+                     opt(options),
+                     alt(new FunctionParameters(), dynamic));
 
     return call;
   }

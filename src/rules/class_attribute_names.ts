@@ -59,11 +59,11 @@ export class ClassAttributeNames implements IRule {
     if (!attr) { return []; }
     let ret: Issue[] = [];
 
-    for (let ins of attr.getInstance()) {
+    for (const ins of attr.getInstance()) {
       ret = ret.concat(this.checkName(ins, this.conf.instance, obj));
     }
 
-    for (let sta of attr.getStatic()) {
+    for (const sta of attr.getStatic()) {
       ret = ret.concat(this.checkName(sta, this.conf.statics, obj));
     }
 
@@ -71,14 +71,14 @@ export class ClassAttributeNames implements IRule {
   }
 
   private checkName(attr: ClassAttribute, expected: string, obj: IObject): Issue[] {
-    let ret: Issue[] = [];
-    let regex = new RegExp(expected, "i");
-    let name = attr.getName();
+    const ret: Issue[] = [];
+    const regex = new RegExp(expected, "i");
+    const name = attr.getName();
 
     if (regex.test(name) === false) {
       const message = "Bad attribute name \"" + name + "\" expected \"" + expected + "/i\"";
 // todo, find the right file
-      let issue = new Issue({file: obj.getFiles()[0], message, code: this.getKey(), start: attr.getPosition()});
+      const issue = new Issue({file: obj.getFiles()[0], message, code: this.getKey(), start: attr.getPosition()});
       ret.push(issue);
     }
 

@@ -6,27 +6,27 @@ import {WAt} from "../tokens/";
 export class UpdateDatabase extends Statement {
 
   public getMatcher(): IRunnable {
-    let target = alt(new DatabaseTable(), new Dynamic());
+    const target = alt(new DatabaseTable(), new Dynamic());
 
-    let param = seq(new Field(), str("="), opt(tok(WAt)), new Source());
-    let parameters = seq(param, star(seq(opt(str(",")), param)));
+    const param = seq(new Field(), str("="), opt(tok(WAt)), new Source());
+    const parameters = seq(param, star(seq(opt(str(",")), param)));
 
-    let set = seq(str("SET"),
-                  alt(parameters, new Dynamic()),
-                  opt(seq(str("WHERE"), new SQLCond())));
+    const set = seq(str("SET"),
+                    alt(parameters, new Dynamic()),
+                    opt(seq(str("WHERE"), new SQLCond())));
 
-    let fromTable = seq(str("FROM"),
-                        opt(str("TABLE")),
-                        new Source());
+    const fromTable = seq(str("FROM"),
+                          opt(str("TABLE")),
+                          new Source());
 
-    let client = str("CLIENT SPECIFIED");
-    let connection = seq(str("CONNECTION"), new Dynamic());
+    const client = str("CLIENT SPECIFIED");
+    const connection = seq(str("CONNECTION"), new Dynamic());
 
-    let ret = seq(str("UPDATE"),
-                  target,
-                  opt(client),
-                  opt(connection),
-                  opt(alt(fromTable, set)));
+    const ret = seq(str("UPDATE"),
+                    target,
+                    opt(client),
+                    opt(connection),
+                    opt(alt(fromTable, set)));
 
     return ret;
   }

@@ -1,7 +1,7 @@
 import {statementType} from "../_utils";
 import * as Statements from "../../../src/abap/statements/";
 
-let tests = [
+const tests = [
   "STATICS BEGIN OF foo.",
   "STATICS BEGIN OF foo OCCURS 0.",
 ];

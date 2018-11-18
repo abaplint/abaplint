@@ -6,9 +6,9 @@ import {Version} from "../../version";
 export class ExecSQL extends Statement {
 
   public getMatcher(): IRunnable {
-    let performing = seq(str("PERFORMING"), new SimpleName());
+    const performing = seq(str("PERFORMING"), new SimpleName());
 
-    let ret = seq(str("EXEC SQL"), opt(performing));
+    const ret = seq(str("EXEC SQL"), opt(performing));
 
     return verNot(Version.Cloud, ret);
   }

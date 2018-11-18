@@ -6,13 +6,13 @@ import {Version} from "../../version";
 export class Ranges extends Statement {
 
   public getMatcher(): IRunnable {
-    let occurs = seq(str("OCCURS"), new Source());
+    const occurs = seq(str("OCCURS"), new Source());
 
-    let ret = seq(str("RANGES"),
-                  new SimpleName(),
-                  str("FOR"),
-                  new FieldSub(),
-                  opt(occurs));
+    const ret = seq(str("RANGES"),
+                    new SimpleName(),
+                    str("FOR"),
+                    new FieldSub(),
+                    opt(occurs));
 
     return verNot(Version.Cloud, ret);
   }

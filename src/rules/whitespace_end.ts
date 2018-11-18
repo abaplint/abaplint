@@ -28,13 +28,13 @@ export class WhitespaceEnd extends ABAPRule {
   }
 
   public runParsed(file: ABAPFile) {
-    let issues: Array<Issue> = [];
+    const issues: Array<Issue> = [];
 
-    let rows = file.getRawRows();
+    const rows = file.getRawRows();
 
     for (let i = 0; i < rows.length; i++) {
       if (/.* $/.test(rows[i]) === true) {
-        let issue = new Issue({file, message: this.getDescription(), code: this.getKey(), start: new Position(i + 1, 1)});
+        const issue = new Issue({file, message: this.getDescription(), code: this.getKey(), start: new Position(i + 1, 1)});
         issues.push(issue);
       }
     }

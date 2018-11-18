@@ -5,22 +5,22 @@ import {MemoryFile} from "../../src/files";
 import {Identifier, WPlusW, Plus} from "../../src/abap/tokens";
 import {Token} from "../../src/abap/tokens/_token";
 
-let str  = Combi.str;
-let per  = Combi.per;
-let seq  = Combi.seq;
-let alt  = Combi.alt;
-let opt  = Combi.opt;
-let plus = Combi.plus;
-let star = Combi.star;
-let reg  = Combi.regex;
-let tok  = Combi.tok;
-let optPrio = Combi.optPrio;
+const str  = Combi.str;
+const per  = Combi.per;
+const seq  = Combi.seq;
+const alt  = Combi.alt;
+const opt  = Combi.opt;
+const plus = Combi.plus;
+const star = Combi.star;
+const reg  = Combi.regex;
+const tok  = Combi.tok;
+const optPrio = Combi.optPrio;
 
 function tokenize(s: string): Array<Token> {
   return Lexer.run(new MemoryFile("foo.abap", s));
 }
 
-let tests = [
+const tests = [
 {n: "str1", c: str("foo"),                        t: tokenize("foo"),     e: true, len: 1},
 {n: "str2", c: str("foo"),                        t: tokenize("bar"),     e: false, len: 0},
 {n: "str3", c: str("foo"),                        t: [],                  e: false},
@@ -106,12 +106,12 @@ let tests = [
 describe("combi matching -", () => {
   tests.forEach((test) => {
     it(test.n, () => {
-      let input = new Combi.Result(test.t);
-      let result = test.c.run([input]);
+      const input = new Combi.Result(test.t);
+      const result = test.c.run([input]);
 //      console.log("final result");
 //      console.dir(result);
       let match = false;
-      for (let res of result) {
+      for (const res of result) {
         if (res.length() === 0) {
           match = true;
         }

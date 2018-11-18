@@ -2,7 +2,7 @@ import {statementType, statementVersion} from "../_utils";
 import * as Statements from "../../../src/abap/statements/";
 import {Version} from "../../../src/version";
 
-let tests = [
+const tests = [
   "raise exception type zcx_root.",
   "RAISE EXCEPTION lx_root.",
   "RAISE RESUMABLE EXCEPTION TYPE zcx_foobar.",
@@ -19,7 +19,7 @@ let tests = [
 statementType(tests, "RAISE", Statements.Raise);
 
 
-let versions = [
+const versions = [
   {abap: "RAISE EXCEPTION TYPE zcx_foobar MESSAGE ID sy-msgid TYPE sy-msgty" +
     " NUMBER sy-msgno WITH sy-msgv1 sy-msgv2 sy-msgv3 sy-msgv4.", ver: Version.v750},
   {abap: "RAISE EXCEPTION TYPE zcx_foobar MESSAGE ID 'ZFOO' TYPE 'E' NUMBER 001.", ver: Version.v750},

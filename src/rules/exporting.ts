@@ -26,19 +26,19 @@ export class Exporting extends ABAPRule {
   }
 
   public runParsed(file: ABAPFile) {
-    let issues: Array<Issue> = [];
+    const issues: Array<Issue> = [];
 
-    for (let statement of file.getStatements()) {
+    for (const statement of file.getStatements()) {
       let current: Counter | undefined = new Counter();
-      let stack: Array<Counter> = [];
+      const stack: Array<Counter> = [];
 
-      for (let token of statement.getTokens()) {
+      for (const token of statement.getTokens()) {
         if (this.lastChar(token.getStr()) === "(") {
           stack.push(current);
           current = new Counter();
         } else if (this.firstChar(token.getStr()) === ")") {
           if (current.exporting === true && current.other === false) {
-            let issue = new Issue({file, message: this.getDescription(), code: this.getKey(), start: current.pos});
+            const issue = new Issue({file, message: this.getDescription(), code: this.getKey(), start: current.pos});
             issues.push(issue);
           }
           current = stack.pop();

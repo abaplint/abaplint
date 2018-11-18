@@ -27,17 +27,17 @@ export class ColonMissingSpace extends ABAPRule {
   }
 
   public runParsed(file: ABAPFile) {
-    let issues: Array<Issue> = [];
+    const issues: Array<Issue> = [];
 
-    let tokens = file.getTokens();
+    const tokens = file.getTokens();
 
     for (let i = 0; i < tokens.length; i++) {
-      let token = tokens[i];
+      const token = tokens[i];
       if (token.getStr() === ":"
           && tokens[i + 1] !== undefined
           && tokens[i + 1].getRow() === token.getRow()
           && tokens[i + 1].getCol() === token.getCol() + 1) {
-        let issue = new Issue({file, message: this.getDescription(), code: this.getKey(), start: token.getPos()});
+        const issue = new Issue({file, message: this.getDescription(), code: this.getKey(), start: token.getPos()});
         issues.push(issue);
       }
     }

@@ -1,7 +1,7 @@
 import {statementType} from "../_utils";
 import * as Statements from "../../../src/abap/statements/";
 
-let tests = [
+const tests = [
   "MODIFY t100 FROM <ls_t100>.",
   "MODIFY zfoo CLIENT SPECIFIED.",
   "MODIFY (c_tabname) FROM ls_content.",
