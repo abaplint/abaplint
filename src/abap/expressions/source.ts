@@ -59,7 +59,9 @@ export class Source extends Expression {
                                            new Source(),
                                            rparen, opt(arith)));
 
-    const swhen = seq(str("WHEN"), new Source(), str("THEN"), new Source());
+    const or = seq(str("OR"), new Source());
+
+    const swhen = seq(str("WHEN"), new Source(), star(or), str("THEN"), new Source());
     const swit = ver(Version.v740sp02, seq(str("SWITCH"),
                                            new TypeName(),
                                            tok(ParenLeftW),

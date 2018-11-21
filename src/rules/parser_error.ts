@@ -42,7 +42,7 @@ export class ParserError extends ABAPRule {
             && start.getRow() !== statement.getStart().getRow()) {
 
         const message = this.missingSpace(statement) ?
-          "Missing space between string or character literal and parentheses" :
+          "Missing space between string or character literal and parentheses, Parser error" :
           this.getDescription() + ", ABAP version " + versionToText(reg.getConfig().getVersion());
 
         start = statement.getStart();
