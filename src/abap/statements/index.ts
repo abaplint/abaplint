@@ -13,6 +13,7 @@ export * from "./class_data_begin";
 export * from "./class_data_end";
 export * from "./select_loop";
 export * from "./do";
+export * from "./break_id";
 export * from "./interface_deferred";
 export * from "./while";
 export * from "./loop";

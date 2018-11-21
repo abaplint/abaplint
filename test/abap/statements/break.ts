@@ -3,7 +3,6 @@ import * as Statements from "../../../src/abap/statements/";
 
 const tests = [
   "break-point.",
-  "break-point id foo.",
   "BREAK-POINT AT NEXT APPLICATION STATEMENT.",
   "break username.",
   "BREAK-POINT lv_logtxt.",

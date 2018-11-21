@@ -17,6 +17,7 @@ export class Normal extends Structure {
                sta(Statements.AuthorityCheck),
                sta(Statements.Back),
                sta(Statements.Break),
+               sta(Statements.BreakId),
                sta(Statements.CallDatabase),
                sta(Statements.CallDialog),
                sta(Statements.CallFunction),
