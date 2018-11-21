@@ -136,7 +136,7 @@ async function run() {
       output = Formatter.format(issues, format);
 
       if (argv["t"]) {
-        output = JSON.stringify(new Stats(reg).run(), undefined, 2);
+        output = JSON.stringify(new Stats(reg).run(progress), undefined, 2);
         issues = [];
       }
     }

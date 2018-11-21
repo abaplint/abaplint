@@ -6,6 +6,7 @@ import {ABAPFile} from "./files";
 import {Config} from "./config";
 import {Issue} from "./issue";
 import {Artifacts} from "./artifacts";
+import {versionToText} from "./version";
 
 
 export interface IProgress {
@@ -49,6 +50,9 @@ todo
   }
 
   public setConfig(conf: Config) {
+// todo, the config can be changed outside of this setConfig method, how to handle?
+// or alternatively not handle, just consider everything as dirty?
+// or have a checksum of the config and dirty on a different level?
     this.setDirty();
     this.conf = conf;
   }
@@ -145,7 +149,7 @@ todo
 
     const objects = this.getABAPObjects();
 
-    pro.set(objects.length, ":percent - Lexing and parsing - :object");
+    pro.set(objects.length, ":percent - Lexing and parsing(" + versionToText(this.conf.getVersion()) + ") - :object");
     objects.forEach((obj) => {
       pro.tick({object: obj.getType() + " " + obj.getName()});
       obj.parseFirstPass(this.conf.getVersion(), this);

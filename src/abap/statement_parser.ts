@@ -40,7 +40,7 @@ export class StatementParser {
   private static statements: StatementNode[];
   private static map: Map;
 
-  public static run(tokens: Array<Token>, ver = Version.v750): StatementNode[] {
+  public static run(tokens: Array<Token>, ver: Version): StatementNode[] {
     this.statements = [];
 
     if (!this.map) {

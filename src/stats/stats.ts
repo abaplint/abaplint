@@ -1,4 +1,7 @@
-import {Registry} from "../registry";
+import {Registry, IProgress} from "../registry";
+import {Runner} from "../runner";
+import {Version, textToVersion, versionToText} from "../version";
+import {Unknown} from "../abap/statements/_statement";
 
 export interface ITotals {
   statements: number;
@@ -7,20 +10,19 @@ export interface ITotals {
   objects: number;
 }
 
-export interface IObjectCount {
-  type: string;
-  count: number;
-}
-
-export interface IIssueCount {
+export interface ITypeCount {
   type: string;
   count: number;
 }
 
 export interface IResult {
+  version: string;
+  target: string;
+  time: string;
   totals: ITotals;
-  objects: IObjectCount[];
-  issues: IIssueCount[];
+  objects: ITypeCount[];
+  issues: ITypeCount[];
+  statements: ITypeCount[];
 }
 
 export class Stats {
@@ -30,18 +32,49 @@ export class Stats {
     this.reg = reg;
   }
 
-  public run(): IResult {
+  public run(progress?: IProgress): IResult {
     return {
+      version: Runner.version(),
+      target: versionToText(this.reg.getConfig().getVersion()),
+      time: new Date().toISOString(),
       totals: this.buildTotals(),
       objects: this.buildObjects(),
       issues: this.buildIssues(),
+      statements: this.buildStatements(progress),
     };
   }
 
 // ////////////////////////////////////////////////
 
-  private buildIssues(): IIssueCount[] {
-    const res: IIssueCount[] = [];
+  private buildStatements(progress?: IProgress): ITypeCount[] {
+    const ret: ITypeCount[] = [];
+    for (const ver in Version) {
+      if (isNaN(Number(ver))) {
+        ret.push({type: ver, count: this.statementsVersion(textToVersion(ver), progress)});
+      }
+    }
+    return ret;
+  }
+
+  private statementsVersion(ver: Version, progress?: IProgress): number {
+    let result = 0;
+
+    this.reg.setConfig(this.reg.getConfig().setVersion(ver));
+    this.reg.parse(progress);
+
+    for (const file of this.reg.getABAPFiles()) {
+      for (const stat of file.getStatements()) {
+        if (!(stat.get() instanceof Unknown)) {
+          result = result + 1;
+        }
+      }
+    }
+
+    return result;
+  }
+
+  private buildIssues(): ITypeCount[] {
+    const res: ITypeCount[] = [];
     for (const issue of this.reg.findIssues()) {
       let found = false;
       for (const r of res) {
@@ -57,8 +90,8 @@ export class Stats {
     return res;
   }
 
-  private buildObjects(): IObjectCount[] {
-    const res: IObjectCount[] = [];
+  private buildObjects(): ITypeCount[] {
+    const res: ITypeCount[] = [];
     for (const obj of this.reg.getObjects()) {
       let found = false;
       for (const r of res) {
