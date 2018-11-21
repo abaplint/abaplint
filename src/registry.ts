@@ -157,6 +157,8 @@ todo
       this.issues = this.issues.concat(obj.parseSecondPass(this));
     });
 
+    this.dirty = false;
+
     return this;
   }
 

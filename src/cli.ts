@@ -13,6 +13,7 @@ import {Formatter} from "./formatters/_format";
 import {Artifacts} from "./abap/artifacts";
 import {Registry, IProgress} from "./registry";
 import {IFile} from "./files/_ifile";
+import {Stats} from "./stats/stats";
 
 function searchConfig(filename: string): Config {
   const json = searchUp(path.dirname(process.cwd() + path.sep + filename) + path.sep);
@@ -48,6 +49,7 @@ function displayHelp(): string {
   output = output + "  -a [abap]        specify ABAP version\n";
   output = output + "  -s               show progress\n";
   output = output + "  -k               output keywords\n";
+  output = output + "  -t               output stats\n";
   output = output + "  -c               compress files in memory\n";
   output = output + "  -m               show memory usage\n";
   output = output + "  -d, --default    show default configuration\n";
@@ -129,8 +131,14 @@ async function run() {
 
       const loaded = await loadFiles(compress, files, argv["s"]);
       const progress = argv["s"] ? new Progress() : undefined;
-      issues = new Registry(config).addFiles(loaded).findIssues(progress);
+      const reg = new Registry(config);
+      issues = reg.addFiles(loaded).findIssues(progress);
       output = Formatter.format(issues, format);
+
+      if (argv["t"]) {
+        output = JSON.stringify(new Stats(reg).run(), undefined, 2);
+        issues = [];
+      }
     }
   }
 
