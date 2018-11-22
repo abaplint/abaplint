@@ -1,7 +1,8 @@
 import {Registry, IProgress} from "../registry";
 import {Runner} from "../runner";
 import {Version, textToVersion, versionToText} from "../version";
-import {Unknown} from "../abap/statements/_statement";
+import {Unknown, Comment, Empty} from "../abap/statements/_statement";
+import * as Statements from "../abap/statements";
 
 export interface ITotals {
   statements: number;
@@ -15,6 +16,11 @@ export interface ITypeCount {
   count: number;
 }
 
+export interface IObjectOrientation {
+  oo: number;
+  non: number;
+}
+
 export interface IResult {
   version: string;
   target: string;
@@ -23,6 +29,8 @@ export interface IResult {
   objects: ITypeCount[];
   issues: ITypeCount[];
   statements: ITypeCount[];
+  objectOrientation: IObjectOrientation;
+  methodLength: number[];
 }
 
 export class Stats {
@@ -40,11 +48,79 @@ export class Stats {
       totals: this.buildTotals(),
       objects: this.buildObjects(),
       issues: this.buildIssues(),
+      objectOrientation: this.buildObjectOrientation(),
+      methodLength: this.buildMethodLength(),
       statements: this.buildStatements(progress),
     };
   }
 
 // ////////////////////////////////////////////////
+
+  private buildMethodLength(): number[] {
+    const ret: number[] = [];
+    let method = false;
+    let length = 0;
+
+    for (const file of this.reg.getABAPFiles()) {
+      for (const stat of file.getStatements()) {
+        const type = stat.get();
+        if (type instanceof Statements.Method) {
+          method = true;
+          length = 0;
+        } else if (type instanceof Statements.Endmethod) {
+// add to output, todo, this is really slow
+          for (let i = 0; i <= length; i++) {
+            if (ret[i] === undefined) {
+              ret.push(0);
+            }
+          }
+          ret[length] = ret[length] + 1;
+
+          method = false;
+        } else if (method === true
+            && !(type instanceof Comment)
+            && !(type instanceof Empty)) {
+          length = length + 1;
+        }
+      }
+    }
+
+    return ret;
+  }
+
+  private buildObjectOrientation(): IObjectOrientation {
+    const res: IObjectOrientation = {oo: 0, non: 0};
+    let oo: boolean = false;
+
+    for (const file of this.reg.getABAPFiles()) {
+      for (const stat of file.getStatements()) {
+        const type = stat.get();
+        if (type instanceof Comment
+            || type instanceof Empty) {
+          continue;
+        } else if (type instanceof Statements.ClassDefinition
+            || type instanceof Statements.ClassImplementation
+            || type instanceof Statements.Interface) {
+          oo = true;
+          res.oo = res.oo + 1;
+        } else if (type instanceof Statements.EndClass
+            || type instanceof Statements.EndInterface) {
+          oo = false;
+          res.oo = res.oo + 1;
+        } else if (type instanceof Statements.ClassDefinitionLoad
+            || type instanceof Statements.ClassOther
+            || type instanceof Statements.InterfaceDeferred) {
+          res.oo = res.oo + 1;
+        } else if (oo) {
+          res.oo = res.oo + 1;
+        } else {
+          res.non = res.non + 1;
+        }
+      }
+    }
+
+    return res;
+  }
 
   private buildStatements(progress?: IProgress): ITypeCount[] {
     const ret: ITypeCount[] = [];
