@@ -13,6 +13,7 @@ export class MethodParameterNamesConf {
   public returning: string = "^R._.*$";
   public changing: string = "^C._.*$";
   public exporting: string = "^E._.*$";
+  public ignoreNames: string[] = ["P_TASK"];
 }
 
 export class MethodParameterNames implements IRule {
@@ -88,6 +89,9 @@ export class MethodParameterNames implements IRule {
     const name = param.getName();
 
     if (regex.test(name) === false) {
+      if (this.conf.ignoreNames.indexOf(name.toUpperCase()) >= 0) {
+        return ret;
+      }
       const message = "Bad method parameter name \"" + name + "\" expected \"" + expected + "/i\"";
 // todo, find the right file
       const issue = new Issue({file: obj.getFiles()[0], message, code: this.getKey(), start: param.getPosition()});

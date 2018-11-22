@@ -75,4 +75,12 @@ describe("Rule: method parameter names", function() {
     expect(issues.length).to.equal(0);
   });
 
+  it("skip p_task", function () {
+    const abap = "INTERFACE zif_foobar PUBLIC.\n" +
+      "  METHODS method1 IMPORTING p_task TYPE i.\n" +
+      "ENDINTERFACE.";
+    const issues = findIssues(abap, "zif_foobar.intf.abap");
+    expect(issues.length).to.equal(0);
+  });
+
 });
