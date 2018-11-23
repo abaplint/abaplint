@@ -3,6 +3,7 @@ import {Registry} from "../../src/registry";
 import {MemoryFile} from "../../src/files/memory_file";
 import {IRule} from "../../src/rules/_irule";
 
+// todo, remove description as input, it can be determined at runtime?
 export function testRule(tests: any, description: string, rule: new () => IRule) {
   describe(description, function () {
     // note that timeout() only works inside function()
