@@ -10,6 +10,7 @@ import {TokenNode, StatementNode} from "../abap/nodes/";
 import {Token} from "../abap/tokens/_token";
 import {Unknown, MacroCall} from "../abap/statements/_statement";
 import {Issue} from "../issue";
+import {Identifier} from "../abap/tokens";
 
 export abstract class ABAPObject extends AbstractObject {
   private parsed: Array<ABAPFile>;
@@ -43,7 +44,16 @@ export abstract class ABAPObject extends AbstractObject {
     this.parsed.forEach((f) => {
       const statements: StatementNode[] = [];
       f.getStatements().forEach((s) => {
-        if (s.get() instanceof Unknown && reg.isMacro(s.getTokens()[0].getStr())) {
+        let name: string | undefined = undefined;
+
+        for (const i of s.getTokens()) {
+          if (i instanceof Identifier) {
+            name = i.getStr();
+            break;
+          }
+        }
+
+        if (s.get() instanceof Unknown && name && reg.isMacro(name)) {
           statements.push(new StatementNode(new MacroCall()).setChildren(this.tokensToNodes(s.getTokens())));
         } else {
           statements.push(s);

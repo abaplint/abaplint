@@ -70,6 +70,9 @@ const tests = [
 
   "MOVE foo(+100) TO bar.",
   "gs_structure-field$01 = 'val'.",
+  "foo = bar ##called.",
+  "##called foo = bar.",
+
 //  "DATA(ints) = NEW tyt_integer( ( 1 ) ( 2 ) ( 3 ) ).",
 ];
 

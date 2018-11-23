@@ -14,6 +14,9 @@ const tests = [
   {abap: "moo( 'sdf').", cnt: 1}, // see differences between ABAP and abaplint
   {abap: "APPEND NEW lcl_foo( VALUE #( connid = '456') ) TO foos.", cnt: 1},
   {abap: "DEFINE _foo.\nEND-OF-DEFINITION.\n_foo.", cnt: 0},
+  {abap: "DEFINE _foo.\nEND-OF-DEFINITION.\n_foo ##CALLED.", cnt: 0},
+  {abap: "DEFINE _foo.\nEND-OF-DEFINITION.\n##CALLED _foo.", cnt: 0},
+  {abap: "DEFINE _foo.\nEND-OF-DEFINITION.\n_foo bar.", cnt: 0},
 ];
 
 testRule(tests, "test parser_error rule", ParserError);

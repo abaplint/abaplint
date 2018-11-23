@@ -76,14 +76,16 @@ describe("count_tokens", () => {
     {abap: "WRITE `a``b`",                        tokens: 2},
     {abap: "WRITE ````",                          tokens: 2},
     {abap: "WRITE `\"foo``\"bar`",                tokens: 2},
+    {abap: "foo = bar ##called.",                 tokens: 5},
+    {abap: "##called foo = bar.",                 tokens: 5},
+    {abap: "##called _moo.",                      tokens: 3},
   ];
 
   tests.forEach((test) => {
     const tokens = getTokens(test.abap);
-
     it("\"" + test.abap + "\" should have " + test.tokens + " tokens", () => {
       expect(tokens.length).to.equals(test.tokens);
     });
-
   });
+
 });

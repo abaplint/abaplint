@@ -256,7 +256,7 @@ export class Lexer {
 // start comment
         this.add();
         this.m = Mode.Comment;
-      } else if (this.m === Mode.Pragma && ( ahead === "," || ahead === "." ) ) {
+      } else if (this.m === Mode.Pragma && ( ahead === "," || ahead === "." || ahead === " " || ahead === "\n" ) ) {
 // end of pragma
         this.add();
         this.m = Mode.Normal;
