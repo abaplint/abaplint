@@ -1,4 +1,4 @@
-import {plus, ver, seq, opt, tok, str, alt, star, optPrio, Expression, IRunnable} from "../combi";
+import {plus, ver, seq, opt, tok, str, alt, star, optPrio, regex, Expression, IRunnable} from "../combi";
 import {Arrow, WParenLeftW, WParenRightW, WParenRight, WDashW, ParenLeftW} from "../tokens/";
 import {MethodCallChain, ArithOperator, Cond, Constant, StringTemplate, Let} from "./";
 import {FieldChain, Field, TableBody, TypeName, ArrowOrDash, FieldSub, For} from "./";
@@ -19,8 +19,8 @@ export class Source extends Expression {
 
     const after = seq(alt(str("&"), str("&&"), new ArithOperator()), new Source());
 
-    const bool = seq(alt(ver(Version.v702, str("BOOLC")),
-                         ver(Version.v740sp08, str("XSDBOOL"))),
+    const bool = seq(alt(ver(Version.v702, regex(/^BOOLC$/i)),
+                         ver(Version.v740sp08, regex(/^XSDBOOL$/i))),
                      tok(ParenLeftW),
                      new Cond(),
                      str(")"));

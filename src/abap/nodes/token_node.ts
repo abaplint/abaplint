@@ -17,3 +17,7 @@ export class TokenNode extends CountableNode {
     return super.countTokens() + 1;
   }
 }
+
+export class TokenNodeRegex extends TokenNode {
+
+}

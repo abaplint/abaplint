@@ -1,7 +1,7 @@
 import * as Tokens from "./tokens";
 import {Token as Tokens_Token} from "./tokens/_token";
 import {Position} from "../position";
-import {TokenNode, ExpressionNode} from "./nodes/";
+import {TokenNode, ExpressionNode, TokenNodeRegex} from "./nodes/";
 import {Version, versionToText} from "../version";
 import {CountableNode} from "./nodes/_countable_node";
 import {INode} from "./nodes/_inode";
@@ -107,7 +107,7 @@ class Regex implements IRunnable {
     for (const input of r) {
       if (input.length() !== 0
           && this.regexp.test(input.peek().getStr()) === true) {
-        result.push(input.shift(new TokenNode(input.peek())));
+        result.push(input.shift(new TokenNodeRegex(input.peek())));
       }
     }
 
