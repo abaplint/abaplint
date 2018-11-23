@@ -46,9 +46,9 @@ export class Source extends Expression {
                                            tok(ParenLeftW),
                                            opt(baseParen),
                                            new Source(),
-                                           opt(mapping),
-                                           opt(seq(str("EXCEPT"), new Field())),
                                            opt(discarding),
+                                           opt(mapping),
+                                           opt(seq(str("EXCEPT"), alt(plus(new Field()), str("*")))),
                                            rparen));
 
     const arith = seq(new ArithOperator(), new Source());
@@ -102,7 +102,8 @@ export class Source extends Expression {
                                            opt(new Let()),
                                            plus(when),
                                            opt(elsee),
-                                           rparen));
+                                           rparen,
+                                           opt(after)));
 
     const reff = ver(Version.v740sp02, seq(str("REF"),
                                            new TypeName(),
@@ -127,19 +128,18 @@ export class Source extends Expression {
                            seq(str("WHERE"), new Cond()),
                            rparen));
 
+    const fields = seq(new Field(), str("="), new Source());
+
     const reduce = ver(Version.v740sp08,
                        seq(str("REDUCE"),
                            new TypeName(),
                            tok(ParenLeftW),
+                           opt(new Let()),
                            str("INIT"),
-                           new Field(),
-                           str("="),
-                           new Source(),
+                           plus(fields),
                            new For(),
                            str("NEXT"),
-                           new Field(),
-                           str("="),
-                           new Source(),
+                           plus(fields),
                            rparen,
                            opt(after)));
 

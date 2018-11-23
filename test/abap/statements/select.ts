@@ -142,6 +142,7 @@ const tests = [
   "SELECT SINGLE a, b INTO (@ls_foo-b, @ls_foo-a) FROM table.",
   "SELECT SINGLE 'X' FROM ztable INTO @DATA(lv_exist) WHERE field = 'F'.",
   "SELECT SINGLE field INTO lv_total FROM ztab WHERE invts = ( SELECT MIN( invts ) FROM table2 WHERE field = lv_value ).",
+  "SELECT SINGLE field FROM ztable WHERE name = @( 'sdf' ) INTO @DATA(foo1).",
 ];
 
 statementType(tests, "SELECT", Statements.Select);
