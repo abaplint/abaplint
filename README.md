@@ -6,7 +6,9 @@
 
 # abaplint
 
-Linter for ABAP, code must be serialized using [abapGit](https://github.com/larshp/abapGit)
+Linter for ABAP, code must be serialized using [abapGit](https://github.com/larshp/abapGit). 
+
+Regarding versioning: semantic versioning is currently not followed, recommend fixing usage to a specific version
 
 [Online Playground](https://playground.abaplint.org)
 
