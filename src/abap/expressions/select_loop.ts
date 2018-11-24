@@ -3,6 +3,7 @@ import {WParenLeftW, WAt, WParenRightW, WParenLeft} from "../tokens/";
 import {Field, DatabaseTable, Dynamic, Target, Source, SQLCond, SQLJoin, SQLFieldName, SQLTarget, SQLAggregation} from "./";
 import {Version} from "../../version";
 import {SQLSource} from "./sql_source";
+import {SQLCDSParameters} from "./sql_cds_parameters";
 
 export class SelectLoop extends Expression {
   public getRunnable(): IRunnable {
@@ -12,6 +13,7 @@ export class SelectLoop extends Expression {
     const from = seq(str("FROM"),
                      opt(tok(WParenLeftW)),
                      alt(new Dynamic(), new DatabaseTable()),
+                     opt(new SQLCDSParameters()),
                      opt(aas));
 
     const intoList = seq(alt(tok(WParenLeft), tok(WParenLeftW)),

@@ -135,7 +135,6 @@ const tests = [
   "SELECT * FROM table INTO TABLE lt_tab WHERE field LIKE search ESCAPE '#'.",
   "SELECT * FROM table INTO TABLE lt_tab %_HINTS ORACLE 'FIRST_ROWS'.",
   "SELECT SINGLE FROM table FIELDS field INTO @DATA(lv_field).",
-  "SELECT * FROM cds_view( param2 = @lv_val2, param = @lv_val1 ).",
   "SELECT SINGLE @abap_true FROM dd03l INTO @DATA(lv_exists) WHERE tabname = @lv_tabname AND as4local = 'A'.",
   "SELECT field1, field2 FROM ztab INTO TABLE @DATA(lt_result) WHERE field = @lv_field ORDER BY field1, field2.",
   "SELECT field FROM tab INTO TABLE @rt_delta WHERE clas IN ( 'VALUE1' , 'VALUE2' ) ORDER BY clas.",
@@ -143,6 +142,9 @@ const tests = [
   "SELECT SINGLE 'X' FROM ztable INTO @DATA(lv_exist) WHERE field = 'F'.",
   "SELECT SINGLE field INTO lv_total FROM ztab WHERE invts = ( SELECT MIN( invts ) FROM table2 WHERE field = lv_value ).",
   "SELECT SINGLE field FROM ztable WHERE name = @( 'sdf' ) INTO @DATA(foo1).",
+  "SELECT FROM ztab FIELDS fieldname INTO TABLE @DATA(lt_result).",
+  "SELECT SINGLE FROM ztab FIELDS fieldname INTO @DATA(lt_result).",
+  "SELECT SINGLE FOR UPDATE FROM ztab FIELDS fieldname INTO @DATA(lt_result).",
 ];
 
 statementType(tests, "SELECT", Statements.Select);

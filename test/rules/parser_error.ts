@@ -17,6 +17,9 @@ const tests = [
   {abap: "DEFINE _foo.\nEND-OF-DEFINITION.\n_foo ##CALLED.", cnt: 0},
   {abap: "DEFINE _foo.\nEND-OF-DEFINITION.\n##CALLED _foo.", cnt: 0},
   {abap: "DEFINE _foo.\nEND-OF-DEFINITION.\n_foo bar.", cnt: 0},
+  {abap: "ro_alv->get_columns(:\n" +
+    ")->get_column( 'TIMESTAMP' )->set_visible( abap_false ),\n" +
+    ")->get_column( 'USERNAME' )->set_visible( abap_false ).", cnt: 0},
 ];
 
 testRule(tests, "test parser_error rule", ParserError);

@@ -15,6 +15,7 @@ const tests = [
   "SELECT p~field1 p~field2 INTO (lv_field1, lv_field2) FROM ztab AS p WHERE p~field = lv_field.",
   "select field count(*) into (l_field, l_count) from ztab where field = bar group by number.",
   "select field appending table lt_tab from ztable package size 10 where foo = 'B'.",
+  "SELECT * FROM cds_view( param2 = @lv_val2, param = @lv_val1 ).",
   "SELECT * FROM foo INTO CORRESPONDING FIELDS OF TABLE lt_foo PACKAGE SIZE 100 WHERE moo = stru-value1 AND boo = stru-value2.",
   "SELECT field1 field2 INTO  (lv_field1, lv_field2) FROM  ztab AS tab\n" +
   "  WHERE field < wa-field\n" +
