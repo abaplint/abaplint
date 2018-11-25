@@ -7,7 +7,7 @@ import {Position} from "../position";
 
 export class MethodLengthConf {
   public enabled: boolean = true;
-  public statements: number = 180; // this default is too high
+  public statements: number = 100;
 }
 
 export class MethodLength extends ABAPRule {
