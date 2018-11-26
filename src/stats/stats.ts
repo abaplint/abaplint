@@ -3,6 +3,7 @@ import {Runner} from "../runner";
 import {Version, textToVersion, versionToText} from "../version";
 import {Unknown, Comment, Empty} from "../abap/statements/_statement";
 import * as Statements from "../abap/statements";
+import {MethodLengthStats} from "./method_length_stats";
 
 export interface ITotals {
   statements: number;
@@ -58,33 +59,19 @@ export class Stats {
 
   private buildMethodLength(): number[] {
     const ret: number[] = [];
-    let method = false;
-    let length = 0;
 
-    for (const file of this.reg.getABAPFiles()) {
-      for (const stat of file.getStatements()) {
-        const type = stat.get();
-        if (type instanceof Statements.Method) {
-          method = true;
-          length = 0;
-        } else if (type instanceof Statements.Endmethod) {
+    for (const obj of this.reg.getObjects()) {
+      const stats = MethodLengthStats.run(obj);
+      for (const s of stats) {
 // add to output, todo, this is really slow
-          for (let i = 0; i <= length; i++) {
-            if (ret[i] === undefined) {
-              ret.push(0);
-            }
+        for (let i = 0; i <= s.count; i++) {
+          if (ret[i] === undefined) {
+            ret.push(0);
           }
-          ret[length] = ret[length] + 1;
-
-          method = false;
-        } else if (method === true
-            && !(type instanceof Comment)
-            && !(type instanceof Empty)) {
-          length = length + 1;
         }
+        ret[s.count] = ret[s.count] + 1;
       }
     }
-
     return ret;
   }
 

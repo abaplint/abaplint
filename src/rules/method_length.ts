@@ -1,16 +1,16 @@
 import {Issue} from "../issue";
-import {Comment, Empty} from "../abap/statements/_statement";
-import * as Statements from "../abap/statements";
-import {ABAPRule} from "./_abap_rule";
-import {ABAPFile} from "../files";
-import {Position} from "../position";
+import {IObject} from "../objects/_iobject";
+import {Registry} from "../registry";
+import {MethodLengthStats} from "../stats/method_length_stats";
+import {IRule} from "./_irule";
+
 
 export class MethodLengthConf {
   public enabled: boolean = true;
   public statements: number = 100;
 }
 
-export class MethodLength extends ABAPRule {
+export class MethodLength implements IRule {
 
   private conf = new MethodLengthConf();
 
@@ -30,28 +30,18 @@ export class MethodLength extends ABAPRule {
     this.conf = conf;
   }
 
-  public runParsed(file: ABAPFile) {
+  public run(obj: IObject, _reg: Registry): Issue[] {
     const issues: Array<Issue> = [];
-    let length: number = 0;
-    let pos: Position | undefined = undefined;
-    let method: boolean = false;
+    const stats = MethodLengthStats.run(obj);
 
-    for (const stat of file.getStatements()) {
-      const type = stat.get();
-      if (type instanceof Statements.Method) {
-        pos = stat.getFirstToken().get().getPos();
-        method = true;
-        length = 0;
-      } else if (type instanceof Statements.Endmethod) {
-        if (length > this.conf.statements) {
-          const issue = new Issue({file, message: "Reduce method length, " + length + " statements", code: this.getKey(), start: pos});
-          issues.push(issue);
-        }
-        method = false;
-      } else if (method === true
-          && !(type instanceof Comment)
-          && !(type instanceof Empty)) {
-        length = length + 1;
+    for (const s of stats) {
+      if (s.count > this.conf.statements) {
+        const issue = new Issue({
+          file: s.file,
+          message: "Reduce method length, " + length + " statements",
+          code: this.getKey(),
+          start: s.pos});
+        issues.push(issue);
       }
     }
 

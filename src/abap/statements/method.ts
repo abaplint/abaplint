@@ -1,5 +1,6 @@
 import {Statement} from "./_statement";
 import {str, seq, opt, alt, regex as reg, IRunnable} from "../combi";
+import {MethodName} from "../expressions";
 
 export class Method extends Statement {
 
@@ -10,7 +11,7 @@ export class Method extends Statement {
                        name,
                        opt(alt(str("FAIL"), str("IGNORE"))));
 
-    return seq(str("METHOD"), name, opt(kernel));
+    return seq(str("METHOD"), new MethodName(), opt(kernel));
   }
 
 }
