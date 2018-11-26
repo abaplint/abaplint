@@ -5,9 +5,14 @@ import {StatementNode, ExpressionNode, TokenNode, TokenNodeRegex} from "../abap/
 import {Position} from "../position";
 import {Unknown, Comment, MacroContent, MacroCall} from "../abap/statements/_statement";
 import {Identifier} from "../abap/tokens";
+import {IObject} from "../objects/_iobject";
+import {Registry} from "../registry";
+import {Class} from "../objects";
+
 
 export class KeywordsUpperConf {
   public enabled: boolean = true;
+  public ignoreExceptions: boolean = true;
 }
 
 export class KeywordsUpper extends ABAPRule {
@@ -30,8 +35,12 @@ export class KeywordsUpper extends ABAPRule {
     this.conf = conf;
   }
 
-  public runParsed(file: ABAPFile) {
+  public runParsed(file: ABAPFile, _reg: Registry, obj: IObject) {
     const issues: Array<Issue> = [];
+
+    if (this.conf.ignoreExceptions && obj instanceof Class && (obj as Class).isException()) {
+      return [];
+    }
 
     for (const statement of file.getStatements()) {
       if (statement.get() instanceof Unknown
