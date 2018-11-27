@@ -1,29 +1,32 @@
-import * as Rules from "./rules/";
 import {Version, versionToText, textToVersion} from "./version";
-import {IRule} from "./rules/_irule";
+import {Artifacts} from "./artifacts";
+
+export interface IGlobalConfig {
+  version: string;
+}
+
+export interface IConfig {
+  global: IGlobalConfig;
+  rules: any;
+}
 
 export class Config {
 
   private static defaultVersion = Version.v753;
-
-  private config: any = undefined;
+  private config: IConfig;
 
   public static getDefault(): Config {
     const defaults: Array<string> = [];
 
-    for (const key in Rules) {
-      const rul: any = Rules;
-      if (typeof rul[key] === "function") {
-        const rule: IRule = new rul[key]();
-        if (rule.getKey) {
-          defaults.push("\"" + rule.getKey() + "\": " + JSON.stringify(rule.getConfig()));
-        }
-      }
+    for (const rule of Artifacts.getRules()) {
+      defaults.push("\"" + rule.getKey() + "\": " + JSON.stringify(rule.getConfig()));
     }
 
-    const json = "{\"version\": \"" +
-      versionToText(Config.defaultVersion) +
-      "\", \"rules\":\n{" + defaults.join(",\n") + "\n}}";
+    const global: IGlobalConfig = {version: versionToText(Config.defaultVersion)};
+
+    const json = "{" +
+      "\"global\": " + JSON.stringify(global) + ", " +
+      "\"rules\": {" + defaults.join(", ") + "}}";
     const conf = new Config(json);
     return conf;
   }
@@ -47,17 +50,17 @@ export class Config {
   }
 
   public getVersion(): Version {
-    if (this.config["version"] === undefined) {
+    if (this.config.global === undefined || this.config.global.version === undefined) {
       return Config.defaultVersion;
     }
-    return textToVersion(this.config["version"]);
+    return textToVersion(this.config.global.version);
   }
 
   public setVersion(ver: Version | undefined): Config {
     if (ver === undefined) {
       return this;
     }
-    this.config["version"] = versionToText(ver);
+    this.config.global.version = versionToText(ver);
     return this;
   }
 
