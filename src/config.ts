@@ -3,6 +3,7 @@ import {Artifacts} from "./artifacts";
 
 export interface IGlobalConfig {
   version: string;
+  skipGeneratedGatewayClasses: boolean;
 }
 
 export interface IConfig {
@@ -22,7 +23,10 @@ export class Config {
       defaults.push("\"" + rule.getKey() + "\": " + JSON.stringify(rule.getConfig()));
     }
 
-    const global: IGlobalConfig = {version: versionToText(Config.defaultVersion)};
+    const global: IGlobalConfig = {
+      version: versionToText(Config.defaultVersion),
+      skipGeneratedGatewayClasses: true,
+    };
 
     const json = "{" +
       "\"global\": " + JSON.stringify(global) + ", " +
@@ -47,6 +51,10 @@ export class Config {
 
   public readByRule(rule: string) {
     return this.config["rules"][rule];
+  }
+
+  public getGlobal(): IGlobalConfig {
+    return this.config.global;
   }
 
   public getVersion(): Version {

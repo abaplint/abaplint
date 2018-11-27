@@ -73,6 +73,16 @@ export class Class extends ABAPObject {
     return main.getAttributes();
   }
 
+  public isGeneratedGatewayClass(): boolean {
+    if (this.getName().match(/_MPC$/i) && this.getSuperClass() === "/IWBEP/CL_MGW_PUSH_ABS_MODEL") {
+      return true;
+    }
+    if (this.getName().match(/_DPC$/i) && this.getSuperClass() === "/IWBEP/CL_MGW_PUSH_ABS_DATA") {
+      return true;
+    }
+    return false;
+  }
+
 // --------------------
 
   private getMain(): StructureNode | undefined {

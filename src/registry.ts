@@ -7,6 +7,7 @@ import {Config} from "./config";
 import {Issue} from "./issue";
 import {Artifacts} from "./artifacts";
 import {versionToText} from "./version";
+import {Class} from "./objects";
 
 
 export interface IProgress {
@@ -132,6 +133,12 @@ todo
 
     progress.set(objects.length, ":percent - Finding Issues - :object");
     for (const obj of objects) {
+      if (this.getConfig().getGlobal().skipGeneratedGatewayClasses
+          && obj instanceof Class
+          && obj.isGeneratedGatewayClass()) {
+        continue;
+      }
+
       progress.tick({object: obj.getType() + " " + obj.getName()});
       for (const rule of rules) {
         issues = issues.concat(rule.run(obj, this));
