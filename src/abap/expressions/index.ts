@@ -3,6 +3,8 @@ export * from "./fieldsymbol";
 export * from "./inlinedata";
 export * from "./inlinefs";
 export * from "./fstarget";
+export * from "./method_source";
+export * from "./method_call_body";
 export * from "./sql_field_list";
 export * from "./target";
 export * from "./sql_source";

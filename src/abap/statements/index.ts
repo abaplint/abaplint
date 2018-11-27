@@ -8,6 +8,7 @@ export * from "./endmethod";
 export * from "./method";
 export * from "./endform";
 export * from "./form";
+export * from "./call_badi";
 export * from "./class_data";
 export * from "./class_data_begin";
 export * from "./class_data_end";
