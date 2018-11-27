@@ -2,18 +2,13 @@ import * as Tokens from "./tokens";
 import * as Statements from "./statements";
 import {Combi} from "./combi";
 import {TokenNode, StatementNode} from "./nodes/";
-import {Unknown, Empty, Comment, MacroContent, NativeSQL} from "./statements/_statement";
+import {Unknown, Empty, Comment, MacroContent, NativeSQL, Statement} from "./statements/_statement";
 import {Version} from "../version";
 import {Artifacts} from "./artifacts";
 import {Token} from "./tokens/_token";
 
-function className(cla: any) {
-  // @ts-ignore
-  return (cla.constructor + "").match(/\w+/g)[1];
-}
-
 class Map {
-  private map: {[index: string]: Array<string> };
+  private map: {[index: string]: Statement[] };
 
   public constructor() {
     this.map = {};
@@ -22,14 +17,14 @@ class Map {
       const first = stat.getMatcher().first();
 
       if (this.map[first]) {
-        this.map[first].push(className(stat));
+        this.map[first].push(stat);
       } else {
-        this.map[first] = [className(stat)];
+        this.map[first] = [stat];
       }
     }
   }
 
-  public lookup(token: Token): Array<string> {
+  public lookup(token: Token): Statement[] {
     let res = this.map[token.getStr().toUpperCase()];
     res = res ? res.concat(this.map[""]) : this.map[""];
     return res;
@@ -141,11 +136,11 @@ export class StatementParser {
     }
 
     for (const st of this.map.lookup(tokens[0])) {
-      const match = Combi.run(Artifacts.newStatement(st).getMatcher(),
+      const match = Combi.run(st.getMatcher(),
                               tokens,
                               ver);
       if (match) {
-        return new StatementNode(Artifacts.newStatement(st)).setChildren(match.concat(new TokenNode(last)));
+        return new StatementNode(st).setChildren(match.concat(new TokenNode(last)));
       }
     }
     return statement;

@@ -88,13 +88,6 @@ export class Artifacts {
     return ret;
   }
 
-  public static newStatement(name: string): Statement {
-// todo, not sure this is needed anymore, Statements does not carry state
-// or change to singleton
-    const list: any = Statements;
-    return new list[name]();
-  }
-
   public static getKeywords(): IKeyword[] {
     const list: List = new List();
 
