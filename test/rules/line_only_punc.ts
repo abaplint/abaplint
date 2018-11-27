@@ -8,4 +8,4 @@ const tests = [
   {abap: "WRITE 'hello'.", cnt: 0},
 ];
 
-testRule(tests, "test line_only_punc rule", LineOnlyPunc);
+testRule(tests, LineOnlyPunc);

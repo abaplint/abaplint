@@ -11,4 +11,4 @@ const tests = [
          "TYPES:   data     TYPE xstring,\n       END OF ty_file.", cnt: 0},
 ];
 
-testRule(tests, "test start_at_tab rule", StartAtTab);
+testRule(tests, StartAtTab);

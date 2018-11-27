@@ -8,4 +8,4 @@ const tests = [
   {abap: "break-point id foo.", cnt: 0},
 ];
 
-testRule(tests, "test breakpoint rule", Breakpoint);
+testRule(tests, Breakpoint);

@@ -7,4 +7,4 @@ const tests = [
   {abap: "IF foo = bar.", cnt: 0},
 ];
 
-testRule(tests, "test contains_tab rule", ContainsTab);
+testRule(tests, ContainsTab);

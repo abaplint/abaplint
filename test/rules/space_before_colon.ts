@@ -7,4 +7,4 @@ const tests = [
   {abap: ":WRITE 'foo'.", cnt: 0},
 ];
 
-testRule(tests, "test space_before_colon rule", SpaceBeforeColon);
+testRule(tests, SpaceBeforeColon);

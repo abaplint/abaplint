@@ -6,4 +6,4 @@ const tests = [
   {abap: "WRITE 'hello'.\nWRITE 'world'.\nWRITE 'world'.", cnt: 0},
 ];
 
-testRule(tests, "test max_one_statement rule", MaxOneStatement);
+testRule(tests, MaxOneStatement);

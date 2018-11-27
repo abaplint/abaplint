@@ -12,4 +12,4 @@ const tests = [
          "INCLUDE TYPE gty_status.\nTYPES: END OF lty_color_line.\nENDFORM.", cnt: 0},
 ];
 
-testRule(tests, "test definitions_top rule", DefinitionsTop);
+testRule(tests, DefinitionsTop);

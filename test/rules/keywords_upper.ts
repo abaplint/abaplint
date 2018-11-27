@@ -8,4 +8,4 @@ const tests = [
   {abap: "IF a = b.", cnt: 0},
 ];
 
-testRule(tests, "test keywords_upper rule", KeywordsUpper);
+testRule(tests, KeywordsUpper);

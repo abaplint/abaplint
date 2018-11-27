@@ -6,4 +6,4 @@ const tests = [
   {abap: "WRITE: / 'abc'.", cnt: 0},
 ];
 
-testRule(tests, "test 7bit_ascii rule", SevenBitAscii);
+testRule(tests, SevenBitAscii);

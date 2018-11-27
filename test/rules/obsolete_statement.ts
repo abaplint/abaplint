@@ -20,4 +20,4 @@ const tests = [
   {abap: "IF foo IS SUPPLIED.", cnt: 0},
 ];
 
-testRule(tests, "test obsolete_statement rule", ObsoleteStatement);
+testRule(tests, ObsoleteStatement);

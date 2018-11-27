@@ -25,4 +25,4 @@ const tests = [
     "ENDCLASS.", cnt: 1},
 ];
 
-testRule(tests, "test functional_writing rule", FunctionalWriting);
+testRule(tests, FunctionalWriting);

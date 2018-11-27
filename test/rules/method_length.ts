@@ -160,4 +160,4 @@ const tests = [
     "ENDMETHOD.", cnt: 1},
 ];
 
-testRule(tests, "test method_length rule", MethodLength);
+testRule(tests, MethodLength);

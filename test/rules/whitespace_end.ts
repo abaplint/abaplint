@@ -6,4 +6,4 @@ const tests = [
   {abap: "WRITE 'hello'.  ", cnt: 1},
 ];
 
-testRule(tests, "test whitespace_end rule", WhitespaceEnd);
+testRule(tests, WhitespaceEnd);

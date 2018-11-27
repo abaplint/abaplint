@@ -7,4 +7,4 @@ const tests = [
   {abap: "WRITE / 'foobar'.", cnt: 0},
 ];
 
-testRule(tests, "test colon_missing_space rule", ColonMissingSpace);
+testRule(tests, ColonMissingSpace);

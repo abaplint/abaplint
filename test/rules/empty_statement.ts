@@ -6,4 +6,4 @@ const tests = [
   {abap: "WRITE: / 'abc'.", cnt: 0},
 ];
 
-testRule(tests, "test empty_statement rule", EmptyStatement);
+testRule(tests, EmptyStatement);

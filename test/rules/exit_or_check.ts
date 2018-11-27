@@ -8,4 +8,4 @@ const tests = [
   {abap: "SELECT kunnr INTO lv_kunnr FROM kna1.\nCHECK sy-dbcnt > is_paging-skip.\nENDSELECT.", cnt: 0},
 ];
 
-testRule(tests, "test exit_or_check rule", ExitOrCheck);
+testRule(tests, ExitOrCheck);

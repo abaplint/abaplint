@@ -22,4 +22,4 @@ const tests = [
     ")->get_column( 'USERNAME' )->set_visible( abap_false ).", cnt: 0},
 ];
 
-testRule(tests, "test parser_error rule", ParserError);
+testRule(tests, ParserError);

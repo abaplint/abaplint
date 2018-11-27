@@ -6,4 +6,4 @@ const tests = [
   {abap: "zcl_class=>methodname( iv_foo = '23' ).", cnt: 0},
 ];
 
-testRule(tests, "test exporting rule", Exporting);
+testRule(tests, Exporting);

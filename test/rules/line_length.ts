@@ -9,4 +9,4 @@ const tests = [
   {abap: "WRITE: / 'abc'.", cnt: 0},
 ];
 
-testRule(tests, "test line_length rule", LineLength);
+testRule(tests, LineLength);
