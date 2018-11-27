@@ -1,8 +1,8 @@
-import {Expression, IRunnable} from "../combi";
+import {Expression, IStatementRunnable} from "../combi";
 import {ClassName} from "./class_name";
 
 export class SuperClassName extends Expression {
-  public getRunnable(): IRunnable {
+  public getRunnable(): IStatementRunnable {
     return new ClassName();
   }
 }

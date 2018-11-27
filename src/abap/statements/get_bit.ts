@@ -1,10 +1,10 @@
 import {Statement} from "./_statement";
-import {str, seq, IRunnable} from "../combi";
+import {str, seq, IStatementRunnable} from "../combi";
 import {Target, Source} from "../expressions";
 
 export class GetBit extends Statement {
 
-  public getMatcher(): IRunnable {
+  public getMatcher(): IStatementRunnable {
     const ret = seq(str("GET BIT"),
                     new Source(),
                     str("OF"),

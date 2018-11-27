@@ -1,10 +1,10 @@
 import {Statement} from "./_statement";
-import {str, seq, alt, opt, optPrio, plus, per, IRunnable} from "../combi";
+import {str, seq, alt, opt, optPrio, plus, per, IStatementRunnable} from "../combi";
 import {FSTarget, Target, Field, Source, Dynamic, FieldSub} from "../expressions";
 
 export class Read extends Statement {
 
-  public getMatcher(): IRunnable {
+  public getMatcher(): IStatementRunnable {
     const comparing = seq(str("COMPARING"), plus(new FieldSub()));
 
     const target = alt(seq(str("ASSIGNING"), new FSTarget()),

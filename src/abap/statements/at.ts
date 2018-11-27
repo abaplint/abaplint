@@ -1,11 +1,11 @@
 import {Statement} from "./_statement";
-import {verNot, str, seq, alt, opt, IRunnable, regex} from "../combi";
+import {verNot, str, seq, alt, opt, IStatementRunnable, regex} from "../combi";
 import {FieldSymbol, FieldSub, Dynamic, FieldLength, FieldOffset} from "../expressions";
 import {Version} from "../../version";
 
 export class At extends Statement {
 
-  public getMatcher(): IRunnable {
+  public getMatcher(): IStatementRunnable {
     const field = alt(seq(new FieldSub(), opt(new FieldOffset()), opt(new FieldLength())),
                       new Dynamic(),
                       new FieldSymbol());

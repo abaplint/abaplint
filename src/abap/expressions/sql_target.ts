@@ -1,10 +1,10 @@
-import {alt, seq, ver, tok, Expression, IRunnable} from "../combi";
+import {alt, seq, ver, tok, Expression, IStatementRunnable} from "../combi";
 import {Version} from "../../version";
 import {WAt, At} from "../tokens/";
 import {Target} from "./target";
 
 export class SQLTarget extends Expression {
-  public getRunnable(): IRunnable {
+  public getRunnable(): IStatementRunnable {
     const at = ver(Version.v740sp05, seq(alt(tok(WAt), tok(At)), new Target()));
 
     return alt(new Target(), at);

@@ -1,8 +1,8 @@
-import {str, seq, alt, opt, per, IRunnable, Expression} from "../combi";
+import {str, seq, alt, opt, per, IStatementRunnable, Expression} from "../combi";
 import * as Expressions from "../expressions";
 
 export class DataDefinition extends Expression {
-  public getRunnable(): IRunnable {
+  public getRunnable(): IStatementRunnable {
 
     const simple = opt(per(str("READ-ONLY"),
                            new Expressions.Type(),

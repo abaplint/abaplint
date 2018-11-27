@@ -1,11 +1,11 @@
 import {Statement} from "./_statement";
-import {str, verNot, seq, IRunnable, plus} from "../combi";
+import {str, verNot, seq, IStatementRunnable, plus} from "../combi";
 import {Field, Source, Target} from "../expressions";
 import {Version} from "../../version";
 
 export class Provide extends Statement {
 
-  public getMatcher(): IRunnable {
+  public getMatcher(): IStatementRunnable {
 
     const list = str("*");
 

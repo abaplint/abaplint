@@ -1,11 +1,11 @@
 import {Statement} from "./_statement";
-import {verNot, str, seq, opt, alt, per, IRunnable} from "../combi";
+import {verNot, str, seq, opt, alt, per, IStatementRunnable} from "../combi";
 import {Source} from "../expressions";
 import {Version} from "../../version";
 
 export class Search extends Statement {
 
-  public getMatcher(): IRunnable {
+  public getMatcher(): IStatementRunnable {
     const starting = seq(str("STARTING AT"), new Source());
     const ending = seq(str("ENDING AT"), new Source());
     const mark = str("AND MARK");

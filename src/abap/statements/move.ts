@@ -1,12 +1,12 @@
 import {Statement} from "./_statement";
-import {verNot, str, tok, ver, seq, alt, opt, plus, IRunnable} from "../combi";
+import {verNot, str, tok, ver, seq, alt, opt, plus, IStatementRunnable} from "../combi";
 import {Target, Source} from "../expressions";
 import {Version} from "../../version";
 import {WPlus, WDash} from "../tokens";
 
 export class Move extends Statement {
 
-  public getMatcher(): IRunnable {
+  public getMatcher(): IStatementRunnable {
     const keeping = ver(Version.v740sp05, str("KEEPING TARGET LINES"));
     const expanding = ver(Version.v740sp05, str("EXPANDING NESTED TABLES"));
 

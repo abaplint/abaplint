@@ -1,12 +1,12 @@
 import {Statement} from "./_statement";
-import {verNot, str, seq, opt, alt, tok, per, plus, IRunnable} from "../combi";
+import {verNot, str, seq, opt, alt, tok, per, plus, IStatementRunnable} from "../combi";
 import {ParenLeft, ParenRightW, ParenRight} from "../tokens/";
 import {Source, Field, Dynamic, FormName} from "../expressions";
 import {Version} from "../../version";
 
 export class Perform extends Statement {
 
-  public getMatcher(): IRunnable {
+  public getMatcher(): IStatementRunnable {
     const programName = new Field();
     const using = seq(str("USING"), plus(new Source()));
     const tables = seq(str("TABLES"), plus(new Source()));

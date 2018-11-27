@@ -1,12 +1,12 @@
 import {Statement} from "./_statement";
-import {verNot, str, seq, opt, alt, per, tok, regex as reg, IRunnable} from "../combi";
+import {verNot, str, seq, opt, alt, per, tok, regex as reg, IStatementRunnable} from "../combi";
 import {Target, Source, Dynamic, FieldSub} from "../expressions";
 import {ParenLeft, ParenRightW, WParenLeft} from "../tokens/";
 import {Version} from "../../version";
 
 export class Write extends Statement {
 
-  public getMatcher(): IRunnable {
+  public getMatcher(): IStatementRunnable {
     const at = seq(opt(str("AT")), reg(/^\/?\d+$/));
 
     const mask = seq(str("USING"),

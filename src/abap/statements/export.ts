@@ -1,11 +1,11 @@
 import {Statement} from "./_statement";
-import {str, seq, alt, opt, per, plus, IRunnable} from "../combi";
+import {str, seq, alt, opt, per, plus, IStatementRunnable} from "../combi";
 import {Target, Source, ParameterListS, Field, Dynamic} from "../expressions";
 
 // todo, cloud, split?
 export class Export extends Statement {
 
-  public getMatcher(): IRunnable {
+  public getMatcher(): IStatementRunnable {
     const id = seq(str("ID"), new Source());
 
     const db = seq(str("DATA BUFFER"), new Target());

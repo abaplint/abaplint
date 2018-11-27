@@ -1,11 +1,11 @@
 import {Statement} from "./_statement";
-import {verNot, str, seq, plus, IRunnable} from "../combi";
+import {verNot, str, seq, plus, IStatementRunnable} from "../combi";
 import {Source, Field} from "../expressions";
 import {Version} from "../../version";
 
 export class Supply extends Statement {
 
-  public getMatcher(): IRunnable {
+  public getMatcher(): IStatementRunnable {
     const field = seq(new Field(), str("="), new Source());
 
     const ret = seq(str("SUPPLY"),

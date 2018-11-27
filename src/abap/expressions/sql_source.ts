@@ -1,10 +1,10 @@
-import {alt, seq, ver, tok, Expression, IRunnable} from "../combi";
+import {alt, seq, ver, tok, Expression, IStatementRunnable} from "../combi";
 import {Version} from "../../version";
 import {WAt, ParenLeftW, WParenRight, WParenRightW} from "../tokens/";
 import {Source} from "./source";
 
 export class SQLSource extends Expression {
-  public getRunnable(): IRunnable {
+  public getRunnable(): IStatementRunnable {
     const paren = seq(tok(ParenLeftW), new Source(), alt(tok(WParenRight), tok(WParenRightW)));
 
 // todo, this Source must be a simple field?

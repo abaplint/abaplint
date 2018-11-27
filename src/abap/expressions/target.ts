@@ -1,10 +1,10 @@
-import {seq, opt, tok, star, alt, str, altPrio, Expression, IRunnable} from "../combi";
+import {seq, opt, tok, star, alt, str, altPrio, Expression, IStatementRunnable} from "../combi";
 import {Field, TableExpression, FieldAll, FieldOffset, FieldLength, TableBody} from "./";
 import {FieldSymbol, InlineData, InlineFS, ArrowOrDash} from "./";
 import {Arrow} from "../tokens/";
 
 export class Target extends Expression {
-  public getRunnable(): IRunnable {
+  public getRunnable(): IStatementRunnable {
     const after = seq(alt(new Field(), new FieldSymbol()),
                       star(new TableExpression()),
                       star(seq(new ArrowOrDash(), alt(str("*"), new FieldAll()), star(new TableExpression()))));

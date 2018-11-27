@@ -1,11 +1,11 @@
 import {Statement} from "./_statement";
-import {verNot, str, seq, alt, opt, ver, plus, IRunnable} from "../combi";
+import {verNot, str, seq, alt, opt, ver, plus, IStatementRunnable} from "../combi";
 import {Version} from "../../version";
 import {Source, Field, ParameterListS} from "../expressions";
 
 export class Raise extends Statement {
 
-  public getMatcher(): IRunnable {
+  public getMatcher(): IStatementRunnable {
     const wit  = seq(str("WITH"), plus(new Source()));
 
     const mess1 = seq(str("ID"), new Source(), str("TYPE"), new Source(), str("NUMBER"), new Source());

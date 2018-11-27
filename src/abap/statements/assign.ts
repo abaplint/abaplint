@@ -1,11 +1,11 @@
 import {Statement} from "./_statement";
-import {str, seq, alt, opt, tok, per, IRunnable} from "../combi";
+import {str, seq, alt, opt, tok, per, IStatementRunnable} from "../combi";
 import {Arrow} from "../tokens/";
 import {FSTarget, Target, Source, Dynamic, Field, FieldSub} from "../expressions";
 
 export class Assign extends Statement {
 
-  public getMatcher(): IRunnable {
+  public getMatcher(): IStatementRunnable {
     const component = seq(str("COMPONENT"),
                           new Source(),
                           str("OF STRUCTURE"),

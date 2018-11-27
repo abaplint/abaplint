@@ -1,11 +1,11 @@
 import {Statement} from "./_statement";
-import {verNot, str, seq, per, opt, plus, IRunnable} from "../combi";
+import {verNot, str, seq, per, opt, plus, IStatementRunnable} from "../combi";
 import {Target, Field} from "../expressions";
 import {Version} from "../../version";
 
 export class Get extends Statement {
 
-  public getMatcher(): IRunnable {
+  public getMatcher(): IStatementRunnable {
     const fields = seq(str("FIELDS"), plus(new Field()));
 
     const options = per(str("LATE"), fields);

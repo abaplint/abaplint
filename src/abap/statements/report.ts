@@ -1,12 +1,12 @@
 import {Statement} from "./_statement";
-import {verNot, str, seq, opt, per, alt, IRunnable, tok} from "../combi";
+import {verNot, str, seq, opt, per, alt, IStatementRunnable, tok} from "../combi";
 import {Integer, MessageClass, NamespaceSimpleName, Field} from "../expressions";
 import {Version} from "../../version";
 import {ParenLeft, ParenRightW, ParenRight} from "../tokens";
 
 export class Report extends Statement {
 
-  public getMatcher(): IRunnable {
+  public getMatcher(): IStatementRunnable {
     const more = seq(tok(ParenLeft), new Integer(), alt(tok(ParenRightW), tok(ParenRight)));
     const heading = str("NO STANDARD PAGE HEADING");
     const size = seq(str("LINE-SIZE"), new Integer());

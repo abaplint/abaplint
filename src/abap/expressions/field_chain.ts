@@ -1,8 +1,8 @@
-import {seq, opt, optPrio, alt, str, plus, star, Expression, IRunnable} from "../combi";
+import {seq, opt, optPrio, alt, str, plus, star, Expression, IStatementRunnable} from "../combi";
 import {Field, FieldSymbol, TableExpression, ArrowOrDash, FieldAll, FieldOffset, FieldLength} from "./";
 
 export class FieldChain extends Expression {
-  public getRunnable(): IRunnable {
+  public getRunnable(): IStatementRunnable {
 
     const chain = seq(alt(new Field(), new FieldSymbol()),
                       optPrio(plus(new TableExpression())),

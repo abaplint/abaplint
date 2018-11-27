@@ -1,10 +1,10 @@
 import {Statement} from "./_statement";
-import {str, verNot, IRunnable} from "../combi";
+import {str, verNot, IStatementRunnable} from "../combi";
 import {Version} from "../../version";
 
 export class EndExec extends Statement {
 
-  public getMatcher(): IRunnable {
+  public getMatcher(): IStatementRunnable {
     const ret = str("ENDEXEC");
 
     return verNot(Version.Cloud, ret);

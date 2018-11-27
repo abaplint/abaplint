@@ -1,11 +1,11 @@
 import {Statement} from "./_statement";
-import {verNot, str, seq, alt, opt, per, plus, IRunnable} from "../combi";
+import {verNot, str, seq, alt, opt, per, plus, IStatementRunnable} from "../combi";
 import {Source} from "../expressions";
 import {Version} from "../../version";
 
 export class ModifyLine extends Statement {
 
-  public getMatcher(): IRunnable {
+  public getMatcher(): IStatementRunnable {
 
     const form = seq(alt(str("INVERSE"), str("INPUT")),
                      str("="),

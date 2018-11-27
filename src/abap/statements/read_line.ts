@@ -1,11 +1,11 @@
 import {Statement} from "./_statement";
-import {verNot, str, seq, per, opt, alt, plus, IRunnable} from "../combi";
+import {verNot, str, seq, per, opt, alt, plus, IStatementRunnable} from "../combi";
 import {Target, Source} from "../expressions";
 import {Version} from "../../version";
 
 export class ReadLine extends Statement {
 
-  public getMatcher(): IRunnable {
+  public getMatcher(): IStatementRunnable {
     const val = seq(str("LINE VALUE INTO"),
                     new Target());
 

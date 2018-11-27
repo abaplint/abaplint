@@ -1,12 +1,12 @@
 import {Statement} from "./_statement";
-import {str, seq, alt, opt, tok, IRunnable} from "../combi";
+import {str, seq, alt, opt, tok, IStatementRunnable} from "../combi";
 import {Arrow, ParenLeftW} from "../tokens/";
 import {Source, MethodName, Dynamic, FieldChain, ParameterListS, MethodParameters, MethodCallChain} from "../expressions";
 
 // method call
 export class Call extends Statement {
 
-  public getMatcher(): IRunnable {
+  public getMatcher(): IStatementRunnable {
     const mname = alt(new MethodName(), new Dynamic());
     const cname = alt(new FieldChain(), new MethodCallChain(), new Dynamic());
 

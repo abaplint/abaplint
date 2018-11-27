@@ -1,11 +1,11 @@
 import {Statement} from "./_statement";
-import {verNot, str, seq, opt, per, IRunnable} from "../combi";
+import {verNot, str, seq, opt, per, IStatementRunnable} from "../combi";
 import {Target} from "../expressions";
 import {Version} from "../../version";
 
 export class GetDataset extends Statement {
 
-  public getMatcher(): IRunnable {
+  public getMatcher(): IStatementRunnable {
     const position = seq(str("POSITION"), new Target());
     const attr = seq(str("ATTRIBUTES"), new Target());
 

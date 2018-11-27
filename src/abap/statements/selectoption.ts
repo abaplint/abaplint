@@ -1,11 +1,11 @@
 import {Statement} from "./_statement";
-import {verNot, str, seq, opt, alt, per, IRunnable} from "../combi";
+import {verNot, str, seq, opt, alt, per, IStatementRunnable} from "../combi";
 import {Source, FieldChain, Constant, Field, Modif, FieldSub, Dynamic} from "../expressions";
 import {Version} from "../../version";
 
 export class SelectOption extends Statement {
 
-  public getMatcher(): IRunnable {
+  public getMatcher(): IStatementRunnable {
     const sourc = alt(new Constant(), new FieldChain());
 
     const to = seq(str("TO"), sourc);

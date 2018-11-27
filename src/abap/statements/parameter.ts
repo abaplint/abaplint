@@ -1,11 +1,11 @@
 import {Statement} from "./_statement";
-import {verNot, str, seq, opt, alt, per, regex as reg, IRunnable} from "../combi";
+import {verNot, str, seq, opt, alt, per, regex as reg, IStatementRunnable} from "../combi";
 import {Source, Constant, FieldChain, Dynamic, Field, FieldLength, FieldSub, RadioGroupName, Modif} from "../expressions";
 import {Version} from "../../version";
 
 export class Parameter extends Statement {
 
-  public getMatcher(): IRunnable {
+  public getMatcher(): IStatementRunnable {
     const para = alt(str("PARAMETER"), str("PARAMETERS"));
     const def = seq(str("DEFAULT"), alt(new Constant(), new FieldChain()));
     const radio = seq(str("RADIOBUTTON GROUP"), new RadioGroupName());

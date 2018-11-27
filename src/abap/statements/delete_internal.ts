@@ -1,11 +1,11 @@
 import {Statement} from "./_statement";
-import {str, seq, alt, opt, per, plus, IRunnable} from "../combi";
+import {str, seq, alt, opt, per, plus, IStatementRunnable} from "../combi";
 import {FieldSymbol} from "../expressions";
 import {Target, Source, Dynamic, Compare, Cond, SimpleName, Field, FieldSub} from "../expressions";
 
 export class DeleteInternal extends Statement {
 
-  public getMatcher(): IRunnable {
+  public getMatcher(): IStatementRunnable {
 // todo, is READ and DELETE similar? something can be reused?
     const index = seq(str("INDEX"), new Source());
 

@@ -1,10 +1,10 @@
 import {Statement} from "./_statement";
-import {str, opt, seq, per, plus, IRunnable} from "../combi";
+import {str, opt, seq, per, plus, IStatementRunnable} from "../combi";
 import {Target, Source} from "../expressions";
 
 export class Do extends Statement {
 
-  public getMatcher(): IRunnable {
+  public getMatcher(): IStatementRunnable {
     const range = seq(str("RANGE"), new Source());
 
     const vary = seq(str("VARYING"),

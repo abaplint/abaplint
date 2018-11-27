@@ -1,10 +1,10 @@
 import {Statement} from "./_statement";
-import {str, seq, alt, opt, IRunnable} from "../combi";
+import {str, seq, alt, opt, IStatementRunnable} from "../combi";
 import {Source, DatabaseTable, Dynamic, SQLSource} from "../expressions";
 
 export class InsertDatabase extends Statement {
 
-  public getMatcher(): IRunnable {
+  public getMatcher(): IStatementRunnable {
     const target = alt(new DatabaseTable(), new Dynamic());
 
     const client = str("CLIENT SPECIFIED");

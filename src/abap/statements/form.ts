@@ -1,12 +1,12 @@
 import {Statement} from "./_statement";
-import {verNot, str, seq, alt, opt, tok, altPrio, plus, IRunnable} from "../combi";
+import {verNot, str, seq, alt, opt, tok, altPrio, plus, IStatementRunnable} from "../combi";
 import {ParenLeft, ParenRight, ParenRightW} from "../tokens/";
 import {ClassName, SimpleName, NamespaceSimpleName, FormParam, FormName} from "../expressions";
 import {Version} from "../../version";
 
 export class Form extends Statement {
 
-  public getMatcher(): IRunnable {
+  public getMatcher(): IStatementRunnable {
 
     const resume = seq(str("RESUMABLE"),
                        tok(ParenLeft),

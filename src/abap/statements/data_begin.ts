@@ -1,10 +1,10 @@
 import {Statement} from "./_statement";
-import {str, seq, opt, IRunnable} from "../combi";
+import {str, seq, opt, IStatementRunnable} from "../combi";
 import {Integer, NamespaceSimpleName} from "../expressions";
 
 export class DataBegin extends Statement {
 
-  public getMatcher(): IRunnable {
+  public getMatcher(): IStatementRunnable {
     const occurs = seq(str("OCCURS"), new Integer());
 
     const structure = seq(str("BEGIN OF"),

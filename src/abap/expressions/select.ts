@@ -1,11 +1,11 @@
-import {seq, per, opt, alt, tok, str, star, plus, Expression, IRunnable} from "../combi";
+import {seq, per, opt, alt, tok, str, star, plus, Expression, IStatementRunnable} from "../combi";
 import {WParenLeftW, WParenRightW, WParenLeft} from "../tokens/";
 import {Field, DatabaseTable, Dynamic, SQLCond, SQLJoin, SQLCDSParameters, SQLSource} from "./";
 import {SQLFieldList} from "./sql_field_list";
 import {SQLTarget} from "./sql_target";
 
 export class Select extends Expression {
-  public getRunnable(): IRunnable {
+  public getRunnable(): IStatementRunnable {
 
     const aas = seq(str("AS"), new Field());
 

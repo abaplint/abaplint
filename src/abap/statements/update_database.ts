@@ -1,10 +1,10 @@
 import {Statement} from "./_statement";
-import {str, seq, opt, alt, IRunnable, star} from "../combi";
+import {str, seq, opt, alt, IStatementRunnable, star} from "../combi";
 import {SQLSource, DatabaseTable, Dynamic, Field, SQLCond} from "../expressions";
 
 export class UpdateDatabase extends Statement {
 
-  public getMatcher(): IRunnable {
+  public getMatcher(): IStatementRunnable {
     const target = alt(new DatabaseTable(), new Dynamic());
 
     const param = seq(new Field(), str("="), new SQLSource());

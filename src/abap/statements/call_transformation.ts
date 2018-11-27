@@ -1,10 +1,10 @@
 import {Statement} from "./_statement";
-import {str, seq, alt, per, plus, IRunnable} from "../combi";
+import {str, seq, alt, per, plus, IStatementRunnable} from "../combi";
 import {Target, Field, Source, Dynamic} from "../expressions";
 
 export class CallTransformation extends Statement {
 
-  public getMatcher(): IRunnable {
+  public getMatcher(): IStatementRunnable {
     const field = seq(new Field(), str("="), new Source());
 
     const options = seq(str("OPTIONS"), plus(field));

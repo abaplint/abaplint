@@ -1,10 +1,10 @@
 import {Statement} from "./_statement";
-import {str, seq, opt, alt, per, plus, IRunnable} from "../combi";
+import {str, seq, opt, alt, per, plus, IStatementRunnable} from "../combi";
 import {ClassName, SuperClassName} from "../expressions";
 
 export class ClassDefinition extends Statement {
 
-  public getMatcher(): IRunnable {
+  public getMatcher(): IStatementRunnable {
     const create = seq(str("CREATE"), alt(str("PUBLIC"), str("PROTECTED"), str("PRIVATE")));
 
     const level = alt(str("CRITICAL"), str("HARMLESS"), str("DANGEROUS"));

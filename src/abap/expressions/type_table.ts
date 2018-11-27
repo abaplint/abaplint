@@ -1,9 +1,9 @@
-import {seq, opt, alt, str, ver, star, per, Expression, IRunnable} from "../combi";
+import {seq, opt, alt, str, ver, star, per, Expression, IStatementRunnable} from "../combi";
 import {Constant, FieldSub, TypeName, Integer} from "./";
 import {Version} from "../../version";
 
 export class TypeTable extends Expression {
-  public getRunnable(): IRunnable {
+  public getRunnable(): IStatementRunnable {
     const likeType = alt(str("LIKE"), str("TYPE"));
     const header = str("WITH HEADER LINE");
     const initial = seq(str("INITIAL SIZE"), new Constant());

@@ -1,12 +1,12 @@
 import {Statement} from "./_statement";
-import {verNot, str, seq, opt, tok, alt, regex as reg, optPrio, IRunnable} from "../combi";
+import {verNot, str, seq, opt, tok, alt, regex as reg, optPrio, IStatementRunnable} from "../combi";
 import {ParenLeft, ParenRight, WParenLeft, ParenRightW} from "../tokens/";
 import {Dynamic} from "../expressions";
 import {Version} from "../../version";
 
 export class Uline extends Statement {
 
-  public getMatcher(): IRunnable {
+  public getMatcher(): IStatementRunnable {
     const right = alt(tok(ParenRight), tok(ParenRightW));
 
     // todo, reuse the AT thing in ULINE and WRITE?

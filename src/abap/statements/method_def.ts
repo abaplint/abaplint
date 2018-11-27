@@ -1,12 +1,12 @@
 import {Version} from "../../version";
 import {Statement} from "./_statement";
-import {str, seq, alt, opt, tok, ver, regex as reg, plus, IRunnable} from "../combi";
+import {str, seq, alt, opt, tok, ver, regex as reg, plus, IStatementRunnable} from "../combi";
 import {ParenLeft, ParenRight, ParenRightW} from "../tokens/";
 import {Field, ClassName, MethodName, MethodDefExporting, MethodDefImporting, MethodDefChanging, MethodDefReturning} from "../expressions";
 
 export class MethodDef extends Statement {
 
-  public getMatcher(): IRunnable {
+  public getMatcher(): IStatementRunnable {
     const field = reg(/^!?(\/\w+\/)?\w+$/);
 
     const resumable = seq(str("RESUMABLE"),

@@ -1,11 +1,11 @@
 import {Statement} from "./_statement";
-import {verNot, str, seq, alt, opt, regex as reg, IRunnable} from "../combi";
+import {verNot, str, seq, alt, opt, regex as reg, IStatementRunnable} from "../combi";
 import {FieldSub, Field} from "../expressions";
 import {Version} from "../../version";
 
 export class AtSelectionScreen extends Statement {
 
-  public getMatcher(): IRunnable {
+  public getMatcher(): IStatementRunnable {
     const output = str("OUTPUT");
 
     const value = seq(str("ON VALUE-REQUEST FOR"), new FieldSub());

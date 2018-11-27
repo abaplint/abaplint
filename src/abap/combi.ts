@@ -74,8 +74,7 @@ export class Result {
   }
 }
 
-// todo, rename to IStatementRunnable ?
-export interface IRunnable {
+export interface IStatementRunnable {
   run(r: Array<Result>): Array<Result>;
   railroad(): string;
   toStr(): string;
@@ -85,7 +84,7 @@ export interface IRunnable {
   first(): string;
 }
 
-class Regex implements IRunnable {
+class Regex implements IStatementRunnable {
 
   private regexp: RegExp;
 
@@ -127,7 +126,7 @@ class Regex implements IRunnable {
   }
 }
 
-class Word implements IRunnable {
+class Word implements IStatementRunnable {
 
   private s: string;
 
@@ -179,7 +178,7 @@ function functionName(fun: any) {
   return (fun + "").match(/\w+/g)[1];
 }
 
-class Token implements IRunnable {
+class Token implements IStatementRunnable {
 
   private s: String;
 
@@ -229,12 +228,12 @@ class Token implements IRunnable {
   }
 }
 
-class Vers implements IRunnable {
+class Vers implements IStatementRunnable {
 
   private version: Version;
-  private runnable: IRunnable;
+  private runnable: IStatementRunnable;
 
-  constructor(version: Version, runnable: IRunnable) {
+  constructor(version: Version, runnable: IStatementRunnable) {
     this.version = version;
     this.runnable = runnable;
   }
@@ -272,12 +271,12 @@ class Vers implements IRunnable {
   }
 }
 
-class VersNot implements IRunnable {
+class VersNot implements IStatementRunnable {
 
   private version: Version;
-  private runnable: IRunnable;
+  private runnable: IStatementRunnable;
 
-  constructor(version: Version, runnable: IRunnable) {
+  constructor(version: Version, runnable: IStatementRunnable) {
     this.version = version;
     this.runnable = runnable;
   }
@@ -315,11 +314,11 @@ class VersNot implements IRunnable {
   }
 }
 
-class OptionalPriority implements IRunnable {
+class OptionalPriority implements IStatementRunnable {
 
-  private optional: IRunnable;
+  private optional: IStatementRunnable;
 
-  constructor(optional: IRunnable) {
+  constructor(optional: IStatementRunnable) {
     this.optional = optional;
   }
 
@@ -370,11 +369,11 @@ class OptionalPriority implements IRunnable {
   }
 }
 
-class Optional implements IRunnable {
+class Optional implements IStatementRunnable {
 
-  private optional: IRunnable;
+  private optional: IStatementRunnable;
 
-  constructor(optional: IRunnable) {
+  constructor(optional: IStatementRunnable) {
     this.optional = optional;
   }
 
@@ -411,11 +410,11 @@ class Optional implements IRunnable {
   }
 }
 
-class Star implements IRunnable {
+class Star implements IStatementRunnable {
 
-  private sta: IRunnable;
+  private sta: IStatementRunnable;
 
-  constructor(sta: IRunnable) {
+  constructor(sta: IStatementRunnable) {
     this.sta = sta;
   }
 
@@ -459,11 +458,11 @@ class Star implements IRunnable {
   }
 }
 
-class Plus implements IRunnable {
+class Plus implements IStatementRunnable {
 
-  private plu: IRunnable;
+  private plu: IStatementRunnable;
 
-  constructor(plu: IRunnable) {
+  constructor(plu: IStatementRunnable) {
     this.plu = plu;
   }
 
@@ -492,11 +491,11 @@ class Plus implements IRunnable {
   }
 }
 
-class Sequence implements IRunnable {
-  private list: Array<IRunnable>;
+class Sequence implements IStatementRunnable {
+  private list: Array<IStatementRunnable>;
   private stack: boolean;
 
-  constructor(list: IRunnable[], stack = false) {
+  constructor(list: IStatementRunnable[], stack = false) {
     if (list.length < 2) {
       throw new Error("Sequence, length error");
     }
@@ -556,10 +555,10 @@ class Sequence implements IRunnable {
   }
 }
 
-class WordSequence implements IRunnable {
+class WordSequence implements IStatementRunnable {
 
   private stri: String;
-  private words: Array<IRunnable> = [];
+  private words: Array<IStatementRunnable> = [];
 
   constructor(stri: String) {
     this.stri = stri;
@@ -599,7 +598,7 @@ class WordSequence implements IRunnable {
   }
 }
 
-export abstract class Expression implements IRunnable {
+export abstract class Expression implements IStatementRunnable {
   public run(r: Array<Result>): Array<Result> {
     let results: Array<Result> = [];
 
@@ -633,7 +632,7 @@ export abstract class Expression implements IRunnable {
     return results;
   }
 
-  public abstract getRunnable(): IRunnable;
+  public abstract getRunnable(): IStatementRunnable;
 
   public listKeywords(): string[] {
 // do not recurse, all Expressions are evaluated only on first level
@@ -661,10 +660,10 @@ export abstract class Expression implements IRunnable {
   }
 }
 
-class Permutation implements IRunnable {
-  private list: Array<IRunnable>;
+class Permutation implements IStatementRunnable {
+  private list: Array<IStatementRunnable>;
 
-  constructor(list: IRunnable[]) {
+  constructor(list: IStatementRunnable[]) {
     if (list.length < 2) {
       throw new Error("Permutation, length error");
     }
@@ -719,10 +718,10 @@ class Permutation implements IRunnable {
   }
 }
 
-class Alternative implements IRunnable {
-  private list: Array<IRunnable>;
+class Alternative implements IStatementRunnable {
+  private list: Array<IStatementRunnable>;
 
-  constructor(list: IRunnable[]) {
+  constructor(list: IStatementRunnable[]) {
     if (list.length < 2) {
       throw new Error("Alternative, length error");
     }
@@ -771,10 +770,10 @@ class Alternative implements IRunnable {
 }
 
 // prioritized alternative, skip others if match found
-class AlternativePriority implements IRunnable {
-  private list: Array<IRunnable>;
+class AlternativePriority implements IStatementRunnable {
+  private list: Array<IStatementRunnable>;
 
-  constructor(list: IRunnable[]) {
+  constructor(list: IStatementRunnable[]) {
     if (list.length < 2) {
       throw new Error("Alternative, length error");
     }
@@ -833,7 +832,7 @@ export class Combi {
 
   private static ver: Version;
 
-  public static railroad(runnable: IRunnable, complex = false): string {
+  public static railroad(runnable: IStatementRunnable, complex = false): string {
 // todo, move method to graph.js?
     let type = "Railroad.Diagram(";
     if (complex === true) {
@@ -847,7 +846,7 @@ export class Combi {
     return result;
   }
 
-  public static listKeywords(runnable: IRunnable): string[] {
+  public static listKeywords(runnable: IStatementRunnable): string[] {
 // todo, move these walkers of the syntax tree to some abstraction?
     let res = runnable.listKeywords();
 // remove duplicates
@@ -856,7 +855,7 @@ export class Combi {
   }
 
 // assumption: no pgragmas supplied in tokens input
-  public static run(runnable: IRunnable, tokens: Array<Tokens_Token>, version = Version.v750): INode[] | undefined {
+  public static run(runnable: IStatementRunnable, tokens: Array<Tokens_Token>, version = Version.v750): INode[] | undefined {
     this.ver = version;
 
     const input = new Result(tokens);
@@ -879,49 +878,49 @@ export class Combi {
 
 // -----------------------------------------------------------------------------
 
-export function str(s: string): IRunnable {
+export function str(s: string): IStatementRunnable {
   if (/[ -]/.test(s) === false) {
     return new Word(s);
   } else {
     return new WordSequence(s);
   }
 }
-export function seq(first: IRunnable, ...rest: IRunnable[]): IRunnable {
+export function seq(first: IStatementRunnable, ...rest: IStatementRunnable[]): IStatementRunnable {
   return new Sequence([first].concat(rest));
 }
-export function seqs(first: IRunnable, ...rest: IRunnable[]): IRunnable {
+export function seqs(first: IStatementRunnable, ...rest: IStatementRunnable[]): IStatementRunnable {
   return new Sequence([first].concat(rest), true);
 }
-export function alt(first: IRunnable, ...rest: IRunnable[]): IRunnable {
+export function alt(first: IStatementRunnable, ...rest: IStatementRunnable[]): IStatementRunnable {
   return new Alternative([first].concat(rest));
 }
-export function altPrio(first: IRunnable, ...rest: IRunnable[]): IRunnable {
+export function altPrio(first: IStatementRunnable, ...rest: IStatementRunnable[]): IStatementRunnable {
   return new AlternativePriority([first].concat(rest));
 }
-export function per(first: IRunnable, ...rest: IRunnable[]): IRunnable {
+export function per(first: IStatementRunnable, ...rest: IStatementRunnable[]): IStatementRunnable {
   return new Permutation([first].concat(rest));
 }
-export function opt(first: IRunnable): IRunnable {
+export function opt(first: IStatementRunnable): IStatementRunnable {
   return new Optional(first);
 }
-export function optPrio(first: IRunnable): IRunnable {
+export function optPrio(first: IStatementRunnable): IStatementRunnable {
   return new OptionalPriority(first);
 }
-export function tok(t: new (p: Position, s: string) => any): IRunnable {
+export function tok(t: new (p: Position, s: string) => any): IStatementRunnable {
   return new Token(functionName(t));
 }
-export function star(first: IRunnable): IRunnable {
+export function star(first: IStatementRunnable): IStatementRunnable {
   return new Star(first);
 }
-export function regex(r: RegExp): IRunnable {
+export function regex(r: RegExp): IStatementRunnable {
   return new Regex(r);
 }
-export function plus(first: IRunnable): IRunnable {
+export function plus(first: IStatementRunnable): IStatementRunnable {
   return new Plus(first);
 }
-export function ver(version: Version, first: IRunnable): IRunnable {
+export function ver(version: Version, first: IStatementRunnable): IStatementRunnable {
   return new Vers(version, first);
 }
-export function verNot(version: Version, first: IRunnable): IRunnable {
+export function verNot(version: Version, first: IStatementRunnable): IStatementRunnable {
   return new VersNot(version, first);
 }

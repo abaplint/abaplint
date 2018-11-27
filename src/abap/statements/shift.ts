@@ -1,10 +1,10 @@
 import {Statement} from "./_statement";
-import {str, seq, alt, opt, per, IRunnable} from "../combi";
+import {str, seq, alt, opt, per, IStatementRunnable} from "../combi";
 import {Target, Source} from "../expressions";
 
 export class Shift extends Statement {
 
-  public getMatcher(): IRunnable {
+  public getMatcher(): IStatementRunnable {
     const deleting = seq(str("DELETING"), alt(str("LEADING"), str("TRAILING")), new Source());
     const up = seq(str("UP TO"), new Source());
     const mode = seq(str("IN"), alt(str("CHARACTER"), str("BYTE")), str("MODE"));

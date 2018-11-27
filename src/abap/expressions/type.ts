@@ -1,8 +1,8 @@
-import {seq, opt, alt, str, Expression, IRunnable} from "../combi";
+import {seq, opt, alt, str, Expression, IStatementRunnable} from "../combi";
 import {Constant, FieldChain, TableBody} from "./";
 
 export class Type extends Expression {
-  public getRunnable(): IRunnable {
+  public getRunnable(): IStatementRunnable {
     const likeType = alt(str("LIKE"), str("TYPE"));
     const def = seq(str("DEFAULT"), alt(new Constant(), new FieldChain()));
 

@@ -1,12 +1,12 @@
 import {Statement} from "./_statement";
-import {verNot, str, seq, alt, opt, per, regex as reg, tok, IRunnable} from "../combi";
+import {verNot, str, seq, alt, opt, per, regex as reg, tok, IStatementRunnable} from "../combi";
 import {ParenLeft, WParenLeft, ParenRightW, ParenRight} from "../tokens";
 import {Integer, Source, Field, FieldSub, Modif, Constant} from "../expressions";
 import {Version} from "../../version";
 
 export class SelectionScreen extends Statement {
 
-  public getMatcher(): IRunnable {
+  public getMatcher(): IStatementRunnable {
     const blockName = new FieldSub();
 
     const beginBlock = seq(str("BEGIN OF BLOCK"),

@@ -1,10 +1,10 @@
 import {Statement} from "./_statement";
-import {str, seq, alt, IRunnable} from "../combi";
+import {str, seq, alt, IStatementRunnable} from "../combi";
 import {Target, Source} from "../expressions";
 
 export class Translate extends Statement {
 
-  public getMatcher(): IRunnable {
+  public getMatcher(): IStatementRunnable {
     const cas = seq(str("TO"),
                     alt(str("UPPER"), str("LOWER")),
                     str("CASE"));

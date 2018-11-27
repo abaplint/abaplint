@@ -1,11 +1,11 @@
 import {Statement} from "./_statement";
-import {verNot, str, seq, opt, alt, per, IRunnable} from "../combi";
+import {verNot, str, seq, opt, alt, per, IStatementRunnable} from "../combi";
 import {Target, Source} from "../expressions";
 import {Version} from "../../version";
 
 export class Describe extends Statement {
 
-  public getMatcher(): IRunnable {
+  public getMatcher(): IStatementRunnable {
     const tlines = seq(str("LINES"), new Target());
     const kind = seq(str("KIND"), new Target());
     const occurs = seq(str("OCCURS"), new Target());

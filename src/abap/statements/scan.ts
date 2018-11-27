@@ -1,11 +1,11 @@
 import {Statement} from "./_statement";
-import {verNot, str, seq, per, IRunnable} from "../combi";
+import {verNot, str, seq, per, IStatementRunnable} from "../combi";
 import {Target, Source} from "../expressions";
 import {Version} from "../../version";
 
 export class Scan extends Statement {
 
-  public getMatcher(): IRunnable {
+  public getMatcher(): IStatementRunnable {
     const tokens = seq(str("TOKENS INTO"), new Target());
     const word = seq(str("WORD INTO"), new Target());
     const line = seq(str("LINE INTO"), new Target());

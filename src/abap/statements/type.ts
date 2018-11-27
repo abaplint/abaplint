@@ -1,10 +1,10 @@
 import {Statement} from "./_statement";
-import {str, seq, alt, per, opt, IRunnable} from "../combi";
+import {str, seq, alt, per, opt, IStatementRunnable} from "../combi";
 import {NamespaceSimpleName, FieldLength, Type as eType, TypeTable, Decimals, Length} from "../expressions";
 
 export class Type extends Statement {
 
-  public getMatcher(): IRunnable {
+  public getMatcher(): IStatementRunnable {
     const simple = per(new eType(), new Decimals(), new Length());
 
     const def = seq(new NamespaceSimpleName(),

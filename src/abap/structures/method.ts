@@ -8,7 +8,7 @@ export class Method extends Structure {
   public getMatcher(): IStructureRunnable {
     return beginEnd(sta(Statements.Method),
                     star(sub(new Structures.Normal())),
-                    sta(Statements.Endmethod));
+                    sta(Statements.EndMethod));
   }
 
 }

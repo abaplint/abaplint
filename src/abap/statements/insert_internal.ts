@@ -1,10 +1,10 @@
 import {Statement} from "./_statement";
-import {str, seq, alt, opt, per, IRunnable} from "../combi";
+import {str, seq, alt, opt, per, IStatementRunnable} from "../combi";
 import {FSTarget, Target, Source, Dynamic} from "../expressions";
 
 export class InsertInternal extends Statement {
 
-  public getMatcher(): IRunnable {
+  public getMatcher(): IStatementRunnable {
     const target = alt(new Source(), new Dynamic());
     const assigning = seq(str("ASSIGNING"), new FSTarget());
     const ref = seq(str("REFERENCE INTO"), new Target());

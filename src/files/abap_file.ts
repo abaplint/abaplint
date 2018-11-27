@@ -4,7 +4,6 @@ import {AbstractFile} from "./_abstract_file";
 import {IFile} from "./_ifile";
 import {StructureNode, StatementNode} from "../abap/nodes/";
 
-// todo: rename to ABAPFile
 export class ABAPFile extends AbstractFile {
   // tokens vs statements: pragmas are part of tokens but not in statements
   // todo: need some better way of handling pragmas

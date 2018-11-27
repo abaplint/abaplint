@@ -1,10 +1,10 @@
-import {seq, opt, ver, tok, plus, alt, str, Expression, IRunnable} from "../combi";
+import {seq, opt, ver, tok, plus, alt, str, Expression, IStatementRunnable} from "../combi";
 import {FieldSub, Constant, Source, MethodCallChain} from "./";
 import {WParenLeft, ParenRightW, ParenRight} from "../tokens/";
 import {Version} from "../../version";
 
 export class Compare extends Expression {
-  public getRunnable(): IRunnable {
+  public getRunnable(): IStatementRunnable {
     const val = alt(new FieldSub(), new Constant());
 
     const list = seq(tok(WParenLeft),

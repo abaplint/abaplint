@@ -1,8 +1,8 @@
-import {seq, opt, str, Expression, IRunnable} from "../combi";
+import {seq, opt, str, Expression, IStatementRunnable} from "../combi";
 import {ParameterListS, ParameterListT, ParameterListExceptions, ParameterT} from "./";
 
 export class MethodParameters extends Expression {
-  public getRunnable(): IRunnable {
+  public getRunnable(): IStatementRunnable {
     const exporting = seq(str("EXPORTING"), new ParameterListS());
     const importing = seq(str("IMPORTING"), new ParameterListT());
     const changing = seq(str("CHANGING"), new ParameterListT());

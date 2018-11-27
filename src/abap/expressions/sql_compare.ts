@@ -1,10 +1,10 @@
-import {seq, opt, tok, star, alt, optPrio, str, Expression, IRunnable} from "../combi";
+import {seq, opt, tok, star, alt, optPrio, str, Expression, IStatementRunnable} from "../combi";
 import {SQLFieldName, Dynamic, Select} from "./";
 import {WParenLeft, WParenLeftW} from "../tokens/";
 import {SQLSource} from "./sql_source";
 
 export class SQLCompare extends Expression {
-  public getRunnable(): IRunnable {
+  public getRunnable(): IStatementRunnable {
     const val = new SQLSource();
 
     const list = seq(alt(tok(WParenLeft), tok(WParenLeftW)),

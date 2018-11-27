@@ -1,11 +1,11 @@
 import {Statement} from "./_statement";
-import {verNot, str, seq, per, IRunnable} from "../combi";
+import {verNot, str, seq, per, IStatementRunnable} from "../combi";
 import {Target, Source} from "../expressions";
 import {Version} from "../../version";
 
 export class ReadTextpool extends Statement {
 
-  public getMatcher(): IRunnable {
+  public getMatcher(): IStatementRunnable {
     const language = seq(str("LANGUAGE"), new Source());
     const into = seq(str("INTO"), new Target());
     const state = seq(str("STATE"), new Source());

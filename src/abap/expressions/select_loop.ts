@@ -1,4 +1,4 @@
-import {seq, per, opt, alt, tok, str, ver, star, plus, Expression, IRunnable} from "../combi";
+import {seq, per, opt, alt, tok, str, ver, star, plus, Expression, IStatementRunnable} from "../combi";
 import {WParenLeftW, WAt, WParenRightW, WParenLeft} from "../tokens/";
 import {Field, DatabaseTable, Dynamic, Target, Source, SQLCond, SQLJoin, SQLFieldName, SQLTarget, SQLAggregation} from "./";
 import {Version} from "../../version";
@@ -6,7 +6,7 @@ import {SQLSource} from "./sql_source";
 import {SQLCDSParameters} from "./sql_cds_parameters";
 
 export class SelectLoop extends Expression {
-  public getRunnable(): IRunnable {
+  public getRunnable(): IStatementRunnable {
 
     const aas = seq(str("AS"), new Field());
 

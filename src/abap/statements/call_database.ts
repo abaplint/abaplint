@@ -1,11 +1,11 @@
 import {Statement} from "./_statement";
-import {verNot, str, seq, opt, alt, IRunnable} from "../combi";
+import {verNot, str, seq, opt, alt, IStatementRunnable} from "../combi";
 import {Dynamic, Source, ParameterListS, ParameterListT} from "../expressions";
 import {Version} from "../../version";
 
 export class CallDatabase extends Statement {
 
-  public getMatcher(): IRunnable {
+  public getMatcher(): IStatementRunnable {
     const exporting = seq(str("EXPORTING"), new ParameterListS());
     const importing = seq(str("IMPORTING"), new ParameterListT());
     const expl = seq(opt(exporting), opt(importing));

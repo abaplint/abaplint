@@ -1,11 +1,11 @@
 import {Statement} from "./_statement";
-import {verNot, str, seq, opt, IRunnable} from "../combi";
+import {verNot, str, seq, opt, IStatementRunnable} from "../combi";
 import {Source, SimpleName, FieldSub} from "../expressions";
 import {Version} from "../../version";
 
 export class Ranges extends Statement {
 
-  public getMatcher(): IRunnable {
+  public getMatcher(): IStatementRunnable {
     const occurs = seq(str("OCCURS"), new Source());
 
     const ret = seq(str("RANGES"),

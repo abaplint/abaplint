@@ -1,11 +1,11 @@
 import {Statement} from "./_statement";
-import {verNot, str, seq, opt, alt, per, IRunnable} from "../combi";
+import {verNot, str, seq, opt, alt, per, IStatementRunnable} from "../combi";
 import {Constant, FieldSub, FormName, Source, FunctionParameters, FunctionName, FieldChain} from "../expressions";
 import {Version} from "../../version";
 
 export class CallFunction extends Statement {
 
-  public getMatcher(): IRunnable {
+  public getMatcher(): IStatementRunnable {
     const starting = seq(str("STARTING NEW TASK"),
                          alt(new Constant(), new FieldSub()));
     const update = str("IN UPDATE TASK");

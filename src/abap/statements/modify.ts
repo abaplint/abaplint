@@ -1,10 +1,10 @@
 import {Statement} from "./_statement";
-import {str, seq, opt, alt, per, plus, IRunnable} from "../combi";
+import {str, seq, opt, alt, per, plus, IStatementRunnable} from "../combi";
 import {FSTarget, Target, Source, Dynamic, Cond, FieldSub} from "../expressions";
 
 export class Modify extends Statement {
 
-  public getMatcher(): IRunnable {
+  public getMatcher(): IStatementRunnable {
     const index = seq(str("INDEX"), new Source());
     const from = seq(str("FROM"), opt(str("TABLE")), new Source());
     const transporting = seq(str("TRANSPORTING"),

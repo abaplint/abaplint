@@ -1,11 +1,11 @@
 import {Statement} from "./_statement";
-import {verNot, str, per, alt, seq, opt, IRunnable} from "../combi";
+import {verNot, str, per, alt, seq, opt, IStatementRunnable} from "../combi";
 import {Source} from "../expressions";
 import {Version} from "../../version";
 
 export class Format extends Statement {
 
-  public getMatcher(): IRunnable {
+  public getMatcher(): IStatementRunnable {
     const eq = seq(str("="), new Source());
     const value = alt(eq, new Source());
     const toggle = alt(str("ON"), str("OFF"));

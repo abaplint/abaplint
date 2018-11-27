@@ -1,9 +1,9 @@
 import {Statement} from "./_statement";
-import {str, IRunnable} from "../combi";
+import {str, IStatementRunnable} from "../combi";
 
 export class EndTestInjection extends Statement {
 
-  public getMatcher(): IRunnable {
+  public getMatcher(): IStatementRunnable {
     return str("END-TEST-INJECTION");
   }
 

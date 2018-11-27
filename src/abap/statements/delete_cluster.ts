@@ -1,12 +1,12 @@
 import {Statement} from "./_statement";
-import {verNot, str, seq, tok, opt, IRunnable} from "../combi";
+import {verNot, str, seq, tok, opt, IStatementRunnable} from "../combi";
 import {ParenLeft, ParenRightW} from "../tokens/";
 import {Source, SimpleName} from "../expressions";
 import {Version} from "../../version";
 
 export class DeleteCluster extends Statement {
 
-  public getMatcher(): IRunnable {
+  public getMatcher(): IStatementRunnable {
     const client = seq(str("CLIENT"), new Source());
 
     const ret = seq(str("DELETE FROM DATABASE"),

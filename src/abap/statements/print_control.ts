@@ -1,11 +1,11 @@
 import {Statement} from "./_statement";
-import {verNot, str, alt, seq, IRunnable} from "../combi";
+import {verNot, str, alt, seq, IStatementRunnable} from "../combi";
 import {Source} from "../expressions";
 import {Version} from "../../version";
 
 export class PrintControl extends Statement {
 
-  public getMatcher(): IRunnable {
+  public getMatcher(): IStatementRunnable {
     const index = seq(str("INDEX-LINE"), new Source());
     const func = seq(str("FUNCTION"), new Source());
 

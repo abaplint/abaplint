@@ -1,11 +1,11 @@
 import {Statement} from "./_statement";
-import {verNot, str, seq, opt, per, optPrio, IRunnable} from "../combi";
+import {verNot, str, seq, opt, per, optPrio, IStatementRunnable} from "../combi";
 import {Source, Field} from "../expressions";
 import {Version} from "../../version";
 
 export class Program extends Statement {
 
-  public getMatcher(): IRunnable {
+  public getMatcher(): IStatementRunnable {
     const message = seq(str("MESSAGE-ID"), new Source());
     const size = seq(str("LINE-SIZE"), new Source());
     const heading = str("NO STANDARD PAGE HEADING");

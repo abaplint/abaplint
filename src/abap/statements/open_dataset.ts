@@ -1,11 +1,11 @@
 import {Statement} from "./_statement";
-import {verNot, str, seq, alt, per, opt, IRunnable} from "../combi";
+import {verNot, str, seq, alt, per, opt, IStatementRunnable} from "../combi";
 import {Target, Source} from "../expressions";
 import {Version} from "../../version";
 
 export class OpenDataset extends Statement {
 
-  public getMatcher(): IRunnable {
+  public getMatcher(): IStatementRunnable {
     const mode = seq(str("IN"),
                      opt(str("LEGACY")),
                      alt(str("BINARY MODE"),

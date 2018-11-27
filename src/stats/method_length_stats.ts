@@ -35,7 +35,7 @@ export class MethodLengthStats {
           name = this.findName(stat);
           method = true;
           count = 0;
-        } else if (type instanceof Statements.Endmethod) {
+        } else if (type instanceof Statements.EndMethod) {
           if (pos) {
             res.push({name, count, file, pos});
           } else {

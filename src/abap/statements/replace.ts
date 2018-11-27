@@ -1,10 +1,10 @@
 import {Statement} from "./_statement";
-import {str, seq, alt, opt, per, IRunnable} from "../combi";
+import {str, seq, alt, opt, per, IStatementRunnable} from "../combi";
 import {Target, Source} from "../expressions";
 
 export class Replace extends Statement {
 
-  public getMatcher(): IRunnable {
+  public getMatcher(): IStatementRunnable {
     const length = seq(str("LENGTH"), new Source());
     const offset = seq(str("OFFSET"), new Source());
 

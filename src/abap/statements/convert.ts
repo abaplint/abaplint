@@ -1,10 +1,10 @@
 import {Statement} from "./_statement";
-import {str, seq, alt, per, IRunnable} from "../combi";
+import {str, seq, alt, per, IStatementRunnable} from "../combi";
 import {Target, Source} from "../expressions";
 
 export class Convert extends Statement {
 
-  public getMatcher(): IRunnable {
+  public getMatcher(): IStatementRunnable {
     const intoTime = seq(str("TIME"), new Target());
     const intoDate = seq(str("DATE"), new Target());
     const into = seq(str("INTO"), per(intoTime, intoDate));

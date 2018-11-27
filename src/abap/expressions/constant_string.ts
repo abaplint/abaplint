@@ -1,8 +1,8 @@
-import {seq, opt, tok, alt, regex as reg, Expression, IRunnable} from "../combi";
+import {seq, opt, tok, alt, regex as reg, Expression, IStatementRunnable} from "../combi";
 import {ParenLeft, ParenRightW, ParenRight} from "../tokens/";
 
 export class ConstantString extends Expression {
-  public getRunnable(): IRunnable {
+  public getRunnable(): IStatementRunnable {
     const text = seq(tok(ParenLeft), reg(/^\w{3}$/), alt(tok(ParenRightW), tok(ParenRight)));
     /*
     let constant = reg(/^('.*')|(`.*`)$/);

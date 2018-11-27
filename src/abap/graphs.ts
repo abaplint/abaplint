@@ -63,7 +63,7 @@ class Graph {
     return res;
   }
 
-  private static buildRunnable(name: string, type: string, runnable: Combi.IRunnable, complex: boolean): IData {
+  private static buildRunnable(name: string, type: string, runnable: Combi.IStatementRunnable, complex: boolean): IData {
     return {
       name: name,
       type: type,

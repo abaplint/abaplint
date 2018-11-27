@@ -1,10 +1,9 @@
 import {Statement} from "./_statement";
-import {str, IRunnable} from "../combi";
+import {str, IStatementRunnable} from "../combi";
 
-// todo, rename to EndMethod
-export class Endmethod extends Statement {
+export class EndMethod extends Statement {
 
-  public getMatcher(): IRunnable {
+  public getMatcher(): IStatementRunnable {
     return str("ENDMETHOD");
   }
 

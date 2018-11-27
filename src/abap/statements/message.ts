@@ -1,11 +1,11 @@
 import {Statement} from "./_statement";
-import {str, seq, opt, tok, per, IRunnable} from "../combi";
+import {str, seq, opt, tok, per, IStatementRunnable} from "../combi";
 import {ParenLeft} from "../tokens";
 import {Target, Source, Field, MessageClass} from "../expressions";
 
 export class Message extends Statement {
 
-  public getMatcher(): IRunnable {
+  public getMatcher(): IStatementRunnable {
     const like = seq(str("DISPLAY LIKE"), new Source());
     const type = seq(str("TYPE"), new Source());
     const id = seq(str("ID"), new Source());

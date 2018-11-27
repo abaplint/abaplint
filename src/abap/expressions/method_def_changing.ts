@@ -1,8 +1,8 @@
-import {str, opt, seq, plus, IRunnable, Expression} from "../combi";
+import {str, opt, seq, plus, IStatementRunnable, Expression} from "../combi";
 import {MethodParam} from ".";
 
 export class MethodDefChanging extends Expression  {
-  public getRunnable(): IRunnable {
+  public getRunnable(): IStatementRunnable {
     return seq(str("CHANGING"), plus(seq(new MethodParam(), opt(str("OPTIONAL")))));
   }
 }

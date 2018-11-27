@@ -1,10 +1,10 @@
 import {Statement} from "./_statement";
-import {str, seq, opt, alt, per, plus, IRunnable} from "../combi";
+import {str, seq, opt, alt, per, plus, IStatementRunnable} from "../combi";
 import {Target, Source} from "../expressions";
 
 export class Find extends Statement {
 
-  public getMatcher(): IRunnable {
+  public getMatcher(): IStatementRunnable {
     const options = per(str("IGNORING CASE"),
                         str("RESPECTING CASE"),
                         str("IN BYTE MODE"),

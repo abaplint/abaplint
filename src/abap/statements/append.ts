@@ -1,10 +1,10 @@
 import {Statement} from "./_statement";
-import {str, opt, alt, seq, IRunnable} from "../combi";
+import {str, opt, alt, seq, IStatementRunnable} from "../combi";
 import {FSTarget, Target, Field, Source} from "../expressions";
 
 export class Append extends Statement {
 
-  public getMatcher(): IRunnable {
+  public getMatcher(): IStatementRunnable {
     const assigning = seq(str("ASSIGNING"), new FSTarget());
     const reference = seq(str("REFERENCE INTO"), new Target());
     const sorted = seq(str("SORTED BY"), new Field());

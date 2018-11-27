@@ -1,10 +1,10 @@
 import {Statement} from "./_statement";
-import {str, seq, alt, per, opt, plus, optPrio, IRunnable} from "../combi";
+import {str, seq, alt, per, opt, plus, optPrio, IStatementRunnable} from "../combi";
 import {FieldSymbol, Target, Dynamic, FieldChain} from "../expressions";
 
 export class Sort extends Statement {
 
-  public getMatcher(): IRunnable {
+  public getMatcher(): IStatementRunnable {
     const order = alt(str("ASCENDING"), str("DESCENDING"));
 
     const sel = alt(new FieldChain(),

@@ -1,8 +1,8 @@
-import {alt, Expression, IRunnable} from "../combi";
+import {alt, Expression, IStatementRunnable} from "../combi";
 import {ConstantString, Integer} from "./";
 
 export class Constant extends Expression {
-  public getRunnable(): IRunnable {
+  public getRunnable(): IStatementRunnable {
     return alt(new ConstantString(), new Integer());
   }
 }

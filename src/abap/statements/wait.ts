@@ -1,11 +1,11 @@
 import {Statement} from "./_statement";
-import {verNot, str, seq, opt, alt, ver, IRunnable} from "../combi";
+import {verNot, str, seq, opt, alt, ver, IStatementRunnable} from "../combi";
 import {Version} from "../../version";
 import {Source, Cond} from "../expressions";
 
 export class Wait extends Statement {
 
-  public getMatcher(): IRunnable {
+  public getMatcher(): IStatementRunnable {
     const up = seq(str("UP TO"), new Source(), str("SECONDS"));
 
     const channels = seq(alt(str("MESSAGING"), ver(Version.v750, str("PUSH"))), str("CHANNELS"));

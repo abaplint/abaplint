@@ -1,10 +1,10 @@
 import {Statement} from "./_statement";
-import {str, seq, alt, opt, plus, IRunnable} from "../combi";
+import {str, seq, alt, opt, plus, IStatementRunnable} from "../combi";
 import {Target, Source, Dynamic, Field} from "../expressions";
 
 export class CreateData extends Statement {
 
-  public getMatcher(): IRunnable {
+  public getMatcher(): IStatementRunnable {
 // todo, similar to DATA or TYPES?
     const area = seq(str("AREA HANDLE"), new Source());
 

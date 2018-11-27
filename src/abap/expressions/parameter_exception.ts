@@ -1,8 +1,8 @@
-import {seq, opt, str, Expression, IRunnable} from "../combi";
+import {seq, opt, str, Expression, IStatementRunnable} from "../combi";
 import {Field, SimpleName, Target} from "./";
 
 export class ParameterException extends Expression {
-  public getRunnable(): IRunnable {
+  public getRunnable(): IStatementRunnable {
     return seq(new Field(),
                str("="),
 //               alt(new Constant, new FieldSub(), new FieldChain()),

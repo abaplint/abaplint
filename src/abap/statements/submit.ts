@@ -1,11 +1,11 @@
 import {Statement} from "./_statement";
-import {verNot, str, seq, opt, per, alt, plus, IRunnable} from "../combi";
+import {verNot, str, seq, opt, per, alt, plus, IStatementRunnable} from "../combi";
 import {Source, NamespaceSimpleName, Dynamic, Field} from "../expressions";
 import {Version} from "../../version";
 
 export class Submit extends Statement {
 
-  public getMatcher(): IRunnable {
+  public getMatcher(): IStatementRunnable {
     const sign = seq(str("SIGN"), new Source());
     const eq = alt(str("="), str("EQ"), str("IN"), str("NE"), str("CP"), str("GE"), str("LE"), str("INCL"));
     const compare = seq(eq, new Source());

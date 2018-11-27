@@ -1,9 +1,9 @@
-import {seq, opt, tok, alt, str, star, Expression, IRunnable} from "../combi";
+import {seq, opt, tok, alt, str, star, Expression, IStatementRunnable} from "../combi";
 import {WParenLeftW, WParenRightW, WParenRight} from "../tokens/";
 import {Compare} from "./";
 
 export class Cond extends Expression {
-  public getRunnable(): IRunnable {
+  public getRunnable(): IStatementRunnable {
     const operator = alt(str("AND"), str("OR"));
 
     const another = seq(opt(str("NOT")),

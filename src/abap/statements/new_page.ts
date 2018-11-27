@@ -1,11 +1,11 @@
 import {Statement} from "./_statement";
-import {verNot, str, seq, alt, per, opt, IRunnable} from "../combi";
+import {verNot, str, seq, alt, per, opt, IStatementRunnable} from "../combi";
 import {Source} from "../expressions";
 import {Version} from "../../version";
 
 export class NewPage extends Statement {
 
-  public getMatcher(): IRunnable {
+  public getMatcher(): IStatementRunnable {
     const line = seq(str("LINE-SIZE"), new Source());
     const print = seq(str("PRINT"), alt(str("OFF"), str("ON")));
     const parameters = seq(str("PARAMETERS"), new Source());

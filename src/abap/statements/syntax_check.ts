@@ -1,11 +1,11 @@
 import {Statement} from "./_statement";
-import {verNot, str, seq, alt, per, opt, plus, IRunnable} from "../combi";
+import {verNot, str, seq, alt, per, opt, plus, IStatementRunnable} from "../combi";
 import {Target, Source} from "../expressions";
 import {Version} from "../../version";
 
 export class SyntaxCheck extends Statement {
 
-  public getMatcher(): IRunnable {
+  public getMatcher(): IStatementRunnable {
     const program = seq(str("PROGRAM"), new Source());
     const offset = seq(str("OFFSET"), new Target());
     const frame = seq(str("FRAME ENTRY"), new Target());

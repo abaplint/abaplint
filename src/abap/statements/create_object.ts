@@ -1,10 +1,10 @@
 import {Statement} from "./_statement";
-import {str, seq, opt, alt, per, IRunnable} from "../combi";
+import {str, seq, opt, alt, per, IStatementRunnable} from "../combi";
 import {Target, ParameterListS, ParameterListExceptions, Source, ClassName, Dynamic} from "../expressions";
 
 export class CreateObject extends Statement {
 
-  public getMatcher(): IRunnable {
+  public getMatcher(): IStatementRunnable {
     const exporting = seq(str("EXPORTING"), new ParameterListS());
     const exceptions = seq(str("EXCEPTIONS"), new ParameterListExceptions());
     const table = seq(str("PARAMETER-TABLE"), new Source());

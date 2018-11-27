@@ -1,10 +1,10 @@
 import {Statement} from "./_statement";
-import {str, opt, seq, IRunnable} from "../combi";
+import {str, opt, seq, IStatementRunnable} from "../combi";
 import {NamespaceSimpleName} from "../expressions";
 
 export class TypeEnumBegin extends Statement {
 
-  public getMatcher(): IRunnable {
+  public getMatcher(): IStatementRunnable {
     const structure = seq(str("STRUCTURE"), new NamespaceSimpleName());
 
     const base = seq(str("BASE TYPE"), new NamespaceSimpleName());

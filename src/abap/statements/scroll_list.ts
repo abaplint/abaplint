@@ -1,11 +1,11 @@
 import {Statement} from "./_statement";
-import {verNot, str, seq, alt, per, IRunnable} from "../combi";
+import {verNot, str, seq, alt, per, IStatementRunnable} from "../combi";
 import {Source} from "../expressions";
 import {Version} from "../../version";
 
 export class ScrollList extends Statement {
 
-  public getMatcher(): IRunnable {
+  public getMatcher(): IStatementRunnable {
     const index = seq(str("INDEX"), new Source());
     const line = seq(str("LINE"), new Source());
     const column = seq(str("TO COLUMN"), new Source());

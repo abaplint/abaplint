@@ -1,11 +1,11 @@
 import {Statement} from "./_statement";
-import {verNot, str, seq, opt, per, IRunnable} from "../combi";
+import {verNot, str, seq, opt, per, IStatementRunnable} from "../combi";
 import {Source} from "../expressions";
 import {Version} from "../../version";
 
 export class EditorCall extends Statement {
 
-  public getMatcher(): IRunnable {
+  public getMatcher(): IStatementRunnable {
     const title = seq(str("TITLE"), new Source());
 
     const options = per(str("DISPLAY-MODE"), title);

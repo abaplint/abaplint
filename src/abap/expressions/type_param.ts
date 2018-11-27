@@ -1,8 +1,8 @@
-import {seq, opt, alt, str, Expression, IRunnable} from "../combi";
+import {seq, opt, alt, str, Expression, IStatementRunnable} from "../combi";
 import {Constant, FieldChain, TypeName} from "./";
 
 export class TypeParam extends Expression {
-  public getRunnable(): IRunnable {
+  public getRunnable(): IStatementRunnable {
     const def = seq(str("DEFAULT"), alt(new Constant(), new FieldChain()));
 
     const table = seq(alt(str("STANDARD"), str("HASHED"), str("INDEX"), str("SORTED"), str("ANY")),

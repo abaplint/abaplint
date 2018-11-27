@@ -1,11 +1,11 @@
 import {Statement} from "./_statement";
-import {verNot, str, seq, opt, IRunnable} from "../combi";
+import {verNot, str, seq, opt, IStatementRunnable} from "../combi";
 import {Field, FieldSub} from "../expressions";
 import {Version} from "../../version";
 
 export class EnhancementPoint extends Statement {
 
-  public getMatcher(): IRunnable {
+  public getMatcher(): IStatementRunnable {
     const ret = seq(str("ENHANCEMENT-POINT"),
                     new FieldSub(),
                     str("SPOTS"),

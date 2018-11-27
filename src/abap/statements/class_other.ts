@@ -1,10 +1,10 @@
 import {Statement} from "./_statement";
-import {str, seq, opt, IRunnable, alt, plus} from "../combi";
+import {str, seq, opt, IStatementRunnable, alt, plus} from "../combi";
 import {ClassName} from "../expressions";
 
 export class ClassOther extends Statement {
 
-  public getMatcher(): IRunnable {
+  public getMatcher(): IStatementRunnable {
 
     const def = seq(str("DEFERRED"),
                     opt(str("PUBLIC")));

@@ -1,11 +1,11 @@
 import {Statement} from "./_statement";
-import {verNot, str, seq, per, IRunnable, opt} from "../combi";
+import {verNot, str, seq, per, IStatementRunnable, opt} from "../combi";
 import {Target} from "../expressions";
 import {Version} from "../../version";
 
 export class GetCursor extends Statement {
 
-  public getMatcher(): IRunnable {
+  public getMatcher(): IStatementRunnable {
     const line = seq(str("LINE"), new Target());
     const field = seq(str("FIELD"), new Target());
     const offset = seq(str("OFFSET"), new Target());

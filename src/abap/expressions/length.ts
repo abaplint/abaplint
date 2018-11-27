@@ -1,8 +1,8 @@
-import {seq, str, Expression, IRunnable} from "../combi";
+import {seq, str, Expression, IStatementRunnable} from "../combi";
 import {Source} from "./";
 
 export class Length extends Expression {
-  public getRunnable(): IRunnable {
+  public getRunnable(): IStatementRunnable {
     const ret = seq(str("LENGTH"), new Source());
     return ret;
   }

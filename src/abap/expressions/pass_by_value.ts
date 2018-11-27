@@ -1,9 +1,9 @@
-import {seq, alt, str, tok, Expression, IRunnable} from "../combi";
+import {seq, alt, str, tok, Expression, IStatementRunnable} from "../combi";
 import {ParenLeft, ParenRight, ParenRightW} from "../tokens/";
 import {Field} from "./";
 
 export class PassByValue extends Expression {
-  public getRunnable(): IRunnable {
+  public getRunnable(): IStatementRunnable {
     const value = seq(str("VALUE"),
                       tok(ParenLeft),
                       new Field(),

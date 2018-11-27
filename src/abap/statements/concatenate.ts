@@ -1,10 +1,10 @@
 import {Statement} from "./_statement";
-import {str, opt, seq, alt, per, plus, IRunnable} from "../combi";
+import {str, opt, seq, alt, per, plus, IStatementRunnable} from "../combi";
 import {Target, Source} from "../expressions";
 
 export class Concatenate extends Statement {
 
-  public getMatcher(): IRunnable {
+  public getMatcher(): IStatementRunnable {
     const mode = seq(str("IN"),
                      alt(str("BYTE"), str("CHARACTER")),
                      str("MODE"));

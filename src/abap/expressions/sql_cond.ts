@@ -1,9 +1,9 @@
-import {str, alt, seq, optPrio, star, tok, Expression, IRunnable} from "../combi";
+import {str, alt, seq, optPrio, star, tok, Expression, IStatementRunnable} from "../combi";
 import {WParenLeftW, WParenRightW, WParenRight} from "../tokens/";
 import {SQLCompare} from "./";
 
 export class SQLCond extends Expression {
-  public getRunnable(): IRunnable {
+  public getRunnable(): IStatementRunnable {
     const operator = alt(str("AND"), str("OR"));
 
     const paren = seq(tok(WParenLeftW),

@@ -1,10 +1,10 @@
 import {Statement} from "./_statement";
-import {str, opt, seq, IRunnable} from "../combi";
+import {str, opt, seq, IStatementRunnable} from "../combi";
 import {NamespaceSimpleName} from "../expressions";
 
 export class TypeEnumEnd extends Statement {
 
-  public getMatcher(): IRunnable {
+  public getMatcher(): IStatementRunnable {
     const structure = seq(str("STRUCTURE"), new NamespaceSimpleName());
 
     const em = seq(str("ENUM"), new NamespaceSimpleName(), opt(structure));

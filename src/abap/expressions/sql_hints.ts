@@ -1,8 +1,8 @@
-import {seq, str, Expression, IRunnable} from "../combi";
+import {seq, str, Expression, IStatementRunnable} from "../combi";
 import {Constant} from "./constant";
 
 export class SQLHints extends Expression {
-  public getRunnable(): IRunnable {
+  public getRunnable(): IStatementRunnable {
     const ret = seq(str("%_HINTS"), str("ORACLE"), new Constant());
     return ret;
   }

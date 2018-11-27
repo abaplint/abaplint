@@ -1,9 +1,9 @@
-import {alt, seq, tok, str, Expression, IRunnable, opt} from "../combi";
+import {alt, seq, tok, str, Expression, IStatementRunnable, opt} from "../combi";
 import {ParenLeft, ParenLeftW} from "../tokens/";
 import {Field} from "./";
 
 export class SQLAggregation extends Expression {
-  public getRunnable(): IRunnable {
+  public getRunnable(): IStatementRunnable {
 
     const count = seq(str("COUNT"), alt(tok(ParenLeft), tok(ParenLeftW)), opt(str("DISTINCT")), alt(str("*"), new Field()), str(")"));
     const max = seq(str("MAX"), alt(tok(ParenLeft), tok(ParenLeftW)), new Field(), str(")"));

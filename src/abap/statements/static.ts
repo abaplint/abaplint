@@ -1,11 +1,11 @@
 import {Statement} from "./_statement";
-import {verNot, str, seq, opt, per, alt, IRunnable} from "../combi";
+import {verNot, str, seq, opt, per, alt, IStatementRunnable} from "../combi";
 import {Value, Type, FieldLength, NamespaceSimpleName, TypeTable, Length} from "../expressions";
 import {Version} from "../../version";
 
 export class Static extends Statement {
 
-  public getMatcher(): IRunnable {
+  public getMatcher(): IStatementRunnable {
     const p = opt(per(new Type(), new Value(), new Length()));
 
     const type = seq(opt(new FieldLength()), p);

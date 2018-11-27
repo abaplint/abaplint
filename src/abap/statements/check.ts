@@ -1,10 +1,10 @@
 import {Statement} from "./_statement";
-import {str, seq, IRunnable} from "../combi";
+import {str, seq, IStatementRunnable} from "../combi";
 import {Cond} from "../expressions";
 
 export class Check extends Statement {
 
-  public getMatcher(): IRunnable {
+  public getMatcher(): IStatementRunnable {
     const ret = seq(str("CHECK"), new Cond());
 
     return ret;
