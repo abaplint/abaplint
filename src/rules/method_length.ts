@@ -31,7 +31,7 @@ export class MethodLength implements IRule {
   }
 
   public run(obj: IObject, _reg: Registry): Issue[] {
-    const issues: Array<Issue> = [];
+    const issues: Issue[] = [];
     const stats = MethodLengthStats.run(obj);
 
     for (const s of stats) {

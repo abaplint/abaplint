@@ -8,7 +8,7 @@ import {StructureNode} from "./nodes/";
 
 export class StructureParser {
 
-  public static run(file: ABAPFile): {issues: Array<Issue>, node?: StructureNode} {
+  public static run(file: ABAPFile): {issues: Issue[], node?: StructureNode} {
     const structure = this.findStructureForFile(file.getFilename());
 // todo, comments and empty statements will not be part of the structure
 // is this a problem?

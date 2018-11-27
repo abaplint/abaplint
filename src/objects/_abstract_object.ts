@@ -2,7 +2,7 @@ import {IFile} from "../files/_ifile";
 import {IObject} from "./_iobject";
 
 export abstract class AbstractObject implements IObject {
-  protected files: Array<IFile>;
+  protected files: IFile[];
   private name: string;
 // todo, dirty flag?
 
@@ -21,7 +21,7 @@ export abstract class AbstractObject implements IObject {
     this.files.push(file);
   }
 
-  public getFiles(): Array<IFile> {
+  public getFiles(): IFile[] {
     return this.files;
   }
 

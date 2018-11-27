@@ -36,7 +36,7 @@ export class KeywordsUpper extends ABAPRule {
   }
 
   public runParsed(file: ABAPFile, _reg: Registry, obj: IObject) {
-    const issues: Array<Issue> = [];
+    const issues: Issue[] = [];
 
     if (this.conf.ignoreExceptions && obj instanceof Class && (obj as Class).isException()) {
       return [];

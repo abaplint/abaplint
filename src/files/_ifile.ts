@@ -3,5 +3,5 @@ export interface IFile {
   getObjectType(): string;
   getObjectName(): string;
   getRaw(): string;
-  getRawRows(): Array<string>;
+  getRawRows(): string[];
 }

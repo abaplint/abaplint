@@ -29,7 +29,7 @@ export class Nesting extends ABAPRule {
   }
 
   public runParsed(file: ABAPFile) {
-    const issues: Array<Issue> = [];
+    const issues: Issue[] = [];
 
     let depth: number = 0;
 

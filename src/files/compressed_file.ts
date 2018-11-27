@@ -13,7 +13,7 @@ export class CompressedFile extends AbstractFile {
     return this.decompress(this.compressed);
   }
 
-  public getRawRows(): Array<string> {
+  public getRawRows(): string[] {
     return this.decompress(this.compressed).split("\n");
   }
 

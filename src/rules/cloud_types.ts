@@ -29,7 +29,7 @@ export class CloudTypes implements IRule {
     this.conf = conf;
   }
 
-  public run(obj: IObject, reg: Registry): Array<Issue> {
+  public run(obj: IObject, reg: Registry): Issue[] {
     if (reg.getConfig().getVersion() !== Version.Cloud
         || obj instanceof Objects.Class
         || obj instanceof Objects.Interface

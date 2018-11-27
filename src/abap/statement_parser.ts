@@ -35,7 +35,7 @@ export class StatementParser {
   private static statements: StatementNode[];
   private static map: Map;
 
-  public static run(tokens: Array<Token>, ver: Version): StatementNode[] {
+  public static run(tokens: Token[], ver: Version): StatementNode[] {
     this.statements = [];
 
     if (!this.map) {
@@ -50,8 +50,8 @@ export class StatementParser {
     return this.statements;
   }
 
-  private static tokensToNodes(tokens: Array<Token>): Array<TokenNode> {
-    const ret: Array<TokenNode> = [];
+  private static tokensToNodes(tokens: Token[]): TokenNode[] {
+    const ret: TokenNode[] = [];
 
     tokens.forEach((t) => {ret.push(new TokenNode(t)); });
 
@@ -96,7 +96,7 @@ export class StatementParser {
     this.statements = result;
   }
 
-  private static removeLast(tokens: Array<Token>): Array<Token> {
+  private static removeLast(tokens: Token[]): Token[] {
     const copy = tokens.slice();
     copy.pop();
     return copy;
@@ -123,7 +123,7 @@ export class StatementParser {
     this.statements = result;
   }
 
-  private static removePragma(tokens: Array<Token>): Array<Token> {
+  private static removePragma(tokens: Token[]): Token[] {
     return tokens.filter(function (value) { return !(value instanceof Tokens.Pragma); } );
   }
 
@@ -147,9 +147,9 @@ export class StatementParser {
   }
 
 // takes care of splitting tokens into statements, also handles chained statements
-  private static process(tokens: Array<Token>) {
-    let add: Array<Token> = [];
-    let pre: Array<Token> = [];
+  private static process(tokens: Token[]) {
+    let add: Token[] = [];
+    let pre: Token[] = [];
     const ukn = (t: Token[]) => { this.statements.push(new StatementNode(new Unknown()).setChildren(this.tokensToNodes(t))); };
 
     for (const token of tokens) {

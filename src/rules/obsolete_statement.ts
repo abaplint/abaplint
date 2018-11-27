@@ -29,7 +29,7 @@ export class ObsoleteStatement extends ABAPRule {
   }
 
   public runParsed(file: ABAPFile) {
-    const issues: Array<Issue> = [];
+    const issues: Issue[] = [];
 
     const statements = file.getStatements();
 

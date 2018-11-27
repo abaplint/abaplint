@@ -6,5 +6,5 @@ export interface IObject {
   addFile(file: IFile): void;
   updateFile(file: IFile): void;
   removeFile(file: IFile): void;
-  getFiles(): Array<IFile>;
+  getFiles(): IFile[];
 }

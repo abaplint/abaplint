@@ -12,7 +12,7 @@ export abstract class ABAPRule implements IRule {
   public abstract getConfig(): void;
   public abstract setConfig(conf: any): void;
 
-  public abstract runParsed(file: ABAPFile, reg: Registry, obj: IObject): Array<Issue>;
+  public abstract runParsed(file: ABAPFile, reg: Registry, obj: IObject): Issue[];
 
   public run(obj: IObject, reg: Registry) {
 
@@ -21,7 +21,7 @@ export abstract class ABAPRule implements IRule {
     }
 
     const abap = obj as ABAPObject;
-    let output: Array<Issue> = [];
+    let output: Issue[] = [];
 
     for (const file of abap.getParsedFiles()) {
       output = output.concat(this.runParsed(file, reg, obj));

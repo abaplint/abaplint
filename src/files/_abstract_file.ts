@@ -24,5 +24,5 @@ export abstract class AbstractFile implements IFile {
   }
 
   public abstract getRaw(): string;
-  public abstract getRawRows(): Array<string>;
+  public abstract getRawRows(): string[];
 }

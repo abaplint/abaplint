@@ -16,7 +16,7 @@ const reg  = Combi.regex;
 const tok  = Combi.tok;
 const optPrio = Combi.optPrio;
 
-function tokenize(s: string): Array<Token> {
+function tokenize(s: string): Token[] {
   return Lexer.run(new MemoryFile("foo.abap", s));
 }
 

@@ -27,7 +27,7 @@ export class SpaceBeforeColon extends ABAPRule {
   }
 
   public runParsed(file: ABAPFile) {
-    const issues: Array<Issue> = [];
+    const issues: Issue[] = [];
 
     let prev = file.getTokens()[0];
 

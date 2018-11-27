@@ -29,7 +29,7 @@ export class LineLength extends ABAPRule {
   }
 
   public runParsed(file: ABAPFile) {
-    const issues: Array<Issue> = [];
+    const issues: Issue[] = [];
 
     const lines = file.getRaw().split("\n");
     for (let line = 0; line < lines.length; line++) {

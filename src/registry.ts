@@ -35,7 +35,7 @@ export class Registry {
     this.conf = conf ? conf : Config.getDefault();
   }
 
-  public getObjects(): Array<IObject> {
+  public getObjects(): IObject[] {
     return this.objects;
   }
 
@@ -57,15 +57,15 @@ todo
     this.conf = conf;
   }
 
-  public getABAPObjects(): Array<ABAPObject> {
-    return this.objects.filter((obj) => { return obj instanceof ABAPObject; }) as Array<ABAPObject>;
+  public getABAPObjects(): ABAPObject[] {
+    return this.objects.filter((obj) => { return obj instanceof ABAPObject; }) as ABAPObject[];
   }
 
-  public getABAPFiles(progress?: IProgress): Array<ABAPFile> {
+  public getABAPFiles(progress?: IProgress): ABAPFile[] {
     if (this.isDirty()) {
       this.parse(progress);
     }
-    let ret: Array<ABAPFile> = [];
+    let ret: ABAPFile[] = [];
     this.getABAPObjects().forEach((a) => {ret = ret.concat(a.getParsedFiles()); });
     return ret;
   }
@@ -92,7 +92,7 @@ todo
     return this;
   }
 
-  public addFiles(files: Array<IFile>): Registry {
+  public addFiles(files: IFile[]): Registry {
     this.setDirty();
     files.forEach((f) => {
       try {
@@ -113,7 +113,7 @@ todo
     return this.dirty;
   }
 
-  public findIssues(progress?: IProgress): Array<Issue> {
+  public findIssues(progress?: IProgress): Issue[] {
     if (this.isDirty()) {
       this.parse(progress);
     }

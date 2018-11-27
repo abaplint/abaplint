@@ -89,12 +89,12 @@ class Stream {
 }
 
 export class Lexer {
-  private static tokens: Array<Token>;
+  private static tokens: Token[];
   private static m: Mode;
   private static stream: Stream;
   private static buffer: Buffer;
 
-  public static run(file: IFile): Array<Token> {
+  public static run(file: IFile): Token[] {
     this.tokens = [];
     this.m = Mode.Normal;
 

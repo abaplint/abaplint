@@ -52,8 +52,8 @@ export class StatementNode extends BasicNode {
     return pos;
   }
 
-  public getTokens(): Array<Token> {
-    let tokens: Array<Token> = [];
+  public getTokens(): Token[] {
+    let tokens: Token[] = [];
 
     this.getChildren().forEach((c) => {
       tokens = tokens.concat(this.toTokens(c));
@@ -131,8 +131,8 @@ export class StatementNode extends BasicNode {
     return ret;
   }
 
-  private toTokens(b: INode): Array<Token> {
-    let tokens: Array<Token> = [];
+  private toTokens(b: INode): Token[] {
+    let tokens: Token[] = [];
 
     if (b instanceof TokenNode) {
       tokens.push((b as TokenNode).get());

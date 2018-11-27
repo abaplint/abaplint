@@ -33,7 +33,7 @@ export class ParserError extends ABAPRule {
   }
 
   public runParsed(file: ABAPFile, reg: Registry) {
-    const issues: Array<Issue> = [];
+    const issues: Issue[] = [];
 
     let start = new Position(0, 0);
     for (const statement of file.getStatements()) {

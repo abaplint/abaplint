@@ -27,7 +27,7 @@ export class Breakpoint extends ABAPRule {
   }
 
   public runParsed(file: ABAPFile) {
-    const issues: Array<Issue> = [];
+    const issues: Issue[] = [];
 
     for (const statement of file.getStatements()) {
       if (statement.get() instanceof Statements.Break) {

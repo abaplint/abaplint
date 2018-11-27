@@ -13,7 +13,7 @@ import {Issue} from "../issue";
 import {Identifier} from "../abap/tokens";
 
 export abstract class ABAPObject extends AbstractObject {
-  private parsed: Array<ABAPFile>;
+  private parsed: ABAPFile[];
 
   public constructor(name: string) {
     super(name);
@@ -72,12 +72,12 @@ export abstract class ABAPObject extends AbstractObject {
     return ret;
   }
 
-  public getParsedFiles(): Array<ABAPFile> {
+  public getParsedFiles(): ABAPFile[] {
     return this.parsed;
   }
 
-  private tokensToNodes(tokens: Array<Token>): Array<TokenNode> {
-    const ret: Array<TokenNode> = [];
+  private tokensToNodes(tokens: Token[]): TokenNode[] {
+    const ret: TokenNode[] = [];
     tokens.forEach((t) => {ret.push(new TokenNode(t)); });
     return ret;
   }

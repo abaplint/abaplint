@@ -14,8 +14,8 @@ class Tuple {
 
 export class Standard implements IFormatter {
 
-  public output(issues: Array<Issue>): string {
-    const tuples: Array<Tuple> = [];
+  public output(issues: Issue[]): string {
+    const tuples: Tuple[] = [];
     for (const issue of issues) {
       tuples.push(this.build_tuple(issue));
     }
@@ -25,7 +25,7 @@ export class Standard implements IFormatter {
     return result + new Total().output(issues);
   }
 
-  private columns(tuples: Array<Tuple>): string {
+  private columns(tuples: Tuple[]): string {
     let max = 0;
     tuples.forEach((tuple) => { if (max < tuple.filename.length) { max = tuple.filename.length; } });
 

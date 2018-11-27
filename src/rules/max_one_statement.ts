@@ -28,7 +28,7 @@ export class MaxOneStatement extends ABAPRule {
   }
 
   public runParsed(file: ABAPFile) {
-    const issues: Array<Issue> = [];
+    const issues: Issue[] = [];
 
     let prev: number = 0;
     let reported: number = 0;

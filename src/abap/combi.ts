@@ -7,10 +7,10 @@ import {CountableNode} from "./nodes/_countable_node";
 import {INode} from "./nodes/_inode";
 
 export class Result {
-  private tokens: Array<Tokens_Token>;
-  private nodes: Array<CountableNode> | undefined;
+  private tokens: Tokens_Token[];
+  private nodes: CountableNode[] | undefined;
 
-  constructor(a: Array<Tokens_Token>, n?: Array<CountableNode>) {
+  constructor(a: Tokens_Token[], n?: CountableNode[]) {
 // tokens: not yet matched
 // nodes: matched tokens
     this.tokens = a;
@@ -39,7 +39,7 @@ export class Result {
     }
   }
 
-  public getTokens(): Array<Tokens_Token> {
+  public getTokens(): Tokens_Token[] {
     return this.tokens;
   }
 
@@ -50,14 +50,14 @@ export class Result {
     return this.nodes.pop();
   }
 
-  public getNodes(): Array<CountableNode> {
+  public getNodes(): CountableNode[] {
     if (!this.nodes) {
       throw new Error("getNodes, error");
     }
     return this.nodes;
   }
 
-  public setNodes(n: Array<CountableNode>): void {
+  public setNodes(n: CountableNode[]): void {
     this.nodes = n;
   }
 
@@ -75,7 +75,7 @@ export class Result {
 }
 
 export interface IStatementRunnable {
-  run(r: Array<Result>): Array<Result>;
+  run(r: Result[]): Result[];
   railroad(): string;
   toStr(): string;
   getUsing(): string[];
@@ -100,8 +100,8 @@ class Regex implements IStatementRunnable {
     return [];
   }
 
-  public run(r: Array<Result>): Array<Result> {
-    const result: Array<Result> = [];
+  public run(r: Result[]): Result[] {
+    const result: Result[] = [];
 
     for (const input of r) {
       if (input.length() !== 0
@@ -142,8 +142,8 @@ class Word implements IStatementRunnable {
     return [];
   }
 
-  public run(r: Array<Result>): Array<Result> {
-    const result: Array<Result> = [];
+  public run(r: Result[]): Result[] {
+    const result: Result[] = [];
 
     for (const input of r) {
       if (input.length() !== 0
@@ -194,8 +194,8 @@ class Token implements IStatementRunnable {
     return [];
   }
 
-  public run(r: Array<Result>): Array<Result> {
-    const result: Array<Result> = [];
+  public run(r: Result[]): Result[] {
+    const result: Result[] = [];
 
     for (const input of r) {
       if (input.length() !== 0
@@ -242,7 +242,7 @@ class Vers implements IStatementRunnable {
     return this.runnable.listKeywords();
   }
 
-  public run(r: Array<Result>): Array<Result> {
+  public run(r: Result[]): Result[] {
     if (Combi.getVersion() >= this.version) {
       return this.runnable.run(r);
     } else {
@@ -289,7 +289,7 @@ class VersNot implements IStatementRunnable {
     return this.runnable.getUsing();
   }
 
-  public run(r: Array<Result>): Array<Result> {
+  public run(r: Result[]): Result[] {
     if (Combi.getVersion() !== this.version) {
       return this.runnable.run(r);
     } else {
@@ -330,8 +330,8 @@ class OptionalPriority implements IStatementRunnable {
     return this.optional.getUsing();
   }
 
-  public run(r: Array<Result>): Array<Result> {
-    let result: Array<Result> = [];
+  public run(r: Result[]): Result[] {
+    let result: Result[] = [];
 
     for (const input of r) {
       const res = this.optional.run([input]);
@@ -385,8 +385,8 @@ class Optional implements IStatementRunnable {
     return this.optional.getUsing();
   }
 
-  public run(r: Array<Result>): Array<Result> {
-    let result: Array<Result> = [];
+  public run(r: Result[]): Result[] {
+    let result: Result[] = [];
 
     for (const input of r) {
       result.push(input);
@@ -426,11 +426,11 @@ class Star implements IStatementRunnable {
     return this.sta.getUsing();
   }
 
-  public run(r: Array<Result>): Array<Result> {
+  public run(r: Result[]): Result[] {
     let result = r;
 
     let res = r;
-    let input: Array<Result> = [];
+    let input: Result[] = [];
     for ( ; ; ) {
       input = res;
       res = this.sta.run(input);
@@ -474,7 +474,7 @@ class Plus implements IStatementRunnable {
     return this.plu.getUsing();
   }
 
-  public run(r: Array<Result>): Array<Result> {
+  public run(r: Result[]): Result[] {
     return new Sequence([this.plu, new Star(this.plu)]).run(r);
   }
 
@@ -492,7 +492,7 @@ class Plus implements IStatementRunnable {
 }
 
 class Sequence implements IStatementRunnable {
-  private list: Array<IStatementRunnable>;
+  private list: IStatementRunnable[];
   private stack: boolean;
 
   constructor(list: IStatementRunnable[], stack = false) {
@@ -515,8 +515,8 @@ class Sequence implements IStatementRunnable {
     return this.list.reduce((a, c) => { return a.concat(c.getUsing()); }, [] as string[]);
   }
 
-  public run(r: Array<Result>): Array<Result> {
-    let result: Array<Result> = [];
+  public run(r: Result[]): Result[] {
+    let result: Result[] = [];
 
     for (const input of r) {
       let temp = [input];
@@ -558,7 +558,7 @@ class Sequence implements IStatementRunnable {
 class WordSequence implements IStatementRunnable {
 
   private stri: String;
-  private words: Array<IStatementRunnable> = [];
+  private words: IStatementRunnable[] = [];
 
   constructor(stri: String) {
     this.stri = stri;
@@ -581,7 +581,7 @@ class WordSequence implements IStatementRunnable {
     return [];
   }
 
-  public run(r: Array<Result>): Array<Result> {
+  public run(r: Result[]): Result[] {
     return (new Sequence(this.words)).run(r);
   }
 
@@ -599,13 +599,13 @@ class WordSequence implements IStatementRunnable {
 }
 
 export abstract class Expression implements IStatementRunnable {
-  public run(r: Array<Result>): Array<Result> {
-    let results: Array<Result> = [];
+  public run(r: Result[]): Result[] {
+    let results: Result[] = [];
 
     for (const input of r) {
       const temp = this.getRunnable().run([input]);
 
-      const moo: Array<Result> = [];
+      const moo: Result[] = [];
       for (const t of temp) {
         let consumed = input.length() - t.length();
         if (consumed > 0) {
@@ -661,7 +661,7 @@ export abstract class Expression implements IStatementRunnable {
 }
 
 class Permutation implements IStatementRunnable {
-  private list: Array<IStatementRunnable>;
+  private list: IStatementRunnable[];
 
   constructor(list: IStatementRunnable[]) {
     if (list.length < 2) {
@@ -682,8 +682,8 @@ class Permutation implements IStatementRunnable {
     return this.list.reduce((a, c) => { return a.concat(c.getUsing()); }, [] as string[]);
   }
 
-  public run(r: Array<Result>): Array<Result> {
-    let result: Array<Result> = [];
+  public run(r: Result[]): Result[] {
+    let result: Result[] = [];
 
     for (let index = 0; index < this.list.length; index++) {
       const temp = this.list[index].run(r);
@@ -719,7 +719,7 @@ class Permutation implements IStatementRunnable {
 }
 
 class Alternative implements IStatementRunnable {
-  private list: Array<IStatementRunnable>;
+  private list: IStatementRunnable[];
 
   constructor(list: IStatementRunnable[]) {
     if (list.length < 2) {
@@ -740,8 +740,8 @@ class Alternative implements IStatementRunnable {
     return this.list.reduce((a, c) => { return a.concat(c.getUsing()); }, [] as string[]);
   }
 
-  public run(r: Array<Result>): Array<Result> {
-    let result: Array<Result> = [];
+  public run(r: Result[]): Result[] {
+    let result: Result[] = [];
 
     for (const sequ of this.list) {
       const temp = sequ.run(r);
@@ -771,7 +771,7 @@ class Alternative implements IStatementRunnable {
 
 // prioritized alternative, skip others if match found
 class AlternativePriority implements IStatementRunnable {
-  private list: Array<IStatementRunnable>;
+  private list: IStatementRunnable[];
 
   constructor(list: IStatementRunnable[]) {
     if (list.length < 2) {
@@ -792,8 +792,8 @@ class AlternativePriority implements IStatementRunnable {
     return this.list.reduce((a, c) => { return a.concat(c.getUsing()); }, [] as string[]);
   }
 
-  public run(r: Array<Result>): Array<Result> {
-    let result: Array<Result> = [];
+  public run(r: Result[]): Result[] {
+    let result: Result[] = [];
 
     for (const sequ of this.list) {
 //      console.log(seq.toStr());
@@ -855,7 +855,7 @@ export class Combi {
   }
 
 // assumption: no pgragmas supplied in tokens input
-  public static run(runnable: IStatementRunnable, tokens: Array<Tokens_Token>, version = Version.v750): INode[] | undefined {
+  public static run(runnable: IStatementRunnable, tokens: Tokens_Token[], version = Version.v750): INode[] | undefined {
     this.ver = version;
 
     const input = new Result(tokens);

@@ -26,11 +26,11 @@ export class Exporting extends ABAPRule {
   }
 
   public runParsed(file: ABAPFile) {
-    const issues: Array<Issue> = [];
+    const issues: Issue[] = [];
 
     for (const statement of file.getStatements()) {
       let current: Counter | undefined = new Counter();
-      const stack: Array<Counter> = [];
+      const stack: Counter[] = [];
 
       for (const token of statement.getTokens()) {
         if (this.lastChar(token.getStr()) === "(") {

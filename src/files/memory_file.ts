@@ -12,7 +12,7 @@ export class MemoryFile extends AbstractFile {
     return this.raw;
   }
 
-  public getRawRows(): Array<string> {
+  public getRawRows(): string[] {
     return this.raw.split("\n");
   }
 }

@@ -16,7 +16,7 @@ export class Config {
   private config: IConfig;
 
   public static getDefault(): Config {
-    const defaults: Array<string> = [];
+    const defaults: string[] = [];
 
     for (const rule of Artifacts.getRules()) {
       defaults.push("\"" + rule.getKey() + "\": " + JSON.stringify(rule.getConfig()));

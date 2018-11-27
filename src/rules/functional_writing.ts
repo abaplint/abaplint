@@ -29,7 +29,7 @@ export class FunctionalWriting extends ABAPRule {
   }
 
   public runParsed(file: ABAPFile) {
-    const issues: Array<Issue> = [];
+    const issues: Issue[] = [];
     let exception = false;
 
     for (const statement of file.getStatements()) {

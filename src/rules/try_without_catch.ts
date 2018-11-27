@@ -28,7 +28,7 @@ export class TryWithoutCatch extends ABAPRule {
   }
 
   public runParsed(file: ABAPFile, _reg: Registry) {
-    const issues: Array<Issue> = [];
+    const issues: Issue[] = [];
 
     const stru = file.getStructure();
     if (stru === undefined) {

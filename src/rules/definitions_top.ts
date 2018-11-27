@@ -35,7 +35,7 @@ export class DefinitionsTop extends ABAPRule {
   }
 
   public runParsed(file: ABAPFile) {
-    const issues: Array<Issue> = [];
+    const issues: Issue[] = [];
 
     let mode = ANY;
     let issue: Issue | undefined = undefined;

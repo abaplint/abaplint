@@ -56,16 +56,16 @@ function displayHelp(): string {
   return output;
 }
 
-function loadFileNames(args: string[]): Array<string> {
-  let files: Array<string> = [];
+function loadFileNames(args: string[]): string[] {
+  let files: string[] = [];
   for (const file of args) {
     files = files.concat(glob.sync(file, {nosort: true, nodir: true}));
   }
   return files;
 }
 
-async function loadFiles(compress: boolean, input: Array<string>, progress: boolean): Promise<Array<IFile>> {
-  const files: Array<IFile> = [];
+async function loadFiles(compress: boolean, input: string[], progress: boolean): Promise<IFile[]> {
+  const files: IFile[] = [];
   let bar: ProgressBar | undefined = undefined;
 
   if (progress) {
@@ -96,7 +96,7 @@ async function run() {
   const argv = minimist(process.argv.slice(2));
   let format = "default";
   let output = "";
-  let issues: Array<Issue> = [];
+  let issues: Issue[] = [];
 
   if (argv["f"] !== undefined || argv["format"] !== undefined) {
     if (argv["f"] !== undefined) {

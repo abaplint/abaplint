@@ -5,7 +5,7 @@ import {IFormatter} from "./_iformatter";
 // for CodeClimate output?
 
 export class Code implements IFormatter {
-  public output(issues: Array<Issue>): string {
+  public output(issues: Issue[]): string {
 
     let result = "";
     for (const issue of issues) {

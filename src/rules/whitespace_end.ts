@@ -28,7 +28,7 @@ export class WhitespaceEnd extends ABAPRule {
   }
 
   public runParsed(file: ABAPFile) {
-    const issues: Array<Issue> = [];
+    const issues: Issue[] = [];
 
     const rows = file.getRawRows();
 

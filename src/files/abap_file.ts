@@ -7,12 +7,12 @@ import {StructureNode, StatementNode} from "../abap/nodes/";
 export class ABAPFile extends AbstractFile {
   // tokens vs statements: pragmas are part of tokens but not in statements
   // todo: need some better way of handling pragmas
-  private tokens: Array<Token>;
+  private tokens: Token[];
   private statements: StatementNode[];
   private structure: StructureNode | undefined;
   private file: IFile;
 
-  public constructor(file: IFile, tokens: Array<Token>, statements: StatementNode[]) {
+  public constructor(file: IFile, tokens: Token[], statements: StatementNode[]) {
     super(file.getFilename());
     this.file       = file;
     this.tokens     = tokens;
@@ -23,7 +23,7 @@ export class ABAPFile extends AbstractFile {
     return this.file.getRaw();
   }
 
-  public getRawRows(): Array<string> {
+  public getRawRows(): string[] {
     return this.file.getRawRows();
   }
 
@@ -47,11 +47,11 @@ export class ABAPFile extends AbstractFile {
       return new ParsedFile(file, tokens, statements, root);
     }
   */
-  public getTokens(withPragmas = true): Array<Token> {
+  public getTokens(withPragmas = true): Token[] {
     if (withPragmas === true) {
       return this.tokens;
     } else {
-      const tokens: Array<Token> = [];
+      const tokens: Token[] = [];
       this.tokens.forEach((t) => {
         if (!(t instanceof Pragma)) {
           tokens.push(t);

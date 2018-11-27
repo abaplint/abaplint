@@ -64,7 +64,7 @@ class Sequence implements IStructureRunnable {
 }
 
 class Alternative implements IStructureRunnable {
-  private list: Array<IStructureRunnable>;
+  private list: IStructureRunnable[];
 
   constructor(list: IStructureRunnable[]) {
     if (list.length < 2) {

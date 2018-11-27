@@ -2,7 +2,7 @@ import {Issue} from "../issue";
 import * as Formatters from ".";
 
 export class Formatter {
-  public static format(issues: Array<Issue>, format?: string): string {
+  public static format(issues: Issue[], format?: string): string {
   // todo, this can be done more generic, move to artifacts.ts?
     switch (format) {
       case "total":

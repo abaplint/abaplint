@@ -29,7 +29,7 @@ export class LineOnlyPunc extends ABAPRule {
   }
 
   public runParsed(file: ABAPFile) {
-    const issues: Array<Issue> = [];
+    const issues: Issue[] = [];
     let exception = false;
 
     const rows = file.getRawRows();

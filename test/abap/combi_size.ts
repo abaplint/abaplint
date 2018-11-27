@@ -10,10 +10,10 @@ const seq  = Combi.seq;
 const opt  = Combi.opt;
 const star = Combi.star;
 
-function tok(s: string): Array<Token> {
+function tok(s: string): Token[] {
   const split = s.split(" ");
 
-  const tokens: Array<Token> = [];
+  const tokens: Token[] = [];
   for (const st of split) {
     tokens.push(new Tokens.Identifier(new Position(10, 10), st));
   }

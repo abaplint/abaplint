@@ -27,7 +27,7 @@ export class ColonMissingSpace extends ABAPRule {
   }
 
   public runParsed(file: ABAPFile) {
-    const issues: Array<Issue> = [];
+    const issues: Issue[] = [];
 
     const tokens = file.getTokens();
 

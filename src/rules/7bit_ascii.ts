@@ -27,7 +27,7 @@ export class SevenBitAscii extends ABAPRule {
   }
 
   public runParsed(file: ABAPFile) {
-    const output: Array<Issue> = [];
+    const output: Issue[] = [];
 
     const rows = file.getRawRows();
 
