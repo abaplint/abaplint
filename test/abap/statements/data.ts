@@ -69,6 +69,7 @@ const tests = [
   "DATA *foo.",
   "DATA bar*.",
   "DATA moo*boo.",
+  "DATA gt_data TYPE REF TO something OCCURS 0 WITH HEADER LINE.",
 
 // todo
 //  "DATA lt_tab OCCURS 10.",

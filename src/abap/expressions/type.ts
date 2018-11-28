@@ -4,6 +4,8 @@ import {Constant, FieldChain, TableBody} from "./";
 export class Type extends Expression {
   public getRunnable(): IStatementRunnable {
     const likeType = alt(str("LIKE"), str("TYPE"));
+
+// todo, DEFAULT is only valid for definitions in relation to method parameters
     const def = seq(str("DEFAULT"), alt(new Constant(), new FieldChain()));
 
     const type = seq(likeType,
@@ -11,12 +13,10 @@ export class Type extends Expression {
                              str("REF TO"),
                              str("RANGE OF"))));
 
-    const options = opt(def);
-
     const ret = seq(type,
                     new FieldChain(),
                     opt(new TableBody()),
-                    alt(options, str("WITH HEADER LINE")));
+                    opt(def));
 
     return ret;
   }

@@ -1,20 +1,12 @@
 import {seq, per, opt, alt, tok, str, ver, star, plus, Expression, IStatementRunnable} from "../combi";
-import {WParenLeftW, WAt, WParenRightW, WParenLeft} from "../tokens/";
-import {Field, DatabaseTable, Dynamic, Target, Source, SQLCond, SQLJoin, SQLFieldName, SQLTarget, SQLAggregation} from "./";
+import {WParenLeftW, WAt, WParenLeft} from "../tokens/";
+import {DatabaseTable, Dynamic, Target, Source, SQLCond, SQLFieldName, SQLTarget, SQLAggregation} from "./";
 import {Version} from "../../version";
 import {SQLSource} from "./sql_source";
-import {SQLCDSParameters} from "./sql_cds_parameters";
+import {SQLFrom} from "./sql_from";
 
 export class SelectLoop extends Expression {
   public getRunnable(): IStatementRunnable {
-
-    const aas = seq(str("AS"), new Field());
-
-    const from = seq(str("FROM"),
-                     opt(tok(WParenLeftW)),
-                     alt(new Dynamic(), new DatabaseTable()),
-                     opt(new SQLCDSParameters()),
-                     opt(aas));
 
     const intoList = seq(alt(tok(WParenLeft), tok(WParenLeftW)),
                          star(seq(new Target(), str(","))),
@@ -50,8 +42,6 @@ export class SelectLoop extends Expression {
 
     const forAll = seq(str("FOR ALL ENTRIES IN"), new SQLSource());
 
-    const source = seq(from, star(new SQLJoin()), opt(tok(WParenRightW)));
-
     const group = seq(str("GROUP BY"), plus(alt(new SQLFieldName(), new Dynamic())));
 
     const from2 = seq(str("FROM"), new DatabaseTable());
@@ -65,7 +55,7 @@ export class SelectLoop extends Expression {
 
     const intoTab = seq(str("INTO"), opt(str("CORRESPONDING FIELDS OF")), str("TABLE"), new SQLTarget(), pack);
 
-    const perm = per(source, where, up, order, client, bypass, group, forAll, alt(appending, intoTab, into));
+    const perm = per(new SQLFrom(), where, up, order, client, bypass, group, forAll, alt(appending, intoTab, into));
 
     const ret = seq(str("SELECT"),
                     fields,

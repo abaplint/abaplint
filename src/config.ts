@@ -25,6 +25,7 @@ export class Config {
 
     const global = this.getGlobalDefault();
 
+// todo, use real object with index signature instead of "defaults"
     const json = "{" +
       "\"global\": " + JSON.stringify(global) + ", " +
       "\"rules\": {" + defaults.join(", ") + "}}";

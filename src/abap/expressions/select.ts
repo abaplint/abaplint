@@ -1,18 +1,9 @@
 import {seq, per, opt, alt, tok, str, star, plus, Expression, IStatementRunnable} from "../combi";
-import {WParenLeftW, WParenRightW, WParenLeft} from "../tokens/";
-import {Field, DatabaseTable, Dynamic, SQLCond, SQLJoin, SQLCDSParameters, SQLSource} from "./";
-import {SQLFieldList} from "./sql_field_list";
-import {SQLTarget} from "./sql_target";
+import {WParenLeftW, WParenLeft} from "../tokens/";
+import {SQLTarget, SQLFieldList, SQLFrom, Field, Dynamic, SQLCond, SQLSource} from "./";
 
 export class Select extends Expression {
   public getRunnable(): IStatementRunnable {
-
-    const aas = seq(str("AS"), new Field());
-
-    const from = seq(str("FROM"),
-                     opt(tok(WParenLeftW)),
-                     alt(new Dynamic(), seq(new DatabaseTable(), opt(new SQLCDSParameters()))),
-                     opt(aas));
 
     const intoList = seq(alt(tok(WParenLeft), tok(WParenLeftW)),
                          star(seq(new SQLTarget(), str(","))),
@@ -43,13 +34,11 @@ export class Select extends Expression {
     const client = str("CLIENT SPECIFIED");
     const bypass = str("BYPASSING BUFFER");
 
-    const source = seq(from, star(new SQLJoin()), opt(tok(WParenRightW)));
-
     const group = seq(str("GROUP BY"), plus(alt(new Field(), new Dynamic())));
 
     const fields = seq(str("FIELDS"), new SQLFieldList());
 
-    const perm = per(source, into, forAll, where, order, up, client, bypass, group, fields, connection);
+    const perm = per(new SQLFrom(), into, forAll, where, order, up, client, bypass, group, fields, connection);
 
     const ret = seq(str("SELECT"),
                     alt(str("DISTINCT"), opt(seq(str("SINGLE"), opt(str("FOR UPDATE"))))),

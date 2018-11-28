@@ -134,6 +134,7 @@ const tests = [
   "SELECT pernr FROM pa0002 INTO TABLE lt_pernr UP TO 100 ROWS WHERE pernr = SOME ( select pernr FROM pa9510 ).",
   "SELECT * FROM table INTO TABLE lt_tab WHERE field LIKE search ESCAPE '#'.",
   "SELECT * FROM table INTO TABLE lt_tab %_HINTS ORACLE 'FIRST_ROWS'.",
+  "SELECT foo INTO TABLE gt_result FROM ztable %_HINTS ORACLE 'ORDERED' ORACLE 'USE_NL(&table2&)'.",
   "SELECT SINGLE FROM table FIELDS field INTO @DATA(lv_field).",
   "SELECT SINGLE @abap_true FROM dd03l INTO @DATA(lv_exists) WHERE tabname = @lv_tabname AND as4local = 'A'.",
   "SELECT field1, field2 FROM ztab INTO TABLE @DATA(lt_result) WHERE field = @lv_field ORDER BY field1, field2.",
@@ -145,6 +146,13 @@ const tests = [
   "SELECT FROM ztab FIELDS fieldname INTO TABLE @DATA(lt_result).",
   "SELECT SINGLE FROM ztab FIELDS fieldname INTO @DATA(lt_result).",
   "SELECT SINGLE FOR UPDATE FROM ztab FIELDS fieldname INTO @DATA(lt_result).",
+
+  "SELECT field\n" +
+  "  INTO TABLE @DATA(lt_result1)\n" +
+  "  FROM ( ( tab1\n" +
+  "  INNER JOIN tab2 ON tab1~key = tab2~key )\n" +
+  "  INNER JOIN tab3 ON tab1~key = tab3~key ) WHERE foo = bar.",
+
 ];
 
 statementType(tests, "SELECT", Statements.Select);
