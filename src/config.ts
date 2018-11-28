@@ -23,10 +23,7 @@ export class Config {
       defaults.push("\"" + rule.getKey() + "\": " + JSON.stringify(rule.getConfig()));
     }
 
-    const global: IGlobalConfig = {
-      version: versionToText(Config.defaultVersion),
-      skipGeneratedGatewayClasses: true,
-    };
+    const global = this.getGlobalDefault();
 
     const json = "{" +
       "\"global\": " + JSON.stringify(global) + ", " +
@@ -35,8 +32,19 @@ export class Config {
     return conf;
   }
 
+  private static getGlobalDefault(): IGlobalConfig {
+    return {
+      version: versionToText(Config.defaultVersion),
+      skipGeneratedGatewayClasses: true,
+    };
+  }
+
   public constructor(json: string) {
     this.config = JSON.parse(json);
+
+    if (this.config.global === undefined) {
+      this.config.global = Config.getGlobalDefault();
+    }
   }
 
   public get() {

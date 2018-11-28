@@ -79,6 +79,8 @@ describe("count_tokens", () => {
     {abap: "foo = bar ##called.",                 tokens: 5},
     {abap: "##called foo = bar.",                 tokens: 5},
     {abap: "##called _moo.",                      tokens: 3},
+    {abap: "|foobar\\\\|",                        tokens: 1},
+    {abap: "|foobar\\\\| moo",                    tokens: 2},
   ];
 
   tests.forEach((test) => {

@@ -1,8 +1,8 @@
-import {seq, opt, tok, regex as reg, Expression, IStatementRunnable} from "../combi";
-import {WDash} from "../tokens/";
+import {seq, opt, tok, alt, regex as reg, Expression, IStatementRunnable} from "../combi";
+import {WDash, WPlus} from "../tokens/";
 
 export class Integer extends Expression {
   public getRunnable(): IStatementRunnable {
-    return seq(opt(tok(WDash)), reg(/^\d+$/));
+    return seq(opt(alt(tok(WDash), tok(WPlus))), reg(/^\d+$/));
   }
 }

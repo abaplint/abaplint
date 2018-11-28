@@ -45,6 +45,11 @@ const tests = [
   "lr_ref->*-length = ls_type-length.",
   "x = column - '0.5'.",
   "e_flag-4 = 'X'.",
+  "int = +1.",
+  "int = -1.",
+  "int = 1 - +1.",
+  "int = 1 - -1.",
+  "MOVE +1 TO int.",
 
   "lv_foo = `foo` & `foo` & `foo` & `foo` & `foo` & `foo` & \n" +
     "`foo` & `foo` & `foo` & `foo` & `foo` & `foo` & `foo` & \n" +
@@ -143,6 +148,15 @@ const versions = [
   {abap: "t->matrix[ 1 ][ 4 ] = i_rotate_about_line->x.", ver: Version.v740sp02},
   {abap: "DATA(asdf) = VALUE zfoo(\n" +
     "FOR ls_sdf IN  lt_sdf WHERE ( classtype = '001' AND classnum = 'SOMETHING' )\n" +
+    "( ls_sdf ) ).", ver: Version.v740sp05},
+  {abap: "DATA(asdf) = VALUE zfoo(\n" +
+    "FOR ls_sdf IN  lt_sdf FROM bar WHERE ( classnum = 'SOMETHING' )\n" +
+    "( ls_sdf ) ).", ver: Version.v740sp05},
+  {abap: "DATA(asdf) = VALUE zfoo(\n" +
+    "FOR ls_sdf IN  lt_sdf TO bar WHERE ( classnum = 'SOMETHING' )\n" +
+    "( ls_sdf ) ).", ver: Version.v740sp05},
+  {abap: "DATA(asdf) = VALUE zfoo(\n" +
+    "FOR ls_sdf IN  lt_sdf FROM moo TO bar WHERE ( classnum = 'SOMETHING' )\n" +
     "( ls_sdf ) ).", ver: Version.v740sp05},
   {abap: "et_blah = VALUE #( field = 2 ( id = c_bac ) ( id = c_gen ) ).", ver: Version.v740sp02},
   {abap: "foo = EXACT #( blah ).", ver: Version.v740sp02},

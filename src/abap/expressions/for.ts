@@ -6,7 +6,9 @@ import {Let} from "./let";
 export class For extends Expression {
   public getRunnable(): IStatementRunnable {
     const where = seq(str("WHERE"), new Cond());
-    const inn = seq(str("IN"), new Source(), opt(where));
+    const from = seq(str("FROM"), new Source());
+    const to = seq(str("TO"), new Source());
+    const inn = seq(str("IN"), new Source(), opt(from), opt(to), opt(where));
     const then = seq(str("THEN"), new Source());
     const whil = seq(alt(str("UNTIL"), str("WHILE")), new Cond());
     const itera = seq(str("="), new Source(), opt(then), whil);

@@ -72,6 +72,10 @@ class Stream {
     return this.raw.substr(this.offset - 1, 1);
   }
 
+  public prevPrevChar(): string {
+    return this.raw.substr(this.offset - 2, 2);
+  }
+
   public currentChar(): string {
     if (this.offset < 0) {
       return "\n"; // simulate newline at start of file to handle star(*) comments
@@ -234,6 +238,7 @@ export class Lexer {
       const ahead = this.stream.nextChar();
       const aahead = this.stream.nextNextChar();
       const prev = this.stream.prevChar();
+      const pprev = this.stream.prevPrevChar();
 
       if (ahead === "'" && this.m === Mode.Normal) {
 // start string
@@ -272,7 +277,7 @@ export class Lexer {
         escaped = escaped + 1;
       } else if (this.m === Mode.Template && escaped && current === "}" && prev !== "\\") {
         escaped = escaped - 1;
-      } else if (buf.length > 1 && current === "|" && prev !== "\\" && escaped === 0 && this.m === Mode.Template) {
+      } else if (buf.length > 1 && current === "|" && ( prev !== "\\" || pprev === "\\\\" ) && escaped === 0 && this.m === Mode.Template) {
 // end of template
         this.add();
         this.m = Mode.Normal;
