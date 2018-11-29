@@ -1,6 +1,6 @@
 import {Statement} from "./_statement";
 import {verNot, str, seq, opt, alt, tok, per, plus, IStatementRunnable} from "../combi";
-import {ParenLeft, ParenRightW, ParenRight} from "../tokens/";
+import {ParenLeft, ParenRightW} from "../tokens/";
 import {Source, Field, Dynamic, FormName} from "../expressions";
 import {Version} from "../../version";
 
@@ -18,7 +18,7 @@ export class Perform extends Statement {
     const short = seq(new FormName(),
                       tok(ParenLeft),
                       programName,
-                      alt(tok(ParenRightW), tok(ParenRight)));
+                      tok(ParenRightW));
 
     const program = seq(str("IN PROGRAM"), opt(alt(new Dynamic(), programName)));
 

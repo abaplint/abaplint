@@ -1,5 +1,5 @@
-import {seq, alt, str, tok, Expression, IStatementRunnable} from "../combi";
-import {ParenLeft, ParenRight, ParenRightW} from "../tokens/";
+import {seq, str, tok, Expression, IStatementRunnable} from "../combi";
+import {ParenLeft, ParenRightW} from "../tokens/";
 import {Field} from "./";
 
 export class PassByValue extends Expression {
@@ -7,7 +7,7 @@ export class PassByValue extends Expression {
     const value = seq(str("VALUE"),
                       tok(ParenLeft),
                       new Field(),
-                      alt(tok(ParenRight), tok(ParenRightW)));
+                      tok(ParenRightW));
 
     return value;
   }

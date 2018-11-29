@@ -1,7 +1,7 @@
 import {Version} from "../../version";
 import {Statement} from "./_statement";
 import {str, seq, alt, opt, tok, ver, regex as reg, plus, IStatementRunnable} from "../combi";
-import {ParenLeft, ParenRight, ParenRightW} from "../tokens/";
+import {ParenLeft, ParenRightW} from "../tokens/";
 import {Field, ClassName, MethodName, MethodDefExporting, MethodDefImporting, MethodDefChanging, MethodDefReturning} from "../expressions";
 
 export class MethodDef extends Statement {
@@ -12,7 +12,7 @@ export class MethodDef extends Statement {
     const resumable = seq(str("RESUMABLE"),
                           tok(ParenLeft),
                           new ClassName(),
-                          alt(tok(ParenRight), tok(ParenRightW)));
+                          tok(ParenRightW));
 
     const raising    = seq(str("RAISING"),    plus(alt(resumable, new ClassName())));
     const exceptions = seq(str("EXCEPTIONS"), plus(reg(/^\w+?$/)));

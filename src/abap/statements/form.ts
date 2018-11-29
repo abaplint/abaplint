@@ -1,6 +1,6 @@
 import {Statement} from "./_statement";
 import {verNot, str, seq, alt, opt, tok, altPrio, plus, IStatementRunnable} from "../combi";
-import {ParenLeft, ParenRight, ParenRightW} from "../tokens/";
+import {ParenLeft, ParenRightW} from "../tokens/";
 import {ClassName, SimpleName, NamespaceSimpleName, FormParam, FormName} from "../expressions";
 import {Version} from "../../version";
 
@@ -11,7 +11,7 @@ export class Form extends Statement {
     const resume = seq(str("RESUMABLE"),
                        tok(ParenLeft),
                        new ClassName(),
-                       alt(tok(ParenRight), tok(ParenRightW)));
+                       tok(ParenRightW));
 
     const stru = seq(new SimpleName(),
                      str("STRUCTURE"),

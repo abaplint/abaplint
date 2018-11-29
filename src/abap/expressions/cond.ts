@@ -1,5 +1,5 @@
 import {seq, opt, tok, alt, str, star, Expression, IStatementRunnable} from "../combi";
-import {WParenLeftW, WParenRightW, WParenRight} from "../tokens/";
+import {WParenLeftW, WParenRightW} from "../tokens/";
 import {Compare} from "./";
 
 export class Cond extends Expression {
@@ -9,7 +9,7 @@ export class Cond extends Expression {
     const another = seq(opt(str("NOT")),
                         tok(WParenLeftW),
                         new Cond(),
-                        alt(tok(WParenRightW), tok(WParenRight)));
+                        tok(WParenRightW));
 
     const cnd = alt(new Compare(), another);
 

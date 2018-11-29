@@ -1,13 +1,13 @@
 import {Statement} from "./_statement";
 import {verNot, str, seq, opt, tok, alt, regex as reg, optPrio, IStatementRunnable} from "../combi";
-import {ParenLeft, ParenRight, WParenLeft, ParenRightW} from "../tokens/";
+import {ParenLeft, WParenLeft, ParenRightW} from "../tokens/";
 import {Dynamic} from "../expressions";
 import {Version} from "../../version";
 
 export class Uline extends Statement {
 
   public getMatcher(): IStatementRunnable {
-    const right = alt(tok(ParenRight), tok(ParenRightW));
+    const right = tok(ParenRightW);
 
     // todo, reuse the AT thing in ULINE and WRITE?
     const pos = alt(seq(reg(/^(\/\d*|\d+)$/),

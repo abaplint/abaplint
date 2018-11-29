@@ -1,5 +1,5 @@
 import {str, alt, seq, optPrio, star, tok, Expression, IStatementRunnable} from "../combi";
-import {WParenLeftW, WParenRightW, WParenRight} from "../tokens/";
+import {WParenLeftW, WParenRightW} from "../tokens/";
 import {SQLCompare} from "./";
 
 export class SQLCond extends Expression {
@@ -8,7 +8,7 @@ export class SQLCond extends Expression {
 
     const paren = seq(tok(WParenLeftW),
                       new SQLCond(),
-                      alt(tok(WParenRightW), tok(WParenRight)));
+                      tok(WParenRightW));
 
     const cnd = seq(optPrio(str("NOT")), alt(new SQLCompare(), paren));
 

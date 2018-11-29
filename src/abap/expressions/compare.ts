@@ -1,6 +1,6 @@
 import {seq, opt, ver, tok, plus, alt, str, Expression, IStatementRunnable} from "../combi";
 import {FieldSub, Constant, Source, MethodCallChain} from "./";
-import {WParenLeft, ParenRightW, ParenRight} from "../tokens/";
+import {WParenLeft, ParenRightW} from "../tokens/";
 import {Version} from "../../version";
 
 export class Compare extends Expression {
@@ -10,7 +10,7 @@ export class Compare extends Expression {
     const list = seq(tok(WParenLeft),
                      val,
                      plus(seq(str(","), val)),
-                     alt(tok(ParenRightW), tok(ParenRight)));
+                     tok(ParenRightW));
 
     const inn = seq(opt(str("NOT")), str("IN"), alt(new Source(), list));
 

@@ -1,5 +1,5 @@
 import {plus, ver, seq, opt, tok, str, alt, star, optPrio, regex, Expression, IStatementRunnable} from "../combi";
-import {Arrow, WParenLeftW, WParenRightW, WParenRight, WDashW, ParenLeftW} from "../tokens/";
+import {Arrow, WParenLeftW, WParenRightW, WDashW, ParenLeftW} from "../tokens/";
 import {MethodCallChain, ArithOperator, Cond, Constant, StringTemplate, Let} from "./";
 import {FieldChain, Field, TableBody, TypeName, ArrowOrDash, FieldSub, For} from "./";
 import {Version} from "../../version";
@@ -10,7 +10,7 @@ export class Source extends Expression {
 
     const method = seq(new MethodCallChain(), optPrio(seq(new ArrowOrDash(), new FieldChain())));
 
-    const rparen = alt(tok(WParenRightW), tok(WParenRight));
+    const rparen = tok(WParenRightW);
 
 // paren used for eg. "( 2 + 1 ) * 4"
     const paren = seq(tok(WParenLeftW),

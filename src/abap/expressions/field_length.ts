@@ -1,5 +1,5 @@
 import {seq, opt, alt, str, tok, regex as reg, Expression, IStatementRunnable} from "../combi";
-import {ParenLeft, ParenRightW, ParenRight, Plus} from "../tokens/";
+import {ParenLeft, ParenRightW, Plus} from "../tokens/";
 import {FieldSymbol, Field, ArrowOrDash} from "./";
 
 export class FieldLength extends Expression {
@@ -10,7 +10,7 @@ export class FieldLength extends Expression {
 
     const length = seq(tok(ParenLeft),
                        alt(normal, str("*")),
-                       alt(tok(ParenRightW), tok(ParenRight)));
+                       tok(ParenRightW));
 
     return length;
   }

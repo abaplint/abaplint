@@ -153,6 +153,12 @@ const tests = [
   "  INNER JOIN tab2 ON tab1~key = tab2~key )\n" +
   "  INNER JOIN tab3 ON tab1~key = tab3~key ) WHERE foo = bar.",
 
+  "SELECT field\n" +
+  "  INTO TABLE @DATA(lt_result1)\n" +
+  "  FROM ( ( tab1\n" +
+  "  INNER JOIN tab2 ON tab1~key = tab2~key )\n" +
+  "  INNER JOIN tab3 ON tab1~key = tab3~key ).",
+
 ];
 
 statementType(tests, "SELECT", Statements.Select);
