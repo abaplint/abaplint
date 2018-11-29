@@ -11,6 +11,7 @@ export class Any extends Structure {
                     sta(Statements.Report),
                     sta(Statements.Program),
                     sta(Statements.Parameter),
+                    sta(Statements.CheckSelectOptions),
                     sta(Statements.Get),
                     sta(Statements.Initialization),
                     sta(Statements.InterfaceDeferred),
