@@ -60,7 +60,8 @@ const tests = [
   "WRITE AT lv_pos(4) lv_icon AS ICON.",
   "WRITE AT / moo.",
   "WRITE AT /20 moo.",
-
+  "write (*) l_line2.",
+  "WRITE AT /pos foo.",
 // todo
 //  "WRITE AT ls_output-field(ls_len-outputlen) <l_fs> NO-GAP.",
 ];

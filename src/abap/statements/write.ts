@@ -46,12 +46,13 @@ export class Write extends Statement {
                         seq(str("CURRENCY"), new Source()),
                         str("NO-SIGN"));
 
-    const wlength = seq(tok(WParenLeft), reg(/^[\w\d]+$/), tok(ParenRightW));
-    const length = seq(tok(ParenLeft), reg(/^[\w\d]+$/), tok(ParenRightW));
+    const post = seq(alt(reg(/^[\w\d]+$/), reg(/^\*$/)), tok(ParenRightW));
+    const wlength = seq(tok(WParenLeft), post);
+    const length = seq(tok(ParenLeft), post);
 
 // todo, move to expression?
     const complex = alt(wlength,
-                        seq(alt(new FieldSub(), reg(/^\/?\d+$/), str("/")), opt(length)));
+                        seq(alt(new FieldSub(), reg(/^\/?[\w\d]+$/), str("/")), opt(length)));
 
     const at = seq(opt(str("AT")), complex);
 
