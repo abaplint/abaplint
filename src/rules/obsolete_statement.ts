@@ -6,6 +6,14 @@ import {Compare} from "../abap/expressions";
 
 export class ObsoleteStatementConf {
   public enabled: boolean = true;
+  public refresh: boolean = true;
+  public compute: boolean = true;
+  public add: boolean = true;
+  public subtract: boolean = true;
+  public multiply: boolean = true;
+  public move: boolean = true;
+  public divide: boolean = true;
+  public requested: boolean = true;
 }
 
 export class ObsoleteStatement extends ABAPRule {
@@ -34,16 +42,16 @@ export class ObsoleteStatement extends ABAPRule {
     const statements = file.getStatements();
 
     for (const sta of statements) {
-      if (sta.get() instanceof Statements.Refresh
-          || sta.get() instanceof Statements.Compute
-          || sta.get() instanceof Statements.Add
-          || sta.get() instanceof Statements.Subtract
-          || sta.get() instanceof Statements.Multiply
-          || ( sta.get() instanceof Statements.Move
+      if ((sta.get() instanceof Statements.Refresh && this.conf.refresh)
+          || (sta.get() instanceof Statements.Compute && this.conf.compute)
+          || (sta.get() instanceof Statements.Add && this.conf.add)
+          || (sta.get() instanceof Statements.Subtract && this.conf.subtract)
+          || (sta.get() instanceof Statements.Multiply && this.conf.multiply)
+          || (sta.get() instanceof Statements.Move && this.conf.move
           && sta.getTokens()[0].getStr() === "MOVE"
           && sta.getTokens()[1].getStr() !== "-"
           && sta.getTokens()[1].getStr() !== "EXACT" )
-          || sta.get() instanceof Statements.Divide) {
+          || (sta.get() instanceof Statements.Divide && this.conf.divide)) {
         issues.push(new Issue({file, message: this.getDescription(), code: this.getKey(), start: sta.getStart()}));
       }
 
