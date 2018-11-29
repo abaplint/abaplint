@@ -6,7 +6,7 @@
 
 # abaplint
 
-Linter for ABAP, code must be serialized using [abapGit](https://github.com/larshp/abapGit). 
+Linter for ABAP, code must be serialized using [abapGit](https://github.com/larshp/abapGit).
 
 Regarding versioning: semantic versioning is currently not followed, recommend fixing usage to a specific version
 
@@ -33,7 +33,9 @@ Node 10
 `npm test`
 
 ### Parsing vs standard ABAP
-* Spaces required after string literals and before right parenthesis
+* Spaces required after string literals and before right parenthesis, following gives parser error
+`lo_obj->method( 'FOO').`
+
 * CALL FUNCTION EXCEPTIONS must be well formed, eg not
 ```abap
   CALL FUNCTION 'RFC_PING'
@@ -43,3 +45,6 @@ Node 10
   CALL FUNCTION 'RFC_PING'
     EXCEPTIONS = 2.
 ```
+
+* Only single chaning, following gives parser error:
+`WRITE: bar: foo.`

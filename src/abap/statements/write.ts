@@ -7,7 +7,6 @@ import {Version} from "../../version";
 export class Write extends Statement {
 
   public getMatcher(): IStatementRunnable {
-    const at = seq(opt(str("AT")), reg(/^\/?\d+$/));
 
     const mask = seq(str("USING"),
                      alt(str("NO EDIT MASK"),
@@ -50,17 +49,14 @@ export class Write extends Statement {
     const wlength = seq(tok(WParenLeft), reg(/^[\w\d]+$/), tok(ParenRightW));
     const length = seq(tok(ParenLeft), reg(/^[\w\d]+$/), tok(ParenRightW));
 
-// todo, is AT just an optional token?
-// todo, clean up
 // todo, move to expression?
-    const complex = alt(seq(str("/"), opt(length)),
-                        seq(opt(str("AT")), wlength),
-                        seq(opt(str("AT")), reg(/^\/?\d+$/), length),
-                        seq(str("AT"), new FieldSub(), opt(length)),
-                        seq(str("AT"), str("/"), length));
+    const complex = alt(wlength,
+                        seq(alt(new FieldSub(), reg(/^\/?\d+$/), str("/")), opt(length)));
+
+    const at = seq(opt(str("AT")), complex);
 
     const ret = seq(str("WRITE"),
-                    opt(alt(at, complex)),
+                    opt(at),
                     opt(alt(new Source(), new Dynamic())),
                     opt(options));
 

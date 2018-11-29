@@ -12,14 +12,17 @@ export class CallTransaction extends Statement {
 
     const auth = seq(alt(str("WITH"), str("WITHOUT")), str("AUTHORITY-CHECK"));
 
+    const perm = per(seq(str("UPDATE"), new Source()),
+                     str("AND SKIP FIRST SCREEN"),
+                     options,
+                     messages,
+                     seq(str("MODE"), new Source()));
+
     const ret = seq(str("CALL TRANSACTION"),
                     new Source(),
                     opt(auth),
                     opt(seq(str("USING"), new Source())),
-                    opt(per(seq(str("UPDATE"), new Source()), seq(str("MODE"), new Source()))),
-                    opt(str("AND SKIP FIRST SCREEN")),
-                    opt(options),
-                    opt(messages));
+                    opt(perm));
 
     return verNot(Version.Cloud, ret);
   }

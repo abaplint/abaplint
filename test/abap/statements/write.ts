@@ -58,6 +58,11 @@ const tests = [
   "WRITE 'sdf' TO table INDEX index.",
   "WRITE AT pos(length) symbol AS SYMBOL NO-GAP.",
   "WRITE AT lv_pos(4) lv_icon AS ICON.",
+  "WRITE AT / moo.",
+  "WRITE AT /20 moo.",
+
+// todo
+//  "WRITE AT ls_output-field(ls_len-outputlen) <l_fs> NO-GAP.",
 ];
 
 statementType(tests, "WRITE", Statements.Write);
