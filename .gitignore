@@ -1,5 +1,6 @@
 package-lock.json
 foo.prog.abap
+zcl_foo.clas.abap
 node_modules/
 worklist.txt
 .worklist.txt.swp

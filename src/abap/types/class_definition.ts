@@ -5,6 +5,7 @@ import * as Statements from "../../abap/statements";
 import * as Structures from "../../abap/structures";
 import {ClassAttributes} from "./class_attributes";
 
+// todo, is this the same as an InterfaceDefinition?
 export class ClassDefinition {
   private node: StructureNode;
 
@@ -43,6 +44,8 @@ export class ClassDefinition {
   }
 
   /*
+
+  public getFriends()
 
   public isAbstract(): boolean {
 // todo

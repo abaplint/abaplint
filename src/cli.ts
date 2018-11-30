@@ -14,6 +14,7 @@ import {Artifacts} from "./abap/artifacts";
 import {Registry, IProgress} from "./registry";
 import {IFile} from "./files/_ifile";
 import {Stats} from "./stats/stats";
+import {Dump} from "./dump/dump";
 
 function searchConfig(filename: string): Config {
   const json = searchUp(path.dirname(process.cwd() + path.sep + filename) + path.sep);
@@ -46,10 +47,11 @@ function displayHelp(): string {
   output = output + "  -h, --help       display this help\n";
   output = output + "  -f, --format     output format (standard, total, json, summary)\n";
   output = output + "  -v, --version    current version\n";
-  output = output + "  -a [abap]        specify ABAP version\n";
+  output = output + "  -a [abap]        specify ABAP version\n";  // todo, remove this feature?
   output = output + "  -s               show progress\n";
   output = output + "  -k               output keywords\n";
   output = output + "  -t               output stats\n";
+  output = output + "  -u               dump class and interface information\n";
   output = output + "  -c               compress files in memory\n";
   output = output + "  -m               show memory usage\n";
   output = output + "  -d, --default    show default configuration\n";
@@ -137,6 +139,9 @@ async function run() {
 
       if (argv["t"]) {
         output = JSON.stringify(new Stats(reg).run(progress), undefined, 2);
+        issues = [];
+      } else if (argv["u"]) {
+        output = JSON.stringify(new Dump(reg).classes(), undefined, 2);
         issues = [];
       }
     }
