@@ -28,6 +28,7 @@ const tests = [
   "ASSIGN <ls_data> TO <ls_/foo/bar>.",
   "ASSIGN COMPONENT lv_name OF STRUCTURE iv_input TO <target> CASTING TYPE HANDLE <foo>-type.",
   "ASSIGN <field_x> TO <field> TYPE <fs>-inttype DECIMALS <fs>-decimals.",
+  "ASSIGN <lt_list>-field TO <ls_id> RANGE <ls_range>.",
 //  "ASSIGN (FOO) TO <Z-BAR>.",
   "ASSIGN field TO <F> RANGE range-bar.",
 ];

@@ -27,11 +27,12 @@ export class Import extends Statement {
 
     const buffer = seq(str("DATA BUFFER"), new Source());
     const memory = seq(str("MEMORY ID"), new Source());
+    const using = seq(str("USING"), new Source());
     const table = seq(str("INTERNAL TABLE"), new Source());
 
     const database = seq(str("DATABASE"),
                          new Source(),
-                         per(dto, id, client));
+                         per(dto, id, client, using));
 
     const source = alt(buffer, memory, database, table, shared);
 

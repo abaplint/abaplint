@@ -1,7 +1,7 @@
 import {Statement} from "./_statement";
 import {str, seq, alt, opt, tok, per, IStatementRunnable} from "../combi";
 import {Arrow} from "../tokens/";
-import {FSTarget, Target, Source, Dynamic, Field, FieldSub} from "../expressions";
+import {FSTarget, Target, Source, Dynamic, Field} from "../expressions";
 
 export class Assign extends Statement {
 
@@ -21,10 +21,10 @@ export class Assign extends Statement {
     const type = seq(str("TYPE"), alt(new Dynamic(), new Source()));
     const like = seq(str("LIKE"), alt(new Dynamic(), new Source()));
     const handle = seq(str("TYPE HANDLE"), new Source());
-    const range = seq(str("RANGE"), new FieldSub());
+    const range = seq(str("RANGE"), new Source());
     const decimals = seq(str("DECIMALS"), new Source());
 
-    const casting = seq(opt(str("CASTING")), opt(alt(like, range, handle, per(type, decimals))));
+    const casting = seq(opt(str("CASTING")), opt(alt(like, handle, per(type, decimals))));
 
     const ret = seq(str("ASSIGN"),
                     opt(seq(new Target(), str("INCREMENT"))),

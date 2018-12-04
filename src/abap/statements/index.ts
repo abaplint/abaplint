@@ -8,6 +8,7 @@ export * from "./endmethod";
 export * from "./method";
 export * from "./endform";
 export * from "./form";
+export * from "./import_nametab";
 export * from "./check_select_options";
 export * from "./call_badi";
 export * from "./class_data";
