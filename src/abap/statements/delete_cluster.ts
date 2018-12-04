@@ -1,7 +1,7 @@
 import {Statement} from "./_statement";
 import {verNot, str, seq, tok, opt, IStatementRunnable} from "../combi";
 import {ParenLeft, ParenRightW} from "../tokens/";
-import {Source, SimpleName} from "../expressions";
+import {Source, SimpleName, NamespaceSimpleName} from "../expressions";
 import {Version} from "../../version";
 
 export class DeleteCluster extends Statement {
@@ -10,7 +10,7 @@ export class DeleteCluster extends Statement {
     const client = seq(str("CLIENT"), new Source());
 
     const ret = seq(str("DELETE FROM DATABASE"),
-                    new SimpleName(),
+                    new NamespaceSimpleName(),
                     tok(ParenLeft),
                     new SimpleName(),
                     tok(ParenRightW),

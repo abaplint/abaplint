@@ -1,6 +1,6 @@
 import {Statement} from "./_statement";
 import {verNot, str, seq, opt, alt, per, plus, IStatementRunnable} from "../combi";
-import {Target, Source, ParameterListT, Dynamic, Field} from "../expressions";
+import {Target, Source, Dynamic, Field} from "../expressions";
 import {Version} from "../../version";
 
 export class Import extends Statement {
@@ -40,7 +40,11 @@ export class Import extends Statement {
                         alt(str("TO"), str("INTO")),
                         new Target()));
 
-    const target = alt(new ParameterListT(),
+    const toeq = plus(seq(new Source(),
+                          str("="),
+                          new Target()));
+
+    const target = alt(toeq,
                        to,
                        new Dynamic(),
                        plus(new Target()));

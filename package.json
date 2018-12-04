@@ -72,6 +72,6 @@
   "dependencies": {
     "glob": "^7.1.2",
     "minimist": "^1.2.0",
-    "progress": "^2.0.1"
+    "progress": "^2.0.2"
   }
 }
