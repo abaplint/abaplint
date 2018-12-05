@@ -131,7 +131,7 @@ todo
       }
     }
 
-    progress.set(objects.length, ":percent - Finding Issues - :object");
+    progress.set(objects.length, ":percent - :elapseds - Finding Issues - :object");
     for (const obj of objects) {
       if (this.getConfig().getGlobal().skipGeneratedGatewayClasses
           && obj instanceof Class
@@ -156,13 +156,13 @@ todo
 
     const objects = this.getABAPObjects();
 
-    pro.set(objects.length, ":percent - Lexing and parsing(" + versionToText(this.conf.getVersion()) + ") - :object");
+    pro.set(objects.length, ":percent - :elapseds - Lexing and parsing(" + versionToText(this.conf.getVersion()) + ") - :object");
     objects.forEach((obj) => {
       pro.tick({object: obj.getType() + " " + obj.getName()});
       obj.parseFirstPass(this.conf.getVersion(), this);
     });
 
-    pro.set(objects.length, ":percent - Second pass - :object");
+    pro.set(objects.length, ":percent - :elapseds - Second pass - :object");
     objects.forEach((obj) => {
       pro.tick({object: obj.getType() + " " + obj.getName()});
       this.issues = this.issues.concat(obj.parseSecondPass(this));

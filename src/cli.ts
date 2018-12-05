@@ -71,7 +71,7 @@ async function loadFiles(compress: boolean, input: string[], progress: boolean):
   let bar: ProgressBar | undefined = undefined;
 
   if (progress) {
-    bar = new ProgressBar(":percent - Reading files - :filename", {total: input.length});
+    bar = new ProgressBar(":percent - :elapseds - Reading files - :filename", {total: input.length});
   }
 
   for (const filename of input) {

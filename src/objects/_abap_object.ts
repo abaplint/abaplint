@@ -41,10 +41,10 @@ export abstract class ABAPObject extends AbstractObject {
   }
 
   public parseSecondPass(reg: Registry): Issue[] {
-// todo, change to for loops instead of forEach where possible
-    this.parsed.forEach((f) => {
+    for (const f of this.parsed) {
       const statements: StatementNode[] = [];
-      f.getStatements().forEach((s) => {
+
+      for (const s of f.getStatements()) {
         let name: string | undefined = undefined;
 
         if (s.get() instanceof Unknown) {
@@ -65,16 +65,17 @@ export abstract class ABAPObject extends AbstractObject {
         } else {
           statements.push(s);
         }
-      });
+      }
+
       f.setStatements(statements);
-    });
+    }
 
     let ret: Issue[] = [];
-    this.parsed.forEach((f) => {
+    for (const f of this.parsed) {
       const result = StructureParser.run(f);
       f.setStructure(result.node);
       ret = ret.concat(result.issues);
-    });
+    }
 
     return ret;
   }

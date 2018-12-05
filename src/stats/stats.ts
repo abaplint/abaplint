@@ -4,6 +4,7 @@ import {Version, textToVersion, versionToText} from "../version";
 import {Unknown, Comment, Empty} from "../abap/statements/_statement";
 import * as Statements from "../abap/statements";
 import {MethodLengthStats} from "./method_length_stats";
+import {IStatementTypeCount, StatementTypesStats} from "./statement_types_stats";
 
 export interface ITotals {
   statements: number;
@@ -32,6 +33,7 @@ export interface IResult {
   statements: ITypeCount[];
   objectOrientation: IObjectOrientation;
   methodLength: number[];
+  statementTypes: IStatementTypeCount[];
 }
 
 export class Stats {
@@ -51,7 +53,8 @@ export class Stats {
       issues: this.buildIssues(),
       objectOrientation: this.buildObjectOrientation(),
       methodLength: this.buildMethodLength(),
-      statements: this.buildStatements(progress),
+      statementTypes: StatementTypesStats.run(this.reg),
+      statements: this.buildStatements(progress), // attention: this changes the ABAP version
     };
   }
 
