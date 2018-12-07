@@ -25,7 +25,7 @@ const tests = [
   "SELECT-OPTIONS sp$00004 FOR moo-boo MEMORY ID foo.",
   "SELECT-OPTIONS s_name FOR field NO DATABASE SELECTION.",
   "SELECT-OPTIONS s_field FOR table-field DEFAULT 'A' OPTION EQ SIGN E.",
-//  "select-options date for <fs_booking>-date.",
+  "select-options date for <fs_booking>-date.",
 ];
 
 statementType(tests, "SELECT-OPTIONS", Statements.SelectOption);

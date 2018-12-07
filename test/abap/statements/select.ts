@@ -159,6 +159,8 @@ const tests = [
   "  INNER JOIN tab2 ON tab1~key = tab2~key )\n" +
   "  INNER JOIN tab3 ON tab1~key = tab3~key ).",
 
+  "SELECT SINGLE * FROM *moo WHERE foo = bar.",
+
 ];
 
 statementType(tests, "SELECT", Statements.Select);
