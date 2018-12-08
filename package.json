@@ -3,7 +3,7 @@
   "version": "1.5.0",
   "description": "Linter for ABAP",
   "bin": {
-    "abaplint": "./abaplint"
+    "abaplint": "./abaplint.js"
   },
   "main": "build/src/index.js",
   "typings": "build/src/index.d.ts",

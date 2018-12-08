@@ -1,3 +1,2 @@
-#!/usr/bin/env node
-
-require("./build/src/cli");
+#!/usr/bin/env sh
+node abaplint.js $@

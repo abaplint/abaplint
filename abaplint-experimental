@@ -1,3 +1,0 @@
-#!/usr/bin/env -S node --experimental-worker
-
-require("./build/src/cli");
