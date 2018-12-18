@@ -14,6 +14,7 @@
     "ban-comma-operator": true,
     "no-return-await": true,
     "no-irregular-whitespace": true,
+    "file-name-casing": [true, "snake-case"],
     "no-default-export": true,
     "ter-arrow-body-style": [true, "always"],
     "array-type": [true, "array"],

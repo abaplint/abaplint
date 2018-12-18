@@ -1,7 +1,7 @@
 import {expect} from "chai";
 import {Registry} from "../../src/registry";
 import {MemoryFile} from "../../src/files/memory_file";
-import {Class} from "../../src/objects";
+import {Class, ClassCategory} from "../../src/objects";
 import {Scope} from "../../src/abap/types/scope";
 
 describe("Objects, class, isException", () => {
@@ -174,6 +174,47 @@ describe("Objects, class, getAttributes", () => {
     const reg = new Registry().addFile(new MemoryFile("zcl_foobar.clas.abap", "parser error")).parse();
     const clas = reg.getABAPObjects()[0] as Class;
     expect(clas.getAttributes()).to.equal(undefined);
+  });
+
+});
+
+describe("Objects, class, getCategory", () => {
+
+  it("false", () => {
+    const reg = new Registry();
+
+    const abap = "CLASS zcl_abapgit_moo DEFINITION PUBLIC\n" +
+      "FINAL CREATE PUBLIC.\n" +
+      "ENDCLASS.\n" +
+      "CLASS zcl_abapgit_moo IMPLEMENTATION.\n" +
+      "ENDCLASS.";
+    reg.addFile(new MemoryFile("zcl_abapgit_moo.clas.abap", abap));
+
+    const xml = "<?xml version=\"1.0\" encoding=\"utf-8\"?>\n" +
+      "<abapGit version=\"v1.0.0\" serializer=\"LCL_OBJECT_CLAS\" serializer_version=\"v1.0.0\">\n" +
+      " <asx:abap xmlns:asx=\"http://www.sap.com/abapxml\" version=\"1.0\">\n" +
+      "  <asx:values>\n" +
+      "   <VSEOCLASS>\n" +
+      "    <CLSNAME>ZCL_ABAPGIT_MOO</CLSNAME>\n" +
+      "    <VERSION>1</VERSION>\n" +
+      "    <LANGU>E</LANGU>\n" +
+      "    <DESCRIPT>test test</DESCRIPT>\n" +
+      "    <CATEGORY>05</CATEGORY>\n" +
+      "    <STATE>1</STATE>\n" +
+      "    <CLSCCINCL>X</CLSCCINCL>\n" +
+      "    <FIXPT>X</FIXPT>\n" +
+      "    <UNICODE>X</UNICODE>\n" +
+      "    <WITH_UNIT_TESTS>X</WITH_UNIT_TESTS>\n" +
+      "   </VSEOCLASS>\n" +
+      "  </asx:values>\n" +
+      " </asx:abap>\n" +
+      "</abapGit>";
+    reg.addFile(new MemoryFile("zcl_abapgit_moo.clas.xml", xml));
+
+    reg.parse();
+
+    const clas = reg.getABAPObjects()[0] as Class;
+    expect(clas.getCategory()).to.equal(ClassCategory.Test);
   });
 
 });

@@ -7,7 +7,7 @@ import {Config} from "./config";
 import {Issue} from "./issue";
 import {Artifacts} from "./artifacts";
 import {versionToText} from "./version";
-import {Class} from "./objects";
+import {SkipLogic} from "./skip_logic";
 
 
 export interface IProgress {
@@ -40,11 +40,15 @@ export class Registry {
     return this.objects;
   }
 
-  /*
-  public getObject(): IObject {
-todo
+  public getObject(type: string, name: string): IObject | undefined {
+    for (const obj of this.objects) {
+// todo, this is slow
+      if (obj.getType() === type && obj.getName() === name) {
+        return obj;
+      }
+    }
+    return undefined;
   }
-  */
 
   public getConfig() {
     return this.conf;
@@ -131,13 +135,12 @@ todo
       }
     }
 
+    const skipLogic = new SkipLogic(this);
     progress.set(objects.length, ":percent - :elapseds - Finding Issues - :object");
     for (const obj of objects) {
       progress.tick({object: obj.getType() + " " + obj.getName()});
 
-      if (this.getConfig().getGlobal().skipGeneratedGatewayClasses
-          && obj instanceof Class
-          && obj.isGeneratedGatewayClass()) {
+      if (skipLogic.skip(obj)) {
         continue;
       }
 

@@ -5,6 +5,14 @@ import {ClassDefinition} from "../abap/types/class_definition";
 import {MethodDefinitions} from "../abap/types/method_definitions";
 import {ClassAttributes} from "../abap/types/class_attributes";
 
+export enum ClassCategory {
+  Test = "05",
+  Persistent = "10",
+  PersistentFactory = "11",
+  Exception = "40",
+  SharedObject = "45",
+}
+
 export class Class extends ABAPObject {
 // todo, add dirty flag so things can be cached?
 
@@ -67,14 +75,14 @@ export class Class extends ABAPObject {
 
 // -------------------
 
-  public isGeneratedGatewayClass(): boolean {
-    if (this.getName().match(/_MPC$/i) && this.getSuperClass() === "/IWBEP/CL_MGW_PUSH_ABS_MODEL") {
-      return true;
+  public getCategory(): string | undefined {
+    const result = this.getXML().match(/<CATEGORY>(\d{2})<\/CATEGORY>/);
+    if (result) {
+// https://blog.mariusschulz.com/2017/10/27/typescript-2-4-string-enums#no-reverse-mapping-for-string-valued-enum-members
+      return result[1];
+    } else {
+      return undefined;
     }
-    if (this.getName().match(/_DPC$/i) && this.getSuperClass() === "/IWBEP/CL_MGW_PUSH_ABS_DATA") {
-      return true;
-    }
-    return false;
   }
 
 // --------------------
@@ -92,6 +100,15 @@ export class Class extends ABAPObject {
     } else {
       throw new Error("class.ts, getMain: Could not find main file");
     }
+  }
+
+  private getXML(): string {
+    for (const file of this.getFiles()) {
+      if (file.getFilename().match(/\.clas\.xml$/i)) {
+        return file.getRaw();
+      }
+    }
+    throw new Error("class.ts: XML file not found for class " + this.getName());
   }
 
 }

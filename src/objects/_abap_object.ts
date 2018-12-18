@@ -34,6 +34,7 @@ export abstract class ABAPObject extends AbstractObject {
     this.parsed.forEach((f) => {
       f.getStatements().forEach((s) => {
         if (s.get() instanceof Define) {
+// todo, will this break if first token is a pragma?
           reg.addMacro(s.getTokens()[1].getStr());
         }
       });
