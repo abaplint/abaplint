@@ -1,0 +1,13 @@
+#!/usr/bin/env node
+const path = require('path');
+const { spawn } = require('child_process');
+
+const args = process.argv.slice(2);
+const abaplintPath = path.join(__dirname, 'abaplint');
+
+const pc = spawn('node', [
+  '--experimental-worker',
+  abaplintPath,
+  ...args ],
+  { stdio: 'inherit' }
+);
