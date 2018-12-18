@@ -1,8 +1,2 @@
 #!/usr/bin/env node
-try {
-    require.resolve('worker_threads');
-    console.log('worker_threads found!');
-} catch(e) {
-    console.log('worker_threads NOT found');
-}
 require("./build/src/cli");
