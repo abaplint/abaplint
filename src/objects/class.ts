@@ -12,8 +12,9 @@ export class Class extends ABAPObject {
     return "CLAS";
   }
 
+// todo, rename to "getClass" ?
   public getMainClass(): ClassDefinition | undefined {
-    const main = this.getMain();
+    const main = this.getMainABAP();
     if (!main) {
       return undefined;
     }
@@ -22,15 +23,6 @@ export class Class extends ABAPObject {
       return undefined;
     }
     return new ClassDefinition(found);
-  }
-
-  public getAllClasses(): ClassDefinition[] {
-    const main = this.getMainClass();
-    const ret = this.getLocalClasses();
-    if (main !== undefined) {
-      ret.push(main);
-    }
-    return ret;
   }
 
   public getLocalClasses(): ClassDefinition[] {
@@ -73,6 +65,8 @@ export class Class extends ABAPObject {
     return main.getAttributes();
   }
 
+// -------------------
+
   public isGeneratedGatewayClass(): boolean {
     if (this.getName().match(/_MPC$/i) && this.getSuperClass() === "/IWBEP/CL_MGW_PUSH_ABS_MODEL") {
       return true;
@@ -85,7 +79,7 @@ export class Class extends ABAPObject {
 
 // --------------------
 
-  private getMain(): StructureNode | undefined {
+  private getMainABAP(): StructureNode | undefined {
 // todo, overrride addFile instead of looping through it again?
     const files = this.getParsedFiles();
     for (const file of files) {
