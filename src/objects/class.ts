@@ -76,7 +76,11 @@ export class Class extends ABAPObject {
 // -------------------
 
   public getCategory(): string | undefined {
-    const result = this.getXML().match(/<CATEGORY>(\d{2})<\/CATEGORY>/);
+    const xml = this.getXML();
+    if (!xml) {
+      return undefined;
+    }
+    const result = xml.match(/<CATEGORY>(\d{2})<\/CATEGORY>/);
     if (result) {
 // https://blog.mariusschulz.com/2017/10/27/typescript-2-4-string-enums#no-reverse-mapping-for-string-valued-enum-members
       return result[1];
@@ -102,13 +106,14 @@ export class Class extends ABAPObject {
     }
   }
 
-  private getXML(): string {
+  private getXML(): string | undefined {
     for (const file of this.getFiles()) {
       if (file.getFilename().match(/\.clas\.xml$/i)) {
         return file.getRaw();
       }
     }
-    throw new Error("class.ts: XML file not found for class " + this.getName());
+    return undefined;
+//    throw new Error("class.ts: XML file not found for class " + this.getName());
   }
 
 }

@@ -15,6 +15,10 @@ export class SkipLogic {
         && obj instanceof Class
         && this.isGeneratedGatewayClass(obj)) {
       return true;
+    } else if (this.reg.getConfig().getGlobal().skipGeneratedPersistentClasses
+        && obj instanceof Class
+        && this.isGeneratedPersistentClass(obj)) {
+      return true;
     }
 
     return false;

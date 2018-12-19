@@ -4,6 +4,7 @@ import {Artifacts} from "./artifacts";
 export interface IGlobalConfig {
   version: string;
   skipGeneratedGatewayClasses: boolean;
+  skipGeneratedPersistentClasses: boolean;
 }
 
 export interface IConfig {
@@ -37,6 +38,7 @@ export class Config {
     return {
       version: versionToText(Config.defaultVersion),
       skipGeneratedGatewayClasses: true,
+      skipGeneratedPersistentClasses: true,
     };
   }
 
