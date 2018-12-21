@@ -6,3 +6,9 @@ docs/*
 web/*
 build/test/*
 test/*
+zcl_foo.clas.abap
+version.sh
+travis.sh
+.travis.yml
+tsconfig.json
+tslint.json
