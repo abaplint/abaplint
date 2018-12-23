@@ -132,6 +132,7 @@ export class Registry {
     let issues = this.issues.slice(0);
     const objects = this.getObjects();
 
+ // todo, move this part somewhere else?
     const rules: IRule[] = [];
     for (const rule of Artifacts.getRules()) {
       if (this.conf.readByKey(rule.getKey(), "enabled") === true) {

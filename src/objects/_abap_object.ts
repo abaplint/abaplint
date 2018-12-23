@@ -14,13 +14,26 @@ import {Identifier, Pragma} from "../abap/tokens";
 
 export abstract class ABAPObject extends AbstractObject {
   private parsed: ABAPFile[];
+  private old: Issue[];
 
   public constructor(name: string) {
     super(name);
     this.parsed = [];
   }
 
+  private shouldParse(): boolean {
+  // todo, this does not handle changing of version + macros
+    if (this.parsed.length > 0 && this.isDirty() === false) {
+      return false;
+    } else {
+      return true;
+    }
+  }
+
   public parseFirstPass(ver: Version, reg: Registry) {
+    if (this.shouldParse() === false) {
+      return;
+    }
     this.parsed = [];
 
     this.files.forEach((f) => {
@@ -42,6 +55,10 @@ export abstract class ABAPObject extends AbstractObject {
   }
 
   public parseSecondPass(reg: Registry): Issue[] {
+    if (this.shouldParse() === false) {
+      return this.old;
+    }
+
     for (const f of this.parsed) {
       const statements: StatementNode[] = [];
 
@@ -77,6 +94,9 @@ export abstract class ABAPObject extends AbstractObject {
       f.setStructure(result.node);
       ret = ret.concat(result.issues);
     }
+
+    this.setDirty(false);
+    this.old = ret;
 
     return ret;
   }

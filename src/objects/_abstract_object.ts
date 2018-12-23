@@ -4,13 +4,14 @@ import {IObject} from "./_iobject";
 export abstract class AbstractObject implements IObject {
   protected files: IFile[];
   private name: string;
-// todo, dirty flag?
+  private dirty: boolean;
 
   public abstract getType(): string;
 
   public constructor(name: string) {
     this.name = name;
     this.files = [];
+    this.dirty = false;
   }
 
   public getName(): string {
@@ -18,6 +19,7 @@ export abstract class AbstractObject implements IObject {
   }
 
   public addFile(file: IFile) {
+    this.setDirty(true);
     this.files.push(file);
   }
 
@@ -26,6 +28,7 @@ export abstract class AbstractObject implements IObject {
   }
 
   public removeFile(file: IFile): void {
+    this.setDirty(true);
     for (let i = 0; i < this.files.length; i++) {
       if (this.files[i].getFilename() === file.getFilename()) {
         this.files.splice(i, 1);
@@ -35,7 +38,16 @@ export abstract class AbstractObject implements IObject {
     throw new Error("removeFile: file not found");
   }
 
+  protected setDirty(dirty: boolean): void {
+    this.dirty = dirty;
+  }
+
+  public isDirty() {
+    return this.dirty;
+  }
+
   public updateFile(file: IFile) {
+    this.setDirty(true);
     for (let i = 0; i < this.files.length; i++) {
       if (this.files[i].getFilename() === file.getFilename()) {
         this.files[i] = file;
@@ -44,17 +56,5 @@ export abstract class AbstractObject implements IObject {
     }
     throw new Error("updateFile: file not found");
   }
-/*
-  public removeFile(_file: IFile) {
-    throw new Error("todo");
-  }
 
-  public updateFile(_file: IFile) {
-    throw new Error("todo");
-  }
-
-  public getPackage() {
-    throw new Error("todo, determine from file paths?");
-  }
-*/
 }

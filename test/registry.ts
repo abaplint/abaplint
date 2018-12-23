@@ -58,4 +58,35 @@ describe("Registry", () => {
     expect(() => { registry.removeFile(file1); }).to.throw();
   });
 
+  it("Add and update", () => {
+    const file = new MemoryFile("zfoobar.prog.abap", "WRITE hello.");
+    const registry = new Registry().addFile(file);
+    expect(registry.findIssues().length).to.equal(0);
+
+    const updated = new MemoryFile("zfoobar.prog.abap", "moo boo");
+    registry.updateFile(updated);
+    expect(registry.findIssues().length).to.equal(1);
+  });
+
+  it("Double parse should give the same issues, structure", () => {
+    const file = new MemoryFile("zfoobar.prog.abap", "IF foo = bar.");
+    const registry = new Registry().addFile(file);
+    expect(registry.findIssues().length).to.equal(1);
+    expect(registry.findIssues().length).to.equal(1);
+  });
+
+  it("Double parse should give the same issues, parser errror", () => {
+    const file = new MemoryFile("zfoobar.prog.abap", "moo boo");
+    const registry = new Registry().addFile(file);
+    expect(registry.findIssues().length).to.equal(1);
+    expect(registry.findIssues().length).to.equal(1);
+  });
+
+  it("Double parse should give the same issues, rule", () => {
+    const file = new MemoryFile("zfoobar.prog.abap", "BREAK-POINT.");
+    const registry = new Registry().addFile(file);
+    expect(registry.findIssues().length).to.equal(1);
+    expect(registry.findIssues().length).to.equal(1);
+  });
+
 });
