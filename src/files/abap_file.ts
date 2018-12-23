@@ -3,6 +3,8 @@ import {Token} from "../abap/tokens/_token";
 import {AbstractFile} from "./_abstract_file";
 import {IFile} from "./_ifile";
 import {StructureNode, StatementNode} from "../abap/nodes/";
+import * as Structures from "../abap/structures";
+import {ClassDefinition} from "../abap/types";
 
 export class ABAPFile extends AbstractFile {
   // tokens vs statements: pragmas are part of tokens but not in statements
@@ -35,18 +37,6 @@ export class ABAPFile extends AbstractFile {
     return this.structure;
   }
 
-  /*
-    public static fromJSON(str: string): ParsedFile {
-      let json = JSON.parse(str);
-
-      let file: File = new File(json.filename, json.raw);
-      let tokens: Array<Token> = undefined;
-      let statements: Array<Statement> = undefined;
-      let root: RootNode = undefined;
-
-      return new ParsedFile(file, tokens, statements, root);
-    }
-  */
   public getTokens(withPragmas = true): Token[] {
     if (withPragmas === true) {
       return this.tokens;
@@ -68,15 +58,21 @@ export class ABAPFile extends AbstractFile {
   public setStatements(s: StatementNode[]): void {
     this.statements = s;
   }
-  /*
-    private statementsToTokens(): Array<Token> {
-      let ret: Array<Token> = [];
 
-      this.getStatements().forEach((s) => {
-        ret = ret.concat(s.getTokens());
-      });
+// **************************
 
-      return ret;
+  public getClassDefinitions(): ClassDefinition[] {
+    if (this.structure === undefined) {
+      return [];
     }
-  */
+    const ret: ClassDefinition[] = [];
+    for (const found of this.structure.findAllStructures(Structures.ClassDefinition)) {
+      ret.push(new ClassDefinition(found));
+    }
+    return ret;
+  }
+
+//  public getClassImplementations(): something[] {}
+//  public getForms(): something[] {}
+
 }

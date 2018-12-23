@@ -1,3 +1,5 @@
+import {Token} from "../tokens/_token";
+
 // import {Type} from "./type";
 
 export class Constant {
@@ -9,11 +11,8 @@ export class Constant {
 //    this.type = undefined;
   }
 
-  public getName() {
+  public getName(): Token {
     throw new Error("getName, todo");
   }
 
-  public getType() {
-    throw new Error("getType, todo");
-  }
 }

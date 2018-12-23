@@ -39,13 +39,17 @@ export class ClassAttributeNames implements IRule {
 // todo, consider local classes(PROG, FUGR, CLAS)
 
     if (obj instanceof Class) {
-      if (this.conf.ignoreExceptions && obj.isException()) {
+      const definition = obj.getClassDefinition();
+      if (definition === undefined) {
         return [];
       }
-      if (obj.getAttributes() === undefined) {
+      if (this.conf.ignoreExceptions && definition.isException()) {
         return [];
       }
-      attr = obj.getAttributes();
+      if (definition.getAttributes() === undefined) {
+        return [];
+      }
+      attr = definition.getAttributes();
 // todo, INTF
 //    } else if (obj instanceof Interface) {
 //      methods = obj();

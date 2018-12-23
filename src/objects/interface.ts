@@ -10,6 +10,7 @@ export class Interface extends ABAPObject {
     return "INTF";
   }
 
+// todo, this should give an interface from the types directory
   public getMethodDefinitions(): MethodDefinition[] {
     const node = this.getMain();
     if (!node) {

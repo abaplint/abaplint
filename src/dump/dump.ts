@@ -16,9 +16,10 @@ export class Dump {
         ret.push({
           type: obj.getType(),
           name: obj.getName(),
-          superclass: obj.getSuperClass(),
-          methods: this.methods(obj.getMethodDefinitions()),
-          attributes: this.attributes(obj.getAttributes()),
+// todo
+//          superclass: obj.getSuperClass(),
+//          methods: this.methods(obj.getMethodDefinitions()),
+//          attributes: this.attributes(obj.getAttributes()),
         });
       }
     }

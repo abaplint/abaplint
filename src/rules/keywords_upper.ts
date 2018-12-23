@@ -38,8 +38,11 @@ export class KeywordsUpper extends ABAPRule {
   public runParsed(file: ABAPFile, _reg: Registry, obj: IObject) {
     const issues: Issue[] = [];
 
-    if (this.conf.ignoreExceptions && obj instanceof Class && (obj as Class).isException()) {
-      return [];
+    if (this.conf.ignoreExceptions && obj instanceof Class) {
+      const definition = obj.getClassDefinition();
+      if (definition === undefined || definition.isException()) {
+        return [];
+      }
     }
 
     for (const statement of file.getStatements()) {

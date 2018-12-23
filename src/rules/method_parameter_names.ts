@@ -43,10 +43,15 @@ export class MethodParameterNames implements IRule {
 // todo, consider local classes(PROG, FUGR, CLAS)
 
     if (obj instanceof Class) {
-      if (this.conf.ignoreExceptions && obj.isException()) {
+      const definition = obj.getClassDefinition();
+      if (definition === undefined) {
         return [];
       }
-      const definitions = obj.getMethodDefinitions();
+
+      if (this.conf.ignoreExceptions && definition.isException()) {
+        return [];
+      }
+      const definitions = definition.getMethodDefinitions();
       if (definitions === undefined) {
         return [];
       }

@@ -1,9 +1,6 @@
 import {ABAPObject} from "./_abap_object";
-import {StructureNode} from "../abap/nodes";
-import * as Structures from "../abap/structures";
 import {ClassDefinition} from "../abap/types/class_definition";
-import {MethodDefinitions} from "../abap/types/method_definitions";
-import {ClassAttributes} from "../abap/types/class_attributes";
+import {ABAPFile} from "../files";
 
 export enum ClassCategory {
   Test = "05",
@@ -20,19 +17,19 @@ export class Class extends ABAPObject {
     return "CLAS";
   }
 
-// todo, rename to "getClass" ?
-  public getMainClass(): ClassDefinition | undefined {
+  public getClassDefinition(): ClassDefinition | undefined {
     const main = this.getMainABAP();
     if (!main) {
       return undefined;
     }
-    const found = main.findFirstStructure(Structures.ClassDefinition);
-    if (!found) {
+    const definitions = main.getClassDefinitions();
+    if (definitions.length === 0) {
       return undefined;
     }
-    return new ClassDefinition(found);
+    return definitions[0];
   }
 
+  /*
   public getLocalClasses(): ClassDefinition[] {
     const ret: ClassDefinition[] = [];
     for (const file of this.getParsedFiles()) {
@@ -46,32 +43,7 @@ export class Class extends ABAPObject {
     }
     return ret;
   }
-
-// -------------------
-
-  public isException(): boolean | undefined  {
-    const main = this.getMainClass();
-    if (!main) { return undefined; }
-    return main.isException();
-  }
-
-  public getSuperClass(): string | undefined  {
-    const main = this.getMainClass();
-    if (!main) { return undefined; }
-    return main.getSuperClass();
-  }
-
-  public getMethodDefinitions(): MethodDefinitions | undefined  {
-    const main = this.getMainClass();
-    if (!main) { return undefined; }
-    return main.getMethodDefinitions();
-  }
-
-  public getAttributes(): ClassAttributes | undefined {
-    const main = this.getMainClass();
-    if (!main) { return undefined; }
-    return main.getAttributes();
-  }
+ */
 
 // -------------------
 
@@ -91,12 +63,12 @@ export class Class extends ABAPObject {
 
 // --------------------
 
-  private getMainABAP(): StructureNode | undefined {
+  private getMainABAP(): ABAPFile | undefined {
 // todo, overrride addFile instead of looping through it again?
     const files = this.getParsedFiles();
     for (const file of files) {
       if (file.getFilename().match(/\.clas\.abap$/i)) {
-        return file.getStructure();
+        return file;
       }
     }
     if (files.length === 0) {
@@ -113,7 +85,6 @@ export class Class extends ABAPObject {
       }
     }
     return undefined;
-//    throw new Error("class.ts: XML file not found for class " + this.getName());
   }
 
 }

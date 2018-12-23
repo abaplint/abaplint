@@ -1,13 +1,7 @@
 import * as LServer from "vscode-languageserver-protocol";
-import * as Structures from "../abap/structures";
-import * as Statements from "../abap/statements";
-import * as Expressions from "../abap/expressions";
 import {Registry} from "../registry";
-import {INode} from "../abap/nodes/_inode";
-import {StructureNode} from "../abap/nodes";
 import {Token} from "../abap/tokens/_token";
-
-// todo, refactor all this, use the real methods instead of traversing the AST
+import {ABAPFile} from "../files";
 
 export class Symbols {
 
@@ -17,47 +11,32 @@ export class Symbols {
       return [];
     }
 
-    const structure = file.getStructure();
-    if (structure === undefined) {
-      return [];
-    }
-
-    return this.traverse(structure);
+    let ret: LServer.DocumentSymbol[] = [];
+    ret = ret.concat(this.outputClasses(file));
+    return ret;
   }
 
   private static tokenToRange(token: Token): LServer.Range {
     return LServer.Range.create(token.getCol(), token.getRow(), token.getCol() + token.getStr().length, token.getRow());
   }
 
-  private static beginEnd(node: StructureNode): LServer.Range {
-    const first = node.getFirstToken();
-    const last = node.getLastToken();
-
+  private static beginEnd(first: Token, last: Token): LServer.Range {
     return LServer.Range.create(first.getCol(), first.getRow(), last.getCol() + last.getStr().length, last.getRow());
   }
 
-  private static traverse(node: INode): LServer.DocumentSymbol[] {
-    let ret: LServer.DocumentSymbol[] = [];
+  private static outputClasses(file: ABAPFile): LServer.DocumentSymbol[] {
+    const ret: LServer.DocumentSymbol[] = [];
 
-    if (node.get() instanceof Structures.Any || node.get() instanceof Structures.ClassGlobal) {
-      for (const child of node.getChildren()) {
-        ret = ret.concat(this.traverse(child));
-      }
-    } else if (node instanceof StructureNode && node.get() instanceof Structures.ClassDefinition) {
-      const nameToken = node.findFirstStatement(Statements.ClassDefinition)!.findFirstExpression(Expressions.ClassName)!.getFirstToken();
-
+    for (const cla of file.getClassDefinitions()) {
+      const nameToken = cla.getName();
       const symbol: LServer.DocumentSymbol = {
         name: nameToken.getStr(),
         kind: LServer.SymbolKind.Class,
-        range: this.beginEnd(node),
+        range: this.beginEnd(cla.getFirstToken(), cla.getLastToken()),
         selectionRange: this.tokenToRange(nameToken),
         children: [],
       };
-
-      for (const child of node.getChildren()) {
-        symbol.children = symbol.children!.concat(this.traverse(child));
-      }
-
+// todo, methods and more
       ret.push(symbol);
     }
 
