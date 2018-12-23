@@ -10,7 +10,7 @@ import * as Nodes from "./abap/nodes";
 // this part is required for the web things to work
 exports.File = MemoryFile;
 exports.Nodes = Nodes;
-exports.Nodes = Issue;
+exports.Issue = Issue;
 exports.Registry = Registry;
 exports.Config = Config;
 exports.Version = Version;
