@@ -13,13 +13,16 @@ export class Dump {
     const ret: any = [];
     for (const obj of this.reg.getObjects()) {
       if (obj instanceof Objects.Class) {
+        const definition = obj.getClassDefinition();
+        if (definition === undefined) {
+          continue;
+        }
         ret.push({
           type: obj.getType(),
           name: obj.getName(),
-// todo
-//          superclass: obj.getSuperClass(),
-//          methods: this.methods(obj.getMethodDefinitions()),
-//          attributes: this.attributes(obj.getAttributes()),
+          superclass: definition.getSuperClass(),
+          methods: this.methods(definition.getMethodDefinitions()),
+          attributes: this.attributes(definition.getAttributes()),
         });
       }
     }

@@ -1,4 +1,5 @@
 import {INode} from "./_inode";
+import {Token} from "../tokens/_token";
 
 export abstract class BasicNode implements INode {
   protected children: INode[];
@@ -8,6 +9,8 @@ export abstract class BasicNode implements INode {
   }
 
   public abstract get(): any;
+  public abstract getFirstToken(): Token;
+  public abstract getLastToken(): Token;
 
   public addChild(n: INode): INode {
     this.children.push(n);

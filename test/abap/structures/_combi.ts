@@ -6,10 +6,17 @@ import {StatementNode} from "../../../src/abap/nodes/";
 import {Structure} from "../../../src/abap/structures/_structure";
 import {Statement} from "../../../src/abap/statements/_statement";
 import {BasicNode} from "../../../src/abap/nodes/_basic_node";
+import {Token} from "../../../src/abap/tokens/_token";
 
 class DummyNode extends BasicNode {
   public get(): undefined {
     return undefined;
+  }
+  public getFirstToken(): Token {
+    throw new Error("not implemented");
+  }
+  public getLastToken(): Token {
+    throw new Error("not implemented");
   }
 }
 

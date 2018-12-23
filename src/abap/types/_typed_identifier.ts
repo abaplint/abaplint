@@ -1,11 +1,12 @@
 // import {Type} from "./type";
-import {Position} from "../../position";
 import {Identifier} from "./_identifier";
+import {Token} from "../tokens/_token";
+import {INode} from "../nodes/_inode";
 
 export abstract class TypedIdentifier extends Identifier {
 //  private type: Type;
-  constructor(name: string, position: Position) {
-    super(name, position);
+  constructor(token: Token, node: INode) {
+    super(token, node);
   }
 /*
   public getType() {

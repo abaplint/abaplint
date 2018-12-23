@@ -12,7 +12,7 @@ export class MethodParameter extends TypedIdentifier {
     if (!name) {
       throw new Error("method_parameter.ts, todo, handle pass by value and reference");
     }
-    super(name.getFirstToken().getStr(), name.getFirstToken().getPos());
+    super(name.getFirstToken(), node);
   }
 
 // todo: pass by reference / pass by value

@@ -8,3 +8,4 @@ build/
 coverage/
 npm-debug.log
 .alm/
+dump.json

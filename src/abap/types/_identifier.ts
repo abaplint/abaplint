@@ -1,13 +1,19 @@
 // import {Type} from "./type";
 import {Position} from "../../position";
+import {Token} from "../tokens/_token";
+import {INode} from "../nodes/_inode";
 
 export abstract class Identifier {
   private name: string;
   private position: Position;
+  private start: Position;
+  private end: Position;
 
-  constructor(name: string, position: Position) {
-    this.name = name;
-    this.position = position;
+  constructor(token: Token, node: INode) {
+    this.name = token.getStr();
+    this.position = token.getPos();
+    this.start = node.getFirstToken().getPos();
+    this.end = node.getLastToken().getPos();
 
 // todo, should this be handled in the parser instead?
     if (this.name.substr(0, 1) === "!") {
@@ -21,5 +27,13 @@ export abstract class Identifier {
 
   public getPosition() {
     return this.position;
+  }
+
+  public getStart(): Position {
+    return this.start;
+  }
+
+  public getEnd(): Position {
+    return this.end;
   }
 }

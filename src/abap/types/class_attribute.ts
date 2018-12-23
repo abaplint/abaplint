@@ -18,7 +18,7 @@ export class ClassAttribute extends TypedIdentifier {
     }
     const token = found.getFirstToken();
 
-    super(token.getStr(), token.getPos());
+    super(token, node);
     this.scope = scope;
 //    this.readOnly = undefined;
   }

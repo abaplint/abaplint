@@ -22,7 +22,7 @@ export class MethodDefinition extends Identifier {
     if (found === undefined) {
       throw new Error("MethodDefinition, expected MethodDef as part of input node");
     }
-    super(found.getFirstToken().getStr(), found.getFirstToken().getPos());
+    super(found.getFirstToken(), node);
 
     this.scope = scope;
     this.parameters = new MethodParameters(node);

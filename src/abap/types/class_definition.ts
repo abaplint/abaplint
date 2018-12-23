@@ -5,16 +5,20 @@ import * as Statements from "../../abap/statements";
 import * as Structures from "../../abap/structures";
 import * as Expressions from "../../abap/expressions";
 import {ClassAttributes} from "./class_attributes";
-import {Token} from "../tokens/_token";
+import {Identifier} from "./_identifier";
 
 // todo, is this the same as an InterfaceDefinition?
-export class ClassDefinition {
+export class ClassDefinition extends Identifier {
   private node: StructureNode;
 
   constructor(node: StructureNode) {
     if (!(node.get() instanceof Structures.ClassDefinition)) {
       throw new Error("ClassDefinition, unexpected node type");
     }
+
+    const name = node.findFirstStatement(Statements.ClassDefinition)!.findFirstExpression(Expressions.ClassName)!.getFirstToken();
+    super(name, node);
+
     this.node = node;
   }
 
@@ -33,18 +37,6 @@ export class ClassDefinition {
   public getAttributes(): ClassAttributes | undefined {
     if (!this.node) { return undefined; }
     return new ClassAttributes(this.node);
-  }
-
-  public getName(): Token {
-    return this.node.findFirstStatement(Statements.ClassDefinition)!.findFirstExpression(Expressions.ClassName)!.getFirstToken();
-  }
-
-  public getFirstToken(): Token {
-    return this.node.getFirstToken();
-  }
-
-  public getLastToken(): Token {
-    return this.node.getLastToken();
   }
 
   public isException(): boolean {
