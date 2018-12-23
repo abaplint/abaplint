@@ -36,6 +36,11 @@ export class Registry {
     this.conf = conf ? conf : Config.getDefault();
   }
 
+  public static abaplintVersion(): string {
+    // magic, see build script "version.sh"
+    return "{{ VERSION }}";
+  }
+
   public getObjects(): IObject[] {
     return this.objects;
   }

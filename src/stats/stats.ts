@@ -1,5 +1,4 @@
 import {Registry, IProgress} from "../registry";
-import {Runner} from "../runner";
 import {Version, textToVersion, versionToText} from "../version";
 import {Unknown, Comment, Empty} from "../abap/statements/_statement";
 import * as Statements from "../abap/statements";
@@ -45,7 +44,7 @@ export class Stats {
 
   public run(progress?: IProgress): IResult {
     return {
-      version: Runner.version(),
+      version: Registry.abaplintVersion(),
       target: versionToText(this.reg.getConfig().getVersion()),
       time: new Date().toISOString(),
       totals: this.buildTotals(),

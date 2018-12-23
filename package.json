@@ -1,6 +1,6 @@
 {
   "name": "abaplint",
-  "version": "1.5.4",
+  "version": "1.5.5",
   "description": "Linter for ABAP",
   "bin": {
     "abaplint": "./abaplint",
@@ -24,7 +24,7 @@
     "postcoverage": "codecov -f coverage/coverage-remap.json",
     "prebrowserify": "tsc --pretty --target ES3 --lib es2017 --outdir build/web",
     "browserify": "sh version.sh",
-    "postbrowserify": "browserify build/web/src/runner.js -o build/bundle.js -s abaplint",
+    "postbrowserify": "browserify build/web/src/index_web.js -o build/bundle.js -s abaplint",
     "uglify": "uglifyjs build/bundle.js --compress warnings=false --mangle --keep-fnames -o build/bundle.js",
     "postuglify": "rm -rf build/web",
     "preweb.playground": "npm run browserify",

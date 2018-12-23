@@ -4,7 +4,6 @@ import * as zlib from "zlib";
 import * as glob from "glob";
 import * as minimist from "minimist";
 import * as ProgressBar from "progress";
-import {Runner} from "./runner";
 import {CompressedFile, MemoryFile} from "./files";
 import {Issue} from "./issue";
 import {Config} from "./config";
@@ -111,7 +110,7 @@ async function run() {
   if (argv["h"] !== undefined || argv["help"] !== undefined) {
     output = output + displayHelp();
   } else if (argv["v"] !== undefined || argv["version"] !== undefined) {
-    output = output + Runner.version() + "\n";
+    output = output + Registry.abaplintVersion() + "\n";
   } else if (argv["d"] !== undefined || argv["default"] !== undefined) {
     output = output + JSON.stringify(Config.getDefault().get(), undefined, 2) + "\n";
   } else if (argv["k"] !== undefined) {

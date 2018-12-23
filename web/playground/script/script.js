@@ -198,7 +198,7 @@ function run() {
   });
   popuplateVersionDropdown();
   editor.setSize(null, "100%");
-  document.getElementById("abaplintver").innerHTML = abaplint.Runner.version();
+  document.getElementById("abaplintver").innerHTML = abaplint.Registry.abaplintVersion();
 }
 
 run();
