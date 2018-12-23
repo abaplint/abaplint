@@ -7,6 +7,8 @@ import {INode} from "../abap/nodes/_inode";
 import {StructureNode} from "../abap/nodes";
 import {Token} from "../abap/tokens/_token";
 
+// todo, refactor all this, use the real methods instead of traversing the AST
+
 export class Symbols {
 
   public static find(reg: Registry, uri: string): LServer.DocumentSymbol[] {
@@ -35,9 +37,13 @@ export class Symbols {
   }
 
   private static traverse(node: INode): LServer.DocumentSymbol[] {
-    const ret: LServer.DocumentSymbol[] = [];
+    let ret: LServer.DocumentSymbol[] = [];
 
-    if (node instanceof StructureNode && node.get() instanceof Structures.ClassDefinition) {
+    if (node.get() instanceof Structures.Any || node.get() instanceof Structures.ClassGlobal) {
+      for (const child of node.getChildren()) {
+        ret = ret.concat(this.traverse(child));
+      }
+    } else if (node instanceof StructureNode && node.get() instanceof Structures.ClassDefinition) {
       const nameToken = node.findFirstStatement(Statements.ClassDefinition)!.findFirstExpression(Expressions.ClassName)!.getFirstToken();
 
       const symbol: LServer.DocumentSymbol = {
