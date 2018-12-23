@@ -1,16 +1,18 @@
 // import {Type} from "./type";
 import {Position} from "../../position";
 
-
-export class Attribute {
+export abstract class Identifier {
   private name: string;
   private position: Position;
-//  private type: Type;
 
   constructor(name: string, position: Position) {
     this.name = name;
     this.position = position;
-//    this.type = undefined;
+
+// todo, should this be handled in the parser instead?
+    if (this.name.substr(0, 1) === "!") {
+      this.name = this.name.substr(1);
+    }
   }
 
   public getName() {
@@ -20,9 +22,4 @@ export class Attribute {
   public getPosition() {
     return this.position;
   }
-/*
-  public getType() {
-    return this.type;
-  }
-*/
 }

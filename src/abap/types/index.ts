@@ -1,4 +1,3 @@
-export * from "./attribute";
 export * from "./class_attribute";
 export * from "./class_attributes";
 export * from "./class_constant";
@@ -9,5 +8,4 @@ export * from "./method_definitions";
 export * from "./method_parameter";
 export * from "./method_parameters";
 export * from "./scope";
-export * from "./type";
 export * from "./class_implementation";

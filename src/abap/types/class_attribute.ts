@@ -1,10 +1,10 @@
-import {Scope} from "./scope";
-import {Attribute} from "./attribute";
 import * as Statements from "../statements";
 import * as Expressions from "../expressions";
+import {Scope} from "./scope";
 import {StatementNode} from "../nodes";
+import {TypedIdentifier} from "./_typed_identifier";
 
-export class ClassAttribute extends Attribute {
+export class ClassAttribute extends TypedIdentifier {
   private scope: Scope;
 //  private readOnly: boolean;
 

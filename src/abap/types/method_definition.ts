@@ -3,12 +3,10 @@ import {MethodDef} from "../../abap/statements";
 import {MethodName} from "../../abap/expressions";
 import {MethodParameters} from "./method_parameters";
 import {Scope} from "./scope";
-import {Position} from "../../position";
+import {Identifier} from "./_identifier";
 
-export class MethodDefinition {
+export class MethodDefinition extends Identifier {
   private scope: Scope;
-  private name: string;
-  private position: Position;
   private parameters: MethodParameters;
 
 // todo:
@@ -24,18 +22,10 @@ export class MethodDefinition {
     if (found === undefined) {
       throw new Error("MethodDefinition, expected MethodDef as part of input node");
     }
-    this.name = found.getFirstToken().getStr();
-    this.position = found.getFirstToken().getPos();
+    super(found.getFirstToken().getStr(), found.getFirstToken().getPos());
+
     this.scope = scope;
     this.parameters = new MethodParameters(node);
-  }
-
-  public getName(): string {
-    return this.name;
-  }
-
-  public getPosition(): Position {
-    return this.position;
   }
 
   public getScope() {

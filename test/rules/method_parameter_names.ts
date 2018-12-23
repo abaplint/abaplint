@@ -10,7 +10,7 @@ function findIssues(abap: string, filename: string) {
 }
 
 describe("Rule: method parameter names", function() {
-  it("positive", function () {
+  it("positive 1", function () {
     const abap = "INTERFACE zif_foobar PUBLIC.\n" +
       "  METHODS method1 IMPORTING foo TYPE i.\n" +
       "ENDINTERFACE.";
@@ -18,7 +18,7 @@ describe("Rule: method parameter names", function() {
     expect(issues.length).to.equal(1);
   });
 
-  it("positive", function () {
+  it("positive 2", function () {
     const abap = "INTERFACE zif_foobar PUBLIC.\n" +
       "  METHODS method1 IMPORTING !iv_foo TYPE i.\n" +
       "ENDINTERFACE.";

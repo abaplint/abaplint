@@ -2,7 +2,7 @@ import {Token} from "../tokens/_token";
 
 // import {Type} from "./type";
 
-export class Constant {
+export class Constant { // todo extends TypedIdentifier
 //  private name: string;
 //  private type: Type;
 

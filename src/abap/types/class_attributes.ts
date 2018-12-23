@@ -1,7 +1,7 @@
-import {ClassAttribute} from "./class_attribute";
-import {ClassConstant} from "./class_constant";
 import * as Structures from "../../abap/structures";
 import * as Statements from "../../abap/statements";
+import {ClassAttribute} from "./class_attribute";
+import {ClassConstant} from "./class_constant";
 import {StructureNode} from "../../abap/nodes";
 import {Scope} from "./scope";
 
