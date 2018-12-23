@@ -22,7 +22,7 @@ export class MethodDefinition {
     if (found === undefined) {
       throw new Error("MethodDefinition, expected MethodDef as part of input node");
     }
-    this.name = found.getFirstToken().get().getStr();
+    this.name = found.getFirstToken().getStr();
     this.scope = scope;
     this.parameters = new MethodParameters(node);
   }

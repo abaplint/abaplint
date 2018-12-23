@@ -22,4 +22,12 @@ export abstract class BasicNode implements INode {
   public getChildren(): INode[] {
     return this.children;
   }
+
+  public getFirstChild(): INode | undefined {
+    return this.children[0];
+  }
+
+  public getLastChild(): INode | undefined {
+    return this.children[this.children.length - 1];
+  }
 }

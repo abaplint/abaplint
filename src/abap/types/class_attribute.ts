@@ -16,7 +16,7 @@ export class ClassAttribute extends Attribute {
     if (found === undefined) {
       throw new Error("ClassAttribute, unexpected node");
     }
-    const token = found.getFirstToken().get();
+    const token = found.getFirstToken();
 
     super(token.getStr(), token.getPos());
     this.scope = scope;

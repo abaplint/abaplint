@@ -36,10 +36,10 @@ export class MethodParameter {
     if (!name) {
       throw new Error("method_parameter.ts, todo, handle pass by value and reference");
     }
-    this.name = name.getFirstToken().get().getStr();
+    this.name = name.getFirstToken().getStr();
     if (this.name.substr(0, 1) === "!") {
       this.name = this.name.substr(1);
     }
-    this.position = name.getFirstToken().get().getPos();
+    this.position = name.getFirstToken().getPos();
   }
 }

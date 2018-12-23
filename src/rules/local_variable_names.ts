@@ -70,7 +70,7 @@ export class LocalVariableNames extends ABAPRule {
       }
       const found = dat.findFirstExpression(Expressions.NamespaceSimpleName);
       if (found) {
-        const token = found.getFirstToken().get();
+        const token = found.getFirstToken();
         ret = ret.concat(this.checkName(token, file, this.conf.expectedData));
       }
     }
@@ -79,7 +79,7 @@ export class LocalVariableNames extends ABAPRule {
     for (const dat of datab) {
       const found = dat.findFirstExpression(Expressions.NamespaceSimpleName);
       if (found) {
-        const token = found.getFirstToken().get();
+        const token = found.getFirstToken();
         ret = ret.concat(this.checkName(token, file, this.conf.expectedData));
       }
     }
@@ -88,7 +88,7 @@ export class LocalVariableNames extends ABAPRule {
     for (const fieldsymbol of fieldsymbols) {
       const found = fieldsymbol.findFirstExpression(Expressions.FieldSymbol);
       if (found) {
-        const token = found.getFirstToken().get();
+        const token = found.getFirstToken();
         ret = ret.concat(this.checkName(token, file, this.conf.expectedFS));
       }
     }
@@ -101,7 +101,7 @@ export class LocalVariableNames extends ABAPRule {
       }
       const found = constant.findFirstExpression(Expressions.NamespaceSimpleName);
       if (found) {
-        const token = found.getFirstToken().get();
+        const token = found.getFirstToken();
         ret = ret.concat(this.checkName(token, file, this.conf.expectedConstant));
       }
     }

@@ -2,7 +2,7 @@ import {BasicNode} from "./_basic_node";
 import {Structure} from "../structures/_structure";
 import {StatementNode} from "./statement_node";
 import {Statement} from "../statements/_statement";
-import {TokenNode} from "./token_node";
+import {Token} from "../tokens/_token";
 
 export class StructureNode extends BasicNode {
   private structure: Structure;
@@ -52,15 +52,28 @@ export class StructureNode extends BasicNode {
     return undefined;
   }
 
-  public getFirstToken(): TokenNode {
-    for (const child of this.getChildren()) {
-      if (child instanceof StatementNode) {
-        return child.getFirstToken();
-      } else if (child instanceof StructureNode) {
-        return child.getFirstToken();
-      }
+  public getFirstToken(): Token {
+    const child = this.getFirstChild();
+
+    if (child instanceof StatementNode) {
+      return child.getFirstToken();
+    } else if (child instanceof StructureNode) {
+      return child.getFirstToken();
     }
+
     throw new Error("getFirstToken, unexpected type");
+  }
+
+  public getLastToken(): Token {
+    const child = this.getLastChild();
+
+    if (child instanceof StatementNode) {
+      return child.getLastToken();
+    } else if (child instanceof StructureNode) {
+      return child.getLastToken();
+    }
+
+    throw new Error("getLastToken, unexpected type");
   }
 
   public findAllStatements(type: new () => Statement): StatementNode[] {

@@ -47,7 +47,7 @@ export class LocalClassNaming extends ABAPRule {
       if (!expr) {
         continue;
       }
-      const token = expr.getFirstToken().get();
+      const token = expr.getFirstToken();
       const name = token.getStr();
       if (obj instanceof Class && name.toUpperCase() === obj.getName().toUpperCase()) {
         continue;

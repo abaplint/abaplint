@@ -31,7 +31,7 @@ export class MethodLengthStats {
       for (const stat of file.getStatements()) {
         const type = stat.get();
         if (type instanceof Statements.Method) {
-          pos = stat.getFirstToken().get().getPos();
+          pos = stat.getFirstToken().getPos();
           name = this.findName(stat);
           method = true;
           count = 0;
@@ -57,7 +57,7 @@ export class MethodLengthStats {
     let name: string = "";
     const nameExpr = stat.findFirstExpression(MethodName);
     if (nameExpr) {
-      name = nameExpr.getFirstToken().get().getStr();
+      name = nameExpr.getFirstToken().getStr();
     } else {
       throw new Error("MethodLength, findName, expected MethodName");
     }

@@ -25,7 +25,7 @@ export class ClassDefinition {
     if (!this.node) { return undefined; }
     const found = this.node.findFirstStatement(Statements.ClassDefinition);
     const token = found ? found.findFirstExpression(SuperClassName) : undefined;
-    return token ? token.getFirstToken().get().getStr() : undefined;
+    return token ? token.getFirstToken().getStr() : undefined;
   }
 
   public getAttributes(): ClassAttributes | undefined {

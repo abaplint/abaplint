@@ -80,6 +80,16 @@ export class Registry {
     return ret;
   }
 
+  public getABAPFile(name: string): ABAPFile | undefined {
+    const all = this.getABAPFiles();
+    for (const file of all) {
+      if (file.getFilename() === name) {
+        return file;
+      }
+    }
+    return undefined;
+  }
+
   public addFile(file: IFile): Registry {
     this.setDirty();
     return this.addFiles([file]);

@@ -44,7 +44,7 @@ export class TryWithoutCatch extends ABAPRule {
           file,
           message: this.getDescription(),
           code: this.getKey(),
-          start: t.getFirstToken().get().getPos()}));
+          start: t.getFirstToken().getPos()}));
       }
     }
 

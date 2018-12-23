@@ -86,15 +86,27 @@ export class StatementNode extends BasicNode {
     return this.getTokens()[this.getTokens().length - 1].getStr();
   }
 
-  public getFirstToken(): TokenNode {
+  public getFirstToken(): Token {
     for (const child of this.getChildren()) {
       if (child instanceof TokenNode) {
-        return child;
+        return child.get();
       } else if (child instanceof ExpressionNode) {
         return child.getFirstToken();
       }
     }
     throw new Error("getFirstToken, unexpected type");
+  }
+
+  public getLastToken(): Token {
+    const child = this.getLastChild();
+
+    if (child instanceof TokenNode) {
+      return child.get();
+    } else if (child instanceof ExpressionNode) {
+      return child.getLastToken();
+    }
+
+    throw new Error("getLastToken, unexpected type");
   }
 
   public findFirstExpression(type: new () => Expression): ExpressionNode | undefined {
