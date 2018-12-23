@@ -39,7 +39,6 @@ export class ClassAttributes {
     this.parseSection(cdef.findFirstStructure(Structures.PublicSection), Scope.Public);
     this.parseSection(cdef.findFirstStructure(Structures.PrivateSection), Scope.Private);
     this.parseSection(cdef.findFirstStructure(Structures.ProtectedSection), Scope.Protected);
-
   }
 
   private parseSection(node: StructureNode | undefined, scope: Scope): void {

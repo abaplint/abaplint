@@ -5,7 +5,7 @@ import {Symbols} from "../../src/lsp/symbols";
 
 describe("LSP, symbols", () => {
 
-  it("Simple WRITE", () => {
+  it("Simple WRITE, no symbols", () => {
     const file = new MemoryFile("foobar.prog.abap", "WRITE foo.");
     const reg = new Registry().addFile(file).parse();
     const symbols = Symbols.find(reg, file.getFilename());
@@ -19,6 +19,18 @@ describe("LSP, symbols", () => {
     const symbols = Symbols.find(reg, file.getFilename());
     expect(symbols.length).to.equal(1);
     expect(symbols[0].name).to.equal("lcl_foobar");
+  });
+
+  it("Class Implementation", () => {
+    const file = new MemoryFile("foobar.prog.abap", "CLASS lcl_foobar IMPLEMENTATION.\nMETHOD foo.\nENDMETHOD.\nENDCLASS.");
+    const reg = new Registry().addFile(file).parse();
+    expect(reg.findIssues().length).to.equal(0);
+    const symbols = Symbols.find(reg, file.getFilename());
+    expect(symbols.length).to.equal(1);
+    expect(symbols[0].name).to.equal("lcl_foobar");
+    expect(symbols[0].children).to.not.equal(undefined);
+    expect(symbols[0].children!.length).to.equal(1);
+    expect(symbols[0].children![0].name).to.equal("foo");
   });
 
 });

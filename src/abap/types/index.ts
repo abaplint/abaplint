@@ -9,3 +9,4 @@ export * from "./method_parameter";
 export * from "./method_parameters";
 export * from "./scope";
 export * from "./class_implementation";
+export * from "./method_implementation";

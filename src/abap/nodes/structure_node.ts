@@ -3,6 +3,8 @@ import {Structure} from "../structures/_structure";
 import {StatementNode} from "./statement_node";
 import {Statement} from "../statements/_statement";
 import {Token} from "../tokens/_token";
+import {Expression} from "../combi";
+import {ExpressionNode} from "./expression_node";
 
 export class StructureNode extends BasicNode {
   private structure: Structure;
@@ -42,6 +44,27 @@ export class StructureNode extends BasicNode {
         continue;
       } else if (child instanceof StructureNode) {
         const res = child.findFirstStatement(type);
+        if (res) {
+          return res;
+        }
+      } else {
+        throw new Error("findFirstStatement, unexpected type");
+      }
+    }
+    return undefined;
+  }
+
+  public findFirstExpression(type: new () => Expression): ExpressionNode | undefined {
+    for (const child of this.getChildren()) {
+      if (child.get() instanceof type) {
+        return child as ExpressionNode;
+      } else if (child instanceof StatementNode) {
+        const res = child.findFirstExpression(type);
+        if (res) {
+          return res;
+        }
+      } else if (child instanceof StructureNode) {
+        const res = child.findFirstExpression(type);
         if (res) {
           return res;
         }

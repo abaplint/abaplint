@@ -33,4 +33,5 @@ export abstract class BasicNode implements INode {
   public getLastChild(): INode | undefined {
     return this.children[this.children.length - 1];
   }
+
 }

@@ -7,4 +7,5 @@ export interface INode {
   get(): any;
   getFirstToken(): Token;
   getLastToken(): Token;
+// todo, consider adding find* get* methods from nodes, subclasses currently contain similar methods
 }
