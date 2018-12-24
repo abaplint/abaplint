@@ -4,6 +4,7 @@ import {Version, textToVersion} from "./version";
 import {Formatter} from "./formatters/_format";
 import {Registry} from "./registry";
 import {Issue} from "./issue";
+import {LanguageServer} from "./lsp";
 import * as Nodes from "./abap/nodes";
 
 // todo figure out how these exports relate to the exports in index.ts
@@ -16,3 +17,4 @@ exports.Config = Config;
 exports.Version = Version;
 exports.textToVersion = textToVersion;
 exports.Formatter = Formatter;
+exports.LanguageServer = LanguageServer;
