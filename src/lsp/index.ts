@@ -26,11 +26,10 @@ export class LanguageServer {
 
     const text = new PrettyPrinter(file).run();
     const tokens = file.getTokens();
-    const first = tokens[0];
     const last = tokens[tokens.length - 1];
 
     return [{
-      range: LServer.Range.create(first.getRow(), first.getCol(), last.getRow(), last.getCol() + last.getStr().length),
+      range: LServer.Range.create(0, 0, last.getRow(), last.getCol() + last.getStr().length),
       newText: text,
     }];
   }
