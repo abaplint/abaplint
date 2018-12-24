@@ -1,4 +1,4 @@
-import {ParserError} from "../../src/rules/parser_error";
+import {ParserError} from "../../src/rules/syntax/parser_error";
 import {testRule} from "./_utils";
 
 const tests = [

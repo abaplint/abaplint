@@ -1,7 +1,7 @@
 import {MemoryFile} from "../../src/files/memory_file";
 import {Registry} from "../../src/registry";
 import {expect} from "chai";
-import {InlineDataOldVersions} from "../../src/rules/inline_data_old_versions";
+import {InlineDataOldVersions} from "../../src/rules/syntax/inline_data_old_versions";
 import {Version} from "../../src/version";
 import {Config} from "../../src/config";
 

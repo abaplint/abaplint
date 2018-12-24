@@ -1,9 +1,9 @@
-import {Issue} from "../issue";
-import {ABAPRule} from "./_abap_rule";
-import {ABAPFile} from "../files";
-import {Registry} from "../registry";
-import {Version, versionToText} from "../version";
-import {Target} from "../abap/expressions";
+import {Issue} from "../../issue";
+import {ABAPRule} from "../_abap_rule";
+import {ABAPFile} from "../../files";
+import {Registry} from "../../registry";
+import {Version, versionToText} from "../../version";
+import {Target} from "../../abap/expressions";
 
 export class InlineDataOldVersionsConf {
   public enabled: boolean = true;

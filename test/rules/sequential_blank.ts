@@ -1,4 +1,4 @@
-import {SequentialBlank} from "../../src/rules/sequential_blank";
+import {SequentialBlank} from "../../src/rules/whitespace/sequential_blank";
 import {testRule} from "./_utils";
 
 const tests = [

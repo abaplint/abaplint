@@ -1,6 +1,6 @@
-import {Issue} from "../issue";
-import {ABAPRule} from "./_abap_rule";
-import {ABAPFile} from "../files";
+import {Issue} from "../../issue";
+import {ABAPRule} from "../_abap_rule";
+import {ABAPFile} from "../../files";
 
 export class ColonMissingSpaceConf {
   public enabled: boolean = true;

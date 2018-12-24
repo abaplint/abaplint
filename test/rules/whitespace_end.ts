@@ -1,4 +1,4 @@
-import {WhitespaceEnd} from "../../src/rules/whitespace_end";
+import {WhitespaceEnd} from "../../src/rules/whitespace/whitespace_end";
 import {testRule} from "./_utils";
 
 const tests = [

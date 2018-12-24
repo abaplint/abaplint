@@ -1,12 +1,12 @@
-import {Issue} from "../issue";
-import {Position} from "../position";
-import * as Tokens from "../abap/tokens";
-import {Unknown} from "../abap/statements/_statement";
-import {ABAPRule} from "./_abap_rule";
-import {ABAPFile} from "../files";
-import {StatementNode} from "../abap/nodes/";
-import {Registry} from "../registry";
-import {versionToText} from "../version";
+import {Issue} from "../../issue";
+import {Position} from "../../position";
+import * as Tokens from "../../abap/tokens";
+import {Unknown} from "../../abap/statements/_statement";
+import {ABAPRule} from "../_abap_rule";
+import {ABAPFile} from "../../files";
+import {StatementNode} from "../../abap/nodes";
+import {Registry} from "../../registry";
+import {versionToText} from "../../version";
 
 export class ParserErrorConf {
   public enabled: boolean = true;

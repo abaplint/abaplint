@@ -1,7 +1,7 @@
-import {Issue} from "../issue";
-import {Position} from "../position";
-import {ABAPRule} from "./_abap_rule";
-import {ABAPFile} from "../files";
+import {Issue} from "../../issue";
+import {Position} from "../../position";
+import {ABAPRule} from "../_abap_rule";
+import {ABAPFile} from "../../files";
 
 export class ContainsTabConf {
   public enabled: boolean = true;
