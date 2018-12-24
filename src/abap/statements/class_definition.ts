@@ -1,6 +1,6 @@
 import {Statement} from "./_statement";
 import {str, seq, opt, alt, per, plus, IStatementRunnable} from "../combi";
-import {ClassName, SuperClassName} from "../expressions";
+import {ClassName, SuperClassName, ClassGlobal} from "../expressions";
 
 export class ClassDefinition extends Statement {
 
@@ -13,7 +13,7 @@ export class ClassDefinition extends Statement {
     const time = alt(str("LONG"), str("MEDIUM"), str("SHORT"));
     const duration = seq(str("DURATION"), time);
 
-    const blah = per(alt(str("PUBLIC"), str("LOCAL")),
+    const blah = per(new ClassGlobal(),
                      str("FINAL"),
                      str("ABSTRACT"),
                      seq(str("INHERITING FROM"), new SuperClassName()),

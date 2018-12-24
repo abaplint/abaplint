@@ -49,6 +49,14 @@ export class ClassDefinition extends Identifier {
     }
   }
 
+  public isLocal(): boolean {
+    return !this.isGlobal();
+  }
+
+  public isGlobal(): boolean {
+    return this.node.findFirstExpression(Expressions.ClassGlobal) !== undefined;
+  }
+
   /*
   public getFriends()
 
@@ -63,16 +71,6 @@ export class ClassDefinition extends Identifier {
   }
 
   public isForTesting(): boolean {
-// todo
-    return false;
-  }
-
-  public isLocal(): boolean {
-// todo
-    return false;
-  }
-
-  public isGlobal(): boolean {
 // todo
     return false;
   }

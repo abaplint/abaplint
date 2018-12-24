@@ -59,6 +59,22 @@ describe("Objects, class, getName", () => {
 
 });
 
+describe("Objects, class, isGlobal / isLocal", () => {
+
+  it("test", () => {
+    const abap = "class zcl_name definition public create public.\n" +
+      "ENDCLASS.\n" +
+      "CLASS zcl_name IMPLEMENTATION.\n" +
+      "ENDCLASS.";
+    const reg = new Registry().addFile(new MemoryFile("zcl_name.clas.abap", abap)).parse();
+    const clas = reg.getABAPObjects()[0] as Class;
+    expect(clas.getClassDefinition()).to.not.equal(undefined);
+    expect(clas.getClassDefinition()!.isGlobal()).to.equal(true);
+    expect(clas.getClassDefinition()!.isLocal()).to.equal(false);
+  });
+
+});
+
 describe("Objects, class, getSuperClass", () => {
 
   it("test, positive", () => {
