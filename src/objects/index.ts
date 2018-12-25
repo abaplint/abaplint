@@ -10,6 +10,8 @@ export * from "./domain";
 export * from "./extension_index";
 export * from "./idoc";
 export * from "./view";
+export * from "./classification";
+export * from "./object_characteristic";
 export * from "./gateway_model_metadata";
 export * from "./gateway_model";
 export * from "./gateway_project";

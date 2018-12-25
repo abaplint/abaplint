@@ -24,7 +24,6 @@ describe("LSP, symbols", () => {
   it("Class Implementation", () => {
     const file = new MemoryFile("foobar.prog.abap", "CLASS lcl_foobar IMPLEMENTATION.\nENDCLASS.");
     const reg = new Registry().addFile(file).parse();
-    expect(reg.findIssues().length).to.equal(0);
     const symbols = Symbols.find(reg, file.getFilename());
     expect(symbols.length).to.equal(1);
     expect(symbols[0].name).to.equal("lcl_foobar");
@@ -33,7 +32,6 @@ describe("LSP, symbols", () => {
   it("Class Implementation, with method", () => {
     const file = new MemoryFile("foobar.prog.abap", "CLASS lcl_foobar IMPLEMENTATION.\nMETHOD foo.\nENDMETHOD.\nENDCLASS.");
     const reg = new Registry().addFile(file).parse();
-    expect(reg.findIssues().length).to.equal(0);
     const symbols = Symbols.find(reg, file.getFilename());
     expect(symbols.length).to.equal(1);
     expect(symbols[0].name).to.equal("lcl_foobar");

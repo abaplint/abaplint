@@ -17,6 +17,7 @@ export * from "./method_length";
 export * from "./method_parameter_names";
 export * from "./mix_returning";
 export * from "./nesting";
+export * from "./indentation";
 export * from "./obsolete_statement";
 export * from "./syntax/global_class";
 export * from "./syntax/inline_data_old_versions";

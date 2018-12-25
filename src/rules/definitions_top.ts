@@ -48,7 +48,7 @@ export class DefinitionsTop extends ABAPRule {
         issue = undefined;
       } else if (statement.get() instanceof Comment) {
         continue;
-      } else if (statement.get() instanceof Statements.Endform
+      } else if (statement.get() instanceof Statements.EndForm
           || statement.get() instanceof Statements.EndMethod) {
         mode = ANY;
         if (issue !== undefined) {

@@ -13,7 +13,7 @@ export class Form extends Structure {
 
     return beginEnd(sta(Statements.Form),
                     star(body),
-                    sta(Statements.Endform));
+                    sta(Statements.EndForm));
   }
 
 }

@@ -8,7 +8,7 @@ export class At extends Structure {
   public getMatcher(): IStructureRunnable {
     return beginEnd(sta(Statements.At),
                     star(sub(new Normal())),
-                    sta(Statements.Endat));
+                    sta(Statements.EndAt));
   }
 
 }

@@ -21,7 +21,6 @@ describe("Objects, class, isException", () => {
       "CLASS zcl_abapgit_moo IMPLEMENTATION.\n" +
       "ENDCLASS.";
     const reg = new Registry().addFile(new MemoryFile("zcl_abapgit_moo.clas.abap", abap)).parse();
-    expect(reg.findIssues().length).to.equal(0);
     const clas = reg.getABAPObjects()[0] as Class;
     expect(clas.getClassDefinition()).to.not.equal(undefined);
     expect(clas.getClassDefinition()!.isException()).to.equal(false);
