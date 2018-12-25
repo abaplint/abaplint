@@ -16,7 +16,9 @@ Regarding versioning: semantic versioning is currently not followed, recommend f
 
 [Documentation](https://docs.abaplint.org)
 
-Works with
+The code is in active development and some rules may not be described in documentation yet. In order to see the default configuration with all the rules run `abaplint -d`. You may also save it as the current config in the root dir of your project `abaplint -d > abaplint.json`
+
+### Works with
 * [VS Code](https://marketplace.visualstudio.com/items?itemName=larshp.vscode-abaplint) ([source](https://github.com/abaplint/vscode-abaplint))
 * [Atom](https://atom.io/packages/linter-abaplint) ([source](https://github.com/larshp/linter-abaplint))
 * [Github App](https://github.com/apps/abaplint)
@@ -24,12 +26,14 @@ Works with
 For checking ABAP code inside the ABAP system use [code inspector](http://wiki.scn.sap.com/wiki/display/ABAP/Code+Inspector) or [ATC](http://wiki.scn.sap.com/wiki/display/ABAP/ABAP+Test+Cockpit), also see project [abapOpenChecks](https://github.com/larshp/abapOpenChecks).
 
 ### Requirements
-Node 10
+Node.js 10
 
 ### Building
-`npm install`
+```
+npm install
+npm test
+```
 
-`npm test`
 
 ### Parsing vs standard ABAP
 * Spaces required after string literals and before right parenthesis, following gives parser error
