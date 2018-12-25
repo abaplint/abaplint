@@ -134,7 +134,7 @@ async function run() {
       const progress = argv["s"] ? new Progress() : undefined;
       const reg = new Registry(config);
       issues = reg.addFiles(loaded).findIssues(progress);
-      output = Formatter.format(issues, format);
+      output = Formatter.format(issues, format, loaded.length);
 
       if (argv["t"]) {
         output = JSON.stringify(new Stats(reg).run(progress), undefined, 2);

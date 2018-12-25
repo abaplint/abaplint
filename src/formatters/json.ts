@@ -3,7 +3,7 @@ import {IFormatter} from "./_iformatter";
 
 export class Json implements IFormatter {
 
-  public output(issues: Issue[]): string {
+  public output(issues: Issue[], _fileCount: number): string {
     const out = [];
 
     for (const issue of issues) {

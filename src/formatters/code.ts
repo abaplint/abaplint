@@ -5,7 +5,7 @@ import {IFormatter} from "./_iformatter";
 // for CodeClimate output?
 
 export class Code implements IFormatter {
-  public output(issues: Issue[]): string {
+  public output(issues: Issue[], fileCount: number): string {
 
     let result = "";
     for (const issue of issues) {
@@ -23,6 +23,6 @@ export class Code implements IFormatter {
       result = result + text;
     }
 
-    return result + new Total().output(issues);
+    return result + new Total().output(issues, fileCount);
   }
 }

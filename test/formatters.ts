@@ -14,13 +14,13 @@ describe("formatters", () => {
 
     it(test.abap, () => {
       expect(issues.length).to.equals(test.errors);
-      expect(Formatter.format(issues, "json").split("\n").length).to.equals(2);
+      expect(Formatter.format(issues, "json", 1).split("\n").length).to.equals(2);
 
       expect(issues.length).to.equals(test.errors);
-      expect(Formatter.format(issues).split("\n").length).to.equals(test.errors + 2);
+      expect(Formatter.format(issues, "standard", 1).split("\n").length).to.equals(test.errors + 2);
 
       expect(issues.length).to.equals(test.errors);
-      expect(Formatter.format(issues, "total").split("\n").length).to.equals(2);
+      expect(Formatter.format(issues, "total", 1).split("\n").length).to.equals(2);
     });
 
   });

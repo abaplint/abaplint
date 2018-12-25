@@ -14,7 +14,7 @@ class Tuple {
 
 export class Standard implements IFormatter {
 
-  public output(issues: Issue[]): string {
+  public output(issues: Issue[], fileCount: number): string {
     const tuples: Tuple[] = [];
     for (const issue of issues) {
       tuples.push(this.build_tuple(issue));
@@ -22,7 +22,7 @@ export class Standard implements IFormatter {
 
     const result = this.columns(tuples);
 
-    return result + new Total().output(issues);
+    return result + new Total().output(issues, fileCount);
   }
 
   private columns(tuples: Tuple[]): string {
