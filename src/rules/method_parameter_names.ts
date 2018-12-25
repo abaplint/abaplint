@@ -98,6 +98,9 @@ export class MethodParameterNames implements IRule {
     const name = param.getName();
 
     if (regex.test(name) === false) {
+      if (!this.conf.ignoreNames) {
+        throw new Error("update abaplint.json to latest format");
+      }
       if (this.conf.ignoreNames.indexOf(name.toUpperCase()) >= 0) {
         return ret;
       }
