@@ -18,7 +18,7 @@ describe("Rule: method parameter names", function() {
     expect(issues.length).to.equal(1);
   });
 
-  it("positive 2", function () {
+  it("negative, 1", function () {
     const abap = "INTERFACE zif_foobar PUBLIC.\n" +
       "  METHODS method1 IMPORTING !iv_foo TYPE i.\n" +
       "ENDINTERFACE.";
@@ -81,6 +81,24 @@ describe("Rule: method parameter names", function() {
       "ENDINTERFACE.";
     const issues = findIssues(abap, "zif_foobar.intf.abap");
     expect(issues.length).to.equal(0);
+  });
+
+  it("positive, instance method", function () {
+    const abap = "CLASS lcl_foobar DEFINITION.\n" +
+      "  PUBLIC SECTION.\n" +
+      "    METHODS method1 IMPORTING foo TYPE i.\n" +
+      "ENDCLASS.";
+    const issues = findIssues(abap, "foobar.prog.abap");
+    expect(issues.length).to.equal(1);
+  });
+
+  it("positive, static method", function () {
+    const abap = "CLASS lcl_foobar DEFINITION.\n" +
+      "  PUBLIC SECTION.\n" +
+      "    CLASS-METHODS method1 IMPORTING foo TYPE i.\n" +
+      "ENDCLASS.";
+    const issues = findIssues(abap, "foobar.prog.abap");
+    expect(issues.length).to.equal(1);
   });
 
 });

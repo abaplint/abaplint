@@ -1,10 +1,12 @@
 import {Issue} from "../issue";
 import {IRule} from "./_irule";
 import {IObject} from "../objects/_iobject";
-import {Class, Interface} from "../objects";
+import {Interface} from "../objects";
 import {MethodDefinition} from "../abap/types/method_definition";
 import {MethodParameter} from "../abap/types/method_parameter";
 import {Registry} from "../registry";
+import {ABAPObject} from "../objects/_abap_object";
+import {IFile} from "../files/_ifile";
 
 export class MethodParameterNamesConf {
   public enabled: boolean = true;
@@ -38,57 +40,59 @@ export class MethodParameterNames implements IRule {
 
   public run(obj: IObject, _reg: Registry): Issue[] {
     let ret: Issue[] = [];
-    let methods: MethodDefinition[] = [];
 
-// todo, consider local classes(PROG, FUGR, CLAS)
-
-    if (obj instanceof Class) {
-      const definition = obj.getClassDefinition();
-      if (definition === undefined) {
-        return [];
-      }
-
-      if (this.conf.ignoreExceptions && definition.isException()) {
-        return [];
-      }
-      const definitions = definition.getMethodDefinitions();
-      if (definitions === undefined) {
-        return [];
-      }
-      methods = definitions.getAll();
-    } else if (obj instanceof Interface) {
-      methods = obj.getMethodDefinitions();
+    if (!(obj instanceof ABAPObject)) {
+      return [];
     }
 
-    for (const method of methods) {
-      ret = ret.concat(this.checkMethod(method, obj));
+// todo, handle local interfaces
+
+    if (obj instanceof Interface) { // todo, to be refactored
+      for (const method of obj.getMethodDefinitions()) {
+        ret = ret.concat(this.checkMethod(method, obj.getFiles()[0]));
+      }
+    } else {
+      for (const file of obj.getParsedFiles()) {
+        for (const def of file.getClassDefinitions()) {
+          if (this.conf.ignoreExceptions && def.isException()) {
+            continue;
+          }
+          const definitions = def.getMethodDefinitions();
+          if (definitions === undefined) {
+            continue;
+          }
+          for (const method of definitions.getAll()) {
+            ret = ret.concat(this.checkMethod(method, file));
+          }
+        }
+      }
     }
 
     return ret;
   }
 
-  private checkMethod(method: MethodDefinition, obj: IObject): Issue[] {
+  private checkMethod(method: MethodDefinition, file: IFile): Issue[] {
     let ret: Issue[] = [];
 
     const parameters = method.getParameters();
     for (const param of parameters.getImporting()) {
-      ret = ret.concat(this.checkParameter(param, this.conf.importing, obj));
+      ret = ret.concat(this.checkParameter(param, this.conf.importing, file));
     }
     for (const param of parameters.getExporting()) {
-      ret = ret.concat(this.checkParameter(param, this.conf.exporting, obj));
+      ret = ret.concat(this.checkParameter(param, this.conf.exporting, file));
     }
     for (const param of parameters.getChanging()) {
-      ret = ret.concat(this.checkParameter(param, this.conf.changing, obj));
+      ret = ret.concat(this.checkParameter(param, this.conf.changing, file));
     }
     const returning = parameters.getReturning();
     if (returning) {
-      ret = ret.concat(this.checkParameter(returning, this.conf.returning, obj));
+      ret = ret.concat(this.checkParameter(returning, this.conf.returning, file));
     }
 
     return ret;
   }
 
-  private checkParameter(param: MethodParameter, expected: string, obj: IObject): Issue[] {
+  private checkParameter(param: MethodParameter, expected: string, file: IFile): Issue[] {
     const ret: Issue[] = [];
     const regex = new RegExp(expected, "i");
     const name = param.getName();
@@ -99,7 +103,7 @@ export class MethodParameterNames implements IRule {
       }
       const message = "Bad method parameter name \"" + name + "\" expected \"" + expected + "/i\"";
 // todo, find the right file
-      const issue = new Issue({file: obj.getFiles()[0], message, code: this.getKey(), start: param.getPosition()});
+      const issue = new Issue({file, message, code: this.getKey(), start: param.getPosition()});
       ret.push(issue);
     }
 

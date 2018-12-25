@@ -4,6 +4,8 @@ import {MemoryFile} from "../../src/files/memory_file";
 import {Class, ClassCategory} from "../../src/objects";
 import {Scope} from "../../src/abap/types/scope";
 
+// todo, most of these tests to be moved to /types/class_definition
+
 describe("Objects, class, isException", () => {
 
   it("false, parser error", () => {
@@ -138,6 +140,25 @@ describe("Objects, class, getMethodDefinitions", () => {
     const reg = new Registry().addFile(new MemoryFile("zcl_with_super.clas.abap", "parser error")).parse();
     const clas = reg.getABAPObjects()[0] as Class;
     expect(clas.getClassDefinition()).to.equal(undefined);
+  });
+
+  it("positive, instance method, single parameter", function () {
+    const abap = "CLASS zcl_foobar DEFINITION PUBLIC.\n" +
+      "  PUBLIC SECTION.\n" +
+      "    METHODS method1 IMPORTING foo TYPE i.\n" +
+      "ENDCLASS.\n" +
+      "CLASS zcl_foobar IMPLEMENTATION.\n" +
+      "  METHOD method1.\n" +
+      "  ENDMETHOD.\n" +
+      "ENDCLASS.";
+    const reg = new Registry().addFile(new MemoryFile("zcl_foobar.clas.abap", abap)).parse();
+    const clas = reg.getABAPObjects()[0] as Class;
+    expect(clas.getClassDefinition()).to.not.equal(undefined);
+    expect(clas.getClassDefinition()!.getMethodDefinitions()).to.not.equal(undefined);
+    const methods = clas.getClassDefinition()!.getMethodDefinitions()!.getAll();
+    expect(methods.length).to.equal(1);
+    const parameters = methods[0].getParameters();
+    expect(parameters.getImporting().length).to.equal(1);
   });
 
 });
