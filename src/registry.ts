@@ -64,6 +64,9 @@ export class Registry {
 // or alternatively not handle, just consider everything as dirty?
 // or have a checksum of the config and dirty on a different level?
     this.setDirty();
+    for (const obj of this.getObjects()) {
+      obj.setDirty();
+    }
     this.conf = conf;
   }
 

@@ -4,7 +4,7 @@ import {IObject} from "./_iobject";
 export abstract class AbstractObject implements IObject {
   protected files: IFile[];
   private name: string;
-  private dirty: boolean;
+  protected dirty: boolean;
 
   public abstract getType(): string;
 
@@ -18,8 +18,12 @@ export abstract class AbstractObject implements IObject {
     return this.name;
   }
 
+  public setDirty(): void {
+    this.dirty = true;
+  }
+
   public addFile(file: IFile) {
-    this.setDirty(true);
+    this.setDirty();
     this.files.push(file);
   }
 
@@ -28,7 +32,7 @@ export abstract class AbstractObject implements IObject {
   }
 
   public removeFile(file: IFile): void {
-    this.setDirty(true);
+    this.setDirty();
     for (let i = 0; i < this.files.length; i++) {
       if (this.files[i].getFilename() === file.getFilename()) {
         this.files.splice(i, 1);
@@ -38,16 +42,12 @@ export abstract class AbstractObject implements IObject {
     throw new Error("removeFile: file not found");
   }
 
-  protected setDirty(dirty: boolean): void {
-    this.dirty = dirty;
-  }
-
   public isDirty() {
     return this.dirty;
   }
 
   public updateFile(file: IFile) {
-    this.setDirty(true);
+    this.setDirty();
     for (let i = 0; i < this.files.length; i++) {
       if (this.files[i].getFilename() === file.getFilename()) {
         this.files[i] = file;

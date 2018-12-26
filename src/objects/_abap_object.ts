@@ -95,7 +95,7 @@ export abstract class ABAPObject extends AbstractObject {
       ret = ret.concat(result.issues);
     }
 
-    this.setDirty(false);
+    this.dirty = false;
     this.old = ret;
 
     return ret;
