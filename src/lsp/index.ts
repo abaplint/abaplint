@@ -16,7 +16,11 @@ export class LanguageServer {
   }
 
   public hover(params: LServer.TextDocumentPositionParams): LServer.Hover | undefined {
-    return Hover.find(this.reg, params);
+    const hover = Hover.find(this.reg, params.textDocument.uri, params.position.line, params.position.character);
+    if (hover) {
+      return {contents: hover};
+    }
+    return undefined;
   }
 
   public documentFormatting(params: LServer.DocumentFormattingParams): LServer.TextEdit[] {
