@@ -1,6 +1,6 @@
 import {Registry} from "./registry";
 import {IObject} from "./objects/_iobject";
-import {Class, ClassCategory} from "./objects";
+import {Class, ClassCategory, FunctionGroup, MaintenanceAndTransportObject} from "./objects";
 
 export class SkipLogic {
   private reg: Registry;
@@ -19,8 +19,26 @@ export class SkipLogic {
         && obj instanceof Class
         && this.isGeneratedPersistentClass(obj)) {
       return true;
+    } else if (this.reg.getConfig().getGlobal().skipGeneratedFunctionGroups
+        && obj instanceof FunctionGroup
+        && this.isGeneratedFunctionGroup(obj)) {
+      return true;
     }
 
+    return false;
+  }
+
+  public isGeneratedFunctionGroup(group: FunctionGroup): boolean {
+    this.reg.getObject("TOBJ", "");
+    for (const obj of this.reg.getObjects()) {
+      if (obj.getType() !== "TOBJ") {
+        continue;
+      }
+      const tobj = obj as MaintenanceAndTransportObject;
+      if (tobj.getArea() === group.getName()) {
+        return true;
+      }
+    }
     return false;
   }
 

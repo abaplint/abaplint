@@ -5,6 +5,7 @@ export interface IGlobalConfig {
   version: string;
   skipGeneratedGatewayClasses: boolean;
   skipGeneratedPersistentClasses: boolean;
+  skipGeneratedFunctionGroups: boolean;
 }
 
 export interface IConfig {
@@ -39,6 +40,7 @@ export class Config {
       version: versionToText(Config.defaultVersion),
       skipGeneratedGatewayClasses: true,
       skipGeneratedPersistentClasses: true,
+      skipGeneratedFunctionGroups: true,
     };
   }
 
