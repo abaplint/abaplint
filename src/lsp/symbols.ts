@@ -20,13 +20,13 @@ export class Symbols {
   private static selectionRange(identifier: Identifier): LServer.Range {
     const pos = identifier.getPosition();
     const str = identifier.getName();
-    return LServer.Range.create(pos.getRow(), pos.getCol(), pos.getRow(), pos.getCol() + str.length);
+    return LServer.Range.create(pos.getRow() - 1, pos.getCol() - 1, pos.getRow() - 1, pos.getCol() - 1 + str.length);
   }
 
   private static range(identifer: Identifier): LServer.Range {
     const start = identifer.getStart();
     const end = identifer.getEnd();
-    return LServer.Range.create(start.getRow(), start.getCol(), end.getRow(), end.getCol());
+    return LServer.Range.create(start.getRow() - 1, start.getCol() - 1, end.getRow() - 1, end.getCol() - 1);
   }
 
   private static newSymbol(identifier: Identifier, kind: LServer.SymbolKind, children: LServer.DocumentSymbol[]): LServer.DocumentSymbol {

@@ -14,8 +14,9 @@ export class Hover {
         if (token.getRow() - 1 === line
             && token.getCol() - 1 <= character
             && token.getCol() - 1 + token.getStr().length >= character) {
-          const value = token.getStr() + "\n" +
-            statement.constructor.name + "\n" +
+          const value =
+            "```abap\n" + token.getStr() + "\n```\n" +
+            statement.constructor.name + "\n\n" +
             token.constructor.name;
           return {kind: LServer.MarkupKind.Markdown, value};
         }
