@@ -6,6 +6,7 @@ import {MethodLengthStats} from "../../src/stats/method_length_stats";
 describe("method length stats", () => {
   const tests = [
     {abap: "foo bar", lengths: []},
+    {abap: "ENDMETHOD.", lengths: []},
     {abap: "METHOD foo. ENDMETHOD.", lengths: [0]},
     {abap: "METHOD foo. ENDMETHOD. METHOD bar. ENDMETHOD.", lengths: [0, 0]},
     {abap: "METHOD foo. WRITE moo. ENDMETHOD.", lengths: [1]},

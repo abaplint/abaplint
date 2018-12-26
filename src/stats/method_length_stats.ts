@@ -39,7 +39,7 @@ export class MethodLengthStats {
           if (pos) {
             res.push({name, count, file, pos});
           } else {
-            throw new Error("MethodLength, expected pos to be defined");
+            continue;
           }
           method = false;
         } else if (method === true
