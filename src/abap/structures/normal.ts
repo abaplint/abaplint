@@ -53,6 +53,7 @@ export class Normal extends Structure {
                sta(Statements.Commit),
                sta(Statements.Communication),
                sta(Statements.Compute),
+               sta(Statements.CallBadi),
                sta(Statements.Condense),
                sta(Statements.Constant),
                sta(Statements.Contexts),

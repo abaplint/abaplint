@@ -1,6 +1,7 @@
 import * as LServer from "vscode-languageserver-protocol";
 import {Registry} from "../registry";
 import {Symbols} from "./symbols";
+import {Hover} from "./hover";
 import {PrettyPrinter} from "../abap/pretty_printer";
 
 export class LanguageServer {
@@ -14,8 +15,8 @@ export class LanguageServer {
     return Symbols.find(this.reg, params.textDocument.uri);
   }
 
-  public hover(_params: LServer.TextDocumentPositionParams): LServer.Hover | undefined {
-    return undefined; // todo
+  public hover(params: LServer.TextDocumentPositionParams): LServer.Hover | undefined {
+    return Hover.find(this.reg, params);
   }
 
   public documentFormatting(params: LServer.DocumentFormattingParams): LServer.TextEdit[] {

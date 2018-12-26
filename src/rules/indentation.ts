@@ -5,7 +5,7 @@ import {ABAPFile} from "../files";
 import {IObject} from "../objects/_iobject";
 import {Class} from "../objects";
 import {Registry} from "../registry";
-import {Comment, MacroContent} from "../abap/statements/_statement";
+import {Comment, MacroContent, Empty} from "../abap/statements/_statement";
 
 export class IndentationConf {
   public enabled: boolean = true;
@@ -109,6 +109,7 @@ export class Indentation extends ABAPRule {
         indent = stack.pop() - 2;
       } else if (type instanceof Comment
           || type instanceof Statements.IncludeType
+          || type instanceof Empty
           || type instanceof MacroContent) {
         continue;
       }
