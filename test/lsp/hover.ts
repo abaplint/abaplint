@@ -11,7 +11,7 @@ describe("LSP, hover", () => {
 
     let hover = Hover.find(reg, file.getFilename(), 0 , 0);
     expect(hover).to.not.equal(undefined);
-    expect(hover!.value).to.equal("```abap\nDO\n```\nStatementNode\n\nIdentifier");
+    expect(hover!.value).to.equal("```abap\nDO\n```\nStatement: Do\n\nToken: Identifier");
 
     hover = Hover.find(reg, file.getFilename(), 1 , 0);
     expect(hover).to.equal(undefined);
