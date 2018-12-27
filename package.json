@@ -1,6 +1,6 @@
 {
   "name": "abaplint",
-  "version": "1.5.13",
+  "version": "1.5.14",
   "description": "Linter for ABAP",
   "bin": {
     "abaplint": "./abaplint",
@@ -59,7 +59,7 @@
     "@types/node": "^10.12.15",
     "@types/progress": "^2.0.3",
     "browserify": "^16.0.0",
-    "chai": "^4.1.2",
+    "chai": "^4.2.0",
     "codecov": "^3.0.0",
     "istanbul": "^0.4.5",
     "mocha": "^5.0.0",
