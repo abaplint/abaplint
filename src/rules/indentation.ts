@@ -91,11 +91,14 @@ export class Indentation extends ABAPRule {
       } else if (type instanceof Statements.StartOfSelection
           || type instanceof Statements.AtSelectionScreen
           || type instanceof Statements.Initialization
+          || type instanceof Statements.EndOfSelection
           || type instanceof Statements.LoadOfProgram) {
         indent = init;
         parentIsEvent = true;
       } else if (type instanceof Statements.Form
           || ( type instanceof Statements.Include && parentIsEvent )
+          || type instanceof Statements.Module
+          || type instanceof Statements.ClassImplementation
           || type instanceof Statements.ClassDefinition) {
         indent = init;
         parentIsEvent = false;
@@ -145,6 +148,7 @@ export class Indentation extends ABAPRule {
           || type instanceof Statements.AtSelectionScreen
           || type instanceof Statements.LoadOfProgram
           || type instanceof Statements.Initialization
+          || type instanceof Statements.EndOfSelection
           || type instanceof Statements.Public
           || type instanceof Statements.Protected
           || type instanceof Statements.Private) {
