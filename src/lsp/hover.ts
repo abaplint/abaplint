@@ -67,7 +67,7 @@ export class Hover {
       local = local + "Expression: " + node.get().constructor.name;
     } else if (node instanceof TokenNode) {
       local = local + "Token: " + node.get().constructor.name;
-      if (node.get() === search) {
+      if (node.get().getStr() === search.getStr()) {
         return local;
       }
     } else {
@@ -75,7 +75,10 @@ export class Hover {
     }
 
     for (const child of node.getChildren()) {
-      return this.traverse(child, local, search);
+      const ret = this.traverse(child, local, search);
+      if (ret) {
+        return ret;
+      }
     }
 
     return undefined;

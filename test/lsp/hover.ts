@@ -36,4 +36,13 @@ describe("LSP, hover", () => {
     expect(hover!.value).to.contain("Structure: Any");
   });
 
+  it("full structure, 2nd token", () => {
+    const file = new MemoryFile("foobar.prog.abap", "WRITE hello.");
+    const reg = new Registry().addFile(file).parse();
+    const hover = Hover.find(reg, file.getFilename(), 0 , 7);
+    expect(hover).to.not.equal(undefined);
+    expect(hover!.value).to.contain("hello");
+    expect(hover!.value).to.contain("Structure: Any");
+  });
+
 });
