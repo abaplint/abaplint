@@ -52,6 +52,7 @@ export class Indentation extends ABAPRule {
   public runParsed(file: ABAPFile, _reg: Registry, obj: IObject) {
     const init: number = 1;
     let indent: number = init;
+    let parentIsEvent: boolean = false;
     const stack = new Stack();
 
     if (file.getStructure() == undefined) {
@@ -90,10 +91,14 @@ export class Indentation extends ABAPRule {
       } else if (type instanceof Statements.StartOfSelection
           || type instanceof Statements.AtSelectionScreen
           || type instanceof Statements.Initialization
-          || type instanceof Statements.Form
-          || type instanceof Statements.ClassDefinition
           || type instanceof Statements.LoadOfProgram) {
         indent = init;
+        parentIsEvent = true;
+      } else if (type instanceof Statements.Form
+          || ( type instanceof Statements.Include && parentIsEvent )
+          || type instanceof Statements.ClassDefinition) {
+        indent = init;
+        parentIsEvent = false;
       } else if (type instanceof Statements.Cleanup
           || type instanceof Statements.Catch) {
         indent = stack.peek() - 2;

@@ -43,6 +43,10 @@ const tests = [
     "    DATA: foo TYPE c.\n" +
     "  PRIVATE SECTION.\n" +
     "ENDCLASS.\n", cnt: 0},
+
+  {abap: "AT SELECTION-SCREEN ON EXIT-COMMAND.\n" +
+  "  PERFORM exit.\n" +
+  "INCLUDE zfoo.\n", cnt: 0},
 ];
 
 testRule(tests, Indentation);
