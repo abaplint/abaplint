@@ -5,7 +5,9 @@ import {INode} from "../nodes/_inode";
 import {TypedIdentifier} from "../types/_typed_identifier";
 import {Token} from "../tokens/_token";
 import {StatementNode, ExpressionNode} from "../nodes";
-import {ABAPFile} from "../../files";
+import {ABAPFile, MemoryFile} from "../../files";
+import {Registry} from "../../registry";
+import {MethodDefinition} from "../types";
 
 // todo, some visualization, graphviz?
 // todo, when there is more structure, everything will be refactored?
@@ -18,7 +20,7 @@ class Variables {
 
   constructor() {
     this.scopes = [];
-    this.pushScope("_global");
+    this.pushScope("_global", []);
   }
 
   public add(identifier: TypedIdentifier) {
@@ -42,12 +44,15 @@ class Variables {
     return this.scopes[this.scopes.length - 1].name;
   }
 
-  public pushScope(name: string) {
-    this.scopes.push({name: name, ids: []});
+  public pushScope(name: string, ids: TypedIdentifier[]) {
+    this.scopes.push({name: name, ids: ids});
   }
 
   public popScope() {
     this.scopes.pop();
+    if (this.scopes.length === 0) {
+      throw new Error("something wrong, global scope popped");
+    }
   }
 
 }
@@ -58,16 +63,24 @@ export class CheckVariables {
   private variables: Variables;
   private issues: Issue[];
 
-// assumption: objects are parsed without parsing errors
   public run(file: ABAPFile): Issue[] {
     this.issues = [];
     this.file = file;
+
     this.variables = new Variables();
 
+    // assumption: objects are parsed without parsing errors
     const structure = file.getStructure();
     if (structure === undefined) {
       return [];
     }
+
+// todo, more defintions, and move to somewhere else?
+    const global = new MemoryFile("_global.prog.abap", "* Globals\n" +
+      "DATA sy TYPE c.\n" + // todo, add structure
+      "DATA abap_true TYPE c LENGTH 1.\n" +
+      "DATA abap_false TYPE c LENGTH 1.\n");
+    this.traverse(new Registry().addFile(global).getABAPFiles()[0].getStructure()!);
 
     this.traverse(structure);
 
@@ -100,37 +113,69 @@ export class CheckVariables {
     }
   }
 
+  private findMethodScope(node: StatementNode): TypedIdentifier[] {
+    const className = this.variables.getParentName();
+    const classDefinition = this.file.getClassDefinition(className);
+    if (classDefinition === undefined) {
+      this.newIssue(node.getFirstToken(), "Class definition \"" + className + "\" not found");
+      return [];
+    }
+
+    const methodName = node.findFirstExpression(Expressions.MethodName)!.getFirstToken().getStr();
+    let methodDefinition: MethodDefinition | undefined = undefined;
+    for (const method of classDefinition.getMethodDefinitions()!.getAll()) {
+      if (method.getName().toUpperCase() === methodName.toUpperCase()) {
+        methodDefinition = method;
+      }
+    }
+    if (methodDefinition === undefined) {
+      this.newIssue(node.getFirstToken(), "Method definition \"" + methodName + "\" not found");
+      return [];
+    }
+
+    const classAttributes = classDefinition.getAttributes();
+    if (classAttributes === undefined) {
+      this.newIssue(node.getFirstToken(), "Error reading class attributes");
+      return [];
+    }
+
+    let ret: TypedIdentifier[] = [];
+//    ret = ret.concat(classAttributes.getConstants());
+    ret = ret.concat(classAttributes.getInstance()); // todo, this is not correct
+    ret = ret.concat(classAttributes.getStatic()); // todo, this is not correct
+    ret = ret.concat(methodDefinition.getParameters().getAll());
+
+    return ret;
+  }
+
   private updateVariables(node: INode): void {
 // todo, handle inline local definitions
-    if (node instanceof StatementNode && node.get() instanceof Statements.Data) {
+    if (node instanceof StatementNode
+        && ( node.get() instanceof Statements.Data || node.get() instanceof Statements.Constant ) ) {
       const expr = node.findFirstExpression(Expressions.NamespaceSimpleName);
       if (expr === undefined) {
         throw new Error("syntax_check, unexpected tree structure");
       }
       const token = expr.getFirstToken();
+// todo, these identifers should be possible to create from a Node
       this.variables.add(new LocalIdentifier(token, expr));
     } else if (node instanceof StatementNode && node.get() instanceof Statements.Form) {
 //    this.file.getForms(todo)
-      this.variables.pushScope("form");
+      this.variables.pushScope("form", []);
     } else if (node instanceof StatementNode && node.get() instanceof Statements.EndForm) {
       this.variables.popScope();
     } else if (node instanceof StatementNode && node.get() instanceof Statements.Method) {
-      const name = this.variables.getParentName();
-      const def = this.file.getClassDefinition(name);
-      if (def === undefined) {
-        this.newIssue(node.getFirstToken(), "Class definition \"" + name + "\" not found");
-      }
-// todo, add method parameters
-      this.variables.pushScope("method");
+      this.variables.pushScope("method", this.findMethodScope(node));
     } else if (node instanceof StatementNode && node.get() instanceof Statements.EndMethod) {
       this.variables.popScope();
-    } else if (node instanceof StatementNode && node.get() instanceof Statements.ClassImplementation) {
+    } else if (node instanceof StatementNode
+        && ( node.get() instanceof Statements.ClassImplementation || node.get() instanceof Statements.ClassDefinition ) ) {
       const expr = node.findFirstExpression(Expressions.ClassName);
       if (expr === undefined) {
         throw new Error("syntax_check, unexpected tree structure");
       }
       const token = expr.getFirstToken();
-      this.variables.pushScope(token.getStr());
+      this.variables.pushScope(token.getStr(), []);
     } else if (node instanceof StatementNode && node.get() instanceof Statements.EndClass) {
       this.variables.popScope();
     }

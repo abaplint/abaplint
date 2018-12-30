@@ -2,6 +2,7 @@ import {ABAPRule} from "../_abap_rule";
 import {ABAPFile} from "../../files";
 import {Registry} from "../../registry";
 import {CheckVariables} from "../../abap/syntax/check_variables";
+import {Issue} from "../../issue";
 
 export class SyntaxCheckConf {
   public enabled: boolean = true;
@@ -27,7 +28,7 @@ export class SyntaxCheck extends ABAPRule {
     this.conf = conf;
   }
 
-  public runParsed(file: ABAPFile, _reg: Registry) {
+  public runParsed(file: ABAPFile, _reg: Registry): Issue[] {
     return new CheckVariables().run(file);
   }
 

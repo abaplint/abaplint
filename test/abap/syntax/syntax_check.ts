@@ -35,6 +35,12 @@ describe("Syntax Check", () => {
     expect(issues.length).to.equals(0);
   });
 
+  it("program, constant", () => {
+    const abap = "CONSTANTS foobar TYPE c VALUE 'B'.\nWRITE foobar.\n";
+    const issues = runProgram(abap);
+    expect(issues.length).to.equals(0);
+  });
+
   it("program, foobar found, typed", () => {
     const abap = "DATA foobar TYPE c LENGTH 1.\nWRITE foobar.\n";
     const issues = runProgram(abap);
@@ -54,6 +60,24 @@ describe("Syntax Check", () => {
     expect(issues.length).to.equals(0);
   });
 
+  it("program, abap_true", () => {
+    const abap = "WRITE abap_true.\n";
+    const issues = runProgram(abap);
+    expect(issues.length).to.equals(0);
+  });
+
+  it("program, sy field", () => {
+    const abap = "WRITE sy-uname.\n";
+    const issues = runProgram(abap);
+    expect(issues.length).to.equals(0);
+  });
+/*
+  it("program, sy field, unknown field", () => {
+    const abap = "WRITE sy-fooboo.\n";
+    const issues = runProgram(abap);
+    expect(issues.length).to.equals(1);
+  });
+*/
   it("program, different scope", () => {
     const abap = "FORM foobar1.\n" +
       "  DATA moo.\n" +
@@ -128,12 +152,79 @@ describe("Syntax Check", () => {
     expect(issues.length).to.equals(0);
   });
 
+  it("class, importing variable", () => {
+    const abap =
+      "CLASS zcl_foobar DEFINITION PUBLIC FINAL CREATE PUBLIC.\n" +
+      "  PUBLIC SECTION.\n" +
+      "    METHODS hello IMPORTING foobar TYPE c.\n" +
+      "ENDCLASS.\n" +
+      "CLASS zcl_foobar IMPLEMENTATION.\n" +
+      "  METHOD hello.\n" +
+      "    WRITE foobar.\n" +
+      "  ENDMETHOD.\n" +
+      "ENDCLASS.";
+    const issues = runClass(abap);
+    expect(issues.length).to.equals(0);
+  });
+
+  it("class, method not found, must push scope", () => {
+    const abap =
+      "CLASS zcl_foobar DEFINITION PUBLIC FINAL CREATE PUBLIC.\n" +
+      "  PUBLIC SECTION.\n" +
+      "ENDCLASS.\n" +
+      "CLASS zcl_foobar IMPLEMENTATION.\n" +
+      "  METHOD hello.\n" +
+      "    WRITE foobar.\n" +
+      "  ENDMETHOD.\n" +
+      "ENDCLASS.";
+    const issues = runClass(abap);
+    expect(issues.length).to.equals(2);
+  });
+
+  it("class, attribute", () => {
+    const abap =
+      "CLASS zcl_foobar DEFINITION PUBLIC FINAL CREATE PUBLIC.\n" +
+      "  PUBLIC SECTION.\n" +
+      "    DATA foobar TYPE c.\n" +
+      "    METHODS hello.\n" +
+      "ENDCLASS.\n" +
+      "CLASS zcl_foobar IMPLEMENTATION.\n" +
+      "  METHOD hello.\n" +
+      "    WRITE foobar.\n" +
+      "  ENDMETHOD.\n" +
+      "ENDCLASS.";
+    const issues = runClass(abap);
+    expect(issues.length).to.equals(0);
+  });
+/*
+  it("class, constant attribute", () => {
+    const abap =
+      "CLASS zcl_foobar DEFINITION PUBLIC FINAL CREATE PUBLIC.\n" +
+      "  PUBLIC SECTION.\n" +
+      "    CONSTANTS foobar TYPE c VALUE 'B'.\n" +
+      "    METHODS hello.\n" +
+      "ENDCLASS.\n" +
+      "CLASS zcl_foobar IMPLEMENTATION.\n" +
+      "  METHOD hello.\n" +
+      "    WRITE foobar.\n" +
+      "  ENDMETHOD.\n" +
+      "ENDCLASS.";
+    const issues = runClass(abap);
+    expect(issues.length).to.equals(0);
+  });
+*/
 // todo, test both Source and Target
 
 // class variable
 // local variable
 // method parameter
 
+// static method cannot access instance attributes
+
+// can a private method acces protected attributes?
+
 // upper case vs lower case
+
+// todo, write protected fields
 
 });

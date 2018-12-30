@@ -15,6 +15,6 @@ export class MethodParameter extends TypedIdentifier {
     super(name.getFirstToken(), node);
   }
 
-// todo: pass by reference / pass by value
+// todo: pass by reference / pass by value / write protected
 
 }

@@ -25,6 +25,18 @@ export class MethodParameters {
     this.parse(node);
   }
 
+  public getAll(): MethodParameter[] {
+    let ret: MethodParameter[] = [];
+    const returning = this.getReturning();
+    if (returning) {
+      ret.push(returning);
+    }
+    ret = ret.concat(this.getImporting());
+    ret = ret.concat(this.getExporting());
+    ret = ret.concat(this.getChanging());
+    return ret;
+  }
+
   public getImporting() {
     return this.importing;
   }
