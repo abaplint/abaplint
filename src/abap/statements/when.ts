@@ -1,13 +1,13 @@
 import {Statement} from "./_statement";
-import {str, seq, star, IStatementRunnable} from "../combi";
+import {str, seq, star, IStatementRunnable, altPrio} from "../combi";
 import {Source} from "../expressions";
 
 export class When extends Statement {
 
   public getMatcher(): IStatementRunnable {
+    const sourc = seq(new Source(), star(seq(str("OR"), new Source())));
     return seq(str("WHEN"),
-               new Source(),
-               star(seq(str("OR"), new Source())));
+               altPrio(str("OTHERS"), sourc));
   }
 
 }
