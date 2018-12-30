@@ -54,7 +54,10 @@ export class ClassAttributes {
       this.static.push(new ClassAttribute(def, scope));
     }
 
-// todo, handle constants
+    defs = node.findAllStatements(Statements.Constant);
+    for (const def of defs) {
+      this.constants.push(new ClassConstant(def, scope));
+    }
   }
 
 }

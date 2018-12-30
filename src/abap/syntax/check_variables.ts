@@ -78,8 +78,9 @@ export class CheckVariables {
 // todo, more defintions, and move to somewhere else?
     const global = new MemoryFile("_global.prog.abap", "* Globals\n" +
       "DATA sy TYPE c.\n" + // todo, add structure
-      "DATA abap_true TYPE c LENGTH 1.\n" +
-      "DATA abap_false TYPE c LENGTH 1.\n");
+      "CONSTANTS space TYPE c LENGTH 1 VALUE ''.\n" +
+      "CONSTANTS abap_true TYPE c LENGTH 1 VALUE 'X'.\n" +
+      "CONSTANTS abap_false TYPE c LENGTH 1 VALUE ''.\n");
     this.traverse(new Registry().addFile(global).getABAPFiles()[0].getStructure()!);
 
     this.traverse(structure);
@@ -140,7 +141,8 @@ export class CheckVariables {
     }
 
     let ret: TypedIdentifier[] = [];
-//    ret = ret.concat(classAttributes.getConstants());
+// todo, also add attributes and constants from super classes
+    ret = ret.concat(classAttributes.getConstants());
     ret = ret.concat(classAttributes.getInstance()); // todo, this is not correct
     ret = ret.concat(classAttributes.getStatic()); // todo, this is not correct
     ret = ret.concat(methodDefinition.getParameters().getAll());

@@ -1,18 +1,21 @@
-import {Token} from "../tokens/_token";
+import * as Statements from "../statements";
+import * as Expressions from "../expressions";
+import {StatementNode} from "../nodes";
+import {TypedIdentifier} from "./_typed_identifier";
 
-// import {Type} from "./type";
+export class Constant extends TypedIdentifier {
 
-export class Constant { // todo extends TypedIdentifier
-//  private name: string;
-//  private type: Type;
+  constructor(node: StatementNode) {
+    if (!(node.get() instanceof Statements.Constant)) {
+      throw new Error("Constant, unexpected node");
+    }
+    const found = node.findFirstExpression(Expressions.NamespaceSimpleName);
+    if (found === undefined) {
+      throw new Error("Constant, unexpected node");
+    }
+    const token = found.getFirstToken();
 
-  constructor() {
-//    this.name = undefined;
-//    this.type = undefined;
-  }
-
-  public getName(): Token {
-    throw new Error("getName, todo");
+    super(token, node);
   }
 
 }

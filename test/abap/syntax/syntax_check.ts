@@ -196,8 +196,8 @@ describe("Syntax Check", () => {
     const issues = runClass(abap);
     expect(issues.length).to.equals(0);
   });
-/*
-  it("class, constant attribute", () => {
+
+  it("class, constant", () => {
     const abap =
       "CLASS zcl_foobar DEFINITION PUBLIC FINAL CREATE PUBLIC.\n" +
       "  PUBLIC SECTION.\n" +
@@ -212,7 +212,7 @@ describe("Syntax Check", () => {
     const issues = runClass(abap);
     expect(issues.length).to.equals(0);
   });
-*/
+
 // todo, test both Source and Target
 
 // class variable
