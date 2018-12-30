@@ -1,4 +1,3 @@
-import {Registry} from "../../registry";
 import {Issue} from "../../issue";
 import * as Expressions from "../expressions";
 import * as Statements from "../statements";
@@ -54,27 +53,23 @@ class Variables {
 }
 
 // todo, rename this class?
-export class SyntaxCheck {
-  private reg: Registry;
+export class CheckVariables {
   private file: ABAPFile;
   private variables: Variables;
   private issues: Issue[];
 
 // assumption: objects are parsed without parsing errors
-  public run(reg: Registry): Issue[] {
+  public run(file: ABAPFile): Issue[] {
     this.issues = [];
-    this.reg = reg;
+    this.file = file;
     this.variables = new Variables();
 
-    for (const file of this.reg.getABAPFiles()) {
-      const structure = file.getStructure();
-      if (structure === undefined) {
-        continue;
-      }
-
-      this.file = file;
-      this.traverse(structure);
+    const structure = file.getStructure();
+    if (structure === undefined) {
+      return [];
     }
+
+    this.traverse(structure);
 
     return this.issues;
   }

@@ -59,7 +59,7 @@ describe("Registry", () => {
   });
 
   it("Add and update", () => {
-    const file = new MemoryFile("zfoobar.prog.abap", "WRITE hello.");
+    const file = new MemoryFile("zfoobar.prog.abap", "DATA hello.\nWRITE hello.");
     const registry = new Registry().addFile(file);
     expect(registry.findIssues().length).to.equal(0);
 

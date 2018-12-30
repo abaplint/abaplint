@@ -9,6 +9,7 @@ export * from "./exporting";
 export * from "./functional_writing";
 export * from "./keywords_upper";
 export * from "./line_length";
+export * from "./syntax/syntax_check";
 export * from "./line_only_punc";
 export * from "./local_class_naming";
 export * from "./local_variable_names";
