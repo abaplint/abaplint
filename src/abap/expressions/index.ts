@@ -10,6 +10,7 @@ export * from "./target";
 export * from "./sql_source";
 export * from "./sql_target";
 export * from "./let";
+export * from "./parameter_name";
 export * from "./class_global";
 export * from "./sql_from";
 export * from "./data_definition";

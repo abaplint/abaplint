@@ -7,13 +7,13 @@ import {Issue} from "../../../src/issue";
 function runClass(abap: string): Issue[] {
   const file = new MemoryFile("zcl_foobar.clas.abap", abap);
   const reg = new Registry().addFile(file).parse();
-  return new CheckVariables().run(reg.getABAPFiles()[0]);
+  return new CheckVariables().run(reg.getABAPFiles()[0], reg);
 }
 
 function runProgram(abap: string): Issue[] {
   const file = new MemoryFile("zfoobar.prog.abap", abap);
   const reg = new Registry().addFile(file).parse();
-  return new CheckVariables().run(reg.getABAPFiles()[0]);
+  return new CheckVariables().run(reg.getABAPFiles()[0], reg);
 }
 
 describe("Syntax Check", () => {

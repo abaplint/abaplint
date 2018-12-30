@@ -17,8 +17,10 @@ class LocalIdentifier extends TypedIdentifier { }
 
 class Variables {
   private scopes: {name: string, ids: TypedIdentifier[]}[];
+  private reg: Registry;
 
-  constructor() {
+  constructor(reg: Registry) {
+    this.reg = reg;
     this.scopes = [];
     this.pushScope("_global", []);
   }
@@ -27,17 +29,22 @@ class Variables {
     this.scopes[this.scopes.length - 1].ids.push(identifier);
   }
 
-  public resolve(name: string): TypedIdentifier | undefined {
+  public resolve(name: string): boolean {
 // todo, this should probably search the nearest first? in case there are shadowed variables?
     for (const scope of this.scopes) {
       for (const local of scope.ids) {
         if (local.getName() === name) {
-          return local;
+          return true;
         }
       }
     }
 
-    return undefined;
+// look for a global object of this name
+    if (this.reg.getObject("CLAS", name.toUpperCase()) || this.reg.getObject("INTF", name.toUpperCase())) {
+      return true;
+    }
+
+    return false;  // todo this method should return a "TypedIdentifier | undefined"
   }
 
   public getParentName(): string {
@@ -63,11 +70,10 @@ export class CheckVariables {
   private variables: Variables;
   private issues: Issue[];
 
-  public run(file: ABAPFile): Issue[] {
+  public run(file: ABAPFile, reg: Registry): Issue[] {
     this.issues = [];
     this.file = file;
-
-    this.variables = new Variables();
+    this.variables = new Variables(reg);
 
     // assumption: objects are parsed without parsing errors
     const structure = file.getStructure();
@@ -78,7 +84,18 @@ export class CheckVariables {
 // todo, more defintions, and move to somewhere else?
     const global = new MemoryFile("_global.prog.abap", "* Globals\n" +
       "DATA sy TYPE c.\n" + // todo, add structure
+      "CONSTANTS icon_led_red TYPE c LENGTH 4 VALUE ''.\n" +
+      "CONSTANTS icon_led_yellow TYPE c LENGTH 4 VALUE ''.\n" +
+      "CONSTANTS icon_led_green TYPE c LENGTH 4 VALUE ''.\n" +
+      "CONSTANTS icon_led_inactive TYPE c LENGTH 4 VALUE ''.\n" +
+      "CONSTANTS icon_workflow_fork TYPE c LENGTH 4 VALUE ''.\n" +
+      "CONSTANTS icon_folder TYPE c LENGTH 4 VALUE ''.\n" +
+      "CONSTANTS icon_okay TYPE c LENGTH 4 VALUE ''.\n" +
+      "CONSTANTS icon_folder TYPE c LENGTH 4 VALUE ''.\n" +
       "CONSTANTS space TYPE c LENGTH 1 VALUE ''.\n" +
+      "CONSTANTS col_positive TYPE c LENGTH 1 VALUE '5'.\n" +
+      "CONSTANTS col_negative TYPE c LENGTH 1 VALUE '6'.\n" +
+      "CONSTANTS abap_undefined TYPE c LENGTH 1 VALUE '-'.\n" +
       "CONSTANTS abap_true TYPE c LENGTH 1 VALUE 'X'.\n" +
       "CONSTANTS abap_false TYPE c LENGTH 1 VALUE ''.\n");
     this.traverse(new Registry().addFile(global).getABAPFiles()[0].getStructure()!);
@@ -102,7 +119,7 @@ export class CheckVariables {
         && ( node.get() instanceof Expressions.Source || node.get() instanceof Expressions.Target ) ) {
       for (const field of node.findAllExpressions(Expressions.Field)) {
         const token = field.getFirstToken();
-        if (this.variables.resolve(token.getStr()) === undefined) {
+        if (this.variables.resolve(token.getStr()) === false) {
           this.newIssue(token, "\"" + token.getStr() + "\" not found");
         }
       }

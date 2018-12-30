@@ -28,8 +28,8 @@ export class SyntaxCheck extends ABAPRule {
     this.conf = conf;
   }
 
-  public runParsed(file: ABAPFile, _reg: Registry): Issue[] {
-    return new CheckVariables().run(file);
+  public runParsed(file: ABAPFile, reg: Registry): Issue[] {
+    return new CheckVariables().run(file, reg);
   }
 
 }

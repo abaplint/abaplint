@@ -1,8 +1,8 @@
 import {str, seq, Expression, IStatementRunnable} from "../combi";
-import {Field, Source} from "./";
+import {Source, ParameterName} from "./";
 
 export class ParameterS extends Expression {
   public getRunnable(): IStatementRunnable {
-    return seq(new Field(), str("="), new Source());
+    return seq(new ParameterName(), str("="), new Source());
   }
 }
