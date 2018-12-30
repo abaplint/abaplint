@@ -1,5 +1,5 @@
 import {Statement} from "./_statement";
-import {str, opt, seq, alt, per, plus, IStatementRunnable} from "../combi";
+import {str, opt, seq, alt, per, plus, IStatementRunnable, altPrio} from "../combi";
 import {Target, Source} from "../expressions";
 
 export class Concatenate extends Statement {
@@ -13,9 +13,11 @@ export class Concatenate extends Statement {
 
     const options = per(mode, blanks, sep);
 
+    const sourc = seq(new Source(), plus(new Source()));
+    const lines = seq(str("LINES OF"), new Source());
+
     return seq(str("CONCATENATE"),
-               new Source(),
-               plus(new Source()),
+               altPrio(lines, sourc),
                str("INTO"),
                new Target(),
                opt(options));

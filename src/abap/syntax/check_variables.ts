@@ -157,6 +157,7 @@ export class CheckVariables {
       return [];
     }
 
+// todo, handle "me" variable
     let ret: TypedIdentifier[] = [];
 // todo, also add attributes and constants from super classes
     ret = ret.concat(classAttributes.getConstants());
