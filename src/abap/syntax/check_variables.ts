@@ -8,6 +8,7 @@ import {StatementNode, ExpressionNode} from "../nodes";
 import {ABAPFile, MemoryFile} from "../../files";
 import {Registry} from "../../registry";
 import {MethodDefinition} from "../types";
+import {Interface} from "../../objects";
 
 // todo, some visualization, graphviz?
 // todo, when there is more structure, everything will be refactored?
@@ -69,10 +70,12 @@ export class CheckVariables {
   private file: ABAPFile;
   private variables: Variables;
   private issues: Issue[];
+  private reg: Registry;
 
   public run(file: ABAPFile, reg: Registry): Issue[] {
     this.issues = [];
     this.file = file;
+    this.reg = reg;
     this.variables = new Variables(reg);
 
     // assumption: objects are parsed without parsing errors
@@ -150,13 +153,30 @@ export class CheckVariables {
       return [];
     }
 
-    const methodName = node.findFirstExpression(Expressions.MethodName)!.getFirstToken().getStr();
+    let methodName = node.findFirstExpression(Expressions.MethodName)!.getFirstToken().getStr();
     let methodDefinition: MethodDefinition | undefined = undefined;
     for (const method of classDefinition.getMethodDefinitions()!.getAll()) {
       if (method.getName().toUpperCase() === methodName.toUpperCase()) {
         methodDefinition = method;
       }
     }
+
+// todo, this is not completely correct, and too much code
+    if (methodName.includes("~")) {
+      const interfaceName = methodName.split("~")[0];
+      methodName = methodName.split("~")[1];
+      const intf = this.reg.getObject("INTF", interfaceName) as Interface;
+      if (intf && intf.getDefinition()) {
+        const methods = intf.getDefinition()!.getMethodDefinitions();
+        for (const method of methods) {
+          if (method.getName().toUpperCase() === methodName.toUpperCase()) {
+            methodDefinition = method;
+            break;
+          }
+        }
+      }
+    }
+
     if (methodDefinition === undefined) {
       this.newIssue(node.getFirstToken(), "Method definition \"" + methodName + "\" not found");
       return [];
@@ -168,7 +188,7 @@ export class CheckVariables {
       return [];
     }
 
-// todo, handle "me" variable
+// todo, handle "me" + "super" variables
     let ret: TypedIdentifier[] = [];
 // todo, also add attributes and constants from super classes
     ret = ret.concat(classAttributes.getConstants());

@@ -48,7 +48,7 @@ export class Registry {
   public getObject(type: string, name: string): IObject | undefined {
     for (const obj of this.objects) {
 // todo, this is slow
-      if (obj.getType() === type && obj.getName() === name) {
+      if (obj.getType() === type && obj.getName().toUpperCase() === name.toUpperCase()) {
         return obj;
       }
     }
