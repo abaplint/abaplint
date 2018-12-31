@@ -1,8 +1,6 @@
 import {ABAPObject} from "./_abap_object";
-import {MethodDefinition} from "../abap/types/method_definition";
-import {MethodDef} from "../abap/statements";
-import {StructureNode} from "../abap/nodes";
-import {Scope} from "../abap/types/scope";
+import {InterfaceDefinition} from "../abap/types";
+import {ABAPFile} from "../files";
 
 export class Interface extends ABAPObject {
 
@@ -10,27 +8,24 @@ export class Interface extends ABAPObject {
     return "INTF";
   }
 
-// todo, this should give an interface from the types directory
-  public getMethodDefinitions(): MethodDefinition[] {
-    const node = this.getMain();
-    if (!node) {
-      return [];
+  public getDefinition(): InterfaceDefinition | undefined {
+    const main = this.getMain();
+    if (!main) {
+      return undefined;
     }
-
-    const ret = [];
-    const defs = node.findAllStatements(MethodDef);
-    for (const def of defs) {
-      ret.push(new MethodDefinition(def, Scope.Public));
+    const definitions = main.getInterfaceDefinitions();
+    if (definitions.length === 0) {
+      return undefined;
     }
-    return ret;
+    return definitions[0];
   }
 
-  private getMain(): StructureNode | undefined {
+  private getMain(): ABAPFile | undefined {
     const files = this.getParsedFiles();
     if (files.length > 1) {
       throw new Error("interface.ts, did not expect multiple parsed files");
     }
-    return files[0].getStructure();
+    return files[0];
   }
 
 }

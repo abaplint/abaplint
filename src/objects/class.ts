@@ -17,6 +17,7 @@ export class Class extends ABAPObject {
     return "CLAS";
   }
 
+// todo, rename to "getDefinition" ?
   public getClassDefinition(): ClassDefinition | undefined {
     const main = this.getMainABAP();
     if (!main) {

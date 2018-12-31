@@ -1,7 +1,6 @@
 import {Issue} from "../issue";
 import {IRule} from "./_irule";
 import {IObject} from "../objects/_iobject";
-import {Interface} from "../objects";
 import {MethodDefinition} from "../abap/types/method_definition";
 import {MethodParameter} from "../abap/types/method_parameter";
 import {Registry} from "../registry";
@@ -45,25 +44,22 @@ export class MethodParameterNames implements IRule {
       return [];
     }
 
-// todo, handle local interfaces
-
-    if (obj instanceof Interface) { // todo, to be refactored
-      for (const method of obj.getMethodDefinitions()) {
-        ret = ret.concat(this.checkMethod(method, obj.getFiles()[0]));
+    for (const file of obj.getParsedFiles()) {
+      for (const def of file.getInterfaceDefinitions()) {
+        for (const method of def.getMethodDefinitions()) {
+          ret = ret.concat(this.checkMethod(method, file));
+        }
       }
-    } else {
-      for (const file of obj.getParsedFiles()) {
-        for (const def of file.getClassDefinitions()) {
-          if (this.conf.ignoreExceptions && def.isException()) {
-            continue;
-          }
-          const definitions = def.getMethodDefinitions();
-          if (definitions === undefined) {
-            continue;
-          }
-          for (const method of definitions.getAll()) {
-            ret = ret.concat(this.checkMethod(method, file));
-          }
+      for (const def of file.getClassDefinitions()) {
+        if (this.conf.ignoreExceptions && def.isException()) {
+          continue;
+        }
+        const definitions = def.getMethodDefinitions();
+        if (definitions === undefined) {
+          continue;
+        }
+        for (const method of definitions.getAll()) {
+          ret = ret.concat(this.checkMethod(method, file));
         }
       }
     }

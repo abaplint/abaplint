@@ -117,6 +117,9 @@ export class StructureNode extends BasicNode {
 
   public findAllStructures(type: new () => Structure): StructureNode[] {
     let ret: StructureNode[] = [];
+    if (this.get() instanceof type) {
+      return [this];
+    }
     for (const child of this.getChildren()) {
       if (child.get() instanceof type) {
         ret.push(child as StructureNode);

@@ -7,6 +7,7 @@ export * from "./method_definition";
 export * from "./method_definitions";
 export * from "./method_parameter";
 export * from "./method_parameters";
+export * from "./interface_definition";
 export * from "./scope";
 export * from "./class_implementation";
 export * from "./method_implementation";

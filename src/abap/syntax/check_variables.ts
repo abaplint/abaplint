@@ -33,7 +33,7 @@ class Variables {
 // todo, this should probably search the nearest first? in case there are shadowed variables?
     for (const scope of this.scopes) {
       for (const local of scope.ids) {
-        if (local.getName() === name) {
+        if (local.getName().toUpperCase() === name.toUpperCase()) {
           return true;
         }
       }
@@ -82,8 +82,19 @@ export class CheckVariables {
     }
 
 // todo, more defintions, and move to somewhere else?
+// todo, icon_*, abap_*, col_* are from the corresponding type pools?
     const global = new MemoryFile("_global.prog.abap", "* Globals\n" +
       "DATA sy TYPE c.\n" + // todo, add structure
+      "CONSTANTS %_CHARSIZE TYPE i.\n" +
+      "CONSTANTS %_ENDIAN TYPE c LENGTH 1.\n" +
+      "CONSTANTS %_MINCHAR TYPE c LENGTH 1.\n" +
+      "CONSTANTS %_MAXCHAR TYPE c LENGTH 1.\n" +
+      "CONSTANTS %_HORIZONTAL_TAB TYPE c LENGTH 1.\n" +
+      "CONSTANTS %_VERTICAL_TAB TYPE c LENGTH 1.\n" +
+      "CONSTANTS %_NEWLINE TYPE c LENGTH 1.\n" +
+      "CONSTANTS %_CR_LF TYPE c LENGTH 2.\n" +
+      "CONSTANTS %_FORMFEED TYPE c LENGTH 1.\n" +
+      "CONSTANTS %_BACKSPACE TYPE c LENGTH 1.\n" +
       "CONSTANTS icon_led_red TYPE c LENGTH 4 VALUE ''.\n" +
       "CONSTANTS icon_led_yellow TYPE c LENGTH 4 VALUE ''.\n" +
       "CONSTANTS icon_led_green TYPE c LENGTH 4 VALUE ''.\n" +

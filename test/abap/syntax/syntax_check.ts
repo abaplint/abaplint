@@ -61,13 +61,13 @@ describe("Syntax Check", () => {
   });
 
   it("program, abap_true", () => {
-    const abap = "WRITE abap_true.\n";
+    const abap = "WRITE abap_true.\nWRITE ABAP_TRUE.\n";
     const issues = runProgram(abap);
     expect(issues.length).to.equals(0);
   });
 
   it("program, sy field", () => {
-    const abap = "WRITE sy-uname.\n";
+    const abap = "WRITE sy-uname.\nWRITE SY-UNAME.\n";
     const issues = runProgram(abap);
     expect(issues.length).to.equals(0);
   });
