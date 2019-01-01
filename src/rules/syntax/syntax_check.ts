@@ -1,16 +1,16 @@
 import {ABAPRule} from "../_abap_rule";
 import {ABAPFile} from "../../files";
 import {Registry} from "../../registry";
-import {CheckVariables} from "../../abap/syntax/check_variables";
+import {CheckVariablesLogic} from "../../abap/syntax/check_variables";
 import {Issue} from "../../issue";
 
-export class SyntaxCheckConf {
+export class CheckVariablesConf {
   public enabled: boolean = true;
 }
 
-export class SyntaxCheck extends ABAPRule {
+export class CheckVariables extends ABAPRule {
 
-  private conf = new SyntaxCheckConf();
+  private conf = new CheckVariablesConf();
 
   public getKey(): string {
     return "syntax_check";
@@ -24,12 +24,12 @@ export class SyntaxCheck extends ABAPRule {
     return this.conf;
   }
 
-  public setConfig(conf: SyntaxCheckConf) {
+  public setConfig(conf: CheckVariablesConf) {
     this.conf = conf;
   }
 
   public runParsed(file: ABAPFile, reg: Registry): Issue[] {
-    return new CheckVariables().run(file, reg);
+    return new CheckVariablesLogic().run(file, reg);
   }
 
 }

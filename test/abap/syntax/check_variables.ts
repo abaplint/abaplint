@@ -1,7 +1,7 @@
 import {expect} from "chai";
 import {MemoryFile} from "../../../src/files";
 import {Registry} from "../../../src/registry";
-import {CheckVariables} from "../../../src/abap/syntax/check_variables";
+import {CheckVariablesLogic} from "../../../src/abap/syntax/check_variables";
 import {Issue} from "../../../src/issue";
 
 function runMulti(objects: {filename: string, abap: string}[]): Issue[] {
@@ -10,22 +10,22 @@ function runMulti(objects: {filename: string, abap: string}[]): Issue[] {
     const file = new MemoryFile(obj.filename, obj.abap);
     reg.addFile(file).parse();
   }
-  return new CheckVariables().run(reg.getABAPFiles()[0], reg);
+  return new CheckVariablesLogic().run(reg.getABAPFiles()[0], reg);
 }
 
 function runClass(abap: string): Issue[] {
   const file = new MemoryFile("zcl_foobar.clas.abap", abap);
   const reg = new Registry().addFile(file).parse();
-  return new CheckVariables().run(reg.getABAPFiles()[0], reg);
+  return new CheckVariablesLogic().run(reg.getABAPFiles()[0], reg);
 }
 
 function runProgram(abap: string): Issue[] {
   const file = new MemoryFile("zfoobar.prog.abap", abap);
   const reg = new Registry().addFile(file).parse();
-  return new CheckVariables().run(reg.getABAPFiles()[0], reg);
+  return new CheckVariablesLogic().run(reg.getABAPFiles()[0], reg);
 }
 
-describe("Syntax Check", () => {
+describe("Check Variables", () => {
 
   it("parser error, class", () => {
     const issues = runClass("asdf sdfs");
@@ -56,6 +56,26 @@ describe("Syntax Check", () => {
     expect(issues.length).to.equals(0);
   });
 
+  it("program, constant, begin", () => {
+    const abap =
+      "CONSTANTS: BEGIN OF c_mode,\n" +
+      "             create TYPE i VALUE 1,\n" +
+      "           END OF c_mode.\n" +
+      "WRITE c_mode-create.\n";
+    const issues = runProgram(abap);
+    expect(issues.length).to.equals(0);
+  });
+/*
+  it("program, constant, begin, error", () => {
+    const abap =
+      "CONSTANTS: BEGIN OF c_mode,\n" +
+      "             create TYPE i VALUE 1,\n" +
+      "           END OF c_mode.\n" +
+      "WRITE create.\n";
+    const issues = runProgram(abap);
+    expect(issues.length).to.equals(0);
+  });
+*/
   it("program, foobar found, typed", () => {
     const abap = "DATA foobar TYPE c LENGTH 1.\nWRITE foobar.\n";
     const issues = runProgram(abap);
@@ -86,6 +106,25 @@ describe("Syntax Check", () => {
     const issues = runProgram(abap);
     expect(issues.length).to.equals(0);
   });
+
+  it("program, TABLES", () => {
+    const abap = "TABLES zmoo.\nWRITE zmoo.\n";
+    const issues = runProgram(abap);
+    expect(issues.length).to.equals(0);
+  });
+
+  it("program, LOOP AT SCREEN", () => {
+    const abap = "LOOP AT SCREEN.\nENDLOOP.\n";
+    const issues = runProgram(abap);
+    expect(issues.length).to.equals(0);
+  });
+
+  it("program, parameter", () => {
+    const abap = "PARAMETERS: p_moo TYPE i.\nWRITE p_moo.\n";
+    const issues = runProgram(abap);
+    expect(issues.length).to.equals(0);
+  });
+
 /*
   it("program, sy field, unknown field", () => {
     const abap = "WRITE sy-fooboo.\n";
@@ -222,6 +261,44 @@ describe("Syntax Check", () => {
       "CLASS zcl_foobar IMPLEMENTATION.\n" +
       "  METHOD hello.\n" +
       "    WRITE foobar.\n" +
+      "  ENDMETHOD.\n" +
+      "ENDCLASS.";
+    const issues = runClass(abap);
+    expect(issues.length).to.equals(0);
+  });
+
+  it("class, me, method call", () => {
+    const abap =
+      "CLASS zcl_foobar DEFINITION PUBLIC FINAL CREATE PUBLIC.\n" +
+      "  PRIVATE SECTION.\n" +
+      "    METHODS hello.\n" +
+      "    METHODS world.\n" +
+      "ENDCLASS.\n" +
+      "CLASS zcl_foobar IMPLEMENTATION.\n" +
+      "  METHOD hello.\n" +
+      "    me->world( ).\n" +
+      "  ENDMETHOD.\n" +
+      "  METHOD world.\n" +
+      "  ENDMETHOD.\n" +
+      "ENDCLASS.";
+    const issues = runClass(abap);
+    expect(issues.length).to.equals(0);
+  });
+
+  it("class, me", () => {
+    const abap =
+      "CLASS zcl_foobar DEFINITION PUBLIC FINAL CREATE PUBLIC.\n" +
+      "  PRIVATE SECTION.\n" +
+      "    DATA foobar TYPE i.\n" +
+      "    METHODS hello.\n" +
+      "    METHODS world.\n" +
+      "ENDCLASS.\n" +
+      "CLASS zcl_foobar IMPLEMENTATION.\n" +
+      "  METHOD hello.\n" +
+      "    me->world( ).\n" +
+      "  ENDMETHOD.\n" +
+      "  METHOD world.\n" +
+      "    WRITE me->foobar.\n" +
       "  ENDMETHOD.\n" +
       "ENDCLASS.";
     const issues = runClass(abap);
