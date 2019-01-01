@@ -3,9 +3,9 @@ import {ABAPFile} from "../../files";
 import {Registry} from "../../registry";
 import {CheckVariablesLogic} from "../../abap/syntax/check_variables";
 import {Issue} from "../../issue";
+import {BasicRuleConfig} from "../_basic_rule_config";
 
-export class CheckVariablesConf {
-  public enabled: boolean = false;
+export class CheckVariablesConf extends BasicRuleConfig {
 }
 
 export class CheckVariables extends ABAPRule {
@@ -13,11 +13,11 @@ export class CheckVariables extends ABAPRule {
   private conf = new CheckVariablesConf();
 
   public getKey(): string {
-    return "syntax_check";
+    return "check_variables";
   }
 
   public getDescription(): string {
-    return "Syntax check";
+    return "Check Variables";
   }
 
   public getConfig() {

@@ -4,9 +4,9 @@ import {ABAPFile} from "../../files";
 import {Registry} from "../../registry";
 import {IObject} from "../../objects/_iobject";
 import * as Objects from "../../objects";
+import {BasicRuleConfig} from "../_basic_rule_config";
 
-export class GlobalClassConf {
-  public enabled: boolean = true;
+export class GlobalClassConf extends BasicRuleConfig {
 }
 
 export class GlobalClass extends ABAPRule {

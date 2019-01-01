@@ -4,9 +4,9 @@ import {ABAPFile} from "../../files";
 import {Registry} from "../../registry";
 import {Version, versionToText} from "../../version";
 import {Target} from "../../abap/expressions";
+import {BasicRuleConfig} from "../_basic_rule_config";
 
-export class InlineDataOldVersionsConf {
-  public enabled: boolean = true;
+export class InlineDataOldVersionsConf extends BasicRuleConfig {
 }
 
 export class InlineDataOldVersions extends ABAPRule {

@@ -3,9 +3,9 @@ import * as Statements from "../abap/statements/";
 import {ABAPRule} from "./_abap_rule";
 import {ABAPFile} from "../files";
 import {Compare} from "../abap/expressions";
+import {BasicRuleConfig} from "./_basic_rule_config";
 
-export class ObsoleteStatementConf {
-  public enabled: boolean = true;
+export class ObsoleteStatementConf extends BasicRuleConfig {
   public refresh: boolean = true;
   public compute: boolean = true;
   public add: boolean = true;

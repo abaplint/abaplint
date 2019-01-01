@@ -3,9 +3,9 @@ import * as Statements from "../abap/statements/";
 import {ABAPRule} from "./_abap_rule";
 import {ABAPFile} from "../files";
 import {StatementNode} from "../abap/nodes/";
+import {BasicRuleConfig} from "./_basic_rule_config";
 
-export class ExitOrCheckConf {
-  public enabled: boolean = true;
+export class ExitOrCheckConf extends BasicRuleConfig {
 }
 
 export class ExitOrCheck extends ABAPRule {

@@ -3,10 +3,9 @@ import {IObject} from "../objects/_iobject";
 import {Registry} from "../registry";
 import {MethodLengthStats} from "../stats/method_length_stats";
 import {IRule} from "./_irule";
+import {BasicRuleConfig} from "./_basic_rule_config";
 
-
-export class MethodLengthConf {
-  public enabled: boolean = true;
+export class MethodLengthConf extends BasicRuleConfig {
   public statements: number = 100;
 }
 

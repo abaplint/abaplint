@@ -3,7 +3,7 @@ import {Registry} from "../registry";
 import {ABAPFile} from "../files";
 import {Token} from "../abap/tokens/_token";
 import {INode} from "../abap/nodes/_inode";
-import {StructureNode, StatementNode, ExpressionNode, TokenNode} from "../abap/nodes";
+import {StructureNode, StatementNode, ExpressionNode, TokenNode, TokenNodeRegex} from "../abap/nodes";
 import {CheckVariablesLogic} from "../abap/syntax/check_variables";
 import {TypedIdentifier} from "../abap/types/_typed_identifier";
 import {AbstractObject} from "../objects/_abstract_object";
@@ -28,15 +28,20 @@ export class Hover {
             "Statement: " + statement.get().constructor.name + "\n\n" +
             "Token: " + token.constructor.name;
 
-          value = value + this.fullPath(file, token);
+          const full = this.fullPath(file, token);
+          value = value + full.value;
 
-          const resolved = new CheckVariablesLogic(reg, file).resolveToken(token);
-          if (resolved === undefined) {
-            value = value + "\n\nNot resolved";
-          } else if (resolved instanceof TypedIdentifier) {
-            value = value + "\n\nResolved: Local";
-          } else if (resolved instanceof AbstractObject) {
-            value = value + "\n\nResolved: Global " + resolved.getType() + " " + resolved.getName();
+          if (full.keyword === true) {
+            value = value + "\n\nIs a ABAP keyword";
+          } else {
+            const resolved = new CheckVariablesLogic(reg, file).resolveToken(token);
+            if (resolved === undefined) {
+              value = value + "\n\nNot resolved";
+            } else if (resolved instanceof TypedIdentifier) {
+              value = value + "\n\nResolved: Local";
+            } else if (resolved instanceof AbstractObject) {
+              value = value + "\n\nResolved: Global " + resolved.getType() + " " + resolved.getName();
+            }
           }
 
           ret = {kind: LServer.MarkupKind.Markdown, value};
@@ -51,22 +56,22 @@ export class Hover {
     return ret;
   }
 
-  private static fullPath(file: ABAPFile, token: Token): string {
+  private static fullPath(file: ABAPFile, token: Token): {value: string, keyword: boolean}  {
     const structure = file.getStructure();
 
     if (structure === undefined) {
-      return "";
+      return {value: "", keyword: false};
     }
 
     const found = this.traverse(structure, "", token);
     if (found === undefined) {
-      return "";
+      return {value: "", keyword: false};
     }
 
-    return "\n\n" + found;
+    return {value: "\n\n" + found.value, keyword: found.keyword};
   }
 
-  private static traverse(node: INode, parents: string, search: Token): string | undefined {
+  private static traverse(node: INode, parents: string, search: Token): {value: string, keyword: boolean} | undefined {
     let local = parents;
     if (local !== "") {
       local = local + " -> ";
@@ -83,7 +88,8 @@ export class Hover {
       if (token.getStr() === search.getStr()
           && token.getCol() === search.getCol()
           && token.getRow() === search.getRow()) {
-        return local;
+        const keyword = !(node instanceof TokenNodeRegex);
+        return {value: local, keyword};
       }
     } else {
       throw new Error("hover, traverse, unexpected node type");

@@ -4,9 +4,9 @@ import {Version} from "../version";
 import * as Objects from "../objects";
 import {IObject} from "../objects/_iobject";
 import {Registry} from "../registry";
+import {BasicRuleConfig} from "./_basic_rule_config";
 
-export class CloudTypesConf {
-  public enabled: boolean = true;
+export class CloudTypesConf extends BasicRuleConfig {
 }
 
 export class CloudTypes implements IRule {

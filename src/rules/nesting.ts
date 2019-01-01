@@ -2,9 +2,9 @@ import {Issue} from "../issue";
 import * as Statements from "../abap/statements";
 import {ABAPRule} from "./_abap_rule";
 import {ABAPFile} from "../files";
+import {BasicRuleConfig} from "./_basic_rule_config";
 
-export class NestingConf {
-  public enabled: boolean = true;
+export class NestingConf extends BasicRuleConfig {
   public depth: number = 5;
 }
 

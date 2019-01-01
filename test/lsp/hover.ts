@@ -72,4 +72,12 @@ describe("LSP, hover", () => {
     expect(hover!.value).to.contain("Resolved: Local");
   });
 
+  it("Is keyword", () => {
+    const file = new MemoryFile("foobar.prog.abap", "WRITE foobar.");
+    const reg = new Registry().addFile(file).parse();
+    const hover = Hover.find(reg, file.getFilename(), 0 , 2);
+    expect(hover).to.not.equal(undefined);
+    expect(hover!.value).to.contain("Is a ABAP keyword");
+  });
+
 });

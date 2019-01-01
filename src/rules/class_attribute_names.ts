@@ -5,9 +5,9 @@ import {Class} from "../objects";
 import {Registry} from "../registry";
 import {ClassAttributes} from "../abap/types/class_attributes";
 import {ClassAttribute} from "../abap/types/class_attribute";
+import {BasicRuleConfig} from "./_basic_rule_config";
 
-export class ClassAttributeNamesConf {
-  public enabled: boolean = true;
+export class ClassAttributeNamesConf extends BasicRuleConfig {
   public ignoreExceptions: boolean = true;
   public statics: string = "^G._.*$";
   public instance: string = "^M._.*$";

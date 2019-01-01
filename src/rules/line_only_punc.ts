@@ -2,9 +2,9 @@ import {Issue} from "../issue";
 import {Position} from "../position";
 import {ABAPRule} from "./_abap_rule";
 import {ABAPFile} from "../files";
+import {BasicRuleConfig} from "./_basic_rule_config";
 
-export class LineOnlyPuncConf {
-  public enabled: boolean = true;
+export class LineOnlyPuncConf extends BasicRuleConfig {
   public ignoreExceptions: boolean = true;
 }
 

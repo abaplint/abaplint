@@ -7,9 +7,9 @@ import {ABAPFile} from "../../files";
 import {StatementNode} from "../../abap/nodes";
 import {Registry} from "../../registry";
 import {versionToText} from "../../version";
+import {BasicRuleConfig} from "../_basic_rule_config";
 
-export class ParserErrorConf {
-  public enabled: boolean = true;
+export class ParserErrorConf extends BasicRuleConfig {
 }
 
 export class ParserError extends ABAPRule {

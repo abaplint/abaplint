@@ -2,9 +2,9 @@ import {Issue} from "../../issue";
 import {Position} from "../../position";
 import {ABAPRule} from "../_abap_rule";
 import {ABAPFile} from "../../files";
+import {BasicRuleConfig} from "../_basic_rule_config";
 
-export class ContainsTabConf {
-  public enabled: boolean = true;
+export class ContainsTabConf extends BasicRuleConfig {
 }
 
 export class ContainsTab extends ABAPRule {

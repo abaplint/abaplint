@@ -2,6 +2,7 @@ import {Position} from "../position";
 import {Issue} from "../issue";
 import {ABAPRule} from "./_abap_rule";
 import {ABAPFile} from "../files";
+import {BasicRuleConfig} from "./_basic_rule_config";
 
 export class Counter {
   public exporting: boolean = false;
@@ -9,8 +10,7 @@ export class Counter {
   public pos: Position;
 }
 
-export class ExportingConf {
-  public enabled: boolean = true;
+export class ExportingConf extends BasicRuleConfig {
 }
 
 export class Exporting extends ABAPRule {

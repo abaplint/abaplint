@@ -6,10 +6,9 @@ import * as Statements from "../abap/statements";
 import * as Expressions from "../abap/expressions";
 import {StructureNode} from "../abap/nodes";
 import {Token} from "../abap/tokens/_token";
+import {BasicRuleConfig} from "./_basic_rule_config";
 
-
-export class LocalVariableNamesConf {
-  public enabled: boolean = true;
+export class LocalVariableNamesConf extends BasicRuleConfig {
   public expectedData: string = "^L._.*$";
   public expectedConstant: string = "^LC_.*$";
   public expectedFS: string = "^<L._.*>$";

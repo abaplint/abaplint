@@ -6,9 +6,9 @@ import {IObject} from "../objects/_iobject";
 import {Class} from "../objects";
 import {Registry} from "../registry";
 import {Comment, MacroContent, Empty} from "../abap/statements/_statement";
+import {BasicRuleConfig} from "./_basic_rule_config";
 
-export class IndentationConf {
-  public enabled: boolean = true;
+export class IndentationConf extends BasicRuleConfig {
   public ignoreExceptions: boolean = true;
 }
 

@@ -6,9 +6,9 @@ import {MethodParameter} from "../abap/types/method_parameter";
 import {Registry} from "../registry";
 import {ABAPObject} from "../objects/_abap_object";
 import {IFile} from "../files/_ifile";
+import {BasicRuleConfig} from "./_basic_rule_config";
 
-export class MethodParameterNamesConf {
-  public enabled: boolean = true;
+export class MethodParameterNamesConf extends BasicRuleConfig {
   public ignoreExceptions: boolean = true;
   public importing: string = "^I._.*$";
   public returning: string = "^R._.*$";

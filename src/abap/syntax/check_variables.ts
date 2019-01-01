@@ -139,7 +139,7 @@ export class CheckVariablesLogic {
     this.issues.push(new Issue({
       file: this.file,
       message: message,
-      code: "syntax_check",
+      code: "check_variables",
       start: token.getPos(),
     }));
   }

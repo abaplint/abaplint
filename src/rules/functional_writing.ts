@@ -2,9 +2,9 @@ import {Issue} from "../issue";
 import {ABAPRule} from "./_abap_rule";
 import {ABAPFile} from "../files";
 import * as Statements from "../abap/statements";
+import {BasicRuleConfig} from "./_basic_rule_config";
 
-export class FunctionalWritingConf {
-  public enabled: boolean = true;
+export class FunctionalWritingConf extends BasicRuleConfig {
   public ignoreExceptions: boolean = true;
 }
 

@@ -6,9 +6,9 @@ import {IObject} from "../objects/_iobject";
 import {Registry} from "../registry";
 import {ClassName} from "../abap/expressions";
 import {Class} from "../objects";
+import {BasicRuleConfig} from "./_basic_rule_config";
 
-export class LocalClassNamingConf {
-  public enabled: boolean = true;
+export class LocalClassNamingConf extends BasicRuleConfig {
   public local: string = "^LCL_.*$";
   public test: string = "^LTCL_.*$";
 }

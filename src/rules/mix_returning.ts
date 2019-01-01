@@ -3,10 +3,9 @@ import {ABAPRule} from "./_abap_rule";
 import {ABAPFile} from "../files";
 import * as Statements from "../abap/statements";
 import * as Expressions from "../abap/expressions";
+import {BasicRuleConfig} from "./_basic_rule_config";
 
-
-export class MixReturningConf {
-  public enabled: boolean = true;
+export class MixReturningConf extends BasicRuleConfig {
 }
 
 export class MixReturning extends ABAPRule {

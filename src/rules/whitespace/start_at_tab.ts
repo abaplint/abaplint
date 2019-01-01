@@ -4,9 +4,9 @@ import {Comment} from "../../abap/statements/_statement";
 import {TypeBegin, TypeEnd} from "../../abap/statements";
 import {ABAPRule} from "../_abap_rule";
 import {ABAPFile} from "../../files";
+import {BasicRuleConfig} from "../_basic_rule_config";
 
-export class StartAtTabConf {
-  public enabled: boolean = true;
+export class StartAtTabConf extends BasicRuleConfig {
 }
 
 export class StartAtTab extends ABAPRule {

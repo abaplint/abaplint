@@ -3,9 +3,9 @@ import {Comment} from "../abap/statements/_statement";
 import * as Statements from "../abap/statements/";
 import {ABAPRule} from "./_abap_rule";
 import {ABAPFile} from "../files";
+import {BasicRuleConfig} from "./_basic_rule_config";
 
-export class DefinitionsTopConf {
-  public enabled: boolean = true;
+export class DefinitionsTopConf extends BasicRuleConfig {
 }
 
 // todo, use enum instead?

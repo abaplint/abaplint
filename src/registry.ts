@@ -168,6 +168,31 @@ export class Registry {
       }
     }
 
+// exclude issues, as now we know both the filename and issue key
+// todo, add unit tests for this feature
+    for (const rule of Artifacts.getRules()) {
+      const key = rule.getKey();
+      const exclude = this.conf.readByKey(key, "exclude");
+      if (exclude.length === 0) {
+        continue;
+      }
+      for (let i = issues.length - 1; i >= 0; i--) {
+        if (issues[i].getCode() !== key) {
+          continue;
+        }
+        let remove = false;
+        for (const excl of exclude) {
+          if (new RegExp(excl).exec(issues[i].getFile().getFilename())) {
+            remove = true;
+            break;
+          }
+        }
+        if (remove) {
+          issues.splice(i, 1);
+        }
+      }
+    }
+
     return issues;
   }
 
