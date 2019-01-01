@@ -4,6 +4,8 @@ import {MemoryFile} from "../../src/files/memory_file";
 import {Interface} from "../../src/objects";
 import {Scope} from "../../src/abap/types/scope";
 
+// todo, most(all?) of these tests to be moved to abap/types/
+
 describe("Objects, interface, getMethodDefinitions", () => {
   it("test, positive", () => {
     const abap = "INTERFACE zif_foobar PUBLIC.\n" +

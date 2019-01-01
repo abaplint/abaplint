@@ -158,16 +158,15 @@ describe("Check Variables", () => {
     const issues = runProgram(abap);
     expect(issues.length).to.equals(0);
   });
-/*
+
   it("program, FORM parameter", () => {
-    const file = new MemoryFile("zfoobar.prog.abap", "FORM foo USING boo.\n" +
+    const abap = "FORM foo USING boo.\n" +
       "WRITE boo.\n" +
-      "ENDFORM.\n");
-    const reg = new Registry().addFile(file).parse();
-    const issues = runProgram();
+      "ENDFORM.\n";
+    const issues = runProgram(abap);
     expect(issues.length).to.equals(0);
   });
-*/
+
   it("class, simple, no errors", () => {
     const abap = "CLASS zcl_foobar DEFINITION PUBLIC FINAL CREATE PUBLIC.\n" +
       "  PUBLIC SECTION.\n" +

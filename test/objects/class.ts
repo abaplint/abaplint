@@ -4,7 +4,7 @@ import {MemoryFile} from "../../src/files/memory_file";
 import {Class, ClassCategory} from "../../src/objects";
 import {Scope} from "../../src/abap/types/scope";
 
-// todo, most of these tests to be moved to /types/class_definition
+// todo, most(all?) of these tests to be moved to abap/types/
 
 describe("Objects, class, isException", () => {
 

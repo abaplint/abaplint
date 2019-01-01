@@ -4,7 +4,7 @@ import {AbstractFile} from "./_abstract_file";
 import {IFile} from "./_ifile";
 import {StructureNode, StatementNode} from "../abap/nodes/";
 import * as Structures from "../abap/structures";
-import {ClassDefinition, ClassImplementation, InterfaceDefinition} from "../abap/types";
+import {ClassDefinition, ClassImplementation, InterfaceDefinition, FormDefinition} from "../abap/types";
 
 export class ABAPFile extends AbstractFile {
   // tokens vs statements: pragmas are part of tokens but not in statements
@@ -103,6 +103,24 @@ export class ABAPFile extends AbstractFile {
     return ret;
   }
 
-//  public getForms(): something[] {}
+  public getFormDefinitions(): FormDefinition[] {
+    if (this.structure === undefined) {
+      return [];
+    }
+    const ret: FormDefinition[] = [];
+    for (const found of this.structure.findAllStructures(Structures.Form)) {
+      ret.push(new FormDefinition(found));
+    }
+    return ret;
+  }
+
+  public getFormDefinition(name: string): FormDefinition | undefined {
+    for (const def of this.getFormDefinitions()) {
+      if (def.getName().toUpperCase() === name.toUpperCase()) {
+        return def;
+      }
+    }
+    return undefined;
+  }
 
 }

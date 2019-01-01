@@ -150,6 +150,16 @@ export class CheckVariablesLogic {
     }
   }
 
+  private findFormScope(node: StatementNode): TypedIdentifier[] {
+    const formName = node.findFirstExpression(Expressions.FormName)!.getFirstToken().getStr();
+    const form = this.file.getFormDefinition(formName);
+    if (form === undefined) {
+      this.newIssue(node.getFirstToken(), "Form definition \"" + formName + "\" not found");
+      return [];
+    }
+    return form.getParameters();
+  }
+
   private findMethodScope(node: StatementNode): TypedIdentifier[] {
     const className = this.variables.getParentName();
     const classDefinition = this.file.getClassDefinition(className);
@@ -229,8 +239,7 @@ export class CheckVariablesLogic {
       if (expr === undefined) { throw new Error("syntax_check, unexpected tree structure"); }
       this.addVariable(expr);
     } else if (node instanceof StatementNode && node.get() instanceof Statements.Form) {
-//    this.file.getForms(todo)
-      this.variables.pushScope("form", []);
+      this.variables.pushScope("form", this.findFormScope(node));
     } else if (node instanceof StatementNode && node.get() instanceof Statements.EndForm) {
       this.variables.popScope();
     } else if (node instanceof StatementNode && node.get() instanceof Statements.Method) {
