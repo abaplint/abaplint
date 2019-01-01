@@ -2,10 +2,6 @@ import {statementType} from "../_utils";
 import * as Statements from "../../../src/abap/statements/";
 
 const tests = [
-  "MODIFY t100 FROM <ls_t100>.",
-  "MODIFY zfoo CLIENT SPECIFIED.",
-  "MODIFY (c_tabname) FROM ls_content.",
-  "MODIFY zfoo FROM TABLE mt_mat.",
   "MODIFY SCREEN.",
   "modify lt_table index sy-index from item.",
   "MODIFY lt_table INDEX SY-TABIX.",
@@ -22,12 +18,9 @@ const tests = [
   "modify ct_data from <ls_data> transporting (name).",
   "MODIFY ct_data TRANSPORTING field.",
   "MODIFY TABLE me->properties FROM prop TRANSPORTING text.",
-  "MODIFY ls_foo-interface FROM ls_inter.",
   "MODIFY lt_tab FROM <data> INDEX sy-tabix ASSIGNING <fs>.",
   "MODIFY ct_data FROM <ls_data> TRANSPORTING (b1) (b2).",
   "MODIFY TABLE lt_obj FROM ls_obj TRANSPORTING foo-bar type.",
-  "MODIFY (lv_table) CONNECTION (lv_db) FROM TABLE it_data.",
-  "MODIFY table CONNECTION lv_con FROM TABLE lt_data.",
 ];
 
-statementType(tests, "MODIFY", Statements.Modify);
+statementType(tests, "MODIFY", Statements.ModifyInternal);
