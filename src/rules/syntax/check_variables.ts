@@ -5,7 +5,7 @@ import {CheckVariablesLogic} from "../../abap/syntax/check_variables";
 import {Issue} from "../../issue";
 
 export class CheckVariablesConf {
-  public enabled: boolean = true;
+  public enabled: boolean = false;
 }
 
 export class CheckVariables extends ABAPRule {
@@ -29,7 +29,7 @@ export class CheckVariables extends ABAPRule {
   }
 
   public runParsed(file: ABAPFile, reg: Registry): Issue[] {
-    return new CheckVariablesLogic().run(file, reg);
+    return new CheckVariablesLogic(reg, file).findIssues();
   }
 
 }

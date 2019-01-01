@@ -46,4 +46,4 @@ const tests = [
   "READ TABLE lt_tab FROM lv_line INTO lv_target COMPARING fields-field.",
 ];
 
-statementType(tests, "READ", Statements.Read);
+statementType(tests, "READ TABLE", Statements.ReadTable);

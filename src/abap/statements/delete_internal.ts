@@ -1,7 +1,7 @@
 import {Statement} from "./_statement";
 import {str, seq, alt, opt, per, plus, IStatementRunnable} from "../combi";
 import {FieldSymbol} from "../expressions";
-import {Target, Source, Dynamic, Compare, Cond, SimpleName, Field, FieldSub} from "../expressions";
+import {Target, Source, Dynamic, Compare, ComponentCond, SimpleName, Field, FieldSub} from "../expressions";
 
 export class DeleteInternal extends Statement {
 
@@ -14,7 +14,7 @@ export class DeleteInternal extends Statement {
     const fromTo = seq(opt(seq(str("FROM"), new Source())),
                        opt(seq(str("TO"), new Source())));
 
-    const where = seq(str("WHERE"), alt(new Cond(), new Dynamic()));
+    const where = seq(str("WHERE"), alt(new ComponentCond(), new Dynamic()));
 
     const key = seq(str("WITH TABLE KEY"),
                     opt(seq(new SimpleName(), str("COMPONENTS"))),

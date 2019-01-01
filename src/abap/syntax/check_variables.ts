@@ -9,6 +9,7 @@ import {ABAPFile, MemoryFile} from "../../files";
 import {Registry} from "../../registry";
 import {MethodDefinition} from "../types";
 import {Interface} from "../../objects";
+import {IObject} from "../../objects/_iobject";
 
 // todo, some visualization, graphviz?
 // todo, when there is more structure, everything will be refactored?
@@ -30,22 +31,23 @@ class Variables {
     this.scopes[this.scopes.length - 1].ids.push(identifier);
   }
 
-  public resolve(name: string): boolean {
+  public resolve(name: string): TypedIdentifier | IObject | undefined {
 // todo, this should probably search the nearest first? in case there are shadowed variables?
     for (const scope of this.scopes) {
       for (const local of scope.ids) {
         if (local.getName().toUpperCase() === name.toUpperCase()) {
-          return true;
+          return local;
         }
       }
     }
 
 // look for a global object of this name
-    if (this.reg.getObject("CLAS", name.toUpperCase()) || this.reg.getObject("INTF", name.toUpperCase())) {
-      return true;
-    }
+    let search = this.reg.getObject("CLAS", name.toUpperCase());
+    if (search) { return search; }
+    search = this.reg.getObject("INTF", name.toUpperCase());
+    if (search) { return search; }
 
-    return false;  // todo this method should return a "TypedIdentifier | undefined"
+    return undefined;
   }
 
   public getParentName(): string {
@@ -71,20 +73,37 @@ export class CheckVariablesLogic {
   private issues: Issue[];
   private reg: Registry;
 
-  public run(file: ABAPFile, reg: Registry): Issue[] {
+  constructor(reg: Registry, file: ABAPFile) {
+    this.reg = reg;
     this.issues = [];
     this.file = file;
-    this.reg = reg;
-    this.variables = new Variables(reg);
+    this.variables = new Variables(this.reg);
+  }
 
+  public findIssues(): Issue[] {
     // assumption: objects are parsed without parsing errors
-    const structure = file.getStructure();
+    const structure = this.file.getStructure();
     if (structure === undefined) {
       return [];
     }
+    this.addGlobals();
+    this.traverse(structure);
+    return this.issues;
+  }
 
-// todo, more defintions, and move to somewhere else?
-// todo, icon_*, abap_*, col_* are from the corresponding type pools?
+  public resolveToken(token: Token): TypedIdentifier | IObject | undefined {
+    // assumption: objects are parsed without parsing errors
+    const structure = this.file.getStructure();
+    if (structure === undefined) {
+      return undefined;
+    }
+    this.addGlobals();
+    return this.traverse(structure, token);
+  }
+
+  private addGlobals() {
+    // todo, more defintions, and move to somewhere else?
+    // todo, icon_*, abap_*, col_* are from the corresponding type pools?
     const global = new MemoryFile("_global.prog.abap", "* Globals\n" +
       "DATA sy TYPE c.\n" + // todo, add structure
       "DATA screen TYPE c.\n" + // todo, add structure
@@ -112,11 +131,8 @@ export class CheckVariablesLogic {
       "CONSTANTS abap_undefined TYPE c LENGTH 1 VALUE '-'.\n" +
       "CONSTANTS abap_true TYPE c LENGTH 1 VALUE 'X'.\n" +
       "CONSTANTS abap_false TYPE c LENGTH 1 VALUE ''.\n");
+
     this.traverse(new Registry().addFile(global).getABAPFiles()[0].getStructure()!);
-
-    this.traverse(structure);
-
-    return this.issues;
   }
 
   private newIssue(token: Token, message: string): void {
@@ -128,7 +144,7 @@ export class CheckVariablesLogic {
     }));
   }
 
-  private traverse(node: INode) {
+  private traverse(node: INode, search?: Token): TypedIdentifier | IObject | undefined {
     if (node instanceof ExpressionNode
         && ( node.get() instanceof Expressions.Source || node.get() instanceof Expressions.Target ) ) {
       for (const inline of node.findAllExpressions(Expressions.InlineData)) {
@@ -138,16 +154,27 @@ export class CheckVariablesLogic {
       }
       for (const field of node.findAllExpressions(Expressions.Field)) {
         const token = field.getFirstToken();
-        if (this.variables.resolve(token.getStr()) === false) {
+        const resolved = this.variables.resolve(token.getStr());
+        if (resolved === undefined) {
           this.newIssue(token, "\"" + token.getStr() + "\" not found");
+        } else if (search
+            && search.getStr() === token.getStr()
+            && search.getCol() === token.getCol()
+            && search.getRow() === token.getRow()) {
+          return resolved;
         }
       }
     }
 
     for (const child of node.getChildren()) {
       this.updateVariables(child);
-      this.traverse(child);
+      const resolved = this.traverse(child, search);
+      if (resolved) {
+        return resolved;
+      }
     }
+
+    return undefined;
   }
 
   private findFormScope(node: StatementNode): TypedIdentifier[] {

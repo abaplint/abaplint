@@ -1,8 +1,8 @@
 import {Statement} from "./_statement";
 import {str, seq, alt, opt, optPrio, plus, per, IStatementRunnable} from "../combi";
-import {FSTarget, Target, Field, Source, Dynamic, FieldSub} from "../expressions";
+import {FSTarget, Target, Field, Source, Dynamic, FieldSub, FieldChain} from "../expressions";
 
-export class Read extends Statement {
+export class ReadTable extends Statement {
 
   public getMatcher(): IStatementRunnable {
     const comparing = seq(str("COMPARING"), plus(new FieldSub()));
@@ -13,7 +13,7 @@ export class Read extends Statement {
 
     const index = seq(str("INDEX"), new Source());
 
-    const compare = seq(alt(new Target(), new Dynamic()),
+    const compare = seq(alt(new FieldChain(), new Dynamic()),
                         str("="),
                         new Source());
 

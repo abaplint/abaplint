@@ -1,6 +1,6 @@
 import {Statement} from "./_statement";
 import {str, seq, opt, alt, per, plus, IStatementRunnable} from "../combi";
-import {FSTarget, Target, Source, Dynamic, Cond, FieldSub} from "../expressions";
+import {FSTarget, Target, Source, Dynamic, ComponentCond, FieldSub} from "../expressions";
 
 export class ModifyInternal extends Statement {
 
@@ -10,7 +10,7 @@ export class ModifyInternal extends Statement {
     const transporting = seq(str("TRANSPORTING"),
                              plus(alt(new FieldSub(), new Dynamic())));
 
-    const where = seq(str("WHERE"), new Cond());
+    const where = seq(str("WHERE"), new ComponentCond());
     const assigning = seq(str("ASSIGNING"), new FSTarget());
 
     const target = alt(new Target(), new Dynamic());

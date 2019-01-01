@@ -4,6 +4,9 @@ import {ABAPFile} from "../files";
 import {Token} from "../abap/tokens/_token";
 import {INode} from "../abap/nodes/_inode";
 import {StructureNode, StatementNode, ExpressionNode, TokenNode} from "../abap/nodes";
+import {CheckVariablesLogic} from "../abap/syntax/check_variables";
+import {TypedIdentifier} from "../abap/types/_typed_identifier";
+import {AbstractObject} from "../objects/_abstract_object";
 
 export class Hover {
   public static find(reg: Registry, uri: string, line: number, character: number): LServer.MarkupContent | undefined {
@@ -26,6 +29,15 @@ export class Hover {
             "Token: " + token.constructor.name;
 
           value = value + this.fullPath(file, token);
+
+          const resolved = new CheckVariablesLogic(reg, file).resolveToken(token);
+          if (resolved === undefined) {
+            value = value + "\n\nNot resolved";
+          } else if (resolved instanceof TypedIdentifier) {
+            value = value + "\n\nResolved: Local";
+          } else if (resolved instanceof AbstractObject) {
+            value = value + "\n\nResolved: Global " + resolved.getType() + " " + resolved.getName();
+          }
 
           ret = {kind: LServer.MarkupKind.Markdown, value};
           break;
@@ -67,7 +79,10 @@ export class Hover {
       local = local + "Expression: " + node.get().constructor.name;
     } else if (node instanceof TokenNode) {
       local = local + "Token: " + node.get().constructor.name;
-      if (node.get().getStr() === search.getStr()) {
+      const token = node.get();
+      if (token.getStr() === search.getStr()
+          && token.getCol() === search.getCol()
+          && token.getRow() === search.getRow()) {
         return local;
       }
     } else {

@@ -1,9 +1,10 @@
 import {seq, opt, ver, tok, plus, alt, str, Expression, IStatementRunnable} from "../combi";
-import {FieldSub, Constant, Source, MethodCallChain, CompareOperator} from "./";
+import {FieldSub, Constant, Source, CompareOperator} from "./";
 import {WParenLeft, ParenRightW} from "../tokens/";
 import {Version} from "../../version";
+import {FieldChain} from "./field_chain";
 
-export class Compare extends Expression {
+export class ComponentCompare extends Expression {
   public getRunnable(): IStatementRunnable {
     const val = alt(new FieldSub(), new Constant());
 
@@ -25,15 +26,13 @@ export class Compare extends Expression {
 
     const between = seq(opt(str("NOT")), str("BETWEEN"), new Source(), str("AND"), new Source());
 
-    const predicate = ver(Version.v740sp08, new MethodCallChain());
-
-    const rett = seq(new Source(),
+    const rett = seq(new FieldChain(),
                      alt(seq(new CompareOperator(), new Source()),
                          inn,
                          between,
                          sopt));
 
-    const ret = seq(opt(str("NOT")), alt(predicate, rett));
+    const ret = seq(opt(str("NOT")), rett);
 
     return ret;
   }

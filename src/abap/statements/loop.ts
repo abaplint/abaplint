@@ -1,11 +1,11 @@
 import {Statement} from "./_statement";
 import {str, seq, alt, opt, per, IStatementRunnable} from "../combi";
-import {FSTarget, Target, Cond, Dynamic, Source} from "../expressions";
+import {FSTarget, Target, ComponentCond, Dynamic, Source} from "../expressions";
 
 export class Loop extends Statement {
 
   public getMatcher(): IStatementRunnable {
-    const where = seq(str("WHERE"), alt(new Cond(), new Dynamic()));
+    const where = seq(str("WHERE"), alt(new ComponentCond(), new Dynamic()));
 
     const group = seq(str("GROUP BY"), new Source());
 

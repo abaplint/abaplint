@@ -20,7 +20,7 @@ export class Normal extends Structure {
                sub(new Structures.Loop()),
                sta(Statements.Append),
                sub(new Structures.Try()),
-               sta(Statements.Read),
+               sta(Statements.ReadTable),
                sta(Statements.Assert),
                sta(Statements.Return),
                sta(Statements.Select),

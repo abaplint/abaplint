@@ -10,19 +10,19 @@ function runMulti(objects: {filename: string, abap: string}[]): Issue[] {
     const file = new MemoryFile(obj.filename, obj.abap);
     reg.addFile(file).parse();
   }
-  return new CheckVariablesLogic().run(reg.getABAPFiles()[0], reg);
+  return new CheckVariablesLogic(reg, reg.getABAPFiles()[0]).findIssues();
 }
 
 function runClass(abap: string): Issue[] {
   const file = new MemoryFile("zcl_foobar.clas.abap", abap);
   const reg = new Registry().addFile(file).parse();
-  return new CheckVariablesLogic().run(reg.getABAPFiles()[0], reg);
+  return new CheckVariablesLogic(reg, reg.getABAPFiles()[0]).findIssues();
 }
 
 function runProgram(abap: string): Issue[] {
   const file = new MemoryFile("zfoobar.prog.abap", abap);
   const reg = new Registry().addFile(file).parse();
-  return new CheckVariablesLogic().run(reg.getABAPFiles()[0], reg);
+  return new CheckVariablesLogic(reg, reg.getABAPFiles()[0]).findIssues();
 }
 
 describe("Check Variables", () => {
@@ -163,6 +163,15 @@ describe("Check Variables", () => {
     const abap = "FORM foo USING boo.\n" +
       "WRITE boo.\n" +
       "ENDFORM.\n";
+    const issues = runProgram(abap);
+    expect(issues.length).to.equals(0);
+  });
+
+  it("program, READ TABLE", () => {
+// todo, this code is not syntactically correct
+    const abap = "DATA lt_map TYPE STANDARD TABLE OF string.\n" +
+      "DATA iv_tag TYPE string.\n" +
+      "READ TABLE lt_map WITH KEY tag = iv_tag.\n";
     const issues = runProgram(abap);
     expect(issues.length).to.equals(0);
   });
@@ -355,6 +364,8 @@ describe("Check Variables", () => {
     expect(issues.length).to.equals(0);
   });
 */
+
+// todo, "data(foobar) = zcl_foobar" should not be possible
 // todo, static method cannot access instance attributes
 // todo, can a private method acces protected attributes?
 // todo, write protected fields

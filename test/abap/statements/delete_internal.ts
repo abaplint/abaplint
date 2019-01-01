@@ -19,6 +19,7 @@ const tests = [
   "DELETE TABLE lt_tab WITH TABLE KEY key_sort COMPONENTS key = ls_node-key.",
   "DELETE lt_tab INDEX lv_tabix USING KEY ay.",
   "DELETE ct_data USING KEY (mv_key) WHERE (lv_where).",
+  "DELETE lt_edges WHERE to-obj_name = <ls_node>-obj_name.",
 // todo, table key should not use generic Compare
 //  "DELETE TABLE <lt_values> WITH TABLE KEY (lv_key) = <lv_key>.",
   "DELETE <fs> WHERE (l_where).",
