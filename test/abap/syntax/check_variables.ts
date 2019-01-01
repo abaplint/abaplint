@@ -73,11 +73,17 @@ describe("Check Variables", () => {
       "           END OF c_mode.\n" +
       "WRITE create.\n";
     const issues = runProgram(abap);
-    expect(issues.length).to.equals(0);
+    expect(issues.length).to.equals(1);
   });
 */
   it("program, foobar found, typed", () => {
     const abap = "DATA foobar TYPE c LENGTH 1.\nWRITE foobar.\n";
+    const issues = runProgram(abap);
+    expect(issues.length).to.equals(0);
+  });
+
+  it("program, inline definition", () => {
+    const abap = "DATA(foobar) = 2.\nWRITE foobar.\n";
     const issues = runProgram(abap);
     expect(issues.length).to.equals(0);
   });

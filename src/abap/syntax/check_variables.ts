@@ -131,6 +131,11 @@ export class CheckVariablesLogic {
   private traverse(node: INode) {
     if (node instanceof ExpressionNode
         && ( node.get() instanceof Expressions.Source || node.get() instanceof Expressions.Target ) ) {
+      for (const inline of node.findAllExpressions(Expressions.InlineData)) {
+        const field = inline.findFirstExpression(Expressions.Field);
+        if (field === undefined) { throw new Error("syntax_check, unexpected tree structure"); }
+        this.addVariable(field);
+      }
       for (const field of node.findAllExpressions(Expressions.Field)) {
         const token = field.getFirstToken();
         if (this.variables.resolve(token.getStr()) === false) {
