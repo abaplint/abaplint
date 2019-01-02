@@ -107,6 +107,7 @@ export class CheckVariablesLogic {
     const global = new MemoryFile("_global.prog.abap", "* Globals\n" +
       "DATA sy TYPE c.\n" + // todo, add structure
       "DATA screen TYPE c.\n" + // todo, add structure
+      "DATA text TYPE c.\n" + // todo, this is not completely correct
       "CONSTANTS %_CHARSIZE TYPE i.\n" +
       "CONSTANTS %_ENDIAN TYPE c LENGTH 1.\n" +
       "CONSTANTS %_MINCHAR TYPE c LENGTH 1.\n" +
