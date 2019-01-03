@@ -115,6 +115,20 @@ export class StructureNode extends BasicNode {
     return ret;
   }
 
+  public findAllStatementNodes(): StatementNode[] {
+    let ret: StatementNode[] = [];
+    for (const child of this.getChildren()) {
+      if (child instanceof StatementNode) {
+        ret.push(child as StatementNode);
+      } else if (child instanceof StructureNode) {
+        ret = ret.concat(child.findAllStatementNodes());
+      } else {
+        throw new Error("findAllStatementNodes, unexpected type");
+      }
+    }
+    return ret;
+  }
+
   public findAllStructures(type: new () => Structure): StructureNode[] {
     let ret: StructureNode[] = [];
     if (this.get() instanceof type) {

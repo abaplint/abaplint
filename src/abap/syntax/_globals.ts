@@ -1,12 +1,15 @@
-import {IFile} from "../../files/_ifile";
 import {MemoryFile} from "../../files";
+import {Registry} from "../../registry";
+import {Procedural} from "./_procedural";
+import {TypedIdentifier} from "../types/_typed_identifier";
+import {IFile} from "../../files/_ifile";
 
 export class Globals {
 
-  public static getFile(): IFile {
+  public static get(): TypedIdentifier[] {
     // todo, more defintions, and move to somewhere else?
     // todo, icon_*, abap_*, col_* are from the corresponding type pools?
-    return new MemoryFile("_global.prog.abap", "* Globals\n" +
+    const file = new MemoryFile("_global.prog.abap", "* Globals\n" +
       "DATA sy TYPE c.\n" + // todo, add structure
       "DATA screen TYPE c.\n" + // todo, add structure
       "DATA text TYPE c.\n" + // todo, this is not correct, add structure
@@ -37,6 +40,24 @@ export class Globals {
       "CONSTANTS abap_undefined TYPE c LENGTH 1 VALUE '-'.\n" +
       "CONSTANTS abap_true TYPE c LENGTH 1 VALUE 'X'.\n" +
       "CONSTANTS abap_false TYPE c LENGTH 1 VALUE ''.\n");
+
+
+    return this.typesInFile(file);
+  }
+
+  public static typesInFile(file: IFile): TypedIdentifier[] {
+    const reg = new Registry();
+    const structure = reg.addFile(file).getABAPFiles()[0].getStructure();
+    if (structure === undefined) {
+      throw new Error("globals, parser error");
+    }
+
+    let ret: TypedIdentifier[] = [];
+    const proc = new Procedural(reg.getABAPObjects()[0], reg);
+    for (const statement of structure.findAllStatementNodes()) {
+      ret = ret.concat(proc.findDefinitions(statement));
+    }
+    return ret;
   }
 
 }

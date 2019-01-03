@@ -5,7 +5,7 @@ export class Variables {
 
   constructor() {
     this.scopes = [];
-    this.pushScope("_global", []);
+    this.pushScope("_global");
   }
 
   public add(identifier: TypedIdentifier) {
@@ -31,11 +31,12 @@ export class Variables {
   }
 
   public getParentName(): string {
-    return this.scopes[this.scopes.length - 1].name;
+    return this.scopes[this.scopes.length - 2].name;
   }
 
-  public pushScope(name: string, ids: TypedIdentifier[]) {
-    this.scopes.push({name: name, ids: ids});
+  public pushScope(name: string): Variables {
+    this.scopes.push({name: name, ids: []});
+    return this;
   }
 
   public popScope() {

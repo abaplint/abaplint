@@ -59,7 +59,7 @@ describe("Check Variables", () => {
   });
 
   it("program, MESAGE", () => {
-    const abap = "DATA foobar.\nMESSAGe e000(zz) WITH foobar INTO DATA(sdfs).\n";
+    const abap = "DATA foobar.\nMESSAGe e000(zz) WITH foobar.\n";
     const issues = runProgram(abap);
     expect(issues.length).to.equals(0);
   });

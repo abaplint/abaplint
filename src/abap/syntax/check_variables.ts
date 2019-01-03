@@ -5,17 +5,16 @@ import {INode} from "../nodes/_inode";
 import {TypedIdentifier} from "../types/_typed_identifier";
 import {Token} from "../tokens/_token";
 import {StatementNode, ExpressionNode} from "../nodes";
-import {ABAPFile, MemoryFile} from "../../files";
+import {ABAPFile} from "../../files";
 import {Registry} from "../../registry";
 import {ABAPObject} from "../../objects/_abap_object";
 import {Variables} from "./_variables";
 import {ObjectOriented} from "./_object_oriented";
 import {Globals} from "./_globals";
+import {Procedural} from "./_procedural";
 
 // todo, some visualization, graphviz?
 // todo, when there is more structure, everything will be refactored?
-
-// todo, rename this class?
 class LocalIdentifier extends TypedIdentifier { }
 
 export class CheckVariablesLogic {
@@ -33,7 +32,7 @@ export class CheckVariablesLogic {
   }
 
   public findIssues(): Issue[] {
-    this.addGlobals();
+    this.variables.addList(Globals.get());
 
     for (const file of this.object.getABAPFiles()) {
       this.file = file;
@@ -50,7 +49,7 @@ export class CheckVariablesLogic {
 
 // todo, this assumes no tokes are the same across files
   public resolveToken(token: Token): TypedIdentifier | undefined {
-    this.addGlobals();
+    this.variables.addList(Globals.get());
 
     for (const file of this.object.getABAPFiles()) {
       this.file = file;
@@ -69,10 +68,7 @@ export class CheckVariablesLogic {
     return undefined;
   }
 
-  private addGlobals() {
-    const global = Globals.getFile();
-    this.traverse(new Registry().addFile(global).getABAPFiles()[0].getStructure()!);
-  }
+/////////////////////////////
 
   private newIssue(token: Token, message: string): void {
     this.issues.push(new Issue({
@@ -81,6 +77,14 @@ export class CheckVariablesLogic {
       code: "check_variables",
       start: token.getPos(),
     }));
+  }
+
+  private addVariable(expr: ExpressionNode | undefined) {
+    if (expr === undefined) { throw new Error("syntax_check, unexpected tree structure"); }
+    // todo, these identifers should be possible to create from a Node
+    // todo, how to determine the real types?
+    const token = expr.getFirstToken();
+    this.variables.add(new LocalIdentifier(token, expr));
   }
 
   private traverse(node: INode, search?: Token): TypedIdentifier | undefined {
@@ -120,62 +124,26 @@ export class CheckVariablesLogic {
     return undefined;
   }
 
-  private findFormScope(node: StatementNode): TypedIdentifier[] {
-    const formName = node.findFirstExpression(Expressions.FormName)!.getFirstToken().getStr();
-    const form = this.file.getFormDefinition(formName);
-    if (form === undefined) {
-      this.newIssue(node.getFirstToken(), "Form definition \"" + formName + "\" not found");
-      return [];
-    }
-    return form.getParameters();
-  }
-
-  private addVariable(expr: ExpressionNode | undefined) {
-    if (expr === undefined) { throw new Error("syntax_check, unexpected tree structure"); }
-    // todo, these identifers should be possible to create from a Node
-    // todo, how to determine the real types?
-    const token = expr.getFirstToken();
-    this.variables.add(new LocalIdentifier(token, expr));
-  }
-
   private updateVariables(node: INode): void {
-// todo, align statements, eg is NamespaceSimmpleName a definition or is it Field, or something new?
+// todo, align statements, eg is NamespaceSimpleName a definition or is it Field, or something new?
 // todo, and introduce SimpleSource?
     if (!(node instanceof StatementNode)) {
       return;
     }
 
     const sub = node.get();
+    const varc = new ObjectOriented(this.object, this.reg);
+    const proc = new Procedural(this.object, this.reg);
+    this.variables.addList(proc.findDefinitions(node));
 
-    if (sub instanceof Statements.Data
-        || sub instanceof Statements.DataBegin
-        || sub instanceof Statements.Constant
-        || sub instanceof Statements.ConstantBegin) {
-      this.addVariable(node.findFirstExpression(Expressions.NamespaceSimpleName));
-    } else if (sub instanceof Statements.Parameter) {
-      this.addVariable(node.findFirstExpression(Expressions.FieldSub));
-    } else if (sub instanceof Statements.Tables || sub instanceof Statements.SelectOption) {
-      this.addVariable(node.findFirstExpression(Expressions.Field));
-
-    } else if (sub instanceof Statements.Form) {
-      this.variables.pushScope("form", this.findFormScope(node));
+    if (sub instanceof Statements.Form) {
+      this.variables.pushScope("form").addList(proc.findFormScope(node));
     } else if (sub instanceof Statements.Method) {
-      const varc = new ObjectOriented(this.object, this.reg);
-      const parent = this.variables.getParentName();
-      this.variables.pushScope("method", []);
-      this.variables.addList(varc.methodImplementation(parent, node));
-// todo, this is not correct, add correct types, plus when is "super" allowed?
-      const file = new MemoryFile("_method_locals.prog.abap", "* Method Locals\n" +
-        "DATA super TYPE REF TO object.\n" +
-        "DATA me TYPE REF TO object.\n");
-      this.traverse(new Registry().addFile(file).getABAPFiles()[0].getStructure()!);
-    } else if (sub instanceof Statements.ClassImplementation || sub instanceof Statements.ClassDefinition ) {
-      const varc = new ObjectOriented(this.object, this.reg);
-      this.variables.pushScope(varc.findClassName(node), []);
-      if (sub instanceof Statements.ClassImplementation) {
-        this.variables.addList(varc.classImplementation(node));
-      }
-
+      this.variables.pushScope("method").addList(varc.methodImplementation(this.variables.getParentName(), node));
+    } else if (sub instanceof Statements.ClassDefinition) {
+      this.variables.pushScope(varc.findClassName(node)).addList(varc.classDefinition(node));
+    } else if (sub instanceof Statements.ClassImplementation) {
+      this.variables.pushScope(varc.findClassName(node)).addList(varc.classImplementation(node));
     } else if (sub instanceof Statements.EndForm
         || sub instanceof Statements.EndMethod
         || sub instanceof Statements.EndClass) {

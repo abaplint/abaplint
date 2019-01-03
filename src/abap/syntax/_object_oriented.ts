@@ -6,6 +6,8 @@ import {ClassDefinition, MethodDefinition} from "../types";
 import {TypedIdentifier} from "../types/_typed_identifier";
 import {Interface} from "../../objects";
 import {Registry} from "../../registry";
+import {Globals} from "./_globals";
+import {MemoryFile} from "../../files";
 
 export class ObjectOriented {
   private obj: ABAPObject;
@@ -14,10 +16,6 @@ export class ObjectOriented {
   constructor(obj: ABAPObject, reg: Registry) {
     this.obj = obj;
     this.reg = reg;
-  }
-
-  public classDefinition(): undefined {
-    return undefined;
   }
 
   public findClassName(node: StatementNode): string {
@@ -30,6 +28,11 @@ export class ObjectOriented {
       throw new Error("findClassName, unexpected node type");
     }
     return blah.getFirstToken().getStr();
+  }
+
+  public classDefinition(_node: StatementNode): TypedIdentifier[] {
+// todo
+    return [];
   }
 
   public classImplementation(node: StatementNode): TypedIdentifier[] {
@@ -84,8 +87,13 @@ export class ObjectOriented {
       throw new Error("Method definition \"" + methodName + "\" not found");
     }
 
-    return methodDefinition.getParameters().getAll();
+// todo, this is not correct, add correct types, plus when is "super" allowed?
+    const file = new MemoryFile("_method_locals.prog.abap", "* Method Locals\n" +
+      "DATA super TYPE REF TO object.\n" +
+      "DATA me TYPE REF TO object.\n");
+    const builtIn = Globals.typesInFile(file);
 
+    return methodDefinition.getParameters().getAll().concat(builtIn);
   }
 
   private findDefinition(name: string): ClassDefinition {
