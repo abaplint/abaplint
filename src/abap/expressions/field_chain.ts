@@ -1,14 +1,20 @@
-import {seq, opt, optPrio, alt, str, plus, star, Expression, IStatementRunnable} from "../combi";
-import {Field, FieldSymbol, TableExpression, ArrowOrDash, ComponentName, FieldOffset, FieldLength} from "./";
+import {seq, opt, optPrio, alt, str, plus, star, tok, Expression, IStatementRunnable} from "../combi";
+import {Field, FieldSymbol, TableExpression, ComponentName, FieldOffset, FieldLength} from "./";
+import {InstanceArrow, StaticArrow, Dash} from "../tokens";
+import {ClassName} from "./class_name";
 
 export class FieldChain extends Expression {
   public getRunnable(): IStatementRunnable {
 
-    const chain = seq(alt(new Field(), new FieldSymbol()),
-                      optPrio(plus(new TableExpression())),
-                      star(seq(new ArrowOrDash(), alt(str("*"), new ComponentName()), opt(plus(new TableExpression())))));
+    const arrow = alt(tok(InstanceArrow), tok(Dash));
 
-    const ret = seq(chain, optPrio(new FieldOffset()), optPrio(new FieldLength()));
+    const chain = seq(optPrio(plus(new TableExpression())),
+                      star(seq(arrow, alt(str("*"), new ComponentName()), opt(plus(new TableExpression())))));
+
+    const clas = seq(new ClassName(), tok(StaticArrow), new ComponentName());
+    const start = alt(clas, new Field(), new FieldSymbol());
+
+    const ret = seq(start, chain, optPrio(new FieldOffset()), optPrio(new FieldLength()));
 
     return ret;
   }

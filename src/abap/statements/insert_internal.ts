@@ -10,7 +10,7 @@ export class InsertInternal extends Statement {
     const ref = seq(str("REFERENCE INTO"), new Target());
     const index = seq(str("INDEX"), new Source());
     const initial = str("INITIAL LINE");
-    const into = seq(str("INTO"), opt(str("TABLE")), new Source());
+    const into = seq(str("INTO"), opt(str("TABLE")), new Target());
 
     const to = seq(str("TO"), new Source());
 
@@ -29,7 +29,7 @@ export class InsertInternal extends Statement {
 
     const ret = seq(str("INSERT"),
                     alt(initial,
-                        new Target(),
+                        new Source(),
                         lines),
                     foo);
 

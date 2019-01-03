@@ -9,7 +9,6 @@ import {ABAPFile, MemoryFile} from "../../files";
 import {Registry} from "../../registry";
 import {MethodDefinition} from "../types";
 import {Interface} from "../../objects";
-import {IObject} from "../../objects/_iobject";
 
 // todo, some visualization, graphviz?
 // todo, when there is more structure, everything will be refactored?
@@ -19,10 +18,10 @@ class LocalIdentifier extends TypedIdentifier { }
 
 class Variables {
   private scopes: {name: string, ids: TypedIdentifier[]}[];
-  private reg: Registry;
+//  private reg: Registry;
 
-  constructor(reg: Registry) {
-    this.reg = reg;
+  constructor() {
+//    this.reg = reg;
     this.scopes = [];
     this.pushScope("_global", []);
   }
@@ -31,7 +30,7 @@ class Variables {
     this.scopes[this.scopes.length - 1].ids.push(identifier);
   }
 
-  public resolve(name: string): TypedIdentifier | IObject | undefined {
+  public resolve(name: string): TypedIdentifier | undefined {
 // todo, this should probably search the nearest first? in case there are shadowed variables?
     for (const scope of this.scopes) {
       for (const local of scope.ids) {
@@ -42,10 +41,12 @@ class Variables {
     }
 
 // look for a global object of this name
+/*
     let search = this.reg.getObject("CLAS", name.toUpperCase());
     if (search) { return search; }
     search = this.reg.getObject("INTF", name.toUpperCase());
     if (search) { return search; }
+*/
 
     return undefined;
   }
@@ -77,7 +78,7 @@ export class CheckVariablesLogic {
     this.reg = reg;
     this.issues = [];
     this.file = file;
-    this.variables = new Variables(this.reg);
+    this.variables = new Variables();
   }
 
   public findIssues(): Issue[] {
@@ -91,7 +92,7 @@ export class CheckVariablesLogic {
     return this.issues;
   }
 
-  public resolveToken(token: Token): TypedIdentifier | IObject | undefined {
+  public resolveToken(token: Token): TypedIdentifier | undefined {
     // assumption: objects are parsed without parsing errors
     const structure = this.file.getStructure();
     if (structure === undefined) {
@@ -148,7 +149,7 @@ export class CheckVariablesLogic {
     }));
   }
 
-  private traverse(node: INode, search?: Token): TypedIdentifier | IObject | undefined {
+  private traverse(node: INode, search?: Token): TypedIdentifier | undefined {
     if (node instanceof ExpressionNode
         && ( node.get() instanceof Expressions.Source || node.get() instanceof Expressions.Target ) ) {
       for (const inline of node.findAllExpressions(Expressions.InlineData)) {

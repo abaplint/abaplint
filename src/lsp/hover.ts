@@ -6,7 +6,6 @@ import {INode} from "../abap/nodes/_inode";
 import {StructureNode, StatementNode, ExpressionNode, TokenNode, TokenNodeRegex} from "../abap/nodes";
 import {CheckVariablesLogic} from "../abap/syntax/check_variables";
 import {TypedIdentifier} from "../abap/types/_typed_identifier";
-import {AbstractObject} from "../objects/_abstract_object";
 
 export class Hover {
   public static find(reg: Registry, uri: string, line: number, character: number): LServer.MarkupContent | undefined {
@@ -39,8 +38,6 @@ export class Hover {
               value = value + "\n\nNot resolved";
             } else if (resolved instanceof TypedIdentifier) {
               value = value + "\n\nResolved: Local";
-            } else if (resolved instanceof AbstractObject) {
-              value = value + "\n\nResolved: Global " + resolved.getType() + " " + resolved.getName();
             }
           }
 

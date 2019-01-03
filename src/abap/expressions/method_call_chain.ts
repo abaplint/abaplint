@@ -2,6 +2,7 @@ import {seq, opt, str, tok, ver, star, alt, Expression, IStatementRunnable} from
 import {InstanceArrow, StaticArrow, WParenRightW, WParenRight, ParenLeftW} from "../tokens/";
 import {ParameterListS, ArrowOrDash, Field, FieldChain, MethodCall, Source, TypeName} from "./";
 import {Version} from "../../version";
+import {ClassName} from "./class_name";
 
 export class MethodCallChain extends Expression {
   public getRunnable(): IStatementRunnable {
@@ -22,7 +23,10 @@ export class MethodCallChain extends Expression {
                                            new Source(),
                                            rparen));
 
-    const ret = seq(alt(seq(opt(seq(new FieldChain(), alt(tok(InstanceArrow), tok(StaticArrow)))), new MethodCall()),
+    const localVariable = seq(new FieldChain(), tok(InstanceArrow));
+    const staticClass = seq(new ClassName(), tok(StaticArrow));
+
+    const ret = seq(alt(seq(opt(alt(localVariable, staticClass)), new MethodCall()),
                         neww,
                         cast),
                     after);

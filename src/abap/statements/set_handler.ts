@@ -1,6 +1,6 @@
 import {Statement} from "./_statement";
 import {str, seq, opt, alt, plus, IStatementRunnable} from "../combi";
-import {Target, Source} from "../expressions";
+import {Source, Target} from "../expressions";
 
 export class SetHandler extends Statement {
 

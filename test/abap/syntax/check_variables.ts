@@ -88,6 +88,12 @@ describe("Check Variables", () => {
     expect(issues.length).to.equals(0);
   });
 
+  it("program, call method of global class", () => {
+    const abap = "DATA field TYPE i.\nfield = zcl_global_class=>method( ).";
+    const issues = runProgram(abap);
+    expect(issues.length).to.equals(0);
+  });
+
   it("program, inline definition", () => {
     const abap = "DATA(foobar) = 2.\nWRITE foobar.\n";
     const issues = runProgram(abap);
@@ -202,6 +208,13 @@ describe("Check Variables", () => {
 // todo, this code is not syntactically correct
     const abap = "DATA field TYPE string.\n" +
       "field = get_something( )-date.\n";
+    const issues = runProgram(abap);
+    expect(issues.length).to.equals(0);
+  });
+
+  it("program, component after call", () => {
+    // todo, this code is not syntactically correct
+    const abap = "run( zcl_global_class=>field ).\n";
     const issues = runProgram(abap);
     expect(issues.length).to.equals(0);
   });
