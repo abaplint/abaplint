@@ -66,7 +66,7 @@ export class Class extends ABAPObject {
 
   private getMainABAP(): ABAPFile | undefined {
 // todo, overrride addFile instead of looping through it again?
-    const files = this.getParsedFiles();
+    const files = this.getABAPFiles();
     for (const file of files) {
       if (file.getFilename().match(/\.clas\.abap$/i)) {
         return file;

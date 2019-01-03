@@ -4,25 +4,33 @@ import {Registry} from "../../../src/registry";
 import {CheckVariablesLogic} from "../../../src/abap/syntax/check_variables";
 import {Issue} from "../../../src/issue";
 
+function run(reg: Registry): Issue[] {
+  let ret: Issue[] = [];
+  for (const obj of reg.getABAPObjects()) {
+    ret = ret.concat(new CheckVariablesLogic(reg, obj).findIssues());
+  }
+  return ret;
+}
+
 function runMulti(objects: {filename: string, abap: string}[]): Issue[] {
   const reg = new Registry();
   for (const obj of objects) {
     const file = new MemoryFile(obj.filename, obj.abap);
     reg.addFile(file).parse();
   }
-  return new CheckVariablesLogic(reg, reg.getABAPFiles()[0]).findIssues();
+  return run(reg);
 }
 
 function runClass(abap: string): Issue[] {
   const file = new MemoryFile("zcl_foobar.clas.abap", abap);
   const reg = new Registry().addFile(file).parse();
-  return new CheckVariablesLogic(reg, reg.getABAPFiles()[0]).findIssues();
+  return run(reg);
 }
 
 function runProgram(abap: string): Issue[] {
   const file = new MemoryFile("zfoobar.prog.abap", abap);
   const reg = new Registry().addFile(file).parse();
-  return new CheckVariablesLogic(reg, reg.getABAPFiles()[0]).findIssues();
+  return run(reg);
 }
 
 describe("Check Variables", () => {

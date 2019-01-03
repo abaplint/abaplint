@@ -79,7 +79,7 @@ export class Registry {
       this.parse(progress);
     }
     let ret: ABAPFile[] = [];
-    this.getABAPObjects().forEach((a) => {ret = ret.concat(a.getParsedFiles()); });
+    this.getABAPObjects().forEach((a) => {ret = ret.concat(a.getABAPFiles()); });
     return ret;
   }
 

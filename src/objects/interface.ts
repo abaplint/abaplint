@@ -21,7 +21,7 @@ export class Interface extends ABAPObject {
   }
 
   private getMain(): ABAPFile | undefined {
-    const files = this.getParsedFiles();
+    const files = this.getABAPFiles();
     if (files.length > 1) {
       throw new Error("interface.ts, did not expect multiple parsed files");
     }

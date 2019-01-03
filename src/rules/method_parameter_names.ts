@@ -44,7 +44,7 @@ export class MethodParameterNames implements IRule {
       return [];
     }
 
-    for (const file of obj.getParsedFiles()) {
+    for (const file of obj.getABAPFiles()) {
       for (const def of file.getInterfaceDefinitions()) {
         for (const method of def.getMethodDefinitions()) {
           ret = ret.concat(this.checkMethod(method, file));

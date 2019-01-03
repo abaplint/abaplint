@@ -1,14 +1,13 @@
-import {ABAPRule} from "../_abap_rule";
-import {ABAPFile} from "../../files";
 import {Registry} from "../../registry";
 import {CheckVariablesLogic} from "../../abap/syntax/check_variables";
-import {Issue} from "../../issue";
 import {BasicRuleConfig} from "../_basic_rule_config";
+import {IObject} from "../../objects/_iobject";
+import {ABAPObject} from "../../objects/_abap_object";
 
 export class CheckVariablesConf extends BasicRuleConfig {
 }
 
-export class CheckVariables extends ABAPRule {
+export class CheckVariables {
 
   private conf = new CheckVariablesConf();
 
@@ -28,8 +27,13 @@ export class CheckVariables extends ABAPRule {
     this.conf = conf;
   }
 
-  public runParsed(file: ABAPFile, reg: Registry): Issue[] {
-    return new CheckVariablesLogic(reg, file).findIssues();
+  public run(obj: IObject, reg: Registry) {
+
+    if (!(obj instanceof ABAPObject)) {
+      return [];
+    }
+
+    return new CheckVariablesLogic(reg, obj).findIssues();
   }
 
 }

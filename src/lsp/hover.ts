@@ -6,6 +6,7 @@ import {INode} from "../abap/nodes/_inode";
 import {StructureNode, StatementNode, ExpressionNode, TokenNode, TokenNodeRegex} from "../abap/nodes";
 import {CheckVariablesLogic} from "../abap/syntax/check_variables";
 import {TypedIdentifier} from "../abap/types/_typed_identifier";
+import {ABAPObject} from "../objects/_abap_object";
 
 export class Hover {
   public static find(reg: Registry, uri: string, line: number, character: number): LServer.MarkupContent | undefined {
@@ -33,11 +34,16 @@ export class Hover {
           if (full.keyword === true) {
             value = value + "\n\nIs a ABAP keyword";
           } else {
-            const resolved = new CheckVariablesLogic(reg, file).resolveToken(token);
-            if (resolved === undefined) {
-              value = value + "\n\nNot resolved";
-            } else if (resolved instanceof TypedIdentifier) {
-              value = value + "\n\nResolved: Local";
+            const obj = reg.getObject(file.getObjectType(), file.getObjectName());
+            if (obj instanceof ABAPObject) {
+              const resolved = new CheckVariablesLogic(reg, obj).resolveToken(token);
+              if (resolved === undefined) {
+                value = value + "\n\nNot resolved";
+              } else if (resolved instanceof TypedIdentifier) {
+                value = value + "\n\nResolved: Local";
+              }
+            } else {
+              value = value + "\n\nNot an ABAP object.";
             }
           }
 

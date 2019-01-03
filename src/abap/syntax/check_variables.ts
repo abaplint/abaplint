@@ -9,6 +9,7 @@ import {ABAPFile, MemoryFile} from "../../files";
 import {Registry} from "../../registry";
 import {MethodDefinition} from "../types";
 import {Interface} from "../../objects";
+import {ABAPObject} from "../../objects/_abap_object";
 
 // todo, some visualization, graphviz?
 // todo, when there is more structure, everything will be refactored?
@@ -69,37 +70,54 @@ class Variables {
 }
 
 export class CheckVariablesLogic {
+  private object: ABAPObject;
   private file: ABAPFile;
   private variables: Variables;
   private issues: Issue[];
   private reg: Registry;
 
-  constructor(reg: Registry, file: ABAPFile) {
+  constructor(reg: Registry, object: ABAPObject) {
     this.reg = reg;
     this.issues = [];
-    this.file = file;
+    this.object = object;
     this.variables = new Variables();
   }
 
   public findIssues(): Issue[] {
-    // assumption: objects are parsed without parsing errors
-    const structure = this.file.getStructure();
-    if (structure === undefined) {
-      return [];
-    }
     this.addGlobals();
-    this.traverse(structure);
+
+    for (const file of this.object.getABAPFiles()) {
+      this.file = file;
+    // assumption: objects are parsed without parsing errors
+      const structure = this.file.getStructure();
+      if (structure === undefined) {
+        return [];
+      }
+      this.traverse(structure);
+    }
+
     return this.issues;
   }
 
+// todo, this assumes no tokes are the same across files
   public resolveToken(token: Token): TypedIdentifier | undefined {
-    // assumption: objects are parsed without parsing errors
-    const structure = this.file.getStructure();
-    if (structure === undefined) {
-      return undefined;
-    }
     this.addGlobals();
-    return this.traverse(structure, token);
+
+    for (const file of this.object.getABAPFiles()) {
+      this.file = file;
+    // assumption: objects are parsed without parsing errors
+      const structure = this.file.getStructure();
+      if (structure === undefined) {
+        return undefined;
+      }
+
+      const ret = this.traverse(structure, token);
+      if (ret) {
+        return ret;
+      }
+    }
+
+    return undefined;
   }
 
   private addGlobals() {

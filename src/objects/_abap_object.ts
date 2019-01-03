@@ -101,7 +101,7 @@ export abstract class ABAPObject extends AbstractObject {
     return ret;
   }
 
-  public getParsedFiles(): ABAPFile[] {
+  public getABAPFiles(): ABAPFile[] {
     return this.parsed;
   }
 
