@@ -12,6 +12,8 @@ const tests = [
   "message e059(0k) with 'error' raising fatal.",
   "message i420(foo#) with lv_var.",
   "MESSAGE i420(foo@) WITH foo bar.",
+  "MESSAGE i420(foo@) WITH foo bar INTO loo.",
+  "MESSAGE i420(foo@) WITH foo bar boo1 boo2 INTO loo.",
   "MESSAGE i420(foo/) WITH foo bar.",
   "MESSAGE i420(foo!) WITH foo bar.",
   "message id sy-msgid type 'I' number sy-msgno display like 'E' with sy-msgv1 sy-msgv2 sy-msgv3 sy-msgv4.",
@@ -21,6 +23,11 @@ const tests = [
   "MESSAGE e001(a&) WITH lv_par1.",
   "MESSAGE e001(a>) RAISING exists.",
   "MESSAGE x001(>1) WITH 'foo'.",
+  "MESSAGE e000(zz) INTO DATA(error1) WITH 'asdf' raising zsdf.",
+  "MESSAGE e000(zz) INTO DATA(error2) raising zsdf WITH 'asdf'.",
+  "MESSAGE e000(zz) RAISING zsdf INTO DATA(error3) WITH 'asdf'.",
+  "MESSAGE e000(zz) WITH 'asdf' raising zsdf INTO DATA(error4).",
+  "MESSAGE e000(zz) RAISING zsdf WITH 'asdf' into data(error5).",
 ];
 
 statementType(tests, "MESSAGE", Statements.Message);

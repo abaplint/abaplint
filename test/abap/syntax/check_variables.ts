@@ -50,6 +50,12 @@ describe("Check Variables", () => {
     expect(issues.length).to.equals(0);
   });
 
+  it("program, MESAGE", () => {
+    const abap = "DATA foobar.\nMESSAGe e000(zz) WITH foobar INTO DATA(sdfs).\n";
+    const issues = runProgram(abap);
+    expect(issues.length).to.equals(0);
+  });
+
   it("program, constant", () => {
     const abap = "CONSTANTS foobar TYPE c VALUE 'B'.\nWRITE foobar.\n";
     const issues = runProgram(abap);

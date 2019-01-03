@@ -122,6 +122,9 @@ export class CheckVariablesLogic {
       "CONSTANTS icon_led_yellow TYPE c LENGTH 4 VALUE ''.\n" +
       "CONSTANTS icon_led_green TYPE c LENGTH 4 VALUE ''.\n" +
       "CONSTANTS icon_led_inactive TYPE c LENGTH 4 VALUE ''.\n" +
+      "CONSTANTS icon_green_light TYPE c LENGTH 4 VALUE ''.\n" +
+      "CONSTANTS icon_yellow_light TYPE c LENGTH 4 VALUE ''.\n" +
+      "CONSTANTS icon_red_light TYPE c LENGTH 4 VALUE ''.\n" +
       "CONSTANTS icon_workflow_fork TYPE c LENGTH 4 VALUE ''.\n" +
       "CONSTANTS icon_folder TYPE c LENGTH 4 VALUE ''.\n" +
       "CONSTANTS icon_okay TYPE c LENGTH 4 VALUE ''.\n" +
