@@ -7,67 +7,16 @@ import {Token} from "../tokens/_token";
 import {StatementNode, ExpressionNode} from "../nodes";
 import {ABAPFile, MemoryFile} from "../../files";
 import {Registry} from "../../registry";
-import {MethodDefinition} from "../types";
-import {Interface} from "../../objects";
 import {ABAPObject} from "../../objects/_abap_object";
+import {Variables} from "./_variables";
+import {ObjectOriented} from "./_object_oriented";
+import {Globals} from "./_globals";
 
 // todo, some visualization, graphviz?
 // todo, when there is more structure, everything will be refactored?
 
 // todo, rename this class?
 class LocalIdentifier extends TypedIdentifier { }
-
-class Variables {
-  private scopes: {name: string, ids: TypedIdentifier[]}[];
-//  private reg: Registry;
-
-  constructor() {
-//    this.reg = reg;
-    this.scopes = [];
-    this.pushScope("_global", []);
-  }
-
-  public add(identifier: TypedIdentifier) {
-    this.scopes[this.scopes.length - 1].ids.push(identifier);
-  }
-
-  public resolve(name: string): TypedIdentifier | undefined {
-// todo, this should probably search the nearest first? in case there are shadowed variables?
-    for (const scope of this.scopes) {
-      for (const local of scope.ids) {
-        if (local.getName().toUpperCase() === name.toUpperCase()) {
-          return local;
-        }
-      }
-    }
-
-// look for a global object of this name
-/*
-    let search = this.reg.getObject("CLAS", name.toUpperCase());
-    if (search) { return search; }
-    search = this.reg.getObject("INTF", name.toUpperCase());
-    if (search) { return search; }
-*/
-
-    return undefined;
-  }
-
-  public getParentName(): string {
-    return this.scopes[this.scopes.length - 1].name;
-  }
-
-  public pushScope(name: string, ids: TypedIdentifier[]) {
-    this.scopes.push({name: name, ids: ids});
-  }
-
-  public popScope() {
-    this.scopes.pop();
-    if (this.scopes.length === 0) {
-      throw new Error("something wrong, global scope popped");
-    }
-  }
-
-}
 
 export class CheckVariablesLogic {
   private object: ABAPObject;
@@ -121,40 +70,7 @@ export class CheckVariablesLogic {
   }
 
   private addGlobals() {
-    // todo, more defintions, and move to somewhere else?
-    // todo, icon_*, abap_*, col_* are from the corresponding type pools?
-    const global = new MemoryFile("_global.prog.abap", "* Globals\n" +
-      "DATA sy TYPE c.\n" + // todo, add structure
-      "DATA screen TYPE c.\n" + // todo, add structure
-      "DATA text TYPE c.\n" + // todo, this is not correct, add structure
-      "CONSTANTS %_CHARSIZE TYPE i.\n" +
-      "CONSTANTS %_ENDIAN TYPE c LENGTH 1.\n" +
-      "CONSTANTS %_MINCHAR TYPE c LENGTH 1.\n" +
-      "CONSTANTS %_MAXCHAR TYPE c LENGTH 1.\n" +
-      "CONSTANTS %_HORIZONTAL_TAB TYPE c LENGTH 1.\n" +
-      "CONSTANTS %_VERTICAL_TAB TYPE c LENGTH 1.\n" +
-      "CONSTANTS %_NEWLINE TYPE c LENGTH 1.\n" +
-      "CONSTANTS %_CR_LF TYPE c LENGTH 2.\n" +
-      "CONSTANTS %_FORMFEED TYPE c LENGTH 1.\n" +
-      "CONSTANTS %_BACKSPACE TYPE c LENGTH 1.\n" +
-      "CONSTANTS icon_led_red TYPE c LENGTH 4 VALUE ''.\n" +
-      "CONSTANTS icon_led_yellow TYPE c LENGTH 4 VALUE ''.\n" +
-      "CONSTANTS icon_led_green TYPE c LENGTH 4 VALUE ''.\n" +
-      "CONSTANTS icon_led_inactive TYPE c LENGTH 4 VALUE ''.\n" +
-      "CONSTANTS icon_green_light TYPE c LENGTH 4 VALUE ''.\n" +
-      "CONSTANTS icon_yellow_light TYPE c LENGTH 4 VALUE ''.\n" +
-      "CONSTANTS icon_red_light TYPE c LENGTH 4 VALUE ''.\n" +
-      "CONSTANTS icon_workflow_fork TYPE c LENGTH 4 VALUE ''.\n" +
-      "CONSTANTS icon_folder TYPE c LENGTH 4 VALUE ''.\n" +
-      "CONSTANTS icon_okay TYPE c LENGTH 4 VALUE ''.\n" +
-      "CONSTANTS icon_folder TYPE c LENGTH 4 VALUE ''.\n" +
-      "CONSTANTS space TYPE c LENGTH 1 VALUE ''.\n" +
-      "CONSTANTS col_positive TYPE c LENGTH 1 VALUE '5'.\n" +
-      "CONSTANTS col_negative TYPE c LENGTH 1 VALUE '6'.\n" +
-      "CONSTANTS abap_undefined TYPE c LENGTH 1 VALUE '-'.\n" +
-      "CONSTANTS abap_true TYPE c LENGTH 1 VALUE 'X'.\n" +
-      "CONSTANTS abap_false TYPE c LENGTH 1 VALUE ''.\n");
-
+    const global = Globals.getFile();
     this.traverse(new Registry().addFile(global).getABAPFiles()[0].getStructure()!);
   }
 
@@ -190,7 +106,11 @@ export class CheckVariablesLogic {
     }
 
     for (const child of node.getChildren()) {
-      this.updateVariables(child);
+      try {
+        this.updateVariables(child);
+      } catch (e) {
+        this.newIssue(child.getFirstToken(), e.message);
+      }
       const resolved = this.traverse(child, search);
       if (resolved) {
         return resolved;
@@ -210,60 +130,8 @@ export class CheckVariablesLogic {
     return form.getParameters();
   }
 
-  private findMethodScope(node: StatementNode): TypedIdentifier[] {
-    const className = this.variables.getParentName();
-    const classDefinition = this.file.getClassDefinition(className);
-    if (classDefinition === undefined) {
-      this.newIssue(node.getFirstToken(), "Class definition \"" + className + "\" not found");
-      return [];
-    }
-
-    let methodName = node.findFirstExpression(Expressions.MethodName)!.getFirstToken().getStr();
-    let methodDefinition: MethodDefinition | undefined = undefined;
-    for (const method of classDefinition.getMethodDefinitions()!.getAll()) {
-      if (method.getName().toUpperCase() === methodName.toUpperCase()) {
-        methodDefinition = method;
-      }
-    }
-
-// todo, this is not completely correct, and too much code
-    if (methodName.includes("~")) {
-      const interfaceName = methodName.split("~")[0];
-      methodName = methodName.split("~")[1];
-      const intf = this.reg.getObject("INTF", interfaceName) as Interface;
-      if (intf && intf.getDefinition()) {
-        const methods = intf.getDefinition()!.getMethodDefinitions();
-        for (const method of methods) {
-          if (method.getName().toUpperCase() === methodName.toUpperCase()) {
-            methodDefinition = method;
-            break;
-          }
-        }
-      }
-    }
-
-    if (methodDefinition === undefined) {
-      this.newIssue(node.getFirstToken(), "Method definition \"" + methodName + "\" not found");
-      return [];
-    }
-
-    const classAttributes = classDefinition.getAttributes();
-    if (classAttributes === undefined) {
-      this.newIssue(node.getFirstToken(), "Error reading class attributes");
-      return [];
-    }
-
-    let ret: TypedIdentifier[] = [];
-// todo, also add attributes and constants from super classes
-    ret = ret.concat(classAttributes.getConstants());
-    ret = ret.concat(classAttributes.getInstance()); // todo, this is not correct, take care of scope
-    ret = ret.concat(classAttributes.getStatic()); // todo, this is not correct, take care of scope
-    ret = ret.concat(methodDefinition.getParameters().getAll());
-
-    return ret;
-  }
-
-  private addVariable(expr: ExpressionNode) {
+  private addVariable(expr: ExpressionNode | undefined) {
+    if (expr === undefined) { throw new Error("syntax_check, unexpected tree structure"); }
     // todo, these identifers should be possible to create from a Node
     // todo, how to determine the real types?
     const token = expr.getFirstToken();
@@ -273,48 +141,44 @@ export class CheckVariablesLogic {
   private updateVariables(node: INode): void {
 // todo, align statements, eg is NamespaceSimmpleName a definition or is it Field, or something new?
 // todo, and introduce SimpleSource?
+    if (!(node instanceof StatementNode)) {
+      return;
+    }
+
     const sub = node.get();
-    if (node instanceof StatementNode
-        && ( sub instanceof Statements.Data
+
+    if (sub instanceof Statements.Data
         || sub instanceof Statements.DataBegin
         || sub instanceof Statements.Constant
-        || sub instanceof Statements.ConstantBegin ) ) {
-      const expr = node.findFirstExpression(Expressions.NamespaceSimpleName);
-      if (expr === undefined) { throw new Error("syntax_check, unexpected tree structure"); }
-      this.addVariable(expr);
-    } else if (node instanceof StatementNode && sub instanceof Statements.Parameter ) {
-      const expr = node.findFirstExpression(Expressions.FieldSub);
-      if (expr === undefined) { throw new Error("syntax_check, unexpected tree structure"); }
-      this.addVariable(expr);
-    } else if (node instanceof StatementNode &&
-        (sub instanceof Statements.Tables || sub instanceof Statements.SelectOption)) {
-      const expr = node.findFirstExpression(Expressions.Field);
-      if (expr === undefined) { throw new Error("syntax_check, unexpected tree structure"); }
-      this.addVariable(expr);
-    } else if (node instanceof StatementNode && sub instanceof Statements.Form) {
-      this.variables.pushScope("form", this.findFormScope(node));
-    } else if (node instanceof StatementNode && sub instanceof Statements.EndForm) {
-      this.variables.popScope();
-    } else if (node instanceof StatementNode && sub instanceof Statements.Method) {
-      this.variables.pushScope("method", this.findMethodScope(node));
+        || sub instanceof Statements.ConstantBegin) {
+      this.addVariable(node.findFirstExpression(Expressions.NamespaceSimpleName));
+    } else if (sub instanceof Statements.Parameter) {
+      this.addVariable(node.findFirstExpression(Expressions.FieldSub));
+    } else if (sub instanceof Statements.Tables || sub instanceof Statements.SelectOption) {
+      this.addVariable(node.findFirstExpression(Expressions.Field));
 
+    } else if (sub instanceof Statements.Form) {
+      this.variables.pushScope("form", this.findFormScope(node));
+    } else if (sub instanceof Statements.Method) {
+      const varc = new ObjectOriented(this.object, this.reg);
+      const parent = this.variables.getParentName();
+      this.variables.pushScope("method", []);
+      this.variables.addList(varc.methodImplementation(parent, node));
 // todo, this is not correct, add correct types, plus when is "super" allowed?
       const file = new MemoryFile("_method_locals.prog.abap", "* Method Locals\n" +
         "DATA super TYPE REF TO object.\n" +
         "DATA me TYPE REF TO object.\n");
       this.traverse(new Registry().addFile(file).getABAPFiles()[0].getStructure()!);
-
-    } else if (node instanceof StatementNode && sub instanceof Statements.EndMethod) {
-      this.variables.popScope();
-    } else if (node instanceof StatementNode
-        && ( sub instanceof Statements.ClassImplementation || sub instanceof Statements.ClassDefinition ) ) {
-      const expr = node.findFirstExpression(Expressions.ClassName);
-      if (expr === undefined) {
-        throw new Error("syntax_check, unexpected tree structure");
+    } else if (sub instanceof Statements.ClassImplementation || sub instanceof Statements.ClassDefinition ) {
+      const varc = new ObjectOriented(this.object, this.reg);
+      this.variables.pushScope(varc.findClassName(node), []);
+      if (sub instanceof Statements.ClassImplementation) {
+        this.variables.addList(varc.classImplementation(node));
       }
-      const token = expr.getFirstToken();
-      this.variables.pushScope(token.getStr(), []);
-    } else if (node instanceof StatementNode && sub instanceof Statements.EndClass) {
+
+    } else if (sub instanceof Statements.EndForm
+        || sub instanceof Statements.EndMethod
+        || sub instanceof Statements.EndClass) {
       this.variables.popScope();
     }
   }
