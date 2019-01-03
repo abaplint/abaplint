@@ -44,17 +44,17 @@ export class ClassAttributes {
   private parseSection(node: StructureNode | undefined, scope: Scope): void {
     if (!node) { return; }
 
-    let defs = node.findAllStatements(Statements.Data);
+    let defs = node.findAllStatements(Statements.Data).concat(node.findAllStatements(Statements.DataBegin));
     for (const def of defs) {
       this.instance.push(new ClassAttribute(def, scope));
     }
 
-    defs = node.findAllStatements(Statements.ClassData);
+    defs = node.findAllStatements(Statements.ClassData).concat(node.findAllStatements(Statements.ClassDataBegin));
     for (const def of defs) {
       this.static.push(new ClassAttribute(def, scope));
     }
 
-    defs = node.findAllStatements(Statements.Constant);
+    defs = node.findAllStatements(Statements.Constant).concat(node.findAllStatements(Statements.ConstantBegin));
     for (const def of defs) {
       this.constants.push(new ClassConstant(def, scope));
     }

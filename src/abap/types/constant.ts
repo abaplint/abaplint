@@ -6,7 +6,7 @@ import {TypedIdentifier} from "./_typed_identifier";
 export class Constant extends TypedIdentifier {
 
   constructor(node: StatementNode) {
-    if (!(node.get() instanceof Statements.Constant)) {
+    if (!(node.get() instanceof Statements.Constant || node.get() instanceof Statements.ConstantBegin)) {
       throw new Error("Constant, unexpected node");
     }
     const found = node.findFirstExpression(Expressions.NamespaceSimpleName);

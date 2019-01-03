@@ -9,7 +9,10 @@ export class ClassAttribute extends TypedIdentifier {
 //  private readOnly: boolean;
 
   constructor(node: StatementNode, scope: Scope) {
-    if (!(node.get() instanceof Statements.Data) && !(node.get() instanceof Statements.ClassData)) {
+    if (!(node.get() instanceof Statements.Data)
+        && !(node.get() instanceof Statements.DataBegin)
+        && !(node.get() instanceof Statements.ClassData
+        && !(node.get() instanceof Statements.ClassDataBegin))) {
       throw new Error("ClassAttribute, unexpected node");
     }
     const found = node.findFirstExpression(Expressions.NamespaceSimpleName);

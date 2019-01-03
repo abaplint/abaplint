@@ -79,17 +79,7 @@ describe("Check Variables", () => {
     const issues = runProgram(abap);
     expect(issues.length).to.equals(0);
   });
-/*
-  it("program, constant, begin, error", () => {
-    const abap =
-      "CONSTANTS: BEGIN OF c_mode,\n" +
-      "             create TYPE i VALUE 1,\n" +
-      "           END OF c_mode.\n" +
-      "WRITE create.\n";
-    const issues = runProgram(abap);
-    expect(issues.length).to.equals(1);
-  });
-*/
+
   it("program, foobar found, typed", () => {
     const abap = "DATA foobar TYPE c LENGTH 1.\nWRITE foobar.\n";
     const issues = runProgram(abap);
@@ -167,13 +157,6 @@ describe("Check Variables", () => {
     expect(issues.length).to.equals(0);
   });
 
-/*
-  it("program, sy field, unknown field", () => {
-    const abap = "WRITE sy-fooboo.\n";
-    const issues = runProgram(abap);
-    expect(issues.length).to.equals(1);
-  });
-*/
   it("program, different scope", () => {
     const abap = "FORM foobar1.\n" +
       "  DATA moo.\n" +
@@ -332,6 +315,24 @@ describe("Check Variables", () => {
     expect(issues.length).to.equals(0);
   });
 
+  it("class, constant, BEGIN OF", () => {
+    const abap =
+      "CLASS zcl_foobar DEFINITION PUBLIC FINAL CREATE PUBLIC.\n" +
+      "  PUBLIC SECTION.\n" +
+      "    CONSTANTS: BEGIN OF foobar,\n" +
+      "                 loo TYPE c VALUE 'B',\n" +
+      "               END OF foobar.\n" +
+      "    METHODS hello.\n" +
+      "ENDCLASS.\n" +
+      "CLASS zcl_foobar IMPLEMENTATION.\n" +
+      "  METHOD hello.\n" +
+      "    WRITE foobar-loo.\n" +
+      "  ENDMETHOD.\n" +
+      "ENDCLASS.";
+    const issues = runClass(abap);
+    expect(issues.length).to.equals(0);
+  });
+
   it("class, me, method call", () => {
     const abap =
       "CLASS zcl_foobar DEFINITION PUBLIC FINAL CREATE PUBLIC.\n" +
@@ -390,11 +391,21 @@ describe("Check Variables", () => {
       {filename: "zif_foobar.intf.abap", abap: intf}]);
     expect(issues.length).to.equals(0);
   });
-/*
-  it("attribute from super class", () => {
+
+  it("super class not found", () => {
     const clas =
       "CLASS zcl_foobar DEFINITION PUBLIC INHERITING FROM zcl_super FINAL CREATE PUBLIC.\n" +
-      "  PRIVATE SECTION.\n" +
+      "ENDCLASS.\n" +
+      "CLASS zcl_foobar IMPLEMENTATION.\n" +
+      "ENDCLASS.\n";
+    const issues = runClass(clas);
+    expect(issues.length).to.equals(1);
+  });
+
+  it("protected attribute from super class", () => {
+    const clas =
+      "CLASS zcl_foobar DEFINITION PUBLIC INHERITING FROM zcl_super FINAL CREATE PUBLIC.\n" +
+      "  PUBLIC SECTION.\n" +
       "    METHODS hello.\n" +
       "ENDCLASS.\n" +
       "CLASS zcl_foobar IMPLEMENTATION.\n" +
@@ -414,9 +425,27 @@ describe("Check Variables", () => {
       {filename: "zcl_super.clas.abap", abap: sup}]);
     expect(issues.length).to.equals(0);
   });
+
+/*
+  it("program, constant, begin, error", () => {
+    const abap =
+      "CONSTANTS: BEGIN OF c_mode,\n" +
+      "             create TYPE i VALUE 1,\n" +
+      "           END OF c_mode.\n" +
+      "WRITE create.\n";
+    const issues = runProgram(abap);
+    expect(issues.length).to.equals(1);
+  });
 */
 
-// todo, "data(foobar) = zcl_foobar" should not be possible
+/*
+  it("program, sy field, unknown field", () => {
+    const abap = "WRITE sy-fooboo.\n";
+    const issues = runProgram(abap);
+    expect(issues.length).to.equals(1);
+  });
+*/
+
 // todo, static method cannot access instance attributes
 // todo, can a private method acces protected attributes?
 // todo, write protected fields

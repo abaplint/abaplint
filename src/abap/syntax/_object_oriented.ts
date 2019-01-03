@@ -4,7 +4,7 @@ import {StatementNode} from "../nodes";
 import {ABAPObject} from "../../objects/_abap_object";
 import {ClassDefinition, MethodDefinition} from "../types";
 import {TypedIdentifier} from "../types/_typed_identifier";
-import {Interface} from "../../objects";
+import {Interface, Class} from "../../objects";
 import {Registry} from "../../registry";
 import {Globals} from "./_globals";
 import {MemoryFile} from "../../files";
@@ -35,6 +35,36 @@ export class ObjectOriented {
     return [];
   }
 
+  private fromSuperClass(child: ClassDefinition): TypedIdentifier[] {
+    const sup = child.getSuperClass();
+    if (sup === undefined) {
+      return [];
+    }
+
+    const csup = this.reg.getObject("CLAS", sup) as Class;
+    if (csup === undefined) {
+      throw new Error("super class \"" + sup + "\" not found");
+    }
+
+    const cdef = csup.getClassDefinition();
+    if (cdef === undefined) {
+      throw new Error("super class \"" + sup + "\" contains errors");
+    }
+
+    const attr = cdef.getAttributes();
+    if (attr === undefined) {
+      throw new Error("super class \"" + sup + "\" error in attributes");
+    }
+
+    let ret: TypedIdentifier[] = [];
+    ret = ret.concat(attr.getConstants()); // todo, handle scope and instance vs static
+    ret = ret.concat(attr.getInstance()); // todo, handle scope and instance vs static
+    ret = ret.concat(attr.getStatic()); // todo, handle scope and instance vs static
+    ret = ret.concat(this.fromSuperClass(cdef));
+    return ret;
+
+  }
+
   public classImplementation(node: StatementNode): TypedIdentifier[] {
     const className = this.findClassName(node);
 
@@ -51,8 +81,9 @@ export class ObjectOriented {
   // todo, also add attributes and constants from super classes
     let ret: TypedIdentifier[] = [];
     ret = ret.concat(classAttributes.getConstants());
-    ret = ret.concat(classAttributes.getInstance()); // todo, this is not correct, take care of scope
-    ret = ret.concat(classAttributes.getStatic()); // todo, this is not correct, take care of scope
+    ret = ret.concat(classAttributes.getInstance()); // todo, this is not correct, take care of instance vs static
+    ret = ret.concat(classAttributes.getStatic()); // todo, this is not correct, take care of instance vs static
+    ret = ret.concat(this.fromSuperClass(classDefinition));
     return ret;
   }
 
