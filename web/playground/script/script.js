@@ -177,8 +177,8 @@ function validator(text, options) {
     const hint = {
       message: issue.getMessage(),
       severity: "error",
-      from: CodeMirror.Pos(issue.getStart().getRow() - 1, issue.getStart().getCol()),
-      to: CodeMirror.Pos(issue.getEnd().getRow() - 1, issue.getEnd().getCol())
+      from: CodeMirror.Pos(issue.getStart().getRow() - 1, issue.getStart().getCol() - 1),
+      to: CodeMirror.Pos(issue.getEnd().getRow() - 1, issue.getEnd().getCol() - 1)
     };
     ret.push(hint);
   }

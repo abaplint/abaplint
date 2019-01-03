@@ -107,7 +107,7 @@ export class CheckVariablesLogic {
     const global = new MemoryFile("_global.prog.abap", "* Globals\n" +
       "DATA sy TYPE c.\n" + // todo, add structure
       "DATA screen TYPE c.\n" + // todo, add structure
-      "DATA text TYPE c.\n" + // todo, this is not completely correct
+      "DATA text TYPE c.\n" + // todo, this is not correct, add structure
       "CONSTANTS %_CHARSIZE TYPE i.\n" +
       "CONSTANTS %_ENDIAN TYPE c LENGTH 1.\n" +
       "CONSTANTS %_MINCHAR TYPE c LENGTH 1.\n" +
@@ -252,28 +252,31 @@ export class CheckVariablesLogic {
   }
 
   private updateVariables(node: INode): void {
-// todo, handle inline local definitions
+// todo, align statements, eg is NamespaceSimmpleName a definition or is it Field, or something new?
+// todo, and introduce SimpleSource?
+    const sub = node.get();
     if (node instanceof StatementNode
-        && ( node.get() instanceof Statements.Data
-        || node.get() instanceof Statements.DataBegin
-        || node.get() instanceof Statements.Constant
-        || node.get() instanceof Statements.ConstantBegin ) ) {
+        && ( sub instanceof Statements.Data
+        || sub instanceof Statements.DataBegin
+        || sub instanceof Statements.Constant
+        || sub instanceof Statements.ConstantBegin ) ) {
       const expr = node.findFirstExpression(Expressions.NamespaceSimpleName);
       if (expr === undefined) { throw new Error("syntax_check, unexpected tree structure"); }
       this.addVariable(expr);
-    } else if (node instanceof StatementNode && node.get() instanceof Statements.Parameter ) {
+    } else if (node instanceof StatementNode && sub instanceof Statements.Parameter ) {
       const expr = node.findFirstExpression(Expressions.FieldSub);
       if (expr === undefined) { throw new Error("syntax_check, unexpected tree structure"); }
       this.addVariable(expr);
-    } else if (node instanceof StatementNode && node.get() instanceof Statements.Tables ) {
+    } else if (node instanceof StatementNode &&
+        (sub instanceof Statements.Tables || sub instanceof Statements.SelectOption)) {
       const expr = node.findFirstExpression(Expressions.Field);
       if (expr === undefined) { throw new Error("syntax_check, unexpected tree structure"); }
       this.addVariable(expr);
-    } else if (node instanceof StatementNode && node.get() instanceof Statements.Form) {
+    } else if (node instanceof StatementNode && sub instanceof Statements.Form) {
       this.variables.pushScope("form", this.findFormScope(node));
-    } else if (node instanceof StatementNode && node.get() instanceof Statements.EndForm) {
+    } else if (node instanceof StatementNode && sub instanceof Statements.EndForm) {
       this.variables.popScope();
-    } else if (node instanceof StatementNode && node.get() instanceof Statements.Method) {
+    } else if (node instanceof StatementNode && sub instanceof Statements.Method) {
       this.variables.pushScope("method", this.findMethodScope(node));
 
 // todo, this is not correct, add correct types, plus when is "super" allowed?
@@ -282,17 +285,17 @@ export class CheckVariablesLogic {
         "DATA me TYPE REF TO object.\n");
       this.traverse(new Registry().addFile(file).getABAPFiles()[0].getStructure()!);
 
-    } else if (node instanceof StatementNode && node.get() instanceof Statements.EndMethod) {
+    } else if (node instanceof StatementNode && sub instanceof Statements.EndMethod) {
       this.variables.popScope();
     } else if (node instanceof StatementNode
-        && ( node.get() instanceof Statements.ClassImplementation || node.get() instanceof Statements.ClassDefinition ) ) {
+        && ( sub instanceof Statements.ClassImplementation || sub instanceof Statements.ClassDefinition ) ) {
       const expr = node.findFirstExpression(Expressions.ClassName);
       if (expr === undefined) {
         throw new Error("syntax_check, unexpected tree structure");
       }
       const token = expr.getFirstToken();
       this.variables.pushScope(token.getStr(), []);
-    } else if (node instanceof StatementNode && node.get() instanceof Statements.EndClass) {
+    } else if (node instanceof StatementNode && sub instanceof Statements.EndClass) {
       this.variables.popScope();
     }
   }

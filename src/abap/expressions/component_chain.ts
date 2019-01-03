@@ -1,10 +1,10 @@
 import {seq, opt, optPrio, alt, str, plus, star, Expression, IStatementRunnable} from "../combi";
-import {Field, FieldSymbol, TableExpression, ArrowOrDash, ComponentName, FieldOffset, FieldLength} from "./";
+import {TableExpression, ArrowOrDash, ComponentName, FieldOffset, FieldLength} from "./";
 
-export class FieldChain extends Expression {
+export class ComponentChain extends Expression {
   public getRunnable(): IStatementRunnable {
 
-    const chain = seq(alt(new Field(), new FieldSymbol()),
+    const chain = seq(new ComponentName(),
                       optPrio(plus(new TableExpression())),
                       star(seq(new ArrowOrDash(), alt(str("*"), new ComponentName()), opt(plus(new TableExpression())))));
 

@@ -137,6 +137,22 @@ describe("Check Variables", () => {
     expect(issues.length).to.equals(0);
   });
 
+  it("program, SELECT-OPTIONS", () => {
+// todo, this should really fail as structure-field is unknown
+    const abap = "SELECT-OPTIONS foo FOR structure-field.\nWRITE foo.\n";
+    const issues = runProgram(abap);
+    expect(issues.length).to.equals(0);
+  });
+
+  it("program, line_exists", () => {
+// todo, types of below code is not correct
+    const abap = "DATA lt_data TYPE i.\n" +
+      "IF line_exists( lt_data[ id = '2' ] ).\n" +
+      "ENDIF.\n";
+    const issues = runProgram(abap);
+    expect(issues.length).to.equals(0);
+  });
+
 /*
   it("program, sy field, unknown field", () => {
     const abap = "WRITE sy-fooboo.\n";
@@ -178,6 +194,14 @@ describe("Check Variables", () => {
     const abap = "DATA lt_map TYPE STANDARD TABLE OF string.\n" +
       "DATA iv_tag TYPE string.\n" +
       "READ TABLE lt_map WITH KEY tag = iv_tag.\n";
+    const issues = runProgram(abap);
+    expect(issues.length).to.equals(0);
+  });
+
+  it("program, component after call", () => {
+// todo, this code is not syntactically correct
+    const abap = "DATA field TYPE string.\n" +
+      "field = get_something( )-date.\n";
     const issues = runProgram(abap);
     expect(issues.length).to.equals(0);
   });
