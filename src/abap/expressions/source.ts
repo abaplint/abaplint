@@ -1,5 +1,5 @@
 import {plus, ver, seq, opt, tok, str, alt, star, optPrio, regex, Expression, IStatementRunnable} from "../combi";
-import {Arrow, WParenLeftW, WParenRightW, WDashW, ParenLeftW} from "../tokens/";
+import {InstanceArrow, WParenLeftW, WParenRightW, WDashW, ParenLeftW} from "../tokens/";
 import {MethodCallChain, ArithOperator, Cond, Constant, StringTemplate, Let} from "./";
 import {FieldChain, Field, TableBody, TypeName, ArrowOrDash, FieldSub, For} from "./";
 import {Version} from "../../version";
@@ -7,7 +7,7 @@ import {ComponentChain} from "./";
 
 export class Source extends Expression {
   public getRunnable(): IStatementRunnable {
-    const ref = seq(tok(Arrow), str("*"));
+    const ref = seq(tok(InstanceArrow), str("*"));
 
     const method = seq(new MethodCallChain(), optPrio(seq(new ArrowOrDash(), new ComponentChain())));
 

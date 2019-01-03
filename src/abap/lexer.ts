@@ -209,15 +209,25 @@ export class Lexer {
         } else {
           tok = new Tokens.At(pos, s);
         }
-      } else if (s.length === 2 && (s === "->" || s === "=>")) {
+      } else if (s.length === 2 && s === "->") {
         if (whiteBefore && whiteAfter) {
-          tok = new Tokens.WArrowW(pos, s);
+          tok = new Tokens.WInstanceArrowW(pos, s);
         } else if (whiteBefore) {
-          tok = new Tokens.WArrow(pos, s);
+          tok = new Tokens.WInstanceArrow(pos, s);
         } else if (whiteAfter) {
-          tok = new Tokens.ArrowW(pos, s);
+          tok = new Tokens.InstanceArrowW(pos, s);
         } else {
-          tok = new Tokens.Arrow(pos, s);
+          tok = new Tokens.InstanceArrow(pos, s);
+        }
+      } else if (s.length === 2 && s === "=>") {
+        if (whiteBefore && whiteAfter) {
+          tok = new Tokens.WStaticArrowW(pos, s);
+        } else if (whiteBefore) {
+          tok = new Tokens.WStaticArrow(pos, s);
+        } else if (whiteAfter) {
+          tok = new Tokens.StaticArrowW(pos, s);
+        } else {
+          tok = new Tokens.StaticArrow(pos, s);
         }
       } else {
         tok = new Tokens.Identifier(pos, s);

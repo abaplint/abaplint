@@ -1,5 +1,5 @@
 export * from "./arith_operator";
-export * from "./arrowordash";
+export * from "./arrow_or_dash";
 export * from "./class_global";
 export * from "./class_name";
 export * from "./compare_operator";

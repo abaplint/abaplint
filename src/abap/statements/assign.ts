@@ -1,6 +1,6 @@
 import {Statement} from "./_statement";
 import {str, seq, alt, opt, tok, per, IStatementRunnable} from "../combi";
-import {Arrow} from "../tokens/";
+import {InstanceArrow, StaticArrow} from "../tokens/";
 import {FSTarget, Target, Source, Dynamic, Field} from "../expressions";
 
 export class Assign extends Statement {
@@ -13,10 +13,12 @@ export class Assign extends Statement {
 
     const tableField = seq(str("TABLE FIELD"), new Dynamic());
 
-    const source = alt(seq(new Source(), opt(seq(tok(Arrow), new Dynamic()))),
+    const arrow = alt(tok(InstanceArrow), tok(StaticArrow));
+
+    const source = alt(seq(new Source(), opt(seq(arrow, new Dynamic()))),
                        component,
                        tableField,
-                       seq(new Dynamic(), opt(seq(tok(Arrow), alt(new Field(), new Dynamic())))));
+                       seq(new Dynamic(), opt(seq(arrow, alt(new Field(), new Dynamic())))));
 
     const type = seq(str("TYPE"), alt(new Dynamic(), new Source()));
     const like = seq(str("LIKE"), alt(new Dynamic(), new Source()));
