@@ -1,6 +1,6 @@
 import {Statement} from "./_statement";
 import {verNot, str, seq, opt, alt, per, plus, IStatementRunnable} from "../combi";
-import {Target, Source, Dynamic, Field} from "../expressions";
+import {Target, Source, Dynamic, Field, ComponentChainSimple} from "../expressions";
 import {Version} from "../../version";
 
 export class Import extends Statement {
@@ -36,11 +36,11 @@ export class Import extends Statement {
 
     const source = alt(buffer, memory, database, table, shared);
 
-    const to = plus(seq(new Source(),
+    const to = plus(seq(new ComponentChainSimple(),
                         alt(str("TO"), str("INTO")),
                         new Target()));
 
-    const toeq = plus(seq(new Source(),
+    const toeq = plus(seq(new ComponentChainSimple(),
                           str("="),
                           new Target()));
 

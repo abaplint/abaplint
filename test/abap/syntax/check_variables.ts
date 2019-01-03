@@ -141,9 +141,26 @@ describe("Check Variables", () => {
     expect(issues.length).to.equals(0);
   });
 
+  it("program, parameter", () => {
+    const abap = "DATA: local TYPE i,\n" +
+      "                 buffer TYPE c.\n" +
+      "IMPORT name = local FROM DATA BUFFER buffer.\n";
+    const issues = runProgram(abap);
+    expect(issues.length).to.equals(0);
+  });
+
   it("program, SELECT-OPTIONS", () => {
 // todo, this should really fail as structure-field is unknown
     const abap = "SELECT-OPTIONS foo FOR structure-field.\nWRITE foo.\n";
+    const issues = runProgram(abap);
+    expect(issues.length).to.equals(0);
+  });
+
+  it("program, STATICS", () => {
+    const abap = "FORM foo.\n" +
+      "  STATICS: foo TYPE i.\n" +
+      "  WRITE foo.\n" +
+      "ENDFORM.\n";
     const issues = runProgram(abap);
     expect(issues.length).to.equals(0);
   });
@@ -333,6 +350,24 @@ describe("Check Variables", () => {
     expect(issues.length).to.equals(0);
   });
 
+  it("class, class-data, BEGIN OF", () => {
+    const abap =
+      "CLASS zcl_foobar DEFINITION PUBLIC FINAL CREATE PUBLIC.\n" +
+      "  PUBLIC SECTION.\n" +
+      "    CLASS-DATA: BEGIN OF foobar,\n" +
+      "                  loo TYPE c,\n" +
+      "                END OF foobar.\n" +
+      "    METHODS hello.\n" +
+      "ENDCLASS.\n" +
+      "CLASS zcl_foobar IMPLEMENTATION.\n" +
+      "  METHOD hello.\n" +
+      "    WRITE foobar-loo.\n" +
+      "  ENDMETHOD.\n" +
+      "ENDCLASS.";
+    const issues = runClass(abap);
+    expect(issues.length).to.equals(0);
+  });
+
   it("class, me, method call", () => {
     const abap =
       "CLASS zcl_foobar DEFINITION PUBLIC FINAL CREATE PUBLIC.\n" +
@@ -365,6 +400,24 @@ describe("Check Variables", () => {
       "  ENDMETHOD.\n" +
       "  METHOD world.\n" +
       "    WRITE me->foobar.\n" +
+      "  ENDMETHOD.\n" +
+      "ENDCLASS.";
+    const issues = runClass(abap);
+    expect(issues.length).to.equals(0);
+  });
+
+  it("class, private attribute", () => {
+    const abap =
+      "CLASS zcl_foobar DEFINITION PUBLIC FINAL CREATE PUBLIC.\n" +
+      "  PROTECTED SECTION.\n" +
+      "    METHODS hello.\n" +
+      "  PRIVATE SECTION.\n" +
+      "    DATA foobar TYPE i.\n" +
+      "    DATA bar TYPE i.\n" +
+      "ENDCLASS.\n" +
+      "CLASS zcl_foobar IMPLEMENTATION.\n" +
+      "  METHOD hello.\n" +
+      "    WRITE foobar.\n" +
       "  ENDMETHOD.\n" +
       "ENDCLASS.";
     const issues = runClass(abap);

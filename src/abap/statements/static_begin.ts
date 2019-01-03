@@ -1,6 +1,6 @@
 import {Statement} from "./_statement";
 import {verNot, str, seq, alt, opt, IStatementRunnable} from "../combi";
-import {Integer, SimpleName} from "../expressions";
+import {Integer, NamespaceSimpleName} from "../expressions";
 import {Version} from "../../version";
 
 export class StaticBegin extends Statement {
@@ -10,7 +10,7 @@ export class StaticBegin extends Statement {
 
     const ret = seq(alt(str("STATIC"), str("STATICS")),
                     str("BEGIN OF"),
-                    new SimpleName(),
+                    new NamespaceSimpleName(),
                     opt(occurs));
 
     return verNot(Version.Cloud, ret);

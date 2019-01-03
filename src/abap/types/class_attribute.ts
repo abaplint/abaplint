@@ -11,13 +11,13 @@ export class ClassAttribute extends TypedIdentifier {
   constructor(node: StatementNode, scope: Scope) {
     if (!(node.get() instanceof Statements.Data)
         && !(node.get() instanceof Statements.DataBegin)
-        && !(node.get() instanceof Statements.ClassData
-        && !(node.get() instanceof Statements.ClassDataBegin))) {
-      throw new Error("ClassAttribute, unexpected node");
+        && !(node.get() instanceof Statements.ClassData)
+        && !(node.get() instanceof Statements.ClassDataBegin)) {
+      throw new Error("ClassAttribute, unexpected node, 1");
     }
     const found = node.findFirstExpression(Expressions.NamespaceSimpleName);
     if (found === undefined) {
-      throw new Error("ClassAttribute, unexpected node");
+      throw new Error("ClassAttribute, unexpected node, 2");
     }
     const token = found.getFirstToken();
 

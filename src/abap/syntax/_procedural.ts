@@ -33,7 +33,9 @@ export class Procedural {
     if (sub instanceof Statements.Data
       || sub instanceof Statements.DataBegin
       || sub instanceof Statements.Constant
-      || sub instanceof Statements.ConstantBegin) {
+      || sub instanceof Statements.ConstantBegin
+      || sub instanceof Statements.Static
+      || sub instanceof Statements.StaticBegin) {
       ret.push(this.addVariable(node.findFirstExpression(Expressions.NamespaceSimpleName)));
     } else if (sub instanceof Statements.Parameter) {
       ret.push(this.addVariable(node.findFirstExpression(Expressions.FieldSub)));

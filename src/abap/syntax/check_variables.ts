@@ -19,7 +19,7 @@ class LocalIdentifier extends TypedIdentifier { }
 
 export class CheckVariablesLogic {
   private object: ABAPObject;
-  private file: ABAPFile;
+  private currentFile: ABAPFile;
   private variables: Variables;
   private issues: Issue[];
   private reg: Registry;
@@ -35,9 +35,9 @@ export class CheckVariablesLogic {
     this.variables.addList(Globals.get());
 
     for (const file of this.object.getABAPFiles()) {
-      this.file = file;
+      this.currentFile = file;
     // assumption: objects are parsed without parsing errors
-      const structure = this.file.getStructure();
+      const structure = this.currentFile.getStructure();
       if (structure === undefined) {
         return [];
       }
@@ -52,9 +52,9 @@ export class CheckVariablesLogic {
     this.variables.addList(Globals.get());
 
     for (const file of this.object.getABAPFiles()) {
-      this.file = file;
+      this.currentFile = file;
     // assumption: objects are parsed without parsing errors
-      const structure = this.file.getStructure();
+      const structure = this.currentFile.getStructure();
       if (structure === undefined) {
         return undefined;
       }
@@ -72,7 +72,7 @@ export class CheckVariablesLogic {
 
   private newIssue(token: Token, message: string): void {
     this.issues.push(new Issue({
-      file: this.file,
+      file: this.currentFile,
       message: message,
       code: "check_variables",
       start: token.getPos(),
