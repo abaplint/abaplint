@@ -72,8 +72,9 @@
   },
   "dependencies": {
     "glob": "^7.1.3",
-    "vscode-languageserver-protocol": "^3.14.1",
     "minimist": "^1.2.0",
-    "progress": "^2.0.3"
+    "progress": "^2.0.3",
+    "vscode-languageserver-protocol": "^3.14.1",
+    "xml-js": "^1.6.8"
   }
 }
