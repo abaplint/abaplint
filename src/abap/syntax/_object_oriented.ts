@@ -3,19 +3,21 @@ import * as Expressions from "../expressions";
 import {StatementNode} from "../nodes";
 import {ABAPObject} from "../../objects/_abap_object";
 import {ClassDefinition, MethodDefinition} from "../types";
-import {TypedIdentifier} from "../types/_typed_identifier";
 import {Interface, Class} from "../../objects";
 import {Registry} from "../../registry";
 import {Globals} from "./_globals";
 import {MemoryFile} from "../../files";
+import {Variables} from "./_variables";
 
 export class ObjectOriented {
   private obj: ABAPObject;
   private reg: Registry;
+  private variables: Variables;
 
-  constructor(obj: ABAPObject, reg: Registry) {
+  constructor(obj: ABAPObject, reg: Registry, variables: Variables) {
     this.obj = obj;
     this.reg = reg;
+    this.variables = variables;
   }
 
   public findClassName(node: StatementNode): string {
@@ -30,43 +32,14 @@ export class ObjectOriented {
     return blah.getFirstToken().getStr();
   }
 
-  public classDefinition(_node: StatementNode): TypedIdentifier[] {
+  public classDefinition(node: StatementNode) {
+    this.variables.pushScope(this.findClassName(node));
 // todo
-    return [];
   }
 
-  private fromSuperClass(child: ClassDefinition): TypedIdentifier[] {
-    const sup = child.getSuperClass();
-    if (sup === undefined) {
-      return [];
-    }
-
-    const csup = this.reg.getObject("CLAS", sup) as Class;
-    if (csup === undefined) {
-      throw new Error("super class \"" + sup + "\" not found");
-    }
-
-    const cdef = csup.getClassDefinition();
-    if (cdef === undefined) {
-      throw new Error("super class \"" + sup + "\" contains errors");
-    }
-
-    const attr = cdef.getAttributes();
-    if (attr === undefined) {
-      throw new Error("super class \"" + sup + "\" error in attributes");
-    }
-
-    let ret: TypedIdentifier[] = [];
-    ret = ret.concat(attr.getConstants()); // todo, handle scope and instance vs static
-    ret = ret.concat(attr.getInstance()); // todo, handle scope and instance vs static
-    ret = ret.concat(attr.getStatic()); // todo, handle scope and instance vs static
-    ret = ret.concat(this.fromSuperClass(cdef));
-    return ret;
-
-  }
-
-  public classImplementation(node: StatementNode): TypedIdentifier[] {
+  public classImplementation(node: StatementNode) {
     const className = this.findClassName(node);
+    this.variables.pushScope(className);
 
     const classDefinition = this.findDefinition(className);
     if (classDefinition === undefined) {
@@ -79,15 +52,16 @@ export class ObjectOriented {
     }
 
   // todo, also add attributes and constants from super classes
-    let ret: TypedIdentifier[] = [];
-    ret = ret.concat(classAttributes.getConstants());
-    ret = ret.concat(classAttributes.getInstance()); // todo, this is not correct, take care of instance vs static
-    ret = ret.concat(classAttributes.getStatic()); // todo, this is not correct, take care of instance vs static
-    ret = ret.concat(this.fromSuperClass(classDefinition));
-    return ret;
+    this.variables.addList(classAttributes.getConstants());
+    this.variables.addList(classAttributes.getInstance()); // todo, this is not correct, take care of instance vs static
+    this.variables.addList(classAttributes.getStatic()); // todo, this is not correct, take care of instance vs static
+
+    this.fromSuperClass(classDefinition);
   }
 
-  public methodImplementation(className: string, node: StatementNode): TypedIdentifier[] {
+  public methodImplementation(node: StatementNode) {
+    this.variables.pushScope("method");
+    const className = this.variables.getParentName();
     const classDefinition = this.findDefinition(className);
 
     let methodName = node.findFirstExpression(Expressions.MethodName)!.getFirstToken().getStr();
@@ -122,9 +96,9 @@ export class ObjectOriented {
     const file = new MemoryFile("_method_locals.prog.abap", "* Method Locals\n" +
       "DATA super TYPE REF TO object.\n" +
       "DATA me TYPE REF TO object.\n");
-    const builtIn = Globals.typesInFile(file);
+    this.variables.addList(Globals.typesInFile(file));
 
-    return methodDefinition.getParameters().getAll().concat(builtIn);
+    this.variables.addList(methodDefinition.getParameters().getAll());
   }
 
   private findDefinition(name: string): ClassDefinition {
@@ -135,6 +109,33 @@ export class ObjectOriented {
       }
     }
     throw new Error("Class defintion for \"" + name + "\" not found");
+  }
+
+  private fromSuperClass(child: ClassDefinition) {
+    const sup = child.getSuperClass();
+    if (sup === undefined) {
+      return;
+    }
+    const csup = this.reg.getObject("CLAS", sup) as Class;
+    if (csup === undefined) {
+      throw new Error("super class \"" + sup + "\" not found");
+    }
+
+    const cdef = csup.getClassDefinition();
+    if (cdef === undefined) {
+      throw new Error("super class \"" + sup + "\" contains errors");
+    }
+
+    const attr = cdef.getAttributes();
+    if (attr === undefined) {
+      throw new Error("super class \"" + sup + "\" error in attributes");
+    }
+
+    this.variables.addList(attr.getConstants()); // todo, handle scope and instance vs static
+    this.variables.addList(attr.getInstance()); // todo, handle scope and instance vs static
+    this.variables.addList(attr.getStatic()); // todo, handle scope and instance vs static
+
+    this.fromSuperClass(cdef);
   }
 
 }

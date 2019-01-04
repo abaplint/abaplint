@@ -18,6 +18,10 @@ export class Variables {
     }
   }
 
+  public getCurrentScope(): TypedIdentifier[] {
+    return this.scopes[this.scopes.length - 1].ids;
+  }
+
   public resolve(name: string): TypedIdentifier | undefined {
     // todo, this should probably search the nearest first? in case there are shadowed variables?
     for (const scope of this.scopes) {

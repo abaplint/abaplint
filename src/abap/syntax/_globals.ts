@@ -3,6 +3,7 @@ import {Registry} from "../../registry";
 import {Procedural} from "./_procedural";
 import {TypedIdentifier} from "../types/_typed_identifier";
 import {IFile} from "../../files/_ifile";
+import {Variables} from "./_variables";
 
 export class Globals {
 
@@ -47,17 +48,17 @@ export class Globals {
 
   public static typesInFile(file: IFile): TypedIdentifier[] {
     const reg = new Registry();
+    const variables = new Variables();
     const structure = reg.addFile(file).getABAPFiles()[0].getStructure();
     if (structure === undefined) {
       throw new Error("globals, parser error");
     }
 
-    let ret: TypedIdentifier[] = [];
-    const proc = new Procedural(reg.getABAPObjects()[0], reg);
+    const proc = new Procedural(reg.getABAPObjects()[0], reg, variables);
     for (const statement of structure.findAllStatementNodes()) {
-      ret = ret.concat(proc.findDefinitions(statement));
+      proc.findDefinitions(statement);
     }
-    return ret;
+    return variables.getCurrentScope();
   }
 
 }

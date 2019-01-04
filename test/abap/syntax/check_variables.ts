@@ -350,6 +350,26 @@ describe("Check Variables", () => {
     expect(issues.length).to.equals(0);
   });
 
+  it("class, changing parameter", () => {
+    const abap =
+      "CLASS zcl_foobar DEFINITION PUBLIC FINAL CREATE PUBLIC.\n" +
+      "  PUBLIC SECTION.\n" +
+      "    METHODS hello.\n" +
+      "  PRIVATE SECTION.\n" +
+      "    METHODS moo CHANGING cv_changing TYPE i.\n" +
+      "ENDCLASS.\n" +
+      "CLASS ZCL_FOOBAR IMPLEMENTATION.\n" +
+      "  METHOD hello.\n" +
+      "    DATA lv_foo TYPE i.\n" +
+      "    moo( CHANGING cv_changing = lv_foo ).\n" +
+      "  ENDMETHOD.\n" +
+      "  METHOD moo.\n" +
+      "  ENDMETHOD.\n" +
+      "ENDCLASS.";
+    const issues = runClass(abap);
+    expect(issues.length).to.equals(0);
+  });
+
   it("class, class-data, BEGIN OF", () => {
     const abap =
       "CLASS zcl_foobar DEFINITION PUBLIC FINAL CREATE PUBLIC.\n" +
@@ -477,6 +497,23 @@ describe("Check Variables", () => {
       {filename: "zcl_foobar.clas.abap", abap: clas},
       {filename: "zcl_super.clas.abap", abap: sup}]);
     expect(issues.length).to.equals(0);
+  });
+
+  it("super class not found, local variable found", () => {
+    const clas =
+      "CLASS zcl_foobar DEFINITION PUBLIC INHERITING FROM zcl_super FINAL CREATE PUBLIC.\n" +
+      "  PRIVATE SECTION.\n" +
+      "    DATA foobar TYPE i.\n" +
+      "    METHODS hello.\n" +
+      "ENDCLASS.\n" +
+      "CLASS zcl_foobar IMPLEMENTATION.\n" +
+      "  METHOD hello.\n" +
+      "    DATA foobar TYPE i.\n" +
+      "    WRITE foobar.\n" +
+      "  ENDMETHOD.\n" +
+      "ENDCLASS.\n";
+    const issues = runClass(clas);
+    expect(issues.length).to.equals(1);
   });
 
 /*

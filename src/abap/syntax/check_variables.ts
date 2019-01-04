@@ -23,12 +23,16 @@ export class CheckVariablesLogic {
   private variables: Variables;
   private issues: Issue[];
   private reg: Registry;
+  private oooc: ObjectOriented;
+  private proc: Procedural;
 
   constructor(reg: Registry, object: ABAPObject) {
     this.reg = reg;
     this.issues = [];
     this.object = object;
     this.variables = new Variables();
+    this.oooc = new ObjectOriented(this.object, this.reg, this.variables);
+    this.proc = new Procedural(this.object, this.reg, this.variables);
   }
 
   public findIssues(): Issue[] {
@@ -132,18 +136,16 @@ export class CheckVariablesLogic {
     }
 
     const sub = node.get();
-    const varc = new ObjectOriented(this.object, this.reg);
-    const proc = new Procedural(this.object, this.reg);
-    this.variables.addList(proc.findDefinitions(node));
+    this.proc.findDefinitions(node);
 
     if (sub instanceof Statements.Form) {
-      this.variables.pushScope("form").addList(proc.findFormScope(node));
+      this.proc.findFormScope(node);
     } else if (sub instanceof Statements.Method) {
-      this.variables.pushScope("method").addList(varc.methodImplementation(this.variables.getParentName(), node));
+      this.oooc.methodImplementation(node);
     } else if (sub instanceof Statements.ClassDefinition) {
-      this.variables.pushScope(varc.findClassName(node)).addList(varc.classDefinition(node));
+      this.oooc.classDefinition(node);
     } else if (sub instanceof Statements.ClassImplementation) {
-      this.variables.pushScope(varc.findClassName(node)).addList(varc.classImplementation(node));
+      this.oooc.classImplementation(node);
     } else if (sub instanceof Statements.EndForm
         || sub instanceof Statements.EndMethod
         || sub instanceof Statements.EndClass) {
