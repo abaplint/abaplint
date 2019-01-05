@@ -2,7 +2,8 @@ import {Version} from "../../version";
 import {Statement} from "./_statement";
 import {str, seq, alt, opt, tok, ver, regex as reg, plus, IStatementRunnable} from "../combi";
 import {ParenLeft, ParenRightW} from "../tokens/";
-import {Field, ClassName, MethodName, MethodDefExporting, MethodDefImporting, MethodDefChanging, MethodDefReturning} from "../expressions";
+import {Field, ClassName, MethodName, MethodDefExporting, MethodDefImporting} from "../expressions";
+import {MethodDefChanging, MethodDefReturning, Redefinition} from "../expressions";
 
 export class MethodDef extends Statement {
 
@@ -14,7 +15,7 @@ export class MethodDef extends Statement {
                           new ClassName(),
                           tok(ParenRightW));
 
-    const raising    = seq(str("RAISING"),    plus(alt(resumable, new ClassName())));
+    const raising    = seq(str("RAISING"), plus(alt(resumable, new ClassName())));
     const exceptions = seq(str("EXCEPTIONS"), plus(reg(/^\w+?$/)));
 
     const def = ver(Version.v740sp08, seq(str("DEFAULT"), alt(str("FAIL"), str("IGNORE"))));
@@ -36,7 +37,7 @@ export class MethodDef extends Statement {
                     new MethodName(),
                     alt(event, parameters,
                         str("NOT AT END OF MODE"),
-                        seq(opt(str("FINAL")), str("REDEFINITION"))));
+                        opt(new Redefinition())));
 
     return ret;
   }

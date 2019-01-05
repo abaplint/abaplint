@@ -1,6 +1,6 @@
 import {StatementNode} from "../../abap/nodes";
 import {MethodDef} from "../../abap/statements";
-import {MethodName} from "../../abap/expressions";
+import * as Expressions from "../../abap/expressions";
 import {MethodParameters} from "./method_parameters";
 import {Scope} from "./scope";
 import {Identifier} from "./_identifier";
@@ -8,21 +8,26 @@ import {Identifier} from "./_identifier";
 export class MethodDefinition extends Identifier {
   private scope: Scope;
   private parameters: MethodParameters;
+  private redfinition: boolean;
 
 // todo:
 // abstract
 // final
-// redefinition
 
   constructor(node: StatementNode, scope: Scope) {
     if (!(node.get() instanceof MethodDef)) {
       throw new Error("MethodDefinition, expected MethodDef as part of input node");
     }
-    const found = node.findFirstExpression(MethodName);
+    const found = node.findFirstExpression(Expressions.MethodName);
     if (found === undefined) {
       throw new Error("MethodDefinition, expected MethodDef as part of input node");
     }
     super(found.getFirstToken(), node);
+
+    this.redfinition = false;
+    if (node.findFirstExpression(Expressions.Redefinition)) {
+      this.redfinition = true;
+    }
 
     this.scope = scope;
     this.parameters = new MethodParameters(node);
@@ -30,6 +35,10 @@ export class MethodDefinition extends Identifier {
 
   public getScope() {
     return this.scope;
+  }
+
+  public isRedefinition(): boolean {
+    return this.redfinition;
   }
 
   public getParameters() {

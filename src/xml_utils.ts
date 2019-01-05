@@ -1,5 +1,5 @@
 export function xmlToArray(data: any) {
-  if (data.constructur === Array) {
+  if (data.length) { // input data is an Array
     return data;
   } else {
     return [data];

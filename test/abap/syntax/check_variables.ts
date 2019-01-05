@@ -223,6 +223,29 @@ describe("Check Variables", () => {
     expect(issues.length).to.equals(0);
   });
 
+  it("program, character offsets", () => {
+    const abap = "DATA: lv_string TYPE string.\n" +
+      "DATA: BEGIN OF ls_match,\n" +
+      "        offset TYPE i,\n" +
+      "        length TYPE i,\n" +
+      "      END OF ls_match.\n" +
+      "lv_string = lv_string+ls_match-offset(ls_match-length).\n";
+    const issues = runProgram(abap);
+    expect(issues.length).to.equals(0);
+  });
+
+  it("program, character offsets, field symbol", () => {
+    const abap = "DATA: lv_string TYPE string.\n" +
+      "DATA: BEGIN OF ls_match,\n" +
+      "        offset TYPE i,\n" +
+      "        length TYPE i,\n" +
+      "      END OF ls_match.\n" +
+      "FIELD-SYMBOLS: <ls_match> LIKE ls_match.\n" +
+      "lv_string = lv_string+<ls_match>-offset(<ls_match>-length).\n";
+    const issues = runProgram(abap);
+    expect(issues.length).to.equals(0);
+  });
+
   it("class, simple, no errors", () => {
     const abap = "CLASS zcl_foobar DEFINITION PUBLIC FINAL CREATE PUBLIC.\n" +
       "  PUBLIC SECTION.\n" +
@@ -557,6 +580,32 @@ describe("Check Variables", () => {
     const issues = runMulti([
       {filename: "zagtest_function_group.fugr.xml", contents: xml},
       {filename: "zagtest_function_group.fugr.zagtest_function_module.abap", contents: code}]);
+    expect(issues.length).to.equals(0);
+  });
+
+  it("redefined method with parameter", () => {
+    const clas =
+      "CLASS zcl_foobar DEFINITION PUBLIC INHERITING FROM zcl_super FINAL CREATE PUBLIC.\n" +
+      "  PUBLIC SECTION.\n" +
+      "    METHODS method1 REDEFINITION.\n" +
+      "ENDCLASS.\n" +
+      "CLASS zcl_foobar IMPLEMENTATION.\n" +
+      "  METHOD method1.\n" +
+      "    WRITE parameter.\n" +
+      "  ENDMETHOD.\n" +
+      "ENDCLASS.\n";
+    const sup =
+      "CLASS zcl_super DEFINITION PUBLIC CREATE PUBLIC.\n" +
+      "  PUBLIC SECTION.\n" +
+      "    METHODS method1 IMPORTING parameter TYPE c.\n" +
+      "ENDCLASS.\n" +
+      "CLASS ZCL_SUPER IMPLEMENTATION.\n" +
+      "  METHOD method1." +
+      "  ENDMETHOD." +
+      "ENDCLASS.";
+    const issues = runMulti([
+      {filename: "zcl_foobar.clas.abap", contents: clas},
+      {filename: "zcl_super.clas.abap", contents: sup}]);
     expect(issues.length).to.equals(0);
   });
 

@@ -8,6 +8,7 @@ export * from "./message_source";
 export * from "./component_compare";
 export * from "./component_cond";
 export * from "./cond";
+export * from "./redefinition";
 export * from "./constant_string";
 export * from "./constant";
 export * from "./component_name";

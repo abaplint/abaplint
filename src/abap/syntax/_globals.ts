@@ -12,6 +12,7 @@ export class Globals {
     // todo, icon_*, abap_*, col_* are from the corresponding type pools?
     const file = new MemoryFile("_global.prog.abap", "* Globals\n" +
       "DATA sy TYPE c.\n" + // todo, add structure
+      "DATA syst TYPE c.\n" + // todo, add structure
       "DATA screen TYPE c.\n" + // todo, add structure
       "DATA text TYPE c.\n" + // todo, this is not correct, add structure
       "CONSTANTS %_CHARSIZE TYPE i.\n" +

@@ -3,7 +3,7 @@ import {InstanceArrow, WParenLeftW, WParenRightW, WDashW, ParenLeftW} from "../t
 import {MethodCallChain, ArithOperator, Cond, Constant, StringTemplate, Let} from "./";
 import {FieldChain, Field, TableBody, TypeName, ArrowOrDash, FieldSub, For} from "./";
 import {Version} from "../../version";
-import {ComponentChain} from "./";
+import {ComponentChain, ComponentName} from "./";
 
 export class Source extends Expression {
   public getRunnable(): IStatementRunnable {
@@ -36,7 +36,7 @@ export class Source extends Expression {
                         paren),
                     optPrio(alt(ref, after, new TableBody())));
 
-    const mapping = seq(str("MAPPING"), plus(seq(new Field(), str("="), new Field())));
+    const mapping = seq(str("MAPPING"), plus(seq(new ComponentName(), str("="), new ComponentName())));
 
     const baseParen = seq(str("BASE"), tok(WParenLeftW), new Source(), tok(WParenRightW));
 

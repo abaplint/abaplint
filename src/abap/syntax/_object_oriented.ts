@@ -64,13 +64,16 @@ export class ObjectOriented {
     const className = this.variables.getParentName();
     const classDefinition = this.findDefinition(className);
 
+// todo, this is not correct, add correct types, plus when is "super" allowed?
+    const file = new MemoryFile("_method_locals.prog.abap", "* Method Locals\n" +
+      "DATA super TYPE REF TO object.\n" +
+      "DATA me TYPE REF TO object.\n");
+    this.variables.addList(Globals.typesInFile(file));
+
     let methodName = node.findFirstExpression(Expressions.MethodName)!.getFirstToken().getStr();
+
     let methodDefinition: MethodDefinition | undefined = undefined;
-    for (const method of classDefinition.getMethodDefinitions()!.getAll()) {
-      if (method.getName().toUpperCase() === methodName.toUpperCase()) {
-        methodDefinition = method;
-      }
-    }
+    methodDefinition = this.findMethod(classDefinition, methodName);
 
 // todo, this is not completely correct, and too much code
     if (methodName.includes("~")) {
@@ -92,12 +95,6 @@ export class ObjectOriented {
       throw new Error("Method definition \"" + methodName + "\" not found");
     }
 
-// todo, this is not correct, add correct types, plus when is "super" allowed?
-    const file = new MemoryFile("_method_locals.prog.abap", "* Method Locals\n" +
-      "DATA super TYPE REF TO object.\n" +
-      "DATA me TYPE REF TO object.\n");
-    this.variables.addList(Globals.typesInFile(file));
-
     this.variables.addList(methodDefinition.getParameters().getAll());
   }
 
@@ -111,20 +108,47 @@ export class ObjectOriented {
     throw new Error("Class defintion for \"" + name + "\" not found");
   }
 
+  private findMethod(classDefinition: ClassDefinition, methodName: string): MethodDefinition | undefined {
+    for (const method of classDefinition.getMethodDefinitions()!.getAll()) {
+      if (method.getName().toUpperCase() === methodName.toUpperCase()) {
+        if (method.isRedefinition()) {
+          return this.findMethodInSuper(classDefinition, methodName);
+        } else {
+          return method;
+        }
+      }
+    }
+    return undefined;
+  }
+
+  private findMethodInSuper(child: ClassDefinition, methodName: string): MethodDefinition | undefined {
+    const sup = child.getSuperClass();
+    if (sup === undefined) {
+      return;
+    }
+    const cdef = this.findSuperDefinition(sup);
+    return this.findMethod(cdef, methodName);
+  }
+
+  private findSuperDefinition(name: string): ClassDefinition {
+    const csup = this.reg.getObject("CLAS", name) as Class;
+    if (csup === undefined) {
+      throw new Error("super class \"" + name + "\" not found");
+    }
+
+    const cdef = csup.getClassDefinition();
+    if (cdef === undefined) {
+      throw new Error("super class \"" + name + "\" contains errors");
+    }
+    return cdef;
+  }
+
   private fromSuperClass(child: ClassDefinition) {
     const sup = child.getSuperClass();
     if (sup === undefined) {
       return;
     }
-    const csup = this.reg.getObject("CLAS", sup) as Class;
-    if (csup === undefined) {
-      throw new Error("super class \"" + sup + "\" not found");
-    }
-
-    const cdef = csup.getClassDefinition();
-    if (cdef === undefined) {
-      throw new Error("super class \"" + sup + "\" contains errors");
-    }
+    const cdef = this.findSuperDefinition(sup);
 
     const attr = cdef.getAttributes();
     if (attr === undefined) {

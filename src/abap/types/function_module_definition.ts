@@ -21,26 +21,26 @@ export class FunctionModuleDefinition {
     this.parameters = [];
 
     if (data.IMPORT) {
-      for (const imp of xmlToArray(data.IMPORT.RSIMP)) {
-        this.parameters.push(imp.PARAMETER._text);
+      for (const param of xmlToArray(data.IMPORT.RSIMP)) {
+        this.parameters.push(param.PARAMETER._text);
       }
     }
 
     if (data.CHANGING) {
-      for (const imp of xmlToArray(data.CHANGING.RSCHA)) {
-        this.parameters.push(imp.PARAMETER._text);
+      for (const param of xmlToArray(data.CHANGING.RSCHA)) {
+        this.parameters.push(param.PARAMETER._text);
       }
     }
 
     if (data.EXPORT) {
-      for (const imp of xmlToArray(data.EXPORT.RSEXP)) {
-        this.parameters.push(imp.PARAMETER._text);
+      for (const param of xmlToArray(data.EXPORT.RSEXP)) {
+        this.parameters.push(param.PARAMETER._text);
       }
     }
 
     if (data.TABLES) {
-      for (const imp of xmlToArray(data.TABLES.RSTBL)) {
-        this.parameters.push(imp.PARAMETER._text);
+      for (const param of xmlToArray(data.TABLES.RSTBL)) {
+        this.parameters.push(param.PARAMETER._text);
       }
     }
 
