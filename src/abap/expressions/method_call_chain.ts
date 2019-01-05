@@ -1,5 +1,5 @@
-import {seq, opt, str, tok, ver, star, alt, Expression, IStatementRunnable} from "../combi";
-import {InstanceArrow, StaticArrow, WParenRightW, WParenRight, ParenLeftW} from "../tokens/";
+import {seq, opt, str, tok, plus, ver, star, alt, Expression, IStatementRunnable} from "../combi";
+import {InstanceArrow, StaticArrow, WParenRightW, WParenRight, ParenLeftW, WParenLeftW} from "../tokens/";
 import {ParameterListS, ArrowOrDash, Field, FieldChain, MethodCall, Source, TypeName} from "./";
 import {Version} from "../../version";
 import {ClassName} from "./class_name";
@@ -11,10 +11,12 @@ export class MethodCallChain extends Expression {
 
     const rparen = alt(tok(WParenRightW), tok(WParenRight));
 
+    const lines = plus(seq(tok(WParenLeftW), new Source(), tok(WParenRightW)));
+
     const neww = ver(Version.v740sp02, seq(str("NEW"),
                                            new TypeName(),
                                            tok(ParenLeftW),
-                                           opt(alt(new Source(), new ParameterListS())),
+                                           opt(alt(new Source(), new ParameterListS(), lines)),
                                            rparen));
 
     const cast = ver(Version.v740sp02, seq(str("CAST"),

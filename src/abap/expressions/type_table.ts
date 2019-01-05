@@ -1,6 +1,7 @@
 import {seq, opt, alt, str, ver, star, per, Expression, IStatementRunnable} from "../combi";
 import {Constant, FieldSub, TypeName, Integer} from "./";
 import {Version} from "../../version";
+import {FieldChain} from "./field_chain";
 
 export class TypeTable extends Expression {
   public getRunnable(): IStatementRunnable {
@@ -18,7 +19,7 @@ export class TypeTable extends Expression {
                           str("TABLE"),
                           opt(str("OF")),
                           opt(str("REF TO")),
-                          opt(new TypeName()),
+                          opt(new FieldChain()),
                           opt(per(header, initial)),
                           opt(key));
 

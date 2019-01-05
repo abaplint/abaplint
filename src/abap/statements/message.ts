@@ -23,7 +23,7 @@ export class Message extends Statement {
     const mwith = seq(str("WITH"), new Source(), opt(sourc));
 
     const foo = seq(new MessageSource(), opt(options), opt(mwith));
-    const text = seq(new Source(), type, opt(like));
+    const text = seq(new Source(), type, opt(like), opt(raising));
 
     const ret = seq(str("MESSAGE"), alt(foo, text));
 

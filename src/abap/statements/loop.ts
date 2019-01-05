@@ -1,13 +1,17 @@
 import {Statement} from "./_statement";
-import {str, seq, alt, opt, per, IStatementRunnable} from "../combi";
-import {FSTarget, Target, ComponentCond, Dynamic, Source} from "../expressions";
+import {str, seq, alt, opt, ver, tok, plus, per, IStatementRunnable} from "../combi";
+import {FSTarget, Target, ComponentCond, Dynamic, Source, ComponentCompare} from "../expressions";
+import {Version} from "../../version";
+import {WParenLeftW, WParenRightW} from "../tokens";
 
 export class Loop extends Statement {
 
   public getMatcher(): IStatementRunnable {
     const where = seq(str("WHERE"), alt(new ComponentCond(), new Dynamic()));
 
-    const group = seq(str("GROUP BY"), new Source());
+    const components = seq(tok(WParenLeftW), plus(new ComponentCompare()), tok(WParenRightW));
+
+    const group = ver(Version.v740sp08, seq(str("GROUP BY"), alt(new Source(), components)));
 
     const into = seq(opt(str("REFERENCE")), str("INTO"), new Target());
 

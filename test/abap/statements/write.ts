@@ -62,8 +62,9 @@ const tests = [
   "WRITE AT /20 moo.",
   "write (*) l_line2.",
   "WRITE AT /pos foo.",
-// todo
-//  "WRITE AT ls_output-field(ls_len-outputlen) <l_fs> NO-GAP.",
+  "WRITE AT <baubles_memory>-position_x(1) 'hello'.",
+  "WRITE AT ls_output-field(ls_len-outputlen) <l_fs> NO-GAP.",
+  "WRITE AT lv_position_x(1) 'o' COLOR COL_TOTAL INTENSIFIED ON INVERSE OFF FRAMES OFF.",
 ];
 
 statementType(tests, "WRITE", Statements.Write);

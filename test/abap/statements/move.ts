@@ -77,8 +77,7 @@ const tests = [
   "gs_structure-field$01 = 'val'.",
   "foo = bar ##called.",
   "##called foo = bar.",
-
-//  "DATA(ints) = NEW tyt_integer( ( 1 ) ( 2 ) ( 3 ) ).",
+  "DATA(ints) = NEW tyt_integer( ( 1 ) ( 2 ) ( 3 ) ).",
 ];
 
 statementType(tests, "MOVE", Statements.Move);
