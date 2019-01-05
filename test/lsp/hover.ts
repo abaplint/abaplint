@@ -69,7 +69,7 @@ describe("LSP, hover", () => {
     const reg = new Registry().addFile(file).parse();
     const hover = Hover.find(reg, file.getFilename(), 1 , 7);
     expect(hover).to.not.equal(undefined);
-    expect(hover!.value).to.contain("Resolved: Local");
+    expect(hover!.value).to.contain("Resolved");
   });
 
   it("Is keyword", () => {
