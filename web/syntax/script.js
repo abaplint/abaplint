@@ -6,6 +6,12 @@ function focusFilter() {
 
 function inputChanged() {
   renderRight(document.getElementById('filter').value);
+  const value = document.getElementById('filter').value;
+  let newUrl = window.location.pathname;
+  if (value !== "") {
+    newUrl = newUrl +"?filter=" + document.getElementById('filter').value;
+  }
+  window.history.replaceState(null, document.title, newUrl);
 }
 
 function setFilter(filter) {
@@ -108,12 +114,25 @@ class Router {
   }
 }
 
+function onRightClick() {
+  document.getElementById('filter').value = "";
+  inputChanged();
+  window.event.returnValue = false;
+}
+
 function renderMain() {
+  console.dir(window.location);
+
+  let filter = new URL(window.location).searchParams.get("filter");
+  if (filter === null) {
+    filter = "";
+  }
+
   document.getElementById("body").innerHTML =
     "<div>\n" +
     "<div id=\"mySidenav\" class=\"sidenav sidenav-print\">\n" +
     "<h3>abaplint</h3>\n" +
-    "<input type=\"text\" id=\"filter\" oninput=\"javascript:inputChanged();\" onfocus=\"javascript:focusFilter()\"></input><br>\n" +
+    "<input type=\"text\" id=\"filter\" oninput=\"javascript:inputChanged();\" onfocus=\"javascript:focusFilter()\" oncontextmenu=\"javascript:onRightClick();\" value=\"" + filter + "\"></input><br>\n" +
     "<br>\n" +
     "<b>Statements</b><br>\n" +
     "<div id=\"sidenav_statements\">Loading</div>\n" +
@@ -128,7 +147,7 @@ function renderMain() {
 
   document.getElementById("filter").focus();
   renderLeft();
-  renderRight();
+  inputChanged();
 }
 
 function run() {

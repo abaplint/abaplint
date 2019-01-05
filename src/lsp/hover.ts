@@ -40,7 +40,7 @@ export class Hover {
               if (resolved === undefined) {
                 value = value + "\n\nNot resolved";
               } else if (resolved instanceof TypedIdentifier) {
-                value = value + "\n\nResolved: Local";
+                value = value + "\n\nResolved";
               }
             } else {
               value = value + "\n\nNot an ABAP object.";
