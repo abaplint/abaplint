@@ -1,6 +1,6 @@
 {
   "name": "abaplint",
-  "version": "1.6.1",
+  "version": "1.6.2",
   "description": "Linter for ABAP",
   "bin": {
     "abaplint": "./abaplint",
@@ -30,7 +30,8 @@
     "preweb.playground": "npm run browserify",
     "web.playground": "npm run uglify",
     "postweb.playground": "sh web/playground.sh",
-    "web.syntax": "sh web/syntax.sh"
+    "web.syntax": "sh web/syntax.sh",
+    "prepublish": "npm run test"
   },
   "repository": {
     "type": "git",

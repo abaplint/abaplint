@@ -173,7 +173,7 @@ export class Registry {
     for (const rule of Artifacts.getRules()) {
       const key = rule.getKey();
       const exclude = this.conf.readByKey(key, "exclude");
-      if (exclude.length === 0) {
+      if (exclude === undefined || exclude.length === 0) {
         continue;
       }
       for (let i = issues.length - 1; i >= 0; i--) {
