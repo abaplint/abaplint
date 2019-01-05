@@ -855,7 +855,7 @@ export class Combi {
   }
 
 // assumption: no pgragmas supplied in tokens input
-  public static run(runnable: IStatementRunnable, tokens: Tokens_Token[], version = Version.v750): INode[] | undefined {
+  public static run(runnable: IStatementRunnable, tokens: Tokens_Token[], version: Version): INode[] | undefined {
     this.ver = version;
 
     const input = new Result(tokens);

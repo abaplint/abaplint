@@ -15,7 +15,12 @@ export function getTokens(abap: string) {
   return Lexer.run(new MemoryFile("cl_foo.clas.abap", abap));
 }
 
-export function getStatements(abap: string, version = Version.v750) {
+export function getStatements(abap: string, version?: Version) {
+
+  if (version === undefined) {
+    version = Config.getDefault().getVersion();
+  }
+
   return StatementParser.run(getTokens(abap), version);
 }
 
@@ -29,10 +34,14 @@ export function parse(abap: string, config?: Config) {
   return new Registry(config).addFile(file).parse().getABAPFiles()[0];
 }
 
-function run(abap: string, text: string, type: any, version = Version.v750) {
+function run(abap: string, text: string, type: any, version?: Version | undefined) {
   const config = Config.getDefault().setVersion(version);
   const file = parse(abap, config);
   const slist = file.getStatements();
+
+  if (version === undefined) {
+    version = Config.getDefault().getVersion();
+  }
 
   it(text, () => {
     expect(slist[0].get()).to.be.instanceof(type);

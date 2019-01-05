@@ -2,6 +2,7 @@ import {expect} from "chai";
 import * as Combi from "../../../src/abap/combi";
 import * as Expressions from "../../../src/abap/expressions";
 import {getTokens} from "../_utils";
+import {Config} from "../../../src/config";
 
 // todo, refactor to separate files, one for each expression
 
@@ -73,7 +74,7 @@ describe("Test expression matchers", () => {
 
     it("\"" + test.c + "\" should " + not + "match " + test.r.getName(), () => {
       const tokens = getTokens(test.c);
-      const match = Combi.Combi.run(test.r.getRunnable(), tokens);
+      const match = Combi.Combi.run(test.r.getRunnable(), tokens, Config.getDefault().getVersion());
       expect(match !== undefined).to.equals(test.e);
     });
   });

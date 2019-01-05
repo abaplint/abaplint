@@ -160,7 +160,8 @@ const tests = [
   "  INNER JOIN tab3 ON tab1~key = tab3~key ).",
 
   "SELECT SINGLE * FROM *moo WHERE foo = bar.",
-
+  "SELECT SINGLE * FROM ztable WHERE host = @lv_host INTO @DATA(ls_config).",
+  "SELECT SINGLE * FROM ztable WHERE lower( host ) = @lv_host INTO @DATA(ls_config).",
 ];
 
 statementType(tests, "SELECT", Statements.Select);

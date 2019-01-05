@@ -5,6 +5,7 @@ import {IObject} from "../../objects/_iobject";
 import {ABAPObject} from "../../objects/_abap_object";
 
 export class CheckVariablesConf extends BasicRuleConfig {
+  public enabled = false;
 }
 
 export class CheckVariables {

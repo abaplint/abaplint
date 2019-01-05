@@ -21,6 +21,8 @@ const tests = [
   "MODIFY lt_tab FROM <data> INDEX sy-tabix ASSIGNING <fs>.",
   "MODIFY ct_data FROM <ls_data> TRANSPORTING (b1) (b2).",
   "MODIFY TABLE lt_obj FROM ls_obj TRANSPORTING foo-bar type.",
+  "MODIFY TABLE <ls_transport>-import_info FROM VALUE #( system = <ls_info>-system ).",
+  "MODIFY TABLE <ls_transport>-import_info FROM VALUE #( system = <ls_info>-system ) USING KEY unique.",
 ];
 
 statementType(tests, "MODIFY", Statements.ModifyInternal);

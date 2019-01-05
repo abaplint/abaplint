@@ -1,7 +1,8 @@
-import {seq, opt, tok, star, alt, optPrio, str, Expression, IStatementRunnable} from "../combi";
+import {ver, seq, opt, tok, star, alt, optPrio, str, Expression, IStatementRunnable} from "../combi";
 import {SQLFieldName, Dynamic, Select} from "./";
-import {WParenLeft, WParenLeftW} from "../tokens/";
+import {WParenLeft, WParenLeftW, ParenLeftW, WParenRightW} from "../tokens/";
 import {SQLSource} from "./sql_source";
+import {Version} from "../../version";
 
 export class SQLCompare extends Expression {
   public getRunnable(): IStatementRunnable {
@@ -43,7 +44,9 @@ export class SQLCompare extends Expression {
 
     const sub = seq(opt(alt(str("ALL"), str("ANY"), str("SOME"))), subSelect);
 
-    const rett = seq(new SQLFieldName(),
+    const builtin = ver(Version.v751, seq(alt(str("lower"), str("upper")), tok(ParenLeftW), new SQLFieldName(), tok(WParenRightW)));
+
+    const rett = seq(alt(new SQLFieldName(), builtin),
                      alt(seq(operator, alt(source, sub)),
                          inn,
                          like,
