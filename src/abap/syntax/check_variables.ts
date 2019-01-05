@@ -35,7 +35,7 @@ export class CheckVariablesLogic {
     this.proc = new Procedural(this.object, this.reg, this.variables);
   }
 
-  public findIssues(): Issue[] {
+  public findIssues(ignoreParserError = true): Issue[] {
     this.variables.addList(Globals.get());
 
     for (const file of this.object.getABAPFiles()) {
@@ -43,7 +43,11 @@ export class CheckVariablesLogic {
     // assumption: objects are parsed without parsing errors
       const structure = this.currentFile.getStructure();
       if (structure === undefined) {
-        return [];
+        if (ignoreParserError) {
+          return [];
+        } else {
+          throw new Error("Parser error");
+        }
       }
       this.traverse(structure);
     }
@@ -140,6 +144,8 @@ export class CheckVariablesLogic {
 
     if (sub instanceof Statements.Form) {
       this.proc.findFormScope(node);
+    } else if (sub instanceof Statements.FunctionModule) {
+      this.proc.findFunctionScope(node);
     } else if (sub instanceof Statements.Method) {
       this.oooc.methodImplementation(node);
     } else if (sub instanceof Statements.ClassDefinition) {
@@ -148,6 +154,7 @@ export class CheckVariablesLogic {
       this.oooc.classImplementation(node);
     } else if (sub instanceof Statements.EndForm
         || sub instanceof Statements.EndMethod
+        || sub instanceof Statements.EndFunction
         || sub instanceof Statements.EndClass) {
       this.variables.popScope();
     }

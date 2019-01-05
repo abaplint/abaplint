@@ -6,6 +6,9 @@ import {ABAPObject} from "../../objects/_abap_object";
 import {Registry} from "../../registry";
 import {FormDefinition} from "../types";
 import {Variables} from "./_variables";
+import {FunctionGroup} from "../../objects";
+import {MemoryFile} from "../../files";
+import {Globals} from "./_globals";
 
 // todo, rename this class?
 class LocalIdentifier extends TypedIdentifier { }
@@ -39,6 +42,23 @@ export class Procedural {
     }
 
     this.variables.addList(ret);
+  }
+
+  public findFunctionScope(node: StatementNode) {
+    this.variables.pushScope("function");
+
+    const name = node.findFirstExpression(Expressions.FunctionName)!.getFirstToken().getStr();
+    const definition = (this.obj as FunctionGroup).getModule(name);
+    if (definition === undefined) {
+      throw new Error("Function group definition \"" + name + "\" not found");
+    }
+
+    let abap = "";
+    for (const param of definition.getParameters()) {
+      abap = abap + "DATA " + param + " TYPE c.\n"; // todo, not correct type
+    }
+    const file = new MemoryFile("_function_module.prog.abap", abap);
+    this.variables.addList(Globals.typesInFile(file));
   }
 
   public findFormScope(node: StatementNode) {

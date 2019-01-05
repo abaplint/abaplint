@@ -7,15 +7,15 @@ import {Issue} from "../../../src/issue";
 function run(reg: Registry): Issue[] {
   let ret: Issue[] = [];
   for (const obj of reg.getABAPObjects()) {
-    ret = ret.concat(new CheckVariablesLogic(reg, obj).findIssues());
+    ret = ret.concat(new CheckVariablesLogic(reg, obj).findIssues(false));
   }
   return ret;
 }
 
-function runMulti(objects: {filename: string, abap: string}[]): Issue[] {
+function runMulti(objects: {filename: string, contents: string}[]): Issue[] {
   const reg = new Registry();
   for (const obj of objects) {
-    const file = new MemoryFile(obj.filename, obj.abap);
+    const file = new MemoryFile(obj.filename, obj.contents);
     reg.addFile(file).parse();
   }
   return run(reg);
@@ -34,16 +34,6 @@ function runProgram(abap: string): Issue[] {
 }
 
 describe("Check Variables", () => {
-
-  it("parser error, class", () => {
-    const issues = runClass("asdf sdfs");
-    expect(issues.length).to.equals(0);
-  });
-
-  it("parser error, program", () => {
-    const issues = runProgram("asdf sdfs");
-    expect(issues.length).to.equals(0);
-  });
 
   it("program, variable foobar not found", () => {
     const abap = "WRITE foobar.\n";
@@ -113,6 +103,12 @@ describe("Check Variables", () => {
 
   it("program, abap_true", () => {
     const abap = "WRITE abap_true.\nWRITE ABAP_TRUE.\n";
+    const issues = runProgram(abap);
+    expect(issues.length).to.equals(0);
+  });
+
+  it("program, SET CURSOR", () => {
+    const abap = "SET CURSOR FIELD 'P_PASS'.";
     const issues = runProgram(abap);
     expect(issues.length).to.equals(0);
   });
@@ -460,8 +456,8 @@ describe("Check Variables", () => {
       "  METHODS method1 IMPORTING foo TYPE i.\n" +
       "ENDINTERFACE.";
     const issues = runMulti([
-      {filename: "zcl_foobar.clas.abap", abap: clas},
-      {filename: "zif_foobar.intf.abap", abap: intf}]);
+      {filename: "zcl_foobar.clas.abap", contents: clas},
+      {filename: "zif_foobar.intf.abap", contents: intf}]);
     expect(issues.length).to.equals(0);
   });
 
@@ -494,8 +490,8 @@ describe("Check Variables", () => {
       "CLASS ZCL_SUPER IMPLEMENTATION.\n" +
       "ENDCLASS.";
     const issues = runMulti([
-      {filename: "zcl_foobar.clas.abap", abap: clas},
-      {filename: "zcl_super.clas.abap", abap: sup}]);
+      {filename: "zcl_foobar.clas.abap", contents: clas},
+      {filename: "zcl_super.clas.abap", contents: sup}]);
     expect(issues.length).to.equals(0);
   });
 
@@ -514,6 +510,54 @@ describe("Check Variables", () => {
       "ENDCLASS.\n";
     const issues = runClass(clas);
     expect(issues.length).to.equals(1);
+  });
+
+  it("function module definition not found", () => {
+    const code = "FUNCTION zagtest_function_module.\n" +
+      "ENDFUNCTION.";
+
+    const issues = runMulti([
+      {filename: "zagtest_function_group.fugr.zagtest_function_module.abap", contents: code}]);
+    expect(issues.length).to.equals(1);
+    expect(issues[0].getMessage()).to.contain("not found");
+  });
+
+  it("function module", () => {
+    const xml =
+      "<?xml version=\"1.0\" encoding=\"utf-8\"?>\n" +
+      "<abapGit version=\"v1.0.0\" serializer=\"LCL_OBJECT_FUGR\" serializer_version=\"v1.0.0\">\n" +
+      " <asx:abap xmlns:asx=\"http://www.sap.com/abapxml\" version=\"1.0\">\n" +
+      "  <asx:values>\n" +
+      "   <AREAT>test</AREAT>\n" +
+      "   <INCLUDES>\n" +
+      "    <SOBJ_NAME>LZAGTEST_FUNCTION_GROUPTOP</SOBJ_NAME>\n" +
+      "    <SOBJ_NAME>SAPLZAGTEST_FUNCTION_GROUP</SOBJ_NAME>\n" +
+      "   </INCLUDES>\n" +
+      "   <FUNCTIONS>\n" +
+      "    <item>\n" +
+      "     <FUNCNAME>ZAGTEST_FUNCTION_MODULE</FUNCNAME>\n" +
+      "     <SHORT_TEXT>test</SHORT_TEXT>\n" +
+      "     <IMPORT>\n" +
+      "      <RSIMP>\n" +
+      "       <PARAMETER>IMPORT_PARAMETER</PARAMETER>\n" +
+      "       <REFERENCE>X</REFERENCE>\n" +
+      "       <TYP>C</TYP>\n" +
+      "      </RSIMP>\n" +
+      "     </IMPORT>\n" +
+      "    </item>\n" +
+      "   </FUNCTIONS>\n" +
+      "  </asx:values>\n" +
+      " </asx:abap>\n" +
+      "</abapGit>";
+
+    const code = "FUNCTION zagtest_function_module.\n" +
+      "  WRITE import_parameter.\n" +
+      "ENDFUNCTION.";
+
+    const issues = runMulti([
+      {filename: "zagtest_function_group.fugr.xml", contents: xml},
+      {filename: "zagtest_function_group.fugr.zagtest_function_module.abap", contents: code}]);
+    expect(issues.length).to.equals(0);
   });
 
 /*

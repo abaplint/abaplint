@@ -7,7 +7,6 @@ export * from "./constant";
 export * from "./form_definition";
 export * from "./form_parameter";
 export * from "./function_module_definition";
-export * from "./function_module_parameters";
 export * from "./interface_definition";
 export * from "./method_definition";
 export * from "./method_definitions";

@@ -44,5 +44,6 @@ describe("Funcion Group, parse main xml", () => {
     const modules = fugr.getModules();
     expect(modules.length).to.equal(1);
     expect(modules[0].getName()).to.equal("ZAGTEST_FUNCTION_MODULE");
+    expect(modules[0].getParameters().length).to.equal(1);
   });
 });

@@ -1,11 +1,11 @@
 import {Statement} from "./_statement";
 import {str, seq, IStatementRunnable} from "../combi";
-import {Field} from "../expressions";
+import {FunctionName} from "../expressions";
 
 export class FunctionModule extends Statement {
 
   public getMatcher(): IStatementRunnable {
-    return seq(str("FUNCTION"), new Field());
+    return seq(str("FUNCTION"), new FunctionName());
   }
 
 }
