@@ -1,5 +1,6 @@
 import {Version, versionToText, textToVersion} from "./version";
 import {Artifacts} from "./artifacts";
+import {IRule} from "./rules/_irule";
 
 export interface IGlobalConfig {
   version: string;
@@ -42,6 +43,17 @@ export class Config {
       skipGeneratedPersistentClasses: true,
       skipGeneratedFunctionGroups: true,
     };
+  }
+
+  public getEnabledRules(): IRule[] {
+    const rules: IRule[] = [];
+    for (const rule of Artifacts.getRules()) {
+      if (this.readByKey(rule.getKey(), "enabled") === true) {
+        rule.setConfig(this.readByRule(rule.getKey()));
+        rules.push(rule);
+      }
+    }
+    return rules;
   }
 
   public constructor(json: string) {

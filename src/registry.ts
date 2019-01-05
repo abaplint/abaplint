@@ -1,5 +1,4 @@
 import {IObject} from "./objects/_iobject";
-import {IRule} from "./rules/_irule";
 import {IFile} from "./files/_ifile";
 import {ABAPObject} from "./objects/_abap_object";
 import {ABAPFile} from "./files";
@@ -143,18 +142,11 @@ export class Registry {
     progress = progress ? progress : new NoProgress();
 
     let issues = this.issues.slice(0);
+
     const objects = this.getObjects();
-
- // todo, move this part somewhere else?
-    const rules: IRule[] = [];
-    for (const rule of Artifacts.getRules()) {
-      if (this.conf.readByKey(rule.getKey(), "enabled") === true) {
-        rule.setConfig(this.conf.readByRule(rule.getKey()));
-        rules.push(rule);
-      }
-    }
-
+    const rules = this.conf.getEnabledRules();
     const skipLogic = new SkipLogic(this);
+
     progress.set(objects.length, ":percent - :elapseds - Finding Issues - :object");
     for (const obj of objects) {
       progress.tick({object: obj.getType() + " " + obj.getName()});
