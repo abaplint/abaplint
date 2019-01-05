@@ -1,7 +1,7 @@
 import {Statement} from "./_statement";
 import {str, seq, alt, opt, per, plus, IStatementRunnable} from "../combi";
 import {FieldSymbol} from "../expressions";
-import {Target, Source, Dynamic, Compare, ComponentCond, SimpleName, Field, FieldSub} from "../expressions";
+import {Target, Source, Dynamic, ComponentCompare, ComponentCond, SimpleName, Field, FieldSub} from "../expressions";
 
 export class DeleteInternal extends Statement {
 
@@ -18,7 +18,7 @@ export class DeleteInternal extends Statement {
 
     const key = seq(str("WITH TABLE KEY"),
                     opt(seq(new SimpleName(), str("COMPONENTS"))),
-                    plus(new Compare()));
+                    plus(new ComponentCompare()));
 
     const table = seq(opt(str("TABLE")),
                       new Target(),

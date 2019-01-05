@@ -199,6 +199,13 @@ describe("Check Variables", () => {
     expect(issues.length).to.equals(0);
   });
 
+  it("program, offset", () => {
+    const abap = "DATA lv_string TYPE string.\n" +
+      "lv_string = lv_string+sy-fdpos.\n";
+    const issues = runProgram(abap);
+    expect(issues.length).to.equals(0);
+  });
+
   it("program, READ TABLE", () => {
 // todo, this code is not syntactically correct
     const abap = "DATA lt_map TYPE STANDARD TABLE OF string.\n" +

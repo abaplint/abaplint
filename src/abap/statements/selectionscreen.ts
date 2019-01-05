@@ -1,7 +1,7 @@
 import {Statement} from "./_statement";
 import {verNot, str, seq, alt, opt, per, regex as reg, tok, IStatementRunnable} from "../combi";
 import {ParenLeft, WParenLeft, ParenRightW, ParenRight} from "../tokens";
-import {Integer, Source, Field, FieldSub, Modif, Constant} from "../expressions";
+import {Integer, Source, Field, FieldSub, Modif, Constant, FieldChain} from "../expressions";
 import {Version} from "../../version";
 
 export class SelectionScreen extends Statement {
@@ -47,7 +47,7 @@ export class SelectionScreen extends Statement {
 
     const comment = seq(str("COMMENT"),
                         position,
-                        opt(new Source()),
+                        opt(new FieldChain()),
                         opt(commentOpt));
 
     const command = seq(str("USER-COMMAND"), alt(new Field(), new Constant()));
