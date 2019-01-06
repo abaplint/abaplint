@@ -22,6 +22,24 @@ describe("Pretty printer, keywords upper case", () => {
   });
 });
 
+describe("Pretty printer, indent code", () => {
+  const tests = [
+    {input: "parser error.", expected: "parser error."},
+    {input: "REPORT zfoo.", expected: "REPORT zfoo."},
+    {input: "REPORT zfoo.\nWRITE moo.", expected: "REPORT zfoo.\nWRITE moo."},
+    {input: "IF foo = bar.\nWRITE moo.\nENDIF.", expected: "IF foo = bar.\n  WRITE moo.\nENDIF."},
+  ];
+
+  tests.forEach((test) => {
+    it(test.input, () => {
+      const reg = new Registry().addFile(new MemoryFile("zfoo.prog.abap", test.input)).parse();
+      expect(reg.getABAPFiles().length).to.equal(1);
+      const result = new PrettyPrinter(reg.getABAPFiles()[0]).run();
+      expect(result).to.equals(test.expected);
+    });
+  });
+});
+
 describe("Pretty printer, expected indentation", () => {
   const tests = [
     {input: "parser error.", expected: [1]},

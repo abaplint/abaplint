@@ -5,6 +5,8 @@ import {ABAPFile} from "../files";
 import {Identifier} from "./tokens";
 import {Position} from "../position";
 
+// todo, will break if there is multiple statements per line?
+
 class Stack {
   private items: number[] = [];
 
@@ -128,8 +130,6 @@ class Indentation {
   }
 }
 
-// todo, will break if there is multiple statements per line?
-
 export class PrettyPrinter {
   private result: string;
   private file: ABAPFile;
@@ -140,7 +140,8 @@ export class PrettyPrinter {
   }
 
   public run(): string {
-    for (const statement of this.file.getStatements()) {
+    const statements = this.file.getStatements();
+    for (const statement of statements) {
       if (statement.get() instanceof Unknown
           || statement.get() instanceof MacroContent
           || statement.get() instanceof MacroCall
@@ -150,15 +151,36 @@ export class PrettyPrinter {
 // note that no positions are changed during a upperCaseKeys operation
       this.upperCaseKeywords(statement);
     }
-
-// todo, do something with the result
-    this.getExpectedIndentation();
-
+    this.indentCode();
     return this.result;
   }
 
   public getExpectedIndentation(): number[] {
     return Indentation.run(this.file);
+  }
+
+  private indentCode() {
+    const statements = this.file.getStatements();
+    const expected = this.getExpectedIndentation();
+    if (expected.length !== statements.length) {
+      throw new Error("Pretty Printer, expected lengths to match");
+    }
+
+    const lines = this.result.split("\n");
+
+    for (const statement of statements) {
+      const exp = expected.shift();
+      if (exp === undefined || exp < 0) {
+        continue;
+      }
+      const row = statement.getFirstToken().getPos().getRow() - 1;
+      lines[row] = lines[row].trim();
+      for (let i = 1; i < exp; i++) {
+        lines[row] = " " + lines[row];
+      }
+    }
+
+    this.result = lines.join("\n");
   }
 
   private replaceString(pos: Position, str: string) {
