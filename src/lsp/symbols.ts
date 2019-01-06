@@ -14,6 +14,7 @@ export class Symbols {
 
     let ret: LServer.DocumentSymbol[] = [];
     ret = ret.concat(this.outputClasses(file));
+    ret = ret.concat(this.outputForms(file));
     return ret;
   }
 
@@ -39,6 +40,15 @@ export class Symbols {
     };
 
     return symbol;
+  }
+
+  private static outputForms(file: ABAPFile): LServer.DocumentSymbol[] {
+    const ret: LServer.DocumentSymbol[] = [];
+    for (const form of file.getFormDefinitions()) {
+      const symbol = this.newSymbol(form, LServer.SymbolKind.Function, []);
+      ret.push(symbol);
+    }
+    return ret;
   }
 
   private static outputClasses(file: ABAPFile): LServer.DocumentSymbol[] {

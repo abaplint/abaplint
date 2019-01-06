@@ -40,4 +40,13 @@ describe("LSP, symbols", () => {
     expect(symbols[0].children![0].name).to.equal("foo");
   });
 
+  it("FORM Definition", () => {
+    const file = new MemoryFile("foobar.prog.abap", "FORM foobar.\nENDFORM.");
+    const reg = new Registry().addFile(file).parse();
+    expect(reg.findIssues().length).to.equal(0);
+    const symbols = Symbols.find(reg, file.getFilename());
+    expect(symbols.length).to.equal(1);
+    expect(symbols[0].name).to.equal("foobar");
+  });
+
 });
