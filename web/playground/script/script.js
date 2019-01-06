@@ -185,6 +185,11 @@ function validator(text, options) {
   return ret;
 }
 
+function prettyPrint(cm) {
+  const pretty = new abaplint.PrettyPrinter(registry.getABAPFiles()[0]);
+  cm.doc.setValue(pretty.run());
+}
+
 function run() {
   CodeMirror.registerHelper("lint", "abap", validator);
   editor = CodeMirror.fromTextArea(document.getElementById("input"), {
@@ -198,6 +203,9 @@ function run() {
   });
   popuplateVersionDropdown();
   editor.setSize(null, "100%");
+  editor.setOption("extraKeys", {
+    "Shift-F1": prettyPrint
+  });
   document.getElementById("abaplintver").innerHTML = abaplint.Registry.abaplintVersion();
 }
 
