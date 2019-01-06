@@ -89,4 +89,16 @@ describe("Registry", () => {
     expect(registry.findIssues().length).to.equal(1);
   });
 
+  it("find issues for file", () => {
+    const file = new MemoryFile("zfoobar.prog.abap", "BREAK-POINT.");
+    const registry = new Registry().addFile(file);
+    expect(registry.findIssuesFile(file).length).to.equal(1);
+  });
+
+  it("find issues for unknown file", () => {
+    const file = new MemoryFile("zfoobar.prog.abap", "BREAK-POINT.");
+    const registry = new Registry();
+    expect(registry.findIssuesFile(file).length).to.equal(0);
+  });
+
 });

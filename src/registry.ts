@@ -135,7 +135,27 @@ export class Registry {
     return this.dirty;
   }
 
-  public findIssues(progress?: IProgress): Issue[] {
+  // assumption: the file is already in the registry
+  public findObjectForFile(file: IFile): IObject | undefined {
+    for (const obj of this.getObjects()) {
+      for (const ofile of obj.getFiles()) {
+        if (ofile.getFilename() === file.getFilename()) {
+          return obj;
+        }
+      }
+    }
+    return undefined;
+  }
+
+  public findIssuesFile(file: IFile): Issue[] {
+    const obj = this.findObjectForFile(file);
+    if (obj === undefined) {
+      return [];
+    }
+    return this.findIssues(undefined, obj);
+  }
+
+  public findIssues(progress?: IProgress, iobj?: IObject): Issue[] {
     if (this.isDirty()) {
       this.parse(progress);
     }
@@ -143,7 +163,7 @@ export class Registry {
 
     let issues = this.issues.slice(0);
 
-    const objects = this.getObjects();
+    const objects = iobj ? [iobj] : this.getObjects();
     const rules = this.conf.getEnabledRules();
     const skipLogic = new SkipLogic(this);
 
@@ -160,6 +180,13 @@ export class Registry {
       }
     }
 
+    return this.excludeIssues(issues);
+  }
+
+  private excludeIssues(issues: Issue[]): Issue[] {
+
+    const ret: Issue[] = issues;
+
 // exclude issues, as now we know both the filename and issue key
 // todo, add unit tests for this feature
     for (const rule of Artifacts.getRules()) {
@@ -174,18 +201,18 @@ export class Registry {
         }
         let remove = false;
         for (const excl of exclude) {
-          if (new RegExp(excl).exec(issues[i].getFile().getFilename())) {
+          if (new RegExp(excl).exec(ret[i].getFile().getFilename())) {
             remove = true;
             break;
           }
         }
-        if (remove) {
-          issues.splice(i, 1);
+        if (!remove) {
+          ret.splice(i, 1);
         }
       }
     }
 
-    return issues;
+    return ret;
   }
 
   public parse(progress?: IProgress): Registry {
