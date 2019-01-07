@@ -8,6 +8,7 @@ export * from "./exit_or_check";
 export * from "./exporting";
 export * from "./functional_writing";
 export * from "./indentation";
+export * from "./indentical_form_names";
 export * from "./keywords_upper";
 export * from "./line_length";
 export * from "./line_only_punc";
