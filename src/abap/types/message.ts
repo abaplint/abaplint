@@ -18,4 +18,6 @@ export class Message {
   public getPlaceholderCount(): number {
     return (this.getMessage().match(/&/g) || []).length;
   }
+
+// todo: languages + long text
 }

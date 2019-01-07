@@ -99,6 +99,20 @@ export class StructureNode extends BasicNode {
     throw new Error("getLastToken, unexpected type");
   }
 
+  public findAllExpressions(type: new () => Expression): ExpressionNode[] {
+    let ret: ExpressionNode[] = [];
+    for (const child of this.getChildren()) {
+      if (child instanceof StatementNode) {
+        ret = ret.concat(child.findAllExpressions(type));
+      } else if (child instanceof StructureNode) {
+        ret = ret.concat(child.findAllExpressions(type));
+      } else {
+        throw new Error("findAllExpressions, unexpected type");
+      }
+    }
+    return ret;
+  }
+
   public findAllStatements(type: new () => Statement): StatementNode[] {
     let ret: StatementNode[] = [];
     for (const child of this.getChildren()) {
