@@ -74,6 +74,11 @@ async function loadFiles(compress: boolean, input: string[], progress: boolean):
   }
 
   for (const filename of input) {
+    const base = filename.split("/").reverse()[0];
+    if (base.split(".").length <= 2) {
+      continue; // not a abapGit file
+    }
+
 // note that readFileSync is typically faster than async readFile,
 // https://medium.com/@adamhooper/node-synchronous-code-runs-faster-than-asynchronous-code-b0553d5cf54e
     const raw = fs.readFileSync(filename, "utf8").replace(/\r/g, ""); // ignore all carriage returns
