@@ -52,13 +52,13 @@ export class ObsoleteStatement extends ABAPRule {
           && sta.getTokens()[1].getStr() !== "-"
           && sta.getTokens()[1].getStr() !== "EXACT" )
           || (sta.get() instanceof Statements.Divide && this.conf.divide)) {
-        issues.push(new Issue({file, message: this.getDescription(), code: this.getKey(), start: sta.getStart()}));
+        issues.push(new Issue({file, message: this.getDescription(), key: this.getKey(), start: sta.getStart()}));
       }
 
       for (const compare of sta.findAllExpressions(Compare)) {
         const token = compare.findDirectTokenByText("REQUESTED");
         if (token) {
-          issues.push(new Issue({file, message: "IS REQUESTED is obsolete", code: this.getKey(), start: token.getPos()}));
+          issues.push(new Issue({file, message: "IS REQUESTED is obsolete", key: this.getKey(), start: token.getPos()}));
         }
       }
     }

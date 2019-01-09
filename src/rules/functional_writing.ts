@@ -45,7 +45,7 @@ export class FunctionalWriting extends ABAPRule {
             || this.startsWith(code, "CALL METHOD (")) {
           continue;
         }
-        const issue = new Issue({file, message: this.getDescription(), code: this.getKey(), start: statement.getStart()});
+        const issue = new Issue({file, message: this.getDescription(), key: this.getKey(), start: statement.getStart()});
         issues.push(issue);
       }
     }

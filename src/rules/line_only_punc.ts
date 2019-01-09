@@ -41,7 +41,7 @@ export class LineOnlyPunc extends ABAPRule {
       } else if (trim.match(/^ENDCLASS/i)) {
         exception = false;
       } else if ((trim === "." || trim === ").") && exception === false) {
-        const issue = new Issue({file, message: this.getDescription(), code: this.getKey(), start: new Position(i + 1, 0)});
+        const issue = new Issue({file, message: this.getDescription(), key: this.getKey(), start: new Position(i + 1, 0)});
         issues.push(issue);
       }
     }

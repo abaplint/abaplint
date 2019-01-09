@@ -143,13 +143,13 @@ export class Stats {
     for (const issue of this.reg.findIssues()) {
       let found = false;
       for (const r of res) {
-        if (r.type === issue.getCode()) {
+        if (r.type === issue.getKey()) {
           r.count = r.count + 1;
           found = true;
         }
       }
       if (found === false) {
-        res.push({type: issue.getCode(), count: 1});
+        res.push({type: issue.getKey(), count: 1});
       }
     }
     return res;

@@ -38,7 +38,7 @@ export class MethodLength implements IRule {
         const issue = new Issue({
           file: s.file,
           message: "Reduce method length, " + s.count + " statements",
-          code: this.getKey(),
+          key: this.getKey(),
           start: s.pos});
         issues.push(issue);
       }

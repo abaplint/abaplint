@@ -120,7 +120,7 @@ export class Registry {
       try {
         this.findOrCreate(f.getObjectName(), f.getObjectType()).addFile(f);
       } catch (error) {
-        this.issues.push(new Issue({file: f, message: error, code: "registry_add"}));
+        this.issues.push(new Issue({file: f, message: error, key: "registry_add"}));
       }
     }
     return this;
@@ -196,7 +196,7 @@ export class Registry {
         continue;
       }
       for (let i = issues.length - 1; i >= 0; i--) {
-        if (issues[i].getCode() !== key) {
+        if (issues[i].getKey() !== key) {
           continue;
         }
         let remove = false;

@@ -14,12 +14,12 @@ export abstract class Structure  {
     const result = this.getMatcher().run(statements, parent);
 
     if (result.error) {
-      return {issues: [new Issue({file, code: "structure", message: result.errorDescription})], node: undefined};
+      return {issues: [new Issue({file, key: "structure", message: result.errorDescription})], node: undefined};
     }
     if (result.unmatched.length > 0) {
       const statement = result.unmatched[0];
       const descr = "Unexpected " + statement.get().constructor.name.toUpperCase();
-      return {issues: [new Issue({file, message: descr, code: "structure", start: statement.getStart()})], node: undefined};
+      return {issues: [new Issue({file, message: descr, key: "structure", start: statement.getStart()})], node: undefined};
     }
 
     return {issues: [], node: parent};

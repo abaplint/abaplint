@@ -82,7 +82,7 @@ export class ClassAttributeNames implements IRule {
     if (regex.test(name) === false) {
       const message = "Bad attribute name \"" + name + "\" expected \"" + expected + "/i\"";
 // todo, find the right file
-      const issue = new Issue({file: obj.getFiles()[0], message, code: this.getKey(), start: attr.getPosition()});
+      const issue = new Issue({file: obj.getFiles()[0], message, key: this.getKey(), start: attr.getPosition()});
       ret.push(issue);
     }
 

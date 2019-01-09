@@ -4,7 +4,7 @@ import {Position} from "./position";
 interface IssueData {
   file: IFile;
   message: string;
-  code: string;
+  key: string;
   start?: Position;
   end?: Position;
 }
@@ -14,11 +14,11 @@ export class Issue {
   private end: Position;
   private file: IFile;
   private message: string;
-  private code: string;
+  private key: string;
 
   public constructor(data: IssueData) {
     this.message = data.message;
-    this.code = data.code;
+    this.key = data.key;
 
     if (!data.start) {
       this.start = new Position(1, 1);
@@ -39,8 +39,8 @@ export class Issue {
     return this.message;
   }
 
-  public getCode(): string {
-    return this.code;
+  public getKey(): string {
+    return this.key;
   }
 
   public getStart(): Position {

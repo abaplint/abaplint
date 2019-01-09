@@ -50,7 +50,7 @@ export class Indentation extends ABAPRule {
       const position = statement.getFirstToken().getPos();
       const indent = expected.shift();
       if (indent && indent > 0 && indent !== position.getCol()) {
-        const issue = new Issue({file, message: this.getDescription(), code: this.getKey(), start: position});
+        const issue = new Issue({file, message: this.getDescription(), key: this.getKey(), start: position});
         return [issue]; // only one finding per include
       }
     }

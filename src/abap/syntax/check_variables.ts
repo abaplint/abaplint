@@ -82,7 +82,7 @@ export class CheckVariablesLogic {
     this.issues.push(new Issue({
       file: this.currentFile,
       message: message,
-      code: "check_variables",
+      key: "check_variables",
       start: token.getPos(),
     }));
   }

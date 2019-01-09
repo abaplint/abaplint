@@ -40,7 +40,7 @@ export class MessageRule extends ABAPRule {
       const token = node.getFirstToken();
       if (reg.getObject("MSAG", token.getStr()) === undefined) {
         const message = "Message class \"" + token.getStr() + "\" not found";
-        issues.push(new Issue({file, message, code: this.getKey(), start: token.getPos()}));
+        issues.push(new Issue({file, message, key: this.getKey(), start: token.getPos()}));
       }
     }
 
@@ -63,7 +63,7 @@ export class MessageRule extends ABAPRule {
       const num = numberToken.getStr().substr(1);
       if (msag.getByNumber(num) === undefined) {
         const message = "Message number \"" + num + "\" not found in class \"" + name + "\"";
-        issues.push(new Issue({file, message, code: this.getKey(), start: numberToken.getPos()}));
+        issues.push(new Issue({file, message, key: this.getKey(), start: numberToken.getPos()}));
       }
     }
 

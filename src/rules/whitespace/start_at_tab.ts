@@ -51,7 +51,7 @@ export class StartAtTab extends ABAPRule {
         continue;
       }
       if ((pos.getCol() - 1) % 2 !== 0) {
-        const issue = new Issue({file, message: this.getDescription(), code: this.getKey(), start: pos});
+        const issue = new Issue({file, message: this.getDescription(), key: this.getKey(), start: pos});
         issues.push(issue);
       }
       previous = pos;

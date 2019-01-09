@@ -53,7 +53,7 @@ export class KeywordsUpper extends ABAPRule {
       }
       const position = this.traverse(statement);
       if (position) {
-        const issue = new Issue({file, message: this.getDescription(), code: this.getKey(), start: position});
+        const issue = new Issue({file, message: this.getDescription(), key: this.getKey(), start: position});
         issues.push(issue);
         break; // one finding per file
       }

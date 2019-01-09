@@ -34,7 +34,7 @@ export class WhitespaceEnd extends ABAPRule {
 
     for (let i = 0; i < rows.length; i++) {
       if (/.* $/.test(rows[i]) === true) {
-        const issue = new Issue({file, message: this.getDescription(), code: this.getKey(), start: new Position(i + 1, 1)});
+        const issue = new Issue({file, message: this.getDescription(), key: this.getKey(), start: new Position(i + 1, 1)});
         issues.push(issue);
       }
     }

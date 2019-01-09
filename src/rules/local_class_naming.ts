@@ -68,7 +68,7 @@ export class LocalClassNaming extends ABAPRule {
         const issue = new Issue({
           file,
           message: this.getDescription() + ", expected " + expected,
-          code: this.getKey(),
+          key: this.getKey(),
           start: token.getPos()});
         issues.push(issue);
       }
