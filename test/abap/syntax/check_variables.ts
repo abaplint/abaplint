@@ -223,6 +223,21 @@ describe("Check Variables", () => {
     expect(issues.length).to.equals(0);
   });
 
+  it("program, definition in FOR expression", () => {
+    const abap = "DATA itab TYPE STANDARD TABLE OF i.\n" +
+      "itab = VALUE #( FOR j = 1 THEN j + 1 UNTIL j > 10 ( j ) ).";
+    const issues = runProgram(abap);
+    expect(issues.length).to.equals(0);
+  });
+/*
+  it("program, definition in FOR expression, should not work after", () => {
+    const abap = "DATA itab TYPE STANDARD TABLE OF i.\n" +
+      "itab = VALUE #( FOR j = 1 THEN j + 1 UNTIL j > 10 ( j ) ).\n" +
+      "WRITE j.";
+    const issues = runProgram(abap);
+    expect(issues.length).to.equals(1);
+  });
+*/
   it("program, component after call", () => {
     // todo, this code is not syntactically correct
     const abap = "run( zcl_global_class=>field ).\n";

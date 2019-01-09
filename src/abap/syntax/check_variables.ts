@@ -12,10 +12,9 @@ import {Variables} from "./_variables";
 import {ObjectOriented} from "./_object_oriented";
 import {Globals} from "./_globals";
 import {Procedural} from "./_procedural";
+import {Inline} from "./_inline";
 
 // todo, some visualization, graphviz?
-// todo, when there is more structure, everything will be refactored?
-class LocalIdentifier extends TypedIdentifier { }
 
 export class CheckVariablesLogic {
   private object: ABAPObject;
@@ -25,6 +24,7 @@ export class CheckVariablesLogic {
   private reg: Registry;
   private oooc: ObjectOriented;
   private proc: Procedural;
+  private inline: Inline;
 
   constructor(reg: Registry, object: ABAPObject) {
     this.reg = reg;
@@ -33,6 +33,7 @@ export class CheckVariablesLogic {
     this.variables = new Variables();
     this.oooc = new ObjectOriented(this.object, this.reg, this.variables);
     this.proc = new Procedural(this.object, this.reg, this.variables);
+    this.inline = new Inline(this.variables);
   }
 
   public findIssues(ignoreParserError = true): Issue[] {
@@ -87,22 +88,11 @@ export class CheckVariablesLogic {
     }));
   }
 
-  private addVariable(expr: ExpressionNode | undefined) {
-    if (expr === undefined) { throw new Error("syntax_check, unexpected tree structure"); }
-    // todo, these identifers should be possible to create from a Node
-    // todo, how to determine the real types?
-    const token = expr.getFirstToken();
-    this.variables.add(new LocalIdentifier(token, expr));
-  }
-
   private traverse(node: INode, search?: Token): TypedIdentifier | undefined {
+    this.inline.update(node);
+
     if (node instanceof ExpressionNode
         && ( node.get() instanceof Expressions.Source || node.get() instanceof Expressions.Target ) ) {
-      for (const inline of node.findAllExpressions(Expressions.InlineData)) {
-        const field = inline.findFirstExpression(Expressions.Field);
-        if (field === undefined) { throw new Error("syntax_check, unexpected tree structure"); }
-        this.addVariable(field);
-      }
       for (const field of node.findAllExpressions(Expressions.Field)) {
         const token = field.getFirstToken();
         const resolved = this.variables.resolve(token.getStr());

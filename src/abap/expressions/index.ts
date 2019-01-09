@@ -4,6 +4,7 @@ export * from "./class_global";
 export * from "./class_name";
 export * from "./compare_operator";
 export * from "./compare";
+export * from "./inline_for";
 export * from "./message_source";
 export * from "./message_type_and_number";
 export * from "./component_compare";
