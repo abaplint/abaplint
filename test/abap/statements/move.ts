@@ -78,6 +78,7 @@ const tests = [
   "foo = bar ##called.",
   "##called foo = bar.",
   "DATA(ints) = NEW tyt_integer( ( 1 ) ( 2 ) ( 3 ) ).",
+  "DATA(lt_list) = VALUE mo_out->ty_list_tt( ( 1 ) ).",
 ];
 
 statementType(tests, "MOVE", Statements.Move);
