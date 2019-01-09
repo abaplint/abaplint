@@ -616,6 +616,38 @@ describe("Check Variables", () => {
     expect(issues.length).to.equals(0);
   });
 
+  it("redefined method with parameter, 2 steps up", () => {
+    const clas =
+      "CLASS zcl_foobar DEFINITION PUBLIC INHERITING FROM zcl_super1 FINAL CREATE PUBLIC.\n" +
+      "  PUBLIC SECTION.\n" +
+      "    METHODS method1 REDEFINITION.\n" +
+      "ENDCLASS.\n" +
+      "CLASS zcl_foobar IMPLEMENTATION.\n" +
+      "  METHOD method1.\n" +
+      "    WRITE parameter.\n" +
+      "  ENDMETHOD.\n" +
+      "ENDCLASS.\n";
+    const sup1 =
+      "CLASS zcl_super1 DEFINITION PUBLIC INHERITING FROM zcl_super2 CREATE PUBLIC.\n" +
+      "ENDCLASS.\n" +
+      "CLASS ZCL_SUPER1 IMPLEMENTATION.\n" +
+      "ENDCLASS.";
+    const sup2 =
+      "CLASS zcl_super2 DEFINITION PUBLIC CREATE PUBLIC.\n" +
+      "  PUBLIC SECTION.\n" +
+      "    METHODS method1 IMPORTING parameter TYPE c.\n" +
+      "ENDCLASS.\n" +
+      "CLASS ZCL_SUPER2 IMPLEMENTATION.\n" +
+      "  METHOD method1." +
+      "  ENDMETHOD." +
+      "ENDCLASS.";
+    const issues = runMulti([
+      {filename: "zcl_foobar.clas.abap", contents: clas},
+      {filename: "zcl_super1.clas.abap", contents: sup1},
+      {filename: "zcl_super2.clas.abap", contents: sup2}]);
+    expect(issues.length).to.equals(0);
+  });
+
 /*
   it("program, constant, begin, error", () => {
     const abap =

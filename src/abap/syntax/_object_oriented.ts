@@ -127,7 +127,12 @@ export class ObjectOriented {
       return;
     }
     const cdef = this.findSuperDefinition(sup);
-    return this.findMethod(cdef, methodName);
+    const found = this.findMethod(cdef, methodName);
+    if (found) {
+      return found;
+    }
+
+    return this.findMethodInSuper(cdef, methodName);
   }
 
   private findSuperDefinition(name: string): ClassDefinition {
