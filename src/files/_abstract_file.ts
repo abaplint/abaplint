@@ -20,7 +20,7 @@ export abstract class AbstractFile implements IFile {
   public getObjectName(): string {
     const base = this.getFilename().split("/").reverse()[0];
     const split = base.split(".");
-    return split[0].toUpperCase();
+    return split[0].toUpperCase().replace(/#/g, "/");
   }
 
   public abstract getRaw(): string;

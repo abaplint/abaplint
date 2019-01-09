@@ -26,6 +26,13 @@ describe("Registry", () => {
     expect(registry.getABAPFiles()[0].getRaw()).to.equal("updated");
   });
 
+  it("filename with namespace", () => {
+    const reg = new Registry().addFile(new MemoryFile("#namesp#cl_foobar.clas.abap", "parser error"));
+    expect(reg.getObjects().length).to.equal(1);
+    expect(reg.getObjects()[0].getType()).to.equal("CLAS");
+    expect(reg.getObject("CLAS", "/namesp/cl_foobar")).to.not.equal(undefined);
+  });
+
   it("Update unknown file, 1", () => {
     const file = new MemoryFile("zfoobar.prog.abap", "IF moo = boo. ENDIF.");
     const registry = new Registry();
