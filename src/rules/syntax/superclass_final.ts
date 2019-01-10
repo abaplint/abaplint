@@ -44,11 +44,12 @@ export class SuperclassFinal extends ABAPRule {
       }
       let found: ClassDefinition | undefined = undefined;
       if (localLookup) {
+// todo, this should look inside the object instead of the file?
         found = file.getClassDefinition(sup);
       }
       if (found === undefined) {
         const clas = reg.getObject("CLAS", sup) as Class;
-        if (obj) {
+        if (clas) {
           found = clas.getClassDefinition();
         }
       }
