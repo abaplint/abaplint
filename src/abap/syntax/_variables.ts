@@ -1,7 +1,7 @@
 import {TypedIdentifier} from "../types/_typed_identifier";
 
 export class Variables {
-  private scopes: {name: string; ids: TypedIdentifier[]; }[];
+  private scopes: {name: string; ids: TypedIdentifier[]; other: string[] }[];
 
   constructor() {
     this.scopes = [];
@@ -10,6 +10,10 @@ export class Variables {
 
   public add(identifier: TypedIdentifier) {
     this.scopes[this.scopes.length - 1].ids.push(identifier);
+  }
+
+  public addOther(name: string) {
+    this.scopes[this.scopes.length - 1].other.push(name);
   }
 
   public addList(identifiers: TypedIdentifier[]) {
@@ -22,11 +26,16 @@ export class Variables {
     return this.scopes[this.scopes.length - 1].ids;
   }
 
-  public resolve(name: string): TypedIdentifier | undefined {
+  public resolve(name: string): TypedIdentifier | string | undefined {
     // todo, this should probably search the nearest first? in case there are shadowed variables?
     for (const scope of this.scopes) {
       for (const local of scope.ids) {
         if (local.getName().toUpperCase() === name.toUpperCase()) {
+          return local;
+        }
+      }
+      for (const local of scope.other) {
+        if (local.toUpperCase() === name.toUpperCase()) {
           return local;
         }
       }
@@ -39,7 +48,7 @@ export class Variables {
   }
 
   public pushScope(name: string): Variables {
-    this.scopes.push({name: name, ids: []});
+    this.scopes.push({name: name, ids: [], other: []});
     return this;
   }
 

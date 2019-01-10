@@ -50,9 +50,16 @@ export class Inline {
           if (dbtab === undefined) {
             continue;
           }
-//          const fields =
-          this.findFields(dbtab.getFirstToken().getStr());
-//          from.findFirstExpression(Expressions.SQLAsName)
+          let name = dbtab.getFirstToken().getStr();
+          const fields = this.findFields(name);
+          const asName = from.findFirstExpression(Expressions.SQLAsName);
+          if (asName) {
+            name = asName.getFirstToken().getStr();
+          }
+          for (const field of fields) {
+            this.variables.addOther(name + "~" + field);
+          }
+// todo, these also have to be popped after the statement
         }
       }
     }

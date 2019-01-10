@@ -57,7 +57,7 @@ export class CheckVariablesLogic {
   }
 
 // todo, this assumes no tokes are the same across files
-  public resolveToken(token: Token): TypedIdentifier | undefined {
+  public resolveToken(token: Token): TypedIdentifier | string | undefined {
     this.variables.addList(Globals.get());
 
     for (const file of this.object.getABAPFiles()) {
@@ -88,7 +88,7 @@ export class CheckVariablesLogic {
     }));
   }
 
-  private traverse(node: INode, search?: Token): TypedIdentifier | undefined {
+  private traverse(node: INode, search?: Token): TypedIdentifier | string | undefined {
     try {
       this.inline.update(node);
     } catch (e) {

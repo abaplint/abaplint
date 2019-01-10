@@ -74,6 +74,11 @@ async function loadFiles(compress: boolean, input: string[], progress: boolean):
   }
 
   for (const filename of input) {
+    if (bar) {
+      bar.tick({filename: path.basename(filename)});
+      bar.render();
+    }
+
     const base = filename.split("/").reverse()[0];
     if (base.split(".").length <= 2) {
       continue; // not a abapGit file
@@ -88,11 +93,6 @@ async function loadFiles(compress: boolean, input: string[], progress: boolean):
       files.push(new CompressedFile(filename, zlib.deflateSync(raw).toString("base64")));
     } else {
       files.push(new MemoryFile(filename, raw));
-    }
-
-    if (bar) {
-      bar.tick({filename: path.basename(filename)});
-      bar.render();
     }
   }
   return files;
