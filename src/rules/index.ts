@@ -24,6 +24,7 @@ export * from "./nesting";
 export * from "./obsolete_statement";
 export * from "./syntax/check_variables";
 export * from "./syntax/global_class";
+export * from "./syntax/superclass_final";
 export * from "./syntax/inline_data_old_versions";
 export * from "./syntax/parser_error";
 export * from "./whitespace/colon_missing_space";
