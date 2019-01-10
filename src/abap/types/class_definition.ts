@@ -57,15 +57,14 @@ export class ClassDefinition extends Identifier {
     return this.node.findFirstExpression(Expressions.ClassGlobal) !== undefined;
   }
 
+  public isFinal(): boolean {
+    return this.node.findFirstExpression(Expressions.ClassFinal) !== undefined;
+  }
+
   /*
   public getFriends()
 
   public isAbstract(): boolean {
-// todo
-    return false;
-  }
-
-  public isFinal(): boolean {
 // todo
     return false;
   }
