@@ -5,6 +5,7 @@ export * from "./cloud_types";
 export * from "./definitions_top";
 export * from "./empty_statement";
 export * from "./exit_or_check";
+export * from "./commented_code";
 export * from "./exporting";
 export * from "./functional_writing";
 export * from "./indentation";
