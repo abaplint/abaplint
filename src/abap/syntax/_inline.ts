@@ -1,16 +1,21 @@
 import {Variables} from "./_variables";
 import {TypedIdentifier} from "../types/_typed_identifier";
-import {ExpressionNode} from "../nodes";
+import {ExpressionNode, StatementNode} from "../nodes";
 import * as Expressions from "../expressions";
+import * as Statements from "../statements";
 import {INode} from "../nodes/_inode";
+import {Registry} from "../../registry";
+import {Table, View} from "../../objects";
 
 class LocalIdentifier extends TypedIdentifier { }
 
 export class Inline {
   private variables: Variables;
+  private reg: Registry;
 
-  constructor(variables: Variables) {
+  constructor(variables: Variables, reg: Registry) {
     this.variables = variables;
+    this.reg = reg;
   }
 
   private addVariable(expr: ExpressionNode | undefined) {
@@ -22,13 +27,14 @@ export class Inline {
   }
 
   public update(node: INode) {
-    if (node instanceof ExpressionNode) {
-// todo, this will add the variable multiple times if there are expressions in multiple levels?
+    if (node instanceof StatementNode) {
+
       for (const inline of node.findAllExpressions(Expressions.InlineData)) {
         const field = inline.findFirstExpression(Expressions.Field);
         if (field === undefined) { throw new Error("syntax_check, unexpected tree structure"); }
         this.addVariable(field);
       }
+
       for (const inline of node.findAllExpressions(Expressions.InlineFor)) {
         const field = inline.findFirstExpression(Expressions.Field);
         if (field !== undefined) {
@@ -36,6 +42,31 @@ export class Inline {
 // todo, these also have to be popped after the statement
         }
       }
+
+      if (node.get() instanceof Statements.Select || node.get() instanceof Statements.SelectLoop) {
+        const fromList = node.findAllExpressions(Expressions.SQLFromSource);
+        for (const from of fromList) {
+          const dbtab = from.findFirstExpression(Expressions.DatabaseTable);
+          if (dbtab === undefined) {
+            continue;
+          }
+//          const fields =
+          this.findFields(dbtab.getFirstToken().getStr());
+//          from.findFirstExpression(Expressions.SQLAsName)
+        }
+      }
     }
+  }
+
+  private findFields(name: string): string[] {
+    const table = this.reg.getObject("TABL", name) as Table;
+    if (table !== undefined) {
+      return table.getFields();
+    }
+    const view = this.reg.getObject("VIEW", name) as View;
+    if (view !== undefined) {
+      return view.getFields();
+    }
+    throw new Error("Database table or view \"" + name + "\" not found");
   }
 }

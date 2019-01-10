@@ -229,6 +229,7 @@ describe("Check Variables", () => {
     const issues = runProgram(abap);
     expect(issues.length).to.equals(0);
   });
+
 /*
   it("program, definition in FOR expression, should not work after", () => {
     const abap = "DATA itab TYPE STANDARD TABLE OF i.\n" +
@@ -238,6 +239,13 @@ describe("Check Variables", () => {
     expect(issues.length).to.equals(1);
   });
 */
+
+  it("program, SELECT, database table not found", () => {
+    const abap = "SELECT SINGLE * FROM zfoobar INTO @DATA(ls_data).";
+    const issues = runProgram(abap);
+    expect(issues.length).to.equals(1);
+  });
+
   it("program, component after call", () => {
     // todo, this code is not syntactically correct
     const abap = "run( zcl_global_class=>field ).\n";

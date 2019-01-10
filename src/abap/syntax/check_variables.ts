@@ -33,7 +33,7 @@ export class CheckVariablesLogic {
     this.variables = new Variables();
     this.oooc = new ObjectOriented(this.object, this.reg, this.variables);
     this.proc = new Procedural(this.object, this.reg, this.variables);
-    this.inline = new Inline(this.variables);
+    this.inline = new Inline(this.variables, this.reg);
   }
 
   public findIssues(ignoreParserError = true): Issue[] {
@@ -89,8 +89,13 @@ export class CheckVariablesLogic {
   }
 
   private traverse(node: INode, search?: Token): TypedIdentifier | undefined {
-    this.inline.update(node);
+    try {
+      this.inline.update(node);
+    } catch (e) {
+      this.newIssue(node.getFirstToken(), e.message);
+    }
 
+// todo, the same variables can be checked multiple times? as Expressions are nested
     if (node instanceof ExpressionNode
         && ( node.get() instanceof Expressions.Source || node.get() instanceof Expressions.Target ) ) {
       for (const field of node.findAllExpressions(Expressions.Field)) {

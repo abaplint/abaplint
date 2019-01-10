@@ -10,6 +10,8 @@ export * from "./message_type_and_number";
 export * from "./component_compare";
 export * from "./component_cond";
 export * from "./cond";
+export * from "./sql_as_name";
+export * from "./sql_from_source";
 export * from "./redefinition";
 export * from "./constant_string";
 export * from "./constant";

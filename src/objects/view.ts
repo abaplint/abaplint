@@ -6,4 +6,9 @@ export class View extends AbstractObject {
     return "VIEW";
   }
 
+  public getFields(): string[] {
+// todo
+    return [];
+  }
+
 }
