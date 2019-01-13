@@ -24,7 +24,7 @@ export class MessageClass extends AbstractObject {
 
     const t100 = data.abapGit["asx:abap"]["asx:values"].T100;
     for (const msg of xmlToArray(t100.T100)) {
-      ret.push(new Message(msg.MSGNR._text, msg.TEXT._text));
+      ret.push(new Message(msg.MSGNR._text, msg.TEXT ? msg.TEXT._text : ""));
     }
 
     return ret;

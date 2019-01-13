@@ -226,14 +226,14 @@ describe("Objects, class, getCategory", () => {
 
   it("false", () => {
     const reg = new Registry();
-
+/*
     const abap = "CLASS zcl_abapgit_moo DEFINITION PUBLIC\n" +
       "FINAL CREATE PUBLIC.\n" +
       "ENDCLASS.\n" +
       "CLASS zcl_abapgit_moo IMPLEMENTATION.\n" +
       "ENDCLASS.";
     reg.addFile(new MemoryFile("zcl_abapgit_moo.clas.abap", abap));
-
+*/
     const xml = "<?xml version=\"1.0\" encoding=\"utf-8\"?>\n" +
       "<abapGit version=\"v1.0.0\" serializer=\"LCL_OBJECT_CLAS\" serializer_version=\"v1.0.0\">\n" +
       " <asx:abap xmlns:asx=\"http://www.sap.com/abapxml\" version=\"1.0\">\n" +
@@ -259,6 +259,69 @@ describe("Objects, class, getCategory", () => {
 
     const clas = reg.getABAPObjects()[0] as Class;
     expect(clas.getCategory()).to.equal(ClassCategory.Test);
+  });
+
+});
+
+describe("Objects, class, getDescription", () => {
+
+  it("test 1", () => {
+    const reg = new Registry();
+
+    const xml = "<?xml version=\"1.0\" encoding=\"utf-8\"?>\n" +
+      "<abapGit version=\"v1.0.0\" serializer=\"LCL_OBJECT_CLAS\" serializer_version=\"v1.0.0\">\n" +
+      " <asx:abap xmlns:asx=\"http://www.sap.com/abapxml\" version=\"1.0\">\n" +
+      "  <asx:values>\n" +
+      "   <VSEOCLASS>\n" +
+      "    <CLSNAME>ZCL_ABAPGIT_MOO</CLSNAME>\n" +
+      "    <VERSION>1</VERSION>\n" +
+      "    <LANGU>E</LANGU>\n" +
+      "    <DESCRIPT>test test</DESCRIPT>\n" +
+      "    <CATEGORY>05</CATEGORY>\n" +
+      "    <STATE>1</STATE>\n" +
+      "    <CLSCCINCL>X</CLSCCINCL>\n" +
+      "    <FIXPT>X</FIXPT>\n" +
+      "    <UNICODE>X</UNICODE>\n" +
+      "    <WITH_UNIT_TESTS>X</WITH_UNIT_TESTS>\n" +
+      "   </VSEOCLASS>\n" +
+      "  </asx:values>\n" +
+      " </asx:abap>\n" +
+      "</abapGit>";
+    reg.addFile(new MemoryFile("zcl_abapgit_moo.clas.xml", xml));
+
+    reg.parse();
+
+    const clas = reg.getABAPObjects()[0] as Class;
+    expect(clas.getDescription()).to.equal("test test");
+  });
+
+  it("test 2", () => {
+    const reg = new Registry();
+
+    const xml = "<?xml version=\"1.0\" encoding=\"utf-8\"?>\n" +
+      "<abapGit version=\"v1.0.0\" serializer=\"LCL_OBJECT_CLAS\" serializer_version=\"v1.0.0\">\n" +
+      " <asx:abap xmlns:asx=\"http://www.sap.com/abapxml\" version=\"1.0\">\n" +
+      "  <asx:values>\n" +
+      "   <VSEOCLASS>\n" +
+      "    <CLSNAME>ZCL_ABAPGIT_MOO</CLSNAME>\n" +
+      "    <VERSION>1</VERSION>\n" +
+      "    <LANGU>E</LANGU>\n" +
+      "    <CATEGORY>05</CATEGORY>\n" +
+      "    <STATE>1</STATE>\n" +
+      "    <CLSCCINCL>X</CLSCCINCL>\n" +
+      "    <FIXPT>X</FIXPT>\n" +
+      "    <UNICODE>X</UNICODE>\n" +
+      "    <WITH_UNIT_TESTS>X</WITH_UNIT_TESTS>\n" +
+      "   </VSEOCLASS>\n" +
+      "  </asx:values>\n" +
+      " </asx:abap>\n" +
+      "</abapGit>";
+    reg.addFile(new MemoryFile("zcl_abapgit_moo.clas.xml", xml));
+
+    reg.parse();
+
+    const clas = reg.getABAPObjects()[0] as Class;
+    expect(clas.getDescription()).to.equal("");
   });
 
 });

@@ -1,6 +1,7 @@
 import {ABAPObject} from "./_abap_object";
 import {ClassDefinition} from "../abap/types/class_definition";
 import {ABAPFile} from "../files";
+import * as xmljs from "xml-js";
 
 export enum ClassCategory {
   Test = "05",
@@ -47,6 +48,16 @@ export class Class extends ABAPObject {
  */
 
 // -------------------
+
+  public getDescription(): string {
+    const xml = this.getXML();
+    if (!xml) {
+      return "";
+    }
+    const parsed: any = xmljs.xml2js(xml, {compact: true});
+    const vseo = parsed.abapGit["asx:abap"]["asx:values"].VSEOCLASS;
+    return vseo.DESCRIPT ? vseo.DESCRIPT._text : "";
+  }
 
   public getCategory(): string | undefined {
     const xml = this.getXML();
