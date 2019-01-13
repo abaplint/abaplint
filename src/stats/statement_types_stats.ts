@@ -1,15 +1,10 @@
 import {Registry} from "../registry";
-
-
-export interface IStatementTypeCount {
-  type: string;
-  count: number;
-}
+import {ITypeCount} from "./stats";
 
 export class StatementTypesStats {
 
-  public static run(reg: Registry): IStatementTypeCount[] {
-    const ret: IStatementTypeCount[] = [];
+  public static run(reg: Registry): ITypeCount[] {
+    const ret: ITypeCount[] = [];
 
     for (const a of reg.getABAPFiles()) {
       for (const s of a.getStatements()) {

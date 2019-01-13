@@ -3,7 +3,7 @@ import {Version, textToVersion, versionToText} from "../version";
 import {Unknown, Comment, Empty} from "../abap/statements/_statement";
 import * as Statements from "../abap/statements";
 import {MethodLengthStats} from "./method_length_stats";
-import {IStatementTypeCount, StatementTypesStats} from "./statement_types_stats";
+import {StatementTypesStats} from "./statement_types_stats";
 
 export interface ITotals {
   statements: number;
@@ -32,7 +32,7 @@ export interface IResult {
   statements: ITypeCount[];
   objectOrientation: IObjectOrientation;
   methodLength: number[];
-  statementTypes: IStatementTypeCount[];
+  statementTypes: ITypeCount[];
 }
 
 export class Stats {
@@ -48,16 +48,20 @@ export class Stats {
       target: versionToText(this.reg.getConfig().getVersion()),
       time: new Date().toISOString(),
       totals: this.buildTotals(),
-      objects: this.buildObjects(),
-      issues: this.buildIssues(),
+      objects: this.sort(this.buildObjects()),
+      issues: this.sort(this.buildIssues()),
       objectOrientation: this.buildObjectOrientation(),
       methodLength: this.buildMethodLength(),
-      statementTypes: StatementTypesStats.run(this.reg),
+      statementTypes: this.sort(StatementTypesStats.run(this.reg)),
       statements: this.buildStatements(progress), // attention: this changes the ABAP version
     };
   }
 
 // ////////////////////////////////////////////////
+
+  private sort(input: ITypeCount[]): ITypeCount[] {
+    return input.sort((a, b) => { return a.type.localeCompare(b.type); });
+  }
 
   private buildMethodLength(): number[] {
     const ret: number[] = [];
