@@ -17,6 +17,7 @@ const tests = [
   "TYPES moo TYPE p DECIMALS 2 LENGTH 5.",
   "TYPES ty_bar TYPE STANDARD TABLE OF /foo/bar INITIAL SIZE 0 WITH DEFAULT KEY.",
   "TYPES name TYPE STANDARD TABLE OF something WITH NON-UNIQUE KEY !name.",
+  "TYPES ty_objects TYPE RANGE OF trobjtype INITIAL SIZE 1.",
 ];
 
 statementType(tests, "TYPE", Statements.Type);

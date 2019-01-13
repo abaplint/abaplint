@@ -64,6 +64,7 @@ const tests = [
   {c: "type index table",                 r: new Expressions.Type(),            e: false},
   {c: "type index table",                 r: new Expressions.TypeTable(),       e: true},
   {c: "type index table",                 r: new Expressions.TypeTable(),       e: true},
+  {c: "type range of string",             r: new Expressions.TypeTable(),       e: true},
   {c: "%_C_POINTER",                      r: new Expressions.TypeName(),        e: true},
 //  {c: "<Z-BAR>",                          r: new Expressions.FieldSymbol(),     e: true},
 ];

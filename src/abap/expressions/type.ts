@@ -10,8 +10,7 @@ export class Type extends Expression {
 
     const type = seq(likeType,
                      opt(alt(str("LINE OF"),
-                             str("REF TO"),
-                             str("RANGE OF"))));
+                             str("REF TO"))));
 
     const ret = seq(type,
                     new FieldChain(),

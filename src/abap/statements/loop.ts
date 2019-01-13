@@ -1,6 +1,6 @@
 import {Statement} from "./_statement";
 import {str, seq, alt, opt, ver, tok, plus, per, IStatementRunnable} from "../combi";
-import {FSTarget, Target, ComponentCond, Dynamic, Source, ComponentCompare} from "../expressions";
+import {FSTarget, Target, ComponentCond, Dynamic, Source, ComponentCompare, SimpleName} from "../expressions";
 import {Version} from "../../version";
 import {WParenLeftW, WParenRightW} from "../tokens";
 
@@ -26,7 +26,7 @@ export class Loop extends Statement {
 
     const to = seq(str("TO"), new Source());
 
-    const usingKey = seq(str("USING KEY"), alt(new Source(), new Dynamic()));
+    const usingKey = seq(str("USING KEY"), alt(new SimpleName(), new Dynamic()));
 
     const options = per(target, from, to, where, usingKey);
 

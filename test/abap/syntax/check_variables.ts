@@ -82,6 +82,13 @@ describe("Check Variables", () => {
     expect(issues.length).to.equals(0);
   });
 
+  it("program, SPLIT", () => {
+    const abap = "DATA lt_foobar TYPE STANDARD TABLE OF string.\n" +
+      "SPLIT 'sfsds' AT 's' INTO TABLE lt_foobar.";
+    const issues = runProgram(abap);
+    expect(issues.length).to.equals(0);
+  });
+
   it("program, inline definition", () => {
     const abap = "DATA(foobar) = 2.\nWRITE foobar.\n";
     const issues = runProgram(abap);

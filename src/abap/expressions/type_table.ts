@@ -15,11 +15,15 @@ export class TypeTable extends Expression {
                     str("KEY"),
                     star(new FieldSub()));
 
-    const typetable = seq(opt(alt(str("STANDARD"), str("HASHED"), str("INDEX"), str("SORTED"), str("ANY"))),
-                          str("TABLE"),
-                          opt(str("OF")),
-                          opt(str("REF TO")),
-                          opt(new FieldChain()),
+    const normal = seq(opt(alt(str("STANDARD"), str("HASHED"), str("INDEX"), str("SORTED"), str("ANY"))),
+                       str("TABLE"),
+                       opt(str("OF")),
+                       opt(str("REF TO")),
+                       opt(new FieldChain()));
+
+    const range = seq(str("RANGE OF"), new FieldChain());
+
+    const typetable = seq(alt(normal, range),
                           opt(per(header, initial)),
                           opt(key));
 
