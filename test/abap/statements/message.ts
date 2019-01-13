@@ -29,6 +29,8 @@ const tests = [
   "MESSAGE e000(zz) WITH 'asdf' raising zsdf INTO DATA(error4).",
   "MESSAGE e000(zz) RAISING zsdf WITH 'asdf' into data(error5).",
   "MESSAGE 'sdf' TYPE 'E' RAISING cancel.",
+  "MESSAGE A600 WITH 'Moo'.",
+  "message E001(0A) with 'FATAL' raising FATAL_ERROR.",
 ];
 
 statementType(tests, "MESSAGE", Statements.Message);
