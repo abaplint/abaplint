@@ -4,7 +4,7 @@ import {IFormatter} from "./_iformatter";
 
 // for CodeClimate output?
 
-export class Code implements IFormatter {
+export class CodeClimate implements IFormatter {
   public output(issues: Issue[], fileCount: number): string {
 
     let result = "";

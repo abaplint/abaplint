@@ -9,8 +9,8 @@ export class Formatter {
         return new Formatters.Total().output(issues, fileCount);
       case "json":
         return new Formatters.Json().output(issues, fileCount);
-      case "code":
-        return new Formatters.Code().output(issues, fileCount);
+      case "codeclimate":
+        return new Formatters.CodeClimate().output(issues, fileCount);
       default:
         return new Formatters.Standard().output(issues, fileCount);
     }
