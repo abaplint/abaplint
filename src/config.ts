@@ -22,7 +22,8 @@ export class Config {
   public static getDefault(): Config {
     const defaults: string[] = [];
 
-    for (const rule of Artifacts.getRules()) {
+    const sorted = Artifacts.getRules().sort((a, b) => { return a.getKey().localeCompare(b.getKey()); });
+    for (const rule of sorted) {
       defaults.push("\"" + rule.getKey() + "\": " + JSON.stringify(rule.getConfig()));
     }
 
