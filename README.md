@@ -21,7 +21,11 @@ The code is in active development and some rules may not be described in documen
 ### Works with
 * [VS Code](https://marketplace.visualstudio.com/items?itemName=larshp.vscode-abaplint) ([source](https://github.com/abaplint/vscode-abaplint))
 * [Atom](https://atom.io/packages/linter-abaplint) ([source](https://github.com/larshp/linter-abaplint))
-* [Github App](https://github.com/apps/abaplint)
+* [GitHub App](https://github.com/apps/abaplint)
+* [GitHub Actions](https://github.com/abaplint/actions-abaplint)
+* GitLab Pipelines, wip, https://gitlab.com/sbu-absw/abaplint-example
+* Code Climate Engine, todo
+* ABAP in Eclipse, todo
 
 For checking ABAP code inside the ABAP system use [code inspector](http://wiki.scn.sap.com/wiki/display/ABAP/Code+Inspector) or [ATC](http://wiki.scn.sap.com/wiki/display/ABAP/ABAP+Test+Cockpit), also see project [abapOpenChecks](https://github.com/larshp/abapOpenChecks).
 
