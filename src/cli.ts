@@ -38,25 +38,6 @@ function searchUp(dir: string): string | undefined {
   return undefined;
 }
 
-function displayHelp(): string {
-  let output = "";
-  output = output + "Usage: abaplint [options] [file ...]\n";
-  output = output + "\n";
-  output = output + "Options:\n";
-  output = output + "  -h, --help       display this help\n";
-  output = output + "  -f, --format     output format (standard, total, json, summary)\n";
-  output = output + "  -v, --version    current version\n";
-  output = output + "  -a [abap]        specify ABAP version\n";  // todo, remove this feature?
-  output = output + "  -s               show progress\n";
-  output = output + "  -k               output keywords\n";
-  output = output + "  -t               output stats\n";
-  output = output + "  -u               dump class and interface information\n";
-  output = output + "  -c               compress files in memory\n";
-  output = output + "  -m               show memory usage\n";
-  output = output + "  -d, --default    show default configuration\n";
-  return output;
-}
-
 function loadFileNames(args: string[]): string[] {
   let files: string[] = [];
   for (const file of args) {
@@ -98,9 +79,30 @@ async function loadFiles(compress: boolean, input: string[], progress: boolean):
   return files;
 }
 
+function displayHelp(): string {
+  let output = "";
+  output = output + "Usage: abaplint [options] [file ...]\n";
+  output = output + "\n";
+  output = output + "Options:\n";
+  output = output + "  -h, --help             display this help\n";
+  output = output + "  -f, --format [format]  output format (standard, total, json, summary, junit, codeclimate)\n";
+  output = output + "  -v, --version          current version\n";
+  output = output + "  -a [abap]              specify ABAP version\n";  // todo, remove this feature?
+  output = output + "  --outformat [format] --outfile [file]     output issues to file in format\n";
+  output = output + "  -s                     show progress\n";
+  output = output + "  -k                     output keywords\n";
+  output = output + "  -t                     output stats\n";
+  output = output + "  -u                     dump class and interface information\n";
+  output = output + "  -c                     compress files in memory\n";
+  output = output + "  -m                     show memory usage\n";
+  output = output + "  -d, --default          show default configuration\n";
+  return output;
+}
+
 async function run() {
+
   const argv = minimist(process.argv.slice(2));
-  let format = "default";
+  let format = "standard";
   let output = "";
   let issues: Issue[] = [];
 
@@ -138,6 +140,7 @@ async function run() {
       const loaded = await loadFiles(compress, files, argv["s"]);
       const progress = argv["s"] ? new Progress() : undefined;
       const reg = new Registry(config);
+
       issues = reg.addFiles(loaded).findIssues(progress);
       output = Formatter.format(issues, format, loaded.length);
 
@@ -147,6 +150,9 @@ async function run() {
       } else if (argv["u"]) {
         output = JSON.stringify(new Dump(reg).classes(), undefined, 2);
         issues = [];
+      } else if (argv["outformat"] && argv["outfile"]) {
+        const fileContents = Formatter.format(issues, argv["outformat"], loaded.length);
+        fs.writeFileSync(argv["outfile"], fileContents, "utf-8");
       }
     }
   }

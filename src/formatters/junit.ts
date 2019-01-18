@@ -17,7 +17,9 @@ export class Junit implements IFormatter {
       "  <testsuite name=\"abaplint\" tests=\"" + issues.length + "\" failures=\"" + issues.length + "\" errors=\"0\" skipped=\"0\">\n";
 
     for (const issue of issues) {
-      xml = xml + "    <testcase classname=\"" + issue.getFile().getFilename() + "\" name=\"" + issue.getKey() + "\">\n" +
+      xml = xml + "    <testcase classname=\"" + issue.getFile().getFilename() +
+        "[" + issue.getStart().getRow() + ", " + issue.getStart().getCol() +
+        "]\" name=\"" + issue.getKey() + "\">\n" +
         "      <failure message=\"" + escape(issue.getMessage()) + "\"/>\n" +
         "    </testcase>\n";
     }
