@@ -120,7 +120,7 @@ export class Registry {
       try {
         this.findOrCreate(f.getObjectName(), f.getObjectType()).addFile(f);
       } catch (error) {
-        this.issues.push(new Issue({file: f, message: error && error.toString() || "", key: "registry_add"}));
+        this.issues.push(new Issue({file: f, message: error ? error.toString() : "", key: "registry_add"}));
       }
     }
     return this;
