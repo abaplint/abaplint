@@ -23,7 +23,7 @@ export class KeywordsUpper extends ABAPRule {
   }
 
   public getDescription(): string {
-    return "Keywords upper case";
+    return "Keywords upper case, other lower case";
   }
 
   public getConfig() {
@@ -66,7 +66,10 @@ export class KeywordsUpper extends ABAPRule {
 
     for (const child of s.getChildren()) {
       if (child instanceof TokenNodeRegex) {
-        continue;
+        const str = child.get().getStr();
+        if (str !== str.toLowerCase() && child.get() instanceof Identifier) {
+          return child.get().getPos();
+        }
       } else if (child instanceof TokenNode) {
         const str = child.get().getStr();
         if (str !== str.toUpperCase() && child.get() instanceof Identifier) {
