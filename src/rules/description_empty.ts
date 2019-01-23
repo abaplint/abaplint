@@ -34,13 +34,20 @@ export class DescriptionEmpty implements IRule {
   public run(obj: IObject, _reg: Registry): Issue[] {
     const issues: Issue[] = [];
 
+    // todo, add INTF
     if (obj instanceof Class) {
-      if (obj.getDescription() === "") {
-        const issue = new Issue({file: obj.getFiles()[0], message: this.getDescription(), key: this.getKey(), start: new Position(1, 1)});
+      const description = obj.getDescription();
+      let message: string | undefined = undefined;
+      if (description === "") {
+        message = this.getDescription();
+      } else if (description === undefined) {
+        message = this.getDescription() + ", class XML file not found";
+      }
+      if (message) {
+        const issue = new Issue({file: obj.getFiles()[0], message, key: this.getKey(), start: new Position(1, 1)});
         issues.push(issue);
       }
     }
-// todo, add INTF
 
     return issues;
   }

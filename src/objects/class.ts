@@ -49,10 +49,10 @@ export class Class extends ABAPObject {
 
 // -------------------
 
-  public getDescription(): string {
+  public getDescription(): string | undefined {
     const xml = this.getXML();
     if (!xml) {
-      return "";
+      return undefined;
     }
     const parsed: any = xmljs.xml2js(xml, {compact: true});
     const vseo = parsed.abapGit["asx:abap"]["asx:values"].VSEOCLASS;
