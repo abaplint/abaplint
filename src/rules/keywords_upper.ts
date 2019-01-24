@@ -3,15 +3,17 @@ import {ABAPRule} from "./_abap_rule";
 import {ABAPFile} from "../files";
 import {StatementNode, ExpressionNode, TokenNode, TokenNodeRegex} from "../abap/nodes";
 import {Position} from "../position";
-import {Unknown, Comment, MacroContent, MacroCall} from "../abap/statements/_statement";
+import {Unknown, Comment, MacroContent, MacroCall, Statement} from "../abap/statements/_statement";
 import {Identifier} from "../abap/tokens";
 import {IObject} from "../objects/_iobject";
 import {Registry} from "../registry";
 import {Class} from "../objects";
 import {BasicRuleConfig} from "./_basic_rule_config";
+import {ClassImplementation} from "../abap/statements";
 
 export class KeywordsUpperConf extends BasicRuleConfig {
   public ignoreExceptions: boolean = true;
+  public ignoreLowerClassImplmentationStatement: boolean = true;
 }
 
 export class KeywordsUpper extends ABAPRule {
@@ -51,21 +53,25 @@ export class KeywordsUpper extends ABAPRule {
           || statement.get() instanceof Comment) {
         continue;
       }
-      const position = this.traverse(statement);
+      const position = this.traverse(statement, statement.get());
       if (position) {
         const issue = new Issue({file, message: this.getDescription(), key: this.getKey(), start: position});
         issues.push(issue);
-        break; // one finding per file
+        break; // one issue per file
       }
     }
 
     return issues;
   }
 
-  private traverse(s: StatementNode | ExpressionNode): Position | undefined {
+  private traverse(s: StatementNode | ExpressionNode, parent: Statement): Position | undefined {
 
     for (const child of s.getChildren()) {
       if (child instanceof TokenNodeRegex) {
+        if (this.conf.ignoreLowerClassImplmentationStatement
+            && parent instanceof ClassImplementation) {
+          continue;
+        }
         const str = child.get().getStr();
         if (str !== str.toLowerCase() && child.get() instanceof Identifier) {
           return child.get().getPos();
@@ -76,7 +82,7 @@ export class KeywordsUpper extends ABAPRule {
           return child.get().getPos();
         }
       } else if (child instanceof ExpressionNode) {
-        const pos = this.traverse(child);
+        const pos = this.traverse(child, parent);
         if (pos) {
           return pos;
         }
