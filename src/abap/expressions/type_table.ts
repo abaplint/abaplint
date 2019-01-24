@@ -1,4 +1,4 @@
-import {seq, opt, alt, str, ver, star, per, Expression, IStatementRunnable} from "../combi";
+import {seq, opt, alt, str, ver, star, per, Expression, IStatementRunnable, altPrio} from "../combi";
 import {Constant, FieldSub, TypeName, Integer} from "./";
 import {Version} from "../../version";
 import {FieldChain} from "./field_chain";
@@ -9,11 +9,16 @@ export class TypeTable extends Expression {
     const header = str("WITH HEADER LINE");
     const initial = seq(str("INITIAL SIZE"), new Constant());
 
+    const uniqueness = alt(str("NON-UNIQUE"), str("UNIQUE"));
+    const defaultKey = str("DEFAULT KEY");
+    const emptyKey = ver(Version.v740sp02, str("EMPTY KEY"));
+
     const key = seq(str("WITH"),
-                    opt(alt(str("NON-UNIQUE"), str("UNIQUE"))),
-                    opt(alt(str("DEFAULT"), str("SORTED"), ver(Version.v740sp02, str("EMPTY")))),
-                    str("KEY"),
-                    star(new FieldSub()));
+                    opt(uniqueness),
+                    altPrio(defaultKey, emptyKey,
+                            seq(opt(alt(str("SORTED"), str("HASHED"))),
+                                str("KEY"),
+                                star(new FieldSub()))));
 
     const normal = seq(opt(alt(str("STANDARD"), str("HASHED"), str("INDEX"), str("SORTED"), str("ANY"))),
                        str("TABLE"),
@@ -25,7 +30,7 @@ export class TypeTable extends Expression {
 
     const typetable = seq(alt(normal, range),
                           opt(per(header, initial)),
-                          opt(key));
+                          star(key));
 
     const occurs = seq(str("OCCURS"), new Integer());
 

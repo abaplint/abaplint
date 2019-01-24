@@ -1,4 +1,4 @@
-import {seq, per, opt, alt, tok, str, star, plus, Expression, IStatementRunnable} from "../combi";
+import {seq, per, opt, alt, tok, str, star, plus, Expression, IStatementRunnable, altPrio, optPrio} from "../combi";
 import {WParenLeftW, WParenLeft} from "../tokens/";
 import {SQLTarget, SQLFieldList, SQLFrom, Field, Dynamic, SQLCond, SQLSource} from "./";
 
@@ -25,7 +25,8 @@ export class Select extends Expression {
 
     const ding = alt(str("ASCENDING"), str("DESCENDING"));
 
-    const order = seq(str("ORDER BY"), alt(plus(seq(new Field(), opt(ding), opt(str(",")))), str("PRIMARY KEY"), new Dynamic()));
+    const ofields = plus(seq(new Field(), opt(ding), opt(str(","))));
+    const order = seq(str("ORDER BY"), altPrio(str("PRIMARY KEY"), new Dynamic(), ofields));
 
     const forAll = seq(str("FOR ALL ENTRIES IN"), new SQLSource());
 
@@ -41,7 +42,7 @@ export class Select extends Expression {
     const perm = per(new SQLFrom(), into, forAll, where, order, up, client, bypass, group, fields, connection);
 
     const ret = seq(str("SELECT"),
-                    alt(str("DISTINCT"), opt(seq(str("SINGLE"), opt(str("FOR UPDATE"))))),
+                    altPrio(str("DISTINCT"), optPrio(seq(str("SINGLE"), optPrio(str("FOR UPDATE"))))),
                     opt(new SQLFieldList()),
                     perm);
 

@@ -1,5 +1,5 @@
 import {Statement} from "./_statement";
-import {str, seq, alt, opt, per, plus, IStatementRunnable} from "../combi";
+import {str, seq, alt, opt, per, plus, IStatementRunnable, altPrio} from "../combi";
 import {FieldSymbol} from "../expressions";
 import {Target, Source, Dynamic, ComponentCompare, ComponentCond, SimpleName, Field, FieldSub} from "../expressions";
 
@@ -26,7 +26,7 @@ export class DeleteInternal extends Statement {
 
     const adjacent = seq(str("ADJACENT DUPLICATES FROM"),
                          new Target(),
-                         opt(seq(str("COMPARING"), plus(alt(new FieldSub(), new Dynamic())))),
+                         opt(seq(str("COMPARING"), altPrio(str("ALL FIELDS"), plus(alt(new FieldSub(), new Dynamic()))))),
                          opt(seq(str("USING KEY"), new Field())));
 
     const fs = seq(new FieldSymbol(), where);

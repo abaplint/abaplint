@@ -18,6 +18,10 @@ const tests = [
   "TYPES ty_bar TYPE STANDARD TABLE OF /foo/bar INITIAL SIZE 0 WITH DEFAULT KEY.",
   "TYPES name TYPE STANDARD TABLE OF something WITH NON-UNIQUE KEY !name.",
   "TYPES ty_objects TYPE RANGE OF trobjtype INITIAL SIZE 1.",
+  "TYPES ty_overwrite_tt TYPE STANDARD TABLE OF ty_overwrite\n" +
+  "  WITH DEFAULT KEY\n" +
+  "  WITH UNIQUE HASHED KEY object_type_and_name COMPONENTS obj_type obj_name.",
+  "TYPES tty_log_out TYPE STANDARD TABLE OF ty_log_out WITH NON-UNIQUE DEFAULT KEY.",
 ];
 
 statementType(tests, "TYPE", Statements.Type);

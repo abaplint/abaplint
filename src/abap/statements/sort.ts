@@ -11,13 +11,15 @@ export class Sort extends Statement {
                     new FieldSymbol(),
                     new Dynamic());
 
-    const fields = plus(seq(sel, optPrio(order)));
+    const text = str("AS TEXT");
+
+    const fields = plus(seq(sel, optPrio(order), optPrio(text)));
 
     const by = seq(str("BY"), fields);
 
-    const normal = seq(new Target(), opt(per(order, by, str("STABLE"), str("AS TEXT"))));
+    const normal = seq(new Target(), opt(per(order, by, str("STABLE"), text)));
 
-    const target = alt(normal, str("AS TEXT"));
+    const target = alt(normal, text);
 
     return seq(str("SORT"), target);
   }
