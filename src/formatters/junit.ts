@@ -1,31 +1,57 @@
 import {Issue} from "../issue";
 import {IFormatter} from "./_iformatter";
-
-function escape(xml: string): string {
-  return xml.replace(/&/g, "&amp;")
-            .replace(/</g, "&lt;")
-            .replace(/>/g, "&gt;")
-            .replace(/"/g, "&quot;")
-            .replace(/'/g, "&apos;");
-}
+import {js2xml} from "xml-js";
 
 export class Junit implements IFormatter {
 
   public output(issues: Issue[], _fileCount: number): string {
-    let xml = "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n" +
-      "<testsuites>\n" +
-      "  <testsuite name=\"abaplint\" tests=\"" + issues.length + "\" failures=\"" + issues.length + "\" errors=\"0\" skipped=\"0\">\n";
+    const outputObj = {
+      _declaration: {
+        _attributes: {
+          version: "1.0",
+          encoding: "UTF-8",
+        },
+      },
+      testsuites: {
+        testsuite: {
+          _attributes: {
+            name: "abaplint",
+            tests: issues.length || 1,
+            failures: issues.length,
+            errors: 0,
+            skipped: 0,
+          },
+          testcase: [] as {}[],
+        },
+      },
+    };
 
-    for (const issue of issues) {
-      xml = xml + "    <testcase classname=\"" + issue.getFile().getFilename() +
-        "[" + issue.getStart().getRow() + ", " + issue.getStart().getCol() +
-        "]\" name=\"" + issue.getKey() + "\">\n" +
-        "      <failure message=\"" + escape(issue.getMessage()) + "\"/>\n" +
-        "    </testcase>\n";
+    if (issues.length > 0) {
+      for (const issue of issues) {
+        outputObj.testsuites.testsuite.testcase.push({
+          _attributes: {
+            classname: issue.getFile().getObjectName(),
+            file: issue.getFile().getFilename(),
+            name: `${issue.getFile().getFilename()}: [${issue.getStart().getRow()}, ${issue.getStart().getCol()}] - ${issue.getKey()}`,
+          },
+          failure: {
+            _attributes: {
+              message: issue.getKey(),
+            },
+            _cdata: `${issue.getMessage()}`,
+          },
+        });
+      }
+    } else {
+      outputObj.testsuites.testsuite.testcase.push({
+        _attributes: {
+          classname: "none",
+          name: "OK",
+        },
+      });
     }
 
-    xml = xml + "  </testsuite>\n" +
-      "</testsuites>";
+    const xml = js2xml(outputObj, {compact: true, spaces: 2});
 
     return xml;
   }
