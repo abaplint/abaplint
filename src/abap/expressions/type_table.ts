@@ -1,5 +1,5 @@
-import {seq, opt, alt, str, ver, star, per, Expression, IStatementRunnable, altPrio} from "../combi";
-import {Constant, FieldSub, TypeName, Integer} from "./";
+import {seq, opt, alt, str, ver, star, per, Expression, IStatementRunnable, altPrio, plus} from "../combi";
+import {Constant, FieldSub, TypeName, Integer, Field} from "./";
 import {Version} from "../../version";
 import {FieldChain} from "./field_chain";
 
@@ -12,13 +12,16 @@ export class TypeTable extends Expression {
     const uniqueness = alt(str("NON-UNIQUE"), str("UNIQUE"));
     const defaultKey = str("DEFAULT KEY");
     const emptyKey = ver(Version.v740sp02, str("EMPTY KEY"));
+//    const components = seq(str("COMPONENTS"), plus(new FieldSub()));
+//    const named = seq(new Field(), opt(components));
 
     const key = seq(str("WITH"),
                     opt(uniqueness),
                     altPrio(defaultKey, emptyKey,
                             seq(opt(alt(str("SORTED"), str("HASHED"))),
                                 str("KEY"),
-                                star(new FieldSub()))));
+                                alt(seq(new Field(), str("COMPONENTS"), plus(new FieldSub())),
+                                    plus(new FieldSub())))));
 
     const normal = seq(opt(alt(str("STANDARD"), str("HASHED"), str("INDEX"), str("SORTED"), str("ANY"))),
                        str("TABLE"),

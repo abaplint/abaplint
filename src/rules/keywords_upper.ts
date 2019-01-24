@@ -85,7 +85,7 @@ export class KeywordsUpper extends ABAPRule {
           continue;
         }
         // todo
-        if (parent instanceof Statements.FieldSymbol) {
+        if (parent instanceof Statements.FieldSymbol || parent instanceof Statements.Type) {
           continue;
         }
         if (str !== str.toLowerCase() && child.get() instanceof Identifier) {
