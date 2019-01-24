@@ -74,7 +74,7 @@ export class KeywordsUpper extends ABAPRule {
         }
         const str = child.get().getStr();
         // todo, this is a hack, the parser should recongize OTHERS as a keyword
-        if (str.toUpperCase() === "OTHERS") {
+        if (str.toUpperCase() === "OTHERS" || str.toUpperCase() === "TEXT") {
           continue;
         }
         // todo, this is a hack, the parser should recigize SCREEN as a keyword
