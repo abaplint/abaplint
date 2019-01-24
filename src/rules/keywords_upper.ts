@@ -9,7 +9,7 @@ import {IObject} from "../objects/_iobject";
 import {Registry} from "../registry";
 import {Class} from "../objects";
 import {BasicRuleConfig} from "./_basic_rule_config";
-import {ClassImplementation} from "../abap/statements";
+import {ClassImplementation, CallFunction} from "../abap/statements";
 
 export class KeywordsUpperConf extends BasicRuleConfig {
   public ignoreExceptions: boolean = true;
@@ -73,6 +73,10 @@ export class KeywordsUpper extends ABAPRule {
           continue;
         }
         const str = child.get().getStr();
+        // todo, this is a hack, the parser should recongize OTHERS as a keyword
+        if (parent instanceof CallFunction && str.toUpperCase() === "OTHERS") {
+          continue;
+        }
         if (str !== str.toLowerCase() && child.get() instanceof Identifier) {
           return child.get().getPos();
         }
