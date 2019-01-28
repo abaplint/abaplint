@@ -23,7 +23,7 @@ The code is in active development and some rules may not be described in documen
 * [Atom](https://atom.io/packages/linter-abaplint) ([source](https://github.com/larshp/linter-abaplint))
 * [GitHub App](https://github.com/apps/abaplint)
 * [GitHub Actions](https://github.com/abaplint/actions-abaplint)
-* GitLab Pipelines, wip, https://gitlab.com/sbu-absw/abaplint-example
+* [GitLab Pipelines](https://gitlab.com/sbu-absw/abaplint-example)
 * Code Climate Engine, todo
 * ABAP in Eclipse, todo
 
