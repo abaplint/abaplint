@@ -25,12 +25,12 @@ export function getStatements(abap: string, version?: Version) {
 }
 
 export function findIssues(abap: string) {
-  const file = new MemoryFile("cl_foo.prog.abap", abap);
+  const file = new MemoryFile("zfoo.prog.abap", abap);
   return new Registry().addFile(file).findIssues();
 }
 
 export function parse(abap: string, config?: Config) {
-  const file = new MemoryFile("cl_foo.prog.abap", abap);
+  const file = new MemoryFile("zfoo.prog.abap", abap);
   return new Registry(config).addFile(file).parse().getABAPFiles()[0];
 }
 

@@ -1,14 +1,13 @@
 import {Issue} from "../issue";
 import {BasicRuleConfig} from "./_basic_rule_config";
 import {Registry} from "../registry";
-import {MessageClass} from "../objects";
 import {IObject} from "../objects/_iobject";
 import {IRule} from "./_irule";
 import * as Objects from "../objects";
 import {Position} from "../position";
 
 export class ObjectNamingConf extends BasicRuleConfig {
-  public clas = "^ZCL\\_";
+  public clas = "^ZC(L|X)\\_";
   public intf = "^ZIF\\_";
   public prog = "^Z";
   public fugr = "^Z";
@@ -20,7 +19,6 @@ export class ObjectNamingConf extends BasicRuleConfig {
   public tran = "^Z";
   public enqu = "^Z";
   public auth = "^Z";
-  public devc = "^Z";
   public pinf = "^Z";
 }
 
@@ -47,10 +45,6 @@ export class ObjectNaming implements IRule {
     let message: string | undefined = undefined;
     let pattern: string;
 
-    if (!(obj instanceof MessageClass)) {
-      return [];
-    }
-
     if (obj instanceof Objects.Class) {
       pattern = this.getConfig().clas;
     } else if (obj instanceof Objects.Interface) {
@@ -73,8 +67,6 @@ export class ObjectNaming implements IRule {
       pattern = this.getConfig().enqu;
     } else if (obj instanceof Objects.AuthorizationObject) {
       pattern = this.getConfig().auth;
-    } else if (obj instanceof Objects.Package) {
-      pattern = this.getConfig().devc;
     } else if (obj instanceof Objects.PackageInterface) {
       pattern = this.getConfig().pinf;
     } else if (obj instanceof Objects.MessageClass) {

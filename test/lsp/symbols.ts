@@ -6,14 +6,14 @@ import {Symbols} from "../../src/lsp/symbols";
 describe("LSP, symbols", () => {
 
   it("Simple WRITE, no symbols", () => {
-    const file = new MemoryFile("foobar.prog.abap", "WRITE foo.");
+    const file = new MemoryFile("zfoobar.prog.abap", "WRITE foo.");
     const reg = new Registry().addFile(file).parse();
     const symbols = Symbols.find(reg, file.getFilename());
     expect(symbols.length).to.equal(0);
   });
 
   it("Class Definition", () => {
-    const file = new MemoryFile("foobar.prog.abap", "CLASS lcl_foobar DEFINITION.\nENDCLASS.");
+    const file = new MemoryFile("zfoobar.prog.abap", "CLASS lcl_foobar DEFINITION.\nENDCLASS.");
     const reg = new Registry().addFile(file).parse();
     expect(reg.findIssues().length).to.equal(0);
     const symbols = Symbols.find(reg, file.getFilename());
@@ -22,7 +22,7 @@ describe("LSP, symbols", () => {
   });
 
   it("Class Implementation", () => {
-    const file = new MemoryFile("foobar.prog.abap", "CLASS lcl_foobar IMPLEMENTATION.\nENDCLASS.");
+    const file = new MemoryFile("zfoobar.prog.abap", "CLASS lcl_foobar IMPLEMENTATION.\nENDCLASS.");
     const reg = new Registry().addFile(file).parse();
     const symbols = Symbols.find(reg, file.getFilename());
     expect(symbols.length).to.equal(1);
@@ -30,7 +30,7 @@ describe("LSP, symbols", () => {
   });
 
   it("Class Implementation, with method", () => {
-    const file = new MemoryFile("foobar.prog.abap", "CLASS lcl_foobar IMPLEMENTATION.\nMETHOD foo.\nENDMETHOD.\nENDCLASS.");
+    const file = new MemoryFile("zfoobar.prog.abap", "CLASS lcl_foobar IMPLEMENTATION.\nMETHOD foo.\nENDMETHOD.\nENDCLASS.");
     const reg = new Registry().addFile(file).parse();
     const symbols = Symbols.find(reg, file.getFilename());
     expect(symbols.length).to.equal(1);
@@ -41,7 +41,7 @@ describe("LSP, symbols", () => {
   });
 
   it("FORM Definition", () => {
-    const file = new MemoryFile("foobar.prog.abap", "FORM foobar.\nENDFORM.");
+    const file = new MemoryFile("zfoobar.prog.abap", "FORM foobar.\nENDFORM.");
     const reg = new Registry().addFile(file).parse();
     expect(reg.findIssues().length).to.equal(0);
     const symbols = Symbols.find(reg, file.getFilename());
