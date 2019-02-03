@@ -9,3 +9,5 @@ coverage/
 npm-debug.log
 .alm/
 dump.json
+.vscode/
+.nyc_output/
