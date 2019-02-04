@@ -10,6 +10,7 @@ import {PrettyPrinter, IndentationOptions} from "../abap/pretty_printer";
 export class IndentationConf extends BasicRuleConfig {
   public ignoreExceptions: boolean = true;
   public alignTryCatch: boolean = false;
+  public globalClassSkipFirst: boolean = false;
 }
 
 export class Indentation extends ABAPRule {
@@ -47,6 +48,7 @@ export class Indentation extends ABAPRule {
 
     const indentOpts: IndentationOptions = {
       alignTryCatch: this.conf.alignTryCatch,
+      globalClassSkipFirst: this.conf.globalClassSkipFirst,
     };
     const expected = new PrettyPrinter(file, indentOpts).getExpectedIndentation();
 

@@ -1,4 +1,5 @@
 import * as Statements from "./statements";
+import * as Expressions from "./expressions";
 import {Unknown, MacroContent, MacroCall, Comment, Empty} from "./statements/_statement";
 import {StatementNode, ExpressionNode, TokenNodeRegex, TokenNode} from "./nodes";
 import {ABAPFile} from "../files";
@@ -9,7 +10,12 @@ import {Position} from "../position";
 
 export interface IndentationOptions {
   alignTryCatch?: boolean;
+  globalClassSkipFirst?: boolean;
 }
+
+const classIsGlobal = (t: any) => {
+  return t instanceof ExpressionNode && t.get() instanceof Expressions.ClassGlobal;
+};
 
 class Stack {
   private items: number[] = [];
@@ -83,6 +89,7 @@ class Indentation {
       } else if (type instanceof Statements.EndClass
           || type instanceof Statements.EndCase) {
         indent = stack.pop() - 2;
+        indent = Math.max(indent, init); // maybe move this out of switch before ret.push(indent)
       } else if (type instanceof Comment
           || type instanceof Statements.IncludeType
           || type instanceof Empty
@@ -126,6 +133,9 @@ class Indentation {
           || type instanceof Statements.Case
           || type instanceof Statements.ClassImplementation) {
         indent = indent + 2;
+        if (options.globalClassSkipFirst && statement.getChildren().find(classIsGlobal)) {
+          indent -= 2;
+        }
         stack.push(indent);
       }
     }
