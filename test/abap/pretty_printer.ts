@@ -4,15 +4,6 @@ import {MemoryFile} from "../../src/files";
 import {Registry} from "../../src/registry";
 
 const testTitle = (text: string): string => { return text.split("\n")[0]; };
-const createRunner = (test: any, methodName: string): (() => void) => {
-  return () => {
-    const reg = new Registry().addFile(new MemoryFile("zfoo.prog.abap", test.input)).parse();
-    expect(reg.getABAPFiles().length).to.equal(1);
-    const printer = new PrettyPrinter(reg.getABAPFiles()[0], test.options);
-    const result = (printer as any)[methodName]();
-    expect(result).to.deep.equal(test.expected);
-  };
-};
 
 describe("Pretty printer, keywords upper case", () => {
   const tests = [
@@ -81,5 +72,12 @@ describe("Pretty printer with alignTryCatch", () => {
       options: {alignTryCatch: true}},
   ];
 
-  tests.forEach((test) => it(testTitle(test.input), createRunner(test, "getExpectedIndentation")));
+  tests.forEach((test) => {
+    it(testTitle(test.input), () => {
+      const reg = new Registry().addFile(new MemoryFile("zfoo.prog.abap", test.input)).parse();
+      expect(reg.getABAPFiles().length).to.equal(1);
+      const result = new PrettyPrinter(reg.getABAPFiles()[0], test.options).getExpectedIndentation();
+      expect(result).to.deep.equal(test.expected);
+    });
+  });
 });
