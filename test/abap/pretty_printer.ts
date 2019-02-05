@@ -3,6 +3,8 @@ import {PrettyPrinter} from "../../src/abap/pretty_printer";
 import {MemoryFile} from "../../src/files";
 import {Registry} from "../../src/registry";
 
+const testTitle = (text: string): string => { return text.split("\n")[0]; };
+
 describe("Pretty printer, keywords upper case", () => {
   const tests = [
     {input: "REPORT zfoo.", expected: "REPORT zfoo."},
@@ -13,7 +15,7 @@ describe("Pretty printer, keywords upper case", () => {
   ];
 
   tests.forEach((test) => {
-    it(test.input, () => {
+    it(testTitle(test.input), () => {
       const reg = new Registry().addFile(new MemoryFile("zfoo.prog.abap", test.input)).parse();
       expect(reg.getABAPFiles().length).to.equal(1);
       const result = new PrettyPrinter(reg.getABAPFiles()[0]).run();
@@ -31,7 +33,7 @@ describe("Pretty printer, indent code", () => {
   ];
 
   tests.forEach((test) => {
-    it(test.input, () => {
+    it(testTitle(test.input), () => {
       const reg = new Registry().addFile(new MemoryFile("zfoo.prog.abap", test.input)).parse();
       expect(reg.getABAPFiles().length).to.equal(1);
       const result = new PrettyPrinter(reg.getABAPFiles()[0]).run();
@@ -49,10 +51,32 @@ describe("Pretty printer, expected indentation", () => {
   ];
 
   tests.forEach((test) => {
-    it(test.input, () => {
+    it(testTitle(test.input), () => {
       const reg = new Registry().addFile(new MemoryFile("zfoo.prog.abap", test.input)).parse();
       expect(reg.getABAPFiles().length).to.equal(1);
       const result = new PrettyPrinter(reg.getABAPFiles()[0]).getExpectedIndentation();
+      expect(result).to.deep.equal(test.expected);
+    });
+  });
+});
+
+describe("Pretty printer with alignTryCatch", () => {
+  const tests = [
+    {
+      input: "try. \"no align\nwrite moo.\ncatch cx_root.\nwrite err.\nendtry.",
+      expected: [1, -1, 5, 3, 5, 1],
+    },
+    {
+      input: "try. \"with align\nwrite moo.\ncatch cx_root.\nwrite err.\nendtry.",
+      expected: [1, -1, 3, 1, 3, 1],
+      options: {alignTryCatch: true}},
+  ];
+
+  tests.forEach((test) => {
+    it(testTitle(test.input), () => {
+      const reg = new Registry().addFile(new MemoryFile("zfoo.prog.abap", test.input)).parse();
+      expect(reg.getABAPFiles().length).to.equal(1);
+      const result = new PrettyPrinter(reg.getABAPFiles()[0], test.options).getExpectedIndentation();
       expect(result).to.deep.equal(test.expected);
     });
   });

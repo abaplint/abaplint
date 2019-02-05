@@ -7,6 +7,10 @@ import {Position} from "../position";
 
 // todo, will break if there is multiple statements per line?
 
+export interface IndentationOptions {
+  alignTryCatch?: boolean;
+}
+
 class Stack {
   private items: number[] = [];
 
@@ -27,7 +31,7 @@ class Stack {
 
 class Indentation {
 // returns list of expected indentation for each line/statement?
-  public static run(file: ABAPFile): number[] {
+  public static run(file: ABAPFile, options: IndentationOptions): number[] {
     const ret: number[] = [];
     const init: number = 1;
     let indent: number = init;
@@ -75,7 +79,7 @@ class Indentation {
           || type instanceof Statements.When) {
         indent = stack.peek();
       } else if (type instanceof Statements.EndTry) {
-        indent = stack.pop() - 4;
+        indent = stack.pop() - (options.alignTryCatch ? 2 : 4);
       } else if (type instanceof Statements.EndClass
           || type instanceof Statements.EndCase) {
         indent = stack.pop() - 2;
@@ -116,7 +120,7 @@ class Indentation {
           || type instanceof Statements.Private) {
         indent = indent + 2;
       } else if (type instanceof Statements.Try) {
-        indent = indent + 4;
+        indent = indent + (options.alignTryCatch ? 2 : 4);
         stack.push(indent);
       } else if (type instanceof Statements.ClassDefinition
           || type instanceof Statements.Case
@@ -133,10 +137,12 @@ class Indentation {
 export class PrettyPrinter {
   private result: string;
   private file: ABAPFile;
+  private options: IndentationOptions;
 
-  constructor(file: ABAPFile) {
+  constructor(file: ABAPFile, options?: IndentationOptions) {
     this.result = file.getRaw();
     this.file = file;
+    this.options = options || {};
   }
 
   public run(): string {
@@ -156,7 +162,7 @@ export class PrettyPrinter {
   }
 
   public getExpectedIndentation(): number[] {
-    return Indentation.run(this.file);
+    return Indentation.run(this.file, this.options);
   }
 
   private indentCode() {

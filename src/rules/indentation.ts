@@ -5,10 +5,11 @@ import {IObject} from "../objects/_iobject";
 import {Class} from "../objects";
 import {Registry} from "../registry";
 import {BasicRuleConfig} from "./_basic_rule_config";
-import {PrettyPrinter} from "../abap/pretty_printer";
+import {PrettyPrinter, IndentationOptions} from "../abap/pretty_printer";
 
 export class IndentationConf extends BasicRuleConfig {
   public ignoreExceptions: boolean = true;
+  public alignTryCatch: boolean = false;
 }
 
 export class Indentation extends ABAPRule {
@@ -44,7 +45,10 @@ export class Indentation extends ABAPRule {
       }
     }
 
-    const expected = new PrettyPrinter(file).getExpectedIndentation();
+    const indentOpts: IndentationOptions = {
+      alignTryCatch: this.conf.alignTryCatch,
+    };
+    const expected = new PrettyPrinter(file, indentOpts).getExpectedIndentation();
 
     for (const statement of file.getStatements()) {
       const position = statement.getFirstToken().getPos();
