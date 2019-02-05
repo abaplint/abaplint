@@ -13,10 +13,6 @@ export interface IndentationOptions {
   globalClassSkipFirst?: boolean;
 }
 
-const classIsGlobal = (t: any) => {
-  return t instanceof ExpressionNode && t.get() instanceof Expressions.ClassGlobal;
-};
-
 class Stack {
   private items: number[] = [];
 
@@ -133,7 +129,7 @@ class Indentation {
           || type instanceof Statements.Case
           || type instanceof Statements.ClassImplementation) {
         indent = indent + 2;
-        if (options.globalClassSkipFirst && statement.getChildren().find(classIsGlobal)) {
+        if (options.globalClassSkipFirst && statement.findFirstExpression(Expressions.ClassGlobal)) {
           indent -= 2;
         }
         stack.push(indent);

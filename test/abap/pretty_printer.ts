@@ -82,7 +82,7 @@ describe("Pretty printer with alignTryCatch", () => {
   });
 });
 
-describe.only("Pretty printer with globalClassSkipFirst", () => {
+describe("Pretty printer with globalClassSkipFirst", () => {
   const tests = [
     {
       input: "class zcl_no_skip definition public.\npublic section.\nendclass.",
