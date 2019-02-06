@@ -63,6 +63,29 @@ lines: 4
 ### definitions_top
 Similar to https://github.com/larshp/abapOpenChecks/wiki/ZCL_AOC_CHECK_17
 
+### indentation
+Controls proper indentation. Tab stop is 2 spaces (fixed for now). Additional options:
+- **ignoreExceptions** - completely ignores exception classes (due to default global exception generation, which does not format code)
+- **alignTryCatch** - aligns `catch` to the same level as `try`
+
+```abap
+try.
+  some_statement( ).
+catch cx_root.
+  message 'error'.
+endtry.
+```
+
+- **globalClassSkipFirst** - skips first tab stop after the class definition/implementation (due to standard formatting in se80, which aligns `method` and `* section` to the left edge)
+```abap
+class lcl_app implementation.
+method run.
+  " and here goes normal indentation
+endmethod.
+endclass.
+```
+
+
 ## Configuration
 
 run 'abaplint -h'

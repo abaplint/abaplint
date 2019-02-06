@@ -81,3 +81,31 @@ describe("Pretty printer with alignTryCatch", () => {
     });
   });
 });
+
+describe("Pretty printer with globalClassSkipFirst", () => {
+  const tests = [
+    {
+      input: "class zcl_no_skip definition public.\npublic section.\nendclass.",
+      expected: [1, 3, 1],
+    },
+    {
+      input: "class zcl_skip definition public.\npublic section.\nendclass.\nwrite lo_var.",
+      expected: [1, 1, 1, 1],
+      options: {globalClassSkipFirst: true},
+    },
+    {
+      input: "class lcl_skip definition.\npublic section.\nendclass.\nwrite lo_var.",
+      expected: [1, 3, 1, 1],
+      options: {globalClassSkipFirst: true},
+    },
+  ];
+
+  tests.forEach((test) => {
+    it(testTitle(test.input), () => {
+      const reg = new Registry().addFile(new MemoryFile("zfoo.prog.abap", test.input)).parse();
+      expect(reg.getABAPFiles().length).to.equal(1);
+      const result = new PrettyPrinter(reg.getABAPFiles()[0], test.options).getExpectedIndentation();
+      expect(result).to.deep.equal(test.expected);
+    });
+  });
+});
