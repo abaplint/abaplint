@@ -8,6 +8,7 @@ export * from "./description_empty";
 export * from "./empty_statement";
 export * from "./exit_or_check";
 export * from "./exporting";
+export * from "./no_public_attributes";
 export * from "./functional_writing";
 export * from "./indentation";
 export * from "./object_naming";
