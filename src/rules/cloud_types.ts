@@ -36,6 +36,7 @@ export class CloudTypes implements IRule {
         || obj instanceof Objects.MessageClass
         || obj instanceof Objects.Package
         || obj instanceof Objects.Table
+        || obj instanceof Objects.TableType
         || obj instanceof Objects.DataDefinition
         || obj instanceof Objects.DataControl
         || obj instanceof Objects.LockObject
