@@ -32,13 +32,14 @@ class Stack {
 }
 
 class Indentation {
-// returns list of expected indentation for each line/statement?
+  // returns list of expected indentation for each line/statement?
   public static run(file: ABAPFile, options: IndentationOptions): number[] {
     const ret: number[] = [];
     const init: number = 1;
     let indent: number = init;
     let parentIsEvent: boolean = false;
     const stack = new Stack();
+    const globalClasses = new Set();
 
     for (const statement of file.getStatements()) {
       const type = statement.get();
@@ -129,8 +130,20 @@ class Indentation {
           || type instanceof Statements.Case
           || type instanceof Statements.ClassImplementation) {
         indent = indent + 2;
-        if (options.globalClassSkipFirst && statement.findFirstExpression(Expressions.ClassGlobal)) {
-          indent -= 2;
+        if (options.globalClassSkipFirst) {
+          if (type instanceof Statements.ClassDefinition && statement.findFirstExpression(Expressions.ClassGlobal)) {
+            const className = statement.findFirstExpression(Expressions.ClassName);
+            if (className) {
+              globalClasses.add(className.getFirstToken().getStr().toUpperCase());
+            }
+            indent -= 2;
+          }
+          if (type instanceof Statements.ClassImplementation) {
+            const className = statement.findFirstExpression(Expressions.ClassName);
+            if (className && globalClasses.has(className.getFirstToken().getStr().toUpperCase())) {
+              indent -= 2;
+            }
+          }
         }
         stack.push(indent);
       }
