@@ -14,6 +14,7 @@ export * from "./object_naming";
 export * from "./indentical_form_names";
 export * from "./keywords_upper";
 export * from "./line_length";
+export * from "./no_exec_sql";
 export * from "./line_only_punc";
 export * from "./local_class_naming";
 export * from "./local_variable_names";
