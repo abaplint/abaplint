@@ -98,6 +98,26 @@ describe("Pretty printer with globalClassSkipFirst", () => {
       expected: [1, 3, 1, 1],
       options: {globalClassSkipFirst: true},
     },
+    {
+      input: [
+        "class zcl_skip definition public.",
+        "public section.",
+        "methods xxx.",
+        "endclass.",
+        "class zcl_skip implementation.",
+        "method xxx.",
+        "write msg.",
+        "endmethod.",
+        "endclass.",
+        "class zcl_NO_skip implementation.",
+        "method yyy.",
+        "write msg.",
+        "endmethod.",
+        "endclass.",
+      ].join("\n"),
+      expected: [1, 1, 3, 1, 1, 1, 3, 1, 1, 1, 3, 5, 3, 1],
+      options: {globalClassSkipFirst: true},
+    },
   ];
 
   tests.forEach((test) => {

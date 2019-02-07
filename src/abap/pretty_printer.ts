@@ -32,8 +32,15 @@ class Stack {
 }
 
 class Indentation {
-// returns list of expected indentation for each line/statement?
-  public static run(file: ABAPFile, options: IndentationOptions): number[] {
+  private options: IndentationOptions;
+  private globalClasses = new Set();
+
+  constructor(options: IndentationOptions) {
+    this.options = options;
+  }
+
+  // returns list of expected indentation for each line/statement?
+  public run(file: ABAPFile): number[] {
     const ret: number[] = [];
     const init: number = 1;
     let indent: number = init;
@@ -81,7 +88,7 @@ class Indentation {
           || type instanceof Statements.When) {
         indent = stack.peek();
       } else if (type instanceof Statements.EndTry) {
-        indent = stack.pop() - (options.alignTryCatch ? 2 : 4);
+        indent = stack.pop() - (this.options.alignTryCatch ? 2 : 4);
       } else if (type instanceof Statements.EndClass
           || type instanceof Statements.EndCase) {
         indent = stack.pop() - 2;
@@ -123,20 +130,39 @@ class Indentation {
           || type instanceof Statements.Private) {
         indent = indent + 2;
       } else if (type instanceof Statements.Try) {
-        indent = indent + (options.alignTryCatch ? 2 : 4);
+        indent = indent + (this.options.alignTryCatch ? 2 : 4);
         stack.push(indent);
       } else if (type instanceof Statements.ClassDefinition
           || type instanceof Statements.Case
           || type instanceof Statements.ClassImplementation) {
-        indent = indent + 2;
-        if (options.globalClassSkipFirst && statement.findFirstExpression(Expressions.ClassGlobal)) {
-          indent -= 2;
-        }
+        indent = indent + (this.skipIndentForGlobalClass(statement) ? 0 : 2);
         stack.push(indent);
       }
     }
 
     return ret;
+  }
+
+  private skipIndentForGlobalClass(statement: StatementNode): boolean {
+    if (!this.options.globalClassSkipFirst) {
+      return false;
+    }
+
+    const type = statement.get();
+
+    if (type instanceof Statements.ClassDefinition && statement.findFirstExpression(Expressions.ClassGlobal)) {
+      const className = statement.findFirstExpression(Expressions.ClassName);
+      if (className) {
+        this.globalClasses.add(className.getFirstToken().getStr().toUpperCase());
+      }
+      return true;
+    } else if (type instanceof Statements.ClassImplementation) {
+      const className = statement.findFirstExpression(Expressions.ClassName);
+      if (className && this.globalClasses.has(className.getFirstToken().getStr().toUpperCase())) {
+        return true;
+      }
+    }
+    return false;
   }
 }
 
@@ -168,7 +194,7 @@ export class PrettyPrinter {
   }
 
   public getExpectedIndentation(): number[] {
-    return Indentation.run(this.file, this.options);
+    return (new Indentation(this.options)).run(this.file);
   }
 
   private indentCode() {
