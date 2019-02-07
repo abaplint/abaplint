@@ -32,24 +32,22 @@ class Stack {
 }
 
 class Indentation {
-  private file: ABAPFile;
   private options: IndentationOptions;
   private globalClasses = new Set();
 
-  constructor(file: ABAPFile, options: IndentationOptions) {
-    this.file = file;
+  constructor(options: IndentationOptions) {
     this.options = options;
   }
 
   // returns list of expected indentation for each line/statement?
-  public run(): number[] {
+  public run(file: ABAPFile): number[] {
     const ret: number[] = [];
     const init: number = 1;
     let indent: number = init;
     let parentIsEvent: boolean = false;
     const stack = new Stack();
 
-    for (const statement of this.file.getStatements()) {
+    for (const statement of file.getStatements()) {
       const type = statement.get();
 
       if (type instanceof Statements.EndIf
@@ -196,7 +194,7 @@ export class PrettyPrinter {
   }
 
   public getExpectedIndentation(): number[] {
-    return (new Indentation(this.file, this.options)).run();
+    return (new Indentation(this.options)).run(this.file);
   }
 
   private indentCode() {
