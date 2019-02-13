@@ -1,4 +1,4 @@
-import {KeywordsUpper} from "../../src/rules/keywords_upper";
+import {KeywordsUpper, KeywordsUpperConf} from "../../src/rules/keywords_upper";
 import {testRule} from "./_utils";
 
 const tests = [
@@ -28,3 +28,13 @@ const tests = [
 ];
 
 testRule(tests, KeywordsUpper);
+
+const tests2 = [
+  {abap: "class ycl_something definition public final.\nendclass.\n", cnt: 0},
+  {abap: "class ycl_something definition public final.\nendclass.\nwrite foo.", cnt: 1},
+];
+
+const config = new KeywordsUpperConf();
+config.ignoreGlobalClassDefinition = true;
+
+testRule(tests2, KeywordsUpper, config);

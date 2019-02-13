@@ -10,10 +10,12 @@ import {Registry} from "../registry";
 import {Class} from "../objects";
 import {BasicRuleConfig} from "./_basic_rule_config";
 import * as Statements from "../abap/statements";
+import * as Expressions from "../abap/expressions";
 
 export class KeywordsUpperConf extends BasicRuleConfig {
   public ignoreExceptions: boolean = true;
   public ignoreLowerClassImplmentationStatement: boolean = true;
+  public ignoreGlobalClassDefinition: boolean = false;
 }
 
 export class KeywordsUpper extends ABAPRule {
@@ -38,6 +40,7 @@ export class KeywordsUpper extends ABAPRule {
 
   public runParsed(file: ABAPFile, _reg: Registry, obj: IObject) {
     const issues: Issue[] = [];
+    let skip = false;
 
     if (this.conf.ignoreExceptions && obj instanceof Class) {
       const definition = obj.getClassDefinition();
@@ -53,6 +56,20 @@ export class KeywordsUpper extends ABAPRule {
           || statement.get() instanceof Comment) {
         continue;
       }
+
+      if (this.conf.ignoreGlobalClassDefinition) {
+        if (statement.get() instanceof Statements.ClassDefinition
+            && statement.findFirstExpression(Expressions.ClassGlobal)) {
+          skip = true;
+          continue;
+        } else if (skip === true && statement.get() instanceof Statements.EndClass) {
+          skip = false;
+          continue;
+        } else if (skip === true) {
+          continue;
+        }
+      }
+
       const position = this.traverse(statement, statement.get());
       if (position) {
         const issue = new Issue({file, message: this.getDescription(), key: this.getKey(), start: position});
