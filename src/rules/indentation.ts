@@ -14,6 +14,7 @@ export class IndentationConf extends BasicRuleConfig {
   public alignTryCatch: boolean = false;
   public globalClassSkipFirst: boolean = false;
   public ignoreGlobalClassDefinition: boolean = false;
+  public ignoreGlobalInterface: boolean = false;
 }
 
 export class Indentation extends ABAPRule {
@@ -63,10 +64,23 @@ export class Indentation extends ABAPRule {
 
       if (this.conf.ignoreGlobalClassDefinition) {
         if (statement.get() instanceof Statements.ClassDefinition
-            && statement.findFirstExpression(Expressions.ClassGlobal)) {
+            && statement.findFirstExpression(Expressions.Global)) {
           skip = true;
           continue;
         } else if (skip === true && statement.get() instanceof Statements.EndClass) {
+          skip = false;
+          continue;
+        } else if (skip === true) {
+          continue;
+        }
+      }
+
+      if (this.conf.ignoreGlobalInterface) {
+        if (statement.get() instanceof Statements.Interface
+            && statement.findFirstExpression(Expressions.Global)) {
+          skip = true;
+          continue;
+        } else if (skip === true && statement.get() instanceof Statements.EndInterface) {
           skip = false;
           continue;
         } else if (skip === true) {

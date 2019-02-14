@@ -54,7 +54,7 @@ export class ClassDefinition extends Identifier {
   }
 
   public isGlobal(): boolean {
-    return this.node.findFirstExpression(Expressions.ClassGlobal) !== undefined;
+    return this.node.findFirstExpression(Expressions.Global) !== undefined;
   }
 
   public isFinal(): boolean {

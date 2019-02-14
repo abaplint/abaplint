@@ -16,6 +16,7 @@ export class KeywordsUpperConf extends BasicRuleConfig {
   public ignoreExceptions: boolean = true;
   public ignoreLowerClassImplmentationStatement: boolean = true;
   public ignoreGlobalClassDefinition: boolean = false;
+  public ignoreGlobalInterface: boolean = false;
 }
 
 export class KeywordsUpper extends ABAPRule {
@@ -59,10 +60,23 @@ export class KeywordsUpper extends ABAPRule {
 
       if (this.conf.ignoreGlobalClassDefinition) {
         if (statement.get() instanceof Statements.ClassDefinition
-            && statement.findFirstExpression(Expressions.ClassGlobal)) {
+            && statement.findFirstExpression(Expressions.Global)) {
           skip = true;
           continue;
         } else if (skip === true && statement.get() instanceof Statements.EndClass) {
+          skip = false;
+          continue;
+        } else if (skip === true) {
+          continue;
+        }
+      }
+
+      if (this.conf.ignoreGlobalInterface) {
+        if (statement.get() instanceof Statements.Interface
+            && statement.findFirstExpression(Expressions.Global)) {
+          skip = true;
+          continue;
+        } else if (skip === true && statement.get() instanceof Statements.EndInterface) {
           skip = false;
           continue;
         } else if (skip === true) {

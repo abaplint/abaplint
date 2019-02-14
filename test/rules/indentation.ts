@@ -54,11 +54,13 @@ testRule(tests, Indentation);
 
 const tests2 = [
   {abap: "class ycl_something definition public final.\npublic section.\nendclass.\n", cnt: 0},
+  {abap: "interface zif_foobar public.\nmethods foo.\nendinterface.\n", cnt: 0},
   {abap: "write hello.\n", cnt: 0},
   {abap: " write hello.\n", cnt: 1},
 ];
 
 const config = new IndentationConf();
 config.ignoreGlobalClassDefinition = true;
+config.ignoreGlobalInterface = true;
 
 testRule(tests2, Indentation, config);

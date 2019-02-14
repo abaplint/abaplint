@@ -1,6 +1,6 @@
 export * from "./arith_operator";
 export * from "./arrow_or_dash";
-export * from "./class_global";
+export * from "./global";
 export * from "./class_name";
 export * from "./compare_operator";
 export * from "./compare";

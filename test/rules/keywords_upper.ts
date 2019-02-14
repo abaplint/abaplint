@@ -31,10 +31,12 @@ testRule(tests, KeywordsUpper);
 
 const tests2 = [
   {abap: "class ycl_something definition public final.\nendclass.\n", cnt: 0},
+  {abap: "interface zif_foobar public.\nendinterface.\n", cnt: 0},
   {abap: "class ycl_something definition public final.\nendclass.\nwrite foo.", cnt: 1},
 ];
 
 const config = new KeywordsUpperConf();
 config.ignoreGlobalClassDefinition = true;
+config.ignoreGlobalInterface = true;
 
 testRule(tests2, KeywordsUpper, config);

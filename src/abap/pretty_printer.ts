@@ -150,7 +150,7 @@ class Indentation {
 
     const type = statement.get();
 
-    if (type instanceof Statements.ClassDefinition && statement.findFirstExpression(Expressions.ClassGlobal)) {
+    if (type instanceof Statements.ClassDefinition && statement.findFirstExpression(Expressions.Global)) {
       const className = statement.findFirstExpression(Expressions.ClassName);
       if (className) {
         this.globalClasses.add(className.getFirstToken().getStr().toUpperCase());
