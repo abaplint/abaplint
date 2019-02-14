@@ -1,7 +1,7 @@
 /*global abaplint*/
 /*global CodeMirror*/
 
-let registry = new abaplint.Registry().addFile(new abaplint.File("foobar.prog.abap", "dummy"));
+let registry = new abaplint.Registry().addFile(new abaplint.File("zfoobar.prog.abap", "dummy"));
 
 function stripNewline(input) {
   let result = input;
