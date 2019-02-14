@@ -1,7 +1,9 @@
 /*global abaplint*/
 /*global CodeMirror*/
 
-let registry = new abaplint.Registry().addFile(new abaplint.File("zfoobar.prog.abap", "dummy"));
+const filename = "zfoobar.prog.abap";
+
+let registry = new abaplint.Registry().addFile(new abaplint.File(filename, "dummy"));
 
 function stripNewline(input) {
   let result = input;
@@ -78,13 +80,13 @@ function buildStructure(nodes) {
 
 function process(val = undefined) {
   let input = stripNewline(val ? val : editor.getValue());
-  let file = new abaplint.File("foobar.prog.abap", input);
+  let file = new abaplint.File(filename, input);
   return registry.updateFile(file).findIssues();
 }
 
 function parse() {
   let input = stripNewline(editor.getValue());
-  let file = new abaplint.File("foobar.prog.abap", input);
+  let file = new abaplint.File(filename, input);
   return registry.updateFile(file).parse().getABAPFiles()[0];
 }
 
@@ -99,7 +101,7 @@ function issues() {
       "<div onmouseover=\"javascript:markLine(" + issue.start.row + ", " +
       issue.start.col + ");\">" +
       "[" + issue.start.row + ", "+ issue.start.col + "] " +
-      issue.description +
+      escape(issue.description) +
       "</div>\n";
   }
   document.getElementById("info").innerHTML = output;
@@ -130,7 +132,12 @@ function structure() {
 }
 
 function escape(str) {
-  return str.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
+  str = str.replace(/&/g, "&amp;");
+  str = str.replace(/>/g, "&gt;");
+  str = str.replace(/</g, "&lt;");
+  str = str.replace(/"/g, "&quot;");
+  str = str.replace(/'/g, "&#039;");
+  return str;
 }
 
 // ---------------------
