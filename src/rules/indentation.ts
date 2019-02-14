@@ -6,11 +6,14 @@ import {Class} from "../objects";
 import {Registry} from "../registry";
 import {BasicRuleConfig} from "./_basic_rule_config";
 import {PrettyPrinter, IndentationOptions} from "../abap/pretty_printer";
+import * as Statements from "../abap/statements";
+import * as Expressions from "../abap/expressions";
 
 export class IndentationConf extends BasicRuleConfig {
   public ignoreExceptions: boolean = true;
   public alignTryCatch: boolean = false;
   public globalClassSkipFirst: boolean = false;
+  public ignoreGlobalClassDefinition: boolean = false;
 }
 
 export class Indentation extends ABAPRule {
@@ -33,6 +36,9 @@ export class Indentation extends ABAPRule {
   }
 
   public runParsed(file: ABAPFile, _reg: Registry, obj: IObject) {
+
+    let skip = false;
+
     if (file.getStructure() == undefined) {
       return []; // syntax error in file
     }
@@ -53,8 +59,23 @@ export class Indentation extends ABAPRule {
     const expected = new PrettyPrinter(file, indentOpts).getExpectedIndentation();
 
     for (const statement of file.getStatements()) {
-      const position = statement.getFirstToken().getPos();
       const indent = expected.shift();
+
+      if (this.conf.ignoreGlobalClassDefinition) {
+        if (statement.get() instanceof Statements.ClassDefinition
+            && statement.findFirstExpression(Expressions.ClassGlobal)) {
+          skip = true;
+          continue;
+        } else if (skip === true && statement.get() instanceof Statements.EndClass) {
+          skip = false;
+          continue;
+        } else if (skip === true) {
+          continue;
+        }
+      }
+
+      const position = statement.getFirstToken().getPos();
+
       if (indent && indent > 0 && indent !== position.getCol()) {
         const issue = new Issue({file, message: this.getDescription(), key: this.getKey(), start: position});
         return [issue]; // only one finding per include

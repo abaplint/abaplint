@@ -1,5 +1,5 @@
 import {testRule} from "./_utils";
-import {Indentation} from "../../src/rules/indentation";
+import {Indentation, IndentationConf} from "../../src/rules/indentation";
 
 const tests = [
   {abap: "add 2 to lv_foo.", cnt: 0},
@@ -50,3 +50,15 @@ const tests = [
 ];
 
 testRule(tests, Indentation);
+
+
+const tests2 = [
+  {abap: "class ycl_something definition public final.\npublic section.\nendclass.\n", cnt: 0},
+  {abap: "write hello.\n", cnt: 0},
+  {abap: " write hello.\n", cnt: 1},
+];
+
+const config = new IndentationConf();
+config.ignoreGlobalClassDefinition = true;
+
+testRule(tests2, Indentation, config);
