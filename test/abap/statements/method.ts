@@ -6,6 +6,7 @@ const tests = [
   "METHOD foobar by kernel module foobar fail.",
   "METHOD foobar by kernel module foobar ignore.",
   "METHOD if_foo~write BY KERNEL MODULE foobar.",
+  "METHOD foobar BY DATABASE PROCEDURE FOR HDB LANGUAGE SQLSCRIPT.",
 ];
 
 statementType(tests, "METHOD", Statements.Method);

@@ -1,5 +1,6 @@
 import * as Tokens from "./tokens";
 import * as Statements from "./statements";
+import * as Expressions from "./expressions";
 import {Combi} from "./combi";
 import {TokenNode, StatementNode} from "./nodes/";
 import {Unknown, Empty, Comment, MacroContent, NativeSQL, Statement} from "./statements/_statement";
@@ -82,9 +83,12 @@ export class StatementParser {
     let sql = false;
 
     for (let statement of this.statements) {
-      if (statement.get() instanceof Statements.ExecSQL) {
+      if (statement.get() instanceof Statements.ExecSQL
+          || (statement.get() instanceof Statements.Method && statement.findFirstExpression(Expressions.Language))) {
         sql = true;
-      } else if (statement.get() instanceof Statements.EndExec) {
+      } else if (sql === true
+          && (statement.get() instanceof Statements.EndExec
+          || statement.get() instanceof Statements.EndMethod)) {
         sql = false;
       } else if (!(statement.get() instanceof Comment) && sql === true) {
         statement = new StatementNode(new NativeSQL()).setChildren(this.tokensToNodes(statement.getTokens()));
