@@ -22,7 +22,8 @@ export class OpenDataset extends Statement {
     const bom = str("SKIPPING BYTE-ORDER MARK");
     const wbom = str("WITH BYTE-ORDER MARK");
     const type = seq(str("TYPE"), new Source());
-    const feed = str("WITH SMART LINEFEED");
+    const linetype = alt(str("SMART"), str("NATIVE"));
+    const feed = seq(str("WITH"), linetype, str("LINEFEED"));
     const windows = str("WITH WINDOWS LINEFEED");
 
     const ret = seq(str("OPEN DATASET"),
