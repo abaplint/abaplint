@@ -3,6 +3,10 @@ import {ABAPRule} from "./_abap_rule";
 import {ABAPFile} from "../files";
 import * as Statements from "../abap/statements";
 import {BasicRuleConfig} from "./_basic_rule_config";
+import {Registry} from "../registry";
+import {IObject} from "../objects/_iobject";
+import {Class} from "../objects";
+import {ClassDefinition} from "../abap/types";
 
 export class FunctionalWritingConf extends BasicRuleConfig {
   public ignoreExceptions: boolean = true;
@@ -28,14 +32,22 @@ export class FunctionalWriting extends ABAPRule {
     this.conf = conf;
   }
 
-  public runParsed(file: ABAPFile) {
+  public runParsed(file: ABAPFile, _reg: Registry, obj: IObject) {
     const issues: Issue[] = [];
     let exception = false;
 
     for (const statement of file.getStatements()) {
       const code = statement.concatTokens().toUpperCase();
 
-      if (statement.get() instanceof Statements.ClassImplementation && code.match(/^CLASS .?CX/i) && this.conf.ignoreExceptions) {
+      let definition: ClassDefinition | undefined = undefined;
+      if (obj instanceof Class) {
+        definition = obj.getClassDefinition();
+      }
+
+      if (statement.get() instanceof Statements.ClassImplementation
+          && definition
+          && definition.isException()
+          && this.conf.ignoreExceptions) {
         exception = true;
       } else if (statement.get() instanceof Statements.EndClass) {
         exception = false;
