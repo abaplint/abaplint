@@ -195,8 +195,8 @@ export class Registry {
       if (exclude === undefined || exclude.length === 0) {
         continue;
       }
-      for (let i = issues.length - 1; i >= 0; i--) {
-        if (issues[i].getKey() !== key) {
+      for (let i = ret.length - 1; i >= 0; i--) {
+        if (ret[i].getKey() !== key) {
           continue;
         }
         let remove = false;
@@ -206,7 +206,7 @@ export class Registry {
             break;
           }
         }
-        if (!remove) {
+        if (remove) {
           ret.splice(i, 1);
         }
       }
