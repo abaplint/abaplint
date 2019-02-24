@@ -44,7 +44,7 @@ export class LineOnlyPunc extends ABAPRule {
     }
 
     const rows = file.getRawRows();
-    const reg = new RegExp("^\\)?\. *(\".*)?$");
+    const reg = new RegExp("^\\)?\\. *(\\\".*)?$");
 
     for (let i = 0; i < rows.length; i++) {
       if (reg.exec(rows[i].trim())) {
