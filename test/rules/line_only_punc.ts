@@ -6,6 +6,7 @@ const tests = [
   {abap: "WRITE 'hello'\n.", cnt: 1},
   {abap: "CALL METHOD SUPER->CONSTRUCTOR\nEXPORTING\nPREVIOUS = PREVIOUS\n.", cnt: 1},
   {abap: "WRITE 'hello'.", cnt: 0},
+  {abap: "WRITE 'bar'\n. \" comment", cnt: 1},
 ];
 
 testRule(tests, LineOnlyPunc);
