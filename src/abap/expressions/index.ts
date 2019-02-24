@@ -4,6 +4,7 @@ export * from "./global";
 export * from "./class_name";
 export * from "./compare_operator";
 export * from "./compare";
+export * from "./report_name";
 export * from "./language";
 export * from "./inline_for";
 export * from "./message_source";

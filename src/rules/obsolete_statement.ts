@@ -4,6 +4,7 @@ import {ABAPRule} from "./_abap_rule";
 import {ABAPFile} from "../files";
 import {Compare} from "../abap/expressions";
 import {BasicRuleConfig} from "./_basic_rule_config";
+import {Position} from "../position";
 
 export class ObsoleteStatementConf extends BasicRuleConfig {
   public refresh: boolean = true;
@@ -40,6 +41,7 @@ export class ObsoleteStatement extends ABAPRule {
     const issues: Issue[] = [];
 
     const statements = file.getStatements();
+    let prev: Position | undefined = undefined;
 
     for (const sta of statements) {
       if ((sta.get() instanceof Statements.Refresh && this.conf.refresh)
@@ -52,7 +54,10 @@ export class ObsoleteStatement extends ABAPRule {
           && sta.getTokens()[1].getStr() !== "-"
           && sta.getTokens()[1].getStr() !== "EXACT" )
           || (sta.get() instanceof Statements.Divide && this.conf.divide)) {
-        issues.push(new Issue({file, message: this.getDescription(), key: this.getKey(), start: sta.getStart()}));
+        if (prev === undefined || sta.getStart().getCol() !== prev.getCol() || sta.getStart().getRow() !== prev.getRow()) {
+          issues.push(new Issue({file, message: this.getDescription(), key: this.getKey(), start: sta.getStart()}));
+        }
+        prev = sta.getStart();
       }
 
       for (const compare of sta.findAllExpressions(Compare)) {

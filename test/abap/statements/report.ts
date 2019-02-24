@@ -14,6 +14,8 @@ const tests = [
   "REPORT zbar NO STANDARD PAGE HEADING LINE-SIZE 255 LINE-COUNT 60(03) MESSAGE-ID z3.",
   "REPORT zsomething NO STANDARD PAGE HEADING LINE-SIZE 132 LINE-COUNT 65(3).",
   "REPORT zbar USING DATABASE ldb MESSAGE-ID aa.",
+  "REPORT zxxsdfsd//sdfs.",
+  "REPORT zxxs/dfsd//sdf/s.",
 ];
 
 statementType(tests, "REPORT", Statements.Report);

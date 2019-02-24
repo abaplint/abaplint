@@ -9,7 +9,6 @@ const tests = [
   {abap: "DIVIDE lv_foo BY 2.", cnt: 1},
   {abap: "MOVE 2 TO lv_foo.", cnt: 1},
   {abap: "IF foo IS REQUESTED.", cnt: 1},
-
   {abap: "CLEAR lt_table.", cnt: 0},
   {abap: "lv_foo = 2 + 2.", cnt: 0},
   {abap: "MOVE EXACT is_status-installed_release TO lv_number.", cnt: 0},
@@ -18,6 +17,7 @@ const tests = [
   {abap: "lv_foo = lv_foo / 2.", cnt: 0},
   {abap: "lv_foo = 2.", cnt: 0},
   {abap: "IF foo IS SUPPLIED.", cnt: 0},
+  {abap: "MOVE: LS_TFACS-JAHR TO LS_CAL-JAHR, LS_TFACS-MON01 TO LS_CAL-MON01.", cnt: 1},
 ];
 
 testRule(tests, ObsoleteStatement);

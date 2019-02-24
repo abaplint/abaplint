@@ -1,6 +1,6 @@
 import {Statement} from "./_statement";
 import {verNot, str, seq, opt, per, IStatementRunnable, tok} from "../combi";
-import {Integer, MessageClass, NamespaceSimpleName, Field} from "../expressions";
+import {Integer, MessageClass, Field, ReportName} from "../expressions";
 import {Version} from "../../version";
 import {ParenLeft, ParenRightW} from "../tokens";
 
@@ -15,7 +15,7 @@ export class Report extends Statement {
     const database = seq(str("USING DATABASE"), new Field());
 
     const ret = seq(str("REPORT"),
-                    opt(new NamespaceSimpleName()),
+                    opt(new ReportName()),
                     opt(per(heading, size, count, database, message)));
 
     return verNot(Version.Cloud, ret);
