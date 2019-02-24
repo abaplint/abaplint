@@ -13,7 +13,8 @@ export class Transfer extends Statement {
                     new Source(),
                     str("TO"),
                     new Target(),
-                    opt(length));
+                    opt(length),
+                    opt(str("NO END OF LINE")));
 
     return verNot(Version.Cloud, ret);
   }
