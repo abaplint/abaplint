@@ -39,11 +39,11 @@ export class MSAGConsistency implements IRule {
 // todo, get the right positions in xml file
       if (!message.getNumber().match(/\d\d\d/)) {
         issues.push(new Issue({file: obj.getFiles()[0],
-          message: "Message number must be 3 digits", key: this.getKey(), start: new Position(1, 1)}));
+          message: "Message number must be 3 digits, " + message.getNumber(), key: this.getKey(), start: new Position(1, 1)}));
       }
       if (message.getMessage() === "") {
         issues.push(new Issue({file: obj.getFiles()[0],
-          message: "Message number must contain text", key: this.getKey(), start: new Position(1, 1)}));
+          message: "Message text empty, " + message.getNumber(), key: this.getKey(), start: new Position(1, 1)}));
       }
     }
 
