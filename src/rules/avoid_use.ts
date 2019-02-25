@@ -14,7 +14,7 @@ export class AvoidUse extends ABAPRule {
   private conf = new AvoidUseConf();
 
   public getKey(): string {
-    return "Avoid use";
+    return "avoid_use";
   }
 
   public getDescription(): string {
