@@ -24,6 +24,7 @@ The code is in active development and some rules may not be described in documen
 * [GitHub App](https://github.com/apps/abaplint)
 * [GitHub Actions](https://github.com/abaplint/actions-abaplint)
 * [GitLab Pipelines](https://gitlab.com/sbu-absw/abaplint-example)
+* [Bitbucket Pipelines](https://bitbucket.org/larshp/abaplint_pipeline)
 * Code Climate Engine, todo
 * ABAP in Eclipse, todo
 
