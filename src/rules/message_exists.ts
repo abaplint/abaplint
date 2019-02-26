@@ -6,25 +6,25 @@ import {BasicRuleConfig} from "./_basic_rule_config";
 import {Registry} from "../registry";
 import {MessageClass} from "../objects";
 
-export class MessageConf extends BasicRuleConfig {
+export class MessageExistsConf extends BasicRuleConfig {
 }
 
-export class MessageRule extends ABAPRule {
-  private conf = new MessageConf();
+export class MessageExistsRule extends ABAPRule {
+  private conf = new MessageExistsConf();
 
   public getKey(): string {
-    return "message";
+    return "message_exists";
   }
 
   public getDescription(): string {
-    return "Message checks";
+    return "Message exists checks";
   }
 
   public getConfig() {
     return this.conf;
   }
 
-  public setConfig(conf: MessageConf) {
+  public setConfig(conf: MessageExistsConf) {
     this.conf = conf;
   }
 

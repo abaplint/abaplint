@@ -1,6 +1,6 @@
 import {Registry} from "../../src/registry";
 import {MemoryFile} from "../../src/files/memory_file";
-import {MessageRule} from "../../src/rules";
+import {MessageExistsRule} from "../../src/rules";
 import {expect} from "chai";
 import {Issue} from "../../src/issue";
 
@@ -31,7 +31,7 @@ function run(abap: string): Issue[] {
   reg.addFile(new MemoryFile("zfoobar.prog.abap", abap));
   reg.addFile(new MemoryFile("zag_unit_test.msag.xml", xml));
   reg.parse();
-  return new MessageRule().run(reg.getObjects()[0], reg);
+  return new MessageExistsRule().run(reg.getObjects()[0], reg);
 }
 
 describe("Message rule", function () {

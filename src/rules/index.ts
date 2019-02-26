@@ -18,7 +18,7 @@ export * from "./line_only_punc";
 export * from "./local_class_naming";
 export * from "./local_variable_names";
 export * from "./max_one_statement";
-export * from "./message_rule";
+export * from "./message_exists";
 export * from "./method_length";
 export * from "./method_parameter_names";
 export * from "./mix_returning";
