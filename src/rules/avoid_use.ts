@@ -8,6 +8,7 @@ export class AvoidUseConf extends BasicRuleConfig {
   public define = true;
   public endselect = true;
   public execSQL = true;
+  public kernelCall = true;
 }
 
 export class AvoidUse extends ABAPRule {
@@ -41,6 +42,8 @@ export class AvoidUse extends ABAPRule {
         message = "Avoid use of ENDSELECT";
       } else if (this.conf.execSQL && statement.get() instanceof Statements.ExecSQL) {
         message = "Avoid use of EXEC SQL";
+      } else if (this.conf.kernelCall && statement.get() instanceof Statements.CallKernel) {
+        message = "Avoid use of kernel CALL";
       }
       if (message) {
         issues.push(new Issue({file, message, key: this.getKey(), start: statement.getStart()}));
