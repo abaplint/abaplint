@@ -7,6 +7,7 @@ import {BasicRuleConfig} from "./_basic_rule_config";
 export class AvoidUseConf extends BasicRuleConfig {
   public define = true;
   public endselect = true;
+  public execSQL = true;
 }
 
 export class AvoidUse extends ABAPRule {
@@ -38,6 +39,8 @@ export class AvoidUse extends ABAPRule {
         message = "Avoid use of DEFINE";
       } else if (this.conf.endselect && statement.get() instanceof Statements.EndSelect) {
         message = "Avoid use of ENDSELECT";
+      } else if (this.conf.execSQL && statement.get() instanceof Statements.ExecSQL) {
+        message = "Avoid use of EXEC SQL";
       }
       if (message) {
         issues.push(new Issue({file, message, key: this.getKey(), start: statement.getStart()}));

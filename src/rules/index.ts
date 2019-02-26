@@ -24,7 +24,6 @@ export * from "./method_parameter_names";
 export * from "./mix_returning";
 export * from "./msag_consistency";
 export * from "./nesting";
-export * from "./no_exec_sql";
 export * from "./no_public_attributes";
 export * from "./object_naming";
 export * from "./obsolete_statement";
