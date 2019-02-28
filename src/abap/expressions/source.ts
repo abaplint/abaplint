@@ -59,6 +59,7 @@ export class Source extends Expression {
     const conv = ver(Version.v740sp02, seq(str("CONV"),
                                            new TypeName(),
                                            tok(ParenLeftW),
+                                           opt(new Let()),
                                            new Source(),
                                            rparen, opt(arith)));
 
