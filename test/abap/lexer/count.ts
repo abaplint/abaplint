@@ -31,7 +31,7 @@ describe("count_tokens", () => {
     {abap: "|fooobar|",                           tokens: 1},
     {abap: "|foo{ lv_foo }obar|",                 tokens: 1},
     {abap: "|foo \\| bar|",                       tokens: 1},
-    {abap: "|foo{\n lv_foo }obar|",               tokens: 1},
+    {abap: "|foo{\n lv_foo }obar|",               tokens: 2},
     {abap: "foo-bar",                             tokens: 3},
     {abap: "foo( )-bar",                          tokens: 5},
     {abap: "foo( )",                              tokens: 3},
@@ -81,6 +81,7 @@ describe("count_tokens", () => {
     {abap: "##called _moo.",                      tokens: 3},
     {abap: "|foobar\\\\|",                        tokens: 1},
     {abap: "|foobar\\\\| moo",                    tokens: 2},
+    {abap: "|foo{\nmoo }|",                       tokens: 2},
   ];
 
   tests.forEach((test) => {
@@ -88,6 +89,11 @@ describe("count_tokens", () => {
     it("\"" + test.abap + "\" should have " + test.tokens + " tokens", () => {
       expect(tokens.length).to.equals(test.tokens);
     });
+    it("\"" + test.abap + "\" position values should be positive", () => {
+      for (const t of tokens) {
+        expect(t.getCol()).to.be.greaterThan(0);
+        expect(t.getRow()).to.be.greaterThan(0);
+      }
+    });
   });
-
 });

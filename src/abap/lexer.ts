@@ -322,11 +322,13 @@ export class Lexer {
           || ahead === "\t"
           || ahead === "\n")
           && this.m === Mode.Normal) {
-//        console.dir(buf);
         this.add();
       } else if (ahead === "\n" && this.m !== Mode.Template) {
         this.add();
         this.m = Mode.Normal;
+      } else if (current === "\n" && this.m === Mode.Template) {
+        this.add();
+        this.m = Mode.Template;
       } else if (current === ">"
           && (prev === "-" || prev === "=" )
           && ahead !== " "
