@@ -10,6 +10,7 @@ export * from "./description_empty";
 export * from "./empty_statement";
 export * from "./exit_or_check";
 export * from "./exporting";
+export * from "./empty_loop";
 export * from "./functional_writing";
 export * from "./indentation";
 export * from "./indentical_form_names";
