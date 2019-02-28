@@ -41,11 +41,16 @@ export class ParserError extends ABAPRule {
       if (statement.get() instanceof Unknown
             && start.getRow() !== statement.getStart().getRow()) {
 
-        const message = this.missingSpace(statement) ?
-          "Missing space between string or character literal and parentheses, Parser error" :
-          this.getDescription() + ", ABAP version " + versionToText(reg.getConfig().getVersion());
+        let message = "";
+        const missing = this.missingSpace(statement);
+        if (missing) {
+          message = "Missing space between string or character literal and parentheses, Parser error";
+          start = missing;
+        } else {
+          message = this.getDescription() + ", ABAP version " + versionToText(reg.getConfig().getVersion());
+          start = statement.getStart();
+        }
 
-        start = statement.getStart();
         const issue = new Issue({file, message, key: this.getKey(), start});
         issues.push(issue);
       }
@@ -54,7 +59,7 @@ export class ParserError extends ABAPRule {
     return issues;
   }
 
-  private missingSpace(statement: StatementNode): boolean {
+  private missingSpace(statement: StatementNode): Position | undefined {
     const tokens = statement.getTokens();
     for (let i = 0; i < tokens.length - 1; i++) {
       const current = tokens[ i ];
@@ -63,11 +68,11 @@ export class ParserError extends ABAPRule {
           current.getCol() + current.getStr().length === next.getCol() &&
           (current instanceof Tokens.String && next.getStr() === ")"
           || current.getStr() === "(" && next instanceof Tokens.String)) {
-        return true;
+        return next.getPos();
       }
     }
 
-    return false;
+    return undefined;
   }
 
 }
