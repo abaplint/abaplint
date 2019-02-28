@@ -4,8 +4,6 @@ import {ABAPFile} from "../files";
 import * as Statements from "../abap/statements";
 import * as Structures from "../abap/structures";
 import {BasicRuleConfig} from "./_basic_rule_config";
-import {Registry} from "../registry";
-import {IObject} from "../objects/_iobject";
 
 export class ShortCaseConf extends BasicRuleConfig {
   public length: number = 1;
@@ -31,7 +29,7 @@ export class ShortCase extends ABAPRule {
     this.conf = conf;
   }
 
-  public runParsed(file: ABAPFile, _reg: Registry, _obj: IObject) {
+  public runParsed(file: ABAPFile) {
     const issues: Issue[] = [];
 
     const struc = file.getStructure();

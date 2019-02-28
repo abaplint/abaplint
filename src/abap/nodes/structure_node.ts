@@ -45,7 +45,7 @@ export class StructureNode extends BasicNode {
     }
     return ret;
   }
-/*
+
   public findDirectStructures(type: new () => Structure): StructureNode[] {
     const ret: StructureNode[] = [];
     for (const child of this.getChildren()) {
@@ -55,7 +55,7 @@ export class StructureNode extends BasicNode {
     }
     return ret;
   }
-*/
+
   public findFirstStatement(type: new () => Statement): StatementNode | undefined {
     for (const child of this.getChildren()) {
       if (child.get() instanceof type) {
