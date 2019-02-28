@@ -4,6 +4,7 @@ export * from "./breakpoint";
 export * from "./class_attribute_names";
 export * from "./cloud_types";
 export * from "./short_case";
+export * from "./empty_line_in_statement";
 export * from "./commented_code";
 export * from "./definitions_top";
 export * from "./description_empty";
