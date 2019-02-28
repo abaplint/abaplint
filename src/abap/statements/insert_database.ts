@@ -1,6 +1,7 @@
 import {Statement} from "./_statement";
-import {str, seq, alt, opt, IStatementRunnable} from "../combi";
-import {Source, DatabaseTable, Dynamic, SQLSource} from "../expressions";
+import {str, seq, alt, opt, tok, IStatementRunnable} from "../combi";
+import {Source, DatabaseTable, Dynamic, SQLSource, Select} from "../expressions";
+import {WParenLeftW, WParenRightW} from "../tokens";
 
 export class InsertDatabase extends Statement {
 
@@ -11,11 +12,13 @@ export class InsertDatabase extends Statement {
 
     const conn = seq(str("CONNECTION"), alt(new Source(), new Dynamic()));
 
+    const sub = seq(tok(WParenLeftW), new Select(), tok(WParenRightW));
+
     const f = seq(opt(client),
                   opt(conn),
                   str("FROM"),
                   opt(str("TABLE")),
-                  new SQLSource(),
+                  alt(new SQLSource(), sub),
                   opt(str("ACCEPTING DUPLICATE KEYS")));
 
     const from = seq(target,
