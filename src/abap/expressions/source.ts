@@ -1,9 +1,11 @@
 import {plus, ver, seq, opt, tok, str, alt, star, optPrio, regex, Expression, IStatementRunnable} from "../combi";
 import {InstanceArrow, WParenLeftW, WParenRightW, WDashW, ParenLeftW} from "../tokens/";
 import {MethodCallChain, ArithOperator, Cond, Constant, StringTemplate, Let, ComponentCond, SimpleName} from "./";
-import {FieldChain, Field, TableBody, TypeName, ArrowOrDash, FieldSub, For} from "./";
+import {FieldChain, Field, TableBody, TypeName, ArrowOrDash, FieldSub, For, Throw} from "./";
 import {Version} from "../../version";
 import {ComponentChain, ComponentName} from "./";
+
+// todo, COND and SWITCH are quite similar?
 
 export class Source extends Expression {
   public getRunnable(): IStatementRunnable {
@@ -62,14 +64,14 @@ export class Source extends Expression {
 
     const or = seq(str("OR"), new Source());
 
-    const swhen = seq(str("WHEN"), new Source(), star(or), str("THEN"), new Source());
+    const swhen = seq(str("WHEN"), new Source(), star(or), str("THEN"), alt(new Source(), new Throw()));
     const swit = ver(Version.v740sp02, seq(str("SWITCH"),
                                            new TypeName(),
                                            tok(ParenLeftW),
                                            opt(new Let()),
                                            new Source(),
                                            plus(swhen),
-                                           opt(seq(str("ELSE"), new Source())),
+                                           opt(seq(str("ELSE"), alt(new Source(), new Throw()))),
                                            rparen));
 
     const fieldList = seq(new FieldSub(), str("="), new Source());
@@ -93,9 +95,9 @@ export class Source extends Expression {
                                                     strucOrTab)),
                                             rparen));
 
-    const when = seq(str("WHEN"), new Cond(), str("THEN"), new Source());
+    const when = seq(str("WHEN"), new Cond(), str("THEN"), alt(new Source(), new Throw()));
 
-    const elsee = seq(str("ELSE"), new Source());
+    const elsee = seq(str("ELSE"), alt(new Source(), new Throw()));
 
     const cond = ver(Version.v740sp02, seq(str("COND"),
                                            new TypeName(),

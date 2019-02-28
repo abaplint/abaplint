@@ -197,6 +197,11 @@ const versions = [
   {abap: "lv_foo -= 2.", ver: Version.Cloud},
   {abap: "lv_foo /= 2.", ver: Version.Cloud},
   {abap: "lv_foo *= 2.", ver: Version.Cloud},
+
+  {abap: "DATA(mode) = SWITCH edit_mode( id_edit_mode\n" +
+    "  WHEN 'U' THEN asdf\n" +
+    "  ELSE THROW zcx_exception( ) ).", ver: Version.v740sp02},
+
 ];
 
 statementVersion(versions, "MOVE", Statements.Move);
