@@ -4,7 +4,7 @@ import {MemoryFile} from "../../src/files/memory_file";
 import {Table, EnhancementCategory, TableCategory} from "../../src/objects";
 
 describe("Table, parse XML", () => {
-  it("test", () => {
+  it("test 1", () => {
     const xml =
       "<?xml version=\"1.0\" encoding=\"utf-8\"?>\n" +
       "<abapGit version=\"v1.0.0\" serializer=\"LCL_OBJECT_TABL\" serializer_version=\"v1.0.0\">\n" +
@@ -77,4 +77,30 @@ describe("Table, parse XML", () => {
     expect(tabl.getEnhancementCategory()).to.equal("1");
     expect(tabl.getEnhancementCategory()).to.equal(EnhancementCategory.CannotBeEhanced);
   });
+
+  it("test 2, empty enhancement category", () => {
+    const xml =
+      "<?xml version=\"1.0\" encoding=\"utf-8\"?>\n" +
+      "<abapGit version=\"v1.0.0\" serializer=\"LCL_OBJECT_TABL\" serializer_version=\"v1.0.0\">\n" +
+      " <asx:abap xmlns:asx=\"http://www.sap.com/abapxml\" version=\"1.0\">\n" +
+      "  <asx:values>\n" +
+      "   <DD02V>\n" +
+      "    <TABNAME>ZSYST</TABNAME>\n" +
+      "    <DDLANGUAGE>E</DDLANGUAGE>\n" +
+      "    <TABCLASS>INTTAB</TABCLASS>\n" +
+      "    <DDTEXT>Fields</DDTEXT>\n" +
+      "    <APPLCLASS>SAB4</APPLCLASS>\n" +
+      "    <AUTHCLASS>02</AUTHCLASS>\n" +
+      "    <MASTERLANG>D</MASTERLANG>\n" +
+      "   </DD02V>\n" +
+      "  </asx:values>\n" +
+      " </asx:abap>\n" +
+      "</abapGit>";
+
+    const reg = new Registry().addFile(new MemoryFile("zsyst.tabl.xml", xml)).parse();
+    const tabl = reg.getObjects()[0] as Table;
+
+    expect(tabl.getEnhancementCategory()).to.equal(EnhancementCategory.NotClassified);
+  });
+
 });

@@ -43,10 +43,13 @@ export class Table extends AbstractObject {
     return parsed.abapGit["asx:abap"]["asx:values"].DD02V.TABCLASS._text;
   }
 
-  public getEnhancementCategory(): EnhancementCategory | undefined {
+  public getEnhancementCategory(): EnhancementCategory {
     const parsed = this.parseXML();
     if (parsed === undefined) {
-      return undefined;
+      return EnhancementCategory.NotClassified;
+    }
+    if (parsed.abapGit["asx:abap"]["asx:values"].DD02V.EXCLASS === undefined) {
+      return EnhancementCategory.NotClassified;
     }
 
     return parsed.abapGit["asx:abap"]["asx:values"].DD02V.EXCLASS._text;
