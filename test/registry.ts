@@ -33,6 +33,13 @@ describe("Registry", () => {
     expect(reg.getObject("CLAS", "/namesp/cl_foobar")).to.not.equal(undefined);
   });
 
+  it("filename with namespace, url encoded", () => {
+    const reg = new Registry().addFile(new MemoryFile("%23namesp%23cl_foobar.clas.abap", "parser error"));
+    expect(reg.getObjects().length).to.equal(1);
+    expect(reg.getObjects()[0].getType()).to.equal("CLAS");
+    expect(reg.getObject("CLAS", "/namesp/cl_foobar")).to.not.equal(undefined);
+  });
+
   it("Update unknown file, 1", () => {
     const file = new MemoryFile("zfoobar.prog.abap", "IF moo = boo. ENDIF.");
     const registry = new Registry();

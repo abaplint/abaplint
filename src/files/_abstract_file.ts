@@ -20,6 +20,9 @@ export abstract class AbstractFile implements IFile {
   public getObjectName(): string {
     const base = this.getFilename().split("/").reverse()[0];
     const split = base.split(".");
+// handle url escaped namespace
+    split[0] = split[0].replace(/^%23(\w+)%23(.+)$/g, "/$1/$2");
+// handle namespace
     return split[0].toUpperCase().replace(/#/g, "/");
   }
 
