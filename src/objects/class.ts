@@ -90,7 +90,7 @@ export class Class extends ABAPObject {
     }
   }
 
-  private getXML(): string | undefined {
+  public getXML(): string | undefined {
     for (const file of this.getFiles()) {
       if (file.getFilename().match(/\.clas\.xml$/i)) {
         return file.getRaw();
