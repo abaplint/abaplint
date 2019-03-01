@@ -36,6 +36,8 @@ export class Globals {
       "CONSTANTS icon_folder TYPE c LENGTH 4 VALUE ''.\n" +
       "CONSTANTS icon_okay TYPE c LENGTH 4 VALUE ''.\n" +
       "CONSTANTS icon_folder TYPE c LENGTH 4 VALUE ''.\n" +
+      "CONSTANTS icon_header TYPE c LENGTH 4 VALUE ''.\n" +
+      "CONSTANTS icon_detail TYPE c LENGTH 4 VALUE ''.\n" +
       "CONSTANTS space TYPE c LENGTH 1 VALUE ''.\n" +
       "CONSTANTS col_total TYPE c LENGTH 1 VALUE '?'.\n" +
       "CONSTANTS col_key TYPE c LENGTH 1 VALUE '?'.\n" +
