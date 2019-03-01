@@ -1,7 +1,7 @@
 import {expect} from "chai";
 import {Registry} from "../../src/registry";
 import {MemoryFile} from "../../src/files/memory_file";
-import {Table} from "../../src/objects";
+import {Table, EnhancementCategory, TableCategory} from "../../src/objects";
 
 describe("Table, parse XML", () => {
   it("test", () => {
@@ -62,11 +62,19 @@ describe("Table, parse XML", () => {
 
     const reg = new Registry().addFile(new MemoryFile("zabapgit_unit_t2.tabl.xml", xml)).parse();
     const tabl = reg.getObjects()[0] as Table;
+
     expect(tabl.getName()).to.equal("ZABAPGIT_UNIT_T2");
+
     const fields = tabl.getFields();
     expect(fields.length).to.equal(3);
     expect(fields).to.contain("MANDT");
     expect(fields).to.contain("XUBNAME");
     expect(fields).to.contain("NAME");
+
+    expect(tabl.getTableCategory()).to.equal("TRANSP");
+    expect(tabl.getTableCategory()).to.equal(TableCategory.Transparent);
+
+    expect(tabl.getEnhancementCategory()).to.equal("1");
+    expect(tabl.getEnhancementCategory()).to.equal(EnhancementCategory.CannotBeEhanced);
   });
 });
