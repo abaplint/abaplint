@@ -40,22 +40,6 @@ export class DoubleSpace extends ABAPRule {
       }
     }
 
-    /*
-    for (const s of file.getStatements()) {
-      let expectCol: number | undefined = undefined;
-      let expectRow: number | undefined = undefined;
-      for (const t of s.getTokens()) {
-        if (expectRow === t.getRow() && expectCol !== t.getCol()) {
-          const issue = new Issue({file, message: this.getDescription(), key: this.getKey(), start: t.getPos()});
-          issues.push(issue);
-        }
-
-        expectRow = t.getRow();
-        expectCol = t.getCol() + t.getStr().length + 1;
-      }
-    }
-    */
-
     return issues;
   }
 }
