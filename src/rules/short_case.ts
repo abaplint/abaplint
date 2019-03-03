@@ -7,10 +7,10 @@ import {BasicRuleConfig} from "./_basic_rule_config";
 
 export class ShortCaseConf extends BasicRuleConfig {
   public length: number = 1;
+  public allow: string[] = [];
 }
 
 export class ShortCase extends ABAPRule {
-
   private conf = new ShortCaseConf();
 
   public getKey(): string {
@@ -38,6 +38,12 @@ export class ShortCase extends ABAPRule {
     }
 
     for (const c of struc.findAllStructures(Structures.Case)) {
+      const clist = c.findDirectStatements(Statements.Case);
+      if (clist.length > 0 && this.conf.allow.find((e) => { return e === clist[0].getTokens()[1].getStr(); })) {
+//        console.dir(clist[0].getTokens()[1]);
+        continue;
+      }
+
       if (c.findDirectStatements(Statements.When).length <= this.conf.length) {
         const issue = new Issue({file, message: this.getDescription(), key: this.getKey(), start: c.getFirstToken().getPos()});
         issues.push(issue);
