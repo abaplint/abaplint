@@ -6,6 +6,7 @@ import {IObject} from "../objects/_iobject";
 import {BasicRuleConfig} from "./_basic_rule_config";
 import {xmlToArray} from "../xml_utils";
 import {ClassDefinition} from "../abap/types";
+import {IFile} from "../files/_ifile";
 
 export class RemoveDescriptionsConf extends BasicRuleConfig {
   public ignoreExceptions: boolean = true;
@@ -46,22 +47,38 @@ export class RemoveDescriptions implements IRule {
         return [];
       }
       return this.checkClass(obj);
+    } else if (obj instanceof Objects.Interface) {
+      return this.checkInterface(obj);
     }
-// todo, "obj instanceof Objects.Interface"
 
     return [];
   }
 
-  public checkClass(obj: Objects.Class): Issue[] {
-    let xml: string | undefined = undefined;
-    try {
-      xml = obj.getXML();
-    } catch {
-      return [];
-    }
+  private checkInterface(obj: Objects.Interface): Issue[] {
+    const xml = obj.getXML();
     if (xml === undefined) {
       return [];
     }
+    const file = obj.getXMLFile();
+    if (file === undefined) {
+      return [];
+    }
+    return this.checkXML(xml, file);
+  }
+
+  private checkClass(obj: Objects.Class): Issue[] {
+    const xml = obj.getXML();
+    if (xml === undefined) {
+      return [];
+    }
+    const file = obj.getXMLFile();
+    if (file === undefined) {
+      return [];
+    }
+    return this.checkXML(xml, file);
+  }
+
+  private checkXML(xml: string, file: IFile) {
     const parsed: any = xmljs.xml2js(xml, {compact: true});
 
     const desc = parsed.abapGit["asx:abap"]["asx:values"].DESCRIPTIONS;
@@ -70,12 +87,9 @@ export class RemoveDescriptions implements IRule {
     }
 
     const ret: Issue[] = [];
-    for (const d of xmlToArray(desc)) {
-      if (d.SEOCOMPOTX === undefined) {
-        continue;
-      }
-      const message = "Remove description, " + d.SEOCOMPOTX.CMPNAME._text;
-      ret.push(new Issue({file: obj.getFiles()[0], key: this.getKey(), message}));
+    for (const d of xmlToArray(desc.SEOCOMPOTX)) {
+      const message = "Remove description, " + d.CMPNAME._text;
+      ret.push(new Issue({file, key: this.getKey(), message}));
     }
     return ret;
   }
