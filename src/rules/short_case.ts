@@ -39,8 +39,7 @@ export class ShortCase extends ABAPRule {
 
     for (const c of struc.findAllStructures(Structures.Case)) {
       const clist = c.findDirectStatements(Statements.Case);
-      if (clist.length > 0 && this.conf.allow.find((e) => { return e === clist[0].getTokens()[1].getStr(); })) {
-//        console.dir(clist[0].getTokens()[1]);
+      if (clist.length > 0 && this.conf.allow && this.conf.allow.find((e) => { return e === clist[0].getTokens()[1].getStr(); })) {
         continue;
       }
 
