@@ -2,6 +2,7 @@ import {Issue} from "../issue";
 import {ABAPRule} from "./_abap_rule";
 import {ABAPFile} from "../files";
 import * as Statements from "../abap/statements";
+import * as Expressions from "../abap/expressions";
 import * as Structures from "../abap/structures";
 import {BasicRuleConfig} from "./_basic_rule_config";
 
@@ -44,6 +45,9 @@ export class ShortCase extends ABAPRule {
       }
 
       if (c.findDirectStatements(Statements.When).length <= this.conf.length) {
+        if (c.findAllExpressions(Expressions.Or).length > 0) {
+          continue;
+        }
         const issue = new Issue({file, message: this.getDescription(), key: this.getKey(), start: c.getFirstToken().getPos()});
         issues.push(issue);
       }
