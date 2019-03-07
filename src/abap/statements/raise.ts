@@ -27,9 +27,9 @@ export class Raise extends Statement {
                      opt(alt(ver(Version.v750, mess), ver(Version.v752, str("USING MESSAGE")))),
                      opt(exporting));
 
-    const ret = seq(str("RAISE"), alt(new Field(), clas));
+    const ret = seq(str("RAISE"), alt(verNot(Version.Cloud, new Field()), clas));
 
-    return verNot(Version.Cloud, ret);
+    return ret;
   }
 
 }
