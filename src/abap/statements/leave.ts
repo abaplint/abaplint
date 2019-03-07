@@ -1,12 +1,12 @@
 import {Statement} from "./_statement";
 import {verNot, str, seq, alt, opt, IStatementRunnable} from "../combi";
-import {Source} from "../expressions";
+import {Source, AndReturn} from "../expressions";
 import {Version} from "../../version";
 
 export class Leave extends Statement {
 
   public getMatcher(): IStatementRunnable {
-    const retu = seq(str("AND RETURN TO SCREEN"), new Source());
+    const retu = seq(new AndReturn(), str("TO SCREEN"), new Source());
 
     const transaction = seq(str("TO TRANSACTION"),
                             new Source(),

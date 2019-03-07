@@ -1,6 +1,6 @@
 import {Statement} from "./_statement";
 import {verNot, str, seq, opt, per, alt, plus, IStatementRunnable} from "../combi";
-import {Source, NamespaceSimpleName, Dynamic, Field} from "../expressions";
+import {Source, NamespaceSimpleName, Dynamic, Field, AndReturn} from "../expressions";
 import {Version} from "../../version";
 
 export class Submit extends Statement {
@@ -53,7 +53,7 @@ export class Submit extends Statement {
                      str("WITHOUT SPOOL DYNPRO"),
                      str("VIA SELECTION-SCREEN"),
                      exporting,
-                     str("AND RETURN"),
+                     new AndReturn(),
                      job);
 
     const ret = seq(str("SUBMIT"), prog, opt(perm));
