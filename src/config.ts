@@ -7,6 +7,7 @@ export interface IGlobalConfig {
   skipGeneratedGatewayClasses: boolean;
   skipGeneratedPersistentClasses: boolean;
   skipGeneratedFunctionGroups: boolean;
+  applyUnspecifiedRules: boolean;
 }
 
 export interface IConfig {
@@ -43,15 +44,25 @@ export class Config {
       skipGeneratedGatewayClasses: true,
       skipGeneratedPersistentClasses: true,
       skipGeneratedFunctionGroups: true,
+      applyUnspecifiedRules: true,
     };
   }
 
   public getEnabledRules(): IRule[] {
     const rules: IRule[] = [];
     for (const rule of Artifacts.getRules()) {
-      if (this.readByKey(rule.getKey(), "enabled") === true) {
-        rule.setConfig(this.readByRule(rule.getKey()));
-        rules.push(rule);
+      switch (this.readByKey(rule.getKey(), "enabled")) {
+        case true:
+          rule.setConfig(this.readByRule(rule.getKey()));
+          rules.push(rule);
+          break;
+        case undefined:
+          if (this.config.global && this.config.global.applyUnspecifiedRules === true) {
+            rules.push(rule);
+          }
+          break;
+        default:
+          break;
       }
     }
     return rules;
