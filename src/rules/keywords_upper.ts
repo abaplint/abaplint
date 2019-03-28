@@ -17,6 +17,7 @@ export class KeywordsUpperConf extends BasicRuleConfig {
   public ignoreLowerClassImplmentationStatement: boolean = true;
   public ignoreGlobalClassDefinition: boolean = false;
   public ignoreGlobalInterface: boolean = false;
+  public ignoreFunctionModuleName: boolean = false;
 }
 
 export class KeywordsUpper extends ABAPRule {
@@ -110,6 +111,10 @@ export class KeywordsUpper extends ABAPRule {
         }
         // todo, this is a hack, the parser should recigize SCREEN as a keyword
         if (parent instanceof Statements.Loop && str.toUpperCase() === "SCREEN") {
+          continue;
+        }
+        if (this.conf.ignoreFunctionModuleName === true
+            && parent instanceof Statements.FunctionModule && str.toUpperCase() !== "FUNCTION") {
           continue;
         }
         if (parent instanceof Statements.ModifyInternal && str.toUpperCase() === "SCREEN") {

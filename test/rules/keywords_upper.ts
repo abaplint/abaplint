@@ -25,9 +25,12 @@ const tests = [
   {abap: "SELECT devclass FROM tdevc INTO TABLE lt_list WHERE parentcl = mv_package ORDER BY PRIMARY KEY.", cnt: 0},
   {abap: "SELECT DISTINCT sprsl AS langu INTO TABLE lt_i18n_langs FROM t100t.", cnt: 0},
   {abap: "SELECTION-SCREEN BEGIN OF BLOCK b1 WITH FRAME TITLE TEXT-001.", cnt: 0},
+  {abap: "FUNCTION ZFOOBAR.\n", cnt: 1},
 ];
 
 testRule(tests, KeywordsUpper);
+
+// ************************
 
 const tests2 = [
   {abap: "class ycl_something definition public final.\nendclass.\n", cnt: 0},
@@ -35,8 +38,22 @@ const tests2 = [
   {abap: "class ycl_something definition public final.\nendclass.\nwrite foo.", cnt: 1},
 ];
 
-const config = new KeywordsUpperConf();
-config.ignoreGlobalClassDefinition = true;
-config.ignoreGlobalInterface = true;
+const config2 = new KeywordsUpperConf();
+config2.ignoreGlobalClassDefinition = true;
+config2.ignoreGlobalInterface = true;
 
-testRule(tests2, KeywordsUpper, config);
+testRule(tests2, KeywordsUpper, config2);
+
+// ************************
+
+const tests3 = [
+  {abap: "FUNCTION ZFOOBAR.\n", cnt: 0},
+  {abap: "FUNCTION zfoobar.\n", cnt: 0},
+  {abap: "fUNCTION ZFOOBAR.\n", cnt: 1},
+  {abap: "fUNCTION zfoobar.\n", cnt: 1},
+];
+
+const config3 = new KeywordsUpperConf();
+config3.ignoreFunctionModuleName = true;
+
+testRule(tests3, KeywordsUpper, config3);
