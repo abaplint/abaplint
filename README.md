@@ -25,6 +25,7 @@ The code is in active development and some rules may not be described in documen
 * [GitLab Pipelines](https://gitlab.com/sbu-absw/abaplint-example)
 * [Bitbucket Pipelines](https://bitbucket.org/larshp/abaplint_pipeline)
 * [Azure Pipelines](https://github.com/abaplint/azure-devops-example)
+* [Travis CI](https://blogs.sap.com/2018/12/25/automatic-checking-of-your-abap-code-in-githubgitlab-with-ci-and-abaplint/)
 * Code Climate Engine, todo
 * ABAP in Eclipse, todo
 
