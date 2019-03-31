@@ -16,7 +16,7 @@
     "compile": "tsc",
     "postcompile": "sh version.sh",
     "pretest": "npm run compile",
-    "test": "mocha --recursive --reporter progress build/test",
+    "test": "mocha --recursive --reporter progress \"build/test/**/*.js\"",
     "posttest": "npm run tslint",
     "prebrowserify": "tsc --target ES3 --lib es2017 --outdir build/web",
     "browserify": "sh version.sh",
