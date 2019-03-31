@@ -13,13 +13,12 @@
   },
   "scripts": {
     "tslint": "tslint -c tslint.json 'src/**/*.ts' 'test/**/*.ts'",
-    "precompile": "rm -rf build",
-    "compile": "tsc --pretty",
+    "compile": "tsc",
     "postcompile": "sh version.sh",
     "pretest": "npm run compile",
     "test": "mocha --recursive --reporter progress build/test",
     "posttest": "npm run tslint",
-    "prebrowserify": "tsc --pretty --target ES3 --lib es2017 --outdir build/web",
+    "prebrowserify": "tsc --target ES3 --lib es2017 --outdir build/web",
     "browserify": "sh version.sh",
     "postbrowserify": "browserify build/web/src/index_web.js -o build/bundle.js -s abaplint",
     "uglify": "uglifyjs build/bundle.js --compress warnings=false --mangle --keep-fnames -o build/bundle.js",
@@ -61,7 +60,7 @@
     "railroad-diagrams": "git+https://github.com/tabatkins/railroad-diagrams#gh-pages",
     "tslint": "^5.14.0",
     "tslint-eslint-rules": "^5.4.0",
-    "typescript": "^3.3.3",
+    "typescript": "^3.4.1",
     "uglify-js": "^3.0.27"
   },
   "dependencies": {

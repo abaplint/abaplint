@@ -2,6 +2,8 @@
     "compilerOptions": {
         "module": "commonjs",
         "outDir": "build",
+        "incremental": true,
+        "pretty": true,
         "noFallthroughCasesInSwitch": true,
         "noImplicitReturns": true,
         "noUnusedParameters": true,
