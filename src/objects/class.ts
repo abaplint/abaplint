@@ -74,6 +74,19 @@ export class Class extends ABAPObject {
     }
   }
 
+  public isGeneratedProxy(): boolean {
+    const xml = this.getXML();
+    if (!xml) {
+      return false;
+    }
+    const result = xml.match(/<CLSPROXY>(.)<\/CLSPROXY>/);
+    if (result) {
+      return true;
+    } else {
+      return false;
+    }
+  }
+
 // --------------------
 
   private getMainABAP(): ABAPFile | undefined {

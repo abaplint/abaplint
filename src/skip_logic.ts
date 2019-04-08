@@ -1,6 +1,6 @@
 import {Registry} from "./registry";
 import {IObject} from "./objects/_iobject";
-import {Class, ClassCategory, FunctionGroup, MaintenanceAndTransportObject} from "./objects";
+import {Class, ClassCategory, FunctionGroup, MaintenanceAndTransportObject, Interface} from "./objects";
 
 export class SkipLogic {
   private reg: Registry;
@@ -22,6 +22,10 @@ export class SkipLogic {
     } else if (this.reg.getConfig().getGlobal().skipGeneratedFunctionGroups
         && obj instanceof FunctionGroup
         && this.isGeneratedFunctionGroup(obj)) {
+      return true;
+    } else if (obj instanceof Class && obj.isGeneratedProxy()) {
+      return true;
+    } else if (obj instanceof Interface && obj.isGeneratedProxy()) {
       return true;
     }
 

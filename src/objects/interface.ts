@@ -21,6 +21,19 @@ export class Interface extends ABAPObject {
     return definitions[0];
   }
 
+  public isGeneratedProxy(): boolean {
+    const xml = this.getXML();
+    if (!xml) {
+      return false;
+    }
+    const result = xml.match(/<CLSPROXY>(.)<\/CLSPROXY>/);
+    if (result) {
+      return true;
+    } else {
+      return false;
+    }
+  }
+
   private getMain(): ABAPFile | undefined {
     const files = this.getABAPFiles();
     if (files.length > 1) {
