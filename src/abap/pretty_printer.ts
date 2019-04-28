@@ -8,7 +8,7 @@ import {Position} from "../position";
 
 // todo, will break if there is multiple statements per line?
 
-export interface IndentationOptions {
+export interface IIndentationOptions {
   alignTryCatch?: boolean;
   globalClassSkipFirst?: boolean;
 }
@@ -32,10 +32,10 @@ class Stack {
 }
 
 class Indentation {
-  private options: IndentationOptions;
+  private options: IIndentationOptions;
   private globalClasses = new Set();
 
-  constructor(options: IndentationOptions) {
+  constructor(options: IIndentationOptions) {
     this.options = options;
   }
 
@@ -169,9 +169,9 @@ class Indentation {
 export class PrettyPrinter {
   private result: string;
   private file: ABAPFile;
-  private options: IndentationOptions;
+  private options: IIndentationOptions;
 
-  constructor(file: ABAPFile, options?: IndentationOptions) {
+  constructor(file: ABAPFile, options?: IIndentationOptions) {
     this.result = file.getRaw();
     this.file = file;
     this.options = options || {};

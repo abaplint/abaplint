@@ -5,7 +5,7 @@ import {IObject} from "../objects/_iobject";
 import {Class} from "../objects";
 import {Registry} from "../registry";
 import {BasicRuleConfig} from "./_basic_rule_config";
-import {PrettyPrinter, IndentationOptions} from "../abap/pretty_printer";
+import {PrettyPrinter, IIndentationOptions} from "../abap/pretty_printer";
 import * as Statements from "../abap/statements";
 import * as Expressions from "../abap/expressions";
 
@@ -53,7 +53,7 @@ export class Indentation extends ABAPRule {
       }
     }
 
-    const indentOpts: IndentationOptions = {
+    const indentOpts: IIndentationOptions = {
       alignTryCatch: this.conf.alignTryCatch,
       globalClassSkipFirst: this.conf.globalClassSkipFirst,
     };

@@ -1,7 +1,7 @@
 import {IFile} from "./files/_ifile";
 import {Position} from "./position";
 
-interface IssueData {
+interface IIssueData {
   file: IFile;
   message: string;
   key: string;
@@ -16,7 +16,7 @@ export class Issue {
   private message: string;
   private key: string;
 
-  public constructor(data: IssueData) {
+  public constructor(data: IIssueData) {
     this.message = data.message;
     this.key = data.key;
 
