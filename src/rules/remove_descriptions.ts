@@ -81,6 +81,10 @@ export class RemoveDescriptions implements IRule {
   private checkXML(xml: string, file: IFile) {
     const parsed: any = xmljs.xml2js(xml, {compact: true});
 
+    if (parsed.abapGit["asx:abap"]["asx:values"] === undefined) {
+      return [];
+    }
+
     const desc = parsed.abapGit["asx:abap"]["asx:values"].DESCRIPTIONS;
     if (desc === undefined) {
       return [];

@@ -56,6 +56,9 @@ export class Class extends ABAPObject {
       return undefined;
     }
     const parsed: any = xmljs.xml2js(xml, {compact: true});
+    if (parsed.abapGit["asx:abap"]["asx:values"] === undefined) {
+      return undefined;
+    }
     const vseo = parsed.abapGit["asx:abap"]["asx:values"].VSEOCLASS;
     return vseo.DESCRIPT ? vseo.DESCRIPT._text : "";
   }
