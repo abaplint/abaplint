@@ -1,6 +1,6 @@
 {
   "name": "abaplint",
-  "version": "1.6.46",
+  "version": "1.6.47",
   "description": "Linter for ABAP",
   "bin": {
     "abaplint": "./abaplint",
