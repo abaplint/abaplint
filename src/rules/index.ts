@@ -8,6 +8,7 @@ export * from "./definitions_top";
 export * from "./description_empty";
 export * from "./empty_line_in_statement";
 export * from "./empty_loop";
+export * from "./preferred_compare_operator";
 export * from "./unreachable_code";
 export * from "./remove_descriptions";
 export * from "./empty_statement";
