@@ -14,6 +14,7 @@ export * from "./remove_descriptions";
 export * from "./empty_statement";
 export * from "./exit_or_check";
 export * from "./exporting";
+export * from "./constructor_visibility_public";
 export * from "./functional_writing";
 export * from "./if_in_if";
 export * from "./indentation";
