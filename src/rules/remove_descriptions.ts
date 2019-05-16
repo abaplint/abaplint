@@ -9,7 +9,7 @@ import {ClassDefinition} from "../abap/types";
 import {IFile} from "../files/_ifile";
 
 export class RemoveDescriptionsConf extends BasicRuleConfig {
-  public ignoreExceptions: boolean = true;
+  public ignoreExceptions: boolean = false;
 }
 
 export class RemoveDescriptions implements IRule {
