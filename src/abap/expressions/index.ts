@@ -10,6 +10,7 @@ export * from "./component_compare";
 export * from "./component_cond";
 export * from "./component_name";
 export * from "./cond";
+export * from "./destination";
 export * from "./or";
 export * from "./and_return";
 export * from "./constant_string";
