@@ -33,7 +33,7 @@ export class DoubleSpace extends ABAPRule {
     const rows = file.getRawRows();
 
     for (let i = 0; i < rows.length; i++) {
-      const reg = /^\s*(IF|SHIFT|WHEN|READ TABLE|MODIFY|DELETE|COLLECT|CHECK|SORT|ELSEIF|DATA|MOVE-CORRESPONDING|APPEND|METHOD)  /;
+      const reg = /^\s*(IF|IF NOT|SHIFT|WHEN|READ TABLE|MODIFY|DELETE|COLLECT|CHECK|SORT|ELSEIF|DATA|MOVE-CORRESPONDING|APPEND|METHOD)  /;
       if (rows[i].match(reg)) {
         const issue = new Issue({file, message: this.getDescription(), key: this.getKey(), start: new Position(i + 1, 1)});
         issues.push(issue);

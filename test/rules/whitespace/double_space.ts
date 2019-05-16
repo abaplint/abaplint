@@ -6,6 +6,7 @@ const tests = [
   {abap: "WRITE: / 'abc'.", cnt: 0},
   {abap: "IF  foo = bar.", cnt: 1},
   {abap: "IF foo = bar.", cnt: 0},
+  {abap: "IF NOT  me->is_class_pool( me->program_name ) EQ abap_true.", cnt: 1},
 ];
 
 testRule(tests, DoubleSpace);
