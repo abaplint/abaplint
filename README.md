@@ -55,5 +55,5 @@ npm test
     EXCEPTIONS = 2.
 ```
 
-* Only single chaning, following gives parser error:
+* Only single chaining, following gives parser error:
 `WRITE: bar: foo.`
