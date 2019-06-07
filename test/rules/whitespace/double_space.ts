@@ -7,6 +7,10 @@ const tests = [
   {abap: "IF  foo = bar.", cnt: 1},
   {abap: "IF foo = bar.", cnt: 0},
   {abap: "IF NOT  me->is_class_pool( me->program_name ) EQ abap_true.", cnt: 1},
+  {abap: "call( var ).", cnt: 0},
+  {abap: "call(  var ).", cnt: 1},
+  {abap: "call( var  ).", cnt: 1},
+  {abap: "call(  var  ).", cnt: 2},
 ];
 
 testRule(tests, DoubleSpace);
