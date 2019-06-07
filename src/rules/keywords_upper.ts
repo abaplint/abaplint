@@ -2,7 +2,6 @@ import {Issue} from "../issue";
 import {ABAPRule} from "./_abap_rule";
 import {ABAPFile} from "../files";
 import {StatementNode, ExpressionNode, TokenNode, TokenNodeRegex} from "../abap/nodes";
-import {Position} from "../position";
 import {Unknown, Comment, MacroContent, MacroCall, Statement} from "../abap/statements/_statement";
 import {Identifier} from "../abap/tokens";
 import {IObject} from "../objects/_iobject";
@@ -11,6 +10,7 @@ import {Class} from "../objects";
 import {BasicRuleConfig} from "./_basic_rule_config";
 import * as Statements from "../abap/statements";
 import * as Expressions from "../abap/expressions";
+import {Token} from "../abap/tokens/_token";
 
 export class KeywordsUpperConf extends BasicRuleConfig {
   public ignoreExceptions: boolean = true;
@@ -85,9 +85,13 @@ export class KeywordsUpper extends ABAPRule {
         }
       }
 
-      const position = this.traverse(statement, statement.get());
-      if (position) {
-        const issue = new Issue({file, message: this.getDescription(), key: this.getKey(), start: position});
+      const tok = this.traverse(statement, statement.get());
+      if (tok) {
+        const issue = new Issue({
+          file,
+          message: this.getDescription() + ", \"" + tok.getStr() + "\"",
+          key: this.getKey(),
+          start: tok.getPos()});
         issues.push(issue);
         break; // one issue per file
       }
@@ -96,7 +100,7 @@ export class KeywordsUpper extends ABAPRule {
     return issues;
   }
 
-  private traverse(s: StatementNode | ExpressionNode, parent: Statement): Position | undefined {
+  private traverse(s: StatementNode | ExpressionNode, parent: Statement): Token | undefined {
 
     for (const child of s.getChildren()) {
       if (child instanceof TokenNodeRegex) {
@@ -125,17 +129,17 @@ export class KeywordsUpper extends ABAPRule {
           continue;
         }
         if (str !== str.toLowerCase() && child.get() instanceof Identifier) {
-          return child.get().getPos();
+          return child.get();
         }
       } else if (child instanceof TokenNode) {
         const str = child.get().getStr();
         if (str !== str.toUpperCase() && child.get() instanceof Identifier) {
-          return child.get().getPos();
+          return child.get();
         }
       } else if (child instanceof ExpressionNode) {
-        const pos = this.traverse(child, parent);
-        if (pos) {
-          return pos;
+        const tok = this.traverse(child, parent);
+        if (tok) {
+          return tok;
         }
       } else {
         throw new Error("traverseStatement, unexpected node type");
