@@ -80,22 +80,27 @@ async function loadFiles(compress: boolean, input: string[], progress: boolean):
 }
 
 function displayHelp(): string {
+// follow docopt.org conventions,
   let output = "";
-  output = output + "Usage: abaplint [options] [file ...]\n";
+  output = output + "Usage:\n";
+  output = output + "  abaplint <file>... [-f -a -s -c (-t | -u)] \n";
+  output = output + "  abaplint -h            display this help\n";
+  output = output + "  abaplint -v            show version\n";
+  output = output + "  abaplint -d            show default configuration\n";
+  output = output + "  abaplint -k            output keywords\n";
   output = output + "\n";
   output = output + "Options:\n";
-  output = output + "  -h, --help             display this help\n";
-  output = output + "  -f, --format [format]  output format (standard, total, json, summary, junit, codeclimate)\n";
-  output = output + "  -v, --version          current version\n";
-  output = output + "  -a [abap]              specify ABAP version\n";  // todo, remove this feature?
-  output = output + "  --outformat [format] --outfile [file]     output issues to file in format\n";
+  output = output + "  -f, --format <format>  output format (standard, total, json, summary, junit, codeclimate)\n";
+  output = output + "  -a <version>           specify ABAP version (v700, v702, ..., v740sp02, ..., cloud)\n";
+  output = output + "  --outformat <format> --outfile <file>     output issues to file in format\n";
   output = output + "  -s                     show progress\n";
-  output = output + "  -k                     output keywords\n";
-  output = output + "  -t                     output stats\n";
-  output = output + "  -u                     dump class and interface information\n";
   output = output + "  -c                     compress files in memory\n";
-  output = output + "  -m                     show memory usage\n";
-  output = output + "  -d, --default          show default configuration\n";
+  output = output + "  -t                     output stats instead of issues\n";
+  output = output + "  -u                     dump class and interface information instead of issues\n";
+  output = output + "  -h                     display this help\n";
+  output = output + "  -v                     show version\n";
+  output = output + "  -d                     show default configuration\n";
+  output = output + "  -k                     output keywords\n";
   return output;
 }
 
@@ -116,9 +121,9 @@ async function run() {
 
   if (argv["h"] !== undefined || argv["help"] !== undefined) {
     output = output + displayHelp();
-  } else if (argv["v"] !== undefined || argv["version"] !== undefined) {
+  } else if (argv["v"] !== undefined) {
     output = output + Registry.abaplintVersion() + "\n";
-  } else if (argv["d"] !== undefined || argv["default"] !== undefined) {
+  } else if (argv["d"] !== undefined) {
     output = output + JSON.stringify(Config.getDefault().get(), undefined, 2) + "\n";
   } else if (argv["k"] !== undefined) {
     output = output + JSON.stringify(Artifacts.getKeywords(), undefined, 2);
@@ -155,10 +160,6 @@ async function run() {
         fs.writeFileSync(argv["outfile"], fileContents, "utf-8");
       }
     }
-  }
-
-  if (argv["m"]) {
-    output = output + JSON.stringify(process.memoryUsage());
   }
 
   return {output, issues};

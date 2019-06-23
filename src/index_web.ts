@@ -6,6 +6,8 @@ import {Registry} from "./registry";
 import {Issue} from "./issue";
 import * as Nodes from "./abap/nodes";
 import {PrettyPrinter} from "./abap/pretty_printer";
+import {Artifacts as ABAPArtifacts} from "./abap/artifacts";
+import {Artifacts} from "./artifacts";
 
 // todo figure out how these exports relate to the exports in index.ts
 // this part is required for the web things to work
@@ -15,6 +17,9 @@ exports.Issue = Issue;
 exports.Registry = Registry;
 exports.Config = Config;
 exports.Version = Version;
+
 exports.textToVersion = textToVersion;
 exports.Formatter = Formatter;
 exports.PrettyPrinter = PrettyPrinter;
+exports.Artifacts = Artifacts;
+exports.ABAPArtifacts = ABAPArtifacts;
