@@ -1,4 +1,4 @@
-import {EmptyLoop} from "../../src/rules";
+import {EmptyStructure} from "../../src/rules";
 import {testRule} from "./_utils";
 
 const tests = [
@@ -6,6 +6,9 @@ const tests = [
   {abap: "CHECK foo = bar.", cnt: 0},
   {abap: "LOOP AT foobar.\nENDLOOP.", cnt: 1},
   {abap: "LOOP AT foobar.\nWRITE boo.\nENDLOOP.", cnt: 0},
+  {abap: "IF foo = bar.\nENDIF.", cnt: 1},
+  {abap: "WHILE foo = bar.\nENDWHILE.", cnt: 1},
+  {abap: "CASE foo.\nENDCASE.", cnt: 1},
 ];
 
-testRule(tests, EmptyLoop);
+testRule(tests, EmptyStructure);
