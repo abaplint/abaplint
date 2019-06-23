@@ -1,5 +1,5 @@
-import {StartAtTab} from "../../src/rules/whitespace/start_at_tab";
-import {testRule} from "./_utils";
+import {StartAtTab} from "../../../src/rules/whitespace/start_at_tab";
+import {testRule} from "../_utils";
 
 const tests = [
   {abap: " WRITE 'foobar'.", cnt: 1},
@@ -9,6 +9,7 @@ const tests = [
   {abap: "moo = boo.  \"sdf", cnt: 0},
   {abap: "TYPES: BEGIN OF ty_file.\n         INCLUDE TYPE ty_file_signature.\n" +
          "TYPES:   data     TYPE xstring,\n       END OF ty_file.", cnt: 0},
+//  {abap: "WRITE\n 'foobar'.", cnt: 1},
 ];
 
 testRule(tests, StartAtTab);

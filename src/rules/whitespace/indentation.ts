@@ -1,13 +1,13 @@
-import {Issue} from "../issue";
-import {ABAPRule} from "./_abap_rule";
-import {ABAPFile} from "../files";
-import {IObject} from "../objects/_iobject";
-import {Class} from "../objects";
-import {Registry} from "../registry";
-import {BasicRuleConfig} from "./_basic_rule_config";
-import {PrettyPrinter, IIndentationOptions} from "../abap/pretty_printer";
-import * as Statements from "../abap/statements";
-import * as Expressions from "../abap/expressions";
+import {Issue} from "../../issue";
+import {ABAPRule} from "../_abap_rule";
+import {ABAPFile} from "../../files";
+import {IObject} from "../../objects/_iobject";
+import {Class} from "../../objects";
+import {Registry} from "../../registry";
+import {BasicRuleConfig} from "../_basic_rule_config";
+import {PrettyPrinter, IIndentationOptions} from "../../abap/pretty_printer";
+import * as Statements from "../../abap/statements";
+import * as Expressions from "../../abap/expressions";
 
 export class IndentationConf extends BasicRuleConfig {
   public ignoreExceptions: boolean = true;
