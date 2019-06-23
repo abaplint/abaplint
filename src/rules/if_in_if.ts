@@ -35,8 +35,12 @@ export class IfInIf extends ABAPRule {
       return [];
     }
 
-    for (const i of stru.findAllStructures(Structures.If)) {
-      if (i.findDirectStructures(Structures.Elseif).length > 0 || i.findDirectStructures(Structures.Else).length > 0) {
+    let possible = stru.findAllStructures(Structures.If);
+    possible = possible.concat(stru.findAllStructures(Structures.Else));
+
+    for (const i of possible) {
+      if (i.findDirectStructures(Structures.ElseIf).length > 0
+          || i.findDirectStructures(Structures.Else).length > 0) {
         continue;
       }
 
@@ -56,11 +60,16 @@ export class IfInIf extends ABAPRule {
       }
 
       const nestedIf = niflist[0];
-      if (nestedIf.findDirectStructures(Structures.Elseif).length > 0 || nestedIf.findDirectStructures(Structures.Else).length > 0) {
+      if (i.get() instanceof Structures.If
+          && (nestedIf.findDirectStructures(Structures.ElseIf).length > 0
+          || nestedIf.findDirectStructures(Structures.Else).length > 0)) {
         continue;
       }
 
-      const issue = new Issue({file, message: this.getDescription(), key: this.getKey(), start: i.getFirstToken().getPos()});
+      const issue = new Issue({file,
+        message: this.getDescription(),
+        key: this.getKey(),
+        start: i.getFirstToken().getPos()});
       issues.push(issue);
     }
 
