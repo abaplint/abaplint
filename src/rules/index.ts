@@ -49,4 +49,5 @@ export * from "./whitespace/indentation";
 export * from "./whitespace/sequential_blank";
 export * from "./whitespace/space_before_colon";
 export * from "./whitespace/start_at_tab";
+export * from "./whitespace/space_before_dot";
 export * from "./whitespace/whitespace_end";
