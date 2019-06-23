@@ -11,9 +11,9 @@ export abstract class Identifier {
 
   constructor(token: Token, node: INode) {
     this.name = token.getStr();
-    this.position = token.getPos();
-    this.start = node.getFirstToken().getPos();
-    this.end = node.getLastToken().getPos();
+    this.position = token.getStart();
+    this.start = node.getFirstToken().getStart();
+    this.end = node.getLastToken().getStart();
 
 // todo, should this be handled in the parser instead?
     if (this.name.substr(0, 1) === "!") {

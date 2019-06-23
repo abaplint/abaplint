@@ -69,7 +69,7 @@ export class IfInIf extends ABAPRule {
       const issue = new Issue({file,
         message: this.getDescription(),
         key: this.getKey(),
-        start: i.getFirstToken().getPos()});
+        start: i.getFirstToken().getStart()});
       issues.push(issue);
     }
 

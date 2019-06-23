@@ -39,15 +39,15 @@ export class StatementNode extends BasicNode {
   }
 
   public getStart(): Position {
-    return this.getTokens()[0].getPos();
+    return this.getTokens()[0].getStart();
   }
 
   public getEnd(): Position {
     const tokens = this.getTokens();
     const last = tokens[tokens.length - 1];
 
-    const pos = new Position(last.getPos().getRow(),
-                             last.getPos().getCol() + last.getStr().length);
+    const pos = new Position(last.getStart().getRow(),
+                             last.getStart().getCol() + last.getStr().length);
 
     return pos;
   }

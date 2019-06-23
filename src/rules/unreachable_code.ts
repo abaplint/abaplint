@@ -46,7 +46,7 @@ export class UnreachableCode extends ABAPRule {
         continue;
       }
       if (exit === true) {
-        output.push(new Issue({file, message: this.getDescription(), key: this.getKey(), start: node.getFirstToken().getPos()}));
+        output.push(new Issue({file, message: this.getDescription(), key: this.getKey(), start: node.getFirstToken().getStart()}));
       }
     }
 

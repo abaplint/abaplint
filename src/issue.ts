@@ -30,6 +30,8 @@ export class Issue {
       this.end = new Position(
         this.start.getRow(),
         data.file.getRawRows()[this.start.getRow() - 1].length);
+    } else {
+      this.end = data.end;
     }
 
     this.file = data.file;

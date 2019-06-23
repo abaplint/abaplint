@@ -48,7 +48,7 @@ export class ShortCase extends ABAPRule {
         if (c.findAllExpressions(Expressions.Or).length > 0) {
           continue;
         }
-        const issue = new Issue({file, message: this.getDescription(), key: this.getKey(), start: c.getFirstToken().getPos()});
+        const issue = new Issue({file, message: this.getDescription(), key: this.getKey(), start: c.getFirstToken().getStart()});
         issues.push(issue);
       }
     }

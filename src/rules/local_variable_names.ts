@@ -117,7 +117,7 @@ export class LocalVariableNames extends ABAPRule {
     const name = token.getStr();
     if (regex.test(name) === false) {
       const message = "Bad local name \"" + name + "\" expected \"" + expected + "/i\"";
-      const issue = new Issue({file, message, key: this.getKey(), start: token.getPos()});
+      const issue = new Issue({file, message, key: this.getKey(), start: token.getStart()});
       ret.push(issue);
     }
     return ret;

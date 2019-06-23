@@ -84,7 +84,7 @@ export class CheckVariablesLogic {
       file: this.currentFile,
       message: message,
       key: "check_variables",
-      start: token.getPos(),
+      start: token.getStart(),
     }));
   }
 

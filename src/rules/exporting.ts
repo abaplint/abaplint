@@ -47,7 +47,7 @@ export class Exporting extends ABAPRule {
           }
         } else if (token.getStr() === "EXPORTING") {
           current.exporting = true;
-          current.pos = token.getPos();
+          current.pos = token.getStart();
         } else if (token.getStr() === "IMPORTING"
             || token.getStr() === "RECEIVING"
             || token.getStr() === "EXCEPTIONS"

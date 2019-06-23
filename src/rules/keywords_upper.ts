@@ -91,7 +91,8 @@ export class KeywordsUpper extends ABAPRule {
           file,
           message: this.getDescription() + ", \"" + tok.getStr() + "\"",
           key: this.getKey(),
-          start: tok.getPos()});
+          start: tok.getStart(),
+          end: tok.getEnd()});
         issues.push(issue);
         break; // one issue per file
       }

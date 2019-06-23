@@ -88,7 +88,7 @@ export class Indentation extends ABAPRule {
         }
       }
 
-      const position = statement.getFirstToken().getPos();
+      const position = statement.getFirstToken().getStart();
 
       if (indent && indent > 0 && indent !== position.getCol()) {
         const issue = new Issue({file, message: this.getDescription(), key: this.getKey(), start: position});

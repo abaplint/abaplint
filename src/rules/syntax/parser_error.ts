@@ -68,7 +68,7 @@ export class ParserError extends ABAPRule {
           current.getCol() + current.getStr().length === next.getCol() &&
           (current instanceof Tokens.String && next.getStr() === ")"
           || current.getStr() === "(" && next instanceof Tokens.String)) {
-        return next.getPos();
+        return next.getStart();
       }
     }
 

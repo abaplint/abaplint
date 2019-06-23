@@ -45,7 +45,7 @@ export class EmptyLineinStatement extends ABAPRule {
       }
 
       if (prevLine && t.getRow() - prevLine >= 2) {
-        const issue = new Issue({file, message: this.getDescription(), key: this.getKey(), start: t.getPos()});
+        const issue = new Issue({file, message: this.getDescription(), key: this.getKey(), start: t.getStart()});
         issues.push(issue);
       }
 

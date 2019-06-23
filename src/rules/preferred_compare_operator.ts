@@ -33,7 +33,7 @@ export class PreferredCompareOperator extends ABAPRule {
       const token = op.getLastToken();
       if (this.conf.badOperators.indexOf(token.getStr()) >= 0) {
         const message = "Compare operator " + token.getStr() + " not preferred";
-        const issue = new Issue({file, message, key: this.getKey(), start: token.getPos()});
+        const issue = new Issue({file, message, key: this.getKey(), start: token.getStart()});
         issues.push(issue);
       }
     }

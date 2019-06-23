@@ -63,7 +63,7 @@ export class ObsoleteStatement extends ABAPRule {
       for (const compare of sta.findAllExpressions(Compare)) {
         const token = compare.findDirectTokenByText("REQUESTED");
         if (token) {
-          issues.push(new Issue({file, message: "IS REQUESTED is obsolete", key: this.getKey(), start: token.getPos()}));
+          issues.push(new Issue({file, message: "IS REQUESTED is obsolete", key: this.getKey(), start: token.getStart()}));
         }
       }
     }

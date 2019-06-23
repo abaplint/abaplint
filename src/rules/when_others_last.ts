@@ -33,7 +33,7 @@ export class WhenOthersLast extends ABAPRule {
       const whens = c.findDirectStatements(Statements.When);
       for (let i = 0; i < whens.length - 1; i++) {
         if (whens[i].concatTokens() === "WHEN OTHERS.") {
-          const start = whens[i].getFirstToken().getPos();
+          const start = whens[i].getFirstToken().getStart();
           const issue = new Issue({file, message: this.getDescription(), key: this.getKey(), start});
           issues.push(issue);
         }

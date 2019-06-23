@@ -211,7 +211,7 @@ export class PrettyPrinter {
       if (exp === undefined || exp < 0) {
         continue;
       }
-      const row = statement.getFirstToken().getPos().getRow() - 1;
+      const row = statement.getFirstToken().getStart().getRow() - 1;
       lines[row] = lines[row].trim();
       for (let i = 1; i < exp; i++) {
         lines[row] = " " + lines[row];
@@ -238,7 +238,7 @@ export class PrettyPrinter {
         const token = child.get();
         const str = token.getStr();
         if (str !== str.toUpperCase() && token instanceof Identifier) {
-          this.replaceString(token.getPos(), str.toUpperCase());
+          this.replaceString(token.getStart(), str.toUpperCase());
         }
       } else if (child instanceof ExpressionNode) {
         this.upperCaseKeywords(child);

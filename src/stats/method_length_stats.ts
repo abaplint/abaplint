@@ -31,7 +31,7 @@ export class MethodLengthStats {
       for (const stat of file.getStatements()) {
         const type = stat.get();
         if (type instanceof Statements.Method) {
-          pos = stat.getFirstToken().getPos();
+          pos = stat.getFirstToken().getStart();
           name = this.findName(stat);
           method = true;
           count = 0;

@@ -38,7 +38,7 @@ export class EmptyLoop extends ABAPRule {
 
     for (const l of stru.findAllStructures(Structures.Loop)) {
       if (l.getChildren().length === 2) {
-        const issue = new Issue({file, message: this.getDescription(), key: this.getKey(), start: l.getFirstToken().getPos()});
+        const issue = new Issue({file, message: this.getDescription(), key: this.getKey(), start: l.getFirstToken().getStart()});
         issues.push(issue);
       }
     }
