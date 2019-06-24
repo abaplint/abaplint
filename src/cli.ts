@@ -10,10 +10,25 @@ import {Config} from "./config";
 import {textToVersion} from "./version";
 import {Formatter} from "./formatters/_format";
 import {Artifacts} from "./abap/artifacts";
-import {Registry, IProgress} from "./registry";
+import {Registry, IProgress, NoProgress} from "./registry";
 import {IFile} from "./files/_ifile";
 import {Stats} from "./stats/stats";
 import {Dump} from "./dump/dump";
+
+class Progress implements IProgress {
+  private bar: ProgressBar;
+
+  public set(total: number, text: string) {
+    this.bar = new ProgressBar(text, {total, renderThrottle: 100});
+  }
+
+  public tick(options: any) {
+    if (this.bar) {
+      this.bar.tick(options);
+      this.bar.render();
+    }
+  }
+}
 
 function searchConfig(filename: string): Config {
   const json = searchUp(path.dirname(process.cwd() + path.sep + filename) + path.sep);
@@ -46,19 +61,13 @@ function loadFileNames(args: string[]): string[] {
   return files;
 }
 
-async function loadFiles(compress: boolean, input: string[], progress: boolean): Promise<IFile[]> {
+async function loadFiles(compress: boolean, input: string[], bar: IProgress): Promise<IFile[]> {
   const files: IFile[] = [];
-  let bar: ProgressBar | undefined = undefined;
 
-  if (progress) {
-    bar = new ProgressBar(":percent - :elapseds - Reading files - :filename", {total: input.length});
-  }
+  bar.set(input.length, ":percent - :elapseds - Reading files - :filename");
 
   for (const filename of input) {
-    if (bar) {
-      bar.tick({filename: path.basename(filename)});
-      bar.render();
-    }
+    bar.tick({filename: path.basename(filename)});
 
     const base = filename.split("/").reverse()[0];
     if (base.split(".").length <= 2) {
@@ -83,11 +92,13 @@ function displayHelp(): string {
 // follow docopt.org conventions,
   let output = "";
   output = output + "Usage:\n";
-  output = output + "  abaplint <file>... [-f -a -s -c (-t | -u)] \n";
-  output = output + "  abaplint -h            display this help\n";
-  output = output + "  abaplint -v            show version\n";
-  output = output + "  abaplint -d            show default configuration\n";
-  output = output + "  abaplint -k            output keywords\n";
+  output = output + "  abaplint <file>... [-f <format> -a <version> -s -c --outformat <format> --outfile <file>] \n";
+  output = output + "  abaplint -h | --help       show this help\n";
+  output = output + "  abaplint -v | --version    show version\n";
+  output = output + "  abaplint -d | --default    show default configuration\n";
+  output = output + "  abaplint -k                show keywords\n";
+  output = output + "  abaplint <file>... -u [-s] show class and interface information\n";
+  output = output + "  abaplint <file>... -t [-s] show stats\n";
   output = output + "\n";
   output = output + "Options:\n";
   output = output + "  -f, --format <format>  output format (standard, total, json, summary, junit, codeclimate)\n";
@@ -95,35 +106,28 @@ function displayHelp(): string {
   output = output + "  --outformat <format> --outfile <file>     output issues to file in format\n";
   output = output + "  -s                     show progress\n";
   output = output + "  -c                     compress files in memory\n";
-  output = output + "  -t                     output stats instead of issues\n";
-  output = output + "  -u                     dump class and interface information instead of issues\n";
-  output = output + "  -h                     display this help\n";
-  output = output + "  -v                     show version\n";
-  output = output + "  -d                     show default configuration\n";
-  output = output + "  -k                     output keywords\n";
   return output;
 }
 
 async function run() {
 
-  const argv = minimist(process.argv.slice(2));
+  const argv = minimist(process.argv.slice(2), {boolean: ["s", "c"]});
   let format = "standard";
   let output = "";
   let issues: Issue[] = [];
 
   if (argv["f"] !== undefined || argv["format"] !== undefined) {
-    if (argv["f"] !== undefined) {
-      format = argv["f"];
-    } else {
-      format = argv["format"];
-    }
+    format = argv["f"] ? argv["f"] : argv["format"];
   }
+
+  const progress: IProgress = argv["s"] ? new Progress() : new NoProgress();
+  const compress = argv["c"] ? true : false;
 
   if (argv["h"] !== undefined || argv["help"] !== undefined) {
     output = output + displayHelp();
-  } else if (argv["v"] !== undefined) {
+  } else if (argv["v"] !== undefined || argv["version"] !== undefined) {
     output = output + Registry.abaplintVersion() + "\n";
-  } else if (argv["d"] !== undefined) {
+  } else if (argv["d"] !== undefined || argv["default"] !== undefined) {
     output = output + JSON.stringify(Config.getDefault().get(), undefined, 2) + "\n";
   } else if (argv["k"] !== undefined) {
     output = output + JSON.stringify(Artifacts.getKeywords(), undefined, 2);
@@ -140,10 +144,8 @@ async function run() {
       if (argv["a"]) {
         config.setVersion(textToVersion(argv["a"]));
       }
-      const compress = argv["c"] ? true : false;
 
-      const loaded = await loadFiles(compress, files, argv["s"]);
-      const progress = argv["s"] ? new Progress() : undefined;
+      const loaded = await loadFiles(compress, files, progress);
       const reg = new Registry(config);
 
       issues = reg.addFiles(loaded).findIssues(progress);
@@ -181,18 +183,3 @@ run().then(({output, issues}) => {
   console.dir(err);
   process.exit(1);
 });
-
-class Progress implements IProgress {
-  private bar: ProgressBar;
-
-  public set(total: number, text: string) {
-    this.bar = new ProgressBar(text, {total, renderThrottle: 100});
-  }
-
-  public tick(options: any) {
-    if (this.bar) {
-      this.bar.tick(options);
-      this.bar.render();
-    }
-  }
-}

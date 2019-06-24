@@ -14,7 +14,7 @@ export interface IProgress {
   tick(info: any): void;
 }
 
-class NoProgress implements IProgress {
+export class NoProgress implements IProgress {
   public set(_total: number, _text: string): undefined {
     return undefined;
   }
