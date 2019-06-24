@@ -58,6 +58,9 @@ function loadFileNames(args: string[]): string[] {
   for (const file of args) {
     files = files.concat(glob.sync(file, {nosort: true, nodir: true}));
   }
+  if (files.length === 0) {
+    throw "No files found";
+  }
   return files;
 }
 
@@ -90,28 +93,27 @@ async function loadFiles(compress: boolean, input: string[], bar: IProgress): Pr
 
 function displayHelp(): string {
 // follow docopt.org conventions,
-  let output = "";
-  output = output + "Usage:\n";
-  output = output + "  abaplint <file>... [-f <format> -a <version> -s -c --outformat <format> --outfile <file>] \n";
-  output = output + "  abaplint -h | --help       show this help\n";
-  output = output + "  abaplint -v | --version    show version\n";
-  output = output + "  abaplint -d | --default    show default configuration\n";
-  output = output + "  abaplint -k                show keywords\n";
-  output = output + "  abaplint <file>... -u [-s] show class and interface information\n";
-  output = output + "  abaplint <file>... -t [-s] show stats\n";
-  output = output + "\n";
-  output = output + "Options:\n";
-  output = output + "  -f, --format <format>  output format (standard, total, json, summary, junit, codeclimate)\n";
-  output = output + "  -a <version>           specify ABAP version (v700, v702, ..., v740sp02, ..., cloud)\n";
-  output = output + "  --outformat <format> --outfile <file>     output issues to file in format\n";
-  output = output + "  -s                     show progress\n";
-  output = output + "  -c                     compress files in memory\n";
-  return output;
+  return "Usage:\n" +
+    "  abaplint <file>... [-f <format> -a <version> -s -c --outformat <format> --outfile <file>] \n" +
+    "  abaplint -h | --help          show this help\n" +
+    "  abaplint -v | --version       show version\n" +
+    "  abaplint -d | --default       show default configuration\n" +
+    "  abaplint -k                   show keywords\n" +
+    "  abaplint <file>... -u [-s -c] show class and interface information\n" +
+    "  abaplint <file>... -t [-s -c] show stats\n" +
+    "\n" +
+    "Options:\n" +
+    "  -f, --format <format>  output format (standard, total, json, summary, junit, codeclimate)\n" +
+    "  -a <version>           specify ABAP version (v700, v702, ..., v740sp02, ..., cloud)\n" +
+    "  --outformat <format>   output format, use in combination with outfile\n" +
+    "  --outfile <file>       output issues to file in format\n" +
+    "  -s                     show progress\n" +
+    "  -c                     compress files in memory\n";
 }
 
 async function run() {
 
-  const argv = minimist(process.argv.slice(2), {boolean: ["s", "c"]});
+  const argv = minimist(process.argv.slice(2), {boolean: ["s", "c", "u", "t"]});
   let format = "standard";
   let output = "";
   let issues: Issue[] = [];
@@ -131,33 +133,23 @@ async function run() {
     output = output + JSON.stringify(Config.getDefault().get(), undefined, 2) + "\n";
   } else if (argv["k"] !== undefined) {
     output = output + JSON.stringify(Artifacts.getKeywords(), undefined, 2);
-  } else if (argv._[0] === undefined) {
-    output = output + "Supply filename\n";
   } else {
     const files = loadFileNames(argv._);
+    const config = searchConfig(files[0]);
+    if (argv["a"]) { config.setVersion(textToVersion(argv["a"])); }
+    const loaded = await loadFiles(compress, files, progress);
+    const reg = new Registry(config).addFiles(loaded);
 
-    if (files.length === 0) {
-      output = output + "No files found\n";
+    if (argv["t"]) {
+      output = JSON.stringify(new Stats(reg).run(progress), undefined, 2);
+    } else if (argv["u"]) {
+      reg.parse(progress);
+      output = JSON.stringify(new Dump(reg).classes(), undefined, 2);
     } else {
-      const config = searchConfig(files[0]);
-
-      if (argv["a"]) {
-        config.setVersion(textToVersion(argv["a"]));
-      }
-
-      const loaded = await loadFiles(compress, files, progress);
-      const reg = new Registry(config);
-
-      issues = reg.addFiles(loaded).findIssues(progress);
+      issues = reg.findIssues(progress);
       output = Formatter.format(issues, format, loaded.length);
 
-      if (argv["t"]) {
-        output = JSON.stringify(new Stats(reg).run(progress), undefined, 2);
-        issues = [];
-      } else if (argv["u"]) {
-        output = JSON.stringify(new Dump(reg).classes(), undefined, 2);
-        issues = [];
-      } else if (argv["outformat"] && argv["outfile"]) {
+      if (argv["outformat"] && argv["outfile"]) {
         const fileContents = Formatter.format(issues, argv["outformat"], loaded.length);
         fs.writeFileSync(argv["outfile"], fileContents, "utf-8");
       }
