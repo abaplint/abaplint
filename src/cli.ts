@@ -12,8 +12,8 @@ import {Formatter} from "./formatters/_format";
 import {Artifacts} from "./abap/artifacts";
 import {Registry, IProgress, NoProgress} from "./registry";
 import {IFile} from "./files/_ifile";
-import {Stats} from "./stats/stats";
-import {Dump} from "./dump/dump";
+import {Stats} from "./extras/stats/stats";
+import {Dump} from "./extras/dump/dump";
 
 class Progress implements IProgress {
   private bar: ProgressBar;

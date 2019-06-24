@@ -1,11 +1,11 @@
-import * as Statements from "../abap/statements";
-import {IFile} from "../files/_ifile";
-import {Position} from "../position";
-import {MethodName} from "../abap/expressions";
-import {StatementNode} from "../abap/nodes";
-import {IObject} from "../objects/_iobject";
-import {ABAPObject} from "../objects/_abap_object";
-import {Empty, Comment} from "../abap/statements/_statement";
+import * as Statements from "../../abap/statements";
+import {IFile} from "../../files/_ifile";
+import {Position} from "../../position";
+import {MethodName} from "../../abap/expressions";
+import {StatementNode} from "../../abap/nodes";
+import {IObject} from "../../objects/_iobject";
+import {ABAPObject} from "../../objects/_abap_object";
+import {Empty, Comment} from "../../abap/statements/_statement";
 
 
 export interface IMethodLengthResult {

@@ -1,4 +1,4 @@
-import {Registry} from "../registry";
+import {Registry} from "../../registry";
 import {ITypeCount} from "./stats";
 
 export class StatementTypesStats {

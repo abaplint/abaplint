@@ -4,7 +4,7 @@ import {Config} from "./config";
 import {Version, textToVersion} from "./version";
 import {Formatter} from "./formatters/_format";
 import {Registry} from "./registry";
-import {Stats} from "./stats/stats";
+import {Stats} from "./extras/stats/stats";
 import {LanguageServer} from "./lsp";
 
 // file used to build typings, index.d.ts

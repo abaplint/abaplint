@@ -1,6 +1,6 @@
-import {Registry} from "../registry";
-import * as Objects from "../objects";
-import * as Types from "../abap/types";
+import {Registry} from "../../registry";
+import * as Objects from "../../objects";
+import * as Types from "../../abap/types";
 
 export class Dump {
   private reg: Registry;

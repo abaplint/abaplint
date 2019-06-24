@@ -1,7 +1,7 @@
-import {Registry, IProgress} from "../registry";
-import {Version, textToVersion, versionToText} from "../version";
-import {Unknown, Comment, Empty} from "../abap/statements/_statement";
-import * as Statements from "../abap/statements";
+import {Registry, IProgress} from "../../registry";
+import {Version, textToVersion, versionToText} from "../../version";
+import {Unknown, Comment, Empty} from "../../abap/statements/_statement";
+import * as Statements from "../../abap/statements";
 import {MethodLengthStats} from "./method_length_stats";
 import {StatementTypesStats} from "./statement_types_stats";
 
