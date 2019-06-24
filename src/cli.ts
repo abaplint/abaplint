@@ -14,6 +14,7 @@ import {Registry, IProgress, NoProgress} from "./registry";
 import {IFile} from "./files/_ifile";
 import {Stats} from "./extras/stats/stats";
 import {Dump} from "./extras/dump/dump";
+import {SemanticSearch} from "./extras/semantic_search/semantic_search";
 
 class Progress implements IProgress {
   private bar: ProgressBar;
@@ -101,6 +102,7 @@ function displayHelp(): string {
     "  abaplint -k                   show keywords\n" +
     "  abaplint <file>... -u [-s -c] show class and interface information\n" +
     "  abaplint <file>... -t [-s -c] show stats\n" +
+    "  abaplint <file>... -e [-s -c] show semantic search information\n" +
     "\n" +
     "Options:\n" +
     "  -f, --format <format>  output format (standard, total, json, summary, junit, codeclimate)\n" +
@@ -113,7 +115,7 @@ function displayHelp(): string {
 
 async function run() {
 
-  const argv = minimist(process.argv.slice(2), {boolean: ["s", "c", "u", "t"]});
+  const argv = minimist(process.argv.slice(2), {boolean: ["s", "c", "u", "t", "e"]});
   let format = "standard";
   let output = "";
   let issues: Issue[] = [];
@@ -145,6 +147,8 @@ async function run() {
     } else if (argv["u"]) {
       reg.parse(progress);
       output = JSON.stringify(new Dump(reg).classes(), undefined, 2);
+    } else if (argv["e"]) {
+      output = JSON.stringify(new SemanticSearch(reg).run(progress), undefined, 1);
     } else {
       issues = reg.findIssues(progress);
       output = Formatter.format(issues, format, loaded.length);

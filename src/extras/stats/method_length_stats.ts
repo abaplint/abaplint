@@ -7,6 +7,7 @@ import {IObject} from "../../objects/_iobject";
 import {ABAPObject} from "../../objects/_abap_object";
 import {Empty, Comment} from "../../abap/statements/_statement";
 
+// todo, move this file to somewhere outside "extras", its used in a rule
 
 export interface IMethodLengthResult {
   name: string;

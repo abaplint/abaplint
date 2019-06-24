@@ -62,13 +62,13 @@ export class Artifacts {
     return ret;
   }
 
-  public static getExpressions(): Expression[] {
-    const ret: Expression[] = [];
+  public static getExpressions(): (new () => Expression)[] {
+    const ret: (new () => Expression)[] = [];
 
     for (const key in Expressions) {
       const list: any = Expressions;
       if (typeof list[key] === "function") {
-        ret.push(new list[key]());
+        ret.push(list[key]);
       }
     }
 
@@ -96,7 +96,7 @@ export class Artifacts {
     }
 
     for (const expr of this.getExpressions()) {
-      list.add(Combi.listKeywords(expr.getRunnable()), "expression_" + className(expr));
+      list.add(Combi.listKeywords(new expr().getRunnable()), "expression_" + className(expr));
     }
 
     return list.get();
