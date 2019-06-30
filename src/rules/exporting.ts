@@ -45,13 +45,13 @@ export class Exporting extends ABAPRule {
           if (current === undefined) {
             current = new Counter();
           }
-        } else if (token.getStr() === "EXPORTING") {
+        } else if (token.getStr().toUpperCase() === "EXPORTING") {
           current.exporting = true;
           current.pos = token.getStart();
-        } else if (token.getStr() === "IMPORTING"
-            || token.getStr() === "RECEIVING"
-            || token.getStr() === "EXCEPTIONS"
-            || token.getStr() === "CHANGING") {
+        } else if (token.getStr().toUpperCase() === "IMPORTING"
+            || token.getStr().toUpperCase() === "RECEIVING"
+            || token.getStr().toUpperCase() === "EXCEPTIONS"
+            || token.getStr().toUpperCase() === "CHANGING") {
           current.other = true;
         }
       }
