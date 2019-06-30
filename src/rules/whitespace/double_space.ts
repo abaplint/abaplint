@@ -3,6 +3,8 @@ import {ABAPRule} from "../_abap_rule";
 import {ABAPFile} from "../../files";
 import {BasicRuleConfig} from "../_basic_rule_config";
 import {Position} from "../../position";
+import {Token} from "../../abap/tokens/_token";
+import {ParenLeftW, Comment, WParenRightW, WParenRight, StringTemplate} from "../../abap/tokens";
 
 export class DoubleSpaceConf extends BasicRuleConfig {
   public keywords = true;
@@ -40,14 +42,32 @@ export class DoubleSpace extends ABAPRule {
         const reg = /^\s*(IF|IF NOT|SHIFT|WHEN|READ TABLE|MODIFY|DELETE|COLLECT|CHECK|SORT|ELSEIF|DATA|MOVE-CORRESPONDING|APPEND|METHOD)  /;
         issues = issues.concat(this.checkAndReport(reg, rows[i], i, file));
       }
-      if (this.getConfig().startParen === true) {
-        const reg = /\([ ]{2}[ ]*\S/;
-        issues = issues.concat(this.checkAndReport(reg, rows[i], i, file));
+    }
+
+    let prev: Token | undefined = undefined;
+    for (const t of file.getTokens()) {
+      if (prev === undefined) {
+        prev = t;
+        continue;
       }
-      if (this.getConfig().endParen === true) {
-        const reg = /\S[ ]*[ ]{2}\)/;
-        issues = issues.concat(this.checkAndReport(reg, rows[i], i, file));
+
+      if (this.getConfig().startParen === true
+          && prev.getRow() === t.getRow()
+          && prev instanceof ParenLeftW
+          && !(t instanceof Comment)
+          && !(t instanceof StringTemplate)  // tempoary workaround, see #427
+          && prev.getEnd().getCol() + 1 < t.getCol()) {
+        issues.push(new Issue({file, message: this.getDescription(), key: this.getKey(), start: prev.getStart()}));
       }
+
+      if (this.getConfig().endParen === true
+          && prev.getRow() === t.getRow()
+          && (t instanceof WParenRightW || t instanceof WParenRight)
+          && prev.getEnd().getCol() + 1 < t.getCol()) {
+        issues.push(new Issue({file, message: this.getDescription(), key: this.getKey(), start: prev.getEnd()}));
+      }
+
+      prev = t;
     }
 
     return issues;

@@ -11,6 +11,11 @@ const tests = [
   {abap: "call(  var ).", cnt: 1},
   {abap: "call( var  ).", cnt: 1},
   {abap: "call(  var  ).", cnt: 2},
+  {abap: "call(  \"comment\n).", cnt: 0},
+  {abap: "foo = |  )|.", cnt: 0},
+  {abap: "call( |hello| ).", cnt: 0},
+  {abap: "call( |moo {\nvar }bar| ).", cnt: 0},
+//  {abap: "call(  |moo {\nvar }bar| ).", cnt: 1},
 ];
 
 testRule(tests, DoubleSpace);
