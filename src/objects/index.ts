@@ -5,6 +5,7 @@ export * from "./authorization_object";
 export * from "./bsp_application";
 export * from "./business_add_in_implementation";
 export * from "./business_configuration_set";
+export * from "./cds_metadata_extension";
 export * from "./chapter_of_book_structure";
 export * from "./checkpoint_group";
 export * from "./class";
