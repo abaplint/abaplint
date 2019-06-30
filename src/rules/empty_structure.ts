@@ -70,7 +70,7 @@ export class EmptyStructure extends ABAPRule {
     for (const l of candidates) {
       if (l.getChildren().length === 2) {
         const issue = new Issue({file,
-          message: "Empty " + l.constructor.name,
+          message: "Empty " + l.get().constructor.name,
           key: this.getKey(),
           start: l.getFirstToken().getStart()});
         issues.push(issue);
