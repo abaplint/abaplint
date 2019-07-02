@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>abaplint playground</title>
+    <script src="script/bundle.js"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.6.3/css/font-awesome.css">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.2.0/jszip.js" integrity="sha256-EHgAIxZ/n1IaWzhk7MwPaOux4UOWSr3czJ4dEVimBvo=" crossorigin="anonymous"></script>
+    <link rel="stylesheet" type="text/css" href="style/style.css">
+    <link rel="icon" href="data:;base64,iVBORw0KGgo=">
+<!-- Global site tag (gtag.js) - Google Analytics -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=UA-83119203-1"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+  gtag('config', 'UA-83119203-1');
+</script>
+  </head>
+  <body>
+
+    <form id="upload" action="upload.php" method="POST" enctype="multipart/form-data">
+      <input type="hidden" id="MAX_FILE_SIZE" name="MAX_FILE_SIZE" value="3000000" />
+      <div>
+        <input type="file" id="fileselect" name="fileselect[]" multiple="multiple" style="display: none;" />
+        <div id="filedrag">drop zip here</div>
+      </div>
+      <div id="submitbutton">
+        <button type="submit">Upload Files</button>
+      </div>
+      </form>
+
+      <script src="script/semantic.js"></script>
+
+  </body>
+</html>
+
