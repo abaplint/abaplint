@@ -110,12 +110,12 @@ function issues() {
 function tokens() {
   let file = parse();
 
-  let inner = "<table>";
+  let inner = "<table><tr><td><b>String</b></td><td><b>Type</b></td><td><b>Row</b></td><td><b>Column</b></td></tr>";
   for (let token of file.getTokens()) {
     inner = inner + "<tr><td>\"" +
       token.getStr() + "\"</td><td>" +
-      token.constructor.name + "</td><td>" +
-      token.getRow() + "</td><td>" +
+      token.constructor.name + "</td><td align=\"right\">" +
+      token.getRow() + "</td><td align=\"right\">" +
       token.getCol() + "</td></tr>";
   }
   inner = inner + "</table>";
