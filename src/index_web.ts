@@ -8,6 +8,7 @@ import * as Nodes from "./abap/nodes";
 import {PrettyPrinter} from "./abap/pretty_printer";
 import {Artifacts as ABAPArtifacts} from "./abap/artifacts";
 import {Artifacts} from "./artifacts";
+import {SemanticSearch} from "./extras/semantic_search/semantic_search";
 
 // todo figure out how these exports relate to the exports in index.ts
 // this part is required for the web things to work
@@ -23,3 +24,4 @@ exports.Formatter = Formatter;
 exports.PrettyPrinter = PrettyPrinter;
 exports.Artifacts = Artifacts;
 exports.ABAPArtifacts = ABAPArtifacts;
+exports.SemanticSearch = SemanticSearch;

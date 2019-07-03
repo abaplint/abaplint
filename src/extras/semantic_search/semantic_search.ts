@@ -26,7 +26,7 @@ export class SemanticSearch {
     this.reg = reg;
   }
 
-  public run(progress: IProgress): ISemanticSearchResult {
+  public run(progress?: IProgress): ISemanticSearchResult {
     const result: ISemanticSearchResult = {expressions: [], files: []};
 
     this.reg.parse(progress);

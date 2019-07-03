@@ -22,12 +22,17 @@
       <input type="hidden" id="MAX_FILE_SIZE" name="MAX_FILE_SIZE" value="3000000" />
       <div>
         <input type="file" id="fileselect" name="fileselect[]" multiple="multiple" style="display: none;" />
-        <div id="filedrag">drop zip here</div>
+        <div id="filedrag">drop zip here, be patient</div>
       </div>
       <div id="submitbutton">
         <button type="submit">Upload Files</button>
       </div>
       </form>
+
+      <div id="status"></div>
+      Expressions: <select name="version" id="dropdown"></select>
+      </div>
+      <div id="results"></div>
 
       <script src="script/semantic.js"></script>
 
