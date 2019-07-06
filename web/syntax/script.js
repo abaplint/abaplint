@@ -91,7 +91,7 @@ function renderSyntax(type, name) {
   if (next) {
     html = html + "<b>Next</b>: <a href=\"#/" + type + "/" + next.name + "\">" + next.name + "</a><br>\n";
   }
-  html = html + "<a href=\"https://github.com/larshp/abaplint/blob/master/src/abap/" + found.type + "s/" + found.filename + "\">Source</a><br>";
+  html = html + "<a href=\"https://github.com/abaplint/abaplint/blob/master/src/abap/" + found.type + "s/" + found.filename + "\">Source</a><br>";
 
   let use = found.using.map((e) => { return "<a href=\"#/" + e + "\">" + e + "</a>"; });
   let by = found.used_by.map((e) => { return "<a href=\"#/" + e + "\">" + e + "</a>"; });
