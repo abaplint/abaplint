@@ -13,8 +13,6 @@ Regarding versioning: semantic versioning is currently not followed, recommend f
 
 [Syntax Diagrams](https://syntax.abaplint.org)
 
-[Documentation](https://docs.abaplint.org)
-
 The code is in active development and some rules may not be described in documentation yet. In order to see the default configuration with all the rules run `abaplint -d`. You may also save it as the current config in the root dir of your project `abaplint -d > abaplint.json`
 
 ### Works with
