@@ -1,6 +1,6 @@
 [![npm version](https://badge.fury.io/js/abaplint.svg)](https://badge.fury.io/js/abaplint)
-[![Build Status](https://travis-ci.org/larshp/abaplint.svg?branch=master)](https://travis-ci.org/larshp/abaplint)
-[![Dependency Status](https://david-dm.org/larshp/abaplint.svg)](https://david-dm.org/larshp/abaplint)
+[![Build Status](https://travis-ci.com/abaplint/abaplint.svg?branch=master)](https://travis-ci.com/abaplint/abaplint)
+[![Dependency Status](https://david-dm.org/abaplint/abaplint.svg)](https://david-dm.org/abaplint/abaplint)
 [![Greenkeeper badge](https://badges.greenkeeper.io/larshp/abaplint.svg)](https://greenkeeper.io/)
 
 # abaplint
