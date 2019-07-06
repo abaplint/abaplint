@@ -1,7 +1,7 @@
 [![npm version](https://badge.fury.io/js/abaplint.svg)](https://badge.fury.io/js/abaplint)
 [![Build Status](https://travis-ci.com/abaplint/abaplint.svg?branch=master)](https://travis-ci.com/abaplint/abaplint)
 [![Dependency Status](https://david-dm.org/abaplint/abaplint.svg)](https://david-dm.org/abaplint/abaplint)
-[![Greenkeeper badge](https://badges.greenkeeper.io/larshp/abaplint.svg)](https://greenkeeper.io/)
+[![Greenkeeper badge](https://badges.greenkeeper.io/abaplint/abaplint.svg)](https://greenkeeper.io/)
 
 # abaplint
 
