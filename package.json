@@ -52,7 +52,7 @@
     "@types/glob": "^7.1.1",
     "@types/minimist": "^1.2.0",
     "@types/mocha": "^5.2.7",
-    "@types/node": "^12.0.10",
+    "@types/node": "^12.6.0",
     "@types/progress": "^2.0.3",
     "browserify": "^16.0.0",
     "chai": "^4.2.0",
