@@ -17,7 +17,7 @@ export class ObjectNamingConf extends BasicRuleConfig {
   public doma = "^Z";
   public msag = "^Z";
   public tran = "^Z";
-  public enqu = "^Z";
+  public enqu = "^EZ";
   public auth = "^Z";
   public pinf = "^Z";
 }
