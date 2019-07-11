@@ -38,7 +38,7 @@ class Graph {
     const res: ICollection = {expressions: [], statements: [], structures: []};
 
     for (const expr of Artifacts.getExpressions()) {
-      res.expressions.push(this.buildRunnable(expr.constructor.name, "expression", new expr().getRunnable(), true));
+      res.expressions.push(this.buildRunnable(new expr().constructor.name, "expression", new expr().getRunnable(), true));
     }
 
     for (const stat of Artifacts.getStatements()) {
