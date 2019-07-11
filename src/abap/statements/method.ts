@@ -11,7 +11,9 @@ export class Method extends Statement {
                        name,
                        opt(alt(str("FAIL"), str("IGNORE"))));
 
-    const database = seq(str("DATABASE PROCEDURE FOR HDB"), new Language());
+    const database = seq(str("DATABASE PROCEDURE FOR HDB"),
+                         new Language(),
+                         opt(str("OPTIONS READ-ONLY")));
 
     const by = seq(str("BY"), alt(kernel, database));
 
