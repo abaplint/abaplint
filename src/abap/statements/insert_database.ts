@@ -29,7 +29,7 @@ export class InsertDatabase extends Statement {
                      opt(str("CLIENT SPECIFIED")),
                      opt(conn),
                      str("VALUES"),
-                     new Source());
+                     new SQLSource());
 
     return seq(str("INSERT"), alt(from, into));
   }

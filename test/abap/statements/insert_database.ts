@@ -15,6 +15,7 @@ const tests = [
   "insert into ztable client specified connection (l_db) values entry.",
   "INSERT ztable FROM TABLE @lt_data.",
   "INSERT ztotals FROM ( SELECT FROM zheader FIELDS number GROUP BY mandt, number ).",
+  "INSERT INTO ztable VALUES @current.",
 ];
 
 statementType(tests, "INSERT", Statements.InsertDatabase);
