@@ -2,8 +2,7 @@ import {Registry, IProgress} from "../../registry";
 import {Version, textToVersion, versionToText} from "../../version";
 import {Unknown, Comment, Empty} from "../../abap/statements/_statement";
 import * as Statements from "../../abap/statements";
-import {MethodLengthStats} from "./method_length_stats";
-import {StatementTypesStats} from "./statement_types_stats";
+import {MethodLengthStats} from "../../abap/method_length_stats";
 
 export interface ITotals {
   statements: number;
@@ -28,11 +27,9 @@ export interface IResult {
   time: string;
   totals: ITotals;
   objects: ITypeCount[];
-  issues: ITypeCount[];
   statements: ITypeCount[];
   objectOrientation: IObjectOrientation;
   methodLength: number[];
-  statementTypes: ITypeCount[];
 }
 
 export class Stats {
@@ -49,10 +46,8 @@ export class Stats {
       time: new Date().toISOString(),
       totals: this.buildTotals(),
       objects: this.sort(this.buildObjects()),
-      issues: this.sort(this.buildIssues()),
       objectOrientation: this.buildObjectOrientation(),
       methodLength: this.buildMethodLength(),
-      statementTypes: this.sort(StatementTypesStats.run(this.reg)),
       statements: this.buildStatements(progress), // attention: this changes the ABAP version
     };
   }
@@ -140,23 +135,6 @@ export class Stats {
     }
 
     return result;
-  }
-
-  private buildIssues(): ITypeCount[] {
-    const res: ITypeCount[] = [];
-    for (const issue of this.reg.findIssues()) {
-      let found = false;
-      for (const r of res) {
-        if (r.type === issue.getKey()) {
-          r.count = r.count + 1;
-          found = true;
-        }
-      }
-      if (found === false) {
-        res.push({type: issue.getKey(), count: 1});
-      }
-    }
-    return res;
   }
 
   private buildObjects(): ITypeCount[] {

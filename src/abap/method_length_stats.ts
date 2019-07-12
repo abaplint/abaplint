@@ -1,13 +1,11 @@
-import * as Statements from "../../abap/statements";
-import {IFile} from "../../files/_ifile";
-import {Position} from "../../position";
-import {MethodName} from "../../abap/expressions";
-import {StatementNode} from "../../abap/nodes";
-import {IObject} from "../../objects/_iobject";
-import {ABAPObject} from "../../objects/_abap_object";
-import {Empty, Comment} from "../../abap/statements/_statement";
-
-// todo, move this file to somewhere outside "extras", its used in a rule
+import * as Statements from "./statements";
+import {IFile} from "../files/_ifile";
+import {Position} from "../position";
+import {MethodName} from "./expressions";
+import {StatementNode} from "./nodes";
+import {IObject} from "../objects/_iobject";
+import {ABAPObject} from "../objects/_abap_object";
+import {Empty, Comment} from "./statements/_statement";
 
 export interface IMethodLengthResult {
   name: string;

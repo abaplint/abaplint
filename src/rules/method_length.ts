@@ -1,7 +1,7 @@
 import {Issue} from "../issue";
 import {IObject} from "../objects/_iobject";
 import {Registry} from "../registry";
-import {MethodLengthStats} from "../extras/stats/method_length_stats";
+import {MethodLengthStats} from "../abap/method_length_stats";
 import {IRule} from "./_irule";
 import {BasicRuleConfig} from "./_basic_rule_config";
 
