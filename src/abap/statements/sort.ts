@@ -1,5 +1,5 @@
 import {Statement} from "./_statement";
-import {str, seq, alt, per, opt, plus, optPrio, IStatementRunnable} from "../combi";
+import {str, seq, alt, per, opt, plus, IStatementRunnable, optPrio} from "../combi";
 import {FieldSymbol, Target, Dynamic, FieldChain} from "../expressions";
 
 export class Sort extends Statement {
@@ -13,7 +13,7 @@ export class Sort extends Statement {
 
     const text = str("AS TEXT");
 
-    const fields = plus(seq(sel, optPrio(order), optPrio(text)));
+    const fields = plus(seq(sel, optPrio(text), optPrio(order), optPrio(text)));
 
     const by = seq(str("BY"), fields);
 

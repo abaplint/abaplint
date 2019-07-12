@@ -665,7 +665,7 @@ class Permutation implements IStatementRunnable {
 
   constructor(list: IStatementRunnable[]) {
     if (list.length < 2) {
-      throw new Error("Permutation, length error");
+      throw new Error("Permutation, length error, got " + list.length);
     }
     this.list = list;
   }
