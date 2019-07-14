@@ -66,6 +66,7 @@ export class ClassDefinition extends Identifier {
     for (const node of this.node.findAllStatements(Statements.InterfaceDef)) {
       ret.push(node.findFirstExpression(Expressions.InterfaceName)!.getFirstToken().getStr());
     }
+
     return ret;
   }
 

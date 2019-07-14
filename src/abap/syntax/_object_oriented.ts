@@ -96,7 +96,7 @@ export class ObjectOriented {
 
     this.variables.addList(methodDefinition.getParameters().getAll());
 
-    for (const i of classDefinition.getImplementing()) {
+    for (const i of this.findInterfaces(classDefinition)) {
       const intf = this.reg.getObject("INTF", i) as Interface;
       if (intf) {
         this.variables.addList(intf.getDefinition()!.getAttributes()!.getConstants(), i + "~");
@@ -105,6 +105,21 @@ export class ObjectOriented {
         this.variables.addList(intf.getDefinition()!.getAttributes()!.getInstance(), i + "~");
       }
     }
+  }
+
+  private findInterfaces(cd: ClassDefinition): string[] {
+    let ret = cd.getImplementing();
+
+    const sup = cd.getSuperClass();
+    if (sup) {
+      try {
+        ret = ret.concat(this.findInterfaces(this.findSuperDefinition(sup)));
+      } catch {
+// ignore errors, they will show up as variable not found anyhow
+      }
+    }
+
+    return ret;
   }
 
   private findDefinition(name: string): ClassDefinition {
