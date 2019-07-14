@@ -13,7 +13,7 @@ export class InterfaceDefinition extends Identifier {
       throw new Error("InterfaceDefinition, unexpected node type");
     }
 
-    const name = node.findFirstStatement(Statements.Interface)!.findFirstExpression(Expressions.ClassName)!.getFirstToken();
+    const name = node.findFirstStatement(Statements.Interface)!.findFirstExpression(Expressions.InterfaceName)!.getFirstToken();
     super(name, node);
 
     this.node = node;

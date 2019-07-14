@@ -51,7 +51,6 @@ export class ObjectOriented {
       throw new Error("Error reading class attributes");
     }
 
-  // todo, also add attributes and constants from super classes
     this.variables.addList(classAttributes.getConstants());
     this.variables.addList(classAttributes.getInstance()); // todo, this is not correct, take care of instance vs static
     this.variables.addList(classAttributes.getStatic()); // todo, this is not correct, take care of instance vs static

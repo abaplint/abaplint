@@ -679,6 +679,30 @@ describe("Check Variables", () => {
   });
 
 /*
+  it("class implementing interface, referencing data", () => {
+    const clas =
+      "CLASS zcl_foobar DEFINITION PUBLIC FINAL CREATE PUBLIC.\n" +
+      "  PUBLIC SECTION.\n" +
+      "    INTERFACES zif_foobar.\n" +
+      "    METHODS bar.\n" +
+      "ENDCLASS.\n" +
+      "CLASS ZCL_FOOBAR IMPLEMENTATION.\n" +
+      "  METHOD bar.\n" +
+      "    WRITE zif_foobar~boo.\n" +
+      "  ENDMETHOD.\n" +
+      "ENDCLASS.\n";
+    const intf =
+      "INTERFACE zif_foobar PUBLIC.\n" +
+      "  DATA boo TYPE c LENGTH 1.\n" +
+      "ENDINTERFACE.";
+    const issues = runMulti([
+      {filename: "zcl_foobar.clas.abap", contents: clas},
+      {filename: "zif_foobar.intf.abap", contents: intf}]);
+    expect(issues.length).to.equals(0);
+  });
+*/
+
+/*
   it("program, constant, begin, error", () => {
     const abap =
       "CONSTANTS: BEGIN OF c_mode,\n" +

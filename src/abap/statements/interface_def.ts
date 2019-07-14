@@ -1,7 +1,7 @@
 import {Statement} from "./_statement";
 import {Version} from "../../version";
 import {str, seq, opt, alt, ver, plus, IStatementRunnable} from "../combi";
-import {Source, Field} from "../expressions";
+import {Source, Field, InterfaceName} from "../expressions";
 
 export class InterfaceDef extends Statement {
 
@@ -18,7 +18,7 @@ export class InterfaceDef extends Statement {
                         ver(Version.v740sp02, str("PARTIALLY IMPLEMENTED")));
 
     return seq(str("INTERFACES"),
-               new Field(),
+               new InterfaceName(),
                opt(options),
                opt(dataValues));
   }

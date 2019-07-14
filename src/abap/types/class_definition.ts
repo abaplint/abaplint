@@ -61,6 +61,14 @@ export class ClassDefinition extends Identifier {
     return this.node.findFirstExpression(Expressions.ClassFinal) !== undefined;
   }
 
+  public getImplementing(): string[] {
+    const ret = [];
+    for (const node of this.node.findAllStatements(Statements.InterfaceDef)) {
+      ret.push(node.findFirstExpression(Expressions.InterfaceName)!.getFirstToken().getStr());
+    }
+    return ret;
+  }
+
   /*
   public getFriends()
 
@@ -75,9 +83,6 @@ export class ClassDefinition extends Identifier {
   }
 
   public getEvents() {
-
-  public getImplementing() {
-
 */
 
 }
