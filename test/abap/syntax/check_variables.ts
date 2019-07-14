@@ -678,29 +678,27 @@ describe("Check Variables", () => {
     expect(issues.length).to.equals(0);
   });
 
-/*
-  it("class implementing interface, referencing data", () => {
+  it("class implementing interface, referencing data from interface", () => {
     const clas =
       "CLASS zcl_foobar DEFINITION PUBLIC FINAL CREATE PUBLIC.\n" +
       "  PUBLIC SECTION.\n" +
-      "    INTERFACES zif_foobar.\n" +
+      "    INTERFACES zif_foobar2.\n" +
       "    METHODS bar.\n" +
       "ENDCLASS.\n" +
       "CLASS ZCL_FOOBAR IMPLEMENTATION.\n" +
       "  METHOD bar.\n" +
-      "    WRITE zif_foobar~boo.\n" +
+      "    WRITE zif_foobar2~boo.\n" +
       "  ENDMETHOD.\n" +
       "ENDCLASS.\n";
     const intf =
-      "INTERFACE zif_foobar PUBLIC.\n" +
+      "INTERFACE zif_foobar2 PUBLIC.\n" +
       "  DATA boo TYPE c LENGTH 1.\n" +
       "ENDINTERFACE.";
     const issues = runMulti([
       {filename: "zcl_foobar.clas.abap", contents: clas},
-      {filename: "zif_foobar.intf.abap", contents: intf}]);
+      {filename: "zif_foobar2.intf.abap", contents: intf}]);
     expect(issues.length).to.equals(0);
   });
-*/
 
 /*
   it("program, constant, begin, error", () => {

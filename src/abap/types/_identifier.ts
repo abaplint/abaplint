@@ -1,4 +1,3 @@
-// import {Type} from "./type";
 import {Position} from "../../position";
 import {Token} from "../tokens/_token";
 import {INode} from "../nodes/_inode";
@@ -23,6 +22,12 @@ export abstract class Identifier {
 
   public getName() {
     return this.name;
+  }
+
+// hmm, consider how this can be refactored
+  public setName(name: string): Identifier {
+    this.name = name;
+    return this;
   }
 
   public getPosition() {

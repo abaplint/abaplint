@@ -16,9 +16,13 @@ export class Variables {
     this.scopes[this.scopes.length - 1].other.push(name);
   }
 
-  public addList(identifiers: TypedIdentifier[]) {
+  public addList(identifiers: TypedIdentifier[], prefix?: string | undefined) {
     for (const id of identifiers) {
-      this.add(id);
+      if (prefix) {
+        this.add(id.setName(prefix + id.getName()));
+      } else {
+        this.add(id);
+      }
     }
   }
 

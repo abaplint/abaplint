@@ -75,7 +75,7 @@ export class ObjectOriented {
     methodDefinition = this.findMethod(classDefinition, methodName);
 
 // todo, this is not completely correct, and too much code
-    if (methodName.includes("~")) {
+    if (methodDefinition === undefined && methodName.includes("~")) {
       const interfaceName = methodName.split("~")[0];
       methodName = methodName.split("~")[1];
       const intf = this.reg.getObject("INTF", interfaceName) as Interface;
@@ -95,6 +95,16 @@ export class ObjectOriented {
     }
 
     this.variables.addList(methodDefinition.getParameters().getAll());
+
+    for (const i of classDefinition.getImplementing()) {
+      const intf = this.reg.getObject("INTF", i) as Interface;
+      if (intf) {
+        this.variables.addList(intf.getDefinition()!.getAttributes()!.getConstants(), i + "~");
+        this.variables.addList(intf.getDefinition()!.getAttributes()!.getStatic(), i + "~");
+        // todo, only add instance if its an instance method
+        this.variables.addList(intf.getDefinition()!.getAttributes()!.getInstance(), i + "~");
+      }
+    }
   }
 
   private findDefinition(name: string): ClassDefinition {
