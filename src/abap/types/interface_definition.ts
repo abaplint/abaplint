@@ -3,7 +3,7 @@ import {StructureNode} from "../nodes";
 import * as Structures from "../../abap/structures";
 import * as Statements from "../../abap/statements";
 import * as Expressions from "../../abap/expressions";
-import {MethodDefinition, Scope} from ".";
+import {MethodDefinition, Scope, ClassAttributes} from ".";
 
 export class InterfaceDefinition extends Identifier {
   private node: StructureNode;
@@ -17,6 +17,11 @@ export class InterfaceDefinition extends Identifier {
     super(name, node);
 
     this.node = node;
+  }
+
+  public getAttributes(): ClassAttributes | undefined {
+    if (!this.node) { return undefined; }
+    return new ClassAttributes(this.node);
   }
 
   public getMethodDefinitions(): MethodDefinition[] {

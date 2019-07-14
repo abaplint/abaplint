@@ -21,6 +21,7 @@ export class Interface extends ABAPObject {
     return definitions[0];
   }
 
+// todo, should this method be moved to abstract class ABAPObject?
   public isGeneratedProxy(): boolean {
     const xml = this.getXML();
     if (!xml) {

@@ -5,7 +5,7 @@ import {ClassConstant} from "./class_constant";
 import {StructureNode} from "../../abap/nodes";
 import {Scope} from "./scope";
 
-
+// todo, rename this class, it is used for both classes and interfaces?
 export class ClassAttributes {
   private static: ClassAttribute[];
   private instance: ClassAttribute[];
@@ -32,13 +32,20 @@ export class ClassAttributes {
 
   private parse(node: StructureNode): void {
     const cdef = node.findFirstStructure(Structures.ClassDefinition);
-    if (!cdef) {
-      throw new Error("MethodDefinition, expected ClassDefinition as part of input node");
+    if (cdef) {
+      this.parseSection(cdef.findFirstStructure(Structures.PublicSection), Scope.Public);
+      this.parseSection(cdef.findFirstStructure(Structures.PrivateSection), Scope.Private);
+      this.parseSection(cdef.findFirstStructure(Structures.ProtectedSection), Scope.Protected);
+      return;
     }
 
-    this.parseSection(cdef.findFirstStructure(Structures.PublicSection), Scope.Public);
-    this.parseSection(cdef.findFirstStructure(Structures.PrivateSection), Scope.Private);
-    this.parseSection(cdef.findFirstStructure(Structures.ProtectedSection), Scope.Protected);
+    const idef = node.findFirstStructure(Structures.Interface);
+    if (idef) {
+      this.parseSection(idef.findFirstStructure(Structures.SectionContents), Scope.Public);
+      return;
+    }
+
+    throw new Error("MethodDefinition, expected ClassDefinition or InterfaceDefinition");
   }
 
   private parseSection(node: StructureNode | undefined, scope: Scope): void {
