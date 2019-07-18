@@ -10,6 +10,7 @@ export class SetHandler extends Statement {
     const fo = seq(str("FOR"), alt(str("ALL INSTANCES"), new Source()));
 
     const ret = seq(str("SET HANDLER"),
+// todo, this should be something with MethodName instead
                     plus(new Target()),
                     opt(fo),
                     opt(activation));
