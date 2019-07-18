@@ -1,6 +1,7 @@
-import {seq, per, opt, alt, tok, str, star, plus, Expression, IStatementRunnable, altPrio, optPrio} from "../combi";
+import {seq, per, opt, alt, tok, str, star, plus, Expression, IStatementRunnable, altPrio, optPrio, ver} from "../combi";
 import {WParenLeftW, WParenLeft} from "../tokens/";
 import {SQLTarget, SQLFieldList, SQLFrom, Field, Dynamic, SQLCond, SQLSource} from "./";
+import {Version} from "../../version";
 
 export class Select extends Expression {
   public getRunnable(): IStatementRunnable {
@@ -31,6 +32,7 @@ export class Select extends Expression {
     const forAll = seq(str("FOR ALL ENTRIES IN"), new SQLSource());
 
     const up = seq(str("UP TO"), new SQLSource(), str("ROWS"));
+    const offset = ver(Version.v751, seq(str("OFFSET"), new SQLSource()));
 
     const client = str("CLIENT SPECIFIED");
     const bypass = str("BYPASSING BUFFER");
@@ -39,7 +41,7 @@ export class Select extends Expression {
 
     const fields = seq(str("FIELDS"), new SQLFieldList());
 
-    const perm = per(new SQLFrom(), into, forAll, where, order, up, client, bypass, group, fields, connection);
+    const perm = per(new SQLFrom(), into, forAll, where, order, up, offset, client, bypass, group, fields, connection);
 
     const ret = seq(str("SELECT"),
                     altPrio(str("DISTINCT"), optPrio(seq(str("SINGLE"), optPrio(str("FOR UPDATE"))))),

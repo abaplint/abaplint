@@ -162,6 +162,7 @@ const tests = [
   "SELECT SINGLE * FROM *moo WHERE foo = bar.",
   "SELECT SINGLE * FROM ztable WHERE host = @lv_host INTO @DATA(ls_config).",
   "SELECT SINGLE * FROM ztable WHERE lower( host ) = @lv_host INTO @DATA(ls_config).",
+  "SELECT field FROM table INTO TABLE @DATA(lt_tab) OFFSET 22.",
 ];
 
 statementType(tests, "SELECT", Statements.Select);
