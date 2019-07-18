@@ -5,6 +5,15 @@ const filename = "zfoobar.prog.abap";
 
 let registry = new abaplint.Registry().addFile(new abaplint.File(filename, "dummy"));
 
+function escape(str) {
+  str = str.replace(/&/g, "&amp;");
+  str = str.replace(/>/g, "&gt;");
+  str = str.replace(/</g, "&lt;");
+  str = str.replace(/"/g, "&quot;");
+  str = str.replace(/'/g, "&#039;");
+  return str;
+}
+
 function stripNewline(input) {
   let result = input;
   while (result.substr(result.length - 1, 1) === "\n") {
@@ -113,7 +122,7 @@ function tokens() {
   let inner = "<table><tr><td><b>String</b></td><td><b>Type</b></td><td><b>Row</b></td><td><b>Column</b></td></tr>";
   for (let token of file.getTokens()) {
     inner = inner + "<tr><td>\"" +
-      token.getStr() + "\"</td><td>" +
+      escape(token.getStr()) + "\"</td><td>" +
       token.constructor.name + "</td><td align=\"right\">" +
       token.getRow() + "</td><td align=\"right\">" +
       token.getCol() + "</td></tr>";
@@ -129,15 +138,6 @@ function statements() {
 
 function structure() {
   document.getElementById("info").innerHTML = buildStructure([parse().getStructure()]);
-}
-
-function escape(str) {
-  str = str.replace(/&/g, "&amp;");
-  str = str.replace(/>/g, "&gt;");
-  str = str.replace(/</g, "&lt;");
-  str = str.replace(/"/g, "&quot;");
-  str = str.replace(/'/g, "&#039;");
-  return str;
 }
 
 // ---------------------
