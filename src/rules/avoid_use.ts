@@ -10,7 +10,7 @@ export class AvoidUseConf extends BasicRuleConfig {
   public execSQL = true;
   public kernelCall = true;
   public communication = true;
-
+  public statics = true;
 }
 
 export class AvoidUse extends ABAPRule {
@@ -48,6 +48,10 @@ export class AvoidUse extends ABAPRule {
         message = "Avoid use of kernel CALL";
       } else if (this.conf.communication && statement.get() instanceof Statements.Communication) {
         message = "Avoid use of COMMUNICATION";
+      } else if (this.conf.statics
+          && (statement.get() instanceof Statements.Static
+          || statement.get() instanceof Statements.StaticBegin)) {
+        message = "Avoid use of STATICS";
       }
       if (message) {
         issues.push(new Issue({file, message, key: this.getKey(), start: statement.getStart()}));
