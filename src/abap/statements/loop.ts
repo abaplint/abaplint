@@ -31,7 +31,7 @@ export class Loop extends Statement {
     const options = per(target, from, to, where, usingKey);
 
     const at = seq(str("AT"),
-                   opt(str("GROUP")),
+                   opt(ver(Version.v740sp08, str("GROUP"))),
                    new Source(),
                    opt(options));
 
