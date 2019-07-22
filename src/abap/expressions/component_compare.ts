@@ -2,7 +2,7 @@ import {seq, opt, ver, tok, plus, alt, str, Expression, IStatementRunnable} from
 import {FieldSub, Constant, Source, CompareOperator} from "./";
 import {WParenLeft, ParenRightW} from "../tokens/";
 import {Version} from "../../version";
-import {FieldChain} from "./field_chain";
+import {ComponentChainSimple} from "./component_chain_simple";
 
 export class ComponentCompare extends Expression {
   public getRunnable(): IStatementRunnable {
@@ -26,7 +26,7 @@ export class ComponentCompare extends Expression {
 
     const between = seq(opt(str("NOT")), str("BETWEEN"), new Source(), str("AND"), new Source());
 
-    const rett = seq(new FieldChain(),
+    const rett = seq(new ComponentChainSimple(),
                      alt(seq(new CompareOperator(), new Source()),
                          inn,
                          between,
