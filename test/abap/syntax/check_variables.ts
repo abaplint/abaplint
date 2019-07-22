@@ -700,6 +700,13 @@ describe("Check Variables", () => {
     expect(issues.length).to.equals(0);
   });
 
+  it("CREATE DATA string", () => {
+    const abap = "DATA foo TYPE c.\n" +
+      "CREATE DATA foo TYPE string.\n";
+    const issues = runProgram(abap);
+    expect(issues.length).to.equals(0);
+  });
+
 /*
   it("program, constant, begin, error", () => {
     const abap =
