@@ -193,10 +193,10 @@ const versions = [
     "option = 'NE' ( low = 'VAL3' )\n" +
     "( low = 'VAL4' ) ).", ver: Version.v740sp02},
 
-  {abap: "lv_foo += 2.", ver: Version.Cloud},
-  {abap: "lv_foo -= 2.", ver: Version.Cloud},
-  {abap: "lv_foo /= 2.", ver: Version.Cloud},
-  {abap: "lv_foo *= 2.", ver: Version.Cloud},
+  {abap: "lv_foo += 2.", ver: Version.v755},
+  {abap: "lv_foo -= 2.", ver: Version.v755},
+  {abap: "lv_foo /= 2.", ver: Version.v755},
+  {abap: "lv_foo *= 2.", ver: Version.v755},
 
   {abap: "DATA(mode) = SWITCH edit_mode( id_edit_mode\n" +
     "  WHEN 'U' THEN asdf\n" +
