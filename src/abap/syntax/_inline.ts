@@ -12,9 +12,11 @@ class LocalIdentifier extends TypedIdentifier { }
 export class Inline {
   private variables: Variables;
   private reg: Registry;
+  private errorNamespace: string;
 
-  constructor(variables: Variables, reg: Registry) {
+  constructor(variables: Variables, reg: Registry, errorNamespace: string) {
     this.variables = variables;
+    this.errorNamespace = errorNamespace;
     this.reg = reg;
   }
 
@@ -74,6 +76,11 @@ export class Inline {
     if (view !== undefined) {
       return view.getFields();
     }
-    throw new Error("Database table or view \"" + name + "\" not found");
+    const reg = new RegExp(this.errorNamespace, "i");
+    if (name.match(reg)) {
+      throw new Error("Database table or view \"" + name + "\" not found");
+    } else {
+      return [];
+    }
   }
 }

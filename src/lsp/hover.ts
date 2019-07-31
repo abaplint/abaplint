@@ -36,7 +36,7 @@ export class Hover {
           } else {
             const obj = reg.getObject(file.getObjectType(), file.getObjectName());
             if (obj instanceof ABAPObject) {
-              const resolved = new CheckVariablesLogic(reg, obj).resolveToken(token);
+              const resolved = new CheckVariablesLogic(reg, obj, "").resolveToken(token);
               if (resolved === undefined) {
                 value = value + "\n\nNot resolved";
               } else if (resolved instanceof TypedIdentifier) {

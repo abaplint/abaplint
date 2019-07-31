@@ -25,15 +25,17 @@ export class CheckVariablesLogic {
   private oooc: ObjectOriented;
   private proc: Procedural;
   private inline: Inline;
+  private errorNamespace: string;
 
-  constructor(reg: Registry, object: ABAPObject) {
+  constructor(reg: Registry, object: ABAPObject, errorNamespace: string) {
     this.reg = reg;
+    this.errorNamespace = errorNamespace;
     this.issues = [];
     this.object = object;
     this.variables = new Variables();
     this.oooc = new ObjectOriented(this.object, this.reg, this.variables);
     this.proc = new Procedural(this.object, this.reg, this.variables);
-    this.inline = new Inline(this.variables, this.reg);
+    this.inline = new Inline(this.variables, this.reg, this.errorNamespace);
   }
 
   public findIssues(ignoreParserError = true): Issue[] {

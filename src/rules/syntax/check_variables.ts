@@ -5,7 +5,7 @@ import {IObject} from "../../objects/_iobject";
 import {ABAPObject} from "../../objects/_abap_object";
 
 export class CheckVariablesConf extends BasicRuleConfig {
-//  public enabled = false;
+  public errorNamespace: string = "^(Z|Y)";
 }
 
 export class CheckVariables {
@@ -33,8 +33,12 @@ export class CheckVariables {
     if (!(obj instanceof ABAPObject)) {
       return [];
     }
+    let ens = this.getConfig().errorNamespace;
+    if (ens === undefined) {
+      ens = new CheckVariablesConf().errorNamespace;
+    }
 
-    return new CheckVariablesLogic(reg, obj).findIssues();
+    return new CheckVariablesLogic(reg, obj, ens).findIssues();
   }
 
 }

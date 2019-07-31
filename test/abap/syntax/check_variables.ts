@@ -7,7 +7,7 @@ import {Issue} from "../../../src/issue";
 function run(reg: Registry): Issue[] {
   let ret: Issue[] = [];
   for (const obj of reg.getABAPObjects()) {
-    ret = ret.concat(new CheckVariablesLogic(reg, obj).findIssues(false));
+    ret = ret.concat(new CheckVariablesLogic(reg, obj, "^(Z|Y)").findIssues(false));
   }
   return ret;
 }
@@ -247,10 +247,16 @@ describe("Check Variables", () => {
   });
 */
 
-  it("program, SELECT, database table not found", () => {
+  it("program, SELECT, database table not found, error", () => {
     const abap = "SELECT SINGLE * FROM zfoobar INTO @DATA(ls_data).";
     const issues = runProgram(abap);
     expect(issues.length).to.equals(1);
+  });
+
+  it("program, SELECT, database table not found, no error", () => {
+    const abap = "SELECT SINGLE * FROM something INTO @DATA(ls_data).";
+    const issues = runProgram(abap);
+    expect(issues.length).to.equals(0);
   });
 
   it("program, component after call", () => {
