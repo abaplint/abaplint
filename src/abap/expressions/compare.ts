@@ -2,6 +2,7 @@ import {seq, opt, ver, tok, plus, alt, str, Expression, IStatementRunnable} from
 import {FieldSub, Constant, Source, MethodCallChain, CompareOperator} from "./";
 import {WParenLeft, ParenRightW} from "../tokens/";
 import {Version} from "../../version";
+import {ClassName} from "./class_name";
 
 export class Compare extends Expression {
   public getRunnable(): IStatementRunnable {
@@ -18,7 +19,7 @@ export class Compare extends Expression {
                      opt(str("NOT")),
                      alt(str("SUPPLIED"),
                          str("BOUND"),
-                         ver(Version.v750, seq(str("INSTANCE OF"), new Source())),
+                         ver(Version.v750, seq(str("INSTANCE OF"), new ClassName())),
                          str("REQUESTED"),
                          str("ASSIGNED"),
                          str("INITIAL")));

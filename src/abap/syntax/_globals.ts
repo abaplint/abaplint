@@ -45,11 +45,13 @@ export class Globals {
       "CONSTANTS space TYPE c LENGTH 1 VALUE ''.\n" +
       "CONSTANTS col_total TYPE c LENGTH 1 VALUE '?'.\n" +
       "CONSTANTS col_key TYPE c LENGTH 1 VALUE '?'.\n" +
-      "CONSTANTS col_positive TYPE c LENGTH 1 VALUE '5'.\n" +
-      "CONSTANTS col_negative TYPE c LENGTH 1 VALUE '6'.\n" +
+      "CONSTANTS col_positive TYPE c LENGTH 1 VALUE '?'.\n" +
+      "CONSTANTS col_negative TYPE c LENGTH 1 VALUE '?'.\n" +
+      "CONSTANTS col_heading TYPE c LENGTH 1 VALUE '?'.\n" +
+      "CONSTANTS col_background TYPE c LENGTH 1 VALUE '?'.\n" +
       "CONSTANTS abap_undefined TYPE c LENGTH 1 VALUE '-'.\n" +
       "CONSTANTS abap_true TYPE c LENGTH 1 VALUE 'X'.\n" +
-      "CONSTANTS abap_false TYPE c LENGTH 1 VALUE ''.\n");
+      "CONSTANTS abap_false TYPE c LENGTH 1 VALUE ' '.\n");
 
 
     return this.typesInFile(file);

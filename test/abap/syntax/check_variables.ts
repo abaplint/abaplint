@@ -713,6 +713,12 @@ describe("Check Variables", () => {
     expect(issues.length).to.equals(0);
   });
 
+  it("FORMAT INTENSIFIED OFF.", () => {
+    const abap = "FORMAT INTENSIFIED OFF.\n";
+    const issues = runProgram(abap);
+    expect(issues.length).to.equals(0);
+  });
+
   it("FILTER", () => {
     const abap = "DATA cells TYPE c.\n" +
       "DATA(result) = lines( FILTER #(\n" +
