@@ -35,24 +35,26 @@ class Progress implements IProgress {
   }
 }
 
-function searchConfig(filename: string): Config {
-  const json = searchUp(path.dirname(process.cwd() + path.sep + filename) + path.sep);
-  if (json === undefined) {
+function loadConfig(filename: string| undefined): Config {
+  if (filename === undefined) {
+    process.stderr.write("Using default config\n");
     return Config.getDefault();
   } else {
+    process.stderr.write("Using config: " + filename + "\n");
+    const json = fs.readFileSync(filename, "utf8");
     return new Config(json);
   }
 }
 
-function searchUp(dir: string): string | undefined {
+function findConfig(dir: string): string | undefined {
   const file = dir + "abaplint.json";
   if (fs.existsSync(file)) {
-    return fs.readFileSync(file, "utf8");
+    return file;
   }
 
   const up = path.normalize(dir + ".." + path.sep);
   if (path.normalize(up) !== dir) {
-    return searchUp(up);
+    return findConfig(up);
   }
 
   return undefined;
@@ -96,7 +98,7 @@ async function loadFiles(compress: boolean, input: string[], bar: IProgress): Pr
   return files;
 }
 
-async function loadDependencies(config: Config, compress: boolean, bar: IProgress): Promise<IFile[]> {
+async function loadDependencies(config: Config, compress: boolean, bar: IProgress, configFile: string | undefined): Promise<IFile[]> {
   let files: IFile[] = [];
 
   if (config.get().dependencies === undefined) {
@@ -104,14 +106,24 @@ async function loadDependencies(config: Config, compress: boolean, bar: IProgres
   }
 
   for (const d of config.get().dependencies) {
-    process.stderr.write("Clone " + d.url + "\n");
+    if (d.folder && configFile) {
+      const g = path.dirname(configFile) + d.folder + d.files;
+      const names = loadFileNames([g]);
+      if (names.length > 0) {
+        process.stderr.write("Using dependencies from: " + g + "\n");
+        files = files.concat(await loadFiles(compress, names, bar));
+        continue;
+      }
+    }
 
-    const dir = fs.mkdtempSync(path.join(os.tmpdir(), "abaplint-"));
-    childProcess.execSync("git clone --quiet --depth 1 " + d.url + " .", {cwd: dir, stdio: "inherit"});
-
-    const names = loadFileNames([dir + d.files]);
-    files = files.concat(await loadFiles(compress, names, bar));
+    if (d.url) {
+      process.stderr.write("Clone: " + d.url + "\n");
+      const dir = fs.mkdtempSync(path.join(os.tmpdir(), "abaplint-"));
+      childProcess.execSync("git clone --quiet --depth 1 " + d.url + " .", {cwd: dir, stdio: "inherit"});
+      const names = loadFileNames([dir + d.files]);
+      files = files.concat(await loadFiles(compress, names, bar));
 // todo, cleanup    fs.rmdirSync(dir);
+    }
   }
 
   return files;
@@ -162,9 +174,10 @@ async function run() {
     output = output + JSON.stringify(Artifacts.getKeywords(), undefined, 2);
   } else {
     const files = loadFileNames(argv._);
-    const config = searchConfig(files[0]);
+    const configFile = findConfig(path.dirname(process.cwd() + path.sep + files[0]) + path.sep);
+    const config = loadConfig(configFile);
     if (argv["a"]) { config.setVersion(textToVersion(argv["a"])); }
-    const deps = await loadDependencies(config, compress, progress);
+    const deps = await loadDependencies(config, compress, progress, configFile);
     const loaded = await loadFiles(compress, files, progress);
     const reg = new Registry(config).addFiles(loaded);
 

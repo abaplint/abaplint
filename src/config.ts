@@ -37,7 +37,7 @@ export class Config {
 
     const config: IConfig = {
       global: this.getGlobalDefault(),
-      dependencies: [{url: "https://github.com/abaplint/deps", files: "/src/**/*.*"}],
+      dependencies: [{url: "https://github.com/abaplint/deps", folder: "/deps", files: "/src/**/*.*"}],
       rules: rules,
     };
 
