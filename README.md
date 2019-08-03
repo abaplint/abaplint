@@ -56,7 +56,3 @@ npm test
 
 * Only single chaining, following gives parser error:
 `WRITE: bar: foo.`
-
-
-## License
-[![FOSSA Status](https://app.fossa.io/api/projects/git%2Bgithub.com%2Fabaplint%2Fabaplint.svg?type=large)](https://app.fossa.io/projects/git%2Bgithub.com%2Fabaplint%2Fabaplint?ref=badge_large)
