@@ -2,6 +2,7 @@
 [![Build Status](https://travis-ci.com/abaplint/abaplint.svg?branch=master)](https://travis-ci.com/abaplint/abaplint)
 [![Dependency Status](https://david-dm.org/abaplint/abaplint.svg)](https://david-dm.org/abaplint/abaplint)
 [![Greenkeeper badge](https://badges.greenkeeper.io/abaplint/abaplint.svg)](https://greenkeeper.io/)
+[![FOSSA Status](https://app.fossa.io/api/projects/git%2Bgithub.com%2Fabaplint%2Fabaplint.svg?type=shield)](https://app.fossa.io/projects/git%2Bgithub.com%2Fabaplint%2Fabaplint?ref=badge_shield)
 
 # abaplint
 
@@ -55,3 +56,7 @@ npm test
 
 * Only single chaining, following gives parser error:
 `WRITE: bar: foo.`
+
+
+## License
+[![FOSSA Status](https://app.fossa.io/api/projects/git%2Bgithub.com%2Fabaplint%2Fabaplint.svg?type=large)](https://app.fossa.io/projects/git%2Bgithub.com%2Fabaplint%2Fabaplint?ref=badge_large)
