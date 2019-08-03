@@ -42,6 +42,10 @@ export class Globals {
       "CONSTANTS icon_replace TYPE c LENGTH 4 VALUE ''.\n" +
       "CONSTANTS icon_refresh TYPE c LENGTH 4 VALUE ''.\n" +
       "CONSTANTS icon_xls TYPE c LENGTH 4 VALUE ''.\n" +
+      "CONSTANTS icon_message_information TYPE c LENGTH 4 VALUE ''.\n" +
+      "CONSTANTS icon_system_help TYPE c LENGTH 4 VALUE ''.\n" +
+      "CONSTANTS icon_stack TYPE c LENGTH 4 VALUE ''.\n" +
+      "CONSTANTS icon_abap TYPE c LENGTH 4 VALUE ''.\n" +
       "CONSTANTS space TYPE c LENGTH 1 VALUE ''.\n" +
       "CONSTANTS col_total TYPE c LENGTH 1 VALUE '?'.\n" +
       "CONSTANTS col_key TYPE c LENGTH 1 VALUE '?'.\n" +
