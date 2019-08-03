@@ -1,9 +1,11 @@
 import * as fs from "fs";
+import * as os from "os";
 import * as path from "path";
 import * as zlib from "zlib";
 import * as glob from "glob";
 import * as minimist from "minimist";
 import * as ProgressBar from "progress";
+import * as childProcess from "child_process";
 import {CompressedFile, MemoryFile} from "./files";
 import {Issue} from "./issue";
 import {Config} from "./config";
@@ -15,6 +17,8 @@ import {IFile} from "./files/_ifile";
 import {Stats} from "./extras/stats/stats";
 import {Dump} from "./extras/dump/dump";
 import {SemanticSearch} from "./extras/semantic_search/semantic_search";
+
+// todo, split this file into mulitple files? and move to new directory?
 
 class Progress implements IProgress {
   private bar: ProgressBar;
@@ -92,6 +96,27 @@ async function loadFiles(compress: boolean, input: string[], bar: IProgress): Pr
   return files;
 }
 
+async function loadDependencies(config: Config, compress: boolean, bar: IProgress): Promise<IFile[]> {
+  let files: IFile[] = [];
+
+  if (config.get().dependencies === undefined) {
+    return [];
+  }
+
+  for (const d of config.get().dependencies) {
+    process.stderr.write("Clone " + d.url + "\n");
+
+    const dir = fs.mkdtempSync(path.join(os.tmpdir(), "abaplint-"));
+    childProcess.execSync("git clone --quiet --depth 1 " + d.url + " .", {cwd: dir, stdio: "inherit"});
+
+    const names = loadFileNames([dir + d.files]);
+    files = files.concat(await loadFiles(compress, names, bar));
+// todo, cleanup    fs.rmdirSync(dir);
+  }
+
+  return files;
+}
+
 function displayHelp(): string {
 // follow docopt.org conventions,
   return "Usage:\n" +
@@ -139,6 +164,7 @@ async function run() {
     const files = loadFileNames(argv._);
     const config = searchConfig(files[0]);
     if (argv["a"]) { config.setVersion(textToVersion(argv["a"])); }
+    const deps = await loadDependencies(config, compress, progress);
     const loaded = await loadFiles(compress, files, progress);
     const reg = new Registry(config).addFiles(loaded);
 
@@ -150,6 +176,8 @@ async function run() {
     } else if (argv["e"]) {
       output = JSON.stringify(new SemanticSearch(reg).run(progress), undefined, 1);
     } else {
+      reg.addDependencies(deps);
+
       issues = reg.findIssues(progress);
       output = Formatter.format(issues, format, loaded.length);
 

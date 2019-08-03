@@ -30,6 +30,7 @@ export class Registry {
   private macros: string[] = [];
   private objects: IObject[] = [];
   private issues: Issue[] = [];
+  private dependencies: string[] = [];
 
   constructor(conf?: Config) {
     this.conf = conf ? conf : Config.getDefault();
@@ -126,6 +127,15 @@ export class Registry {
     return this;
   }
 
+// todo: methods to add/remove deps
+// todo: add unit tests
+  public addDependencies(files: IFile[]): Registry {
+    for (const f of files) {
+      this.dependencies.push(f.getFilename());
+    }
+    return this.addFiles(files);
+  }
+
   public setDirty() {
     this.dirty = true;
     this.issues = [];
@@ -147,6 +157,7 @@ export class Registry {
     return undefined;
   }
 
+// called from vscode plugin
   public findIssuesFile(file: IFile): Issue[] {
     const obj = this.findObjectForFile(file);
     if (obj === undefined) {
@@ -171,7 +182,7 @@ export class Registry {
     for (const obj of objects) {
       progress.tick({object: obj.getType() + " " + obj.getName()});
 
-      if (skipLogic.skip(obj)) {
+      if (skipLogic.skip(obj) || this.dependencies.includes(obj.getFiles()[0].getFilename())) {
         continue;
       }
 

@@ -10,8 +10,15 @@ export interface IGlobalConfig {
   applyUnspecifiedRules: boolean;
 }
 
+export interface IDependency {
+  url?: string;
+  folder?: string;
+  files: string;
+}
+
 export interface IConfig {
   global: IGlobalConfig;
+  dependencies: IDependency[];
   rules: any;
 }
 
@@ -21,21 +28,20 @@ export class Config {
   private config: IConfig;
 
   public static getDefault(): Config {
-    const defaults: string[] = [];
+    const rules: any = {};
 
     const sorted = Artifacts.getRules().sort((a, b) => { return a.getKey().localeCompare(b.getKey()); });
     for (const rule of sorted) {
-      defaults.push("\"" + rule.getKey() + "\": " + JSON.stringify(rule.getConfig()));
+      rules[rule.getKey()] = rule.getConfig();
     }
 
-    const global = this.getGlobalDefault();
+    const config: IConfig = {
+      global: this.getGlobalDefault(),
+      dependencies: [{url: "https://github.com/abaplint/deps", files: "/src/**/*.*"}],
+      rules: rules,
+    };
 
-// todo, use real object with index signature instead of "defaults"
-    const json = "{" +
-      "\"global\": " + JSON.stringify(global) + ", " +
-      "\"rules\": {" + defaults.join(", ") + "}}";
-    const conf = new Config(json);
-    return conf;
+    return new Config(JSON.stringify(config));
   }
 
   private static getGlobalDefault(): IGlobalConfig {
