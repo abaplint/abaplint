@@ -60,12 +60,12 @@ function findConfig(dir: string): string | undefined {
   return undefined;
 }
 
-function loadFileNames(args: string[]): string[] {
+function loadFileNames(args: string[], error = true): string[] {
   let files: string[] = [];
   for (const file of args) {
     files = files.concat(glob.sync(file, {nosort: true, nodir: true}));
   }
-  if (files.length === 0) {
+  if (files.length === 0 && error) {
     throw "No files found";
   }
   return files;
@@ -108,7 +108,7 @@ async function loadDependencies(config: Config, compress: boolean, bar: IProgres
   for (const d of config.get().dependencies) {
     if (d.folder && configFile) {
       const g = path.dirname(configFile) + d.folder + d.files;
-      const names = loadFileNames([g]);
+      const names = loadFileNames([g], false);
       if (names.length > 0) {
         process.stderr.write("Using dependencies from: " + g + "\n");
         files = files.concat(await loadFiles(compress, names, bar));
