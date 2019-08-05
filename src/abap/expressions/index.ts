@@ -19,6 +19,7 @@ export * from "./database_table";
 export * from "./decimals";
 export * from "./destination";
 export * from "./dynamic";
+export * from "./event_handler";
 export * from "./field_all";
 export * from "./field_chain";
 export * from "./field_length";

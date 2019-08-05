@@ -69,7 +69,8 @@ export class LocalClassNaming extends ABAPRule {
           file,
           message: this.getDescription() + ", expected " + expected,
           key: this.getKey(),
-          start: token.getStart()});
+          start: token.getStart(),
+          end: token.getEnd()});
         issues.push(issue);
       }
     }
