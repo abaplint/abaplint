@@ -40,4 +40,13 @@ describe("Rule: class attribute names", function() {
     expect(issues.length).to.equal(1);
   });
 
+  it("end position", function () {
+    const abap = "CLASS zcl_foobar DEFINITION PUBLIC.\n" +
+      "  PUBLIC SECTION. CLASS-DATA foo TYPE i.\n" +
+      "ENDCLASS. CLASS zcl_foobar IMPLEMENTATION. ENDCLASS.";
+    const issues = findIssues(abap);
+    expect(issues.length).to.equal(1);
+    expect(issues[0].getEnd().getCol()).to.equal(33);
+  });
+
 });

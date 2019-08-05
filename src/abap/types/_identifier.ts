@@ -8,11 +8,12 @@ export abstract class Identifier {
   private start: Position;
   private end: Position;
 
-  constructor(token: Token, node: INode) {
+// todo, remove parameter _node?
+  constructor(token: Token, _node: INode) {
     this.name = token.getStr();
     this.position = token.getStart();
-    this.start = node.getFirstToken().getStart();
-    this.end = node.getLastToken().getStart();
+    this.start = token.getStart();
+    this.end = token.getEnd();
 
 // todo, should this be handled in the parser instead?
     if (this.name.substr(0, 1) === "!") {

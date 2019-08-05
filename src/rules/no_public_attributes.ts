@@ -6,6 +6,8 @@ import {IObject} from "../objects/_iobject";
 import {Class} from "../objects";
 import {Scope} from "../abap/types";
 
+// todo, add unit tests for this class
+
 export class NoPublicAttributesConf extends BasicRuleConfig {
 // todo,  public allowReadOnly: boolean = false;
 }
@@ -32,7 +34,7 @@ export class NoPublicAttributes implements IRule {
   public run(obj: IObject, _reg: Registry): Issue[] {
     const issues: Issue[] = [];
 
-// todo: also implement for interfaces
+// todo: also implement for interfaces and local classes
     if (!(obj instanceof Class)) {
       return [];
     }
@@ -50,8 +52,13 @@ export class NoPublicAttributes implements IRule {
     for (const attr of attrs.getInstance().concat(attrs.getStatic())) {
       if (attr.getScope() === Scope.Public) {
         const message = this.getDescription() + ", " + attr.getName();
-        issues.push(new Issue({file: obj.getFiles()[0],
-          message, key: this.getKey(), start: attr.getPosition()}));
+        issues.push(new Issue({
+          file: obj.getFiles()[0],
+          message,
+          key: this.getKey(),
+          start: attr.getStart(),
+          end: attr.getEnd(),
+        }));
       }
     }
 

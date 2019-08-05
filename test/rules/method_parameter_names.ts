@@ -101,4 +101,14 @@ describe("Rule: method parameter names", function() {
     expect(issues.length).to.equal(1);
   });
 
+  it("end position", function () {
+    const abap = "CLASS lcl_foobar DEFINITION.\n" +
+      "  PUBLIC SECTION.\n" +
+      "    CLASS-METHODS method1 IMPORTING foo TYPE i.\n" +
+      "ENDCLASS.";
+    const issues = findIssues(abap, "foobar.prog.abap");
+    expect(issues.length).to.equal(1);
+    expect(issues[0].getEnd().getCol()).to.equal(40);
+  });
+
 });
