@@ -8,6 +8,7 @@ const tests = [
   "SET HANDLER me->link_click FOR alv->get_event( ).",
   "set handler foobar.",
   "SET HANDLER foobar ACTIVATION ' '.",
+  "SET HANDLER lcl_alv=>on_link_click FOR lo_events.",
 ];
 
 statementType(tests, "SET HANDLER", Statements.SetHandler);
