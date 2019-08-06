@@ -7,10 +7,10 @@ import {Variables} from "./_variables";
 
 export class Globals {
 
-  public static get(): TypedIdentifier[] {
+  public static get(extras: string[]): TypedIdentifier[] {
     // todo, more defintions, and move to somewhere else?
-    // todo, icon_*, abap_*, col_* are from the corresponding type pools?
-    const file = new MemoryFile("_global.prog.abap", "* Globals\n" +
+
+    let code = "* Globals\n" +
       "DATA sy TYPE c.\n" + // todo, add structure
       "DATA syst TYPE c.\n" + // todo, add structure
       "DATA screen TYPE c.\n" + // todo, add structure
@@ -55,8 +55,13 @@ export class Globals {
       "CONSTANTS col_background TYPE c LENGTH 1 VALUE '?'.\n" +
       "CONSTANTS abap_undefined TYPE c LENGTH 1 VALUE '-'.\n" +
       "CONSTANTS abap_true TYPE c LENGTH 1 VALUE 'X'.\n" +
-      "CONSTANTS abap_false TYPE c LENGTH 1 VALUE ' '.\n");
+      "CONSTANTS abap_false TYPE c LENGTH 1 VALUE ' '.\n";
 
+    for (const e of extras) {
+      code = code + "CONSTANTS " + e + " TYPE c LENGTH 1 VALUE '?'.\n";
+    }
+
+    const file = new MemoryFile("_global.prog.abap", code);
 
     return this.typesInFile(file);
   }

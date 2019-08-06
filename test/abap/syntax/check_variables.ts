@@ -4,10 +4,10 @@ import {Registry} from "../../../src/registry";
 import {CheckVariablesLogic} from "../../../src/abap/syntax/check_variables";
 import {Issue} from "../../../src/issue";
 
-function run(reg: Registry): Issue[] {
+function run(reg: Registry, globalConstants?: string[]): Issue[] {
   let ret: Issue[] = [];
   for (const obj of reg.getABAPObjects()) {
-    ret = ret.concat(new CheckVariablesLogic(reg, obj, "^(Z|Y)").findIssues(false));
+    ret = ret.concat(new CheckVariablesLogic(reg, obj, "^(Z|Y)", globalConstants).findIssues(false));
   }
   return ret;
 }
@@ -27,10 +27,10 @@ function runClass(abap: string): Issue[] {
   return run(reg);
 }
 
-function runProgram(abap: string): Issue[] {
+function runProgram(abap: string, globalConstants?: string[]): Issue[] {
   const file = new MemoryFile("zfoobar.prog.abap", abap);
   const reg = new Registry().addFile(file).parse();
-  return run(reg);
+  return run(reg, globalConstants);
 }
 
 describe("Check Variables", () => {
@@ -741,6 +741,12 @@ describe("Check Variables", () => {
       "  ENDMETHOD.\n" +
       "ENDCLASS.";
     const issues = runClass(abap);
+    expect(issues.length).to.equals(0);
+  });
+
+  it("program, global constant", () => {
+    const abap = "WRITE hello_world.\n";
+    const issues = runProgram(abap, ["hello_world"]);
     expect(issues.length).to.equals(0);
   });
 

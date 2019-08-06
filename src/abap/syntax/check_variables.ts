@@ -26,11 +26,16 @@ export class CheckVariablesLogic {
   private proc: Procedural;
   private inline: Inline;
   private errorNamespace: string;
+  private globalConstants: string[];
 
-  constructor(reg: Registry, object: ABAPObject, errorNamespace: string) {
+  constructor(reg: Registry, object: ABAPObject, errorNamespace: string, globalConstants: string[] | undefined) {
     this.reg = reg;
     this.errorNamespace = errorNamespace;
     this.issues = [];
+    this.globalConstants = [];
+    if (globalConstants !== undefined) {
+      this.globalConstants = globalConstants;
+    }
     this.object = object;
     this.variables = new Variables();
     this.oooc = new ObjectOriented(this.object, this.reg, this.variables);
@@ -39,7 +44,7 @@ export class CheckVariablesLogic {
   }
 
   public findIssues(ignoreParserError = true): Issue[] {
-    this.variables.addList(Globals.get());
+    this.variables.addList(Globals.get(this.globalConstants));
 
     for (const file of this.object.getABAPFiles()) {
       this.currentFile = file;
@@ -60,7 +65,7 @@ export class CheckVariablesLogic {
 
 // todo, this assumes no tokes are the same across files
   public resolveToken(token: Token): TypedIdentifier | string | undefined {
-    this.variables.addList(Globals.get());
+    this.variables.addList(Globals.get(this.globalConstants));
 
     for (const file of this.object.getABAPFiles()) {
       this.currentFile = file;

@@ -6,6 +6,7 @@ import {ABAPObject} from "../../objects/_abap_object";
 
 export class CheckVariablesConf extends BasicRuleConfig {
   public errorNamespace: string = "^(Z|Y)";
+  public globalConstants: string[] = [];
 }
 
 export class CheckVariables {
@@ -38,7 +39,7 @@ export class CheckVariables {
       ens = new CheckVariablesConf().errorNamespace;
     }
 
-    return new CheckVariablesLogic(reg, obj, ens).findIssues();
+    return new CheckVariablesLogic(reg, obj, ens, this.conf.globalConstants).findIssues();
   }
 
 }
