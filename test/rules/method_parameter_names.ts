@@ -111,4 +111,14 @@ describe("Rule: method parameter names", function() {
     expect(issues[0].getEnd().getCol()).to.equal(40);
   });
 
+  it("ignore event handler parameter names", function () {
+    const abap = "CLASS lcl_foobar DEFINITION.\n" +
+      "  PUBLIC SECTION.\n" +
+      "    CLASS-METHODS on_link_click FOR EVENT link_click OF cl_salv_events_table\n" +
+      " IMPORTING row column.\n" +
+      "ENDCLASS.";
+    const issues = findIssues(abap, "foobar.prog.abap");
+    expect(issues.length).to.equal(0);
+  });
+
 });

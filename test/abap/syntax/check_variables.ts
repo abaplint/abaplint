@@ -728,6 +728,22 @@ describe("Check Variables", () => {
     expect(issues.length).to.equals(0);
   });
 
+  it("event handler parameter", () => {
+    const abap = "CLASS zcl_moo DEFINITION CREATE PUBLIC.\n" +
+      "  PUBLIC SECTION.\n" +
+      "    METHODS double_click\n" +
+      "      FOR EVENT double_click OF cl_salv_events_table\n" +
+      "      IMPORTING !row !column.\n" +
+      "ENDCLASS.\n" +
+      "CLASS zcl_moo IMPLEMENTATION.\n" +
+      "  METHOD double_click.\n" +
+      "    WRITE row.\n" +
+      "  ENDMETHOD.\n" +
+      "ENDCLASS.";
+    const issues = runClass(abap);
+    expect(issues.length).to.equals(0);
+  });
+
 /*
   it("program, constant, begin, error", () => {
     const abap =

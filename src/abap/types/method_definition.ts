@@ -9,6 +9,7 @@ export class MethodDefinition extends Identifier {
   private scope: Scope;
   private parameters: MethodParameters;
   private redfinition: boolean;
+  private eventHandler: boolean;
 
 // todo:
 // abstract
@@ -29,6 +30,11 @@ export class MethodDefinition extends Identifier {
       this.redfinition = true;
     }
 
+    this.eventHandler = false;
+    if (node.findFirstExpression(Expressions.EventHandler)) {
+      this.eventHandler = true;
+    }
+
     this.scope = scope;
     this.parameters = new MethodParameters(node);
   }
@@ -39,6 +45,10 @@ export class MethodDefinition extends Identifier {
 
   public isRedefinition(): boolean {
     return this.redfinition;
+  }
+
+  public isEventHandler(): boolean {
+    return this.eventHandler;
   }
 
   public getParameters() {

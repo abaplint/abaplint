@@ -59,6 +59,9 @@ export class MethodParameterNames implements IRule {
           continue;
         }
         for (const method of definitions.getAll()) {
+          if (method.isEventHandler()) {
+            continue;
+          }
           ret = ret.concat(this.checkMethod(method, file));
         }
       }
