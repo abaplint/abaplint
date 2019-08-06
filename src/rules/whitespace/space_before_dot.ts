@@ -39,6 +39,11 @@ export class SpaceBeforeDot extends ABAPRule {
     let prev: Token | undefined = undefined;
     let startRow = 0;
 
+    if (file.getStructure() === undefined) {
+      // some parser error exists in file
+      return [];
+    }
+
     if (this.conf.ignoreGlobalDefinition) {
       const structure = file.getStructure();
       if (obj instanceof Class && structure !== undefined) {

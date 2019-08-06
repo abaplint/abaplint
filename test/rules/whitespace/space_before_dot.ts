@@ -8,6 +8,7 @@ const tests = [
   {abap: "\" sdfsd", cnt: 0},
   {abap: "WRITE 'abc'.", cnt: 0},
   {abap: "WRITE 'abc' .", cnt: 1},
+  {abap: "parser error WRITE 'abc' .", cnt: 0},
 ];
 
 testRule(tests, SpaceBeforeDot);
