@@ -73,6 +73,10 @@ const tests = [
   "  'foo' && 'foo' && 'foo' && 'foo' && 'foo' && 'foo' && 'foo' &&\n" +
   "  'foo' && 'foo' && 'foo' && 'foo' && 'foo' && 'foo' && 'foo'.",
 
+  "ls_extension = CORRESPONDING #( ls_line_item MAPPING /abc/comp_a = comp_a\n" +
+  "  /abc/comp_b = comp_b\n" +
+  "  /abc/comp_c = comp_c ).",
+
   "MOVE foo(+100) TO bar.",
   "gs_structure-field$01 = 'val'.",
   "foo = bar ##called.",
