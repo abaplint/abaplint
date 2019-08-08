@@ -2,6 +2,7 @@ import {expect} from "chai";
 import {MemoryFile} from "../../../src/files";
 import {Registry} from "../../../src/registry";
 import {Class} from "../../../src/objects";
+import {Scope} from "../../../src/abap/types/scope";
 
 describe("Types, class_definition", () => {
 
@@ -72,5 +73,26 @@ describe("Types, class_definition", () => {
     expect(pub[0].isEventHandler()).to.equal(true);
     expect(pub[0]!.getParameters().getAll().length).to.equal(2);
   });
+
+  it("method alias", () => {
+    const abap = "CLASS zcl_moo DEFINITION CREATE PUBLIC.\n" +
+      "  PUBLIC SECTION.\n" +
+      "    INTERFACES zif_foobar.\n" +
+      "    ALIASES: cache_asset FOR zif_foobar~cache_asset.\n" +
+      "ENDCLASS.\n" +
+      "CLASS zcl_moo IMPLEMENTATION.\n" +
+      "  METHOD cache_asset.\n" +
+      "  ENDMETHOD.\n" +
+      "ENDCLASS.";
+    const reg = new Registry().addFile(new MemoryFile("zcl_moo.clas.abap", abap)).parse();
+    const clas = reg.getABAPObjects()[0] as Class;
+    expect(clas.getClassDefinition()).to.not.equal(undefined);
+    const aliases = clas.getClassDefinition()!.getAliases().getAll();
+    expect(aliases.length).to.equal(1);
+    expect(aliases[0].getName()).to.equal("cache_asset");
+    expect(aliases[0].getScope()).to.equal(Scope.Public);
+    expect(aliases[0].getComponent()).to.equal("zif_foobar~cache_asset");
+  });
+
 
 });

@@ -14,7 +14,7 @@ export class InterfaceDefinition extends Identifier {
     }
 
     const name = node.findFirstStatement(Statements.Interface)!.findFirstExpression(Expressions.InterfaceName)!.getFirstToken();
-    super(name, node);
+    super(name);
 
     this.node = node;
   }

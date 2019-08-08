@@ -15,7 +15,7 @@ export class Constant extends TypedIdentifier {
     }
     const token = found.getFirstToken();
 
-    super(token, node);
+    super(token);
   }
 
 }

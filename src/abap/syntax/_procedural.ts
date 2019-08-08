@@ -86,7 +86,7 @@ export class Procedural {
     // todo, these identifers should be possible to create from a Node
     // todo, how to determine the real types?
     const token = expr.getFirstToken();
-    return new LocalIdentifier(token, expr);
+    return new LocalIdentifier(token);
   }
 
 }

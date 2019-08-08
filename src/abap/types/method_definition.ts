@@ -23,7 +23,7 @@ export class MethodDefinition extends Identifier {
     if (found === undefined) {
       throw new Error("MethodDefinition, expected MethodDef as part of input node");
     }
-    super(found.getFirstToken(), node);
+    super(found.getFirstToken());
 
     this.redfinition = false;
     if (node.findFirstExpression(Expressions.Redefinition)) {

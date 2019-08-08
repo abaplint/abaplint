@@ -13,7 +13,7 @@ export class MethodImplementation extends Identifier {
     if (found === undefined) {
       throw new Error("MethodImplementation, expected MethodName as part of input node");
     }
-    super(found.getFirstToken(), node);
+    super(found.getFirstToken());
   }
 
 }

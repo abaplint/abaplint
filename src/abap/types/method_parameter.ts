@@ -13,7 +13,7 @@ export class MethodParameter extends TypedIdentifier {
       console.dir(node);
       throw new Error("method_parameter.ts, todo, handle pass by value and reference");
     }
-    super(name.getFirstToken(), node);
+    super(name.getFirstToken());
   }
 
 // todo: pass by reference / pass by value / write protected

@@ -13,7 +13,7 @@ export class FormDefinition extends Identifier {
       throw new Error("FormDefinition, unexpected node type");
     }
     const name = node.findFirstStatement(Statements.Form)!.findFirstExpression(Expressions.FormName)!.getFirstToken();
-    super(name, node);
+    super(name);
 
     this.node = node;
   }
@@ -24,7 +24,7 @@ export class FormDefinition extends Identifier {
     const res: FormParameter[] = [];
     for (const param of form.findAllExpressions(Expressions.FormParam)) {
       const token = param.getFirstToken();
-      res.push(new FormParameter(token, param));
+      res.push(new FormParameter(token));
     }
     return res;
   }

@@ -13,7 +13,7 @@ export class ClassImplementation extends Identifier {
       throw new Error("ClassImplementation, unexpected node type");
     }
     const name = node.findFirstStatement(Statements.ClassImplementation)!.findFirstExpression(Expressions.ClassName)!.getFirstToken();
-    super(name, node);
+    super(name);
 
     this.node = node;
   }

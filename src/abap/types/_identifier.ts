@@ -1,6 +1,5 @@
 import {Position} from "../../position";
 import {Token} from "../tokens/_token";
-import {INode} from "../nodes/_inode";
 
 export abstract class Identifier {
   private name: string;
@@ -9,7 +8,7 @@ export abstract class Identifier {
   private end: Position;
 
 // todo, remove parameter _node?
-  constructor(token: Token, _node: INode) {
+  constructor(token: Token) {
     this.name = token.getStr();
     this.position = token.getStart();
     this.start = token.getStart();
