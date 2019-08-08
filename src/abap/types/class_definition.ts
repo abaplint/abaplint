@@ -4,7 +4,7 @@ import {SuperClassName} from "../../abap/expressions";
 import * as Statements from "../../abap/statements";
 import * as Structures from "../../abap/structures";
 import * as Expressions from "../../abap/expressions";
-import {ClassAttributes} from "./class_attributes";
+import {Attributes} from "./class_attributes";
 import {Identifier} from "./_identifier";
 import {Aliases} from "./aliases";
 
@@ -33,8 +33,8 @@ export class ClassDefinition extends Identifier {
     return token ? token.getFirstToken().getStr() : undefined;
   }
 
-  public getAttributes(): ClassAttributes {
-    return new ClassAttributes(this.node);
+  public getAttributes(): Attributes {
+    return new Attributes(this.node);
   }
 
   public isException(): boolean {

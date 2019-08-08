@@ -2,7 +2,7 @@ import * as LServer from "vscode-languageserver-protocol";
 import {Registry} from "../registry";
 import {ABAPFile} from "../files";
 import {Identifier} from "../abap/types/_identifier";
-import {ClassAttributes, MethodDefinitions, MethodImplementation} from "../abap/types";
+import {Attributes, MethodDefinitions, MethodImplementation} from "../abap/types";
 
 export class Symbols {
 
@@ -81,7 +81,7 @@ export class Symbols {
     return ret;
   }
 
-  private static outputClassAttributes(attr: ClassAttributes | undefined): LServer.DocumentSymbol[] {
+  private static outputClassAttributes(attr: Attributes | undefined): LServer.DocumentSymbol[] {
     if (attr === undefined) {
       return [];
     }

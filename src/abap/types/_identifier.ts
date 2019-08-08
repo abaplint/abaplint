@@ -7,7 +7,6 @@ export class Identifier {
   private start: Position;
   private end: Position;
 
-// todo, remove parameter _node?
   constructor(token: Token) {
     this.name = token.getStr();
     this.position = token.getStart();
@@ -24,7 +23,7 @@ export class Identifier {
     return this.name;
   }
 
-// hmm, consider how this can be refactored
+// todo, hmm, consider how this can be refactored
   public setName(name: string): Identifier {
     this.name = name;
     return this;

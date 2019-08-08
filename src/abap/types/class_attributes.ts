@@ -6,8 +6,7 @@ import {ClassConstant} from "./class_constant";
 import {StructureNode, StatementNode} from "../../abap/nodes";
 import {Visibility} from "./visibility";
 
-// todo, rename this class, it is used for both classes and interfaces?
-export class ClassAttributes {
+export class Attributes {
   private static: ClassAttribute[];
   private instance: ClassAttribute[];
   private constants: ClassConstant[];
@@ -30,6 +29,8 @@ export class ClassAttributes {
   public getConstants(): ClassConstant[] {
     return this.constants;
   }
+
+/////////////////////////////
 
   private parse(node: StructureNode): void {
     const cdef = node.findFirstStructure(Structures.ClassDefinition);

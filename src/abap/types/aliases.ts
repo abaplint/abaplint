@@ -17,6 +17,8 @@ export class Aliases {
     return this.aliases;
   }
 
+/////////////////////////
+
   private parse(node: StructureNode): void {
     const cdef = node.findFirstStructure(Structures.ClassDefinition);
     if (cdef) {

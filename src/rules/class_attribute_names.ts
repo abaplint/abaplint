@@ -3,7 +3,7 @@ import {IRule} from "./_irule";
 import {IObject} from "../objects/_iobject";
 import {Class} from "../objects";
 import {Registry} from "../registry";
-import {ClassAttributes} from "../abap/types/class_attributes";
+import {Attributes} from "../abap/types/class_attributes";
 import {ClassAttribute} from "../abap/types/class_attribute";
 import {BasicRuleConfig} from "./_basic_rule_config";
 
@@ -34,7 +34,7 @@ export class ClassAttributeNames implements IRule {
   }
 
   public run(obj: IObject, _reg: Registry): Issue[] {
-    let attr: ClassAttributes | undefined = undefined;
+    let attr: Attributes | undefined = undefined;
 
 // todo, consider local classes(PROG, FUGR, CLAS)
 
@@ -59,7 +59,7 @@ export class ClassAttributeNames implements IRule {
     return this.checkAttributes(attr, obj);
   }
 
-  private checkAttributes(attr: ClassAttributes | undefined, obj: IObject): Issue[] {
+  private checkAttributes(attr: Attributes | undefined, obj: IObject): Issue[] {
     if (!attr) { return []; }
     let ret: Issue[] = [];
 

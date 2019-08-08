@@ -73,7 +73,7 @@ export class Dump {
     };
   }
 
-  public attributes(attributes: Types.ClassAttributes | undefined): any {
+  public attributes(attributes: Types.Attributes | undefined): any {
     if (attributes === undefined) {
       return undefined;
     }
