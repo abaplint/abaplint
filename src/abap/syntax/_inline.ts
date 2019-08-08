@@ -25,7 +25,7 @@ export class Inline {
     // todo, these identifers should be possible to create from a Node
     // todo, how to determine the real types?
     const token = expr.getFirstToken();
-    this.variables.add(new LocalIdentifier(token));
+    this.variables.addIdentifier(new LocalIdentifier(token));
   }
 
   public update(node: INode) {
@@ -59,7 +59,7 @@ export class Inline {
             name = asName.getFirstToken().getStr();
           }
           for (const field of fields) {
-            this.variables.addOther(name + "~" + field);
+            this.variables.addName(name + "~" + field);
           }
 // todo, these also have to be popped after the statement
         }

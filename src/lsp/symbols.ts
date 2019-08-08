@@ -19,7 +19,7 @@ export class Symbols {
   }
 
   private static selectionRange(identifier: Identifier): LServer.Range {
-    const pos = identifier.getPosition();
+    const pos = identifier.getStart();
     const str = identifier.getName();
     return LServer.Range.create(pos.getRow() - 1, pos.getCol() - 1, pos.getRow() - 1, pos.getCol() - 1 + str.length);
   }

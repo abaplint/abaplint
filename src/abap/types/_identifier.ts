@@ -2,42 +2,28 @@ import {Position} from "../../position";
 import {Token} from "../tokens/_token";
 
 export class Identifier {
-  private name: string;
-  private position: Position;
-  private start: Position;
-  private end: Position;
+  private token: Token;
 
   constructor(token: Token) {
-    this.name = token.getStr();
-    this.position = token.getStart();
-    this.start = token.getStart();
-    this.end = token.getEnd();
-
-// todo, should this be handled in the parser instead?
-    if (this.name.substr(0, 1) === "!") {
-      this.name = this.name.substr(1);
-    }
+    this.token = token;
   }
 
   public getName() {
-    return this.name;
-  }
+    let name = this.token.getStr();
 
-// todo, hmm, consider how this can be refactored
-  public setName(name: string): Identifier {
-    this.name = name;
-    return this;
-  }
+    // todo, should this be handled in the parser instead?
+    if (name.substr(0, 1) === "!") {
+      name = name.substr(1);
+    }
 
-  public getPosition() {
-    return this.position;
+    return name;
   }
 
   public getStart(): Position {
-    return this.start;
+    return this.token.getStart();
   }
 
   public getEnd(): Position {
-    return this.end;
+    return this.token.getEnd();
   }
 }
