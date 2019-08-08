@@ -25,26 +25,20 @@ export class CheckVariablesLogic {
   private oooc: ObjectOriented;
   private proc: Procedural;
   private inline: Inline;
-  private errorNamespace: string;
-  private globalConstants: string[];
 
-  constructor(reg: Registry, object: ABAPObject, errorNamespace: string, globalConstants: string[] | undefined) {
+  constructor(reg: Registry, object: ABAPObject) {
     this.reg = reg;
-    this.errorNamespace = errorNamespace;
     this.issues = [];
-    this.globalConstants = [];
-    if (globalConstants !== undefined) {
-      this.globalConstants = globalConstants;
-    }
+
     this.object = object;
     this.variables = new Variables();
     this.oooc = new ObjectOriented(this.object, this.reg, this.variables);
     this.proc = new Procedural(this.object, this.reg, this.variables);
-    this.inline = new Inline(this.variables, this.reg, this.errorNamespace);
+    this.inline = new Inline(this.variables, this.reg);
   }
 
   public findIssues(ignoreParserError = true): Issue[] {
-    this.variables.addList(Globals.get(this.globalConstants));
+    this.variables.addList(Globals.get(this.reg.getConfig().getSyntaxSetttings().globalConstants));
 
     for (const file of this.object.getABAPFiles()) {
       this.currentFile = file;
@@ -65,7 +59,7 @@ export class CheckVariablesLogic {
 
 // todo, this assumes no tokes are the same across files
   public resolveToken(token: Token): Identifier | string | undefined {
-    this.variables.addList(Globals.get(this.globalConstants));
+    this.variables.addList(Globals.get(this.reg.getConfig().getSyntaxSetttings().globalConstants));
 
     for (const file of this.object.getABAPFiles()) {
       this.currentFile = file;

@@ -3,11 +3,19 @@ import {MemoryFile} from "../../../src/files";
 import {Registry} from "../../../src/registry";
 import {CheckVariablesLogic} from "../../../src/abap/syntax/check_variables";
 import {Issue} from "../../../src/issue";
+import {Config} from "../../../src/config";
 
 function run(reg: Registry, globalConstants?: string[]): Issue[] {
   let ret: Issue[] = [];
+
+  if (globalConstants) {
+    const config = reg.getConfig().get();
+    config.syntax.globalConstants = globalConstants;
+    reg.setConfig(new Config(JSON.stringify(config)));
+  }
+
   for (const obj of reg.getABAPObjects()) {
-    ret = ret.concat(new CheckVariablesLogic(reg, obj, "^(Z|Y)", globalConstants).findIssues(false));
+    ret = ret.concat(new CheckVariablesLogic(reg, obj).findIssues(false));
   }
   return ret;
 }

@@ -63,6 +63,7 @@ export class Registry {
 // todo, the config can be changed outside of this setConfig method, how to handle?
 // or alternatively not handle, just consider everything as dirty?
 // or have a checksum of the config and dirty on a different level?
+// will probably make config immutable
     this.setDirty();
     for (const obj of this.getObjects()) {
       obj.setDirty();

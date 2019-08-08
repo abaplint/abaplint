@@ -16,9 +16,16 @@ export interface IDependency {
   files: string;
 }
 
+export interface ISyntaxSettings {
+  errorNamespace: string;
+  globalConstants: string[];
+//  globalMacros: string[];
+}
+
 export interface IConfig {
   global: IGlobalConfig;
   dependencies: IDependency[];
+  syntax: ISyntaxSettings;
   rules: any;
 }
 
@@ -36,22 +43,27 @@ export class Config {
     }
 
     const config: IConfig = {
-      global: this.getGlobalDefault(),
-      dependencies: [{url: "https://github.com/abaplint/deps", folder: "/deps", files: "/src/**/*.*"}],
+      global: {
+        version: versionToText(Config.defaultVersion),
+        skipGeneratedGatewayClasses: true,
+        skipGeneratedPersistentClasses: true,
+        skipGeneratedFunctionGroups: true,
+        applyUnspecifiedRules: true,
+      },
+      dependencies: [{
+        url: "https://github.com/abaplint/deps",
+        folder: "/deps",
+        files: "/src/**/*.*",
+      }],
+      syntax: {
+        errorNamespace: "^(Z|Y)",
+        globalConstants: [],
+//        globalMacros: [],
+      },
       rules: rules,
     };
 
     return new Config(JSON.stringify(config));
-  }
-
-  private static getGlobalDefault(): IGlobalConfig {
-    return {
-      version: versionToText(Config.defaultVersion),
-      skipGeneratedGatewayClasses: true,
-      skipGeneratedPersistentClasses: true,
-      skipGeneratedFunctionGroups: true,
-      applyUnspecifiedRules: true,
-    };
   }
 
   public getEnabledRules(): IRule[] {
@@ -78,7 +90,10 @@ export class Config {
     this.config = JSON.parse(json);
 
     if (this.config.global === undefined) {
-      this.config.global = Config.getGlobalDefault();
+      this.config.global = Config.getDefault().getGlobal();
+    }
+    if (this.config.syntax === undefined) {
+      this.config.syntax = Config.getDefault().getSyntaxSetttings();
     }
   }
 
@@ -98,6 +113,10 @@ export class Config {
 
   public getGlobal(): IGlobalConfig {
     return this.config.global;
+  }
+
+  public getSyntaxSetttings(): ISyntaxSettings {
+    return this.config.syntax;
   }
 
   public getVersion(): Version {
