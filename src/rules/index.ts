@@ -19,6 +19,7 @@ export * from "./keywords_upper";
 export * from "./line_length";
 export * from "./line_only_punc";
 export * from "./local_class_naming";
+export * from "./local_testclass_location";
 export * from "./local_variable_names";
 export * from "./max_one_statement";
 export * from "./message_exists";

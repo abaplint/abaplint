@@ -72,16 +72,15 @@ export class ClassDefinition extends Identifier {
     return new Aliases(this.node);
   }
 
+  public isForTesting(): boolean {
+    return this.node.findFirstStatement(Statements.ClassDefinition)!.concatTokens().toUpperCase().includes(" FOR TESTING");
+  }
+
 /*
   public getFriends() {
   }
 
   public isAbstract(): boolean {
-// todo
-    return false;
-  }
-
-  public isForTesting(): boolean {
 // todo
     return false;
   }
