@@ -2,7 +2,7 @@ import {expect} from "chai";
 import {MemoryFile} from "../../../src/files";
 import {Registry} from "../../../src/registry";
 import {Class} from "../../../src/objects";
-import {Scope} from "../../../src/abap/types/scope";
+import {Visibility} from "../../../src/abap/types/visibility";
 
 describe("Types, class_definition", () => {
 
@@ -90,7 +90,7 @@ describe("Types, class_definition", () => {
     const aliases = clas.getClassDefinition()!.getAliases().getAll();
     expect(aliases.length).to.equal(1);
     expect(aliases[0].getName()).to.equal("cache_asset");
-    expect(aliases[0].getScope()).to.equal(Scope.Public);
+    expect(aliases[0].getVisibility()).to.equal(Visibility.Public);
     expect(aliases[0].getComponent()).to.equal("zif_foobar~cache_asset");
   });
 

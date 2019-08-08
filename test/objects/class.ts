@@ -2,7 +2,7 @@ import {expect} from "chai";
 import {Registry} from "../../src/registry";
 import {MemoryFile} from "../../src/files/memory_file";
 import {Class, ClassCategory} from "../../src/objects";
-import {Scope} from "../../src/abap/types/scope";
+import {Visibility} from "../../src/abap/types/visibility";
 
 // todo, most(all?) of these tests to be moved to abap/types/class_definition
 // or other file under abap/types
@@ -132,7 +132,7 @@ describe("Objects, class, getMethodDefinitions", () => {
     if (methods !== undefined) {
       expect(methods.getPrivate().length).to.equal(1);
       expect(methods.getPrivate()[0].getName()).to.equal("method1");
-      expect(methods.getPrivate()[0].getScope()).to.equal(Scope.Private);
+      expect(methods.getPrivate()[0].getVisibility()).to.equal(Visibility.Private);
     }
   });
 
@@ -183,7 +183,7 @@ describe("Objects, class, getAttributes", () => {
     if (attr !== undefined) {
       expect(attr.getInstance().length).to.equal(1);
       expect(attr.getInstance()[0].getName()).to.equal("moo");
-      expect(attr.getInstance()[0].getScope()).to.equal(Scope.Private);
+      expect(attr.getInstance()[0].getVisibility()).to.equal(Visibility.Private);
       expect(attr.getStatic().length).to.equal(0);
     }
   });
@@ -207,7 +207,7 @@ describe("Objects, class, getAttributes", () => {
       expect(attr.getStatic().length).to.equal(1);
       expect(attr.getStatic().length).to.equal(1);
       expect(attr.getStatic()[0].getName()).to.equal("moo");
-      expect(attr.getStatic()[0].getScope()).to.equal(Scope.Private);
+      expect(attr.getStatic()[0].getVisibility()).to.equal(Visibility.Private);
       expect(attr.getInstance().length).to.equal(0);
     }
   });

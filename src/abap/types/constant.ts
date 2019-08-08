@@ -1,9 +1,9 @@
 import * as Statements from "../statements";
 import * as Expressions from "../expressions";
 import {StatementNode} from "../nodes";
-import {TypedIdentifier} from "./_typed_identifier";
+import {Identifier} from "./_identifier";
 
-export class Constant extends TypedIdentifier {
+export class Constant extends Identifier {
 
   constructor(node: StatementNode) {
     if (!(node.get() instanceof Statements.Constant || node.get() instanceof Statements.ConstantBegin)) {

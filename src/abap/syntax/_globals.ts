@@ -1,13 +1,13 @@
 import {MemoryFile} from "../../files";
 import {Registry} from "../../registry";
 import {Procedural} from "./_procedural";
-import {TypedIdentifier} from "../types/_typed_identifier";
+import {Identifier} from "../types/_identifier";
 import {IFile} from "../../files/_ifile";
 import {Variables} from "./_variables";
 
 export class Globals {
 
-  public static get(extras: string[]): TypedIdentifier[] {
+  public static get(extras: string[]): Identifier[] {
     // todo, more defintions, and move to somewhere else?
 
     let code = "* Globals\n" +
@@ -66,7 +66,7 @@ export class Globals {
     return this.typesInFile(file);
   }
 
-  public static typesInFile(file: IFile): TypedIdentifier[] {
+  public static typesInFile(file: IFile): Identifier[] {
     const reg = new Registry();
     const variables = new Variables();
     const structure = reg.addFile(file).getABAPFiles()[0].getStructure();

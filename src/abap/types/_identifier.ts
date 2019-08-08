@@ -1,7 +1,7 @@
 import {Position} from "../../position";
 import {Token} from "../tokens/_token";
 
-export abstract class Identifier {
+export class Identifier {
   private name: string;
   private position: Position;
   private start: Position;

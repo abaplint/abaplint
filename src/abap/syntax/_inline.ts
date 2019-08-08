@@ -1,5 +1,5 @@
 import {Variables} from "./_variables";
-import {TypedIdentifier} from "../types/_typed_identifier";
+import {Identifier} from "../types/_identifier";
 import {ExpressionNode, StatementNode} from "../nodes";
 import * as Expressions from "../expressions";
 import * as Statements from "../statements";
@@ -7,7 +7,7 @@ import {INode} from "../nodes/_inode";
 import {Registry} from "../../registry";
 import {Table, View} from "../../objects";
 
-class LocalIdentifier extends TypedIdentifier { }
+class LocalIdentifier extends Identifier { }
 
 export class Inline {
   private variables: Variables;

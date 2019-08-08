@@ -1,7 +1,7 @@
 import * as Expressions from "../expressions";
 import * as Statements from "../statements";
 import {StatementNode, ExpressionNode} from "../nodes";
-import {TypedIdentifier} from "../types/_typed_identifier";
+import {Identifier} from "../types/_identifier";
 import {ABAPObject} from "../../objects/_abap_object";
 import {Registry} from "../../registry";
 import {FormDefinition} from "../types";
@@ -11,7 +11,7 @@ import {MemoryFile} from "../../files";
 import {Globals} from "./_globals";
 
 // todo, rename this class?
-class LocalIdentifier extends TypedIdentifier { }
+class LocalIdentifier extends Identifier { }
 
 export class Procedural {
   private obj: ABAPObject;
@@ -26,7 +26,7 @@ export class Procedural {
 
   public findDefinitions(node: StatementNode) {
     const sub = node.get();
-    const ret: TypedIdentifier[] = [];
+    const ret: Identifier[] = [];
 
     if (sub instanceof Statements.Data
       || sub instanceof Statements.DataBegin
@@ -81,7 +81,7 @@ export class Procedural {
     throw new Error("FORM defintion for \"" + name + "\" not found");
   }
 
-  private addVariable(expr: ExpressionNode | undefined): TypedIdentifier {
+  private addVariable(expr: ExpressionNode | undefined): Identifier {
     if (expr === undefined) { throw new Error("syntax_check, unexpected tree structure"); }
     // todo, these identifers should be possible to create from a Node
     // todo, how to determine the real types?

@@ -1,8 +1,8 @@
 import {ExpressionNode} from "../../abap/nodes";
 import {MethodParam, MethodParamName} from "../../abap/expressions";
-import {TypedIdentifier} from "./_typed_identifier";
+import {Identifier} from "./_identifier";
 
-export class MethodParameter extends TypedIdentifier {
+export class MethodParameter extends Identifier {
 
   constructor(node: ExpressionNode) {
     if (!(node.get() instanceof MethodParam) && !(node.get() instanceof MethodParamName)) {

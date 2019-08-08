@@ -2,7 +2,7 @@ import {Issue} from "../../issue";
 import * as Expressions from "../expressions";
 import * as Statements from "../statements";
 import {INode} from "../nodes/_inode";
-import {TypedIdentifier} from "../types/_typed_identifier";
+import {Identifier} from "../types/_identifier";
 import {Token} from "../tokens/_token";
 import {StatementNode, ExpressionNode} from "../nodes";
 import {ABAPFile} from "../../files";
@@ -64,7 +64,7 @@ export class CheckVariablesLogic {
   }
 
 // todo, this assumes no tokes are the same across files
-  public resolveToken(token: Token): TypedIdentifier | string | undefined {
+  public resolveToken(token: Token): Identifier | string | undefined {
     this.variables.addList(Globals.get(this.globalConstants));
 
     for (const file of this.object.getABAPFiles()) {
@@ -95,7 +95,7 @@ export class CheckVariablesLogic {
     }));
   }
 
-  private traverse(node: INode, search?: Token): TypedIdentifier | string | undefined {
+  private traverse(node: INode, search?: Token): Identifier | string | undefined {
     try {
       this.inline.update(node);
     } catch (e) {

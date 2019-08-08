@@ -3,7 +3,7 @@ import {Alias} from "./alias";
 import * as Structures from "../../abap/structures";
 import * as Statements from "../../abap/statements";
 import * as Expressions from "../../abap/expressions";
-import {Scope} from "./scope";
+import {Visibility} from "./visibility";
 
 export class Aliases {
   private aliases: Alias[];
@@ -20,24 +20,22 @@ export class Aliases {
   private parse(node: StructureNode): void {
     const cdef = node.findFirstStructure(Structures.ClassDefinition);
     if (cdef) {
-      this.parseSection(cdef.findFirstStructure(Structures.PublicSection), Scope.Public);
-      this.parseSection(cdef.findFirstStructure(Structures.PrivateSection), Scope.Private);
-      this.parseSection(cdef.findFirstStructure(Structures.ProtectedSection), Scope.Protected);
+      this.parseSection(cdef.findFirstStructure(Structures.PublicSection), Visibility.Public);
+      this.parseSection(cdef.findFirstStructure(Structures.PrivateSection), Visibility.Private);
+      this.parseSection(cdef.findFirstStructure(Structures.ProtectedSection), Visibility.Protected);
     }
   }
 
-  private parseSection(node: StructureNode | undefined, scope: Scope): void {
+  private parseSection(node: StructureNode | undefined, visibility: Visibility): void {
     if (!node) { return; }
 
     const list = node.findAllStatements(Statements.Aliases);
     for (const a of list) {
-      const names = a.findAllExpressions(Expressions.Field);
-      if (names.length !== 2) {
-        throw new Error("Unexpected ALIAS statement");
-      }
-      this.aliases.push(new Alias(names[0].getFirstToken(), scope, names[1].getFirstToken().getStr()));
-    }
+      const name = a.findFirstExpression(Expressions.SimpleName)!.getFirstToken();
+      const comp = a.findFirstExpression(Expressions.Field)!.getFirstToken();
 
+      this.aliases.push(new Alias(name, visibility, comp.getStr()));
+    }
   }
 
 }

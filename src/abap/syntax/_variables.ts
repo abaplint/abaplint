@@ -1,14 +1,14 @@
-import {TypedIdentifier} from "../types/_typed_identifier";
+import {Identifier} from "../types/_identifier";
 
 export class Variables {
-  private scopes: {name: string; ids: TypedIdentifier[]; other: string[] }[];
+  private scopes: {name: string; ids: Identifier[]; other: string[] }[];
 
   constructor() {
     this.scopes = [];
     this.pushScope("_global");
   }
 
-  public add(identifier: TypedIdentifier) {
+  public add(identifier: Identifier) {
     this.scopes[this.scopes.length - 1].ids.push(identifier);
   }
 
@@ -16,7 +16,7 @@ export class Variables {
     this.scopes[this.scopes.length - 1].other.push(name);
   }
 
-  public addList(identifiers: TypedIdentifier[], prefix?: string | undefined) {
+  public addList(identifiers: Identifier[], prefix?: string | undefined) {
     for (const id of identifiers) {
       if (prefix) {
         this.add(id.setName(prefix + id.getName()));
@@ -26,11 +26,11 @@ export class Variables {
     }
   }
 
-  public getCurrentScope(): TypedIdentifier[] {
+  public getCurrentScope(): Identifier[] {
     return this.scopes[this.scopes.length - 1].ids;
   }
 
-  public resolve(name: string): TypedIdentifier | string | undefined {
+  public resolve(name: string): Identifier | string | undefined {
     // todo, this should probably search the nearest first? in case there are shadowed variables?
     for (const scope of this.scopes) {
       for (const local of scope.ids) {

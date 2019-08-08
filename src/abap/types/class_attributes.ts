@@ -1,9 +1,10 @@
 import * as Structures from "../../abap/structures";
 import * as Statements from "../../abap/statements";
+import * as Expressions from "../../abap/expressions";
 import {ClassAttribute} from "./class_attribute";
 import {ClassConstant} from "./class_constant";
-import {StructureNode} from "../../abap/nodes";
-import {Scope} from "./scope";
+import {StructureNode, StatementNode} from "../../abap/nodes";
+import {Visibility} from "./visibility";
 
 // todo, rename this class, it is used for both classes and interfaces?
 export class ClassAttributes {
@@ -33,38 +34,54 @@ export class ClassAttributes {
   private parse(node: StructureNode): void {
     const cdef = node.findFirstStructure(Structures.ClassDefinition);
     if (cdef) {
-      this.parseSection(cdef.findFirstStructure(Structures.PublicSection), Scope.Public);
-      this.parseSection(cdef.findFirstStructure(Structures.PrivateSection), Scope.Private);
-      this.parseSection(cdef.findFirstStructure(Structures.ProtectedSection), Scope.Protected);
+      this.parseSection(cdef.findFirstStructure(Structures.PublicSection), Visibility.Public);
+      this.parseSection(cdef.findFirstStructure(Structures.PrivateSection), Visibility.Private);
+      this.parseSection(cdef.findFirstStructure(Structures.ProtectedSection), Visibility.Protected);
       return;
     }
 
     const idef = node.findFirstStructure(Structures.Interface);
     if (idef) {
-      this.parseSection(idef.findFirstStructure(Structures.SectionContents), Scope.Public);
+      this.parseSection(idef.findFirstStructure(Structures.SectionContents), Visibility.Public);
       return;
     }
 
     throw new Error("MethodDefinition, expected ClassDefinition or InterfaceDefinition");
   }
 
-  private parseSection(node: StructureNode | undefined, scope: Scope): void {
+  private parseSection(node: StructureNode | undefined, visibility: Visibility): void {
     if (!node) { return; }
 
     let defs = node.findAllStatements(Statements.Data).concat(node.findAllStatements(Statements.DataBegin));
     for (const def of defs) {
-      this.instance.push(new ClassAttribute(def, scope));
+      this.instance.push(this.parseAttribute(def, visibility));
     }
 
     defs = node.findAllStatements(Statements.ClassData).concat(node.findAllStatements(Statements.ClassDataBegin));
     for (const def of defs) {
-      this.static.push(new ClassAttribute(def, scope));
+      this.static.push(this.parseAttribute(def, visibility));
     }
 
     defs = node.findAllStatements(Statements.Constant).concat(node.findAllStatements(Statements.ConstantBegin));
     for (const def of defs) {
-      this.constants.push(new ClassConstant(def, scope));
+      this.constants.push(new ClassConstant(def, visibility));
     }
+  }
+
+  private parseAttribute(node: StatementNode, visibility: Visibility): ClassAttribute {
+    if (!(node.get() instanceof Statements.Data)
+        && !(node.get() instanceof Statements.DataBegin)
+        && !(node.get() instanceof Statements.ClassData)
+        && !(node.get() instanceof Statements.ClassDataBegin)) {
+      throw new Error("ClassAttribute, unexpected node, 1");
+    }
+    const found = node.findFirstExpression(Expressions.NamespaceSimpleName);
+    if (found === undefined) {
+      throw new Error("ClassAttribute, unexpected node, 2");
+    }
+    const token = found.getFirstToken();
+
+    return new ClassAttribute(token, visibility);
   }
 
 }

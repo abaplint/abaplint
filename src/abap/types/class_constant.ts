@@ -1,11 +1,11 @@
-import {Scope} from "./scope";
+import {Visibility} from "./visibility";
 import {StatementNode} from "../nodes";
 import {Constant} from "./constant";
 
 export class ClassConstant extends Constant {
-  private scope: Scope;
+  private visibility: Visibility;
 
-  constructor(node: StatementNode, scope: Scope) {
+  constructor(node: StatementNode, visibility: Visibility) {
     /*
     if (!(node.get() instanceof Statements.Constant)) {
       throw new Error("Constant, unexpected node");
@@ -17,11 +17,11 @@ export class ClassConstant extends Constant {
     const token = found.getFirstToken();
 */
     super(node);
-    this.scope = scope;
+    this.visibility = visibility;
   }
 
-  public getScope() {
-    return this.scope;
+  public getVisibility() {
+    return this.visibility;
   }
 
 }
