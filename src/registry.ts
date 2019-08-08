@@ -140,6 +140,7 @@ export class Registry {
   public setDirty() {
     this.dirty = true;
     this.issues = [];
+    this.macros = [];
   }
 
   public isDirty(): boolean {
@@ -261,7 +262,8 @@ export class Registry {
   }
 
   public isMacro(name: string): boolean {
-    for (const mac of this.macros) {
+    const macros = this.macros.concat(this.getConfig().getSyntaxSetttings().globalMacros);
+    for (const mac of macros) {
       if (mac === name.toUpperCase()) {
         return true;
       }

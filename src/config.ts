@@ -19,7 +19,7 @@ export interface IDependency {
 export interface ISyntaxSettings {
   errorNamespace: string;
   globalConstants: string[];
-//  globalMacros: string[];
+  globalMacros: string[];
 }
 
 export interface IConfig {
@@ -58,7 +58,7 @@ export class Config {
       syntax: {
         errorNamespace: "^(Z|Y)",
         globalConstants: [],
-//        globalMacros: [],
+        globalMacros: [],
       },
       rules: rules,
     };
