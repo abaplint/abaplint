@@ -83,6 +83,11 @@ const tests = [
   "##called foo = bar.",
   "DATA(ints) = NEW tyt_integer( ( 1 ) ( 2 ) ( 3 ) ).",
   "DATA(lt_list) = VALUE mo_out->ty_list_tt( ( 1 ) ).",
+  "CAST cl_class( x )->property = blah.",
+  "CAST cl_class( x )->property-component = blah.",
+  "CAST cl_class( x->y->z )->property-component = blah.",
+  "CAST cl_class( x->y->z )->property-component = cl_other_class=>constant.",
+  "NEW zcl_foo( )->prop = bar.",
 ];
 
 statementType(tests, "MOVE", Statements.Move);
