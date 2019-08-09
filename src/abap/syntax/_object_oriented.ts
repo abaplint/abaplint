@@ -58,6 +58,32 @@ export class ObjectOriented {
     this.fromSuperClass(classDefinition);
   }
 
+  private findMethodInInterface(interfaceName: string, methodName: string): MethodDefinition | undefined {
+    const intf = this.reg.getObject("INTF", interfaceName) as Interface;
+    if (intf && intf.getDefinition()) {
+      const methods = intf.getDefinition()!.getMethodDefinitions();
+      for (const method of methods) {
+        if (method.getName().toUpperCase() === methodName.toUpperCase()) {
+          return method;
+        }
+      }
+    }
+    return undefined;
+  }
+
+  private findMethodViaAlias(methodName: string, classDefinition: ClassDefinition): MethodDefinition | undefined {
+    for (const a of classDefinition.getAliases().getAll()) {
+      if (a.getName().toUpperCase() === methodName.toUpperCase()) {
+        const comp = a.getComponent();
+        const res = this.findMethodInInterface(comp.split("~")[0], comp.split("~")[1]);
+        if (res) {
+          return res;
+        }
+      }
+    }
+    return undefined;
+  }
+
   public methodImplementation(node: StatementNode) {
     this.variables.pushScope("method");
     const className = this.variables.getParentName();
@@ -74,20 +100,15 @@ export class ObjectOriented {
     let methodDefinition: MethodDefinition | undefined = undefined;
     methodDefinition = this.findMethod(classDefinition, methodName);
 
-// todo, this is not completely correct, and too much code
+// todo, this is not completely correct? hmm, why? visibility?
     if (methodDefinition === undefined && methodName.includes("~")) {
       const interfaceName = methodName.split("~")[0];
       methodName = methodName.split("~")[1];
-      const intf = this.reg.getObject("INTF", interfaceName) as Interface;
-      if (intf && intf.getDefinition()) {
-        const methods = intf.getDefinition()!.getMethodDefinitions();
-        for (const method of methods) {
-          if (method.getName().toUpperCase() === methodName.toUpperCase()) {
-            methodDefinition = method;
-            break;
-          }
-        }
-      }
+      methodDefinition = this.findMethodInInterface(interfaceName, methodName);
+    }
+
+    if (methodDefinition === undefined) {
+      methodDefinition = this.findMethodViaAlias(methodName, classDefinition);
     }
 
     if (methodDefinition === undefined) {

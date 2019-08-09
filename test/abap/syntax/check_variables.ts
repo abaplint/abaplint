@@ -772,8 +772,11 @@ describe("Check Variables", () => {
     expect(issues.length).to.equals(0);
   });
 
-/*
   it("class implementing interface, aliased implementation", () => {
+    const intf =
+      "INTERFACE zif_foobar2 PUBLIC.\n" +
+      "  METHODS method1 IMPORTING foo TYPE i.\n" +
+      "ENDINTERFACE.";
     const clas =
       "CLASS zcl_foobar DEFINITION PUBLIC FINAL CREATE PUBLIC.\n" +
       "  PUBLIC SECTION.\n" +
@@ -785,17 +788,11 @@ describe("Check Variables", () => {
       "    WRITE foo.\n" +
       "  ENDMETHOD.\n" +
       "ENDCLASS.\n";
-    const intf =
-      "INTERFACE zif_foobar2 PUBLIC.\n" +
-      "  METHODS method1 IMPORTING foo TYPE i.\n" +
-      "ENDINTERFACE.";
     const issues = runMulti([
       {filename: "zcl_foobar.clas.abap", contents: clas},
       {filename: "zif_foobar2.intf.abap", contents: intf}]);
-    console.dir(issues);
     expect(issues.length).to.equals(0);
   });
-*/
 
 /*
   it("program, constant, begin, error", () => {
