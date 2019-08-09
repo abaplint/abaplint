@@ -221,6 +221,35 @@ describe("Check Variables", () => {
     expect(issues.length).to.equals(0);
   });
 
+  it("program, class definition not found", () => {
+    const abap = "CLASS lcl_foobar IMPLEMENTATION.\n" +
+      "ENDCLASS.\n";
+    const issues = runProgram(abap);
+    expect(issues.length).to.equals(1);
+  });
+
+  it("program, class definition not found, two methods should give single error", () => {
+    const abap = "CLASS lcl_foobar IMPLEMENTATION.\n" +
+      "  METHOD moo.\n" +
+      "  ENDMETHOD.\n" +
+      "  METHOD bar.\n" +
+      "  ENDMETHOD.\n" +
+      "ENDCLASS.\n";
+    const issues = runProgram(abap);
+    expect(issues.length).to.equals(1);
+  });
+
+  it("program, class definition not found, two methods should give single error, interfaced", () => {
+    const abap = "CLASS lcl_foobar IMPLEMENTATION.\n" +
+      "  METHOD zif_sdf~moo.\n" +
+      "  ENDMETHOD.\n" +
+      "  METHOD zif_sdf~bar.\n" +
+      "  ENDMETHOD.\n" +
+      "ENDCLASS.\n";
+    const issues = runProgram(abap);
+    expect(issues.length).to.equals(1);
+  });
+
   it("program, READ TABLE", () => {
 // todo, this code is not syntactically correct
     const abap = "DATA lt_map TYPE STANDARD TABLE OF string.\n" +
@@ -785,6 +814,29 @@ describe("Check Variables", () => {
       "ENDCLASS.\n" +
       "CLASS ZCL_FOOBAR IMPLEMENTATION.\n" +
       "  METHOD method1.\n" +
+      "    WRITE foo.\n" +
+      "  ENDMETHOD.\n" +
+      "ENDCLASS.\n";
+    const issues = runMulti([
+      {filename: "zcl_foobar.clas.abap", contents: clas},
+      {filename: "zif_foobar2.intf.abap", contents: intf}]);
+    expect(issues.length).to.equals(0);
+  });
+
+  it("class implementing interface, aliased attribute", () => {
+    const intf =
+      "INTERFACE zif_foobar2 PUBLIC.\n" +
+      "  DATA: bar TYPE string.\n" +
+      "  METHODS method1.\n" +
+      "ENDINTERFACE.";
+    const clas =
+      "CLASS zcl_foobar DEFINITION PUBLIC FINAL CREATE PUBLIC.\n" +
+      "  PUBLIC SECTION.\n" +
+      "    INTERFACES zif_foobar2.\n" +
+      "    ALIASES foo FOR zif_foobar2~bar.\n" +
+      "ENDCLASS.\n" +
+      "CLASS ZCL_FOOBAR IMPLEMENTATION.\n" +
+      "  METHOD zif_foobar2~method1.\n" +
       "    WRITE foo.\n" +
       "  ENDMETHOD.\n" +
       "ENDCLASS.\n";

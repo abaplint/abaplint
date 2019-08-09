@@ -51,11 +51,26 @@ export class ObjectOriented {
       throw new Error("Error reading class attributes");
     }
 
+    this.addAliasedAttributes(classDefinition); // todo, this is not correct, take care of instance vs static
+
     this.variables.addList(classAttributes.getConstants());
     this.variables.addList(classAttributes.getInstance()); // todo, this is not correct, take care of instance vs static
     this.variables.addList(classAttributes.getStatic()); // todo, this is not correct, take care of instance vs static
 
     this.fromSuperClass(classDefinition);
+  }
+
+  private addAliasedAttributes(classDefinition: ClassDefinition): void {
+    for (const alias of classDefinition.getAliases().getAll()) {
+      const comp = alias.getComponent();
+      const intf = this.reg.getObject("INTF", comp.split("~")[0]) as Interface;
+      if (intf && intf.getDefinition()) {
+        const found = intf.getDefinition()!.getAttributes()!.findByName(comp.split("~")[1]);
+        if (found) {
+          this.variables.addNamedIdentifier(alias.getName(), found);
+        }
+      }
+    }
   }
 
   private findMethodInInterface(interfaceName: string, methodName: string): MethodDefinition | undefined {
