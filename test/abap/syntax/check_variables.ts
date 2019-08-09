@@ -310,6 +310,20 @@ describe("Check Variables", () => {
     expect(issues.length).to.equals(0);
   });
 
+  it("class, simple, one error for method not found", () => {
+    const abap = "CLASS zcl_foobar DEFINITION PUBLIC FINAL CREATE PUBLIC.\n" +
+      "  PUBLIC SECTION.\n" +
+      "    METHODS hello.\n" +
+      "ENDCLASS.\n" +
+      "CLASS zcl_foobar IMPLEMENTATION.\n" +
+      "  METHOD helllloooo.\n" +
+      "    WRITE moo.\n" +
+      "  ENDMETHOD.\n" +
+      "ENDCLASS.";
+    const issues = runClass(abap);
+    expect(issues.length).to.equals(1);
+  });
+
   it("class, variable foobar not found", () => {
     const abap = "CLASS zcl_foobar DEFINITION PUBLIC FINAL CREATE PUBLIC.\n" +
       "  PUBLIC SECTION.\n" +
@@ -367,7 +381,7 @@ describe("Check Variables", () => {
       "  ENDMETHOD.\n" +
       "ENDCLASS.";
     const issues = runClass(abap);
-    expect(issues.length).to.equals(2);
+    expect(issues.length).to.equals(1);
   });
 
   it("class, attribute", () => {
@@ -757,6 +771,31 @@ describe("Check Variables", () => {
     const issues = runProgram(abap, ["hello_world"]);
     expect(issues.length).to.equals(0);
   });
+
+/*
+  it("class implementing interface, aliased implementation", () => {
+    const clas =
+      "CLASS zcl_foobar DEFINITION PUBLIC FINAL CREATE PUBLIC.\n" +
+      "  PUBLIC SECTION.\n" +
+      "    INTERFACES zif_foobar2.\n" +
+      "    ALIASES method1 FOR zif_foobar2~method1.\n" +
+      "ENDCLASS.\n" +
+      "CLASS ZCL_FOOBAR IMPLEMENTATION.\n" +
+      "  METHOD method1.\n" +
+      "    WRITE foo.\n" +
+      "  ENDMETHOD.\n" +
+      "ENDCLASS.\n";
+    const intf =
+      "INTERFACE zif_foobar2 PUBLIC.\n" +
+      "  METHODS method1 IMPORTING foo TYPE i.\n" +
+      "ENDINTERFACE.";
+    const issues = runMulti([
+      {filename: "zcl_foobar.clas.abap", contents: clas},
+      {filename: "zif_foobar2.intf.abap", contents: intf}]);
+    console.dir(issues);
+    expect(issues.length).to.equals(0);
+  });
+*/
 
 /*
   it("program, constant, begin, error", () => {

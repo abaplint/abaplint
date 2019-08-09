@@ -118,6 +118,7 @@ export class CheckVariablesLogic {
         this.updateVariables(child);
       } catch (e) {
         this.newIssue(child.getFirstToken(), e.message);
+        break;
       }
       const resolved = this.traverse(child, search);
       if (resolved) {
