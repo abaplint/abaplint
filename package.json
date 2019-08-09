@@ -48,11 +48,11 @@
   },
   "homepage": "https://abaplint.org",
   "devDependencies": {
-    "@types/chai": "^4.1.7",
+    "@types/chai": "^4.2.0",
     "@types/glob": "^7.1.1",
     "@types/minimist": "^1.2.0",
     "@types/mocha": "^5.2.7",
-    "@types/node": "^12.6.9",
+    "@types/node": "^12.7.1",
     "@types/progress": "^2.0.3",
     "browserify": "^16.0.0",
     "chai": "^4.2.0",
