@@ -26,7 +26,7 @@ export class Inline {
     this.variables.addIdentifier(new LocalIdentifier(token));
   }
 
-  public update(node: INode) {
+  public update(node: INode): boolean {
     if (node instanceof StatementNode) {
 
       for (const inline of node.findAllExpressions(Expressions.InlineData)) {
@@ -52,6 +52,9 @@ export class Inline {
           }
           let name = dbtab.getFirstToken().getStr();
           const fields = this.findFields(name);
+          if (fields.length === 0) {
+            return true; // skip the statement, it uses things outside of checked namespace
+          }
           const asName = from.findFirstExpression(Expressions.SQLAsName);
           if (asName) {
             name = asName.getFirstToken().getStr();
@@ -63,6 +66,8 @@ export class Inline {
         }
       }
     }
+
+    return false;
   }
 
   private findFields(name: string): string[] {

@@ -362,6 +362,12 @@ describe("Check Variables", () => {
     expect(issues.length).to.equals(0);
   });
 
+  it("program, SELECT, database table not found, no error", () => {
+    const abap = "SELECT SINGLE * FROM something INTO @DATA(ls_data) WHERE moo = loo.";
+    const issues = runProgram(abap);
+    expect(issues.length).to.equals(0);
+  });
+
   it("program, component after call", () => {
     // todo, this code is not syntactically correct
     const abap = "run( zcl_global_class=>field ).\n";

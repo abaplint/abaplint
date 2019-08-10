@@ -91,7 +91,10 @@ export class CheckVariablesLogic {
 
   private traverse(node: INode, search?: Token): Identifier | string | undefined {
     try {
-      this.inline.update(node);
+      const skip = this.inline.update(node);
+      if (skip) {
+        return undefined;
+      }
     } catch (e) {
       this.newIssue(node.getFirstToken(), e.message);
     }
