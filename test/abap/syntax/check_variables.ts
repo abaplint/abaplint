@@ -239,15 +239,20 @@ describe("Check Variables", () => {
     expect(issues.length).to.equals(1);
   });
 
-  it("program, class definition not found, two methods should give single error, interfaced", () => {
-    const abap = "CLASS lcl_foobar IMPLEMENTATION.\n" +
-      "  METHOD zif_sdf~moo.\n" +
-      "  ENDMETHOD.\n" +
-      "  METHOD zif_sdf~bar.\n" +
+  it("locals impl, class definition, one method", () => {
+    const def = "CLASS lcl_foobar DEFINITION.\n" +
+      "  PUBLIC SECTION.\n" +
+      "    METHODS: hello IMPORTING moo TYPE string.\n" +
+      "ENDCLASS.\n";
+    const impl = "CLASS lcl_foobar IMPLEMENTATION.\n" +
+      "  METHOD hello.\n" +
+      "    WRITE moo.\n" +
       "  ENDMETHOD.\n" +
       "ENDCLASS.\n";
-    const issues = runProgram(abap);
-    expect(issues.length).to.equals(1);
+    const issues = runMulti([
+      {filename: "zcl_sdfsdf.clas.locals_def.abap", contents: def},
+      {filename: "zcl_sdfsdf.clas.locals_imp.abap", contents: impl}]);
+    expect(issues.length).to.equals(0);
   });
 
   it("program, READ TABLE", () => {

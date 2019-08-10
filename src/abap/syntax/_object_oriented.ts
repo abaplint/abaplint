@@ -42,14 +42,8 @@ export class ObjectOriented {
     this.variables.pushScope(className);
 
     const classDefinition = this.findDefinition(className);
-    if (classDefinition === undefined) {
-      throw new Error("Class definition \"" + className + "\" not found");
-    }
 
     const classAttributes = classDefinition.getAttributes();
-    if (classAttributes === undefined) {
-      throw new Error("Error reading class attributes");
-    }
 
     this.addAliasedAttributes(classDefinition); // todo, this is not correct, take care of instance vs static
 
@@ -165,7 +159,7 @@ export class ObjectOriented {
         return found;
       }
     }
-    throw new Error("Class defintion for \"" + name + "\" not found");
+    throw new Error("Class definition for \"" + name + "\" not found");
   }
 
   private findMethod(classDefinition: ClassDefinition, methodName: string): MethodDefinition | undefined {

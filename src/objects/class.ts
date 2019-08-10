@@ -102,9 +102,8 @@ export class Class extends ABAPObject {
     }
     if (files.length === 0) {
       throw new Error("class.ts, getMain: Could not find main file, parsed empty");
-    } else {
-      throw new Error("class.ts, getMain: Could not find main file");
     }
+    return undefined;
   }
 
   public getXMLFile(): IFile | undefined {

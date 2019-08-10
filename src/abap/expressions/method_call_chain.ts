@@ -1,11 +1,11 @@
 import {seq, opt, tok, star, alt, Expression, IStatementRunnable} from "../combi";
 import {InstanceArrow, StaticArrow} from "../tokens/";
-import {NewObject, ArrowOrDash, Field, FieldChain, MethodCall, Cast} from "./";
+import {NewObject, ArrowOrDash, ComponentName, FieldChain, MethodCall, Cast} from "./";
 import {ClassName} from "./class_name";
 
 export class MethodCallChain extends Expression {
   public getRunnable(): IStatementRunnable {
-    const fields = star(seq(new ArrowOrDash(), new Field()));
+    const fields = star(seq(new ArrowOrDash(), new ComponentName()));
     const after = star(seq(fields, tok(InstanceArrow), new MethodCall()));
 
     const localVariable = seq(new FieldChain(), tok(InstanceArrow));
