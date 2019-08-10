@@ -274,7 +274,6 @@ describe("Check Variables", () => {
     expect(issues[1].getMessage()).to.contain("method2");
   });
 
-
   it("locals impl, interface", () => {
     const def = "INTERFACE lif_foobar.\n" +
       "  METHODS: moo.\n" +
@@ -290,6 +289,30 @@ describe("Check Variables", () => {
     const issues = runMulti([
       {filename: "zcl_sdfsdf.clas.locals_def.abap", contents: def},
       {filename: "zcl_sdfsdf.clas.locals_imp.abap", contents: impl}]);
+    expect(issues.length).to.equals(0);
+  });
+
+  it("program, local superclass not found", () => {
+    const abap =
+      "CLASS lcl_class DEFINITION INHERITING FROM lcl_base.\n" +
+      "ENDCLASS.\n" +
+      "CLASS lcl_class IMPLEMENTATION.\n" +
+      "ENDCLASS.\n";
+    const issues = runProgram(abap);
+    expect(issues.length).to.equals(1);
+  });
+
+  it("program, local superclass found", () => {
+    const abap =
+      "CLASS lcl_base DEFINITION.\n" +
+      "ENDCLASS.\n" +
+      "CLASS lcl_base IMPLEMENTATION.\n" +
+      "ENDCLASS.\n" +
+      "CLASS lcl_class DEFINITION INHERITING FROM lcl_base.\n" +
+      "ENDCLASS.\n" +
+      "CLASS lcl_class IMPLEMENTATION.\n" +
+      "ENDCLASS.\n";
+    const issues = runProgram(abap);
     expect(issues.length).to.equals(0);
   });
 

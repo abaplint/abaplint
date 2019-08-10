@@ -208,6 +208,12 @@ export class ObjectOriented {
   private findSuperDefinition(name: string): ClassDefinition {
     const csup = this.reg.getObject("CLAS", name) as Class;
     if (csup === undefined) {
+      const found = this.findClassDefinition(name);
+      if (found) {
+        return found;
+      }
+    }
+    if (csup === undefined) {
       throw new Error("super class \"" + name + "\" not found");
     }
 
