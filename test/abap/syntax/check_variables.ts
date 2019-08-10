@@ -255,6 +255,44 @@ describe("Check Variables", () => {
     expect(issues.length).to.equals(0);
   });
 
+  it("locals impl, error descriptions, double error", () => {
+    const def =
+      "CLASS lcl_foobar DEFINITION.\n" +
+      "  PUBLIC SECTION.\n" +
+      "ENDCLASS.\n";
+    const impl = "CLASS lcl_foobar IMPLEMENTATION.\n" +
+      "  METHOD method1.\n" +
+      "  ENDMETHOD.\n" +
+      "  METHOD method2.\n" +
+      "  ENDMETHOD.\n" +
+      "ENDCLASS.\n";
+    const issues = runMulti([
+      {filename: "zcl_sdfsdf.clas.locals_def.abap", contents: def},
+      {filename: "zcl_sdfsdf.clas.locals_imp.abap", contents: impl}]);
+    expect(issues.length).to.equals(2);
+    expect(issues[0].getMessage()).to.contain("method1");
+    expect(issues[1].getMessage()).to.contain("method2");
+  });
+
+
+  it("locals impl, interface", () => {
+    const def = "INTERFACE lif_foobar.\n" +
+      "  METHODS: moo.\n" +
+      "ENDINTERFACE.\n" +
+      "CLASS lcl_foobar DEFINITION.\n" +
+      "  PUBLIC SECTION.\n" +
+      "    INTERFACES lif_foobar.\n" +
+      "ENDCLASS.\n";
+    const impl = "CLASS lcl_foobar IMPLEMENTATION.\n" +
+      "  METHOD lif_foobar~moo.\n" +
+      "  ENDMETHOD.\n" +
+      "ENDCLASS.\n";
+    const issues = runMulti([
+      {filename: "zcl_sdfsdf.clas.locals_def.abap", contents: def},
+      {filename: "zcl_sdfsdf.clas.locals_imp.abap", contents: impl}]);
+    expect(issues.length).to.equals(0);
+  });
+
   it("program, READ TABLE", () => {
 // todo, this code is not syntactically correct
     const abap = "DATA lt_map TYPE STANDARD TABLE OF string.\n" +

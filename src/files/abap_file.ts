@@ -72,6 +72,15 @@ export class ABAPFile extends AbstractFile {
     return ret;
   }
 
+  public getInterfaceDefinition(name: string): InterfaceDefinition | undefined {
+    for (const def of this.getInterfaceDefinitions()) {
+      if (def.getName().toUpperCase() === name.toUpperCase()) {
+        return def;
+      }
+    }
+    return undefined;
+  }
+
   public getClassDefinitions(): ClassDefinition[] {
     if (this.structure === undefined) {
       return [];

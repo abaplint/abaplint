@@ -2,7 +2,7 @@ import * as Statements from "../statements";
 import * as Expressions from "../expressions";
 import {StatementNode} from "../nodes";
 import {ABAPObject} from "../../objects/_abap_object";
-import {ClassDefinition, MethodDefinition} from "../types";
+import {ClassDefinition, MethodDefinition, InterfaceDefinition} from "../types";
 import {Interface, Class} from "../../objects";
 import {Registry} from "../../registry";
 import {Globals} from "./_globals";
@@ -41,7 +41,7 @@ export class ObjectOriented {
     const className = this.findClassName(node);
     this.variables.pushScope(className);
 
-    const classDefinition = this.findDefinition(className);
+    const classDefinition = this.findClassDefinition(className);
 
     const classAttributes = classDefinition.getAttributes();
 
@@ -54,12 +54,27 @@ export class ObjectOriented {
     this.fromSuperClass(classDefinition);
   }
 
+  private findInterfaceDefinition(name: string): InterfaceDefinition | undefined {
+    const intf = this.reg.getObject("INTF", name) as Interface;
+    if (intf && intf.getDefinition()) {
+      return intf.getDefinition();
+    }
+// todo, this is not correct, global classes cannot implement local interfaces
+    for (const file of this.obj.getABAPFiles()) {
+      const found = file.getInterfaceDefinition(name);
+      if (found) {
+        return found;
+      }
+    }
+    return undefined;
+  }
+
   private addAliasedAttributes(classDefinition: ClassDefinition): void {
     for (const alias of classDefinition.getAliases().getAll()) {
       const comp = alias.getComponent();
-      const intf = this.reg.getObject("INTF", comp.split("~")[0]) as Interface;
-      if (intf && intf.getDefinition()) {
-        const found = intf.getDefinition()!.getAttributes()!.findByName(comp.split("~")[1]);
+      const idef = this.findInterfaceDefinition(comp.split("~")[0]);
+      if (idef) {
+        const found = idef.getAttributes()!.findByName(comp.split("~")[1]);
         if (found) {
           this.variables.addNamedIdentifier(alias.getName(), found);
         }
@@ -68,9 +83,9 @@ export class ObjectOriented {
   }
 
   private findMethodInInterface(interfaceName: string, methodName: string): MethodDefinition | undefined {
-    const intf = this.reg.getObject("INTF", interfaceName) as Interface;
-    if (intf && intf.getDefinition()) {
-      const methods = intf.getDefinition()!.getMethodDefinitions();
+    const idef = this.findInterfaceDefinition(interfaceName);
+    if (idef) {
+      const methods = idef.getMethodDefinitions();
       for (const method of methods) {
         if (method.getName().toUpperCase() === methodName.toUpperCase()) {
           return method;
@@ -96,7 +111,7 @@ export class ObjectOriented {
   public methodImplementation(node: StatementNode) {
     this.variables.pushScope("method");
     const className = this.variables.getParentName();
-    const classDefinition = this.findDefinition(className);
+    const classDefinition = this.findClassDefinition(className);
 
 // todo, this is not correct, add correct types, plus when is "super" allowed?
     const file = new MemoryFile("_method_locals.prog.abap", "* Method Locals\n" +
@@ -121,18 +136,19 @@ export class ObjectOriented {
     }
 
     if (methodDefinition === undefined) {
+      this.variables.popScope();
       throw new Error("Method definition \"" + methodName + "\" not found");
     }
 
     this.variables.addList(methodDefinition.getParameters().getAll());
 
     for (const i of this.findInterfaces(classDefinition)) {
-      const intf = this.reg.getObject("INTF", i) as Interface;
-      if (intf) {
-        this.variables.addList(intf.getDefinition()!.getAttributes()!.getConstants(), i + "~");
-        this.variables.addList(intf.getDefinition()!.getAttributes()!.getStatic(), i + "~");
+      const idef = this.findInterfaceDefinition(i);
+      if (idef) {
+        this.variables.addList(idef.getAttributes()!.getConstants(), i + "~");
+        this.variables.addList(idef.getAttributes()!.getStatic(), i + "~");
         // todo, only add instance if its an instance method
-        this.variables.addList(intf.getDefinition()!.getAttributes()!.getInstance(), i + "~");
+        this.variables.addList(idef.getAttributes()!.getInstance(), i + "~");
       }
     }
   }
@@ -152,7 +168,7 @@ export class ObjectOriented {
     return ret;
   }
 
-  private findDefinition(name: string): ClassDefinition {
+  private findClassDefinition(name: string): ClassDefinition {
     for (const file of this.obj.getABAPFiles()) {
       const found = file.getClassDefinition(name);
       if (found) {
