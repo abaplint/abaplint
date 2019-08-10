@@ -15,13 +15,11 @@ class LocalIdentifier extends Identifier { }
 
 export class Procedural {
   private obj: ABAPObject;
-//  private reg: Registry;
   private variables: Variables;
 
   constructor(obj: ABAPObject, _reg: Registry, variables: Variables) {
     this.obj = obj;
     this.variables = variables;
-//    this.reg = reg;
   }
 
   public findDefinitions(node: StatementNode) {

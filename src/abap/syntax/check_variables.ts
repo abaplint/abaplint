@@ -13,6 +13,7 @@ import {ObjectOriented} from "./_object_oriented";
 import {Globals} from "./_globals";
 import {Procedural} from "./_procedural";
 import {Inline} from "./_inline";
+import {Program} from "../../objects";
 
 // todo, some visualization, graphviz?
 
@@ -40,12 +41,17 @@ export class CheckVariablesLogic {
   public findIssues(ignoreParserError = true): Issue[] {
     this.variables.addList(Globals.get(this.reg.getConfig().getSyntaxSetttings().globalConstants));
 
+    if (this.object instanceof Program && this.object.isInclude()) {
+// todo, for now only main executeable program parts are checked
+      return [];
+    }
+
     for (const file of this.object.getABAPFiles()) {
       this.currentFile = file;
     // assumption: objects are parsed without parsing errors
       const structure = this.currentFile.getStructure();
       if (structure === undefined) {
-        if (ignoreParserError) {
+        if (ignoreParserError) { // todo, this is only used for testing, move the logic to testing instead
           return [];
         } else {
           throw new Error("Parser error");
