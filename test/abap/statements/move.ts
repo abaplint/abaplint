@@ -77,6 +77,11 @@ const tests = [
   "  /abc/comp_b = comp_b\n" +
   "  /abc/comp_c = comp_c ).",
 
+  "result = COND #(\n" +
+  "  WHEN constant_value IS NOT INITIAL\n" +
+  "  THEN `blabla`\n" +
+  "  ELSE THROW cx_with_parameter( id ) ).",
+
   "MOVE foo(+100) TO bar.",
   "gs_structure-field$01 = 'val'.",
   "foo = bar ##called.",

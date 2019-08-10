@@ -1,5 +1,5 @@
-import {seq, str, opt, Expression, IStatementRunnable, tok} from "../combi";
-import {ClassName, ParameterListS} from "./";
+import {seq, str, opt, Expression, IStatementRunnable, tok, alt} from "../combi";
+import {ClassName, ParameterListS, Source} from "./";
 import {ParenLeftW, WParenRightW} from "../tokens";
 
 export class Throw extends Expression {
@@ -9,7 +9,7 @@ export class Throw extends Expression {
                opt(str("RESUMABLE")),
                new ClassName(),
                tok(ParenLeftW),
-               opt(new ParameterListS()),
+               opt(alt(new Source(), new ParameterListS())),
                tok(WParenRightW));
   }
 }
