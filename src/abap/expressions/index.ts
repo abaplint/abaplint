@@ -95,6 +95,7 @@ export * from "./sql_from";
 export * from "./sql_hints";
 export * from "./sql_join";
 export * from "./sql_source";
+export * from "./sql_source_simple";
 export * from "./sql_target";
 export * from "./string_template";
 export * from "./super_class_name";

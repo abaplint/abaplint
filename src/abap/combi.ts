@@ -854,7 +854,7 @@ export class Combi {
     return res;
   }
 
-// assumption: no pgragmas supplied in tokens input
+// assumption: no pragmas supplied in tokens input
   public static run(runnable: IStatementRunnable, tokens: Tokens_Token[], version: Version): INode[] | undefined {
     this.ver = version;
 
