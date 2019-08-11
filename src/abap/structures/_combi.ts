@@ -238,8 +238,7 @@ class SubStatement implements IStructureRunnable {
   }
 
   private className() {
-    // @ts-ignore
-    return (this.obj + "").match(/\w+/g)[1];
+    return this.obj.name;
   }
 
   public run(statements: StatementNode[], parent: INode): IMatch {
