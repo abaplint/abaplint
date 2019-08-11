@@ -9,4 +9,5 @@ npm-debug.log
 .alm/
 dump.json
 .vscode/
+.idea/
 .nyc_output/
