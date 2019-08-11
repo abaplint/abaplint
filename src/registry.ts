@@ -172,6 +172,10 @@ export class Registry {
     if (this.isDirty()) {
       this.parse(progress);
     }
+    return this.runRules(progress, iobj);
+  }
+
+  private runRules(progress?: IProgress, iobj?: IObject): Issue[] {
     progress = progress ? progress : new NoProgress();
 
     let issues = this.issues.slice(0);
@@ -237,16 +241,16 @@ export class Registry {
     const objects = this.getABAPObjects();
 
     pro.set(objects.length, ":percent - :elapseds - Lexing and parsing(" + versionToText(this.conf.getVersion()) + ") - :object");
-    objects.forEach((obj) => {
+    for (const obj of objects) {
       pro.tick({object: obj.getType() + " " + obj.getName()});
       obj.parseFirstPass(this.conf.getVersion(), this);
-    });
+    }
 
     pro.set(objects.length, ":percent - :elapseds - Second pass - :object");
-    objects.forEach((obj) => {
+    for (const obj of objects) {
       pro.tick({object: obj.getType() + " " + obj.getName()});
       this.issues = this.issues.concat(obj.parseSecondPass(this));
-    });
+    }
 
     this.dirty = false;
 

@@ -55,9 +55,9 @@ export class StatementNode extends BasicNode {
   public getTokens(): Token[] {
     let tokens: Token[] = [];
 
-    this.getChildren().forEach((c) => {
+    for (const c of this.getChildren()) {
       tokens = tokens.concat(this.toTokens(c));
-    });
+    }
 
     return tokens;
   }
@@ -150,13 +150,13 @@ export class StatementNode extends BasicNode {
       tokens.push((b as TokenNode).get());
     }
 
-    b.getChildren().forEach((c) => {
+    for (const c of b.getChildren()) {
       if (c instanceof TokenNode) {
         tokens.push((c as TokenNode).get());
       } else {
         tokens = tokens.concat(this.toTokens(c));
       }
-    });
+    }
 
     return tokens;
   }

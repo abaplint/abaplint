@@ -5,8 +5,6 @@ import {ABAPObject} from "../../objects/_abap_object";
 import {ClassDefinition, MethodDefinition, InterfaceDefinition} from "../types";
 import {Interface, Class} from "../../objects";
 import {Registry} from "../../registry";
-import {Globals} from "./_globals";
-import {MemoryFile} from "../../files";
 import {Variables} from "./_variables";
 
 export class ObjectOriented {
@@ -114,10 +112,8 @@ export class ObjectOriented {
     const classDefinition = this.findClassDefinition(className);
 
 // todo, this is not correct, add correct types, plus when is "super" allowed?
-    const file = new MemoryFile("_method_locals.prog.abap", "* Method Locals\n" +
-      "DATA super TYPE REF TO object.\n" +
-      "DATA me TYPE REF TO object.\n");
-    this.variables.addList(Globals.typesInFile(file));
+    this.variables.addName("super");
+    this.variables.addName("me");
 
     let methodName = node.findFirstExpression(Expressions.MethodName)!.getFirstToken().getStr();
 

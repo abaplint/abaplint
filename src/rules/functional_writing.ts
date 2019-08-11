@@ -36,13 +36,13 @@ export class FunctionalWriting extends ABAPRule {
     const issues: Issue[] = [];
     let exception = false;
 
+    let definition: ClassDefinition | undefined = undefined;
+    if (obj instanceof Class) {
+      definition = obj.getClassDefinition();
+    }
+
     for (const statement of file.getStatements()) {
       const code = statement.concatTokens().toUpperCase();
-
-      let definition: ClassDefinition | undefined = undefined;
-      if (obj instanceof Class) {
-        definition = obj.getClassDefinition();
-      }
 
       if (statement.get() instanceof Statements.ClassImplementation
           && definition

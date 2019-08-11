@@ -17,3 +17,4 @@ dump.json
 foo.prog.abap
 zcl_foo.clas.abap
 worklist.txt
+.clinic/

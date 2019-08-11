@@ -10,3 +10,4 @@ npm-debug.log
 dump.json
 .vscode/
 .nyc_output/
+.clinic/

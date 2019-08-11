@@ -6,9 +6,16 @@ import {IFile} from "../../files/_ifile";
 import {Variables} from "./_variables";
 
 export class Globals {
+  private static cache: Identifier[];
+  private static extras: number;
 
   public static get(extras: string[]): Identifier[] {
     // todo, more defintions, and move to somewhere else?
+
+    if (this.cache && this.extras === extras.length) {
+// todo, this is a workaround for not having to parse the below for every file
+      return this.cache;
+    }
 
     let code = "* Globals\n" +
       "DATA sy TYPE c.\n" + // todo, add structure
@@ -63,10 +70,13 @@ export class Globals {
 
     const file = new MemoryFile("_global.prog.abap", code);
 
-    return this.typesInFile(file);
+    this.cache = this.typesInFile(file);
+    this.extras = extras.length;
+
+    return this.cache;
   }
 
-  public static typesInFile(file: IFile): Identifier[] {
+  private static typesInFile(file: IFile): Identifier[] {
     const reg = new Registry();
     const variables = new Variables();
     const structure = reg.addFile(file).getABAPFiles()[0].getStructure();

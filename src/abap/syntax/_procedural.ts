@@ -7,8 +7,6 @@ import {Registry} from "../../registry";
 import {FormDefinition} from "../types";
 import {Variables} from "./_variables";
 import {FunctionGroup} from "../../objects";
-import {MemoryFile} from "../../files";
-import {Globals} from "./_globals";
 
 // todo, rename this class?
 class LocalIdentifier extends Identifier { }
@@ -51,12 +49,9 @@ export class Procedural {
       throw new Error("Function group definition \"" + name + "\" not found");
     }
 
-    let abap = "";
     for (const param of definition.getParameters()) {
-      abap = abap + "DATA " + param + " TYPE c.\n"; // todo, not correct type
+      this.variables.addName(param);
     }
-    const file = new MemoryFile("_function_module.prog.abap", abap);
-    this.variables.addList(Globals.typesInFile(file));
   }
 
   public findFormScope(node: StatementNode) {

@@ -36,13 +36,13 @@ export abstract class ABAPObject extends AbstractObject {
     }
     this.parsed = [];
 
-    this.files.forEach((f) => {
-      if (/.*\.abap$/.test(f.getFilename())) {
+    for (const f of this.files) {
+      if (f.getFilename().endsWith(".abap")) {
         const tokens = Lexer.run(f);
         const statements = StatementParser.run(tokens, ver);
         this.parsed.push(new ABAPFile(f, tokens, statements));
       }
-    });
+    }
 
     this.parsed.forEach((f) => {
       f.getStatements().forEach((s) => {
