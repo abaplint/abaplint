@@ -36,31 +36,37 @@ export class AmbiguousStatement extends ABAPRule {
     const issues: Issue[] = [];
 
     for (const statement of file.getStatements()) {
-      if (statement.get() instanceof Statements.DeleteDatabase || statement.get() instanceof Statements.DeleteInternal) {
-        const match = this.tryMatchBoth(statement, reg, Statements.DeleteDatabase, Statements.DeleteInternal);
-        if (match) {
-          issues.push(new Issue({
-            file,
-            message: this.getDescription(),
-            key: this.getKey(),
-            start: statement.getStart()}));
-        }
+      let match = false;
+
+      if (statement.get() instanceof Statements.DeleteDatabase) {
+        match = this.tryMatch(statement, reg, Statements.DeleteInternal);
+      } else if (statement.get() instanceof Statements.DeleteInternal) {
+        match = this.tryMatch(statement, reg, Statements.DeleteDatabase);
       }
+
+
+      if (match) {
+        issues.push(new Issue({
+          file,
+          message: this.getDescription(),
+          key: this.getKey(),
+          start: statement.getStart()}));
+      }
+
     }
 
     return issues;
   }
 
-  private tryMatchBoth(st: StatementNode, reg: Registry, type1: new () => Statement, type2: new () => Statement): boolean {
+  private tryMatch(st: StatementNode, reg: Registry, type1: new () => Statement): boolean {
     const ver = reg.getConfig().getVersion();
 
     const tokens = st.getTokens();
     tokens.pop();
 
-    const match1 = Combi.run(new type1().getMatcher(), tokens, ver);
-    const match2 = Combi.run(new type2().getMatcher(), tokens, ver);
+    const match = Combi.run(new type1().getMatcher(), tokens, ver);
 
-    return match1 !== undefined && match2 !== undefined;
+    return match !== undefined;
   }
 
 }
