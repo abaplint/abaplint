@@ -93,6 +93,7 @@ const tests = [
   "CAST cl_class( x->y->z )->property-component = blah.",
   "CAST cl_class( x->y->z )->property-component = cl_other_class=>constant.",
   "NEW zcl_foo( )->prop = bar.",
+  "boo = VALUE #( BASE moo ( LINES OF <foo>-bar ) ).",
 ];
 
 statementType(tests, "MOVE", Statements.Move);
