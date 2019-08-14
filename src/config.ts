@@ -31,7 +31,7 @@ export interface IConfig {
 
 export class Config {
 
-  private static defaultVersion = Version.v753;
+  private static defaultVersion = Version.v755;
   private config: IConfig;
 
   public static getDefault(): Config {
