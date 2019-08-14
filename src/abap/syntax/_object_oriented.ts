@@ -120,20 +120,26 @@ export class ObjectOriented {
     let methodDefinition: MethodDefinition | undefined = undefined;
     methodDefinition = this.findMethod(classDefinition, methodName);
 
-// todo, this is not completely correct? hmm, why? visibility?
-    if (methodDefinition === undefined && methodName.includes("~")) {
-      const interfaceName = methodName.split("~")[0];
-      methodName = methodName.split("~")[1];
-      methodDefinition = this.findMethodInInterface(interfaceName, methodName);
+    let interfaceName: string | undefined = undefined;
+    if (methodName.includes("~")) {
+      interfaceName = methodName.split("~")[0];
     }
 
-    if (methodDefinition === undefined) {
+// todo, this is not completely correct? hmm, why? visibility?
+    if (methodDefinition === undefined && interfaceName) {
+      methodName = methodName.split("~")[1];
+      methodDefinition = this.findMethodInInterface(interfaceName, methodName);
+    } else if (methodDefinition === undefined) {
       methodDefinition = this.findMethodViaAlias(methodName, classDefinition);
     }
 
     if (methodDefinition === undefined) {
       this.variables.popScope();
-      throw new Error("Method definition \"" + methodName + "\" not found");
+      if (interfaceName) {
+        throw new Error("Method definition \"" + methodName + "\" in \"" + interfaceName + "\" not found");
+      } else {
+        throw new Error("Method definition \"" + methodName + "\" not found");
+      }
     }
 
     this.variables.addList(methodDefinition.getParameters().getAll());
