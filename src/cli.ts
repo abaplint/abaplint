@@ -98,6 +98,21 @@ async function loadFiles(compress: boolean, input: string[], bar: IProgress): Pr
   return files;
 }
 
+function deleteFolderRecursive(p: string) {
+  if (fs.existsSync(p) ) {
+    const files = fs.readdirSync(p);
+    for (const file of files) {
+      const curPath = p + path.sep + file;
+      if (fs.lstatSync(curPath).isDirectory()) {
+        deleteFolderRecursive(curPath);
+      } else {
+        fs.unlinkSync(curPath);
+      }
+    }
+    fs.rmdirSync(p);
+  }
+}
+
 async function loadDependencies(config: Config, compress: boolean, bar: IProgress, configFile: string | undefined): Promise<IFile[]> {
   let files: IFile[] = [];
 
@@ -122,7 +137,7 @@ async function loadDependencies(config: Config, compress: boolean, bar: IProgres
       childProcess.execSync("git clone --quiet --depth 1 " + d.url + " .", {cwd: dir, stdio: "inherit"});
       const names = loadFileNames([dir + d.files]);
       files = files.concat(await loadFiles(compress, names, bar));
-// todo, cleanup    fs.rmdirSync(dir);
+      deleteFolderRecursive(dir);
     }
   }
 
