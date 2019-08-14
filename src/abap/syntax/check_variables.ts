@@ -92,6 +92,7 @@ export class CheckVariablesLogic {
       message: message,
       key: "check_variables",
       start: token.getStart(),
+      end: token.getEnd(),
     }));
   }
 
