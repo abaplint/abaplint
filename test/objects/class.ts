@@ -42,7 +42,7 @@ describe("Objects, class, isException", () => {
   it("not parsed", () => {
     const reg = new Registry().addFile(new MemoryFile("zcx_foo.clas.abap", "foo bar"));
     const clas = reg.getABAPObjects()[0] as Class;
-    expect(() => { clas.getClassDefinition(); }).to.throw();
+    expect(clas.getClassDefinition()).to.equal(undefined);
   });
 
 });

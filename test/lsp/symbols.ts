@@ -13,7 +13,7 @@ describe("LSP, symbols", () => {
   });
 
   it("Class Definition", () => {
-    const file = new MemoryFile("zfoobar.prog.abap", "CLASS lcl_foobar DEFINITION.\nENDCLASS.");
+    const file = new MemoryFile("zfoobar.prog.abap", "REPORT zfoobar.\nCLASS lcl_foobar DEFINITION.\nENDCLASS.");
     const reg = new Registry().addFile(file).parse();
     expect(reg.findIssues().length).to.equal(0);
     const symbols = Symbols.find(reg, file.getFilename());
@@ -41,7 +41,7 @@ describe("LSP, symbols", () => {
   });
 
   it("FORM Definition", () => {
-    const file = new MemoryFile("zfoobar.prog.abap", "FORM foobar.\nENDFORM.");
+    const file = new MemoryFile("zfoobar.prog.abap", "REPORT zfoobar.\nFORM foobar.\nENDFORM.");
     const reg = new Registry().addFile(file).parse();
     expect(reg.findIssues().length).to.equal(0);
     const symbols = Symbols.find(reg, file.getFilename());

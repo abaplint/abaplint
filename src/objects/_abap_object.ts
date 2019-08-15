@@ -105,6 +105,16 @@ export abstract class ABAPObject extends AbstractObject {
     return this.parsed;
   }
 
+  public getMainABAPFile(): ABAPFile | undefined {
+    const search = this.getName().toLowerCase() + "." + this.getType().toLowerCase() + ".abap";
+    for (const file of this.getABAPFiles()) {
+      if (file.getFilename().endsWith(search)) {
+        return file;
+      }
+    }
+    return undefined;
+  }
+
   private tokensToNodes(tokens: Token[]): TokenNode[] {
     const ret: TokenNode[] = [];
     tokens.forEach((t) => {ret.push(new TokenNode(t)); });
