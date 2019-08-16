@@ -1,62 +1,57 @@
 import {Registry} from "../../registry";
 import {FamixRepository} from "./famix_repository";
 import {ModelABAPFile} from "./model_abapfile";
-import {ClassAttributes} from "../../abap/types";
-import * as Structures from "../../abap/structures/";
-import * as Expressions from "../../abap/expressions/";
-import {ModelClass} from "./model_class";
-import {ModelMethods} from "./model_methods";
+import {ModelDirectory} from "./model_directory";
 
 export class Moose {
   private reg: Registry;
   private readonly repo: FamixRepository;
+  private directories: ModelDirectory[] = [];
 
   public constructor(reg: Registry) {
     this.reg = reg;
     this.repo = new FamixRepository();
+    this.analyseABAPFiles();
+    console.log("done.");
   }
 
-  private analyseClassAndMethodDefinition() {
+  private analyseABAPFiles() {
     for (const file of this.reg.getABAPFiles()) {
-      const modelFile = new ModelABAPFile(file);
-
-      for (const classDef of file.getClassDefinitions()) {
-
-        const modelClass = new ModelClass(this.repo, modelFile, classDef);
-        const modelMethods = new ModelMethods(this.repo, modelFile, modelClass);
-
-
-        modelMethods.toString();
-
-        const callAttrs: ClassAttributes | undefined = classDef.getAttributes();
-        if (callAttrs !== undefined) {
-          for (const attr of callAttrs.getInstance()) {
-            console.log(attr.getName());
-            console.log(attr.getScope());
-          }
-        }
-      }
-
-      const structure = file.getStructure();
-      if (structure) {
-        for (const method of structure.findAllStructures(Structures.Method)) {
-          for (const mcc of method.findAllExpressions(Expressions.MethodCallChain)) {
-            console.log(mcc.countTokens());
-          }
-
-        }
-      }
-
-
+      const dir = this.getOrCreateModelDirectory(ModelDirectory.getDirectoryPath(file.getFilename()));
+      const modelFile = new ModelABAPFile(this.repo, dir.getFamixPackage(), dir.getFamixNamespace(), file);
+      modelFile.getEndOfFile();
     }
+    this.buildAssociationForNamespacesAndPackages();
+  }
+
+  private getOrCreateModelDirectory(path: string): ModelDirectory {
+    for (const dir of this.directories) {
+      if (dir.getPath() === path) {
+        return dir;
+      }
+    }
+    const newDir = new ModelDirectory(this.repo, path);
+    this.directories.push(newDir);
+    if (newDir.hasParentDirectories()) {
+      newDir.setParent(this.getOrCreateModelDirectory(ModelDirectory.getDirectoryPath(newDir.getPath())));
+    }
+    return newDir;
+  }
+
+  private buildAssociationForNamespacesAndPackages() {
+    this.getRootDirectory().findSourceRootDirectory().buildAssociations(true);
+  }
+
+  private getRootDirectory(): ModelDirectory {
+    for (const dir of this.directories) {
+      if (dir.getParent() === undefined) {
+        return dir;
+      }
+    }
+    throw new Error("no root directory found.");
   }
 
   public getMSE(): string {
-
-
-    this.analyseClassAndMethodDefinition();
-
-
     return this.repo.getMSE();
   }
 
