@@ -101,6 +101,15 @@ export class ABAPFile extends AbstractFile {
     return undefined;
   }
 
+  public getClassImplementation(name: string): ClassImplementation | undefined {
+    for (const impl of this.getClassImplementations()) {
+      if (impl.getName().toUpperCase() === name.toUpperCase()) {
+        return impl;
+      }
+    }
+    return undefined;
+  }
+
   public getClassImplementations(): ClassImplementation[] {
     if (this.structure === undefined) {
       return [];

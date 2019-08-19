@@ -2,6 +2,7 @@ import {ABAPObject} from "./_abap_object";
 import {ClassDefinition} from "../abap/types/class_definition";
 import * as xmljs from "xml-js";
 import {IFile} from "../files/_ifile";
+import {ABAPFile} from "../files";
 
 export enum ClassCategory {
   Test = "05",
@@ -93,7 +94,16 @@ export class Class extends ABAPObject {
 
   public getXMLFile(): IFile | undefined {
     for (const file of this.getFiles()) {
-      if (file.getFilename().match(/\.clas\.xml$/i)) {
+      if (file.getFilename().endsWith(".clas.xml")) {
+        return file;
+      }
+    }
+    return undefined;
+  }
+
+  public getLocalsImpFile(): ABAPFile | undefined {
+    for (const file of this.getABAPFiles()) {
+      if (file.getFilename().endsWith(".clas.locals_imp.abap")) {
         return file;
       }
     }

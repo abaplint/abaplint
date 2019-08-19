@@ -40,6 +40,7 @@ export * from "./short_case";
 export * from "./syntax/begin_end_names";
 export * from "./syntax/check_variables";
 export * from "./syntax/global_class";
+export * from "./syntax/implement_methods";
 export * from "./syntax/inline_data_old_versions";
 export * from "./syntax/parser_error";
 export * from "./syntax/superclass_final";

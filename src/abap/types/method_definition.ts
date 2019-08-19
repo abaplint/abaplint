@@ -10,9 +10,9 @@ export class MethodDefinition extends Identifier {
   private parameters: MethodParameters;
   private redfinition: boolean;
   private eventHandler: boolean;
+  private abstract: boolean;
 
 // todo:
-// abstract
 // final
 
   constructor(node: StatementNode, visibility: Visibility) {
@@ -35,6 +35,11 @@ export class MethodDefinition extends Identifier {
       this.eventHandler = true;
     }
 
+    this.abstract = false;
+    if (node.findFirstExpression(Expressions.Abstract)) {
+      this.abstract = true;
+    }
+
     this.visibility = visibility;
     this.parameters = new MethodParameters(node);
   }
@@ -45,6 +50,10 @@ export class MethodDefinition extends Identifier {
 
   public isRedefinition(): boolean {
     return this.redfinition;
+  }
+
+  public isAbstract(): boolean {
+    return this.abstract;
   }
 
   public isEventHandler(): boolean {

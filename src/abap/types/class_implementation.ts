@@ -26,4 +26,13 @@ export class ClassImplementation extends Identifier {
     return ret;
   }
 
+  public getMethodImplementation(name: string): MethodImplementation | undefined {
+    for (const impl of this.getMethodImplementations()) {
+      if (impl.getName().toUpperCase() === name.toUpperCase()) {
+        return impl;
+      }
+    }
+    return undefined;
+  }
+
 }
