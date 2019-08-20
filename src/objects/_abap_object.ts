@@ -11,6 +11,7 @@ import {Token} from "../abap/tokens/_token";
 import {Unknown, MacroCall} from "../abap/statements/_statement";
 import {Issue} from "../issue";
 import {Identifier, Pragma} from "../abap/tokens";
+import {ClassImplementation} from "../abap/types";
 
 export abstract class ABAPObject extends AbstractObject {
   private parsed: ABAPFile[];
@@ -113,6 +114,23 @@ export abstract class ABAPObject extends AbstractObject {
       }
     }
     return undefined;
+  }
+
+  public getClassImplementation(name: string): ClassImplementation | undefined {
+    for (const impl of this.getClassImplementations()) {
+      if (impl.getName().toUpperCase() === name.toUpperCase()) {
+        return impl;
+      }
+    }
+    return undefined;
+  }
+
+  public getClassImplementations(): ClassImplementation[] {
+    let ret: ClassImplementation[] = [];
+    for (const file of this.getABAPFiles()) {
+      ret = ret.concat(file.getClassImplementations());
+    }
+    return ret;
   }
 
   private tokensToNodes(tokens: Token[]): TokenNode[] {
