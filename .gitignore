@@ -9,5 +9,7 @@ npm-debug.log
 .alm/
 dump.json
 .vscode/
+scripts/schema.ts
+scripts/schema.json
 .nyc_output/
 .clinic/
