@@ -8,7 +8,7 @@ notifications:
   email: false
 deploy:
   provider: script
-  script: "./scripts/travis.sh"
+  script: "./travis.sh"
   skip_cleanup: true
   on:
     branch: master

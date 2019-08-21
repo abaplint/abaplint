@@ -5,6 +5,7 @@ docs/*
 web/*
 build/test/*
 test/*
+travis.sh
 zcl_foo.clas.abap
 scripts/*
 .travis.yml
