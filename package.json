@@ -58,7 +58,7 @@
     "chai": "^4.2.0",
     "mocha": "^6.2.0",
     "railroad-diagrams": "git+https://github.com/tabatkins/railroad-diagrams#gh-pages",
-    "tslint": "^5.18.0",
+    "tslint": "^5.19.0",
     "tslint-eslint-rules": "^5.4.0",
     "typescript": "^3.5.3",
     "uglify-js": "^3.6.0"
