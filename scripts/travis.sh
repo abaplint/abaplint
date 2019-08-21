@@ -1,5 +1,6 @@
 #!/bin/bash
 cd ..
+cd ..
 git clone https://github.com/abaplint/playground.abaplint.org.git
 git clone https://github.com/abaplint/syntax.abaplint.org.git
 
