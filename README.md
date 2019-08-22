@@ -39,7 +39,6 @@ npm install
 npm test
 ```
 
-
 ### Parsing vs standard ABAP
 * Spaces required after string literals and before right parenthesis, following gives parser error
 `lo_obj->method( 'FOO').`
