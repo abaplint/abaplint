@@ -1,12 +1,13 @@
 const fs = require("fs");
+const path = require("path");
 const abaplint = require("../build/src/index");
 
 function getFiles(dir) {
   const ret = [];
   for (const d of fs.readdirSync(dir, {withFileTypes: true})) {
     if (d.isDirectory()) {
-      for (const sub of getFiles(dir + d.name + "/")) {
-        ret.push(d.name + "/" + sub);
+      for (const sub of getFiles(dir + d.name + path.sep)) {
+        ret.push(d.name + path.sep + sub);
       }
     } else {
       ret.push(d.name);
@@ -16,11 +17,11 @@ function getFiles(dir) {
 }
 
 const ruledir = "../src/rules/";
-const rulefiles = getFiles(__dirname + "/" + ruledir);
+const rulefiles = getFiles(__dirname + path.sep + ruledir);
 
 function findFile(key) {
   for (const file of rulefiles) {
-    if (file.endsWith(key + ".ts")) {
+    if (file === key + ".ts" || file.endsWith(path.sep + key + ".ts")) {
       return file.substring(0, file.length - 3);
     }
   }
