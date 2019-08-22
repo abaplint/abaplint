@@ -8,6 +8,7 @@ export * from "./cloud_types";
 export * from "./commented_code";
 export * from "./constructor_visibility_public";
 export * from "./definitions_top";
+export * from "./type_form_parameters";
 export * from "./description_empty";
 export * from "./empty_line_in_statement";
 export * from "./empty_statement";
