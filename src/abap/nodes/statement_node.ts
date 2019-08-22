@@ -109,6 +109,21 @@ export class StatementNode extends BasicNode {
     throw new Error("getLastToken, unexpected type");
   }
 
+  public findDirectTokenByText(text: string): Token | undefined {
+    for (const child of this.getChildren()) {
+      if (child instanceof TokenNode) {
+        if (child.get().getStr() === text) {
+          return child.get();
+        }
+      } else if (child instanceof ExpressionNode) {
+        continue;
+      } else {
+        throw new Error("findDirectTokenByText, unexpected type");
+      }
+    }
+    return undefined;
+  }
+
   public findFirstExpression(type: new () => Expression): ExpressionNode | undefined {
     for (const child of this.getChildren()) {
       if (child.get() instanceof type) {
