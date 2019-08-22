@@ -20,6 +20,7 @@ export class ObjectNamingConf extends BasicRuleConfig {
   public enqu = "^EZ";
   public auth = "^Z";
   public pinf = "^Z";
+  public idoc = "^Z";
 }
 
 export class ObjectNaming implements IRule {
@@ -43,7 +44,7 @@ export class ObjectNaming implements IRule {
 
   public run(obj: IObject, _reg: Registry): Issue[] {
     let message: string | undefined = undefined;
-    let pattern: string;
+    let pattern: string = "";
 
     if (obj instanceof Objects.Class) {
       pattern = this.getConfig().clas;
@@ -71,7 +72,11 @@ export class ObjectNaming implements IRule {
       pattern = this.getConfig().pinf;
     } else if (obj instanceof Objects.MessageClass) {
       pattern = this.getConfig().msag;
-    } else {
+    } else if (obj instanceof Objects.Idoc) {
+      pattern = this.getConfig().idoc;
+    }
+
+    if (pattern === "" || pattern === undefined) {
       return [];
     }
 
