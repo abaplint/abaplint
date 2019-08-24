@@ -7,21 +7,23 @@ export class Moose {
   private reg: Registry;
   private readonly repo: FamixRepository;
   private directories: ModelDirectory[] = [];
+  private files: ModelABAPFile[] = [];
 
   public constructor(reg: Registry) {
     this.reg = reg;
     this.repo = new FamixRepository();
     this.analyseABAPFiles();
-    console.log("done.");
   }
 
   private analyseABAPFiles() {
     for (const file of this.reg.getABAPFiles()) {
       const dir = this.getOrCreateModelDirectory(ModelDirectory.getDirectoryPath(file.getFilename()));
-      const modelFile = new ModelABAPFile(this.repo, dir.getFamixPackage(), dir.getFamixNamespace(), file);
-      modelFile.getEndOfFile();
+      this.files.push(new ModelABAPFile(this.repo, dir.getFamixPackage(), dir.getFamixNamespace(), file));
     }
     this.buildAssociationForNamespacesAndPackages();
+    for(const file of this.files) {
+      file.analyseAccessAndInvocations();
+    }
   }
 
   private getOrCreateModelDirectory(path: string): ModelDirectory {

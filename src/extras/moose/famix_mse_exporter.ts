@@ -17,13 +17,15 @@ export class FamixMseExporter {
     if (prop instanceof Set) {
       let valueBuffer: string = "";
       for (const value of prop) {
+        if (valueBuffer.length > 0) {
+          valueBuffer = valueBuffer + " ";
+        }
         if (typeof(value) === "string") {
-          if (valueBuffer.length > 0) {
-            valueBuffer = valueBuffer + " ";
-          }
           valueBuffer = valueBuffer + `'${value}'`;
         } else if (value instanceof FamixBaseElement) {
-          return;
+          valueBuffer = valueBuffer + `(ref: ${value.id})`;
+        } else {
+          valueBuffer = valueBuffer + `${value}`;
         }
       }
       this.buffer = this.buffer + `\n    (${name} ${valueBuffer})`;

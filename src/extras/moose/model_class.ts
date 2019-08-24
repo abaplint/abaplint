@@ -29,7 +29,7 @@ export class ModelClass {
     if (classDef instanceof InterfaceDefinition) {
       this.famixClass.setIsInterface(true);
       for (const methodDef of classDef.getMethodDefinitions()) {
-        this.modelMethods.concat(new ModelMethods(repo, modelFile, this, this.famixClass, methodDef));
+        this.modelMethods.push(new ModelMethods(repo, modelFile, this, methodDef));
       }
 
     } else if (classDef instanceof ClassDefinition) {
@@ -41,14 +41,25 @@ export class ModelClass {
       const methodDefinitions = classDef.getMethodDefinitions();
       if (methodDefinitions) {
         for (const methodDef of methodDefinitions.getAll()) {
-          this.modelMethods.concat(new ModelMethods(repo, modelFile, this, this.famixClass, methodDef));
+          this.modelMethods.push(new ModelMethods(repo, modelFile, this, methodDef));
         }
       }
     }
   }
 
+  public analyseAccessAndInvocations() {
+    for (const modelMethod of this.modelMethods) {
+      modelMethod.analyseInvocations();
+      modelMethod.analyseFieldAccess();
+    }
+  }
+
   public getClassImplStructure(): StructureNode | undefined {
     return this.classImplStructure;
+  }
+
+  public getFamixClass(): Class {
+    return this.famixClass;
   }
 
   public getAttribute(name: string): Attribute | undefined {
@@ -78,7 +89,12 @@ export class ModelClass {
     const attributes = classDef.getAttributes();
     if (attributes) {
       for (const instanceAttr of attributes.getInstance()) {
-        this.createAttributeModel(repo, modelFile, famixClass, instanceAttr);
+        const famixAttr = this.createAttributeModel(repo, modelFile, famixClass, instanceAttr);
+        const type = instanceAttr.getType();
+        if (type) {
+          const famixTypeClass = repo.createOrGetFamixClass(type);
+          famixAttr.setDeclaredType(famixTypeClass);
+        }
       }
       for (const staticAttr of attributes.getStatic()) {
         const famixAttr = this.createAttributeModel(repo, modelFile, famixClass, staticAttr);
@@ -129,4 +145,5 @@ export class ModelClass {
       modelInheritance.setSuperclass(modelSuperClass);
     }
   }
+
 }

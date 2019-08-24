@@ -18,13 +18,18 @@ export class ModelABAPFile {
     this.calculateSumOfCharsByRow(file);
 
     for (const classDef of file.getClassDefinitions()) {
-      this.modelClasses.concat(new ModelClass(repo, famixPackage, famixNamespace, this, classDef));
+      this.modelClasses.push(new ModelClass(repo, famixPackage, famixNamespace, this, classDef));
     }
 
     for (const interfaceDef of file.getInterfaceDefinitions()) {
-      this.modelClasses.concat(new ModelClass(repo, famixPackage, famixNamespace, this, interfaceDef));
+      this.modelClasses.push(new ModelClass(repo, famixPackage, famixNamespace, this, interfaceDef));
     }
+  }
 
+  public analyseAccessAndInvocations() {
+    for(const modelClass of this.modelClasses) {
+      modelClass.analyseAccessAndInvocations();
+    }
   }
 
   private calculateSumOfCharsByRow(file: ABAPFile) {
