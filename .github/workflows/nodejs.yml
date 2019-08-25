@@ -22,6 +22,8 @@ jobs:
     - name: npm run schema
       run: npm run schema
     - name: deploy schema.abaplint.org
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}    
       run: |
         cd ..
         cd ..
