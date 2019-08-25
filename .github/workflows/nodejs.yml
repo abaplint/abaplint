@@ -10,7 +10,8 @@ jobs:
     strategy:
       matrix:
         node-version: [10.x]
-
+    container:
+      image: node:10.16-jessie
     steps:
     - uses: actions/checkout@v1
       with:
@@ -23,6 +24,6 @@ jobs:
     - name: npm test
       run: npm test
     - name: npm run schema
-      run: npm run schema  
-    - using: 'docker'
-      image: 'Dockerfile'
+      run: npm run schema
+    - name: whoami
+      run: whoami
