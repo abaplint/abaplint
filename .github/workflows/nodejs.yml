@@ -5,8 +5,9 @@ on: [push]
 jobs:
   build:
     runs-on: ubuntu-latest
-    container:
-      image: node:lts
+    strategy:
+      matrix:
+        node-version: [10.x]
     steps:
     - uses: actions/checkout@v1
       with:
@@ -22,5 +23,6 @@ jobs:
       run: npm run schema
     - name: dfg
       run: |
-        cd /
-        ls  
+        cd ${GITHUB_WORKSPACE}
+        ls
+        pwd
