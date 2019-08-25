@@ -24,3 +24,9 @@ jobs:
       run: npm test
     - name: npm run schema
       run: npm run schema  
+    - name: foobar
+      run: ls
+    - name: foobar
+      run: cd ..      
+    - name: foobar
+      run: ls      
