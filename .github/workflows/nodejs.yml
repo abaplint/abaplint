@@ -21,7 +21,7 @@ jobs:
     - name: npm run schema
       run: npm run schema
     - name: dfg
-      run: cd ${GITHUB_WORKSPACE}
+      run: cd ..
     - name: pwd
       run: pwd
     - name: ls
