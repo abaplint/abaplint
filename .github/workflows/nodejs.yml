@@ -27,8 +27,8 @@ jobs:
     - name: foobar
       run: pwd
     - name: foobar
-      run: cd ${GITHUB_WORKSPACE}
+      run: cd /home/runner/work/
     - name: foobar
       run: pwd
     - name: foobar
-      run: whoami      
+      run: ls    
