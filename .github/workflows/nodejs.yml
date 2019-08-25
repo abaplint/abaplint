@@ -39,5 +39,5 @@ jobs:
         cd schema.abaplint.org
         git add -A
         git status
-        git commit -m "Automatic update"
+        git diff-index --quiet HEAD || git commit -m "Automatic update"
         git push -q https://$MY_TOKEN@github.com/abaplint/schema.abaplint.org.git > /dev/null 2>&1
