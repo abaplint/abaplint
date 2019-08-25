@@ -21,11 +21,12 @@ jobs:
       run: npm test
     - name: npm run schema
       run: npm run schema
-    - name: dfg
+    - name: deploy schema.abaplint.org
       run: |
         cd ..
         cd ..
-        ls
-        pwd
         git clone https://github.com/abaplint/schema.abaplint.org.git
         ls
+        cp abaplint/scripts/schema.json schema.abaplint.org/schema.json
+        cd schema.abaplint.org
+        git status
