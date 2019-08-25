@@ -7,7 +7,7 @@ function getFiles(dir) {
   for (const d of fs.readdirSync(dir, {withFileTypes: true})) {
     if (d.isDirectory()) {
       for (const sub of getFiles(dir + d.name + path.sep)) {
-        ret.push(d.name + path.sep + sub);
+        ret.push(d.name + "/" + sub);
       }
     } else {
       ret.push(d.name);
@@ -21,11 +21,11 @@ const rulefiles = getFiles(__dirname + path.sep + ruledir);
 
 function findFile(key) {
   for (const file of rulefiles) {
-    if (file === key + ".ts" || file.endsWith(path.sep + key + ".ts")) {
-      return file.substring(0, file.length - 3);
+    if (file === key + ".ts" || file.endsWith("/" + key + ".ts")) {
+      const res = file.substring(0, file.length - 3);
+      return res;
     }
   }
-  console.dir(rulefiles);
   throw new Error("File for " + key + " not found");
 }
 
