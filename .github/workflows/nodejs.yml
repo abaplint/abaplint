@@ -23,6 +23,9 @@ jobs:
       run: npm run schema
     - name: dfg
       run: |
-        cd ${GITHUB_WORKSPACE}
+        cd ..
+        cd ..
         ls
         pwd
+        git clone https://github.com/abaplint/schema.abaplint.org.git
+        ls
