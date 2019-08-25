@@ -26,7 +26,6 @@ jobs:
     - name: npm run schema
       run: npm run schema
     - name: deploy schema.abaplint.org
-      if: github.ref == 'refs/heads/master'
       env:
         MY_TOKEN: ${{ secrets.MY_TOKEN }}    
       run: |
