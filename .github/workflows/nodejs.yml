@@ -21,5 +21,6 @@ jobs:
     - name: npm run schema
       run: npm run schema
     - name: dfg
-      run: cd /
-       | ls  
+      run: |
+        cd /
+        ls  
