@@ -24,11 +24,5 @@ jobs:
       run: npm test
     - name: npm run schema
       run: npm run schema  
-    - name: foobar
-      run: su root
-    - name: foobar
-      run: cd /home/runner/work/
-    - name: foobar
-      run: pwd
-    - name: foobar
-      run: ls    
+    - using: 'docker'
+      image: 'Dockerfile'
