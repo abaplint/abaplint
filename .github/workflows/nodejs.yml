@@ -27,6 +27,6 @@ jobs:
         cd ..
         git clone https://github.com/abaplint/schema.abaplint.org.git
         ls
-        cp abaplint/scripts/schema.json schema.abaplint.org/schema.json
+        cp abaplint/abaplint/scripts/schema.json schema.abaplint.org/schema.json
         cd schema.abaplint.org
         git status
