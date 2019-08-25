@@ -23,7 +23,7 @@ jobs:
       run: npm run schema
     - name: deploy schema.abaplint.org
       env:
-        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}    
+        MY_TOKEN: ${{ secrets.MY_TOKEN }}    
       run: |
         cd ..
         cd ..
@@ -36,4 +36,4 @@ jobs:
         git add -A
         git status
         git commit -m "Automatic update"
-        git push -q https://$GITHUB_TOKEN@github.com/abaplint/schema.abaplint.org.git > /dev/null 2>&1
+        git push -q https://$MY_TOKEN@github.com/abaplint/schema.abaplint.org.git > /dev/null 2>&1
