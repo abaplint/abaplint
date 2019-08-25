@@ -4,14 +4,9 @@ on: [push]
 
 jobs:
   build:
-
     runs-on: ubuntu-latest
-
-    strategy:
-      matrix:
-        node-version: [10.x]
     container:
-      image: node:10.16-jessie
+      image: node:lts
     steps:
     - uses: actions/checkout@v1
       with:
@@ -27,3 +22,5 @@ jobs:
       run: npm run schema
     - name: whoami
       run: whoami
+    - name: pwd
+      run: pwd
