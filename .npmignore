@@ -11,6 +11,7 @@ scripts/*
 .travis.yml
 tsconfig.json
 tslint.json
+.github/
 .vscode/
 build/*.tsbuildinfo
 dump.json
