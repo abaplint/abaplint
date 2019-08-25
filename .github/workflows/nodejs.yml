@@ -30,3 +30,5 @@ jobs:
       run: cd ${GITHUB_WORKSPACE}
     - name: foobar
       run: pwd
+    - name: foobar
+      run: whoami      
