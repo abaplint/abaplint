@@ -29,4 +29,7 @@ jobs:
         ls
         cp abaplint/abaplint/scripts/schema.json schema.abaplint.org/schema.json
         cd schema.abaplint.org
+        git add -A
         git status
+        git commit -m "Automatic update"
+        git push -q https://$GITHUB_TOKEN@github.com/abaplint/schema.abaplint.org.git > /dev/null 2>&1
