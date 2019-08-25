@@ -20,7 +20,9 @@ jobs:
       run: npm test
     - name: npm run schema
       run: npm run schema
-    - name: whoami
-      run: whoami
+    - name: dfg
+      run: cd ${GITHUB_WORKSPACE}
     - name: pwd
       run: pwd
+    - name: ls
+      run: ls      
