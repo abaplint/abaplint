@@ -27,10 +27,6 @@ jobs:
     - name: foobar
       run: pwd
     - name: foobar
-      run: cd ..      
+      run: cd ${GITHUB_WORKSPACE}
     - name: foobar
-      run: ls      
-    - name: foobar
-      run: cd ..      
-    - name: foobar
-      run: ls           
+      run: pwd
