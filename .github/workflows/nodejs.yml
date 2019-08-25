@@ -25,7 +25,7 @@ jobs:
     - name: npm run schema
       run: npm run schema  
     - name: foobar
-      run: pwd
+      run: su root
     - name: foobar
       run: cd /home/runner/work/
     - name: foobar
