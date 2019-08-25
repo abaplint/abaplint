@@ -54,7 +54,7 @@ export class LocalClassNaming extends ABAPRule {
       }
 
       let expected = "";
-      if (stat.concatTokens().includes("FOR TESTING")) {
+      if (stat.concatTokens().toUpperCase().includes("FOR TESTING")) {
         if (testRegex.test(name) === false) {
           expected = this.conf.test;
         }
