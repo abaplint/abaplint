@@ -5,7 +5,7 @@ import {ABAPFile} from "../files";
 import {BasicRuleConfig} from "./_basic_rule_config";
 
 export class PreferredCompareOperatorConf extends BasicRuleConfig {
-  public badOperators = ["EQ", "><", "NE", "GE", "GT", "LT", "LE"];
+  public badOperators: string[] = ["EQ", "><", "NE", "GE", "GT", "LT", "LE"];
 }
 
 export class PreferredCompareOperator extends ABAPRule {

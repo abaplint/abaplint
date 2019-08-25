@@ -46,7 +46,7 @@ output = output + "\nexport interface IConfig {\n" +
 "  syntax: ISyntaxSettings;\n" +
 "  rules: {\n";
 for (const rule of rules) {
-  output = output + "    \"" + rule.key + "\": " + rule.config + ",\n";
+  output = output + "    \"" + rule.key + "\"?: " + rule.config + ",\n";
 }
 output = output + "  };\n" +
 "}";

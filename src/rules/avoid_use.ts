@@ -5,12 +5,12 @@ import {ABAPFile} from "../files";
 import {BasicRuleConfig} from "./_basic_rule_config";
 
 export class AvoidUseConf extends BasicRuleConfig {
-  public define = true;
-  public endselect = true;
-  public execSQL = true;
-  public kernelCall = true;
-  public communication = true;
-  public statics = true;
+  public define: boolean = true;
+  public endselect: boolean = true;
+  public execSQL: boolean = true;
+  public kernelCall: boolean = true;
+  public communication: boolean = true;
+  public statics: boolean = true;
 }
 
 export class AvoidUse extends ABAPRule {
