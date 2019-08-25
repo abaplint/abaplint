@@ -29,7 +29,7 @@
     "web.syntax": "sh web/syntax.sh",
     "prepublishOnly": "rm -rf build && npm run test",
     "preschema": "node scripts/schema.js > scripts/schema.ts",
-    "schema": "npm install ts-json-schema-generator",
+    "schema": "npm install --no-save ts-json-schema-generator",
     "postschema": "./node_modules/.bin/ts-json-schema-generator --jsDoc basic --path scripts/schema.ts > scripts/schema.json"
   },
   "repository": {
