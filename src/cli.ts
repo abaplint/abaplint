@@ -150,7 +150,6 @@ function displayHelp(): string {
     "  abaplint -h | --help       show this help\n" +
     "  abaplint -v | --version    show version\n" +
     "  abaplint -d | --default    show default configuration\n" +
-    "  abaplint -k                show keywords\n" +
     "  abaplint <file>... -u [-c] show class and interface information\n" +
     "  abaplint <file>... -t [-c] show stats\n" +
     "  abaplint <file>... -e [-c] show semantic search information\n" +
@@ -182,8 +181,6 @@ async function run() {
     output = output + Registry.abaplintVersion() + "\n";
   } else if (argv["d"] !== undefined || argv["default"] !== undefined) {
     output = output + JSON.stringify(Config.getDefault().get(), undefined, 2) + "\n";
-  } else if (argv["k"] !== undefined) {
-    output = output + JSON.stringify(Artifacts.getKeywords(), undefined, 2);
   } else {
     const files = loadFileNames(argv._);
     const configFile = findConfig(path.dirname(process.cwd() + path.sep + files[0]) + path.sep);
