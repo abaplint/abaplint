@@ -31,29 +31,34 @@ class Progress implements IProgress {
   }
 }
 
-function loadConfig(filename: string| undefined): Config {
+function loadConfig(filename: string | undefined): Config {
+// possible cases:
+// a) nothing specified, using abaplint.json from cwd
+// b) nothing specified, no abaplint.json in cwd
+// c) specified and found
+// d) specified and not found => use default
+// e) supplied but a directory => use default
+  let f: string = "";
   if (filename === undefined) {
-    process.stderr.write("Using default config\n");
-    return Config.getDefault();
+    f = process.cwd() + path.sep + "abaplint.json";
+    if (fs.existsSync(f) === false) {
+      process.stderr.write("Using default config\n");
+      return Config.getDefault();
+    }
   } else {
-    process.stderr.write("Using config: " + filename + "\n");
-    const json = fs.readFileSync(filename, "utf8");
-    return new Config(json);
-  }
-}
-
-function findConfig(dir: string): string | undefined {
-  const file = dir + "abaplint.json";
-  if (fs.existsSync(file)) {
-    return file;
+    if (fs.existsSync(filename) === false) {
+      process.stderr.write("Specified abaplint.json does not exist, using default config\n");
+      return Config.getDefault();
+    } else if (fs.statSync(filename).isDirectory() === true) {
+      process.stderr.write("Supply filename, not directory, using default config\n");
+      return Config.getDefault();
+    }
+    f = filename;
   }
 
-  const up = path.normalize(dir + ".." + path.sep);
-  if (path.normalize(up) !== dir) {
-    return findConfig(up);
-  }
-
-  return undefined;
+  process.stderr.write("Using config: " + filename + "\n");
+  const json = fs.readFileSync(f, "utf8");
+  return new Config(json);
 }
 
 async function loadDependencies(config: Config, compress: boolean, bar: IProgress, configFile: string | undefined): Promise<IFile[]> {
@@ -66,7 +71,7 @@ async function loadDependencies(config: Config, compress: boolean, bar: IProgres
   for (const d of config.get().dependencies) {
     if (d.folder && configFile) {
       const g = path.dirname(configFile) + d.folder + d.files;
-      const names = FileOperations.loadFileNames([g], false);
+      const names = FileOperations.loadFileNames(g, false);
       if (names.length > 0) {
         process.stderr.write("Using dependencies from: " + g + "\n");
         files = files.concat(await FileOperations.loadFiles(compress, names, bar));
@@ -78,7 +83,7 @@ async function loadDependencies(config: Config, compress: boolean, bar: IProgres
       process.stderr.write("Clone: " + d.url + "\n");
       const dir = fs.mkdtempSync(path.join(os.tmpdir(), "abaplint-"));
       childProcess.execSync("git clone --quiet --depth 1 " + d.url + " .", {cwd: dir, stdio: "inherit"});
-      const names = FileOperations.loadFileNames([dir + d.files]);
+      const names = FileOperations.loadFileNames(dir + d.files);
       files = files.concat(await FileOperations.loadFiles(compress, names, bar));
       FileOperations.deleteFolderRecursive(dir);
     }
@@ -90,13 +95,13 @@ async function loadDependencies(config: Config, compress: boolean, bar: IProgres
 function displayHelp(): string {
 // follow docopt.org conventions,
   return "Usage:\n" +
-    "  abaplint <file>... [-f <format> -c --outformat <format> --outfile <file>] \n" +
-    "  abaplint -h | --help       show this help\n" +
-    "  abaplint -v | --version    show version\n" +
-    "  abaplint -d | --default    show default configuration\n" +
-    "  abaplint <file>... -u [-c] show class and interface information\n" +
-    "  abaplint <file>... -t [-c] show stats\n" +
-    "  abaplint <file>... -e [-c] show semantic search information\n" +
+    "  abaplint [<abaplint.json> -f <format> -c --outformat <format> --outfile <file>] \n" +
+    "  abaplint -h | --help             show this help\n" +
+    "  abaplint -v | --version          show version\n" +
+    "  abaplint -d | --default          show default configuration\n" +
+    "  abaplint -u [<abaplint.json> -c] show class and interface information\n" +
+    "  abaplint -t [<abaplint.json> -c] show stats\n" +
+    "  abaplint -e [<abaplint.json> -c] show semantic search information\n" +
     "\n" +
     "Options:\n" +
     "  -f, --format <format>  output format (standard, total, json, summary, junit, codeclimate)\n" +
@@ -126,11 +131,14 @@ async function run() {
   } else if (argv["d"] !== undefined || argv["default"] !== undefined) {
     output = output + JSON.stringify(Config.getDefault().get(), undefined, 2) + "\n";
   } else {
-    const files = FileOperations.loadFileNames(argv._);
-    const configFile = findConfig(path.dirname(process.cwd() + path.sep + files[0]) + path.sep);
-    const config = loadConfig(configFile);
-    const deps = await loadDependencies(config, compress, progress, configFile);
+
+    const config = loadConfig(argv._[0]);
+    if (config.get().global.files === undefined) {
+      throw "Error: Update abaplint.json to latest format";
+    }
+    const files = FileOperations.loadFileNames(config.get().global.files);
     const loaded = await FileOperations.loadFiles(compress, files, progress);
+    const deps = await loadDependencies(config, compress, progress, argv._[0]);
     const reg = new Registry(config).addFiles(loaded);
 
     if (argv["t"]) {
@@ -169,6 +177,6 @@ run().then(({output, issues}) => {
     process.exit();
   }
 }).catch((err) => {
-  console.dir(err);
+  console.log(err);
   process.exit(1);
 });

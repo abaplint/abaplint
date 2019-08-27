@@ -3,6 +3,7 @@ import {Artifacts} from "./artifacts";
 import {IRule} from "./rules/_irule";
 
 export interface IGlobalConfig {
+  files: string;
   version: string;
   skipGeneratedGatewayClasses: boolean;
   skipGeneratedPersistentClasses: boolean;
@@ -44,6 +45,7 @@ export class Config {
 
     const config: IConfig = {
       global: {
+        files: "/src/**/*.*",
         version: versionToText(Config.defaultVersion),
         skipGeneratedGatewayClasses: true,
         skipGeneratedPersistentClasses: true,

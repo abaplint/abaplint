@@ -23,13 +23,11 @@ export class FileOperations {
     }
   }
 
-  public static loadFileNames(args: string[], error = true): string[] {
+  public static loadFileNames(arg: string, error = true): string[] {
     let files: string[] = [];
-    for (const file of args) {
-      files = files.concat(glob.sync(file, {nosort: true, nodir: true}));
-    }
+    files = files.concat(glob.sync(arg, {nosort: true, nodir: true}));
     if (files.length === 0 && error) {
-      throw "No files found";
+      throw "Error: No files found";
     }
     return files;
   }
