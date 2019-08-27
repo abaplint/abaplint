@@ -6,16 +6,15 @@ import * as glob from "glob";
 import * as minimist from "minimist";
 import * as ProgressBar from "progress";
 import * as childProcess from "child_process";
-import {CompressedFile, MemoryFile} from "./files";
-import {Issue} from "./issue";
-import {Config} from "./config";
-import {Formatter} from "./formatters/_format";
-import {Artifacts} from "./abap/artifacts";
-import {Registry, IProgress} from "./registry";
-import {IFile} from "./files/_ifile";
-import {Stats} from "./extras/stats/stats";
-import {Dump} from "./extras/dump/dump";
-import {SemanticSearch} from "./extras/semantic_search/semantic_search";
+import {CompressedFile, MemoryFile} from "../files";
+import {Issue} from "../issue";
+import {Config} from "../config";
+import {Formatter} from "../formatters/_format";
+import {Registry, IProgress} from "../registry";
+import {IFile} from "../files/_ifile";
+import {Stats} from "../extras/stats/stats";
+import {Dump} from "../extras/dump/dump";
+import {SemanticSearch} from "../extras/semantic_search/semantic_search";
 
 // todo, split this file into mulitple files? and move to new directory?
 
