@@ -9,10 +9,9 @@ import * as childProcess from "child_process";
 import {CompressedFile, MemoryFile} from "./files";
 import {Issue} from "./issue";
 import {Config} from "./config";
-import {textToVersion} from "./version";
 import {Formatter} from "./formatters/_format";
 import {Artifacts} from "./abap/artifacts";
-import {Registry, IProgress, NoProgress} from "./registry";
+import {Registry, IProgress} from "./registry";
 import {IFile} from "./files/_ifile";
 import {Stats} from "./extras/stats/stats";
 import {Dump} from "./extras/dump/dump";
@@ -147,26 +146,25 @@ async function loadDependencies(config: Config, compress: boolean, bar: IProgres
 function displayHelp(): string {
 // follow docopt.org conventions,
   return "Usage:\n" +
-    "  abaplint <file>... [-f <format> -a <version> -s -c --outformat <format> --outfile <file>] \n" +
-    "  abaplint -h | --help          show this help\n" +
-    "  abaplint -v | --version       show version\n" +
-    "  abaplint -d | --default       show default configuration\n" +
-    "  abaplint -k                   show keywords\n" +
-    "  abaplint <file>... -u [-s -c] show class and interface information\n" +
-    "  abaplint <file>... -t [-s -c] show stats\n" +
-    "  abaplint <file>... -e [-s -c] show semantic search information\n" +
+    "  abaplint <file>... [-f <format> -c --outformat <format> --outfile <file>] \n" +
+    "  abaplint -h | --help       show this help\n" +
+    "  abaplint -v | --version    show version\n" +
+    "  abaplint -d | --default    show default configuration\n" +
+    "  abaplint -k                show keywords\n" +
+    "  abaplint <file>... -u [-c] show class and interface information\n" +
+    "  abaplint <file>... -t [-c] show stats\n" +
+    "  abaplint <file>... -e [-c] show semantic search information\n" +
     "\n" +
     "Options:\n" +
     "  -f, --format <format>  output format (standard, total, json, summary, junit, codeclimate)\n" +
     "  --outformat <format>   output format, use in combination with outfile\n" +
     "  --outfile <file>       output issues to file in format\n" +
-    "  -s                     show progress\n" +
     "  -c                     compress files in memory\n";
 }
 
 async function run() {
 
-  const argv = minimist(process.argv.slice(2), {boolean: ["s", "c", "u", "t", "e"]});
+  const argv = minimist(process.argv.slice(2), {boolean: ["c", "u", "t", "e"]});
   let format = "standard";
   let output = "";
   let issues: Issue[] = [];
@@ -175,7 +173,7 @@ async function run() {
     format = argv["f"] ? argv["f"] : argv["format"];
   }
 
-  const progress: IProgress = argv["s"] ? new Progress() : new NoProgress();
+  const progress: IProgress = new Progress();
   const compress = argv["c"] ? true : false;
 
   if (argv["h"] !== undefined || argv["help"] !== undefined) {
