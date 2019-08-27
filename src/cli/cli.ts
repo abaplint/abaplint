@@ -1,12 +1,9 @@
 import * as fs from "fs";
 import * as os from "os";
 import * as path from "path";
-import * as zlib from "zlib";
-import * as glob from "glob";
 import * as minimist from "minimist";
 import * as ProgressBar from "progress";
 import * as childProcess from "child_process";
-import {CompressedFile, MemoryFile} from "../files";
 import {Issue} from "../issue";
 import {Config} from "../config";
 import {Formatter} from "../formatters/_format";
@@ -15,6 +12,7 @@ import {IFile} from "../files/_ifile";
 import {Stats} from "../extras/stats/stats";
 import {Dump} from "../extras/dump/dump";
 import {SemanticSearch} from "../extras/semantic_search/semantic_search";
+import {FileOperations} from "./file_operations";
 
 // todo, split this file into mulitple files? and move to new directory?
 
@@ -58,59 +56,6 @@ function findConfig(dir: string): string | undefined {
   return undefined;
 }
 
-function loadFileNames(args: string[], error = true): string[] {
-  let files: string[] = [];
-  for (const file of args) {
-    files = files.concat(glob.sync(file, {nosort: true, nodir: true}));
-  }
-  if (files.length === 0 && error) {
-    throw "No files found";
-  }
-  return files;
-}
-
-async function loadFiles(compress: boolean, input: string[], bar: IProgress): Promise<IFile[]> {
-  const files: IFile[] = [];
-
-  bar.set(input.length, ":percent - :elapseds - Reading files - :filename");
-
-  for (const filename of input) {
-    bar.tick({filename: path.basename(filename)});
-
-    const base = filename.split("/").reverse()[0];
-    if (base.split(".").length <= 2) {
-      continue; // not a abapGit file
-    }
-
-// note that readFileSync is typically faster than async readFile,
-// https://medium.com/@adamhooper/node-synchronous-code-runs-faster-than-asynchronous-code-b0553d5cf54e
-    const raw = fs.readFileSync(filename, "utf8").replace(/\r/g, ""); // ignore all carriage returns
-    // tslint:disable-next-line:no-constant-condition
-    if (compress) {
-// todo, util.promisify(zlib.deflate) does not seem to work?
-      files.push(new CompressedFile(filename, zlib.deflateSync(raw).toString("base64")));
-    } else {
-      files.push(new MemoryFile(filename, raw));
-    }
-  }
-  return files;
-}
-
-function deleteFolderRecursive(p: string) {
-  if (fs.existsSync(p) ) {
-    const files = fs.readdirSync(p);
-    for (const file of files) {
-      const curPath = p + path.sep + file;
-      if (fs.lstatSync(curPath).isDirectory()) {
-        deleteFolderRecursive(curPath);
-      } else {
-        fs.unlinkSync(curPath);
-      }
-    }
-    fs.rmdirSync(p);
-  }
-}
-
 async function loadDependencies(config: Config, compress: boolean, bar: IProgress, configFile: string | undefined): Promise<IFile[]> {
   let files: IFile[] = [];
 
@@ -121,10 +66,10 @@ async function loadDependencies(config: Config, compress: boolean, bar: IProgres
   for (const d of config.get().dependencies) {
     if (d.folder && configFile) {
       const g = path.dirname(configFile) + d.folder + d.files;
-      const names = loadFileNames([g], false);
+      const names = FileOperations.loadFileNames([g], false);
       if (names.length > 0) {
         process.stderr.write("Using dependencies from: " + g + "\n");
-        files = files.concat(await loadFiles(compress, names, bar));
+        files = files.concat(await FileOperations.loadFiles(compress, names, bar));
         continue;
       }
     }
@@ -133,9 +78,9 @@ async function loadDependencies(config: Config, compress: boolean, bar: IProgres
       process.stderr.write("Clone: " + d.url + "\n");
       const dir = fs.mkdtempSync(path.join(os.tmpdir(), "abaplint-"));
       childProcess.execSync("git clone --quiet --depth 1 " + d.url + " .", {cwd: dir, stdio: "inherit"});
-      const names = loadFileNames([dir + d.files]);
-      files = files.concat(await loadFiles(compress, names, bar));
-      deleteFolderRecursive(dir);
+      const names = FileOperations.loadFileNames([dir + d.files]);
+      files = files.concat(await FileOperations.loadFiles(compress, names, bar));
+      FileOperations.deleteFolderRecursive(dir);
     }
   }
 
@@ -181,11 +126,11 @@ async function run() {
   } else if (argv["d"] !== undefined || argv["default"] !== undefined) {
     output = output + JSON.stringify(Config.getDefault().get(), undefined, 2) + "\n";
   } else {
-    const files = loadFileNames(argv._);
+    const files = FileOperations.loadFileNames(argv._);
     const configFile = findConfig(path.dirname(process.cwd() + path.sep + files[0]) + path.sep);
     const config = loadConfig(configFile);
     const deps = await loadDependencies(config, compress, progress, configFile);
-    const loaded = await loadFiles(compress, files, progress);
+    const loaded = await FileOperations.loadFiles(compress, files, progress);
     const reg = new Registry(config).addFiles(loaded);
 
     if (argv["t"]) {
