@@ -1,6 +1,6 @@
 import {Statement} from "./_statement";
 import {str, seq, alt, per, plus, IStatementRunnable} from "../combi";
-import {Target, Field, Source, Dynamic} from "../expressions";
+import {Target, Field, Source, Dynamic, NamespaceSimpleName} from "../expressions";
 
 export class CallTransformation extends Statement {
 
@@ -18,7 +18,7 @@ export class CallTransformation extends Statement {
     const result = seq(str("RESULT"), alt(plus(field), result2, new Dynamic()));
 
     const call = seq(str("CALL TRANSFORMATION"),
-                     alt(new Field(), new Dynamic()),
+                     alt(new NamespaceSimpleName(), new Dynamic()),
                      per(options,
                          parameters,
                          objects,
