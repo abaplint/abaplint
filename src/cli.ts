@@ -158,7 +158,6 @@ function displayHelp(): string {
     "\n" +
     "Options:\n" +
     "  -f, --format <format>  output format (standard, total, json, summary, junit, codeclimate)\n" +
-    "  -a <version>           specify ABAP version (v700, v702, ..., v740sp02, ..., cloud)\n" +
     "  --outformat <format>   output format, use in combination with outfile\n" +
     "  --outfile <file>       output issues to file in format\n" +
     "  -s                     show progress\n" +
@@ -191,7 +190,6 @@ async function run() {
     const files = loadFileNames(argv._);
     const configFile = findConfig(path.dirname(process.cwd() + path.sep + files[0]) + path.sep);
     const config = loadConfig(configFile);
-    if (argv["a"]) { config.setVersion(textToVersion(argv["a"])); }
     const deps = await loadDependencies(config, compress, progress, configFile);
     const loaded = await loadFiles(compress, files, progress);
     const reg = new Registry(config).addFiles(loaded);
