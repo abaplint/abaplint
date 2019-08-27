@@ -13,7 +13,7 @@ export class CheckTransformationExists extends ABAPRule {
   private conf = new CheckTransformationExistsConf();
 
   public getKey(): string {
-    return "check_transfromation_exists";
+    return "check_transformation_exists";
   }
 
   public getDescription(): string {
