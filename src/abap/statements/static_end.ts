@@ -1,7 +1,6 @@
 import {Statement} from "./_statement";
-import {verNot, str, seq, alt, IStatementRunnable} from "../combi";
+import {str, seq, alt, IStatementRunnable} from "../combi";
 import {NamespaceSimpleName} from "../expressions";
-import {Version} from "../../version";
 
 export class StaticEnd extends Statement {
 
@@ -10,7 +9,7 @@ export class StaticEnd extends Statement {
                     str("END OF"),
                     new NamespaceSimpleName());
 
-    return verNot(Version.Cloud, ret);
+    return ret;
   }
 
 }

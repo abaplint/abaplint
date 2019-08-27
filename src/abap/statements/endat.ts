@@ -1,12 +1,11 @@
 import {Statement} from "./_statement";
-import {verNot, str, IStatementRunnable} from "../combi";
-import {Version} from "../../version";
+import {str, IStatementRunnable} from "../combi";
 
 export class EndAt extends Statement {
 
   public getMatcher(): IStatementRunnable {
     const ret = str("ENDAT");
-    return verNot(Version.Cloud, ret);
+    return ret;
   }
 
 }

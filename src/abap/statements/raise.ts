@@ -1,5 +1,5 @@
 import {Statement} from "./_statement";
-import {verNot, str, seq, alt, opt, ver, IStatementRunnable} from "../combi";
+import {str, seq, alt, opt, ver, IStatementRunnable} from "../combi";
 import {Version} from "../../version";
 import {Source, Field, ParameterListS, ClassName, MessageSource} from "../expressions";
 
@@ -27,7 +27,7 @@ export class Raise extends Statement {
                      opt(alt(ver(Version.v750, mess), ver(Version.v752, str("USING MESSAGE")))),
                      opt(exporting));
 
-    const ret = seq(str("RAISE"), alt(verNot(Version.Cloud, new Field()), clas));
+    const ret = seq(str("RAISE"), alt(new Field(), clas));
 
     return ret;
   }

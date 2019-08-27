@@ -15,17 +15,17 @@ export class Perform extends Statement {
     const commit = alt(seq(str("ON COMMIT"), opt(level)),
                        str("ON ROLLBACK"));
 
-    const short = seq(new FormName(),
-                      tok(ParenLeft),
-                      programName,
-                      tok(ParenRightW));
+    const short = verNot(Version.Cloud, seq(new FormName(),
+                                            tok(ParenLeft),
+                                            programName,
+                                            tok(ParenRightW)));
 
     const program = seq(str("IN PROGRAM"), opt(alt(new Dynamic(), programName)));
 
     const found = str("IF FOUND");
 
     const full = seq(alt(new FormName(), new Dynamic()),
-                     opt(program));
+                     opt(verNot(Version.Cloud, program)));
 
     const ret = seq(str("PERFORM"),
                     per(alt(short, full), found),
@@ -35,7 +35,7 @@ export class Perform extends Statement {
                     opt(found),
                     opt(commit));
 
-    return verNot(Version.Cloud, ret);
+    return ret;
   }
 
 }

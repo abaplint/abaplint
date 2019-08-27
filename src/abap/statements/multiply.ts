@@ -1,7 +1,6 @@
 import {Statement} from "./_statement";
-import {verNot, str, seq, IStatementRunnable} from "../combi";
+import {str, seq, IStatementRunnable} from "../combi";
 import {Target, Source} from "../expressions";
-import {Version} from "../../version";
 
 export class Multiply extends Statement {
 
@@ -11,7 +10,7 @@ export class Multiply extends Statement {
                     str("BY"),
                     new Source());
 
-    return verNot(Version.Cloud, ret);
+    return ret;
   }
 
 }
