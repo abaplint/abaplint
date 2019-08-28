@@ -31,7 +31,7 @@ class Progress implements IProgress {
   }
 }
 
-function loadConfig(filename: string | undefined): Config {
+function loadConfig(filename: string | undefined): {config: Config, base: string} {
 // possible cases:
 // a) nothing specified, using abaplint.json from cwd
 // b) nothing specified, no abaplint.json in cwd
@@ -43,25 +43,25 @@ function loadConfig(filename: string | undefined): Config {
     f = process.cwd() + path.sep + "abaplint.json";
     if (fs.existsSync(f) === false) {
       process.stderr.write("Using default config\n");
-      return Config.getDefault();
+      return {config: Config.getDefault(), base: "."};
     }
   } else {
     if (fs.existsSync(filename) === false) {
       process.stderr.write("Specified abaplint.json does not exist, using default config\n");
-      return Config.getDefault();
+      return {config: Config.getDefault(), base: "."};
     } else if (fs.statSync(filename).isDirectory() === true) {
       process.stderr.write("Supply filename, not directory, using default config\n");
-      return Config.getDefault();
+      return {config: Config.getDefault(), base: "."};
     }
     f = filename;
   }
 
-  process.stderr.write("Using config: " + filename + "\n");
+  process.stderr.write("Using config: " + f + "\n");
   const json = fs.readFileSync(f, "utf8");
-  return new Config(json);
+  return {config: new Config(json), base: path.dirname(f)};
 }
 
-async function loadDependencies(config: Config, compress: boolean, bar: IProgress, configFile: string | undefined): Promise<IFile[]> {
+async function loadDependencies(config: Config, compress: boolean, bar: IProgress, base: string): Promise<IFile[]> {
   let files: IFile[] = [];
 
   if (config.get().dependencies === undefined) {
@@ -69,11 +69,11 @@ async function loadDependencies(config: Config, compress: boolean, bar: IProgres
   }
 
   for (const d of config.get().dependencies) {
-    if (d.folder && configFile) {
-      const g = path.dirname(configFile) + d.folder + d.files;
+    if (d.folder) {
+      const g = base + d.folder + d.files;
       const names = FileOperations.loadFileNames(g, false);
       if (names.length > 0) {
-        process.stderr.write("Using dependencies from: " + g + "\n");
+        process.stderr.write("Using dependency from: " + g + "\n");
         files = files.concat(await FileOperations.loadFiles(compress, names, bar));
         continue;
       }
@@ -132,13 +132,13 @@ async function run() {
     output = output + JSON.stringify(Config.getDefault().get(), undefined, 2) + "\n";
   } else {
 
-    const config = loadConfig(argv._[0]);
+    const {config, base} = loadConfig(argv._[0]);
     if (config.get().global.files === undefined) {
       throw "Error: Update abaplint.json to latest format";
     }
-    const files = FileOperations.loadFileNames(config.get().global.files);
+    const files = FileOperations.loadFileNames(base + config.get().global.files);
     const loaded = await FileOperations.loadFiles(compress, files, progress);
-    const deps = await loadDependencies(config, compress, progress, argv._[0]);
+    const deps = await loadDependencies(config, compress, progress, base);
     const reg = new Registry(config).addFiles(loaded);
 
     if (argv["t"]) {
