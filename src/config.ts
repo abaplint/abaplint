@@ -4,7 +4,6 @@ import {IRule} from "./rules/_irule";
 
 export interface IGlobalConfig {
   files: string;
-  version: string;
   skipGeneratedGatewayClasses: boolean;
   skipGeneratedPersistentClasses: boolean;
   skipGeneratedFunctionGroups: boolean;
@@ -18,6 +17,7 @@ export interface IDependency {
 }
 
 export interface ISyntaxSettings {
+  version: string;
   errorNamespace: string;
   globalConstants: string[];
   globalMacros: string[];
@@ -46,7 +46,6 @@ export class Config {
     const config: IConfig = {
       global: {
         files: "/src/**/*.*",
-        version: versionToText(Config.defaultVersion),
         skipGeneratedGatewayClasses: true,
         skipGeneratedPersistentClasses: true,
         skipGeneratedFunctionGroups: true,
@@ -58,6 +57,7 @@ export class Config {
         files: "/src/**/*.*",
       }],
       syntax: {
+        version: versionToText(Config.defaultVersion),
         errorNamespace: "^(Z|Y)",
         globalConstants: [],
         globalMacros: [],
@@ -122,17 +122,17 @@ export class Config {
   }
 
   public getVersion(): Version {
-    if (this.config.global === undefined || this.config.global.version === undefined) {
+    if (this.config.global === undefined || this.config.syntax.version === undefined) {
       return Config.defaultVersion;
     }
-    return textToVersion(this.config.global.version);
+    return textToVersion(this.config.syntax.version);
   }
 
   public setVersion(ver: Version | undefined): Config {
     if (ver === undefined) {
       return this;
     }
-    this.config.global.version = versionToText(ver);
+    this.config.syntax.version = versionToText(ver);
     return this;
   }
 
