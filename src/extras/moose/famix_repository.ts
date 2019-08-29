@@ -20,7 +20,7 @@ export class FamixRepository {
       }
     }
     const newClass = new Class(this);
-    newClass.setName(name);
+    newClass.setName(name.toLowerCase());
     newClass.setIsStub(true);
     if ((isInterface) && (isInterface === true)) {
       newClass.setIsInterface(true);
