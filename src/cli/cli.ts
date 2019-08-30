@@ -13,6 +13,7 @@ import {Stats} from "../extras/stats/stats";
 import {Dump} from "../extras/dump/dump";
 import {SemanticSearch} from "../extras/semantic_search/semantic_search";
 import {FileOperations} from "./file_operations";
+import {MemoryFile} from "../files";
 
 // todo, split this file into mulitple files? and move to new directory?
 
@@ -132,33 +133,47 @@ async function run() {
     output = output + JSON.stringify(Config.getDefault().get(), undefined, 2) + "\n";
   } else {
 
+    let loaded: IFile[] = [];
+    let deps: IFile[] = [];
     const {config, base} = loadConfig(argv._[0]);
-    if (config.get().global.files === undefined) {
-      throw "Error: Update abaplint.json to latest format";
-    }
-    const files = FileOperations.loadFileNames(base + config.get().global.files);
-    const loaded = await FileOperations.loadFiles(compress, files, progress);
-    const deps = await loadDependencies(config, compress, progress, base);
-    const reg = new Registry(config).addFiles(loaded);
-
-    if (argv["t"]) {
-      output = JSON.stringify(new Stats(reg).run(progress), undefined, 2);
-    } else if (argv["u"]) {
-      reg.parse(progress);
-      output = JSON.stringify(new Dump(reg).classes(), undefined, 2);
-    } else if (argv["e"]) {
-      output = JSON.stringify(new SemanticSearch(reg).run(progress), undefined, 1);
-    } else {
-      reg.addDependencies(deps);
-
-      issues = reg.findIssues(progress);
-      output = Formatter.format(issues, format, loaded.length);
-
-      if (argv["outformat"] && argv["outfile"]) {
-        const fileContents = Formatter.format(issues, argv["outformat"], loaded.length);
-        fs.writeFileSync(argv["outfile"], fileContents, "utf-8");
+    try {
+      if (config.get().global.files === undefined) {
+        throw "Error: Update abaplint.json to latest format";
       }
+      const files = FileOperations.loadFileNames(base + config.get().global.files);
+      loaded = await FileOperations.loadFiles(compress, files, progress);
+      deps = await loadDependencies(config, compress, progress, base);
+    } catch (error) {
+      issues = [new Issue({
+        file: new MemoryFile("generic", ""),
+        message: error,
+        key: "error",
+      })];
     }
+
+    if (issues.length === 0) {
+      const reg = new Registry(config).addFiles(loaded);
+      if (argv["t"]) {
+        output = JSON.stringify(new Stats(reg).run(progress), undefined, 2);
+      } else if (argv["u"]) {
+        reg.parse(progress);
+        output = JSON.stringify(new Dump(reg).classes(), undefined, 2);
+      } else if (argv["e"]) {
+        output = JSON.stringify(new SemanticSearch(reg).run(progress), undefined, 1);
+      } else {
+        reg.addDependencies(deps);
+        issues = reg.findIssues(progress);
+        output = Formatter.format(issues, format, loaded.length);
+
+        if (argv["outformat"] && argv["outfile"]) {
+          const fileContents = Formatter.format(issues, argv["outformat"], loaded.length);
+          fs.writeFileSync(argv["outfile"], fileContents, "utf-8");
+        }
+      }
+    } else {
+      output = Formatter.format(issues, format, loaded.length);
+    }
+
   }
 
   return {output, issues};
