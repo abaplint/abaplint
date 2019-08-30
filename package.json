@@ -54,7 +54,7 @@
     "@types/glob": "^7.1.1",
     "@types/minimist": "^1.2.0",
     "@types/mocha": "^5.2.7",
-    "@types/node": "^12.7.2",
+    "@types/node": "^12.7.3",
     "@types/progress": "^2.0.3",
     "browserify": "^16.0.0",
     "chai": "^4.2.0",
@@ -63,7 +63,7 @@
     "source-map-support": "^0.5.13",
     "tslint": "^5.19.0",
     "tslint-eslint-rules": "^5.4.0",
-    "typescript": "^3.5.3",
+    "typescript": "^3.6.2",
     "uglify-js": "^3.6.0"
   },
   "dependencies": {
