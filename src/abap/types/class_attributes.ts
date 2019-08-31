@@ -5,6 +5,9 @@ import {ClassAttribute} from "./class_attribute";
 import {ClassConstant} from "./class_constant";
 import {StructureNode, StatementNode} from "../../abap/nodes";
 import {Visibility} from "./visibility";
+import {Type} from "../../abap/expressions";
+import {FieldChain} from "../../abap/expressions";
+import {Field} from "../../abap/expressions";
 
 export class Attributes {
   private static: ClassAttribute[];
@@ -101,7 +104,16 @@ export class Attributes {
     }
     const token = found.getFirstToken();
 
-    return new ClassAttribute(token, visibility);
+    let type;
+    const foundType = node.findFirstExpression(Type);
+    if (foundType) {
+      if ((foundType.getChildren()[1].getFirstToken().getStr() === "REF") &&
+          (foundType.getChildren()[1].getFirstToken().getStr() === "TO")) {
+        type = foundType.findFirstExpression(FieldChain)!.findFirstExpression(Field)!.getFirstToken().getStr();
+      }
+    }
+
+    return new ClassAttribute(token, visibility, type);
   }
 
 }
