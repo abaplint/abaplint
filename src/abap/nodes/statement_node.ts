@@ -55,9 +55,9 @@ export class StatementNode extends BasicNode {
   public getTokens(): Token[] {
     let tokens: Token[] = [];
 
-    this.getChildren().forEach((c) => {
+    for (const c of this.getChildren()) {
       tokens = tokens.concat(this.toTokens(c));
-    });
+    }
 
     return tokens;
   }
@@ -109,6 +109,21 @@ export class StatementNode extends BasicNode {
     throw new Error("getLastToken, unexpected type");
   }
 
+  public findDirectTokenByText(text: string): Token | undefined {
+    for (const child of this.getChildren()) {
+      if (child instanceof TokenNode) {
+        if (child.get().getStr() === text) {
+          return child.get();
+        }
+      } else if (child instanceof ExpressionNode) {
+        continue;
+      } else {
+        throw new Error("findDirectTokenByText, unexpected type");
+      }
+    }
+    return undefined;
+  }
+
   public findFirstExpression(type: new () => Expression): ExpressionNode | undefined {
     for (const child of this.getChildren()) {
       if (child.get() instanceof type) {
@@ -150,13 +165,13 @@ export class StatementNode extends BasicNode {
       tokens.push((b as TokenNode).get());
     }
 
-    b.getChildren().forEach((c) => {
+    for (const c of b.getChildren()) {
       if (c instanceof TokenNode) {
         tokens.push((c as TokenNode).get());
       } else {
         tokens = tokens.concat(this.toTokens(c));
       }
-    });
+    }
 
     return tokens;
   }

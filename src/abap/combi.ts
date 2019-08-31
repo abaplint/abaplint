@@ -168,14 +168,16 @@ class Word implements IStatementRunnable {
   }
 }
 
-function className(cla: any) {
-  // @ts-ignore
-  return (cla.constructor + "").match(/\w+/g)[1];
+function className(cla: Expression) {
+  return cla.constructor.name;
+}
+
+function className2(cla: Tokens_Token) {
+  return cla.constructor.name;
 }
 
 function functionName(fun: any) {
-  // @ts-ignore
-  return (fun + "").match(/\w+/g)[1];
+  return fun.name;
 }
 
 class Token implements IStatementRunnable {
@@ -199,7 +201,7 @@ class Token implements IStatementRunnable {
 
     for (const input of r) {
       if (input.length() !== 0
-          && className(input.peek()).toUpperCase() === this.s.toUpperCase()) {
+          && className2(input.peek()).toUpperCase() === this.s.toUpperCase()) {
         result.push(input.shift(new TokenNode(input.peek())));
       }
     }
@@ -564,7 +566,7 @@ class WordSequence implements IStatementRunnable {
     this.stri = stri;
 
     const foo = this.stri.replace(/-/g, " - ");
-    const split = foo.split(/[ ]/);
+    const split = foo.split(" ");
 
     for (const st of split) {
 // todo, use Dash token
@@ -854,7 +856,7 @@ export class Combi {
     return res;
   }
 
-// assumption: no pgragmas supplied in tokens input
+// assumption: no pragmas supplied in tokens input
   public static run(runnable: IStatementRunnable, tokens: Tokens_Token[], version: Version): INode[] | undefined {
     this.ver = version;
 
@@ -879,10 +881,10 @@ export class Combi {
 // -----------------------------------------------------------------------------
 
 export function str(s: string): IStatementRunnable {
-  if (/[ -]/.test(s) === false) {
-    return new Word(s);
-  } else {
+  if (s.indexOf(" ") > 0 || s.indexOf("-") > 0) {
     return new WordSequence(s);
+  } else {
+    return new Word(s);
   }
 }
 export function seq(first: IStatementRunnable, ...rest: IStatementRunnable[]): IStatementRunnable {

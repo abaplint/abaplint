@@ -2,11 +2,9 @@ import * as Statements from "../statements";
 import * as Expressions from "../expressions";
 import {StatementNode} from "../nodes";
 import {ABAPObject} from "../../objects/_abap_object";
-import {ClassDefinition, MethodDefinition} from "../types";
+import {ClassDefinition, MethodDefinition, InterfaceDefinition} from "../types";
 import {Interface, Class} from "../../objects";
 import {Registry} from "../../registry";
-import {Globals} from "./_globals";
-import {MemoryFile} from "../../files";
 import {Variables} from "./_variables";
 
 export class ObjectOriented {
@@ -41,15 +39,11 @@ export class ObjectOriented {
     const className = this.findClassName(node);
     this.variables.pushScope(className);
 
-    const classDefinition = this.findDefinition(className);
-    if (classDefinition === undefined) {
-      throw new Error("Class definition \"" + className + "\" not found");
-    }
+    const classDefinition = this.findClassDefinition(className);
 
     const classAttributes = classDefinition.getAttributes();
-    if (classAttributes === undefined) {
-      throw new Error("Error reading class attributes");
-    }
+
+    this.addAliasedAttributes(classDefinition); // todo, this is not correct, take care of instance vs static
 
     this.variables.addList(classAttributes.getConstants());
     this.variables.addList(classAttributes.getInstance()); // todo, this is not correct, take care of instance vs static
@@ -58,51 +52,105 @@ export class ObjectOriented {
     this.fromSuperClass(classDefinition);
   }
 
+  private findInterfaceDefinition(name: string): InterfaceDefinition | undefined {
+    const intf = this.reg.getObject("INTF", name) as Interface;
+    if (intf && intf.getDefinition()) {
+      return intf.getDefinition();
+    }
+// todo, this is not correct, global classes cannot implement local interfaces
+    for (const file of this.obj.getABAPFiles()) {
+      const found = file.getInterfaceDefinition(name);
+      if (found) {
+        return found;
+      }
+    }
+    return undefined;
+  }
+
+  private addAliasedAttributes(classDefinition: ClassDefinition): void {
+    for (const alias of classDefinition.getAliases().getAll()) {
+      const comp = alias.getComponent();
+      const idef = this.findInterfaceDefinition(comp.split("~")[0]);
+      if (idef) {
+        const found = idef.getAttributes()!.findByName(comp.split("~")[1]);
+        if (found) {
+          this.variables.addNamedIdentifier(alias.getName(), found);
+        }
+      }
+    }
+  }
+
+  private findMethodInInterface(interfaceName: string, methodName: string): MethodDefinition | undefined {
+    const idef = this.findInterfaceDefinition(interfaceName);
+    if (idef) {
+      const methods = idef.getMethodDefinitions();
+      for (const method of methods) {
+        if (method.getName().toUpperCase() === methodName.toUpperCase()) {
+          return method;
+        }
+      }
+    }
+    return undefined;
+  }
+
+  private findMethodViaAlias(methodName: string, classDefinition: ClassDefinition): MethodDefinition | undefined {
+    for (const a of classDefinition.getAliases().getAll()) {
+      if (a.getName().toUpperCase() === methodName.toUpperCase()) {
+        const comp = a.getComponent();
+        const res = this.findMethodInInterface(comp.split("~")[0], comp.split("~")[1]);
+        if (res) {
+          return res;
+        }
+      }
+    }
+    return undefined;
+  }
+
   public methodImplementation(node: StatementNode) {
     this.variables.pushScope("method");
     const className = this.variables.getParentName();
-    const classDefinition = this.findDefinition(className);
+    const classDefinition = this.findClassDefinition(className);
 
 // todo, this is not correct, add correct types, plus when is "super" allowed?
-    const file = new MemoryFile("_method_locals.prog.abap", "* Method Locals\n" +
-      "DATA super TYPE REF TO object.\n" +
-      "DATA me TYPE REF TO object.\n");
-    this.variables.addList(Globals.typesInFile(file));
+    this.variables.addName("super");
+    this.variables.addName("me");
 
     let methodName = node.findFirstExpression(Expressions.MethodName)!.getFirstToken().getStr();
 
     let methodDefinition: MethodDefinition | undefined = undefined;
     methodDefinition = this.findMethod(classDefinition, methodName);
 
-// todo, this is not completely correct, and too much code
-    if (methodDefinition === undefined && methodName.includes("~")) {
-      const interfaceName = methodName.split("~")[0];
+    let interfaceName: string | undefined = undefined;
+    if (methodName.includes("~")) {
+      interfaceName = methodName.split("~")[0];
+    }
+
+// todo, this is not completely correct? hmm, why? visibility?
+    if (methodDefinition === undefined && interfaceName) {
       methodName = methodName.split("~")[1];
-      const intf = this.reg.getObject("INTF", interfaceName) as Interface;
-      if (intf && intf.getDefinition()) {
-        const methods = intf.getDefinition()!.getMethodDefinitions();
-        for (const method of methods) {
-          if (method.getName().toUpperCase() === methodName.toUpperCase()) {
-            methodDefinition = method;
-            break;
-          }
-        }
-      }
+      methodDefinition = this.findMethodInInterface(interfaceName, methodName);
+    } else if (methodDefinition === undefined) {
+      methodDefinition = this.findMethodViaAlias(methodName, classDefinition);
     }
 
     if (methodDefinition === undefined) {
-      throw new Error("Method definition \"" + methodName + "\" not found");
+      this.variables.popScope();
+      if (interfaceName) {
+        throw new Error("Method definition \"" + methodName + "\" in \"" + interfaceName + "\" not found");
+      } else {
+        throw new Error("Method definition \"" + methodName + "\" not found");
+      }
     }
 
     this.variables.addList(methodDefinition.getParameters().getAll());
 
     for (const i of this.findInterfaces(classDefinition)) {
-      const intf = this.reg.getObject("INTF", i) as Interface;
-      if (intf) {
-        this.variables.addList(intf.getDefinition()!.getAttributes()!.getConstants(), i + "~");
-        this.variables.addList(intf.getDefinition()!.getAttributes()!.getStatic(), i + "~");
+      const idef = this.findInterfaceDefinition(i);
+      if (idef) {
+        this.variables.addList(idef.getAttributes()!.getConstants(), i + "~");
+        this.variables.addList(idef.getAttributes()!.getStatic(), i + "~");
         // todo, only add instance if its an instance method
-        this.variables.addList(intf.getDefinition()!.getAttributes()!.getInstance(), i + "~");
+        this.variables.addList(idef.getAttributes()!.getInstance(), i + "~");
       }
     }
   }
@@ -122,14 +170,14 @@ export class ObjectOriented {
     return ret;
   }
 
-  private findDefinition(name: string): ClassDefinition {
+  private findClassDefinition(name: string): ClassDefinition {
     for (const file of this.obj.getABAPFiles()) {
       const found = file.getClassDefinition(name);
       if (found) {
         return found;
       }
     }
-    throw new Error("Class defintion for \"" + name + "\" not found");
+    throw new Error("Class definition for \"" + name + "\" not found");
   }
 
   private findMethod(classDefinition: ClassDefinition, methodName: string): MethodDefinition | undefined {
@@ -161,6 +209,12 @@ export class ObjectOriented {
 
   private findSuperDefinition(name: string): ClassDefinition {
     const csup = this.reg.getObject("CLAS", name) as Class;
+    if (csup === undefined) {
+      const found = this.findClassDefinition(name);
+      if (found) {
+        return found;
+      }
+    }
     if (csup === undefined) {
       throw new Error("super class \"" + name + "\" not found");
     }

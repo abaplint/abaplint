@@ -1,32 +1,28 @@
 import * as Expressions from "../expressions";
 import * as Statements from "../statements";
 import {StatementNode, ExpressionNode} from "../nodes";
-import {TypedIdentifier} from "../types/_typed_identifier";
+import {Identifier} from "../types/_identifier";
 import {ABAPObject} from "../../objects/_abap_object";
 import {Registry} from "../../registry";
 import {FormDefinition} from "../types";
 import {Variables} from "./_variables";
 import {FunctionGroup} from "../../objects";
-import {MemoryFile} from "../../files";
-import {Globals} from "./_globals";
 
 // todo, rename this class?
-class LocalIdentifier extends TypedIdentifier { }
+class LocalIdentifier extends Identifier { }
 
 export class Procedural {
   private obj: ABAPObject;
-//  private reg: Registry;
   private variables: Variables;
 
   constructor(obj: ABAPObject, _reg: Registry, variables: Variables) {
     this.obj = obj;
     this.variables = variables;
-//    this.reg = reg;
   }
 
   public findDefinitions(node: StatementNode) {
     const sub = node.get();
-    const ret: TypedIdentifier[] = [];
+    const ret: Identifier[] = [];
 
     if (sub instanceof Statements.Data
       || sub instanceof Statements.DataBegin
@@ -53,12 +49,9 @@ export class Procedural {
       throw new Error("Function group definition \"" + name + "\" not found");
     }
 
-    let abap = "";
     for (const param of definition.getParameters()) {
-      abap = abap + "DATA " + param + " TYPE c.\n"; // todo, not correct type
+      this.variables.addName(param);
     }
-    const file = new MemoryFile("_function_module.prog.abap", abap);
-    this.variables.addList(Globals.typesInFile(file));
   }
 
   public findFormScope(node: StatementNode) {
@@ -81,12 +74,12 @@ export class Procedural {
     throw new Error("FORM defintion for \"" + name + "\" not found");
   }
 
-  private addVariable(expr: ExpressionNode | undefined): TypedIdentifier {
+  private addVariable(expr: ExpressionNode | undefined): Identifier {
     if (expr === undefined) { throw new Error("syntax_check, unexpected tree structure"); }
     // todo, these identifers should be possible to create from a Node
     // todo, how to determine the real types?
     const token = expr.getFirstToken();
-    return new LocalIdentifier(token, expr);
+    return new LocalIdentifier(token);
   }
 
 }

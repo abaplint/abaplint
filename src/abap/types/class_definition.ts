@@ -4,8 +4,9 @@ import {SuperClassName} from "../../abap/expressions";
 import * as Statements from "../../abap/statements";
 import * as Structures from "../../abap/structures";
 import * as Expressions from "../../abap/expressions";
-import {ClassAttributes} from "./class_attributes";
+import {Attributes} from "./class_attributes";
 import {Identifier} from "./_identifier";
+import {Aliases} from "./aliases";
 
 // todo, is this the same as an InterfaceDefinition?
 export class ClassDefinition extends Identifier {
@@ -17,26 +18,23 @@ export class ClassDefinition extends Identifier {
     }
 
     const name = node.findFirstStatement(Statements.ClassDefinition)!.findFirstExpression(Expressions.ClassName)!.getFirstToken();
-    super(name, node);
+    super(name);
 
     this.node = node;
   }
 
-  public getMethodDefinitions(): MethodDefinitions | undefined {
-    if (!this.node) { return undefined; }
+  public getMethodDefinitions(): MethodDefinitions {
     return new MethodDefinitions(this.node);
   }
 
   public getSuperClass(): string | undefined {
-    if (!this.node) { return undefined; }
     const found = this.node.findFirstStatement(Statements.ClassDefinition);
     const token = found ? found.findFirstExpression(SuperClassName) : undefined;
     return token ? token.getFirstToken().getStr() : undefined;
   }
 
-  public getAttributes(): ClassAttributes | undefined {
-    if (!this.node) { return undefined; }
-    return new ClassAttributes(this.node);
+  public getAttributes(): Attributes {
+    return new Attributes(this.node);
   }
 
   public isException(): boolean {
@@ -70,20 +68,25 @@ export class ClassDefinition extends Identifier {
     return ret;
   }
 
-  /*
-  public getFriends()
+  public getAliases(): Aliases {
+    return new Aliases(this.node);
+  }
+
+  public isForTesting(): boolean {
+    return this.node.findFirstStatement(Statements.ClassDefinition)!.concatTokens().toUpperCase().includes(" FOR TESTING");
+  }
+
+/*
+  public getFriends() {
+  }
 
   public isAbstract(): boolean {
 // todo
     return false;
   }
 
-  public isForTesting(): boolean {
-// todo
-    return false;
-  }
-
   public getEvents() {
+  }
 */
 
 }

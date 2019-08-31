@@ -11,6 +11,7 @@ import {Token} from "../abap/tokens/_token";
 import {Unknown, MacroCall} from "../abap/statements/_statement";
 import {Issue} from "../issue";
 import {Identifier, Pragma} from "../abap/tokens";
+import {ClassImplementation} from "../abap/types";
 
 export abstract class ABAPObject extends AbstractObject {
   private parsed: ABAPFile[];
@@ -36,13 +37,13 @@ export abstract class ABAPObject extends AbstractObject {
     }
     this.parsed = [];
 
-    this.files.forEach((f) => {
-      if (/.*\.abap$/.test(f.getFilename())) {
+    for (const f of this.files) {
+      if (f.getFilename().endsWith(".abap")) {
         const tokens = Lexer.run(f);
         const statements = StatementParser.run(tokens, ver);
         this.parsed.push(new ABAPFile(f, tokens, statements));
       }
-    });
+    }
 
     this.parsed.forEach((f) => {
       f.getStatements().forEach((s) => {
@@ -103,6 +104,33 @@ export abstract class ABAPObject extends AbstractObject {
 
   public getABAPFiles(): ABAPFile[] {
     return this.parsed;
+  }
+
+  public getMainABAPFile(): ABAPFile | undefined {
+    const search = this.getName().replace(/\//g, "#").toLowerCase() + "." + this.getType().toLowerCase() + ".abap";
+    for (const file of this.getABAPFiles()) {
+      if (file.getFilename().endsWith(search)) {
+        return file;
+      }
+    }
+    return undefined;
+  }
+
+  public getClassImplementation(name: string): ClassImplementation | undefined {
+    for (const impl of this.getClassImplementations()) {
+      if (impl.getName().toUpperCase() === name.toUpperCase()) {
+        return impl;
+      }
+    }
+    return undefined;
+  }
+
+  public getClassImplementations(): ClassImplementation[] {
+    let ret: ClassImplementation[] = [];
+    for (const file of this.getABAPFiles()) {
+      ret = ret.concat(file.getClassImplementations());
+    }
+    return ret;
   }
 
   private tokensToNodes(tokens: Token[]): TokenNode[] {

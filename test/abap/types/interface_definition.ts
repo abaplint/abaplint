@@ -2,7 +2,7 @@ import {expect} from "chai";
 import {MemoryFile} from "../../../src/files";
 import {Registry} from "../../../src/registry";
 import {Interface} from "../../../src/objects";
-import {Scope} from "../../../src/abap/types/scope";
+import {Visibility} from "../../../src/abap/types/visibility";
 
 describe("Types, interface_definition, getMethodDefinitions", () => {
   it("test, positive", () => {
@@ -16,7 +16,7 @@ describe("Types, interface_definition, getMethodDefinitions", () => {
     expect(def).to.not.equal(undefined);
     expect(def!.getMethodDefinitions().length).to.equal(1);
     expect(def!.getMethodDefinitions()[0].getName()).to.equal("method1");
-    expect(def!.getMethodDefinitions()[0].getScope()).to.equal(Scope.Public);
+    expect(def!.getMethodDefinitions()[0].getVisibility()).to.equal(Visibility.Public);
   });
 
   it("test, parser error", () => {
@@ -66,6 +66,6 @@ describe("Types, interface_definition, getAttributes", () => {
     const instance = intf.getDefinition()!.getAttributes()!.getInstance();
     expect(instance.length).to.equal(1);
     expect(instance[0].getName()).to.equal("moo");
-    expect(instance[0].getScope()).to.equal(Scope.Public);
+    expect(instance[0].getVisibility()).to.equal(Visibility.Public);
   });
 });

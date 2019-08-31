@@ -23,6 +23,7 @@ const tests = [
   "class zcl_foo definition public inheriting from zcl_super final create private global friends zcl_factory.",
 
   "class ZCL_SHARED_MEMORY_ROOT definition public final create public shared memory enabled.",
+  "CLASS cl_foo DEFINITION PUBLIC ABSTRACT FINAL FOR BEHAVIOR OF blah.",
 ];
 
 statementType(tests, "CLASS Definition", Statements.ClassDefinition);

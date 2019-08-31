@@ -86,6 +86,10 @@ export class ExpressionNode extends CountableNode {
   }
 
   public findFirstExpression(type: new () => Expression): ExpressionNode | undefined {
+    if (this.get() instanceof type) {
+      return this;
+    }
+
     for (const child of this.getChildren()) {
       if (child.get() instanceof type) {
         return child as ExpressionNode;

@@ -1,5 +1,5 @@
 import {Variables} from "./_variables";
-import {TypedIdentifier} from "../types/_typed_identifier";
+import {Identifier} from "../types/_identifier";
 import {ExpressionNode, StatementNode} from "../nodes";
 import * as Expressions from "../expressions";
 import * as Statements from "../statements";
@@ -7,7 +7,7 @@ import {INode} from "../nodes/_inode";
 import {Registry} from "../../registry";
 import {Table, View} from "../../objects";
 
-class LocalIdentifier extends TypedIdentifier { }
+class LocalIdentifier extends Identifier { }
 
 export class Inline {
   private variables: Variables;
@@ -23,10 +23,10 @@ export class Inline {
     // todo, these identifers should be possible to create from a Node
     // todo, how to determine the real types?
     const token = expr.getFirstToken();
-    this.variables.add(new LocalIdentifier(token, expr));
+    this.variables.addIdentifier(new LocalIdentifier(token));
   }
 
-  public update(node: INode) {
+  public update(node: INode): boolean {
     if (node instanceof StatementNode) {
 
       for (const inline of node.findAllExpressions(Expressions.InlineData)) {
@@ -52,17 +52,22 @@ export class Inline {
           }
           let name = dbtab.getFirstToken().getStr();
           const fields = this.findFields(name);
+          if (fields.length === 0) {
+            return true; // skip the statement, it uses things outside of checked namespace
+          }
           const asName = from.findFirstExpression(Expressions.SQLAsName);
           if (asName) {
             name = asName.getFirstToken().getStr();
           }
           for (const field of fields) {
-            this.variables.addOther(name + "~" + field);
+            this.variables.addName(name + "~" + field);
           }
 // todo, these also have to be popped after the statement
         }
       }
     }
+
+    return false;
   }
 
   private findFields(name: string): string[] {
@@ -74,6 +79,11 @@ export class Inline {
     if (view !== undefined) {
       return view.getFields();
     }
-    throw new Error("Database table or view \"" + name + "\" not found");
+    const reg = new RegExp(this.reg.getConfig().getSyntaxSetttings().errorNamespace, "i");
+    if (name.match(reg)) {
+      throw new Error("Database table or view \"" + name + "\" not found");
+    } else {
+      return [];
+    }
   }
 }

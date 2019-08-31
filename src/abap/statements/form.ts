@@ -1,8 +1,7 @@
 import {Statement} from "./_statement";
-import {verNot, str, seq, alt, opt, tok, altPrio, plus, IStatementRunnable} from "../combi";
+import {str, seq, alt, opt, tok, altPrio, plus, IStatementRunnable} from "../combi";
 import {ParenLeft, ParenRightW} from "../tokens/";
 import {ClassName, SimpleName, NamespaceSimpleName, FormParam, FormName} from "../expressions";
-import {Version} from "../../version";
 
 export class Form extends Statement {
 
@@ -29,7 +28,7 @@ export class Form extends Statement {
                     opt(changing),
                     opt(raising));
 
-    return verNot(Version.Cloud, ret);
+    return ret;
   }
 
 }

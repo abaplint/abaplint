@@ -5,7 +5,7 @@ import {Token} from "../abap/tokens/_token";
 import {INode} from "../abap/nodes/_inode";
 import {StructureNode, StatementNode, ExpressionNode, TokenNode, TokenNodeRegex} from "../abap/nodes";
 import {CheckVariablesLogic} from "../abap/syntax/check_variables";
-import {TypedIdentifier} from "../abap/types/_typed_identifier";
+import {Identifier} from "../abap/types/_identifier";
 import {ABAPObject} from "../objects/_abap_object";
 
 export class Hover {
@@ -39,7 +39,7 @@ export class Hover {
               const resolved = new CheckVariablesLogic(reg, obj).resolveToken(token);
               if (resolved === undefined) {
                 value = value + "\n\nNot resolved";
-              } else if (resolved instanceof TypedIdentifier) {
+              } else if (resolved instanceof Identifier) {
                 value = value + "\n\nResolved";
               }
             } else {

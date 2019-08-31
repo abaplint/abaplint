@@ -43,8 +43,7 @@ class List {
 }
 
 function className(cla: any) {
-  // @ts-ignore
-  return (cla.constructor + "").match(/\w+/g)[1];
+  return cla.constructor.name;
 }
 
 export class Artifacts {

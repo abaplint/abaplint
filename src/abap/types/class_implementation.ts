@@ -13,7 +13,7 @@ export class ClassImplementation extends Identifier {
       throw new Error("ClassImplementation, unexpected node type");
     }
     const name = node.findFirstStatement(Statements.ClassImplementation)!.findFirstExpression(Expressions.ClassName)!.getFirstToken();
-    super(name, node);
+    super(name);
 
     this.node = node;
   }
@@ -24,6 +24,15 @@ export class ClassImplementation extends Identifier {
       ret.push(new MethodImplementation(method));
     }
     return ret;
+  }
+
+  public getMethodImplementation(name: string): MethodImplementation | undefined {
+    for (const impl of this.getMethodImplementations()) {
+      if (impl.getName().toUpperCase() === name.toUpperCase()) {
+        return impl;
+      }
+    }
+    return undefined;
   }
 
 }

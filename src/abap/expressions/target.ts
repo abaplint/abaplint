@@ -1,18 +1,21 @@
 import {seq, opt, tok, star, alt, str, altPrio, Expression, IStatementRunnable} from "../combi";
-import {Field, TableExpression, FieldAll, FieldOffset, FieldLength, TableBody, ClassName, ComponentName} from "./";
-import {FieldSymbol, InlineData, InlineFS} from "./";
-import {InstanceArrow, StaticArrow, Dash} from "../tokens/";
+import {Arrow, Field, TableExpression, FieldAll, FieldOffset, FieldLength, TableBody, ClassName, ComponentName, Cast} from "./";
+import {FieldSymbol, NewObject, InlineData, InlineFS} from "./";
+import {InstanceArrow, StaticArrow} from "../tokens/";
+import {ArrowOrDash} from "./arrow_or_dash";
 
 export class Target extends Expression {
   public getRunnable(): IStatementRunnable {
-    const clas = seq(new ClassName(), tok(StaticArrow), new ComponentName());
-    const start = alt(clas, new Field(), new FieldSymbol());
+    const something = star(seq(new ArrowOrDash(), alt(str("*"), new FieldAll()), star(new TableExpression())));
 
-    const arrow = alt(tok(InstanceArrow), tok(Dash));
+    const cast = seq(alt(new Cast( ), new NewObject()), new Arrow(), new FieldAll());
+
+    const clas = seq(new ClassName(), tok(StaticArrow), new ComponentName());
+    const start = alt(clas, new Field(), new FieldSymbol(), cast);
 
     const after = seq(start,
                       star(new TableExpression()),
-                      star(seq(arrow, alt(str("*"), new FieldAll()), star(new TableExpression()))));
+                      something);
 
     const fields = seq(opt(new FieldOffset()), opt(new FieldLength()));
 

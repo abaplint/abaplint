@@ -1,27 +1,17 @@
-import {Scope} from "./scope";
+import {Visibility} from "./visibility";
 import {StatementNode} from "../nodes";
 import {Constant} from "./constant";
 
 export class ClassConstant extends Constant {
-  private scope: Scope;
+  private visibility: Visibility;
 
-  constructor(node: StatementNode, scope: Scope) {
-    /*
-    if (!(node.get() instanceof Statements.Constant)) {
-      throw new Error("Constant, unexpected node");
-    }
-    const found = node.findFirstExpression(Expressions.NamespaceSimpleName);
-    if (found === undefined) {
-      throw new Error("Constant, unexpected node");
-    }
-    const token = found.getFirstToken();
-*/
+  constructor(node: StatementNode, visibility: Visibility) {
     super(node);
-    this.scope = scope;
+    this.visibility = visibility;
   }
 
-  public getScope() {
-    return this.scope;
+  public getVisibility() {
+    return this.visibility;
   }
 
 }

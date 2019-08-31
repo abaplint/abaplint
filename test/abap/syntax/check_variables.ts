@@ -3,9 +3,17 @@ import {MemoryFile} from "../../../src/files";
 import {Registry} from "../../../src/registry";
 import {CheckVariablesLogic} from "../../../src/abap/syntax/check_variables";
 import {Issue} from "../../../src/issue";
+import {Config} from "../../../src/config";
 
-function run(reg: Registry): Issue[] {
+function run(reg: Registry, globalConstants?: string[]): Issue[] {
   let ret: Issue[] = [];
+
+  if (globalConstants) {
+    const config = reg.getConfig().get();
+    config.syntax.globalConstants = globalConstants;
+    reg.setConfig(new Config(JSON.stringify(config)));
+  }
+
   for (const obj of reg.getABAPObjects()) {
     ret = ret.concat(new CheckVariablesLogic(reg, obj).findIssues(false));
   }
@@ -27,10 +35,10 @@ function runClass(abap: string): Issue[] {
   return run(reg);
 }
 
-function runProgram(abap: string): Issue[] {
+function runProgram(abap: string, globalConstants?: string[]): Issue[] {
   const file = new MemoryFile("zfoobar.prog.abap", abap);
   const reg = new Registry().addFile(file).parse();
-  return run(reg);
+  return run(reg, globalConstants);
 }
 
 describe("Check Variables", () => {
@@ -213,6 +221,101 @@ describe("Check Variables", () => {
     expect(issues.length).to.equals(0);
   });
 
+  it("program, class definition not found", () => {
+    const abap = "CLASS lcl_foobar IMPLEMENTATION.\n" +
+      "ENDCLASS.\n";
+    const issues = runProgram(abap);
+    expect(issues.length).to.equals(1);
+  });
+
+  it("program, class definition not found, two methods should give single error", () => {
+    const abap = "CLASS lcl_foobar IMPLEMENTATION.\n" +
+      "  METHOD moo.\n" +
+      "  ENDMETHOD.\n" +
+      "  METHOD bar.\n" +
+      "  ENDMETHOD.\n" +
+      "ENDCLASS.\n";
+    const issues = runProgram(abap);
+    expect(issues.length).to.equals(1);
+  });
+
+  it("locals impl, class definition, one method", () => {
+    const def = "CLASS lcl_foobar DEFINITION.\n" +
+      "  PUBLIC SECTION.\n" +
+      "    METHODS: hello IMPORTING moo TYPE string.\n" +
+      "ENDCLASS.\n";
+    const impl = "CLASS lcl_foobar IMPLEMENTATION.\n" +
+      "  METHOD hello.\n" +
+      "    WRITE moo.\n" +
+      "  ENDMETHOD.\n" +
+      "ENDCLASS.\n";
+    const issues = runMulti([
+      {filename: "zcl_sdfsdf.clas.locals_def.abap", contents: def},
+      {filename: "zcl_sdfsdf.clas.locals_imp.abap", contents: impl}]);
+    expect(issues.length).to.equals(0);
+  });
+
+  it("locals impl, error descriptions, double error", () => {
+    const def =
+      "CLASS lcl_foobar DEFINITION.\n" +
+      "  PUBLIC SECTION.\n" +
+      "ENDCLASS.\n";
+    const impl = "CLASS lcl_foobar IMPLEMENTATION.\n" +
+      "  METHOD method1.\n" +
+      "  ENDMETHOD.\n" +
+      "  METHOD method2.\n" +
+      "  ENDMETHOD.\n" +
+      "ENDCLASS.\n";
+    const issues = runMulti([
+      {filename: "zcl_sdfsdf.clas.locals_def.abap", contents: def},
+      {filename: "zcl_sdfsdf.clas.locals_imp.abap", contents: impl}]);
+    expect(issues.length).to.equals(2);
+    expect(issues[0].getMessage()).to.contain("method1");
+    expect(issues[1].getMessage()).to.contain("method2");
+  });
+
+  it("locals impl, interface", () => {
+    const def = "INTERFACE lif_foobar.\n" +
+      "  METHODS: moo.\n" +
+      "ENDINTERFACE.\n" +
+      "CLASS lcl_foobar DEFINITION.\n" +
+      "  PUBLIC SECTION.\n" +
+      "    INTERFACES lif_foobar.\n" +
+      "ENDCLASS.\n";
+    const impl = "CLASS lcl_foobar IMPLEMENTATION.\n" +
+      "  METHOD lif_foobar~moo.\n" +
+      "  ENDMETHOD.\n" +
+      "ENDCLASS.\n";
+    const issues = runMulti([
+      {filename: "zcl_sdfsdf.clas.locals_def.abap", contents: def},
+      {filename: "zcl_sdfsdf.clas.locals_imp.abap", contents: impl}]);
+    expect(issues.length).to.equals(0);
+  });
+
+  it("program, local superclass not found", () => {
+    const abap =
+      "CLASS lcl_class DEFINITION INHERITING FROM lcl_base.\n" +
+      "ENDCLASS.\n" +
+      "CLASS lcl_class IMPLEMENTATION.\n" +
+      "ENDCLASS.\n";
+    const issues = runProgram(abap);
+    expect(issues.length).to.equals(1);
+  });
+
+  it("program, local superclass found", () => {
+    const abap =
+      "CLASS lcl_base DEFINITION.\n" +
+      "ENDCLASS.\n" +
+      "CLASS lcl_base IMPLEMENTATION.\n" +
+      "ENDCLASS.\n" +
+      "CLASS lcl_class DEFINITION INHERITING FROM lcl_base.\n" +
+      "ENDCLASS.\n" +
+      "CLASS lcl_class IMPLEMENTATION.\n" +
+      "ENDCLASS.\n";
+    const issues = runProgram(abap);
+    expect(issues.length).to.equals(0);
+  });
+
   it("program, READ TABLE", () => {
 // todo, this code is not syntactically correct
     const abap = "DATA lt_map TYPE STANDARD TABLE OF string.\n" +
@@ -247,10 +350,22 @@ describe("Check Variables", () => {
   });
 */
 
-  it("program, SELECT, database table not found", () => {
+  it("program, SELECT, database table not found, error", () => {
     const abap = "SELECT SINGLE * FROM zfoobar INTO @DATA(ls_data).";
     const issues = runProgram(abap);
     expect(issues.length).to.equals(1);
+  });
+
+  it("program, SELECT, database table not found, no error", () => {
+    const abap = "SELECT SINGLE * FROM something INTO @DATA(ls_data).";
+    const issues = runProgram(abap);
+    expect(issues.length).to.equals(0);
+  });
+
+  it("program, SELECT, database table not found, no error", () => {
+    const abap = "SELECT SINGLE * FROM something INTO @DATA(ls_data) WHERE moo = loo.";
+    const issues = runProgram(abap);
+    expect(issues.length).to.equals(0);
   });
 
   it("program, component after call", () => {
@@ -294,6 +409,20 @@ describe("Check Variables", () => {
       "ENDCLASS.";
     const issues = runClass(abap);
     expect(issues.length).to.equals(0);
+  });
+
+  it("class, simple, one error for method not found", () => {
+    const abap = "CLASS zcl_foobar DEFINITION PUBLIC FINAL CREATE PUBLIC.\n" +
+      "  PUBLIC SECTION.\n" +
+      "    METHODS hello.\n" +
+      "ENDCLASS.\n" +
+      "CLASS zcl_foobar IMPLEMENTATION.\n" +
+      "  METHOD helllloooo.\n" +
+      "    WRITE moo.\n" +
+      "  ENDMETHOD.\n" +
+      "ENDCLASS.";
+    const issues = runClass(abap);
+    expect(issues.length).to.equals(1);
   });
 
   it("class, variable foobar not found", () => {
@@ -353,7 +482,7 @@ describe("Check Variables", () => {
       "  ENDMETHOD.\n" +
       "ENDCLASS.";
     const issues = runClass(abap);
-    expect(issues.length).to.equals(2);
+    expect(issues.length).to.equals(1);
   });
 
   it("class, attribute", () => {
@@ -694,6 +823,95 @@ describe("Check Variables", () => {
       "INTERFACE zif_foobar2 PUBLIC.\n" +
       "  DATA boo TYPE c LENGTH 1.\n" +
       "ENDINTERFACE.";
+    const issues = runMulti([
+      {filename: "zcl_foobar.clas.abap", contents: clas},
+      {filename: "zif_foobar2.intf.abap", contents: intf}]);
+    expect(issues.length).to.equals(0);
+  });
+
+  it("CREATE DATA string", () => {
+    const abap = "DATA foo TYPE c.\n" +
+      "CREATE DATA foo TYPE string.\n";
+    const issues = runProgram(abap);
+    expect(issues.length).to.equals(0);
+  });
+
+  it("FORMAT INTENSIFIED OFF.", () => {
+    const abap = "FORMAT INTENSIFIED OFF.\n";
+    const issues = runProgram(abap);
+    expect(issues.length).to.equals(0);
+  });
+
+  it("FILTER", () => {
+    const abap = "DATA cells TYPE c.\n" +
+      "DATA(result) = lines( FILTER #(\n" +
+      "  cells USING KEY key_alive\n" +
+      "  WHERE alive = abap_true ) ).\n";
+    const issues = runProgram(abap);
+    expect(issues.length).to.equals(0);
+  });
+
+  it("event handler parameter", () => {
+    const abap = "CLASS zcl_moo DEFINITION CREATE PUBLIC.\n" +
+      "  PUBLIC SECTION.\n" +
+      "    METHODS double_click\n" +
+      "      FOR EVENT double_click OF cl_salv_events_table\n" +
+      "      IMPORTING !row !column.\n" +
+      "ENDCLASS.\n" +
+      "CLASS zcl_moo IMPLEMENTATION.\n" +
+      "  METHOD double_click.\n" +
+      "    WRITE row.\n" +
+      "  ENDMETHOD.\n" +
+      "ENDCLASS.";
+    const issues = runClass(abap);
+    expect(issues.length).to.equals(0);
+  });
+
+  it("program, global constant", () => {
+    const abap = "WRITE hello_world.\n";
+    const issues = runProgram(abap, ["hello_world"]);
+    expect(issues.length).to.equals(0);
+  });
+
+  it("class implementing interface, aliased implementation", () => {
+    const intf =
+      "INTERFACE zif_foobar2 PUBLIC.\n" +
+      "  METHODS method1 IMPORTING foo TYPE i.\n" +
+      "ENDINTERFACE.";
+    const clas =
+      "CLASS zcl_foobar DEFINITION PUBLIC FINAL CREATE PUBLIC.\n" +
+      "  PUBLIC SECTION.\n" +
+      "    INTERFACES zif_foobar2.\n" +
+      "    ALIASES method1 FOR zif_foobar2~method1.\n" +
+      "ENDCLASS.\n" +
+      "CLASS ZCL_FOOBAR IMPLEMENTATION.\n" +
+      "  METHOD method1.\n" +
+      "    WRITE foo.\n" +
+      "  ENDMETHOD.\n" +
+      "ENDCLASS.\n";
+    const issues = runMulti([
+      {filename: "zcl_foobar.clas.abap", contents: clas},
+      {filename: "zif_foobar2.intf.abap", contents: intf}]);
+    expect(issues.length).to.equals(0);
+  });
+
+  it("class implementing interface, aliased attribute", () => {
+    const intf =
+      "INTERFACE zif_foobar2 PUBLIC.\n" +
+      "  DATA: bar TYPE string.\n" +
+      "  METHODS method1.\n" +
+      "ENDINTERFACE.";
+    const clas =
+      "CLASS zcl_foobar DEFINITION PUBLIC FINAL CREATE PUBLIC.\n" +
+      "  PUBLIC SECTION.\n" +
+      "    INTERFACES zif_foobar2.\n" +
+      "    ALIASES foo FOR zif_foobar2~bar.\n" +
+      "ENDCLASS.\n" +
+      "CLASS ZCL_FOOBAR IMPLEMENTATION.\n" +
+      "  METHOD zif_foobar2~method1.\n" +
+      "    WRITE foo.\n" +
+      "  ENDMETHOD.\n" +
+      "ENDCLASS.\n";
     const issues = runMulti([
       {filename: "zcl_foobar.clas.abap", contents: clas},
       {filename: "zif_foobar2.intf.abap", contents: intf}]);

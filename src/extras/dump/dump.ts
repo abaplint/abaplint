@@ -40,7 +40,7 @@ export class Dump {
     for (const m of methods.getAll()) {
       ret.push({
         name: m.getName(),
-        scope: m.getScope(),
+        visibility: m.getVisibility(),
         parameters: this.parameters(m.getParameters()),
       });
     }
@@ -69,11 +69,11 @@ export class Dump {
   public classAtribute(attr: Types.ClassAttribute): any {
     return {
       name: attr.getName(),
-      scope: attr.getScope(),
+      visibility: attr.getVisibility(),
     };
   }
 
-  public attributes(attributes: Types.ClassAttributes | undefined): any {
+  public attributes(attributes: Types.Attributes | undefined): any {
     if (attributes === undefined) {
       return undefined;
     }

@@ -1,4 +1,4 @@
-export enum Scope {
+export enum Visibility {
   Private = 1,
   Protected,
   Public,

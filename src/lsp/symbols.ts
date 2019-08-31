@@ -2,7 +2,7 @@ import * as LServer from "vscode-languageserver-protocol";
 import {Registry} from "../registry";
 import {ABAPFile} from "../files";
 import {Identifier} from "../abap/types/_identifier";
-import {ClassAttributes, MethodDefinitions, MethodImplementation} from "../abap/types";
+import {Attributes, MethodDefinitions, MethodImplementation} from "../abap/types";
 
 export class Symbols {
 
@@ -19,7 +19,7 @@ export class Symbols {
   }
 
   private static selectionRange(identifier: Identifier): LServer.Range {
-    const pos = identifier.getPosition();
+    const pos = identifier.getStart();
     const str = identifier.getName();
     return LServer.Range.create(pos.getRow() - 1, pos.getCol() - 1, pos.getRow() - 1, pos.getCol() - 1 + str.length);
   }
@@ -81,7 +81,7 @@ export class Symbols {
     return ret;
   }
 
-  private static outputClassAttributes(attr: ClassAttributes | undefined): LServer.DocumentSymbol[] {
+  private static outputClassAttributes(attr: Attributes | undefined): LServer.DocumentSymbol[] {
     if (attr === undefined) {
       return [];
     }

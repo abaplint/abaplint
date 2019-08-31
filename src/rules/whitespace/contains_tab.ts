@@ -32,8 +32,15 @@ export class ContainsTab extends ABAPRule {
 
     const lines = file.getRaw().split("\n");
     for (let line = 0; line < lines.length; line++) {
-      if (/\t/.test(lines[line])) {
-        const issue = new Issue({file, message: this.getDescription(), key: this.getKey(), start: new Position(line + 1, 1)});
+      const index = lines[line].indexOf("\t");
+      if (index >= 0) {
+        const issue = new Issue({
+          file,
+          message: this.getDescription(),
+          key: this.getKey(),
+          start: new Position(line + 1, index + 1),
+          end: new Position(line + 1, index + 2),
+        });
         issues.push(issue);
       }
     }

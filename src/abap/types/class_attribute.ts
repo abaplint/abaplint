@@ -1,29 +1,16 @@
-import * as Statements from "../statements";
-import * as Expressions from "../expressions";
-import {Scope} from "./scope";
-import {StatementNode} from "../nodes";
-import {TypedIdentifier} from "./_typed_identifier";
+import {Visibility} from "./visibility";
+import {Identifier} from "./_identifier";
+import {Token} from "../tokens/_token";
 
-export class ClassAttribute extends TypedIdentifier {
+export class ClassAttribute extends Identifier {
+  private visibility: Visibility;
   private scope: Scope;
   private type: string | undefined;
 //  private readOnly: boolean;
 
-  constructor(node: StatementNode, scope: Scope) {
-    if (!(node.get() instanceof Statements.Data)
-        && !(node.get() instanceof Statements.DataBegin)
-        && !(node.get() instanceof Statements.ClassData)
-        && !(node.get() instanceof Statements.ClassDataBegin)) {
-      throw new Error("ClassAttribute, unexpected node, 1");
-    }
-    const found = node.findFirstExpression(Expressions.NamespaceSimpleName);
-    if (found === undefined) {
-      throw new Error("ClassAttribute, unexpected node, 2");
-    }
-    const token = found.getFirstToken();
-
-    super(token, node);
-    this.scope = scope;
+  constructor(token: Token, visibility: Visibility) {
+    super(token);
+    this.visibility = visibility;
 //    this.readOnly = undefined;
 
     const foundType = node.findFirstExpression(Expressions.Type);
@@ -35,8 +22,8 @@ export class ClassAttribute extends TypedIdentifier {
     }
   }
 
-  public getScope() {
-    return this.scope;
+  public getVisibility() {
+    return this.visibility;
   }
 
   public getType() {

@@ -59,6 +59,9 @@ export class MethodParameterNames implements IRule {
           continue;
         }
         for (const method of definitions.getAll()) {
+          if (method.isEventHandler()) {
+            continue;
+          }
           ret = ret.concat(this.checkMethod(method, file));
         }
       }
@@ -102,7 +105,12 @@ export class MethodParameterNames implements IRule {
       }
       const message = "Bad method parameter name \"" + name + "\" expected \"" + expected + "/i\"";
 // todo, find the right file
-      const issue = new Issue({file, message, key: this.getKey(), start: param.getPosition()});
+      const issue = new Issue({
+        file,
+        message,
+        key: this.getKey(),
+        start: param.getStart(),
+        end: param.getEnd()});
       ret.push(issue);
     }
 

@@ -1,7 +1,6 @@
 import {Statement} from "./_statement";
-import {verNot, str, seq, alt, opt, IStatementRunnable, regex, altPrio} from "../combi";
+import {str, seq, alt, opt, IStatementRunnable, regex, altPrio} from "../combi";
 import {FieldSymbol, FieldSub, Dynamic, FieldLength, FieldOffset} from "../expressions";
-import {Version} from "../../version";
 
 export class At extends Statement {
 
@@ -16,7 +15,7 @@ export class At extends Statement {
 
     const ret = seq(str("AT"), altPrio(str("FIRST"), str("LAST"), atNew, atEnd, group));
 
-    return verNot(Version.Cloud, ret);
+    return ret;
   }
 
 }

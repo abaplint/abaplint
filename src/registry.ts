@@ -30,6 +30,7 @@ export class Registry {
   private macros: string[] = [];
   private objects: IObject[] = [];
   private issues: Issue[] = [];
+  private dependencies: string[] = [];
 
   constructor(conf?: Config) {
     this.conf = conf ? conf : Config.getDefault();
@@ -62,6 +63,7 @@ export class Registry {
 // todo, the config can be changed outside of this setConfig method, how to handle?
 // or alternatively not handle, just consider everything as dirty?
 // or have a checksum of the config and dirty on a different level?
+// will probably make config immutable
     this.setDirty();
     for (const obj of this.getObjects()) {
       obj.setDirty();
@@ -126,9 +128,19 @@ export class Registry {
     return this;
   }
 
+// todo: methods to add/remove deps
+// todo: add unit tests
+  public addDependencies(files: IFile[]): Registry {
+    for (const f of files) {
+      this.dependencies.push(f.getFilename());
+    }
+    return this.addFiles(files);
+  }
+
   public setDirty() {
     this.dirty = true;
     this.issues = [];
+    this.macros = [];
   }
 
   public isDirty(): boolean {
@@ -147,6 +159,7 @@ export class Registry {
     return undefined;
   }
 
+// called from vscode plugin
   public findIssuesFile(file: IFile): Issue[] {
     const obj = this.findObjectForFile(file);
     if (obj === undefined) {
@@ -159,6 +172,10 @@ export class Registry {
     if (this.isDirty()) {
       this.parse(progress);
     }
+    return this.runRules(progress, iobj);
+  }
+
+  private runRules(progress?: IProgress, iobj?: IObject): Issue[] {
     progress = progress ? progress : new NoProgress();
 
     let issues = this.issues.slice(0);
@@ -171,7 +188,7 @@ export class Registry {
     for (const obj of objects) {
       progress.tick({object: obj.getType() + " " + obj.getName()});
 
-      if (skipLogic.skip(obj)) {
+      if (skipLogic.skip(obj) || this.dependencies.includes(obj.getFiles()[0].getFilename())) {
         continue;
       }
 
@@ -224,16 +241,16 @@ export class Registry {
     const objects = this.getABAPObjects();
 
     pro.set(objects.length, ":percent - :elapseds - Lexing and parsing(" + versionToText(this.conf.getVersion()) + ") - :object");
-    objects.forEach((obj) => {
+    for (const obj of objects) {
       pro.tick({object: obj.getType() + " " + obj.getName()});
       obj.parseFirstPass(this.conf.getVersion(), this);
-    });
+    }
 
     pro.set(objects.length, ":percent - :elapseds - Second pass - :object");
-    objects.forEach((obj) => {
+    for (const obj of objects) {
       pro.tick({object: obj.getType() + " " + obj.getName()});
       this.issues = this.issues.concat(obj.parseSecondPass(this));
-    });
+    }
 
     this.dirty = false;
 
@@ -249,7 +266,8 @@ export class Registry {
   }
 
   public isMacro(name: string): boolean {
-    for (const mac of this.macros) {
+    const macros = this.macros.concat(this.getConfig().getSyntaxSetttings().globalMacros);
+    for (const mac of macros) {
       if (mac === name.toUpperCase()) {
         return true;
       }

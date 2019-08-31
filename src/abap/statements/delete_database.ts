@@ -1,6 +1,6 @@
 import {Statement} from "./_statement";
 import {str, seq, alt, opt, IStatementRunnable} from "../combi";
-import {SQLSource, Dynamic, SQLCond, DatabaseTable} from "../expressions";
+import {Dynamic, SQLCond, DatabaseTable, SQLSourceSimple} from "../expressions";
 
 export class DeleteDatabase extends Statement {
 
@@ -18,7 +18,7 @@ export class DeleteDatabase extends Statement {
                       opt(connection),
                       str("FROM"),
                       opt(str("TABLE")),
-                      new SQLSource());
+                      new SQLSourceSimple());
 
     const ret = seq(str("DELETE"), alt(from, table));
 

@@ -23,6 +23,9 @@ export class Issue {
     if (!data.start) {
       this.start = new Position(1, 1);
     } else {
+      if (data.start.getCol() < 1) {
+        throw new Error("issue, row < 1");
+      }
       this.start = data.start;
     }
 

@@ -1,6 +1,5 @@
 import {Position} from "../../position";
 
-// todo, should this be an interface instead?
 export abstract class Token {
   private pos: Position;
   private str: string;

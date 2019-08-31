@@ -3,7 +3,7 @@ import {StructureNode} from "../../abap/nodes";
 import {ClassDefinition} from "../../abap/structures/class_definition";
 import * as Structures from "../../abap/structures";
 import {MethodDef} from "../../abap/statements";
-import {Scope} from "./scope";
+import {Visibility} from "./visibility";
 
 export class MethodDefinitions {
   private pri: MethodDefinition[];
@@ -43,7 +43,7 @@ export class MethodDefinitions {
     if (pri) {
       const defs = pri.findAllStatements(MethodDef);
       for (const def of defs) {
-        this.pri.push(new MethodDefinition(def, Scope.Private));
+        this.pri.push(new MethodDefinition(def, Visibility.Private));
       }
     }
 
@@ -51,7 +51,7 @@ export class MethodDefinitions {
     if (pro) {
       const defs = pro.findAllStatements(MethodDef);
       for (const def of defs) {
-        this.pro.push(new MethodDefinition(def, Scope.Protected));
+        this.pro.push(new MethodDefinition(def, Visibility.Protected));
       }
     }
 
@@ -59,7 +59,7 @@ export class MethodDefinitions {
     if (pub) {
       const defs = pub.findAllStatements(MethodDef);
       for (const def of defs) {
-        this.pub.push(new MethodDefinition(def, Scope.Public));
+        this.pub.push(new MethodDefinition(def, Visibility.Public));
       }
     }
   }

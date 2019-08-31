@@ -3,7 +3,7 @@ import {BasicRuleConfig} from "./_basic_rule_config";
 import {IRule} from "./_irule";
 import {IObject} from "../objects/_iobject";
 import {Class} from "../objects";
-import {Scope} from "../abap/types";
+import {Visibility} from "../abap/types";
 
 export class ConstructorVisibilityPublicConf extends BasicRuleConfig {
 }
@@ -46,10 +46,10 @@ export class ConstructorVisibilityPublic implements IRule {
 
     for (const method of methods.getAll()) {
       if (method.getName().toUpperCase() === "CONSTRUCTOR"
-          && method.getScope() !== Scope.Public) {
+          && method.getVisibility() !== Visibility.Public) {
         const message = this.getDescription();
         issues.push(new Issue({file: obj.getFiles()[0],
-          message, key: this.getKey(), start: method.getPosition()}));
+          message, key: this.getKey(), start: method.getStart()}));
       }
     }
 

@@ -5,7 +5,7 @@ import {ABAPFile} from "../files";
 import {BasicRuleConfig} from "./_basic_rule_config";
 
 export class PreferredCompareOperatorConf extends BasicRuleConfig {
-  public badOperators = ["EQ", "><", "NE", "GE", "GT", "LT", "LE"];
+  public badOperators: string[] = ["EQ", "><", "NE", "GE", "GT", "LT", "LE"];
 }
 
 export class PreferredCompareOperator extends ABAPRule {
@@ -33,7 +33,13 @@ export class PreferredCompareOperator extends ABAPRule {
       const token = op.getLastToken();
       if (this.conf.badOperators.indexOf(token.getStr()) >= 0) {
         const message = "Compare operator " + token.getStr() + " not preferred";
-        const issue = new Issue({file, message, key: this.getKey(), start: token.getStart()});
+        const issue = new Issue({
+          file,
+          message,
+          key: this.getKey(),
+          start: token.getStart(),
+          end: token.getEnd(),
+        });
         issues.push(issue);
       }
     }

@@ -7,9 +7,9 @@ import {Token} from "../../abap/tokens/_token";
 import {ParenLeftW, Comment, WParenRightW, WParenRight, StringTemplate} from "../../abap/tokens";
 
 export class DoubleSpaceConf extends BasicRuleConfig {
-  public keywords = true;
-  public startParen = true;
-  public endParen = true;
+  public keywords: boolean = true;
+  public startParen: boolean = true;
+  public endParen: boolean = true;
 }
 
 export class DoubleSpace extends ABAPRule {

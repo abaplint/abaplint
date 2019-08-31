@@ -3,49 +3,69 @@ import {Artifacts} from "./artifacts";
 import {IRule} from "./rules/_irule";
 
 export interface IGlobalConfig {
-  version: string;
+  files: string;
   skipGeneratedGatewayClasses: boolean;
   skipGeneratedPersistentClasses: boolean;
   skipGeneratedFunctionGroups: boolean;
   applyUnspecifiedRules: boolean;
 }
 
+export interface IDependency {
+  url?: string;
+  folder?: string;
+  files: string;
+}
+
+export interface ISyntaxSettings {
+  version: string;
+  errorNamespace: string;
+  globalConstants: string[];
+  globalMacros: string[];
+}
+
 export interface IConfig {
   global: IGlobalConfig;
+  dependencies: IDependency[];
+  syntax: ISyntaxSettings;
   rules: any;
 }
 
 export class Config {
 
-  private static defaultVersion = Version.v753;
+  private static defaultVersion = Version.v755;
   private config: IConfig;
 
   public static getDefault(): Config {
-    const defaults: string[] = [];
+    const rules: any = {};
 
     const sorted = Artifacts.getRules().sort((a, b) => { return a.getKey().localeCompare(b.getKey()); });
     for (const rule of sorted) {
-      defaults.push("\"" + rule.getKey() + "\": " + JSON.stringify(rule.getConfig()));
+      rules[rule.getKey()] = rule.getConfig();
     }
 
-    const global = this.getGlobalDefault();
-
-// todo, use real object with index signature instead of "defaults"
-    const json = "{" +
-      "\"global\": " + JSON.stringify(global) + ", " +
-      "\"rules\": {" + defaults.join(", ") + "}}";
-    const conf = new Config(json);
-    return conf;
-  }
-
-  private static getGlobalDefault(): IGlobalConfig {
-    return {
-      version: versionToText(Config.defaultVersion),
-      skipGeneratedGatewayClasses: true,
-      skipGeneratedPersistentClasses: true,
-      skipGeneratedFunctionGroups: true,
-      applyUnspecifiedRules: true,
+    const config: IConfig = {
+      global: {
+        files: "/src/**/*.*",
+        skipGeneratedGatewayClasses: true,
+        skipGeneratedPersistentClasses: true,
+        skipGeneratedFunctionGroups: true,
+        applyUnspecifiedRules: true,
+      },
+      dependencies: [{
+        url: "https://github.com/abaplint/deps",
+        folder: "/deps",
+        files: "/src/**/*.*",
+      }],
+      syntax: {
+        version: versionToText(Config.defaultVersion),
+        errorNamespace: "^(Z|Y)",
+        globalConstants: [],
+        globalMacros: [],
+      },
+      rules: rules,
     };
+
+    return new Config(JSON.stringify(config));
   }
 
   public getEnabledRules(): IRule[] {
@@ -72,7 +92,10 @@ export class Config {
     this.config = JSON.parse(json);
 
     if (this.config.global === undefined) {
-      this.config.global = Config.getGlobalDefault();
+      this.config.global = Config.getDefault().getGlobal();
+    }
+    if (this.config.syntax === undefined) {
+      this.config.syntax = Config.getDefault().getSyntaxSetttings();
     }
   }
 
@@ -94,18 +117,22 @@ export class Config {
     return this.config.global;
   }
 
+  public getSyntaxSetttings(): ISyntaxSettings {
+    return this.config.syntax;
+  }
+
   public getVersion(): Version {
-    if (this.config.global === undefined || this.config.global.version === undefined) {
+    if (this.config.global === undefined || this.config.syntax.version === undefined) {
       return Config.defaultVersion;
     }
-    return textToVersion(this.config.global.version);
+    return textToVersion(this.config.syntax.version);
   }
 
   public setVersion(ver: Version | undefined): Config {
     if (ver === undefined) {
       return this;
     }
-    this.config.global.version = versionToText(ver);
+    this.config.syntax.version = versionToText(ver);
     return this;
   }
 

@@ -33,7 +33,7 @@ export class WhitespaceEnd extends ABAPRule {
     const rows = file.getRawRows();
 
     for (let i = 0; i < rows.length; i++) {
-      if (/.* $/.test(rows[i]) === true) {
+      if (rows[i].endsWith(" ")) {
         const issue = new Issue({file, message: this.getDescription(), key: this.getKey(), start: new Position(i + 1, 1)});
         issues.push(issue);
       }

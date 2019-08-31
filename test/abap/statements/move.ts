@@ -73,12 +73,27 @@ const tests = [
   "  'foo' && 'foo' && 'foo' && 'foo' && 'foo' && 'foo' && 'foo' &&\n" +
   "  'foo' && 'foo' && 'foo' && 'foo' && 'foo' && 'foo' && 'foo'.",
 
+  "ls_extension = CORRESPONDING #( ls_line_item MAPPING /abc/comp_a = comp_a\n" +
+  "  /abc/comp_b = comp_b\n" +
+  "  /abc/comp_c = comp_c ).",
+
+  "result = COND #(\n" +
+  "  WHEN constant_value IS NOT INITIAL\n" +
+  "  THEN `blabla`\n" +
+  "  ELSE THROW cx_with_parameter( id ) ).",
+
   "MOVE foo(+100) TO bar.",
   "gs_structure-field$01 = 'val'.",
   "foo = bar ##called.",
   "##called foo = bar.",
   "DATA(ints) = NEW tyt_integer( ( 1 ) ( 2 ) ( 3 ) ).",
   "DATA(lt_list) = VALUE mo_out->ty_list_tt( ( 1 ) ).",
+  "CAST cl_class( x )->property = blah.",
+  "CAST cl_class( x )->property-component = blah.",
+  "CAST cl_class( x->y->z )->property-component = blah.",
+  "CAST cl_class( x->y->z )->property-component = cl_other_class=>constant.",
+  "NEW zcl_foo( )->prop = bar.",
+  "boo = VALUE #( BASE moo ( LINES OF <foo>-bar ) ).",
 ];
 
 statementType(tests, "MOVE", Statements.Move);
@@ -193,10 +208,10 @@ const versions = [
     "option = 'NE' ( low = 'VAL3' )\n" +
     "( low = 'VAL4' ) ).", ver: Version.v740sp02},
 
-  {abap: "lv_foo += 2.", ver: Version.Cloud},
-  {abap: "lv_foo -= 2.", ver: Version.Cloud},
-  {abap: "lv_foo /= 2.", ver: Version.Cloud},
-  {abap: "lv_foo *= 2.", ver: Version.Cloud},
+  {abap: "lv_foo += 2.", ver: Version.v755},
+  {abap: "lv_foo -= 2.", ver: Version.v755},
+  {abap: "lv_foo /= 2.", ver: Version.v755},
+  {abap: "lv_foo *= 2.", ver: Version.v755},
 
   {abap: "DATA(mode) = SWITCH edit_mode( id_edit_mode\n" +
     "  WHEN 'U' THEN asdf\n" +

@@ -55,12 +55,12 @@ export class SuperclassFinal extends ABAPRule {
       }
       if (found === undefined) {
         const message = "Super class \"" + sup + "\" not found";
-        const issue = new Issue({file, message, key: this.getKey(), start: definition.getPosition()});
+        const issue = new Issue({file, message, key: this.getKey(), start: definition.getStart()});
         output.push(issue);
         continue;
       }
       if (found.isFinal()) {
-        const issue = new Issue({file, message: this.getDescription(), key: this.getKey(), start: definition.getPosition()});
+        const issue = new Issue({file, message: this.getDescription(), key: this.getKey(), start: definition.getStart()});
         output.push(issue);
       }
     }

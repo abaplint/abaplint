@@ -1,6 +1,5 @@
 import {ABAPObject} from "./_abap_object";
 import {InterfaceDefinition} from "../abap/types";
-import {ABAPFile} from "../files";
 import {IFile} from "../files/_ifile";
 
 export class Interface extends ABAPObject {
@@ -10,7 +9,7 @@ export class Interface extends ABAPObject {
   }
 
   public getDefinition(): InterfaceDefinition | undefined {
-    const main = this.getMain();
+    const main = this.getMainABAPFile();
     if (!main) {
       return undefined;
     }
@@ -33,14 +32,6 @@ export class Interface extends ABAPObject {
     } else {
       return false;
     }
-  }
-
-  private getMain(): ABAPFile | undefined {
-    const files = this.getABAPFiles();
-    if (files.length > 1) {
-      throw new Error("interface.ts, did not expect multiple parsed files");
-    }
-    return files[0];
   }
 
   public getXMLFile(): IFile | undefined {

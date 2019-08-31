@@ -8,6 +8,8 @@ const tests = [
   "MODIFY zfoo FROM TABLE mt_mat.",
   "MODIFY (lv_table) CONNECTION (lv_db) FROM TABLE it_data.",
   "MODIFY table CONNECTION lv_con FROM TABLE lt_data.",
+  "MODIFY /abc/tablea FROM @is_tablea.",
+  "MODIFY /abc/tableb FROM TABLE @it_tableb.",
 ];
 
 statementType(tests, "MODIFY database", Statements.ModifyDatabase);

@@ -3,7 +3,7 @@ import {StructureNode} from "../nodes";
 import * as Structures from "../../abap/structures";
 import * as Statements from "../../abap/statements";
 import * as Expressions from "../../abap/expressions";
-import {MethodDefinition, Scope, ClassAttributes} from ".";
+import {MethodDefinition, Visibility, Attributes} from ".";
 
 export class InterfaceDefinition extends Identifier {
   private node: StructureNode;
@@ -14,21 +14,21 @@ export class InterfaceDefinition extends Identifier {
     }
 
     const name = node.findFirstStatement(Statements.Interface)!.findFirstExpression(Expressions.InterfaceName)!.getFirstToken();
-    super(name, node);
+    super(name);
 
     this.node = node;
   }
 
-  public getAttributes(): ClassAttributes | undefined {
+  public getAttributes(): Attributes | undefined {
     if (!this.node) { return undefined; }
-    return new ClassAttributes(this.node);
+    return new Attributes(this.node);
   }
 
   public getMethodDefinitions(): MethodDefinition[] {
     const ret = [];
     const defs = this.node.findAllStatements(Statements.MethodDef);
     for (const def of defs) {
-      ret.push(new MethodDefinition(def, Scope.Public));
+      ret.push(new MethodDefinition(def, Visibility.Public));
     }
     return ret;
   }

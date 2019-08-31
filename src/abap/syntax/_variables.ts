@@ -1,46 +1,56 @@
-import {TypedIdentifier} from "../types/_typed_identifier";
+import {Identifier} from "../types/_identifier";
+
+interface IVar {
+  name: string;
+  identifier?: Identifier;
+}
 
 export class Variables {
-  private scopes: {name: string; ids: TypedIdentifier[]; other: string[] }[];
+  private scopes: {name: string; vars: IVar[]}[];
 
   constructor() {
     this.scopes = [];
     this.pushScope("_global");
   }
 
-  public add(identifier: TypedIdentifier) {
-    this.scopes[this.scopes.length - 1].ids.push(identifier);
+  public addIdentifier(identifier: Identifier) {
+    this.scopes[this.scopes.length - 1].vars.push({name: identifier.getName(), identifier});
   }
 
-  public addOther(name: string) {
-    this.scopes[this.scopes.length - 1].other.push(name);
+  public addNamedIdentifier(name: string, identifier: Identifier) {
+    this.scopes[this.scopes.length - 1].vars.push({name, identifier});
   }
 
-  public addList(identifiers: TypedIdentifier[], prefix?: string | undefined) {
+  public addName(name: string) {
+    this.scopes[this.scopes.length - 1].vars.push({name});
+  }
+
+  public addList(identifiers: Identifier[], prefix?: string | undefined) {
     for (const id of identifiers) {
       if (prefix) {
-        this.add(id.setName(prefix + id.getName()));
+        this.addNamedIdentifier(prefix + id.getName(), id);
       } else {
-        this.add(id);
+        this.addIdentifier(id);
       }
     }
   }
 
-  public getCurrentScope(): TypedIdentifier[] {
-    return this.scopes[this.scopes.length - 1].ids;
+  public getCurrentScope(): Identifier[] {
+    const ret: Identifier[] = [];
+    for (const v of this.scopes[this.scopes.length - 1].vars) {
+      if (v.identifier) {
+        ret.push(v.identifier);
+      }
+    }
+    return ret;
   }
 
-  public resolve(name: string): TypedIdentifier | string | undefined {
+  public resolve(name: string): Identifier | string | undefined {
     // todo, this should probably search the nearest first? in case there are shadowed variables?
     for (const scope of this.scopes) {
-      for (const local of scope.ids) {
-        if (local.getName().toUpperCase() === name.toUpperCase()) {
-          return local;
-        }
-      }
-      for (const local of scope.other) {
-        if (local.toUpperCase() === name.toUpperCase()) {
-          return local;
+      for (const local of scope.vars) {
+        if (local.name.toUpperCase() === name.toUpperCase()) {
+          return local.identifier ? local.identifier : local.name;
         }
       }
     }
@@ -52,7 +62,7 @@ export class Variables {
   }
 
   public pushScope(name: string): Variables {
-    this.scopes.push({name: name, ids: [], other: []});
+    this.scopes.push({name: name, vars: []});
     return this;
   }
 

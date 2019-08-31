@@ -80,7 +80,7 @@ export class Source extends Expression {
     const base = seq(str("BASE"), new Source());
 
     const tab = seq(opt(new For()),
-                    alt(plus(seq(tok(WParenLeftW), star(new Source()), tok(WParenRightW))),
+                    alt(plus(seq(tok(WParenLeftW), opt(seq(opt(str("LINES OF")), new Source())), tok(WParenRightW))),
                         plus(seq(star(fieldList), seq(tok(WParenLeftW), plus(fieldList), tok(WParenRightW))))));
 
     const strucOrTab = seq(opt(new Let()), opt(base),

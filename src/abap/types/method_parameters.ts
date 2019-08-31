@@ -1,7 +1,8 @@
 import {StatementNode} from "../../abap/nodes/statement_node";
 import {MethodDef} from "../../abap/statements/method_def";
 import {MethodParameter} from "./method_parameter";
-import {MethodDefImporting, MethodParam, MethodDefExporting, MethodDefChanging, MethodDefReturning} from "../../abap/expressions";
+import {MethodDefImporting, MethodParam, MethodDefExporting, MethodDefChanging,
+        MethodDefReturning, EventHandler, MethodParamName} from "../../abap/expressions";
 import {ExpressionNode}  from "../../abap/nodes";
 
 export class MethodParameters {
@@ -58,6 +59,13 @@ export class MethodParameters {
   }
 
   private parse(node: StatementNode): void {
+
+    const handler = node.findFirstExpression(EventHandler);
+    if (handler) {
+      for (const p of handler.findAllExpressions(MethodParamName)) {
+        this.importing.push(new MethodParameter(p));
+      }
+    }
 
     const importing = node.findFirstExpression(MethodDefImporting);
     if (importing) {

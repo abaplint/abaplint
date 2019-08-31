@@ -3,7 +3,6 @@ import * as Statements from "../../abap/statements";
 import * as Expressions from "../../abap/expressions";
 import {Identifier} from "./_identifier";
 import {StructureNode} from "../../abap/nodes";
-import {FormParameter} from "./form_parameter";
 
 export class FormDefinition extends Identifier {
   private node: StructureNode;
@@ -13,18 +12,18 @@ export class FormDefinition extends Identifier {
       throw new Error("FormDefinition, unexpected node type");
     }
     const name = node.findFirstStatement(Statements.Form)!.findFirstExpression(Expressions.FormName)!.getFirstToken();
-    super(name, node);
+    super(name);
 
     this.node = node;
   }
 
-  public getParameters(): FormParameter[] {
+  public getParameters(): Identifier[] {
     const form = this.node.findFirstStatement(Statements.Form);
     if (form === undefined) { return []; }
-    const res: FormParameter[] = [];
+    const res: Identifier[] = [];
     for (const param of form.findAllExpressions(Expressions.FormParam)) {
       const token = param.getFirstToken();
-      res.push(new FormParameter(token, param));
+      res.push(new Identifier(token));
     }
     return res;
   }

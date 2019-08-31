@@ -2,7 +2,7 @@ import {Issue} from "../../issue";
 import * as Expressions from "../expressions";
 import * as Statements from "../statements";
 import {INode} from "../nodes/_inode";
-import {TypedIdentifier} from "../types/_typed_identifier";
+import {Identifier} from "../types/_identifier";
 import {Token} from "../tokens/_token";
 import {StatementNode, ExpressionNode} from "../nodes";
 import {ABAPFile} from "../../files";
@@ -13,6 +13,7 @@ import {ObjectOriented} from "./_object_oriented";
 import {Globals} from "./_globals";
 import {Procedural} from "./_procedural";
 import {Inline} from "./_inline";
+import {Program} from "../../objects";
 
 // todo, some visualization, graphviz?
 
@@ -29,6 +30,7 @@ export class CheckVariablesLogic {
   constructor(reg: Registry, object: ABAPObject) {
     this.reg = reg;
     this.issues = [];
+
     this.object = object;
     this.variables = new Variables();
     this.oooc = new ObjectOriented(this.object, this.reg, this.variables);
@@ -37,14 +39,19 @@ export class CheckVariablesLogic {
   }
 
   public findIssues(ignoreParserError = true): Issue[] {
-    this.variables.addList(Globals.get());
+    this.variables.addList(Globals.get(this.reg.getConfig().getSyntaxSetttings().globalConstants));
+
+    if (this.object instanceof Program && this.object.isInclude()) {
+// todo, for now only main executeable program parts are checked
+      return [];
+    }
 
     for (const file of this.object.getABAPFiles()) {
       this.currentFile = file;
     // assumption: objects are parsed without parsing errors
       const structure = this.currentFile.getStructure();
       if (structure === undefined) {
-        if (ignoreParserError) {
+        if (ignoreParserError) { // todo, this is only used for testing, move the logic to testing instead
           return [];
         } else {
           throw new Error("Parser error");
@@ -57,8 +64,8 @@ export class CheckVariablesLogic {
   }
 
 // todo, this assumes no tokes are the same across files
-  public resolveToken(token: Token): TypedIdentifier | string | undefined {
-    this.variables.addList(Globals.get());
+  public resolveToken(token: Token): Identifier | string | undefined {
+    this.variables.addList(Globals.get(this.reg.getConfig().getSyntaxSetttings().globalConstants));
 
     for (const file of this.object.getABAPFiles()) {
       this.currentFile = file;
@@ -85,12 +92,16 @@ export class CheckVariablesLogic {
       message: message,
       key: "check_variables",
       start: token.getStart(),
+      end: token.getEnd(),
     }));
   }
 
-  private traverse(node: INode, search?: Token): TypedIdentifier | string | undefined {
+  private traverse(node: INode, search?: Token): Identifier | string | undefined {
     try {
-      this.inline.update(node);
+      const skip = this.inline.update(node);
+      if (skip) {
+        return undefined;
+      }
     } catch (e) {
       this.newIssue(node.getFirstToken(), e.message);
     }
@@ -117,6 +128,7 @@ export class CheckVariablesLogic {
         this.updateVariables(child);
       } catch (e) {
         this.newIssue(child.getFirstToken(), e.message);
+        break;
       }
       const resolved = this.traverse(child, search);
       if (resolved) {

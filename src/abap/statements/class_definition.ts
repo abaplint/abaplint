@@ -1,6 +1,7 @@
 import {Statement} from "./_statement";
-import {str, seq, opt, alt, per, plus, IStatementRunnable} from "../combi";
-import {ClassName, SuperClassName, Global, ClassFinal} from "../expressions";
+import {str, seq, opt, alt, per, plus, IStatementRunnable, ver} from "../combi";
+import {ClassName, SuperClassName, Global, ClassFinal, SimpleName} from "../expressions";
+import {Version} from "../../version";
 
 export class ClassDefinition extends Statement {
 
@@ -22,6 +23,7 @@ export class ClassDefinition extends Statement {
                      risk,
                      str("SHARED MEMORY ENABLED"),
                      duration,
+                     ver(Version.v755, seq(str("FOR BEHAVIOR OF"), new SimpleName())),
                      seq(opt(str("GLOBAL")), str("FRIENDS"), plus(new ClassName())));
 
     const def = seq(str("DEFINITION"), opt(blah));

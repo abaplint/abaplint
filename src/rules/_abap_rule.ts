@@ -12,7 +12,7 @@ export abstract class ABAPRule implements IRule {
   public abstract getConfig(): void;
   public abstract setConfig(conf: any): void;
 
-  public abstract runParsed(file: ABAPFile, reg: Registry, obj: IObject): Issue[];
+  public abstract runParsed(file: ABAPFile, reg: Registry, obj: ABAPObject): Issue[];
 
   public run(obj: IObject, reg: Registry) {
 

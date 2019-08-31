@@ -7,19 +7,20 @@ import * as Objects from "../objects";
 import {Position} from "../position";
 
 export class ObjectNamingConf extends BasicRuleConfig {
-  public clas = "^ZC(L|X)\\_";
-  public intf = "^ZIF\\_";
-  public prog = "^Z";
-  public fugr = "^Z";
-  public tabl = "^Z";
-  public ttyp = "^Z";
-  public dtel = "^Z";
-  public doma = "^Z";
-  public msag = "^Z";
-  public tran = "^Z";
-  public enqu = "^EZ";
-  public auth = "^Z";
-  public pinf = "^Z";
+  public clas: string = "^ZC(L|X)\\_";
+  public intf: string = "^ZIF\\_";
+  public prog: string = "^Z";
+  public fugr: string = "^Z";
+  public tabl: string = "^Z";
+  public ttyp: string = "^Z";
+  public dtel: string = "^Z";
+  public doma: string = "^Z";
+  public msag: string = "^Z";
+  public tran: string = "^Z";
+  public enqu: string = "^EZ";
+  public auth: string = "^Z";
+  public pinf: string = "^Z";
+  public idoc: string = "^Z";
 }
 
 export class ObjectNaming implements IRule {
@@ -43,7 +44,7 @@ export class ObjectNaming implements IRule {
 
   public run(obj: IObject, _reg: Registry): Issue[] {
     let message: string | undefined = undefined;
-    let pattern: string;
+    let pattern: string = "";
 
     if (obj instanceof Objects.Class) {
       pattern = this.getConfig().clas;
@@ -71,7 +72,11 @@ export class ObjectNaming implements IRule {
       pattern = this.getConfig().pinf;
     } else if (obj instanceof Objects.MessageClass) {
       pattern = this.getConfig().msag;
-    } else {
+    } else if (obj instanceof Objects.Idoc) {
+      pattern = this.getConfig().idoc;
+    }
+
+    if (pattern === "" || pattern === undefined) {
       return [];
     }
 

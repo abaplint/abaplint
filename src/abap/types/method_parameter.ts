@@ -1,20 +1,21 @@
 import {ExpressionNode} from "../../abap/nodes";
 import {MethodParam, MethodParamName, TypeName, TypeParam} from "../../abap/expressions";
-import {TypedIdentifier} from "./_typed_identifier";
+import {Identifier} from "./_identifier";
 
-export class MethodParameter extends TypedIdentifier {
+export class MethodParameter extends Identifier {
   private readonly typeName: ExpressionNode | undefined;
   private hasRefToToken: boolean;
 
   constructor(node: ExpressionNode) {
-    if (!(node.get() instanceof MethodParam)) {
-      throw new Error("MethodDefinition, expected MethodDef as part of input node");
+    if (!(node.get() instanceof MethodParam) && !(node.get() instanceof MethodParamName)) {
+      throw new Error("MethodParameter, unexpected input node");
     }
     const name = node.findFirstExpression(MethodParamName);
     if (!name) {
+      console.dir(node);
       throw new Error("method_parameter.ts, todo, handle pass by value and reference");
     }
-    super(name.getFirstToken(), node);
+    super(name.getFirstToken());
 
     const typeParam = node.findFirstExpression(TypeParam);
     if (!typeParam) {
@@ -26,7 +27,7 @@ export class MethodParameter extends TypedIdentifier {
 
   public getTypeName(): string {
     let name: string = "";
-    for(const token of this.typeName!.getAllTokens()) {
+    for (const token of this.typeName!.getAllTokens()) {
       name = name.concat(token.getStr());
     }
     return name;

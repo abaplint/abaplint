@@ -13,11 +13,16 @@ describe("LSP, symbols", () => {
   });
 
   it("Class Definition", () => {
-    const file = new MemoryFile("zfoobar.prog.abap", "CLASS lcl_foobar DEFINITION.\nENDCLASS.");
+    const abap = "REPORT zfoobar.\n" +
+      "CLASS lcl_foobar DEFINITION.\n" +
+      "ENDCLASS.\n" +
+      "CLASS lcl_foobar IMPLEMENTATION.\n" +
+      "ENDCLASS.\n";
+    const file = new MemoryFile("zfoobar.prog.abap", abap);
     const reg = new Registry().addFile(file).parse();
     expect(reg.findIssues().length).to.equal(0);
     const symbols = Symbols.find(reg, file.getFilename());
-    expect(symbols.length).to.equal(1);
+    expect(symbols.length).to.equal(2);
     expect(symbols[0].name).to.equal("lcl_foobar");
   });
 
@@ -41,7 +46,7 @@ describe("LSP, symbols", () => {
   });
 
   it("FORM Definition", () => {
-    const file = new MemoryFile("zfoobar.prog.abap", "FORM foobar.\nENDFORM.");
+    const file = new MemoryFile("zfoobar.prog.abap", "REPORT zfoobar.\nFORM foobar.\nENDFORM.");
     const reg = new Registry().addFile(file).parse();
     expect(reg.findIssues().length).to.equal(0);
     const symbols = Symbols.find(reg, file.getFilename());

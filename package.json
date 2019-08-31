@@ -1,10 +1,9 @@
 {
   "name": "abaplint",
-  "version": "1.7.10",
+  "version": "2.0.1",
   "description": "Linter for ABAP",
   "bin": {
-    "abaplint": "./abaplint",
-    "abaplint-x": "./abaplint-x"
+    "abaplint": "./abaplint"
   },
   "main": "build/src/index.js",
   "typings": "build/src/index.d.ts",
@@ -14,12 +13,12 @@
   "scripts": {
     "tslint": "tslint -c tslint.json 'src/**/*.ts' 'test/**/*.ts'",
     "compile": "tsc",
-    "postcompile": "sh version.sh",
+    "postcompile": "sh scripts/version.sh",
     "pretest": "npm run compile",
-    "test": "mocha --recursive --reporter progress \"build/test/**/*.js\"",
+    "test": "mocha --require source-map-support/register --recursive --reporter progress \"build/test/**/*.js\"",
     "posttest": "npm run tslint",
-    "prebrowserify": "tsc --target ES5 --lib es2017 --outdir build/web",
-    "browserify": "sh version.sh",
+    "prebrowserify": "tsc --target ES3 --lib es2017 --outdir build/web",
+    "browserify": "sh scripts/version.sh",
     "postbrowserify": "browserify build/web/src/index_web.js -o build/bundle.js -s abaplint",
     "uglify": "uglifyjs build/bundle.js --compress --mangle --keep-fnames -o build/bundle.js",
     "postuglify": "rm -rf build/web",
@@ -27,7 +26,10 @@
     "web.playground": "npm run uglify",
     "postweb.playground": "sh web/playground.sh",
     "web.syntax": "sh web/syntax.sh",
-    "prepublishOnly": "rm -rf build && npm run test"
+    "prepublishOnly": "rm -rf build && npm run test",
+    "preschema": "node scripts/schema.js > scripts/schema.ts",
+    "schema": "npm install --no-save ts-json-schema-generator",
+    "postschema": "./node_modules/.bin/ts-json-schema-generator --jsDoc basic --path scripts/schema.ts > scripts/schema.json"
   },
   "repository": {
     "type": "git",
@@ -48,19 +50,20 @@
   },
   "homepage": "https://abaplint.org",
   "devDependencies": {
-    "@types/chai": "^4.1.7",
+    "@types/chai": "^4.2.0",
     "@types/glob": "^7.1.1",
     "@types/minimist": "^1.2.0",
     "@types/mocha": "^5.2.7",
-    "@types/node": "^12.6.6",
+    "@types/node": "^12.7.3",
     "@types/progress": "^2.0.3",
     "browserify": "^16.0.0",
     "chai": "^4.2.0",
-    "mocha": "^6.1.4",
+    "mocha": "^6.2.0",
     "railroad-diagrams": "git+https://github.com/tabatkins/railroad-diagrams#gh-pages",
-    "tslint": "^5.18.0",
+    "source-map-support": "^0.5.13",
+    "tslint": "^5.19.0",
     "tslint-eslint-rules": "^5.4.0",
-    "typescript": "^3.5.2",
+    "typescript": "^3.6.2",
     "uglify-js": "^3.6.0"
   },
   "dependencies": {

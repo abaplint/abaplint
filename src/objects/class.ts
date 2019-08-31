@@ -1,8 +1,8 @@
 import {ABAPObject} from "./_abap_object";
 import {ClassDefinition} from "../abap/types/class_definition";
-import {ABAPFile} from "../files";
 import * as xmljs from "xml-js";
 import {IFile} from "../files/_ifile";
+import {ABAPFile} from "../files";
 
 export enum ClassCategory {
   Test = "05",
@@ -21,7 +21,7 @@ export class Class extends ABAPObject {
 
 // todo, rename to "getDefinition" ?
   public getClassDefinition(): ClassDefinition | undefined {
-    const main = this.getMainABAP();
+    const main = this.getMainABAPFile();
     if (!main) {
       return undefined;
     }
@@ -92,24 +92,18 @@ export class Class extends ABAPObject {
 
 // --------------------
 
-  private getMainABAP(): ABAPFile | undefined {
-// todo, overrride addFile instead of looping through it again?
-    const files = this.getABAPFiles();
-    for (const file of files) {
-      if (file.getFilename().match(/\.clas\.abap$/i)) {
+  public getXMLFile(): IFile | undefined {
+    for (const file of this.getFiles()) {
+      if (file.getFilename().endsWith(".clas.xml")) {
         return file;
       }
     }
-    if (files.length === 0) {
-      throw new Error("class.ts, getMain: Could not find main file, parsed empty");
-    } else {
-      throw new Error("class.ts, getMain: Could not find main file");
-    }
+    return undefined;
   }
 
-  public getXMLFile(): IFile | undefined {
-    for (const file of this.getFiles()) {
-      if (file.getFilename().match(/\.clas\.xml$/i)) {
+  public getLocalsImpFile(): ABAPFile | undefined {
+    for (const file of this.getABAPFiles()) {
+      if (file.getFilename().endsWith(".clas.locals_imp.abap")) {
         return file;
       }
     }

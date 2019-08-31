@@ -73,7 +73,7 @@ describe("Registry", () => {
   });
 
   it("Add and update", () => {
-    const file = new MemoryFile("zfoobar.prog.abap", "DATA hello.\nWRITE hello.");
+    const file = new MemoryFile("zfoobar.prog.abap", "REPORT zfoobar.\nDATA hello.\nWRITE hello.");
     const registry = new Registry().addFile(file);
     expect(registry.findIssues().length).to.equal(0);
 
@@ -99,14 +99,15 @@ describe("Registry", () => {
   it("Double parse should give the same issues, rule", () => {
     const file = new MemoryFile("zfoobar.prog.abap", "BREAK-POINT.");
     const registry = new Registry().addFile(file);
-    expect(registry.findIssues().length).to.equal(1);
-    expect(registry.findIssues().length).to.equal(1);
+    const expected = 2;
+    expect(registry.findIssues().length).to.equal(expected);
+    expect(registry.findIssues().length).to.equal(expected);
   });
 
   it("find issues for file", () => {
     const file = new MemoryFile("zfoobar.prog.abap", "BREAK-POINT.");
     const registry = new Registry().addFile(file);
-    expect(registry.findIssuesFile(file).length).to.equal(1);
+    expect(registry.findIssuesFile(file).length).to.equal(2);
   });
 
   it("find issues for unknown file", () => {

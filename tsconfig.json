@@ -14,7 +14,7 @@
         "strictFunctionTypes": true,
         "alwaysStrict": true,
         "target": "es2017",
-        "sourceMap": false
+        "sourceMap": true
         },
     "filesGlob": [
         "./**/*.ts"
