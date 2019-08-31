@@ -2,27 +2,25 @@ import {ModelABAPFile} from "./model_abapfile";
 import {FamixRepository} from "./famix_repository";
 import {MethodDefinition, Scope} from "../../abap/types";
 import {Method} from "./model/famix/Method";
-import {Class} from "./model/famix/Class";
 import {ModelClass} from "./model_class";
 import * as Structures from "../../abap/structures";
 import * as Expressions from "../../abap/expressions";
-import {Access} from "./model/famix/access";
-import {Attribute} from "./model/famix/attribute";
 import {Invocation} from "./model/famix/invocation";
-import {ExpressionNode, StructureNode} from "../../abap/nodes";
+import {StructureNode} from "../../abap/nodes";
+import {ModelChain} from "./model_chain";
 
 export class ModelMethods {
   private readonly famixMethod: Method;
   private readonly methodImplStructure: StructureNode | undefined;
   private readonly repo: FamixRepository;
-  private readonly modelClass: ModelClass;
-  private readonly modelFile: ModelABAPFile;
+  // private readonly modelClass: ModelClass;
+  // private readonly modelFile: ModelABAPFile;
 
   public constructor(repo: FamixRepository, modelFile: ModelABAPFile, modelClass: ModelClass,
                      methodDef: MethodDefinition) {
     this.repo = repo;
-    this.modelFile = modelFile;
-    this.modelClass = modelClass;
+    // this.modelFile = modelFile;
+    // this.modelClass = modelClass;
     this.famixMethod = new Method(repo);
     this.famixMethod.setName(methodDef.getName().toLowerCase());
 
@@ -110,113 +108,20 @@ export class ModelMethods {
     return undefined;
   }
 
-  // attribute access
-  // ------------------
-
-  private analyseFieldChains(fieldChain: ExpressionNode) {
-    let famixAccess: Access | undefined;
-    if (fieldChain.getFirstChild()!.get() instanceof Expressions.ClassName) {
-      if (fieldChain.getChildren().length === 3) {
-        famixAccess = this.createStaticAccess(fieldChain.getChildren()[0].getFirstToken().getStr(),
-                                              fieldChain.getChildren()[2].getFirstToken().getStr());
-      } else {
-        return;
-      }
-    } else if (fieldChain.getFirstChild()!.get() instanceof Expressions.Field) {
-      if (fieldChain.getChildren().length === 1) {
-        famixAccess = this.createLocalAccess(fieldChain.getFirstChild()!.getFirstToken().getStr());
-      } else if (fieldChain.getChildren().length === 3) {
-        if (fieldChain.getChildren()[0].getFirstToken().getStr().toLowerCase() === "me") {
-          famixAccess = this.createLocalAccess(fieldChain.getChildren()[2].getFirstToken().getStr());
-        } else if (fieldChain.getChildren()[1].getFirstToken().getStr() === "-") {
-          famixAccess = this.createLocalAccess(fieldChain.getFirstChild()!.getFirstToken().getStr());
-        } else {
-          return;
-        }
-      } else {
-        return;
-      }
-    } else {
-      return;
-    }
-    if (famixAccess) {
-      ModelABAPFile.createIndexedFileAnchor(this.repo, this.modelFile, famixAccess, fieldChain.getFirstToken().getStart(),
-                                            fieldChain.getLastToken().getEnd());
-    }
-  }
-
-  private analyseTarget(target: ExpressionNode) {
-    let famixAccess: Access | undefined;
-    if (target.getFirstChild()!.get() instanceof Expressions.ClassName) {
-      if (target.getChildren().length === 3) {
-        famixAccess = this.createStaticAccess(target.getChildren()[0].getFirstToken().getStr(),
-                                              target.getChildren()[2].getFirstToken().getStr());
-      } else {
-        return;
-      }
-    } else if (target.getFirstChild()!.get() instanceof Expressions.Field) {
-      if (target.getChildren().length === 1) {
-        famixAccess = this.createLocalAccess(target.getFirstChild()!.getFirstToken().getStr());
-      } else if ((target.getChildren().length === 3) && (target.getChildren()[1].getFirstToken().getStr() === "-")) {
-        famixAccess = this.createLocalAccess(target.getFirstChild()!.getFirstToken().getStr());
-      } else if ((target.getChildren().length === 3) && (target.getChildren()[0].getFirstToken().getStr().toLowerCase() === "me") &&
-          (target.getChildren()[1].getFirstToken().getStr() === "->")) {
-        famixAccess = this.createLocalAccess(target.getChildren()[2].getFirstToken().getStr());
-      } else {
-        return;
-      }
-    } else {
-      return;
-    }
-    if (famixAccess) {
-      ModelABAPFile.createIndexedFileAnchor(this.repo, this.modelFile, famixAccess, target.getFirstToken().getStart(),
-                                            target.getLastToken().getEnd());
-    }
-
-  }
-
-
-  private createStaticAccess(classname: string, attributeName: string): Access  | undefined {
-    let famixClass: Class;
-    if (classname.toLowerCase() === "me") {
-      famixClass = this.modelClass.getFamixClass();
-    } else {
-      famixClass = this.repo.createOrGetFamixClass(classname);
-    }
-    return this.createAccess(famixClass, attributeName);
-  }
-
-  private createLocalAccess(attributeName: string): Access  | undefined {
-    return this.createAccess(this.modelClass.getFamixClass(), attributeName);
-  }
-
-  private createAccess(famixClass: Class, attributeName: string): Access | undefined {
-    const attr = this.getAttribute(famixClass, attributeName);
-    if (attr) {
-      const famixAccess = new Access(this.repo);
-      famixAccess.setAccessor(this.famixMethod);
-      famixAccess.setVariable(attr);
-      return famixAccess;
-    }
-    return undefined;
-  }
-
-  private getAttribute(famixClass: Class, name: string): Attribute | undefined {
-    for (const attr of famixClass.getAttributes()) {
-      if (attr.getName() === name) {
-        return attr;
-      }
-    }
-    return undefined;
-  }
-
   public analyseFieldAccess() {
+    console.log("--------------------" + this.famixMethod.getName() + "---------------------");
     if (this.methodImplStructure) {
       for (const c of this.methodImplStructure.findAllExpressions(Expressions.FieldChain)) {
-        this.analyseFieldChains(c);
+        const chain = new ModelChain(c);
+        chain.toString();
       }
       for (const t of this.methodImplStructure.findAllExpressions(Expressions.Target)) {
-        this.analyseTarget(t);
+        const chain = new ModelChain(t);
+        chain.toString();
+      }
+      for (const m of this.methodImplStructure.findAllExpressions(Expressions.MethodCallChain)) {
+        const chain = new ModelChain(m);
+        chain.toString();
       }
     }
   }
