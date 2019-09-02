@@ -172,6 +172,10 @@ async function run() {
       }
     } else {
       output = Formatter.format(issues, format, loaded.length);
+      if (argv["outformat"] && argv["outfile"]) {
+        const fileContents = Formatter.format(issues, argv["outformat"], loaded.length);
+        fs.writeFileSync(argv["outfile"], fileContents, "utf-8");
+      }
     }
 
   }
