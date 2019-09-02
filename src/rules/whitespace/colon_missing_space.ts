@@ -3,6 +3,7 @@ import {ABAPRule} from "../_abap_rule";
 import {ABAPFile} from "../../files";
 import {BasicRuleConfig} from "../_basic_rule_config";
 
+/** Checks for missing spaces after colons in chained statements. */
 export class ColonMissingSpaceConf extends BasicRuleConfig {
 }
 

@@ -7,6 +7,7 @@ import {Registry} from "../registry";
 import * as Statements from "../abap/statements";
 import {ABAPObject} from "../objects/_abap_object";
 
+/** Checks for TABLES parameters in forms. */
 export class FormTablesObsoleteConf extends BasicRuleConfig {
 }
 

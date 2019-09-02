@@ -8,9 +8,13 @@ import {StructureNode} from "../abap/nodes";
 import {Token} from "../abap/tokens/_token";
 import {BasicRuleConfig} from "./_basic_rule_config";
 
+/** Allows you to enforce a pattern, such as a prefix, for local variables, constants and field symbols. */
 export class LocalVariableNamesConf extends BasicRuleConfig {
+  /** The pattern for local variable names */
   public expectedData: string = "^L._.*$";
+  /** The pattern for local constant names */
   public expectedConstant: string = "^LC_.*$";
+  /** The pattern for field symbol names */
   public expectedFS: string = "^<L._.*>$";
 }
 

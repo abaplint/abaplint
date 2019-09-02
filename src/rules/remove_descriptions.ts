@@ -8,6 +8,7 @@ import {xmlToArray} from "../xml_utils";
 import {ClassDefinition} from "../abap/types";
 import {IFile} from "../files/_ifile";
 
+/** Ensures you have no descriptions in metadata of methods, parameters, etc. For class descriptions, see rule description_empty. */
 export class RemoveDescriptionsConf extends BasicRuleConfig {
   public ignoreExceptions: boolean = false;
 }

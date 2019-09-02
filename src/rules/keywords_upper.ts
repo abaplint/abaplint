@@ -12,6 +12,7 @@ import * as Statements from "../abap/statements";
 import * as Expressions from "../abap/expressions";
 import {Token} from "../abap/tokens/_token";
 
+/** Detects keywords which are not uppercased. */
 export class KeywordsUpperConf extends BasicRuleConfig {
   public ignoreExceptions: boolean = true;
   public ignoreLowerClassImplmentationStatement: boolean = true;

@@ -6,6 +6,7 @@ import {BasicRuleConfig} from "./_basic_rule_config";
 import {Registry} from "../registry";
 import {Unknown, Empty, Comment} from "../abap/statements/_statement";
 
+/** Detects usage of commented out code. */
 export class CommentedCodeConf extends BasicRuleConfig {
 }
 

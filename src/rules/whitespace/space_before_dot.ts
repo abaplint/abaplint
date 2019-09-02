@@ -9,6 +9,7 @@ import {Registry} from "../../registry";
 import {Punctuation} from "../../abap/tokens";
 import {Token} from "../../abap/tokens/_token";
 
+/** Checks for extra spaces before dots at the ends of statements . */
 export class SpaceBeforeDotConf extends BasicRuleConfig {
   public ignoreGlobalDefinition: boolean = true;
   public ignoreExceptions: boolean = true;

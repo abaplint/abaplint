@@ -8,8 +8,11 @@ import {ClassName} from "../abap/expressions";
 import {Class} from "../objects";
 import {BasicRuleConfig} from "./_basic_rule_config";
 
+/** Allows you to enforce a pattern, such as a prefix, for local class names. */
 export class LocalClassNamingConf extends BasicRuleConfig {
+  /** The pattern for local class names */
   public local: string = "^LCL_.*$";
+  /** The pattern for local test class names */
   public test: string = "^LTCL_.*$";
 }
 

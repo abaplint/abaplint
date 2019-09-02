@@ -4,6 +4,7 @@ import {ABAPRule} from "./_abap_rule";
 import {ABAPFile} from "../files";
 import {BasicRuleConfig} from "./_basic_rule_config";
 
+/** Detects nested ifs which can be refactored to a single condition using AND. */
 export class IfInIfConf extends BasicRuleConfig {
 }
 

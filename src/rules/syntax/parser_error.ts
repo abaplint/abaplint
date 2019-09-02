@@ -9,6 +9,7 @@ import {Registry} from "../../registry";
 import {versionToText} from "../../version";
 import {BasicRuleConfig} from "../_basic_rule_config";
 
+/** Checks for syntax unrecognized by abaplint */
 export class ParserErrorConf extends BasicRuleConfig {
 }
 

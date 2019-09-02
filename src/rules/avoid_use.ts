@@ -4,12 +4,19 @@ import {ABAPRule} from "./_abap_rule";
 import {ABAPFile} from "../files";
 import {BasicRuleConfig} from "./_basic_rule_config";
 
+/** Detects usage of certain statements. */
 export class AvoidUseConf extends BasicRuleConfig {
+  /** Detects define (macro definitions) */
   public define: boolean = true;
+  /** Detects endselect */
   public endselect: boolean = true;
+  /** Detects execSQL (dynamic SQL) */
   public execSQL: boolean = true;
+  /** Detects kernel calls */
   public kernelCall: boolean = true;
+  /** Detects communication */
   public communication: boolean = true;
+  /** Detects statics */
   public statics: boolean = true;
 }
 

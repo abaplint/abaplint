@@ -6,6 +6,7 @@ import {BasicRuleConfig} from "./_basic_rule_config";
 import {Registry} from "../registry";
 import {MessageClass} from "../objects";
 
+/** In message statements, check that the message class + id exist */
 export class MessageExistsConf extends BasicRuleConfig {
 }
 

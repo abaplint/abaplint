@@ -4,7 +4,9 @@ import {ABAPRule} from "../_abap_rule";
 import {ABAPFile} from "../../files";
 import {BasicRuleConfig} from "../_basic_rule_config";
 
+/** Checks that code does not contain more than the configured number of blank lines in a row. */
 export class SequentialBlankConf extends BasicRuleConfig {
+  /** The maximum number of allowed blank lines in a row */
   public lines: number = 4;
 }
 

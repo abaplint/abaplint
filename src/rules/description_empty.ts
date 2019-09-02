@@ -8,6 +8,7 @@ import {Position} from "../position";
 
 // standard class CL_OO_CLASS assumes classes have descriptions
 
+/** Ensures descriptions in class metadata exist. */
 export class DescriptionEmptyConf extends BasicRuleConfig {
 }
 

@@ -5,7 +5,9 @@ import {MethodLengthStats} from "../abap/method_length_stats";
 import {IRule} from "./_irule";
 import {BasicRuleConfig} from "./_basic_rule_config";
 
+/** Chcecks that methods do not exceed the set number of statements */
 export class MethodLengthConf extends BasicRuleConfig {
+  /** Maximum method length in statements */
   public statements: number = 100;
 }
 

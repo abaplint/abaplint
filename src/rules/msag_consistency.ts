@@ -6,6 +6,7 @@ import {IRule} from "./_irule";
 import {IObject} from "../objects/_iobject";
 import {Position} from "../position";
 
+/** Checks the validity of messages in message classes */
 export class MSAGConsistencyConf extends BasicRuleConfig {
 }
 

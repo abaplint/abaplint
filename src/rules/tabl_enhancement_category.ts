@@ -6,6 +6,7 @@ import {IRule} from "./_irule";
 import {IObject} from "../objects/_iobject";
 import {Position} from "../position";
 
+/** Checks that tables do not have the enhancement category 'not classified' */
 export class TABLEnhancementCategoryConf extends BasicRuleConfig {
 }
 

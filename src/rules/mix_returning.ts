@@ -5,6 +5,7 @@ import * as Statements from "../abap/statements";
 import * as Expressions from "../abap/expressions";
 import {BasicRuleConfig} from "./_basic_rule_config";
 
+/** Checks that methods don't have a mixture of returning and exporting/changing parameters */
 export class MixReturningConf extends BasicRuleConfig {
 }
 

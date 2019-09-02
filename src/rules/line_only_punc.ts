@@ -7,6 +7,7 @@ import {Registry} from "../registry";
 import {IObject} from "../objects/_iobject";
 import {Class} from "../objects";
 
+/** Detects lines containing only punctuation. */
 export class LineOnlyPuncConf extends BasicRuleConfig {
   public ignoreExceptions: boolean = true;
 }

@@ -9,6 +9,7 @@ import * as Statements from "../abap/statements";
 import * as Expressions from "../abap/expressions";
 import {Position} from "../position";
 
+/** Checks related to report declarations. */
 export class MainFileContentsConf extends BasicRuleConfig {
 }
 

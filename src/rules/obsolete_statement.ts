@@ -6,6 +6,7 @@ import {Compare} from "../abap/expressions";
 import {BasicRuleConfig} from "./_basic_rule_config";
 import {Position} from "../position";
 
+/** Checks for usages of certain obsolete statements */
 export class ObsoleteStatementConf extends BasicRuleConfig {
   public refresh: boolean = true;
   public compute: boolean = true;
@@ -14,6 +15,7 @@ export class ObsoleteStatementConf extends BasicRuleConfig {
   public multiply: boolean = true;
   public move: boolean = true;
   public divide: boolean = true;
+  /** Checks for usages of IS REQUESTED */
   public requested: boolean = true;
 }
 
