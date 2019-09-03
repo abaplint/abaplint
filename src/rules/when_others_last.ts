@@ -5,6 +5,7 @@ import {BasicRuleConfig} from "./_basic_rule_config";
 import * as Statements from "../abap/statements";
 import * as Structures from "../abap/structures";
 
+/** Checks that WHEN OTHERS is placed the last within a CASE statement. */
 export class WhenOthersLastConf extends BasicRuleConfig {
 }
 

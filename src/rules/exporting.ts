@@ -10,6 +10,7 @@ export class Counter {
   public pos: Position;
 }
 
+/** Detects EXPORTING statements which can be omitted. */
 export class ExportingConf extends BasicRuleConfig {
 }
 

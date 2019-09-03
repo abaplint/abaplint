@@ -5,6 +5,7 @@ import {Registry} from "../registry";
 import {Try, Catch} from "../abap/structures";
 import {BasicRuleConfig} from "./_basic_rule_config";
 
+/** Checks for TRY blocks without a CATCH block */
 export class TryWithoutCatchConf extends BasicRuleConfig {
 }
 

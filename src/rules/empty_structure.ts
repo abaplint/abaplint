@@ -5,13 +5,21 @@ import {ABAPFile} from "../files";
 import {BasicRuleConfig} from "./_basic_rule_config";
 import {StructureNode} from "../abap/nodes";
 
+/** Checks that the code does not contain empty blocks. */
 export class EmptyStructureConf extends BasicRuleConfig {
+  /** Checks for empty loop blocks */
   public loop: boolean = true;
+  /** Checks for empty if blocks */
   public if: boolean = true;
+  /** Checks for empty while blocks */
   public while: boolean = true;
+  /** Checks for empty case blocks */
   public case: boolean = true;
+  /** Checks for empty select blockss */
   public select: boolean = true;
+  /** Checks for empty do blocks */
   public do: boolean = true;
+  /** Checks for empty at blocks */
   public at: boolean = true;
 // todo, other category containing WHEN, ELSE
 }

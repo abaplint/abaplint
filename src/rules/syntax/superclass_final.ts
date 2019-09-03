@@ -8,6 +8,7 @@ import {BasicRuleConfig} from "../_basic_rule_config";
 import {ClassDefinition} from "../../abap/types";
 import {Class} from "../../objects";
 
+/** Checks that classes which are inherited from are not declared as FINAL. */
 export class SuperclassFinalConf extends BasicRuleConfig {
 }
 

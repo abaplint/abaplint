@@ -6,6 +6,7 @@ import {Position} from "../../position";
 import {Token} from "../../abap/tokens/_token";
 import {ParenLeftW, Comment, WParenRightW, WParenRight, StringTemplate} from "../../abap/tokens";
 
+/** Checks that only a single space follows certain common statements. */
 export class DoubleSpaceConf extends BasicRuleConfig {
   public keywords: boolean = true;
   public startParen: boolean = true;

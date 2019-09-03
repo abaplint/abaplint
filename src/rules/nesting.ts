@@ -4,7 +4,9 @@ import {ABAPRule} from "./_abap_rule";
 import {ABAPFile} from "../files";
 import {BasicRuleConfig} from "./_basic_rule_config";
 
+/** Checks for methods exceeding a maximum nesting depth */
 export class NestingConf extends BasicRuleConfig {
+  /** Maximum allowed nesting depth */
   public depth: number = 5;
 }
 

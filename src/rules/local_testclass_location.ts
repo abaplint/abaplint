@@ -6,6 +6,7 @@ import {Class} from "../objects";
 import {Registry} from "../registry";
 import {IObject} from "../objects/_iobject";
 
+/** Chceks that local test classes are placed in the test include. */
 export class LocalTestclassLocationConf extends BasicRuleConfig {
 }
 

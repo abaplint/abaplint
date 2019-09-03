@@ -6,6 +6,7 @@ import {IObject} from "../objects/_iobject";
 import {Registry} from "../registry";
 import {BasicRuleConfig} from "./_basic_rule_config";
 
+/** Checks that the package does not contain any object types unsupported in cloud ABAP. */
 export class CloudTypesConf extends BasicRuleConfig {
 }
 

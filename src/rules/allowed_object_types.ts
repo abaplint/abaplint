@@ -3,6 +3,7 @@ import {Issue} from "../issue";
 import {IObject} from "../objects/_iobject";
 import {BasicRuleConfig} from "./_basic_rule_config";
 
+/** Restricts the set of allowed object types. */
 export class AllowedObjectTypesConf extends BasicRuleConfig {
   public allowed: string[] = [];
 }

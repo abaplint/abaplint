@@ -4,6 +4,7 @@ import {ABAPRule} from "./_abap_rule";
 import {ABAPFile} from "../files";
 import {BasicRuleConfig} from "./_basic_rule_config";
 
+/** Chekcks that each line contains only a single statement. */
 export class MaxOneStatementConf extends BasicRuleConfig {
 }
 

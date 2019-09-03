@@ -8,6 +8,7 @@ import {Visibility} from "../abap/types";
 
 // todo, add unit tests for this class
 
+/** Checks that classes don't contain any public attributes */
 export class NoPublicAttributesConf extends BasicRuleConfig {
 // todo,  public allowReadOnly: boolean = false;
 }

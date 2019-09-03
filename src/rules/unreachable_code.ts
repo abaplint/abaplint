@@ -7,6 +7,7 @@ import * as Statements from "../abap/statements/";
 import * as Expressions from "../abap/expressions/";
 import {StatementNode} from "../abap/nodes";
 
+/** Checks for unreachable code. */
 export class UnreachableCodeConf extends BasicRuleConfig {
 }
 

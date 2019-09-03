@@ -5,6 +5,7 @@ import {ABAPFile} from "../files";
 import {StatementNode} from "../abap/nodes/";
 import {BasicRuleConfig} from "./_basic_rule_config";
 
+/** Detects usages of EXIT or CHECK statements outside of loops. */
 export class ExitOrCheckConf extends BasicRuleConfig {
 }
 

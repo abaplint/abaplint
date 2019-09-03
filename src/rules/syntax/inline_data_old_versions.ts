@@ -6,6 +6,7 @@ import {Version, versionToText} from "../../version";
 import {Target} from "../../abap/expressions";
 import {BasicRuleConfig} from "../_basic_rule_config";
 
+/** Checks for inline data declarations in older releases. */
 export class InlineDataOldVersionsConf extends BasicRuleConfig {
 }
 

@@ -4,7 +4,9 @@ import {ABAPRule} from "./_abap_rule";
 import {ABAPFile} from "../files";
 import {BasicRuleConfig} from "./_basic_rule_config";
 
+/** Configure undesired operator variants */
 export class PreferredCompareOperatorConf extends BasicRuleConfig {
+  /** Operators which are not allowed */
   public badOperators: string[] = ["EQ", "><", "NE", "GE", "GT", "LT", "LE"];
 }
 

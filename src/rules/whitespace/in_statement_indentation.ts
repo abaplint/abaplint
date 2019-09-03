@@ -7,6 +7,11 @@ import {Registry} from "../../registry";
 import {BasicRuleConfig} from "../_basic_rule_config";
 import * as Statements from "../../abap/statements";
 
+/** Checks alignment within block statement declarations which span multiple lines, such as multiple conditions in IF statements.
+ * Example:
+ * IF 1 = 1 AND
+ *    2 = 2.
+ */
 export class InStatementIndentationConf extends BasicRuleConfig {
   public ignoreExceptions: boolean = true;
 }

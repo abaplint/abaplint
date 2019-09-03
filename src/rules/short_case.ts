@@ -6,8 +6,11 @@ import * as Expressions from "../abap/expressions";
 import * as Structures from "../abap/structures";
 import {BasicRuleConfig} from "./_basic_rule_config";
 
+/** Checks for CASE statements which have fewer than the specified number of branches */
 export class ShortCaseConf extends BasicRuleConfig {
+  /** Minimum number of branches */
   public length: number = 1;
+
   public allow: string[] = [];
 }
 

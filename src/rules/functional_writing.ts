@@ -8,6 +8,7 @@ import {IObject} from "../objects/_iobject";
 import {Class} from "../objects";
 import {ClassDefinition} from "../abap/types";
 
+/** Detects usage of call method when functional style calls can be used. */
 export class FunctionalWritingConf extends BasicRuleConfig {
   public ignoreExceptions: boolean = true;
 }

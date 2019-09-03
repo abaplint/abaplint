@@ -4,7 +4,9 @@ import {ABAPRule} from "./_abap_rule";
 import {ABAPFile} from "../files";
 import {BasicRuleConfig} from "./_basic_rule_config";
 
+/** Detects lines exceeding the provided maximum length. */
 export class LineLengthConf extends BasicRuleConfig {
+  /** Maximum line length in characters */
   public length: number = 120;
 }
 

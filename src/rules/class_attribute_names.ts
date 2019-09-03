@@ -7,9 +7,12 @@ import {Attributes} from "../abap/types/class_attributes";
 import {ClassAttribute} from "../abap/types/class_attribute";
 import {BasicRuleConfig} from "./_basic_rule_config";
 
+/** Allows you to enforce a pattern, such as a prefix, for class variable names. */
 export class ClassAttributeNamesConf extends BasicRuleConfig {
   public ignoreExceptions: boolean = true;
+  /** The pattern for static variable names */
   public statics: string = "^G._.*$";
+  /** The pattern for instance variable names */
   public instance: string = "^M._.*$";
 }
 
