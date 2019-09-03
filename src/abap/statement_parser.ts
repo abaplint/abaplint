@@ -150,11 +150,14 @@ export class StatementParser {
     return statement;
   }
 
+  private static addUnknown(t: Token[]) {
+    this.statements.push(new StatementNode(new Unknown()).setChildren(this.tokensToNodes(t)));
+  }
+
 // takes care of splitting tokens into statements, also handles chained statements
   private static process(tokens: Token[]) {
     let add: Token[] = [];
     let pre: Token[] = [];
-    const ukn = (t: Token[]) => { this.statements.push(new StatementNode(new Unknown()).setChildren(this.tokensToNodes(t))); };
 
     for (const token of tokens) {
       if (token instanceof Tokens.Comment) {
@@ -164,11 +167,11 @@ export class StatementParser {
 
       add.push(token);
       if (token.getStr() === ".") {
-        ukn(pre.concat(add));
+        this.addUnknown(pre.concat(add));
         add = [];
         pre = [];
       } else if (token.getStr() === "," && pre.length > 0) {
-        ukn(pre.concat(add));
+        this.addUnknown(pre.concat(add));
         add = [];
       } else if (token.getStr() === ":") {
         add.pop(); // do not add colon token to statement
@@ -178,7 +181,7 @@ export class StatementParser {
     }
 
     if (add.length > 0) {
-      ukn(pre.concat(add));
+      this.addUnknown(pre.concat(add));
     }
   }
 }

@@ -37,33 +37,35 @@ export abstract class ABAPObject extends AbstractObject {
     }
     this.parsed = [];
 
-    for (const f of this.files) {
-      if (f.getFilename().endsWith(".abap")) {
-        const tokens = Lexer.run(f);
+    for (const file of this.files) {
+      if (file.getFilename().endsWith(".abap")) {
+        const tokens = Lexer.run(file);
         const statements = StatementParser.run(tokens, ver);
-        this.parsed.push(new ABAPFile(f, tokens, statements));
+        this.parsed.push(new ABAPFile(file, tokens, statements));
       }
     }
 
-    this.parsed.forEach((f) => {
-      f.getStatements().forEach((s) => {
-        if (s.get() instanceof Define) {
-// todo, will this break if first token is a pragma?
-          reg.addMacro(s.getTokens()[1].getStr());
+    for (const file of this.parsed) {
+      for (const statement of file.getStatements()) {
+        if (statement.get() instanceof Define) {
+    // todo, will this break if first token is a pragma?
+          reg.addMacro(statement.getTokens()[1].getStr());
         }
-      });
-    });
+      }
+    }
   }
 
+// 1: make sure macros exists
+// 2: runs StructureParser
   public parseSecondPass(reg: Registry): Issue[] {
     if (this.shouldParse() === false) {
       return this.old;
     }
 
-    for (const f of this.parsed) {
+    for (const file of this.parsed) {
       const statements: StatementNode[] = [];
 
-      for (const s of f.getStatements()) {
+      for (const s of file.getStatements()) {
         let name: string | undefined = undefined;
 
         if (s.get() instanceof Unknown) {
@@ -86,7 +88,7 @@ export abstract class ABAPObject extends AbstractObject {
         }
       }
 
-      f.setStatements(statements);
+      file.setStatements(statements);
     }
 
     let ret: Issue[] = [];
