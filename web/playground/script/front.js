@@ -110,8 +110,9 @@ function issues() {
       "<div onmouseover=\"javascript:markLine(" + issue.start.row + ", " +
       issue.start.col + ");\">" +
       "[" + issue.start.row + ", "+ issue.start.col + "] " +
-      escape(issue.description) +
-      "</div>\n";
+      escape(issue.description) + " (" +
+      issue.key +
+      ")</div>\n";
   }
   document.getElementById("info").innerHTML = output;
 }
