@@ -24,8 +24,8 @@ export class ClassAttributeNames implements IRule {
     return "class_attribute_names";
   }
 
-  public getDescription(): string {
-    return "Class Attribute Names";
+  public getDescription(expected: string, actual: string): string {
+    return "Class attribute name does not match pattern " + expected + ": " + actual;
   }
 
   public getConfig() {
@@ -82,11 +82,11 @@ export class ClassAttributeNames implements IRule {
     const regex = new RegExp(expected, "i");
     const name = attr.getName();
     if (regex.test(name) === false) {
-      const message = "Bad attribute name \"" + name + "\" expected \"" + expected + "/i\"";
 // todo, find the right file
       const issue = new Issue({
         file: obj.getFiles()[0],
-        message, key: this.getKey(),
+        message: this.getDescription(name, expected),
+        key: this.getKey(),
         start: attr.getStart(),
         end: attr.getEnd(),
       });

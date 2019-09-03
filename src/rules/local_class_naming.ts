@@ -24,8 +24,8 @@ export class LocalClassNaming extends ABAPRule {
     return "local_class_naming";
   }
 
-  public getDescription(): string {
-    return "Local class naming";
+  public getDescription(expected: string, actual: string): string {
+    return "Local class name does not match pattern " + expected + ": " + actual;
   }
 
   public getConfig() {
@@ -70,7 +70,7 @@ export class LocalClassNaming extends ABAPRule {
       if (expected.length > 0) {
         const issue = new Issue({
           file,
-          message: this.getDescription() + ", expected " + expected,
+          message: this.getDescription(expected, name),
           key: this.getKey(),
           start: token.getStart(),
           end: token.getEnd()});

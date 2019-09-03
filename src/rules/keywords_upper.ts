@@ -29,8 +29,8 @@ export class KeywordsUpper extends ABAPRule {
     return "keywords_upper";
   }
 
-  public getDescription(): string {
-    return "Keywords upper case, other lower case";
+  public getDescription(tokenValue: string): string {
+    return "Keyword should be upper case: " + tokenValue;
   }
 
   public getConfig() {
@@ -90,7 +90,7 @@ export class KeywordsUpper extends ABAPRule {
       if (tok) {
         const issue = new Issue({
           file,
-          message: this.getDescription() + ", \"" + tok.getStr() + "\"",
+          message: this.getDescription(tok.getStr()),
           key: this.getKey(),
           start: tok.getStart(),
           end: tok.getEnd()});

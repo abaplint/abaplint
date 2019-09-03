@@ -19,7 +19,7 @@ export class UseNew extends ABAPRule {
   }
 
   public getDescription(): string {
-    return "Use NEW #( )";
+    return "Use NEW #( ) to initialize object.";
   }
 
   public getConfig() {

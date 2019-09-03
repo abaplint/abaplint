@@ -22,7 +22,7 @@ export class DoubleSpace extends ABAPRule {
   }
 
   public getDescription(): string {
-    return "Double space";
+    return "Remove double space.";
   }
 
   public getConfig() {

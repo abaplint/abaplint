@@ -22,7 +22,7 @@ export class FunctionalWriting extends ABAPRule {
   }
 
   public getDescription(): string {
-    return "Use functional writing style";
+    return "Use functional writing style for method calls.";
   }
 
   public getConfig() {

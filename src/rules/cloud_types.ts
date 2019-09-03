@@ -18,8 +18,8 @@ export class CloudTypes implements IRule {
     return "cloud_types";
   }
 
-  public getDescription(): string {
-    return "Object type not supported in cloud";
+  public getDescription(objectType: string): string {
+    return "Object type " + objectType + " not supported in cloud";
   }
 
   public getConfig() {
@@ -48,7 +48,7 @@ export class CloudTypes implements IRule {
       return [];
     }
 
-    return [new Issue({file: obj.getFiles()[0], key: this.getKey(), message: this.getDescription()})];
+    return [new Issue({file: obj.getFiles()[0], key: this.getKey(), message: this.getDescription(obj.getType())})];
   }
 
 }

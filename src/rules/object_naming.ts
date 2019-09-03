@@ -45,8 +45,8 @@ export class ObjectNaming implements IRule {
     return "object_naming";
   }
 
-  public getDescription(): string {
-    return "Object naming";
+  public getDescription(expected: string, actual: string): string {
+    return "Object name does not match pattern " + expected + ": " + actual;
   }
 
   public getConfig() {
@@ -98,7 +98,7 @@ export class ObjectNaming implements IRule {
     const regex = new RegExp(pattern, "i");
 
     if (regex.exec(obj.getName()) === null) {
-      message = "Object naming, expected " + pattern + ", got " + obj.getName();
+      message = this.getDescription(pattern, obj.getName());
     }
 
     if (message) {

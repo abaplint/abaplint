@@ -32,8 +32,8 @@ export class EmptyStructure extends ABAPRule {
     return "empty_structure";
   }
 
-  public getDescription(): string {
-    return "Empty structure";
+  public getDescription(name: string): string {
+    return "Empty structure:" + name ;
   }
 
   public getConfig() {
@@ -78,7 +78,7 @@ export class EmptyStructure extends ABAPRule {
     for (const l of candidates) {
       if (l.getChildren().length === 2) {
         const issue = new Issue({file,
-          message: "Empty " + l.get().constructor.name,
+          message: this.getDescription(l.get().constructor.name),
           key: this.getKey(),
           start: l.getFirstToken().getStart()});
         issues.push(issue);
