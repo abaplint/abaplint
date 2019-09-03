@@ -6,6 +6,7 @@ import {BasicRuleConfig} from "./_basic_rule_config";
 import * as Statements from "../abap/statements/";
 import * as Expressions from "../abap/expressions/";
 
+/** Checks that exceptions 'system_failure' and 'communication_failure' are handled in RFC calls */
 export class RFCErrorHandlingConf extends BasicRuleConfig {
 }
 

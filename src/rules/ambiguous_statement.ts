@@ -10,6 +10,7 @@ import {Registry} from "../registry";
 
 // todo, this rule can be disabled when using strict SQL
 
+/** Checks for ambiguity between deleting from internal and database table */
 export class AmbiguousStatementConf extends BasicRuleConfig {
 }
 
