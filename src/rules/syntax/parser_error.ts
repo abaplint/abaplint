@@ -41,18 +41,19 @@ export class ParserError extends ABAPRule {
       if (statement.get() instanceof Unknown
             && start.getRow() !== statement.getStart().getRow()) {
 
-        let message = "";
         const missing = this.missingSpace(statement);
         if (missing) {
-          message = "Missing space between string or character literal and parentheses, Parser error";
+          const message = "Missing space between string or character literal and parentheses, Parser error";
           start = missing;
+          issues.push(new Issue({file, message, key: this.getKey(), start}));
         } else {
-          message = this.getDescription() + ", ABAP version " + versionToText(reg.getConfig().getVersion());
-          start = statement.getStart();
+          const message = this.getDescription() + ", ABAP version " + versionToText(reg.getConfig().getVersion());
+          issues.push(new Issue({file, message,
+            key: this.getKey(),
+            start: statement.getStart(),
+            end: statement.getEnd()}));
         }
 
-        const issue = new Issue({file, message, key: this.getKey(), start});
-        issues.push(issue);
       }
     }
 

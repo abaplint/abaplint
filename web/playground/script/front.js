@@ -109,7 +109,8 @@ function issues() {
     output = output +
       "<div onmouseover=\"javascript:markLine(" + issue.start.row + ", " +
       issue.start.col + ");\">" +
-      "[" + issue.start.row + ", "+ issue.start.col + "] " +
+      "[" + issue.start.row + ", "+ issue.start.col + "] -> " +
+      "[" + issue.end.row + ", "+ issue.end.col + "]: " +
       escape(issue.description) + " (" +
       issue.key +
       ")</div>\n";
