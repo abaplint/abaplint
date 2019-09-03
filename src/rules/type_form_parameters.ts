@@ -7,7 +7,7 @@ import {Registry} from "../registry";
 import * as Expressions from "../abap/expressions";
 import {ABAPObject} from "../objects/_abap_object";
 
-/** Checks for untyped form parameters */
+/** Checks for untyped FORM parameters */
 export class TypeFormParametersConf extends BasicRuleConfig {
 }
 
