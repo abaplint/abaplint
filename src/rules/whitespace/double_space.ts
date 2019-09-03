@@ -53,20 +53,20 @@ export class DoubleSpace extends ABAPRule {
       }
 
       if (this.getConfig().startParen === true
-        && prev.getRow() === t.getRow()
-        && prev instanceof ParenLeftW
-        && !(t instanceof Comment)
-        && !(t instanceof StringTemplate)  // tempoary workaround, see #427
-        && prev.getEnd().getCol() + 1 < t.getCol()) {
-          issues.push(new Issue({file, message: this.getDescription(), key: this.getKey(), start: prev.getStart()}));
-        }
+          && prev.getRow() === t.getRow()
+          && prev instanceof ParenLeftW
+          && !(t instanceof Comment)
+          && !(t instanceof StringTemplate)  // tempoary workaround, see #427
+          && prev.getEnd().getCol() + 1 < t.getCol()) {
+        issues.push(new Issue({file, message: this.getDescription(), key: this.getKey(), start: prev.getStart()}));
+      }
 
       if (this.getConfig().endParen === true
-        && prev.getRow() === t.getRow()
-        && (t instanceof WParenRightW || t instanceof WParenRight)
-        && prev.getEnd().getCol() + 1 < t.getCol()) {
-          issues.push(new Issue({file, message: this.getDescription(), key: this.getKey(), start: prev.getEnd()}));
-        }
+          && prev.getRow() === t.getRow()
+          && (t instanceof WParenRightW || t instanceof WParenRight)
+          && prev.getEnd().getCol() + 1 < t.getCol()) {
+        issues.push(new Issue({file, message: this.getDescription(), key: this.getKey(), start: prev.getEnd()}));
+      }
 
       prev = t;
     }
