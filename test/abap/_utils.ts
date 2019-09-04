@@ -17,11 +17,12 @@ export function getTokens(abap: string) {
 
 export function getStatements(abap: string, version?: Version) {
 
-  if (version === undefined) {
-    version = Config.getDefault().getVersion();
+  const config = Config.getDefault();
+  if (version !== undefined) {
+    config.setVersion(version);
   }
 
-  return StatementParser.run(getTokens(abap), version);
+  return StatementParser.run(getTokens(abap), config);
 }
 
 export function findIssues(abap: string) {

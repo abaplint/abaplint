@@ -27,7 +27,6 @@ export class NoProgress implements IProgress {
 export class Registry {
   private dirty = false;
   private conf: Config;
-  private macros: string[] = [];
   private objects: IObject[] = [];
   private issues: Issue[] = [];
   private dependencies: string[] = [];
@@ -140,7 +139,6 @@ export class Registry {
   public setDirty() {
     this.dirty = true;
     this.issues = [];
-    this.macros = [];
   }
 
   public isDirty(): boolean {
@@ -243,36 +241,18 @@ export class Registry {
     pro.set(objects.length, ":percent - :elapseds - Lexing and parsing(" + versionToText(this.conf.getVersion()) + ") - :object");
     for (const obj of objects) {
       pro.tick({object: obj.getType() + " " + obj.getName()});
-      obj.parseFirstPass(this.conf.getVersion(), this);
+      obj.parseFirstPass(this);
     }
 
     pro.set(objects.length, ":percent - :elapseds - Second pass - :object");
     for (const obj of objects) {
       pro.tick({object: obj.getType() + " " + obj.getName()});
-      this.issues = this.issues.concat(obj.parseSecondPass(this));
+      this.issues = this.issues.concat(obj.parseSecondPass());
     }
 
     this.dirty = false;
 
     return this;
-  }
-
-  public addMacro(name: string) {
-// todo, handle scoping for macros
-    if (this.isMacro(name)) {
-      return;
-    }
-    this.macros.push(name.toUpperCase());
-  }
-
-  public isMacro(name: string): boolean {
-    const macros = this.macros.concat(this.getConfig().getSyntaxSetttings().globalMacros);
-    for (const mac of macros) {
-      if (mac === name.toUpperCase()) {
-        return true;
-      }
-    }
-    return false;
   }
 
   private findOrCreate(name: string, type: string): IObject {

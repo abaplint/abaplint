@@ -3,10 +3,12 @@ import * as Statements from "./statements";
 import * as Expressions from "./expressions";
 import {Combi} from "./combi";
 import {TokenNode, StatementNode} from "./nodes/";
-import {Unknown, Empty, Comment, MacroContent, NativeSQL, Statement} from "./statements/_statement";
+import {Unknown, Empty, Comment, MacroContent, NativeSQL, Statement, MacroCall} from "./statements/_statement";
 import {Version} from "../version";
 import {Artifacts} from "./artifacts";
 import {Token} from "./tokens/_token";
+import {Config} from "../config";
+import {Identifier, Pragma} from "./tokens";
 
 class Map {
   private map: {[index: string]: Statement[] };
@@ -32,21 +34,52 @@ class Map {
   }
 }
 
+class Macros {
+  private macros: string[];
+
+  constructor(config: Config) {
+    this.macros = [];
+    for (const m of config.getSyntaxSetttings().globalMacros) {
+      this.macros.push(m.toUpperCase());
+    }
+  }
+
+  public addMacro(name: string): void {
+    // todo, handle scoping for macros
+    if (this.isMacro(name)) {
+      return;
+    }
+    this.macros.push(name.toUpperCase());
+  }
+
+  public isMacro(name: string): boolean {
+    for (const mac of this.macros) {
+      if (mac === name.toUpperCase()) {
+        return true;
+      }
+    }
+    return false;
+  }
+
+}
+
 export class StatementParser {
   private static statements: StatementNode[];
   private static map: Map;
+  private static macros: Macros;
 
-  public static run(tokens: Token[], ver: Version): StatementNode[] {
+  public static run(tokens: Token[], config: Config): StatementNode[] {
     this.statements = [];
+    this.macros = new Macros(config);
 
     if (!this.map) {
       this.map = new Map();
     }
 
     this.process(tokens);
-    this.categorize(ver);
-    this.macros();
+    this.categorize(config.getVersion());
     this.nativeSQL();
+    this.handleMacros();
 
     return this.statements;
   }
@@ -59,17 +92,34 @@ export class StatementParser {
     return ret;
   }
 
-  private static macros() {
+  private static handleMacros() {
     const result: StatementNode[] = [];
     let define = false;
 
     for (let statement of this.statements) {
       if (statement.get() instanceof Statements.Define) {
         define = true;
+        // todo, will this break if first token is a pragma?
+        this.macros.addMacro(statement.getTokens()[1].getStr());
       } else if (statement.get() instanceof Statements.EndOfDefinition) {
         define = false;
       } else if (!(statement.get() instanceof Comment) && define === true) {
         statement = new StatementNode(new MacroContent()).setChildren(this.tokensToNodes(statement.getTokens()));
+      } else if (statement.get() instanceof Unknown) {
+        let macroName: string | undefined = undefined;
+        for (const i of statement.getTokens()) {
+          if (i instanceof Identifier) {
+            macroName = i.getStr();
+            break;
+          } else if (i instanceof Pragma) {
+            continue;
+          } else {
+            break;
+          }
+        }
+        if (macroName && this.macros.isMacro(macroName)) {
+          statement = new StatementNode(new MacroCall()).setChildren(this.tokensToNodes(statement.getTokens()));
+        }
       }
 
       result.push(statement);
