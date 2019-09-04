@@ -45,7 +45,6 @@ class Macros {
   }
 
   public addMacro(name: string): void {
-    // todo, handle scoping for macros
     if (this.isMacro(name)) {
       return;
     }
@@ -60,26 +59,28 @@ class Macros {
     }
     return false;
   }
-
 }
 
 export class StatementParser {
   private static statements: StatementNode[];
   private static map: Map;
   private static macros: Macros;
+  private static version: Version;
 
   public static run(tokens: Token[], config: Config): StatementNode[] {
     this.statements = [];
     this.macros = new Macros(config);
+    this.version = config.getVersion();
 
     if (!this.map) {
       this.map = new Map();
     }
 
     this.process(tokens);
-    this.categorize(config.getVersion());
+    this.categorize();
     this.nativeSQL();
     this.handleMacros();
+    this.lazyUnknown();
 
     return this.statements;
   }
@@ -90,6 +91,45 @@ export class StatementParser {
     tokens.forEach((t) => {ret.push(new TokenNode(t)); });
 
     return ret;
+  }
+
+// tries to split Unknown statements by newlines, when adding/writing a new statement
+// in an editor, adding the statement terminator is typically the last thing to do
+// note: this will not work if the second statement is a macro call, guess this is okay
+  private static lazyUnknown() {
+    const result: StatementNode[] = [];
+
+    for (let statement of this.statements) {
+      if (statement.get() instanceof Unknown) {
+        for (const {first, second} of this.buildSplits(statement.getTokens())) {
+          const s = this.categorizeStatement(new StatementNode(new Unknown()).setChildren(this.tokensToNodes(second)));
+          if (!(s.get() instanceof Unknown)) {
+            result.push(new StatementNode(new Unknown()).setChildren(this.tokensToNodes(first)));
+            statement = s;
+            break;
+          }
+        }
+      }
+      result.push(statement);
+    }
+
+    this.statements = result;
+  }
+
+  private static buildSplits(tokens: Token[]): {first: Token[], second: Token[]}[] {
+    const res: {first: Token[], second: Token[]}[] = [];
+    const before: Token[] = [];
+    let prevRow = tokens[0].getRow();
+
+    for (let i = 0; i < tokens.length; i++) {
+      if (tokens[i].getRow() !== prevRow) {
+        res.push({first: [...before], second: [...tokens].splice(i)});
+      }
+      prevRow = tokens[i].getRow();
+      before.push(tokens[i]);
+    }
+
+    return res;
   }
 
   private static handleMacros() {
@@ -157,31 +197,37 @@ export class StatementParser {
   }
 
 // for each statement, run statement matchers to figure out which kind of statement it is
-  private static categorize(ver: Version) {
+  private static categorize() {
     const result: StatementNode[] = [];
 
-    for (let statement of this.statements) {
-      const length = statement.getTokens().length;
-      const last = statement.getTokens()[length - 1];
-
-      if (length === 1
-          && last instanceof Tokens.Punctuation) {
-        statement = new StatementNode(new Empty()).setChildren(this.tokensToNodes(statement.getTokens()));
-      } else if (statement.get() instanceof Unknown
-          && last instanceof Tokens.Punctuation) {
-        statement = this.match(statement, ver);
-      }
-
-      result.push(statement);
+    for (const statement of this.statements) {
+      result.push(this.categorizeStatement(statement));
     }
     this.statements = result;
+  }
+
+  private static categorizeStatement(input: StatementNode) {
+    let statement = input;
+
+    const length = statement.getTokens().length;
+    const last = statement.getTokens()[length - 1];
+
+    if (length === 1
+        && last instanceof Tokens.Punctuation) {
+      statement = new StatementNode(new Empty()).setChildren(this.tokensToNodes(statement.getTokens()));
+    } else if (statement.get() instanceof Unknown
+        && last instanceof Tokens.Punctuation) {
+      statement = this.match(statement);
+    }
+
+    return statement;
   }
 
   private static removePragma(tokens: Token[]): Token[] {
     return tokens.filter(function (value) { return !(value instanceof Tokens.Pragma); } );
   }
 
-  private static match(statement: StatementNode, ver: Version): StatementNode {
+  private static match(statement: StatementNode): StatementNode {
     let tokens = statement.getTokens();
     const last = tokens[tokens.length - 1];
     tokens = this.removePragma(this.removeLast(tokens));
@@ -190,9 +236,7 @@ export class StatementParser {
     }
 
     for (const st of this.map.lookup(tokens[0])) {
-      const match = Combi.run(st.getMatcher(),
-                              tokens,
-                              ver);
+      const match = Combi.run(st.getMatcher(), tokens, this.version);
       if (match) {
         return new StatementNode(st).setChildren(match.concat(new TokenNode(last)));
       }
@@ -205,6 +249,7 @@ export class StatementParser {
   }
 
 // takes care of splitting tokens into statements, also handles chained statements
+// statements are split by "," or "."
   private static process(tokens: Token[]) {
     let add: Token[] = [];
     let pre: Token[] = [];
