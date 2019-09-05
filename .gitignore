@@ -11,5 +11,6 @@ dump.json
 .vscode/*
 !.vscode/launch.json
 scripts/schema.ts
+scripts/schema.json
 .nyc_output/
 .clinic/
