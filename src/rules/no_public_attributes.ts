@@ -10,7 +10,7 @@ import {Visibility} from "../abap/types";
 
 /** Checks that classes don't contain any public attributes */
 export class NoPublicAttributesConf extends BasicRuleConfig {
-  public allowReadOnly: boolean = false;
+  // todo,  public allowReadOnly: boolean = false;
 }
 
 export class NoPublicAttributes implements IRule {
