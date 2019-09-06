@@ -10,7 +10,7 @@ import {Visibility} from "../abap/types";
 
 /** Checks that classes don't contain any public attributes */
 export class NoPublicAttributesConf extends BasicRuleConfig {
-// todo,  public allowReadOnly: boolean = false;
+  // todo,  public allowReadOnly: boolean = false;
 }
 
 export class NoPublicAttributes implements IRule {
@@ -20,8 +20,8 @@ export class NoPublicAttributes implements IRule {
     return "no_public_attributes";
   }
 
-  public getDescription(): string {
-    return "No public attributes";
+  public getDescription(name: string): string {
+    return "Public attributes are not allowed. Attribute name: " + name;
   }
 
   public getConfig() {
@@ -52,7 +52,7 @@ export class NoPublicAttributes implements IRule {
 
     for (const attr of attrs.getInstance().concat(attrs.getStatic())) {
       if (attr.getVisibility() === Visibility.Public) {
-        const message = this.getDescription() + ", " + attr.getName();
+        const message = this.getDescription(attr.getName());
         issues.push(new Issue({
           file: obj.getFiles()[0],
           message,

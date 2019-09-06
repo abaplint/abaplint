@@ -32,8 +32,8 @@ export class MethodParameterNames implements IRule {
     return "method_parameter_names";
   }
 
-  public getDescription(): string {
-    return "Method Parameter Names";
+  public getDescription(expected: string, actual: string): string {
+    return "Method parameter name does not match pattern " + expected + ": " + actual;
   }
 
   public getConfig() {
@@ -110,7 +110,7 @@ export class MethodParameterNames implements IRule {
       if (this.conf.ignoreNames.indexOf(name.toUpperCase()) >= 0) {
         return ret;
       }
-      const message = "Bad method parameter name \"" + name + "\" expected \"" + expected + "/i\"";
+      const message = this.getDescription(expected, name);
 // todo, find the right file
       const issue = new Issue({
         file,

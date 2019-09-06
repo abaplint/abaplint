@@ -16,7 +16,7 @@ export class SpaceBeforeColon extends ABAPRule {
   }
 
   public getDescription(): string {
-    return "Space before colon";
+    return "Remove space before colon";
   }
 
   public getConfig() {

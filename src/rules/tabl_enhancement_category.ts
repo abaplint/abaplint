@@ -17,8 +17,8 @@ export class TABLEnhancementCategory implements IRule {
     return "tabl_enhancement_category";
   }
 
-  public getDescription(): string {
-    return "TABL enhancement category not classified";
+  public getDescription(name: string): string {
+    return "TABL enhancement category not classified in" + name;
   }
 
   public getConfig() {
@@ -36,7 +36,7 @@ export class TABLEnhancementCategory implements IRule {
 
     if (obj.getEnhancementCategory() === EnhancementCategory.NotClassified) {
       return [new Issue({file: obj.getFiles()[0],
-        message: this.getDescription(), key: this.getKey(), start: new Position(1, 1)})];
+        message: this.getDescription(obj.getName()), key: this.getKey(), start: new Position(1, 1)})];
     }
 
     return [];

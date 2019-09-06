@@ -28,8 +28,8 @@ export class AvoidUse extends ABAPRule {
     return "avoid_use";
   }
 
-  public getDescription(): string {
-    return "Avoid use";
+  public getDescription(statement: string): string {
+    return "Avoid use of " + statement;
   }
 
   public getConfig() {
@@ -46,22 +46,22 @@ export class AvoidUse extends ABAPRule {
     for (const statement of file.getStatements()) {
       let message: string | undefined = undefined;
       if (this.conf.define && statement.get() instanceof Statements.Define) {
-        message = "Avoid use of DEFINE";
+        message = "DEFINE";
       } else if (this.conf.endselect && statement.get() instanceof Statements.EndSelect) {
-        message = "Avoid use of ENDSELECT";
+        message = "ENDSELECT";
       } else if (this.conf.execSQL && statement.get() instanceof Statements.ExecSQL) {
-        message = "Avoid use of EXEC SQL";
+        message = "EXEC SQL";
       } else if (this.conf.kernelCall && statement.get() instanceof Statements.CallKernel) {
-        message = "Avoid use of kernel CALL";
+        message = "KERNEL CALL";
       } else if (this.conf.communication && statement.get() instanceof Statements.Communication) {
-        message = "Avoid use of COMMUNICATION";
+        message = "COMMUNICATION";
       } else if (this.conf.statics
           && (statement.get() instanceof Statements.Static
           || statement.get() instanceof Statements.StaticBegin)) {
-        message = "Avoid use of STATICS";
+        message = "STATICS";
       }
       if (message) {
-        issues.push(new Issue({file, message, key: this.getKey(), start: statement.getStart()}));
+        issues.push(new Issue({file, message: this.getDescription(message), key: this.getKey(), start: statement.getStart()}));
       }
     }
 

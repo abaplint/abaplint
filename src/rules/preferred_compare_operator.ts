@@ -18,8 +18,8 @@ export class PreferredCompareOperator extends ABAPRule {
     return "preferred_compare_operator";
   }
 
-  public getDescription(): string {
-    return "Compare operator not preferred";
+  public getDescription(operator: string): string {
+    return "Compare operator " + operator + " not preferred";
   }
 
   public runParsed(file: ABAPFile) {
@@ -34,7 +34,7 @@ export class PreferredCompareOperator extends ABAPRule {
     for (const op of operators) {
       const token = op.getLastToken();
       if (this.conf.badOperators.indexOf(token.getStr()) >= 0) {
-        const message = "Compare operator " + token.getStr() + " not preferred";
+        const message = this.getDescription(token.getStr());
         const issue = new Issue({
           file,
           message,

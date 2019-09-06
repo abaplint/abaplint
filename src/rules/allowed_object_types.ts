@@ -16,8 +16,8 @@ export class AllowedObjectTypes implements IRule {
     return "allowed_object_types";
   }
 
-  public getDescription(): string {
-    return "Allowed object Types";
+  public getDescription(objectType: string): string {
+    return "Object type " + objectType + " not allowed.";
   }
 
   public getConfig() {
@@ -34,11 +34,12 @@ export class AllowedObjectTypes implements IRule {
       return [];
     }
 
-    if (allowed.indexOf(obj.getType()) < 0) {
+    const objectType = obj.getType();
+    if (allowed.indexOf(objectType) < 0) {
       return [new Issue({
         file: obj.getFiles()[0],
         key: this.getKey(),
-        message: "Object type " + obj.getType() + " not allowed"})];
+        message: this.getDescription(objectType)})];
     }
 
     return [];

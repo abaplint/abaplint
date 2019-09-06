@@ -22,7 +22,7 @@ export class AmbiguousStatement extends ABAPRule {
   }
 
   public getDescription(): string {
-    return "Ambiguous Statement";
+    return "Ambiguous DELETE statement. Use explicit syntax.";
   }
 
   public getConfig() {

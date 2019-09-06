@@ -17,7 +17,7 @@ export class TryWithoutCatch extends ABAPRule {
   }
 
   public getDescription(): string {
-    return "Inline DATA in old versions";
+    return "A TRY block must have a corresponding CATCH block.";
   }
 
   public getConfig() {

@@ -22,7 +22,7 @@ export class ShortCase extends ABAPRule {
   }
 
   public getDescription(): string {
-    return "Short CASE construct";
+    return "CASE construct too short, it must have a minimum of " + this.conf.length + " WHEN branches.";
   }
 
   public getConfig() {

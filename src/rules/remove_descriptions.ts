@@ -21,8 +21,8 @@ export class RemoveDescriptions implements IRule {
     return "remove_descriptions";
   }
 
-  public getDescription(): string {
-    return "Remove descriptions";
+  public getDescription(name: string): string {
+    return "Remove description in " + name;
   }
 
   public getConfig() {
@@ -93,7 +93,7 @@ export class RemoveDescriptions implements IRule {
 
     const ret: Issue[] = [];
     for (const d of xmlToArray(desc.SEOCOMPOTX)) {
-      const message = "Remove description, " + d.CMPNAME._text;
+      const message = this.getDescription(d.CMPNAME._text);
       ret.push(new Issue({file, key: this.getKey(), message}));
     }
     return ret;

@@ -23,7 +23,7 @@ export class Exporting extends ABAPRule {
   }
 
   public getDescription(): string {
-    return "EXPORTING can be omitted";
+    return "The EXPORTING keyword can be omitted.";
   }
 
   public runParsed(file: ABAPFile) {

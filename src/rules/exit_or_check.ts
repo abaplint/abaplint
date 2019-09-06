@@ -18,7 +18,7 @@ export class ExitOrCheck extends ABAPRule {
   }
 
   public getDescription(): string {
-    return "EXIT or CHECK outside of loop";
+    return "EXIT and CHECK are not allowed outside of loops.";
   }
 
   public getConfig() {

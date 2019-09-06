@@ -21,8 +21,8 @@ export class ParserError extends ABAPRule {
     return "parser_error";
   }
 
-  public getDescription(): string {
-    return "Parser error(Unknown statement)";
+  public getDescription(abapVersion: string): string {
+    return "Statement does not exist in ABAP" + abapVersion + "(or a parser error)";
   }
 
   public getConfig() {
@@ -48,7 +48,7 @@ export class ParserError extends ABAPRule {
           start = missing;
           issues.push(new Issue({file, message, key: this.getKey(), start}));
         } else {
-          const message = this.getDescription() + ", ABAP version " + versionToText(reg.getConfig().getVersion());
+          const message = this.getDescription(versionToText(reg.getConfig().getVersion()));
           issues.push(new Issue({file, message,
             key: this.getKey(),
             start: statement.getStart(),

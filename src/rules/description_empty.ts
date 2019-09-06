@@ -20,8 +20,8 @@ export class DescriptionEmpty implements IRule {
     return "description_empty";
   }
 
-  public getDescription(): string {
-    return "Description empty";
+  public getDescription(name: string): string {
+    return "Description empty in " + name;
   }
 
   public getConfig() {
@@ -40,9 +40,9 @@ export class DescriptionEmpty implements IRule {
       const description = obj.getDescription();
       let message: string | undefined = undefined;
       if (description === "") {
-        message = this.getDescription();
+        message = this.getDescription(obj.getName());
       } else if (description === undefined) {
-        message = this.getDescription() + ", class XML file not found";
+        message = this.getDescription(obj.getName() + ", class XML file not found") ;
       }
       if (message) {
         const issue = new Issue({file: obj.getFiles()[0], message, key: this.getKey(), start: new Position(1, 1)});

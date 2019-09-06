@@ -16,7 +16,7 @@ export class ColonMissingSpace extends ABAPRule {
   }
 
   public getDescription(): string {
-    return "Missing space after colon";
+    return "Missing space after the colon.";
   }
 
   public getConfig() {

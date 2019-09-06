@@ -17,7 +17,7 @@ export class WhitespaceEnd extends ABAPRule {
   }
 
   public getDescription(): string {
-    return "Whitespace at end of line";
+    return "Remove whitespace at end of line.";
   }
 
   public getConfig() {
