@@ -1,4 +1,6 @@
 export abstract class BasicRuleConfig {
+  /** Is the rule enabled? */
   public enabled: boolean = true;
-  public exclude: string[] = [];
+  /** List of patterns to exclude */
+  public exclude?: string[] = [];
 }
