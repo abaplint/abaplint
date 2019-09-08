@@ -24,25 +24,27 @@ describe("Rules, superclass final rule", function () {
   });
 
   it("normal class", () => {
-    const contents = "CLASS zcl_foobar DEFINITION PUBLIC FINAL CREATE PUBLIC.\n" +
-      "ENDCLASS.\n" +
-      "CLASS zcl_foobar IMPLEMENTATION.\n" +
-      "ENDCLASS.";
+    const contents =
+      `CLASS zcl_foobar DEFINITION PUBLIC FINAL CREATE PUBLIC.
+      ENDCLASS.
+      CLASS zcl_foobar IMPLEMENTATION.
+      ENDCLASS.`;
     const issues = runMulti([{filename: "cl_foo.clas.abap", contents}]);
     expect(issues.length).to.equals(0);
   });
 
   it("superclass final", () => {
     const clas =
-      "CLASS zcl_foobar DEFINITION PUBLIC INHERITING FROM zcl_super FINAL CREATE PUBLIC.\n" +
-      "ENDCLASS.\n" +
-      "CLASS zcl_foobar IMPLEMENTATION.\n" +
-      "ENDCLASS.\n";
+      `CLASS zcl_foobar DEFINITION PUBLIC
+        INHERITING FROM zcl_super FINAL CREATE PUBLIC.
+      ENDCLASS.
+      CLASS zcl_foobar IMPLEMENTATION.
+      ENDCLASS.`;
     const sup =
-      "CLASS zcl_super DEFINITION PUBLIC FINAL CREATE PUBLIC.\n" +
-      "ENDCLASS.\n" +
-      "CLASS ZCL_SUPER IMPLEMENTATION.\n" +
-      "ENDCLASS.";
+      `CLASS zcl_super DEFINITION PUBLIC FINAL CREATE PUBLIC.
+      ENDCLASS.
+      CLASS ZCL_SUPER IMPLEMENTATION.
+      ENDCLASS.`;
     const issues = runMulti([
       {filename: "zcl_foobar.clas.abap", contents: clas},
       {filename: "zcl_super.clas.abap", contents: sup}]);
@@ -51,15 +53,16 @@ describe("Rules, superclass final rule", function () {
 
   it("superclass not final", () => {
     const clas =
-      "CLASS zcl_foobar DEFINITION PUBLIC INHERITING FROM zcl_super FINAL CREATE PUBLIC.\n" +
-      "ENDCLASS.\n" +
-      "CLASS zcl_foobar IMPLEMENTATION.\n" +
-      "ENDCLASS.\n";
+      `CLASS zcl_foobar DEFINITION PUBLIC
+        INHERITING FROM zcl_super FINAL CREATE PUBLIC.
+      ENDCLASS.
+      CLASS zcl_foobar IMPLEMENTATION.
+      ENDCLASS.`;
     const sup =
-      "CLASS zcl_super DEFINITION PUBLIC CREATE PUBLIC.\n" +
-      "ENDCLASS.\n" +
-      "CLASS ZCL_SUPER IMPLEMENTATION.\n" +
-      "ENDCLASS.";
+      `CLASS zcl_super DEFINITION PUBLIC CREATE PUBLIC.
+      ENDCLASS.
+      CLASS ZCL_SUPER IMPLEMENTATION.
+      ENDCLASS.`;
     const issues = runMulti([
       {filename: "zcl_foobar.clas.abap", contents: clas},
       {filename: "zcl_super.clas.abap", contents: sup}]);

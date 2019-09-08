@@ -24,79 +24,84 @@ describe("Rules, implement_methods", function () {
   });
 
   it("normal class, no methods", () => {
-    const contents = "CLASS zcl_foobar DEFINITION PUBLIC FINAL CREATE PUBLIC.\n" +
-      "ENDCLASS.\n" +
-      "CLASS zcl_foobar IMPLEMENTATION.\n" +
-      "ENDCLASS.";
+    const contents =
+    `CLASS zcl_foobar DEFINITION PUBLIC FINAL CREATE PUBLIC.
+     ENDCLASS.
+     CLASS zcl_foobar IMPLEMENTATION.
+     ENDCLASS.`;
     const issues = runMulti([{filename: "cl_foo.clas.abap", contents}]);
     expect(issues.length).to.equals(0);
   });
 
   it("local class, implementation part not found", () => {
-    const contents = "REPORT zrep.\n" +
-      "CLASS lcl_foobar DEFINITION.\n" +
-      "ENDCLASS.\n";
+    const contents =
+    `REPORT zrep.
+     CLASS lcl_foobar DEFINITION.
+     ENDCLASS.`;
     const issues = runMulti([{filename: "zrep.prog.abap", contents}]);
     expect(issues.length).to.equals(1);
   });
 
   it("normal class, missing implementation", () => {
-    const contents = "CLASS zcl_foobar DEFINITION PUBLIC FINAL CREATE PUBLIC.\n" +
-      "  PUBLIC SECTION.\n" +
-      "    METHODS foobar.\n" +
-      "ENDCLASS.\n" +
-      "CLASS zcl_foobar IMPLEMENTATION.\n" +
-      "ENDCLASS.";
+    const contents =
+    `CLASS zcl_foobar DEFINITION PUBLIC FINAL CREATE PUBLIC.
+        PUBLIC SECTION.
+          METHODS foobar.
+     ENDCLASS.
+     CLASS zcl_foobar IMPLEMENTATION.
+     ENDCLASS.`;
     const issues = runMulti([{filename: "cl_foo.clas.abap", contents}]);
     expect(issues.length).to.equals(1);
   });
 
   it("normal class, method implemented", () => {
-    const contents = "CLASS zcl_foobar DEFINITION PUBLIC FINAL CREATE PUBLIC.\n" +
-      "  PUBLIC SECTION.\n" +
-      "    METHODS foobar.\n" +
-      "ENDCLASS.\n" +
-      "CLASS zcl_foobar IMPLEMENTATION.\n" +
-      "  METHOD foobar.\n" +
-      "  ENDMETHOD.\n" +
-      "ENDCLASS.";
+    const contents =
+    `CLASS zcl_foobar DEFINITION PUBLIC FINAL CREATE PUBLIC.
+       PUBLIC SECTION.
+         METHODS foobar.
+     ENDCLASS.
+     CLASS zcl_foobar IMPLEMENTATION.
+       METHOD foobar.
+       ENDMETHOD.
+      ENDCLASS.`;
     const issues = runMulti([{filename: "cl_foo.clas.abap", contents}]);
     expect(issues.length).to.equals(0);
   });
 
   it("abstract method", () => {
-    const contents = "CLASS zcl_foobar DEFINITION PUBLIC FINAL CREATE PUBLIC.\n" +
-      "  PUBLIC SECTION.\n" +
-      "    METHODS foobar ABSTRACT.\n" +
-      "ENDCLASS.\n" +
-      "CLASS zcl_foobar IMPLEMENTATION.\n" +
-      "ENDCLASS.";
+    const contents =
+    `CLASS zcl_foobar DEFINITION PUBLIC FINAL CREATE PUBLIC.
+      PUBLIC SECTION.
+        METHODS foobar ABSTRACT.
+     ENDCLASS.
+     CLASS zcl_foobar IMPLEMENTATION.
+     ENDCLASS.`;
     const issues = runMulti([{filename: "cl_foo.clas.abap", contents}]);
     expect(issues.length).to.equals(0);
   });
 
   it("abstract method, do not implement", () => {
-    const contents = "CLASS zcl_foobar DEFINITION PUBLIC FINAL CREATE PUBLIC.\n" +
-      "  PUBLIC SECTION.\n" +
-      "    METHODS foobar ABSTRACT.\n" +
-      "ENDCLASS.\n" +
-      "CLASS zcl_foobar IMPLEMENTATION.\n" +
-      "  METHOD foobar.\n" +
-      "  ENDMETHOD.\n" +
-      "ENDCLASS.";
+    const contents = `CLASS zcl_foobar DEFINITION PUBLIC FINAL CREATE PUBLIC.
+        PUBLIC SECTION.
+          METHODS foobar ABSTRACT.
+      ENDCLASS.
+      CLASS zcl_foobar IMPLEMENTATION.
+        METHOD foobar.
+        ENDMETHOD.
+      ENDCLASS.`;
     const issues = runMulti([{filename: "cl_foo.clas.abap", contents}]);
     expect(issues.length).to.equals(1);
   });
 
   it("global class with local classes", () => {
-    const main = "CLASS zcl_foobar DEFINITION PUBLIC FINAL CREATE PUBLIC.\n" +
-      "ENDCLASS.\n" +
-      "CLASS zcl_foobar IMPLEMENTATION.\n" +
-      "ENDCLASS.";
-    const imp = "CLASS lcl_foo IMPLEMENTATION.\n" +
-      "ENDCLASS.";
-    const def = "CLASS lcl_foo DEFINITION.\n" +
-      "ENDCLASS.";
+    const main = `CLASS zcl_foobar DEFINITION PUBLIC FINAL CREATE PUBLIC.
+      ENDCLASS.
+      CLASS zcl_foobar IMPLEMENTATION.
+      ENDCLASS.`;
+    const imp = `CLASS lcl_foo IMPLEMENTATION.
+      ENDCLASS.`;
+    const def = `CLASS lcl_foo DEFINITION.
+      ENDCLASS.`;
     const issues = runMulti([
       {filename: "zcl_foobar.clas.locals_imp.abap", contents: imp},
       {filename: "zcl_foobar.clas.locals_def.abap", contents: def},
@@ -106,27 +111,27 @@ describe("Rules, implement_methods", function () {
   });
 
   it("implemented interface not found", () => {
-    const clas = "CLASS zcl_foo DEFINITION PUBLIC FINAL CREATE PUBLIC.\n" +
-      "  PUBLIC SECTION.\n" +
-      "    INTERFACES: zif_bar.\n" +
-      "ENDCLASS.\n" +
-      "CLASS zcl_foo IMPLEMENTATION.\n" +
-      "ENDCLASS.";
+    const clas = `CLASS zcl_foo DEFINITION PUBLIC FINAL CREATE PUBLIC.
+        PUBLIC SECTION.
+          INTERFACES: zif_bar.
+      ENDCLASS.
+      CLASS zcl_foo IMPLEMENTATION.
+      ENDCLASS.`;
     const issues = runMulti([
       {filename: "zcl_foo.clas.abap", contents: clas}]);
     expect(issues.length).to.equals(1);
   });
 
   it("implement methods from interface, error, not implemented", () => {
-    const intf = "INTERFACE zif_bar PUBLIC.\n" +
-      "  METHODS: foobar.\n" +
-      "ENDINTERFACE.\n";
-    const clas = "CLASS zcl_foo DEFINITION PUBLIC FINAL CREATE PUBLIC.\n" +
-      "  PUBLIC SECTION.\n" +
-      "    INTERFACES: zif_bar.\n" +
-      "ENDCLASS.\n" +
-      "CLASS zcl_foo IMPLEMENTATION.\n" +
-      "ENDCLASS.";
+    const intf = `INTERFACE zif_bar PUBLIC.
+        METHODS: foobar.
+      ENDINTERFACE.\n`;
+    const clas = `CLASS zcl_foo DEFINITION PUBLIC FINAL CREATE PUBLIC.
+        PUBLIC SECTION.
+          INTERFACES: zif_bar.
+      ENDCLASS.
+      CLASS zcl_foo IMPLEMENTATION.
+      ENDCLASS.`;
     const issues = runMulti([
       {filename: "zcl_foo.clas.abap", contents: clas},
       {filename: "zif_bar.intf.abap", contents: intf}]);
@@ -134,15 +139,15 @@ describe("Rules, implement_methods", function () {
   });
 
   it("interface contains syntax error, ignore", () => {
-    const intf = "INTERFsdffsdACE zif_bar PUBLIC.\n" +
-      "  METHODS: foobar.\n" +
-      "ENDINTERFACE.\n";
-    const clas = "CLASS zcl_foo DEFINITION PUBLIC FINAL CREATE PUBLIC.\n" +
-      "  PUBLIC SECTION.\n" +
-      "    INTERFACES: zif_bar.\n" +
-      "ENDCLASS.\n" +
-      "CLASS zcl_foo IMPLEMENTATION.\n" +
-      "ENDCLASS.";
+    const intf = `INTERFsdffsdACE zif_bar PUBLIC.
+        METHODS: foobar.
+      ENDINTERFACE.\n`;
+    const clas = `CLASS zcl_foo DEFINITION PUBLIC FINAL CREATE PUBLIC.
+        PUBLIC SECTION.
+          INTERFACES: zif_bar.
+      ENDCLASS.
+      CLASS zcl_foo IMPLEMENTATION.
+      ENDCLASS.`;
     const issues = runMulti([
       {filename: "zcl_foo.clas.abap", contents: clas},
       {filename: "zif_bar.intf.abap", contents: intf}]);
@@ -150,17 +155,17 @@ describe("Rules, implement_methods", function () {
   });
 
   it("implement methods from interface, implemented", () => {
-    const intf = "INTERFACE zif_bar PUBLIC.\n" +
-      "  METHODS: foobar.\n" +
-      "ENDINTERFACE.\n";
-    const clas = "CLASS zcl_foo DEFINITION PUBLIC FINAL CREATE PUBLIC.\n" +
-      "  PUBLIC SECTION.\n" +
-      "    INTERFACES: zif_bar.\n" +
-      "ENDCLASS.\n" +
-      "CLASS zcl_foo IMPLEMENTATION.\n" +
-      "  METHOD zif_bar~foobar.\n" +
-      "  ENDMETHOD.\n" +
-      "ENDCLASS.";
+    const intf = `INTERFACE zif_bar PUBLIC.
+        METHODS: foobar.
+      ENDINTERFACE.\n`;
+    const clas = `CLASS zcl_foo DEFINITION PUBLIC FINAL CREATE PUBLIC.
+        PUBLIC SECTION.
+          INTERFACES: zif_bar.
+      ENDCLASS.
+      CLASS zcl_foo IMPLEMENTATION.
+        METHOD zif_bar~foobar.
+        ENDMETHOD.
+      ENDCLASS.`;
     const issues = runMulti([
       {filename: "zcl_foo.clas.abap", contents: clas},
       {filename: "zif_bar.intf.abap", contents: intf}]);
@@ -168,18 +173,20 @@ describe("Rules, implement_methods", function () {
   });
 
   it("implement methods from interface, implemented by ALIAS", () => {
-    const intf = "INTERFACE zif_bar PUBLIC.\n" +
-      "  METHODS: foobar.\n" +
-      "ENDINTERFACE.\n";
-    const clas = "CLASS zcl_foo DEFINITION PUBLIC FINAL CREATE PUBLIC.\n" +
-      "  PUBLIC SECTION.\n" +
-      "    INTERFACES: zif_bar.\n" +
-      "    ALIASES: foobar FOR zif_bar~foobar.\n" +
-      "ENDCLASS.\n" +
-      "CLASS zcl_foo IMPLEMENTATION.\n" +
-      "  METHOD foobar.\n" +
-      "  ENDMETHOD.\n" +
-      "ENDCLASS.";
+    const intf =
+    `INTERFACE zif_bar PUBLIC.
+        METHODS: foobar.
+      ENDINTERFACE.\n`;
+    const clas =
+    `CLASS zcl_foo DEFINITION PUBLIC FINAL CREATE PUBLIC.
+        PUBLIC SECTION.
+          INTERFACES: zif_bar.
+          ALIASES: foobar FOR zif_bar~foobar.
+      ENDCLASS.
+      CLASS zcl_foo IMPLEMENTATION.
+        METHOD foobar.
+        ENDMETHOD.
+      ENDCLASS.`;
     const issues = runMulti([
       {filename: "zcl_foo.clas.abap", contents: clas},
       {filename: "zif_bar.intf.abap", contents: intf}]);
@@ -187,15 +194,16 @@ describe("Rules, implement_methods", function () {
   });
 
   it("PROG, local intf and class", () => {
-    const prog = "REPORT zfoobar.\n" +
-      "INTERFACE zif_bar.\n" +
-      "ENDINTERFACE.\n" +
-      "CLASS zcl_foo DEFINITION.\n" +
-      "  PUBLIC SECTION.\n" +
-      "    INTERFACES: zif_bar.\n" +
-      "ENDCLASS.\n" +
-      "CLASS zcl_foo IMPLEMENTATION.\n" +
-      "ENDCLASS.";
+    const prog = `
+    REPORT zfoobar.
+    INTERFACE zif_bar.
+    ENDINTERFACE.
+    CLASS zcl_foo DEFINITION.
+      PUBLIC SECTION.
+        INTERFACES: zif_bar.
+    ENDCLASS.
+    CLASS zcl_foo IMPLEMENTATION.
+    ENDCLASS.`;
     const issues = runMulti([
       {filename: "zfoobar.prog.abap", contents: prog}]);
     expect(issues.length).to.equals(0);

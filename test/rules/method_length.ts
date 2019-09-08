@@ -7,157 +7,157 @@ const tests = [
   {abap: "METHOD foobar. ENDMETHOD.", cnt: 0},
   {abap: "METHOD foobar. WRITE foo. ENDMETHOD.", cnt: 0},
 
-  {abap: "METHOD foobar.\n" +
-    "WRITE foo.\n" +
-    "WRITE foo.\n" +
-    "WRITE foo.\n" +
-    "WRITE foo.\n" +
-    "WRITE foo.\n" +
-    "WRITE foo.\n" +
-    "WRITE foo.\n" +
-    "WRITE foo.\n" +
-    "WRITE foo.\n" +
-    "WRITE foo.\n" +
-    "WRITE foo.\n" +
-    "WRITE foo.\n" +
-    "WRITE foo.\n" +
-    "WRITE foo.\n" +
-    "WRITE foo.\n" +
-    "WRITE foo.\n" +
-    "WRITE foo.\n" +
-    "WRITE foo.\n" +
-    "WRITE foo.\n" +
-    "WRITE foo.\n" +
-    "WRITE foo.\n" +
-    "WRITE foo.\n" +
-    "WRITE foo.\n" +
-    "WRITE foo.\n" +
-    "WRITE foo.\n" +
-    "WRITE foo.\n" +
-    "WRITE foo.\n" +
-    "WRITE foo.\n" +
-    "WRITE foo.\n" +
-    "WRITE foo.\n" +
-    "WRITE foo.\n" +
-    "WRITE foo.\n" +
-    "WRITE foo.\n" +
-    "WRITE foo.\n" +
-    "WRITE foo.\n" +
-    "WRITE foo.\n" +
-    "WRITE foo.\n" +
-    "WRITE foo.\n" +
-    "WRITE foo.\n" +
-    "WRITE foo.\n" +
-    "WRITE foo.\n" +
-    "WRITE foo.\n" +
-    "WRITE foo.\n" +
-    "WRITE foo.\n" +
-    "WRITE foo.\n" +
-    "WRITE foo.\n" +
-    "WRITE foo.\n" +
-    "WRITE foo.\n" +
-    "WRITE foo.\n" +
-    "WRITE foo.\n" +
-    "WRITE foo.\n" +
-    "WRITE foo.\n" +
-    "WRITE foo.\n" +
-    "WRITE foo.\n" +
-    "WRITE foo.\n" +
-    "WRITE foo.\n" +
-    "WRITE foo.\n" +
-    "WRITE foo.\n" +
-    "WRITE foo.\n" +
-    "WRITE foo.\n" +
-    "WRITE foo.\n" +
-    "WRITE foo.\n" +
-    "WRITE foo.\n" +
-    "WRITE foo.\n" +
-    "WRITE foo.\n" +
-    "WRITE foo.\n" +
-    "WRITE foo.\n" +
-    "WRITE foo.\n" +
-    "WRITE foo.\n" +
-    "WRITE foo.\n" +
-    "WRITE foo.\n" +
-    "WRITE foo.\n" +
-    "WRITE foo.\n" +
-    "WRITE foo.\n" +
-    "WRITE foo.\n" +
-    "WRITE foo.\n" +
-    "WRITE foo.\n" +
-    "WRITE foo.\n" +
-    "WRITE foo.\n" +
-    "WRITE foo.\n" +
-    "WRITE foo.\n" +
-    "WRITE foo.\n" +
-    "WRITE foo.\n" +
-    "WRITE foo.\n" +
-    "WRITE foo.\n" +
-    "WRITE foo.\n" +
-    "WRITE foo.\n" +
-    "WRITE foo.\n" +
-    "WRITE foo.\n" +
-    "WRITE foo.\n" +
-    "WRITE foo.\n" +
-    "WRITE foo.\n" +
-    "WRITE foo.\n" +
-    "WRITE foo.\n" +
-    "WRITE foo.\n" +
-    "WRITE foo.\n" +
-    "WRITE foo.\n" +
-    "WRITE foo.\n" +
-    "WRITE foo.\n" +
-    "WRITE foo.\n" +
-    "WRITE foo.\n" +
-    "WRITE foo.\n" +
-    "WRITE foo.\n" +
-    "WRITE foo.\n" +
-    "WRITE foo.\n" +
-    "WRITE foo.\n" +
-    "WRITE foo.\n" +
-    "WRITE foo.\n" +
-    "WRITE foo.\n" +
-    "WRITE foo.\n" +
-    "WRITE foo.\n" +
-    "WRITE foo.\n" +
-    "WRITE foo.\n" +
-    "WRITE foo.\n" +
-    "WRITE foo.\n" +
-    "WRITE foo.\n" +
-    "WRITE foo.\n" +
-    "WRITE foo.\n" +
-    "WRITE foo.\n" +
-    "WRITE foo.\n" +
-    "WRITE foo.\n" +
-    "WRITE foo.\n" +
-    "WRITE foo.\n" +
-    "WRITE foo.\n" +
-    "WRITE foo.\n" +
-    "WRITE foo.\n" +
-    "WRITE foo.\n" +
-    "WRITE foo.\n" +
-    "WRITE foo.\n" +
-    "WRITE foo.\n" +
-    "WRITE foo.\n" +
-    "WRITE foo.\n" +
-    "WRITE foo.\n" +
-    "WRITE foo.\n" +
-    "WRITE foo.\n" +
-    "WRITE foo.\n" +
-    "WRITE foo.\n" +
-    "WRITE foo.\n" +
-    "WRITE foo.\n" +
-    "WRITE foo.\n" +
-    "WRITE foo.\n" +
-    "WRITE foo.\n" +
-    "WRITE foo.\n" +
-    "WRITE foo.\n" +
-    "WRITE foo.\n" +
-    "WRITE foo.\n" +
-    "WRITE foo.\n" +
-    "WRITE foo.\n" +
-    "WRITE foo.\n" +
-    "ENDMETHOD.", cnt: 1},
+  {abap: `METHOD foobar.
+  WRITE foo.
+  WRITE foo.
+  WRITE foo.
+  WRITE foo.
+  WRITE foo.
+  WRITE foo.
+  WRITE foo.
+  WRITE foo.
+  WRITE foo.
+  WRITE foo.
+  WRITE foo.
+  WRITE foo.
+  WRITE foo.
+  WRITE foo.
+  WRITE foo.
+  WRITE foo.
+  WRITE foo.
+  WRITE foo.
+  WRITE foo.
+  WRITE foo.
+  WRITE foo.
+  WRITE foo.
+  WRITE foo.
+  WRITE foo.
+  WRITE foo.
+  WRITE foo.
+  WRITE foo.
+  WRITE foo.
+  WRITE foo.
+  WRITE foo.
+  WRITE foo.
+  WRITE foo.
+  WRITE foo.
+  WRITE foo.
+  WRITE foo.
+  WRITE foo.
+  WRITE foo.
+  WRITE foo.
+  WRITE foo.
+  WRITE foo.
+  WRITE foo.
+  WRITE foo.
+  WRITE foo.
+  WRITE foo.
+  WRITE foo.
+  WRITE foo.
+  WRITE foo.
+  WRITE foo.
+  WRITE foo.
+  WRITE foo.
+  WRITE foo.
+  WRITE foo.
+  WRITE foo.
+  WRITE foo.
+  WRITE foo.
+  WRITE foo.
+  WRITE foo.
+  WRITE foo.
+  WRITE foo.
+  WRITE foo.
+  WRITE foo.
+  WRITE foo.
+  WRITE foo.
+  WRITE foo.
+  WRITE foo.
+  WRITE foo.
+  WRITE foo.
+  WRITE foo.
+  WRITE foo.
+  WRITE foo.
+  WRITE foo.
+  WRITE foo.
+  WRITE foo.
+  WRITE foo.
+  WRITE foo.
+  WRITE foo.
+  WRITE foo.
+  WRITE foo.
+  WRITE foo.
+  WRITE foo.
+  WRITE foo.
+  WRITE foo.
+  WRITE foo.
+  WRITE foo.
+  WRITE foo.
+  WRITE foo.
+  WRITE foo.
+  WRITE foo.
+  WRITE foo.
+  WRITE foo.
+  WRITE foo.
+  WRITE foo.
+  WRITE foo.
+  WRITE foo.
+  WRITE foo.
+  WRITE foo.
+  WRITE foo.
+  WRITE foo.
+  WRITE foo.
+  WRITE foo.
+  WRITE foo.
+  WRITE foo.
+  WRITE foo.
+  WRITE foo.
+  WRITE foo.
+  WRITE foo.
+  WRITE foo.
+  WRITE foo.
+  WRITE foo.
+  WRITE foo.
+  WRITE foo.
+  WRITE foo.
+  WRITE foo.
+  WRITE foo.
+  WRITE foo.
+  WRITE foo.
+  WRITE foo.
+  WRITE foo.
+  WRITE foo.
+  WRITE foo.
+  WRITE foo.
+  WRITE foo.
+  WRITE foo.
+  WRITE foo.
+  WRITE foo.
+  WRITE foo.
+  WRITE foo.
+  WRITE foo.
+  WRITE foo.
+  WRITE foo.
+  WRITE foo.
+  WRITE foo.
+  WRITE foo.
+  WRITE foo.
+  WRITE foo.
+  WRITE foo.
+  WRITE foo.
+  WRITE foo.
+  WRITE foo.
+  WRITE foo.
+  WRITE foo.
+  WRITE foo.
+  WRITE foo.
+  WRITE foo.
+  WRITE foo.
+  WRITE foo.
+  WRITE foo.
+  WRITE foo.
+  WRITE foo.
+  ENDMETHOD.`, cnt: 1},
 ];
 
 testRule(tests, MethodLength);
