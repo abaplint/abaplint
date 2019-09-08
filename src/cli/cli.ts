@@ -143,7 +143,6 @@ async function run() {
       if (config.get().global.files === undefined) {
         throw "Error: Update abaplint.json to latest format";
       }
-      console.dir("base: " + base);
       const files = FileOperations.loadFileNames(base + config.get().global.files);
       loaded = await FileOperations.loadFiles(compress, files, progress);
       deps = await loadDependencies(config, compress, progress, base);

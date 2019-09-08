@@ -80,6 +80,7 @@ export class Config {
       if (ruleExists) {
         const ruleEnabled = this.readByKey(rule.getKey(), "enabled");
         if (ruleEnabled === true || ruleEnabled === undefined) {
+          rule.setConfig(this.readByRule(rule.getKey()));
           rules.push(rule);
           continue;
         }
