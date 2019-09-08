@@ -7,14 +7,14 @@ const tests = [
   {abap: "CALL METHOD (lv_class_name)=>jump.", cnt: 0},
   {abap: "CALL METHOD mo_plugin->('SET_FILES').", cnt: 0},
   {abap: "CALL METHOD (method_name) PARAMETER-TABLE parameters.", cnt: 0},
-  {abap: "CLASS ZCL_NOT_AN_EXCEPTION IMPLEMENTATION.\n" +
-    "method CONSTRUCTOR.\n" +
-    "CALL METHOD SUPER->CONSTRUCTOR\n" +
-    "EXPORTING\n" +
-    "TEXTID = TEXTID\n" +
-    "PREVIOUS = PREVIOUS.\n" +
-    "endmethod.\n" +
-    "ENDCLASS.", cnt: 1},
+  {abap: `CLASS ZCL_NOT_AN_EXCEPTION IMPLEMENTATION.
+            method CONSTRUCTOR.
+              CALL METHOD SUPER->CONSTRUCTOR
+                EXPORTING
+                  TEXTID = TEXTID
+                  PREVIOUS = PREVIOUS.
+            endmethod.
+          ENDCLASS.`, cnt: 1},
 ];
 
 testRule(tests, FunctionalWriting);

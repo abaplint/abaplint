@@ -17,33 +17,45 @@ describe("Rule: class attribute names", function() {
   });
 
   it("issue", function () {
-    const abap = "CLASS zcl_foobar DEFINITION PUBLIC.\n" +
-      "  PUBLIC SECTION. DATA foo TYPE i.\n" +
-      "ENDCLASS. CLASS zcl_foobar IMPLEMENTATION. ENDCLASS.";
+    const abap = `
+CLASS zcl_foobar DEFINITION PUBLIC.
+  PUBLIC SECTION.
+    DATA foo TYPE i.
+ENDCLASS.
+CLASS zcl_foobar IMPLEMENTATION. ENDCLASS.`;
     const issues = findIssues(abap);
     expect(issues.length).to.equal(1);
   });
 
   it("no issue", function () {
-    const abap = "CLASS zcl_foobar DEFINITION PUBLIC.\n" +
-      "  PUBLIC SECTION. DATA mv_foo TYPE i.\n" +
-      "ENDCLASS. CLASS zcl_foobar IMPLEMENTATION. ENDCLASS.";
+    const abap = `
+CLASS zcl_foobar DEFINITION PUBLIC.
+  PUBLIC SECTION.
+    DATA mv_foo TYPE i.
+ENDCLASS.
+CLASS zcl_foobar IMPLEMENTATION. ENDCLASS.`;
     const issues = findIssues(abap);
     expect(issues.length).to.equal(0);
   });
 
   it("issue", function () {
-    const abap = "CLASS zcl_foobar DEFINITION PUBLIC.\n" +
-      "  PUBLIC SECTION. CLASS-DATA foo TYPE i.\n" +
-      "ENDCLASS. CLASS zcl_foobar IMPLEMENTATION. ENDCLASS.";
+    const abap = `
+CLASS zcl_foobar DEFINITION PUBLIC.
+  PUBLIC SECTION.
+    CLASS-DATA foo TYPE i.
+ENDCLASS.
+CLASS zcl_foobar IMPLEMENTATION. ENDCLASS.`;
     const issues = findIssues(abap);
     expect(issues.length).to.equal(1);
   });
 
   it("end position", function () {
-    const abap = "CLASS zcl_foobar DEFINITION PUBLIC.\n" +
-      "  PUBLIC SECTION. CLASS-DATA foo TYPE i.\n" +
-      "ENDCLASS. CLASS zcl_foobar IMPLEMENTATION. ENDCLASS.";
+    const abap = `
+              CLASS zcl_foobar DEFINITION PUBLIC.
+                PUBLIC SECTION.
+                  CLASS-DATA foo TYPE i.
+              ENDCLASS.
+              CLASS zcl_foobar IMPLEMENTATION. ENDCLASS.`;
     const issues = findIssues(abap);
     expect(issues.length).to.equal(1);
     expect(issues[0].getEnd().getCol()).to.equal(33);
