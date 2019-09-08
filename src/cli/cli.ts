@@ -59,7 +59,10 @@ function loadConfig(filename: string | undefined): {config: Config, base: string
 
   process.stderr.write("Using config: " + f + "\n");
   const json = fs.readFileSync(f, "utf8");
-  return {config: new Config(json), base: path.dirname(f)};
+  return {
+    config: new Config(json),
+    base: path.dirname(f) === process.cwd() ? "." : path.dirname(f),
+  };
 }
 
 async function loadDependencies(config: Config, compress: boolean, bar: IProgress, base: string): Promise<IFile[]> {
@@ -140,6 +143,7 @@ async function run() {
       if (config.get().global.files === undefined) {
         throw "Error: Update abaplint.json to latest format";
       }
+      console.dir("base: " + base);
       const files = FileOperations.loadFileNames(base + config.get().global.files);
       loaded = await FileOperations.loadFiles(compress, files, progress);
       deps = await loadDependencies(config, compress, progress, base);
