@@ -44,6 +44,19 @@ describe("Registry", () => {
     expect(enabledRuleCount).to.be.greaterThan(0);
   });
 
+  it("should support Boolean rules", function () {
+    const config: IConfig = getConfig(false, {
+      "7bit_ascii": true,
+      "avoid_use": false,
+      "short_case": {
+        enabled: false,
+      },
+    });
+
+    const conf = new Config(JSON.stringify(config));
+    expect(conf.getEnabledRules().length).to.equal(1);
+  });
+
   function getConfig(applyUnspecifiedRules: boolean, rules: any): IConfig {
     return {
       global: {

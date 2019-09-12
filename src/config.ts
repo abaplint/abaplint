@@ -71,19 +71,20 @@ export class Config {
   public getEnabledRules(): IRule[] {
     const rules: IRule[] = [];
     for (const rule of Artifacts.getRules()) {
-      const ruleExists = this.config["rules"][rule.getKey()] !== undefined;
-      if (!ruleExists && this.config.global.applyUnspecifiedRules) {
-        rules.push(rule);
-        continue;
-      }
+      const ruleConfig = this.config["rules"][rule.getKey()];
+      const ruleExists = ruleConfig !== undefined;
 
       if (ruleExists) {
-        const ruleEnabled = this.readByKey(rule.getKey(), "enabled");
-        if (ruleEnabled === true || ruleEnabled === undefined) {
-          rule.setConfig(this.readByRule(rule.getKey()));
+        if (ruleConfig === true) { // "rule": true
           rules.push(rule);
-          continue;
+        } else if (typeof ruleConfig === "object") {
+          if (ruleConfig.enabled === true || ruleConfig.enabled === undefined) {
+            rule.setConfig(ruleConfig);
+            rules.push(rule);
+          }
         }
+      } else if (this.config.global.applyUnspecifiedRules) {
+        rules.push(rule);
       }
     }
 
