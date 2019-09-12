@@ -37,6 +37,7 @@ export * from "./object_naming";
 export * from "./obsolete_statement";
 export * from "./preferred_compare_operator";
 export * from "./remove_descriptions";
+export * from "./rfc_error_handling";
 export * from "./short_case";
 export * from "./syntax/begin_end_names";
 export * from "./syntax/check_transformation_exists";
