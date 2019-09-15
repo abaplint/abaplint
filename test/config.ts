@@ -44,6 +44,34 @@ describe("Registry", () => {
     expect(enabledRuleCount).to.be.greaterThan(0);
   });
 
+  it("should support Boolean rules with true", function () {
+    const config = getConfig(false, {
+      "7bit_ascii": true,
+      "avoid_use": false,
+      "short_case": {
+        enabled: false,
+      },
+    });
+
+    const conf = new Config(JSON.stringify(config));
+    expect(conf.getEnabledRules().length).to.equal(1);
+  });
+
+  it("should support Boolean rules with false", function () {
+    const configAll = getConfig(true, {});
+    const config = getConfig(true, {
+      "7bit_ascii": true,
+      "avoid_use": false,
+      "short_case": {
+        enabled: false,
+      },
+    });
+
+    const confAll = new Config(JSON.stringify(configAll));
+    const conf = new Config(JSON.stringify(config));
+    expect(conf.getEnabledRules().length).to.equal(confAll.getEnabledRules().length - 2);
+  });
+
   function getConfig(applyUnspecifiedRules: boolean, rules: any): IConfig {
     return {
       global: {
