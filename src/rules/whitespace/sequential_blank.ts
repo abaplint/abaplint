@@ -6,7 +6,9 @@ import {BasicRuleConfig} from "../_basic_rule_config";
 
 /** Checks that code does not contain more than the configured number of blank lines in a row. */
 export class SequentialBlankConf extends BasicRuleConfig {
-  /** The maximum number of allowed blank lines in a row */
+  /** An equal or higher number of sequential blank lines will trigger a violation.
+   * Example: if lines = 3, a maximum of 2 is allowed.
+   */
   public lines: number = 4;
 }
 
