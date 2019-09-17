@@ -8,7 +8,9 @@ import {BasicRuleConfig} from "./_basic_rule_config";
 
 /** Checks for CASE statements which have fewer than the specified number of branches */
 export class ShortCaseConf extends BasicRuleConfig {
-  /** Minimum number of branches */
+  /** The smallest number of WHEN branches which will trigger a violation.
+   * Example: if length = 1, at least 2 branches are required
+   */
   public length: number = 1;
 
   public allow: string[] = [];
@@ -22,7 +24,7 @@ export class ShortCase extends ABAPRule {
   }
 
   public getDescription(): string {
-    return "CASE construct too short, it must have a minimum of " + this.conf.length + " WHEN branches.";
+    return "CASE construct too short, it must have a minimum of " + (this.conf.length + 1) + " WHEN branches.";
   }
 
   public getConfig() {
