@@ -36,6 +36,7 @@ export * from "./no_public_attributes";
 export * from "./object_naming";
 export * from "./obsolete_statement";
 export * from "./preferred_compare_operator";
+export * from "./release_idoc";
 export * from "./remove_descriptions";
 export * from "./rfc_error_handling";
 export * from "./short_case";
