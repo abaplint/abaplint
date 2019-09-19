@@ -8,6 +8,7 @@ import {IRule} from "./_irule";
 import * as Statements from "../abap/statements";
 import * as Expressions from "../abap/expressions";
 import {Position} from "../position";
+import {Comment} from "../abap/statements/_statement";
 
 /** Checks related to report declarations. */
 export class MainFileContentsConf extends BasicRuleConfig {
@@ -47,7 +48,12 @@ export class MainFileContents implements IRule {
     }
 
     if (obj instanceof Objects.Program && obj.isInclude() === false) {
-      const first = main.getStatements()[0];
+      let count = 0;
+      let first = main.getStatements()[count];
+      while (first !== undefined && first.get() instanceof Comment) {
+        count = count + 1;
+        first = main.getStatements()[count];
+      }
       if (first === undefined || !(first.get() instanceof Statements.Report)) {
         return [new Issue({file: main,
           message: this.getDescription("Report must begin with REPORT"),
