@@ -8,4 +8,5 @@ export interface IObject {
   removeFile(file: IFile): void;
   setDirty(): void;
   getFiles(): IFile[];
+  getXMLFile(): IFile | undefined;
 }
