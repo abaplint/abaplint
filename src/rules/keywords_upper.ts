@@ -29,8 +29,12 @@ export class KeywordsUpper extends ABAPRule {
     return "keywords_upper";
   }
 
-  public getDescription(tokenValue: string): string {
-    return "Keyword should be upper case: " + tokenValue;
+  public getDescription(tokenValue: string, keyword: boolean): string {
+    if (keyword === true) {
+      return "Keyword should be upper case: " + tokenValue;
+    } else {
+      return "Identifiers should be lower case: " + tokenValue;
+    }
   }
 
   public getConfig() {
@@ -86,14 +90,14 @@ export class KeywordsUpper extends ABAPRule {
         }
       }
 
-      const tok = this.traverse(statement, statement.get());
-      if (tok) {
+      const result = this.traverse(statement, statement.get());
+      if (result.token) {
         const issue = new Issue({
           file,
-          message: this.getDescription(tok.getStr()),
+          message: this.getDescription(result.token.getStr(), result.keyword),
           key: this.getKey(),
-          start: tok.getStart(),
-          end: tok.getEnd()});
+          start: result.token.getStart(),
+          end: result.token.getEnd()});
         issues.push(issue);
         break; // one issue per file
       }
@@ -102,7 +106,7 @@ export class KeywordsUpper extends ABAPRule {
     return issues;
   }
 
-  private traverse(s: StatementNode | ExpressionNode, parent: Statement): Token | undefined {
+  private traverse(s: StatementNode | ExpressionNode, parent: Statement): {token: Token | undefined, keyword: boolean} {
 
     for (const child of s.getChildren()) {
       if (child instanceof TokenNodeRegex) {
@@ -131,12 +135,12 @@ export class KeywordsUpper extends ABAPRule {
           continue;
         }
         if (str !== str.toLowerCase() && child.get() instanceof Identifier) {
-          return child.get();
+          return {token: child.get(), keyword: false};
         }
       } else if (child instanceof TokenNode) {
         const str = child.get().getStr();
         if (str !== str.toUpperCase() && child.get() instanceof Identifier) {
-          return child.get();
+          return {token: child.get(), keyword: true};
         }
       } else if (child instanceof ExpressionNode) {
         const tok = this.traverse(child, parent);
@@ -148,7 +152,7 @@ export class KeywordsUpper extends ABAPRule {
       }
     }
 
-    return undefined;
+    return {token: undefined, keyword: false};
   }
 
 }

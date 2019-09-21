@@ -8,7 +8,7 @@ import {Registry} from "../registry";
 export abstract class ABAPRule implements IRule {
 
   public abstract getKey(): string;
-  public abstract getDescription(...params: string[]): string;
+  public abstract getDescription(...params: any[]): string;
   public abstract getConfig(): void;
   public abstract setConfig(conf: any): void;
 
