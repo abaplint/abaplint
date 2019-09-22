@@ -3,7 +3,6 @@ import {BoxPanel, DockPanel, Menu, MenuBar, Widget} from "@phosphor/widgets";
 import "../style/index.css";
 import {EditorWidget, TreeWidget, ProblemsWidget} from "./widgets/";
 import {FileSystem} from "./filesystem";
-import {Config} from "abaplint/config";
 
 const commands = new CommandRegistry();
 
@@ -13,21 +12,15 @@ function createMenu(): Menu {
   return root;
 }
 
-function setupFiles() {
-  FileSystem.addFile(
-"zfoobar.prog.abap",
-`REPORT zfoobar.
- WRITE 'Hello World'.
-
-LOOP AT lt_foo ASSIGNING FIELD-SYMBOL(<ls_foo>).
-  WRITE 'bar'.
-ENDLOOP.`);
-  FileSystem.addFile("abaplint.json", JSON.stringify(Config.getDefault(), undefined, 2));
-}
-
 function main(): void {
 
-  setupFiles();
+  const tree = new TreeWidget();
+  tree.id = "tree";
+
+  const problems = new ProblemsWidget();
+  problems.id = "problems";
+
+  FileSystem.setup(tree, problems);
 
   commands.addCommand("abaplint:add_file", {
     label: "Add file",
@@ -49,16 +42,12 @@ function main(): void {
   const dock = new DockPanel();
   dock.id = "dock";
   for (const f of FileSystem.getFiles()) {
-    const r1 = new EditorWidget(f);
+    const r1 = new EditorWidget(f.getFilename(), f.getRaw());
     dock.addWidget(r1);
   }
   BoxPanel.setStretch(dock, 1);
 
-  const tree = new TreeWidget();
-  tree.id = "tree";
 
-  const problems = new ProblemsWidget();
-  problems.id = "problems";
 
   const left = new BoxPanel({direction: "top-to-bottom", spacing: 0});
   left.id = "left";

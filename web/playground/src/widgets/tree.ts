@@ -1,8 +1,8 @@
 import {Message} from "@phosphor/messaging";
 import {Widget} from "@phosphor/widgets";
-import {FileSystem, IFileSubscriber} from "../filesystem";
+import {FileSystem} from "../filesystem";
 
-export class TreeWidget extends Widget implements IFileSubscriber {
+export class TreeWidget extends Widget {
   public static createNode(): HTMLElement {
     const node = document.createElement("div");
     return node;
@@ -12,11 +12,10 @@ export class TreeWidget extends Widget implements IFileSubscriber {
     super({node: TreeWidget.createNode()});
     this.setFlag(Widget.Flag.DisallowLayout);
     this.addClass("content");
-    FileSystem.register(this);
   }
 
   public notify(): void {
-    this.updateList();
+    this.update();
   }
 
   protected onActivateRequest(msg: Message): void {
@@ -24,15 +23,16 @@ export class TreeWidget extends Widget implements IFileSubscriber {
   }
 
   protected onAfterAttach() {
-    this.updateList();
+    this.update();
   }
 
-  private updateList() {
+  public update() {
     const content = document.createElement("div");
     this.addClass("content");
     const input = document.createElement("tt");
+// todo: sort by name
     for (const f of FileSystem.getFiles()) {
-      input.innerHTML = input.innerHTML + "<br>" + f.filename;
+      input.innerHTML = input.innerHTML + "<br>" + f.getFilename();
     }
     content.appendChild(input);
 

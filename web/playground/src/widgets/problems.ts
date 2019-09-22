@@ -1,5 +1,6 @@
 import {Message} from "@phosphor/messaging";
 import {Widget} from "@phosphor/widgets";
+import {FileSystem} from "../filesystem";
 
 export class ProblemsWidget extends Widget {
 
@@ -21,5 +22,22 @@ export class ProblemsWidget extends Widget {
 
   protected onActivateRequest(msg: Message): void {
     return;
+  }
+
+  public update() {
+    const content = document.createElement("div");
+    this.addClass("content");
+    const input = document.createElement("tt");
+    for (const i of FileSystem.getIssues()) {
+      input.innerHTML = input.innerHTML + "<br>" +
+        i.getFile().getFilename() + ": " + i.getMessage() + "(" + i.getKey() + ")";
+    }
+    content.appendChild(input);
+
+    while (this.node.firstChild) {
+      this.node.removeChild(this.node.firstChild);
+    }
+
+    this.node.appendChild(content);
   }
 }
