@@ -8,7 +8,7 @@
     "module": "commonjs",
     "moduleResolution": "node",
     "target": "es2017",
-    "outDir": "./build",
+    "outDir": "./build_tsc",
     "baseUrl": ".",
     "paths": {
       "abaplint/*": ["../../build/src/*"]

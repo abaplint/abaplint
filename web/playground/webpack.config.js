@@ -2,7 +2,7 @@ const path = require('path');
 
 module.exports = {
   entry: {
-    "app": './build/index.js',
+    "app": './build_tsc/index.js',
     "editor.worker": 'monaco-editor/esm/vs/editor/editor.worker.js',
     "json.worker": 'monaco-editor/esm/vs/language/json/json.worker.js',
   },
@@ -16,7 +16,7 @@ module.exports = {
   resolve: {
     extensions: ['.js', '.ts', '.tsx'],
     alias: {
-    'abaplint': path.resolve(__dirname, '../../build/src/'),
+      'abaplint': path.resolve(__dirname, '../../build/src/'),
     }
   },
   module: {

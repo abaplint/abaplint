@@ -5,7 +5,7 @@
   "scripts": {
     "build": "tsc && webpack",
     "ws": "ws",
-    "clean": "rimraf build"
+    "clean": "rimraf build && rimraf build_tsc"
   },
   "dependencies": {
     "@phosphor/commands": "^1.7.1",
