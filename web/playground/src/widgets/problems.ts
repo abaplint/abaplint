@@ -29,8 +29,9 @@ export class ProblemsWidget extends Widget {
     this.addClass("content");
     const input = document.createElement("tt");
     for (const i of FileSystem.getIssues()) {
+      const position = "[" + i.getStart().getRow() + ", " + i.getStart().getCol() + "]";
       input.innerHTML = input.innerHTML + "<br>" +
-        i.getFile().getFilename() + ": " + i.getMessage() + "(" + i.getKey() + ")";
+        i.getFile().getFilename() + position + ": " + i.getMessage() + "(" + i.getKey() + ")";
     }
     content.appendChild(input);
 

@@ -46,8 +46,23 @@ ENDLOOP.`);
     return this.files;
   }
 
-  public static getIssues() {
-    return this.reg.findIssues();
+  public static getRegistry(): Registry {
+    return this.reg;
+  }
+
+  public static getIssues(filename?: string) {
+    if (filename) {
+      const issues = this.reg.findIssues();
+      const ret = [];
+      for (const i of issues) { // blah
+        if (i.getFile().getFilename() === filename) {
+          ret.push(i);
+        }
+      }
+      return ret;
+    } else {
+      return this.reg.findIssues();
+    }
   }
 
   private static update() {

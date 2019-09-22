@@ -13,7 +13,6 @@ function createMenu(): Menu {
 }
 
 function main(): void {
-
   const tree = new TreeWidget();
   tree.id = "tree";
 
@@ -47,8 +46,6 @@ function main(): void {
   }
   BoxPanel.setStretch(dock, 1);
 
-
-
   const left = new BoxPanel({direction: "top-to-bottom", spacing: 0});
   left.id = "left";
   left.addWidget(dock);
@@ -66,3 +63,8 @@ function main(): void {
 }
 
 window.onload = main;
+
+window.onbeforeunload = function (e: any) {
+  e.preventDefault();
+  e.returnValue = "Close?";
+};
