@@ -21,7 +21,7 @@
     "local-web-server": "^3.0.7",
     "rimraf": "^3.0.0",
     "style-loader": "^1.0.0",
-    "typescript": "~3.6.3",
+    "typescript": "^3.6.3",
     "webpack": "^4.40.2",
     "webpack-cli": "^3.3.9"
   }

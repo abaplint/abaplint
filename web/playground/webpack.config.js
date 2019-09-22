@@ -1,4 +1,4 @@
-var path = require('path');
+const path = require('path');
 
 module.exports = {
   entry: {
@@ -11,6 +11,12 @@ module.exports = {
 		globalObject: 'self',
 		filename: '[name].bundle.js',
     publicPath: './build/'
+  },
+  resolve: {
+    extensions: ['.js', '.ts', '.tsx'],
+    alias: {
+    'abaplint': path.resolve(__dirname, '../../build/src/'),
+    }
   },
   module: {
     rules: [

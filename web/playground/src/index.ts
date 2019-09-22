@@ -4,7 +4,7 @@ import "../style/index.css";
 import * as monaco from "monaco-editor";
 import {EditorWidget, TreeWidget, ProblemsWidget} from "./widgets/";
 import {FileSystem} from "./filesystem";
-
+import {Config} from "abaplint/config";
 
 const commands = new CommandRegistry();
 
@@ -30,6 +30,7 @@ LOOP AT lt_foo ASSIGNING FIELD-SYMBOL(<ls_foo>).
   WRITE 'bar'.
 ENDLOOP.`);
   files.addFile("abaplint.json", "todo");
+  console.dir(Config.getDefault());
   return files;
 }
 

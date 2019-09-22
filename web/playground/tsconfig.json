@@ -7,9 +7,13 @@
     "strictNullChecks": true,
     "module": "commonjs",
     "moduleResolution": "node",
-    "target": "ES5",
+    "target": "es2017",
     "outDir": "./build",
+    "baseUrl": ".",
+    "paths": {
+      "abaplint/*": ["../../build/src/*"]
+    },
     "types": []
   },
-  "include": ["src/*", "src/widgets/tree.ts", "src/widgets/editor_widget.ts"]
+  "include": ["src/*", "src/widgets/*.ts"]
 }
