@@ -1,12 +1,12 @@
-import {Message} from '@phosphor/messaging';
-import {Widget} from '@phosphor/widgets';
-import {FileSystem, IFileSubscriber} from '../filesystem';
+import {Message} from "@phosphor/messaging";
+import {Widget} from "@phosphor/widgets";
+import {FileSystem, IFileSubscriber} from "../filesystem";
 
 export class TreeWidget extends Widget implements IFileSubscriber {
   private fileSystem: FileSystem;
 
-  static createNode(): HTMLElement {
-    let node = document.createElement('div');
+  public static createNode(): HTMLElement {
+    const node = document.createElement("div");
     return node;
   }
 
@@ -23,6 +23,7 @@ export class TreeWidget extends Widget implements IFileSubscriber {
   }
 
   protected onActivateRequest(msg: Message): void {
+    return;
   }
 
   protected onAfterAttach() {
@@ -30,9 +31,9 @@ export class TreeWidget extends Widget implements IFileSubscriber {
   }
 
   private updateList() {
-    let content = document.createElement('div');
+    const content = document.createElement("div");
     this.addClass("content");
-    let input = document.createElement('tt');
+    const input = document.createElement("tt");
     for (const f of this.fileSystem.getFiles()) {
       input.innerHTML = input.innerHTML + "<br>" + f.filename;
     }

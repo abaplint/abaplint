@@ -1,25 +1,25 @@
-import {Message} from '@phosphor/messaging';
-import {Widget} from '@phosphor/widgets';
+import {Message} from "@phosphor/messaging";
+import {Widget} from "@phosphor/widgets";
 
 export class ProblemsWidget extends Widget {
 
-  static createNode(): HTMLElement {
-    let node = document.createElement('div');
-    let content = document.createElement('div');
-    let input = document.createElement('tt');
-    input.innerText = 'problems';
+  public static createNode(): HTMLElement {
+    const node = document.createElement("div");
+    const content = document.createElement("div");
+    const input = document.createElement("tt");
+    input.innerText = "problems";
     content.appendChild(input);
     node.appendChild(content);
     return node;
   }
 
   constructor() {
-    super({ node: ProblemsWidget.createNode() });
+    super({node: ProblemsWidget.createNode()});
     this.setFlag(Widget.Flag.DisallowLayout);
-    this.addClass('content');
+    this.addClass("content");
   }
 
   protected onActivateRequest(msg: Message): void {
-
+    return;
   }
 }
