@@ -3,9 +3,8 @@
 <head>
   <title>playground.abaplint.org</title>
   <link href="http://maxcdn.bootstrapcdn.com/font-awesome/4.2.0/css/font-awesome.min.css" rel="stylesheet">
-  <script type="text/javascript" src="build/abaplint.js"></script>
   <script type="text/javascript" src="build/app.bundle.js"></script>
-    <link rel="icon" href="data:;base64,iVBORw0KGgo=">
+  <link rel="icon" href="data:;base64,iVBORw0KGgo=">
 <!-- Global site tag (gtag.js) - Google Analytics -->
 <script async src="https://www.googletagmanager.com/gtag/js?id=UA-83119203-1"></script>
 <script>
@@ -20,6 +19,7 @@
   <script>
     self.MonacoEnvironment = {
       getWorkerUrl: function (moduleId, label) {
+        if (label === 'json') return './build/json.worker.bundle.js';
         return './build/editor.worker.bundle.js';
       }
     }

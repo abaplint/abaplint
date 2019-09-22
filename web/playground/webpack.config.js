@@ -4,6 +4,7 @@ module.exports = {
   entry: {
     "app": './build/index.js',
     "editor.worker": 'monaco-editor/esm/vs/editor/editor.worker.js',
+    "json.worker": 'monaco-editor/esm/vs/language/json/json.worker.js',
   },
   mode: 'development',
   output: {

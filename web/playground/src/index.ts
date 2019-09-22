@@ -15,8 +15,9 @@ function createMenu(): Menu {
 }
 
 function setupMonaco() {
+  monaco.languages.register({id: "json"});
   monaco.languages.register({id: "abap"});
-// todo, add json and xml?
+  monaco.languages.register({id: "xml"});
 }
 
 function setupFiles() {
@@ -29,8 +30,7 @@ function setupFiles() {
 LOOP AT lt_foo ASSIGNING FIELD-SYMBOL(<ls_foo>).
   WRITE 'bar'.
 ENDLOOP.`);
-  files.addFile("abaplint.json", "todo");
-  console.dir(Config.getDefault());
+  files.addFile("abaplint.json", JSON.stringify(Config.getDefault(), undefined, 2));
   return files;
 }
 

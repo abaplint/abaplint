@@ -40,11 +40,16 @@ export class EditorWidget extends Widget {
     }
   }
 
+  protected determineLanguage(filename: string): string {
+    const split = filename.split(".");
+    return split[split.length - 1];
+  }
+
   protected onAfterAttach() {
     if (this.editor === undefined) {
       this.editor = monaco.editor.create(this.node, {
         value: this.file.contents,
-        language: "abap",
+        language: this.determineLanguage(this.file.filename),
         theme: "vs-dark",
         glyphMargin: true,
         lightbulb: {
