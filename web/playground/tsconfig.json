@@ -1,0 +1,19 @@
+{
+  "compilerOptions": {
+    "declaration": false,
+    "noImplicitAny": true,
+    "noEmitOnError": true,
+    "noUnusedLocals": true,
+    "strictNullChecks": true,
+    "module": "commonjs",
+    "moduleResolution": "node",
+    "target": "es2017",
+    "outDir": "./build_tsc",
+    "baseUrl": ".",
+    "paths": {
+      "abaplint/*": ["../../build/src/*"]
+    },
+    "types": []
+  },
+  "include": ["src/*", "src/widgets/*.ts"]
+}

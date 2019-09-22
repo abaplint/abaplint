@@ -1,0 +1,55 @@
+@import '~@phosphor/default-theme/style/index.css';
+
+body {
+  display: flex;
+  flex-direction: column;
+  color: #cccccc;
+  background: #252526;
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  margin: 0;
+  padding: 0;
+  overflow: hidden;
+}
+
+#menuBar {
+  background: #252526;
+  color: #cccccc;
+  flex: 0 0 auto;
+}
+
+#main {
+  flex: 1 1 auto;
+}
+
+#tree {
+  max-width: 300px;
+  background: #252526;
+  border-right: 1px solid #DDDDDD;
+}
+
+#problems {
+  min-height: 200px;
+  background: #252526;
+  border-top: 1px solid #DDDDDD;
+}
+
+#dock {
+  padding: 4px;
+}
+
+.p-TabBar-tab {
+  background: unset;
+}
+.p-TabBar-tab.p-mod-current {
+  background: unset;
+}
+
+.editor > div {
+  flex: 1 1 auto;
+  border: 1px solid #505050;
+  overflow: none;
+}
