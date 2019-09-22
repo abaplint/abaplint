@@ -99,6 +99,10 @@ export class EditorWidget extends Widget {
         () => { this.editor!.trigger("", "editor.action.quickCommand", ""); });
       this.editor.addCommand(monaco.KeyMod.CtrlCmd + monaco.KeyCode.KEY_S, () => { return undefined; });
       this.updateMarkers();
+
+      if (this.filename === "zfoobar.prog.abap") { // todo, hack
+        this.editor.focus();
+      }
     }
   }
 }
