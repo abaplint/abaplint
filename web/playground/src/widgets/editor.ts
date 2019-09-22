@@ -89,8 +89,14 @@ export class EditorWidget extends Widget {
           enabled: true,
         },
       });
+
+// hmm, cannot remap F1, see https://github.com/microsoft/monaco-editor/issues/649
+
       this.editor.onDidChangeModelContent(this.changed.bind(this));
       this.editor.addCommand(monaco.KeyMod.Shift + monaco.KeyCode.F1, this.prettyPrint.bind(this));
+      this.editor.addCommand(
+        monaco.KeyMod.CtrlCmd + monaco.KeyMod.Shift + monaco.KeyCode.KEY_P,
+        () => { this.editor!.trigger("", "editor.action.quickCommand", ""); });
       this.editor.addCommand(monaco.KeyMod.CtrlCmd + monaco.KeyCode.KEY_S, () => { return undefined; });
       this.updateMarkers();
     }
