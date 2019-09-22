@@ -1,19 +1,18 @@
 import * as monaco from "monaco-editor";
 import {Message} from "@phosphor/messaging";
 import {Widget} from "@phosphor/widgets";
-import {FileSystem, IFile} from "../filesystem";
+import {IFile} from "../filesystem";
 
 export class EditorWidget extends Widget {
   private editor: monaco.editor.IStandaloneCodeEditor | undefined = undefined;
   private file: IFile;
-//  private fileSystem: FileSystem;
 
   public static createNode(): HTMLElement {
     const node = document.createElement("div");
     return node;
   }
 
-  constructor(file: IFile, _fileSystem: FileSystem) {
+  constructor(file: IFile) {
     super({node: EditorWidget.createNode()});
     this.setFlag(Widget.Flag.DisallowLayout);
     this.addClass("editor");
@@ -21,7 +20,6 @@ export class EditorWidget extends Widget {
     this.title.closable = true;
     this.title.caption = this.title.label;
     this.file = file;
-//    this.fileSystem = fileSystem;
   }
 
   get inputNode(): HTMLInputElement {

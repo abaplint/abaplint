@@ -1,5 +1,3 @@
-
-
 export interface IFile {
   filename: string;
   contents: string;
@@ -18,28 +16,23 @@ rename
 */
 
 export class FileSystem {
-  private files: IFile[];
-  private subscribers: IFileSubscriber[];
+  private static files: IFile[] = [];
+  private static subscribers: IFileSubscriber[] = [];
 
-  constructor() {
-    this.files = [];
-    this.subscribers = [];
-  }
-
-  public addFile(filename: string, contents: string) {
+  public static addFile(filename: string, contents: string) {
     this.files.push({filename, contents});
     this.notify();
   }
 
-  public getFiles(): IFile[] {
+  public static getFiles(): IFile[] {
     return this.files;
   }
 
-  public register(obj: IFileSubscriber) {
+  public static register(obj: IFileSubscriber) {
     this.subscribers.push(obj);
   }
 
-  private notify() {
+  private static notify() {
     for (const s of this.subscribers) {
       s.notify();
     }

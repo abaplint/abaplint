@@ -1,7 +1,6 @@
 import {CommandRegistry} from "@phosphor/commands";
 import {BoxPanel, DockPanel, Menu, MenuBar, Widget} from "@phosphor/widgets";
 import "../style/index.css";
-import * as monaco from "monaco-editor";
 import {EditorWidget, TreeWidget, ProblemsWidget} from "./widgets/";
 import {FileSystem} from "./filesystem";
 import {Config} from "abaplint/config";
@@ -14,15 +13,8 @@ function createMenu(): Menu {
   return root;
 }
 
-function setupMonaco() {
-  monaco.languages.register({id: "json"});
-  monaco.languages.register({id: "abap"});
-  monaco.languages.register({id: "xml"});
-}
-
 function setupFiles() {
-  const files = new FileSystem();
-  files.addFile(
+  FileSystem.addFile(
 "zfoobar.prog.abap",
 `REPORT zfoobar.
  WRITE 'Hello World'.
@@ -30,21 +22,19 @@ function setupFiles() {
 LOOP AT lt_foo ASSIGNING FIELD-SYMBOL(<ls_foo>).
   WRITE 'bar'.
 ENDLOOP.`);
-  files.addFile("abaplint.json", JSON.stringify(Config.getDefault(), undefined, 2));
-  return files;
+  FileSystem.addFile("abaplint.json", JSON.stringify(Config.getDefault(), undefined, 2));
 }
 
 function main(): void {
 
-  setupMonaco();
-  const fileSystem = setupFiles();
+  setupFiles();
 
   commands.addCommand("abaplint:add_file", {
     label: "Add file",
     mnemonic: 0,
     iconClass: "fa fa-copy",
     execute: () => {
-      fileSystem.addFile("sdf", "sdf");
+      FileSystem.addFile("sdf", "sdf");
     },
   });
 
@@ -58,13 +48,13 @@ function main(): void {
 
   const dock = new DockPanel();
   dock.id = "dock";
-  for (const f of fileSystem.getFiles()) {
-    const r1 = new EditorWidget(f, fileSystem);
+  for (const f of FileSystem.getFiles()) {
+    const r1 = new EditorWidget(f);
     dock.addWidget(r1);
   }
   BoxPanel.setStretch(dock, 1);
 
-  const tree = new TreeWidget(fileSystem);
+  const tree = new TreeWidget();
   tree.id = "tree";
 
   const problems = new ProblemsWidget();

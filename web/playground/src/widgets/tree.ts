@@ -3,19 +3,16 @@ import {Widget} from "@phosphor/widgets";
 import {FileSystem, IFileSubscriber} from "../filesystem";
 
 export class TreeWidget extends Widget implements IFileSubscriber {
-  private fileSystem: FileSystem;
-
   public static createNode(): HTMLElement {
     const node = document.createElement("div");
     return node;
   }
 
-  constructor(fileSystem: FileSystem) {
-    super({ node: TreeWidget.createNode() });
+  constructor() {
+    super({node: TreeWidget.createNode()});
     this.setFlag(Widget.Flag.DisallowLayout);
     this.addClass("content");
-    fileSystem.register(this);
-    this.fileSystem = fileSystem;
+    FileSystem.register(this);
   }
 
   public notify(): void {
@@ -34,7 +31,7 @@ export class TreeWidget extends Widget implements IFileSubscriber {
     const content = document.createElement("div");
     this.addClass("content");
     const input = document.createElement("tt");
-    for (const f of this.fileSystem.getFiles()) {
+    for (const f of FileSystem.getFiles()) {
       input.innerHTML = input.innerHTML + "<br>" + f.filename;
     }
     content.appendChild(input);

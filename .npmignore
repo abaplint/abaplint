@@ -3,6 +3,7 @@ npm-debug.log
 coverage/
 docs/*
 web/*
+src/*
 build/test/*
 test/*
 travis.sh
