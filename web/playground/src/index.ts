@@ -1,8 +1,10 @@
+import * as monaco from "monaco-editor";
 import {CommandRegistry} from "@phosphor/commands";
 import {BoxPanel, DockPanel, Menu, MenuBar, Widget} from "@phosphor/widgets";
 import "../style/index.css";
 import {EditorWidget, TreeWidget, ProblemsWidget} from "./widgets/";
 import {FileSystem} from "./filesystem";
+import {AbapSnippetProvider} from "./monaco/AbapSnippetProvider";
 
 const commands = new CommandRegistry();
 
@@ -60,6 +62,8 @@ function main(): void {
   window.onresize = () => { mainBox.update(); };
   Widget.attach(menu, document.body);
   Widget.attach(mainBox, document.body);
+
+  registerMonacoSettings();
 }
 
 window.onload = main;
@@ -68,3 +72,7 @@ window.onbeforeunload = function (e: any) {
   e.preventDefault();
   e.returnValue = "Close?";
 };
+
+function registerMonacoSettings() {
+  monaco.languages.registerCompletionItemProvider("abap", new AbapSnippetProvider());
+}
