@@ -15,5 +15,5 @@
     },
     "types": []
   },
-  "include": ["src/*", "src/widgets/*.ts"]
+  "include": ["src/*", "src/widgets/*.ts", "src/monaco/*.ts"]
 }
