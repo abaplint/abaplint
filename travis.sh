@@ -8,6 +8,7 @@ git config --global user.name "Travis CI"
 
 cp abaplint/web/playground/index.html playground.abaplint.org/
 cp -r abaplint/web/playground/build/* playground.abaplint.org/build/
+cp -r abaplint/web/playground/img/* playground.abaplint.org/img/
 cd playground.abaplint.org
 git status
 git add -A

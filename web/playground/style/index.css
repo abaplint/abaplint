@@ -15,6 +15,21 @@ body {
   overflow: hidden;
 }
 
+a:link {
+  color: #0cc;
+  text-decoration: none;
+}
+a:visited {
+  color: #0cc;
+  text-decoration: none;
+}
+a:hover {
+  text-decoration: none;
+}
+a:active {
+  text-decoration: none;
+}
+
 #menuBar {
   background: #252526;
   color: #cccccc;

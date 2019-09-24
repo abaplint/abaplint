@@ -5,12 +5,14 @@ import "../style/index.css";
 import {EditorWidget, TreeWidget, ProblemsWidget} from "./widgets/";
 import {FileSystem} from "./filesystem";
 import {AbapSnippetProvider} from "./monaco/AbapSnippetProvider";
+import {WelcomeWidget} from "./widgets/welcome";
 
 const commands = new CommandRegistry();
 
 function createMenu(): Menu {
   const root = new Menu({commands});
   root.addItem({command: "abaplint:add_file"});
+// todo, add option to show welcome widget
   return root;
 }
 
@@ -42,11 +44,13 @@ function main(): void {
 
   const dock = new DockPanel();
   dock.id = "dock";
-  for (const f of FileSystem.getFiles()) {
-    const r1 = new EditorWidget(f.getFilename(), f.getRaw());
-    dock.addWidget(r1);
-  }
   BoxPanel.setStretch(dock, 1);
+  for (const f of FileSystem.getFiles()) {
+    if (f.getFilename() === "zfoobar.prog.abap") { // todo, temp workaround
+      dock.addWidget(new EditorWidget(f.getFilename(), f.getRaw()));
+    }
+  }
+  dock.addWidget(new WelcomeWidget());
 
   const left = new BoxPanel({direction: "top-to-bottom", spacing: 0});
   left.id = "left";

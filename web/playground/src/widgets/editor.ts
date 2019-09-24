@@ -93,11 +93,18 @@ export class EditorWidget extends Widget {
 // hmm, cannot remap F1, see https://github.com/microsoft/monaco-editor/issues/649
 
       this.editor.onDidChangeModelContent(this.changed.bind(this));
+
+// todo, should this be something else so it is shown in the command palette?
       this.editor.addCommand(monaco.KeyMod.Shift + monaco.KeyCode.F1, this.prettyPrint.bind(this));
+
       this.editor.addCommand(
         monaco.KeyMod.CtrlCmd + monaco.KeyMod.Shift + monaco.KeyCode.KEY_P,
         () => { this.editor!.trigger("", "editor.action.quickCommand", ""); });
+
+// override Chrome default shortcuts
       this.editor.addCommand(monaco.KeyMod.CtrlCmd + monaco.KeyCode.KEY_S, () => { return undefined; });
+      this.editor.addCommand(monaco.KeyMod.CtrlCmd + monaco.KeyCode.KEY_P, () => { return undefined; });
+
       this.updateMarkers();
 
       if (this.filename === "zfoobar.prog.abap") { // todo, hack
