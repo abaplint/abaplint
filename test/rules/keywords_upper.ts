@@ -28,6 +28,7 @@ const tests = [
   {abap: "FUNCTION ZFOOBAR.\n", cnt: 1},
   {abap: "SELECT foo UP TO @bar ROWS INTO CORRESPONDING FIELDS OF TABLE @boo FROM loo.", cnt: 0},
   {abap: "SORT rt_list BY repo-name AS TEXT ASCENDING.", cnt: 0},
+  {abap: "IF foo = bar and moo = boo.", cnt: 1},
 ];
 
 testRule(tests, KeywordsUpper);

@@ -12,7 +12,7 @@ import * as Statements from "../abap/statements";
 import * as Expressions from "../abap/expressions";
 import {Token} from "../abap/tokens/_token";
 
-/** Detects keywords which are not uppercased. */
+/** Detects keywords which are not uppercased, non-keywords must be lower case. */
 export class KeywordsUpperConf extends BasicRuleConfig {
   public ignoreExceptions: boolean = true;
   public ignoreLowerClassImplmentationStatement: boolean = true;
@@ -144,7 +144,7 @@ export class KeywordsUpper extends ABAPRule {
         }
       } else if (child instanceof ExpressionNode) {
         const tok = this.traverse(child, parent);
-        if (tok) {
+        if (tok.token !== undefined) {
           return tok;
         }
       } else {
