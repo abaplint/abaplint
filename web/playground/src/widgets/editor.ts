@@ -1,8 +1,9 @@
 import * as monaco from "monaco-editor";
 import {Message} from "@phosphor/messaging";
-import {Widget} from "@phosphor/widgets";
+import {Widget, DockPanel} from "@phosphor/widgets";
 import {FileSystem} from "../filesystem";
 import {PrettyPrinter} from "abaplint/abap/pretty_printer";
+import {HelpWidget} from "./help";
 
 export class EditorWidget extends Widget {
   private editor: monaco.editor.IStandaloneCodeEditor | undefined = undefined;
@@ -79,6 +80,23 @@ export class EditorWidget extends Widget {
     this.editor!.setPosition(old!);
   }
 
+  protected openHelp() {
+    const dock = this.parent as DockPanel;
+
+// only add one, todo, refactor, this is a mess
+    const it = dock.children();
+    for (;;) {
+      const res = it.next();
+      if (res === undefined) {
+        break;
+      } else if (res instanceof HelpWidget) {
+        return;
+      }
+    }
+
+    dock.addWidget(new HelpWidget(), {mode: "split-right", ref: this});
+  }
+
   protected onAfterAttach() {
     if (this.editor === undefined) {
       this.editor = monaco.editor.create(this.node, {
@@ -90,12 +108,18 @@ export class EditorWidget extends Widget {
         },
       });
 
-// hmm, cannot remap F1, see https://github.com/microsoft/monaco-editor/issues/649
-
       this.editor.onDidChangeModelContent(this.changed.bind(this));
 
-// todo, should this be something else so it is shown in the command palette?
+// hack to remap F1, see https://github.com/microsoft/monaco-editor/issues/649
+// @ts-ignore
+      this.editor._standaloneKeybindingService._getResolver()._lookupMap.get(
+        "editor.action.quickCommand")[0].resolvedKeybinding._parts[0].keyCode = monaco.KeyCode.F3;
+// @ts-ignore
+      this.editor._standaloneKeybindingService.updateResolver();
+
+// todo, how to show custom commands in the command palette?
       this.editor.addCommand(monaco.KeyMod.Shift + monaco.KeyCode.F1, this.prettyPrint.bind(this));
+      this.editor.addCommand(monaco.KeyCode.F1, this.openHelp.bind(this));
 
       this.editor.addCommand(
         monaco.KeyMod.CtrlCmd + monaco.KeyMod.Shift + monaco.KeyCode.KEY_P,

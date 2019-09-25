@@ -1,7 +1,7 @@
 import {Widget} from "@phosphor/widgets";
-import {Registry} from "abaplint/registry";
 
-export class WelcomeWidget extends Widget {
+// todo, this should be a singleton/only one window in the workspace
+export class HelpWidget extends Widget {
 
   public static createNode(): HTMLElement {
     const node = document.createElement("div");
@@ -9,10 +9,10 @@ export class WelcomeWidget extends Widget {
   }
 
   constructor() {
-    super({node: WelcomeWidget.createNode()});
+    super({node: HelpWidget.createNode()});
     this.setFlag(Widget.Flag.DisallowLayout);
-    this.addClass("welcome");
-    this.title.label = "Welcome";
+    this.addClass("help");
+    this.title.label = "Help";
     this.title.closable = true;
     this.title.caption = this.title.label;
   }
@@ -27,17 +27,7 @@ export class WelcomeWidget extends Widget {
     const input = document.createElement("tt");
     input.innerHTML = `
     <center>
-    <br>
-    <img src="/img/abaplint.svg" style="filter: grayscale(100%);" height="200">
-    <br>
-    <br>
-    Editor Shortcuts:<br>
-    F1 = ABAP Help<br>
-    Shift + F1 = ABAP Pretty Print<br>
-    Ctrl + Shift + P = Command Palette<br>
-    <br>
-    abaplint ` + Registry.abaplintVersion() + `<br>
-    <a href="https://github.com/abaplint/abaplint/tree/master/web/playground">playground sourcecode</a>
+    hello world, todo
     </center>`;
     content.appendChild(input);
 
