@@ -48,10 +48,8 @@ export class EditorWidget extends Widget {
   }
 
   protected changed(e: any) {
-    if (this.filename !== "abaplint.json") { // todo, hmm
-      FileSystem.updateFile(this.filename, this.editor!.getValue());
-      this.updateMarkers();
-    }
+    FileSystem.updateFile(this.filename, this.editor!.getValue());
+    this.updateMarkers();
   }
 
   protected updateMarkers() {

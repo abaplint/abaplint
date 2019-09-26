@@ -78,6 +78,8 @@ window.onbeforeunload = function (e: any) {
 function registerMonacoSettings() {
   monaco.languages.registerCompletionItemProvider("abap", new AbapSnippetProvider());
 
+  /* todo, the schema must be fetched via http first? note CORS on github
+  alternatively add it here at compile time
   monaco.languages.json.jsonDefaults.setDiagnosticsOptions({
     validate: true,
     schemas: [{
@@ -85,4 +87,5 @@ function registerMonacoSettings() {
       fileMatch: ["abaplint.json"],
     }],
   });
+  */
 }

@@ -24,18 +24,33 @@ export class FileSystem {
 LOOP AT lt_foo ASSIGNING FIELD-SYMBOL(<ls_foo>).
   WRITE 'bar'.
 ENDLOOP.`);
-    this.addFile("abaplint.json", JSON.stringify(Config.getDefault(), undefined, 2));
+    this.addFile("abaplint.json", JSON.stringify(Config.getDefault().get(), undefined, 2));
+  }
+
+  private static updateConfig(contents: string) {
+    try {
+      const conf = new Config(contents);
+      this.reg.setConfig(conf);
+    } catch {
+      return;
+    }
   }
 
   public static updateFile(filename: string, contents: string) {
-    const file = new MemoryFile(filename, contents);
-    this.reg.updateFile(file);
+    if (filename === "abaplint.json") {
+      this.updateConfig(contents);
+    } else {
+      const file = new MemoryFile(filename, contents);
+      this.reg.updateFile(file);
+    }
     this.update();
   }
 
   public static addFile(filename: string, contents: string) {
     const file = new MemoryFile(filename, contents);
-    if (filename !== "abaplint.json") { // hmm, todo
+    if (filename === "abaplint.json") {
+      this.updateConfig(contents);
+    } else {
       this.reg.addFile(file);
     }
     this.files.push(file);
