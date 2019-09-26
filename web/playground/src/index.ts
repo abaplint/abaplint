@@ -46,9 +46,7 @@ function main(): void {
   dock.id = "dock";
   BoxPanel.setStretch(dock, 1);
   for (const f of FileSystem.getFiles()) {
-    if (f.getFilename() === "zfoobar.prog.abap") { // todo, temp workaround
-      dock.addWidget(new EditorWidget(f.getFilename(), f.getRaw()));
-    }
+    dock.addWidget(new EditorWidget(f.getFilename(), f.getRaw()));
   }
   dock.addWidget(new WelcomeWidget());
 
@@ -79,4 +77,12 @@ window.onbeforeunload = function (e: any) {
 
 function registerMonacoSettings() {
   monaco.languages.registerCompletionItemProvider("abap", new AbapSnippetProvider());
+
+  monaco.languages.json.jsonDefaults.setDiagnosticsOptions({
+    validate: true,
+    schemas: [{
+      uri: "https://schema.abaplint.org/schema.json",
+      fileMatch: ["abaplint.json"],
+    }],
+  });
 }
