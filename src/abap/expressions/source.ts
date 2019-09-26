@@ -133,14 +133,16 @@ export class Source extends Expression {
                            rparen));
 
     const fields = seq(new Field(), str("="), new Source());
+    const inittype = seq(new Field(), str("TYPE"), new TypeName());
+
+    const init = seq(str("INIT"), plus(alt(fields, inittype)));
 
     const reduce = ver(Version.v740sp08,
                        seq(str("REDUCE"),
                            new TypeName(),
                            tok(ParenLeftW),
                            opt(new Let()),
-                           str("INIT"),
-                           plus(fields),
+                           init,
                            new For(),
                            str("NEXT"),
                            plus(fields),
