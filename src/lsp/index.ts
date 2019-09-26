@@ -1,8 +1,11 @@
-import * as LServer from "vscode-languageserver-protocol";
+import * as LServer from "vscode-languageserver-types";
 import {Registry} from "../registry";
 import {Symbols} from "./symbols";
 import {Hover} from "./hover";
 import {PrettyPrinter} from "../abap/pretty_printer";
+
+// the types in this file are not completely correct
+// see https://github.com/microsoft/vscode-languageserver-node/issues/354
 
 export class LanguageServer {
   private reg: Registry;
@@ -15,7 +18,7 @@ export class LanguageServer {
     return Symbols.find(this.reg, params.textDocument.uri);
   }
 
-  public hover(params: LServer.TextDocumentPositionParams): LServer.Hover | undefined {
+  public hover(params: {textDocument: LServer.TextDocumentIdentifier, position: LServer.Position}): LServer.Hover | undefined {
     const hover = Hover.find(this.reg, params.textDocument.uri, params.position.line, params.position.character);
     if (hover) {
       return {contents: hover};
@@ -23,7 +26,9 @@ export class LanguageServer {
     return undefined;
   }
 
-  public documentFormatting(params: LServer.DocumentFormattingParams): LServer.TextEdit[] {
+  public documentFormatting(params: {textDocument: LServer.TextDocumentIdentifier,
+    options: LServer.FormattingOptions}): LServer.TextEdit[] {
+
     const file = this.reg.getABAPFile(params.textDocument.uri);
     if (file === undefined) {
       return [];

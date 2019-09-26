@@ -61,7 +61,7 @@
     "glob": "^7.1.4",
     "minimist": "^1.2.0",
     "progress": "^2.0.3",
-    "vscode-languageserver-protocol": "^3.14.1",
+    "vscode-languageserver-types": "^3.14.0",
     "xml-js": "^1.6.11"
   }
 }

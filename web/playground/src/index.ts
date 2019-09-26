@@ -1,11 +1,11 @@
+import "../style/index.css";
 import * as monaco from "monaco-editor";
 import {CommandRegistry} from "@phosphor/commands";
 import {BoxPanel, DockPanel, Menu, MenuBar, Widget} from "@phosphor/widgets";
-import "../style/index.css";
-import {EditorWidget, TreeWidget, ProblemsWidget} from "./widgets/";
+import {WelcomeWidget, EditorWidget, TreeWidget, ProblemsWidget} from "./widgets/";
 import {FileSystem} from "./filesystem";
-import {AbapSnippetProvider} from "./monaco/AbapSnippetProvider";
-import {WelcomeWidget} from "./widgets/welcome";
+import {ABAPSnippetProvider} from "./monaco/abap_snippet_provider";
+import {ABAPHoverProvider} from "./monaco/abap_hover_provider";
 
 const commands = new CommandRegistry();
 
@@ -70,7 +70,8 @@ window.onbeforeunload = function (e: any) {
 };
 
 function registerMonacoSettings() {
-  monaco.languages.registerCompletionItemProvider("abap", new AbapSnippetProvider());
+  monaco.languages.registerCompletionItemProvider("abap", new ABAPSnippetProvider());
+  monaco.languages.registerHoverProvider("abap", new ABAPHoverProvider());
 
   /* todo, the schema must be fetched via http first? note CORS on github
   alternatively add it here at compile time

@@ -1,6 +1,6 @@
 import * as monaco from "monaco-editor";
 
-export class AbapSnippetProvider implements monaco.languages.CompletionItemProvider {
+export class ABAPSnippetProvider implements monaco.languages.CompletionItemProvider {
   public triggerCharacters?: string[] | undefined;
 
   public provideCompletionItems(
