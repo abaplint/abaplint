@@ -13,6 +13,7 @@ body {
   margin: 0;
   padding: 0;
   overflow: hidden;
+  font-family: sans-serif;
 }
 
 a:link {
@@ -50,6 +51,10 @@ a:active {
   min-height: 200px;
   background: #252526;
   border-top: 1px solid #DDDDDD;
+}
+
+.help {
+  overflow: auto;
 }
 
 #dock {

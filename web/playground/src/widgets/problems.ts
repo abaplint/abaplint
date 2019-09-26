@@ -24,7 +24,7 @@ export class ProblemsWidget extends Widget {
     return;
   }
 
-  public update() {
+  public updateIt() {
     const content = document.createElement("div");
     this.addClass("content");
     const input = document.createElement("tt");

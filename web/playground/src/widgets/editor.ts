@@ -82,6 +82,7 @@ export class EditorWidget extends Widget {
 
   protected openHelp() {
     const dock = this.parent as DockPanel;
+    let help: HelpWidget | undefined;
 
 // only add one, todo, refactor, this is a mess
     const it = dock.children();
@@ -90,11 +91,17 @@ export class EditorWidget extends Widget {
       if (res === undefined) {
         break;
       } else if (res instanceof HelpWidget) {
-        return;
+        help = res;
+        break;
       }
     }
 
-    dock.addWidget(new HelpWidget(), {mode: "split-right", ref: this});
+    if (help === undefined) {
+      help = new HelpWidget();
+      dock.addWidget(help, {mode: "split-right", ref: this});
+    }
+
+    help.updateIt(this.filename, this.editor!.getPosition()!);
   }
 
   protected onAfterAttach() {

@@ -67,7 +67,7 @@ ENDLOOP.`);
 
   private static update() {
     this.tree.update();
-    this.problems.update();
+    this.problems.updateIt();
   }
 
 }
