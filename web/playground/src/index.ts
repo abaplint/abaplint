@@ -9,13 +9,6 @@ import {WelcomeWidget} from "./widgets/welcome";
 
 const commands = new CommandRegistry();
 
-function createMenu(): Menu {
-  const root = new Menu({commands});
-  root.addItem({command: "abaplint:add_file"});
-// todo, add option to show welcome widget
-  return root;
-}
-
 function main(): void {
   const tree = new TreeWidget();
   tree.id = "tree";
@@ -25,16 +18,17 @@ function main(): void {
 
   FileSystem.setup(tree, problems);
 
-  commands.addCommand("abaplint:add_file", {
-    label: "Add file",
+  commands.addCommand("abaplint:goto_syntax_diagrams", {
+    label: "Syntax Diagrams",
     mnemonic: 0,
-    iconClass: "fa fa-copy",
+    iconClass: "fa fa-align-center",
     execute: () => {
-      FileSystem.addFile("sdf", "sdf");
+      window.open("https://syntax.abaplint.org");
     },
   });
 
-  const menu1 = createMenu();
+  const menu1 = new Menu({commands});
+  menu1.addItem({command: "abaplint:goto_syntax_diagrams"});
   menu1.title.label = "File";
   menu1.title.mnemonic = 0;
 
