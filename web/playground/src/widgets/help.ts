@@ -15,18 +15,18 @@ function escape(str: string) {
 }
 
 function linkToStatement(statement: any) {
-  return "<a href=\"https://syntax.abaplint.org/#/statement/" + statement.constructor.name + "\">" +
-    statement.constructor.name + "</a>";
+  return `<a href="https://syntax.abaplint.org/#/statement/${statement.constructor.name}"
+            target="_blank">${statement.constructor.name}</a>`;
 }
 
 function linkToStructure(structure: any) {
-  return "<a href=\"https://syntax.abaplint.org/#/structure/" + structure.constructor.name + "\">" +
-    structure.constructor.name + "</a>";
+  return `<a href="https://syntax.abaplint.org/#/structure/${structure.constructor.name}"
+             target="_blank">${structure.constructor.name}</a>`;
 }
 
 function linkToExpression(expression: any) {
-  return "<a href=\"https://syntax.abaplint.org/#/expression/" + expression.constructor.name + "\">" +
-    expression.constructor.name + "</a>";
+  return `<a href="https://syntax.abaplint.org/#/expression/${expression.constructor.name}"
+             target="_blank">${expression.constructor.name}</a>`;
 }
 
 function outputNodes(nodes: INode[]) {
