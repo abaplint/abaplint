@@ -5,10 +5,11 @@
     "noEmitOnError": true,
     "noUnusedLocals": true,
     "strictNullChecks": true,
+    "sourceMap": true,
     "module": "commonjs",
     "moduleResolution": "node",
     "target": "es2017",
-    "outDir": "./build_tsc",
+    "outDir": "./build",
     "baseUrl": ".",
     "paths": {
       "abaplint/*": ["../../build/src/*"]

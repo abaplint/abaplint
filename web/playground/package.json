@@ -3,7 +3,8 @@
   "version": "0.0.1",
   "private": true,
   "scripts": {
-    "build": "tsc && webpack",
+    "build": "webpack --mode production",
+    "dev": "webpack-dev-server --mode development",
     "ws": "ws",
     "clean": "rimraf build && rimraf build_tsc"
   },
@@ -21,8 +22,10 @@
     "local-web-server": "^3.0.7",
     "rimraf": "^3.0.0",
     "style-loader": "^1.0.0",
+    "ts-loader": "^6.1.2",
     "typescript": "^3.6.3",
     "webpack": "^4.41.0",
-    "webpack-cli": "^3.3.9"
+    "webpack-cli": "^3.3.9",
+    "webpack-dev-server": "^3.8.1"
   }
 }

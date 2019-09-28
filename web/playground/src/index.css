@@ -73,3 +73,12 @@ a:active {
   border: 1px solid #505050;
   overflow: none;
 }
+
+.content ul {
+  padding-left: 1em;
+}
+
+.content ul li {
+  font-family: monospace;
+  list-style-type: none;
+}
