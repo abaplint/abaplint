@@ -33,7 +33,7 @@ export class WelcomeWidget extends Widget {
     <br>
     Editor Shortcuts:<br>
     F1 = ABAP Help<br>
-    Shift + F1 = ABAP Pretty Print<br>
+    Shift + F1 = Pretty Print<br>
     Ctrl + Shift + P = Command Palette<br>
     <br>
     abaplint ` + Registry.abaplintVersion() + `<br>

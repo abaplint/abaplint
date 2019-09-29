@@ -121,15 +121,24 @@ export class EditorWidget extends Widget {
         run: () => { this.editor!.trigger("", "editor.action.formatDocument", ""); },
       });
 
-// todo, add to command palette,
-// https://microsoft.github.io/monaco-editor/playground.html#interacting-with-the-editor-adding-an-action-to-an-editor-instance
-      this.editor.addCommand(monaco.KeyCode.F1, this.openHelp.bind(this));
+      this.editor.addAction({
+        id: "abaplint.help",
+        label: "ABAP Help",
+        keybindings: [monaco.KeyCode.F1],
+        precondition: "editorLangId == 'abap'",
+        run: this.openHelp.bind(this),
+      });
 
-// todo, add to command palette,
-// https://microsoft.github.io/monaco-editor/playground.html#interacting-with-the-editor-adding-an-action-to-an-editor-instance
-      this.editor.addCommand(
-        monaco.KeyMod.CtrlCmd + monaco.KeyMod.Shift + monaco.KeyCode.KEY_P,
-        () => { this.editor!.trigger("", "editor.action.quickCommand", ""); });
+      this.editor.addAction({
+        id: "abaplint.commandpalette",
+        label: "Command Palette",
+        keybindings: [monaco.KeyMod.CtrlCmd + monaco.KeyMod.Shift + monaco.KeyCode.KEY_P],
+        run: () => { this.editor!.trigger("", "editor.action.quickCommand", ""); },
+      });
+
+/* todo, action.quickOpen
+https://github.com/microsoft/monaco-editor/issues?utf8=%E2%9C%93&q=is%3Aissue+is%3Aopen+quickopen
+*/
 
 // override Chrome default shortcuts
       this.editor.addCommand(monaco.KeyMod.CtrlCmd + monaco.KeyCode.KEY_S, () => { return undefined; });
