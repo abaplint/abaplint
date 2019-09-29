@@ -1,4 +1,6 @@
 import * as monaco from "monaco-editor";
+import {FileSystem} from "../filesystem";
+import {LanguageServer} from "abaplint/lsp";
 
 export class ABAPDocumentFormattingProvider implements monaco.languages.DocumentFormattingEditProvider {
 
@@ -6,20 +8,25 @@ export class ABAPDocumentFormattingProvider implements monaco.languages.Document
       model: monaco.editor.ITextModel,
       options: monaco.languages.FormattingOptions,
       token: monaco.CancellationToken): monaco.languages.ProviderResult<monaco.languages.TextEdit[]> {
-    console.dir("formatting");
-    throw new Error("Method not implemented.");
+
+    const ls = new LanguageServer(FileSystem.getRegistry());
+    const edit = ls.documentFormatting({
+      textDocument: {uri: FileSystem.getCurrentFile()},
+    });
+
+    if (edit && edit.length === 1) {
+      return [{
+        range: {
+          startLineNumber: edit[0].range.start.line,
+          startColumn: edit[0].range.start.character,
+          endLineNumber: edit[0].range.end.line,
+          endColumn: edit[0].range.end.character,
+        },
+        text: edit[0].newText,
+      }];
+    } else {
+      return undefined;
+    }
   }
 
 }
-
-/*
-  protected prettyPrint() {
-    const file = FileSystem.getRegistry().getABAPFile(this.filename);
-    if (file === undefined) {
-      return;
-    }
-    const old = this.editor!.getPosition();
-    this.editor!.setValue(new PrettyPrinter(file).run());
-    this.editor!.setPosition(old!);
-  }
-*/

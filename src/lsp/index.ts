@@ -27,7 +27,7 @@ export class LanguageServer {
   }
 
   public documentFormatting(params: {textDocument: LServer.TextDocumentIdentifier,
-    options: LServer.FormattingOptions}): LServer.TextEdit[] {
+    options?: LServer.FormattingOptions}): LServer.TextEdit[] {
 
     const file = this.reg.getABAPFile(params.textDocument.uri);
     if (file === undefined) {
