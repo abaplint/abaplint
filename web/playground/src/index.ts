@@ -1,4 +1,4 @@
-import "../style/index.css";
+import "./index.css";
 import * as monaco from "monaco-editor";
 import {CommandRegistry} from "@phosphor/commands";
 import {BoxPanel, DockPanel, Menu, MenuBar, Widget} from "@phosphor/widgets";
@@ -65,8 +65,8 @@ function main(): void {
 window.onload = main;
 
 window.onbeforeunload = function (e: any) {
-  e.preventDefault();
-  e.returnValue = "Close?";
+  // e.preventDefault();
+  // e.returnValue = "Close?";
 };
 
 function registerMonacoSettings() {

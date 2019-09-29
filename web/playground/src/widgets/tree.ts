@@ -29,12 +29,15 @@ export class TreeWidget extends Widget {
   public update() {
     const content = document.createElement("div");
     this.addClass("content");
-    const input = document.createElement("tt");
-// todo: sort by name
-    for (const f of FileSystem.getFiles()) {
-      input.innerHTML = input.innerHTML + "<br>" + f.getFilename();
+    const list = document.createElement("ul");
+    const files = FileSystem.getFiles().map((f) => { return f.getFilename(); }).sort();
+
+    for (const f of files) {
+      const li = document.createElement("li");
+      li.appendChild(document.createTextNode(f));
+      list.append(li);
     }
-    content.appendChild(input);
+    content.appendChild(list);
 
     while (this.node.firstChild) {
       this.node.removeChild(this.node.firstChild);
