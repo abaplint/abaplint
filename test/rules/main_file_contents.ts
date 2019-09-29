@@ -28,6 +28,12 @@ describe("Rule: main_file_contents", function() {
     expect(issues.length).to.equal(0);
   });
 
+  it("PROG should start with REPORT or PROGRAM, solved", function () {
+    const abap = "PROGRAM zreport.";
+    const issues = findIssues(abap, "zreport.prog.abap");
+    expect(issues.length).to.equal(0);
+  });
+
   it("PROG should start with REPORT, solved, comment ok", function () {
     const abap = "* foo\nREPORT zreport.";
     const issues = findIssues(abap, "zreport.prog.abap");

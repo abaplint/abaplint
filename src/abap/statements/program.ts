@@ -1,6 +1,6 @@
 import {Statement} from "./_statement";
 import {verNot, str, seq, opt, per, optPrio, IStatementRunnable} from "../combi";
-import {Source, Field} from "../expressions";
+import {Source, ReportName} from "../expressions";
 import {Version} from "../../version";
 
 export class Program extends Statement {
@@ -12,7 +12,7 @@ export class Program extends Statement {
     const line = seq(str("LINE-COUNT"), new Source());
     const options = per(message, size, heading, line);
 
-    const ret = seq(str("PROGRAM"), optPrio(new Field()), opt(options));
+    const ret = seq(str("PROGRAM"), optPrio(new ReportName()), opt(options));
 
     return verNot(Version.Cloud, ret);
   }
