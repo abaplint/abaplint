@@ -29,6 +29,7 @@ ENDLOOP.`);
   }
 
   public static getCurrentFile(): string {
+// todo, refactoring, this is not needed, there is an uri in the model of the editor
     return this.current;
   }
 
