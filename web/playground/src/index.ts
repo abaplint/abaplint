@@ -6,7 +6,8 @@ import {WelcomeWidget, EditorWidget, TreeWidget, ProblemsWidget} from "./widgets
 import {FileSystem} from "./filesystem";
 import {ABAPSnippetProvider} from "./monaco/abap_snippet_provider";
 import {ABAPHoverProvider} from "./monaco/abap_hover_provider";
-import {ABAPDocumentFormattingProvider} from "./monaco/abap_document_formatting_provider";
+import {ABAPFormattingProvider} from "./monaco/abap_formatting_provider";
+import {ABAPSymbolProvider} from "./monaco/abap_symbol_provider";
 
 const commands = new CommandRegistry();
 
@@ -74,7 +75,9 @@ window.onbeforeunload = function (e: any) {
 function registerMonacoSettings() {
   monaco.languages.registerCompletionItemProvider("abap", new ABAPSnippetProvider());
   monaco.languages.registerHoverProvider("abap", new ABAPHoverProvider());
-  monaco.languages.registerDocumentFormattingEditProvider("abap", new ABAPDocumentFormattingProvider());
+  monaco.languages.registerDocumentFormattingEditProvider("abap", new ABAPFormattingProvider());
+  monaco.languages.registerDocumentSymbolProvider("abap", new ABAPSymbolProvider());
+// todo, change diagnostics to be via LSP instead
 
   /* todo, the schema must be fetched via http first? note CORS on github
   alternatively add it here at compile time

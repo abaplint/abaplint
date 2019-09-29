@@ -2,7 +2,7 @@ import * as monaco from "monaco-editor";
 import {FileSystem} from "../filesystem";
 import {LanguageServer} from "abaplint/lsp";
 
-export class ABAPDocumentFormattingProvider implements monaco.languages.DocumentFormattingEditProvider {
+export class ABAPFormattingProvider implements monaco.languages.DocumentFormattingEditProvider {
 
   public provideDocumentFormattingEdits(
       model: monaco.editor.ITextModel,
