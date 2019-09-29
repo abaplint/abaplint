@@ -40,6 +40,7 @@ export class EditorWidget extends Widget {
     if (this.editor) {
       this.editor.focus();
     }
+    FileSystem.setCurrentFile(this.filename);
   }
 
   protected determineLanguage(filename: string): string {
@@ -139,7 +140,7 @@ export class EditorWidget extends Widget {
       this.updateMarkers();
 
       if (this.filename === "zfoobar.prog.abap") { // todo, hack
-        this.editor.focus();
+        this.onActivateRequest(new Message("foobar"));
       }
     }
   }

@@ -9,6 +9,7 @@ export class FileSystem {
   private static reg: Registry;
   private static tree: TreeWidget;
   private static problems: ProblemsWidget;
+  private static current: string;
 
   public static setup(tree: TreeWidget, problems: ProblemsWidget) {
     this.files = [];
@@ -25,6 +26,14 @@ LOOP AT lt_foo ASSIGNING FIELD-SYMBOL(<ls_foo>).
   WRITE 'bar'.
 ENDLOOP.`);
     this.addFile("abaplint.json", JSON.stringify(Config.getDefault().get(), undefined, 2));
+  }
+
+  public static getCurrentFile(): string {
+    return this.current;
+  }
+
+  public static setCurrentFile(file: string): void {
+    this.current = file;
   }
 
   private static updateConfig(contents: string) {
