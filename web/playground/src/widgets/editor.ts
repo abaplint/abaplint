@@ -2,7 +2,6 @@ import * as monaco from "monaco-editor";
 import {Message} from "@phosphor/messaging";
 import {Widget, DockPanel} from "@phosphor/widgets";
 import {FileSystem} from "../filesystem";
-import {PrettyPrinter} from "abaplint/abap/pretty_printer";
 import {HelpWidget} from "./help";
 
 export class EditorWidget extends Widget {
@@ -71,21 +70,11 @@ export class EditorWidget extends Widget {
     monaco.editor.setModelMarkers(this.editor!.getModel()!, "abaplint", markers);
   }
 
-  protected prettyPrint() {
-    const file = FileSystem.getRegistry().getABAPFile(this.filename);
-    if (file === undefined) {
-      return;
-    }
-    const old = this.editor!.getPosition();
-    this.editor!.setValue(new PrettyPrinter(file).run());
-    this.editor!.setPosition(old!);
-  }
-
   protected openHelp() {
     const dock = this.parent as DockPanel;
     let help: HelpWidget | undefined;
 
-// only add one, todo, refactor, this is a mess
+// only add one, todo: refactor, this is a mess
     const it = dock.children();
     for (;;) {
       const res = it.next();
@@ -125,10 +114,19 @@ export class EditorWidget extends Widget {
 // @ts-ignore
       this.editor._standaloneKeybindingService.updateResolver();
 
-// todo, how to show custom commands in the command palette?
-      this.editor.addCommand(monaco.KeyMod.Shift + monaco.KeyCode.F1, this.prettyPrint.bind(this));
+      this.editor.addAction({
+        id: "abaplint.prettyprint",
+        label: "Pretty Print",
+        keybindings: [monaco.KeyMod.Shift + monaco.KeyCode.F1],
+        run: () => { this.editor!.trigger("", "editor.action.formatDocument", ""); },
+      });
+
+// todo, add to command palette,
+// https://microsoft.github.io/monaco-editor/playground.html#interacting-with-the-editor-adding-an-action-to-an-editor-instance
       this.editor.addCommand(monaco.KeyCode.F1, this.openHelp.bind(this));
 
+// todo, add to command palette,
+// https://microsoft.github.io/monaco-editor/playground.html#interacting-with-the-editor-adding-an-action-to-an-editor-instance
       this.editor.addCommand(
         monaco.KeyMod.CtrlCmd + monaco.KeyMod.Shift + monaco.KeyCode.KEY_P,
         () => { this.editor!.trigger("", "editor.action.quickCommand", ""); });

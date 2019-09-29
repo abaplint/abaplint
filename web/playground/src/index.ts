@@ -6,6 +6,7 @@ import {WelcomeWidget, EditorWidget, TreeWidget, ProblemsWidget} from "./widgets
 import {FileSystem} from "./filesystem";
 import {ABAPSnippetProvider} from "./monaco/abap_snippet_provider";
 import {ABAPHoverProvider} from "./monaco/abap_hover_provider";
+import {ABAPDocumentFormattingProvider} from "./monaco/abap_document_formatting_provider";
 
 const commands = new CommandRegistry();
 
@@ -65,6 +66,7 @@ function main(): void {
 window.onload = main;
 
 window.onbeforeunload = function (e: any) {
+  // todo, some fix for not accidentally hitting Ctrl+W, but still works with hot reloading for local development
   // e.preventDefault();
   // e.returnValue = "Close?";
 };
@@ -72,6 +74,7 @@ window.onbeforeunload = function (e: any) {
 function registerMonacoSettings() {
   monaco.languages.registerCompletionItemProvider("abap", new ABAPSnippetProvider());
   monaco.languages.registerHoverProvider("abap", new ABAPHoverProvider());
+  monaco.languages.registerDocumentFormattingEditProvider("abap", new ABAPDocumentFormattingProvider());
 
   /* todo, the schema must be fetched via http first? note CORS on github
   alternatively add it here at compile time
