@@ -9,7 +9,7 @@ git config --global user.name "Travis CI"
 cp -r abaplint/web/playground/public/* playground.abaplint.org/
 cp abaplint/web/playground/build/json.worker.bundle.js playground.abaplint.org/
 cp abaplint/web/playground/build/editor.worker.bundle.js playground.abaplint.org/
-cp abaplint/web/playground/build/app.worker.bundle.js playground.abaplint.org/
+cp abaplint/web/playground/build/app.bundle.js playground.abaplint.org/
 cd playground.abaplint.org
 git status
 git add -A
