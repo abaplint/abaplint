@@ -6,7 +6,6 @@ git clone https://github.com/abaplint/syntax.abaplint.org.git
 git config --global user.email "builds@travis-ci.com"
 git config --global user.name "Travis CI"
 
-cp -r abaplint/web/playground/public/* playground.abaplint.org/
 cp abaplint/web/playground/build/* playground.abaplint.org/
 cd playground.abaplint.org
 git status
