@@ -6,9 +6,10 @@ git clone https://github.com/abaplint/syntax.abaplint.org.git
 git config --global user.email "builds@travis-ci.com"
 git config --global user.name "Travis CI"
 
-cp abaplint/web/playground/index.html playground.abaplint.org/
-cp -r abaplint/web/playground/build/* playground.abaplint.org/build/
-cp -r abaplint/web/playground/img/* playground.abaplint.org/img/
+cp -r abaplint/web/playground/public/* playground.abaplint.org/
+cp abaplint/web/playground/build/json.worker.bundle.js playground.abaplint.org/
+cp abaplint/web/playground/build/editor.worker.bundle.js playground.abaplint.org/
+cp abaplint/web/playground/build/app.worker.bundle.js playground.abaplint.org/
 cd playground.abaplint.org
 git status
 git add -A

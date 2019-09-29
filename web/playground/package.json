@@ -3,9 +3,8 @@
   "version": "0.0.1",
   "private": true,
   "scripts": {
-    "build": "webpack --mode production",
+    "build": "webpack",
     "dev": "webpack-dev-server --mode development",
-    "ws": "ws",
     "clean": "rimraf build && rimraf build_tsc"
   },
   "dependencies": {
@@ -19,7 +18,6 @@
   "devDependencies": {
     "css-loader": "^3.2.0",
     "file-loader": "^4.2.0",
-    "local-web-server": "^3.0.7",
     "rimraf": "^3.0.0",
     "style-loader": "^1.0.0",
     "ts-loader": "^6.1.2",
