@@ -13,12 +13,6 @@ module.exports = ({ mode } = { mode: 'development' }) => ({
 		filename: '[name].bundle.js',
 		globalObject: 'self',
   },
-  optimization: {
-    splitChunks: {
-      chunks: 'all',
-      name: 'shared', // may be suboptimal for production due to big chunk size
-    },
-  },
   devServer: {
     contentBase: path.join(__dirname, 'public'),
     inline: true,
@@ -35,12 +29,12 @@ module.exports = ({ mode } = { mode: 'development' }) => ({
     rules: [
       { test: /\.css$/, use: ['style-loader', 'css-loader'] },
       { test: /\.less$/, use: ['style-loader', 'css-loader', 'less-loader'] },
-      { 
+      {
         test: /\.png$/,
         include: /favicon/,
         use: 'file-loader?name=[name].[ext]'
       },
-      { 
+      {
         test: /\.png$|\.svg$/,
         exclude: /favicon/,
         use: 'url-loader?limit=1024',
