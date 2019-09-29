@@ -1,4 +1,5 @@
 const path = require('path');
+var HtmlWebpackPlugin = require('html-webpack-plugin');
 
 module.exports = ({ mode } = { mode: 'development' }) => ({
   entry: {
@@ -11,7 +12,12 @@ module.exports = ({ mode } = { mode: 'development' }) => ({
     path: path.join(__dirname, 'build'),
 		filename: '[name].bundle.js',
 		globalObject: 'self',
-    publicPath: '/'
+  },
+  optimization: {
+    splitChunks: {
+      chunks: 'all',
+      name: 'shared', // may be suboptimal for production due to big chunk size
+    },
   },
   devServer: {
     contentBase: path.join(__dirname, 'public'),
@@ -28,12 +34,27 @@ module.exports = ({ mode } = { mode: 'development' }) => ({
   module: {
     rules: [
       { test: /\.css$/, use: ['style-loader', 'css-loader'] },
-      { test: /\.png$/, use: 'file-loader' },
+      { test: /\.less$/, use: ['style-loader', 'css-loader', 'less-loader'] },
+      { 
+        test: /\.png$/,
+        include: /favicon/,
+        use: 'file-loader?name=[name].[ext]'
+      },
+      { 
+        test: /\.png$|\.svg$/,
+        exclude: /favicon/,
+        use: 'url-loader?limit=1024',
+      },
       {
         test: /\.tsx?$/,
         loader: 'ts-loader',
         exclude: /node_modules/,
       },
     ]
-  }
+  },
+  plugins: [
+    new HtmlWebpackPlugin({
+      template: 'public/index.html',
+    })
+  ],
 });

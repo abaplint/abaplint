@@ -1,5 +1,6 @@
 import {Widget} from "@phosphor/widgets";
 import {Registry} from "abaplint/registry";
+import * as logo from "../../public/img/abaplint.svg";
 
 export class WelcomeWidget extends Widget {
 
@@ -28,7 +29,7 @@ export class WelcomeWidget extends Widget {
     input.innerHTML = `
     <center>
     <br>
-    <img src="/img/abaplint.svg" style="filter: grayscale(100%);" height="200">
+    <img src="${logo}" style="filter: grayscale(100%);" height="200">
     <br>
     <br>
     Editor Shortcuts:<br>
