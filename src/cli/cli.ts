@@ -139,7 +139,9 @@ async function run() {
     let deps: IFile[] = [];
     const {config, base} = loadConfig(argv._[0]);
     try {
-      if (config.get().global.files === undefined) {
+      if (argv["x"]) {
+        config.get().global.files = argv["x"];
+      } else if (config.get().global.files === undefined) {
         throw "Error: Update abaplint.json to latest format";
       }
       const files = FileOperations.loadFileNames(base + config.get().global.files);
@@ -163,9 +165,10 @@ async function run() {
       } else if (argv["e"]) {
         output = JSON.stringify(new SemanticSearch(reg).run(progress), undefined, 1);
       } else if (argv["m"]) {
-        output = new Moose(reg).getMSE();
         if (argv["outfile"]) {
-          fs.writeFileSync(argv["outfile"], output, "utf-8");
+          fs.writeFileSync(argv["outfile"], new Moose(reg).getMSE(), "utf-8");
+        } else {
+          output = "please call the program with outfile parameter \"abaplint -m --outfile projectname.mse\""
         }
       } else {
         reg.addDependencies(deps);
