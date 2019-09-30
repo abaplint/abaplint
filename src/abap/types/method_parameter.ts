@@ -3,8 +3,8 @@ import {MethodParam, MethodParamName, TypeName, TypeParam} from "../../abap/expr
 import {Identifier} from "./_identifier";
 
 export class MethodParameter extends Identifier {
-  private readonly typeName: ExpressionNode | undefined;
-  private hasRefToToken: boolean;
+  private readonly typeName: string;
+  private readonly hasRefToToken: boolean;
 
   constructor(node: ExpressionNode) {
     if (!(node.get() instanceof MethodParam) && !(node.get() instanceof MethodParamName)) {
@@ -17,20 +17,25 @@ export class MethodParameter extends Identifier {
     }
     super(name.getFirstToken());
 
-    const typeParam = node.findFirstExpression(TypeParam);
-    if (!typeParam) {
-      throw new Error("MethodParameter expected a TypeParam as a child");
+    const typeParamStructure = node.findFirstExpression(TypeParam);
+    if (typeParamStructure !== undefined) {
+      const typeNameStructure = typeParamStructure.findFirstExpression(TypeName);
+      if (typeNameStructure !== undefined) {
+        let typeNameString: string = "";
+        for (const token of typeNameStructure.getAllTokens()) {
+          typeNameString = typeNameString.concat(token.getStr());
+        }
+        this.typeName = typeNameString;
+        this.hasRefToToken = (typeParamStructure.findDirectTokenByText("REF") !== undefined);
+      }
+    } else {
+      this.typeName = "";
     }
-    this.typeName = typeParam.findFirstExpression(TypeName);
-    this.hasRefToToken = (typeParam.findDirectTokenByText("REF") !== undefined);
+
   }
 
   public getTypeName(): string {
-    let name: string = "";
-    for (const token of this.typeName!.getAllTokens()) {
-      name = name.concat(token.getStr());
-    }
-    return name;
+    return this.typeName;
   }
 
   public isReferenceTo(): boolean {

@@ -7,10 +7,18 @@ export class FamixRepository {
   private famixClasses: Set<Class> = new Set<Class>();
   private idCounter: number = 1;
   private lang: CustomSourceLanguage;
+  private static repo: FamixRepository;
 
   constructor() {
     this.lang = new CustomSourceLanguage(this);
     this.lang.setName("ABAP");
+  }
+
+  public static getFamixRepo(): FamixRepository {
+    if (this.repo === undefined) {
+      this.repo = new FamixRepository();
+    }
+    return this.repo;
   }
 
   public createOrGetFamixClass(name: string, isInterface?: boolean): Class {

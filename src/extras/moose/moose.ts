@@ -5,23 +5,21 @@ import {ModelDirectory} from "./model_directory";
 
 export class Moose {
   private reg: Registry;
-  private readonly repo: FamixRepository;
   private directories: ModelDirectory[] = [];
   private files: ModelABAPFile[] = [];
 
   public constructor(reg: Registry) {
     this.reg = reg;
-    this.repo = new FamixRepository();
     this.analyseABAPFiles();
   }
 
   private analyseABAPFiles() {
     for (const file of this.reg.getABAPFiles()) {
       const dir = this.getOrCreateModelDirectory(ModelDirectory.getDirectoryPath(file.getFilename()));
-      this.files.push(new ModelABAPFile(this.repo, dir.getFamixPackage(), dir.getFamixNamespace(), file));
+      this.files.push(new ModelABAPFile(dir.getFamixPackage(), dir.getFamixNamespace(), file));
     }
     this.buildAssociationForNamespacesAndPackages();
-    for(const file of this.files) {
+    for (const file of this.files) {
       file.analyseAccessAndInvocations();
     }
   }
@@ -32,7 +30,7 @@ export class Moose {
         return dir;
       }
     }
-    const newDir = new ModelDirectory(this.repo, path);
+    const newDir = new ModelDirectory(FamixRepository.getFamixRepo(), path);
     this.directories.push(newDir);
     if (newDir.hasParentDirectories()) {
       newDir.setParent(this.getOrCreateModelDirectory(ModelDirectory.getDirectoryPath(newDir.getPath())));
@@ -54,7 +52,7 @@ export class Moose {
   }
 
   public getMSE(): string {
-    return this.repo.getMSE();
+    return FamixRepository.getFamixRepo().getMSE();
   }
 
 }

@@ -7,27 +7,32 @@ import {StructureNode} from "../../abap/nodes";
 import {ModelClass} from "./model_class";
 import {Package} from "./model/famix/package";
 import {Namespace} from "./model/famix/namespace";
+import {ModelRepository} from "./model_repository";
 
 export class ModelABAPFile {
   private sumOfCharsAtRow: number[];
   private modelClasses: ModelClass[] = [];
   private readonly file: ABAPFile;
 
-  constructor(repo: FamixRepository, famixPackage: Package, famixNamespace: Namespace, file: ABAPFile) {
+  constructor(famixPackage: Package, famixNamespace: Namespace, file: ABAPFile) {
     this.file = file;
     this.calculateSumOfCharsByRow(file);
 
     for (const classDef of file.getClassDefinitions()) {
-      this.modelClasses.push(new ModelClass(repo, famixPackage, famixNamespace, this, classDef));
+      const modelClass = new ModelClass(famixPackage, famixNamespace, this, classDef);
+      this.modelClasses.push(modelClass);
+      ModelRepository.getRepo().addModelClass(modelClass);
     }
 
     for (const interfaceDef of file.getInterfaceDefinitions()) {
-      this.modelClasses.push(new ModelClass(repo, famixPackage, famixNamespace, this, interfaceDef));
+      const modelClass = new ModelClass(famixPackage, famixNamespace, this, interfaceDef);
+      this.modelClasses.push(modelClass);
+      ModelRepository.getRepo().addModelClass(modelClass);
     }
   }
 
   public analyseAccessAndInvocations() {
-    for(const modelClass of this.modelClasses) {
+    for (const modelClass of this.modelClasses) {
       modelClass.analyseAccessAndInvocations();
     }
   }
@@ -70,9 +75,9 @@ export class ModelABAPFile {
     return this.sumOfCharsAtRow[this.sumOfCharsAtRow.length];
   }
 
-  public static createIndexedFileAnchor(repo: FamixRepository, fpc: ModelABAPFile, element: SourcedEntity,
+  public static createIndexedFileAnchor(fpc: ModelABAPFile, element: SourcedEntity,
                                         start?: Position, end?: Position) {
-    const ifa = new IndexedFileAnchor(repo);
+    const ifa = new IndexedFileAnchor(FamixRepository.getFamixRepo());
     ifa.setFileName(fpc.getFilename());
     ifa.setElement(element);
 

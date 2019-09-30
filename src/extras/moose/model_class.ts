@@ -1,5 +1,5 @@
 import {ModelABAPFile} from "./model_abapfile";
-import {ClassAttribute, ClassConstant, ClassDefinition, InterfaceDefinition, Scope} from "../../abap/types";
+import {ClassAttribute, ClassConstant, ClassDefinition, InterfaceDefinition, Visibility} from "../../abap/types";
 import {Class} from "./model/famix/Class";
 import {Package} from "./model/famix/Package";
 import {Inheritance} from "./model/famix/Inheritance";
@@ -17,31 +17,31 @@ export class ModelClass {
   private modelMethods: ModelMethods[] = [];
   private classImplStructure: StructureNode | undefined;
 
-  public constructor(repo: FamixRepository, famixPackage: Package, famixNamespace: Namespace, modelFile: ModelABAPFile,
+  public constructor(famixPackage: Package, famixNamespace: Namespace, modelFile: ModelABAPFile,
                      classDef: ClassDefinition | InterfaceDefinition) {
-    this.famixClass = repo.createOrGetFamixClass(classDef.getName());
+    this.famixClass = FamixRepository.getFamixRepo().createOrGetFamixClass(classDef.getName());
     this.famixClass.setIsStub(false);
     this.famixClass.setContainer(famixNamespace);
     this.famixClass.setParentPackage(famixPackage);
-    ModelABAPFile.createIndexedFileAnchor(repo, modelFile, this.famixClass);
-    this.analyseClassAttributes(repo, modelFile, this.famixClass, classDef);
+    ModelABAPFile.createIndexedFileAnchor(modelFile, this.famixClass);
+    this.analyseClassAttributes(modelFile, this.famixClass, classDef);
 
     if (classDef instanceof InterfaceDefinition) {
       this.famixClass.setIsInterface(true);
       for (const methodDef of classDef.getMethodDefinitions()) {
-        this.modelMethods.push(new ModelMethods(repo, modelFile, this, methodDef));
+        this.modelMethods.push(new ModelMethods(modelFile, this, methodDef));
       }
 
     } else if (classDef instanceof ClassDefinition) {
       this.classImplStructure = this.findCallImplStructure(modelFile.getABAPFile().getStructure(), classDef.getName());
-      this.analyseSuperClass(repo, this.famixClass, classDef);
-      this.analyseInterfaceImplementing(repo, this.famixClass, classDef);
+      this.analyseSuperClass(this.famixClass, classDef);
+      this.analyseInterfaceImplementing(this.famixClass, classDef);
       this.analyseClassModifier(this.famixClass, classDef);
 
       const methodDefinitions = classDef.getMethodDefinitions();
       if (methodDefinitions) {
         for (const methodDef of methodDefinitions.getAll()) {
-          this.modelMethods.push(new ModelMethods(repo, modelFile, this, methodDef));
+          this.modelMethods.push(new ModelMethods(modelFile, this, methodDef));
         }
       }
     }
@@ -84,36 +84,36 @@ export class ModelClass {
     return undefined;
   }
 
-  private analyseClassAttributes(repo: FamixRepository, modelFile: ModelABAPFile, famixClass: Class,
+  private analyseClassAttributes(modelFile: ModelABAPFile, famixClass: Class,
                                  classDef: ClassDefinition | InterfaceDefinition ) {
     const attributes = classDef.getAttributes();
     if (attributes) {
       for (const instanceAttr of attributes.getInstance()) {
-        const famixAttr = this.createAttributeModel(repo, modelFile, famixClass, instanceAttr);
+        const famixAttr = this.createAttributeModel(modelFile, famixClass, instanceAttr);
         const type = instanceAttr.getType();
         if (type) {
-          const famixTypeClass = repo.createOrGetFamixClass(type);
+          const famixTypeClass = FamixRepository.getFamixRepo().createOrGetFamixClass(type);
           famixAttr.setDeclaredType(famixTypeClass);
         }
       }
       for (const staticAttr of attributes.getStatic()) {
-        const famixAttr = this.createAttributeModel(repo, modelFile, famixClass, staticAttr);
+        const famixAttr = this.createAttributeModel(modelFile, famixClass, staticAttr);
         famixAttr.addModifiers("static");
         famixAttr.setHasClassScope(true);
       }
       for (const constAttr of attributes.getConstants()) {
-        const famixAttr = this.createAttributeModel(repo, modelFile, famixClass, constAttr);
+        const famixAttr = this.createAttributeModel(modelFile, famixClass, constAttr);
         famixAttr.setHasClassScope(true);
       }
     }
   }
 
-  private createAttributeModel(repo: FamixRepository, modelFile: ModelABAPFile, famixClass: Class, attr: ClassAttribute | ClassConstant) {
-    const famixAttribute = new Attribute(repo);
+  private createAttributeModel(modelFile: ModelABAPFile, famixClass: Class, attr: ClassAttribute | ClassConstant) {
+    const famixAttribute = new Attribute(FamixRepository.getFamixRepo());
     famixAttribute.setName(attr.getName().toLowerCase());
     famixAttribute.setParentType(famixClass);
-    famixAttribute.addModifiers(Scope[attr.getScope()].toLowerCase());
-    ModelABAPFile.createIndexedFileAnchor(repo, modelFile, famixAttribute, attr.getStart(), attr.getEnd());
+    famixAttribute.addModifiers(Visibility[attr.getVisibility()].toLowerCase());
+    ModelABAPFile.createIndexedFileAnchor(modelFile, famixAttribute, attr.getStart(), attr.getEnd());
     return famixAttribute;
   }
 
@@ -127,20 +127,20 @@ export class ModelClass {
     }
   }
 
-  private analyseSuperClass(repo: FamixRepository, famixClass: Class, classDef: ClassDefinition) {
-    this.createInheritance(repo, famixClass, classDef.getSuperClass());
+  private analyseSuperClass(famixClass: Class, classDef: ClassDefinition) {
+    this.createInheritance(famixClass, classDef.getSuperClass());
   }
 
-  private analyseInterfaceImplementing(repo: FamixRepository, famixClass: Class, classDef: ClassDefinition) {
+  private analyseInterfaceImplementing(famixClass: Class, classDef: ClassDefinition) {
     for (const interfaceName of classDef.getImplementing()) {
-      this.createInheritance(repo, famixClass, interfaceName, true);
+      this.createInheritance(famixClass, interfaceName, true);
     }
   }
 
-  private createInheritance(repo: FamixRepository, famixClass: Class, superClass: string | undefined, isInterface?: boolean) {
+  private createInheritance(famixClass: Class, superClass: string | undefined, isInterface?: boolean) {
     if (superClass !== undefined) {
-      const modelSuperClass = repo.createOrGetFamixClass(superClass, isInterface);
-      const modelInheritance = new Inheritance(repo);
+      const modelSuperClass = FamixRepository.getFamixRepo().createOrGetFamixClass(superClass, isInterface);
+      const modelInheritance = new Inheritance(FamixRepository.getFamixRepo());
       modelInheritance.setSubclass(famixClass);
       modelInheritance.setSuperclass(modelSuperClass);
     }

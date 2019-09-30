@@ -1,6 +1,6 @@
 import {ModelABAPFile} from "./model_abapfile";
 import {FamixRepository} from "./famix_repository";
-import {MethodDefinition, Scope} from "../../abap/types";
+import {MethodDefinition, Visibility} from "../../abap/types";
 import {Method} from "./model/famix/Method";
 import {ModelClass} from "./model_class";
 import * as Structures from "../../abap/structures";
@@ -8,36 +8,47 @@ import * as Expressions from "../../abap/expressions";
 import {Invocation} from "./model/famix/invocation";
 import {StructureNode} from "../../abap/nodes";
 import {ModelChain} from "./model_chain";
+import {Parameter} from "./model/famix/parameter";
 
 export class ModelMethods {
   private readonly famixMethod: Method;
   private readonly methodImplStructure: StructureNode | undefined;
-  private readonly repo: FamixRepository;
-  // private readonly modelClass: ModelClass;
+  private modelClass: ModelClass;
+  public methodDef: MethodDefinition;
   // private readonly modelFile: ModelABAPFile;
 
-  public constructor(repo: FamixRepository, modelFile: ModelABAPFile, modelClass: ModelClass,
+  public constructor(modelFile: ModelABAPFile, modelClass: ModelClass,
                      methodDef: MethodDefinition) {
-    this.repo = repo;
     // this.modelFile = modelFile;
-    // this.modelClass = modelClass;
-    this.famixMethod = new Method(repo);
+    this.methodDef = methodDef;
+    this.modelClass = modelClass;
+    this.famixMethod = new Method(FamixRepository.getFamixRepo());
     this.famixMethod.setName(methodDef.getName().toLowerCase());
-
 
     this.methodImplStructure = this.findMethodImplStructure(modelClass.getClassImplStructure(), methodDef.getName());
 
-    this.famixMethod.addModifiers(Scope[methodDef.getScope()].toLowerCase());
+    this.famixMethod.addModifiers(Visibility[methodDef.getVisibility()].toLowerCase());
     // todo: static methods CLASS-METHODS?
 
 
     this.famixMethod.setParentType(modelClass.getFamixClass());
-    this.famixMethod.setSignature(methodDef.getName());
+    this.famixMethod.setSignature(methodDef.getName().toLowerCase());
+
+    // importing Parameter
+    for (const parameter of methodDef.getParameters().getImporting()) {
+      const famixParameter = new Parameter(FamixRepository.getFamixRepo());
+      famixParameter.setName(parameter.getName().toLowerCase());
+      famixParameter.setParentBehaviouralEntity(this.famixMethod);
+      if (parameter.isReferenceTo()) {
+        famixParameter.setDeclaredType(FamixRepository.getFamixRepo().createOrGetFamixClass(parameter.getTypeName()));
+      }
+    }
+
     // todo: returning a complex data structure
     const returning = methodDef.getParameters().getReturning();
     if (returning) {
       if (returning.isReferenceTo()) {
-        const returnigClass = repo.createOrGetFamixClass(returning.getTypeName());
+        const returnigClass = FamixRepository.getFamixRepo().createOrGetFamixClass(returning.getTypeName());
         this.famixMethod.setDeclaredType(returnigClass);
       } else {
         // todo: primitive types and others
@@ -59,7 +70,7 @@ export class ModelMethods {
     // todo FileAnchor to implementation or definition?
     // def ModelABAPFile.createIndexedFileAnchor(repo, modelFile, this.famixMethod, methodDef.getStart(), methodDef.getEnd());
     if (this.methodImplStructure) {
-      ModelABAPFile.createIndexedFileAnchor(repo, modelFile, this.famixMethod, this.methodImplStructure.getFirstToken().getStart(),
+      ModelABAPFile.createIndexedFileAnchor(modelFile, this.famixMethod, this.methodImplStructure.getFirstToken().getStart(),
                                             this.methodImplStructure.getLastToken().getEnd());
     }
   }
@@ -81,14 +92,14 @@ export class ModelMethods {
       for (const methodCallChain of this.methodImplStructure.findAllExpressions(Expressions.MethodCallChain)) {
         if (methodCallChain.getFirstChild()!.get() instanceof Expressions.ClassName) {
           // static access
-          const famixInvocation = new Invocation(this.repo);
+          const famixInvocation = new Invocation(FamixRepository.getFamixRepo());
           famixInvocation.setSender(this.famixMethod);
           const className = methodCallChain.getChildren()[0].getFirstToken().getStr();
           const methodName = methodCallChain.findFirstExpression(Expressions.MethodName)!.getFirstToken().getStr();
-          const famixReceiverClass = this.repo.createOrGetFamixClass(className);
+          const famixReceiverClass = FamixRepository.getFamixRepo().createOrGetFamixClass(className);
           let famixReceiverMethod = this.findMethod(famixReceiverClass.getMethods(), methodName);
           if (!famixReceiverMethod) {
-            famixReceiverMethod = new Method(this.repo);
+            famixReceiverMethod = new Method(FamixRepository.getFamixRepo());
             famixReceiverMethod.setName(methodName);
             famixReceiverMethod.setIsStub(true);
             famixReceiverClass.addMethods(famixReceiverMethod);
@@ -109,22 +120,28 @@ export class ModelMethods {
   }
 
   public analyseFieldAccess() {
-    console.log("--------------------" + this.famixMethod.getName() + "---------------------");
+    console.log("---------------" + this.modelClass.getFamixClass().getName() + ": " + this.famixMethod.getName() + "----------------");
     if (this.methodImplStructure) {
       for (const c of this.methodImplStructure.findAllExpressions(Expressions.FieldChain)) {
-        const chain = new ModelChain(c);
+        const chain = new ModelChain(c, this.modelClass, this);
         chain.toString();
       }
+      /*
       for (const t of this.methodImplStructure.findAllExpressions(Expressions.Target)) {
-        const chain = new ModelChain(t);
+        const chain = new ModelChain(t, this.modelClass, this);
         chain.toString();
       }
       for (const m of this.methodImplStructure.findAllExpressions(Expressions.MethodCallChain)) {
-        const chain = new ModelChain(m);
+        const chain = new ModelChain(m, this.modelClass, this);
         chain.toString();
       }
+
+       */
     }
   }
 
+  public getFamixMethod(): Method {
+    return this.famixMethod;
+  }
 
 }
