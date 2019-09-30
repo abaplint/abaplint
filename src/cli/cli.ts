@@ -171,7 +171,7 @@ async function run() {
         if (argv["outfile"]) {
           fs.writeFileSync(argv["outfile"], new Moose(reg).getMSE(), "utf-8");
         } else {
-          output = "please call the program with outfile parameter \"abaplint -m --outfile projectname.mse\""
+          output = "please call the program with outfile parameter \"abaplint -m --outfile projectname.mse\"";
         }
       } else {
         reg.addDependencies(deps);
