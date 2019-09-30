@@ -7,8 +7,9 @@ import * as Structures from "../../abap/structures";
 import * as Expressions from "../../abap/expressions";
 import {Invocation} from "./model/famix/invocation";
 import {StructureNode} from "../../abap/nodes";
-import {ModelChain} from "./model_chain";
 import {Parameter} from "./model/famix/parameter";
+import {ModelFieldChain} from "./model_chain_field";
+import {ModelTargetChain} from "./model_chain_target";
 
 export class ModelMethods {
   private readonly famixMethod: Method;
@@ -120,17 +121,18 @@ export class ModelMethods {
   }
 
   public analyseFieldAccess() {
-    console.log("---------------" + this.modelClass.getFamixClass().getName() + ": " + this.famixMethod.getName() + "----------------");
+    console.debug("---------------" + this.modelClass.getFamixClass().getName() + ": " + this.famixMethod.getName() + "----------------");
     if (this.methodImplStructure) {
       for (const c of this.methodImplStructure.findAllExpressions(Expressions.FieldChain)) {
-        const chain = new ModelChain(c, this.modelClass, this);
+        const chain = new ModelFieldChain(c, this.modelClass, this);
+        chain.toString();
+      }
+
+      for (const t of this.methodImplStructure.findAllExpressions(Expressions.Target)) {
+        const chain = new ModelTargetChain(t, this.modelClass, this);
         chain.toString();
       }
       /*
-      for (const t of this.methodImplStructure.findAllExpressions(Expressions.Target)) {
-        const chain = new ModelChain(t, this.modelClass, this);
-        chain.toString();
-      }
       for (const m of this.methodImplStructure.findAllExpressions(Expressions.MethodCallChain)) {
         const chain = new ModelChain(m, this.modelClass, this);
         chain.toString();
