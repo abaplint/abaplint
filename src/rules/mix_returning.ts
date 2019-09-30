@@ -5,6 +5,7 @@ import * as Statements from "../abap/statements";
 import * as Expressions from "../abap/expressions";
 import {BasicRuleConfig} from "./_basic_rule_config";
 
+/** Checks that methods don't have a mixture of returning and exporting/changing parameters */
 export class MixReturningConf extends BasicRuleConfig {
 }
 
@@ -17,7 +18,7 @@ export class MixReturning extends ABAPRule {
   }
 
   public getDescription(): string {
-    return "Mixing RETURNING and EXPORTING/CHANGING";
+    return "Don't mix RETURNING and EXPORTING/CHANGING parameters in a single method.";
   }
 
   public getConfig() {

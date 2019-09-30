@@ -1,11 +1,11 @@
 import {Issue} from "../issue";
-// import {Position} from "../position";
 import {ABAPRule} from "./_abap_rule";
 import {ABAPFile} from "../files";
 import {BasicRuleConfig} from "./_basic_rule_config";
 import * as Statements from "../abap/statements/";
 import * as Expressions from "../abap/expressions/";
 
+/** Checks that exceptions 'system_failure' and 'communication_failure' are handled in RFC calls */
 export class RFCErrorHandlingConf extends BasicRuleConfig {
 }
 
@@ -17,7 +17,7 @@ export class RFCErrorHandling extends ABAPRule {
   }
 
   public getDescription(): string {
-    return "RFC error handling";
+    return "RFC error handling: At least one unhandled exception from SYSTEM_FAILURE, COMMUNICATION_FAILURE, RESOURCE_FAILURE.";
   }
 
   public getConfig() {

@@ -8,12 +8,19 @@ import {ABAPObject} from "../objects/_abap_object";
 import {IFile} from "../files/_ifile";
 import {BasicRuleConfig} from "./_basic_rule_config";
 
+/** Allows you to enforce a pattern, such as a prefix, for method parameter names */
 export class MethodParameterNamesConf extends BasicRuleConfig {
+  /** Ignore parameters in methods of exception classes */
   public ignoreExceptions: boolean = true;
+  /** The pattern for importing parameters */
   public importing: string = "^I._.*$";
+  /** The pattern for returning parameters */
   public returning: string = "^R._.*$";
+  /** The pattern for changing parameters */
   public changing: string = "^C._.*$";
+  /** The pattern for exporting parameters */
   public exporting: string = "^E._.*$";
+  /** The following parameter names will be ignored */
   public ignoreNames: string[] = ["P_TASK"];
 }
 
@@ -25,8 +32,8 @@ export class MethodParameterNames implements IRule {
     return "method_parameter_names";
   }
 
-  public getDescription(): string {
-    return "Method Parameter Names";
+  public getDescription(expected: string, actual: string): string {
+    return "Method parameter name does not match pattern " + expected + ": " + actual;
   }
 
   public getConfig() {
@@ -103,7 +110,7 @@ export class MethodParameterNames implements IRule {
       if (this.conf.ignoreNames.indexOf(name.toUpperCase()) >= 0) {
         return ret;
       }
-      const message = "Bad method parameter name \"" + name + "\" expected \"" + expected + "/i\"";
+      const message = this.getDescription(expected, name);
 // todo, find the right file
       const issue = new Issue({
         file,

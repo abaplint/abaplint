@@ -10,6 +10,7 @@ export class Counter {
   public pos: Position;
 }
 
+/** Detects EXPORTING statements which can be omitted. */
 export class ExportingConf extends BasicRuleConfig {
 }
 
@@ -22,7 +23,7 @@ export class Exporting extends ABAPRule {
   }
 
   public getDescription(): string {
-    return "EXPORTING can be omitted";
+    return "The EXPORTING keyword can be omitted.";
   }
 
   public runParsed(file: ABAPFile) {

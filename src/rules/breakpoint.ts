@@ -4,6 +4,7 @@ import {ABAPRule} from "./_abap_rule";
 import {ABAPFile} from "../files";
 import {BasicRuleConfig} from "./_basic_rule_config";
 
+/** Detects usage of code-based breakpoints. */
 export class BreakpointConf extends BasicRuleConfig {
 }
 
@@ -15,7 +16,7 @@ export class Breakpoint extends ABAPRule {
   }
 
   public getDescription(): string {
-    return "Contains breakpoint";
+    return "Line contains a breakpoint.";
   }
 
   public getConfig() {

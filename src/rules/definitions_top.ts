@@ -5,6 +5,7 @@ import {ABAPRule} from "./_abap_rule";
 import {ABAPFile} from "../files";
 import {BasicRuleConfig} from "./_basic_rule_config";
 
+/** Checks that definitions are placed at the beginning of methods. */
 export class DefinitionsTopConf extends BasicRuleConfig {
 }
 

@@ -7,9 +7,12 @@ import {Attributes} from "../abap/types/class_attributes";
 import {ClassAttribute} from "../abap/types/class_attribute";
 import {BasicRuleConfig} from "./_basic_rule_config";
 
+/** Allows you to enforce a pattern, such as a prefix, for class variable names. */
 export class ClassAttributeNamesConf extends BasicRuleConfig {
   public ignoreExceptions: boolean = true;
+  /** The pattern for static variable names */
   public statics: string = "^G._.*$";
+  /** The pattern for instance variable names */
   public instance: string = "^M._.*$";
 }
 
@@ -21,8 +24,8 @@ export class ClassAttributeNames implements IRule {
     return "class_attribute_names";
   }
 
-  public getDescription(): string {
-    return "Class Attribute Names";
+  public getDescription(expected: string, actual: string): string {
+    return "Class attribute name does not match pattern " + expected + ": " + actual;
   }
 
   public getConfig() {
@@ -79,11 +82,11 @@ export class ClassAttributeNames implements IRule {
     const regex = new RegExp(expected, "i");
     const name = attr.getName();
     if (regex.test(name) === false) {
-      const message = "Bad attribute name \"" + name + "\" expected \"" + expected + "/i\"";
 // todo, find the right file
       const issue = new Issue({
         file: obj.getFiles()[0],
-        message, key: this.getKey(),
+        message: this.getDescription(name, expected),
+        key: this.getKey(),
         start: attr.getStart(),
         end: attr.getEnd(),
       });

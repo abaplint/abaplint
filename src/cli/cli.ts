@@ -60,7 +60,10 @@ function loadConfig(filename: string | undefined): {config: Config, base: string
 
   process.stderr.write("Using config: " + f + "\n");
   const json = fs.readFileSync(f, "utf8");
-  return {config: new Config(json), base: path.dirname(f)};
+  return {
+    config: new Config(json),
+    base: path.dirname(f) === process.cwd() ? "." : path.dirname(f),
+  };
 }
 
 async function loadDependencies(config: Config, compress: boolean, bar: IProgress, base: string): Promise<IFile[]> {
@@ -182,6 +185,10 @@ async function run() {
       }
     } else {
       output = Formatter.format(issues, format, loaded.length);
+      if (argv["outformat"] && argv["outfile"]) {
+        const fileContents = Formatter.format(issues, argv["outformat"], loaded.length);
+        fs.writeFileSync(argv["outfile"], fileContents, "utf-8");
+      }
     }
 
   }

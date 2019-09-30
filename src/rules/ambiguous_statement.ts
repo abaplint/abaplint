@@ -10,6 +10,7 @@ import {Registry} from "../registry";
 
 // todo, this rule can be disabled when using strict SQL
 
+/** Checks for ambiguity between deleting from internal and database table */
 export class AmbiguousStatementConf extends BasicRuleConfig {
 }
 
@@ -21,7 +22,7 @@ export class AmbiguousStatement extends ABAPRule {
   }
 
   public getDescription(): string {
-    return "Ambiguous Statement";
+    return "Ambiguous DELETE statement. Use explicit syntax.";
   }
 
   public getConfig() {

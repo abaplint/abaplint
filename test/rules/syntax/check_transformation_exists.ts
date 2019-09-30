@@ -24,28 +24,28 @@ describe("Rules, check_transformation_exists", function () {
   });
 
   it("not found", () => {
-    const contents = "REPORT zfoo.\n" +
-      "CALL TRANSFORMATION id\n" +
-      "  SOURCE (lt_stab)\n" +
-      "  RESULT XML li_doc.";
+    const contents = `REPORT zfoo.
+      CALL TRANSFORMATION id
+        SOURCE (lt_stab)
+        RESULT XML li_doc.`;
     const issues = runMulti([{filename: "zfoo.prog.abap", contents}]);
     expect(issues.length).to.equals(1);
   });
 
   it("dynamic, no error", () => {
-    const contents = "REPORT zfoo.\n" +
-      "CALL TRANSFORMATION (fsd)\n" +
-      "  SOURCE (lt_stab)\n" +
-      "  RESULT XML li_doc.";
+    const contents = `REPORT zfoo.
+      CALL TRANSFORMATION (fsd)
+        SOURCE (lt_stab)
+        RESULT XML li_doc.`;
     const issues = runMulti([{filename: "zfoo.prog.abap", contents}]);
     expect(issues.length).to.equals(0);
   });
 
   it("found, ok", () => {
-    const contents = "REPORT zfoo.\n" +
-      "CALL TRANSFORMATION id\n" +
-      "  SOURCE (lt_stab)\n" +
-      "  RESULT XML li_doc.";
+    const contents = `REPORT zfoo.
+      CALL TRANSFORMATION id
+        SOURCE (lt_stab)
+        RESULT XML li_doc.`;
     const issues = runMulti([
       {filename: "zfoo.prog.abap", contents},
       {filename: "id.xslt.xml", contents: "<foo></foo>"}]);

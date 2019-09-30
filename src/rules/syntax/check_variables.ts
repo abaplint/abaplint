@@ -4,6 +4,7 @@ import {BasicRuleConfig} from "../_basic_rule_config";
 import {IObject} from "../../objects/_iobject";
 import {ABAPObject} from "../../objects/_abap_object";
 
+/** Enables variable resolution */
 export class CheckVariablesConf extends BasicRuleConfig {
 }
 

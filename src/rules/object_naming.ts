@@ -6,20 +6,35 @@ import {IRule} from "./_irule";
 import * as Objects from "../objects";
 import {Position} from "../position";
 
+/** Allows you to enforce a pattern, such as a prefix, for object names */
 export class ObjectNamingConf extends BasicRuleConfig {
+  /** The pattern for global class names */
   public clas: string = "^ZC(L|X)\\_";
+  /** The pattern for global interface names */
   public intf: string = "^ZIF\\_";
+  /** The pattern for program (report) names */
   public prog: string = "^Z";
+  /** The pattern for function group names */
   public fugr: string = "^Z";
+  /** The pattern for DDIC table names */
   public tabl: string = "^Z";
+  /** The pattern for DDIC table type names */
   public ttyp: string = "^Z";
+  /** The pattern for data element names */
   public dtel: string = "^Z";
+  /** The pattern for domain names */
   public doma: string = "^Z";
+  /** The pattern for message class names */
   public msag: string = "^Z";
+  /** The pattern for transaction names */
   public tran: string = "^Z";
+  /** The pattern for lock object names */
   public enqu: string = "^EZ";
+  /** The pattern for authorization object names */
   public auth: string = "^Z";
+  /** The pattern for package interface names */
   public pinf: string = "^Z";
+  /** The pattern for idoc names */
   public idoc: string = "^Z";
 }
 
@@ -30,8 +45,8 @@ export class ObjectNaming implements IRule {
     return "object_naming";
   }
 
-  public getDescription(): string {
-    return "Object naming";
+  public getDescription(expected: string, actual: string): string {
+    return "Object name does not match pattern " + expected + ": " + actual;
   }
 
   public getConfig() {
@@ -83,7 +98,7 @@ export class ObjectNaming implements IRule {
     const regex = new RegExp(pattern, "i");
 
     if (regex.exec(obj.getName()) === null) {
-      message = "Object naming, expected " + pattern + ", got " + obj.getName();
+      message = this.getDescription(pattern, obj.getName());
     }
 
     if (message) {

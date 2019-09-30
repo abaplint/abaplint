@@ -4,7 +4,9 @@ import {ABAPRule} from "./_abap_rule";
 import {ABAPFile} from "../files";
 import {BasicRuleConfig} from "./_basic_rule_config";
 
+/** Checks for methods exceeding a maximum nesting depth */
 export class NestingConf extends BasicRuleConfig {
+  /** Maximum allowed nesting depth */
   public depth: number = 5;
 }
 
@@ -16,8 +18,8 @@ export class Nesting extends ABAPRule {
     return "nesting";
   }
 
-  public getDescription(): string {
-    return "Deep nesting";
+  public getDescription(max: string): string {
+    return "Reduce nesting depth to max " + max;
   }
 
   public getConfig() {
@@ -56,7 +58,7 @@ export class Nesting extends ABAPRule {
 
       if (depth > this.conf.depth) {
         const pos = statement.getFirstToken().getStart();
-        const issue = new Issue({file, message: this.getDescription(), key: this.getKey(), start: pos});
+        const issue = new Issue({file, message: this.getDescription(this.conf.depth.toString()), key: this.getKey(), start: pos});
         issues.push(issue);
         break; // only one finding per file
       }

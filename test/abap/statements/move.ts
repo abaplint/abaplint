@@ -94,6 +94,16 @@ const tests = [
   "CAST cl_class( x->y->z )->property-component = cl_other_class=>constant.",
   "NEW zcl_foo( )->prop = bar.",
   "boo = VALUE #( BASE moo ( LINES OF <foo>-bar ) ).",
+
+  "DATA(other_cases) = VALUE test_cases(\n" +
+  "  ( test_case )\n" +
+  "  ( expression = `blah` expected_result = abap_true ) ).",
+
+  "moo = REDUCE string( INIT x TYPE string\n" +
+  "  FOR wa IN material_data\n" +
+  "  WHERE ( plnal = opr->plnal AND plnnr = opr->plnnr )\n" +
+  "  NEXT x = |{ x } { wa-matnr alpha = out }, | ).",
+
 ];
 
 statementType(tests, "MOVE", Statements.Move);

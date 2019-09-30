@@ -1,0 +1,20 @@
+{
+  "compilerOptions": {
+    "declaration": false,
+    "noImplicitAny": true,
+    "noEmitOnError": true,
+    "noUnusedLocals": true,
+    "strictNullChecks": true,
+    "sourceMap": true,
+    "module": "commonjs",
+    "moduleResolution": "node",
+    "target": "es2017",
+    "outDir": "./build",
+    "baseUrl": ".",
+    "paths": {
+      "abaplint/*": ["../../build/src/*"]
+    },
+    "types": []
+  },
+  "include": ["src/*", "src/widgets/*.ts", "src/monaco/*.ts"]
+}

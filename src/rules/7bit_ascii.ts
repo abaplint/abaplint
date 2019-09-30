@@ -4,6 +4,7 @@ import {ABAPRule} from "./_abap_rule";
 import {ABAPFile} from "../files";
 import {BasicRuleConfig} from "./_basic_rule_config";
 
+/** Only allow characters from the 7bit ASCII set. */
 export class SevenBitAsciiConf extends BasicRuleConfig {
 }
 

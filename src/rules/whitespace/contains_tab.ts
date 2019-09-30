@@ -4,6 +4,7 @@ import {ABAPRule} from "../_abap_rule";
 import {ABAPFile} from "../../files";
 import {BasicRuleConfig} from "../_basic_rule_config";
 
+/** Checks for usage of tabs (enable to enforce spaces). */
 export class ContainsTabConf extends BasicRuleConfig {
 }
 
@@ -16,7 +17,7 @@ export class ContainsTab extends ABAPRule {
   }
 
   public getDescription(): string {
-    return "Code contains tab";
+    return "Code can't contain tabs.";
   }
 
   public getConfig() {

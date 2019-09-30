@@ -7,6 +7,7 @@ import {Registry} from "../registry";
 import * as Expressions from "../abap/expressions";
 import {ABAPObject} from "../objects/_abap_object";
 
+/** Checks for untyped FORM parameters */
 export class TypeFormParametersConf extends BasicRuleConfig {
 }
 
@@ -18,8 +19,8 @@ export class TypeFormParameters extends ABAPRule {
     return "type_form_parameters";
   }
 
-  public getDescription(): string {
-    return "Add TYPE for FORM parameters";
+  public getDescription(parameterName: string): string {
+    return "Add TYPE for FORM parameter" + parameterName;
   }
 
   public getConfig() {
@@ -43,7 +44,7 @@ export class TypeFormParameters extends ABAPRule {
         const token = formparam.getFirstToken();
         ret.push(new Issue({
           file,
-          message: this.getDescription(),
+          message: this.getDescription(token.getStr()),
           key: this.getKey(),
           start: token.getStart(),
           end: token.getEnd(),

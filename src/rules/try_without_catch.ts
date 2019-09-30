@@ -5,6 +5,7 @@ import {Registry} from "../registry";
 import {Try, Catch} from "../abap/structures";
 import {BasicRuleConfig} from "./_basic_rule_config";
 
+/** Checks for TRY blocks without a CATCH block */
 export class TryWithoutCatchConf extends BasicRuleConfig {
 }
 
@@ -16,7 +17,7 @@ export class TryWithoutCatch extends ABAPRule {
   }
 
   public getDescription(): string {
-    return "Inline DATA in old versions";
+    return "A TRY block must have a corresponding CATCH block.";
   }
 
   public getConfig() {

@@ -8,12 +8,12 @@ const tests = [
   {abap: "IF a = b.", cnt: 0},
   {abap: "IF A = b.", cnt: 1}, // "A" should be lower case
   {abap: "CLASS ZCL_ABAPGIT_ZLIB_STREAM IMPLEMENTATION.", cnt: 0}, // txn SE80 upper cases the keyword when saving
-  {abap: "CALL FUNCTION 'ZMOOBOO'\n" +
-  "EXPORTING\n" +
-  "  iv_fild     = lv_value\n" +
-  "EXCEPTIONS\n" +
-  "  invalid_boo = 1\n" +
-  "  OTHERS      = 2.", cnt: 0},
+  {abap: `CALL FUNCTION 'ZMOOBOO'
+  EXPORTING
+    iv_fild     = lv_value
+  EXCEPTIONS
+    invalid_boo = 1
+    OTHERS      = 2.`, cnt: 0},
   {abap: "LOOP AT SCREEN.", cnt: 0},
   {abap: "MODIFY SCREEN.",  cnt: 0},
   {abap: "FIELD-SYMBOLS <lv_dst> TYPE ANY.", cnt: 0}, // todo, "ANY" should be lower case
@@ -28,6 +28,7 @@ const tests = [
   {abap: "FUNCTION ZFOOBAR.\n", cnt: 1},
   {abap: "SELECT foo UP TO @bar ROWS INTO CORRESPONDING FIELDS OF TABLE @boo FROM loo.", cnt: 0},
   {abap: "SORT rt_list BY repo-name AS TEXT ASCENDING.", cnt: 0},
+  {abap: "IF foo = bar and moo = boo.", cnt: 1},
 ];
 
 testRule(tests, KeywordsUpper);

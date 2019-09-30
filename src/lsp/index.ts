@@ -1,8 +1,15 @@
-import * as LServer from "vscode-languageserver-protocol";
+import * as LServer from "vscode-languageserver-types";
 import {Registry} from "../registry";
 import {Symbols} from "./symbols";
 import {Hover} from "./hover";
 import {PrettyPrinter} from "../abap/pretty_printer";
+
+// the types in this file are not completely correct
+// see https://github.com/microsoft/vscode-languageserver-node/issues/354
+
+// note Ranges are zero based in LSP,
+// https://github.com/microsoft/language-server-protocol/blob/master/versions/protocol-2-x.md#range
+// but 1 based in abaplint
 
 export class LanguageServer {
   private reg: Registry;
@@ -15,7 +22,7 @@ export class LanguageServer {
     return Symbols.find(this.reg, params.textDocument.uri);
   }
 
-  public hover(params: LServer.TextDocumentPositionParams): LServer.Hover | undefined {
+  public hover(params: {textDocument: LServer.TextDocumentIdentifier, position: LServer.Position}): LServer.Hover | undefined {
     const hover = Hover.find(this.reg, params.textDocument.uri, params.position.line, params.position.character);
     if (hover) {
       return {contents: hover};
@@ -23,7 +30,9 @@ export class LanguageServer {
     return undefined;
   }
 
-  public documentFormatting(params: LServer.DocumentFormattingParams): LServer.TextEdit[] {
+  public documentFormatting(params: {textDocument: LServer.TextDocumentIdentifier,
+    options?: LServer.FormattingOptions}): LServer.TextEdit[] {
+
     const file = this.reg.getABAPFile(params.textDocument.uri);
     if (file === undefined) {
       return [];
@@ -39,8 +48,33 @@ export class LanguageServer {
     }];
   }
 
-  public diagnostics(_uri: string): LServer.Diagnostic[] {
-    return []; // todo
+  public diagnostics(textDocument: LServer.TextDocumentIdentifier): LServer.Diagnostic[] {
+
+    const file = this.reg.getABAPFile(textDocument.uri); // todo, this sould also run for xml files
+    if (file === undefined) {
+      return [];
+    }
+
+    const diagnostics: LServer.Diagnostic[] = [];
+    for (const issue of this.reg.findIssuesFile(file)) {
+      if (issue.getFile().getFilename() !== file.getFilename()) { // todo, is this required?
+        continue;
+      }
+      const diagnosic: LServer.Diagnostic = {
+        severity: LServer.DiagnosticSeverity.Error,
+        range: {
+          start: {line: issue.getStart().getRow() - 1, character: issue.getStart().getCol() - 1},
+          end: {line: issue.getEnd().getRow() - 1, character: issue.getEnd().getCol() - 1},
+        },
+        code: issue.getKey(),
+        message: issue.getMessage().toString(),
+        source: "abaplint",
+      };
+
+      diagnostics.push(diagnosic);
+    }
+
+    return diagnostics;
   }
 
 }

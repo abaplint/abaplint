@@ -4,37 +4,38 @@ import {RemoveDescriptions} from "../../src/rules";
 import {expect} from "chai";
 
 describe("rule, remove_descriptions, one error", function () {
-  const xml = "<?xml version=\"1.0\" encoding=\"utf-8\"?>\n" +
-    "<abapGit version=\"v1.0.0\" serializer=\"LCL_OBJECT_CLAS\" serializer_version=\"v1.0.0\">\n" +
-    " <asx:abap xmlns:asx=\"http://www.sap.com/abapxml\" version=\"1.0\">\n" +
-    "  <asx:values>\n" +
-    "   <VSEOCLASS>\n" +
-    "    <CLSNAME>ZCL_ABAPGIT_PERSIST_SETTINGS</CLSNAME>\n" +
-    "    <VERSION>1</VERSION>\n" +
-    "    <LANGU>E</LANGU>\n" +
-    "    <DESCRIPT>Settings</DESCRIPT>\n" +
-    "    <STATE>1</STATE>\n" +
-    "    <CLSCCINCL>X</CLSCCINCL>\n" +
-    "    <FIXPT>X</FIXPT>\n" +
-    "    <UNICODE>X</UNICODE>\n" +
-    "    <WITH_UNIT_TESTS>X</WITH_UNIT_TESTS>\n" +
-    "   </VSEOCLASS>\n" +
-    "   <DESCRIPTIONS>\n" +
-    "    <SEOCOMPOTX>\n" +
-    "     <CLSNAME>ZCL_ABAPGIT_PERSIST_SETTINGS</CLSNAME>\n" +
-    "     <CMPNAME>GO_PERSIST</CMPNAME>\n" +
-    "     <LANGU>E</LANGU>\n" +
-    "     <DESCRIPT>Settings</DESCRIPT>\n" +
-    "    </SEOCOMPOTX>\n" +
-    "   </DESCRIPTIONS>\n" +
-    "  </asx:values>\n" +
-    " </asx:abap>\n" +
-    "</abapGit>";
+  const xml = `<?xml version="1.0" encoding="utf-8"?>
+    <abapGit version="v1.0" serializer="LCL_OBJECT_CLAS" serializer_version="v1.0">
+     <asx:abap xmlns:asx="http://www.sap.com/abapxml" version="1.0">
+      <asx:values>
+       <VSEOCLASS>
+        <CLSNAME>ZCL_ABAPGIT_PERSIST_SETTINGS</CLSNAME>
+        <VERSION>1</VERSION>
+        <LANGU>E</LANGU>
+        <DESCRIPT>Settings</DESCRIPT>
+        <STATE>1</STATE>
+        <CLSCCINCL>X</CLSCCINCL>
+        <FIXPT>X</FIXPT>
+        <UNICODE>X</UNICODE>
+        <WITH_UNIT_TESTS>X</WITH_UNIT_TESTS>
+       </VSEOCLASS>
+       <DESCRIPTIONS>
+        <SEOCOMPOTX>
+         <CLSNAME>ZCL_ABAPGIT_PERSIST_SETTINGS</CLSNAME>
+         <CMPNAME>GO_PERSIST</CMPNAME>
+         <LANGU>E</LANGU>
+         <DESCRIPT>Settings</DESCRIPT>
+        </SEOCOMPOTX>
+       </DESCRIPTIONS>
+      </asx:values>
+     </asx:abap>
+    </abapGit>`;
 
-  const abap = "CLASS zcl_abapgit_persist_settings DEFINITION PUBLIC CREATE PRIVATE.\n" +
-    "ENDCLASS.\n" +
-    "CLASS ZCL_ABAPGIT_PERSIST_SETTINGS IMPLEMENTATION.\n" +
-    "ENDCLASS.";
+  const abap = `
+CLASS zcl_abapgit_persist_settings DEFINITION PUBLIC CREATE PRIVATE.
+ENDCLASS.
+CLASS ZCL_ABAPGIT_PERSIST_SETTINGS IMPLEMENTATION.
+ENDCLASS.`;
 
   const reg = new Registry().addFile(new MemoryFile("zcl_abapgit_persist_settings.clas.xml", xml));
   reg.addFile(new MemoryFile("zcl_abapgit_persist_settings.clas.abap", abap));
@@ -47,29 +48,30 @@ describe("rule, remove_descriptions, one error", function () {
 });
 
 describe("rule, remove_descriptions, no error", function () {
-  const xml = "<?xml version=\"1.0\" encoding=\"utf-8\"?>\n" +
-    "<abapGit version=\"v1.0.0\" serializer=\"LCL_OBJECT_CLAS\" serializer_version=\"v1.0.0\">\n" +
-    " <asx:abap xmlns:asx=\"http://www.sap.com/abapxml\" version=\"1.0\">\n" +
-    "  <asx:values>\n" +
-    "   <VSEOCLASS>\n" +
-    "    <CLSNAME>ZCL_ABAPGIT_PERSIST_SETTINGS</CLSNAME>\n" +
-    "    <VERSION>1</VERSION>\n" +
-    "    <LANGU>E</LANGU>\n" +
-    "    <DESCRIPT>Settings</DESCRIPT>\n" +
-    "    <STATE>1</STATE>\n" +
-    "    <CLSCCINCL>X</CLSCCINCL>\n" +
-    "    <FIXPT>X</FIXPT>\n" +
-    "    <UNICODE>X</UNICODE>\n" +
-    "    <WITH_UNIT_TESTS>X</WITH_UNIT_TESTS>\n" +
-    "   </VSEOCLASS>\n" +
-    "  </asx:values>\n" +
-    " </asx:abap>\n" +
-    "</abapGit>";
+  const xml = `<?xml version="1.0" encoding="utf-8"?>
+    <abapGit version="v1.0" serializer="LCL_OBJECT_CLAS" serializer_version="v1.0">
+     <asx:abap xmlns:asx="http://www.sap.com/abapxml" version="1.0">
+      <asx:values>
+       <VSEOCLASS>
+        <CLSNAME>ZCL_ABAPGIT_PERSIST_SETTINGS</CLSNAME>
+        <VERSION>1</VERSION>
+        <LANGU>E</LANGU>
+        <DESCRIPT>Settings</DESCRIPT>
+        <STATE>1</STATE>
+        <CLSCCINCL>X</CLSCCINCL>
+        <FIXPT>X</FIXPT>
+        <UNICODE>X</UNICODE>
+        <WITH_UNIT_TESTS>X</WITH_UNIT_TESTS>
+       </VSEOCLASS>
+      </asx:values>
+     </asx:abap>
+    </abapGit>`;
 
-  const abap = "CLASS zcl_abapgit_persist_settings DEFINITION PUBLIC CREATE PRIVATE.\n" +
-    "ENDCLASS.\n" +
-    "CLASS ZCL_ABAPGIT_PERSIST_SETTINGS IMPLEMENTATION.\n" +
-    "ENDCLASS.";
+  const abap = `
+CLASS zcl_abapgit_persist_settings DEFINITION PUBLIC CREATE PRIVATE.
+ENDCLASS.
+CLASS ZCL_ABAPGIT_PERSIST_SETTINGS IMPLEMENTATION.
+ENDCLASS.`;
 
   const reg = new Registry().addFile(new MemoryFile("zcl_abapgit_persist_settings.clas.xml", xml));
   reg.addFile(new MemoryFile("zcl_abapgit_persist_settings.clas.abap", abap));
@@ -82,43 +84,42 @@ describe("rule, remove_descriptions, no error", function () {
 });
 
 describe("rule, remove_descriptions, 2 errors", function () {
-  const xml = "<?xml version=\"1.0\" encoding=\"utf-8\"?>\n" +
-    "<abapGit version=\"v1.0.0\" serializer=\"LCL_OBJECT_CLAS\" serializer_version=\"v1.0.0\">\n" +
-    " <asx:abap xmlns:asx=\"http://www.sap.com/abapxml\" version=\"1.0\">\n" +
-    "  <asx:values>\n" +
-    "   <VSEOCLASS>\n" +
-    "    <CLSNAME>ZCL_ABAPGIT_PERSIST_SETTINGS</CLSNAME>\n" +
-    "    <VERSION>1</VERSION>\n" +
-    "    <LANGU>E</LANGU>\n" +
-    "    <DESCRIPT>Settings</DESCRIPT>\n" +
-    "    <STATE>1</STATE>\n" +
-    "    <CLSCCINCL>X</CLSCCINCL>\n" +
-    "    <FIXPT>X</FIXPT>\n" +
-    "    <UNICODE>X</UNICODE>\n" +
-    "    <WITH_UNIT_TESTS>X</WITH_UNIT_TESTS>\n" +
-    "   </VSEOCLASS>\n" +
-    "   <DESCRIPTIONS>\n" +
-    "    <SEOCOMPOTX>\n" +
-    "     <CLSNAME>ZCL_ABAPGIT_PERSIST_SETTINGS</CLSNAME>\n" +
-    "     <CMPNAME>GO_PERSIST</CMPNAME>\n" +
-    "     <LANGU>E</LANGU>\n" +
-    "     <DESCRIPT>Settings</DESCRIPT>\n" +
-    "    </SEOCOMPOTX>\n" +
-    "    <SEOCOMPOTX>\n" +
-    "     <CLSNAME>ZCL_ABAPGIT_PERSIST_SETTINGS</CLSNAME>\n" +
-    "     <CMPNAME>SOMETHING_ELSE</CMPNAME>\n" +
-    "     <LANGU>E</LANGU>\n" +
-    "     <DESCRIPT>Settings</DESCRIPT>\n" +
-    "    </SEOCOMPOTX>\n" +
-    "   </DESCRIPTIONS>\n" +
-    "  </asx:values>\n" +
-    " </asx:abap>\n" +
-    "</abapGit>";
-
-  const abap = "CLASS zcl_abapgit_persist_settings DEFINITION PUBLIC CREATE PRIVATE.\n" +
-    "ENDCLASS.\n" +
-    "CLASS ZCL_ABAPGIT_PERSIST_SETTINGS IMPLEMENTATION.\n" +
-    "ENDCLASS.";
+  const xml = `<?xml version="1.0" encoding="utf-8"?>
+    <abapGit version="v1.0.0" serializer="LCL_OBJECT_CLAS" serializer_version="v1.0.0">
+     <asx:abap xmlns:asx="http://www.sap.com/abapxml" version="1.0">
+      <asx:values>
+       <VSEOCLASS>
+        <CLSNAME>ZCL_ABAPGIT_PERSIST_SETTINGS</CLSNAME>
+        <VERSION>1</VERSION>
+        <LANGU>E</LANGU>
+        <DESCRIPT>Settings</DESCRIPT>
+        <STATE>1</STATE>
+        <CLSCCINCL>X</CLSCCINCL>
+        <FIXPT>X</FIXPT>
+        <UNICODE>X</UNICODE>
+        <WITH_UNIT_TESTS>X</WITH_UNIT_TESTS>
+       </VSEOCLASS>
+       <DESCRIPTIONS>
+        <SEOCOMPOTX>
+         <CLSNAME>ZCL_ABAPGIT_PERSIST_SETTINGS</CLSNAME>
+         <CMPNAME>GO_PERSIST</CMPNAME>
+         <LANGU>E</LANGU>
+         <DESCRIPT>Settings</DESCRIPT>
+        </SEOCOMPOTX>
+        <SEOCOMPOTX>
+         <CLSNAME>ZCL_ABAPGIT_PERSIST_SETTINGS</CLSNAME>
+         <CMPNAME>SOMETHING_ELSE</CMPNAME>
+         <LANGU>E</LANGU>
+         <DESCRIPT>Settings</DESCRIPT>
+        </SEOCOMPOTX>
+       </DESCRIPTIONS>
+      </asx:values>
+     </asx:abap>
+    </abapGit>`;
+  const abap = `CLASS zcl_abapgit_persist_settings DEFINITION PUBLIC CREATE PRIVATE.
+    ENDCLASS.
+    CLASS ZCL_ABAPGIT_PERSIST_SETTINGS IMPLEMENTATION.
+    ENDCLASS.`;
 
   const reg = new Registry().addFile(new MemoryFile("zcl_abapgit_persist_settings.clas.xml", xml));
   reg.addFile(new MemoryFile("zcl_abapgit_persist_settings.clas.abap", abap));

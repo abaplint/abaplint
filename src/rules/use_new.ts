@@ -7,6 +7,7 @@ import {Dynamic} from "../abap/expressions";
 import {Registry} from "../registry";
 import {Version} from "../version";
 
+/** Checks for deprecated CREATE OBJECT statements. */
 export class UseNewConf extends BasicRuleConfig {
 }
 
@@ -18,7 +19,7 @@ export class UseNew extends ABAPRule {
   }
 
   public getDescription(): string {
-    return "Use NEW #( )";
+    return "Use NEW #( ) to instantiate object.";
   }
 
   public getConfig() {

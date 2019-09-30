@@ -17,31 +17,34 @@ describe("Rule: local variable names", function() {
   });
 
   it("ok", function () {
-    const abap = "CLASS zcl_abapgit_object_enho_class DEFINITION.\n" +
-      "PUBLIC SECTION.\n" +
-      "  METHODS:\n" +
-      "   foobar.\n" +
-      "ENDCLASS.";
+    const abap = `
+CLASS zcl_abapgit_object_enho_class DEFINITION.
+  PUBLIC SECTION.
+    METHODS:
+      foobar.
+ENDCLASS.`;
     const issues = findIssues(abap);
     expect(issues.length).to.equal(0);
   });
 
   it("ok", function () {
-    const abap = "CLASS zcl_abapgit_object_enho_class DEFINITION.\n" +
-      "PUBLIC SECTION.\n" +
-      "  METHODS:\n" +
-      "   foobar RETURNING VALUE(rv_string) TYPE string.\n" +
-      "ENDCLASS.";
+    const abap = `
+CLASS zcl_abapgit_object_enho_class DEFINITION.
+  PUBLIC SECTION.
+    METHODS:
+      foobar RETURNING VALUE(rv_string) TYPE string.
+ENDCLASS.`;
     const issues = findIssues(abap);
     expect(issues.length).to.equal(0);
   });
 
   it("issue", function () {
-    const abap = "CLASS zcl_abapgit_object_enho_class DEFINITION.\n" +
-      "PUBLIC SECTION.\n" +
-      "  METHODS:\n" +
-      "   foobar EXPORTING foo TYPE i RETURNING VALUE(rv_string) TYPE string.\n" +
-      "ENDCLASS.";
+    const abap = `
+CLASS zcl_abapgit_object_enho_class DEFINITION.
+  PUBLIC SECTION.
+    METHODS:
+      foobar EXPORTING foo TYPE i RETURNING VALUE(rv_string) TYPE string.
+ENDCLASS.`;
     const issues = findIssues(abap);
     expect(issues.length).to.equal(1);
   });

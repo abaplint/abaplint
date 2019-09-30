@@ -71,23 +71,25 @@ export class Config {
   public getEnabledRules(): IRule[] {
     const rules: IRule[] = [];
     for (const rule of Artifacts.getRules()) {
-      switch (this.readByKey(rule.getKey(), "enabled")) {
-        case true:
-          rule.setConfig(this.readByRule(rule.getKey()));
+      const ruleConfig = this.config["rules"][rule.getKey()];
+      const ruleExists = ruleConfig !== undefined;
+
+      if (ruleExists) {
+        if (ruleConfig === true) { // "rule": true
           rules.push(rule);
-          break;
-        case undefined:
-          if (this.config.global && this.config.global.applyUnspecifiedRules === true) {
+        } else if (typeof ruleConfig === "object") {
+          if (ruleConfig.enabled === true || ruleConfig.enabled === undefined) {
+            rule.setConfig(ruleConfig);
             rules.push(rule);
           }
-          break;
-        default:
-          break;
+        }
+      } else if (this.config.global.applyUnspecifiedRules) {
+        rules.push(rule);
       }
     }
+
     return rules;
   }
-
   public constructor(json: string) {
     this.config = JSON.parse(json);
 
@@ -104,8 +106,6 @@ export class Config {
   }
 
   public readByKey(rule: string, key: string) {
-// todo: when reading enabled for a rule that is not in abaplint.json
-//       should the rule be enabled by default?
     return this.config["rules"][rule] ? this.config["rules"][rule][key] : undefined;
   }
 

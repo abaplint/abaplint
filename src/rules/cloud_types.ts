@@ -6,6 +6,7 @@ import {IObject} from "../objects/_iobject";
 import {Registry} from "../registry";
 import {BasicRuleConfig} from "./_basic_rule_config";
 
+/** Checks that the package does not contain any object types unsupported in cloud ABAP. */
 export class CloudTypesConf extends BasicRuleConfig {
 }
 
@@ -17,8 +18,8 @@ export class CloudTypes implements IRule {
     return "cloud_types";
   }
 
-  public getDescription(): string {
-    return "Object type not supported in cloud";
+  public getDescription(objectType: string): string {
+    return "Object type " + objectType + " not supported in cloud";
   }
 
   public getConfig() {
@@ -47,7 +48,7 @@ export class CloudTypes implements IRule {
       return [];
     }
 
-    return [new Issue({file: obj.getFiles()[0], key: this.getKey(), message: this.getDescription()})];
+    return [new Issue({file: obj.getFiles()[0], key: this.getKey(), message: this.getDescription(obj.getType())})];
   }
 
 }

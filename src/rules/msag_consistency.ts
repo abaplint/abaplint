@@ -6,6 +6,7 @@ import {IRule} from "./_irule";
 import {IObject} from "../objects/_iobject";
 import {Position} from "../position";
 
+/** Checks the validity of messages in message classes */
 export class MSAGConsistencyConf extends BasicRuleConfig {
 }
 
@@ -16,8 +17,8 @@ export class MSAGConsistency implements IRule {
     return "msag_consistency";
   }
 
-  public getDescription(): string {
-    return "Message class consistency";
+  public getDescription(reason: string): string {
+    return "Message class invalid: " + reason;
   }
 
   public getConfig() {
@@ -39,11 +40,13 @@ export class MSAGConsistency implements IRule {
 // todo, get the right positions in xml file
       if (!message.getNumber().match(/\d\d\d/)) {
         issues.push(new Issue({file: obj.getFiles()[0],
-          message: "Message number must be 3 digits, " + message.getNumber(), key: this.getKey(), start: new Position(1, 1)}));
+          message: this.getDescription(
+              "Message number must be 3 digits: message " + message.getNumber()), key: this.getKey(), start: new Position(1, 1)}));
       }
       if (message.getMessage() === "") {
         issues.push(new Issue({file: obj.getFiles()[0],
-          message: "Message text empty, " + message.getNumber(), key: this.getKey(), start: new Position(1, 1)}));
+          message:
+              "Message text empty: message " + message.getNumber(), key: this.getKey(), start: new Position(1, 1)}));
       }
     }
 

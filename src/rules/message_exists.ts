@@ -6,6 +6,7 @@ import {BasicRuleConfig} from "./_basic_rule_config";
 import {Registry} from "../registry";
 import {MessageClass} from "../objects";
 
+/** In message statements, check that the message class + id exist */
 export class MessageExistsConf extends BasicRuleConfig {
 }
 
@@ -16,8 +17,8 @@ export class MessageExistsRule extends ABAPRule {
     return "message_exists";
   }
 
-  public getDescription(): string {
-    return "Message exists checks";
+  public getDescription(reason: string): string {
+    return "Message invalid: " + reason;
   }
 
   public getConfig() {
@@ -39,7 +40,7 @@ export class MessageExistsRule extends ABAPRule {
     for (const node of struc.findAllExpressions(Expressions.MessageClass)) {
       const token = node.getFirstToken();
       if (reg.getObject("MSAG", token.getStr()) === undefined) {
-        const message = "Message class \"" + token.getStr() + "\" not found";
+        const message = this.getDescription("Message class \"" + token.getStr() + "\" not found");
         issues.push(new Issue({file, message, key: this.getKey(), start: token.getStart()}));
       }
     }
@@ -62,7 +63,7 @@ export class MessageExistsRule extends ABAPRule {
       const numberToken = typeNumber.getFirstToken();
       const num = numberToken.getStr().substr(1);
       if (msag.getByNumber(num) === undefined) {
-        const message = "Message number \"" + num + "\" not found in class \"" + name + "\"";
+        const message = this.getDescription("Message number \"" + num + "\" not found in class \"" + name + "\"");
         issues.push(new Issue({file, message, key: this.getKey(), start: numberToken.getStart()}));
       }
     }

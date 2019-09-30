@@ -5,6 +5,7 @@ import {BasicRuleConfig} from "./_basic_rule_config";
 import * as Statements from "../abap/statements";
 import * as Structures from "../abap/structures";
 
+/** Checks that WHEN OTHERS is placed the last within a CASE statement. */
 export class WhenOthersLastConf extends BasicRuleConfig {
 }
 
@@ -17,7 +18,7 @@ export class WhenOthersLast extends ABAPRule {
   }
 
   public getDescription(): string {
-    return "WHEN OTHERS should be last in CASE";
+    return "WHEN OTHERS should be the last branch in a CASE statement.";
   }
 
   public runParsed(file: ABAPFile) {

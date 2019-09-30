@@ -5,7 +5,9 @@ import {MethodLengthStats} from "../abap/method_length_stats";
 import {IRule} from "./_irule";
 import {BasicRuleConfig} from "./_basic_rule_config";
 
+/** Chcecks that methods do not exceed the set number of statements */
 export class MethodLengthConf extends BasicRuleConfig {
+  /** Maximum method length in statements */
   public statements: number = 100;
 }
 
@@ -17,8 +19,8 @@ export class MethodLength implements IRule {
     return "method_length";
   }
 
-  public getDescription(): string {
-    return "Method length, number of statements";
+  public getDescription(max: string, actual: string): string {
+    return "Reduce line length to max " + max + ", currently " + actual;
   }
 
   public getConfig() {
@@ -37,7 +39,7 @@ export class MethodLength implements IRule {
       if (s.count > this.conf.statements) {
         const issue = new Issue({
           file: s.file,
-          message: "Reduce method length, " + s.count + " statements",
+          message: this.getDescription(s.count.toString(), this.conf.statements.toString()),
           key: this.getKey(),
           start: s.pos});
         issues.push(issue);

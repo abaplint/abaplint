@@ -4,6 +4,7 @@ import {ABAPFile} from "../files";
 import {BasicRuleConfig} from "./_basic_rule_config";
 import {Punctuation, Comment} from "../abap/tokens";
 
+/** Checks that statements do not contain empty lines. */
 export class EmptyLineinStatementConf extends BasicRuleConfig {
   public allowChained: boolean = false;
 }
@@ -17,7 +18,7 @@ export class EmptyLineinStatement extends ABAPRule {
   }
 
   public getDescription(): string {
-    return "Empty line in statement";
+    return "Remove empty line in statement.";
   }
 
   public getConfig() {

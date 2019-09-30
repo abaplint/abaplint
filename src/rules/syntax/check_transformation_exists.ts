@@ -6,6 +6,7 @@ import {CallTransformation} from "../../abap/statements";
 import {NamespaceSimpleName} from "../../abap/expressions";
 import {Registry} from "../../registry";
 
+/** Checks that used XSLT transformations exist. */
 export class CheckTransformationExistsConf extends BasicRuleConfig {
 }
 

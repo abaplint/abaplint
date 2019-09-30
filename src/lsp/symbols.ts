@@ -1,4 +1,4 @@
-import * as LServer from "vscode-languageserver-protocol";
+import * as LServer from "vscode-languageserver-types";
 import {Registry} from "../registry";
 import {ABAPFile} from "../files";
 import {Identifier} from "../abap/types/_identifier";

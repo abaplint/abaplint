@@ -8,9 +8,13 @@ import {StructureNode} from "../abap/nodes";
 import {Token} from "../abap/tokens/_token";
 import {BasicRuleConfig} from "./_basic_rule_config";
 
+/** Allows you to enforce a pattern, such as a prefix, for local variables, constants and field symbols. */
 export class LocalVariableNamesConf extends BasicRuleConfig {
+  /** The pattern for local variable names */
   public expectedData: string = "^L._.*$";
+  /** The pattern for local constant names */
   public expectedConstant: string = "^LC_.*$";
+  /** The pattern for field symbol names */
   public expectedFS: string = "^<L._.*>$";
 }
 
@@ -22,8 +26,8 @@ export class LocalVariableNames extends ABAPRule {
     return "local_variable_names";
   }
 
-  public getDescription(): string {
-    return "Local Variable Names";
+  public getDescription(expected: string, actual: string): string {
+    return "Local variable name does not match pattern " + expected + ": " + actual;
   }
 
   public getConfig() {
@@ -115,8 +119,8 @@ export class LocalVariableNames extends ABAPRule {
     const ret: Issue[] = [];
     const regex = new RegExp(expected, "i");
     const name = token.getStr();
-    if (regex.test(name) === false) {
-      const message = "Bad local name \"" + name + "\" expected \"" + expected + "/i\"";
+    if (!regex.test(name)) {
+      const message = this.getDescription(expected, name);
       const issue = new Issue({file, message, key: this.getKey(), start: token.getStart()});
       ret.push(issue);
     }

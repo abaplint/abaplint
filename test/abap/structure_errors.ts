@@ -4,6 +4,8 @@ import {Structure} from "../../src/abap/structures/_structure";
 import {getStatements, parse} from "./_utils";
 import {StructureParser} from "../../src/abap/structure_parser";
 import {StructureNode} from "../../src/abap/nodes/";
+import {MemoryFile} from "../../src/files";
+import {Registry} from "../../src/registry";
 
 const cases = [
   {abap: "IF foo = bar.", error: "Expected ENDIF", structure: new Structures.If(), errorMatched: 1},
@@ -52,5 +54,19 @@ describe("Structure, test error messages, parser", function() {
         expect(issues[0].getMessage()).to.equal(c.error);
       }
     });
+  });
+});
+
+describe("Structure, test empty class", function() {
+  it("empty class file", function () {
+    const file = new MemoryFile("zcl_foo.clas.abap", "");
+    const issues = new Registry().addFile(file).findIssues();
+    let found = false;
+    for (const issue of issues) {
+      if (issue.getMessage() === "Expected CLASSDEFINITION") {
+        found = true; // this can be done smarter somehow?
+      }
+    }
+    expect(found).to.equal(true);
   });
 });

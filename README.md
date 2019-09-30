@@ -40,18 +40,7 @@ npm test
 ```
 
 ### Parsing vs standard ABAP
-* Spaces required after string literals and before right parenthesis, following gives parser error
-`lo_obj->method( 'FOO').`
-
-* CALL FUNCTION EXCEPTIONS must be well formed, eg not
-```abap
-  CALL FUNCTION 'RFC_PING'
-    EXCEPTIONS
-      OTHERS.
-
-  CALL FUNCTION 'RFC_PING'
-    EXCEPTIONS = 2.
-```
-
-* Only single chaining, following gives parser error:
-`WRITE: bar: foo.`
+* Spaces required after string literals and before right parenthesis
+* CALL FUNCTION EXCEPTIONS must be well formed
+* Only single chaining
+* Macros are only scoped to current file

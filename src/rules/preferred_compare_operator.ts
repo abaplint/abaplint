@@ -4,7 +4,9 @@ import {ABAPRule} from "./_abap_rule";
 import {ABAPFile} from "../files";
 import {BasicRuleConfig} from "./_basic_rule_config";
 
+/** Configure undesired operator variants */
 export class PreferredCompareOperatorConf extends BasicRuleConfig {
+  /** Operators which are not allowed */
   public badOperators: string[] = ["EQ", "><", "NE", "GE", "GT", "LT", "LE"];
 }
 
@@ -16,8 +18,8 @@ export class PreferredCompareOperator extends ABAPRule {
     return "preferred_compare_operator";
   }
 
-  public getDescription(): string {
-    return "Compare operator not preferred";
+  public getDescription(operator: string): string {
+    return "Compare operator " + operator + " not preferred";
   }
 
   public runParsed(file: ABAPFile) {
@@ -32,7 +34,7 @@ export class PreferredCompareOperator extends ABAPRule {
     for (const op of operators) {
       const token = op.getLastToken();
       if (this.conf.badOperators.indexOf(token.getStr()) >= 0) {
-        const message = "Compare operator " + token.getStr() + " not preferred";
+        const message = this.getDescription(token.getStr());
         const issue = new Issue({
           file,
           message,

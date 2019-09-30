@@ -3,6 +3,7 @@ import {ABAPRule} from "../_abap_rule";
 import {ABAPFile} from "../../files";
 import {BasicRuleConfig} from "../_basic_rule_config";
 
+/** Checks that there are no spaces in front of colons in chained statements. */
 export class SpaceBeforeColonConf extends BasicRuleConfig {
 }
 
@@ -15,7 +16,7 @@ export class SpaceBeforeColon extends ABAPRule {
   }
 
   public getDescription(): string {
-    return "Space before colon";
+    return "Remove space before colon";
   }
 
   public getConfig() {

@@ -23,18 +23,21 @@ export class Issue {
     if (!data.start) {
       this.start = new Position(1, 1);
     } else {
-      if (data.start.getCol() < 1) {
-        throw new Error("issue, row < 1");
-      }
       this.start = data.start;
     }
 
     if (!data.end) {
       this.end = new Position(
         this.start.getRow(),
-        data.file.getRawRows()[this.start.getRow() - 1].length);
+        data.file.getRawRows()[this.start.getRow() - 1].length + 1);
     } else {
       this.end = data.end;
+    }
+
+    if (this.start.getCol() < 1) {
+      throw new Error("issue, start col < 1");
+    } else if (this.end.getCol() < 1) {
+      throw new Error("issue, end col < 1");
     }
 
     this.file = data.file;

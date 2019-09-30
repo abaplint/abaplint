@@ -28,6 +28,30 @@ describe("Rule: main_file_contents", function() {
     expect(issues.length).to.equal(0);
   });
 
+  it("PROG should start with REPORT or PROGRAM, solved", function () {
+    const abap = "PROGRAM zreport.";
+    const issues = findIssues(abap, "zreport.prog.abap");
+    expect(issues.length).to.equal(0);
+  });
+
+  it("PROG should start with REPORT, solved, comment ok", function () {
+    const abap = "* foo\nREPORT zreport.";
+    const issues = findIssues(abap, "zreport.prog.abap");
+    expect(issues.length).to.equal(0);
+  });
+
+  it("PROG should start with REPORT, solved, two comments", function () {
+    const abap = "* foo\n* bar\nREPORT zreport.";
+    const issues = findIssues(abap, "zreport.prog.abap");
+    expect(issues.length).to.equal(0);
+  });
+
+  it("just a comment", function () {
+    const abap = "* foo";
+    const issues = findIssues(abap, "zreport.prog.abap");
+    expect(issues.length).to.equal(1);
+  });
+
   it("PROG should have name", function () {
     const abap = "REPORT.";
     const issues = findIssues(abap, "zreport.prog.abap");
