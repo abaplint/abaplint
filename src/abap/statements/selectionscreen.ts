@@ -73,7 +73,15 @@ export class SelectionScreen extends Statement {
 
     const skip = seq(str("SKIP"), opt(new Integer()));
 
-    const pos = seq(str("POSITION"), new Source());
+    const posSymbols = alt(str("POS_LOW"),
+                           str("POS_HIGH"));
+
+    // number between 1 and 83
+    const posIntegers = reg(/^(0?[1-9]|[1234567][0-9]|8[0-3])$/);
+
+    const pos = seq(str("POSITION"),
+                    alt(posIntegers,
+                        posSymbols));
 
     const incl = seq(str("INCLUDE BLOCKS"), blockName);
 
