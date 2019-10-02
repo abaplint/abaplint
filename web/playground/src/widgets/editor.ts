@@ -100,9 +100,13 @@ export class EditorWidget extends Widget {
 
   protected onAfterAttach() {
     if (this.editor === undefined) {
+      const model = monaco.editor.createModel(
+        this.contents,
+        this.determineLanguage(this.filename),
+        monaco.Uri.file("inmemory://" + this.filename),
+      );
       this.editor = monaco.editor.create(this.node, {
-        value: this.contents,
-        language: this.determineLanguage(this.filename),
+        model: model,
         theme: "vs-dark",
         lightbulb: {
           enabled: true,

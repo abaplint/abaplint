@@ -1,6 +1,6 @@
 import {Widget} from "@phosphor/widgets";
 import {Registry} from "abaplint/registry";
-import * as logo from "../../public/img/abaplint.svg";
+import logo from "../../public/img/abaplint.svg";
 
 export class WelcomeWidget extends Widget {
 
