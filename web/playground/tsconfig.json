@@ -8,6 +8,8 @@
     "sourceMap": true,
     "module": "commonjs",
     "moduleResolution": "node",
+    "resolveJsonModule": true,
+    "esModuleInterop": true,
     "target": "es2017",
     "outDir": "./build",
     "baseUrl": ".",

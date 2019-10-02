@@ -11,7 +11,7 @@ import {ABAPSnippetProvider} from "./monaco/abap_snippet_provider";
 import {ABAPHoverProvider} from "./monaco/abap_hover_provider";
 import {ABAPFormattingProvider} from "./monaco/abap_formatting_provider";
 import {ABAPSymbolProvider} from "./monaco/abap_symbol_provider";
-// import {ABAPCodeActionProvider} from "./monaco/abap_code_action_provider";
+import schema from "../../../scripts/schema.json";
 
 const commands = new CommandRegistry();
 
@@ -82,14 +82,12 @@ function registerMonacoSettings() {
   monaco.languages.registerDocumentFormattingEditProvider("abap", new ABAPFormattingProvider());
   monaco.languages.registerDocumentSymbolProvider("abap", new ABAPSymbolProvider());
 
-  /* todo, the schema must be fetched via http first? note CORS on github
-  alternatively add it here at compile time
   monaco.languages.json.jsonDefaults.setDiagnosticsOptions({
     validate: true,
     schemas: [{
       uri: "https://schema.abaplint.org/schema.json",
       fileMatch: ["abaplint.json"],
+      schema: schema,
     }],
   });
-  */
 }
