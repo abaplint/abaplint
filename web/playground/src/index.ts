@@ -81,7 +81,6 @@ function registerMonacoSettings() {
   monaco.languages.registerHoverProvider("abap", new ABAPHoverProvider());
   monaco.languages.registerDocumentFormattingEditProvider("abap", new ABAPFormattingProvider());
   monaco.languages.registerDocumentSymbolProvider("abap", new ABAPSymbolProvider());
-//  monaco.languages.registerCodeActionProvider("abap", new ABAPCodeActionProvider());
 
   /* todo, the schema must be fetched via http first? note CORS on github
   alternatively add it here at compile time
