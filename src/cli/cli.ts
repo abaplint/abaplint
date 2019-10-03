@@ -107,7 +107,7 @@ function displayHelp(): string {
     "  abaplint -u [<abaplint.json> -c] show class and interface information\n" +
     "  abaplint -t [<abaplint.json> -c] show stats\n" +
     "  abaplint -e [<abaplint.json> -c] show semantic search information\n" +
-    "  abaplint -m [<abaplint.json> -c] show moose information for software analysis and visualisation\n" +
+    "  abaplint -m [<abaplint.json> -c] extract model for software analysis and visualisation with moose\n" +
     "\n" +
     "Options:\n" +
     "  -f, --format <format>  output format (standard, total, json, summary, junit, codeclimate)\n" +
@@ -142,7 +142,7 @@ async function run() {
     let deps: IFile[] = [];
     const {config, base} = loadConfig(argv._[0]);
     try {
-      if (argv["x"]) {
+      if (argv["x"]) { // hidden parameter for debugging support
         config.get().global.files = argv["x"];
       } else if (config.get().global.files === undefined) {
         throw "Error: Update abaplint.json to latest format";
@@ -171,7 +171,7 @@ async function run() {
         if (argv["outfile"]) {
           fs.writeFileSync(argv["outfile"], new Moose(reg).getMSE(), "utf-8");
         } else {
-          output = "please call the program with outfile parameter \"abaplint -m --outfile projectname.mse\"";
+          output = "please call abaplint with outfile parameter \"abaplint -m --outfile projectname.mse\"";
         }
       } else {
         reg.addDependencies(deps);
