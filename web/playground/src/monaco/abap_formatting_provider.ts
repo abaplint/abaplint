@@ -11,7 +11,7 @@ export class ABAPFormattingProvider implements monaco.languages.DocumentFormatti
 
     const ls = new LanguageServer(FileSystem.getRegistry());
     const edit = ls.documentFormatting({
-      textDocument: {uri: FileSystem.getCurrentFile()},
+      textDocument: {uri: model.uri.toString()},
     });
 
     if (edit && edit.length === 1) {

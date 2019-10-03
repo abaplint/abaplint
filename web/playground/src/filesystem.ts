@@ -9,7 +9,6 @@ export class FileSystem {
   private static reg: Registry;
   private static tree: TreeWidget;
   private static problems: ProblemsWidget;
-  private static current: string;
 
   public static setup(tree: TreeWidget, problems: ProblemsWidget) {
     this.files = [];
@@ -26,15 +25,6 @@ LOOP AT lt_foo ASSIGNING FIELD-SYMBOL(<ls_foo>).
   WRITE 'bar'.
 ENDLOOP.`);
     this.addFile("abaplint.json", JSON.stringify(Config.getDefault().get(), undefined, 2));
-  }
-
-  public static getCurrentFile(): string {
-// todo, refactoring, this is not needed, there is an uri in the model of the editor
-    return this.current;
-  }
-
-  public static setCurrentFile(file: string): void {
-    this.current = file;
   }
 
   private static updateConfig(contents: string) {
@@ -57,7 +47,7 @@ ENDLOOP.`);
   }
 
   public static addFile(filename: string, contents: string) {
-    const file = new MemoryFile(filename, contents);
+    const file = new MemoryFile("file:///" + filename, contents);
     if (filename === "abaplint.json") {
       this.updateConfig(contents);
     } else {
