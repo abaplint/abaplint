@@ -7,12 +7,10 @@ import {LanguageServer} from "abaplint/lsp";
 
 export class EditorWidget extends Widget {
   private editor: monaco.editor.IStandaloneCodeEditor | undefined = undefined;
-  private filename: string;
-  private contents: string;
+  private model: monaco.editor.ITextModel;
 
   public static createNode(): HTMLElement {
-    const node = document.createElement("div");
-    return node;
+    return document.createElement("div");
   }
 
   constructor(filename: string, contents: string) {
@@ -22,8 +20,12 @@ export class EditorWidget extends Widget {
     this.title.label = filename;
     this.title.closable = true;
     this.title.caption = this.title.label;
-    this.filename = filename;
-    this.contents = contents;
+
+    this.model = monaco.editor.createModel(
+      contents,
+      this.determineLanguage(filename),
+      monaco.Uri.parse(filename),
+    );
   }
 
   get inputNode(): HTMLInputElement {
@@ -40,7 +42,6 @@ export class EditorWidget extends Widget {
     if (this.editor) {
       this.editor.focus();
     }
-    FileSystem.setCurrentFile(this.filename);
   }
 
   protected determineLanguage(filename: string): string {
@@ -49,7 +50,7 @@ export class EditorWidget extends Widget {
   }
 
   protected changed(e: any) {
-    FileSystem.updateFile(this.filename, this.editor!.getValue());
+    FileSystem.updateFile(this.model.uri.toString(), this.editor!.getValue());
     this.updateMarkers();
   }
 
@@ -57,7 +58,7 @@ export class EditorWidget extends Widget {
 // see https://github.com/microsoft/monaco-editor/issues/1604
 
     const ls = new LanguageServer(FileSystem.getRegistry());
-    const diagnostics = ls.diagnostics({uri: this.filename});
+    const diagnostics = ls.diagnostics({uri: this.model.uri.toString()});
 
     const markers: monaco.editor.IMarkerData[] = [];
     for (const diagnostic of diagnostics) {
@@ -95,18 +96,13 @@ export class EditorWidget extends Widget {
       dock.addWidget(help, {mode: "split-right", ref: this});
     }
 
-    help.updateIt(this.filename, this.editor!.getPosition()!);
+    help.updateIt(this.model.uri.toString(), this.editor!.getPosition()!);
   }
 
   protected onAfterAttach() {
     if (this.editor === undefined) {
-      const model = monaco.editor.createModel(
-        this.contents,
-        this.determineLanguage(this.filename),
-        monaco.Uri.file("inmemory://" + this.filename),
-      );
       this.editor = monaco.editor.create(this.node, {
-        model: model,
+        model: this.model,
         theme: "vs-dark",
         lightbulb: {
           enabled: true,
@@ -154,7 +150,7 @@ https://github.com/microsoft/monaco-editor/issues?utf8=%E2%9C%93&q=is%3Aissue+is
 
       this.updateMarkers();
 
-      if (this.filename === "zfoobar.prog.abap") { // todo, hack
+      if (this.model.uri.toString() === "file:///zfoobar.prog.abap") { // todo, hack
         this.onActivateRequest(new Message("foobar"));
       }
     }

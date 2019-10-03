@@ -9,7 +9,7 @@ export class ABAPHoverProvider implements monaco.languages.HoverProvider {
     const ls = new LanguageServer(FileSystem.getRegistry());
     // todo, can the model somehow contain the filename instead of having to call getCurrentFile?
     const hov = ls.hover({
-      textDocument: {uri: FileSystem.getCurrentFile()},
+      textDocument: {uri: model.uri.toString()},
       position: {line: position.lineNumber - 1, character: position.column - 1}}) as {contents: LServer.MarkupContent} | undefined;
     if (hov) {
       return {

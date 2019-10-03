@@ -10,7 +10,7 @@ export class ABAPSymbolProvider implements monaco.languages.DocumentSymbolProvid
 
     const ls = new LanguageServer(FileSystem.getRegistry());
     const symbols = ls.documentSymbol({
-      textDocument: {uri: FileSystem.getCurrentFile()},
+      textDocument: {uri: model.uri.toString()},
     });
 
     const ret: monaco.languages.DocumentSymbol[] = [];
