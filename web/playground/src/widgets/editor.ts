@@ -3,6 +3,7 @@ import {Message} from "@phosphor/messaging";
 import {Widget, DockPanel} from "@phosphor/widgets";
 import {FileSystem} from "../filesystem";
 import {HelpWidget} from "./help";
+import {LanguageServer} from "abaplint/lsp";
 
 export class EditorWidget extends Widget {
   private editor: monaco.editor.IStandaloneCodeEditor | undefined = undefined;
@@ -53,17 +54,20 @@ export class EditorWidget extends Widget {
   }
 
   protected updateMarkers() {
-    const issues = FileSystem.getIssues(this.filename);
+// see https://github.com/microsoft/monaco-editor/issues/1604
+
+    const ls = new LanguageServer(FileSystem.getRegistry());
+    const diagnostics = ls.diagnostics({uri: this.filename});
 
     const markers: monaco.editor.IMarkerData[] = [];
-    for (const i of issues) {
+    for (const diagnostic of diagnostics) {
       markers.push({
         severity: monaco.MarkerSeverity.Error,
-        message: i.getMessage(),
-        startLineNumber: i.getStart().getRow(),
-        startColumn: i.getStart().getCol(),
-        endLineNumber: i.getEnd().getRow(),
-        endColumn: i.getEnd().getCol(),
+        message: diagnostic.message,
+        startLineNumber: diagnostic.range.start.line + 1,
+        startColumn: diagnostic.range.start.character + 1,
+        endLineNumber: diagnostic.range.end.line + 1,
+        endColumn: diagnostic.range.end.character + 1,
       });
     }
 
@@ -96,9 +100,13 @@ export class EditorWidget extends Widget {
 
   protected onAfterAttach() {
     if (this.editor === undefined) {
+      const model = monaco.editor.createModel(
+        this.contents,
+        this.determineLanguage(this.filename),
+        monaco.Uri.file("inmemory://" + this.filename),
+      );
       this.editor = monaco.editor.create(this.node, {
-        value: this.contents,
-        language: this.determineLanguage(this.filename),
+        model: model,
         theme: "vs-dark",
         lightbulb: {
           enabled: true,

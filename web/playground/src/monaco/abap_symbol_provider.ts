@@ -18,20 +18,20 @@ export class ABAPSymbolProvider implements monaco.languages.DocumentSymbolProvid
     for (const symbol of symbols) {
       ret.push({
         range: {
-          startLineNumber: symbol.range.start.line,
-          startColumn: symbol.range.start.character,
-          endLineNumber: symbol.range.end.line,
-          endColumn: symbol.range.end.character,
+          startLineNumber: symbol.range.start.line + 1,
+          startColumn: symbol.range.start.character + 1,
+          endLineNumber: symbol.range.end.line + 1,
+          endColumn: symbol.range.end.character + 1,
         },
         name: symbol.name,
         kind: symbol.kind,
         detail: symbol.detail ? symbol.detail : "",
         tags: [],
         selectionRange: {
-          startLineNumber: symbol.selectionRange.start.line,
-          startColumn: symbol.selectionRange.start.character,
-          endLineNumber: symbol.selectionRange.end.line,
-          endColumn: symbol.selectionRange.end.character,
+          startLineNumber: symbol.selectionRange.start.line + 1,
+          startColumn: symbol.selectionRange.start.character + 1,
+          endLineNumber: symbol.selectionRange.end.line + 1,
+          endColumn: symbol.selectionRange.end.character + 1,
         },
       });
     }

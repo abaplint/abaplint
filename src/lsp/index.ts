@@ -57,7 +57,9 @@ export class LanguageServer {
 
     const diagnostics: LServer.Diagnostic[] = [];
     for (const issue of this.reg.findIssuesFile(file)) {
-      if (issue.getFile().getFilename() !== file.getFilename()) { // todo, is this required?
+      if (issue.getFile().getFilename() !== file.getFilename()) {
+        // todo, is this required?
+        // yeah, the findIssuesFile really finds issues for an object
         continue;
       }
       const diagnosic: LServer.Diagnostic = {
