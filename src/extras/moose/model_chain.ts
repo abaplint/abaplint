@@ -4,12 +4,13 @@ import {ModelClass} from "./model_class";
 import {ModelMethods} from "./model_methods";
 import {INode} from "../../abap/nodes/_inode";
 import {Attribute} from "./model/famix/attribute";
+import {Method} from "./model/famix/method";
 
 export abstract class ModelChain {
   private modelMethod: ModelMethods;
   private debugInfo: string = "";
 
-  constructor(node: ExpressionNode, modelClass: ModelClass, modelMethod: ModelMethods) {
+  constructor(node: ExpressionNode, modelClass: ModelClass, modelMethod: ModelMethods, logging: boolean) {
     if (!(node.get() instanceof MethodCallChain ||
        node.get() instanceof FieldChain ||
        node.get() instanceof Target)) {
@@ -35,7 +36,7 @@ export abstract class ModelChain {
 
     this.addToModel(modelMethod);
 
-    if (children.length > 1) {
+    if (logging && this.showInLogOutput()) {
       console.log(node.get().constructor.name + ": " + chain + "(" + text + ") " + this.debugInfo);
     }
   }
@@ -44,16 +45,24 @@ export abstract class ModelChain {
 
   protected abstract addToModel(modelMethod: ModelMethods): void;
 
+  protected showInLogOutput(): boolean {
+    return false;
+  }
+
   protected addDebugInfo(info: string) {
     this.debugInfo = this.debugInfo.concat(info);
   }
 
-  protected getFieldOfClass(node: INode, modelClass: ModelClass): Attribute | undefined {
-    return modelClass.getAttribute(node.getFirstToken().getStr());
+  protected getFieldOfClass(name: string, modelClass: ModelClass): Attribute | undefined {
+    return modelClass.getAttribute(name);
   }
 
-  protected isFieldOfClass(node: INode, modelClass: ModelClass): boolean {
-    return this.getFieldOfClass(node, modelClass) !== undefined;
+  protected isFieldOfClass(name: string, modelClass: ModelClass): boolean {
+    return this.getFieldOfClass(name, modelClass) !== undefined;
+  }
+
+  protected getMethodOfClass(name: string, modelClass: ModelClass): Method | undefined {
+    return modelClass.getMethod(name);
   }
 
   protected isParameterOfMethod(node: INode): boolean {

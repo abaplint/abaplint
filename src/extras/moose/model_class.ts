@@ -11,6 +11,7 @@ import * as Structures from "../../abap/structures";
 import * as Statements from "../../abap/statements";
 import * as Expressions from "../../abap/expressions";
 import {Namespace} from "./model/famix/namespace";
+import {Method} from "./model/famix/method";
 
 export class ModelClass {
   private readonly famixClass: Class;
@@ -38,6 +39,10 @@ export class ModelClass {
       this.analyseInterfaceImplementing(this.famixClass, classDef);
       this.analyseClassModifier(this.famixClass, classDef);
 
+      if (classDef.isForTesting()) {
+        this.famixClass.setIsTestCase(true);
+      }
+
       const methodDefinitions = classDef.getMethodDefinitions();
       if (methodDefinitions) {
         for (const methodDef of methodDefinitions.getAll()) {
@@ -49,8 +54,7 @@ export class ModelClass {
 
   public analyseAccessAndInvocations() {
     for (const modelMethod of this.modelMethods) {
-      modelMethod.analyseInvocations();
-      modelMethod.analyseFieldAccess();
+      modelMethod.analyseFieldAccessAndInvocations();
     }
   }
 
@@ -66,6 +70,15 @@ export class ModelClass {
     for (const attr of this.famixClass.getAttributes()) {
       if (attr.getName().toLowerCase() === name.toLowerCase()) {
         return attr;
+      }
+    }
+    return undefined;
+  }
+
+  public getMethod(name: string): Method | undefined {
+    for (const method of this.famixClass.getMethods()) {
+      if (method.getName().toLocaleLowerCase() === name.toLowerCase()) {
+        return method;
       }
     }
     return undefined;

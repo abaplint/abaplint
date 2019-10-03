@@ -16,9 +16,9 @@ export class ModelFieldChain extends ModelChain {
     const expression = node.get();
     if ((expression instanceof Field) || (expression instanceof ComponentName) || (expression instanceof FieldAll)) {
 
-      if (this.isFieldOfClass(node, currModelClass)) {
+      if (this.isFieldOfClass(node.getFirstToken().getStr(), currModelClass)) {
         this.addDebugInfo("class_field");
-        this.variable = this.getFieldOfClass(node, currModelClass)!;
+        this.variable = this.getFieldOfClass(node.getFirstToken().getStr(), currModelClass)!;
 
       } else if (isFirstElementInChain && (this.isParameterOfMethod(node))) {
         this.addDebugInfo("parameter");
@@ -36,14 +36,13 @@ export class ModelFieldChain extends ModelChain {
         currModelClass = nextModelClass;
       } else {
         this.addDebugInfo("CLASS_NOT_FOUND");
-        console.log("class not found: " + node.getFirstToken().getStr());
       }
     } else if ((expression instanceof Dash) || (expression instanceof InstanceArrow) || (expression instanceof StaticArrow)) {
       this.addDebugInfo(expression.getStr());
     } else if (expression instanceof ArrowOrDash) {
       this.addDebugInfo("=->");
     } else {
-      console.log("other expression found!");
+      this.addDebugInfo("[expression found!]");
     }
     return currModelClass;
   }
@@ -56,6 +55,5 @@ export class ModelFieldChain extends ModelChain {
       famixAccess.setVariable(this.variable);
     }
   }
-
 
 }

@@ -5,11 +5,11 @@ import {Method} from "./model/famix/Method";
 import {ModelClass} from "./model_class";
 import * as Structures from "../../abap/structures";
 import * as Expressions from "../../abap/expressions";
-import {Invocation} from "./model/famix/invocation";
 import {StructureNode} from "../../abap/nodes";
 import {Parameter} from "./model/famix/parameter";
 import {ModelFieldChain} from "./model_chain_field";
 import {ModelTargetChain} from "./model_chain_target";
+import {ModelMethodChain} from "./model_chain_method";
 
 export class ModelMethods {
   private readonly famixMethod: Method;
@@ -88,57 +88,29 @@ export class ModelMethods {
     return undefined;
   }
 
-  public analyseInvocations() {
-    if (this.methodImplStructure) {
-      for (const methodCallChain of this.methodImplStructure.findAllExpressions(Expressions.MethodCallChain)) {
-        if (methodCallChain.getFirstChild()!.get() instanceof Expressions.ClassName) {
-          // static access
-          const famixInvocation = new Invocation(FamixRepository.getFamixRepo());
-          famixInvocation.setSender(this.famixMethod);
-          const className = methodCallChain.getChildren()[0].getFirstToken().getStr();
-          const methodName = methodCallChain.findFirstExpression(Expressions.MethodName)!.getFirstToken().getStr();
-          const famixReceiverClass = FamixRepository.getFamixRepo().createOrGetFamixClass(className);
-          let famixReceiverMethod = this.findMethod(famixReceiverClass.getMethods(), methodName);
-          if (!famixReceiverMethod) {
-            famixReceiverMethod = new Method(FamixRepository.getFamixRepo());
-            famixReceiverMethod.setName(methodName);
-            famixReceiverMethod.setIsStub(true);
-            famixReceiverClass.addMethods(famixReceiverMethod);
-          }
-          famixInvocation.addCandidates(famixReceiverMethod);
-        }
-      }
+  public analyseFieldAccessAndInvocations() {
+    const logging = false;
+    if (logging) {
+      console.debug("---------------" + this.modelClass.getFamixClass().getName() + ": " + this.famixMethod.getName() + "----------------");
     }
-  }
 
-  private findMethod(methods: Set<Method>, name: string): Method | undefined {
-    for (const m of methods.values()) {
-      if (m.getName() === name) {
-        return m;
-      }
-    }
-    return undefined;
-  }
-
-  public analyseFieldAccess() {
-    console.debug("---------------" + this.modelClass.getFamixClass().getName() + ": " + this.famixMethod.getName() + "----------------");
     if (this.methodImplStructure) {
       for (const c of this.methodImplStructure.findAllExpressions(Expressions.FieldChain)) {
-        const chain = new ModelFieldChain(c, this.modelClass, this);
+        const chain = new ModelFieldChain(c, this.modelClass, this, logging);
         chain.toString();
       }
 
       for (const t of this.methodImplStructure.findAllExpressions(Expressions.Target)) {
-        const chain = new ModelTargetChain(t, this.modelClass, this);
-        chain.toString();
-      }
-      /*
-      for (const m of this.methodImplStructure.findAllExpressions(Expressions.MethodCallChain)) {
-        const chain = new ModelChain(m, this.modelClass, this);
+        const chain = new ModelTargetChain(t, this.modelClass, this, logging);
         chain.toString();
       }
 
-       */
+      for (const m of this.methodImplStructure.findAllExpressions(Expressions.MethodCallChain)) {
+        const chain = new ModelMethodChain(m, this.modelClass, this, logging);
+        chain.toString();
+      }
+
+
     }
   }
 

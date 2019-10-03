@@ -107,8 +107,9 @@ export class Attributes {
     let type;
     const foundType = node.findFirstExpression(Type);
     if (foundType) {
+      // todo: oder Types
       if ((foundType.getChildren()[1].getFirstToken().getStr() === "REF") &&
-          (foundType.getChildren()[1].getFirstToken().getStr() === "TO")) {
+          (foundType.getChildren()[2].getFirstToken().getStr() === "TO")) {
         type = foundType.findFirstExpression(FieldChain)!.findFirstExpression(Field)!.getFirstToken().getStr();
       }
     }
