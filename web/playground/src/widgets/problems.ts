@@ -1,3 +1,4 @@
+import * as monaco from "monaco-editor";
 import {Message} from "@phosphor/messaging";
 import {Widget} from "@phosphor/widgets";
 import {FileSystem} from "../filesystem";
@@ -30,8 +31,9 @@ export class ProblemsWidget extends Widget {
     const input = document.createElement("tt");
     for (const i of FileSystem.getIssues()) {
       const position = "[" + i.getStart().getRow() + ", " + i.getStart().getCol() + "]";
+      const path = monaco.Uri.parse(i.getFile().getFilename()).path;
       input.innerHTML = input.innerHTML + "<br>" +
-        i.getFile().getFilename() + position + ": " + i.getMessage() + "(" + i.getKey() + ")";
+        path + position + ": " + i.getMessage() + "(" + i.getKey() + ")";
     }
     content.appendChild(input);
 

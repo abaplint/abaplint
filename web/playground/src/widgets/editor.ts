@@ -17,7 +17,7 @@ export class EditorWidget extends Widget {
     super({node: EditorWidget.createNode()});
     this.setFlag(Widget.Flag.DisallowLayout);
     this.addClass("editor");
-    this.title.label = filename;
+    this.title.label = monaco.Uri.parse(filename).path;
     this.title.closable = true;
     this.title.caption = this.title.label;
 
