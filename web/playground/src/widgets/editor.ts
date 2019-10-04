@@ -28,6 +28,16 @@ export class EditorWidget extends Widget {
     );
   }
 
+  public getModel(): monaco.editor.ITextModel {
+    return this.model;
+  }
+
+  public onCloseRequest(msg: Message) {
+    super.onCloseRequest(msg);
+    this.editor!.dispose();
+    this.model.dispose();
+  }
+
   get inputNode(): HTMLInputElement {
     return this.node.getElementsByTagName("input")[0] as HTMLInputElement;
   }
@@ -149,10 +159,6 @@ https://github.com/microsoft/monaco-editor/issues?utf8=%E2%9C%93&q=is%3Aissue+is
       this.editor.addCommand(monaco.KeyMod.CtrlCmd + monaco.KeyCode.KEY_P, () => { return undefined; });
 
       this.updateMarkers();
-
-      if (this.model.uri.toString() === "file:///zfoobar.prog.abap") { // todo, hack
-        this.onActivateRequest(new Message("foobar"));
-      }
     }
   }
 }

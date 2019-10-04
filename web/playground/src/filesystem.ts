@@ -1,7 +1,9 @@
-import {TreeWidget, ProblemsWidget} from "./widgets";
+import {TreeWidget, ProblemsWidget, EditorWidget} from "./widgets";
 import {Registry} from "abaplint/registry";
 import {Config} from "abaplint/config";
 import {MemoryFile} from "abaplint/files";
+import {DockPanel} from "@phosphor/widgets";
+import {IFile} from "abaplint/files/_ifile";
 
 // magic god class
 export class FileSystem {
@@ -9,13 +11,16 @@ export class FileSystem {
   private static reg: Registry;
   private static tree: TreeWidget;
   private static problems: ProblemsWidget;
+  private static dock: DockPanel;
 
-  public static setup(tree: TreeWidget, problems: ProblemsWidget) {
+  public static setup(tree: TreeWidget, problems: ProblemsWidget, dock: DockPanel) {
     this.files = [];
     this.reg = new Registry();
     this.tree = tree;
+    this.dock = dock;
     this.problems = problems;
 
+    this.addFile("abaplint.json", JSON.stringify(Config.getDefault().get(), undefined, 2));
     this.addFile(
 "zfoobar.prog.abap",
 `REPORT zfoobar.
@@ -24,7 +29,6 @@ export class FileSystem {
 LOOP AT lt_foo ASSIGNING FIELD-SYMBOL(<ls_foo>).
   WRITE 'bar'.
 ENDLOOP.`);
-    this.addFile("abaplint.json", JSON.stringify(Config.getDefault().get(), undefined, 2));
   }
 
   private static updateConfig(contents: string) {
@@ -34,6 +38,44 @@ ENDLOOP.`);
     } catch {
       return;
     }
+  }
+
+  public static openFile(filename: string) {
+    const f = this.getFile(filename);
+    if (f) {
+      const editor = this.findEditor(f);
+      if (editor) {
+        this.dock.activateWidget(editor);
+      } else {
+        const w = new EditorWidget(f.getFilename(), f.getRaw());
+        this.dock.addWidget(w);
+        this.dock.activateWidget(w);
+      }
+    }
+  }
+
+  private static findEditor(f: IFile): EditorWidget | undefined {
+    const it = this.dock.children();
+    for (;;) {
+      const res = it.next();
+      if (res === undefined) {
+        break;
+      } else if (res instanceof EditorWidget) {
+        if (res.getModel().uri.toString() === f.getFilename()) {
+          return res;
+        }
+      }
+    }
+    return undefined;
+  }
+
+  public static getFile(filename: string): IFile | undefined {
+    for (const f of this.getFiles()) {
+      if (f.getFilename() === filename || f.getFilename() === "file://" + filename) {
+        return f;
+      }
+    }
+    return undefined;
   }
 
   public static updateFile(filename: string, contents: string) {
@@ -57,7 +99,7 @@ ENDLOOP.`);
     this.update();
   }
 
-  public static getFiles(): MemoryFile[] {
+  public static getFiles(): IFile[] {
     return this.files;
   }
 

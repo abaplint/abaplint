@@ -5,7 +5,7 @@ import "../public/img/favicon-32x32.png";
 import * as monaco from "monaco-editor";
 import {CommandRegistry} from "@phosphor/commands";
 import {BoxPanel, DockPanel, Menu, MenuBar, Widget} from "@phosphor/widgets";
-import {WelcomeWidget, EditorWidget, TreeWidget, ProblemsWidget} from "./widgets/";
+import {WelcomeWidget, TreeWidget, ProblemsWidget} from "./widgets/";
 import {FileSystem} from "./filesystem";
 import {ABAPSnippetProvider} from "./monaco/abap_snippet_provider";
 import {ABAPHoverProvider} from "./monaco/abap_hover_provider";
@@ -21,8 +21,6 @@ function main(): void {
 
   const problems = new ProblemsWidget();
   problems.id = "problems";
-
-  FileSystem.setup(tree, problems);
 
   commands.addCommand("abaplint:goto_syntax_diagrams", {
     label: "Syntax Diagrams",
@@ -45,10 +43,13 @@ function main(): void {
   const dock = new DockPanel();
   dock.id = "dock";
   BoxPanel.setStretch(dock, 1);
-  for (const f of FileSystem.getFiles()) {
-    dock.addWidget(new EditorWidget(f.getFilename(), f.getRaw()));
-  }
+
+  FileSystem.setup(tree, problems, dock);
+
   dock.addWidget(new WelcomeWidget());
+  for (const f of FileSystem.getFiles()) {
+    FileSystem.openFile(f.getFilename());
+  }
 
   const left = new BoxPanel({direction: "top-to-bottom", spacing: 0});
   left.id = "left";
@@ -59,7 +60,6 @@ function main(): void {
   mainBox.id = "main";
   mainBox.addWidget(tree);
   mainBox.addWidget(left);
-
 
   window.onresize = () => { mainBox.update(); };
   Widget.attach(menu, document.body);

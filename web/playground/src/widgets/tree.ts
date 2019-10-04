@@ -35,7 +35,13 @@ export class TreeWidget extends Widget {
 
     for (const f of files) {
       const li = document.createElement("li");
-      li.appendChild(document.createTextNode(f));
+
+      const a = document.createElement("a");
+      a.setAttribute("href", "#");
+      a.appendChild(document.createTextNode(f));
+      a.onclick = function () { FileSystem.openFile(f); };
+
+      li.appendChild(a);
       list.append(li);
     }
     content.appendChild(list);
