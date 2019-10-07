@@ -38,15 +38,16 @@ export class FormNoDash extends ABAPRule {
       return issues;
     }
     for (const form of struc.findAllStatements(Statements.Form)) {
-      if (form.concatTokens().includes(Dash.railroad())) {
-        const token = form.getFirstToken();
-        issues.push(new Issue({
-          file,
-          message: this.getDescription(),
-          key: this.getKey(),
-          start: token.getStart(),
-          end: token.getEnd(),
-        }));
+      for (const token of form.getTokens()) {
+        if (token instanceof Dash) {
+          issues.push(new Issue({
+            file,
+            message: this.getDescription(),
+            key: this.getKey(),
+            start: token.getStart(),
+            end: token.getEnd(),
+          }));
+        }
       }
     }
     return issues;
