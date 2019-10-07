@@ -47,6 +47,7 @@ export class FormNoDash extends ABAPRule {
             start: token.getStart(),
             end: token.getEnd(),
           }));
+          break;
         }
       }
     }
