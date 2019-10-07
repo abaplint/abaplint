@@ -957,6 +957,15 @@ describe("Check Variables", () => {
     expect(issues.length).to.equals(0);
   });
 
+  it("REDUCE with INIT", () => {
+    const abap = "DATA it_result TYPE c.\n" +
+      "DATA(output) = REDUCE string( INIT result = ||\n" +
+      "  FOR <result> IN it_result\n" +
+      "  NEXT result = result && 'abc' ).";
+    const issues = runProgram(abap);
+    expect(issues.length).to.equals(0);
+  });
+
 /*
   it("program, constant, begin, error", () => {
     const abap =
