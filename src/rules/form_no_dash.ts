@@ -3,7 +3,7 @@ import {BasicRuleConfig} from "./_basic_rule_config";
 import {Issue} from "../issue";
 import {ABAPFile} from "../files";
 import * as Statements from "../abap/statements";
-import {Dash} from "../abap/tokens";
+import {Dash, DashW} from "../abap/tokens";
 
 
 /** Checks for a Dash in form names. */
@@ -39,7 +39,7 @@ export class FormNoDash extends ABAPRule {
     }
     for (const form of struc.findAllStatements(Statements.Form)) {
       for (const token of form.getTokens()) {
-        if (token instanceof Dash) {
+        if (token instanceof Dash || token instanceof DashW) {
           issues.push(new Issue({
             file,
             message: this.getDescription(),
