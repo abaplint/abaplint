@@ -1,10 +1,11 @@
 import {Issue} from "../../issue";
 import * as Expressions from "../expressions";
 import * as Statements from "../statements";
+import * as Structures from "../structures";
 import {INode} from "../nodes/_inode";
 import {Identifier} from "../types/_identifier";
 import {Token} from "../tokens/_token";
-import {StatementNode, ExpressionNode} from "../nodes";
+import {StatementNode, ExpressionNode, StructureNode} from "../nodes";
 import {ABAPFile} from "../../files";
 import {Registry} from "../../registry";
 import {ABAPObject} from "../../objects/_abap_object";
@@ -15,7 +16,7 @@ import {Procedural} from "./_procedural";
 import {Inline} from "./_inline";
 import {Program} from "../../objects";
 
-// todo, some visualization, graphviz?
+// todo, some visualization, graphviz? -> playground
 
 export class CheckVariablesLogic {
   private object: ABAPObject;
@@ -142,7 +143,10 @@ export class CheckVariablesLogic {
   private updateVariables(node: INode): void {
 // todo, align statements, eg is NamespaceSimpleName a definition or is it Field, or something new?
 // todo, and introduce SimpleSource?
-    if (!(node instanceof StatementNode)) {
+    if (node instanceof StructureNode && node.get() instanceof Structures.TypeEnum) {
+      this.proc.addEnumValues(node);
+      return;
+    } else if (!(node instanceof StatementNode)) {
       return;
     }
 

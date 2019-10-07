@@ -86,6 +86,14 @@ export class Attributes {
     for (const def of defs) {
       this.constants.push(new ClassConstant(def, visibility));
     }
+
+// for now add ENUM values as constants
+    for (const type of node.findAllStructures(Structures.TypeEnum)) {
+      for (const val of type.findDirectStatements(Statements.Type)) {
+        this.constants.push(new ClassConstant(val, visibility));
+      }
+    }
+
   }
 
   private parseAttribute(node: StatementNode, visibility: Visibility): ClassAttribute {

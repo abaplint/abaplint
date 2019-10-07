@@ -188,6 +188,29 @@ describe("Objects, class, getAttributes", () => {
     }
   });
 
+  it("test, positive, enum", () => {
+    const abap = "CLASS zcl_foobar DEFINITION PUBLIC CREATE PUBLIC.\n" +
+    "  PUBLIC SECTION.\n" +
+    "    TYPES:\n" +
+    "      BEGIN OF ENUM enum_name,\n" +
+    "        value1,\n" +
+    "      END OF ENUM enum_name.    \n" +
+    "  PROTECTED SECTION.\n" +
+    "  PRIVATE SECTION.\n" +
+    "ENDCLASS.\n" +
+    "CLASS zcl_foobar IMPLEMENTATION.\n" +
+    "ENDCLASS.";
+
+    const reg = new Registry().addFile(new MemoryFile("zcl_foobar.clas.abap", abap)).parse();
+    const clas = reg.getABAPObjects()[0] as Class;
+    expect(clas.getClassDefinition()).to.not.equal(undefined);
+    expect(clas.getClassDefinition()!.getAttributes()).to.not.equal(undefined);
+    const attr = clas.getClassDefinition()!.getAttributes()!;
+    expect(attr.getConstants().length).to.equal(1);
+    expect(attr.getConstants()[0].getName()).to.equal("value1");
+    expect(attr.getConstants()[0].getVisibility()).to.equal(Visibility.Public);
+  });
+
   it("test, positive, static", () => {
     const abap = "CLASS zcl_foobar DEFINITION PUBLIC CREATE PUBLIC.\n" +
     "  PUBLIC SECTION.\n" +

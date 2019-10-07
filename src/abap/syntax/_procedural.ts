@@ -1,6 +1,7 @@
 import * as Expressions from "../expressions";
 import * as Statements from "../statements";
-import {StatementNode, ExpressionNode} from "../nodes";
+import * as Structures from "../structures";
+import {StatementNode, ExpressionNode, StructureNode} from "../nodes";
 import {Identifier} from "../types/_identifier";
 import {ABAPObject} from "../../objects/_abap_object";
 import {Registry} from "../../registry";
@@ -30,14 +31,27 @@ export class Procedural {
       || sub instanceof Statements.ConstantBegin
       || sub instanceof Statements.Static
       || sub instanceof Statements.StaticBegin) {
-      ret.push(this.addVariable(node.findFirstExpression(Expressions.NamespaceSimpleName)));
+      ret.push(this.buildVariable(node.findFirstExpression(Expressions.NamespaceSimpleName)));
     } else if (sub instanceof Statements.Parameter) {
-      ret.push(this.addVariable(node.findFirstExpression(Expressions.FieldSub)));
+      ret.push(this.buildVariable(node.findFirstExpression(Expressions.FieldSub)));
     } else if (sub instanceof Statements.Tables || sub instanceof Statements.SelectOption) {
-      ret.push(this.addVariable(node.findFirstExpression(Expressions.Field)));
+      ret.push(this.buildVariable(node.findFirstExpression(Expressions.Field)));
     }
 
     this.variables.addList(ret);
+  }
+
+  public addEnumValues(node: StructureNode) {
+    if (!(node.get() instanceof Structures.TypeEnum)) {
+      throw new Error("addEnumValues unexpected type");
+    }
+    for (const type of node.findDirectStatements(Statements.Type)) {
+      const expr = type.findFirstExpression(Expressions.NamespaceSimpleName);
+      if (expr === undefined) {
+        continue;
+      }
+      this.variables.addIdentifier(this.buildVariable(expr));
+    }
   }
 
   public findFunctionScope(node: StatementNode) {
@@ -74,7 +88,7 @@ export class Procedural {
     throw new Error("FORM defintion for \"" + name + "\" not found");
   }
 
-  private addVariable(expr: ExpressionNode | undefined): Identifier {
+  private buildVariable(expr: ExpressionNode | undefined): Identifier {
     if (expr === undefined) { throw new Error("syntax_check, unexpected tree structure"); }
     // todo, these identifers should be possible to create from a Node
     // todo, how to determine the real types?

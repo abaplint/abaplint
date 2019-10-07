@@ -851,6 +851,35 @@ describe("Check Variables", () => {
     expect(issues.length).to.equals(0);
   });
 
+  it("value from ENUM, procedural", () => {
+    const abap = "  TYPES:\n" +
+      "    BEGIN OF ENUM enum_name,\n" +
+      "      value1,\n" +
+      "    END OF ENUM enum_name.\n" +
+      "  DATA var_name TYPE enum_name.\n" +
+      "  var_name = value1.\n";
+    const issues = runProgram(abap);
+    expect(issues.length).to.equals(0);
+  });
+
+  it("value from ENUM, object oriented", () => {
+    const abap = "CLASS lcl_foo DEFINITION.\n" +
+      "  PUBLIC SECTION.\n" +
+      "    TYPES:\n" +
+      "      BEGIN OF ENUM enum_name,\n" +
+      "        value1,\n" +
+      "      END OF ENUM enum_name.\n" +
+      "    METHODS: moo.\n" +
+      "ENDCLASS.\n" +
+      "CLASS lcl_foo IMPLEMENTATION.\n" +
+      "  METHOD moo.\n" +
+      "    WRITE value1.\n" +
+      "  ENDMETHOD.\n" +
+      "ENDCLASS.\n";
+    const issues = runProgram(abap);
+    expect(issues.length).to.equals(0);
+  });
+
   it("event handler parameter", () => {
     const abap = "CLASS zcl_moo DEFINITION CREATE PUBLIC.\n" +
       "  PUBLIC SECTION.\n" +
