@@ -6,7 +6,7 @@ import * as Statements from "../abap/statements";
 import {Dash} from "../abap/tokens";
 
 
-/** Checks for a Dash in form names.*/
+/** Checks for a Dash in form names. */
 export class FormNoDashConf extends BasicRuleConfig {
 }
 
