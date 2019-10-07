@@ -47,9 +47,7 @@ function main(): void {
   FileSystem.setup(tree, problems, dock);
 
   dock.addWidget(new WelcomeWidget());
-  for (const f of FileSystem.getFiles()) {
-    FileSystem.openFile(f.getFilename());
-  }
+  FileSystem.openFile("file:///zfoobar.prog.abap");
 
   const left = new BoxPanel({direction: "top-to-bottom", spacing: 0});
   left.id = "left";

@@ -60,6 +60,10 @@ export class EditorWidget extends Widget {
   }
 
   protected changed(e: any) {
+    if (this.model.uri.toString() === "file:///abaplint.json") {
+      return;
+    }
+
     FileSystem.updateFile(this.model.uri.toString(), this.editor!.getValue());
     this.updateMarkers();
   }
@@ -159,6 +163,7 @@ https://github.com/microsoft/monaco-editor/issues?utf8=%E2%9C%93&q=is%3Aissue+is
       this.editor.addCommand(monaco.KeyMod.CtrlCmd + monaco.KeyCode.KEY_P, () => { return undefined; });
 
       this.updateMarkers();
+      this.activate();
     }
   }
 }

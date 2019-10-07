@@ -285,7 +285,7 @@ export class Registry {
         return obj;
       }
     }
-    throw new Error("find: object not found");
+    throw new Error("find: object not found, " + type + " " + name);
   }
 
 }
