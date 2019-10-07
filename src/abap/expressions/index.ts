@@ -40,7 +40,7 @@ export * from "./function_name";
 export * from "./function_parameters";
 export * from "./global";
 export * from "./include_name";
-export * from "./inline_for";
+export * from "./inline_field_definition";
 export * from "./inlinedata";
 export * from "./inlinefs";
 export * from "./integer";

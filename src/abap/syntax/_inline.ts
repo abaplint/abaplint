@@ -35,7 +35,7 @@ export class Inline {
         this.addVariable(field);
       }
 
-      for (const inline of node.findAllExpressions(Expressions.InlineFor)) {
+      for (const inline of node.findAllExpressions(Expressions.InlineFieldDefinition)) {
         const field = inline.findFirstExpression(Expressions.Field);
         if (field !== undefined) {
           this.addVariable(field);

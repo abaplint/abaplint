@@ -41,6 +41,8 @@ function runProgram(abap: string, globalConstants?: string[]): Issue[] {
   return run(reg, globalConstants);
 }
 
+////////////////////////////////////////////////////////////
+
 describe("Check Variables", () => {
 
   it("program, variable foobar not found", () => {
@@ -340,7 +342,7 @@ describe("Check Variables", () => {
     expect(issues.length).to.equals(0);
   });
 
-/*
+/* todo
   it("program, definition in FOR expression, should not work after", () => {
     const abap = "DATA itab TYPE STANDARD TABLE OF i.\n" +
       "itab = VALUE #( FOR j = 1 THEN j + 1 UNTIL j > 10 ( j ) ).\n" +
@@ -947,6 +949,23 @@ describe("Check Variables", () => {
     expect(issues.length).to.equals(0);
   });
 
+  it("COND with LET, inline", () => {
+    const abap = "DATA(x) = COND abap_bool( LET helper = '1' IN\n" +
+      "  WHEN helper = '0'\n" +
+      "  THEN abap_true ELSE abap_false ).\n";
+    const issues = runProgram(abap);
+    expect(issues.length).to.equals(0);
+  });
+
+  it("REDUCE with INIT", () => {
+    const abap = "DATA it_result TYPE c.\n" +
+      "DATA(output) = REDUCE string( INIT result = ||\n" +
+      "  FOR <result> IN it_result\n" +
+      "  NEXT result = result && 'abc' ).";
+    const issues = runProgram(abap);
+    expect(issues.length).to.equals(0);
+  });
+
 /*
   it("program, constant, begin, error", () => {
     const abap =
@@ -968,7 +987,7 @@ describe("Check Variables", () => {
 */
 
 // todo, static method cannot access instance attributes
-// todo, can a private method acces protected attributes?
-// todo, write protected fields
+// todo, can a private method access protected attributes?
+// todo, readonly fields(constants + enums + attributes flagged read-only)
 
 });
