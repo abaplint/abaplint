@@ -4,6 +4,7 @@ import {MethodCallChain, ArithOperator, Cond, Constant, StringTemplate, Let, Com
 import {FieldChain, Field, TableBody, TypeName, ArrowOrDash, FieldSub, For, Throw} from "./";
 import {Version} from "../../version";
 import {ComponentChain, ComponentName} from "./";
+import {InlineFieldDefinition} from "./inline_field_definition";
 
 // todo, COND and SWITCH are quite similar?
 
@@ -135,7 +136,7 @@ export class Source extends Expression {
     const fields = seq(new Field(), str("="), new Source());
     const inittype = seq(new Field(), str("TYPE"), new TypeName());
 
-    const init = seq(str("INIT"), plus(alt(fields, inittype)));
+    const init = seq(str("INIT"), plus(alt(new InlineFieldDefinition(), inittype)));
 
     const reduce = ver(Version.v740sp08,
                        seq(str("REDUCE"),
