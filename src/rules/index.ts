@@ -14,6 +14,7 @@ export * from "./empty_statement";
 export * from "./empty_structure";
 export * from "./exit_or_check";
 export * from "./exporting";
+export * from "./form_no_dash";
 export * from "./form_tables_obsolete";
 export * from "./functional_writing";
 export * from "./identical_form_names";
