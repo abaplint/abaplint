@@ -1,9 +1,8 @@
 import {seq, str, plus, Expression, IStatementRunnable} from "../combi";
-import {Source, FieldSub} from "./";
+import {InlineFieldDefinition} from "./inline_field_definition";
 
 export class Let extends Expression {
   public getRunnable(): IStatementRunnable {
-    const fieldList = seq(new FieldSub(), str("="), new Source());
-    return seq(str("LET"), plus(fieldList), str("IN"));
+    return seq(str("LET"), plus(new InlineFieldDefinition()), str("IN"));
   }
 }
