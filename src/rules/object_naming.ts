@@ -1,13 +1,14 @@
 import {Issue} from "../issue";
-import {BasicRuleConfig} from "./_basic_rule_config";
+import {NamingRuleConfig} from "./_naming_rule_config";
 import {Registry} from "../registry";
 import {IObject} from "../objects/_iobject";
 import {IRule} from "./_irule";
 import * as Objects from "../objects";
 import {Position} from "../position";
+import {NameValidator} from "../utils/name_validator";
 
 /** Allows you to enforce a pattern, such as a prefix, for object names */
-export class ObjectNamingConf extends BasicRuleConfig {
+export class ObjectNamingConf extends NamingRuleConfig {
   /** The pattern for global class names */
   public clas: string = "^ZC(L|X)\\_";
   /** The pattern for global interface names */
@@ -46,10 +47,12 @@ export class ObjectNaming implements IRule {
   }
 
   public getDescription(expected: string, actual: string): string {
-    return "Object name does not match pattern " + expected + ": " + actual;
+    return this.conf.patternKind === "required" ?
+      "Object name does not match pattern " + expected + ": " + actual :
+      "Object name must not match pattern " + expected + ": " + actual;
   }
 
-  public getConfig() {
+  public getConfig(): ObjectNamingConf {
     return this.conf;
   }
 
@@ -97,15 +100,23 @@ export class ObjectNaming implements IRule {
 
     const regex = new RegExp(pattern, "i");
 
-    if (regex.exec(obj.getName()) === null) {
+    if (NameValidator.violatesRule(obj.getName(), regex, this.conf)) {
       message = this.getDescription(pattern, obj.getName());
     }
 
     if (message) {
-      return [new Issue({file: obj.getFiles()[0],
-        message, key: this.getKey(), start: new Position(1, 1)})];
+      return [new Issue({
+        file: obj.getFiles()[0],
+        message, key: this.getKey(), start: new Position(1, 1),
+      })];
     }
 
     return [];
+  }
+
+  public nameViolatesRule(name: string, pattern: RegExp): boolean {
+    return this.conf.patternKind === "required" ?
+      pattern.test(name) === false :
+      pattern.test(name) === true;
   }
 }
