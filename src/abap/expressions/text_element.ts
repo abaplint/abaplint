@@ -3,6 +3,6 @@ import {Dash} from "../tokens";
 
 export class TextElement extends Expression {
   public getRunnable(): IStatementRunnable {
-    return seq(str("TEXT"), tok(Dash), reg(/^\d\d\d$/));
+    return seq(str("TEXT"), tok(Dash), reg(/^\w\w\w$/));
   }
 }
