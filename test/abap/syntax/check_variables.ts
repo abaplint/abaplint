@@ -967,6 +967,21 @@ describe("Check Variables", () => {
   });
 
 /*
+  it("REDUCE with INIT", () => {
+    const abap =
+      "SELECTION-SCREEN: BEGIN OF TABBED BLOCK b1 FOR 18 LINES,\n" +
+      "                    TAB (40) button1 USER-COMMAND push1 DEFAULT SCREEN 200,\n" +
+      "                  END OF BLOCK b1.\n" +
+      "SELECTION-SCREEN BEGIN OF SCREEN 200 AS SUBSCREEN.\n" +
+      "SELECTION-SCREEN END OF SCREEN 200.\n" +
+      "INITIALIZATION.\n" +
+      "  button1 = 'moo'.";
+    const issues = runProgram(abap);
+    expect(issues.length).to.equals(0);
+  });
+*/
+
+/*
   it("program, constant, begin, error", () => {
     const abap =
       "CONSTANTS: BEGIN OF c_mode,\n" +
