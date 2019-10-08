@@ -6,8 +6,8 @@ import {IObject} from "../objects/_iobject";
 import {Registry} from "../registry";
 import {ClassName} from "../abap/expressions";
 import {Class} from "../objects";
-import {NamingRuleConfig} from "./_namingRuleConfig";
-import {NameValidator} from "../utils/nameValidator";
+import {NamingRuleConfig} from "./_naming_rule_config";
+import {NameValidator} from "../utils/name_validator";
 
 /** Allows you to enforce a pattern, such as a prefix, for local class names. */
 export class LocalClassNamingConf extends NamingRuleConfig {

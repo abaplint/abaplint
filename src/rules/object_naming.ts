@@ -1,11 +1,11 @@
 import {Issue} from "../issue";
-import {NamingRuleConfig} from "./_namingRuleConfig";
+import {NamingRuleConfig} from "./_naming_rule_config";
 import {Registry} from "../registry";
 import {IObject} from "../objects/_iobject";
 import {IRule} from "./_irule";
 import * as Objects from "../objects";
 import {Position} from "../position";
-import {NameValidator} from "../utils/nameValidator";
+import {NameValidator} from "../utils/name_validator";
 
 /** Allows you to enforce a pattern, such as a prefix, for object names */
 export class ObjectNamingConf extends NamingRuleConfig {

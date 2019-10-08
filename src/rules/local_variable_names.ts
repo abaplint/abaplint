@@ -6,8 +6,8 @@ import * as Statements from "../abap/statements";
 import * as Expressions from "../abap/expressions";
 import {StructureNode} from "../abap/nodes";
 import {Token} from "../abap/tokens/_token";
-import {NamingRuleConfig} from "./_namingRuleConfig";
-import {NameValidator} from "../utils/nameValidator";
+import {NamingRuleConfig} from "./_naming_rule_config";
+import {NameValidator} from "../utils/name_validator";
 
 /** Allows you to enforce a pattern, such as a prefix, for local variables, constants and field symbols. */
 export class LocalVariableNamesConf extends NamingRuleConfig {

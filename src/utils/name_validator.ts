@@ -1,4 +1,4 @@
-import {NamingRuleConfig} from "../rules/_namingRuleConfig";
+import {NamingRuleConfig} from "../rules/_naming_rule_config";
 
 export class NameValidator {
 

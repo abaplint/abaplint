@@ -1,4 +1,4 @@
-import {NameValidator} from "../../src/utils/nameValidator";
+import {NameValidator} from "../../src/utils/name_validator";
 import {expect} from "chai";
 
 describe(`Name validator`, function () {

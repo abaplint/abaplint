@@ -6,8 +6,8 @@ import {MethodParameter} from "../abap/types/method_parameter";
 import {Registry} from "../registry";
 import {ABAPObject} from "../objects/_abap_object";
 import {IFile} from "../files/_ifile";
-import {NamingRuleConfig} from "./_namingRuleConfig";
-import {NameValidator} from "../utils/nameValidator";
+import {NamingRuleConfig} from "./_naming_rule_config";
+import {NameValidator} from "../utils/name_validator";
 
 /** Allows you to enforce a pattern, such as a prefix, for method parameter names */
 export class MethodParameterNamesConf extends NamingRuleConfig {
