@@ -17,8 +17,8 @@ export class CheckTransformationExists extends ABAPRule {
     return "check_transformation_exists";
   }
 
-  public getDescription(): string {
-    return "Transformation not found";
+  public getDescription(name: string): string {
+    return "Transformation \"" + name + "\" not found";
   }
 
   public getConfig() {
@@ -47,7 +47,7 @@ export class CheckTransformationExists extends ABAPRule {
         if (reg.getObject("XSLT", tok.getStr()) === undefined) {
           output.push(new Issue({
             file,
-            message: this.getDescription(),
+            message: this.getDescription(tok.getStr()),
             key: this.getKey(),
             start: tok.getStart(),
             end: tok.getEnd()}));

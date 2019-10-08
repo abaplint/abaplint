@@ -36,6 +36,15 @@ export class Globals {
       "CONSTANTS icon_led_yellow TYPE c LENGTH 4 VALUE ''.\n" +
       "CONSTANTS icon_led_green TYPE c LENGTH 4 VALUE ''.\n" +
       "CONSTANTS icon_led_inactive TYPE c LENGTH 4 VALUE ''.\n" +
+      "CONSTANTS icon_change TYPE c LENGTH 4 VALUE ''.\n" +
+      "CONSTANTS icon_display TYPE c LENGTH 4 VALUE ''.\n" +
+      "CONSTANTS icon_close TYPE c LENGTH 4 VALUE ''.\n" +
+      "CONSTANTS icon_test TYPE c LENGTH 4 VALUE ''.\n" +
+      "CONSTANTS icon_view_maximize TYPE c LENGTH 4 VALUE ''.\n" +
+      "CONSTANTS icon_abc TYPE c LENGTH 4 VALUE ''.\n" +
+      "CONSTANTS icon_address TYPE c LENGTH 4 VALUE ''.\n" +
+      "CONSTANTS icon_activate TYPE c LENGTH 4 VALUE ''.\n" +
+      "CONSTANTS icon_list TYPE c LENGTH 4 VALUE ''.\n" +
       "CONSTANTS icon_green_light TYPE c LENGTH 4 VALUE ''.\n" +
       "CONSTANTS icon_yellow_light TYPE c LENGTH 4 VALUE ''.\n" +
       "CONSTANTS icon_red_light TYPE c LENGTH 4 VALUE ''.\n" +
