@@ -1,7 +1,7 @@
 import {Statement} from "./_statement";
 import {verNot, str, seq, alt, opt, per, regex as reg, tok, IStatementRunnable} from "../combi";
 import {ParenLeft, WParenLeft, ParenRightW, ParenRight} from "../tokens";
-import {Integer, Source, Field, FieldSub, Modif, Constant, FieldChain} from "../expressions";
+import {Integer, Source, Field, FieldSub, Modif, Constant, FieldChain, InlineField, TextElement} from "../expressions";
 import {Version} from "../../version";
 
 export class SelectionScreen extends Statement {
@@ -12,14 +12,14 @@ export class SelectionScreen extends Statement {
     const beginBlock = seq(str("BEGIN OF BLOCK"),
                            blockName,
                            opt(str("WITH FRAME")),
-                           opt(seq(str("TITLE"), new Source())),
+                           opt(seq(str("TITLE"), alt(new InlineField(), new TextElement()))),
                            opt(str("NO INTERVALS")));
     const endBlock = seq(str("END OF BLOCK"), blockName);
 
     const nesting = seq(str("NESTING LEVEL"), new Source());
 
     const scrOptions = per(seq(str("AS"), alt(str("WINDOW"), str("SUBSCREEN"))),
-                           seq(str("TITLE"), new Source()),
+                           seq(str("TITLE"), alt(new InlineField(), new TextElement())),
                            str("NO INTERVALS"),
                            nesting);
 
@@ -65,7 +65,7 @@ export class SelectionScreen extends Statement {
                     tok(WParenLeft),
                     new Integer(),
                     tok(ParenRightW),
-                    new FieldSub(),
+                    alt(new InlineField(), new TextElement()),
                     command,
                     opt(def));
 

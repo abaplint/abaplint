@@ -51,6 +51,14 @@ export class Inline {
         }
       }
 
+      for (const inline of node.findAllExpressions(Expressions.InlineField)) {
+        const field = inline.findFirstExpression(Expressions.Field);
+        if (field !== undefined) {
+          this.addVariable(field);
+// todo, these also have to be popped after the statement
+        }
+      }
+
       if (node.get() instanceof Statements.Select || node.get() instanceof Statements.SelectLoop) {
         const fromList = node.findAllExpressions(Expressions.SQLFromSource);
         for (const from of fromList) {

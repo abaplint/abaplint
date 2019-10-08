@@ -967,8 +967,17 @@ describe("Check Variables", () => {
     expect(issues.length).to.equals(0);
   });
 
-/*
-  it("REDUCE with INIT", () => {
+  it("SELECTION-SCREEN title, b1_tit can be set", () => {
+    const abap =
+      "SELECTION-SCREEN BEGIN OF BLOCK b1 WITH FRAME TITLE b1_tit.\n" +
+      "SELECTION-SCREEN END OF BLOCK b1.\n" +
+      "INITIALIZATION.\n" +
+      "  b1_tit = 'moo'.";
+    const issues = runProgram(abap);
+    expect(issues.length).to.equals(0);
+  });
+
+  it("SELECTION-SCREEN tab button", () => {
     const abap =
       "SELECTION-SCREEN: BEGIN OF TABBED BLOCK b1 FOR 18 LINES,\n" +
       "                    TAB (40) button1 USER-COMMAND push1 DEFAULT SCREEN 200,\n" +
@@ -980,7 +989,6 @@ describe("Check Variables", () => {
     const issues = runProgram(abap);
     expect(issues.length).to.equals(0);
   });
-*/
 
 /*
   it("program, constant, begin, error", () => {
