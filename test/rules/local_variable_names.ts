@@ -1,115 +1,183 @@
 import {MemoryFile} from "../../src/files/memory_file";
 import {Registry} from "../../src/registry";
 import {expect} from "chai";
-import {LocalVariableNames} from "../../src/rules";
+import {LocalVariableNames, LocalVariableNamesConf} from "../../src/rules";
 
-function findIssues(abap: string) {
+function findIssues(abap: string, config?: LocalVariableNamesConf) {
   const reg = new Registry().addFile(new MemoryFile("zfoobar.prog.abap", abap)).parse();
   const rule = new LocalVariableNames();
+  if (config) {
+    rule.setConfig(config);
+  }
   return rule.run(reg.getObjects()[0], reg);
 }
 
-describe("Rule: local variable names", function() {
+describe("Rule: local variable names (required pattern)", function () {
+  const anyUpToThreeLetterPrefix = "^[a-zA-Z]{1,3}_.*$";
+  const fsPrefix = "^<[a-zA-Z]{1,3}_.*>$";
+
   it("parser error", function () {
     const abap = "sdf lksjdf lkj sdf";
     const issues = findIssues(abap);
     expect(issues.length).to.equal(0);
   });
 
-  it("ok", function () {
+  it("local variable with prefix", function () {
     const abap = `
-FORM foobar.
+    FORM foobar.
     DATA lv_moo TYPE i.
-ENDFORM.`;
-    const issues = findIssues(abap);
-    expect(issues.length).to.equal(0);
+    ENDFORM.`;
+
+    const config = new LocalVariableNamesConf();
+    config.expectedData = anyUpToThreeLetterPrefix;
+    config.patternKind = "required";
+    expect(findIssues(abap, config).length).to.equal(0);
+
+    config.patternKind = "forbidden";
+    expect(findIssues(abap, config).length).to.equal(1);
   });
 
-  it("issue, FORM", function () {
+  it("local variable without prefix, FORM", function () {
     const abap = `
-FORM foobar.
-  DATA moo TYPE i.
-ENDFORM.`;
-    const issues = findIssues(abap);
-    expect(issues.length).to.equal(1);
+    FORM foobar.
+    DATA moo TYPE i.
+    ENDFORM.`;
+
+    const config = new LocalVariableNamesConf();
+    config.expectedData = anyUpToThreeLetterPrefix;
+
+    config.patternKind = "required";
+    expect(findIssues(abap, config).length).to.equal(1);
+
+    config.patternKind = "forbidden";
+    expect(findIssues(abap, config).length).to.equal(0);
   });
 
-  it("issue, METHOD", function () {
+  it("local variable without prefix inside METHOD", function () {
     const abap = `
 CLASS foo IMPLEMENTATION.
     METHOD foobar.
       DATA moo TYPE i.
     ENDMETHOD.
 ENDCLASS.`;
-    const issues = findIssues(abap);
-    expect(issues.length).to.equal(1);
+
+    const config = new LocalVariableNamesConf();
+    config.expectedData = anyUpToThreeLetterPrefix;
+
+    config.patternKind = "required";
+    expect(findIssues(abap, config).length).to.equal(1);
+
+    config.patternKind = "forbidden";
+    expect(findIssues(abap, config).length).to.equal(0);
   });
 
-  it("issue, Function Module", function () {
+  it("local variable without prefix inside Function Module", function () {
     const abap = `
 FUNCTION foo.
   DATA moo TYPE i.
 ENDFUNCTION.`;
-    const issues = findIssues(abap);
-    expect(issues.length).to.equal(1);
+    const config = new LocalVariableNamesConf();
+    config.expectedData = anyUpToThreeLetterPrefix;
+
+    config.patternKind = "required";
+    expect(findIssues(abap, config).length).to.equal(1);
+
+    config.patternKind = "forbidden";
+    expect(findIssues(abap, config).length).to.equal(0);
   });
 
-  it("issue, FORM, fieldsymbol", function () {
+  it("no prefix, FORM, fieldsymbol", function () {
     const abap = `
 FORM foobar.
   FIELD-SYMBOL <moo> TYPE i.
 ENDFORM.`;
-    const issues = findIssues(abap);
-    expect(issues.length).to.equal(1);
+    const config = new LocalVariableNamesConf();
+    config.expectedFS = fsPrefix;
+
+    config.patternKind = "required";
+    expect(findIssues(abap, config).length).to.equal(1);
+
+    config.patternKind = "forbidden";
+    expect(findIssues(abap, config).length).to.equal(0);
   });
 
-  it("ok, FORM, fieldsymbol", function () {
+  it("prefix, FORM, fieldsymbol", function () {
     const abap = `
 FORM foobar.
   FIELD-SYMBOL <lv_moo> TYPE i.
 ENDFORM.`;
-    const issues = findIssues(abap);
-    expect(issues.length).to.equal(0);
+    const config = new LocalVariableNamesConf();
+    config.expectedFS = fsPrefix;
+
+    config.patternKind = "required";
+    expect(findIssues(abap, config).length).to.equal(0);
+
+    config.patternKind = "forbidden";
+    expect(findIssues(abap, config).length).to.equal(1);
   });
 
-  it("ok, FORM, DATA BEGIN OF", function () {
+  it("prefix, FORM, DATA BEGIN OF", function () {
     const abap = `
 FORM foobar.
   DATA: BEGIN OF ls_foo,
                  moob TYPE i,
         END OF ls_foo.
 ENDFORM.`;
-    const issues = findIssues(abap);
-    expect(issues.length).to.equal(0);
+    const config = new LocalVariableNamesConf();
+    config.expectedData = anyUpToThreeLetterPrefix;
+
+    config.patternKind = "required";
+    expect(findIssues(abap, config).length).to.equal(0);
+
+    config.patternKind = "forbidden";
+    expect(findIssues(abap, config).length).to.equal(1);
   });
 
-  it("issue, FORM, DATA BEGIN OF", function () {
+  it("no prefix, FORM, DATA BEGIN OF", function () {
     const abap = `
 FORM foobar.
   DATA: BEGIN OF foo,
             moob TYPE i,
         END OF foo.
 ENDFORM.`;
-    const issues = findIssues(abap);
-    expect(issues.length).to.equal(1);
+    const config = new LocalVariableNamesConf();
+    config.expectedData = anyUpToThreeLetterPrefix;
+
+    config.patternKind = "required";
+    expect(findIssues(abap, config).length).to.equal(1);
+
+    config.patternKind = "forbidden";
+    expect(findIssues(abap, config).length).to.equal(0);
   });
 
-  it("issue, local constant", function () {
+  it("no prefix, local constant", function () {
     const abap = `
 FORM foobar.
   CONSTANTS foo TYPE c VALUE 'A' LENGTH 1.
 ENDFORM.`;
-    const issues = findIssues(abap);
-    expect(issues.length).to.equal(1);
+    const config = new LocalVariableNamesConf();
+    config.expectedConstant = anyUpToThreeLetterPrefix;
+
+    config.patternKind = "required";
+    expect(findIssues(abap, config).length).to.equal(1);
+
+    config.patternKind = "forbidden";
+    expect(findIssues(abap, config).length).to.equal(0);
   });
 
-  it("ok, local constant", function () {
+  it("prefix, local constant", function () {
     const abap = `
 FORM foobar.
   CONSTANTS lc_foo TYPE c VALUE 'A' LENGTH 1.
 ENDFORM.`;
-    const issues = findIssues(abap);
-    expect(issues.length).to.equal(0);
+    const config = new LocalVariableNamesConf();
+    config.expectedConstant = anyUpToThreeLetterPrefix;
+
+    config.patternKind = "required";
+    expect(findIssues(abap, config).length).to.equal(0);
+
+    config.patternKind = "forbidden";
+    expect(findIssues(abap, config).length).to.equal(1);
   });
 
   it("ok, local constant structure", function () {
@@ -122,6 +190,8 @@ FORM foobar.
 ENDFORM.`;
     const issues = findIssues(abap);
     expect(issues.length).to.equal(0);
+
+      // todo prefix - not supported by parser yet (this syntax will never report any issues)
   });
 
 });

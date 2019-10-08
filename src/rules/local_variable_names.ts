@@ -6,10 +6,11 @@ import * as Statements from "../abap/statements";
 import * as Expressions from "../abap/expressions";
 import {StructureNode} from "../abap/nodes";
 import {Token} from "../abap/tokens/_token";
-import {BasicRuleConfig} from "./_basic_rule_config";
+import {NamingRuleConfig} from "./_naming_rule_config";
+import {NameValidator} from "../utils/name_validator";
 
 /** Allows you to enforce a pattern, such as a prefix, for local variables, constants and field symbols. */
-export class LocalVariableNamesConf extends BasicRuleConfig {
+export class LocalVariableNamesConf extends NamingRuleConfig {
   /** The pattern for local variable names */
   public expectedData: string = "^L._.*$";
   /** The pattern for local constant names */
@@ -27,7 +28,9 @@ export class LocalVariableNames extends ABAPRule {
   }
 
   public getDescription(expected: string, actual: string): string {
-    return "Local variable name does not match pattern " + expected + ": " + actual;
+    return this.conf.patternKind === "required" ?
+     "Local variable name does not match pattern " + expected + ": " + actual :
+     "Local variable name must not match pattern " + expected + ": " + actual ;
   }
 
   public getConfig() {
@@ -119,7 +122,7 @@ export class LocalVariableNames extends ABAPRule {
     const ret: Issue[] = [];
     const regex = new RegExp(expected, "i");
     const name = token.getStr();
-    if (!regex.test(name)) {
+    if (NameValidator.violatesRule(name, regex, this.conf)) {
       const message = this.getDescription(expected, name);
       const issue = new Issue({file, message, key: this.getKey(), start: token.getStart()});
       ret.push(issue);
