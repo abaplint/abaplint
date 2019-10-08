@@ -30,6 +30,10 @@ The code is in active development and some rules may not be described in documen
 
 For checking ABAP code inside the ABAP system use [code inspector](http://wiki.scn.sap.com/wiki/display/ABAP/Code+Inspector) or [ATC](http://wiki.scn.sap.com/wiki/display/ABAP/ABAP+Test+Cockpit), also see project [abapOpenChecks](https://github.com/larshp/abapOpenChecks).
 
+### Example configs
+
+[abaplint-clean-code](https://github.com/FreHu/abaplint-clean-code) contains rule documentation as well as abaplint.json definitions which attempt to align abaplint with the official [Clean ABAP](https://github.com/SAP/styleguides/blob/master/clean-abap/CleanABAP.md) styleguide.
+
 ### Requirements
 Node.js 10
 
