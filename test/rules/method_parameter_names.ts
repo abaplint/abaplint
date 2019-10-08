@@ -1,41 +1,18 @@
 import {MemoryFile} from "../../src/files/memory_file";
 import {Registry} from "../../src/registry";
-import {MethodParameterNames} from "../../src/rules/method_parameter_names";
+import {MethodParameterNames, MethodParameterNamesConf} from "../../src/rules/method_parameter_names";
 import {expect} from "chai";
 
-function findIssues(abap: string, filename: string) {
+function findIssues(abap: string, filename: string, config?: MethodParameterNamesConf) {
   const reg = new Registry().addFile(new MemoryFile(filename, abap)).parse();
   const rule = new MethodParameterNames();
+  if (config) {
+    rule.setConfig(config);
+  }
   return rule.run(reg.getObjects()[0], reg);
 }
 
-describe(`Rule: method parameter names`, function() {
-  it(`positive 1`, function () {
-    const abap = `
-INTERFACE zif_foobar PUBLIC.
-  METHODS method1 IMPORTING foo TYPE i.
-ENDINTERFACE.`;
-    const issues = findIssues(abap, `zif_foobar.intf.abap`);
-    expect(issues.length).to.equal(1);
-  });
-
-  it(`negative, 1`, function () {
-    const abap = `
-INTERFACE zif_foobar PUBLIC.
-  METHODS method1 IMPORTING !iv_foo TYPE i.
-ENDINTERFACE.`;
-    const issues = findIssues(abap, `zif_foobar.intf.abap`);
-    expect(issues.length).to.equal(0);
-  });
-
-  it(`negative`, function () {
-    const abap = `
-INTERFACE zif_foobar PUBLIC.
-  METHODS method1 IMPORTING iv_foo TYPE i.
-ENDINTERFACE.`;
-    const issues = findIssues(abap, `zif_foobar.intf.abap`);
-    expect(issues.length).to.equal(0);
-  });
+describe(`Rule: method parameter names (general)`, function () {
 
   it(`no methods, interface`, function () {
     const abap = `
@@ -65,49 +42,135 @@ ENDCLASS.`;
     expect(issues.length).to.equal(0);
   });
 
+});
+
+describe(`Rule: method parameter names (skipping)`, function () {
+
+  const config = new MethodParameterNamesConf();
+  config.ignoreExceptions = true;
+  config.ignoreNames = ["P_TASK"];
+
   it(`skip exception`, function () {
     const abap = `
 CLASS zcx_abapgit_exception DEFINITION
 PUBLIC
 INHERITING FROM cx_static_check
 CREATE PUBLIC.
-  PUBLIC SECTION.
-    METHODS constructor IMPORTING foo TYPE C OPTIONAL.
+PUBLIC SECTION.
+  METHODS constructor IMPORTING foo TYPE C OPTIONAL.
 ENDCLASS.
 CLASS zcx_abapgit_exception IMPLEMENTATION.
 ENDCLASS.`;
 
-    const issues = findIssues(abap, `zcx_abapgit_exception.clas.abap`);
+    const issues = findIssues(abap, `zcx_abapgit_exception.clas.abap`, config);
     expect(issues.length).to.equal(0);
   });
 
   it(`skip p_task`, function () {
     const abap = `
-INTERFACE zif_foobar PUBLIC.
+  INTERFACE zif_foobar PUBLIC.
   METHODS method1 IMPORTING p_task TYPE i.
-ENDINTERFACE.`;
-    const issues = findIssues(abap, `zif_foobar.intf.abap`);
+  ENDINTERFACE.`;
+    const issues = findIssues(abap, `zif_foobar.intf.abap`, config);
     expect(issues.length).to.equal(0);
   });
 
-  it(`positive, instance method`, function () {
+  // todo this is not configurable
+  it(`ignore event handler parameter names`, function () {
+    const abap = `
+CLASS lcl_foobar DEFINITION.
+  PUBLIC SECTION.
+    CLASS-METHODS on_link_click FOR EVENT link_click OF cl_salv_events_table
+  IMPORTING row column.
+ENDCLASS.`;
+    const issues = findIssues(abap, `foobar.prog.abap`, config);
+    expect(issues.length).to.equal(0);
+  });
+
+});
+
+describe(`Rule: method parameter names`, function () {
+  const anyUpToThreeLetterPrefix = "^[a-zA-Z]{1,3}_.*$";
+  it(`interface with a method, no prefix on method parameter 1`, function () {
+    const abap = `
+INTERFACE zif_foobar PUBLIC.
+  METHODS method1 IMPORTING foo TYPE i.
+ENDINTERFACE.`;
+
+    const config = new MethodParameterNamesConf();
+    config.importing = anyUpToThreeLetterPrefix;
+
+    config.patternKind = "required";
+    expect(findIssues(abap, `zif_foobar.intf.abap`, config).length).to.equal(1);
+
+    config.patternKind = "forbidden";
+    expect(findIssues(abap, `zif_foobar.intf.abap`, config).length).to.equal(0);
+  });
+
+  it(`interface with a method, prefix on method parameter 1`, function () {
+    const abap = `
+INTERFACE zif_foobar PUBLIC.
+  METHODS method1 IMPORTING !iv_foo TYPE i.
+ENDINTERFACE.`;
+
+    const config = new MethodParameterNamesConf();
+    config.importing = anyUpToThreeLetterPrefix;
+
+    config.patternKind = "required";
+    expect(findIssues(abap, `zif_foobar.intf.abap`, config).length).to.equal(0);
+
+    config.patternKind = "forbidden";
+    expect(findIssues(abap, `zif_foobar.intf.abap`, config).length).to.equal(1);
+  });
+
+  it(`interface with a method, prefix on method parameter 1`, function () {
+    const abap = `
+INTERFACE zif_foobar PUBLIC.
+  METHODS method1 IMPORTING iv_foo TYPE i.
+ENDINTERFACE.`;
+
+    const config = new MethodParameterNamesConf();
+    config.importing = anyUpToThreeLetterPrefix;
+
+    config.patternKind = "required";
+    expect(findIssues(abap, `zif_foobar.intf.abap`, config).length).to.equal(0);
+
+    config.patternKind = "forbidden";
+    expect(findIssues(abap, `zif_foobar.intf.abap`, config).length).to.equal(1);
+  });
+
+  it(`instance method without prefix`, function () {
     const abap = `
 CLASS lcl_foobar DEFINITION.
   PUBLIC SECTION.
     METHODS method1 IMPORTING foo TYPE i.
 ENDCLASS.`;
-    const issues = findIssues(abap, `foobar.prog.abap`);
-    expect(issues.length).to.equal(1);
+
+    const config = new MethodParameterNamesConf();
+    config.importing = anyUpToThreeLetterPrefix;
+
+    config.patternKind = "required";
+    expect(findIssues(abap, `foobar.prog.abap`, config).length).to.equal(1);
+
+    config.patternKind = "forbidden";
+    expect(findIssues(abap, `foobar.prog.abap`, config).length).to.equal(0);
   });
 
-  it(`positive, static method`, function () {
+  it(`static method without prefix`, function () {
     const abap = `
 CLASS lcl_foobar DEFINITION.
   PUBLIC SECTION.
     CLASS-METHODS method1 IMPORTING foo TYPE i.
 ENDCLASS.`;
-    const issues = findIssues(abap, `foobar.prog.abap`);
-    expect(issues.length).to.equal(1);
+
+    const config = new MethodParameterNamesConf();
+    config.importing = anyUpToThreeLetterPrefix;
+
+    config.patternKind = "required";
+    expect(findIssues(abap, `foobar.prog.abap`, config).length).to.equal(1);
+
+    config.patternKind = "forbidden";
+    expect(findIssues(abap, `foobar.prog.abap`, config).length).to.equal(0);
   });
 
   it(`end position`, function () {
@@ -116,20 +179,16 @@ CLASS lcl_foobar DEFINITION.
   PUBLIC SECTION.
     CLASS-METHODS method1 IMPORTING foo TYPE i.
 ENDCLASS.`;
-    const issues = findIssues(abap, `foobar.prog.abap`);
-    expect(issues.length).to.equal(1);
-    expect(issues[0].getEnd().getCol()).to.equal(40);
-  });
+    const config = new MethodParameterNamesConf();
+    config.importing = anyUpToThreeLetterPrefix;
 
-  it(`ignore event handler parameter names`, function () {
-    const abap = `
-CLASS lcl_foobar DEFINITION.
-  PUBLIC SECTION.
-    CLASS-METHODS on_link_click FOR EVENT link_click OF cl_salv_events_table
-  IMPORTING row column.
-ENDCLASS.`;
-    const issues = findIssues(abap, `foobar.prog.abap`);
-    expect(issues.length).to.equal(0);
+    config.patternKind = "required";
+    const issuesFromRequiredPattern = findIssues(abap, `foobar.prog.abap`, config);
+    expect(issuesFromRequiredPattern.length).to.equal(1);
+    expect(issuesFromRequiredPattern[0].getEnd().getCol()).to.equal(40);
+
+    config.patternKind = "forbidden";
+    expect(findIssues(abap, "foobar.prog.abap", config).length).to.equal(0);
   });
 
 });

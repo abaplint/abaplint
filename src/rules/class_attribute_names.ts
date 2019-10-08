@@ -1,14 +1,16 @@
 import {Issue} from "../issue";
-import {IRule} from "./_irule";
 import {IObject} from "../objects/_iobject";
 import {Class} from "../objects";
 import {Registry} from "../registry";
 import {Attributes} from "../abap/types/class_attributes";
 import {ClassAttribute} from "../abap/types/class_attribute";
-import {BasicRuleConfig} from "./_basic_rule_config";
+import {NamingRuleConfig} from "./_namingRuleConfig";
+import {IRule} from "./_irule";
+import {NameValidator} from "../utils/nameValidator";
+
 
 /** Allows you to enforce a pattern, such as a prefix, for class variable names. */
-export class ClassAttributeNamesConf extends BasicRuleConfig {
+export class ClassAttributeNamesConf extends NamingRuleConfig {
   public ignoreExceptions: boolean = true;
   /** The pattern for static variable names */
   public statics: string = "^G._.*$";
@@ -25,7 +27,9 @@ export class ClassAttributeNames implements IRule {
   }
 
   public getDescription(expected: string, actual: string): string {
-    return "Class attribute name does not match pattern " + expected + ": " + actual;
+    return this.conf.patternKind === "required" ?
+      "Class attribute name does not match pattern " + expected + ": " + actual :
+      "Class attribute name must not match pattern " + expected + ": " + actual ;
   }
 
   public getConfig() {
@@ -81,7 +85,7 @@ export class ClassAttributeNames implements IRule {
     const ret: Issue[] = [];
     const regex = new RegExp(expected, "i");
     const name = attr.getName();
-    if (regex.test(name) === false) {
+    if (NameValidator.violatesRule(name, regex, this.conf)) {
 // todo, find the right file
       const issue = new Issue({
         file: obj.getFiles()[0],

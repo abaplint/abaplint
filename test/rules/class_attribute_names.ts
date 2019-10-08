@@ -1,20 +1,29 @@
 import {MemoryFile} from "../../src/files/memory_file";
 import {Registry} from "../../src/registry";
 import {expect} from "chai";
-import {ClassAttributeNames} from "../../src/rules/class_attribute_names";
+import {ClassAttributeNames, ClassAttributeNamesConf} from "../../src/rules/class_attribute_names";
 
-function findIssues(abap: string) {
+function findIssues(abap: string, config?: ClassAttributeNamesConf) {
   const reg = new Registry().addFile(new MemoryFile("cl_foobar.clas.abap", abap)).parse();
   const rule = new ClassAttributeNames();
+  if (config) {
+    rule.setConfig(config);
+  }
   return rule.run(reg.getObjects()[0], reg);
 }
 
-describe("Rule: class attribute names", function() {
+describe("Rule: class attribute names (general)", function () {
+
   it("parser error", function () {
     const abap = "sdf lksjdf lkj sdf";
     const issues = findIssues(abap);
     expect(issues.length).to.equal(0);
   });
+
+});
+
+describe("Rule: class attribute names", function () {
+  const anyUpToThreeLetterPrefix = "^[a-zA-Z]{1,3}_.*$";
 
   it("issue", function () {
     const abap = `
@@ -23,8 +32,14 @@ CLASS zcl_foobar DEFINITION PUBLIC.
     DATA foo TYPE i.
 ENDCLASS.
 CLASS zcl_foobar IMPLEMENTATION. ENDCLASS.`;
-    const issues = findIssues(abap);
-    expect(issues.length).to.equal(1);
+    const config = new ClassAttributeNamesConf();
+    config.instance = anyUpToThreeLetterPrefix;
+
+    config.patternKind = "required";
+    expect(findIssues(abap, config).length).to.equal(1);
+
+    config.patternKind = "forbidden";
+    expect(findIssues(abap, config).length).to.equal(0);
   });
 
   it("no issue", function () {
@@ -34,8 +49,14 @@ CLASS zcl_foobar DEFINITION PUBLIC.
     DATA mv_foo TYPE i.
 ENDCLASS.
 CLASS zcl_foobar IMPLEMENTATION. ENDCLASS.`;
-    const issues = findIssues(abap);
-    expect(issues.length).to.equal(0);
+    const config = new ClassAttributeNamesConf();
+    config.instance = anyUpToThreeLetterPrefix;
+
+    config.patternKind = "required";
+    expect(findIssues(abap, config).length).to.equal(0);
+
+    config.patternKind = "forbidden";
+    expect(findIssues(abap, config).length).to.equal(1);
   });
 
   it("issue", function () {
@@ -45,8 +66,14 @@ CLASS zcl_foobar DEFINITION PUBLIC.
     CLASS-DATA foo TYPE i.
 ENDCLASS.
 CLASS zcl_foobar IMPLEMENTATION. ENDCLASS.`;
-    const issues = findIssues(abap);
-    expect(issues.length).to.equal(1);
+    const config = new ClassAttributeNamesConf();
+    config.statics = anyUpToThreeLetterPrefix;
+
+    config.patternKind = "required";
+    expect(findIssues(abap, config).length).to.equal(1);
+
+    config.patternKind = "forbidden";
+    expect(findIssues(abap, config).length).to.equal(0);
   });
 
   it("end position", function () {
@@ -56,9 +83,17 @@ CLASS zcl_foobar IMPLEMENTATION. ENDCLASS.`;
                   CLASS-DATA foo TYPE i.
               ENDCLASS.
               CLASS zcl_foobar IMPLEMENTATION. ENDCLASS.`;
-    const issues = findIssues(abap);
-    expect(issues.length).to.equal(1);
-    expect(issues[0].getEnd().getCol()).to.equal(33);
+
+    const config = new ClassAttributeNamesConf();
+    config.instance = anyUpToThreeLetterPrefix;
+
+    config.patternKind = "required";
+    const issuesFromRequiredPattern = findIssues(abap, config);
+    expect(issuesFromRequiredPattern.length).to.equal(1);
+    expect(issuesFromRequiredPattern[0].getEnd().getCol()).to.equal(33);
+
+    config.patternKind = "forbidden";
+    expect(findIssues(abap, config).length).to.equal(0);
   });
 
 });

@@ -6,10 +6,11 @@ import {MethodParameter} from "../abap/types/method_parameter";
 import {Registry} from "../registry";
 import {ABAPObject} from "../objects/_abap_object";
 import {IFile} from "../files/_ifile";
-import {BasicRuleConfig} from "./_basic_rule_config";
+import {NamingRuleConfig} from "./_namingRuleConfig";
+import {NameValidator} from "../utils/nameValidator";
 
 /** Allows you to enforce a pattern, such as a prefix, for method parameter names */
-export class MethodParameterNamesConf extends BasicRuleConfig {
+export class MethodParameterNamesConf extends NamingRuleConfig {
   /** Ignore parameters in methods of exception classes */
   public ignoreExceptions: boolean = true;
   /** The pattern for importing parameters */
@@ -20,8 +21,6 @@ export class MethodParameterNamesConf extends BasicRuleConfig {
   public changing: string = "^C._.*$";
   /** The pattern for exporting parameters */
   public exporting: string = "^E._.*$";
-  /** The following parameter names will be ignored */
-  public ignoreNames: string[] = ["P_TASK"];
 }
 
 export class MethodParameterNames implements IRule {
@@ -33,7 +32,9 @@ export class MethodParameterNames implements IRule {
   }
 
   public getDescription(expected: string, actual: string): string {
-    return "Method parameter name does not match pattern " + expected + ": " + actual;
+    return this.conf.patternKind === "required" ?
+      "Method parameter name does not match pattern " + expected + ": " + actual :
+      "Method parameter name must not match pattern " + expected + ": " + actual;
   }
 
   public getConfig() {
@@ -102,14 +103,7 @@ export class MethodParameterNames implements IRule {
     const ret: Issue[] = [];
     const regex = new RegExp(expected, "i");
     const name = param.getName();
-
-    if (regex.test(name) === false) {
-      if (!this.conf.ignoreNames) {
-        throw new Error("update abaplint.json to latest format");
-      }
-      if (this.conf.ignoreNames.indexOf(name.toUpperCase()) >= 0) {
-        return ret;
-      }
+    if (NameValidator.violatesRule(name, regex, this.conf)) {
       const message = this.getDescription(expected, name);
 // todo, find the right file
       const issue = new Issue({
@@ -117,7 +111,8 @@ export class MethodParameterNames implements IRule {
         message,
         key: this.getKey(),
         start: param.getStart(),
-        end: param.getEnd()});
+        end: param.getEnd(),
+      });
       ret.push(issue);
     }
 

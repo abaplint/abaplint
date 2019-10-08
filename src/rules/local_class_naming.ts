@@ -6,10 +6,11 @@ import {IObject} from "../objects/_iobject";
 import {Registry} from "../registry";
 import {ClassName} from "../abap/expressions";
 import {Class} from "../objects";
-import {BasicRuleConfig} from "./_basic_rule_config";
+import {NamingRuleConfig} from "./_namingRuleConfig";
+import {NameValidator} from "../utils/nameValidator";
 
 /** Allows you to enforce a pattern, such as a prefix, for local class names. */
-export class LocalClassNamingConf extends BasicRuleConfig {
+export class LocalClassNamingConf extends NamingRuleConfig {
   /** The pattern for local class names */
   public local: string = "^LCL_.*$";
   /** The pattern for local test class names */
@@ -25,10 +26,12 @@ export class LocalClassNaming extends ABAPRule {
   }
 
   public getDescription(expected: string, actual: string): string {
-    return "Local class name does not match pattern " + expected + ": " + actual;
+    return this.conf.patternKind === "required" ?
+      "Local class name does not match pattern " + expected + ": " + actual :
+      "Local class name must not match pattern " + expected + ": " + actual ;
   }
 
-  public getConfig() {
+  public getConfig(): LocalClassNamingConf {
     return this.conf;
   }
 
@@ -58,11 +61,11 @@ export class LocalClassNaming extends ABAPRule {
 
       let expected = "";
       if (stat.concatTokens().toUpperCase().includes("FOR TESTING")) {
-        if (testRegex.test(name) === false) {
+        if (NameValidator.violatesRule(name, testRegex, this.conf)) {
           expected = this.conf.test;
         }
       } else {
-        if (localRegex.test(name) === false) {
+        if (NameValidator.violatesRule(name, localRegex, this.conf)) {
           expected = this.conf.local;
         }
       }
