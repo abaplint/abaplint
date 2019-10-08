@@ -11,6 +11,7 @@
     "new-parens": true,
     "prefer-for-of": true,
     "unified-signatures": true,
+    "file-name-casing": [true, "snake-case"],
     "ban-comma-operator": true,
     "no-return-await": true,
     "no-irregular-whitespace": true,
