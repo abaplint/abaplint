@@ -13,7 +13,7 @@ export class NameValidator {
       }
     }
 
-    return params.patternKind === "required" ?
+    return !params.patternKind || params.patternKind === "required" ?
       pattern.test(name) === false :
       pattern.test(name) === true;
   }

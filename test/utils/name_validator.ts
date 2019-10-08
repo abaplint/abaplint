@@ -41,4 +41,13 @@ describe(`Name validator`, function () {
     expect(ruleViolated).to.equal(false);
   });
 
+  it("behaves as if patternKind = required if it is omitted", function () {
+    const ruleViolated = NameValidator.violatesRule(
+      "is_okay",
+      new RegExp("^[a-z]{2}_.*$", "i"),
+      {patternKind: undefined});
+
+    expect(ruleViolated).to.equal(false);
+  });
+
 });
