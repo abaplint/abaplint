@@ -342,16 +342,6 @@ describe("Check Variables", () => {
     expect(issues.length).to.equals(0);
   });
 
-/* todo
-  it("program, definition in FOR expression, should not work after", () => {
-    const abap = "DATA itab TYPE STANDARD TABLE OF i.\n" +
-      "itab = VALUE #( FOR j = 1 THEN j + 1 UNTIL j > 10 ( j ) ).\n" +
-      "WRITE j.";
-    const issues = runProgram(abap);
-    expect(issues.length).to.equals(1);
-  });
-*/
-
   it("program, SELECT, database table not found, error", () => {
     const abap = "SELECT SINGLE * FROM zfoobar INTO @DATA(ls_data).";
     const issues = runProgram(abap);
@@ -966,6 +956,17 @@ describe("Check Variables", () => {
     expect(issues.length).to.equals(0);
   });
 
+  it("FOR, loop IN", () => {
+    const abap = "DATA moo TYPE bar.\n" +
+      "DATA it_packages TYPE boo.\n" +
+      "moo = VALUE #(\n" +
+      "  FOR lo_package IN it_packages\n" +
+      "  FOR lo_element IN get_all_elements_from_package( lo_package )\n" +
+      "  ( package = lo_package element = lo_element ) ).";
+    const issues = runProgram(abap);
+    expect(issues.length).to.equals(0);
+  });
+
 /*
   it("REDUCE with INIT", () => {
     const abap =
@@ -996,6 +997,16 @@ describe("Check Variables", () => {
 /*
   it("program, sy field, unknown field", () => {
     const abap = "WRITE sy-fooboo.\n";
+    const issues = runProgram(abap);
+    expect(issues.length).to.equals(1);
+  });
+*/
+
+/*
+  it("program, definition in FOR expression, should not work after", () => {
+    const abap = "DATA itab TYPE STANDARD TABLE OF i.\n" +
+      "itab = VALUE #( FOR j = 1 THEN j + 1 UNTIL j > 10 ( j ) ).\n" +
+      "WRITE j.";
     const issues = runProgram(abap);
     expect(issues.length).to.equals(1);
   });
