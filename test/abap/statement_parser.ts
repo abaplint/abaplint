@@ -53,4 +53,22 @@ describe("statement parser", function() {
     expect(statements[1].get()).to.be.instanceof(Write);
   });
 
+  it("Chained/Colon statement", function () {
+    const abap = "WRITE: bar.";
+
+    const statements = getStatements(abap);
+    expect(statements.length).to.equal(1);
+    expect(statements[0].get()).to.be.instanceof(Write);
+    expect(statements[0].getColon()).to.not.equal(undefined);
+  });
+
+  it("Keep track of pragmas", function () {
+    const abap = "WRITE bar ##foobar.";
+
+    const statements = getStatements(abap);
+    expect(statements.length).to.equal(1);
+    expect(statements[0].get()).to.be.instanceof(Write);
+    expect(statements[0].getPragmas().length).to.equal(1);
+  });
+
 });

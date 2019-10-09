@@ -10,29 +10,38 @@ import {Expression} from "../combi";
 
 export class StatementNode extends BasicNode {
   private statement: Statement;
+  private colon: Token | undefined;
+  private pragmas: Token[];
 
-  public constructor(statement: Statement) {
+  public constructor(statement: Statement, colon?: Token | undefined, pragmas?: Token[]) {
     super();
     this.statement = statement;
+    this.colon = colon;
+
+    if (pragmas) {
+      this.pragmas = pragmas;
+    } else {
+      this.pragmas = [];
+    }
   }
 
   public get() {
     return this.statement;
   }
 
+  public getColon(): Token | undefined {
+    return this.colon;
+  }
+
+  public getPragmas(): Token[] {
+    return this.pragmas;
+  }
+
   public setChildren(children: INode[]): StatementNode {
     if (children.length === 0) {
       throw "statement: zero children";
     }
-// commented to optimize performance
-/*
-    // validate child nodes
-    children.forEach((c) => {
-      if (!(c instanceof TokenNode || c instanceof ExpressionNode)) {
-        throw "statement: not token or expression node";
-      }
-    });
-*/
+
     this.children = children;
 
     return this;

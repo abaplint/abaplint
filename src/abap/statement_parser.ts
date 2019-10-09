@@ -88,7 +88,9 @@ export class StatementParser {
   private static tokensToNodes(tokens: Token[]): TokenNode[] {
     const ret: TokenNode[] = [];
 
-    tokens.forEach((t) => {ret.push(new TokenNode(t)); });
+    for (const t of tokens) {
+      ret.push(new TokenNode(t));
+    }
 
     return ret;
   }
@@ -223,29 +225,40 @@ export class StatementParser {
     return statement;
   }
 
-  private static removePragma(tokens: Token[]): Token[] {
-    return tokens.filter(function (value) { return !(value instanceof Tokens.Pragma); } );
+  private static removePragma(tokens: Token[]): {tokens: Token[], pragmas: Token[]} {
+    const result: Token[] = [];
+    const pragmas: Token[] = [];
+
+    for (const t of tokens) {
+      if (t instanceof Tokens.Pragma) {
+        pragmas.push(t);
+      } else {
+        result.push(t);
+      }
+    }
+
+    return {tokens: result, pragmas: pragmas};
   }
 
   private static match(statement: StatementNode): StatementNode {
-    let tokens = statement.getTokens();
+    const tokens = statement.getTokens();
     const last = tokens[tokens.length - 1];
-    tokens = this.removePragma(this.removeLast(tokens));
-    if (tokens.length === 0) {
-      return new StatementNode(new Empty()).setChildren(this.tokensToNodes(this.removePragma(statement.getTokens())));
+    const {tokens: filtered, pragmas} = this.removePragma(this.removeLast(tokens));
+    if (filtered.length === 0) {
+      return new StatementNode(new Empty()).setChildren(this.tokensToNodes(tokens));
     }
 
-    for (const st of this.map.lookup(tokens[0])) {
-      const match = Combi.run(st.getMatcher(), tokens, this.version);
+    for (const st of this.map.lookup(filtered[0])) {
+      const match = Combi.run(st.getMatcher(), filtered, this.version);
       if (match) {
-        return new StatementNode(st).setChildren(match.concat(new TokenNode(last)));
+        return new StatementNode(st, statement.getColon(), pragmas).setChildren(match.concat(new TokenNode(last)));
       }
     }
     return statement;
   }
 
-  private static addUnknown(t: Token[]) {
-    this.statements.push(new StatementNode(new Unknown()).setChildren(this.tokensToNodes(t)));
+  private static addUnknown(t: Token[], colon: Token | undefined) {
+    this.statements.push(new StatementNode(new Unknown(), colon).setChildren(this.tokensToNodes(t)));
   }
 
 // takes care of splitting tokens into statements, also handles chained statements
@@ -253,6 +266,7 @@ export class StatementParser {
   private static process(tokens: Token[]) {
     let add: Token[] = [];
     let pre: Token[] = [];
+    let colon: Token | undefined;
 
     for (const token of tokens) {
       if (token instanceof Tokens.Comment) {
@@ -262,13 +276,15 @@ export class StatementParser {
 
       add.push(token);
       if (token.getStr() === ".") {
-        this.addUnknown(pre.concat(add));
+        this.addUnknown(pre.concat(add), colon);
         add = [];
         pre = [];
+        colon = undefined;
       } else if (token.getStr() === "," && pre.length > 0) {
-        this.addUnknown(pre.concat(add));
+        this.addUnknown(pre.concat(add), colon);
         add = [];
       } else if (token.getStr() === ":") {
+        colon = token;
         add.pop(); // do not add colon token to statement
         pre = add.slice(0);
         add = [];
@@ -276,7 +292,7 @@ export class StatementParser {
     }
 
     if (add.length > 0) {
-      this.addUnknown(pre.concat(add));
+      this.addUnknown(pre.concat(add), colon);
     }
   }
 }
