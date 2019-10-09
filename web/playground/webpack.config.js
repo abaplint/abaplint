@@ -16,8 +16,6 @@ module.exports = ({ mode } = { mode: 'development' }) => ({
   devServer: {
     contentBase: path.join(__dirname, 'public'),
     inline: true,
-    hot: true,
-    open: true,
   },
   resolve: {
     extensions: ['.js', '.ts', '.tsx'],
