@@ -1,6 +1,8 @@
+import {BasicRuleConfig} from "./_basic_rule_config";
+
 export type PatternKind = "required" | "forbidden";
 
-export abstract class NamingRuleConfig {
+export abstract class NamingRuleConfig extends BasicRuleConfig {
   /** Specifies whether the pattern is forbidden (violation if name matches) or required (violation if name does not match). */
   public patternKind?: PatternKind = "required";
 
