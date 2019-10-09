@@ -20,7 +20,7 @@ export class MethodLength implements IRule {
   }
 
   public getDescription(max: string, actual: string): string {
-    return "Reduce line length to max " + max + ", currently " + actual;
+    return "Reduce method length to max " + max + " statements, currently " + actual;
   }
 
   public getConfig() {
@@ -39,7 +39,7 @@ export class MethodLength implements IRule {
       if (s.count > this.conf.statements) {
         const issue = new Issue({
           file: s.file,
-          message: this.getDescription(s.count.toString(), this.conf.statements.toString()),
+          message: this.getDescription(this.conf.statements.toString(), s.count.toString()),
           key: this.getKey(),
           start: s.pos});
         issues.push(issue);
