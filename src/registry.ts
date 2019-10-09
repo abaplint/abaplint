@@ -157,15 +157,6 @@ export class Registry {
     return undefined;
   }
 
-// called from vscode plugin
-  public findIssuesFile(file: IFile): Issue[] {
-    const obj = this.findObjectForFile(file);
-    if (obj === undefined) {
-      return [];
-    }
-    return this.findIssues(undefined, obj);
-  }
-
   public findIssues(progress?: IProgress, iobj?: IObject): Issue[] {
     if (this.isDirty()) {
       this.parse(progress);

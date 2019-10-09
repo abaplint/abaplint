@@ -2,6 +2,7 @@ import * as LServer from "vscode-languageserver-types";
 import {Registry} from "../registry";
 import {Symbols} from "./symbols";
 import {Hover} from "./hover";
+import {Diagnostics} from "./diagnostics";
 import {PrettyPrinter} from "../abap/pretty_printer";
 
 // the types in this file are not completely correct
@@ -49,34 +50,7 @@ export class LanguageServer {
   }
 
   public diagnostics(textDocument: LServer.TextDocumentIdentifier): LServer.Diagnostic[] {
-
-    const file = this.reg.getABAPFile(textDocument.uri); // todo, this sould also run for xml files
-    if (file === undefined) {
-      return [];
-    }
-
-    const diagnostics: LServer.Diagnostic[] = [];
-    for (const issue of this.reg.findIssuesFile(file)) {
-      if (issue.getFile().getFilename() !== file.getFilename()) {
-        // todo, is this required?
-        // yeah, the findIssuesFile really finds issues for an object
-        continue;
-      }
-      const diagnosic: LServer.Diagnostic = {
-        severity: LServer.DiagnosticSeverity.Error,
-        range: {
-          start: {line: issue.getStart().getRow() - 1, character: issue.getStart().getCol() - 1},
-          end: {line: issue.getEnd().getRow() - 1, character: issue.getEnd().getCol() - 1},
-        },
-        code: issue.getKey(),
-        message: issue.getMessage().toString(),
-        source: "abaplint",
-      };
-
-      diagnostics.push(diagnosic);
-    }
-
-    return diagnostics;
+    return Diagnostics.find(this.reg, textDocument);
   }
 
 }
