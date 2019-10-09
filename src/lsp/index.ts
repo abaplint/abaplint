@@ -3,6 +3,7 @@ import {Registry} from "../registry";
 import {Symbols} from "./symbols";
 import {Hover} from "./hover";
 import {Diagnostics} from "./diagnostics";
+import {Help} from "./help";
 import {PrettyPrinter} from "../abap/pretty_printer";
 
 // the types in this file are not completely correct
@@ -17,6 +18,10 @@ export class LanguageServer {
 
   constructor (reg: Registry) {
     this.reg = reg;
+  }
+
+  public help(textDocument: LServer.TextDocumentIdentifier, position: LServer.Position): string {
+    return Help.find(this.reg, textDocument, position);
   }
 
   public documentSymbol(params: LServer.DocumentSymbolParams): LServer.DocumentSymbol[] {
