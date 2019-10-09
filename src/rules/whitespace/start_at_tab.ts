@@ -35,6 +35,7 @@ export class StartAtTab extends ABAPRule {
 
     let inType = false;
     let previous: Position | undefined = undefined;
+    const raw = file.getRawRows();
 
     for (const statement of file.getStatements()) {
       if (statement.get() instanceof Comment) {
@@ -51,7 +52,8 @@ export class StartAtTab extends ABAPRule {
       if (previous !== undefined && pos.getRow() === previous.getRow()) {
         continue;
       }
-      if ((pos.getCol() - 1) % 2 !== 0) {
+// just skip rows that contains tabs, this will be reported by the contains_tab rule
+      if ((pos.getCol() - 1) % 2 !== 0 && raw[pos.getRow() - 1].includes("\t") === false) {
         const issue = new Issue({file, message: this.getDescription(), key: this.getKey(), start: pos});
         issues.push(issue);
       }

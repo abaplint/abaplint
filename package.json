@@ -1,6 +1,6 @@
 {
   "name": "abaplint",
-  "version": "2.3.1",
+  "version": "2.3.2",
   "description": "Linter for ABAP",
   "bin": {
     "abaplint": "./abaplint"
@@ -46,13 +46,13 @@
     "@types/glob": "^7.1.1",
     "@types/minimist": "^1.2.0",
     "@types/mocha": "^5.2.7",
-    "@types/node": "^12.7.11",
+    "@types/node": "^12.7.12",
     "@types/progress": "^2.0.3",
     "chai": "^4.2.0",
     "mocha": "^6.2.1",
     "railroad-diagrams": "git+https://github.com/tabatkins/railroad-diagrams#gh-pages",
     "source-map-support": "^0.5.13",
-    "ts-json-schema-generator": "^0.53.0",
+    "ts-json-schema-generator": "^0.54.0",
     "tslint": "^5.20.0",
     "tslint-eslint-rules": "^5.4.0",
     "typescript": "^3.6.3"
