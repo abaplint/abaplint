@@ -52,7 +52,7 @@
     "mocha": "^6.2.1",
     "railroad-diagrams": "git+https://github.com/tabatkins/railroad-diagrams#gh-pages",
     "source-map-support": "^0.5.13",
-    "ts-json-schema-generator": "^0.53.0",
+    "ts-json-schema-generator": "^0.54.0",
     "tslint": "^5.20.0",
     "tslint-eslint-rules": "^5.4.0",
     "typescript": "^3.6.3"
