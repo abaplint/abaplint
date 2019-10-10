@@ -6,7 +6,7 @@ import {Identifier} from "../types/_identifier";
 import {ABAPObject} from "../../objects/_abap_object";
 import {Registry} from "../../registry";
 import {FormDefinition} from "../types";
-import {Variables} from "./_variables";
+import {ScopedVariables} from "./_scoped_variables";
 import {FunctionGroup} from "../../objects";
 
 // todo, rename this class?
@@ -14,9 +14,9 @@ class LocalIdentifier extends Identifier { }
 
 export class Procedural {
   private obj: ABAPObject;
-  private variables: Variables;
+  private variables: ScopedVariables;
 
-  constructor(obj: ABAPObject, _reg: Registry, variables: Variables) {
+  constructor(obj: ABAPObject, _reg: Registry, variables: ScopedVariables) {
     this.obj = obj;
     this.variables = variables;
   }

@@ -3,13 +3,12 @@ import * as Expressions from "../expressions";
 import * as Statements from "../statements";
 import * as Structures from "../structures";
 import {INode} from "../nodes/_inode";
-import {Identifier} from "../types/_identifier";
 import {Token} from "../tokens/_token";
 import {StatementNode, ExpressionNode, StructureNode} from "../nodes";
 import {ABAPFile} from "../../files";
 import {Registry} from "../../registry";
 import {ABAPObject} from "../../objects/_abap_object";
-import {Variables} from "./_variables";
+import {ScopedVariables} from "./_scoped_variables";
 import {ObjectOriented} from "./_object_oriented";
 import {Globals} from "./_globals";
 import {Procedural} from "./_procedural";
@@ -21,7 +20,7 @@ import {Program} from "../../objects";
 export class CheckVariablesLogic {
   private object: ABAPObject;
   private currentFile: ABAPFile;
-  private variables: Variables;
+  private variables: ScopedVariables;
   private issues: Issue[];
   private reg: Registry;
   private oooc: ObjectOriented;
@@ -33,7 +32,7 @@ export class CheckVariablesLogic {
     this.issues = [];
 
     this.object = object;
-    this.variables = new Variables();
+    this.variables = new ScopedVariables();
     this.oooc = new ObjectOriented(this.object, this.reg, this.variables);
     this.proc = new Procedural(this.object, this.reg, this.variables);
     this.inline = new Inline(this.variables, this.reg);
@@ -64,8 +63,8 @@ export class CheckVariablesLogic {
     return this.issues;
   }
 
-// todo, this assumes no tokes are the same(memory wise) across files
-  public resolveToken(token: Token): Identifier | string | undefined {
+// todo, this assumes no tokes are the same across files, loops all getABAPFiles
+  public traverseUntil(token: Token): ScopedVariables {
     this.variables.addList(Globals.get(this.reg.getConfig().getSyntaxSetttings().globalConstants));
 
     for (const file of this.object.getABAPFiles()) {
@@ -73,16 +72,13 @@ export class CheckVariablesLogic {
     // assumption: objects are parsed without parsing errors
       const structure = this.currentFile.getStructure();
       if (structure === undefined) {
-        return undefined;
-      }
-
-      const ret = this.traverse(structure, token);
-      if (ret) {
-        return ret;
+        return this.variables;
+      } else if (this.traverse(structure, token)) {
+        return this.variables;
       }
     }
 
-    return undefined;
+    return this.variables;
   }
 
 /////////////////////////////
@@ -97,11 +93,11 @@ export class CheckVariablesLogic {
     }));
   }
 
-  private traverse(node: INode, search?: Token): Identifier | string | undefined {
+  private traverse(node: INode, stopAt?: Token): boolean {
     try {
       const skip = this.inline.update(node);
       if (skip) {
-        return undefined;
+        return false;
       }
     } catch (e) {
       this.newIssue(node.getFirstToken(), e.message);
@@ -116,11 +112,12 @@ export class CheckVariablesLogic {
         const resolved = this.variables.resolve(token.getStr());
         if (resolved === undefined) {
           this.newIssue(token, "\"" + token.getStr() + "\" not found");
-        } else if (search
-            && search.getStr() === token.getStr()
-            && search.getCol() === token.getCol()
-            && search.getRow() === token.getRow()) {
-          return resolved;
+        }
+        if (stopAt !== undefined
+            && stopAt.getStr() === token.getStr()
+            && stopAt.getCol() === token.getCol()
+            && stopAt.getRow() === token.getRow()) {
+          return true;
         }
       }
     }
@@ -132,13 +129,13 @@ export class CheckVariablesLogic {
         this.newIssue(child.getFirstToken(), e.message);
         break;
       }
-      const resolved = this.traverse(child, search);
-      if (resolved) {
-        return resolved;
+      const stop = this.traverse(child, stopAt);
+      if (stop) {
+        return stop;
       }
     }
 
-    return undefined;
+    return false;
   }
 
   private updateVariables(node: INode): void {

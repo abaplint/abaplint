@@ -5,12 +5,16 @@ interface IVar {
   identifier?: Identifier;
 }
 
-export class Variables {
+export class ScopedVariables {
   private scopes: {name: string; vars: IVar[]}[];
 
   constructor() {
     this.scopes = [];
     this.pushScope("_global");
+  }
+
+  public get() {
+    return this.scopes;
   }
 
   public addIdentifier(identifier: Identifier) {
@@ -61,7 +65,7 @@ export class Variables {
     return this.scopes[this.scopes.length - 2].name;
   }
 
-  public pushScope(name: string): Variables {
+  public pushScope(name: string): ScopedVariables {
     this.scopes.push({name: name, vars: []});
     return this;
   }

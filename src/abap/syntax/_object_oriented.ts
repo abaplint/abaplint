@@ -5,14 +5,14 @@ import {ABAPObject} from "../../objects/_abap_object";
 import {ClassDefinition, MethodDefinition, InterfaceDefinition} from "../types";
 import {Interface, Class} from "../../objects";
 import {Registry} from "../../registry";
-import {Variables} from "./_variables";
+import {ScopedVariables} from "./_scoped_variables";
 
 export class ObjectOriented {
   private obj: ABAPObject;
   private reg: Registry;
-  private variables: Variables;
+  private variables: ScopedVariables;
 
-  constructor(obj: ABAPObject, reg: Registry, variables: Variables) {
+  constructor(obj: ABAPObject, reg: Registry, variables: ScopedVariables) {
     this.obj = obj;
     this.reg = reg;
     this.variables = variables;

@@ -5,6 +5,9 @@ import {ABAPFile} from "../files";
 import {StructureNode, StatementNode, TokenNodeRegex, ExpressionNode, TokenNode} from "../abap/nodes";
 import {Token} from "../abap/tokens/_token";
 import {LSPUtils} from "./_lsp_utils";
+import {CheckVariablesLogic} from "../abap/syntax/check_variables";
+import {ABAPObject} from "../objects/_abap_object";
+import {ScopedVariables} from "../abap/syntax/_scoped_variables";
 
 export class Help {
   public static find(reg: Registry, textDocument: LServer.TextDocumentIdentifier, position: LServer.Position): string {
@@ -29,16 +32,36 @@ export class Help {
                                    textDocument: LServer.TextDocumentIdentifier,
                                    position: LServer.Position,
                                    file: ABAPFile): string {
-
+    let ret = "";
     const found = LSPUtils.find(reg, textDocument, position);
 
     if (found !== undefined) {
-      return "Statement: " + this.linkToStatement(found.statement) + "<br>\n" +
+      ret = "Statement: " + this.linkToStatement(found.statement) + "<br>\n" +
         "Token: " + found.token.constructor.name + "<br>\n" +
         this.fullPath(file, found.token).value;
+
+      const obj = reg.getObject(file.getObjectType(), file.getObjectName());
+      if (obj instanceof ABAPObject) {
+        const variables = new CheckVariablesLogic(reg, obj).traverseUntil(found.token);
+        ret = ret + this.dumpVariables(variables);
+      }
     } else {
-      return "No token found";
+      ret = "No token found";
     }
+
+    return ret;
+  }
+
+  private static dumpVariables(variables: ScopedVariables): string {
+    let ret = "<hr>\n";
+    for (const s of variables.get()) {
+      ret = ret + "<u>" + s.name + "</u>: ";
+      for (const v of s.vars) {
+        ret = ret + v.name + ", ";
+      }
+      ret = ret + "<br>\n";
+    }
+    return ret;
   }
 
   private static fullPath(file: ABAPFile, token: Token): {value: string, keyword: boolean}  {
