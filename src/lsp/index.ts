@@ -5,6 +5,7 @@ import {Hover} from "./hover";
 import {Diagnostics} from "./diagnostics";
 import {Help} from "./help";
 import {PrettyPrinter} from "../abap/pretty_printer";
+import {Definition} from "./definition";
 
 // the types in this file are not completely correct
 // see https://github.com/microsoft/vscode-languageserver-node/issues/354
@@ -34,6 +35,11 @@ export class LanguageServer {
       return {contents: hover};
     }
     return undefined;
+  }
+
+// go to definition
+  public definition(params: {textDocument: LServer.TextDocumentIdentifier, position: LServer.Position}): LServer.Location | undefined {
+    return Definition.find(this.reg, params.textDocument, params.position);
   }
 
   public documentFormatting(params: {textDocument: LServer.TextDocumentIdentifier,

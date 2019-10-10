@@ -2,6 +2,7 @@ import "../node_modules/@phosphor/default-theme/style/index.css";
 import "./index.less";
 import "../public/img/favicon-16x16.png";
 import "../public/img/favicon-32x32.png";
+import schema from "../../../scripts/schema.json";
 import * as monaco from "monaco-editor";
 import {CommandRegistry} from "@phosphor/commands";
 import {BoxPanel, DockPanel, Menu, MenuBar, Widget} from "@phosphor/widgets";
@@ -11,7 +12,7 @@ import {ABAPSnippetProvider} from "./monaco/abap_snippet_provider";
 import {ABAPHoverProvider} from "./monaco/abap_hover_provider";
 import {ABAPFormattingProvider} from "./monaco/abap_formatting_provider";
 import {ABAPSymbolProvider} from "./monaco/abap_symbol_provider";
-import schema from "../../../scripts/schema.json";
+import {ABAPDefinitionProvider} from "./monaco/abap_definition_provider";
 
 const commands = new CommandRegistry();
 
@@ -79,6 +80,7 @@ function registerMonacoSettings() {
   monaco.languages.registerHoverProvider("abap", new ABAPHoverProvider());
   monaco.languages.registerDocumentFormattingEditProvider("abap", new ABAPFormattingProvider());
   monaco.languages.registerDocumentSymbolProvider("abap", new ABAPSymbolProvider());
+  monaco.languages.registerDefinitionProvider("abap", new ABAPDefinitionProvider());
 
   monaco.languages.json.jsonDefaults.setDiagnosticsOptions({
     validate: true,
