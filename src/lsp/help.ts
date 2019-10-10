@@ -33,7 +33,7 @@ export class Help {
     const found = LSPUtils.find(reg, textDocument, position);
 
     if (found !== undefined) {
-      return "Statement: " + found.statement.constructor.name + "<br>" +
+      return "Statement: " + this.linkToStatement(found.statement) + "<br>" +
         "Token: " + found.token.constructor.name + "<br>" +
         this.fullPath(file, found.token).value;
     } else {
@@ -62,11 +62,11 @@ export class Help {
       local = local + " -> ";
     }
     if (node instanceof StructureNode) {
-      local = local + "Structure: " + node.get().constructor.name;
+      local = local + "Structure: " + this.linkToStructure(node.get());
     } else if (node instanceof StatementNode) {
-      local = local + "Statement: " + node.get().constructor.name;
+      local = local + "Statement: " + this.linkToStatement(node.get());
     } else if (node instanceof ExpressionNode) {
-      local = local + "Expression: " + node.get().constructor.name;
+      local = local + "Expression: " + this.linkToExpression(node.get());
     } else if (node instanceof TokenNode) {
       local = local + "Token: " + node.get().constructor.name;
       const token = node.get();
@@ -118,18 +118,15 @@ export class Help {
   }
 
   private static linkToStatement(statement: any) {
-    return `<a href="https://syntax.abaplint.org/#/statement/${statement.constructor.name}"
-              target="_blank">${statement.constructor.name}</a>`;
+    return `<a href="https://syntax.abaplint.org/#/statement/${statement.constructor.name}" target="_blank">${statement.constructor.name}</a>\n`;
   }
 
   private static linkToStructure(structure: any) {
-    return `<a href="https://syntax.abaplint.org/#/structure/${structure.constructor.name}"
-               target="_blank">${structure.constructor.name}</a>`;
+    return `<a href="https://syntax.abaplint.org/#/structure/${structure.constructor.name}" target="_blank">${structure.constructor.name}</a>\n`;
   }
 
   private static linkToExpression(expression: any) {
-    return `<a href="https://syntax.abaplint.org/#/expression/${expression.constructor.name}"
-               target="_blank">${expression.constructor.name}</a>`;
+    return `<a href="https://syntax.abaplint.org/#/expression/${expression.constructor.name}" target="_blank">${expression.constructor.name}</a>\n`;
   }
 
   private static outputNodes(nodes: INode[]) {

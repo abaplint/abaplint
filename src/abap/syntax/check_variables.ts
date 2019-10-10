@@ -64,7 +64,7 @@ export class CheckVariablesLogic {
     return this.issues;
   }
 
-// todo, this assumes no tokes are the same across files
+// todo, this assumes no tokes are the same(memory wise) across files
   public resolveToken(token: Token): Identifier | string | undefined {
     this.variables.addList(Globals.get(this.reg.getConfig().getSyntaxSetttings().globalConstants));
 
