@@ -433,7 +433,7 @@ class Star implements IStatementRunnable {
 
     let res = r;
     let input: Result[] = [];
-    for ( ; ; ) {
+    for (;;) {
       input = res;
       res = this.sta.run(input);
 

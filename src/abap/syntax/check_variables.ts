@@ -109,7 +109,8 @@ export class CheckVariablesLogic {
 
 // todo, the same variables can be checked multiple times? as Expressions are nested
     if (node instanceof ExpressionNode
-        && ( node.get() instanceof Expressions.Source || node.get() instanceof Expressions.Target ) ) {
+        && (node.get() instanceof Expressions.Source
+        || node.get() instanceof Expressions.Target)) {
       for (const field of node.findAllExpressions(Expressions.Field)) {
         const token = field.getFirstToken();
         const resolved = this.variables.resolve(token.getStr());

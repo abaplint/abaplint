@@ -8,7 +8,7 @@ export class Target extends Expression {
   public getRunnable(): IStatementRunnable {
     const something = star(seq(new ArrowOrDash(), alt(str("*"), new FieldAll()), star(new TableExpression())));
 
-    const cast = seq(alt(new Cast( ), new NewObject()), new Arrow(), new FieldAll());
+    const cast = seq(alt(new Cast(), new NewObject()), new Arrow(), new FieldAll());
 
     const clas = seq(new ClassName(), tok(StaticArrow), new ComponentName());
     const start = alt(clas, new Field(), new FieldSymbol(), cast);

@@ -11,7 +11,7 @@ export class Help {
     let content = "";
 
     content = "<tt>" + textDocument.uri + " (" +
-      ( position.line + 1) + ", " +
+      (position.line + 1) + ", " +
       (position.character + 1) + ")</tt>";
     const file = reg.getABAPFile(textDocument.uri);
     if (file === undefined) {
@@ -33,11 +33,11 @@ export class Help {
     const found = LSPUtils.find(reg, textDocument, position);
 
     if (found !== undefined) {
-      return "Statement: " + this.linkToStatement(found.statement) + "<br>" +
-        "Token: " + found.token.constructor.name + "<br>" +
+      return "Statement: " + this.linkToStatement(found.statement) + "<br>\n" +
+        "Token: " + found.token.constructor.name + "<br>\n" +
         this.fullPath(file, found.token).value;
     } else {
-      return "Could not find token";
+      return "No token found";
     }
   }
 

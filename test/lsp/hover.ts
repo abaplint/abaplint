@@ -11,7 +11,7 @@ describe("LSP, hover", () => {
     const reg = new Registry().addFile(file).parse();
     const hover = Hover.find(reg, {uri: file.getFilename()}, LServer.Position.create(0 , 7));
     expect(hover).to.not.equal(undefined);
-    expect(hover!.value).to.contain("Not resolved");
+    expect(hover!.value).to.contain("Unknown");
   });
 
   it("resolved, local", () => {

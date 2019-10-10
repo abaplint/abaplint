@@ -243,7 +243,7 @@ export class Lexer {
 
     let escaped = 0;
 
-    for ( ; ; ) {
+    for (;;) {
       const current = this.stream.currentChar();
       this.buffer.add(current);
       const buf = this.buffer.get();
@@ -273,7 +273,7 @@ export class Lexer {
 // start comment
         this.add();
         this.m = Mode.Comment;
-      } else if (this.m === Mode.Pragma && ( ahead === "," || ahead === "." || ahead === " " || ahead === "\n" ) ) {
+      } else if (this.m === Mode.Pragma && (ahead === "," || ahead === "." || ahead === " " || ahead === "\n")) {
 // end of pragma
         this.add();
         this.m = Mode.Normal;
@@ -289,7 +289,7 @@ export class Lexer {
         escaped = escaped + 1;
       } else if (this.m === Mode.Template && escaped && current === "}" && prev !== "\\") {
         escaped = escaped - 1;
-      } else if (buf.length > 1 && current === "|" && ( prev !== "\\" || pprev === "\\\\" ) && escaped === 0 && this.m === Mode.Template) {
+      } else if (buf.length > 1 && current === "|" && (prev !== "\\" || pprev === "\\\\") && escaped === 0 && this.m === Mode.Template) {
 // end of template
         this.add();
         this.m = Mode.Normal;
@@ -316,7 +316,7 @@ export class Lexer {
           || ahead === ")"
           || ahead === "["
           || ahead === "]"
-          || ( ahead === "@" && buf.trim().length === 0 )
+          || (ahead === "@" && buf.trim().length === 0)
           || aahead === "->"
           || aahead === "=>"
           || ahead === "\t"
@@ -330,7 +330,7 @@ export class Lexer {
         this.add();
         this.m = Mode.Template;
       } else if (current === ">"
-          && (prev === "-" || prev === "=" )
+          && (prev === "-" || prev === "=")
           && ahead !== " "
           && this.m === Mode.Normal) {
 // arrows
@@ -344,7 +344,7 @@ export class Lexer {
           || buf === "]"
           || buf === "+"
           || buf === "@"
-          || ( buf === "-" && ahead !== ">" ) )
+          || (buf === "-" && ahead !== ">"))
           && this.m === Mode.Normal) {
         this.add();
       }

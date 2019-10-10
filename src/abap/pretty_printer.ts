@@ -73,7 +73,7 @@ class Indentation {
         indent = init;
         parentIsEvent = true;
       } else if (type instanceof Statements.Form
-          || ( type instanceof Statements.Include && parentIsEvent )
+          || (type instanceof Statements.Include && parentIsEvent)
           || type instanceof Statements.Module
           || type instanceof Statements.ClassImplementation
           || type instanceof Statements.ClassDefinition) {

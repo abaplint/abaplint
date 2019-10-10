@@ -54,7 +54,7 @@ export class ObsoleteStatement extends ABAPRule {
           || (sta.get() instanceof Statements.Move && this.conf.move
           && sta.getTokens()[0].getStr() === "MOVE"
           && sta.getTokens()[1].getStr() !== "-"
-          && sta.getTokens()[1].getStr() !== "EXACT" )
+          && sta.getTokens()[1].getStr() !== "EXACT")
           || (sta.get() instanceof Statements.Divide && this.conf.divide)) {
         if (prev === undefined || sta.getStart().getCol() !== prev.getCol() || sta.getStart().getRow() !== prev.getRow()) {
           issues.push(new Issue({file, message: this.getDescription(), key: this.getKey(), start: sta.getStart()}));

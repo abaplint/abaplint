@@ -20,6 +20,7 @@
     "array-type": [true, "array"],
     "ter-arrow-parens": [true],
     "ter-arrow-spacing": [true],
+    "space-within-parens": [true, 0],
     "brace-style": [
       true,
       "1tbs",

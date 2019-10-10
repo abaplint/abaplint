@@ -23,6 +23,8 @@ export class Hover {
       const resolved = new CheckVariablesLogic(reg, obj).resolveToken(found.token);
       if (resolved !== undefined) {
         return {kind: LServer.MarkupKind.Markdown, value: "Resolved"};
+      } else {
+        return {kind: LServer.MarkupKind.Markdown, value: "Unknown"};
       }
     }
 

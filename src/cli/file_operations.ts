@@ -9,7 +9,7 @@ import {IFile} from "../files/_ifile";
 export class FileOperations {
 
   public static deleteFolderRecursive(p: string) {
-    if (fs.existsSync(p) ) {
+    if (fs.existsSync(p)) {
       const files = fs.readdirSync(p);
       for (const file of files) {
         const curPath = p + path.sep + file;
