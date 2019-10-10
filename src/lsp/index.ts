@@ -29,7 +29,7 @@ export class LanguageServer {
   }
 
   public hover(params: {textDocument: LServer.TextDocumentIdentifier, position: LServer.Position}): LServer.Hover | undefined {
-    const hover = Hover.find(this.reg, params.textDocument.uri, params.position.line, params.position.character);
+    const hover = Hover.find(this.reg, params.textDocument, params.position);
     if (hover) {
       return {contents: hover};
     }

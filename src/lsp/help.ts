@@ -2,36 +2,109 @@ import * as LServer from "vscode-languageserver-types";
 import {Registry} from "../registry";
 import {INode} from "../abap/nodes/_inode";
 import {ABAPFile} from "../files";
-import {StructureNode, StatementNode} from "../abap/nodes";
+import {StructureNode, StatementNode, TokenNodeRegex, ExpressionNode, TokenNode} from "../abap/nodes";
+import {Token} from "../abap/tokens/_token";
+import {LSPUtils} from "./_lsp_utils";
 
 export class Help {
   public static find(reg: Registry, textDocument: LServer.TextDocumentIdentifier, position: LServer.Position): string {
     let content = "";
 
-    position.line = position.line + 1;
-    position.character = position.character + 1;
-
-    content = "<tt>" + textDocument.uri + " (" + position.line + ", " + position.character + ")</tt>";
-    content = content + "<hr>";
-
+    content = "<tt>" + textDocument.uri + " (" +
+      ( position.line + 1) + ", " +
+      (position.character + 1) + ")</tt>";
     const file = reg.getABAPFile(textDocument.uri);
-    if (file !== undefined) {
-      content = content + this.tokens(file);
-      content = content + "<hr>";
-
-      content = content + this.buildStatements(file);
-      content = content + "<hr>";
-
-      const structure = file.getStructure();
-      if (structure !== undefined) {
-        content = content + this.buildStructure([structure]);
-      } else {
-        content = content + "sturcture undefined";
-      }
-    } else {
-      content = content + "file not found";
+    if (file === undefined) {
+      return content + "file not found";
     }
 
+    content = content + "<hr>";
+    content = content + this.cursorInformation(reg, textDocument, position, file);
+    content = content + this.fileInformation(file);
+
+    return content;
+  }
+
+  private static cursorInformation(reg: Registry,
+                                   textDocument: LServer.TextDocumentIdentifier,
+                                   position: LServer.Position,
+                                   file: ABAPFile): string {
+
+    const found = LSPUtils.find(reg, textDocument, position);
+
+    if (found !== undefined) {
+      return "Statement: " + found.statement.constructor.name + "<br>" +
+        "Token: " + found.token.constructor.name + "<br>" +
+        this.fullPath(file, found.token).value;
+    } else {
+      return "Could not find token";
+    }
+  }
+
+  private static fullPath(file: ABAPFile, token: Token): {value: string, keyword: boolean}  {
+    const structure = file.getStructure();
+
+    if (structure === undefined) {
+      return {value: "", keyword: false};
+    }
+
+    const found = this.traverse(structure, "", token);
+    if (found === undefined) {
+      return {value: "", keyword: false};
+    }
+
+    return {value: "\n\n" + found.value, keyword: found.keyword};
+  }
+
+  private static traverse(node: INode, parents: string, search: Token): {value: string, keyword: boolean} | undefined {
+    let local = parents;
+    if (local !== "") {
+      local = local + " -> ";
+    }
+    if (node instanceof StructureNode) {
+      local = local + "Structure: " + node.get().constructor.name;
+    } else if (node instanceof StatementNode) {
+      local = local + "Statement: " + node.get().constructor.name;
+    } else if (node instanceof ExpressionNode) {
+      local = local + "Expression: " + node.get().constructor.name;
+    } else if (node instanceof TokenNode) {
+      local = local + "Token: " + node.get().constructor.name;
+      const token = node.get();
+      if (token.getStr() === search.getStr()
+          && token.getCol() === search.getCol()
+          && token.getRow() === search.getRow()) {
+        const keyword = !(node instanceof TokenNodeRegex);
+        return {value: local, keyword};
+      }
+    } else {
+      throw new Error("hover, traverse, unexpected node type");
+    }
+
+    for (const child of node.getChildren()) {
+      const ret = this.traverse(child, local, search);
+      if (ret) {
+        return ret;
+      }
+    }
+
+    return undefined;
+  }
+
+  private static fileInformation(file: ABAPFile): string {
+    let content = "";
+
+    content = content + "<hr>";
+    content = content + this.tokens(file);
+    content = content + "<hr>";
+    content = content + this.buildStatements(file);
+    content = content + "<hr>";
+
+    const structure = file.getStructure();
+    if (structure !== undefined) {
+      content = content + this.buildStructure([structure]);
+    } else {
+      content = content + "sturcture undefined";
+    }
     return content;
   }
 
