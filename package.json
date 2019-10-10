@@ -55,7 +55,7 @@
     "ts-json-schema-generator": "^0.54.0",
     "tslint": "^5.20.0",
     "tslint-eslint-rules": "^5.4.0",
-    "typescript": "^3.6.3"
+    "typescript": "^3.6.4"
   },
   "dependencies": {
     "glob": "^7.1.4",

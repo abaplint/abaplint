@@ -67,6 +67,7 @@ export class Globals {
       "CONSTANTS col_key TYPE c LENGTH 1 VALUE '?'.\n" +
       "CONSTANTS col_positive TYPE c LENGTH 1 VALUE '?'.\n" +
       "CONSTANTS col_negative TYPE c LENGTH 1 VALUE '?'.\n" +
+      "CONSTANTS col_normal TYPE c LENGTH 1 VALUE '?'.\n" +
       "CONSTANTS col_heading TYPE c LENGTH 1 VALUE '?'.\n" +
       "CONSTANTS col_background TYPE c LENGTH 1 VALUE '?'.\n" +
       "CONSTANTS abap_undefined TYPE c LENGTH 1 VALUE '-'.\n" +

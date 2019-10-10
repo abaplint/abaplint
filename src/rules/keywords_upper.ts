@@ -14,6 +14,7 @@ import {Token} from "../abap/tokens/_token";
 
 /** Detects keywords which are not uppercased, non-keywords must be lower case. */
 export class KeywordsUpperConf extends BasicRuleConfig {
+  /** Ignore global exception classes */
   public ignoreExceptions: boolean = true;
   public ignoreLowerClassImplmentationStatement: boolean = true;
   public ignoreGlobalClassDefinition: boolean = false;

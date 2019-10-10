@@ -2,14 +2,18 @@ import {Issue} from "../../issue";
 import {ABAPRule} from "../_abap_rule";
 import {ABAPFile} from "../../files";
 import {BasicRuleConfig} from "../_basic_rule_config";
-import {Position} from "../../position";
 import {Token} from "../../abap/tokens/_token";
 import {ParenLeftW, Comment, WParenRightW, WParenRight, StringTemplate} from "../../abap/tokens";
+import {TokenNode, StatementNode, TokenNodeRegex} from "../../abap/nodes";
+import {Unknown, MacroContent} from "../../abap/statements/_statement";
 
 /** Checks that only a single space follows certain common statements. */
 export class DoubleSpaceConf extends BasicRuleConfig {
+  /** Check for double space after keywords */
   public keywords: boolean = true;
+  /** Check for double space after start parenthesis */
   public startParen: boolean = true;
+  /** Check for double space before end parenthesis */
   public endParen: boolean = true;
 }
 
@@ -34,51 +38,81 @@ export class DoubleSpace extends ABAPRule {
   }
 
   public runParsed(file: ABAPFile) {
-    let issues: Issue[] = [];
+    const issues: Issue[] = [];
 
-    const rows = file.getRawRows();
+    for (const s of file.getStatements()) {
 
-    for (let i = 0; i < rows.length; i++) {
-      if (this.getConfig().keywords === true) {
-        const reg = /^\s*(IF|IF NOT|SHIFT|WHEN|READ TABLE|MODIFY|DELETE|COLLECT|CHECK|SORT|ELSEIF|DATA|MOVE-CORRESPONDING|APPEND|METHOD)  /;
-        issues = issues.concat(this.checkAndReport(reg, rows[i], i, file));
+      if (this.conf.keywords === true
+          && !(s.get() instanceof Unknown)
+          && !(s.get() instanceof MacroContent)) {
+        const f = this.checkKeywords(s);
+        if (f !== undefined) {
+          issues.push(new Issue({file, message: this.getDescription(), key: this.getKey(), start: f.getEnd()}));
+        }
       }
-    }
 
-    let prev: Token | undefined = undefined;
-    for (const t of file.getTokens()) {
-      if (prev === undefined) {
+      let prev: Token | undefined = undefined;
+      for (const t of s.getTokens()) {
+        if (prev === undefined) {
+          prev = t;
+          continue;
+        }
+
+        if (this.getConfig().startParen === true
+            && prev.getRow() === t.getRow()
+            && prev instanceof ParenLeftW
+            && !(t instanceof Comment)
+            && !(t instanceof StringTemplate)  // tempoary workaround, see #427
+            && prev.getEnd().getCol() + 1 < t.getCol()) {
+          issues.push(new Issue({file, message: this.getDescription(), key: this.getKey(), start: prev.getStart()}));
+        }
+
+        if (this.getConfig().endParen === true
+            && prev.getRow() === t.getRow()
+            && (t instanceof WParenRightW || t instanceof WParenRight)
+            && prev.getEnd().getCol() + 1 < t.getCol()) {
+          issues.push(new Issue({file, message: this.getDescription(), key: this.getKey(), start: prev.getEnd()}));
+        }
+
         prev = t;
-        continue;
       }
-
-      if (this.getConfig().startParen === true
-          && prev.getRow() === t.getRow()
-          && prev instanceof ParenLeftW
-          && !(t instanceof Comment)
-          && !(t instanceof StringTemplate)  // tempoary workaround, see #427
-          && prev.getEnd().getCol() + 1 < t.getCol()) {
-        issues.push(new Issue({file, message: this.getDescription(), key: this.getKey(), start: prev.getStart()}));
-      }
-
-      if (this.getConfig().endParen === true
-          && prev.getRow() === t.getRow()
-          && (t instanceof WParenRightW || t instanceof WParenRight)
-          && prev.getEnd().getCol() + 1 < t.getCol()) {
-        issues.push(new Issue({file, message: this.getDescription(), key: this.getKey(), start: prev.getEnd()}));
-      }
-
-      prev = t;
     }
 
     return issues;
   }
 
-  private checkAndReport(reg: RegExp, code: string, row: number, file: ABAPFile): Issue[] {
-    if (code.match(reg)) {
-      const issue = new Issue({file, message: this.getDescription(), key: this.getKey(), start: new Position(row + 1, 1)});
-      return [issue];
+  private checkKeywords(s: StatementNode): Token | undefined {
+    let prev: TokenNode | undefined = undefined;
+
+    if (s.getColon() !== undefined) {
+// for chained statments just give up
+      return undefined;
     }
-    return [];
+
+    for (const n of s.getTokenNodes()) {
+      if (prev === undefined) {
+        prev = n;
+        continue;
+      }
+
+      if (prev instanceof TokenNodeRegex
+          || prev.get().getStr() === "("
+          || prev.get().getStr() === ")"
+          || n.get() instanceof StringTemplate) { // tempoary workaround, see #427
+        // not a keyword, continue
+        prev = n;
+        continue;
+      }
+
+      if (prev.get().getStart().getRow() === n.get().getStart().getRow()
+          && prev.get().getEnd().getCol() + 1 < n.get().getStart().getCol()) {
+        return prev.get();
+      }
+
+      prev = n;
+    }
+
+    return undefined;
   }
+
 }

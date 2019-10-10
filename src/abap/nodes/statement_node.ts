@@ -71,6 +71,16 @@ export class StatementNode extends BasicNode {
     return tokens;
   }
 
+  public getTokenNodes(): TokenNode[] {
+    let tokens: TokenNode[] = [];
+
+    for (const c of this.getChildren()) {
+      tokens = tokens.concat(this.toTokenNodess(c));
+    }
+
+    return tokens;
+  }
+
   public concatTokens(): string {
     let str = "";
     let prev: Token | undefined;
@@ -171,14 +181,32 @@ export class StatementNode extends BasicNode {
     let tokens: Token[] = [];
 
     if (b instanceof TokenNode) {
-      tokens.push((b as TokenNode).get());
+      tokens.push(b.get());
     }
 
     for (const c of b.getChildren()) {
       if (c instanceof TokenNode) {
-        tokens.push((c as TokenNode).get());
+        tokens.push(c.get());
       } else {
         tokens = tokens.concat(this.toTokens(c));
+      }
+    }
+
+    return tokens;
+  }
+
+  private toTokenNodess(b: INode): TokenNode[] {
+    let tokens: TokenNode[] = [];
+
+    if (b instanceof TokenNode) {
+      tokens.push(b);
+    }
+
+    for (const c of b.getChildren()) {
+      if (c instanceof TokenNode) {
+        tokens.push(c);
+      } else {
+        tokens = tokens.concat(this.toTokenNodess(c));
       }
     }
 

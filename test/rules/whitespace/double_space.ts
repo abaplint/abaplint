@@ -6,6 +6,7 @@ const tests = [
   {abap: "WRITE: / 'abc'.", cnt: 0},
   {abap: "IF  foo = bar.", cnt: 1},
   {abap: "IF foo = bar.", cnt: 0},
+  {abap: "IF foo EQ  bar.", cnt: 1},
   {abap: "IF NOT  me->is_class_pool( me->program_name ) EQ abap_true.", cnt: 1},
   {abap: "call( var ).", cnt: 0},
   {abap: "call(  var ).", cnt: 1},
@@ -15,6 +16,8 @@ const tests = [
   {abap: "foo = |  )|.", cnt: 0},
   {abap: "call( |hello| ).", cnt: 0},
   {abap: "call( |moo {\nvar }bar| ).", cnt: 0},
+  {abap: "CLASS zsdfsdf DEFINITION PUBLIC  ABSTRACT FINAL CREATE PUBLIC.", cnt: 1},
+  {abap: "CLASS-METHODS class_includes RETURNING VALUE(rt_programs)     TYPE scit_program.", cnt: 0},
 //  {abap: "call(  |moo {\nvar }bar| ).", cnt: 1},
 ];
 
