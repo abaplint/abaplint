@@ -1,10 +1,10 @@
-import {Issue} from "../../issue";
 import * as Expressions from "../expressions";
 import * as Statements from "../statements";
 import * as Structures from "../structures";
+import {Issue} from "../../issue";
 import {INode} from "../nodes/_inode";
 import {Token} from "../tokens/_token";
-import {StatementNode, ExpressionNode, StructureNode} from "../nodes";
+import {StatementNode, ExpressionNode, StructureNode, TokenNode} from "../nodes";
 import {ABAPFile} from "../../files";
 import {Registry} from "../../registry";
 import {ABAPObject} from "../../objects/_abap_object";
@@ -14,8 +14,6 @@ import {Globals} from "./_globals";
 import {Procedural} from "./_procedural";
 import {Inline} from "./_inline";
 import {Program} from "../../objects";
-
-// todo, some visualization, graphviz? -> playground
 
 export class CheckVariablesLogic {
   private object: ABAPObject;
@@ -32,14 +30,13 @@ export class CheckVariablesLogic {
     this.issues = [];
 
     this.object = object;
-    this.variables = new ScopedVariables();
+    this.variables = new ScopedVariables(Globals.get(this.reg.getConfig().getSyntaxSetttings().globalConstants));
     this.oooc = new ObjectOriented(this.object, this.reg, this.variables);
     this.proc = new Procedural(this.object, this.reg, this.variables);
     this.inline = new Inline(this.variables, this.reg);
   }
 
   public findIssues(ignoreParserError = true): Issue[] {
-    this.variables.addList(Globals.get(this.reg.getConfig().getSyntaxSetttings().globalConstants));
 
     if (this.object instanceof Program && this.object.isInclude()) {
 // todo, for now only main executeable program parts are checked
@@ -65,7 +62,6 @@ export class CheckVariablesLogic {
 
 // todo, this assumes no tokes are the same across files, loops all getABAPFiles
   public traverseUntil(token: Token): ScopedVariables {
-    this.variables.addList(Globals.get(this.reg.getConfig().getSyntaxSetttings().globalConstants));
 
     for (const file of this.object.getABAPFiles()) {
       this.currentFile = file;
@@ -113,12 +109,6 @@ export class CheckVariablesLogic {
         if (resolved === undefined) {
           this.newIssue(token, "\"" + token.getStr() + "\" not found");
         }
-        if (stopAt !== undefined
-            && stopAt.getStr() === token.getStr()
-            && stopAt.getCol() === token.getCol()
-            && stopAt.getRow() === token.getRow()) {
-          return true;
-        }
       }
     }
 
@@ -129,9 +119,20 @@ export class CheckVariablesLogic {
         this.newIssue(child.getFirstToken(), e.message);
         break;
       }
+
       const stop = this.traverse(child, stopAt);
       if (stop) {
         return stop;
+      }
+
+      if (child instanceof TokenNode) {
+        const token = child.get();
+        if (stopAt !== undefined
+            && stopAt.getStr() === token.getStr()
+            && stopAt.getCol() === token.getCol()
+            && stopAt.getRow() === token.getRow()) {
+          return true;
+        }
       }
     }
 

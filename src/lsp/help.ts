@@ -55,9 +55,17 @@ export class Help {
   private static dumpVariables(variables: ScopedVariables): string {
     let ret = "<hr>\n";
     for (const s of variables.get()) {
+      if (s.name === "_builtin") {
+        continue; // too many of these, and they are not super important right now
+      }
       ret = ret + "<u>" + s.name + "</u>: ";
       for (const v of s.vars) {
-        ret = ret + v.name + ", ";
+        ret = ret + "<tt>" + v.name + "</tt>";
+        if (v.identifier !== undefined) {
+          const pos = v.identifier.getStart();
+          ret = ret + "(" + pos.getRow() + ", " + pos.getCol() + ")";
+        }
+        ret = ret + ", ";
       }
       ret = ret + "<br>\n";
     }
@@ -175,8 +183,8 @@ export class Help {
   private static tokens(file: ABAPFile) {
     let inner = "<table><tr><td><b>String</b></td><td><b>Type</b></td><td><b>Row</b></td><td><b>Column</b></td></tr>";
     for (const token of file.getTokens()) {
-      inner = inner + "<tr><td>\"" +
-        this.escape(token.getStr()) + "\"</td><td>" +
+      inner = inner + "<tr><td><tt>" +
+        this.escape(token.getStr()) + "</tt></td><td>" +
         token.constructor.name + "</td><td align=\"right\">" +
         token.getRow() + "</td><td align=\"right\">" +
         token.getCol() + "</td></tr>";

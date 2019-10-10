@@ -88,7 +88,7 @@ export class Globals {
 
   private static typesInFile(file: IFile): Identifier[] {
     const reg = new Registry();
-    const variables = new ScopedVariables();
+    const variables = new ScopedVariables([]);
     const structure = reg.addFile(file).getABAPFiles()[0].getStructure();
     if (structure === undefined) {
       throw new Error("globals, parser error");

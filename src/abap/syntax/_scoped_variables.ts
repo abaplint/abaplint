@@ -8,8 +8,10 @@ interface IVar {
 export class ScopedVariables {
   private scopes: {name: string; vars: IVar[]}[];
 
-  constructor() {
+  constructor(builtin: Identifier[]) {
     this.scopes = [];
+    this.pushScope("_builtin");
+    this.addList(builtin);
     this.pushScope("_global");
   }
 
@@ -73,7 +75,7 @@ export class ScopedVariables {
   public popScope() {
     this.scopes.pop();
     if (this.scopes.length === 0) {
-      throw new Error("something wrong, global scope popped");
+      throw new Error("something wrong, top scope popped");
     }
   }
 }
