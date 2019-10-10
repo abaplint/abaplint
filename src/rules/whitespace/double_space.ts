@@ -5,7 +5,8 @@ import {BasicRuleConfig} from "../_basic_rule_config";
 import {Token} from "../../abap/tokens/_token";
 import {ParenLeftW, Comment, WParenRightW, WParenRight, StringTemplate} from "../../abap/tokens";
 import {TokenNode, StatementNode, TokenNodeRegex} from "../../abap/nodes";
-import {Unknown, MacroContent} from "../../abap/statements/_statement";
+import {Unknown, MacroContent, MacroCall} from "../../abap/statements/_statement";
+import {MethodDef} from "../../abap/statements";
 
 /** Checks that only a single space follows certain common statements. */
 export class DoubleSpaceConf extends BasicRuleConfig {
@@ -44,6 +45,8 @@ export class DoubleSpace extends ABAPRule {
 
       if (this.conf.keywords === true
           && !(s.get() instanceof Unknown)
+          && !(s.get() instanceof MethodDef)
+          && !(s.get() instanceof MacroCall)
           && !(s.get() instanceof MacroContent)) {
         const f = this.checkKeywords(s);
         if (f !== undefined) {
@@ -84,7 +87,7 @@ export class DoubleSpace extends ABAPRule {
   private checkKeywords(s: StatementNode): Token | undefined {
     let prev: TokenNode | undefined = undefined;
 
-    if (s.getColon() !== undefined) {
+    if (s.getColon() !== undefined || s.getPragmas().length > 0) {
 // for chained statments just give up
       return undefined;
     }
@@ -97,7 +100,8 @@ export class DoubleSpace extends ABAPRule {
 
       if (prev instanceof TokenNodeRegex
           || prev.get().getStr() === "("
-          || prev.get().getStr() === ")"
+          || prev.get().getStr().toUpperCase() === "CHANGING"
+          || prev.get().getStr().toUpperCase() === "EXPORTING"
           || n.get() instanceof StringTemplate) { // tempoary workaround, see #427
         // not a keyword, continue
         prev = n;
