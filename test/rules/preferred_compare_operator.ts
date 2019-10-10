@@ -6,6 +6,7 @@ const tests = [
   {abap: "IF foo = bar. ENDIF.", cnt: 0},
   {abap: "IF foo EQ bar. ENDIF.", cnt: 1},
   {abap: "IF foo >< bar. ENDIF.", cnt: 1},
+  {abap: "SELECT * FROM foo INTO TABLE bar WHERE moo EQ boo.", cnt: 1},
 ];
 
 testRule(tests, PreferredCompareOperator);

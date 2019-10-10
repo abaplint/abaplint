@@ -30,7 +30,8 @@ export class PreferredCompareOperator extends ABAPRule {
       return [];
     }
 
-    const operators = struc.findAllExpressions(Expressions.CompareOperator);
+    const operators = struc.findAllExpressions(Expressions.CompareOperator).concat(
+      struc.findAllExpressions(Expressions.SQLCompareOperator));
     for (const op of operators) {
       const token = op.getLastToken();
       if (this.conf.badOperators.indexOf(token.getStr()) >= 0) {

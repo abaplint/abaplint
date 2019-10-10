@@ -1,5 +1,5 @@
 import {ver, seq, opt, tok, star, alt, optPrio, str, Expression, IStatementRunnable} from "../combi";
-import {SQLFieldName, Dynamic, Select} from "./";
+import {SQLFieldName, Dynamic, Select, SQLCompareOperator} from "./";
 import {WParenLeft, WParenLeftW, ParenLeftW, WParenRightW} from "../tokens/";
 import {SQLSource} from "./sql_source";
 import {Version} from "../../version";
@@ -19,21 +19,6 @@ export class SQLCompare extends Expression {
                     str("IN"),
                     alt(new SQLSource(), list, subSelect));
 
-    const operator = alt(str("="),
-                         str("<>"),
-                         str("><"),
-                         str("<"),
-                         str(">"),
-                         str("<="),
-                         str("=>"),
-                         str(">="),
-                         str("EQ"),
-                         str("NE"),
-                         str("GE"),
-                         str("GT"),
-                         str("LT"),
-                         str("LE"));
-
     const between = seq(str("BETWEEN"), new SQLSource(), str("AND"), new SQLSource());
 
     const like = seq(opt(str("NOT")), str("LIKE"), new SQLSource(), optPrio(seq(str("ESCAPE"), new SQLSource())));
@@ -47,7 +32,7 @@ export class SQLCompare extends Expression {
     const builtin = ver(Version.v751, seq(alt(str("lower"), str("upper")), tok(ParenLeftW), new SQLFieldName(), tok(WParenRightW)));
 
     const rett = seq(alt(new SQLFieldName(), builtin),
-                     alt(seq(operator, alt(source, sub)),
+                     alt(seq(new SQLCompareOperator(), alt(source, sub)),
                          inn,
                          like,
                          between,
