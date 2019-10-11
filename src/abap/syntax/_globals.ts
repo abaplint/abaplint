@@ -96,7 +96,7 @@ export class Globals {
 
     const proc = new Procedural(reg.getABAPObjects()[0], reg, variables);
     for (const statement of structure.findAllStatementNodes()) {
-      proc.findDefinitions(statement);
+      proc.addDefinitions(statement);
     }
     return variables.getCurrentScope();
   }

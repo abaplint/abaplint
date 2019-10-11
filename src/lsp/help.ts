@@ -60,7 +60,7 @@ export class Help {
       }
       ret = ret + "<u>" + s.name + "</u>: ";
       for (const v of s.vars) {
-        ret = ret + "<tt>" + v.name.toLowerCase() + "</tt>";
+        ret = ret + "<tt>" + this.escape(v.name.toLowerCase()) + "</tt>";
         if (v.identifier !== undefined) {
           const pos = v.identifier.getStart();
           ret = ret + "(" + pos.getRow() + ", " + pos.getCol() + ")";

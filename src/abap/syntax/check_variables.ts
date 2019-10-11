@@ -103,7 +103,7 @@ export class CheckVariablesLogic {
     if (node instanceof ExpressionNode
         && (node.get() instanceof Expressions.Source
         || node.get() instanceof Expressions.Target)) {
-      for (const field of node.findAllExpressions(Expressions.Field)) {
+      for (const field of node.findAllExpressions(Expressions.Field).concat(node.findAllExpressions(Expressions.FieldSymbol))) {
         const token = field.getFirstToken();
         const resolved = this.variables.resolve(token.getStr());
         if (resolved === undefined) {
@@ -150,7 +150,7 @@ export class CheckVariablesLogic {
     }
 
     const sub = node.get();
-    this.proc.findDefinitions(node);
+    this.proc.addDefinitions(node);
 
     if (sub instanceof Statements.Form) {
       this.proc.findFormScope(node);

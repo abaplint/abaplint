@@ -990,6 +990,18 @@ describe("Check Variables", () => {
     expect(issues.length).to.equals(0);
   });
 
+  it("program, unknown field-symbol", () => {
+    const abap = "WRITE <moo>.\n";
+    const issues = runProgram(abap);
+    expect(issues.length).to.equals(1);
+  });
+
+  it("program, just the field-symbol definition", () => {
+    const abap = "FIELD-SYMBOLS: <ls_match> TYPE c.\n";
+    const issues = runProgram(abap);
+    expect(issues.length).to.equals(0);
+  });
+
 /*
   it("program, constant, begin, error", () => {
     const abap =

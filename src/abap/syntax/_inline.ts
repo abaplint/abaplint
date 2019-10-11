@@ -44,10 +44,14 @@ export class Inline {
       }
 
       for (const inline of node.findAllExpressions(Expressions.InlineLoopDefinition)) {
-        const field = inline.findFirstExpression(Expressions.Field);
+        const field = inline.findFirstExpression(Expressions.Field); // todo, this can take the field after IN
         if (field !== undefined) {
           this.addVariable(field);
 // todo, these also have to be popped after the statement
+        }
+        const fs = inline.findFirstExpression(Expressions.FieldSymbol);
+        if (fs !== undefined) {
+          this.addVariable(fs);
         }
       }
 

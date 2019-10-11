@@ -21,7 +21,7 @@ export class Procedural {
     this.variables = variables;
   }
 
-  public findDefinitions(node: StatementNode) {
+  public addDefinitions(node: StatementNode) {
     const sub = node.get();
     const ret: Identifier[] = [];
 
@@ -34,6 +34,8 @@ export class Procedural {
       ret.push(this.buildVariable(node.findFirstExpression(Expressions.NamespaceSimpleName)));
     } else if (sub instanceof Statements.Parameter) {
       ret.push(this.buildVariable(node.findFirstExpression(Expressions.FieldSub)));
+    } else if (sub instanceof Statements.FieldSymbol) {
+      ret.push(this.buildVariable(node.findFirstExpression(Expressions.FieldSymbol)));
     } else if (sub instanceof Statements.Tables || sub instanceof Statements.SelectOption) {
       ret.push(this.buildVariable(node.findFirstExpression(Expressions.Field)));
     }
