@@ -2,6 +2,7 @@ import {ABAPRule} from "./_abap_rule";
 import {BasicRuleConfig} from "./_basic_rule_config";
 import {Issue} from "../issue";
 import {ABAPFile} from "../files";
+import {MethodDefinition} from "../abap/types";
 
 /** Checks abapdoc for public class methods and all interface methods. */
 // todo check if public method is implementation of interface method
@@ -31,33 +32,25 @@ export class RequireAbapdoc extends ABAPRule {
   public runParsed(file: ABAPFile) {
     const issues: Issue[] = [];
     const rows = file.getRawRows();
+    let methods: MethodDefinition[] = [];
 
-    for (const def of file.getClassDefinitions()) {
-      for (const publicMethod of def.getMethodDefinitions().getPublic()) {
-        const previousRow = publicMethod.getStart().getRow() - 2;
-        if (!(rows[previousRow].trim().substring(0, 2) === "\"!")) {
-          issues.push(new Issue({
-            file,
-            message: this.getDescription(),
-            key: this.getKey(),
-            start: publicMethod.getStart()}));
-        }
-      }
+    for (const classDef of file.getClassDefinitions()) {
+      methods = methods.concat(classDef.getMethodDefinitions().getPublic());
+    }
+    for (const interfaceDef of file.getInterfaceDefinitions()) {
+      methods = methods.concat(interfaceDef.getMethodDefinitions());
     }
 
-    for (const def of file.getInterfaceDefinitions()) {
-      for (const interfaceMethod of def.getMethodDefinitions()) {
-        const previousRow = interfaceMethod.getStart().getRow() - 2;
-        if (!(rows[previousRow].trim().substring(0, 2) === "\"!")) {
-          issues.push(new Issue({
-            file,
-            message: this.getDescription(),
-            key: this.getKey(),
-            start: interfaceMethod.getStart()}));
-        }
+    for (const method of methods) {
+      const previousRow = method.getStart().getRow() - 2;
+      if (!(rows[previousRow].trim().substring(0, 2) === "\"!")) {
+        issues.push(new Issue({
+          file,
+          message: this.getDescription(),
+          key: this.getKey(),
+          start: method.getStart() }));
       }
     }
-
     return issues;
   }
 
