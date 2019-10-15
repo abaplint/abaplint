@@ -39,6 +39,7 @@ export * from "./obsolete_statement";
 export * from "./preferred_compare_operator";
 export * from "./release_idoc";
 export * from "./remove_descriptions";
+export * from "./require_abapdoc";
 export * from "./rfc_error_handling";
 export * from "./short_case";
 export * from "./syntax/begin_end_names";
