@@ -5,7 +5,6 @@ import {ABAPFile} from "../files";
 import {MethodDefinition} from "../abap/types";
 
 /** Checks abapdoc for public class methods and all interface methods. */
-// todo check if public method is implementation of interface method
 export class RequireAbapdocConf extends BasicRuleConfig {
 }
 
