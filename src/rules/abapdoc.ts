@@ -6,7 +6,8 @@ import {MethodDefinition} from "../abap/types";
 
 /**
  * Various checks regarding abapdoc. Base rule checks for existence of abapdoc for
- * public class methods and all interface methods. */
+ * public class methods and all interface methods.
+ */
 export class AbapdocConf extends BasicRuleConfig {
 }
 
