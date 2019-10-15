@@ -20,7 +20,7 @@ export class Abapdoc extends ABAPRule {
   }
 
   public getDescription(): string {
-    return "Rules for abapdoc.";
+    return "Missing abapdoc.";
   }
 
   public getConfig() {
