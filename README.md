@@ -14,19 +14,19 @@ Regarding versioning: semantic versioning is currently not followed, recommend f
 
 [Syntax Diagrams](https://syntax.abaplint.org)
 
-The code is in active development and some rules may not be described in documentation yet. In order to see the default configuration with all the rules run `abaplint -d`. You may also save it as the current config in the root dir of your project `abaplint -d > abaplint.json`
+Get default configuration by running `abaplint -d > abaplint.json`
 
 ### Works with
 * [VS Code](https://marketplace.visualstudio.com/items?itemName=larshp.vscode-abaplint) ([source](https://github.com/abaplint/vscode-abaplint))
-* [Atom](https://atom.io/packages/linter-abaplint) ([source](https://github.com/larshp/linter-abaplint))
 * [GitHub App](https://github.com/apps/abaplint)
 * [GitHub Actions](https://github.com/abaplint/actions-abaplint)
 * [GitLab Pipelines](https://gitlab.com/sbu-absw/abaplint-example)
 * [Bitbucket Pipelines](https://bitbucket.org/larshp/abaplint_pipeline)
 * [Azure Pipelines](https://github.com/abaplint/azure-devops-example)
 * [Travis CI](https://blogs.sap.com/2018/12/25/automatic-checking-of-your-abap-code-in-githubgitlab-with-ci-and-abaplint/)
+* [Atom](https://atom.io/packages/linter-abaplint) (todo, [source](https://github.com/larshp/linter-abaplint))
 * Code Climate Engine, todo
-* ABAP in Eclipse, todo
+* ABAP in Eclipse, (todo, [source](https://github.com/abaplint/abaplint-eclipse))
 
 For checking ABAP code inside the ABAP system use [code inspector](http://wiki.scn.sap.com/wiki/display/ABAP/Code+Inspector) or [ATC](http://wiki.scn.sap.com/wiki/display/ABAP/ABAP+Test+Cockpit), also see project [abapOpenChecks](https://github.com/larshp/abapOpenChecks).
 
