@@ -4,27 +4,29 @@ import {Issue} from "../issue";
 import {ABAPFile} from "../files";
 import {MethodDefinition} from "../abap/types";
 
-/** Checks abapdoc for public class methods and all interface methods. */
-export class RequireAbapdocConf extends BasicRuleConfig {
+/**
+ * Various checks regarding abapdoc. Base rule checks for existence of abapdoc for
+ * public class methods and all interface methods. */
+export class AbapdocConf extends BasicRuleConfig {
 }
 
-export class RequireAbapdoc extends ABAPRule {
+export class Abapdoc extends ABAPRule {
 
-  private conf = new RequireAbapdocConf();
+  private conf = new AbapdocConf();
 
   public getKey(): string {
-    return "require_abapdoc";
+    return "abapdoc";
   }
 
   public getDescription(): string {
-    return "Require abapdoc for public methods.";
+    return "Rules for abapdoc.";
   }
 
   public getConfig() {
     return this.conf;
   }
 
-  public setConfig(conf: RequireAbapdocConf): void {
+  public setConfig(conf: AbapdocConf): void {
     this.conf = conf;
   }
 

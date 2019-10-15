@@ -1,4 +1,5 @@
 export * from "./7bit_ascii";
+export * from "./abapdoc";
 export * from "./allowed_object_types";
 export * from "./ambiguous_statement";
 export * from "./avoid_use";
@@ -39,7 +40,6 @@ export * from "./obsolete_statement";
 export * from "./preferred_compare_operator";
 export * from "./release_idoc";
 export * from "./remove_descriptions";
-export * from "./require_abapdoc";
 export * from "./rfc_error_handling";
 export * from "./short_case";
 export * from "./syntax/begin_end_names";

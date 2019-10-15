@@ -1,5 +1,5 @@
 import {testRule} from "./_utils";
-import {RequireAbapdoc} from "../../src/rules/require_abapdoc";
+import {Abapdoc} from "../../src/rules/abapdoc";
 
 
 const tests = [
@@ -61,4 +61,4 @@ const tests = [
             ENDINTERFACE.`, cnt: 0},
 ];
 
-testRule(tests, RequireAbapdoc);
+testRule(tests, Abapdoc);
