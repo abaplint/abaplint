@@ -8,7 +8,7 @@ import {Identifier} from "./_identifier";
 export class MethodDefinition extends Identifier {
   private visibility: Visibility;
   private parameters: MethodParameters;
-  private redfinition: boolean;
+  private redefinition: boolean;
   private eventHandler: boolean;
   private abstract: boolean;
 
@@ -25,9 +25,9 @@ export class MethodDefinition extends Identifier {
     }
     super(found.getFirstToken());
 
-    this.redfinition = false;
+    this.redefinition = false;
     if (node.findFirstExpression(Expressions.Redefinition)) {
-      this.redfinition = true;
+      this.redefinition = true;
     }
 
     this.eventHandler = false;
@@ -49,7 +49,7 @@ export class MethodDefinition extends Identifier {
   }
 
   public isRedefinition(): boolean {
-    return this.redfinition;
+    return this.redefinition;
   }
 
   public isAbstract(): boolean {
