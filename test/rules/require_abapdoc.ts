@@ -61,5 +61,4 @@ const tests = [
             ENDINTERFACE.`, cnt: 0},
 ];
 
-
 testRule(tests, RequireAbapdoc);
