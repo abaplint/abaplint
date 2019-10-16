@@ -8,9 +8,9 @@ import {Registry} from "../../registry";
 import {ScopedVariables} from "./_scoped_variables";
 
 export class ObjectOriented {
-  private obj: ABAPObject;
-  private reg: Registry;
-  private variables: ScopedVariables;
+  private readonly obj: ABAPObject;
+  private readonly reg: Registry;
+  private readonly variables: ScopedVariables;
 
   constructor(obj: ABAPObject, reg: Registry, variables: ScopedVariables) {
     this.obj = obj;

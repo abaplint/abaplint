@@ -1002,6 +1002,16 @@ describe("Check Variables", () => {
     expect(issues.length).to.equals(0);
   });
 
+  it("program, inline FS definition", () => {
+    const abap = `
+    DATA moo TYPE string_table.
+    LOOP AT moo ASSIGNING FIELD-SYMBOL(<moo>).
+      WRITE <moo>.
+    ENDLOOP.`;
+    const issues = runProgram(abap);
+    expect(issues.length).to.equals(0);
+  });
+
 /*
   it("program, constant, begin, error", () => {
     const abap =

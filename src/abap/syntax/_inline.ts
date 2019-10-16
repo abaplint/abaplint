@@ -10,8 +10,8 @@ import {Table, View} from "../../objects";
 class LocalIdentifier extends Identifier { }
 
 export class Inline {
-  private variables: ScopedVariables;
-  private reg: Registry;
+  private readonly variables: ScopedVariables;
+  private readonly reg: Registry;
 
   constructor(variables: ScopedVariables, reg: Registry) {
     this.variables = variables;
@@ -31,6 +31,12 @@ export class Inline {
 
       for (const inline of node.findAllExpressions(Expressions.InlineData)) {
         const field = inline.findFirstExpression(Expressions.Field);
+        if (field === undefined) { throw new Error("syntax_check, unexpected tree structure"); }
+        this.addVariable(field);
+      }
+
+      for (const inline of node.findAllExpressions(Expressions.InlineFS)) {
+        const field = inline.findFirstExpression(Expressions.FieldSymbol);
         if (field === undefined) { throw new Error("syntax_check, unexpected tree structure"); }
         this.addVariable(field);
       }
@@ -91,11 +97,11 @@ export class Inline {
   }
 
   private findFields(name: string): string[] {
-    const table = this.reg.getObject("TABL", name) as Table;
+    const table = this.reg.getObject("TABL", name) as Table | undefined;
     if (table !== undefined) {
       return table.getFields();
     }
-    const view = this.reg.getObject("VIEW", name) as View;
+    const view = this.reg.getObject("VIEW", name) as View | undefined;
     if (view !== undefined) {
       return view.getFields();
     }
