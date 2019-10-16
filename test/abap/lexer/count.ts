@@ -86,7 +86,7 @@ describe("count_tokens", () => {
 
   tests.forEach((test) => {
     const tokens = getTokens(test.abap);
-    it("\"" + test.abap + "\" should have " + test.tokens + " tokens", () => {
+    it("\"" + test.abap + "\" should have " + test.tokens.toString() + " tokens", () => {
       expect(tokens.length).to.equals(test.tokens);
     });
     it("\"" + test.abap + "\" position values should be positive", () => {

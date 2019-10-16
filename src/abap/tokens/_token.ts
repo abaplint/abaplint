@@ -1,8 +1,8 @@
 import {Position} from "../../position";
 
 export abstract class Token {
-  private pos: Position;
-  private str: string;
+  private readonly pos: Position;
+  private readonly str: string;
 
   constructor(pos: Position, str: string) {
     this.pos = pos;

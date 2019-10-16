@@ -33,7 +33,7 @@ class Buffer {
 }
 
 class Stream {
-  private raw: string;
+  private readonly raw: string;
   private offset = -1;
   private row: number;
   private col: number;

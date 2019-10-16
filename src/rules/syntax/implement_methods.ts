@@ -91,7 +91,7 @@ export class ImplementMethods extends ABAPRule {
     let idef: InterfaceDefinition | undefined = undefined;
 
     for (const interfaceName of def.getImplementing()) {
-      const intf = reg.getObject("INTF", interfaceName.name) as Interface;
+      const intf = reg.getObject("INTF", interfaceName.name) as Interface | undefined;
       if (intf === undefined) {
         idef = file.getInterfaceDefinition(interfaceName.name);
         if (idef === undefined) {

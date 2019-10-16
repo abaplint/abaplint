@@ -32,8 +32,8 @@ class Stack {
 }
 
 class Indentation {
-  private options: IIndentationOptions;
-  private globalClasses = new Set();
+  private readonly options: IIndentationOptions;
+  private readonly globalClasses = new Set();
 
   constructor(options: IIndentationOptions) {
     this.options = options;
@@ -168,8 +168,8 @@ class Indentation {
 
 export class PrettyPrinter {
   private result: string;
-  private file: ABAPFile;
-  private options: IIndentationOptions;
+  private readonly file: ABAPFile;
+  private readonly options: IIndentationOptions;
 
   constructor(file: ABAPFile, options?: IIndentationOptions) {
     this.result = file.getRaw();

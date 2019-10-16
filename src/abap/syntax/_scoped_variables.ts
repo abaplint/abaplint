@@ -6,7 +6,7 @@ interface IVar {
 }
 
 export class ScopedVariables {
-  private scopes: {name: string; vars: IVar[]}[];
+  private readonly scopes: {name: string; vars: IVar[]}[];
 
   constructor(builtin: Identifier[]) {
     this.scopes = [];

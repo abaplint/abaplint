@@ -3,8 +3,8 @@ import {Visibility} from ".";
 import {Token} from "../tokens/_token";
 
 export class Alias extends Identifier {
-  private visibility: Visibility;
-  private component: string;
+  private readonly visibility: Visibility;
+  private readonly component: string;
 
   constructor(token: Token, visibility: Visibility, component: string) {
     super(token);

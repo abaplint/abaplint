@@ -6,11 +6,11 @@ import {Visibility} from "./visibility";
 import {Identifier} from "./_identifier";
 
 export class MethodDefinition extends Identifier {
-  private visibility: Visibility;
-  private parameters: MethodParameters;
-  private redefinition: boolean;
-  private eventHandler: boolean;
-  private abstract: boolean;
+  private readonly visibility: Visibility;
+  private readonly parameters: MethodParameters;
+  private readonly redefinition: boolean;
+  private readonly eventHandler: boolean;
+  private readonly abstract: boolean;
 
 // todo:
 // final

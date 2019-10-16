@@ -7,7 +7,7 @@ import {CountableNode} from "./nodes/_countable_node";
 import {INode} from "./nodes/_inode";
 
 export class Result {
-  private tokens: Tokens_Token[];
+  private readonly tokens: Tokens_Token[];
   private nodes: CountableNode[] | undefined;
 
   constructor(a: Tokens_Token[], n?: CountableNode[]) {
@@ -86,7 +86,7 @@ export interface IStatementRunnable {
 
 class Regex implements IStatementRunnable {
 
-  private regexp: RegExp;
+  private readonly regexp: RegExp;
 
   constructor(r: RegExp) {
     this.regexp = r;
@@ -128,7 +128,7 @@ class Regex implements IStatementRunnable {
 
 class Word implements IStatementRunnable {
 
-  private s: string;
+  private readonly s: string;
 
   constructor(s: string) {
     this.s = s;
@@ -182,9 +182,9 @@ function functionName(fun: any) {
 
 class Token implements IStatementRunnable {
 
-  private s: String;
+  private readonly s: string;
 
-  constructor(s: String) {
+  constructor(s: string) {
     this.s = s;
   }
 
@@ -232,8 +232,8 @@ class Token implements IStatementRunnable {
 
 class Vers implements IStatementRunnable {
 
-  private version: Version;
-  private runnable: IStatementRunnable;
+  private readonly version: Version;
+  private readonly runnable: IStatementRunnable;
 
   constructor(version: Version, runnable: IStatementRunnable) {
     this.version = version;
@@ -275,8 +275,8 @@ class Vers implements IStatementRunnable {
 
 class VersNot implements IStatementRunnable {
 
-  private version: Version;
-  private runnable: IStatementRunnable;
+  private readonly version: Version;
+  private readonly runnable: IStatementRunnable;
 
   constructor(version: Version, runnable: IStatementRunnable) {
     this.version = version;
@@ -318,7 +318,7 @@ class VersNot implements IStatementRunnable {
 
 class OptionalPriority implements IStatementRunnable {
 
-  private optional: IStatementRunnable;
+  private readonly optional: IStatementRunnable;
 
   constructor(optional: IStatementRunnable) {
     this.optional = optional;
@@ -373,7 +373,7 @@ class OptionalPriority implements IStatementRunnable {
 
 class Optional implements IStatementRunnable {
 
-  private optional: IStatementRunnable;
+  private readonly optional: IStatementRunnable;
 
   constructor(optional: IStatementRunnable) {
     this.optional = optional;
@@ -414,7 +414,7 @@ class Optional implements IStatementRunnable {
 
 class Star implements IStatementRunnable {
 
-  private sta: IStatementRunnable;
+  private readonly sta: IStatementRunnable;
 
   constructor(sta: IStatementRunnable) {
     this.sta = sta;
@@ -462,7 +462,7 @@ class Star implements IStatementRunnable {
 
 class Plus implements IStatementRunnable {
 
-  private plu: IStatementRunnable;
+  private readonly plu: IStatementRunnable;
 
   constructor(plu: IStatementRunnable) {
     this.plu = plu;
@@ -494,8 +494,8 @@ class Plus implements IStatementRunnable {
 }
 
 class Sequence implements IStatementRunnable {
-  private list: IStatementRunnable[];
-  private stack: boolean;
+  private readonly list: IStatementRunnable[];
+  private readonly stack: boolean;
 
   constructor(list: IStatementRunnable[], stack = false) {
     if (list.length < 2) {
@@ -559,10 +559,10 @@ class Sequence implements IStatementRunnable {
 
 class WordSequence implements IStatementRunnable {
 
-  private stri: String;
-  private words: IStatementRunnable[] = [];
+  private readonly stri: string;
+  private readonly words: IStatementRunnable[] = [];
 
-  constructor(stri: String) {
+  constructor(stri: string) {
     this.stri = stri;
 
     const foo = this.stri.replace(/-/g, " - ");
@@ -663,7 +663,7 @@ export abstract class Expression implements IStatementRunnable {
 }
 
 class Permutation implements IStatementRunnable {
-  private list: IStatementRunnable[];
+  private readonly list: IStatementRunnable[];
 
   constructor(list: IStatementRunnable[]) {
     if (list.length < 2) {
@@ -721,7 +721,7 @@ class Permutation implements IStatementRunnable {
 }
 
 class Alternative implements IStatementRunnable {
-  private list: IStatementRunnable[];
+  private readonly list: IStatementRunnable[];
 
   constructor(list: IStatementRunnable[]) {
     if (list.length < 2) {
@@ -773,7 +773,7 @@ class Alternative implements IStatementRunnable {
 
 // prioritized alternative, skip others if match found
 class AlternativePriority implements IStatementRunnable {
-  private list: IStatementRunnable[];
+  private readonly list: IStatementRunnable[];
 
   constructor(list: IStatementRunnable[]) {
     if (list.length < 2) {

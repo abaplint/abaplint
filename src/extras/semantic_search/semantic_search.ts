@@ -20,7 +20,7 @@ export interface ISemanticSearchResult {
 }
 
 export class SemanticSearch {
-  private reg: Registry;
+  private readonly reg: Registry;
 
   constructor(reg: Registry) {
     this.reg = reg;

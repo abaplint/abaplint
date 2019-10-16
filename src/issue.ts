@@ -10,11 +10,11 @@ interface IIssueData {
 }
 
 export class Issue {
-  private start: Position;
-  private end: Position;
-  private file: IFile;
-  private message: string;
-  private key: string;
+  private readonly start: Position;
+  private readonly end: Position;
+  private readonly file: IFile;
+  private readonly message: string;
+  private readonly key: string;
 
   public constructor(data: IIssueData) {
     this.message = data.message;

@@ -16,14 +16,14 @@ import {Inline} from "./_inline";
 import {Program} from "../../objects";
 
 export class CheckVariablesLogic {
-  private object: ABAPObject;
+  private readonly object: ABAPObject;
   private currentFile: ABAPFile;
-  private variables: ScopedVariables;
-  private issues: Issue[];
-  private reg: Registry;
-  private oooc: ObjectOriented;
-  private proc: Procedural;
-  private inline: Inline;
+  private readonly variables: ScopedVariables;
+  private readonly issues: Issue[];
+  private readonly reg: Registry;
+  private readonly oooc: ObjectOriented;
+  private readonly proc: Procedural;
+  private readonly inline: Inline;
 
   constructor(reg: Registry, object: ABAPObject) {
     this.reg = reg;

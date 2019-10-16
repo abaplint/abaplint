@@ -10,7 +10,7 @@ import {Aliases} from "./aliases";
 
 // todo, is this the same as an InterfaceDefinition?
 export class ClassDefinition extends Identifier {
-  private node: StructureNode;
+  private readonly node: StructureNode;
 
   constructor(node: StructureNode) {
     if (!(node.get() instanceof Structures.ClassDefinition)) {

@@ -129,11 +129,9 @@ describe("Objects, class, getMethodDefinitions", () => {
     expect(clas.getClassDefinition()).to.not.equal(undefined);
     expect(clas.getClassDefinition()!.getMethodDefinitions()).to.not.equal(undefined);
     const methods = clas.getClassDefinition()!.getMethodDefinitions();
-    if (methods !== undefined) {
-      expect(methods.getPrivate().length).to.equal(1);
-      expect(methods.getPrivate()[0].getName()).to.equal("method1");
-      expect(methods.getPrivate()[0].getVisibility()).to.equal(Visibility.Private);
-    }
+    expect(methods.getPrivate().length).to.equal(1);
+    expect(methods.getPrivate()[0].getName()).to.equal("method1");
+    expect(methods.getPrivate()[0].getVisibility()).to.equal(Visibility.Private);
   });
 
   it("test, parser error", () => {
@@ -180,12 +178,10 @@ describe("Objects, class, getAttributes", () => {
     expect(clas.getClassDefinition()).to.not.equal(undefined);
     expect(clas.getClassDefinition()!.getAttributes()).to.not.equal(undefined);
     const attr = clas.getClassDefinition()!.getAttributes();
-    if (attr !== undefined) {
-      expect(attr.getInstance().length).to.equal(1);
-      expect(attr.getInstance()[0].getName()).to.equal("moo");
-      expect(attr.getInstance()[0].getVisibility()).to.equal(Visibility.Private);
-      expect(attr.getStatic().length).to.equal(0);
-    }
+    expect(attr.getInstance().length).to.equal(1);
+    expect(attr.getInstance()[0].getName()).to.equal("moo");
+    expect(attr.getInstance()[0].getVisibility()).to.equal(Visibility.Private);
+    expect(attr.getStatic().length).to.equal(0);
   });
 
   it("test, positive, enum", () => {
@@ -226,13 +222,11 @@ describe("Objects, class, getAttributes", () => {
     expect(clas.getClassDefinition()).to.not.equal(undefined);
     expect(clas.getClassDefinition()!.getAttributes()).to.not.equal(undefined);
     const attr = clas.getClassDefinition()!.getAttributes();
-    if (attr !== undefined) {
-      expect(attr.getStatic().length).to.equal(1);
-      expect(attr.getStatic().length).to.equal(1);
-      expect(attr.getStatic()[0].getName()).to.equal("moo");
-      expect(attr.getStatic()[0].getVisibility()).to.equal(Visibility.Private);
-      expect(attr.getInstance().length).to.equal(0);
-    }
+    expect(attr.getStatic().length).to.equal(1);
+    expect(attr.getStatic().length).to.equal(1);
+    expect(attr.getStatic()[0].getName()).to.equal("moo");
+    expect(attr.getStatic()[0].getVisibility()).to.equal(Visibility.Private);
+    expect(attr.getInstance().length).to.equal(0);
   });
 
 // todo, one test for each section, plus data/static/constant

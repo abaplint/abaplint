@@ -11,7 +11,7 @@ export interface IKeyword {
 }
 
 class List {
-  private words: IKeyword[];
+  private readonly words: IKeyword[];
 
   public constructor() {
     this.words = [];

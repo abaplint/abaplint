@@ -1,7 +1,7 @@
 import {AbstractFile} from "./_abstract_file";
 
 export class MemoryFile extends AbstractFile {
-  private raw: string;
+  private readonly raw: string;
 
   constructor(filename: string, raw: string) {
     super(filename);

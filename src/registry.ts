@@ -27,9 +27,9 @@ export class NoProgress implements IProgress {
 export class Registry {
   private dirty = false;
   private conf: Config;
-  private objects: IObject[] = [];
+  private readonly objects: IObject[] = [];
   private issues: Issue[] = [];
-  private dependencies: string[] = [];
+  private readonly dependencies: string[] = [];
 
   constructor(conf?: Config) {
     this.conf = conf ? conf : Config.getDefault();

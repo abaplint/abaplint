@@ -3,7 +3,7 @@ import * as Objects from "../../objects";
 import * as Types from "../../abap/types";
 
 export class Dump {
-  private reg: Registry;
+  private readonly reg: Registry;
 
   public constructor(reg: Registry) {
     this.reg = reg;

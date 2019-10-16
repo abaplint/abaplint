@@ -2,7 +2,7 @@ import {CountableNode} from "./_countable_node";
 import {Token} from "../tokens/_token";
 
 export class TokenNode extends CountableNode {
-  private token: Token;
+  private readonly token: Token;
 
   public constructor(token: Token) {
     super();

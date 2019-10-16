@@ -3,7 +3,7 @@ import {IObject} from "./objects/_iobject";
 import {Class, ClassCategory, FunctionGroup, MaintenanceAndTransportObject, Interface} from "./objects";
 
 export class SkipLogic {
-  private reg: Registry;
+  private readonly reg: Registry;
 
   constructor(reg: Registry) {
     this.reg = reg;

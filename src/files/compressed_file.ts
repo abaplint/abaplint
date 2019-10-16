@@ -2,7 +2,7 @@ import {AbstractFile} from "./_abstract_file";
 import * as zlib from "zlib";
 
 export class CompressedFile extends AbstractFile {
-  private compressed: string;
+  private readonly compressed: string;
 
   constructor(filename: string, compressed: string) {
     super(filename);

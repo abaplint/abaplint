@@ -6,11 +6,11 @@ import {MethodDefImporting, MethodParam, MethodDefExporting, MethodDefChanging,
 import {ExpressionNode}  from "../../abap/nodes";
 
 export class MethodParameters {
-  private importing: MethodParameter[];
-  private exporting: MethodParameter[];
-  private changing: MethodParameter[];
+  private readonly importing: MethodParameter[];
+  private readonly exporting: MethodParameter[];
+  private readonly changing: MethodParameter[];
   private returning: MethodParameter | undefined;
-  private exceptions: string[]; // todo, not filled
+  private readonly exceptions: string[]; // todo, not filled
 
   constructor(node: StatementNode) {
     if (!(node.get() instanceof MethodDef)) {

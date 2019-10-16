@@ -63,7 +63,7 @@ export class Help {
         ret = ret + "<tt>" + this.escape(v.name.toLowerCase()) + "</tt>";
         if (v.identifier !== undefined) {
           const pos = v.identifier.getStart();
-          ret = ret + "(" + pos.getRow() + ", " + pos.getCol() + ")";
+          ret = ret + "(" + pos.getRow().toString() + ", " + pos.getCol().toString() + ")";
         }
         ret = ret + ", ";
       }

@@ -7,7 +7,7 @@ import {Expression} from "../combi";
 import {ExpressionNode} from "./expression_node";
 
 export class StructureNode extends BasicNode {
-  private structure: Structure;
+  private readonly structure: Structure;
 
   public constructor(structure: Structure) {
     super();

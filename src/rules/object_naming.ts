@@ -94,7 +94,7 @@ export class ObjectNaming implements IRule {
       pattern = this.getConfig().idoc;
     }
 
-    if (pattern === "" || pattern === undefined) {
+    if (pattern === "") {
       return [];
     }
 

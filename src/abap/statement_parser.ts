@@ -11,7 +11,7 @@ import {Config} from "../config";
 import {Identifier, Pragma} from "./tokens";
 
 class Map {
-  private map: {[index: string]: Statement[] };
+  private readonly map: {[index: string]: Statement[] };
 
   public constructor() {
     this.map = {};
@@ -35,7 +35,7 @@ class Map {
 }
 
 class Macros {
-  private macros: string[];
+  private readonly macros: string[];
 
   constructor(config: Config) {
     this.macros = [];

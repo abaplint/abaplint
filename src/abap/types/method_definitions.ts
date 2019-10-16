@@ -6,9 +6,9 @@ import {MethodDef} from "../../abap/statements";
 import {Visibility} from "./visibility";
 
 export class MethodDefinitions {
-  private pri: MethodDefinition[];
-  private pub: MethodDefinition[];
-  private pro: MethodDefinition[];
+  private readonly pri: MethodDefinition[];
+  private readonly pub: MethodDefinition[];
+  private readonly pro: MethodDefinition[];
 
   public constructor(node: StructureNode) {
     this.pri = [];

@@ -3,7 +3,7 @@ import {StatementNode} from "../nodes";
 import {Constant} from "./constant";
 
 export class ClassConstant extends Constant {
-  private visibility: Visibility;
+  private readonly visibility: Visibility;
 
   constructor(node: StatementNode, visibility: Visibility) {
     super(node);

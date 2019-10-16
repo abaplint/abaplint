@@ -6,7 +6,7 @@ import * as Expressions from "../../abap/expressions";
 import {MethodImplementation} from "./method_implementation";
 
 export class ClassImplementation extends Identifier {
-  private node: StructureNode;
+  private readonly node: StructureNode;
 
   constructor(node: StructureNode) {
     if (!(node.get() instanceof Structures.ClassImplementation)) {

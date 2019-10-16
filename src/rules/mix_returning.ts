@@ -32,7 +32,7 @@ export class MixReturning extends ABAPRule {
   public runParsed(file: ABAPFile): Issue[] {
     const ret: Issue[] = [];
     const stru = file.getStructure();
-    if (stru == undefined) {
+    if (stru === undefined) {
       return [];
     }
 

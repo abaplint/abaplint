@@ -1,6 +1,9 @@
 {
   "rulesDirectory": "node_modules/tslint-eslint-rules/dist/rules",
   "rules": {
+    "restrict-plus-operands": false,
+    "strict-type-predicates": false,
+
     "no-constant-condition": true,
     "no-duplicate-case": true,
     "no-empty-character-class": true,
@@ -94,10 +97,8 @@
       ],
     "no-null-keyword": true,
     "no-reference": true,
-    "restrict-plus-operands": true,
     "no-require-imports": true,
     "strict-string-expressions": true,
-    "strict-type-predicates": true,
     "prefer-readonly": true,
     "no-shadowed-variable": true,
     "no-string-literal": false,

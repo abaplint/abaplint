@@ -6,7 +6,7 @@ import * as Expressions from "../../abap/expressions";
 import {Visibility} from "./visibility";
 
 export class Aliases {
-  private aliases: Alias[];
+  private readonly aliases: Alias[];
 
   constructor(node: StructureNode) {
     this.aliases = [];

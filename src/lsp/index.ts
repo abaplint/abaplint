@@ -15,7 +15,7 @@ import {Definition} from "./definition";
 // but 1 based in abaplint
 
 export class LanguageServer {
-  private reg: Registry;
+  private readonly reg: Registry;
 
   constructor (reg: Registry) {
     this.reg = reg;

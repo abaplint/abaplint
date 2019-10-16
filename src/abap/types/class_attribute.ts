@@ -3,7 +3,7 @@ import {Identifier} from "./_identifier";
 import {Token} from "../tokens/_token";
 
 export class ClassAttribute extends Identifier {
-  private visibility: Visibility;
+  private readonly visibility: Visibility;
 //  private readOnly: boolean;
 
   constructor(token: Token, visibility: Visibility) {

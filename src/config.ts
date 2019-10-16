@@ -32,8 +32,8 @@ export interface IConfig {
 
 export class Config {
 
-  private static defaultVersion = Version.v755;
-  private config: IConfig;
+  private static readonly defaultVersion = Version.v755;
+  private readonly config: IConfig;
 
   public static getDefault(): Config {
     const rules: any = {};

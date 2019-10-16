@@ -3,7 +3,7 @@ import {IObject} from "./_iobject";
 
 export abstract class AbstractObject implements IObject {
   protected files: IFile[];
-  private name: string;
+  private readonly name: string;
   protected dirty: boolean;
 
   public abstract getType(): string;

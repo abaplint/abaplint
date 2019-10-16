@@ -45,7 +45,7 @@ export class LocalVariableNames extends ABAPRule {
     let ret: Issue[] = [];
     const stru = file.getStructure();
 
-    if (stru == undefined) {
+    if (stru === undefined) {
       return [];
     }
 

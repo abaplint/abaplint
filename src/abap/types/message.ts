@@ -1,6 +1,6 @@
 export class Message {
-  private num: string;
-  private msg: string;
+  private readonly num: string;
+  private readonly msg: string;
 
   constructor(num: string, msg: string) {
     this.num = num;

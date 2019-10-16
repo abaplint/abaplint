@@ -13,8 +13,8 @@ import {FunctionGroup} from "../../objects";
 class LocalIdentifier extends Identifier { }
 
 export class Procedural {
-  private obj: ABAPObject;
-  private variables: ScopedVariables;
+  private readonly obj: ABAPObject;
+  private readonly variables: ScopedVariables;
 
   constructor(obj: ABAPObject, _reg: Registry, variables: ScopedVariables) {
     this.obj = obj;

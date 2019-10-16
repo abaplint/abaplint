@@ -2,7 +2,7 @@ import {Position} from "../../position";
 import {Token} from "../tokens/_token";
 
 export class Identifier {
-  private token: Token;
+  private readonly token: Token;
 
   constructor(token: Token) {
     this.token = token;

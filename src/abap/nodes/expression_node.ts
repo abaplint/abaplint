@@ -4,7 +4,7 @@ import {TokenNode} from "./token_node";
 import {Token} from "../tokens/_token";
 
 export class ExpressionNode extends CountableNode {
-  private expression: Expression;
+  private readonly expression: Expression;
 
   public constructor(expression: Expression) {
     super();

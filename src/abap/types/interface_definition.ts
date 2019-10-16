@@ -6,7 +6,7 @@ import * as Expressions from "../../abap/expressions";
 import {MethodDefinition, Visibility, Attributes} from ".";
 
 export class InterfaceDefinition extends Identifier {
-  private node: StructureNode;
+  private readonly node: StructureNode;
 
   constructor(node: StructureNode) {
     if (!(node.get() instanceof Structures.Interface)) {

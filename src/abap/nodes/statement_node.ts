@@ -9,9 +9,9 @@ import {ExpressionNode} from "./expression_node";
 import {Expression} from "../combi";
 
 export class StatementNode extends BasicNode {
-  private statement: Statement;
-  private colon: Token | undefined;
-  private pragmas: Token[];
+  private readonly statement: Statement;
+  private readonly colon: Token | undefined;
+  private readonly pragmas: Token[];
 
   public constructor(statement: Statement, colon?: Token | undefined, pragmas?: Token[]) {
     super();

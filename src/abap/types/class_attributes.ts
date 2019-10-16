@@ -7,9 +7,9 @@ import {StructureNode, StatementNode} from "../../abap/nodes";
 import {Visibility} from "./visibility";
 
 export class Attributes {
-  private static: ClassAttribute[];
-  private instance: ClassAttribute[];
-  private constants: ClassConstant[];
+  private readonly static: ClassAttribute[];
+  private readonly instance: ClassAttribute[];
+  private readonly constants: ClassConstant[];
 
   constructor(node: StructureNode) {
     this.static = [];

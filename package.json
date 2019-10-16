@@ -11,7 +11,7 @@
     "test": "test"
   },
   "scripts": {
-    "tslint": "tslint -p tsconfig.json -c tslint.json 'src/**/*.ts' 'test/**/*.ts'",
+    "tslint": "tslint -p tsconfig.json -c tslint.json \"src/**/*.ts\" \"test/**/*.ts\"",
     "compile": "tsc",
     "postcompile": "sh scripts/version.sh",
     "pretest": "npm run compile",

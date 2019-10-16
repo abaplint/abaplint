@@ -14,6 +14,7 @@ export function testRule(tests: any, rule: new () => IRule, config?: any) {
     tests.forEach((test: any) => {
       const reg = new Registry().addFile(new MemoryFile("zfoo.prog.abap", test.abap)).parse();
       const issues = nrule.run(reg.getObjects()[0], reg);
+      // tslint:disable-next-line: restrict-plus-operands
       it("\"" + test.abap + "\" should have " + test.cnt + " issue(s)", () => {
         expect(issues.length).to.equals(test.cnt);
       });

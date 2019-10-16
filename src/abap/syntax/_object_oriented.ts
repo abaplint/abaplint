@@ -208,7 +208,7 @@ export class ObjectOriented {
   }
 
   private findSuperDefinition(name: string): ClassDefinition {
-    const csup = this.reg.getObject("CLAS", name) as Class;
+    const csup = this.reg.getObject("CLAS", name) as Class | undefined;
     if (csup === undefined) {
       const found = this.findClassDefinition(name);
       if (found) {
@@ -234,9 +234,6 @@ export class ObjectOriented {
     const cdef = this.findSuperDefinition(sup);
 
     const attr = cdef.getAttributes();
-    if (attr === undefined) {
-      throw new Error("super class \"" + sup + "\" error in attributes");
-    }
 
     this.variables.addList(attr.getConstants()); // todo, handle scope and instance vs static
     this.variables.addList(attr.getInstance()); // todo, handle scope and instance vs static

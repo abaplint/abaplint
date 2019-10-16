@@ -1,6 +1,6 @@
 export class Position {
-  private row: number;
-  private col: number;
+  private readonly row: number;
+  private readonly col: number;
 
   constructor(row: number, col: number) {
     this.row = row;

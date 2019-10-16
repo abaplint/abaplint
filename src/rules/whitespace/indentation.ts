@@ -40,7 +40,7 @@ export class Indentation extends ABAPRule {
 
     let skip = false;
 
-    if (file.getStructure() == undefined) {
+    if (file.getStructure() === undefined) {
       return []; // syntax error in file
     }
 

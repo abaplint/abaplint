@@ -5,7 +5,7 @@ import {Identifier} from "./_identifier";
 import {StructureNode} from "../../abap/nodes";
 
 export class FormDefinition extends Identifier {
-  private node: StructureNode;
+  private readonly node: StructureNode;
 
   constructor(node: StructureNode) {
     if (!(node.get() instanceof Structures.Form)) {

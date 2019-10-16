@@ -18,7 +18,7 @@ export interface IStructureRunnable {
 }
 
 class Sequence implements IStructureRunnable {
-  private list: IStructureRunnable[];
+  private readonly list: IStructureRunnable[];
 
   constructor(list: IStructureRunnable[]) {
     if (list.length < 2) {
@@ -64,7 +64,7 @@ class Sequence implements IStructureRunnable {
 }
 
 class Alternative implements IStructureRunnable {
-  private list: IStructureRunnable[];
+  private readonly list: IStructureRunnable[];
 
   constructor(list: IStructureRunnable[]) {
     if (list.length < 2) {
@@ -117,7 +117,7 @@ class Alternative implements IStructureRunnable {
 }
 
 class Optional implements IStructureRunnable {
-  private obj: IStructureRunnable;
+  private readonly obj: IStructureRunnable;
 
   constructor(obj: IStructureRunnable) {
     this.obj = obj;
@@ -139,12 +139,9 @@ class Optional implements IStructureRunnable {
 }
 
 class Star implements IStructureRunnable {
-  private obj: IStructureRunnable;
+  private readonly obj: IStructureRunnable;
 
   constructor(obj: IStructureRunnable) {
-    if (obj === undefined) {
-      throw new Error("Star, input undefined");
-    }
     this.obj = obj;
   }
 
@@ -196,7 +193,7 @@ class Star implements IStructureRunnable {
 }
 
 class SubStructure implements IStructureRunnable {
-  private s: Structure;
+  private readonly s: Structure;
 
   constructor(s: Structure) {
     this.s = s;
@@ -223,7 +220,7 @@ class SubStructure implements IStructureRunnable {
 }
 
 class SubStatement implements IStructureRunnable {
-  private obj: new () => Statement;
+  private readonly obj: new () => Statement;
 
   constructor(obj: new () => Statement) {
     this.obj = obj;

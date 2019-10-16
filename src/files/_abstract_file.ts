@@ -1,7 +1,7 @@
 import {IFile} from "./_ifile";
 
 export abstract class AbstractFile implements IFile {
-  private filename: string;
+  private readonly filename: string;
 
   constructor(filename: string) {
     this.filename = filename;
