@@ -59,7 +59,7 @@ export class ImplementMethods extends ABAPRule {
     return ret;
   }
 
-  public checkClass(def: ClassDefinition, impl: ClassImplementation, file: ABAPFile): Issue[] {
+  private checkClass(def: ClassDefinition, impl: ClassImplementation, file: ABAPFile): Issue[] {
     const ret: Issue[] = [];
 
     for (const md of def.getMethodDefinitions().getAll()) {
@@ -86,17 +86,17 @@ export class ImplementMethods extends ABAPRule {
     return ret;
   }
 
-  public checkInterfaces(def: ClassDefinition, impl: ClassImplementation, file: ABAPFile, reg: Registry): Issue[] {
+  private checkInterfaces(def: ClassDefinition, impl: ClassImplementation, file: ABAPFile, reg: Registry): Issue[] {
     const ret: Issue[] = [];
     let idef: InterfaceDefinition | undefined = undefined;
 
     for (const interfaceName of def.getImplementing()) {
-      const intf = reg.getObject("INTF", interfaceName) as Interface;
+      const intf = reg.getObject("INTF", interfaceName.name) as Interface;
       if (intf === undefined) {
-        idef = file.getInterfaceDefinition(interfaceName);
+        idef = file.getInterfaceDefinition(interfaceName.name);
         if (idef === undefined) {
           ret.push(new Issue({file,
-            message: "Implemented interface \"" + interfaceName + "\" not found",
+            message: "Implemented interface \"" + interfaceName.name + "\" not found",
             key: this.getKey(),
             start: def.getStart()}));
           continue;
@@ -105,12 +105,12 @@ export class ImplementMethods extends ABAPRule {
         idef = intf.getDefinition();
       }
 
-      if (idef === undefined) {
+      if (idef === undefined || interfaceName.partial === true) {
         continue; // ignore parser errors in interface
       }
 
       for (const method of idef.getMethodDefinitions()) {
-        const name = interfaceName + "~" + method.getName();
+        const name = interfaceName.name + "~" + method.getName();
         let found = impl.getMethodImplementation(name);
 
         if (found === undefined) {
@@ -125,7 +125,7 @@ export class ImplementMethods extends ABAPRule {
 
         if (found === undefined) {
           ret.push(new Issue({file,
-            message: "Implement method \"" + method.getName() + "\" from interface \"" + interfaceName + "\"",
+            message: "Implement method \"" + method.getName() + "\" from interface \"" + interfaceName.name + "\"",
             key: this.getKey(),
             start: impl.getStart()}));
         }

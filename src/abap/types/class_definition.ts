@@ -59,12 +59,13 @@ export class ClassDefinition extends Identifier {
     return this.node.findFirstExpression(Expressions.ClassFinal) !== undefined;
   }
 
-  public getImplementing(): string[] {
-    const ret = [];
+  public getImplementing(): {name: string, partial: boolean}[] {
+    const ret: {name: string, partial: boolean}[] = [];
     for (const node of this.node.findAllStatements(Statements.InterfaceDef)) {
-      ret.push(node.findFirstExpression(Expressions.InterfaceName)!.getFirstToken().getStr());
+      const partial = node.concatTokens().toUpperCase().includes("PARTIALLY IMPLEMENTED");
+      const name = node.findFirstExpression(Expressions.InterfaceName)!.getFirstToken().getStr();
+      ret.push({name, partial});
     }
-
     return ret;
   }
 

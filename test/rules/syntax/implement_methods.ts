@@ -209,4 +209,20 @@ describe("Rules, implement_methods", function () {
     expect(issues.length).to.equals(0);
   });
 
+  it("PROG, local intf and class, partially implemented", () => {
+    const prog = `
+    INTERFACE lif_foo.
+      METHODS method1.
+    ENDINTERFACE.
+    CLASS ltcl_bar DEFINITION FOR TESTING.
+      PUBLIC SECTION.
+        INTERFACES lif_foo PARTIALLY IMPLEMENTED.
+    ENDCLASS.
+    CLASS ltcl_bar IMPLEMENTATION.
+    ENDCLASS.`;
+    const issues = runMulti([
+      {filename: "zfoobar.prog.abap", contents: prog}]);
+    expect(issues.length).to.equals(0);
+  });
+
 });

@@ -145,17 +145,17 @@ export class ObjectOriented {
     this.variables.addList(methodDefinition.getParameters().getAll());
 
     for (const i of this.findInterfaces(classDefinition)) {
-      const idef = this.findInterfaceDefinition(i);
+      const idef = this.findInterfaceDefinition(i.name);
       if (idef) {
-        this.variables.addList(idef.getAttributes()!.getConstants(), i + "~");
-        this.variables.addList(idef.getAttributes()!.getStatic(), i + "~");
+        this.variables.addList(idef.getAttributes()!.getConstants(), i.name + "~");
+        this.variables.addList(idef.getAttributes()!.getStatic(), i.name + "~");
         // todo, only add instance if its an instance method
-        this.variables.addList(idef.getAttributes()!.getInstance(), i + "~");
+        this.variables.addList(idef.getAttributes()!.getInstance(), i.name + "~");
       }
     }
   }
 
-  private findInterfaces(cd: ClassDefinition): string[] {
+  private findInterfaces(cd: ClassDefinition): {name: string, partial: boolean}[] {
     let ret = cd.getImplementing();
 
     const sup = cd.getSuperClass();
