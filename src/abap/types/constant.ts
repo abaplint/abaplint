@@ -5,7 +5,7 @@ import {Identifier} from "./_identifier";
 
 export class Constant extends Identifier {
 
-  constructor(node: StatementNode) {
+  constructor(node: StatementNode, filename: string) {
     if (!(node.get() instanceof Statements.Constant
         || node.get() instanceof Statements.Type
         || node.get() instanceof Statements.ConstantBegin)) {
@@ -17,7 +17,7 @@ export class Constant extends Identifier {
     }
     const token = found.getFirstToken();
 
-    super(token);
+    super(token, filename);
   }
 
 }

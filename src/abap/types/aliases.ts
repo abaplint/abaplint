@@ -7,9 +7,11 @@ import {Visibility} from "./visibility";
 
 export class Aliases {
   private readonly aliases: Alias[];
+  private readonly filename: string;
 
-  constructor(node: StructureNode) {
+  constructor(node: StructureNode, filename: string) {
     this.aliases = [];
+    this.filename = filename;
     this.parse(node);
   }
 
@@ -36,7 +38,7 @@ export class Aliases {
       const name = a.findFirstExpression(Expressions.SimpleName)!.getFirstToken();
       const comp = a.findFirstExpression(Expressions.Field)!.getFirstToken();
 
-      this.aliases.push(new Alias(name, visibility, comp.getStr()));
+      this.aliases.push(new Alias(name, visibility, comp.getStr(), this.filename));
     }
   }
 

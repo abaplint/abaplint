@@ -1,29 +1,23 @@
-import * as Structures from "../../abap/structures";
 import * as Statements from "../../abap/statements";
 import * as Expressions from "../../abap/expressions";
 import {Identifier} from "./_identifier";
-import {StructureNode} from "../../abap/nodes";
+import {StructureNode, StatementNode} from "../../abap/nodes";
 
 export class FormDefinition extends Identifier {
-  private readonly node: StructureNode;
+  private readonly node: StatementNode;
 
-  constructor(node: StructureNode) {
-    if (!(node.get() instanceof Structures.Form)) {
-      throw new Error("FormDefinition, unexpected node type");
-    }
-    const name = node.findFirstStatement(Statements.Form)!.findFirstExpression(Expressions.FormName)!.getFirstToken();
-    super(name);
-
-    this.node = node;
+  constructor(node: StructureNode | StatementNode, filename: string) {
+    const st = node instanceof StructureNode ? node.findFirstStatement(Statements.Form)! : node;
+    const name = st.findFirstExpression(Expressions.FormName)!.getFirstToken();
+    super(name, filename);
+    this.node = st;
   }
 
   public getParameters(): Identifier[] {
-    const form = this.node.findFirstStatement(Statements.Form);
-    if (form === undefined) { return []; }
     const res: Identifier[] = [];
-    for (const param of form.findAllExpressions(Expressions.FormParam)) {
+    for (const param of this.node.findAllExpressions(Expressions.FormParam)) {
       const token = param.getFirstToken();
-      res.push(new Identifier(token));
+      res.push(new Identifier(token, this.filename));
     }
     return res;
   }

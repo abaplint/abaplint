@@ -18,33 +18,33 @@ export class Inline {
     this.reg = reg;
   }
 
-  private addVariable(expr: ExpressionNode | undefined) {
+  private addVariable(expr: ExpressionNode | undefined, filename: string) {
     if (expr === undefined) { throw new Error("syntax_check, unexpected tree structure"); }
     // todo, these identifers should be possible to create from a Node
     // todo, how to determine the real types?
     const token = expr.getFirstToken();
-    this.variables.addIdentifier(new LocalIdentifier(token));
+    this.variables.addIdentifier(new LocalIdentifier(token, filename));
   }
 
-  public update(node: INode): boolean {
+  public update(node: INode, filename: string): boolean {
     if (node instanceof StatementNode) {
 
       for (const inline of node.findAllExpressions(Expressions.InlineData)) {
         const field = inline.findFirstExpression(Expressions.Field);
         if (field === undefined) { throw new Error("syntax_check, unexpected tree structure"); }
-        this.addVariable(field);
+        this.addVariable(field, filename);
       }
 
       for (const inline of node.findAllExpressions(Expressions.InlineFS)) {
         const field = inline.findFirstExpression(Expressions.FieldSymbol);
         if (field === undefined) { throw new Error("syntax_check, unexpected tree structure"); }
-        this.addVariable(field);
+        this.addVariable(field, filename);
       }
 
       for (const inline of node.findAllExpressions(Expressions.InlineFieldDefinition)) {
         const field = inline.findFirstExpression(Expressions.Field);
         if (field !== undefined) {
-          this.addVariable(field);
+          this.addVariable(field, filename);
 // todo, these also have to be popped after the statement
         }
       }
@@ -52,19 +52,19 @@ export class Inline {
       for (const inline of node.findAllExpressions(Expressions.InlineLoopDefinition)) {
         const field = inline.findFirstExpression(Expressions.Field); // todo, this can take the field after IN
         if (field !== undefined) {
-          this.addVariable(field);
+          this.addVariable(field, filename);
 // todo, these also have to be popped after the statement
         }
         const fs = inline.findFirstExpression(Expressions.FieldSymbol);
         if (fs !== undefined) {
-          this.addVariable(fs);
+          this.addVariable(fs, filename);
         }
       }
 
       for (const inline of node.findAllExpressions(Expressions.InlineField)) {
         const field = inline.findFirstExpression(Expressions.Field);
         if (field !== undefined) {
-          this.addVariable(field);
+          this.addVariable(field, filename);
 // todo, these also have to be popped after the statement
         }
       }

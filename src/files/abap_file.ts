@@ -67,7 +67,7 @@ export class ABAPFile extends AbstractFile {
     }
     const ret: InterfaceDefinition[] = [];
     for (const found of this.structure.findAllStructures(Structures.Interface)) {
-      ret.push(new InterfaceDefinition(found));
+      ret.push(new InterfaceDefinition(found, this.getFilename()));
     }
     return ret;
   }
@@ -87,7 +87,7 @@ export class ABAPFile extends AbstractFile {
     }
     const ret: ClassDefinition[] = [];
     for (const found of this.structure.findAllStructures(Structures.ClassDefinition)) {
-      ret.push(new ClassDefinition(found));
+      ret.push(new ClassDefinition(found, this.getFilename()));
     }
     return ret;
   }
@@ -116,7 +116,7 @@ export class ABAPFile extends AbstractFile {
     }
     const ret: ClassImplementation[] = [];
     for (const found of this.structure.findAllStructures(Structures.ClassImplementation)) {
-      ret.push(new ClassImplementation(found));
+      ret.push(new ClassImplementation(found, this.getFilename()));
     }
     return ret;
   }
@@ -127,7 +127,7 @@ export class ABAPFile extends AbstractFile {
     }
     const ret: FormDefinition[] = [];
     for (const found of this.structure.findAllStructures(Structures.Form)) {
-      ret.push(new FormDefinition(found));
+      ret.push(new FormDefinition(found, this.getFilename()));
     }
     return ret;
   }

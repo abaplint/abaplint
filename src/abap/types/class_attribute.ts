@@ -6,8 +6,8 @@ export class ClassAttribute extends Identifier {
   private readonly visibility: Visibility;
 //  private readOnly: boolean;
 
-  constructor(token: Token, visibility: Visibility) {
-    super(token);
+  constructor(token: Token, visibility: Visibility, filename: string) {
+    super(token, filename);
     this.visibility = visibility;
 //    this.readOnly = undefined;
   }

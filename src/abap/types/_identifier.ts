@@ -3,9 +3,11 @@ import {Token} from "../tokens/_token";
 
 export class Identifier {
   private readonly token: Token;
+  protected readonly filename: string;
 
-  constructor(token: Token) {
+  constructor(token: Token, filename: string) {
     this.token = token;
+    this.filename = filename;
   }
 
   public getName() {
@@ -17,6 +19,10 @@ export class Identifier {
     }
 
     return name;
+  }
+
+  public getFilename(): string {
+    return this.filename;
   }
 
   public getStart(): Position {
