@@ -4,7 +4,7 @@ import {testRule} from "./_utils";
 const tests = [
   {abap: "parser error", cnt: 0},
   {abap: "WRITE: / 'abc'.", cnt: 0},
-  {abap: "METHOD foobar. ENDMETHOD.", cnt: 0},
+  {abap: "METHOD foobar. ENDMETHOD.", cnt: 1},
   {abap: "METHOD foobar. WRITE foo. ENDMETHOD.", cnt: 0},
 
   {abap: `METHOD foobar.

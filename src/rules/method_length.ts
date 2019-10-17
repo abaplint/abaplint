@@ -5,10 +5,16 @@ import {MethodLengthStats} from "../abap/method_length_stats";
 import {IRule} from "./_irule";
 import {BasicRuleConfig} from "./_basic_rule_config";
 
-/** Chcecks that methods do not exceed the set number of statements */
+/** Checks relating to method length. */
 export class MethodLengthConf extends BasicRuleConfig {
   /** Maximum method length in statements */
   public statements: number = 100;
+  public checkEmptyMethods: boolean = true;
+}
+
+enum IssueType {
+  EmptyMethod,
+  MaxStatements,
 }
 
 export class MethodLength implements IRule {
@@ -19,8 +25,18 @@ export class MethodLength implements IRule {
     return "method_length";
   }
 
-  public getDescription(max: string, actual: string): string {
-    return "Reduce method length to max " + max + " statements, currently " + actual;
+  public getDescription(issueType: IssueType, actual: string): string {
+    switch (issueType) {
+      case IssueType.EmptyMethod: {
+        return "Empty Method.";
+      }
+      case IssueType.MaxStatements: {
+        return "Reduce method length to max " + this.conf.statements + " statements, currently " + actual;
+      }
+      default: {
+        return "";
+      }
+    }
   }
 
   public getConfig() {
@@ -36,13 +52,20 @@ export class MethodLength implements IRule {
     const stats = MethodLengthStats.run(obj);
 
     for (const s of stats) {
-      if (s.count > this.conf.statements) {
-        const issue = new Issue({
+      if (s.count === 0 && this.conf.checkEmptyMethods) {
+        issues.push(new Issue({
           file: s.file,
-          message: this.getDescription(this.conf.statements.toString(), s.count.toString()),
+          message: this.getDescription(IssueType.EmptyMethod, "0"),
           key: this.getKey(),
-          start: s.pos});
-        issues.push(issue);
+          start: s.pos }));
+        continue;
+      }
+      if (s.count > this.conf.statements) {
+        issues.push(new Issue({
+          file: s.file,
+          message: this.getDescription(IssueType.MaxStatements, s.count.toString()),
+          key: this.getKey(),
+          start: s.pos }));
       }
     }
 
