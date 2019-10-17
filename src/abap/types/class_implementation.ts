@@ -8,12 +8,12 @@ import {MethodImplementation} from "./method_implementation";
 export class ClassImplementation extends Identifier {
   private readonly node: StructureNode;
 
-  constructor(node: StructureNode) {
+  constructor(node: StructureNode, filename: string) {
     if (!(node.get() instanceof Structures.ClassImplementation)) {
       throw new Error("ClassImplementation, unexpected node type");
     }
     const name = node.findFirstStatement(Statements.ClassImplementation)!.findFirstExpression(Expressions.ClassName)!.getFirstToken();
-    super(name);
+    super(name, filename);
 
     this.node = node;
   }
@@ -21,7 +21,7 @@ export class ClassImplementation extends Identifier {
   public getMethodImplementations(): MethodImplementation[] {
     const ret: MethodImplementation[] = [];
     for (const method of this.node.findAllStructures(Structures.Method)) {
-      ret.push(new MethodImplementation(method));
+      ret.push(new MethodImplementation(method, this.filename));
     }
     return ret;
   }

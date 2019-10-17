@@ -4,7 +4,7 @@ import {Identifier} from "./_identifier";
 
 export class MethodParameter extends Identifier {
 
-  constructor(node: ExpressionNode) {
+  constructor(node: ExpressionNode, filename: string) {
     if (!(node.get() instanceof MethodParam) && !(node.get() instanceof MethodParamName)) {
       throw new Error("MethodParameter, unexpected input node");
     }
@@ -13,7 +13,7 @@ export class MethodParameter extends Identifier {
       console.dir(node);
       throw new Error("method_parameter.ts, todo, handle pass by value and reference");
     }
-    super(name.getFirstToken());
+    super(name.getFirstToken(), filename);
   }
 
 // todo: pass by reference / pass by value / write protected

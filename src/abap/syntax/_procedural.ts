@@ -4,7 +4,6 @@ import * as Structures from "../structures";
 import {StatementNode, ExpressionNode, StructureNode} from "../nodes";
 import {Identifier} from "../types/_identifier";
 import {ABAPObject} from "../../objects/_abap_object";
-import {Registry} from "../../registry";
 import {FormDefinition} from "../types";
 import {ScopedVariables} from "./_scoped_variables";
 import {FunctionGroup} from "../../objects";
@@ -16,12 +15,13 @@ export class Procedural {
   private readonly obj: ABAPObject;
   private readonly variables: ScopedVariables;
 
-  constructor(obj: ABAPObject, _reg: Registry, variables: ScopedVariables) {
+// todo: can "obj" as input be removed?
+  constructor(obj: ABAPObject, variables: ScopedVariables) {
     this.obj = obj;
     this.variables = variables;
   }
 
-  public addDefinitions(node: StatementNode) {
+  public addDefinitions(node: StatementNode, filename: string) {
     const sub = node.get();
     const ret: Identifier[] = [];
 
@@ -31,19 +31,19 @@ export class Procedural {
       || sub instanceof Statements.ConstantBegin
       || sub instanceof Statements.Static
       || sub instanceof Statements.StaticBegin) {
-      ret.push(this.buildVariable(node.findFirstExpression(Expressions.NamespaceSimpleName)));
+      ret.push(this.buildVariable(node.findFirstExpression(Expressions.NamespaceSimpleName), filename));
     } else if (sub instanceof Statements.Parameter) {
-      ret.push(this.buildVariable(node.findFirstExpression(Expressions.FieldSub)));
+      ret.push(this.buildVariable(node.findFirstExpression(Expressions.FieldSub), filename));
     } else if (sub instanceof Statements.FieldSymbol) {
-      ret.push(this.buildVariable(node.findFirstExpression(Expressions.FieldSymbol)));
+      ret.push(this.buildVariable(node.findFirstExpression(Expressions.FieldSymbol), filename));
     } else if (sub instanceof Statements.Tables || sub instanceof Statements.SelectOption) {
-      ret.push(this.buildVariable(node.findFirstExpression(Expressions.Field)));
+      ret.push(this.buildVariable(node.findFirstExpression(Expressions.Field), filename));
     }
 
     this.variables.addList(ret);
   }
 
-  public addEnumValues(node: StructureNode) {
+  public addEnumValues(node: StructureNode, filename: string) {
     if (!(node.get() instanceof Structures.TypeEnum)) {
       throw new Error("addEnumValues unexpected type");
     }
@@ -52,7 +52,7 @@ export class Procedural {
       if (expr === undefined) {
         continue;
       }
-      this.variables.addIdentifier(this.buildVariable(expr));
+      this.variables.addIdentifier(this.buildVariable(expr, filename));
     }
   }
 
@@ -70,32 +70,17 @@ export class Procedural {
     }
   }
 
-  public findFormScope(node: StatementNode) {
+  public findFormScope(node: StatementNode, filename: string) {
     this.variables.pushScope("form");
-    const formName = node.findFirstExpression(Expressions.FormName)!.getFirstToken().getStr();
-    const form = this.findDefinition(formName);
-    if (form === undefined) {
-      throw new Error("Form definition \"" + formName + "\" not found");
-    }
-    this.variables.addList(form.getParameters());
+    this.variables.addList(new FormDefinition(node, filename).getParameters());
   }
 
-  private findDefinition(name: string): FormDefinition {
-    for (const file of this.obj.getABAPFiles()) {
-      const found = file.getFormDefinition(name);
-      if (found) {
-        return found;
-      }
-    }
-    throw new Error("FORM defintion for \"" + name + "\" not found");
-  }
-
-  private buildVariable(expr: ExpressionNode | undefined): Identifier {
+  private buildVariable(expr: ExpressionNode | undefined, filename: string): Identifier {
     if (expr === undefined) { throw new Error("syntax_check, unexpected tree structure"); }
     // todo, these identifers should be possible to create from a Node
     // todo, how to determine the real types?
     const token = expr.getFirstToken();
-    return new LocalIdentifier(token);
+    return new LocalIdentifier(token, filename);
   }
 
 }

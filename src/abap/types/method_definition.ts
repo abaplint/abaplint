@@ -15,7 +15,7 @@ export class MethodDefinition extends Identifier {
 // todo:
 // final
 
-  constructor(node: StatementNode, visibility: Visibility) {
+  constructor(node: StatementNode, visibility: Visibility, filename: string) {
     if (!(node.get() instanceof MethodDef)) {
       throw new Error("MethodDefinition, expected MethodDef as part of input node");
     }
@@ -23,7 +23,7 @@ export class MethodDefinition extends Identifier {
     if (found === undefined) {
       throw new Error("MethodDefinition, expected MethodDef as part of input node");
     }
-    super(found.getFirstToken());
+    super(found.getFirstToken(), filename);
 
     this.redefinition = false;
     if (node.findFirstExpression(Expressions.Redefinition)) {
@@ -41,7 +41,7 @@ export class MethodDefinition extends Identifier {
     }
 
     this.visibility = visibility;
-    this.parameters = new MethodParameters(node);
+    this.parameters = new MethodParameters(node, this.filename);
   }
 
   public getVisibility() {

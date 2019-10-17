@@ -5,7 +5,7 @@ import * as Expressions from "../../abap/expressions";
 
 export class MethodImplementation extends Identifier {
 
-  constructor(node: StructureNode) {
+  constructor(node: StructureNode, filename: string) {
     if (!(node.get() instanceof Structures.Method)) {
       throw new Error("MethodImplementation, expected Method as part of input node");
     }
@@ -13,7 +13,7 @@ export class MethodImplementation extends Identifier {
     if (found === undefined) {
       throw new Error("MethodImplementation, expected MethodName as part of input node");
     }
-    super(found.getFirstToken());
+    super(found.getFirstToken(), filename);
   }
 
 }

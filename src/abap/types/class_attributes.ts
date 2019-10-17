@@ -10,11 +10,13 @@ export class Attributes {
   private readonly static: ClassAttribute[];
   private readonly instance: ClassAttribute[];
   private readonly constants: ClassConstant[];
+  private readonly filename: string;
 
-  constructor(node: StructureNode) {
+  constructor(node: StructureNode, filename: string) {
     this.static = [];
     this.instance = [];
     this.constants = [];
+    this.filename = filename;
     this.parse(node);
   }
 
@@ -84,13 +86,13 @@ export class Attributes {
 
     defs = node.findAllStatements(Statements.Constant).concat(node.findAllStatements(Statements.ConstantBegin));
     for (const def of defs) {
-      this.constants.push(new ClassConstant(def, visibility));
+      this.constants.push(new ClassConstant(def, visibility, this.filename));
     }
 
 // for now add ENUM values as constants
     for (const type of node.findAllStructures(Structures.TypeEnum)) {
       for (const val of type.findDirectStatements(Statements.Type)) {
-        this.constants.push(new ClassConstant(val, visibility));
+        this.constants.push(new ClassConstant(val, visibility, this.filename));
       }
     }
 
@@ -109,7 +111,7 @@ export class Attributes {
     }
     const token = found.getFirstToken();
 
-    return new ClassAttribute(token, visibility);
+    return new ClassAttribute(token, visibility, this.filename);
   }
 
 }

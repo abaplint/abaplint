@@ -11,8 +11,9 @@ export class MethodParameters {
   private readonly changing: MethodParameter[];
   private returning: MethodParameter | undefined;
   private readonly exceptions: string[]; // todo, not filled
+  private readonly filename: string;
 
-  constructor(node: StatementNode) {
+  constructor(node: StatementNode, filename: string) {
     if (!(node.get() instanceof MethodDef)) {
       throw new Error("MethodDefinition, expected MethodDef as part of input node");
     }
@@ -22,6 +23,7 @@ export class MethodParameters {
     this.changing = [];
     this.returning = undefined;
     this.exceptions = [];
+    this.filename = filename;
 
     this.parse(node);
   }
@@ -63,7 +65,7 @@ export class MethodParameters {
     const handler = node.findFirstExpression(EventHandler);
     if (handler) {
       for (const p of handler.findAllExpressions(MethodParamName)) {
-        this.importing.push(new MethodParameter(p));
+        this.importing.push(new MethodParameter(p, this.filename));
       }
     }
 
@@ -86,7 +88,7 @@ export class MethodParameters {
     if (returning) {
       const found = returning.findFirstExpression(MethodParam);
       if (found) {
-        this.returning = new MethodParameter(found);
+        this.returning = new MethodParameter(found, this.filename);
       }
     }
 
@@ -98,7 +100,7 @@ export class MethodParameters {
   private add(target: MethodParameter[], source: ExpressionNode): void {
     const params = source.findAllExpressions(MethodParam);
     for (const param of params) {
-      target.push(new MethodParameter(param));
+      target.push(new MethodParameter(param, this.filename));
     }
   }
 

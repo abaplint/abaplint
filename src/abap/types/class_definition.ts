@@ -12,19 +12,19 @@ import {Aliases} from "./aliases";
 export class ClassDefinition extends Identifier {
   private readonly node: StructureNode;
 
-  constructor(node: StructureNode) {
+  constructor(node: StructureNode, filename: string) {
     if (!(node.get() instanceof Structures.ClassDefinition)) {
       throw new Error("ClassDefinition, unexpected node type");
     }
 
     const name = node.findFirstStatement(Statements.ClassDefinition)!.findFirstExpression(Expressions.ClassName)!.getFirstToken();
-    super(name);
+    super(name, filename);
 
     this.node = node;
   }
 
   public getMethodDefinitions(): MethodDefinitions {
-    return new MethodDefinitions(this.node);
+    return new MethodDefinitions(this.node, this.filename);
   }
 
   public getSuperClass(): string | undefined {
@@ -34,7 +34,7 @@ export class ClassDefinition extends Identifier {
   }
 
   public getAttributes(): Attributes {
-    return new Attributes(this.node);
+    return new Attributes(this.node, this.filename);
   }
 
   public isException(): boolean {
@@ -70,7 +70,7 @@ export class ClassDefinition extends Identifier {
   }
 
   public getAliases(): Aliases {
-    return new Aliases(this.node);
+    return new Aliases(this.node, this.filename);
   }
 
   public isForTesting(): boolean {

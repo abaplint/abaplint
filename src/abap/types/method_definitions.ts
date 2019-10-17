@@ -9,11 +9,13 @@ export class MethodDefinitions {
   private readonly pri: MethodDefinition[];
   private readonly pub: MethodDefinition[];
   private readonly pro: MethodDefinition[];
+  private readonly filename: string;
 
-  public constructor(node: StructureNode) {
+  public constructor(node: StructureNode, filename: string) {
     this.pri = [];
     this.pub = [];
     this.pro = [];
+    this.filename = filename;
     this.parse(node);
   }
 
@@ -43,7 +45,7 @@ export class MethodDefinitions {
     if (pri) {
       const defs = pri.findAllStatements(MethodDef);
       for (const def of defs) {
-        this.pri.push(new MethodDefinition(def, Visibility.Private));
+        this.pri.push(new MethodDefinition(def, Visibility.Private, this.filename));
       }
     }
 
@@ -51,7 +53,7 @@ export class MethodDefinitions {
     if (pro) {
       const defs = pro.findAllStatements(MethodDef);
       for (const def of defs) {
-        this.pro.push(new MethodDefinition(def, Visibility.Protected));
+        this.pro.push(new MethodDefinition(def, Visibility.Protected, this.filename));
       }
     }
 
@@ -59,7 +61,7 @@ export class MethodDefinitions {
     if (pub) {
       const defs = pub.findAllStatements(MethodDef);
       for (const def of defs) {
-        this.pub.push(new MethodDefinition(def, Visibility.Public));
+        this.pub.push(new MethodDefinition(def, Visibility.Public, this.filename));
       }
     }
   }
