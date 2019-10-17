@@ -52,7 +52,7 @@ export class MethodLength implements IRule {
     const stats = MethodLengthStats.run(obj);
 
     for (const s of stats) {
-      if (s.count === 0 && this.conf.checkEmptyMethods) {
+      if (s.count === 0 && this.conf.checkEmptyMethods === true) {
         issues.push(new Issue({
           file: s.file,
           message: this.getDescription(IssueType.EmptyMethod, "0"),
