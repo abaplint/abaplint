@@ -25,10 +25,9 @@ export class Definition {
       const variables = new CheckVariablesLogic(reg, obj).traverseUntil(found.token);
       const resolved = variables.resolve(found.token.getStr());
       if (resolved instanceof Identifier) {
-// todo, handle cross file references
         const pos = resolved.getStart();
         return {
-          uri: doc.uri,
+          uri: resolved.getFilename(),
           range: LServer.Range.create(pos.getRow() - 1, pos.getCol() - 1, pos.getRow() - 1, pos.getCol() - 1),
         };
       }

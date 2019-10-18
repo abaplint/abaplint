@@ -21,4 +21,27 @@ describe("LSP, definition", () => {
     expect(def!.range.start.line).to.equal(0);
   });
 
+  it("resolved, cross files", () => {
+    const fileIntf = new MemoryFile("zif_test.intf.abap", `
+      INTERFACE zif_test PUBLIC.
+        DATA moo TYPE string.
+      ENDINTERFACE.`);
+    const fileClas = new MemoryFile("zcl_test.clas.abap", `
+      CLASS zcl_test DEFINITION PUBLIC FINAL CREATE PUBLIC.
+        PUBLIC SECTION.
+          INTERFACES zif_test.
+          METHODS method1.
+      ENDCLASS.
+      CLASS ZCL_TEST IMPLEMENTATION.
+        METHOD method1.
+          WRITE: / zif_test~moo.
+        ENDMETHOD.
+      ENDCLASS.`);
+    const reg = new Registry().addFile(fileIntf).addFile(fileClas).parse();
+    const def = Definition.find(reg, {uri: fileClas.getFilename()}, LServer.Position.create(8 , 20));
+    expect(def).to.not.equal(undefined);
+    expect(def!.uri).to.equal(fileIntf.getFilename());
+    expect(def!.range.start.line).to.equal(2);
+  });
+
 });
