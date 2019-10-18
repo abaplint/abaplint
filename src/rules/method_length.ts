@@ -9,7 +9,8 @@ import {BasicRuleConfig} from "./_basic_rule_config";
 export class MethodLengthConf extends BasicRuleConfig {
   /** Maximum method length in statements */
   public statements: number = 100;
-  public checkEmptyMethods: boolean = true;
+  /** Checks for empty methods. */
+  public errorWhenEmpty: boolean = true;
 }
 
 enum IssueType {
@@ -52,12 +53,13 @@ export class MethodLength implements IRule {
     const stats = MethodLengthStats.run(obj);
 
     for (const s of stats) {
-      if (s.count === 0 && this.conf.checkEmptyMethods === true) {
+      if (s.count === 0 && this.conf.errorWhenEmpty === true) {
         issues.push(new Issue({
           file: s.file,
           message: this.getDescription(IssueType.EmptyMethod, "0"),
           key: this.getKey(),
-          start: s.pos }));
+          start: s.pos,
+        }));
         continue;
       }
       if (s.count > this.conf.statements) {
@@ -65,10 +67,10 @@ export class MethodLength implements IRule {
           file: s.file,
           message: this.getDescription(IssueType.MaxStatements, s.count.toString()),
           key: this.getKey(),
-          start: s.pos }));
+          start: s.pos,
+        }));
       }
     }
-
     return issues;
   }
 
