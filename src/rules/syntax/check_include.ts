@@ -46,7 +46,7 @@ export class CheckInclude extends ABAPRule {
         if (iexp === undefined) {
           throw new Error("unexpected Include node");
         }
-        const name = iexp.getFirstToken().getStr();
+        const name = iexp.getFirstToken().getStr().toUpperCase();
 
         if (this.findInclude(name, reg, obj) === false) {
           issues.push(new Issue({file,
@@ -62,12 +62,14 @@ export class CheckInclude extends ABAPRule {
   }
 
   private findInclude(name: string, reg: Registry, obj: ABAPObject): boolean {
-    const top = ("L" + obj.getName() + "TOP").toUpperCase();
-    const uxx = ("L" + obj.getName() + "UXX").toUpperCase();
-    if (obj instanceof FunctionGroup && (name.toUpperCase() === top || name.toUpperCase() === uxx)) {
-// todo, this is a workaround, more work needed for FUGR
-      return true;
+    if (obj instanceof FunctionGroup) {
+      const includes = obj.getIncludes();
+      includes.push(("L" + obj.getName() + "UXX").toUpperCase());
+      if (includes.indexOf(name) >= 0) {
+        return true;
+      }
     }
+
     const res = reg.getObject("PROG", name);
     return res !== undefined;
   }

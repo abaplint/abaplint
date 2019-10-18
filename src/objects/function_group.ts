@@ -16,7 +16,24 @@ export class FunctionGroup extends ABAPObject {
     }
     const parsed: any = xmljs.xml2js(xml, {compact: true});
 
-    return this.parse(parsed);
+    return this.parseModules(parsed);
+  }
+
+  public getIncludes(): string[] {
+    const xml = this.getXML();
+    if (xml === undefined) {
+      return [];
+    }
+
+    const parsed: any = xmljs.xml2js(xml, {compact: true});
+    const includes = parsed.abapGit["asx:abap"]["asx:values"].INCLUDES;
+
+    const ret: string[] = [];
+    for (const i of xmlToArray(includes.SOBJ_NAME)) {
+      ret.push(i._text);
+    }
+
+    return ret;
   }
 
   public getModule(name: string): FunctionModuleDefinition | undefined {
@@ -28,7 +45,7 @@ export class FunctionGroup extends ABAPObject {
     return undefined;
   }
 
-  private parse(data: any): FunctionModuleDefinition[] {
+  private parseModules(data: any): FunctionModuleDefinition[] {
     const ret: FunctionModuleDefinition[] = [];
 
     const functions = data.abapGit["asx:abap"]["asx:values"].FUNCTIONS;
