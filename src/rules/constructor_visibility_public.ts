@@ -16,7 +16,7 @@ export class ConstructorVisibilityPublic implements IRule {
     return "constructor_visibility_public";
   }
 
-  public getDescription(): string {
+  private getDescription(): string {
     return "Constructor visibility should be public";
   }
 

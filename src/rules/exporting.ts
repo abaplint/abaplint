@@ -22,7 +22,7 @@ export class Exporting extends ABAPRule {
     return "exporting";
   }
 
-  public getDescription(): string {
+  private getDescription(): string {
     return "The EXPORTING keyword can be omitted.";
   }
 

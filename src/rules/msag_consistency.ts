@@ -17,7 +17,7 @@ export class MSAGConsistency implements IRule {
     return "msag_consistency";
   }
 
-  public getDescription(reason: string): string {
+  private getDescription(reason: string): string {
     return "Message class invalid: " + reason;
   }
 

@@ -17,7 +17,7 @@ export class IdenticalFormNames implements IRule {
     return "identical_form_names";
   }
 
-  public getDescription(name: string): string {
+  private getDescription(name: string): string {
     return "Identical FORM Names:" + name;
   }
 

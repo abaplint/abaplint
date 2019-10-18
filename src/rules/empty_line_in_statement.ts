@@ -17,7 +17,7 @@ export class EmptyLineinStatement extends ABAPRule {
     return "empty_line_in_statement";
   }
 
-  public getDescription(): string {
+  private getDescription(): string {
     return "Remove empty line in statement.";
   }
 

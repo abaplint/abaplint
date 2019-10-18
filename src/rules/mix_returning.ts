@@ -17,7 +17,7 @@ export class MixReturning extends ABAPRule {
     return "mix_returning";
   }
 
-  public getDescription(): string {
+  private getDescription(): string {
     return "Don't mix RETURNING and EXPORTING/CHANGING parameters in a single method.";
   }
 

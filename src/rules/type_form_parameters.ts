@@ -19,7 +19,7 @@ export class TypeFormParameters extends ABAPRule {
     return "type_form_parameters";
   }
 
-  public getDescription(parameterName: string): string {
+  private getDescription(parameterName: string): string {
     return "Add TYPE for FORM parameter" + parameterName;
   }
 

@@ -16,7 +16,7 @@ export class MaxOneStatement extends ABAPRule {
     return "max_one_statement";
   }
 
-  public getDescription(): string {
+  private getDescription(): string {
     return "Only one statement is allowed per line.";
   }
 

@@ -16,7 +16,7 @@ export class EmptyStatement extends ABAPRule {
     return "empty_statement";
   }
 
-  public getDescription(): string {
+  private getDescription(): string {
     return "Remove empty statement.";
   }
 

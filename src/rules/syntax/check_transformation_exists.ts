@@ -17,7 +17,7 @@ export class CheckTransformationExists extends ABAPRule {
     return "check_transformation_exists";
   }
 
-  public getDescription(name: string): string {
+  private getDescription(name: string): string {
     return "Transformation \"" + name + "\" not found";
   }
 

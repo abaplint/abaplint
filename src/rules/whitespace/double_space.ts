@@ -26,7 +26,7 @@ export class DoubleSpace extends ABAPRule {
     return "double_space";
   }
 
-  public getDescription(): string {
+  private getDescription(): string {
     return "Remove double space.";
   }
 

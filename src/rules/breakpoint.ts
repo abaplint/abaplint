@@ -15,7 +15,7 @@ export class Breakpoint extends ABAPRule {
     return "breakpoint";
   }
 
-  public getDescription(): string {
+  private getDescription(): string {
     return "Line contains a breakpoint.";
   }
 

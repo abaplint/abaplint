@@ -16,7 +16,7 @@ export class TryWithoutCatch extends ABAPRule {
     return "try_without_catch";
   }
 
-  public getDescription(): string {
+  private getDescription(): string {
     return "A TRY block must have a corresponding CATCH block.";
   }
 

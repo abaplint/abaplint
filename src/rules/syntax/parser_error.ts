@@ -21,7 +21,7 @@ export class ParserError extends ABAPRule {
     return "parser_error";
   }
 
-  public getDescription(abapVersion: string): string {
+  private getDescription(abapVersion: string): string {
     return "Statement does not exist in ABAP" + abapVersion + "(or a parser error)";
   }
 

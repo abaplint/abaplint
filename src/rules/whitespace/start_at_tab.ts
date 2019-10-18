@@ -18,7 +18,7 @@ export class StartAtTab extends ABAPRule {
     return "start_at_tab";
   }
 
-  public getDescription(): string {
+  private getDescription(): string {
     return "Start statement at tab position";
   }
 

@@ -21,7 +21,7 @@ export class MainFileContents implements IRule {
     return "main_file_contents";
   }
 
-  public getDescription(details: string): string {
+  private getDescription(details: string): string {
     return "Main file must have specific contents: " + details;
   }
 

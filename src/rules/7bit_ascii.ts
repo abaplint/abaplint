@@ -15,7 +15,7 @@ export class SevenBitAscii extends ABAPRule {
     return "7bit_ascii";
   }
 
-  public getDescription(): string {
+  private getDescription(): string {
     return "Contains non 7 bit ascii character";
   }
 

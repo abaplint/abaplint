@@ -16,7 +16,7 @@ export class IfInIf extends ABAPRule {
     return "if_in_if";
   }
 
-  public getDescription(): string {
+  private getDescription(): string {
     return "IF in IF. Use IF cond1 AND cond2 instead.";
   }
 

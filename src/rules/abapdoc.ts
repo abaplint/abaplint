@@ -19,7 +19,7 @@ export class Abapdoc extends ABAPRule {
     return "abapdoc";
   }
 
-  public getDescription(): string {
+  private getDescription(): string {
     return "Missing abapdoc";
   }
 

@@ -26,7 +26,7 @@ export class ClassAttributeNames implements IRule {
     return "class_attribute_names";
   }
 
-  public getDescription(expected: string, actual: string): string {
+  private getDescription(expected: string, actual: string): string {
     return this.conf.patternKind === "required" ?
       "Class attribute name does not match pattern " + expected + ": " + actual :
       "Class attribute name must not match pattern " + expected + ": " + actual ;

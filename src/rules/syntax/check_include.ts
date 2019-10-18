@@ -20,7 +20,7 @@ export class CheckInclude extends ABAPRule {
     return "check_include";
   }
 
-  public getDescription(include: string): string {
+  private getDescription(include: string): string {
     return "Include " + include + " not found";
   }
 

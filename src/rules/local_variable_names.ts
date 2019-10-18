@@ -27,7 +27,7 @@ export class LocalVariableNames extends ABAPRule {
     return "local_variable_names";
   }
 
-  public getDescription(expected: string, actual: string): string {
+  private getDescription(expected: string, actual: string): string {
     return this.conf.patternKind === "required" ?
      "Local variable name does not match pattern " + expected + ": " + actual :
      "Local variable name must not match pattern " + expected + ": " + actual ;

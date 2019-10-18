@@ -21,7 +21,7 @@ export class FunctionalWriting extends ABAPRule {
     return "functional_writing";
   }
 
-  public getDescription(): string {
+  private getDescription(): string {
     return "Use functional writing style for method calls.";
   }
 

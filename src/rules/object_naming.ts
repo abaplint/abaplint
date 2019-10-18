@@ -46,7 +46,7 @@ export class ObjectNaming implements IRule {
     return "object_naming";
   }
 
-  public getDescription(expected: string, actual: string): string {
+  private getDescription(expected: string, actual: string): string {
     return this.conf.patternKind === "required" ?
       "Object name does not match pattern " + expected + ": " + actual :
       "Object name must not match pattern " + expected + ": " + actual;

@@ -20,7 +20,7 @@ export class DescriptionEmpty implements IRule {
     return "description_empty";
   }
 
-  public getDescription(name: string): string {
+  private getDescription(name: string): string {
     return "Description empty in " + name;
   }
 

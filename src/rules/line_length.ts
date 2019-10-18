@@ -18,7 +18,7 @@ export class LineLength extends ABAPRule {
     return "line_length";
   }
 
-  public getDescription(max: string, actual: string): string {
+  private getDescription(max: string, actual: string): string {
     return "Reduce line length to max " + max + ", currently " + actual;
   }
 

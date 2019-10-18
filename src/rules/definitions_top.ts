@@ -23,7 +23,7 @@ export class DefinitionsTop extends ABAPRule {
     return "definitions_top";
   }
 
-  public getDescription(): string {
+  private getDescription(): string {
     return "Reorder definitions to top of routine";
   }
 

@@ -15,7 +15,7 @@ export class SpaceBeforeColon extends ABAPRule {
     return "space_before_colon";
   }
 
-  public getDescription(): string {
+  private getDescription(): string {
     return "Remove space before colon";
   }
 

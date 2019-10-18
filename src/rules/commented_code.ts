@@ -17,7 +17,7 @@ export class CommentedCode extends ABAPRule {
     return "commented_code";
   }
 
-  public getDescription(): string {
+  private getDescription(): string {
     return "Commented code";
   }
 

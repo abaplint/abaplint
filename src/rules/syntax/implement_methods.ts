@@ -20,10 +20,6 @@ export class ImplementMethods extends ABAPRule {
     return "implement_methods";
   }
 
-  public getDescription(): string {
-    return "Implement methods";
-  }
-
   public getConfig() {
     return this.conf;
   }

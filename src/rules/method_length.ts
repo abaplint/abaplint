@@ -26,7 +26,7 @@ export class MethodLength implements IRule {
     return "method_length";
   }
 
-  public getDescription(issueType: IssueType, actual: string): string {
+  private getDescription(issueType: IssueType, actual: string): string {
     switch (issueType) {
       case IssueType.EmptyMethod: {
         return "Empty Method.";

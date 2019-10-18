@@ -21,7 +21,7 @@ export class RemoveDescriptions implements IRule {
     return "remove_descriptions";
   }
 
-  public getDescription(name: string): string {
+  private getDescription(name: string): string {
     return "Remove description in " + name;
   }
 

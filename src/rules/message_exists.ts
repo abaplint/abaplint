@@ -17,7 +17,7 @@ export class MessageExistsRule extends ABAPRule {
     return "message_exists";
   }
 
-  public getDescription(reason: string): string {
+  private getDescription(reason: string): string {
     return "Message invalid: " + reason;
   }
 

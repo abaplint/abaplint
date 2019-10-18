@@ -32,7 +32,7 @@ export class EmptyStructure extends ABAPRule {
     return "empty_structure";
   }
 
-  public getDescription(name: string): string {
+  private getDescription(name: string): string {
     return "Empty structure:" + name ;
   }
 

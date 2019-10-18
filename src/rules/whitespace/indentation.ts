@@ -24,7 +24,7 @@ export class Indentation extends ABAPRule {
     return "indentation";
   }
 
-  public getDescription(): string {
+  private getDescription(): string {
     return "Indentation";
   }
 

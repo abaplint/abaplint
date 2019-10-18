@@ -31,7 +31,7 @@ export class MethodParameterNames implements IRule {
     return "method_parameter_names";
   }
 
-  public getDescription(expected: string, actual: string): string {
+  private getDescription(expected: string, actual: string): string {
     return this.conf.patternKind === "required" ?
       "Method parameter name does not match pattern " + expected + ": " + actual :
       "Method parameter name must not match pattern " + expected + ": " + actual;

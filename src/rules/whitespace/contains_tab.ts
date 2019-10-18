@@ -16,7 +16,7 @@ export class ContainsTab extends ABAPRule {
     return "contains_tab";
   }
 
-  public getDescription(): string {
+  private getDescription(): string {
     return "Code can't contain tabs.";
   }
 

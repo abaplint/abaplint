@@ -16,7 +16,7 @@ export class ReleaseIdoc implements IRule {
     return "release_idoc";
   }
 
-  public getDescription(): string {
+  private getDescription(): string {
     return "Idoc type/segement status must be set to released";
   }
 

@@ -16,7 +16,7 @@ export class RFCErrorHandling extends ABAPRule {
     return "rfc_error_handling";
   }
 
-  public getDescription(): string {
+  private getDescription(): string {
     return "RFC error handling: At least one unhandled exception from SYSTEM_FAILURE, COMMUNICATION_FAILURE, RESOURCE_FAILURE.";
   }
 

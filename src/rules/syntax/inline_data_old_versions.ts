@@ -17,10 +17,6 @@ export class InlineDataOldVersions extends ABAPRule {
     return "inline_data_old_versions";
   }
 
-  public getDescription(): string {
-    return "Inline DATA in old versions";
-  }
-
   public getConfig() {
     return this.conf;
   }

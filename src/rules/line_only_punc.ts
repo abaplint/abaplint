@@ -20,7 +20,7 @@ export class LineOnlyPunc extends ABAPRule {
     return "line_only_punc";
   }
 
-  public getDescription(): string {
+  private getDescription(): string {
     return "A line cannot contain only . or ).";
   }
 

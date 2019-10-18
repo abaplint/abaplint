@@ -18,7 +18,7 @@ export class PreferredCompareOperator extends ABAPRule {
     return "preferred_compare_operator";
   }
 
-  public getDescription(operator: string): string {
+  private getDescription(operator: string): string {
     return "Compare operator " + operator + " not preferred";
   }
 

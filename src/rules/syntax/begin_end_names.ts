@@ -19,7 +19,7 @@ export class BeginEndNames extends ABAPRule {
     return "begin_end_names";
   }
 
-  public getDescription(): string {
+  private getDescription(): string {
     return "BEGIN END names must match";
   }
 

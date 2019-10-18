@@ -18,7 +18,7 @@ export class FormNoDash extends ABAPRule {
     return "form_no_dash";
   }
 
-  public getDescription(): string {
+  private getDescription(): string {
     return "No dash allowed in FORM Names.";
   }
 

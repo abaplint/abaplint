@@ -15,7 +15,7 @@ export class ColonMissingSpace extends ABAPRule {
     return "colon_missing_space";
   }
 
-  public getDescription(): string {
+  private getDescription(): string {
     return "Missing space after the colon";
   }
 

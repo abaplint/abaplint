@@ -17,10 +17,6 @@ export class GlobalClass extends ABAPRule {
     return "global_class";
   }
 
-  public getDescription(): string {
-    return "Global class naming";
-  }
-
   public getConfig() {
     return this.conf;
   }

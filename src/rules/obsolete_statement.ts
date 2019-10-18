@@ -27,7 +27,7 @@ export class ObsoleteStatement extends ABAPRule {
     return "obsolete_statement";
   }
 
-  public getDescription(): string {
+  private getDescription(): string {
     return "Statement is obsolete";
   }
 

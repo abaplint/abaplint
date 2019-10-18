@@ -98,6 +98,7 @@
     "no-null-keyword": true,
     "no-reference": true,
     "no-require-imports": true,
+    "no-void-expression": true,
     "strict-string-expressions": true,
     "prefer-readonly": true,
     "no-shadowed-variable": true,

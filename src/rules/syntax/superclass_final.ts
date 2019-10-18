@@ -19,7 +19,7 @@ export class SuperclassFinal extends ABAPRule {
     return "superclass_final";
   }
 
-  public getDescription(): string {
+  private getDescription(): string {
     return "Superclasses cannot be FINAL";
   }
 

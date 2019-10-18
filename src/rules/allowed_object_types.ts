@@ -16,7 +16,7 @@ export class AllowedObjectTypes implements IRule {
     return "allowed_object_types";
   }
 
-  public getDescription(objectType: string): string {
+  private getDescription(objectType: string): string {
     return "Object type " + objectType + " not allowed.";
   }
 

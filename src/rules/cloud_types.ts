@@ -18,7 +18,7 @@ export class CloudTypes implements IRule {
     return "cloud_types";
   }
 
-  public getDescription(objectType: string): string {
+  private getDescription(objectType: string): string {
     return "Object type " + objectType + " not supported in cloud";
   }
 

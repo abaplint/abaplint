@@ -18,7 +18,7 @@ export class UseNew extends ABAPRule {
     return "use_new";
   }
 
-  public getDescription(): string {
+  private getDescription(): string {
     return "Use NEW #( ) to instantiate object.";
   }
 

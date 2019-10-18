@@ -23,7 +23,7 @@ export class SpaceBeforeDot extends ABAPRule {
     return "space_before_dot";
   }
 
-  public getDescription(): string {
+  private getDescription(): string {
     return "Remove space before , or .";
   }
 

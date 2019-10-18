@@ -28,7 +28,7 @@ export class AvoidUse extends ABAPRule {
     return "avoid_use";
   }
 
-  public getDescription(statement: string): string {
+  private getDescription(statement: string): string {
     return "Avoid use of " + statement;
   }
 

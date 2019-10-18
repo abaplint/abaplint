@@ -25,7 +25,7 @@ export class LocalClassNaming extends ABAPRule {
     return "local_class_naming";
   }
 
-  public getDescription(expected: string, actual: string): string {
+  private getDescription(expected: string, actual: string): string {
     return this.conf.patternKind === "required" ?
       "Local class name does not match pattern " + expected + ": " + actual :
       "Local class name must not match pattern " + expected + ": " + actual ;

@@ -21,7 +21,7 @@ export class AmbiguousStatement extends ABAPRule {
     return "ambiguous_statement";
   }
 
-  public getDescription(): string {
+  private getDescription(): string {
     return "Ambiguous DELETE statement. Use explicit syntax.";
   }
 

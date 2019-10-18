@@ -17,7 +17,7 @@ export class WhenOthersLast extends ABAPRule {
     return "when_others_last";
   }
 
-  public getDescription(): string {
+  private getDescription(): string {
     return "WHEN OTHERS should be the last branch in a CASE statement.";
   }
 

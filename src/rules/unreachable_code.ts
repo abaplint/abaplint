@@ -18,7 +18,7 @@ export class UnreachableCode extends ABAPRule {
     return "unreachable_code";
   }
 
-  public getDescription(): string {
+  private getDescription(): string {
     return "Unreachable code";
   }
 

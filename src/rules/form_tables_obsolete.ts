@@ -19,7 +19,7 @@ export class FormTablesObsolete extends ABAPRule {
     return "form_tables_obsolete";
   }
 
-  public getDescription(): string {
+  private getDescription(): string {
     return "FORM TABLES parameters are obsolete.";
   }
 

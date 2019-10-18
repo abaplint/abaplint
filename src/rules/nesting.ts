@@ -18,7 +18,7 @@ export class Nesting extends ABAPRule {
     return "nesting";
   }
 
-  public getDescription(max: string): string {
+  private getDescription(max: string): string {
     return "Reduce nesting depth to max " + max;
   }
 

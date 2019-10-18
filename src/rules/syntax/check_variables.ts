@@ -16,10 +16,6 @@ export class CheckVariables {
     return "check_variables";
   }
 
-  public getDescription(): string {
-    return "Check Variables";
-  }
-
   public getConfig() {
     return this.conf;
   }

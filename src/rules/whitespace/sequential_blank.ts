@@ -20,7 +20,7 @@ export class SequentialBlank extends ABAPRule {
     return "sequential_blank";
   }
 
-  public getDescription(): string {
+  private getDescription(): string {
     return "Remove sequential blank lines";
   }
 
