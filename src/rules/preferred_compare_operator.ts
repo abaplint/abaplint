@@ -36,13 +36,7 @@ export class PreferredCompareOperator extends ABAPRule {
       const token = op.getLastToken();
       if (this.conf.badOperators.indexOf(token.getStr()) >= 0) {
         const message = this.getDescription(token.getStr());
-        const issue = new Issue({
-          file,
-          message,
-          key: this.getKey(),
-          start: token.getStart(),
-          end: token.getEnd(),
-        });
+        const issue = Issue.atToken(file, token, message, this.getKey());
         issues.push(issue);
       }
     }

@@ -54,21 +54,13 @@ export class MethodLength implements IRule {
 
     for (const s of stats) {
       if (s.count === 0 && this.conf.errorWhenEmpty === true) {
-        issues.push(new Issue({
-          file: s.file,
-          message: this.getDescription(IssueType.EmptyMethod, "0"),
-          key: this.getKey(),
-          start: s.pos,
-        }));
+        const issue = Issue.atPosition(s.file, s.pos, this.getDescription(IssueType.EmptyMethod, "0"), this.getKey());
+        issues.push(issue);
         continue;
       }
       if (s.count > this.conf.statements) {
-        issues.push(new Issue({
-          file: s.file,
-          message: this.getDescription(IssueType.MaxStatements, s.count.toString()),
-          key: this.getKey(),
-          start: s.pos,
-        }));
+        const issue = Issue.atPosition(s.file, s.pos, this.getDescription(IssueType.MaxStatements, s.count.toString()), this.getKey());
+        issues.push(issue);
       }
     }
     return issues;

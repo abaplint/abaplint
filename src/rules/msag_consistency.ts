@@ -39,14 +39,16 @@ export class MSAGConsistency implements IRule {
     for (const message of obj.getMessages()) {
 // todo, get the right positions in xml file
       if (!message.getNumber().match(/\d\d\d/)) {
-        issues.push(new Issue({file: obj.getFiles()[0],
-          message: this.getDescription(
-              "Message number must be 3 digits: message " + message.getNumber()), key: this.getKey(), start: new Position(1, 1)}));
+        const text = this.getDescription("Message number must be 3 digits: message " + message.getNumber());
+        const position = new Position(1, 1);
+        const issue = Issue.atPosition(obj.getFiles()[0], position, text, this.getKey());
+        issues.push(issue);
       }
       if (message.getMessage() === "") {
-        issues.push(new Issue({file: obj.getFiles()[0],
-          message:
-              "Message text empty: message " + message.getNumber(), key: this.getKey(), start: new Position(1, 1)}));
+        const text = "Message text empty: message " + message.getNumber();
+        const position = new Position(1, 1);
+        const issue = Issue.atPosition(obj.getFiles()[0], position, text, this.getKey());
+        issues.push(issue);
       }
     }
 

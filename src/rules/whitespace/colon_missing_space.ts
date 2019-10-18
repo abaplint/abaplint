@@ -38,7 +38,7 @@ export class ColonMissingSpace extends ABAPRule {
           && tokens[i + 1] !== undefined
           && tokens[i + 1].getRow() === token.getRow()
           && tokens[i + 1].getCol() === token.getCol() + 1) {
-        const issue = new Issue({file, message: this.getDescription(), key: this.getKey(), start: token.getStart()});
+        const issue = Issue.atPosition(file, token.getStart(), this.getDescription(), this.getKey());
         issues.push(issue);
       }
     }

@@ -50,7 +50,8 @@ export class InlineDataOldVersions extends ABAPRule {
         }
 
         const message = "Inline DATA not possible in " + versionToText(reg.getConfig().getVersion());
-        issues.push(new Issue({file, message, key: this.getKey(), start: tokens[0].getStart()}));
+        const issue = Issue.atToken(file, tokens[0], message, this.getKey());
+        issues.push(issue);
       }
     }
 

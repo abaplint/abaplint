@@ -4,7 +4,6 @@ import {Registry} from "../../registry";
 import {IObject} from "../../objects/_iobject";
 import {IRule} from "../_irule";
 import * as Objects from "../../objects";
-import {Position} from "../../position";
 import {NameValidator} from "../../utils/name_validator";
 
 /** Allows you to enforce a pattern, such as a prefix, for object names */
@@ -105,10 +104,7 @@ export class ObjectNaming implements IRule {
     }
 
     if (message) {
-      return [new Issue({
-        file: obj.getFiles()[0],
-        message, key: this.getKey(), start: new Position(1, 1),
-      })];
+      return [Issue.atRow(obj.getFiles()[0], 1, message, this.getKey())];
     }
 
     return [];

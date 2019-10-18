@@ -48,7 +48,7 @@ export class Standard implements IFormatter {
   }
 
   private build_tuple(issue: Issue): Tuple {
-    return new Tuple(issue.getFile().getFilename() +
+    return new Tuple(issue.getFilename() +
                      "[" + issue.getStart().getRow() + ", " + issue.getStart().getCol() + "]",
                      issue.getMessage() + " (" + issue.getKey() + ")");
   }

@@ -32,7 +32,8 @@ export class Breakpoint extends ABAPRule {
 
     for (const statement of file.getStatements()) {
       if (statement.get() instanceof Statements.Break) {
-        issues.push(new Issue({file, message: this.getDescription(), key: this.getKey(), start: statement.getStart()}));
+        const issue = Issue.atRow(file, statement.getStart().getRow(), this.getDescription(), this.getKey());
+        issues.push(issue);
       }
     }
 

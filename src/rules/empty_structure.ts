@@ -77,10 +77,8 @@ export class EmptyStructure extends ABAPRule {
 
     for (const l of candidates) {
       if (l.getChildren().length === 2) {
-        const issue = new Issue({file,
-          message: this.getDescription(l.get().constructor.name),
-          key: this.getKey(),
-          start: l.getFirstToken().getStart()});
+        const token = l.getFirstToken();
+        const issue = Issue.atToken(file, token, this.getDescription(l.get().constructor.name), this.getKey());
         issues.push(issue);
       }
     }

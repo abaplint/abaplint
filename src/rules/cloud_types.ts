@@ -5,6 +5,7 @@ import * as Objects from "../objects";
 import {IObject} from "../objects/_iobject";
 import {Registry} from "../registry";
 import {BasicRuleConfig} from "./_basic_rule_config";
+import {Position} from "../position";
 
 /** Checks that the package does not contain any object types unsupported in cloud ABAP. */
 export class CloudTypesConf extends BasicRuleConfig {
@@ -48,7 +49,9 @@ export class CloudTypes implements IRule {
       return [];
     }
 
-    return [new Issue({file: obj.getFiles()[0], key: this.getKey(), message: this.getDescription(obj.getType())})];
+    const position = new Position(1, 1);
+    const issue = Issue.atPosition(obj.getFiles()[0], position, this.getDescription(obj.getType()), this.getKey());
+    return [issue];
   }
 
 }

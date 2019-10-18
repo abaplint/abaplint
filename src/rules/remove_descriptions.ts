@@ -7,6 +7,7 @@ import {BasicRuleConfig} from "./_basic_rule_config";
 import {xmlToArray} from "../xml_utils";
 import {ClassDefinition} from "../abap/types";
 import {IFile} from "../files/_ifile";
+import {Position} from "../position";
 
 /** Ensures you have no descriptions in metadata of methods, parameters, etc. For class descriptions, see rule description_empty. */
 export class RemoveDescriptionsConf extends BasicRuleConfig {
@@ -94,7 +95,9 @@ export class RemoveDescriptions implements IRule {
     const ret: Issue[] = [];
     for (const d of xmlToArray(desc.SEOCOMPOTX)) {
       const message = this.getDescription(d.CMPNAME._text);
-      ret.push(new Issue({file, key: this.getKey(), message}));
+      const position = new Position(1, 1);
+      const issue = Issue.atPosition(file, position, message, this.getKey());
+      ret.push(issue);
     }
     return ret;
   }

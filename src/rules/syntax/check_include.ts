@@ -49,11 +49,8 @@ export class CheckInclude extends ABAPRule {
         const name = iexp.getFirstToken().getStr().toUpperCase();
 
         if (this.findInclude(name, reg, obj) === false) {
-          issues.push(new Issue({file,
-            message: this.getDescription(name),
-            key: this.getKey(),
-            start: statement.getStart(),
-            end: statement.getEnd()}));
+          const issue = Issue.atRow(file, statement.getStart().getRow(), this.getDescription(name), this.getKey());
+          issues.push(issue);
         }
       }
     }

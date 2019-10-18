@@ -42,13 +42,8 @@ export class TypeFormParameters extends ABAPRule {
     for (const formparam of stru.findAllExpressions(Expressions.FormParam)) {
       if (formparam.findFirstExpression(Expressions.FormParamType) === undefined) {
         const token = formparam.getFirstToken();
-        ret.push(new Issue({
-          file,
-          message: this.getDescription(token.getStr()),
-          key: this.getKey(),
-          start: token.getStart(),
-          end: token.getEnd(),
-        }));
+        const issue = Issue.atToken(file, token, this.getDescription(token.getStr()), this.getKey());
+        ret.push(issue);
       }
     }
 

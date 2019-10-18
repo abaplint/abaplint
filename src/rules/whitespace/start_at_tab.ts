@@ -54,7 +54,7 @@ export class StartAtTab extends ABAPRule {
       }
 // just skip rows that contains tabs, this will be reported by the contains_tab rule
       if ((pos.getCol() - 1) % 2 !== 0 && raw[pos.getRow() - 1].includes("\t") === false) {
-        const issue = new Issue({file, message: this.getDescription(), key: this.getKey(), start: pos});
+        const issue = Issue.atPosition(file, pos, this.getDescription(), this.getKey());
         issues.push(issue);
       }
       previous = pos;

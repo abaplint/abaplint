@@ -30,9 +30,9 @@ export class Junit implements IFormatter {
       for (const issue of issues) {
         outputObj.testsuites.testsuite.testcase.push({
           _attributes: {
-            classname: issue.getFile().getObjectName(),
-            file: issue.getFile().getFilename(),
-            name: `${issue.getFile().getFilename()}: [${issue.getStart().getRow()}, ${issue.getStart().getCol()}] - ${issue.getKey()}`,
+            classname: issue.getFilename().split(".")[0],
+            file: issue.getFilename(),
+            name: `${issue.getFilename()}: [${issue.getStart().getRow()}, ${issue.getStart().getCol()}] - ${issue.getKey()}`,
           },
           failure: {
             _attributes: {

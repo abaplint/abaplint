@@ -41,21 +41,19 @@ export class ImplementMethods extends ABAPRule {
         impl = obj.getClassImplementation(def.getName());
       }
       if (impl === undefined) {
-        ret.push(new Issue({file,
-          message: "Class implementation for \"" + def.getName() + "\" not found",
-          key: this.getKey(),
-          start: def.getStart()}));
+        const issue = Issue.atIdentifier(def, "Class implementation for \"" + def.getName() + "\" not found", this.getKey());
+        ret.push(issue);
         continue;
       }
 
-      ret = ret.concat(this.checkClass(def, impl, file));
+      ret = ret.concat(this.checkClass(def, impl));
       ret = ret.concat(this.checkInterfaces(def, impl, file, reg));
     }
 
     return ret;
   }
 
-  private checkClass(def: ClassDefinition, impl: ClassImplementation, file: ABAPFile): Issue[] {
+  private checkClass(def: ClassDefinition, impl: ClassImplementation): Issue[] {
     const ret: Issue[] = [];
 
     for (const md of def.getMethodDefinitions().getAll()) {
@@ -63,19 +61,15 @@ export class ImplementMethods extends ABAPRule {
 
       if (md.isAbstract()) {
         if (found !== undefined) {
-          ret.push(new Issue({file,
-            message: "Do not implement abstract method \"" + md.getName() + "\"",
-            key: this.getKey(),
-            start: found.getStart()}));
+          const issue = Issue.atIdentifier(found, "Do not implement abstract method \"" + md.getName() + "\"", this.getKey());
+          ret.push(issue);
         }
         continue;
       }
 
       if (found === undefined) {
-        ret.push(new Issue({file,
-          message: "Implement method \"" + md.getName() + "\"",
-          key: this.getKey(),
-          start: impl.getStart()}));
+        const issue = Issue.atIdentifier(impl, "Implement method \"" + md.getName() + "\"", this.getKey());
+        ret.push(issue);
       }
     }
 
@@ -91,10 +85,8 @@ export class ImplementMethods extends ABAPRule {
       if (intf === undefined) {
         idef = file.getInterfaceDefinition(interfaceName.name);
         if (idef === undefined) {
-          ret.push(new Issue({file,
-            message: "Implemented interface \"" + interfaceName.name + "\" not found",
-            key: this.getKey(),
-            start: def.getStart()}));
+          const issue = Issue.atIdentifier(def, "Implemented interface \"" + interfaceName.name + "\" not found", this.getKey());
+          ret.push(issue);
           continue;
         }
       } else {
@@ -120,10 +112,9 @@ export class ImplementMethods extends ABAPRule {
         }
 
         if (found === undefined) {
-          ret.push(new Issue({file,
-            message: "Implement method \"" + method.getName() + "\" from interface \"" + interfaceName.name + "\"",
-            key: this.getKey(),
-            start: impl.getStart()}));
+          const message = "Implement method \"" + method.getName() + "\" from interface \"" + interfaceName.name + "\"";
+          const issue = Issue.atIdentifier(impl, message, this.getKey());
+          ret.push(issue);
         }
       }
     }

@@ -39,7 +39,7 @@ export class Exporting extends ABAPRule {
           current = new Counter();
         } else if (this.firstChar(token.getStr()) === ")") {
           if (current.exporting === true && current.other === false) {
-            const issue = new Issue({file, message: this.getDescription(), key: this.getKey(), start: current.pos});
+            const issue = Issue.atPosition(file, current.pos, this.getDescription(), this.getKey());
             issues.push(issue);
           }
           current = stack.pop();

@@ -42,7 +42,8 @@ export class IdenticalFormNames implements IRule {
         const name = form.getName().toUpperCase();
         if (found.indexOf(name) >= 0) {
           const message = this.getDescription(name) + " \"" + name + "\"";
-          ret.push(new Issue({file, message, key: this.getKey(), start: form.getStart()}));
+          const issue = Issue.atIdentifier(form, message, this.getKey());
+          ret.push(issue);
         } else {
           found.push(name);
         }

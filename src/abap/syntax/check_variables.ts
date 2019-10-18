@@ -82,13 +82,8 @@ export class CheckVariablesLogic {
 /////////////////////////////
 
   private newIssue(token: Token, message: string): void {
-    this.issues.push(new Issue({
-      file: this.currentFile,
-      message: message,
-      key: "check_variables",
-      start: token.getStart(),
-      end: token.getEnd(),
-    }));
+    const issue = Issue.atToken(this.currentFile, token, message, "check_variables");
+    this.issues.push(issue);
   }
 
   private traverse(node: INode, filename: string, stopAt?: Token): boolean {

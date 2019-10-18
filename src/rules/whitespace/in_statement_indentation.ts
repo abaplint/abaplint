@@ -78,7 +78,8 @@ export class InStatementIndentation extends ABAPRule {
           continue;
         }
         if (t.getCol() < expected) {
-          ret.push(new Issue({file, message: this.getDescription(), key: this.getKey(), start: t.getStart()}));
+          const issue = Issue.atToken(file, t, this.getDescription(), this.getKey());
+          ret.push(issue);
           break;
         }
       }

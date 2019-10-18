@@ -53,13 +53,8 @@ export class NoPublicAttributes implements IRule {
     for (const attr of attrs.getInstance().concat(attrs.getStatic())) {
       if (attr.getVisibility() === Visibility.Public) {
         const message = this.getDescription(attr.getName());
-        issues.push(new Issue({
-          file: obj.getFiles()[0],
-          message,
-          key: this.getKey(),
-          start: attr.getStart(),
-          end: attr.getEnd(),
-        }));
+        const issue = Issue.atIdentifier(attr, message, this.getKey());
+        issues.push(issue);
       }
     }
 

@@ -63,37 +63,30 @@ export class ClassAttributeNames implements IRule {
     }
 
 
-    return this.checkAttributes(attr, obj);
+    return this.checkAttributes(attr);
   }
 
-  private checkAttributes(attr: Attributes | undefined, obj: IObject): Issue[] {
+  private checkAttributes(attr: Attributes | undefined): Issue[] {
     if (!attr) { return []; }
     let ret: Issue[] = [];
 
     for (const ins of attr.getInstance()) {
-      ret = ret.concat(this.checkName(ins, this.conf.instance, obj));
+      ret = ret.concat(this.checkName(ins, this.conf.instance));
     }
 
     for (const sta of attr.getStatic()) {
-      ret = ret.concat(this.checkName(sta, this.conf.statics, obj));
+      ret = ret.concat(this.checkName(sta, this.conf.statics));
     }
 
     return ret;
   }
 
-  private checkName(attr: ClassAttribute, expected: string, obj: IObject): Issue[] {
+  private checkName(attr: ClassAttribute, expected: string): Issue[] {
     const ret: Issue[] = [];
     const regex = new RegExp(expected, "i");
     const name = attr.getName();
     if (NameValidator.violatesRule(name, regex, this.conf)) {
-// todo, find the right file
-      const issue = new Issue({
-        file: obj.getFiles()[0],
-        message: this.getDescription(name, expected),
-        key: this.getKey(),
-        start: attr.getStart(),
-        end: attr.getEnd(),
-      });
+      const issue = Issue.atIdentifier(attr, this.getDescription(name, expected), this.getKey());
       ret.push(issue);
     }
 

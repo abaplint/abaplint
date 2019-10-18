@@ -57,7 +57,8 @@ export class ObsoleteStatement extends ABAPRule {
           && sta.getTokens()[1].getStr() !== "EXACT")
           || (sta.get() instanceof Statements.Divide && this.conf.divide)) {
         if (prev === undefined || sta.getStart().getCol() !== prev.getCol() || sta.getStart().getRow() !== prev.getRow()) {
-          issues.push(new Issue({file, message: this.getDescription(), key: this.getKey(), start: sta.getStart()}));
+          const issue = Issue.atRow(file, sta.getStart().getRow(), this.getDescription(), this.getKey());
+          issues.push(issue);
         }
         prev = sta.getStart();
       }
@@ -65,7 +66,8 @@ export class ObsoleteStatement extends ABAPRule {
       for (const compare of sta.findAllExpressions(Compare)) {
         const token = compare.findDirectTokenByText("REQUESTED");
         if (token) {
-          issues.push(new Issue({file, message: "IS REQUESTED is obsolete", key: this.getKey(), start: token.getStart()}));
+          const issue = Issue.atToken(file, token, "IS REQUESTED is obsolete", this.getKey());
+          issues.push(issue);
         }
       }
     }

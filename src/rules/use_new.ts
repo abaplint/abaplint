@@ -42,7 +42,8 @@ export class UseNew extends ABAPRule {
         if (statement.findFirstExpression(Dynamic)) {
           continue;
         }
-        issues.push(new Issue({file, message: this.getDescription(), key: this.getKey(), start: statement.getStart()}));
+        const issue = Issue.atPosition(file, statement.getStart(), this.getDescription(), this.getKey());
+        issues.push(issue);
       }
     }
 

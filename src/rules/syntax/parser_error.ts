@@ -46,13 +46,12 @@ export class ParserError extends ABAPRule {
         if (missing) {
           const message = "Missing space between string or character literal and parentheses, Parser error";
           start = missing;
-          issues.push(new Issue({file, message, key: this.getKey(), start}));
+          const issue = Issue.atPosition(file, start, message, this.getKey());
+          issues.push(issue);
         } else {
           const message = this.getDescription(versionToText(reg.getConfig().getVersion()));
-          issues.push(new Issue({file, message,
-            key: this.getKey(),
-            start: statement.getStart(),
-            end: statement.getEnd()}));
+          const issue = Issue.atRow(file, statement.getStart().getRow(), message, this.getKey());
+          issues.push(issue);
         }
 
       }

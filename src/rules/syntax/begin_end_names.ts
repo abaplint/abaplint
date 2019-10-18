@@ -60,13 +60,7 @@ export class BeginEndNames extends ABAPRule {
       const last = end.getFirstToken();
 
       if (first.getStr().toUpperCase() !== last.getStr().toUpperCase()) {
-        const issue = new Issue({
-          file,
-          message: this.getDescription(),
-          key: this.getKey(),
-          start: first.getStart(),
-          end: first.getEnd(),
-        });
+        const issue = Issue.atToken(file, first, this.getDescription(), this.getKey());
         output.push(issue);
       }
     }

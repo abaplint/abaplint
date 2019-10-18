@@ -41,11 +41,8 @@ export class TryWithoutCatch extends ABAPRule {
     for (const t of tries) {
       const c = t.findFirstStructure(Catch);
       if (c === undefined) {
-        issues.push(new Issue({
-          file,
-          message: this.getDescription(),
-          key: this.getKey(),
-          start: t.getFirstToken().getStart()}));
+        const issue = Issue.atToken(file, t.getFirstToken(), this.getDescription(), this.getKey());
+        issues.push(issue);
       }
     }
 

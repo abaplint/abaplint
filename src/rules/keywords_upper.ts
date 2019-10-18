@@ -93,12 +93,7 @@ export class KeywordsUpper extends ABAPRule {
 
       const result = this.traverse(statement, statement.get());
       if (result.token) {
-        const issue = new Issue({
-          file,
-          message: this.getDescription(result.token.getStr(), result.keyword),
-          key: this.getKey(),
-          start: result.token.getStart(),
-          end: result.token.getEnd()});
+        const issue = Issue.atToken(file, result.token, this.getDescription(result.token.getStr(), result.keyword), this.getKey());
         issues.push(issue);
         break; // one issue per file
       }

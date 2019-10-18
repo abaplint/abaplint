@@ -43,7 +43,8 @@ export class MixReturning extends ABAPRule {
       if (def.findFirstExpression(Expressions.MethodDefExporting)
           || def.findFirstExpression(Expressions.MethodDefChanging)) {
         const token = def.getFirstToken();
-        ret.push(new Issue({file, message: this.getDescription(), key: this.getKey(), start: token.getStart()}));
+        const issue = Issue.atToken(file, token, this.getDescription(), this.getKey());
+        ret.push(issue);
       }
     }
 

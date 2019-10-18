@@ -124,7 +124,7 @@ export class LocalVariableNames extends ABAPRule {
     const name = token.getStr();
     if (NameValidator.violatesRule(name, regex, this.conf)) {
       const message = this.getDescription(expected, name);
-      const issue = new Issue({file, message, key: this.getKey(), start: token.getStart()});
+      const issue = Issue.atToken(file, token, message, this.getKey());
       ret.push(issue);
     }
     return ret;

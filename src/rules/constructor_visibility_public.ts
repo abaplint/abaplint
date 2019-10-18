@@ -48,9 +48,8 @@ export class ConstructorVisibilityPublic implements IRule {
     for (const method of methods.getAll()) {
       if (method.getName().toUpperCase() === "CONSTRUCTOR"
           && method.getVisibility() !== Visibility.Public) {
-        const message = this.getDescription();
-        issues.push(new Issue({file: obj.getFiles()[0],
-          message, key: this.getKey(), start: method.getStart()}));
+        const issue = Issue.atIdentifier(method, this.getDescription(), this.getKey());
+        issues.push(issue);
       }
     }
 

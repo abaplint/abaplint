@@ -34,12 +34,12 @@ export class SpaceBeforeColon extends ABAPRule {
 
     for (const token of file.getTokens()) {
       if (token.getStr() === ":" && !prev) {
-        const issue = new Issue({file, message: this.getDescription(), key: this.getKey(), start: token.getStart()});
+        const issue = Issue.atToken(file, token, this.getDescription(), this.getKey());
         issues.push(issue);
       } else if (token.getStr() === ":"
           && prev.getRow() === token.getRow()
           && prev.getCol() + prev.getStr().length < token.getCol()) {
-        const issue = new Issue({file, message: this.getDescription(), key: this.getKey(), start: token.getStart()});
+        const issue = Issue.atToken(file, token, this.getDescription(), this.getKey());
         issues.push(issue);
       }
       prev = token;

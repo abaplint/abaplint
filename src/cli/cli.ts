@@ -13,7 +13,7 @@ import {Stats} from "../extras/stats/stats";
 import {Dump} from "../extras/dump/dump";
 import {SemanticSearch} from "../extras/semantic_search/semantic_search";
 import {FileOperations} from "./file_operations";
-import {MemoryFile} from "../files";
+import {Position} from "../position";
 
 // todo, split this file into mulitple files? and move to new directory?
 
@@ -104,7 +104,7 @@ function displayHelp(): string {
     "  abaplint -e [<abaplint.json> -c] show semantic search information\n" +
     "\n" +
     "Options:\n" +
-    "  -f, --format <format>  output format (standard, total, json, summary, junit, codeclimate)\n" +
+    "  -f, --format <format>  output format (standard, total, json, summary, junit)\n" +
     "  --outformat <format>   output format, use in combination with outfile\n" +
     "  --outfile <file>       output issues to file in format\n" +
     "  -c                     compress files in memory\n";
@@ -144,8 +144,10 @@ async function run() {
       deps = await loadDependencies(config, compress, progress, base);
     } catch (error) {
       issues = [new Issue({
-        file: new MemoryFile("generic", ""),
+        filename: "generic",
         message: error,
+        start: new Position(1, 1),
+        end: new Position(1, 1),
         key: "error",
       })];
     }

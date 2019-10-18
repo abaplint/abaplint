@@ -71,12 +71,7 @@ export class LocalClassNaming extends ABAPRule {
       }
 
       if (expected.length > 0) {
-        const issue = new Issue({
-          file,
-          message: this.getDescription(expected, name),
-          key: this.getKey(),
-          start: token.getStart(),
-          end: token.getEnd()});
+        const issue = Issue.atToken(file, token, this.getDescription(expected, name), this.getKey());
         issues.push(issue);
       }
     }

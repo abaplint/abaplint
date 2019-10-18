@@ -44,7 +44,8 @@ export class RFCErrorHandling extends ABAPRule {
 
       const list = stat.findFirstExpression(Expressions.ParameterListExceptions);
       if (list === undefined) {
-        output.push(new Issue({file, message: this.getDescription(), key: this.getKey(), start: token.getStart()}));
+        const issue = Issue.atToken(file, token, this.getDescription(), this.getKey());
+        output.push(issue);
         continue;
       }
 
@@ -57,7 +58,8 @@ export class RFCErrorHandling extends ABAPRule {
       if (names.indexOf("SYSTEM_FAILURE") < 0
           || names.indexOf("COMMUNICATION_FAILURE") < 0
           || names.indexOf("RESOURCE_FAILURE") < 0) {
-        output.push(new Issue({file, message: this.getDescription(), key: this.getKey(), start: token.getStart()}));
+        const issue = Issue.atToken(file, token, this.getDescription(), this.getKey());
+        output.push(issue);
         continue;
       }
     }

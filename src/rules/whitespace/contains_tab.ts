@@ -4,7 +4,7 @@ import {ABAPRule} from "../_abap_rule";
 import {ABAPFile} from "../../files";
 import {BasicRuleConfig} from "../_basic_rule_config";
 
-/** Checks for usage of tabs (enable to enforce spaces). */
+/** Checks for usage of tabs (enable to enforce spaces) */
 export class ContainsTabConf extends BasicRuleConfig {
 }
 
@@ -35,13 +35,7 @@ export class ContainsTab extends ABAPRule {
     for (let line = 0; line < lines.length; line++) {
       const index = lines[line].indexOf("\t");
       if (index >= 0) {
-        const issue = new Issue({
-          file,
-          message: this.getDescription(),
-          key: this.getKey(),
-          start: new Position(line + 1, index + 1),
-          end: new Position(line + 1, index + 2),
-        });
+        const issue = Issue.atPosition(file, new Position(line + 1, index + 1), this.getDescription(), this.getKey());
         issues.push(issue);
       }
     }

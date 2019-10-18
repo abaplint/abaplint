@@ -35,7 +35,7 @@ export class WhenOthersLast extends ABAPRule {
       for (let i = 0; i < whens.length - 1; i++) {
         if (whens[i].concatTokens() === "WHEN OTHERS.") {
           const start = whens[i].getFirstToken().getStart();
-          const issue = new Issue({file, message: this.getDescription(), key: this.getKey(), start});
+          const issue = Issue.atPosition(file, start, this.getDescription(), this.getKey());
           issues.push(issue);
         }
       }

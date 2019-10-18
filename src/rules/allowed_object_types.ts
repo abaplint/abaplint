@@ -2,6 +2,7 @@ import {IRule} from "./_irule";
 import {Issue} from "../issue";
 import {IObject} from "../objects/_iobject";
 import {BasicRuleConfig} from "./_basic_rule_config";
+import {Position} from "../position";
 
 /** Restricts the set of allowed object types. */
 export class AllowedObjectTypesConf extends BasicRuleConfig {
@@ -36,10 +37,9 @@ export class AllowedObjectTypes implements IRule {
 
     const objectType = obj.getType();
     if (allowed.indexOf(objectType) < 0) {
-      return [new Issue({
-        file: obj.getFiles()[0],
-        key: this.getKey(),
-        message: this.getDescription(objectType)})];
+      const position = new Position(1, 1);
+      const issue = Issue.atPosition(obj.getFiles()[0], position, this.getDescription(objectType), this.getKey());
+      return [issue];
     }
 
     return [];

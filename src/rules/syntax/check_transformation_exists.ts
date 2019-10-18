@@ -45,12 +45,8 @@ export class CheckTransformationExists extends ABAPRule {
         }
         const tok = name.getFirstToken();
         if (reg.getObject("XSLT", tok.getStr()) === undefined) {
-          output.push(new Issue({
-            file,
-            message: this.getDescription(tok.getStr()),
-            key: this.getKey(),
-            start: tok.getStart(),
-            end: tok.getEnd()}));
+          const issue = Issue.atToken(file, tok, this.getDescription(tok.getStr()), this.getKey());
+          output.push(issue);
         }
       }
     }

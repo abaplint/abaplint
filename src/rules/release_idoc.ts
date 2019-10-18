@@ -44,7 +44,9 @@ export class ReleaseIdoc implements IRule {
     }
 
     if (file.getRaw().includes("<CLOSED>X</CLOSED>") === false) {
-      return [new Issue({file: obj.getFiles()[0], message: this.getDescription(), key: this.getKey(), start: new Position(1, 1)})];
+      const position = new Position(1, 1);
+      const issue = Issue.atPosition(obj.getFiles()[0], position, this.getDescription(), this.getKey());
+      return [issue];
     } else {
       return [];
     }

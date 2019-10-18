@@ -5,7 +5,6 @@ import {MethodDefinition} from "../../abap/types/method_definition";
 import {MethodParameter} from "../../abap/types/method_parameter";
 import {Registry} from "../../registry";
 import {ABAPObject} from "../../objects/_abap_object";
-import {IFile} from "../../files/_ifile";
 import {NamingRuleConfig} from "../_naming_rule_config";
 import {NameValidator} from "../../utils/name_validator";
 
@@ -55,7 +54,7 @@ export class MethodParameterNames implements IRule {
     for (const file of obj.getABAPFiles()) {
       for (const def of file.getInterfaceDefinitions()) {
         for (const method of def.getMethodDefinitions()) {
-          ret = ret.concat(this.checkMethod(method, file));
+          ret = ret.concat(this.checkMethod(method));
         }
       }
       for (const def of file.getClassDefinitions()) {
@@ -70,7 +69,7 @@ export class MethodParameterNames implements IRule {
           if (method.isEventHandler()) {
             continue;
           }
-          ret = ret.concat(this.checkMethod(method, file));
+          ret = ret.concat(this.checkMethod(method));
         }
       }
     }
@@ -78,41 +77,34 @@ export class MethodParameterNames implements IRule {
     return ret;
   }
 
-  private checkMethod(method: MethodDefinition, file: IFile): Issue[] {
+  private checkMethod(method: MethodDefinition): Issue[] {
     let ret: Issue[] = [];
 
     const parameters = method.getParameters();
     for (const param of parameters.getImporting()) {
-      ret = ret.concat(this.checkParameter(param, this.conf.importing, file));
+      ret = ret.concat(this.checkParameter(param, this.conf.importing));
     }
     for (const param of parameters.getExporting()) {
-      ret = ret.concat(this.checkParameter(param, this.conf.exporting, file));
+      ret = ret.concat(this.checkParameter(param, this.conf.exporting));
     }
     for (const param of parameters.getChanging()) {
-      ret = ret.concat(this.checkParameter(param, this.conf.changing, file));
+      ret = ret.concat(this.checkParameter(param, this.conf.changing));
     }
     const returning = parameters.getReturning();
     if (returning) {
-      ret = ret.concat(this.checkParameter(returning, this.conf.returning, file));
+      ret = ret.concat(this.checkParameter(returning, this.conf.returning));
     }
 
     return ret;
   }
 
-  private checkParameter(param: MethodParameter, expected: string, file: IFile): Issue[] {
+  private checkParameter(param: MethodParameter, expected: string): Issue[] {
     const ret: Issue[] = [];
     const regex = new RegExp(expected, "i");
     const name = param.getName();
     if (NameValidator.violatesRule(name, regex, this.conf)) {
       const message = this.getDescription(expected, name);
-// todo, find the right file
-      const issue = new Issue({
-        file,
-        message,
-        key: this.getKey(),
-        start: param.getStart(),
-        end: param.getEnd(),
-      });
+      const issue = Issue.atIdentifier(param, message, this.getKey());
       ret.push(issue);
     }
 

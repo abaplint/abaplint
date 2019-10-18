@@ -7,6 +7,7 @@ import {Issue} from "./issue";
 import {Artifacts} from "./artifacts";
 import {versionToText} from "./version";
 import {SkipLogic} from "./skip_logic";
+import {Position} from "./position";
 
 
 export interface IProgress {
@@ -121,7 +122,12 @@ export class Registry {
       try {
         this.findOrCreate(f.getObjectName(), f.getObjectType()).addFile(f);
       } catch (error) {
-        this.issues.push(new Issue({file: f, message: error ? error.toString() : "", key: "registry_add"}));
+        this.issues.push(new Issue({
+          filename: f.getFilename(),
+          message: error ? error.toString() : "",
+          start: new Position(1, 1),
+          end: new Position(1, 1),
+          key: "registry_add"}));
       }
     }
     return this;
@@ -207,7 +213,7 @@ export class Registry {
         }
         let remove = false;
         for (const excl of exclude) {
-          if (new RegExp(excl).exec(ret[i].getFile().getFilename())) {
+          if (new RegExp(excl).exec(ret[i].getFilename())) {
             remove = true;
             break;
           }

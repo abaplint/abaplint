@@ -58,7 +58,7 @@ export class Nesting extends ABAPRule {
 
       if (depth > this.conf.depth) {
         const pos = statement.getFirstToken().getStart();
-        const issue = new Issue({file, message: this.getDescription(this.conf.depth.toString()), key: this.getKey(), start: pos});
+        const issue = Issue.atPosition(file, pos, this.getDescription(this.conf.depth.toString()), this.getKey());
         issues.push(issue);
         break; // only one finding per file
       }

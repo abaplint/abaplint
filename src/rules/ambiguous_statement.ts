@@ -45,13 +45,9 @@ export class AmbiguousStatement extends ABAPRule {
         match = this.tryMatch(statement, reg, Statements.DeleteDatabase);
       }
 
-
       if (match) {
-        issues.push(new Issue({
-          file,
-          message: this.getDescription(),
-          key: this.getKey(),
-          start: statement.getStart()}));
+        const issue = Issue.atRow(file, statement.getStart().getRow(), this.getDescription(), this.getKey());
+        issues.push(issue);
       }
 
     }

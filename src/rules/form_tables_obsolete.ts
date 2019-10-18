@@ -42,13 +42,8 @@ export class FormTablesObsolete extends ABAPRule {
     for (const form of stru.findAllStatements(Statements.Form)) {
       if (form.findDirectTokenByText("TABLES")) {
         const token = form.getFirstToken();
-        ret.push(new Issue({
-          file,
-          message: this.getDescription(),
-          key: this.getKey(),
-          start: token.getStart(),
-          end: token.getEnd(),
-        }));
+        const issue = Issue.atToken(file, token, this.getDescription(), this.getKey());
+        ret.push(issue);
       }
     }
 

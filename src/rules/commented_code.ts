@@ -68,6 +68,8 @@ export class CommentedCode extends ABAPRule {
       }
     }
 
-    return [new Issue({file, message: this.getDescription(), key: this.getKey(), start: new Position(row + 1, 1)})];
+    const position = new Position(row + 1, 1);
+    const issue = Issue.atPosition(file, position, this.getDescription(), this.getKey());
+    return [issue];
   }
 }

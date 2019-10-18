@@ -40,13 +40,8 @@ export class FormNoDash extends ABAPRule {
     for (const form of struc.findAllStatements(Statements.Form)) {
       for (const token of form.getTokens()) {
         if (token instanceof Dash || token instanceof DashW) {
-          issues.push(new Issue({
-            file,
-            message: this.getDescription(),
-            key: this.getKey(),
-            start: token.getStart(),
-            end: token.getEnd(),
-          }));
+          const issue = Issue.atToken(file, token, this.getDescription(), this.getKey());
+          issues.push(issue);
           break;
         }
       }

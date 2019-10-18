@@ -10,7 +10,7 @@ export class Json implements IFormatter {
       const single = {
         description: issue.getMessage(),
         key: issue.getKey(),
-        file: issue.getFile().getFilename(),
+        file: issue.getFilename(),
         start: {
           row: issue.getStart().getRow(),
           col: issue.getStart().getCol(),

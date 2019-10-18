@@ -35,7 +35,7 @@ export class EmptyStatement extends ABAPRule {
 
     for (const sta of statements) {
       if (sta.get() instanceof Empty) {
-        const issue = new Issue({file, key: this.getKey(), message: this.getDescription(), start: sta.getStart()});
+        const issue = Issue.atRow(file, sta.getStart().getRow(), this.getDescription(), this.getKey());
         issues.push(issue);
       }
     }

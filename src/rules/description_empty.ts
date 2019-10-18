@@ -45,7 +45,8 @@ export class DescriptionEmpty implements IRule {
         message = this.getDescription(obj.getName() + ", class XML file not found") ;
       }
       if (message) {
-        const issue = new Issue({file: obj.getFiles()[0], message, key: this.getKey(), start: new Position(1, 1)});
+        const position = new Position(1, 1);
+        const issue = Issue.atPosition(obj.getFiles()[0], position, message, this.getKey());
         issues.push(issue);
       }
     }
