@@ -167,7 +167,7 @@ const emptyMethodTests = [
   {abap: "METHOD foobar. ENDMETHOD.", cnt: 0},
 ];
 
-const config = new  MethodLengthConf();
+const config = new MethodLengthConf();
 config.errorWhenEmpty = false;
 
 testRule(emptyMethodTests, MethodLength, config);
