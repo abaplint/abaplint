@@ -15,7 +15,12 @@ function run(reg: Registry, globalConstants?: string[]): Issue[] {
   }
 
   for (const obj of reg.getABAPObjects()) {
-    ret = ret.concat(new CheckVariablesLogic(reg, obj).findIssues(false));
+    for (const file of obj.getABAPFiles()) {
+      if (file.getStructure() === undefined) {
+        throw new Error("check variables test, parser error");
+      }
+    }
+    ret = ret.concat(new CheckVariablesLogic(reg, obj).findIssues());
   }
   return ret;
 }
@@ -1011,6 +1016,22 @@ describe("Check Variables", () => {
     const issues = runProgram(abap);
     expect(issues.length).to.equals(0);
   });
+/*
+  it("PROG, INCLUDEs", () => {
+    const prog1 = `
+      DATA moo TYPE string.
+      INCLUDE zincl.`;
+    const zincl = `
+      WRITE moo.
+      WRITE boo.`;
+    const issues = runMulti([
+      {filename: "zprog1.prog.abap", contents: prog1},
+      {filename: "zincl.prog.abap", contents: zincl},
+      {filename: "zincl.prog.xml", contents: "<SUBC>I</SUBC>"}]);
+    expect(issues.length).to.equals(1);
+    expect(issues[0].getMessage()).to.include("boo");
+  });
+*/
 
 /*
   it("program, constant, begin, error", () => {

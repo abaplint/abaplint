@@ -17,12 +17,16 @@ import {Program} from "../../objects";
 
 // todo: should filename and ScopedVariables be singletons instead of passed everywhere?
 
+// assumption: objects are parsed without parsing errors
+
 export class CheckVariablesLogic {
-  private readonly object: ABAPObject;
   private currentFile: ABAPFile;
-  private readonly variables: ScopedVariables;
-  private readonly issues: Issue[];
+  private issues: Issue[];
+
+  private readonly object: ABAPObject;
   private readonly reg: Registry;
+
+  private readonly variables: ScopedVariables;
   private readonly oooc: ObjectOriented;
   private readonly proc: Procedural;
   private readonly inline: Inline;
@@ -38,25 +42,20 @@ export class CheckVariablesLogic {
     this.inline = new Inline(this.variables, this.reg);
   }
 
-  public findIssues(ignoreParserError = true): Issue[] {
+  public findIssues(): Issue[] {
+    this.issues = [];
 
     if (this.object instanceof Program && this.object.isInclude()) {
-// todo, for now only main executeable program parts are checked
       return [];
     }
 
     for (const file of this.object.getABAPFiles()) {
       this.currentFile = file;
-    // assumption: objects are parsed without parsing errors
       const structure = this.currentFile.getStructure();
       if (structure === undefined) {
-        if (ignoreParserError) { // todo, this is only used for testing, move the logic to testing instead
-          return [];
-        } else {
-          throw new Error("Parser error");
-        }
+        return [];
       }
-      this.traverse(structure, file.getFilename());
+      this.traverse(structure);
     }
 
     return this.issues;
@@ -65,13 +64,14 @@ export class CheckVariablesLogic {
 // todo, this assumes no tokes are the same across files, loops all getABAPFiles
   public traverseUntil(token: Token): ScopedVariables {
 
+// todo, this should start with the right file for the object
     for (const file of this.object.getABAPFiles()) {
       this.currentFile = file;
     // assumption: objects are parsed without parsing errors
       const structure = this.currentFile.getStructure();
       if (structure === undefined) {
         return this.variables;
-      } else if (this.traverse(structure, file.getFilename(), token)) {
+      } else if (this.traverse(structure, token)) {
         return this.variables;
       }
     }
@@ -86,9 +86,9 @@ export class CheckVariablesLogic {
     this.issues.push(issue);
   }
 
-  private traverse(node: INode, filename: string, stopAt?: Token): boolean {
+  private traverse(node: INode, stopAt?: Token): boolean {
     try {
-      const skip = this.inline.update(node, filename);
+      const skip = this.inline.update(node, this.currentFile.getFilename());
       if (skip) {
         return false;
       }
@@ -111,13 +111,20 @@ export class CheckVariablesLogic {
 
     for (const child of node.getChildren()) {
       try {
-        this.updateVariables(child, filename);
+        this.updateVariables(child);
       } catch (e) {
         this.newIssue(child.getFirstToken(), e.message);
         break;
       }
 
-      const stop = this.traverse(child, filename, stopAt);
+      if (child instanceof StatementNode && child.get() instanceof Statements.Include) {
+        const file = this.findInclude(child);
+        if (file !== undefined) {
+          // todo
+        }
+      }
+
+      const stop = this.traverse(child, stopAt);
       if (stop) {
         return stop;
       }
@@ -136,21 +143,30 @@ export class CheckVariablesLogic {
     return false;
   }
 
-  private updateVariables(node: INode, filename: string): void {
+  private findInclude(node: StatementNode): ABAPFile | undefined {
+    const expr = node.findFirstExpression(Expressions.IncludeName);
+    if (expr === undefined) {
+      return undefined;
+    }
+    const name = expr.getFirstToken().getStr();
+    return this.reg.getABAPFile(name);
+  }
+
+  private updateVariables(node: INode): void {
 // todo, align statements, eg is NamespaceSimpleName a definition or is it Field, or something new?
 // todo, and introduce SimpleSource?
     if (node instanceof StructureNode && node.get() instanceof Structures.TypeEnum) {
-      this.proc.addEnumValues(node, filename);
+      this.proc.addEnumValues(node, this.currentFile.getFilename());
       return;
     } else if (!(node instanceof StatementNode)) {
       return;
     }
 
     const statement = node.get();
-    this.proc.addDefinitions(node, filename);
+    this.proc.addDefinitions(node, this.currentFile.getFilename());
 
     if (statement instanceof Statements.Form) {
-      this.proc.findFormScope(node, filename);
+      this.proc.findFormScope(node, this.currentFile.getFilename());
     } else if (statement instanceof Statements.FunctionModule) {
       this.proc.findFunctionScope(node);
     } else if (statement instanceof Statements.Method) {

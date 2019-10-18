@@ -124,7 +124,7 @@ export class Registry {
       } catch (error) {
         this.issues.push(new Issue({
           filename: f.getFilename(),
-          message: error ? error.toString() : "",
+          message: error ? error.toString() : "registry_add",
           start: new Position(1, 1),
           end: new Position(1, 1),
           key: "registry_add"}));

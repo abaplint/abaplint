@@ -31,7 +31,7 @@ export class ProblemsWidget extends Widget {
     const input = document.createElement("tt");
     for (const i of FileSystem.getIssues()) {
       const position = "[" + i.getStart().getRow() + ", " + i.getStart().getCol() + "]";
-      const path = monaco.Uri.parse(i.getFile().getFilename()).path;
+      const path = monaco.Uri.parse(i.getFilename()).path;
       input.innerHTML = input.innerHTML + "<br>" +
         path + position + ": " + i.getMessage() + "(" + i.getKey() + ")";
     }

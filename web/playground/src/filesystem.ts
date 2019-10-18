@@ -112,7 +112,7 @@ ENDLOOP.`);
       const issues = this.reg.findIssues();
       const ret = [];
       for (const i of issues) { // blah
-        if (i.getFile().getFilename() === filename) {
+        if (i.getFilename() === filename) {
           ret.push(i);
         }
       }
