@@ -1,4 +1,4 @@
-import {MethodLength} from "../../src/rules/method_length";
+import {MethodLength, MethodLengthConf} from "../../src/rules/method_length";
 import {testRule} from "./_utils";
 
 const tests = [
@@ -161,3 +161,13 @@ const tests = [
 ];
 
 testRule(tests, MethodLength);
+
+
+const emptyMethodTests = [
+  {abap: "METHOD foobar. ENDMETHOD.", cnt: 0},
+];
+
+const config = new  MethodLengthConf();
+config.errorWhenEmpty = false;
+
+testRule(emptyMethodTests, MethodLength, config);
