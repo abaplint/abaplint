@@ -1,5 +1,5 @@
-import {ContainsTab} from "../../src/rules/whitespace/contains_tab";
-import {testRule} from "./_utils";
+import {ContainsTab} from "../../../src/rules/whitespace/contains_tab";
+import {testRule} from "../_utils";
 
 const tests = [
   {abap: "data: lt_file\ttype solix_tab.", cnt: 1},

@@ -1,5 +1,5 @@
-import {ColonMissingSpace} from "../../src/rules/whitespace/colon_missing_space";
-import {testRule} from "./_utils";
+import {ColonMissingSpace} from "../../../src/rules/whitespace/colon_missing_space";
+import {testRule} from "../_utils";
 
 const tests = [
   {abap: "WRITE:/ 'foobar'.", cnt: 1},

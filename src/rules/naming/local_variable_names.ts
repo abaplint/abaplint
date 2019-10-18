@@ -1,13 +1,13 @@
-import {Issue} from "../issue";
-import {ABAPRule} from "./_abap_rule";
-import {ABAPFile} from "../files";
-import * as Structures from "../abap/structures";
-import * as Statements from "../abap/statements";
-import * as Expressions from "../abap/expressions";
-import {StructureNode} from "../abap/nodes";
-import {Token} from "../abap/tokens/_token";
-import {NamingRuleConfig} from "./_naming_rule_config";
-import {NameValidator} from "../utils/name_validator";
+import {Issue} from "../../issue";
+import {ABAPRule} from "../_abap_rule";
+import {ABAPFile} from "../../files";
+import * as Structures from "../../abap/structures";
+import * as Statements from "../../abap/statements";
+import * as Expressions from "../../abap/expressions";
+import {StructureNode} from "../../abap/nodes";
+import {Token} from "../../abap/tokens/_token";
+import {NamingRuleConfig} from "../_naming_rule_config";
+import {NameValidator} from "../../utils/name_validator";
 
 /** Allows you to enforce a pattern, such as a prefix, for local variables, constants and field symbols. */
 export class LocalVariableNamesConf extends NamingRuleConfig {

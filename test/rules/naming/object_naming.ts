@@ -1,6 +1,6 @@
-import {ObjectNaming, ObjectNamingConf} from "../../src/rules";
-import {Registry} from "../../src/registry";
-import {MemoryFile} from "../../src/files";
+import {ObjectNaming, ObjectNamingConf} from "../../../src/rules";
+import {Registry} from "../../../src/registry";
+import {MemoryFile} from "../../../src/files";
 import {expect} from "chai";
 
 function findIssues(filename: string, expectedIssueCount: Number, config?: ObjectNamingConf) {

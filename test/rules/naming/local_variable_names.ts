@@ -1,7 +1,7 @@
-import {MemoryFile} from "../../src/files/memory_file";
-import {Registry} from "../../src/registry";
+import {MemoryFile} from "../../../src/files/memory_file";
+import {Registry} from "../../../src/registry";
 import {expect} from "chai";
-import {LocalVariableNames, LocalVariableNamesConf} from "../../src/rules";
+import {LocalVariableNames, LocalVariableNamesConf} from "../../../src/rules";
 
 function findIssues(abap: string, config?: LocalVariableNamesConf) {
   const reg = new Registry().addFile(new MemoryFile("zfoobar.prog.abap", abap)).parse();

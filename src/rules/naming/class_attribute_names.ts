@@ -1,12 +1,12 @@
-import {Issue} from "../issue";
-import {IObject} from "../objects/_iobject";
-import {Class} from "../objects";
-import {Registry} from "../registry";
-import {Attributes} from "../abap/types/class_attributes";
-import {ClassAttribute} from "../abap/types/class_attribute";
-import {NamingRuleConfig} from "./_naming_rule_config";
-import {IRule} from "./_irule";
-import {NameValidator} from "../utils/name_validator";
+import {Issue} from "../../issue";
+import {IObject} from "../../objects/_iobject";
+import {Class} from "../../objects";
+import {Registry} from "../../registry";
+import {Attributes} from "../../abap/types/class_attributes";
+import {ClassAttribute} from "../../abap/types/class_attribute";
+import {NamingRuleConfig} from "../_naming_rule_config";
+import {IRule} from "../_irule";
+import {NameValidator} from "../../utils/name_validator";
 
 
 /** Allows you to enforce a pattern, such as a prefix, for class variable names. */

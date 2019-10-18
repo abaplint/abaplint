@@ -1,5 +1,5 @@
-import {SpaceBeforeColon} from "../../src/rules/whitespace/space_before_colon";
-import {testRule} from "./_utils";
+import {SpaceBeforeColon} from "../../../src/rules/whitespace/space_before_colon";
+import {testRule} from "../_utils";
 
 const tests = [
   {abap: "WRITE : 'foo'.", cnt: 1},

@@ -1,13 +1,13 @@
-import {Issue} from "../issue";
-import {ABAPRule} from "./_abap_rule";
-import {ABAPFile} from "../files";
-import {ClassDefinition} from "../abap/statements";
-import {IObject} from "../objects/_iobject";
-import {Registry} from "../registry";
-import {ClassName} from "../abap/expressions";
-import {Class} from "../objects";
-import {NamingRuleConfig} from "./_naming_rule_config";
-import {NameValidator} from "../utils/name_validator";
+import {Issue} from "../../issue";
+import {ABAPRule} from "../_abap_rule";
+import {ABAPFile} from "../../files";
+import {ClassDefinition} from "../../abap/statements";
+import {IObject} from "../../objects/_iobject";
+import {Registry} from "../../registry";
+import {ClassName} from "../../abap/expressions";
+import {Class} from "../../objects";
+import {NamingRuleConfig} from "../_naming_rule_config";
+import {NameValidator} from "../../utils/name_validator";
 
 /** Allows you to enforce a pattern, such as a prefix, for local class names. */
 export class LocalClassNamingConf extends NamingRuleConfig {

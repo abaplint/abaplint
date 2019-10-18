@@ -1,5 +1,5 @@
-import {SequentialBlank} from "../../src/rules/whitespace/sequential_blank";
-import {testRule} from "./_utils";
+import {SequentialBlank} from "../../../src/rules/whitespace/sequential_blank";
+import {testRule} from "../_utils";
 
 const tests = [
   {abap: "\n\n\n\n", cnt: 1},

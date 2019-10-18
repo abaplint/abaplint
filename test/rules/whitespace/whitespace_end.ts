@@ -1,5 +1,5 @@
-import {WhitespaceEnd} from "../../src/rules/whitespace/whitespace_end";
-import {testRule} from "./_utils";
+import {WhitespaceEnd} from "../../../src/rules/whitespace/whitespace_end";
+import {testRule} from "../_utils";
 
 const tests = [
   {abap: "WRITE 'hello'.", cnt: 0},
