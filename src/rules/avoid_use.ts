@@ -61,7 +61,7 @@ export class AvoidUse extends ABAPRule {
         message = "STATICS";
       }
       if (message) {
-        const issue = Issue.atRow(file, statement.getStart().getRow(), this.getDescription(message), this.getKey());
+        const issue = Issue.atStatement(file, statement, this.getDescription(message), this.getKey());
         issues.push(issue);
       }
     }

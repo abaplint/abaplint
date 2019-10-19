@@ -50,7 +50,7 @@ export class ParserError extends ABAPRule {
           issues.push(issue);
         } else {
           const message = this.getDescription(versionToText(reg.getConfig().getVersion()));
-          const issue = Issue.atRow(file, statement.getStart().getRow(), message, this.getKey());
+          const issue = Issue.atStatement(file, statement, message, this.getKey());
           issues.push(issue);
         }
 

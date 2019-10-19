@@ -2,6 +2,7 @@ import {IFile} from "./files/_ifile";
 import {Position} from "./position";
 import {Token} from "./abap/tokens/_token";
 import {Identifier} from "./abap/types/_identifier";
+import {StatementNode} from "./abap/nodes";
 
 interface IIssueData {
   filename: string;
@@ -31,6 +32,10 @@ export class Issue {
       start,
       end,
     });
+  }
+
+  public static atStatement(file: IFile, statement: StatementNode, message: string, key: string) {
+    return this.atRow(file, statement.getStart().getRow(), message, key);
   }
 
   public static atPosition(file: IFile, start: Position, message: string, key: string) {

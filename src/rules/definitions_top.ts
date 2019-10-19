@@ -72,7 +72,7 @@ export class DefinitionsTop extends ABAPRule {
           || statement.get() instanceof Statements.StaticEnd
           || statement.get() instanceof Statements.FieldSymbol) {
         if (mode === AFTER) {
-          issue = Issue.atRow(file, statement.getStart().getRow(), this.getDescription(), this.getKey());
+          issue = Issue.atStatement(file, statement, this.getDescription(), this.getKey());
           mode = ANY;
         }
       } else if (statement.get() instanceof Statements.Define) {

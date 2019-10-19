@@ -57,7 +57,7 @@ export class ObsoleteStatement extends ABAPRule {
           && sta.getTokens()[1].getStr() !== "EXACT")
           || (sta.get() instanceof Statements.Divide && this.conf.divide)) {
         if (prev === undefined || sta.getStart().getCol() !== prev.getCol() || sta.getStart().getRow() !== prev.getRow()) {
-          const issue = Issue.atRow(file, sta.getStart().getRow(), this.getDescription(), this.getKey());
+          const issue = Issue.atStatement(file, sta, this.getDescription(), this.getKey());
           issues.push(issue);
         }
         prev = sta.getStart();
