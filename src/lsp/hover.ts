@@ -1,8 +1,10 @@
 import * as LServer from "vscode-languageserver-types";
 import {Registry} from "../registry";
-import {SyntaxLogic} from "../abap/syntax/syntax";
 import {ABAPObject} from "../objects/_abap_object";
 import {LSPUtils} from "./_lsp_utils";
+import {FormDefinition} from "../abap/types";
+import {ABAPFile} from "../files";
+import {Identifier} from "../abap/types/_identifier";
 
 export class Hover {
   public static find(reg: Registry,
@@ -18,18 +20,22 @@ export class Hover {
       return undefined;
     }
 
-    const found = LSPUtils.find(reg, textDocument, position);
-    if (found !== undefined) {
-      const variables = new SyntaxLogic(reg, obj).traverseUntil(found.identifier);
-      const resolved = variables.resolveVariable(found.token.getStr());
-      if (resolved !== undefined) {
-        return {kind: LServer.MarkupKind.Markdown, value: "Resolved"};
-      } else {
-        return {kind: LServer.MarkupKind.Markdown, value: "Unknown"};
-      }
+    const found = LSPUtils.findCursor(reg, textDocument, position);
+    if (found === undefined) {
+      return {kind: LServer.MarkupKind.Markdown, value: "Cursor token not found"};
     }
 
-    return {kind: LServer.MarkupKind.Markdown, value: "Not resolved"};
+    const lookup = LSPUtils.lookup(found, reg, obj);
+    if (lookup instanceof ABAPFile) {
+      return {kind: LServer.MarkupKind.Markdown, value: "File"};
+    } else if (lookup instanceof FormDefinition) {
+      return {kind: LServer.MarkupKind.Markdown, value: "FORM info"};
+    } else if (lookup instanceof Identifier) {
+      return {kind: LServer.MarkupKind.Markdown, value: "Resolved"};
+    } else {
+      return {kind: LServer.MarkupKind.Markdown, value: "Unknown"};
+    }
+
   }
 
 }

@@ -33,7 +33,7 @@ export class Help {
                                    position: LServer.Position,
                                    file: ABAPFile): string {
     let ret = "";
-    const found = LSPUtils.find(reg, textDocument, position);
+    const found = LSPUtils.findCursor(reg, textDocument, position);
 
     if (found !== undefined) {
       ret = "Statement: " + this.linkToStatement(found.statement) + "<br>\n" +
