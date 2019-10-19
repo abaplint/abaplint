@@ -12,13 +12,10 @@ import {FunctionGroup} from "../../objects";
 class LocalIdentifier extends Identifier { }
 
 export class Procedural {
-  private readonly obj: ABAPObject;
-  private readonly variables: Scope;
+  private readonly scope: Scope;
 
-// todo: can "obj" as input be removed?
-  constructor(obj: ABAPObject, variables: Scope) {
-    this.obj = obj;
-    this.variables = variables;
+  constructor(scope: Scope) {
+    this.scope = scope;
   }
 
   public addDefinitions(node: StatementNode, filename: string) {
@@ -40,7 +37,7 @@ export class Procedural {
       ret.push(this.buildVariable(node.findFirstExpression(Expressions.Field), filename));
     }
 
-    this.variables.addList(ret);
+    this.scope.addList(ret);
   }
 
   public addEnumValues(node: StructureNode, filename: string) {
@@ -52,27 +49,27 @@ export class Procedural {
       if (expr === undefined) {
         continue;
       }
-      this.variables.addIdentifier(this.buildVariable(expr, filename));
+      this.scope.addIdentifier(this.buildVariable(expr, filename));
     }
   }
 
-  public findFunctionScope(node: StatementNode) {
-    this.variables.pushScope("function");
+  public findFunctionScope(obj: ABAPObject, node: StatementNode) {
+    this.scope.pushScope("function");
 
     const name = node.findFirstExpression(Expressions.FunctionName)!.getFirstToken().getStr();
-    const definition = (this.obj as FunctionGroup).getModule(name);
+    const definition = (obj as FunctionGroup).getModule(name);
     if (definition === undefined) {
       throw new Error("Function group definition \"" + name + "\" not found");
     }
 
     for (const param of definition.getParameters()) {
-      this.variables.addName(param);
+      this.scope.addName(param);
     }
   }
 
   public findFormScope(node: StatementNode, filename: string) {
-    this.variables.pushScope("form");
-    this.variables.addList(new FormDefinition(node, filename).getParameters());
+    this.scope.pushScope("form");
+    this.scope.addList(new FormDefinition(node, filename).getParameters());
   }
 
   private buildVariable(expr: ExpressionNode | undefined, filename: string): Identifier {

@@ -13,7 +13,7 @@ export class Inline {
   private readonly variables: Scope;
   private readonly reg: Registry;
 
-  constructor(variables: Scope, reg: Registry) {
+  constructor(reg: Registry, variables: Scope) {
     this.variables = variables;
     this.reg = reg;
   }

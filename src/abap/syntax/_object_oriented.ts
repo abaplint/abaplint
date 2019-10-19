@@ -1,7 +1,6 @@
 import * as Statements from "../statements";
 import * as Expressions from "../expressions";
 import {StatementNode} from "../nodes";
-import {ABAPObject} from "../../objects/_abap_object";
 import {ClassDefinition, MethodDefinition, InterfaceDefinition} from "../types";
 import {Interface, Class} from "../../objects";
 import {Registry} from "../../registry";
@@ -11,7 +10,7 @@ export class ObjectOriented {
   private readonly reg: Registry;
   private readonly scope: Scope;
 
-  constructor(_obj: ABAPObject, reg: Registry, scope: Scope) {
+  constructor(reg: Registry, scope: Scope) {
     this.reg = reg;
     this.scope = scope;
   }

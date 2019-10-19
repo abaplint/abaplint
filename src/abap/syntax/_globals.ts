@@ -94,7 +94,7 @@ export class Globals {
       throw new Error("globals, parser error");
     }
 
-    const proc = new Procedural(reg.getABAPObjects()[0], variables);
+    const proc = new Procedural(variables);
     for (const statement of structure.findAllStatementNodes()) {
       proc.addDefinitions(statement, file.getFilename());
     }

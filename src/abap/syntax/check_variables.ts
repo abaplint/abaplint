@@ -41,9 +41,9 @@ export class CheckVariablesLogic {
     this.scope = new Scope(Globals.get(this.reg.getConfig().getSyntaxSetttings().globalConstants));
 
     this.helpers = {
-      oooc: new ObjectOriented(this.object, this.reg, this.scope),
-      proc: new Procedural(this.object, this.scope),
-      inline: new Inline(this.scope, this.reg),
+      oooc: new ObjectOriented(this.reg, this.scope),
+      proc: new Procedural(this.scope),
+      inline: new Inline(this.reg, this.scope),
     };
   }
 
@@ -188,7 +188,7 @@ export class CheckVariablesLogic {
     if (statement instanceof Statements.Form) {
       this.helpers.proc.findFormScope(node, this.currentFile.getFilename());
     } else if (statement instanceof Statements.FunctionModule) {
-      this.helpers.proc.findFunctionScope(node);
+      this.helpers.proc.findFunctionScope(this.object, node);
     } else if (statement instanceof Statements.Method) {
       this.helpers.oooc.methodImplementation(node);
     } else if (statement instanceof Statements.ClassDefinition) {

@@ -1058,6 +1058,16 @@ describe("Check Variables", () => {
     expect(issues.length).to.equals(1);
   });
 
+  it("PROG, selection screen comment", () => {
+    const abap = `
+      SELECTION-SCREEN COMMENT 1(10) s_url FOR FIELD p_foo.
+      PARAMETERS p_foo TYPE string.
+      INITIALIZATION.
+        s_url = 'sdf'.`;
+    const issues = runProgram(abap);
+    expect(issues.length).to.equals(0);
+  });
+
 /*
   it("program, constant, begin, error", () => {
     const abap =
