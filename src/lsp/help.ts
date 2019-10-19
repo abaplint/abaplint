@@ -7,7 +7,7 @@ import {Token} from "../abap/tokens/_token";
 import {LSPUtils} from "./_lsp_utils";
 import {CheckVariablesLogic} from "../abap/syntax/check_variables";
 import {ABAPObject} from "../objects/_abap_object";
-import {ScopedVariables} from "../abap/syntax/_scoped_variables";
+import {Scope} from "../abap/syntax/_scope";
 
 export class Help {
   public static find(reg: Registry, textDocument: LServer.TextDocumentIdentifier, position: LServer.Position): string {
@@ -52,7 +52,7 @@ export class Help {
     return ret;
   }
 
-  private static dumpVariables(variables: ScopedVariables): string {
+  private static dumpVariables(variables: Scope): string {
     let ret = "<hr>\n";
     for (const s of variables.get()) {
       if (s.name === "_builtin") {

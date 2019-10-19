@@ -3,7 +3,7 @@ import {Registry} from "../../registry";
 import {Procedural} from "./_procedural";
 import {Identifier} from "../types/_identifier";
 import {IFile} from "../../files/_ifile";
-import {ScopedVariables} from "./_scoped_variables";
+import {Scope} from "./_scope";
 
 export class Globals {
   private static cache: Identifier[];
@@ -88,7 +88,7 @@ export class Globals {
 
   private static typesInFile(file: IFile): Identifier[] {
     const reg = new Registry();
-    const variables = new ScopedVariables([]);
+    const variables = new Scope([]);
     const structure = reg.addFile(file).getABAPFiles()[0].getStructure();
     if (structure === undefined) {
       throw new Error("globals, parser error");

@@ -1,12 +1,19 @@
 import {Identifier} from "../types/_identifier";
+import {ClassDefinition, InterfaceDefinition} from "../types";
 
 interface IVar {
   name: string;
   identifier?: Identifier;
 }
 
-export class ScopedVariables {
-  private readonly scopes: {name: string; vars: IVar[]}[];
+export class Scope {
+
+  private readonly scopes: {
+    name: string,
+    vars: IVar[],
+    cdef: ClassDefinition[],
+    idef: InterfaceDefinition[],
+  }[];
 
   constructor(builtin: Identifier[]) {
     this.scopes = [];
@@ -17,6 +24,38 @@ export class ScopedVariables {
 
   public get() {
     return this.scopes;
+  }
+
+  public addClassDefinition(c: ClassDefinition) {
+    this.scopes[this.scopes.length - 1].cdef.push(c);
+  }
+
+  public findClassDefinition(name: string): ClassDefinition | undefined {
+    // todo, this should probably search the nearest first? in case there are shadowed variables?
+    for (const scope of this.scopes) {
+      for (const cdef of scope.cdef) {
+        if (cdef.getName().toUpperCase() === name.toUpperCase()) {
+          return cdef;
+        }
+      }
+    }
+    return undefined;
+  }
+
+  public addInterfaceDefinition(i: InterfaceDefinition) {
+    this.scopes[this.scopes.length - 1].idef.push(i);
+  }
+
+  public findInterfaceDefinition(name: string): InterfaceDefinition | undefined {
+    // todo, this should probably search the nearest first? in case there are shadowed variables?
+    for (const scope of this.scopes) {
+      for (const idef of scope.idef) {
+        if (idef.getName().toUpperCase() === name.toUpperCase()) {
+          return idef;
+        }
+      }
+    }
+    return undefined;
   }
 
   public addIdentifier(identifier: Identifier) {
@@ -67,8 +106,13 @@ export class ScopedVariables {
     return this.scopes[this.scopes.length - 2].name;
   }
 
-  public pushScope(name: string): ScopedVariables {
-    this.scopes.push({name: name, vars: []});
+  public pushScope(name: string): Scope {
+    this.scopes.push({
+      name: name,
+      vars: [],
+      cdef: [],
+      idef: [],
+    });
     return this;
   }
 

@@ -87,7 +87,7 @@ export class Registry {
   public getABAPFile(name: string): ABAPFile | undefined {
     const all = this.getABAPFiles();
     for (const file of all) {
-      if (file.getFilename() === name) {
+      if (file.getFilename().toUpperCase() === name.toUpperCase()) {
         return file;
       }
     }

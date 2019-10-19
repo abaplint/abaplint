@@ -1016,7 +1016,7 @@ describe("Check Variables", () => {
     const issues = runProgram(abap);
     expect(issues.length).to.equals(0);
   });
-/*
+
   it("PROG, INCLUDEs", () => {
     const prog1 = `
       DATA moo TYPE string.
@@ -1031,7 +1031,32 @@ describe("Check Variables", () => {
     expect(issues.length).to.equals(1);
     expect(issues[0].getMessage()).to.include("boo");
   });
-*/
+
+  it("program, local class definition and implementation in include", () => {
+    const prog1 = `
+      DATA moo TYPE string.
+      INCLUDE zincl.`;
+    const zincl = `
+      CLASS lcl_foobar DEFINITION FINAL.
+      ENDCLASS.
+      CLASS lcl_foobar IMPLEMENTATION.
+      ENDCLASS.`;
+    const issues = runMulti([
+      {filename: "zprog1.prog.abap", contents: prog1},
+      {filename: "zincl.prog.abap", contents: zincl},
+      {filename: "zincl.prog.xml", contents: "<SUBC>I</SUBC>"}]);
+    expect(issues.length).to.equals(0);
+  });
+
+  it("PROG, wrong sequence of definition and implementation", () => {
+    const abap = `
+    CLASS lcl_foobar IMPLEMENTATION.
+    ENDCLASS.
+    CLASS lcl_foobar DEFINITION FINAL.
+    ENDCLASS.`;
+    const issues = runProgram(abap);
+    expect(issues.length).to.equals(1);
+  });
 
 /*
   it("program, constant, begin, error", () => {

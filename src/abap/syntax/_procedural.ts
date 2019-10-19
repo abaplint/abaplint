@@ -5,7 +5,7 @@ import {StatementNode, ExpressionNode, StructureNode} from "../nodes";
 import {Identifier} from "../types/_identifier";
 import {ABAPObject} from "../../objects/_abap_object";
 import {FormDefinition} from "../types";
-import {ScopedVariables} from "./_scoped_variables";
+import {Scope} from "./_scope";
 import {FunctionGroup} from "../../objects";
 
 // todo, rename this class?
@@ -13,10 +13,10 @@ class LocalIdentifier extends Identifier { }
 
 export class Procedural {
   private readonly obj: ABAPObject;
-  private readonly variables: ScopedVariables;
+  private readonly variables: Scope;
 
 // todo: can "obj" as input be removed?
-  constructor(obj: ABAPObject, variables: ScopedVariables) {
+  constructor(obj: ABAPObject, variables: Scope) {
     this.obj = obj;
     this.variables = variables;
   }

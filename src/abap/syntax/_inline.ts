@@ -1,4 +1,4 @@
-import {ScopedVariables} from "./_scoped_variables";
+import {Scope} from "./_scope";
 import {Identifier} from "../types/_identifier";
 import {ExpressionNode, StatementNode} from "../nodes";
 import * as Expressions from "../expressions";
@@ -10,10 +10,10 @@ import {Table, View} from "../../objects";
 class LocalIdentifier extends Identifier { }
 
 export class Inline {
-  private readonly variables: ScopedVariables;
+  private readonly variables: Scope;
   private readonly reg: Registry;
 
-  constructor(variables: ScopedVariables, reg: Registry) {
+  constructor(variables: Scope, reg: Registry) {
     this.variables = variables;
     this.reg = reg;
   }

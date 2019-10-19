@@ -49,7 +49,7 @@
     "@types/node": "^12.11.1",
     "@types/progress": "^2.0.3",
     "chai": "^4.2.0",
-    "mocha": "^6.2.1",
+    "mocha": "^6.2.2",
     "railroad-diagrams": "git+https://github.com/tabatkins/railroad-diagrams#gh-pages",
     "source-map-support": "^0.5.13",
     "ts-json-schema-generator": "^0.54.0",

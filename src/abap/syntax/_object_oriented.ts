@@ -5,17 +5,15 @@ import {ABAPObject} from "../../objects/_abap_object";
 import {ClassDefinition, MethodDefinition, InterfaceDefinition} from "../types";
 import {Interface, Class} from "../../objects";
 import {Registry} from "../../registry";
-import {ScopedVariables} from "./_scoped_variables";
+import {Scope} from "./_scope";
 
 export class ObjectOriented {
-  private readonly obj: ABAPObject;
   private readonly reg: Registry;
-  private readonly variables: ScopedVariables;
+  private readonly scope: Scope;
 
-  constructor(obj: ABAPObject, reg: Registry, variables: ScopedVariables) {
-    this.obj = obj;
+  constructor(_obj: ABAPObject, reg: Registry, scope: Scope) {
     this.reg = reg;
-    this.variables = variables;
+    this.scope = scope;
   }
 
   public findClassName(node: StatementNode): string {
@@ -31,13 +29,13 @@ export class ObjectOriented {
   }
 
   public classDefinition(node: StatementNode) {
-    this.variables.pushScope(this.findClassName(node));
+    this.scope.pushScope(this.findClassName(node));
 // todo
   }
 
   public classImplementation(node: StatementNode) {
     const className = this.findClassName(node);
-    this.variables.pushScope(className);
+    this.scope.pushScope(className);
 
     const classDefinition = this.findClassDefinition(className);
 
@@ -45,9 +43,9 @@ export class ObjectOriented {
 
     this.addAliasedAttributes(classDefinition); // todo, this is not correct, take care of instance vs static
 
-    this.variables.addList(classAttributes.getConstants());
-    this.variables.addList(classAttributes.getInstance()); // todo, this is not correct, take care of instance vs static
-    this.variables.addList(classAttributes.getStatic()); // todo, this is not correct, take care of instance vs static
+    this.scope.addList(classAttributes.getConstants());
+    this.scope.addList(classAttributes.getInstance()); // todo, this is not correct, take care of instance vs static
+    this.scope.addList(classAttributes.getStatic()); // todo, this is not correct, take care of instance vs static
 
     this.fromSuperClass(classDefinition);
   }
@@ -57,13 +55,12 @@ export class ObjectOriented {
     if (intf && intf.getDefinition()) {
       return intf.getDefinition();
     }
-// todo, this is not correct, global classes cannot implement local interfaces
-    for (const file of this.obj.getABAPFiles()) {
-      const found = file.getInterfaceDefinition(name);
-      if (found) {
-        return found;
-      }
+
+    const found = this.scope.findInterfaceDefinition(name);
+    if (found) {
+      return found;
     }
+
     return undefined;
   }
 
@@ -74,7 +71,7 @@ export class ObjectOriented {
       if (idef) {
         const found = idef.getAttributes()!.findByName(comp.split("~")[1]);
         if (found) {
-          this.variables.addNamedIdentifier(alias.getName(), found);
+          this.scope.addNamedIdentifier(alias.getName(), found);
         }
       }
     }
@@ -107,13 +104,13 @@ export class ObjectOriented {
   }
 
   public methodImplementation(node: StatementNode) {
-    this.variables.pushScope("method");
-    const className = this.variables.getParentName();
+    this.scope.pushScope("method");
+    const className = this.scope.getParentName();
     const classDefinition = this.findClassDefinition(className);
 
 // todo, this is not correct, add correct types, plus when is "super" allowed?
-    this.variables.addName("super");
-    this.variables.addName("me");
+    this.scope.addName("super");
+    this.scope.addName("me");
 
     let methodName = node.findFirstExpression(Expressions.MethodName)!.getFirstToken().getStr();
 
@@ -134,7 +131,7 @@ export class ObjectOriented {
     }
 
     if (methodDefinition === undefined) {
-      this.variables.popScope();
+      this.scope.popScope();
       if (interfaceName) {
         throw new Error("Method definition \"" + methodName + "\" in \"" + interfaceName + "\" not found");
       } else {
@@ -142,15 +139,15 @@ export class ObjectOriented {
       }
     }
 
-    this.variables.addList(methodDefinition.getParameters().getAll());
+    this.scope.addList(methodDefinition.getParameters().getAll());
 
     for (const i of this.findInterfaces(classDefinition)) {
       const idef = this.findInterfaceDefinition(i.name);
       if (idef) {
-        this.variables.addList(idef.getAttributes()!.getConstants(), i.name + "~");
-        this.variables.addList(idef.getAttributes()!.getStatic(), i.name + "~");
+        this.scope.addList(idef.getAttributes()!.getConstants(), i.name + "~");
+        this.scope.addList(idef.getAttributes()!.getStatic(), i.name + "~");
         // todo, only add instance if its an instance method
-        this.variables.addList(idef.getAttributes()!.getInstance(), i.name + "~");
+        this.scope.addList(idef.getAttributes()!.getInstance(), i.name + "~");
       }
     }
   }
@@ -171,11 +168,9 @@ export class ObjectOriented {
   }
 
   private findClassDefinition(name: string): ClassDefinition {
-    for (const file of this.obj.getABAPFiles()) {
-      const found = file.getClassDefinition(name);
-      if (found) {
-        return found;
-      }
+    const found = this.scope.findClassDefinition(name);
+    if (found) {
+      return found;
     }
     throw new Error("Class definition for \"" + name + "\" not found");
   }
@@ -235,9 +230,9 @@ export class ObjectOriented {
 
     const attr = cdef.getAttributes();
 
-    this.variables.addList(attr.getConstants()); // todo, handle scope and instance vs static
-    this.variables.addList(attr.getInstance()); // todo, handle scope and instance vs static
-    this.variables.addList(attr.getStatic()); // todo, handle scope and instance vs static
+    this.scope.addList(attr.getConstants()); // todo, handle scope and instance vs static
+    this.scope.addList(attr.getInstance()); // todo, handle scope and instance vs static
+    this.scope.addList(attr.getStatic()); // todo, handle scope and instance vs static
 
     this.fromSuperClass(cdef);
   }

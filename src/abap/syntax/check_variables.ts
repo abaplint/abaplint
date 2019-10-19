@@ -8,14 +8,13 @@ import {StatementNode, ExpressionNode, StructureNode, TokenNode} from "../nodes"
 import {ABAPFile} from "../../files";
 import {Registry} from "../../registry";
 import {ABAPObject} from "../../objects/_abap_object";
-import {ScopedVariables} from "./_scoped_variables";
+import {Scope} from "./_scope";
 import {ObjectOriented} from "./_object_oriented";
 import {Globals} from "./_globals";
 import {Procedural} from "./_procedural";
 import {Inline} from "./_inline";
 import {Program} from "../../objects";
-
-// todo: should filename and ScopedVariables be singletons instead of passed everywhere?
+import {ClassDefinition, InterfaceDefinition} from "../types";
 
 // assumption: objects are parsed without parsing errors
 
@@ -26,20 +25,26 @@ export class CheckVariablesLogic {
   private readonly object: ABAPObject;
   private readonly reg: Registry;
 
-  private readonly variables: ScopedVariables;
-  private readonly oooc: ObjectOriented;
-  private readonly proc: Procedural;
-  private readonly inline: Inline;
+  private readonly scope: Scope;
+
+  private readonly helpers: {
+    oooc: ObjectOriented,
+    proc: Procedural,
+    inline: Inline,
+  };
 
   constructor(reg: Registry, object: ABAPObject) {
     this.reg = reg;
     this.issues = [];
 
     this.object = object;
-    this.variables = new ScopedVariables(Globals.get(this.reg.getConfig().getSyntaxSetttings().globalConstants));
-    this.oooc = new ObjectOriented(this.object, this.reg, this.variables);
-    this.proc = new Procedural(this.object, this.variables);
-    this.inline = new Inline(this.variables, this.reg);
+    this.scope = new Scope(Globals.get(this.reg.getConfig().getSyntaxSetttings().globalConstants));
+
+    this.helpers = {
+      oooc: new ObjectOriented(this.object, this.reg, this.scope),
+      proc: new Procedural(this.object, this.scope),
+      inline: new Inline(this.scope, this.reg),
+    };
   }
 
   public findIssues(): Issue[] {
@@ -62,7 +67,7 @@ export class CheckVariablesLogic {
   }
 
 // todo, this assumes no tokes are the same across files, loops all getABAPFiles
-  public traverseUntil(token: Token): ScopedVariables {
+  public traverseUntil(token: Token): Scope {
 
 // todo, this should start with the right file for the object
     for (const file of this.object.getABAPFiles()) {
@@ -70,13 +75,13 @@ export class CheckVariablesLogic {
     // assumption: objects are parsed without parsing errors
       const structure = this.currentFile.getStructure();
       if (structure === undefined) {
-        return this.variables;
+        return this.scope;
       } else if (this.traverse(structure, token)) {
-        return this.variables;
+        return this.scope;
       }
     }
 
-    return this.variables;
+    return this.scope;
   }
 
 /////////////////////////////
@@ -88,7 +93,7 @@ export class CheckVariablesLogic {
 
   private traverse(node: INode, stopAt?: Token): boolean {
     try {
-      const skip = this.inline.update(node, this.currentFile.getFilename());
+      const skip = this.helpers.inline.update(node, this.currentFile.getFilename());
       if (skip) {
         return false;
       }
@@ -102,7 +107,7 @@ export class CheckVariablesLogic {
         || node.get() instanceof Expressions.Target)) {
       for (const field of node.findAllExpressions(Expressions.Field).concat(node.findAllExpressions(Expressions.FieldSymbol))) {
         const token = field.getFirstToken();
-        const resolved = this.variables.resolve(token.getStr());
+        const resolved = this.scope.resolve(token.getStr());
         if (resolved === undefined) {
           this.newIssue(token, "\"" + token.getStr() + "\" not found");
         }
@@ -111,16 +116,20 @@ export class CheckVariablesLogic {
 
     for (const child of node.getChildren()) {
       try {
-        this.updateVariables(child);
+        this.updateScope(child);
       } catch (e) {
         this.newIssue(child.getFirstToken(), e.message);
         break;
       }
 
       if (child instanceof StatementNode && child.get() instanceof Statements.Include) {
+// assumption: no cyclic includes, includes not found are reported by rule "check_include"
         const file = this.findInclude(child);
-        if (file !== undefined) {
-          // todo
+        if (file !== undefined && file.getStructure() !== undefined) {
+          const old = this.currentFile;
+          this.currentFile = file;
+          this.traverse(file.getStructure()!);
+          this.currentFile = old;
         }
       }
 
@@ -149,37 +158,48 @@ export class CheckVariablesLogic {
       return undefined;
     }
     const name = expr.getFirstToken().getStr();
-    return this.reg.getABAPFile(name);
+    const prog = this.reg.getObject("PROG", name) as ABAPObject | undefined;
+    if (prog !== undefined) {
+      return prog.getABAPFiles()[0];
+    }
+    return undefined;
   }
 
-  private updateVariables(node: INode): void {
+  private updateScope(node: INode): void {
 // todo, align statements, eg is NamespaceSimpleName a definition or is it Field, or something new?
 // todo, and introduce SimpleSource?
-    if (node instanceof StructureNode && node.get() instanceof Structures.TypeEnum) {
-      this.proc.addEnumValues(node, this.currentFile.getFilename());
+    if (node instanceof StructureNode) {
+      const stru = node.get();
+      if (stru instanceof Structures.TypeEnum) {
+        this.helpers.proc.addEnumValues(node, this.currentFile.getFilename());
+      } else if (stru instanceof Structures.ClassDefinition) {
+        this.scope.addClassDefinition(new ClassDefinition(node, this.currentFile.getFilename()));
+      } else if (stru instanceof Structures.Interface) {
+        this.scope.addInterfaceDefinition(new InterfaceDefinition(node, this.currentFile.getFilename()));
+      }
       return;
     } else if (!(node instanceof StatementNode)) {
       return;
     }
 
     const statement = node.get();
-    this.proc.addDefinitions(node, this.currentFile.getFilename());
+    this.helpers.proc.addDefinitions(node, this.currentFile.getFilename());
 
     if (statement instanceof Statements.Form) {
-      this.proc.findFormScope(node, this.currentFile.getFilename());
+      this.helpers.proc.findFormScope(node, this.currentFile.getFilename());
     } else if (statement instanceof Statements.FunctionModule) {
-      this.proc.findFunctionScope(node);
+      this.helpers.proc.findFunctionScope(node);
     } else if (statement instanceof Statements.Method) {
-      this.oooc.methodImplementation(node);
+      this.helpers.oooc.methodImplementation(node);
     } else if (statement instanceof Statements.ClassDefinition) {
-      this.oooc.classDefinition(node);
+      this.helpers.oooc.classDefinition(node);
     } else if (statement instanceof Statements.ClassImplementation) {
-      this.oooc.classImplementation(node);
+      this.helpers.oooc.classImplementation(node);
     } else if (statement instanceof Statements.EndForm
         || statement instanceof Statements.EndMethod
         || statement instanceof Statements.EndFunction
         || statement instanceof Statements.EndClass) {
-      this.variables.popScope();
+      this.scope.popScope();
     }
   }
 
