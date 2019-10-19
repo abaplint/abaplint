@@ -34,7 +34,7 @@ export class Definition {
       }
     }
 
-    const variables = new CheckVariablesLogic(reg, obj).traverseUntil(found.token);
+    const variables = new CheckVariablesLogic(reg, obj).traverseUntil(found.identifier);
     const resolved = variables.resolve(found.token.getStr());
     if (resolved instanceof Identifier) {
       const pos = resolved.getStart();

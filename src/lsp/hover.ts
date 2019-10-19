@@ -20,7 +20,7 @@ export class Hover {
 
     const found = LSPUtils.find(reg, textDocument, position);
     if (found !== undefined) {
-      const variables = new CheckVariablesLogic(reg, obj).traverseUntil(found.token);
+      const variables = new CheckVariablesLogic(reg, obj).traverseUntil(found.identifier);
       const resolved = variables.resolve(found.token.getStr());
       if (resolved !== undefined) {
         return {kind: LServer.MarkupKind.Markdown, value: "Resolved"};

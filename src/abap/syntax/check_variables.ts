@@ -15,6 +15,7 @@ import {Procedural} from "./_procedural";
 import {Inline} from "./_inline";
 import {Program} from "../../objects";
 import {ClassDefinition, InterfaceDefinition} from "../types";
+import {Identifier} from "../types/_identifier";
 
 // assumption: objects are parsed without parsing errors
 
@@ -66,8 +67,7 @@ export class CheckVariablesLogic {
     return this.issues;
   }
 
-// todo, this assumes no tokes are the same across files, loops all getABAPFiles
-  public traverseUntil(token: Token): Scope {
+  public traverseUntil(token: Identifier): Scope {
 
 // todo, this should start with the right file for the object
     for (const file of this.object.getABAPFiles()) {
@@ -91,7 +91,7 @@ export class CheckVariablesLogic {
     this.issues.push(issue);
   }
 
-  private traverse(node: INode, stopAt?: Token): boolean {
+  private traverse(node: INode, stopAt?: Identifier): boolean {
     try {
       const skip = this.helpers.inline.update(node, this.currentFile.getFilename());
       if (skip) {
@@ -141,9 +141,9 @@ export class CheckVariablesLogic {
       if (child instanceof TokenNode) {
         const token = child.get();
         if (stopAt !== undefined
-            && stopAt.getStr() === token.getStr()
-            && stopAt.getCol() === token.getCol()
-            && stopAt.getRow() === token.getRow()) {
+            && stopAt.getStart().getCol() === token.getStart().getCol()
+            && stopAt.getStart().getRow() === token.getStart().getRow()
+            && stopAt.getFilename() === this.currentFile.getFilename()) {
           return true;
         }
       }

@@ -3,10 +3,12 @@ import {Registry} from "../registry";
 import {Token} from "../abap/tokens/_token";
 import {Statement} from "../abap/statements/_statement";
 import {StatementNode} from "../abap/nodes";
+import {Identifier} from "../abap/types/_identifier";
 
 export interface IFindResult {
   token: Token;
   statement: Statement;
+  identifier: Identifier;
   snode: StatementNode;
 }
 
@@ -30,6 +32,7 @@ export class LSPUtils {
             && token.getCol() - 1 + token.getStr().length > character) {
           return {
             token: token,
+            identifier: new Identifier(token, file.getFilename()),
             statement: statement.get(),
             snode: statement};
         }

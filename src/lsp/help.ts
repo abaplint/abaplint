@@ -42,7 +42,7 @@ export class Help {
 
       const obj = reg.getObject(file.getObjectType(), file.getObjectName());
       if (obj instanceof ABAPObject) {
-        const variables = new CheckVariablesLogic(reg, obj).traverseUntil(found.token);
+        const variables = new CheckVariablesLogic(reg, obj).traverseUntil(found.identifier);
         ret = ret + this.dumpVariables(variables);
       }
     } else {
