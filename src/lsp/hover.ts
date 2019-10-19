@@ -29,13 +29,16 @@ export class Hover {
     if (lookup instanceof ABAPFile) {
       return {kind: LServer.MarkupKind.Markdown, value: "File"};
     } else if (lookup instanceof FormDefinition) {
-      return {kind: LServer.MarkupKind.Markdown, value: "FORM info"};
+      return {kind: LServer.MarkupKind.Markdown, value: this.hoverFormDefinition(lookup)};
     } else if (lookup instanceof Identifier) {
       return {kind: LServer.MarkupKind.Markdown, value: "Resolved"};
     } else {
       return {kind: LServer.MarkupKind.Markdown, value: "Unknown"};
     }
+  }
 
+  private static hoverFormDefinition(def: FormDefinition): string {
+    return "FORM info, todo, parameter count: " + def.getParameters().length;
   }
 
 }

@@ -4,7 +4,7 @@ import {BasicRuleConfig} from "./_basic_rule_config";
 import {ABAPRule} from "./_abap_rule";
 import {ABAPFile} from "../files";
 import {Registry} from "../registry";
-import * as Statements from "../abap/statements";
+import * as Expressions from "../abap/expressions";
 import {ABAPObject} from "../objects/_abap_object";
 
 /** Checks for TABLES parameters in forms. */
@@ -39,12 +39,10 @@ export class FormTablesObsolete extends ABAPRule {
       return ret;
     }
 
-    for (const form of stru.findAllStatements(Statements.Form)) {
-      if (form.findDirectTokenByText("TABLES")) {
-        const token = form.getFirstToken();
-        const issue = Issue.atToken(file, token, this.getDescription(), this.getKey());
-        ret.push(issue);
-      }
+    for (const form of stru.findAllExpressions(Expressions.FormTables)) {
+      const token = form.getFirstToken();
+      const issue = Issue.atToken(file, token, this.getDescription(), this.getKey());
+      ret.push(issue);
     }
 
     return ret;

@@ -20,7 +20,7 @@ export class TypeFormParameters extends ABAPRule {
   }
 
   private getDescription(parameterName: string): string {
-    return "Add TYPE for FORM parameter" + parameterName;
+    return "Add TYPE for FORM parameter \"" + parameterName + "\"";
   }
 
   public getConfig() {
