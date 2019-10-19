@@ -44,4 +44,19 @@ describe("LSP, definition", () => {
     expect(def!.range.start.line).to.equal(2);
   });
 
+  it("PROG, goto INCLUDE", () => {
+    const prog1 = new MemoryFile("zprog1.prog.abap", `
+      DATA moo TYPE string.
+      INCLUDE zprog2.`);
+    const prog2 = new MemoryFile("zprog2.prog.abap", `
+      WRITE moo.
+      WRITE boo.`);
+
+    const reg = new Registry().addFile(prog1).addFile(prog2).parse();
+    const def = Definition.find(reg, {uri: prog1.getFilename()}, LServer.Position.create(2 , 16));
+
+    expect(def).to.not.equal(undefined);
+    expect(def!.uri).to.equal(prog2.getFilename());
+  });
+
 });
