@@ -1,5 +1,5 @@
 import {Registry} from "../../registry";
-import {CheckVariablesLogic} from "../../abap/syntax/check_variables";
+import {SyntaxLogic} from "../../abap/syntax/syntax";
 import {BasicRuleConfig} from "../_basic_rule_config";
 import {IObject} from "../../objects/_iobject";
 import {ABAPObject} from "../../objects/_abap_object";
@@ -30,7 +30,7 @@ export class CheckVariables {
       return [];
     }
 
-    return new CheckVariablesLogic(reg, obj).findIssues();
+    return new SyntaxLogic(reg, obj).findIssues();
   }
 
 }

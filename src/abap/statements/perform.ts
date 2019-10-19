@@ -1,13 +1,12 @@
 import {Statement} from "./_statement";
-import {verNot, str, seq, opt, alt, tok, per, plus, IStatementRunnable} from "../combi";
+import {verNot, str, seq, opt, alt, tok, plus, IStatementRunnable} from "../combi";
 import {ParenLeft, ParenRightW} from "../tokens/";
-import {Source, Field, Dynamic, FormName} from "../expressions";
+import {Source, Dynamic, FormName, IncludeName} from "../expressions";
 import {Version} from "../../version";
 
 export class Perform extends Statement {
 
   public getMatcher(): IStatementRunnable {
-    const programName = new Field();
     const using = seq(str("USING"), plus(new Source()));
     const tables = seq(str("TABLES"), plus(new Source()));
     const changing = seq(str("CHANGING"), plus(new Source()));
@@ -17,10 +16,10 @@ export class Perform extends Statement {
 
     const short = verNot(Version.Cloud, seq(new FormName(),
                                             tok(ParenLeft),
-                                            programName,
+                                            new IncludeName(),
                                             tok(ParenRightW)));
 
-    const program = seq(str("IN PROGRAM"), opt(alt(new Dynamic(), programName)));
+    const program = seq(str("IN PROGRAM"), opt(alt(new Dynamic(), new IncludeName())));
 
     const found = str("IF FOUND");
 
@@ -28,7 +27,8 @@ export class Perform extends Statement {
                      opt(verNot(Version.Cloud, program)));
 
     const ret = seq(str("PERFORM"),
-                    per(alt(short, full), found),
+                    alt(short, full),
+                    opt(found),
                     opt(tables),
                     opt(using),
                     opt(changing),

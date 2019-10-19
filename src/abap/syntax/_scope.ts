@@ -1,5 +1,5 @@
 import {Identifier} from "../types/_identifier";
-import {ClassDefinition, InterfaceDefinition} from "../types";
+import {ClassDefinition, InterfaceDefinition, FormDefinition} from "../types";
 
 interface IVar {
   name: string;
@@ -13,6 +13,7 @@ export class Scope {
     vars: IVar[],
     cdef: ClassDefinition[],
     idef: InterfaceDefinition[],
+    form: FormDefinition[],
   }[];
 
   constructor(builtin: Identifier[]) {
@@ -30,12 +31,28 @@ export class Scope {
     this.scopes[this.scopes.length - 1].cdef.push(c);
   }
 
+  public addFormDefinitions(f: FormDefinition[]) {
+    this.scopes[this.scopes.length - 1].form = this.scopes[this.scopes.length - 1].form.concat(f);
+  }
+
   public findClassDefinition(name: string): ClassDefinition | undefined {
     // todo, this should probably search the nearest first? in case there are shadowed variables?
     for (const scope of this.scopes) {
       for (const cdef of scope.cdef) {
         if (cdef.getName().toUpperCase() === name.toUpperCase()) {
           return cdef;
+        }
+      }
+    }
+    return undefined;
+  }
+
+  public findFormDefinition(name: string): FormDefinition | undefined {
+    // todo, this should probably search the nearest first? in case there are shadowed variables?
+    for (const scope of this.scopes) {
+      for (const form of scope.form) {
+        if (form.getName().toUpperCase() === name.toUpperCase()) {
+          return form;
         }
       }
     }
@@ -90,7 +107,7 @@ export class Scope {
     return ret;
   }
 
-  public resolve(name: string): Identifier | string | undefined {
+  public resolveVariable(name: string): Identifier | string | undefined {
     // todo, this should probably search the nearest first? in case there are shadowed variables?
     for (const scope of this.scopes) {
       for (const local of scope.vars) {
@@ -112,6 +129,7 @@ export class Scope {
       vars: [],
       cdef: [],
       idef: [],
+      form: [],
     });
     return this;
   }

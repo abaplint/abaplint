@@ -5,7 +5,7 @@ import {ABAPFile} from "../files";
 import {StructureNode, StatementNode, TokenNodeRegex, ExpressionNode, TokenNode} from "../abap/nodes";
 import {Token} from "../abap/tokens/_token";
 import {LSPUtils} from "./_lsp_utils";
-import {CheckVariablesLogic} from "../abap/syntax/check_variables";
+import {SyntaxLogic} from "../abap/syntax/syntax";
 import {ABAPObject} from "../objects/_abap_object";
 import {Scope} from "../abap/syntax/_scope";
 
@@ -42,7 +42,7 @@ export class Help {
 
       const obj = reg.getObject(file.getObjectType(), file.getObjectName());
       if (obj instanceof ABAPObject) {
-        const variables = new CheckVariablesLogic(reg, obj).traverseUntil(found.identifier);
+        const variables = new SyntaxLogic(reg, obj).traverseUntil(found.identifier);
         ret = ret + this.dumpVariables(variables);
       }
     } else {

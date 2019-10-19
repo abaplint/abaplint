@@ -19,7 +19,9 @@ import {Identifier} from "../types/_identifier";
 
 // assumption: objects are parsed without parsing errors
 
-export class CheckVariablesLogic {
+// todo, traversal should start with the right file for the object
+
+export class SyntaxLogic {
   private currentFile: ABAPFile;
   private issues: Issue[];
 
@@ -43,7 +45,7 @@ export class CheckVariablesLogic {
 
     this.helpers = {
       oooc: new ObjectOriented(this.reg, this.scope),
-      proc: new Procedural(this.scope),
+      proc: new Procedural(this.reg, this.scope),
       inline: new Inline(this.reg, this.scope),
     };
   }
@@ -55,36 +57,33 @@ export class CheckVariablesLogic {
       return [];
     }
 
-    for (const file of this.object.getABAPFiles()) {
-      this.currentFile = file;
-      const structure = this.currentFile.getStructure();
-      if (structure === undefined) {
-        return [];
-      }
-      this.traverse(structure);
-    }
-
+    this.traverseObject();
     return this.issues;
   }
 
-  public traverseUntil(token: Identifier): Scope {
+  public traverseUntil(stopAt: Identifier): Scope {
+    return this.traverseObject(stopAt);
+  }
 
-// todo, this should start with the right file for the object
+/////////////////////////////
+
+  private traverseObject(stopAt?: Identifier): Scope {
+    if (this.object instanceof Program) {
+      this.helpers.proc.addFormDefinitions(this.object.getABAPFiles()[0]);
+    }
+
     for (const file of this.object.getABAPFiles()) {
       this.currentFile = file;
-    // assumption: objects are parsed without parsing errors
       const structure = this.currentFile.getStructure();
       if (structure === undefined) {
         return this.scope;
-      } else if (this.traverse(structure, token)) {
+      } else if (this.traverse(structure, stopAt)) {
         return this.scope;
       }
     }
 
     return this.scope;
   }
-
-/////////////////////////////
 
   private newIssue(token: Token, message: string): void {
     const issue = Issue.atToken(this.currentFile, token, message, "check_variables");
@@ -107,7 +106,7 @@ export class CheckVariablesLogic {
         || node.get() instanceof Expressions.Target)) {
       for (const field of node.findAllExpressions(Expressions.Field).concat(node.findAllExpressions(Expressions.FieldSymbol))) {
         const token = field.getFirstToken();
-        const resolved = this.scope.resolve(token.getStr());
+        const resolved = this.scope.resolveVariable(token.getStr());
         if (resolved === undefined) {
           this.newIssue(token, "\"" + token.getStr() + "\" not found");
         }
@@ -123,8 +122,7 @@ export class CheckVariablesLogic {
       }
 
       if (child instanceof StatementNode && child.get() instanceof Statements.Include) {
-// assumption: no cyclic includes, includes not found are reported by rule "check_include"
-        const file = this.findInclude(child);
+        const file = this.helpers.proc.findInclude(child);
         if (file !== undefined && file.getStructure() !== undefined) {
           const old = this.currentFile;
           this.currentFile = file;
@@ -152,19 +150,6 @@ export class CheckVariablesLogic {
     return false;
   }
 
-  private findInclude(node: StatementNode): ABAPFile | undefined {
-    const expr = node.findFirstExpression(Expressions.IncludeName);
-    if (expr === undefined) {
-      return undefined;
-    }
-    const name = expr.getFirstToken().getStr();
-    const prog = this.reg.getObject("PROG", name) as ABAPObject | undefined;
-    if (prog !== undefined) {
-      return prog.getABAPFiles()[0];
-    }
-    return undefined;
-  }
-
   private updateScope(node: INode): void {
 // todo, align statements, eg is NamespaceSimpleName a definition or is it Field, or something new?
 // todo, and introduce SimpleSource?
@@ -187,6 +172,8 @@ export class CheckVariablesLogic {
 
     if (statement instanceof Statements.Form) {
       this.helpers.proc.findFormScope(node, this.currentFile.getFilename());
+    } else if (statement instanceof Statements.Perform) {
+      this.helpers.proc.checkPerform(node);
     } else if (statement instanceof Statements.FunctionModule) {
       this.helpers.proc.findFunctionScope(this.object, node);
     } else if (statement instanceof Statements.Method) {

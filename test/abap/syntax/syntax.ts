@@ -1,7 +1,7 @@
 import {expect} from "chai";
 import {MemoryFile} from "../../../src/files";
 import {Registry} from "../../../src/registry";
-import {CheckVariablesLogic} from "../../../src/abap/syntax/check_variables";
+import {SyntaxLogic} from "../../../src/abap/syntax/syntax";
 import {Issue} from "../../../src/issue";
 import {Config} from "../../../src/config";
 
@@ -20,7 +20,7 @@ function run(reg: Registry, globalConstants?: string[]): Issue[] {
         throw new Error("check variables test, parser error");
       }
     }
-    ret = ret.concat(new CheckVariablesLogic(reg, obj).findIssues());
+    ret = ret.concat(new SyntaxLogic(reg, obj).findIssues());
   }
   return ret;
 }
@@ -1064,6 +1064,33 @@ describe("Check Variables", () => {
       PARAMETERS p_foo TYPE string.
       INITIALIZATION.
         s_url = 'sdf'.`;
+    const issues = runProgram(abap);
+    expect(issues.length).to.equals(0);
+  });
+
+  it("PROG, PERFORM not found", () => {
+    const abap = `PERFORM foo.`;
+    const issues = runProgram(abap);
+    expect(issues.length).to.equals(1);
+  });
+
+  it("PROG, PERFORM found", () => {
+    const abap = `
+    FORM foo.
+    ENDFORM.
+    PERFORM foo.`;
+    const issues = runProgram(abap);
+    expect(issues.length).to.equals(0);
+  });
+
+  it("PROG, PERFORM cyclic, allowed", () => {
+    const abap = `
+      FORM bar.
+        PERFORM foo.
+      ENDFORM.
+      FORM foo.
+        PERFORM bar.
+      ENDFORM.`;
     const issues = runProgram(abap);
     expect(issues.length).to.equals(0);
   });

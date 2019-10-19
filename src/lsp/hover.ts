@@ -1,6 +1,6 @@
 import * as LServer from "vscode-languageserver-types";
 import {Registry} from "../registry";
-import {CheckVariablesLogic} from "../abap/syntax/check_variables";
+import {SyntaxLogic} from "../abap/syntax/syntax";
 import {ABAPObject} from "../objects/_abap_object";
 import {LSPUtils} from "./_lsp_utils";
 
@@ -20,8 +20,8 @@ export class Hover {
 
     const found = LSPUtils.find(reg, textDocument, position);
     if (found !== undefined) {
-      const variables = new CheckVariablesLogic(reg, obj).traverseUntil(found.identifier);
-      const resolved = variables.resolve(found.token.getStr());
+      const variables = new SyntaxLogic(reg, obj).traverseUntil(found.identifier);
+      const resolved = variables.resolveVariable(found.token.getStr());
       if (resolved !== undefined) {
         return {kind: LServer.MarkupKind.Markdown, value: "Resolved"};
       } else {

@@ -1,11 +1,12 @@
 import * as LServer from "vscode-languageserver-types";
-import {Registry} from "../registry";
-import {CheckVariablesLogic} from "../abap/syntax/check_variables";
-import {ABAPObject} from "../objects/_abap_object";
 import * as Statements from "../abap/statements";
 import * as Expressions from "../abap/expressions";
-import {LSPUtils, IFindResult} from "./_lsp_utils";
+import {Registry} from "../registry";
+import {SyntaxLogic} from "../abap/syntax/syntax";
 import {Identifier} from "../abap/types/_identifier";
+import {Scope} from "../abap/syntax/_scope";
+import {ABAPObject} from "../objects/_abap_object";
+import {LSPUtils, IFindResult} from "./_lsp_utils";
 
 export class Definition {
 
@@ -34,14 +35,47 @@ export class Definition {
       }
     }
 
-    const variables = new CheckVariablesLogic(reg, obj).traverseUntil(found.identifier);
-    const resolved = variables.resolve(found.token.getStr());
+    const scope = new SyntaxLogic(reg, obj).traverseUntil(found.identifier);
+
+    if (found.statement instanceof Statements.Perform) {
+      const res = this.findForm(found, scope);
+      if (res) {
+        return res;
+      }
+    }
+
+    const resolved = scope.resolveVariable(found.token.getStr());
     if (resolved instanceof Identifier) {
-      const pos = resolved.getStart();
-      return {
-        uri: resolved.getFilename(),
-        range: LServer.Range.create(pos.getRow() - 1, pos.getCol() - 1, pos.getRow() - 1, pos.getCol() - 1),
-      };
+      return this.buildResult(resolved);
+    }
+
+    return undefined;
+  }
+
+  private static buildResult(resolved: Identifier): LServer.Location {
+    const pos = resolved.getStart();
+    return {
+      uri: resolved.getFilename(),
+      range: LServer.Range.create(pos.getRow() - 1, pos.getCol() - 1, pos.getRow() - 1, pos.getCol() - 1),
+    };
+  }
+
+  private static findForm(found: IFindResult, scope: Scope): LServer.Location | undefined {
+    const name = found.snode.findFirstExpression(Expressions.FormName);
+    if (name === undefined) {
+      return undefined;
+    }
+
+// check the cursor is at the right token
+    const token = name.getFirstToken();
+    if (token.getStart().getCol() !== found.token.getStart().getCol()
+        || token.getStart().getRow() !== found.token.getStart().getRow()) {
+      return undefined;
+    }
+
+    const resolved = scope.findFormDefinition(found.token.getStr());
+    if (resolved instanceof Identifier) {
+      return this.buildResult(resolved);
     }
 
     return undefined;
@@ -53,6 +87,7 @@ export class Definition {
       return undefined;
     }
 
+// check the cursor is at the right token
     const token = name.getFirstToken();
     if (token.getStart().getCol() !== found.token.getStart().getCol()
         || token.getStart().getRow() !== found.token.getStart().getRow()) {

@@ -59,4 +59,18 @@ describe("LSP, definition", () => {
     expect(def!.uri).to.equal(prog2.getFilename());
   });
 
+  it("PROG, goto FORM from PERFORM", () => {
+    const prog1 = new MemoryFile("zprog1.prog.abap", `
+      FORM foo.
+      ENDFORM.
+      START-OF-SELECTION.
+        PERFORM foo.`);
+
+    const reg = new Registry().addFile(prog1).parse();
+    const def = Definition.find(reg, {uri: prog1.getFilename()}, LServer.Position.create(4 , 18));
+
+    expect(def).to.not.equal(undefined);
+    expect(def!.uri).to.equal(prog1.getFilename());
+  });
+
 });
