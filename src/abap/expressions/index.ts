@@ -4,6 +4,7 @@ export * from "./arith_operator";
 export * from "./arrow_or_dash";
 export * from "./arrow";
 export * from "./cast";
+export * from "./default";
 export * from "./class_final";
 export * from "./class_name";
 export * from "./compare_operator";

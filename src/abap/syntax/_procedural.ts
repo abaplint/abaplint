@@ -1,7 +1,7 @@
 import * as Expressions from "../expressions";
 import * as Statements from "../statements";
 import * as Structures from "../structures";
-import {StatementNode, ExpressionNode, StructureNode} from "../nodes";
+import {StatementNode, StructureNode} from "../nodes";
 import {Identifier} from "../types/_identifier";
 import {ABAPObject} from "../../objects/_abap_object";
 import {FormDefinition} from "../types";
@@ -9,9 +9,7 @@ import {Scope} from "./_scope";
 import {FunctionGroup} from "../../objects";
 import {ABAPFile} from "../../files";
 import {Registry} from "../../registry";
-
-// todo, rename this class? and what is it used for?
-class LocalIdentifier extends Identifier { }
+import {BasicTypes} from "./basic_types";
 
 export class Procedural {
   private readonly scope: Scope;
@@ -73,31 +71,17 @@ export class Procedural {
 
     const name = expr.getFirstToken().getStr();
 
+// todo, also check parameters match
     if (this.scope.findFormDefinition(name) === undefined) {
       throw new Error("FORM definition \"" + name + "\" not found");
     }
   }
 
   public addDefinitions(node: StatementNode, filename: string) {
-    const sub = node.get();
-    const ret: Identifier[] = [];
-
-    if (sub instanceof Statements.Data
-      || sub instanceof Statements.DataBegin
-      || sub instanceof Statements.Constant
-      || sub instanceof Statements.ConstantBegin
-      || sub instanceof Statements.Static
-      || sub instanceof Statements.StaticBegin) {
-      ret.push(this.buildVariable(node.findFirstExpression(Expressions.NamespaceSimpleName), filename));
-    } else if (sub instanceof Statements.Parameter) {
-      ret.push(this.buildVariable(node.findFirstExpression(Expressions.FieldSub), filename));
-    } else if (sub instanceof Statements.FieldSymbol) {
-      ret.push(this.buildVariable(node.findFirstExpression(Expressions.FieldSymbol), filename));
-    } else if (sub instanceof Statements.Tables || sub instanceof Statements.SelectOption) {
-      ret.push(this.buildVariable(node.findFirstExpression(Expressions.Field), filename));
+    const found = new BasicTypes(filename, this.scope).build(node);
+    if (found) {
+      this.scope.addList([found]);
     }
-
-    this.scope.addList(ret);
   }
 
   public addEnumValues(node: StructureNode, filename: string) {
@@ -109,7 +93,8 @@ export class Procedural {
       if (expr === undefined) {
         continue;
       }
-      this.scope.addIdentifier(this.buildVariable(expr, filename));
+      const token = expr.getFirstToken();
+      this.scope.addIdentifier(new Identifier(token, filename));
     }
   }
 
@@ -130,14 +115,6 @@ export class Procedural {
   public findFormScope(node: StatementNode, filename: string) {
     this.scope.pushScope("form");
     this.scope.addList(new FormDefinition(node, filename).getParameters());
-  }
-
-  private buildVariable(expr: ExpressionNode | undefined, filename: string): Identifier {
-    if (expr === undefined) { throw new Error("syntax_check, unexpected tree structure"); }
-    // todo, these identifers should be possible to create from a Node
-    // todo, how to determine the real types?
-    const token = expr.getFirstToken();
-    return new LocalIdentifier(token, filename);
   }
 
 }

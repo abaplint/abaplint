@@ -22,4 +22,12 @@ describe("LSP, hover", () => {
     expect(hover!.value).to.contain("Resolved");
   });
 
+  it("resolved, typed", () => {
+    const file = new MemoryFile("foobar.prog.abap", "DATA foobar TYPE string.\nWRITE foobar.");
+    const reg = new Registry().addFile(file).parse();
+    const hover = Hover.find(reg, {uri: file.getFilename()}, LServer.Position.create(1 , 7));
+    expect(hover).to.not.equal(undefined);
+    expect(hover!.value).to.contain("Resolved, Typed");
+  });
+
 });

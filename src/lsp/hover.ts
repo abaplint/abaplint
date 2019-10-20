@@ -5,6 +5,8 @@ import {LSPUtils} from "./_lsp_utils";
 import {FormDefinition} from "../abap/types";
 import {ABAPFile} from "../files";
 import {Identifier} from "../abap/types/_identifier";
+import {TypedIdentifier} from "../abap/types/_typed_identifier";
+import {TypedConstantIdentifier} from "../abap/types/_typed_constant_identifier";
 
 export class Hover {
   public static find(reg: Registry,
@@ -30,6 +32,10 @@ export class Hover {
       return {kind: LServer.MarkupKind.Markdown, value: "File"};
     } else if (lookup instanceof FormDefinition) {
       return {kind: LServer.MarkupKind.Markdown, value: this.hoverFormDefinition(lookup)};
+    } else if (lookup instanceof TypedConstantIdentifier) {
+      return {kind: LServer.MarkupKind.Markdown, value: "Resolved, Typed, Constant"};
+    } else if (lookup instanceof TypedIdentifier) {
+      return {kind: LServer.MarkupKind.Markdown, value: "Resolved, Typed"};
     } else if (lookup instanceof Identifier) {
       return {kind: LServer.MarkupKind.Markdown, value: "Resolved"};
     } else {
@@ -38,6 +44,7 @@ export class Hover {
   }
 
   private static hoverFormDefinition(def: FormDefinition): string {
+// todo, list parameters properly in hover information
     return "FORM info, todo, parameter count: " + def.getParameters().length;
   }
 

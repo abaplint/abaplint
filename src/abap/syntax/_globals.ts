@@ -22,16 +22,16 @@ export class Globals {
       "DATA syst TYPE c.\n" + // todo, add structure
       "DATA screen TYPE c.\n" + // todo, add structure
       "DATA text TYPE c.\n" + // todo, this is not correct, add structure
-      "CONSTANTS %_CHARSIZE TYPE i.\n" +
-      "CONSTANTS %_ENDIAN TYPE c LENGTH 1.\n" +
-      "CONSTANTS %_MINCHAR TYPE c LENGTH 1.\n" +
-      "CONSTANTS %_MAXCHAR TYPE c LENGTH 1.\n" +
-      "CONSTANTS %_HORIZONTAL_TAB TYPE c LENGTH 1.\n" +
-      "CONSTANTS %_VERTICAL_TAB TYPE c LENGTH 1.\n" +
-      "CONSTANTS %_NEWLINE TYPE c LENGTH 1.\n" +
-      "CONSTANTS %_CR_LF TYPE c LENGTH 2.\n" +
-      "CONSTANTS %_FORMFEED TYPE c LENGTH 1.\n" +
-      "CONSTANTS %_BACKSPACE TYPE c LENGTH 1.\n" +
+      "CONSTANTS %_CHARSIZE TYPE i VALUE 2.\n" +
+      "CONSTANTS %_ENDIAN TYPE c LENGTH 1 VALUE 'L'.\n" +
+      "CONSTANTS %_MINCHAR TYPE c LENGTH 1 VALUE ''.\n" +
+      "CONSTANTS %_MAXCHAR TYPE c LENGTH 1 VALUE ''.\n" +
+      "CONSTANTS %_HORIZONTAL_TAB TYPE c LENGTH 1 VALUE ''.\n" +
+      "CONSTANTS %_VERTICAL_TAB TYPE c LENGTH 1 VALUE ''.\n" +
+      "CONSTANTS %_NEWLINE TYPE c LENGTH 1 VALUE ''.\n" +
+      "CONSTANTS %_CR_LF TYPE c LENGTH 2 VALUE ''.\n" +
+      "CONSTANTS %_FORMFEED TYPE c LENGTH 1 VALUE ''.\n" +
+      "CONSTANTS %_BACKSPACE TYPE c LENGTH 1 VALUE ''.\n" +
       "CONSTANTS icon_led_red TYPE c LENGTH 4 VALUE ''.\n" +
       "CONSTANTS icon_led_yellow TYPE c LENGTH 4 VALUE ''.\n" +
       "CONSTANTS icon_led_green TYPE c LENGTH 4 VALUE ''.\n" +
@@ -62,6 +62,7 @@ export class Globals {
       "CONSTANTS icon_system_help TYPE c LENGTH 4 VALUE ''.\n" +
       "CONSTANTS icon_stack TYPE c LENGTH 4 VALUE ''.\n" +
       "CONSTANTS icon_abap TYPE c LENGTH 4 VALUE ''.\n" +
+      "CONSTANTS icon_system_save TYPE c LENGTH 4 VALUE ''.\n" +
       "CONSTANTS space TYPE c LENGTH 1 VALUE ''.\n" +
       "CONSTANTS col_total TYPE c LENGTH 1 VALUE '?'.\n" +
       "CONSTANTS col_key TYPE c LENGTH 1 VALUE '?'.\n" +

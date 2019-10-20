@@ -2,6 +2,8 @@ import {CountableNode} from "./_countable_node";
 import {Expression} from "../combi";
 import {TokenNode} from "./token_node";
 import {Token} from "../tokens/_token";
+import {INode} from "./_inode";
+import {Pragma} from "../tokens";
 
 export class ExpressionNode extends CountableNode {
   private readonly expression: Expression;
@@ -26,6 +28,53 @@ export class ExpressionNode extends CountableNode {
     throw new Error("getFirstToken, unexpected type");
   }
 
+  public concatTokens(): string {
+    let str = "";
+    let prev: Token | undefined;
+    for (const token of this.getTokens()) {
+      if (token instanceof Pragma) {
+        continue;
+      }
+      if (str === "") {
+        str = token.getStr();
+      } else if (prev && prev.getStr().length + prev.getCol() === token.getCol()
+          && prev.getRow() === token.getRow()) {
+        str = str + token.getStr();
+      } else {
+        str = str + " " + token.getStr();
+      }
+      prev = token;
+    }
+    return str;
+  }
+
+  public getTokens(): Token[] {
+    let tokens: Token[] = [];
+
+    for (const c of this.getChildren()) {
+      tokens = tokens.concat(this.toTokens(c));
+    }
+
+    return tokens;
+  }
+
+  private toTokens(b: INode): Token[] {
+    let tokens: Token[] = [];
+
+    if (b instanceof TokenNode) {
+      tokens.push(b.get());
+    }
+
+    for (const c of b.getChildren()) {
+      if (c instanceof TokenNode) {
+        tokens.push(c.get());
+      } else {
+        tokens = tokens.concat(this.toTokens(c));
+      }
+    }
+
+    return tokens;
+  }
   public getLastToken(): Token {
     const child = this.getLastChild();
 
