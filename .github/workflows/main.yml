@@ -1,4 +1,4 @@
-name: Node CI
+name: Main
 
 on: [push]
 
@@ -21,8 +21,6 @@ jobs:
       run: npm test
     - name: npm run web.syntax
       run: npm run web.syntax
-    - name: npm run web.playground
-      run: npm run web.playground
     - name: npm run coverage
       run: npm run coverage
     - uses: codecov/codecov-action@v1.0.3
