@@ -5,7 +5,7 @@ import * as Statements from "../statements";
 import * as Expressions from "../expressions";
 import * as Types from "../types/basic/";
 import {Scope} from "./_scope";
-import {BasicType} from "../types/basic/_basic_type";
+import {AbstractType} from "../types/basic/_abstract_type";
 import {TypedConstantIdentifier} from "../types/_typed_constant_identifier";
 import {Chaining} from "./chaining";
 
@@ -21,7 +21,17 @@ export class BasicTypes {
   public build(node: StatementNode): TypedIdentifier | Identifier | undefined {
     const sub = node.get();
 
-    if (sub instanceof Statements.Data || sub instanceof Statements.Constant) {
+    if (sub instanceof Statements.Data
+        || sub instanceof Statements.Static) {
+      const found = this.tableType(node);
+      if (found) {
+        return found;
+      }
+    }
+
+    if (sub instanceof Statements.Data
+        || sub instanceof Statements.Constant
+        || sub instanceof Statements.Static) {
       const found = this.simpleType(node);
       if (found) {
         return found;
@@ -29,6 +39,7 @@ export class BasicTypes {
 //      throw new Error("unresolved!!!");
     }
 
+// fallback to untyped
     if (sub instanceof Statements.Data
       || sub instanceof Statements.DataBegin
       || sub instanceof Statements.Constant
@@ -55,6 +66,24 @@ export class BasicTypes {
     return new Identifier(token, this.filename);
   }
 
+  private tableType(node: StatementNode): TypedIdentifier | undefined {
+    const nameExpr = node.findFirstExpression(Expressions.NamespaceSimpleName);
+    if (nameExpr === undefined) {
+      return undefined;
+    }
+    const name = nameExpr.getFirstToken();
+
+    const tab = node.findFirstExpression(Expressions.TypeTable);
+    if (tab === undefined) {
+      return undefined;
+    }
+
+//    const chain = node.findFirstExpression(Expressions.FieldChain);
+// todo
+
+    return new TypedIdentifier(name, this.filename, new Types.TableType(new Types.StringType()));
+  }
+
   private simpleType(node: StatementNode): TypedIdentifier | undefined {
     const nameExpr = node.findFirstExpression(Expressions.NamespaceSimpleName);
     if (nameExpr === undefined) {
@@ -68,7 +97,7 @@ export class BasicTypes {
     const type = node.findFirstExpression(Expressions.Type);
     const text = type ? type.concatTokens().toUpperCase() : "TYPE";
 
-    let found: BasicType | undefined = undefined;
+    let found: AbstractType | undefined = undefined;
     if (text.startsWith("LIKE LINE OF")) {
       return undefined;
     } else if (text.startsWith("LIKE REF TO")) {
@@ -126,6 +155,19 @@ export class BasicTypes {
   }
 
   private findLength(node: StatementNode): number {
+    const flen = node.findFirstExpression(Expressions.ConstantFieldLength);
+    if (flen) {
+      const cintExpr = flen.findFirstExpression(Expressions.Integer);
+      if (cintExpr) {
+        return this.parseInt(cintExpr.concatTokens());
+      }
+
+      const cchain = flen.findFirstExpression(Expressions.SimpleFieldChain);
+      if (cchain) {
+        return this.parseInt(new Chaining(this.scope).resolveConstantValue(cchain));
+      }
+    }
+
     const val = node.findFirstExpression(Expressions.Length);
     if (val === undefined) {
       return 1;

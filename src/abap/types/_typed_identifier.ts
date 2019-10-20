@@ -1,16 +1,16 @@
 import {Token} from "../tokens/_token";
 import {Identifier} from "./_identifier";
-import {BasicType} from "./basic/_basic_type";
+import {AbstractType} from "./basic/_abstract_type";
 
 export class TypedIdentifier extends Identifier {
-  private readonly type: BasicType;
+  private readonly type: AbstractType;
 
-  constructor(token: Token, filename: string, type: BasicType) {
+  constructor(token: Token, filename: string, type: AbstractType) {
     super(token, filename);
     this.type = type;
   }
 
-  public getType(): BasicType {
+  public getType(): AbstractType {
     return this.type;
   }
 

@@ -1,6 +1,6 @@
-import {BasicType} from "./_basic_type";
+import {AbstractType} from "./_abstract_type";
 
-export class StringType extends BasicType {
+export class StringType extends AbstractType {
   public toText() {
     return "TYPE string";
   }

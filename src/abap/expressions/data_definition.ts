@@ -13,7 +13,6 @@ export class DataDefinition extends Expression {
                            initial,
                            str("WITH HEADER LINE"),
                            new Expressions.Type(),
-//                           new Expressions.TypeTable(),
                            new Expressions.Length(),
                            new Expressions.Decimals(),
                            new Expressions.Value()));
@@ -23,7 +22,7 @@ export class DataDefinition extends Expression {
                       opt(initial));
 
     return seq(new Expressions.NamespaceSimpleName(),
-               opt(new Expressions.FieldLength()),
+               opt(new Expressions.ConstantFieldLength()),
                alt(simple, table));
 
   }

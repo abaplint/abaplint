@@ -2,7 +2,7 @@ import {expect} from "chai";
 import {MemoryFile} from "../../../src/files";
 import {Registry} from "../../../src/registry";
 import {TypedIdentifier} from "../../../src/abap/types/_typed_identifier";
-import {StringType, CharacterType, IntegerType} from "../../../src/abap/types/basic/";
+import * as Basic from "../../../src/abap/types/basic/";
 import {TypedConstantIdentifier} from "../../../src/abap/types/_typed_constant_identifier";
 import {SyntaxLogic} from "../../../src/abap/syntax/syntax";
 import {ABAPObject} from "../../../src/objects/_abap_object";
@@ -23,23 +23,30 @@ function runProgram(abap: string, name: string): TypedIdentifier | undefined {
 
 function expectString(identifier: TypedIdentifier | undefined) {
   expect(identifier).to.not.equals(undefined);
-  expect(identifier!.getType()).to.be.instanceof(StringType);
+  expect(identifier!.getType()).to.be.instanceof(Basic.StringType);
+}
+
+function expectTable(identifier: TypedIdentifier | undefined) {
+  expect(identifier).to.not.equals(undefined);
+  expect(identifier!.getType()).to.be.instanceof(Basic.TableType);
+  const tab = identifier!.getType() as Basic.TableType;
+  return tab.getRowType();
+}
+
+function expectInteger(identifier: TypedIdentifier | undefined) {
+  expect(identifier).to.not.equals(undefined);
+  expect(identifier!.getType()).to.be.instanceof(Basic.IntegerType);
 }
 
 function expectCharacter(identifier: TypedIdentifier | undefined, length: number) {
   expect(identifier).to.not.equals(undefined);
-  expect(identifier!.getType()).to.be.instanceof(CharacterType);
-  const type = identifier!.getType() as CharacterType;
+  expect(identifier!.getType()).to.be.instanceof(Basic.CharacterType);
+  const type = identifier!.getType() as Basic.CharacterType;
   expect(type.getLength()).to.equal(length);
 }
 
 function expectConstantString(identifier: TypedIdentifier | undefined, value: string) {
   expectString(identifier);
-  /*
-  expect(identifier).to.not.equals(undefined);
-  expect(identifier).to.be.instanceOf(TypedConstantIdentifier);
-  expect(constant.getType()).to.be.instanceof(StringType);
-  */
   const constant = identifier as TypedConstantIdentifier;
   expect(constant.getValue()).to.equal(value);
 }
@@ -81,8 +88,7 @@ describe("Syntax - Basic Types", () => {
   it("DATA TYPE i", () => {
     const abap = "DATA foo TYPE i.";
     const identifier = runProgram(abap, "foo");
-    expect(identifier).to.not.equals(undefined);
-    expect(identifier!.getType()).to.be.instanceof(IntegerType);
+    expectInteger(identifier);
   });
 
   it("CONSTANTS TYPE string", () => {
@@ -135,19 +141,31 @@ describe("Syntax - Basic Types", () => {
   });
 
   it("DATA TYPE c", () => {
-    const abap = "CONSTANTS len TYPE i VALUE 5.\n" +
+    const abap =
+      "CONSTANTS len TYPE i VALUE 5.\n" +
       "DATA foo TYPE c LENGTH len.";
     const identifier = runProgram(abap, "foo");
     expectCharacter(identifier, 5);
   });
-/*
-  it("DATA TYPE c", () => {
+
+  it("DATA TYPE c, pre, 5", () => {
     const abap = "DATA foo(5) TYPE c.";
-    const identifier = runProgram(abap);
-    expect(identifier).to.not.equals(undefined);
-    expect(identifier!.getType()).to.be.instanceof(CharacterType);
-    const type = identifier!.getType() as CharacterType;
-    expect(type.getLength()).to.equal(5);
+    const identifier = runProgram(abap, "foo");
+    expectCharacter(identifier, 5);
+  });
+
+  it("DATA tab TYPE STANDARD TABLE OF string.", () => {
+    const abap = "DATA tab TYPE STANDARD TABLE OF string.";
+    const identifier = runProgram(abap, "tab");
+    const rowType = expectTable(identifier);
+    expect(rowType).to.be.instanceOf(Basic.StringType);
+  });
+/*
+  it("DATA tab TYPE STANDARD TABLE OF i.", () => {
+    const abap = "DATA tab TYPE STANDARD TABLE OF i.";
+    const identifier = runProgram(abap, "tab");
+    const rowType = expectTable(identifier);
+    expect(rowType).to.be.instanceOf(Basic.IntegerType);
   });
 */
 });

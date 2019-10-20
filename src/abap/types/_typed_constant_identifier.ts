@@ -1,11 +1,11 @@
 import {Token} from "../tokens/_token";
-import {BasicType} from "./basic/_basic_type";
+import {AbstractType} from "./basic/_abstract_type";
 import {TypedIdentifier} from "./_typed_identifier";
 
 export class TypedConstantIdentifier extends TypedIdentifier {
   private readonly value: string;
 
-  constructor(token: Token, filename: string, type: BasicType, value: string) {
+  constructor(token: Token, filename: string, type: AbstractType, value: string) {
     super(token, filename, type);
     this.value = value;
   }

@@ -1,6 +1,6 @@
-import {BasicType} from "./_basic_type";
+import {AbstractType} from "./_abstract_type";
 
-export class CharacterType extends BasicType {
+export class CharacterType extends AbstractType {
   private readonly length: number;
 
   public constructor(length: number) {

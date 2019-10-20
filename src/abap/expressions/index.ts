@@ -14,6 +14,7 @@ export * from "./component_compare";
 export * from "./component_cond";
 export * from "./component_name";
 export * from "./cond";
+export * from "./constant_field_length";
 export * from "./constant_string";
 export * from "./constant";
 export * from "./data_definition";
