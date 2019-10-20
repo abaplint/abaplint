@@ -3,6 +3,7 @@
 [![Dependency Status](https://david-dm.org/abaplint/abaplint.svg)](https://david-dm.org/abaplint/abaplint)
 [![Greenkeeper badge](https://badges.greenkeeper.io/abaplint/abaplint.svg)](https://greenkeeper.io/)
 [![FOSSA Status](https://app.fossa.io/api/projects/git%2Bgithub.com%2Fabaplint%2Fabaplint.svg?type=shield)](https://app.fossa.io/projects/git%2Bgithub.com%2Fabaplint%2Fabaplint?ref=badge_shield)
+[![codecov](https://codecov.io/gh/abaplint/abaplint/branch/master/graph/badge.svg)](https://codecov.io/gh/abaplint/abaplint)
 
 # abaplint
 
