@@ -33,9 +33,14 @@ export class Hover {
     } else if (lookup instanceof FormDefinition) {
       return {kind: LServer.MarkupKind.Markdown, value: this.hoverFormDefinition(lookup)};
     } else if (lookup instanceof TypedConstantIdentifier) {
-      return {kind: LServer.MarkupKind.Markdown, value: "Resolved, Typed, Constant"};
+      const value = "Resolved, Typed, Constant\n\n" +
+        "`" + lookup.getType().toText() + "`\n\n" +
+        "Value: `" + lookup.getValue() + "`";
+      return {kind: LServer.MarkupKind.Markdown, value};
     } else if (lookup instanceof TypedIdentifier) {
-      return {kind: LServer.MarkupKind.Markdown, value: "Resolved, Typed"};
+      const value = "Resolved, Typed\n\n" +
+        "`" + lookup.getType().toText() + "`";
+      return {kind: LServer.MarkupKind.Markdown, value};
     } else if (lookup instanceof Identifier) {
       return {kind: LServer.MarkupKind.Markdown, value: "Resolved"};
     } else {

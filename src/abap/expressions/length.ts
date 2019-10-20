@@ -1,11 +1,9 @@
 import {seq, alt, str, Expression, IStatementRunnable} from "../combi";
-import {Integer} from "./integer";
-import {NamespaceSimpleName} from "./namespace_simple_name";
+import {Integer, SimpleFieldChain, ConstantString} from "./";
 
 export class Length extends Expression {
   public getRunnable(): IStatementRunnable {
-    // must be integer or constant
-    const ret = seq(str("LENGTH"), alt(new Integer(), new NamespaceSimpleName()));
+    const ret = seq(str("LENGTH"), alt(new Integer(), new ConstantString(), new SimpleFieldChain()));
     return ret;
   }
 }

@@ -962,8 +962,8 @@ describe("Check Variables", () => {
   });
 
   it("FOR, loop IN", () => {
-    const abap = "DATA moo TYPE bar.\n" +
-      "DATA it_packages TYPE boo.\n" +
+    const abap = "DATA moo TYPE c.\n" +
+      "DATA it_packages TYPE c.\n" +
       "moo = VALUE #(\n" +
       "  FOR lo_package IN it_packages\n" +
       "  FOR lo_element IN get_all_elements_from_package( lo_package )\n" +
@@ -1009,7 +1009,7 @@ describe("Check Variables", () => {
 
   it("program, inline FS definition", () => {
     const abap = `
-    DATA moo TYPE string_table.
+    DATA moo TYPE c.
     LOOP AT moo ASSIGNING FIELD-SYMBOL(<moo>).
       WRITE <moo>.
     ENDLOOP.`;
@@ -1093,6 +1093,24 @@ describe("Check Variables", () => {
       ENDFORM.`;
     const issues = runProgram(abap);
     expect(issues.length).to.equals(0);
+  });
+
+  it("CONSTANTS, missing VALUE", () => {
+    const abap = `CONSTANTS foo TYPE string.`;
+    const issues = runProgram(abap);
+    expect(issues.length).to.equals(1);
+  });
+
+  it("CONSTANTS TYPE string VALUE not a constant", () => {
+    const abap = `CONSTANTS foo TYPE string VALUE bar.`;
+    const issues = runProgram(abap);
+    expect(issues.length).to.equals(1);
+  });
+
+  it("DATA, negative LENGTH", () => {
+    const abap = `DATA foo TYPE c LENGTH -5.`;
+    const issues = runProgram(abap);
+    expect(issues.length).to.equals(1);
   });
 
 /*

@@ -61,7 +61,7 @@ export class SyntaxLogic {
     return this.issues;
   }
 
-  public traverseUntil(stopAt: Identifier): Scope {
+  public traverseUntil(stopAt?: Identifier): Scope {
     return this.traverseObject(stopAt);
   }
 

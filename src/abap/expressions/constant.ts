@@ -1,8 +1,8 @@
 import {alt, Expression, IStatementRunnable} from "../combi";
-import {ConstantString, Integer} from "./";
+import {ConstantString, TextElementString, Integer} from "./";
 
 export class Constant extends Expression {
   public getRunnable(): IStatementRunnable {
-    return alt(new ConstantString(), new Integer());
+    return alt(new ConstantString(), new TextElementString(), new Integer());
   }
 }

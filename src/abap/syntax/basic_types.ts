@@ -7,22 +7,26 @@ import * as Types from "../types/basic/";
 import {Scope} from "./_scope";
 import {BasicType} from "../types/basic/_basic_type";
 import {TypedConstantIdentifier} from "../types/_typed_constant_identifier";
+import {Chaining} from "./chaining";
 
 export class BasicTypes {
   private readonly filename: string;
-//  private readonly scope: Scope;
+  private readonly scope: Scope;
 
-  public constructor(filename: string, _scope: Scope) {
+  public constructor(filename: string, scope: Scope) {
     this.filename = filename;
-//    this.scope = scope;
+    this.scope = scope;
   }
 
   public build(node: StatementNode): TypedIdentifier | Identifier | undefined {
     const sub = node.get();
 
-    const found = this.simpleType(node);
-    if (found) {
-      return found;
+    if (sub instanceof Statements.Data || sub instanceof Statements.Constant) {
+      const found = this.simpleType(node);
+      if (found) {
+        return found;
+      }
+//      throw new Error("unresolved!!!");
     }
 
     if (sub instanceof Statements.Data
@@ -58,18 +62,11 @@ export class BasicTypes {
     }
     const name = nameExpr.getFirstToken();
 
-    const type = node.findFirstExpression(Expressions.Type);
-    if (type === undefined) {
-      return undefined;
-    }
-
     const chain = node.findFirstExpression(Expressions.FieldChain);
-    if (chain === undefined) {
-      return undefined;
-    }
-    const chainText = chain.concatTokens().toUpperCase();
+    const chainText = chain ? chain.concatTokens().toUpperCase() : "C";
 
-    const text = type.concatTokens().toUpperCase();
+    const type = node.findFirstExpression(Expressions.Type);
+    const text = type ? type.concatTokens().toUpperCase() : "TYPE";
 
     let found: BasicType | undefined = undefined;
     if (text.startsWith("LIKE LINE OF")) {
@@ -88,7 +85,7 @@ export class BasicTypes {
       } else if (chainText === "I") {
         found = new Types.IntegerType();
       } else if (chainText === "C") {
-        found = new Types.CharacterType(1);
+        found = new Types.CharacterType(this.findLength(node));
       } else {
         return undefined;
       }
@@ -111,12 +108,55 @@ export class BasicTypes {
       throw new Error("set VALUE, " + name);
     }
 
+    if (val.concatTokens().toUpperCase() === "VALUE IS INITIAL") {
+      return "";
+    }
+
     const constant = val.findFirstExpression(Expressions.Constant);
     if (constant) {
       return constant.concatTokens();
     }
 
+    const chain = val.findFirstExpression(Expressions.SimpleFieldChain);
+    if (chain) {
+      return new Chaining(this.scope).resolveConstantValue(chain);
+    }
+
     throw new Error("findValue, unexpected, " + name);
+  }
+
+  private findLength(node: StatementNode): number {
+    const val = node.findFirstExpression(Expressions.Length);
+    if (val === undefined) {
+      return 1;
+    }
+
+    const intExpr = val.findFirstExpression(Expressions.Integer);
+    if (intExpr) {
+      return this.parseInt(intExpr.concatTokens());
+    }
+
+    const strExpr = val.findFirstExpression(Expressions.ConstantString);
+    if (strExpr) {
+      return this.parseInt(strExpr.concatTokens());
+    }
+
+    const chain = val.findFirstExpression(Expressions.SimpleFieldChain);
+    if (chain) {
+      return this.parseInt(new Chaining(this.scope).resolveConstantValue(chain));
+    }
+
+    throw new Error("Unexpected, findLength");
+  }
+
+  private parseInt(text: string): number {
+    if (text.startsWith("'")) {
+      text = text.split("'")[1];
+    } else if (text.startsWith("`")) {
+      text = text.split("`")[1];
+    }
+
+    return parseInt(text, 10);
   }
 
 }
