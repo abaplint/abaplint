@@ -23,6 +23,13 @@ jobs:
       run: npm run web.syntax
     - name: npm run web.playground
       run: npm run web.playground
+    - name: npm run coverage
+      run: npm run coverage
+    - uses: codecov/codecov-action@v1.0.3
+      if: github.ref == 'refs/heads/master' && github.repository == 'abaplint/abaplint'
+      with:
+        token: ${{secrets.CODECOV_TOKEN}}
+        file: ./coverage/coverage-final.json
     - name: deploy schema.abaplint.org
       if: github.ref == 'refs/heads/master' && github.repository == 'abaplint/abaplint'
       env:
