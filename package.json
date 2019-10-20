@@ -15,13 +15,26 @@
     "compile": "tsc",
     "postcompile": "sh scripts/version.sh",
     "pretest": "npm run compile",
-    "test": "mocha --require source-map-support/register --recursive --reporter progress \"build/test/**/*.js\"",
+    "test": "mocha",
     "posttest": "npm run tslint && npm run schema",
     "web.playground": "cd web/playground && npm install && npm test && npm run build && cd ../../",
     "web.syntax": "sh web/syntax.sh",
     "prepublishOnly": "rm -rf build && npm run test",
     "preschema": "node scripts/schema.js > scripts/schema.ts",
-    "schema": "ts-json-schema-generator --jsDoc extended --path scripts/schema.ts > scripts/schema.json"
+    "schema": "ts-json-schema-generator --jsDoc extended --path scripts/schema.ts > scripts/schema.json",
+    "precoverage": "npm run compile",
+    "coverage": "nyc mocha",
+    "postcoverage": "nyc report --reporter=json"
+  },
+  "mocha": {
+    "recursive": true,
+    "reporter": "progress",
+    "spec": "build/test/**/*.js",
+    "require": "source-map-support/register"
+  },
+  "nyc": {
+    "include": ["build/src/**/*.js"],
+    "exclude-after-remap": false
   },
   "repository": {
     "type": "git",
@@ -50,6 +63,7 @@
     "@types/progress": "^2.0.3",
     "chai": "^4.2.0",
     "mocha": "^6.2.2",
+    "nyc": "^14.1.1",
     "railroad-diagrams": "git+https://github.com/tabatkins/railroad-diagrams#gh-pages",
     "source-map-support": "^0.5.13",
     "ts-json-schema-generator": "^0.54.0",
