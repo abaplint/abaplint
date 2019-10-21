@@ -24,6 +24,14 @@ export class InterfaceDefinition extends Identifier {
     return new Attributes(this.node, this.filename);
   }
 
+  public isLocal(): boolean {
+    return !this.isGlobal();
+  }
+
+  public isGlobal(): boolean {
+    return this.node.findFirstExpression(Expressions.Global) !== undefined;
+  }
+
   public getMethodDefinitions(): MethodDefinition[] {
     const ret = [];
     const defs = this.node.findAllStatements(Statements.MethodDef);
