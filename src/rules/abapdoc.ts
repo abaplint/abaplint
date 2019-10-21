@@ -10,6 +10,7 @@ import {MethodDefinition} from "../abap/types";
  */
 export class AbapdocConf extends BasicRuleConfig {
 
+  /** Check local classes and interfaces for abapdoc. */
   public checkLocal: boolean = false;
 }
 
@@ -39,13 +40,13 @@ export class Abapdoc extends ABAPRule {
     let methods: MethodDefinition[] = [];
 
     for (const classDef of file.getClassDefinitions()) {
-      if (this.conf.checkLocal === false && classDef.isLocal()) {
+      if (this.conf.checkLocal === false && classDef.isLocal() === true) {
         continue;
       }
       methods = methods.concat(classDef.getMethodDefinitions().getPublic());
     }
     for (const interfaceDef of file.getInterfaceDefinitions()) {
-      if (this.conf.checkLocal === false && interfaceDef.isLocal()) {
+      if (this.conf.checkLocal === false && interfaceDef.isLocal() === true) {
         continue;
       }
       methods = methods.concat(interfaceDef.getMethodDefinitions());
