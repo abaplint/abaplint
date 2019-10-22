@@ -16,6 +16,7 @@ import {Inline} from "./_inline";
 import {Program} from "../../objects";
 import {ClassDefinition, InterfaceDefinition} from "../types";
 import {Identifier} from "../types/_identifier";
+import {BasicTypes} from "./basic_types";
 
 // assumption: objects are parsed without parsing errors
 
@@ -115,7 +116,10 @@ export class SyntaxLogic {
 
     for (const child of node.getChildren()) {
       try {
-        this.updateScope(child);
+        const next = this.updateScope(child);
+        if (next === true) {
+          continue;
+        }
       } catch (e) {
         this.newIssue(child.getFirstToken(), e.message);
         break;
@@ -150,26 +154,36 @@ export class SyntaxLogic {
     return false;
   }
 
-  private updateScope(node: INode): void {
+  // if this returns true, then the traversal should continue with next child
+  private updateScope(node: INode): boolean {
 // todo, align statements, eg is NamespaceSimpleName a definition or is it Field, or something new?
 // todo, and introduce SimpleSource?
     if (node instanceof StructureNode) {
       const stru = node.get();
       if (stru instanceof Structures.TypeEnum) {
         this.helpers.proc.addEnumValues(node, this.currentFile.getFilename());
+        return true;
       } else if (stru instanceof Structures.ClassDefinition) {
         this.scope.addClassDefinition(new ClassDefinition(node, this.currentFile.getFilename()));
+        return true;
       } else if (stru instanceof Structures.Interface) {
         this.scope.addInterfaceDefinition(new InterfaceDefinition(node, this.currentFile.getFilename()));
+        return true;
+      } else if (stru instanceof Structures.Types) {
+        const typ = new BasicTypes(this.currentFile.getFilename(), this.scope).buildStructureType(node);
+        if (typ) {
+          this.scope.addType(typ);
+        }
+        return true;
       }
-      return;
+      return false;
     } else if (!(node instanceof StatementNode)) {
-      return;
+      return false;
     }
 
-    const statement = node.get();
     this.helpers.proc.addDefinitions(node, this.currentFile.getFilename());
 
+    const statement = node.get();
     if (statement instanceof Statements.Form) {
       this.helpers.proc.findFormScope(node, this.currentFile.getFilename());
     } else if (statement instanceof Statements.Perform) {
@@ -188,6 +202,8 @@ export class SyntaxLogic {
         || statement instanceof Statements.EndClass) {
       this.scope.popScope();
     }
+
+    return false;
   }
 
 }

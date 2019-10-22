@@ -34,12 +34,12 @@ export class Hover {
       return {kind: LServer.MarkupKind.Markdown, value: this.hoverFormDefinition(lookup)};
     } else if (lookup instanceof TypedConstantIdentifier) {
       const value = "Resolved, Typed, Constant\n\n" +
-        "Type: `" + lookup.getType().toText() + "`\n\n" +
-        "Value: `" + lookup.getValue() + "`";
+        "Type: ```" + lookup.getType().toText() + "```\n\n" +
+        "Value: ```" + lookup.getValue() + "```";
       return {kind: LServer.MarkupKind.Markdown, value};
     } else if (lookup instanceof TypedIdentifier) {
       const value = "Resolved, Typed\n\n" +
-        "Type: `" + lookup.getType().toText() + "`";
+        "Type: ```" + lookup.getType().toText() + "```";
       return {kind: LServer.MarkupKind.Markdown, value};
     } else if (lookup instanceof Identifier) {
       return {kind: LServer.MarkupKind.Markdown, value: "Resolved"};

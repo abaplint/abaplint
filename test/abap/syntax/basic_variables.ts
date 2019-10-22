@@ -168,4 +168,12 @@ describe("Syntax - Basic Types", () => {
     expect(rowType).to.be.instanceOf(Basic.IntegerType);
   });
 
+  it("data with defined type", () => {
+    const abap =
+      "TYPES typ TYPE i.\n" +
+      "DATA foo TYPE typ.";
+    const identifier = resolveVariable(abap, "foo");
+    expectInteger(identifier);
+  });
+
 });

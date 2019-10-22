@@ -1,5 +1,5 @@
 import {TypedIdentifier} from "../types/_typed_identifier";
-import {StatementNode, ExpressionNode} from "../nodes";
+import {StatementNode, ExpressionNode, StructureNode} from "../nodes";
 import {Identifier} from "../types/_identifier";
 import * as Statements from "../statements";
 import * as Expressions from "../expressions";
@@ -8,6 +8,7 @@ import {Scope} from "./_scope";
 import {AbstractType} from "../types/basic/_abstract_type";
 import {TypedConstantIdentifier} from "../types/_typed_constant_identifier";
 import {Chaining} from "./chaining";
+import {IStructureComponent, StructureType} from "../types/basic/";
 
 export class BasicTypes {
   private readonly filename: string;
@@ -18,7 +19,67 @@ export class BasicTypes {
     this.scope = scope;
   }
 
-  public build(node: StatementNode): TypedIdentifier | Identifier | undefined {
+  public buildStructureType(node: StructureNode): TypedIdentifier | undefined {
+    const name = node.findFirstExpression(Expressions.NamespaceSimpleName)!.getFirstToken();
+
+    let components: IStructureComponent[] = [];
+    for (const c of node.getChildren()) {
+      if (c instanceof StatementNode && c.get() instanceof Statements.Type) {
+        const found = this.buildTypes(c);
+        if (found === undefined) {
+          return undefined;
+        }
+
+        components.push({
+          name: found.getName(),
+          type: found.getType(),
+        });
+      } else if (c instanceof StatementNode && c.get() instanceof Statements.IncludeType) {
+        const iname = c.findFirstExpression(Expressions.TypeName)!.getFirstToken()!.getStr();
+        const ityp = this.scope.resolveType(iname);
+        if (ityp) {
+          const typ = ityp.getType();
+          if (typ instanceof StructureType) {
+            components = components.concat(typ.getComponents());
+          } // todo, else exception?
+        } // todo, else exception?
+      }
+      // todo, nested structures
+    }
+
+    if (components.length === 0) { // todo, remove this check
+      return undefined;
+    }
+
+    return new TypedIdentifier(name, this.filename, new Types.StructureType(components));
+  }
+
+  public buildTypes(node: StatementNode): TypedIdentifier | undefined {
+    if (!(node.get() instanceof Statements.Type)) {
+      return undefined;
+    }
+
+    const table = this.tableType(node);
+    if (table) {
+      return table;
+    }
+
+    const found = this.simpleType(node);
+    if (found) {
+      return found;
+    }
+/*
+    const nameExpr = node.findFirstExpression(Expressions.NamespaceSimpleName);
+    if (nameExpr === undefined) {
+      throw new Error("unresolved TYPE");
+    } else {
+      throw new Error("unresolved TYPE, \"" + nameExpr.getFirstToken().getStr() + "\"");
+    }
+*/
+    return undefined;
+  }
+
+  public buildVariables(node: StatementNode): TypedIdentifier | Identifier | undefined {
     const sub = node.get();
 
     if (sub instanceof Statements.Data
@@ -92,13 +153,20 @@ export class BasicTypes {
     }
 
     const chainText = expr.concatTokens().toUpperCase();
-
     if (chainText === "STRING") {
       return new Types.StringType();
     } else if (chainText === "I") {
       return new Types.IntegerType();
+    } else if (chainText === "F") {
+      return new Types.FloatType();
     } else if (chainText === "C") {
       return new Types.CharacterType(this.findLength(stat));
+    }
+
+    // todo, this only handles simple names
+    const typ = this.scope.resolveType(chainText);
+    if (typ) {
+      return typ.getType();
     }
 
     return undefined;

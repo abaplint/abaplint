@@ -1,5 +1,6 @@
 import {Identifier} from "../types/_identifier";
 import {ClassDefinition, InterfaceDefinition, FormDefinition} from "../types";
+import {TypedIdentifier} from "../types/_typed_identifier";
 
 interface IVar {
   name: string;
@@ -14,6 +15,7 @@ export class Scope {
     cdef: ClassDefinition[],
     idef: InterfaceDefinition[],
     form: FormDefinition[],
+    type: TypedIdentifier[],
   }[];
 
   constructor(builtin: Identifier[]) {
@@ -25,6 +27,10 @@ export class Scope {
 
   public get() {
     return this.scopes;
+  }
+
+  public addType(type: TypedIdentifier) {
+    this.scopes[this.scopes.length - 1].type.push(type);
   }
 
   public addClassDefinition(c: ClassDefinition) {
@@ -107,9 +113,15 @@ export class Scope {
     return ret;
   }
 
-  public resolveType(_name: string): undefined {
-// sdf TypedIdentifier
-// todo
+  public resolveType(name: string): TypedIdentifier |undefined {
+    // todo, this should probably search the nearest first? in case there are shadowed variables?
+    for (const scope of this.scopes) {
+      for (const local of scope.type) {
+        if (local.getName().toUpperCase() === name.toUpperCase()) {
+          return local;
+        }
+      }
+    }
     return undefined;
   }
 
@@ -136,6 +148,7 @@ export class Scope {
       cdef: [],
       idef: [],
       form: [],
+      type: [],
     });
     return this;
   }

@@ -2,17 +2,14 @@ import {expect} from "chai";
 import {MemoryFile} from "../../../src/files";
 import {Registry} from "../../../src/registry";
 import {TypedIdentifier} from "../../../src/abap/types/_typed_identifier";
-// import * as Basic from "../../../src/abap/types/basic";
+import * as Basic from "../../../src/abap/types/basic";
 import {SyntaxLogic} from "../../../src/abap/syntax/syntax";
 import {ABAPObject} from "../../../src/objects/_abap_object";
 
 function resolveType(abap: string, name: string): TypedIdentifier | undefined {
-  const filename = "zfoobar.prog.abap";
-  const file = new MemoryFile(filename, abap);
-  const reg = new Registry().addFile(file).parse();
-
+  const reg = new Registry().addFile(new MemoryFile("zfoobar.prog.abap", abap)).parse();
   const scope = new SyntaxLogic(reg, reg.getObjects()[0] as ABAPObject).traverseUntil();
-  const identifier = scope.resolveVariable(name);
+  const identifier = scope.resolveType(name);
 
   if (identifier instanceof TypedIdentifier) {
     return identifier;
@@ -20,12 +17,23 @@ function resolveType(abap: string, name: string): TypedIdentifier | undefined {
   return undefined;
 }
 /*
+function runProgram(abap: string): Issue[] {
+  const reg = new Registry().addFile(new MemoryFile("zfoobar.prog.abap", abap)).parse();
+  return new SyntaxLogic(reg, reg.getABAPObjects()[0]).findIssues();
+}
+*/
 function expectString(identifier: TypedIdentifier | undefined) {
   expect(identifier).to.not.equals(undefined);
   expect(identifier!.getType()).to.be.instanceof(Basic.StringType);
 }
-*/
-/*
+
+function expectStructure(identifier: TypedIdentifier | undefined) {
+  expect(identifier).to.not.equals(undefined);
+  expect(identifier!.getType()).to.be.instanceof(Basic.StructureType);
+  const tab = identifier!.getType() as Basic.StructureType;
+  return tab.getComponents();
+}
+
 function expectTable(identifier: TypedIdentifier | undefined) {
   expect(identifier).to.not.equals(undefined);
   expect(identifier!.getType()).to.be.instanceof(Basic.TableType);
@@ -33,11 +41,7 @@ function expectTable(identifier: TypedIdentifier | undefined) {
   return tab.getRowType();
 }
 
-function expectInteger(identifier: TypedIdentifier | undefined) {
-  expect(identifier).to.not.equals(undefined);
-  expect(identifier!.getType()).to.be.instanceof(Basic.IntegerType);
-}
-
+/*
 function expectCharacter(identifier: TypedIdentifier | undefined, length: number) {
   expect(identifier).to.not.equals(undefined);
   expect(identifier!.getType()).to.be.instanceof(Basic.CharacterType);
@@ -55,11 +59,57 @@ describe("Syntax - Types", () => {
     const identifier = resolveType(abap, "sdf");
     expect(identifier).to.equals(undefined);
   });
-/*
-  it("TYPE foo TYPE string", () => {
+
+  it("string", () => {
     const abap = "TYPES foo TYPE string.";
     const type = resolveType(abap, "foo");
     expectString(type);
   });
+
+  it("table", () => {
+    const abap = "TYPES foo TYPE STANDARD TABLE OF string.";
+    const type = resolveType(abap, "foo");
+    const row = expectTable(type);
+    expect(row).to.be.instanceOf(Basic.StringType);
+  });
+
+  it("structure", () => {
+    const abap = `
+    TYPES: BEGIN OF foo,
+      bar TYPE i,
+    END OF foo.`;
+    const type = resolveType(abap, "foo");
+    const components = expectStructure(type);
+    expect(components.length).to.equal(1);
+    expect(components[0].name).to.equal("bar");
+    expect(components[0].type).to.be.instanceof(Basic.IntegerType);
+  });
+
+  it("INCLUDE TYPE", () => {
+    const abap = `
+      TYPES: BEGIN OF foo1,
+               field TYPE i,
+             END OF foo1.
+      TYPES: BEGIN OF foo2,
+               moo TYPE f.
+          INCLUDE TYPE foo1.
+      TYPES END OF foo2.`;
+    const type = resolveType(abap, "foo2");
+    const components = expectStructure(type);
+    expect(components.length).to.equal(2);
+    expect(components[0].name).to.equal("moo");
+    expect(components[0].type).to.be.instanceof(Basic.FloatType);
+    expect(components[1].name).to.equal("field");
+    expect(components[1].type).to.be.instanceof(Basic.IntegerType);
+  });
+
+/*
+  it("TYPE unresolveable", () => {
+    const abap = "TYPES foo TYPE zsdfsd.";
+    const issues = runProgram(abap);
+    expect(issues.length).to.equal(1);
+    expect(issues[0].getMessage()).to.include("unresolved");
+  });
 */
+
 });
