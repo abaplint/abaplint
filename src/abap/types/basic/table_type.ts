@@ -15,6 +15,6 @@ export class TableType extends AbstractType {
   }
 
   public toText() {
-    return "TYPE TABLE OF: " + this.rowType.toText();
+    return "TABLE OF: " + this.rowType.toText();
   }
 }

@@ -107,6 +107,12 @@ export class Scope {
     return ret;
   }
 
+  public resolveType(_name: string): undefined {
+// sdf TypedIdentifier
+// todo
+    return undefined;
+  }
+
   public resolveVariable(name: string): Identifier | string | undefined {
     // todo, this should probably search the nearest first? in case there are shadowed variables?
     for (const scope of this.scopes) {

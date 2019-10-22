@@ -16,7 +16,7 @@ export class CharacterType extends AbstractType {
   }
 
   public toText() {
-    return "TYPE c LENGTH " + this.getLength();
+    return "c LENGTH " + this.getLength();
   }
 
 }

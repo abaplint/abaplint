@@ -78,10 +78,30 @@ export class BasicTypes {
       return undefined;
     }
 
-//    const chain = node.findFirstExpression(Expressions.FieldChain);
-// todo
+    const row = this.resolveChainType(node, node.findFirstExpression(Expressions.FieldChain));
+    if (row === undefined) {
+      return undefined;
+    }
 
-    return new TypedIdentifier(name, this.filename, new Types.TableType(new Types.StringType()));
+    return new TypedIdentifier(name, this.filename, new Types.TableType(row));
+  }
+
+  private resolveChainType(stat: StatementNode, expr: ExpressionNode | undefined): AbstractType | undefined {
+    if (expr === undefined) {
+      return undefined;
+    }
+
+    const chainText = expr.concatTokens().toUpperCase();
+
+    if (chainText === "STRING") {
+      return new Types.StringType();
+    } else if (chainText === "I") {
+      return new Types.IntegerType();
+    } else if (chainText === "C") {
+      return new Types.CharacterType(this.findLength(stat));
+    }
+
+    return undefined;
   }
 
   private simpleType(node: StatementNode): TypedIdentifier | undefined {
@@ -90,9 +110,7 @@ export class BasicTypes {
       return undefined;
     }
     const name = nameExpr.getFirstToken();
-
     const chain = node.findFirstExpression(Expressions.FieldChain);
-    const chainText = chain ? chain.concatTokens().toUpperCase() : "C";
 
     const type = node.findFirstExpression(Expressions.Type);
     const text = type ? type.concatTokens().toUpperCase() : "TYPE";
@@ -109,14 +127,9 @@ export class BasicTypes {
     } else if (text.startsWith("TYPE REF TO")) {
       return undefined;
     } else if (text.startsWith("TYPE")) {
-      if (chainText === "STRING") {
-        found = new Types.StringType();
-      } else if (chainText === "I") {
-        found = new Types.IntegerType();
-      } else if (chainText === "C") {
-        found = new Types.CharacterType(this.findLength(node));
-      } else {
-        return undefined;
+      found = this.resolveChainType(node, chain);
+      if (found === undefined && chain === undefined) {
+        found = new Types.CharacterType(1);
       }
     }
 
@@ -126,9 +139,9 @@ export class BasicTypes {
       } else {
         return new TypedIdentifier(name, this.filename, found);
       }
-    } else {
-      return undefined;
     }
+
+    return undefined;
   }
 
   private findValue(node: StatementNode, name: string): string {
