@@ -52,7 +52,21 @@ export class Procedural {
   public addDefinitions(node: StatementNode, filename: string) {
     const s = node.get();
     if (s instanceof Statements.Type) {
-      s.runSyntax(node, this.scope, filename);
+      this.scope.addType(s.runSyntax(node, this.scope, filename));
+    } else if (s instanceof Statements.Constant) {
+      this.scope.addIdentifier(s.runSyntax(node, this.scope, filename));
+    } else if (s instanceof Statements.Static) {
+      this.scope.addIdentifier(s.runSyntax(node, this.scope, filename));
+    } else if (s instanceof Statements.Data) {
+      this.scope.addIdentifier(s.runSyntax(node, this.scope, filename));
+    } else if (s instanceof Statements.DataBegin) {
+      this.scope.addIdentifier(s.runSyntax(node, this.scope, filename));
+    } else if (s instanceof Statements.ConstantBegin) {
+      this.scope.addIdentifier(s.runSyntax(node, this.scope, filename));
+    } else if (s instanceof Statements.StaticBegin) {
+      this.scope.addIdentifier(s.runSyntax(node, this.scope, filename));
+    } else if (s instanceof Statements.Parameter) {
+      this.scope.addIdentifier(s.runSyntax(node, this.scope, filename));
     } else {
       new BasicTypes(filename, this.scope).buildVariables(node);
     }

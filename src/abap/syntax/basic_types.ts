@@ -20,36 +20,14 @@ export class BasicTypes {
   public buildVariables(node: StatementNode): void {
     const sub = node.get();
 
-    if (sub instanceof Statements.Data
-        || sub instanceof Statements.Static) {
-      const tt = node.findFirstExpression(Expressions.TypeTable);
-      if (tt) {
-        const found = (tt.get() as Expressions.TypeTable).runSyntax(node, this.scope, this.filename);
-        this.scope.addIdentifier(found);
-      }
-    }
-
-    if (sub instanceof Statements.Data
-        || sub instanceof Statements.Constant
-        || sub instanceof Statements.Static) {
-      const found = this.simpleType(node);
-      this.scope.addIdentifier(found);
-    }
+// todo, refactor this method
 
 // fallback to untyped
     let fallback: ExpressionNode | undefined;
-    if (sub instanceof Statements.Data
-      || sub instanceof Statements.DataBegin
-      || sub instanceof Statements.Constant
-      || sub instanceof Statements.ConstantBegin
-      || sub instanceof Statements.Static
-      || sub instanceof Statements.StaticBegin) {
-      fallback = node.findFirstExpression(Expressions.NamespaceSimpleName);
-    } else if (sub instanceof Statements.Parameter) {
-      fallback = node.findFirstExpression(Expressions.FieldSub);
-    } else if (sub instanceof Statements.FieldSymbol) {
+    if (sub instanceof Statements.FieldSymbol) {
       fallback = node.findFirstExpression(Expressions.FieldSymbol);
-    } else if (sub instanceof Statements.Tables || sub instanceof Statements.SelectOption) {
+    } else if (sub instanceof Statements.Tables
+        || sub instanceof Statements.SelectOption) {
       fallback = node.findFirstExpression(Expressions.Field);
     }
     if (fallback === undefined) { return; }
@@ -59,6 +37,7 @@ export class BasicTypes {
 //////////////////////
 
   public resolveChainType(stat: StatementNode | ExpressionNode, expr: ExpressionNode | undefined): AbstractType | undefined {
+// todo, move this to the expresssion, and perhaps rename/add another expression for types
     if (expr === undefined) {
       return undefined;
     }
@@ -113,7 +92,7 @@ export class BasicTypes {
     }
 
     if (found) {
-      if (node.get() instanceof Statements.Constant) {
+      if (node.get() instanceof Statements.Constant) { // todo, move this to Statements.Constant
         return new TypedConstantIdentifier(name, this.filename, found, this.findValue(node, name.getStr()));
       } else {
         return new TypedIdentifier(name, this.filename, found);

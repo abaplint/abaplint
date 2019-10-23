@@ -7,7 +7,7 @@ export class Constant extends Identifier {
 
   constructor(node: StatementNode, filename: string) {
     if (!(node.get() instanceof Statements.Constant
-        || node.get() instanceof Statements.Type
+        || node.get() instanceof Statements.Type // todo, remove this
         || node.get() instanceof Statements.ConstantBegin)) {
       throw new Error("Constant, unexpected node");
     }

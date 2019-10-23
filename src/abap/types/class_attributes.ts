@@ -91,6 +91,14 @@ export class Attributes {
 
 // for now add ENUM values as constants
     for (const type of node.findAllStructures(Structures.TypeEnum)) {
+      /*
+      const enu = type.get() as Structures.TypeEnum;
+      const s = new Scope(); // todo, handle the scope
+      enu.runSyntax(type, s, this.filename);
+      for (const c of s.popScope().vars) {
+        this.constants.push(new ClassConstant(c.identifier, visibility, this.filename));
+      }
+      */
       for (const val of type.findDirectStatements(Statements.Type)) {
         this.constants.push(new ClassConstant(val, visibility, this.filename));
       }

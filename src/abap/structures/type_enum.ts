@@ -4,7 +4,7 @@ import {Structure} from "./_structure";
 import {star, IStructureRunnable, sta, alt, beginEnd} from "./_combi";
 import {StructureNode} from "../nodes";
 import {Scope} from "../syntax/_scope";
-import {IntegerType} from "../types/basic";
+import {UnknownType} from "../types/basic";
 import {TypedIdentifier} from "../types/_typed_identifier";
 
 export class TypeEnum extends Structure {
@@ -15,18 +15,20 @@ export class TypeEnum extends Structure {
                     sta(Statements.TypeEnumEnd));
   }
 
-  public runSyntax(node: StructureNode, scope: Scope, filename: string): void {
+  public runSyntax(node: StructureNode, _scope: Scope, filename: string): TypedIdentifier[] {
     if (!(node.get() instanceof TypeEnum)) {
       throw new Error("addEnumValues unexpected type");
     }
+    const ret: TypedIdentifier[] = [];
     for (const type of node.findDirectStatements(Statements.Type)) {
       const expr = type.findFirstExpression(Expressions.NamespaceSimpleName);
       if (expr === undefined) {
         continue;
       }
       const token = expr.getFirstToken();
-      scope.addIdentifier(new TypedIdentifier(token, filename, new IntegerType()));
+      ret.push(new TypedIdentifier(token, filename, new UnknownType()));
     }
+    return ret;
   }
 
 }

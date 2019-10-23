@@ -165,8 +165,11 @@ export class SyntaxLogic {
       } else if (stru instanceof Structures.Interface) {
         this.scope.addInterfaceDefinition(new InterfaceDefinition(node, this.currentFile.getFilename()));
         return true;
-      } else if (stru instanceof Structures.Types || stru instanceof Structures.TypeEnum) {
-        stru.runSyntax(node, this.scope, this.currentFile.getFilename());
+      } else if (stru instanceof Structures.Types) {
+        this.scope.addType(stru.runSyntax(node, this.scope, this.currentFile.getFilename()));
+        return true;
+      } else if (stru instanceof Structures.TypeEnum) {
+        this.scope.addList(stru.runSyntax(node, this.scope, this.currentFile.getFilename()));
         return true;
       }
       return false;

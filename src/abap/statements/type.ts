@@ -4,6 +4,7 @@ import {NamespaceSimpleName, FieldLength, Type as eType, TypeTable, Decimals, Le
 import {Scope} from "../syntax/_scope";
 import {StatementNode} from "../nodes";
 import {BasicTypes} from "../syntax/basic_types";
+import {TypedIdentifier} from "../types/_typed_identifier";
 
 export class Type extends Statement {
 
@@ -19,18 +20,15 @@ export class Type extends Statement {
     return ret;
   }
 
-  public runSyntax(node: StatementNode, scope: Scope, filename: string): void {
+  public runSyntax(node: StatementNode, scope: Scope, filename: string): TypedIdentifier | undefined {
     const tt = node.findFirstExpression(TypeTable);
     if (tt) {
       const tts = tt.get() as TypeTable;
-      const found1 = tts.runSyntax(node, scope, filename);
-      scope.addType(found1);
-      return;
+      return tts.runSyntax(node, scope, filename);
     }
 
     // todo
-    const found = new BasicTypes(filename, scope).simpleType(node);
-    scope.addType(found);
+    return new BasicTypes(filename, scope).simpleType(node);
   }
 
 }

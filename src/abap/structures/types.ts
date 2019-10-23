@@ -16,18 +16,16 @@ export class Types extends Structure {
                     sta(Statements.TypeEnd));
   }
 
-  public runSyntax(node: StructureNode, scope: Scope, filename: string): void {
+  public runSyntax(node: StructureNode, scope: Scope, filename: string): TypedIdentifier | undefined {
     const name = node.findFirstExpression(Expressions.NamespaceSimpleName)!.getFirstToken();
 
     let components: IStructureComponent[] = [];
     for (const c of node.getChildren()) {
       const ctyp = c.get();
       if (c instanceof StatementNode && ctyp instanceof Statements.Type) {
-        scope.pushScope("BEGIN OF TYPE");
-        ctyp.runSyntax(c, scope, filename);
-        const found = scope.popScope().type;
-        if (found.length === 1) {
-          components.push({name: found[0].getName(), type: found[0].getType()});
+        const found = ctyp.runSyntax(c, scope, filename);
+        if (found) {
+          components.push({name: found.getName(), type: found.getType()});
         }
       } else if (c instanceof StatementNode && ctyp instanceof Statements.IncludeType) {
         const iname = c.findFirstExpression(Expressions.TypeName)!.getFirstToken()!.getStr();
@@ -46,7 +44,7 @@ export class Types extends Structure {
       return undefined;
     }
 
-    scope.addType(new TypedIdentifier(name, filename, new Basic.StructureType(components)));
+    return new TypedIdentifier(name, filename, new Basic.StructureType(components));
   }
 
 }
