@@ -4,7 +4,8 @@ import {Structure} from "./_structure";
 import {star, IStructureRunnable, sta, alt, beginEnd} from "./_combi";
 import {StructureNode} from "../nodes";
 import {Scope} from "../syntax/_scope";
-import {Identifier} from "../types/_identifier";
+import {IntegerType} from "../types/basic";
+import {TypedIdentifier} from "../types/_typed_identifier";
 
 export class TypeEnum extends Structure {
 
@@ -24,7 +25,7 @@ export class TypeEnum extends Structure {
         continue;
       }
       const token = expr.getFirstToken();
-      scope.addIdentifier(new Identifier(token, filename));
+      scope.addIdentifier(new TypedIdentifier(token, filename, new IntegerType()));
     }
   }
 

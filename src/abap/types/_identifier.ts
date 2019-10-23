@@ -21,6 +21,10 @@ export class Identifier {
     return name;
   }
 
+  public getToken(): Token {
+    return this.token;
+  }
+
   public getFilename(): string {
     return this.filename;
   }

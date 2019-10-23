@@ -5,6 +5,10 @@ import {ClassDefinition, MethodDefinition, InterfaceDefinition} from "../types";
 import {Interface, Class} from "../../objects";
 import {Registry} from "../../registry";
 import {Scope} from "./_scope";
+import {UnknownType} from "../types/basic";
+import {Identifier} from "../tokens";
+import {TypedIdentifier} from "../types/_typed_identifier";
+import {Position} from "../../position";
 
 export class ObjectOriented {
   private readonly reg: Registry;
@@ -107,9 +111,9 @@ export class ObjectOriented {
     const className = this.scope.getParentName();
     const classDefinition = this.findClassDefinition(className);
 
-// todo, this is not correct, add correct types, plus when is "super" allowed?
-    this.scope.addName("super");
-    this.scope.addName("me");
+// todo, this is not correct, add correct types, plus "super" should only be added when there are super classes
+    this.scope.addIdentifier(new TypedIdentifier(new Identifier(new Position(1, 1), "super"), "_global.prog.abap", new UnknownType()));
+    this.scope.addIdentifier(new TypedIdentifier(new Identifier(new Position(1, 1), "me"), "_global.prog.abap", new UnknownType()));
 
     let methodName = node.findFirstExpression(Expressions.MethodName)!.getFirstToken().getStr();
 

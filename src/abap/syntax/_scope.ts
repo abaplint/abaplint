@@ -1,6 +1,7 @@
 import {Identifier} from "../types/_identifier";
 import {ClassDefinition, InterfaceDefinition, FormDefinition} from "../types";
 import {TypedIdentifier} from "../types/_typed_identifier";
+import {UnknownType} from "../types/basic";
 
 interface IVar {
   name: string;
@@ -20,7 +21,7 @@ export class Scope {
 
   private readonly scopes: IScopeInfo[];
 
-  constructor(builtin?: Identifier[]) {
+  constructor(builtin?: TypedIdentifier[]) {
     this.scopes = [];
     this.pushScope("_builtin");
     if (builtin) {
@@ -88,7 +89,7 @@ export class Scope {
     return undefined;
   }
 
-  public addIdentifier(identifier: Identifier | undefined) {
+  public addIdentifier(identifier: TypedIdentifier | undefined) {
     if (identifier === undefined) {
       return;
     }
@@ -105,10 +106,11 @@ export class Scope {
 
   public addList(identifiers: Identifier[], prefix?: string | undefined) {
     for (const id of identifiers) {
+      const foo = new TypedIdentifier(id.getToken(), id.getFilename(), new UnknownType());
       if (prefix) {
-        this.addNamedIdentifier(prefix + id.getName(), id);
+        this.addNamedIdentifier(prefix + id.getName(), foo);
       } else {
-        this.addIdentifier(id);
+        this.addIdentifier(foo);
       }
     }
   }

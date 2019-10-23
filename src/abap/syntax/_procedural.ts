@@ -68,7 +68,7 @@ export class Procedural {
     }
 
     for (const param of definition.getParameters()) {
-      this.scope.addName(param);
+      this.scope.addName(param); // todo, add real type
     }
   }
 

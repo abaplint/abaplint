@@ -4,3 +4,5 @@ export * from "./integer_type";
 export * from "./string_type";
 export * from "./structure_type";
 export * from "./table_type";
+export * from "./unknown_type";
+export * from "./void_type";

@@ -1,13 +1,12 @@
 import {Scope} from "./_scope";
-import {Identifier} from "../types/_identifier";
 import {ExpressionNode, StatementNode} from "../nodes";
 import * as Expressions from "../expressions";
 import * as Statements from "../statements";
 import {INode} from "../nodes/_inode";
 import {Registry} from "../../registry";
 import {Table, View} from "../../objects";
-
-class LocalIdentifier extends Identifier { }
+import {TypedIdentifier} from "../types/_typed_identifier";
+import {UnknownType} from "../types/basic";
 
 export class Inline {
   private readonly variables: Scope;
@@ -20,10 +19,8 @@ export class Inline {
 
   private addVariable(expr: ExpressionNode | undefined, filename: string) {
     if (expr === undefined) { throw new Error("syntax_check, unexpected tree structure"); }
-    // todo, these identifers should be possible to create from a Node
-    // todo, how to determine the real types?
     const token = expr.getFirstToken();
-    this.variables.addIdentifier(new LocalIdentifier(token, filename));
+    this.variables.addIdentifier(new TypedIdentifier(token, filename, new UnknownType()));
   }
 
   public update(node: INode, filename: string): boolean {

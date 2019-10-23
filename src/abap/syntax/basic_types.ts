@@ -1,6 +1,5 @@
 import {TypedIdentifier} from "../types/_typed_identifier";
 import {StatementNode, ExpressionNode} from "../nodes";
-import {Identifier} from "../types/_identifier";
 import * as Statements from "../statements";
 import * as Expressions from "../expressions";
 import * as Types from "../types/basic/";
@@ -18,7 +17,7 @@ export class BasicTypes {
     this.scope = scope;
   }
 
-  public buildVariables(node: StatementNode) {
+  public buildVariables(node: StatementNode): void {
     const sub = node.get();
 
     if (sub instanceof Statements.Data
@@ -38,30 +37,26 @@ export class BasicTypes {
     }
 
 // fallback to untyped
+    let fallback: ExpressionNode | undefined;
     if (sub instanceof Statements.Data
       || sub instanceof Statements.DataBegin
       || sub instanceof Statements.Constant
       || sub instanceof Statements.ConstantBegin
       || sub instanceof Statements.Static
       || sub instanceof Statements.StaticBegin) {
-      this.scope.addIdentifier(this.buildVariable(node.findFirstExpression(Expressions.NamespaceSimpleName)));
+      fallback = node.findFirstExpression(Expressions.NamespaceSimpleName);
     } else if (sub instanceof Statements.Parameter) {
-      this.scope.addIdentifier(this.buildVariable(node.findFirstExpression(Expressions.FieldSub)));
+      fallback = node.findFirstExpression(Expressions.FieldSub);
     } else if (sub instanceof Statements.FieldSymbol) {
-      this.scope.addIdentifier(this.buildVariable(node.findFirstExpression(Expressions.FieldSymbol)));
+      fallback = node.findFirstExpression(Expressions.FieldSymbol);
     } else if (sub instanceof Statements.Tables || sub instanceof Statements.SelectOption) {
-      this.scope.addIdentifier(this.buildVariable(node.findFirstExpression(Expressions.Field)));
+      fallback = node.findFirstExpression(Expressions.Field);
     }
-
+    if (fallback === undefined) { return; }
+    this.scope.addIdentifier(new TypedIdentifier(fallback.getFirstToken(), this.filename, new Types.UnknownType()));
   }
 
 //////////////////////
-
-  private buildVariable(expr: ExpressionNode | undefined): Identifier {
-    if (expr === undefined) { throw new Error("BasicTypes, unexpected tree structure"); }
-    const token = expr.getFirstToken();
-    return new Identifier(token, this.filename);
-  }
 
   public resolveChainType(stat: StatementNode | ExpressionNode, expr: ExpressionNode | undefined): AbstractType | undefined {
     if (expr === undefined) {
