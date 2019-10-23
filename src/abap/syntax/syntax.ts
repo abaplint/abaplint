@@ -16,7 +16,6 @@ import {Inline} from "./_inline";
 import {Program} from "../../objects";
 import {ClassDefinition, InterfaceDefinition} from "../types";
 import {Identifier} from "../types/_identifier";
-import {BasicTypes} from "./basic_types";
 
 // assumption: objects are parsed without parsing errors
 
@@ -170,10 +169,13 @@ export class SyntaxLogic {
         this.scope.addInterfaceDefinition(new InterfaceDefinition(node, this.currentFile.getFilename()));
         return true;
       } else if (stru instanceof Structures.Types) {
+        stru.runSyntax(node, this.scope, this.currentFile.getFilename());
+        /*
         const typ = new BasicTypes(this.currentFile.getFilename(), this.scope).buildStructureType(node);
         if (typ) {
           this.scope.addType(typ);
         }
+        */
         return true;
       }
       return false;

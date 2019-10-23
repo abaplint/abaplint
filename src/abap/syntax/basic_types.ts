@@ -1,5 +1,5 @@
 import {TypedIdentifier} from "../types/_typed_identifier";
-import {StatementNode, ExpressionNode, StructureNode} from "../nodes";
+import {StatementNode, ExpressionNode} from "../nodes";
 import {Identifier} from "../types/_identifier";
 import * as Statements from "../statements";
 import * as Expressions from "../expressions";
@@ -8,7 +8,6 @@ import {Scope} from "./_scope";
 import {AbstractType} from "../types/basic/_abstract_type";
 import {TypedConstantIdentifier} from "../types/_typed_constant_identifier";
 import {Chaining} from "./chaining";
-import {IStructureComponent, StructureType} from "../types/basic/";
 
 export class BasicTypes {
   private readonly filename: string;
@@ -17,66 +16,6 @@ export class BasicTypes {
   public constructor(filename: string, scope: Scope) {
     this.filename = filename;
     this.scope = scope;
-  }
-
-  public buildStructureType(node: StructureNode): TypedIdentifier | undefined {
-    const name = node.findFirstExpression(Expressions.NamespaceSimpleName)!.getFirstToken();
-
-    let components: IStructureComponent[] = [];
-    for (const c of node.getChildren()) {
-      if (c instanceof StatementNode && c.get() instanceof Statements.Type) {
-        const found = this.buildTypes(c);
-        if (found === undefined) {
-          return undefined;
-        }
-
-        components.push({
-          name: found.getName(),
-          type: found.getType(),
-        });
-      } else if (c instanceof StatementNode && c.get() instanceof Statements.IncludeType) {
-        const iname = c.findFirstExpression(Expressions.TypeName)!.getFirstToken()!.getStr();
-        const ityp = this.scope.resolveType(iname);
-        if (ityp) {
-          const typ = ityp.getType();
-          if (typ instanceof StructureType) {
-            components = components.concat(typ.getComponents());
-          } // todo, else exception?
-        } // todo, else exception?
-      }
-      // todo, nested structures
-    }
-
-    if (components.length === 0) { // todo, remove this check
-      return undefined;
-    }
-
-    return new TypedIdentifier(name, this.filename, new Types.StructureType(components));
-  }
-
-  public buildTypes(node: StatementNode): TypedIdentifier | undefined {
-    if (!(node.get() instanceof Statements.Type)) {
-      return undefined;
-    }
-
-    const table = this.tableType(node);
-    if (table) {
-      return table;
-    }
-
-    const found = this.simpleType(node);
-    if (found) {
-      return found;
-    }
-/*
-    const nameExpr = node.findFirstExpression(Expressions.NamespaceSimpleName);
-    if (nameExpr === undefined) {
-      throw new Error("unresolved TYPE");
-    } else {
-      throw new Error("unresolved TYPE, \"" + nameExpr.getFirstToken().getStr() + "\"");
-    }
-*/
-    return undefined;
   }
 
   public buildVariables(node: StatementNode): TypedIdentifier | Identifier | undefined {
@@ -147,7 +86,7 @@ export class BasicTypes {
     return new TypedIdentifier(name, this.filename, new Types.TableType(row));
   }
 
-  private resolveChainType(stat: StatementNode, expr: ExpressionNode | undefined): AbstractType | undefined {
+  public resolveChainType(stat: StatementNode | ExpressionNode, expr: ExpressionNode | undefined): AbstractType | undefined {
     if (expr === undefined) {
       return undefined;
     }
@@ -172,7 +111,7 @@ export class BasicTypes {
     return undefined;
   }
 
-  private simpleType(node: StatementNode): TypedIdentifier | undefined {
+  public simpleType(node: StatementNode): TypedIdentifier | undefined {
     const nameExpr = node.findFirstExpression(Expressions.NamespaceSimpleName);
     if (nameExpr === undefined) {
       return undefined;
@@ -235,7 +174,7 @@ export class BasicTypes {
     throw new Error("findValue, unexpected, " + name);
   }
 
-  private findLength(node: StatementNode): number {
+  private findLength(node: StatementNode | ExpressionNode): number {
     const flen = node.findFirstExpression(Expressions.ConstantFieldLength);
     if (flen) {
       const cintExpr = flen.findFirstExpression(Expressions.Integer);

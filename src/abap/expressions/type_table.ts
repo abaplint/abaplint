@@ -1,7 +1,13 @@
 import {seq, opt, alt, str, ver, star, per, Expression, IStatementRunnable, altPrio, plus} from "../combi";
 import {Constant, FieldSub, TypeName, Integer, Field} from "./";
+import * as Expressions from "./";
 import {Version} from "../../version";
+import * as Types from "../types/basic/";
 import {FieldChain} from "./field_chain";
+import {ExpressionNode, StatementNode} from "../nodes";
+import {Scope} from "../syntax/_scope";
+import {TypedIdentifier} from "../types/_typed_identifier";
+import {BasicTypes} from "../syntax/basic_types";
 
 export class TypeTable extends Expression {
   public getRunnable(): IStatementRunnable {
@@ -46,4 +52,26 @@ export class TypeTable extends Expression {
 
     return ret;
   }
+
+  public runSyntax(node: ExpressionNode | StatementNode, scope: Scope, filename: string): TypedIdentifier | undefined {
+    // todo, input is currently the statement, but should be the expression
+    const nameExpr = node.findFirstExpression(Expressions.NamespaceSimpleName);
+    if (nameExpr === undefined) {
+      return undefined;
+    }
+    const name = nameExpr.getFirstToken();
+
+    const tab = node.findFirstExpression(Expressions.TypeTable);
+    if (tab === undefined) {
+      return undefined;
+    }
+
+    const row = new BasicTypes(filename, scope).resolveChainType(node, node.findFirstExpression(Expressions.FieldChain));
+    if (row === undefined) {
+      return undefined;
+    }
+
+    return new TypedIdentifier(name, filename, new Types.TableType(row));
+  }
+
 }

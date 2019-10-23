@@ -78,11 +78,18 @@ export class Procedural {
   }
 
   public addDefinitions(node: StatementNode, filename: string) {
+    const s = node.get();
+    if (s instanceof Statements.Type) {
+      s.runSyntax(node, this.scope, filename);
+      return;
+    }
+    /*
     const type = new BasicTypes(filename, this.scope).buildTypes(node);
     if (type) {
       this.scope.addType(type);
       return;
     }
+*/
 
     const variable = new BasicTypes(filename, this.scope).buildVariables(node);
     if (variable) {

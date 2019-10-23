@@ -18,10 +18,12 @@ export class Scope {
     type: TypedIdentifier[],
   }[];
 
-  constructor(builtin: Identifier[]) {
+  constructor(builtin?: Identifier[]) {
     this.scopes = [];
     this.pushScope("_builtin");
-    this.addList(builtin);
+    if (builtin) {
+      this.addList(builtin);
+    }
     this.pushScope("_global");
   }
 
@@ -29,7 +31,10 @@ export class Scope {
     return this.scopes;
   }
 
-  public addType(type: TypedIdentifier) {
+  public addType(type: TypedIdentifier | undefined) {
+    if (type === undefined) {  // todo, this can be removed later?
+      return;
+    }
     this.scopes[this.scopes.length - 1].type.push(type);
   }
 
@@ -111,6 +116,10 @@ export class Scope {
       }
     }
     return ret;
+  }
+
+  public getCurrentTypes(): TypedIdentifier[] {
+    return this.scopes[this.scopes.length - 1].type;
   }
 
   public resolveType(name: string): TypedIdentifier |undefined {
