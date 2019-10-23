@@ -54,7 +54,7 @@ export class TypeTable extends Expression {
   }
 
   public runSyntax(node: ExpressionNode | StatementNode, scope: Scope, filename: string): TypedIdentifier | undefined {
-    // todo, input is currently the statement, but should be the expression
+    // todo, input is currently the statement, but should be the expression?
     const nameExpr = node.findFirstExpression(Expressions.NamespaceSimpleName);
     if (nameExpr === undefined) {
       return undefined;

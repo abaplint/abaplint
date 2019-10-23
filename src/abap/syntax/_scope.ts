@@ -7,16 +7,18 @@ interface IVar {
   identifier?: Identifier;
 }
 
+export interface IScopeInfo {
+  name: string;
+  vars: IVar[];
+  cdef: ClassDefinition[];
+  idef: InterfaceDefinition[];
+  form: FormDefinition[];
+  type: TypedIdentifier[];
+}
+
 export class Scope {
 
-  private readonly scopes: {
-    name: string,
-    vars: IVar[],
-    cdef: ClassDefinition[],
-    idef: InterfaceDefinition[],
-    form: FormDefinition[],
-    type: TypedIdentifier[],
-  }[];
+  private readonly scopes: IScopeInfo[];
 
   constructor(builtin?: Identifier[]) {
     this.scopes = [];
@@ -86,7 +88,10 @@ export class Scope {
     return undefined;
   }
 
-  public addIdentifier(identifier: Identifier) {
+  public addIdentifier(identifier: Identifier | undefined) {
+    if (identifier === undefined) {
+      return;
+    }
     this.scopes[this.scopes.length - 1].vars.push({name: identifier.getName(), identifier});
   }
 
@@ -162,10 +167,10 @@ export class Scope {
     return this;
   }
 
-  public popScope() {
-    this.scopes.pop();
-    if (this.scopes.length === 0) {
+  public popScope(): IScopeInfo {
+    if (this.scopes.length === 1) {
       throw new Error("something wrong, top scope popped");
     }
+    return this.scopes.pop()!;
   }
 }

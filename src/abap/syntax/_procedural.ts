@@ -1,8 +1,6 @@
 import * as Expressions from "../expressions";
 import * as Statements from "../statements";
-import * as Structures from "../structures";
-import {StatementNode, StructureNode} from "../nodes";
-import {Identifier} from "../types/_identifier";
+import {StatementNode} from "../nodes";
 import {ABAPObject} from "../../objects/_abap_object";
 import {FormDefinition} from "../types";
 import {Scope} from "./_scope";
@@ -20,7 +18,7 @@ export class Procedural {
     this.reg = reg;
   }
 
-  public addFormDefinitions(file: ABAPFile) {
+  public addAllFormDefinitions(file: ABAPFile) {
     this.scope.addFormDefinitions(file.getFormDefinitions());
 
     const stru = file.getStructure();
@@ -32,7 +30,7 @@ export class Procedural {
     for (const node of includes) {
       const found = this.findInclude(node);
       if (found) {
-        this.addFormDefinitions(found);
+        this.addAllFormDefinitions(found);
       }
     }
   }
@@ -51,63 +49,12 @@ export class Procedural {
     return undefined;
   }
 
-  public checkPerform(node: StatementNode) {
-    if (!(node.get() instanceof Statements.Perform)) {
-      throw new Error("checkPerform unexpected node type");
-    }
-
-    if (node.findFirstExpression(Expressions.IncludeName)) {
-      return; // in external program, not checked, todo
-    }
-
-    if (node.findFirstExpression(Expressions.Dynamic)) {
-      return; // todo, some parts can be checked
-    }
-
-    const expr = node.findFirstExpression(Expressions.FormName);
-    if (expr === undefined) {
-      return; // it might be a dynamic call
-    }
-
-    const name = expr.getFirstToken().getStr();
-
-// todo, also check parameters match
-    if (this.scope.findFormDefinition(name) === undefined) {
-      throw new Error("FORM definition \"" + name + "\" not found");
-    }
-  }
-
   public addDefinitions(node: StatementNode, filename: string) {
     const s = node.get();
     if (s instanceof Statements.Type) {
       s.runSyntax(node, this.scope, filename);
-      return;
-    }
-    /*
-    const type = new BasicTypes(filename, this.scope).buildTypes(node);
-    if (type) {
-      this.scope.addType(type);
-      return;
-    }
-*/
-
-    const variable = new BasicTypes(filename, this.scope).buildVariables(node);
-    if (variable) {
-      this.scope.addList([variable]);
-    }
-  }
-
-  public addEnumValues(node: StructureNode, filename: string) {
-    if (!(node.get() instanceof Structures.TypeEnum)) {
-      throw new Error("addEnumValues unexpected type");
-    }
-    for (const type of node.findDirectStatements(Statements.Type)) {
-      const expr = type.findFirstExpression(Expressions.NamespaceSimpleName);
-      if (expr === undefined) {
-        continue;
-      }
-      const token = expr.getFirstToken();
-      this.scope.addIdentifier(new Identifier(token, filename));
+    } else {
+      new BasicTypes(filename, this.scope).buildVariables(node);
     }
   }
 

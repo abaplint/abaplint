@@ -18,14 +18,15 @@ export class BasicTypes {
     this.scope = scope;
   }
 
-  public buildVariables(node: StatementNode): TypedIdentifier | Identifier | undefined {
+  public buildVariables(node: StatementNode) {
     const sub = node.get();
 
     if (sub instanceof Statements.Data
         || sub instanceof Statements.Static) {
-      const found = this.tableType(node);
-      if (found) {
-        return found;
+      const tt = node.findFirstExpression(Expressions.TypeTable);
+      if (tt) {
+        const found = (tt.get() as Expressions.TypeTable).runSyntax(node, this.scope, this.filename);
+        this.scope.addIdentifier(found);
       }
     }
 
@@ -33,10 +34,7 @@ export class BasicTypes {
         || sub instanceof Statements.Constant
         || sub instanceof Statements.Static) {
       const found = this.simpleType(node);
-      if (found) {
-        return found;
-      }
-//      throw new Error("unresolved!!!");
+      this.scope.addIdentifier(found);
     }
 
 // fallback to untyped
@@ -46,16 +44,15 @@ export class BasicTypes {
       || sub instanceof Statements.ConstantBegin
       || sub instanceof Statements.Static
       || sub instanceof Statements.StaticBegin) {
-      return this.buildVariable(node.findFirstExpression(Expressions.NamespaceSimpleName));
+      this.scope.addIdentifier(this.buildVariable(node.findFirstExpression(Expressions.NamespaceSimpleName)));
     } else if (sub instanceof Statements.Parameter) {
-      return this.buildVariable(node.findFirstExpression(Expressions.FieldSub));
+      this.scope.addIdentifier(this.buildVariable(node.findFirstExpression(Expressions.FieldSub)));
     } else if (sub instanceof Statements.FieldSymbol) {
-      return this.buildVariable(node.findFirstExpression(Expressions.FieldSymbol));
+      this.scope.addIdentifier(this.buildVariable(node.findFirstExpression(Expressions.FieldSymbol)));
     } else if (sub instanceof Statements.Tables || sub instanceof Statements.SelectOption) {
-      return this.buildVariable(node.findFirstExpression(Expressions.Field));
+      this.scope.addIdentifier(this.buildVariable(node.findFirstExpression(Expressions.Field)));
     }
 
-    return undefined;
   }
 
 //////////////////////
@@ -64,26 +61,6 @@ export class BasicTypes {
     if (expr === undefined) { throw new Error("BasicTypes, unexpected tree structure"); }
     const token = expr.getFirstToken();
     return new Identifier(token, this.filename);
-  }
-
-  private tableType(node: StatementNode): TypedIdentifier | undefined {
-    const nameExpr = node.findFirstExpression(Expressions.NamespaceSimpleName);
-    if (nameExpr === undefined) {
-      return undefined;
-    }
-    const name = nameExpr.getFirstToken();
-
-    const tab = node.findFirstExpression(Expressions.TypeTable);
-    if (tab === undefined) {
-      return undefined;
-    }
-
-    const row = this.resolveChainType(node, node.findFirstExpression(Expressions.FieldChain));
-    if (row === undefined) {
-      return undefined;
-    }
-
-    return new TypedIdentifier(name, this.filename, new Types.TableType(row));
   }
 
   public resolveChainType(stat: StatementNode | ExpressionNode, expr: ExpressionNode | undefined): AbstractType | undefined {

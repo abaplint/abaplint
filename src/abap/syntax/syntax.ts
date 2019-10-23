@@ -69,7 +69,7 @@ export class SyntaxLogic {
 
   private traverseObject(stopAt?: Identifier): Scope {
     if (this.object instanceof Program) {
-      this.helpers.proc.addFormDefinitions(this.object.getABAPFiles()[0]);
+      this.helpers.proc.addAllFormDefinitions(this.object.getABAPFiles()[0]);
     }
 
     for (const file of this.object.getABAPFiles()) {
@@ -115,8 +115,8 @@ export class SyntaxLogic {
 
     for (const child of node.getChildren()) {
       try {
-        const next = this.updateScope(child);
-        if (next === true) {
+        const gotoNext = this.updateScope(child);
+        if (gotoNext === true) {
           continue;
         }
       } catch (e) {
@@ -159,23 +159,14 @@ export class SyntaxLogic {
 // todo, and introduce SimpleSource?
     if (node instanceof StructureNode) {
       const stru = node.get();
-      if (stru instanceof Structures.TypeEnum) {
-        this.helpers.proc.addEnumValues(node, this.currentFile.getFilename());
-        return true;
-      } else if (stru instanceof Structures.ClassDefinition) {
+      if (stru instanceof Structures.ClassDefinition) {
         this.scope.addClassDefinition(new ClassDefinition(node, this.currentFile.getFilename()));
         return true;
       } else if (stru instanceof Structures.Interface) {
         this.scope.addInterfaceDefinition(new InterfaceDefinition(node, this.currentFile.getFilename()));
         return true;
-      } else if (stru instanceof Structures.Types) {
+      } else if (stru instanceof Structures.Types || stru instanceof Structures.TypeEnum) {
         stru.runSyntax(node, this.scope, this.currentFile.getFilename());
-        /*
-        const typ = new BasicTypes(this.currentFile.getFilename(), this.scope).buildStructureType(node);
-        if (typ) {
-          this.scope.addType(typ);
-        }
-        */
         return true;
       }
       return false;
@@ -189,7 +180,7 @@ export class SyntaxLogic {
     if (statement instanceof Statements.Form) {
       this.helpers.proc.findFormScope(node, this.currentFile.getFilename());
     } else if (statement instanceof Statements.Perform) {
-      this.helpers.proc.checkPerform(node);
+      statement.runSyntax(node, this.scope, this.currentFile.getFilename());
     } else if (statement instanceof Statements.FunctionModule) {
       this.helpers.proc.findFunctionScope(this.object, node);
     } else if (statement instanceof Statements.Method) {

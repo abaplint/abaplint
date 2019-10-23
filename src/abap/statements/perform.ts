@@ -1,29 +1,31 @@
 import {Statement} from "./_statement";
 import {verNot, str, seq, opt, alt, tok, plus, IStatementRunnable} from "../combi";
 import {ParenLeft, ParenRightW} from "../tokens/";
-import {Source, Dynamic, FormName, IncludeName} from "../expressions";
+import * as Expressions from "../expressions";
 import {Version} from "../../version";
+import {StatementNode} from "../nodes";
+import {Scope} from "../syntax/_scope";
 
 export class Perform extends Statement {
 
   public getMatcher(): IStatementRunnable {
-    const using = seq(str("USING"), plus(new Source()));
-    const tables = seq(str("TABLES"), plus(new Source()));
-    const changing = seq(str("CHANGING"), plus(new Source()));
-    const level = seq(str("LEVEL"), new Source());
+    const using = seq(str("USING"), plus(new Expressions.Source()));
+    const tables = seq(str("TABLES"), plus(new Expressions.Source()));
+    const changing = seq(str("CHANGING"), plus(new Expressions.Source()));
+    const level = seq(str("LEVEL"), new Expressions.Source());
     const commit = alt(seq(str("ON COMMIT"), opt(level)),
                        str("ON ROLLBACK"));
 
-    const short = verNot(Version.Cloud, seq(new FormName(),
+    const short = verNot(Version.Cloud, seq(new Expressions.FormName(),
                                             tok(ParenLeft),
-                                            new IncludeName(),
+                                            new Expressions.IncludeName(),
                                             tok(ParenRightW)));
 
-    const program = seq(str("IN PROGRAM"), opt(alt(new Dynamic(), new IncludeName())));
+    const program = seq(str("IN PROGRAM"), opt(alt(new Expressions.Dynamic(), new Expressions.IncludeName())));
 
     const found = str("IF FOUND");
 
-    const full = seq(alt(new FormName(), new Dynamic()),
+    const full = seq(alt(new Expressions.FormName(), new Expressions.Dynamic()),
                      opt(verNot(Version.Cloud, program)));
 
     const ret = seq(str("PERFORM"),
@@ -36,6 +38,32 @@ export class Perform extends Statement {
                     opt(commit));
 
     return ret;
+  }
+
+  public runSyntax(node: StatementNode, scope: Scope, _filename: string): void {
+    if (!(node.get() instanceof Perform)) {
+      throw new Error("checkPerform unexpected node type");
+    }
+
+    if (node.findFirstExpression(Expressions.IncludeName)) {
+      return; // in external program, not checked, todo
+    }
+
+    if (node.findFirstExpression(Expressions.Dynamic)) {
+      return; // todo, maybe some parts can be checked
+    }
+
+    const expr = node.findFirstExpression(Expressions.FormName);
+    if (expr === undefined) {
+      return; // it might be a dynamic call
+    }
+
+    const name = expr.getFirstToken().getStr();
+
+// todo, also check parameters match
+    if (scope.findFormDefinition(name) === undefined) {
+      throw new Error("FORM definition \"" + name + "\" not found");
+    }
   }
 
 }

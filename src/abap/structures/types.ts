@@ -23,9 +23,9 @@ export class Types extends Structure {
     for (const c of node.getChildren()) {
       const ctyp = c.get();
       if (c instanceof StatementNode && ctyp instanceof Statements.Type) {
-        const s = new Scope();
-        ctyp.runSyntax(c, s, filename);
-        const found = s.getCurrentTypes();
+        scope.pushScope("BEGIN OF TYPE");
+        ctyp.runSyntax(c, scope, filename);
+        const found = scope.popScope().type;
         if (found.length === 1) {
           components.push({name: found[0].getName(), type: found[0].getType()});
         }
