@@ -7,7 +7,6 @@ import {Scope} from "./_scope";
 import {FunctionGroup} from "../../objects";
 import {ABAPFile} from "../../files";
 import {Registry} from "../../registry";
-import {BasicTypes} from "./basic_types";
 
 export class Procedural {
   private readonly scope: Scope;
@@ -47,29 +46,6 @@ export class Procedural {
       return prog.getABAPFiles()[0];
     }
     return undefined;
-  }
-
-  public addDefinitions(node: StatementNode, filename: string) {
-    const s = node.get();
-    if (s instanceof Statements.Type) {
-      this.scope.addType(s.runSyntax(node, this.scope, filename));
-    } else if (s instanceof Statements.Constant) {
-      this.scope.addIdentifier(s.runSyntax(node, this.scope, filename));
-    } else if (s instanceof Statements.Static) {
-      this.scope.addIdentifier(s.runSyntax(node, this.scope, filename));
-    } else if (s instanceof Statements.Data) {
-      this.scope.addIdentifier(s.runSyntax(node, this.scope, filename));
-    } else if (s instanceof Statements.DataBegin) {
-      this.scope.addIdentifier(s.runSyntax(node, this.scope, filename));
-    } else if (s instanceof Statements.ConstantBegin) {
-      this.scope.addIdentifier(s.runSyntax(node, this.scope, filename));
-    } else if (s instanceof Statements.StaticBegin) {
-      this.scope.addIdentifier(s.runSyntax(node, this.scope, filename));
-    } else if (s instanceof Statements.Parameter) {
-      this.scope.addIdentifier(s.runSyntax(node, this.scope, filename));
-    } else {
-      new BasicTypes(filename, this.scope).buildVariables(node);
-    }
   }
 
   public findFunctionScope(obj: ABAPObject, node: StatementNode) {

@@ -20,7 +20,7 @@ export class Constant extends Statement {
     return ret;
   }
 
-  public runSyntax(node: StatementNode, scope: Scope, filename: string): TypedIdentifier | undefined {
+  public runSyntax(node: StatementNode, scope: Scope, filename: string): TypedIdentifier {
     const found = new BasicTypes(filename, scope).simpleType(node);
     if (found) {
       return found;
@@ -31,7 +31,7 @@ export class Constant extends Statement {
       return new TypedIdentifier(fallback.getFirstToken(), filename, new UnknownType());
     }
 
-    return undefined;
+    throw new Error("Statement Constant: unexpecte structure");
   }
 
 }

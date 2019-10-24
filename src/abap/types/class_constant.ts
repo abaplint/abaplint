@@ -1,12 +1,11 @@
 import {Visibility} from "./visibility";
-import {StatementNode} from "../nodes";
-import {Constant} from "./constant";
+import {TypedIdentifier} from "./_typed_identifier";
 
-export class ClassConstant extends Constant {
+export class ClassConstant extends TypedIdentifier {
   private readonly visibility: Visibility;
 
-  constructor(node: StatementNode, visibility: Visibility, filename: string) {
-    super(node, filename);
+  constructor(id: TypedIdentifier, visibility: Visibility) {
+    super(id.getToken(), id.getFilename(), id.getType());
     this.visibility = visibility;
   }
 

@@ -17,25 +17,6 @@ export class BasicTypes {
     this.scope = scope;
   }
 
-  public buildVariables(node: StatementNode): void {
-    const sub = node.get();
-
-// todo, refactor this method
-
-// fallback to untyped
-    let fallback: ExpressionNode | undefined;
-    if (sub instanceof Statements.FieldSymbol) {
-      fallback = node.findFirstExpression(Expressions.FieldSymbol);
-    } else if (sub instanceof Statements.Tables
-        || sub instanceof Statements.SelectOption) {
-      fallback = node.findFirstExpression(Expressions.Field);
-    }
-    if (fallback === undefined) { return; }
-    this.scope.addIdentifier(new TypedIdentifier(fallback.getFirstToken(), this.filename, new Types.UnknownType()));
-  }
-
-//////////////////////
-
   public resolveChainType(stat: StatementNode | ExpressionNode, expr: ExpressionNode | undefined): AbstractType | undefined {
 // todo, move this to the expresssion, and perhaps rename/add another expression for types
     if (expr === undefined) {

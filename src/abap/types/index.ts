@@ -3,7 +3,6 @@ export * from "./class_attributes";
 export * from "./class_constant";
 export * from "./class_definition";
 export * from "./class_implementation";
-export * from "./constant";
 export * from "./form_definition";
 export * from "./function_module_definition";
 export * from "./interface_definition";

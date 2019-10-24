@@ -5,6 +5,8 @@ import {ClassAttribute} from "./class_attribute";
 import {ClassConstant} from "./class_constant";
 import {StructureNode, StatementNode} from "../../abap/nodes";
 import {Visibility} from "./visibility";
+import {Scope} from "../syntax/_scope";
+import {TypedIdentifier} from "./_typed_identifier";
 
 export class Attributes {
   private readonly static: ClassAttribute[];
@@ -86,21 +88,24 @@ export class Attributes {
 
     defs = node.findAllStatements(Statements.Constant).concat(node.findAllStatements(Statements.ConstantBegin));
     for (const def of defs) {
-      this.constants.push(new ClassConstant(def, visibility, this.filename));
+      let found: TypedIdentifier | undefined = undefined;
+      const s = def.get();
+      if (s instanceof Statements.Constant) {
+        found = s.runSyntax(def, new Scope(), this.filename);
+      } else if (s instanceof Statements.ConstantBegin) {
+        found = s.runSyntax(def, new Scope(), this.filename);
+      }
+      if (found) {
+        this.constants.push(new ClassConstant(found, visibility));
+      }
     }
 
 // for now add ENUM values as constants
     for (const type of node.findAllStructures(Structures.TypeEnum)) {
-      /*
       const enu = type.get() as Structures.TypeEnum;
-      const s = new Scope(); // todo, handle the scope
-      enu.runSyntax(type, s, this.filename);
-      for (const c of s.popScope().vars) {
-        this.constants.push(new ClassConstant(c.identifier, visibility, this.filename));
-      }
-      */
-      for (const val of type.findDirectStatements(Statements.Type)) {
-        this.constants.push(new ClassConstant(val, visibility, this.filename));
+      const enums = enu.runSyntax(type, new Scope(), this.filename);
+      for (const c of enums) {
+        this.constants.push(new ClassConstant(c, visibility));
       }
     }
 

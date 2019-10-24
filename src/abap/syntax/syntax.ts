@@ -157,19 +157,21 @@ export class SyntaxLogic {
   private updateScope(node: INode): boolean {
 // todo, align statements, eg is NamespaceSimpleName a definition or is it Field, or something new?
 // todo, and introduce SimpleSource?
+    const filename = this.currentFile.getFilename();
+
     if (node instanceof StructureNode) {
       const stru = node.get();
       if (stru instanceof Structures.ClassDefinition) {
-        this.scope.addClassDefinition(new ClassDefinition(node, this.currentFile.getFilename()));
+        this.scope.addClassDefinition(new ClassDefinition(node, filename));
         return true;
       } else if (stru instanceof Structures.Interface) {
-        this.scope.addInterfaceDefinition(new InterfaceDefinition(node, this.currentFile.getFilename()));
+        this.scope.addInterfaceDefinition(new InterfaceDefinition(node, filename));
         return true;
       } else if (stru instanceof Structures.Types) {
-        this.scope.addType(stru.runSyntax(node, this.scope, this.currentFile.getFilename()));
+        this.scope.addType(stru.runSyntax(node, this.scope, filename));
         return true;
       } else if (stru instanceof Structures.TypeEnum) {
-        this.scope.addList(stru.runSyntax(node, this.scope, this.currentFile.getFilename()));
+        this.scope.addList(stru.runSyntax(node, this.scope, filename));
         return true;
       }
       return false;
@@ -177,25 +179,36 @@ export class SyntaxLogic {
       return false;
     }
 
-    this.helpers.proc.addDefinitions(node, this.currentFile.getFilename());
-
-    const statement = node.get();
-    if (statement instanceof Statements.Form) {
-      this.helpers.proc.findFormScope(node, this.currentFile.getFilename());
-    } else if (statement instanceof Statements.Perform) {
-      statement.runSyntax(node, this.scope, this.currentFile.getFilename());
-    } else if (statement instanceof Statements.FunctionModule) {
+    const s = node.get();
+    if (s instanceof Statements.Type) {
+      this.scope.addType(s.runSyntax(node, this.scope, filename));
+    } else if (s instanceof Statements.Constant
+        || s instanceof Statements.Static
+        || s instanceof Statements.Data
+        || s instanceof Statements.DataBegin
+        || s instanceof Statements.ConstantBegin
+        || s instanceof Statements.StaticBegin
+        || s instanceof Statements.Parameter
+        || s instanceof Statements.FieldSymbol
+        || s instanceof Statements.Tables
+        || s instanceof Statements.SelectOption) {
+      this.scope.addIdentifier(s.runSyntax(node, this.scope, filename));
+    } else if (s instanceof Statements.Form) {
+      this.helpers.proc.findFormScope(node, filename);
+    } else if (s instanceof Statements.Perform) {
+      s.runSyntax(node, this.scope, filename);
+    } else if (s instanceof Statements.FunctionModule) {
       this.helpers.proc.findFunctionScope(this.object, node);
-    } else if (statement instanceof Statements.Method) {
+    } else if (s instanceof Statements.Method) {
       this.helpers.oooc.methodImplementation(node);
-    } else if (statement instanceof Statements.ClassDefinition) {
+    } else if (s instanceof Statements.ClassDefinition) {
       this.helpers.oooc.classDefinition(node);
-    } else if (statement instanceof Statements.ClassImplementation) {
+    } else if (s instanceof Statements.ClassImplementation) {
       this.helpers.oooc.classImplementation(node);
-    } else if (statement instanceof Statements.EndForm
-        || statement instanceof Statements.EndMethod
-        || statement instanceof Statements.EndFunction
-        || statement instanceof Statements.EndClass) {
+    } else if (s instanceof Statements.EndForm
+        || s instanceof Statements.EndMethod
+        || s instanceof Statements.EndFunction
+        || s instanceof Statements.EndClass) {
       this.scope.popScope();
     }
 
