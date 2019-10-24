@@ -96,7 +96,7 @@ export class Scope {
     this.scopes[this.scopes.length - 1].vars.push({name: identifier.getName(), identifier});
   }
 
-  public addNamedIdentifier(name: string, identifier: Identifier) {
+  public addNamedIdentifier(name: string, identifier: TypedIdentifier) {
     this.scopes[this.scopes.length - 1].vars.push({name, identifier});
   }
 

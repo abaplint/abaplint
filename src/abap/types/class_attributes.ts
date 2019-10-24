@@ -1,6 +1,5 @@
 import * as Structures from "../../abap/structures";
 import * as Statements from "../../abap/statements";
-import * as Expressions from "../../abap/expressions";
 import {ClassAttribute} from "./class_attribute";
 import {ClassConstant} from "./class_constant";
 import {StructureNode, StatementNode} from "../../abap/nodes";
@@ -112,19 +111,25 @@ export class Attributes {
   }
 
   private parseAttribute(node: StatementNode, visibility: Visibility): ClassAttribute {
-    if (!(node.get() instanceof Statements.Data)
-        && !(node.get() instanceof Statements.DataBegin)
-        && !(node.get() instanceof Statements.ClassData)
-        && !(node.get() instanceof Statements.ClassDataBegin)) {
+    let found: TypedIdentifier | undefined = undefined;
+    const s = node.get();
+    if (s instanceof Statements.Data) {
+      found = s.runSyntax(node, new Scope(), this.filename);
+    } else if (s instanceof Statements.DataBegin) {
+      found = s.runSyntax(node, new Scope(), this.filename);
+    } else if (s instanceof Statements.ClassData) {
+      found = s.runSyntax(node, new Scope(), this.filename);
+    } else if (s instanceof Statements.ClassDataBegin) {
+      found = s.runSyntax(node, new Scope(), this.filename);
+    } else {
       throw new Error("ClassAttribute, unexpected node, 1");
     }
-    const found = node.findFirstExpression(Expressions.NamespaceSimpleName);
-    if (found === undefined) {
-      throw new Error("ClassAttribute, unexpected node, 2");
-    }
-    const token = found.getFirstToken();
 
-    return new ClassAttribute(token, visibility, this.filename);
+    if (found === undefined) {
+      throw new Error("ClassAttribute, unexpected node");
+    }
+
+    return new ClassAttribute(found, visibility);
   }
 
 }

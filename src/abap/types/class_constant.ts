@@ -12,5 +12,4 @@ export class ClassConstant extends TypedIdentifier {
   public getVisibility() {
     return this.visibility;
   }
-
 }
