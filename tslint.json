@@ -1,5 +1,8 @@
 {
   "rulesDirectory": "node_modules/tslint-eslint-rules/dist/rules",
+  "linterOptions": {
+    "exclude": ["abaplint"]
+  },
   "rules": {
     "restrict-plus-operands": false,
     "strict-type-predicates": false,

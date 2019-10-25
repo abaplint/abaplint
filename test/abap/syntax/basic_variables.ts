@@ -20,7 +20,14 @@ function resolveVariable(abap: string, name: string): TypedIdentifier | undefine
   }
   return undefined;
 }
-
+/*
+function expectStructure(identifier: TypedIdentifier | undefined) {
+  expect(identifier).to.not.equals(undefined);
+  expect(identifier!.getType()).to.be.instanceof(Basic.StructureType);
+  const tab = identifier!.getType() as Basic.StructureType;
+  return tab.getComponents();
+}
+*/
 function expectString(identifier: TypedIdentifier | undefined) {
   expect(identifier).to.not.equals(undefined);
   expect(identifier!.getType()).to.be.instanceof(Basic.StringType);
@@ -174,6 +181,21 @@ describe("Syntax - Basic Types", () => {
       "DATA foo TYPE typ.";
     const identifier = resolveVariable(abap, "foo");
     expectInteger(identifier);
+  });
+
+  it("DATA structured table", () => {
+    const abap = `
+      TYPES: BEGIN OF foo1,
+               field TYPE i,
+             END OF foo1.
+      DATA tab TYPE STANDARD TABLE OF foo1 WITH EMPTY KEY.`;
+    const type = resolveVariable(abap, "tab");
+    const rowType = expectTable(type);
+    expect(rowType).to.be.instanceof(Basic.StructureType);
+    const stru = rowType as Basic.StructureType;
+    const components = stru.getComponents();
+    expect(components.length).to.equal(1);
+    expect(components[0].name).to.equal("field");
   });
 
 });

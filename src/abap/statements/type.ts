@@ -1,10 +1,12 @@
 import {Statement} from "./_statement";
 import {str, seq, alt, per, opt, IStatementRunnable} from "../combi";
 import {NamespaceSimpleName, FieldLength, Type as eType, TypeTable, Decimals, Length} from "../expressions";
+import * as Expressions from "../expressions";
 import {Scope} from "../syntax/_scope";
 import {StatementNode} from "../nodes";
 import {BasicTypes} from "../syntax/basic_types";
 import {TypedIdentifier} from "../types/_typed_identifier";
+import {UnknownType} from "../types/basic";
 
 export class Type extends Statement {
 
@@ -27,8 +29,17 @@ export class Type extends Statement {
       return tts.runSyntax(node, scope, filename);
     }
 
-    // todo
-    return new BasicTypes(filename, scope).simpleType(node);
+    const found = new BasicTypes(filename, scope).simpleType(node);
+    if (found) {
+      return found;
+    }
+
+    const fallback = node.findFirstExpression(Expressions.NamespaceSimpleName);
+    if (fallback) {
+      return new TypedIdentifier(fallback.getFirstToken(), filename, new UnknownType());
+    }
+
+    return undefined;
   }
 
 }

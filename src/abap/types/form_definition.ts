@@ -1,7 +1,7 @@
 import * as Statements from "../../abap/statements";
 import * as Expressions from "../../abap/expressions";
 import {Identifier} from "./_identifier";
-import {StructureNode, StatementNode} from "../../abap/nodes";
+import {StructureNode, StatementNode, ExpressionNode} from "../../abap/nodes";
 import {Expression} from "../combi";
 import {TypedIdentifier} from "./_typed_identifier";
 import {Scope} from "../syntax/_scope";
@@ -17,36 +17,34 @@ export class FormDefinition extends Identifier {
   }
 
   public getParameters(): TypedIdentifier[] {
-    const res: TypedIdentifier[] = [];
-    for (const param of this.node.findAllExpressions(Expressions.FormParam)) {
-      const para = param.get() as Expressions.FormParam;
-      res.push(para.runSyntax(param, new Scope(), this.filename));
-    }
-    return res;
+    return this.findParams(this.node);
   }
 
-  public getTablesParameters(): Identifier[] {
+  public getTablesParameters(): TypedIdentifier[] {
     return this.findType(Expressions.FormTables);
   }
 
-  public getUsingParameters(): Identifier[] {
+  public getUsingParameters(): TypedIdentifier[] {
     return this.findType(Expressions.FormUsing);
   }
 
-  public getChangingParameters(): Identifier[] {
+  public getChangingParameters(): TypedIdentifier[] {
     return this.findType(Expressions.FormChanging);
   }
 
-  private findType(type: new () => Expression): Identifier[] {
-    const res: Identifier[] = [];
+  private findType(type: new () => Expression): TypedIdentifier[] {
     const found = this.node.findFirstExpression(type);
     if (found === undefined) {
       return [];
     }
+    return this.findParams(found);
+  }
 
-    for (const param of found.findAllExpressions(Expressions.FormParam)) {
-      const token = param.getFirstToken();
-      res.push(new Identifier(token, this.filename));
+  private findParams(node: ExpressionNode | StatementNode) {
+    const res: TypedIdentifier[] = [];
+    for (const param of node.findAllExpressions(Expressions.FormParam)) {
+      const para = param.get() as Expressions.FormParam;
+      res.push(para.runSyntax(param, new Scope(), this.filename));
     }
     return res;
   }

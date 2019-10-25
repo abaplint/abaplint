@@ -42,4 +42,14 @@ describe("Types, FormDefinition", () => {
     expect(using[0].getName()).to.equal("blah");
   });
 
+  it("one FORM, one parameter, pass by VALUE", () => {
+    const abap = "FORM moo USING VALUE(bar).\nENDFORM.";
+    const defs = runProgram(abap);
+
+    expect(defs.length).to.equal(1);
+    const params = defs[0].getUsingParameters();
+    expect(params.length).to.equal(1);
+    expect(params[0].getName()).to.equal("bar");
+  });
+
 });

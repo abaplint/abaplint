@@ -7,7 +7,7 @@ interface IVar {
 }
 
 export interface IScopeInfo {
-  name: string;
+  scopeName: string;
   vars: IVar[];
   cdef: ClassDefinition[];
   idef: InterfaceDefinition[];
@@ -151,12 +151,12 @@ export class Scope {
   }
 
   public getParentName(): string {
-    return this.scopes[this.scopes.length - 2].name;
+    return this.scopes[this.scopes.length - 2].scopeName;
   }
 
   public push(name: string): Scope {
     this.scopes.push({
-      name: name,
+      scopeName: name,
       vars: [],
       cdef: [],
       idef: [],

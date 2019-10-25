@@ -55,10 +55,10 @@ export class Help {
   private static dumpVariables(variables: Scope): string {
     let ret = "<hr>\n";
     for (const s of variables.get()) {
-      if (s.name === "_builtin") {
+      if (s.scopeName === "_builtin") {
         continue; // too many of these, and they are not super important right now
       }
-      ret = ret + "<u>" + s.name + "</u>: ";
+      ret = ret + "<u>" + s.scopeName + "</u>: ";
       for (const v of s.vars) {
         ret = ret + "<tt>" + this.escape(v.name.toLowerCase()) + "</tt>";
         if (v.identifier !== undefined) {

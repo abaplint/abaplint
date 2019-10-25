@@ -1,8 +1,8 @@
 import {expect} from "chai";
+import * as Basic from "../../../src/abap/types/basic";
 import {MemoryFile} from "../../../src/files";
 import {Registry} from "../../../src/registry";
 import {TypedIdentifier} from "../../../src/abap/types/_typed_identifier";
-import * as Basic from "../../../src/abap/types/basic";
 import {SyntaxLogic} from "../../../src/abap/syntax/syntax";
 import {ABAPObject} from "../../../src/objects/_abap_object";
 
@@ -16,12 +16,7 @@ function resolveType(abap: string, name: string): TypedIdentifier | undefined {
   }
   return undefined;
 }
-/*
-function runProgram(abap: string): Issue[] {
-  const reg = new Registry().addFile(new MemoryFile("zfoobar.prog.abap", abap)).parse();
-  return new SyntaxLogic(reg, reg.getABAPObjects()[0]).findIssues();
-}
-*/
+
 function expectString(identifier: TypedIdentifier | undefined) {
   expect(identifier).to.not.equals(undefined);
   expect(identifier!.getType()).to.be.instanceof(Basic.StringType);
@@ -103,13 +98,11 @@ describe("Syntax - Types", () => {
     expect(components[1].type).to.be.instanceof(Basic.IntegerType);
   });
 
-/*
   it("TYPE unresolveable", () => {
-    const abap = "TYPES foo TYPE zsdfsd.";
-    const issues = runProgram(abap);
-    expect(issues.length).to.equal(1);
-    expect(issues[0].getMessage()).to.include("unresolved");
+    const abap = "TYPES foo TYPE sdfsd.";
+    const type = resolveType(abap, "foo");
+    expect(type).to.not.equal(undefined);
+    expect(type!.getType()).to.be.instanceof(Basic.UnknownType);
   });
-*/
 
 });
