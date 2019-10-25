@@ -2,11 +2,11 @@ import {Issue} from "../../issue";
 import {IRule} from "../_irule";
 import {IObject} from "../../objects/_iobject";
 import {MethodDefinition} from "../../abap/types/method_definition";
-import {MethodParameter} from "../../abap/types/method_parameter";
 import {Registry} from "../../registry";
 import {ABAPObject} from "../../objects/_abap_object";
 import {NamingRuleConfig} from "../_naming_rule_config";
 import {NameValidator} from "../../utils/name_validator";
+import {TypedIdentifier} from "../../abap/types/_typed_identifier";
 
 /** Allows you to enforce a pattern, such as a prefix, for method parameter names */
 export class MethodParameterNamesConf extends NamingRuleConfig {
@@ -98,7 +98,7 @@ export class MethodParameterNames implements IRule {
     return ret;
   }
 
-  private checkParameter(param: MethodParameter, expected: string): Issue[] {
+  private checkParameter(param: TypedIdentifier, expected: string): Issue[] {
     const ret: Issue[] = [];
     const regex = new RegExp(expected, "i");
     const name = param.getName();

@@ -1,11 +1,9 @@
-import {Identifier} from "../types/_identifier";
 import {ClassDefinition, InterfaceDefinition, FormDefinition} from "../types";
 import {TypedIdentifier} from "../types/_typed_identifier";
-import {UnknownType} from "../types/basic";
 
 interface IVar {
   name: string;
-  identifier?: Identifier;
+  identifier?: TypedIdentifier;
 }
 
 export interface IScopeInfo {
@@ -23,11 +21,11 @@ export class Scope {
 
   constructor(builtin?: TypedIdentifier[]) {
     this.scopes = [];
-    this.pushScope("_builtin");
+    this.push("_builtin");
     if (builtin) {
       this.addList(builtin);
     }
-    this.pushScope("_global");
+    this.push("_global");
   }
 
   public get() {
@@ -35,7 +33,7 @@ export class Scope {
   }
 
   public addType(type: TypedIdentifier | undefined) {
-    if (type === undefined) {  // todo, this can be removed later?
+    if (type === undefined) {
       return;
     }
     this.scopes[this.scopes.length - 1].type.push(type);
@@ -104,19 +102,18 @@ export class Scope {
     this.scopes[this.scopes.length - 1].vars.push({name});
   }
 
-  public addList(identifiers: Identifier[], prefix?: string | undefined) {
+  public addList(identifiers: TypedIdentifier[], prefix?: string | undefined) {
     for (const id of identifiers) {
-      const foo = new TypedIdentifier(id.getToken(), id.getFilename(), new UnknownType());
       if (prefix) {
-        this.addNamedIdentifier(prefix + id.getName(), foo);
+        this.addNamedIdentifier(prefix + id.getName(), id);
       } else {
-        this.addIdentifier(foo);
+        this.addIdentifier(id);
       }
     }
   }
 
-  public getCurrentScope(): Identifier[] {
-    const ret: Identifier[] = [];
+  public getCurrentScope(): TypedIdentifier[] {
+    const ret: TypedIdentifier[] = [];
     for (const v of this.scopes[this.scopes.length - 1].vars) {
       if (v.identifier) {
         ret.push(v.identifier);
@@ -141,7 +138,7 @@ export class Scope {
     return undefined;
   }
 
-  public resolveVariable(name: string): Identifier | string | undefined {
+  public resolveVariable(name: string): TypedIdentifier | string | undefined {
     // todo, this should probably search the nearest first? in case there are shadowed variables?
     for (const scope of this.scopes) {
       for (const local of scope.vars) {
@@ -157,7 +154,7 @@ export class Scope {
     return this.scopes[this.scopes.length - 2].name;
   }
 
-  public pushScope(name: string): Scope {
+  public push(name: string): Scope {
     this.scopes.push({
       name: name,
       vars: [],
@@ -169,7 +166,7 @@ export class Scope {
     return this;
   }
 
-  public popScope(): IScopeInfo {
+  public pop(): IScopeInfo {
     if (this.scopes.length === 1) {
       throw new Error("something wrong, top scope popped");
     }

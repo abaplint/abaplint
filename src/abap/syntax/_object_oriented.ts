@@ -32,13 +32,13 @@ export class ObjectOriented {
   }
 
   public classDefinition(node: StatementNode) {
-    this.scope.pushScope(this.findClassName(node));
+    this.scope.push(this.findClassName(node));
 // todo
   }
 
   public classImplementation(node: StatementNode) {
     const className = this.findClassName(node);
-    this.scope.pushScope(className);
+    this.scope.push(className);
 
     const classDefinition = this.findClassDefinition(className);
 
@@ -107,7 +107,7 @@ export class ObjectOriented {
   }
 
   public methodImplementation(node: StatementNode) {
-    this.scope.pushScope("method");
+    this.scope.push("method");
     const className = this.scope.getParentName();
     const classDefinition = this.findClassDefinition(className);
 
@@ -134,7 +134,7 @@ export class ObjectOriented {
     }
 
     if (methodDefinition === undefined) {
-      this.scope.popScope();
+      this.scope.pop();
       if (interfaceName) {
         throw new Error("Method definition \"" + methodName + "\" in \"" + interfaceName + "\" not found");
       } else {

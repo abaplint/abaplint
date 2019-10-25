@@ -209,7 +209,7 @@ export class SyntaxLogic {
         || s instanceof Statements.EndMethod
         || s instanceof Statements.EndFunction
         || s instanceof Statements.EndClass) {
-      this.scope.popScope();
+      this.scope.pop();
     }
 
     return false;

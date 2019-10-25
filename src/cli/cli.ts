@@ -10,7 +10,6 @@ import {Formatter} from "../formatters/_format";
 import {Registry, IProgress} from "../registry";
 import {IFile} from "../files/_ifile";
 import {Stats} from "../extras/stats/stats";
-import {Dump} from "../extras/dump/dump";
 import {SemanticSearch} from "../extras/semantic_search/semantic_search";
 import {FileOperations} from "./file_operations";
 import {Position} from "../position";
@@ -99,7 +98,6 @@ function displayHelp(): string {
     "  abaplint -h | --help             show this help\n" +
     "  abaplint -v | --version          show version\n" +
     "  abaplint -d | --default          show default configuration\n" +
-    "  abaplint -u [<abaplint.json> -c] show class and interface information\n" +
     "  abaplint -t [<abaplint.json> -c] show stats\n" +
     "  abaplint -e [<abaplint.json> -c] show semantic search information\n" +
     "\n" +
@@ -156,9 +154,6 @@ async function run() {
       const reg = new Registry(config).addFiles(loaded);
       if (argv["t"]) {
         output = JSON.stringify(new Stats(reg).run(progress), undefined, 2);
-      } else if (argv["u"]) {
-        reg.parse(progress);
-        output = JSON.stringify(new Dump(reg).classes(), undefined, 2);
       } else if (argv["e"]) {
         output = JSON.stringify(new SemanticSearch(reg).run(progress), undefined, 1);
       } else {

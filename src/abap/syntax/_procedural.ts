@@ -49,7 +49,7 @@ export class Procedural {
   }
 
   public findFunctionScope(obj: ABAPObject, node: StatementNode) {
-    this.scope.pushScope("function");
+    this.scope.push("function");
 
     const name = node.findFirstExpression(Expressions.FunctionName)!.getFirstToken().getStr();
     const definition = (obj as FunctionGroup).getModule(name);
@@ -63,7 +63,7 @@ export class Procedural {
   }
 
   public findFormScope(node: StatementNode, filename: string) {
-    this.scope.pushScope("form");
+    this.scope.push("form");
     this.scope.addList(new FormDefinition(node, filename).getParameters());
   }
 

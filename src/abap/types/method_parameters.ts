@@ -1,15 +1,17 @@
 import {StatementNode} from "../../abap/nodes/statement_node";
 import {MethodDef} from "../../abap/statements/method_def";
-import {MethodParameter} from "./method_parameter";
 import {MethodDefImporting, MethodParam, MethodDefExporting, MethodDefChanging,
         MethodDefReturning, EventHandler, MethodParamName} from "../../abap/expressions";
 import {ExpressionNode}  from "../../abap/nodes";
+import {TypedIdentifier} from "./_typed_identifier";
+import {UnknownType} from "./basic";
+import {Scope} from "../syntax/_scope";
 
 export class MethodParameters {
-  private readonly importing: MethodParameter[];
-  private readonly exporting: MethodParameter[];
-  private readonly changing: MethodParameter[];
-  private returning: MethodParameter | undefined;
+  private readonly importing: TypedIdentifier[];
+  private readonly exporting: TypedIdentifier[];
+  private readonly changing: TypedIdentifier[];
+  private returning: TypedIdentifier | undefined;
   private readonly exceptions: string[]; // todo, not filled
   private readonly filename: string;
 
@@ -28,8 +30,8 @@ export class MethodParameters {
     this.parse(node);
   }
 
-  public getAll(): MethodParameter[] {
-    let ret: MethodParameter[] = [];
+  public getAll(): TypedIdentifier[] {
+    let ret: TypedIdentifier[] = [];
     const returning = this.getReturning();
     if (returning) {
       ret.push(returning);
@@ -65,7 +67,8 @@ export class MethodParameters {
     const handler = node.findFirstExpression(EventHandler);
     if (handler) {
       for (const p of handler.findAllExpressions(MethodParamName)) {
-        this.importing.push(new MethodParameter(p, this.filename));
+        const token = p.getFirstToken();
+        this.importing.push(new TypedIdentifier(token, this.filename, new UnknownType()));
       }
     }
 
@@ -88,7 +91,8 @@ export class MethodParameters {
     if (returning) {
       const found = returning.findFirstExpression(MethodParam);
       if (found) {
-        this.returning = new MethodParameter(found, this.filename);
+        const para = found.get() as MethodParam;
+        this.returning = para.runSyntax(found, new Scope(), this.filename);
       }
     }
 
@@ -97,10 +101,11 @@ export class MethodParameters {
 // also consider RAISING vs EXCEPTIONS
   }
 
-  private add(target: MethodParameter[], source: ExpressionNode): void {
+  private add(target: TypedIdentifier[], source: ExpressionNode): void {
     const params = source.findAllExpressions(MethodParam);
     for (const param of params) {
-      target.push(new MethodParameter(param, this.filename));
+      const para = param.get() as MethodParam;
+      target.push(para.runSyntax(param, new Scope(), this.filename));
     }
   }
 

@@ -3,6 +3,8 @@ import * as Expressions from "../../abap/expressions";
 import {Identifier} from "./_identifier";
 import {StructureNode, StatementNode} from "../../abap/nodes";
 import {Expression} from "../combi";
+import {TypedIdentifier} from "./_typed_identifier";
+import {Scope} from "../syntax/_scope";
 
 export class FormDefinition extends Identifier {
   private readonly node: StatementNode;
@@ -14,11 +16,11 @@ export class FormDefinition extends Identifier {
     this.node = st;
   }
 
-  public getParameters(): Identifier[] {
-    const res: Identifier[] = [];
+  public getParameters(): TypedIdentifier[] {
+    const res: TypedIdentifier[] = [];
     for (const param of this.node.findAllExpressions(Expressions.FormParam)) {
-      const token = param.getFirstToken();
-      res.push(new Identifier(token, this.filename));
+      const para = param.get() as Expressions.FormParam;
+      res.push(para.runSyntax(param, new Scope(), this.filename));
     }
     return res;
   }
