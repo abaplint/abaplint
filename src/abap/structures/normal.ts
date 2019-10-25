@@ -78,7 +78,7 @@ export class Normal extends Structure {
                sta(Statements.ExportDynpro),
                sta(Statements.Export),
                sta(Statements.Extract),
-               sta(Statements.FetchNext),
+               sta(Statements.FetchNextCursor),
                sta(Statements.FieldGroup),
                sta(Statements.Fields),
                sta(Statements.Find),

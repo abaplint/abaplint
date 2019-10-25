@@ -195,7 +195,7 @@ export * from "./modify_line";
 export * from "./selectionscreen";
 export * from "./free";
 export * from "./endon";
-export * from "./fetch_next";
+export * from "./fetch_next_cursor";
 export * from "./reserve";
 export * from "./refresh_control";
 export * from "./delete_dynpro";

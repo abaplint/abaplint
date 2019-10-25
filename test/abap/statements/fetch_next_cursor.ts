@@ -1,5 +1,5 @@
 import {statementType} from "../_utils";
-import * as Statements from "../../../src/abap/statements/";
+import * as Statements from "../../../src/abap/statements";
 
 const tests = [
   "FETCH NEXT CURSOR lv_cursor INTO TABLE lt_table PACKAGE SIZE lv_size.",
@@ -11,4 +11,4 @@ const tests = [
   "FETCH NEXT CURSOR l_cursor INTO lt_data PACKAGE SIZE 1000.",
 ];
 
-statementType(tests, "FETCH NEXT", Statements.FetchNext);
+statementType(tests, "FETCH NEXT", Statements.FetchNextCursor);
