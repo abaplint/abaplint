@@ -8,6 +8,7 @@ import {Identifier} from "../abap/types/_identifier";
 import {TypedIdentifier} from "../abap/types/_typed_identifier";
 import {TypedConstantIdentifier} from "../abap/types/_typed_constant_identifier";
 import {Scope} from "../abap/syntax/_scope";
+import * as Tokens from "../abap/tokens";
 
 export class Hover {
   public static find(reg: Registry,
@@ -26,6 +27,10 @@ export class Hover {
     const found = LSPUtils.findCursor(reg, textDocument, position);
     if (found === undefined) {
       return {kind: LServer.MarkupKind.Markdown, value: "Cursor token not found"};
+    } else if (found.token instanceof Tokens.String) {
+      return {kind: LServer.MarkupKind.Markdown, value: "String"};
+    } else if (found.token instanceof Tokens.Comment) {
+      return {kind: LServer.MarkupKind.Markdown, value: "Comment"};
     }
 
     const lookup = LSPUtils.lookup(found, reg, obj);
@@ -35,7 +40,7 @@ export class Hover {
       return {kind: LServer.MarkupKind.Markdown, value: this.hoverFormDefinition(lookup)};
     } else if (lookup instanceof TypedConstantIdentifier) {
       const value = "Resolved, Typed, Constant\n\n" +
-        "Type:\n\n" + lookup.getType().toText() +
+        "Type:\n\n" + lookup.getType().toText() + "\n\n" +
         "Value:\n\n```" + lookup.getValue() + "```";
       return {kind: LServer.MarkupKind.Markdown, value};
     } else if (lookup instanceof TypedIdentifier) {

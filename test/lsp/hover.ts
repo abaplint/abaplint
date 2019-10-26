@@ -30,4 +30,20 @@ describe("LSP, hover", () => {
     expect(hover!.value).to.contain("Resolved, Typed");
   });
 
+  it("String", () => {
+    const file = new MemoryFile("foobar.prog.abap", "WRITE 'hello'.");
+    const reg = new Registry().addFile(file).parse();
+    const hover = Hover.find(reg, {uri: file.getFilename()}, LServer.Position.create(0 , 10));
+    expect(hover).to.not.equal(undefined);
+    expect(hover!.value).to.contain("String");
+  });
+
+  it("Comment", () => {
+    const file = new MemoryFile("foobar.prog.abap", "* foo bar moo loo hoo");
+    const reg = new Registry().addFile(file).parse();
+    const hover = Hover.find(reg, {uri: file.getFilename()}, LServer.Position.create(0 , 10));
+    expect(hover).to.not.equal(undefined);
+    expect(hover!.value).to.contain("Comment");
+  });
+
 });

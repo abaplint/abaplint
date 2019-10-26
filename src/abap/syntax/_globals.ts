@@ -3,6 +3,7 @@ import {TypedConstantIdentifier} from "../types/_typed_constant_identifier";
 import {VoidType, CharacterType} from "../types/basic";
 import {Identifier} from "../tokens";
 import {Position} from "../../position";
+import {AbstractType} from "../types/basic/_abstract_type";
 
 export class Globals {
   private static readonly filename = "_global.prog.abap";
@@ -73,11 +74,9 @@ export class Globals {
     ret.push(this.buildConstant("col_normal"));
     ret.push(this.buildConstant("col_heading"));
     ret.push(this.buildConstant("col_background"));
-    ret.push(this.buildConstant("abap_undefined"));
-    ret.push(this.buildConstant("abap_true"));
-    ret.push(this.buildConstant("abap_false"));
-
-// types abap_bool type c length 1.
+    ret.push(this.buildConstant("abap_undefined", new CharacterType(1), "'-'"));
+    ret.push(this.buildConstant("abap_true", new CharacterType(1), "'X'"));
+    ret.push(this.buildConstant("abap_false", new CharacterType(1), "' '"));
 
     for (const e of extras) {
       const id = new Identifier(new Position(1, 1), e);
@@ -87,9 +86,15 @@ export class Globals {
     return ret;
   }
 
-  private static buildConstant(name: string) {
+  private static buildConstant(name: string, type?: AbstractType, value?: string) {
     const id = new Identifier(new Position(1, 1), name);
-    return new TypedConstantIdentifier(id, this.filename, new VoidType(), "'?'");
+    if (type === undefined) {
+      type = new VoidType();
+    }
+    if (value === undefined) {
+      value = "'?'";
+    }
+    return new TypedConstantIdentifier(id, this.filename, type, value);
   }
 
   private static buildVariable(name: string) {
