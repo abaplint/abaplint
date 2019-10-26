@@ -36,7 +36,7 @@ export class Type extends Statement {
 
     const fallback = node.findFirstExpression(Expressions.NamespaceSimpleName);
     if (fallback) {
-      return new TypedIdentifier(fallback.getFirstToken(), filename, new UnknownType());
+      return new TypedIdentifier(fallback.getFirstToken(), filename, new UnknownType("Type, fallback"));
     }
 
     return undefined;

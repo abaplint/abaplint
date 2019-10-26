@@ -41,21 +41,21 @@ export class BasicTypes {
       if (len) {
         return new Types.CharacterType(len);
       } else {
-        return new Types.UnknownType();
+        return new Types.UnknownType("C, unable to parse length");
       }
     } else if (chainText === "X") {
       const len = this.findLength(stat);
       if (len) {
         return new Types.HexType(len);
       } else {
-        return new Types.UnknownType();
+        return new Types.UnknownType("X, unable to parse length");
       }
     } else if (chainText === "N") {
       const len = this.findLength(stat);
       if (len) {
         return new Types.NumericType(len);
       } else {
-        return new Types.UnknownType();
+        return new Types.UnknownType("N, unable to parse length");
       }
     }
 
@@ -105,7 +105,7 @@ export class BasicTypes {
         if (val !== undefined) {
           return new TypedConstantIdentifier(name, this.filename, found, val);
         } else {
-          return new TypedConstantIdentifier(name, this.filename, new Types.UnknownType(), "unknown");
+          return new TypedConstantIdentifier(name, this.filename, new Types.UnknownType("todo"), "unknown");
         }
       } else {
         return new TypedIdentifier(name, this.filename, found);

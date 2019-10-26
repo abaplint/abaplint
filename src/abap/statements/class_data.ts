@@ -17,7 +17,7 @@ export class ClassData extends Statement {
 // todo
     const fallback = node.findFirstExpression(Expressions.NamespaceSimpleName);
     if (fallback) {
-      return new TypedIdentifier(fallback.getFirstToken(), filename, new UnknownType());
+      return new TypedIdentifier(fallback.getFirstToken(), filename, new UnknownType("class data, fallback"));
     } else {
       return undefined;
     }

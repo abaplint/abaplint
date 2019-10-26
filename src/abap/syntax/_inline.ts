@@ -20,7 +20,7 @@ export class Inline {
   private addVariable(expr: ExpressionNode | undefined, filename: string) {
     if (expr === undefined) { throw new Error("syntax_check, unexpected tree structure"); }
     const token = expr.getFirstToken();
-    this.variables.addIdentifier(new TypedIdentifier(token, filename, new UnknownType()));
+    this.variables.addIdentifier(new TypedIdentifier(token, filename, new UnknownType("todo")));
   }
 
   public update(node: INode, filename: string): boolean {
@@ -102,8 +102,9 @@ export class Inline {
     if (view !== undefined) {
       return view.getFields();
     }
-    const reg = new RegExp(this.reg.getConfig().getSyntaxSetttings().errorNamespace, "i");
-    if (name.match(reg)) {
+//    const reg = new RegExp(this.reg.getConfig().getSyntaxSetttings().errorNamespace, "i");
+//    if (name.match(reg)) {
+    if (this.reg.inErrorNamespace(name)) {
       throw new Error("Database table or view \"" + name + "\" not found");
     } else {
       return [];

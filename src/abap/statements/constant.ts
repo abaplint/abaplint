@@ -28,7 +28,7 @@ export class Constant extends Statement {
 
     const fallback = node.findFirstExpression(Expressions.NamespaceSimpleName);
     if (fallback) {
-      return new TypedIdentifier(fallback.getFirstToken(), filename, new UnknownType());
+      return new TypedIdentifier(fallback.getFirstToken(), filename, new UnknownType("constant, fallback"));
     }
 
     throw new Error("Statement Constant: unexpecte structure");

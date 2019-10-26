@@ -15,7 +15,7 @@ export class FormParam extends Expression {
 
   public runSyntax(node: ExpressionNode, _scope: Scope, filename: string): TypedIdentifier {
     const token = node.findFirstExpression(Field)!.getFirstToken();
-    return new TypedIdentifier(token, filename, new UnknownType());
+    return new TypedIdentifier(token, filename, new UnknownType("FormParam, todo"));
   }
 
 }

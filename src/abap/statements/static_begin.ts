@@ -23,7 +23,7 @@ export class StaticBegin extends Statement {
   public runSyntax(node: StatementNode, _scope: Scope, filename: string): TypedIdentifier | undefined {
     const fallback = node.findFirstExpression(Expressions.NamespaceSimpleName);
     if (fallback) {
-      return new TypedIdentifier(fallback.getFirstToken(), filename, new UnknownType());
+      return new TypedIdentifier(fallback.getFirstToken(), filename, new UnknownType("Static begin, todo"));
     } else {
       return undefined;
     }

@@ -1,6 +1,9 @@
 import {AbstractObject} from "./_abstract_object";
 import * as xmljs from "xml-js";
 import {xmlToArray} from "../xml_utils";
+import {AbstractType} from "../abap/types/basic/_abstract_type";
+import * as Types from "../abap/types/basic";
+import {Registry} from "../registry";
 
 export enum EnhancementCategory {
   NotClassified = "0",
@@ -23,6 +26,10 @@ export class Table extends AbstractObject {
 
   public getType(): string {
     return "TABL";
+  }
+
+  public parseType(_reg: Registry): AbstractType {
+    return new Types.UnknownType("todo, table parse type");
   }
 
   public getFields(): string[] {

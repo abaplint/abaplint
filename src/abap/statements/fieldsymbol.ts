@@ -19,7 +19,7 @@ export class FieldSymbol extends Statement {
   public runSyntax(node: StatementNode, _scope: Scope, filename: string): TypedIdentifier | undefined {
     const fallback = node.findFirstExpression(Expressions.FieldSymbol);
     if (fallback) {
-      return new TypedIdentifier(fallback.getFirstToken(), filename, new UnknownType());
+      return new TypedIdentifier(fallback.getFirstToken(), filename, new UnknownType("Fieldsymbol, fallback"));
     } else {
       return undefined;
     }

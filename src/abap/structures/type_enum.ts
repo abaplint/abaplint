@@ -26,7 +26,7 @@ export class TypeEnum extends Structure {
         continue;
       }
       const token = expr.getFirstToken();
-      ret.push(new TypedIdentifier(token, filename, new UnknownType()));
+      ret.push(new TypedIdentifier(token, filename, new UnknownType("todo, type_enum")));
     }
     return ret;
   }

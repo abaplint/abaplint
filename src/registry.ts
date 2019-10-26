@@ -71,6 +71,11 @@ export class Registry {
     this.conf = conf;
   }
 
+  public inErrorNamespace(name: string): boolean {
+    const reg = new RegExp(this.getConfig().getSyntaxSetttings().errorNamespace, "i");
+    return reg.test(name);
+  }
+
   public getABAPObjects(): ABAPObject[] {
     return this.objects.filter((obj) => { return obj instanceof ABAPObject; }) as ABAPObject[];
   }

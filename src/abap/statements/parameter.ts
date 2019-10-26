@@ -52,7 +52,7 @@ export class Parameter extends Statement {
   public runSyntax(node: StatementNode, _scope: Scope, filename: string): TypedIdentifier | undefined {
     const fallback = node.findFirstExpression(Expressions.FieldSub);
     if (fallback) {
-      return new TypedIdentifier(fallback.getFirstToken(), filename, new UnknownType());
+      return new TypedIdentifier(fallback.getFirstToken(), filename, new UnknownType("Parameter, fallback"));
     } else {
       return undefined;
     }

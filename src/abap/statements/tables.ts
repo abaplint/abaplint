@@ -19,7 +19,7 @@ export class Tables extends Statement {
   public runSyntax(node: StatementNode, _scope: Scope, filename: string): TypedIdentifier | undefined {
     const fallback = node.findFirstExpression(Expressions.Field);
     if (fallback) {
-      return new TypedIdentifier(fallback.getFirstToken(), filename, new UnknownType());
+      return new TypedIdentifier(fallback.getFirstToken(), filename, new UnknownType("Tables, todo"));
     } else {
       return undefined;
     }

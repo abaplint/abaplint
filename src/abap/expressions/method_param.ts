@@ -33,7 +33,7 @@ export class MethodParam extends Expression {
       throw new Error("method_parameter.ts, todo, handle pass by value and reference");
     }
 
-    return new TypedIdentifier(name.getFirstToken(), filename, new UnknownType());
+    return new TypedIdentifier(name.getFirstToken(), filename, new UnknownType("method param, todo"));
   }
 
 }

@@ -112,8 +112,10 @@ export class ObjectOriented {
     const classDefinition = this.findClassDefinition(className);
 
 // todo, this is not correct, add correct types, plus "super" should only be added when there are super classes
-    this.scope.addIdentifier(new TypedIdentifier(new Identifier(new Position(1, 1), "super"), "_global.prog.abap", new UnknownType()));
-    this.scope.addIdentifier(new TypedIdentifier(new Identifier(new Position(1, 1), "me"), "_global.prog.abap", new UnknownType()));
+    this.scope.addIdentifier(new TypedIdentifier(
+      new Identifier(new Position(1, 1), "super"), "_global.prog.abap", new UnknownType("todo")));
+    this.scope.addIdentifier(new TypedIdentifier(
+      new Identifier(new Position(1, 1), "me"), "_global.prog.abap", new UnknownType("todo")));
 
     let methodName = node.findFirstExpression(Expressions.MethodName)!.getFirstToken().getStr();
 
