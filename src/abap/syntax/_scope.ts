@@ -23,15 +23,22 @@ export class Scope {
   private readonly reg: Registry;
 
   public static buildDefault(reg: Registry): Scope {
-    return new Scope(Globals.get(reg.getConfig().getSyntaxSetttings().globalConstants), reg);
+    const s = new Scope(reg);
+
+    s.push("_builtin");
+    const builtin = Globals.get(reg.getConfig().getSyntaxSetttings().globalConstants);
+    s.addList(builtin);
+    for (const t of Globals.getTypes()) {
+      s.addType(t);
+    }
+    s.push("_global");
+
+    return s;
   }
 
-  private constructor(builtin: TypedIdentifier[], reg: Registry) {
+  private constructor(reg: Registry) {
     this.scopes = [];
     this.reg = reg;
-    this.push("_builtin");
-    this.addList(builtin);
-    this.push("_global");
   }
 
   public get() {

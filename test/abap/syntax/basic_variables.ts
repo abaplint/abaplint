@@ -296,6 +296,12 @@ describe("Syntax - Basic Types", () => {
     expect(type!.getType()).to.be.instanceof(Basic.ObjectReferenceType);
   });
 
+  it("DATA abap_bool", () => {
+    const abap = "DATA foo TYPE abap_bool.";
+    const identifier = resolveVariable(abap, "foo");
+    expectCharacter(identifier, 1);
+  });
+
 /*
   it("DDIC data element", () => {
     const clas = `

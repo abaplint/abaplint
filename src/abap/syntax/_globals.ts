@@ -1,11 +1,20 @@
 import {TypedIdentifier} from "../types/_typed_identifier";
 import {TypedConstantIdentifier} from "../types/_typed_constant_identifier";
-import {VoidType} from "../types/basic";
+import {VoidType, CharacterType} from "../types/basic";
 import {Identifier} from "../tokens";
 import {Position} from "../../position";
 
 export class Globals {
   private static readonly filename = "_global.prog.abap";
+
+  public static getTypes(): TypedIdentifier[] {
+    const ret: TypedIdentifier[] = [];
+
+    const id = new Identifier(new Position(1, 1), "abap_bool");
+    ret.push(new TypedIdentifier(id, this.filename, new CharacterType(1)));
+
+    return ret;
+  }
 
   public static get(extras: string[]): TypedIdentifier[] {
     const ret: TypedIdentifier[] = [];
@@ -68,22 +77,24 @@ export class Globals {
     ret.push(this.buildConstant("abap_true"));
     ret.push(this.buildConstant("abap_false"));
 
+// types abap_bool type c length 1.
+
     for (const e of extras) {
-      const token = new Identifier(new Position(1, 1), e);
-      ret.push(new TypedConstantIdentifier(token, this.filename, new VoidType(), "'?'"));
+      const id = new Identifier(new Position(1, 1), e);
+      ret.push(new TypedConstantIdentifier(id, this.filename, new VoidType(), "'?'"));
     }
 
     return ret;
   }
 
   private static buildConstant(name: string) {
-    const token = new Identifier(new Position(1, 1), name);
-    return new TypedConstantIdentifier(token, this.filename, new VoidType(), "'?'");
+    const id = new Identifier(new Position(1, 1), name);
+    return new TypedConstantIdentifier(id, this.filename, new VoidType(), "'?'");
   }
 
   private static buildVariable(name: string) {
-    const token = new Identifier(new Position(1, 1), name);
-    return new TypedIdentifier(token, this.filename, new VoidType());
+    const id = new Identifier(new Position(1, 1), name);
+    return new TypedIdentifier(id, this.filename, new VoidType());
   }
 
 }
