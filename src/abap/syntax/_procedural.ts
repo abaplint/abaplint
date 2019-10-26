@@ -64,7 +64,7 @@ export class Procedural {
 
   public findFormScope(node: StatementNode, filename: string) {
     this.scope.push("form");
-    this.scope.addList(new FormDefinition(node, filename).getParameters());
+    this.scope.addList(new FormDefinition(node, filename).getParameters(this.scope));
   }
 
 }

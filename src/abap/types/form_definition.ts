@@ -16,35 +16,35 @@ export class FormDefinition extends Identifier {
     this.node = st;
   }
 
-  public getParameters(): TypedIdentifier[] {
-    return this.findParams(this.node);
+  public getParameters(scope: Scope): TypedIdentifier[] {
+    return this.findParams(this.node, scope);
   }
 
-  public getTablesParameters(): TypedIdentifier[] {
-    return this.findType(Expressions.FormTables);
+  public getTablesParameters(scope: Scope): TypedIdentifier[] {
+    return this.findType(Expressions.FormTables, scope);
   }
 
-  public getUsingParameters(): TypedIdentifier[] {
-    return this.findType(Expressions.FormUsing);
+  public getUsingParameters(scope: Scope): TypedIdentifier[] {
+    return this.findType(Expressions.FormUsing, scope);
   }
 
-  public getChangingParameters(): TypedIdentifier[] {
-    return this.findType(Expressions.FormChanging);
+  public getChangingParameters(scope: Scope): TypedIdentifier[] {
+    return this.findType(Expressions.FormChanging, scope);
   }
 
-  private findType(type: new () => Expression): TypedIdentifier[] {
+  private findType(type: new () => Expression, scope: Scope): TypedIdentifier[] {
     const found = this.node.findFirstExpression(type);
     if (found === undefined) {
       return [];
     }
-    return this.findParams(found);
+    return this.findParams(found, scope);
   }
 
-  private findParams(node: ExpressionNode | StatementNode) {
+  private findParams(node: ExpressionNode | StatementNode, scope: Scope) {
     const res: TypedIdentifier[] = [];
     for (const param of node.findAllExpressions(Expressions.FormParam)) {
       const para = param.get() as Expressions.FormParam;
-      res.push(para.runSyntax(param, new Scope(), this.filename));
+      res.push(para.runSyntax(param, scope, this.filename));
     }
     return res;
   }

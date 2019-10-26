@@ -4,6 +4,7 @@ import {ClassDefinition} from "../../abap/structures/class_definition";
 import * as Structures from "../../abap/structures";
 import {MethodDef} from "../../abap/statements";
 import {Visibility} from "./visibility";
+import {Scope} from "../syntax/_scope";
 
 export class MethodDefinitions {
   private readonly pri: MethodDefinition[];
@@ -11,12 +12,12 @@ export class MethodDefinitions {
   private readonly pro: MethodDefinition[];
   private readonly filename: string;
 
-  public constructor(node: StructureNode, filename: string) {
+  public constructor(node: StructureNode, filename: string, scope: Scope) {
     this.pri = [];
     this.pub = [];
     this.pro = [];
     this.filename = filename;
-    this.parse(node);
+    this.parse(node, scope);
   }
 
   public getPublic(): MethodDefinition[] {
@@ -35,7 +36,7 @@ export class MethodDefinitions {
     return this.pub.concat(this.pro).concat(this.pri);
   }
 
-  private parse(node: StructureNode) {
+  private parse(node: StructureNode, scope: Scope) {
     const cdef = node.findFirstStructure(ClassDefinition);
     if (!cdef) {
       throw new Error("MethodDefinitions, expected ClassDefinition as part of input node");
@@ -45,7 +46,7 @@ export class MethodDefinitions {
     if (pri) {
       const defs = pri.findAllStatements(MethodDef);
       for (const def of defs) {
-        this.pri.push(new MethodDefinition(def, Visibility.Private, this.filename));
+        this.pri.push(new MethodDefinition(def, Visibility.Private, this.filename, scope));
       }
     }
 
@@ -53,7 +54,7 @@ export class MethodDefinitions {
     if (pro) {
       const defs = pro.findAllStatements(MethodDef);
       for (const def of defs) {
-        this.pro.push(new MethodDefinition(def, Visibility.Protected, this.filename));
+        this.pro.push(new MethodDefinition(def, Visibility.Protected, this.filename, scope));
       }
     }
 
@@ -61,7 +62,7 @@ export class MethodDefinitions {
     if (pub) {
       const defs = pub.findAllStatements(MethodDef);
       for (const def of defs) {
-        this.pub.push(new MethodDefinition(def, Visibility.Public, this.filename));
+        this.pub.push(new MethodDefinition(def, Visibility.Public, this.filename, scope));
       }
     }
   }

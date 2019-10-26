@@ -24,8 +24,8 @@ export class ClassDefinition extends Identifier {
     this.node = node;
   }
 
-  public getMethodDefinitions(): MethodDefinitions {
-    return new MethodDefinitions(this.node, this.filename);
+  public getMethodDefinitions(scope: Scope): MethodDefinitions {
+    return new MethodDefinitions(this.node, this.filename, scope);
   }
 
   public getSuperClass(): string | undefined {

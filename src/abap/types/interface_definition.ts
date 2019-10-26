@@ -33,11 +33,11 @@ export class InterfaceDefinition extends Identifier {
     return this.node.findFirstExpression(Expressions.Global) !== undefined;
   }
 
-  public getMethodDefinitions(): MethodDefinition[] {
+  public getMethodDefinitions(scope: Scope): MethodDefinition[] {
     const ret = [];
     const defs = this.node.findAllStatements(Statements.MethodDef);
     for (const def of defs) {
-      ret.push(new MethodDefinition(def, Visibility.Public, this.filename));
+      ret.push(new MethodDefinition(def, Visibility.Public, this.filename, scope));
     }
     return ret;
   }

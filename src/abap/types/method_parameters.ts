@@ -15,7 +15,7 @@ export class MethodParameters {
   private readonly exceptions: string[]; // todo, not filled
   private readonly filename: string;
 
-  constructor(node: StatementNode, filename: string) {
+  constructor(node: StatementNode, filename: string, scope: Scope) {
     if (!(node.get() instanceof MethodDef)) {
       throw new Error("MethodDefinition, expected MethodDef as part of input node");
     }
@@ -27,7 +27,7 @@ export class MethodParameters {
     this.exceptions = [];
     this.filename = filename;
 
-    this.parse(node);
+    this.parse(node, scope);
   }
 
   public getAll(): TypedIdentifier[] {
@@ -62,7 +62,7 @@ export class MethodParameters {
     return this.exceptions;
   }
 
-  private parse(node: StatementNode): void {
+  private parse(node: StatementNode, scope: Scope): void {
 
     const handler = node.findFirstExpression(EventHandler);
     if (handler) {
@@ -74,17 +74,17 @@ export class MethodParameters {
 
     const importing = node.findFirstExpression(MethodDefImporting);
     if (importing) {
-      this.add(this.importing, importing);
+      this.add(this.importing, importing, scope);
     }
 
     const exporting = node.findFirstExpression(MethodDefExporting);
     if (exporting) {
-      this.add(this.exporting, exporting);
+      this.add(this.exporting, exporting, scope);
     }
 
     const changing = node.findFirstExpression(MethodDefChanging);
     if (changing) {
-      this.add(this.changing, changing);
+      this.add(this.changing, changing, scope);
     }
 
     const returning = node.findFirstExpression(MethodDefReturning);
@@ -92,7 +92,7 @@ export class MethodParameters {
       const found = returning.findFirstExpression(MethodParam);
       if (found) {
         const para = found.get() as MethodParam;
-        this.returning = para.runSyntax(found, new Scope(), this.filename);
+        this.returning = para.runSyntax(found, scope, this.filename);
       }
     }
 
@@ -101,11 +101,11 @@ export class MethodParameters {
 // also consider RAISING vs EXCEPTIONS
   }
 
-  private add(target: TypedIdentifier[], source: ExpressionNode): void {
+  private add(target: TypedIdentifier[], source: ExpressionNode, scope: Scope): void {
     const params = source.findAllExpressions(MethodParam);
     for (const param of params) {
       const para = param.get() as MethodParam;
-      target.push(para.runSyntax(param, new Scope(), this.filename));
+      target.push(para.runSyntax(param, scope, this.filename));
     }
   }
 

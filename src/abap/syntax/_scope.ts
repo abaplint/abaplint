@@ -25,7 +25,7 @@ export class Scope {
     return new Scope(Globals.get(reg.getConfig().getSyntaxSetttings().globalConstants));
   }
 
-  constructor(builtin?: TypedIdentifier[]) {
+  private constructor(builtin?: TypedIdentifier[]) {
     this.scopes = [];
     this.push("_builtin");
     if (builtin) {

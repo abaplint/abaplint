@@ -6,6 +6,7 @@ import {BasicRuleConfig} from "../_basic_rule_config";
 import {ClassDefinition, ClassImplementation, InterfaceDefinition} from "../../abap/types";
 import {ABAPObject} from "../../objects/_abap_object";
 import {Interface} from "../../objects";
+import {Scope} from "../../abap/syntax/_scope";
 
 // todo: abstract methods from superclass parents(might be multiple), if class is not abstract
 
@@ -35,6 +36,8 @@ export class ImplementMethods extends ABAPRule {
       return [];
     }
 
+    const scope = Scope.buildDefault(reg);
+
     for (const def of file.getClassDefinitions()) {
       let impl = file.getClassImplementation(def.getName());
       if (impl === undefined) {
@@ -46,17 +49,17 @@ export class ImplementMethods extends ABAPRule {
         continue;
       }
 
-      ret = ret.concat(this.checkClass(def, impl));
+      ret = ret.concat(this.checkClass(def, impl, scope));
       ret = ret.concat(this.checkInterfaces(def, impl, file, reg));
     }
 
     return ret;
   }
 
-  private checkClass(def: ClassDefinition, impl: ClassImplementation): Issue[] {
+  private checkClass(def: ClassDefinition, impl: ClassImplementation, scope: Scope): Issue[] {
     const ret: Issue[] = [];
 
-    for (const md of def.getMethodDefinitions().getAll()) {
+    for (const md of def.getMethodDefinitions(scope).getAll()) {
       const found = impl.getMethodImplementation(md.getName());
 
       if (md.isAbstract()) {
@@ -97,7 +100,8 @@ export class ImplementMethods extends ABAPRule {
         continue; // ignore parser errors in interface
       }
 
-      for (const method of idef.getMethodDefinitions()) {
+      const scope = Scope.buildDefault(reg);
+      for (const method of idef.getMethodDefinitions(scope)) {
         const name = interfaceName.name + "~" + method.getName();
         let found = impl.getMethodImplementation(name);
 

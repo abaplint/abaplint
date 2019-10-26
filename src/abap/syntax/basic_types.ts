@@ -89,7 +89,9 @@ export class BasicTypes {
     } else if (text.startsWith("TYPE LINE OF")) {
       return undefined;
     } else if (text.startsWith("TYPE REF TO")) {
-      return undefined;
+//      console.dir(text);
+//      return undefined;
+      found = this.resolveTypeRef(chain);
     } else if (text.startsWith("TYPE")) {
       found = this.resolveChainType(node, chain);
       if (found === undefined && chain === undefined) {
@@ -108,6 +110,21 @@ export class BasicTypes {
       } else {
         return new TypedIdentifier(name, this.filename, found);
       }
+    }
+
+    return undefined;
+  }
+
+  private resolveTypeRef(chain: ExpressionNode | undefined): AbstractType | undefined {
+    if (chain === undefined) {
+      return undefined;
+    }
+
+    const name = chain.getFirstToken().getStr();
+
+    const found = this.scope.findClassDefinition(name);
+    if (found) {
+      return new Types.ObjectReferenceType(name);
     }
 
     return undefined;

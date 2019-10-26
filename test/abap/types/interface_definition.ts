@@ -12,12 +12,13 @@ describe("Types, interface_definition, getMethodDefinitions", () => {
       "ENDINTERFACE.";
 
     const reg = new Registry().addFile(new MemoryFile("zif_foobar.intf.abap", abap)).parse();
+    const scope = Scope.buildDefault(reg);
     const intf = reg.getABAPObjects()[0] as Interface;
     const def = intf.getDefinition();
     expect(def).to.not.equal(undefined);
-    expect(def!.getMethodDefinitions().length).to.equal(1);
-    expect(def!.getMethodDefinitions()[0].getName()).to.equal("method1");
-    expect(def!.getMethodDefinitions()[0].getVisibility()).to.equal(Visibility.Public);
+    expect(def!.getMethodDefinitions(scope).length).to.equal(1);
+    expect(def!.getMethodDefinitions(scope)[0].getName()).to.equal("method1");
+    expect(def!.getMethodDefinitions(scope)[0].getVisibility()).to.equal(Visibility.Public);
   });
 
   it("test, parser error", () => {
@@ -34,10 +35,11 @@ describe("Types, interface_definition, getMethodParameters", () => {
       "ENDINTERFACE.";
 
     const reg = new Registry().addFile(new MemoryFile("zif_foobar.intf.abap", abap)).parse();
+    const scope = Scope.buildDefault(reg);
     const intf = reg.getABAPObjects()[0] as Interface;
-    expect(intf.getDefinition()!.getMethodDefinitions().length).to.equal(1);
-    expect(intf.getDefinition()!.getMethodDefinitions()[0].getParameters().getImporting().length).to.equal(1);
-    expect(intf.getDefinition()!.getMethodDefinitions()[0].getParameters().getImporting()[0].getName()).to.equal("foo");
+    expect(intf.getDefinition()!.getMethodDefinitions(scope).length).to.equal(1);
+    expect(intf.getDefinition()!.getMethodDefinitions(scope)[0].getParameters().getImporting().length).to.equal(1);
+    expect(intf.getDefinition()!.getMethodDefinitions(scope)[0].getParameters().getImporting()[0].getName()).to.equal("foo");
   });
 
   it("test, returning", () => {
@@ -46,9 +48,10 @@ describe("Types, interface_definition, getMethodParameters", () => {
       "ENDINTERFACE.";
 
     const reg = new Registry().addFile(new MemoryFile("zif_foobar.intf.abap", abap)).parse();
+    const scope = Scope.buildDefault(reg);
     const intf = reg.getABAPObjects()[0] as Interface;
-    expect(intf.getDefinition()!.getMethodDefinitions().length).to.equal(1);
-    const returning = intf.getDefinition()!.getMethodDefinitions()[0].getParameters().getReturning();
+    expect(intf.getDefinition()!.getMethodDefinitions(scope).length).to.equal(1);
+    const returning = intf.getDefinition()!.getMethodDefinitions(scope)[0].getParameters().getReturning();
     expect(returning).to.not.equal(undefined);
     if (returning) {
       expect(returning.getName()).to.equal("rv_foo");

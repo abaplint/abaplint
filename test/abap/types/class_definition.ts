@@ -3,6 +3,7 @@ import {MemoryFile} from "../../../src/files";
 import {Registry} from "../../../src/registry";
 import {Class} from "../../../src/objects";
 import {Visibility} from "../../../src/abap/types/visibility";
+import {Scope} from "../../../src/abap/syntax/_scope";
 
 describe("Types, class_definition", () => {
 
@@ -66,10 +67,11 @@ describe("Types, class_definition", () => {
       "  ENDMETHOD.\n" +
       "ENDCLASS.";
     const reg = new Registry().addFile(new MemoryFile("zcl_moo.clas.abap", abap)).parse();
+    const scope = Scope.buildDefault(reg);
     const clas = reg.getABAPObjects()[0] as Class;
     expect(clas.getClassDefinition()).to.not.equal(undefined);
-    expect(clas.getClassDefinition()!.getMethodDefinitions()).to.not.equal(undefined);
-    const pub = clas.getClassDefinition()!.getMethodDefinitions()!.getPublic();
+    expect(clas.getClassDefinition()!.getMethodDefinitions(scope)).to.not.equal(undefined);
+    const pub = clas.getClassDefinition()!.getMethodDefinitions(scope)!.getPublic();
     expect(pub.length).to.equal(1);
     expect(pub[0].isEventHandler()).to.equal(true);
     expect(pub[0]!.getParameters().getAll().length).to.equal(2);

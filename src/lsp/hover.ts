@@ -7,6 +7,7 @@ import {ABAPFile} from "../files";
 import {Identifier} from "../abap/types/_identifier";
 import {TypedIdentifier} from "../abap/types/_typed_identifier";
 import {TypedConstantIdentifier} from "../abap/types/_typed_constant_identifier";
+import {Scope} from "../abap/syntax/_scope";
 
 export class Hover {
   public static find(reg: Registry,
@@ -50,7 +51,9 @@ export class Hover {
 
   private static hoverFormDefinition(def: FormDefinition): string {
 // todo, list parameters properly in hover information
-    return "FORM info, todo, parameter count: " + def.getParameters().length;
+// todo, properly handling scope
+    const scope = Scope.buildDefault(new Registry());
+    return "FORM info, todo, parameter count: " + def.getParameters(scope).length;
   }
 
 }

@@ -7,6 +7,7 @@ import {Scope} from "../abap/syntax/_scope";
 
 export class Symbols {
   private static reg: Registry;
+  private static scope: Scope;
 
   public static find(reg: Registry, uri: string): LServer.DocumentSymbol[] {
     const file = reg.getABAPFile(uri);
@@ -14,6 +15,7 @@ export class Symbols {
       return [];
     }
     this.reg = reg;
+    this.scope = Scope.buildDefault(this.reg);
 
     let ret: LServer.DocumentSymbol[] = [];
     ret = ret.concat(this.outputClasses(file));
@@ -59,8 +61,8 @@ export class Symbols {
 
     for (const cla of file.getClassDefinitions()) {
       let children: LServer.DocumentSymbol[] = [];
-      children = children.concat(this.outputClassAttributes(cla.getAttributes(Scope.buildDefault(this.reg))));
-      children = children.concat(this.outputMethodDefinitions(cla.getMethodDefinitions()));
+      children = children.concat(this.outputClassAttributes(cla.getAttributes(this.scope)));
+      children = children.concat(this.outputMethodDefinitions(cla.getMethodDefinitions(this.scope)));
       const symbol = this.newSymbol(cla, LServer.SymbolKind.Class, children);
       ret.push(symbol);
     }

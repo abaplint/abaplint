@@ -16,7 +16,7 @@ ENDCLASS.`;
 
   const reg = new Registry().addFile(new MemoryFile("zcl_abapgit_persist_settings.clas.abap", abap)).parse();
   const rule = new ConstructorVisibilityPublic();
-  const issues = rule.run(reg.getObjects()[0]);
+  const issues = rule.run(reg.getObjects()[0], reg);
   it("constructor_visibility_public test", () => {
     expect(issues.length).to.equals(1);
   });
@@ -35,7 +35,7 @@ ENDCLASS.`;
 
   const reg = new Registry().addFile(new MemoryFile("zcl_abapgit_persist_settings.clas.abap", abap)).parse();
   const rule = new ConstructorVisibilityPublic();
-  const issues = rule.run(reg.getObjects()[0]);
+  const issues = rule.run(reg.getObjects()[0], reg);
   it("constructor_visibility_public test", () => {
     expect(issues.length).to.equals(0);
   });

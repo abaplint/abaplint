@@ -3,6 +3,8 @@ import {BasicRuleConfig} from "./_basic_rule_config";
 import {Issue} from "../issue";
 import {ABAPFile} from "../files";
 import {MethodDefinition} from "../abap/types";
+import {Scope} from "../abap/syntax/_scope";
+import {Registry} from "../registry";
 
 /**
  * Various checks regarding abapdoc. Base rule checks for existence of abapdoc for
@@ -34,22 +36,24 @@ export class Abapdoc extends ABAPRule {
     this.conf = conf;
   }
 
-  public runParsed(file: ABAPFile) {
+  public runParsed(file: ABAPFile, reg: Registry) {
     const issues: Issue[] = [];
     const rows = file.getRawRows();
+    const scope = Scope.buildDefault(reg);
     let methods: MethodDefinition[] = [];
 
     for (const classDef of file.getClassDefinitions()) {
       if (this.conf.checkLocal === false && classDef.isLocal() === true) {
         continue;
       }
-      methods = methods.concat(classDef.getMethodDefinitions().getPublic());
+      methods = methods.concat(classDef.getMethodDefinitions(scope).getPublic());
     }
+
     for (const interfaceDef of file.getInterfaceDefinitions()) {
       if (this.conf.checkLocal === false && interfaceDef.isLocal() === true) {
         continue;
       }
-      methods = methods.concat(interfaceDef.getMethodDefinitions());
+      methods = methods.concat(interfaceDef.getMethodDefinitions(scope));
     }
 
     for (const method of methods) {

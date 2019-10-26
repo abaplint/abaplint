@@ -83,7 +83,7 @@ export class ObjectOriented {
   private findMethodInInterface(interfaceName: string, methodName: string): MethodDefinition | undefined {
     const idef = this.findInterfaceDefinition(interfaceName);
     if (idef) {
-      const methods = idef.getMethodDefinitions();
+      const methods = idef.getMethodDefinitions(this.scope);
       for (const method of methods) {
         if (method.getName().toUpperCase() === methodName.toUpperCase()) {
           return method;
@@ -179,7 +179,7 @@ export class ObjectOriented {
   }
 
   private findMethod(classDefinition: ClassDefinition, methodName: string): MethodDefinition | undefined {
-    for (const method of classDefinition.getMethodDefinitions()!.getAll()) {
+    for (const method of classDefinition.getMethodDefinitions(this.scope)!.getAll()) {
       if (method.getName().toUpperCase() === methodName.toUpperCase()) {
         if (method.isRedefinition()) {
           return this.findMethodInSuper(classDefinition, methodName);

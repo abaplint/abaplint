@@ -4,6 +4,8 @@ import {IRule} from "./_irule";
 import {IObject} from "../objects/_iobject";
 import {Class} from "../objects";
 import {Visibility} from "../abap/types";
+import {Registry} from "../registry";
+import {Scope} from "../abap/syntax/_scope";
 
 /** Constructor must be placed in the public section, even if the class is not CREATE PUBLIC. */
 export class ConstructorVisibilityPublicConf extends BasicRuleConfig {
@@ -28,7 +30,7 @@ export class ConstructorVisibilityPublic implements IRule {
     this.conf = conf;
   }
 
-  public run(obj: IObject): Issue[] {
+  public run(obj: IObject, reg: Registry): Issue[] {
     const issues: Issue[] = [];
 
     if (!(obj instanceof Class)) {
@@ -40,7 +42,8 @@ export class ConstructorVisibilityPublic implements IRule {
       return [];
     }
 
-    const methods = def.getMethodDefinitions();
+    const scope = Scope.buildDefault(reg);
+    const methods = def.getMethodDefinitions(scope);
     if (methods === undefined) {
       return [];
     }

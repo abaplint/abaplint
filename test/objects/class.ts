@@ -127,10 +127,11 @@ describe("Objects, class, getMethodDefinitions", () => {
     "ENDCLASS.";
 
     const reg = new Registry().addFile(new MemoryFile("zcl_with_super.clas.abap", abap)).parse();
+    const scope = Scope.buildDefault(reg);
     const clas = reg.getABAPObjects()[0] as Class;
     expect(clas.getClassDefinition()).to.not.equal(undefined);
-    expect(clas.getClassDefinition()!.getMethodDefinitions()).to.not.equal(undefined);
-    const methods = clas.getClassDefinition()!.getMethodDefinitions();
+    expect(clas.getClassDefinition()!.getMethodDefinitions(scope)).to.not.equal(undefined);
+    const methods = clas.getClassDefinition()!.getMethodDefinitions(scope);
     expect(methods.getPrivate().length).to.equal(1);
     expect(methods.getPrivate()[0].getName()).to.equal("method1");
     expect(methods.getPrivate()[0].getVisibility()).to.equal(Visibility.Private);
@@ -152,10 +153,11 @@ describe("Objects, class, getMethodDefinitions", () => {
       "  ENDMETHOD.\n" +
       "ENDCLASS.";
     const reg = new Registry().addFile(new MemoryFile("zcl_foobar.clas.abap", abap)).parse();
+    const scope = Scope.buildDefault(reg);
     const clas = reg.getABAPObjects()[0] as Class;
     expect(clas.getClassDefinition()).to.not.equal(undefined);
-    expect(clas.getClassDefinition()!.getMethodDefinitions()).to.not.equal(undefined);
-    const methods = clas.getClassDefinition()!.getMethodDefinitions()!.getAll();
+    expect(clas.getClassDefinition()!.getMethodDefinitions(scope)).to.not.equal(undefined);
+    const methods = clas.getClassDefinition()!.getMethodDefinitions(scope)!.getAll();
     expect(methods.length).to.equal(1);
     const parameters = methods[0].getParameters();
     expect(parameters.getImporting().length).to.equal(1);

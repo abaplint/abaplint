@@ -233,4 +233,24 @@ describe("Syntax - Basic Types", () => {
     expect(components[0].name).to.equal("field");
   });
 
+  it("ref to object", () => {
+    const abap = `
+    CLASS lcl_class DEFINITION.
+    ENDCLASS.
+    CLASS lcl_class IMPLEMENTATION.
+    ENDCLASS.
+    DATA lo_class TYPE REF TO lcl_class.`;
+    const type = resolveVariable(abap, "lo_class");
+    expect(type).to.not.equal(undefined);
+    expect(type!.getType()).to.be.instanceof(Basic.ObjectReferenceType);
+  });
+
+  it("ref to object, unknown", () => {
+    const abap = `
+    DATA lo_class TYPE REF TO lcl_sdfsdsdf.`;
+    const type = resolveVariable(abap, "lo_class");
+    expect(type).to.not.equal(undefined);
+    expect(type!.getType()).to.be.instanceof(Basic.UnknownType);
+  });
+
 });
