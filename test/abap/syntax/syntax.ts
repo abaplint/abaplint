@@ -1101,12 +1101,6 @@ describe("Check Variables", () => {
     expect(issues.length).to.equals(1);
   });
 
-  it("CONSTANTS TYPE string VALUE not a constant", () => {
-    const abap = `CONSTANTS foo TYPE string VALUE bar.`;
-    const issues = runProgram(abap);
-    expect(issues.length).to.equals(1);
-  });
-
   it("DATA, negative LENGTH", () => {
     const abap = `DATA foo TYPE c LENGTH -5.`;
     const issues = runProgram(abap);

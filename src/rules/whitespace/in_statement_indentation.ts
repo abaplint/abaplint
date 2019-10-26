@@ -25,7 +25,7 @@ export class InStatementIndentation extends ABAPRule {
   }
 
   private getDescription(): string {
-    return "Fix in-Statement Indentation.";
+    return "Fix in-statement indentation";
   }
 
   public getConfig() {

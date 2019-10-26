@@ -7,6 +7,7 @@ import * as Expressions from "../../abap/expressions";
 import {Attributes} from "./class_attributes";
 import {Identifier} from "./_identifier";
 import {Aliases} from "./aliases";
+import {Scope} from "../syntax/_scope";
 
 // todo, is this the same as an InterfaceDefinition?
 export class ClassDefinition extends Identifier {
@@ -33,8 +34,8 @@ export class ClassDefinition extends Identifier {
     return token ? token.getFirstToken().getStr() : undefined;
   }
 
-  public getAttributes(): Attributes {
-    return new Attributes(this.node, this.filename);
+  public getAttributes(scope: Scope): Attributes {
+    return new Attributes(this.node, this.filename, scope);
   }
 
   public isException(): boolean {

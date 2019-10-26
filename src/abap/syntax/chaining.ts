@@ -10,21 +10,22 @@ export class Chaining {
     this.scope = scope;
   }
 
-  public resolveConstantValue(expr: ExpressionNode): string {
+  public resolveConstantValue(expr: ExpressionNode): string | undefined {
     if (!(expr.get() instanceof Expressions.SimpleFieldChain)) {
       throw new Error("resolveConstantValue");
     }
 
     const first = expr.getFirstChild()!;
     if (first.get() instanceof Expressions.Field) {
-      const found = this.scope.resolveVariable(first.getFirstToken().getStr());
+      const name = first.getFirstToken().getStr();
+      const found = this.scope.resolveVariable(name);
       if (found instanceof TypedConstantIdentifier) {
         return found.getValue();
       } else {
-        throw new Error("VALUE not a constant");
+        return undefined;
       }
     } else if (first.get() instanceof Expressions.ClassName) {
-      return "todo, resolveConstantValue";
+      return undefined; // todo
     } else {
       throw new Error("resolveConstantValue, unexpected structure");
     }

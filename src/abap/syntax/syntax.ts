@@ -10,7 +10,6 @@ import {Registry} from "../../registry";
 import {ABAPObject} from "../../objects/_abap_object";
 import {Scope} from "./_scope";
 import {ObjectOriented} from "./_object_oriented";
-import {Globals} from "./_globals";
 import {Procedural} from "./_procedural";
 import {Inline} from "./_inline";
 import {Program} from "../../objects";
@@ -41,7 +40,7 @@ export class SyntaxLogic {
     this.issues = [];
 
     this.object = object;
-    this.scope = new Scope(Globals.get(this.reg.getConfig().getSyntaxSetttings().globalConstants));
+    this.scope = Scope.buildDefault(this.reg);
 
     this.helpers = {
       oooc: new ObjectOriented(this.reg, this.scope),

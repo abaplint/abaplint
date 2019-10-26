@@ -13,12 +13,12 @@ export class Attributes {
   private readonly constants: ClassConstant[];
   private readonly filename: string;
 
-  constructor(node: StructureNode, filename: string) {
+  constructor(node: StructureNode, filename: string, scope: Scope) {
     this.static = [];
     this.instance = [];
     this.constants = [];
     this.filename = filename;
-    this.parse(node);
+    this.parse(node, scope);
   }
 
   public getStatic(): ClassAttribute[] {
@@ -54,35 +54,35 @@ export class Attributes {
 
 /////////////////////////////
 
-  private parse(node: StructureNode): void {
+  private parse(node: StructureNode, scope: Scope): void {
     const cdef = node.findFirstStructure(Structures.ClassDefinition);
     if (cdef) {
-      this.parseSection(cdef.findFirstStructure(Structures.PublicSection), Visibility.Public);
-      this.parseSection(cdef.findFirstStructure(Structures.PrivateSection), Visibility.Private);
-      this.parseSection(cdef.findFirstStructure(Structures.ProtectedSection), Visibility.Protected);
+      this.parseSection(cdef.findFirstStructure(Structures.PublicSection), Visibility.Public, scope);
+      this.parseSection(cdef.findFirstStructure(Structures.PrivateSection), Visibility.Private, scope);
+      this.parseSection(cdef.findFirstStructure(Structures.ProtectedSection), Visibility.Protected, scope);
       return;
     }
 
     const idef = node.findFirstStructure(Structures.Interface);
     if (idef) {
-      this.parseSection(idef.findFirstStructure(Structures.SectionContents), Visibility.Public);
+      this.parseSection(idef.findFirstStructure(Structures.SectionContents), Visibility.Public, scope);
       return;
     }
 
     throw new Error("MethodDefinition, expected ClassDefinition or InterfaceDefinition");
   }
 
-  private parseSection(node: StructureNode | undefined, visibility: Visibility): void {
+  private parseSection(node: StructureNode | undefined, visibility: Visibility, scope: Scope): void {
     if (!node) { return; }
 
     let defs = node.findAllStatements(Statements.Data).concat(node.findAllStatements(Statements.DataBegin));
     for (const def of defs) {
-      this.instance.push(this.parseAttribute(def, visibility));
+      this.instance.push(this.parseAttribute(def, visibility, scope));
     }
 
     defs = node.findAllStatements(Statements.ClassData).concat(node.findAllStatements(Statements.ClassDataBegin));
     for (const def of defs) {
-      this.static.push(this.parseAttribute(def, visibility));
+      this.static.push(this.parseAttribute(def, visibility, scope));
     }
 
     defs = node.findAllStatements(Statements.Constant).concat(node.findAllStatements(Statements.ConstantBegin));
@@ -90,9 +90,9 @@ export class Attributes {
       let found: TypedIdentifier | undefined = undefined;
       const s = def.get();
       if (s instanceof Statements.Constant) {
-        found = s.runSyntax(def, new Scope(), this.filename);
+        found = s.runSyntax(def, scope, this.filename);
       } else if (s instanceof Statements.ConstantBegin) {
-        found = s.runSyntax(def, new Scope(), this.filename);
+        found = s.runSyntax(def, scope, this.filename);
       }
       if (found) {
         this.constants.push(new ClassConstant(found, visibility));
@@ -102,7 +102,7 @@ export class Attributes {
 // for now add ENUM values as constants
     for (const type of node.findAllStructures(Structures.TypeEnum)) {
       const enu = type.get() as Structures.TypeEnum;
-      const enums = enu.runSyntax(type, new Scope(), this.filename);
+      const enums = enu.runSyntax(type, scope, this.filename);
       for (const c of enums) {
         this.constants.push(new ClassConstant(c, visibility));
       }
@@ -110,17 +110,17 @@ export class Attributes {
 
   }
 
-  private parseAttribute(node: StatementNode, visibility: Visibility): ClassAttribute {
+  private parseAttribute(node: StatementNode, visibility: Visibility, scope: Scope): ClassAttribute {
     let found: TypedIdentifier | undefined = undefined;
     const s = node.get();
     if (s instanceof Statements.Data) {
-      found = s.runSyntax(node, new Scope(), this.filename);
+      found = s.runSyntax(node, scope, this.filename);
     } else if (s instanceof Statements.DataBegin) {
-      found = s.runSyntax(node, new Scope(), this.filename);
+      found = s.runSyntax(node, scope, this.filename);
     } else if (s instanceof Statements.ClassData) {
-      found = s.runSyntax(node, new Scope(), this.filename);
+      found = s.runSyntax(node, scope, this.filename);
     } else if (s instanceof Statements.ClassDataBegin) {
-      found = s.runSyntax(node, new Scope(), this.filename);
+      found = s.runSyntax(node, scope, this.filename);
     } else {
       throw new Error("ClassAttribute, unexpected node, 1");
     }

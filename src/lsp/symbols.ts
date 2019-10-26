@@ -3,14 +3,17 @@ import {Registry} from "../registry";
 import {ABAPFile} from "../files";
 import {Identifier} from "../abap/types/_identifier";
 import {Attributes, MethodDefinitions, MethodImplementation} from "../abap/types";
+import {Scope} from "../abap/syntax/_scope";
 
 export class Symbols {
+  private static reg: Registry;
 
   public static find(reg: Registry, uri: string): LServer.DocumentSymbol[] {
     const file = reg.getABAPFile(uri);
     if (file === undefined) {
       return [];
     }
+    this.reg = reg;
 
     let ret: LServer.DocumentSymbol[] = [];
     ret = ret.concat(this.outputClasses(file));
@@ -56,7 +59,7 @@ export class Symbols {
 
     for (const cla of file.getClassDefinitions()) {
       let children: LServer.DocumentSymbol[] = [];
-      children = children.concat(this.outputClassAttributes(cla.getAttributes()));
+      children = children.concat(this.outputClassAttributes(cla.getAttributes(Scope.buildDefault(this.reg))));
       children = children.concat(this.outputMethodDefinitions(cla.getMethodDefinitions()));
       const symbol = this.newSymbol(cla, LServer.SymbolKind.Class, children);
       ret.push(symbol);

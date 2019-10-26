@@ -3,6 +3,7 @@ import {MemoryFile} from "../../../src/files";
 import {Registry} from "../../../src/registry";
 import {Interface} from "../../../src/objects";
 import {Visibility} from "../../../src/abap/types/visibility";
+import {Scope} from "../../../src/abap/syntax/_scope";
 
 describe("Types, interface_definition, getMethodDefinitions", () => {
   it("test, positive", () => {
@@ -63,7 +64,7 @@ describe("Types, interface_definition, getAttributes", () => {
 
     const reg = new Registry().addFile(new MemoryFile("zif_foobar.intf.abap", abap)).parse();
     const intf = reg.getABAPObjects()[0] as Interface;
-    const instance = intf.getDefinition()!.getAttributes()!.getInstance();
+    const instance = intf.getDefinition()!.getAttributes(Scope.buildDefault(reg))!.getInstance();
     expect(instance.length).to.equal(1);
     expect(instance[0].getName()).to.equal("moo");
     expect(instance[0].getVisibility()).to.equal(Visibility.Public);

@@ -31,7 +31,12 @@ export class BasicTypes {
     } else if (chainText === "F") {
       return new Types.FloatType();
     } else if (chainText === "C") {
-      return new Types.CharacterType(this.findLength(stat));
+      const len = this.findLength(stat);
+      if (len) {
+        return new Types.CharacterType(len);
+      } else {
+        return new Types.UnknownType();
+      }
     }
 
     // todo, this only handles simple names
@@ -74,7 +79,12 @@ export class BasicTypes {
 
     if (found) {
       if (node.get() instanceof Statements.Constant) { // todo, move this to Statements.Constant
-        return new TypedConstantIdentifier(name, this.filename, found, this.findValue(node, name.getStr()));
+        const val = this.findValue(node, name.getStr());
+        if (val !== undefined) {
+          return new TypedConstantIdentifier(name, this.filename, found, val);
+        } else {
+          return new TypedConstantIdentifier(name, this.filename, new Types.UnknownType(), "unknown");
+        }
       } else {
         return new TypedIdentifier(name, this.filename, found);
       }
@@ -83,7 +93,7 @@ export class BasicTypes {
     return undefined;
   }
 
-  private findValue(node: StatementNode, name: string): string {
+  private findValue(node: StatementNode, name: string): string | undefined {
     const val = node.findFirstExpression(Expressions.Value);
     if (val === undefined) {
       throw new Error("set VALUE, " + name);
@@ -106,7 +116,7 @@ export class BasicTypes {
     throw new Error("findValue, unexpected, " + name);
   }
 
-  private findLength(node: StatementNode | ExpressionNode): number {
+  private findLength(node: StatementNode | ExpressionNode): number | undefined {
     const flen = node.findFirstExpression(Expressions.ConstantFieldLength);
     if (flen) {
       const cintExpr = flen.findFirstExpression(Expressions.Integer);
@@ -143,7 +153,11 @@ export class BasicTypes {
     throw new Error("Unexpected, findLength");
   }
 
-  private parseInt(text: string): number {
+  private parseInt(text: string | undefined): number | undefined {
+    if (text === undefined) {
+      return undefined;
+    }
+
     if (text.startsWith("'")) {
       text = text.split("'")[1];
     } else if (text.startsWith("`")) {

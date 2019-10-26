@@ -5,6 +5,7 @@ import {IRule} from "./_irule";
 import {IObject} from "../objects/_iobject";
 import {Class} from "../objects";
 import {Visibility} from "../abap/types";
+import {Scope} from "../abap/syntax/_scope";
 
 // todo, add unit tests for this class
 
@@ -32,7 +33,7 @@ export class NoPublicAttributes implements IRule {
     this.conf = conf;
   }
 
-  public run(obj: IObject, _reg: Registry): Issue[] {
+  public run(obj: IObject, reg: Registry): Issue[] {
     const issues: Issue[] = [];
 
 // todo: also implement for interfaces and local classes
@@ -45,7 +46,8 @@ export class NoPublicAttributes implements IRule {
       return [];
     }
 
-    const attrs = def.getAttributes();
+    const attrs = def.getAttributes(Scope.buildDefault(reg));
+
     if (attrs === undefined) {
       return [];
     }

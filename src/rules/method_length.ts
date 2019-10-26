@@ -29,7 +29,7 @@ export class MethodLength implements IRule {
   private getDescription(issueType: IssueType, actual: string): string {
     switch (issueType) {
       case IssueType.EmptyMethod: {
-        return "Empty Method.";
+        return "Empty method";
       }
       case IssueType.MaxStatements: {
         return "Reduce method length to max " + this.conf.statements + " statements, currently " + actual;

@@ -1,5 +1,7 @@
 import {ClassDefinition, InterfaceDefinition, FormDefinition} from "../types";
 import {TypedIdentifier} from "../types/_typed_identifier";
+import {Registry} from "../../registry";
+import {Globals} from "./_globals";
 
 interface IVar {
   name: string;
@@ -18,6 +20,10 @@ export interface IScopeInfo {
 export class Scope {
 
   private readonly scopes: IScopeInfo[];
+
+  public static buildDefault(reg: Registry): Scope {
+    return new Scope(Globals.get(reg.getConfig().getSyntaxSetttings().globalConstants));
+  }
 
   constructor(builtin?: TypedIdentifier[]) {
     this.scopes = [];

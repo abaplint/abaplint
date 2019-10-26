@@ -4,6 +4,7 @@ import * as Structures from "../../abap/structures";
 import * as Statements from "../../abap/statements";
 import * as Expressions from "../../abap/expressions";
 import {MethodDefinition, Visibility, Attributes} from ".";
+import {Scope} from "../syntax/_scope";
 
 export class InterfaceDefinition extends Identifier {
   private readonly node: StructureNode;
@@ -19,9 +20,9 @@ export class InterfaceDefinition extends Identifier {
     this.node = node;
   }
 
-  public getAttributes(): Attributes | undefined {
+  public getAttributes(scope: Scope): Attributes | undefined {
     if (!this.node) { return undefined; }
-    return new Attributes(this.node, this.filename);
+    return new Attributes(this.node, this.filename, scope);
   }
 
   public isLocal(): boolean {

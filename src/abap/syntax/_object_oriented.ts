@@ -42,7 +42,7 @@ export class ObjectOriented {
 
     const classDefinition = this.findClassDefinition(className);
 
-    const classAttributes = classDefinition.getAttributes();
+    const classAttributes = classDefinition.getAttributes(this.scope);
 
     this.addAliasedAttributes(classDefinition); // todo, this is not correct, take care of instance vs static
 
@@ -72,7 +72,7 @@ export class ObjectOriented {
       const comp = alias.getComponent();
       const idef = this.findInterfaceDefinition(comp.split("~")[0]);
       if (idef) {
-        const found = idef.getAttributes()!.findByName(comp.split("~")[1]);
+        const found = idef.getAttributes(this.scope)!.findByName(comp.split("~")[1]);
         if (found) {
           this.scope.addNamedIdentifier(alias.getName(), found);
         }
@@ -147,10 +147,10 @@ export class ObjectOriented {
     for (const i of this.findInterfaces(classDefinition)) {
       const idef = this.findInterfaceDefinition(i.name);
       if (idef) {
-        this.scope.addList(idef.getAttributes()!.getConstants(), i.name + "~");
-        this.scope.addList(idef.getAttributes()!.getStatic(), i.name + "~");
+        this.scope.addList(idef.getAttributes(this.scope)!.getConstants(), i.name + "~");
+        this.scope.addList(idef.getAttributes(this.scope)!.getStatic(), i.name + "~");
         // todo, only add instance if its an instance method
-        this.scope.addList(idef.getAttributes()!.getInstance(), i.name + "~");
+        this.scope.addList(idef.getAttributes(this.scope)!.getInstance(), i.name + "~");
       }
     }
   }
@@ -231,7 +231,7 @@ export class ObjectOriented {
     }
     const cdef = this.findSuperDefinition(sup);
 
-    const attr = cdef.getAttributes();
+    const attr = cdef.getAttributes(this.scope);
 
     this.scope.addList(attr.getConstants()); // todo, handle scope and instance vs static
     this.scope.addList(attr.getInstance()); // todo, handle scope and instance vs static
