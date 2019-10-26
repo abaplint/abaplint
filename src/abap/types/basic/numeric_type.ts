@@ -16,7 +16,7 @@ export class NumericType extends AbstractType {
   }
 
   public toText() {
-    return "n LENGTH " + this.getLength();
+    return "```n LENGTH " + this.getLength() + "```";
   }
 
 }

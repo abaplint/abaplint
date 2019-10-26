@@ -25,6 +25,6 @@ export class StructureType extends AbstractType {
     for (const c of this.components) {
       compo.push(c.name + " TYPE " + c.type.toText());
     }
-    return "Structure: {" + compo.join(", ") + "}";
+    return "Structure: {\n\n" + compo.join(",\n\n") + "}";
   }
 }

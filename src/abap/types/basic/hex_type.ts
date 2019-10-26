@@ -16,7 +16,7 @@ export class HexType extends AbstractType {
   }
 
   public toText() {
-    return "x LENGTH " + this.getLength();
+    return "```x LENGTH " + this.getLength() + "```";
   }
 
 }

@@ -1,19 +1,19 @@
 import {AbstractType} from "./_abstract_type";
 
 export class ObjectReferenceType extends AbstractType {
-  private readonly object: string;
+  private readonly name: string;
 
-  public constructor(object: string) {
+  public constructor(name: string) {
     super();
-    this.object = object;
+    this.name = name;
   }
 
-  public getObject() {
-    return this.object;
+  public getName() {
+    return this.name;
   }
 
   public toText() {
-    return "REF TO " + this.object;
+    return "```REF TO " + this.name + "```";
   }
 
 }

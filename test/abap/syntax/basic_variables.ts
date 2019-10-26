@@ -1,8 +1,8 @@
 import {expect} from "chai";
+import * as Basic from "../../../src/abap/types/basic";
 import {MemoryFile} from "../../../src/files";
 import {Registry} from "../../../src/registry";
 import {TypedIdentifier} from "../../../src/abap/types/_typed_identifier";
-import * as Basic from "../../../src/abap/types/basic";
 import {TypedConstantIdentifier} from "../../../src/abap/types/_typed_constant_identifier";
 import {SyntaxLogic} from "../../../src/abap/syntax/syntax";
 import {ABAPObject} from "../../../src/objects/_abap_object";
@@ -20,6 +20,24 @@ function resolveVariable(abap: string, name: string): TypedIdentifier | undefine
   }
   return undefined;
 }
+
+function runMulti(files: {filename: string, contents: string}[], name: string): TypedIdentifier | undefined {
+  const reg = new Registry();
+  for (const file of files) {
+    reg.addFile(new MemoryFile(file.filename, file.contents));
+  }
+  reg.parse();
+
+  const last = files.length - 1;
+  const scope = new SyntaxLogic(reg, reg.getObjects()[last] as ABAPObject).traverseUntil();
+  const identifier = scope.resolveVariable(name);
+
+  if (identifier instanceof TypedIdentifier) {
+    return identifier;
+  }
+  return undefined;
+}
+
 /*
 function expectStructure(identifier: TypedIdentifier | undefined) {
   expect(identifier).to.not.equals(undefined);
@@ -253,4 +271,64 @@ describe("Syntax - Basic Types", () => {
     expect(type!.getType()).to.be.instanceof(Basic.UnknownType);
   });
 
+  it("ref to interface", () => {
+    const abap = `
+    INTERFACE lif_foo.
+    ENDINTERFACE.
+    DATA li_intf TYPE REF TO lif_foo.`;
+    const type = resolveVariable(abap, "li_intf");
+    expect(type).to.not.equal(undefined);
+    expect(type!.getType()).to.be.instanceof(Basic.ObjectReferenceType);
+  });
+
+  it("ref to global class", () => {
+    const clas = `
+      CLASS zcl_global DEFINITION PUBLIC.
+      ENDCLASS.
+      CLASS zcl_global IMPLEMENTATION.
+      ENDCLASS.`;
+    const prog = `DATA lo_class TYPE REF TO zcl_global.`;
+    const type = runMulti(
+      [{filename: "zcl_global.clas.abap", contents: clas},
+      {filename: "zfoobar.prog.abap", contents: prog}],
+      "lo_class");
+    expect(type).to.not.equal(undefined);
+    expect(type!.getType()).to.be.instanceof(Basic.ObjectReferenceType);
+  });
+
+/*
+  it("DDIC data element", () => {
+    const clas = `
+<?xml version="1.0" encoding="utf-8"?>
+<abapGit version="v1.0.0" serializer="LCL_OBJECT_DTEL" serializer_version="v1.0.0">
+ <asx:abap xmlns:asx="http://www.sap.com/abapxml" version="1.0">
+  <asx:values>
+   <DD04V>
+    <ROLLNAME>ZDDIC</ROLLNAME>
+    <DDLANGUAGE>E</DDLANGUAGE>
+    <HEADLEN>55</HEADLEN>
+    <SCRLEN1>10</SCRLEN1>
+    <SCRLEN2>20</SCRLEN2>
+    <SCRLEN3>40</SCRLEN3>
+    <DDTEXT>moo</DDTEXT>
+    <REPTEXT>moo</REPTEXT>
+    <SCRTEXT_S>moo</SCRTEXT_S>
+    <SCRTEXT_M>moo</SCRTEXT_M>
+    <SCRTEXT_L>moo</SCRTEXT_L>
+    <DTELMASTER>E</DTELMASTER>
+    <DATATYPE>CHAR</DATATYPE>
+    <LENG>000002</LENG>
+    <OUTPUTLEN>000002</OUTPUTLEN>
+   </DD04V>
+  </asx:values>
+ </asx:abap>
+</abapGit>`;
+    const prog = `DATA foo TYPE zddic.`;
+    const type = runMulti(
+      [{filename: "zddic.dtel.abap", contents: clas},
+      {filename: "zfoobar.prog.abap", contents: prog}],
+      "foo");
+    expectCharacter(type, 2);
+  });
+*/
 });

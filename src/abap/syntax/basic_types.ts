@@ -122,7 +122,7 @@ export class BasicTypes {
 
     const name = chain.getFirstToken().getStr();
 
-    const found = this.scope.findClassDefinition(name);
+    const found = this.scope.findObjectReference(name);
     if (found) {
       return new Types.ObjectReferenceType(name);
     }

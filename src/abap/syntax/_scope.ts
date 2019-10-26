@@ -2,6 +2,7 @@ import {ClassDefinition, InterfaceDefinition, FormDefinition} from "../types";
 import {TypedIdentifier} from "../types/_typed_identifier";
 import {Registry} from "../../registry";
 import {Globals} from "./_globals";
+import * as Objects from "../../objects";
 
 interface IVar {
   name: string;
@@ -18,19 +19,18 @@ export interface IScopeInfo {
 }
 
 export class Scope {
-
   private readonly scopes: IScopeInfo[];
+  private readonly reg: Registry;
 
   public static buildDefault(reg: Registry): Scope {
-    return new Scope(Globals.get(reg.getConfig().getSyntaxSetttings().globalConstants));
+    return new Scope(Globals.get(reg.getConfig().getSyntaxSetttings().globalConstants), reg);
   }
 
-  private constructor(builtin?: TypedIdentifier[]) {
+  private constructor(builtin: TypedIdentifier[], reg: Registry) {
     this.scopes = [];
+    this.reg = reg;
     this.push("_builtin");
-    if (builtin) {
-      this.addList(builtin);
-    }
+    this.addList(builtin);
     this.push("_global");
   }
 
@@ -61,6 +61,27 @@ export class Scope {
           return cdef;
         }
       }
+    }
+
+    return undefined;
+  }
+
+  public findObjectReference(name: string): ClassDefinition | InterfaceDefinition | undefined {
+    const clocal = this.findClassDefinition(name);
+    if (clocal) {
+      return clocal;
+    }
+    const ilocal = this.findInterfaceDefinition(name);
+    if (ilocal) {
+      return ilocal;
+    }
+    const cglobal = this.reg.getObject("CLAS", name) as Objects.Class | undefined;
+    if (cglobal) {
+      return cglobal.getClassDefinition();
+    }
+    const iglobal = this.reg.getObject("INTF", name) as Objects.Interface | undefined;
+    if (iglobal) {
+      return iglobal.getDefinition();
     }
     return undefined;
   }
