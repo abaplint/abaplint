@@ -7,8 +7,6 @@ import * as Structures from "../abap/structures";
 import {ClassDefinition, ClassImplementation, InterfaceDefinition, FormDefinition} from "../abap/types";
 
 export class ABAPFile extends AbstractFile {
-  // tokens vs statements: pragmas are part of tokens but not in statements
-  // todo: need some better way of handling pragmas
   private readonly tokens: Token[];
   private statements: StatementNode[];
   private structure: StructureNode | undefined;

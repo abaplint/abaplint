@@ -13,8 +13,7 @@ export class MethodDefinition extends Identifier {
   private readonly eventHandler: boolean;
   private readonly abstract: boolean;
 
-// todo:
-// final
+// todo: final
 
   constructor(node: StatementNode, visibility: Visibility, filename: string, scope: Scope) {
     if (!(node.get() instanceof MethodDef)) {

@@ -16,12 +16,7 @@ export function getTokens(abap: string) {
 }
 
 export function getStatements(abap: string, version?: Version) {
-
-  const config = Config.getDefault();
-  if (version !== undefined) {
-    config.setVersion(version);
-  }
-
+  const config = Config.getDefault(version);
   return StatementParser.run(getTokens(abap), config);
 }
 
@@ -36,7 +31,7 @@ export function parse(abap: string, config?: Config) {
 }
 
 function run(abap: string, text: string, type: any, version?: Version | undefined) {
-  const config = Config.getDefault().setVersion(version);
+  const config = Config.getDefault(version);
   const file = parse(abap, config);
   const slist = file.getStatements();
 

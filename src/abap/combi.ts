@@ -24,8 +24,7 @@ export class Result {
     return this.tokens[0];
   }
 
-// todo, make it non optional
-  public shift(node?: CountableNode): Result {
+  public shift(node: CountableNode): Result {
     const copy = this.tokens.slice();
     copy.shift();
     if (this.nodes) {

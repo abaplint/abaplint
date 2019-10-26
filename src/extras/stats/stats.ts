@@ -3,6 +3,7 @@ import {Version, textToVersion, versionToText} from "../../version";
 import {Unknown, Comment, Empty} from "../../abap/statements/_statement";
 import * as Statements from "../../abap/statements";
 import {MethodLengthStats} from "../../abap/method_length_stats";
+import { Config } from "../../config";
 
 export interface ITotals {
   statements: number;
@@ -123,7 +124,7 @@ export class Stats {
   private statementsVersion(ver: Version, progress?: IProgress): number {
     let result = 0;
 
-    this.reg.setConfig(this.reg.getConfig().setVersion(ver));
+    this.reg.setConfig(Config.getDefault(ver));
     this.reg.parse(progress);
 
     for (const file of this.reg.getABAPFiles()) {

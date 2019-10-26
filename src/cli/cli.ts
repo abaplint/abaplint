@@ -14,7 +14,7 @@ import {SemanticSearch} from "../extras/semantic_search/semantic_search";
 import {FileOperations} from "./file_operations";
 import {Position} from "../position";
 
-// todo, split this file into mulitple files? and move to new directory?
+// todo, split this file into multiple files? and move to new directory?
 
 class Progress implements IProgress {
   private bar: ProgressBar;

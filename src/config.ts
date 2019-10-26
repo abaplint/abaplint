@@ -30,17 +30,23 @@ export interface IConfig {
   rules: any;
 }
 
+// assumption: this class is immutable
 export class Config {
 
   private static readonly defaultVersion = Version.v755;
   private readonly config: IConfig;
 
-  public static getDefault(): Config {
+  public static getDefault(ver?: Version): Config {
     const rules: any = {};
 
     const sorted = Artifacts.getRules().sort((a, b) => { return a.getKey().localeCompare(b.getKey()); });
     for (const rule of sorted) {
       rules[rule.getKey()] = rule.getConfig();
+    }
+
+    let version = versionToText(Config.defaultVersion);
+    if (ver) {
+      version = versionToText(ver);
     }
 
     const config: IConfig = {
@@ -57,7 +63,7 @@ export class Config {
         files: "/src/**/*.*",
       }],
       syntax: {
-        version: versionToText(Config.defaultVersion),
+        version,
         errorNamespace: "^(Z|Y)",
         globalConstants: [],
         globalMacros: [],
@@ -90,6 +96,7 @@ export class Config {
 
     return rules;
   }
+
   public constructor(json: string) {
     this.config = JSON.parse(json);
 
@@ -127,7 +134,7 @@ export class Config {
     }
     return textToVersion(this.config.syntax.version);
   }
-
+/*
   public setVersion(ver: Version | undefined): Config {
     if (ver === undefined) {
       return this;
@@ -135,5 +142,5 @@ export class Config {
     this.config.syntax.version = versionToText(ver);
     return this;
   }
-
+*/
 }
