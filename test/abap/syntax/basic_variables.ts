@@ -98,6 +98,41 @@ describe("Syntax - Basic Types", () => {
     expectInteger(identifier);
   });
 
+  it("DATA TYPE xstring", () => {
+    const abap = "DATA foo TYPE xstring.";
+    const identifier = resolveVariable(abap, "foo");
+    expect(identifier).to.not.equal(undefined);
+    expect(identifier!.getType()).to.be.instanceof(Basic.XStringType);
+  });
+
+  it("DATA TYPE d", () => {
+    const abap = "DATA foo TYPE d.";
+    const identifier = resolveVariable(abap, "foo");
+    expect(identifier).to.not.equal(undefined);
+    expect(identifier!.getType()).to.be.instanceof(Basic.DateType);
+  });
+
+  it("DATA TYPE t", () => {
+    const abap = "DATA foo TYPE t.";
+    const identifier = resolveVariable(abap, "foo");
+    expect(identifier).to.not.equal(undefined);
+    expect(identifier!.getType()).to.be.instanceof(Basic.TimeType);
+  });
+
+  it("DATA TYPE n", () => {
+    const abap = "DATA foo TYPE n.";
+    const identifier = resolveVariable(abap, "foo");
+    expect(identifier).to.not.equal(undefined);
+    expect(identifier!.getType()).to.be.instanceof(Basic.NumericType);
+  });
+
+  it("DATA TYPE x", () => {
+    const abap = "DATA foo TYPE x.";
+    const identifier = resolveVariable(abap, "foo");
+    expect(identifier).to.not.equal(undefined);
+    expect(identifier!.getType()).to.be.instanceof(Basic.HexType);
+  });
+
   it("CONSTANTS TYPE string", () => {
     const abap = "CONSTANTS foo TYPE string VALUE 'sdf'.";
     const identifier = resolveVariable(abap, "foo");

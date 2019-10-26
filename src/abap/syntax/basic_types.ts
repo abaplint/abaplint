@@ -26,6 +26,12 @@ export class BasicTypes {
     const chainText = expr.concatTokens().toUpperCase();
     if (chainText === "STRING") {
       return new Types.StringType();
+    } else if (chainText === "XSTRING") {
+      return new Types.XStringType();
+    } else if (chainText === "D") {
+      return new Types.DateType();
+    } else if (chainText === "T") {
+      return new Types.TimeType();
     } else if (chainText === "I") {
       return new Types.IntegerType();
     } else if (chainText === "F") {
@@ -34,6 +40,20 @@ export class BasicTypes {
       const len = this.findLength(stat);
       if (len) {
         return new Types.CharacterType(len);
+      } else {
+        return new Types.UnknownType();
+      }
+    } else if (chainText === "X") {
+      const len = this.findLength(stat);
+      if (len) {
+        return new Types.HexType(len);
+      } else {
+        return new Types.UnknownType();
+      }
+    } else if (chainText === "N") {
+      const len = this.findLength(stat);
+      if (len) {
+        return new Types.NumericType(len);
       } else {
         return new Types.UnknownType();
       }
