@@ -6,7 +6,7 @@ import {Registry} from "../../registry";
 import {BasicRuleConfig} from "../_basic_rule_config";
 import {Position} from "../../position";
 import {AbstractType} from "../../abap/types/basic/_abstract_type";
-import {UnknownType} from "../../abap/types/basic";
+import {UnknownType, StructureType, TableType} from "../../abap/types/basic";
 
 /** Checks the types of DDIC objects can be resolved, the namespace of the development/errors can be configured in "errorNamespace" */
 export class CheckDDICConf extends BasicRuleConfig {
@@ -40,14 +40,27 @@ export class CheckDDIC implements IRule {
       return [];
     }
 
+    return this.check(found, obj);
+  }
+
+  private check(found: AbstractType | undefined, obj: IObject): Issue[] {
+    let ret: Issue[] = [];
+
     if (found instanceof UnknownType) {
       const position = new Position(1, 1);
       const message = "Unknown/un-resolveable type in " + obj.getName() + ": " + found.getError();
-      const issue = Issue.atPosition(obj.getFiles()[0], position, message, this.getKey());
-      return [issue];
+      ret.push(Issue.atPosition(obj.getFiles()[0], position, message, this.getKey()));
+    } else if (found instanceof StructureType) {
+// assumption: no circular types
+      for (const c of found.getComponents()) {
+        ret = ret.concat(this.check(c.type, obj));
+      }
+    } else if (found instanceof TableType) {
+      ret = ret.concat(this.check(found.getRowType(), obj));
     }
+// todo, reference types?
 
-    return [];
+    return ret;
   }
 
 }

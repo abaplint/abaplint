@@ -96,7 +96,7 @@ export class Inline {
   private findFields(name: string): string[] {
     const table = this.reg.getObject("TABL", name) as Table | undefined;
     if (table !== undefined) {
-      return table.getFields();
+      return table.getFieldNames();
     }
     const view = this.reg.getObject("VIEW", name) as View | undefined;
     if (view !== undefined) {

@@ -4,6 +4,8 @@ import {xmlToArray} from "../xml_utils";
 import {AbstractType} from "../abap/types/basic/_abstract_type";
 import * as Types from "../abap/types/basic";
 import {Registry} from "../registry";
+import {IStructureComponent, StructureType} from "../abap/types/basic";
+import {DDIC} from "../ddic";
 
 export enum EnhancementCategory {
   NotClassified = "0",
@@ -28,11 +30,51 @@ export class Table extends AbstractObject {
     return "TABL";
   }
 
-  public parseType(_reg: Registry): AbstractType {
-    return new Types.UnknownType("todo, table parse type");
+  public parseType(reg: Registry): AbstractType {
+    const parsed = this.parseXML();
+    if (parsed === undefined) {
+      return new Types.UnknownType("Table, parser error");
+    }
+
+    const components: IStructureComponent[] = [];
+    const fields = parsed.abapGit["asx:abap"]["asx:values"].DD03P_TABLE;
+    const ddic = new DDIC(reg);
+    for (const field of xmlToArray(fields.DD03P)) {
+      const comptype = field.COMPTYPE ? field.COMPTYPE._text : "";
+      if (comptype === "E") { // data element
+        components.push({
+          name: field.FIELDNAME._text,
+          type: ddic.lookupDataElement(field.ROLLNAME._text)});
+      } else if (comptype === "S" && field.FIELDNAME._text === ".INCLUDE") { // incude structure
+        const found = ddic.lookupTable(field.PRECFIELD._text);
+        if (found instanceof StructureType) {
+          for (const c of found.getComponents()) {
+            components.push({
+              name: c.name,
+              type: c.type});
+          }
+        } else {
+          components.push({
+            name: field.FIELDNAME._text,
+            type: found});
+        }
+      } else if (comptype === "") { // built in
+        const datatype = field.DATATYPE._text;
+        const length = field.INTLEN._text;
+        components.push({
+          name: field.FIELDNAME._text,
+          type: ddic.textToType(datatype, length)});
+      } else {
+        components.push({
+          name: field.FIELDNAME._text,
+          type: new Types.UnknownType("Table " + this.getName() + ", unknown component type " + comptype)});
+      }
+    }
+
+    return new Types.StructureType(components);
   }
 
-  public getFields(): string[] {
+  public getFieldNames(): string[] {
     const parsed = this.parseXML();
     if (parsed === undefined) {
       return [];
@@ -61,6 +103,8 @@ export class Table extends AbstractObject {
 
     return parsed.abapGit["asx:abap"]["asx:values"].DD02V.EXCLASS._text;
   }
+
+/////////////////////////////////
 
   private parseXML(): any | undefined {
     const xml = this.getXML();

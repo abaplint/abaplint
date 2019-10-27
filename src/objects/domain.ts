@@ -3,6 +3,7 @@ import {AbstractType} from "../abap/types/basic/_abstract_type";
 import * as Types from "../abap/types/basic";
 import {Registry} from "../registry";
 import * as xmljs from "xml-js";
+import {DDIC} from "../ddic";
 
 export class Domain extends AbstractObject {
 
@@ -10,7 +11,7 @@ export class Domain extends AbstractObject {
     return "DOMA";
   }
 
-  public parseType(_reg: Registry): AbstractType {
+  public parseType(reg: Registry): AbstractType {
     const xml = this.getXML();
     if (xml === undefined) {
       return new Types.UnknownType("unable to find xml");
@@ -20,14 +21,9 @@ export class Domain extends AbstractObject {
       const parsed: any = xmljs.xml2js(xml, {compact: true});
       const dd01v = parsed.abapGit["asx:abap"]["asx:values"].DD01V;
       const datatype = dd01v.DATATYPE._text;
-      switch (datatype) {
-        case "CHAR":
-          return new Types.CharacterType(parseInt(dd01v.LENG._text, 10));
-        case "RAW":
-          return new Types.HexType(parseInt(dd01v.LENG._text, 10));
-        default:
-          return new Types.UnknownType(datatype + " unknown");
-      }
+      const length = dd01v.LENG._text;
+      const ddic = new DDIC(reg);
+      return ddic.textToType(datatype, length);
     } catch {
       return new Types.UnknownType("Domain parser error");
     }
