@@ -5,6 +5,7 @@ docs/*
 web/*
 src/*
 build/test/*
+build/scripts/*
 test/*
 travis.sh
 zcl_foo.clas.abap

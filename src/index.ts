@@ -19,6 +19,6 @@ import * as Types from "./abap/types";
 
 const abap = {Structures, Statements, Expressions, Types};
 
-export = {MemoryFile, Issue, Config, Version, Formatter,
+export {MemoryFile, Issue, Config, Version, Formatter,
   Registry, Stats, textToVersion, LanguageServer, MethodLengthStats,
   SemanticSearch, Artifacts, Objects, abap};
