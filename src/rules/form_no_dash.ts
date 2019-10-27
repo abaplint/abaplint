@@ -4,12 +4,13 @@ import {Issue} from "../issue";
 import {ABAPFile} from "../files";
 import * as Statements from "../abap/statements";
 import {Dash, DashW} from "../abap/tokens";
-
+import {FormName} from "../abap/expressions";
 
 /** Checks for a Dash in form names. */
 export class FormNoDashConf extends BasicRuleConfig {
 }
 
+// todo, also check for other characters like %&$, rename rule? and extend to more kinds of identifiers?
 export class FormNoDash extends ABAPRule {
 
   private conf = new FormNoDashConf();
@@ -38,7 +39,8 @@ export class FormNoDash extends ABAPRule {
       return issues;
     }
     for (const form of struc.findAllStatements(Statements.Form)) {
-      for (const token of form.getTokens()) {
+      const expr = form.findFirstExpression(FormName);
+      for (const token of expr!.getTokens()) {
         if (token instanceof Dash || token instanceof DashW) {
           const issue = Issue.atToken(file, token, this.getDescription(), this.getKey());
           issues.push(issue);

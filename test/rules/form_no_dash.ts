@@ -6,6 +6,7 @@ const tests = [
   {abap: "FORM foobar.\nENDFORM.", cnt: 0},
   {abap: "FORM foo-bar-bar.\nENDFORM.", cnt: 1},
   {abap: "FORM foo-.\nENDFORM.", cnt: 1},
+  {abap: "FORM remove_toolbar USING pv_dynnr TYPE sy-dynnr.\nENDFORM.", cnt: 0},
   {abap: "jasdhasdf", cnt: 0},
 ];
 
