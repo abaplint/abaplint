@@ -1,7 +1,7 @@
 import {MemoryFile} from "./files";
 import {Issue} from "./issue";
 import {Config} from "./config";
-import {Version, textToVersion} from "./version";
+import {Version, textToVersion, versionToText} from "./version";
 import {Formatter} from "./formatters/_format";
 import {Registry} from "./registry";
 import {Stats} from "./extras/stats/stats";
@@ -21,4 +21,4 @@ const abap = {Structures, Statements, Expressions, Types};
 
 export {MemoryFile, Issue, Config, Version, Formatter,
   Registry, Stats, textToVersion, LanguageServer, MethodLengthStats,
-  SemanticSearch, Artifacts, Objects, abap};
+  versionToText, SemanticSearch, Artifacts, Objects, abap};
