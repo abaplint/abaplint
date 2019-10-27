@@ -65,6 +65,11 @@ export class BasicTypes {
       return typ.getType();
     }
 
+    const ddic = this.scope.getDDIC().lookup(chainText);
+    if (ddic) {
+      return ddic;
+    }
+
     return undefined;
   }
 
@@ -128,6 +133,8 @@ export class BasicTypes {
     return undefined;
   }
 
+/////////////////////
+
   private findValue(node: StatementNode, name: string): string | undefined {
     const val = node.findFirstExpression(Expressions.Value);
     if (val === undefined) {
@@ -152,7 +159,13 @@ export class BasicTypes {
   }
 
   private findLength(node: StatementNode | ExpressionNode): number | undefined {
+    const val = node.findFirstExpression(Expressions.Length);
     const flen = node.findFirstExpression(Expressions.ConstantFieldLength);
+
+    if (val && flen) {
+      throw new Error("Only specify length once");
+    }
+
     if (flen) {
       const cintExpr = flen.findFirstExpression(Expressions.Integer);
       if (cintExpr) {
@@ -165,7 +178,6 @@ export class BasicTypes {
       }
     }
 
-    const val = node.findFirstExpression(Expressions.Length);
     if (val === undefined) {
       return 1;
     }

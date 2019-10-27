@@ -301,7 +301,7 @@ describe("Syntax - Basic Types", () => {
     const identifier = resolveVariable(abap, "foo");
     expectCharacter(identifier, 1);
   });
-/*
+
   it("DDIC data element", () => {
     const clas = `
 <?xml version="1.0" encoding="utf-8"?>
@@ -320,10 +320,10 @@ describe("Syntax - Basic Types", () => {
 </abapGit>`;
     const prog = `DATA foo TYPE zddic.`;
     const type = runMulti(
-      [{filename: "zddic.dtel.abap", contents: clas},
+      [{filename: "zddic.dtel.xml", contents: clas},
       {filename: "zfoobar.prog.abap", contents: prog}],
       "foo");
     expectCharacter(type, 2);
   });
-*/
+
 });

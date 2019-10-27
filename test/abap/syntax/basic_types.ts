@@ -99,7 +99,7 @@ describe("Syntax - Types", () => {
   });
 
   it("TYPE unresolveable", () => {
-    const abap = "TYPES foo TYPE sdfsd.";
+    const abap = "TYPES foo TYPE zsdfsd.";
     const type = resolveType(abap, "foo");
     expect(type).to.not.equal(undefined);
     expect(type!.getType()).to.be.instanceof(Basic.UnknownType);

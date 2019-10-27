@@ -1107,6 +1107,18 @@ describe("Check Variables", () => {
     expect(issues.length).to.equals(1);
   });
 
+  it("DATA, double lenght specified", () => {
+    const abap = `DATA foo(4) TYPE c length 2.`;
+    const issues = runProgram(abap);
+    expect(issues.length).to.equals(1);
+  });
+/*
+  it("DATA, already specified", () => {
+    const abap = `DATA foo.\nDATA foo.`;
+    const issues = runProgram(abap);
+    expect(issues.length).to.equals(1);
+  });
+*/
 /*
   it("program, constant, begin, error", () => {
     const abap =

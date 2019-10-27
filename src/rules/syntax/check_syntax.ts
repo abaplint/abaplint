@@ -4,28 +4,27 @@ import {BasicRuleConfig} from "../_basic_rule_config";
 import {IObject} from "../../objects/_iobject";
 import {ABAPObject} from "../../objects/_abap_object";
 
-/** Enables variable resolution */
-export class CheckVariablesConf extends BasicRuleConfig {
+/** Enables syntax check and variable resolution */
+export class CheckSyntaxConf extends BasicRuleConfig {
 }
 
-export class CheckVariables {
+export class CheckSyntax {
 
-  private conf = new CheckVariablesConf();
+  private conf = new CheckSyntaxConf();
 
   public getKey(): string {
-    return "check_variables";
+    return "check_syntax";
   }
 
   public getConfig() {
     return this.conf;
   }
 
-  public setConfig(conf: CheckVariablesConf) {
+  public setConfig(conf: CheckSyntaxConf) {
     this.conf = conf;
   }
 
   public run(obj: IObject, reg: Registry) {
-
     if (!(obj instanceof ABAPObject)) {
       return [];
     }
