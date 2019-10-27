@@ -1,6 +1,6 @@
 import {str, alt, tok, seq, Expression, IStatementRunnable, ver} from "../combi";
 import {Version} from "../../version";
-import {TypeName, Source} from ".";
+import {TypeNameOrInfer, Source} from ".";
 import {ParenLeftW, WParenRightW, WParenRight} from "../tokens";
 
 export class Cast extends Expression {
@@ -8,7 +8,7 @@ export class Cast extends Expression {
     const rparen = alt(tok(WParenRightW), tok(WParenRight));
 
     const cast = ver(Version.v740sp02, seq(str("CAST"),
-                                           new TypeName(),
+                                           new TypeNameOrInfer(),
                                            tok(ParenLeftW),
                                            new Source(),
                                            rparen));

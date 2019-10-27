@@ -10,6 +10,7 @@ const tests = [
   "STATICS asdf/foo/bar TYPE i.",
   "STATICS stat(255).",
   "STATICS lv_stat1 TYPE c LENGTH 1.",
+  "STATICS foo TYPE p DECIMALS 2.",
   "STATICS lv_stat2 LENGTH 1 TYPE c.",
 ];
 

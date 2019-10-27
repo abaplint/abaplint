@@ -1,7 +1,7 @@
 import {plus, ver, seq, opt, tok, str, alt, star, optPrio, regex, Expression, IStatementRunnable} from "../combi";
 import {InstanceArrow, WParenLeftW, WParenRightW, WDashW, ParenLeftW} from "../tokens/";
 import {MethodCallChain, ArithOperator, Cond, Constant, StringTemplate, Let, ComponentCond, SimpleName} from "./";
-import {FieldChain, Field, TableBody, TypeName, ArrowOrDash, FieldSub, For, Throw} from "./";
+import {TypeName, FieldChain, Field, TableBody, TypeNameOrInfer, ArrowOrDash, FieldSub, For, Throw} from "./";
 import {Version} from "../../version";
 import {ComponentChain, ComponentName} from "./";
 import {InlineFieldDefinition} from "./inline_field_definition";
@@ -46,7 +46,7 @@ export class Source extends Expression {
     const discarding = ver(Version.v751, str("DISCARDING DUPLICATES"));
 
     const corr = ver(Version.v740sp05, seq(str("CORRESPONDING"),
-                                           new TypeName(),
+                                           new TypeNameOrInfer(),
                                            tok(ParenLeftW),
                                            opt(baseParen),
                                            new Source(),
@@ -58,7 +58,7 @@ export class Source extends Expression {
     const arith = seq(new ArithOperator(), new Source());
 
     const conv = ver(Version.v740sp02, seq(str("CONV"),
-                                           new TypeName(),
+                                           new TypeNameOrInfer(),
                                            tok(ParenLeftW),
                                            opt(new Let()),
                                            new Source(),
@@ -68,7 +68,7 @@ export class Source extends Expression {
 
     const swhen = seq(str("WHEN"), new Source(), star(or), str("THEN"), alt(new Source(), new Throw()));
     const swit = ver(Version.v740sp02, seq(str("SWITCH"),
-                                           new TypeName(),
+                                           new TypeNameOrInfer(),
                                            tok(ParenLeftW),
                                            opt(new Let()),
                                            new Source(),
@@ -91,7 +91,7 @@ export class Source extends Expression {
     const tabdef = ver(Version.v740sp08, alt(str("OPTIONAL"), seq(str("DEFAULT"), new Source())));
 
     const value = ver(Version.v740sp02, seq(str("VALUE"),
-                                            new TypeName(),
+                                            new TypeNameOrInfer(),
                                             tok(ParenLeftW),
                                             opt(alt(seq(new Source(), opt(tabdef)),
                                                     strucOrTab)),
@@ -102,7 +102,7 @@ export class Source extends Expression {
     const elsee = seq(str("ELSE"), alt(new Source(), new Throw()));
 
     const cond = ver(Version.v740sp02, seq(str("COND"),
-                                           new TypeName(),
+                                           new TypeNameOrInfer(),
                                            tok(ParenLeftW),
                                            opt(new Let()),
                                            plus(when),
@@ -111,20 +111,20 @@ export class Source extends Expression {
                                            opt(after)));
 
     const reff = ver(Version.v740sp02, seq(str("REF"),
-                                           new TypeName(),
+                                           new TypeNameOrInfer(),
                                            tok(ParenLeftW),
                                            new Source(),
                                            rparen));
 
     const exact = ver(Version.v740sp02, seq(str("EXACT"),
-                                            new TypeName(),
+                                            new TypeNameOrInfer(),
                                             tok(ParenLeftW),
                                             new Source(),
                                             rparen));
 
     const filter = ver(Version.v740sp08,
                        seq(str("FILTER"),
-                           new TypeName(),
+                           new TypeNameOrInfer(),
                            tok(ParenLeftW),
                            new Source(),
                            opt(str("EXCEPT")),
@@ -140,7 +140,7 @@ export class Source extends Expression {
 
     const reduce = ver(Version.v740sp08,
                        seq(str("REDUCE"),
-                           new TypeName(),
+                           new TypeNameOrInfer(),
                            tok(ParenLeftW),
                            opt(new Let()),
                            init,

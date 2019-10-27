@@ -301,7 +301,6 @@ describe("Syntax - Basic Types", () => {
     const identifier = resolveVariable(abap, "foo");
     expectCharacter(identifier, 1);
   });
-
 /*
   it("DDIC data element", () => {
     const clas = `
@@ -312,16 +311,6 @@ describe("Syntax - Basic Types", () => {
    <DD04V>
     <ROLLNAME>ZDDIC</ROLLNAME>
     <DDLANGUAGE>E</DDLANGUAGE>
-    <HEADLEN>55</HEADLEN>
-    <SCRLEN1>10</SCRLEN1>
-    <SCRLEN2>20</SCRLEN2>
-    <SCRLEN3>40</SCRLEN3>
-    <DDTEXT>moo</DDTEXT>
-    <REPTEXT>moo</REPTEXT>
-    <SCRTEXT_S>moo</SCRTEXT_S>
-    <SCRTEXT_M>moo</SCRTEXT_M>
-    <SCRTEXT_L>moo</SCRTEXT_L>
-    <DTELMASTER>E</DTELMASTER>
     <DATATYPE>CHAR</DATATYPE>
     <LENG>000002</LENG>
     <OUTPUTLEN>000002</OUTPUTLEN>

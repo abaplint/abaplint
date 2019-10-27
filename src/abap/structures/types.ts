@@ -5,7 +5,7 @@ import {Structure} from "./_structure";
 import {star, IStructureRunnable, sta, alt, sub, beginEnd} from "./_combi";
 import {StructureNode, StatementNode} from "../nodes";
 import {TypedIdentifier} from "../types/_typed_identifier";
-import {IStructureComponent, StructureType} from "../types/basic";
+import {IStructureComponent} from "../types/basic";
 import {Scope} from "../syntax/_scope";
 
 export class Types extends Structure {
@@ -28,14 +28,7 @@ export class Types extends Structure {
           components.push({name: found.getName(), type: found.getType()});
         }
       } else if (c instanceof StatementNode && ctyp instanceof Statements.IncludeType) {
-        const iname = c.findFirstExpression(Expressions.TypeName)!.getFirstToken()!.getStr();
-        const ityp = scope.resolveType(iname);
-        if (ityp) {
-          const typ = ityp.getType();
-          if (typ instanceof StructureType) {
-            components = components.concat(typ.getComponents());
-          } // todo, else exception?
-        } // todo, else exception?
+        components = components.concat(ctyp.runSyntax(c, scope, filename));
       }
       // todo, nested structures
     }

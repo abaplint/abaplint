@@ -17,7 +17,7 @@ export class BasicTypes {
     this.scope = scope;
   }
 
-  public resolveChainType(stat: StatementNode | ExpressionNode, expr: ExpressionNode | undefined): AbstractType | undefined {
+  public resolveTypeName(stat: StatementNode | ExpressionNode, expr: ExpressionNode | undefined): AbstractType | undefined {
 // todo, move this to the expresssion, and perhaps rename/add another expression for types
     if (expr === undefined) {
       return undefined;
@@ -74,7 +74,7 @@ export class BasicTypes {
       return undefined;
     }
     const name = nameExpr.getFirstToken();
-    const chain = node.findFirstExpression(Expressions.FieldChain);
+    const typename = node.findFirstExpression(Expressions.TypeName);
 
     const type = node.findFirstExpression(Expressions.Type);
     const text = type ? type.concatTokens().toUpperCase() : "TYPE";
@@ -89,12 +89,10 @@ export class BasicTypes {
     } else if (text.startsWith("TYPE LINE OF")) {
       return undefined;
     } else if (text.startsWith("TYPE REF TO")) {
-//      console.dir(text);
-//      return undefined;
-      found = this.resolveTypeRef(chain);
+      found = this.resolveTypeRef(typename);
     } else if (text.startsWith("TYPE")) {
-      found = this.resolveChainType(node, chain);
-      if (found === undefined && chain === undefined) {
+      found = this.resolveTypeName(node, typename);
+      if (found === undefined && typename === undefined) {
         found = new Types.CharacterType(1);
       }
     }

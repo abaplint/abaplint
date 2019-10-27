@@ -3,6 +3,7 @@ import {TypedIdentifier} from "../types/_typed_identifier";
 import {Registry} from "../../registry";
 import {Globals} from "./_globals";
 import * as Objects from "../../objects";
+import {DDIC} from "../../ddic";
 
 interface IVar {
   name: string;
@@ -43,6 +44,10 @@ export class Scope {
 
   public get() {
     return this.scopes;
+  }
+
+  public getDDIC(): DDIC {
+    return new DDIC(this.reg);
   }
 
   public addType(type: TypedIdentifier | undefined) {

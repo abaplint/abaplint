@@ -117,6 +117,7 @@ export * from "./text_element_string";
 export * from "./text_element";
 export * from "./throw";
 export * from "./type_name";
+export * from "./type_name_or_infer";
 export * from "./type_param";
 export * from "./type_table";
 export * from "./type";

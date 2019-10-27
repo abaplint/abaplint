@@ -66,7 +66,7 @@ export class TypeTable extends Expression {
       return undefined;
     }
 
-    const row = new BasicTypes(filename, scope).resolveChainType(node, node.findFirstExpression(Expressions.FieldChain));
+    const row = new BasicTypes(filename, scope).resolveTypeName(node, node.findFirstExpression(Expressions.FieldChain));
     if (row === undefined) {
       return undefined;
     }

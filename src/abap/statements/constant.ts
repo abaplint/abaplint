@@ -1,7 +1,7 @@
 import {Statement} from "./_statement";
 import * as Expressions from "../expressions";
 import {str, seq, alt, opt, IStatementRunnable, per} from "../combi";
-import {NamespaceSimpleName, FieldLength, Type, Value, Length, Decimals} from "../expressions";
+import {NamespaceSimpleName, Type, Value, Length, Decimals, ConstantFieldLength} from "../expressions";
 import {StatementNode} from "../nodes";
 import {Scope} from "../syntax/_scope";
 import {BasicTypes} from "../syntax/basic_types";
@@ -12,7 +12,7 @@ export class Constant extends Statement {
 
   public getMatcher(): IStatementRunnable {
     const def = seq(new NamespaceSimpleName(),
-                    opt(new FieldLength()),
+                    opt(new ConstantFieldLength()),
                     per(new Type(), new Value(), new Decimals(), new Length()));
 
     const ret = seq(alt(str("CONSTANT"), str("CONSTANTS")), def);

@@ -23,14 +23,20 @@ export class Data extends Statement {
       }
     }
 
-    const found = new BasicTypes(filename, scope).simpleType(node);
-    if (found) {
-      return found;
+    const bfound = new BasicTypes(filename, scope).simpleType(node);
+    if (bfound) {
+      return bfound;
     }
 
-    const fallback = node.findFirstExpression(Expressions.NamespaceSimpleName);
-    if (fallback) {
-      return new TypedIdentifier(fallback.getFirstToken(), filename, new UnknownType("data, fallback"));
+    const name = node.findFirstExpression(Expressions.NamespaceSimpleName);
+    if (name) {
+/*
+      const dfound = scope.getDDIC().lookup();
+      if (dfound) {
+        return new TypedIdentifier(name.getFirstToken(), filename, dfound);
+      }
+*/
+      return new TypedIdentifier(name.getFirstToken(), filename, new UnknownType("data, fallback"));
     }
 
     return undefined;

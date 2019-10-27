@@ -1,6 +1,6 @@
 import {Statement} from "./_statement";
 import {str, seq, opt, per, alt, IStatementRunnable} from "../combi";
-import {Value, Type, FieldLength, NamespaceSimpleName, TypeTable, Length} from "../expressions";
+import {Value, Type, ConstantFieldLength, NamespaceSimpleName, TypeTable, Length, Decimals} from "../expressions";
 import * as Expressions from "../expressions";
 import {StatementNode} from "../nodes";
 import {Scope} from "../syntax/_scope";
@@ -11,9 +11,9 @@ import {UnknownType} from "../types/basic";
 export class Static extends Statement {
 
   public getMatcher(): IStatementRunnable {
-    const p = opt(per(new Type(), new Value(), new Length()));
+    const p = opt(per(new Type(), new Value(), new Length(), new Decimals()));
 
-    const type = seq(opt(new FieldLength()), p);
+    const type = seq(opt(new ConstantFieldLength()), p);
 
     const ret = seq(alt(str("STATIC"), str("STATICS")),
                     new NamespaceSimpleName(),

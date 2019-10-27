@@ -10,6 +10,23 @@ export class DDIC {
     this.reg = reg;
   }
 
+  public lookup(name: string): AbstractType | undefined {
+    const dtel = this.lookupDataElement(name);
+    if (dtel) {
+      return dtel;
+    }
+    const tabl = this.lookupTable(name);
+    if (tabl) {
+      return tabl;
+    }
+    const ttyp = this.lookupTableType(name);
+    if (ttyp) {
+      return ttyp;
+    }
+
+    return undefined;
+  }
+
   public lookupDomain(name: string): AbstractType {
     const found = this.reg.getObject("DOMA", name) as Objects.Domain | undefined;
     if (found) {
@@ -36,6 +53,18 @@ export class DDIC {
 
   public lookupTable(name: string): AbstractType {
     const found = this.reg.getObject("TABL", name) as Objects.Table | undefined;
+    if (found) {
+      return found.parseType(this.reg);
+    }
+    if (this.reg.inErrorNamespace(name)) {
+      return new Types.UnknownType(name + " not found");
+    } else {
+      return new Types.VoidType();
+    }
+  }
+
+  public lookupTableType(name: string): AbstractType {
+    const found = this.reg.getObject("TTYP", name) as Objects.Table | undefined;
     if (found) {
       return found.parseType(this.reg);
     }

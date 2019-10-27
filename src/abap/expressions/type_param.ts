@@ -1,5 +1,5 @@
 import {seq, opt, alt, str, Expression, IStatementRunnable} from "../combi";
-import {Constant, FieldChain, TypeName} from "./";
+import {Constant, FieldChain, TypeNameOrInfer} from "./";
 
 export class TypeParam extends Expression {
   public getRunnable(): IStatementRunnable {
@@ -13,7 +13,7 @@ export class TypeParam extends Expression {
     const typeLine = str("LINE OF");
 
     const ret = seq(alt(foo, typeLine),
-                    new TypeName(),
+                    new TypeNameOrInfer(),
                     opt(def));
 
     const like = seq(str("LIKE"), opt(str("LINE OF")), new FieldChain(), opt(def));
