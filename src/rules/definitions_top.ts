@@ -1,5 +1,5 @@
 import {Issue} from "../issue";
-import {Comment} from "../abap/statements/_statement";
+import {Comment, Unknown} from "../abap/statements/_statement";
 import * as Statements from "../abap/statements/";
 import {ABAPRule} from "./_abap_rule";
 import {ABAPFile} from "../files";
@@ -60,6 +60,7 @@ export class DefinitionsTop extends ABAPRule {
           || statement.get() instanceof Statements.DataBegin
           || statement.get() instanceof Statements.DataEnd
           || statement.get() instanceof Statements.Type
+          || statement.get() instanceof Unknown
           || statement.get() instanceof Statements.TypeBegin
           || statement.get() instanceof Statements.TypeEnd
           || statement.get() instanceof Statements.Constant

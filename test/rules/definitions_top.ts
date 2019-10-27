@@ -63,6 +63,15 @@ FORM foo.
 ENDFORM.`,
     cnt: 0,
   },
+
+  {
+    abap: `
+FORM foo.
+  parser error
+  DATA foo TYPE i.
+ENDFORM.`,
+    cnt: 0,
+  },
 ];
 
 testRule(tests, DefinitionsTop);
