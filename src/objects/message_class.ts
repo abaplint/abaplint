@@ -1,6 +1,5 @@
 import {AbstractObject} from "./_abstract_object";
 import {Message} from "../abap/types/message";
-import * as xmljs from "xml-js";
 import {xmlToArray} from "../xml_utils";
 
 export class MessageClass extends AbstractObject {
@@ -14,7 +13,7 @@ export class MessageClass extends AbstractObject {
     if (xml === undefined) {
       return [];
     }
-    const parsed: any = xmljs.xml2js(xml, {compact: true});
+    const parsed = this.parseXML();
 
     return this.parse(parsed);
   }
@@ -34,15 +33,6 @@ export class MessageClass extends AbstractObject {
     for (const message of this.getMessages()) {
       if (message.getNumber() === num) {
         return message;
-      }
-    }
-    return undefined;
-  }
-
-  private getXML(): string | undefined {
-    for (const file of this.getFiles()) {
-      if (file.getFilename().match(/\.msag\.xml$/i)) {
-        return file.getRaw();
       }
     }
     return undefined;

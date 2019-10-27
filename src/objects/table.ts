@@ -1,5 +1,4 @@
 import {AbstractObject} from "./_abstract_object";
-import * as xmljs from "xml-js";
 import {xmlToArray} from "../xml_utils";
 import {AbstractType} from "../abap/types/basic/_abstract_type";
 import * as Types from "../abap/types/basic";
@@ -106,14 +105,6 @@ export class Table extends AbstractObject {
 
 /////////////////////////////////
 
-  private parseXML(): any | undefined {
-    const xml = this.getXML();
-    if (xml === undefined) {
-      return undefined;
-    }
-    return xmljs.xml2js(xml, {compact: true});
-  }
-
   private parseFields(data: any): string[] {
     const ret: string[] = [];
 
@@ -123,15 +114,6 @@ export class Table extends AbstractObject {
     }
 
     return ret;
-  }
-
-  private getXML(): string | undefined {
-    for (const file of this.getFiles()) {
-      if (file.getFilename().match(/\.tabl\.xml$/i)) {
-        return file.getRaw();
-      }
-    }
-    return undefined;
   }
 
 }

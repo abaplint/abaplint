@@ -2,7 +2,6 @@ import {AbstractObject} from "./_abstract_object";
 import {AbstractType} from "../abap/types/basic/_abstract_type";
 import * as Types from "../abap/types/basic";
 import {Registry} from "../registry";
-import * as xmljs from "xml-js";
 import {DDIC} from "../ddic";
 
 export class Domain extends AbstractObject {
@@ -18,7 +17,7 @@ export class Domain extends AbstractObject {
     }
 
     try {
-      const parsed: any = xmljs.xml2js(xml, {compact: true});
+      const parsed = this.parseXML();
       const dd01v = parsed.abapGit["asx:abap"]["asx:values"].DD01V;
       const datatype = dd01v.DATATYPE._text;
       const length = dd01v.LENG._text;
@@ -29,13 +28,5 @@ export class Domain extends AbstractObject {
     }
   }
 
-  private getXML(): string | undefined {
-    for (const file of this.getFiles()) {
-      if (file.getFilename().match(/\.doma\.xml$/i)) {
-        return file.getRaw();
-      }
-    }
-    return undefined;
-  }
 
 }

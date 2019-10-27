@@ -1,5 +1,6 @@
 import {IFile} from "../files/_ifile";
 import {IObject} from "./_iobject";
+import * as xmljs from "xml-js";
 
 export abstract class AbstractObject implements IObject {
   protected files: IFile[];
@@ -56,6 +57,14 @@ export abstract class AbstractObject implements IObject {
     return undefined;
   }
 
+  public getXML(): string | undefined {
+    const file = this.getXMLFile();
+    if (file) {
+      return file.getRaw();
+    }
+    return undefined;
+  }
+
   public updateFile(file: IFile) {
     this.setDirty();
     for (let i = 0; i < this.files.length; i++) {
@@ -65,6 +74,14 @@ export abstract class AbstractObject implements IObject {
       }
     }
     throw new Error("updateFile: file not found");
+  }
+
+  protected parseXML(): any | undefined {
+    const xml = this.getXML();
+    if (xml === undefined) {
+      return undefined;
+    }
+    return xmljs.xml2js(xml, {compact: true});
   }
 
 }

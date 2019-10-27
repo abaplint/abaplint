@@ -1,6 +1,5 @@
 import {ABAPObject} from "./_abap_object";
 import {InterfaceDefinition} from "../abap/types";
-import {IFile} from "../files/_ifile";
 
 export class Interface extends ABAPObject {
 
@@ -32,23 +31,6 @@ export class Interface extends ABAPObject {
     } else {
       return false;
     }
-  }
-
-  public getXMLFile(): IFile | undefined {
-    for (const file of this.getFiles()) {
-      if (file.getFilename().match(/\.intf\.xml$/i)) {
-        return file;
-      }
-    }
-    return undefined;
-  }
-
-  public getXML(): string | undefined {
-    const file = this.getXMLFile();
-    if (file) {
-      return file.getRaw();
-    }
-    return undefined;
   }
 
 }

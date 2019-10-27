@@ -1,6 +1,5 @@
 import {ABAPObject} from "./_abap_object";
 import {FunctionModuleDefinition} from "../abap/types";
-import * as xmljs from "xml-js";
 import {xmlToArray} from "../xml_utils";
 
 export class FunctionGroup extends ABAPObject {
@@ -14,7 +13,7 @@ export class FunctionGroup extends ABAPObject {
     if (xml === undefined) {
       return [];
     }
-    const parsed: any = xmljs.xml2js(xml, {compact: true});
+    const parsed = this.parseXML();
 
     return this.parseModules(parsed);
   }
@@ -25,7 +24,7 @@ export class FunctionGroup extends ABAPObject {
       return [];
     }
 
-    const parsed: any = xmljs.xml2js(xml, {compact: true});
+    const parsed = this.parseXML();
     const includes = parsed.abapGit["asx:abap"]["asx:values"].INCLUDES;
 
     const ret: string[] = [];
@@ -54,15 +53,6 @@ export class FunctionGroup extends ABAPObject {
     }
 
     return ret;
-  }
-
-  private getXML(): string | undefined {
-    for (const file of this.getFiles()) {
-      if (file.getFilename().match(/\.fugr\.xml$/i)) {
-        return file.getRaw();
-      }
-    }
-    return undefined;
   }
 
 }

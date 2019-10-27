@@ -1,5 +1,4 @@
 import {AbstractObject} from "./_abstract_object";
-import * as xmljs from "xml-js";
 import {xmlToArray} from "../xml_utils";
 
 export class View extends AbstractObject {
@@ -13,9 +12,7 @@ export class View extends AbstractObject {
     if (xml === undefined) {
       return [];
     }
-    const parsed: any = xmljs.xml2js(xml, {compact: true});
-
-    return this.parse(parsed);
+    return this.parse(this.parseXML());
   }
 
   private parse(data: any): string[] {
@@ -27,15 +24,6 @@ export class View extends AbstractObject {
     }
 
     return ret;
-  }
-
-  private getXML(): string | undefined {
-    for (const file of this.getFiles()) {
-      if (file.getFilename().match(/\.view\.xml$/i)) {
-        return file.getRaw();
-      }
-    }
-    return undefined;
   }
 
 }

@@ -1,7 +1,5 @@
 import {ABAPObject} from "./_abap_object";
 import {ClassDefinition} from "../abap/types/class_definition";
-import * as xmljs from "xml-js";
-import {IFile} from "../files/_ifile";
 import {ABAPFile} from "../files";
 
 export enum ClassCategory {
@@ -19,7 +17,6 @@ export class Class extends ABAPObject {
     return "CLAS";
   }
 
-// todo, rename to "getDefinition" ?
   public getClassDefinition(): ClassDefinition | undefined {
     const main = this.getMainABAPFile();
     if (!main) {
@@ -55,7 +52,7 @@ export class Class extends ABAPObject {
     if (!xml) {
       return undefined;
     }
-    const parsed: any = xmljs.xml2js(xml, {compact: true});
+    const parsed = this.parseXML();
     if (parsed.abapGit["asx:abap"]["asx:values"] === undefined) {
       return undefined;
     }
@@ -92,28 +89,11 @@ export class Class extends ABAPObject {
 
 // --------------------
 
-  public getXMLFile(): IFile | undefined {
-    for (const file of this.getFiles()) {
-      if (file.getFilename().endsWith(".clas.xml")) {
-        return file;
-      }
-    }
-    return undefined;
-  }
-
   public getLocalsImpFile(): ABAPFile | undefined {
     for (const file of this.getABAPFiles()) {
       if (file.getFilename().endsWith(".clas.locals_imp.abap")) {
         return file;
       }
-    }
-    return undefined;
-  }
-
-  public getXML(): string | undefined {
-    const file = this.getXMLFile();
-    if (file) {
-      return file.getRaw();
     }
     return undefined;
   }

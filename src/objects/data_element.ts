@@ -3,7 +3,6 @@ import {AbstractType} from "../abap/types/basic/_abstract_type";
 import {Registry} from "../registry";
 import {DDIC} from "../ddic";
 import * as Types from "../abap/types/basic";
-import * as xmljs from "xml-js";
 
 export class DataElement extends AbstractObject {
 
@@ -18,7 +17,7 @@ export class DataElement extends AbstractObject {
     }
 
     try {
-      const parsed: any = xmljs.xml2js(xml, {compact: true});
+      const parsed = this.parseXML();
       const dd04v = parsed.abapGit["asx:abap"]["asx:values"].DD04V;
       const ddic = new DDIC(reg);
 
@@ -33,15 +32,6 @@ export class DataElement extends AbstractObject {
     } catch {
       return new Types.UnknownType("Data Element, parser exception");
     }
-  }
-
-  private getXML(): string | undefined {
-    for (const file of this.getFiles()) {
-      if (file.getFilename().match(/\.dtel\.xml$/i)) {
-        return file.getRaw();
-      }
-    }
-    return undefined;
   }
 
 }

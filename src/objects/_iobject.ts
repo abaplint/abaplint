@@ -9,4 +9,5 @@ export interface IObject {
   setDirty(): void;
   getFiles(): IFile[];
   getXMLFile(): IFile | undefined;
+  getXML(): string | undefined;
 }
