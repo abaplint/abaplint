@@ -21,7 +21,7 @@ export class LineOnlyPunc extends ABAPRule {
   }
 
   private getDescription(): string {
-    return "A line cannot contain only . or ).";
+    return "A line cannot contain only \".\" or \").\"";
   }
 
   public getConfig() {

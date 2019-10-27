@@ -32,9 +32,9 @@ export class KeywordsUpper extends ABAPRule {
 
   private getDescription(tokenValue: string, keyword: boolean): string {
     if (keyword === true) {
-      return "Keyword should be upper case: " + tokenValue;
+      return "Keyword should be upper case: \"" + tokenValue + "\"";
     } else {
-      return "Identifiers should be lower case: " + tokenValue;
+      return "Identifiers should be lower case: \"" + tokenValue + "\"";
     }
   }
 

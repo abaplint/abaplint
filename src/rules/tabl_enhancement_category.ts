@@ -18,7 +18,7 @@ export class TABLEnhancementCategory implements IRule {
   }
 
   private getDescription(name: string): string {
-    return "TABL enhancement category not classified in" + name;
+    return "TABL enhancement category not classified in " + name;
   }
 
   public getConfig() {

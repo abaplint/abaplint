@@ -3,7 +3,7 @@ import {Version, textToVersion, versionToText} from "../../version";
 import {Unknown, Comment, Empty} from "../../abap/statements/_statement";
 import * as Statements from "../../abap/statements";
 import {MethodLengthStats} from "../../abap/method_length_stats";
-import { Config } from "../../config";
+import {Config} from "../../config";
 
 export interface ITotals {
   statements: number;

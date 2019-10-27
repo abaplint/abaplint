@@ -19,7 +19,7 @@ export class PreferredCompareOperator extends ABAPRule {
   }
 
   private getDescription(operator: string): string {
-    return "Compare operator " + operator + " not preferred";
+    return "Compare operator \"" + operator + "\" not preferred";
   }
 
   public runParsed(file: ABAPFile) {

@@ -24,10 +24,6 @@ export class Indentation extends ABAPRule {
     return "indentation";
   }
 
-  private getDescription(): string {
-    return "Indentation";
-  }
-
   public getConfig() {
     return this.conf;
   }
@@ -91,7 +87,8 @@ export class Indentation extends ABAPRule {
       const position = statement.getFirstToken().getStart();
 
       if (indent && indent > 0 && indent !== position.getCol()) {
-        const issue = Issue.atPosition(file, position, this.getDescription(), this.getKey());
+        const message = "Indentation problem, expected " + indent + " spaces";
+        const issue = Issue.atPosition(file, position, message, this.getKey());
         return [issue]; // only one finding per include
       }
     }

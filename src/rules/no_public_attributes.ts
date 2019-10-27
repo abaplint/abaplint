@@ -22,7 +22,7 @@ export class NoPublicAttributes implements IRule {
   }
 
   private getDescription(name: string): string {
-    return "Public attributes are not allowed. Attribute name: " + name;
+    return "Public attributes are not allowed, attribute \"" + name + "\"";
   }
 
   public getConfig() {

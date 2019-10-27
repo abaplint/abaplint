@@ -23,7 +23,7 @@ export class RemoveDescriptions implements IRule {
   }
 
   private getDescription(name: string): string {
-    return "Remove description in " + name;
+    return "Remove description for " + name;
   }
 
   public getConfig() {

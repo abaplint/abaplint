@@ -11,6 +11,7 @@ export class Find extends Statement {
                         str("IN CHARACTER MODE"),
                         seq(str("OF"), new Source()),
                         seq(str("FROM"), new Source()),
+                        seq(str("TO"), new Source()),
                         seq(str("MATCH OFFSET"), new Target()),
                         seq(str("MATCH LINE"), new Target()),
                         seq(str("MATCH COUNT"), new Target()),

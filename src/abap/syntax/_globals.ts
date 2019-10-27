@@ -66,6 +66,7 @@ export class Globals {
     ret.push(this.buildConstant("icon_stack"));
     ret.push(this.buildConstant("icon_abap"));
     ret.push(this.buildConstant("icon_system_save"));
+    ret.push(this.buildConstant("icon_document"));
     ret.push(this.buildConstant("space"));
     ret.push(this.buildConstant("col_total"));
     ret.push(this.buildConstant("col_key"));

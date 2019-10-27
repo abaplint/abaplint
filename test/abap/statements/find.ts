@@ -24,6 +24,7 @@ const tests = [
   "FIND FIRST OCCURRENCE OF SUBSTRING 'BLAH' IN SECTION LENGTH 20 OF lv_foo MATCH COUNT l_count.",
   "FIND blah IN SECTION LENGTH 1 OF lv_value.",
   "find FIRST OCCURRENCE OF REGEX 'df' in SECTION OFFSET 30 LENGTH 10 of blah.",
+  "FIND FIRST OCCURRENCE OF moo IN TABLE tab FROM iv_from + 1 TO lv_until IN BYTE MODE MATCH LINE rv_row.",
 ];
 
 statementType(tests, "FIND", Statements.Find);

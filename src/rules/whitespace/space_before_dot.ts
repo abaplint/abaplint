@@ -24,7 +24,7 @@ export class SpaceBeforeDot extends ABAPRule {
   }
 
   private getDescription(): string {
-    return "Remove space before , or .";
+    return "Remove space before \",\" or \".\"";
   }
 
   public getConfig() {
