@@ -43,7 +43,7 @@ export class Help {
       const obj = reg.getObject(file.getObjectType(), file.getObjectName());
       if (obj instanceof ABAPObject) {
         const variables = new SyntaxLogic(reg, obj).traverseUntil(found.identifier);
-        ret = ret + this.dumpVariables(variables);
+        ret = ret + this.dumpScope(variables);
       }
     } else {
       ret = "No token found";
@@ -52,22 +52,22 @@ export class Help {
     return ret;
   }
 
-  private static dumpVariables(variables: Scope): string {
+  private static dumpScope(scope: Scope): string {
     let ret = "<hr>\n";
-    for (const s of variables.get()) {
+    for (const s of scope.get()) {
       if (s.scopeName === "_builtin") {
         continue; // too many of these, and they are not super important right now
       }
-      ret = ret + "<u>" + s.scopeName + "</u>: ";
+      ret = ret + "<u>" + s.scopeName + "</u>:<br>\n";
       for (const v of s.vars) {
         ret = ret + "<tt>" + this.escape(v.name.toLowerCase()) + "</tt>";
         if (v.identifier !== undefined) {
           const pos = v.identifier.getStart();
-          ret = ret + "(" + pos.getRow().toString() + ", " + pos.getCol().toString() + ")";
+          ret = ret + "(" + pos.getRow().toString() + ", " + pos.getCol().toString() + ") ";
+          ret = ret + v.identifier.getType().toText();
         }
-        ret = ret + ", ";
+        ret = ret + "<br>\n";
       }
-      ret = ret + "<br>\n";
     }
     return ret;
   }
