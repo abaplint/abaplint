@@ -1,7 +1,7 @@
 import {INode} from "./_inode";
 import {Token} from "../tokens/_token";
 
-export abstract class BasicNode implements INode {
+export abstract class AbstractNode implements INode {
   protected children: INode[];
 
   public constructor() {

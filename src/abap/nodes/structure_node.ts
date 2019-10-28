@@ -1,4 +1,4 @@
-import {BasicNode} from "./_basic_node";
+import {AbstractNode} from "./_abstract_node";
 import {Structure} from "../structures/_structure";
 import {StatementNode} from "./statement_node";
 import {Statement} from "../statements/_statement";
@@ -6,7 +6,7 @@ import {Token} from "../tokens/_token";
 import {Expression} from "../combi";
 import {ExpressionNode} from "./expression_node";
 
-export class StructureNode extends BasicNode {
+export class StructureNode extends AbstractNode {
   private readonly structure: Structure;
 
   public constructor(structure: Structure) {

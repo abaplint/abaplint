@@ -5,10 +5,10 @@ import * as Structures from "../../../src/abap/structures";
 import {StatementNode} from "../../../src/abap/nodes/";
 import {Structure} from "../../../src/abap/structures/_structure";
 import {Statement} from "../../../src/abap/statements/_statement";
-import {BasicNode} from "../../../src/abap/nodes/_basic_node";
+import {AbstractNode} from "../../../src/abap/nodes/_abstract_node";
 import {Token} from "../../../src/abap/tokens/_token";
 
-class DummyNode extends BasicNode {
+class DummyNode extends AbstractNode {
   public get(): undefined {
     return undefined;
   }

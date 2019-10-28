@@ -1,4 +1,4 @@
-import {BasicNode} from "./_basic_node";
+import {AbstractNode} from "./_abstract_node";
 import {Statement} from "../statements/_statement";
 import {INode} from "./_inode";
 import {Position} from "../../position";
@@ -8,7 +8,7 @@ import {TokenNode} from "./token_node";
 import {ExpressionNode} from "./expression_node";
 import {Expression} from "../combi";
 
-export class StatementNode extends BasicNode {
+export class StatementNode extends AbstractNode {
   private readonly statement: Statement;
   private readonly colon: Token | undefined;
   private readonly pragmas: Token[];
