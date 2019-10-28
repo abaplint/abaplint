@@ -96,4 +96,33 @@ describe("Table Type, parse XML", () => {
     expect(row).to.be.instanceof(Types.StringType);
   });
 
+  it("Call parseType, reference to object", () => {
+    const xml1 = `
+<?xml version="1.0" encoding="utf-8"?>
+<abapGit version="v1.0.0" serializer="LCL_OBJECT_TTYP" serializer_version="v1.0.0">
+ <asx:abap xmlns:asx="http://www.sap.com/abapxml" version="1.0">
+  <asx:values>
+   <DD40V>
+    <TYPENAME>ZTEST</TYPENAME>
+    <ROWTYPE>ZCL_FOOBAR</ROWTYPE>
+    <ROWKIND>R</ROWKIND>
+    <DATATYPE>REF</DATATYPE>
+    <ACCESSMODE>T</ACCESSMODE>
+    <KEYDEF>D</KEYDEF>
+    <KEYKIND>N</KEYKIND>
+    <REFTYPE>C</REFTYPE>
+   </DD40V>
+  </asx:values>
+ </asx:abap>
+</abapGit>`;
+
+    const reg = new Registry().addFile(new MemoryFile("ztest.ttyp.xml", xml1)).parse();
+    const tabl = reg.getObjects()[0] as Objects.TableType;
+
+    const type = tabl.parseType(reg);
+    expect(type).to.be.instanceof(Types.TableType);
+    const row = (type as Types.TableType).getRowType();
+    expect(row).to.be.instanceof(Types.ObjectReferenceType);
+  });
+
 });

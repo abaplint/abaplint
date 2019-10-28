@@ -57,6 +57,18 @@ export class Table extends AbstractObject {
             name: field.FIELDNAME._text,
             type: found});
         }
+      } else if (comptype === "S") {
+        components.push({
+          name: field.FIELDNAME._text,
+          type: ddic.lookupTable(field.ROLLNAME._text)});
+      } else if (comptype === "R") {
+        components.push({
+          name: field.FIELDNAME._text,
+          type: new Types.ObjectReferenceType(field.ROLLNAME._text)});
+      } else if (comptype === "L") {
+        components.push({
+          name: field.FIELDNAME._text,
+          type: ddic.lookupTableType(field.ROLLNAME._text)});
       } else if (comptype === "") { // built in
         const datatype = field.DATATYPE._text;
         const length = field.INTLEN._text;
