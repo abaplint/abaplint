@@ -27,7 +27,7 @@ export class TableType extends AbstractObject {
       return new Types.TableType(ddic.lookupDataElement(rowtype));
     } else if (rowkind === "") {
       const datatype = dd40v.DATATYPE._text;
-      const leng = dd40v.LENG._text;
+      const leng = dd40v.LENG ? dd40v.LENG._text : undefined;
       const row = ddic.textToType(datatype, leng);
       return new Types.TableType(row);
     } else {
