@@ -90,8 +90,10 @@ export class DDIC {
       case "INT4":
         return new Types.IntegerType();
       case "SSTR":
+      case "STRG":
         return new Types.StringType();
       case "RSTR":
+      case "RAW":
         return new Types.XStringType();
       default:
         return new Types.UnknownType(text + " unknown");

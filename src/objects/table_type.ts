@@ -17,13 +17,19 @@ export class TableType extends AbstractObject {
     }
 
     const ddic = new DDIC(reg);
-    const rowtype = parsed.abapGit["asx:abap"]["asx:values"].DD40V.ROWTYPE._text;
-    const rowkind = parsed.abapGit["asx:abap"]["asx:values"].DD40V.ROWKIND._text;
+    const dd40v = parsed.abapGit["asx:abap"]["asx:values"].DD40V;
+    const rowtype = dd40v.ROWTYPE ? dd40v.ROWTYPE._text : "";
+    const rowkind = dd40v.ROWKIND ? dd40v.ROWKIND._text : "";
 
     if (rowkind === "S") {
       return new Types.TableType(ddic.lookupTable(rowtype));
     } else if (rowkind === "E") {
       return new Types.TableType(ddic.lookupDataElement(rowtype));
+    } else if (rowkind === "") {
+      const datatype = dd40v.DATATYPE._text;
+      const leng = dd40v.LENG._text;
+      const row = ddic.textToType(datatype, leng);
+      return new Types.TableType(row);
     } else {
       return new Types.UnknownType("Table Type, unkown kind \"" + rowkind + "\"");
     }
