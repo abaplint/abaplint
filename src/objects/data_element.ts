@@ -27,10 +27,10 @@ export class DataElement extends AbstractObject {
       }
 
       const datatype = dd04v.DATATYPE._text;
-      const length = dd04v.LENG._text;
+      const length = dd04v.LENG ? dd04v.LENG._text : undefined;
       return ddic.textToType(datatype, length);
     } catch {
-      return new Types.UnknownType("Data Element, parser exception");
+      return new Types.UnknownType("Data Element " + this.getName() + ", parser exception");
     }
   }
 

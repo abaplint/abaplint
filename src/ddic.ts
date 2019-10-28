@@ -76,7 +76,9 @@ export class DDIC {
   }
 
   public textToType(text: string, length: string | undefined): AbstractType {
+// todo, support short strings, and length of different integers, NUMC vs CHAR
     switch (text) {
+      case "NUMC":
       case "CHAR":
         if (length === undefined) {
           return new Types.UnknownType(text + " unknown length");
@@ -87,13 +89,19 @@ export class DDIC {
           return new Types.UnknownType(text + " unknown length");
         }
         return new Types.HexType(parseInt(length, 10));
+      case "TIMS":
+        return new Types.TimeType();
+      case "DATS":
+        return new Types.DateType();
+      case "INT1":
+      case "INT2":
       case "INT4":
+      case "INT8":
         return new Types.IntegerType();
       case "SSTR":
       case "STRG":
         return new Types.StringType();
       case "RSTR":
-      case "RAW":
         return new Types.XStringType();
       default:
         return new Types.UnknownType(text + " unknown");

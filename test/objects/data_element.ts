@@ -2,7 +2,7 @@ import {expect} from "chai";
 import {Registry} from "../../src/registry";
 import {MemoryFile} from "../../src/files/memory_file";
 import {DataElement} from "../../src/objects";
-import {CharacterType, UnknownType, HexType, VoidType} from "../../src/abap/types/basic";
+import {CharacterType, UnknownType, HexType, VoidType, StringType} from "../../src/abap/types/basic";
 
 describe("Data element, parse main xml", () => {
 
@@ -130,6 +130,30 @@ describe("Data element, parse main xml", () => {
     const dtel = reg.getObjects()[0] as DataElement;
     const type = dtel.parseType(reg);
     expect(type).to.be.instanceof(VoidType);
+  });
+
+  it("String", () => {
+    const dtelxml = `
+<?xml version="1.0" encoding="utf-8"?>
+<abapGit version="v1.0.0" serializer="LCL_OBJECT_DTEL" serializer_version="v1.0.0">
+ <asx:abap xmlns:asx="http://www.sap.com/abapxml" version="1.0">
+  <asx:values>
+   <DD04V>
+    <ROLLNAME>ZDTEL</ROLLNAME>
+    <DDLANGUAGE>E</DDLANGUAGE>
+    <DTELMASTER>E</DTELMASTER>
+    <DATATYPE>STRG</DATATYPE>
+   </DD04V>
+  </asx:values>
+ </asx:abap>
+</abapGit>`;
+    const reg = new Registry();
+    reg.addFile(new MemoryFile("zdtel.dtel.xml", dtelxml));
+
+    reg.parse();
+    const dtel = reg.getObjects()[0] as DataElement;
+    const type = dtel.parseType(reg);
+    expect(type).to.be.instanceof(StringType);
   });
 
 });

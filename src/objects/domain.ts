@@ -20,11 +20,11 @@ export class Domain extends AbstractObject {
       const parsed = this.parseXML();
       const dd01v = parsed.abapGit["asx:abap"]["asx:values"].DD01V;
       const datatype = dd01v.DATATYPE._text;
-      const length = dd01v.LENG._text;
+      const length = dd01v.LENG ? dd01v.LENG._text : undefined;
       const ddic = new DDIC(reg);
       return ddic.textToType(datatype, length);
     } catch {
-      return new Types.UnknownType("Domain parser error");
+      return new Types.UnknownType("Domain " + this.getName() + "parser error");
     }
   }
 
