@@ -1,6 +1,6 @@
 name: Playground
 
-on: [push, ppull_request]
+on: [push, pull_request]
 
 jobs:
   build:
