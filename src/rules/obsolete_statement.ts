@@ -2,7 +2,7 @@ import {Issue} from "../issue";
 import * as Statements from "../abap/statements/";
 import {ABAPRule} from "./_abap_rule";
 import {ABAPFile} from "../files";
-import {Compare} from "../abap/expressions";
+import {Compare, DataDefinition} from "../abap/expressions";
 import {BasicRuleConfig} from "./_basic_rule_config";
 import {Position} from "../position";
 
@@ -67,6 +67,13 @@ export class ObsoleteStatement extends ABAPRule {
         const token = compare.findDirectTokenByText("REQUESTED");
         if (token) {
           const issue = Issue.atToken(file, token, "IS REQUESTED is obsolete", this.getKey());
+          issues.push(issue);
+        }
+      }
+      for (const compare of sta.findAllExpressions(DataDefinition)) {
+        const token = compare.findDirectTokenByText("OCCURS");
+        if (token) {
+          const issue = Issue.atToken(file, token, "OCCURS is obsolete", this.getKey());
           issues.push(issue);
         }
       }
