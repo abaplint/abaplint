@@ -18,8 +18,9 @@ const tests = [
   {abap: "lv_foo = 2.", cnt: 0},
   {abap: "IF foo IS SUPPLIED.", cnt: 0},
   {abap: "MOVE: LS_TFACS-JAHR TO LS_CAL-JAHR, LS_TFACS-MON01 TO LS_CAL-MON01.", cnt: 1},
-  {abap: "DATA tab LIKE foobar OCCURS 0 WITH HEADER LINE.", cnt: 1},
   {abap: "DATA tab LIKE foobar OCCURS 0.", cnt: 1},
+  {abap: "STATICS BEGIN OF foo OCCURS 0.", cnt: 1},
+  {abap: "RANGES moo FOR foo-bar OCCURS 50.", cnt: 1},
 ];
 
 testRule(tests, ObsoleteStatement);
