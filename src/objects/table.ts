@@ -57,6 +57,10 @@ export class Table extends AbstractObject {
             name: field.FIELDNAME._text,
             type: found});
         }
+      } else if (comptype === "S" && field.FIELDNAME._text.startsWith(".INCLU-")) {
+        components.push({
+          name: field.FIELDNAME._text,
+          type: new Types.UnknownType("Table " + this.getName() + ", todo, group named INCLUDE")});
       } else if (comptype === "S") {
         components.push({
           name: field.FIELDNAME._text,

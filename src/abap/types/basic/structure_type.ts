@@ -13,6 +13,7 @@ export class StructureType extends AbstractType {
     if (components.length === 0) {
       throw new Error("Structure does not contain any components");
     }
+// todo, check for duplicate names
     this.components = components;
   }
 
