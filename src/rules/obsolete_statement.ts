@@ -64,9 +64,7 @@ export class ObsoleteStatement extends ABAPRule {
       }
 
       if ((sta.get() instanceof Statements.Describe)
-          || (sta.get() instanceof Statements.Ranges)
-          || (sta.get() instanceof Statements.Static)
-          || (sta.get() instanceof Statements.StaticBegin)) {
+          || (sta.get() instanceof Statements.Ranges)) {
         const token = sta.findDirectTokenByText("OCCURS");
         if (token) {
           const issue = Issue.atToken(file, token, "OCCURS is obsolete", this.getKey());
