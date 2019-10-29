@@ -28,7 +28,8 @@ export class DataElement extends AbstractObject {
 
       const datatype = dd04v.DATATYPE._text;
       const length = dd04v.LENG ? dd04v.LENG._text : undefined;
-      return ddic.textToType(datatype, length);
+      const decimals = dd04v.DECIMALS ? dd04v.DECIMALS._text : undefined;
+      return ddic.textToType(datatype, length, decimals);
     } catch {
       return new Types.UnknownType("Data Element " + this.getName() + ", parser exception");
     }

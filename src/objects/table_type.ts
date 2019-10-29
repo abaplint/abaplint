@@ -30,7 +30,8 @@ export class TableType extends AbstractObject {
     } else if (rowkind === "") {
       const datatype = dd40v.DATATYPE._text;
       const leng = dd40v.LENG ? dd40v.LENG._text : undefined;
-      const row = ddic.textToType(datatype, leng);
+      const decimals = dd40v.DECIMALS ? dd40v.DECIMALS._text : undefined;
+      const row = ddic.textToType(datatype, leng, decimals);
       return new Types.TableType(row);
     } else {
       return new Types.UnknownType("Table Type, unkown kind \"" + rowkind + "\"");

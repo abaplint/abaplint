@@ -76,9 +76,10 @@ export class Table extends AbstractObject {
       } else if (comptype === "") { // built in
         const datatype = field.DATATYPE._text;
         const length = field.INTLEN._text;
+        const decimals = field.DECIMALS ? field.DECIMALS._text : undefined;
         components.push({
           name: field.FIELDNAME._text,
-          type: ddic.textToType(datatype, length)});
+          type: ddic.textToType(datatype, length, decimals)});
       } else {
         components.push({
           name: field.FIELDNAME._text,

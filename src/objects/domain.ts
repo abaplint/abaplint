@@ -17,12 +17,13 @@ export class Domain extends AbstractObject {
     }
 
     try {
+      const ddic = new DDIC(reg);
       const parsed = this.parseXML();
       const dd01v = parsed.abapGit["asx:abap"]["asx:values"].DD01V;
       const datatype = dd01v.DATATYPE._text;
       const length = dd01v.LENG ? dd01v.LENG._text : undefined;
-      const ddic = new DDIC(reg);
-      return ddic.textToType(datatype, length);
+      const decimals = dd01v.DECIMALS ? dd01v.DECIMALS._text : undefined;
+      return ddic.textToType(datatype, length, decimals);
     } catch {
       return new Types.UnknownType("Domain " + this.getName() + "parser error");
     }

@@ -6,6 +6,7 @@ export * from "./hex_type";
 export * from "./integer_type";
 export * from "./numeric_type";
 export * from "./object_reference_type";
+export * from "./packed_type";
 export * from "./string_type";
 export * from "./structure_type";
 export * from "./table_type";
