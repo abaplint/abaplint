@@ -108,7 +108,7 @@ export abstract class ABAPObject extends AbstractObject {
 
     const ret: ITextElement[] = [];
     for (const t of xmlToArray(parsed.abapGit["asx:abap"]["asx:values"].TPOOL.item)) {
-      if (t.ID._text === "I") {
+      if (t.ID !== undefined && t.ID._text === "I") {
         ret.push({
           key: t.KEY._text,
           text: t.ENTRY._text});
