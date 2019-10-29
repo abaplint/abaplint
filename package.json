@@ -67,7 +67,7 @@
     "mocha": "^6.2.2",
     "nyc": "^14.1.1",
     "railroad-diagrams": "git+https://github.com/tabatkins/railroad-diagrams#gh-pages",
-    "source-map-support": "^0.5.13",
+    "source-map-support": "^0.5.15",
     "ts-json-schema-generator": "^0.55.0",
     "tslint": "^5.20.0",
     "tslint-eslint-rules": "^5.4.0",

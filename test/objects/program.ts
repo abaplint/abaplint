@@ -62,4 +62,55 @@ describe("Program, isInclude", () => {
     const prog = reg.getABAPObjects()[0] as Program;
     expect(prog.isInclude()).to.equal(false);
   });
+
+  it("read textpool", () => {
+    const abap = "WRITE hello.";
+    const reg = new Registry().addFile(new MemoryFile("zfoobar.prog.abap", abap));
+
+    const xml = `<?xml version="1.0" encoding="utf-8"?>
+<abapGit version="v1.0.0" serializer="LCL_OBJECT_PROG" serializer_version="v1.0.0">
+ <asx:abap xmlns:asx="http://www.sap.com/abapxml" version="1.0">
+  <asx:values>
+   <PROGDIR>
+    <NAME>ZFOOBAR</NAME>
+    <SUBC>1</SUBC>
+    <RLOAD>E</RLOAD>
+    <FIXPT>X</FIXPT>
+    <UCCHECK>X</UCCHECK>
+   </PROGDIR>
+   <TPOOL>
+    <item>
+     <ID>I</ID>
+     <KEY>001</KEY>
+     <ENTRY>hello world 1</ENTRY>
+     <LENGTH>22</LENGTH>
+    </item>
+    <item>
+     <ID>I</ID>
+     <KEY>ABC</KEY>
+     <ENTRY>hello world 2</ENTRY>
+     <LENGTH>22</LENGTH>
+    </item>
+    <item>
+     <ID>R</ID>
+     <ENTRY>Program ZFOOBAR</ENTRY>
+     <LENGTH>28</LENGTH>
+    </item>
+   </TPOOL>
+  </asx:values>
+ </asx:abap>
+</abapGit>`;
+    reg.addFile(new MemoryFile("zfoobar.prog.xml", xml));
+
+    reg.parse();
+    const prog = reg.getABAPObjects()[0] as Program;
+    const texts = prog.getTexts();
+    expect(texts.length).to.equal(2);
+    expect(texts[0].key).to.equal("001");
+    expect(texts[1].key).to.equal("ABC");
+    expect(texts[0].text).to.equal("hello world 1");
+    expect(texts[1].text).to.equal("hello world 2");
+  });
+
+
 });

@@ -10,6 +10,7 @@ export * from "./compare_operator";
 export * from "./compare";
 export * from "./component_chain_simple";
 export * from "./component_chain";
+export * from "./text_element_key";
 export * from "./component_compare";
 export * from "./component_cond";
 export * from "./component_name";

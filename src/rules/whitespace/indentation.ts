@@ -87,7 +87,7 @@ export class Indentation extends ABAPRule {
       const position = statement.getFirstToken().getStart();
 
       if (indent && indent > 0 && indent !== position.getCol()) {
-        const message = "Indentation problem, expected " + indent + " spaces";
+        const message = "Indentation problem, expected " + (indent - 1) + " spaces";
         const issue = Issue.atPosition(file, position, message, this.getKey());
         return [issue]; // only one finding per include
       }

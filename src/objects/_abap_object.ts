@@ -6,6 +6,12 @@ import {StructureParser} from "../abap/structure_parser";
 import {Registry} from "../registry";
 import {Issue} from "../issue";
 import {ClassImplementation} from "../abap/types";
+import {xmlToArray} from "../xml_utils";
+
+export interface ITextElement {
+  key: string;
+  text: string;
+}
 
 export abstract class ABAPObject extends AbstractObject {
   private parsed: ABAPFile[];
@@ -89,6 +95,26 @@ export abstract class ABAPObject extends AbstractObject {
     for (const file of this.getABAPFiles()) {
       ret = ret.concat(file.getClassImplementations());
     }
+    return ret;
+  }
+
+  public getTexts(): ITextElement[] {
+    const parsed = this.parseXML();
+    if (parsed === undefined
+        || parsed.abapGit["asx:abap"]["asx:values"] === undefined
+        || parsed.abapGit["asx:abap"]["asx:values"].TPOOL === undefined) {
+      return [];
+    }
+
+    const ret: ITextElement[] = [];
+    for (const t of xmlToArray(parsed.abapGit["asx:abap"]["asx:values"].TPOOL.item)) {
+      if (t.ID._text === "I") {
+        ret.push({
+          key: t.KEY._text,
+          text: t.ENTRY._text});
+      }
+    }
+
     return ret;
   }
 

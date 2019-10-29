@@ -5,6 +5,7 @@ export * from "./ambiguous_statement";
 export * from "./avoid_use";
 export * from "./breakpoint";
 export * from "./chain_mainly_declarations";
+export * from "./check_text_elements";
 export * from "./cloud_types";
 export * from "./commented_code";
 export * from "./constructor_visibility_public";
