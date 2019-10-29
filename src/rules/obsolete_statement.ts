@@ -63,6 +63,17 @@ export class ObsoleteStatement extends ABAPRule {
         prev = sta.getStart();
       }
 
+      if ((sta.get() instanceof Statements.Describe)
+          || (sta.get() instanceof Statements.Ranges)
+          || (sta.get() instanceof Statements.Static)
+          || (sta.get() instanceof Statements.StaticBegin)) {
+        const token = sta.findDirectTokenByText("OCCURS");
+        if (token) {
+          const issue = Issue.atToken(file, token, "OCCURS is obsolete", this.getKey());
+          issues.push(issue);
+        }
+      }
+
       for (const compare of sta.findAllExpressions(Compare)) {
         const token = compare.findDirectTokenByText("REQUESTED");
         if (token) {
@@ -70,8 +81,8 @@ export class ObsoleteStatement extends ABAPRule {
           issues.push(issue);
         }
       }
-      for (const compare of sta.findAllExpressions(DataDefinition)) {
-        const token = compare.findDirectTokenByText("OCCURS");
+      for (const dataDef of sta.findAllExpressions(DataDefinition)) {
+        const token = dataDef.findDirectTokenByText("OCCURS");
         if (token) {
           const issue = Issue.atToken(file, token, "OCCURS is obsolete", this.getKey());
           issues.push(issue);
