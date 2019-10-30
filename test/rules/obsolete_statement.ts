@@ -21,6 +21,7 @@ const tests = [
   {abap: "DATA tab LIKE foobar OCCURS 2.", cnt: 1},
   {abap: "RANGES moo FOR foo-bar OCCURS 50.", cnt: 1},
   {abap: "DESCRIBE TABLE tab OCCURS n1.", cnt: 1},
+  {abap: "DATA tab TYPE STANDARD TABLE of foobar.", cnt: 0},
 ];
 
 testRule(tests, ObsoleteStatement);
