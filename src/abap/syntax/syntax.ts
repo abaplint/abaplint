@@ -85,7 +85,7 @@ export class SyntaxLogic {
   }
 
   private newIssue(token: Token, message: string): void {
-    const issue = Issue.atToken(this.currentFile, token, message, "check_variables");
+    const issue = Issue.atToken(this.currentFile, token, message, "check_syntax");
     this.issues.push(issue);
   }
 
