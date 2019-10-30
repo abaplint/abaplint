@@ -221,6 +221,7 @@ const versions = [
   {abap: "lv_foo -= 2.", ver: Version.v755},
   {abap: "lv_foo /= 2.", ver: Version.v755},
   {abap: "lv_foo *= 2.", ver: Version.v755},
+  {abap: "lv_foo &&= `abc`.", ver: Version.v755},
 
   {abap: "DATA(mode) = SWITCH edit_mode( id_edit_mode\n" +
     "  WHEN 'U' THEN asdf\n" +
