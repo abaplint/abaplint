@@ -8,6 +8,7 @@ export * from "./class_final";
 export * from "./class_name";
 export * from "./compare_operator";
 export * from "./compare";
+export * from "./concatenated_constant";
 export * from "./component_chain_simple";
 export * from "./component_chain";
 export * from "./text_element_key";
