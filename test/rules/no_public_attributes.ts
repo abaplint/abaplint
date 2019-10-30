@@ -26,6 +26,10 @@ const tests = [
             DATA counter TYPE i.
             DATA abc TYPE i.
           ENDCLASS.`, cnt: 0},
+  {abap: `CLASS lcx_except DEFINITION INHERITING FROM cx_static_check.
+            PUBLIC SECTION.
+              DATA foo TYPE i.
+          ENDCLASS.`, cnt: 0},
 ];
 
 testRule(tests, NoPublicAttributes);
@@ -58,6 +62,10 @@ const testsReadOnlyAllowed = [
                 DATA counter TYPE i.
             PRIVATE SECTION.
                 DATA abc TYPE i.
+          ENDCLASS.`, cnt: 0},
+  {abap: `CLASS lcx_except DEFINITION INHERITING FROM cx_static_check.
+            PUBLIC SECTION.
+                DATA foo TYPE i.
           ENDCLASS.`, cnt: 0},
 ];
 
