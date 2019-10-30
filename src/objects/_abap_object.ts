@@ -102,7 +102,8 @@ export abstract class ABAPObject extends AbstractObject {
     const parsed = this.parseXML();
     if (parsed === undefined
         || parsed.abapGit["asx:abap"]["asx:values"] === undefined
-        || parsed.abapGit["asx:abap"]["asx:values"].TPOOL === undefined) {
+        || parsed.abapGit["asx:abap"]["asx:values"].TPOOL === undefined
+        || parsed.abapGit["asx:abap"]["asx:values"].TPOOL.item === undefined) {
       return [];
     }
 
