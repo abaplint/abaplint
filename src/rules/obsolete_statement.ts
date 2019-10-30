@@ -17,6 +17,8 @@ export class ObsoleteStatementConf extends BasicRuleConfig {
   public divide: boolean = true;
   /** Checks for usages of IS REQUESTED */
   public requested: boolean = true;
+  /** Checks for usages of OCCURS */
+  public occurs: boolean = true;
 }
 
 export class ObsoleteStatement extends ABAPRule {
@@ -63,31 +65,34 @@ export class ObsoleteStatement extends ABAPRule {
         prev = sta.getStart();
       }
 
-      if ((sta.get() instanceof Statements.Describe)
+      if (this.conf.requested) {
+        for (const compare of sta.findAllExpressions(Compare)) {
+          const token = compare.findDirectTokenByText("REQUESTED");
+          if (token) {
+            const issue = Issue.atToken(file, token, "IS REQUESTED is obsolete", this.getKey());
+            issues.push(issue);
+          }
+        }
+      }
+      if (this.conf.occurs) {
+        if ((sta.get() instanceof Statements.Describe)
           || (sta.get() instanceof Statements.Ranges)) {
-        const token = sta.findDirectTokenByText("OCCURS");
-        if (token) {
-          const issue = Issue.atToken(file, token, "OCCURS is obsolete", this.getKey());
-          issues.push(issue);
+          const token = sta.findDirectTokenByText("OCCURS");
+          if (token) {
+            const issue = Issue.atToken(file, token, "OCCURS is obsolete", this.getKey());
+            issues.push(issue);
+          }
         }
-      }
 
-      for (const compare of sta.findAllExpressions(Compare)) {
-        const token = compare.findDirectTokenByText("REQUESTED");
-        if (token) {
-          const issue = Issue.atToken(file, token, "IS REQUESTED is obsolete", this.getKey());
-          issues.push(issue);
-        }
-      }
-      for (const dataDef of sta.findAllExpressions(DataDefinition)) {
-        const token = dataDef.findDirectTokenByText("OCCURS");
-        if (token) {
-          const issue = Issue.atToken(file, token, "OCCURS is obsolete", this.getKey());
-          issues.push(issue);
+        for (const dataDef of sta.findAllExpressions(DataDefinition)) {
+          const token = dataDef.findDirectTokenByText("OCCURS");
+          if (token) {
+            const issue = Issue.atToken(file, token, "OCCURS is obsolete", this.getKey());
+            issues.push(issue);
+          }
         }
       }
     }
-
     return issues;
   }
 }
