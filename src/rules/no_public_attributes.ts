@@ -1,27 +1,33 @@
 import {Issue} from "../issue";
 import {BasicRuleConfig} from "./_basic_rule_config";
 import {Registry} from "../registry";
-import {IRule} from "./_irule";
-import {IObject} from "../objects/_iobject";
-import {Class} from "../objects";
-import {Visibility} from "../abap/types";
+import {Visibility, ClassAttribute} from "../abap/types";
 import {Scope} from "../abap/syntax/_scope";
+import {ABAPRule} from "./_abap_rule";
+import {ABAPFile} from "../files";
 
-// todo, add unit tests for this class
-
-/** Checks that classes don't contain any public attributes */
+/**
+ * Checks that classes and interfaces don't contain any public attributes.
+ * Exceptions are excluded from this rule.
+ */
 export class NoPublicAttributesConf extends BasicRuleConfig {
-  // todo,  public allowReadOnly: boolean = false;
+  /** Allows public attributes, if they are declared as READ-ONLY. */
+  public allowReadOnly: boolean = false;
 }
 
-export class NoPublicAttributes implements IRule {
+export class NoPublicAttributes extends ABAPRule {
+
   private conf = new NoPublicAttributesConf();
+  private rows: string[] = [];
+
+  private file: ABAPFile;
+  private scope: Scope;
 
   public getKey(): string {
     return "no_public_attributes";
   }
 
-  private getDescription(name: string): string {
+  public getDescription(name: string): string {
     return "Public attributes are not allowed, attribute \"" + name + "\"";
   }
 
@@ -33,33 +39,61 @@ export class NoPublicAttributes implements IRule {
     this.conf = conf;
   }
 
-  public run(obj: IObject, reg: Registry): Issue[] {
-    const issues: Issue[] = [];
+  public runParsed(file: ABAPFile, reg: Registry) {
+    this.rows = file.getRawRows();
+    this.scope = Scope.buildDefault(reg);
+    this.file = file;
 
-// todo: also implement for interfaces and local classes
-    if (!(obj instanceof Class)) {
-      return [];
+    const attributes = this.getAllPublicAttributes();
+    return this.findAllIssues(attributes);
+  }
+
+  private getAllPublicAttributes(): ClassAttribute[] {
+    let attributes: ClassAttribute[] = [];
+    attributes = attributes.concat(this.getAllPublicClassAttributes());
+    attributes = attributes.concat(this.getAllPublicInterfaceAttributes());
+    return attributes;
+  }
+
+  private getAllPublicClassAttributes(): ClassAttribute[] {
+    let attributes: ClassAttribute[] = [];
+    for (const classDef of this.file.getClassDefinitions()) {
+      if (classDef.isException()) {
+        continue;
+      }
+      const attr = classDef.getAttributes(this.scope);
+      attributes = attributes.concat(attr.getInstancesByVisibility(Visibility.Public));
+      attributes = attributes.concat(attr.getStaticsByVisibility(Visibility.Public));
     }
+    return attributes;
+  }
 
-    const def = obj.getClassDefinition();
-    if (def === undefined || def.isException()) {
-      return [];
-    }
-
-    const attrs = def.getAttributes(Scope.buildDefault(reg));
-
-    if (attrs === undefined) {
-      return [];
-    }
-
-    for (const attr of attrs.getInstance().concat(attrs.getStatic())) {
-      if (attr.getVisibility() === Visibility.Public) {
-        const message = this.getDescription(attr.getName());
-        const issue = Issue.atIdentifier(attr, message, this.getKey());
-        issues.push(issue);
+  private getAllPublicInterfaceAttributes(): ClassAttribute[] {
+    let attributes: ClassAttribute[] = [];
+    for (const interfaceDef of this.file.getInterfaceDefinitions()) {
+      const attr = interfaceDef.getAttributes(this.scope);
+      if (attr) {
+        attributes = attributes.concat(attr.getInstancesByVisibility(Visibility.Public));
+        attributes = attributes.concat(attr.getStaticsByVisibility(Visibility.Public));
       }
     }
+    return attributes;
+  }
 
+  private findAllIssues(attributes: ClassAttribute[]): Issue[] {
+    const issues: Issue[] = [];
+    for (const attr of attributes) {
+      if ((this.conf.allowReadOnly === true) && this.isAttributeReadOnly(attr)) {
+        continue;
+      }
+      const issue = Issue.atIdentifier(attr, this.getDescription(attr.getName()), this.getKey());
+      issues.push(issue);
+    }
     return issues;
+  }
+  private isAttributeReadOnly(attribute: ClassAttribute): boolean {
+    const rowNum = attribute.getStart().getRow();
+    const row = this.rows[rowNum - 1] + this.rows[rowNum];
+    return row.includes("READ-ONLY");
   }
 }
