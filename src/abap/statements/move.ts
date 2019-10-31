@@ -20,7 +20,7 @@ export class Move extends Statement {
                      opt(expanding),
                      opt(keeping));
 
-    const calcAssign = ver(Version.v755,
+    const calcAssign = ver(Version.v754,
                            alt(seq(tok(WPlus), str("=")),
                                seq(tok(WDash), str("=")),
                                str("/="),

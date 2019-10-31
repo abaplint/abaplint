@@ -23,7 +23,7 @@ export class ClassDefinition extends Statement {
                      risk,
                      str("SHARED MEMORY ENABLED"),
                      duration,
-                     ver(Version.v755, seq(str("FOR BEHAVIOR OF"), new SimpleName())),
+                     ver(Version.v754, seq(str("FOR BEHAVIOR OF"), new SimpleName())),
                      seq(opt(str("GLOBAL")), str("FRIENDS"), plus(new ClassName())));
 
     const def = seq(str("DEFINITION"), opt(blah));

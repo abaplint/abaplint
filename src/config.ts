@@ -33,7 +33,7 @@ export interface IConfig {
 // assumption: this class is immutable
 export class Config {
 
-  private static readonly defaultVersion = Version.v755;
+  private static readonly defaultVersion = Version.v754;
   private readonly config: IConfig;
 
   public static getDefault(ver?: Version): Config {
