@@ -29,6 +29,12 @@ describe("Rule: check_text_elements", function() {
      <LENGTH>22</LENGTH>
     </item>
     <item>
+     <ID>I</ID>
+     <KEY>111</KEY>
+     <ENTRY>&apos;Editor Lock&apos; is set.</ENTRY>
+     <LENGTH>42</LENGTH>
+    </item>
+    <item>
      <ID>R</ID>
      <ENTRY>Program ZFOOBAR</ENTRY>
      <LENGTH>28</LENGTH>
@@ -118,6 +124,16 @@ describe("Rule: check_text_elements", function() {
     reg.parse();
     const issues = new CheckTextElements().run(reg.getObjects()[0]);
     expect(issues.length).to.equal(1);
+  });
+
+  it("test 9", function () {
+    const abap = "WRITE '''Editor Lock'' is set.'(111).";
+    const reg = new Registry();
+    reg.addFile(new MemoryFile("zfoobar.prog.abap", abap));
+    reg.addFile(new MemoryFile("zfoobar.prog.xml", xml));
+    reg.parse();
+    const issues = new CheckTextElements().run(reg.getObjects()[0]);
+    expect(issues.length).to.equal(0);
   });
 
 });

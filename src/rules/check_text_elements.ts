@@ -52,12 +52,16 @@ export class CheckTextElements implements IRule {
 
       for (const e of stru.findAllExpressions(Expressions.TextElementString)) {
         const token = e.findFirstExpression(Expressions.TextElementKey)!.getFirstToken();
+        const code = e.getFirstToken().getStr();
         const key = token.getStr();
-        const found = this.findKey(key, texts);
+        let found = this.findKey(key, texts);
+        if (found && code.startsWith("'")) {
+          found = found.replace(/'/g, "''");
+        }
         if (found === undefined) {
           output.push(Issue.atToken(file, token, "Text element not found", this.getKey()));
-        } else if (e.getFirstToken().getStr() !== "'" + found + "'"
-            && e.getFirstToken().getStr() !== "`" + found + "`") {
+        } else if (code !== "'" + found + "'"
+            && code !== "`" + found + "`") {
           output.push(Issue.atToken(file, token, "Text does not match text element", this.getKey()));
         }
       }
