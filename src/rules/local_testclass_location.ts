@@ -19,7 +19,7 @@ export class LocalTestclassLocation extends ABAPRule {
   }
 
   private getDescription(className: string): string {
-    return "Place local testclass" + className + " in the testclass include.";
+    return "Place local testclass \"" + className + "\" in the testclass include";
   }
 
   public getConfig() {
