@@ -25,12 +25,42 @@ export class Attributes {
     return this.static;
   }
 
+  public getStaticsByVisibility(visibility: Visibility): ClassAttribute[] {
+    const attributes: ClassAttribute[] = [];
+    for (const attr of this.static) {
+      if (attr.getVisibility() === visibility) {
+        attributes.push(attr);
+      }
+    }
+    return attributes;
+  }
+
   public getInstance(): ClassAttribute[] {
     return this.instance;
   }
 
+  public getInstancesByVisibility(visibility: Visibility): ClassAttribute[] {
+    const attributes: ClassAttribute[] = [];
+    for (const attr of this.instance) {
+      if (attr.getVisibility() === visibility) {
+        attributes.push(attr);
+      }
+    }
+    return attributes;
+  }
+
   public getConstants(): ClassConstant[] {
     return this.constants;
+  }
+
+  public getConstantsByVisibility(visibility: Visibility): ClassConstant[] {
+    const attributes: ClassConstant[] = [];
+    for (const attr of this.constants) {
+      if (attr.getVisibility() === visibility) {
+        attributes.push(attr);
+      }
+    }
+    return attributes;
   }
 
   public findByName(name: string): ClassAttribute | ClassConstant | undefined {
