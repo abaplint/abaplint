@@ -24,9 +24,13 @@ export class Move extends Statement {
                            alt(seq(tok(WPlus), str("=")),
                                seq(tok(WDash), str("=")),
                                str("/="),
-                               str("*=")));
+                               str("*="),
+                               str("&&=")));
 
-    const equals = alt(alt(str("="), str("?=")), calcAssign);
+    const assignment = str("=");
+    const cast = str("?=");
+
+    const equals = alt(alt(assignment, cast), calcAssign);
 
 // todo, move "?=" to CAST?
     const eq = seq(plus(seq(new Target(), equals)), new Source());
