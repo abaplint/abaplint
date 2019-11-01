@@ -8,7 +8,7 @@ import {Artifacts} from "./artifacts";
 import {versionToText} from "./version";
 import {SkipLogic} from "./skip_logic";
 import {Position} from "./position";
-
+import {IncludeGraph} from "./include_graph";
 
 export interface IProgress {
   set(total: number, text: string): void;
@@ -31,6 +31,7 @@ export class Registry {
   private readonly objects: IObject[] = [];
   private issues: Issue[] = [];
   private readonly dependencies: string[] = [];
+  private includeGraph: IncludeGraph | undefined;
 
   constructor(conf?: Config) {
     this.conf = conf ? conf : Config.getDefault();
@@ -79,7 +80,7 @@ export class Registry {
 
   public getABAPFiles(progress?: IProgress): ABAPFile[] {
     if (this.isDirty()) {
-      this.parse(progress);
+      this.clean(progress);
     }
     let ret: ABAPFile[] = [];
     this.getABAPObjects().forEach((a) => {ret = ret.concat(a.getABAPFiles()); });
@@ -138,6 +139,7 @@ export class Registry {
 // todo: methods to add/remove deps
 // todo: add unit tests
   public addDependencies(files: IFile[]): Registry {
+    this.setDirty();
     for (const f of files) {
       this.dependencies.push(f.getFilename());
     }
@@ -147,6 +149,7 @@ export class Registry {
   public setDirty() {
     this.dirty = true;
     this.issues = [];
+    this.includeGraph = undefined;
   }
 
   public isDirty(): boolean {
@@ -166,10 +169,51 @@ export class Registry {
   }
 
   public findIssues(progress?: IProgress, iobj?: IObject): Issue[] {
-    if (this.isDirty()) {
-      this.parse(progress);
+    if (this.isDirty() === true) {
+      this.clean(progress);
     }
     return this.runRules(progress, iobj);
+  }
+
+  public getIncludeGraph(progress?: IProgress): IncludeGraph {
+    if (this.isDirty() === true) {
+      this.clean(progress);
+    }
+    if (this.includeGraph === undefined) {
+      throw new Error("includeGraph unexpectedly undefined");
+    }
+    return this.includeGraph;
+  }
+
+  public parse(progress?: IProgress): Registry {
+    if (this.isDirty() === false) {
+      return this;
+    }
+    const pro = progress ? progress : new NoProgress();
+
+    const objects = this.getABAPObjects();
+
+    pro.set(objects.length, ":percent - :elapseds - Lexing and parsing(" + versionToText(this.conf.getVersion()) + ") - :object");
+    for (const obj of objects) {
+      pro.tick({object: obj.getType() + " " + obj.getName()});
+      obj.parseFirstPass(this);
+    }
+
+    pro.set(objects.length, ":percent - :elapseds - Second pass - :object");
+    for (const obj of objects) {
+      pro.tick({object: obj.getType() + " " + obj.getName()});
+      this.issues = this.issues.concat(obj.parseSecondPass());
+    }
+
+    return this;
+  }
+
+//////////////////////////////////////////
+
+  private clean(progress?: IProgress) {
+    this.parse(progress);
+    this.includeGraph = new IncludeGraph(this);
+    this.dirty = false;
   }
 
   private runRules(progress?: IProgress, iobj?: IObject): Issue[] {
@@ -227,31 +271,6 @@ export class Registry {
     }
 
     return ret;
-  }
-
-  public parse(progress?: IProgress): Registry {
-    if (!this.isDirty()) {
-      return this;
-    }
-    const pro = progress ? progress : new NoProgress();
-
-    const objects = this.getABAPObjects();
-
-    pro.set(objects.length, ":percent - :elapseds - Lexing and parsing(" + versionToText(this.conf.getVersion()) + ") - :object");
-    for (const obj of objects) {
-      pro.tick({object: obj.getType() + " " + obj.getName()});
-      obj.parseFirstPass(this);
-    }
-
-    pro.set(objects.length, ":percent - :elapseds - Second pass - :object");
-    for (const obj of objects) {
-      pro.tick({object: obj.getType() + " " + obj.getName()});
-      this.issues = this.issues.concat(obj.parseSecondPass());
-    }
-
-    this.dirty = false;
-
-    return this;
   }
 
   private findOrCreate(name: string, type: string): IObject {
