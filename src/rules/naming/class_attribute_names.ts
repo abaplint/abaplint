@@ -13,9 +13,9 @@ import {Scope} from "../../abap/syntax/_scope";
 export class ClassAttributeNamesConf extends NamingRuleConfig {
   public ignoreExceptions: boolean = true;
   /** The pattern for static variable names */
-  public statics: string = "^G._.*$";
+  public statics: string = "^G._.+$";
   /** The pattern for instance variable names */
-  public instance: string = "^M._.*$";
+  public instance: string = "^M._.+$";
 }
 
 export class ClassAttributeNames implements IRule {

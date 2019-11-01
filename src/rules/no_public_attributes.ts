@@ -91,6 +91,7 @@ export class NoPublicAttributes extends ABAPRule {
     }
     return issues;
   }
+
   private isAttributeReadOnly(attribute: ClassAttribute): boolean {
     const rowNum = attribute.getStart().getRow();
     const row = this.rows[rowNum - 1] + this.rows[rowNum];

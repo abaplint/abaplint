@@ -12,11 +12,11 @@ import {NameValidator} from "../../utils/name_validator";
 /** Allows you to enforce a pattern, such as a prefix, for local variables, constants and field symbols. */
 export class LocalVariableNamesConf extends NamingRuleConfig {
   /** The pattern for local variable names */
-  public expectedData: string = "^L._.*$";
+  public expectedData: string = "^L._.+$";
   /** The pattern for local constant names */
-  public expectedConstant: string = "^LC_.*$";
+  public expectedConstant: string = "^LC_.+$";
   /** The pattern for field symbol names */
-  public expectedFS: string = "^<L._.*>$";
+  public expectedFS: string = "^<L._.+>$";
 }
 
 export class LocalVariableNames extends ABAPRule {

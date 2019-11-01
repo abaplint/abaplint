@@ -12,9 +12,9 @@ import {NameValidator} from "../../utils/name_validator";
 /** Allows you to enforce a pattern, such as a prefix, for local class names. */
 export class LocalClassNamingConf extends NamingRuleConfig {
   /** The pattern for local class names */
-  public local: string = "^LCL_.*$";
+  public local: string = "^LCL_.+$";
   /** The pattern for local test class names */
-  public test: string = "^LTCL_.*$";
+  public test: string = "^LTCL_.+$";
 }
 
 export class LocalClassNaming extends ABAPRule {

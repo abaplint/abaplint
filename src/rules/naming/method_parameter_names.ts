@@ -14,13 +14,13 @@ export class MethodParameterNamesConf extends NamingRuleConfig {
   /** Ignore parameters in methods of exception classes */
   public ignoreExceptions: boolean = true;
   /** The pattern for importing parameters */
-  public importing: string = "^I._.*$";
+  public importing: string = "^I._.+$";
   /** The pattern for returning parameters */
-  public returning: string = "^R._.*$";
+  public returning: string = "^R._.+$";
   /** The pattern for changing parameters */
-  public changing: string = "^C._.*$";
+  public changing: string = "^C._.+$";
   /** The pattern for exporting parameters */
-  public exporting: string = "^E._.*$";
+  public exporting: string = "^E._.+$";
 }
 
 export class MethodParameterNames implements IRule {
