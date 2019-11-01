@@ -78,13 +78,12 @@ export class ClassDefinition extends Identifier {
     return this.node.findFirstStatement(Statements.ClassDefinition)!.concatTokens().toUpperCase().includes(" FOR TESTING");
   }
 
-/*
-  public getFriends() {
+  public isAbstract(): boolean {
+    return this.node.findFirstStatement(Statements.ClassDefinition)!.concatTokens().toUpperCase().includes(" ABSTRACT");
   }
 
-  public isAbstract(): boolean {
-// todo
-    return false;
+/*
+  public getFriends() {
   }
 
   public getEvents() {
