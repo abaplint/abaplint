@@ -1,6 +1,7 @@
 import {ABAPObject} from "./_abap_object";
 import {FunctionModuleDefinition} from "../abap/types";
 import {xmlToArray} from "../xml_utils";
+import {ABAPFile} from "../files";
 
 export class FunctionGroup extends ABAPObject {
 
@@ -18,6 +19,44 @@ export class FunctionGroup extends ABAPObject {
     return this.parseModules(parsed);
   }
 
+  public getIncludeFiles(): {file: ABAPFile, name: string}[] {
+    const ret = [];
+    const includes = this.getIncludes();
+    for (const f of this.getABAPFiles()) {
+      for (const i of includes) {
+        if (i.startsWith("L") && f.getFilename().includes(i.toLowerCase())) {
+          ret.push({
+            file: f,
+            name: i});
+        }
+      }
+    }
+    return ret;
+  }
+/*
+  public getModuleFiles(): ABAPFile[] {
+
+  }
+*/
+  public getMainABAPFile(): ABAPFile | undefined {
+    const search = this.getName() + ".fugr.sapl";
+    for (const f of this.getABAPFiles()) {
+      if (f.getFilename().includes(search.toLowerCase())) {
+        return f;
+      }
+    }
+    return undefined;
+  }
+
+/*
+  public isInclude(f: ABAPFile): boolean {
+    const search = this.getName() + ".fugr.sapl" + this.getName() + ".abap";
+    if (f.getFilename().endsWith(search.toLowerCase())) {
+      return false;
+    }
+    return true;
+  }
+*/
   public getIncludes(): string[] {
     const xml = this.getXML();
     if (xml === undefined) {

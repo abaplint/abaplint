@@ -32,14 +32,29 @@ describe("Rules, check_include", function () {
   it("found", () => {
     const issues = runMulti([
       {filename: "zexists.prog.abap", contents: `WRITE 2.`},
+      {filename: "zexists.prog.xml", contents: `<SUBC>I</SUBC>`},
       {filename: "zfoo.prog.abap", contents: `INCLUDE zexists.`}]);
     expect(issues.length).to.equals(0);
+  });
+
+  it("error, not possible to INCLUDE main program", () => {
+    const issues = runMulti([
+      {filename: "zexists.prog.abap", contents: `WRITE 2.`},
+      {filename: "zfoo.prog.abap", contents: `INCLUDE zexists.`}]);
+    expect(issues.length).to.equals(1);
   });
 
   it("not found, IF FOUND", () => {
     const contents = `INCLUDE znot_found IF FOUND.`;
     const issues = runMulti([{filename: "zfoo.prog.abap", contents}]);
     expect(issues.length).to.equals(0);
+  });
+
+  it("not used", () => {
+    const issues = runMulti([
+      {filename: "zexists.prog.abap", contents: `WRITE 2.`},
+      {filename: "zexists.prog.xml", contents: `<SUBC>I</SUBC>`}]);
+    expect(issues.length).to.equals(1);
   });
 
 });

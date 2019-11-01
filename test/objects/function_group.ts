@@ -57,4 +57,18 @@ describe("Funcion Group, parse main xml", () => {
     expect(includes).to.include("LZAGTEST_FUNCTION_GROUPTOP");
     expect(includes).to.include("SAPLZAGTEST_FUNCTION_GROUP");
   });
+
+  it("test, getIncludeFiles", () => {
+    const reg = new Registry();
+    reg.addFile(new MemoryFile("zagtest_function_group.fugr.xml", xml));
+    reg.addFile(new MemoryFile("zagtest_function_group.fugr.lzagtest_function_grouptop.abap", "WRITE hello."));
+    reg.parse();
+    const fugr = reg.getABAPObjects()[0] as FunctionGroup;
+
+    const includes = fugr.getIncludeFiles();
+    expect(includes.length).to.equal(1);
+    const row = includes[0];
+    expect(row.name).to.equal("LZAGTEST_FUNCTION_GROUPTOP");
+  });
+
 });

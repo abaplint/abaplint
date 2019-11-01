@@ -46,6 +46,17 @@ export class Registry {
     return this.objects;
   }
 
+  public getFileByName(filename: string): IFile | undefined {
+    for (const o of this.objects) {
+      for (const f of o.getFiles()) {
+        if (f.getFilename().toUpperCase() === filename.toUpperCase()) {
+          return f;
+        }
+      }
+    }
+    return undefined;
+  }
+
   public getObject(type: string, name: string): IObject | undefined {
     for (const obj of this.objects) {
 // todo, this is slow
