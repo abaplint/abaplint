@@ -1,7 +1,8 @@
-import {ABAPObject} from "./_abap_object";
+import {ABAPObject, ITextElement} from "./_abap_object";
 import {FunctionModuleDefinition} from "../abap/types";
 import {xmlToArray} from "../xml_utils";
 import {ABAPFile} from "../files";
+import * as xmljs from "xml-js";
 
 export class FunctionGroup extends ABAPObject {
 
@@ -92,6 +93,26 @@ export class FunctionGroup extends ABAPObject {
     }
 
     return ret;
+  }
+
+  public getTexts(): ITextElement[] {
+    const found = this.findTextFile();
+    if (found === undefined) {
+      return [];
+    }
+
+    const parsed = xmljs.xml2js(found.getRaw(), {compact: true});
+    return this.findTexts(parsed);
+  }
+
+  private findTextFile() {
+    const search = this.getName() + ".fugr.sapl" + this.getName() + ".xml";
+    for (const f of this.files) {
+      if (f.getFilename().includes(search.toLowerCase())) {
+        return f;
+      }
+    }
+    return undefined;
   }
 
 }

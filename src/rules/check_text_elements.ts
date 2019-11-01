@@ -4,7 +4,7 @@ import {BasicRuleConfig} from "./_basic_rule_config";
 import * as Expressions from "../abap/expressions";
 import {ABAPObject, ITextElement} from "../objects/_abap_object";
 import {IObject} from "../objects/_iobject";
-import {FunctionGroup} from "../objects";
+import {Registry} from "../registry";
 
 /** Check text elements */
 export class CheckTextElementsConf extends BasicRuleConfig {
@@ -26,20 +26,26 @@ export class CheckTextElements implements IRule {
     this.conf = conf;
   }
 
-  public run(obj: IObject): Issue[] {
-    if (!(obj instanceof ABAPObject)
-        || obj instanceof FunctionGroup) { // todo
+  public run(obj: IObject, reg: Registry): Issue[] {
+    if (!(obj instanceof ABAPObject)) {
       return [];
     }
 
     const output: Issue[] = [];
-    const abap = obj as ABAPObject;
-    const texts = abap.getTexts();
 
-    for (const file of abap.getABAPFiles()) {
+    for (const file of obj.getABAPFiles()) {
       const stru = file.getStructure();
       if (stru === undefined) {
         continue;
+      }
+
+      let texts = obj.getTexts();
+
+      const mains = reg.getIncludeGraph().listMainForInclude(file.getFilename());
+      if (mains.length === 1) {
+// todo, this only checks the first main
+        const main1 = reg.findObjectForFile(reg.getFileByName(mains[0])!)! as ABAPObject;
+        texts = main1.getTexts();
       }
 
       for (const e of stru.findAllExpressions(Expressions.TextElement)) {

@@ -50,7 +50,7 @@ describe("Rule: check_text_elements", function() {
     reg.addFile(new MemoryFile("zfoobar.prog.abap", abap));
     reg.addFile(new MemoryFile("zfoobar.prog.xml", xml));
     reg.parse();
-    const issues = new CheckTextElements().run(reg.getObjects()[0]);
+    const issues = new CheckTextElements().run(reg.getObjects()[0], reg);
     expect(issues.length).to.equal(0);
   });
 
@@ -72,7 +72,7 @@ describe("Rule: check_text_elements", function() {
     reg.addFile(new MemoryFile("zfoobar.prog.abap", abap));
     reg.addFile(new MemoryFile("zfoobar.prog.xml", xml));
     reg.parse();
-    const issues = new CheckTextElements().run(reg.getObjects()[0]);
+    const issues = new CheckTextElements().run(reg.getObjects()[0], reg);
     expect(issues.length).to.equal(0);
   });
 
@@ -82,7 +82,7 @@ describe("Rule: check_text_elements", function() {
     reg.addFile(new MemoryFile("zfoobar.prog.abap", abap));
     reg.addFile(new MemoryFile("zfoobar.prog.xml", xml));
     reg.parse();
-    const issues = new CheckTextElements().run(reg.getObjects()[0]);
+    const issues = new CheckTextElements().run(reg.getObjects()[0], reg);
     expect(issues.length).to.equal(0);
   });
 
@@ -92,7 +92,7 @@ describe("Rule: check_text_elements", function() {
     reg.addFile(new MemoryFile("zfoobar.prog.abap", abap));
     reg.addFile(new MemoryFile("zfoobar.prog.xml", xml));
     reg.parse();
-    const issues = new CheckTextElements().run(reg.getObjects()[0]);
+    const issues = new CheckTextElements().run(reg.getObjects()[0], reg);
     expect(issues.length).to.equal(1);
   });
 
@@ -102,7 +102,7 @@ describe("Rule: check_text_elements", function() {
     reg.addFile(new MemoryFile("zfoobar.prog.abap", abap));
     reg.addFile(new MemoryFile("zfoobar.prog.xml", xml));
     reg.parse();
-    const issues = new CheckTextElements().run(reg.getObjects()[0]);
+    const issues = new CheckTextElements().run(reg.getObjects()[0], reg);
     expect(issues.length).to.equal(0);
   });
 
@@ -112,7 +112,7 @@ describe("Rule: check_text_elements", function() {
     reg.addFile(new MemoryFile("zfoobar.prog.abap", abap));
     reg.addFile(new MemoryFile("zfoobar.prog.xml", xml));
     reg.parse();
-    const issues = new CheckTextElements().run(reg.getObjects()[0]);
+    const issues = new CheckTextElements().run(reg.getObjects()[0], reg);
     expect(issues.length).to.equal(1);
   });
 
@@ -122,7 +122,7 @@ describe("Rule: check_text_elements", function() {
     reg.addFile(new MemoryFile("zfoobar.prog.abap", abap));
     reg.addFile(new MemoryFile("zfoobar.prog.xml", xml));
     reg.parse();
-    const issues = new CheckTextElements().run(reg.getObjects()[0]);
+    const issues = new CheckTextElements().run(reg.getObjects()[0], reg);
     expect(issues.length).to.equal(1);
   });
 
@@ -132,7 +132,7 @@ describe("Rule: check_text_elements", function() {
     reg.addFile(new MemoryFile("zfoobar.prog.abap", abap));
     reg.addFile(new MemoryFile("zfoobar.prog.xml", xml));
     reg.parse();
-    const issues = new CheckTextElements().run(reg.getObjects()[0]);
+    const issues = new CheckTextElements().run(reg.getObjects()[0], reg);
     expect(issues.length).to.equal(0);
   });
 

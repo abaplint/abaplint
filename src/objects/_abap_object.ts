@@ -100,6 +100,10 @@ export abstract class ABAPObject extends AbstractObject {
 
   public getTexts(): ITextElement[] {
     const parsed = this.parseXML();
+    return this.findTexts(parsed);
+  }
+
+  public findTexts(parsed: any): ITextElement[] {
     if (parsed === undefined
         || parsed.abapGit["asx:abap"]["asx:values"] === undefined
         || parsed.abapGit["asx:abap"]["asx:values"].TPOOL === undefined

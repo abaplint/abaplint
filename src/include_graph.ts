@@ -7,6 +7,7 @@ import {CheckInclude} from "./rules";
 import {Position} from "./position";
 
 // todo, check for cycles/circular dependencies, method findTop
+// todo, add configurable error for multiple use includes
 
 interface IVertex {
   filename: string;
@@ -57,7 +58,10 @@ class Graph {
       }
     }
     if (ret.length === 0) {
-      ret.push(this.findVertex(filename)!);
+      const found = this.findVertex(filename);
+      if (found !== undefined) {
+        ret.push(found);
+      }
     }
     return ret;
   }
