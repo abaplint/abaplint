@@ -1,6 +1,6 @@
 import {Statement} from "./_statement";
-import {str, seq, regex as reg, alt, star, IStatementRunnable} from "../combi";
-import {FieldSymbol as Name} from "../expressions";
+import {str, seq, alt, IStatementRunnable} from "../combi";
+import {FieldSymbol as Name, Type, TypeTable} from "../expressions";
 import * as Expressions from "../expressions";
 import {StatementNode} from "../nodes";
 import {Scope} from "../syntax/_scope";
@@ -10,10 +10,9 @@ import {UnknownType} from "../types/basic";
 export class FieldSymbol extends Statement {
 
   public getMatcher(): IStatementRunnable {
-// todo, reuse type definition from DATA
     return seq(alt(str("FIELD-SYMBOL"), str("FIELD-SYMBOLS")),
                new Name(),
-               star(reg(/^.*$/)));
+               alt(new Type(), new TypeTable()));
   }
 
   public runSyntax(node: StatementNode, _scope: Scope, filename: string): TypedIdentifier | undefined {
