@@ -1,5 +1,5 @@
 import {Statement} from "./_statement";
-import {str, seq, alt, IStatementRunnable} from "../combi";
+import {str, seq, alt, opt, IStatementRunnable} from "../combi";
 import {FieldSymbol as Name, Type, TypeTable} from "../expressions";
 import * as Expressions from "../expressions";
 import {StatementNode} from "../nodes";
@@ -12,7 +12,7 @@ export class FieldSymbol extends Statement {
   public getMatcher(): IStatementRunnable {
     return seq(alt(str("FIELD-SYMBOL"), str("FIELD-SYMBOLS")),
                new Name(),
-               alt(new Type(), new TypeTable()));
+               opt(alt(new Type(), new TypeTable())));
   }
 
   public runSyntax(node: StatementNode, _scope: Scope, filename: string): TypedIdentifier | undefined {
