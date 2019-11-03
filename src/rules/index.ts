@@ -4,6 +4,7 @@ export * from "./allowed_object_types";
 export * from "./ambiguous_statement";
 export * from "./avoid_use";
 export * from "./breakpoint";
+export * from "./check_abstract";
 export * from "./chain_mainly_declarations";
 export * from "./check_text_elements";
 export * from "./cloud_types";
