@@ -13,7 +13,7 @@ export class Artifacts {
       if (typeof list[key] === "function") {
         const rule: IRule = new list[key]();
 // note that configuration is also exported from rules
-        if (rule.getKey) {
+        if (rule.getKey !== undefined) {
           ret.push(rule);
         }
       }
