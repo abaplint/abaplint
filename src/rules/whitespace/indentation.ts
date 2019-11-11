@@ -53,7 +53,7 @@ export class Indentation extends ABAPRule {
       alignTryCatch: this.conf.alignTryCatch,
       globalClassSkipFirst: this.conf.globalClassSkipFirst,
     };
-    const expected = new PrettyPrinter(file, indentOpts).getExpectedIndentation();
+    const expected = new PrettyPrinter(file, _reg.getConfig(), indentOpts).getExpectedIndentation();
 
     for (const statement of file.getStatements()) {
       const indent = expected.shift();

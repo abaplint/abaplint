@@ -5,6 +5,8 @@ import {StatementNode, ExpressionNode, TokenNodeRegex, TokenNode} from "./nodes"
 import {ABAPFile} from "../files";
 import {Identifier} from "./tokens";
 import {Position} from "../position";
+import {Config} from "..";
+import {SequentialBlank, SequentialBlankConf} from "../rules";
 
 // todo, will break if there is multiple statements per line?
 
@@ -51,52 +53,52 @@ class Indentation {
       const type = statement.get();
 
       if (type instanceof Statements.EndIf
-          || type instanceof Statements.EndWhile
-          || type instanceof Statements.EndModule
-          || type instanceof Statements.EndSelect
-          || type instanceof Statements.EndMethod
-          || type instanceof Statements.EndAt
-          || type instanceof Statements.Else
-          || type instanceof Statements.EndOfDefinition
-          || type instanceof Statements.EndLoop
-          || type instanceof Statements.EndForm
-          || type instanceof Statements.ElseIf
-          || type instanceof Statements.EndFunction
-          || type instanceof Statements.EndInterface
-          || type instanceof Statements.EndDo) {
+        || type instanceof Statements.EndWhile
+        || type instanceof Statements.EndModule
+        || type instanceof Statements.EndSelect
+        || type instanceof Statements.EndMethod
+        || type instanceof Statements.EndAt
+        || type instanceof Statements.Else
+        || type instanceof Statements.EndOfDefinition
+        || type instanceof Statements.EndLoop
+        || type instanceof Statements.EndForm
+        || type instanceof Statements.ElseIf
+        || type instanceof Statements.EndFunction
+        || type instanceof Statements.EndInterface
+        || type instanceof Statements.EndDo) {
         indent = indent - 2;
       } else if (type instanceof Statements.StartOfSelection
-          || type instanceof Statements.AtSelectionScreen
-          || type instanceof Statements.Initialization
-          || type instanceof Statements.EndOfSelection
-          || type instanceof Statements.LoadOfProgram) {
+        || type instanceof Statements.AtSelectionScreen
+        || type instanceof Statements.Initialization
+        || type instanceof Statements.EndOfSelection
+        || type instanceof Statements.LoadOfProgram) {
         indent = init;
         parentIsEvent = true;
       } else if (type instanceof Statements.Form
-          || (type instanceof Statements.Include && parentIsEvent)
-          || type instanceof Statements.Module
-          || type instanceof Statements.ClassImplementation
-          || type instanceof Statements.ClassDefinition) {
+        || (type instanceof Statements.Include && parentIsEvent)
+        || type instanceof Statements.Module
+        || type instanceof Statements.ClassImplementation
+        || type instanceof Statements.ClassDefinition) {
         indent = init;
         parentIsEvent = false;
       } else if (type instanceof Statements.Cleanup
-          || type instanceof Statements.Catch) {
+        || type instanceof Statements.Catch) {
         indent = stack.peek() - 2;
       } else if (type instanceof Statements.Public
-          || type instanceof Statements.Protected
-          || type instanceof Statements.Private
-          || type instanceof Statements.When) {
+        || type instanceof Statements.Protected
+        || type instanceof Statements.Private
+        || type instanceof Statements.When) {
         indent = stack.peek();
       } else if (type instanceof Statements.EndTry) {
         indent = stack.pop() - (this.options.alignTryCatch ? 2 : 4);
       } else if (type instanceof Statements.EndClass
-          || type instanceof Statements.EndCase) {
+        || type instanceof Statements.EndCase) {
         indent = stack.pop() - 2;
         indent = Math.max(indent, init); // maybe move this out of switch before ret.push(indent)
       } else if (type instanceof Comment
-          || type instanceof Statements.IncludeType
-          || type instanceof Empty
-          || type instanceof MacroContent) {
+        || type instanceof Statements.IncludeType
+        || type instanceof Empty
+        || type instanceof MacroContent) {
         ret.push(-1);
         continue;
       }
@@ -104,37 +106,37 @@ class Indentation {
       ret.push(indent);
 
       if (type instanceof Statements.If
-          || type instanceof Statements.While
-          || type instanceof Statements.Module
-          || type instanceof Statements.SelectLoop
-          || type instanceof Statements.FunctionModule
-          || type instanceof Statements.Interface
-          || type instanceof Statements.Do
-          || type instanceof Statements.At
-          || type instanceof Statements.Catch
-          || type instanceof Statements.Define
-          || type instanceof Statements.When
-          || type instanceof Statements.Cleanup
-          || type instanceof Statements.Loop
-          || type instanceof Statements.Form
-          || type instanceof Statements.Else
-          || type instanceof Statements.ElseIf
-          || type instanceof Statements.Method
-          || type instanceof Statements.StartOfSelection
-          || type instanceof Statements.AtSelectionScreen
-          || type instanceof Statements.LoadOfProgram
-          || type instanceof Statements.Initialization
-          || type instanceof Statements.EndOfSelection
-          || type instanceof Statements.Public
-          || type instanceof Statements.Protected
-          || type instanceof Statements.Private) {
+        || type instanceof Statements.While
+        || type instanceof Statements.Module
+        || type instanceof Statements.SelectLoop
+        || type instanceof Statements.FunctionModule
+        || type instanceof Statements.Interface
+        || type instanceof Statements.Do
+        || type instanceof Statements.At
+        || type instanceof Statements.Catch
+        || type instanceof Statements.Define
+        || type instanceof Statements.When
+        || type instanceof Statements.Cleanup
+        || type instanceof Statements.Loop
+        || type instanceof Statements.Form
+        || type instanceof Statements.Else
+        || type instanceof Statements.ElseIf
+        || type instanceof Statements.Method
+        || type instanceof Statements.StartOfSelection
+        || type instanceof Statements.AtSelectionScreen
+        || type instanceof Statements.LoadOfProgram
+        || type instanceof Statements.Initialization
+        || type instanceof Statements.EndOfSelection
+        || type instanceof Statements.Public
+        || type instanceof Statements.Protected
+        || type instanceof Statements.Private) {
         indent = indent + 2;
       } else if (type instanceof Statements.Try) {
         indent = indent + (this.options.alignTryCatch ? 2 : 4);
         stack.push(indent);
       } else if (type instanceof Statements.ClassDefinition
-          || type instanceof Statements.Case
-          || type instanceof Statements.ClassImplementation) {
+        || type instanceof Statements.Case
+        || type instanceof Statements.ClassImplementation) {
         indent = indent + (this.skipIndentForGlobalClass(statement) ? 0 : 2);
         stack.push(indent);
       }
@@ -170,27 +172,66 @@ export class PrettyPrinter {
   private result: string;
   private readonly file: ABAPFile;
   private readonly options: IIndentationOptions;
+  private readonly config: Config;
 
-  constructor(file: ABAPFile, options?: IIndentationOptions) {
+  constructor(file: ABAPFile, config: Config, options?: IIndentationOptions) {
     this.result = file.getRaw();
     this.file = file;
     this.options = options || {};
+    this.config = config;
   }
 
   public run(): string {
     const statements = this.file.getStatements();
     for (const statement of statements) {
       if (statement.get() instanceof Unknown
-          || statement.get() instanceof MacroContent
-          || statement.get() instanceof MacroCall
-          || statement.get() instanceof Comment) {
+        || statement.get() instanceof MacroContent
+        || statement.get() instanceof MacroCall
+        || statement.get() instanceof Comment) {
         continue;
       }
-// note that no positions are changed during a upperCaseKeys operation
+      // note that no positions are changed during a upperCaseKeys operation
       this.upperCaseKeywords(statement);
     }
     this.indentCode();
+
+    const sequentialBlankConfig = this.getSequentialBlankConfig();
+    if (sequentialBlankConfig && sequentialBlankConfig.enabled) {
+      this.removeSequentialBlanks(sequentialBlankConfig.lines);
+    }
+
     return this.result;
+  }
+
+  private getSequentialBlankConfig(): SequentialBlankConf | undefined {
+    return this.config.readByRule(new SequentialBlank().getKey());
+  }
+
+  private removeSequentialBlanks(threshold: number) {
+    const rows = this.file.getRawRows();
+
+    let blanks = 0;
+    const rowsToRemove: number[] = [];
+
+    for (let i = 0; i < rows.length; i++) {
+      if (rows[i] === "") {
+        blanks++;
+      } else {
+        blanks = 0;
+      }
+
+      if (blanks === threshold) {
+        // count additional blanks
+        for (let j = i; j < rows.length; j++) {
+          if (rows[j] === "") {
+            rowsToRemove.push(j);
+          } else {
+            break;
+          }
+        }
+      }
+    }
+    this.removeRows(rowsToRemove);
   }
 
   public getExpectedIndentation(): number[] {
@@ -220,6 +261,17 @@ export class PrettyPrinter {
 
     this.result = lines.join("\n");
   }
+
+  private removeRows(rowsToRemove: number[]) {
+    const lines = this.result.split("\n");
+
+    const withoutRemoved = lines.filter((_, idx) => {
+      return rowsToRemove.indexOf(idx) === -1;
+    });
+
+    this.result = withoutRemoved.join("\n");
+  }
+
 
   private replaceString(pos: Position, str: string) {
     const lines = this.result.split("\n");

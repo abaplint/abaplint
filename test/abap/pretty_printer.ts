@@ -18,7 +18,8 @@ describe("Pretty printer, keywords upper case", () => {
     it(testTitle(test.input), () => {
       const reg = new Registry().addFile(new MemoryFile("zfoo.prog.abap", test.input)).parse();
       expect(reg.getABAPFiles().length).to.equal(1);
-      const result = new PrettyPrinter(reg.getABAPFiles()[0]).run();
+      const config = reg.getConfig();
+      const result = new PrettyPrinter(reg.getABAPFiles()[0], config).run();
       expect(result).to.equals(test.expected);
     });
   });
@@ -36,7 +37,8 @@ describe("Pretty printer, indent code", () => {
     it(testTitle(test.input), () => {
       const reg = new Registry().addFile(new MemoryFile("zfoo.prog.abap", test.input)).parse();
       expect(reg.getABAPFiles().length).to.equal(1);
-      const result = new PrettyPrinter(reg.getABAPFiles()[0]).run();
+      const config = reg.getConfig();
+      const result = new PrettyPrinter(reg.getABAPFiles()[0], config).run();
       expect(result).to.equals(test.expected);
     });
   });
@@ -54,7 +56,8 @@ describe("Pretty printer, expected indentation", () => {
     it(testTitle(test.input), () => {
       const reg = new Registry().addFile(new MemoryFile("zfoo.prog.abap", test.input)).parse();
       expect(reg.getABAPFiles().length).to.equal(1);
-      const result = new PrettyPrinter(reg.getABAPFiles()[0]).getExpectedIndentation();
+      const config = reg.getConfig();
+      const result = new PrettyPrinter(reg.getABAPFiles()[0], config).getExpectedIndentation();
       expect(result).to.deep.equal(test.expected);
     });
   });
@@ -76,8 +79,60 @@ describe("Pretty printer with alignTryCatch", () => {
     it(testTitle(test.input), () => {
       const reg = new Registry().addFile(new MemoryFile("zfoo.prog.abap", test.input)).parse();
       expect(reg.getABAPFiles().length).to.equal(1);
-      const result = new PrettyPrinter(reg.getABAPFiles()[0], test.options).getExpectedIndentation();
+      const config = reg.getConfig();
+      const result = new PrettyPrinter(reg.getABAPFiles()[0], config, test.options).getExpectedIndentation();
       expect(result).to.deep.equal(test.expected);
+    });
+  });
+});
+
+
+describe("Remove sequential blanks", () => {
+  const tests = [
+    {
+      input: "REPORT zfoo.\nWRITE: `foo`.",
+      expected: "REPORT zfoo.\nWRITE: `foo`.",
+    },
+    {
+      input: "REPORT zfoo.\n\n\n\n\nWRITE: `foo`.",
+      expected: "REPORT zfoo.\n\n\n\nWRITE: `foo`.",
+    },
+    {
+      input: "REPORT zfoo.\n\n\n\n\nWRITE: `foo`.\n\n\n\n\nWRITE: 'bar'",
+      expected: "REPORT zfoo.\n\n\n\nWRITE: `foo`.\n\n\n\nWRITE: 'bar'",
+    },
+  ];
+
+  tests.forEach((test) => {
+    it(testTitle(test.input), () => {
+      const reg = new Registry().addFile(new MemoryFile("zfoo.prog.abap", test.input)).parse();
+      expect(reg.getABAPFiles().length).to.equal(1);
+      const config = reg.getConfig();
+      const prettyPrinter = new PrettyPrinter(reg.getABAPFiles()[0], config);
+      const result = prettyPrinter.run();
+      expect(result).to.equal(test.expected);
+    });
+  });
+});
+
+describe("Remove sequential blanks, no config", () => {
+  const tests = [
+    {
+      input: "REPORT zfoo.\n\n\n\n\nWRITE: `foo`.",
+      expected: "REPORT zfoo.\n\n\n\n\nWRITE: `foo`.",
+    },
+  ];
+
+  tests.forEach((test) => {
+    it(testTitle(test.input), () => {
+      const reg = new Registry().addFile(new MemoryFile("zfoo.prog.abap", test.input)).parse();
+      expect(reg.getABAPFiles().length).to.equal(1);
+      const config = reg.getConfig() as any;
+      delete config.config.rules.sequential_blank;
+
+      const prettyPrinter = new PrettyPrinter(reg.getABAPFiles()[0], config);
+      const result = prettyPrinter.run();
+      expect(result).to.equal(test.expected);
     });
   });
 });
@@ -124,7 +179,8 @@ describe("Pretty printer with globalClassSkipFirst", () => {
     it(testTitle(test.input), () => {
       const reg = new Registry().addFile(new MemoryFile("zfoo.prog.abap", test.input)).parse();
       expect(reg.getABAPFiles().length).to.equal(1);
-      const result = new PrettyPrinter(reg.getABAPFiles()[0], test.options).getExpectedIndentation();
+      const config = reg.getConfig();
+      const result = new PrettyPrinter(reg.getABAPFiles()[0], config, test.options).getExpectedIndentation();
       expect(result).to.deep.equal(test.expected);
     });
   });

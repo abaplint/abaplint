@@ -50,7 +50,7 @@ export class LanguageServer {
       return [];
     }
 
-    const text = new PrettyPrinter(file).run();
+    const text = new PrettyPrinter(file, this.reg.getConfig()).run();
     const tokens = file.getTokens();
     const last = tokens[tokens.length - 1];
 
