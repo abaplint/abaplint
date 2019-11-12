@@ -214,7 +214,7 @@ export class PrettyPrinter {
     const rowsToRemove: number[] = [];
 
     for (let i = 0; i < rows.length; i++) {
-      if (rows[i] === "") {
+      if (SequentialBlank.isBlankOrWhitespace(rows[i])) {
         blanks++;
       } else {
         blanks = 0;
@@ -223,7 +223,7 @@ export class PrettyPrinter {
       if (blanks === threshold) {
         // count additional blanks
         for (let j = i; j < rows.length; j++) {
-          if (rows[j] === "") {
+          if (SequentialBlank.isBlankOrWhitespace(rows[j])) {
             rowsToRemove.push(j);
           } else {
             break;

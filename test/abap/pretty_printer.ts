@@ -3,7 +3,7 @@ import {PrettyPrinter} from "../../src/abap/pretty_printer";
 import {MemoryFile} from "../../src/files";
 import {Registry} from "../../src/registry";
 
-const testTitle = (text: string): string => { return text.split("\n")[0]; };
+const testTitle = (text: string): string => {return text.split("\n")[0]; };
 
 describe("Pretty printer, keywords upper case", () => {
   const tests = [
@@ -72,7 +72,8 @@ describe("Pretty printer with alignTryCatch", () => {
     {
       input: "try. \"with align\nwrite moo.\ncatch cx_root.\nwrite err.\nendtry.",
       expected: [1, -1, 3, 1, 3, 1],
-      options: {alignTryCatch: true}},
+      options: {alignTryCatch: true},
+    },
   ];
 
   tests.forEach((test) => {
@@ -100,6 +101,10 @@ describe("Remove sequential blanks", () => {
     {
       input: "REPORT zfoo.\n\n\n\n\nWRITE: `foo`.\n\n\n\n\nWRITE: 'bar'",
       expected: "REPORT zfoo.\n\n\n\nWRITE: `foo`.\n\n\n\nWRITE: 'bar'",
+    },
+    {
+      input: "REPORT zfoo.\n\t\n\n\n\nWRITE: `foo`.\n\n\t\n\n\nWRITE: 'bar'", // todo trim trailing whitespace
+      expected: "REPORT zfoo.\n\t\n\n\nWRITE: `foo`.\n\n\t\n\nWRITE: 'bar'",
     },
   ];
 
