@@ -6,16 +6,16 @@ import {StatementNode} from "../abap/nodes/statement_node";
 import {IIndentationOptions} from "./indentation_options";
 
 // todo, will break if there is multiple statements per line?
-export class Indentation {
+export class Indent {
   private readonly options: IIndentationOptions;
   private readonly globalClasses = new Set();
-  constructor(options: IIndentationOptions) {
-    this.options = options;
+  constructor(options?: IIndentationOptions) {
+    this.options = options || {};
   }
 
   public execute(original: ABAPFile, modified: string): string {
     const statements = original.getStatements();
-    const expected = this.run(original);
+    const expected = this.getExpectedIndents(original);
     if (expected.length !== statements.length) {
       throw new Error("Pretty Printer, expected lengths to match");
     }
@@ -38,7 +38,7 @@ export class Indentation {
   }
 
   // returns list of expected indentation for each line/statement?
-  public run(file: ABAPFile): number[] {
+  public getExpectedIndents(file: ABAPFile): number[] {
     const ret: number[] = [];
     const init: number = 1;
     let indent: number = init;

@@ -3,7 +3,7 @@ import {Unknown, MacroContent, MacroCall, Comment} from "../abap/statements/_sta
 import {ABAPFile} from "../files";
 import {Config} from "..";
 import {UppercaseKeywords} from "./uppercase_keywords";
-import {Indentation} from "./indentation";
+import {Indent as Indent} from "./indent";
 import {IIndentationOptions} from "./indentation_options";
 import {RemoveSequentialBlanks} from "./remove_sequential_blanks";
 
@@ -35,7 +35,7 @@ export class PrettyPrinter {
       this.result = upperCaseKeywords.execute(statement);
     }
 
-    const indentation = new Indentation(this.options);
+    const indentation = new Indent(this.options);
     this.result = indentation.execute(this.file, this.result);
 
     const removeBlanks = new RemoveSequentialBlanks(this.config);

@@ -2,6 +2,7 @@ import {expect} from "chai";
 import {PrettyPrinter} from "../../src/pretty_printer/pretty_printer";
 import {MemoryFile} from "../../src/files";
 import {Registry} from "../../src/registry";
+import {Indent} from "../../src/pretty_printer/indent";
 
 const testTitle = (text: string): string => {return text.split("\n")[0]; };
 
@@ -56,8 +57,8 @@ describe("Pretty printer, expected indentation", () => {
     it(testTitle(test.input), () => {
       const reg = new Registry().addFile(new MemoryFile("zfoo.prog.abap", test.input)).parse();
       expect(reg.getABAPFiles().length).to.equal(1);
-      const config = reg.getConfig();
-      const result = new PrettyPrinter(reg.getABAPFiles()[0], config).getExpectedIndentation();
+      const file = reg.getABAPFiles()[0];
+      const result = new Indent().getExpectedIndents(file);
       expect(result).to.deep.equal(test.expected);
     });
   });
@@ -80,8 +81,8 @@ describe("Pretty printer with alignTryCatch", () => {
     it(testTitle(test.input), () => {
       const reg = new Registry().addFile(new MemoryFile("zfoo.prog.abap", test.input)).parse();
       expect(reg.getABAPFiles().length).to.equal(1);
-      const config = reg.getConfig();
-      const result = new PrettyPrinter(reg.getABAPFiles()[0], config, test.options).getExpectedIndentation();
+      const file = reg.getABAPFiles()[0];
+      const result = new Indent(test.options).getExpectedIndents(file);
       expect(result).to.deep.equal(test.expected);
     });
   });
@@ -183,9 +184,9 @@ describe("Pretty printer with globalClassSkipFirst", () => {
   tests.forEach((test) => {
     it(testTitle(test.input), () => {
       const reg = new Registry().addFile(new MemoryFile("zfoo.prog.abap", test.input)).parse();
+      const file = reg.getABAPFiles()[0];
       expect(reg.getABAPFiles().length).to.equal(1);
-      const config = reg.getConfig();
-      const result = new PrettyPrinter(reg.getABAPFiles()[0], config, test.options).getExpectedIndentation();
+      const result = new Indent(test.options).getExpectedIndents(file);
       expect(result).to.deep.equal(test.expected);
     });
   });
