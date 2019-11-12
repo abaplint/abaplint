@@ -1,12 +1,11 @@
-import * as Statements from "./statements";
-import * as Expressions from "./expressions";
-import {Unknown, MacroContent, MacroCall, Comment, Empty} from "./statements/_statement";
-import {StatementNode, ExpressionNode, TokenNodeRegex, TokenNode} from "./nodes";
+import * as Statements from "../abap/statements";
+import * as Expressions from "../abap/expressions";
+import {Unknown, MacroContent, MacroCall, Comment, Empty} from "../abap/statements/_statement";
 import {ABAPFile} from "../files";
-import {Identifier} from "./tokens";
-import {Position} from "../position";
 import {Config} from "..";
 import {SequentialBlank, SequentialBlankConf} from "../rules";
+import {StatementNode} from "../abap/nodes/statement_node";
+import {UppercaseKeywords} from "./uppercase_keywords";
 
 // todo, will break if there is multiple statements per line?
 
@@ -190,8 +189,10 @@ export class PrettyPrinter {
         || statement.get() instanceof Comment) {
         continue;
       }
+
       // note that no positions are changed during a upperCaseKeys operation
-      this.upperCaseKeywords(statement);
+      const upperCaseKeywords = new UppercaseKeywords(this.result);
+      this.result = upperCaseKeywords.execute(statement);
     }
     this.indentCode();
 
@@ -270,34 +271,6 @@ export class PrettyPrinter {
     });
 
     this.result = withoutRemoved.join("\n");
-  }
-
-
-  private replaceString(pos: Position, str: string) {
-    const lines = this.result.split("\n");
-    const line = lines[pos.getRow() - 1];
-
-    lines[pos.getRow() - 1] = line.substr(0, pos.getCol() - 1) + str + line.substr(pos.getCol() + str.length - 1);
-
-    this.result = lines.join("\n");
-  }
-
-  private upperCaseKeywords(s: StatementNode | ExpressionNode): void {
-    for (const child of s.getChildren()) {
-      if (child instanceof TokenNodeRegex) {
-        continue;
-      } else if (child instanceof TokenNode) {
-        const token = child.get();
-        const str = token.getStr();
-        if (str !== str.toUpperCase() && token instanceof Identifier) {
-          this.replaceString(token.getStart(), str.toUpperCase());
-        }
-      } else if (child instanceof ExpressionNode) {
-        this.upperCaseKeywords(child);
-      } else {
-        throw new Error("pretty printer, traverse, unexpected node type");
-      }
-    }
   }
 
 }

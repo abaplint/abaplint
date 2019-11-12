@@ -4,7 +4,7 @@ import {Symbols} from "./symbols";
 import {Hover} from "./hover";
 import {Diagnostics} from "./diagnostics";
 import {Help} from "./help";
-import {PrettyPrinter} from "../abap/pretty_printer";
+import {PrettyPrinter} from "../pretty_printer/pretty_printer";
 import {Definition} from "./definition";
 
 // the types in this file are not completely correct

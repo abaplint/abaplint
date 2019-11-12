@@ -5,7 +5,7 @@ import {IObject} from "../../objects/_iobject";
 import {Class} from "../../objects";
 import {Registry} from "../../registry";
 import {BasicRuleConfig} from "../_basic_rule_config";
-import {PrettyPrinter, IIndentationOptions} from "../../abap/pretty_printer";
+import {PrettyPrinter, IIndentationOptions} from "../../pretty_printer/pretty_printer";
 import * as Statements from "../../abap/statements";
 import * as Expressions from "../../abap/expressions";
 

@@ -1,5 +1,5 @@
 import {expect} from "chai";
-import {PrettyPrinter} from "../../src/abap/pretty_printer";
+import {PrettyPrinter} from "../../src/pretty_printer/pretty_printer";
 import {MemoryFile} from "../../src/files";
 import {Registry} from "../../src/registry";
 
