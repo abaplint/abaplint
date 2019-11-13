@@ -55,7 +55,8 @@ export class MethodLength implements IRule {
     const issues: Issue[] = [];
     const stats = MethodLengthStats.run(obj);
     for (const s of stats) {
-      if (this.conf.ignoreTestClasses && s.file.getFilename().includes(".testclasses.")) {
+      if ((this.conf.ignoreTestClasses === true)
+        && s.file.getFilename().includes(".testclasses.")) {
         continue;
       }
       if (s.count === 0 && this.conf.errorWhenEmpty === true) {
