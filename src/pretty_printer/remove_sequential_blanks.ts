@@ -22,13 +22,12 @@ export class RemoveSequentialBlanks {
 
     let blanks = 0;
     const rowsToRemove: number[] = [];
+    const newBlankCount = (current: number, row: string): number => {
+      return SequentialBlank.isBlankOrWhitespace(row) ? current + 1 : 0;
+    };
 
     for (let i = 0; i < rows.length; i++) {
-      if (SequentialBlank.isBlankOrWhitespace(rows[i])) {
-        blanks++;
-      } else {
-        blanks = 0;
-      }
+      blanks = newBlankCount(blanks, rows[i]);
 
       if (blanks === threshold) {
         // count additional blanks
@@ -43,7 +42,6 @@ export class RemoveSequentialBlanks {
     }
     return this.removeRows(modified.split("\n"), rowsToRemove);
   }
-
   private removeRows(lines: string[], rowsToRemove: number[]): string {
 
     const withoutRemoved = lines.filter((_, idx) => {
