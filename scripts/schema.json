@@ -1,0 +1,3017 @@
+{
+  "$ref": "#/definitions/IConfig",
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "definitions": {
+    "AbapdocConf": {
+      "additionalProperties": false,
+      "description": "Various checks regarding abapdoc. Base rule checks for existence of abapdoc for\r\npublic class methods and all interface methods.",
+      "properties": {
+        "checkLocal": {
+          "description": "Check local classes and interfaces for abapdoc.",
+          "type": "boolean"
+        },
+        "enabled": {
+          "description": "Is the rule enabled?",
+          "type": "boolean"
+        },
+        "exclude": {
+          "description": "List of file regex patterns to exclude",
+          "items": {
+            "type": "string"
+          },
+          "type": "array"
+        },
+        "reason": {
+          "description": "An explanation for why the rule is enforced",
+          "type": "string"
+        }
+      },
+      "required": [
+        "checkLocal"
+      ],
+      "type": "object"
+    },
+    "AllowedObjectTypesConf": {
+      "additionalProperties": false,
+      "description": "Restricts the set of allowed object types.",
+      "properties": {
+        "allowed": {
+          "items": {
+            "type": "string"
+          },
+          "type": "array"
+        },
+        "enabled": {
+          "description": "Is the rule enabled?",
+          "type": "boolean"
+        },
+        "exclude": {
+          "description": "List of file regex patterns to exclude",
+          "items": {
+            "type": "string"
+          },
+          "type": "array"
+        },
+        "reason": {
+          "description": "An explanation for why the rule is enforced",
+          "type": "string"
+        }
+      },
+      "required": [
+        "allowed"
+      ],
+      "type": "object"
+    },
+    "AmbiguousStatementConf": {
+      "additionalProperties": false,
+      "description": "Checks for ambiguity between deleting from internal and database table",
+      "properties": {
+        "enabled": {
+          "description": "Is the rule enabled?",
+          "type": "boolean"
+        },
+        "exclude": {
+          "description": "List of file regex patterns to exclude",
+          "items": {
+            "type": "string"
+          },
+          "type": "array"
+        },
+        "reason": {
+          "description": "An explanation for why the rule is enforced",
+          "type": "string"
+        }
+      },
+      "type": "object"
+    },
+    "AvoidUseConf": {
+      "additionalProperties": false,
+      "description": "Detects usage of certain statements.",
+      "properties": {
+        "communication": {
+          "description": "Detects communication",
+          "type": "boolean"
+        },
+        "define": {
+          "description": "Detects define (macro definitions)",
+          "type": "boolean"
+        },
+        "enabled": {
+          "description": "Is the rule enabled?",
+          "type": "boolean"
+        },
+        "endselect": {
+          "description": "Detects endselect",
+          "type": "boolean"
+        },
+        "exclude": {
+          "description": "List of file regex patterns to exclude",
+          "items": {
+            "type": "string"
+          },
+          "type": "array"
+        },
+        "execSQL": {
+          "description": "Detects execSQL (dynamic SQL)",
+          "type": "boolean"
+        },
+        "kernelCall": {
+          "description": "Detects kernel calls",
+          "type": "boolean"
+        },
+        "reason": {
+          "description": "An explanation for why the rule is enforced",
+          "type": "string"
+        },
+        "statics": {
+          "description": "Detects statics",
+          "type": "boolean"
+        }
+      },
+      "required": [
+        "define",
+        "endselect",
+        "execSQL",
+        "kernelCall",
+        "communication",
+        "statics"
+      ],
+      "type": "object"
+    },
+    "BeginEndNamesConf": {
+      "additionalProperties": false,
+      "properties": {
+        "enabled": {
+          "description": "Is the rule enabled?",
+          "type": "boolean"
+        },
+        "exclude": {
+          "description": "List of file regex patterns to exclude",
+          "items": {
+            "type": "string"
+          },
+          "type": "array"
+        },
+        "reason": {
+          "description": "An explanation for why the rule is enforced",
+          "type": "string"
+        }
+      },
+      "type": "object"
+    },
+    "BreakpointConf": {
+      "additionalProperties": false,
+      "description": "Detects usage of code-based breakpoints.",
+      "properties": {
+        "enabled": {
+          "description": "Is the rule enabled?",
+          "type": "boolean"
+        },
+        "exclude": {
+          "description": "List of file regex patterns to exclude",
+          "items": {
+            "type": "string"
+          },
+          "type": "array"
+        },
+        "reason": {
+          "description": "An explanation for why the rule is enforced",
+          "type": "string"
+        }
+      },
+      "type": "object"
+    },
+    "ChainMainlyDeclarationsConf": {
+      "additionalProperties": false,
+      "description": "Chain mainly declarations",
+      "properties": {
+        "enabled": {
+          "description": "Is the rule enabled?",
+          "type": "boolean"
+        },
+        "exclude": {
+          "description": "List of file regex patterns to exclude",
+          "items": {
+            "type": "string"
+          },
+          "type": "array"
+        },
+        "reason": {
+          "description": "An explanation for why the rule is enforced",
+          "type": "string"
+        }
+      },
+      "type": "object"
+    },
+    "CheckAbstractConf": {
+      "additionalProperties": false,
+      "description": "Checks abstract methods and classes:\r\n- class defined as abstract and final,\r\n- non-abstract class contains abstract methods",
+      "properties": {
+        "enabled": {
+          "description": "Is the rule enabled?",
+          "type": "boolean"
+        },
+        "exclude": {
+          "description": "List of file regex patterns to exclude",
+          "items": {
+            "type": "string"
+          },
+          "type": "array"
+        },
+        "reason": {
+          "description": "An explanation for why the rule is enforced",
+          "type": "string"
+        }
+      },
+      "type": "object"
+    },
+    "CheckDDICConf": {
+      "additionalProperties": false,
+      "description": "Checks the types of DDIC objects can be resolved, the namespace of the development/errors can be configured in \"errorNamespace\"",
+      "properties": {
+        "enabled": {
+          "description": "Is the rule enabled?",
+          "type": "boolean"
+        },
+        "exclude": {
+          "description": "List of file regex patterns to exclude",
+          "items": {
+            "type": "string"
+          },
+          "type": "array"
+        },
+        "reason": {
+          "description": "An explanation for why the rule is enforced",
+          "type": "string"
+        }
+      },
+      "type": "object"
+    },
+    "CheckIncludeConf": {
+      "additionalProperties": false,
+      "description": "Checks INCLUDE statements",
+      "properties": {
+        "enabled": {
+          "description": "Is the rule enabled?",
+          "type": "boolean"
+        },
+        "exclude": {
+          "description": "List of file regex patterns to exclude",
+          "items": {
+            "type": "string"
+          },
+          "type": "array"
+        },
+        "reason": {
+          "description": "An explanation for why the rule is enforced",
+          "type": "string"
+        }
+      },
+      "type": "object"
+    },
+    "CheckSyntaxConf": {
+      "additionalProperties": false,
+      "description": "Enables syntax check and variable resolution",
+      "properties": {
+        "enabled": {
+          "description": "Is the rule enabled?",
+          "type": "boolean"
+        },
+        "exclude": {
+          "description": "List of file regex patterns to exclude",
+          "items": {
+            "type": "string"
+          },
+          "type": "array"
+        },
+        "reason": {
+          "description": "An explanation for why the rule is enforced",
+          "type": "string"
+        }
+      },
+      "type": "object"
+    },
+    "CheckTextElementsConf": {
+      "additionalProperties": false,
+      "description": "Check text elements",
+      "properties": {
+        "enabled": {
+          "description": "Is the rule enabled?",
+          "type": "boolean"
+        },
+        "exclude": {
+          "description": "List of file regex patterns to exclude",
+          "items": {
+            "type": "string"
+          },
+          "type": "array"
+        },
+        "reason": {
+          "description": "An explanation for why the rule is enforced",
+          "type": "string"
+        }
+      },
+      "type": "object"
+    },
+    "CheckTransformationExistsConf": {
+      "additionalProperties": false,
+      "description": "Checks that used XSLT transformations exist.",
+      "properties": {
+        "enabled": {
+          "description": "Is the rule enabled?",
+          "type": "boolean"
+        },
+        "exclude": {
+          "description": "List of file regex patterns to exclude",
+          "items": {
+            "type": "string"
+          },
+          "type": "array"
+        },
+        "reason": {
+          "description": "An explanation for why the rule is enforced",
+          "type": "string"
+        }
+      },
+      "type": "object"
+    },
+    "ClassAttributeNamesConf": {
+      "additionalProperties": false,
+      "description": "Allows you to enforce a pattern, such as a prefix, for class variable names.",
+      "properties": {
+        "enabled": {
+          "description": "Is the rule enabled?",
+          "type": "boolean"
+        },
+        "exclude": {
+          "description": "List of file regex patterns to exclude",
+          "items": {
+            "type": "string"
+          },
+          "type": "array"
+        },
+        "ignoreExceptions": {
+          "type": "boolean"
+        },
+        "ignoreNames": {
+          "description": "A list of names to be ignored",
+          "items": {
+            "type": "string"
+          },
+          "type": "array"
+        },
+        "ignorePatterns": {
+          "description": "A list of patterns to be ignored. For example, you can use it to ignore ambiguous prefixes",
+          "items": {
+            "type": "string"
+          },
+          "type": "array"
+        },
+        "instance": {
+          "description": "The pattern for instance variable names",
+          "type": "string"
+        },
+        "patternKind": {
+          "$ref": "#/definitions/PatternKind",
+          "description": "Specifies whether the pattern is forbidden (violation if name matches) or required (violation if name does not match)."
+        },
+        "reason": {
+          "description": "An explanation for why the rule is enforced",
+          "type": "string"
+        },
+        "statics": {
+          "description": "The pattern for static variable names",
+          "type": "string"
+        }
+      },
+      "required": [
+        "ignoreExceptions",
+        "statics",
+        "instance"
+      ],
+      "type": "object"
+    },
+    "CloudTypesConf": {
+      "additionalProperties": false,
+      "description": "Checks that the package does not contain any object types unsupported in cloud ABAP.",
+      "properties": {
+        "enabled": {
+          "description": "Is the rule enabled?",
+          "type": "boolean"
+        },
+        "exclude": {
+          "description": "List of file regex patterns to exclude",
+          "items": {
+            "type": "string"
+          },
+          "type": "array"
+        },
+        "reason": {
+          "description": "An explanation for why the rule is enforced",
+          "type": "string"
+        }
+      },
+      "type": "object"
+    },
+    "ColonMissingSpaceConf": {
+      "additionalProperties": false,
+      "description": "Checks for missing spaces after colons in chained statements.",
+      "properties": {
+        "enabled": {
+          "description": "Is the rule enabled?",
+          "type": "boolean"
+        },
+        "exclude": {
+          "description": "List of file regex patterns to exclude",
+          "items": {
+            "type": "string"
+          },
+          "type": "array"
+        },
+        "reason": {
+          "description": "An explanation for why the rule is enforced",
+          "type": "string"
+        }
+      },
+      "type": "object"
+    },
+    "CommentedCodeConf": {
+      "additionalProperties": false,
+      "description": "Detects usage of commented out code.",
+      "properties": {
+        "enabled": {
+          "description": "Is the rule enabled?",
+          "type": "boolean"
+        },
+        "exclude": {
+          "description": "List of file regex patterns to exclude",
+          "items": {
+            "type": "string"
+          },
+          "type": "array"
+        },
+        "reason": {
+          "description": "An explanation for why the rule is enforced",
+          "type": "string"
+        }
+      },
+      "type": "object"
+    },
+    "ConstructorVisibilityPublicConf": {
+      "additionalProperties": false,
+      "description": "Constructor must be placed in the public section, even if the class is not CREATE PUBLIC.",
+      "properties": {
+        "enabled": {
+          "description": "Is the rule enabled?",
+          "type": "boolean"
+        },
+        "exclude": {
+          "description": "List of file regex patterns to exclude",
+          "items": {
+            "type": "string"
+          },
+          "type": "array"
+        },
+        "reason": {
+          "description": "An explanation for why the rule is enforced",
+          "type": "string"
+        }
+      },
+      "type": "object"
+    },
+    "ContainsTabConf": {
+      "additionalProperties": false,
+      "description": "Checks for usage of tabs (enable to enforce spaces)",
+      "properties": {
+        "enabled": {
+          "description": "Is the rule enabled?",
+          "type": "boolean"
+        },
+        "exclude": {
+          "description": "List of file regex patterns to exclude",
+          "items": {
+            "type": "string"
+          },
+          "type": "array"
+        },
+        "reason": {
+          "description": "An explanation for why the rule is enforced",
+          "type": "string"
+        }
+      },
+      "type": "object"
+    },
+    "DefinitionsTopConf": {
+      "additionalProperties": false,
+      "description": "Checks that definitions are placed at the beginning of methods.",
+      "properties": {
+        "enabled": {
+          "description": "Is the rule enabled?",
+          "type": "boolean"
+        },
+        "exclude": {
+          "description": "List of file regex patterns to exclude",
+          "items": {
+            "type": "string"
+          },
+          "type": "array"
+        },
+        "reason": {
+          "description": "An explanation for why the rule is enforced",
+          "type": "string"
+        }
+      },
+      "type": "object"
+    },
+    "DescriptionEmptyConf": {
+      "additionalProperties": false,
+      "description": "Ensures descriptions in class metadata exist.",
+      "properties": {
+        "enabled": {
+          "description": "Is the rule enabled?",
+          "type": "boolean"
+        },
+        "exclude": {
+          "description": "List of file regex patterns to exclude",
+          "items": {
+            "type": "string"
+          },
+          "type": "array"
+        },
+        "reason": {
+          "description": "An explanation for why the rule is enforced",
+          "type": "string"
+        }
+      },
+      "type": "object"
+    },
+    "DoubleSpaceConf": {
+      "additionalProperties": false,
+      "description": "Checks that only a single space follows certain common statements.",
+      "properties": {
+        "enabled": {
+          "description": "Is the rule enabled?",
+          "type": "boolean"
+        },
+        "endParen": {
+          "description": "Check for double space before end parenthesis",
+          "type": "boolean"
+        },
+        "exclude": {
+          "description": "List of file regex patterns to exclude",
+          "items": {
+            "type": "string"
+          },
+          "type": "array"
+        },
+        "keywords": {
+          "description": "Check for double space after keywords",
+          "type": "boolean"
+        },
+        "reason": {
+          "description": "An explanation for why the rule is enforced",
+          "type": "string"
+        },
+        "startParen": {
+          "description": "Check for double space after start parenthesis",
+          "type": "boolean"
+        }
+      },
+      "required": [
+        "keywords",
+        "startParen",
+        "endParen"
+      ],
+      "type": "object"
+    },
+    "EmptyLineinStatementConf": {
+      "additionalProperties": false,
+      "description": "Checks that statements do not contain empty lines.",
+      "properties": {
+        "allowChained": {
+          "type": "boolean"
+        },
+        "enabled": {
+          "description": "Is the rule enabled?",
+          "type": "boolean"
+        },
+        "exclude": {
+          "description": "List of file regex patterns to exclude",
+          "items": {
+            "type": "string"
+          },
+          "type": "array"
+        },
+        "reason": {
+          "description": "An explanation for why the rule is enforced",
+          "type": "string"
+        }
+      },
+      "required": [
+        "allowChained"
+      ],
+      "type": "object"
+    },
+    "EmptyStatementConf": {
+      "additionalProperties": false,
+      "description": "Checks for empty statements (an empty statement is a single dot)",
+      "properties": {
+        "enabled": {
+          "description": "Is the rule enabled?",
+          "type": "boolean"
+        },
+        "exclude": {
+          "description": "List of file regex patterns to exclude",
+          "items": {
+            "type": "string"
+          },
+          "type": "array"
+        },
+        "reason": {
+          "description": "An explanation for why the rule is enforced",
+          "type": "string"
+        }
+      },
+      "type": "object"
+    },
+    "EmptyStructureConf": {
+      "additionalProperties": false,
+      "description": "Checks that the code does not contain empty blocks.",
+      "properties": {
+        "at": {
+          "description": "Checks for empty at blocks",
+          "type": "boolean"
+        },
+        "case": {
+          "description": "Checks for empty case blocks",
+          "type": "boolean"
+        },
+        "do": {
+          "description": "Checks for empty do blocks",
+          "type": "boolean"
+        },
+        "enabled": {
+          "description": "Is the rule enabled?",
+          "type": "boolean"
+        },
+        "exclude": {
+          "description": "List of file regex patterns to exclude",
+          "items": {
+            "type": "string"
+          },
+          "type": "array"
+        },
+        "if": {
+          "description": "Checks for empty if blocks",
+          "type": "boolean"
+        },
+        "loop": {
+          "description": "Checks for empty loop blocks",
+          "type": "boolean"
+        },
+        "reason": {
+          "description": "An explanation for why the rule is enforced",
+          "type": "string"
+        },
+        "select": {
+          "description": "Checks for empty select blockss",
+          "type": "boolean"
+        },
+        "while": {
+          "description": "Checks for empty while blocks",
+          "type": "boolean"
+        }
+      },
+      "required": [
+        "loop",
+        "if",
+        "while",
+        "case",
+        "select",
+        "do",
+        "at"
+      ],
+      "type": "object"
+    },
+    "ExitOrCheckConf": {
+      "additionalProperties": false,
+      "description": "Detects usages of EXIT or CHECK statements outside of loops.",
+      "properties": {
+        "enabled": {
+          "description": "Is the rule enabled?",
+          "type": "boolean"
+        },
+        "exclude": {
+          "description": "List of file regex patterns to exclude",
+          "items": {
+            "type": "string"
+          },
+          "type": "array"
+        },
+        "reason": {
+          "description": "An explanation for why the rule is enforced",
+          "type": "string"
+        }
+      },
+      "type": "object"
+    },
+    "ExportingConf": {
+      "additionalProperties": false,
+      "description": "Detects EXPORTING statements which can be omitted.",
+      "properties": {
+        "enabled": {
+          "description": "Is the rule enabled?",
+          "type": "boolean"
+        },
+        "exclude": {
+          "description": "List of file regex patterns to exclude",
+          "items": {
+            "type": "string"
+          },
+          "type": "array"
+        },
+        "reason": {
+          "description": "An explanation for why the rule is enforced",
+          "type": "string"
+        }
+      },
+      "type": "object"
+    },
+    "FormNoDashConf": {
+      "additionalProperties": false,
+      "description": "Checks for a Dash in form names.",
+      "properties": {
+        "enabled": {
+          "description": "Is the rule enabled?",
+          "type": "boolean"
+        },
+        "exclude": {
+          "description": "List of file regex patterns to exclude",
+          "items": {
+            "type": "string"
+          },
+          "type": "array"
+        },
+        "reason": {
+          "description": "An explanation for why the rule is enforced",
+          "type": "string"
+        }
+      },
+      "type": "object"
+    },
+    "FormTablesObsoleteConf": {
+      "additionalProperties": false,
+      "description": "Checks for TABLES parameters in forms.",
+      "properties": {
+        "enabled": {
+          "description": "Is the rule enabled?",
+          "type": "boolean"
+        },
+        "exclude": {
+          "description": "List of file regex patterns to exclude",
+          "items": {
+            "type": "string"
+          },
+          "type": "array"
+        },
+        "reason": {
+          "description": "An explanation for why the rule is enforced",
+          "type": "string"
+        }
+      },
+      "type": "object"
+    },
+    "FunctionalWritingConf": {
+      "additionalProperties": false,
+      "description": "Detects usage of call method when functional style calls can be used.",
+      "properties": {
+        "enabled": {
+          "description": "Is the rule enabled?",
+          "type": "boolean"
+        },
+        "exclude": {
+          "description": "List of file regex patterns to exclude",
+          "items": {
+            "type": "string"
+          },
+          "type": "array"
+        },
+        "ignoreExceptions": {
+          "type": "boolean"
+        },
+        "reason": {
+          "description": "An explanation for why the rule is enforced",
+          "type": "string"
+        }
+      },
+      "required": [
+        "ignoreExceptions"
+      ],
+      "type": "object"
+    },
+    "GlobalClassConf": {
+      "additionalProperties": false,
+      "description": "Checks related to names of global classes. For the name pattern, see rule object_naming",
+      "properties": {
+        "enabled": {
+          "description": "Is the rule enabled?",
+          "type": "boolean"
+        },
+        "exclude": {
+          "description": "List of file regex patterns to exclude",
+          "items": {
+            "type": "string"
+          },
+          "type": "array"
+        },
+        "reason": {
+          "description": "An explanation for why the rule is enforced",
+          "type": "string"
+        }
+      },
+      "type": "object"
+    },
+    "IConfig": {
+      "additionalProperties": false,
+      "properties": {
+        "dependencies": {
+          "items": {
+            "$ref": "#/definitions/IDependency"
+          },
+          "type": "array"
+        },
+        "global": {
+          "$ref": "#/definitions/IGlobalConfig"
+        },
+        "rules": {
+          "additionalProperties": false,
+          "properties": {
+            "7bit_ascii": {
+              "anyOf": [
+                {
+                  "$ref": "#/definitions/SevenBitAsciiConf"
+                },
+                {
+                  "type": "boolean"
+                }
+              ]
+            },
+            "abapdoc": {
+              "anyOf": [
+                {
+                  "$ref": "#/definitions/AbapdocConf"
+                },
+                {
+                  "type": "boolean"
+                }
+              ]
+            },
+            "allowed_object_types": {
+              "anyOf": [
+                {
+                  "$ref": "#/definitions/AllowedObjectTypesConf"
+                },
+                {
+                  "type": "boolean"
+                }
+              ]
+            },
+            "ambiguous_statement": {
+              "anyOf": [
+                {
+                  "$ref": "#/definitions/AmbiguousStatementConf"
+                },
+                {
+                  "type": "boolean"
+                }
+              ]
+            },
+            "avoid_use": {
+              "anyOf": [
+                {
+                  "$ref": "#/definitions/AvoidUseConf"
+                },
+                {
+                  "type": "boolean"
+                }
+              ]
+            },
+            "begin_end_names": {
+              "anyOf": [
+                {
+                  "$ref": "#/definitions/BeginEndNamesConf"
+                },
+                {
+                  "type": "boolean"
+                }
+              ]
+            },
+            "breakpoint": {
+              "anyOf": [
+                {
+                  "$ref": "#/definitions/BreakpointConf"
+                },
+                {
+                  "type": "boolean"
+                }
+              ]
+            },
+            "chain_mainly_declarations": {
+              "anyOf": [
+                {
+                  "$ref": "#/definitions/ChainMainlyDeclarationsConf"
+                },
+                {
+                  "type": "boolean"
+                }
+              ]
+            },
+            "check_abstract": {
+              "anyOf": [
+                {
+                  "$ref": "#/definitions/CheckAbstractConf"
+                },
+                {
+                  "type": "boolean"
+                }
+              ]
+            },
+            "check_ddic": {
+              "anyOf": [
+                {
+                  "$ref": "#/definitions/CheckDDICConf"
+                },
+                {
+                  "type": "boolean"
+                }
+              ]
+            },
+            "check_include": {
+              "anyOf": [
+                {
+                  "$ref": "#/definitions/CheckIncludeConf"
+                },
+                {
+                  "type": "boolean"
+                }
+              ]
+            },
+            "check_syntax": {
+              "anyOf": [
+                {
+                  "$ref": "#/definitions/CheckSyntaxConf"
+                },
+                {
+                  "type": "boolean"
+                }
+              ]
+            },
+            "check_text_elements": {
+              "anyOf": [
+                {
+                  "$ref": "#/definitions/CheckTextElementsConf"
+                },
+                {
+                  "type": "boolean"
+                }
+              ]
+            },
+            "check_transformation_exists": {
+              "anyOf": [
+                {
+                  "$ref": "#/definitions/CheckTransformationExistsConf"
+                },
+                {
+                  "type": "boolean"
+                }
+              ]
+            },
+            "class_attribute_names": {
+              "anyOf": [
+                {
+                  "$ref": "#/definitions/ClassAttributeNamesConf"
+                },
+                {
+                  "type": "boolean"
+                }
+              ]
+            },
+            "cloud_types": {
+              "anyOf": [
+                {
+                  "$ref": "#/definitions/CloudTypesConf"
+                },
+                {
+                  "type": "boolean"
+                }
+              ]
+            },
+            "colon_missing_space": {
+              "anyOf": [
+                {
+                  "$ref": "#/definitions/ColonMissingSpaceConf"
+                },
+                {
+                  "type": "boolean"
+                }
+              ]
+            },
+            "commented_code": {
+              "anyOf": [
+                {
+                  "$ref": "#/definitions/CommentedCodeConf"
+                },
+                {
+                  "type": "boolean"
+                }
+              ]
+            },
+            "constructor_visibility_public": {
+              "anyOf": [
+                {
+                  "$ref": "#/definitions/ConstructorVisibilityPublicConf"
+                },
+                {
+                  "type": "boolean"
+                }
+              ]
+            },
+            "contains_tab": {
+              "anyOf": [
+                {
+                  "$ref": "#/definitions/ContainsTabConf"
+                },
+                {
+                  "type": "boolean"
+                }
+              ]
+            },
+            "definitions_top": {
+              "anyOf": [
+                {
+                  "$ref": "#/definitions/DefinitionsTopConf"
+                },
+                {
+                  "type": "boolean"
+                }
+              ]
+            },
+            "description_empty": {
+              "anyOf": [
+                {
+                  "$ref": "#/definitions/DescriptionEmptyConf"
+                },
+                {
+                  "type": "boolean"
+                }
+              ]
+            },
+            "double_space": {
+              "anyOf": [
+                {
+                  "$ref": "#/definitions/DoubleSpaceConf"
+                },
+                {
+                  "type": "boolean"
+                }
+              ]
+            },
+            "empty_line_in_statement": {
+              "anyOf": [
+                {
+                  "$ref": "#/definitions/EmptyLineinStatementConf"
+                },
+                {
+                  "type": "boolean"
+                }
+              ]
+            },
+            "empty_statement": {
+              "anyOf": [
+                {
+                  "$ref": "#/definitions/EmptyStatementConf"
+                },
+                {
+                  "type": "boolean"
+                }
+              ]
+            },
+            "empty_structure": {
+              "anyOf": [
+                {
+                  "$ref": "#/definitions/EmptyStructureConf"
+                },
+                {
+                  "type": "boolean"
+                }
+              ]
+            },
+            "exit_or_check": {
+              "anyOf": [
+                {
+                  "$ref": "#/definitions/ExitOrCheckConf"
+                },
+                {
+                  "type": "boolean"
+                }
+              ]
+            },
+            "exporting": {
+              "anyOf": [
+                {
+                  "$ref": "#/definitions/ExportingConf"
+                },
+                {
+                  "type": "boolean"
+                }
+              ]
+            },
+            "form_no_dash": {
+              "anyOf": [
+                {
+                  "$ref": "#/definitions/FormNoDashConf"
+                },
+                {
+                  "type": "boolean"
+                }
+              ]
+            },
+            "form_tables_obsolete": {
+              "anyOf": [
+                {
+                  "$ref": "#/definitions/FormTablesObsoleteConf"
+                },
+                {
+                  "type": "boolean"
+                }
+              ]
+            },
+            "functional_writing": {
+              "anyOf": [
+                {
+                  "$ref": "#/definitions/FunctionalWritingConf"
+                },
+                {
+                  "type": "boolean"
+                }
+              ]
+            },
+            "global_class": {
+              "anyOf": [
+                {
+                  "$ref": "#/definitions/GlobalClassConf"
+                },
+                {
+                  "type": "boolean"
+                }
+              ]
+            },
+            "identical_form_names": {
+              "anyOf": [
+                {
+                  "$ref": "#/definitions/IdenticalFormNamesConf"
+                },
+                {
+                  "type": "boolean"
+                }
+              ]
+            },
+            "if_in_if": {
+              "anyOf": [
+                {
+                  "$ref": "#/definitions/IfInIfConf"
+                },
+                {
+                  "type": "boolean"
+                }
+              ]
+            },
+            "implement_methods": {
+              "anyOf": [
+                {
+                  "$ref": "#/definitions/ImplementMethodsConf"
+                },
+                {
+                  "type": "boolean"
+                }
+              ]
+            },
+            "in_statement_indentation": {
+              "anyOf": [
+                {
+                  "$ref": "#/definitions/InStatementIndentationConf"
+                },
+                {
+                  "type": "boolean"
+                }
+              ]
+            },
+            "indentation": {
+              "anyOf": [
+                {
+                  "$ref": "#/definitions/IndentationConf"
+                },
+                {
+                  "type": "boolean"
+                }
+              ]
+            },
+            "inline_data_old_versions": {
+              "anyOf": [
+                {
+                  "$ref": "#/definitions/InlineDataOldVersionsConf"
+                },
+                {
+                  "type": "boolean"
+                }
+              ]
+            },
+            "keywords_upper": {
+              "anyOf": [
+                {
+                  "$ref": "#/definitions/KeywordsUpperConf"
+                },
+                {
+                  "type": "boolean"
+                }
+              ]
+            },
+            "line_length": {
+              "anyOf": [
+                {
+                  "$ref": "#/definitions/LineLengthConf"
+                },
+                {
+                  "type": "boolean"
+                }
+              ]
+            },
+            "line_only_punc": {
+              "anyOf": [
+                {
+                  "$ref": "#/definitions/LineOnlyPuncConf"
+                },
+                {
+                  "type": "boolean"
+                }
+              ]
+            },
+            "local_class_naming": {
+              "anyOf": [
+                {
+                  "$ref": "#/definitions/LocalClassNamingConf"
+                },
+                {
+                  "type": "boolean"
+                }
+              ]
+            },
+            "local_testclass_location": {
+              "anyOf": [
+                {
+                  "$ref": "#/definitions/LocalTestclassLocationConf"
+                },
+                {
+                  "type": "boolean"
+                }
+              ]
+            },
+            "local_variable_names": {
+              "anyOf": [
+                {
+                  "$ref": "#/definitions/LocalVariableNamesConf"
+                },
+                {
+                  "type": "boolean"
+                }
+              ]
+            },
+            "main_file_contents": {
+              "anyOf": [
+                {
+                  "$ref": "#/definitions/MainFileContentsConf"
+                },
+                {
+                  "type": "boolean"
+                }
+              ]
+            },
+            "max_one_statement": {
+              "anyOf": [
+                {
+                  "$ref": "#/definitions/MaxOneStatementConf"
+                },
+                {
+                  "type": "boolean"
+                }
+              ]
+            },
+            "message_exists": {
+              "anyOf": [
+                {
+                  "$ref": "#/definitions/MessageExistsConf"
+                },
+                {
+                  "type": "boolean"
+                }
+              ]
+            },
+            "method_length": {
+              "anyOf": [
+                {
+                  "$ref": "#/definitions/MethodLengthConf"
+                },
+                {
+                  "type": "boolean"
+                }
+              ]
+            },
+            "method_parameter_names": {
+              "anyOf": [
+                {
+                  "$ref": "#/definitions/MethodParameterNamesConf"
+                },
+                {
+                  "type": "boolean"
+                }
+              ]
+            },
+            "mix_returning": {
+              "anyOf": [
+                {
+                  "$ref": "#/definitions/MixReturningConf"
+                },
+                {
+                  "type": "boolean"
+                }
+              ]
+            },
+            "msag_consistency": {
+              "anyOf": [
+                {
+                  "$ref": "#/definitions/MSAGConsistencyConf"
+                },
+                {
+                  "type": "boolean"
+                }
+              ]
+            },
+            "nesting": {
+              "anyOf": [
+                {
+                  "$ref": "#/definitions/NestingConf"
+                },
+                {
+                  "type": "boolean"
+                }
+              ]
+            },
+            "no_public_attributes": {
+              "anyOf": [
+                {
+                  "$ref": "#/definitions/NoPublicAttributesConf"
+                },
+                {
+                  "type": "boolean"
+                }
+              ]
+            },
+            "object_naming": {
+              "anyOf": [
+                {
+                  "$ref": "#/definitions/ObjectNamingConf"
+                },
+                {
+                  "type": "boolean"
+                }
+              ]
+            },
+            "obsolete_statement": {
+              "anyOf": [
+                {
+                  "$ref": "#/definitions/ObsoleteStatementConf"
+                },
+                {
+                  "type": "boolean"
+                }
+              ]
+            },
+            "parser_error": {
+              "anyOf": [
+                {
+                  "$ref": "#/definitions/ParserErrorConf"
+                },
+                {
+                  "type": "boolean"
+                }
+              ]
+            },
+            "preferred_compare_operator": {
+              "anyOf": [
+                {
+                  "$ref": "#/definitions/PreferredCompareOperatorConf"
+                },
+                {
+                  "type": "boolean"
+                }
+              ]
+            },
+            "release_idoc": {
+              "anyOf": [
+                {
+                  "$ref": "#/definitions/ReleaseIdocConf"
+                },
+                {
+                  "type": "boolean"
+                }
+              ]
+            },
+            "remove_descriptions": {
+              "anyOf": [
+                {
+                  "$ref": "#/definitions/RemoveDescriptionsConf"
+                },
+                {
+                  "type": "boolean"
+                }
+              ]
+            },
+            "rfc_error_handling": {
+              "anyOf": [
+                {
+                  "$ref": "#/definitions/RFCErrorHandlingConf"
+                },
+                {
+                  "type": "boolean"
+                }
+              ]
+            },
+            "sequential_blank": {
+              "anyOf": [
+                {
+                  "$ref": "#/definitions/SequentialBlankConf"
+                },
+                {
+                  "type": "boolean"
+                }
+              ]
+            },
+            "short_case": {
+              "anyOf": [
+                {
+                  "$ref": "#/definitions/ShortCaseConf"
+                },
+                {
+                  "type": "boolean"
+                }
+              ]
+            },
+            "space_before_colon": {
+              "anyOf": [
+                {
+                  "$ref": "#/definitions/SpaceBeforeColonConf"
+                },
+                {
+                  "type": "boolean"
+                }
+              ]
+            },
+            "space_before_dot": {
+              "anyOf": [
+                {
+                  "$ref": "#/definitions/SpaceBeforeDotConf"
+                },
+                {
+                  "type": "boolean"
+                }
+              ]
+            },
+            "start_at_tab": {
+              "anyOf": [
+                {
+                  "$ref": "#/definitions/StartAtTabConf"
+                },
+                {
+                  "type": "boolean"
+                }
+              ]
+            },
+            "superclass_final": {
+              "anyOf": [
+                {
+                  "$ref": "#/definitions/SuperclassFinalConf"
+                },
+                {
+                  "type": "boolean"
+                }
+              ]
+            },
+            "tabl_enhancement_category": {
+              "anyOf": [
+                {
+                  "$ref": "#/definitions/TABLEnhancementCategoryConf"
+                },
+                {
+                  "type": "boolean"
+                }
+              ]
+            },
+            "type_begin_single_include": {
+              "anyOf": [
+                {
+                  "$ref": "#/definitions/TypeBeginSingleTypeConf"
+                },
+                {
+                  "type": "boolean"
+                }
+              ]
+            },
+            "type_form_parameters": {
+              "anyOf": [
+                {
+                  "$ref": "#/definitions/TypeFormParametersConf"
+                },
+                {
+                  "type": "boolean"
+                }
+              ]
+            },
+            "types_naming": {
+              "anyOf": [
+                {
+                  "$ref": "#/definitions/TypesNamingConf"
+                },
+                {
+                  "type": "boolean"
+                }
+              ]
+            },
+            "unreachable_code": {
+              "anyOf": [
+                {
+                  "$ref": "#/definitions/UnreachableCodeConf"
+                },
+                {
+                  "type": "boolean"
+                }
+              ]
+            },
+            "use_new": {
+              "anyOf": [
+                {
+                  "$ref": "#/definitions/UseNewConf"
+                },
+                {
+                  "type": "boolean"
+                }
+              ]
+            },
+            "when_others_last": {
+              "anyOf": [
+                {
+                  "$ref": "#/definitions/WhenOthersLastConf"
+                },
+                {
+                  "type": "boolean"
+                }
+              ]
+            },
+            "whitespace_end": {
+              "anyOf": [
+                {
+                  "$ref": "#/definitions/WhitespaceEndConf"
+                },
+                {
+                  "type": "boolean"
+                }
+              ]
+            }
+          },
+          "type": "object"
+        },
+        "syntax": {
+          "$ref": "#/definitions/ISyntaxSettings"
+        }
+      },
+      "required": [
+        "global",
+        "dependencies",
+        "syntax",
+        "rules"
+      ],
+      "type": "object"
+    },
+    "IDependency": {
+      "additionalProperties": false,
+      "properties": {
+        "files": {
+          "type": "string"
+        },
+        "folder": {
+          "type": "string"
+        },
+        "url": {
+          "type": "string"
+        }
+      },
+      "required": [
+        "files"
+      ],
+      "type": "object"
+    },
+    "IGlobalConfig": {
+      "additionalProperties": false,
+      "properties": {
+        "applyUnspecifiedRules": {
+          "type": "boolean"
+        },
+        "files": {
+          "type": "string"
+        },
+        "skipGeneratedFunctionGroups": {
+          "type": "boolean"
+        },
+        "skipGeneratedGatewayClasses": {
+          "type": "boolean"
+        },
+        "skipGeneratedPersistentClasses": {
+          "type": "boolean"
+        }
+      },
+      "required": [
+        "files",
+        "skipGeneratedGatewayClasses",
+        "skipGeneratedPersistentClasses",
+        "skipGeneratedFunctionGroups",
+        "applyUnspecifiedRules"
+      ],
+      "type": "object"
+    },
+    "ISyntaxSettings": {
+      "additionalProperties": false,
+      "properties": {
+        "errorNamespace": {
+          "type": "string"
+        },
+        "globalConstants": {
+          "items": {
+            "type": "string"
+          },
+          "type": "array"
+        },
+        "globalMacros": {
+          "items": {
+            "type": "string"
+          },
+          "type": "array"
+        },
+        "version": {
+          "type": "string"
+        }
+      },
+      "required": [
+        "version",
+        "errorNamespace",
+        "globalConstants",
+        "globalMacros"
+      ],
+      "type": "object"
+    },
+    "IdenticalFormNamesConf": {
+      "additionalProperties": false,
+      "description": "Detects identically named forms.",
+      "properties": {
+        "enabled": {
+          "description": "Is the rule enabled?",
+          "type": "boolean"
+        },
+        "exclude": {
+          "description": "List of file regex patterns to exclude",
+          "items": {
+            "type": "string"
+          },
+          "type": "array"
+        },
+        "reason": {
+          "description": "An explanation for why the rule is enforced",
+          "type": "string"
+        }
+      },
+      "type": "object"
+    },
+    "IfInIfConf": {
+      "additionalProperties": false,
+      "description": "Detects nested ifs which can be refactored to a single condition using AND.",
+      "properties": {
+        "enabled": {
+          "description": "Is the rule enabled?",
+          "type": "boolean"
+        },
+        "exclude": {
+          "description": "List of file regex patterns to exclude",
+          "items": {
+            "type": "string"
+          },
+          "type": "array"
+        },
+        "reason": {
+          "description": "An explanation for why the rule is enforced",
+          "type": "string"
+        }
+      },
+      "type": "object"
+    },
+    "ImplementMethodsConf": {
+      "additionalProperties": false,
+      "description": "Chekcs for abstract methods which need implementing.",
+      "properties": {
+        "enabled": {
+          "description": "Is the rule enabled?",
+          "type": "boolean"
+        },
+        "exclude": {
+          "description": "List of file regex patterns to exclude",
+          "items": {
+            "type": "string"
+          },
+          "type": "array"
+        },
+        "reason": {
+          "description": "An explanation for why the rule is enforced",
+          "type": "string"
+        }
+      },
+      "type": "object"
+    },
+    "InStatementIndentationConf": {
+      "additionalProperties": false,
+      "description": "Checks alignment within block statement declarations which span multiple lines, such as multiple conditions in IF statements.\r\nExample:\r\nIF 1 = 1 AND\r\n  2 = 2.",
+      "properties": {
+        "enabled": {
+          "description": "Is the rule enabled?",
+          "type": "boolean"
+        },
+        "exclude": {
+          "description": "List of file regex patterns to exclude",
+          "items": {
+            "type": "string"
+          },
+          "type": "array"
+        },
+        "ignoreExceptions": {
+          "type": "boolean"
+        },
+        "reason": {
+          "description": "An explanation for why the rule is enforced",
+          "type": "string"
+        }
+      },
+      "required": [
+        "ignoreExceptions"
+      ],
+      "type": "object"
+    },
+    "IndentationConf": {
+      "additionalProperties": false,
+      "properties": {
+        "alignTryCatch": {
+          "type": "boolean"
+        },
+        "enabled": {
+          "description": "Is the rule enabled?",
+          "type": "boolean"
+        },
+        "exclude": {
+          "description": "List of file regex patterns to exclude",
+          "items": {
+            "type": "string"
+          },
+          "type": "array"
+        },
+        "globalClassSkipFirst": {
+          "type": "boolean"
+        },
+        "ignoreExceptions": {
+          "type": "boolean"
+        },
+        "ignoreGlobalClassDefinition": {
+          "type": "boolean"
+        },
+        "ignoreGlobalInterface": {
+          "type": "boolean"
+        },
+        "reason": {
+          "description": "An explanation for why the rule is enforced",
+          "type": "string"
+        }
+      },
+      "required": [
+        "ignoreExceptions",
+        "alignTryCatch",
+        "globalClassSkipFirst",
+        "ignoreGlobalClassDefinition",
+        "ignoreGlobalInterface"
+      ],
+      "type": "object"
+    },
+    "InlineDataOldVersionsConf": {
+      "additionalProperties": false,
+      "description": "Checks for inline data declarations in older releases.",
+      "properties": {
+        "enabled": {
+          "description": "Is the rule enabled?",
+          "type": "boolean"
+        },
+        "exclude": {
+          "description": "List of file regex patterns to exclude",
+          "items": {
+            "type": "string"
+          },
+          "type": "array"
+        },
+        "reason": {
+          "description": "An explanation for why the rule is enforced",
+          "type": "string"
+        }
+      },
+      "type": "object"
+    },
+    "KeywordsUpperConf": {
+      "additionalProperties": false,
+      "description": "Detects keywords which are not uppercased, non-keywords must be lower case.",
+      "properties": {
+        "enabled": {
+          "description": "Is the rule enabled?",
+          "type": "boolean"
+        },
+        "exclude": {
+          "description": "List of file regex patterns to exclude",
+          "items": {
+            "type": "string"
+          },
+          "type": "array"
+        },
+        "ignoreExceptions": {
+          "description": "Ignore global exception classes",
+          "type": "boolean"
+        },
+        "ignoreFunctionModuleName": {
+          "type": "boolean"
+        },
+        "ignoreGlobalClassDefinition": {
+          "type": "boolean"
+        },
+        "ignoreGlobalInterface": {
+          "type": "boolean"
+        },
+        "ignoreLowerClassImplmentationStatement": {
+          "type": "boolean"
+        },
+        "reason": {
+          "description": "An explanation for why the rule is enforced",
+          "type": "string"
+        }
+      },
+      "required": [
+        "ignoreExceptions",
+        "ignoreLowerClassImplmentationStatement",
+        "ignoreGlobalClassDefinition",
+        "ignoreGlobalInterface",
+        "ignoreFunctionModuleName"
+      ],
+      "type": "object"
+    },
+    "LineLengthConf": {
+      "additionalProperties": false,
+      "description": "Detects lines exceeding the provided maximum length.",
+      "properties": {
+        "enabled": {
+          "description": "Is the rule enabled?",
+          "type": "boolean"
+        },
+        "exclude": {
+          "description": "List of file regex patterns to exclude",
+          "items": {
+            "type": "string"
+          },
+          "type": "array"
+        },
+        "length": {
+          "description": "Maximum line length in characters",
+          "type": "number"
+        },
+        "reason": {
+          "description": "An explanation for why the rule is enforced",
+          "type": "string"
+        }
+      },
+      "required": [
+        "length"
+      ],
+      "type": "object"
+    },
+    "LineOnlyPuncConf": {
+      "additionalProperties": false,
+      "description": "Detects lines containing only punctuation.",
+      "properties": {
+        "enabled": {
+          "description": "Is the rule enabled?",
+          "type": "boolean"
+        },
+        "exclude": {
+          "description": "List of file regex patterns to exclude",
+          "items": {
+            "type": "string"
+          },
+          "type": "array"
+        },
+        "ignoreExceptions": {
+          "type": "boolean"
+        },
+        "reason": {
+          "description": "An explanation for why the rule is enforced",
+          "type": "string"
+        }
+      },
+      "required": [
+        "ignoreExceptions"
+      ],
+      "type": "object"
+    },
+    "LocalClassNamingConf": {
+      "additionalProperties": false,
+      "description": "Allows you to enforce a pattern, such as a prefix, for local class names.",
+      "properties": {
+        "enabled": {
+          "description": "Is the rule enabled?",
+          "type": "boolean"
+        },
+        "exclude": {
+          "description": "List of file regex patterns to exclude",
+          "items": {
+            "type": "string"
+          },
+          "type": "array"
+        },
+        "ignoreNames": {
+          "description": "A list of names to be ignored",
+          "items": {
+            "type": "string"
+          },
+          "type": "array"
+        },
+        "ignorePatterns": {
+          "description": "A list of patterns to be ignored. For example, you can use it to ignore ambiguous prefixes",
+          "items": {
+            "type": "string"
+          },
+          "type": "array"
+        },
+        "local": {
+          "description": "The pattern for local class names",
+          "type": "string"
+        },
+        "patternKind": {
+          "$ref": "#/definitions/PatternKind",
+          "description": "Specifies whether the pattern is forbidden (violation if name matches) or required (violation if name does not match)."
+        },
+        "reason": {
+          "description": "An explanation for why the rule is enforced",
+          "type": "string"
+        },
+        "test": {
+          "description": "The pattern for local test class names",
+          "type": "string"
+        }
+      },
+      "required": [
+        "local",
+        "test"
+      ],
+      "type": "object"
+    },
+    "LocalTestclassLocationConf": {
+      "additionalProperties": false,
+      "description": "Chceks that local test classes are placed in the test include.",
+      "properties": {
+        "enabled": {
+          "description": "Is the rule enabled?",
+          "type": "boolean"
+        },
+        "exclude": {
+          "description": "List of file regex patterns to exclude",
+          "items": {
+            "type": "string"
+          },
+          "type": "array"
+        },
+        "reason": {
+          "description": "An explanation for why the rule is enforced",
+          "type": "string"
+        }
+      },
+      "type": "object"
+    },
+    "LocalVariableNamesConf": {
+      "additionalProperties": false,
+      "description": "Allows you to enforce a pattern, such as a prefix, for local variables, constants and field symbols.",
+      "properties": {
+        "enabled": {
+          "description": "Is the rule enabled?",
+          "type": "boolean"
+        },
+        "exclude": {
+          "description": "List of file regex patterns to exclude",
+          "items": {
+            "type": "string"
+          },
+          "type": "array"
+        },
+        "expectedConstant": {
+          "description": "The pattern for local constant names",
+          "type": "string"
+        },
+        "expectedData": {
+          "description": "The pattern for local variable names",
+          "type": "string"
+        },
+        "expectedFS": {
+          "description": "The pattern for field symbol names",
+          "type": "string"
+        },
+        "ignoreNames": {
+          "description": "A list of names to be ignored",
+          "items": {
+            "type": "string"
+          },
+          "type": "array"
+        },
+        "ignorePatterns": {
+          "description": "A list of patterns to be ignored. For example, you can use it to ignore ambiguous prefixes",
+          "items": {
+            "type": "string"
+          },
+          "type": "array"
+        },
+        "patternKind": {
+          "$ref": "#/definitions/PatternKind",
+          "description": "Specifies whether the pattern is forbidden (violation if name matches) or required (violation if name does not match)."
+        },
+        "reason": {
+          "description": "An explanation for why the rule is enforced",
+          "type": "string"
+        }
+      },
+      "required": [
+        "expectedData",
+        "expectedConstant",
+        "expectedFS"
+      ],
+      "type": "object"
+    },
+    "MSAGConsistencyConf": {
+      "additionalProperties": false,
+      "description": "Checks the validity of messages in message classes",
+      "properties": {
+        "enabled": {
+          "description": "Is the rule enabled?",
+          "type": "boolean"
+        },
+        "exclude": {
+          "description": "List of file regex patterns to exclude",
+          "items": {
+            "type": "string"
+          },
+          "type": "array"
+        },
+        "reason": {
+          "description": "An explanation for why the rule is enforced",
+          "type": "string"
+        }
+      },
+      "type": "object"
+    },
+    "MainFileContentsConf": {
+      "additionalProperties": false,
+      "description": "Checks related to report declarations.",
+      "properties": {
+        "enabled": {
+          "description": "Is the rule enabled?",
+          "type": "boolean"
+        },
+        "exclude": {
+          "description": "List of file regex patterns to exclude",
+          "items": {
+            "type": "string"
+          },
+          "type": "array"
+        },
+        "reason": {
+          "description": "An explanation for why the rule is enforced",
+          "type": "string"
+        }
+      },
+      "type": "object"
+    },
+    "MaxOneStatementConf": {
+      "additionalProperties": false,
+      "description": "Chekcks that each line contains only a single statement.",
+      "properties": {
+        "enabled": {
+          "description": "Is the rule enabled?",
+          "type": "boolean"
+        },
+        "exclude": {
+          "description": "List of file regex patterns to exclude",
+          "items": {
+            "type": "string"
+          },
+          "type": "array"
+        },
+        "reason": {
+          "description": "An explanation for why the rule is enforced",
+          "type": "string"
+        }
+      },
+      "type": "object"
+    },
+    "MessageExistsConf": {
+      "additionalProperties": false,
+      "description": "In message statements, check that the message class + id exist",
+      "properties": {
+        "enabled": {
+          "description": "Is the rule enabled?",
+          "type": "boolean"
+        },
+        "exclude": {
+          "description": "List of file regex patterns to exclude",
+          "items": {
+            "type": "string"
+          },
+          "type": "array"
+        },
+        "reason": {
+          "description": "An explanation for why the rule is enforced",
+          "type": "string"
+        }
+      },
+      "type": "object"
+    },
+    "MethodLengthConf": {
+      "additionalProperties": false,
+      "description": "Checks relating to method length.",
+      "properties": {
+        "enabled": {
+          "description": "Is the rule enabled?",
+          "type": "boolean"
+        },
+        "errorWhenEmpty": {
+          "description": "Checks for empty methods.",
+          "type": "boolean"
+        },
+        "exclude": {
+          "description": "List of file regex patterns to exclude",
+          "items": {
+            "type": "string"
+          },
+          "type": "array"
+        },
+        "reason": {
+          "description": "An explanation for why the rule is enforced",
+          "type": "string"
+        },
+        "statements": {
+          "description": "Maximum method length in statements",
+          "type": "number"
+        }
+      },
+      "required": [
+        "statements",
+        "errorWhenEmpty"
+      ],
+      "type": "object"
+    },
+    "MethodParameterNamesConf": {
+      "additionalProperties": false,
+      "description": "Allows you to enforce a pattern, such as a prefix, for method parameter names",
+      "properties": {
+        "changing": {
+          "description": "The pattern for changing parameters",
+          "type": "string"
+        },
+        "enabled": {
+          "description": "Is the rule enabled?",
+          "type": "boolean"
+        },
+        "exclude": {
+          "description": "List of file regex patterns to exclude",
+          "items": {
+            "type": "string"
+          },
+          "type": "array"
+        },
+        "exporting": {
+          "description": "The pattern for exporting parameters",
+          "type": "string"
+        },
+        "ignoreExceptions": {
+          "description": "Ignore parameters in methods of exception classes",
+          "type": "boolean"
+        },
+        "ignoreNames": {
+          "description": "A list of names to be ignored",
+          "items": {
+            "type": "string"
+          },
+          "type": "array"
+        },
+        "ignorePatterns": {
+          "description": "A list of patterns to be ignored. For example, you can use it to ignore ambiguous prefixes",
+          "items": {
+            "type": "string"
+          },
+          "type": "array"
+        },
+        "importing": {
+          "description": "The pattern for importing parameters",
+          "type": "string"
+        },
+        "patternKind": {
+          "$ref": "#/definitions/PatternKind",
+          "description": "Specifies whether the pattern is forbidden (violation if name matches) or required (violation if name does not match)."
+        },
+        "reason": {
+          "description": "An explanation for why the rule is enforced",
+          "type": "string"
+        },
+        "returning": {
+          "description": "The pattern for returning parameters",
+          "type": "string"
+        }
+      },
+      "required": [
+        "ignoreExceptions",
+        "importing",
+        "returning",
+        "changing",
+        "exporting"
+      ],
+      "type": "object"
+    },
+    "MixReturningConf": {
+      "additionalProperties": false,
+      "description": "Checks that methods don't have a mixture of returning and exporting/changing parameters",
+      "properties": {
+        "enabled": {
+          "description": "Is the rule enabled?",
+          "type": "boolean"
+        },
+        "exclude": {
+          "description": "List of file regex patterns to exclude",
+          "items": {
+            "type": "string"
+          },
+          "type": "array"
+        },
+        "reason": {
+          "description": "An explanation for why the rule is enforced",
+          "type": "string"
+        }
+      },
+      "type": "object"
+    },
+    "NestingConf": {
+      "additionalProperties": false,
+      "description": "Checks for methods exceeding a maximum nesting depth",
+      "properties": {
+        "depth": {
+          "description": "Maximum allowed nesting depth",
+          "type": "number"
+        },
+        "enabled": {
+          "description": "Is the rule enabled?",
+          "type": "boolean"
+        },
+        "exclude": {
+          "description": "List of file regex patterns to exclude",
+          "items": {
+            "type": "string"
+          },
+          "type": "array"
+        },
+        "reason": {
+          "description": "An explanation for why the rule is enforced",
+          "type": "string"
+        }
+      },
+      "required": [
+        "depth"
+      ],
+      "type": "object"
+    },
+    "NoPublicAttributesConf": {
+      "additionalProperties": false,
+      "description": "Checks that classes and interfaces don't contain any public attributes.\r\nExceptions are excluded from this rule.",
+      "properties": {
+        "allowReadOnly": {
+          "description": "Allows public attributes, if they are declared as READ-ONLY.",
+          "type": "boolean"
+        },
+        "enabled": {
+          "description": "Is the rule enabled?",
+          "type": "boolean"
+        },
+        "exclude": {
+          "description": "List of file regex patterns to exclude",
+          "items": {
+            "type": "string"
+          },
+          "type": "array"
+        },
+        "reason": {
+          "description": "An explanation for why the rule is enforced",
+          "type": "string"
+        }
+      },
+      "required": [
+        "allowReadOnly"
+      ],
+      "type": "object"
+    },
+    "ObjectNamingConf": {
+      "additionalProperties": false,
+      "description": "Allows you to enforce a pattern, such as a prefix, for object names",
+      "properties": {
+        "auth": {
+          "description": "The pattern for authorization object names",
+          "type": "string"
+        },
+        "clas": {
+          "description": "The pattern for global class names",
+          "type": "string"
+        },
+        "doma": {
+          "description": "The pattern for domain names",
+          "type": "string"
+        },
+        "dtel": {
+          "description": "The pattern for data element names",
+          "type": "string"
+        },
+        "enabled": {
+          "description": "Is the rule enabled?",
+          "type": "boolean"
+        },
+        "enqu": {
+          "description": "The pattern for lock object names",
+          "type": "string"
+        },
+        "exclude": {
+          "description": "List of file regex patterns to exclude",
+          "items": {
+            "type": "string"
+          },
+          "type": "array"
+        },
+        "fugr": {
+          "description": "The pattern for function group names",
+          "type": "string"
+        },
+        "idoc": {
+          "description": "The pattern for idoc names",
+          "type": "string"
+        },
+        "ignoreNames": {
+          "description": "A list of names to be ignored",
+          "items": {
+            "type": "string"
+          },
+          "type": "array"
+        },
+        "ignorePatterns": {
+          "description": "A list of patterns to be ignored. For example, you can use it to ignore ambiguous prefixes",
+          "items": {
+            "type": "string"
+          },
+          "type": "array"
+        },
+        "intf": {
+          "description": "The pattern for global interface names",
+          "type": "string"
+        },
+        "msag": {
+          "description": "The pattern for message class names",
+          "type": "string"
+        },
+        "patternKind": {
+          "$ref": "#/definitions/PatternKind",
+          "description": "Specifies whether the pattern is forbidden (violation if name matches) or required (violation if name does not match)."
+        },
+        "pinf": {
+          "description": "The pattern for package interface names",
+          "type": "string"
+        },
+        "prog": {
+          "description": "The pattern for program (report) names",
+          "type": "string"
+        },
+        "reason": {
+          "description": "An explanation for why the rule is enforced",
+          "type": "string"
+        },
+        "tabl": {
+          "description": "The pattern for DDIC table names",
+          "type": "string"
+        },
+        "tran": {
+          "description": "The pattern for transaction names",
+          "type": "string"
+        },
+        "ttyp": {
+          "description": "The pattern for DDIC table type names",
+          "type": "string"
+        }
+      },
+      "required": [
+        "clas",
+        "intf",
+        "prog",
+        "fugr",
+        "tabl",
+        "ttyp",
+        "dtel",
+        "doma",
+        "msag",
+        "tran",
+        "enqu",
+        "auth",
+        "pinf",
+        "idoc"
+      ],
+      "type": "object"
+    },
+    "ObsoleteStatementConf": {
+      "additionalProperties": false,
+      "description": "Checks for usages of certain obsolete statements",
+      "properties": {
+        "add": {
+          "type": "boolean"
+        },
+        "compute": {
+          "type": "boolean"
+        },
+        "divide": {
+          "type": "boolean"
+        },
+        "enabled": {
+          "description": "Is the rule enabled?",
+          "type": "boolean"
+        },
+        "exclude": {
+          "description": "List of file regex patterns to exclude",
+          "items": {
+            "type": "string"
+          },
+          "type": "array"
+        },
+        "move": {
+          "type": "boolean"
+        },
+        "multiply": {
+          "type": "boolean"
+        },
+        "occurs": {
+          "description": "Checks for usages of OCCURS",
+          "type": "boolean"
+        },
+        "reason": {
+          "description": "An explanation for why the rule is enforced",
+          "type": "string"
+        },
+        "refresh": {
+          "type": "boolean"
+        },
+        "requested": {
+          "description": "Checks for usages of IS REQUESTED",
+          "type": "boolean"
+        },
+        "subtract": {
+          "type": "boolean"
+        }
+      },
+      "required": [
+        "refresh",
+        "compute",
+        "add",
+        "subtract",
+        "multiply",
+        "move",
+        "divide",
+        "requested",
+        "occurs"
+      ],
+      "type": "object"
+    },
+    "ParserErrorConf": {
+      "additionalProperties": false,
+      "description": "Checks for syntax unrecognized by abaplint",
+      "properties": {
+        "enabled": {
+          "description": "Is the rule enabled?",
+          "type": "boolean"
+        },
+        "exclude": {
+          "description": "List of file regex patterns to exclude",
+          "items": {
+            "type": "string"
+          },
+          "type": "array"
+        },
+        "reason": {
+          "description": "An explanation for why the rule is enforced",
+          "type": "string"
+        }
+      },
+      "type": "object"
+    },
+    "PatternKind": {
+      "enum": [
+        "required",
+        "forbidden"
+      ],
+      "type": "string"
+    },
+    "PreferredCompareOperatorConf": {
+      "additionalProperties": false,
+      "description": "Configure undesired operator variants",
+      "properties": {
+        "badOperators": {
+          "description": "Operators which are not allowed",
+          "items": {
+            "type": "string"
+          },
+          "type": "array"
+        },
+        "enabled": {
+          "description": "Is the rule enabled?",
+          "type": "boolean"
+        },
+        "exclude": {
+          "description": "List of file regex patterns to exclude",
+          "items": {
+            "type": "string"
+          },
+          "type": "array"
+        },
+        "reason": {
+          "description": "An explanation for why the rule is enforced",
+          "type": "string"
+        }
+      },
+      "required": [
+        "badOperators"
+      ],
+      "type": "object"
+    },
+    "RFCErrorHandlingConf": {
+      "additionalProperties": false,
+      "description": "Checks that exceptions 'system_failure' and 'communication_failure' are handled in RFC calls",
+      "properties": {
+        "enabled": {
+          "description": "Is the rule enabled?",
+          "type": "boolean"
+        },
+        "exclude": {
+          "description": "List of file regex patterns to exclude",
+          "items": {
+            "type": "string"
+          },
+          "type": "array"
+        },
+        "reason": {
+          "description": "An explanation for why the rule is enforced",
+          "type": "string"
+        }
+      },
+      "type": "object"
+    },
+    "ReleaseIdocConf": {
+      "additionalProperties": false,
+      "description": "Checks idoc types and segments are set to status released",
+      "properties": {
+        "enabled": {
+          "description": "Is the rule enabled?",
+          "type": "boolean"
+        },
+        "exclude": {
+          "description": "List of file regex patterns to exclude",
+          "items": {
+            "type": "string"
+          },
+          "type": "array"
+        },
+        "reason": {
+          "description": "An explanation for why the rule is enforced",
+          "type": "string"
+        }
+      },
+      "type": "object"
+    },
+    "RemoveDescriptionsConf": {
+      "additionalProperties": false,
+      "description": "Ensures you have no descriptions in metadata of methods, parameters, etc. For class descriptions, see rule description_empty.",
+      "properties": {
+        "enabled": {
+          "description": "Is the rule enabled?",
+          "type": "boolean"
+        },
+        "exclude": {
+          "description": "List of file regex patterns to exclude",
+          "items": {
+            "type": "string"
+          },
+          "type": "array"
+        },
+        "ignoreExceptions": {
+          "type": "boolean"
+        },
+        "reason": {
+          "description": "An explanation for why the rule is enforced",
+          "type": "string"
+        }
+      },
+      "required": [
+        "ignoreExceptions"
+      ],
+      "type": "object"
+    },
+    "SequentialBlankConf": {
+      "additionalProperties": false,
+      "description": "Checks that code does not contain more than the configured number of blank lines in a row.",
+      "properties": {
+        "enabled": {
+          "description": "Is the rule enabled?",
+          "type": "boolean"
+        },
+        "exclude": {
+          "description": "List of file regex patterns to exclude",
+          "items": {
+            "type": "string"
+          },
+          "type": "array"
+        },
+        "lines": {
+          "description": "An equal or higher number of sequential blank lines will trigger a violation.\r\nExample: if lines = 3, a maximum of 2 is allowed.",
+          "type": "number"
+        },
+        "reason": {
+          "description": "An explanation for why the rule is enforced",
+          "type": "string"
+        }
+      },
+      "required": [
+        "lines"
+      ],
+      "type": "object"
+    },
+    "SevenBitAsciiConf": {
+      "additionalProperties": false,
+      "description": "Only allow characters from the 7bit ASCII set.",
+      "properties": {
+        "enabled": {
+          "description": "Is the rule enabled?",
+          "type": "boolean"
+        },
+        "exclude": {
+          "description": "List of file regex patterns to exclude",
+          "items": {
+            "type": "string"
+          },
+          "type": "array"
+        },
+        "reason": {
+          "description": "An explanation for why the rule is enforced",
+          "type": "string"
+        }
+      },
+      "type": "object"
+    },
+    "ShortCaseConf": {
+      "additionalProperties": false,
+      "description": "Checks for CASE statements which have fewer than the specified number of branches",
+      "properties": {
+        "allow": {
+          "items": {
+            "type": "string"
+          },
+          "type": "array"
+        },
+        "enabled": {
+          "description": "Is the rule enabled?",
+          "type": "boolean"
+        },
+        "exclude": {
+          "description": "List of file regex patterns to exclude",
+          "items": {
+            "type": "string"
+          },
+          "type": "array"
+        },
+        "length": {
+          "description": "The smallest number of WHEN branches which will trigger a violation.\r\nExample: if length = 1, at least 2 branches are required",
+          "type": "number"
+        },
+        "reason": {
+          "description": "An explanation for why the rule is enforced",
+          "type": "string"
+        }
+      },
+      "required": [
+        "length",
+        "allow"
+      ],
+      "type": "object"
+    },
+    "SpaceBeforeColonConf": {
+      "additionalProperties": false,
+      "description": "Checks that there are no spaces in front of colons in chained statements.",
+      "properties": {
+        "enabled": {
+          "description": "Is the rule enabled?",
+          "type": "boolean"
+        },
+        "exclude": {
+          "description": "List of file regex patterns to exclude",
+          "items": {
+            "type": "string"
+          },
+          "type": "array"
+        },
+        "reason": {
+          "description": "An explanation for why the rule is enforced",
+          "type": "string"
+        }
+      },
+      "type": "object"
+    },
+    "SpaceBeforeDotConf": {
+      "additionalProperties": false,
+      "description": "Checks for extra spaces before dots at the ends of statements .",
+      "properties": {
+        "enabled": {
+          "description": "Is the rule enabled?",
+          "type": "boolean"
+        },
+        "exclude": {
+          "description": "List of file regex patterns to exclude",
+          "items": {
+            "type": "string"
+          },
+          "type": "array"
+        },
+        "ignoreExceptions": {
+          "type": "boolean"
+        },
+        "ignoreGlobalDefinition": {
+          "type": "boolean"
+        },
+        "reason": {
+          "description": "An explanation for why the rule is enforced",
+          "type": "string"
+        }
+      },
+      "required": [
+        "ignoreGlobalDefinition",
+        "ignoreExceptions"
+      ],
+      "type": "object"
+    },
+    "StartAtTabConf": {
+      "additionalProperties": false,
+      "description": "Checks that statements start at tabstops.",
+      "properties": {
+        "enabled": {
+          "description": "Is the rule enabled?",
+          "type": "boolean"
+        },
+        "exclude": {
+          "description": "List of file regex patterns to exclude",
+          "items": {
+            "type": "string"
+          },
+          "type": "array"
+        },
+        "reason": {
+          "description": "An explanation for why the rule is enforced",
+          "type": "string"
+        }
+      },
+      "type": "object"
+    },
+    "SuperclassFinalConf": {
+      "additionalProperties": false,
+      "description": "Checks that classes which are inherited from are not declared as FINAL.",
+      "properties": {
+        "enabled": {
+          "description": "Is the rule enabled?",
+          "type": "boolean"
+        },
+        "exclude": {
+          "description": "List of file regex patterns to exclude",
+          "items": {
+            "type": "string"
+          },
+          "type": "array"
+        },
+        "reason": {
+          "description": "An explanation for why the rule is enforced",
+          "type": "string"
+        }
+      },
+      "type": "object"
+    },
+    "TABLEnhancementCategoryConf": {
+      "additionalProperties": false,
+      "description": "Checks that tables do not have the enhancement category 'not classified'",
+      "properties": {
+        "enabled": {
+          "description": "Is the rule enabled?",
+          "type": "boolean"
+        },
+        "exclude": {
+          "description": "List of file regex patterns to exclude",
+          "items": {
+            "type": "string"
+          },
+          "type": "array"
+        },
+        "reason": {
+          "description": "An explanation for why the rule is enforced",
+          "type": "string"
+        }
+      },
+      "type": "object"
+    },
+    "TypeBeginSingleTypeConf": {
+      "additionalProperties": false,
+      "description": "Finds TYPE BEGIN with just one INCLUDE TYPE",
+      "properties": {
+        "enabled": {
+          "description": "Is the rule enabled?",
+          "type": "boolean"
+        },
+        "exclude": {
+          "description": "List of file regex patterns to exclude",
+          "items": {
+            "type": "string"
+          },
+          "type": "array"
+        },
+        "reason": {
+          "description": "An explanation for why the rule is enforced",
+          "type": "string"
+        }
+      },
+      "type": "object"
+    },
+    "TypeFormParametersConf": {
+      "additionalProperties": false,
+      "description": "Checks for untyped FORM parameters",
+      "properties": {
+        "enabled": {
+          "description": "Is the rule enabled?",
+          "type": "boolean"
+        },
+        "exclude": {
+          "description": "List of file regex patterns to exclude",
+          "items": {
+            "type": "string"
+          },
+          "type": "array"
+        },
+        "reason": {
+          "description": "An explanation for why the rule is enforced",
+          "type": "string"
+        }
+      },
+      "type": "object"
+    },
+    "TypesNamingConf": {
+      "additionalProperties": false,
+      "description": "Allows you to enforce a pattern for TYPES definitions",
+      "properties": {
+        "enabled": {
+          "description": "Is the rule enabled?",
+          "type": "boolean"
+        },
+        "exclude": {
+          "description": "List of file regex patterns to exclude",
+          "items": {
+            "type": "string"
+          },
+          "type": "array"
+        },
+        "pattern": {
+          "description": "The pattern for TYPES",
+          "type": "string"
+        },
+        "reason": {
+          "description": "An explanation for why the rule is enforced",
+          "type": "string"
+        }
+      },
+      "required": [
+        "pattern"
+      ],
+      "type": "object"
+    },
+    "UnreachableCodeConf": {
+      "additionalProperties": false,
+      "description": "Checks for unreachable code.",
+      "properties": {
+        "enabled": {
+          "description": "Is the rule enabled?",
+          "type": "boolean"
+        },
+        "exclude": {
+          "description": "List of file regex patterns to exclude",
+          "items": {
+            "type": "string"
+          },
+          "type": "array"
+        },
+        "reason": {
+          "description": "An explanation for why the rule is enforced",
+          "type": "string"
+        }
+      },
+      "type": "object"
+    },
+    "UseNewConf": {
+      "additionalProperties": false,
+      "description": "Checks for deprecated CREATE OBJECT statements.",
+      "properties": {
+        "enabled": {
+          "description": "Is the rule enabled?",
+          "type": "boolean"
+        },
+        "exclude": {
+          "description": "List of file regex patterns to exclude",
+          "items": {
+            "type": "string"
+          },
+          "type": "array"
+        },
+        "reason": {
+          "description": "An explanation for why the rule is enforced",
+          "type": "string"
+        }
+      },
+      "type": "object"
+    },
+    "WhenOthersLastConf": {
+      "additionalProperties": false,
+      "description": "Checks that WHEN OTHERS is placed the last within a CASE statement.",
+      "properties": {
+        "enabled": {
+          "description": "Is the rule enabled?",
+          "type": "boolean"
+        },
+        "exclude": {
+          "description": "List of file regex patterns to exclude",
+          "items": {
+            "type": "string"
+          },
+          "type": "array"
+        },
+        "reason": {
+          "description": "An explanation for why the rule is enforced",
+          "type": "string"
+        }
+      },
+      "type": "object"
+    },
+    "WhitespaceEndConf": {
+      "additionalProperties": false,
+      "description": "Checks for redundant whitespace at the end of each line.",
+      "properties": {
+        "enabled": {
+          "description": "Is the rule enabled?",
+          "type": "boolean"
+        },
+        "exclude": {
+          "description": "List of file regex patterns to exclude",
+          "items": {
+            "type": "string"
+          },
+          "type": "array"
+        },
+        "reason": {
+          "description": "An explanation for why the rule is enforced",
+          "type": "string"
+        }
+      },
+      "type": "object"
+    }
+  }
+}
