@@ -4,7 +4,7 @@ import {Symbols} from "./symbols";
 import {Hover} from "./hover";
 import {Diagnostics} from "./diagnostics";
 import {Help} from "./help";
-import {PrettyPrinter} from "../abap/pretty_printer";
+import {PrettyPrinter} from "../pretty_printer/pretty_printer";
 import {Definition} from "./definition";
 
 // the types in this file are not completely correct
@@ -50,7 +50,7 @@ export class LanguageServer {
       return [];
     }
 
-    const text = new PrettyPrinter(file).run();
+    const text = new PrettyPrinter(file, this.reg.getConfig()).run();
     const tokens = file.getTokens();
     const last = tokens[tokens.length - 1];
 

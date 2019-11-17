@@ -5,7 +5,8 @@ import {IObject} from "../../objects/_iobject";
 import {Class} from "../../objects";
 import {Registry} from "../../registry";
 import {BasicRuleConfig} from "../_basic_rule_config";
-import {PrettyPrinter, IIndentationOptions} from "../../abap/pretty_printer";
+import {IIndentationOptions} from "../../pretty_printer/indentation_options";
+import {Indent} from "../../pretty_printer/indent";
 import * as Statements from "../../abap/statements";
 import * as Expressions from "../../abap/expressions";
 
@@ -53,14 +54,15 @@ export class Indentation extends ABAPRule {
       alignTryCatch: this.conf.alignTryCatch,
       globalClassSkipFirst: this.conf.globalClassSkipFirst,
     };
-    const expected = new PrettyPrinter(file, indentOpts).getExpectedIndentation();
+    const indentOperation = new Indent(indentOpts);
+    const expected = indentOperation.getExpectedIndents(file);
 
     for (const statement of file.getStatements()) {
       const indent = expected.shift();
 
       if (this.conf.ignoreGlobalClassDefinition) {
         if (statement.get() instanceof Statements.ClassDefinition
-            && statement.findFirstExpression(Expressions.Global)) {
+          && statement.findFirstExpression(Expressions.Global)) {
           skip = true;
           continue;
         } else if (skip === true && statement.get() instanceof Statements.EndClass) {
@@ -73,7 +75,7 @@ export class Indentation extends ABAPRule {
 
       if (this.conf.ignoreGlobalInterface) {
         if (statement.get() instanceof Statements.Interface
-            && statement.findFirstExpression(Expressions.Global)) {
+          && statement.findFirstExpression(Expressions.Global)) {
           skip = true;
           continue;
         } else if (skip === true && statement.get() instanceof Statements.EndInterface) {
