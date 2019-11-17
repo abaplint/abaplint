@@ -2176,6 +2176,10 @@
           },
           "type": "array"
         },
+        "ignoreTestClasses": {
+          "description": "Option to ignore test classes for this check.",
+          "type": "boolean"
+        },
         "reason": {
           "description": "An explanation for why the rule is enforced",
           "type": "string"
@@ -2187,7 +2191,8 @@
       },
       "required": [
         "statements",
-        "errorWhenEmpty"
+        "errorWhenEmpty",
+        "ignoreTestClasses"
       ],
       "type": "object"
     },
