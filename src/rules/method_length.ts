@@ -11,6 +11,9 @@ export class MethodLengthConf extends BasicRuleConfig {
   public statements: number = 100;
   /** Checks for empty methods. */
   public errorWhenEmpty: boolean = true;
+
+  /** Option to ignore test classes for this check.  */
+  public ignoreTestClasses: boolean = false;
 }
 
 enum IssueType {
@@ -51,8 +54,11 @@ export class MethodLength implements IRule {
   public run(obj: IObject, _reg: Registry): Issue[] {
     const issues: Issue[] = [];
     const stats = MethodLengthStats.run(obj);
-
     for (const s of stats) {
+      if ((this.conf.ignoreTestClasses === true)
+        && s.file.getFilename().includes(".testclasses.")) {
+        continue;
+      }
       if (s.count === 0 && this.conf.errorWhenEmpty === true) {
         const issue = Issue.atPosition(s.file, s.pos, this.getDescription(IssueType.EmptyMethod, "0"), this.getKey());
         issues.push(issue);

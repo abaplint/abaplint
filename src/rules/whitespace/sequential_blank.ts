@@ -14,6 +14,9 @@ export class SequentialBlankConf extends BasicRuleConfig {
 
 export class SequentialBlank extends ABAPRule {
 
+  public static isBlankOrWhitespace(line: string): boolean {
+    return /^\s*$/.test(line);
+  }
   private conf = new SequentialBlankConf();
 
   public getKey(): string {
@@ -39,7 +42,7 @@ export class SequentialBlank extends ABAPRule {
     let blanks = 0;
 
     for (let i = 0; i < rows.length; i++) {
-      if (rows[i] === "") {
+      if (SequentialBlank.isBlankOrWhitespace(rows[i])) {
         blanks++;
       } else {
         blanks = 0;
