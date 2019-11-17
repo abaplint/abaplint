@@ -21,7 +21,7 @@
   },
   "devDependencies": {
     "css-loader": "^3.2.0",
-    "cypress": "^3.4.1",
+    "cypress": "^3.6.1",
     "file-loader": "^4.2.0",
     "html-webpack-plugin": "^3.2.0",
     "less": "^3.10.3",
@@ -29,11 +29,11 @@
     "rimraf": "^3.0.0",
     "start-server-and-test": "^1.10.6",
     "style-loader": "^1.0.0",
-    "ts-loader": "^6.2.0",
-    "typescript": "^3.6.4",
+    "ts-loader": "^6.2.1",
+    "typescript": "^3.7.2",
     "url-loader": "^2.2.0",
     "webpack": "^4.41.2",
-    "webpack-cli": "^3.3.9",
+    "webpack-cli": "^3.3.10",
     "webpack-dev-server": "^3.9.0"
   }
 }
