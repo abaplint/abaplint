@@ -12,11 +12,15 @@ import * as Statements from "../abap/statements";
 import * as Expressions from "../abap/expressions";
 import {Token} from "../abap/tokens/_token";
 
-export type KeywordCaseStyle = "upper" | "lower";
+export enum KeywordCaseStyle {
+  Upper = "upper",
+  Lower = "lower",
+}
+
 
 /** Checks that keywords have the same case. Non-keywords must be lower case. */
 export class KeywordCaseConf extends BasicRuleConfig {
-  public style: KeywordCaseStyle = "upper";
+  public style: KeywordCaseStyle = KeywordCaseStyle.Upper;
   /** Ignore global exception classes */
   public ignoreExceptions: boolean = true;
   public ignoreLowerClassImplmentationStatement: boolean = true;
@@ -155,11 +159,11 @@ export class KeywordCase extends ABAPRule {
   }
 
   public violatesRule(keyword: string): boolean {
-    if (this.conf.style === "lower") {
+    if (this.conf.style === KeywordCaseStyle.Lower) {
       return keyword !== keyword.toLowerCase();
     }
 
-    if (this.conf.style === "upper") {
+    if (this.conf.style === KeywordCaseStyle.Upper) {
       return keyword !== keyword.toUpperCase();
     }
 

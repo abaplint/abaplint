@@ -3,7 +3,7 @@ import {PrettyPrinter} from "../../src/pretty_printer/pretty_printer";
 import {MemoryFile} from "../../src/files";
 import {Registry} from "../../src/registry";
 import {Indent} from "../../src/pretty_printer/indent";
-import {KeywordCaseConf} from "../../src/rules";
+import {KeywordCaseConf, KeywordCaseStyle} from "../../src/rules";
 
 const testTitle = (text: string): string => {return text.split("\n")[0]; };
 
@@ -124,10 +124,10 @@ describe("Remove sequential blanks", () => {
 
 describe("Fix keyword case", () => {
   const lowerCaseConfig = new KeywordCaseConf();
-  lowerCaseConfig.style = "lower";
+  lowerCaseConfig.style = KeywordCaseStyle.Lower;
 
   const upperCaseConfig = new KeywordCaseConf();
-  upperCaseConfig.style = "upper";
+  upperCaseConfig.style = KeywordCaseStyle.Upper;
 
   const tests = [
     {

@@ -1,4 +1,4 @@
-import {KeywordCase, KeywordCaseConf} from "../../src/rules/keyword_case";
+import {KeywordCase, KeywordCaseConf, KeywordCaseStyle} from "../../src/rules/keyword_case";
 import {testRule} from "./_utils";
 
 const tests = [
@@ -62,7 +62,7 @@ config3.ignoreFunctionModuleName = true;
 testRule(tests3, KeywordCase, config3);
 
 const config4 = new KeywordCaseConf();
-config4.style = "lower";
+config4.style = KeywordCaseStyle.Lower;
 
 const tests4 = [
   {abap: "IF a = b.", cnt: 1},
