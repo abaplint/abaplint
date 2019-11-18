@@ -117,7 +117,7 @@ export interface IConfig {
     "in_statement_indentation"?: InStatementIndentationConf | boolean,
     "indentation"?: IndentationConf | boolean,
     "inline_data_old_versions"?: InlineDataOldVersionsConf | boolean,
-    "keywords_upper"?: KeywordCaseConf | boolean,
+    "keyword_case"?: KeywordCaseConf | boolean,
     "line_length"?: LineLengthConf | boolean,
     "line_only_punc"?: LineOnlyPuncConf | boolean,
     "local_class_naming"?: LocalClassNamingConf | boolean,

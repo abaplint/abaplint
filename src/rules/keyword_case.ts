@@ -14,7 +14,7 @@ import {Token} from "../abap/tokens/_token";
 
 export type KeywordCaseStyle = "upper" | "lower";
 
-/** Detects keywords which are not uppercased, non-keywords must be lower case. */
+/** Checks that keywords have the same case. Non-keywords must be lower case. */
 export class KeywordCaseConf extends BasicRuleConfig {
   public style: KeywordCaseStyle = "upper";
   /** Ignore global exception classes */
