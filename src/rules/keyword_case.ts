@@ -16,7 +16,7 @@ export type KeywordCaseStyle = "upper" | "lower";
 
 /** Detects keywords which are not uppercased, non-keywords must be lower case. */
 export class KeywordCaseConf extends BasicRuleConfig {
-  public style: KeywordCaseStyle = "lower";
+  public style: KeywordCaseStyle = "upper";
   /** Ignore global exception classes */
   public ignoreExceptions: boolean = true;
   public ignoreLowerClassImplmentationStatement: boolean = true;
@@ -154,7 +154,7 @@ export class KeywordCase extends ABAPRule {
     return {token: undefined, keyword: false};
   }
 
-  private violatesRule(keyword: string): boolean {
+  public violatesRule(keyword: string): boolean {
     if (this.conf.style === "lower") {
       return keyword !== keyword.toLowerCase();
     }

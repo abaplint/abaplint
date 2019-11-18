@@ -3,12 +3,13 @@ import {Registry} from "../../src/registry";
 import {MemoryFile} from "../../src/files/memory_file";
 import {IRule} from "../../src/rules/_irule";
 
-export function testRule(tests: any, rule: new () => IRule, config?: any) {
+export function testRule(tests: any, rule: new () => IRule, config?: any, testTitle?: string) {
   const nrule = new rule();
   if (config) {
     nrule.setConfig(config);
   }
-  describe("test " + nrule.getKey() + " rule", function () {
+  testTitle = testTitle || `test ${nrule.getKey()} rule`;
+  describe(testTitle, function () {
     // note that timeout() only works inside function()
     this.timeout(200); // tslint:disable-line
     tests.forEach((test: any) => {

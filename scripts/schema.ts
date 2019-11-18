@@ -37,7 +37,7 @@ import {ImplementMethodsConf} from "../src/rules/syntax/implement_methods";
 import {InStatementIndentationConf} from "../src/rules/whitespace/in_statement_indentation";
 import {IndentationConf} from "../src/rules/whitespace/indentation";
 import {InlineDataOldVersionsConf} from "../src/rules/syntax/inline_data_old_versions";
-import {KeywordsUpperConf} from "../src/rules/keywords_upper";
+import {KeywordCaseConf} from "../src/rules/keyword_case";
 import {LineLengthConf} from "../src/rules/line_length";
 import {LineOnlyPuncConf} from "../src/rules/line_only_punc";
 import {LocalClassNamingConf} from "../src/rules/naming/local_class_naming";
@@ -117,7 +117,7 @@ export interface IConfig {
     "in_statement_indentation"?: InStatementIndentationConf | boolean,
     "indentation"?: IndentationConf | boolean,
     "inline_data_old_versions"?: InlineDataOldVersionsConf | boolean,
-    "keywords_upper"?: KeywordsUpperConf | boolean,
+    "keywords_upper"?: KeywordCaseConf | boolean,
     "line_length"?: LineLengthConf | boolean,
     "line_only_punc"?: LineOnlyPuncConf | boolean,
     "local_class_naming"?: LocalClassNamingConf | boolean,

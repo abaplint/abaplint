@@ -3,6 +3,7 @@ import {PrettyPrinter} from "../../src/pretty_printer/pretty_printer";
 import {MemoryFile} from "../../src/files";
 import {Registry} from "../../src/registry";
 import {Indent} from "../../src/pretty_printer/indent";
+import {KeywordCaseConf} from "../../src/rules";
 
 const testTitle = (text: string): string => {return text.split("\n")[0]; };
 
@@ -120,6 +121,40 @@ describe("Remove sequential blanks", () => {
     });
   });
 });
+
+describe("Fix keyword case", () => {
+  const lowerCaseConfig = new KeywordCaseConf();
+  lowerCaseConfig.style = "lower";
+
+  const upperCaseConfig = new KeywordCaseConf();
+  upperCaseConfig.style = "upper";
+
+  const tests = [
+    {
+      input: "REPORT zfoo.WRITE: `foo`.",
+      expected: "report zfoo.write: `foo`.",
+      config: lowerCaseConfig,
+    },
+    {
+      input: "report zfoo.write: `foo`.",
+      expected: "REPORT zfoo.WRITE: `foo`.",
+      config: upperCaseConfig,
+    },
+  ];
+
+  tests.forEach((test) => {
+    it(testTitle(test.input), () => {
+      const reg = new Registry().addFile(new MemoryFile("zfoo.prog.abap", test.input)).parse();
+      expect(reg.getABAPFiles().length).to.equal(1);
+      const config = reg.getConfig() as any;
+      config.config.rules.keyword_case = test.config;
+      const prettyPrinter = new PrettyPrinter(reg.getABAPFiles()[0], config);
+      const result = prettyPrinter.run();
+      expect(result).to.equal(test.expected);
+    });
+  });
+});
+
 
 describe("Remove sequential blanks, no config", () => {
   const tests = [
