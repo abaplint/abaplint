@@ -22,7 +22,7 @@ export * from "./form_tables_obsolete";
 export * from "./functional_writing";
 export * from "./identical_form_names";
 export * from "./if_in_if";
-export * from "./keywords_upper";
+export * from "./keyword_case";
 export * from "./line_length";
 export * from "./line_only_punc";
 export * from "./local_testclass_location";

@@ -12,8 +12,15 @@ import * as Statements from "../abap/statements";
 import * as Expressions from "../abap/expressions";
 import {Token} from "../abap/tokens/_token";
 
-/** Detects keywords which are not uppercased, non-keywords must be lower case. */
-export class KeywordsUpperConf extends BasicRuleConfig {
+export enum KeywordCaseStyle {
+  Upper = "upper",
+  Lower = "lower",
+}
+
+
+/** Checks that keywords have the same case. Non-keywords must be lower case. */
+export class KeywordCaseConf extends BasicRuleConfig {
+  public style: KeywordCaseStyle = KeywordCaseStyle.Upper;
   /** Ignore global exception classes */
   public ignoreExceptions: boolean = true;
   public ignoreLowerClassImplmentationStatement: boolean = true;
@@ -22,19 +29,19 @@ export class KeywordsUpperConf extends BasicRuleConfig {
   public ignoreFunctionModuleName: boolean = false;
 }
 
-export class KeywordsUpper extends ABAPRule {
+export class KeywordCase extends ABAPRule {
 
-  private conf = new KeywordsUpperConf();
+  private conf = new KeywordCaseConf();
 
   public getKey(): string {
-    return "keywords_upper";
+    return "keyword_case";
   }
 
   private getDescription(tokenValue: string, keyword: boolean): string {
     if (keyword === true) {
-      return "Keyword should be upper case: \"" + tokenValue + "\"";
+      return `Keyword should be ${this.conf.style} case: "${tokenValue}"`;
     } else {
-      return "Identifiers should be lower case: \"" + tokenValue + "\"";
+      return `Identifiers should be lower case: "${tokenValue}"`;
     }
   }
 
@@ -42,7 +49,7 @@ export class KeywordsUpper extends ABAPRule {
     return this.conf;
   }
 
-  public setConfig(conf: KeywordsUpperConf) {
+  public setConfig(conf: KeywordCaseConf) {
     this.conf = conf;
   }
 
@@ -59,15 +66,15 @@ export class KeywordsUpper extends ABAPRule {
 
     for (const statement of file.getStatements()) {
       if (statement.get() instanceof Unknown
-          || statement.get() instanceof MacroContent
-          || statement.get() instanceof MacroCall
-          || statement.get() instanceof Comment) {
+        || statement.get() instanceof MacroContent
+        || statement.get() instanceof MacroCall
+        || statement.get() instanceof Comment) {
         continue;
       }
 
       if (this.conf.ignoreGlobalClassDefinition) {
         if (statement.get() instanceof Statements.ClassDefinition
-            && statement.findFirstExpression(Expressions.Global)) {
+          && statement.findFirstExpression(Expressions.Global)) {
           skip = true;
           continue;
         } else if (skip === true && statement.get() instanceof Statements.EndClass) {
@@ -80,7 +87,7 @@ export class KeywordsUpper extends ABAPRule {
 
       if (this.conf.ignoreGlobalInterface) {
         if (statement.get() instanceof Statements.Interface
-            && statement.findFirstExpression(Expressions.Global)) {
+          && statement.findFirstExpression(Expressions.Global)) {
           skip = true;
           continue;
         } else if (skip === true && statement.get() instanceof Statements.EndInterface) {
@@ -107,7 +114,7 @@ export class KeywordsUpper extends ABAPRule {
     for (const child of s.getChildren()) {
       if (child instanceof TokenNodeRegex) {
         if (this.conf.ignoreLowerClassImplmentationStatement
-            && parent instanceof Statements.ClassImplementation) {
+          && parent instanceof Statements.ClassImplementation) {
           continue;
         }
         const str = child.get().getStr();
@@ -120,7 +127,7 @@ export class KeywordsUpper extends ABAPRule {
           continue;
         }
         if (this.conf.ignoreFunctionModuleName === true
-            && parent instanceof Statements.FunctionModule && str.toUpperCase() !== "FUNCTION") {
+          && parent instanceof Statements.FunctionModule && str.toUpperCase() !== "FUNCTION") {
           continue;
         }
         if (parent instanceof Statements.ModifyInternal && str.toUpperCase() === "SCREEN") {
@@ -135,7 +142,7 @@ export class KeywordsUpper extends ABAPRule {
         }
       } else if (child instanceof TokenNode) {
         const str = child.get().getStr();
-        if (str !== str.toUpperCase() && child.get() instanceof Identifier) {
+        if (this.violatesRule(str) && child.get() instanceof Identifier) {
           return {token: child.get(), keyword: true};
         }
       } else if (child instanceof ExpressionNode) {
@@ -149,6 +156,18 @@ export class KeywordsUpper extends ABAPRule {
     }
 
     return {token: undefined, keyword: false};
+  }
+
+  public violatesRule(keyword: string): boolean {
+    if (this.conf.style === KeywordCaseStyle.Lower) {
+      return keyword !== keyword.toLowerCase();
+    }
+
+    if (this.conf.style === KeywordCaseStyle.Upper) {
+      return keyword !== keyword.toUpperCase();
+    }
+
+    return false;
   }
 
 }

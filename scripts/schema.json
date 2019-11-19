@@ -1226,10 +1226,10 @@
                 }
               ]
             },
-            "keywords_upper": {
+            "keyword_case": {
               "anyOf": [
                 {
-                  "$ref": "#/definitions/KeywordsUpperConf"
+                  "$ref": "#/definitions/KeywordCaseConf"
                 },
                 {
                   "type": "boolean"
@@ -1836,9 +1836,9 @@
       },
       "type": "object"
     },
-    "KeywordsUpperConf": {
+    "KeywordCaseConf": {
       "additionalProperties": false,
-      "description": "Detects keywords which are not uppercased, non-keywords must be lower case.",
+      "description": "Checks that keywords have the same case. Non-keywords must be lower case.",
       "properties": {
         "enabled": {
           "description": "Is the rule enabled?",
@@ -1870,9 +1870,13 @@
         "reason": {
           "description": "An explanation for why the rule is enforced",
           "type": "string"
+        },
+        "style": {
+          "$ref": "#/definitions/KeywordCaseStyle"
         }
       },
       "required": [
+        "style",
         "ignoreExceptions",
         "ignoreLowerClassImplmentationStatement",
         "ignoreGlobalClassDefinition",
@@ -1880,6 +1884,13 @@
         "ignoreFunctionModuleName"
       ],
       "type": "object"
+    },
+    "KeywordCaseStyle": {
+      "enum": [
+        "upper",
+        "lower"
+      ],
+      "type": "string"
     },
     "LineLengthConf": {
       "additionalProperties": false,
