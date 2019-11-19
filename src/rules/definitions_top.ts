@@ -60,7 +60,6 @@ export class DefinitionsTop extends ABAPRule {
           || statement.get() instanceof Statements.DataBegin
           || statement.get() instanceof Statements.DataEnd
           || statement.get() instanceof Statements.Type
-          || statement.get() instanceof Unknown
           || statement.get() instanceof Statements.TypeBegin
           || statement.get() instanceof Statements.TypeEnd
           || statement.get() instanceof Statements.Constant
@@ -76,8 +75,8 @@ export class DefinitionsTop extends ABAPRule {
           issue = Issue.atStatement(file, statement, this.getDescription(), this.getKey());
           mode = ANY;
         }
-      } else if (statement.get() instanceof Statements.Define) {
-// todo, currently macros will skip checking of the routine
+      } else if (statement.get() instanceof Statements.Define
+          || statement.get() instanceof Unknown) {
         mode = IGNORE;
       } else if (mode === DEFINITION) {
         mode = AFTER;

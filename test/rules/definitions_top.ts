@@ -72,6 +72,16 @@ FORM foo.
 ENDFORM.`,
     cnt: 0,
   },
+
+  {
+    abap: `
+FORM foo.
+  TRY.
+  parser error
+ENDFORM.`,
+    cnt: 0,
+  },
+
 ];
 
 testRule(tests, DefinitionsTop);
