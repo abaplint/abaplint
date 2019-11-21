@@ -269,6 +269,28 @@
       },
       "type": "object"
     },
+    "CheckNoHandlerPragmaConf": {
+      "additionalProperties": false,
+      "description": "Checks NO_HANDLER pragmas that can be removed",
+      "properties": {
+        "enabled": {
+          "description": "Is the rule enabled?",
+          "type": "boolean"
+        },
+        "exclude": {
+          "description": "List of file regex patterns to exclude",
+          "items": {
+            "type": "string"
+          },
+          "type": "array"
+        },
+        "reason": {
+          "description": "An explanation for why the rule is enforced",
+          "type": "string"
+        }
+      },
+      "type": "object"
+    },
     "CheckSyntaxConf": {
       "additionalProperties": false,
       "description": "Enables syntax check and variable resolution",
@@ -950,6 +972,16 @@
               "anyOf": [
                 {
                   "$ref": "#/definitions/CheckIncludeConf"
+                },
+                {
+                  "type": "boolean"
+                }
+              ]
+            },
+            "check_no_handler_pragma": {
+              "anyOf": [
+                {
+                  "$ref": "#/definitions/CheckNoHandlerPragmaConf"
                 },
                 {
                   "type": "boolean"

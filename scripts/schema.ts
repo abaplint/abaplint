@@ -10,6 +10,7 @@ import {ChainMainlyDeclarationsConf} from "../src/rules/chain_mainly_declaration
 import {CheckAbstractConf} from "../src/rules/check_abstract";
 import {CheckDDICConf} from "../src/rules/syntax/check_ddic";
 import {CheckIncludeConf} from "../src/rules/syntax/check_include";
+import {CheckNoHandlerPragmaConf} from "../src/rules/check_no_handler_pragma";
 import {CheckSyntaxConf} from "../src/rules/syntax/check_syntax";
 import {CheckTextElementsConf} from "../src/rules/check_text_elements";
 import {CheckTransformationExistsConf} from "../src/rules/syntax/check_transformation_exists";
@@ -90,6 +91,7 @@ export interface IConfig {
     "check_abstract"?: CheckAbstractConf | boolean,
     "check_ddic"?: CheckDDICConf | boolean,
     "check_include"?: CheckIncludeConf | boolean,
+    "check_no_handler_pragma"?: CheckNoHandlerPragmaConf | boolean,
     "check_syntax"?: CheckSyntaxConf | boolean,
     "check_text_elements"?: CheckTextElementsConf | boolean,
     "check_transformation_exists"?: CheckTransformationExistsConf | boolean,
