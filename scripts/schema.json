@@ -1398,6 +1398,16 @@
                 }
               ]
             },
+            "newline_between_methods": {
+              "anyOf": [
+                {
+                  "$ref": "#/definitions/NewlineBetweenMethodsConf"
+                },
+                {
+                  "type": "boolean"
+                }
+              ]
+            },
             "no_public_attributes": {
               "anyOf": [
                 {
@@ -2355,6 +2365,27 @@
       "required": [
         "depth"
       ],
+      "type": "object"
+    },
+    "NewlineBetweenMethodsConf": {
+      "additionalProperties": false,
+      "properties": {
+        "enabled": {
+          "description": "Is the rule enabled?",
+          "type": "boolean"
+        },
+        "exclude": {
+          "description": "List of file regex patterns to exclude",
+          "items": {
+            "type": "string"
+          },
+          "type": "array"
+        },
+        "reason": {
+          "description": "An explanation for why the rule is enforced",
+          "type": "string"
+        }
+      },
       "type": "object"
     },
     "NoPublicAttributesConf": {

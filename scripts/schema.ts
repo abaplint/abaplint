@@ -52,6 +52,7 @@ import {MethodParameterNamesConf} from "../src/rules/naming/method_parameter_nam
 import {MixReturningConf} from "../src/rules/mix_returning";
 import {MSAGConsistencyConf} from "../src/rules/msag_consistency";
 import {NestingConf} from "../src/rules/nesting";
+import {NewlineBetweenMethodsConf} from "../src/rules/whitespace/newline_between_methods";
 import {NoPublicAttributesConf} from "../src/rules/no_public_attributes";
 import {ObjectNamingConf} from "../src/rules/naming/object_naming";
 import {ObsoleteStatementConf} from "../src/rules/obsolete_statement";
@@ -133,6 +134,7 @@ export interface IConfig {
     "mix_returning"?: MixReturningConf | boolean,
     "msag_consistency"?: MSAGConsistencyConf | boolean,
     "nesting"?: NestingConf | boolean,
+    "newline_between_methods"?: NewlineBetweenMethodsConf | boolean,
     "no_public_attributes"?: NoPublicAttributesConf | boolean,
     "object_naming"?: ObjectNamingConf | boolean,
     "obsolete_statement"?: ObsoleteStatementConf | boolean,
