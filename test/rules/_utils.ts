@@ -22,3 +22,21 @@ export function testRule(tests: any, rule: new () => IRule, config?: any, testTi
     });
   });
 }
+
+
+export function testRuleWithVariableConfig(tests: any, rule: new () => IRule, testTitle?: string) {
+  const nrule = new rule();
+  testTitle = testTitle || `test ${nrule.getKey()} rule`;
+  describe(testTitle, function () {
+    this.timeout(200); // tslint:disable-line
+    tests.forEach((test: any) => {
+      const reg = new Registry().addFile(new MemoryFile("zfoo.prog.abap", test.abap)).parse();
+      nrule.setConfig(test.config);
+      const issues = nrule.run(reg.getObjects()[0], reg);
+      // tslint:disable-next-line: restrict-plus-operands
+      it(test.description, () => {
+        expect(issues.length).to.equals(test.issueLength);
+      });
+    });
+  });
+}
