@@ -2,16 +2,16 @@ import {NewlineBetweenMethods, NewlineBetweenMethodsConf, NewlineLogic} from "..
 import {testRuleWithVariableConfig} from "../_utils";
 
 const configNewlineLess = new NewlineBetweenMethodsConf();
-configNewlineLess.newlineAmount = 2;
-configNewlineLess.newlineLogic = NewlineLogic.Less;
+configNewlineLess.count = 2;
+configNewlineLess.logic = NewlineLogic.Less;
 
 const configNewlineExact = new NewlineBetweenMethodsConf();
-configNewlineExact.newlineAmount = 2;
-configNewlineExact.newlineLogic = NewlineLogic.Exact;
+configNewlineExact.count = 2;
+configNewlineExact.logic = NewlineLogic.Exact;
 
 const configInvalid = new NewlineBetweenMethodsConf();
-configInvalid.newlineAmount = 1;
-configInvalid.newlineLogic = NewlineLogic.Less;
+configInvalid.count = 1;
+configInvalid.logic = NewlineLogic.Less;
 
 const testCases: String[] = [
   ` CLASS lcl_foo DEFINITION CREATE PUBLIC.
