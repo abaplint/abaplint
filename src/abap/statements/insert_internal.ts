@@ -1,6 +1,7 @@
 import {Statement} from "./_statement";
-import {str, seq, alt, opt, per, IStatementRunnable} from "../combi";
-import {FSTarget, Target, Source, Dynamic} from "../expressions";
+import {str, seq, alt, opt, per, ver, IStatementRunnable} from "../combi";
+import {Version} from "../../version";
+import {FSTarget, Target, Source, Dynamic, SimpleSource} from "../expressions";
 
 export class InsertInternal extends Statement {
 
@@ -27,9 +28,11 @@ export class InsertInternal extends Statement {
                       target,
                       opt(from));
 
+    const src = alt(ver(Version.v740sp02, new Source()), new SimpleSource());
+
     const ret = seq(str("INSERT"),
                     alt(initial,
-                        new Source(),
+                        src,
                         lines),
                     foo);
 
