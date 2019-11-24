@@ -1,4 +1,4 @@
-import {statementType, statementVersion} from "../_utils";
+import {statementType, statementVersion, statementVersionOk} from "../_utils";
 import * as Statements from "../../../src/abap/statements/";
 import {Version} from "../../../src/version";
 
@@ -39,6 +39,7 @@ const tests = [
 statementType(tests, "APPEND", Statements.Append);
 
 const versions = [
+  {abap: "APPEND `x` && `y` TO mt_files.", ver: Version.v740sp02},
   {abap: "APPEND VALUE #( key = is_key meta = it_meta ) TO mt_files.", ver: Version.v740sp02},
   {abap: "APPEND INITIAL LINE TO <ls_data>-sub ASSIGNING FIELD-SYMBOL(<ls_sub>).", ver: Version.v740sp02},
   {abap: "APPEND VALUE #( LET type = ztcl_alog_test_utl=>get_random_log_type( ) IN\n" +
@@ -48,3 +49,10 @@ const versions = [
 ];
 
 statementVersion(versions, "APPEND", Statements.Append);
+
+const versionsOk = [
+  {abap: "APPEND <ls_comp>-name TO mt_meta_fields.", ver: Version.v702},
+  {abap: "APPEND cl_oo_classname_service=>get_ccmac_name( lv_class_name ) TO rt_includes.", ver: Version.v702},
+];
+
+statementVersionOk(versionsOk, "APPEND", Statements.Append);

@@ -37,8 +37,9 @@ export class FixKeywordCase {
   }
 
   private formatKeyword(keyword: string): string {
-    const rule = this.keywordCase.getKey();
-    const style: KeywordCaseStyle = this.config.readByRule(rule)["style"];
+    const ruleKey = this.keywordCase.getKey();
+    const rule = this.config.readByRule(ruleKey);
+    const style: KeywordCaseStyle = rule ? rule["style"] : KeywordCaseStyle.Upper;
     return style === KeywordCaseStyle.Lower ? keyword.toLowerCase() : keyword.toUpperCase();
   }
 

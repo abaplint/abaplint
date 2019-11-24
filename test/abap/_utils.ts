@@ -89,3 +89,13 @@ export function statementVersion(tests: any, description: string, type: any) {
     });
   });
 }
+
+export function statementVersionOk(tests: any, description: string, type: any) {
+  describe(description + " statement version,", function() {
+// note that timeout() only works inside function()
+    this.timeout(200); // tslint:disable-line
+    tests.forEach((test: any) => {
+      run(test.abap, "\"" + test.abap + "\" should be " + description, type, test.ver);
+    });
+  });
+}
