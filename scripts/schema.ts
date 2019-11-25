@@ -8,6 +8,7 @@ import {BeginEndNamesConf} from "../src/rules/syntax/begin_end_names";
 import {BreakpointConf} from "../src/rules/breakpoint";
 import {ChainMainlyDeclarationsConf} from "../src/rules/chain_mainly_declarations";
 import {CheckAbstractConf} from "../src/rules/check_abstract";
+import {CheckCommentsConf} from "../src/rules/check_comments";
 import {CheckDDICConf} from "../src/rules/syntax/check_ddic";
 import {CheckIncludeConf} from "../src/rules/syntax/check_include";
 import {CheckNoHandlerPragmaConf} from "../src/rules/check_no_handler_pragma";
@@ -90,6 +91,7 @@ export interface IConfig {
     "breakpoint"?: BreakpointConf | boolean,
     "chain_mainly_declarations"?: ChainMainlyDeclarationsConf | boolean,
     "check_abstract"?: CheckAbstractConf | boolean,
+    "check_comments"?: CheckCommentsConf | boolean,
     "check_ddic"?: CheckDDICConf | boolean,
     "check_include"?: CheckIncludeConf | boolean,
     "check_no_handler_pragma"?: CheckNoHandlerPragmaConf | boolean,

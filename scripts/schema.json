@@ -225,6 +225,35 @@
       },
       "type": "object"
     },
+    "CheckCommentsConf": {
+      "additionalProperties": false,
+      "description": "Various checks for comment usage.",
+      "properties": {
+        "allowEndOfLine": {
+          "description": "Allows the use of end-of-line comments.",
+          "type": "boolean"
+        },
+        "enabled": {
+          "description": "Is the rule enabled?",
+          "type": "boolean"
+        },
+        "exclude": {
+          "description": "List of file regex patterns to exclude",
+          "items": {
+            "type": "string"
+          },
+          "type": "array"
+        },
+        "reason": {
+          "description": "An explanation for why the rule is enforced",
+          "type": "string"
+        }
+      },
+      "required": [
+        "allowEndOfLine"
+      ],
+      "type": "object"
+    },
     "CheckDDICConf": {
       "additionalProperties": false,
       "description": "Checks the types of DDIC objects can be resolved, the namespace of the development/errors can be configured in \"errorNamespace\"",
@@ -952,6 +981,16 @@
               "anyOf": [
                 {
                   "$ref": "#/definitions/CheckAbstractConf"
+                },
+                {
+                  "type": "boolean"
+                }
+              ]
+            },
+            "check_comments": {
+              "anyOf": [
+                {
+                  "$ref": "#/definitions/CheckCommentsConf"
                 },
                 {
                   "type": "boolean"
