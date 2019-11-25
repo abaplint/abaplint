@@ -2371,6 +2371,10 @@
       "additionalProperties": false,
       "description": "Checks for newlines between method implementations.",
       "properties": {
+        "count": {
+          "description": "Amount of newlines, works in conjunction with \"newlineLogic\"",
+          "type": "number"
+        },
         "enabled": {
           "description": "Is the rule enabled?",
           "type": "boolean"
@@ -2382,11 +2386,7 @@
           },
           "type": "array"
         },
-        "newlineAmount": {
-          "description": "Amount of newlines, works in conjunction with \"newlineLogic\"",
-          "type": "number"
-        },
-        "newlineLogic": {
+        "logic": {
           "$ref": "#/definitions/NewlineLogic",
           "description": "Exact: the exact number of required newlines between methods is defined by \"newlineAmount\"\r\n\r\nLess: the required number of newlines has to be less than \"newlineAmount\""
         },
@@ -2396,8 +2396,8 @@
         }
       },
       "required": [
-        "newlineAmount",
-        "newlineLogic"
+        "count",
+        "logic"
       ],
       "type": "object"
     },
