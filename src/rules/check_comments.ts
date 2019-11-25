@@ -1,5 +1,4 @@
 import {Issue} from "../issue";
-// import * as Statements from "../abap/statements";
 import {Comment} from "../abap/statements/_statement";
 import {BasicRuleConfig} from "./_basic_rule_config";
 import {ABAPRule} from "./_abap_rule";
