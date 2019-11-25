@@ -42,17 +42,17 @@ export class CheckComments extends ABAPRule {
     if (this.conf.allowEndOfLine === true) {
       return [];
     }
-    const rowsWithComments: number[] = [];
+    const commentRows: number[] = [];
     for (let i = 0; i < rows.length; i++) {
       const row = rows[i];
       if (row.trim().startsWith("*") || row.trim().startsWith(`"`)) {
-        rowsWithComments.push(i);
+        commentRows.push(i);
       }
     }
     const statements = file.getStatements();
     for (let i = statements.length - 1; i >= 0; i--) {
       const statement = statements[i];
-      if (statement.get() instanceof Comment && !rowsWithComments.includes(statement.getStart().getRow() - 1)) {
+      if (statement.get() instanceof Comment && !commentRows.includes(statement.getStart().getRow() - 1)) {
         issues.push(
           Issue.atStatement(
             file,
