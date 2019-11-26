@@ -54,6 +54,9 @@ export class LocalClassNaming extends ABAPRule {
       } else {
         expected = this.conf.local;
       }
+      if (expected.length === 0) {
+        continue;
+      }
       const regex = new RegExp(expected, "i");
 
       if (NameValidator.violatesRule(className, regex, this.conf)) {
