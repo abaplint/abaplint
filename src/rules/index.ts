@@ -6,6 +6,7 @@ export * from "./avoid_use";
 export * from "./breakpoint";
 export * from "./chain_mainly_declarations";
 export * from "./check_abstract";
+export * from "./check_comments";
 export * from "./check_no_handler_pragma";
 export * from "./check_text_elements";
 export * from "./cloud_types";
