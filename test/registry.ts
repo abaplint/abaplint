@@ -105,3 +105,31 @@ describe("Registry", () => {
   });
 
 });
+
+describe("Registry, object types", () => {
+
+  it("Unknown object type", () => {
+    const file = new MemoryFile("abcd.abcd.abcd", "BREAK-POINT.");
+    const registry = new Registry().addFile(file);
+    const issues = registry.findIssues();
+    expect(issues.length).to.equal(1);
+    expect(issues[0].getKey()).to.equal("registry_add");
+  });
+
+  it("Object type = PROG", () => {
+    const file = new MemoryFile("zfoobar.prog.abap", "BREAK-POINT.");
+    const registry = new Registry().addFile(file);
+    const objects = registry.getObjects();
+    expect(objects.length).to.equal(1);
+    expect(objects[0].getType()).to.equal("PROG");
+  });
+
+  it("Object type = W3MI", () => {
+    const file = new MemoryFile("background.w3mi.data.png", "moo");
+    const registry = new Registry().addFile(file);
+    const objects = registry.getObjects();
+    expect(objects.length).to.equal(1);
+    expect(objects[0].getType()).to.equal("W3MI");
+  });
+
+});
