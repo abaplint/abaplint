@@ -2038,6 +2038,10 @@
           "description": "Is the rule enabled?",
           "type": "boolean"
         },
+        "exception": {
+          "description": "The pattern for local exception names",
+          "type": "string"
+        },
         "exclude": {
           "description": "List of file regex patterns to exclude",
           "items": {
@@ -2078,6 +2082,7 @@
       },
       "required": [
         "local",
+        "exception",
         "test"
       ],
       "type": "object"
