@@ -163,6 +163,7 @@ const tests = [
   "SELECT SINGLE * FROM ztable WHERE host = @lv_host INTO @DATA(ls_config).",
   "SELECT SINGLE * FROM ztable WHERE lower( host ) = @lv_host INTO @DATA(ls_config).",
   "SELECT field FROM table INTO TABLE @DATA(lt_tab) OFFSET 22.",
+  "SELECT bname, bcode FROM usr02 GROUP BY bname, bcode INTO TABLE @DATA(result).",
 ];
 
 statementType(tests, "SELECT", Statements.Select);

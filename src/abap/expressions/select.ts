@@ -37,7 +37,7 @@ export class Select extends Expression {
     const client = str("CLIENT SPECIFIED");
     const bypass = str("BYPASSING BUFFER");
 
-    const group = seq(str("GROUP BY"), plus(alt(new Field(), new Dynamic())));
+    const group = seq(str("GROUP BY"), plus(seq(alt(new Field(), new Dynamic()), opt(str(",")))));
 
     const fields = seq(str("FIELDS"), new SQLFieldList());
 
