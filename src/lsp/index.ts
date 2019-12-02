@@ -17,7 +17,7 @@ import {Definition} from "./definition";
 export class LanguageServer {
   private readonly reg: Registry;
 
-  constructor (reg: Registry) {
+  constructor(reg: Registry) {
     this.reg = reg;
   }
 
@@ -37,13 +37,15 @@ export class LanguageServer {
     return undefined;
   }
 
-// go to definition
+  // go to definition
   public definition(params: {textDocument: LServer.TextDocumentIdentifier, position: LServer.Position}): LServer.Location | undefined {
     return Definition.find(this.reg, params.textDocument, params.position);
   }
 
-  public documentFormatting(params: {textDocument: LServer.TextDocumentIdentifier,
-    options?: LServer.FormattingOptions}): LServer.TextEdit[] {
+  public documentFormatting(params: {
+    textDocument: LServer.TextDocumentIdentifier,
+    options?: LServer.FormattingOptions,
+  }): LServer.TextEdit[] {
 
     const file = this.reg.getABAPFile(params.textDocument.uri);
     if (file === undefined) {
@@ -51,11 +53,9 @@ export class LanguageServer {
     }
 
     const text = new PrettyPrinter(file, this.reg.getConfig()).run();
-    const tokens = file.getTokens();
-    const last = tokens[tokens.length - 1];
 
     return [{
-      range: LServer.Range.create(0, 0, last.getRow(), last.getCol() + last.getStr().length),
+      range: LServer.Range.create(0, 0, Number.MAX_VALUE, 0),
       newText: text,
     }];
   }
