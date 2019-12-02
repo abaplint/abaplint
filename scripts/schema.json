@@ -834,8 +834,10 @@
     },
     "FullyTypeConsantsConf": {
       "additionalProperties": false,
+      "description": "Checks constants for full typing - no implicit typing allowed.",
       "properties": {
         "checkData": {
+          "description": "Add check for implicit data definition, require full typing.",
           "type": "boolean"
         },
         "enabled": {
