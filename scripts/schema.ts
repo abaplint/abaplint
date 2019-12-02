@@ -31,6 +31,7 @@ import {ExitOrCheckConf} from "../src/rules/exit_or_check";
 import {ExportingConf} from "../src/rules/exporting";
 import {FormNoDashConf} from "../src/rules/form_no_dash";
 import {FormTablesObsoleteConf} from "../src/rules/form_tables_obsolete";
+import {FullyTypeConsantsConf} from "../src/rules/fully_type_constants";
 import {FunctionalWritingConf} from "../src/rules/functional_writing";
 import {GlobalClassConf} from "../src/rules/syntax/global_class";
 import {IdenticalFormNamesConf} from "../src/rules/identical_form_names";
@@ -114,6 +115,7 @@ export interface IConfig {
     "exporting"?: ExportingConf | boolean,
     "form_no_dash"?: FormNoDashConf | boolean,
     "form_tables_obsolete"?: FormTablesObsoleteConf | boolean,
+    "fully_type_constants"?: FullyTypeConsantsConf | boolean,
     "functional_writing"?: FunctionalWritingConf | boolean,
     "global_class"?: GlobalClassConf | boolean,
     "identical_form_names"?: IdenticalFormNamesConf | boolean,

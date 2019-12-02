@@ -832,6 +832,35 @@
       },
       "type": "object"
     },
+    "FullyTypeConsantsConf": {
+      "additionalProperties": false,
+      "description": "Checks constants for full typing - no implicit typing allowed.",
+      "properties": {
+        "checkData": {
+          "description": "Add check for implicit data definition, require full typing.",
+          "type": "boolean"
+        },
+        "enabled": {
+          "description": "Is the rule enabled?",
+          "type": "boolean"
+        },
+        "exclude": {
+          "description": "List of file regex patterns to exclude",
+          "items": {
+            "type": "string"
+          },
+          "type": "array"
+        },
+        "reason": {
+          "description": "An explanation for why the rule is enforced",
+          "type": "string"
+        }
+      },
+      "required": [
+        "checkData"
+      ],
+      "type": "object"
+    },
     "FunctionalWritingConf": {
       "additionalProperties": false,
       "description": "Detects usage of call method when functional style calls can be used.",
@@ -1211,6 +1240,16 @@
               "anyOf": [
                 {
                   "$ref": "#/definitions/FormTablesObsoleteConf"
+                },
+                {
+                  "type": "boolean"
+                }
+              ]
+            },
+            "fully_type_constants": {
+              "anyOf": [
+                {
+                  "$ref": "#/definitions/FullyTypeConsantsConf"
                 },
                 {
                   "type": "boolean"
