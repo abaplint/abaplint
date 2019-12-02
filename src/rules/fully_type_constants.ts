@@ -19,7 +19,7 @@ export class FullyTypeConstants extends ABAPRule {
   }
 
   public getDescription(type: string): string {
-    return `Fully type ${type} (no implicit typing).`;
+    return `Fully type ${type}, no implicit typing`;
   }
 
   public getConfig(): FullyTypeConsantsConf {
@@ -37,11 +37,12 @@ export class FullyTypeConstants extends ABAPRule {
       if ((stat.get() instanceof Statements.Constant
           || (this.conf.checkData === true && stat.get() instanceof Statements.Data))
           && (!stat.findFirstExpression(Type))) {
+        const type = stat.get() instanceof Statements.Constant ? "constant definition" : "data definition";
         issues.push(
           Issue.atStatement(
             file,
             stat,
-            this.getDescription(stat.getFirstToken().getStr()),
+            this.getDescription(type),
             this.getKey()));
       }
     }
