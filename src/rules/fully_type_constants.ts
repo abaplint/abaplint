@@ -5,9 +5,9 @@ import {Issue} from "..";
 import * as Statements from "../abap/statements";
 import {Type} from "../abap/expressions";
 
-// todo jsdoc
+/** Checks constants for full typing - no implicit typing allowed. */
 export class FullyTypeConsantsConf extends BasicRuleConfig {
-  // todo jsdoc
+  /** Add check for implicit data definition, require full typing. */
   public checkData: boolean = true;
 }
 
