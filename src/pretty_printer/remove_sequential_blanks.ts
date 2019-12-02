@@ -48,7 +48,7 @@ export class RemoveSequentialBlanks {
       return rowsToRemove.indexOf(idx) === -1;
     });
 
-    return withoutRemoved.join("\n");
+    return withoutRemoved.join("\n").trim();
   }
 
   private getSequentialBlankConfig(): SequentialBlankConf | undefined {
