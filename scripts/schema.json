@@ -600,6 +600,10 @@
       "additionalProperties": false,
       "description": "Checks that only a single space follows certain common statements.",
       "properties": {
+        "afterColon": {
+          "description": "Check for double space after colon/chaining operator",
+          "type": "boolean"
+        },
         "enabled": {
           "description": "Is the rule enabled?",
           "type": "boolean"
@@ -631,7 +635,8 @@
       "required": [
         "keywords",
         "startParen",
-        "endParen"
+        "endParen",
+        "afterColon"
       ],
       "type": "object"
     },

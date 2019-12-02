@@ -7,6 +7,7 @@ import {ParenLeftW, Comment, WParenRightW, WParenRight, StringTemplate} from "..
 import {TokenNode, StatementNode, TokenNodeRegex} from "../../abap/nodes";
 import {Unknown, MacroContent, MacroCall} from "../../abap/statements/_statement";
 import {MethodDef} from "../../abap/statements";
+import {Position} from "../../position";
 
 /** Checks that only a single space follows certain common statements. */
 export class DoubleSpaceConf extends BasicRuleConfig {
@@ -16,6 +17,8 @@ export class DoubleSpaceConf extends BasicRuleConfig {
   public startParen: boolean = true;
   /** Check for double space before end parenthesis */
   public endParen: boolean = true;
+  /** Check for double space after colon/chaining operator */
+  public afterColon: boolean = true;
 }
 
 export class DoubleSpace extends ABAPRule {
@@ -39,7 +42,7 @@ export class DoubleSpace extends ABAPRule {
   }
 
   public runParsed(file: ABAPFile) {
-    const issues: Issue[] = [];
+    let issues: Issue[] = [];
 
     for (const s of file.getStatements()) {
 
@@ -55,33 +58,81 @@ export class DoubleSpace extends ABAPRule {
         }
       }
 
-      let prev: Token | undefined = undefined;
+      issues = issues.concat(this.checkParen(s, file));
+
+    }
+
+    issues = issues.concat(this.checkAfterColon(file));
+
+    return issues;
+  }
+
+  private checkAfterColon(file: ABAPFile): Issue[] {
+    const issues: Issue[] = [];
+    let cPosition: Position | undefined = undefined;
+
+    if (this.conf.afterColon !== true) {
+      return [];
+    }
+
+    for (const s of file.getStatements()) {
+      const colon = s.getColon();
+      if (colon === undefined) {
+        continue;
+      } else if (cPosition !== undefined && cPosition.getCol() === colon.getCol()) {
+        continue;
+      }
+
+      cPosition = colon.getStart();
+
       for (const t of s.getTokens()) {
-        if (prev === undefined) {
-          prev = t;
+        if (t.getRow() !== cPosition.getRow()) {
+          return [];
+        } else if (t.getCol() < cPosition.getCol()) {
           continue;
         }
 
-        if (this.getConfig().startParen === true
-            && prev.getRow() === t.getRow()
-            && prev instanceof ParenLeftW
-            && !(t instanceof Comment)
-            && !(t instanceof StringTemplate)  // tempoary workaround, see #427
-            && prev.getEnd().getCol() + 1 < t.getCol()) {
-          const issue = Issue.atToken(file, prev, this.getDescription(), this.getKey());
+        if (t.getCol() > cPosition.getCol() + 2) {
+          const issue = Issue.atToken(file, colon, this.getDescription(), this.getKey());
           issues.push(issue);
         }
 
-        if (this.getConfig().endParen === true
-            && prev.getRow() === t.getRow()
-            && (t instanceof WParenRightW || t instanceof WParenRight)
-            && prev.getEnd().getCol() + 1 < t.getCol()) {
-          const issue = Issue.atToken(file, prev, this.getDescription(), this.getKey());
-          issues.push(issue);
-        }
-
-        prev = t;
+        break;
       }
+    }
+
+    return issues;
+  }
+
+  private checkParen(s: StatementNode, file: ABAPFile): Issue[] {
+    const issues: Issue[] = [];
+
+    let prev: Token | undefined = undefined;
+    for (const t of s.getTokens()) {
+      if (prev === undefined) {
+        prev = t;
+        continue;
+      }
+
+      if (this.getConfig().startParen === true
+          && prev.getRow() === t.getRow()
+          && prev instanceof ParenLeftW
+          && !(t instanceof Comment)
+          && !(t instanceof StringTemplate)  // tempoary workaround, see #427
+          && prev.getEnd().getCol() + 1 < t.getCol()) {
+        const issue = Issue.atToken(file, prev, this.getDescription(), this.getKey());
+        issues.push(issue);
+      }
+
+      if (this.getConfig().endParen === true
+          && prev.getRow() === t.getRow()
+          && (t instanceof WParenRightW || t instanceof WParenRight)
+          && prev.getEnd().getCol() + 1 < t.getCol()) {
+        const issue = Issue.atToken(file, prev, this.getDescription(), this.getKey());
+        issues.push(issue);
+      }
+
+      prev = t;
     }
 
     return issues;
