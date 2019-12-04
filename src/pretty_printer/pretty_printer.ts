@@ -2,7 +2,7 @@
 import {Unknown, MacroContent, MacroCall, Comment} from "../abap/statements/_statement";
 import {ABAPFile} from "../files";
 import {Config} from "..";
-import {FixKeywordCase} from "./fix_keyword_case";
+import {FixCase} from "./fix_keyword_case";
 import {Indent as Indent} from "./indent";
 import {IIndentationOptions} from "./indentation_options";
 import {RemoveSequentialBlanks} from "./remove_sequential_blanks";
@@ -30,9 +30,9 @@ export class PrettyPrinter {
         continue;
       }
 
-      // note that no positions are changed during a upperCaseKeys operation
-      const upperCaseKeywords = new FixKeywordCase(this.result, this.config);
-      this.result = upperCaseKeywords.execute(statement);
+      // note that no positions are changed when case is changed
+      const fixCase = new FixCase(this.result, this.config);
+      this.result = fixCase.execute(statement);
     }
 
     const indentation = new Indent(this.options);
