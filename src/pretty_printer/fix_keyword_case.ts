@@ -5,7 +5,7 @@ import {Config} from "..";
 import {KeywordCase, KeywordCaseStyle} from "../rules/keyword_case";
 
 
-export class FixKeywordCase {
+export class FixCase {
   private fileContents: string;
   private readonly config: Config;
   private readonly keywordCase: KeywordCase;
@@ -19,6 +19,8 @@ export class FixKeywordCase {
   public execute(statement: StatementNode | ExpressionNode): string {
     for (const child of statement.getChildren()) {
       if (child instanceof TokenNodeRegex) {
+        const token = child.get();
+        this.replaceString(token.getStart(), this.formatNonKeyword(token.getStr()));
         continue;
       } else if (child instanceof TokenNode) {
         const token = child.get();
@@ -34,6 +36,9 @@ export class FixKeywordCase {
     }
 
     return this.fileContents;
+  }
+  private formatNonKeyword(str: string): string {
+    return str.toLowerCase();
   }
 
   private formatKeyword(keyword: string): string {
