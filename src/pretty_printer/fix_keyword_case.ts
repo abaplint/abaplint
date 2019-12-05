@@ -1,8 +1,9 @@
-import {StatementNode, ExpressionNode, TokenNodeRegex, TokenNode} from "../abap/nodes";
+import {StatementNode, ExpressionNode, TokenNode, TokenNodeRegex} from "../abap/nodes";
 import {Identifier} from "../abap/tokens";
 import {Position} from "../position";
 import {Config} from "..";
 import {KeywordCase, KeywordCaseStyle} from "../rules/keyword_case";
+import * as Tokens from "../abap/tokens";
 
 
 export class FixCase {
@@ -20,6 +21,9 @@ export class FixCase {
     for (const child of statement.getChildren()) {
       if (child instanceof TokenNodeRegex) {
         const token = child.get();
+        if (token instanceof Tokens.String) {
+          continue;
+        }
         this.replaceString(token.getStart(), this.formatNonKeyword(token.getStr()));
         continue;
       } else if (child instanceof TokenNode) {
