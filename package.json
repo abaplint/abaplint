@@ -57,7 +57,7 @@
   },
   "homepage": "https://abaplint.org",
   "devDependencies": {
-    "@types/chai": "^4.2.5",
+    "@types/chai": "^4.2.6",
     "@types/glob": "^7.1.1",
     "@types/minimist": "^1.2.0",
     "@types/mocha": "^5.2.7",
@@ -68,10 +68,10 @@
     "nyc": "^14.1.1",
     "railroad-diagrams": "git+https://github.com/tabatkins/railroad-diagrams#gh-pages",
     "source-map-support": "^0.5.16",
-    "ts-json-schema-generator": "^0.56.0",
+    "ts-json-schema-generator": "^0.57.0",
     "tslint": "^5.20.1",
     "tslint-eslint-rules": "^5.4.0",
-    "typescript": "^3.7.2"
+    "typescript": "^3.7.3"
   },
   "dependencies": {
     "glob": "^7.1.6",
