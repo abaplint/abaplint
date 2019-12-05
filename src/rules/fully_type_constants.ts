@@ -3,7 +3,8 @@ import {ABAPRule} from "./_abap_rule";
 import {ABAPFile} from "../files";
 import {Issue} from "..";
 import * as Statements from "../abap/statements";
-import {Type} from "../abap/expressions";
+import {StatementNode} from "../abap/nodes/statement_node";
+import {Type, TypeTable} from "../abap/expressions";
 
 /** Checks constants for full typing - no implicit typing allowed. */
 export class FullyTypeConsantsConf extends BasicRuleConfig {
@@ -35,8 +36,8 @@ export class FullyTypeConstants extends ABAPRule {
 
     for (const stat of file.getStatements()) {
       if ((stat.get() instanceof Statements.Constant
-          || (this.conf.checkData === true && stat.get() instanceof Statements.Data))
-          && (!stat.findFirstExpression(Type))) {
+        || (this.conf.checkData === true && stat.get() instanceof Statements.Data))
+        && (!this.isTyped(stat))) {
         const type = stat.get() instanceof Statements.Constant ? "constant definition" : "data definition";
         issues.push(
           Issue.atStatement(
@@ -47,5 +48,9 @@ export class FullyTypeConstants extends ABAPRule {
       }
     }
     return issues;
+  }
+
+  private isTyped(stat: StatementNode) {
+    return (stat.findFirstExpression(Type) || stat.findFirstExpression(TypeTable));
   }
 }

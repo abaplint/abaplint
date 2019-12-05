@@ -13,7 +13,10 @@ const testCases: String[] = [
   `DATA: foo VALUE 124.`,
   `DATA: foo VALUE \`blah\`.`,
   `CONSTANTS foo TYPE i VALUE 1.`,
-  `DATA foo TYPE i VALUE 1.`,
+  `DATA:
+    foo TYPE i VALUE 1,
+    bar TYPE REF TO lcl_foo,
+    table TYPE TABLE OF mara.`,
 
   `CONSTANTS: BEGIN OF c_multi,
     foo VALUE 1,
@@ -89,13 +92,13 @@ const fullyTypeTests = [
   },
   {
     abap: testCases[5],
-    description: "only const, data with type",
+    description: "only const, data with various types",
     config: configOnlyConstants,
     issueLength: 0,
   },
   {
     abap: testCases[5],
-    description: "both, data with type",
+    description: "both, data with various types",
     config: configDataAndConstants,
     issueLength: 0,
   },
