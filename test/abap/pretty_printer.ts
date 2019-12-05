@@ -155,6 +155,21 @@ describe("Fix keyword case", () => {
       expected: "REPORT zfoo.DATA(x) = `foo`.",
       config: upperCaseConfig,
     },
+    {
+      input: "WRITE: `FOO` ##NO_TEXT.",
+      expected: "write: `FOO` ##NO_TEXT.",
+      config: lowerCaseConfig,
+    },
+    {
+      input: "WRITE: 'FOO' ##NO_TEXT.",
+      expected: "write: 'FOO' ##NO_TEXT.",
+      config: lowerCaseConfig,
+    },
+    {
+      input: "WRITE: |FOO| ##NO_TEXT.",
+      expected: "write: |FOO| ##NO_TEXT.",
+      config: lowerCaseConfig,
+    },
   ];
 
   tests.forEach((test) => {
