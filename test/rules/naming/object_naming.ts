@@ -2,15 +2,17 @@ import {ObjectNaming, ObjectNamingConf} from "../../../src/rules";
 import {Registry} from "../../../src/registry";
 import {MemoryFile} from "../../../src/files";
 import {expect} from "chai";
+import {Issue} from "../../../src";
 
-function findIssues(filename: string, expectedIssueCount: Number, config?: ObjectNamingConf) {
+function findIssues(filename: string, expectedIssueCount: Number, config?: ObjectNamingConf): Issue[] {
   const reg = new Registry().addFile(new MemoryFile(filename, "")).parse();
   const rule = new ObjectNaming();
   if (config) {
     rule.setConfig(config);
   }
-  const issues = rule.run(reg.getObjects()[0], reg).length;
-  expect(issues).to.equal(expectedIssueCount);
+  const issues = rule.run(reg.getObjects()[0], reg);
+  expect(issues.length).to.equal(expectedIssueCount);
+  return issues;
 }
 
 describe(`Rule: Object naming (required pattern)`, function () {
@@ -207,6 +209,15 @@ describe(`Rule: Object naming (required pattern)`, function () {
     config.patternKind = "forbidden";
     findIssues("ztest.xslt.xml", 1, config);
     findIssues("test.xslt.xml", 0, config);
+  });
+
+  it("Config, patternKind not set", function () {
+    const config = new ObjectNamingConf();
+    config.clas = "^ZCL_.*$";
+    config.patternKind = undefined;
+
+    findIssues("zcl_class.clas.abap", 0, config);
+    findIssues("cl_class.clas.abap", 1, config);
   });
 
 });

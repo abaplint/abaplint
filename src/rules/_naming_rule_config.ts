@@ -1,5 +1,6 @@
 import {BasicRuleConfig} from "./_basic_rule_config";
 
+// todo, change this to an enum instead
 export type PatternKind = "required" | "forbidden";
 
 export abstract class NamingRuleConfig extends BasicRuleConfig {
