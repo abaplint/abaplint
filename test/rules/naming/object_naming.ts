@@ -195,4 +195,18 @@ describe(`Rule: Object naming (required pattern)`, function () {
     findIssues("ztest.idoc.xml", 1, config);
     findIssues("test.idoc.xml", 0, config);
   });
+
+  it("xslt", function () {
+    const config = new ObjectNamingConf();
+    config.idoc = "^Z.*$";
+
+    config.patternKind = "required";
+    findIssues("ztest.xslt.xml", 0, config);
+    findIssues("test.xslt.xml", 1, config);
+
+    config.patternKind = "forbidden";
+    findIssues("ztest.xslt.xml", 1, config);
+    findIssues("test.xslt.xml", 0, config);
+  });
+
 });

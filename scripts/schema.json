@@ -2622,6 +2622,10 @@
         "ttyp": {
           "description": "The pattern for DDIC table type names",
           "type": "string"
+        },
+        "xslt": {
+          "description": "The pattern for transformation names",
+          "type": "string"
         }
       },
       "required": [
@@ -2638,7 +2642,8 @@
         "enqu",
         "auth",
         "pinf",
-        "idoc"
+        "idoc",
+        "xslt"
       ],
       "type": "object"
     },

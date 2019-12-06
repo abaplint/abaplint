@@ -36,6 +36,8 @@ export class ObjectNamingConf extends NamingRuleConfig {
   public pinf: string = "^Z";
   /** The pattern for idoc names */
   public idoc: string = "^Z";
+  /** The pattern for transformation names */
+  public xslt: string = "^Z";
 }
 
 export class ObjectNaming implements IRule {
@@ -91,6 +93,8 @@ export class ObjectNaming implements IRule {
       pattern = this.getConfig().msag;
     } else if (obj instanceof Objects.Idoc) {
       pattern = this.getConfig().idoc;
+    } else if (obj instanceof Objects.Transformation) {
+      pattern = this.getConfig().xslt;
     }
 
     if (pattern === "") {
