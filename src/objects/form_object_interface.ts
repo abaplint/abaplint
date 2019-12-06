@@ -6,4 +6,10 @@ export class FormObjectInterface extends AbstractObject {
     return "SFPI";
   }
 
+  public getAllowedNaming() {
+    return { // todo, verify
+      maxLength: 30,
+      allowNamespace: true,
+    };
+  }
 }

@@ -1,7 +1,11 @@
 import {IFile} from "../files/_ifile";
 
-export interface IObject {
+interface IArtifact {
   getType(): string;
+  getAllowedNaming(): {maxLength: number, allowNamespace: boolean};
+}
+
+export interface IObject extends IArtifact {
   getName(): string;
   addFile(file: IFile): void;
   updateFile(file: IFile): void;

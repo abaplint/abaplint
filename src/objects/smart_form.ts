@@ -6,4 +6,10 @@ export class SmartForm extends AbstractObject {
     return "SSFO";
   }
 
+  public getAllowedNaming() {
+    return { // todo, verify
+      maxLength: 30,
+      allowNamespace: true,
+    };
+  }
 }

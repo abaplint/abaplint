@@ -17,6 +17,13 @@ export class Class extends ABAPObject {
     return "CLAS";
   }
 
+  public getAllowedNaming() {
+    return {
+      maxLength: 30,
+      allowNamespace: true,
+    };
+  }
+
   public getClassDefinition(): ClassDefinition | undefined {
     const main = this.getMainABAPFile();
     if (!main) {

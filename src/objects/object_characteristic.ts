@@ -6,4 +6,10 @@ export class ObjectCharacteristic extends AbstractObject {
     return "CHAR";
   }
 
+  public getAllowedNaming() {
+    return { // todo, verify
+      maxLength: 30,
+      allowNamespace: true,
+    };
+  }
 }

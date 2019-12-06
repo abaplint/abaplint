@@ -6,4 +6,11 @@ export class AuthorizationObjectClass extends AbstractObject {
     return "SUSC";
   }
 
+  public getAllowedNaming() {
+    return {
+      maxLength: 4,
+      allowNamespace: false,
+    };
+  }
+
 }

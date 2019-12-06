@@ -6,4 +6,10 @@ export class GatewayService extends AbstractObject {
     return "IWSV";
   }
 
+  public getAllowedNaming() {
+    return { // todo, verify
+      maxLength: 30,
+      allowNamespace: true,
+    };
+  }
 }

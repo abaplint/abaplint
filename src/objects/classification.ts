@@ -6,4 +6,10 @@ export class Classification extends AbstractObject {
     return "AVAS";
   }
 
+  public getAllowedNaming() {
+    return { // todo, verify
+      maxLength: 30,
+      allowNamespace: true,
+    };
+  }
 }

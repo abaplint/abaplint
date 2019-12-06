@@ -6,4 +6,10 @@ export class BusinessObjectModel extends AbstractObject {
     return "BOBF";
   }
 
+  public getAllowedNaming() {
+    return { // todo, verify
+      maxLength: 30,
+      allowNamespace: true,
+    };
+  }
 }

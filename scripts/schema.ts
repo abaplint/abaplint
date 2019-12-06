@@ -1,6 +1,7 @@
 import {IGlobalConfig, IDependency, ISyntaxSettings} from "../src/config";
 import {SevenBitAsciiConf} from "../src/rules/7bit_ascii";
 import {AbapdocConf} from "../src/rules/abapdoc";
+import {AllowedObjectNamingConf} from "../src/rules/naming/allowed_object_naming";
 import {AllowedObjectTypesConf} from "../src/rules/allowed_object_types";
 import {AmbiguousStatementConf} from "../src/rules/ambiguous_statement";
 import {AvoidUseConf} from "../src/rules/avoid_use";
@@ -85,6 +86,7 @@ export interface IConfig {
   rules: {
     "7bit_ascii"?: SevenBitAsciiConf | boolean,
     "abapdoc"?: AbapdocConf | boolean,
+    "allowed_object_naming"?: AllowedObjectNamingConf | boolean,
     "allowed_object_types"?: AllowedObjectTypesConf | boolean,
     "ambiguous_statement"?: AmbiguousStatementConf | boolean,
     "avoid_use"?: AvoidUseConf | boolean,

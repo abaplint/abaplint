@@ -6,4 +6,10 @@ export class BusinessAddInImplementation extends AbstractObject {
     return "SXCI";
   }
 
+  public getAllowedNaming() {
+    return { // todo, verify
+      maxLength: 30,
+      allowNamespace: true,
+    };
+  }
 }

@@ -6,4 +6,10 @@ export class BusinessConfigurationSet extends AbstractObject {
     return "SCP1";
   }
 
+  public getAllowedNaming() {
+    return { // todo, verify
+      maxLength: 30,
+      allowNamespace: true,
+    };
+  }
 }

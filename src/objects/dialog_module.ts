@@ -6,4 +6,10 @@ export class DialogModule extends AbstractObject {
     return "DIAL";
   }
 
+  public getAllowedNaming() {
+    return {
+      maxLength: 30,
+      allowNamespace: true,
+    };
+  }
 }

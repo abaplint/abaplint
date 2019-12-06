@@ -6,4 +6,10 @@ export class ProxyObject extends AbstractObject {
     return "SPRX";
   }
 
+  public getAllowedNaming() {
+    return { // todo, verify
+      maxLength: 30,
+      allowNamespace: true,
+    };
+  }
 }

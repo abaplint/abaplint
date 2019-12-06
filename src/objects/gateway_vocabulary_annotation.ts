@@ -6,4 +6,10 @@ export class GatewayVocabularyAnnotation extends AbstractObject {
     return "IWVB";
   }
 
+  public getAllowedNaming() {
+    return { // todo, verify
+      maxLength: 30,
+      allowNamespace: true,
+    };
+  }
 }

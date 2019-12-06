@@ -6,4 +6,10 @@ export class MIMEObject extends AbstractObject {
     return "SMIM";
   }
 
+  public getAllowedNaming() {
+    return { // todo, verify
+      maxLength: 30,
+      allowNamespace: true,
+    };
+  }
 }

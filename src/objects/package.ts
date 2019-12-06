@@ -6,4 +6,10 @@ export class Package extends AbstractObject {
     return "DEVC";
   }
 
+  public getAllowedNaming() {
+    return {
+      maxLength: 30,
+      allowNamespace: true,
+    };
+  }
 }

@@ -6,4 +6,10 @@ export class SearchHelp extends AbstractObject {
     return "SHLP";
   }
 
+  public getAllowedNaming() {
+    return {
+      maxLength: 30,
+      allowNamespace: true,
+    };
+  }
 }

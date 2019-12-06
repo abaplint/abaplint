@@ -6,4 +6,10 @@ export class PushChannel extends AbstractObject {
     return "SAPC";
   }
 
+  public getAllowedNaming() {
+    return { // todo, verify
+      maxLength: 30,
+      allowNamespace: true,
+    };
+  }
 }

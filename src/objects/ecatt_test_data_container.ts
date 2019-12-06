@@ -6,4 +6,10 @@ export class EcattTestDataContainer extends AbstractObject {
     return "ECTD";
   }
 
+  public getAllowedNaming() {
+    return { // todo, verify
+      maxLength: 30,
+      allowNamespace: true,
+    };
+  }
 }

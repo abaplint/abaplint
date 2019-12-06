@@ -6,4 +6,10 @@ export class WebDynproComponent extends AbstractObject {
     return "WDYN";
   }
 
+  public getAllowedNaming() {
+    return { // todo, verify
+      maxLength: 30,
+      allowNamespace: true,
+    };
+  }
 }

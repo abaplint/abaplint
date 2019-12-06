@@ -6,4 +6,10 @@ export class VirtualEndPoint extends AbstractObject {
     return "WEBI";
   }
 
+  public getAllowedNaming() {
+    return { // todo, verify
+      maxLength: 30,
+      allowNamespace: true,
+    };
+  }
 }

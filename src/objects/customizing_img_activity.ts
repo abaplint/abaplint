@@ -6,4 +6,10 @@ export class CustomizingImgActivity extends AbstractObject {
     return "CUS0";
   }
 
+  public getAllowedNaming() {
+    return { // todo, verify
+      maxLength: 30,
+      allowNamespace: true,
+    };
+  }
 }

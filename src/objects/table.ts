@@ -29,6 +29,13 @@ export class Table extends AbstractObject {
     return "TABL";
   }
 
+  public getAllowedNaming() {
+    return { // todo, verify
+      maxLength: 30,
+      allowNamespace: true,
+    };
+  }
+
   public parseType(reg: Registry): AbstractType {
     const parsed = this.parseXML();
     if (parsed === undefined) {

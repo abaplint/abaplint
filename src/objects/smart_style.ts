@@ -6,4 +6,10 @@ export class SmartStyle extends AbstractObject {
     return "SSST";
   }
 
+  public getAllowedNaming() {
+    return { // todo, verify
+      maxLength: 30,
+      allowNamespace: true,
+    };
+  }
 }

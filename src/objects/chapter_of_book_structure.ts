@@ -6,4 +6,10 @@ export class ChapterOfBookStructure extends AbstractObject {
     return "DSYS";
   }
 
+  public getAllowedNaming() {
+    return { // todo, verify
+      maxLength: 30,
+      allowNamespace: true,
+    };
+  }
 }

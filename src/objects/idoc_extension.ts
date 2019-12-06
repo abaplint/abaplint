@@ -6,4 +6,10 @@ export class IdocExtension extends AbstractObject {
     return "IEXT";
   }
 
+  public getAllowedNaming() {
+    return { // todo, verify
+      maxLength: 30,
+      allowNamespace: true,
+    };
+  }
 }

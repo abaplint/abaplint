@@ -6,4 +6,10 @@ export class GatewayProject extends AbstractObject {
     return "IWPR";
   }
 
+  public getAllowedNaming() {
+    return { // todo, verify
+      maxLength: 30,
+      allowNamespace: true,
+    };
+  }
 }

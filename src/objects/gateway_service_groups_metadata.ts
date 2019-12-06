@@ -6,4 +6,10 @@ export class GatewayServiceGroupsMetadata extends AbstractObject {
     return "IWSG";
   }
 
+  public getAllowedNaming() {
+    return { // todo, verify
+      maxLength: 30,
+      allowNamespace: true,
+    };
+  }
 }

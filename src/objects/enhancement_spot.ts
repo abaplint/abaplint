@@ -6,4 +6,11 @@ export class EnhancementSpot extends AbstractObject {
     return "ENHS";
   }
 
+  public getAllowedNaming() {
+    return { // todo, verify
+      maxLength: 30,
+      allowNamespace: true,
+    };
+  }
+
 }

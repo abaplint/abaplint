@@ -6,4 +6,11 @@ export class AuthorizationCheckField extends AbstractObject {
     return "AUTH";
   }
 
+  public getAllowedNaming() {
+    return { // todo, verify
+      maxLength: 30,
+      allowNamespace: true,
+    };
+  }
+
 }

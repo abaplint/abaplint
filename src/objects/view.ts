@@ -7,6 +7,13 @@ export class View extends AbstractObject {
     return "VIEW";
   }
 
+  public getAllowedNaming() {
+    return { // todo, verify
+      maxLength: 30,
+      allowNamespace: true,
+    };
+  }
+
   public getFields(): string[] {
     const xml = this.getXML();
     if (xml === undefined) {

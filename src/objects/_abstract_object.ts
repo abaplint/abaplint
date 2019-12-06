@@ -8,6 +8,7 @@ export abstract class AbstractObject implements IObject {
   protected dirty: boolean;
 
   public abstract getType(): string;
+  public abstract getAllowedNaming(): {maxLength: number, allowNamespace: boolean};
 
   public constructor(name: string) {
     this.name = name;

@@ -6,4 +6,10 @@ export class CDSMetadataExtension extends AbstractObject {
     return "DDLX";
   }
 
+  public getAllowedNaming() {
+    return { // todo, verify
+      maxLength: 30,
+      allowNamespace: true,
+    };
+  }
 }

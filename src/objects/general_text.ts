@@ -6,4 +6,10 @@ export class GeneralText extends AbstractObject {
     return "DOCT";
   }
 
+  public getAllowedNaming() {
+    return { // todo, verify
+      maxLength: 30,
+      allowNamespace: true,
+    };
+  }
 }

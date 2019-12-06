@@ -10,6 +10,13 @@ export class Domain extends AbstractObject {
     return "DOMA";
   }
 
+  public getAllowedNaming() {
+    return { // todo, verify
+      maxLength: 30,
+      allowNamespace: true,
+    };
+  }
+
   public parseType(reg: Registry): AbstractType {
     const xml = this.getXML();
     if (xml === undefined) {

@@ -6,4 +6,10 @@ export class GatewayModelMetadata extends AbstractObject {
     return "IWOM";
   }
 
+  public getAllowedNaming() {
+    return { // todo, verify
+      maxLength: 30,
+      allowNamespace: true,
+    };
+  }
 }

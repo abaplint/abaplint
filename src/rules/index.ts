@@ -35,6 +35,7 @@ export * from "./message_exists";
 export * from "./method_length";
 export * from "./mix_returning";
 export * from "./msag_consistency";
+export * from "./naming/allowed_object_naming";
 export * from "./naming/class_attribute_names";
 export * from "./naming/local_class_naming";
 export * from "./naming/local_variable_names";

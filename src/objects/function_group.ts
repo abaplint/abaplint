@@ -10,6 +10,13 @@ export class FunctionGroup extends ABAPObject {
     return "FUGR";
   }
 
+  public getAllowedNaming() {
+    return { // todo, verify
+      maxLength: 30,
+      allowNamespace: true,
+    };
+  }
+
   public getModules(): FunctionModuleDefinition[] {
     const xml = this.getXML();
     if (xml === undefined) {

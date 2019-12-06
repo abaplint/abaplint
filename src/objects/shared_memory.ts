@@ -6,4 +6,10 @@ export class SharedMemory extends AbstractObject {
     return "SHMA";
   }
 
+  public getAllowedNaming() {
+    return { // todo, verify
+      maxLength: 30,
+      allowNamespace: true,
+    };
+  }
 }

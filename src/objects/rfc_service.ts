@@ -6,4 +6,10 @@ export class RFCService extends AbstractObject {
     return "SRFC";
   }
 
+  public getAllowedNaming() {
+    return { // todo, verify
+      maxLength: 30,
+      allowNamespace: true,
+    };
+  }
 }

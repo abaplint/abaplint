@@ -6,4 +6,10 @@ export class SAPScript extends AbstractObject {
     return "FORM";
   }
 
+  public getAllowedNaming() {
+    return {
+      maxLength: 20,
+      allowNamespace: true,
+    };
+  }
 }

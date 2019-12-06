@@ -7,6 +7,13 @@ export class Interface extends ABAPObject {
     return "INTF";
   }
 
+  public getAllowedNaming() {
+    return {
+      maxLength: 30,
+      allowNamespace: true,
+    };
+  }
+
   public getDefinition(): InterfaceDefinition | undefined {
     const main = this.getMainABAPFile();
     if (!main) {

@@ -6,4 +6,11 @@ export class MessagingChannel extends AbstractObject {
     return "SAMC";
   }
 
+  public getAllowedNaming() {
+    return { // todo, verify
+      maxLength: 30,
+      allowNamespace: true,
+    };
+  }
+
 }

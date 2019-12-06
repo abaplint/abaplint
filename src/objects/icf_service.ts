@@ -6,4 +6,10 @@ export class ICFService extends AbstractObject {
     return "SICF";
   }
 
+  public getAllowedNaming() {
+    return { // todo, verify
+      maxLength: 30,
+      allowNamespace: true,
+    };
+  }
 }

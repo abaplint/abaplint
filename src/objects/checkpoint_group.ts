@@ -6,4 +6,10 @@ export class CheckpointGroup extends AbstractObject {
     return "ACID";
   }
 
+  public getAllowedNaming() {
+    return { // todo, verify
+      maxLength: 30,
+      allowNamespace: true,
+    };
+  }
 }

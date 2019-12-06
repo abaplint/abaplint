@@ -6,4 +6,11 @@ export class BehaviorDefinition extends AbstractObject {
     return "BDEF";
   }
 
+  public getAllowedNaming() {
+    return { // todo, verify
+      maxLength: 30,
+      allowNamespace: true,
+    };
+  }
+
 }

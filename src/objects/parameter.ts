@@ -6,4 +6,10 @@ export class Parameter extends AbstractObject {
     return "PARA";
   }
 
+  public getAllowedNaming() {
+    return {
+      maxLength: 20,
+      allowNamespace: true,
+    };
+  }
 }

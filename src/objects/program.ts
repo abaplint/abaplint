@@ -6,6 +6,13 @@ export class Program extends ABAPObject {
     return "PROG";
   }
 
+  public getAllowedNaming() {
+    return { // todo, verify
+      maxLength: 30,
+      allowNamespace: true,
+    };
+  }
+
   public isInclude(): boolean {
     const file = this.getXMLFile();
     if (file) {

@@ -6,4 +6,11 @@ export class Transaction extends AbstractObject {
     return "TRAN";
   }
 
+  public getAllowedNaming() {
+    return {
+      maxLength: 20,
+      allowNamespace: true,
+    };
+  }
+
 }

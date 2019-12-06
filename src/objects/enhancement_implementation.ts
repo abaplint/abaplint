@@ -6,4 +6,10 @@ export class EnhancementImplementation extends AbstractObject {
     return "ENHO";
   }
 
+  public getAllowedNaming() {
+    return { // todo, verify
+      maxLength: 30,
+      allowNamespace: true,
+    };
+  }
 }

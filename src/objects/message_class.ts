@@ -8,6 +8,13 @@ export class MessageClass extends AbstractObject {
     return "MSAG";
   }
 
+  public getAllowedNaming() {
+    return {
+      maxLength: 20,
+      allowNamespace: true,
+    };
+  }
+
   public getMessages(): Message[] {
     const xml = this.getXML();
     if (xml === undefined) {

@@ -6,6 +6,13 @@ export class MaintenanceAndTransportObject extends AbstractObject {
     return "TOBJ";
   }
 
+  public getAllowedNaming() {
+    return { // todo, verify
+      maxLength: 30,
+      allowNamespace: true,
+    };
+  }
+
   public getArea(): string | undefined {
     if (this.getFiles().length === 0) {
       return undefined;

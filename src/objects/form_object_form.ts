@@ -6,4 +6,10 @@ export class FormObjectForm extends AbstractObject {
     return "SFPF";
   }
 
+  public getAllowedNaming() {
+    return { // todo, verify
+      maxLength: 30,
+      allowNamespace: true,
+    };
+  }
 }

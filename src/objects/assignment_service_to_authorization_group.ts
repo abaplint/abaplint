@@ -6,4 +6,11 @@ export class AssignmentServiceToAuthorizationGroup extends AbstractObject {
     return "SUSH";
   }
 
+  public getAllowedNaming() {
+    return { // todo, verify
+      maxLength: 30,
+      allowNamespace: true,
+    };
+  }
+
 }

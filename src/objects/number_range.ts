@@ -6,4 +6,10 @@ export class NumberRange extends AbstractObject {
     return "NROB";
   }
 
+  public getAllowedNaming() {
+    return {
+      maxLength: 10,
+      allowNamespace: false,
+    };
+  }
 }

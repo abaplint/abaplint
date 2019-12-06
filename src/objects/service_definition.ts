@@ -6,4 +6,10 @@ export class ServiceDefinition extends AbstractObject {
     return "SRVD";
   }
 
+  public getAllowedNaming() {
+    return { // todo, verify
+      maxLength: 30,
+      allowNamespace: true,
+    };
+  }
 }

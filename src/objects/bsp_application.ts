@@ -6,4 +6,10 @@ export class BSPApplication extends AbstractObject {
     return "WAPA";
   }
 
+  public getAllowedNaming() {
+    return { // todo, verify
+      maxLength: 30,
+      allowNamespace: true,
+    };
+  }
 }

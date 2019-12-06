@@ -6,4 +6,10 @@ export class WebMIME extends AbstractObject {
     return "W3MI";
   }
 
+  public getAllowedNaming() {
+    return { // todo, verify
+      maxLength: 30,
+      allowNamespace: true,
+    };
+  }
 }

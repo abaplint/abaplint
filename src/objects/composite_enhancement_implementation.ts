@@ -6,4 +6,10 @@ export class CompositeEnhancementImplementation extends AbstractObject {
     return "ENHC";
   }
 
+  public getAllowedNaming() {
+    return { // todo, verify
+      maxLength: 30,
+      allowNamespace: true,
+    };
+  }
 }

@@ -31,6 +31,28 @@
       ],
       "type": "object"
     },
+    "AllowedObjectNamingConf": {
+      "additionalProperties": false,
+      "description": "Enforces basic name length and namespace restrictions",
+      "properties": {
+        "enabled": {
+          "description": "Is the rule enabled?",
+          "type": "boolean"
+        },
+        "exclude": {
+          "description": "List of file regex patterns to exclude",
+          "items": {
+            "type": "string"
+          },
+          "type": "array"
+        },
+        "reason": {
+          "description": "An explanation for why the rule is enforced",
+          "type": "string"
+        }
+      },
+      "type": "object"
+    },
     "AllowedObjectTypesConf": {
       "additionalProperties": false,
       "description": "Restricts the set of allowed object types.",
@@ -950,6 +972,16 @@
               "anyOf": [
                 {
                   "$ref": "#/definitions/AbapdocConf"
+                },
+                {
+                  "type": "boolean"
+                }
+              ]
+            },
+            "allowed_object_naming": {
+              "anyOf": [
+                {
+                  "$ref": "#/definitions/AllowedObjectNamingConf"
                 },
                 {
                   "type": "boolean"

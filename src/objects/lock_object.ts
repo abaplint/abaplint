@@ -6,4 +6,11 @@ export class LockObject extends AbstractObject {
     return "ENQU";
   }
 
+  public getAllowedNaming() {
+    return {
+      maxLength: 16,
+      allowNamespace: false,
+    };
+  }
+
 }

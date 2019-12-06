@@ -6,4 +6,11 @@ export class AuthorizationGroup extends AbstractObject {
     return "SUCU";
   }
 
+  public getAllowedNaming() {
+    return { // todo, verify
+      maxLength: 30,
+      allowNamespace: true,
+    };
+  }
+
 }

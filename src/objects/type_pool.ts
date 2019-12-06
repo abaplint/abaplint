@@ -6,4 +6,10 @@ export class TypePool extends ABAPObject {
     return "TYPE";
   }
 
+  public getAllowedNaming() {
+    return {
+      maxLength: 5,
+      allowNamespace: false,
+    };
+  }
 }
