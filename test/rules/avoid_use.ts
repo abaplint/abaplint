@@ -9,6 +9,7 @@ const tests = [
   {abap: "CALL 'SYST_LOGOFF'.", cnt: 1},
   {abap: "ENDSELECT.\nWRITE foobar.", cnt: 1},
   {abap: "parser error", cnt: 0},
+  {abap: "SYSTEM-CALL foo.", cnt: 1},
 ];
 
 testRule(tests, AvoidUse);

@@ -18,6 +18,8 @@ export class AvoidUseConf extends BasicRuleConfig {
   public communication: boolean = true;
   /** Detects statics */
   public statics: boolean = true;
+  /** Detects SYSTEM-CALL */
+  public systemCall: boolean = true;
 }
 
 export class AvoidUse extends ABAPRule {
@@ -53,6 +55,8 @@ export class AvoidUse extends ABAPRule {
         message = "EXEC SQL";
       } else if (this.conf.kernelCall && statement.get() instanceof Statements.CallKernel) {
         message = "KERNEL CALL";
+      } else if (this.conf.systemCall && statement.get() instanceof Statements.SystemCall) {
+        message = "SYSTEM-CALL";
       } else if (this.conf.communication && statement.get() instanceof Statements.Communication) {
         message = "COMMUNICATION";
       } else if (this.conf.statics

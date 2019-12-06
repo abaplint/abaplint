@@ -126,6 +126,10 @@
         "statics": {
           "description": "Detects statics",
           "type": "boolean"
+        },
+        "systemCall": {
+          "description": "Detects SYSTEM-CALL",
+          "type": "boolean"
         }
       },
       "required": [
@@ -134,7 +138,8 @@
         "execSQL",
         "kernelCall",
         "communication",
-        "statics"
+        "statics",
+        "systemCall"
       ],
       "type": "object"
     },
