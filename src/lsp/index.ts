@@ -6,13 +6,25 @@ import {Diagnostics} from "./diagnostics";
 import {Help} from "./help";
 import {PrettyPrinter} from "../pretty_printer/pretty_printer";
 import {Definition} from "./definition";
-
-// the types in this file are not completely correct
-// see https://github.com/microsoft/vscode-languageserver-node/issues/354
+import {Rename} from "./rename";
 
 // note Ranges are zero based in LSP,
 // https://github.com/microsoft/language-server-protocol/blob/master/versions/protocol-2-x.md#range
 // but 1 based in abaplint
+
+// the types in this file are not completely correct
+// see https://github.com/microsoft/vscode-languageserver-node/issues/354
+
+export interface ITextDocumentPositionParams {
+  textDocument: LServer.TextDocumentIdentifier;
+  position: LServer.Position;
+}
+
+export interface IRenameParams {
+  textDocument: LServer.TextDocumentIdentifier;
+  position: LServer.Position;
+  newName: string;
+}
 
 export class LanguageServer {
   private readonly reg: Registry;
@@ -29,7 +41,7 @@ export class LanguageServer {
     return Symbols.find(this.reg, params.textDocument.uri);
   }
 
-  public hover(params: {textDocument: LServer.TextDocumentIdentifier, position: LServer.Position}): LServer.Hover | undefined {
+  public hover(params: ITextDocumentPositionParams): LServer.Hover | undefined {
     const hover = Hover.find(this.reg, params.textDocument, params.position);
     if (hover) {
       return {contents: hover};
@@ -37,8 +49,7 @@ export class LanguageServer {
     return undefined;
   }
 
-  // go to definition
-  public definition(params: {textDocument: LServer.TextDocumentIdentifier, position: LServer.Position}): LServer.Location | undefined {
+  public gotoDefinition(params: ITextDocumentPositionParams): LServer.Location | undefined {
     return Definition.find(this.reg, params.textDocument, params.position);
   }
 
@@ -62,6 +73,14 @@ export class LanguageServer {
 
   public diagnostics(textDocument: LServer.TextDocumentIdentifier): LServer.Diagnostic[] {
     return Diagnostics.find(this.reg, textDocument);
+  }
+
+  public prepareRename(params: ITextDocumentPositionParams): {range: LServer.Range, placeholder: string} | undefined {
+    return Rename.prepareRename(params);
+  }
+
+  public rename(params: IRenameParams): LServer.WorkspaceEdit | undefined {
+    return Rename.rename(params);
   }
 
 }
