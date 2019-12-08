@@ -76,11 +76,11 @@ export class LanguageServer {
   }
 
   public prepareRename(params: ITextDocumentPositionParams): {range: LServer.Range, placeholder: string} | undefined {
-    return Rename.prepareRename(params);
+    return new Rename(this.reg).prepareRename(params);
   }
 
   public rename(params: IRenameParams): LServer.WorkspaceEdit | undefined {
-    return Rename.rename(params);
+    return new Rename(this.reg).rename(params);
   }
 
 }
