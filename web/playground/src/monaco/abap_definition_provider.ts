@@ -9,7 +9,7 @@ export class ABAPDefinitionProvider implements monaco.languages.DefinitionProvid
                            token: monaco.CancellationToken): monaco.languages.ProviderResult<monaco.languages.Definition> {
 
     const ls = new LanguageServer(FileSystem.getRegistry());
-    const def = ls.definition({
+    const def = ls.gotoDefinition({
       textDocument: {uri: model.uri.toString()},
       position: {line: position.lineNumber - 1, character: position.column - 1}});
     if (def) {
