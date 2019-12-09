@@ -12,6 +12,7 @@ import {SyntaxLogic} from "../abap/syntax/syntax";
 import {ITextDocumentPositionParams} from ".";
 import {INode} from "../abap/nodes/_inode";
 import {Position} from "../position";
+import * as LServer from "vscode-languageserver-types";
 
 export interface ICursorPosition {
   token: Token;
@@ -21,6 +22,14 @@ export interface ICursorPosition {
 }
 
 export class LSPUtils {
+
+  public static tokenToRange(token: Token): LServer.Range {
+    return LServer.Range.create(
+      token.getStart().getRow() - 1,
+      token.getStart().getCol() - 1,
+      token.getEnd().getRow() - 1,
+      token.getEnd().getCol() - 1);
+  }
 
   public static findCursor(reg: Registry, pos: ITextDocumentPositionParams): ICursorPosition | undefined {
     const file = reg.getABAPFile(pos.textDocument.uri);
