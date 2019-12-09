@@ -9,6 +9,7 @@ import {BoxPanel, DockPanel, Menu, MenuBar, Widget} from "@phosphor/widgets";
 import {WelcomeWidget, TreeWidget, ProblemsWidget} from "./widgets/";
 import {FileSystem} from "./filesystem";
 import {ABAPSnippetProvider} from "./monaco/abap_snippet_provider";
+import {ABAPRenameProvider} from "./monaco/abap_rename_provider";
 import {ABAPHoverProvider} from "./monaco/abap_hover_provider";
 import {ABAPFormattingProvider} from "./monaco/abap_formatting_provider";
 import {ABAPSymbolProvider} from "./monaco/abap_symbol_provider";
@@ -81,6 +82,7 @@ function registerMonacoSettings() {
   monaco.languages.registerDocumentFormattingEditProvider("abap", new ABAPFormattingProvider());
   monaco.languages.registerDocumentSymbolProvider("abap", new ABAPSymbolProvider());
   monaco.languages.registerDefinitionProvider("abap", new ABAPDefinitionProvider());
+  monaco.languages.registerRenameProvider("abap", new ABAPRenameProvider());
 
   monaco.languages.json.jsonDefaults.setDiagnosticsOptions({
     validate: true,
