@@ -21,6 +21,10 @@ export class RenameGlobalClass {
       return undefined;
     }
 
+    if (newName.length > clas.getAllowedNaming().maxLength) {
+      return undefined;
+    }
+
     const main = clas.getMainABAPFile();
     if (main === undefined) {
       return undefined;
@@ -45,17 +49,26 @@ export class RenameGlobalClass {
     }
 
     changes.push(TextDocumentEdit.create({uri: main.getFilename(), version: 1}, edits));
-
     changes = changes.concat(this.buildXMLFileEdits(clas, oldName, newName));
-
-    for (const f of clas.getFiles()) {
-      const newFilename = f.getFilename().replace(oldName, newName.toLowerCase());
-      changes.push(RenameFile.create(f.getFilename(), newFilename));
-    }
+    changes = changes.concat(this.renameFiles(clas, oldName, newName));
 
     return {
       documentChanges: changes,
     };
+  }
+
+  private renameFiles(clas: Class, oldName: string, name: string): RenameFile[] {
+    const list: RenameFile[] = [];
+
+    const newName = name.toLowerCase().replace(/\//g, "#");
+
+    for (const f of clas.getFiles()) {
+// todo, this is not completely correct, ie. if the URI contains the same directory name as the object name
+      const newFilename = f.getFilename().replace(oldName, newName);
+      list.push(RenameFile.create(f.getFilename(), newFilename));
+    }
+
+    return list;
   }
 
   private buildXMLFileEdits(clas: Class, oldName: string, newName: string): TextDocumentEdit[] {

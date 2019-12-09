@@ -6,7 +6,7 @@ import {ApplyWorkSpaceEdit} from "./_apply_edit";
 import * as LServer from "vscode-languageserver-types";
 import {Class} from "../../src/objects";
 
-describe("LSP, prepare rename", () => {
+describe("LSP, prepare rename, global class", () => {
 
   it("bad position", () => {
     const file = new MemoryFile("foobar.prog.abap", "DO.");
@@ -44,7 +44,7 @@ describe("LSP, prepare rename", () => {
 
 });
 
-describe("LSP, actual rename", () => {
+describe("LSP, actual rename, global class", () => {
 
   it("bad position", () => {
     const file = new MemoryFile("foobar.prog.abap", "DO.");
@@ -58,7 +58,24 @@ describe("LSP, actual rename", () => {
     expect(result).to.equal(undefined);
   });
 
-  it("rename global class", () => {
+  it("name too long", () => {
+    const abap = new MemoryFile(
+      "zcl_foobar.clas.abap",
+      `CLASS zcl_foobar DEFINITION PUBLIC CREATE PUBLIC.
+ENDCLASS.
+CLASS zcl_foobar IMPLEMENTATION.
+ENDCLASS.`);
+    const reg = new Registry().addFile(abap).parse();
+    const rename = new Rename(reg);
+
+    const result = rename.rename({
+      textDocument: {uri: abap.getFilename()},
+      position: LServer.Position.create(0, 10),
+      newName: "foobar_foobar_foobar_foobar_foobar_foobar_foobar_foobar_foobar"});
+    expect(result).to.equal(undefined);
+  });
+
+  it("rename global class, normal naming", () => {
     const abap = new MemoryFile(
       "zcl_foobar.clas.abap",
       `CLASS zcl_foobar DEFINITION PUBLIC CREATE PUBLIC.
@@ -109,6 +126,54 @@ ENDCLASS.`);
 
     const issues = reg.findIssues();
     expect(issues.length).to.equal(0);
+  });
+
+  it("rename global class, add namespace", () => {
+    const abap = new MemoryFile(
+      "zcl_foobar.clas.abap",
+      `CLASS zcl_foobar DEFINITION PUBLIC CREATE PUBLIC.
+ENDCLASS.
+CLASS zcl_foobar IMPLEMENTATION.
+ENDCLASS.`);
+
+    const xml = new MemoryFile(
+      "zcl_foobar.clas.xml",
+      `<?xml version="1.0" encoding="utf-8"?>
+<abapGit version="v1.0.0" serializer="LCL_OBJECT_CLAS" serializer_version="v1.0.0">
+ <asx:abap xmlns:asx="http://www.sap.com/abapxml" version="1.0">
+  <asx:values>
+   <VSEOCLASS>
+    <CLSNAME>ZCL_FOOBAR</CLSNAME>
+    <LANGU>E</LANGU>
+    <DESCRIPT>Description</DESCRIPT>
+    <STATE>1</STATE>
+    <CLSCCINCL>X</CLSCCINCL>
+    <FIXPT>X</FIXPT>
+    <UNICODE>X</UNICODE>
+   </VSEOCLASS>
+  </asx:values>
+ </asx:abap>
+</abapGit>`);
+
+    const reg = new Registry();
+    reg.addFile(abap);
+    reg.addFile(xml);
+    reg.parse();
+    expect(reg.findIssues().length).to.equal(0);
+
+    const newName = "/foo/cl_bar";
+
+    const result = new Rename(reg).rename({
+      textDocument: {uri: abap.getFilename()},
+      position: LServer.Position.create(0, 10),
+      newName: newName});
+    expect(result).to.not.equal(undefined);
+
+    new ApplyWorkSpaceEdit(reg).apply(result!);
+
+    const issues = reg.findIssues();
+    expect(issues.length).to.equal(1);
+    expect(issues[0].getKey()).to.equal("object_naming");
   });
 
 });

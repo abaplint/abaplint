@@ -49,7 +49,8 @@ export abstract class AbstractObject implements IObject {
   }
 
   public getXMLFile() {
-    const expected = this.getName().toLowerCase() + "." + this.getType().toLowerCase() + ".xml";
+    const name = this.getName().toLowerCase().replace(/\//g, "#");
+    const expected = name + "." + this.getType().toLowerCase() + ".xml";
     for (const file of this.getFiles()) {
       if (file.getFilename().endsWith(expected)) {
         return file;

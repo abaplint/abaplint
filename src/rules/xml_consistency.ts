@@ -43,6 +43,7 @@ export class XMLConsistency implements IRule {
         issues.push(Issue.atRow(file, 1, "Name in XML does not match object", this.getKey()));
       }
     }
+    // todo, add more object types here
 
     return issues;
   }

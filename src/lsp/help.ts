@@ -24,6 +24,8 @@ export class Help {
     content = content + "<hr>";
     content = content + this.cursorInformation(reg, textDocument, position, file);
     content = content + this.fileInformation(file);
+    content = content + "<hr>";
+    content = content + this.dumpFiles(reg);
 
     return content;
   }
@@ -218,6 +220,18 @@ export class Help {
       }
     }
     return output + "</ul>";
+  }
+
+  private static dumpFiles(reg: Registry) {
+    let output = "";
+    for (const o of reg.getObjects()) {
+      output = output + o.getType() + " " + o.getName() + ": ";
+      for (const f of o.getFiles()) {
+        output = output + f.getFilename() + " ";
+      }
+      output = output + "<br>";
+    }
+    return output;
   }
 
 }
