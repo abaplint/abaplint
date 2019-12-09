@@ -67,6 +67,19 @@ export class Class extends ABAPObject {
     return vseo.DESCRIPT ? vseo.DESCRIPT._text : "";
   }
 
+  public getNameFromXML(): string | undefined {
+    const xml = this.getXML();
+    if (!xml) {
+      return undefined;
+    }
+    const parsed = this.parseXML();
+    if (parsed.abapGit["asx:abap"]["asx:values"] === undefined) {
+      return undefined;
+    }
+    const vseo = parsed.abapGit["asx:abap"]["asx:values"].VSEOCLASS;
+    return vseo.CLSNAME ? vseo.CLSNAME._text : "";
+  }
+
   public getCategory(): string | undefined {
     const xml = this.getXML();
     if (!xml) {

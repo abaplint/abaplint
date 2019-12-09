@@ -1747,6 +1747,16 @@
                   "type": "boolean"
                 }
               ]
+            },
+            "xml_consistency": {
+              "anyOf": [
+                {
+                  "$ref": "#/definitions/XMLConsistencyConf"
+                },
+                {
+                  "type": "boolean"
+                }
+              ]
             }
           },
           "type": "object"
@@ -3223,6 +3233,28 @@
     "WhitespaceEndConf": {
       "additionalProperties": false,
       "description": "Checks for redundant whitespace at the end of each line.",
+      "properties": {
+        "enabled": {
+          "description": "Is the rule enabled?",
+          "type": "boolean"
+        },
+        "exclude": {
+          "description": "List of file regex patterns to exclude",
+          "items": {
+            "type": "string"
+          },
+          "type": "array"
+        },
+        "reason": {
+          "description": "An explanation for why the rule is enforced",
+          "type": "string"
+        }
+      },
+      "type": "object"
+    },
+    "XMLConsistencyConf": {
+      "additionalProperties": false,
+      "description": "Checks the consistency of main XML files, eg. naming",
       "properties": {
         "enabled": {
           "description": "Is the rule enabled?",

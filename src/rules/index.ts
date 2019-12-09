@@ -77,3 +77,4 @@ export * from "./whitespace/space_before_colon";
 export * from "./whitespace/space_before_dot";
 export * from "./whitespace/start_at_tab";
 export * from "./whitespace/whitespace_end";
+export * from "./xml_consistency";

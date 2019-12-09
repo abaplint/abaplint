@@ -78,6 +78,7 @@ import {UnreachableCodeConf} from "../src/rules/unreachable_code";
 import {UseNewConf} from "../src/rules/use_new";
 import {WhenOthersLastConf} from "../src/rules/when_others_last";
 import {WhitespaceEndConf} from "../src/rules/whitespace/whitespace_end";
+import {XMLConsistencyConf} from "../src/rules/xml_consistency";
 
 export interface IConfig {
   global: IGlobalConfig;
@@ -163,5 +164,6 @@ export interface IConfig {
     "use_new"?: UseNewConf | boolean,
     "when_others_last"?: WhenOthersLastConf | boolean,
     "whitespace_end"?: WhitespaceEndConf | boolean,
+    "xml_consistency"?: XMLConsistencyConf | boolean,
   };
 }
