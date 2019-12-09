@@ -1,4 +1,3 @@
-import * as LServer from "vscode-languageserver-types";
 import * as Statements from "../abap/statements";
 import * as Expressions from "../abap/expressions";
 import {Registry} from "../registry";
@@ -11,6 +10,7 @@ import {FormDefinition} from "../abap/types";
 import {ABAPFile} from "../files";
 import {ABAPObject} from "../objects/_abap_object";
 import {SyntaxLogic} from "../abap/syntax/syntax";
+import {ITextDocumentPositionParams} from ".";
 
 export interface ICursorPosition {
   token: Token;
@@ -21,15 +21,14 @@ export interface ICursorPosition {
 
 export class LSPUtils {
 
-  public static findCursor(reg: Registry, textDocument: LServer.TextDocumentIdentifier, position: LServer.Position):
-      ICursorPosition | undefined {
-    const file = reg.getABAPFile(textDocument.uri);
+  public static findCursor(reg: Registry, pos: ITextDocumentPositionParams): ICursorPosition | undefined {
+    const file = reg.getABAPFile(pos.textDocument.uri);
     if (file === undefined) {
       return undefined;
     }
 
-    const line = position.line;
-    const character = position.character;
+    const line = pos.position.line;
+    const character = pos.position.character;
 
     for (const statement of file.getStatements()) {
       for (const token of statement.getTokens()) {

@@ -9,13 +9,12 @@ import {TypedIdentifier} from "../abap/types/_typed_identifier";
 import {TypedConstantIdentifier} from "../abap/types/_typed_constant_identifier";
 import {Scope} from "../abap/syntax/_scope";
 import * as Tokens from "../abap/tokens";
+import {ITextDocumentPositionParams} from ".";
 
 export class Hover {
-  public static find(reg: Registry,
-                     textDocument: LServer.TextDocumentIdentifier,
-                     position: LServer.Position): LServer.MarkupContent | undefined {
+  public static find(reg: Registry, pos: ITextDocumentPositionParams): LServer.MarkupContent | undefined {
 
-    const file = reg.getABAPFile(textDocument.uri);
+    const file = reg.getABAPFile(pos.textDocument.uri);
     if (file === undefined) {
       return undefined;
     }
@@ -24,7 +23,7 @@ export class Hover {
       return undefined;
     }
 
-    const found = LSPUtils.findCursor(reg, textDocument, position);
+    const found = LSPUtils.findCursor(reg, pos);
     if (found === undefined) {
       return {kind: LServer.MarkupKind.Markdown, value: "Cursor token not found"};
     } else if (found.token instanceof Tokens.String) {

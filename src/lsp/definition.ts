@@ -8,10 +8,10 @@ import {ABAPFile} from "../files";
 export class Definition {
 
   public static find(reg: Registry,
-                     doc: LServer.TextDocumentIdentifier,
+                     textDocument: LServer.TextDocumentIdentifier,
                      position: LServer.Position): LServer.Location | undefined {
 
-    const file = reg.getABAPFile(doc.uri);
+    const file = reg.getABAPFile(textDocument.uri);
     if (file === undefined) {
       return undefined;
     }
@@ -20,7 +20,7 @@ export class Definition {
       return undefined;
     }
 
-    const found = LSPUtils.findCursor(reg, doc, position);
+    const found = LSPUtils.findCursor(reg, {textDocument, position});
     if (found === undefined) {
       return undefined;
     }
