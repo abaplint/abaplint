@@ -3,6 +3,7 @@ import {ITextDocumentPositionParams, IRenameParams} from ".";
 import {LSPUtils} from "./_lsp_utils";
 import {Registry} from "..";
 import * as Statements from "../abap/statements";
+import * as Expressions from "../abap/expressions";
 
 export class Rename {
   private readonly reg: Registry;
@@ -17,9 +18,12 @@ export class Rename {
       return undefined;
     }
 
-    if (cursor.statement instanceof Statements.ClassDefinition) {
-      const start = cursor.token.getStart();
-      const end = cursor.token.getEnd();
+    const start = cursor.token.getStart();
+    const end = cursor.token.getEnd();
+
+    if (cursor.stack.length === 2
+        && cursor.stack[0].get() instanceof Statements.ClassDefinition
+        && cursor.stack[1].get() instanceof Expressions.ClassName) {
       const range = LServer.Range.create(start.getRow() - 1, start.getCol() - 1, end.getRow() - 1, end.getCol() - 1);
       return {
         range: range,

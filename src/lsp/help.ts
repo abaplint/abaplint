@@ -36,7 +36,7 @@ export class Help {
     const found = LSPUtils.findCursor(reg, {textDocument, position});
 
     if (found !== undefined) {
-      ret = "Statement: " + this.linkToStatement(found.statement) + "<br>\n" +
+      ret = "Statement: " + this.linkToStatement(found.snode.get()) + "<br>\n" +
         "Token: " + found.token.constructor.name + "<br>\n" +
         this.fullPath(file, found.token).value;
 

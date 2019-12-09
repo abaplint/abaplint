@@ -3,19 +3,20 @@ import * as Expressions from "../abap/expressions";
 import {Registry} from "../registry";
 import {Scope} from "../abap/syntax/_scope";
 import {Token} from "../abap/tokens/_token";
-import {Statement} from "../abap/statements/_statement";
-import {StatementNode} from "../abap/nodes";
+import {StatementNode, TokenNode} from "../abap/nodes";
 import {Identifier} from "../abap/types/_identifier";
 import {FormDefinition} from "../abap/types";
 import {ABAPFile} from "../files";
 import {ABAPObject} from "../objects/_abap_object";
 import {SyntaxLogic} from "../abap/syntax/syntax";
 import {ITextDocumentPositionParams} from ".";
+import {INode} from "../abap/nodes/_inode";
+import {Position} from "../position";
 
 export interface ICursorPosition {
   token: Token;
-  statement: Statement;
   identifier: Identifier;
+  stack: INode[];
   snode: StatementNode;
 }
 
@@ -27,20 +28,37 @@ export class LSPUtils {
       return undefined;
     }
 
-    const line = pos.position.line;
-    const character = pos.position.character;
+    const search = new Position(pos.position.line + 1, pos.position.character + 1);
 
     for (const statement of file.getStatements()) {
-      for (const token of statement.getTokens()) {
-// assumption: no tokens span multiple lines
-        if (token.getRow() - 1 === line
-            && token.getCol() - 1 <= character
-            && token.getCol() - 1 + token.getStr().length > character) {
-          return {
-            token: token,
-            identifier: new Identifier(token, file.getFilename()),
-            statement: statement.get(),
-            snode: statement};
+      const res = this.buildStack(statement, search, [statement]);
+      if (res !== undefined) {
+        return {
+          token: res.token,
+          identifier: new Identifier(res.token, file.getFilename()),
+          stack: res.stack,
+          snode: statement};
+      }
+    }
+
+    return undefined;
+  }
+
+  private static buildStack(node: INode, search: Position, parents: INode[]): {token: Token, stack: INode[]} | undefined {
+    const stack: INode[] = parents;
+
+    for (const c of node.getChildren()) {
+      if (c instanceof TokenNode) {
+        const token = c.getFirstToken();
+        if (token.getRow() === search.getRow()
+            && token.getCol() <= search.getCol()
+            && token.getCol() + token.getStr().length > search.getCol()) {
+          return {token, stack};
+        }
+      } else {
+        const res = this.buildStack(c, search, stack.concat([c]));
+        if (res !== undefined) {
+          return res;
         }
       }
     }
@@ -68,7 +86,7 @@ export class LSPUtils {
   }
 
   public static findForm(found: ICursorPosition, scope: Scope): FormDefinition | undefined {
-    if (!(found.statement instanceof Statements.Perform)) {
+    if (!(found.snode.get() instanceof Statements.Perform)) {
       return undefined;
     }
 
@@ -93,7 +111,7 @@ export class LSPUtils {
   }
 
   public static findInclude(found: ICursorPosition, reg: Registry): ABAPFile | undefined {
-    if (!(found.statement instanceof Statements.Include)) {
+    if (!(found.snode.get() instanceof Statements.Include)) {
       return;
     }
 
