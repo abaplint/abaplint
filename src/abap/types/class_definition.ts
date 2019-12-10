@@ -64,7 +64,7 @@ export class ClassDefinition extends Identifier {
     const ret: {name: string, partial: boolean}[] = [];
     for (const node of this.node.findAllStatements(Statements.InterfaceDef)) {
       const partial = node.concatTokens().toUpperCase().includes("PARTIALLY IMPLEMENTED");
-      const name = node.findFirstExpression(Expressions.InterfaceName)!.getFirstToken().getStr();
+      const name = node.findFirstExpression(Expressions.InterfaceName)!.getFirstToken().getStr().toUpperCase();
       ret.push({name, partial});
     }
     return ret;

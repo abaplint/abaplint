@@ -9,7 +9,7 @@ export class ICFService extends AbstractObject {
 
   public getAllowedNaming() {
     return { // todo, verify
-      maxLength: 30,
+      maxLength: 100,
       allowNamespace: true,
     };
   }

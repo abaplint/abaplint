@@ -40,9 +40,12 @@ export class SICFConsistency implements IRule {
     for (const h of handlers) {
       const clas = reg.getObject("CLAS", h) as Class | undefined;
       if (clas === undefined) {
-        const message = "Handler class " + h + " not found";
-        const issue = Issue.atPosition(obj.getFiles()[0], new Position(1, 1), message, this.getKey());
-        issues.push(issue);
+        const pattern = new RegExp(reg.getConfig().getSyntaxSetttings().errorNamespace, "i");
+        if (pattern.test(h) === true) {
+          const message = "Handler class " + h + " not found";
+          const issue = Issue.atPosition(obj.getFiles()[0], new Position(1, 1), message, this.getKey());
+          issues.push(issue);
+        }
         continue;
       }
 

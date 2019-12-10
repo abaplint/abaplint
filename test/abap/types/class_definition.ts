@@ -51,7 +51,7 @@ describe("Types, class_definition", () => {
     const clas = reg.getABAPObjects()[0] as Class;
     expect(clas.getClassDefinition()).to.not.equal(undefined);
     expect(clas.getClassDefinition()!.getImplementing().length).to.equal(1);
-    expect(clas.getClassDefinition()!.getImplementing()[0].name).to.equal("zif_moo");
+    expect(clas.getClassDefinition()!.getImplementing()[0].name).to.equal("ZIF_MOO");
     expect(clas.getClassDefinition()!.getImplementing()[0].partial).to.equal(false);
   });
 

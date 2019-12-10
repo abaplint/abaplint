@@ -55,7 +55,7 @@ export class Config {
         skipGeneratedGatewayClasses: true,
         skipGeneratedPersistentClasses: true,
         skipGeneratedFunctionGroups: true,
-        applyUnspecifiedRules: true,
+        applyUnspecifiedRules: false,
       },
       dependencies: [{
         url: "https://github.com/abaplint/deps",
