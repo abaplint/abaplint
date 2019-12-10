@@ -171,6 +171,11 @@ ENDCLASS.`);
 
     new ApplyWorkSpaceEdit(reg).apply(result!);
 
+    expect(reg.getObjects().length).to.equal(1);
+    expect(reg.getObjects()[0]).to.be.instanceof(Class);
+    const clas = reg.getObjects()[0] as Class;
+    expect(clas.getName()).to.equal("/FOO/CL_BAR");
+
     const issues = reg.findIssues();
     expect(issues.length).to.equal(1);
     expect(issues[0].getKey()).to.equal("object_naming");

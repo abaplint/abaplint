@@ -21,6 +21,8 @@ export class RenameGlobalClass {
       return undefined;
     }
 
+    // todo, refactor to somewhere else, overlaps with rule allowed_object_naming
+    // todo, also do not allow strange characters and spaces
     if (newName.length > clas.getAllowedNaming().maxLength) {
       return undefined;
     }
@@ -60,7 +62,7 @@ export class RenameGlobalClass {
   private renameFiles(clas: Class, oldName: string, name: string): RenameFile[] {
     const list: RenameFile[] = [];
 
-    const newName = name.toLowerCase().replace(/\//g, "#");
+    const newName = name.toLowerCase().replace(/\//g, "%23");
 
     for (const f of clas.getFiles()) {
 // todo, this is not completely correct, ie. if the URI contains the same directory name as the object name
