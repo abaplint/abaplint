@@ -83,7 +83,11 @@ export abstract class AbstractObject implements IObject {
     if (xml === undefined) {
       return undefined;
     }
-    return xmljs.xml2js(xml, {compact: true});
+    try {
+      return xmljs.xml2js(xml, {compact: true});
+    } catch {
+      return undefined;
+    }
   }
 
 }

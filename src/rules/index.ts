@@ -50,6 +50,7 @@ export * from "./release_idoc";
 export * from "./remove_descriptions";
 export * from "./rfc_error_handling";
 export * from "./short_case";
+export * from "./sicf_consistency";
 export * from "./syntax/begin_end_names";
 export * from "./syntax/check_ddic";
 export * from "./syntax/check_include";

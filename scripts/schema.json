@@ -1628,6 +1628,16 @@
                 }
               ]
             },
+            "sicf_consistency": {
+              "anyOf": [
+                {
+                  "$ref": "#/definitions/SICFConsistencyConf"
+                },
+                {
+                  "type": "boolean"
+                }
+              ]
+            },
             "space_before_colon": {
               "anyOf": [
                 {
@@ -2882,6 +2892,28 @@
       "required": [
         "ignoreExceptions"
       ],
+      "type": "object"
+    },
+    "SICFConsistencyConf": {
+      "additionalProperties": false,
+      "description": "Checks the validity of ICF services",
+      "properties": {
+        "enabled": {
+          "description": "Is the rule enabled?",
+          "type": "boolean"
+        },
+        "exclude": {
+          "description": "List of file regex patterns to exclude",
+          "items": {
+            "type": "string"
+          },
+          "type": "array"
+        },
+        "reason": {
+          "description": "An explanation for why the rule is enforced",
+          "type": "string"
+        }
+      },
       "type": "object"
     },
     "SequentialBlankConf": {

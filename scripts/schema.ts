@@ -66,6 +66,7 @@ import {RemoveDescriptionsConf} from "../src/rules/remove_descriptions";
 import {RFCErrorHandlingConf} from "../src/rules/rfc_error_handling";
 import {SequentialBlankConf} from "../src/rules/whitespace/sequential_blank";
 import {ShortCaseConf} from "../src/rules/short_case";
+import {SICFConsistencyConf} from "../src/rules/sicf_consistency";
 import {SpaceBeforeColonConf} from "../src/rules/whitespace/space_before_colon";
 import {SpaceBeforeDotConf} from "../src/rules/whitespace/space_before_dot";
 import {StartAtTabConf} from "../src/rules/whitespace/start_at_tab";
@@ -152,6 +153,7 @@ export interface IConfig {
     "rfc_error_handling"?: RFCErrorHandlingConf | boolean,
     "sequential_blank"?: SequentialBlankConf | boolean,
     "short_case"?: ShortCaseConf | boolean,
+    "sicf_consistency"?: SICFConsistencyConf | boolean,
     "space_before_colon"?: SpaceBeforeColonConf | boolean,
     "space_before_dot"?: SpaceBeforeDotConf | boolean,
     "start_at_tab"?: StartAtTabConf | boolean,
