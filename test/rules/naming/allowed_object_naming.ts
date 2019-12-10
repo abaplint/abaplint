@@ -36,4 +36,10 @@ describe("Rule: allowed_object_naming", function () {
     expect(issues.length).to.equal(0);
   });
 
+  it("SICF, with spaces", function () {
+    const issues = findIssues("zzzzzx         34fdfa36f2a5b0c7d2a8cc037.sicf.xml");
+    expect(issues.length).to.equal(0);
+  });
+
+
 });

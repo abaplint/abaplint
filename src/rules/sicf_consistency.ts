@@ -50,7 +50,7 @@ export class SICFConsistency implements IRule {
       }
 
       const implementing = clas.getClassDefinition()!.getImplementing();
-      if (implementing.includes({name: "IF_HTTP_EXTENSION", partial: false}) === false) {
+      if (implementing.findIndex((i) => { return i.name === "IF_HTTP_EXTENSION"; }) < 0) {
         const message = "Handler class " + h + " must implement IF_HTTP_EXTENSION";
         const issue = Issue.atPosition(obj.getFiles()[0], new Position(1, 1), message, this.getKey());
         issues.push(issue);
