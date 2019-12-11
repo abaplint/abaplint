@@ -39,6 +39,9 @@ export class SelectionScreenNaming extends ABAPRule {
 
   public runParsed(file: ABAPFile) {
     const issues: Issue[] = [];
+    if (this.conf.patternKind === undefined) {
+      this.conf.patternKind = "required";
+    }
     let parameterCheckDisabled: boolean = false;
     let selectOptionDisabled: boolean = false;
     if (this.conf.parameter.length === 0 || this.conf.parameter === undefined) {
