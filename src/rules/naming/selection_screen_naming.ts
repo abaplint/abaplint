@@ -51,7 +51,7 @@ export class SelectionScreenNaming extends ABAPRule {
     for (const stat of file.getStatements()) {
       if ((stat.get() instanceof Parameter && !parameterCheckDisabled)
           || (stat.get() instanceof SelectOption && !selectOptionDisabled)) {
-        const fieldNode = this.getFieldForStatement(stat);
+        const fieldNode = this.getFieldForStatementNode(stat);
         const regex = new RegExp(this.getPatternForStatement(stat.get()), "i");
         if (fieldNode && NameValidator.violatesRule(fieldNode.getFirstToken().getStr(), regex, this.conf)) {
           issues.push(Issue.atToken(
@@ -75,7 +75,7 @@ export class SelectionScreenNaming extends ABAPRule {
     return pattern;
   }
 
-  private getFieldForStatement(statNode: StatementNode): ExpressionNode | undefined {
+  private getFieldForStatementNode(statNode: StatementNode): ExpressionNode | undefined {
     if (statNode.get() instanceof Parameter) {
       return statNode.findFirstExpression(FieldSub);
     } else if (statNode.get() instanceof SelectOption) {
