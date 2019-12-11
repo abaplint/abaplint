@@ -41,10 +41,10 @@ export class SelectionScreenNaming extends ABAPRule {
     const issues: Issue[] = [];
     let parameterCheckDisabled: boolean = false;
     let selectOptionDisabled: boolean = false;
-    if (this.conf.parameter.length === 0) {
+    if (this.conf.parameter.length === 0 || this.conf.parameter === undefined) {
       parameterCheckDisabled = true;
     }
-    if (this.conf.selectOption.length === 0) {
+    if (this.conf.selectOption.length === 0 || this.conf.selectOption === undefined) {
       selectOptionDisabled = true;
     }
 

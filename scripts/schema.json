@@ -2928,6 +2928,7 @@
     },
     "SelectionScreenNamingConf": {
       "additionalProperties": false,
+      "description": "Allows you to enforce a pattern, such as a prefix, for selection-screen variable names.",
       "properties": {
         "enabled": {
           "description": "Is the rule enabled?",
