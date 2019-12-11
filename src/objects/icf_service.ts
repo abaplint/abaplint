@@ -26,7 +26,9 @@ export class ICFService extends AbstractObject {
 
     const table = parsed.abapGit["asx:abap"]["asx:values"].ICFHANDLER_TABLE;
     for (const h of xmlToArray(table)) {
-      ret.push(h.ICFHANDLER.ICFHANDLER._text);
+      if (h.ICFHANDLER !== undefined) {
+        ret.push(h.ICFHANDLER.ICFHANDLER._text);
+      }
     }
 
     return ret;
