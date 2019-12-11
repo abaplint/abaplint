@@ -68,7 +68,7 @@
     "nyc": "^14.1.1",
     "railroad-diagrams": "git+https://github.com/tabatkins/railroad-diagrams#gh-pages",
     "source-map-support": "^0.5.16",
-    "ts-json-schema-generator": "^0.57.0",
+    "ts-json-schema-generator": "^0.58.0",
     "tslint": "^5.20.1",
     "tslint-eslint-rules": "^5.4.0",
     "typescript": "^3.7.3"
