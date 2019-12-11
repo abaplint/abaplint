@@ -1608,6 +1608,16 @@
                 }
               ]
             },
+            "selection_screen_naming": {
+              "anyOf": [
+                {
+                  "$ref": "#/definitions/SelectionScreenNamingConf"
+                },
+                {
+                  "type": "boolean"
+                }
+              ]
+            },
             "sequential_blank": {
               "anyOf": [
                 {
@@ -2914,6 +2924,57 @@
           "type": "string"
         }
       },
+      "type": "object"
+    },
+    "SelectionScreenNamingConf": {
+      "additionalProperties": false,
+      "properties": {
+        "enabled": {
+          "description": "Is the rule enabled?",
+          "type": "boolean"
+        },
+        "exclude": {
+          "description": "List of file regex patterns to exclude",
+          "items": {
+            "type": "string"
+          },
+          "type": "array"
+        },
+        "ignoreNames": {
+          "description": "A list of names to be ignored",
+          "items": {
+            "type": "string"
+          },
+          "type": "array"
+        },
+        "ignorePatterns": {
+          "description": "A list of patterns to be ignored. For example, you can use it to ignore ambiguous prefixes",
+          "items": {
+            "type": "string"
+          },
+          "type": "array"
+        },
+        "parameter": {
+          "description": "The pattern for selection-screen parameters",
+          "type": "string"
+        },
+        "patternKind": {
+          "$ref": "#/definitions/PatternKind",
+          "description": "Specifies whether the pattern is forbidden (violation if name matches) or required (violation if name does not match)."
+        },
+        "reason": {
+          "description": "An explanation for why the rule is enforced",
+          "type": "string"
+        },
+        "selectOption": {
+          "description": "The pattern for selection-screen select-options",
+          "type": "string"
+        }
+      },
+      "required": [
+        "parameter",
+        "selectOption"
+      ],
       "type": "object"
     },
     "SequentialBlankConf": {
