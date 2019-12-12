@@ -16,6 +16,7 @@ import {CheckNoHandlerPragmaConf} from "../src/rules/check_no_handler_pragma";
 import {CheckSyntaxConf} from "../src/rules/syntax/check_syntax";
 import {CheckTextElementsConf} from "../src/rules/check_text_elements";
 import {CheckTransformationExistsConf} from "../src/rules/syntax/check_transformation_exists";
+import {CheckUnusedVariablesConf} from "../src/rules/check_unused_variables";
 import {ClassAttributeNamesConf} from "../src/rules/naming/class_attribute_names";
 import {CloudTypesConf} from "../src/rules/cloud_types";
 import {ColonMissingSpaceConf} from "../src/rules/whitespace/colon_missing_space";
@@ -104,6 +105,7 @@ export interface IConfig {
     "check_syntax"?: CheckSyntaxConf | boolean,
     "check_text_elements"?: CheckTextElementsConf | boolean,
     "check_transformation_exists"?: CheckTransformationExistsConf | boolean,
+    "check_unused_variables"?: CheckUnusedVariablesConf | boolean,
     "class_attribute_names"?: ClassAttributeNamesConf | boolean,
     "cloud_types"?: CloudTypesConf | boolean,
     "colon_missing_space"?: ColonMissingSpaceConf | boolean,

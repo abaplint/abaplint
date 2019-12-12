@@ -413,6 +413,33 @@
       },
       "type": "object"
     },
+    "CheckUnusedVariablesConf": {
+      "additionalProperties": false,
+      "properties": {
+        "checkConstants": {
+          "type": "boolean"
+        },
+        "enabled": {
+          "description": "Is the rule enabled?",
+          "type": "boolean"
+        },
+        "exclude": {
+          "description": "List of file regex patterns to exclude",
+          "items": {
+            "type": "string"
+          },
+          "type": "array"
+        },
+        "reason": {
+          "description": "An explanation for why the rule is enforced",
+          "type": "string"
+        }
+      },
+      "required": [
+        "checkConstants"
+      ],
+      "type": "object"
+    },
     "ClassAttributeNamesConf": {
       "additionalProperties": false,
       "description": "Allows you to enforce a pattern, such as a prefix, for class variable names.",
@@ -1122,6 +1149,16 @@
               "anyOf": [
                 {
                   "$ref": "#/definitions/CheckTransformationExistsConf"
+                },
+                {
+                  "type": "boolean"
+                }
+              ]
+            },
+            "check_unused_variables": {
+              "anyOf": [
+                {
+                  "$ref": "#/definitions/CheckUnusedVariablesConf"
                 },
                 {
                   "type": "boolean"

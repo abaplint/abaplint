@@ -9,6 +9,7 @@ export * from "./check_abstract";
 export * from "./check_comments";
 export * from "./check_no_handler_pragma";
 export * from "./check_text_elements";
+export * from "./check_unused_variables";
 export * from "./cloud_types";
 export * from "./commented_code";
 export * from "./constructor_visibility_public";
