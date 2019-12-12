@@ -64,6 +64,7 @@ import {PreferredCompareOperatorConf} from "../src/rules/preferred_compare_opera
 import {ReleaseIdocConf} from "../src/rules/release_idoc";
 import {RemoveDescriptionsConf} from "../src/rules/remove_descriptions";
 import {RFCErrorHandlingConf} from "../src/rules/rfc_error_handling";
+import {SelectionScreenNamingConf} from "../src/rules/naming/selection_screen_naming";
 import {SequentialBlankConf} from "../src/rules/whitespace/sequential_blank";
 import {ShortCaseConf} from "../src/rules/short_case";
 import {SICFConsistencyConf} from "../src/rules/sicf_consistency";
@@ -151,6 +152,7 @@ export interface IConfig {
     "release_idoc"?: ReleaseIdocConf | boolean,
     "remove_descriptions"?: RemoveDescriptionsConf | boolean,
     "rfc_error_handling"?: RFCErrorHandlingConf | boolean,
+    "selection_screen_naming"?: SelectionScreenNamingConf | boolean,
     "sequential_blank"?: SequentialBlankConf | boolean,
     "short_case"?: ShortCaseConf | boolean,
     "sicf_consistency"?: SICFConsistencyConf | boolean,

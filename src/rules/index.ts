@@ -41,6 +41,7 @@ export * from "./naming/local_class_naming";
 export * from "./naming/local_variable_names";
 export * from "./naming/method_parameter_names";
 export * from "./naming/object_naming";
+export * from "./naming/selection_screen_naming";
 export * from "./naming/types_naming";
 export * from "./nesting";
 export * from "./no_public_attributes";
