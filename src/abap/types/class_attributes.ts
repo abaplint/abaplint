@@ -105,7 +105,17 @@ export class Attributes {
   private parseSection(node: StructureNode | undefined, visibility: Visibility, scope: Scope): void {
     if (!node) { return; }
 
-    let defs = node.findAllStatements(Statements.Data).concat(node.findAllStatements(Statements.DataBegin));
+// todo, change all this to a traversal instead, eg. DATA BEGIN is a structure that contains DATA statements
+
+    for (const s of node.findAllStructures(Structures.Data)) {
+      const d = s.get() as Structures.Data;
+      const found = d.runSyntax(s, scope, this.filename);
+      if (found !== undefined) {
+        this.instance.push(new ClassAttribute(found, visibility));
+      }
+    }
+
+    let defs = node.findAllStatements(Statements.Data); // todo, this finds too much
     for (const def of defs) {
       this.instance.push(this.parseAttribute(def, visibility, scope));
     }
@@ -144,8 +154,6 @@ export class Attributes {
     let found: TypedIdentifier | undefined = undefined;
     const s = node.get();
     if (s instanceof Statements.Data) {
-      found = s.runSyntax(node, scope, this.filename);
-    } else if (s instanceof Statements.DataBegin) {
       found = s.runSyntax(node, scope, this.filename);
     } else if (s instanceof Statements.ClassData) {
       found = s.runSyntax(node, scope, this.filename);

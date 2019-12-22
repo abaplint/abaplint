@@ -38,14 +38,13 @@ function runMulti(files: {filename: string, contents: string}[], name: string): 
   return undefined;
 }
 
-/*
 function expectStructure(identifier: TypedIdentifier | undefined) {
   expect(identifier).to.not.equals(undefined);
   expect(identifier!.getType()).to.be.instanceof(Basic.StructureType);
   const tab = identifier!.getType() as Basic.StructureType;
   return tab.getComponents();
 }
-*/
+
 function expectString(identifier: TypedIdentifier | undefined) {
   expect(identifier).to.not.equals(undefined);
   expect(identifier!.getType()).to.be.instanceof(Basic.StringType);
@@ -324,6 +323,24 @@ describe("Syntax - Basic Types", () => {
       {filename: "zfoobar.prog.abap", contents: prog}],
       "foo");
     expectCharacter(type, 2);
+  });
+
+  it("structured DATA, BEGIN OF", () => {
+    const abap = `
+    DATA: BEGIN OF foo,
+      bar TYPE i,
+    END OF foo.`;
+
+    const identifier = resolveVariable(abap, "foo");
+    const components = expectStructure(identifier);
+    expect(components.length).to.equal(1);
+/*
+    const type = resolveType(abap, "foo");
+    const components = expectStructure(type);
+    expect(components.length).to.equal(1);
+    expect(components[0].name).to.equal("bar");
+    expect(components[0].type).to.be.instanceof(Basic.IntegerType);
+*/
   });
 
 });
