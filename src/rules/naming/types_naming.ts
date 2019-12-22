@@ -39,7 +39,9 @@ export class TypesNaming extends ABAPRule {
       if (stat.get() instanceof Statements.Type && nesting === 0) {
         expr = stat.findFirstExpression(Expressions.NamespaceSimpleName);
       } else if (stat.get() instanceof Statements.TypeBegin) {
-        expr = stat.findFirstExpression(Expressions.NamespaceSimpleName);
+        if (nesting === 0) {
+          expr = stat.findFirstExpression(Expressions.NamespaceSimpleName);
+        }
         nesting = nesting + 1;
       } else if (stat.get() instanceof Statements.TypeEnd) {
         nesting = nesting - 1;
