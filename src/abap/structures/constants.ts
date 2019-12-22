@@ -27,8 +27,16 @@ export class Constants extends Structure {
         if (found) {
           components.push({name: found.getName(), type: found.getType()});
         }
+      } else if (c instanceof StructureNode && ctyp instanceof Constants) {
+        const found = ctyp.runSyntax(c, scope, filename);
+        if (found) {
+          components.push({name: found.getName(), type: found.getType()});
+        }
       }
-      // todo, nested structures and INCLUDES
+    }
+
+    if (components.length === 0) {
+      return undefined;
     }
 
     return new TypedIdentifier(name, filename, new Basic.StructureType(components));

@@ -27,8 +27,13 @@ export class Data extends Structure {
         if (found) {
           components.push({name: found.getName(), type: found.getType()});
         }
+      } else if (c instanceof StructureNode && ctyp instanceof Data) {
+        const found = ctyp.runSyntax(c, scope, filename);
+        if (found) {
+          components.push({name: found.getName(), type: found.getType()});
+        }
       }
-      // todo, nested structures and INCLUDES
+      // todo: INCLUDES
     }
 
     return new TypedIdentifier(name, filename, new Basic.StructureType(components));

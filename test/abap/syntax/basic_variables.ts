@@ -337,4 +337,48 @@ describe("Syntax - Basic Types", () => {
     expect(components[0].name).to.equal("bar");
   });
 
+  it("structured CONSTANTS, BEGIN OF", () => {
+    const abap = `
+    CONSTANTS:
+      BEGIN OF bar,
+        foo TYPE c LENGTH 1 VALUE 'a',
+      END OF bar.`;
+
+    const identifier = resolveVariable(abap, "bar");
+    const components = expectStructure(identifier);
+    expect(components.length).to.equal(1);
+    expect(components[0].name).to.equal("foo");
+  });
+
+  it("structured CONSTANTS, BEGIN OF, nested", () => {
+    const abap = `
+    CONSTANTS:
+      BEGIN OF bar,
+        BEGIN OF loo,
+          foo TYPE c LENGTH 1 VALUE 'a',
+        END OF loo,
+      END OF bar.`;
+
+    const identifier = resolveVariable(abap, "bar");
+    const components = expectStructure(identifier);
+    expect(components.length).to.equal(1);
+    expect(components[0].name).to.equal("loo");
+  });
+
+  it("structured DATA, BEGIN OF, nested", () => {
+    const abap = `
+    DATA:
+      BEGIN OF foo,
+        BEGIN OF bar,
+          f TYPE string,
+        END OF bar,
+      END OF foo.`;
+
+    const identifier = resolveVariable(abap, "foo");
+    const components = expectStructure(identifier);
+    expect(components.length).to.equal(1);
+    expect(components[0].name).to.equal("bar");
+  });
+
+
 });
