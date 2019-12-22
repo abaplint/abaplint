@@ -334,13 +334,7 @@ describe("Syntax - Basic Types", () => {
     const identifier = resolveVariable(abap, "foo");
     const components = expectStructure(identifier);
     expect(components.length).to.equal(1);
-/*
-    const type = resolveType(abap, "foo");
-    const components = expectStructure(type);
-    expect(components.length).to.equal(1);
     expect(components[0].name).to.equal("bar");
-    expect(components[0].type).to.be.instanceof(Basic.IntegerType);
-*/
   });
 
 });
