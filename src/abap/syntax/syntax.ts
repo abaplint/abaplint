@@ -169,7 +169,13 @@ export class SyntaxLogic {
       } else if (stru instanceof Structures.Types) {
         this.scope.addType(stru.runSyntax(node, this.scope, filename));
         return true;
+      } else if (stru instanceof Structures.Constants) {
+        this.scope.addIdentifier(stru.runSyntax(node, this.scope, filename));
+        return true;
       } else if (stru instanceof Structures.Data) {
+        this.scope.addIdentifier(stru.runSyntax(node, this.scope, filename));
+        return true;
+      } else if (stru instanceof Structures.Statics) {
         this.scope.addIdentifier(stru.runSyntax(node, this.scope, filename));
         return true;
       } else if (stru instanceof Structures.TypeEnum) {
@@ -187,8 +193,6 @@ export class SyntaxLogic {
     } else if (s instanceof Statements.Constant
         || s instanceof Statements.Static
         || s instanceof Statements.Data
-        || s instanceof Statements.ConstantBegin  // todo, refactor to structure
-        || s instanceof Statements.StaticBegin    // todo, refactor to structure
         || s instanceof Statements.Parameter
         || s instanceof Statements.FieldSymbol
         || s instanceof Statements.Tables

@@ -1,7 +1,7 @@
 import * as Statements from "../statements";
+import * as Expressions from "../expressions";
 import {Structure} from "./_structure";
 import {star, IStructureRunnable, sta, beginEnd, alt, sub} from "./_combi";
-import * as Expressions from "../expressions";
 import {StatementNode, StructureNode} from "../nodes";
 import {Scope} from "../syntax/_scope";
 import {TypedIdentifier} from "../types/_typed_identifier";

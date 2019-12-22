@@ -150,6 +150,7 @@ export class Attributes {
   }
 
   private parseAttribute(node: StatementNode, visibility: Visibility, scope: Scope): ClassAttribute {
+// todo: remove this method
     let found: TypedIdentifier | undefined = undefined;
     const s = node.get();
     if (s instanceof Statements.Data) {
