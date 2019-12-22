@@ -102,7 +102,7 @@ export class Attributes {
     throw new Error("MethodDefinition, expected ClassDefinition or InterfaceDefinition");
   }
 
-  // todo, should this part be refactored into the general syntax logic somewhere?
+  // todo: should this part be refactored into the general syntax logic somewhere?
   private parseSection(node: StructureNode | undefined, visibility: Visibility, scope: Scope): void {
     if (node === undefined) { return; }
 
@@ -113,6 +113,16 @@ export class Attributes {
           const found = ctyp.runSyntax(c, scope, this.filename);
           if (found !== undefined) {
             this.instance.push(new ClassAttribute(found, visibility));
+          }
+        } else if (ctyp instanceof Structures.ClassData) {
+          const found = ctyp.runSyntax(c, scope, this.filename);
+          if (found !== undefined) {
+            this.static.push(new ClassAttribute(found, visibility));
+          }
+        } else if (ctyp instanceof Structures.Constants) {
+          const found = ctyp.runSyntax(c, scope, this.filename);
+          if (found !== undefined) {
+            this.constants.push(new ClassConstant(found, visibility));
           }
         } else if (ctyp instanceof Structures.TypeEnum) {
           const enums = ctyp.runSyntax(c, scope, this.filename);
@@ -129,14 +139,7 @@ export class Attributes {
           this.instance.push(this.parseAttribute(c, visibility, scope));
         } else if (ctyp instanceof Statements.ClassData) {
           this.static.push(this.parseAttribute(c, visibility, scope));
-        } else if (ctyp instanceof Statements.ClassDataBegin) { // todo, refactor
-          this.static.push(this.parseAttribute(c, visibility, scope));
         } else if (ctyp instanceof Statements.Constant) {
-          const found = ctyp.runSyntax(c, scope, this.filename);
-          if (found) {
-            this.constants.push(new ClassConstant(found, visibility));
-          }
-        } else if (ctyp instanceof Statements.ConstantBegin) {
           const found = ctyp.runSyntax(c, scope, this.filename);
           if (found) {
             this.constants.push(new ClassConstant(found, visibility));
@@ -152,8 +155,6 @@ export class Attributes {
     if (s instanceof Statements.Data) {
       found = s.runSyntax(node, scope, this.filename);
     } else if (s instanceof Statements.ClassData) {
-      found = s.runSyntax(node, scope, this.filename);
-    } else if (s instanceof Statements.ClassDataBegin) {
       found = s.runSyntax(node, scope, this.filename);
     } else {
       throw new Error("ClassAttribute, unexpected node, 1");
