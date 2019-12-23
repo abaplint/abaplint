@@ -65,7 +65,7 @@
     "@types/progress": "^2.0.3",
     "chai": "^4.2.0",
     "mocha": "^6.2.2",
-    "nyc": "^14.1.1",
+    "nyc": "^15.0.0",
     "railroad-diagrams": "git+https://github.com/tabatkins/railroad-diagrams#gh-pages",
     "source-map-support": "^0.5.16",
     "ts-json-schema-generator": "^0.58.1",
