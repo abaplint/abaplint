@@ -3,7 +3,7 @@ name: Playground
 on: [push, pull_request]
 
 jobs:
-  build:
+  playground:
     runs-on: ubuntu-latest
     strategy:
       matrix:
