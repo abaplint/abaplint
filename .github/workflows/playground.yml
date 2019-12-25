@@ -21,3 +21,20 @@ jobs:
       run: npm test
     - name: npm run web.playground
       run: npm run web.playground
+    - name: deploy playground.abaplint.org
+      if: github.ref == 'refs/heads/master' && github.repository == 'abaplint/abaplint'
+      env:
+        MY_TOKEN: ${{ secrets.MY_TOKEN }}
+      run: |
+        cd ..
+        cd ..
+        git config --global user.email "actions@github.com"
+        git config --global user.name "Actions CI"
+        git clone https://github.com/abaplint/playground.abaplint.org.git
+        ls
+        cp abaplint/abaplint/web/playground/build/* playground.abaplint.org/
+        cd playground.abaplint.org
+        git add -A
+        git status
+        git diff-index --quiet HEAD || git commit -m "Automatic update"
+        git push -q https://$MY_TOKEN@github.com/abaplint/playground.abaplint.org.git > /dev/null 2>&1
