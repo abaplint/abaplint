@@ -1,7 +1,7 @@
 import {MemoryFile} from "../../src/files";
 import {Config} from "../../src/config";
 import {expect} from "chai";
-import {Version, versionToText} from "../../src/version";
+import {Version, getPreviousVersion} from "../../src/version";
 import {Unknown} from "../../src/abap/statements/_statement";
 import {Structure} from "../../src/abap/structures/_structure";
 import {Lexer} from "../../src/abap/lexer";
@@ -81,9 +81,9 @@ export function statementVersion(tests: any, description: string, type: any) {
     tests.forEach((test: any) => {
       run(test.abap, "\"" + test.abap + "\" should be " + description, type, test.ver);
 // should fail in previous version
-      const lower = test.ver - 1;
+      const lower = getPreviousVersion(test.ver);
       run(test.abap,
-          "\"" + test.abap + "\" should not work in lower version(" + versionToText(lower) + ")",
+          "\"" + test.abap + "\" should not work in lower version(" + lower + ")",
           Unknown,
           lower);
     });

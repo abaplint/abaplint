@@ -1,4 +1,4 @@
-import {Version, versionToText, textToVersion} from "./version";
+import {Version} from "./version";
 import {Artifacts} from "./artifacts";
 import {IRule} from "./rules/_irule";
 
@@ -17,7 +17,7 @@ export interface IDependency {
 }
 
 export interface ISyntaxSettings {
-  version: string;
+  version: Version;
   errorNamespace: string;
   globalConstants: string[];
   globalMacros: string[];
@@ -44,9 +44,9 @@ export class Config {
       rules[rule.getKey()] = rule.getConfig();
     }
 
-    let version = versionToText(Config.defaultVersion);
+    let version = Config.defaultVersion;
     if (ver) {
-      version = versionToText(ver);
+      version = ver;
     }
 
     const config: IConfig = {
@@ -132,15 +132,7 @@ export class Config {
     if (this.config.global === undefined || this.config.syntax.version === undefined) {
       return Config.defaultVersion;
     }
-    return textToVersion(this.config.syntax.version);
+    return this.config.syntax.version;
   }
-/*
-  public setVersion(ver: Version | undefined): Config {
-    if (ver === undefined) {
-      return this;
-    }
-    this.config.syntax.version = versionToText(ver);
-    return this;
-  }
-*/
+
 }

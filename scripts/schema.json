@@ -1858,7 +1858,7 @@
           "type": "array"
         },
         "version": {
-          "type": "string"
+          "$ref": "#/definitions/Version"
         }
       },
       "required": [
@@ -3301,6 +3301,23 @@
         }
       },
       "type": "object"
+    },
+    "Version": {
+      "enum": [
+        "v700",
+        "v702",
+        "v740sp02",
+        "v740sp05",
+        "v740sp08",
+        "v750",
+        "v751",
+        "v752",
+        "v753",
+        "v754",
+        "v755",
+        "Cloud"
+      ],
+      "type": "string"
     },
     "WhenOthersLastConf": {
       "additionalProperties": false,

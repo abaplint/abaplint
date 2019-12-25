@@ -2,7 +2,7 @@ import {Issue} from "../../issue";
 import {ABAPRule} from "../_abap_rule";
 import {ABAPFile} from "../../files";
 import {Registry} from "../../registry";
-import {Version, versionToText} from "../../version";
+import {Version} from "../../version";
 import {Target} from "../../abap/expressions";
 import {BasicRuleConfig} from "../_basic_rule_config";
 
@@ -49,7 +49,7 @@ export class InlineDataOldVersions extends ABAPRule {
           continue;
         }
 
-        const message = "Inline DATA not possible in " + versionToText(reg.getConfig().getVersion());
+        const message = "Inline DATA not possible in " + reg.getConfig().getVersion();
         const issue = Issue.atToken(file, tokens[0], message, this.getKey());
         issues.push(issue);
       }
