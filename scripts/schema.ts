@@ -70,6 +70,7 @@ import {ShortCaseConf} from "../src/rules/short_case";
 import {SICFConsistencyConf} from "../src/rules/sicf_consistency";
 import {SpaceBeforeColonConf} from "../src/rules/whitespace/space_before_colon";
 import {SpaceBeforeDotConf} from "../src/rules/whitespace/space_before_dot";
+import {SQLEscapeHostVariablesConf} from "../src/rules/sql_escape_host_variables";
 import {StartAtTabConf} from "../src/rules/whitespace/start_at_tab";
 import {SuperclassFinalConf} from "../src/rules/syntax/superclass_final";
 import {TABLEnhancementCategoryConf} from "../src/rules/tabl_enhancement_category";
@@ -158,6 +159,7 @@ export interface IConfig {
     "sicf_consistency"?: SICFConsistencyConf | boolean,
     "space_before_colon"?: SpaceBeforeColonConf | boolean,
     "space_before_dot"?: SpaceBeforeDotConf | boolean,
+    "sql_escape_host_variables"?: SQLEscapeHostVariablesConf | boolean,
     "start_at_tab"?: StartAtTabConf | boolean,
     "superclass_final"?: SuperclassFinalConf | boolean,
     "tabl_enhancement_category"?: TABLEnhancementCategoryConf | boolean,

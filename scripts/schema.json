@@ -1668,6 +1668,16 @@
                 }
               ]
             },
+            "sql_escape_host_variables": {
+              "anyOf": [
+                {
+                  "$ref": "#/definitions/SQLEscapeHostVariablesConf"
+                },
+                {
+                  "type": "boolean"
+                }
+              ]
+            },
             "start_at_tab": {
               "anyOf": [
                 {
@@ -2907,6 +2917,28 @@
     "SICFConsistencyConf": {
       "additionalProperties": false,
       "description": "Checks the validity of ICF services",
+      "properties": {
+        "enabled": {
+          "description": "Is the rule enabled?",
+          "type": "boolean"
+        },
+        "exclude": {
+          "description": "List of file regex patterns to exclude",
+          "items": {
+            "type": "string"
+          },
+          "type": "array"
+        },
+        "reason": {
+          "description": "An explanation for why the rule is enforced",
+          "type": "string"
+        }
+      },
+      "type": "object"
+    },
+    "SQLEscapeHostVariablesConf": {
+      "additionalProperties": false,
+      "description": "Escape SQL host variables, from 740sp05",
       "properties": {
         "enabled": {
           "description": "Is the rule enabled?",
