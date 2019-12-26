@@ -41,6 +41,7 @@ import {ImplementMethodsConf} from "../src/rules/syntax/implement_methods";
 import {InStatementIndentationConf} from "../src/rules/whitespace/in_statement_indentation";
 import {IndentationConf} from "../src/rules/whitespace/indentation";
 import {InlineDataOldVersionsConf} from "../src/rules/syntax/inline_data_old_versions";
+import {KeepSingleParameterCallsOnOneLineConf} from "../src/rules/whitespace/keep_single_parameter_on_one_line";
 import {KeywordCaseConf} from "../src/rules/keyword_case";
 import {LineLengthConf} from "../src/rules/line_length";
 import {LineOnlyPuncConf} from "../src/rules/line_only_punc";
@@ -130,6 +131,7 @@ export interface IConfig {
     "in_statement_indentation"?: InStatementIndentationConf | boolean,
     "indentation"?: IndentationConf | boolean,
     "inline_data_old_versions"?: InlineDataOldVersionsConf | boolean,
+    "keep_single_parameter_on_one_line"?: KeepSingleParameterCallsOnOneLineConf | boolean,
     "keyword_case"?: KeywordCaseConf | boolean,
     "line_length"?: LineLengthConf | boolean,
     "line_only_punc"?: LineOnlyPuncConf | boolean,

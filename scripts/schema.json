@@ -1378,6 +1378,16 @@
                 }
               ]
             },
+            "keep_single_parameter_on_one_line": {
+              "anyOf": [
+                {
+                  "$ref": "#/definitions/KeepSingleParameterCallsOnOneLineConf"
+                },
+                {
+                  "type": "boolean"
+                }
+              ]
+            },
             "keyword_case": {
               "anyOf": [
                 {
@@ -2019,6 +2029,28 @@
     "InlineDataOldVersionsConf": {
       "additionalProperties": false,
       "description": "Checks for inline data declarations in older releases.",
+      "properties": {
+        "enabled": {
+          "description": "Is the rule enabled?",
+          "type": "boolean"
+        },
+        "exclude": {
+          "description": "List of file regex patterns to exclude",
+          "items": {
+            "type": "string"
+          },
+          "type": "array"
+        },
+        "reason": {
+          "description": "An explanation for why the rule is enforced",
+          "type": "string"
+        }
+      },
+      "type": "object"
+    },
+    "KeepSingleParameterCallsOnOneLineConf": {
+      "additionalProperties": false,
+      "description": "Keep single parameter calls on one line",
       "properties": {
         "enabled": {
           "description": "Is the rule enabled?",

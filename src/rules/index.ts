@@ -74,6 +74,7 @@ export * from "./whitespace/contains_tab";
 export * from "./whitespace/double_space";
 export * from "./whitespace/in_statement_indentation";
 export * from "./whitespace/indentation";
+export * from "./whitespace/keep_single_parameter_on_one_line";
 export * from "./whitespace/newline_between_methods";
 export * from "./whitespace/sequential_blank";
 export * from "./whitespace/space_before_colon";
