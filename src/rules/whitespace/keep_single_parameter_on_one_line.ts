@@ -7,6 +7,7 @@ import * as Expressions from "../../abap/expressions";
 
 /** Keep single parameter calls on one line */
 export class KeepSingleParameterCallsOnOneLineConf extends BasicRuleConfig {
+  public length = 120;
 }
 
 export class KeepSingleParameterCallsOnOneLine extends ABAPRule {
@@ -34,7 +35,7 @@ export class KeepSingleParameterCallsOnOneLine extends ABAPRule {
 
     for (const s of file.getStatements()) {
       // todo, add this as configurable
-      if (this.calcStatementLength(s) > 120) {
+      if (this.calcStatementLength(s) > this.getConfig().length) {
         continue;
       }
       for (const c of s.findAllExpressions(Expressions.MethodCall)) {
