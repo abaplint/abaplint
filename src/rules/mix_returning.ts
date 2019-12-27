@@ -5,7 +5,9 @@ import * as Statements from "../abap/statements";
 import * as Expressions from "../abap/expressions";
 import {BasicRuleConfig} from "./_basic_rule_config";
 
-/** Checks that methods don't have a mixture of returning and exporting/changing parameters */
+/** Checks that methods don't have a mixture of returning and exporting/changing parameters
+ * https://github.com/SAP/styleguides/blob/master/clean-abap/CleanABAP.md#use-either-returning-or-exporting-or-changing-but-not-a-combination
+ */
 export class MixReturningConf extends BasicRuleConfig {
 }
 

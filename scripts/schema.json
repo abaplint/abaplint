@@ -2521,7 +2521,7 @@
     },
     "MixReturningConf": {
       "additionalProperties": false,
-      "description": "Checks that methods don't have a mixture of returning and exporting/changing parameters",
+      "description": "Checks that methods don't have a mixture of returning and exporting/changing parameters\r\nhttps://github.com/SAP/styleguides/blob/master/clean-abap/CleanABAP.md#use-either-returning-or-exporting-or-changing-but-not-a-combination",
       "properties": {
         "enabled": {
           "description": "Is the rule enabled?",
