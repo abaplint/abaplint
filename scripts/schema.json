@@ -1578,6 +1578,16 @@
                 }
               ]
             },
+            "prefer_returning_to_exporting": {
+              "anyOf": [
+                {
+                  "$ref": "#/definitions/PreferReturningToExportingConf"
+                },
+                {
+                  "type": "boolean"
+                }
+              ]
+            },
             "preferred_compare_operator": {
               "anyOf": [
                 {
@@ -2847,6 +2857,28 @@
         "forbidden"
       ],
       "type": "string"
+    },
+    "PreferReturningToExportingConf": {
+      "additionalProperties": false,
+      "description": "Prefer RETURNING to EXPORTING\r\nhttps://github.com/SAP/styleguides/blob/master/clean-abap/CleanABAP.md#prefer-returning-to-exporting\r\nhttps://docs.abapopenchecks.org/checks/44/",
+      "properties": {
+        "enabled": {
+          "description": "Is the rule enabled?",
+          "type": "boolean"
+        },
+        "exclude": {
+          "description": "List of file regex patterns to exclude",
+          "items": {
+            "type": "string"
+          },
+          "type": "array"
+        },
+        "reason": {
+          "description": "An explanation for why the rule is enforced",
+          "type": "string"
+        }
+      },
+      "type": "object"
     },
     "PreferredCompareOperatorConf": {
       "additionalProperties": false,
