@@ -26,6 +26,19 @@ export class Interface extends ABAPObject {
     return definitions[0];
   }
 
+  public getDescription(): string | undefined {
+    const xml = this.getXML();
+    if (!xml) {
+      return undefined;
+    }
+    const parsed = this.parseXML();
+    if (parsed.abapGit["asx:abap"]["asx:values"] === undefined) {
+      return undefined;
+    }
+    const vseo = parsed.abapGit["asx:abap"]["asx:values"].VSEOINTERF;
+    return vseo.DESCRIPT ? vseo.DESCRIPT._text : "";
+  }
+
 // todo, should this method be moved to abstract class ABAPObject?
   public isGeneratedProxy(): boolean {
     const xml = this.getXML();

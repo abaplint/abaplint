@@ -1,5 +1,6 @@
 import {expect} from "chai";
 import {IConfig, Config} from "../src/config";
+import {Version} from "../src";
 
 describe("Registry", () => {
 
@@ -83,7 +84,7 @@ describe("Registry", () => {
       },
       dependencies: [],
       syntax: {
-        version: "v702",
+        version: Version.v702,
         errorNamespace: "^(Z|Y)",
         globalConstants: [],
         globalMacros: [],

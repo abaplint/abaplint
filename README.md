@@ -1,7 +1,5 @@
 [![npm version](https://badge.fury.io/js/abaplint.svg)](https://badge.fury.io/js/abaplint)
-[![Build Status](https://travis-ci.com/abaplint/abaplint.svg?branch=master)](https://travis-ci.com/abaplint/abaplint)
-[![Dependency Status](https://david-dm.org/abaplint/abaplint.svg)](https://david-dm.org/abaplint/abaplint)
-[![Greenkeeper badge](https://badges.greenkeeper.io/abaplint/abaplint.svg)](https://greenkeeper.io/)
+[![Build Status](https://github.com/abaplint/abaplint/workflows/Main/badge.svg)](https://github.com/abaplint/abaplint/actions)
 [![FOSSA Status](https://app.fossa.io/api/projects/git%2Bgithub.com%2Fabaplint%2Fabaplint.svg?type=shield)](https://app.fossa.io/projects/git%2Bgithub.com%2Fabaplint%2Fabaplint?ref=badge_shield)
 [![codecov](https://codecov.io/gh/abaplint/abaplint/branch/master/graph/badge.svg)](https://codecov.io/gh/abaplint/abaplint)
 

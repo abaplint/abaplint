@@ -5,7 +5,6 @@ import {ABAPFile} from "./files";
 import {Config} from "./config";
 import {Issue} from "./issue";
 import {Artifacts} from "./artifacts";
-import {versionToText} from "./version";
 import {SkipLogic} from "./skip_logic";
 import {Position} from "./position";
 import {IncludeGraph} from "./include_graph";
@@ -204,7 +203,7 @@ export class Registry {
 
     const objects = this.getABAPObjects();
 
-    pro.set(objects.length, ":percent - :elapseds - Lexing and parsing(" + versionToText(this.conf.getVersion()) + ") - :object");
+    pro.set(objects.length, ":percent - :elapseds - Lexing and parsing(" + this.conf.getVersion() + ") - :object");
     for (const obj of objects) {
       pro.tick({object: obj.getType() + " " + obj.getName()});
       obj.parseFirstPass(this);

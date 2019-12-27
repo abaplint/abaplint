@@ -1,5 +1,5 @@
 import {Registry, IProgress} from "../../registry";
-import {Version, textToVersion, versionToText} from "../../version";
+import {Version} from "../../version";
 import {Unknown, Comment, Empty} from "../../abap/statements/_statement";
 import * as Statements from "../../abap/statements";
 import {MethodLengthStats} from "../../abap/method_length_stats";
@@ -43,7 +43,7 @@ export class Stats {
   public run(progress?: IProgress): IResult {
     return {
       version: Registry.abaplintVersion(),
-      target: versionToText(this.reg.getConfig().getVersion()),
+      target: this.reg.getConfig().getVersion(),
       time: new Date().toISOString(),
       totals: this.buildTotals(),
       objects: this.sort(this.buildObjects()),
@@ -113,10 +113,8 @@ export class Stats {
 
   private buildStatements(progress?: IProgress): ITypeCount[] {
     const ret: ITypeCount[] = [];
-    for (const ver in Version) {
-      if (isNaN(Number(ver))) {
-        ret.push({type: ver, count: this.statementsVersion(textToVersion(ver), progress)});
-      }
+    for (const ver of Object.values(Version)) {
+      ret.push({type: ver, count: this.statementsVersion(ver, progress)});
     }
     return ret;
   }

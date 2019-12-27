@@ -50,7 +50,7 @@ export class BeginEndNames extends ABAPRule {
   }
 
   private test(stru: StructureNode, type: new() => Structure, b: new() => Statement, e: new() => Statement, file: ABAPFile): Issue[] {
-    const output: Issue[] = [];
+    let output: Issue[] = [];
 
     for (const sub of stru.findAllStructures(type)) {
       const begin = sub.findDirectStatements(b)[0].findFirstExpression(Expressions.NamespaceSimpleName)!;
@@ -62,6 +62,11 @@ export class BeginEndNames extends ABAPRule {
       if (first.getStr().toUpperCase() !== last.getStr().toUpperCase()) {
         const issue = Issue.atToken(file, first, this.getDescription(), this.getKey());
         output.push(issue);
+      }
+
+      // begin recursion
+      for (const c of sub.findDirectStructures(type)) {
+        output = output.concat(this.test(c, type, b, e, file));
       }
     }
 

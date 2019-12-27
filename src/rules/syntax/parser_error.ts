@@ -6,7 +6,6 @@ import {ABAPRule} from "../_abap_rule";
 import {ABAPFile} from "../../files";
 import {StatementNode} from "../../abap/nodes";
 import {Registry} from "../../registry";
-import {versionToText} from "../../version";
 import {BasicRuleConfig} from "../_basic_rule_config";
 
 /** Checks for syntax unrecognized by abaplint */
@@ -49,7 +48,7 @@ export class ParserError extends ABAPRule {
           const issue = Issue.atPosition(file, start, message, this.getKey());
           issues.push(issue);
         } else {
-          const message = this.getDescription(versionToText(reg.getConfig().getVersion()));
+          const message = this.getDescription(reg.getConfig().getVersion());
           const issue = Issue.atStatement(file, statement, message, this.getKey());
           issues.push(issue);
         }

@@ -251,6 +251,25 @@ describe("Objects, class, getAttributes", () => {
     expect(c.getType()).to.be.instanceof(CharacterType);
   });
 
+  it("test, positive, instance, BEGIN OF", () => {
+    const abap = "CLASS zcl_foobar DEFINITION PUBLIC CREATE PUBLIC.\n" +
+    "  PUBLIC SECTION.\n" +
+    "  PROTECTED SECTION.\n" +
+    "  PRIVATE SECTION.\n" +
+    "    DATA: BEGIN OF foobar,\n" +
+    "            moo TYPE i,\n" +
+    "          END OF foobar.\n" +
+    "ENDCLASS.\n" +
+    "CLASS zcl_foobar IMPLEMENTATION.\n" +
+    "ENDCLASS.";
+
+    const reg = new Registry().addFile(new MemoryFile("zcl_foobar.clas.abap", abap)).parse();
+    const clas = reg.getABAPObjects()[0] as Class;
+    expect(clas.getClassDefinition()).to.not.equal(undefined);
+    const attr = clas.getClassDefinition()!.getAttributes(Scope.buildDefault(reg));
+    expect(attr.getInstance().length).to.equal(1);
+  });
+
 // todo, one test for each section, plus data/static/constant
 
   it("test, parser error", () => {

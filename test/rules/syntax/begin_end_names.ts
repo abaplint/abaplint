@@ -29,6 +29,9 @@ const tests = [
 
   {abap: "TYPES: BEGIN OF ENUM moo, blah, END OF ENUM bar.", cnt: 1},
   {abap: "TYPES: BEGIN OF ENUM moo, blah, END OF ENUM moo.", cnt: 0},
+
+  {abap: "DATA: BEGIN OF foo, BEGIN OF bar2, f TYPE string, END OF bar, END OF foo.", cnt: 1},
+  {abap: "DATA: BEGIN OF foo, BEGIN OF bar, f TYPE string, END OF bar, END OF foo.", cnt: 0},
 ];
 
 testRule(tests, BeginEndNames);

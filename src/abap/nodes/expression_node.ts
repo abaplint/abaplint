@@ -103,6 +103,15 @@ export class ExpressionNode extends CountableNode {
     return ret;
   }
 
+  public findDirectExpression(type: new () => Expression): ExpressionNode | undefined {
+    for (const child of this.getChildren()) {
+      if (child instanceof ExpressionNode && child.get() instanceof type) {
+        return child;
+      }
+    }
+    return undefined;
+  }
+
   public findDirectTokenByText(text: string): Token | undefined {
     for (const child of this.getChildren()) {
       if (child instanceof TokenNode) {

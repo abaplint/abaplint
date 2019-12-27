@@ -2,7 +2,7 @@ import * as Tokens from "./tokens";
 import {Token as Tokens_Token} from "./tokens/_token";
 import {Position} from "../position";
 import {TokenNode, ExpressionNode, TokenNodeRegex} from "./nodes/";
-import {Version, versionToText} from "../version";
+import {Version} from "../version";
 import {CountableNode} from "./nodes/_countable_node";
 import {INode} from "./nodes/_inode";
 
@@ -257,7 +257,7 @@ class Vers implements IStatementRunnable {
 
   public railroad() {
     return "Railroad.Sequence(Railroad.Comment(\"" +
-      versionToText(this.version) +
+      this.version +
       "\", {}), " +
       this.runnable.railroad() +
       ")";
@@ -300,7 +300,7 @@ class VersNot implements IStatementRunnable {
 
   public railroad() {
     return "Railroad.Sequence(Railroad.Comment(\"not " +
-      versionToText(this.version) +
+      this.version +
       "\", {}), " +
       this.runnable.railroad() +
       ")";

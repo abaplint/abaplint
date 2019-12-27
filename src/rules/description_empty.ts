@@ -1,7 +1,7 @@
 import {Issue} from "../issue";
 import {IRule} from "./_irule";
 import {IObject} from "../objects/_iobject";
-import {Class} from "../objects";
+import {Class, Interface} from "../objects";
 import {Registry} from "../registry";
 import {BasicRuleConfig} from "./_basic_rule_config";
 import {Position} from "../position";
@@ -35,8 +35,7 @@ export class DescriptionEmpty implements IRule {
   public run(obj: IObject, _reg: Registry): Issue[] {
     const issues: Issue[] = [];
 
-    // todo, add INTF
-    if (obj instanceof Class) {
+    if (obj instanceof Class || obj instanceof Interface) {
       const description = obj.getDescription();
       let message: string | undefined = undefined;
       if (description === "") {

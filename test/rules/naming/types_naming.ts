@@ -9,6 +9,15 @@ const tests = [
   {abap: "TYPES ty_foo.", cnt: 0},
   {abap: "TYPES BEGIN OF bar.\nTYPES moo.\nTYPES END OF bar.", cnt: 1},
   {abap: "TYPES BEGIN OF ty_bar.\nTYPES moo.\nTYPES END OF ty_bar.", cnt: 0},
+
+  {abap: `TYPES:
+BEGIN OF ty_foo,
+  lazy TYPE abap_bool,
+  BEGIN OF boo,
+    controller TYPE REF TO object,
+  END OF boo,
+END OF ty_foo.`, cnt: 0},
+
 ];
 
 testRule(tests, TypesNaming);

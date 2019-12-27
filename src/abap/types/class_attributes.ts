@@ -102,54 +102,60 @@ export class Attributes {
     throw new Error("MethodDefinition, expected ClassDefinition or InterfaceDefinition");
   }
 
+  // todo: should this part be refactored into the general syntax logic somewhere?
   private parseSection(node: StructureNode | undefined, visibility: Visibility, scope: Scope): void {
-    if (!node) { return; }
+    if (node === undefined) { return; }
 
-    let defs = node.findAllStatements(Statements.Data).concat(node.findAllStatements(Statements.DataBegin));
-    for (const def of defs) {
-      this.instance.push(this.parseAttribute(def, visibility, scope));
-    }
-
-    defs = node.findAllStatements(Statements.ClassData).concat(node.findAllStatements(Statements.ClassDataBegin));
-    for (const def of defs) {
-      this.static.push(this.parseAttribute(def, visibility, scope));
-    }
-
-    defs = node.findAllStatements(Statements.Constant).concat(node.findAllStatements(Statements.ConstantBegin));
-    for (const def of defs) {
-      let found: TypedIdentifier | undefined = undefined;
-      const s = def.get();
-      if (s instanceof Statements.Constant) {
-        found = s.runSyntax(def, scope, this.filename);
-      } else if (s instanceof Statements.ConstantBegin) {
-        found = s.runSyntax(def, scope, this.filename);
+    for (const c of node.getChildren()) {
+      const ctyp = c.get();
+      if (c instanceof StructureNode) {
+        if (ctyp instanceof Structures.Data) {
+          const found = ctyp.runSyntax(c, scope, this.filename);
+          if (found !== undefined) {
+            this.instance.push(new ClassAttribute(found, visibility));
+          }
+        } else if (ctyp instanceof Structures.ClassData) {
+          const found = ctyp.runSyntax(c, scope, this.filename);
+          if (found !== undefined) {
+            this.static.push(new ClassAttribute(found, visibility));
+          }
+        } else if (ctyp instanceof Structures.Constants) {
+          const found = ctyp.runSyntax(c, scope, this.filename);
+          if (found !== undefined) {
+            this.constants.push(new ClassConstant(found, visibility));
+          }
+        } else if (ctyp instanceof Structures.TypeEnum) {
+          const enums = ctyp.runSyntax(c, scope, this.filename);
+          for (const e of enums) {
+          // for now add ENUM values as constants
+            this.constants.push(new ClassConstant(e, visibility));
+          }
+        } else {
+          // begin recursion
+          this.parseSection(c, visibility, scope);
+        }
+      } else if (c instanceof StatementNode) {
+        if (ctyp instanceof Statements.Data) {
+          this.instance.push(this.parseAttribute(c, visibility, scope));
+        } else if (ctyp instanceof Statements.ClassData) {
+          this.static.push(this.parseAttribute(c, visibility, scope));
+        } else if (ctyp instanceof Statements.Constant) {
+          const found = ctyp.runSyntax(c, scope, this.filename);
+          if (found) {
+            this.constants.push(new ClassConstant(found, visibility));
+          }
+        }
       }
-      if (found) {
-        this.constants.push(new ClassConstant(found, visibility));
-      }
     }
-
-// for now add ENUM values as constants
-    for (const type of node.findAllStructures(Structures.TypeEnum)) {
-      const enu = type.get() as Structures.TypeEnum;
-      const enums = enu.runSyntax(type, scope, this.filename);
-      for (const c of enums) {
-        this.constants.push(new ClassConstant(c, visibility));
-      }
-    }
-
   }
 
   private parseAttribute(node: StatementNode, visibility: Visibility, scope: Scope): ClassAttribute {
+// todo: remove this method
     let found: TypedIdentifier | undefined = undefined;
     const s = node.get();
     if (s instanceof Statements.Data) {
       found = s.runSyntax(node, scope, this.filename);
-    } else if (s instanceof Statements.DataBegin) {
-      found = s.runSyntax(node, scope, this.filename);
     } else if (s instanceof Statements.ClassData) {
-      found = s.runSyntax(node, scope, this.filename);
-    } else if (s instanceof Statements.ClassDataBegin) {
       found = s.runSyntax(node, scope, this.filename);
     } else {
       throw new Error("ClassAttribute, unexpected node, 1");

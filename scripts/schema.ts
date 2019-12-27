@@ -42,6 +42,7 @@ import {ImplementMethodsConf} from "../src/rules/syntax/implement_methods";
 import {InStatementIndentationConf} from "../src/rules/whitespace/in_statement_indentation";
 import {IndentationConf} from "../src/rules/whitespace/indentation";
 import {InlineDataOldVersionsConf} from "../src/rules/syntax/inline_data_old_versions";
+import {KeepSingleParameterCallsOnOneLineConf} from "../src/rules/whitespace/keep_single_parameter_on_one_line";
 import {KeywordCaseConf} from "../src/rules/keyword_case";
 import {LineLengthConf} from "../src/rules/line_length";
 import {LineOnlyPuncConf} from "../src/rules/line_only_punc";
@@ -71,6 +72,7 @@ import {ShortCaseConf} from "../src/rules/short_case";
 import {SICFConsistencyConf} from "../src/rules/sicf_consistency";
 import {SpaceBeforeColonConf} from "../src/rules/whitespace/space_before_colon";
 import {SpaceBeforeDotConf} from "../src/rules/whitespace/space_before_dot";
+import {SQLEscapeHostVariablesConf} from "../src/rules/sql_escape_host_variables";
 import {StartAtTabConf} from "../src/rules/whitespace/start_at_tab";
 import {SuperclassFinalConf} from "../src/rules/syntax/superclass_final";
 import {TABLEnhancementCategoryConf} from "../src/rules/tabl_enhancement_category";
@@ -131,6 +133,7 @@ export interface IConfig {
     "in_statement_indentation"?: InStatementIndentationConf | boolean,
     "indentation"?: IndentationConf | boolean,
     "inline_data_old_versions"?: InlineDataOldVersionsConf | boolean,
+    "keep_single_parameter_on_one_line"?: KeepSingleParameterCallsOnOneLineConf | boolean,
     "keyword_case"?: KeywordCaseConf | boolean,
     "line_length"?: LineLengthConf | boolean,
     "line_only_punc"?: LineOnlyPuncConf | boolean,
@@ -160,6 +163,7 @@ export interface IConfig {
     "sicf_consistency"?: SICFConsistencyConf | boolean,
     "space_before_colon"?: SpaceBeforeColonConf | boolean,
     "space_before_dot"?: SpaceBeforeDotConf | boolean,
+    "sql_escape_host_variables"?: SQLEscapeHostVariablesConf | boolean,
     "start_at_tab"?: StartAtTabConf | boolean,
     "superclass_final"?: SuperclassFinalConf | boolean,
     "tabl_enhancement_category"?: TABLEnhancementCategoryConf | boolean,
