@@ -14,6 +14,8 @@ describe("Pretty printer, keywords upper case", () => {
     {input: "write report.", expected: "WRITE report."},
     {input: "data(foo) = 2.", expected: "DATA(foo) = 2."},
     {input: "WRITE foo.\nwrite bar.", expected: "WRITE foo.\nWRITE bar."},
+    {input: "CALL FUNCTION 'FOOBAR' EXCEPTIONS OTHERS = 1.",
+      expected: "CALL FUNCTION 'FOOBAR' EXCEPTIONS OTHERS = 1."},
   ];
 
   tests.forEach((test) => {
