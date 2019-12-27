@@ -35,7 +35,8 @@ export class KeepSingleParameterCallsOnOneLine extends ABAPRule {
 
     for (const s of file.getStatements()) {
       // todo, add this as configurable
-      if (this.calcStatementLength(s) > this.getConfig().length) {
+      if (this.calcStatementLength(s) > this.getConfig().length
+          || this.containsNewlineTemplate(s)) {
         continue;
       }
       for (const c of s.findAllExpressions(Expressions.MethodCall)) {
@@ -44,6 +45,17 @@ export class KeepSingleParameterCallsOnOneLine extends ABAPRule {
     }
 
     return issues;
+  }
+
+  private containsNewlineTemplate(s: StatementNode): boolean {
+    for (const st of s.findAllExpressions(Expressions.StringTemplate)) {
+      for (const t of st.getAllTokens()) {
+        if (t.getStr().includes("\\n")) {
+          return true;
+        }
+      }
+    }
+    return false;
   }
 
   private check(c: ExpressionNode, file: ABAPFile): Issue[] {

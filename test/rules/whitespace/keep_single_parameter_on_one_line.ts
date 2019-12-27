@@ -24,6 +24,10 @@ const tests = [
     iv_name = |filter| ) ).`, cnt: 1},
   {abap: `io_html->add(
     iv_name = moo( ) ).`, cnt: 1},
+  {abap: `then_patch_should_be(
+    |\\n| &&
+    |write: \`Hello world\`.\\n| &&
+    |\\n| ).`, cnt: 0},
 ];
 
 testRule(tests, KeepSingleParameterCallsOnOneLine);
