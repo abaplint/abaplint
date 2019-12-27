@@ -7,7 +7,7 @@ import * as Expressions from "../../abap/expressions";
 
 /** Keep single parameter calls on one line */
 export class KeepSingleParameterCallsOnOneLineConf extends BasicRuleConfig {
-  public length = 120;
+  public length: number = 120;
 }
 
 export class KeepSingleParameterCallsOnOneLine extends ABAPRule {

@@ -2063,11 +2063,17 @@
           },
           "type": "array"
         },
+        "length": {
+          "type": "number"
+        },
         "reason": {
           "description": "An explanation for why the rule is enforced",
           "type": "string"
         }
       },
+      "required": [
+        "length"
+      ],
       "type": "object"
     },
     "KeywordCaseConf": {
