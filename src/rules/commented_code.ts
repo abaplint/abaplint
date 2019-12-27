@@ -6,7 +6,10 @@ import {BasicRuleConfig} from "./_basic_rule_config";
 import {Registry} from "../registry";
 import {Unknown, Empty, Comment} from "../abap/statements/_statement";
 
-/** Detects usage of commented out code. */
+/** Detects usage of commented out code.
+ * https://github.com/SAP/styleguides/blob/master/clean-abap/CleanABAP.md#delete-code-instead-of-commenting-it
+ * https://docs.abapopenchecks.org/checks/14/
+ */
 export class CommentedCodeConf extends BasicRuleConfig {
 }
 

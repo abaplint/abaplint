@@ -7,7 +7,10 @@ import {Registry} from "../registry";
 import {IObject} from "../objects/_iobject";
 import {Class} from "../objects";
 
-/** Detects lines containing only punctuation. */
+/** Detects lines containing only punctuation.
+ * https://github.com/SAP/styleguides/blob/master/clean-abap/CleanABAP.md#close-brackets-at-line-end
+ * https://docs.abapopenchecks.org/checks/16/
+ */
 export class LineOnlyPuncConf extends BasicRuleConfig {
   public ignoreExceptions: boolean = true;
 }

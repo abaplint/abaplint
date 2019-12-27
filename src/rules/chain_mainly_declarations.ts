@@ -4,7 +4,9 @@ import {ABAPFile} from "../files";
 import {BasicRuleConfig} from "./_basic_rule_config";
 import * as Statements from "../abap/statements";
 
-/** Chain mainly declarations */
+/** Chain mainly declarations
+ * https://docs.abapopenchecks.org/checks/23/
+ */
 export class ChainMainlyDeclarationsConf extends BasicRuleConfig {
 }
 

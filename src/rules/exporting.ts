@@ -10,7 +10,10 @@ export class Counter {
   public pos: Position;
 }
 
-/** Detects EXPORTING statements which can be omitted. */
+/** Detects EXPORTING statements which can be omitted.
+ * https://github.com/SAP/styleguides/blob/master/clean-abap/CleanABAP.md#omit-the-optional-keyword-exporting
+ * https://docs.abapopenchecks.org/checks/30/
+ */
 export class ExportingConf extends BasicRuleConfig {
 }
 

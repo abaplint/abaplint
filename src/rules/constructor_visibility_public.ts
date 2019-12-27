@@ -7,7 +7,10 @@ import {Visibility} from "../abap/types";
 import {Registry} from "../registry";
 import {Scope} from "../abap/syntax/_scope";
 
-/** Constructor must be placed in the public section, even if the class is not CREATE PUBLIC. */
+/** Constructor must be placed in the public section, even if the class is not CREATE PUBLIC.
+ * https://github.com/SAP/styleguides/blob/master/clean-abap/CleanABAP.md#if-your-global-class-is-create-private-leave-the-constructor-public
+ * https://help.sap.com/doc/abapdocu_751_index_htm/7.51/en-US/abeninstance_constructor_guidl.htm
+ */
 export class ConstructorVisibilityPublicConf extends BasicRuleConfig {
 }
 

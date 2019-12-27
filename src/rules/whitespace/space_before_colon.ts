@@ -3,7 +3,9 @@ import {ABAPRule} from "../_abap_rule";
 import {ABAPFile} from "../../files";
 import {BasicRuleConfig} from "../_basic_rule_config";
 
-/** Checks that there are no spaces in front of colons in chained statements. */
+/** Checks that there are no spaces in front of colons in chained statements.
+ * https://docs.abapopenchecks.org/checks/80/
+ */
 export class SpaceBeforeColonConf extends BasicRuleConfig {
 }
 
