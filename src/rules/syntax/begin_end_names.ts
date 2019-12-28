@@ -9,6 +9,7 @@ import {StructureNode} from "../../abap/nodes";
 import {Structure} from "../../abap/structures/_structure";
 import {Statement} from "../../abap/statements/_statement";
 
+/** Check BEGIN OF and END OF names match */
 export class BeginEndNamesConf extends BasicRuleConfig {
 }
 
