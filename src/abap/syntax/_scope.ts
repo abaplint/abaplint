@@ -5,18 +5,25 @@ import {Globals} from "./_globals";
 import * as Objects from "../../objects";
 import {DDIC} from "../../ddic";
 
-interface IVar {
-  name: string;
-  identifier?: TypedIdentifier;
+export enum ScopeType {
+  BuiltIn = "_builtin",
+  Global = "_global",
+  Form = "form",
+  Function = "function",
+  Method = "method",
+  ClassDefinition = "class_definition",
+  ClassImplementation = "class_implementation",
 }
 
 export interface IScopeInfo {
-  scopeName: string;
-  vars: IVar[];
-  cdef: ClassDefinition[];
-  idef: InterfaceDefinition[];
-  form: FormDefinition[];
-  type: TypedIdentifier[];
+  stype: ScopeType;
+  sname: string;
+
+  vars: {name: string; identifier: TypedIdentifier}[];
+  cdefs: ClassDefinition[];
+  idefs: InterfaceDefinition[];
+  forms: FormDefinition[];
+  types: TypedIdentifier[];
 }
 
 export class Scope {
@@ -26,13 +33,13 @@ export class Scope {
   public static buildDefault(reg: Registry): Scope {
     const s = new Scope(reg);
 
-    s.push("_builtin");
+    s.push(ScopeType.BuiltIn, ScopeType.BuiltIn);
     const builtin = Globals.get(reg.getConfig().getSyntaxSetttings().globalConstants);
     s.addList(builtin);
     for (const t of Globals.getTypes()) {
       s.addType(t);
     }
-    s.push("_global");
+    s.push(ScopeType.Global, ScopeType.Global);
 
     return s;
   }
@@ -54,21 +61,21 @@ export class Scope {
     if (type === undefined) {
       return;
     }
-    this.scopes[this.scopes.length - 1].type.push(type);
+    this.scopes[this.scopes.length - 1].types.push(type);
   }
 
   public addClassDefinition(c: ClassDefinition) {
-    this.scopes[this.scopes.length - 1].cdef.push(c);
+    this.scopes[this.scopes.length - 1].cdefs.push(c);
   }
 
   public addFormDefinitions(f: FormDefinition[]) {
-    this.scopes[this.scopes.length - 1].form = this.scopes[this.scopes.length - 1].form.concat(f);
+    this.scopes[this.scopes.length - 1].forms = this.scopes[this.scopes.length - 1].forms.concat(f);
   }
 
   public findClassDefinition(name: string): ClassDefinition | undefined {
     // todo, this should probably search the nearest first? in case there are shadowed variables?
     for (const scope of this.scopes) {
-      for (const cdef of scope.cdef) {
+      for (const cdef of scope.cdefs) {
         if (cdef.getName().toUpperCase() === name.toUpperCase()) {
           return cdef;
         }
@@ -101,7 +108,7 @@ export class Scope {
   public findFormDefinition(name: string): FormDefinition | undefined {
     // todo, this should probably search the nearest first? in case there are shadowed variables?
     for (const scope of this.scopes) {
-      for (const form of scope.form) {
+      for (const form of scope.forms) {
         if (form.getName().toUpperCase() === name.toUpperCase()) {
           return form;
         }
@@ -111,13 +118,13 @@ export class Scope {
   }
 
   public addInterfaceDefinition(i: InterfaceDefinition) {
-    this.scopes[this.scopes.length - 1].idef.push(i);
+    this.scopes[this.scopes.length - 1].idefs.push(i);
   }
 
   public findInterfaceDefinition(name: string): InterfaceDefinition | undefined {
     // todo, this should probably search the nearest first? in case there are shadowed variables?
     for (const scope of this.scopes) {
-      for (const idef of scope.idef) {
+      for (const idef of scope.idefs) {
         if (idef.getName().toUpperCase() === name.toUpperCase()) {
           return idef;
         }
@@ -137,17 +144,15 @@ export class Scope {
     this.scopes[this.scopes.length - 1].vars.push({name, identifier});
   }
 
-  public addName(name: string) {
-    this.scopes[this.scopes.length - 1].vars.push({name});
+  public addListPrefix(identifiers: TypedIdentifier[], prefix: string) {
+    for (const id of identifiers) {
+      this.addNamedIdentifier(prefix + id.getName(), id);
+    }
   }
 
-  public addList(identifiers: TypedIdentifier[], prefix?: string | undefined) {
+  public addList(identifiers: TypedIdentifier[]) {
     for (const id of identifiers) {
-      if (prefix) {
-        this.addNamedIdentifier(prefix + id.getName(), id);
-      } else {
-        this.addIdentifier(id);
-      }
+      this.addIdentifier(id);
     }
   }
 
@@ -162,13 +167,13 @@ export class Scope {
   }
 
   public getCurrentTypes(): TypedIdentifier[] {
-    return this.scopes[this.scopes.length - 1].type;
+    return this.scopes[this.scopes.length - 1].types;
   }
 
   public resolveType(name: string): TypedIdentifier |undefined {
     // todo, this should probably search the nearest first? in case there are shadowed variables?
     for (const scope of this.scopes) {
-      for (const local of scope.type) {
+      for (const local of scope.types) {
         if (local.getName().toUpperCase() === name.toUpperCase()) {
           return local;
         }
@@ -189,18 +194,19 @@ export class Scope {
     return undefined;
   }
 
-  public getParentName(): string {
-    return this.scopes[this.scopes.length - 2].scopeName;
+  public getParentName(): string { // todo, somehow get rid of this?
+    return this.scopes[this.scopes.length - 2].sname;
   }
 
-  public push(name: string): Scope {
+  public push(stype: ScopeType, sname: string): Scope {
     this.scopes.push({
-      scopeName: name,
+      stype,
+      sname,
       vars: [],
-      cdef: [],
-      idef: [],
-      form: [],
-      type: [],
+      cdefs: [],
+      idefs: [],
+      forms: [],
+      types: [],
     });
     return this;
   }

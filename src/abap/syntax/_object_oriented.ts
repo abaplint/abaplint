@@ -4,7 +4,7 @@ import {StatementNode} from "../nodes";
 import {ClassDefinition, MethodDefinition, InterfaceDefinition} from "../types";
 import {Interface, Class} from "../../objects";
 import {Registry} from "../../registry";
-import {Scope} from "./_scope";
+import {Scope, ScopeType} from "./_scope";
 import {UnknownType} from "../types/basic";
 import {Identifier} from "../tokens";
 import {TypedIdentifier} from "../types/_typed_identifier";
@@ -32,13 +32,13 @@ export class ObjectOriented {
   }
 
   public classDefinition(node: StatementNode) {
-    this.scope.push(this.findClassName(node));
+    this.scope.push(ScopeType.ClassDefinition, this.findClassName(node));
 // todo
   }
 
   public classImplementation(node: StatementNode) {
     const className = this.findClassName(node);
-    this.scope.push(className);
+    this.scope.push(ScopeType.ClassImplementation, className);
 
     const classDefinition = this.findClassDefinition(className);
 
@@ -107,7 +107,7 @@ export class ObjectOriented {
   }
 
   public methodImplementation(node: StatementNode) {
-    this.scope.push("method");
+    this.scope.push(ScopeType.Method, "method"); // todo, add the right method name
     const className = this.scope.getParentName();
     const classDefinition = this.findClassDefinition(className);
 
@@ -149,10 +149,10 @@ export class ObjectOriented {
     for (const i of this.findInterfaces(classDefinition)) {
       const idef = this.findInterfaceDefinition(i.name);
       if (idef) {
-        this.scope.addList(idef.getAttributes(this.scope)!.getConstants(), i.name + "~");
-        this.scope.addList(idef.getAttributes(this.scope)!.getStatic(), i.name + "~");
-        // todo, only add instance if its an instance method
-        this.scope.addList(idef.getAttributes(this.scope)!.getInstance(), i.name + "~");
+        this.scope.addListPrefix(idef.getAttributes(this.scope)!.getConstants(), i.name + "~");
+        this.scope.addListPrefix(idef.getAttributes(this.scope)!.getStatic(), i.name + "~");
+        // todo, only add instance variables if its an instance method
+        this.scope.addListPrefix(idef.getAttributes(this.scope)!.getInstance(), i.name + "~");
       }
     }
   }

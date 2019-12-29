@@ -53,6 +53,7 @@ export class SyntaxLogic {
     this.issues = [];
 
     if (this.object instanceof Program && this.object.isInclude()) {
+// todo, show some kind of error?
       return [];
     }
 
@@ -203,7 +204,7 @@ export class SyntaxLogic {
     } else if (s instanceof Statements.Perform) {
       s.runSyntax(node, this.scope, filename);
     } else if (s instanceof Statements.FunctionModule) {
-      this.helpers.proc.findFunctionScope(this.object, node);
+      this.helpers.proc.findFunctionScope(this.object, node, filename);
     } else if (s instanceof Statements.Method) {
       this.helpers.oooc.methodImplementation(node);
     } else if (s instanceof Statements.ClassDefinition) {
