@@ -26,6 +26,12 @@ export interface IRenameParams {
   newName: string;
 }
 
+export interface ICodeActionParams {
+  textDocument: LServer.TextDocumentIdentifier;
+  range: LServer.Range;
+  context: LServer.CodeActionContext;
+}
+
 export class LanguageServer {
   private readonly reg: Registry;
 
@@ -81,6 +87,16 @@ export class LanguageServer {
 
   public rename(params: IRenameParams): LServer.WorkspaceEdit | undefined {
     return new Rename(this.reg).rename(params);
+  }
+
+  public codeActions(_params: ICodeActionParams): LServer.CodeAction[] {
+    // todo, implement
+    return [];
+  }
+
+  public documentHighlight(_params: ITextDocumentPositionParams): LServer.DocumentHighlight[] {
+    // todo, implement
+    return [];
   }
 
 }

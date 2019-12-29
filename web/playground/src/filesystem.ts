@@ -26,6 +26,9 @@ export class FileSystem {
 `REPORT zfoobar.
  WRITE 'Hello World'.
 
+DATA moo TYPE i VALUE 2.
+WRITE moo.
+
 LOOP AT lt_foo ASSIGNING FIELD-SYMBOL(<ls_foo>).
   WRITE 'bar'.
 ENDLOOP.`);

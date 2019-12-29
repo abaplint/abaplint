@@ -7,7 +7,7 @@ import {LanguageServer} from "abaplint/lsp";
 
 export class EditorWidget extends Widget {
   private editor: monaco.editor.IStandaloneCodeEditor | undefined = undefined;
-  private model: monaco.editor.ITextModel;
+  private readonly model: monaco.editor.ITextModel;
 
   public static createNode(): HTMLElement {
     return document.createElement("div");

@@ -67,7 +67,13 @@ function loadConfig(filename: string | undefined): {config: Config, base: string
 async function loadDependencies(config: Config, compress: boolean, bar: IProgress, base: string): Promise<IFile[]> {
   let files: IFile[] = [];
 
-  for (const d of config.get().dependencies) {
+  const deps = config.get().dependencies;
+
+  if (deps === undefined) {
+    return [];
+  }
+
+  for (const d of deps) {
     if (d.folder) {
       const g = base + d.folder + d.files;
       const names = FileOperations.loadFileNames(g, false);
