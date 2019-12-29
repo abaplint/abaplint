@@ -1,4 +1,4 @@
-import {Scope} from "./_scope";
+import {CurrentScope} from "./_current_scope";
 import {ExpressionNode, StatementNode} from "../nodes";
 import * as Expressions from "../expressions";
 import * as Statements from "../statements";
@@ -9,10 +9,10 @@ import {TypedIdentifier} from "../types/_typed_identifier";
 import {UnknownType} from "../types/basic";
 
 export class Inline {
-  private readonly variables: Scope;
+  private readonly variables: CurrentScope;
   private readonly reg: Registry;
 
-  constructor(reg: Registry, variables: Scope) {
+  constructor(reg: Registry, variables: CurrentScope) {
     this.variables = variables;
     this.reg = reg;
   }

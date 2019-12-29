@@ -6,7 +6,7 @@ import {star, IStructureRunnable, sta, alt, sub, beginEnd} from "./_combi";
 import {StructureNode, StatementNode} from "../nodes";
 import {TypedIdentifier} from "../types/_typed_identifier";
 import {IStructureComponent} from "../types/basic";
-import {Scope} from "../syntax/_scope";
+import {CurrentScope} from "../syntax/_current_scope";
 
 export class Types extends Structure {
 
@@ -16,7 +16,7 @@ export class Types extends Structure {
                     sta(Statements.TypeEnd));
   }
 
-  public runSyntax(node: StructureNode, scope: Scope, filename: string): TypedIdentifier | undefined {
+  public runSyntax(node: StructureNode, scope: CurrentScope, filename: string): TypedIdentifier | undefined {
     const name = node.findFirstExpression(Expressions.NamespaceSimpleName)!.getFirstToken();
 
     let components: IStructureComponent[] = [];

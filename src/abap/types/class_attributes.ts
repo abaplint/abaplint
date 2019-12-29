@@ -4,7 +4,7 @@ import {ClassAttribute} from "./class_attribute";
 import {ClassConstant} from "./class_constant";
 import {StructureNode, StatementNode} from "../../abap/nodes";
 import {Visibility} from "./visibility";
-import {Scope} from "../syntax/_scope";
+import {CurrentScope} from "../syntax/_current_scope";
 import {TypedIdentifier} from "./_typed_identifier";
 
 export class Attributes {
@@ -13,7 +13,7 @@ export class Attributes {
   private readonly constants: ClassConstant[];
   private readonly filename: string;
 
-  constructor(node: StructureNode, filename: string, scope: Scope) {
+  constructor(node: StructureNode, filename: string, scope: CurrentScope) {
     this.static = [];
     this.instance = [];
     this.constants = [];
@@ -84,7 +84,7 @@ export class Attributes {
 
 /////////////////////////////
 
-  private parse(node: StructureNode, scope: Scope): void {
+  private parse(node: StructureNode, scope: CurrentScope): void {
     const cdef = node.findFirstStructure(Structures.ClassDefinition);
     if (cdef) {
       this.parseSection(cdef.findFirstStructure(Structures.PublicSection), Visibility.Public, scope);
@@ -103,7 +103,7 @@ export class Attributes {
   }
 
   // todo: should this part be refactored into the general syntax logic somewhere?
-  private parseSection(node: StructureNode | undefined, visibility: Visibility, scope: Scope): void {
+  private parseSection(node: StructureNode | undefined, visibility: Visibility, scope: CurrentScope): void {
     if (node === undefined) { return; }
 
     for (const c of node.getChildren()) {
@@ -149,7 +149,7 @@ export class Attributes {
     }
   }
 
-  private parseAttribute(node: StatementNode, visibility: Visibility, scope: Scope): ClassAttribute {
+  private parseAttribute(node: StatementNode, visibility: Visibility, scope: CurrentScope): ClassAttribute {
 // todo: remove this method
     let found: TypedIdentifier | undefined = undefined;
     const s = node.get();

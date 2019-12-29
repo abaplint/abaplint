@@ -3,16 +3,16 @@ import {StatementNode, ExpressionNode} from "../nodes";
 import * as Statements from "../statements";
 import * as Expressions from "../expressions";
 import * as Types from "../types/basic/";
-import {Scope} from "./_scope";
+import {CurrentScope} from "./_current_scope";
 import {AbstractType} from "../types/basic/_abstract_type";
 import {TypedConstantIdentifier} from "../types/_typed_constant_identifier";
 import {Chaining} from "./chaining";
 
 export class BasicTypes {
   private readonly filename: string;
-  private readonly scope: Scope;
+  private readonly scope: CurrentScope;
 
-  public constructor(filename: string, scope: Scope) {
+  public constructor(filename: string, scope: CurrentScope) {
     this.filename = filename;
     this.scope = scope;
   }

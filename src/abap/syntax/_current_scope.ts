@@ -15,7 +15,7 @@ export enum ScopeType {
   ClassImplementation = "class_implementation",
 }
 
-export interface IScopeInfo {
+interface IScopeInfo {
   stype: ScopeType;
   sname: string;
 
@@ -26,22 +26,27 @@ export interface IScopeInfo {
   types: TypedIdentifier[];
 }
 
-export class Scope {
+export class CurrentScope {
   private readonly scopes: IScopeInfo[];
   private readonly reg: Registry;
 
-  public static buildDefault(reg: Registry): Scope {
-    const s = new Scope(reg);
+  public static buildDefault(reg: Registry): CurrentScope {
+    const s = new CurrentScope(reg);
 
     s.push(ScopeType.BuiltIn, ScopeType.BuiltIn);
+    this.addBuiltIn(s, reg);
+
+    s.push(ScopeType.Global, ScopeType.Global);
+
+    return s;
+  }
+
+  private static addBuiltIn(s: CurrentScope, reg: Registry) {
     const builtin = Globals.get(reg.getConfig().getSyntaxSetttings().globalConstants);
     s.addList(builtin);
     for (const t of Globals.getTypes()) {
       s.addType(t);
     }
-    s.push(ScopeType.Global, ScopeType.Global);
-
-    return s;
   }
 
   private constructor(reg: Registry) {
@@ -156,21 +161,7 @@ export class Scope {
     }
   }
 
-  public getCurrentScope(): TypedIdentifier[] {
-    const ret: TypedIdentifier[] = [];
-    for (const v of this.scopes[this.scopes.length - 1].vars) {
-      if (v.identifier) {
-        ret.push(v.identifier);
-      }
-    }
-    return ret;
-  }
-
-  public getCurrentTypes(): TypedIdentifier[] {
-    return this.scopes[this.scopes.length - 1].types;
-  }
-
-  public resolveType(name: string): TypedIdentifier |undefined {
+  public resolveType(name: string): TypedIdentifier | undefined {
     // todo, this should probably search the nearest first? in case there are shadowed variables?
     for (const scope of this.scopes) {
       for (const local of scope.types) {
@@ -182,23 +173,23 @@ export class Scope {
     return undefined;
   }
 
-  public resolveVariable(name: string): TypedIdentifier | string | undefined {
+  public resolveVariable(name: string): TypedIdentifier | undefined {
     // todo, this should probably search the nearest first? in case there are shadowed variables?
     for (const scope of this.scopes) {
       for (const local of scope.vars) {
         if (local.name.toUpperCase() === name.toUpperCase()) {
-          return local.identifier ? local.identifier : local.name;
+          return local.identifier;
         }
       }
     }
     return undefined;
   }
 
-  public getParentName(): string { // todo, somehow get rid of this?
-    return this.scopes[this.scopes.length - 2].sname;
+  public getName(): string {
+    return this.scopes[this.scopes.length - 1].sname;
   }
 
-  public push(stype: ScopeType, sname: string): Scope {
+  public push(stype: ScopeType, sname: string): void {
     this.scopes.push({
       stype,
       sname,
@@ -208,13 +199,12 @@ export class Scope {
       forms: [],
       types: [],
     });
-    return this;
   }
 
-  public pop(): IScopeInfo {
+  public pop(): void {
     if (this.scopes.length === 1) {
       throw new Error("something wrong, top scope popped");
     }
-    return this.scopes.pop()!;
+    this.scopes.pop();
   }
 }

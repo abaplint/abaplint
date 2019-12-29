@@ -7,7 +7,7 @@ import {Token} from "../abap/tokens/_token";
 import {LSPUtils} from "./_lsp_utils";
 import {SyntaxLogic} from "../abap/syntax/syntax";
 import {ABAPObject} from "../objects/_abap_object";
-import {Scope, ScopeType} from "../abap/syntax/_scope";
+import {CurrentScope, ScopeType} from "../abap/syntax/_current_scope";
 
 export class Help {
   public static find(reg: Registry, textDocument: LServer.TextDocumentIdentifier, position: LServer.Position): string {
@@ -54,7 +54,7 @@ export class Help {
     return ret;
   }
 
-  private static dumpScope(scope: Scope): string {
+  private static dumpScope(scope: CurrentScope): string {
     let ret = "<hr>\n";
     for (const s of scope.get()) {
       if (s.stype === ScopeType.BuiltIn) {

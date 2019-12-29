@@ -5,7 +5,7 @@ import {Version} from "../../version";
 import * as Types from "../types/basic/";
 import {FieldChain} from "./field_chain";
 import {ExpressionNode, StatementNode} from "../nodes";
-import {Scope} from "../syntax/_scope";
+import {CurrentScope} from "../syntax/_current_scope";
 import {TypedIdentifier} from "../types/_typed_identifier";
 import {BasicTypes} from "../syntax/basic_types";
 
@@ -53,7 +53,7 @@ export class TypeTable extends Expression {
     return ret;
   }
 
-  public runSyntax(node: ExpressionNode | StatementNode, scope: Scope, filename: string): TypedIdentifier | undefined {
+  public runSyntax(node: ExpressionNode | StatementNode, scope: CurrentScope, filename: string): TypedIdentifier | undefined {
     // todo, input is currently the statement, but should be the expression?
     const nameExpr = node.findFirstExpression(Expressions.NamespaceSimpleName);
     if (nameExpr === undefined) {

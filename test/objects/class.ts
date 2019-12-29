@@ -3,7 +3,7 @@ import {Registry} from "../../src/registry";
 import {MemoryFile} from "../../src/files/memory_file";
 import {Class, ClassCategory} from "../../src/objects";
 import {Visibility} from "../../src/abap/types/visibility";
-import {Scope} from "../../src/abap/syntax/_scope";
+import {CurrentScope} from "../../src/abap/syntax/_current_scope";
 import {CharacterType} from "../../src/abap/types/basic";
 
 // todo, most(all?) of these tests to be moved to abap/types/class_definition
@@ -127,7 +127,7 @@ describe("Objects, class, getMethodDefinitions", () => {
     "ENDCLASS.";
 
     const reg = new Registry().addFile(new MemoryFile("zcl_with_super.clas.abap", abap)).parse();
-    const scope = Scope.buildDefault(reg);
+    const scope = CurrentScope.buildDefault(reg);
     const clas = reg.getABAPObjects()[0] as Class;
     expect(clas.getClassDefinition()).to.not.equal(undefined);
     expect(clas.getClassDefinition()!.getMethodDefinitions(scope)).to.not.equal(undefined);
@@ -153,7 +153,7 @@ describe("Objects, class, getMethodDefinitions", () => {
       "  ENDMETHOD.\n" +
       "ENDCLASS.";
     const reg = new Registry().addFile(new MemoryFile("zcl_foobar.clas.abap", abap)).parse();
-    const scope = Scope.buildDefault(reg);
+    const scope = CurrentScope.buildDefault(reg);
     const clas = reg.getABAPObjects()[0] as Class;
     expect(clas.getClassDefinition()).to.not.equal(undefined);
     expect(clas.getClassDefinition()!.getMethodDefinitions(scope)).to.not.equal(undefined);
@@ -180,7 +180,7 @@ describe("Objects, class, getAttributes", () => {
     const reg = new Registry().addFile(new MemoryFile("zcl_foobar.clas.abap", abap)).parse();
     const clas = reg.getABAPObjects()[0] as Class;
     expect(clas.getClassDefinition()).to.not.equal(undefined);
-    const attr = clas.getClassDefinition()!.getAttributes(Scope.buildDefault(reg));
+    const attr = clas.getClassDefinition()!.getAttributes(CurrentScope.buildDefault(reg));
     expect(attr.getInstance().length).to.equal(1);
     expect(attr.getInstance()[0].getName()).to.equal("moo");
     expect(attr.getInstance()[0].getVisibility()).to.equal(Visibility.Private);
@@ -203,7 +203,7 @@ describe("Objects, class, getAttributes", () => {
     const reg = new Registry().addFile(new MemoryFile("zcl_foobar.clas.abap", abap)).parse();
     const clas = reg.getABAPObjects()[0] as Class;
     expect(clas.getClassDefinition()).to.not.equal(undefined);
-    const attr = clas.getClassDefinition()!.getAttributes(Scope.buildDefault(reg));
+    const attr = clas.getClassDefinition()!.getAttributes(CurrentScope.buildDefault(reg));
     expect(attr).to.not.equal(undefined);
     expect(attr.getConstants().length).to.equal(1);
     expect(attr.getConstants()[0].getName()).to.equal("value1");
@@ -223,7 +223,7 @@ describe("Objects, class, getAttributes", () => {
     const reg = new Registry().addFile(new MemoryFile("zcl_foobar.clas.abap", abap)).parse();
     const clas = reg.getABAPObjects()[0] as Class;
     expect(clas.getClassDefinition()).to.not.equal(undefined);
-    const attr = clas.getClassDefinition()!.getAttributes(Scope.buildDefault(reg));
+    const attr = clas.getClassDefinition()!.getAttributes(CurrentScope.buildDefault(reg));
     expect(attr).to.not.equal(undefined);
     expect(attr.getStatic().length).to.equal(1);
     expect(attr.getStatic().length).to.equal(1);
@@ -243,7 +243,7 @@ describe("Objects, class, getAttributes", () => {
     const reg = new Registry().addFile(new MemoryFile("zcl_foobar.clas.abap", abap)).parse();
     const clas = reg.getABAPObjects()[0] as Class;
     expect(clas.getClassDefinition()).to.not.equal(undefined);
-    const attr = clas.getClassDefinition()!.getAttributes(Scope.buildDefault(reg));
+    const attr = clas.getClassDefinition()!.getAttributes(CurrentScope.buildDefault(reg));
     expect(attr).to.not.equal(undefined);
     expect(attr.getConstants().length).to.equal(1);
     const c = attr.getConstants()[0];
@@ -266,7 +266,7 @@ describe("Objects, class, getAttributes", () => {
     const reg = new Registry().addFile(new MemoryFile("zcl_foobar.clas.abap", abap)).parse();
     const clas = reg.getABAPObjects()[0] as Class;
     expect(clas.getClassDefinition()).to.not.equal(undefined);
-    const attr = clas.getClassDefinition()!.getAttributes(Scope.buildDefault(reg));
+    const attr = clas.getClassDefinition()!.getAttributes(CurrentScope.buildDefault(reg));
     expect(attr.getInstance().length).to.equal(1);
   });
 

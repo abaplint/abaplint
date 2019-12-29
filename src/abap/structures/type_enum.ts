@@ -3,7 +3,7 @@ import * as Expressions from "../expressions";
 import {Structure} from "./_structure";
 import {star, IStructureRunnable, sta, alt, beginEnd} from "./_combi";
 import {StructureNode} from "../nodes";
-import {Scope} from "../syntax/_scope";
+import {CurrentScope} from "../syntax/_current_scope";
 import {UnknownType} from "../types/basic";
 import {TypedIdentifier} from "../types/_typed_identifier";
 
@@ -15,7 +15,7 @@ export class TypeEnum extends Structure {
                     sta(Statements.TypeEnumEnd));
   }
 
-  public runSyntax(node: StructureNode, _scope: Scope, filename: string): TypedIdentifier[] {
+  public runSyntax(node: StructureNode, _scope: CurrentScope, filename: string): TypedIdentifier[] {
     if (!(node.get() instanceof TypeEnum)) {
       throw new Error("addEnumValues unexpected type");
     }

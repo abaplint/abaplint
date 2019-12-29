@@ -2,7 +2,7 @@ import {Statement} from "./_statement";
 import {str, seq, alt, per, opt, IStatementRunnable} from "../combi";
 import {NamespaceSimpleName, ConstantFieldLength, Type as eType, TypeTable, Decimals, Length} from "../expressions";
 import * as Expressions from "../expressions";
-import {Scope} from "../syntax/_scope";
+import {CurrentScope} from "../syntax/_current_scope";
 import {StatementNode} from "../nodes";
 import {BasicTypes} from "../syntax/basic_types";
 import {TypedIdentifier} from "../types/_typed_identifier";
@@ -22,7 +22,7 @@ export class Type extends Statement {
     return ret;
   }
 
-  public runSyntax(node: StatementNode, scope: Scope, filename: string): TypedIdentifier | undefined {
+  public runSyntax(node: StatementNode, scope: CurrentScope, filename: string): TypedIdentifier | undefined {
     const tt = node.findFirstExpression(TypeTable);
     if (tt) {
       const tts = tt.get() as TypeTable;

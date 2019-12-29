@@ -5,7 +5,7 @@ import {MethodDefImporting, MethodParam, MethodDefExporting, MethodDefChanging,
 import {ExpressionNode}  from "../../abap/nodes";
 import {TypedIdentifier} from "./_typed_identifier";
 import {UnknownType} from "./basic";
-import {Scope} from "../syntax/_scope";
+import {CurrentScope} from "../syntax/_current_scope";
 
 export class MethodParameters {
   private readonly importing: TypedIdentifier[];
@@ -15,7 +15,7 @@ export class MethodParameters {
   private readonly exceptions: string[]; // todo, not filled
   private readonly filename: string;
 
-  constructor(node: StatementNode, filename: string, scope: Scope) {
+  constructor(node: StatementNode, filename: string, scope: CurrentScope) {
     if (!(node.get() instanceof MethodDef)) {
       throw new Error("MethodDefinition, expected MethodDef as part of input node");
     }
@@ -62,7 +62,7 @@ export class MethodParameters {
     return this.exceptions;
   }
 
-  private parse(node: StatementNode, scope: Scope): void {
+  private parse(node: StatementNode, scope: CurrentScope): void {
 
     const handler = node.findFirstExpression(EventHandler);
     if (handler) {
@@ -101,7 +101,7 @@ export class MethodParameters {
 // also consider RAISING vs EXCEPTIONS
   }
 
-  private add(target: TypedIdentifier[], source: ExpressionNode, scope: Scope): void {
+  private add(target: TypedIdentifier[], source: ExpressionNode, scope: CurrentScope): void {
     const params = source.findAllExpressions(MethodParam);
     for (const param of params) {
       const para = param.get() as MethodParam;

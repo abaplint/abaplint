@@ -1,7 +1,7 @@
 import * as Statements from "../abap/statements";
 import * as Expressions from "../abap/expressions";
 import {Registry} from "../registry";
-import {Scope} from "../abap/syntax/_scope";
+import {CurrentScope} from "../abap/syntax/_current_scope";
 import {Token} from "../abap/tokens/_token";
 import {StatementNode, TokenNode} from "../abap/nodes";
 import {Identifier} from "../abap/types/_identifier";
@@ -94,7 +94,7 @@ export class LSPUtils {
     return undefined;
   }
 
-  public static findForm(found: ICursorPosition, scope: Scope): FormDefinition | undefined {
+  public static findForm(found: ICursorPosition, scope: CurrentScope): FormDefinition | undefined {
     if (!(found.snode.get() instanceof Statements.Perform)) {
       return undefined;
     }

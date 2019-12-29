@@ -3,7 +3,7 @@ import {str, seq, alt, opt, IStatementRunnable} from "../combi";
 import {FieldSymbol as Name, Type, TypeTable} from "../expressions";
 import * as Expressions from "../expressions";
 import {StatementNode} from "../nodes";
-import {Scope} from "../syntax/_scope";
+import {CurrentScope} from "../syntax/_current_scope";
 import {TypedIdentifier} from "../types/_typed_identifier";
 import {UnknownType} from "../types/basic";
 
@@ -15,7 +15,7 @@ export class FieldSymbol extends Statement {
                opt(alt(new Type(), new TypeTable())));
   }
 
-  public runSyntax(node: StatementNode, _scope: Scope, filename: string): TypedIdentifier | undefined {
+  public runSyntax(node: StatementNode, _scope: CurrentScope, filename: string): TypedIdentifier | undefined {
     const fallback = node.findFirstExpression(Expressions.FieldSymbol);
     if (fallback) {
       return new TypedIdentifier(fallback.getFirstToken(), filename, new UnknownType("Fieldsymbol, fallback"));

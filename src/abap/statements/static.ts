@@ -3,7 +3,7 @@ import {str, seq, opt, per, alt, IStatementRunnable} from "../combi";
 import {Value, Type, ConstantFieldLength, NamespaceSimpleName, TypeTable, Length, Decimals} from "../expressions";
 import * as Expressions from "../expressions";
 import {StatementNode} from "../nodes";
-import {Scope} from "../syntax/_scope";
+import {CurrentScope} from "../syntax/_current_scope";
 import {TypedIdentifier} from "../types/_typed_identifier";
 import {BasicTypes} from "../syntax/basic_types";
 import {UnknownType} from "../types/basic";
@@ -22,7 +22,7 @@ export class Static extends Statement {
     return ret;
   }
 
-  public runSyntax(node: StatementNode, scope: Scope, filename: string): TypedIdentifier | undefined {
+  public runSyntax(node: StatementNode, scope: CurrentScope, filename: string): TypedIdentifier | undefined {
     const tt = node.findFirstExpression(Expressions.TypeTable);
     if (tt) {
       const ttfound = (tt.get() as Expressions.TypeTable).runSyntax(node, scope, filename);

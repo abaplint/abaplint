@@ -3,7 +3,7 @@ import {MemoryFile} from "../../../src/files";
 import {Registry} from "../../../src/registry";
 import {Interface} from "../../../src/objects";
 import {Visibility} from "../../../src/abap/types/visibility";
-import {Scope} from "../../../src/abap/syntax/_scope";
+import {CurrentScope} from "../../../src/abap/syntax/_current_scope";
 
 describe("Types, interface_definition, getMethodDefinitions", () => {
   it("test, positive", () => {
@@ -12,7 +12,7 @@ describe("Types, interface_definition, getMethodDefinitions", () => {
       "ENDINTERFACE.";
 
     const reg = new Registry().addFile(new MemoryFile("zif_foobar.intf.abap", abap)).parse();
-    const scope = Scope.buildDefault(reg);
+    const scope = CurrentScope.buildDefault(reg);
     const intf = reg.getABAPObjects()[0] as Interface;
     const def = intf.getDefinition();
     expect(def).to.not.equal(undefined);
@@ -35,7 +35,7 @@ describe("Types, interface_definition, getMethodParameters", () => {
       "ENDINTERFACE.";
 
     const reg = new Registry().addFile(new MemoryFile("zif_foobar.intf.abap", abap)).parse();
-    const scope = Scope.buildDefault(reg);
+    const scope = CurrentScope.buildDefault(reg);
     const intf = reg.getABAPObjects()[0] as Interface;
     expect(intf.getDefinition()!.getMethodDefinitions(scope).length).to.equal(1);
     expect(intf.getDefinition()!.getMethodDefinitions(scope)[0].getParameters().getImporting().length).to.equal(1);
@@ -48,7 +48,7 @@ describe("Types, interface_definition, getMethodParameters", () => {
       "ENDINTERFACE.";
 
     const reg = new Registry().addFile(new MemoryFile("zif_foobar.intf.abap", abap)).parse();
-    const scope = Scope.buildDefault(reg);
+    const scope = CurrentScope.buildDefault(reg);
     const intf = reg.getABAPObjects()[0] as Interface;
     expect(intf.getDefinition()!.getMethodDefinitions(scope).length).to.equal(1);
     const returning = intf.getDefinition()!.getMethodDefinitions(scope)[0].getParameters().getReturning();
@@ -67,7 +67,7 @@ describe("Types, interface_definition, getAttributes", () => {
 
     const reg = new Registry().addFile(new MemoryFile("zif_foobar.intf.abap", abap)).parse();
     const intf = reg.getABAPObjects()[0] as Interface;
-    const instance = intf.getDefinition()!.getAttributes(Scope.buildDefault(reg))!.getInstance();
+    const instance = intf.getDefinition()!.getAttributes(CurrentScope.buildDefault(reg))!.getInstance();
     expect(instance.length).to.equal(1);
     expect(instance[0].getName()).to.equal("moo");
     expect(instance[0].getVisibility()).to.equal(Visibility.Public);

@@ -4,7 +4,7 @@ import * as Structures from "../../abap/structures";
 import * as Statements from "../../abap/statements";
 import * as Expressions from "../../abap/expressions";
 import {MethodDefinition, Visibility, Attributes} from ".";
-import {Scope} from "../syntax/_scope";
+import {CurrentScope} from "../syntax/_current_scope";
 
 export class InterfaceDefinition extends Identifier {
   private readonly node: StructureNode;
@@ -20,7 +20,7 @@ export class InterfaceDefinition extends Identifier {
     this.node = node;
   }
 
-  public getAttributes(scope: Scope): Attributes | undefined {
+  public getAttributes(scope: CurrentScope): Attributes | undefined {
     if (!this.node) { return undefined; }
     return new Attributes(this.node, this.filename, scope);
   }
@@ -33,7 +33,7 @@ export class InterfaceDefinition extends Identifier {
     return this.node.findFirstExpression(Expressions.Global) !== undefined;
   }
 
-  public getMethodDefinitions(scope: Scope): MethodDefinition[] {
+  public getMethodDefinitions(scope: CurrentScope): MethodDefinition[] {
     const ret = [];
     const defs = this.node.findAllStatements(Statements.MethodDef);
     for (const def of defs) {

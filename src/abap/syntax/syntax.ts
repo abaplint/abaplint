@@ -8,7 +8,7 @@ import {StatementNode, ExpressionNode, StructureNode, TokenNode} from "../nodes"
 import {ABAPFile} from "../../files";
 import {Registry} from "../../registry";
 import {ABAPObject} from "../../objects/_abap_object";
-import {Scope} from "./_scope";
+import {CurrentScope} from "./_current_scope";
 import {ObjectOriented} from "./_object_oriented";
 import {Procedural} from "./_procedural";
 import {Inline} from "./_inline";
@@ -27,7 +27,7 @@ export class SyntaxLogic {
   private readonly object: ABAPObject;
   private readonly reg: Registry;
 
-  private readonly scope: Scope;
+  private readonly scope: CurrentScope;
 
   private readonly helpers: {
     oooc: ObjectOriented,
@@ -40,7 +40,7 @@ export class SyntaxLogic {
     this.issues = [];
 
     this.object = object;
-    this.scope = Scope.buildDefault(this.reg);
+    this.scope = CurrentScope.buildDefault(this.reg);
 
     this.helpers = {
       oooc: new ObjectOriented(this.reg, this.scope),
@@ -61,13 +61,13 @@ export class SyntaxLogic {
     return this.issues;
   }
 
-  public traverseUntil(stopAt?: Identifier): Scope {
+  public traverseUntil(stopAt?: Identifier): CurrentScope {
     return this.traverseObject(stopAt);
   }
 
 /////////////////////////////
 
-  private traverseObject(stopAt?: Identifier): Scope {
+  private traverseObject(stopAt?: Identifier): CurrentScope {
     if (this.object instanceof Program) {
       this.helpers.proc.addAllFormDefinitions(this.object.getABAPFiles()[0]);
     }

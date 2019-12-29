@@ -3,7 +3,7 @@ import * as Statements from "../statements";
 import {StatementNode} from "../nodes";
 import {ABAPObject} from "../../objects/_abap_object";
 import {FormDefinition} from "../types";
-import {Scope, ScopeType} from "./_scope";
+import {CurrentScope, ScopeType} from "./_current_scope";
 import {FunctionGroup} from "../../objects";
 import {ABAPFile} from "../../files";
 import {Registry} from "../../registry";
@@ -11,10 +11,10 @@ import {TypedIdentifier} from "../types/_typed_identifier";
 import {IntegerType} from "../types/basic";
 
 export class Procedural {
-  private readonly scope: Scope;
+  private readonly scope: CurrentScope;
   private readonly reg: Registry;
 
-  constructor(reg: Registry, scope: Scope) {
+  constructor(reg: Registry, scope: CurrentScope) {
     this.scope = scope;
     this.reg = reg;
   }

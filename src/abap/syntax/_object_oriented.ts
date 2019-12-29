@@ -4,7 +4,7 @@ import {StatementNode} from "../nodes";
 import {ClassDefinition, MethodDefinition, InterfaceDefinition} from "../types";
 import {Interface, Class} from "../../objects";
 import {Registry} from "../../registry";
-import {Scope, ScopeType} from "./_scope";
+import {CurrentScope, ScopeType} from "./_current_scope";
 import {UnknownType} from "../types/basic";
 import {Identifier} from "../tokens";
 import {TypedIdentifier} from "../types/_typed_identifier";
@@ -12,9 +12,9 @@ import {Position} from "../../position";
 
 export class ObjectOriented {
   private readonly reg: Registry;
-  private readonly scope: Scope;
+  private readonly scope: CurrentScope;
 
-  constructor(reg: Registry, scope: Scope) {
+  constructor(reg: Registry, scope: CurrentScope) {
     this.reg = reg;
     this.scope = scope;
   }
@@ -107,8 +107,9 @@ export class ObjectOriented {
   }
 
   public methodImplementation(node: StatementNode) {
-    this.scope.push(ScopeType.Method, "method"); // todo, add the right method name
-    const className = this.scope.getParentName();
+    const className = this.scope.getName();
+    let methodName = node.findFirstExpression(Expressions.MethodName)!.getFirstToken().getStr();
+    this.scope.push(ScopeType.Method, methodName);
     const classDefinition = this.findClassDefinition(className);
 
 // todo, this is not correct, add correct types, plus "super" should only be added when there are super classes
@@ -116,8 +117,6 @@ export class ObjectOriented {
       new Identifier(new Position(1, 1), "super"), "_global.prog.abap", new UnknownType("todo")));
     this.scope.addIdentifier(new TypedIdentifier(
       new Identifier(new Position(1, 1), "me"), "_global.prog.abap", new UnknownType("todo")));
-
-    let methodName = node.findFirstExpression(Expressions.MethodName)!.getFirstToken().getStr();
 
     let methodDefinition: MethodDefinition | undefined = undefined;
     methodDefinition = this.findMethod(classDefinition, methodName);
