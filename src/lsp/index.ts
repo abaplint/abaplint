@@ -99,4 +99,44 @@ export class LanguageServer {
     return [];
   }
 
+////////////////////////////////////////
+//  ______      _
+// |  ____|    | |
+// | |__  __  _| |_ _ __ __   ___
+// |  __| \ \/ / __| '__/ _` / __|
+// | |____ >  <| |_| | | (_| \__ \
+// |______/_/\_\\__|_|  \__,_|___/
+//
+////////////////////////////////////////
+
+  public listDefinitionPositions(_textDocument: LServer.TextDocumentIdentifier): LServer.Range[] {
+// todo
+    const range: LServer.Range = {
+      start: {line: 0, character: 0},
+      end: {line: 0, character: 4},
+    };
+
+    return [range];
+  }
+
+  public listReadPositions(_textDocument: LServer.TextDocumentIdentifier): LServer.Range[] {
+// todo
+    const range: LServer.Range = {
+      start: {line: 0, character: 0},
+      end: {line: 0, character: 4},
+    };
+
+    return [range];
+  }
+
+  public listWritePositions(_textDocument: LServer.TextDocumentIdentifier): LServer.Range[] {
+// todo
+    const range: LServer.Range = {
+      start: {line: 0, character: 0},
+      end: {line: 0, character: 4},
+    };
+
+    return [range];
+  }
+
 }

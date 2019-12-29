@@ -1,9 +1,10 @@
 import * as monaco from "monaco-editor";
 import {Message} from "@phosphor/messaging";
-import {Widget, DockPanel} from "@phosphor/widgets";
+import {Widget} from "@phosphor/widgets";
 import {FileSystem} from "../filesystem";
 import {HelpWidget} from "./help";
 import {LanguageServer} from "abaplint/lsp";
+import {HighlightActions} from "../highlight_actions";
 
 export class EditorWidget extends Widget {
   private editor: monaco.editor.IStandaloneCodeEditor | undefined = undefined;
@@ -90,26 +91,7 @@ export class EditorWidget extends Widget {
   }
 
   protected openHelp() {
-    const dock = this.parent as DockPanel;
-    let help: HelpWidget | undefined;
-
-// only add one, todo: refactor, this is a mess
-    const it = dock.children();
-    for (;;) {
-      const res = it.next();
-      if (res === undefined) {
-        break;
-      } else if (res instanceof HelpWidget) {
-        help = res;
-        break;
-      }
-    }
-
-    if (help === undefined) {
-      help = new HelpWidget();
-      dock.addWidget(help, {mode: "split-right", ref: this});
-    }
-
+    const help = HelpWidget.getInstance(this);
     help.updateIt(this.model.uri.toString(), this.editor!.getPosition()!);
   }
 
@@ -146,6 +128,8 @@ export class EditorWidget extends Widget {
         precondition: "editorLangId == 'abap'",
         run: this.openHelp.bind(this),
       });
+
+      new HighlightActions(this.editor).register();
 
       this.editor.addAction({
         id: "abaplint.commandpalette",
