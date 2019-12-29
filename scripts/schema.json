@@ -948,6 +948,7 @@
       "additionalProperties": false,
       "properties": {
         "dependencies": {
+          "description": "External git dependencies used for syntax checks",
           "items": {
             "$ref": "#/definitions/IDependency"
           },
@@ -1903,7 +1904,6 @@
       },
       "required": [
         "global",
-        "dependencies",
         "syntax",
         "rules"
       ],

@@ -84,10 +84,10 @@ import {UseNewConf} from "../src/rules/use_new";
 import {WhenOthersLastConf} from "../src/rules/when_others_last";
 import {WhitespaceEndConf} from "../src/rules/whitespace/whitespace_end";
 import {XMLConsistencyConf} from "../src/rules/xml_consistency";
-
 export interface IConfig {
   global: IGlobalConfig;
-  dependencies: IDependency[];
+  /** External git dependencies used for syntax checks */
+  dependencies?: IDependency[];
   syntax: ISyntaxSettings;
   rules: {
     "7bit_ascii"?: SevenBitAsciiConf | boolean,
