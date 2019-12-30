@@ -37,13 +37,17 @@ export class SpaghettiScope {
   }
 
   public listVars(filename: string): IScopeVariable[] {
-    let ret: IScopeVariable[] = [];
+    const ret: IScopeVariable[] = [];
     let stack: SpaghettiScopeNode[] = [this.node];
 
     while (stack.length > 0) {
       const current = stack.pop()!;
       if (current.getIdentifier().filename === filename) {
-        ret = ret.concat(current.getVars());
+        for (const v of current.getVars()) {
+          if (v.identifier.getFilename() === filename) {
+            ret.push(v);
+          }
+        }
       }
       stack = stack.concat(current.getChildren());
     }

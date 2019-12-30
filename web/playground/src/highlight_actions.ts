@@ -59,7 +59,7 @@ export class HighlightActions {
       return;
     }
     const ls = new LanguageServer(FileSystem.getRegistry());
-    const found = ls.listDefinitionPositions({uri: this.editor.getModel()!.uri.toString()});
+    const found = ls.listReadPositions({uri: this.editor.getModel()!.uri.toString()});
     const add = this.buildDecorations(found, "abapHighlightReads");
     this.reads = this.editor!.deltaDecorations([], add);
   }
@@ -71,7 +71,7 @@ export class HighlightActions {
       return;
     }
     const ls = new LanguageServer(FileSystem.getRegistry());
-    const found = ls.listDefinitionPositions({uri: this.editor.getModel()!.uri.toString()});
+    const found = ls.listWritePositions({uri: this.editor.getModel()!.uri.toString()});
     const add = this.buildDecorations(found, "abapHighlightWrites");
     this.writes = this.editor!.deltaDecorations([], add);
   }

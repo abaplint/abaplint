@@ -41,7 +41,7 @@ export class ClassDefinition extends Identifier {
   public isException(): boolean {
     const superClass = this.getSuperClass();
     // todo, this logic is not correct
-    if (superClass && superClass.match(/^.?cx_.*$/i)) {
+    if (superClass && (superClass.match(/^.?cx_.*$/i) || superClass.match(/^\/.+\/cx_.*$/i))) {
       return true;
     } else {
       return false;
