@@ -6,6 +6,8 @@ import * as Objects from "../../objects";
 import {DDIC} from "../../ddic";
 import {Position} from "../../position";
 import {SpaghettiScope, SpaghettiScopeNode, IScopeIdentifier} from "./_spaghetti_scope";
+import {Token} from "../tokens/_token";
+import {Identifier} from "../types/_identifier";
 
 export enum ScopeType {
   BuiltIn = "_builtin",
@@ -91,6 +93,18 @@ export class CurrentScope {
     for (const id of identifiers) {
       this.addIdentifier(id);
     }
+  }
+
+///////////////////////////
+
+  public addRead(token: Token, resolved: TypedIdentifier, filename: string) {
+    const position = new Identifier(token, filename);
+    this.current?.getData().reads.push({position, resolved});
+  }
+
+  public addWrite(token: Token, resolved: TypedIdentifier, filename: string) {
+    const position = new Identifier(token, filename);
+    this.current?.getData().writes.push({position, resolved});
   }
 
 ///////////////////////////

@@ -21,4 +21,18 @@ describe("LSP, highlight", () => {
     expect(found.length).to.equal(1);
   });
 
+  it("Single read", () => {
+    const file = new MemoryFile(filename, "DATA bar TYPE i.\nWRITE bar.\n");
+    const reg = new Registry().addFile(file).parse();
+    const found = new Highlight(reg).listReadPositions({uri: filename});
+    expect(found.length).to.equal(1);
+  });
+
+  it("Single write", () => {
+    const file = new MemoryFile(filename, "DATA bar TYPE i.\nbar = 2.\n");
+    const reg = new Registry().addFile(file).parse();
+    const found = new Highlight(reg).listWritePositions({uri: filename});
+    expect(found.length).to.equal(1);
+  });
+
 });

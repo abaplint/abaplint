@@ -56,7 +56,7 @@ export class Help {
   }
 
   private static dumpScope(spaghetti: SpaghettiScope): string {
-    let ret = "<hr>\n";
+    let ret = "<hr>Spaghetti Scope:<br><br>\n";
     ret = ret + this.traverseSpaghetti(spaghetti.getTop(), 0);
     return ret;
   }

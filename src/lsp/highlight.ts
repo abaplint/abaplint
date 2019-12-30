@@ -31,13 +31,13 @@ export class Highlight {
     if (spaghetti === undefined) {
       return [];
     }
-// todo
-    const range: LServer.Range = {
-      start: {line: 0, character: 0},
-      end: {line: 0, character: 4},
-    };
 
-    return [range];
+    const reads = spaghetti.listReadPositions(textDocument.uri);
+    const ret: LServer.Range[] = [];
+    for (const d of reads) {
+      ret.push(LSPUtils.tokenToRange(d.getToken()));
+    }
+    return ret;
   }
 
   public listWritePositions(textDocument: LServer.TextDocumentIdentifier): LServer.Range[] {
@@ -45,13 +45,13 @@ export class Highlight {
     if (spaghetti === undefined) {
       return [];
     }
-// todo
-    const range: LServer.Range = {
-      start: {line: 0, character: 0},
-      end: {line: 0, character: 4},
-    };
 
-    return [range];
+    const writes = spaghetti.listWritePositions(textDocument.uri);
+    const ret: LServer.Range[] = [];
+    for (const d of writes) {
+      ret.push(LSPUtils.tokenToRange(d.getToken()));
+    }
+    return ret;
   }
 
 ////////////////////////

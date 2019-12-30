@@ -116,6 +116,10 @@ export class SyntaxLogic {
         const resolved = this.scope.findVariable(token.getStr());
         if (resolved === undefined) {
           this.newIssue(token, "\"" + token.getStr() + "\" not found");
+        } else if (node.get() instanceof Expressions.Source) {
+          this.scope.addRead(token, resolved, this.currentFile.getFilename());
+        } else if (node.get() instanceof Expressions.Target) {
+          this.scope.addWrite(token, resolved, this.currentFile.getFilename());
         }
       }
     }
@@ -162,13 +166,9 @@ export class SyntaxLogic {
       } else if (stru instanceof Structures.Types) {
         this.scope.addType(stru.runSyntax(node, this.scope, filename));
         return true;
-      } else if (stru instanceof Structures.Constants) {
-        this.scope.addIdentifier(stru.runSyntax(node, this.scope, filename));
-        return true;
-      } else if (stru instanceof Structures.Data) {
-        this.scope.addIdentifier(stru.runSyntax(node, this.scope, filename));
-        return true;
-      } else if (stru instanceof Structures.Statics) {
+      } else if (stru instanceof Structures.Constants
+          || stru instanceof Structures.Data
+          || stru instanceof Structures.Statics) {
         this.scope.addIdentifier(stru.runSyntax(node, this.scope, filename));
         return true;
       } else if (stru instanceof Structures.TypeEnum) {

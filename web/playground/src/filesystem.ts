@@ -28,6 +28,7 @@ export class FileSystem {
 
 DATA moo TYPE i VALUE 2.
 WRITE moo.
+moo = 4.
 
 LOOP AT lt_foo ASSIGNING FIELD-SYMBOL(<ls_foo>).
   WRITE 'bar'.

@@ -2,6 +2,7 @@ import {Position} from "../../position";
 import {TypedIdentifier} from "../types/_typed_identifier";
 import {InterfaceDefinition, FormDefinition, ClassDefinition} from "../types";
 import {ScopeType} from "./_current_scope";
+import {Identifier} from "../types/_identifier";
 
 export interface IScopeIdentifier {
   stype: ScopeType;
@@ -21,6 +22,9 @@ export interface IScopeData {
   idefs: InterfaceDefinition[];
   forms: FormDefinition[];
   types: TypedIdentifier[];
+
+  reads: {position: Identifier, resolved: TypedIdentifier}[];
+  writes: {position: Identifier, resolved: TypedIdentifier}[];
 }
 
 abstract class ScopeData {
@@ -33,6 +37,8 @@ abstract class ScopeData {
       idefs: [],
       forms: [],
       types: [],
+      reads: [],
+      writes: [],
     };
   }
 
@@ -176,18 +182,47 @@ export class SpaghettiScope {
   // list variable definitions across all nodes
   public listVars(filename: string): IScopeVariable[] {
     const ret: IScopeVariable[] = [];
-    let stack: SpaghettiScopeNode[] = [this.node];
 
-    while (stack.length > 0) {
-      const current = stack.pop()!;
-      if (current.getIdentifier().filename === filename) {
-        for (const v of current.getData().vars) {
+    for (const n of this.allNodes()) {
+      if (n.getIdentifier().filename === filename) {
+        for (const v of n.getData().vars) {
           if (v.identifier.getFilename() === filename) {
             ret.push(v);
           }
         }
       }
-      stack = stack.concat(current.getChildren());
+    }
+
+    return ret;
+  }
+
+  public listReadPositions(filename: string): Identifier[] {
+    const ret: Identifier[] = [];
+
+    for (const n of this.allNodes()) {
+      if (n.getIdentifier().filename === filename) {
+        for (const v of n.getData().reads) {
+          if (v.position.getFilename() === filename) {
+            ret.push(v.position);
+          }
+        }
+      }
+    }
+
+    return ret;
+  }
+
+  public listWritePositions(filename: string): Identifier[] {
+    const ret: Identifier[] = [];
+
+    for (const n of this.allNodes()) {
+      if (n.getIdentifier().filename === filename) {
+        for (const v of n.getData().writes) {
+          if (v.position.getFilename() === filename) {
+            ret.push(v.position);
+          }
+        }
+      }
     }
 
     return ret;
@@ -202,6 +237,19 @@ export class SpaghettiScope {
   }
 
 /////////////////////////////
+
+  private allNodes(): SpaghettiScopeNode[] {
+    const ret: SpaghettiScopeNode[] = [];
+    let stack: SpaghettiScopeNode[] = [this.node];
+
+    while (stack.length > 0) {
+      const current = stack.pop()!;
+      ret.push(current);
+      stack = stack.concat(current.getChildren());
+    }
+
+    return ret;
+  }
 
   private lookupPositionTraverse(p: Position, filename: string, node: SpaghettiScopeNode): SpaghettiScopeNode | undefined {
     if (node.getIdentifier().filename === filename) {
