@@ -3,7 +3,7 @@ import * as Expressions from "../expressions";
 import {Structure} from "./_structure";
 import {star, IStructureRunnable, sta, beginEnd, alt, sub} from "./_combi";
 import {StatementNode, StructureNode} from "../nodes";
-import {Scope} from "../syntax/_scope";
+import {CurrentScope} from "../syntax/_current_scope";
 import {TypedIdentifier} from "../types/_typed_identifier";
 import * as Basic from "../types/basic";
 import {IStructureComponent} from "../types/basic";
@@ -16,7 +16,7 @@ export class Data extends Structure {
                     sta(Statements.DataEnd));
   }
 
-  public runSyntax(node: StructureNode, scope: Scope, filename: string): TypedIdentifier | undefined {
+  public runSyntax(node: StructureNode, scope: CurrentScope, filename: string): TypedIdentifier | undefined {
     const name = node.findFirstExpression(Expressions.NamespaceSimpleName)!.getFirstToken();
 
     const components: IStructureComponent[] = [];

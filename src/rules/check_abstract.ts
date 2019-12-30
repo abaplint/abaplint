@@ -3,7 +3,7 @@ import {ABAPRule} from "./_abap_rule";
 import {ABAPFile} from "../files";
 import {BasicRuleConfig} from "./_basic_rule_config";
 import {Registry} from "..";
-import {Scope} from "../abap/syntax/_scope";
+import {CurrentScope} from "../abap/syntax/_current_scope";
 
 /**
  * Checks abstract methods and classes:
@@ -44,7 +44,7 @@ export class CheckAbstract extends ABAPRule {
 
   public runParsed(file: ABAPFile, reg: Registry) {
     const issues: Issue[] = [];
-    const scope = Scope.buildDefault(reg);
+    const scope = CurrentScope.buildDefault(reg);
 
     for (const classDef of file.getClassDefinitions()) {
       if (classDef.isAbstract()) {

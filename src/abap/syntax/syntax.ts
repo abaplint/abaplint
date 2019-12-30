@@ -4,21 +4,20 @@ import * as Structures from "../structures";
 import {Issue} from "../../issue";
 import {INode} from "../nodes/_inode";
 import {Token} from "../tokens/_token";
-import {StatementNode, ExpressionNode, StructureNode, TokenNode} from "../nodes";
+import {StatementNode, ExpressionNode, StructureNode} from "../nodes";
 import {ABAPFile} from "../../files";
 import {Registry} from "../../registry";
 import {ABAPObject} from "../../objects/_abap_object";
-import {Scope} from "./_scope";
+import {CurrentScope, ScopeType} from "./_current_scope";
 import {ObjectOriented} from "./_object_oriented";
 import {Procedural} from "./_procedural";
 import {Inline} from "./_inline";
 import {Program} from "../../objects";
 import {ClassDefinition, InterfaceDefinition} from "../types";
-import {Identifier} from "../types/_identifier";
+import {SpaghettiScope} from "./_spaghetti_scope";
+import {Position} from "../../position";
 
 // assumption: objects are parsed without parsing errors
-
-// todo, traversal should start with the right file for the object
 
 export class SyntaxLogic {
   private currentFile: ABAPFile;
@@ -27,7 +26,7 @@ export class SyntaxLogic {
   private readonly object: ABAPObject;
   private readonly reg: Registry;
 
-  private readonly scope: Scope;
+  private readonly scope: CurrentScope;
 
   private readonly helpers: {
     oooc: ObjectOriented,
@@ -40,7 +39,7 @@ export class SyntaxLogic {
     this.issues = [];
 
     this.object = object;
-    this.scope = Scope.buildDefault(this.reg);
+    this.scope = CurrentScope.buildDefault(this.reg);
 
     this.helpers = {
       oooc: new ObjectOriented(this.reg, this.scope),
@@ -49,26 +48,36 @@ export class SyntaxLogic {
     };
   }
 
-  public findIssues(): Issue[] {
+  public run(): {issues: Issue[], spaghetti: SpaghettiScope} {
     this.issues = [];
 
     if (this.object instanceof Program && this.object.isInclude()) {
-      return [];
+// todo, show some kind of error?
+      return {issues: [], spaghetti: this.scope.pop()};
     }
 
     this.traverseObject();
-    return this.issues;
-  }
 
-  public traverseUntil(stopAt?: Identifier): Scope {
-    return this.traverseObject(stopAt);
+    for (;;) {
+      const spaghetti = this.scope.pop(); // pop built-in scopes
+      if (spaghetti.getTop().getIdentifier().stype === ScopeType.BuiltIn) {
+        return {issues: this.issues, spaghetti};
+      }
+    }
+
   }
 
 /////////////////////////////
 
-  private traverseObject(stopAt?: Identifier): Scope {
+  private traverseObject(): CurrentScope {
+// todo, traversal should start with the right file for the object
+
     if (this.object instanceof Program) {
       this.helpers.proc.addAllFormDefinitions(this.object.getABAPFiles()[0]);
+      this.scope.push(ScopeType.Program,
+                      this.object.getName(),
+                      new Position(1, 1),
+                      this.object.getMainABAPFile()!.getFilename());
     }
 
     for (const file of this.object.getABAPFiles()) {
@@ -76,9 +85,8 @@ export class SyntaxLogic {
       const structure = this.currentFile.getStructure();
       if (structure === undefined) {
         return this.scope;
-      } else if (this.traverse(structure, stopAt)) {
-        return this.scope;
       }
+      this.traverse(structure);
     }
 
     return this.scope;
@@ -89,11 +97,11 @@ export class SyntaxLogic {
     this.issues.push(issue);
   }
 
-  private traverse(node: INode, stopAt?: Identifier): boolean {
+  private traverse(node: INode): void {
     try {
       const skip = this.helpers.inline.update(node, this.currentFile.getFilename());
       if (skip) {
-        return false;
+        return;
       }
     } catch (e) {
       this.newIssue(node.getFirstToken(), e.message);
@@ -105,7 +113,7 @@ export class SyntaxLogic {
         || node.get() instanceof Expressions.Target)) {
       for (const field of node.findAllExpressions(Expressions.Field).concat(node.findAllExpressions(Expressions.FieldSymbol))) {
         const token = field.getFirstToken();
-        const resolved = this.scope.resolveVariable(token.getStr());
+        const resolved = this.scope.findVariable(token.getStr());
         if (resolved === undefined) {
           this.newIssue(token, "\"" + token.getStr() + "\" not found");
         }
@@ -133,23 +141,8 @@ export class SyntaxLogic {
         }
       }
 
-      const stop = this.traverse(child, stopAt);
-      if (stop) {
-        return stop;
-      }
-
-      if (child instanceof TokenNode) {
-        const token = child.get();
-        if (stopAt !== undefined
-            && stopAt.getStart().getCol() === token.getStart().getCol()
-            && stopAt.getStart().getRow() === token.getStart().getRow()
-            && stopAt.getFilename() === this.currentFile.getFilename()) {
-          return true;
-        }
-      }
+      this.traverse(child);
     }
-
-    return false;
   }
 
   // if this returns true, then the traversal should continue with next child
@@ -203,13 +196,13 @@ export class SyntaxLogic {
     } else if (s instanceof Statements.Perform) {
       s.runSyntax(node, this.scope, filename);
     } else if (s instanceof Statements.FunctionModule) {
-      this.helpers.proc.findFunctionScope(this.object, node);
+      this.helpers.proc.findFunctionScope(this.object, node, filename);
     } else if (s instanceof Statements.Method) {
-      this.helpers.oooc.methodImplementation(node);
+      this.helpers.oooc.methodImplementation(node, filename);
     } else if (s instanceof Statements.ClassDefinition) {
-      this.helpers.oooc.classDefinition(node);
+      this.helpers.oooc.classDefinition(node, filename);
     } else if (s instanceof Statements.ClassImplementation) {
-      this.helpers.oooc.classImplementation(node);
+      this.helpers.oooc.classImplementation(node, filename);
     } else if (s instanceof Statements.EndForm
         || s instanceof Statements.EndMethod
         || s instanceof Statements.EndFunction

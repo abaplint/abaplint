@@ -7,7 +7,7 @@ import {ABAPObject} from "../../objects/_abap_object";
 import {NamingRuleConfig} from "../_naming_rule_config";
 import {NameValidator} from "../../utils/name_validator";
 import {TypedIdentifier} from "../../abap/types/_typed_identifier";
-import {Scope} from "../../abap/syntax/_scope";
+import {CurrentScope} from "../../abap/syntax/_current_scope";
 
 /** Allows you to enforce a pattern, such as a prefix, for method parameter names */
 export class MethodParameterNamesConf extends NamingRuleConfig {
@@ -52,7 +52,7 @@ export class MethodParameterNames implements IRule {
       return [];
     }
 
-    const scope = Scope.buildDefault(reg);
+    const scope = CurrentScope.buildDefault(reg);
 
     for (const file of obj.getABAPFiles()) {
       for (const def of file.getInterfaceDefinitions()) {

@@ -167,6 +167,7 @@
     },
     "BeginEndNamesConf": {
       "additionalProperties": false,
+      "description": "Check BEGIN OF and END OF names match",
       "properties": {
         "enabled": {
           "description": "Is the rule enabled?",
@@ -210,7 +211,7 @@
     },
     "ChainMainlyDeclarationsConf": {
       "additionalProperties": false,
-      "description": "Chain mainly declarations",
+      "description": "Chain mainly declarations\r\nhttps://docs.abapopenchecks.org/checks/23/",
       "properties": {
         "enabled": {
           "description": "Is the rule enabled?",
@@ -542,7 +543,7 @@
     },
     "CommentedCodeConf": {
       "additionalProperties": false,
-      "description": "Detects usage of commented out code.",
+      "description": "Detects usage of commented out code.\r\nhttps://github.com/SAP/styleguides/blob/master/clean-abap/CleanABAP.md#delete-code-instead-of-commenting-it\r\nhttps://docs.abapopenchecks.org/checks/14/",
       "properties": {
         "enabled": {
           "description": "Is the rule enabled?",
@@ -564,7 +565,7 @@
     },
     "ConstructorVisibilityPublicConf": {
       "additionalProperties": false,
-      "description": "Constructor must be placed in the public section, even if the class is not CREATE PUBLIC.",
+      "description": "Constructor must be placed in the public section, even if the class is not CREATE PUBLIC.\r\nhttps://github.com/SAP/styleguides/blob/master/clean-abap/CleanABAP.md#if-your-global-class-is-create-private-leave-the-constructor-public\r\nhttps://help.sap.com/doc/abapdocu_751_index_htm/7.51/en-US/abeninstance_constructor_guidl.htm",
       "properties": {
         "enabled": {
           "description": "Is the rule enabled?",
@@ -586,7 +587,7 @@
     },
     "ContainsTabConf": {
       "additionalProperties": false,
-      "description": "Checks for usage of tabs (enable to enforce spaces)",
+      "description": "Checks for usage of tabs (enable to enforce spaces)\r\nhttps://docs.abapopenchecks.org/checks/09/",
       "properties": {
         "enabled": {
           "description": "Is the rule enabled?",
@@ -608,7 +609,7 @@
     },
     "DefinitionsTopConf": {
       "additionalProperties": false,
-      "description": "Checks that definitions are placed at the beginning of methods.",
+      "description": "Checks that definitions are placed at the beginning of methods.\r\nhttps://docs.abapopenchecks.org/checks/17/",
       "properties": {
         "enabled": {
           "description": "Is the rule enabled?",
@@ -696,7 +697,7 @@
     },
     "EmptyLineinStatementConf": {
       "additionalProperties": false,
-      "description": "Checks that statements do not contain empty lines.",
+      "description": "Checks that statements do not contain empty lines.\r\nhttps://docs.abapopenchecks.org/checks/41/",
       "properties": {
         "allowChained": {
           "type": "boolean"
@@ -827,7 +828,7 @@
     },
     "ExportingConf": {
       "additionalProperties": false,
-      "description": "Detects EXPORTING statements which can be omitted.",
+      "description": "Detects EXPORTING statements which can be omitted.\r\nhttps://github.com/SAP/styleguides/blob/master/clean-abap/CleanABAP.md#omit-the-optional-keyword-exporting\r\nhttps://docs.abapopenchecks.org/checks/30/",
       "properties": {
         "enabled": {
           "description": "Is the rule enabled?",
@@ -922,7 +923,7 @@
     },
     "FunctionalWritingConf": {
       "additionalProperties": false,
-      "description": "Detects usage of call method when functional style calls can be used.",
+      "description": "Detects usage of call method when functional style calls can be used.\r\nhttps://github.com/SAP/styleguides/blob/master/clean-abap/CleanABAP.md#prefer-functional-to-procedural-calls\r\nhttps://docs.abapopenchecks.org/checks/07/",
       "properties": {
         "enabled": {
           "description": "Is the rule enabled?",
@@ -974,6 +975,7 @@
       "additionalProperties": false,
       "properties": {
         "dependencies": {
+          "description": "External git dependencies used for syntax checks",
           "items": {
             "$ref": "#/definitions/IDependency"
           },
@@ -993,7 +995,8 @@
                 {
                   "type": "boolean"
                 }
-              ]
+              ],
+              "description": "Only allow characters from the 7bit ASCII set.\r\nhttps://docs.abapopenchecks.org/checks/05/"
             },
             "abapdoc": {
               "anyOf": [
@@ -1003,7 +1006,8 @@
                 {
                   "type": "boolean"
                 }
-              ]
+              ],
+              "description": "Various checks regarding abapdoc. Base rule checks for existence of abapdoc for\r\npublic class methods and all interface methods."
             },
             "allowed_object_naming": {
               "anyOf": [
@@ -1013,7 +1017,8 @@
                 {
                   "type": "boolean"
                 }
-              ]
+              ],
+              "description": "Enforces basic name length and namespace restrictions"
             },
             "allowed_object_types": {
               "anyOf": [
@@ -1023,7 +1028,8 @@
                 {
                   "type": "boolean"
                 }
-              ]
+              ],
+              "description": "Restricts the set of allowed object types."
             },
             "ambiguous_statement": {
               "anyOf": [
@@ -1033,7 +1039,8 @@
                 {
                   "type": "boolean"
                 }
-              ]
+              ],
+              "description": "Checks for ambiguity between deleting from internal and database table"
             },
             "avoid_use": {
               "anyOf": [
@@ -1043,7 +1050,8 @@
                 {
                   "type": "boolean"
                 }
-              ]
+              ],
+              "description": "Detects usage of certain statements."
             },
             "begin_end_names": {
               "anyOf": [
@@ -1053,7 +1061,8 @@
                 {
                   "type": "boolean"
                 }
-              ]
+              ],
+              "description": "Check BEGIN OF and END OF names match"
             },
             "breakpoint": {
               "anyOf": [
@@ -1063,7 +1072,8 @@
                 {
                   "type": "boolean"
                 }
-              ]
+              ],
+              "description": "Detects usage of code-based breakpoints."
             },
             "chain_mainly_declarations": {
               "anyOf": [
@@ -1073,7 +1083,8 @@
                 {
                   "type": "boolean"
                 }
-              ]
+              ],
+              "description": "Chain mainly declarations\r\nhttps://docs.abapopenchecks.org/checks/23/"
             },
             "check_abstract": {
               "anyOf": [
@@ -1083,7 +1094,8 @@
                 {
                   "type": "boolean"
                 }
-              ]
+              ],
+              "description": "Checks abstract methods and classes:\r\n- class defined as abstract and final,\r\n- non-abstract class contains abstract methods"
             },
             "check_comments": {
               "anyOf": [
@@ -1093,7 +1105,8 @@
                 {
                   "type": "boolean"
                 }
-              ]
+              ],
+              "description": "Various checks for comment usage."
             },
             "check_ddic": {
               "anyOf": [
@@ -1103,7 +1116,8 @@
                 {
                   "type": "boolean"
                 }
-              ]
+              ],
+              "description": "Checks the types of DDIC objects can be resolved, the namespace of the development/errors can be configured in \"errorNamespace\""
             },
             "check_include": {
               "anyOf": [
@@ -1113,7 +1127,8 @@
                 {
                   "type": "boolean"
                 }
-              ]
+              ],
+              "description": "Checks INCLUDE statements"
             },
             "check_no_handler_pragma": {
               "anyOf": [
@@ -1123,7 +1138,8 @@
                 {
                   "type": "boolean"
                 }
-              ]
+              ],
+              "description": "Checks NO_HANDLER pragmas that can be removed"
             },
             "check_syntax": {
               "anyOf": [
@@ -1133,7 +1149,8 @@
                 {
                   "type": "boolean"
                 }
-              ]
+              ],
+              "description": "Enables syntax check and variable resolution"
             },
             "check_text_elements": {
               "anyOf": [
@@ -1143,7 +1160,8 @@
                 {
                   "type": "boolean"
                 }
-              ]
+              ],
+              "description": "Check text elements"
             },
             "check_transformation_exists": {
               "anyOf": [
@@ -1153,7 +1171,8 @@
                 {
                   "type": "boolean"
                 }
-              ]
+              ],
+              "description": "Checks that used XSLT transformations exist."
             },
             "check_unused_variables": {
               "anyOf": [
@@ -1173,7 +1192,8 @@
                 {
                   "type": "boolean"
                 }
-              ]
+              ],
+              "description": "Allows you to enforce a pattern, such as a prefix, for class variable names."
             },
             "cloud_types": {
               "anyOf": [
@@ -1183,7 +1203,8 @@
                 {
                   "type": "boolean"
                 }
-              ]
+              ],
+              "description": "Checks that the package does not contain any object types unsupported in cloud ABAP."
             },
             "colon_missing_space": {
               "anyOf": [
@@ -1193,7 +1214,8 @@
                 {
                   "type": "boolean"
                 }
-              ]
+              ],
+              "description": "Checks for missing spaces after colons in chained statements."
             },
             "commented_code": {
               "anyOf": [
@@ -1203,7 +1225,8 @@
                 {
                   "type": "boolean"
                 }
-              ]
+              ],
+              "description": "Detects usage of commented out code.\r\nhttps://github.com/SAP/styleguides/blob/master/clean-abap/CleanABAP.md#delete-code-instead-of-commenting-it\r\nhttps://docs.abapopenchecks.org/checks/14/"
             },
             "constructor_visibility_public": {
               "anyOf": [
@@ -1213,7 +1236,8 @@
                 {
                   "type": "boolean"
                 }
-              ]
+              ],
+              "description": "Constructor must be placed in the public section, even if the class is not CREATE PUBLIC.\r\nhttps://github.com/SAP/styleguides/blob/master/clean-abap/CleanABAP.md#if-your-global-class-is-create-private-leave-the-constructor-public\r\nhttps://help.sap.com/doc/abapdocu_751_index_htm/7.51/en-US/abeninstance_constructor_guidl.htm"
             },
             "contains_tab": {
               "anyOf": [
@@ -1223,7 +1247,8 @@
                 {
                   "type": "boolean"
                 }
-              ]
+              ],
+              "description": "Checks for usage of tabs (enable to enforce spaces)\r\nhttps://docs.abapopenchecks.org/checks/09/"
             },
             "definitions_top": {
               "anyOf": [
@@ -1233,7 +1258,8 @@
                 {
                   "type": "boolean"
                 }
-              ]
+              ],
+              "description": "Checks that definitions are placed at the beginning of methods.\r\nhttps://docs.abapopenchecks.org/checks/17/"
             },
             "description_empty": {
               "anyOf": [
@@ -1243,7 +1269,8 @@
                 {
                   "type": "boolean"
                 }
-              ]
+              ],
+              "description": "Ensures descriptions in class metadata exist."
             },
             "double_space": {
               "anyOf": [
@@ -1253,7 +1280,8 @@
                 {
                   "type": "boolean"
                 }
-              ]
+              ],
+              "description": "Checks that only a single space follows certain common statements."
             },
             "empty_line_in_statement": {
               "anyOf": [
@@ -1263,7 +1291,8 @@
                 {
                   "type": "boolean"
                 }
-              ]
+              ],
+              "description": "Checks that statements do not contain empty lines.\r\nhttps://docs.abapopenchecks.org/checks/41/"
             },
             "empty_statement": {
               "anyOf": [
@@ -1273,7 +1302,8 @@
                 {
                   "type": "boolean"
                 }
-              ]
+              ],
+              "description": "Checks for empty statements (an empty statement is a single dot)"
             },
             "empty_structure": {
               "anyOf": [
@@ -1283,7 +1313,8 @@
                 {
                   "type": "boolean"
                 }
-              ]
+              ],
+              "description": "Checks that the code does not contain empty blocks."
             },
             "exit_or_check": {
               "anyOf": [
@@ -1293,7 +1324,8 @@
                 {
                   "type": "boolean"
                 }
-              ]
+              ],
+              "description": "Detects usages of EXIT or CHECK statements outside of loops."
             },
             "exporting": {
               "anyOf": [
@@ -1303,7 +1335,8 @@
                 {
                   "type": "boolean"
                 }
-              ]
+              ],
+              "description": "Detects EXPORTING statements which can be omitted.\r\nhttps://github.com/SAP/styleguides/blob/master/clean-abap/CleanABAP.md#omit-the-optional-keyword-exporting\r\nhttps://docs.abapopenchecks.org/checks/30/"
             },
             "form_no_dash": {
               "anyOf": [
@@ -1313,7 +1346,8 @@
                 {
                   "type": "boolean"
                 }
-              ]
+              ],
+              "description": "Checks for a Dash in form names."
             },
             "form_tables_obsolete": {
               "anyOf": [
@@ -1323,7 +1357,8 @@
                 {
                   "type": "boolean"
                 }
-              ]
+              ],
+              "description": "Checks for TABLES parameters in forms."
             },
             "fully_type_constants": {
               "anyOf": [
@@ -1333,7 +1368,8 @@
                 {
                   "type": "boolean"
                 }
-              ]
+              ],
+              "description": "Checks constants for full typing - no implicit typing allowed."
             },
             "functional_writing": {
               "anyOf": [
@@ -1343,7 +1379,8 @@
                 {
                   "type": "boolean"
                 }
-              ]
+              ],
+              "description": "Detects usage of call method when functional style calls can be used.\r\nhttps://github.com/SAP/styleguides/blob/master/clean-abap/CleanABAP.md#prefer-functional-to-procedural-calls\r\nhttps://docs.abapopenchecks.org/checks/07/"
             },
             "global_class": {
               "anyOf": [
@@ -1353,7 +1390,8 @@
                 {
                   "type": "boolean"
                 }
-              ]
+              ],
+              "description": "Checks related to names of global classes. For the name pattern, see rule object_naming"
             },
             "identical_form_names": {
               "anyOf": [
@@ -1363,7 +1401,8 @@
                 {
                   "type": "boolean"
                 }
-              ]
+              ],
+              "description": "Detects identically named forms."
             },
             "if_in_if": {
               "anyOf": [
@@ -1373,7 +1412,8 @@
                 {
                   "type": "boolean"
                 }
-              ]
+              ],
+              "description": "Detects nested ifs which can be refactored to a single condition using AND."
             },
             "implement_methods": {
               "anyOf": [
@@ -1383,7 +1423,8 @@
                 {
                   "type": "boolean"
                 }
-              ]
+              ],
+              "description": "Chekcs for abstract methods which need implementing."
             },
             "in_statement_indentation": {
               "anyOf": [
@@ -1393,7 +1434,8 @@
                 {
                   "type": "boolean"
                 }
-              ]
+              ],
+              "description": "Checks alignment within block statement declarations which span multiple lines, such as multiple conditions in IF statements.\r\nExample:\r\nIF 1 = 1 AND\r\n  2 = 2."
             },
             "indentation": {
               "anyOf": [
@@ -1403,7 +1445,8 @@
                 {
                   "type": "boolean"
                 }
-              ]
+              ],
+              "description": "Checks indentation"
             },
             "inline_data_old_versions": {
               "anyOf": [
@@ -1413,7 +1456,8 @@
                 {
                   "type": "boolean"
                 }
-              ]
+              ],
+              "description": "Checks for inline data declarations in older releases."
             },
             "keep_single_parameter_on_one_line": {
               "anyOf": [
@@ -1423,7 +1467,8 @@
                 {
                   "type": "boolean"
                 }
-              ]
+              ],
+              "description": "Keep single parameter calls on one line"
             },
             "keyword_case": {
               "anyOf": [
@@ -1433,7 +1478,8 @@
                 {
                   "type": "boolean"
                 }
-              ]
+              ],
+              "description": "Checks that keywords have the same case. Non-keywords must be lower case."
             },
             "line_length": {
               "anyOf": [
@@ -1443,7 +1489,8 @@
                 {
                   "type": "boolean"
                 }
-              ]
+              ],
+              "description": "Detects lines exceeding the provided maximum length.\r\nhttps://github.com/SAP/styleguides/blob/master/clean-abap/CleanABAP.md#stick-to-a-reasonable-line-length\r\nhttps://docs.abapopenchecks.org/checks/04/"
             },
             "line_only_punc": {
               "anyOf": [
@@ -1453,7 +1500,8 @@
                 {
                   "type": "boolean"
                 }
-              ]
+              ],
+              "description": "Detects lines containing only punctuation.\r\nhttps://github.com/SAP/styleguides/blob/master/clean-abap/CleanABAP.md#close-brackets-at-line-end\r\nhttps://docs.abapopenchecks.org/checks/16/"
             },
             "local_class_naming": {
               "anyOf": [
@@ -1463,7 +1511,8 @@
                 {
                   "type": "boolean"
                 }
-              ]
+              ],
+              "description": "Allows you to enforce a pattern, such as a prefix, for local class names."
             },
             "local_testclass_location": {
               "anyOf": [
@@ -1473,7 +1522,8 @@
                 {
                   "type": "boolean"
                 }
-              ]
+              ],
+              "description": "Chceks that local test classes are placed in the test include."
             },
             "local_variable_names": {
               "anyOf": [
@@ -1483,7 +1533,8 @@
                 {
                   "type": "boolean"
                 }
-              ]
+              ],
+              "description": "Allows you to enforce a pattern, such as a prefix, for local variables, constants and field symbols."
             },
             "main_file_contents": {
               "anyOf": [
@@ -1493,7 +1544,8 @@
                 {
                   "type": "boolean"
                 }
-              ]
+              ],
+              "description": "Checks related to report declarations."
             },
             "max_one_statement": {
               "anyOf": [
@@ -1503,7 +1555,8 @@
                 {
                   "type": "boolean"
                 }
-              ]
+              ],
+              "description": "Chekcks that each line contains only a single statement.\r\nhttps://github.com/SAP/styleguides/blob/master/clean-abap/CleanABAP.md#no-more-than-one-statement-per-line\r\nhttps://docs.abapopenchecks.org/checks/11/"
             },
             "message_exists": {
               "anyOf": [
@@ -1513,7 +1566,8 @@
                 {
                   "type": "boolean"
                 }
-              ]
+              ],
+              "description": "In message statements, check that the message class + id exist"
             },
             "method_length": {
               "anyOf": [
@@ -1523,7 +1577,8 @@
                 {
                   "type": "boolean"
                 }
-              ]
+              ],
+              "description": "Checks relating to method length."
             },
             "method_parameter_names": {
               "anyOf": [
@@ -1533,7 +1588,8 @@
                 {
                   "type": "boolean"
                 }
-              ]
+              ],
+              "description": "Allows you to enforce a pattern, such as a prefix, for method parameter names"
             },
             "mix_returning": {
               "anyOf": [
@@ -1543,7 +1599,8 @@
                 {
                   "type": "boolean"
                 }
-              ]
+              ],
+              "description": "Checks that methods don't have a mixture of returning and exporting/changing parameters\r\nhttps://github.com/SAP/styleguides/blob/master/clean-abap/CleanABAP.md#use-either-returning-or-exporting-or-changing-but-not-a-combination"
             },
             "msag_consistency": {
               "anyOf": [
@@ -1553,7 +1610,8 @@
                 {
                   "type": "boolean"
                 }
-              ]
+              ],
+              "description": "Checks the validity of messages in message classes"
             },
             "nesting": {
               "anyOf": [
@@ -1563,7 +1621,8 @@
                 {
                   "type": "boolean"
                 }
-              ]
+              ],
+              "description": "Checks for methods exceeding a maximum nesting depth\r\nhttps://github.com/SAP/styleguides/blob/master/clean-abap/CleanABAP.md#keep-the-nesting-depth-low\r\nhttps://docs.abapopenchecks.org/checks/74/"
             },
             "newline_between_methods": {
               "anyOf": [
@@ -1573,7 +1632,8 @@
                 {
                   "type": "boolean"
                 }
-              ]
+              ],
+              "description": "Checks for newlines between method implementations."
             },
             "no_public_attributes": {
               "anyOf": [
@@ -1583,7 +1643,8 @@
                 {
                   "type": "boolean"
                 }
-              ]
+              ],
+              "description": "Checks that classes and interfaces don't contain any public attributes.\r\nExceptions are excluded from this rule."
             },
             "object_naming": {
               "anyOf": [
@@ -1593,7 +1654,8 @@
                 {
                   "type": "boolean"
                 }
-              ]
+              ],
+              "description": "Allows you to enforce a pattern, such as a prefix, for object names"
             },
             "obsolete_statement": {
               "anyOf": [
@@ -1603,7 +1665,8 @@
                 {
                   "type": "boolean"
                 }
-              ]
+              ],
+              "description": "Checks for usages of certain obsolete statements"
             },
             "parser_error": {
               "anyOf": [
@@ -1613,7 +1676,19 @@
                 {
                   "type": "boolean"
                 }
-              ]
+              ],
+              "description": "Checks for syntax unrecognized by abaplint"
+            },
+            "prefer_returning_to_exporting": {
+              "anyOf": [
+                {
+                  "$ref": "#/definitions/PreferReturningToExportingConf"
+                },
+                {
+                  "type": "boolean"
+                }
+              ],
+              "description": "Prefer RETURNING to EXPORTING\r\nhttps://github.com/SAP/styleguides/blob/master/clean-abap/CleanABAP.md#prefer-returning-to-exporting\r\nhttps://docs.abapopenchecks.org/checks/44/"
             },
             "preferred_compare_operator": {
               "anyOf": [
@@ -1623,7 +1698,8 @@
                 {
                   "type": "boolean"
                 }
-              ]
+              ],
+              "description": "Configure undesired operator variants"
             },
             "release_idoc": {
               "anyOf": [
@@ -1633,7 +1709,8 @@
                 {
                   "type": "boolean"
                 }
-              ]
+              ],
+              "description": "Checks idoc types and segments are set to status released"
             },
             "remove_descriptions": {
               "anyOf": [
@@ -1643,7 +1720,8 @@
                 {
                   "type": "boolean"
                 }
-              ]
+              ],
+              "description": "Ensures you have no descriptions in metadata of methods, parameters, etc. For class descriptions, see rule description_empty."
             },
             "rfc_error_handling": {
               "anyOf": [
@@ -1653,7 +1731,8 @@
                 {
                   "type": "boolean"
                 }
-              ]
+              ],
+              "description": "Checks that exceptions 'system_failure' and 'communication_failure' are handled in RFC calls"
             },
             "selection_screen_naming": {
               "anyOf": [
@@ -1663,7 +1742,8 @@
                 {
                   "type": "boolean"
                 }
-              ]
+              ],
+              "description": "Allows you to enforce a pattern, such as a prefix, for selection-screen variable names."
             },
             "sequential_blank": {
               "anyOf": [
@@ -1673,7 +1753,8 @@
                 {
                   "type": "boolean"
                 }
-              ]
+              ],
+              "description": "Checks that code does not contain more than the configured number of blank lines in a row."
             },
             "short_case": {
               "anyOf": [
@@ -1683,7 +1764,8 @@
                 {
                   "type": "boolean"
                 }
-              ]
+              ],
+              "description": "Checks for CASE statements which have fewer than the specified number of branches"
             },
             "sicf_consistency": {
               "anyOf": [
@@ -1693,7 +1775,8 @@
                 {
                   "type": "boolean"
                 }
-              ]
+              ],
+              "description": "Checks the validity of ICF services"
             },
             "space_before_colon": {
               "anyOf": [
@@ -1703,7 +1786,8 @@
                 {
                   "type": "boolean"
                 }
-              ]
+              ],
+              "description": "Checks that there are no spaces in front of colons in chained statements.\r\nhttps://docs.abapopenchecks.org/checks/80/"
             },
             "space_before_dot": {
               "anyOf": [
@@ -1713,7 +1797,8 @@
                 {
                   "type": "boolean"
                 }
-              ]
+              ],
+              "description": "Checks for extra spaces before dots at the ends of statements ."
             },
             "sql_escape_host_variables": {
               "anyOf": [
@@ -1723,7 +1808,8 @@
                 {
                   "type": "boolean"
                 }
-              ]
+              ],
+              "description": "Escape SQL host variables, from 740sp05"
             },
             "start_at_tab": {
               "anyOf": [
@@ -1733,7 +1819,8 @@
                 {
                   "type": "boolean"
                 }
-              ]
+              ],
+              "description": "Checks that statements start at tabstops."
             },
             "superclass_final": {
               "anyOf": [
@@ -1743,7 +1830,8 @@
                 {
                   "type": "boolean"
                 }
-              ]
+              ],
+              "description": "Checks that classes which are inherited from are not declared as FINAL."
             },
             "tabl_enhancement_category": {
               "anyOf": [
@@ -1753,7 +1841,8 @@
                 {
                   "type": "boolean"
                 }
-              ]
+              ],
+              "description": "Checks that tables do not have the enhancement category 'not classified'"
             },
             "type_begin_single_include": {
               "anyOf": [
@@ -1763,7 +1852,8 @@
                 {
                   "type": "boolean"
                 }
-              ]
+              ],
+              "description": "Finds TYPE BEGIN with just one INCLUDE TYPE"
             },
             "type_form_parameters": {
               "anyOf": [
@@ -1773,7 +1863,8 @@
                 {
                   "type": "boolean"
                 }
-              ]
+              ],
+              "description": "Checks for untyped FORM parameters"
             },
             "types_naming": {
               "anyOf": [
@@ -1783,7 +1874,8 @@
                 {
                   "type": "boolean"
                 }
-              ]
+              ],
+              "description": "Allows you to enforce a pattern for TYPES definitions"
             },
             "unreachable_code": {
               "anyOf": [
@@ -1793,7 +1885,8 @@
                 {
                   "type": "boolean"
                 }
-              ]
+              ],
+              "description": "Checks for unreachable code."
             },
             "use_new": {
               "anyOf": [
@@ -1803,7 +1896,8 @@
                 {
                   "type": "boolean"
                 }
-              ]
+              ],
+              "description": "Checks for deprecated CREATE OBJECT statements."
             },
             "when_others_last": {
               "anyOf": [
@@ -1813,7 +1907,8 @@
                 {
                   "type": "boolean"
                 }
-              ]
+              ],
+              "description": "Checks that WHEN OTHERS is placed the last within a CASE statement."
             },
             "whitespace_end": {
               "anyOf": [
@@ -1823,7 +1918,8 @@
                 {
                   "type": "boolean"
                 }
-              ]
+              ],
+              "description": "Checks for redundant whitespace at the end of each line."
             },
             "xml_consistency": {
               "anyOf": [
@@ -1833,7 +1929,8 @@
                 {
                   "type": "boolean"
                 }
-              ]
+              ],
+              "description": "Checks the consistency of main XML files, eg. naming"
             }
           },
           "type": "object"
@@ -1844,7 +1941,6 @@
       },
       "required": [
         "global",
-        "dependencies",
         "syntax",
         "rules"
       ],
@@ -2022,6 +2118,7 @@
     },
     "IndentationConf": {
       "additionalProperties": false,
+      "description": "Checks indentation",
       "properties": {
         "alignTryCatch": {
           "type": "boolean"
@@ -2100,11 +2197,17 @@
           },
           "type": "array"
         },
+        "length": {
+          "type": "number"
+        },
         "reason": {
           "description": "An explanation for why the rule is enforced",
           "type": "string"
         }
       },
+      "required": [
+        "length"
+      ],
       "type": "object"
     },
     "KeywordCaseConf": {
@@ -2165,7 +2268,7 @@
     },
     "LineLengthConf": {
       "additionalProperties": false,
-      "description": "Detects lines exceeding the provided maximum length.",
+      "description": "Detects lines exceeding the provided maximum length.\r\nhttps://github.com/SAP/styleguides/blob/master/clean-abap/CleanABAP.md#stick-to-a-reasonable-line-length\r\nhttps://docs.abapopenchecks.org/checks/04/",
       "properties": {
         "enabled": {
           "description": "Is the rule enabled?",
@@ -2194,7 +2297,7 @@
     },
     "LineOnlyPuncConf": {
       "additionalProperties": false,
-      "description": "Detects lines containing only punctuation.",
+      "description": "Detects lines containing only punctuation.\r\nhttps://github.com/SAP/styleguides/blob/master/clean-abap/CleanABAP.md#close-brackets-at-line-end\r\nhttps://docs.abapopenchecks.org/checks/16/",
       "properties": {
         "enabled": {
           "description": "Is the rule enabled?",
@@ -2402,7 +2505,7 @@
     },
     "MaxOneStatementConf": {
       "additionalProperties": false,
-      "description": "Chekcks that each line contains only a single statement.",
+      "description": "Chekcks that each line contains only a single statement.\r\nhttps://github.com/SAP/styleguides/blob/master/clean-abap/CleanABAP.md#no-more-than-one-statement-per-line\r\nhttps://docs.abapopenchecks.org/checks/11/",
       "properties": {
         "enabled": {
           "description": "Is the rule enabled?",
@@ -2552,7 +2655,7 @@
     },
     "MixReturningConf": {
       "additionalProperties": false,
-      "description": "Checks that methods don't have a mixture of returning and exporting/changing parameters",
+      "description": "Checks that methods don't have a mixture of returning and exporting/changing parameters\r\nhttps://github.com/SAP/styleguides/blob/master/clean-abap/CleanABAP.md#use-either-returning-or-exporting-or-changing-but-not-a-combination",
       "properties": {
         "enabled": {
           "description": "Is the rule enabled?",
@@ -2574,7 +2677,7 @@
     },
     "NestingConf": {
       "additionalProperties": false,
-      "description": "Checks for methods exceeding a maximum nesting depth",
+      "description": "Checks for methods exceeding a maximum nesting depth\r\nhttps://github.com/SAP/styleguides/blob/master/clean-abap/CleanABAP.md#keep-the-nesting-depth-low\r\nhttps://docs.abapopenchecks.org/checks/74/",
       "properties": {
         "depth": {
           "description": "Maximum allowed nesting depth",
@@ -2879,6 +2982,28 @@
       ],
       "type": "string"
     },
+    "PreferReturningToExportingConf": {
+      "additionalProperties": false,
+      "description": "Prefer RETURNING to EXPORTING\r\nhttps://github.com/SAP/styleguides/blob/master/clean-abap/CleanABAP.md#prefer-returning-to-exporting\r\nhttps://docs.abapopenchecks.org/checks/44/",
+      "properties": {
+        "enabled": {
+          "description": "Is the rule enabled?",
+          "type": "boolean"
+        },
+        "exclude": {
+          "description": "List of file regex patterns to exclude",
+          "items": {
+            "type": "string"
+          },
+          "type": "array"
+        },
+        "reason": {
+          "description": "An explanation for why the rule is enforced",
+          "type": "string"
+        }
+      },
+      "type": "object"
+    },
     "PreferredCompareOperatorConf": {
       "additionalProperties": false,
       "description": "Configure undesired operator variants",
@@ -3110,7 +3235,7 @@
     },
     "SevenBitAsciiConf": {
       "additionalProperties": false,
-      "description": "Only allow characters from the 7bit ASCII set.",
+      "description": "Only allow characters from the 7bit ASCII set.\r\nhttps://docs.abapopenchecks.org/checks/05/",
       "properties": {
         "enabled": {
           "description": "Is the rule enabled?",
@@ -3168,7 +3293,7 @@
     },
     "SpaceBeforeColonConf": {
       "additionalProperties": false,
-      "description": "Checks that there are no spaces in front of colons in chained statements.",
+      "description": "Checks that there are no spaces in front of colons in chained statements.\r\nhttps://docs.abapopenchecks.org/checks/80/",
       "properties": {
         "enabled": {
           "description": "Is the rule enabled?",

@@ -3,7 +3,7 @@ import * as Expressions from "../expressions";
 import {str, seq, alt, opt, IStatementRunnable, per} from "../combi";
 import {NamespaceSimpleName, Type, Value, Length, Decimals, ConstantFieldLength} from "../expressions";
 import {StatementNode} from "../nodes";
-import {Scope} from "../syntax/_scope";
+import {CurrentScope} from "../syntax/_current_scope";
 import {BasicTypes} from "../syntax/basic_types";
 import {TypedIdentifier} from "../types/_typed_identifier";
 import {UnknownType} from "../types/basic";
@@ -20,7 +20,7 @@ export class Constant extends Statement {
     return ret;
   }
 
-  public runSyntax(node: StatementNode, scope: Scope, filename: string): TypedIdentifier {
+  public runSyntax(node: StatementNode, scope: CurrentScope, filename: string): TypedIdentifier {
     const found = new BasicTypes(filename, scope).simpleType(node);
     if (found) {
       return found;

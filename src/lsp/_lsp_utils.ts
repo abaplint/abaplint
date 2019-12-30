@@ -1,7 +1,6 @@
 import * as Statements from "../abap/statements";
 import * as Expressions from "../abap/expressions";
 import {Registry} from "../registry";
-import {Scope} from "../abap/syntax/_scope";
 import {Token} from "../abap/tokens/_token";
 import {StatementNode, TokenNode} from "../abap/nodes";
 import {Identifier} from "../abap/types/_identifier";
@@ -13,6 +12,7 @@ import {ITextDocumentPositionParams} from ".";
 import {INode} from "../abap/nodes/_inode";
 import {Position} from "../position";
 import * as LServer from "vscode-languageserver-types";
+import {SpaghettiScopeNode} from "../abap/syntax/_spaghetti_scope";
 
 export interface ICursorPosition {
   token: Token;
@@ -79,22 +79,25 @@ export class LSPUtils {
       ABAPFile | FormDefinition | Identifier | undefined {
 
     const res = this.findInclude(cursor, reg);
-    if (res) { return res; }
-
-    const scope = new SyntaxLogic(reg, obj).traverseUntil(cursor.identifier);
-
-    const form = this.findForm(cursor, scope);
-    if (form) { return form; }
-
-    const resolved = scope.resolveVariable(cursor.token.getStr());
-    if (resolved instanceof Identifier) {
-      return resolved;
+    if (res) {
+      return res;
     }
 
-    return undefined;
+    const scope = new SyntaxLogic(reg, obj).run().spaghetti.lookupPosition(
+      cursor.identifier.getStart(), cursor.identifier.getFilename());
+    if (scope === undefined) {
+      return undefined;
+    }
+
+    const form = this.findForm(cursor, scope);
+    if (form) {
+      return form;
+    }
+
+    return scope.findVariable(cursor.token.getStr());
   }
 
-  public static findForm(found: ICursorPosition, scope: Scope): FormDefinition | undefined {
+  public static findForm(found: ICursorPosition, scope: SpaghettiScopeNode): FormDefinition | undefined {
     if (!(found.snode.get() instanceof Statements.Perform)) {
       return undefined;
     }

@@ -62,6 +62,7 @@ import {NoPublicAttributesConf} from "../src/rules/no_public_attributes";
 import {ObjectNamingConf} from "../src/rules/naming/object_naming";
 import {ObsoleteStatementConf} from "../src/rules/obsolete_statement";
 import {ParserErrorConf} from "../src/rules/syntax/parser_error";
+import {PreferReturningToExportingConf} from "../src/rules/prefer_returning_to_exporting";
 import {PreferredCompareOperatorConf} from "../src/rules/preferred_compare_operator";
 import {ReleaseIdocConf} from "../src/rules/release_idoc";
 import {RemoveDescriptionsConf} from "../src/rules/remove_descriptions";
@@ -84,10 +85,10 @@ import {UseNewConf} from "../src/rules/use_new";
 import {WhenOthersLastConf} from "../src/rules/when_others_last";
 import {WhitespaceEndConf} from "../src/rules/whitespace/whitespace_end";
 import {XMLConsistencyConf} from "../src/rules/xml_consistency";
-
 export interface IConfig {
   global: IGlobalConfig;
-  dependencies: IDependency[];
+  /** External git dependencies used for syntax checks */
+  dependencies?: IDependency[];
   syntax: ISyntaxSettings;
   rules: {
     "7bit_ascii"?: SevenBitAsciiConf | boolean,
@@ -153,6 +154,7 @@ export interface IConfig {
     "object_naming"?: ObjectNamingConf | boolean,
     "obsolete_statement"?: ObsoleteStatementConf | boolean,
     "parser_error"?: ParserErrorConf | boolean,
+    "prefer_returning_to_exporting"?: PreferReturningToExportingConf | boolean,
     "preferred_compare_operator"?: PreferredCompareOperatorConf | boolean,
     "release_idoc"?: ReleaseIdocConf | boolean,
     "remove_descriptions"?: RemoveDescriptionsConf | boolean,

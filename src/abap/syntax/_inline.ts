@@ -1,4 +1,4 @@
-import {Scope} from "./_scope";
+import {CurrentScope} from "./_current_scope";
 import {ExpressionNode, StatementNode} from "../nodes";
 import * as Expressions from "../expressions";
 import * as Statements from "../statements";
@@ -9,10 +9,10 @@ import {TypedIdentifier} from "../types/_typed_identifier";
 import {UnknownType} from "../types/basic";
 
 export class Inline {
-  private readonly variables: Scope;
+  private readonly variables: CurrentScope;
   private readonly reg: Registry;
 
-  constructor(reg: Registry, variables: Scope) {
+  constructor(reg: Registry, variables: CurrentScope) {
     this.variables = variables;
     this.reg = reg;
   }
@@ -73,11 +73,13 @@ export class Inline {
           if (dbtab === undefined) {
             continue;
           }
-          let name = dbtab.getFirstToken().getStr();
+          const name = dbtab.getFirstToken().getStr();
           const fields = this.findFields(name);
           if (fields.length === 0) {
             return true; // skip the statement, it uses things outside of checked namespace
           }
+          // disabled for now
+          /*
           const asName = from.findFirstExpression(Expressions.SQLAsName);
           if (asName) {
             name = asName.getFirstToken().getStr();
@@ -85,6 +87,7 @@ export class Inline {
           for (const field of fields) {
             this.variables.addName(name + "~" + field);
           }
+          */
 // todo, these also have to be popped after the statement
         }
       }
@@ -102,8 +105,6 @@ export class Inline {
     if (view !== undefined) {
       return view.getFields();
     }
-//    const reg = new RegExp(this.reg.getConfig().getSyntaxSetttings().errorNamespace, "i");
-//    if (name.match(reg)) {
     if (this.reg.inErrorNamespace(name)) {
       throw new Error("Database table or view \"" + name + "\" not found");
     } else {

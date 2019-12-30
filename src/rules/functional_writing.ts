@@ -8,7 +8,10 @@ import {IObject} from "../objects/_iobject";
 import {Class} from "../objects";
 import {ClassDefinition} from "../abap/types";
 
-/** Detects usage of call method when functional style calls can be used. */
+/** Detects usage of call method when functional style calls can be used.
+ * https://github.com/SAP/styleguides/blob/master/clean-abap/CleanABAP.md#prefer-functional-to-procedural-calls
+ * https://docs.abapopenchecks.org/checks/07/
+ */
 export class FunctionalWritingConf extends BasicRuleConfig {
   public ignoreExceptions: boolean = true;
 }

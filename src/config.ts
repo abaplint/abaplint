@@ -25,7 +25,8 @@ export interface ISyntaxSettings {
 
 export interface IConfig {
   global: IGlobalConfig;
-  dependencies: IDependency[];
+  /** External git dependencies used for syntax checks */
+  dependencies?: IDependency[];
   syntax: ISyntaxSettings;
   rules: any;
 }

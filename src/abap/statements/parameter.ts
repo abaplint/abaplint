@@ -4,7 +4,7 @@ import {Source, Constant, FieldChain, Dynamic, Field, FieldLength, FieldSub, Rad
 import {Version} from "../../version";
 import * as Expressions from "../expressions";
 import {StatementNode} from "../nodes";
-import {Scope} from "../syntax/_scope";
+import {CurrentScope} from "../syntax/_current_scope";
 import {TypedIdentifier} from "../types/_typed_identifier";
 import {UnknownType} from "../types/basic";
 
@@ -49,7 +49,7 @@ export class Parameter extends Statement {
     return verNot(Version.Cloud, ret);
   }
 
-  public runSyntax(node: StatementNode, _scope: Scope, filename: string): TypedIdentifier | undefined {
+  public runSyntax(node: StatementNode, _scope: CurrentScope, filename: string): TypedIdentifier | undefined {
     const fallback = node.findFirstExpression(Expressions.FieldSub);
     if (fallback) {
       return new TypedIdentifier(fallback.getFirstToken(), filename, new UnknownType("Parameter, fallback"));

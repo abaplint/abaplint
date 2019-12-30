@@ -14,6 +14,8 @@ import {ABAPHoverProvider} from "./monaco/abap_hover_provider";
 import {ABAPFormattingProvider} from "./monaco/abap_formatting_provider";
 import {ABAPSymbolProvider} from "./monaco/abap_symbol_provider";
 import {ABAPDefinitionProvider} from "./monaco/abap_definition_provider";
+import {ABAPDocumentHighlightProvider} from "./monaco/abap_document_highlight_provider";
+import {ABAPCodeActionProvider} from "./monaco/abap_code_action_provider";
 
 const commands = new CommandRegistry();
 
@@ -70,12 +72,6 @@ function main(): void {
 
 window.onload = main;
 
-window.onbeforeunload = function (e: any) {
-  // todo, some fix for not accidentally hitting Ctrl+W, but still works with hot reloading for local development
-  // e.preventDefault();
-  // e.returnValue = "Close?";
-};
-
 function registerMonacoSettings() {
   monaco.languages.registerCompletionItemProvider("abap", new ABAPSnippetProvider());
   monaco.languages.registerHoverProvider("abap", new ABAPHoverProvider());
@@ -83,6 +79,8 @@ function registerMonacoSettings() {
   monaco.languages.registerDocumentSymbolProvider("abap", new ABAPSymbolProvider());
   monaco.languages.registerDefinitionProvider("abap", new ABAPDefinitionProvider());
   monaco.languages.registerRenameProvider("abap", new ABAPRenameProvider());
+  monaco.languages.registerDocumentHighlightProvider("abap", new ABAPDocumentHighlightProvider());
+  monaco.languages.registerCodeActionProvider("abap", new ABAPCodeActionProvider());
 
   monaco.languages.json.jsonDefaults.setDiagnosticsOptions({
     validate: true,

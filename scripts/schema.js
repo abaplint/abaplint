@@ -40,11 +40,13 @@ for(const rule of rules) {
   output = output + "import {" + rule.config + "} from \"" + ruledir + findFile(rule.key) + "\";\n";
 }
 
-output = output + "\nexport interface IConfig {\n" +
-"  global: IGlobalConfig;\n" +
-"  dependencies: IDependency[];\n" +
-"  syntax: ISyntaxSettings;\n" +
-"  rules: {\n";
+// todo, take this part automatically from the typescript code
+output = output + `export interface IConfig {
+  global: IGlobalConfig;
+  /** External git dependencies used for syntax checks */
+  dependencies?: IDependency[];
+  syntax: ISyntaxSettings;
+  rules: {\n`;
 for (const rule of rules) {
   output = output + "    \"" + rule.key + "\"?: " + rule.config + " | boolean" + ",\n";
 }

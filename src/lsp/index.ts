@@ -7,6 +7,7 @@ import {Help} from "./help";
 import {PrettyPrinter} from "../pretty_printer/pretty_printer";
 import {Definition} from "./definition";
 import {Rename} from "./rename";
+import {Highlight} from "./highlight";
 
 // note Ranges are zero based in LSP,
 // https://github.com/microsoft/language-server-protocol/blob/master/versions/protocol-2-x.md#range
@@ -24,6 +25,12 @@ export interface IRenameParams {
   textDocument: LServer.TextDocumentIdentifier;
   position: LServer.Position;
   newName: string;
+}
+
+export interface ICodeActionParams {
+  textDocument: LServer.TextDocumentIdentifier;
+  range: LServer.Range;
+  context: LServer.CodeActionContext;
 }
 
 export class LanguageServer {
@@ -81,6 +88,38 @@ export class LanguageServer {
 
   public rename(params: IRenameParams): LServer.WorkspaceEdit | undefined {
     return new Rename(this.reg).rename(params);
+  }
+
+  public codeActions(_params: ICodeActionParams): LServer.CodeAction[] {
+    // todo, implement
+    return [];
+  }
+
+  public documentHighlight(_params: ITextDocumentPositionParams): LServer.DocumentHighlight[] {
+    // todo, implement
+    return [];
+  }
+
+////////////////////////////////////////
+//  ______      _
+// |  ____|    | |
+// | |__  __  _| |_ _ __ __   ___
+// |  __| \ \/ / __| '__/ _` / __|
+// | |____ >  <| |_| | | (_| \__ \
+// |______/_/\_\\__|_|  \__,_|___/
+//
+////////////////////////////////////////
+
+  public listDefinitionPositions(textDocument: LServer.TextDocumentIdentifier): LServer.Range[] {
+    return new Highlight(this.reg).listDefinitionPositions(textDocument);
+  }
+
+  public listReadPositions(textDocument: LServer.TextDocumentIdentifier): LServer.Range[] {
+    return new Highlight(this.reg).listReadPositions(textDocument);
+  }
+
+  public listWritePositions(textDocument: LServer.TextDocumentIdentifier): LServer.Range[] {
+    return new Highlight(this.reg).listWritePositions(textDocument);
   }
 
 }

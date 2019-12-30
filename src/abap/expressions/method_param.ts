@@ -3,7 +3,7 @@ import * as Expressions from "./";
 import {MethodParamName} from "./method_param_name";
 import {ParenLeft, ParenRightW} from "../tokens/";
 import {ExpressionNode} from "../nodes";
-import {Scope} from "../syntax/_scope";
+import {CurrentScope} from "../syntax/_current_scope";
 import {TypedIdentifier} from "../types/_typed_identifier";
 import {UnknownType} from "../types/basic";
 
@@ -27,7 +27,7 @@ export class MethodParam extends Expression {
     return fieldsOrValue;
   }
 
-  public runSyntax(node: ExpressionNode, _scope: Scope, filename: string): TypedIdentifier {
+  public runSyntax(node: ExpressionNode, _scope: CurrentScope, filename: string): TypedIdentifier {
     const name = node.findFirstExpression(Expressions.MethodParamName);
     if (!name) {
       throw new Error("method_parameter.ts, todo, handle pass by value and reference");

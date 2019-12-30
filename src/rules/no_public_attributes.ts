@@ -2,7 +2,7 @@ import {Issue} from "../issue";
 import {BasicRuleConfig} from "./_basic_rule_config";
 import {Registry} from "../registry";
 import {Visibility, ClassAttribute} from "../abap/types";
-import {Scope} from "../abap/syntax/_scope";
+import {CurrentScope} from "../abap/syntax/_current_scope";
 import {ABAPRule} from "./_abap_rule";
 import {ABAPFile} from "../files";
 
@@ -21,7 +21,7 @@ export class NoPublicAttributes extends ABAPRule {
   private rows: string[] = [];
 
   private file: ABAPFile;
-  private scope: Scope;
+  private scope: CurrentScope;
 
   public getKey(): string {
     return "no_public_attributes";
@@ -41,7 +41,7 @@ export class NoPublicAttributes extends ABAPRule {
 
   public runParsed(file: ABAPFile, reg: Registry) {
     this.rows = file.getRawRows();
-    this.scope = Scope.buildDefault(reg);
+    this.scope = CurrentScope.buildDefault(reg);
     this.file = file;
 
     const attributes = this.getAllPublicAttributes();

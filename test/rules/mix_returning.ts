@@ -9,7 +9,7 @@ function findIssues(abap: string) {
   return rule.run(reg.getObjects()[0], reg);
 }
 
-describe("Rule: local variable names", function() {
+describe("Rule: mix returning", function() {
   it("parser error", function () {
     const abap = "sdf lksjdf lkj sdf";
     const issues = findIssues(abap);

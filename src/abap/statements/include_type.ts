@@ -3,7 +3,7 @@ import {verNot, str, seq, opt, alt, IStatementRunnable} from "../combi";
 import * as Expressions from "../expressions";
 import {Version} from "../../version";
 import {StatementNode} from "../nodes";
-import {Scope} from "../syntax/_scope";
+import {CurrentScope} from "../syntax/_current_scope";
 import {IStructureComponent, StructureType} from "../types/basic";
 
 export class IncludeType extends Statement {
@@ -22,10 +22,10 @@ export class IncludeType extends Statement {
     return verNot(Version.Cloud, ret);
   }
 
-  public runSyntax(node: StatementNode, scope: Scope, _filename: string): IStructureComponent[] {
+  public runSyntax(node: StatementNode, scope: CurrentScope, _filename: string): IStructureComponent[] {
     let components: IStructureComponent[] = [];
     const iname = node.findFirstExpression(Expressions.TypeName)!.getFirstToken()!.getStr();
-    const ityp = scope.resolveType(iname);
+    const ityp = scope.findType(iname);
     if (ityp) {
       const typ = ityp.getType();
       if (typ instanceof StructureType) {

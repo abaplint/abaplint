@@ -3,7 +3,7 @@ import {MemoryFile} from "../../../src/files";
 import {Registry} from "../../../src/registry";
 import {Class} from "../../../src/objects";
 import {Visibility} from "../../../src/abap/types/visibility";
-import {Scope} from "../../../src/abap/syntax/_scope";
+import {CurrentScope} from "../../../src/abap/syntax/_current_scope";
 
 describe("Types, class_definition", () => {
 
@@ -67,7 +67,7 @@ describe("Types, class_definition", () => {
       "  ENDMETHOD.\n" +
       "ENDCLASS.";
     const reg = new Registry().addFile(new MemoryFile("zcl_moo.clas.abap", abap)).parse();
-    const scope = Scope.buildDefault(reg);
+    const scope = CurrentScope.buildDefault(reg);
     const clas = reg.getABAPObjects()[0] as Class;
     expect(clas.getClassDefinition()).to.not.equal(undefined);
     expect(clas.getClassDefinition()!.getMethodDefinitions(scope)).to.not.equal(undefined);

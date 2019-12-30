@@ -6,19 +6,11 @@ import {TypedIdentifier} from "../../../src/abap/types/_typed_identifier";
 import {TypedConstantIdentifier} from "../../../src/abap/types/_typed_constant_identifier";
 import {SyntaxLogic} from "../../../src/abap/syntax/syntax";
 import {ABAPObject} from "../../../src/objects/_abap_object";
+import {Position} from "../../../src/position";
 
 function resolveVariable(abap: string, name: string): TypedIdentifier | undefined {
   const filename = "zfoobar.prog.abap";
-  const file = new MemoryFile(filename, abap);
-  const reg = new Registry().addFile(file).parse();
-
-  const scope = new SyntaxLogic(reg, reg.getObjects()[0] as ABAPObject).traverseUntil();
-  const identifier = scope.resolveVariable(name);
-
-  if (identifier instanceof TypedIdentifier) {
-    return identifier;
-  }
-  return undefined;
+  return runMulti([{filename: filename, contents: abap}], name);
 }
 
 function runMulti(files: {filename: string, contents: string}[], name: string): TypedIdentifier | undefined {
@@ -28,14 +20,10 @@ function runMulti(files: {filename: string, contents: string}[], name: string): 
   }
   reg.parse();
 
-  const last = files.length - 1;
-  const scope = new SyntaxLogic(reg, reg.getObjects()[last] as ABAPObject).traverseUntil();
-  const identifier = scope.resolveVariable(name);
-
-  if (identifier instanceof TypedIdentifier) {
-    return identifier;
-  }
-  return undefined;
+  const obj = reg.getObjects()[files.length - 1] as ABAPObject;
+  const filename = files[files.length - 1].filename;
+  const scope = new SyntaxLogic(reg, obj).run().spaghetti.lookupPosition(new Position(1, 1), filename);
+  return scope?.findVariable(name);
 }
 
 function expectStructure(identifier: TypedIdentifier | undefined) {

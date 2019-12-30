@@ -7,6 +7,7 @@ import * as Expressions from "../../abap/expressions";
 
 /** Keep single parameter calls on one line */
 export class KeepSingleParameterCallsOnOneLineConf extends BasicRuleConfig {
+  public length: number = 120;
 }
 
 export class KeepSingleParameterCallsOnOneLine extends ABAPRule {
@@ -25,7 +26,7 @@ export class KeepSingleParameterCallsOnOneLine extends ABAPRule {
   }
 
   public runParsed(file: ABAPFile): Issue[] {
-    const issues: Issue[] = [];
+    let issues: Issue[] = [];
 
     const stru = file.getStructure();
     if (stru === undefined) {
@@ -34,20 +35,43 @@ export class KeepSingleParameterCallsOnOneLine extends ABAPRule {
 
     for (const s of file.getStatements()) {
       // todo, add this as configurable
-      if (this.calcStatementLength(s) > 120) {
+      if (this.calcStatementLength(s) > this.getConfig().length
+          || this.containsNewlineTemplate(s)) {
         continue;
       }
       for (const c of s.findAllExpressions(Expressions.MethodCall)) {
-        if (this.isSingleParameter(c) === true
-            && this.isMultiLine(c) === true) {
-          const message = "Keep single parameter on one line";
-          const issue = Issue.atToken(file, c.getFirstToken(), message, this.getKey());
-          issues.push(issue);
-        }
+        issues = issues.concat(this.check(c, file));
       }
     }
 
     return issues;
+  }
+
+  private containsNewlineTemplate(s: StatementNode): boolean {
+    for (const st of s.findAllExpressions(Expressions.StringTemplate)) {
+      for (const t of st.getAllTokens()) {
+        if (t.getStr().includes("\\n")) {
+          return true;
+        }
+      }
+    }
+    return false;
+  }
+
+  private check(c: ExpressionNode, file: ABAPFile): Issue[] {
+    if (this.isSingleParameter(c) === true && this.isMultiLine(c) === true) {
+
+      for (const sub of c.findAllExpressions(Expressions.MethodCall)) {
+        if (this.isSingleParameter(sub) === false
+            && this.isWithoutParameters(sub) === false) {
+          return [];
+        }
+      }
+
+      const message = "Keep single parameter on one line";
+      return [Issue.atToken(file, c.getFirstToken(), message, this.getKey())];
+    }
+    return [];
   }
 
   // including first indentation, worst case calculation add space after each token
@@ -68,6 +92,10 @@ export class KeepSingleParameterCallsOnOneLine extends ABAPRule {
     const last = tokens[tokens.length - 1];
 
     return first.getStart().getRow() < last.getStart().getRow();
+  }
+
+  private isWithoutParameters(c: ExpressionNode): boolean {
+    return c.getChildren().length === 3;
   }
 
   private isSingleParameter(c: ExpressionNode): boolean {

@@ -4,7 +4,7 @@ import {Identifier} from "./_identifier";
 import {StructureNode, StatementNode, ExpressionNode} from "../../abap/nodes";
 import {Expression} from "../combi";
 import {TypedIdentifier} from "./_typed_identifier";
-import {Scope} from "../syntax/_scope";
+import {CurrentScope} from "../syntax/_current_scope";
 
 export class FormDefinition extends Identifier {
   private readonly node: StatementNode;
@@ -16,23 +16,23 @@ export class FormDefinition extends Identifier {
     this.node = st;
   }
 
-  public getParameters(scope: Scope): TypedIdentifier[] {
+  public getParameters(scope: CurrentScope): TypedIdentifier[] {
     return this.findParams(this.node, scope);
   }
 
-  public getTablesParameters(scope: Scope): TypedIdentifier[] {
+  public getTablesParameters(scope: CurrentScope): TypedIdentifier[] {
     return this.findType(Expressions.FormTables, scope);
   }
 
-  public getUsingParameters(scope: Scope): TypedIdentifier[] {
+  public getUsingParameters(scope: CurrentScope): TypedIdentifier[] {
     return this.findType(Expressions.FormUsing, scope);
   }
 
-  public getChangingParameters(scope: Scope): TypedIdentifier[] {
+  public getChangingParameters(scope: CurrentScope): TypedIdentifier[] {
     return this.findType(Expressions.FormChanging, scope);
   }
 
-  private findType(type: new () => Expression, scope: Scope): TypedIdentifier[] {
+  private findType(type: new () => Expression, scope: CurrentScope): TypedIdentifier[] {
     const found = this.node.findFirstExpression(type);
     if (found === undefined) {
       return [];
@@ -40,7 +40,7 @@ export class FormDefinition extends Identifier {
     return this.findParams(found, scope);
   }
 
-  private findParams(node: ExpressionNode | StatementNode, scope: Scope) {
+  private findParams(node: ExpressionNode | StatementNode, scope: CurrentScope) {
     const res: TypedIdentifier[] = [];
     for (const param of node.findAllExpressions(Expressions.FormParam)) {
       const para = param.get() as Expressions.FormParam;

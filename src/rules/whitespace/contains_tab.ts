@@ -4,7 +4,9 @@ import {ABAPRule} from "../_abap_rule";
 import {ABAPFile} from "../../files";
 import {BasicRuleConfig} from "../_basic_rule_config";
 
-/** Checks for usage of tabs (enable to enforce spaces) */
+/** Checks for usage of tabs (enable to enforce spaces)
+ * https://docs.abapopenchecks.org/checks/09/
+ */
 export class ContainsTabConf extends BasicRuleConfig {
 }
 

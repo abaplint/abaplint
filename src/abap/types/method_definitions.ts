@@ -4,7 +4,7 @@ import {ClassDefinition} from "../../abap/structures/class_definition";
 import * as Structures from "../../abap/structures";
 import {MethodDef} from "../../abap/statements";
 import {Visibility} from "./visibility";
-import {Scope} from "../syntax/_scope";
+import {CurrentScope} from "../syntax/_current_scope";
 
 export class MethodDefinitions {
   private readonly pri: MethodDefinition[];
@@ -12,7 +12,7 @@ export class MethodDefinitions {
   private readonly pro: MethodDefinition[];
   private readonly filename: string;
 
-  public constructor(node: StructureNode, filename: string, scope: Scope) {
+  public constructor(node: StructureNode, filename: string, scope: CurrentScope) {
     this.pri = [];
     this.pub = [];
     this.pro = [];
@@ -36,7 +36,7 @@ export class MethodDefinitions {
     return this.pub.concat(this.pro).concat(this.pri);
   }
 
-  private parse(node: StructureNode, scope: Scope) {
+  private parse(node: StructureNode, scope: CurrentScope) {
     const cdef = node.findFirstStructure(ClassDefinition);
     if (!cdef) {
       throw new Error("MethodDefinitions, expected ClassDefinition as part of input node");

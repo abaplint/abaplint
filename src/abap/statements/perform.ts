@@ -4,7 +4,7 @@ import {ParenLeft, ParenRightW} from "../tokens/";
 import * as Expressions from "../expressions";
 import {Version} from "../../version";
 import {StatementNode} from "../nodes";
-import {Scope} from "../syntax/_scope";
+import {CurrentScope} from "../syntax/_current_scope";
 
 export class Perform extends Statement {
 
@@ -40,7 +40,7 @@ export class Perform extends Statement {
     return ret;
   }
 
-  public runSyntax(node: StatementNode, scope: Scope, _filename: string): void {
+  public runSyntax(node: StatementNode, scope: CurrentScope, _filename: string): void {
     if (!(node.get() instanceof Perform)) {
       throw new Error("checkPerform unexpected node type");
     }

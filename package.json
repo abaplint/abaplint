@@ -1,6 +1,6 @@
 {
   "name": "abaplint",
-  "version": "2.17.0",
+  "version": "2.20.1",
   "description": "Linter for ABAP",
   "bin": {
     "abaplint": "./abaplint"
@@ -23,6 +23,7 @@
     "prepublishOnly": "rm -rf build && npm run test",
     "preschema": "node scripts/schema.js > scripts/schema.ts",
     "schema": "ts-json-schema-generator --jsDoc extended --path scripts/schema.ts > scripts/schema.json",
+    "postschema": "node scripts/schema_post.js",
     "precoverage": "npm run compile",
     "coverage": "nyc mocha",
     "postcoverage": "nyc report --reporter=json"
@@ -62,7 +63,7 @@
     "@types/glob": "^7.1.1",
     "@types/minimist": "^1.2.0",
     "@types/mocha": "^5.2.7",
-    "@types/node": "^13.1.0",
+    "@types/node": "^13.1.1",
     "@types/progress": "^2.0.3",
     "chai": "^4.2.0",
     "mocha": "^6.2.2",
@@ -73,7 +74,7 @@
     "tslint": "^5.20.1",
     "tslint-eslint-rules": "^5.4.0",
     "typescript": "^3.7.4",
-    "webpack": "^4.41.4",
+    "webpack": "^4.41.5",
     "webpack-cli": "^3.3.10"
   },
   "dependencies": {

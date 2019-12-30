@@ -2,14 +2,14 @@ import {expect} from "chai";
 import {Registry} from "../../../src/registry";
 import {MemoryFile} from "../../../src/files";
 import {FormDefinition} from "../../../src/abap/types";
-import {Scope} from "../../../src/abap/syntax/_scope";
+import {CurrentScope} from "../../../src/abap/syntax/_current_scope";
 
 let reg: Registry = new Registry();
-let scope: Scope = Scope.buildDefault(reg);
+let scope: CurrentScope = CurrentScope.buildDefault(reg);
 
 function runProgram(abap: string): FormDefinition[] {
   reg = new Registry().addFile(new MemoryFile("zfoobar.prog.abap", abap)).parse();
-  scope = Scope.buildDefault(reg);
+  scope = CurrentScope.buildDefault(reg);
   const file = reg.getABAPFiles()[0];
   return file.getFormDefinitions();
 }

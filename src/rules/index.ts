@@ -47,6 +47,7 @@ export * from "./naming/types_naming";
 export * from "./nesting";
 export * from "./no_public_attributes";
 export * from "./obsolete_statement";
+export * from "./prefer_returning_to_exporting";
 export * from "./preferred_compare_operator";
 export * from "./release_idoc";
 export * from "./remove_descriptions";

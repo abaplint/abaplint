@@ -3,16 +3,18 @@ import * as Statements from "../statements";
 import {StatementNode} from "../nodes";
 import {ABAPObject} from "../../objects/_abap_object";
 import {FormDefinition} from "../types";
-import {Scope} from "./_scope";
+import {CurrentScope, ScopeType} from "./_current_scope";
 import {FunctionGroup} from "../../objects";
 import {ABAPFile} from "../../files";
 import {Registry} from "../../registry";
+import {TypedIdentifier} from "../types/_typed_identifier";
+import {IntegerType} from "../types/basic";
 
 export class Procedural {
-  private readonly scope: Scope;
+  private readonly scope: CurrentScope;
   private readonly reg: Registry;
 
-  constructor(reg: Registry, scope: Scope) {
+  constructor(reg: Registry, scope: CurrentScope) {
     this.scope = scope;
     this.reg = reg;
   }
@@ -48,23 +50,26 @@ export class Procedural {
     return undefined;
   }
 
-  public findFunctionScope(obj: ABAPObject, node: StatementNode) {
-    this.scope.push("function");
+  public findFunctionScope(obj: ABAPObject, node: StatementNode, filename: string) {
+    const nameToken = node.findFirstExpression(Expressions.FunctionName)!.getFirstToken();
+    const name = nameToken.getStr();
+    this.scope.push(ScopeType.Function, name, node.getFirstToken().getStart(), filename);
 
-    const name = node.findFirstExpression(Expressions.FunctionName)!.getFirstToken().getStr();
     const definition = (obj as FunctionGroup).getModule(name);
     if (definition === undefined) {
       throw new Error("Function group definition \"" + name + "\" not found");
     }
 
     for (const param of definition.getParameters()) {
-      this.scope.addName(param); // todo, add real type
+      const type = new TypedIdentifier(nameToken, filename, new IntegerType()); // todo, add real type
+      this.scope.addNamedIdentifier(param, type);
     }
   }
 
   public findFormScope(node: StatementNode, filename: string) {
-    this.scope.push("form");
-    this.scope.addList(new FormDefinition(node, filename).getParameters(this.scope));
+    const form = new FormDefinition(node, filename);
+    this.scope.push(ScopeType.Form, form.getName(), node.getFirstToken().getStart(), filename);
+    this.scope.addList(form.getParameters(this.scope));
   }
 
 }

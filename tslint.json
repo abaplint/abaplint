@@ -77,7 +77,12 @@
     "label-position": true,
     "max-line-length": [
       true,
-      140
+      {
+        "limit": 140,
+        "ignore-pattern": "^\\s*\\*",
+        "check-strings": false,
+        "check-regex": false
+      }
     ],
     "member-access": true,
     "member-ordering": false,

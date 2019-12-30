@@ -1,12 +1,12 @@
-import {Scope} from "./_scope";
+import {CurrentScope} from "./_current_scope";
 import {ExpressionNode} from "../nodes";
 import * as Expressions from "../expressions";
 import {TypedConstantIdentifier} from "../types/_typed_constant_identifier";
 
 export class Chaining {
-  private readonly scope: Scope;
+  private readonly scope: CurrentScope;
 
-  public constructor(scope: Scope) {
+  public constructor(scope: CurrentScope) {
     this.scope = scope;
   }
 
@@ -18,7 +18,7 @@ export class Chaining {
     const first = expr.getFirstChild()!;
     if (first.get() instanceof Expressions.Field) {
       const name = first.getFirstToken().getStr();
-      const found = this.scope.resolveVariable(name);
+      const found = this.scope.findVariable(name);
       if (found instanceof TypedConstantIdentifier) {
         return found.getValue();
       } else {

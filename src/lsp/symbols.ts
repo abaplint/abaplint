@@ -3,11 +3,11 @@ import {Registry} from "../registry";
 import {ABAPFile} from "../files";
 import {Identifier} from "../abap/types/_identifier";
 import {Attributes, MethodDefinitions, MethodImplementation} from "../abap/types";
-import {Scope} from "../abap/syntax/_scope";
+import {CurrentScope} from "../abap/syntax/_current_scope";
 
 export class Symbols {
   private static reg: Registry;
-  private static scope: Scope;
+  private static scope: CurrentScope;
 
   public static find(reg: Registry, uri: string): LServer.DocumentSymbol[] {
     const file = reg.getABAPFile(uri);
@@ -15,7 +15,7 @@ export class Symbols {
       return [];
     }
     this.reg = reg;
-    this.scope = Scope.buildDefault(this.reg);
+    this.scope = CurrentScope.buildDefault(this.reg);
 
     let ret: LServer.DocumentSymbol[] = [];
     ret = ret.concat(this.outputClasses(file));

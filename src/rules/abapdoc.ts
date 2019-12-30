@@ -3,7 +3,7 @@ import {BasicRuleConfig} from "./_basic_rule_config";
 import {Issue} from "../issue";
 import {ABAPFile} from "../files";
 import {MethodDefinition} from "../abap/types";
-import {Scope} from "../abap/syntax/_scope";
+import {CurrentScope} from "../abap/syntax/_current_scope";
 import {Registry} from "../registry";
 
 /**
@@ -35,7 +35,7 @@ export class Abapdoc extends ABAPRule {
   public runParsed(file: ABAPFile, reg: Registry) {
     const issues: Issue[] = [];
     const rows = file.getRawRows();
-    const scope = Scope.buildDefault(reg);
+    const scope = CurrentScope.buildDefault(reg);
     let methods: MethodDefinition[] = [];
 
     for (const classDef of file.getClassDefinitions()) {

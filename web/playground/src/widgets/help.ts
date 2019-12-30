@@ -1,14 +1,32 @@
 import * as monaco from "monaco-editor";
-import {Widget} from "@phosphor/widgets";
+import {Widget, DockPanel} from "@phosphor/widgets";
 import {FileSystem} from "../filesystem";
 import {LanguageServer} from "abaplint/lsp";
 import * as LServer from "vscode-languageserver-types";
+import {EditorWidget} from ".";
 
 export class HelpWidget extends Widget {
 
   public static createNode(): HTMLElement {
     const node = document.createElement("div");
     return node;
+  }
+
+  public static getInstance(editor: EditorWidget): HelpWidget {
+    const dock = editor.parent as DockPanel;
+    const it = dock.children();
+    for (;;) {
+      const res = it.next();
+      if (res === undefined) {
+        break;
+      } else if (res instanceof HelpWidget) {
+        return res;
+      }
+    }
+
+    const help = new HelpWidget();
+    dock.addWidget(help, {mode: "split-right", ref: editor});
+    return help;
   }
 
   constructor() {

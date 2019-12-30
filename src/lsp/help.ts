@@ -7,7 +7,8 @@ import {Token} from "../abap/tokens/_token";
 import {LSPUtils} from "./_lsp_utils";
 import {SyntaxLogic} from "../abap/syntax/syntax";
 import {ABAPObject} from "../objects/_abap_object";
-import {Scope} from "../abap/syntax/_scope";
+import {SpaghettiScope, SpaghettiScopeNode} from "../abap/syntax/_spaghetti_scope";
+import {ScopeType} from "../abap/syntax/_current_scope";
 
 export class Help {
   public static find(reg: Registry, textDocument: LServer.TextDocumentIdentifier, position: LServer.Position): string {
@@ -41,36 +42,52 @@ export class Help {
       ret = "Statement: " + this.linkToStatement(found.snode.get()) + "<br>\n" +
         "Token: " + found.token.constructor.name + "<br>\n" +
         this.fullPath(file, found.token).value;
-
-      const obj = reg.getObject(file.getObjectType(), file.getObjectName());
-      if (obj instanceof ABAPObject) {
-        const variables = new SyntaxLogic(reg, obj).traverseUntil(found.identifier);
-        ret = ret + this.dumpScope(variables);
-      }
     } else {
       ret = "No token found";
+    }
+
+    const obj = reg.getObject(file.getObjectType(), file.getObjectName());
+    if (obj instanceof ABAPObject) {
+      const spaghetti = new SyntaxLogic(reg, obj).run().spaghetti;
+      ret = ret + this.dumpScope(spaghetti);
     }
 
     return ret;
   }
 
-  private static dumpScope(scope: Scope): string {
+  private static dumpScope(spaghetti: SpaghettiScope): string {
     let ret = "<hr>\n";
-    for (const s of scope.get()) {
-      if (s.scopeName === "_builtin") {
-        continue; // too many of these, and they are not super important right now
-      }
-      ret = ret + "<u>" + s.scopeName + "</u>:<br>\n";
-      for (const v of s.vars) {
-        ret = ret + "<tt>" + this.escape(v.name.toLowerCase()) + "</tt>";
-        if (v.identifier !== undefined) {
-          const pos = v.identifier.getStart();
-          ret = ret + "(" + pos.getRow().toString() + ", " + pos.getCol().toString() + ") ";
-          ret = ret + v.identifier.getType().toText();
-        }
-        ret = ret + "<br>\n";
+    ret = ret + this.traverseSpaghetti(spaghetti.getTop(), 0);
+    return ret;
+  }
+
+  private static traverseSpaghetti(node: SpaghettiScopeNode, indent: number): string {
+    const identifier = node.getIdentifier();
+
+    const sident = "&nbsp".repeat(indent * 2);
+
+    let ret: string = sident + "<u>" + identifier.stype + ", <tt>" + identifier.sname + "</tt>, " + identifier.filename;
+    ret = ret + ", (" + identifier.start.getRow() + ", " + identifier.start.getCol() + ")</u><br>";
+
+    if (node.getIdentifier().stype === ScopeType.BuiltIn) {
+      ret = ret + sident + node.getData().vars.length + " definitions<br>";
+    } else if (node.getData().vars.length === 0) {
+      ret = ret + sident + "0 definitions<br>";
+    } else {
+      for (const v of node.getData().vars) {
+        ret = ret + sident + "<tt>" + this.escape(v.name.toLowerCase()) + "</tt>";
+        const pos = v.identifier.getStart();
+        ret = ret + "(" + pos.getRow().toString() + ", " + pos.getCol().toString() + ") ";
+        ret = ret + v.identifier.getType().toText();
+        ret = ret + "<br>";
       }
     }
+    ret = ret + "<br>";
+
+    for (const c of node.getChildren()) {
+      ret = ret + this.traverseSpaghetti(c, indent + 1);
+    }
+
     return ret;
   }
 

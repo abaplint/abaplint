@@ -4,7 +4,7 @@ import * as Expressions from "../../abap/expressions";
 import {MethodParameters} from "./method_parameters";
 import {Visibility} from "./visibility";
 import {Identifier} from "./_identifier";
-import {Scope} from "../syntax/_scope";
+import {CurrentScope} from "../syntax/_current_scope";
 
 export class MethodDefinition extends Identifier {
   private readonly visibility: Visibility;
@@ -15,7 +15,7 @@ export class MethodDefinition extends Identifier {
 
 // todo: final
 
-  constructor(node: StatementNode, visibility: Visibility, filename: string, scope: Scope) {
+  constructor(node: StatementNode, visibility: Visibility, filename: string, scope: CurrentScope) {
     if (!(node.get() instanceof MethodDef)) {
       throw new Error("MethodDefinition, expected MethodDef as part of input node");
     }
