@@ -3,7 +3,8 @@ import {MemoryFile} from "../../../src/files";
 import {Registry} from "../../../src/registry";
 import {SyntaxLogic} from "../../../src/abap/syntax/syntax";
 import {SpaghettiScope} from "../../../src/abap/syntax/_spaghetti_scope";
-// import {Position} from "../../../src/position";
+import {Position} from "../../../src/position";
+import {ScopeType} from "../../../src/abap/syntax/_current_scope";
 
 const filename = "zfoobar.prog.abap";
 
@@ -32,16 +33,26 @@ describe("Spaghetti Scope", () => {
     const spaghetti = runProgram(abap);
     expect(spaghetti).to.not.equal(undefined);
   });
-/*
+
   it("FORMs", () => {
     const abap =
       `DATA boo TYPE i.
       FORM bar.
         WRITE boo.
+      ENDFORM.
+      FORM something_else.
+        WRITE boo.
       ENDFORM.`;
     const spaghetti = runProgram(abap);
 
-    console.dir(spaghetti.lookupPosition(new Position(3, 1), filename));
+    const scope1 = spaghetti.lookupPosition(new Position(3, 1), filename);
+    expect(scope1.length).to.be.greaterThan(0);
+    expect(scope1[0].getIdentifier().stype).to.equal(ScopeType.Form);
+    expect(scope1[0].getIdentifier().sname).to.equal("bar");
+
+    const scope2 = spaghetti.lookupPosition(new Position(1, 1), filename);
+    expect(scope2.length).to.be.greaterThan(0);
+    expect(scope2[0].getIdentifier().stype).to.equal(ScopeType.Program);
   });
-*/
+
 });

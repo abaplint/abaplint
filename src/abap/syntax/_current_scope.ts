@@ -30,15 +30,16 @@ export interface IScopeVariable {
   identifier: TypedIdentifier;
 }
 
-interface IScopeInfo {
-  identifier: IScopeIdentifier;
-  spaghetti: SpaghettiScopeNode;
-
+export interface IScopeData {
   vars: IScopeVariable[];
   cdefs: ClassDefinition[];
   idefs: InterfaceDefinition[];
   forms: FormDefinition[];
   types: TypedIdentifier[];
+}
+
+interface IScopeInfo {
+  spaghetti: SpaghettiScopeNode;
 }
 
 export class CurrentScope {
@@ -77,21 +78,21 @@ export class CurrentScope {
     if (type === undefined) {
       return;
     }
-    this.scopes[this.scopes.length - 1].types.push(type);
+    this.scopes[this.scopes.length - 1].spaghetti.getData().types.push(type);
   }
 
   public addClassDefinition(c: ClassDefinition) {
-    this.scopes[this.scopes.length - 1].cdefs.push(c);
+    this.scopes[this.scopes.length - 1].spaghetti.getData().cdefs.push(c);
   }
 
   public addFormDefinitions(f: FormDefinition[]) {
-    this.scopes[this.scopes.length - 1].forms = this.scopes[this.scopes.length - 1].forms.concat(f);
+    this.scopes[this.scopes.length - 1].spaghetti.getData().forms = this.scopes[this.scopes.length - 1].spaghetti.getData().forms.concat(f);
   }
 
   public findClassDefinition(name: string): ClassDefinition | undefined {
     // todo, this should probably search the nearest first? in case there are shadowed variables?
     for (const scope of this.scopes) {
-      for (const cdef of scope.cdefs) {
+      for (const cdef of scope.spaghetti.getData().cdefs) {
         if (cdef.getName().toUpperCase() === name.toUpperCase()) {
           return cdef;
         }
@@ -124,7 +125,7 @@ export class CurrentScope {
   public findFormDefinition(name: string): FormDefinition | undefined {
     // todo, this should probably search the nearest first? in case there are shadowed variables?
     for (const scope of this.scopes) {
-      for (const form of scope.forms) {
+      for (const form of scope.spaghetti.getData().forms) {
         if (form.getName().toUpperCase() === name.toUpperCase()) {
           return form;
         }
@@ -134,13 +135,13 @@ export class CurrentScope {
   }
 
   public addInterfaceDefinition(i: InterfaceDefinition) {
-    this.scopes[this.scopes.length - 1].idefs.push(i);
+    this.scopes[this.scopes.length - 1].spaghetti.getData().idefs.push(i);
   }
 
   public findInterfaceDefinition(name: string): InterfaceDefinition | undefined {
     // todo, this should probably search the nearest first? in case there are shadowed variables?
     for (const scope of this.scopes) {
-      for (const idef of scope.idefs) {
+      for (const idef of scope.spaghetti.getData().idefs) {
         if (idef.getName().toUpperCase() === name.toUpperCase()) {
           return idef;
         }
@@ -153,11 +154,11 @@ export class CurrentScope {
     if (identifier === undefined) {
       return;
     }
-    this.scopes[this.scopes.length - 1].vars.push({name: identifier.getName(), identifier});
+    this.scopes[this.scopes.length - 1].spaghetti.getData().vars.push({name: identifier.getName(), identifier});
   }
 
   public addNamedIdentifier(name: string, identifier: TypedIdentifier) {
-    this.scopes[this.scopes.length - 1].vars.push({name, identifier});
+    this.scopes[this.scopes.length - 1].spaghetti.getData().vars.push({name, identifier});
   }
 
   public addListPrefix(identifiers: TypedIdentifier[], prefix: string) {
@@ -175,7 +176,7 @@ export class CurrentScope {
   public resolveType(name: string): TypedIdentifier | undefined {
     // todo, this should probably search the nearest first? in case there are shadowed variables?
     for (const scope of this.scopes) {
-      for (const local of scope.types) {
+      for (const local of scope.spaghetti.getData().types) {
         if (local.getName().toUpperCase() === name.toUpperCase()) {
           return local;
         }
@@ -187,7 +188,7 @@ export class CurrentScope {
   public resolveVariable(name: string): TypedIdentifier | undefined {
     // todo, this should probably search the nearest first? in case there are shadowed variables?
     for (const scope of this.scopes) {
-      for (const local of scope.vars) {
+      for (const local of scope.spaghetti.getData().vars) {
         if (local.name.toUpperCase() === name.toUpperCase()) {
           return local.identifier;
         }
@@ -197,26 +198,20 @@ export class CurrentScope {
   }
 
   public getName(): string {
-    return this.scopes[this.scopes.length - 1].identifier.sname;
+    return this.scopes[this.scopes.length - 1].spaghetti.getIdentifier().sname;
   }
 
   public push(stype: ScopeType, sname: string, start: Position, filename: string): void {
     const identifier: IScopeIdentifier = {stype, sname, start, filename};
-    const vars: IScopeVariable[] = [];
+    const spaghetti = new SpaghettiScopeNode(identifier);
 
-    const spaghetti = new SpaghettiScopeNode(identifier, vars);
+    // add node to parent
     if (this.scopes.length > 0) {
       this.scopes[this.scopes.length - 1].spaghetti.addChild(spaghetti);
     }
 
     this.scopes.push({
-      identifier,
       spaghetti,
-      vars,
-      cdefs: [],
-      idefs: [],
-      forms: [],
-      types: [],
     });
   }
 

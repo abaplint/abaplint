@@ -59,9 +59,8 @@ export class SyntaxLogic {
 
     this.traverseObject();
 
-    // tslint:disable-next-line: no-constant-condition
-    while (true) {
-      const spaghetti = this.scope.pop(); // pop built-in scope
+    for (;;) {
+      const spaghetti = this.scope.pop(); // pop built-in scopes
       if (spaghetti.getTop().getIdentifier().stype === ScopeType.BuiltIn) {
         return {issues: this.issues, spaghetti};
       }

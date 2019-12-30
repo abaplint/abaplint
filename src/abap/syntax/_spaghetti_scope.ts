@@ -1,15 +1,21 @@
-import {IScopeIdentifier, IScopeVariable} from "./_current_scope";
-// import {Position} from "../../position";
+import {IScopeIdentifier, IScopeVariable, IScopeData} from "./_current_scope";
+import {Position} from "../../position";
 
 export class SpaghettiScopeNode {
   private readonly identifier: IScopeIdentifier;
   private readonly children: SpaghettiScopeNode[];
-  private readonly vars: IScopeVariable[];
+  private readonly data: IScopeData;
 
-  constructor(identifier: IScopeIdentifier, vars: IScopeVariable[]) {
+  constructor(identifier: IScopeIdentifier) {
     this.identifier = identifier;
     this.children = [];
-    this.vars = vars;
+    this.data = {
+      vars: [],
+      cdefs: [],
+      idefs: [],
+      forms: [],
+      types: [],
+    };
   }
 
   public addChild(node: SpaghettiScopeNode) {
@@ -21,11 +27,33 @@ export class SpaghettiScopeNode {
   }
 
   public getVars(): IScopeVariable[] {
-    return this.vars;
+    return this.data.vars;
+  }
+
+  public getData(): IScopeData {
+    return this.data;
   }
 
   public getIdentifier(): IScopeIdentifier {
     return this.identifier;
+  }
+
+  public calcCoverage(): {start: Position, end: Position} {
+    let end: Position | undefined;
+
+    // assumption: children start positions in ascending order
+    for (const c of this.getChildren()) {
+      if (c.getIdentifier().filename === this.identifier.filename) {
+        end = c.getIdentifier().start;
+        break;
+      }
+    }
+
+    if (end === undefined) {
+      end = new Position(Number.MAX_SAFE_INTEGER, Number.MAX_SAFE_INTEGER);
+    }
+
+    return {start: this.identifier.start, end};
   }
 }
 
@@ -36,6 +64,7 @@ export class SpaghettiScope {
     this.node = node;
   }
 
+  // list variable definitions in all nodes
   public listVars(filename: string): IScopeVariable[] {
     const ret: IScopeVariable[] = [];
     let stack: SpaghettiScopeNode[] = [this.node];
@@ -54,12 +83,31 @@ export class SpaghettiScope {
 
     return ret;
   }
-/*
-  public lookupPosition(p: Position, filename: string) {
-// todo
-    return p.getCol() + filename;
+
+  // most specific scope first, example sequence: [form, program, globals, builtin]
+  public lookupPosition(p: Position, filename: string): SpaghettiScopeNode[] {
+    return this.lookupPositionTraverse(p, filename, this.node);
   }
-*/
+
+  private lookupPositionTraverse(p: Position, filename: string, node: SpaghettiScopeNode): SpaghettiScopeNode[] {
+    if (node.getIdentifier().filename === filename) {
+      const coverage = node.calcCoverage();
+      if (p.isBetween(coverage.start, coverage.end)) {
+        return [node];
+      }
+    }
+
+    for (const c of node.getChildren()) {
+      const result = this.lookupPositionTraverse(p, filename, c);
+      if (result.length > 0) {
+        result.push(node);
+        return result;
+      }
+    }
+
+    return [];
+  }
+
   public getTop(): SpaghettiScopeNode {
     return this.node;
   }
