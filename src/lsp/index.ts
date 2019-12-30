@@ -7,6 +7,7 @@ import {Help} from "./help";
 import {PrettyPrinter} from "../pretty_printer/pretty_printer";
 import {Definition} from "./definition";
 import {Rename} from "./rename";
+import {Highlight} from "./highlight";
 
 // note Ranges are zero based in LSP,
 // https://github.com/microsoft/language-server-protocol/blob/master/versions/protocol-2-x.md#range
@@ -109,34 +110,16 @@ export class LanguageServer {
 //
 ////////////////////////////////////////
 
-  public listDefinitionPositions(_textDocument: LServer.TextDocumentIdentifier): LServer.Range[] {
-// todo
-    const range: LServer.Range = {
-      start: {line: 0, character: 0},
-      end: {line: 0, character: 4},
-    };
-
-    return [range];
+  public listDefinitionPositions(textDocument: LServer.TextDocumentIdentifier): LServer.Range[] {
+    return new Highlight(this.reg).listDefinitionPositions(textDocument);
   }
 
-  public listReadPositions(_textDocument: LServer.TextDocumentIdentifier): LServer.Range[] {
-// todo
-    const range: LServer.Range = {
-      start: {line: 0, character: 0},
-      end: {line: 0, character: 4},
-    };
-
-    return [range];
+  public listReadPositions(textDocument: LServer.TextDocumentIdentifier): LServer.Range[] {
+    return new Highlight(this.reg).listReadPositions(textDocument);
   }
 
-  public listWritePositions(_textDocument: LServer.TextDocumentIdentifier): LServer.Range[] {
-// todo
-    const range: LServer.Range = {
-      start: {line: 0, character: 0},
-      end: {line: 0, character: 4},
-    };
-
-    return [range];
+  public listWritePositions(textDocument: LServer.TextDocumentIdentifier): LServer.Range[] {
+    return new Highlight(this.reg).listWritePositions(textDocument);
   }
 
 }

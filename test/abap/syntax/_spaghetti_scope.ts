@@ -3,7 +3,7 @@ import {MemoryFile} from "../../../src/files";
 import {Registry} from "../../../src/registry";
 import {SyntaxLogic} from "../../../src/abap/syntax/syntax";
 import {SpaghettiScope} from "../../../src/abap/syntax/_spaghetti_scope";
-import {Position} from "../../../src/position";
+// import {Position} from "../../../src/position";
 
 const filename = "zfoobar.prog.abap";
 
@@ -32,7 +32,7 @@ describe("Spaghetti Scope", () => {
     const spaghetti = runProgram(abap);
     expect(spaghetti).to.not.equal(undefined);
   });
-
+/*
   it("FORMs", () => {
     const abap =
       `DATA boo TYPE i.
@@ -43,5 +43,5 @@ describe("Spaghetti Scope", () => {
 
     console.dir(spaghetti.lookupPosition(new Position(3, 1), filename));
   });
-
+*/
 });

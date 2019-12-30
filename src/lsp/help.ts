@@ -66,11 +66,13 @@ export class Help {
 
     const sident = "&nbsp".repeat(indent * 2);
 
-    let ret: string = sident + "<u>" + identifier.stype + ", " + identifier.sname + ", " + identifier.filename;
+    let ret: string = sident + "<u>" + identifier.stype + ", <tt>" + identifier.sname + "</tt>, " + identifier.filename;
     ret = ret + ", (" + identifier.start.getRow() + ", " + identifier.start.getCol() + ")</u><br>";
 
     if (node.getIdentifier().stype === ScopeType.BuiltIn) {
       ret = ret + sident + node.getVars().length + " definitions<br>";
+    } else if (node.getVars().length === 0) {
+      ret = ret + sident + "0 definitions<br>";
     } else {
       for (const v of node.getVars()) {
         ret = ret + sident + "<tt>" + this.escape(v.name.toLowerCase()) + "</tt>";

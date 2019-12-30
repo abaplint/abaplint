@@ -8,7 +8,7 @@ import {StatementNode, ExpressionNode, StructureNode, TokenNode} from "../nodes"
 import {ABAPFile} from "../../files";
 import {Registry} from "../../registry";
 import {ABAPObject} from "../../objects/_abap_object";
-import {CurrentScope} from "./_current_scope";
+import {CurrentScope, ScopeType} from "./_current_scope";
 import {ObjectOriented} from "./_object_oriented";
 import {Procedural} from "./_procedural";
 import {Inline} from "./_inline";
@@ -16,10 +16,9 @@ import {Program} from "../../objects";
 import {ClassDefinition, InterfaceDefinition} from "../types";
 import {Identifier} from "../types/_identifier";
 import {SpaghettiScope} from "./_spaghetti_scope";
+import {Position} from "../../position";
 
 // assumption: objects are parsed without parsing errors
-
-// todo, traversal should start with the right file for the object
 
 export class SyntaxLogic {
   private currentFile: ABAPFile;
@@ -60,10 +59,14 @@ export class SyntaxLogic {
 
     this.traverseObject();
 
-    this.scope.pop(); // pop global scope
-    const spaghetti = this.scope.pop(); // pop built-in scope
+    // tslint:disable-next-line: no-constant-condition
+    while (true) {
+      const spaghetti = this.scope.pop(); // pop built-in scope
+      if (spaghetti.getTop().getIdentifier().stype === ScopeType.BuiltIn) {
+        return {issues: this.issues, spaghetti};
+      }
+    }
 
-    return {issues: this.issues, spaghetti};
   }
 
   public traverseUntil(stopAt?: Identifier): CurrentScope {
@@ -73,8 +76,14 @@ export class SyntaxLogic {
 /////////////////////////////
 
   private traverseObject(stopAt?: Identifier): CurrentScope {
+// todo, traversal should start with the right file for the object
+
     if (this.object instanceof Program) {
       this.helpers.proc.addAllFormDefinitions(this.object.getABAPFiles()[0]);
+      this.scope.push(ScopeType.Program,
+                      this.object.getName(),
+                      new Position(1, 1),
+                      this.object.getMainABAPFile()!.getFilename());
     }
 
     for (const file of this.object.getABAPFiles()) {

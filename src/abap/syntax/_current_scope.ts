@@ -10,6 +10,7 @@ import {SpaghettiScope, SpaghettiScopeNode} from "./_spaghetti_scope";
 export enum ScopeType {
   BuiltIn = "_builtin",
   Global = "_global",
+  Program = "_program",
   Form = "form",
   Function = "function",
   Method = "method",
