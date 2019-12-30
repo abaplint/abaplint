@@ -4,6 +4,8 @@ import {Registry} from "../../registry";
 import {Globals} from "./_globals";
 import * as Objects from "../../objects";
 import {DDIC} from "../../ddic";
+import {Position} from "../../position";
+import {SpaghettiScope, SpaghettiScopeNode} from "./_spaghetti_scope";
 
 export enum ScopeType {
   BuiltIn = "_builtin",
@@ -15,11 +17,23 @@ export enum ScopeType {
   ClassImplementation = "class_implementation",
 }
 
-interface IScopeInfo {
+export interface IScopeIdentifier {
   stype: ScopeType;
   sname: string;
+  filename: string;
+  start: Position; // stop position is implicit in the Spaghetti structure, ie start of the next child
+}
 
-  vars: {name: string; identifier: TypedIdentifier}[];
+export interface IScopeVariable {
+  name: string;
+  identifier: TypedIdentifier;
+}
+
+interface IScopeInfo {
+  identifier: IScopeIdentifier;
+  spaghetti: SpaghettiScopeNode;
+
+  vars: IScopeVariable[];
   cdefs: ClassDefinition[];
   idefs: InterfaceDefinition[];
   forms: FormDefinition[];
@@ -33,10 +47,10 @@ export class CurrentScope {
   public static buildDefault(reg: Registry): CurrentScope {
     const s = new CurrentScope(reg);
 
-    s.push(ScopeType.BuiltIn, ScopeType.BuiltIn);
+    s.push(ScopeType.BuiltIn, ScopeType.BuiltIn, new Position(1, 1), ScopeType.BuiltIn);
     this.addBuiltIn(s, reg);
 
-    s.push(ScopeType.Global, ScopeType.Global);
+    s.push(ScopeType.Global, ScopeType.Global, new Position(1, 1), ScopeType.Global);
 
     return s;
   }
@@ -52,10 +66,6 @@ export class CurrentScope {
   private constructor(reg: Registry) {
     this.scopes = [];
     this.reg = reg;
-  }
-
-  public get() {
-    return this.scopes;
   }
 
   public getDDIC(): DDIC {
@@ -186,14 +196,22 @@ export class CurrentScope {
   }
 
   public getName(): string {
-    return this.scopes[this.scopes.length - 1].sname;
+    return this.scopes[this.scopes.length - 1].identifier.sname;
   }
 
-  public push(stype: ScopeType, sname: string): void {
+  public push(stype: ScopeType, sname: string, start: Position, filename: string): void {
+    const identifier: IScopeIdentifier = {stype, sname, start, filename};
+    const vars: IScopeVariable[] = [];
+
+    const spaghetti = new SpaghettiScopeNode(identifier, vars);
+    if (this.scopes.length > 0) {
+      this.scopes[this.scopes.length - 1].spaghetti.addChild(spaghetti);
+    }
+
     this.scopes.push({
-      stype,
-      sname,
-      vars: [],
+      identifier,
+      spaghetti,
+      vars,
       cdefs: [],
       idefs: [],
       forms: [],
@@ -201,10 +219,11 @@ export class CurrentScope {
     });
   }
 
-  public pop(): void {
-    if (this.scopes.length === 1) {
+  public pop(): SpaghettiScope {
+    const pop = this.scopes.pop();
+    if (pop === undefined) {
       throw new Error("something wrong, top scope popped");
     }
-    this.scopes.pop();
+    return new SpaghettiScope(pop.spaghetti);
   }
 }

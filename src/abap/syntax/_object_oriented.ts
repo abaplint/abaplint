@@ -31,14 +31,14 @@ export class ObjectOriented {
     return blah.getFirstToken().getStr();
   }
 
-  public classDefinition(node: StatementNode) {
-    this.scope.push(ScopeType.ClassDefinition, this.findClassName(node));
+  public classDefinition(node: StatementNode, filename: string) {
+    this.scope.push(ScopeType.ClassDefinition, this.findClassName(node), node.getFirstToken().getStart(), filename);
 // todo
   }
 
-  public classImplementation(node: StatementNode) {
+  public classImplementation(node: StatementNode, filename: string) {
     const className = this.findClassName(node);
-    this.scope.push(ScopeType.ClassImplementation, className);
+    this.scope.push(ScopeType.ClassImplementation, className, node.getFirstToken().getStart(), filename);
 
     const classDefinition = this.findClassDefinition(className);
 
@@ -106,10 +106,10 @@ export class ObjectOriented {
     return undefined;
   }
 
-  public methodImplementation(node: StatementNode) {
+  public methodImplementation(node: StatementNode, filename: string) {
     const className = this.scope.getName();
     let methodName = node.findFirstExpression(Expressions.MethodName)!.getFirstToken().getStr();
-    this.scope.push(ScopeType.Method, methodName);
+    this.scope.push(ScopeType.Method, methodName, node.getFirstToken().getStart(), filename);
     const classDefinition = this.findClassDefinition(className);
 
 // todo, this is not correct, add correct types, plus "super" should only be added when there are super classes

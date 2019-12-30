@@ -15,6 +15,7 @@ import {Inline} from "./_inline";
 import {Program} from "../../objects";
 import {ClassDefinition, InterfaceDefinition} from "../types";
 import {Identifier} from "../types/_identifier";
+import {SpaghettiScope} from "./_spaghetti_scope";
 
 // assumption: objects are parsed without parsing errors
 
@@ -49,16 +50,20 @@ export class SyntaxLogic {
     };
   }
 
-  public findIssues(): Issue[] {
+  public findIssues(): {issues: Issue[], spaghetti: SpaghettiScope} {
     this.issues = [];
 
     if (this.object instanceof Program && this.object.isInclude()) {
 // todo, show some kind of error?
-      return [];
+      return {issues: [], spaghetti: this.scope.pop()};
     }
 
     this.traverseObject();
-    return this.issues;
+
+    this.scope.pop(); // pop global scope
+    const spaghetti = this.scope.pop(); // pop built-in scope
+
+    return {issues: this.issues, spaghetti};
   }
 
   public traverseUntil(stopAt?: Identifier): CurrentScope {
@@ -206,11 +211,11 @@ export class SyntaxLogic {
     } else if (s instanceof Statements.FunctionModule) {
       this.helpers.proc.findFunctionScope(this.object, node, filename);
     } else if (s instanceof Statements.Method) {
-      this.helpers.oooc.methodImplementation(node);
+      this.helpers.oooc.methodImplementation(node, filename);
     } else if (s instanceof Statements.ClassDefinition) {
-      this.helpers.oooc.classDefinition(node);
+      this.helpers.oooc.classDefinition(node, filename);
     } else if (s instanceof Statements.ClassImplementation) {
-      this.helpers.oooc.classImplementation(node);
+      this.helpers.oooc.classImplementation(node, filename);
     } else if (s instanceof Statements.EndForm
         || s instanceof Statements.EndMethod
         || s instanceof Statements.EndFunction

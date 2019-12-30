@@ -31,7 +31,11 @@ WRITE moo.
 
 LOOP AT lt_foo ASSIGNING FIELD-SYMBOL(<ls_foo>).
   WRITE 'bar'.
-ENDLOOP.`);
+ENDLOOP.
+
+FORM foo.
+  DATA boo TYPE i.
+ENDFORM.`);
   }
 
   private static updateConfig(contents: string) {

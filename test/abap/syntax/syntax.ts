@@ -20,7 +20,7 @@ function run(reg: Registry, globalConstants?: string[]): Issue[] {
         throw new Error("check variables test, parser error");
       }
     }
-    ret = ret.concat(new SyntaxLogic(reg, obj).findIssues());
+    ret = ret.concat(new SyntaxLogic(reg, obj).findIssues().issues);
   }
   return ret;
 }
