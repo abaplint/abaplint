@@ -30,7 +30,7 @@ export class CheckSyntax {
       return [];
     }
 
-    return new SyntaxLogic(reg, obj).findIssues().issues;
+    return new SyntaxLogic(reg, obj).run().issues;
   }
 
 }

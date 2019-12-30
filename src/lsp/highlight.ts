@@ -61,7 +61,7 @@ export class Highlight {
     if (obj === undefined) {
       return undefined;
     }
-    return new SyntaxLogic(this.reg, obj).findIssues().spaghetti;
+    return new SyntaxLogic(this.reg, obj).run().spaghetti;
   }
 
   private findObject(textDocument: LServer.TextDocumentIdentifier): ABAPObject | undefined {

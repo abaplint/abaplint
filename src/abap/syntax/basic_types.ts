@@ -60,7 +60,7 @@ export class BasicTypes {
     }
 
     // todo, this only handles simple names
-    const typ = this.scope.resolveType(chainText);
+    const typ = this.scope.findType(chainText);
     if (typ) {
       return typ.getType();
     }

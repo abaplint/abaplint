@@ -48,7 +48,7 @@ export class Help {
 
     const obj = reg.getObject(file.getObjectType(), file.getObjectName());
     if (obj instanceof ABAPObject) {
-      const spaghetti = new SyntaxLogic(reg, obj).findIssues().spaghetti;
+      const spaghetti = new SyntaxLogic(reg, obj).run().spaghetti;
       ret = ret + this.dumpScope(spaghetti);
     }
 
@@ -70,11 +70,11 @@ export class Help {
     ret = ret + ", (" + identifier.start.getRow() + ", " + identifier.start.getCol() + ")</u><br>";
 
     if (node.getIdentifier().stype === ScopeType.BuiltIn) {
-      ret = ret + sident + node.getVars().length + " definitions<br>";
-    } else if (node.getVars().length === 0) {
+      ret = ret + sident + node.getData().vars.length + " definitions<br>";
+    } else if (node.getData().vars.length === 0) {
       ret = ret + sident + "0 definitions<br>";
     } else {
-      for (const v of node.getVars()) {
+      for (const v of node.getData().vars) {
         ret = ret + sident + "<tt>" + this.escape(v.name.toLowerCase()) + "</tt>";
         const pos = v.identifier.getStart();
         ret = ret + "(" + pos.getRow().toString() + ", " + pos.getCol().toString() + ") ";

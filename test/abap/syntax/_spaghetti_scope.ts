@@ -17,7 +17,7 @@ function run(reg: Registry): SpaghettiScope {
     }
   }
 
-  return new SyntaxLogic(reg, obj).findIssues().spaghetti;
+  return new SyntaxLogic(reg, obj).run().spaghetti;
 }
 
 function runProgram(abap: string): SpaghettiScope {
@@ -46,13 +46,11 @@ describe("Spaghetti Scope", () => {
     const spaghetti = runProgram(abap);
 
     const scope1 = spaghetti.lookupPosition(new Position(3, 1), filename);
-    expect(scope1.length).to.be.greaterThan(0);
-    expect(scope1[0].getIdentifier().stype).to.equal(ScopeType.Form);
-    expect(scope1[0].getIdentifier().sname).to.equal("bar");
+    expect(scope1?.getIdentifier().stype).to.equal(ScopeType.Form);
+    expect(scope1?.getIdentifier().sname).to.equal("bar");
 
     const scope2 = spaghetti.lookupPosition(new Position(1, 1), filename);
-    expect(scope2.length).to.be.greaterThan(0);
-    expect(scope2[0].getIdentifier().stype).to.equal(ScopeType.Program);
+    expect(scope2?.getIdentifier().stype).to.equal(ScopeType.Program);
   });
 
 });

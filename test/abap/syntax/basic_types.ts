@@ -5,16 +5,14 @@ import {Registry} from "../../../src/registry";
 import {TypedIdentifier} from "../../../src/abap/types/_typed_identifier";
 import {SyntaxLogic} from "../../../src/abap/syntax/syntax";
 import {ABAPObject} from "../../../src/objects/_abap_object";
+import {Position} from "../../../src/position";
 
 function resolveType(abap: string, name: string): TypedIdentifier | undefined {
-  const reg = new Registry().addFile(new MemoryFile("zfoobar.prog.abap", abap)).parse();
-  const scope = new SyntaxLogic(reg, reg.getObjects()[0] as ABAPObject).traverseUntil();
-  const identifier = scope.resolveType(name);
-
-  if (identifier instanceof TypedIdentifier) {
-    return identifier;
-  }
-  return undefined;
+  const filename = "zfoobar.prog.abap";
+  const reg = new Registry().addFile(new MemoryFile(filename, abap)).parse();
+  const obj = reg.getObjects()[0] as ABAPObject;
+  const scope = new SyntaxLogic(reg, obj).run().spaghetti.lookupPosition(new Position(1, 1), filename);
+  return scope?.findType(name);
 }
 
 function expectString(identifier: TypedIdentifier | undefined) {

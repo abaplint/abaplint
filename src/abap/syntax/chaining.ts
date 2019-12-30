@@ -18,7 +18,7 @@ export class Chaining {
     const first = expr.getFirstChild()!;
     if (first.get() instanceof Expressions.Field) {
       const name = first.getFirstToken().getStr();
-      const found = this.scope.resolveVariable(name);
+      const found = this.scope.findVariable(name);
       if (found instanceof TypedConstantIdentifier) {
         return found.getValue();
       } else {

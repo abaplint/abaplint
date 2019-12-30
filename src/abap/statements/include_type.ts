@@ -25,7 +25,7 @@ export class IncludeType extends Statement {
   public runSyntax(node: StatementNode, scope: CurrentScope, _filename: string): IStructureComponent[] {
     let components: IStructureComponent[] = [];
     const iname = node.findFirstExpression(Expressions.TypeName)!.getFirstToken()!.getStr();
-    const ityp = scope.resolveType(iname);
+    const ityp = scope.findType(iname);
     if (ityp) {
       const typ = ityp.getType();
       if (typ instanceof StructureType) {
