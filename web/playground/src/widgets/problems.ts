@@ -25,6 +25,15 @@ export class ProblemsWidget extends Widget {
     return;
   }
 
+  private escape(str: string) {
+    str = str.replace(/&/g, "&amp;");
+    str = str.replace(/>/g, "&gt;");
+    str = str.replace(/</g, "&lt;");
+    str = str.replace(/"/g, "&quot;");
+    str = str.replace(/'/g, "&#039;");
+    return str;
+  }
+
   public updateIt() {
     const content = document.createElement("div");
     this.addClass("content");
@@ -32,8 +41,9 @@ export class ProblemsWidget extends Widget {
     for (const i of FileSystem.getIssues()) {
       const position = "[" + i.getStart().getRow() + ", " + i.getStart().getCol() + "]";
       const path = monaco.Uri.parse(i.getFilename()).path;
+      const message = this.escape(i.getMessage());
       input.innerHTML = input.innerHTML + "<br>" +
-        path + position + ": " + i.getMessage() + "(" + i.getKey() + ")";
+        path + position + ": " + message + "(" + i.getKey() + ")";
     }
     content.appendChild(input);
 

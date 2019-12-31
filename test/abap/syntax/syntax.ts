@@ -1112,6 +1112,14 @@ describe("Check Variables", () => {
     const issues = runProgram(abap);
     expect(issues.length).to.equals(1);
   });
+
+  it("expect syntax error, <comp> not found", () => {
+    const abap = `DATA ls_structure TYPE string.
+    ASSIGN COMPONENT 'FOO' OF STRUCTURE ls_structure TO <comp>.`;
+    const issues = runProgram(abap);
+    expect(issues.length).to.equals(1);
+  });
+
 /*
   it("DATA, already specified", () => {
     const abap = `DATA foo.\nDATA foo.`;

@@ -124,6 +124,19 @@ export class SyntaxLogic {
       }
     }
 
+    if (node instanceof ExpressionNode && node.get() instanceof Expressions.FSTarget) {
+      const expr = node.findDirectExpression(Expressions.FieldSymbol);
+      if (expr !== undefined) { // otherwise it is an inline FS, handled somewhere else
+        const token = expr.getFirstToken();
+        const resolved = this.scope.findVariable(token.getStr());
+        if (resolved === undefined) {
+          this.newIssue(token, "\"" + token.getStr() + "\" not found");
+        } else {
+          this.scope.addWrite(token, resolved, this.currentFile.getFilename());
+        }
+      }
+    }
+
     for (const child of node.getChildren()) {
       try {
         const gotoNext = this.updateScope(child);

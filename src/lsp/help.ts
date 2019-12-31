@@ -43,7 +43,7 @@ export class Help {
         "Token: " + found.token.constructor.name + "<br>\n" +
         this.fullPath(file, found.token).value;
     } else {
-      ret = "No token found";
+      ret = "No token found at cursor position";
     }
 
     const obj = reg.getObject(file.getObjectType(), file.getObjectName());
@@ -143,17 +143,17 @@ export class Help {
   private static fileInformation(file: ABAPFile): string {
     let content = "";
 
-    content = content + "<hr>";
+    content = content + "<hr>Tokens:<br><br>\n";
     content = content + this.tokens(file);
-    content = content + "<hr>";
+    content = content + "<hr>Statements:<br><br>\n";
     content = content + this.buildStatements(file);
-    content = content + "<hr>";
+    content = content + "<hr>Structure:<br><br>\n";
 
     const structure = file.getStructure();
     if (structure !== undefined) {
       content = content + this.buildStructure([structure]);
     } else {
-      content = content + "sturcture undefined";
+      content = content + "structure undefined";
     }
     return content;
   }
