@@ -18,7 +18,7 @@ export class Highlight {
       return [];
     }
 
-    const defs = spaghetti.listVars(textDocument.uri);
+    const defs = spaghetti.listDefinitions(textDocument.uri);
     const ret: LServer.Range[] = [];
     for (const d of defs) {
       ret.push(LSPUtils.tokenToRange(d.identifier.getToken()));

@@ -133,6 +133,13 @@ const checkCommentsTests = [
     config: configEndOfLineAllowed,
     issueLength: 0,
   },
+  {
+    abap: `lo_obj=>method( 'sdfsdfsd'). "#EC NOTEXT`,
+    description: "end of line allowed, pseudo comment",
+    config: configNoEndOfLine,
+    issueLength: 0,
+  },
+
 ];
 
 testRuleWithVariableConfig(checkCommentsTests, CheckComments);

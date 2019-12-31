@@ -9,18 +9,20 @@ import {TypedIdentifier} from "../types/_typed_identifier";
 import {UnknownType} from "../types/basic";
 
 export class Inline {
-  private readonly variables: CurrentScope;
+  private readonly scope: CurrentScope;
   private readonly reg: Registry;
 
-  constructor(reg: Registry, variables: CurrentScope) {
-    this.variables = variables;
+  constructor(reg: Registry, scope: CurrentScope) {
+    this.scope = scope;
     this.reg = reg;
   }
 
   private addVariable(expr: ExpressionNode | undefined, filename: string) {
     if (expr === undefined) { throw new Error("syntax_check, unexpected tree structure"); }
     const token = expr.getFirstToken();
-    this.variables.addIdentifier(new TypedIdentifier(token, filename, new UnknownType("todo")));
+    const identifier = new TypedIdentifier(token, filename, new UnknownType("todo"));
+    this.scope.addIdentifier(identifier);
+    this.scope.addWrite(token, identifier, filename);
   }
 
   public update(node: INode, filename: string): boolean {

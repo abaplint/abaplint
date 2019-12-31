@@ -180,7 +180,7 @@ export class SpaghettiScope {
   }
 
   // list variable definitions across all nodes
-  public listVars(filename: string): IScopeVariable[] {
+  public listDefinitions(filename: string): IScopeVariable[] {
     const ret: IScopeVariable[] = [];
 
     for (const n of this.allNodes()) {
