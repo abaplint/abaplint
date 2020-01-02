@@ -75,18 +75,33 @@ export class SpaghettiScopeNode extends ScopeData {
     return this.identifier;
   }
 
+  public getNextSibling(): SpaghettiScopeNode | undefined {
+    const parent = this.getParent();
+    if (parent === undefined) {
+      return undefined;
+    }
+
+    let returnNext = false;
+    for (const sibling of parent.getChildren()) {
+      if (sibling.getIdentifier().stype === this.getIdentifier().stype
+          && sibling.getIdentifier().sname === this.getIdentifier().sname) {
+        returnNext = true;
+      } else if (returnNext === true) {
+        return sibling;
+      }
+    }
+
+    return undefined;
+  }
+
   public calcCoverage(): {start: Position, end: Position} {
     let end: Position | undefined;
 
     // assumption: children start positions in ascending order
-    for (const c of this.getChildren()) {
-      if (c.getIdentifier().filename === this.identifier.filename) {
-        end = c.getIdentifier().start;
-        break;
-      }
-    }
-
-    if (end === undefined) {
+    const sibling = this.getNextSibling();
+    if (sibling !== undefined && sibling.getIdentifier().filename === this.getIdentifier().filename) {
+      end = sibling.getIdentifier().start;
+    } else {
       end = new Position(Number.MAX_SAFE_INTEGER, Number.MAX_SAFE_INTEGER);
     }
 
@@ -252,17 +267,17 @@ export class SpaghettiScope {
   }
 
   private lookupPositionTraverse(p: Position, filename: string, node: SpaghettiScopeNode): SpaghettiScopeNode | undefined {
-    if (node.getIdentifier().filename === filename) {
-      const coverage = node.calcCoverage();
-      if (p.isBetween(coverage.start, coverage.end)) {
-        return node;
-      }
-    }
-
     for (const c of node.getChildren()) {
       const result = this.lookupPositionTraverse(p, filename, c);
       if (result !== undefined) {
         return result;
+      }
+    }
+
+    if (node.getIdentifier().filename === filename) {
+      const coverage = node.calcCoverage();
+      if (p.isBetween(coverage.start, coverage.end)) {
+        return node;
       }
     }
 

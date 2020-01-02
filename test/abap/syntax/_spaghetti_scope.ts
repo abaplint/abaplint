@@ -51,6 +51,10 @@ describe("Spaghetti Scope", () => {
 
     const scope2 = spaghetti.lookupPosition(new Position(1, 1), filename);
     expect(scope2?.getIdentifier().stype).to.equal(ScopeType.Program);
+
+    const scope3 = spaghetti.lookupPosition(new Position(6, 1), filename);
+    expect(scope3?.getIdentifier().stype).to.equal(ScopeType.Form);
+    expect(scope3?.getIdentifier().sname).to.equal("something_else");
   });
 
 });

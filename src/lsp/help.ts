@@ -75,11 +75,21 @@ export class Help {
 
   private static traverseSpaghetti(node: SpaghettiScopeNode, indent: number): string {
     const identifier = node.getIdentifier();
+    const coverage = node.calcCoverage();
 
     const sident = "&nbsp".repeat(indent * 2);
 
     let ret: string = sident + "<u>" + identifier.stype + ", <tt>" + identifier.sname + "</tt>, " + identifier.filename;
-    ret = ret + ", (" + identifier.start.getRow() + ", " + identifier.start.getCol() + ")</u><br>";
+
+    ret = ret + ", (" + coverage.start.getRow() + ", " + coverage.start.getCol() + ")";
+    if (coverage.end.getRow() === Number.MAX_SAFE_INTEGER
+        && coverage.end.getCol()  === Number.MAX_SAFE_INTEGER) {
+      ret = ret + ", (max, max)";
+    } else {
+      ret = ret + ", (" + coverage.end.getRow() + ", " + coverage.end.getCol() + ")";
+    }
+
+    ret = ret + "</u><br>";
 
     if (node.getIdentifier().stype === ScopeType.BuiltIn) {
       ret = ret + sident + node.getData().vars.length + " definitions<br>";
