@@ -23,6 +23,13 @@ const tests = [
   {abap: "CLASS zsdfsdf DEFINITION PUBLIC  ABSTRACT FINAL CREATE PUBLIC.", cnt: 1},
   {abap: "CLASS-METHODS class_includes RETURNING VALUE(rt_programs)     TYPE scit_program.", cnt: 0},
   {abap: "foo = call( bar ) ##pragma.", cnt: 0},
+  {abap: `CALL FUNCTION 'ZFOOBAR'
+  EXCEPTIONS
+    excecution_error       = 1
+    cancelled              = 2
+    insert_into_corr_error = 3
+    OTHERS                 = 4.`, cnt: 0},
+
   {abap:
     "_get_1st_child_commit( EXPORTING it_commit_sha1s = lt_parents\n" +
     "                       IMPORTING et_commit_sha1s = lt_parents\n" +

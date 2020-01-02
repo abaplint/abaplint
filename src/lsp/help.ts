@@ -50,6 +50,18 @@ export class Help {
     if (obj instanceof ABAPObject) {
       const spaghetti = new SyntaxLogic(reg, obj).run().spaghetti;
       ret = ret + this.dumpScope(spaghetti);
+
+      if (found !== undefined) {
+        ret = ret + "<hr>Spaghetti Scope by Cursor Position:<br><br>\n";
+        const lookup = spaghetti.lookupPosition(found.token.getStart(), textDocument.uri);
+        if (lookup) {
+          const identifier = lookup.getIdentifier();
+          ret = ret + "<u>" + identifier.stype + ", <tt>" + identifier.sname + "</tt>, " + identifier.filename;
+          ret = ret + ", (" + identifier.start.getRow() + ", " + identifier.start.getCol() + ")</u><br>";
+        } else {
+          ret = ret + "Not found";
+        }
+      }
     }
 
     return ret;

@@ -156,6 +156,7 @@ export class DoubleSpace extends ABAPRule {
           || prev.get().getStr() === "("
           || prev.get().getStr().toUpperCase() === "CHANGING"
           || prev.get().getStr().toUpperCase() === "EXPORTING"
+          || prev.get().getStr().toUpperCase() === "OTHERS"
           || n.get() instanceof StringTemplate) { // tempoary workaround, see #427
         // not a keyword, continue
         prev = n;
