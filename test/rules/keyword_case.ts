@@ -29,6 +29,7 @@ const tests = [
   {abap: "SELECT foo UP TO @bar ROWS INTO CORRESPONDING FIELDS OF TABLE @boo FROM loo.", cnt: 0},
   {abap: "SORT rt_list BY repo-name AS TEXT ASCENDING.", cnt: 0},
   {abap: "IF foo = bar and moo = boo.", cnt: 1},
+  {abap: "WRITE lv_date TO lv_str MM/DD/YYYY.", cnt: 0},
 ];
 
 testRule(tests, KeywordCase);

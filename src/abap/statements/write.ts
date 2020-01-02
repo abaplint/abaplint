@@ -14,6 +14,14 @@ export class Write extends Statement {
 
     const onOff = alt(alt(str("ON"), str("OFF")), seq(str("="), new FieldSub()));
 
+    const dateFormat = alt(str("DD/MM/YY"),
+                           str("MM/DD/YY"),
+                           str("DD/MM/YYYY"),
+                           str("MM/DD/YYYY"),
+                           str("DDMMYY"),
+                           str("MMDDYY"),
+                           str("YYMMDD"));
+
     const to = seq(str("TO"), new Target());
     const options = per(mask,
                         to,
@@ -37,7 +45,7 @@ export class Write extends Statement {
                         seq(str("ROUND"), new Source()),
                         seq(str("QUICKINFO"), new Source()),
                         str("ENVIRONMENT TIME FORMAT"),
-                        reg(/^[YMD]{2,4}\/?[YMD]{2,4}\/?[YMD]{2,4}$/i),
+                        dateFormat,
                         seq(str("UNIT"), new Source()),
                         seq(str("INTENSIFIED"), opt(onOff)),
                         seq(str("INDEX"), new Source()),
