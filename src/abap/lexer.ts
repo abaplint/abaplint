@@ -134,7 +134,19 @@ export class Lexer {
       } else if (this.m === Mode.Ping || this.m === Mode.Str) {
         tok = new Tokens.String(pos, s);
       } else if (this.m === Mode.Template) {
-        tok = new Tokens.StringTemplate(pos, s);
+        const first = s.charAt(0);
+        const last = s.charAt(s.length - 1);
+        if (first === "|" && last === "|") {
+          tok = new Tokens.StringTemplate(pos, s);
+        } else if (first === "|" && last === "{") {
+          tok = new Tokens.StringTemplateBegin(pos, s);
+        } else if (first === "}" && last === "|") {
+          tok = new Tokens.StringTemplateEnd(pos, s);
+        } else if (first === "}" && last === "{") {
+          tok = new Tokens.StringTemplateMiddle(pos, s);
+        } else {
+          tok = new Tokens.Identifier(pos, s);
+        }
       } else if (s.substr(0, 2) === "##" && s.length > 1) {
         tok = new Tokens.Pragma(pos, s);
       } else if (s.length === 1 && (s === "." || s === ",")) {
@@ -241,8 +253,6 @@ export class Lexer {
     this.stream = new Stream(raw);
     this.buffer = new Buffer();
 
-    let escaped = 0;
-
     for (;;) {
       const current = this.stream.currentChar();
       this.buffer.add(current);
@@ -256,7 +266,8 @@ export class Lexer {
 // start string
         this.add();
         this.m = Mode.Str;
-      } else if (ahead === "|" && this.m === Mode.Normal) {
+      } else if ((ahead === "|" || ahead === "}")
+          && this.m === Mode.Normal) {
 // start template
         this.add();
         this.m = Mode.Template;
@@ -285,11 +296,10 @@ export class Lexer {
 // end of ping
         this.add();
         this.m = Mode.Normal;
-      } else if (this.m === Mode.Template && current === "{" && prev !== "\\") {
-        escaped = escaped + 1;
-      } else if (this.m === Mode.Template && escaped && current === "}" && prev !== "\\") {
-        escaped = escaped - 1;
-      } else if (buf.length > 1 && current === "|" && (prev !== "\\" || pprev === "\\\\") && escaped === 0 && this.m === Mode.Template) {
+      } else if (buf.length > 1
+          && (current === "|" || current === "{")
+          && (prev !== "\\" || pprev === "\\\\")
+          && this.m === Mode.Template) {
 // end of template
         this.add();
         this.m = Mode.Normal;

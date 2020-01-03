@@ -65,6 +65,8 @@ const tests = [
   "WRITE AT <baubles_memory>-position_x(1) 'hello'.",
   "WRITE AT ls_output-field(ls_len-outputlen) <l_fs> NO-GAP.",
   "WRITE AT lv_position_x(1) 'o' COLOR COL_TOTAL INTENSIFIED ON INVERSE OFF FRAMES OFF.",
+  "WRITE |<td>{ lv_date DATE = USER }</td>|.",
+  "WRITE |<td>{ lv_time TIME = USER }</td>|.",
 ];
 
 statementType(tests, "WRITE", Statements.Write);

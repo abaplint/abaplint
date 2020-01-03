@@ -52,6 +52,7 @@ statementVersion(versions, "APPEND", Statements.Append);
 
 const versionsOk = [
   {abap: "APPEND <ls_comp>-name TO mt_meta_fields.", ver: Version.v702},
+  {abap: "APPEND |foo| && |bar| TO mt_code.", ver: Version.v702},
   {abap: "APPEND cl_oo_classname_service=>get_ccmac_name( lv_class_name ) TO rt_includes.", ver: Version.v702},
 ];
 
