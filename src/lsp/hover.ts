@@ -28,6 +28,11 @@ export class Hover {
       return {kind: LServer.MarkupKind.Markdown, value: "Cursor token not found"};
     } else if (found.token instanceof Tokens.String) {
       return {kind: LServer.MarkupKind.Markdown, value: "String"};
+    } else if (found.token instanceof Tokens.StringTemplate
+        || found.token instanceof Tokens.StringTemplateBegin
+        || found.token instanceof Tokens.StringTemplateEnd
+        || found.token instanceof Tokens.StringTemplateMiddle) {
+      return {kind: LServer.MarkupKind.Markdown, value: "String Template"};
     } else if (found.token instanceof Tokens.Comment) {
       return {kind: LServer.MarkupKind.Markdown, value: "Comment"};
     }

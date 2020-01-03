@@ -55,4 +55,13 @@ describe("LSP, hover", () => {
     expect(hover!.value).to.contain("Comment");
   });
 
+  it("String Template", () => {
+    const file = new MemoryFile("foobar.prog.abap", "WRITE |bar|.");
+    const reg = new Registry().addFile(file).parse();
+    const hover = Hover.find(reg, buildPosition(file, 0 , 9));
+    expect(hover).to.not.equal(undefined);
+    expect(hover!.value).to.contain("String Template");
+  });
+
+
 });
