@@ -62,13 +62,13 @@ export class MainFileContents implements IRule {
       }
       const name = first.findFirstExpression(Expressions.ReportName);
       if (name === undefined) {
-        const position = new Position(1, 1);
-        const issue = Issue.atPosition(
-          main, position, this.getDescription("Add report name to REPORT or PROGRAM statement"), this.getKey());
+        const token = first.getFirstToken();
+        const issue = Issue.atToken(
+          main, token, this.getDescription("Add report name to REPORT or PROGRAM statement"), this.getKey());
         return [issue];
       } else if (name.getFirstToken().getStr().toUpperCase() !== obj.getName()) {
-        const position = new Position(1, 1);
-        const issue = Issue.atPosition(main, position, this.getDescription("REPORT or PROGRAM name should match filename"), this.getKey());
+        const token = name.getFirstToken();
+        const issue = Issue.atToken(main, token, this.getDescription("REPORT or PROGRAM name should match filename"), this.getKey());
         return [issue];
       }
     }

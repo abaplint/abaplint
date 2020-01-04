@@ -52,7 +52,8 @@ export class LineOnlyPunc extends ABAPRule {
 
     for (let i = 0; i < rows.length; i++) {
       if (reg.exec(rows[i].trim())) {
-        const position = new Position(i + 1, 1);
+        const column = rows[i].indexOf(")") >= 0 ? rows[i].indexOf(")") + 1 : rows[i].indexOf(".") + 1;
+        const position = new Position(i + 1, column);
         const issue = Issue.atPosition(file, position, this.getDescription(), this.getKey());
         issues.push(issue);
       }

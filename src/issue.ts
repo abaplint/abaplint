@@ -51,6 +51,19 @@ export class Issue {
     });
   }
 
+  public static atRange(file: IFile, row: number, startCol: number, endCol: number, message: string, key: string) {
+    const start = new Position(row, startCol);
+    const end = new Position(row, endCol);
+
+    return new Issue({
+      filename: file.getFilename(),
+      message,
+      key,
+      start,
+      end,
+    });
+  }
+
   public static atToken(file: IFile, token: Token, message: string, key: string) {
     return new Issue({
       filename: file.getFilename(),
