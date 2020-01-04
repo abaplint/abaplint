@@ -130,42 +130,6 @@ export class SyntaxLogic {
         }
       }
     }
-
-// todo, REFACTOR BEGIN
-/*
-    if (node instanceof ExpressionNode
-        && (node.get() instanceof Expressions.Source
-        || node.get() instanceof Expressions.Target)) {
-      let fields = node.findAllExpressions(Expressions.TargetField);
-      fields = fields.concat(node.findAllExpressions(Expressions.TargetFieldSymbol));
-      fields = fields.concat(node.findAllExpressions(Expressions.SourceFieldSymbol));
-      fields = fields.concat(node.findAllExpressions(Expressions.SourceField));
-      for (const field of fields) {
-        const token = field.getFirstToken();
-        const resolved = this.scope.findVariable(token.getStr());
-        if (resolved === undefined) {
-          this.newIssue(token, "\"" + token.getStr() + "\" not found");
-        } else if (node.get() instanceof Expressions.Source) {
-          this.scope.addRead(token, resolved, this.currentFile.getFilename());
-        } else if (node.get() instanceof Expressions.Target) {
-          this.scope.addWrite(token, resolved, this.currentFile.getFilename());
-        }
-      }
-    } else if (node instanceof ExpressionNode && node.get() instanceof Expressions.FSTarget) {
-      const expr = node.findDirectExpression(Expressions.TargetFieldSymbol);
-      if (expr !== undefined) { // otherwise it is an inline FS, handled somewhere else
-        const token = expr.getFirstToken();
-        const resolved = this.scope.findVariable(token.getStr());
-        if (resolved === undefined) {
-          this.newIssue(token, "\"" + token.getStr() + "\" not found");
-        } else {
-          this.scope.addWrite(token, resolved, this.currentFile.getFilename());
-        }
-      }
-    }
-    */
-// todo, REFACTOR END
-
     for (const child of node.getChildren()) {
       try {
         const gotoNext = this.updateScope(child);

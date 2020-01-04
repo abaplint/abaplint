@@ -346,6 +346,12 @@ describe("Check Variables", () => {
     expect(issues.length).to.equals(0);
   });
 
+  it("program, SELECT, INTO field not found", () => {
+    const abap = "SELECT SINGLE field FROM foobar INTO lv_field.";
+    const issues = runProgram(abap);
+    expect(issues.length).to.equals(1);
+  });
+
   it("program, SELECT, database table not found, error", () => {
     const abap = "SELECT SINGLE * FROM zfoobar INTO @DATA(ls_data).";
     const issues = runProgram(abap);
@@ -358,8 +364,15 @@ describe("Check Variables", () => {
     expect(issues.length).to.equals(0);
   });
 
-  it("program, SELECT, database table not found, no error", () => {
-    const abap = "SELECT SINGLE * FROM something INTO @DATA(ls_data) WHERE moo = loo.";
+  it("program, SELECT, aliased field, no error expected", () => {
+    const abap = "SELECT SINGLE field FROM dbtable INTO @DATA(lv_data) WHERE field = dbtable~field.";
+    const issues = runProgram(abap);
+    expect(issues.length).to.equals(0);
+  });
+
+  it("program, SELECT, database table not found, no error, with WHERE", () => {
+    const abap = `DATA loo TYPE string.
+    SELECT SINGLE * FROM something INTO @DATA(ls_data) WHERE moo = loo.`;
     const issues = runProgram(abap);
     expect(issues.length).to.equals(0);
   });

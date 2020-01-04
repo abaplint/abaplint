@@ -75,21 +75,7 @@ export class Inline {
             continue;
           }
           const name = dbtab.getFirstToken().getStr();
-          const fields = this.findFields(name);
-          if (fields.length === 0) {
-            return true; // skip the statement, it uses things outside of checked namespace
-          }
-          // disabled for now
-          /*
-          const asName = from.findFirstExpression(Expressions.SQLAsName);
-          if (asName) {
-            name = asName.getFirstToken().getStr();
-          }
-          for (const field of fields) {
-            this.variables.addName(name + "~" + field);
-          }
-          */
-// todo, these also have to be popped after the statement
+          this.findTable(name);
         }
       }
     }
@@ -97,19 +83,19 @@ export class Inline {
     return false;
   }
 
-  private findFields(name: string): string[] {
+  private findTable(name: string): void {
     const table = this.reg.getObject("TABL", name) as Table | undefined;
     if (table !== undefined) {
-      return table.getFieldNames();
+      return;
     }
     const view = this.reg.getObject("VIEW", name) as View | undefined;
     if (view !== undefined) {
-      return view.getFields();
+      return;
     }
     if (this.reg.inErrorNamespace(name)) {
       throw new Error("Database table or view \"" + name + "\" not found");
     } else {
-      return [];
+      return;
     }
   }
 }
