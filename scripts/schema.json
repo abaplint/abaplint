@@ -1851,6 +1851,17 @@
               ],
               "description": "Checks for unreachable code."
             },
+            "unused_variables": {
+              "anyOf": [
+                {
+                  "$ref": "#/definitions/UnusedVariablesConf"
+                },
+                {
+                  "type": "boolean"
+                }
+              ],
+              "description": "Checks for unused variables"
+            },
             "use_new": {
               "anyOf": [
                 {
@@ -3450,6 +3461,28 @@
     "UnreachableCodeConf": {
       "additionalProperties": false,
       "description": "Checks for unreachable code.",
+      "properties": {
+        "enabled": {
+          "description": "Is the rule enabled?",
+          "type": "boolean"
+        },
+        "exclude": {
+          "description": "List of file regex patterns to exclude",
+          "items": {
+            "type": "string"
+          },
+          "type": "array"
+        },
+        "reason": {
+          "description": "An explanation for why the rule is enforced",
+          "type": "string"
+        }
+      },
+      "type": "object"
+    },
+    "UnusedVariablesConf": {
+      "additionalProperties": false,
+      "description": "Checks for unused variables",
       "properties": {
         "enabled": {
           "description": "Is the rule enabled?",

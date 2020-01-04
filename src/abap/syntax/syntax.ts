@@ -48,7 +48,7 @@ export class SyntaxLogic {
     };
   }
 
-  public run(): {issues: Issue[], spaghetti: SpaghettiScope} {
+  public run(): {readonly issues: Issue[], readonly spaghetti: SpaghettiScope} {
     this.issues = [];
 
     if (this.object instanceof Program && this.object.isInclude()) {

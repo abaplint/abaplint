@@ -33,6 +33,15 @@ export abstract class AbstractObject implements IObject {
     return this.files;
   }
 
+  public containsFile(filename: string): boolean {
+    for (const f of this.files) {
+      if (f.getFilename() === filename) {
+        return true;
+      }
+    }
+    return false;
+  }
+
   public removeFile(file: IFile): void {
     this.setDirty();
     for (let i = 0; i < this.files.length; i++) {

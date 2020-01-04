@@ -68,6 +68,7 @@ export * from "./tabl_enhancement_category";
 export * from "./type_begin_single_include";
 export * from "./type_form_parameters";
 export * from "./unreachable_code";
+export * from "./unused_variables";
 export * from "./use_new";
 export * from "./when_others_last";
 export * from "./whitespace/colon_missing_space";
