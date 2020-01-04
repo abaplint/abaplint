@@ -1133,6 +1133,13 @@ describe("Check Variables", () => {
     expect(issues.length).to.equals(0);
   });
 
+  it("Field offset, lv_i not specified", () => {
+    const abap = `DATA rv_s TYPE string.
+      rv_s+lv_i(1) = 'a'.`;
+    const issues = runProgram(abap);
+    expect(issues.length).to.equals(1);
+  });
+
 /*
   it("DATA, already specified", () => {
     const abap = `DATA foo.\nDATA foo.`;
