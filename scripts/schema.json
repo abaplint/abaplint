@@ -1664,6 +1664,17 @@
               ],
               "description": "Configure undesired operator variants"
             },
+            "prefix_is_current_class": {
+              "anyOf": [
+                {
+                  "$ref": "#/definitions/PrefixIsCurrentClassConf"
+                },
+                {
+                  "type": "boolean"
+                }
+              ],
+              "description": "Reports errors if the current class references itself with \"current_class=>\""
+            },
             "release_idoc": {
               "anyOf": [
                 {
@@ -3008,6 +3019,28 @@
       "required": [
         "badOperators"
       ],
+      "type": "object"
+    },
+    "PrefixIsCurrentClassConf": {
+      "additionalProperties": false,
+      "description": "Reports errors if the current class references itself with \"current_class=>\"",
+      "properties": {
+        "enabled": {
+          "description": "Is the rule enabled?",
+          "type": "boolean"
+        },
+        "exclude": {
+          "description": "List of file regex patterns to exclude",
+          "items": {
+            "type": "string"
+          },
+          "type": "array"
+        },
+        "reason": {
+          "description": "An explanation for why the rule is enforced",
+          "type": "string"
+        }
+      },
       "type": "object"
     },
     "RFCErrorHandlingConf": {

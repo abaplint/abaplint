@@ -63,6 +63,7 @@ import {ObsoleteStatementConf} from "../src/rules/obsolete_statement";
 import {ParserErrorConf} from "../src/rules/syntax/parser_error";
 import {PreferReturningToExportingConf} from "../src/rules/prefer_returning_to_exporting";
 import {PreferredCompareOperatorConf} from "../src/rules/preferred_compare_operator";
+import {PrefixIsCurrentClassConf} from "../src/rules/prefix_is_current_class";
 import {ReleaseIdocConf} from "../src/rules/release_idoc";
 import {RemoveDescriptionsConf} from "../src/rules/remove_descriptions";
 import {RFCErrorHandlingConf} from "../src/rules/rfc_error_handling";
@@ -155,6 +156,7 @@ export interface IConfig {
     "parser_error"?: ParserErrorConf | boolean,
     "prefer_returning_to_exporting"?: PreferReturningToExportingConf | boolean,
     "preferred_compare_operator"?: PreferredCompareOperatorConf | boolean,
+    "prefix_is_current_class"?: PrefixIsCurrentClassConf | boolean,
     "release_idoc"?: ReleaseIdocConf | boolean,
     "remove_descriptions"?: RemoveDescriptionsConf | boolean,
     "rfc_error_handling"?: RFCErrorHandlingConf | boolean,
