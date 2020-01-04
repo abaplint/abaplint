@@ -16,6 +16,7 @@ import {ABAPSymbolProvider} from "./monaco/abap_symbol_provider";
 import {ABAPDefinitionProvider} from "./monaco/abap_definition_provider";
 import {ABAPDocumentHighlightProvider} from "./monaco/abap_document_highlight_provider";
 import {ABAPCodeActionProvider} from "./monaco/abap_code_action_provider";
+import {ABAPImplementationProvider} from "./monaco/abap_implementation_provider";
 
 const commands = new CommandRegistry();
 
@@ -81,6 +82,7 @@ function registerMonacoSettings() {
   monaco.languages.registerRenameProvider("abap", new ABAPRenameProvider());
   monaco.languages.registerDocumentHighlightProvider("abap", new ABAPDocumentHighlightProvider());
   monaco.languages.registerCodeActionProvider("abap", new ABAPCodeActionProvider());
+  monaco.languages.registerImplementationProvider("abap", new ABAPImplementationProvider());
 
   monaco.languages.json.jsonDefaults.setDiagnosticsOptions({
     validate: true,
