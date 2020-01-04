@@ -9,6 +9,7 @@ import {UnknownType} from "../types/basic";
 import {Identifier} from "../tokens";
 import {TypedIdentifier} from "../types/_typed_identifier";
 import {Position} from "../../position";
+import {BuiltIn} from "./_builtin";
 
 export class ObjectOriented {
   private readonly reg: Registry;
@@ -114,9 +115,9 @@ export class ObjectOriented {
 
 // todo, this is not correct, add correct types, plus "super" should only be added when there are super classes
     this.scope.addIdentifier(new TypedIdentifier(
-      new Identifier(new Position(1, 1), "super"), "_global.prog.abap", new UnknownType("todo")));
+      new Identifier(new Position(1, 1), "super"), BuiltIn.filename, new UnknownType("todo")));
     this.scope.addIdentifier(new TypedIdentifier(
-      new Identifier(new Position(1, 1), "me"), "_global.prog.abap", new UnknownType("todo")));
+      new Identifier(new Position(1, 1), "me"), BuiltIn.filename, new UnknownType("todo")));
 
     let methodDefinition: MethodDefinition | undefined = undefined;
     methodDefinition = this.findMethod(classDefinition, methodName);

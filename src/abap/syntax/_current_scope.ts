@@ -1,7 +1,7 @@
 import {ClassDefinition, InterfaceDefinition, FormDefinition} from "../types";
 import {TypedIdentifier} from "../types/_typed_identifier";
 import {Registry} from "../../registry";
-import {Globals} from "./_globals";
+import {BuiltIn} from "./_builtin";
 import * as Objects from "../../objects";
 import {DDIC} from "../../ddic";
 import {Position} from "../../position";
@@ -27,7 +27,7 @@ export class CurrentScope {
   public static buildDefault(reg: Registry): CurrentScope {
     const s = new CurrentScope(reg);
 
-    s.push(ScopeType.BuiltIn, ScopeType.BuiltIn, new Position(1, 1), ScopeType.BuiltIn);
+    s.push(ScopeType.BuiltIn, ScopeType.BuiltIn, new Position(1, 1), BuiltIn.filename);
     this.addBuiltIn(s, reg);
 
     s.push(ScopeType.Global, ScopeType.Global, new Position(1, 1), ScopeType.Global);
@@ -36,9 +36,9 @@ export class CurrentScope {
   }
 
   private static addBuiltIn(s: CurrentScope, reg: Registry) {
-    const builtin = Globals.get(reg.getConfig().getSyntaxSetttings().globalConstants);
+    const builtin = BuiltIn.get(reg.getConfig().getSyntaxSetttings().globalConstants);
     s.addList(builtin);
-    for (const t of Globals.getTypes()) {
+    for (const t of BuiltIn.getTypes()) {
       s.addType(t);
     }
   }

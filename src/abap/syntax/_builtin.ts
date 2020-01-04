@@ -5,8 +5,8 @@ import {Identifier} from "../tokens";
 import {Position} from "../../position";
 import {AbstractType} from "../types/basic/_abstract_type";
 
-export class Globals {
-  private static readonly filename = "_global.prog.abap";
+export class BuiltIn {
+  public static readonly filename = "_builtin.prog.abap";
 
   public static getTypes(): TypedIdentifier[] {
     const ret: TypedIdentifier[] = [];
@@ -22,7 +22,7 @@ export class Globals {
 
     ret.push(this.buildVariable("sy")); // todo, add structure
     ret.push(this.buildVariable("syst")); // todo, add structure
-    ret.push(this.buildVariable("screen")); // todo, add structure
+    ret.push(this.buildVariable("screen")); // todo, add structure, or alternatively make native Statements
     ret.push(this.buildVariable("text")); // todo, this should be parsed to text elements? and this var removed
 
     ret.push(this.buildConstant("%_BACKSPACE"));
