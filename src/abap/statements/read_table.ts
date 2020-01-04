@@ -1,6 +1,6 @@
 import {Statement} from "./_statement";
 import {str, seq, alt, opt, optPrio, plus, per, IStatementRunnable} from "../combi";
-import {FSTarget, Target, Field, Source, Dynamic, FieldSub, FieldChain} from "../expressions";
+import {FSTarget, Target, Field, Source, Dynamic, FieldSub, ComponentChain} from "../expressions";
 
 export class ReadTable extends Statement {
 
@@ -13,7 +13,7 @@ export class ReadTable extends Statement {
 
     const index = seq(str("INDEX"), new Source());
 
-    const compare = seq(alt(new FieldChain(), new Dynamic()),
+    const compare = seq(alt(new ComponentChain(), new Dynamic()),
                         str("="),
                         new Source());
 

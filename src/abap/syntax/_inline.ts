@@ -22,7 +22,6 @@ export class Inline {
     const token = expr.getFirstToken();
     const identifier = new TypedIdentifier(token, filename, new UnknownType("todo"));
     this.scope.addIdentifier(identifier);
-    this.scope.addWrite(token, identifier, filename);
   }
 
   public update(node: INode, filename: string): boolean {

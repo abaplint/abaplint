@@ -45,7 +45,7 @@ function expectCharacter(identifier: TypedIdentifier | undefined, length: number
 
 /////////////////////////////////////
 
-describe("Syntax - Types", () => {
+describe("Syntax - Basic Types", () => {
 
   it("nothing", () => {
     const abap = "WRITE foobar.";

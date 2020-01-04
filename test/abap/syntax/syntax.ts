@@ -168,10 +168,9 @@ describe("Check Variables", () => {
   });
 
   it("program, SELECT-OPTIONS", () => {
-// todo, this should really fail as structure-field is unknown
     const abap = "SELECT-OPTIONS foo FOR structure-field.\nWRITE foo.\n";
     const issues = runProgram(abap);
-    expect(issues.length).to.equals(0);
+    expect(issues.length).to.equals(1);
   });
 
   it("program, STATICS", () => {
@@ -325,9 +324,9 @@ describe("Check Variables", () => {
 
   it("program, READ TABLE", () => {
 // todo, this code is not syntactically correct
-    const abap = "DATA lt_map TYPE STANDARD TABLE OF string.\n" +
-      "DATA iv_tag TYPE string.\n" +
-      "READ TABLE lt_map WITH KEY tag = iv_tag.\n";
+    const abap = `DATA lt_map TYPE STANDARD TABLE OF string.
+      DATA iv_tag TYPE string.
+      READ TABLE lt_map WITH KEY tag = iv_tag.`;
     const issues = runProgram(abap);
     expect(issues.length).to.equals(0);
   });
@@ -341,8 +340,8 @@ describe("Check Variables", () => {
   });
 
   it("program, definition in FOR expression", () => {
-    const abap = "DATA itab TYPE STANDARD TABLE OF i.\n" +
-      "itab = VALUE #( FOR j = 1 THEN j + 1 UNTIL j > 10 ( j ) ).";
+    const abap = `DATA itab TYPE STANDARD TABLE OF i.
+      itab = VALUE #( FOR j = 1 THEN j + 1 UNTIL j > 10 ( j ) ).`;
     const issues = runProgram(abap);
     expect(issues.length).to.equals(0);
   });
@@ -1118,6 +1117,20 @@ describe("Check Variables", () => {
     ASSIGN COMPONENT 'FOO' OF STRUCTURE ls_structure TO <comp>.`;
     const issues = runProgram(abap);
     expect(issues.length).to.equals(1);
+  });
+
+  it("SORT, expect 0 errors", () => {
+    const abap = `DATA tab TYPE STANDARD TABLE OF i.
+      SORT tab BY table_line.`;
+    const issues = runProgram(abap);
+    expect(issues.length).to.equals(0);
+  });
+
+  it("CALL METHOD, static class and method", () => {
+// todo, actually cl_foobar is unknown
+    const abap = `CALL METHOD cl_foo=>bar( ).`;
+    const issues = runProgram(abap);
+    expect(issues.length).to.equals(0);
   });
 
 /*

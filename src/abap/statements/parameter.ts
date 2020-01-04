@@ -1,6 +1,6 @@
 import {Statement} from "./_statement";
 import {verNot, str, seq, opt, alt, per, regex as reg, IStatementRunnable} from "../combi";
-import {Source, Constant, FieldChain, Dynamic, Field, FieldLength, FieldSub, RadioGroupName, Modif} from "../expressions";
+import {Source, Constant, FieldChain, Dynamic, Field, FieldLength, FieldSub, RadioGroupName, Modif, TypeName} from "../expressions";
 import {Version} from "../../version";
 import * as Expressions from "../expressions";
 import {StatementNode} from "../nodes";
@@ -14,7 +14,7 @@ export class Parameter extends Statement {
     const para = alt(str("PARAMETER"), str("PARAMETERS"));
     const def = seq(str("DEFAULT"), alt(new Constant(), new FieldChain()));
     const radio = seq(str("RADIOBUTTON GROUP"), new RadioGroupName());
-    const type = seq(alt(str("TYPE"), str("LIKE")), alt(new FieldChain(), new Dynamic()));
+    const type = seq(alt(str("TYPE"), str("LIKE")), alt(new TypeName(), new Dynamic()));
     const memory = seq(str("MEMORY ID"), new FieldSub());
     const listbox = str("AS LISTBOX");
     const cmd = seq(str("USER-COMMAND"), reg(/^\w+$/));

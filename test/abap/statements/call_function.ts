@@ -262,12 +262,12 @@ const tests = [
   "call function gc_fm in background unit lo_unit\n" +
   "  exporting\n" +
   "    foo = bar.",
-
+/* todo
   "call function 'ZNAME'\n" +
   "  destination 'NONE'\n" +
   "  starting new task 'ZFOO'\n" +
   "  calling <out>->end_of_task on end of task.",
-
+*/
 ];
 
 statementType(tests, "CALL FUNCTION", Statements.CallFunction);

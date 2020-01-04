@@ -4,7 +4,7 @@ import * as Structures from "../structures";
 import {Issue} from "../../issue";
 import {INode} from "../nodes/_inode";
 import {Token} from "../tokens/_token";
-import {StatementNode, ExpressionNode, StructureNode} from "../nodes";
+import {StatementNode, StructureNode} from "../nodes";
 import {ABAPFile} from "../../files";
 import {Registry} from "../../registry";
 import {ABAPObject} from "../../objects/_abap_object";
@@ -107,8 +107,32 @@ export class SyntaxLogic {
       this.newIssue(node.getFirstToken(), e.message);
     }
 
-// todo, the same variables can be checked multiple times? as Expressions are nested
+    if (node instanceof StatementNode) {
+      const targets = node.findAllExpressions(Expressions.TargetField).concat(node.findAllExpressions(Expressions.TargetFieldSymbol));
+      for (const target of targets) {
+        const token = target.getFirstToken();
+        const resolved = this.scope.findVariable(token.getStr());
+        if (resolved === undefined) {
+          this.newIssue(token, "\"" + token.getStr() + "\" not found");
+        } else {
+          this.scope.addWrite(token, resolved, this.currentFile.getFilename());
+        }
+      }
+
+      const sources = node.findAllExpressions(Expressions.SourceField).concat(node.findAllExpressions(Expressions.SourceFieldSymbol));
+      for (const source of sources) {
+        const token = source.getFirstToken();
+        const resolved = this.scope.findVariable(token.getStr());
+        if (resolved === undefined) {
+          this.newIssue(token, "\"" + token.getStr() + "\" not found");
+        } else {
+          this.scope.addRead(token, resolved, this.currentFile.getFilename());
+        }
+      }
+    }
+
 // todo, REFACTOR BEGIN
+/*
     if (node instanceof ExpressionNode
         && (node.get() instanceof Expressions.Source
         || node.get() instanceof Expressions.Target)) {
@@ -139,6 +163,7 @@ export class SyntaxLogic {
         }
       }
     }
+    */
 // todo, REFACTOR END
 
     for (const child of node.getChildren()) {

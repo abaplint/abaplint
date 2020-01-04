@@ -1,12 +1,17 @@
-import {seq, alt, opt, tok, Expression, IStatementRunnable} from "../combi";
+import {seq, alt, altPrio, opt, tok, Expression, IStatementRunnable} from "../combi";
 import {InstanceArrow, StaticArrow} from "../tokens/";
 import {MethodName, Dynamic, FieldChain, MethodCallChain} from "../expressions";
+import {ClassName} from "./class_name";
 
 export class MethodSource extends Expression {
   public getRunnable(): IStatementRunnable {
     const mname = alt(new MethodName(), new Dynamic());
     const cname = alt(new FieldChain(), new MethodCallChain(), new Dynamic());
 
-    return seq(opt(seq(cname, alt(tok(InstanceArrow), tok(StaticArrow)))), mname);
+    const stati = seq(new ClassName(), tok(StaticArrow));
+
+    const part1 = seq(cname, alt(tok(InstanceArrow), tok(StaticArrow)));
+
+    return seq(opt(altPrio(stati, part1)), mname);
   }
 }

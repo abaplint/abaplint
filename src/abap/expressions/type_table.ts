@@ -3,7 +3,6 @@ import {Constant, FieldSub, TypeName, Integer, Field} from "./";
 import * as Expressions from "./";
 import {Version} from "../../version";
 import * as Types from "../types/basic/";
-import {FieldChain} from "./field_chain";
 import {ExpressionNode, StatementNode} from "../nodes";
 import {CurrentScope} from "../syntax/_current_scope";
 import {TypedIdentifier} from "../types/_typed_identifier";
@@ -33,9 +32,9 @@ export class TypeTable extends Expression {
                        str("TABLE"),
                        opt(str("OF")),
                        opt(str("REF TO")),
-                       opt(new FieldChain()));
+                       opt(new TypeName()));
 
-    const range = seq(str("RANGE OF"), new FieldChain());
+    const range = seq(str("RANGE OF"), new TypeName());
 
     const typetable = seq(alt(normal, range),
                           opt(per(header, initial)),
@@ -66,7 +65,7 @@ export class TypeTable extends Expression {
       return undefined;
     }
 
-    const row = new BasicTypes(filename, scope).resolveTypeName(node, node.findFirstExpression(Expressions.FieldChain));
+    const row = new BasicTypes(filename, scope).resolveTypeName(node, node.findFirstExpression(Expressions.TypeName));
     if (row === undefined) {
       return undefined;
     }

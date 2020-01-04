@@ -1,17 +1,19 @@
 import {Statement} from "./_statement";
 import {verNot, str, seq, opt, alt, per, IStatementRunnable} from "../combi";
-import {Constant, FieldSub, FormName, Source, FunctionParameters, FunctionName, FieldChain, Destination} from "../expressions";
+import {Constant, FieldSub, FormName, Source, FunctionParameters, FunctionName, Destination, MethodName} from "../expressions";
 import {Version} from "../../version";
 
 export class CallFunction extends Statement {
 
   public getMatcher(): IStatementRunnable {
+    const method = new MethodName();
+
     const starting = seq(str("STARTING NEW TASK"),
                          alt(new Constant(), new FieldSub()));
     const update = str("IN UPDATE TASK");
     const unit = seq(str("UNIT"), new Source());
     const background = seq(str("IN BACKGROUND"), alt(str("TASK"), unit));
-    const calling = seq(str("CALLING"), new FieldChain(), str("ON END OF TASK"));
+    const calling = seq(str("CALLING"), method, str("ON END OF TASK"));
     const performing = seq(str("PERFORMING"), new FormName(), str("ON END OF TASK"));
     const separate = str("AS SEPARATE UNIT");
 
