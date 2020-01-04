@@ -1,15 +1,13 @@
 import {Statement} from "./_statement";
 import {str, seq, alt, per, opt, plus, IStatementRunnable, optPrio} from "../combi";
-import {FieldSymbol, Target, Dynamic, FieldChain} from "../expressions";
+import {Target, Dynamic, FieldChain} from "../expressions";
 
 export class Sort extends Statement {
 
   public getMatcher(): IStatementRunnable {
     const order = alt(str("ASCENDING"), str("DESCENDING"));
 
-    const sel = alt(new FieldChain(),
-                    new FieldSymbol(),
-                    new Dynamic());
+    const sel = alt(new FieldChain(), new Dynamic());
 
     const text = str("AS TEXT");
 

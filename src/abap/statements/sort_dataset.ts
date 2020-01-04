@@ -1,6 +1,6 @@
 import {Statement} from "./_statement";
 import {verNot, str, seq, alt, opt, plus, optPrio, IStatementRunnable} from "../combi";
-import {FieldSymbol, FieldSub, Dynamic} from "../expressions";
+import {SourceFieldSymbol, FieldSub, Dynamic} from "../expressions";
 import {Version} from "../../version";
 
 export class SortDataset extends Statement {
@@ -9,7 +9,7 @@ export class SortDataset extends Statement {
     const order = alt(str("ASCENDING"), str("DESCENDING"));
 
     const sel = alt(new FieldSub(),
-                    new FieldSymbol(),
+                    new SourceFieldSymbol(),
                     new Dynamic());
 
     const fields = plus(seq(sel, optPrio(order)));

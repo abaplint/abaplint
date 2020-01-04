@@ -1,6 +1,5 @@
 import {Statement} from "./_statement";
 import {str, seq, alt, opt, per, plus, IStatementRunnable, altPrio} from "../combi";
-import {FieldSymbol} from "../expressions";
 import {Target, Source, Dynamic, ComponentCompare, ComponentCond, SimpleName, Field, FieldSub} from "../expressions";
 
 export class DeleteInternal extends Statement {
@@ -29,9 +28,9 @@ export class DeleteInternal extends Statement {
                          opt(seq(str("COMPARING"), altPrio(str("ALL FIELDS"), plus(alt(new FieldSub(), new Dynamic()))))),
                          opt(seq(str("USING KEY"), new Field())));
 
-    const fs = seq(new FieldSymbol(), where);
+//    const fs = seq(new FieldSymbol(), where);
 
-    return seq(str("DELETE"), alt(table, adjacent, fs));
+    return seq(str("DELETE"), alt(table, adjacent));
   }
 
 }

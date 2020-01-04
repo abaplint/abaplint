@@ -1,13 +1,13 @@
 import {Statement} from "./_statement";
 import {str, seq, alt, opt, IStatementRunnable, regex, altPrio} from "../combi";
-import {FieldSymbol, FieldSub, Dynamic, FieldLength, FieldOffset} from "../expressions";
+import {SourceFieldSymbol, FieldSub, Dynamic, FieldLength, FieldOffset} from "../expressions";
 
 export class At extends Statement {
 
   public getMatcher(): IStatementRunnable {
     const field = alt(seq(new FieldSub(), opt(new FieldOffset()), opt(new FieldLength())),
                       new Dynamic(),
-                      new FieldSymbol());
+                      new SourceFieldSymbol());
 
     const atNew = seq(str("NEW"), field);
     const atEnd = seq(str("END OF"), field);

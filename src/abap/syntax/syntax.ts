@@ -108,10 +108,15 @@ export class SyntaxLogic {
     }
 
 // todo, the same variables can be checked multiple times? as Expressions are nested
+// todo, REFACTOR BEGIN
     if (node instanceof ExpressionNode
         && (node.get() instanceof Expressions.Source
         || node.get() instanceof Expressions.Target)) {
-      for (const field of node.findAllExpressions(Expressions.Field).concat(node.findAllExpressions(Expressions.FieldSymbol))) {
+      let fields = node.findAllExpressions(Expressions.TargetField);
+      fields = fields.concat(node.findAllExpressions(Expressions.TargetFieldSymbol));
+      fields = fields.concat(node.findAllExpressions(Expressions.SourceFieldSymbol));
+      fields = fields.concat(node.findAllExpressions(Expressions.SourceField));
+      for (const field of fields) {
         const token = field.getFirstToken();
         const resolved = this.scope.findVariable(token.getStr());
         if (resolved === undefined) {
@@ -122,10 +127,8 @@ export class SyntaxLogic {
           this.scope.addWrite(token, resolved, this.currentFile.getFilename());
         }
       }
-    }
-
-    if (node instanceof ExpressionNode && node.get() instanceof Expressions.FSTarget) {
-      const expr = node.findDirectExpression(Expressions.FieldSymbol);
+    } else if (node instanceof ExpressionNode && node.get() instanceof Expressions.FSTarget) {
+      const expr = node.findDirectExpression(Expressions.TargetFieldSymbol);
       if (expr !== undefined) { // otherwise it is an inline FS, handled somewhere else
         const token = expr.getFirstToken();
         const resolved = this.scope.findVariable(token.getStr());
@@ -136,6 +139,7 @@ export class SyntaxLogic {
         }
       }
     }
+// todo, REFACTOR END
 
     for (const child of node.getChildren()) {
       try {
