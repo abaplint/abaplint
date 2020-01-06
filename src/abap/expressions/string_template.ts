@@ -7,8 +7,10 @@ export class StringTemplate extends Expression {
   public getRunnable(): IStatementRunnable {
     const formatting = alt(str("ALPHA = OUT"),
                            str("TIME = USER"),
-                           seq(str("WIDTH ="), new Source()),
-                           str("DATE = USER"));
+                           str("DATE = USER"),
+                           str("TIME = ENVIRONMENT"),
+                           str("DATE = ENVIRONMENT"),
+                           seq(str("WIDTH ="), new Source()));
 
     const nest = seq(tok(Tokens.StringTemplateBegin),
                      new Source(),

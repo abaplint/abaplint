@@ -125,7 +125,7 @@ export class ExpressionNode extends CountableNode {
   public findDirectTokenByText(text: string): Token | undefined {
     for (const child of this.getChildren()) {
       if (child instanceof TokenNode) {
-        if (child.get().getStr() === text) {
+        if (child.get().getStr().toUpperCase() === text.toUpperCase()) {
           return child.get();
         }
       } else if (child instanceof ExpressionNode) {

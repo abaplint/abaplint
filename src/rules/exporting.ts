@@ -3,6 +3,8 @@ import {Issue} from "../issue";
 import {ABAPRule} from "./_abap_rule";
 import {ABAPFile} from "../files";
 import {BasicRuleConfig} from "./_basic_rule_config";
+import {MethodParameters, MethodCallBody, MethodCall} from "../abap/expressions";
+import {ExpressionNode} from "../abap/nodes";
 
 export class Counter {
   public exporting: boolean = false;
@@ -30,35 +32,20 @@ export class Exporting extends ABAPRule {
   }
 
   public runParsed(file: ABAPFile) {
-    const issues: Issue[] = [];
+    let issues: Issue[] = [];
 
     for (const statement of file.getStatements()) {
-      let current: Counter | undefined = new Counter();
-      const stack: Counter[] = [];
-
-      for (const token of statement.getTokens()) {
-        if (this.lastChar(token.getStr()) === "(") {
-          stack.push(current);
-          current = new Counter();
-        } else if (this.firstChar(token.getStr()) === ")") {
-          if (current.exporting === true && current.other === false) {
-            const issue = Issue.atPosition(file, current.pos, this.getDescription(), this.getKey());
-            issues.push(issue);
-          }
-          current = stack.pop();
-          if (current === undefined) {
-            current = new Counter();
-          }
-        } else if (token.getStr().toUpperCase() === "EXPORTING") {
-          current.exporting = true;
-          current.pos = token.getStart();
-        } else if (token.getStr().toUpperCase() === "IMPORTING"
-            || token.getStr().toUpperCase() === "RECEIVING"
-            || token.getStr().toUpperCase() === "EXCEPTIONS"
-            || token.getStr().toUpperCase() === "CHANGING") {
-          current.other = true;
+      for (const b of statement.findAllExpressions(MethodCallBody)) {
+        if (b.getFirstToken().getStr() !== "(") {
+          continue;
         }
+        issues = issues.concat(this.check(b, file));
       }
+
+      for (const b of statement.findAllExpressions(MethodCall)) {
+        issues = issues.concat(this.check(b, file));
+      }
+
     }
 
     return issues;
@@ -72,12 +59,22 @@ export class Exporting extends ABAPRule {
     this.conf = conf;
   }
 
-  private lastChar(s: string): string {
-    return s.charAt(s.length - 1);
+  private check(node: ExpressionNode, file: ABAPFile): Issue[] {
+
+    for (const e of node.findAllExpressions(MethodParameters)) {
+      const found = e.findDirectTokenByText("EXPORTING");
+      if (found !== undefined
+          && e.findDirectTokenByText("IMPORTING") === undefined
+          && e.findDirectTokenByText("RECEIVING") === undefined
+          && e.findDirectTokenByText("EXCEPTIONS") === undefined
+          && e.findDirectTokenByText("CHANGING") === undefined) {
+        const issue = Issue.atToken(file, found, this.getDescription(), this.getKey());
+        return [issue];
+      }
+    }
+
+    return [];
   }
 
-  private firstChar(s: string): string {
-    return s.charAt(0);
-  }
 
 }

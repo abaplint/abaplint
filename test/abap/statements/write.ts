@@ -67,6 +67,8 @@ const tests = [
   "WRITE AT lv_position_x(1) 'o' COLOR COL_TOTAL INTENSIFIED ON INVERSE OFF FRAMES OFF.",
   "WRITE |<td>{ lv_date DATE = USER }</td>|.",
   "WRITE |<td>{ lv_time TIME = USER }</td>|.",
+  "WRITE |<td>{ lv_date DATE = ENVIRONMENT }</td>|.",
+  "WRITE |<td>{ lv_time TIME = ENVIRONMENT }</td>|.",
   "WRITE |{ g_name WIDTH = 30 }|.",
 ];
 
