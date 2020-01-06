@@ -53,10 +53,10 @@ export class Abapdoc extends ABAPRule {
     }
 
     for (const method of methods) {
-      const previousRow = method.getStart().getRow() - 2;
       if (method.isRedefinition()) {
         continue;
       }
+      const previousRow = method.getStart().getRow() - 2;
       if (!(rows[previousRow].trim().substring(0, 2) === "\"!")) {
         const issue = Issue.atIdentifier(method, "Missing ABAP Doc for method " + method.getName(), this.getKey());
         issues.push(issue);
