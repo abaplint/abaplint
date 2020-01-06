@@ -7,7 +7,7 @@ import {ClassName} from "../abap/expressions";
 
 // todo, unit test missing
 
-/** Reports errors if the current class references itself with "current_class=>" 
+/** Reports errors if the current class references itself with "current_class=>"
  * https://github.com/SAP/styleguides/blob/master/clean-abap/CleanABAP.md#omit-the-self-reference-me-when-calling-an-instance-method
  */
 export class PrefixIsCurrentClassConf extends BasicRuleConfig {
