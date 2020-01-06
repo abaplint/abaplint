@@ -42,6 +42,9 @@ export class Abapdoc extends ABAPRule {
       if (this.conf.checkLocal === false && classDef.isLocal() === true) {
         continue;
       }
+      if (classDef.isRedefinition() === true) {
+        continue;
+      }
       methods = methods.concat(classDef.getMethodDefinitions(scope).getPublic());
     }
 

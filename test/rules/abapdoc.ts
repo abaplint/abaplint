@@ -94,6 +94,13 @@ const defaultConfigTests = [
                   doobar RETURNING VALUE(rv_string) TYPE string.
             ENDCLASS.`, cnt: 0,
   },
+  {
+    abap: ` CLASS zcl_foo DEFINITION PUBLIC.
+              PUBLIC SECTION.
+                METHODS:
+                  foobar RETURNING VALUE(rv_string) TYPE string REDEFINITION,
+            ENDCLASS.`, cnt: 0,
+  },
 ];
 
 testRule(defaultConfigTests, Abapdoc);
