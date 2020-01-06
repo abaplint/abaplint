@@ -82,10 +82,6 @@ export class ClassDefinition extends Identifier {
     return this.node.findFirstStatement(Statements.ClassDefinition)!.concatTokens().toUpperCase().includes(" ABSTRACT");
   }
 
-  public isRedefinition(): boolean {
-    return this.node.findFirstStatement(Statements.ClassDefinition)!.concatTokens().toUpperCase().includes(" REDEFINITION");
-  }
-
 /*
   public getFriends() {
   }

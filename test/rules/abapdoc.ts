@@ -98,7 +98,15 @@ const defaultConfigTests = [
     abap: ` CLASS zcl_foo DEFINITION PUBLIC.
               PUBLIC SECTION.
                 METHODS:
-                  foobar RETURNING VALUE(rv_string) TYPE string REDEFINITION,
+                  foobar REDEFINITION,
+                  moo.
+            ENDCLASS.`, cnt: 1,
+  },
+  {
+    abap: ` CLASS zcl_foo DEFINITION PUBLIC.
+              PUBLIC SECTION.
+                METHODS:
+                  foobar REDEFINITION
             ENDCLASS.`, cnt: 0,
   },
 ];
