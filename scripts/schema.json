@@ -3036,7 +3036,8 @@
           },
           "type": "array"
         },
-        "omitMe": {
+        "omitMeInstanceCalls": {
+          "description": "Checks usages of self references with 'me' when calling instance methods",
           "type": "boolean"
         },
         "reason": {
@@ -3045,7 +3046,7 @@
         }
       },
       "required": [
-        "omitMe"
+        "omitMeInstanceCalls"
       ],
       "type": "object"
     },
