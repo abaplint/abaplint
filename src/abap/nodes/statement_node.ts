@@ -7,6 +7,8 @@ import {Pragma} from "../tokens/pragma";
 import {TokenNode} from "./token_node";
 import {ExpressionNode} from "./expression_node";
 import {Expression} from "../combi";
+import {String, StringTemplate} from "../tokens/string";
+import {Comment} from "../tokens/comment";
 
 export class StatementNode extends AbstractNode {
   private readonly statement: Statement;
@@ -86,6 +88,26 @@ export class StatementNode extends AbstractNode {
     let prev: Token | undefined;
     for (const token of this.getTokens()) {
       if (token instanceof Pragma) {
+        continue;
+      }
+      if (str === "") {
+        str = token.getStr();
+      } else if (prev && prev.getStr().length + prev.getCol() === token.getCol()
+          && prev.getRow() === token.getRow()) {
+        str = str + token.getStr();
+      } else {
+        str = str + " " + token.getStr();
+      }
+      prev = token;
+    }
+    return str;
+  }
+
+  public concatIdentifierTokens(): string {
+    let str = "";
+    let prev: Token | undefined;
+    for (const token of this.getTokens()) {
+      if (token instanceof Comment || token instanceof String || token instanceof StringTemplate) {
         continue;
       }
       if (str === "") {
