@@ -47,14 +47,14 @@ export class PrefixIsCurrentClass extends ABAPRule {
       const staticAccess = name + "=>";
 
       for (const s of c.findAllStatementNodes()) {
-        if (s.concatIdentifierTokens().toUpperCase().includes(staticAccess)) {
+        if (s.concatTokensWithoutStringsAndComments().toUpperCase().includes(staticAccess)) {
           issues.push(Issue.atStatement(
             file,
             s,
             "Statement contains reference to current class: \"" + staticAccess + "\"",
             this.getKey()));
         } else if (this.conf.omitMeInstanceCalls === true
-              && s.concatIdentifierTokens().toUpperCase().includes(meAccess)
+              && s.concatTokensWithoutStringsAndComments().toUpperCase().includes(meAccess)
               && s.findFirstExpression(MethodCall)) {
           issues.push(Issue.atStatement(
             file,

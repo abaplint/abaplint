@@ -103,7 +103,7 @@ export class StatementNode extends AbstractNode {
     return str;
   }
 
-  public concatIdentifierTokens(): string {
+  public concatTokensWithoutStringsAndComments(): string {
     let str = "";
     let prev: Token | undefined;
     for (const token of this.getTokens()) {
