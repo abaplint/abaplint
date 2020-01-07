@@ -40,6 +40,21 @@ const defaultConfigTests = [
             ENDCLASS.`, cnt: 0,
   },
   {
+    // static reference to own class in string template source
+    abap: ` CLASS lcl_moo DEFINITION.
+            PUBLIC SECTION.
+              METHODS abc.
+            PROTECTED SECTION.
+              CLASS-DATA mv_abc TYPE i.
+          ENDCLASS.
+          CLASS lcl_moo IMPLEMENTATION.
+            METHOD abc.
+              WRITE: | { lcl_moo=>mv_abc } |.
+              WRITE: | { mv_abc } |.
+            ENDMETHOD.
+          ENDCLASS.`, cnt: 1,
+  },
+  {
     // static reference to own class class-method
     abap: ` CLASS zcl_foo DEFINITION PUBLIC.
               PUBLIC SECTION.
