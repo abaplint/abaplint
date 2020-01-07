@@ -7,7 +7,7 @@ import {Pragma} from "../tokens/pragma";
 import {TokenNode} from "./token_node";
 import {ExpressionNode} from "./expression_node";
 import {Expression} from "../combi";
-import {String, StringTemplate} from "../tokens/string";
+import {String, StringTemplate, StringTemplateBegin, StringTemplateMiddle, StringTemplateEnd} from "../tokens/string";
 import {Comment} from "../tokens/comment";
 
 export class StatementNode extends AbstractNode {
@@ -107,7 +107,12 @@ export class StatementNode extends AbstractNode {
     let str = "";
     let prev: Token | undefined;
     for (const token of this.getTokens()) {
-      if (token instanceof Comment || token instanceof String || token instanceof StringTemplate) {
+      if (token instanceof Comment
+          || token instanceof String
+          || token instanceof StringTemplate
+          || token instanceof StringTemplateBegin
+          || token instanceof StringTemplateMiddle
+          || token instanceof StringTemplateEnd) {
         continue;
       }
       if (str === "") {
