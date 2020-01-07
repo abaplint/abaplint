@@ -51,6 +51,7 @@ const defaultConfigTests = [
             METHOD abc.
               WRITE: | { lcl_moo=>mv_abc } |.
               WRITE: | { mv_abc } |.
+              WRITE: |lcl_moo=>mv_abc{ 2 }lcl_moo=>mv_abc{ 3 }lcl_moo=>mv_abc{ 4 }|.
             ENDMETHOD.
           ENDCLASS.`, cnt: 1,
   },
