@@ -6,7 +6,6 @@ import {AllowedObjectTypesConf} from "../src/rules/allowed_object_types";
 import {AmbiguousStatementConf} from "../src/rules/ambiguous_statement";
 import {AvoidUseConf} from "../src/rules/avoid_use";
 import {BeginEndNamesConf} from "../src/rules/syntax/begin_end_names";
-import {BreakpointConf} from "../src/rules/breakpoint";
 import {ChainMainlyDeclarationsConf} from "../src/rules/chain_mainly_declarations";
 import {CheckAbstractConf} from "../src/rules/check_abstract";
 import {CheckCommentsConf} from "../src/rules/check_comments";
@@ -99,7 +98,6 @@ export interface IConfig {
     "ambiguous_statement"?: AmbiguousStatementConf | boolean,
     "avoid_use"?: AvoidUseConf | boolean,
     "begin_end_names"?: BeginEndNamesConf | boolean,
-    "breakpoint"?: BreakpointConf | boolean,
     "chain_mainly_declarations"?: ChainMainlyDeclarationsConf | boolean,
     "check_abstract"?: CheckAbstractConf | boolean,
     "check_comments"?: CheckCommentsConf | boolean,

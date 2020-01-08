@@ -110,8 +110,16 @@
       "additionalProperties": false,
       "description": "Detects usage of certain statements.",
       "properties": {
+        "break": {
+          "description": "Detects BREAK and BREAK-POINTS",
+          "type": "boolean"
+        },
         "communication": {
           "description": "Detects communication",
+          "type": "boolean"
+        },
+        "defaultKey": {
+          "description": "Detects DEFAULT KEY definitions",
           "type": "boolean"
         },
         "define": {
@@ -161,35 +169,15 @@
         "kernelCall",
         "communication",
         "statics",
-        "systemCall"
+        "systemCall",
+        "defaultKey",
+        "break"
       ],
       "type": "object"
     },
     "BeginEndNamesConf": {
       "additionalProperties": false,
       "description": "Check BEGIN OF and END OF names match",
-      "properties": {
-        "enabled": {
-          "description": "Is the rule enabled?",
-          "type": "boolean"
-        },
-        "exclude": {
-          "description": "List of file regex patterns to exclude",
-          "items": {
-            "type": "string"
-          },
-          "type": "array"
-        },
-        "reason": {
-          "description": "An explanation for why the rule is enforced",
-          "type": "string"
-        }
-      },
-      "type": "object"
-    },
-    "BreakpointConf": {
-      "additionalProperties": false,
-      "description": "Detects usage of code-based breakpoints.",
       "properties": {
         "enabled": {
           "description": "Is the rule enabled?",
@@ -1036,17 +1024,6 @@
                 }
               ],
               "description": "Check BEGIN OF and END OF names match"
-            },
-            "breakpoint": {
-              "anyOf": [
-                {
-                  "$ref": "#/definitions/BreakpointConf"
-                },
-                {
-                  "type": "boolean"
-                }
-              ],
-              "description": "Detects usage of code-based breakpoints."
             },
             "chain_mainly_declarations": {
               "anyOf": [
