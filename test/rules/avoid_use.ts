@@ -14,6 +14,7 @@ const tests = [
   {abap: "STATICS foo TYPE i VALUE 10.", cnt: 1},
   {abap: `STATICS: BEGIN OF stat_foo,
                      foo TYPE i VALUE 10,
+                     bar TYPE i VALUE 5,
                    END OF stat_foo.`, cnt: 1},
 
   // default key
