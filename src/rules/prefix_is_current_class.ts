@@ -5,7 +5,6 @@ import * as Structures from "../abap/structures";
 import {BasicRuleConfig} from "./_basic_rule_config";
 import {ClassName, MethodCall} from "../abap/expressions";
 
-
 /** Reports errors if the current class references itself with "current_class=>"
  *  https://github.com/SAP/styleguides/blob/master/clean-abap/CleanABAP.md#omit-the-self-reference-me-when-calling-an-instance-method
  */
@@ -70,8 +69,6 @@ export class PrefixIsCurrentClass extends ABAPRule {
         }
       }
     }
-
     return issues;
   }
-
 }
