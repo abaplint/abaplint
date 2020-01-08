@@ -170,22 +170,6 @@ export class StatementNode extends AbstractNode {
     return undefined;
   }
 
-  public findDirectTokenByTextIgnoringCase(text: string): Token | undefined {
-    text = text.toUpperCase();
-    for (const child of this.getChildren()) {
-      if (child instanceof TokenNode) {
-        if (child.get().getStr().toUpperCase() === text) {
-          return child.get();
-        }
-      } else if (child instanceof ExpressionNode) {
-        continue;
-      } else {
-        throw new Error("findDirectTokenByText, unexpected type");
-      }
-    }
-    return undefined;
-  }
-
   public findFirstExpression(type: new () => Expression): ExpressionNode | undefined {
     for (const child of this.getChildren()) {
       if (child.get() instanceof type) {
