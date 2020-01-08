@@ -1952,9 +1952,6 @@
     "IGlobalConfig": {
       "additionalProperties": false,
       "properties": {
-        "applyUnspecifiedRules": {
-          "type": "boolean"
-        },
         "files": {
           "type": "string"
         },
@@ -1972,8 +1969,7 @@
         "files",
         "skipGeneratedGatewayClasses",
         "skipGeneratedPersistentClasses",
-        "skipGeneratedFunctionGroups",
-        "applyUnspecifiedRules"
+        "skipGeneratedFunctionGroups"
       ],
       "type": "object"
     },
