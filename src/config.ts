@@ -7,7 +7,6 @@ export interface IGlobalConfig {
   skipGeneratedGatewayClasses: boolean;
   skipGeneratedPersistentClasses: boolean;
   skipGeneratedFunctionGroups: boolean;
-  applyUnspecifiedRules: boolean;
 }
 
 export interface IDependency {
@@ -56,7 +55,6 @@ export class Config {
         skipGeneratedGatewayClasses: true,
         skipGeneratedPersistentClasses: true,
         skipGeneratedFunctionGroups: true,
-        applyUnspecifiedRules: false,
       },
       dependencies: [{
         url: "https://github.com/abaplint/deps",
@@ -90,8 +88,6 @@ export class Config {
             rules.push(rule);
           }
         }
-      } else if (this.config.global.applyUnspecifiedRules) {
-        rules.push(rule);
       }
     }
 
