@@ -49,7 +49,7 @@ export class AvoidUse extends ABAPRule {
 
   public runParsed(file: ABAPFile) {
     const issues: Issue[] = [];
-
+    let isStaticsBlock: boolean = false;
     for (const statementNode of file.getStatements()) {
       const statement = statementNode.get();
       let message: string | undefined = undefined;
@@ -65,7 +65,12 @@ export class AvoidUse extends ABAPRule {
         message = "SYSTEM-CALL";
       } else if (this.conf.communication && statement instanceof Statements.Communication) {
         message = "COMMUNICATION";
-      } else if (this.conf.statics && statement instanceof Statements.Static) {
+      } else if (this.conf.statics && statement instanceof Statements.StaticBegin) {
+        isStaticsBlock = true;
+        message = "STATICS";
+      } else if (this.conf.statics && statement instanceof Statements.StaticEnd) {
+        isStaticsBlock = false;
+      } else if (this.conf.statics && statement instanceof Statements.Static && isStaticsBlock === false) {
         message = "STATICS";
       } else if (this.conf.break && statement instanceof Statements.Break) {
         message = "BREAK/BREAK-POINT";
