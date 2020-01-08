@@ -1673,7 +1673,7 @@
                   "type": "boolean"
                 }
               ],
-              "description": "Reports errors if the current class references itself with \"current_class=>\""
+              "description": "Reports errors if the current class references itself with \"current_class=>\"\r\nhttps://github.com/SAP/styleguides/blob/master/clean-abap/CleanABAP.md#omit-the-self-reference-me-when-calling-an-instance-method"
             },
             "release_idoc": {
               "anyOf": [
@@ -3023,7 +3023,7 @@
     },
     "PrefixIsCurrentClassConf": {
       "additionalProperties": false,
-      "description": "Reports errors if the current class references itself with \"current_class=>\"",
+      "description": "Reports errors if the current class references itself with \"current_class=>\"\r\nhttps://github.com/SAP/styleguides/blob/master/clean-abap/CleanABAP.md#omit-the-self-reference-me-when-calling-an-instance-method",
       "properties": {
         "enabled": {
           "description": "Is the rule enabled?",
@@ -3036,11 +3036,18 @@
           },
           "type": "array"
         },
+        "omitMeInstanceCalls": {
+          "description": "Checks usages of self references with 'me' when calling instance methods",
+          "type": "boolean"
+        },
         "reason": {
           "description": "An explanation for why the rule is enforced",
           "type": "string"
         }
       },
+      "required": [
+        "omitMeInstanceCalls"
+      ],
       "type": "object"
     },
     "RFCErrorHandlingConf": {

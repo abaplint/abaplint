@@ -3,14 +3,16 @@ import {ABAPRule} from "./_abap_rule";
 import {ABAPFile} from "../files";
 import * as Structures from "../abap/structures";
 import {BasicRuleConfig} from "./_basic_rule_config";
-import {ClassName} from "../abap/expressions";
-
-// todo, unit test missing
+import {ClassName, MethodCall} from "../abap/expressions";
 
 /** Reports errors if the current class references itself with "current_class=>"
- * https://github.com/SAP/styleguides/blob/master/clean-abap/CleanABAP.md#omit-the-self-reference-me-when-calling-an-instance-method
+ *  https://github.com/SAP/styleguides/blob/master/clean-abap/CleanABAP.md#omit-the-self-reference-me-when-calling-an-instance-method
  */
 export class PrefixIsCurrentClassConf extends BasicRuleConfig {
+  /**
+   * Checks usages of self references with 'me' when calling instance methods
+   */
+  public omitMeInstanceCalls: boolean = true;
 }
 
 export class PrefixIsCurrentClass extends ABAPRule {
@@ -36,14 +38,29 @@ export class PrefixIsCurrentClass extends ABAPRule {
       return [];
     }
 
-    for (const c of struc.findAllStructures(Structures.ClassImplementation)) {
+    let classStructures = struc.findAllStructures(Structures.ClassImplementation);
+    classStructures = classStructures.concat(struc.findAllStructures(Structures.ClassDefinition));
+    const meAccess = "ME->";
+
+    for (const c of classStructures) {
       const name = c.findFirstExpression(ClassName)!.getFirstToken().getStr().toUpperCase();
-      const search = name + "=>";
+      const staticAccess = name + "=>";
 
       for (const s of c.findAllStatementNodes()) {
-        if (s.concatTokens().toUpperCase().includes(search)) {
-          const issue = Issue.atToken(file, s.getFirstToken(), "Statement contains \"" + search + "\"", this.getKey());
-          issues.push(issue);
+        if (s.concatTokensWithoutStringsAndComments().toUpperCase().includes(staticAccess)) {
+          issues.push(Issue.atStatement(
+            file,
+            s,
+            "Statement contains reference to current class: \"" + staticAccess + "\"",
+            this.getKey()));
+        } else if (this.conf.omitMeInstanceCalls === true
+              && s.concatTokensWithoutStringsAndComments().toUpperCase().includes(meAccess)
+              && s.findFirstExpression(MethodCall)) {
+          issues.push(Issue.atStatement(
+            file,
+            s,
+            "Omit 'me->' in instance calls",
+            this.getKey()));
         }
       }
     }
