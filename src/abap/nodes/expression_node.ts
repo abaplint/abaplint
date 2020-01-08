@@ -3,7 +3,7 @@ import {Expression} from "../combi";
 import {TokenNode} from "./token_node";
 import {Token} from "../tokens/_token";
 import {INode} from "./_inode";
-import {Pragma} from "../tokens";
+import {Pragma, String, StringTemplate, StringTemplateBegin, StringTemplateMiddle, StringTemplateEnd, Comment} from "../tokens";
 
 export class ExpressionNode extends CountableNode {
   private readonly expression: Expression;
@@ -33,6 +33,31 @@ export class ExpressionNode extends CountableNode {
     let prev: Token | undefined;
     for (const token of this.getTokens()) {
       if (token instanceof Pragma) {
+        continue;
+      }
+      if (str === "") {
+        str = token.getStr();
+      } else if (prev && prev.getStr().length + prev.getCol() === token.getCol()
+          && prev.getRow() === token.getRow()) {
+        str = str + token.getStr();
+      } else {
+        str = str + " " + token.getStr();
+      }
+      prev = token;
+    }
+    return str;
+  }
+
+  public concatTokensWithoutStringsAndComments(): string {
+    let str = "";
+    let prev: Token | undefined;
+    for (const token of this.getTokens()) {
+      if (token instanceof Comment
+          || token instanceof String
+          || token instanceof StringTemplate
+          || token instanceof StringTemplateBegin
+          || token instanceof StringTemplateMiddle
+          || token instanceof StringTemplateEnd) {
         continue;
       }
       if (str === "") {
