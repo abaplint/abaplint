@@ -50,31 +50,32 @@ export class AvoidUse extends ABAPRule {
   public runParsed(file: ABAPFile) {
     const issues: Issue[] = [];
 
-    for (const statement of file.getStatements()) {
+    for (const statementNode of file.getStatements()) {
+      const statement = statementNode.get();
       let message: string | undefined = undefined;
-      if (this.conf.define && statement.get() instanceof Statements.Define) {
+      if (this.conf.define && statement instanceof Statements.Define) {
         message = "DEFINE";
-      } else if (this.conf.endselect && statement.get() instanceof Statements.EndSelect) {
+      } else if (this.conf.endselect && statement instanceof Statements.EndSelect) {
         message = "ENDSELECT";
-      } else if (this.conf.execSQL && statement.get() instanceof Statements.ExecSQL) {
+      } else if (this.conf.execSQL && statement instanceof Statements.ExecSQL) {
         message = "EXEC SQL";
-      } else if (this.conf.kernelCall && statement.get() instanceof Statements.CallKernel) {
+      } else if (this.conf.kernelCall && statement instanceof Statements.CallKernel) {
         message = "KERNEL CALL";
-      } else if (this.conf.systemCall && statement.get() instanceof Statements.SystemCall) {
+      } else if (this.conf.systemCall && statement instanceof Statements.SystemCall) {
         message = "SYSTEM-CALL";
-      } else if (this.conf.communication && statement.get() instanceof Statements.Communication) {
+      } else if (this.conf.communication && statement instanceof Statements.Communication) {
         message = "COMMUNICATION";
-      } else if (this.conf.statics && statement.get() instanceof Statements.Static) {
+      } else if (this.conf.statics && statement instanceof Statements.Static) {
         message = "STATICS";
-      } else if (this.conf.break && statement.get() instanceof Statements.Break) {
+      } else if (this.conf.break && statement instanceof Statements.Break) {
         message = "BREAK/BREAK-POINT";
       } else if (this.conf.defaultKey
-          && (statement.get() instanceof Statements.Data || statement.get() instanceof Statements.Type)
-          && statement.findFirstExpression(TypeTable)?.concatTokensWithoutStringsAndComments().toUpperCase().endsWith("DEFAULT KEY")) {
+          && (statement instanceof Statements.Data || statement instanceof Statements.Type)
+          && statementNode.findFirstExpression(TypeTable)?.concatTokensWithoutStringsAndComments().toUpperCase().endsWith("DEFAULT KEY")) {
         message = "DEFAULT KEY";
       }
       if (message) {
-        const issue = Issue.atStatement(file, statement, this.getDescription(message), this.getKey());
+        const issue = Issue.atStatement(file, statementNode, this.getDescription(message), this.getKey());
         issues.push(issue);
       }
     }
