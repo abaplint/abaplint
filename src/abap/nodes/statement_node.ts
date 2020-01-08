@@ -214,11 +214,11 @@ export class StatementNode extends AbstractNode {
     let prev: Token | undefined;
     for (const token of this.getTokens()) {
       if (token instanceof Comment
-        || token instanceof String
-        || token instanceof StringTemplate
-        || token instanceof StringTemplateBegin
-        || token instanceof StringTemplateMiddle
-        || token instanceof StringTemplateEnd) {
+          || token instanceof String
+          || token instanceof StringTemplate
+          || token instanceof StringTemplateBegin
+          || token instanceof StringTemplateMiddle
+          || token instanceof StringTemplateEnd) {
         continue;
       }
       if (prev && token.getStr().toUpperCase() === second && prev?.getStr().toUpperCase() === first.toUpperCase()) {
