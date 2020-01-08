@@ -170,6 +170,22 @@ export class StatementNode extends AbstractNode {
     return undefined;
   }
 
+  public findDirectTokenByTextIgnoringCase(text: string): Token | undefined {
+    text = text.toUpperCase();
+    for (const child of this.getChildren()) {
+      if (child instanceof TokenNode) {
+        if (child.get().getStr().toUpperCase() === text) {
+          return child.get();
+        }
+      } else if (child instanceof ExpressionNode) {
+        continue;
+      } else {
+        throw new Error("findDirectTokenByText, unexpected type");
+      }
+    }
+    return undefined;
+  }
+
   public findFirstExpression(type: new () => Expression): ExpressionNode | undefined {
     for (const child of this.getChildren()) {
       if (child.get() instanceof type) {
@@ -202,6 +218,32 @@ export class StatementNode extends AbstractNode {
       }
     }
     return ret;
+  }
+
+  /**
+   * Returns the Position of the first token if the sequence is found,
+   * otherwise undefined. Strings and Comments are ignored in this search.
+   * @param first Text of the first Token
+   * @param second Text of the second Token
+   */
+  public findTokenSequencePosition(first: string, second: string): Position | undefined {
+    let prev: Token | undefined;
+    for (const token of this.getTokens()) {
+      if (token instanceof Comment
+        || token instanceof String
+        || token instanceof StringTemplate
+        || token instanceof StringTemplateBegin
+        || token instanceof StringTemplateMiddle
+        || token instanceof StringTemplateEnd) {
+        continue;
+      }
+      if (prev && token.getStr().toUpperCase() === second && prev?.getStr().toUpperCase() === first.toUpperCase()) {
+        return prev.getStart();
+      } else {
+        prev = token;
+      }
+    }
+    return undefined;
   }
 
   private toTokens(b: INode): Token[] {
