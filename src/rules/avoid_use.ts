@@ -3,6 +3,7 @@ import {Issue} from "../issue";
 import {ABAPRule} from "./_abap_rule";
 import {ABAPFile} from "../files";
 import {BasicRuleConfig} from "./_basic_rule_config";
+import {TypeTable} from "../abap/expressions";
 
 /** Detects usage of certain statements. */
 export class AvoidUseConf extends BasicRuleConfig {
@@ -20,6 +21,10 @@ export class AvoidUseConf extends BasicRuleConfig {
   public statics: boolean = true;
   /** Detects SYSTEM-CALL */
   public systemCall: boolean = true;
+  /** Detects DEFAULT KEY definitions */
+  public defaultKey: boolean = true;
+  /** Detects BREAK and BREAK-POINTS */
+  public break: boolean = true;
 }
 
 export class AvoidUse extends ABAPRule {
@@ -44,28 +49,38 @@ export class AvoidUse extends ABAPRule {
 
   public runParsed(file: ABAPFile) {
     const issues: Issue[] = [];
-
-    for (const statement of file.getStatements()) {
+    let isStaticsBlock: boolean = false;
+    for (const statementNode of file.getStatements()) {
+      const statement = statementNode.get();
       let message: string | undefined = undefined;
-      if (this.conf.define && statement.get() instanceof Statements.Define) {
+      if (this.conf.define && statement instanceof Statements.Define) {
         message = "DEFINE";
-      } else if (this.conf.endselect && statement.get() instanceof Statements.EndSelect) {
+      } else if (this.conf.endselect && statement instanceof Statements.EndSelect) {
         message = "ENDSELECT";
-      } else if (this.conf.execSQL && statement.get() instanceof Statements.ExecSQL) {
+      } else if (this.conf.execSQL && statement instanceof Statements.ExecSQL) {
         message = "EXEC SQL";
-      } else if (this.conf.kernelCall && statement.get() instanceof Statements.CallKernel) {
+      } else if (this.conf.kernelCall && statement instanceof Statements.CallKernel) {
         message = "KERNEL CALL";
-      } else if (this.conf.systemCall && statement.get() instanceof Statements.SystemCall) {
+      } else if (this.conf.systemCall && statement instanceof Statements.SystemCall) {
         message = "SYSTEM-CALL";
-      } else if (this.conf.communication && statement.get() instanceof Statements.Communication) {
+      } else if (this.conf.communication && statement instanceof Statements.Communication) {
         message = "COMMUNICATION";
-      } else if (this.conf.statics
-          && (statement.get() instanceof Statements.Static
-          || statement.get() instanceof Statements.StaticBegin)) {
+      } else if (this.conf.statics && statement instanceof Statements.StaticBegin) {
+        isStaticsBlock = true;
         message = "STATICS";
+      } else if (this.conf.statics && statement instanceof Statements.StaticEnd) {
+        isStaticsBlock = false;
+      } else if (this.conf.statics && statement instanceof Statements.Static && isStaticsBlock === false) {
+        message = "STATICS";
+      } else if (this.conf.break && statement instanceof Statements.Break) {
+        message = "BREAK/BREAK-POINT";
+      } else if (this.conf.defaultKey
+          && (statement instanceof Statements.Data || statement instanceof Statements.Type)
+          && statementNode.findFirstExpression(TypeTable)?.concatTokensWithoutStringsAndComments().toUpperCase().endsWith("DEFAULT KEY")) {
+        message = "DEFAULT KEY";
       }
       if (message) {
-        const issue = Issue.atStatement(file, statement, this.getDescription(message), this.getKey());
+        const issue = Issue.atStatement(file, statementNode, this.getDescription(message), this.getKey());
         issues.push(issue);
       }
     }
