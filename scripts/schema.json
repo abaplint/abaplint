@@ -10,10 +10,6 @@
           "description": "Check local classes and interfaces for abapdoc.",
           "type": "boolean"
         },
-        "enabled": {
-          "description": "Is the rule enabled?",
-          "type": "boolean"
-        },
         "exclude": {
           "description": "List of file regex patterns to exclude",
           "items": {
@@ -35,10 +31,6 @@
       "additionalProperties": false,
       "description": "Enforces basic name length and namespace restrictions",
       "properties": {
-        "enabled": {
-          "description": "Is the rule enabled?",
-          "type": "boolean"
-        },
         "exclude": {
           "description": "List of file regex patterns to exclude",
           "items": {
@@ -63,10 +55,6 @@
           },
           "type": "array"
         },
-        "enabled": {
-          "description": "Is the rule enabled?",
-          "type": "boolean"
-        },
         "exclude": {
           "description": "List of file regex patterns to exclude",
           "items": {
@@ -88,10 +76,6 @@
       "additionalProperties": false,
       "description": "Checks for ambiguity between deleting from internal and database table",
       "properties": {
-        "enabled": {
-          "description": "Is the rule enabled?",
-          "type": "boolean"
-        },
         "exclude": {
           "description": "List of file regex patterns to exclude",
           "items": {
@@ -124,10 +108,6 @@
         },
         "define": {
           "description": "Detects define (macro definitions)",
-          "type": "boolean"
-        },
-        "enabled": {
-          "description": "Is the rule enabled?",
           "type": "boolean"
         },
         "endselect": {
@@ -179,10 +159,6 @@
       "additionalProperties": false,
       "description": "Check BEGIN OF and END OF names match",
       "properties": {
-        "enabled": {
-          "description": "Is the rule enabled?",
-          "type": "boolean"
-        },
         "exclude": {
           "description": "List of file regex patterns to exclude",
           "items": {
@@ -201,10 +177,6 @@
       "additionalProperties": false,
       "description": "Chain mainly declarations\r\nhttps://docs.abapopenchecks.org/checks/23/",
       "properties": {
-        "enabled": {
-          "description": "Is the rule enabled?",
-          "type": "boolean"
-        },
         "exclude": {
           "description": "List of file regex patterns to exclude",
           "items": {
@@ -223,10 +195,6 @@
       "additionalProperties": false,
       "description": "Checks abstract methods and classes:\r\n- class defined as abstract and final,\r\n- non-abstract class contains abstract methods",
       "properties": {
-        "enabled": {
-          "description": "Is the rule enabled?",
-          "type": "boolean"
-        },
         "exclude": {
           "description": "List of file regex patterns to exclude",
           "items": {
@@ -247,10 +215,6 @@
       "properties": {
         "allowEndOfLine": {
           "description": "Allows the use of end-of-line comments.",
-          "type": "boolean"
-        },
-        "enabled": {
-          "description": "Is the rule enabled?",
           "type": "boolean"
         },
         "exclude": {
@@ -274,10 +238,6 @@
       "additionalProperties": false,
       "description": "Checks the types of DDIC objects can be resolved, the namespace of the development/errors can be configured in \"errorNamespace\"",
       "properties": {
-        "enabled": {
-          "description": "Is the rule enabled?",
-          "type": "boolean"
-        },
         "exclude": {
           "description": "List of file regex patterns to exclude",
           "items": {
@@ -296,10 +256,6 @@
       "additionalProperties": false,
       "description": "Checks INCLUDE statements",
       "properties": {
-        "enabled": {
-          "description": "Is the rule enabled?",
-          "type": "boolean"
-        },
         "exclude": {
           "description": "List of file regex patterns to exclude",
           "items": {
@@ -318,10 +274,6 @@
       "additionalProperties": false,
       "description": "Checks NO_HANDLER pragmas that can be removed",
       "properties": {
-        "enabled": {
-          "description": "Is the rule enabled?",
-          "type": "boolean"
-        },
         "exclude": {
           "description": "List of file regex patterns to exclude",
           "items": {
@@ -340,10 +292,6 @@
       "additionalProperties": false,
       "description": "Enables syntax check and variable resolution",
       "properties": {
-        "enabled": {
-          "description": "Is the rule enabled?",
-          "type": "boolean"
-        },
         "exclude": {
           "description": "List of file regex patterns to exclude",
           "items": {
@@ -362,10 +310,6 @@
       "additionalProperties": false,
       "description": "Check text elements",
       "properties": {
-        "enabled": {
-          "description": "Is the rule enabled?",
-          "type": "boolean"
-        },
         "exclude": {
           "description": "List of file regex patterns to exclude",
           "items": {
@@ -384,10 +328,6 @@
       "additionalProperties": false,
       "description": "Checks that used XSLT transformations exist.",
       "properties": {
-        "enabled": {
-          "description": "Is the rule enabled?",
-          "type": "boolean"
-        },
         "exclude": {
           "description": "List of file regex patterns to exclude",
           "items": {
@@ -406,10 +346,6 @@
       "additionalProperties": false,
       "description": "Allows you to enforce a pattern, such as a prefix, for class variable names.",
       "properties": {
-        "enabled": {
-          "description": "Is the rule enabled?",
-          "type": "boolean"
-        },
         "exclude": {
           "description": "List of file regex patterns to exclude",
           "items": {
@@ -462,10 +398,6 @@
       "additionalProperties": false,
       "description": "Checks that the package does not contain any object types unsupported in cloud ABAP.",
       "properties": {
-        "enabled": {
-          "description": "Is the rule enabled?",
-          "type": "boolean"
-        },
         "exclude": {
           "description": "List of file regex patterns to exclude",
           "items": {
@@ -484,10 +416,6 @@
       "additionalProperties": false,
       "description": "Checks for missing spaces after colons in chained statements.",
       "properties": {
-        "enabled": {
-          "description": "Is the rule enabled?",
-          "type": "boolean"
-        },
         "exclude": {
           "description": "List of file regex patterns to exclude",
           "items": {
@@ -506,10 +434,6 @@
       "additionalProperties": false,
       "description": "Detects usage of commented out code.\r\nhttps://github.com/SAP/styleguides/blob/master/clean-abap/CleanABAP.md#delete-code-instead-of-commenting-it\r\nhttps://docs.abapopenchecks.org/checks/14/",
       "properties": {
-        "enabled": {
-          "description": "Is the rule enabled?",
-          "type": "boolean"
-        },
         "exclude": {
           "description": "List of file regex patterns to exclude",
           "items": {
@@ -528,10 +452,6 @@
       "additionalProperties": false,
       "description": "Constructor must be placed in the public section, even if the class is not CREATE PUBLIC.\r\nhttps://github.com/SAP/styleguides/blob/master/clean-abap/CleanABAP.md#if-your-global-class-is-create-private-leave-the-constructor-public\r\nhttps://help.sap.com/doc/abapdocu_751_index_htm/7.51/en-US/abeninstance_constructor_guidl.htm",
       "properties": {
-        "enabled": {
-          "description": "Is the rule enabled?",
-          "type": "boolean"
-        },
         "exclude": {
           "description": "List of file regex patterns to exclude",
           "items": {
@@ -550,10 +470,6 @@
       "additionalProperties": false,
       "description": "Checks for usage of tabs (enable to enforce spaces)\r\nhttps://docs.abapopenchecks.org/checks/09/",
       "properties": {
-        "enabled": {
-          "description": "Is the rule enabled?",
-          "type": "boolean"
-        },
         "exclude": {
           "description": "List of file regex patterns to exclude",
           "items": {
@@ -572,10 +488,6 @@
       "additionalProperties": false,
       "description": "Checks that definitions are placed at the beginning of methods.\r\nhttps://docs.abapopenchecks.org/checks/17/",
       "properties": {
-        "enabled": {
-          "description": "Is the rule enabled?",
-          "type": "boolean"
-        },
         "exclude": {
           "description": "List of file regex patterns to exclude",
           "items": {
@@ -594,10 +506,6 @@
       "additionalProperties": false,
       "description": "Ensures descriptions in class metadata exist.",
       "properties": {
-        "enabled": {
-          "description": "Is the rule enabled?",
-          "type": "boolean"
-        },
         "exclude": {
           "description": "List of file regex patterns to exclude",
           "items": {
@@ -618,10 +526,6 @@
       "properties": {
         "afterColon": {
           "description": "Check for double space after colon/chaining operator",
-          "type": "boolean"
-        },
-        "enabled": {
-          "description": "Is the rule enabled?",
           "type": "boolean"
         },
         "endParen": {
@@ -663,10 +567,6 @@
         "allowChained": {
           "type": "boolean"
         },
-        "enabled": {
-          "description": "Is the rule enabled?",
-          "type": "boolean"
-        },
         "exclude": {
           "description": "List of file regex patterns to exclude",
           "items": {
@@ -688,10 +588,6 @@
       "additionalProperties": false,
       "description": "Checks for empty statements (an empty statement is a single dot)",
       "properties": {
-        "enabled": {
-          "description": "Is the rule enabled?",
-          "type": "boolean"
-        },
         "exclude": {
           "description": "List of file regex patterns to exclude",
           "items": {
@@ -720,10 +616,6 @@
         },
         "do": {
           "description": "Checks for empty do blocks",
-          "type": "boolean"
-        },
-        "enabled": {
-          "description": "Is the rule enabled?",
           "type": "boolean"
         },
         "exclude": {
@@ -769,10 +661,6 @@
       "additionalProperties": false,
       "description": "Detects usages of EXIT or CHECK statements outside of loops.",
       "properties": {
-        "enabled": {
-          "description": "Is the rule enabled?",
-          "type": "boolean"
-        },
         "exclude": {
           "description": "List of file regex patterns to exclude",
           "items": {
@@ -791,10 +679,6 @@
       "additionalProperties": false,
       "description": "Detects EXPORTING statements which can be omitted.\r\nhttps://github.com/SAP/styleguides/blob/master/clean-abap/CleanABAP.md#omit-the-optional-keyword-exporting\r\nhttps://docs.abapopenchecks.org/checks/30/",
       "properties": {
-        "enabled": {
-          "description": "Is the rule enabled?",
-          "type": "boolean"
-        },
         "exclude": {
           "description": "List of file regex patterns to exclude",
           "items": {
@@ -813,10 +697,6 @@
       "additionalProperties": false,
       "description": "Checks for a Dash in form names.",
       "properties": {
-        "enabled": {
-          "description": "Is the rule enabled?",
-          "type": "boolean"
-        },
         "exclude": {
           "description": "List of file regex patterns to exclude",
           "items": {
@@ -835,10 +715,6 @@
       "additionalProperties": false,
       "description": "Checks for TABLES parameters in forms.",
       "properties": {
-        "enabled": {
-          "description": "Is the rule enabled?",
-          "type": "boolean"
-        },
         "exclude": {
           "description": "List of file regex patterns to exclude",
           "items": {
@@ -859,10 +735,6 @@
       "properties": {
         "checkData": {
           "description": "Add check for implicit data definition, require full typing.",
-          "type": "boolean"
-        },
-        "enabled": {
-          "description": "Is the rule enabled?",
           "type": "boolean"
         },
         "exclude": {
@@ -886,10 +758,6 @@
       "additionalProperties": false,
       "description": "Detects usage of call method when functional style calls can be used.\r\nhttps://github.com/SAP/styleguides/blob/master/clean-abap/CleanABAP.md#prefer-functional-to-procedural-calls\r\nhttps://docs.abapopenchecks.org/checks/07/",
       "properties": {
-        "enabled": {
-          "description": "Is the rule enabled?",
-          "type": "boolean"
-        },
         "exclude": {
           "description": "List of file regex patterns to exclude",
           "items": {
@@ -914,10 +782,6 @@
       "additionalProperties": false,
       "description": "Checks related to names of global classes. For the name pattern, see rule object_naming",
       "properties": {
-        "enabled": {
-          "description": "Is the rule enabled?",
-          "type": "boolean"
-        },
         "exclude": {
           "description": "List of file regex patterns to exclude",
           "items": {
@@ -1984,10 +1848,6 @@
       "additionalProperties": false,
       "description": "Detects identically named forms.",
       "properties": {
-        "enabled": {
-          "description": "Is the rule enabled?",
-          "type": "boolean"
-        },
         "exclude": {
           "description": "List of file regex patterns to exclude",
           "items": {
@@ -2006,10 +1866,6 @@
       "additionalProperties": false,
       "description": "Detects nested ifs which can be refactored to a single condition using AND.",
       "properties": {
-        "enabled": {
-          "description": "Is the rule enabled?",
-          "type": "boolean"
-        },
         "exclude": {
           "description": "List of file regex patterns to exclude",
           "items": {
@@ -2028,10 +1884,6 @@
       "additionalProperties": false,
       "description": "Chekcs for abstract methods which need implementing.",
       "properties": {
-        "enabled": {
-          "description": "Is the rule enabled?",
-          "type": "boolean"
-        },
         "exclude": {
           "description": "List of file regex patterns to exclude",
           "items": {
@@ -2050,10 +1902,6 @@
       "additionalProperties": false,
       "description": "Checks alignment within block statement declarations which span multiple lines, such as multiple conditions in IF statements.\r\nExample:\r\nIF 1 = 1 AND\r\n  2 = 2.",
       "properties": {
-        "enabled": {
-          "description": "Is the rule enabled?",
-          "type": "boolean"
-        },
         "exclude": {
           "description": "List of file regex patterns to exclude",
           "items": {
@@ -2079,10 +1927,6 @@
       "description": "Checks indentation",
       "properties": {
         "alignTryCatch": {
-          "type": "boolean"
-        },
-        "enabled": {
-          "description": "Is the rule enabled?",
           "type": "boolean"
         },
         "exclude": {
@@ -2122,10 +1966,6 @@
       "additionalProperties": false,
       "description": "Checks for inline data declarations in older releases.",
       "properties": {
-        "enabled": {
-          "description": "Is the rule enabled?",
-          "type": "boolean"
-        },
         "exclude": {
           "description": "List of file regex patterns to exclude",
           "items": {
@@ -2144,10 +1984,6 @@
       "additionalProperties": false,
       "description": "Keep single parameter calls on one line",
       "properties": {
-        "enabled": {
-          "description": "Is the rule enabled?",
-          "type": "boolean"
-        },
         "exclude": {
           "description": "List of file regex patterns to exclude",
           "items": {
@@ -2172,10 +2008,6 @@
       "additionalProperties": false,
       "description": "Checks that keywords have the same case. Non-keywords must be lower case.",
       "properties": {
-        "enabled": {
-          "description": "Is the rule enabled?",
-          "type": "boolean"
-        },
         "exclude": {
           "description": "List of file regex patterns to exclude",
           "items": {
@@ -2228,10 +2060,6 @@
       "additionalProperties": false,
       "description": "Detects lines exceeding the provided maximum length.\r\nhttps://github.com/SAP/styleguides/blob/master/clean-abap/CleanABAP.md#stick-to-a-reasonable-line-length\r\nhttps://docs.abapopenchecks.org/checks/04/",
       "properties": {
-        "enabled": {
-          "description": "Is the rule enabled?",
-          "type": "boolean"
-        },
         "exclude": {
           "description": "List of file regex patterns to exclude",
           "items": {
@@ -2257,10 +2085,6 @@
       "additionalProperties": false,
       "description": "Detects lines containing only punctuation.\r\nhttps://github.com/SAP/styleguides/blob/master/clean-abap/CleanABAP.md#close-brackets-at-line-end\r\nhttps://docs.abapopenchecks.org/checks/16/",
       "properties": {
-        "enabled": {
-          "description": "Is the rule enabled?",
-          "type": "boolean"
-        },
         "exclude": {
           "description": "List of file regex patterns to exclude",
           "items": {
@@ -2285,10 +2109,6 @@
       "additionalProperties": false,
       "description": "Allows you to enforce a pattern, such as a prefix, for local class names.",
       "properties": {
-        "enabled": {
-          "description": "Is the rule enabled?",
-          "type": "boolean"
-        },
         "exception": {
           "description": "The pattern for local exception names",
           "type": "string"
@@ -2342,10 +2162,6 @@
       "additionalProperties": false,
       "description": "Chceks that local test classes are placed in the test include.",
       "properties": {
-        "enabled": {
-          "description": "Is the rule enabled?",
-          "type": "boolean"
-        },
         "exclude": {
           "description": "List of file regex patterns to exclude",
           "items": {
@@ -2364,10 +2180,6 @@
       "additionalProperties": false,
       "description": "Allows you to enforce a pattern, such as a prefix, for local variables, constants and field symbols.",
       "properties": {
-        "enabled": {
-          "description": "Is the rule enabled?",
-          "type": "boolean"
-        },
         "exclude": {
           "description": "List of file regex patterns to exclude",
           "items": {
@@ -2421,10 +2233,6 @@
       "additionalProperties": false,
       "description": "Checks the validity of messages in message classes",
       "properties": {
-        "enabled": {
-          "description": "Is the rule enabled?",
-          "type": "boolean"
-        },
         "exclude": {
           "description": "List of file regex patterns to exclude",
           "items": {
@@ -2443,10 +2251,6 @@
       "additionalProperties": false,
       "description": "Checks related to report declarations.",
       "properties": {
-        "enabled": {
-          "description": "Is the rule enabled?",
-          "type": "boolean"
-        },
         "exclude": {
           "description": "List of file regex patterns to exclude",
           "items": {
@@ -2465,10 +2269,6 @@
       "additionalProperties": false,
       "description": "Chekcks that each line contains only a single statement.\r\nhttps://github.com/SAP/styleguides/blob/master/clean-abap/CleanABAP.md#no-more-than-one-statement-per-line\r\nhttps://docs.abapopenchecks.org/checks/11/",
       "properties": {
-        "enabled": {
-          "description": "Is the rule enabled?",
-          "type": "boolean"
-        },
         "exclude": {
           "description": "List of file regex patterns to exclude",
           "items": {
@@ -2487,10 +2287,6 @@
       "additionalProperties": false,
       "description": "In message statements, check that the message class + id exist",
       "properties": {
-        "enabled": {
-          "description": "Is the rule enabled?",
-          "type": "boolean"
-        },
         "exclude": {
           "description": "List of file regex patterns to exclude",
           "items": {
@@ -2509,10 +2305,6 @@
       "additionalProperties": false,
       "description": "Checks relating to method length.",
       "properties": {
-        "enabled": {
-          "description": "Is the rule enabled?",
-          "type": "boolean"
-        },
         "errorWhenEmpty": {
           "description": "Checks for empty methods.",
           "type": "boolean"
@@ -2551,10 +2343,6 @@
         "changing": {
           "description": "The pattern for changing parameters",
           "type": "string"
-        },
-        "enabled": {
-          "description": "Is the rule enabled?",
-          "type": "boolean"
         },
         "exclude": {
           "description": "List of file regex patterns to exclude",
@@ -2615,10 +2403,6 @@
       "additionalProperties": false,
       "description": "Checks that methods don't have a mixture of returning and exporting/changing parameters\r\nhttps://github.com/SAP/styleguides/blob/master/clean-abap/CleanABAP.md#use-either-returning-or-exporting-or-changing-but-not-a-combination",
       "properties": {
-        "enabled": {
-          "description": "Is the rule enabled?",
-          "type": "boolean"
-        },
         "exclude": {
           "description": "List of file regex patterns to exclude",
           "items": {
@@ -2640,10 +2424,6 @@
         "depth": {
           "description": "Maximum allowed nesting depth",
           "type": "number"
-        },
-        "enabled": {
-          "description": "Is the rule enabled?",
-          "type": "boolean"
         },
         "exclude": {
           "description": "List of file regex patterns to exclude",
@@ -2669,10 +2449,6 @@
         "count": {
           "description": "Amount of newlines, works in conjunction with \"newlineLogic\"",
           "type": "number"
-        },
-        "enabled": {
-          "description": "Is the rule enabled?",
-          "type": "boolean"
         },
         "exclude": {
           "description": "List of file regex patterns to exclude",
@@ -2711,10 +2487,6 @@
           "description": "Allows public attributes, if they are declared as READ-ONLY.",
           "type": "boolean"
         },
-        "enabled": {
-          "description": "Is the rule enabled?",
-          "type": "boolean"
-        },
         "exclude": {
           "description": "List of file regex patterns to exclude",
           "items": {
@@ -2751,10 +2523,6 @@
         "dtel": {
           "description": "The pattern for data element names",
           "type": "string"
-        },
-        "enabled": {
-          "description": "Is the rule enabled?",
-          "type": "boolean"
         },
         "enqu": {
           "description": "The pattern for lock object names",
@@ -2862,10 +2630,6 @@
         "divide": {
           "type": "boolean"
         },
-        "enabled": {
-          "description": "Is the rule enabled?",
-          "type": "boolean"
-        },
         "exclude": {
           "description": "List of file regex patterns to exclude",
           "items": {
@@ -2915,10 +2679,6 @@
       "additionalProperties": false,
       "description": "Checks for syntax unrecognized by abaplint",
       "properties": {
-        "enabled": {
-          "description": "Is the rule enabled?",
-          "type": "boolean"
-        },
         "exclude": {
           "description": "List of file regex patterns to exclude",
           "items": {
@@ -2944,10 +2704,6 @@
       "additionalProperties": false,
       "description": "Prefer RETURNING to EXPORTING\r\nhttps://github.com/SAP/styleguides/blob/master/clean-abap/CleanABAP.md#prefer-returning-to-exporting\r\nhttps://docs.abapopenchecks.org/checks/44/",
       "properties": {
-        "enabled": {
-          "description": "Is the rule enabled?",
-          "type": "boolean"
-        },
         "exclude": {
           "description": "List of file regex patterns to exclude",
           "items": {
@@ -2973,10 +2729,6 @@
           },
           "type": "array"
         },
-        "enabled": {
-          "description": "Is the rule enabled?",
-          "type": "boolean"
-        },
         "exclude": {
           "description": "List of file regex patterns to exclude",
           "items": {
@@ -2998,10 +2750,6 @@
       "additionalProperties": false,
       "description": "Reports errors if the current class references itself with \"current_class=>\"\r\nhttps://github.com/SAP/styleguides/blob/master/clean-abap/CleanABAP.md#omit-the-self-reference-me-when-calling-an-instance-method",
       "properties": {
-        "enabled": {
-          "description": "Is the rule enabled?",
-          "type": "boolean"
-        },
         "exclude": {
           "description": "List of file regex patterns to exclude",
           "items": {
@@ -3027,10 +2775,6 @@
       "additionalProperties": false,
       "description": "Checks that exceptions 'system_failure' and 'communication_failure' are handled in RFC calls",
       "properties": {
-        "enabled": {
-          "description": "Is the rule enabled?",
-          "type": "boolean"
-        },
         "exclude": {
           "description": "List of file regex patterns to exclude",
           "items": {
@@ -3049,10 +2793,6 @@
       "additionalProperties": false,
       "description": "Checks idoc types and segments are set to status released",
       "properties": {
-        "enabled": {
-          "description": "Is the rule enabled?",
-          "type": "boolean"
-        },
         "exclude": {
           "description": "List of file regex patterns to exclude",
           "items": {
@@ -3071,10 +2811,6 @@
       "additionalProperties": false,
       "description": "Ensures you have no descriptions in metadata of methods, parameters, etc. For class descriptions, see rule description_empty.",
       "properties": {
-        "enabled": {
-          "description": "Is the rule enabled?",
-          "type": "boolean"
-        },
         "exclude": {
           "description": "List of file regex patterns to exclude",
           "items": {
@@ -3099,10 +2835,6 @@
       "additionalProperties": false,
       "description": "Checks the validity of ICF services",
       "properties": {
-        "enabled": {
-          "description": "Is the rule enabled?",
-          "type": "boolean"
-        },
         "exclude": {
           "description": "List of file regex patterns to exclude",
           "items": {
@@ -3121,10 +2853,6 @@
       "additionalProperties": false,
       "description": "Escape SQL host variables, from 740sp05",
       "properties": {
-        "enabled": {
-          "description": "Is the rule enabled?",
-          "type": "boolean"
-        },
         "exclude": {
           "description": "List of file regex patterns to exclude",
           "items": {
@@ -3143,10 +2871,6 @@
       "additionalProperties": false,
       "description": "Allows you to enforce a pattern, such as a prefix, for selection-screen variable names.",
       "properties": {
-        "enabled": {
-          "description": "Is the rule enabled?",
-          "type": "boolean"
-        },
         "exclude": {
           "description": "List of file regex patterns to exclude",
           "items": {
@@ -3195,10 +2919,6 @@
       "additionalProperties": false,
       "description": "Checks that code does not contain more than the configured number of blank lines in a row.",
       "properties": {
-        "enabled": {
-          "description": "Is the rule enabled?",
-          "type": "boolean"
-        },
         "exclude": {
           "description": "List of file regex patterns to exclude",
           "items": {
@@ -3224,10 +2944,6 @@
       "additionalProperties": false,
       "description": "Only allow characters from the 7bit ASCII set.\r\nhttps://docs.abapopenchecks.org/checks/05/",
       "properties": {
-        "enabled": {
-          "description": "Is the rule enabled?",
-          "type": "boolean"
-        },
         "exclude": {
           "description": "List of file regex patterns to exclude",
           "items": {
@@ -3251,10 +2967,6 @@
             "type": "string"
           },
           "type": "array"
-        },
-        "enabled": {
-          "description": "Is the rule enabled?",
-          "type": "boolean"
         },
         "exclude": {
           "description": "List of file regex patterns to exclude",
@@ -3282,10 +2994,6 @@
       "additionalProperties": false,
       "description": "Checks that there are no spaces in front of colons in chained statements.\r\nhttps://docs.abapopenchecks.org/checks/80/",
       "properties": {
-        "enabled": {
-          "description": "Is the rule enabled?",
-          "type": "boolean"
-        },
         "exclude": {
           "description": "List of file regex patterns to exclude",
           "items": {
@@ -3304,10 +3012,6 @@
       "additionalProperties": false,
       "description": "Checks for extra spaces before dots at the ends of statements .",
       "properties": {
-        "enabled": {
-          "description": "Is the rule enabled?",
-          "type": "boolean"
-        },
         "exclude": {
           "description": "List of file regex patterns to exclude",
           "items": {
@@ -3336,10 +3040,6 @@
       "additionalProperties": false,
       "description": "Checks that statements start at tabstops.",
       "properties": {
-        "enabled": {
-          "description": "Is the rule enabled?",
-          "type": "boolean"
-        },
         "exclude": {
           "description": "List of file regex patterns to exclude",
           "items": {
@@ -3358,10 +3058,6 @@
       "additionalProperties": false,
       "description": "Checks that classes which are inherited from are not declared as FINAL.",
       "properties": {
-        "enabled": {
-          "description": "Is the rule enabled?",
-          "type": "boolean"
-        },
         "exclude": {
           "description": "List of file regex patterns to exclude",
           "items": {
@@ -3380,10 +3076,6 @@
       "additionalProperties": false,
       "description": "Checks that tables do not have the enhancement category 'not classified'",
       "properties": {
-        "enabled": {
-          "description": "Is the rule enabled?",
-          "type": "boolean"
-        },
         "exclude": {
           "description": "List of file regex patterns to exclude",
           "items": {
@@ -3402,10 +3094,6 @@
       "additionalProperties": false,
       "description": "Finds TYPE BEGIN with just one INCLUDE TYPE",
       "properties": {
-        "enabled": {
-          "description": "Is the rule enabled?",
-          "type": "boolean"
-        },
         "exclude": {
           "description": "List of file regex patterns to exclude",
           "items": {
@@ -3424,10 +3112,6 @@
       "additionalProperties": false,
       "description": "Checks for untyped FORM parameters",
       "properties": {
-        "enabled": {
-          "description": "Is the rule enabled?",
-          "type": "boolean"
-        },
         "exclude": {
           "description": "List of file regex patterns to exclude",
           "items": {
@@ -3446,10 +3130,6 @@
       "additionalProperties": false,
       "description": "Allows you to enforce a pattern for TYPES definitions",
       "properties": {
-        "enabled": {
-          "description": "Is the rule enabled?",
-          "type": "boolean"
-        },
         "exclude": {
           "description": "List of file regex patterns to exclude",
           "items": {
@@ -3475,10 +3155,6 @@
       "additionalProperties": false,
       "description": "Checks for unreachable code.",
       "properties": {
-        "enabled": {
-          "description": "Is the rule enabled?",
-          "type": "boolean"
-        },
         "exclude": {
           "description": "List of file regex patterns to exclude",
           "items": {
@@ -3497,10 +3173,6 @@
       "additionalProperties": false,
       "description": "Checks for unused variables",
       "properties": {
-        "enabled": {
-          "description": "Is the rule enabled?",
-          "type": "boolean"
-        },
         "exclude": {
           "description": "List of file regex patterns to exclude",
           "items": {
@@ -3519,10 +3191,6 @@
       "additionalProperties": false,
       "description": "Checks for deprecated CREATE OBJECT statements.",
       "properties": {
-        "enabled": {
-          "description": "Is the rule enabled?",
-          "type": "boolean"
-        },
         "exclude": {
           "description": "List of file regex patterns to exclude",
           "items": {
@@ -3558,10 +3226,6 @@
       "additionalProperties": false,
       "description": "Checks that WHEN OTHERS is placed the last within a CASE statement.",
       "properties": {
-        "enabled": {
-          "description": "Is the rule enabled?",
-          "type": "boolean"
-        },
         "exclude": {
           "description": "List of file regex patterns to exclude",
           "items": {
@@ -3580,10 +3244,6 @@
       "additionalProperties": false,
       "description": "Checks for redundant whitespace at the end of each line.",
       "properties": {
-        "enabled": {
-          "description": "Is the rule enabled?",
-          "type": "boolean"
-        },
         "exclude": {
           "description": "List of file regex patterns to exclude",
           "items": {
@@ -3602,10 +3262,6 @@
       "additionalProperties": false,
       "description": "Checks the consistency of main XML files, eg. naming",
       "properties": {
-        "enabled": {
-          "description": "Is the rule enabled?",
-          "type": "boolean"
-        },
         "exclude": {
           "description": "List of file regex patterns to exclude",
           "items": {
