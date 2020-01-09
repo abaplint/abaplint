@@ -10,7 +10,7 @@ export class RemoveSequentialBlanks {
 
   public execute(file: ABAPFile, modified: string): string {
     const sequentialBlankConfig = this.getSequentialBlankConfig();
-    if (sequentialBlankConfig && sequentialBlankConfig.enabled) {
+    if (sequentialBlankConfig) {
       return this.withoutSequentialBlanks(file, modified, sequentialBlankConfig.lines);
     }
 

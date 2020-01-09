@@ -4,23 +4,7 @@ import {Version} from "../src";
 
 describe("Registry", () => {
 
-  it("Should ignore any rules with enabled = false", function () {
-
-    const config = getConfig({
-      "avoid_use": {
-        enabled: false,
-      },
-    });
-
-    const conf = new Config(JSON.stringify(config));
-
-    const ruleConfig = conf.readByRule("avoid_use");
-    expect(ruleConfig.enabled).to.equal(false);
-
-    expect(conf.getEnabledRules().length).to.equal(0);
-  });
-
-  it("It should include all mentioned rules which are not disabled explicitly", function () {
+  it("It should include all mentioned rules", function () {
     const config: IConfig = getConfig({
       "7bit_ascii": {
       },
@@ -28,12 +12,12 @@ describe("Registry", () => {
         enabled: true,
       },
       "short_case": {
-        enabled: false,
+        enabled: false, // this is deprecated and has no effect. the rule is enabled
       },
     });
 
     const conf = new Config(JSON.stringify(config));
-    expect(conf.getEnabledRules().length).to.equal(2);
+    expect(conf.getEnabledRules().length).to.equal(3);
   });
 
   it("Should never auto enable unspecified rules", function () {
@@ -45,30 +29,17 @@ describe("Registry", () => {
     expect(enabledRuleCount).to.equal(0);
   });
 
-  it("should support Boolean rules with true", function () {
+  it("should support Boolean rules with true/false", function () {
     const config = getConfig({
       "7bit_ascii": true,
       "avoid_use": false,
       "short_case": {
-        enabled: false,
+        enabled: false, // no longer supported. this rule is enabled.
       },
     });
 
     const conf = new Config(JSON.stringify(config));
-    expect(conf.getEnabledRules().length).to.equal(1);
-  });
-
-  it("should support Boolean rules with false", function () {
-    const config = getConfig({
-      "7bit_ascii": true,
-      "avoid_use": false,
-      "short_case": {
-        enabled: false,
-      },
-    });
-
-    const conf = new Config(JSON.stringify(config));
-    expect(conf.getEnabledRules().length).to.equal(1);
+    expect(conf.getEnabledRules().length).to.equal(2);
   });
 
   it("should not do anything bad if you have an old config, old behavior for false", function () {
