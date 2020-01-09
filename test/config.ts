@@ -4,9 +4,9 @@ import {Version} from "../src";
 
 describe("Registry", () => {
 
-  it("Should ignore any rules with enabled = false even if apply unspecified is true", function () {
+  it("Should ignore any rules with enabled = false", function () {
 
-    const config = getConfig(true, {
+    const config = getConfig({
       "avoid_use": {
         enabled: false,
       },
@@ -17,11 +17,11 @@ describe("Registry", () => {
     const ruleConfig = conf.readByRule("avoid_use");
     expect(ruleConfig.enabled).to.equal(false);
 
-    expect(conf.getEnabledRules().length).to.be.greaterThan(0);
+    expect(conf.getEnabledRules().length).to.equal(0);
   });
 
-  it("It should include mentioned rules which are not disabled explicitly if apply unspecified is false", function () {
-    const config: IConfig = getConfig(false, {
+  it("It should include all mentioned rules which are not disabled explicitly", function () {
+    const config: IConfig = getConfig({
       "7bit_ascii": {
       },
       "avoid_use": {
@@ -36,17 +36,17 @@ describe("Registry", () => {
     expect(conf.getEnabledRules().length).to.equal(2);
   });
 
-  it("Should auto enable rules if apply unspecified is true", function () {
-    const config: IConfig = getConfig(true, {});
+  it("Should never auto enable unspecified rules", function () {
+    const config: IConfig = getConfig({});
 
     const conf = new Config(JSON.stringify(config));
     const enabledRuleCount = conf.getEnabledRules().length;
 
-    expect(enabledRuleCount).to.be.greaterThan(0);
+    expect(enabledRuleCount).to.equal(0);
   });
 
   it("should support Boolean rules with true", function () {
-    const config = getConfig(false, {
+    const config = getConfig({
       "7bit_ascii": true,
       "avoid_use": false,
       "short_case": {
@@ -59,8 +59,7 @@ describe("Registry", () => {
   });
 
   it("should support Boolean rules with false", function () {
-    const configAll = getConfig(true, {});
-    const config = getConfig(true, {
+    const config = getConfig({
       "7bit_ascii": true,
       "avoid_use": false,
       "short_case": {
@@ -68,19 +67,33 @@ describe("Registry", () => {
       },
     });
 
-    const confAll = new Config(JSON.stringify(configAll));
     const conf = new Config(JSON.stringify(config));
-    expect(conf.getEnabledRules().length).to.equal(confAll.getEnabledRules().length - 2);
+    expect(conf.getEnabledRules().length).to.equal(1);
   });
 
-  function getConfig(applyUnspecifiedRules: boolean, rules: any): IConfig {
+  it("should not do anything bad if you have an old config, old behavior for false", function () {
+    const config = getConfig({}) as any;
+    config.global.applyUnspecifiedRules = false;
+
+    const conf = new Config(JSON.stringify(config));
+    expect(conf.getEnabledRules().length).to.equal(0);
+  });
+
+  it("should not do anything bad if you have an old config, new behavior for true", function () {
+    const config = getConfig({}) as any;
+    config.global.applyUnspecifiedRules = true;
+
+    const conf = new Config(JSON.stringify(config));
+    expect(conf.getEnabledRules().length).to.equal(0);
+  });
+
+  function getConfig(rules: any): IConfig {
     return {
       global: {
         files: "/src/**/*.*",
         skipGeneratedGatewayClasses: true,
         skipGeneratedPersistentClasses: true,
         skipGeneratedFunctionGroups: true,
-        applyUnspecifiedRules: applyUnspecifiedRules,
       },
       dependencies: [],
       syntax: {
