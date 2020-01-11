@@ -1804,6 +1804,10 @@
         },
         "skipGeneratedPersistentClasses": {
           "type": "boolean"
+        },
+        "useApackDependencies": {
+          "description": "Clone and parse dependencies specified in .apack-manifest.xml if it is present",
+          "type": "boolean"
         }
       },
       "required": [

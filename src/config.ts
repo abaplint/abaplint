@@ -7,6 +7,8 @@ export interface IGlobalConfig {
   skipGeneratedGatewayClasses: boolean;
   skipGeneratedPersistentClasses: boolean;
   skipGeneratedFunctionGroups: boolean;
+  /** Clone and parse dependencies specified in .apack-manifest.xml if it is present */
+  useApackDependencies?: boolean;
 }
 
 export interface IDependency {
