@@ -1,9 +1,9 @@
-import {IDependency} from "../config";
+import {IDependency, IRepoDependency} from "../config";
 import {xml2js} from "xml-js";
 
 export class ApackDependencyProvider {
 
-  public static fromManifest(manifestContents: string): IDependency[] {
+  public static fromManifest(manifestContents: string): IRepoDependency[] {
     if (!manifestContents || !manifestContents.length) {
       return [];
     }

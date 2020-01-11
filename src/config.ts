@@ -11,9 +11,17 @@ export interface IGlobalConfig {
   useApackDependencies?: boolean;
 }
 
-export interface IDependency {
-  url?: string;
+export type IDependency = IFolderDependency | IRepoDependency;
+
+/** Dependencies stored in a folder located in this repository */
+export interface IFolderDependency {
   folder?: string;
+  files: string;
+}
+
+/** Dependencies stored in a remote git repository */
+export interface IRepoDependency {
+  url?: string;
   files: string;
 }
 
@@ -26,7 +34,7 @@ export interface ISyntaxSettings {
 
 export interface IConfig {
   global: IGlobalConfig;
-  /** External git dependencies used for syntax checks */
+  /** Dependencies used for syntax checks */
   dependencies?: IDependency[];
   syntax: ISyntaxSettings;
   rules: any;
@@ -134,4 +142,12 @@ export class Config {
     return this.config.syntax.version;
   }
 
+}
+
+export function isFolderDependency(dependency: IDependency): dependency is IFolderDependency {
+  return "folder" in dependency;
+}
+
+export function isRepoDependency(dependency: IDependency): dependency is IRepoDependency {
+  return "url" in dependency;
 }
