@@ -12,7 +12,9 @@ export interface IGlobalConfig {
 }
 
 export interface IDependency {
+  /** Url of a git repository */
   url?: string;
+  /** Name of local folder with dependencies */
   folder?: string;
   files: string;
 }
