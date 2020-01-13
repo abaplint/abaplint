@@ -1773,23 +1773,15 @@
       "type": "object"
     },
     "IDependency": {
-      "anyOf": [
-        {
-          "$ref": "#/definitions/IFolderDependency"
-        },
-        {
-          "$ref": "#/definitions/IRepoDependency"
-        }
-      ]
-    },
-    "IFolderDependency": {
       "additionalProperties": false,
-      "description": "Dependencies stored in a folder located in this repository",
       "properties": {
         "files": {
           "type": "string"
         },
         "folder": {
+          "type": "string"
+        },
+        "url": {
           "type": "string"
         }
       },
@@ -1823,22 +1815,6 @@
         "skipGeneratedGatewayClasses",
         "skipGeneratedPersistentClasses",
         "skipGeneratedFunctionGroups"
-      ],
-      "type": "object"
-    },
-    "IRepoDependency": {
-      "additionalProperties": false,
-      "description": "Dependencies stored in a remote git repository",
-      "properties": {
-        "files": {
-          "type": "string"
-        },
-        "url": {
-          "type": "string"
-        }
-      },
-      "required": [
-        "files"
       ],
       "type": "object"
     },

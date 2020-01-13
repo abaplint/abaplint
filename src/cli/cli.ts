@@ -5,7 +5,7 @@ import * as minimist from "minimist";
 import * as ProgressBar from "progress";
 import * as childProcess from "child_process";
 import {Issue} from "../issue";
-import {Config, isFolderDependency, isRepoDependency} from "../config";
+import {Config} from "../config";
 import {Formatter} from "../formatters/_format";
 import {Registry, IProgress} from "../registry";
 import {IFile} from "../files/_ifile";
@@ -68,36 +68,37 @@ function loadConfig(filename: string | undefined): {config: Config, base: string
 async function loadDependencies(config: Config, compress: boolean, bar: IProgress, base: string): Promise<IFile[]> {
   let files: IFile[] = [];
 
-  const dependencies = config.get().dependencies || [];
+  const deps = config.get().dependencies || [];
 
   const useApack = config.get().global.useApackDependencies;
   if (useApack) {
     const apackPath = path.join(base, ".apack-manifest.xml");
     if (fs.existsSync(apackPath)) {
       const apackManifest = fs.readFileSync(apackPath, "utf8");
-      dependencies.push(...ApackDependencyProvider.fromManifest(apackManifest));
+      deps.push(...ApackDependencyProvider.fromManifest(apackManifest));
     }
   }
 
-  if (!dependencies) {
+  if (!deps) {
     return [];
   }
 
-  for (const dependency of dependencies) {
-
-    if (isFolderDependency(dependency)) {
-      const g = base + dependency.folder + dependency.files;
+  for (const d of deps) {
+    if (d.folder) {
+      const g = base + d.folder + d.files;
       const names = FileOperations.loadFileNames(g, false);
       if (names.length > 0) {
         process.stderr.write("Using dependency from: " + g + "\n");
         files = files.concat(await FileOperations.loadFiles(compress, names, bar));
         continue;
       }
-    } else if (isRepoDependency(dependency)) {
-      process.stderr.write("Clone: " + dependency.url + "\n");
+    }
+
+    if (d.url) {
+      process.stderr.write("Clone: " + d.url + "\n");
       const dir = fs.mkdtempSync(path.join(os.tmpdir(), "abaplint-"));
-      childProcess.execSync("git clone --quiet --depth 1 " + dependency.url + " .", {cwd: dir, stdio: "inherit"});
-      const names = FileOperations.loadFileNames(dir + dependency.files);
+      childProcess.execSync("git clone --quiet --depth 1 " + d.url + " .", {cwd: dir, stdio: "inherit"});
+      const names = FileOperations.loadFileNames(dir + d.files);
       files = files.concat(await FileOperations.loadFiles(compress, names, bar));
       FileOperations.deleteFolderRecursive(dir);
     }
