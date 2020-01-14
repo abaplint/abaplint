@@ -7,10 +7,14 @@ export interface IGlobalConfig {
   skipGeneratedGatewayClasses: boolean;
   skipGeneratedPersistentClasses: boolean;
   skipGeneratedFunctionGroups: boolean;
+  /** Clone and parse dependencies specified in .apack-manifest.xml if it is present */
+  useApackDependencies?: boolean;
 }
 
 export interface IDependency {
+  /** Url of a git repository */
   url?: string;
+  /** Name of local folder with dependencies */
   folder?: string;
   files: string;
 }

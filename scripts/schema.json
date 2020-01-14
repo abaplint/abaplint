@@ -1779,9 +1779,11 @@
           "type": "string"
         },
         "folder": {
+          "description": "Name of local folder with dependencies",
           "type": "string"
         },
         "url": {
+          "description": "Url of a git repository",
           "type": "string"
         }
       },
@@ -1803,6 +1805,10 @@
           "type": "boolean"
         },
         "skipGeneratedPersistentClasses": {
+          "type": "boolean"
+        },
+        "useApackDependencies": {
+          "description": "Clone and parse dependencies specified in .apack-manifest.xml if it is present",
           "type": "boolean"
         }
       },

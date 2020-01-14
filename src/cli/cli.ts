@@ -13,6 +13,7 @@ import {Stats} from "../extras/stats/stats";
 import {SemanticSearch} from "../extras/semantic_search/semantic_search";
 import {FileOperations} from "./file_operations";
 import {Position} from "../position";
+import {ApackDependencyProvider} from "./apack_dependency_provider";
 
 // todo, split this file into multiple files? and move to new directory?
 
@@ -32,12 +33,12 @@ class Progress implements IProgress {
 }
 
 function loadConfig(filename: string | undefined): {config: Config, base: string} {
-// possible cases:
-// a) nothing specified, using abaplint.json from cwd
-// b) nothing specified, no abaplint.json in cwd
-// c) specified and found
-// d) specified and not found => use default
-// e) supplied but a directory => use default
+  // possible cases:
+  // a) nothing specified, using abaplint.json from cwd
+  // b) nothing specified, no abaplint.json in cwd
+  // c) specified and found
+  // d) specified and not found => use default
+  // e) supplied but a directory => use default
   let f: string = "";
   if (filename === undefined) {
     f = process.cwd() + path.sep + "abaplint.json";
@@ -67,9 +68,18 @@ function loadConfig(filename: string | undefined): {config: Config, base: string
 async function loadDependencies(config: Config, compress: boolean, bar: IProgress, base: string): Promise<IFile[]> {
   let files: IFile[] = [];
 
-  const deps = config.get().dependencies;
+  const deps = config.get().dependencies || [];
 
-  if (deps === undefined) {
+  const useApack = config.get().global.useApackDependencies;
+  if (useApack) {
+    const apackPath = path.join(base, ".apack-manifest.xml");
+    if (fs.existsSync(apackPath)) {
+      const apackManifest = fs.readFileSync(apackPath, "utf8");
+      deps.push(...ApackDependencyProvider.fromManifest(apackManifest));
+    }
+  }
+
+  if (!deps) {
     return [];
   }
 
@@ -98,7 +108,7 @@ async function loadDependencies(config: Config, compress: boolean, bar: IProgres
 }
 
 function displayHelp(): string {
-// follow docopt.org conventions,
+  // follow docopt.org conventions,
   return "Usage:\n" +
     "  abaplint [<abaplint.json> -f <format> -c --outformat <format> --outfile <file>] \n" +
     "  abaplint -h | --help             show this help\n" +
