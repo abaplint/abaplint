@@ -63,7 +63,7 @@
     "@types/glob": "^7.1.1",
     "@types/minimist": "^1.2.0",
     "@types/mocha": "^5.2.7",
-    "@types/node": "^13.1.6",
+    "@types/node": "^13.1.7",
     "@types/progress": "^2.0.3",
     "chai": "^4.2.0",
     "mocha": "^7.0.0",
@@ -81,7 +81,7 @@
     "glob": "^7.1.6",
     "minimist": "^1.2.0",
     "progress": "^2.0.3",
-    "vscode-languageserver-types": "^3.14.0",
+    "vscode-languageserver-types": "^3.15.0",
     "xml-js": "^1.6.11"
   }
 }

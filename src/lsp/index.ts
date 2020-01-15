@@ -33,6 +33,10 @@ export interface ICodeActionParams {
   context: LServer.CodeActionContext;
 }
 
+export interface IDocumentSymbolParams {
+  textDocument: LServer.TextDocumentIdentifier;
+}
+
 export class LanguageServer {
   private readonly reg: Registry;
 
@@ -41,7 +45,7 @@ export class LanguageServer {
   }
 
   // https://microsoft.github.io/language-server-protocol/specifications/specification-3-14/#textDocument_documentSymbol
-  public documentSymbol(params: LServer.DocumentSymbolParams): LServer.DocumentSymbol[] {
+  public documentSymbol(params: IDocumentSymbolParams): LServer.DocumentSymbol[] {
     return Symbols.find(this.reg, params.textDocument.uri);
   }
 

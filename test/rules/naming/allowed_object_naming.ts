@@ -41,5 +41,9 @@ describe("Rule: allowed_object_naming", function () {
     expect(issues.length).to.equal(0);
   });
 
+  it("SMIM, ok", function () {
+    const issues = findIssues("000c29f7ecfe1ed995a9bd75a2836628.smim.duesseldorf.geojson");
+    expect(issues.length).to.equal(0);
+  });
 
 });
