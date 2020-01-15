@@ -1,5 +1,5 @@
 import {Statement} from "./_statement";
-import {str, seq, opt, alt, regex as reg, IStatementRunnable} from "../combi";
+import {str, seq, opt, alt, plus, regex as reg, IStatementRunnable} from "../combi";
 import {MethodName, Language} from "../expressions";
 
 export class Method extends Statement {
@@ -11,9 +11,12 @@ export class Method extends Statement {
                        name,
                        opt(alt(str("FAIL"), str("IGNORE"))));
 
-    const database = seq(str("DATABASE PROCEDURE FOR HDB"),
+    const using = seq(str("USING"), plus(name));
+
+    const database = seq(str("DATABASE"), alt(str("PROCEDURE"), str("FUNCTION")), str("FOR HDB"),
                          new Language(),
-                         opt(str("OPTIONS READ-ONLY")));
+                         opt(str("OPTIONS READ-ONLY")),
+                         opt(using));
 
     const by = seq(str("BY"), alt(kernel, database));
 
