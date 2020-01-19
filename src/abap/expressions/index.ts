@@ -112,6 +112,7 @@ export * from "./sql_join";
 export * from "./sql_source_simple";
 export * from "./sql_source";
 export * from "./sql_target";
+export * from "./string_template_formatting";
 export * from "./string_template";
 export * from "./super_class_name";
 export * from "./table_body";

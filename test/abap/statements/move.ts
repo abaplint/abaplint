@@ -104,6 +104,7 @@ const tests = [
   "  WHERE ( plnal = opr->plnal AND plnnr = opr->plnnr )\n" +
   "  NEXT x = |{ x } { wa-matnr alpha = out }, | ).",
 
+  "lv_str = | { zif_bar=>and ALIGN = RIGHT WIDTH = 5 } |.",
 ];
 
 statementType(tests, "MOVE", Statements.Move);

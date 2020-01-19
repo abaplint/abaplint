@@ -26,9 +26,14 @@ export class MethodDef extends Statement {
                            opt(new MethodDefReturning()),
                            opt(alt(raising, exceptions)));
 
+// todo, this is only from version something
+    const tableFunction = seq(str("FOR TABLE FUNCTION"), reg(/^\w+?$/));
+
     const ret = seq(alt(str("CLASS-METHODS"), str("METHODS")),
                     new MethodName(),
-                    alt(new EventHandler(), parameters,
+                    alt(new EventHandler(),
+                        parameters,
+                        tableFunction,
                         str("NOT AT END OF MODE"),
                         opt(new Redefinition())));
 

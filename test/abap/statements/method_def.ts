@@ -73,6 +73,7 @@ const tests = [
   "methods DESTRUCTOR NOT AT END OF MODE.",
   "methods name exporting !out type %_C_POINTER.",
   "METHODS run IMPORTING parameter TYPE zif_definitions~ty_type.",
+  "CLASS-METHODS foo FOR TABLE FUNCTION bar.",
 ];
 
 statementType(tests, "METHODS", Statements.MethodDef);
