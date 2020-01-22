@@ -69,6 +69,7 @@ export class CommentedCode extends ABAPRule {
           || statement instanceof Empty
           || statement instanceof Comment)) {
         containsStatement = true;
+        break;
       }
     }
     if (!containsStatement) {
