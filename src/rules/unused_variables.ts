@@ -12,7 +12,6 @@ import {Interface} from "../objects";
 
 /** Checks for unused variables */
 export class UnusedVariablesConf extends BasicRuleConfig {
-  public enabled = false;
 }
 
 export class UnusedVariables implements IRule {
