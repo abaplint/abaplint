@@ -39,7 +39,7 @@ export class CommentedCode extends ABAPRule {
 
     let code = "";
     for (let i = 0; i < rows.length; i++) {
-      if (this.isCommentLine(rows[i]) && rows[i].trim().substr(1) !== "") {
+      if (this.isCommentLine(rows[i])) {
         code = code + rows[i].trim().substr(1) + "\n";
       } else if (code !== "") {
         issues = issues.concat(this.check(code, file, i - 1));
