@@ -33,22 +33,22 @@ export class CommentedCode extends ABAPRule {
   }
 
   public runParsed(file: ABAPFile) {
-    let output: Issue[] = [];
+    let issues: Issue[] = [];
 
     const rows = file.getRawRows();
 
     let code = "";
     for (let i = 0; i < rows.length; i++) {
-      if (rows[i].substr(0, 1) === "*") {
-        code = code + rows[i].substr(1) + "\n";
+      if (this.isCommentLine(rows[i])) {
+        code = code + rows[i].trim().substr(1) + "\n";
       } else if (code !== "") {
-        output = output.concat(this.check(code, file, i - 1));
+        issues = issues.concat(this.check(code, file, i - 1));
         code = "";
       }
     }
-    output = output.concat(this.check(code, file, rows.length - 1));
+    issues = issues.concat(this.check(code, file, rows.length - 1));
 
-    return output;
+    return issues;
   }
 
   private check(code: string, file: ABAPFile, row: number): Issue[] {
@@ -58,21 +58,30 @@ export class CommentedCode extends ABAPRule {
 
     const reg = new Registry().addFile(new MemoryFile("_foobar.prog.abap", code)).parse();
 
-    const statements = reg.getABAPFiles()[0].getStatements();
-    if (statements.length === 0) {
+    const statementNodes = reg.getABAPFiles()[0].getStatements();
+    if (statementNodes.length === 0) {
       return [];
     }
-    for (const statement of statements) {
-      const type = statement.get();
-      if (type instanceof Unknown
-          || type instanceof Empty
-          || type instanceof Comment) {
-        return [];
+    let containsStatement: boolean = false;
+    for (const statementNode of statementNodes) {
+      const statement = statementNode.get();
+      if (!(statement instanceof Unknown
+          || statement instanceof Empty
+          || statement instanceof Comment)) {
+        containsStatement = true;
+        break;
       }
+    }
+    if (!containsStatement) {
+      return [];
     }
 
     const position = new Position(row + 1, 1);
     const issue = Issue.atPosition(file, position, this.getDescription(), this.getKey());
     return [issue];
+  }
+
+  private isCommentLine(text: string): boolean {
+    return ((text.substr(0, 1) === "*") || (text.trim().substr(0, 1) === "\"" && text.trim().substr(1, 1) !== "!"));
   }
 }
