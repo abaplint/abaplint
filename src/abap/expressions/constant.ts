@@ -6,7 +6,6 @@ export class Constant extends Expression {
     return altPrio(new TextElementString(),
                    new ConcatenatedConstant(),
                    new ConstantString(),
-                   new Integer(),
-                   );
+                   new Integer());
   }
 }

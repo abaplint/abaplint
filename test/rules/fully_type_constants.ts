@@ -7,7 +7,7 @@ configOnlyConstants.checkData = false;
 const configDataAndConstants = new FullyTypeConsantsConf();
 configDataAndConstants.checkData = true;
 
-const testCases: String[] = [
+const testCases: string[] = [
   `CONSTANTS: tested_name VALUE \`blah\`.`,
   `CONSTANTS: tested_name3 VALUE 1234.`,
   `DATA: foo VALUE 124.`,

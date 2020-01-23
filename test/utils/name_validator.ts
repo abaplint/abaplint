@@ -1,7 +1,7 @@
 import {NameValidator} from "../../src/utils/name_validator";
 import {expect} from "chai";
 
-describe(`Name validator`, function () {
+describe("Name validator", function () {
 
   it("violates a rule if the pattern is required and the name does not match", function () {
     const ruleViolated = NameValidator.violatesRule("abc", new RegExp("^lv_.*$", "i"), {patternKind: "required"});

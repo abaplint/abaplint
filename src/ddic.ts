@@ -79,7 +79,7 @@ export class DDIC {
 // todo, support short strings, and length of different integers, NUMC vs CHAR
     switch (text) {
       case "DEC":
-        if (length === undefined || decimals == undefined) {
+        if (length === undefined || decimals === undefined) {
           return new Types.UnknownType(text + " unknown length or decimals");
         }
         return new Types.PackedType(parseInt(length, 10), parseInt(decimals, 10));

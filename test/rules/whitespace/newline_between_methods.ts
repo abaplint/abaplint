@@ -13,7 +13,7 @@ const configInvalid = new NewlineBetweenMethodsConf();
 configInvalid.count = 1;
 configInvalid.logic = NewlineLogic.Less;
 
-const testCases: String[] = [
+const testCases: string[] = [
   ` CLASS lcl_foo DEFINITION CREATE PUBLIC.
       PUBLIC SECTION.
         METHODS foo.

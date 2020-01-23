@@ -190,15 +190,18 @@ export class Help {
   }
 
   private static linkToStatement(statement: any) {
-    return `<a href="https://syntax.abaplint.org/#/statement/${statement.constructor.name}" target="_blank">${statement.constructor.name}</a>\n`;
+    return `<a href="https://syntax.abaplint.org/#/statement/${
+      statement.constructor.name}" target="_blank">${statement.constructor.name}</a>\n`;
   }
 
   private static linkToStructure(structure: any) {
-    return `<a href="https://syntax.abaplint.org/#/structure/${structure.constructor.name}" target="_blank">${structure.constructor.name}</a>\n`;
+    return `<a href="https://syntax.abaplint.org/#/structure/${
+      structure.constructor.name}" target="_blank">${structure.constructor.name}</a>\n`;
   }
 
   private static linkToExpression(expression: any) {
-    return `<a href="https://syntax.abaplint.org/#/expression/${expression.constructor.name}" target="_blank">${expression.constructor.name}</a>\n`;
+    return `<a href="https://syntax.abaplint.org/#/expression/${
+      expression.constructor.name}" target="_blank">${expression.constructor.name}</a>\n`;
   }
 
   private static outputNodes(nodes: INode[]) {

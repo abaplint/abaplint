@@ -18,7 +18,6 @@ describe("unknown statements", () => {
       for (const statement of statements) {
         expect(statement.get() instanceof Unknown).to.equals(true);
       }
-    },
-  );
+    });
   });
 });

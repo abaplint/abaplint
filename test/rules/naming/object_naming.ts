@@ -4,7 +4,7 @@ import {MemoryFile} from "../../../src/files";
 import {expect} from "chai";
 import {Issue} from "../../../src";
 
-function findIssues(filename: string, expectedIssueCount: Number, config?: ObjectNamingConf): Issue[] {
+function findIssues(filename: string, expectedIssueCount: number, config?: ObjectNamingConf): Issue[] {
   const reg = new Registry().addFile(new MemoryFile(filename, "")).parse();
   const rule = new ObjectNaming();
   if (config) {
@@ -15,7 +15,7 @@ function findIssues(filename: string, expectedIssueCount: Number, config?: Objec
   return issues;
 }
 
-describe(`Rule: Object naming (required pattern)`, function () {
+describe("Rule: Object naming (required pattern)", function () {
   it("clas", function () {
     const config = new ObjectNamingConf();
     config.clas = "^ZCL_.*$";

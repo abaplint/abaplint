@@ -20,7 +20,7 @@ export class MaintenanceAndTransportObject extends AbstractObject {
 
     const xml = this.getFiles()[0].getRaw();
 
-    const result = xml.match(/<AREA>([\w\/]+)<\/AREA>/);
+    const result = xml.match(/<AREA>([\w/]+)<\/AREA>/);
     if (result) {
       return result[1];
     } else {

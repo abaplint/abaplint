@@ -1,7 +1,7 @@
 import {StatementNode} from "../../abap/nodes/statement_node";
 import {MethodDef} from "../../abap/statements/method_def";
 import {MethodDefImporting, MethodParam, MethodDefExporting, MethodDefChanging,
-        MethodDefReturning, EventHandler, MethodParamName} from "../../abap/expressions";
+  MethodDefReturning, EventHandler, MethodParamName} from "../../abap/expressions";
 import {ExpressionNode}  from "../../abap/nodes";
 import {TypedIdentifier} from "./_typed_identifier";
 import {UnknownType} from "./basic";

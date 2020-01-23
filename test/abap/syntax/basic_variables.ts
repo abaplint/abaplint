@@ -277,7 +277,7 @@ describe("Syntax - Basic Types", () => {
     const prog = `DATA lo_class TYPE REF TO zcl_global.`;
     const type = runMulti(
       [{filename: "zcl_global.clas.abap", contents: clas},
-      {filename: "zfoobar.prog.abap", contents: prog}],
+        {filename: "zfoobar.prog.abap", contents: prog}],
       "lo_class");
     expect(type).to.not.equal(undefined);
     expect(type!.getType()).to.be.instanceof(Basic.ObjectReferenceType);
@@ -308,7 +308,7 @@ describe("Syntax - Basic Types", () => {
     const prog = `DATA foo TYPE zddic.`;
     const type = runMulti(
       [{filename: "zddic.dtel.xml", contents: clas},
-      {filename: "zfoobar.prog.abap", contents: prog}],
+        {filename: "zfoobar.prog.abap", contents: prog}],
       "foo");
     expectCharacter(type, 2);
   });

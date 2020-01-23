@@ -1,7 +1,7 @@
 {
 	"recommendations": [
-    "ms-vscode.vscode-typescript-tslint-plugin",
     "mrmlnc.vscode-duplicate",
+    "dbaeumer.vscode-eslint",
     "pflannery.vscode-versionlens"
 	],
 	"unwantedRecommendations": [

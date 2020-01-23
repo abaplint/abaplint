@@ -1,5 +1,5 @@
 
-let tests = [
+const tests = [
   {
     n: "one",
     code: "WRITE 'Hello'.",

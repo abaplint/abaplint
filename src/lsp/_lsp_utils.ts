@@ -75,8 +75,7 @@ export class LSPUtils {
     return undefined;
   }
 
-  public static lookup(cursor: ICursorPosition, reg: Registry, obj: ABAPObject):
-      ABAPFile | FormDefinition | Identifier | undefined {
+  public static lookup(cursor: ICursorPosition, reg: Registry, obj: ABAPObject): ABAPFile | FormDefinition | Identifier | undefined {
 
     const res = this.findInclude(cursor, reg);
     if (res) {

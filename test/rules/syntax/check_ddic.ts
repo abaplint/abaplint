@@ -27,7 +27,7 @@ describe("Rule: no_unknown_ddic", () => {
   });
 
   it("error", () => {
-    const xml = `sdf`;
+    const xml = "sdf";
     const reg = new Registry().addFile(new MemoryFile("zddic.dtel.xml", xml)).parse();
 
     const issues = new CheckDDIC().run(reg.getObjects()[0], reg);

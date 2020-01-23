@@ -9,7 +9,7 @@ const tests = [
   "REPLACE SECTION OFFSET lv_off OF lv_value WITH ' '.",
   "REPLACE '01' IN lv_file WITH '02' IN CHARACTER MODE.",
   "REPLACE '~' INTO <fs_ihttpnvp>-name WITH space.",
-  "REPLACE REGEX '([^/])\s*$' IN filename WITH '$1/' .",
+  "REPLACE REGEX '([^/])\\s*$' IN filename WITH '$1/' .",
   "REPLACE ALL OCCURRENCES OF REGEX 'sdf' IN cv_xml WITH 'sdf' IGNORING CASE.",
   "replace section offset lv_off length 1 of <src> with char.",
   "REPLACE ALL OCCURRENCES OF `''` IN TABLE code WITH `bar`.",

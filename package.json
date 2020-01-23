@@ -1,87 +1,234 @@
 {
-  "name": "abaplint",
-  "version": "2.23.2",
-  "description": "Linter for ABAP",
-  "bin": {
-    "abaplint": "./abaplint"
-  },
-  "main": "build/src/index.js",
-  "typings": "build/src/index.d.ts",
-  "directories": {
-    "test": "test"
-  },
-  "scripts": {
-    "tslint": "tslint -p tsconfig.json -c tslint.json \"src/**/*.ts\" \"test/**/*.ts\"",
-    "compile": "tsc",
-    "postcompile": "sh scripts/version.sh",
-    "pretest": "npm run compile",
-    "test": "mocha",
-    "posttest": "npm run tslint && npm run schema && npm run webpack",
-    "webpack": "webpack --progress --display=minimal",
-    "web.playground": "cd web/playground && npm install && npm test && npm run build && cd ../../",
-    "web.syntax": "sh web/syntax.sh",
-    "prepublishOnly": "rm -rf build && npm run test",
-    "preschema": "node scripts/schema.js > scripts/schema.ts",
-    "schema": "ts-json-schema-generator --jsDoc extended --path scripts/schema.ts > scripts/schema.json",
-    "postschema": "node scripts/schema_post.js",
-    "precoverage": "npm run compile",
-    "coverage": "nyc mocha",
-    "postcoverage": "nyc report --reporter=json"
-  },
-  "mocha": {
-    "recursive": true,
-    "reporter": "progress",
-    "spec": "build/test/**/*.js",
-    "require": "source-map-support/register"
-  },
-  "nyc": {
-    "include": [
-      "build/src/**/*.js"
+    "name": "abaplint",
+    "version": "2.23.2",
+    "description": "Linter for ABAP",
+    "bin": {
+        "abaplint": "./abaplint"
+    },
+    "main": "build/src/index.js",
+    "typings": "build/src/index.d.ts",
+    "directories": {
+        "test": "test"
+    },
+    "scripts": {
+        "lint": "eslint src/**/*.ts test/**/*.ts --format unix",
+        "compile": "tsc",
+        "postcompile": "sh scripts/version.sh",
+        "pretest": "npm run compile",
+        "test": "mocha",
+        "posttest": "npm run lint && npm run schema && npm run webpack",
+        "webpack": "webpack --progress --display=minimal",
+        "web.playground": "cd web/playground && npm install && npm test && npm run build && cd ../../",
+        "web.syntax": "sh web/syntax.sh",
+        "prepublishOnly": "rm -rf build && npm run test",
+        "preschema": "node scripts/schema.js > scripts/schema.ts",
+        "schema": "ts-json-schema-generator --jsDoc extended --path scripts/schema.ts > scripts/schema.json",
+        "postschema": "node scripts/schema_post.js",
+        "precoverage": "npm run compile",
+        "coverage": "nyc mocha",
+        "postcoverage": "nyc report --reporter=json"
+    },
+    "mocha": {
+        "recursive": true,
+        "reporter": "progress",
+        "spec": "build/test/**/*.js",
+        "require": "source-map-support/register"
+    },
+    "eslintConfig": {
+        "root": true,
+        "env": {
+            "browser": true,
+            "mocha": true,
+            "node": true
+        },
+        "parser": "@typescript-eslint/parser",
+        "parserOptions": {
+            "project": "tsconfig.json",
+            "sourceType": "module"
+        },
+        "extends": [
+            "eslint:recommended",
+            "plugin:@typescript-eslint/recommended"
+        ],
+        "rules": {
+            "@typescript-eslint/explicit-function-return-type": "off",
+            "@typescript-eslint/array-type": "error",
+            "@typescript-eslint/no-unused-vars": "off",
+            "no-useless-escape": "off",
+            "no-undef": "off",
+            "no-control-regex": "off",
+            "@typescript-eslint/camelcase": "off",
+            "@typescript-eslint/no-this-alias": "off",
+            "@typescript-eslint/class-name-casing": "error",
+            "@typescript-eslint/no-non-null-assertion": "off",
+            "@typescript-eslint/explicit-member-accessibility": "off",
+            "@typescript-eslint/consistent-type-assertions": "error",
+            "@typescript-eslint/indent": [
+                "error",
+                2,
+                {
+                    "SwitchCase": 1,
+                    "ignoreComments": true,
+                    "CallExpression": {
+                        "arguments": "first"
+                    },
+                    "FunctionDeclaration": {
+                        "parameters": "first"
+                    },
+                    "FunctionExpression": {
+                        "parameters": "first"
+                    }
+                }
+            ],
+            "@typescript-eslint/interface-name-prefix": "off",
+            "@typescript-eslint/member-delimiter-style": "off",
+            "@typescript-eslint/member-ordering": "off",
+            "@typescript-eslint/no-empty-function": "error",
+            "@typescript-eslint/no-empty-interface": "error",
+            "@typescript-eslint/no-explicit-any": "off",
+            "@typescript-eslint/no-inferrable-types": "off",
+            "@typescript-eslint/no-require-imports": "error",
+            "@typescript-eslint/no-use-before-define": "off",
+            "@typescript-eslint/no-var-requires": "error",
+            "@typescript-eslint/prefer-for-of": "error",
+            "@typescript-eslint/prefer-namespace-keyword": "error",
+            "@typescript-eslint/quotes": [
+                "off",
+                "double",
+                {
+                    "avoidEscape": true
+                }
+            ],
+            "@typescript-eslint/restrict-plus-operands": "off",
+            "@typescript-eslint/semi": [
+                "error",
+                "always"
+            ],
+            "@typescript-eslint/triple-slash-reference": "error",
+            "@typescript-eslint/type-annotation-spacing": "error",
+            "@typescript-eslint/unified-signatures": "error",
+            "camelcase": "off",
+            "capitalized-comments": [
+                "off",
+                "never"
+            ],
+            "comma-dangle": [
+                "error",
+                "always-multiline"
+            ],
+            "constructor-super": "error",
+            "curly": "error",
+            "default-case": "error",
+            "dot-notation": "off",
+            "eol-last": "off",
+            "eqeqeq": [
+                "error",
+                "smart"
+            ],
+            "guard-for-in": "off",
+            "id-blacklist": "off",
+            "id-match": "error",
+            "max-len": [
+                "error",
+                {
+                    "ignoreRegExpLiterals": true,
+                    "ignoreStrings": true,
+                    "ignorePattern": "^\\s*\\*",
+                    "code": 140
+                }
+            ],
+            "new-parens": "error",
+            "no-bitwise": "error",
+            "no-caller": "error",
+            "no-cond-assign": "error",
+            "no-console": "off",
+            "no-constant-condition": "off",
+            "no-debugger": "error",
+            "no-duplicate-case": "error",
+            "no-empty": "error",
+            "no-eval": "error",
+            "no-fallthrough": "error",
+            "no-invalid-this": "off",
+            "no-irregular-whitespace": "error",
+            "no-multiple-empty-lines": "off",
+            "no-new-wrappers": "error",
+            "no-redeclare": "error",
+            "no-return-await": "error",
+            "no-sequences": "error",
+            "no-shadow": [
+                "off",
+                {
+                    "hoist": "all"
+                }
+            ],
+            "no-sparse-arrays": "error",
+            "no-trailing-spaces": "error",
+            "no-underscore-dangle": "off",
+            "no-unused-expressions": "off",
+            "no-unused-labels": "error",
+            "no-var": "error",
+            "no-void": "error",
+            "one-var": [
+                "error",
+                "never"
+            ],
+            "prefer-const": "error",
+            "@typescript-eslint/prefer-readonly": "error",
+            "radix": "error",
+            "spaced-comment": "off",
+            "use-isnan": "error"
+        }
+    },
+    "nyc": {
+        "include": [
+            "build/src/**/*.js"
+        ],
+        "exclude-after-remap": false
+    },
+    "repository": {
+        "type": "git",
+        "url": "git+https://github.com/abaplint/abaplint.git"
+    },
+    "engines": {
+        "node": ">=10.5.0",
+        "npm": ">= 6.0.0"
+    },
+    "keywords": [
+        "ABAP",
+        "lint"
     ],
-    "exclude-after-remap": false
-  },
-  "repository": {
-    "type": "git",
-    "url": "git+https://github.com/abaplint/abaplint.git"
-  },
-  "engines": {
-    "node": ">=10.5.0",
-    "npm": ">= 6.0.0"
-  },
-  "keywords": [
-    "ABAP",
-    "lint"
-  ],
-  "author": "Lars Hvam Petersen",
-  "license": "MIT",
-  "bugs": {
-    "url": "https://github.com/abaplint/abaplint/issues"
-  },
-  "homepage": "https://abaplint.org",
-  "devDependencies": {
-    "@types/chai": "^4.2.7",
-    "@types/glob": "^7.1.1",
-    "@types/minimist": "^1.2.0",
-    "@types/mocha": "^5.2.7",
-    "@types/node": "^13.1.8",
-    "@types/progress": "^2.0.3",
-    "chai": "^4.2.0",
-    "mocha": "^7.0.0",
-    "nyc": "^15.0.0",
-    "railroad-diagrams": "git+https://github.com/tabatkins/railroad-diagrams#gh-pages",
-    "source-map-support": "^0.5.16",
-    "ts-json-schema-generator": "^0.58.1",
-    "tslint": "^6.0.0",
-    "tslint-eslint-rules": "^5.4.0",
-    "typescript": "^3.7.5",
-    "webpack": "^4.41.5",
-    "webpack-cli": "^3.3.10"
-  },
-  "dependencies": {
-    "glob": "^7.1.6",
-    "minimist": "^1.2.0",
-    "progress": "^2.0.3",
-    "vscode-languageserver-types": "^3.15.0",
-    "xml-js": "^1.6.11"
-  }
+    "author": "Lars Hvam Petersen",
+    "license": "MIT",
+    "bugs": {
+        "url": "https://github.com/abaplint/abaplint/issues"
+    },
+    "homepage": "https://abaplint.org",
+    "devDependencies": {
+        "@types/chai": "^4.2.7",
+        "@types/glob": "^7.1.1",
+        "@types/minimist": "^1.2.0",
+        "@types/mocha": "^5.2.7",
+        "@types/node": "^13.1.8",
+        "@types/progress": "^2.0.3",
+        "@typescript-eslint/eslint-plugin": "^2.17.0",
+        "@typescript-eslint/eslint-plugin-tslint": "^2.17.0",
+        "@typescript-eslint/parser": "^2.17.0",
+        "chai": "^4.2.0",
+        "eslint": "^6.8.0",
+        "mocha": "^7.0.0",
+        "nyc": "^15.0.0",
+        "railroad-diagrams": "git+https://github.com/tabatkins/railroad-diagrams#gh-pages",
+        "source-map-support": "^0.5.16",
+        "ts-json-schema-generator": "^0.58.1",
+        "typescript": "^3.7.5",
+        "webpack": "^4.41.5",
+        "webpack-cli": "^3.3.10"
+    },
+    "dependencies": {
+        "glob": "^7.1.6",
+        "minimist": "^1.2.0",
+        "progress": "^2.0.3",
+        "vscode-languageserver-types": "^3.15.0",
+        "xml-js": "^1.6.11"
+    }
 }

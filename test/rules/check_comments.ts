@@ -8,7 +8,7 @@ configNoEndOfLine.allowEndOfLine = false;
 const configEndOfLineAllowed = new CheckCommentsConf();
 configEndOfLineAllowed.allowEndOfLine = true;
 
-const testCases: String[] = [
+const testCases: string[] = [
   ` REPORT yfoo. " inline comment `,
 
   ` REPORT yfoo. " inline comment

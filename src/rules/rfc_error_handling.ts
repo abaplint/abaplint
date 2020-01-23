@@ -50,7 +50,7 @@ export class RFCErrorHandling extends ABAPRule {
       }
 
       const parameters = list.findAllExpressions(Expressions.ParameterName);
-      const names: String[] = [];
+      const names: string[] = [];
       for (const par of parameters) {
         names.push(par.getFirstToken().getStr().toUpperCase());
       }
