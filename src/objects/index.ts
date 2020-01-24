@@ -11,6 +11,7 @@ export * from "./business_function_assignment";
 export * from "./business_function_set_assignment";
 export * from "./business_object_model";
 export * from "./cds_metadata_extension";
+export * from "./change_document";
 export * from "./chapter_of_book_structure";
 export * from "./checkpoint_group";
 export * from "./class";
