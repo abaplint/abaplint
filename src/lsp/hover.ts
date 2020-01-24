@@ -25,7 +25,7 @@ export class Hover {
 
     const found = LSPUtils.findCursor(reg, pos);
     if (found === undefined) {
-      return {kind: LServer.MarkupKind.Markdown, value: "Cursor token not found"};
+      return undefined;
     } else if (found.token instanceof Tokens.String) {
       return {kind: LServer.MarkupKind.Markdown, value: "String"};
     } else if (found.token instanceof Tokens.StringTemplate
