@@ -5,7 +5,9 @@ import {ABAPFile} from "../../files";
 import {ExpressionNode, StatementNode} from "../../abap/nodes";
 import * as Expressions from "../../abap/expressions";
 
-/** Keep single parameter calls on one line */
+/** Keep single parameter calls on one line
+ * https://github.com/SAP/styleguides/blob/master/clean-abap/CleanABAP.md#keep-single-parameter-calls-on-one-line
+*/
 export class KeepSingleParameterCallsOnOneLineConf extends BasicRuleConfig {
   public length: number = 120;
 }
