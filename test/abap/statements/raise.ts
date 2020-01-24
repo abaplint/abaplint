@@ -14,6 +14,7 @@ const tests = [
   "RAISE EXCEPTION me->dd_sobject_store-exception.",
   "RAISE EXCEPTION lr_/foo/cx_bar.",
   "RAISE EXCEPTION TYPE cx_error MESSAGE e004(clas) EXPORTING previous = lx_error.",
+  "RAISE EXCEPTION TYPE zcx_foobar MESSAGE ID 'ZZZ' NUMBER '001' WITH <fs>-value.",
 ];
 
 statementType(tests, "RAISE", Statements.Raise);

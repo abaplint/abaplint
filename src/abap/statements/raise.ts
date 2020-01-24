@@ -16,6 +16,12 @@ export class Raise extends Statement {
                      new MessageSource(),
                      opt(wit));
 
+    const messid = seq(str("MESSAGE ID"),
+                       new Source(),
+                       str("NUMBER"),
+                       new Source(),
+                       opt(wit));
+
     const exporting = seq(str("EXPORTING"), new ParameterListS());
 
     const from = alt(new Source(),
@@ -24,7 +30,7 @@ export class Raise extends Statement {
     const clas = seq(opt(str("RESUMABLE")),
                      str("EXCEPTION"),
                      from,
-                     opt(alt(ver(Version.v750, mess), ver(Version.v752, str("USING MESSAGE")))),
+                     opt(alt(ver(Version.v750, alt(mess, messid)), ver(Version.v752, str("USING MESSAGE")))),
                      opt(exporting));
 
     const ret = seq(str("RAISE"), alt(new Field(), clas));
