@@ -1278,7 +1278,7 @@
                   "type": "boolean"
                 }
               ],
-              "description": "Keep single parameter calls on one line"
+              "description": "Keep single parameter calls on one line\r\nhttps://github.com/SAP/styleguides/blob/master/clean-abap/CleanABAP.md#keep-single-parameter-calls-on-one-line"
             },
             "keyword_case": {
               "anyOf": [
@@ -1994,7 +1994,7 @@
     },
     "KeepSingleParameterCallsOnOneLineConf": {
       "additionalProperties": false,
-      "description": "Keep single parameter calls on one line",
+      "description": "Keep single parameter calls on one line\r\nhttps://github.com/SAP/styleguides/blob/master/clean-abap/CleanABAP.md#keep-single-parameter-calls-on-one-line",
       "properties": {
         "exclude": {
           "description": "List of file regex patterns to exclude",
