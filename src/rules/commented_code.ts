@@ -5,12 +5,16 @@ import {ABAPFile, MemoryFile} from "../files";
 import {BasicRuleConfig} from "./_basic_rule_config";
 import {Registry} from "../registry";
 import {Unknown, Empty, Comment} from "../abap/statements/_statement";
+import {ABAPObject} from "../objects/_abap_object";
+import {FunctionGroup} from "../objects";
+import {Include} from "../abap/statements";
 
 /** Detects usage of commented out code.
  * https://github.com/SAP/styleguides/blob/master/clean-abap/CleanABAP.md#delete-code-instead-of-commenting-it
  * https://docs.abapopenchecks.org/checks/14/
  */
 export class CommentedCodeConf extends BasicRuleConfig {
+  allowIncludeInFugr: boolean = true;
 }
 
 export class CommentedCode extends ABAPRule {
@@ -32,7 +36,7 @@ export class CommentedCode extends ABAPRule {
     this.conf = conf;
   }
 
-  public runParsed(file: ABAPFile) {
+  public runParsed(file: ABAPFile, _reg: Registry, obj: ABAPObject) {
     let issues: Issue[] = [];
 
     const rows = file.getRawRows();
@@ -42,16 +46,16 @@ export class CommentedCode extends ABAPRule {
       if (this.isCommentLine(rows[i])) {
         code = code + rows[i].trim().substr(1) + "\n";
       } else if (code !== "") {
-        issues = issues.concat(this.check(code, file, i - 1));
+        issues = issues.concat(this.check(code, file, i - 1, obj));
         code = "";
       }
     }
-    issues = issues.concat(this.check(code, file, rows.length - 1));
+    issues = issues.concat(this.check(code, file, rows.length - 1, obj));
 
     return issues;
   }
 
-  private check(code: string, file: ABAPFile, row: number): Issue[] {
+  private check(code: string, file: ABAPFile, row: number, obj: ABAPObject): Issue[] {
     if (code === "") {
       return [];
     }
@@ -65,6 +69,9 @@ export class CommentedCode extends ABAPRule {
     let containsStatement: boolean = false;
     for (const statementNode of statementNodes) {
       const statement = statementNode.get();
+      if (this.getConfig().allowIncludeInFugr === true && obj instanceof FunctionGroup && statement instanceof Include) {
+        continue;
+      }
       if (!(statement instanceof Unknown
           || statement instanceof Empty
           || statement instanceof Comment)) {
@@ -82,6 +89,7 @@ export class CommentedCode extends ABAPRule {
   }
 
   private isCommentLine(text: string): boolean {
-    return ((text.substr(0, 1) === "*") || (text.trim().substr(0, 1) === "\"" && text.trim().substr(1, 1) !== "!"));
+    return ((text.substr(0, 1) === "*")
+      || (text.trim().substr(0, 1) === "\"" && text.trim().substr(1, 1) !== "!"));
   }
 }

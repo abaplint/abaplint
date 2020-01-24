@@ -434,6 +434,9 @@
       "additionalProperties": false,
       "description": "Detects usage of commented out code.\r\nhttps://github.com/SAP/styleguides/blob/master/clean-abap/CleanABAP.md#delete-code-instead-of-commenting-it\r\nhttps://docs.abapopenchecks.org/checks/14/",
       "properties": {
+        "allowIncludeInFugr": {
+          "type": "boolean"
+        },
         "exclude": {
           "description": "List of file regex patterns to exclude",
           "items": {
@@ -446,6 +449,9 @@
           "type": "string"
         }
       },
+      "required": [
+        "allowIncludeInFugr"
+      ],
       "type": "object"
     },
     "ConstructorVisibilityPublicConf": {
