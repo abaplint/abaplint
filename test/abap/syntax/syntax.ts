@@ -1060,6 +1060,107 @@ describe("Check Variables", () => {
     expect(issues.length).to.equals(0);
   });
 
+  it("minimal function group", () => {
+    const f01abap = `FORM foo.
+      WRITE gv_bar.
+    ENDFORM.`;
+    const f01xml = `<?xml version="1.0" encoding="utf-8"?>
+  <abapGit version="v1.0.0">
+   <asx:abap xmlns:asx="http://www.sap.com/abapxml" version="1.0">
+    <asx:values>
+     <PROGDIR>
+      <NAME>LZMINIMALF01</NAME>
+      <SUBC>I</SUBC>
+      <APPL>S</APPL>
+      <RLOAD>E</RLOAD>
+      <UCCHECK>X</UCCHECK>
+     </PROGDIR>
+     <TPOOL>
+      <item>
+       <ID>R</ID>
+       <ENTRY>Include LZMINIMALF01</ENTRY>
+       <LENGTH>20</LENGTH>
+      </item>
+     </TPOOL>
+    </asx:values>
+   </asx:abap>
+  </abapGit>`;
+    const topabap = `FUNCTION-POOL zminimal.
+    DATA gv_bar TYPE string.`;
+    const topxml = `<?xml version="1.0" encoding="utf-8"?>
+    <abapGit version="v1.0.0">
+     <asx:abap xmlns:asx="http://www.sap.com/abapxml" version="1.0">
+      <asx:values>
+       <PROGDIR>
+        <NAME>LZMINIMALTOP</NAME>
+        <DBAPL>S</DBAPL>
+        <DBNA>D$</DBNA>
+        <SUBC>I</SUBC>
+        <APPL>S</APPL>
+        <FIXPT>X</FIXPT>
+        <LDBNAME>D$S</LDBNAME>
+        <UCCHECK>X</UCCHECK>
+       </PROGDIR>
+      </asx:values>
+     </asx:abap>
+    </abapGit>`;
+    const saplabap = `
+    INCLUDE lzminimaltop.
+    INCLUDE lzminimaluxx.
+    INCLUDE lzminimalf01.`;
+    const saplxml = `<?xml version="1.0" encoding="utf-8"?>
+    <abapGit version="v1.0.0">
+     <asx:abap xmlns:asx="http://www.sap.com/abapxml" version="1.0">
+      <asx:values>
+       <PROGDIR>
+        <NAME>SAPLZMINIMAL</NAME>
+        <DBAPL>S</DBAPL>
+        <DBNA>D$</DBNA>
+        <SUBC>F</SUBC>
+        <APPL>S</APPL>
+        <RLOAD>E</RLOAD>
+        <FIXPT>X</FIXPT>
+        <LDBNAME>D$S</LDBNAME>
+        <UCCHECK>X</UCCHECK>
+       </PROGDIR>
+      </asx:values>
+     </asx:abap>
+    </abapGit>`;
+    const fugrxml = `<?xml version="1.0" encoding="utf-8"?>
+    <abapGit version="v1.0.0" serializer="LCL_OBJECT_FUGR" serializer_version="v1.0.0">
+     <asx:abap xmlns:asx="http://www.sap.com/abapxml" version="1.0">
+      <asx:values>
+       <AREAT>Minimal</AREAT>
+       <INCLUDES>
+       <SOBJ_NAME>LZMINIMALF01</SOBJ_NAME>
+       <SOBJ_NAME>LZMINIMALTOP</SOBJ_NAME>
+       <SOBJ_NAME>SAPLZMINIMAL</SOBJ_NAME>
+       </INCLUDES>
+       <FUNCTIONS>
+        <item>
+         <FUNCNAME>Z_MINIMAL</FUNCNAME>
+         <SHORT_TEXT>hello</SHORT_TEXT>
+        </item>
+       </FUNCTIONS>
+      </asx:values>
+     </asx:abap>
+    </abapGit>`;
+    const functionabap = `FUNCTION z_minimal.
+      WRITE gv_bar.
+      PERFORM foo.
+    ENDFUNCTION.`;
+    const issues = runMulti([
+      {filename: "zminimal.fugr.lzminimalf01.abap", contents: f01abap},
+      {filename: "zminimal.fugr.lzminimalf01.xml", contents: f01xml},
+      {filename: "zminimal.fugr.lzminimaltop.abap", contents: topabap},
+      {filename: "zminimal.fugr.lzminimaltop.xml", contents: topxml},
+      {filename: "zminimal.fugr.saplzminimal.abap", contents: saplabap},
+      {filename: "zminimal.fugr.saplzminimal.xml", contents: saplxml},
+      {filename: "zminimal.fugr.xml", contents: fugrxml},
+      {filename: "zminimal.fugr.z_minimal.abap", contents: functionabap}]);
+    expect(issues.length).to.equals(0);
+  });
+
   it("PROG, wrong sequence of definition and implementation", () => {
     const abap = `
     CLASS lcl_foobar IMPLEMENTATION.

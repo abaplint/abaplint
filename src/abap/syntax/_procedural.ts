@@ -19,7 +19,7 @@ export class Procedural {
     this.reg = reg;
   }
 
-  public addAllFormDefinitions(file: ABAPFile) {
+  public addAllFormDefinitions(file: ABAPFile, obj: ABAPObject) {
     this.scope.addFormDefinitions(file.getFormDefinitions());
 
     const stru = file.getStructure();
@@ -29,20 +29,29 @@ export class Procedural {
 
     const includes = stru.findAllStatements(Statements.Include);
     for (const node of includes) {
-      const found = this.findInclude(node);
+      const found = this.findInclude(node, obj);
       if (found) {
-        this.addAllFormDefinitions(found);
+        this.addAllFormDefinitions(found, obj);
       }
     }
   }
 
-  public findInclude(node: StatementNode): ABAPFile | undefined {
+  public findInclude(node: StatementNode, obj: ABAPObject): ABAPFile | undefined {
 // assumption: no cyclic includes, includes not found are reported by rule "check_include"
+// todo: how to make sure code is not duplicated here and in rule "check_include" ?
     const expr = node.findFirstExpression(Expressions.IncludeName);
     if (expr === undefined) {
       return undefined;
     }
     const name = expr.getFirstToken().getStr();
+
+    if (obj instanceof FunctionGroup) {
+      const incl = obj.getInclude(name);
+      if (incl !== undefined) {
+        return incl;
+      }
+    }
+
     const prog = this.reg.getObject("PROG", name) as ABAPObject | undefined;
     if (prog !== undefined) {
       return prog.getABAPFiles()[0];

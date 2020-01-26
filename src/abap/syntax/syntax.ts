@@ -12,7 +12,7 @@ import {CurrentScope, ScopeType} from "./_current_scope";
 import {ObjectOriented} from "./_object_oriented";
 import {Procedural} from "./_procedural";
 import {Inline} from "./_inline";
-import {Program} from "../../objects";
+import {Program, FunctionGroup} from "../../objects";
 import {ClassDefinition, InterfaceDefinition} from "../types";
 import {SpaghettiScope} from "./_spaghetti_scope";
 import {Position} from "../../position";
@@ -71,16 +71,23 @@ export class SyntaxLogic {
 
   private traverseObject(): CurrentScope {
 // todo, traversal should start with the right file for the object
+    let traversal = this.object.getABAPFiles();
 
     if (this.object instanceof Program) {
-      this.helpers.proc.addAllFormDefinitions(this.object.getABAPFiles()[0]);
+      this.helpers.proc.addAllFormDefinitions(this.object.getABAPFiles()[0], this.object);
       this.scope.push(ScopeType.Program,
                       this.object.getName(),
                       new Position(1, 1),
                       this.object.getMainABAPFile()!.getFilename());
+    } else if (this.object instanceof FunctionGroup) {
+      const main = this.object.getMainABAPFile();
+      if (main !== undefined) {
+        this.helpers.proc.addAllFormDefinitions(main, this.object);
+        traversal = [main];
+      }
     }
 
-    for (const file of this.object.getABAPFiles()) {
+    for (const file of traversal) {
       this.currentFile = file;
       const structure = this.currentFile.getStructure();
       if (structure === undefined) {
@@ -142,7 +149,7 @@ export class SyntaxLogic {
       }
 
       if (child instanceof StatementNode && child.get() instanceof Statements.Include) {
-        const file = this.helpers.proc.findInclude(child);
+        const file = this.helpers.proc.findInclude(child, this.object);
         if (file !== undefined && file.getStructure() !== undefined) {
           const old = this.currentFile;
           this.currentFile = file;
