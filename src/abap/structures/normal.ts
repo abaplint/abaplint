@@ -186,6 +186,7 @@ export class Normal extends Structure {
                sta(Statements.Transfer),
                sta(Statements.Translate),
                sta(Statements.Type),
+               sta(Statements.TypePools),
                sta(Statements.Uline),
                sta(Statements.Unassign),
                sta(Statements.Unpack),
