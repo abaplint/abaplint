@@ -41,6 +41,17 @@ export class FunctionGroup extends ABAPObject {
     }
     return ret;
   }
+
+  public getInclude(name: string): ABAPFile | undefined {
+    const includes = this.getIncludeFiles();
+    for (const i of includes) {
+      if (i.name.toUpperCase() === name.toUpperCase()) {
+        return i.file;
+      }
+    }
+    return undefined;
+  }
+
 /*
   public getModuleFiles(): ABAPFile[] {
 
