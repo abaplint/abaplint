@@ -23,11 +23,10 @@ Get default configuration by running `abaplint -d > abaplint.json`
 * [Bitbucket Pipelines](https://bitbucket.org/larshp/abaplint_pipeline)
 * [Azure Pipelines](https://github.com/abaplint/azure-devops-example)
 * [Travis CI](https://blogs.sap.com/2018/12/25/automatic-checking-of-your-abap-code-in-githubgitlab-with-ci-and-abaplint/)
-* [Atom](https://atom.io/packages/linter-abaplint) (todo, [source](https://github.com/larshp/linter-abaplint))
-* Code Climate Engine, todo
-* ABAP in Eclipse, (todo, [source](https://github.com/abaplint/abaplint-eclipse))
 
-For checking ABAP code inside the ABAP system use [code inspector](http://wiki.scn.sap.com/wiki/display/ABAP/Code+Inspector) or [ATC](http://wiki.scn.sap.com/wiki/display/ABAP/ABAP+Test+Cockpit), also see project [abapOpenChecks](https://github.com/larshp/abapOpenChecks).
+SAP Code inspector via [abaplint-cloud-foundry](https://github.com/abaplint/abaplint-cloud-foundry) and [abaplint-abap-backend](https://github.com/abaplint/abaplint-abap-backend).
+
+Also see [abapOpenChecks](https://github.com/larshp/abapOpenChecks).
 
 ### Example configs
 

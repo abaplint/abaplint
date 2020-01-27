@@ -19,6 +19,8 @@ export class ObsoleteStatementConf extends BasicRuleConfig {
   public requested: boolean = true;
   /** Checks for usages of OCCURS */
   public occurs: boolean = true;
+  /** Checks for SET EXTENDED CHECK, https://help.sap.com/doc/abapdocu_751_index_htm/7.51/en-us/abapset_extended_check.htm */
+  public setExtended: boolean = true;
 }
 
 export class ObsoleteStatement extends ABAPRule {
@@ -63,6 +65,11 @@ export class ObsoleteStatement extends ABAPRule {
           issues.push(issue);
         }
         prev = sta.getStart();
+      }
+
+      if (this.conf.setExtended && sta.get() instanceof Statements.SetExtendedCheck) {
+        const issue = Issue.atStatement(file, sta, "SET EXTENDED CHECK is obsolete", this.getKey());
+        issues.push(issue);
       }
 
       if (this.conf.requested) {
