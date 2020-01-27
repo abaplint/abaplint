@@ -22,6 +22,7 @@ const tests = [
   {abap: "RANGES moo FOR foo-bar OCCURS 50.", cnt: 1},
   {abap: "DESCRIBE TABLE tab OCCURS n1.", cnt: 1},
   {abap: "DATA tab TYPE STANDARD TABLE of foobar.", cnt: 0},
+  {abap: "SET EXTENDED CHECK ON.", cnt: 1},
 ];
 
 testRule(tests, ObsoleteStatement);

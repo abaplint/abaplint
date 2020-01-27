@@ -2670,6 +2670,10 @@
           "description": "Checks for usages of IS REQUESTED",
           "type": "boolean"
         },
+        "setExtended": {
+          "description": "Checks for SET EXTENDED CHECK, https://help.sap.com/doc/abapdocu_751_index_htm/7.51/en-us/abapset_extended_check.htm",
+          "type": "boolean"
+        },
         "subtract": {
           "type": "boolean"
         }
@@ -2683,7 +2687,8 @@
         "move",
         "divide",
         "requested",
-        "occurs"
+        "occurs",
+        "setExtended"
       ],
       "type": "object"
     },
