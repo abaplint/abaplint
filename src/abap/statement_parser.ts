@@ -78,9 +78,9 @@ export class StatementParser {
 
     this.process(tokens);
     this.categorize();
-    this.nativeSQL();
     this.handleMacros();
     this.lazyUnknown();
+    this.nativeSQL();
 
     return this.statements;
   }
