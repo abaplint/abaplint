@@ -1,7 +1,7 @@
 import {plus, ver, seq, opt, tok, str, alt, star, optPrio, regex, Expression, IStatementRunnable} from "../combi";
 import {InstanceArrow, WParenLeftW, WParenRightW, WDashW, ParenLeftW} from "../tokens/";
 import {MethodCallChain, ArithOperator, Cond, Constant, StringTemplate, Let, ComponentCond, SimpleName} from "./";
-import {TypeName, FieldChain, Field, TableBody, TypeNameOrInfer, ArrowOrDash, FieldSub, For, Throw} from "./";
+import {FieldChain, Field, TableBody, TypeNameOrInfer, ArrowOrDash, FieldSub, For, Throw} from "./";
 import {Version} from "../../version";
 import {ComponentChain, ComponentName} from "./";
 import {InlineFieldDefinition} from "./inline_field_definition";
@@ -134,9 +134,8 @@ export class Source extends Expression {
                            rparen));
 
     const fields = seq(new Field(), str("="), new Source());
-    const inittype = seq(new Field(), str("TYPE"), new TypeName());
 
-    const init = seq(str("INIT"), plus(alt(new InlineFieldDefinition(), inittype)));
+    const init = seq(str("INIT"), plus(new InlineFieldDefinition()));
 
     const reduce = ver(Version.v740sp08,
                        seq(str("REDUCE"),

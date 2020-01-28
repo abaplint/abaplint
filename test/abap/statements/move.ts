@@ -105,6 +105,14 @@ const tests = [
   "  NEXT x = |{ x } { wa-matnr alpha = out }, | ).",
 
   "lv_str = | { zif_bar=>and ALIGN = RIGHT WIDTH = 5 } |.",
+
+  `DATA(foo) = REDUCE i( INIT s TYPE i FOR i = 1 UNTIL i > 10 NEXT s = s + i ).`,
+
+  `gp_amount_sp = REDUCE #( 
+    INIT x TYPE vbrk-netwr
+    FOR <i> IN invoices
+    WHERE ( vtweg = '20' )
+    NEXT x = x + <i>-kwert ).`,
 ];
 
 statementType(tests, "MOVE", Statements.Move);
