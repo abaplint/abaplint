@@ -104,7 +104,13 @@ const tests = [
   "  WHERE ( plnal = opr->plnal AND plnnr = opr->plnnr )\n" +
   "  NEXT x = |{ x } { wa-matnr alpha = out }, | ).",
 
+  // string templates
   "lv_str = | { zif_bar=>and ALIGN = RIGHT WIDTH = 5 } |.",
+  "lv_str = | { zif_bar=>and ALIGN = RIGHT WIDTH = 5  PAD = '_' } |.",
+  "<timezone>-datetime = |{ tstamp TIMEZONE = <timezone>-tzone TIMESTAMP = USER }|. ",
+  "<timezone>-datetime = |{ tstamp TIMESTAMP = USER TIMEZONE = <timezone>-tzone }|. ",
+  "<timezone>-datetime = |{ tstamp TIMEZONE = <timezone>-tzone }|. ",
+  "<timezone>-datetime = |{ tstamp TIMESTAMP = USER }|. ",
 
   `DATA(foo) = REDUCE i( INIT s TYPE i FOR i = 1 UNTIL i > 10 NEXT s = s + i ).`,
 
