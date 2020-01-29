@@ -207,7 +207,7 @@
         "@types/chai": "^4.2.7",
         "@types/glob": "^7.1.1",
         "@types/minimist": "^1.2.0",
-        "@types/mocha": "^5.2.7",
+        "@types/mocha": "^7.0.0",
         "@types/node": "^13.5.0",
         "@types/progress": "^2.0.3",
         "@typescript-eslint/eslint-plugin": "^2.18.0",
