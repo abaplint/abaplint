@@ -7,7 +7,9 @@ import {TypeTable} from "../abap/expressions";
 
 /** Detects usage of certain statements. */
 export class AvoidUseConf extends BasicRuleConfig {
-  /** Detects define (macro definitions) */
+  /** Detects define (macro definitions)
+   * https://help.sap.com/doc/abapdocu_752_index_htm/7.52/en-US/abenmacros_guidl.htm
+  */
   public define: boolean = true;
   /** Detects endselect */
   public endselect: boolean = true;
