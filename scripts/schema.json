@@ -107,7 +107,7 @@
           "type": "boolean"
         },
         "define": {
-          "description": "Detects define (macro definitions)",
+          "description": "Detects define (macro definitions)\r\nhttps://help.sap.com/doc/abapdocu_752_index_htm/7.52/en-US/abenmacros_guidl.htm",
           "type": "boolean"
         },
         "endselect": {
