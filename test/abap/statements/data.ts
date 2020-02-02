@@ -76,6 +76,7 @@ const tests = [
   "DATA ls_/moo/boo TYPE STANDARD TABLE OF t_/moo/boo.",
   "DATA foo TYPE c LENGTH '5'.",
   "DATA gt_tab TYPE HASHED TABLE OF f_cut->type WITH UNIQUE KEY name1 name2.",
+  "DATA moo LIKE STANDARD TABLE OF bar WITH DEFAULT KEY WITH HEADER LINE.",
 
 // todo
 //  "DATA lt_tab OCCURS 10.",
