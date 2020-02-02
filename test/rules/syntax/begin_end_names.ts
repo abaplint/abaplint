@@ -37,6 +37,11 @@ const tests = [
   DATA: BEGIN OF COMMON PART foo,
         field TYPE i,
       END OF COMMON PART foo.`, cnt: 0},
+
+  {abap: `
+  DATA: BEGIN OF COMMON PART foo,
+        field TYPE i,
+      END OF COMMON PART.`, cnt: 0},
 ];
 
 testRule(tests, BeginEndNames);

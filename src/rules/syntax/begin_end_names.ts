@@ -57,7 +57,10 @@ export class BeginEndNames extends ABAPRule {
       const begin = sub.findDirectStatements(b)[0].findFirstExpression(Expressions.NamespaceSimpleName)!;
       const first = begin.getFirstToken();
 
-      const end = sub.findDirectStatements(e)[0].findFirstExpression(Expressions.NamespaceSimpleName)!;
+      const end = sub.findDirectStatements(e)[0].findFirstExpression(Expressions.NamespaceSimpleName);
+      if (end === undefined) {
+        continue;
+      }
       const last = end.getFirstToken();
 
       if (first.getStr().toUpperCase() !== last.getStr().toUpperCase()) {
