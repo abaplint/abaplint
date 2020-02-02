@@ -1,4 +1,4 @@
-import {plus, ver, seq, opt, tok, str, alt, star, optPrio, regex, Expression, IStatementRunnable} from "../combi";
+import {plus, ver, seq, opt, tok, str, alt, star, altPrio, optPrio, regex, Expression, IStatementRunnable} from "../combi";
 import {InstanceArrow, WParenLeftW, WParenRightW, WDashW, ParenLeftW} from "../tokens/";
 import {MethodCallChain, ArithOperator, Cond, Constant, StringTemplate, Let, ComponentCond, SimpleName} from "./";
 import {FieldChain, Field, TableBody, TypeNameOrInfer, ArrowOrDash, FieldSub, For, Throw} from "./";
@@ -23,21 +23,21 @@ export class Source extends Expression {
 
     const after = seq(alt(str("&"), str("&&"), new ArithOperator()), new Source());
 
-    const bool = seq(alt(ver(Version.v702, regex(/^BOOLC$/i)),
-                         ver(Version.v740sp08, regex(/^XSDBOOL$/i))),
+    const bool = seq(altPrio(ver(Version.v702, regex(/^BOOLC$/i)),
+                             ver(Version.v740sp08, regex(/^XSDBOOL$/i))),
                      tok(ParenLeftW),
                      new Cond(),
                      str(")"));
 
-    const prefix = alt(tok(WDashW), str("BIT-NOT"));
+    const prefix = altPrio(tok(WDashW), str("BIT-NOT"));
 
-    const old = seq(alt(new Constant(),
-                        new StringTemplate(),
-                        bool,
-                        method,
-                        seq(opt(prefix), new FieldChain()),
-                        paren),
-                    optPrio(alt(ref, after, new TableBody())));
+    const old = seq(altPrio(new Constant(),
+                            new StringTemplate(),
+                            bool,
+                            method,
+                            seq(optPrio(prefix), new FieldChain()),
+                            paren),
+                    optPrio(altPrio(ref, after, new TableBody())));
 
     const mapping = seq(str("MAPPING"), plus(seq(new ComponentName(), str("="), new ComponentName())));
 
@@ -80,12 +80,12 @@ export class Source extends Expression {
 
     const base = seq(str("BASE"), new Source());
 
-    const tab = seq(opt(new For()),
-                    star(seq(star(fieldList),
-                             alt(seq(tok(WParenLeftW), opt(seq(opt(str("LINES OF")), new Source())), tok(WParenRightW)),
-                                 seq(tok(WParenLeftW), plus(fieldList), tok(WParenRightW))))));
+    const foo = seq(tok(WParenLeftW), optPrio(altPrio(plus(fieldList), seq(optPrio(str("LINES OF")), new Source()))), tok(WParenRightW));
 
-    const strucOrTab = seq(opt(new Let()), opt(base),
+    const tab = seq(optPrio(new For()),
+                    star(seq(star(fieldList), foo)));
+
+    const strucOrTab = seq(optPrio(new Let()), optPrio(base),
                            alt(plus(fieldList), tab));
 
     const tabdef = ver(Version.v740sp08, alt(str("OPTIONAL"), seq(str("DEFAULT"), new Source())));
@@ -93,8 +93,7 @@ export class Source extends Expression {
     const value = ver(Version.v740sp02, seq(str("VALUE"),
                                             new TypeNameOrInfer(),
                                             tok(ParenLeftW),
-                                            opt(alt(seq(new Source(), opt(tabdef)),
-                                                    strucOrTab)),
+                                            optPrio(alt(strucOrTab, seq(new Source(), optPrio(tabdef)))),
                                             rparen));
 
     const when = seq(str("WHEN"), new Cond(), str("THEN"), alt(new Source(), new Throw()));
@@ -149,7 +148,7 @@ export class Source extends Expression {
                            rparen,
                            opt(after)));
 
-    const ret = alt(old, corr, conv, value, cond, reff, exact, swit, filter, reduce);
+    const ret = altPrio(corr, conv, value, cond, reff, exact, swit, filter, reduce, old);
 
     return ret;
   }
