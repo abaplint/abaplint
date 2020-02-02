@@ -17,10 +17,6 @@ export class IdenticalFormNames implements IRule {
     return "identical_form_names";
   }
 
-  private getDescription(name: string): string {
-    return "Identical FORM Names:" + name;
-  }
-
   public getConfig() {
     return this.conf;
   }
@@ -41,7 +37,7 @@ export class IdenticalFormNames implements IRule {
       for (const form of file.getFormDefinitions()) {
         const name = form.getName().toUpperCase();
         if (found.indexOf(name) >= 0) {
-          const message = this.getDescription(name) + " \"" + name + "\"";
+          const message = "Identical FORM Names: \"" + name + "\"";
           const issue = Issue.atIdentifier(form, message, this.getKey());
           ret.push(issue);
         } else {
