@@ -17,6 +17,8 @@ export * from "./checkpoint_group";
 export * from "./class";
 export * from "./classification";
 export * from "./composite_enhancement_implementation";
+export * from "./concepts_of_package";
+export * from "./customizing_attributes";
 export * from "./customizing_img_activity";
 export * from "./customizing_transaction";
 export * from "./data_control";
