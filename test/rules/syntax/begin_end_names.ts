@@ -32,6 +32,11 @@ const tests = [
 
   {abap: "DATA: BEGIN OF foo, BEGIN OF bar2, f TYPE string, END OF bar, END OF foo.", cnt: 1},
   {abap: "DATA: BEGIN OF foo, BEGIN OF bar, f TYPE string, END OF bar, END OF foo.", cnt: 0},
+
+  {abap: `
+  DATA: BEGIN OF COMMON PART foo,
+        field TYPE i,
+      END OF COMMON PART foo.`, cnt: 0},
 ];
 
 testRule(tests, BeginEndNames);

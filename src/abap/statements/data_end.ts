@@ -1,11 +1,11 @@
 import {Statement} from "./_statement";
 import {str, seq, alt, optPrio, IStatementRunnable} from "../combi";
-import {SimpleName, NamespaceSimpleName} from "../expressions";
+import {NamespaceSimpleName} from "../expressions";
 
 export class DataEnd extends Statement {
 
   public getMatcher(): IStatementRunnable {
-    const common = seq(str("COMMON PART"), optPrio(new SimpleName()));
+    const common = seq(str("COMMON PART"), optPrio(new NamespaceSimpleName()));
 
     const structure = seq(str("END OF"),
                           alt(common, new NamespaceSimpleName()));
