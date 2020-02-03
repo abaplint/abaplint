@@ -1,5 +1,5 @@
 import {Statement} from "./_statement";
-import {str, seq, alt, opt, ver, tok, plus, per, IStatementRunnable} from "../combi";
+import {str, seq, alt, opt, ver, optPrio, tok, plus, per, IStatementRunnable} from "../combi";
 import {FSTarget, Target, ComponentCond, Dynamic, Source, ComponentCompare, SimpleName} from "../expressions";
 import {Version} from "../../version";
 import {WParenLeftW, WParenRightW} from "../tokens";
@@ -11,13 +11,15 @@ export class Loop extends Statement {
 
     const components = seq(tok(WParenLeftW), plus(new ComponentCompare()), tok(WParenRightW));
 
-    const group = ver(Version.v740sp08, seq(str("GROUP BY"), alt(new Source(), components)));
+    const into = seq(str("INTO"), new Target());
 
-    const into = seq(opt(str("REFERENCE")), str("INTO"), new Target());
+    const group = ver(Version.v740sp08, seq(str("GROUP BY"), alt(new Source(), components), optPrio(into)));
+
+    const rinto = seq(opt(str("REFERENCE")), into);
 
     const assigning = seq(str("ASSIGNING"), new FSTarget());
 
-    const target = alt(seq(alt(into, assigning),
+    const target = alt(seq(alt(rinto, assigning),
                            opt(group),
                            opt(str("CASTING"))),
                        str("TRANSPORTING NO FIELDS"));

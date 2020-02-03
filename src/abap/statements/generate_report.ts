@@ -15,8 +15,10 @@ export class GenerateReport extends Statement {
     const offset = seq(str("OFFSET"), new Target());
     const headers = str("WITH PRECOMPILED HEADERS");
     const test = str("WITH TEST CODE");
+    const messageid = seq(str("MESSAGE-ID"), new Target());
+    const shortdumpid = seq(str("SHORTDUMP-ID"), new Target());
 
-    const options = per(without, message, include, line, word, offset, headers, test);
+    const options = per(without, message, include, line, word, offset, headers, test, messageid, shortdumpid);
 
     const ret = seq(str("GENERATE REPORT"),
                     new Source(),

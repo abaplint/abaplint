@@ -21,6 +21,13 @@ const tests = [
   "GENERATE REPORT l_name WITH PRECOMPILED HEADERS.",
 
   "GENERATE REPORT l_name WITH PRECOMPILED HEADERS WITH TEST CODE.",
+
+  `generate report lv_report
+    message lv_message
+    include lv_include
+    line lv_line
+    message-id ls_message
+    shortdump-id lv_shortdump.`,
 ];
 
 statementType(tests, "GENERATE REPORT", Statements.GenerateReport);

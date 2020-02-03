@@ -1,9 +1,10 @@
 import {Statement} from "./_statement";
-import {str, seq, alt, per, opt, IStatementRunnable} from "../combi";
+import {str, seq, alt, per, opt, ver, IStatementRunnable} from "../combi";
 import {NamespaceSimpleName, ConstantFieldLength, Type as eType, TypeTable, Decimals, Length} from "../expressions";
 import * as Expressions from "../expressions";
 import {CurrentScope} from "../syntax/_current_scope";
 import {StatementNode} from "../nodes";
+import {Version} from "../../version";
 import {BasicTypes} from "../syntax/basic_types";
 import {TypedIdentifier} from "../types/_typed_identifier";
 import {UnknownType} from "../types/basic";
@@ -17,7 +18,10 @@ export class Type extends Statement {
                     opt(new ConstantFieldLength()),
                     opt(alt(simple, new TypeTable())));
 
-    const ret = seq(alt(str("TYPE"), str("TYPES")), def);
+// todo, BOXED is only allowed with structures inside structures?
+    const boxed = ver(Version.v702, str("BOXED"));
+
+    const ret = seq(alt(str("TYPE"), str("TYPES")), def, opt(boxed));
 
     return ret;
   }

@@ -1,6 +1,6 @@
 import {Statement} from "./_statement";
-import {str, seq, alt, opt, per, plus, IStatementRunnable} from "../combi";
-import {Target, Source, ParameterListS, Field, Dynamic, ParameterName} from "../expressions";
+import {str, seq, alt, altPrio, opt, per, plus, IStatementRunnable} from "../combi";
+import {Target, Source, Field, Dynamic, ParameterName, ParameterS} from "../expressions";
 
 // todo, cloud, split?
 export class Export extends Statement {
@@ -29,8 +29,7 @@ export class Export extends Statement {
 
     const target = alt(db, memory, database, table, shared);
 
-    const source = alt(new ParameterListS(),
-                       plus(new ParameterName()),
+    const source = alt(plus(altPrio(new ParameterS(), new ParameterName())),
                        new Dynamic());
 
     const compression = seq(str("COMPRESSION"), alt(str("ON"), str("OFF")));

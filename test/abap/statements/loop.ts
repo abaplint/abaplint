@@ -22,6 +22,7 @@ const tests = [
   "LOOP AT itab INTO DATA(wa) GROUP BY ( sy-tabix - 1 ) DIV n + 1.",
   "LOOP AT <tab> ASSIGNING <data> USING KEY (lv_name) WHERE (lv_where).",
   "LOOP AT lt_compiler INTO ls_compiler WHERE statement->source_info->name = lv_include.",
+  "LOOP AT list INTO DATA(item) GROUP BY item-type INTO DATA(type).",
 ];
 
 statementType(tests, "LOOP", Statements.Loop);

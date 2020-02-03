@@ -10,7 +10,7 @@ import {Token} from "./tokens/_token";
 import {Config} from "../config";
 import {Identifier, Pragma} from "./tokens";
 
-class Map {
+class StatementMap {
   private readonly map: {[index: string]: Statement[] };
 
   public constructor() {
@@ -63,7 +63,7 @@ class Macros {
 
 export class StatementParser {
   private static statements: StatementNode[];
-  private static map: Map;
+  private static map: StatementMap;
   private static macros: Macros;
   private static version: Version;
 
@@ -73,7 +73,7 @@ export class StatementParser {
     this.version = config.getVersion();
 
     if (!this.map) {
-      this.map = new Map();
+      this.map = new StatementMap();
     }
 
     this.process(tokens);
