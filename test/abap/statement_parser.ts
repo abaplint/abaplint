@@ -16,7 +16,7 @@ describe("statement parser", function() {
     iconfig.syntax.globalMacros = ["moo"];
     const config = new Config(JSON.stringify(iconfig));
 
-    const statements = StatementParser.run(getTokens(abap), config);
+    const statements = new StatementParser().run(getTokens(abap), config);
     expect(statements.length).to.equal(1);
     expect(statements[0].get()).to.be.instanceof(MacroCall);
   });

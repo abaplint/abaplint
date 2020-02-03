@@ -17,7 +17,7 @@ export function getTokens(abap: string) {
 
 export function getStatements(abap: string, version?: Version) {
   const config = Config.getDefault(version);
-  return StatementParser.run(getTokens(abap), config);
+  return new StatementParser().run(getTokens(abap), config);
 }
 
 export function findIssues(abap: string) {

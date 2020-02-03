@@ -206,13 +206,7 @@ export class Registry {
     pro.set(objects.length, ":percent - :elapseds - Lexing and parsing(" + this.conf.getVersion() + ") - :object");
     for (const obj of objects) {
       pro.tick({object: obj.getType() + " " + obj.getName()});
-      obj.parseFirstPass(this);
-    }
-
-    pro.set(objects.length, ":percent - :elapseds - Second pass - :object");
-    for (const obj of objects) {
-      pro.tick({object: obj.getType() + " " + obj.getName()});
-      this.issues = this.issues.concat(obj.parseSecondPass());
+      this.issues = this.issues.concat(obj.parse(this));
     }
 
     return this;

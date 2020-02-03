@@ -31,27 +31,18 @@ export abstract class ABAPObject extends AbstractObject {
     }
   }
 
-  public parseFirstPass(reg: Registry) {
+  public parse(reg: Registry): Issue[] {
     if (this.shouldParse() === false) {
-      return;
+      return this.old;
     }
     this.parsed = [];
 
     for (const file of this.files) {
       if (file.getFilename().endsWith(".abap")) {
         const tokens = Lexer.run(file);
-        const statements = StatementParser.run(tokens, reg.getConfig());
+        const statements = new StatementParser().run(tokens, reg.getConfig());
         this.parsed.push(new ABAPFile(file, tokens, statements));
       }
-    }
-
-  }
-
-// runs StructureParser
-// todo: this can actually be refactored into a single pass?
-  public parseSecondPass(): Issue[] {
-    if (this.shouldParse() === false) {
-      return this.old;
     }
 
     let ret: Issue[] = [];
