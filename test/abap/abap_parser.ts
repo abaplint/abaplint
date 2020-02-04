@@ -5,7 +5,7 @@ import {Config} from "../../src/config";
 import {IFile} from "../../src/files/_ifile";
 import {Unknown} from "../../src/abap/statements/_statement";
 
-describe.skip("abap_parser", () => {
+describe("abap_parser", () => {
   it("macro in class, no unknown expected", () => {
     const files: IFile[] = [];
 

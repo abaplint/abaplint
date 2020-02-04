@@ -8,7 +8,7 @@ import {ClassDefinition, ClassImplementation, InterfaceDefinition, FormDefinitio
 
 export class ABAPFile extends AbstractFile {
   private readonly tokens: Token[];
-  private statements: StatementNode[];
+  private readonly statements: StatementNode[];
   private structure: StructureNode | undefined;
   private readonly file: IFile;
 
@@ -51,10 +51,6 @@ export class ABAPFile extends AbstractFile {
 
   public getStatements(): StatementNode[] {
     return this.statements;
-  }
-
-  public setStatements(s: StatementNode[]): void {
-    this.statements = s;
   }
 
 // **************************

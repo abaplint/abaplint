@@ -64,10 +64,39 @@ class Macros {
   }
 }
 
+class WorkArea {
+  private readonly file: IFile;
+  public readonly tokens: Token[];
+  public statements: StatementNode[];
+
+  constructor(file: IFile, tokens: Token[]) {
+    this.file = file;
+    this.tokens = tokens;
+    this.statements = [];
+  }
+
+  public addUnknown(t: Token[], colon: Token | undefined) {
+    this.statements.push(new StatementNode(new Unknown(), colon).setChildren(this.tokensToNodes(t)));
+  }
+
+  public toFile(): ABAPFile {
+    return new ABAPFile(this.file, this.tokens, this.statements);
+  }
+
+  private tokensToNodes(tokens: Token[]): TokenNode[] {
+    const ret: TokenNode[] = [];
+
+    for (const t of tokens) {
+      ret.push(new TokenNode(t));
+    }
+
+    return ret;
+  }
+}
+
 export class StatementParser {
   private static map: StatementMap;
 
-  private statements: StatementNode[];
   private macros: Macros;
   private version: Version;
 
@@ -78,31 +107,27 @@ export class StatementParser {
   }
 
   public run(files: IFile[], config: Config): ABAPFile[] {
-    const output: ABAPFile[] = [];
-
-    for (const file of files) {
-      const tokens = Lexer.run(file);
-      const statements = this.runOld(tokens, config);
-      output.push(new ABAPFile(file, tokens, statements));
-    }
-
-    return output;
-  }
-
-  private runOld(tokens: Token[], config: Config): StatementNode[] {
-    this.statements = [];
     this.macros = new Macros(config);
     this.version = config.getVersion();
 
-    this.process(tokens);
-    this.categorize();
-    this.handleMacros();
-    this.lazyUnknown();
-    this.nativeSQL();
+    const wa = files.map(f => new WorkArea(f, Lexer.run(f)));
 
-    return this.statements;
+    for (const w of wa) {
+      this.process(w);
+      this.categorize(w);
+      this.findMacros(w);
+    }
+
+    for (const w of wa) {
+      this.handleMacros(w);
+      this.lazyUnknown(w);
+      this.nativeSQL(w);
+    }
+
+    return wa.map(w => w.toFile());
   }
 
+  // todo, refactor, remove method here and only have in WorkArea class
   private tokensToNodes(tokens: Token[]): TokenNode[] {
     const ret: TokenNode[] = [];
 
@@ -116,10 +141,10 @@ export class StatementParser {
 // tries to split Unknown statements by newlines, when adding/writing a new statement
 // in an editor, adding the statement terminator is typically the last thing to do
 // note: this will not work if the second statement is a macro call, guess this is okay
-  private lazyUnknown() {
+  private lazyUnknown(wa: WorkArea) {
     const result: StatementNode[] = [];
 
-    for (let statement of this.statements) {
+    for (let statement of wa.statements) {
       if (statement.get() instanceof Unknown) {
         for (const {first, second} of this.buildSplits(statement.getTokens())) {
           const s = this.categorizeStatement(new StatementNode(new Unknown()).setChildren(this.tokensToNodes(second)));
@@ -133,7 +158,7 @@ export class StatementParser {
       result.push(statement);
     }
 
-    this.statements = result;
+    wa.statements = result;
   }
 
   private buildSplits(tokens: Token[]): {first: Token[], second: Token[]}[] {
@@ -152,11 +177,11 @@ export class StatementParser {
     return res;
   }
 
-  private handleMacros() {
+  private findMacros(wa: WorkArea) {
     const result: StatementNode[] = [];
     let define = false;
 
-    for (let statement of this.statements) {
+    for (let statement of wa.statements) {
       if (statement.get() instanceof Statements.Define) {
         define = true;
         // todo, will this break if first token is a pragma?
@@ -165,7 +190,19 @@ export class StatementParser {
         define = false;
       } else if (!(statement.get() instanceof Comment) && define === true) {
         statement = new StatementNode(new MacroContent()).setChildren(this.tokensToNodes(statement.getTokens()));
-      } else if (statement.get() instanceof Unknown) {
+      }
+
+      result.push(statement);
+    }
+
+    wa.statements = result;
+  }
+
+  private handleMacros(wa: WorkArea) {
+    const result: StatementNode[] = [];
+
+    for (let statement of wa.statements) {
+      if (statement.get() instanceof Unknown) {
         let macroName: string | undefined = undefined;
         for (const i of statement.getTokens()) {
           if (i instanceof Identifier) {
@@ -185,14 +222,14 @@ export class StatementParser {
       result.push(statement);
     }
 
-    this.statements = result;
+    wa.statements = result;
   }
 
-  private nativeSQL() {
+  private nativeSQL(wa: WorkArea) {
     const result: StatementNode[] = [];
     let sql = false;
 
-    for (let statement of this.statements) {
+    for (let statement of wa.statements) {
       if (statement.get() instanceof Statements.ExecSQL
           || (statement.get() instanceof Statements.Method && statement.findFirstExpression(Expressions.Language))) {
         sql = true;
@@ -207,7 +244,7 @@ export class StatementParser {
       result.push(statement);
     }
 
-    this.statements = result;
+    wa.statements = result;
   }
 
   private removeLast(tokens: Token[]): Token[] {
@@ -217,13 +254,13 @@ export class StatementParser {
   }
 
 // for each statement, run statement matchers to figure out which kind of statement it is
-  private categorize() {
+  private categorize(wa: WorkArea) {
     const result: StatementNode[] = [];
 
-    for (const statement of this.statements) {
+    for (const statement of wa.statements) {
       result.push(this.categorizeStatement(statement));
     }
-    this.statements = result;
+    wa.statements = result;
   }
 
   private categorizeStatement(input: StatementNode) {
@@ -275,31 +312,27 @@ export class StatementParser {
     return statement;
   }
 
-  private addUnknown(t: Token[], colon: Token | undefined) {
-    this.statements.push(new StatementNode(new Unknown(), colon).setChildren(this.tokensToNodes(t)));
-  }
-
 // takes care of splitting tokens into statements, also handles chained statements
 // statements are split by "," or "."
-  private process(tokens: Token[]) {
+  private process(wa: WorkArea) {
     let add: Token[] = [];
     let pre: Token[] = [];
     let colon: Token | undefined;
 
-    for (const token of tokens) {
+    for (const token of wa.tokens) {
       if (token instanceof Tokens.Comment) {
-        this.statements.push(new StatementNode(new Comment()).setChildren(this.tokensToNodes([token])));
+        wa.statements.push(new StatementNode(new Comment()).setChildren(this.tokensToNodes([token])));
         continue;
       }
 
       add.push(token);
       if (token.getStr() === ".") {
-        this.addUnknown(pre.concat(add), colon);
+        wa.addUnknown(pre.concat(add), colon);
         add = [];
         pre = [];
         colon = undefined;
       } else if (token.getStr() === "," && pre.length > 0) {
-        this.addUnknown(pre.concat(add), colon);
+        wa.addUnknown(pre.concat(add), colon);
         add = [];
       } else if (token.getStr() === ":") {
         colon = token;
@@ -310,7 +343,7 @@ export class StatementParser {
     }
 
     if (add.length > 0) {
-      this.addUnknown(pre.concat(add), colon);
+      wa.addUnknown(pre.concat(add), colon);
     }
   }
 }
