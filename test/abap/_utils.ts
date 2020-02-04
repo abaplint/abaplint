@@ -4,20 +4,26 @@ import {expect} from "chai";
 import {Version, getPreviousVersion} from "../../src/version";
 import {Unknown} from "../../src/abap/statements/_statement";
 import {Structure} from "../../src/abap/structures/_structure";
-import {Lexer} from "../../src/abap/lexer";
 import {StatementParser} from "../../src/abap/statement_parser";
 import {Registry} from "../../src/registry";
-import {StructureNode} from "../../src/abap/nodes/";
+import {StructureNode, StatementNode} from "../../src/abap/nodes/";
+import {IFile} from "../../src/files/_ifile";
+import {Token} from "../../src/abap/tokens/_token";
+import {Lexer} from "../../src/abap/lexer";
 
 // utils for testing
 
-export function getTokens(abap: string) {
+export function getTokens(abap: string): Token[] {
   return Lexer.run(new MemoryFile("cl_foo.clas.abap", abap));
 }
 
-export function getStatements(abap: string, version?: Version) {
+export function getFile(abap: string): IFile[] {
+  return [new MemoryFile("cl_foo.clas.abap", abap)];
+}
+
+export function getStatements(abap: string, version?: Version): StatementNode[] {
   const config = Config.getDefault(version);
-  return new StatementParser().run(getTokens(abap), config);
+  return new StatementParser().run(getFile(abap), config)[0].getStatements();
 }
 
 export function findIssues(abap: string) {

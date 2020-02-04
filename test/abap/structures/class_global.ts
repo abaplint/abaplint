@@ -19,7 +19,7 @@ const cases = [
   "CLASS zcl_foobar IMPLEMENTATION.\n" +
   "  METHOD method1.\n" +
   "  ENDMETHOD.\n" +
-  "ENDCLASS." },
+  "ENDCLASS."},
 ];
 
 structureType(cases, new ClassGlobal());

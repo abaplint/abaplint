@@ -9,6 +9,9 @@ import {Artifacts} from "./artifacts";
 import {Token} from "./tokens/_token";
 import {Config} from "../config";
 import {Identifier, Pragma} from "./tokens";
+import {IFile} from "../files/_ifile";
+import {ABAPFile} from "../files";
+import {Lexer} from "./lexer";
 
 class StatementMap {
   private readonly map: {[index: string]: Statement[] };
@@ -74,7 +77,19 @@ export class StatementParser {
     }
   }
 
-  public run(tokens: Token[], config: Config): StatementNode[] {
+  public run(files: IFile[], config: Config): ABAPFile[] {
+    const output: ABAPFile[] = [];
+
+    for (const file of files) {
+      const tokens = Lexer.run(file);
+      const statements = this.runOld(tokens, config);
+      output.push(new ABAPFile(file, tokens, statements));
+    }
+
+    return output;
+  }
+
+  private runOld(tokens: Token[], config: Config): StatementNode[] {
     this.statements = [];
     this.macros = new Macros(config);
     this.version = config.getVersion();

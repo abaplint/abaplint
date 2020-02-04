@@ -1,5 +1,5 @@
 import {expect} from "chai";
-import {getTokens, getStatements} from "./_utils";
+import {getFile, getStatements} from "./_utils";
 import {MacroCall, Unknown} from "../../src/abap/statements/_statement";
 import {StatementParser} from "../../src/abap/statement_parser";
 import {Config} from "../../src/config";
@@ -16,9 +16,9 @@ describe("statement parser", function() {
     iconfig.syntax.globalMacros = ["moo"];
     const config = new Config(JSON.stringify(iconfig));
 
-    const statements = new StatementParser().run(getTokens(abap), config);
+    const statements = new StatementParser().run(getFile(abap), config);
     expect(statements.length).to.equal(1);
-    expect(statements[0].get()).to.be.instanceof(MacroCall);
+    expect(statements[0].getStatements()[0].get()).to.be.instanceof(MacroCall);
   });
 
   it("Unknown statements should be lazy, 2 statements", function () {

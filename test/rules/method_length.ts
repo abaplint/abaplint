@@ -84,43 +84,43 @@ const abapClassValidLength = `
   ENDCLASS.`;
 
 const testClassTests = [
-  { abap: abapTestClassOverLength,
+  {abap: abapTestClassOverLength,
     description: "testclass, ignore, over length",
     conf: confIgnoreTestClasses,
     filename: `zcl_foo.clas.testclasses.abap`,
     issueLength: 0},
 
-  { abap: abapTestClassOverLength,
+  {abap: abapTestClassOverLength,
     description: "testclass, check, over length",
     conf: confCheckTestClasses,
     filename: `zcl_foo.clas.testclasses.abap`,
     issueLength: 1},
 
-  { abap: abapTestClassValidLength,
+  {abap: abapTestClassValidLength,
     description: "testclass, check, valid length",
     conf: confCheckTestClasses,
     filename: `zcl_foo.clas.testclasses.abap`,
     issueLength: 0},
 
-  { abap: abapTestClassValidLength,
+  {abap: abapTestClassValidLength,
     description: "testclass, ignore, valid length",
     conf: confIgnoreTestClasses,
     filename: `zcl_foo.clas.testclasses.abap`,
     issueLength: 0},
 
-  { abap: abapClassOverLength,
+  {abap: abapClassOverLength,
     description: "class, ignore, over length",
     conf: confIgnoreTestClasses,
     filename: `zcl_foo.clas.abap`,
     issueLength: 1},
 
-  { abap: abapClassOverLength,
+  {abap: abapClassOverLength,
     description: "class, check, over length",
     conf: confCheckTestClasses,
     filename: `zcl_foo.clas.abap`,
     issueLength: 1},
 
-  { abap: abapClassValidLength,
+  {abap: abapClassValidLength,
     description: "class, check, valid length",
     conf: confCheckTestClasses,
     filename: `zcl_foo.clas.abap`,
