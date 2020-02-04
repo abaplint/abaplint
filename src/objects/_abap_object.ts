@@ -1,12 +1,10 @@
 import {AbstractObject} from "./_abstract_object";
 import {ABAPFile} from "../files";
-import {Lexer} from "../abap/lexer";
-import {StatementParser} from "../abap/statement_parser";
-import {StructureParser} from "../abap/structure_parser";
 import {Registry} from "../registry";
 import {Issue} from "../issue";
 import {ClassImplementation} from "../abap/types";
 import {xmlToArray} from "../xml_utils";
+import {ABAPParser} from "../abap/abap_parser";
 
 export interface ITextElement {
   key: string;
@@ -35,27 +33,15 @@ export abstract class ABAPObject extends AbstractObject {
     if (this.shouldParse() === false) {
       return this.old;
     }
-    this.parsed = [];
 
-    for (const file of this.files) {
-      if (file.getFilename().endsWith(".abap")) {
-        const tokens = Lexer.run(file);
-        const statements = new StatementParser().run(tokens, reg.getConfig());
-        this.parsed.push(new ABAPFile(file, tokens, statements));
-      }
-    }
+    const abapFiles = this.files.filter(f => f.getFilename().endsWith(".abap"));
+    const results = new ABAPParser().parse(abapFiles, reg.getConfig());
 
-    let ret: Issue[] = [];
-    for (const f of this.parsed) {
-      const result = StructureParser.run(f);
-      f.setStructure(result.node);
-      ret = ret.concat(result.issues);
-    }
-
+    this.parsed = results.output;
+    this.old = results.issues;
     this.dirty = false;
-    this.old = ret;
 
-    return ret;
+    return results.issues;
   }
 
   public getABAPFiles(): ABAPFile[] {

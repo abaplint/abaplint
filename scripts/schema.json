@@ -1553,7 +1553,7 @@
                   "type": "boolean"
                 }
               ],
-              "description": "Checks that exceptions 'system_failure' and 'communication_failure' are handled in RFC calls"
+              "description": "Checks that exceptions 'system_failure' and 'communication_failure' are handled in RFC calls\r\nhttps://help.sap.com/doc/abapdocu_750_index_htm/7.50/en-US/abenrfc_exception.htm"
             },
             "selection_screen_naming": {
               "anyOf": [
@@ -2790,7 +2790,7 @@
     },
     "RFCErrorHandlingConf": {
       "additionalProperties": false,
-      "description": "Checks that exceptions 'system_failure' and 'communication_failure' are handled in RFC calls",
+      "description": "Checks that exceptions 'system_failure' and 'communication_failure' are handled in RFC calls\r\nhttps://help.sap.com/doc/abapdocu_750_index_htm/7.50/en-US/abenrfc_exception.htm",
       "properties": {
         "exclude": {
           "description": "List of file regex patterns to exclude",
