@@ -5,7 +5,9 @@ import {BasicRuleConfig} from "./_basic_rule_config";
 import * as Statements from "../abap/statements/";
 import * as Expressions from "../abap/expressions/";
 
-/** Checks that exceptions 'system_failure' and 'communication_failure' are handled in RFC calls */
+/** Checks that exceptions 'system_failure' and 'communication_failure' are handled in RFC calls
+ * https://help.sap.com/doc/abapdocu_750_index_htm/7.50/en-US/abenrfc_exception.htm
+*/
 export class RFCErrorHandlingConf extends BasicRuleConfig {
 }
 
