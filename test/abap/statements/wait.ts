@@ -8,6 +8,7 @@ const tests = [
   "WAIT UNTIL foo >= bar UP TO 1 SECONDS.",
   "WAIT FOR MESSAGING CHANNELS UNTIL foobar = abap_true UP TO 10 SECONDS.",
   "WAIT FOR ASYNCHRONOUS TASKS UNTIL mv_tasks_running < mv_max_tasks.",
+  "wait for asynchronous tasks messaging channels push channels until foo = bar up to 2 seconds.",
 ];
 
 statementType(tests, "WAIT", Statements.Wait);

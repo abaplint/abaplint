@@ -94,6 +94,7 @@ const tests = [
   "IF alv? = ''.",
   "IF gi_tab-field* = 'X'.",
   "if not line_exists( outputs[ table_line->alv = io_alv ] ).",
+  "if lv_value <> - 1.",
 
   // todo
 //  "IF ?alv? = ''.",

@@ -20,10 +20,6 @@ export class ParserError extends ABAPRule {
     return "parser_error";
   }
 
-  private getDescription(abapVersion: string): string {
-    return "Statement does not exist in ABAP" + abapVersion + "(or a parser error)";
-  }
-
   public getConfig() {
     return this.conf;
   }
@@ -48,7 +44,8 @@ export class ParserError extends ABAPRule {
           const issue = Issue.atPosition(file, start, message, this.getKey());
           issues.push(issue);
         } else {
-          const message = this.getDescription(reg.getConfig().getVersion());
+          const tok = statement.getFirstToken();
+          const message = "Statement does not exist in ABAP" + reg.getConfig().getVersion() + "(or a parser error), \"" + tok.getStr() + "\"";
           const issue = Issue.atStatement(file, statement, message, this.getKey());
           issues.push(issue);
         }

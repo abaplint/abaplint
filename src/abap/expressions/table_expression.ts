@@ -7,8 +7,9 @@ export class TableExpression extends Expression {
   public getRunnable(): IStatementRunnable {
     const fields = plus(seq(new ComponentChainSimple(), str("="), new Source()));
     const key = seq(str("KEY"), new SimpleName());
+    const index = seq(str("INDEX"), new Source());
     const ret = seq(tok(BracketLeftW),
-                    alt(new Source(), seq(opt(key), opt(str("COMPONENTS")), fields)),
+                    alt(new Source(), seq(opt(key), opt(str("COMPONENTS")), alt(fields, index))),
                     alt(tok(WBracketRight),
                         tok(WBracketRightW)));
     return ver(Version.v740sp02, ret);

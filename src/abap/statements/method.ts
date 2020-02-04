@@ -1,5 +1,5 @@
 import {Statement} from "./_statement";
-import {str, seq, opt, alt, plus, regex as reg, IStatementRunnable} from "../combi";
+import {str, seq, opt, optPrio, alt, plus, regex as reg, IStatementRunnable} from "../combi";
 import {MethodName, Language} from "../expressions";
 
 export class Method extends Statement {
@@ -8,8 +8,8 @@ export class Method extends Statement {
     const name = reg(/[\w~]+/);
 
     const kernel = seq(str("KERNEL MODULE"),
-                       name,
-                       opt(alt(str("FAIL"), str("IGNORE"))));
+                       plus(name),
+                       optPrio(alt(str("FAIL"), str("IGNORE"))));
 
     const using = seq(str("USING"), plus(name));
 
