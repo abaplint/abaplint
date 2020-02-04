@@ -262,6 +262,9 @@ const tests = [
   "call function gc_fm in background unit lo_unit\n" +
   "  exporting\n" +
   "    foo = bar.",
+
+  "call function 'ZBAR' destination 'NONE' keeping logical unit of work.",
+
 /* todo
   "call function 'ZNAME'\n" +
   "  destination 'NONE'\n" +

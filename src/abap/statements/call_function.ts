@@ -16,8 +16,9 @@ export class CallFunction extends Statement {
     const calling = seq(str("CALLING"), method, str("ON END OF TASK"));
     const performing = seq(str("PERFORMING"), new FormName(), str("ON END OF TASK"));
     const separate = str("AS SEPARATE UNIT");
+    const keeping = str("KEEPING LOGICAL UNIT OF WORK");
 
-    const options = per(starting, update, background, new Destination(), calling, performing, separate);
+    const options = per(starting, update, background, new Destination(), calling, performing, separate, keeping);
 
     const dynamic = seq(str("PARAMETER-TABLE"), new Source(),
                         opt(seq(str("EXCEPTION-TABLE"), new Source())));

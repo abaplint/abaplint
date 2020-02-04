@@ -28,6 +28,16 @@ const tests = [
     line lv_line
     message-id ls_message
     shortdump-id lv_shortdump.`,
+
+  `generate report lv_report
+    message    lv_MESSAGE
+    message-id lv_MSGID
+    line       lv_LINE
+    word       lv_WORD
+    include    lv_INCLUDE
+    shortdump-id lv_dump
+    directory entry lv_directory.`,
+
 ];
 
 statementType(tests, "GENERATE REPORT", Statements.GenerateReport);

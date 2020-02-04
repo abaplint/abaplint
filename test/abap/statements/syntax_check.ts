@@ -96,6 +96,7 @@ const tests = [
   "  SHORTDUMP-ID   l_dump\n" +
   "  ID 'MSG' TABLE l_msg.",
 
+  "syntax-check for program PROGRAM replacing moo.",
 ];
 
 statementType(tests, "SYNTAX-CHECK", Statements.SyntaxCheck);

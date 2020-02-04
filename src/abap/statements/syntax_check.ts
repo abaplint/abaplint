@@ -1,5 +1,5 @@
 import {Statement} from "./_statement";
-import {verNot, str, seq, alt, per, opt, plus, IStatementRunnable} from "../combi";
+import {verNot, str, seq, alt, per, plus, IStatementRunnable, optPrio} from "../combi";
 import {Target, Source} from "../expressions";
 import {Version} from "../../version";
 
@@ -20,7 +20,7 @@ export class SyntaxCheck extends Statement {
     const directory = seq(str("DIRECTORY ENTRY"), new Source());
     const dump = seq(str("SHORTDUMP-ID"), new Source());
 
-    const syntax = seq(opt(str("PROGRAM")),
+    const syntax = seq(optPrio(str("PROGRAM")),
                        new Source(),
                        per(message,
                            line,

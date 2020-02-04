@@ -85,6 +85,7 @@ describe("count_tokens", () => {
     {abap: "|foo{\nmoo }|",                       tokens: 3},
     {abap: "|foo{ bar",                           tokens: 2},
     {abap: "|foo| bar",                           tokens: 2},
+    {abap: "DATA ##NEEDED: foo.",                 tokens: 5},
     {abap: "|SELECT * INTO TABLE @DATA(lt_data) FROM e07t AS te|", tokens: 1},
     {abap: "|rr INNER JOIN e071 ON e070~trkorr = e071~trkorr.|",   tokens: 1},
   ];

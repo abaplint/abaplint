@@ -3,7 +3,7 @@ import {getFile, getStatements} from "./_utils";
 import {MacroCall, Unknown} from "../../src/abap/statements/_statement";
 import {StatementParser} from "../../src/abap/statement_parser";
 import {Config} from "../../src/config";
-import {Write} from "../../src/abap/statements";
+import {Write, Data} from "../../src/abap/statements";
 
 
 describe("statement parser", function() {
@@ -69,6 +69,17 @@ describe("statement parser", function() {
     expect(statements.length).to.equal(1);
     expect(statements[0].get()).to.be.instanceof(Write);
     expect(statements[0].getPragmas().length).to.equal(1);
+  });
+
+  it("Chained, pragma malplaced", function () {
+    const abap = "DATA ##NEEDED: foo, bar.";
+
+    const statements = getStatements(abap);
+    expect(statements.length).to.equal(2);
+    expect(statements[0].get()).to.be.instanceof(Data);
+    expect(statements[0].getPragmas().length).to.equal(1);
+    expect(statements[1].get()).to.be.instanceof(Data);
+    expect(statements[1].getPragmas().length).to.equal(1);
   });
 
 });

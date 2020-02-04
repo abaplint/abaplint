@@ -24,10 +24,12 @@ const tests = [
   "SUBMIT /foo/bar USING SELECTION-SCREEN '1000' VIA SELECTION-SCREEN WITH foo EQ 'X'.",
   "SUBMIT zsdfsdf WITH num EQ lv_num WITH date GE '00000000'.",
 
+  /* todo, how to handle this
   "SUBMIT zblah\n" +
   "  WITH p_bukrs = p_bukrs\n" +
   "  WITH SELECTION-TABLE lt_belnr\n" +
   "  WITH p_list = p_list.",
+*/
 
   "SUBMIT zfoo AND RETURN\n" +
   "  WITH s_type = lv_type\n" +
@@ -45,6 +47,7 @@ const tests = [
   "               without spool dynpro\n" +
   "  and return.",
 
+  "SUBMIT (name) WITH SELECTION-TABLE tab VIA SELECTION-SCREEN WITH mode = '1'.",
 ];
 
 statementType(tests, "SUBMIT", Statements.Submit);

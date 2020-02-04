@@ -10,8 +10,8 @@ export class Submit extends Statement {
     const eq = alt(str("="), str("EQ"), str("IN"), str("NE"), str("CP"), str("GE"), str("LE"), str("INCL"));
     const compare = seq(eq, new Source());
     const between = seq(str("BETWEEN"), new Source(), str("AND"), new Source());
-    const selectionTable = seq(str("SELECTION-TABLE"), new Source());
-    const awith = seq(str("WITH"), alt(seq(new Field(), alt(compare, between)), selectionTable));
+    const selectionTable = seq(str("WITH SELECTION-TABLE"), new Source());
+    const awith = seq(str("WITH"), new Field(), alt(compare, between));
     const prog = alt(new NamespaceSimpleName(), new Dynamic());
     const job = seq(str("VIA JOB"), new Source(), str("NUMBER"), new Source());
     const exporting = str("EXPORTING LIST TO MEMORY");
@@ -33,6 +33,7 @@ export class Submit extends Statement {
     const dest = seq(str("DESTINATION"), new Source());
 
     const perm = per(plus(awith),
+                     selectionTable,
                      spool,
                      lineSize,
                      lineCount,

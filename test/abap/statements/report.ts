@@ -16,6 +16,7 @@ const tests = [
   "REPORT zbar USING DATABASE ldb MESSAGE-ID aa.",
   "REPORT zxxsdfsd//sdfs.",
   "REPORT zxxs/dfsd//sdf/s.",
+  "REPORT foo-bar.",
 ];
 
 statementType(tests, "REPORT", Statements.Report);

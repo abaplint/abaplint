@@ -7,6 +7,7 @@ const tests = [
   "DEFINE bar%foo.",
   "define macro>.",
   "DEFINE ?macro?.",
+  "DEFINE foo$bar.",
 ];
 
 statementType(tests, "DEFINE", Statements.Define);

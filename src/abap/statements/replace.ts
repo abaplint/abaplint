@@ -24,6 +24,7 @@ export class Replace extends Statement {
     const repl = seq(str("REPLACEMENT COUNT"), new Target());
     const replo = seq(str("REPLACEMENT OFFSET"), new Target());
     const repll = seq(str("REPLACEMENT LENGTH"), new Target());
+    const repli = seq(str("REPLACEMENT LINE"), new Target());
 
     const occ = alt(str("ALL OCCURRENCES"),
                     str("ALL OCCURENCES"),
@@ -38,7 +39,7 @@ export class Replace extends Statement {
     return seq(str("REPLACE"),
                per(section, seq(opt(occ), source)),
                opt(seq(str("IN"), opt(str("TABLE")), new Target())),
-               opt(per(wit, into, cas, mode, repl, replo, repll, length)));
+               opt(per(wit, into, cas, mode, repl, replo, repll, repli, length)));
   }
 
 }
