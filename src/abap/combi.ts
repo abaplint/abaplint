@@ -459,6 +459,58 @@ class Star implements IStatementRunnable {
   }
 }
 
+class StarPrioroity implements IStatementRunnable {
+
+  private readonly sta: IStatementRunnable;
+
+  constructor(sta: IStatementRunnable) {
+    this.sta = sta;
+  }
+
+  public listKeywords(): string[] {
+    return this.sta.listKeywords();
+  }
+
+  public getUsing(): string[] {
+    return this.sta.getUsing();
+  }
+
+  public run(r: Result[]): Result[] {
+    let result = r;
+
+    let res = r;
+    let input: Result[] = [];
+    let prev: Result[] | undefined;
+    for (;;) {
+      input = res;
+      res = this.sta.run(input);
+
+      if (res.length === 0) {
+        if (prev !== undefined) {
+          result = result.concat(prev);
+        }
+        break;
+      }
+
+      prev = res;
+    }
+//    console.dir(result);
+    return result;
+  }
+
+  public railroad() {
+    return "Railroad.ZeroOrMore(" + this.sta.railroad() + ")";
+  }
+
+  public toStr() {
+    return "star(" + this.sta.toStr() + ")";
+  }
+
+  public first() {
+    return "";
+  }
+}
+
 class Plus implements IStatementRunnable {
 
   private readonly plu: IStatementRunnable;
@@ -477,6 +529,39 @@ class Plus implements IStatementRunnable {
 
   public run(r: Result[]): Result[] {
     return new Sequence([this.plu, new Star(this.plu)]).run(r);
+  }
+
+  public railroad() {
+    return "Railroad.OneOrMore(" + this.plu.railroad() + ")";
+  }
+
+  public toStr() {
+    return "plus(" + this.plu.toStr() + ")";
+  }
+
+  public first() {
+    return this.plu.first();
+  }
+}
+
+class PlusPriority implements IStatementRunnable {
+
+  private readonly plu: IStatementRunnable;
+
+  constructor(plu: IStatementRunnable) {
+    this.plu = plu;
+  }
+
+  public listKeywords(): string[] {
+    return this.plu.listKeywords();
+  }
+
+  public getUsing(): string[] {
+    return this.plu.getUsing();
+  }
+
+  public run(r: Result[]): Result[] {
+    return new Sequence([this.plu, new StarPrioroity(this.plu)]).run(r);
   }
 
   public railroad() {
@@ -913,11 +998,17 @@ export function tok(t: new (p: Position, s: string) => any): IStatementRunnable 
 export function star(first: IStatementRunnable): IStatementRunnable {
   return new Star(first);
 }
+export function starPrio(first: IStatementRunnable): IStatementRunnable {
+  return new StarPrioroity(first);
+}
 export function regex(r: RegExp): IStatementRunnable {
   return new Regex(r);
 }
 export function plus(first: IStatementRunnable): IStatementRunnable {
   return new Plus(first);
+}
+export function plusPrio(first: IStatementRunnable): IStatementRunnable {
+  return new PlusPriority(first);
 }
 export function ver(version: Version, first: IStatementRunnable): IStatementRunnable {
   return new Vers(version, first);

@@ -15,6 +15,7 @@ const star = Combi.star;
 const reg  = Combi.regex;
 const tok  = Combi.tok;
 const optPrio = Combi.optPrio;
+const starPrio = Combi.starPrio;
 
 function tokenize(s: string): Token[] {
   return Lexer.run(new MemoryFile("foo.abap", s));
@@ -54,6 +55,12 @@ const tests = [
   {n: "sta3", c: star(str("bar")),                  t: tokenize("bar bar"), e: true},
   {n: "sta4", c: star(str("foo")),                  t: tokenize("bar"),     e: false},
   {n: "sta5", c: star(str("foo")),                  t: tokenize("bar bar"), e: false},
+  {n: "stp1", c: starPrio(str("bar")),                  t: [],                  e: true},
+  {n: "stp2", c: starPrio(str("bar")),                  t: tokenize("bar"),     e: true},
+  {n: "stp3", c: starPrio(str("bar")),                  t: tokenize("bar bar"), e: true},
+  {n: "stp4", c: starPrio(str("foo")),                  t: tokenize("bar"),     e: false},
+  {n: "stp5", c: starPrio(str("foo")),                  t: tokenize("bar bar"), e: false},
+  {n: "stp6", c: seq(starPrio(str("bar")), str("foo")), t: tokenize("bar bar foo"), e: true},
   {n: "sta6", c: seq(star(str("bar")), str("bar")), t: tokenize("bar bar"), e: true},
   {n: "sta7", c: seq(star(str("bar")), str("foo")), t: tokenize("bar bar"), e: false},
   {n: "sta8", c: seq(star(str("foo")), str("bar")), t: tokenize("bar bar"), e: false},
