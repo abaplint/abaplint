@@ -82,18 +82,14 @@ export class Source extends Expression {
 
     const foo = seq(tok(WParenLeftW), optPrio(altPrio(plusPrio(fieldList), seq(optPrio(str("LINES OF")), new Source()))), tok(WParenRightW));
 
-    const tab = seq(optPrio(new For()),
-                    starPrio(seq(starPrio(fieldList), foo)));
-
-    const strucOrTab = seq(optPrio(new Let()), optPrio(base),
-                           alt(plusPrio(fieldList), tab));
+    const strucOrTab = seq(optPrio(new Let()), optPrio(base), optPrio(new For()), starPrio(altPrio(fieldList, foo)));
 
     const tabdef = ver(Version.v740sp08, altPrio(str("OPTIONAL"), seq(str("DEFAULT"), new Source())));
 
     const value = ver(Version.v740sp02, seq(str("VALUE"),
                                             new TypeNameOrInfer(),
                                             tok(ParenLeftW),
-                                            optPrio(alt(strucOrTab, seq(new Source(), optPrio(tabdef)))),
+                                            alt(strucOrTab, seq(new Source(), optPrio(tabdef))),
                                             rparen));
 
     const when = seq(str("WHEN"), new Cond(), str("THEN"), alt(new Source(), new Throw()));
