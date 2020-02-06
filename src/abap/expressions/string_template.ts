@@ -1,4 +1,4 @@
-import {tok, ver, seq, opt, star, alt, Expression, IStatementRunnable} from "../combi";
+import {tok, ver, seq, opt, star, altPrio, Expression, IStatementRunnable, optPrio} from "../combi";
 import * as Tokens from "../tokens/";
 import {Version} from "../../version";
 import {Source} from "./source";
@@ -9,10 +9,10 @@ export class StringTemplate extends Expression {
 
     const nest = seq(tok(Tokens.StringTemplateBegin),
                      new Source(),
-                     opt(new StringTemplateFormatting()),
+                     optPrio(new StringTemplateFormatting()),
                      star(seq(tok(Tokens.StringTemplateMiddle), new Source(), opt(new StringTemplateFormatting()))),
                      tok(Tokens.StringTemplateEnd));
 
-    return ver(Version.v702, alt(nest, tok(Tokens.StringTemplate)));
+    return ver(Version.v702, altPrio(nest, tok(Tokens.StringTemplate)));
   }
 }

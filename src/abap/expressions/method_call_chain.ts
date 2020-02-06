@@ -1,4 +1,4 @@
-import {seq, opt, tok, star, alt, Expression, IStatementRunnable} from "../combi";
+import {seq, tok, star, alt, Expression, IStatementRunnable, optPrio, altPrio} from "../combi";
 import {InstanceArrow, StaticArrow} from "../tokens/";
 import {NewObject, ArrowOrDash, ComponentName, FieldChain, MethodCall, Cast} from "./";
 import {ClassName} from "./class_name";
@@ -11,7 +11,7 @@ export class MethodCallChain extends Expression {
     const localVariable = seq(new FieldChain(), tok(InstanceArrow));
     const staticClass = seq(new ClassName(), tok(StaticArrow));
 
-    const ret = seq(alt(seq(opt(alt(localVariable, staticClass)), new MethodCall()),
+    const ret = seq(alt(seq(optPrio(altPrio(localVariable, staticClass)), new MethodCall()),
                         new NewObject(),
                         new Cast()),
                     after);

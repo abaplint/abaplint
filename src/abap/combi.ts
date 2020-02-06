@@ -337,7 +337,7 @@ class OptionalPriority implements IStatementRunnable {
     for (const input of r) {
       const res = this.optional.run([input]);
       if (res.length > 1) {
-        result.push(input);
+//        result.push(input);
         result = result.concat(res);
 //      } else if (res.length === 1) {
 //        result = result.concat(res);
@@ -479,15 +479,15 @@ class StarPrioroity implements IStatementRunnable {
     let result = r;
 
     let res = r;
-    let input: Result[] = [];
+//    let input: Result[] = [];
     let prev: Result[] | undefined;
     for (;;) {
-      input = res;
-      res = this.sta.run(input);
+//      input = res;
+      res = this.sta.run(res);
 
       if (res.length === 0) {
         if (prev !== undefined) {
-          result = result.concat(prev);
+          result = prev;
         }
         break;
       }
@@ -885,9 +885,8 @@ class AlternativePriority implements IStatementRunnable {
 //      console.log(seq.toStr());
       const temp = sequ.run(r);
 
-      result = result.concat(temp);
-
       if (temp.length > 0) {
+        result = result.concat(temp);
         break;
       }
     }

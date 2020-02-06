@@ -21,7 +21,7 @@ export class Source extends Expression {
                       new Source(),
                       rparen);
 
-    const after = seq(alt(str("&"), str("&&"), new ArithOperator()), new Source());
+    const after = seq(altPrio(str("&"), str("&&"), new ArithOperator()), new Source());
 
     const bool = seq(altPrio(ver(Version.v702, regex(/^BOOLC$/i)),
                              ver(Version.v740sp08, regex(/^XSDBOOL$/i))),
