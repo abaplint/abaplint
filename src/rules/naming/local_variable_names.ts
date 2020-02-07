@@ -43,6 +43,9 @@ export class LocalVariableNames extends ABAPRule {
 
   public runParsed(file: ABAPFile): Issue[] {
     let ret: Issue[] = [];
+    if (this.conf.patternKind === undefined) {
+      this.conf.patternKind = "required";
+    }
     const stru = file.getStructure();
 
     if (stru === undefined) {

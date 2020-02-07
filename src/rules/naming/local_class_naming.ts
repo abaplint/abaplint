@@ -38,6 +38,9 @@ export class LocalClassNaming extends ABAPRule {
 
   public runParsed(file: ABAPFile): Issue[] {
     const issues: Issue[] = [];
+    if (this.conf.patternKind === undefined) {
+      this.conf.patternKind = "required";
+    }
 
     for (const classDef of file.getClassDefinitions()) {
       if (classDef.isGlobal()) {

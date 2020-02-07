@@ -39,3 +39,7 @@ config.test = "^ltcl_.*$";
 config.exception = "^lcx_.*$";
 config.patternKind = "forbidden";
 testRule(forbiddenPatternTests, LocalClassNaming, config);
+
+const undefinedPatternKindconfig = new LocalClassNamingConf();
+undefinedPatternKindconfig.patternKind = undefined;
+testRule(requiredPatternTests, LocalClassNaming, undefinedPatternKindconfig);

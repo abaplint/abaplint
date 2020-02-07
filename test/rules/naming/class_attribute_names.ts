@@ -40,6 +40,10 @@ CLASS zcl_foobar IMPLEMENTATION. ENDCLASS.`;
 
     config.patternKind = "forbidden";
     expect(findIssues(abap, config).length).to.equal(0);
+
+    // defaults to "required"
+    config.patternKind = undefined;
+    expect(findIssues(abap, config).length).to.equal(1);
   });
 
   it("no issue", function () {
@@ -57,6 +61,10 @@ CLASS zcl_foobar IMPLEMENTATION. ENDCLASS.`;
 
     config.patternKind = "forbidden";
     expect(findIssues(abap, config).length).to.equal(1);
+
+    // defaults to "required"
+    config.patternKind = undefined;
+    expect(findIssues(abap, config).length).to.equal(0);
   });
 
   it("issue", function () {
@@ -74,6 +82,9 @@ CLASS zcl_foobar IMPLEMENTATION. ENDCLASS.`;
 
     config.patternKind = "forbidden";
     expect(findIssues(abap, config).length).to.equal(0);
+
+    config.patternKind = undefined;
+    expect(findIssues(abap, config).length).to.equal(1);
   });
 
   it("end position", function () {
@@ -94,6 +105,11 @@ CLASS zcl_foobar IMPLEMENTATION. ENDCLASS.`;
 
     config.patternKind = "forbidden";
     expect(findIssues(abap, config).length).to.equal(0);
+
+    config.patternKind = undefined;
+    const issuesFromUndefinedPattern = findIssues(abap, config);
+    expect(issuesFromUndefinedPattern.length).to.equal(1);
+    expect(issuesFromUndefinedPattern[0].getEnd().getCol()).to.equal(33);
   });
 
 });
