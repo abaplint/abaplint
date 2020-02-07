@@ -35,6 +35,9 @@ describe("Rule: local variable names (required pattern)", function () {
 
     config.patternKind = "forbidden";
     expect(findIssues(abap, config).length).to.equal(1);
+
+    config.patternKind = undefined;
+    expect(findIssues(abap, config).length).to.equal(0);
   });
 
   it("local variable without prefix, FORM", function () {
@@ -51,6 +54,9 @@ describe("Rule: local variable names (required pattern)", function () {
 
     config.patternKind = "forbidden";
     expect(findIssues(abap, config).length).to.equal(0);
+
+    config.patternKind = undefined;
+    expect(findIssues(abap, config).length).to.equal(1);
   });
 
   it("local variable without prefix inside METHOD", function () {

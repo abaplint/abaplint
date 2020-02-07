@@ -59,14 +59,15 @@ export class ObjectNaming implements IRule {
 
   public setConfig(conf: ObjectNamingConf) {
     this.conf = conf;
-    if (this.conf.patternKind === undefined) {
-      this.conf.patternKind = "required";
-    }
   }
 
   public run(obj: IObject, _reg: Registry): Issue[] {
     let message: string | undefined = undefined;
     let pattern: string = "";
+
+    if (this.conf.patternKind === undefined) {
+      this.conf.patternKind = "required";
+    }
 
     if (obj instanceof Objects.Class) {
       pattern = this.getConfig().clas;

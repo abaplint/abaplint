@@ -42,7 +42,9 @@ export class ClassAttributeNames implements IRule {
 
   public run(obj: IObject, reg: Registry): Issue[] {
     let attr: Attributes | undefined = undefined;
-
+    if (this.conf.patternKind === undefined) {
+      this.conf.patternKind = "required";
+    }
 // todo, consider local classes(PROG, FUGR, CLAS)
 
     if (obj instanceof Class) {

@@ -47,6 +47,9 @@ export class MethodParameterNames implements IRule {
 
   public run(obj: IObject, reg: Registry): Issue[] {
     let ret: Issue[] = [];
+    if (this.conf.patternKind === undefined) {
+      this.conf.patternKind = "required";
+    }
 
     if (!(obj instanceof ABAPObject)) {
       return [];
