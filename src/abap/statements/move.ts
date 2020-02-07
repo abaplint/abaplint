@@ -1,5 +1,5 @@
 import {Statement} from "./_statement";
-import {verNot, str, tok, ver, seq, alt, opt, plus, IStatementRunnable} from "../combi";
+import {verNot, str, tok, ver, seq, alt, opt, IStatementRunnable, altPrio, plus} from "../combi";
 import {Target, Source} from "../expressions";
 import {Version} from "../../version";
 import {WPlus, WDash} from "../tokens";
@@ -30,7 +30,7 @@ export class Move extends Statement {
     const assignment = str("=");
     const cast = str("?=");
 
-    const equals = alt(alt(assignment, cast), calcAssign);
+    const equals = altPrio(altPrio(assignment, cast), calcAssign);
 
 // todo, move "?=" to CAST?
     const eq = seq(plus(seq(new Target(), equals)), new Source());

@@ -41,7 +41,22 @@ const tests = [
     foo = 1 bar = 2 boo = 3 moo = 4 foo = 1 bar = 2 boo = 3 moo = 4 foo = 1 bar = 2 boo = 3 moo = 4 foo = 1 bar = 2 boo = 3 moo = 4
     foo = 1 bar = 2 boo = 3 moo = 4 foo = 1 bar = 2 boo = 3 moo = 4 foo = 1 bar = 2 boo = 3 moo = 4 foo = 1 bar = 2 boo = 3 moo = 4
     foo = 1 bar = 2 boo = 3 moo = 4 foo = 1 bar = 2 boo = 3 moo = 4 foo = 1 bar = 2 boo = 3 moo = 4 foo = 1 bar = 2 boo = 3 moo = 4
-   )`, r: new Expressions.Source(), e: true},
+    foo = 1 bar = 2 boo = 3 moo = 4 foo = 1 bar = 2 boo = 3 moo = 4 foo = 1 bar = 2 boo = 3 moo = 4 foo = 1 bar = 2 boo = 3 moo = 4
+    foo = 1 bar = 2 boo = 3 moo = 4 foo = 1 bar = 2 boo = 3 moo = 4 foo = 1 bar = 2 boo = 3 moo = 4 foo = 1 bar = 2 boo = 3 moo = 4
+    foo = 1 bar = 2 boo = 3 moo = 4 foo = 1 bar = 2 boo = 3 moo = 4 foo = 1 bar = 2 boo = 3 moo = 4 foo = 1 bar = 2 boo = 3 moo = 4
+    foo = 1 bar = 2 boo = 3 moo = 4 foo = 1 bar = 2 boo = 3 moo = 4 foo = 1 bar = 2 boo = 3 moo = 4 foo = 1 bar = 2 boo = 3 moo = 4
+    foo = 1 bar = 2 boo = 3 moo = 4 foo = 1 bar = 2 boo = 3 moo = 4 foo = 1 bar = 2 boo = 3 moo = 4 foo = 1 bar = 2 boo = 3 moo = 4
+    foo = 1 bar = 2 boo = 3 moo = 4 foo = 1 bar = 2 boo = 3 moo = 4 foo = 1 bar = 2 boo = 3 moo = 4 foo = 1 bar = 2 boo = 3 moo = 4
+    foo = 1 bar = 2 boo = 3 moo = 4 foo = 1 bar = 2 boo = 3 moo = 4 foo = 1 bar = 2 boo = 3 moo = 4 foo = 1 bar = 2 boo = 3 moo = 4
+    foo = 1 bar = 2 boo = 3 moo = 4 foo = 1 bar = 2 boo = 3 moo = 4 foo = 1 bar = 2 boo = 3 moo = 4 foo = 1 bar = 2 boo = 3 moo = 4
+    foo = 1 bar = 2 boo = 3 moo = 4 foo = 1 bar = 2 boo = 3 moo = 4 foo = 1 bar = 2 boo = 3 moo = 4 foo = 1 bar = 2 boo = 3 moo = 4
+    foo = 1 bar = 2 boo = 3 moo = 4 foo = 1 bar = 2 boo = 3 moo = 4 foo = 1 bar = 2 boo = 3 moo = 4 foo = 1 bar = 2 boo = 3 moo = 4
+    foo = 1 bar = 2 boo = 3 moo = 4 foo = 1 bar = 2 boo = 3 moo = 4 foo = 1 bar = 2 boo = 3 moo = 4 foo = 1 bar = 2 boo = 3 moo = 4
+    foo = 1 bar = 2 boo = 3 moo = 4 foo = 1 bar = 2 boo = 3 moo = 4 foo = 1 bar = 2 boo = 3 moo = 4 foo = 1 bar = 2 boo = 3 moo = 4
+    foo = 1 bar = 2 boo = 3 moo = 4 foo = 1 bar = 2 boo = 3 moo = 4 foo = 1 bar = 2 boo = 3 moo = 4 foo = 1 bar = 2 boo = 3 moo = 4
+    foo = 1 bar = 2 boo = 3 moo = 4 foo = 1 bar = 2 boo = 3 moo = 4 foo = 1 bar = 2 boo = 3 moo = 4 foo = 1 bar = 2 boo = 3 moo = 4
+    foo = 1 bar = 2 boo = 3 moo = 4 foo = 1 bar = 2 boo = 3 moo = 4 foo = 1 bar = 2 boo = 3 moo = 4 foo = 1 bar = 2 boo = 3 moo = 4
+    )`, r: new Expressions.Source(), e: true},
   {c: `VALUE #(
     ( VALUE #( ) ) ( VALUE #( ) ) ( VALUE #( ) ) ( VALUE #( ) ) ( VALUE #( ) ) ( VALUE #( ) ) ( VALUE #( ) ) ( VALUE #( ) )
     ( VALUE #( ) ) ( VALUE #( ) ) ( VALUE #( ) ) ( VALUE #( ) ) ( VALUE #( ) ) ( VALUE #( ) ) ( VALUE #( ) ) ( VALUE #( ) )
@@ -76,6 +91,49 @@ const tests = [
     ( VALUE #( ) ) ( VALUE #( ) ) ( VALUE #( ) ) ( VALUE #( ) ) ( VALUE #( ) ) ( VALUE #( ) ) ( VALUE #( ) ) ( VALUE #( ) )
     ( VALUE #( ) ) ( VALUE #( ) ) ( VALUE #( ) ) ( VALUE #( ) ) ( VALUE #( ) ) ( VALUE #( ) ) ( VALUE #( ) ) ( VALUE #( ) )
     ( VALUE #( ) ) ( VALUE #( ) ) ( VALUE #( ) ) ( VALUE #( ) ) ( VALUE #( ) ) ( VALUE #( ) ) ( VALUE #( ) ) ( VALUE #( ) )
+    )`, r: new Expressions.Source(), e: true},
+  {c: `VALUE #( VALUE #( VALUE #( VALUE #( VALUE #( VALUE #( VALUE #( VALUE #( VALUE #( VALUE #( VALUE #( VALUE #(
+    VALUE #( VALUE #( VALUE #( VALUE #( VALUE #( VALUE #( VALUE #( VALUE #( VALUE #( VALUE #( VALUE #( VALUE #(
+    VALUE #( VALUE #( VALUE #( VALUE #( VALUE #( VALUE #( VALUE #( VALUE #( VALUE #( VALUE #( VALUE #( VALUE #(
+    VALUE #( VALUE #( VALUE #( VALUE #( VALUE #( VALUE #( VALUE #( VALUE #( VALUE #( VALUE #( VALUE #( VALUE #(
+    VALUE #( VALUE #( VALUE #( VALUE #( VALUE #( VALUE #( VALUE #( VALUE #( VALUE #( VALUE #( VALUE #( VALUE #(
+    VALUE #( VALUE #( VALUE #( VALUE #( VALUE #( VALUE #( VALUE #( VALUE #( VALUE #( VALUE #( VALUE #( VALUE #(
+    VALUE #( VALUE #( VALUE #( VALUE #( VALUE #( VALUE #( VALUE #( VALUE #( ) ) ) ) ) ) ) ) ) ) ) ) ) ) ) )
+    ) ) ) ) ) ) ) ) ) ) ) ) ) ) ) ) ) ) ) ) ) ) ) ) ) ) ) ) ) ) ) ) ) ) ) ) ) ) ) )
+    ) ) ) ) ) ) ) ) ) ) ) ) ) ) ) ) ) ) ) ) ) ) ) )`, r: new Expressions.Source(), e: true},
+  {c: `VALUE #(
+    ( foo = 1 bar = 2 moo = 3 ) ( foo = 1 bar = 2 moo = 3 ) ( foo = 1 bar = 2 moo = 3 ) ( foo = 1 bar = 2 moo = 3 )
+    ( foo = 1 bar = 2 moo = 3 ) ( foo = 1 bar = 2 moo = 3 ) ( foo = 1 bar = 2 moo = 3 ) ( foo = 1 bar = 2 moo = 3 )
+    ( foo = 1 bar = 2 moo = 3 ) ( foo = 1 bar = 2 moo = 3 ) ( foo = 1 bar = 2 moo = 3 ) ( foo = 1 bar = 2 moo = 3 )
+    ( foo = 1 bar = 2 moo = 3 ) ( foo = 1 bar = 2 moo = 3 ) ( foo = 1 bar = 2 moo = 3 ) ( foo = 1 bar = 2 moo = 3 )
+    ( foo = 1 bar = 2 moo = 3 ) ( foo = 1 bar = 2 moo = 3 ) ( foo = 1 bar = 2 moo = 3 ) ( foo = 1 bar = 2 moo = 3 )
+    ( foo = 1 bar = 2 moo = 3 ) ( foo = 1 bar = 2 moo = 3 ) ( foo = 1 bar = 2 moo = 3 ) ( foo = 1 bar = 2 moo = 3 )
+    ( foo = 1 bar = 2 moo = 3 ) ( foo = 1 bar = 2 moo = 3 ) ( foo = 1 bar = 2 moo = 3 ) ( foo = 1 bar = 2 moo = 3 )
+    ( foo = 1 bar = 2 moo = 3 ) ( foo = 1 bar = 2 moo = 3 ) ( foo = 1 bar = 2 moo = 3 ) ( foo = 1 bar = 2 moo = 3 )
+    ( foo = 1 bar = 2 moo = 3 ) ( foo = 1 bar = 2 moo = 3 ) ( foo = 1 bar = 2 moo = 3 ) ( foo = 1 bar = 2 moo = 3 )
+    ( foo = 1 bar = 2 moo = 3 ) ( foo = 1 bar = 2 moo = 3 ) ( foo = 1 bar = 2 moo = 3 ) ( foo = 1 bar = 2 moo = 3 )
+    ( foo = 1 bar = 2 moo = 3 ) ( foo = 1 bar = 2 moo = 3 ) ( foo = 1 bar = 2 moo = 3 ) ( foo = 1 bar = 2 moo = 3 )
+    ( foo = 1 bar = 2 moo = 3 ) ( foo = 1 bar = 2 moo = 3 ) ( foo = 1 bar = 2 moo = 3 ) ( foo = 1 bar = 2 moo = 3 )
+    ( foo = 1 bar = 2 moo = 3 ) ( foo = 1 bar = 2 moo = 3 ) ( foo = 1 bar = 2 moo = 3 ) ( foo = 1 bar = 2 moo = 3 )
+    ( foo = 1 bar = 2 moo = 3 ) ( foo = 1 bar = 2 moo = 3 ) ( foo = 1 bar = 2 moo = 3 ) ( foo = 1 bar = 2 moo = 3 )
+    ( foo = 1 bar = 2 moo = 3 ) ( foo = 1 bar = 2 moo = 3 ) ( foo = 1 bar = 2 moo = 3 ) ( foo = 1 bar = 2 moo = 3 )
+    ( foo = 1 bar = 2 moo = 3 ) ( foo = 1 bar = 2 moo = 3 ) ( foo = 1 bar = 2 moo = 3 ) ( foo = 1 bar = 2 moo = 3 )
+    ( foo = 1 bar = 2 moo = 3 ) ( foo = 1 bar = 2 moo = 3 ) ( foo = 1 bar = 2 moo = 3 ) ( foo = 1 bar = 2 moo = 3 )
+    ( foo = 1 bar = 2 moo = 3 ) ( foo = 1 bar = 2 moo = 3 ) ( foo = 1 bar = 2 moo = 3 ) ( foo = 1 bar = 2 moo = 3 )
+    ( foo = 1 bar = 2 moo = 3 ) ( foo = 1 bar = 2 moo = 3 ) ( foo = 1 bar = 2 moo = 3 ) ( foo = 1 bar = 2 moo = 3 )
+    ( foo = 1 bar = 2 moo = 3 ) ( foo = 1 bar = 2 moo = 3 ) ( foo = 1 bar = 2 moo = 3 ) ( foo = 1 bar = 2 moo = 3 )
+    ( foo = 1 bar = 2 moo = 3 ) ( foo = 1 bar = 2 moo = 3 ) ( foo = 1 bar = 2 moo = 3 ) ( foo = 1 bar = 2 moo = 3 )
+    ( foo = 1 bar = 2 moo = 3 ) ( foo = 1 bar = 2 moo = 3 ) ( foo = 1 bar = 2 moo = 3 ) ( foo = 1 bar = 2 moo = 3 )
+    ( foo = 1 bar = 2 moo = 3 ) ( foo = 1 bar = 2 moo = 3 ) ( foo = 1 bar = 2 moo = 3 ) ( foo = 1 bar = 2 moo = 3 )
+    ( foo = 1 bar = 2 moo = 3 ) ( foo = 1 bar = 2 moo = 3 ) ( foo = 1 bar = 2 moo = 3 ) ( foo = 1 bar = 2 moo = 3 )
+    ( foo = 1 bar = 2 moo = 3 ) ( foo = 1 bar = 2 moo = 3 ) ( foo = 1 bar = 2 moo = 3 ) ( foo = 1 bar = 2 moo = 3 )
+    ( foo = 1 bar = 2 moo = 3 ) ( foo = 1 bar = 2 moo = 3 ) ( foo = 1 bar = 2 moo = 3 ) ( foo = 1 bar = 2 moo = 3 )
+    ( foo = 1 bar = 2 moo = 3 ) ( foo = 1 bar = 2 moo = 3 ) ( foo = 1 bar = 2 moo = 3 ) ( foo = 1 bar = 2 moo = 3 )
+    ( foo = 1 bar = 2 moo = 3 ) ( foo = 1 bar = 2 moo = 3 ) ( foo = 1 bar = 2 moo = 3 ) ( foo = 1 bar = 2 moo = 3 )
+    ( foo = 1 bar = 2 moo = 3 ) ( foo = 1 bar = 2 moo = 3 ) ( foo = 1 bar = 2 moo = 3 ) ( foo = 1 bar = 2 moo = 3 )
+    ( foo = 1 bar = 2 moo = 3 ) ( foo = 1 bar = 2 moo = 3 ) ( foo = 1 bar = 2 moo = 3 ) ( foo = 1 bar = 2 moo = 3 )
+    ( foo = 1 bar = 2 moo = 3 ) ( foo = 1 bar = 2 moo = 3 ) ( foo = 1 bar = 2 moo = 3 ) ( foo = 1 bar = 2 moo = 3 )
+    ( foo = 1 bar = 2 moo = 3 ) ( foo = 1 bar = 2 moo = 3 ) ( foo = 1 bar = 2 moo = 3 ) ( foo = 1 bar = 2 moo = 3 )
     )`, r: new Expressions.Source(), e: true},
 ];
 
