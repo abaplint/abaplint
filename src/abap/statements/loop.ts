@@ -15,7 +15,7 @@ export class Loop extends Statement {
 
     const assigning = seq(str("ASSIGNING"), new FSTarget());
 
-    const group = ver(Version.v740sp08, seq(str("GROUP BY"), alt(new Source(), components), optPrio(alt(into, assigning))));
+    const group = ver(Version.v740sp08, seq(str("GROUP BY"), alt(new Source(), components), optPrio(str("ASCENDING")), optPrio(alt(into, assigning))));
 
     const rinto = seq(opt(str("REFERENCE")), into);
 

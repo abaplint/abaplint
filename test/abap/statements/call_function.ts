@@ -265,6 +265,8 @@ const tests = [
 
   "call function 'ZBAR' destination 'NONE' keeping logical unit of work.",
 
+  `call function 'ZBAR' starting new task <fs>-field.`,
+
 /* todo
   "call function 'ZNAME'\n" +
   "  destination 'NONE'\n" +

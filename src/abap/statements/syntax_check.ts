@@ -19,6 +19,7 @@ export class SyntaxCheck extends Statement {
     const replacing = seq(str("REPLACING"), new Target());
     const directory = seq(str("DIRECTORY ENTRY"), new Source());
     const dump = seq(str("SHORTDUMP-ID"), new Source());
+    const filter = seq(str("FILTER"), new Source());
 
     const syntax = seq(optPrio(str("PROGRAM")),
                        new Source(),
@@ -34,6 +35,7 @@ export class SyntaxCheck extends Statement {
                            messageId,
                            trace,
                            dump,
+                           filter,
                            plus(id)));
 
     const dynpro = seq(str("DYNPRO"),

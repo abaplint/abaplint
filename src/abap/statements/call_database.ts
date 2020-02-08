@@ -1,6 +1,6 @@
 import {Statement} from "./_statement";
 import {verNot, str, seq, opt, alt, IStatementRunnable} from "../combi";
-import {Dynamic, Source, ParameterListS, ParameterListT} from "../expressions";
+import {Dynamic, Source, ParameterListS, ParameterListT, DatabaseConnection} from "../expressions";
 import {Version} from "../../version";
 
 export class CallDatabase extends Statement {
@@ -12,11 +12,9 @@ export class CallDatabase extends Statement {
 
     const tab = seq(str("PARAMETER-TABLE"), new Source());
 
-    const connection = seq(str("CONNECTION"), new Dynamic());
-
     const ret = seq(str("CALL DATABASE PROCEDURE"),
                     new Dynamic(),
-                    opt(connection),
+                    opt(new DatabaseConnection()),
                     alt(expl, tab));
 
     return verNot(Version.Cloud, ret);

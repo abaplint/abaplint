@@ -1,6 +1,6 @@
 import {Version} from "../../version";
 import {Statement} from "./_statement";
-import {str, seq, alt, opt, tok, ver, regex as reg, plus, IStatementRunnable} from "../combi";
+import {str, seq, alt, opt, tok, ver, regex as reg, plus, IStatementRunnable, optPrio} from "../combi";
 import {ParenLeft, ParenRightW} from "../tokens/";
 import {ClassName, MethodName, MethodDefExporting, MethodDefImporting, EventHandler, Abstract} from "../expressions";
 import {MethodDefChanging, MethodDefReturning, Redefinition} from "../expressions";
@@ -31,7 +31,7 @@ export class MethodDef extends Statement {
 
     const ret = seq(alt(str("CLASS-METHODS"), str("METHODS")),
                     new MethodName(),
-                    alt(new EventHandler(),
+                    alt(seq(optPrio(new Abstract()), new EventHandler()),
                         parameters,
                         tableFunction,
                         str("NOT AT END OF MODE"),

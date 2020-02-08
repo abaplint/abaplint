@@ -1,5 +1,6 @@
-import {seq, opt, alt, str, Expression, IStatementRunnable} from "../combi";
+import {seq, opt, optPrio, alt, str, Expression, IStatementRunnable} from "../combi";
 import {Constant, FieldChain, TypeNameOrInfer} from "./";
+import {TableBody} from "./table_body";
 
 export class TypeParam extends Expression {
   public getRunnable(): IStatementRunnable {
@@ -16,7 +17,7 @@ export class TypeParam extends Expression {
                     new TypeNameOrInfer(),
                     opt(def));
 
-    const like = seq(str("LIKE"), opt(str("LINE OF")), new FieldChain(), opt(def));
+    const like = seq(str("LIKE"), opt(str("LINE OF")), new FieldChain(), optPrio(new TableBody()), optPrio(def));
 
     return alt(seq(str("TYPE"), alt(table, ret)), like);
   }

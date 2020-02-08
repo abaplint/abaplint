@@ -97,6 +97,21 @@ const tests = [
   "  ID 'MSG' TABLE l_msg.",
 
   "syntax-check for program PROGRAM replacing moo.",
+
+  `syntax-check for lt_tab
+  program         lv_progname
+  replacing       lv_srcnam
+  directory entry lv_trdir
+  frame     entry lv_fentry
+  include         lv_inclname
+  message-id      lv_messageid
+  message         lv_message
+  line            lv_line
+  offset          lv_offs
+  word            lv_word
+  trace-table     lv_trctab
+  filter          lv_filter.`,
+
 ];
 
 statementType(tests, "SYNTAX-CHECK", Statements.SyntaxCheck);

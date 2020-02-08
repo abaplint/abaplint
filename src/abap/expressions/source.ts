@@ -55,14 +55,12 @@ export class Source extends Expression {
                                            opt(seq(str("EXCEPT"), alt(plus(new Field()), str("*")))),
                                            rparen));
 
-    const arith = seq(new ArithOperator(), new Source());
-
     const conv = ver(Version.v740sp02, seq(str("CONV"),
                                            new TypeNameOrInfer(),
                                            tok(ParenLeftW),
                                            opt(new Let()),
                                            new Source(),
-                                           rparen, opt(arith)));
+                                           rparen, opt(after)));
 
     const or = seq(str("OR"), new Source());
 

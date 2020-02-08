@@ -40,8 +40,9 @@ export class Describe extends Statement {
     const page = seq(str("PAGE"), new Source());
     const index = seq(str("INDEX"), new Target());
     const top = seq(str("TOP-LINES"), new Target());
+    const first = seq(str("FIRST-LINE"), new Target());
 
-    const list = seq(str("LIST"), per(lines, index, line, page, top));
+    const list = seq(str("LIST"), per(lines, index, line, page, top, first));
 
     const ret = seq(str("DESCRIBE"), alt(table, field, distance, list));
 

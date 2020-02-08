@@ -1,6 +1,6 @@
 import {Statement} from "./_statement";
 import {str, seq, alt, opt, tok, IStatementRunnable} from "../combi";
-import {Source, DatabaseTable, Dynamic, SQLSource, Select} from "../expressions";
+import {DatabaseTable, Dynamic, SQLSource, Select, DatabaseConnection} from "../expressions";
 import {WParenLeftW, WParenRightW} from "../tokens";
 
 export class InsertDatabase extends Statement {
@@ -10,12 +10,10 @@ export class InsertDatabase extends Statement {
 
     const client = str("CLIENT SPECIFIED");
 
-    const conn = seq(str("CONNECTION"), alt(new Source(), new Dynamic()));
-
     const sub = seq(tok(WParenLeftW), new Select(), tok(WParenRightW));
 
     const f = seq(opt(client),
-                  opt(conn),
+                  opt(new DatabaseConnection()),
                   str("FROM"),
                   opt(str("TABLE")),
                   alt(new SQLSource(), sub),
@@ -27,7 +25,7 @@ export class InsertDatabase extends Statement {
     const into = seq(str("INTO"),
                      target,
                      opt(str("CLIENT SPECIFIED")),
-                     opt(conn),
+                     opt(new DatabaseConnection()),
                      str("VALUES"),
                      new SQLSource());
 

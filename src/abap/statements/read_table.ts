@@ -35,7 +35,7 @@ export class ReadTable extends Statement {
                      using,
                      comparing,
                      str("CASTING"),
-                     seq(str("TRANSPORTING"), plus(new Field())),
+                     seq(str("TRANSPORTING"), alt(new Dynamic(), plus(new Field()))),
                      str("BINARY SEARCH"));
 
     return seq(str("READ TABLE"),

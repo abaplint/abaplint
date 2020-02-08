@@ -30,11 +30,10 @@ export class InsertInternal extends Statement {
 
     const src = alt(ver(Version.v740sp02, new Source()), new SimpleSource());
 
+    const tab = seq(str("TABLE"), new Source());
+
     const ret = seq(str("INSERT"),
-                    alt(initial,
-                        src,
-                        lines),
-                    foo);
+                    alt(tab, seq(alt(src, initial, lines), foo)));
 
     return ret;
   }

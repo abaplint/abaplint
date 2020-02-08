@@ -50,6 +50,7 @@ const tests = [
   "int = 1 - +1.",
   "int = 1 - -1.",
   "MOVE +1 TO int.",
+  "target = conv string( field1 ) && conv string( field2 ).",
 
   "lv_foo = `foo` & `foo` & `foo` & `foo` & `foo` & `foo` & \n" +
     "`foo` & `foo` & `foo` & `foo` & `foo` & `foo` & `foo` & \n" +
@@ -114,7 +115,7 @@ const tests = [
 
   `DATA(foo) = REDUCE i( INIT s TYPE i FOR i = 1 UNTIL i > 10 NEXT s = s + i ).`,
 
-  `gp_amount_sp = REDUCE #( 
+  `gp_amount_sp = REDUCE #(
     INIT x TYPE vbrk-netwr
     FOR <i> IN invoices
     WHERE ( vtweg = '20' )

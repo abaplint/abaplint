@@ -1,6 +1,6 @@
 import {Statement} from "./_statement";
 import {verNot, str, seq, opt, alt, per, IStatementRunnable} from "../combi";
-import {Constant, FieldSub, FormName, Source, FunctionParameters, FunctionName, Destination, MethodName} from "../expressions";
+import {Constant, FieldChain, FormName, Source, FunctionParameters, FunctionName, Destination, MethodName} from "../expressions";
 import {Version} from "../../version";
 
 export class CallFunction extends Statement {
@@ -9,7 +9,7 @@ export class CallFunction extends Statement {
     const method = new MethodName();
 
     const starting = seq(str("STARTING NEW TASK"),
-                         alt(new Constant(), new FieldSub()));
+                         alt(new Constant(), new FieldChain()));
     const update = str("IN UPDATE TASK");
     const unit = seq(str("UNIT"), new Source());
     const background = seq(str("IN BACKGROUND"), alt(str("TASK"), unit));

@@ -7,6 +7,7 @@ const tests = [
   "set cursor lv_col lv_row.",
   "SET CURSOR FIELD name OFFSET pos.",
   "SET CURSOR FIELD name LINE line OFFSET pos.",
+  "set cursor line lv_line offset lv_offset.",
 ];
 
 statementType(tests, "SET CURSOR", Statements.SetCursor);

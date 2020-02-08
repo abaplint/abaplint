@@ -1,5 +1,5 @@
 import {Statement} from "./_statement";
-import {str, verNot, seq, IStatementRunnable, plus} from "../combi";
+import {str, verNot, seq, alt, IStatementRunnable, plus} from "../combi";
 import {Field, Source, Target} from "../expressions";
 import {Version} from "../../version";
 
@@ -22,8 +22,10 @@ export class Provide extends Statement {
                        str("AND"),
                        new Field());
 
+    const fieldList = seq(new Field(), str("FROM"), new Source());
+
     const ret = seq(str("PROVIDE"),
-                    plus(fields),
+                    alt(plus(fields), plus(fieldList)),
                     str("BETWEEN"),
                     new Field(),
                     str("AND"),

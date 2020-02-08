@@ -1,6 +1,6 @@
 import {Statement} from "./_statement";
 import {str, seq, opt, alt, per, IStatementRunnable} from "../combi";
-import {Source, Dynamic, DatabaseTable, SQLSource} from "../expressions";
+import {Dynamic, DatabaseTable, SQLSource, DatabaseConnection} from "../expressions";
 
 export class ModifyDatabase extends Statement {
 
@@ -12,9 +12,7 @@ export class ModifyDatabase extends Statement {
 
     const target = alt(new DatabaseTable(), new Dynamic());
 
-    const conn = seq(str("CONNECTION"), alt(new Dynamic(), new Source()));
-
-    const options = per(conn, from, client);
+    const options = per(new DatabaseConnection(), from, client);
 
     return seq(str("MODIFY"), target, options);
   }

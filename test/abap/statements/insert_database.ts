@@ -16,6 +16,7 @@ const tests = [
   "INSERT ztable FROM TABLE @lt_data.",
   "INSERT ztotals FROM ( SELECT FROM zheader FIELDS number GROUP BY mandt, number ).",
   "INSERT INTO ztable VALUES @current.",
+  "INSERT zdata CONNECTION R/3*MOO FROM lv_data.",
 ];
 
 statementType(tests, "INSERT", Statements.InsertDatabase);

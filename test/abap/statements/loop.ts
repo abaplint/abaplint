@@ -24,6 +24,7 @@ const tests = [
   "LOOP AT lt_compiler INTO ls_compiler WHERE statement->source_info->name = lv_include.",
   "LOOP AT list INTO DATA(item) GROUP BY item-type INTO DATA(type).",
   "LOOP AT lt_tab INTO DATA(dat) GROUP BY ( model = bar ) ASSIGNING FIELD-SYMBOL(<fs>).",
+  "loop at table assigning field-symbol(<fs>) group by field ascending assigning field-symbol(<tar>).",
 ];
 
 statementType(tests, "LOOP", Statements.Loop);

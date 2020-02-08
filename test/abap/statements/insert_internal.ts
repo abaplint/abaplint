@@ -14,6 +14,7 @@ const tests = [
   "INSERT LINES OF lt_comp INTO TABLE components.",
   "INSERT LINES OF lt_table FROM lv_from TO lv_to INTO TABLE lt_result.",
   "INSERT LINES OF lt_table FROM lv_from INTO TABLE et_merge_table.",
+  "INSERT TABLE lt_foobar.",
 ];
 
 statementType(tests, "INSERT", Statements.InsertInternal);

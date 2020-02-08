@@ -70,6 +70,7 @@ const tests = [
   "WRITE |<td>{ lv_date DATE = ENVIRONMENT }</td>|.",
   "WRITE |<td>{ lv_time TIME = ENVIRONMENT }</td>|.",
   "WRITE |{ g_name WIDTH = 30 }|.",
+  "WRITE <moo>+<offs>-end-end.",
 ];
 
 statementType(tests, "WRITE", Statements.Write);

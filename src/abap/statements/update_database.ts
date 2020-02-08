@@ -1,6 +1,6 @@
 import {Statement} from "./_statement";
 import {str, seq, opt, alt, IStatementRunnable, star} from "../combi";
-import {SQLSource, DatabaseTable, Dynamic, Field, SQLCond} from "../expressions";
+import {SQLSource, DatabaseTable, Dynamic, Field, SQLCond, DatabaseConnection} from "../expressions";
 
 export class UpdateDatabase extends Statement {
 
@@ -19,12 +19,11 @@ export class UpdateDatabase extends Statement {
                           new SQLSource());
 
     const client = str("CLIENT SPECIFIED");
-    const connection = seq(str("CONNECTION"), new Dynamic());
 
     const ret = seq(str("UPDATE"),
                     target,
                     opt(client),
-                    opt(connection),
+                    opt(new DatabaseConnection()),
                     opt(alt(fromTable, set)));
 
     return ret;

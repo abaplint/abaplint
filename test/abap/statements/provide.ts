@@ -11,6 +11,8 @@ const tests = [
     "FIELDS * \n" +
     "FROM li_new INTO ls_new VALID flag2 BOUNDS date_from AND date_to \n" +
     "BETWEEN p_start AND p_end.",
+
+  "provide name from ztab1 name from ztab1 between name1 and name2.",
 ];
 
 statementType(tests, "PROVIDE", Statements.Provide);

@@ -14,6 +14,7 @@ const tests = [
   "methods foobaaar final.",
   "methods BIND_ALV_OLE2 exceptions MISS_GUIDE.",
   "METHODS on_event FOR EVENT sapevent OF cl_gui_html_viewer.",
+  "METHODS on_event ABSTRACT FOR EVENT sapevent OF cl_gui_html_viewer.",
   "methods ADAPT_PARAMETERS final redefinition .",
   "METHODS on_event FOR EVENT sapevent OF cl_gui_html_viewer IMPORTING action frame.",
   "METHODS methodblah IMPORTING is_clskey TYPE sdf RAISING lcx_foo cx_bar.",
@@ -74,6 +75,7 @@ const tests = [
   "methods name exporting !out type %_C_POINTER.",
   "METHODS run IMPORTING parameter TYPE zif_definitions~ty_type.",
   "CLASS-METHODS foo FOR TABLE FUNCTION bar.",
+  "class-methods run importing it_list like gt_list[].",
 ];
 
 statementType(tests, "METHODS", Statements.MethodDef);

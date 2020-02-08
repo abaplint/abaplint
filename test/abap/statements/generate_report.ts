@@ -30,14 +30,23 @@ const tests = [
     shortdump-id lv_shortdump.`,
 
   `generate report lv_report
-    message    lv_MESSAGE
-    message-id lv_MSGID
-    line       lv_LINE
-    word       lv_WORD
-    include    lv_INCLUDE
+    message    lv_message
+    message-id lv_msgid
+    line       lv_line
+    word       lv_word
+    include    lv_include
     shortdump-id lv_dump
     directory entry lv_directory.`,
 
+  `generate report lv_report
+    with precompiled headers
+    include     lv_include
+    message     lv_message
+    line        lv_line
+    offset      lv_offset
+    word        lv_word
+    trace-file  lv_trace
+    directory entry lv_trdir.`,
 ];
 
 statementType(tests, "GENERATE REPORT", Statements.GenerateReport);

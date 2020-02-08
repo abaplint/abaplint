@@ -19,6 +19,7 @@ export * from "./constant_field_length";
 export * from "./constant_string";
 export * from "./constant";
 export * from "./data_definition";
+export * from "./database_connection";
 export * from "./database_field";
 export * from "./database_table";
 export * from "./decimals";

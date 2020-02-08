@@ -32,6 +32,7 @@ const tests = [
 //  "ASSIGN (FOO) TO <Z-BAR>.",
   "ASSIGN field TO <F> RANGE range-bar.",
   "assign lt_tab[ key name index 1 ] to field-symbol(<bar>).",
+  "ASSIGN var TO <fs> TYPE 'N'.",
 ];
 
 statementType(tests, "ASSIGN", Statements.Assign);
