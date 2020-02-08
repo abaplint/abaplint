@@ -11,7 +11,7 @@
         "test": "test"
     },
     "scripts": {
-        "lint": "eslint src/**/*.ts test/**/*.ts --format unix",
+        "lint": "eslint src/**/*.ts test/**/*.ts web/playground/src/**/*.ts --format unix",
         "compile": "tsc",
         "postcompile": "sh scripts/version.sh",
         "pretest": "npm run compile",
@@ -43,7 +43,7 @@
         },
         "parser": "@typescript-eslint/parser",
         "parserOptions": {
-            "project": "tsconfig.json",
+            "project": "tsconfig.eslint.json",
             "sourceType": "module"
         },
         "extends": [
@@ -57,6 +57,7 @@
             "@typescript-eslint/no-unused-vars": "off",
             "no-useless-escape": "off",
             "no-undef": "off",
+            "@typescript-eslint/ban-ts-ignore": "off",
             "no-control-regex": "off",
             "@typescript-eslint/camelcase": "off",
             "@typescript-eslint/no-this-alias": "off",

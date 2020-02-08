@@ -7,7 +7,7 @@ export class ABAPDocumentHighlightProvider implements monaco.languages.DocumentH
   public provideDocumentHighlights(model: monaco.editor.ITextModel,
                                    position: monaco.Position,
                                    token: monaco.CancellationToken):
-                                   monaco.languages.ProviderResult<monaco.languages.DocumentHighlight[]> {
+    monaco.languages.ProviderResult<monaco.languages.DocumentHighlight[]> {
 
     const ls = new LanguageServer(FileSystem.getRegistry());
 

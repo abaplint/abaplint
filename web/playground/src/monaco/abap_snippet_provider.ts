@@ -4,10 +4,10 @@ export class ABAPSnippetProvider implements monaco.languages.CompletionItemProvi
   public triggerCharacters?: string[] | undefined;
 
   public provideCompletionItems(
-        model: monaco.editor.ITextModel,
-        position: monaco.Position,
-        context: monaco.languages.CompletionContext,
-        token: monaco.CancellationToken): any {
+    model: monaco.editor.ITextModel,
+    position: monaco.Position,
+    context: monaco.languages.CompletionContext,
+    token: monaco.CancellationToken): any {
 
     const suggestions: any[] = [
       {

@@ -5,8 +5,8 @@ import {LanguageServer} from "abaplint/lsp";
 export class ABAPSymbolProvider implements monaco.languages.DocumentSymbolProvider {
 
   public provideDocumentSymbols(
-      model: monaco.editor.ITextModel,
-      token: monaco.CancellationToken): monaco.languages.ProviderResult<monaco.languages.DocumentSymbol[]> {
+    model: monaco.editor.ITextModel,
+    token: monaco.CancellationToken): monaco.languages.ProviderResult<monaco.languages.DocumentSymbol[]> {
 
     const ls = new LanguageServer(FileSystem.getRegistry());
     const symbols = ls.documentSymbol({

@@ -6,7 +6,8 @@ export class ABAPCodeActionProvider implements monaco.languages.CodeActionProvid
                             range: monaco.Range,
                             context: monaco.languages.CodeActionContext,
                             token: monaco.CancellationToken):
-                            monaco.languages.CodeActionList | Promise<monaco.languages.CodeActionList> {
+    monaco.languages.CodeActionList | Promise<monaco.languages.CodeActionList> {
+
     const list: monaco.languages.CodeActionList = {
       actions: [],
       dispose: () => { return; }};

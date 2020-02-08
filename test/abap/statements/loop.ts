@@ -23,6 +23,7 @@ const tests = [
   "LOOP AT <tab> ASSIGNING <data> USING KEY (lv_name) WHERE (lv_where).",
   "LOOP AT lt_compiler INTO ls_compiler WHERE statement->source_info->name = lv_include.",
   "LOOP AT list INTO DATA(item) GROUP BY item-type INTO DATA(type).",
+  "LOOP AT lt_tab INTO DATA(dat) GROUP BY ( model = bar ) ASSIGNING FIELD-SYMBOL(<fs>).",
 ];
 
 statementType(tests, "LOOP", Statements.Loop);

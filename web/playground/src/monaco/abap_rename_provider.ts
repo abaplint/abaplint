@@ -5,13 +5,15 @@ import * as monaco from "monaco-editor";
 export class ABAPRenameProvider implements monaco.languages.RenameProvider {
 
   public provideRenameEdits(model: monaco.editor.ITextModel, position: monaco.Position, newName: string, token: monaco.CancellationToken):
-      monaco.languages.ProviderResult<monaco.languages.WorkspaceEdit & monaco.languages.Rejection> {
+  monaco.languages.ProviderResult<monaco.languages.WorkspaceEdit & monaco.languages.Rejection> {
+
 // todo, apply the workspacedit to the model and FileSystem, probably wait for vscode-web
     throw new Error("provideRenameEdits, method not implemented");
   }
 
   public resolveRenameLocation(model: monaco.editor.ITextModel, position: monaco.Position, token: monaco.CancellationToken):
-      monaco.languages.ProviderResult<monaco.languages.RenameLocation & monaco.languages.Rejection> {
+  monaco.languages.ProviderResult<monaco.languages.RenameLocation & monaco.languages.Rejection> {
+
     const ls = new LanguageServer(FileSystem.getRegistry());
 
     const rename = ls.prepareRename({

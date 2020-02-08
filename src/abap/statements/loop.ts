@@ -13,11 +13,11 @@ export class Loop extends Statement {
 
     const into = seq(str("INTO"), new Target());
 
-    const group = ver(Version.v740sp08, seq(str("GROUP BY"), alt(new Source(), components), optPrio(into)));
+    const assigning = seq(str("ASSIGNING"), new FSTarget());
+
+    const group = ver(Version.v740sp08, seq(str("GROUP BY"), alt(new Source(), components), optPrio(alt(into, assigning))));
 
     const rinto = seq(opt(str("REFERENCE")), into);
-
-    const assigning = seq(str("ASSIGNING"), new FSTarget());
 
     const target = alt(seq(alt(rinto, assigning),
                            opt(group),

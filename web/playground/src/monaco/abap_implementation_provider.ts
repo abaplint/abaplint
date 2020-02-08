@@ -5,9 +5,9 @@ import * as monaco from "monaco-editor";
 export class ABAPImplementationProvider implements monaco.languages.ImplementationProvider {
 
   public provideImplementation(
-      model: monaco.editor.ITextModel,
-      position: monaco.Position,
-      _token: monaco.CancellationToken): monaco.languages.ProviderResult<monaco.languages.Location[]> {
+    model: monaco.editor.ITextModel,
+    position: monaco.Position,
+    _token: monaco.CancellationToken): monaco.languages.ProviderResult<monaco.languages.Location[]> {
 
     const ls = new LanguageServer(FileSystem.getRegistry());
 

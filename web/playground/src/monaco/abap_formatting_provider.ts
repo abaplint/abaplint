@@ -5,9 +5,9 @@ import {LanguageServer} from "abaplint/lsp";
 export class ABAPFormattingProvider implements monaco.languages.DocumentFormattingEditProvider {
 
   public provideDocumentFormattingEdits(
-      model: monaco.editor.ITextModel,
-      options: monaco.languages.FormattingOptions,
-      token: monaco.CancellationToken): monaco.languages.ProviderResult<monaco.languages.TextEdit[]> {
+    model: monaco.editor.ITextModel,
+    options: monaco.languages.FormattingOptions,
+    token: monaco.CancellationToken): monaco.languages.ProviderResult<monaco.languages.TextEdit[]> {
 
     const ls = new LanguageServer(FileSystem.getRegistry());
     const edit = ls.documentFormatting({

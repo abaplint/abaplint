@@ -22,8 +22,8 @@ export class FileSystem {
 
     this.addFile("abaplint.json", JSON.stringify(Config.getDefault().get(), undefined, 2));
     this.addFile(
-"zfoobar.prog.abap",
-`REPORT zfoobar.
+      "zfoobar.prog.abap",
+      `REPORT zfoobar.
  WRITE 'Hello World'.
 
 DATA moo TYPE i VALUE 2.
