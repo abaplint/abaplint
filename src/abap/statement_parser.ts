@@ -13,6 +13,8 @@ import {IFile} from "../files/_ifile";
 import {ABAPFile} from "../files";
 import {Lexer} from "./lexer";
 
+export const STATEMENT_MAX_TOKENS = 1000;
+
 class StatementMap {
   private readonly map: {[index: string]: Statement[] };
 
@@ -272,6 +274,9 @@ export class StatementParser {
     if (length === 1
         && last instanceof Tokens.Punctuation) {
       statement = new StatementNode(new Empty()).setChildren(this.tokensToNodes(statement.getTokens()));
+// if the statement contains more than STATEMENT_MAX_TOKENS tokens, just give up
+    } else if (length > STATEMENT_MAX_TOKENS && statement.get() instanceof Unknown) {
+      statement = input;
     } else if (statement.get() instanceof Unknown
         && last instanceof Tokens.Punctuation) {
       statement = this.match(statement);

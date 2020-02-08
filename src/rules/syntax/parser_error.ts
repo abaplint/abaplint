@@ -7,6 +7,7 @@ import {ABAPFile} from "../../files";
 import {StatementNode} from "../../abap/nodes";
 import {Registry} from "../../registry";
 import {BasicRuleConfig} from "../_basic_rule_config";
+import {STATEMENT_MAX_TOKENS} from "../../abap/statement_parser";
 
 /** Checks for syntax unrecognized by abaplint */
 export class ParserErrorConf extends BasicRuleConfig {
@@ -42,6 +43,10 @@ export class ParserError extends ABAPRule {
           const message = "Missing space between string or character literal and parentheses, Parser error";
           start = missing;
           const issue = Issue.atPosition(file, start, message, this.getKey());
+          issues.push(issue);
+        } else if (statement.getTokens().length > STATEMENT_MAX_TOKENS) {
+          const message = "Statement too long, refactor statement";
+          const issue = Issue.atToken(file, statement.getTokens()[0], message, this.getKey());
           issues.push(issue);
         } else {
           const tok = statement.getFirstToken();
