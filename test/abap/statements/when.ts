@@ -6,7 +6,8 @@ const tests = [
   "WHEN 'X'.",
   "WHEN bar.",
   "WHEN bar OR foo.",
-  "WHEN TYPE cl_salv_fullscreen_adapter INTO DATA(full_screen_adapter).",
+  "WHEN TYPE cl_bar INTO DATA(bar).",
+  "WHEN TYPE zcl_type.",
 ];
 
 statementType(tests, "WHEN", Statements.When);
