@@ -219,7 +219,7 @@
         "nyc": "^15.0.0",
         "railroad-diagrams": "git+https://github.com/tabatkins/railroad-diagrams#gh-pages",
         "source-map-support": "^0.5.16",
-        "ts-json-schema-generator": "^0.59.0",
+        "ts-json-schema-generator": "^0.60.0",
         "typescript": "^3.7.5",
         "webpack": "^4.41.5",
         "webpack-cli": "^3.3.10"
