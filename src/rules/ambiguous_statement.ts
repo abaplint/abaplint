@@ -8,9 +8,9 @@ import {Statement} from "../abap/statements/_statement";
 import {Combi} from "../abap/combi";
 import {Registry} from "../registry";
 
-// todo, this rule can be disabled when using strict SQL
-
-/** Checks for ambiguity between deleting from internal and database table */
+/** Checks for ambiguity between deleting or modifying from internal and database table
+ * Add "TABLE" keyword or "@" for escaping SQL variables
+ */
 export class AmbiguousStatementConf extends BasicRuleConfig {
 }
 
@@ -22,7 +22,7 @@ export class AmbiguousStatement extends ABAPRule {
   }
 
   private getDescription(): string {
-    return "Ambiguous DELETE statement. Use explicit syntax.";
+    return "Ambiguous statement. Use explicit syntax.";
   }
 
   public getConfig() {
@@ -43,6 +43,10 @@ export class AmbiguousStatement extends ABAPRule {
         match = this.tryMatch(statement, reg, Statements.DeleteInternal);
       } else if (statement.get() instanceof Statements.DeleteInternal) {
         match = this.tryMatch(statement, reg, Statements.DeleteDatabase);
+      } else if (statement.get() instanceof Statements.ModifyInternal) {
+        match = this.tryMatch(statement, reg, Statements.ModifyDatabase);
+      } else if (statement.get() instanceof Statements.ModifyDatabase) {
+        match = this.tryMatch(statement, reg, Statements.ModifyInternal);
       }
 
       if (match) {

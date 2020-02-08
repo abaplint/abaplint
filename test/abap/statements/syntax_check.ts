@@ -112,6 +112,13 @@ const tests = [
   trace-table     lv_trctab
   filter          lv_filter.`,
 
+  `syntax-check for dynpro a b c d
+  message     lv_message
+  line        lv_line
+  offset      lv_offs
+  word        lv_word
+  trace-table lv_trace.`,
+
 ];
 
 statementType(tests, "SYNTAX-CHECK", Statements.SyntaxCheck);

@@ -55,7 +55,7 @@ export class Write extends Statement {
                         seq(str("CURRENCY"), new Source()),
                         str("NO-SIGN"));
 
-    const post = seq(alt(reg(/^[\w\d]+$/), reg(/^\*$/)), tok(ParenRightW));
+    const post = seq(alt(new FieldChain(), reg(/^[\d]+$/), reg(/^\*$/)), tok(ParenRightW));
     const wlength = seq(tok(WParenLeft), post);
     const length = seq(tok(ParenLeft), post);
 

@@ -71,6 +71,7 @@ const tests = [
   "WRITE |<td>{ lv_time TIME = ENVIRONMENT }</td>|.",
   "WRITE |{ g_name WIDTH = 30 }|.",
   "WRITE <moo>+<offs>-end-end.",
+  "write at 5(ls_structure-field) 'hello world'.",
 ];
 
 statementType(tests, "WRITE", Statements.Write);

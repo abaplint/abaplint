@@ -109,6 +109,7 @@ export class Normal extends Structure {
                sta(Statements.InsertDatabase),
                sta(Statements.InsertReport),
                sta(Statements.InsertTextpool),
+               sta(Statements.InterfaceLoad),
                sta(Statements.Leave),
                sta(Statements.LoadReport),
                sta(Statements.Local),

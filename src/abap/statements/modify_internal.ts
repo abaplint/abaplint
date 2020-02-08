@@ -19,7 +19,7 @@ export class ModifyInternal extends Statement {
 
     const options = alt(
       per(index, transporting),
-      seq(from, per(index, transporting)),
+      seq(from, opt(per(index, transporting))),
       seq(per(index, transporting), from, opt(per(index, transporting))));
 
     const long = seq(str("MODIFY"), opt(str("TABLE")), target, opt(options), opt(additions));

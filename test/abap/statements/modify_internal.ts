@@ -23,6 +23,7 @@ const tests = [
   "MODIFY TABLE lt_obj FROM ls_obj TRANSPORTING foo-bar type.",
   "MODIFY TABLE <ls_transport>-import_info FROM VALUE #( system = <ls_info>-system ).",
   "MODIFY TABLE <ls_transport>-import_info FROM VALUE #( system = <ls_info>-system ) USING KEY unique.",
+  "MODIFY <lt_tab> FROM <lt_source>.",
 ];
 
 statementType(tests, "MODIFY", Statements.ModifyInternal);

@@ -18,6 +18,7 @@ const tests = [
   "EXPORT lv_flag FROM lv_flag TO SHARED BUFFER indx(ar) ID 'BLAH'.",
   "EXPORT itab = l_log_itab TO DATABASE foobar(aa) ID l_key FROM l_wa code page hint l_settings-field.",
   "EXPORT tclass = lv_foo lv_bar TO MEMORY ID 'ID'.",
+  "EXPORT foo-bar moo-boo TO MEMORY ID 'ABCD'.",
 //  "EXPORT <wa> = <wa> TO DATABASE foobar(aa) ID me->name FROM l_wa.",
 ];
 

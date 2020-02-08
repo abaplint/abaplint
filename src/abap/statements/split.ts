@@ -1,11 +1,11 @@
 import {Statement} from "./_statement";
-import {str, seq, altPrio, plus, opt, IStatementRunnable} from "../combi";
+import {str, seq, altPrio, plus, alt, opt, IStatementRunnable} from "../combi";
 import {Target, Source} from "../expressions";
 
 export class Split extends Statement {
 
   public getMatcher(): IStatementRunnable {
-    const mode = str("IN CHARACTER MODE");
+    const mode = seq(str("IN"), alt(str("CHARACTER"), str("BYTE")), str("MODE"));
 
     const into = altPrio(seq(str("TABLE"), new Target(), opt(mode)),
                          plus(new Target()));

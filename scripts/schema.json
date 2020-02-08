@@ -74,7 +74,7 @@
     },
     "AmbiguousStatementConf": {
       "additionalProperties": false,
-      "description": "Checks for ambiguity between deleting from internal and database table",
+      "description": "Checks for ambiguity between deleting or modifying from internal and database table\r\nAdd \"TABLE\" keyword or \"@\" for escaping SQL variables",
       "properties": {
         "exclude": {
           "description": "List of file regex patterns to exclude",
@@ -871,7 +871,7 @@
                   "type": "boolean"
                 }
               ],
-              "description": "Checks for ambiguity between deleting from internal and database table"
+              "description": "Checks for ambiguity between deleting or modifying from internal and database table\r\nAdd \"TABLE\" keyword or \"@\" for escaping SQL variables"
             },
             "avoid_use": {
               "anyOf": [

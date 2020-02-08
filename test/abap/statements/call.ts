@@ -56,6 +56,8 @@ const tests = [
   "  EXPORTING\n" +
   "    columnname = 'COLUMN'\n" +
   "    subtotal   = if_salv_c_bool_sap=>true ).",
+
+  "moo( ).",
 ];
 
 statementType(tests, "CALL", Statements.Call);

@@ -5,7 +5,7 @@ import {FSTarget, Target, Field, Source, Dynamic, FieldSub, ComponentChain} from
 export class ReadTable extends Statement {
 
   public getMatcher(): IStatementRunnable {
-    const comparing = seq(str("COMPARING"), plus(new FieldSub()));
+    const comparing = seq(str("COMPARING"), alt(plus(new FieldSub()), new Dynamic()));
 
     const target = alt(seq(str("ASSIGNING"), new FSTarget()),
                        seq(opt(str("REFERENCE")), str("INTO"), new Target()),

@@ -43,7 +43,7 @@ export class SyntaxCheck extends Statement {
                        new Source(),
                        new Source(),
                        new Source(),
-                       per(message, line, word, offset, messageId));
+                       per(message, line, word, offset, messageId, trace));
 
     const ret = seq(str("SYNTAX-CHECK FOR"), alt(syntax, dynpro));
 

@@ -22,13 +22,14 @@ export class OpenDataset extends Statement {
     const bom = str("SKIPPING BYTE-ORDER MARK");
     const wbom = str("WITH BYTE-ORDER MARK");
     const type = seq(str("TYPE"), new Source());
+    const filter = seq(str("FILTER"), new Source());
     const linetype = alt(str("SMART"), str("NATIVE"), str("UNIX"));
     const feed = seq(str("WITH"), linetype, str("LINEFEED"));
     const windows = str("WITH WINDOWS LINEFEED");
 
     const ret = seq(str("OPEN DATASET"),
                     new Target(),
-                    per(direction, type, mode, wbom, replacement, encoding, pos, message, ignoring, bom, code, feed, windows));
+                    per(direction, type, mode, wbom, replacement, filter, encoding, pos, message, ignoring, bom, code, feed, windows));
 
     return verNot(Version.Cloud, ret);
   }

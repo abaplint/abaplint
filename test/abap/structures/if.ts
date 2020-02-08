@@ -8,6 +8,7 @@ const cases = [
   {abap: "IF foo = bar. ELSEIF moo = boo. ENDIF."},
   {abap: "IF foo = bar. ELSEIF moo = boo. ELSE. ENDIF."},
   {abap: "IF foo = bar. ELSEIF moo = boo. ELSEIF boo = loo. ENDIF."},
+  {abap: "IF 1 = 2. INTERFACE zif_bar LOAD. ENDIF."},
 ];
 
 structureType(cases, new If());

@@ -45,6 +45,8 @@ const tests = [
 
   "READ TABLE lt_tab FROM lv_line INTO lv_target COMPARING fields-field.",
   "read table <table> from <from> into <into> transporting (name).",
+  "read table <table> index lv_line into <target> comparing (name) transporting (name).",
+
 ];
 
 statementType(tests, "READ TABLE", Statements.ReadTable);

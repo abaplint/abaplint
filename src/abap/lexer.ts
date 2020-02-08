@@ -122,7 +122,7 @@ export class Lexer {
 
       let whiteAfter = false;
       const next = this.stream.nextChar();
-      if (next === " " || next === "\n" || next === ":" || next === "," || next === "." || next === "") {
+      if (next === " " || next === "\n" || next === ":" || next === "," || next === "." || next === "" || next === "\"") {
         whiteAfter = true;
       }
 

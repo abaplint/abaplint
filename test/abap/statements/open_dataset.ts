@@ -33,6 +33,7 @@ const tests = [
   "  AT POSITION iv_position MESSAGE lv_message IGNORING CONVERSION ERRORS.",
   "OPEN DATASET iv_path FOR UPDATE IN TEXT MODE ENCODING NON-UNICODE WITH SMART LINEFEED\n" +
   "  AT POSITION iv_position MESSAGE lv_message IGNORING CONVERSION ERRORS.",
+  "OPEN DATASET file FOR INPUT IN TEXT MODE FILTER filter ENCODING DEFAULT.",
 ];
 
 statementType(tests, "OPEN", Statements.OpenDataset);
