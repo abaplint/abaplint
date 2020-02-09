@@ -12,6 +12,7 @@ const tests = [
   "ULINE AT 3(12).",
   "ULINE AT /(right).",
   "ULINE /10.",
+  "ULINE AT /(10) NO-GAP.",
 // todo
 //  "ULINE AT column(length).",
 ];

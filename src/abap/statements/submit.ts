@@ -1,5 +1,5 @@
 import {Statement} from "./_statement";
-import {verNot, str, seq, opt, per, alt, plus, IStatementRunnable} from "../combi";
+import {verNot, str, seq, opt, per, alt, plus, IStatementRunnable, optPrio} from "../combi";
 import {Source, NamespaceSimpleName, Dynamic, Field, AndReturn} from "../expressions";
 import {Version} from "../../version";
 
@@ -8,7 +8,7 @@ export class Submit extends Statement {
   public getMatcher(): IStatementRunnable {
     const sign = seq(str("SIGN"), new Source());
     const eq = alt(str("="), str("EQ"), str("IN"), str("NE"), str("CP"), str("GE"), str("LE"), str("INCL"));
-    const compare = seq(eq, new Source());
+    const compare = seq(eq, new Source(), optPrio(sign));
     const between = seq(str("BETWEEN"), new Source(), str("AND"), new Source());
     const selectionTable = seq(str("WITH SELECTION-TABLE"), new Source());
     const awith = seq(str("WITH"), new Field(), alt(compare, between));
@@ -48,7 +48,6 @@ export class Submit extends Statement {
                      dest,
                      free,
                      newList,
-                     sign,
                      uss,
                      str("TO SAP-SPOOL"),
                      str("WITHOUT SPOOL DYNPRO"),

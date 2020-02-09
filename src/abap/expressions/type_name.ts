@@ -1,4 +1,4 @@
-import {seq, alt, opt, tok, regex as reg, Expression, IStatementRunnable} from "../combi";
+import {seq, alt, opt, tok, regex as reg, Expression, IStatementRunnable, starPrio} from "../combi";
 import {StaticArrow, Dash, InstanceArrow} from "../tokens/";
 
 export class TypeName extends Expression {
@@ -7,7 +7,7 @@ export class TypeName extends Expression {
     const name = reg(/^[\w~\/%]+$/);
     const cla = seq(name, alt(tok(StaticArrow), tok(InstanceArrow)));
     const field = seq(tok(Dash), name);
-    return seq(opt(cla), name, opt(field));
+    return seq(opt(cla), name, starPrio(field));
   }
 
 }

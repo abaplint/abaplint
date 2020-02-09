@@ -15,6 +15,7 @@ const tests = [
   "DELETE FROM /foo/bar CONNECTION (con) WHERE id = lv_id.",
   "delete table connection (lc_db) from table itab.",
   "DELETE FROM ztable USING CLIENT @ls_data-mandt.",
+  "DELETE ztable FROM TABLE lt_bar[].",
 ];
 
 statementType(tests, "DELETE", Statements.DeleteDatabase);

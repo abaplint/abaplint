@@ -9,14 +9,14 @@ export class Uline extends Statement {
   public getMatcher(): IStatementRunnable {
     const right = tok(ParenRightW);
 
-    // todo, reuse the AT thing in ULINE and WRITE?
+    // todo, reuse the "AT" thing in ULINE and WRITE?
     const pos = alt(seq(reg(/^(\/\d*|\d+)$/),
                         opt(seq(tok(ParenLeft), reg(/^\d+$/), right))),
                     seq(tok(WParenLeft), reg(/^\d+$/), right));
 
     const dyn = seq(opt(str("/")), new Dynamic());
 
-    const ret = seq(str("ULINE"), optPrio(str("AT")), opt(alt(pos, dyn)));
+    const ret = seq(str("ULINE"), optPrio(str("AT")), opt(alt(pos, dyn)), optPrio(str("NO-GAP")));
 
     return verNot(Version.Cloud, ret);
   }

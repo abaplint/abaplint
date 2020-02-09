@@ -1,13 +1,17 @@
 import {Statement} from "./_statement";
-import {str, seq, opt, IStatementRunnable} from "../combi";
-import {Field, MessageClass} from "../expressions";
+import {str, seq, IStatementRunnable, optPrio} from "../combi";
+import {Field, MessageClass, Integer} from "../expressions";
 
 export class FunctionPool extends Statement {
 
   public getMatcher(): IStatementRunnable {
+    const message = seq(str("MESSAGE-ID"), new MessageClass());
+    const line = seq(str("LINE-SIZE"), new Integer());
+
     return seq(str("FUNCTION-POOL"),
                new Field(),
-               opt(seq(str("MESSAGE-ID"), new MessageClass())));
+               optPrio(message),
+               optPrio(line));
   }
 
 }

@@ -48,6 +48,8 @@ const tests = [
   "  and return.",
 
   "SUBMIT (name) WITH SELECTION-TABLE tab VIA SELECTION-SCREEN WITH mode = '1'.",
+
+  "SUBMIT zprog WITH p_foo EQ lv_foo SIGN 'I' WITH p_bar EQ lv_bar SIGN 'I' AND RETURN.",
 ];
 
 statementType(tests, "SUBMIT", Statements.Submit);

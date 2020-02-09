@@ -74,6 +74,7 @@ export class Normal extends Structure {
                sta(Statements.Detail),
                sta(Statements.Divide),
                sta(Statements.EditorCall),
+               sta(Statements.EnhancementPoint),
                sta(Statements.Exit),
                sta(Statements.ExportDynpro),
                sta(Statements.Export),

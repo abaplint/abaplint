@@ -67,7 +67,8 @@ export class SelectionScreen extends Statement {
                     tok(ParenRightW),
                     alt(new InlineField(), new TextElement()),
                     command,
-                    opt(def));
+                    opt(def),
+                    opt(modif));
 
     const func = seq(str("FUNCTION KEY"), new Integer());
 

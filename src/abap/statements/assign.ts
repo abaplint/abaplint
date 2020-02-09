@@ -11,7 +11,7 @@ export class Assign extends Statement {
                           str("OF STRUCTURE"),
                           new Source());
 
-    const tableField = seq(str("TABLE FIELD"), new Dynamic());
+    const tableField = seq(str("TABLE FIELD"), alt(new Source(), new Dynamic()));
 
     const arrow = alt(tok(InstanceArrow), tok(StaticArrow));
 
