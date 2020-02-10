@@ -1,5 +1,5 @@
 import {altPrio, str, Expression, IStatementRunnable} from "../combi";
-import {TypeName} from "./type_name";
+import {TypeName} from "./";
 
 export class TypeNameOrInfer extends Expression {
   public getRunnable(): IStatementRunnable {

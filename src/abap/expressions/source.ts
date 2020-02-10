@@ -1,10 +1,7 @@
 import {plus, ver, seq, opt, starPrio, tok, str, alt, star, altPrio, optPrio, regex, Expression, IStatementRunnable, plusPrio} from "../combi";
 import {InstanceArrow, WParenLeftW, WParenRightW, WDashW, ParenLeftW} from "../tokens/";
-import {MethodCallChain, ArithOperator, Cond, Constant, StringTemplate, Let, ComponentCond, SimpleName} from "./";
-import {FieldChain, Field, TableBody, TypeNameOrInfer, ArrowOrDash, FieldSub, For, Throw} from "./";
+import {InlineFieldDefinition, ComponentChain, ComponentName, FieldChain, Field, TableBody, TypeNameOrInfer, ArrowOrDash, FieldSub, For, Throw, MethodCallChain, ArithOperator, Cond, Constant, StringTemplate, Let, ComponentCond, SimpleName} from "./";
 import {Version} from "../../version";
-import {ComponentChain, ComponentName} from "./";
-import {InlineFieldDefinition} from "./inline_field_definition";
 
 // todo, COND and SWITCH are quite similar?
 

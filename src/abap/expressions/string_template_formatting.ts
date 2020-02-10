@@ -1,6 +1,5 @@
 import {str, seq, per, alt, opt, Expression, IStatementRunnable} from "../combi";
-import {Source} from "./source";
-import {Integer} from "./integer";
+import {Integer, Source} from "./";
 
 export class StringTemplateFormatting extends Expression {
   public getRunnable(): IStatementRunnable {

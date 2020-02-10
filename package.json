@@ -48,9 +48,47 @@
         },
         "extends": [
             "eslint:recommended",
-            "plugin:@typescript-eslint/recommended"
+            "plugin:@typescript-eslint/recommended",
+            "plugin:import/errors",
+            "plugin:import/warnings",
+            "plugin:import/typescript"
+        ],
+        "overrides": [
+            {
+                "files": [
+                    "src/abap/expressions/*.ts"
+                ],
+                "rules": {
+                    "no-restricted-imports": [
+                        "error",
+                        {
+                            "patterns": [
+                                "./*"
+                            ]
+                        }
+                    ]
+                }
+            },
+            {
+                "files": [
+                    "src/abap/expressions/index.ts"
+                ],
+                "rules": {
+                    "no-restricted-imports": "off"
+                }
+            }
         ],
         "rules": {
+            "import/no-unresolved": "off",
+            "import/namespace": "off",
+            "import/named": "off",
+            "import/export": "off",
+            "import/newline-after-import": [
+                "error",
+                {
+                    "count": 1
+                }
+            ],
             "object-curly-spacing": "error",
             "@typescript-eslint/explicit-function-return-type": "off",
             "@typescript-eslint/array-type": "error",
@@ -216,6 +254,7 @@
         "@typescript-eslint/parser": "^2.19.0",
         "chai": "^4.2.0",
         "eslint": "^6.8.0",
+        "eslint-plugin-import": "^2.20.1",
         "mocha": "^7.0.1",
         "nyc": "^15.0.0",
         "railroad-diagrams": "git+https://github.com/tabatkins/railroad-diagrams#gh-pages",

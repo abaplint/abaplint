@@ -1,7 +1,6 @@
 import {seq, opt, optPrio, alt, str, plus, star, tok, Expression, IStatementRunnable, altPrio} from "../combi";
-import {SourceField, SourceFieldSymbol, TableExpression, ComponentName, FieldOffset, FieldLength} from "./";
+import {ClassName, SourceField, SourceFieldSymbol, TableExpression, ComponentName, FieldOffset, FieldLength} from "./";
 import {InstanceArrow, StaticArrow, Dash} from "../tokens";
-import {ClassName} from "./class_name";
 
 export class FieldChain extends Expression {
   public getRunnable(): IStatementRunnable {

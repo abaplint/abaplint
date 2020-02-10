@@ -1,8 +1,7 @@
 import {alt, seq, ver, tok, Expression, IStatementRunnable, optPrio} from "../combi";
 import {Version} from "../../version";
 import {WAt, ParenLeftW, WParenRightW} from "../tokens/";
-import {Source, FieldChain} from ".";
-import {TableBody} from "./table_body";
+import {TableBody, Source, FieldChain} from ".";
 
 export class SQLSourceSimple extends Expression {
   public getRunnable(): IStatementRunnable {

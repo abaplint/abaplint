@@ -1,7 +1,6 @@
 import {seq, opt, str, alt, ver, plus, Expression, IStatementRunnable} from "../combi";
-import {Source, InlineFieldDefinition, Cond, ComponentCond, InlineLoopDefinition} from "./";
+import {Let, Source, InlineFieldDefinition, Cond, ComponentCond, InlineLoopDefinition} from "./";
 import {Version} from "../../version";
-import {Let} from "./let";
 
 export class For extends Expression {
   public getRunnable(): IStatementRunnable {

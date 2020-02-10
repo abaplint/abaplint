@@ -1,9 +1,7 @@
 import {seq, per, opt, alt, tok, str, ver, star, plus, Expression, IStatementRunnable} from "../combi";
 import {WParenLeftW, WAt, WParenLeft} from "../tokens/";
-import {DatabaseTable, Dynamic, Target, Source, SQLCond, SQLFieldName, SQLTarget, SQLAggregation} from "./";
+import {SQLSource, SQLFrom, DatabaseTable, Dynamic, Target, Source, SQLCond, SQLFieldName, SQLTarget, SQLAggregation} from "./";
 import {Version} from "../../version";
-import {SQLSource} from "./sql_source";
-import {SQLFrom} from "./sql_from";
 
 export class SelectLoop extends Expression {
   public getRunnable(): IStatementRunnable {

@@ -1,7 +1,6 @@
 import {ver, seq, opt, tok, star, alt, optPrio, str, Expression, IStatementRunnable} from "../combi";
-import {SQLFieldName, Dynamic, Select, SQLCompareOperator} from "./";
+import {SQLSource, SQLFieldName, Dynamic, Select, SQLCompareOperator} from "./";
 import {WParenLeft, WParenLeftW, ParenLeftW, WParenRightW} from "../tokens/";
-import {SQLSource} from "./sql_source";
 import {Version} from "../../version";
 
 export class SQLCompare extends Expression {

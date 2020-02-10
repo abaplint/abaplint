@@ -1,5 +1,5 @@
 import {Expression, IStatementRunnable} from "../combi";
-import {ClassName} from "./class_name";
+import {ClassName} from "./";
 
 export class SuperClassName extends Expression {
   public getRunnable(): IStatementRunnable {

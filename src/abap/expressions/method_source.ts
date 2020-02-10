@@ -1,7 +1,6 @@
 import {seq, alt, altPrio, opt, tok, Expression, IStatementRunnable} from "../combi";
 import {InstanceArrow, StaticArrow} from "../tokens/";
-import {MethodName, Dynamic, FieldChain, MethodCallChain} from "../expressions";
-import {ClassName} from "./class_name";
+import {ClassName, MethodName, Dynamic, FieldChain, MethodCallChain} from "./";
 
 export class MethodSource extends Expression {
   public getRunnable(): IStatementRunnable {

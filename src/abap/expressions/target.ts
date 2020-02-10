@@ -1,9 +1,6 @@
 import {seq, opt, tok, star, alt, str, altPrio, Expression, IStatementRunnable} from "../combi";
-import {Arrow, TableExpression, FieldAll, FieldOffset, FieldLength, TableBody, ClassName, ComponentName, Cast} from "./";
-import {TargetFieldSymbol, NewObject, InlineData, InlineFS} from "./";
+import {TargetField, ArrowOrDash, TargetFieldSymbol, NewObject, InlineData, InlineFS, Arrow, TableExpression, FieldAll, FieldOffset, FieldLength, TableBody, ClassName, ComponentName, Cast} from "./";
 import {InstanceArrow, StaticArrow} from "../tokens/";
-import {ArrowOrDash} from "./arrow_or_dash";
-import {TargetField} from "./target_field";
 
 export class Target extends Expression {
   public getRunnable(): IStatementRunnable {

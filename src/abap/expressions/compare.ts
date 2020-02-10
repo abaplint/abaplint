@@ -1,8 +1,7 @@
 import {seq, opt, ver, tok, plus, alt, str, Expression, IStatementRunnable} from "../combi";
-import {FieldSub, Constant, Source, MethodCallChain, CompareOperator} from "./";
+import {FieldSub, ClassName, Constant, Source, MethodCallChain, CompareOperator} from "./";
 import {WParenLeft, ParenRightW} from "../tokens/";
 import {Version} from "../../version";
-import {ClassName} from "./class_name";
 
 export class Compare extends Expression {
   public getRunnable(): IStatementRunnable {

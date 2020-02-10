@@ -1,6 +1,5 @@
 import {seq, opt, optPrio, alt, str, Expression, IStatementRunnable} from "../combi";
-import {Constant, FieldChain, TypeNameOrInfer} from "./";
-import {TableBody} from "./table_body";
+import {TableBody, Constant, FieldChain, TypeNameOrInfer} from "./";
 
 export class TypeParam extends Expression {
   public getRunnable(): IStatementRunnable {

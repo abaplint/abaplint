@@ -1,6 +1,5 @@
 import {Statement} from "./_statement";
-import {IStatementRunnable} from "../combi";
-import {seq, opt} from "../combi";
+import {seq, opt, IStatementRunnable} from "../combi";
 import {Select as eSelect, SQLHints} from "../expressions";
 
 export class Select extends Statement {

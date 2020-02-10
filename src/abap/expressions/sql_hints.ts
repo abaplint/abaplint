@@ -1,5 +1,5 @@
 import {seq, str, plus, Expression, IStatementRunnable, altPrio} from "../combi";
-import {Constant} from "./constant";
+import {Constant} from "./";
 
 export class SQLHints extends Expression {
   public getRunnable(): IStatementRunnable {

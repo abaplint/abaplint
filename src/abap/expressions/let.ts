@@ -1,5 +1,5 @@
 import {seq, str, plus, Expression, IStatementRunnable} from "../combi";
-import {InlineFieldDefinition} from "./inline_field_definition";
+import {InlineFieldDefinition} from "./";
 
 export class Let extends Expression {
   public getRunnable(): IStatementRunnable {

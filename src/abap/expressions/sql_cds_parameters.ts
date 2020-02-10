@@ -1,7 +1,6 @@
 import {tok, alt, str, seq, star, Expression, IStatementRunnable} from "../combi";
-import {Field} from ".";
+import {Field, Constant} from ".";
 import {WAt} from "../tokens/";
-import {Constant} from "./constant";
 
 export class SQLCDSParameters extends Expression {
   public getRunnable(): IStatementRunnable {

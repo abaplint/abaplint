@@ -1,9 +1,8 @@
 import {ABAPFile} from "../files";
-import {Unknown, Empty} from "./statements/_statement";
+import {Unknown, Empty, Comment as StatementComment} from "./statements/_statement";
 import {Structure} from "./structures/_structure";
 import * as Structures from "./structures/";
 import {Issue} from "../issue";
-import {Comment as StatementComment} from "./statements/_statement";
 import {StructureNode} from "./nodes/";
 
 export class StructureParser {

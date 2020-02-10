@@ -1,8 +1,7 @@
 import {seq, opt, ver, tok, plus, alt, str, Expression, IStatementRunnable} from "../combi";
-import {FieldSub, Constant, Source, CompareOperator} from "./";
+import {ComponentChainSimple, FieldSub, Constant, Source, CompareOperator} from "./";
 import {WParenLeft, ParenRightW} from "../tokens/";
 import {Version} from "../../version";
-import {ComponentChainSimple} from "./component_chain_simple";
 
 export class ComponentCompare extends Expression {
   public getRunnable(): IStatementRunnable {

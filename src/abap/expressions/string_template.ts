@@ -1,8 +1,7 @@
 import {tok, ver, seq, opt, star, altPrio, Expression, IStatementRunnable, optPrio} from "../combi";
 import * as Tokens from "../tokens/";
 import {Version} from "../../version";
-import {Source} from "./source";
-import {StringTemplateFormatting} from ".";
+import {Source, StringTemplateFormatting} from ".";
 
 export class StringTemplate extends Expression {
   public getRunnable(): IStatementRunnable {

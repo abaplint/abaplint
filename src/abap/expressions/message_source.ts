@@ -1,7 +1,6 @@
 import {seq, tok, Expression, IStatementRunnable, opt, str, alt} from "../combi";
 import {ParenLeft, ParenRightW} from "../tokens";
-import {MessageClass, Source} from ".";
-import {MessageTypeAndNumber} from "./message_type_and_number";
+import {MessageTypeAndNumber, MessageClass, Source} from ".";
 
 export class MessageSource extends Expression {
   public getRunnable(): IStatementRunnable {

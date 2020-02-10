@@ -1,6 +1,5 @@
 import {seq, alt, Expression, str, tok, IStatementRunnable} from "../combi";
 import * as Expressions from "./";
-import {MethodParamName} from "./method_param_name";
 import {ParenLeft, ParenRightW} from "../tokens/";
 import {ExpressionNode} from "../nodes";
 import {CurrentScope} from "../syntax/_current_scope";
@@ -11,17 +10,17 @@ export class MethodParam extends Expression {
   public getRunnable(): IStatementRunnable {
     const ref = seq(str("REFERENCE"),
                     tok(ParenLeft),
-                    new MethodParamName(),
+                    new Expressions.MethodParamName(),
                     tok(ParenRightW));
 
     const value = seq(str("VALUE"),
                       tok(ParenLeft),
-                      new MethodParamName(),
+                      new Expressions.MethodParamName(),
                       tok(ParenRightW));
 
     const fieldsOrValue = seq(alt(value,
                                   ref,
-                                  new MethodParamName()),
+                                  new Expressions.MethodParamName()),
                               new Expressions.TypeParam());
 
     return fieldsOrValue;
