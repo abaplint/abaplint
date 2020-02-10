@@ -28,6 +28,7 @@ export class Replace extends Statement {
 
     const occ = alt(str("ALL OCCURRENCES"),
                     str("ALL OCCURENCES"),
+                    str("FIRST OCCURENCE"),
                     str("FIRST OCCURRENCE"));
 
     const mode = alt(str("IN CHARACTER MODE"),

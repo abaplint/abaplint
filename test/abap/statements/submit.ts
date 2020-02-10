@@ -50,6 +50,7 @@ const tests = [
   "SUBMIT (name) WITH SELECTION-TABLE tab VIA SELECTION-SCREEN WITH mode = '1'.",
 
   "SUBMIT zprog WITH p_foo EQ lv_foo SIGN 'I' WITH p_bar EQ lv_bar SIGN 'I' AND RETURN.",
+  "SUBMIT zfoobar VIA JOB lv_job NUMBER lv_number USER lv_user LANGUAGE lv_language AND RETURN.",
 ];
 
 statementType(tests, "SUBMIT", Statements.Submit);

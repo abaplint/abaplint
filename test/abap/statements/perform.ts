@@ -19,6 +19,7 @@ const tests = [
   "PERFORM %run IN PROGRAM (L_REPID) CHANGING foo.",
   "PERFORM foo(zbar) IF FOUND USING l_data CHANGING l_chg.",
   "PERFORM foo?.",
+  "PERFORM ru$n$.",
 ];
 
 statementType(tests, "PERFORM", Statements.Perform);

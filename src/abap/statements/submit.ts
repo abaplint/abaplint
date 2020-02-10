@@ -31,6 +31,7 @@ export class Submit extends Statement {
     const keep = seq(str("KEEP IN SPOOL"), new Source());
     const imm = seq(str("IMMEDIATELY"), new Source());
     const dest = seq(str("DESTINATION"), new Source());
+    const language = seq(str("LANGUAGE"), new Source());
 
     const perm = per(plus(awith),
                      selectionTable,
@@ -46,6 +47,7 @@ export class Submit extends Statement {
                      imm,
                      layout,
                      dest,
+                     language,
                      free,
                      newList,
                      uss,
