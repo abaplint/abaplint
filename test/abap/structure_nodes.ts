@@ -2,10 +2,11 @@ import * as Structures from "../../src/abap/structures/";
 import * as Statements from "../../src/abap/statements/";
 import {expect} from "chai";
 import {parse} from "./_utils";
+import {StructureParser} from "../../src/abap/structure_parser";
 
 describe("Structure, test generated nodes", function() {
   it("Test 01", function () {
-    const result = new Structures.Else().runFile(parse("ELSE."));
+    const result = StructureParser.runFile(new Structures.Else(), parse("ELSE."));
     expect(result.issues.length).to.equal(0);
     expect(result.node).to.not.equal(undefined);
     if (result.node) {
@@ -16,7 +17,7 @@ describe("Structure, test generated nodes", function() {
   });
 
   it("Test 02", function () {
-    const result = new Structures.Else().runFile(parse("ELSE. moo = boo."));
+    const result = StructureParser.runFile(new Structures.Else(), parse("ELSE. moo = boo."));
     expect(result.node).to.not.equal(undefined);
     if (result.node) {
       expect(result.node.get()).to.be.instanceof(Structures.Else);
@@ -28,7 +29,7 @@ describe("Structure, test generated nodes", function() {
   });
 
   it("Test 03", function () {
-    const result = new Structures.Else().runFile(parse("ELSE. moo = boo. loo = foo."));
+    const result = StructureParser.runFile(new Structures.Else(), parse("ELSE. moo = boo. loo = foo."));
     expect(result.node).to.not.equal(undefined);
     if (result.node) {
       expect(result.node.get()).to.be.instanceof(Structures.Else);
@@ -40,7 +41,7 @@ describe("Structure, test generated nodes", function() {
   });
 
   it("Test 04", function () {
-    const result = new Structures.If().runFile(parse("IF foo = boo. ENDIF."));
+    const result = StructureParser.runFile(new Structures.If(), parse("IF foo = boo. ENDIF."));
     expect(result.node).to.not.equal(undefined);
     if (result.node) {
       expect(result.node.get()).to.be.instanceof(Structures.If);
@@ -51,7 +52,7 @@ describe("Structure, test generated nodes", function() {
   });
 
   it("Test 05", function () {
-    const result = new Structures.If().runFile(parse("IF foo = boo. moo = boo. ENDIF."));
+    const result = StructureParser.runFile(new Structures.If(), parse("IF foo = boo. moo = boo. ENDIF."));
     expect(result.node).to.not.equal(undefined);
     if (result.node) {
       expect(result.node.get()).to.be.instanceof(Structures.If);
@@ -60,7 +61,7 @@ describe("Structure, test generated nodes", function() {
   });
 
   it("Test 06", function () {
-    const result = new Structures.Any().runFile(parse("moo = boo. loo = foo."));
+    const result = StructureParser.runFile(new Structures.Any(), parse("moo = boo. loo = foo."));
     expect(result.node).to.not.equal(undefined);
     if (result.node) {
       expect(result.node.get()).to.be.instanceof(Structures.Any);

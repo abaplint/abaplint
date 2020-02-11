@@ -1,5 +1,5 @@
 import {AbstractNode} from "./_abstract_node";
-import {Structure} from "../structures/_structure";
+import {IStructure} from "../structures/_structure";
 import {StatementNode} from "./statement_node";
 import {Statement} from "../statements/_statement";
 import {Token} from "../tokens/_token";
@@ -7,9 +7,9 @@ import {Expression} from "../combi";
 import {ExpressionNode} from "./expression_node";
 
 export class StructureNode extends AbstractNode {
-  private readonly structure: Structure;
+  private readonly structure: IStructure;
 
-  public constructor(structure: Structure) {
+  public constructor(structure: IStructure) {
     super();
     this.structure = structure;
   }
@@ -46,7 +46,7 @@ export class StructureNode extends AbstractNode {
     return ret;
   }
 
-  public findDirectStructures(type: new () => Structure): StructureNode[] {
+  public findDirectStructures(type: new () => IStructure): StructureNode[] {
     const ret: StructureNode[] = [];
     for (const child of this.getChildren()) {
       if (child instanceof StructureNode && child.get() instanceof type) {
@@ -163,7 +163,7 @@ export class StructureNode extends AbstractNode {
     return ret;
   }
 
-  public findAllStructures(type: new () => Structure): StructureNode[] {
+  public findAllStructures(type: new () => IStructure): StructureNode[] {
     let ret: StructureNode[] = [];
     if (this.get() instanceof type) {
       return [this];
@@ -182,7 +182,7 @@ export class StructureNode extends AbstractNode {
     return ret;
   }
 
-  public findFirstStructure(type: new () => Structure): StructureNode | undefined {
+  public findFirstStructure(type: new () => IStructure): StructureNode | undefined {
     if (this.get() instanceof type) {
       return this;
     }

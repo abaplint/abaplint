@@ -1,5 +1,5 @@
 import {IObject} from "./objects/_iobject";
-import {Config} from ".";
+import {Config} from "./config";
 
 export interface IRegistry {
 // todo, add more here

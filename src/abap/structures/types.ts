@@ -1,7 +1,7 @@
 import * as Statements from "../statements";
 import * as Expressions from "../expressions";
 import * as Basic from "../types/basic";
-import {Structure} from "./_structure";
+import {IStructure} from "./_structure";
 import {star, sta, alt, sub, beginEnd} from "./_combi";
 import {StructureNode, StatementNode} from "../nodes";
 import {TypedIdentifier} from "../types/_typed_identifier";
@@ -9,7 +9,7 @@ import {IStructureComponent} from "../types/basic";
 import {CurrentScope} from "../syntax/_current_scope";
 import {IStructureRunnable} from "./_structure_runnable";
 
-export class Types extends Structure {
+export class Types implements IStructure {
 
   public getMatcher(): IStructureRunnable {
     return beginEnd(sta(Statements.TypeBegin),

@@ -1,7 +1,7 @@
 import * as Statements from "./statements";
 import * as Expressions from "./expressions";
 import * as Structures from "./structures";
-import {Structure} from "./structures/_structure";
+import {IStructure} from "./structures/_structure";
 import {Combi, Expression} from "./combi";
 import {Statement} from "./statements/_statement";
 
@@ -48,8 +48,8 @@ function className(cla: any) {
 
 export class Artifacts {
 
-  public static getStructures(): Structure[] {
-    const ret: Structure[] = [];
+  public static getStructures(): IStructure[] {
+    const ret: IStructure[] = [];
 
     for (const key in Structures) {
       const list: any = Structures;

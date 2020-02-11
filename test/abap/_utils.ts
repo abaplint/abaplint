@@ -3,7 +3,7 @@ import {Config} from "../../src/config";
 import {expect} from "chai";
 import {Version, getPreviousVersion} from "../../src/version";
 import {Unknown} from "../../src/abap/statements/_statement";
-import {Structure} from "../../src/abap/structures/_structure";
+import {IStructure} from "../../src/abap/structures/_structure";
 import {StatementParser} from "../../src/abap/statement_parser";
 import {Registry} from "../../src/registry";
 import {StructureNode, StatementNode} from "../../src/abap/nodes/";
@@ -52,7 +52,7 @@ function run(abap: string, text: string, type: any, version?: Version | undefine
   });
 }
 
-export function structureType(cas: {abap: string}[], expected: Structure): void {
+export function structureType(cas: {abap: string}[], expected: IStructure): void {
   describe("Structure type", function() {
     cas.forEach((c: {abap: string}) => {
       it(c.abap, function () {

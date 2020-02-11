@@ -1,10 +1,10 @@
 import * as Statements from "../statements";
 import {star, beginEnd, seq, sta, sub} from "./_combi";
-import {Structure} from "./_structure";
+import {IStructure} from "./_structure";
 import {SectionContents} from "./class_section";
 import {IStructureRunnable} from "./_structure_runnable";
 
-export class Interface extends Structure {
+export class Interface implements IStructure {
 
   public getMatcher(): IStructureRunnable {
     const intf = beginEnd(sta(Statements.Interface),

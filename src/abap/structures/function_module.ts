@@ -1,10 +1,10 @@
 import * as Statements from "../statements";
-import {Structure} from "./_structure";
+import {IStructure} from "./_structure";
 import {star, sta, beginEnd, sub, alt} from "./_combi";
 import {Normal} from "./normal";
 import {IStructureRunnable} from "./_structure_runnable";
 
-export class FunctionModule extends Structure {
+export class FunctionModule implements IStructure {
 
   public getMatcher(): IStructureRunnable {
     const body = alt(sta(Statements.Tables),

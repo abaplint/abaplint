@@ -1,11 +1,11 @@
 import * as Structures from "./";
 import * as Statements from "../statements";
-import {Structure} from "./_structure";
+import {IStructure} from "./_structure";
 import {alt, sta, sub} from "./_combi";
 import {MacroCall} from "../statements/_statement";
 import {IStructureRunnable} from "./_structure_runnable";
 
-export class Normal extends Structure {
+export class Normal implements IStructure {
 
   public getMatcher(): IStructureRunnable {
 // note that the sequence of alternatives here influences performance
