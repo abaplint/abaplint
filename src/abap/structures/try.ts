@@ -1,8 +1,9 @@
 import * as Statements from "../statements";
 import {Structure} from "./_structure";
-import {star, IStructureRunnable, sta, beginEnd, seq, opt, sub} from "./_combi";
+import {star, sta, beginEnd, seq, opt, sub} from "./_combi";
 import {Normal} from "./normal";
 import {Catch} from "./catch";
+import {IStructureRunnable} from "./_structure_runnable";
 
 export class Try extends Structure {
 

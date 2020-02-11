@@ -1,7 +1,8 @@
-import {star, sub, alt, sta, IStructureRunnable} from "./_combi";
+import {star, sub, alt, sta} from "./_combi";
 import * as Structures from "./";
 import * as Statements from "../statements";
 import {Structure} from "./_structure";
+import {IStructureRunnable} from "./_structure_runnable";
 
 export class Any extends Structure {
 

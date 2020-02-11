@@ -1,7 +1,8 @@
 import {Structure} from "./_structure";
 import * as Statements from "../statements";
-import {star, alt, sta, sub, IStructureRunnable} from "./_combi";
+import {star, alt, sta, sub} from "./_combi";
 import {Types, Data, ClassData, Constants, TypeEnum} from ".";
+import {IStructureRunnable} from "./_structure_runnable";
 
 export class SectionContents extends Structure {
 

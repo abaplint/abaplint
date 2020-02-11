@@ -1,7 +1,8 @@
 import * as Statements from "../statements";
 import {Structure} from "./_structure";
 import {NativeSQL} from "../statements/_statement";
-import {star, IStructureRunnable, sta, beginEnd} from "./_combi";
+import {star, sta, beginEnd} from "./_combi";
+import {IStructureRunnable} from "./_structure_runnable";
 
 export class ExecSQL extends Structure {
 

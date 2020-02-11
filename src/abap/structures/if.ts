@@ -1,9 +1,10 @@
 import * as Statements from "../statements";
 import {Structure} from "./_structure";
-import {star, IStructureRunnable, sta, opt, seq, beginEnd, sub} from "./_combi";
+import {star, sta, opt, seq, beginEnd, sub} from "./_combi";
 import {Body} from "./body";
 import {ElseIf} from "./elseif";
 import {Else} from "./else";
+import {IStructureRunnable} from "./_structure_runnable";
 
 export class If extends Structure {
 

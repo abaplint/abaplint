@@ -1,7 +1,8 @@
 import * as Statements from "../statements";
 import {Structure} from "./_structure";
-import {star, IStructureRunnable, sta, beginEnd, sub} from "./_combi";
+import {star, sta, beginEnd, sub} from "./_combi";
 import {Normal} from "./normal";
+import {IStructureRunnable} from "./_structure_runnable";
 
 export class While extends Structure {
 

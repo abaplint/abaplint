@@ -1,7 +1,8 @@
 import * as Structures from "./";
 import {Structure} from "./_structure";
 import * as Statements from "../statements";
-import {seq, IStructureRunnable, sub, star, sta} from "./_combi";
+import {seq, sub, star, sta} from "./_combi";
+import {IStructureRunnable} from "./_structure_runnable";
 
 export class ClassGlobal extends Structure {
 

@@ -1,6 +1,7 @@
 import {Structure} from "./_structure";
-import {IStructureRunnable, star, sub} from "./_combi";
+import {star, sub} from "./_combi";
 import {Normal} from "./normal";
+import {IStructureRunnable} from "./_structure_runnable";
 
 export class Body extends Structure {
 

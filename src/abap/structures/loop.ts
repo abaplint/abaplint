@@ -1,7 +1,8 @@
 import * as Statements from "../statements";
 import {Structure} from "./_structure";
-import {star, IStructureRunnable, sta, beginEnd, sub, alt} from "./_combi";
+import {star, sta, beginEnd, sub, alt} from "./_combi";
 import {Normal, OnChange} from ".";
+import {IStructureRunnable} from "./_structure_runnable";
 
 export class Loop extends Structure {
 

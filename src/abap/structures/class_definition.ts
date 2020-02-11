@@ -1,10 +1,11 @@
 import * as Statements from "../statements";
-import {seq, opt, star, beginEnd, sta, sub, IStructureRunnable} from "./_combi";
+import {seq, opt, star, beginEnd, sta, sub} from "./_combi";
 import {Structure} from "./_structure";
 import {PrivateSection} from "./private_section";
 import {ProtectedSection} from "./protected_section";
 import {PublicSection} from "./public_section";
 import {SetExtendedCheck, TypePools} from "../statements";
+import {IStructureRunnable} from "./_structure_runnable";
 
 export class ClassDefinition extends Structure {
 

@@ -1,8 +1,8 @@
-import {IStructureRunnable} from "./_combi";
 import {StructureNode, StatementNode} from "../nodes/";
 import {Issue} from "../../issue";
 import {ABAPFile} from "../../files";
 import {Position} from "../../position";
+import {IStructureRunnable} from "./_structure_runnable";
 
 // todo, this should also have an interface
 export abstract class Structure  {

@@ -1,7 +1,8 @@
 import * as Statements from "../statements";
-import {star, beginEnd, seq, sta, sub, IStructureRunnable} from "./_combi";
+import {star, beginEnd, seq, sta, sub} from "./_combi";
 import {Structure} from "./_structure";
 import {SectionContents} from "./class_section";
+import {IStructureRunnable} from "./_structure_runnable";
 
 export class Interface extends Structure {
 

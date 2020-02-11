@@ -2,20 +2,8 @@ import {Structure} from "./_structure";
 import {StructureNode, StatementNode} from "../nodes/";
 import {INode} from "../nodes/_inode";
 import {Statement} from "../statements/_statement";
-
-export interface IMatch {
-  matched: StatementNode[];
-  unmatched: StatementNode[];
-  error: boolean;
-  errorDescription: string;
-  errorMatched: number;
-}
-
-export interface IStructureRunnable {
-  toRailroad(): string;
-  getUsing(): string[];
-  run(statements: StatementNode[], parent: INode): IMatch;
-}
+import {IStructureRunnable} from "./_structure_runnable";
+import {IMatch} from "./_match";
 
 class Sequence implements IStructureRunnable {
   private readonly list: IStructureRunnable[];

@@ -1,12 +1,13 @@
 import * as Statements from "../statements";
 import * as Expressions from "../expressions";
 import {Structure} from "./_structure";
-import {star, IStructureRunnable, sta, beginEnd, alt, sub} from "./_combi";
+import {star, sta, beginEnd, alt, sub} from "./_combi";
 import {StructureNode, StatementNode} from "../nodes";
 import {CurrentScope} from "../syntax/_current_scope";
 import {TypedIdentifier} from "../types/_typed_identifier";
 import {IStructureComponent} from "../types/basic";
 import * as Basic from "../types/basic";
+import {IStructureRunnable} from "./_structure_runnable";
 
 export class ClassData extends Structure {
 
