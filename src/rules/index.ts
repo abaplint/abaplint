@@ -65,6 +65,7 @@ export * from "./syntax/inline_data_old_versions";
 export * from "./syntax/parser_error";
 export * from "./syntax/superclass_final";
 export * from "./tabl_enhancement_category";
+export * from "./try_without_catch";
 export * from "./type_begin_single_include";
 export * from "./type_form_parameters";
 export * from "./unreachable_code";

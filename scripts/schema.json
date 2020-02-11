@@ -1665,6 +1665,17 @@
               ],
               "description": "Checks that tables do not have the enhancement category 'not classified'"
             },
+            "try_without_catch": {
+              "anyOf": [
+                {
+                  "$ref": "#/definitions/TryWithoutCatchConf"
+                },
+                {
+                  "type": "boolean"
+                }
+              ],
+              "description": "Checks for TRY blocks without a CATCH block"
+            },
             "type_begin_single_include": {
               "anyOf": [
                 {
@@ -3092,6 +3103,24 @@
     "TABLEnhancementCategoryConf": {
       "additionalProperties": false,
       "description": "Checks that tables do not have the enhancement category 'not classified'",
+      "properties": {
+        "exclude": {
+          "description": "List of file regex patterns to exclude",
+          "items": {
+            "type": "string"
+          },
+          "type": "array"
+        },
+        "reason": {
+          "description": "An explanation for why the rule is enforced",
+          "type": "string"
+        }
+      },
+      "type": "object"
+    },
+    "TryWithoutCatchConf": {
+      "additionalProperties": false,
+      "description": "Checks for TRY blocks without a CATCH block",
       "properties": {
         "exclude": {
           "description": "List of file regex patterns to exclude",

@@ -76,6 +76,7 @@ import {SQLEscapeHostVariablesConf} from "../src/rules/sql_escape_host_variables
 import {StartAtTabConf} from "../src/rules/whitespace/start_at_tab";
 import {SuperclassFinalConf} from "../src/rules/syntax/superclass_final";
 import {TABLEnhancementCategoryConf} from "../src/rules/tabl_enhancement_category";
+import {TryWithoutCatchConf} from "../src/rules/try_without_catch";
 import {TypeBeginSingleTypeConf} from "../src/rules/type_begin_single_include";
 import {TypeFormParametersConf} from "../src/rules/type_form_parameters";
 import {TypesNamingConf} from "../src/rules/naming/types_naming";
@@ -168,6 +169,7 @@ export interface IConfig {
     "start_at_tab"?: StartAtTabConf | boolean,
     "superclass_final"?: SuperclassFinalConf | boolean,
     "tabl_enhancement_category"?: TABLEnhancementCategoryConf | boolean,
+    "try_without_catch"?: TryWithoutCatchConf | boolean,
     "type_begin_single_include"?: TypeBeginSingleTypeConf | boolean,
     "type_form_parameters"?: TypeFormParametersConf | boolean,
     "types_naming"?: TypesNamingConf | boolean,

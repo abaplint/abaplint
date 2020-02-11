@@ -13,3 +13,4 @@ dump.json
 .nyc_output/
 .clinic/
 .idea/
+graph.svg

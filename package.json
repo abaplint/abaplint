@@ -11,6 +11,9 @@
         "test": "test"
     },
     "scripts": {
+        "madge_orphans": "madge --extensions ts --orphans src/",
+        "madge_svg": "madge --extensions ts --image graph.svg src/",
+        "madge_circular": "madge --extensions ts --circular src/",
         "lint": "eslint src/**/*.ts test/**/*.ts web/playground/src/**/*.ts --format unix",
         "compile": "tsc",
         "postcompile": "sh scripts/version.sh",
@@ -75,6 +78,21 @@
                 ],
                 "rules": {
                     "no-restricted-imports": "off"
+                }
+            },
+            {
+                "files": [
+                    "src/abap/statements/*.ts"
+                ],
+                "rules": {
+                    "no-restricted-imports": [
+                        "error",
+                        {
+                            "patterns": [
+                                "../expressions/*"
+                            ]
+                        }
+                    ]
                 }
             }
         ],
@@ -255,6 +273,7 @@
         "chai": "^4.2.0",
         "eslint": "^6.8.0",
         "eslint-plugin-import": "^2.20.1",
+        "madge": "^3.7.0",
         "mocha": "^7.0.1",
         "nyc": "^15.0.0",
         "railroad-diagrams": "git+https://github.com/tabatkins/railroad-diagrams#gh-pages",
