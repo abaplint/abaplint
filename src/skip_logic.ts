@@ -1,11 +1,11 @@
-import {Registry} from "./registry";
 import {IObject} from "./objects/_iobject";
 import {Class, ClassCategory, FunctionGroup, MaintenanceAndTransportObject, Interface} from "./objects";
+import {IRegistry} from "./_iregistry";
 
 export class SkipLogic {
-  private readonly reg: Registry;
+  private readonly reg: IRegistry;
 
-  constructor(reg: Registry) {
+  constructor(reg: IRegistry) {
     this.reg = reg;
   }
 

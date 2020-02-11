@@ -8,6 +8,7 @@ import {Artifacts} from "./artifacts";
 import {SkipLogic} from "./skip_logic";
 import {Position} from "./position";
 import {IncludeGraph} from "./include_graph";
+import {IRegistry} from "./_iregistry";
 
 export interface IProgress {
   set(total: number, text: string): void;
@@ -24,7 +25,7 @@ export class NoProgress implements IProgress {
   }
 }
 
-export class Registry {
+export class Registry implements IRegistry {
   private dirty = false;
   private conf: Config;
   private readonly objects: IObject[] = [];

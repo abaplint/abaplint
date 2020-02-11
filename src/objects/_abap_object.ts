@@ -1,10 +1,10 @@
 import {AbstractObject} from "./_abstract_object";
 import {ABAPFile} from "../files";
-import {Registry} from "../registry";
 import {Issue} from "../issue";
 import {ClassImplementation} from "../abap/types";
 import {xmlToArray} from "../xml_utils";
 import {ABAPParser} from "../abap/abap_parser";
+import {IRegistry} from "../_iregistry";
 
 export interface ITextElement {
   key: string;
@@ -29,7 +29,7 @@ export abstract class ABAPObject extends AbstractObject {
     }
   }
 
-  public parse(reg: Registry): Issue[] {
+  public parse(reg: IRegistry): Issue[] {
     if (this.shouldParse() === false) {
       return this.old;
     }
