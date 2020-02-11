@@ -7,7 +7,6 @@ import {Unknown, Empty, Comment, MacroContent, NativeSQL, Statement, MacroCall} 
 import {Version} from "../version";
 import {Artifacts} from "./artifacts";
 import {Token} from "./tokens/_token";
-import {Config} from "../config";
 import {Identifier, Pragma} from "./tokens";
 import {IFile} from "../files/_ifile";
 import {ABAPFile} from "../files";
@@ -42,9 +41,9 @@ class StatementMap {
 class Macros {
   private readonly macros: string[];
 
-  constructor(config: Config) {
+  constructor(globalMacros: string[]) {
     this.macros = [];
-    for (const m of config.getSyntaxSetttings().globalMacros) {
+    for (const m of globalMacros) {
       this.macros.push(m.toUpperCase());
     }
   }
@@ -108,9 +107,9 @@ export class StatementParser {
     }
   }
 
-  public run(files: IFile[], config: Config): ABAPFile[] {
-    this.macros = new Macros(config);
-    this.version = config.getVersion();
+  public run(files: IFile[], version: Version, globalMacros: string[]): ABAPFile[] {
+    this.macros = new Macros(globalMacros);
+    this.version = version;
 
     const wa = files.map(f => new WorkArea(f, Lexer.run(f)));
 

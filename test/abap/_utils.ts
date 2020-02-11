@@ -1,7 +1,7 @@
 import {MemoryFile} from "../../src/files";
 import {Config} from "../../src/config";
 import {expect} from "chai";
-import {Version, getPreviousVersion} from "../../src/version";
+import {Version, getPreviousVersion, defaultVersion} from "../../src/version";
 import {Unknown} from "../../src/abap/statements/_statement";
 import {IStructure} from "../../src/abap/structures/_structure";
 import {StatementParser} from "../../src/abap/statement_parser";
@@ -22,8 +22,7 @@ export function getFile(abap: string): IFile[] {
 }
 
 export function getStatements(abap: string, version?: Version): StatementNode[] {
-  const config = Config.getDefault(version);
-  return new StatementParser().run(getFile(abap), config)[0].getStatements();
+  return new StatementParser().run(getFile(abap), version ? version : defaultVersion, [])[0].getStatements();
 }
 
 export function findIssues(abap: string) {

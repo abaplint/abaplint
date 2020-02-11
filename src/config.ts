@@ -1,4 +1,4 @@
-import {Version} from "./version";
+import {Version, defaultVersion} from "./version";
 import {ArtifactsRules} from "./artifacts_rules";
 import {IRule} from "./rules/_irule";
 
@@ -37,7 +37,6 @@ export interface IConfig {
 // assumption: this class is immutable
 export class Config {
 
-  private static readonly defaultVersion = Version.v754;
   private readonly config: IConfig;
 
   public static getDefault(ver?: Version): Config {
@@ -48,7 +47,7 @@ export class Config {
       rules[rule.getKey()] = rule.getConfig();
     }
 
-    let version = Config.defaultVersion;
+    let version = defaultVersion;
     if (ver) {
       version = ver;
     }
@@ -131,7 +130,7 @@ export class Config {
 
   public getVersion(): Version {
     if (this.config.global === undefined || this.config.syntax.version === undefined) {
-      return Config.defaultVersion;
+      return defaultVersion;
     }
     return this.config.syntax.version;
   }
