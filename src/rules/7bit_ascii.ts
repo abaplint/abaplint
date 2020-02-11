@@ -1,8 +1,8 @@
 import {Issue} from "../issue";
 import {Position} from "../position";
-import {ABAPRule} from "./_abap_rule";
-import {ABAPFile} from "../files";
 import {BasicRuleConfig} from "./_basic_rule_config";
+import {IObject} from "../objects/_iobject";
+import {IRule} from "./_irule";
 
 /** Only allow characters from the 7bit ASCII set.
  * https://docs.abapopenchecks.org/checks/05/
@@ -10,7 +10,7 @@ import {BasicRuleConfig} from "./_basic_rule_config";
 export class SevenBitAsciiConf extends BasicRuleConfig {
 }
 
-export class SevenBitAscii extends ABAPRule {
+export class SevenBitAscii implements IRule {
   private conf = new SevenBitAsciiConf();
 
   public getKey(): string {
@@ -29,19 +29,24 @@ export class SevenBitAscii extends ABAPRule {
     this.conf = conf;
   }
 
-  public runParsed(file: ABAPFile) {
+  public run(obj: IObject): Issue[] {
     const output: Issue[] = [];
 
-    const rows = file.getRawRows();
+    for (const file of obj.getFiles()) {
+      if (file.getFilename().endsWith(".abap")) {
+        const rows = file.getRawRows();
 
-    for (let i = 0; i < rows.length; i++) {
-      if (/^[\u0000-\u007f]*$/.test(rows[i]) === false) {
-        const position = new Position(i + 1, 1);
-        const issue = Issue.atPosition(file, position, this.getDescription(), this.getKey());
-        output.push(issue);
+        for (let i = 0; i < rows.length; i++) {
+          if (/^[\u0000-\u007f]*$/.test(rows[i]) === false) {
+            const position = new Position(i + 1, 1);
+            const issue = Issue.atPosition(file, position, this.getDescription(), this.getKey());
+            output.push(issue);
+          }
+        }
       }
     }
 
     return output;
   }
+
 }

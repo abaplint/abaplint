@@ -1,6 +1,6 @@
-import {ABAPFile} from "../files";
-import {Config} from "..";
+import {Config} from "../config";
 import {SequentialBlankConf, SequentialBlank} from "../rules";
+import {IFile} from "../files/_ifile";
 
 export class RemoveSequentialBlanks {
   private readonly config: Config;
@@ -8,7 +8,7 @@ export class RemoveSequentialBlanks {
     this.config = config;
   }
 
-  public execute(file: ABAPFile, modified: string): string {
+  public execute(file: IFile, modified: string): string {
     const sequentialBlankConfig = this.getSequentialBlankConfig();
     if (sequentialBlankConfig) {
       return this.withoutSequentialBlanks(file, modified, sequentialBlankConfig.lines);
@@ -17,7 +17,7 @@ export class RemoveSequentialBlanks {
     return modified;
   }
 
-  private withoutSequentialBlanks(file: ABAPFile, modified: string, threshold: number): string {
+  private withoutSequentialBlanks(file: IFile, modified: string, threshold: number): string {
     const rows = file.getRawRows();
 
     let blanks = 0;
