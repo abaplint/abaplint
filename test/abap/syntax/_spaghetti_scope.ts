@@ -4,7 +4,7 @@ import {Registry} from "../../../src/registry";
 import {SyntaxLogic} from "../../../src/abap/syntax/syntax";
 import {SpaghettiScope} from "../../../src/abap/syntax/_spaghetti_scope";
 import {Position} from "../../../src/position";
-import {ScopeType} from "../../../src/abap/syntax/_current_scope";
+import {ScopeType} from "../../../src/abap/syntax/_scope_type";
 
 const filename = "zfoobar.prog.abap";
 
