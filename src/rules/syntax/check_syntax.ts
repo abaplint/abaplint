@@ -3,7 +3,7 @@ import {SyntaxLogic} from "../../abap/syntax/syntax";
 import {BasicRuleConfig} from "../_basic_rule_config";
 import {IObject} from "../../objects/_iobject";
 import {ABAPObject} from "../../objects/_abap_object";
-import {Issue} from "../..";
+import {Issue} from "../../issue";
 
 /** Enables syntax check and variable resolution */
 export class CheckSyntaxConf extends BasicRuleConfig {

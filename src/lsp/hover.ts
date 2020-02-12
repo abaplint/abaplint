@@ -9,7 +9,7 @@ import {TypedIdentifier} from "../abap/types/_typed_identifier";
 import {TypedConstantIdentifier} from "../abap/types/_typed_constant_identifier";
 import {CurrentScope} from "../abap/syntax/_current_scope";
 import * as Tokens from "../abap/tokens";
-import {ITextDocumentPositionParams} from ".";
+import {ITextDocumentPositionParams} from "./_interfaces";
 
 export class Hover {
   public static find(reg: Registry, pos: ITextDocumentPositionParams): LServer.MarkupContent | undefined {

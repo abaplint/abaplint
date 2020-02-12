@@ -8,7 +8,7 @@ import {FormDefinition} from "../abap/types";
 import {ABAPFile} from "../files";
 import {ABAPObject} from "../objects/_abap_object";
 import {SyntaxLogic} from "../abap/syntax/syntax";
-import {ITextDocumentPositionParams} from ".";
+import {ITextDocumentPositionParams} from "./_interfaces";
 import {INode} from "../abap/nodes/_inode";
 import {Position} from "../position";
 import * as LServer from "vscode-languageserver-types";

@@ -8,6 +8,7 @@ import {PrettyPrinter} from "../pretty_printer/pretty_printer";
 import {Definition} from "./definition";
 import {Rename} from "./rename";
 import {Highlight} from "./highlight";
+import {ITextDocumentPositionParams, IDocumentSymbolParams, IRenameParams, ICodeActionParams} from "./_interfaces";
 
 // note Ranges are zero based in LSP,
 // https://github.com/microsoft/language-server-protocol/blob/master/versions/protocol-2-x.md#range
@@ -15,27 +16,6 @@ import {Highlight} from "./highlight";
 
 // the types in this file are not completely correct
 // see https://github.com/microsoft/vscode-languageserver-node/issues/354
-
-export interface ITextDocumentPositionParams {
-  textDocument: LServer.TextDocumentIdentifier;
-  position: LServer.Position;
-}
-
-export interface IRenameParams {
-  textDocument: LServer.TextDocumentIdentifier;
-  position: LServer.Position;
-  newName: string;
-}
-
-export interface ICodeActionParams {
-  textDocument: LServer.TextDocumentIdentifier;
-  range: LServer.Range;
-  context: LServer.CodeActionContext;
-}
-
-export interface IDocumentSymbolParams {
-  textDocument: LServer.TextDocumentIdentifier;
-}
 
 export class LanguageServer {
   private readonly reg: Registry;

@@ -2,7 +2,7 @@ import {Issue} from "../issue";
 import {ABAPRule} from "./_abap_rule";
 import {ABAPFile} from "../files";
 import {BasicRuleConfig} from "./_basic_rule_config";
-import {Registry} from "..";
+import {Registry} from "../registry";
 import {CurrentScope} from "../abap/syntax/_current_scope";
 
 /**

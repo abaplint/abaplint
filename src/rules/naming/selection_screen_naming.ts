@@ -1,6 +1,6 @@
 import {ABAPRule} from "./../_abap_rule";
 import {ABAPFile} from "../../files";
-import {Issue} from "../../";
+import {Issue} from "../../issue";
 import {NamingRuleConfig} from "../_naming_rule_config";
 import {Parameter, SelectOption} from "../../abap/statements";
 import {Statement} from "../../abap/statements/_statement";

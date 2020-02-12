@@ -1,7 +1,7 @@
 
 import {Unknown, MacroContent, MacroCall, Comment} from "../abap/statements/_statement";
 import {ABAPFile} from "../files";
-import {Config} from "..";
+import {Config} from "../config";
 import {FixCase} from "./fix_keyword_case";
 import {Indent as Indent} from "./indent";
 import {IIndentationOptions} from "./indentation_options";

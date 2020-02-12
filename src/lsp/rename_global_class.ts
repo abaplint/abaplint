@@ -1,5 +1,5 @@
 import {WorkspaceEdit, TextDocumentEdit, CreateFile, RenameFile, DeleteFile, TextEdit, Range} from "vscode-languageserver-types";
-import {Registry} from "..";
+import {Registry} from "../registry";
 import {Class} from "../objects";
 import * as Statements from "../abap/statements";
 import * as Expressions from "../abap/expressions";

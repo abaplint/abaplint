@@ -3,7 +3,8 @@ import {ABAPRule} from "./_abap_rule";
 import {ABAPFile} from "../files";
 import {BasicRuleConfig} from "./_basic_rule_config";
 import {Select} from "../abap/statements";
-import {Registry, Version} from "..";
+import {Registry} from "../registry";
+import {Version} from "../version";
 
 /** Escape SQL host variables, from 740sp05 */
 export class SQLEscapeHostVariablesConf extends BasicRuleConfig {

@@ -1,7 +1,7 @@
 import {StatementNode, ExpressionNode, TokenNode, TokenNodeRegex} from "../abap/nodes";
 import {Identifier} from "../abap/tokens";
 import {Position} from "../position";
-import {Config} from "..";
+import {Config} from "../config";
 import {KeywordCase, KeywordCaseStyle} from "../rules/keyword_case";
 import * as Tokens from "../abap/tokens";
 

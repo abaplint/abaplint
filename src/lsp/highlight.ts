@@ -1,5 +1,5 @@
 import * as LServer from "vscode-languageserver-types";
-import {Registry} from "..";
+import {Registry} from "../registry";
 import {ABAPObject} from "../objects/_abap_object";
 import {SpaghettiScope} from "../abap/syntax/_spaghetti_scope";
 import {SyntaxLogic} from "../abap/syntax/syntax";

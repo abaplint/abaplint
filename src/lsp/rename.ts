@@ -1,7 +1,7 @@
 import * as LServer from "vscode-languageserver-types";
-import {ITextDocumentPositionParams, IRenameParams} from ".";
+import {ITextDocumentPositionParams, IRenameParams} from "./_interfaces";
 import {LSPUtils} from "./_lsp_utils";
-import {Registry} from "..";
+import {Registry} from "../registry";
 import * as Statements from "../abap/statements";
 import * as Expressions from "../abap/expressions";
 import {RenameGlobalClass} from "./rename_global_class";

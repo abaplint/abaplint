@@ -1,7 +1,7 @@
 import {BasicRuleConfig} from "./_basic_rule_config";
 import {ABAPRule} from "./_abap_rule";
 import {ABAPFile} from "../files";
-import {Issue} from "..";
+import {Issue} from "../issue";
 import * as Statements from "../abap/statements";
 import {StatementNode} from "../abap/nodes/statement_node";
 import {Type, TypeTable, NamespaceSimpleName} from "../abap/expressions";
