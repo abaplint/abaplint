@@ -113,6 +113,10 @@ const tests = [
   "<timezone>-datetime = |{ tstamp TIMEZONE = <timezone>-tzone }|. ",
   "<timezone>-datetime = |{ tstamp TIMESTAMP = USER }|. ",
 
+  "lv_number = |{ lv_number DECIMALS = 2 NUMBER = RAW SIGN = LEFT }|.",
+  "lv_number = |{ lv_number NUMBER = RAW SIGN = LEFT }|.",
+  "lv_number = |{ lv_number SIGN = LEFT }|.",
+
   `DATA(foo) = REDUCE i( INIT s TYPE i FOR i = 1 UNTIL i > 10 NEXT s = s + i ).`,
 
   `gp_amount_sp = REDUCE #(

@@ -63,20 +63,21 @@ export class StringTemplateFormatting extends Expression {
     const timezone = seq(str("TIMEZONE"), str("="), new Source());
     const timestamp = seq(str("TIMESTAMP"), str("="), timeStampOptions);
     const pad = seq(str("PAD"), str("="), new Source());
+    const number = seq(str("NUMBER"), str("="), numberOptions);
+    const sign = seq(str("SIGN"), str("="), signOptions);
+    const decimals = seq(str("DECIMALS"), str("="), new Integer());
 
     const formatting = alt(seq(str("ALPHA"), str("="), alphaOptions),
                            seq(str("TIME"), str("="), dateTimeOptions),
                            seq(str("DATE"), str("="), dateTimeOptions),
-                           seq(str("NUMBER"), str("="), numberOptions),
-                           seq(str("SIGN"), str("="), signOptions),
                            seq(str("CASE"), str("="), caseOptions),
                            seq(str("EXPONENT"), new Source()),
-                           seq(str("DECIMALS"), new Integer()),
                            seq(str("ZERO"), str("="), zeroXSDOptions),
                            seq(str("XSD"), str("="), zeroXSDOptions),
                            seq(str("STYLE"), str("="), styleOptions),
                            seq(str("CURRENCY"), str("="), new Source()),
                            seq(str("COUNTRY"), str("="), new Source()),
+                           per(sign, number, decimals),
                            per(timezone, timestamp),
                            per(seq(width, opt(pad)), align));
 
