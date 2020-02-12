@@ -3,7 +3,7 @@ import {Issue} from "./issue";
 import {Config} from "./config";
 import {Version} from "./version";
 import {Formatter} from "./formatters/_format";
-import {Registry} from "./registry";
+import {Registry, IProgress} from "./registry";
 import {Stats} from "./extras/stats/stats";
 import {MethodLengthStats} from "./abap/method_length_stats";
 import {LanguageServer} from "./lsp/language_server";
@@ -22,5 +22,5 @@ import * as Types from "./abap/types";
 const abap = {Structures, Statements, Expressions, Types};
 
 export {MemoryFile, Issue, Config, Version, Formatter,
-  Registry, Stats, LanguageServer, MethodLengthStats,
+  Registry, Stats, LanguageServer, MethodLengthStats, IProgress,
   SemanticSearch, ArtifactsObjects, ArtifactsRules, Objects, abap};
