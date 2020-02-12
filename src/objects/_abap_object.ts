@@ -35,7 +35,7 @@ export abstract class ABAPObject extends AbstractObject {
     }
 
     const abapFiles = this.files.filter(f => f.getFilename().endsWith(".abap"));
-    const results = new ABAPParser().parse(abapFiles, reg.getConfig());
+    const results = new ABAPParser().parse(abapFiles, reg.getConfig().getVersion(), reg.getConfig().getSyntaxSetttings().globalMacros);
 
     this.parsed = results.output;
     this.old = results.issues;

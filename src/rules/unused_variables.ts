@@ -6,7 +6,7 @@ import {IObject} from "../objects/_iobject";
 import {SyntaxLogic} from "../abap/syntax/syntax";
 import {ABAPObject} from "../objects/_abap_object";
 import {SpaghettiScopeNode} from "../abap/syntax/_spaghetti_scope";
-import {ScopeType} from "../abap/syntax/_current_scope";
+import {ScopeType} from "../abap/syntax/_scope_type";
 import {TypedIdentifier} from "../abap/types/_typed_identifier";
 import {Interface} from "../objects";
 

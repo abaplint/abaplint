@@ -1,7 +1,7 @@
 import {Position} from "../../position";
 import {TypedIdentifier} from "../types/_typed_identifier";
 import {InterfaceDefinition, FormDefinition, ClassDefinition} from "../types";
-import {ScopeType} from "./_current_scope";
+import {ScopeType} from "./_scope_type";
 import {Identifier} from "../types/_identifier";
 
 export interface IScopeIdentifier {

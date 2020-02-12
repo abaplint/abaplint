@@ -262,14 +262,14 @@
     },
     "homepage": "https://abaplint.org",
     "devDependencies": {
-        "@types/chai": "^4.2.8",
+        "@types/chai": "^4.2.9",
         "@types/glob": "^7.1.1",
         "@types/minimist": "^1.2.0",
         "@types/mocha": "^7.0.1",
-        "@types/node": "^13.7.0",
+        "@types/node": "^13.7.1",
         "@types/progress": "^2.0.3",
-        "@typescript-eslint/eslint-plugin": "^2.19.0",
-        "@typescript-eslint/parser": "^2.19.0",
+        "@typescript-eslint/eslint-plugin": "^2.19.2",
+        "@typescript-eslint/parser": "^2.19.2",
         "chai": "^4.2.0",
         "eslint": "^6.8.0",
         "eslint-plugin-import": "^2.20.1",
@@ -280,8 +280,8 @@
         "source-map-support": "^0.5.16",
         "ts-json-schema-generator": "^0.60.0",
         "typescript": "^3.7.5",
-        "webpack": "^4.41.5",
-        "webpack-cli": "^3.3.10"
+        "webpack": "^4.41.6",
+        "webpack-cli": "^3.3.11"
     },
     "dependencies": {
         "glob": "^7.1.6",

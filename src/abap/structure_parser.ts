@@ -1,9 +1,10 @@
 import {ABAPFile} from "../files";
 import {Unknown, Empty, Comment as StatementComment} from "./statements/_statement";
-import {Structure} from "./structures/_structure";
+import {IStructure} from "./structures/_structure";
 import * as Structures from "./structures/";
 import {Issue} from "../issue";
-import {StructureNode} from "./nodes/";
+import {StructureNode, StatementNode} from "./nodes/";
+import {Position} from "../position";
 
 export class StructureParser {
 
@@ -19,10 +20,10 @@ export class StructureParser {
 // do not parse structure, file contains unknown statements(parser errors)
       return {issues: [], node: undefined};
     }
-    return structure.runFile(file, statements);
+    return this.runFile(structure, file, statements);
   }
 
-  private static findStructureForFile(filename: string): Structure {
+  private static findStructureForFile(filename: string): IStructure {
 // todo, not sure this is the right place for this logic
     if (filename.match(/\.clas\.abap$/)) {
       return new Structures.ClassGlobal();
@@ -32,6 +33,26 @@ export class StructureParser {
 // todo
       return new Structures.Any();
     }
+  }
+
+  public static runFile(structure: IStructure, file: ABAPFile, statements?: StatementNode[]): {issues: Issue[], node?: StructureNode} {
+    statements = statements ? statements : file.getStatements();
+
+    const parent = new StructureNode(structure);
+    const result = structure.getMatcher().run(statements, parent);
+
+    if (result.error) {
+      const issue = Issue.atPosition(file, new Position(1, 1), result.errorDescription, "structure");
+      return {issues: [issue], node: undefined};
+    }
+    if (result.unmatched.length > 0) {
+      const statement = result.unmatched[0];
+      const descr = "Unexpected " + statement.get().constructor.name.toUpperCase();
+      const issue = Issue.atPosition(file, statement.getStart(), descr, "structure");
+      return {issues: [issue], node: undefined};
+    }
+
+    return {issues: [], node: parent};
   }
 
 }

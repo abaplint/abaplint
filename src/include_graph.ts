@@ -1,10 +1,11 @@
-import {Registry, Issue} from ".";
+import {Registry} from "./registry";
 import {Include} from "./abap/statements";
 import {IncludeName} from "./abap/expressions";
 import {FunctionGroup, Program} from "./objects";
 import {ABAPFile} from "./files";
 import {CheckInclude} from "./rules";
 import {Position} from "./position";
+import {Issue} from "./issue";
 
 // todo, check for cycles/circular dependencies, method findTop
 // todo, add configurable error for multiple use includes

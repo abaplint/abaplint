@@ -1,6 +1,6 @@
 import * as Structures from "../../src/abap/structures/";
 import {expect} from "chai";
-import {Structure} from "../../src/abap/structures/_structure";
+import {IStructure} from "../../src/abap/structures/_structure";
 import {getStatements, parse} from "./_utils";
 import {StructureParser} from "../../src/abap/structure_parser";
 import {StructureNode} from "../../src/abap/nodes/";
@@ -15,7 +15,7 @@ const cases = [
 ];
 
 describe("Structure, test error messages, specific", function() {
-  cases.forEach((c: {abap: string, error: string, structure: Structure, errorMatched: number}) => {
+  cases.forEach((c: {abap: string, error: string, structure: IStructure, errorMatched: number}) => {
     it(c.abap, function () {
 // todo, refactor?
       const result = c.structure.getMatcher().run(getStatements(c.abap), new StructureNode(c.structure));

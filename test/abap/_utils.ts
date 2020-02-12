@@ -1,9 +1,9 @@
 import {MemoryFile} from "../../src/files";
 import {Config} from "../../src/config";
 import {expect} from "chai";
-import {Version, getPreviousVersion} from "../../src/version";
+import {Version, getPreviousVersion, defaultVersion} from "../../src/version";
 import {Unknown} from "../../src/abap/statements/_statement";
-import {Structure} from "../../src/abap/structures/_structure";
+import {IStructure} from "../../src/abap/structures/_structure";
 import {StatementParser} from "../../src/abap/statement_parser";
 import {Registry} from "../../src/registry";
 import {StructureNode, StatementNode} from "../../src/abap/nodes/";
@@ -22,8 +22,7 @@ export function getFile(abap: string): IFile[] {
 }
 
 export function getStatements(abap: string, version?: Version): StatementNode[] {
-  const config = Config.getDefault(version);
-  return new StatementParser().run(getFile(abap), config)[0].getStatements();
+  return new StatementParser().run(getFile(abap), version ? version : defaultVersion, [])[0].getStatements();
 }
 
 export function findIssues(abap: string) {
@@ -52,7 +51,7 @@ function run(abap: string, text: string, type: any, version?: Version | undefine
   });
 }
 
-export function structureType(cas: {abap: string}[], expected: Structure): void {
+export function structureType(cas: {abap: string}[], expected: IStructure): void {
   describe("Structure type", function() {
     cas.forEach((c: {abap: string}) => {
       it(c.abap, function () {

@@ -3,7 +3,7 @@ import {opt, sta, star, seq, alt, sub, beginEnd} from "../../../src/abap/structu
 import * as Statements from "../../../src/abap/statements";
 import * as Structures from "../../../src/abap/structures";
 import {StatementNode} from "../../../src/abap/nodes/";
-import {Structure} from "../../../src/abap/structures/_structure";
+import {IStructure} from "../../../src/abap/structures/_structure";
 import {Statement} from "../../../src/abap/statements/_statement";
 import {AbstractNode} from "../../../src/abap/nodes/_abstract_node";
 import {Token} from "../../../src/abap/tokens/_token";
@@ -284,7 +284,7 @@ describe("structure combi beginEnd", function() {
 });
 
 describe("structure combi, complex1", function() {
-  class Normal extends Structure {
+  class Normal implements IStructure {
     public getMatcher() {
       return alt(sta(Statements.Move), sta(Statements.Do));
     }

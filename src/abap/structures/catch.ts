@@ -1,10 +1,10 @@
 import * as Statements from "../statements";
-import {Structure} from "./_structure";
+import {IStructure} from "./_structure";
 import {star, sta, seq, sub} from "./_combi";
 import {Normal} from "./normal";
 import {IStructureRunnable} from "./_structure_runnable";
 
-export class Catch extends Structure {
+export class Catch implements IStructure {
 
   public getMatcher(): IStructureRunnable {
     const normal = star(sub(new Normal()));

@@ -8,7 +8,7 @@ import {LSPUtils} from "./_lsp_utils";
 import {SyntaxLogic} from "../abap/syntax/syntax";
 import {ABAPObject} from "../objects/_abap_object";
 import {SpaghettiScope, SpaghettiScopeNode} from "../abap/syntax/_spaghetti_scope";
-import {ScopeType} from "../abap/syntax/_current_scope";
+import {ScopeType} from "../abap/syntax/_scope_type";
 
 export class Help {
   public static find(reg: Registry, textDocument: LServer.TextDocumentIdentifier, position: LServer.Position): string {

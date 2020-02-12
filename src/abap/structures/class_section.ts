@@ -1,10 +1,10 @@
-import {Structure} from "./_structure";
+import {IStructure} from "./_structure";
 import * as Statements from "../statements";
 import {star, alt, sta, sub} from "./_combi";
 import {Types, Data, ClassData, Constants, TypeEnum} from ".";
 import {IStructureRunnable} from "./_structure_runnable";
 
-export class SectionContents extends Structure {
+export class SectionContents implements IStructure {
 
   public getMatcher(): IStructureRunnable {
 // todo, start should be plus instead?

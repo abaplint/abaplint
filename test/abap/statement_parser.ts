@@ -2,8 +2,8 @@ import {expect} from "chai";
 import {getFile, getStatements} from "./_utils";
 import {MacroCall, Unknown} from "../../src/abap/statements/_statement";
 import {StatementParser} from "../../src/abap/statement_parser";
-import {Config} from "../../src/config";
 import {Write, Data} from "../../src/abap/statements";
+import {defaultVersion} from "../../src/version";
 
 
 describe("statement parser", function() {
@@ -12,11 +12,9 @@ describe("statement parser", function() {
     const abap = "moo bar\n" +
       "WRITE bar.";
 
-    const iconfig = Config.getDefault().get();
-    iconfig.syntax.globalMacros = ["moo"];
-    const config = new Config(JSON.stringify(iconfig));
+    const globalMacros = ["moo"];
 
-    const statements = new StatementParser().run(getFile(abap), config);
+    const statements = new StatementParser().run(getFile(abap), defaultVersion, globalMacros);
     expect(statements.length).to.equal(1);
     expect(statements[0].getStatements()[0].get()).to.be.instanceof(MacroCall);
   });

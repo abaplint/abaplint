@@ -1,4 +1,4 @@
-import {Structure} from "./_structure";
+import {IStructure} from "./_structure";
 import {StructureNode, StatementNode} from "../nodes/";
 import {INode} from "../nodes/_inode";
 import {Statement} from "../statements/_statement";
@@ -181,9 +181,9 @@ class Star implements IStructureRunnable {
 }
 
 class SubStructure implements IStructureRunnable {
-  private readonly s: Structure;
+  private readonly s: IStructure;
 
-  constructor(s: Structure) {
+  constructor(s: IStructure) {
     this.s = s;
   }
 
@@ -280,6 +280,6 @@ export function sta(s: new () => Statement): IStructureRunnable {
   return new SubStatement(s);
 }
 
-export function sub(s: Structure): IStructureRunnable {
+export function sub(s: IStructure): IStructureRunnable {
   return new SubStructure(s);
 }

@@ -8,17 +8,7 @@ import {Position} from "../../position";
 import {SpaghettiScope, SpaghettiScopeNode, IScopeIdentifier} from "./_spaghetti_scope";
 import {Token} from "../tokens/_token";
 import {Identifier} from "../types/_identifier";
-
-export enum ScopeType {
-  BuiltIn = "_builtin",
-  Global = "_global",
-  Program = "_program",
-  Form = "form",
-  Function = "function",
-  Method = "method",
-  ClassDefinition = "class_definition",
-  ClassImplementation = "class_implementation",
-}
+import {ScopeType} from "./_scope_type";
 
 export class CurrentScope {
   private readonly reg: Registry;

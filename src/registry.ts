@@ -4,7 +4,8 @@ import {ABAPObject} from "./objects/_abap_object";
 import {ABAPFile} from "./files";
 import {Config} from "./config";
 import {Issue} from "./issue";
-import {Artifacts} from "./artifacts";
+import {ArtifactsObjects} from "./artifacts_objects";
+import {ArtifactsRules} from "./artifacts_rules";
 import {SkipLogic} from "./skip_logic";
 import {Position} from "./position";
 import {IncludeGraph} from "./include_graph";
@@ -252,7 +253,7 @@ export class Registry implements IRegistry {
 
 // exclude issues, as now we know both the filename and issue key
 // todo, add unit tests for this feature
-    for (const rule of Artifacts.getRules()) {
+    for (const rule of ArtifactsRules.getRules()) {
       const key = rule.getKey();
       const exclude = this.conf.readByKey(key, "exclude");
       if (exclude === undefined || exclude.length === 0) {
@@ -282,7 +283,7 @@ export class Registry implements IRegistry {
     try {
       return this.find(name, type);
     } catch {
-      const add = Artifacts.newObject(name, type);
+      const add = ArtifactsObjects.newObject(name, type);
       this.objects.push(add);
       return add;
     }

@@ -6,7 +6,7 @@ import * as Structures from "../../abap/structures";
 import * as Expressions from "../../abap/expressions";
 import * as Statements from "../../abap/statements";
 import {StructureNode} from "../../abap/nodes";
-import {Structure} from "../../abap/structures/_structure";
+import {IStructure} from "../../abap/structures/_structure";
 import {Statement} from "../../abap/statements/_statement";
 
 /** Check BEGIN OF and END OF names match */
@@ -50,7 +50,7 @@ export class BeginEndNames extends ABAPRule {
     return output;
   }
 
-  private test(stru: StructureNode, type: new() => Structure, b: new() => Statement, e: new() => Statement, file: ABAPFile): Issue[] {
+  private test(stru: StructureNode, type: new() => IStructure, b: new() => Statement, e: new() => Statement, file: ABAPFile): Issue[] {
     let output: Issue[] = [];
 
     for (const sub of stru.findAllStructures(type)) {

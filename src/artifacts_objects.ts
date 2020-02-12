@@ -1,25 +1,8 @@
-import {IRule} from "./rules/_irule";
 import {IObject} from "./objects/_iobject";
-import * as Rules from "./rules/";
 import * as Objects from "./objects";
 
-export class Artifacts {
+export class ArtifactsObjects {
   private static objectMap: any;
-
-  public static getRules(): IRule[] {
-    const ret: IRule[] = [];
-    for (const key in Rules) {
-      const list: any = Rules;
-      if (typeof list[key] === "function") {
-        const rule: IRule = new list[key]();
-// note that configuration is also exported from rules
-        if (rule.getKey !== undefined) {
-          ret.push(rule);
-        }
-      }
-    }
-    return ret;
-  }
 
   public static newObject(name: string, type: string): IObject {
     if (this.objectMap === undefined) {
@@ -34,13 +17,6 @@ export class Artifacts {
 
     return new this.objectMap[type](name);
   }
-
-/*
-  public static getFormatters(): undefined {
-// todo
-    return undefined;
-  }
-*/
 
   private static buildObjectMap() {
     this.objectMap = [];

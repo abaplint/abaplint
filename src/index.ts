@@ -8,7 +8,8 @@ import {Stats} from "./extras/stats/stats";
 import {MethodLengthStats} from "./abap/method_length_stats";
 import {LanguageServer} from "./lsp";
 import {SemanticSearch} from "./extras/semantic_search/semantic_search";
-import {Artifacts} from "./artifacts";
+import {ArtifactsObjects} from "./artifacts_objects";
+import {ArtifactsRules} from "./artifacts_rules";
 import * as Objects from "./objects";
 import * as Structures from "./abap/structures";
 import * as Statements from "./abap/statements";
@@ -21,4 +22,4 @@ const abap = {Structures, Statements, Expressions, Types};
 
 export {MemoryFile, Issue, Config, Version, Formatter,
   Registry, Stats, LanguageServer, MethodLengthStats,
-  SemanticSearch, Artifacts, Objects, abap};
+  SemanticSearch, ArtifactsObjects, ArtifactsRules, Objects, abap};

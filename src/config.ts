@@ -1,5 +1,5 @@
-import {Version} from "./version";
-import {Artifacts} from "./artifacts";
+import {Version, defaultVersion} from "./version";
+import {ArtifactsRules} from "./artifacts_rules";
 import {IRule} from "./rules/_irule";
 
 export interface IGlobalConfig {
@@ -37,18 +37,17 @@ export interface IConfig {
 // assumption: this class is immutable
 export class Config {
 
-  private static readonly defaultVersion = Version.v754;
   private readonly config: IConfig;
 
   public static getDefault(ver?: Version): Config {
     const rules: any = {};
 
-    const sorted = Artifacts.getRules().sort((a, b) => {return a.getKey().localeCompare(b.getKey()); });
+    const sorted = ArtifactsRules.getRules().sort((a, b) => {return a.getKey().localeCompare(b.getKey()); });
     for (const rule of sorted) {
       rules[rule.getKey()] = rule.getConfig();
     }
 
-    let version = Config.defaultVersion;
+    let version = defaultVersion;
     if (ver) {
       version = ver;
     }
@@ -79,7 +78,7 @@ export class Config {
 
   public getEnabledRules(): IRule[] {
     const rules: IRule[] = [];
-    for (const rule of Artifacts.getRules()) {
+    for (const rule of ArtifactsRules.getRules()) {
       const ruleConfig = this.config["rules"][rule.getKey()];
       const ruleExists = ruleConfig !== undefined;
 
@@ -131,7 +130,7 @@ export class Config {
 
   public getVersion(): Version {
     if (this.config.global === undefined || this.config.syntax.version === undefined) {
-      return Config.defaultVersion;
+      return defaultVersion;
     }
     return this.config.syntax.version;
   }

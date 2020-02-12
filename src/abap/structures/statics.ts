@@ -1,6 +1,6 @@
 import * as Statements from "../statements";
 import * as Expressions from "../expressions";
-import {Structure} from "./_structure";
+import {IStructure} from "./_structure";
 import {star, sta, beginEnd, alt} from "./_combi";
 import {StatementNode, StructureNode} from "../nodes";
 import {CurrentScope} from "../syntax/_current_scope";
@@ -9,7 +9,7 @@ import * as Basic from "../types/basic";
 import {IStructureComponent} from "../types/basic";
 import {IStructureRunnable} from "./_structure_runnable";
 
-export class Statics extends Structure {
+export class Statics implements IStructure {
 
   public getMatcher(): IStructureRunnable {
     return beginEnd(sta(Statements.StaticBegin),
