@@ -1,6 +1,6 @@
 import * as LServer from "vscode-languageserver-types";
 import * as monaco from "monaco-editor";
-import {LanguageServer} from "abaplint/lsp";
+import {LanguageServer} from "abaplint/lsp/language_server";
 import {FileSystem} from "../filesystem";
 
 export class ABAPHoverProvider implements monaco.languages.HoverProvider {

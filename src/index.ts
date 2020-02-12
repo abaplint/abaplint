@@ -20,8 +20,7 @@ import * as Types from "./abap/types";
 // file used to build typings, index.d.ts
 
 const abap = {Structures, Statements, Expressions, Types};
-const lsp = {LanguageServer};
 
 export {MemoryFile, Issue, Config, Version, Formatter,
-  Registry, Stats, MethodLengthStats,
-  SemanticSearch, ArtifactsObjects, ArtifactsRules, Objects, abap, lsp};
+  Registry, Stats, LanguageServer, MethodLengthStats,
+  SemanticSearch, ArtifactsObjects, ArtifactsRules, Objects, abap};

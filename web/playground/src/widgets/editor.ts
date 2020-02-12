@@ -3,7 +3,7 @@ import {Message} from "@phosphor/messaging";
 import {Widget} from "@phosphor/widgets";
 import {FileSystem} from "../filesystem";
 import {HelpWidget} from "./help";
-import {LanguageServer} from "abaplint/lsp";
+import {LanguageServer} from "abaplint/lsp/language_server";
 import {HighlightActions} from "../highlight_actions";
 
 export class EditorWidget extends Widget {

@@ -1,6 +1,6 @@
 import * as monaco from "monaco-editor";
 import {FileSystem} from "../filesystem";
-import {LanguageServer} from "abaplint/lsp";
+import {LanguageServer} from "abaplint/lsp/language_server";
 
 export class ABAPDefinitionProvider implements monaco.languages.DefinitionProvider {
 

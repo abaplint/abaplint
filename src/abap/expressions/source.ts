@@ -1,6 +1,7 @@
-import {plus, ver, seq, opt, starPrio, tok, str, alt, star, altPrio, optPrio, regex, Expression, IStatementRunnable, plusPrio} from "../combi";
+import {ver, seq, opt, tok, str, altPrio, optPrio, regex, Expression, IStatementRunnable} from "../combi";
 import {InstanceArrow, WParenLeftW, WParenRightW, WDashW, ParenLeftW} from "../tokens/";
-import {InlineFieldDefinition, ComponentChain, ComponentName, FieldChain, Field, TableBody, TypeNameOrInfer, ArrowOrDash, FieldSub, For, Throw, MethodCallChain, ArithOperator, Cond, Constant, StringTemplate, Let, ComponentCond, SimpleName} from "./";
+import {CondBody, SwitchBody, ComponentChain, FieldChain, ReduceBody, TableBody, TypeNameOrInfer, ArrowOrDash,
+  MethodCallChain, ArithOperator, Cond, Constant, StringTemplate, Let, CorrespondingBody, ValueBody, FilterBody} from "./";
 import {Version} from "../../version";
 
 // todo, COND and SWITCH are quite similar?
@@ -36,20 +37,10 @@ export class Source extends Expression {
                             paren),
                     optPrio(altPrio(ref, after, new TableBody())));
 
-    const mapping = seq(str("MAPPING"), plus(seq(new ComponentName(), str("="), new ComponentName())));
-
-    const baseParen = seq(str("BASE"), tok(WParenLeftW), new Source(), tok(WParenRightW));
-
-    const discarding = ver(Version.v751, str("DISCARDING DUPLICATES"));
-
     const corr = ver(Version.v740sp05, seq(str("CORRESPONDING"),
                                            new TypeNameOrInfer(),
                                            tok(ParenLeftW),
-                                           opt(baseParen),
-                                           new Source(),
-                                           opt(discarding),
-                                           opt(mapping),
-                                           opt(seq(str("EXCEPT"), alt(plus(new Field()), str("*")))),
+                                           new CorrespondingBody(),
                                            rparen));
 
     const conv = ver(Version.v740sp02, seq(str("CONV"),
@@ -59,44 +50,22 @@ export class Source extends Expression {
                                            new Source(),
                                            rparen, opt(after)));
 
-    const or = seq(str("OR"), new Source());
-
-    const swhen = seq(str("WHEN"), new Source(), star(or), str("THEN"), alt(new Source(), new Throw()));
     const swit = ver(Version.v740sp02, seq(str("SWITCH"),
                                            new TypeNameOrInfer(),
                                            tok(ParenLeftW),
-                                           opt(new Let()),
-                                           new Source(),
-                                           plus(swhen),
-                                           opt(seq(str("ELSE"), alt(new Source(), new Throw()))),
+                                           new SwitchBody(),
                                            rparen));
-
-    const fieldList = seq(new FieldSub(), str("="), new Source());
-
-    const base = seq(str("BASE"), new Source());
-
-    const foo = seq(tok(WParenLeftW), optPrio(altPrio(plusPrio(fieldList), seq(optPrio(str("LINES OF")), new Source()))), tok(WParenRightW));
-
-    const strucOrTab = seq(optPrio(new Let()), optPrio(base), optPrio(new For()), starPrio(altPrio(fieldList, foo)));
-
-    const tabdef = ver(Version.v740sp08, altPrio(str("OPTIONAL"), seq(str("DEFAULT"), new Source())));
 
     const value = ver(Version.v740sp02, seq(str("VALUE"),
                                             new TypeNameOrInfer(),
                                             tok(ParenLeftW),
-                                            alt(strucOrTab, seq(new Source(), optPrio(tabdef))),
+                                            new ValueBody(),
                                             rparen));
-
-    const when = seq(str("WHEN"), new Cond(), str("THEN"), alt(new Source(), new Throw()));
-
-    const elsee = seq(str("ELSE"), alt(new Source(), new Throw()));
 
     const cond = ver(Version.v740sp02, seq(str("COND"),
                                            new TypeNameOrInfer(),
                                            tok(ParenLeftW),
-                                           opt(new Let()),
-                                           plus(when),
-                                           opt(elsee),
+                                           new CondBody(),
                                            rparen,
                                            opt(after)));
 
@@ -116,26 +85,14 @@ export class Source extends Expression {
                        seq(str("FILTER"),
                            new TypeNameOrInfer(),
                            tok(ParenLeftW),
-                           new Source(),
-                           opt(str("EXCEPT")),
-                           opt(seq(str("IN"), new Source())),
-                           opt(seq(str("USING KEY"), new SimpleName())),
-                           seq(str("WHERE"), new ComponentCond()),
+                           new FilterBody(),
                            rparen));
-
-    const fields = seq(new Field(), str("="), new Source());
-
-    const init = seq(str("INIT"), plus(new InlineFieldDefinition()));
 
     const reduce = ver(Version.v740sp08,
                        seq(str("REDUCE"),
                            new TypeNameOrInfer(),
                            tok(ParenLeftW),
-                           opt(new Let()),
-                           init,
-                           new For(),
-                           str("NEXT"),
-                           plus(fields),
+                           new ReduceBody(),
                            rparen,
                            opt(after)));
 

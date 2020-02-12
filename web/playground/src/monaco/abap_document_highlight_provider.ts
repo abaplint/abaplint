@@ -1,4 +1,4 @@
-import {LanguageServer} from "abaplint/lsp";
+import {LanguageServer} from "abaplint/lsp/language_server";
 import {FileSystem} from "../filesystem";
 import * as monaco from "monaco-editor";
 
