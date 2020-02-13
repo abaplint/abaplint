@@ -9,20 +9,20 @@ function findIssues(abap: string) {
   return rule.run(reg.getObjects()[0], reg);
 }
 
-describe("Rule: try without catch", function() {
-  it("no issues", function () {
+describe("Rule: try without catch", () => {
+  it("no issues", () => {
     expect(findIssues("WRITE foo.").length).to.equal(0);
   });
 
-  it("issue", function () {
+  it("issue", () => {
     expect(findIssues("TRY. ENDTRY.").length).to.equal(1);
   });
 
-  it("fixed", function () {
+  it("fixed", () => {
     expect(findIssues("TRY. CATCH zcx_moo. ENDTRY.").length).to.equal(0);
   });
 
-  it("parser error", function () {
+  it("parser error", () => {
     expect(findIssues("kjlsfklsdfj sdf").length).to.equal(0);
   });
 });

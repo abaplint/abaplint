@@ -17,7 +17,7 @@ function runMulti(files: {filename: string, contents: string}[]): Issue[] {
   return issues;
 }
 
-describe("Rules, check_include", function () {
+describe("Rules, check_include", () => {
   it("parser error", () => {
     const issues = runMulti([{filename: "cl_foo.clas.abap", contents: "parser error"}]);
     expect(issues.length).to.equals(0);

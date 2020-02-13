@@ -4,8 +4,8 @@ import {expect} from "chai";
 import {parse} from "./_utils";
 import {StructureParser} from "../../src/abap/structure_parser";
 
-describe("Structure, test generated nodes", function() {
-  it("Test 01", function () {
+describe("Structure, test generated nodes", () => {
+  it("Test 01", () => {
     const result = StructureParser.runFile(new Structures.Else(), parse("ELSE."));
     expect(result.issues.length).to.equal(0);
     expect(result.node).to.not.equal(undefined);
@@ -16,7 +16,7 @@ describe("Structure, test generated nodes", function() {
     }
   });
 
-  it("Test 02", function () {
+  it("Test 02", () => {
     const result = StructureParser.runFile(new Structures.Else(), parse("ELSE. moo = boo."));
     expect(result.node).to.not.equal(undefined);
     if (result.node) {
@@ -28,7 +28,7 @@ describe("Structure, test generated nodes", function() {
     }
   });
 
-  it("Test 03", function () {
+  it("Test 03", () => {
     const result = StructureParser.runFile(new Structures.Else(), parse("ELSE. moo = boo. loo = foo."));
     expect(result.node).to.not.equal(undefined);
     if (result.node) {
@@ -40,7 +40,7 @@ describe("Structure, test generated nodes", function() {
     }
   });
 
-  it("Test 04", function () {
+  it("Test 04", () => {
     const result = StructureParser.runFile(new Structures.If(), parse("IF foo = boo. ENDIF."));
     expect(result.node).to.not.equal(undefined);
     if (result.node) {
@@ -51,7 +51,7 @@ describe("Structure, test generated nodes", function() {
     }
   });
 
-  it("Test 05", function () {
+  it("Test 05", () => {
     const result = StructureParser.runFile(new Structures.If(), parse("IF foo = boo. moo = boo. ENDIF."));
     expect(result.node).to.not.equal(undefined);
     if (result.node) {
@@ -60,7 +60,7 @@ describe("Structure, test generated nodes", function() {
     }
   });
 
-  it("Test 06", function () {
+  it("Test 06", () => {
     const result = StructureParser.runFile(new Structures.Any(), parse("moo = boo. loo = foo."));
     expect(result.node).to.not.equal(undefined);
     if (result.node) {

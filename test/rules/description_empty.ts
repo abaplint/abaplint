@@ -3,7 +3,7 @@ import {MemoryFile} from "../../src/files";
 import {DescriptionEmpty} from "../../src/rules";
 import {expect} from "chai";
 
-describe("rule, description_empty, error", function () {
+describe("rule, description_empty, error", () => {
   const xml = `<?xml version="1.0" encoding="utf-8"?>
   <abapGit version="v1.0.0" serializer="LCL_OBJECT_CLAS" serializer_version="v1.0.0">
    <asx:abap xmlns:asx="http://www.sap.com/abapxml" version="1.0">
@@ -29,7 +29,7 @@ describe("rule, description_empty, error", function () {
   });
 });
 
-describe("rule, description_empty, okay", function () {
+describe("rule, description_empty, okay", () => {
   const xml = `<?xml version="1.0" encoding="utf-8"?>
   <abapGit version="v1.0.0" serializer="LCL_OBJECT_CLAS" serializer_version="v1.0.0">
    <asx:abap xmlns:asx="http://www.sap.com/abapxml" version="1.0">
@@ -56,7 +56,7 @@ describe("rule, description_empty, okay", function () {
   });
 });
 
-describe("rule, description_empty, okay, namespaced", function () {
+describe("rule, description_empty, okay, namespaced", () => {
   const xml = `<?xml version="1.0" encoding="utf-8"?>
   <abapGit version="v1.0.0" serializer="LCL_OBJECT_CLAS" serializer_version="v1.0.0">
    <asx:abap xmlns:asx="http://www.sap.com/abapxml" version="1.0">

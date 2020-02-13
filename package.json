@@ -100,6 +100,8 @@
             "import/no-unresolved": "off",
             "import/namespace": "off",
             "import/named": "off",
+            "space-infix-ops": "error",
+            "prefer-arrow-callback": "error",
             "import/export": "off",
             "import/newline-after-import": [
                 "error",

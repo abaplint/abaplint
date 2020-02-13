@@ -9,56 +9,56 @@ function findIssues(abap: string, filename: string) {
   return rule.run(reg.getObjects()[0], reg);
 }
 
-describe("Rule: main_file_contents", function() {
-  it("PROG parser error should not report issues", function () {
+describe("Rule: main_file_contents", () => {
+  it("PROG parser error should not report issues", () => {
     const abap = "parser error";
     const issues = findIssues(abap, "zreport.prog.abap");
     expect(issues.length).to.equal(0);
   });
 
-  it("PROG should start with REPORT, issue", function () {
+  it("PROG should start with REPORT, issue", () => {
     const abap = "WRITE hello.";
     const issues = findIssues(abap, "zreport.prog.abap");
     expect(issues.length).to.equal(1);
   });
 
-  it("PROG should start with REPORT, solved", function () {
+  it("PROG should start with REPORT, solved", () => {
     const abap = "REPORT zreport.";
     const issues = findIssues(abap, "zreport.prog.abap");
     expect(issues.length).to.equal(0);
   });
 
-  it("PROG should start with REPORT or PROGRAM, solved", function () {
+  it("PROG should start with REPORT or PROGRAM, solved", () => {
     const abap = "PROGRAM zreport.";
     const issues = findIssues(abap, "zreport.prog.abap");
     expect(issues.length).to.equal(0);
   });
 
-  it("PROG should start with REPORT, solved, comment ok", function () {
+  it("PROG should start with REPORT, solved, comment ok", () => {
     const abap = "* foo\nREPORT zreport.";
     const issues = findIssues(abap, "zreport.prog.abap");
     expect(issues.length).to.equal(0);
   });
 
-  it("PROG should start with REPORT, solved, two comments", function () {
+  it("PROG should start with REPORT, solved, two comments", () => {
     const abap = "* foo\n* bar\nREPORT zreport.";
     const issues = findIssues(abap, "zreport.prog.abap");
     expect(issues.length).to.equal(0);
   });
 
-  it("just a comment", function () {
+  it("just a comment", () => {
     const abap = "* foo";
     const issues = findIssues(abap, "zreport.prog.abap");
     expect(issues.length).to.equal(1);
   });
 
-  it("PROG should have name", function () {
+  it("PROG should have name", () => {
     const abap = "REPORT.";
     const issues = findIssues(abap, "zreport.prog.abap");
     expect(issues.length).to.equal(1);
   });
 
-  it("PROG report name should match filename", function () {
+  it("PROG report name should match filename", () => {
     const abap = "REPORT zmoo.";
     const issues = findIssues(abap, "zreport.prog.abap");
     expect(issues.length).to.equal(1);

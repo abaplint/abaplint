@@ -6,9 +6,9 @@ import {Write, Data} from "../../src/abap/statements";
 import {defaultVersion} from "../../src/version";
 
 
-describe("statement parser", function() {
+describe("statement parser", () => {
 
-  it("Stupid macro", function () {
+  it("Stupid macro", () => {
     const abap = "moo bar\n" +
       "WRITE bar.";
 
@@ -19,7 +19,7 @@ describe("statement parser", function() {
     expect(statements[0].getStatements()[0].get()).to.be.instanceof(MacroCall);
   });
 
-  it("Unknown statements should be lazy, 2 statements", function () {
+  it("Unknown statements should be lazy, 2 statements", () => {
     const abap = "moo bar\n" +
       "WRITE bar.";
 
@@ -29,7 +29,7 @@ describe("statement parser", function() {
     expect(statements[1].get()).to.be.instanceof(Write);
   });
 
-  it("Unknown statements should be lazy, 3 statements", function () {
+  it("Unknown statements should be lazy, 3 statements", () => {
     const abap = "WRITE moo.\n" +
       "moo bar\n" +
       "WRITE bar.";
@@ -41,7 +41,7 @@ describe("statement parser", function() {
     expect(statements[2].get()).to.be.instanceof(Write);
   });
 
-  it("Unknown statements should be lazy, multi line", function () {
+  it("Unknown statements should be lazy, multi line", () => {
     const abap = "moo\nbar\n" +
       "WRITE bar.";
 
@@ -51,7 +51,7 @@ describe("statement parser", function() {
     expect(statements[1].get()).to.be.instanceof(Write);
   });
 
-  it("Chained/Colon statement", function () {
+  it("Chained/Colon statement", () => {
     const abap = "WRITE: bar.";
 
     const statements = getStatements(abap);
@@ -60,7 +60,7 @@ describe("statement parser", function() {
     expect(statements[0].getColon()).to.not.equal(undefined);
   });
 
-  it("Keep track of pragmas", function () {
+  it("Keep track of pragmas", () => {
     const abap = "WRITE bar ##foobar.";
 
     const statements = getStatements(abap);
@@ -69,7 +69,7 @@ describe("statement parser", function() {
     expect(statements[0].getPragmas().length).to.equal(1);
   });
 
-  it("Chained, pragma malplaced", function () {
+  it("Chained, pragma malplaced", () => {
     const abap = "DATA ##NEEDED: foo, bar.";
 
     const statements = getStatements(abap);

@@ -3,7 +3,7 @@ import {Registry} from "../../src/registry";
 import {expect} from "chai";
 import {CheckTextElements} from "../../src/rules";
 
-describe("Rule: check_text_elements", function() {
+describe("Rule: check_text_elements", () => {
   const xml = `<?xml version="1.0" encoding="utf-8"?>
 <abapGit version="v1.0.0" serializer="LCL_OBJECT_PROG" serializer_version="v1.0.0">
  <asx:abap xmlns:asx="http://www.sap.com/abapxml" version="1.0">
@@ -44,7 +44,7 @@ describe("Rule: check_text_elements", function() {
  </asx:abap>
 </abapGit>`;
 
-  it("test 1", function () {
+  it("test 1", () => {
     const abap = "WRITE hello.";
     const reg = new Registry();
     reg.addFile(new MemoryFile("zfoobar.prog.abap", abap));
@@ -66,7 +66,7 @@ describe("Rule: check_text_elements", function() {
   });
 */
 
-  it("test 3", function () {
+  it("test 3", () => {
     const abap = "WRITE TEXT-001.";
     const reg = new Registry();
     reg.addFile(new MemoryFile("zfoobar.prog.abap", abap));
@@ -76,7 +76,7 @@ describe("Rule: check_text_elements", function() {
     expect(issues.length).to.equal(0);
   });
 
-  it("test 4", function () {
+  it("test 4", () => {
     const abap = "WRITE TEXT-ABC.";
     const reg = new Registry();
     reg.addFile(new MemoryFile("zfoobar.prog.abap", abap));
@@ -86,7 +86,7 @@ describe("Rule: check_text_elements", function() {
     expect(issues.length).to.equal(0);
   });
 
-  it("test 5", function () {
+  it("test 5", () => {
     const abap = "WRITE 'sdfsd'(003).";
     const reg = new Registry();
     reg.addFile(new MemoryFile("zfoobar.prog.abap", abap));
@@ -96,7 +96,7 @@ describe("Rule: check_text_elements", function() {
     expect(issues.length).to.equal(1);
   });
 
-  it("test 6", function () {
+  it("test 6", () => {
     const abap = "WRITE 'hello world 1'(001).";
     const reg = new Registry();
     reg.addFile(new MemoryFile("zfoobar.prog.abap", abap));
@@ -106,7 +106,7 @@ describe("Rule: check_text_elements", function() {
     expect(issues.length).to.equal(0);
   });
 
-  it("test 7", function () {
+  it("test 7", () => {
     const abap = "WRITE 'something else'(001).";
     const reg = new Registry();
     reg.addFile(new MemoryFile("zfoobar.prog.abap", abap));
@@ -116,7 +116,7 @@ describe("Rule: check_text_elements", function() {
     expect(issues.length).to.equal(1);
   });
 
-  it("test 8", function () {
+  it("test 8", () => {
     const abap = "WRITE `something else`(001).";
     const reg = new Registry();
     reg.addFile(new MemoryFile("zfoobar.prog.abap", abap));
@@ -126,7 +126,7 @@ describe("Rule: check_text_elements", function() {
     expect(issues.length).to.equal(1);
   });
 
-  it("test 9", function () {
+  it("test 9", () => {
     const abap = "WRITE '''Editor Lock'' is set.'(111).";
     const reg = new Registry();
     reg.addFile(new MemoryFile("zfoobar.prog.abap", abap));

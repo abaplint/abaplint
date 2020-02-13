@@ -17,7 +17,7 @@ function runMulti(files: {filename: string, contents: string}[]): Issue[] {
   return issues;
 }
 
-describe("Rules, check_transformation_exists", function () {
+describe("Rules, check_transformation_exists", () => {
   it("parser error", () => {
     const issues = runMulti([{filename: "cl_foo.clas.abap", contents: "parase error"}]);
     expect(issues.length).to.equals(0);

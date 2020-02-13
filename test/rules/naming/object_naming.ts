@@ -15,8 +15,8 @@ function findIssues(filename: string, expectedIssueCount: number, config?: Objec
   return issues;
 }
 
-describe("Rule: Object naming (required pattern)", function () {
-  it("clas", function () {
+describe("Rule: Object naming (required pattern)", () => {
+  it("clas", () => {
     const config = new ObjectNamingConf();
     config.clas = "^ZCL_.*$";
 
@@ -29,7 +29,7 @@ describe("Rule: Object naming (required pattern)", function () {
     findIssues("cl_class.clas.abap", 0, config);
   });
 
-  it("intf", function () {
+  it("intf", () => {
     const config = new ObjectNamingConf();
     config.intf = "^ZIF_.*$";
 
@@ -42,7 +42,7 @@ describe("Rule: Object naming (required pattern)", function () {
     findIssues("if_test.intf.abap", 0, config);
   });
 
-  it("prog", function () {
+  it("prog", () => {
     const config = new ObjectNamingConf();
     config.prog = "^Z.*$";
 
@@ -55,7 +55,7 @@ describe("Rule: Object naming (required pattern)", function () {
     findIssues("test.prog.abap", 0, config);
   });
 
-  it("fugr", function () {
+  it("fugr", () => {
     const config = new ObjectNamingConf();
     config.fugr = "^Z.*$";
 
@@ -68,7 +68,7 @@ describe("Rule: Object naming (required pattern)", function () {
     findIssues("test.fugr.abap", 0, config);
   });
 
-  it("tabl", function () {
+  it("tabl", () => {
     const config = new ObjectNamingConf();
     config.tabl = "^Z.*$";
 
@@ -81,7 +81,7 @@ describe("Rule: Object naming (required pattern)", function () {
     findIssues("test.tabl.xml", 0, config);
   });
 
-  it("ttyp", function () {
+  it("ttyp", () => {
     const config = new ObjectNamingConf();
     config.ttyp = "^Z.*$";
 
@@ -94,7 +94,7 @@ describe("Rule: Object naming (required pattern)", function () {
     findIssues("test.ttyp.xml", 0, config);
   });
 
-  it("dtel", function () {
+  it("dtel", () => {
     const config = new ObjectNamingConf();
     config.dtel = "^Z.*$";
 
@@ -107,7 +107,7 @@ describe("Rule: Object naming (required pattern)", function () {
     findIssues("test.dtel.xml", 0, config);
   });
 
-  it("doma", function () {
+  it("doma", () => {
     const config = new ObjectNamingConf();
     config.doma = "^Z.*$";
 
@@ -120,7 +120,7 @@ describe("Rule: Object naming (required pattern)", function () {
     findIssues("test.doma.xml", 0, config);
   });
 
-  it("msag", function () {
+  it("msag", () => {
     const config = new ObjectNamingConf();
     config.doma = "^Z.*$";
 
@@ -133,7 +133,7 @@ describe("Rule: Object naming (required pattern)", function () {
     findIssues("test.msag.xml", 0, config);
   });
 
-  it("tran", function () {
+  it("tran", () => {
     const config = new ObjectNamingConf();
     config.tran = "^Z.*$";
 
@@ -146,7 +146,7 @@ describe("Rule: Object naming (required pattern)", function () {
     findIssues("test.tran.xml", 0, config);
   });
 
-  it("enqu", function () {
+  it("enqu", () => {
     const config = new ObjectNamingConf();
     config.enqu = "^Z.*$";
 
@@ -159,7 +159,7 @@ describe("Rule: Object naming (required pattern)", function () {
     findIssues("test.enqu.xml", 0, config);
   });
 
-  it("auth", function () {
+  it("auth", () => {
     const config = new ObjectNamingConf();
     config.auth = "^Z.*$";
 
@@ -172,7 +172,7 @@ describe("Rule: Object naming (required pattern)", function () {
     findIssues("test.suso.xml", 0, config);
   });
 
-  it("pinf", function () {
+  it("pinf", () => {
     const config = new ObjectNamingConf();
     config.pinf = "^Z.*$";
 
@@ -185,7 +185,7 @@ describe("Rule: Object naming (required pattern)", function () {
     findIssues("test.pinf.xml", 0, config);
   });
 
-  it("idoc", function () {
+  it("idoc", () => {
     const config = new ObjectNamingConf();
     config.idoc = "^Z.*$";
 
@@ -198,7 +198,7 @@ describe("Rule: Object naming (required pattern)", function () {
     findIssues("test.idoc.xml", 0, config);
   });
 
-  it("xslt", function () {
+  it("xslt", () => {
     const config = new ObjectNamingConf();
     config.idoc = "^Z.*$";
 
@@ -211,7 +211,7 @@ describe("Rule: Object naming (required pattern)", function () {
     findIssues("test.xslt.xml", 0, config);
   });
 
-  it("Config, patternKind not set", function () {
+  it("Config, patternKind not set", () => {
     const config = new ObjectNamingConf();
     config.clas = "^ZCL_.*$";
     config.patternKind = undefined;

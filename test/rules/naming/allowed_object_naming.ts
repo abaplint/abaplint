@@ -9,39 +9,39 @@ function findIssues(filename: string) {
   return rule.run(reg.getObjects()[0]);
 }
 
-describe("Rule: allowed_object_naming", function () {
+describe("Rule: allowed_object_naming", () => {
 
-  it("DTEL, exceeds length", function () {
+  it("DTEL, exceeds length", () => {
     const issues = findIssues("very_long_data_element_name_moo_foobar_boo.dtel.xml");
     expect(issues.length).to.equal(1);
   });
 
-  it("DTEL, okay", function () {
+  it("DTEL, okay", () => {
     const issues = findIssues("name.dtel.xml");
     expect(issues.length).to.equal(0);
   });
 
-  it("DTEL, bad characters", function () {
+  it("DTEL, bad characters", () => {
     const issues = findIssues("@foo£!.dtel.xml");
     expect(issues.length).to.equal(1);
   });
 
-  it("DTEL, namespaced", function () {
+  it("DTEL, namespaced", () => {
     const issues = findIssues("#foobar#moo.dtel.xml");
     expect(issues.length).to.equal(0);
   });
 
-  it("CLAS, namespaced", function () {
+  it("CLAS, namespaced", () => {
     const issues = findIssues("#foobar#cl_moo.clas.xml");
     expect(issues.length).to.equal(0);
   });
 
-  it("SICF, with spaces", function () {
+  it("SICF, with spaces", () => {
     const issues = findIssues("zzzzzx         34fdfa36f2a5b0c7d2a8cc037.sicf.xml");
     expect(issues.length).to.equal(0);
   });
 
-  it("SMIM, ok", function () {
+  it("SMIM, ok", () => {
     const issues = findIssues("000c29f7ecfe1ed995a9bd75a2836628.smim.duesseldorf.geojson");
     expect(issues.length).to.equal(0);
   });

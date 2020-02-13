@@ -3,7 +3,7 @@ import {MemoryFile} from "../../src/files";
 import {XMLConsistency} from "../../src/rules";
 import {expect} from "chai";
 
-describe("rule, xml_consistency, error", function () {
+describe("rule, xml_consistency, error", () => {
   const xml = `<?xml version="1.0" encoding="utf-8"?>
   <abapGit version="v1.0.0" serializer="LCL_OBJECT_CLAS" serializer_version="v1.0.0">
    <asx:abap xmlns:asx="http://www.sap.com/abapxml" version="1.0">
@@ -30,7 +30,7 @@ describe("rule, xml_consistency, error", function () {
   });
 });
 
-describe("rule, xml_consistency, okay", function () {
+describe("rule, xml_consistency, okay", () => {
   const xml = `<?xml version="1.0" encoding="utf-8"?>
   <abapGit version="v1.0.0" serializer="LCL_OBJECT_CLAS" serializer_version="v1.0.0">
    <asx:abap xmlns:asx="http://www.sap.com/abapxml" version="1.0">

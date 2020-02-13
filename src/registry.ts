@@ -209,7 +209,7 @@ export class Registry implements IRegistry {
     const objects = this.getABAPObjects();
     progress.set(objects.length, "Lexing and parsing");
     for (const obj of objects) {
-      await progress.tick("Lexing and parsing(" + this.conf.getVersion() + ") - "+  obj.getType() + " " + obj.getName());
+      await progress.tick("Lexing and parsing(" + this.conf.getVersion() + ") - " +  obj.getType() + " " + obj.getName());
       this.issues = this.issues.concat(obj.parse(this));
     }
 

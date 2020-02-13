@@ -52,9 +52,9 @@ function run(abap: string, text: string, type: any, version?: Version | undefine
 }
 
 export function structureType(cas: {abap: string}[], expected: IStructure): void {
-  describe("Structure type", function() {
+  describe("Structure type", () => {
     cas.forEach((c: {abap: string}) => {
-      it(c.abap, function () {
+      it(c.abap, () => {
         const file = parse(c.abap);
         const statements = file.getStatements();
         const length = statements.length;

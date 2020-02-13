@@ -34,7 +34,7 @@ function run(abap: string): Issue[] {
   return new MessageExistsRule().run(reg.getObjects()[0], reg);
 }
 
-describe("Message rule", function () {
+describe("Message rule", () => {
   it("parser error", () => {
     const abap = "sfsdfd";
     const issues = run(abap);

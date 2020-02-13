@@ -5,7 +5,7 @@ import {MemoryFile} from "../../src/files";
 import {expect} from "chai";
 
 function testRulesWithFile(tests: any): void {
-  describe("test files for method length", function () {
+  describe("test files for method length", () => {
     tests.forEach((test: any) => {
       const reg = new Registry();
       reg.addFile(new MemoryFile(test.filename, test.abap)).parse();

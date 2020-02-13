@@ -9,14 +9,14 @@ function findIssues(abap: string) {
   return rule.run(reg.getObjects()[0], reg);
 }
 
-describe("Rule: prefer returning to exporting", function() {
-  it("parser error", function () {
+describe("Rule: prefer returning to exporting", () => {
+  it("parser error", () => {
     const abap = "sdf lksjdf lkj sdf";
     const issues = findIssues(abap);
     expect(issues.length).to.equal(0);
   });
 
-  it("ok", function () {
+  it("ok", () => {
     const abap = `
 CLASS zcl_abapgit_object_enho_class DEFINITION.
   PUBLIC SECTION.
@@ -27,7 +27,7 @@ ENDCLASS.`;
     expect(issues.length).to.equal(0);
   });
 
-  it("ok", function () {
+  it("ok", () => {
     const abap = `
 CLASS zcl_abapgit_object_enho_class DEFINITION.
   PUBLIC SECTION.
@@ -38,7 +38,7 @@ ENDCLASS.`;
     expect(issues.length).to.equal(0);
   });
 
-  it("issue", function () {
+  it("issue", () => {
     const abap = `
 CLASS zcl_abapgit_object_enho_class DEFINITION.
   PUBLIC SECTION.
@@ -48,7 +48,7 @@ ENDCLASS.`;
     expect(issues.length).to.equal(1);
   });
 
-  it("no issue, 2 exporting", function () {
+  it("no issue, 2 exporting", () => {
     const abap = `
 CLASS zcl_abapgit_object_enho_class DEFINITION.
   PUBLIC SECTION.
@@ -60,7 +60,7 @@ ENDCLASS.`;
     expect(issues.length).to.equal(0);
   });
 
-  it("importing", function () {
+  it("importing", () => {
     const abap = `
 CLASS zcl_abapgit_object_enho_class DEFINITION.
   PUBLIC SECTION.
@@ -70,7 +70,7 @@ ENDCLASS.`;
     expect(issues.length).to.equal(0);
   });
 
-  it("TYPE ANY", function () {
+  it("TYPE ANY", () => {
     const abap = `
 CLASS zcl_abapgit_object_enho_class DEFINITION.
   PUBLIC SECTION.

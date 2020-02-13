@@ -143,7 +143,7 @@ describe("Objects, class, getMethodDefinitions", () => {
     expect(clas.getClassDefinition()).to.equal(undefined);
   });
 
-  it("positive, instance method, single parameter", function () {
+  it("positive, instance method, single parameter", () => {
     const abap = "CLASS zcl_foobar DEFINITION PUBLIC.\n" +
       "  PUBLIC SECTION.\n" +
       "    METHODS method1 IMPORTING foo TYPE i.\n" +

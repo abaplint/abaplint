@@ -9,8 +9,8 @@ function findIssues(contents: string, filename: string) {
   return rule.run(reg.getObjects()[0]);
 }
 
-describe("Rule: release_idoc", function() {
-  it("TABL, error", function () {
+describe("Rule: release_idoc", () => {
+  it("TABL, error", () => {
 
     const xml = `<?xml version="1.0" encoding="utf-8"?>
     <abapGit version="v1.0.0" serializer="LCL_OBJECT_TABL" serializer_version="v1.0.0">
@@ -30,7 +30,7 @@ describe("Rule: release_idoc", function() {
     expect(issues.length).to.equal(1);
   });
 
-  it("TABL, no error", function () {
+  it("TABL, no error", () => {
 
     const xml = `<?xml version="1.0" encoding="utf-8"?>
     <abapGit version="v1.0.0" serializer="LCL_OBJECT_TABL" serializer_version="v1.0.0">
@@ -51,7 +51,7 @@ describe("Rule: release_idoc", function() {
     expect(issues.length).to.equal(0);
   });
 
-  it("IDoc, error", function () {
+  it("IDoc, error", () => {
 
     const xml = `<?xml version="1.0" encoding="utf-8"?>
     <abapGit version="v1.0.0" serializer="LCL_OBJECT_IDOC" serializer_version="v1.0.0">
@@ -70,7 +70,7 @@ describe("Rule: release_idoc", function() {
     expect(issues.length).to.equal(1);
   });
 
-  it("IDoc, no error", function () {
+  it("IDoc, no error", () => {
 
     const xml = `<?xml version="1.0" encoding="utf-8"?>
     <abapGit version="v1.0.0" serializer="LCL_OBJECT_IDOC" serializer_version="v1.0.0">

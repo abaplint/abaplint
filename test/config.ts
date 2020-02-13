@@ -4,7 +4,7 @@ import {Version} from "../src";
 
 describe("Registry", () => {
 
-  it("It should include all mentioned rules", function () {
+  it("It should include all mentioned rules", () => {
     const config: IConfig = getConfig({
       "7bit_ascii": {
       },
@@ -20,7 +20,7 @@ describe("Registry", () => {
     expect(conf.getEnabledRules().length).to.equal(3);
   });
 
-  it("Should never auto enable unspecified rules", function () {
+  it("Should never auto enable unspecified rules", () => {
     const config: IConfig = getConfig({});
 
     const conf = new Config(JSON.stringify(config));
@@ -29,7 +29,7 @@ describe("Registry", () => {
     expect(enabledRuleCount).to.equal(0);
   });
 
-  it("should support Boolean rules with true/false", function () {
+  it("should support Boolean rules with true/false", () => {
     const config = getConfig({
       "7bit_ascii": true,
       "avoid_use": false,
@@ -42,7 +42,7 @@ describe("Registry", () => {
     expect(conf.getEnabledRules().length).to.equal(2);
   });
 
-  it("should not do anything bad if you have an old config, old behavior for false", function () {
+  it("should not do anything bad if you have an old config, old behavior for false", () => {
     const config = getConfig({}) as any;
     config.global.applyUnspecifiedRules = false;
 
@@ -50,7 +50,7 @@ describe("Registry", () => {
     expect(conf.getEnabledRules().length).to.equal(0);
   });
 
-  it("should not do anything bad if you have an old config, new behavior for true", function () {
+  it("should not do anything bad if you have an old config, new behavior for true", () => {
     const config = getConfig({}) as any;
     config.global.applyUnspecifiedRules = true;
 

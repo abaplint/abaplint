@@ -12,9 +12,9 @@ function findIssues(abap: string, filename: string, config?: MethodParameterName
   return rule.run(reg.getObjects()[0], reg);
 }
 
-describe(`Rule: method parameter names (general)`, function () {
+describe(`Rule: method parameter names (general)`, () => {
 
-  it(`no methods, interface`, function () {
+  it(`no methods, interface`, () => {
     const abap = `
 INTERFACE zif_foobar PUBLIC.
 ENDINTERFACE.`;
@@ -22,7 +22,7 @@ ENDINTERFACE.`;
     expect(issues.length).to.equal(0);
   });
 
-  it(`no methods, class`, function () {
+  it(`no methods, class`, () => {
     const abap = `
 CLASS zcl_foobar PUBLIC.
 ENDCLASS.`;
@@ -30,13 +30,13 @@ ENDCLASS.`;
     expect(issues.length).to.equal(0);
   });
 
-  it(`parser error, class`, function () {
+  it(`parser error, class`, () => {
     const abap = `sdfsd sdf sdfsd fd`;
     const issues = findIssues(abap, `zif_foobar.clas.abap`);
     expect(issues.length).to.equal(0);
   });
 
-  it(`parser error, interface`, function () {
+  it(`parser error, interface`, () => {
     const abap = `sdfsd sdf sdfsd fd`;
     const issues = findIssues(abap, `zif_foobar.intf.abap`);
     expect(issues.length).to.equal(0);
@@ -44,13 +44,13 @@ ENDCLASS.`;
 
 });
 
-describe(`Rule: method parameter names (skipping)`, function () {
+describe(`Rule: method parameter names (skipping)`, () => {
 
   const config = new MethodParameterNamesConf();
   config.ignoreExceptions = true;
   config.ignoreNames = ["P_TASK"];
 
-  it(`skip exception`, function () {
+  it(`skip exception`, () => {
     const abap = `
 CLASS zcx_abapgit_exception DEFINITION
 PUBLIC
@@ -66,7 +66,7 @@ ENDCLASS.`;
     expect(issues.length).to.equal(0);
   });
 
-  it(`skip p_task`, function () {
+  it(`skip p_task`, () => {
     const abap = `
   INTERFACE zif_foobar PUBLIC.
   METHODS method1 IMPORTING p_task TYPE i.
@@ -76,7 +76,7 @@ ENDCLASS.`;
   });
 
   // todo this is not configurable
-  it(`ignore event handler parameter names`, function () {
+  it(`ignore event handler parameter names`, () => {
     const abap = `
 CLASS lcl_foobar DEFINITION.
   PUBLIC SECTION.
@@ -89,9 +89,9 @@ ENDCLASS.`;
 
 });
 
-describe(`Rule: method parameter names`, function () {
+describe(`Rule: method parameter names`, () => {
   const anyUpToThreeLetterPrefix = "^[a-zA-Z]{1,3}_.*$";
-  it(`interface with a method, no prefix on method parameter 1`, function () {
+  it(`interface with a method, no prefix on method parameter 1`, () => {
     const abap = `
 INTERFACE zif_foobar PUBLIC.
   METHODS method1 IMPORTING foo TYPE i.
@@ -107,7 +107,7 @@ ENDINTERFACE.`;
     expect(findIssues(abap, `zif_foobar.intf.abap`, config).length).to.equal(0);
   });
 
-  it(`interface with a method, prefix on method parameter 1`, function () {
+  it(`interface with a method, prefix on method parameter 1`, () => {
     const abap = `
 INTERFACE zif_foobar PUBLIC.
   METHODS method1 IMPORTING !iv_foo TYPE i.
@@ -123,7 +123,7 @@ ENDINTERFACE.`;
     expect(findIssues(abap, `zif_foobar.intf.abap`, config).length).to.equal(1);
   });
 
-  it(`interface with a method, prefix on method parameter 1`, function () {
+  it(`interface with a method, prefix on method parameter 1`, () => {
     const abap = `
 INTERFACE zif_foobar PUBLIC.
   METHODS method1 IMPORTING iv_foo TYPE i.
@@ -139,7 +139,7 @@ ENDINTERFACE.`;
     expect(findIssues(abap, `zif_foobar.intf.abap`, config).length).to.equal(1);
   });
 
-  it(`instance method without prefix`, function () {
+  it(`instance method without prefix`, () => {
     const abap = `
 CLASS lcl_foobar DEFINITION.
   PUBLIC SECTION.
@@ -156,7 +156,7 @@ ENDCLASS.`;
     expect(findIssues(abap, `foobar.prog.abap`, config).length).to.equal(0);
   });
 
-  it(`static method without prefix`, function () {
+  it(`static method without prefix`, () => {
     const abap = `
 CLASS lcl_foobar DEFINITION.
   PUBLIC SECTION.
@@ -173,7 +173,7 @@ ENDCLASS.`;
     expect(findIssues(abap, `foobar.prog.abap`, config).length).to.equal(0);
   });
 
-  it(`end position`, function () {
+  it(`end position`, () => {
     const abap = `
 CLASS lcl_foobar DEFINITION.
   PUBLIC SECTION.

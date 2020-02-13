@@ -12,9 +12,9 @@ function findIssues(abap: string, config?: ClassAttributeNamesConf) {
   return rule.run(reg.getObjects()[0], reg);
 }
 
-describe("Rule: class attribute names (general)", function () {
+describe("Rule: class attribute names (general)", () => {
 
-  it("parser error", function () {
+  it("parser error", () => {
     const abap = "sdf lksjdf lkj sdf";
     const issues = findIssues(abap);
     expect(issues.length).to.equal(0);
@@ -22,10 +22,10 @@ describe("Rule: class attribute names (general)", function () {
 
 });
 
-describe("Rule: class attribute names", function () {
+describe("Rule: class attribute names", () => {
   const anyUpToThreeLetterPrefix = "^[a-zA-Z]{1,3}_.*$";
 
-  it("issue", function () {
+  it("issue", () => {
     const abap = `
 CLASS zcl_foobar DEFINITION PUBLIC.
   PUBLIC SECTION.
@@ -46,7 +46,7 @@ CLASS zcl_foobar IMPLEMENTATION. ENDCLASS.`;
     expect(findIssues(abap, config).length).to.equal(1);
   });
 
-  it("no issue", function () {
+  it("no issue", () => {
     const abap = `
 CLASS zcl_foobar DEFINITION PUBLIC.
   PUBLIC SECTION.
@@ -67,7 +67,7 @@ CLASS zcl_foobar IMPLEMENTATION. ENDCLASS.`;
     expect(findIssues(abap, config).length).to.equal(0);
   });
 
-  it("issue", function () {
+  it("issue", () => {
     const abap = `
 CLASS zcl_foobar DEFINITION PUBLIC.
   PUBLIC SECTION.
@@ -87,7 +87,7 @@ CLASS zcl_foobar IMPLEMENTATION. ENDCLASS.`;
     expect(findIssues(abap, config).length).to.equal(1);
   });
 
-  it("end position", function () {
+  it("end position", () => {
     const abap = `
               CLASS zcl_foobar DEFINITION PUBLIC.
                 PUBLIC SECTION.

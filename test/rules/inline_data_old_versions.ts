@@ -12,12 +12,12 @@ function findIssues(abap: string, version?: Version) {
   return rule.run(reg.getObjects()[0], reg);
 }
 
-describe("Rule: inline data on old versions", function() {
-  it("no issues", function () {
+describe("Rule: inline data on old versions", () => {
+  it("no issues", () => {
     expect(findIssues("DATA(foo) = 2.").length).to.equal(0);
   });
 
-  it("issue", function () {
+  it("issue", () => {
     expect(findIssues("DATA(foo) = 2.", Version.v702).length).to.equal(1);
   });
 });

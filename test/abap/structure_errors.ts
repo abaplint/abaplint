@@ -14,9 +14,9 @@ const cases = [
   {abap: "IF foo = bar. ENDWHILE. ENDIF.", error: "Expected ENDIF", structure: new Structures.If(), errorMatched: 1},
 ];
 
-describe("Structure, test error messages, specific", function() {
+describe("Structure, test error messages, specific", () => {
   cases.forEach((c: {abap: string, error: string, structure: IStructure, errorMatched: number}) => {
-    it(c.abap, function () {
+    it(c.abap, () => {
 // todo, refactor?
       const result = c.structure.getMatcher().run(getStatements(c.abap), new StructureNode(c.structure));
       expect(result.error).to.equal(true);
@@ -42,9 +42,9 @@ const parser = [
   {abap: "CLASS zfoo DEFINITION. PUBLIC SECTION. WRITE asdf. ENDCLASS.", error: "Expected ENDCLASS"},
 ];
 
-describe("Structure, test error messages, parser", function() {
+describe("Structure, test error messages, parser", () => {
   parser.forEach((c: {abap: string, error: string}) => {
-    it(c.abap, function () {
+    it(c.abap, () => {
       const file = parse(c.abap);
       const issues = StructureParser.run(file).issues;
       if (c.error === "") {
@@ -57,8 +57,8 @@ describe("Structure, test error messages, parser", function() {
   });
 });
 
-describe("Structure, test empty class", function() {
-  it("empty class file", function () {
+describe("Structure, test empty class", () => {
+  it("empty class file", () => {
     const file = new MemoryFile("zcl_foo.clas.abap", "");
     const issues = new Registry().addFile(file).findIssues();
     let found = false;

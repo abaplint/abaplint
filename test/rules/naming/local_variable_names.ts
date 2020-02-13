@@ -12,17 +12,17 @@ function findIssues(abap: string, config?: LocalVariableNamesConf) {
   return rule.run(reg.getObjects()[0], reg);
 }
 
-describe("Rule: local variable names (required pattern)", function () {
+describe("Rule: local variable names (required pattern)", () => {
   const anyUpToThreeLetterPrefix = "^[a-zA-Z]{1,3}_.*$";
   const fsPrefix = "^<[a-zA-Z]{1,3}_.*>$";
 
-  it("parser error", function () {
+  it("parser error", () => {
     const abap = "sdf lksjdf lkj sdf";
     const issues = findIssues(abap);
     expect(issues.length).to.equal(0);
   });
 
-  it("local variable with prefix", function () {
+  it("local variable with prefix", () => {
     const abap = `
     FORM foobar.
     DATA lv_moo TYPE i.
@@ -40,7 +40,7 @@ describe("Rule: local variable names (required pattern)", function () {
     expect(findIssues(abap, config).length).to.equal(0);
   });
 
-  it("local variable without prefix, FORM", function () {
+  it("local variable without prefix, FORM", () => {
     const abap = `
     FORM foobar.
     DATA moo TYPE i.
@@ -59,7 +59,7 @@ describe("Rule: local variable names (required pattern)", function () {
     expect(findIssues(abap, config).length).to.equal(1);
   });
 
-  it("local variable without prefix inside METHOD", function () {
+  it("local variable without prefix inside METHOD", () => {
     const abap = `
 CLASS foo IMPLEMENTATION.
     METHOD foobar.
@@ -77,7 +77,7 @@ ENDCLASS.`;
     expect(findIssues(abap, config).length).to.equal(0);
   });
 
-  it("local variable without prefix inside Function Module", function () {
+  it("local variable without prefix inside Function Module", () => {
     const abap = `
 FUNCTION foo.
   DATA moo TYPE i.
@@ -92,7 +92,7 @@ ENDFUNCTION.`;
     expect(findIssues(abap, config).length).to.equal(0);
   });
 
-  it("no prefix, FORM, fieldsymbol", function () {
+  it("no prefix, FORM, fieldsymbol", () => {
     const abap = `
 FORM foobar.
   FIELD-SYMBOL <moo> TYPE i.
@@ -107,7 +107,7 @@ ENDFORM.`;
     expect(findIssues(abap, config).length).to.equal(0);
   });
 
-  it("prefix, FORM, fieldsymbol", function () {
+  it("prefix, FORM, fieldsymbol", () => {
     const abap = `
 FORM foobar.
   FIELD-SYMBOL <lv_moo> TYPE i.
@@ -122,7 +122,7 @@ ENDFORM.`;
     expect(findIssues(abap, config).length).to.equal(1);
   });
 
-  it("prefix, FORM, DATA BEGIN OF", function () {
+  it("prefix, FORM, DATA BEGIN OF", () => {
     const abap = `
 FORM foobar.
   DATA: BEGIN OF ls_foo,
@@ -139,7 +139,7 @@ ENDFORM.`;
     expect(findIssues(abap, config).length).to.equal(1);
   });
 
-  it("no prefix, FORM, DATA BEGIN OF", function () {
+  it("no prefix, FORM, DATA BEGIN OF", () => {
     const abap = `
 FORM foobar.
   DATA: BEGIN OF foo,
@@ -156,7 +156,7 @@ ENDFORM.`;
     expect(findIssues(abap, config).length).to.equal(0);
   });
 
-  it("no prefix, local constant", function () {
+  it("no prefix, local constant", () => {
     const abap = `
 FORM foobar.
   CONSTANTS foo TYPE c VALUE 'A' LENGTH 1.
@@ -171,7 +171,7 @@ ENDFORM.`;
     expect(findIssues(abap, config).length).to.equal(0);
   });
 
-  it("prefix, local constant", function () {
+  it("prefix, local constant", () => {
     const abap = `
 FORM foobar.
   CONSTANTS lc_foo TYPE c VALUE 'A' LENGTH 1.
@@ -186,7 +186,7 @@ ENDFORM.`;
     expect(findIssues(abap, config).length).to.equal(1);
   });
 
-  it("ok, local constant structure", function () {
+  it("ok, local constant structure", () => {
     const abap = `
 FORM foobar.
   CONSTANTS: BEGIN OF lc_parameter_type,

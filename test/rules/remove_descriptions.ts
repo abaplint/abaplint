@@ -3,7 +3,7 @@ import {MemoryFile} from "../../src/files";
 import {RemoveDescriptions} from "../../src/rules";
 import {expect} from "chai";
 
-describe("rule, remove_descriptions, one error", function () {
+describe("rule, remove_descriptions, one error", () => {
   const xml = `<?xml version="1.0" encoding="utf-8"?>
     <abapGit version="v1.0" serializer="LCL_OBJECT_CLAS" serializer_version="v1.0">
      <asx:abap xmlns:asx="http://www.sap.com/abapxml" version="1.0">
@@ -47,7 +47,7 @@ ENDCLASS.`;
   });
 });
 
-describe("rule, remove_descriptions, no error", function () {
+describe("rule, remove_descriptions, no error", () => {
   const xml = `<?xml version="1.0" encoding="utf-8"?>
     <abapGit version="v1.0" serializer="LCL_OBJECT_CLAS" serializer_version="v1.0">
      <asx:abap xmlns:asx="http://www.sap.com/abapxml" version="1.0">
@@ -83,7 +83,7 @@ ENDCLASS.`;
   });
 });
 
-describe("rule, remove_descriptions, 2 errors", function () {
+describe("rule, remove_descriptions, 2 errors", () => {
   const xml = `<?xml version="1.0" encoding="utf-8"?>
     <abapGit version="v1.0.0" serializer="LCL_OBJECT_CLAS" serializer_version="v1.0.0">
      <asx:abap xmlns:asx="http://www.sap.com/abapxml" version="1.0">
