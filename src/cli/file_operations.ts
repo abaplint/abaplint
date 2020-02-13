@@ -3,8 +3,8 @@ import * as path from "path";
 import {CompressedFile, MemoryFile} from "../files";
 import * as zlib from "zlib";
 import * as glob from "glob";
-import {IProgress} from "../registry";
 import {IFile} from "../files/_ifile";
+import {IProgress} from "../progress";
 
 export class FileOperations {
 
@@ -35,10 +35,10 @@ export class FileOperations {
   public static async loadFiles(compress: boolean, input: string[], bar: IProgress): Promise<IFile[]> {
     const files: IFile[] = [];
 
-    bar.set(input.length, ":percent - :elapseds - Reading files - :filename");
+    bar.set(input.length, "Reading files");
 
     for (const filename of input) {
-      bar.tick({filename: path.basename(filename)});
+      bar.tick("Reading files - " + path.basename(filename));
 
       const base = filename.split("/").reverse()[0];
       if (base.split(".").length <= 2) {

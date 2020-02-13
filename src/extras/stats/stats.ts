@@ -1,4 +1,4 @@
-import {Registry, IProgress} from "../../registry";
+import {Registry} from "../../registry";
 import {Version} from "../../version";
 import {Unknown, Comment, Empty} from "../../abap/statements/_statement";
 import * as Statements from "../../abap/statements";
@@ -40,7 +40,7 @@ export class Stats {
     this.reg = reg;
   }
 
-  public run(progress?: IProgress): IResult {
+  public run(): IResult {
     return {
       version: Registry.abaplintVersion(),
       target: this.reg.getConfig().getVersion(),
@@ -49,7 +49,7 @@ export class Stats {
       objects: this.sort(this.buildObjects()),
       objectOrientation: this.buildObjectOrientation(),
       methodLength: this.buildMethodLength(),
-      statements: this.buildStatements(progress), // attention: this changes the ABAP version
+      statements: this.buildStatements(), // attention: this changes the ABAP version
     };
   }
 
@@ -111,19 +111,19 @@ export class Stats {
     return res;
   }
 
-  private buildStatements(progress?: IProgress): ITypeCount[] {
+  private buildStatements(): ITypeCount[] {
     const ret: ITypeCount[] = [];
     for (const ver of Object.values(Version)) {
-      ret.push({type: ver, count: this.statementsVersion(ver, progress)});
+      ret.push({type: ver, count: this.statementsVersion(ver)});
     }
     return ret;
   }
 
-  private statementsVersion(ver: Version, progress?: IProgress): number {
+  private statementsVersion(ver: Version): number {
     let result = 0;
 
     this.reg.setConfig(Config.getDefault(ver));
-    this.reg.parse(progress);
+    this.reg.parse();
 
     for (const file of this.reg.getABAPFiles()) {
       for (const stat of file.getStatements()) {

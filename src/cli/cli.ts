@@ -7,28 +7,25 @@ import * as childProcess from "child_process";
 import {Issue} from "../issue";
 import {Config} from "../config";
 import {Formatter} from "../formatters/_format";
-import {Registry, IProgress} from "../registry";
+import {Registry} from "../registry";
 import {IFile} from "../files/_ifile";
 import {Stats} from "../extras/stats/stats";
 import {SemanticSearch} from "../extras/semantic_search/semantic_search";
 import {FileOperations} from "./file_operations";
 import {Position} from "../position";
 import {ApackDependencyProvider} from "./apack_dependency_provider";
-
-// todo, split this file into multiple files? and move to new directory?
+import {IProgress} from "../progress";
 
 class Progress implements IProgress {
   private bar: ProgressBar;
 
-  public set(total: number, text: string) {
-    this.bar = new ProgressBar(text, {total, renderThrottle: 100});
+  public set(total: number, _text: string) {
+    this.bar = new ProgressBar(":percent - :elapseds - :text", {total, renderThrottle: 100});
   }
 
-  public tick(options: any) {
-    if (this.bar) {
-      this.bar.tick(options);
-      this.bar.render();
-    }
+  public async tick(text: string) {
+    this.bar.tick({text});
+    this.bar.render();
   }
 }
 
@@ -169,11 +166,12 @@ async function run() {
     if (issues.length === 0) {
       const reg = new Registry(config).addFiles(loaded);
       if (argv["t"]) {
-        output = JSON.stringify(new Stats(reg).run(progress), undefined, 2);
+        output = JSON.stringify(new Stats(reg).run(), undefined, 2);
       } else if (argv["e"]) {
-        output = JSON.stringify(new SemanticSearch(reg).run(progress), undefined, 1);
+        output = JSON.stringify(new SemanticSearch(reg).run(), undefined, 1);
       } else {
         reg.addDependencies(deps);
+        await reg.parseAsync(progress);
         issues = reg.findIssues(progress);
         output = Formatter.format(issues, format, loaded.length);
 

@@ -1,4 +1,4 @@
-import {Registry, IProgress} from "../../registry";
+import {Registry} from "../../registry";
 import {Artifacts} from "../../abap/artifacts";
 import {ExpressionNode} from "../../abap/nodes";
 import {Token} from "../../abap/tokens/_token";
@@ -26,10 +26,10 @@ export class SemanticSearch {
     this.reg = reg;
   }
 
-  public run(progress?: IProgress): ISemanticSearchResult {
+  public run(): ISemanticSearchResult {
     const result: ISemanticSearchResult = {expressions: [], files: []};
 
-    this.reg.parse(progress);
+    this.reg.parse();
 
     const files = this.reg.getABAPFiles();
     for (const file of files) {

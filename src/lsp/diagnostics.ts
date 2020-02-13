@@ -16,7 +16,7 @@ export class Diagnostics {
     }
 
     const diagnostics: LServer.Diagnostic[] = [];
-    for (const issue of reg.findIssues(undefined, obj)) {
+    for (const issue of reg.findIssuesObject(obj)) {
       if (issue.getFilename() !== file.getFilename()) {
         continue;
       }
