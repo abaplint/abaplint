@@ -34,6 +34,7 @@ const tests = [
   "assign lt_tab[ key name index 1 ] to field-symbol(<bar>).",
   "ASSIGN var TO <fs> TYPE 'N'.",
   "ASSIGN TABLE FIELD foobar TO <fs>.",
+  "ASSIGN <tab>[ ('VBELN') = <item>-vbeln ] TO FIELD-SYMBOL(<inv>).",
 ];
 
 statementType(tests, "ASSIGN", Statements.Assign);
