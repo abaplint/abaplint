@@ -3,7 +3,15 @@ import {Constant} from "./";
 
 export class SQLHints extends Expression {
   public getRunnable(): IStatementRunnable {
-    const ret = seq(str("%_HINTS"), plus(seq(altPrio(str("ORACLE"), str("DB6")), new Constant())));
+    const type = altPrio(str("ORACLE"),
+                         str("ADABAS"),
+                         str("AS400"),
+                         str("DB2"),
+                         str("HDB"),
+                         str("MSSQLNT"),
+                         str("SYBASE"),
+                         str("DB6"));
+    const ret = seq(str("%_HINTS"), plus(seq(type, new Constant())));
     return ret;
   }
 }

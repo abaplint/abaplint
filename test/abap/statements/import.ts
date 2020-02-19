@@ -22,6 +22,7 @@ const tests = [
   "IMPORT foo TO bar FROM DATABASE moo(aa) CLIENT lv_client ID lv_id IN CHAR-TO-HEX MODE.",
   "IMPORT line TO converted FROM DATABASE foob(aa) ID id USING source IGNORING CONVERSION ERRORS.",
   "IMPORT foo-bar = foo-bar FROM DATABASE datab(aa) ID lv_id USING lv_read.",
+  "IMPORT field = field FROM SHARED BUFFER INDX(AA) ID 'FOO' TO var.",
 ];
 
 statementType(tests, "IMPORT", Statements.Import);

@@ -22,8 +22,8 @@ export class Import extends Statement {
                        str("("),
                        new Field(),
                        str(")"),
-                       str("ID"),
-                       new Source());
+                       id,
+                       opt(dto));
 
     const buffer = seq(str("DATA BUFFER"), new Source());
     const memory = seq(str("MEMORY ID"), new Source());

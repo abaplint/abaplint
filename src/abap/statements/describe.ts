@@ -38,11 +38,12 @@ export class Describe extends Statement {
     const lines = seq(str("NUMBER OF LINES"), new Target());
     const line = seq(str("LINE"), new Source());
     const page = seq(str("PAGE"), new Source());
-    const index = seq(str("INDEX"), new Target());
+    const index = seq(str("INDEX"), new Source());
     const top = seq(str("TOP-LINES"), new Target());
+    const lineSize = seq(str("LINE-SIZE"), new Target());
     const first = seq(str("FIRST-LINE"), new Target());
 
-    const list = seq(str("LIST"), per(lines, index, line, page, top, first));
+    const list = seq(str("LIST"), per(lines, index, line, page, top, first, lineSize));
 
     const ret = seq(str("DESCRIBE"), alt(table, field, distance, list));
 

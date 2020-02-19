@@ -32,7 +32,7 @@ export class CreateData extends Statement {
     const uniq = alt(str("UNIQUE"), str("NON-UNIQUE"));
     const def = seq(opt(uniq), str("DEFAULT KEY"));
 
-    const kdef = seq(uniq, str("KEY"), alt(plus(new Field()), new Dynamic()));
+    const kdef = seq(opt(uniq), str("KEY"), alt(plus(new Field()), new Dynamic()));
 
     const key = seq(str("WITH"), alt(def, kdef));
 

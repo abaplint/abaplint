@@ -21,7 +21,8 @@ export class Export extends Statement {
                        new Field(),
                        str(")"),
                        str("ID"),
-                       new Source());
+                       new Source(),
+                       opt(from));
 
     const database = seq(str("DATABASE"),
                          new Source(),

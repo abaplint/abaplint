@@ -23,6 +23,7 @@ const tests = [
   "SUBMIT zfoo TO SAP-SPOOL WITHOUT SPOOL DYNPRO KEEP IN SPOOL 'X' IMMEDIATELY 'X' DESTINATION 'LP01' AND RETURN.",
   "SUBMIT /foo/bar USING SELECTION-SCREEN '1000' VIA SELECTION-SCREEN WITH foo EQ 'X'.",
   "SUBMIT zsdfsdf WITH num EQ lv_num WITH date GE '00000000'.",
+  "SUBMIT zfoobar WITH field BETWEEN foo AND bar SIGN 'I' AND RETURN.",
 
   /* todo, how to handle this
   "SUBMIT zblah\n" +

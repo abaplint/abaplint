@@ -20,7 +20,7 @@ export class InsertDatabase extends Statement {
                   opt(str("ACCEPTING DUPLICATE KEYS")));
 
     const from = seq(target,
-                     opt(alt(f, client)));
+                     opt(alt(f, client, new DatabaseConnection())));
 
     const into = seq(str("INTO"),
                      target,

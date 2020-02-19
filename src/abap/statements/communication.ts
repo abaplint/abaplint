@@ -18,6 +18,7 @@ export class Communication extends Statement {
                         new Source(),
                         str("BUFFER"),
                         new Source(),
+                        opt(length),
                         str("DATAINFO"),
                         new Target(),
                         str("STATUSINFO"),

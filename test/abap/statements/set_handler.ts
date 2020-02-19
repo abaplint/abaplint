@@ -9,6 +9,7 @@ const tests = [
   "set handler foobar.",
   "SET HANDLER foobar ACTIVATION ' '.",
   "SET HANDLER lcl_alv=>on_link_click FOR lo_events.",
+  "SET HANDLER dynpro-grid->click FOR foo-bar.",
 ];
 
 statementType(tests, "SET HANDLER", Statements.SetHandler);

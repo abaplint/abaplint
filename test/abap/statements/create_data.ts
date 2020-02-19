@@ -23,6 +23,7 @@ const tests = [
   "CREATE DATA lr_data LIKE STANDARD TABLE OF <l_data> INITIAL SIZE l_size.",
   "CREATE DATA lr_data TYPE HASHED TABLE OF (mv_tabname) WITH UNIQUE KEY (lt_key).",
   "create data lt_ref type sorted table of (iv_tabname) with unique key foo bar.",
+  "CREATE DATA ref TYPE STANDARD TABLE OF (table) WITH KEY (key).",
 ];
 
 statementType(tests, "CREATE DATA", Statements.CreateData);

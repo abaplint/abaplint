@@ -8,10 +8,10 @@ export class Submit extends Statement {
   public getMatcher(): IStatementRunnable {
     const sign = seq(str("SIGN"), new Source());
     const eq = alt(str("="), str("EQ"), str("IN"), str("NE"), str("CP"), str("GE"), str("LE"), str("INCL"));
-    const compare = seq(eq, new Source(), optPrio(sign));
+    const compare = seq(eq, new Source());
     const between = seq(str("BETWEEN"), new Source(), str("AND"), new Source());
     const selectionTable = seq(str("WITH SELECTION-TABLE"), new Source());
-    const awith = seq(str("WITH"), new Field(), alt(compare, between));
+    const awith = seq(str("WITH"), new Field(), alt(compare, between), optPrio(sign));
     const prog = alt(new NamespaceSimpleName(), new Dynamic());
     const job = seq(str("VIA JOB"), new Source(), str("NUMBER"), new Source());
     const exporting = str("EXPORTING LIST TO MEMORY");

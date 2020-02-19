@@ -24,7 +24,9 @@ const tests = [
   "DESCRIBE LIST LINE sy-lilli PAGE lv_page.",
   "DESCRIBE LIST PAGE 1 TOP-LINES lv_top.",
   "DESCRIBE TABLE lt_table LINES lv_lines OCCURS lv_occurs.",
-  "DESCRIBE LIST INDEX lv_index PAGE  lv_page TOP-LINES lv_top FIRST-LINE lv_first.",
+  "DESCRIBE LIST INDEX lv_index PAGE lv_page TOP-LINES lv_top FIRST-LINE lv_first.",
+  "DESCRIBE LIST INDEX 1 PAGE 1 LINE-SIZE size.",
+  "DESCRIBE LIST INDEX 1 PAGE page TOP-LINES top.",
 ];
 
 statementType(tests, "DESCRIBE", Statements.Describe);
