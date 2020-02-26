@@ -15,13 +15,14 @@ import * as Objects from "./objects";
 import * as Structures from "./abap/structures";
 import * as Statements from "./abap/statements";
 import * as Expressions from "./abap/expressions";
+import * as Nodes from "./abap/nodes";
 import * as Types from "./abap/types";
 
 // do not include this file from anywhere
 
 // file used to build typings, index.d.ts
 
-const abap = {Structures, Statements, Expressions, Types};
+const abap = {Structures, Statements, Expressions, Types, Nodes};
 
 export {MemoryFile, Issue, Config, Version, Formatter,
   Registry, Stats, LanguageServer, MethodLengthStats, IProgress,

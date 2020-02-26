@@ -1,6 +1,6 @@
 {
     "name": "abaplint",
-    "version": "2.26.1",
+    "version": "2.26.2",
     "description": "Linter for ABAP",
     "bin": {
         "abaplint": "./abaplint"
@@ -268,7 +268,7 @@
         "@types/glob": "^7.1.1",
         "@types/minimist": "^1.2.0",
         "@types/mocha": "^7.0.1",
-        "@types/node": "^13.7.4",
+        "@types/node": "^13.7.6",
         "@types/progress": "^2.0.3",
         "@typescript-eslint/eslint-plugin": "^2.21.0",
         "@typescript-eslint/parser": "^2.21.0",
