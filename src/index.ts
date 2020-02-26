@@ -22,8 +22,7 @@ import * as Types from "./abap/types";
 
 // file used to build typings, index.d.ts
 
-const abap = {Structures, Statements, Expressions, Types, Nodes};
-
 export {MemoryFile, Issue, Config, Version, Formatter,
   Registry, Stats, LanguageServer, MethodLengthStats, IProgress,
-  SemanticSearch, ArtifactsObjects, ArtifactsRules, Objects, abap};
+  SemanticSearch, ArtifactsObjects, ArtifactsRules, Objects,
+  Structures, Statements, Expressions, Types, Nodes};
