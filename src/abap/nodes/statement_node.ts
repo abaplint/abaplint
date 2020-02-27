@@ -155,6 +155,15 @@ export class StatementNode extends AbstractNode {
     throw new Error("getLastToken, unexpected type");
   }
 
+  public findDirectExpression(type: new () => Expression): ExpressionNode | undefined {
+    for (const child of this.getChildren()) {
+      if (child instanceof ExpressionNode && child.get() instanceof type) {
+        return child;
+      }
+    }
+    return undefined;
+  }
+
   public findDirectTokenByText(text: string): Token | undefined {
     for (const child of this.getChildren()) {
       if (child instanceof TokenNode) {
