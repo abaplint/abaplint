@@ -1,6 +1,6 @@
 import {MemoryFile} from "./files";
 import {Issue} from "./issue";
-import {Config} from "./config";
+import {Config, IConfig} from "./config";
 import {Version} from "./version";
 import {Formatter} from "./formatters/_format";
 import {Registry} from "./registry";
@@ -25,4 +25,4 @@ import * as Types from "./abap/types";
 export {MemoryFile, Issue, Config, Version, Formatter,
   Registry, Stats, LanguageServer, MethodLengthStats, IProgress,
   SemanticSearch, ArtifactsObjects, ArtifactsRules, Objects,
-  Structures, Statements, Expressions, Types, Nodes};
+  Structures, Statements, Expressions, Types, Nodes, IConfig};

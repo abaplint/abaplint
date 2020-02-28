@@ -59,12 +59,13 @@ export class Registry implements IRegistry {
   }
 
 // assumption: Config is immutable, and can only be changed via this method
-  public setConfig(conf: Config) {
+  public setConfig(conf: Config): Registry {
     this.setDirty();
     for (const obj of this.getObjects()) {
       obj.setDirty();
     }
     this.conf = conf;
+    return this;
   }
 
   public inErrorNamespace(name: string): boolean {

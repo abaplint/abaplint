@@ -106,6 +106,10 @@ export class Config {
     if (this.config.syntax === undefined) {
       this.config.syntax = Config.getDefault().getSyntaxSetttings();
     }
+    if (this.config.syntax.globalMacros === undefined) {
+      this.config.syntax.globalMacros = [];
+    }
+
   }
 
   public get() {
