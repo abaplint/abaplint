@@ -22,8 +22,8 @@ export interface IDependency {
 export interface ISyntaxSettings {
   version: Version;
   errorNamespace: string;
-  globalConstants: string[];
-  globalMacros: string[];
+  globalConstants?: string[];
+  globalMacros?: string[];
 }
 
 export interface IConfig {
@@ -109,7 +109,9 @@ export class Config {
     if (this.config.syntax.globalMacros === undefined) {
       this.config.syntax.globalMacros = [];
     }
-
+    if (this.config.syntax.globalConstants === undefined) {
+      this.config.syntax.globalConstants = [];
+    }
   }
 
   public get() {

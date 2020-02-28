@@ -1861,9 +1861,7 @@
       },
       "required": [
         "version",
-        "errorNamespace",
-        "globalConstants",
-        "globalMacros"
+        "errorNamespace"
       ],
       "type": "object"
     },

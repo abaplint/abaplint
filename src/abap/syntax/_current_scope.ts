@@ -26,7 +26,7 @@ export class CurrentScope {
   }
 
   private static addBuiltIn(s: CurrentScope, reg: Registry) {
-    const builtin = BuiltIn.get(reg.getConfig().getSyntaxSetttings().globalConstants);
+    const builtin = BuiltIn.get(reg.getConfig().getSyntaxSetttings().globalConstants!);
     s.addList(builtin);
     for (const t of BuiltIn.getTypes()) {
       s.addType(t);

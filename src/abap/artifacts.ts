@@ -51,8 +51,8 @@ export class Artifacts {
   public static getStructures(): IStructure[] {
     const ret: IStructure[] = [];
 
+    const list: any = Structures;
     for (const key in Structures) {
-      const list: any = Structures;
       if (typeof list[key] === "function") {
         ret.push(new list[key]());
       }
@@ -64,8 +64,8 @@ export class Artifacts {
   public static getExpressions(): (new () => Expression)[] {
     const ret: (new () => Expression)[] = [];
 
+    const list: any = Expressions;
     for (const key in Expressions) {
-      const list: any = Expressions;
       if (typeof list[key] === "function") {
         ret.push(list[key]);
       }
@@ -77,8 +77,8 @@ export class Artifacts {
   public static getStatements(): Statement[] {
     const ret: Statement[] = [];
 
+    const list: any = Statements;
     for (const key in Statements) {
-      const list: any = Statements;
       if (typeof list[key] === "function") {
         ret.push(new list[key]());
       }
