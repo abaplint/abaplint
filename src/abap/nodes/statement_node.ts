@@ -164,6 +164,16 @@ export class StatementNode extends AbstractNode {
     return undefined;
   }
 
+  public findDirectExpressions(type: new () => Expression): ExpressionNode[] {
+    const ret: ExpressionNode[] = [];
+    for (const child of this.getChildren()) {
+      if (child instanceof ExpressionNode && child.get() instanceof type) {
+        ret.push(child);
+      }
+    }
+    return ret;
+  }
+
   public findDirectTokenByText(text: string): Token | undefined {
     for (const child of this.getChildren()) {
       if (child instanceof TokenNode) {
