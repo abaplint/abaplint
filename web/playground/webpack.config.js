@@ -40,6 +40,10 @@ module.exports = ({mode} = {mode: 'development'}) => ({
         use: 'url-loader?limit=1024',
       },
       {
+        test: /\.ttf$/,
+        use: ['file-loader'],
+      },
+      {
         test: /\.tsx?$/,
         loader: 'ts-loader',
         exclude: /node_modules/,
