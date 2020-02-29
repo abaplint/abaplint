@@ -9,7 +9,7 @@ export class HighlightActions {
   private writes: string[];
   private readonly editor: monaco.editor.IStandaloneCodeEditor;
 
-  constructor(editor: monaco.editor.IStandaloneCodeEditor) {
+  public constructor(editor: monaco.editor.IStandaloneCodeEditor) {
     this.editor = editor;
     this.definitions = [];
     this.reads = [];

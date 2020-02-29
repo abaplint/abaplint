@@ -2,7 +2,7 @@ export class Position {
   private readonly row: number;
   private readonly col: number;
 
-  constructor(row: number, col: number) {
+  public constructor(row: number, col: number) {
     this.row = row;
     this.col = col;
   }

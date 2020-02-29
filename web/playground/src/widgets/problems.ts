@@ -15,7 +15,7 @@ export class ProblemsWidget extends Widget {
     return node;
   }
 
-  constructor() {
+  public constructor() {
     super({node: ProblemsWidget.createNode()});
     this.setFlag(Widget.Flag.DisallowLayout);
     this.addClass("content");

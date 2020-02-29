@@ -30,7 +30,7 @@ export interface IScopeData {
 abstract class ScopeData {
   private readonly data: IScopeData;
 
-  constructor() {
+  public constructor() {
     this.data = {
       vars: [],
       cdefs: [],
@@ -52,7 +52,7 @@ export class SpaghettiScopeNode extends ScopeData {
   private readonly children: SpaghettiScopeNode[];
   private readonly parent: SpaghettiScopeNode | undefined;
 
-  constructor(identifier: IScopeIdentifier, parent: SpaghettiScopeNode | undefined) {
+  public constructor(identifier: IScopeIdentifier, parent: SpaghettiScopeNode | undefined) {
     super();
     this.identifier = identifier;
     this.parent = parent;
@@ -190,7 +190,7 @@ export class SpaghettiScopeNode extends ScopeData {
 export class SpaghettiScope {
   private readonly node: SpaghettiScopeNode;
 
-  constructor(top: SpaghettiScopeNode) {
+  public constructor(top: SpaghettiScopeNode) {
     this.node = top;
   }
 

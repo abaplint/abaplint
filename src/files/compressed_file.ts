@@ -4,7 +4,7 @@ import * as zlib from "zlib";
 export class CompressedFile extends AbstractFile {
   private readonly compressed: string;
 
-  constructor(filename: string, compressed: string) {
+  public constructor(filename: string, compressed: string) {
     super(filename);
     this.compressed = compressed;
   }

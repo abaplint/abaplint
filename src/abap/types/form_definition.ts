@@ -9,7 +9,7 @@ import {CurrentScope} from "../syntax/_current_scope";
 export class FormDefinition extends Identifier {
   private readonly node: StatementNode;
 
-  constructor(node: StructureNode | StatementNode, filename: string) {
+  public constructor(node: StructureNode | StatementNode, filename: string) {
     const st = node instanceof StructureNode ? node.findFirstStatement(Statements.Form)! : node;
     const name = st.findFirstExpression(Expressions.FormName)!.getFirstToken();
     super(name, filename);

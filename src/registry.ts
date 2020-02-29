@@ -20,7 +20,7 @@ export class Registry implements IRegistry {
   private readonly dependencies: string[] = [];
   private includeGraph: IncludeGraph | undefined;
 
-  constructor(conf?: Config) {
+  public constructor(conf?: Config) {
     this.conf = conf ? conf : Config.getDefault();
   }
 

@@ -121,7 +121,7 @@
             "@typescript-eslint/no-this-alias": "off",
             "@typescript-eslint/class-name-casing": "error",
             "@typescript-eslint/no-non-null-assertion": "off",
-            "@typescript-eslint/explicit-member-accessibility": "off",
+            "@typescript-eslint/explicit-member-accessibility": "error",
             "@typescript-eslint/consistent-type-assertions": "error",
             "@typescript-eslint/indent": [
                 "error",

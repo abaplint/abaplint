@@ -6,7 +6,7 @@ class Tuple {
   public filename: string;
   public description: string;
 
-  constructor(filename: string, description: string) {
+  public constructor(filename: string, description: string) {
     this.filename = filename;
     this.description = description;
   }

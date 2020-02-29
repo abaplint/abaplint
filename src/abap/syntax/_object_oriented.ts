@@ -16,7 +16,7 @@ export class ObjectOriented {
   private readonly reg: Registry;
   private readonly scope: CurrentScope;
 
-  constructor(reg: Registry, scope: CurrentScope) {
+  public constructor(reg: Registry, scope: CurrentScope) {
     this.reg = reg;
     this.scope = scope;
   }

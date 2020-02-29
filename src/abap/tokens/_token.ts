@@ -4,7 +4,7 @@ export abstract class Token {
   private readonly pos: Position;
   private readonly str: string;
 
-  constructor(pos: Position, str: string) {
+  public constructor(pos: Position, str: string) {
     this.pos = pos;
     this.str = str;
   }

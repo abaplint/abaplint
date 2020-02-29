@@ -35,7 +35,7 @@ export class SyntaxLogic {
     inline: Inline,
   };
 
-  constructor(reg: Registry, object: ABAPObject) {
+  public constructor(reg: Registry, object: ABAPObject) {
     this.reg = reg;
     this.issues = [];
 

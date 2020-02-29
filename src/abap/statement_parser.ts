@@ -41,7 +41,7 @@ class StatementMap {
 class Macros {
   private readonly macros: string[];
 
-  constructor(globalMacros: string[]) {
+  public constructor(globalMacros: string[]) {
     this.macros = [];
     for (const m of globalMacros) {
       this.macros.push(m.toUpperCase());
@@ -70,7 +70,7 @@ class WorkArea {
   public readonly tokens: Token[];
   public statements: StatementNode[];
 
-  constructor(file: IFile, tokens: Token[]) {
+  public constructor(file: IFile, tokens: Token[]) {
     this.file = file;
     this.tokens = tokens;
     this.statements = [];

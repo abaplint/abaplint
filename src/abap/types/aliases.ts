@@ -9,7 +9,7 @@ export class Aliases {
   private readonly aliases: Alias[];
   private readonly filename: string;
 
-  constructor(node: StructureNode, filename: string) {
+  public constructor(node: StructureNode, filename: string) {
     this.aliases = [];
     this.filename = filename;
     this.parse(node);

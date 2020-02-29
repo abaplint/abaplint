@@ -29,7 +29,7 @@ export class HelpWidget extends Widget {
     return help;
   }
 
-  constructor() {
+  public constructor() {
     super({node: HelpWidget.createNode()});
     this.setFlag(Widget.Flag.DisallowLayout);
     this.title.label = "Help";
@@ -37,7 +37,7 @@ export class HelpWidget extends Widget {
     this.title.caption = this.title.label;
   }
 
-  get inputNode(): HTMLInputElement {
+  public get inputNode(): HTMLInputElement {
     return this.node.getElementsByTagName("input")[0] as HTMLInputElement;
   }
 

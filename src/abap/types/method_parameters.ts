@@ -15,7 +15,7 @@ export class MethodParameters {
   private readonly exceptions: string[]; // todo, not filled
   private readonly filename: string;
 
-  constructor(node: StatementNode, filename: string, scope: CurrentScope) {
+  public constructor(node: StatementNode, filename: string, scope: CurrentScope) {
     if (!(node.get() instanceof MethodDef)) {
       throw new Error("MethodDefinition, expected MethodDef as part of input node");
     }

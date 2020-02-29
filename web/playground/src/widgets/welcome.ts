@@ -9,7 +9,7 @@ export class WelcomeWidget extends Widget {
     return node;
   }
 
-  constructor() {
+  public constructor() {
     super({node: WelcomeWidget.createNode()});
     this.setFlag(Widget.Flag.DisallowLayout);
     this.addClass("welcome");
@@ -18,7 +18,7 @@ export class WelcomeWidget extends Widget {
     this.title.caption = this.title.label;
   }
 
-  get inputNode(): HTMLInputElement {
+  public get inputNode(): HTMLInputElement {
     return this.node.getElementsByTagName("input")[0] as HTMLInputElement;
   }
 

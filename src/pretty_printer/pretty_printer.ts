@@ -13,7 +13,7 @@ export class PrettyPrinter {
   private readonly options: IIndentationOptions;
   private readonly config: Config;
 
-  constructor(file: ABAPFile, config: Config, options?: IIndentationOptions) {
+  public constructor(file: ABAPFile, config: Config, options?: IIndentationOptions) {
     this.result = file.getRaw();
     this.file = file;
     this.options = options || {};

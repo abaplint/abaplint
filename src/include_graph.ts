@@ -20,7 +20,7 @@ class Graph {
   public readonly vertices: IVertex[];
   private readonly edges: {from: string, to: string}[];
 
-  constructor() {
+  public constructor() {
     this.vertices = [];
     this.edges = [];
   }

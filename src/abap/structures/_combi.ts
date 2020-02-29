@@ -8,7 +8,7 @@ import {IMatch} from "./_match";
 class Sequence implements IStructureRunnable {
   private readonly list: IStructureRunnable[];
 
-  constructor(list: IStructureRunnable[]) {
+  public constructor(list: IStructureRunnable[]) {
     if (list.length < 2) {
       throw new Error("Sequence, length error");
     }
@@ -54,7 +54,7 @@ class Sequence implements IStructureRunnable {
 class Alternative implements IStructureRunnable {
   private readonly list: IStructureRunnable[];
 
-  constructor(list: IStructureRunnable[]) {
+  public constructor(list: IStructureRunnable[]) {
     if (list.length < 2) {
       throw new Error("Alternative, length error");
     }
@@ -107,7 +107,7 @@ class Alternative implements IStructureRunnable {
 class Optional implements IStructureRunnable {
   private readonly obj: IStructureRunnable;
 
-  constructor(obj: IStructureRunnable) {
+  public constructor(obj: IStructureRunnable) {
     this.obj = obj;
   }
 
@@ -129,7 +129,7 @@ class Optional implements IStructureRunnable {
 class Star implements IStructureRunnable {
   private readonly obj: IStructureRunnable;
 
-  constructor(obj: IStructureRunnable) {
+  public constructor(obj: IStructureRunnable) {
     this.obj = obj;
   }
 
@@ -183,7 +183,7 @@ class Star implements IStructureRunnable {
 class SubStructure implements IStructureRunnable {
   private readonly s: IStructure;
 
-  constructor(s: IStructure) {
+  public constructor(s: IStructure) {
     this.s = s;
   }
 
@@ -210,7 +210,7 @@ class SubStructure implements IStructureRunnable {
 class SubStatement implements IStructureRunnable {
   private readonly obj: new () => Statement;
 
-  constructor(obj: new () => Statement) {
+  public constructor(obj: new () => Statement) {
     this.obj = obj;
   }
 

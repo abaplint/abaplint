@@ -13,7 +13,7 @@ export class Attributes {
   private readonly constants: ClassConstant[];
   private readonly filename: string;
 
-  constructor(node: StructureNode, filename: string, scope: CurrentScope) {
+  public constructor(node: StructureNode, filename: string, scope: CurrentScope) {
     this.static = [];
     this.instance = [];
     this.constants = [];

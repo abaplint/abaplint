@@ -5,7 +5,7 @@ import {Registry, MemoryFile} from "../../src";
 export class ApplyWorkSpaceEdit {
   private readonly reg: Registry;
 
-  constructor(reg: Registry) {
+  public constructor(reg: Registry) {
     this.reg = reg;
   }
 

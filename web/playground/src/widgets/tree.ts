@@ -9,7 +9,7 @@ export class TreeWidget extends Widget {
     return node;
   }
 
-  constructor() {
+  public constructor() {
     super({node: TreeWidget.createNode()});
     this.setFlag(Widget.Flag.DisallowLayout);
     this.addClass("content");

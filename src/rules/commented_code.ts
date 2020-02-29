@@ -14,7 +14,7 @@ import {Include} from "../abap/statements";
  * https://docs.abapopenchecks.org/checks/14/
  */
 export class CommentedCodeConf extends BasicRuleConfig {
-  allowIncludeInFugr: boolean = true;
+  public allowIncludeInFugr: boolean = true;
 }
 
 export class CommentedCode extends ABAPRule {

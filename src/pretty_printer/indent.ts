@@ -9,7 +9,8 @@ import {IIndentationOptions} from "./indentation_options";
 export class Indent {
   private readonly options: IIndentationOptions;
   private readonly globalClasses = new Set();
-  constructor(options?: IIndentationOptions) {
+
+  public constructor(options?: IIndentationOptions) {
     this.options = options || {};
   }
 

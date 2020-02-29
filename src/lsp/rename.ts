@@ -13,7 +13,7 @@ export enum RenameType {
 export class Rename {
   private readonly reg: Registry;
 
-  constructor(reg: Registry) {
+  public constructor(reg: Registry) {
     this.reg = reg;
   }
 

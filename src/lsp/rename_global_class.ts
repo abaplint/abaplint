@@ -10,7 +10,7 @@ import {LSPUtils} from "./_lsp_utils";
 export class RenameGlobalClass {
   private readonly reg: Registry;
 
-  constructor(reg: Registry) {
+  public constructor(reg: Registry) {
     this.reg = reg;
   }
 

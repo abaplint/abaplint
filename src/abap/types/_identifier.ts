@@ -5,7 +5,7 @@ export class Identifier {
   private readonly token: Token;
   protected readonly filename: string;
 
-  constructor(token: Token, filename: string) {
+  public constructor(token: Token, filename: string) {
     this.token = token;
     this.filename = filename;
   }

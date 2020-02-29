@@ -20,7 +20,7 @@ import {ITextDocumentPositionParams, IDocumentSymbolParams, IRenameParams, ICode
 export class LanguageServer {
   private readonly reg: Registry;
 
-  constructor(reg: Registry) {
+  public constructor(reg: Registry) {
     this.reg = reg;
   }
 

@@ -5,7 +5,7 @@ import {TypedIdentifier} from "./_typed_identifier";
 export class TypedConstantIdentifier extends TypedIdentifier {
   private readonly value: string;
 
-  constructor(token: Token, filename: string, type: AbstractType, value: string) {
+  public constructor(token: Token, filename: string, type: AbstractType, value: string) {
     super(token, filename, type);
     this.value = value;
   }

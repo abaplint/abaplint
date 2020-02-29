@@ -2,7 +2,7 @@ export class Message {
   private readonly num: string;
   private readonly msg: string;
 
-  constructor(num: string, msg: string) {
+  public constructor(num: string, msg: string) {
     this.num = num;
     this.msg = msg;
   }

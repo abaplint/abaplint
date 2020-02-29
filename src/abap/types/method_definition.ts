@@ -15,7 +15,7 @@ export class MethodDefinition extends Identifier {
 
 // todo: final
 
-  constructor(node: StatementNode, visibility: Visibility, filename: string, scope: CurrentScope) {
+  public constructor(node: StatementNode, visibility: Visibility, filename: string, scope: CurrentScope) {
     if (!(node.get() instanceof MethodDef)) {
       throw new Error("MethodDefinition, expected MethodDef as part of input node");
     }

@@ -8,7 +8,7 @@ import {MethodImplementation} from "./method_implementation";
 export class ClassImplementation extends Identifier {
   private readonly node: StructureNode;
 
-  constructor(node: StructureNode, filename: string) {
+  public constructor(node: StructureNode, filename: string) {
     if (!(node.get() instanceof Structures.ClassImplementation)) {
       throw new Error("ClassImplementation, unexpected node type");
     }

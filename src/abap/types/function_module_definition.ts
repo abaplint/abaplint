@@ -4,7 +4,7 @@ export class FunctionModuleDefinition {
   private name: string;
   private parameters: string[];
 
-  constructor(data: any) {
+  public constructor(data: any) {
     this.parse(data);
   }
 

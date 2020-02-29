@@ -9,7 +9,7 @@ import {CurrentScope} from "../syntax/_current_scope";
 export class InterfaceDefinition extends Identifier {
   private readonly node: StructureNode;
 
-  constructor(node: StructureNode, filename: string) {
+  public constructor(node: StructureNode, filename: string) {
     if (!(node.get() instanceof Structures.Interface)) {
       throw new Error("InterfaceDefinition, unexpected node type");
     }

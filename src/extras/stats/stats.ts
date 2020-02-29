@@ -36,7 +36,7 @@ export interface IResult {
 export class Stats {
   private readonly reg: Registry;
 
-  constructor(reg: Registry) {
+  public constructor(reg: Registry) {
     this.reg = reg;
   }
 

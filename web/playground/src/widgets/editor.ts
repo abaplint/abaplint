@@ -14,7 +14,7 @@ export class EditorWidget extends Widget {
     return document.createElement("div");
   }
 
-  constructor(filename: string, contents: string) {
+  public constructor(filename: string, contents: string) {
     super({node: EditorWidget.createNode()});
     this.setFlag(Widget.Flag.DisallowLayout);
     this.addClass("editor");
@@ -39,7 +39,7 @@ export class EditorWidget extends Widget {
     this.model.dispose();
   }
 
-  get inputNode(): HTMLInputElement {
+  public get inputNode(): HTMLInputElement {
     return this.node.getElementsByTagName("input")[0] as HTMLInputElement;
   }
 

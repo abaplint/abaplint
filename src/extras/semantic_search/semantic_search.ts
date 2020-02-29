@@ -22,7 +22,7 @@ export interface ISemanticSearchResult {
 export class SemanticSearch {
   private readonly reg: Registry;
 
-  constructor(reg: Registry) {
+  public constructor(reg: Registry) {
     this.reg = reg;
   }
 

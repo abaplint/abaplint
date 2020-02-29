@@ -13,7 +13,7 @@ import {CurrentScope} from "../syntax/_current_scope";
 export class ClassDefinition extends Identifier {
   private readonly node: StructureNode;
 
-  constructor(node: StructureNode, filename: string) {
+  public constructor(node: StructureNode, filename: string) {
     if (!(node.get() instanceof Structures.ClassDefinition)) {
       throw new Error("ClassDefinition, unexpected node type");
     }

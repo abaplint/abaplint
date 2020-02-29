@@ -15,7 +15,7 @@ export class Procedural {
   private readonly scope: CurrentScope;
   private readonly reg: Registry;
 
-  constructor(reg: Registry, scope: CurrentScope) {
+  public constructor(reg: Registry, scope: CurrentScope) {
     this.scope = scope;
     this.reg = reg;
   }

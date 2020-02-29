@@ -5,7 +5,7 @@ import {IRegistry} from "./_iregistry";
 export class SkipLogic {
   private readonly reg: IRegistry;
 
-  constructor(reg: IRegistry) {
+  public constructor(reg: IRegistry) {
     this.reg = reg;
   }
 
