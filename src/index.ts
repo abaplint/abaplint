@@ -17,6 +17,7 @@ import * as Statements from "./abap/statements";
 import * as Expressions from "./abap/expressions";
 import * as Nodes from "./abap/nodes";
 import * as Types from "./abap/types";
+import * as Tokens from "./abap/tokens";
 
 // do not include this file from anywhere
 
@@ -25,4 +26,5 @@ import * as Types from "./abap/types";
 export {MemoryFile, Issue, Config, Version, Formatter,
   Registry, Stats, LanguageServer, MethodLengthStats, IProgress,
   SemanticSearch, ArtifactsObjects, ArtifactsRules, Objects,
-  Structures, Statements, Expressions, Types, Nodes, IConfig};
+  Structures, Statements, Expressions, Types, Nodes, IConfig,
+  Tokens};
