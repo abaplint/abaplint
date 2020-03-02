@@ -153,10 +153,11 @@
             "@typescript-eslint/prefer-for-of": "error",
             "@typescript-eslint/prefer-namespace-keyword": "error",
             "@typescript-eslint/quotes": [
-                "off",
+                "error",
                 "double",
                 {
-                    "avoidEscape": true
+                    "avoidEscape": true,
+                    "allowTemplateLiterals": true
                 }
             ],
             "@typescript-eslint/restrict-plus-operands": "off",
@@ -282,7 +283,7 @@
         "source-map-support": "^0.5.16",
         "ts-json-schema-generator": "^0.61.1",
         "typescript": "^3.8.3",
-        "webpack": "^4.41.6",
+        "webpack": "^4.42.0",
         "webpack-cli": "^3.3.11"
     },
     "dependencies": {
