@@ -31,12 +31,15 @@ export class WhenOthersLast extends ABAPRule {
 
     const cases = struc.findAllStructures(Structures.Case);
     for (const c of cases) {
-      const whens = c.findDirectStatements(Statements.When);
-      for (let i = 0; i < whens.length - 1; i++) {
-        if (whens[i].concatTokens() === "WHEN OTHERS.") {
-          const start = whens[i].getFirstToken().getStart();
-          const issue = Issue.atPosition(file, start, this.getDescription(), this.getKey());
-          issues.push(issue);
+      const whentop = c.findDirectStructures(Structures.When);
+      for (let i = 0; i < whentop.length - 1; i++) {
+        const whens = whentop[i].findDirectStatements(Statements.When);
+        for (const when of whens) {
+          if (when.concatTokens() === "WHEN OTHERS.") {
+            const start = when.getFirstToken().getStart();
+            const issue = Issue.atPosition(file, start, this.getDescription(), this.getKey());
+            issues.push(issue);
+          }
         }
       }
     }

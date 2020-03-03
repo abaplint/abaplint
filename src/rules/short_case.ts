@@ -49,7 +49,7 @@ export class ShortCase extends ABAPRule {
         continue;
       }
 
-      if (c.findDirectStatements(Statements.When).length <= this.conf.length) {
+      if (c.findDirectStructures(Structures.When).length <= this.conf.length) {
         if (c.findAllExpressions(Expressions.Or).length > 0) {
           continue;
         }

@@ -1,6 +1,6 @@
 {
     "name": "abaplint",
-    "version": "2.26.8",
+    "version": "2.26.9",
     "description": "Linter for ABAP",
     "bin": {
         "abaplint": "./abaplint"
@@ -166,7 +166,7 @@
                 "always"
             ],
             "@typescript-eslint/triple-slash-reference": "error",
-            "@typescript-eslint/type-annotation-spacing": "error",
+            "@typescript-eslint/type-annotation-spacing": "off",
             "@typescript-eslint/unified-signatures": "error",
             "camelcase": "off",
             "capitalized-comments": [
@@ -265,14 +265,14 @@
     },
     "homepage": "https://abaplint.org",
     "devDependencies": {
-        "@types/chai": "^4.2.9",
+        "@types/chai": "^4.2.10",
         "@types/glob": "^7.1.1",
         "@types/minimist": "^1.2.0",
         "@types/mocha": "^7.0.1",
         "@types/node": "^13.7.7",
         "@types/progress": "^2.0.3",
-        "@typescript-eslint/eslint-plugin": "^2.21.0",
-        "@typescript-eslint/parser": "^2.21.0",
+        "@typescript-eslint/eslint-plugin": "^2.22.0",
+        "@typescript-eslint/parser": "^2.22.0",
         "chai": "^4.2.0",
         "eslint": "^6.8.0",
         "eslint-plugin-import": "^2.20.1",
