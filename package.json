@@ -269,7 +269,7 @@
         "@types/glob": "^7.1.1",
         "@types/minimist": "^1.2.0",
         "@types/mocha": "^7.0.2",
-        "@types/node": "^13.7.7",
+        "@types/node": "^13.9.0",
         "@types/progress": "^2.0.3",
         "@typescript-eslint/eslint-plugin": "^2.22.0",
         "@typescript-eslint/parser": "^2.22.0",
@@ -281,7 +281,7 @@
         "nyc": "^15.0.0",
         "railroad-diagrams": "git+https://github.com/tabatkins/railroad-diagrams#gh-pages",
         "source-map-support": "^0.5.16",
-        "ts-json-schema-generator": "^0.63.0",
+        "ts-json-schema-generator": "^0.65.0",
         "typescript": "^3.8.3",
         "webpack": "^4.42.0",
         "webpack-cli": "^3.3.11"
