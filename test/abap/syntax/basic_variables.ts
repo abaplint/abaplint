@@ -368,5 +368,4 @@ describe("Syntax - Basic Types", () => {
     expect(components[0].name).to.equal("bar");
   });
 
-
 });

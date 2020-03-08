@@ -9,12 +9,34 @@ const tests = [
   {abap: "WRITE hello.", cnt: 0},
   {abap: "DATA foo TYPE zint4.", cnt: 1},
   {abap: "DATA foo TYPE foomoo.", cnt: 0},
+
   {abap: `
 CLASS lcl_foobar DEFINITION.
   PUBLIC SECTION.
     METHODS: moo.
 ENDCLASS.
+CLASS lcl_foobar IMPLEMENTATION.
+  METHOD moo.
+  ENDMETHOD.
+ENDCLASS.`, cnt: 0},
 
+  {abap: `
+CLASS lcl_foobar DEFINITION.
+PUBLIC SECTION.
+  METHODS: moo
+    IMPORTING iv_foo TYPE string.
+ENDCLASS.
+CLASS lcl_foobar IMPLEMENTATION.
+  METHOD moo.
+  ENDMETHOD.
+ENDCLASS.`, cnt: 0},
+
+  {abap: `
+CLASS lcl_foobar DEFINITION.
+  PUBLIC SECTION.
+    METHODS: moo
+      RETURNING VALUE(rv_foo) TYPE string.
+ENDCLASS.
 CLASS lcl_foobar IMPLEMENTATION.
   METHOD moo.
   ENDMETHOD.

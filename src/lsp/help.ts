@@ -7,8 +7,7 @@ import {Token} from "../abap/tokens/_token";
 import {LSPUtils} from "./_lsp_utils";
 import {SyntaxLogic} from "../abap/syntax/syntax";
 import {ABAPObject} from "../objects/_abap_object";
-import {SpaghettiScope, SpaghettiScopeNode} from "../abap/syntax/spaghetti_scope";
-import {ScopeType} from "../abap/syntax/_scope_type";
+import {DumpScope} from "./dump_scope";
 
 export class Help {
   public static find(reg: Registry, textDocument: LServer.TextDocumentIdentifier, position: LServer.Position): string {
@@ -49,7 +48,7 @@ export class Help {
     const obj = reg.getObject(file.getObjectType(), file.getObjectName());
     if (obj instanceof ABAPObject) {
       const spaghetti = new SyntaxLogic(reg, obj).run().spaghetti;
-      ret = ret + this.dumpScope(spaghetti);
+      ret = ret + DumpScope.dump(spaghetti);
 
       if (found !== undefined) {
         ret = ret + "<hr>Spaghetti Scope by Cursor Position:<br><br>\n";
@@ -62,56 +61,6 @@ export class Help {
           ret = ret + "Not found";
         }
       }
-    }
-
-    return ret;
-  }
-
-  private static dumpScope(spaghetti: SpaghettiScope): string {
-    let ret = "<hr>Spaghetti Scope:<br><br>\n";
-    ret = ret + this.traverseSpaghetti(spaghetti.getTop(), 0);
-    return ret;
-  }
-
-  private static traverseSpaghetti(node: SpaghettiScopeNode, indent: number): string {
-    const identifier = node.getIdentifier();
-    const coverage = node.calcCoverage();
-
-    const sident = "&nbsp".repeat(indent * 2);
-
-    let ret: string = sident + "<u>" + identifier.stype + ", <tt>" + identifier.sname + "</tt>, " + identifier.filename;
-
-    ret = ret + ", (" + coverage.start.getRow() + ", " + coverage.start.getCol() + ")";
-    if (coverage.end.getRow() === Number.MAX_SAFE_INTEGER
-        && coverage.end.getCol()  === Number.MAX_SAFE_INTEGER) {
-      ret = ret + ", (max, max)";
-    } else {
-      ret = ret + ", (" + coverage.end.getRow() + ", " + coverage.end.getCol() + ")";
-    }
-
-    ret = ret + "</u><br>";
-
-    if (node.getIdentifier().stype === ScopeType.BuiltIn) {
-      ret = ret + sident + node.getData().vars.length + " definitions<br>";
-    } else if (node.getData().vars.length === 0) {
-      ret = ret + sident + "0 definitions<br>";
-    } else {
-      for (const v of node.getData().vars) {
-        ret = ret + sident + "<tt>" + this.escape(v.name.toLowerCase()) + "</tt>";
-        const pos = v.identifier.getStart();
-        ret = ret + "(" + pos.getRow().toString() + ", " + pos.getCol().toString() + ") ";
-        ret = ret + v.identifier.getType().toText();
-        const meta = v.identifier.getMeta();
-        if (meta) {
-          ret = ret + ", " + meta;
-        }
-        ret = ret + "<br>";
-      }
-    }
-    ret = ret + "<br>";
-
-    for (const c of node.getChildren()) {
-      ret = ret + this.traverseSpaghetti(c, indent + 1);
     }
 
     return ret;

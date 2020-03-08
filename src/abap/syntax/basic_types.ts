@@ -1,11 +1,9 @@
 import {TypedIdentifier} from "../types/_typed_identifier";
 import {StatementNode, ExpressionNode} from "../nodes";
-import * as Statements from "../statements";
 import * as Expressions from "../expressions";
 import * as Types from "../types/basic/";
 import {CurrentScope} from "./_current_scope";
 import {AbstractType} from "../types/basic/_abstract_type";
-import {TypedConstantIdentifier} from "../types/_typed_constant_identifier";
 import {Chaining} from "./chaining";
 
 export class BasicTypes {
@@ -79,6 +77,17 @@ export class BasicTypes {
       return undefined;
     }
     const name = nameExpr.getFirstToken();
+
+    const found = this.parseType(node);
+
+    if (found) {
+      return new TypedIdentifier(name, this.filename, found);
+    }
+
+    return undefined;
+  }
+
+  public parseType(node: ExpressionNode | StatementNode): AbstractType | undefined {
     const typename = node.findFirstExpression(Expressions.TypeName);
 
     const type = node.findFirstExpression(Expressions.Type);
@@ -102,21 +111,10 @@ export class BasicTypes {
       }
     }
 
-    if (found) {
-      if (node.get() instanceof Statements.Constant) { // todo, move this to Statements.Constant
-        const val = this.findValue(node, name.getStr());
-        if (val !== undefined) {
-          return new TypedConstantIdentifier(name, this.filename, found, val);
-        } else {
-          return new TypedConstantIdentifier(name, this.filename, new Types.UnknownType("todo, TypedConstantIdentifier"), "unknown");
-        }
-      } else {
-        return new TypedIdentifier(name, this.filename, found);
-      }
-    }
-
-    return undefined;
+    return found;
   }
+
+/////////////////////
 
   private resolveTypeRef(chain: ExpressionNode | undefined): AbstractType | undefined {
     if (chain === undefined) {
@@ -133,12 +131,10 @@ export class BasicTypes {
     return undefined;
   }
 
-/////////////////////
-
-  private findValue(node: StatementNode, name: string): string | undefined {
+  public findValue(node: StatementNode): string | undefined {
     const val = node.findFirstExpression(Expressions.Value);
     if (val === undefined) {
-      throw new Error("set VALUE, " + name);
+      throw new Error("set VALUE");
     }
 
     if (val.concatTokens().toUpperCase() === "VALUE IS INITIAL") {
@@ -155,7 +151,7 @@ export class BasicTypes {
       return new Chaining(this.scope).resolveConstantValue(chain);
     }
 
-    throw new Error("findValue, unexpected, " + name);
+    throw new Error("findValue, unexpected");
   }
 
   private findLength(node: StatementNode | ExpressionNode): number | undefined {

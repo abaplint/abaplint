@@ -7,6 +7,7 @@ import {CurrentScope} from "../syntax/_current_scope";
 import {BasicTypes} from "../syntax/basic_types";
 import {TypedIdentifier} from "../types/_typed_identifier";
 import {UnknownType} from "../types/basic";
+import {TypedConstantIdentifier} from "../types/_typed_constant_identifier";
 
 export class Constant extends Statement {
 
@@ -21,9 +22,15 @@ export class Constant extends Statement {
   }
 
   public runSyntax(node: StatementNode, scope: CurrentScope, filename: string): TypedIdentifier {
-    const found = new BasicTypes(filename, scope).simpleType(node);
+    const basic = new BasicTypes(filename, scope);
+    const found = basic.simpleType(node);
     if (found) {
-      return found;
+      const val = basic.findValue(node);
+      if (val !== undefined) {
+        return new TypedConstantIdentifier(found.getToken(), filename, found.getType(), val);
+      } else {
+        return new TypedConstantIdentifier(found.getToken(), filename, new UnknownType("todo, TypedConstantIdentifier"), "unknown");
+      }
     }
 
     const fallback = node.findFirstExpression(Expressions.NamespaceSimpleName);
