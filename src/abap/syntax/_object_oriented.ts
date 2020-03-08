@@ -6,7 +6,7 @@ import {Interface, Class} from "../../objects";
 import {Registry} from "../../registry";
 import {CurrentScope} from "./_current_scope";
 import {ScopeType} from "./_scope_type";
-import {UnknownType} from "../types/basic";
+import {ObjectReferenceType} from "../types/basic";
 import {Identifier} from "../tokens";
 import {TypedIdentifier} from "../types/_typed_identifier";
 import {Position} from "../../position";
@@ -114,11 +114,13 @@ export class ObjectOriented {
     this.scope.push(ScopeType.Method, methodName, node.getFirstToken().getStart(), filename);
     const classDefinition = this.findClassDefinition(className);
 
-// todo, this is not correct, add correct types, plus "super" should only be added when there are super classes
+    const sup = classDefinition.getSuperClass();
+    if (sup) {
+      this.scope.addIdentifier(new TypedIdentifier(
+        new Identifier(new Position(1, 1), "super"), BuiltIn.filename, new ObjectReferenceType(sup)));
+    }
     this.scope.addIdentifier(new TypedIdentifier(
-      new Identifier(new Position(1, 1), "super"), BuiltIn.filename, new UnknownType("todo, super")));
-    this.scope.addIdentifier(new TypedIdentifier(
-      new Identifier(new Position(1, 1), "me"), BuiltIn.filename, new UnknownType("todo, me")));
+      new Identifier(new Position(1, 1), "me"), BuiltIn.filename, new ObjectReferenceType(className)));
 
     let methodDefinition: MethodDefinition | undefined = undefined;
     methodDefinition = this.findMethod(classDefinition, methodName);
