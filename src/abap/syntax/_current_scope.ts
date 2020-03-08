@@ -5,7 +5,7 @@ import {BuiltIn} from "./_builtin";
 import * as Objects from "../../objects";
 import {DDIC} from "../../ddic";
 import {Position} from "../../position";
-import {SpaghettiScope, SpaghettiScopeNode, IScopeIdentifier} from "./_spaghetti_scope";
+import {SpaghettiScope, SpaghettiScopeNode, IScopeIdentifier} from "./spaghetti_scope";
 import {Token} from "../tokens/_token";
 import {Identifier} from "../types/_identifier";
 import {ScopeType} from "./_scope_type";

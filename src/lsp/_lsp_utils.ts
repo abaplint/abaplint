@@ -12,7 +12,7 @@ import {ITextDocumentPositionParams} from "./_interfaces";
 import {INode} from "../abap/nodes/_inode";
 import {Position} from "../position";
 import * as LServer from "vscode-languageserver-types";
-import {SpaghettiScopeNode} from "../abap/syntax/_spaghetti_scope";
+import {SpaghettiScopeNode} from "../abap/syntax/spaghetti_scope";
 
 export interface ICursorPosition {
   token: Token;

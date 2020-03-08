@@ -6,6 +6,7 @@ import {ExpressionNode}  from "../../abap/nodes";
 import {TypedIdentifier} from "./_typed_identifier";
 import {UnknownType} from "./basic";
 import {CurrentScope} from "../syntax/_current_scope";
+import {IdentifierMeta} from "../..";
 
 export class MethodParameters {
   private readonly importing: TypedIdentifier[];
@@ -74,17 +75,17 @@ export class MethodParameters {
 
     const importing = node.findFirstExpression(MethodDefImporting);
     if (importing) {
-      this.add(this.importing, importing, scope);
+      this.add(this.importing, importing, scope, IdentifierMeta.MethodImporting);
     }
 
     const exporting = node.findFirstExpression(MethodDefExporting);
     if (exporting) {
-      this.add(this.exporting, exporting, scope);
+      this.add(this.exporting, exporting, scope, IdentifierMeta.MethodExporting);
     }
 
     const changing = node.findFirstExpression(MethodDefChanging);
     if (changing) {
-      this.add(this.changing, changing, scope);
+      this.add(this.changing, changing, scope, IdentifierMeta.MethodChanging);
     }
 
     const returning = node.findFirstExpression(MethodDefReturning);
@@ -92,7 +93,7 @@ export class MethodParameters {
       const found = returning.findFirstExpression(MethodParam);
       if (found) {
         const para = found.get() as MethodParam;
-        this.returning = para.runSyntax(found, scope, this.filename);
+        this.returning = para.runSyntax(found, scope, this.filename, IdentifierMeta.MethodReturning);
       }
     }
 
@@ -101,11 +102,11 @@ export class MethodParameters {
 // also consider RAISING vs EXCEPTIONS
   }
 
-  private add(target: TypedIdentifier[], source: ExpressionNode, scope: CurrentScope): void {
+  private add(target: TypedIdentifier[], source: ExpressionNode, scope: CurrentScope, meta: IdentifierMeta): void {
     const params = source.findAllExpressions(MethodParam);
     for (const param of params) {
       const para = param.get() as MethodParam;
-      target.push(para.runSyntax(param, scope, this.filename));
+      target.push(para.runSyntax(param, scope, this.filename, meta));
     }
   }
 

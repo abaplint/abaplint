@@ -15,7 +15,7 @@ import {Procedural} from "./_procedural";
 import {Inline} from "./_inline";
 import {Program, FunctionGroup} from "../../objects";
 import {ClassDefinition, InterfaceDefinition} from "../types";
-import {SpaghettiScope} from "./_spaghetti_scope";
+import {SpaghettiScope} from "./spaghetti_scope";
 import {Position} from "../../position";
 
 // assumption: objects are parsed without parsing errors
@@ -217,8 +217,9 @@ export class SyntaxLogic {
       this.helpers.oooc.classDefinition(node, filename);
     } else if (s instanceof Statements.ClassImplementation) {
       this.helpers.oooc.classImplementation(node, filename);
+    } else if (s instanceof Statements.EndMethod) {
+      this.scope.pop();
     } else if (s instanceof Statements.EndForm
-        || s instanceof Statements.EndMethod
         || s instanceof Statements.EndFunction
         || s instanceof Statements.EndClass) {
       this.scope.pop();

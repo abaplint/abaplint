@@ -7,7 +7,7 @@ import {Token} from "../abap/tokens/_token";
 import {LSPUtils} from "./_lsp_utils";
 import {SyntaxLogic} from "../abap/syntax/syntax";
 import {ABAPObject} from "../objects/_abap_object";
-import {SpaghettiScope, SpaghettiScopeNode} from "../abap/syntax/_spaghetti_scope";
+import {SpaghettiScope, SpaghettiScopeNode} from "../abap/syntax/spaghetti_scope";
 import {ScopeType} from "../abap/syntax/_scope_type";
 
 export class Help {
@@ -101,6 +101,10 @@ export class Help {
         const pos = v.identifier.getStart();
         ret = ret + "(" + pos.getRow().toString() + ", " + pos.getCol().toString() + ") ";
         ret = ret + v.identifier.getType().toText();
+        const meta = v.identifier.getMeta();
+        if (meta) {
+          ret = ret + ", " + meta;
+        }
         ret = ret + "<br>";
       }
     }

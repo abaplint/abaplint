@@ -13,6 +13,8 @@ import {ArtifactsRules} from "./artifacts_rules";
 import {IProgress} from "./progress";
 import {ABAPObject} from "./objects/_abap_object";
 import {SyntaxLogic} from "./abap/syntax/syntax";
+import {SpaghettiScope} from "./abap/syntax/spaghetti_scope";
+import {IdentifierMeta} from "./abap/types/_typed_identifier";
 import * as Objects from "./objects";
 import * as Structures from "./abap/structures";
 import * as Statements from "./abap/statements";
@@ -29,4 +31,4 @@ export {MemoryFile, Issue, Config, Version, Formatter,
   Registry, Stats, LanguageServer, MethodLengthStats, IProgress,
   SemanticSearch, ArtifactsObjects, ArtifactsRules, Objects,
   Structures, Statements, Expressions, Types, Nodes, IConfig,
-  Tokens, ABAPObject, SyntaxLogic};
+  Tokens, ABAPObject, SyntaxLogic, SpaghettiScope, IdentifierMeta};
