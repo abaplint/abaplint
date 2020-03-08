@@ -30,6 +30,7 @@ export class CheckSyntax {
       return [];
     }
 
+// todo, move some of the issue building to this rule instead of the SyntaxLogic?
     return new SyntaxLogic(reg, obj).run().issues;
   }
 

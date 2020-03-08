@@ -13,6 +13,6 @@ export class UnknownType extends AbstractType {
   }
 
   public toText() {
-    return "Unknown type, error: " + this.error;
+    return "Unknown type: " + this.error;
   }
 }

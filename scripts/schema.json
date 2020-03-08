@@ -1709,6 +1709,17 @@
               ],
               "description": "Allows you to enforce a pattern for TYPES definitions"
             },
+            "unknown_types": {
+              "anyOf": [
+                {
+                  "$ref": "#/definitions/UnknownTypesConf"
+                },
+                {
+                  "type": "boolean"
+                }
+              ],
+              "description": "Enables check for unknown types, respects errorNamespace"
+            },
             "unreachable_code": {
               "anyOf": [
                 {
@@ -3193,6 +3204,24 @@
       "required": [
         "pattern"
       ],
+      "type": "object"
+    },
+    "UnknownTypesConf": {
+      "additionalProperties": false,
+      "description": "Enables check for unknown types, respects errorNamespace",
+      "properties": {
+        "exclude": {
+          "description": "List of file regex patterns to exclude",
+          "items": {
+            "type": "string"
+          },
+          "type": "array"
+        },
+        "reason": {
+          "description": "An explanation for why the rule is enforced",
+          "type": "string"
+        }
+      },
       "type": "object"
     },
     "UnreachableCodeConf": {

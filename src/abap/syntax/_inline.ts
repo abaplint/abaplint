@@ -20,7 +20,7 @@ export class Inline {
   private addVariable(expr: ExpressionNode | undefined, filename: string) {
     if (expr === undefined) { throw new Error("syntax_check, unexpected tree structure"); }
     const token = expr.getFirstToken();
-    const identifier = new TypedIdentifier(token, filename, new UnknownType("todo"));
+    const identifier = new TypedIdentifier(token, filename, new UnknownType("todo, inline, addVariable"));
     this.scope.addIdentifier(identifier);
   }
 

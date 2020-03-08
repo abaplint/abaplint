@@ -116,9 +116,9 @@ export class ObjectOriented {
 
 // todo, this is not correct, add correct types, plus "super" should only be added when there are super classes
     this.scope.addIdentifier(new TypedIdentifier(
-      new Identifier(new Position(1, 1), "super"), BuiltIn.filename, new UnknownType("todo")));
+      new Identifier(new Position(1, 1), "super"), BuiltIn.filename, new UnknownType("todo, super")));
     this.scope.addIdentifier(new TypedIdentifier(
-      new Identifier(new Position(1, 1), "me"), BuiltIn.filename, new UnknownType("todo")));
+      new Identifier(new Position(1, 1), "me"), BuiltIn.filename, new UnknownType("todo, me")));
 
     let methodDefinition: MethodDefinition | undefined = undefined;
     methodDefinition = this.findMethod(classDefinition, methodName);

@@ -80,6 +80,7 @@ import {TryWithoutCatchConf} from "../src/rules/try_without_catch";
 import {TypeBeginSingleTypeConf} from "../src/rules/type_begin_single_include";
 import {TypeFormParametersConf} from "../src/rules/type_form_parameters";
 import {TypesNamingConf} from "../src/rules/naming/types_naming";
+import {UnknownTypesConf} from "../src/rules/syntax/unknown_types";
 import {UnreachableCodeConf} from "../src/rules/unreachable_code";
 import {UnusedVariablesConf} from "../src/rules/unused_variables";
 import {UseNewConf} from "../src/rules/use_new";
@@ -173,6 +174,7 @@ export interface IConfig {
     "type_begin_single_include"?: TypeBeginSingleTypeConf | boolean,
     "type_form_parameters"?: TypeFormParametersConf | boolean,
     "types_naming"?: TypesNamingConf | boolean,
+    "unknown_types"?: UnknownTypesConf | boolean,
     "unreachable_code"?: UnreachableCodeConf | boolean,
     "unused_variables"?: UnusedVariablesConf | boolean,
     "use_new"?: UseNewConf | boolean,

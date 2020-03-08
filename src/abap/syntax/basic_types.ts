@@ -108,7 +108,7 @@ export class BasicTypes {
         if (val !== undefined) {
           return new TypedConstantIdentifier(name, this.filename, found, val);
         } else {
-          return new TypedConstantIdentifier(name, this.filename, new Types.UnknownType("todo"), "unknown");
+          return new TypedConstantIdentifier(name, this.filename, new Types.UnknownType("todo, TypedConstantIdentifier"), "unknown");
         }
       } else {
         return new TypedIdentifier(name, this.filename, found);

@@ -69,7 +69,7 @@ export class MethodParameters {
     if (handler) {
       for (const p of handler.findAllExpressions(MethodParamName)) {
         const token = p.getFirstToken();
-        this.importing.push(new TypedIdentifier(token, this.filename, new UnknownType("todo")));
+        this.importing.push(new TypedIdentifier(token, this.filename, new UnknownType("todo, method parameter, handler")));
       }
     }
 
