@@ -1,0 +1,179 @@
+:plantuml-server-url: https://www.plantuml.com/plantuml
+:source-highlighter: rouge
+:chapter-label:
+:doctype: book
+
+= abaplint
+Design Document
+:toc:
+:toclevels: 3
+:numbered:
+
+== Introduction
+todo
+
+== Overview
+
+[plantuml, components, svg]
+....
+left to right direction
+skinparam monochrome true
+
+package "@abaplint/abaplint" as abaplint {
+  rectangle "Tokenizer" as tokenizer
+
+  rectangle "Statement Parser" as statement_parser
+  rectangle "Structure Parser" as structure_parser
+  rectangle "Object Information" as object_information
+  rectangle "Syntax & Scoping" as syntax
+  rectangle "Rules" as rules
+
+  rectangle "Downport (WIP)" as downport
+  rectangle "Quick fixes (WIP)" as quick_fixes
+  rectangle "LSP" as lsp
+
+  tokenizer -left-> statement_parser
+  statement_parser -left-> structure_parser
+  structure_parser -left-> object_information
+  object_information -left-> syntax
+  syntax -left-> rules
+
+  tokenizer -[hidden]-> downport
+  statement_parser -[hidden]-> quick_fixes
+  structure_parser -[hidden]-> lsp
+}
+
+rectangle "External Tooling" as tooling
+tooling --> tokenizer
+
+package "@abaplint/cli" {
+  rectangle "Read Files" as read_files
+}
+read_files --> tokenizer
+
+package "@abaplint/transpiler" as package_transpiler {
+  rectangle "Transpiler" as transpiler
+}
+
+rules -down-> transpiler
+
+package "@abaplint/runtime" as package_runtime {
+  rectangle "Runtime" as runtime
+}
+
+transpiler --> runtime
+
+rectangle "Serverless Tooling" as serverless
+serverless -left-> transpiler
+serverless -left-> runtime
+
+....
+
+== Lexing & Parsing
+
+.example.abap
+[source,abap]
+----
+DO 5 TIMES.
+  WRITE 'hello'.
+ENDDO.
+----
+
+=== Tokenization
+
+Based on rules, the string is split into tokens,
+
+[plantuml, tokens, svg]
+....
+skinparam monochrome true
+
+usecase "DO" as token1
+usecase "5" as token2
+usecase "TIMES" as token3
+usecase "." as token4
+usecase "WRITE" as token5
+usecase "'hello'" as token6
+usecase "." as token7
+usecase "ENDDO" as token8
+usecase "." as token9
+....
+
+=== Parsing
+
+Categorizes tokens into statements
+
+[plantuml, parsing, svg]
+....
+skinparam monochrome true
+
+usecase "ENDDO" as token8
+usecase "." as token9
+
+rectangle "Statement ENDDO" as enddo
+token8 <-up- enddo
+token9 <-up- enddo
+
+usecase "WRITE" as token5
+usecase "'hello'" as token6
+usecase "." as token7
+
+rectangle "Statement WRITE" as write
+token5 <-up- write
+token6 <-up- write
+token7 <-up- write
+
+usecase "DO" as token1
+usecase "5" as token2
+usecase "TIMES" as token3
+usecase "." as token4
+
+rectangle "Statement DO" as do
+token1 <-up- do
+token2 <-up- do
+token3 <-up- do
+token4 <-up- do
+....
+
+=== Structuring
+
+Not completely correct, but the idea...
+
+[plantuml, parsing, svg]
+....
+skinparam monochrome true
+
+usecase "ENDDO" as token8
+usecase "." as token9
+
+rectangle "Statement ENDDO" as enddo
+token8 <-up- enddo
+token9 <-up- enddo
+
+usecase "WRITE" as token5
+usecase "'hello'" as token6
+usecase "." as token7
+
+rectangle "Statement WRITE" as write
+token5 <-up- write
+token6 <-up- write
+token7 <-up- write
+
+usecase "DO" as token1
+usecase "5" as token2
+usecase "TIMES" as token3
+usecase "." as token4
+
+rectangle "Statement DO" as do
+token1 <-up- do
+token2 <-up- do
+token3 <-up- do
+token4 <-up- do
+
+collections "Structure DO" as sdo
+do <-up- sdo
+write <-up- sdo
+enddo <-up- sdo
+....
+
+== Pipelining
+todo, immutable
