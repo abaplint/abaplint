@@ -1,5 +1,6 @@
 import * as Statements from "../../abap/statements";
 import * as Expressions from "../../abap/expressions";
+import * as Tokens from "../tokens";
 import {Identifier} from "./_identifier";
 import {StructureNode, StatementNode, ExpressionNode} from "../../abap/nodes";
 import {Expression} from "../combi";
@@ -11,8 +12,13 @@ export class FormDefinition extends Identifier {
 
   public constructor(node: StructureNode | StatementNode, filename: string) {
     const st = node instanceof StructureNode ? node.findFirstStatement(Statements.Form)! : node;
-    const name = st.findFirstExpression(Expressions.FormName)!.getFirstToken();
-    super(name, filename);
+
+    // FORMs can contain a dash in the name
+    const pos = st.findFirstExpression(Expressions.FormName)!.getFirstToken().getStart();
+    const name = st.findFirstExpression(Expressions.FormName)!.concatTokens();
+    const nameToken = new Tokens.Identifier(pos, name);
+
+    super(nameToken, filename);
     this.node = st;
   }
 
