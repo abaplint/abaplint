@@ -5,14 +5,20 @@ import {StructureNode, StatementNode, ExpressionNode} from "../../abap/nodes";
 import {Expression} from "../combi";
 import {TypedIdentifier} from "./_typed_identifier";
 import {CurrentScope} from "../syntax/_current_scope";
+import * as Tokens from "../tokens";
 
 export class FormDefinition extends Identifier {
   private readonly node: StatementNode;
 
   public constructor(node: StructureNode | StatementNode, filename: string) {
     const st = node instanceof StructureNode ? node.findFirstStatement(Statements.Form)! : node;
-    const name = st.findFirstExpression(Expressions.FormName)!.getFirstToken();
-    super(name, filename);
+
+    // FORMs can contain a dash in the name
+    const pos = st.findFirstExpression(Expressions.FormName)!.getFirstToken().getStart();
+    const name = st.findFirstExpression(Expressions.FormName)!.concatTokens();
+    const nameToken = new Tokens.Identifier(pos, name);
+
+    super(nameToken, filename);
     this.node = st;
   }
 
