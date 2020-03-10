@@ -1,11 +1,11 @@
 import * as Statements from "../../abap/statements";
 import * as Expressions from "../../abap/expressions";
+import * as Tokens from "../tokens";
 import {Identifier} from "./_identifier";
 import {StructureNode, StatementNode, ExpressionNode} from "../../abap/nodes";
 import {Expression} from "../combi";
 import {TypedIdentifier} from "./_typed_identifier";
 import {CurrentScope} from "../syntax/_current_scope";
-import * as Tokens from "../tokens";
 
 export class FormDefinition extends Identifier {
   private readonly node: StatementNode;
