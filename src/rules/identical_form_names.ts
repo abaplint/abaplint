@@ -5,7 +5,7 @@ import {Registry} from "../registry";
 import {BasicRuleConfig} from "./_basic_rule_config";
 import {ABAPObject} from "../objects/_abap_object";
 
-/** Detects identically named forms. */
+/** Detects identically named FORMs */
 export class IdenticalFormNamesConf extends BasicRuleConfig {
 }
 

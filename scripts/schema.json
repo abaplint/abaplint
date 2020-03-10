@@ -1212,7 +1212,7 @@
                   "type": "boolean"
                 }
               ],
-              "description": "Detects identically named forms."
+              "description": "Detects identically named FORMs"
             },
             "if_in_if": {
               "anyOf": [
@@ -1878,7 +1878,7 @@
     },
     "IdenticalFormNamesConf": {
       "additionalProperties": false,
-      "description": "Detects identically named forms.",
+      "description": "Detects identically named FORMs",
       "properties": {
         "exclude": {
           "description": "List of file regex patterns to exclude",

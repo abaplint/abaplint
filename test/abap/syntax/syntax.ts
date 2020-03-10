@@ -1241,7 +1241,7 @@ describe("Check Variables", () => {
   });
 
   it("CALL METHOD, static class and method", () => {
-// todo, actually cl_foobar is unknown
+// todo, actually cl_foo is unknown
     const abap = `CALL METHOD cl_foo=>bar( ).`;
     const issues = runProgram(abap);
     expect(issues.length).to.equals(0);
@@ -1254,15 +1254,13 @@ describe("Check Variables", () => {
     expect(issues.length).to.equals(1);
   });
 
-/*
-  it("DATA, already specified", () => {
+  it.skip("DATA, already specified", () => {
     const abap = `DATA foo.\nDATA foo.`;
     const issues = runProgram(abap);
     expect(issues.length).to.equals(1);
   });
-*/
-/*
-  it("program, constant, begin, error", () => {
+
+  it.skip("program, constant, begin, error", () => {
     const abap =
       "CONSTANTS: BEGIN OF c_mode,\n" +
       "             create TYPE i VALUE 1,\n" +
@@ -1271,25 +1269,20 @@ describe("Check Variables", () => {
     const issues = runProgram(abap);
     expect(issues.length).to.equals(1);
   });
-*/
 
-/*
-  it("program, sy field, unknown field", () => {
+  it.skip("program, sy field, unknown field", () => {
     const abap = "WRITE sy-fooboo.\n";
     const issues = runProgram(abap);
     expect(issues.length).to.equals(1);
   });
-*/
 
-/*
-  it("program, definition in FOR expression, should not work after", () => {
+  it.skip("program, definition in FOR expression, should not work after", () => {
     const abap = "DATA itab TYPE STANDARD TABLE OF i.\n" +
       "itab = VALUE #( FOR j = 1 THEN j + 1 UNTIL j > 10 ( j ) ).\n" +
       "WRITE j.";
     const issues = runProgram(abap);
     expect(issues.length).to.equals(1);
   });
-*/
 
 // todo, static method cannot access instance attributes
 // todo, can a private method access protected attributes?
