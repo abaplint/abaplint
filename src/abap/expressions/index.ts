@@ -73,6 +73,7 @@ export * from "./method_def_importing";
 export * from "./method_def_returning";
 export * from "./method_name";
 export * from "./method_param_name";
+export * from "./method_param_optional";
 export * from "./method_param";
 export * from "./method_parameters";
 export * from "./method_source";

@@ -6,7 +6,6 @@ import {FormDefinition} from "../abap/types";
 import {ABAPFile} from "../files";
 import {Identifier} from "../abap/types/_identifier";
 import {TypedIdentifier} from "../abap/types/_typed_identifier";
-import {TypedConstantIdentifier} from "../abap/types/_typed_constant_identifier";
 import {CurrentScope} from "../abap/syntax/_current_scope";
 import * as Tokens from "../abap/tokens";
 import {ITextDocumentPositionParams} from "./_interfaces";
@@ -42,14 +41,15 @@ export class Hover {
       return {kind: LServer.MarkupKind.Markdown, value: "File"};
     } else if (lookup instanceof FormDefinition) {
       return {kind: LServer.MarkupKind.Markdown, value: this.hoverFormDefinition(lookup)};
-    } else if (lookup instanceof TypedConstantIdentifier) {
-      const value = "Resolved, Typed, Constant\n\n" +
-        "Type:\n\n" + lookup.getType().toText() + "\n\n" +
-        "Value:\n\n```" + lookup.getValue() + "```";
-      return {kind: LServer.MarkupKind.Markdown, value};
     } else if (lookup instanceof TypedIdentifier) {
-      const value = "Resolved, Typed\n\n" +
+      let value = "Resolved, Typed\n\n" +
         "Type:\n\n" + lookup.getType().toText();
+      if (lookup.getValue()) {
+        value = value + "Value:\n\n```" + lookup.getValue() + "```";
+      }
+      if (lookup.getMeta().length > 0) {
+        value = value + "Meta: " + lookup.getMeta().join(", ");
+      }
       return {kind: LServer.MarkupKind.Markdown, value};
     } else if (lookup instanceof Identifier) {
       return {kind: LServer.MarkupKind.Markdown, value: "Resolved"};

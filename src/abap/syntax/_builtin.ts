@@ -1,5 +1,4 @@
-import {TypedIdentifier} from "../types/_typed_identifier";
-import {TypedConstantIdentifier} from "../types/_typed_constant_identifier";
+import {TypedIdentifier, IdentifierMeta} from "../types/_typed_identifier";
 import {VoidType, CharacterType} from "../types/basic";
 import {Identifier} from "../tokens";
 import {Position} from "../../position";
@@ -83,7 +82,7 @@ export class BuiltIn {
 
     for (const e of extras) {
       const id = new Identifier(new Position(1, 1), e);
-      ret.push(new TypedConstantIdentifier(id, this.filename, new VoidType(), "'?'"));
+      ret.push(new TypedIdentifier(id, this.filename, new VoidType(), [IdentifierMeta.ReadOnly], "'?'"));
     }
 
     return ret;
@@ -97,7 +96,7 @@ export class BuiltIn {
     if (value === undefined) {
       value = "'?'";
     }
-    return new TypedConstantIdentifier(id, this.filename, type, value);
+    return new TypedIdentifier(id, this.filename, type, [IdentifierMeta.ReadOnly], value);
   }
 
   private static buildVariable(name: string) {

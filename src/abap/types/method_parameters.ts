@@ -93,7 +93,7 @@ export class MethodParameters {
       const found = returning.findFirstExpression(MethodParam);
       if (found) {
         const para = found.get() as MethodParam;
-        this.returning = para.runSyntax(found, scope, this.filename, IdentifierMeta.MethodReturning);
+        this.returning = para.runSyntax(found, scope, this.filename, [IdentifierMeta.MethodReturning]);
       }
     }
 
@@ -106,7 +106,7 @@ export class MethodParameters {
     const params = source.findAllExpressions(MethodParam);
     for (const param of params) {
       const para = param.get() as MethodParam;
-      target.push(para.runSyntax(param, scope, this.filename, meta));
+      target.push(para.runSyntax(param, scope, this.filename, [meta]));
     }
   }
 

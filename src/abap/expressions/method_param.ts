@@ -27,7 +27,7 @@ export class MethodParam extends Expression {
     return fieldsOrValue;
   }
 
-  public runSyntax(node: ExpressionNode, scope: CurrentScope, filename: string, meta: IdentifierMeta): TypedIdentifier {
+  public runSyntax(node: ExpressionNode, scope: CurrentScope, filename: string, meta: IdentifierMeta[]): TypedIdentifier {
     const name = node.findDirectExpression(Expressions.MethodParamName);
     if (name === undefined) {
       throw new Error("method_parameter.ts, todo, handle pass by value and reference");

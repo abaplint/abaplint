@@ -1,12 +1,12 @@
 import {str, seq, opt, regex as reg, plus, IStatementRunnable, Expression} from "../combi";
-import {MethodParam} from ".";
+import {MethodParamOptional} from ".";
 
 export class MethodDefImporting extends Expression  {
   public getRunnable(): IStatementRunnable {
     const field = reg(/^!?(\/\w+\/)?\w+$/);
 
     return seq(str("IMPORTING"),
-               plus(seq(new MethodParam(), opt(str("OPTIONAL")))),
+               plus(new MethodParamOptional()),
                opt(seq(str("PREFERRED PARAMETER"), field)));
   }
 }

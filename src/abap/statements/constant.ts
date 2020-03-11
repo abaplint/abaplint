@@ -5,9 +5,8 @@ import {NamespaceSimpleName, Type, Value, Length, Decimals, ConstantFieldLength}
 import {StatementNode} from "../nodes";
 import {CurrentScope} from "../syntax/_current_scope";
 import {BasicTypes} from "../syntax/basic_types";
-import {TypedIdentifier} from "../types/_typed_identifier";
+import {TypedIdentifier, IdentifierMeta} from "../types/_typed_identifier";
 import {UnknownType} from "../types/basic";
-import {TypedConstantIdentifier} from "../types/_typed_constant_identifier";
 
 export class Constant extends Statement {
 
@@ -27,9 +26,9 @@ export class Constant extends Statement {
     if (found) {
       const val = basic.findValue(node);
       if (val !== undefined) {
-        return new TypedConstantIdentifier(found.getToken(), filename, found.getType(), val);
+        return new TypedIdentifier(found.getToken(), filename, found.getType(), [IdentifierMeta.ReadOnly], val);
       } else {
-        return new TypedConstantIdentifier(found.getToken(), filename, new UnknownType("todo, TypedConstantIdentifier"), "unknown");
+        return new TypedIdentifier(found.getToken(), filename, new UnknownType("todo, TypedConstantIdentifier"), [IdentifierMeta.ReadOnly], "unknown");
       }
     }
 

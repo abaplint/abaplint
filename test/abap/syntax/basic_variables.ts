@@ -2,8 +2,7 @@ import {expect} from "chai";
 import * as Basic from "../../../src/abap/types/basic";
 import {MemoryFile} from "../../../src/files";
 import {Registry} from "../../../src/registry";
-import {TypedIdentifier} from "../../../src/abap/types/_typed_identifier";
-import {TypedConstantIdentifier} from "../../../src/abap/types/_typed_constant_identifier";
+import {TypedIdentifier, IdentifierMeta} from "../../../src/abap/types/_typed_identifier";
 import {SyntaxLogic} from "../../../src/abap/syntax/syntax";
 import {ABAPObject} from "../../../src/objects/_abap_object";
 import {Position} from "../../../src/position";
@@ -59,14 +58,14 @@ function expectCharacter(identifier: TypedIdentifier | undefined, length: number
 
 function expectConstantString(identifier: TypedIdentifier | undefined, value: string) {
   expectString(identifier);
-  const constant = identifier as TypedConstantIdentifier;
-  expect(constant.getValue()).to.equal(value);
+  expect(identifier!.getValue()).to.equal(value);
+  expect(identifier!.getMeta()).to.include(IdentifierMeta.ReadOnly);
 }
 
 function expectConstantCharacter(identifier: TypedIdentifier | undefined, value: string, length: number) {
   expectCharacter(identifier, length);
-  const constant = identifier as TypedConstantIdentifier;
-  expect(constant.getValue()).to.equal(value);
+  expect(identifier!.getValue()).to.equal(value);
+  expect(identifier!.getMeta()).to.include(IdentifierMeta.ReadOnly);
 }
 
 /////////////////////////////////////

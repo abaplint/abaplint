@@ -7,16 +7,24 @@ export const enum IdentifierMeta {
   MethodExporting = "exporting",
   MethodChanging = "changing",
   MethodReturning = "returning",
+  ReadOnly = "read_only",
+// todo, MethodPreferred
+// todo, Optional
 }
 
 export class TypedIdentifier extends Identifier {
   private readonly type: AbstractType;
-  private readonly meta?: IdentifierMeta;
+  private readonly meta: IdentifierMeta[];
+  private readonly value: string | undefined;
 
-  public constructor(token: Token, filename: string, type: AbstractType, meta?: IdentifierMeta) {
+  public constructor(token: Token, filename: string, type: AbstractType, meta?: IdentifierMeta[], value?: string) {
     super(token, filename);
     this.type = type;
-    this.meta = meta;
+    this.value = value;
+    this.meta = [];
+    if (meta) {
+      this.meta = meta;
+    }
   }
 
   public getType(): AbstractType {
@@ -25,5 +33,9 @@ export class TypedIdentifier extends Identifier {
 
   public getMeta() {
     return this.meta;
+  }
+
+  public getValue() {
+    return this.value;
   }
 }
