@@ -14,12 +14,14 @@ import {IProgress} from "./progress";
 import {ABAPObject} from "./objects/_abap_object";
 import {SyntaxLogic} from "./abap/syntax/syntax";
 import {SpaghettiScope} from "./abap/syntax/spaghetti_scope";
-import {IdentifierMeta} from "./abap/types/_typed_identifier";
+import {IdentifierMeta, TypedIdentifier} from "./abap/types/_typed_identifier";
+import {AbstractType} from "./abap/types/basic/_abstract_type";
 import * as Objects from "./objects";
 import * as Structures from "./abap/structures";
 import * as Statements from "./abap/statements";
 import * as Expressions from "./abap/expressions";
 import * as Nodes from "./abap/nodes";
+import * as BasicTypes from "./abap/types/basic";
 import * as Types from "./abap/types";
 import * as Tokens from "./abap/tokens";
 
@@ -31,4 +33,5 @@ export {MemoryFile, Issue, Config, Version, Formatter,
   Registry, Stats, LanguageServer, MethodLengthStats, IProgress,
   SemanticSearch, ArtifactsObjects, ArtifactsRules, Objects,
   Structures, Statements, Expressions, Types, Nodes, IConfig,
+  AbstractType, TypedIdentifier, BasicTypes,
   Tokens, ABAPObject, SyntaxLogic, SpaghettiScope, IdentifierMeta};
