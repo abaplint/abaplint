@@ -11,8 +11,8 @@ import {Identifier} from "../types/_identifier";
 import {ScopeType} from "./_scope_type";
 
 export class CurrentScope {
-  private readonly reg: Registry;
-  private current: SpaghettiScopeNode | undefined;
+  protected readonly reg: Registry;
+  protected current: SpaghettiScopeNode | undefined;
 
   public static buildDefault(reg: Registry): CurrentScope {
     const s = new CurrentScope(reg);
@@ -21,6 +21,21 @@ export class CurrentScope {
     this.addBuiltIn(s, reg);
 
     s.push(ScopeType.Global, ScopeType.Global, new Position(1, 1), ScopeType.Global);
+
+    return s;
+  }
+
+  // dont call push() and pop() on dummy scopes
+  public static buildDummy(sup: CurrentScope): CurrentScope {
+    const s = new CurrentScope(sup.reg);
+
+    const identifier: IScopeIdentifier = {
+      stype: ScopeType.Dummy,
+      sname: ScopeType.Dummy,
+      start: new Position(1, 1),
+      filename: "dummy"};
+
+    s.current = new SpaghettiScopeNode(identifier, sup.current);
 
     return s;
   }

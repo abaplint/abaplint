@@ -3,8 +3,6 @@ import * as Statements from "../../abap/statements";
 import * as Structures from "../../abap/structures";
 import {CurrentScope} from "../syntax/_current_scope";
 import {TypedIdentifier} from "../..";
-import {ScopeType} from "../syntax/_scope_type";
-import {Position} from "../../position";
 
 // todo: public + protected + private
 export class TypeDefinitions {
@@ -24,17 +22,19 @@ export class TypeDefinitions {
   private parse(node: StructureNode, scope: CurrentScope) {
 // todo,   this.parseDirect(node, scope); // for interfaces
 
+    const dummy = CurrentScope.buildDummy(scope);
+
     const pub = node.findFirstStructure(Structures.PublicSection);
     if (pub) {
-      this.parseDirect(pub, scope);
+      this.parseDirect(pub, dummy);
     }
     const pro = node.findFirstStructure(Structures.ProtectedSection);
     if (pro) {
-      this.parseDirect(pro, scope);
+      this.parseDirect(pro, dummy);
     }
     const pri = node.findFirstStructure(Structures.PrivateSection);
     if (pri) {
-      this.parseDirect(pri, scope);
+      this.parseDirect(pri, dummy);
     }
   }
 
@@ -46,7 +46,6 @@ export class TypeDefinitions {
 
     // note that handling the sequence of handling the children is important
     // hmm, move this logic somewhere else?
-    scope.push(ScopeType.Dummy, ScopeType.Dummy, new Position(1, 1), this.filename);
     for (const c of contents.getChildren()) {
       const get = c.get();
       if (c instanceof StatementNode && get instanceof Statements.Type) {
@@ -63,7 +62,6 @@ export class TypeDefinitions {
         }
       }
     }
-    scope.pop();
 
   }
 
