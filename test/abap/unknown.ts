@@ -8,6 +8,7 @@ describe("unknown statements", () => {
     "asdf.",
     "asdf",
     "asdf asdf.",
+    "METHODS run RETURNING str TYPE string.", // VALUE is missing
   ];
 
   tests.forEach((abap) => {

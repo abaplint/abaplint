@@ -28,7 +28,7 @@ describe("Types, interface_definition, getMethodDefinitions", () => {
   });
 });
 
-describe("Types, interface_definition, getMethodParameters", () => {
+describe("Types, interface_definition, getMethodDefinitions", () => {
   it("test, positive", () => {
     const abap = "INTERFACE zif_foobar PUBLIC.\n" +
       "  METHODS method1 IMPORTING foo TYPE i.\n" +

@@ -90,11 +90,8 @@ export class MethodParameters {
 
     const returning = node.findFirstExpression(MethodDefReturning);
     if (returning) {
-      const found = returning.findFirstExpression(MethodParam);
-      if (found) {
-        const para = found.get() as MethodParam;
-        this.returning = para.runSyntax(found, scope, this.filename, [IdentifierMeta.MethodReturning]);
-      }
+      const found = returning.get() as MethodDefReturning;
+      this.returning = found.runSyntax(returning, scope, this.filename, [IdentifierMeta.MethodReturning]);
     }
 
 // todo:
