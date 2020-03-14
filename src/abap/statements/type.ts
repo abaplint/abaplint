@@ -21,7 +21,7 @@ export class Type extends Statement {
 // todo, BOXED is only allowed with structures inside structures?
     const boxed = ver(Version.v702, str("BOXED"));
 
-    const ret = seq(alt(str("TYPE"), str("TYPES")), def, opt(boxed));
+    const ret = seq(str("TYPES"), def, opt(boxed));
 
     return ret;
   }

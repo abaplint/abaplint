@@ -1,5 +1,5 @@
 import {Statement} from "./_statement";
-import {str, seq, alt, IStatementRunnable} from "../combi";
+import {str, seq, IStatementRunnable} from "../combi";
 import {NamespaceSimpleName} from "../expressions";
 
 export class TypeBegin extends Statement {
@@ -8,7 +8,7 @@ export class TypeBegin extends Statement {
 
     const begin = seq(str("BEGIN OF"), new NamespaceSimpleName());
 
-    const ret = seq(alt(str("TYPE"), str("TYPES")), begin);
+    const ret = seq(str("TYPES"), begin);
 
     return ret;
   }
