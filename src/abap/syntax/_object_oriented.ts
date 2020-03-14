@@ -112,18 +112,17 @@ export class ObjectOriented {
     const className = this.scope.getName();
     let methodName = node.findFirstExpression(Expressions.MethodName)!.getFirstToken().getStr();
     this.scope.push(ScopeType.Method, methodName, node.getFirstToken().getStart(), filename);
+
     const classDefinition = this.findClassDefinition(className);
+    classDefinition.getTypeDefinitions(this.scope).getAll().map((t) => this.scope.addType(t));
 
     const sup = classDefinition.getSuperClass();
     if (sup) {
-      this.scope.addIdentifier(new TypedIdentifier(
-        new Identifier(new Position(1, 1), "super"), BuiltIn.filename, new ObjectReferenceType(sup)));
+      this.scope.addIdentifier(new TypedIdentifier(new Identifier(new Position(1, 1), "super"), BuiltIn.filename, new ObjectReferenceType(sup)));
     }
-    this.scope.addIdentifier(new TypedIdentifier(
-      new Identifier(new Position(1, 1), "me"), BuiltIn.filename, new ObjectReferenceType(className)));
+    this.scope.addIdentifier(new TypedIdentifier(new Identifier(new Position(1, 1), "me"), BuiltIn.filename, new ObjectReferenceType(className)));
 
-    let methodDefinition: MethodDefinition | undefined = undefined;
-    methodDefinition = this.findMethod(classDefinition, methodName);
+    let methodDefinition = this.findMethod(classDefinition, methodName);
 
     let interfaceName: string | undefined = undefined;
     if (methodName.includes("~")) {

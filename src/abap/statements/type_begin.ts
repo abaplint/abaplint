@@ -6,9 +6,7 @@ export class TypeBegin extends Statement {
 
   public getMatcher(): IStatementRunnable {
 
-    const begin = seq(str("BEGIN OF"), new NamespaceSimpleName());
-
-    const ret = seq(str("TYPES"), begin);
+    const ret = seq(str("TYPES"), str("BEGIN OF"), new NamespaceSimpleName());
 
     return ret;
   }

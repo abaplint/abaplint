@@ -3,6 +3,7 @@ import {Registry} from "../../src/registry";
 import {MemoryFile} from "../../src/files/memory_file";
 import {Class, ClassCategory} from "../../src/objects";
 import {Visibility} from "../../src/abap/types/visibility";
+import * as Basic from "../../src/abap/types/basic";
 import {CurrentScope} from "../../src/abap/syntax/_current_scope";
 import {CharacterType} from "../../src/abap/types/basic";
 
@@ -91,7 +92,6 @@ describe("Objects, class, getSuperClass", () => {
     expect(clas.getClassDefinition()).to.not.equal(undefined);
     expect(clas.getClassDefinition()!.getSuperClass()).to.equal("ZCL_SUPER");
   });
-
 
   it("test, negative", () => {
     const abap = "class ZCL_WITH_SUPER definition public final create public.\n" +
@@ -380,6 +380,47 @@ describe("Objects, class, getDescription", () => {
 
     const clas = reg.getABAPObjects()[0] as Class;
     expect(clas.getDescription()).to.equal("");
+  });
+
+});
+
+describe("Objects, class, getTypeDefinitions", () => {
+
+  it("test 1", () => {
+    const abap =
+    `CLASS zcl_foobar DEFINITION PUBLIC CREATE PUBLIC.
+      PUBLIC SECTION.
+        TYPES: zstr TYPE string.
+    ENDCLASS.
+    CLASS zcl_foobar IMPLEMENTATION.
+    ENDCLASS.`;
+
+    const reg = new Registry().addFile(new MemoryFile("zcl_foobar.clas.abap", abap)).parse();
+    const clas = reg.getABAPObjects()[0] as Class;
+    expect(clas.getClassDefinition()).to.not.equal(undefined);
+    const attr = clas.getClassDefinition()!.getTypeDefinitions(CurrentScope.buildDefault(reg)).getAll();
+    expect(attr.length).to.equal(1);
+    expect(attr[0].getName()).to.equal("zstr");
+    expect(attr[0].getType()).to.be.instanceof(Basic.StringType);
+  });
+
+  it("test, TYPES BEGIN OF", () => {
+    const abap =
+    `CLASS zcl_foobar DEFINITION PUBLIC CREATE PUBLIC.
+      PUBLIC SECTION.
+        TYPES: BEGIN OF foo,
+        zstr TYPE string,
+        END OF foo.
+    ENDCLASS.
+    CLASS zcl_foobar IMPLEMENTATION.
+    ENDCLASS.`;
+
+    const reg = new Registry().addFile(new MemoryFile("zcl_foobar.clas.abap", abap)).parse();
+    const clas = reg.getABAPObjects()[0] as Class;
+    expect(clas.getClassDefinition()).to.not.equal(undefined);
+    const attr = clas.getClassDefinition()!.getTypeDefinitions(CurrentScope.buildDefault(reg)).getAll();
+    expect(attr.length).to.equal(1);
+    expect(attr[0].getName()).to.equal("foo");
   });
 
 });

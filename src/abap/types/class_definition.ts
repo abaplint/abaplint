@@ -8,8 +8,8 @@ import {Attributes} from "./class_attributes";
 import {Identifier} from "./_identifier";
 import {Aliases} from "./aliases";
 import {CurrentScope} from "../syntax/_current_scope";
+import {TypeDefinitions} from ".";
 
-// todo, is this the same as an InterfaceDefinition?
 export class ClassDefinition extends Identifier {
   private readonly node: StructureNode;
 
@@ -26,6 +26,10 @@ export class ClassDefinition extends Identifier {
 
   public getMethodDefinitions(scope: CurrentScope): MethodDefinitions {
     return new MethodDefinitions(this.node, this.filename, scope);
+  }
+
+  public getTypeDefinitions(scope: CurrentScope): TypeDefinitions {
+    return new TypeDefinitions(this.node, this.filename, scope);
   }
 
   public getSuperClass(): string | undefined {

@@ -3,7 +3,7 @@ import {StructureNode} from "../nodes";
 import * as Structures from "../../abap/structures";
 import * as Statements from "../../abap/statements";
 import * as Expressions from "../../abap/expressions";
-import {MethodDefinition, Visibility, Attributes} from ".";
+import {MethodDefinition, Visibility, Attributes, TypeDefinitions} from ".";
 import {CurrentScope} from "../syntax/_current_scope";
 
 export class InterfaceDefinition extends Identifier {
@@ -23,6 +23,10 @@ export class InterfaceDefinition extends Identifier {
   public getAttributes(scope: CurrentScope): Attributes | undefined {
     if (!this.node) { return undefined; }
     return new Attributes(this.node, this.filename, scope);
+  }
+
+  public getTypeDefinitions(scope: CurrentScope): TypeDefinitions {
+    return new TypeDefinitions(this.node, this.filename, scope);
   }
 
   public isLocal(): boolean {
