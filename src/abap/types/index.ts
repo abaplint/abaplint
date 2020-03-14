@@ -10,6 +10,5 @@ export * from "./method_definition";
 export * from "./method_definitions";
 export * from "./method_implementation";
 export * from "./method_parameters";
-export * from "./visibility";
-export * from "./type_definition";
 export * from "./type_definitions";
+export * from "./visibility";

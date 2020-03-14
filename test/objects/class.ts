@@ -423,4 +423,30 @@ describe("Objects, class, getTypeDefinitions", () => {
     expect(attr[0].getName()).to.equal("foo");
   });
 
+  it("test, TYPES, must be parsed in sequence", () => {
+    const abap =
+    `CLASS zcl_foobar DEFINITION PUBLIC CREATE PUBLIC.
+      PUBLIC SECTION.
+        TYPES: BEGIN OF ty_header,
+          field TYPE string,
+          value TYPE string,
+        END OF ty_header.
+
+        TYPES ty_headers TYPE STANDARD TABLE OF ty_header WITH DEFAULT KEY.
+      ENDCLASS.
+      CLASS zcl_foobar IMPLEMENTATION.
+      ENDCLASS.`;
+
+    const reg = new Registry().addFile(new MemoryFile("zcl_foobar.clas.abap", abap)).parse();
+    const clas = reg.getABAPObjects()[0] as Class;
+    expect(clas.getClassDefinition()).to.not.equal(undefined);
+    const attr = clas.getClassDefinition()!.getTypeDefinitions(CurrentScope.buildDefault(reg)).getAll();
+    expect(attr.length).to.equal(2);
+    expect(attr[0].getName()).to.equal("ty_header");
+    expect(attr[0].getType()).to.not.be.instanceof(Basic.VoidType);
+    expect(attr[1].getName()).to.equal("ty_headers");
+    expect(attr[1].getType()).to.not.be.instanceof(Basic.VoidType);
+    const tab = attr[1].getType() as Basic.TableType;
+    expect(tab.getRowType()).to.not.be.instanceof(Basic.VoidType);
+  });
 });

@@ -8,4 +8,5 @@ export enum ScopeType {
   Locals = "locals",
   Method = "method",
   Program = "_program",
+  Dummy = "_dummy",
 }

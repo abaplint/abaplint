@@ -1,8 +1,10 @@
-import {StructureNode} from "../../abap/nodes";
+import {StructureNode, StatementNode} from "../../abap/nodes";
 import * as Statements from "../../abap/statements";
 import * as Structures from "../../abap/structures";
 import {CurrentScope} from "../syntax/_current_scope";
 import {TypedIdentifier} from "../..";
+import {ScopeType} from "../syntax/_scope_type";
+import {Position} from "../../position";
 
 // todo: public + protected + private
 export class TypeDefinitions {
@@ -42,21 +44,27 @@ export class TypeDefinitions {
       return;
     }
 
-    for (const t of contents.findDirectStatements(Statements.Type)) {
-      const s = t.get() as Statements.Type;
-      const res = s.runSyntax(t, scope, this.filename);
-      if (res) {
-        this.list.push(res);
+    // note that handling the sequence of handling the children is important
+    // hmm, move this logic somewhere else?
+    scope.push(ScopeType.Dummy, ScopeType.Dummy, new Position(1, 1), this.filename);
+    for (const c of contents.getChildren()) {
+      const get = c.get();
+      if (c instanceof StatementNode && get instanceof Statements.Type) {
+        const res = get.runSyntax(c, scope, this.filename);
+        if (res) {
+          scope.addType(res);
+          this.list.push(res);
+        }
+      } else if (c instanceof StructureNode && get instanceof Structures.Types) {
+        const res = get.runSyntax(c, scope, this.filename);
+        if (res) {
+          scope.addType(res);
+          this.list.push(res);
+        }
       }
     }
+    scope.pop();
 
-    for (const t of contents.findDirectStructures(Structures.Types)) {
-      const s = t.get() as Structures.Types;
-      const res = s.runSyntax(t, scope, this.filename);
-      if (res) {
-        this.list.push(res);
-      }
-    }
   }
 
 }
