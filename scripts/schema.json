@@ -699,6 +699,33 @@
       },
       "type": "object"
     },
+    "ForbiddenIdentifierConf": {
+      "additionalProperties": false,
+      "description": "Forbid use of specified identifiers, list of regex",
+      "properties": {
+        "check": {
+          "items": {
+            "type": "string"
+          },
+          "type": "array"
+        },
+        "exclude": {
+          "description": "List of file regex patterns to exclude",
+          "items": {
+            "type": "string"
+          },
+          "type": "array"
+        },
+        "reason": {
+          "description": "An explanation for why the rule is enforced",
+          "type": "string"
+        }
+      },
+      "required": [
+        "check"
+      ],
+      "type": "object"
+    },
     "FormNoDashConf": {
       "additionalProperties": false,
       "description": "Checks for a Dash in form names.",
@@ -1147,6 +1174,17 @@
                 }
               ],
               "description": "Detects EXPORTING statements which can be omitted.\r\nhttps://github.com/SAP/styleguides/blob/master/clean-abap/CleanABAP.md#omit-the-optional-keyword-exporting\r\nhttps://docs.abapopenchecks.org/checks/30/"
+            },
+            "forbidden_identifier": {
+              "anyOf": [
+                {
+                  "$ref": "#/definitions/ForbiddenIdentifierConf"
+                },
+                {
+                  "type": "boolean"
+                }
+              ],
+              "description": "Forbid use of specified identifiers, list of regex"
             },
             "form_no_dash": {
               "anyOf": [

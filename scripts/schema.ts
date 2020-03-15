@@ -29,6 +29,7 @@ import {EmptyStatementConf} from "../src/rules/empty_statement";
 import {EmptyStructureConf} from "../src/rules/empty_structure";
 import {ExitOrCheckConf} from "../src/rules/exit_or_check";
 import {ExportingConf} from "../src/rules/exporting";
+import {ForbiddenIdentifierConf} from "../src/rules/forbidden_identifier";
 import {FormNoDashConf} from "../src/rules/form_no_dash";
 import {FormTablesObsoleteConf} from "../src/rules/form_tables_obsolete";
 import {FullyTypeConsantsConf} from "../src/rules/fully_type_constants";
@@ -123,6 +124,7 @@ export interface IConfig {
     "empty_structure"?: EmptyStructureConf | boolean,
     "exit_or_check"?: ExitOrCheckConf | boolean,
     "exporting"?: ExportingConf | boolean,
+    "forbidden_identifier"?: ForbiddenIdentifierConf | boolean,
     "form_no_dash"?: FormNoDashConf | boolean,
     "form_tables_obsolete"?: FormTablesObsoleteConf | boolean,
     "fully_type_constants"?: FullyTypeConsantsConf | boolean,
