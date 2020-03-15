@@ -4,4 +4,8 @@ export class TimeType extends AbstractType {
   public toText() {
     return "```t```";
   }
+
+  public isGeneric() {
+    return false;
+  }
 }

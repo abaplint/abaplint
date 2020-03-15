@@ -4,4 +4,8 @@ export class FloatType extends AbstractType {
   public toText() {
     return "```f```";
   }
+
+  public isGeneric() {
+    return false;
+  }
 }

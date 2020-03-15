@@ -28,4 +28,8 @@ export class StructureType extends AbstractType {
     }
     return "Structure: {\n\n" + compo.join(",\n\n") + "}";
   }
+
+  public isGeneric() {
+    return false;
+  }
 }

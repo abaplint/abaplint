@@ -27,4 +27,7 @@ export class PackedType extends AbstractType {
     return "```p LENGTH " + this.getLength() + " DECIMALS " + this.getDecimals() + "```";
   }
 
+  public isGeneric() {
+    return false;
+  }
 }

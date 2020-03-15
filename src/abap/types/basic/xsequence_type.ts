@@ -1,11 +1,11 @@
 import {AbstractType} from "./_abstract_type";
 
-export class XStringType extends AbstractType {
+export class XSequenceType extends AbstractType {
   public toText() {
-    return "```xstring```";
+    return "```xsequence```";
   }
 
   public isGeneric() {
-    return false;
+    return true;
   }
 }

@@ -10,4 +10,7 @@ export class DataReference extends AbstractType {
     return "data reference";
   }
 
+  public isGeneric() {
+    return false;
+  }
 }

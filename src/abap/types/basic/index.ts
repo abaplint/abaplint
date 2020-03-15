@@ -14,3 +14,5 @@ export * from "./time_type";
 export * from "./unknown_type";
 export * from "./void_type";
 export * from "./xstring_type";
+export * from "./xsequence_type";
+export * from "./clike_type";

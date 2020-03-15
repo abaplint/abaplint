@@ -16,4 +16,7 @@ export class ObjectReferenceType extends AbstractType {
     return "```REF TO " + this.name + "```";
   }
 
+  public isGeneric() {
+    return false;
+  }
 }

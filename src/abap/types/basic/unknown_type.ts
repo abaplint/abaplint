@@ -15,4 +15,8 @@ export class UnknownType extends AbstractType {
   public toText() {
     return "Unknown type: " + this.error;
   }
+
+  public isGeneric() {
+    return false;
+  }
 }

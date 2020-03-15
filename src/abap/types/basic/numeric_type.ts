@@ -19,4 +19,7 @@ export class NumericType extends AbstractType {
     return "```n LENGTH " + this.getLength() + "```";
   }
 
+  public isGeneric() {
+    return false;
+  }
 }

@@ -19,4 +19,8 @@ export class CharacterType extends AbstractType {
     return "```c LENGTH " + this.getLength() + "```";
   }
 
+  public isGeneric() {
+    return false;
+  }
+
 }

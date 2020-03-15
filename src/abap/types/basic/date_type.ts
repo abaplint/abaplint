@@ -4,4 +4,8 @@ export class DateType extends AbstractType {
   public toText() {
     return "```d```";
   }
+
+  public isGeneric() {
+    return false;
+  }
 }

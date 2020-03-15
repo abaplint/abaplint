@@ -19,4 +19,7 @@ export class HexType extends AbstractType {
     return "```x LENGTH " + this.getLength() + "```";
   }
 
+  public isGeneric() {
+    return false;
+  }
 }

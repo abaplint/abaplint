@@ -30,6 +30,10 @@ export class BasicTypes {
       return new Types.DateType();
     } else if (chainText === "T") {
       return new Types.TimeType();
+    } else if (chainText === "XSEQUENCE") {
+      return new Types.XSequenceType();
+    } else if (chainText === "CLIKE") {
+      return new Types.CLikeType();
     } else if (chainText === "I") {
       return new Types.IntegerType();
     } else if (chainText === "F") {

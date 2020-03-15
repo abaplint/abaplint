@@ -4,4 +4,8 @@ export class StringType extends AbstractType {
   public toText() {
     return "```string```";
   }
+
+  public isGeneric() {
+    return false;
+  }
 }
