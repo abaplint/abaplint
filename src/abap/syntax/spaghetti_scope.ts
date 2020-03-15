@@ -108,8 +108,6 @@ export class SpaghettiScopeNode extends ScopeData {
     return {start: this.identifier.start, end};
   }
 
-///////////////////////////
-
   public findClassDefinition(name: string): ClassDefinition | undefined {
     let search: SpaghettiScopeNode | undefined = this;
 
@@ -177,6 +175,21 @@ export class SpaghettiScopeNode extends ScopeData {
       for (const local of search.getData().vars) {
         if (local.name.toUpperCase() === name.toUpperCase()) {
           return local.identifier;
+        }
+      }
+      search = search.getParent();
+    }
+
+    return undefined;
+  }
+
+  public findScopeForVariable(name: string): IScopeIdentifier | undefined {
+    let search: SpaghettiScopeNode | undefined = this;
+
+    while (search !== undefined) {
+      for (const local of search.getData().vars) {
+        if (local.name.toUpperCase() === name.toUpperCase()) {
+          return search.getIdentifier();
         }
       }
       search = search.getParent();

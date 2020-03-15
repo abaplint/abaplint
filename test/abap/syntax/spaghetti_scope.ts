@@ -55,6 +55,9 @@ describe("Spaghetti Scope", () => {
     const scope3 = spaghetti.lookupPosition(new Position(6, 1), filename);
     expect(scope3?.getIdentifier().stype).to.equal(ScopeType.Form);
     expect(scope3?.getIdentifier().sname).to.equal("something_else");
+
+    const id = scope1?.findScopeForVariable("boo");
+    expect(id?.stype).to.equal(ScopeType.Program);
   });
 
 });
