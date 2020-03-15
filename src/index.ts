@@ -18,6 +18,7 @@ import {IdentifierMeta, TypedIdentifier} from "./abap/types/_typed_identifier";
 import {AbstractType} from "./abap/types/basic/_abstract_type";
 import {ScopeType} from "./abap/syntax/_scope_type";
 import {INode} from "./abap/nodes/_inode";
+import {Token} from "./abap/tokens/_token";
 import * as Objects from "./objects";
 import * as Structures from "./abap/structures";
 import * as Statements from "./abap/statements";
@@ -31,10 +32,9 @@ import * as Tokens from "./abap/tokens";
 
 // file used to build typings, index.d.ts
 
-
 export {MemoryFile, Issue, Config, Version, Formatter,
   Registry, Stats, LanguageServer, MethodLengthStats, IProgress,
   SemanticSearch, ArtifactsObjects, ArtifactsRules, Objects,
   Structures, Statements, Expressions, Types, Nodes, IConfig,
-  AbstractType, TypedIdentifier, BasicTypes, ScopeType, INode,
+  AbstractType, TypedIdentifier, BasicTypes, ScopeType, INode, Token,
   Tokens, ABAPObject, SyntaxLogic, SpaghettiScope, IdentifierMeta};

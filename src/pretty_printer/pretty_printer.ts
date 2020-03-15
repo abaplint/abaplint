@@ -1,4 +1,3 @@
-
 import {Unknown, MacroContent, MacroCall, Comment} from "../abap/statements/_statement";
 import {ABAPFile} from "../files";
 import {Config} from "../config";

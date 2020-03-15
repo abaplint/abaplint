@@ -5,11 +5,11 @@ import {Config} from "../config";
 import {KeywordCase, KeywordCaseStyle} from "../rules/keyword_case";
 import * as Tokens from "../abap/tokens";
 
-
 export class FixCase {
   private fileContents: string;
   private readonly config: Config;
   private readonly keywordCase: KeywordCase;
+
   public constructor(fileContents: string, config: Config) {
     this.keywordCase = new KeywordCase();
     this.keywordCase.setConfig(config.readByRule(this.keywordCase.getKey()));
@@ -41,6 +41,7 @@ export class FixCase {
 
     return this.fileContents;
   }
+
   private formatNonKeyword(str: string): string {
     return str.toLowerCase();
   }

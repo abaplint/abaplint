@@ -4,6 +4,7 @@ import {IFile} from "../files/_ifile";
 
 export class RemoveSequentialBlanks {
   private readonly config: Config;
+
   public constructor(config: Config) {
     this.config = config;
   }

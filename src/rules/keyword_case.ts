@@ -17,7 +17,6 @@ export enum KeywordCaseStyle {
   Lower = "lower",
 }
 
-
 /** Checks that keywords have the same case. Non-keywords must be lower case. */
 export class KeywordCaseConf extends BasicRuleConfig {
   public style: KeywordCaseStyle = KeywordCaseStyle.Upper;
@@ -30,7 +29,6 @@ export class KeywordCaseConf extends BasicRuleConfig {
 }
 
 export class KeywordCase extends ABAPRule {
-
   private conf = new KeywordCaseConf();
 
   public getKey(): string {
@@ -51,6 +49,15 @@ export class KeywordCase extends ABAPRule {
 
   public setConfig(conf: KeywordCaseConf) {
     this.conf = conf;
+    if (this.conf === undefined) {
+      this.conf = new KeywordCaseConf();
+    }
+    if (this.conf.style === undefined) {
+      this.conf.style = new KeywordCaseConf().style;
+    }
+    if (this.conf.ignoreExceptions === undefined) {
+      this.conf.ignoreExceptions = new KeywordCaseConf().ignoreExceptions;
+    }
   }
 
   public runParsed(file: ABAPFile, _reg: Registry, obj: IObject) {
@@ -161,9 +168,7 @@ export class KeywordCase extends ABAPRule {
   public violatesRule(keyword: string): boolean {
     if (this.conf.style === KeywordCaseStyle.Lower) {
       return keyword !== keyword.toLowerCase();
-    }
-
-    if (this.conf.style === KeywordCaseStyle.Upper) {
+    } else if (this.conf.style === KeywordCaseStyle.Upper) {
       return keyword !== keyword.toUpperCase();
     }
 

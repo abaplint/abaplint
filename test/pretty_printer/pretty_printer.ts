@@ -258,3 +258,18 @@ describe("Pretty printer with globalClassSkipFirst", () => {
     });
   });
 });
+
+describe("Config is undefined", () => {
+
+  it("run without config", () => {
+    const reg = new Registry().addFile(new MemoryFile("zfoo.prog.abap", "report zbar.")).parse();
+    expect(reg.getABAPFiles().length).to.equal(1);
+    const config = reg.getConfig() as any;
+    config.config.rules.keyword_case = undefined;
+    config.config.rules.sequential_blank = undefined;
+    const prettyPrinter = new PrettyPrinter(reg.getABAPFiles()[0], config);
+    const result = prettyPrinter.run();
+    expect(result).to.equal("REPORT zbar.");
+  });
+
+});
