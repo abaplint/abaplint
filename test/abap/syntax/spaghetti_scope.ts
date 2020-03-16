@@ -60,6 +60,32 @@ describe("Spaghetti Scope", () => {
     expect(id?.stype).to.equal(ScopeType.Program);
   });
 
+  it("Two classes, lookup position", () => {
+    const abap = `CLASS zcl_ret DEFINITION.
+PUBLIC SECTION.
+  CLASS-METHODS foo.
+ENDCLASS.
+CLASS zcl_ret IMPLEMENTATION.
+METHOD foo.
+  WRITE 1.
+ENDMETHOD.
+ENDCLASS.
+CLASS zcl_ret2 DEFINITION.
+PUBLIC SECTION.
+  CLASS-METHODS blahblah.
+ENDCLASS.
+CLASS zcl_ret2 IMPLEMENTATION.
+METHOD blahblah.
+  WRITE 2.
+ENDMETHOD.
+ENDCLASS.`;
+
+    const spaghetti = runProgram(abap);
+
+    const scope1 = spaghetti.lookupPosition(new Position(16, 1), filename);
+    expect(scope1?.getIdentifier().stype).to.equal(ScopeType.Method);
+    expect(scope1?.getIdentifier().sname).to.equal("blahblah");
+  });
 });
 
 describe("Spaghetti Scope, Definition + Read + Write positions", () => {

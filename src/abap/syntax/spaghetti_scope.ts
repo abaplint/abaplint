@@ -280,6 +280,11 @@ export class SpaghettiScope {
   }
 
   private lookupPositionTraverse(p: Position, filename: string, node: SpaghettiScopeNode): SpaghettiScopeNode | undefined {
+    const coverage = node.calcCoverage();
+    if (node.getIdentifier().filename === filename && p.isBetween(coverage.start, coverage.end) === false) {
+      return undefined;
+    }
+
     for (const c of node.getChildren()) {
       const result = this.lookupPositionTraverse(p, filename, c);
       if (result !== undefined) {
@@ -288,7 +293,6 @@ export class SpaghettiScope {
     }
 
     if (node.getIdentifier().filename === filename) {
-      const coverage = node.calcCoverage();
       if (p.isBetween(coverage.start, coverage.end)) {
         return node;
       }
