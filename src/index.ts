@@ -1,4 +1,4 @@
-import {MemoryFile} from "./files";
+import {MemoryFile, ABAPFile} from "./files";
 import {Issue} from "./issue";
 import {Config, IConfig} from "./config";
 import {Version} from "./version";
@@ -37,4 +37,5 @@ export {MemoryFile, Issue, Config, Version, Formatter,
   SemanticSearch, ArtifactsObjects, ArtifactsRules, Objects,
   Structures, Statements, Expressions, Types, Nodes, IConfig,
   AbstractType, TypedIdentifier, BasicTypes, ScopeType, INode, Token,
-  Tokens, ABAPObject, SyntaxLogic, SpaghettiScope, IdentifierMeta};
+  Tokens, ABAPObject, SyntaxLogic, SpaghettiScope, IdentifierMeta,
+  ABAPFile};

@@ -97,5 +97,23 @@ describe("Types, class_definition", () => {
     expect(aliases[0].getComponent()).to.equal("zif_foobar~cache_asset");
   });
 
+  it("method, static", () => {
+    const abap = "CLASS zcl_moo DEFINITION CREATE PUBLIC.\n" +
+      "  PUBLIC SECTION.\n" +
+      "    CLASS-METHODS moo.\n" +
+      "ENDCLASS.\n" +
+      "CLASS zcl_moo IMPLEMENTATION.\n" +
+      "  METHOD moo.\n" +
+      "  ENDMETHOD.\n" +
+      "ENDCLASS.";
+    const reg = new Registry().addFile(new MemoryFile("zcl_moo.clas.abap", abap)).parse();
+    const scope = CurrentScope.buildDefault(reg);
+    const clas = reg.getABAPObjects()[0] as Class;
+    expect(clas.getClassDefinition()).to.not.equal(undefined);
+    expect(clas.getClassDefinition()!.getMethodDefinitions(scope)).to.not.equal(undefined);
+    const pub = clas.getClassDefinition()!.getMethodDefinitions(scope)!.getPublic();
+    expect(pub.length).to.equal(1);
+    expect(pub[0].isStatic()).to.equal(true);
+  });
 
 });

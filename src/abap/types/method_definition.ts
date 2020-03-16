@@ -12,6 +12,7 @@ export class MethodDefinition extends Identifier {
   private readonly redefinition: boolean;
   private readonly eventHandler: boolean;
   private readonly abstract: boolean;
+  private readonly static: boolean;
 
 // todo: final
 
@@ -40,6 +41,11 @@ export class MethodDefinition extends Identifier {
       this.abstract = true;
     }
 
+    this.static = false;
+    if (node.getFirstToken().getStr().toUpperCase().startsWith("CLASS")) {
+      this.static = true;
+    }
+
     this.visibility = visibility;
     this.parameters = new MethodParameters(node, this.filename, scope);
   }
@@ -54,6 +60,10 @@ export class MethodDefinition extends Identifier {
 
   public isAbstract(): boolean {
     return this.abstract;
+  }
+
+  public isStatic(): boolean {
+    return this.static;
   }
 
   public isEventHandler(): boolean {

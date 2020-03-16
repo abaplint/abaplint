@@ -1,7 +1,7 @@
 import {AbstractObject} from "./_abstract_object";
 import {ABAPFile} from "../files";
 import {Issue} from "../issue";
-import {ClassImplementation} from "../abap/types";
+import {ClassImplementation, ClassDefinition} from "../abap/types";
 import {xmlToArray} from "../xml_utils";
 import {ABAPParser} from "../abap/abap_parser";
 import {IRegistry} from "../_iregistry";
@@ -73,6 +73,23 @@ export abstract class ABAPObject extends AbstractObject {
       ret = ret.concat(file.getClassImplementations());
     }
     return ret;
+  }
+
+  public getClassDefinitions(): ClassDefinition[] {
+    let ret: ClassDefinition[] = [];
+    for (const file of this.getABAPFiles()) {
+      ret = ret.concat(file.getClassDefinitions());
+    }
+    return ret;
+  }
+
+  public getClassDefinition(name: string): ClassDefinition | undefined {
+    for (const impl of this.getClassDefinitions()) {
+      if (impl.getName().toUpperCase() === name.toUpperCase()) {
+        return impl;
+      }
+    }
+    return undefined;
   }
 
   public getTexts(): ITextElement[] {
