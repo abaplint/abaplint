@@ -103,7 +103,6 @@ export class Lexer {
     this.m = Mode.Normal;
 
     this.process(file.getRaw());
-// console.dir(this.tokens);
     return this.tokens;
   }
 
@@ -250,7 +249,7 @@ export class Lexer {
   }
 
   private static process(raw: string) {
-    this.stream = new Stream(raw);
+    this.stream = new Stream(raw.replace(/\r/g, ""));
     this.buffer = new Buffer();
 
     for (;;) {

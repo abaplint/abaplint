@@ -19,6 +19,7 @@ import {AbstractType} from "./abap/types/basic/_abstract_type";
 import {ScopeType} from "./abap/syntax/_scope_type";
 import {INode} from "./abap/nodes/_inode";
 import {Token} from "./abap/tokens/_token";
+import {CurrentScope} from "./abap/syntax/_current_scope";
 import * as Objects from "./objects";
 import * as Structures from "./abap/structures";
 import * as Statements from "./abap/statements";
@@ -28,7 +29,7 @@ import * as BasicTypes from "./abap/types/basic";
 import * as Types from "./abap/types";
 import * as Tokens from "./abap/tokens";
 
-// do not include this file from anywhere
+// do not include this file from anywhere within abaplint
 
 // file used to build typings, index.d.ts
 
@@ -38,4 +39,4 @@ export {MemoryFile, Issue, Config, Version, Formatter,
   Structures, Statements, Expressions, Types, Nodes, IConfig,
   AbstractType, TypedIdentifier, BasicTypes, ScopeType, INode, Token,
   Tokens, ABAPObject, SyntaxLogic, SpaghettiScope, IdentifierMeta,
-  ABAPFile};
+  ABAPFile, CurrentScope};

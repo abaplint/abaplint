@@ -38,6 +38,7 @@ export class LineLength extends ABAPRule {
 
     const lines = file.getRaw().split("\n");
     for (let line = 0; line < lines.length; line++) {
+      lines[line] = lines[line].trimRight(); // remove carriage returns
       if (lines[line].length > this.conf.length) {
         const message = this.getDescription(this.conf.length.toString(), lines[line].length.toString());
         const position = new Position(line + 1, 1);

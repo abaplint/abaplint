@@ -4,6 +4,7 @@ import * as Statements from "../../../src/abap/statements/";
 const tests = [
   "cl_gui_cfw=>flush( ).",
   "cl_gui_cfw=>flush( ) .",
+  "cl_gui_cfw=>flush(\r\n) .",
   "lif_object~delete( ).",
   "gui( )->go_home( ).",
   "cl_abap_unit_assert=>assert_subrc( msg = 'Error while parsing'(001) ).",

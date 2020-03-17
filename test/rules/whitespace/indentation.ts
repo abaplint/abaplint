@@ -47,6 +47,20 @@ const tests = [
   {abap: "AT SELECTION-SCREEN ON EXIT-COMMAND.\n" +
   "  PERFORM exit.\n" +
   "INCLUDE zfoo.\n", cnt: 0},
+
+  {abap: `
+IF foo = bar.
+  IF moo = foo.
+    FIELD-SYMBOLS: <lv_field> TYPE data.
+
+    ASSIGN
+      COMPONENT iv_fieldname
+      OF STRUCTURE cs_header
+      TO <lv_field>.
+    ASSERT sy-subrc = 0.
+  ENDIF.
+ENDIF.`, cnt: 0},
+
 ];
 
 testRule(tests, Indentation);

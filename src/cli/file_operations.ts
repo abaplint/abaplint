@@ -1,8 +1,8 @@
 import * as fs from "fs";
 import * as path from "path";
-import {CompressedFile, MemoryFile} from "../files";
 import * as zlib from "zlib";
 import * as glob from "glob";
+import {CompressedFile, MemoryFile} from "../files";
 import {IFile} from "../files/_ifile";
 import {IProgress} from "../progress";
 
@@ -47,8 +47,7 @@ export class FileOperations {
 
 // note that readFileSync is typically faster than async readFile,
 // https://medium.com/@adamhooper/node-synchronous-code-runs-faster-than-asynchronous-code-b0553d5cf54e
-      const raw = fs.readFileSync(filename, "utf8").replace(/\r/g, ""); // ignore all carriage returns
-    // tslint:disable-next-line:no-constant-condition
+      const raw = fs.readFileSync(filename, "utf8");
       if (compress) {
 // todo, util.promisify(zlib.deflate) does not seem to work?
         files.push(new CompressedFile(filename, zlib.deflateSync(raw).toString("base64")));
