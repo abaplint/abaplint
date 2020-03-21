@@ -1,5 +1,5 @@
 import {structureType} from "../_utils";
-import {If} from "../../../src/abap/structures";
+import {If} from "../../../src/abap/3_structures/structures";
 
 const cases = [
   {abap: "IF foo = bar. ENDIF."},

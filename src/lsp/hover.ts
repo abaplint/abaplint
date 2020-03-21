@@ -7,7 +7,7 @@ import {ABAPFile} from "../files";
 import {Identifier} from "../abap/types/_identifier";
 import {TypedIdentifier} from "../abap/types/_typed_identifier";
 import {CurrentScope} from "../abap/syntax/_current_scope";
-import * as Tokens from "../abap/tokens";
+import * as Tokens from "../abap/1_lexer/tokens";
 import {ITextDocumentPositionParams} from "./_interfaces";
 
 export class Hover {

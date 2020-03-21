@@ -1,4 +1,4 @@
-import * as Expressions from "../abap/expressions";
+import * as Expressions from "../abap/2_statements/expressions";
 import {Issue} from "../issue";
 import {ABAPRule} from "./_abap_rule";
 import {ABAPFile} from "../files";

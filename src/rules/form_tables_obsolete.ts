@@ -4,7 +4,7 @@ import {BasicRuleConfig} from "./_basic_rule_config";
 import {ABAPRule} from "./_abap_rule";
 import {ABAPFile} from "../files";
 import {Registry} from "../registry";
-import * as Expressions from "../abap/expressions";
+import * as Expressions from "../abap/2_statements/expressions";
 import {ABAPObject} from "../objects/_abap_object";
 
 /** Checks for TABLES parameters in forms. */

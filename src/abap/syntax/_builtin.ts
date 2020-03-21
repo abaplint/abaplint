@@ -1,6 +1,6 @@
 import {TypedIdentifier, IdentifierMeta} from "../types/_typed_identifier";
 import {VoidType, CharacterType} from "../types/basic";
-import {Identifier} from "../tokens";
+import {Identifier} from "../1_lexer/tokens";
 import {Position} from "../../position";
 import {AbstractType} from "../types/basic/_abstract_type";
 

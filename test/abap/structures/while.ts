@@ -1,5 +1,5 @@
 import {structureType} from "../_utils";
-import {While} from "../../../src/abap/structures";
+import {While} from "../../../src/abap/3_structures/structures";
 
 const cases = [
   {abap: "WHILE foo = bar. ENDWHILE."},

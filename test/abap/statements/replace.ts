@@ -1,5 +1,5 @@
 import {statementType} from "../_utils";
-import * as Statements from "../../../src/abap/statements/";
+import * as Statements from "../../../src/abap/2_statements/statements";
 
 const tests = [
   "REPLACE ALL OCCURRENCES OF '<_--28C_DATA_--29>' IN lv_xml WITH '<DATA>'.",

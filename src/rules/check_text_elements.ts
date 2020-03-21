@@ -1,7 +1,7 @@
 import {IRule} from "./_irule";
 import {Issue} from "../issue";
 import {BasicRuleConfig} from "./_basic_rule_config";
-import * as Expressions from "../abap/expressions";
+import * as Expressions from "../abap/2_statements/expressions";
 import {ABAPObject, ITextElement} from "../objects/_abap_object";
 import {IObject} from "../objects/_iobject";
 import {Registry} from "../registry";

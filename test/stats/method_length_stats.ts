@@ -1,7 +1,7 @@
 import {expect} from "chai";
 import {Registry} from "../../src/registry";
 import {MemoryFile} from "../../src/files";
-import {MethodLengthStats} from "../../src/abap/method_length_stats";
+import {MethodLengthStats} from "../../src/utils/method_length_stats";
 
 describe("method length stats", () => {
   const tests = [

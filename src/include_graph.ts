@@ -1,6 +1,6 @@
 import {Registry} from "./registry";
-import {Include} from "./abap/statements";
-import {IncludeName} from "./abap/expressions";
+import {Include} from "./abap/2_statements/statements";
+import {IncludeName} from "./abap/2_statements/expressions";
 import {FunctionGroup, Program} from "./objects";
 import {ABAPFile} from "./files";
 import {CheckInclude} from "./rules/syntax/check_include";

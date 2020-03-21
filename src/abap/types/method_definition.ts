@@ -1,6 +1,6 @@
 import {StatementNode} from "../../abap/nodes";
-import {MethodDef} from "../../abap/statements";
-import * as Expressions from "../../abap/expressions";
+import {MethodDef} from "../2_statements/statements";
+import * as Expressions from "../2_statements/expressions";
 import {MethodParameters} from "./method_parameters";
 import {Visibility} from "./visibility";
 import {Identifier} from "./_identifier";

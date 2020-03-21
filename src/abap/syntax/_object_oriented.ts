@@ -1,5 +1,5 @@
-import * as Statements from "../statements";
-import * as Expressions from "../expressions";
+import * as Statements from "../2_statements/statements";
+import * as Expressions from "../2_statements/expressions";
 import {StatementNode} from "../nodes";
 import {ClassDefinition, MethodDefinition, InterfaceDefinition} from "../types";
 import {Interface, Class} from "../../objects";
@@ -7,7 +7,7 @@ import {Registry} from "../../registry";
 import {CurrentScope} from "./_current_scope";
 import {ScopeType} from "./_scope_type";
 import {ObjectReferenceType} from "../types/basic";
-import {Identifier} from "../tokens";
+import {Identifier} from "../1_lexer/tokens";
 import {TypedIdentifier} from "../types/_typed_identifier";
 import {Position} from "../../position";
 import {BuiltIn} from "./_builtin";

@@ -1,7 +1,7 @@
-import * as Statements from "../abap/statements";
-import * as Expressions from "../abap/expressions";
+import * as Statements from "../abap/2_statements/statements";
+import * as Expressions from "../abap/2_statements/expressions";
 import {Registry} from "../registry";
-import {Token} from "../abap/tokens/_token";
+import {Token} from "../abap/1_lexer/tokens/_token";
 import {StatementNode, TokenNode} from "../abap/nodes";
 import {Identifier} from "../abap/types/_identifier";
 import {FormDefinition} from "../abap/types";

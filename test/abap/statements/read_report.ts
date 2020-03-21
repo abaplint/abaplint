@@ -1,5 +1,5 @@
 import {statementType} from "../_utils";
-import * as Statements from "../../../src/abap/statements/";
+import * as Statements from "../../../src/abap/2_statements/statements";
 
 const tests = [
   "READ REPORT ls_include INTO rt_source STATE 'A'.",

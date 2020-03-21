@@ -1,7 +1,7 @@
 import {Issue} from "../issue";
 import {ABAPRule} from "./_abap_rule";
 import {ABAPFile} from "../files";
-import * as Statements from "../abap/statements";
+import * as Statements from "../abap/2_statements/statements";
 import {BasicRuleConfig} from "./_basic_rule_config";
 import {Registry} from "../registry";
 import {IObject} from "../objects/_iobject";

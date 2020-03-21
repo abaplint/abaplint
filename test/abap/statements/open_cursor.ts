@@ -1,5 +1,5 @@
 import {statementType} from "../_utils";
-import * as Statements from "../../../src/abap/statements/";
+import * as Statements from "../../../src/abap/2_statements/statements";
 
 const tests = [
   "OPEN CURSOR WITH HOLD l_db_cursor FOR SELECT mandt objct FROM usr12 WHERE mandt = lv_mandt.",

@@ -3,7 +3,7 @@ import {BasicRuleConfig} from "../_basic_rule_config";
 import {ABAPRule} from "../_abap_rule";
 import {ABAPFile} from "../../files";
 import {ExpressionNode, StatementNode} from "../../abap/nodes";
-import * as Expressions from "../../abap/expressions";
+import * as Expressions from "../../abap/2_statements/expressions";
 
 /** Keep single parameter calls on one line
  * https://github.com/SAP/styleguides/blob/master/clean-abap/CleanABAP.md#keep-single-parameter-calls-on-one-line

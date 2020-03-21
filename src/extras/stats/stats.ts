@@ -1,8 +1,8 @@
 import {Registry} from "../../registry";
 import {Version} from "../../version";
-import {Unknown, Comment, Empty} from "../../abap/statements/_statement";
-import * as Statements from "../../abap/statements";
-import {MethodLengthStats} from "../../abap/method_length_stats";
+import {Unknown, Comment, Empty} from "../../abap/2_statements/statements/_statement";
+import * as Statements from "../../abap/2_statements/statements";
+import {MethodLengthStats} from "../../utils/method_length_stats";
 import {Config} from "../../config";
 
 export interface ITotals {

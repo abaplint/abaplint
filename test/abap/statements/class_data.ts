@@ -1,5 +1,5 @@
 import {statementType} from "../_utils";
-import * as Statements from "../../../src/abap/statements/";
+import * as Statements from "../../../src/abap/2_statements/statements";
 
 const tests = [
   "class-data EOL type CHAR01 value CL_ABAP_CHAR_UTILITIES=>CR_LF.",

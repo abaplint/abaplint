@@ -1,5 +1,5 @@
 import {statementType} from "../_utils";
-import * as Statements from "../../../src/abap/statements/";
+import * as Statements from "../../../src/abap/2_statements/statements";
 
 const tests = [
   "CLOSE DATASET lv_default_file_name.",

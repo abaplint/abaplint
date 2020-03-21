@@ -1,6 +1,6 @@
-import * as Statements from "../abap/statements";
-import * as Expressions from "../abap/expressions";
-import {MacroContent, Comment, Empty} from "../abap/statements/_statement";
+import * as Statements from "../abap/2_statements/statements";
+import * as Expressions from "../abap/2_statements/expressions";
+import {MacroContent, Comment, Empty} from "../abap/2_statements/statements/_statement";
 import {ABAPFile} from "../files";
 import {StatementNode} from "../abap/nodes/statement_node";
 import {IIndentationOptions} from "./indentation_options";

@@ -7,8 +7,8 @@ import {Registry} from "../../registry";
 import {BasicRuleConfig} from "../_basic_rule_config";
 import {IIndentationOptions} from "../../pretty_printer/indentation_options";
 import {Indent} from "../../pretty_printer/indent";
-import * as Statements from "../../abap/statements";
-import * as Expressions from "../../abap/expressions";
+import * as Statements from "../../abap/2_statements/statements";
+import * as Expressions from "../../abap/2_statements/expressions";
 
 /** Checks indentation */
 export class IndentationConf extends BasicRuleConfig {

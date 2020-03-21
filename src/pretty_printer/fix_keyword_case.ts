@@ -1,9 +1,9 @@
 import {StatementNode, ExpressionNode, TokenNode, TokenNodeRegex} from "../abap/nodes";
-import {Identifier} from "../abap/tokens";
+import {Identifier} from "../abap/1_lexer/tokens";
 import {Position} from "../position";
 import {Config} from "../config";
 import {KeywordCase, KeywordCaseStyle} from "../rules/keyword_case";
-import * as Tokens from "../abap/tokens";
+import * as Tokens from "../abap/1_lexer/tokens";
 
 export class FixCase {
   private fileContents: string;

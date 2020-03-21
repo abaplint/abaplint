@@ -1,5 +1,5 @@
 import {statementType} from "../_utils";
-import * as Statements from "../../../src/abap/statements/";
+import * as Statements from "../../../src/abap/2_statements/statements";
 
 const tests = [
   "SUBMIT zdemo WITH rb_down = abap_true WITH rb_show = abap_false AND RETURN.",

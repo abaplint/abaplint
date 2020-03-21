@@ -2,14 +2,14 @@ import {MemoryFile} from "../../src/files";
 import {Config} from "../../src/config";
 import {expect} from "chai";
 import {Version, getPreviousVersion, defaultVersion} from "../../src/version";
-import {Unknown} from "../../src/abap/statements/_statement";
-import {IStructure} from "../../src/abap/structures/_structure";
-import {StatementParser} from "../../src/abap/statement_parser";
+import {Unknown} from "../../src/abap/2_statements/statements/_statement";
+import {IStructure} from "../../src/abap/3_structures/structures/_structure";
+import {StatementParser} from "../../src/abap/2_statements/statement_parser";
 import {Registry} from "../../src/registry";
 import {StructureNode, StatementNode} from "../../src/abap/nodes/";
 import {IFile} from "../../src/files/_ifile";
-import {Token} from "../../src/abap/tokens/_token";
-import {Lexer} from "../../src/abap/lexer";
+import {Token} from "../../src/abap/1_lexer/tokens/_token";
+import {Lexer} from "../../src/abap/1_lexer/lexer";
 
 // utils for testing
 

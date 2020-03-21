@@ -1,6 +1,6 @@
 import {IFile} from "./files/_ifile";
 import {Position} from "./position";
-import {Token} from "./abap/tokens/_token";
+import {Token} from "./abap/1_lexer/tokens/_token";
 import {Identifier} from "./abap/types/_identifier";
 import {StatementNode} from "./abap/nodes";
 

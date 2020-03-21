@@ -2,8 +2,8 @@ import {Issue} from "../issue";
 import {ABAPRule} from "./_abap_rule";
 import {ABAPFile} from "../files";
 import {BasicRuleConfig} from "./_basic_rule_config";
-import * as Statements from "../abap/statements/";
-import * as Expressions from "../abap/expressions/";
+import * as Statements from "../abap/2_statements/statements";
+import * as Expressions from "../abap/2_statements/expressions";
 
 /** Checks that exceptions 'system_failure' and 'communication_failure' are handled in RFC calls
  * https://help.sap.com/doc/abapdocu_750_index_htm/7.50/en-US/abenrfc_exception.htm

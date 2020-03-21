@@ -1,7 +1,7 @@
 import {expect} from "chai";
 import {StructureNode, StatementNode} from "../../../src/abap/nodes";
-import * as Structures from "../../../src/abap/structures";
-import * as Statements from "../../../src/abap/statements";
+import * as Structures from "../../../src/abap/3_structures/structures";
+import * as Statements from "../../../src/abap/2_statements/statements";
 
 describe("Structure node", () => {
 

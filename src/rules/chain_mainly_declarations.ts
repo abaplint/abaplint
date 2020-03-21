@@ -2,7 +2,7 @@ import {Issue} from "../issue";
 import {ABAPRule} from "./_abap_rule";
 import {ABAPFile} from "../files";
 import {BasicRuleConfig} from "./_basic_rule_config";
-import * as Statements from "../abap/statements";
+import * as Statements from "../abap/2_statements/statements";
 
 /** Chain mainly declarations
  * https://docs.abapopenchecks.org/checks/23/

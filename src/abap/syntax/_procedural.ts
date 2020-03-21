@@ -1,5 +1,5 @@
-import * as Expressions from "../expressions";
-import * as Statements from "../statements";
+import * as Expressions from "../2_statements/expressions";
+import * as Statements from "../2_statements/statements";
 import {StatementNode} from "../nodes";
 import {ABAPObject} from "../../objects/_abap_object";
 import {FormDefinition} from "../types";

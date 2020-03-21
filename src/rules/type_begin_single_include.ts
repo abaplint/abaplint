@@ -2,8 +2,8 @@ import {Issue} from "../issue";
 import {ABAPRule} from "./_abap_rule";
 import {ABAPFile} from "../files";
 import {BasicRuleConfig} from "./_basic_rule_config";
-import * as Statements from "../abap/statements";
-import * as Structures from "../abap/structures";
+import * as Statements from "../abap/2_statements/statements";
+import * as Structures from "../abap/3_structures/structures";
 
 /** Finds TYPE BEGIN with just one INCLUDE TYPE */
 export class TypeBeginSingleTypeConf extends BasicRuleConfig {

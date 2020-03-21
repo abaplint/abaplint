@@ -1,5 +1,5 @@
 import {INode} from "./_inode";
-import {Token} from "../tokens/_token";
+import {Token} from "../1_lexer/tokens/_token";
 
 export abstract class AbstractNode implements INode {
   protected children: INode[];

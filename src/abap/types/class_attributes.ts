@@ -1,5 +1,5 @@
-import * as Structures from "../../abap/structures";
-import * as Statements from "../../abap/statements";
+import * as Structures from "../3_structures/structures";
+import * as Statements from "../2_statements/statements";
 import {ClassAttribute} from "./class_attribute";
 import {ClassConstant} from "./class_constant";
 import {StructureNode, StatementNode} from "../../abap/nodes";

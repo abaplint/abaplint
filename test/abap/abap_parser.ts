@@ -2,7 +2,7 @@ import {expect} from "chai";
 import {ABAPParser} from "../../src/abap/abap_parser";
 import {MemoryFile} from "../../src";
 import {IFile} from "../../src/files/_ifile";
-import {Unknown} from "../../src/abap/statements/_statement";
+import {Unknown} from "../../src/abap/2_statements/statements/_statement";
 import {defaultVersion} from "../../src/version";
 
 describe("abap_parser", () => {

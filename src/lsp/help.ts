@@ -3,7 +3,7 @@ import {Registry} from "../registry";
 import {INode} from "../abap/nodes/_inode";
 import {ABAPFile} from "../files";
 import {StructureNode, StatementNode, TokenNodeRegex, ExpressionNode, TokenNode} from "../abap/nodes";
-import {Token} from "../abap/tokens/_token";
+import {Token} from "../abap/1_lexer/tokens/_token";
 import {LSPUtils} from "./_lsp_utils";
 import {SyntaxLogic} from "../abap/syntax/syntax";
 import {ABAPObject} from "../objects/_abap_object";

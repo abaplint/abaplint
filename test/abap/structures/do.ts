@@ -1,5 +1,5 @@
 import {structureType} from "../_utils";
-import {Do} from "../../../src/abap/structures";
+import {Do} from "../../../src/abap/3_structures/structures";
 
 const cases = [
   {abap: "DO 2 TIMES. ENDDO."},

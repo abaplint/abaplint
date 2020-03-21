@@ -1,13 +1,13 @@
 import {Issue} from "../../issue";
 import {Position} from "../../position";
-import * as Tokens from "../../abap/tokens";
-import {Unknown} from "../../abap/statements/_statement";
+import * as Tokens from "../../abap/1_lexer/tokens";
+import {Unknown} from "../../abap/2_statements/statements/_statement";
 import {ABAPRule} from "../_abap_rule";
 import {ABAPFile} from "../../files";
 import {StatementNode} from "../../abap/nodes";
 import {Registry} from "../../registry";
 import {BasicRuleConfig} from "../_basic_rule_config";
-import {STATEMENT_MAX_TOKENS} from "../../abap/statement_parser";
+import {STATEMENT_MAX_TOKENS} from "../../abap/2_statements/statement_parser";
 
 /** Checks for syntax unrecognized by abaplint */
 export class ParserErrorConf extends BasicRuleConfig {

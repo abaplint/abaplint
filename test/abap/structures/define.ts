@@ -1,5 +1,5 @@
 import {structureType} from "../_utils";
-import {Define} from "../../../src/abap/structures";
+import {Define} from "../../../src/abap/3_structures/structures";
 
 const cases = [
   {abap: "DEFINE _macro. END-OF-DEFINITION."},

@@ -2,7 +2,7 @@ import {Issue} from "../issue";
 import {ABAPRule} from "./_abap_rule";
 import {ABAPFile} from "../files";
 import {Registry} from "../registry";
-import {Try, Catch} from "../abap/structures";
+import {Try, Catch} from "../abap/3_structures/structures";
 import {BasicRuleConfig} from "./_basic_rule_config";
 
 /** Checks for TRY blocks without a CATCH block */

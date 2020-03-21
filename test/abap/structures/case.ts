@@ -1,5 +1,5 @@
 import {structureType} from "../_utils";
-import {Case} from "../../../src/abap/structures";
+import {Case} from "../../../src/abap/3_structures/structures";
 
 const cases = [
   {abap: "CASE moo. ENDCASE."},

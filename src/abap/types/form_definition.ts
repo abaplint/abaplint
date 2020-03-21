@@ -1,9 +1,9 @@
-import * as Statements from "../../abap/statements";
-import * as Expressions from "../../abap/expressions";
-import * as Tokens from "../tokens";
+import * as Statements from "../2_statements/statements";
+import * as Expressions from "../2_statements/expressions";
+import * as Tokens from "../1_lexer/tokens";
 import {Identifier} from "./_identifier";
 import {StructureNode, StatementNode, ExpressionNode} from "../../abap/nodes";
-import {Expression} from "../combi";
+import {Expression} from "../2_statements/combi";
 import {TypedIdentifier} from "./_typed_identifier";
 import {CurrentScope} from "../syntax/_current_scope";
 

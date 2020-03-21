@@ -1,9 +1,9 @@
 import {Issue} from "../issue";
-import * as Statements from "../abap/statements";
+import * as Statements from "../abap/2_statements/statements";
 import {ABAPRule} from "./_abap_rule";
 import {ABAPFile} from "../files";
 import {BasicRuleConfig} from "./_basic_rule_config";
-import {Dynamic} from "../abap/expressions";
+import {Dynamic} from "../abap/2_statements/expressions";
 import {Registry} from "../registry";
 import {Version} from "../version";
 

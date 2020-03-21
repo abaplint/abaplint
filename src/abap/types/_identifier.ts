@@ -1,5 +1,5 @@
 import {Position} from "../../position";
-import {Token} from "../tokens/_token";
+import {Token} from "../1_lexer/tokens/_token";
 
 export class Identifier {
   private readonly token: Token;

@@ -1,5 +1,5 @@
 import {structureType} from "../_utils";
-import {TypeEnum} from "../../../src/abap/structures";
+import {TypeEnum} from "../../../src/abap/3_structures/structures";
 
 const cases = [
   {abap: "TYPES BEGIN OF ENUM name STRUCTURE name2 BASE TYPE char01.\n" +

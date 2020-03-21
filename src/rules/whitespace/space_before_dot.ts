@@ -2,12 +2,12 @@ import {Issue} from "../../issue";
 import {ABAPRule} from "../_abap_rule";
 import {ABAPFile} from "../../files";
 import {BasicRuleConfig} from "../_basic_rule_config";
-import * as Statements from "../../abap/statements";
+import * as Statements from "../../abap/2_statements/statements";
 import {Class, Interface} from "../../objects";
 import {IObject} from "../../objects/_iobject";
 import {Registry} from "../../registry";
-import {Punctuation} from "../../abap/tokens";
-import {Token} from "../../abap/tokens/_token";
+import {Punctuation} from "../../abap/1_lexer/tokens";
+import {Token} from "../../abap/1_lexer/tokens/_token";
 
 /** Checks for extra spaces before dots at the ends of statements . */
 export class SpaceBeforeDotConf extends BasicRuleConfig {

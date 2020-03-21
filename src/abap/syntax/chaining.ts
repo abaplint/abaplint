@@ -1,6 +1,6 @@
 import {CurrentScope} from "./_current_scope";
 import {ExpressionNode} from "../nodes";
-import * as Expressions from "../expressions";
+import * as Expressions from "../2_statements/expressions";
 
 export class Chaining {
   private readonly scope: CurrentScope;

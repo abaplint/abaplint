@@ -2,10 +2,10 @@ import {ABAPRule} from "./../_abap_rule";
 import {ABAPFile} from "../../files";
 import {Issue} from "../../issue";
 import {NamingRuleConfig} from "../_naming_rule_config";
-import {Parameter, SelectOption} from "../../abap/statements";
-import {Statement} from "../../abap/statements/_statement";
+import {Parameter, SelectOption} from "../../abap/2_statements/statements";
+import {Statement} from "../../abap/2_statements/statements/_statement";
 import {NameValidator} from "../../utils/name_validator";
-import {FieldSub, Field} from "../../abap/expressions";
+import {FieldSub, Field} from "../../abap/2_statements/expressions";
 import {StatementNode, ExpressionNode} from "../../abap/nodes";
 
 /** Allows you to enforce a pattern, such as a prefix, for selection-screen variable names. */

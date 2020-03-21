@@ -1,8 +1,8 @@
-import * as Structures from "../../src/abap/structures/";
-import * as Statements from "../../src/abap/statements/";
+import * as Structures from "../../src/abap/3_structures/structures";
+import * as Statements from "../../src/abap/2_statements/statements";
 import {expect} from "chai";
 import {parse} from "./_utils";
-import {StructureParser} from "../../src/abap/structure_parser";
+import {StructureParser} from "../../src/abap/3_structures/structure_parser";
 
 describe("Structure, test generated nodes", () => {
   it("Test 01", () => {

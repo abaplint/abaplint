@@ -1,5 +1,5 @@
 import {structureType} from "../_utils";
-import {ClassGlobal} from "../../../src/abap/structures";
+import {ClassGlobal} from "../../../src/abap/3_structures/structures";
 
 const cases = [
   {abap: "CLASS zfoo DEFINITION. ENDCLASS. CLASS zfoo IMPLEMENTATION. ENDCLASS."},

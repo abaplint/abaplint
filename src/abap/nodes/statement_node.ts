@@ -1,14 +1,14 @@
 import {AbstractNode} from "./_abstract_node";
-import {Statement} from "../statements/_statement";
+import {Statement} from "../2_statements/statements/_statement";
 import {INode} from "./_inode";
 import {Position} from "../../position";
-import {Token} from "../tokens/_token";
-import {Pragma} from "../tokens/pragma";
+import {Token} from "../1_lexer/tokens/_token";
+import {Pragma} from "../1_lexer/tokens/pragma";
 import {TokenNode} from "./token_node";
 import {ExpressionNode} from "./expression_node";
-import {Expression} from "../combi";
-import {String, StringTemplate, StringTemplateBegin, StringTemplateMiddle, StringTemplateEnd} from "../tokens/string";
-import {Comment} from "../tokens/comment";
+import {Expression} from "../2_statements/combi";
+import {String, StringTemplate, StringTemplateBegin, StringTemplateMiddle, StringTemplateEnd} from "../1_lexer/tokens/string";
+import {Comment} from "../1_lexer/tokens/comment";
 
 export class StatementNode extends AbstractNode {
   private readonly statement: Statement;

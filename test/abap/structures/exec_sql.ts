@@ -1,5 +1,5 @@
 import {structureType} from "../_utils";
-import {ExecSQL} from "../../../src/abap/structures";
+import {ExecSQL} from "../../../src/abap/3_structures/structures";
 
 const cases = [
 //  {abap: "EXEC SQL. ENDEXEC."},

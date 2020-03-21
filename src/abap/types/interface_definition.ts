@@ -1,8 +1,8 @@
 import {Identifier} from "./_identifier";
 import {StructureNode} from "../nodes";
-import * as Structures from "../../abap/structures";
-import * as Statements from "../../abap/statements";
-import * as Expressions from "../../abap/expressions";
+import * as Structures from "../3_structures/structures";
+import * as Statements from "../2_statements/statements";
+import * as Expressions from "../2_statements/expressions";
 import {MethodDefinition, Visibility, Attributes, TypeDefinitions} from ".";
 import {CurrentScope} from "../syntax/_current_scope";
 

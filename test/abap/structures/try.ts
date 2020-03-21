@@ -1,5 +1,5 @@
 import {structureType} from "../_utils";
-import {Try} from "../../../src/abap/structures";
+import {Try} from "../../../src/abap/3_structures/structures";
 
 const cases = [
   {abap: "TRY. ENDTRY."},

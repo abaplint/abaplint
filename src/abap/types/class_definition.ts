@@ -1,9 +1,9 @@
 import {StructureNode} from "../../abap/nodes";
 import {MethodDefinitions} from "./method_definitions";
-import {SuperClassName} from "../../abap/expressions";
-import * as Statements from "../../abap/statements";
-import * as Structures from "../../abap/structures";
-import * as Expressions from "../../abap/expressions";
+import {SuperClassName} from "../2_statements/expressions";
+import * as Statements from "../2_statements/statements";
+import * as Structures from "../3_structures/structures";
+import * as Expressions from "../2_statements/expressions";
 import {Attributes} from "./class_attributes";
 import {Identifier} from "./_identifier";
 import {Aliases} from "./aliases";

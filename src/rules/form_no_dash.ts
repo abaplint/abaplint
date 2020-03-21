@@ -2,9 +2,9 @@ import {ABAPRule} from "./_abap_rule";
 import {BasicRuleConfig} from "./_basic_rule_config";
 import {Issue} from "../issue";
 import {ABAPFile} from "../files";
-import * as Statements from "../abap/statements";
-import {Dash, DashW} from "../abap/tokens";
-import {FormName} from "../abap/expressions";
+import * as Statements from "../abap/2_statements/statements";
+import {Dash, DashW} from "../abap/1_lexer/tokens";
+import {FormName} from "../abap/2_statements/expressions";
 
 /** Checks for a Dash in form names. */
 export class FormNoDashConf extends BasicRuleConfig {

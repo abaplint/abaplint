@@ -1,12 +1,12 @@
 import {expect} from "chai";
-import {opt, sta, star, seq, alt, sub, beginEnd} from "../../../src/abap/structures/_combi";
-import * as Statements from "../../../src/abap/statements";
-import * as Structures from "../../../src/abap/structures";
+import {opt, sta, star, seq, alt, sub, beginEnd} from "../../../src/abap/3_structures/structures/_combi";
+import * as Statements from "../../../src/abap/2_statements/statements";
+import * as Structures from "../../../src/abap/3_structures/structures";
 import {StatementNode} from "../../../src/abap/nodes/";
-import {IStructure} from "../../../src/abap/structures/_structure";
-import {Statement} from "../../../src/abap/statements/_statement";
+import {IStructure} from "../../../src/abap/3_structures/structures/_structure";
+import {Statement} from "../../../src/abap/2_statements/statements/_statement";
 import {AbstractNode} from "../../../src/abap/nodes/_abstract_node";
-import {Token} from "../../../src/abap/tokens/_token";
+import {Token} from "../../../src/abap/1_lexer/tokens/_token";
 
 class DummyNode extends AbstractNode {
   public get(): undefined {

@@ -2,7 +2,7 @@ import {Issue} from "../issue";
 import {ABAPRule} from "./_abap_rule";
 import {ABAPFile} from "../files";
 import {BasicRuleConfig} from "./_basic_rule_config";
-import {Punctuation, Comment} from "../abap/tokens";
+import {Punctuation, Comment} from "../abap/1_lexer/tokens";
 
 /** Checks that statements do not contain empty lines.
  * https://docs.abapopenchecks.org/checks/41/

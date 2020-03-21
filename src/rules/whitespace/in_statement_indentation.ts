@@ -5,7 +5,7 @@ import {IObject} from "../../objects/_iobject";
 import {Class} from "../../objects";
 import {Registry} from "../../registry";
 import {BasicRuleConfig} from "../_basic_rule_config";
-import * as Statements from "../../abap/statements";
+import * as Statements from "../../abap/2_statements/statements";
 
 /** Checks alignment within block statement declarations which span multiple lines, such as multiple conditions in IF statements.
  * Example:

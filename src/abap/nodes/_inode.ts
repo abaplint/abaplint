@@ -1,4 +1,4 @@
-import {Token} from "../tokens/_token";
+import {Token} from "../1_lexer/tokens/_token";
 
 export interface INode {
   addChild(n: INode): INode;

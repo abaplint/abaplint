@@ -1,8 +1,8 @@
 import {Issue} from "../issue";
-import * as Statements from "../abap/statements/";
+import * as Statements from "../abap/2_statements/statements";
 import {ABAPRule} from "./_abap_rule";
 import {ABAPFile} from "../files";
-import {Compare, DataDefinition} from "../abap/expressions";
+import {Compare, DataDefinition} from "../abap/2_statements/expressions";
 import {BasicRuleConfig} from "./_basic_rule_config";
 import {Position} from "../position";
 

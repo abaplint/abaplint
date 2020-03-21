@@ -1,10 +1,10 @@
 import {Issue} from "../issue";
-import * as Statements from "../abap/statements";
+import * as Statements from "../abap/2_statements/statements";
 import {ABAPRule} from "./_abap_rule";
 import {ABAPFile} from "../files";
 import {BasicRuleConfig} from "./_basic_rule_config";
 import {StatementNode} from "../abap/nodes";
-import {Comment} from "../abap/statements/_statement";
+import {Comment} from "../abap/2_statements/statements/_statement";
 
 /** Checks NO_HANDLER pragmas that can be removed */
 export class CheckNoHandlerPragmaConf extends BasicRuleConfig {

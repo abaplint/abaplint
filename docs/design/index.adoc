@@ -20,7 +20,7 @@ left to right direction
 skinparam monochrome true
 
 package "@abaplint/abaplint" as abaplint {
-  rectangle "Tokenizer" as tokenizer
+  rectangle "Lexer" as lexer
 
   rectangle "Statement Parser" as statement_parser
   rectangle "Structure Parser" as structure_parser
@@ -32,24 +32,24 @@ package "@abaplint/abaplint" as abaplint {
   rectangle "Quick fixes (WIP)" as quick_fixes
   rectangle "LSP" as lsp
 
-  tokenizer -left-> statement_parser
+  lexer -left-> statement_parser
   statement_parser -left-> structure_parser
   structure_parser -left-> object_information
   object_information -left-> syntax
   syntax -left-> rules
 
-  tokenizer -[hidden]-> downport
+  lexer -[hidden]-> downport
   statement_parser -[hidden]-> quick_fixes
   structure_parser -[hidden]-> lsp
 }
 
 rectangle "External Tooling" as tooling
-tooling --> tokenizer
+tooling --> lexer
 
 package "@abaplint/cli" {
   rectangle "Read Files" as read_files
 }
-read_files --> tokenizer
+read_files --> lexer
 
 package "@abaplint/transpiler" as package_transpiler {
   rectangle "Transpiler" as transpiler
@@ -79,7 +79,7 @@ DO 5 TIMES.
 ENDDO.
 ----
 
-=== Tokenization
+=== Lexing / Tokenization
 
 Based on rules, the string is split into tokens,
 

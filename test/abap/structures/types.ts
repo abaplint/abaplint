@@ -1,5 +1,5 @@
 import {structureType} from "../_utils";
-import {Types} from "../../../src/abap/structures";
+import {Types} from "../../../src/abap/3_structures/structures";
 
 const cases = [
   {abap: "TYPES: BEGIN OF ty_foo, raw TYPE xstring, compressed_len TYPE i, END OF ty_foo."},

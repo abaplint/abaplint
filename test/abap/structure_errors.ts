@@ -1,8 +1,8 @@
-import * as Structures from "../../src/abap/structures/";
+import * as Structures from "../../src/abap/3_structures/structures";
 import {expect} from "chai";
-import {IStructure} from "../../src/abap/structures/_structure";
+import {IStructure} from "../../src/abap/3_structures/structures/_structure";
 import {getStatements, parse} from "./_utils";
-import {StructureParser} from "../../src/abap/structure_parser";
+import {StructureParser} from "../../src/abap/3_structures/structure_parser";
 import {StructureNode} from "../../src/abap/nodes/";
 import {MemoryFile} from "../../src/files";
 import {Registry} from "../../src/registry";

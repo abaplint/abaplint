@@ -3,7 +3,7 @@ import {ABAPRule} from "../_abap_rule";
 import {ABAPFile} from "../../files";
 import {Registry} from "../../registry";
 import {Version} from "../../version";
-import {Target} from "../../abap/expressions";
+import {Target} from "../../abap/2_statements/expressions";
 import {BasicRuleConfig} from "../_basic_rule_config";
 
 /** Checks for inline data declarations in older releases. */

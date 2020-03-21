@@ -2,9 +2,9 @@ import {Issue} from "../issue";
 import {ABAPRule} from "./_abap_rule";
 import {ABAPFile} from "../files";
 import {BasicRuleConfig} from "./_basic_rule_config";
-import {Statement, Comment, MacroContent, Empty} from "../abap/statements/_statement";
-import * as Statements from "../abap/statements/";
-import * as Expressions from "../abap/expressions/";
+import {Statement, Comment, MacroContent, Empty} from "../abap/2_statements/statements/_statement";
+import * as Statements from "../abap/2_statements/statements";
+import * as Expressions from "../abap/2_statements/expressions";
 import {StatementNode} from "../abap/nodes";
 
 /** Checks for unreachable code. */

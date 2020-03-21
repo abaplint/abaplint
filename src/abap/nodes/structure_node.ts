@@ -1,9 +1,9 @@
 import {AbstractNode} from "./_abstract_node";
-import {IStructure} from "../structures/_structure";
+import {IStructure} from "../3_structures/structures/_structure";
 import {StatementNode} from "./statement_node";
-import {Statement} from "../statements/_statement";
-import {Token} from "../tokens/_token";
-import {Expression} from "../combi";
+import {Statement} from "../2_statements/statements/_statement";
+import {Token} from "../1_lexer/tokens/_token";
+import {Expression} from "../2_statements/combi";
 import {ExpressionNode} from "./expression_node";
 
 export class StructureNode extends AbstractNode {

@@ -1,9 +1,9 @@
-import {Pragma} from "../abap/tokens";
-import {Token} from "../abap/tokens/_token";
+import {Pragma} from "../abap/1_lexer/tokens";
+import {Token} from "../abap/1_lexer/tokens/_token";
 import {AbstractFile} from "./_abstract_file";
 import {IFile} from "./_ifile";
 import {StructureNode, StatementNode} from "../abap/nodes/";
-import * as Structures from "../abap/structures";
+import * as Structures from "../abap/3_structures/structures";
 import {ClassDefinition, ClassImplementation, InterfaceDefinition, FormDefinition} from "../abap/types";
 
 export class ABAPFile extends AbstractFile {

@@ -2,9 +2,9 @@ import {BasicRuleConfig} from "./_basic_rule_config";
 import {ABAPRule} from "./_abap_rule";
 import {ABAPFile} from "../files";
 import {Issue} from "../issue";
-import * as Statements from "../abap/statements";
+import * as Statements from "../abap/2_statements/statements";
 import {StatementNode} from "../abap/nodes/statement_node";
-import {Type, TypeTable, NamespaceSimpleName} from "../abap/expressions";
+import {Type, TypeTable, NamespaceSimpleName} from "../abap/2_statements/expressions";
 
 /** Checks constants for full typing - no implicit typing allowed. */
 export class FullyTypeConsantsConf extends BasicRuleConfig {

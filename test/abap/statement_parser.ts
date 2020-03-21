@@ -1,8 +1,8 @@
 import {expect} from "chai";
 import {getFile, getStatements} from "./_utils";
-import {MacroCall, Unknown} from "../../src/abap/statements/_statement";
-import {StatementParser} from "../../src/abap/statement_parser";
-import {Write, Data} from "../../src/abap/statements";
+import {MacroCall, Unknown} from "../../src/abap/2_statements/statements/_statement";
+import {StatementParser} from "../../src/abap/2_statements/statement_parser";
+import {Write, Data} from "../../src/abap/2_statements/statements";
 import {defaultVersion} from "../../src/version";
 
 

@@ -1,7 +1,7 @@
 import {StructureNode} from "../../abap/nodes";
 import {Identifier} from "./_identifier";
-import * as Structures from "../../abap/structures";
-import * as Expressions from "../../abap/expressions";
+import * as Structures from "../3_structures/structures";
+import * as Expressions from "../2_statements/expressions";
 
 export class MethodImplementation extends Identifier {
 

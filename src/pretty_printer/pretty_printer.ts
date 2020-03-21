@@ -1,4 +1,4 @@
-import {Unknown, MacroContent, MacroCall, Comment} from "../abap/statements/_statement";
+import {Unknown, MacroContent, MacroCall, Comment} from "../abap/2_statements/statements/_statement";
 import {ABAPFile} from "../files";
 import {Config} from "../config";
 import {FixCase} from "./fix_keyword_case";

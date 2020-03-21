@@ -5,10 +5,10 @@ import {IObject} from "../objects/_iobject";
 import * as Objects from "../objects";
 import {ABAPObject} from "../objects/_abap_object";
 import {IRule} from "./_irule";
-import * as Statements from "../abap/statements";
-import * as Expressions from "../abap/expressions";
+import * as Statements from "../abap/2_statements/statements";
+import * as Expressions from "../abap/2_statements/expressions";
 import {Position} from "../position";
-import {Comment} from "../abap/statements/_statement";
+import {Comment} from "../abap/2_statements/statements/_statement";
 
 /** Checks related to report declarations. */
 export class MainFileContentsConf extends BasicRuleConfig {

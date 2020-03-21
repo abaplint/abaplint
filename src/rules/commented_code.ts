@@ -4,10 +4,10 @@ import {ABAPRule} from "./_abap_rule";
 import {ABAPFile, MemoryFile} from "../files";
 import {BasicRuleConfig} from "./_basic_rule_config";
 import {Registry} from "../registry";
-import {Unknown, Empty, Comment} from "../abap/statements/_statement";
+import {Unknown, Empty, Comment} from "../abap/2_statements/statements/_statement";
 import {ABAPObject} from "../objects/_abap_object";
 import {FunctionGroup} from "../objects";
-import {Include} from "../abap/statements";
+import {Include} from "../abap/2_statements/statements";
 
 /** Detects usage of commented out code.
  * https://github.com/SAP/styleguides/blob/master/clean-abap/CleanABAP.md#delete-code-instead-of-commenting-it

@@ -1,4 +1,4 @@
-import {Token} from "../tokens/_token";
+import {Token} from "../1_lexer/tokens/_token";
 import {Identifier} from "./_identifier";
 import {AbstractType} from "./basic/_abstract_type";
 

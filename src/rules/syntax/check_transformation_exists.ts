@@ -2,8 +2,8 @@ import {Issue} from "../../issue";
 import {ABAPRule} from "./../_abap_rule";
 import {ABAPFile} from "../../files";
 import {BasicRuleConfig} from "../_basic_rule_config";
-import {CallTransformation} from "../../abap/statements";
-import {NamespaceSimpleName} from "../../abap/expressions";
+import {CallTransformation} from "../../abap/2_statements/statements";
+import {NamespaceSimpleName} from "../../abap/2_statements/expressions";
 import {Registry} from "../../registry";
 
 /** Checks that used XSLT transformations exist. */

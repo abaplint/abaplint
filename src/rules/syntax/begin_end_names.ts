@@ -2,12 +2,12 @@ import {Issue} from "../../issue";
 import {ABAPRule} from "./../_abap_rule";
 import {ABAPFile} from "../../files";
 import {BasicRuleConfig} from "../_basic_rule_config";
-import * as Structures from "../../abap/structures";
-import * as Expressions from "../../abap/expressions";
-import * as Statements from "../../abap/statements";
+import * as Structures from "../../abap/3_structures/structures";
+import * as Expressions from "../../abap/2_statements/expressions";
+import * as Statements from "../../abap/2_statements/statements";
 import {StructureNode} from "../../abap/nodes";
-import {IStructure} from "../../abap/structures/_structure";
-import {Statement} from "../../abap/statements/_statement";
+import {IStructure} from "../../abap/3_structures/structures/_structure";
+import {Statement} from "../../abap/2_statements/statements/_statement";
 
 /** Check BEGIN OF and END OF names match */
 export class BeginEndNamesConf extends BasicRuleConfig {

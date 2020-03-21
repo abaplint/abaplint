@@ -2,15 +2,15 @@ import {Issue} from "../issue";
 import {ABAPRule} from "./_abap_rule";
 import {ABAPFile} from "../files";
 import {StatementNode, ExpressionNode, TokenNode, TokenNodeRegex} from "../abap/nodes";
-import {Unknown, Comment, MacroContent, MacroCall, Statement} from "../abap/statements/_statement";
-import {Identifier} from "../abap/tokens";
+import {Unknown, Comment, MacroContent, MacroCall, Statement} from "../abap/2_statements/statements/_statement";
+import {Identifier} from "../abap/1_lexer/tokens";
 import {IObject} from "../objects/_iobject";
 import {Registry} from "../registry";
 import {Class} from "../objects";
 import {BasicRuleConfig} from "./_basic_rule_config";
-import * as Statements from "../abap/statements";
-import * as Expressions from "../abap/expressions";
-import {Token} from "../abap/tokens/_token";
+import * as Statements from "../abap/2_statements/statements";
+import * as Expressions from "../abap/2_statements/expressions";
+import {Token} from "../abap/1_lexer/tokens/_token";
 
 export enum KeywordCaseStyle {
   Upper = "upper",

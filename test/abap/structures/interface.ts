@@ -1,5 +1,5 @@
 import {structureType} from "../_utils";
-import {Interface} from "../../../src/abap/structures";
+import {Interface} from "../../../src/abap/3_structures/structures";
 
 const cases = [
   {abap: "INTERFACE if_foo PUBLIC. ENDINTERFACE."},

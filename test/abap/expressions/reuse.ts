@@ -1,6 +1,6 @@
 import {expect} from "chai";
-import * as Combi from "../../../src/abap/combi";
-import * as Expressions from "../../../src/abap/expressions";
+import * as Combi from "../../../src/abap/2_statements/combi";
+import * as Expressions from "../../../src/abap/2_statements/expressions";
 import {getTokens} from "../_utils";
 import {Config} from "../../../src/config";
 

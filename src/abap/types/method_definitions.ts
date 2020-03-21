@@ -1,8 +1,8 @@
 import {MethodDefinition} from "./method_definition";
 import {StructureNode} from "../../abap/nodes";
-import {ClassDefinition} from "../../abap/structures/class_definition";
-import * as Structures from "../../abap/structures";
-import {MethodDef} from "../../abap/statements";
+import {ClassDefinition} from "../3_structures/structures/class_definition";
+import * as Structures from "../3_structures/structures";
+import {MethodDef} from "../2_statements/statements";
 import {Visibility} from "./visibility";
 import {CurrentScope} from "../syntax/_current_scope";
 

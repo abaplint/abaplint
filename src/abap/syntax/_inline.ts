@@ -1,7 +1,7 @@
 import {CurrentScope} from "./_current_scope";
 import {ExpressionNode, StatementNode} from "../nodes";
-import * as Expressions from "../expressions";
-import * as Statements from "../statements";
+import * as Expressions from "../2_statements/expressions";
+import * as Statements from "../2_statements/statements";
 import {INode} from "../nodes/_inode";
 import {Registry} from "../../registry";
 import {Table, View} from "../../objects";

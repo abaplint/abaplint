@@ -1,9 +1,9 @@
-import * as Expressions from "../expressions";
-import * as Statements from "../statements";
-import * as Structures from "../structures";
+import * as Expressions from "../2_statements/expressions";
+import * as Statements from "../2_statements/statements";
+import * as Structures from "../3_structures/structures";
 import {Issue} from "../../issue";
 import {INode} from "../nodes/_inode";
-import {Token} from "../tokens/_token";
+import {Token} from "../1_lexer/tokens/_token";
 import {StatementNode, StructureNode} from "../nodes";
 import {ABAPFile} from "../../files";
 import {Registry} from "../../registry";

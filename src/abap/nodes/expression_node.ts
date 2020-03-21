@@ -1,9 +1,9 @@
 import {CountableNode} from "./_countable_node";
-import {Expression} from "../combi";
+import {Expression} from "../2_statements/combi";
 import {TokenNode} from "./token_node";
-import {Token} from "../tokens/_token";
+import {Token} from "../1_lexer/tokens/_token";
 import {INode} from "./_inode";
-import {Pragma, String, StringTemplate, StringTemplateBegin, StringTemplateMiddle, StringTemplateEnd, Comment} from "../tokens";
+import {Pragma, String, StringTemplate, StringTemplateBegin, StringTemplateMiddle, StringTemplateEnd, Comment} from "../1_lexer/tokens";
 
 export class ExpressionNode extends CountableNode {
   private readonly expression: Expression;

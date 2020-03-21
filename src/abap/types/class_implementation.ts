@@ -1,8 +1,8 @@
 import {Identifier} from "./_identifier";
 import {StructureNode} from "../../abap/nodes";
-import * as Structures from "../../abap/structures";
-import * as Statements from "../../abap/statements";
-import * as Expressions from "../../abap/expressions";
+import * as Structures from "../3_structures/structures";
+import * as Statements from "../2_statements/statements";
+import * as Expressions from "../2_statements/expressions";
 import {MethodImplementation} from "./method_implementation";
 
 export class ClassImplementation extends Identifier {
