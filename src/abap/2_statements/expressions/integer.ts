@@ -1,5 +1,6 @@
-import {seq, tok, regex as reg, Expression, IStatementRunnable, optPrio, altPrio} from "../combi";
+import {seq, tok, regex as reg, Expression, optPrio, altPrio} from "../combi";
 import {WDash, WPlus, WDashW} from "../../1_lexer/tokens";
+import {IStatementRunnable} from "../statement_runnable";
 
 export class Integer extends Expression {
   public getRunnable(): IStatementRunnable {

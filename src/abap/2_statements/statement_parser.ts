@@ -1,16 +1,18 @@
-import * as Tokens from "../1_lexer/tokens";
+import {Version} from "../../version";
+import {IFile} from "../../files/_ifile";
+
+import {TokenNode, StatementNode} from "../nodes";
+import {Artifacts} from "../artifacts";
+
 import * as Statements from "./statements";
 import * as Expressions from "./expressions";
 import {Combi} from "./combi";
-import {TokenNode, StatementNode} from "../nodes";
 import {Unknown, Empty, Comment, MacroContent, NativeSQL, IStatement, MacroCall} from "./statements/_statement";
-import {Version} from "../../version";
-import {Artifacts} from "../artifacts";
-import {Token} from "../1_lexer/tokens/_token";
-import {Identifier, Pragma} from "../1_lexer/tokens";
-import {IFile} from "../../files/_ifile";
-import {ILexerResult} from "../1_lexer/lexer_result";
 import {IStatementResult} from "./statement_result";
+
+import * as Tokens from "../1_lexer/tokens";
+import {Token} from "../1_lexer/tokens/_token";
+import {ILexerResult} from "../1_lexer/lexer_result";
 
 export const STATEMENT_MAX_TOKENS = 1000;
 
@@ -41,7 +43,7 @@ class StatementMap {
 class Macros {
   private readonly macros: string[];
 
-  public constructor(globalMacros: string[]) {
+  public constructor(globalMacros: readonly string[]) {
     this.macros = [];
     for (const m of globalMacros) {
       this.macros.push(m.toUpperCase());
@@ -108,7 +110,7 @@ export class StatementParser {
     this.version = version;
   }
 
-  public run(input: readonly ILexerResult[], globalMacros: string[]): IStatementResult[] {
+  public run(input: readonly ILexerResult[], globalMacros: readonly string[]): IStatementResult[] {
     this.macros = new Macros(globalMacros);
 
     const wa = input.map(i => new WorkArea(i.file, i.tokens));
@@ -129,7 +131,7 @@ export class StatementParser {
   }
 
   // todo, refactor, remove method here and only have in WorkArea class
-  private tokensToNodes(tokens: Token[]): TokenNode[] {
+  private tokensToNodes(tokens: readonly Token[]): TokenNode[] {
     const ret: TokenNode[] = [];
 
     for (const t of tokens) {
@@ -162,7 +164,7 @@ export class StatementParser {
     wa.statements = result;
   }
 
-  private buildSplits(tokens: Token[]): {first: Token[], second: Token[]}[] {
+  private buildSplits(tokens: readonly Token[]): {first: Token[], second: Token[]}[] {
     const res: {first: Token[], second: Token[]}[] = [];
     const before: Token[] = [];
     let prevRow = tokens[0].getRow();
@@ -206,10 +208,10 @@ export class StatementParser {
       if (statement.get() instanceof Unknown) {
         let macroName: string | undefined = undefined;
         for (const i of statement.getTokens()) {
-          if (i instanceof Identifier) {
+          if (i instanceof Tokens.Identifier) {
             macroName = i.getStr();
             break;
-          } else if (i instanceof Pragma) {
+          } else if (i instanceof Tokens.Pragma) {
             continue;
           } else {
             break;
@@ -248,7 +250,7 @@ export class StatementParser {
     wa.statements = result;
   }
 
-  private removeLast(tokens: Token[]): Token[] {
+  private removeLast(tokens: readonly Token[]): readonly Token[] {
     const copy = tokens.slice();
     copy.pop();
     return copy;
@@ -284,7 +286,7 @@ export class StatementParser {
     return statement;
   }
 
-  private removePragma(tokens: Token[]): {tokens: Token[], pragmas: Token[]} {
+  private removePragma(tokens: readonly Token[]): {tokens: Token[], pragmas: Token[]} {
     const result: Token[] = [];
     const pragmas: Token[] = [];
 

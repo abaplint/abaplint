@@ -1,5 +1,6 @@
-import {Expression, IStatementRunnable, seq, opt, str, plus} from "../combi";
+import {Expression, seq, opt, str, plus} from "../combi";
 import {Let, For, Field, Source, InlineFieldDefinition} from ".";
+import {IStatementRunnable} from "../statement_runnable";
 
 export class ReduceBody extends Expression {
   public getRunnable(): IStatementRunnable {

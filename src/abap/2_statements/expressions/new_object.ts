@@ -1,7 +1,8 @@
-import {str, alt, tok, seq, Expression, IStatementRunnable, ver, opt, plus} from "../combi";
+import {str, alt, tok, seq, Expression, ver, opt, plus} from "../combi";
 import {Version} from "../../../version";
 import {TypeNameOrInfer, Source, ParameterListS} from ".";
 import {ParenLeftW, WParenLeftW, WParenRightW, WParenRight} from "../../1_lexer/tokens";
+import {IStatementRunnable} from "../statement_runnable";
 
 export class NewObject extends Expression {
   public getRunnable(): IStatementRunnable {

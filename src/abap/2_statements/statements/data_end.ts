@@ -1,6 +1,7 @@
 import {IStatement} from "./_statement";
-import {str, seq, alt, optPrio, IStatementRunnable} from "../combi";
+import {str, seq, alt, optPrio} from "../combi";
 import {NamespaceSimpleName} from "../expressions";
+import {IStatementRunnable} from "../statement_runnable";
 
 export class DataEnd implements IStatement {
 

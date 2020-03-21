@@ -1,21 +1,21 @@
-import {AbstractNode} from "./_abstract_node";
-import {IStatement} from "../2_statements/statements/_statement";
-import {INode} from "./_inode";
 import {Position} from "../../position";
-import {Token} from "../1_lexer/tokens/_token";
-import {Pragma} from "../1_lexer/tokens/pragma";
+import {AbstractNode} from "./_abstract_node";
+import {INode} from "./_inode";
 import {TokenNode} from "./token_node";
 import {ExpressionNode} from "./expression_node";
-import {Expression} from "../2_statements/combi";
-import {String, StringTemplate, StringTemplateBegin, StringTemplateMiddle, StringTemplateEnd} from "../1_lexer/tokens/string";
 import {Comment} from "../1_lexer/tokens/comment";
+import {Token} from "../1_lexer/tokens/_token";
+import {Pragma} from "../1_lexer/tokens/pragma";
+import {String, StringTemplate, StringTemplateBegin, StringTemplateMiddle, StringTemplateEnd} from "../1_lexer/tokens/string";
+import {IStatement} from "../2_statements/statements/_statement";
+import {IStatementRunnable} from "../2_statements/statement_runnable";
 
 export class StatementNode extends AbstractNode {
   private readonly statement: IStatement;
   private readonly colon: Token | undefined;
-  private readonly pragmas: Token[];
+  private readonly pragmas: readonly Token[];
 
-  public constructor(statement: IStatement, colon?: Token | undefined, pragmas?: Token[]) {
+  public constructor(statement: IStatement, colon?: Token | undefined, pragmas?: readonly Token[]) {
     super();
     this.statement = statement;
     this.colon = colon;
@@ -35,7 +35,7 @@ export class StatementNode extends AbstractNode {
     return this.colon;
   }
 
-  public getPragmas(): Token[] {
+  public getPragmas(): readonly Token[] {
     return this.pragmas;
   }
 
@@ -63,7 +63,7 @@ export class StatementNode extends AbstractNode {
     return pos;
   }
 
-  public getTokens(): Token[] {
+  public getTokens(): readonly Token[] {
     let tokens: Token[] = [];
 
     for (const c of this.getChildren()) {
@@ -73,7 +73,7 @@ export class StatementNode extends AbstractNode {
     return tokens;
   }
 
-  public getTokenNodes(): TokenNode[] {
+  public getTokenNodes(): readonly TokenNode[] {
     let tokens: TokenNode[] = [];
 
     for (const c of this.getChildren()) {
@@ -155,7 +155,7 @@ export class StatementNode extends AbstractNode {
     throw new Error("getLastToken, unexpected type");
   }
 
-  public findDirectExpression(type: new () => Expression): ExpressionNode | undefined {
+  public findDirectExpression(type: new () => IStatementRunnable): ExpressionNode | undefined {
     for (const child of this.getChildren()) {
       if (child instanceof ExpressionNode && child.get() instanceof type) {
         return child;
@@ -164,7 +164,7 @@ export class StatementNode extends AbstractNode {
     return undefined;
   }
 
-  public findDirectExpressions(type: new () => Expression): ExpressionNode[] {
+  public findDirectExpressions(type: new () => IStatementRunnable): readonly ExpressionNode[] {
     const ret: ExpressionNode[] = [];
     for (const child of this.getChildren()) {
       if (child instanceof ExpressionNode && child.get() instanceof type) {
@@ -189,7 +189,7 @@ export class StatementNode extends AbstractNode {
     return undefined;
   }
 
-  public findFirstExpression(type: new () => Expression): ExpressionNode | undefined {
+  public findFirstExpression(type: new () => IStatementRunnable): ExpressionNode | undefined {
     for (const child of this.getChildren()) {
       if (child.get() instanceof type) {
         return child as ExpressionNode;
@@ -207,7 +207,7 @@ export class StatementNode extends AbstractNode {
     return undefined;
   }
 
-  public findAllExpressions(type: new () => Expression): ExpressionNode[] {
+  public findAllExpressions(type: new () => IStatementRunnable): readonly ExpressionNode[] {
     let ret: ExpressionNode[] = [];
     for (const child of this.getChildren()) {
       if (child.get() instanceof type) {
@@ -249,7 +249,7 @@ export class StatementNode extends AbstractNode {
     return undefined;
   }
 
-  private toTokens(b: INode): Token[] {
+  private toTokens(b: INode): readonly Token[] {
     let tokens: Token[] = [];
 
     if (b instanceof TokenNode) {
@@ -267,7 +267,7 @@ export class StatementNode extends AbstractNode {
     return tokens;
   }
 
-  private toTokenNodess(b: INode): TokenNode[] {
+  private toTokenNodess(b: INode): readonly TokenNode[] {
     let tokens: TokenNode[] = [];
 
     if (b instanceof TokenNode) {

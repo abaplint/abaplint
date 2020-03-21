@@ -1,7 +1,8 @@
 import {IStatement} from "./_statement";
-import {verNot, str, seq, alt, opt, IStatementRunnable} from "../combi";
+import {verNot, str, seq, alt, opt} from "../combi";
 import {SQLTarget, SQLSource} from "../expressions";
 import {Version} from "../../../version";
+import {IStatementRunnable} from "../statement_runnable";
 
 export class FetchNextCursor implements IStatement {
 

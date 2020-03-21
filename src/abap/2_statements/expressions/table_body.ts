@@ -1,5 +1,6 @@
-import {seq, tok, Expression, IStatementRunnable} from "../combi";
+import {seq, tok, Expression} from "../combi";
 import {BracketLeft, BracketRightW} from "../../1_lexer/tokens";
+import {IStatementRunnable} from "../statement_runnable";
 
 export class TableBody extends Expression {
   public getRunnable(): IStatementRunnable {

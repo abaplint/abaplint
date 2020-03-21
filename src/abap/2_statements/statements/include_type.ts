@@ -1,10 +1,11 @@
 import {IStatement} from "./_statement";
-import {verNot, str, seq, opt, alt, IStatementRunnable} from "../combi";
+import {verNot, str, seq, opt, alt} from "../combi";
 import * as Expressions from "../expressions";
 import {Version} from "../../../version";
 import {StatementNode} from "../../nodes";
 import {CurrentScope} from "../../syntax/_current_scope";
 import {IStructureComponent, StructureType} from "../../types/basic";
+import {IStatementRunnable} from "../statement_runnable";
 
 export class IncludeType implements IStatement {
 

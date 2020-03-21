@@ -1,19 +1,19 @@
 import {CountableNode} from "./_countable_node";
-import {Expression} from "../2_statements/combi";
 import {TokenNode} from "./token_node";
 import {Token} from "../1_lexer/tokens/_token";
 import {INode} from "./_inode";
 import {Pragma, String, StringTemplate, StringTemplateBegin, StringTemplateMiddle, StringTemplateEnd, Comment} from "../1_lexer/tokens";
+import {IStatementRunnable} from "../2_statements/statement_runnable";
 
 export class ExpressionNode extends CountableNode {
-  private readonly expression: Expression;
+  private readonly expression: IStatementRunnable;
 
-  public constructor(expression: Expression) {
+  public constructor(expression: IStatementRunnable) {
     super();
     this.expression = expression;
   }
 
-  public get() {
+  public get(): IStatementRunnable {
     return this.expression;
   }
 
@@ -73,7 +73,7 @@ export class ExpressionNode extends CountableNode {
     return str;
   }
 
-  public getTokens(): Token[] {
+  public getTokens(): readonly Token[] {
     let tokens: Token[] = [];
 
     for (const c of this.getChildren()) {
@@ -83,7 +83,7 @@ export class ExpressionNode extends CountableNode {
     return tokens;
   }
 
-  private toTokens(b: INode): Token[] {
+  private toTokens(b: INode): readonly Token[] {
     let tokens: Token[] = [];
 
     if (b instanceof TokenNode) {
@@ -128,7 +128,7 @@ export class ExpressionNode extends CountableNode {
     return ret;
   }
 
-  public findDirectExpression(type: new () => Expression): ExpressionNode | undefined {
+  public findDirectExpression(type: new () => IStatementRunnable): ExpressionNode | undefined {
     for (const child of this.getChildren()) {
       if (child instanceof ExpressionNode && child.get() instanceof type) {
         return child;
@@ -137,7 +137,7 @@ export class ExpressionNode extends CountableNode {
     return undefined;
   }
 
-  public findDirectExpressions(type: new () => Expression): ExpressionNode[] {
+  public findDirectExpressions(type: new () => IStatementRunnable): readonly ExpressionNode[] {
     const ret: ExpressionNode[] = [];
     for (const child of this.getChildren()) {
       if (child instanceof ExpressionNode && child.get() instanceof type) {
@@ -162,7 +162,7 @@ export class ExpressionNode extends CountableNode {
     return undefined;
   }
 
-  public findAllExpressions(type: new () => Expression): ExpressionNode[] {
+  public findAllExpressions(type: new () => IStatementRunnable): readonly ExpressionNode[] {
     let ret: ExpressionNode[] = [];
     for (const child of this.getChildren()) {
       if (child.get() instanceof type) {
@@ -178,7 +178,7 @@ export class ExpressionNode extends CountableNode {
     return ret;
   }
 
-  public findFirstExpression(type: new () => Expression): ExpressionNode | undefined {
+  public findFirstExpression(type: new () => IStatementRunnable): ExpressionNode | undefined {
     if (this.get() instanceof type) {
       return this;
     }

@@ -1,6 +1,7 @@
 import {IStatement} from "./_statement";
-import {str, seq, opt, alt, per, IStatementRunnable} from "../combi";
+import {str, seq, opt, alt, per} from "../combi";
 import {Target, ParameterListS, ParameterListExceptions, Source, ClassName, Dynamic} from "../expressions";
+import {IStatementRunnable} from "../statement_runnable";
 
 export class CreateObject implements IStatement {
 

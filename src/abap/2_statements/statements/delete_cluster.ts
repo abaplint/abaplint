@@ -1,8 +1,9 @@
 import {IStatement} from "./_statement";
-import {verNot, str, seq, tok, opt, IStatementRunnable} from "../combi";
+import {verNot, str, seq, tok, opt} from "../combi";
 import {ParenLeft, ParenRightW} from "../../1_lexer/tokens";
 import {Source, SimpleName, NamespaceSimpleName} from "../expressions";
 import {Version} from "../../../version";
+import {IStatementRunnable} from "../statement_runnable";
 
 export class DeleteCluster implements IStatement {
 

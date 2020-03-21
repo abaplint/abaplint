@@ -1,5 +1,6 @@
-import {seq, opt, str, Expression, IStatementRunnable} from "../combi";
+import {seq, opt, str, Expression} from "../combi";
 import {ParameterListT, ParameterListExceptions, Field} from ".";
+import {IStatementRunnable} from "../statement_runnable";
 
 export class ReceiveParameters extends Expression {
   public getRunnable(): IStatementRunnable {

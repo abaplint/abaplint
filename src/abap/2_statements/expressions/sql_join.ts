@@ -1,5 +1,6 @@
-import {seq, opt, alt, plus, str, Expression, IStatementRunnable} from "../combi";
+import {seq, opt, alt, plus, str, Expression} from "../combi";
 import {SQLFromSource, SQLCond} from ".";
+import {IStatementRunnable} from "../statement_runnable";
 
 export class SQLJoin extends Expression {
   public getRunnable(): IStatementRunnable {

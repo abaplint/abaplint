@@ -1,5 +1,6 @@
-import {seq, star, Expression, IStatementRunnable, optPrio} from "../combi";
+import {seq, star, Expression, optPrio} from "../combi";
 import {ComponentName, ArrowOrDash, FieldOffset, FieldLength} from ".";
+import {IStatementRunnable} from "../statement_runnable";
 
 export class ComponentChainSimple extends Expression {
   public getRunnable(): IStatementRunnable {

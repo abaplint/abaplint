@@ -1,7 +1,8 @@
 import {IStatement} from "./_statement";
-import {verNot, str, seq, alt, per, IStatementRunnable} from "../combi";
+import {verNot, str, seq, alt, per} from "../combi";
 import {Source} from "../expressions";
 import {Version} from "../../../version";
+import {IStatementRunnable} from "../statement_runnable";
 
 export class ScrollList implements IStatement {
 

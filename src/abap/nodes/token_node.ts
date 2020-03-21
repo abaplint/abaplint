@@ -1,5 +1,5 @@
-import {CountableNode} from "./_countable_node";
 import {Token} from "../1_lexer/tokens/_token";
+import {CountableNode} from "./_countable_node";
 
 export class TokenNode extends CountableNode {
   private readonly token: Token;

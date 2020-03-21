@@ -1,7 +1,8 @@
 import {IStatement} from "./_statement";
-import {verNot, str, seq, plus, IStatementRunnable} from "../combi";
+import {verNot, str, seq, plus} from "../combi";
 import {Field, Source} from "../expressions";
 import {Version} from "../../../version";
+import {IStatementRunnable} from "../statement_runnable";
 
 export class CatchSystemExceptions implements IStatement {
 

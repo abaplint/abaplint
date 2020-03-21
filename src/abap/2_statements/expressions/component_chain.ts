@@ -1,5 +1,6 @@
-import {seq, opt, optPrio, alt, str, plus, star, Expression, IStatementRunnable} from "../combi";
+import {seq, opt, optPrio, alt, str, plus, star, Expression} from "../combi";
 import {FieldLength, TableExpression, ArrowOrDash, ComponentName, FieldOffset} from ".";
+import {IStatementRunnable} from "../statement_runnable";
 
 export class ComponentChain extends Expression {
   public getRunnable(): IStatementRunnable {

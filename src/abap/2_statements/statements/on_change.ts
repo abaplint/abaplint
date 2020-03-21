@@ -1,7 +1,8 @@
 import {IStatement} from "./_statement";
-import {verNot, str, seq, IStatementRunnable, star} from "../combi";
+import {verNot, str, seq, star} from "../combi";
 import {Target} from "../expressions";
 import {Version} from "../../../version";
+import {IStatementRunnable} from "../statement_runnable";
 
 export class OnChange implements IStatement {
 

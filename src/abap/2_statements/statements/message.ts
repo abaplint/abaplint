@@ -1,6 +1,7 @@
 import {IStatement} from "./_statement";
-import {str, seq, opt, alt, IStatementRunnable, per, altPrio} from "../combi";
+import {str, seq, opt, alt, per, altPrio} from "../combi";
 import {Target, Source, Field, MessageSource} from "../expressions";
+import {IStatementRunnable} from "../statement_runnable";
 
 export class Message implements IStatement {
 

@@ -1,7 +1,8 @@
-import {alt, seq, ver, tok, Expression, IStatementRunnable} from "../combi";
+import {alt, seq, ver, tok, Expression} from "../combi";
 import {Version} from "../../../version";
 import {WAt, At} from "../../1_lexer/tokens";
 import {Target} from ".";
+import {IStatementRunnable} from "../statement_runnable";
 
 export class SQLTarget extends Expression {
   public getRunnable(): IStatementRunnable {

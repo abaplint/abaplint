@@ -1,7 +1,8 @@
 import {IStatement} from "./_statement";
-import {verNot, seq, str, IStatementRunnable} from "../combi";
+import {verNot, seq, str} from "../combi";
 import {Source, Constant} from "../expressions";
 import {Version} from "../../../version";
+import {IStatementRunnable} from "../statement_runnable";
 
 export class SetProperty implements IStatement {
 

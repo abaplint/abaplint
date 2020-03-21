@@ -1,8 +1,9 @@
-import {ver, seq, opt, tok, str, altPrio, optPrio, regex, Expression, IStatementRunnable} from "../combi";
+import {ver, seq, opt, tok, str, altPrio, optPrio, regex, Expression} from "../combi";
 import {InstanceArrow, WParenLeftW, WParenRightW, WDashW, ParenLeftW} from "../../1_lexer/tokens";
 import {CondBody, SwitchBody, ComponentChain, FieldChain, ReduceBody, TableBody, TypeNameOrInfer, ArrowOrDash,
   MethodCallChain, ArithOperator, Cond, Constant, StringTemplate, Let, CorrespondingBody, ValueBody, FilterBody} from ".";
 import {Version} from "../../../version";
+import {IStatementRunnable} from "../statement_runnable";
 
 // todo, COND and SWITCH are quite similar?
 

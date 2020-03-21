@@ -1,9 +1,9 @@
 import {AbstractNode} from "./_abstract_node";
-import {IStructure} from "../3_structures/structures/_structure";
-import {StatementNode} from "./statement_node";
-import {IStatement} from "../2_statements/statements/_statement";
 import {Token} from "../1_lexer/tokens/_token";
-import {Expression} from "../2_statements/combi";
+import {IStatement} from "../2_statements/statements/_statement";
+import {IStructure} from "../3_structures/structures/_structure";
+import {IStatementRunnable} from "../2_statements/statement_runnable";
+import {StatementNode} from "./statement_node";
 import {ExpressionNode} from "./expression_node";
 
 export class StructureNode extends AbstractNode {
@@ -74,7 +74,7 @@ export class StructureNode extends AbstractNode {
     return undefined;
   }
 
-  public findFirstExpression(type: new () => Expression): ExpressionNode | undefined {
+  public findFirstExpression(type: new () => IStatementRunnable): ExpressionNode | undefined {
     for (const child of this.getChildren()) {
       if (child.get() instanceof type) {
         return child as ExpressionNode;
@@ -119,7 +119,7 @@ export class StructureNode extends AbstractNode {
     throw new Error("getLastToken, unexpected type");
   }
 
-  public findAllExpressions(type: new () => Expression): ExpressionNode[] {
+  public findAllExpressions(type: new () => IStatementRunnable): ExpressionNode[] {
     let ret: ExpressionNode[] = [];
     for (const child of this.getChildren()) {
       if (child instanceof StatementNode) {

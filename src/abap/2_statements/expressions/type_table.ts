@@ -1,4 +1,4 @@
-import {seq, opt, alt, str, ver, per, Expression, IStatementRunnable, altPrio, plus} from "../combi";
+import {seq, opt, alt, str, ver, per, Expression, altPrio, plus} from "../combi";
 import {Constant, FieldSub, TypeName, Integer, Field} from ".";
 import * as Expressions from ".";
 import {Version} from "../../../version";
@@ -7,6 +7,7 @@ import {ExpressionNode, StatementNode} from "../../nodes";
 import {CurrentScope} from "../../syntax/_current_scope";
 import {TypedIdentifier} from "../../types/_typed_identifier";
 import {BasicTypes} from "../../syntax/basic_types";
+import {IStatementRunnable} from "../statement_runnable";
 
 export class TypeTable extends Expression {
   public getRunnable(): IStatementRunnable {

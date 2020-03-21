@@ -1,6 +1,7 @@
 import {IStatement} from "./_statement";
-import {str, seq, opt, alt, per, plus, IStatementRunnable} from "../combi";
+import {str, seq, opt, alt, per, plus} from "../combi";
 import {FSTarget, Target, Source, Dynamic, ComponentCond, FieldSub, SimpleName} from "../expressions";
+import {IStatementRunnable} from "../statement_runnable";
 
 export class ModifyInternal implements IStatement {
 

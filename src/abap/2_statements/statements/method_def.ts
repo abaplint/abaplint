@@ -1,8 +1,9 @@
 import {Version} from "../../../version";
 import {IStatement} from "./_statement";
-import {str, seq, alt, opt, tok, ver, regex as reg, plus, IStatementRunnable, optPrio} from "../combi";
+import {str, seq, alt, opt, tok, ver, regex as reg, plus, optPrio} from "../combi";
 import {ParenLeft, ParenRightW} from "../../1_lexer/tokens";
 import {MethodDefChanging, MethodDefReturning, Redefinition, ClassName, MethodName, MethodDefExporting, MethodDefImporting, EventHandler, Abstract} from "../expressions";
+import {IStatementRunnable} from "../statement_runnable";
 
 export class MethodDef implements IStatement {
 

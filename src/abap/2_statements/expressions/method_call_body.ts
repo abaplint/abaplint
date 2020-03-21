@@ -1,6 +1,7 @@
-import {seq, alt, opt, str, tok, Expression, IStatementRunnable} from "../combi";
+import {seq, alt, opt, str, tok, Expression} from "../combi";
 import {ParenLeftW} from "../../1_lexer/tokens";
 import {Source, ParameterListS, MethodParameters} from ".";
+import {IStatementRunnable} from "../statement_runnable";
 
 export class MethodCallBody extends Expression {
   public getRunnable(): IStatementRunnable {

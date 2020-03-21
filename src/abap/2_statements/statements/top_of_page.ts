@@ -1,6 +1,7 @@
 import {IStatement} from "./_statement";
-import {verNot, str, opt, seq, IStatementRunnable} from "../combi";
+import {verNot, str, opt, seq} from "../combi";
 import {Version} from "../../../version";
+import {IStatementRunnable} from "../statement_runnable";
 
 export class TopOfPage implements IStatement {
 

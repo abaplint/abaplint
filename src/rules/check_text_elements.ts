@@ -76,7 +76,7 @@ export class CheckTextElements implements IRule {
     return output;
   }
 
-  private findKey(key: string, texts: ITextElement[]): string | undefined {
+  private findKey(key: string, texts: readonly ITextElement[]): string | undefined {
     for (const t of texts) {
       if (key.toUpperCase() === t.key) {
         return t.text;

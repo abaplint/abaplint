@@ -1,7 +1,8 @@
-import {seq, opt, ver, tok, plus, alt, str, Expression, IStatementRunnable} from "../combi";
+import {seq, opt, ver, tok, plus, alt, str, Expression} from "../combi";
 import {ComponentChainSimple, FieldSub, Constant, Source, CompareOperator} from ".";
 import {WParenLeft, ParenRightW} from "../../1_lexer/tokens";
 import {Version} from "../../../version";
+import {IStatementRunnable} from "../statement_runnable";
 
 export class ComponentCompare extends Expression {
   public getRunnable(): IStatementRunnable {

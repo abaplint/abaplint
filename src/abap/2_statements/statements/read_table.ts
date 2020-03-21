@@ -1,6 +1,7 @@
 import {IStatement} from "./_statement";
-import {str, seq, alt, opt, optPrio, plus, per, IStatementRunnable} from "../combi";
+import {str, seq, alt, opt, optPrio, plus, per} from "../combi";
 import {FSTarget, Target, Field, Source, Dynamic, FieldSub, ComponentChain} from "../expressions";
+import {IStatementRunnable} from "../statement_runnable";
 
 export class ReadTable implements IStatement {
 

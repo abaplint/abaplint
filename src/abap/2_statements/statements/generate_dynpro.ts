@@ -1,7 +1,8 @@
 import {IStatement} from "./_statement";
-import {verNot, str, seq, per, IStatementRunnable} from "../combi";
+import {verNot, str, seq, per} from "../combi";
 import {Target, Source} from "../expressions";
 import {Version} from "../../../version";
+import {IStatementRunnable} from "../statement_runnable";
 
 export class GenerateDynpro implements IStatement {
 

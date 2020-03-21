@@ -157,7 +157,7 @@ export class Help {
       expression.constructor.name}" target="_blank">${expression.constructor.name}</a>\n`;
   }
 
-  private static outputNodes(nodes: INode[]) {
+  private static outputNodes(nodes: readonly INode[]) {
     let ret = "<ul>";
     for (const node of nodes) {
       let extra = "";
@@ -205,7 +205,7 @@ export class Help {
     return output;
   }
 
-  private static buildStructure(nodes: INode[]) {
+  private static buildStructure(nodes: readonly INode[]) {
     let output = "<ul>";
     for (const node of nodes) {
       if (node instanceof StructureNode) {

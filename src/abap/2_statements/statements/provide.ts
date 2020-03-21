@@ -1,7 +1,8 @@
 import {IStatement} from "./_statement";
-import {str, verNot, seq, alt, IStatementRunnable, plus} from "../combi";
+import {str, verNot, seq, alt, plus} from "../combi";
 import {Field, Source, Target} from "../expressions";
 import {Version} from "../../../version";
+import {IStatementRunnable} from "../statement_runnable";
 
 export class Provide implements IStatement {
 

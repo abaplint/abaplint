@@ -1,7 +1,8 @@
-import {seq, per, opt, alt, tok, str, star, plus, Expression, IStatementRunnable, altPrio, optPrio, ver} from "../combi";
+import {seq, per, opt, alt, tok, str, star, plus, Expression, altPrio, optPrio, ver} from "../combi";
 import {WParenLeftW, WParenLeft} from "../../1_lexer/tokens";
 import {SQLTarget, SQLFieldList, SQLFrom, Field, Dynamic, SQLCond, SQLSource, DatabaseConnection} from ".";
 import {Version} from "../../../version";
+import {IStatementRunnable} from "../statement_runnable";
 
 export class Select extends Expression {
   public getRunnable(): IStatementRunnable {

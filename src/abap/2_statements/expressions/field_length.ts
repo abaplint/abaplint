@@ -1,6 +1,7 @@
-import {seq, opt, alt, str, tok, regex as reg, Expression, IStatementRunnable} from "../combi";
+import {seq, opt, alt, str, tok, regex as reg, Expression} from "../combi";
 import {ParenLeft, ParenRightW, Plus} from "../../1_lexer/tokens";
 import {SourceFieldSymbol, ComponentName, ArrowOrDash, SourceField} from ".";
+import {IStatementRunnable} from "../statement_runnable";
 
 export class FieldLength extends Expression {
   public getRunnable(): IStatementRunnable {

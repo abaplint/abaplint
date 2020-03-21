@@ -1,11 +1,12 @@
 import {IStatement} from "./_statement";
-import {str, seq, opt, IStatementRunnable} from "../combi";
+import {str, seq, opt} from "../combi";
 import {Integer, NamespaceSimpleName} from "../expressions";
 import * as Expressions from "../expressions";
 import {StatementNode} from "../../nodes";
 import {CurrentScope} from "../../syntax/_current_scope";
 import {TypedIdentifier} from "../../types/_typed_identifier";
 import {UnknownType} from "../../types/basic";
+import {IStatementRunnable} from "../statement_runnable";
 
 export class ClassDataBegin implements IStatement {
 

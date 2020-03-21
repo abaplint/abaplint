@@ -1,8 +1,9 @@
 import {IStatement} from "./_statement";
-import {str, seq, alt, opt, ver, optPrio, tok, plus, per, IStatementRunnable} from "../combi";
+import {str, seq, alt, opt, ver, optPrio, tok, plus, per} from "../combi";
 import {FSTarget, Target, ComponentCond, Dynamic, Source, ComponentCompare, SimpleName} from "../expressions";
 import {Version} from "../../../version";
 import {WParenLeftW, WParenRightW} from "../../1_lexer/tokens";
+import {IStatementRunnable} from "../statement_runnable";
 
 export class Loop implements IStatement {
 

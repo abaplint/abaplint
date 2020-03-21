@@ -1,6 +1,7 @@
-import {seq, opt, tok, alt, str, star, Expression, IStatementRunnable, altPrio} from "../combi";
+import {seq, opt, tok, alt, str, star, Expression, altPrio} from "../combi";
 import {WParenLeftW, WParenRightW} from "../../1_lexer/tokens";
 import {Compare} from ".";
+import {IStatementRunnable} from "../statement_runnable";
 
 export class Cond extends Expression {
   public getRunnable(): IStatementRunnable {

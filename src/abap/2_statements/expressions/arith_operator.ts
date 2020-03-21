@@ -1,5 +1,6 @@
-import {str, tok, Expression, IStatementRunnable, altPrio} from "../combi";
+import {str, tok, Expression, altPrio} from "../combi";
 import {WPlusW, WDashW} from "../../1_lexer/tokens";
+import {IStatementRunnable} from "../statement_runnable";
 
 export class ArithOperator extends Expression {
   public getRunnable(): IStatementRunnable {

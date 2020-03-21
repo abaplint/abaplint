@@ -1,5 +1,6 @@
-import {str, alt, seq, opt, Expression, IStatementRunnable} from "../combi";
+import {str, alt, seq, opt, Expression} from "../combi";
 import {SQLAsName, Dynamic, SQLCDSParameters, DatabaseTable} from ".";
+import {IStatementRunnable} from "../statement_runnable";
 
 export class SQLFromSource extends Expression {
   public getRunnable(): IStatementRunnable {

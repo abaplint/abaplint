@@ -1,7 +1,8 @@
 import {IStatement} from "./_statement";
-import {str, opt, alt, seq, ver, IStatementRunnable} from "../combi";
+import {str, opt, alt, seq, ver} from "../combi";
 import {Version} from "../../../version";
 import {FSTarget, Target, Field, Source, SimpleSource} from "../expressions";
+import {IStatementRunnable} from "../statement_runnable";
 
 export class Append implements IStatement {
 

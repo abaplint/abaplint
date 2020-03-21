@@ -1,6 +1,7 @@
 import {IStatement} from "./_statement";
-import {str, opt, seq, plus, IStatementRunnable, optPrio} from "../combi";
+import {str, opt, seq, plus, optPrio} from "../combi";
 import {Target, Field} from "../expressions";
+import {IStatementRunnable} from "../statement_runnable";
 
 export class Catch implements IStatement {
 

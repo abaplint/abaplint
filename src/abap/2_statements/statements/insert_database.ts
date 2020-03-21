@@ -1,7 +1,8 @@
 import {IStatement} from "./_statement";
-import {str, seq, alt, opt, tok, IStatementRunnable} from "../combi";
+import {str, seq, alt, opt, tok} from "../combi";
 import {DatabaseTable, Dynamic, SQLSource, Select, DatabaseConnection} from "../expressions";
 import {WParenLeftW, WParenRightW} from "../../1_lexer/tokens";
+import {IStatementRunnable} from "../statement_runnable";
 
 export class InsertDatabase implements IStatement {
 

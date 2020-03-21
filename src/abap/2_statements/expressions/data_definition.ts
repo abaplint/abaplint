@@ -1,6 +1,7 @@
-import {str, seq, alt, opt, per, IStatementRunnable, Expression} from "../combi";
+import {str, seq, alt, opt, per, Expression} from "../combi";
 import * as Expressions from ".";
 import {Integer} from ".";
+import {IStatementRunnable} from "../statement_runnable";
 
 export class DataDefinition extends Expression {
   public getRunnable(): IStatementRunnable {

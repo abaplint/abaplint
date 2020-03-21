@@ -1,6 +1,7 @@
 import {IStatement} from "./_statement";
-import {str, opt, seq, per, plus, IStatementRunnable} from "../combi";
+import {str, opt, seq, per, plus} from "../combi";
 import {Target, Source} from "../expressions";
+import {IStatementRunnable} from "../statement_runnable";
 
 export class Do implements IStatement {
 

@@ -1,10 +1,11 @@
 import {IStatement} from "./_statement";
-import {verNot, str, seq, opt, alt, tok, plus, IStatementRunnable} from "../combi";
+import {verNot, str, seq, opt, alt, tok, plus} from "../combi";
 import {ParenLeft, ParenRightW} from "../../1_lexer/tokens";
 import * as Expressions from "../expressions";
 import {Version} from "../../../version";
 import {StatementNode} from "../../nodes";
 import {CurrentScope} from "../../syntax/_current_scope";
+import {IStatementRunnable} from "../statement_runnable";
 
 export class Perform implements IStatement {
 

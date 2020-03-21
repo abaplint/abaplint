@@ -1,6 +1,7 @@
 import {IStatement} from "./_statement";
-import {str, seq, opt, alt, IStatementRunnable, star} from "../combi";
+import {str, seq, opt, alt, star} from "../combi";
 import {SQLSource, DatabaseTable, Dynamic, Field, SQLCond, DatabaseConnection} from "../expressions";
+import {IStatementRunnable} from "../statement_runnable";
 
 export class UpdateDatabase implements IStatement {
 

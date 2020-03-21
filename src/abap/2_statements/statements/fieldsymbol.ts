@@ -1,11 +1,12 @@
 import {IStatement} from "./_statement";
-import {str, seq, alt, opt, IStatementRunnable} from "../combi";
+import {str, seq, alt, opt} from "../combi";
 import {FieldSymbol as Name, Type, TypeTable} from "../expressions";
 import * as Expressions from "../expressions";
 import {StatementNode} from "../../nodes";
 import {CurrentScope} from "../../syntax/_current_scope";
 import {TypedIdentifier} from "../../types/_typed_identifier";
 import {UnknownType} from "../../types/basic";
+import {IStatementRunnable} from "../statement_runnable";
 
 export class FieldSymbol implements IStatement {
 

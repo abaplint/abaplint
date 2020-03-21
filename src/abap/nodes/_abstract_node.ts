@@ -22,7 +22,7 @@ export abstract class AbstractNode implements INode {
     return this;
   }
 
-  public getChildren(): INode[] {
+  public getChildren(): readonly INode[] {
     return this.children;
   }
 

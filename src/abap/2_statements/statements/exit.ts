@@ -1,5 +1,6 @@
 import {IStatement} from "./_statement";
-import {str, alt, opt, seq, IStatementRunnable} from "../combi";
+import {str, alt, opt, seq} from "../combi";
+import {IStatementRunnable} from "../statement_runnable";
 
 export class Exit implements IStatement {
 

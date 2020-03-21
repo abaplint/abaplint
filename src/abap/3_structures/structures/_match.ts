@@ -1,4 +1,4 @@
-import {StatementNode} from "../../nodes";
+import {StatementNode} from "../../nodes/statement_node";
 
 export interface IMatch {
   matched: StatementNode[];

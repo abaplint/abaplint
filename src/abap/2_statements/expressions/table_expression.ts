@@ -1,7 +1,8 @@
-import {seq, opt, tok, alt, plus, ver, str, Expression, IStatementRunnable} from "../combi";
+import {seq, opt, tok, alt, plus, ver, str, Expression} from "../combi";
 import {BracketLeftW, WBracketRight, WBracketRightW} from "../../1_lexer/tokens";
 import {Dynamic, Source, SimpleName, ComponentChainSimple} from ".";
 import {Version} from "../../../version";
+import {IStatementRunnable} from "../statement_runnable";
 
 export class TableExpression extends Expression {
   public getRunnable(): IStatementRunnable {

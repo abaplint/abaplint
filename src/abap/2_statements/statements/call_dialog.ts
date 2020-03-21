@@ -1,7 +1,8 @@
 import {IStatement} from "./_statement";
-import {verNot, str, seq, opt, plus, optPrio, IStatementRunnable} from "../combi";
+import {verNot, str, seq, opt, plus, optPrio} from "../combi";
 import {Field, FieldSub, Constant, Source} from "../expressions";
 import {Version} from "../../../version";
+import {IStatementRunnable} from "../statement_runnable";
 
 export class CallDialog implements IStatement {
 

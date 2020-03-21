@@ -1,7 +1,8 @@
-import {alt, seq, ver, tok, Expression, IStatementRunnable, altPrio} from "../combi";
+import {alt, seq, ver, tok, Expression, altPrio} from "../combi";
 import {Version} from "../../../version";
 import {WAt, ParenLeftW, WParenRightW} from "../../1_lexer/tokens";
 import {SQLAliasField, Source} from ".";
+import {IStatementRunnable} from "../statement_runnable";
 
 export class SQLSource extends Expression {
   public getRunnable(): IStatementRunnable {

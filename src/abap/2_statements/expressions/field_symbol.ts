@@ -1,5 +1,6 @@
-import {regex as reg, Expression, IStatementRunnable, altPrio, tok, seq} from "../combi";
+import {regex as reg, Expression, altPrio, tok, seq} from "../combi";
 import {Dash} from "../../1_lexer/tokens";
+import {IStatementRunnable} from "../statement_runnable";
 
 export class FieldSymbol extends Expression {
   public getRunnable(): IStatementRunnable {

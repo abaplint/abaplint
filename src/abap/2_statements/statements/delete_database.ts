@@ -1,6 +1,7 @@
 import {IStatement} from "./_statement";
-import {str, seq, alt, opt, IStatementRunnable} from "../combi";
+import {str, seq, alt, opt} from "../combi";
 import {Dynamic, SQLCond, DatabaseTable, SQLSourceSimple, DatabaseConnection} from "../expressions";
+import {IStatementRunnable} from "../statement_runnable";
 
 export class DeleteDatabase implements IStatement {
 

@@ -1,6 +1,7 @@
 import {IStatement} from "./_statement";
-import {str, seq, IStatementRunnable} from "../combi";
+import {str, seq} from "../combi";
 import {Cond} from "../expressions";
+import {IStatementRunnable} from "../statement_runnable";
 
 export class Check implements IStatement {
 

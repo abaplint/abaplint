@@ -1,5 +1,5 @@
 import {IStatement} from "./_statement";
-import {str, seq, opt, per, alt, IStatementRunnable} from "../combi";
+import {str, seq, opt, per, alt} from "../combi";
 import {Value, Type, ConstantFieldLength, NamespaceSimpleName, TypeTable, Length, Decimals} from "../expressions";
 import * as Expressions from "../expressions";
 import {StatementNode} from "../../nodes";
@@ -7,6 +7,7 @@ import {CurrentScope} from "../../syntax/_current_scope";
 import {TypedIdentifier} from "../../types/_typed_identifier";
 import {BasicTypes} from "../../syntax/basic_types";
 import {UnknownType} from "../../types/basic";
+import {IStatementRunnable} from "../statement_runnable";
 
 export class Static implements IStatement {
 

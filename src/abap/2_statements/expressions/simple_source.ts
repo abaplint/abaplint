@@ -1,5 +1,6 @@
-import {alt, str, seq, star, Expression, IStatementRunnable} from "../combi";
+import {alt, str, seq, star, Expression} from "../combi";
 import {Constant, FieldChain, StringTemplate, MethodCallChain} from ".";
+import {IStatementRunnable} from "../statement_runnable";
 
 export class SimpleSource extends Expression {
   public getRunnable(): IStatementRunnable {

@@ -1,6 +1,7 @@
 import {IStatement} from "./_statement";
-import {str, seq, opt, alt, plus, IStatementRunnable} from "../combi";
+import {str, seq, opt, alt, plus} from "../combi";
 import {Source, MethodSource} from "../expressions";
+import {IStatementRunnable} from "../statement_runnable";
 
 export class SetHandler implements IStatement {
 

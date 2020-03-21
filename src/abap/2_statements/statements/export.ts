@@ -1,6 +1,7 @@
 import {IStatement} from "./_statement";
-import {str, seq, alt, altPrio, opt, per, plus, IStatementRunnable} from "../combi";
+import {str, seq, alt, altPrio, opt, per, plus} from "../combi";
 import {Target, Source, Field, Dynamic, ParameterS, FieldSub} from "../expressions";
+import {IStatementRunnable} from "../statement_runnable";
 
 // todo, cloud, split?
 export class Export implements IStatement {

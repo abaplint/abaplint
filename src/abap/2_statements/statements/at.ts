@@ -1,6 +1,7 @@
 import {IStatement} from "./_statement";
-import {str, seq, alt, opt, IStatementRunnable, regex, altPrio} from "../combi";
+import {str, seq, alt, opt, regex, altPrio} from "../combi";
 import {SourceFieldSymbol, FieldSub, Dynamic, FieldLength, FieldOffset} from "../expressions";
+import {IStatementRunnable} from "../statement_runnable";
 
 export class At implements IStatement {
 

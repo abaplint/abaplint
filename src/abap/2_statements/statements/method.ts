@@ -1,6 +1,7 @@
 import {IStatement} from "./_statement";
-import {str, seq, opt, optPrio, alt, plus, regex as reg, IStatementRunnable} from "../combi";
+import {str, seq, opt, optPrio, alt, plus, regex as reg} from "../combi";
 import {MethodName, Language} from "../expressions";
+import {IStatementRunnable} from "../statement_runnable";
 
 export class Method implements IStatement {
 

@@ -1,6 +1,7 @@
 import {IStatement} from "./_statement";
-import {str, opt, seq, alt, per, plus, IStatementRunnable, altPrio} from "../combi";
+import {str, opt, seq, alt, per, plus, altPrio} from "../combi";
 import {Target, Source} from "../expressions";
+import {IStatementRunnable} from "../statement_runnable";
 
 export class Concatenate implements IStatement {
 

@@ -1,5 +1,6 @@
-import {seq, alt, opt, tok, regex as reg, Expression, IStatementRunnable, starPrio} from "../combi";
+import {seq, alt, opt, tok, regex as reg, Expression, starPrio} from "../combi";
 import {StaticArrow, Dash, InstanceArrow} from "../../1_lexer/tokens";
+import {IStatementRunnable} from "../statement_runnable";
 
 export class TypeName extends Expression {
 

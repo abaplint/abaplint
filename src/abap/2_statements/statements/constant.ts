@@ -1,12 +1,13 @@
 import {IStatement} from "./_statement";
 import * as Expressions from "../expressions";
-import {str, seq, alt, opt, IStatementRunnable, per} from "../combi";
+import {str, seq, alt, opt, per} from "../combi";
 import {NamespaceSimpleName, Type, Value, Length, Decimals, ConstantFieldLength} from "../expressions";
 import {StatementNode} from "../../nodes";
 import {CurrentScope} from "../../syntax/_current_scope";
 import {BasicTypes} from "../../syntax/basic_types";
 import {TypedIdentifier, IdentifierMeta} from "../../types/_typed_identifier";
 import {UnknownType} from "../../types/basic";
+import {IStatementRunnable} from "../statement_runnable";
 
 export class Constant implements IStatement {
 

@@ -1,7 +1,8 @@
 import {IStatement} from "./_statement";
-import {verNot, str, seq, IStatementRunnable, alt} from "../combi";
+import {verNot, str, seq, alt} from "../combi";
 import {Source, Field} from "../expressions";
 import {Version} from "../../../version";
+import {IStatementRunnable} from "../statement_runnable";
 
 export class DeleteMemory implements IStatement {
 

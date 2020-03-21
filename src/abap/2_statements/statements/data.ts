@@ -1,5 +1,5 @@
 import {IStatement} from "./_statement";
-import {str, seq, IStatementRunnable} from "../combi";
+import {str, seq} from "../combi";
 import {DataDefinition} from "../expressions";
 import * as Expressions from "../expressions";
 import {StatementNode} from "../../nodes";
@@ -7,6 +7,7 @@ import {CurrentScope} from "../../syntax/_current_scope";
 import {TypedIdentifier} from "../../types/_typed_identifier";
 import {UnknownType} from "../../types/basic";
 import {BasicTypes} from "../../syntax/basic_types";
+import {IStatementRunnable} from "../statement_runnable";
 
 export class Data implements IStatement {
 

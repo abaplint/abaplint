@@ -1,5 +1,6 @@
-import {Expression, IStatementRunnable, seq, str, star, alt, opt, plus} from "../combi";
+import {Expression, seq, str, star, alt, opt, plus} from "../combi";
 import {Source, Throw, Let} from ".";
+import {IStatementRunnable} from "../statement_runnable";
 
 export class SwitchBody extends Expression {
   public getRunnable(): IStatementRunnable {

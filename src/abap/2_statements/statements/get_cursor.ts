@@ -1,7 +1,8 @@
 import {IStatement} from "./_statement";
-import {verNot, str, seq, per, IStatementRunnable, opt} from "../combi";
+import {verNot, str, seq, per, opt} from "../combi";
 import {Target} from "../expressions";
 import {Version} from "../../../version";
+import {IStatementRunnable} from "../statement_runnable";
 
 export class GetCursor implements IStatement {
 

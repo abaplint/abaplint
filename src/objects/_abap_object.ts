@@ -12,8 +12,8 @@ export interface ITextElement {
 }
 
 export abstract class ABAPObject extends AbstractObject {
-  private parsed: ABAPFile[];
-  private old: Issue[];
+  private parsed: readonly ABAPFile[];
+  private old: readonly Issue[];
 
   public constructor(name: string) {
     super(name);
@@ -29,7 +29,7 @@ export abstract class ABAPObject extends AbstractObject {
     }
   }
 
-  public parse(reg: IRegistry): Issue[] {
+  public parse(reg: IRegistry): readonly Issue[] {
     if (this.shouldParse() === false) {
       return this.old;
     }
@@ -44,7 +44,7 @@ export abstract class ABAPObject extends AbstractObject {
     return results.issues;
   }
 
-  public getABAPFiles(): ABAPFile[] {
+  public getABAPFiles(): readonly ABAPFile[] {
     return this.parsed;
   }
 
@@ -67,7 +67,7 @@ export abstract class ABAPObject extends AbstractObject {
     return undefined;
   }
 
-  public getClassImplementations(): ClassImplementation[] {
+  public getClassImplementations(): readonly ClassImplementation[] {
     let ret: ClassImplementation[] = [];
     for (const file of this.getABAPFiles()) {
       ret = ret.concat(file.getClassImplementations());
@@ -75,7 +75,7 @@ export abstract class ABAPObject extends AbstractObject {
     return ret;
   }
 
-  public getClassDefinitions(): ClassDefinition[] {
+  public getClassDefinitions(): readonly ClassDefinition[] {
     let ret: ClassDefinition[] = [];
     for (const file of this.getABAPFiles()) {
       ret = ret.concat(file.getClassDefinitions());
@@ -92,12 +92,12 @@ export abstract class ABAPObject extends AbstractObject {
     return undefined;
   }
 
-  public getTexts(): ITextElement[] {
+  public getTexts(): readonly ITextElement[] {
     const parsed = this.parseXML();
     return this.findTexts(parsed);
   }
 
-  public findTexts(parsed: any): ITextElement[] {
+  public findTexts(parsed: any): readonly ITextElement[] {
     if (parsed === undefined
         || parsed.abapGit["asx:abap"]["asx:values"] === undefined
         || parsed.abapGit["asx:abap"]["asx:values"].TPOOL === undefined

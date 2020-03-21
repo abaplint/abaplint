@@ -9,15 +9,15 @@ import {ILexerResult} from "./1_lexer/lexer_result";
 
 export class ABAPParser {
   private readonly version: Version;
-  private readonly globalMacros: string[];
+  private readonly globalMacros: readonly string[];
 
-  public constructor(version?: Version, globalMacros?: string[]) {
+  public constructor(version?: Version, globalMacros?: readonly string[]) {
     this.version = version ? version : defaultVersion;
     this.globalMacros = globalMacros ? globalMacros : [];
   }
 
   // files is input for a single object
-  public parse(files: IFile[]): {issues: Issue[], output: ABAPFile[]} {
+  public parse(files: readonly IFile[]): {issues: readonly Issue[], output: readonly ABAPFile[]} {
     let issues: Issue[] = [];
     const output: ABAPFile[] = [];
 

@@ -1,4 +1,4 @@
-import {IStatementRunnable} from "../combi";
+import {IStatementRunnable} from "../statement_runnable";
 
 export interface IStatement {
   getMatcher(): IStatementRunnable;

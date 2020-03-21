@@ -1,8 +1,9 @@
 import {IStatement} from "./_statement";
-import {verNot, str, seq, alt, opt, per, regex as reg, tok, IStatementRunnable} from "../combi";
+import {verNot, str, seq, alt, opt, per, regex as reg, tok} from "../combi";
 import {ParenLeft, WParenLeft, ParenRightW, ParenRight} from "../../1_lexer/tokens";
 import {Integer, Source, Field, FieldSub, Modif, Constant, InlineField, TextElement} from "../expressions";
 import {Version} from "../../../version";
+import {IStatementRunnable} from "../statement_runnable";
 
 export class SelectionScreen implements IStatement {
 

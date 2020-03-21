@@ -4,6 +4,7 @@ import {Lexer} from "../../src/abap/1_lexer/lexer";
 import {MemoryFile} from "../../src/files";
 import {Identifier, WPlusW, Plus} from "../../src/abap/1_lexer/tokens";
 import {Token} from "../../src/abap/1_lexer/tokens/_token";
+import {Result} from "../../src/abap/2_statements/result";
 
 const str  = Combi.str;
 const per  = Combi.per;
@@ -113,7 +114,7 @@ const tests = [
 describe("combi matching -", () => {
   tests.forEach((test) => {
     it(test.n, () => {
-      const input = new Combi.Result(test.t);
+      const input = new Result(test.t);
       const result = test.c.run([input]);
 //      console.log("final result");
 //      console.dir(result);

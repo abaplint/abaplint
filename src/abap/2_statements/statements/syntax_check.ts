@@ -1,7 +1,8 @@
 import {IStatement} from "./_statement";
-import {verNot, str, seq, alt, per, plus, IStatementRunnable, optPrio} from "../combi";
+import {verNot, str, seq, alt, per, plus, optPrio} from "../combi";
 import {Target, Source} from "../expressions";
 import {Version} from "../../../version";
+import {IStatementRunnable} from "../statement_runnable";
 
 export class SyntaxCheck implements IStatement {
 

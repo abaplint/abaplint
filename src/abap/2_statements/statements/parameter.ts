@@ -1,5 +1,5 @@
 import {IStatement} from "./_statement";
-import {verNot, str, seq, opt, alt, per, regex as reg, IStatementRunnable} from "../combi";
+import {verNot, str, seq, opt, alt, per, regex as reg} from "../combi";
 import {Source, Constant, FieldChain, Dynamic, Field, FieldLength, FieldSub, RadioGroupName, Modif, TypeName} from "../expressions";
 import {Version} from "../../../version";
 import * as Expressions from "../expressions";
@@ -7,6 +7,7 @@ import {StatementNode} from "../../nodes";
 import {CurrentScope} from "../../syntax/_current_scope";
 import {TypedIdentifier} from "../../types/_typed_identifier";
 import {UnknownType} from "../../types/basic";
+import {IStatementRunnable} from "../statement_runnable";
 
 export class Parameter implements IStatement {
 

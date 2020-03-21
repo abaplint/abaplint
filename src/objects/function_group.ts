@@ -113,7 +113,7 @@ export class FunctionGroup extends ABAPObject {
     return ret;
   }
 
-  public getTexts(): ITextElement[] {
+  public getTexts(): readonly ITextElement[] {
     const found = this.findTextFile();
     if (found === undefined) {
       return [];

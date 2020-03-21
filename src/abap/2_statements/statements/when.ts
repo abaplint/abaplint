@@ -1,7 +1,8 @@
 import {IStatement} from "./_statement";
-import {str, seq, star, ver, IStatementRunnable, altPrio, optPrio} from "../combi";
+import {str, seq, star, ver, altPrio, optPrio} from "../combi";
 import {Source, InlineData, Or} from "../expressions";
 import {Version} from "../../../version";
+import {IStatementRunnable} from "../statement_runnable";
 
 export class When implements IStatement {
 

@@ -1,8 +1,9 @@
 import {IStatement} from "./_statement";
-import {verNot, str, seq, opt, tok, alt, regex as reg, optPrio, IStatementRunnable} from "../combi";
+import {verNot, str, seq, opt, tok, alt, regex as reg, optPrio} from "../combi";
 import {ParenLeft, WParenLeft, ParenRightW} from "../../1_lexer/tokens";
 import {Dynamic} from "../expressions";
 import {Version} from "../../../version";
+import {IStatementRunnable} from "../statement_runnable";
 
 export class Uline implements IStatement {
 

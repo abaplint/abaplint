@@ -1,6 +1,6 @@
 import {IStatement} from "./_statement";
-import {IStatementRunnable} from "../combi";
 import {SelectLoop as eSelectLoop} from "../expressions";
+import {IStatementRunnable} from "../statement_runnable";
 
 export class SelectLoop implements IStatement {
 

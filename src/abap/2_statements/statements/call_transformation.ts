@@ -1,6 +1,7 @@
 import {IStatement} from "./_statement";
-import {str, seq, alt, per, plus, IStatementRunnable} from "../combi";
+import {str, seq, alt, per, plus} from "../combi";
 import {Target, Field, Source, Dynamic, NamespaceSimpleName} from "../expressions";
+import {IStatementRunnable} from "../statement_runnable";
 
 export class CallTransformation implements IStatement {
 

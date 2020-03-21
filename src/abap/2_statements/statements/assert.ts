@@ -1,6 +1,7 @@
 import {IStatement} from "./_statement";
-import {str, seq, opt, plus, IStatementRunnable} from "../combi";
+import {str, seq, opt, plus} from "../combi";
 import {Source, NamespaceSimpleName, Cond} from "../expressions";
+import {IStatementRunnable} from "../statement_runnable";
 
 export class Assert implements IStatement {
 

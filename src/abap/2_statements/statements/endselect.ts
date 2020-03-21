@@ -1,5 +1,6 @@
 import {IStatement} from "./_statement";
-import {str, IStatementRunnable} from "../combi";
+import {str} from "../combi";
+import {IStatementRunnable} from "../statement_runnable";
 
 export class EndSelect implements IStatement {
 

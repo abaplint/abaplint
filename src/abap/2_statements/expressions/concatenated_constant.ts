@@ -1,4 +1,5 @@
-import {seq, regex as reg, str, Expression, IStatementRunnable, optPrio} from "../combi";
+import {seq, regex as reg, str, Expression, optPrio} from "../combi";
+import {IStatementRunnable} from "../statement_runnable";
 
 export class ConcatenatedConstant extends Expression {
   public getRunnable(): IStatementRunnable {

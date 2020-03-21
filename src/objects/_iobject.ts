@@ -11,7 +11,7 @@ export interface IObject extends IArtifact {
   updateFile(file: IFile): void;
   removeFile(file: IFile): void;
   setDirty(): void;
-  getFiles(): IFile[];
+  getFiles(): readonly IFile[];
   getXMLFile(): IFile | undefined;
   getXML(): string | undefined;
 }

@@ -1,6 +1,7 @@
 import * as Combi from "../abap/2_statements/combi";
 import * as fs from "fs";
 import {Artifacts} from "../abap/artifacts";
+import {IStatementRunnable} from "../abap/2_statements/statement_runnable";
 
 // todo, move this method to somewhere under web/syntax?
 
@@ -63,7 +64,7 @@ class Graph {
     return res;
   }
 
-  private static buildRunnable(name: string, type: string, runnable: Combi.IStatementRunnable, complex: boolean): IData {
+  private static buildRunnable(name: string, type: string, runnable: IStatementRunnable, complex: boolean): IData {
     return {
       name: name,
       type: type,

@@ -1,6 +1,7 @@
-import {seq, opt, tok, star, alt, str, altPrio, Expression, IStatementRunnable} from "../combi";
+import {seq, opt, tok, star, alt, str, altPrio, Expression} from "../combi";
 import {TargetField, ArrowOrDash, TargetFieldSymbol, NewObject, InlineData, InlineFS, Arrow, TableExpression, FieldAll, FieldOffset, FieldLength, TableBody, ClassName, ComponentName, Cast} from ".";
 import {InstanceArrow, StaticArrow} from "../../1_lexer/tokens";
+import {IStatementRunnable} from "../statement_runnable";
 
 export class Target extends Expression {
   public getRunnable(): IStatementRunnable {

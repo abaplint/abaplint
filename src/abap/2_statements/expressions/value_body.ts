@@ -1,7 +1,8 @@
-import {seq, tok, Expression, IStatementRunnable, str, optPrio, altPrio, plusPrio, starPrio, ver, alt} from "../combi";
+import {seq, tok, Expression, str, optPrio, altPrio, plusPrio, starPrio, ver, alt} from "../combi";
 import {WParenLeftW, WParenRightW} from "../../1_lexer/tokens";
 import {FieldSub, Source, Let, For} from ".";
 import {Version} from "../../../version";
+import {IStatementRunnable} from "../statement_runnable";
 
 export class ValueBody extends Expression {
   public getRunnable(): IStatementRunnable {

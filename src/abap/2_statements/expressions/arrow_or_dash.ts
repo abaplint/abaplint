@@ -1,5 +1,6 @@
-import {altPrio, tok, Expression, IStatementRunnable} from "../combi";
+import {altPrio, tok, Expression} from "../combi";
 import {InstanceArrow, StaticArrow, Dash} from "../../1_lexer/tokens";
+import {IStatementRunnable} from "../statement_runnable";
 
 export class ArrowOrDash extends Expression {
   public getRunnable(): IStatementRunnable {

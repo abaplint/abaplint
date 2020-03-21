@@ -1,5 +1,6 @@
-import {Expression, IStatementRunnable, seq, opt, str} from "../combi";
+import {Expression, seq, opt, str} from "../combi";
 import {Source, SimpleName, ComponentCond} from ".";
+import {IStatementRunnable} from "../statement_runnable";
 
 export class FilterBody extends Expression {
   public getRunnable(): IStatementRunnable {

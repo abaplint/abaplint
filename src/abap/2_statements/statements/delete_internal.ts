@@ -1,6 +1,7 @@
 import {IStatement} from "./_statement";
-import {str, seq, alt, opt, per, plus, IStatementRunnable, altPrio} from "../combi";
+import {str, seq, alt, opt, per, plus, altPrio} from "../combi";
 import {Target, Source, Dynamic, ComponentCompare, ComponentCond, SimpleName, Field, FieldSub} from "../expressions";
+import {IStatementRunnable} from "../statement_runnable";
 
 export class DeleteInternal implements IStatement {
 

@@ -1,8 +1,9 @@
 import {IStatement} from "./_statement";
-import {verNot, str, tok, ver, seq, alt, opt, IStatementRunnable, altPrio, plus} from "../combi";
+import {verNot, str, tok, ver, seq, alt, opt, altPrio, plus} from "../combi";
 import {Target, Source} from "../expressions";
 import {Version} from "../../../version";
 import {WPlus, WDash} from "../../1_lexer/tokens";
+import {IStatementRunnable} from "../statement_runnable";
 
 export class Move implements IStatement {
 

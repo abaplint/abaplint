@@ -6,5 +6,5 @@ export interface IRule {
   getKey(): string;
   getConfig(): void;
   setConfig(conf: any): void;
-  run(obj: IObject, reg: IRegistry): Issue[];
+  run(obj: IObject, reg: IRegistry): readonly Issue[];
 }

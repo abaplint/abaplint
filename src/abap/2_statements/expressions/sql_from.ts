@@ -1,6 +1,7 @@
-import {str, seq, opt, star, tok, Expression, IStatementRunnable} from "../combi";
+import {str, seq, opt, star, tok, Expression} from "../combi";
 import {WParenLeftW, WParenRightW} from "../../1_lexer/tokens";
 import {SQLJoin, SQLFromSource} from ".";
+import {IStatementRunnable} from "../statement_runnable";
 
 export class SQLFrom extends Expression {
   public getRunnable(): IStatementRunnable {

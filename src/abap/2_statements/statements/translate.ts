@@ -1,6 +1,7 @@
 import {IStatement} from "./_statement";
-import {str, seq, alt, IStatementRunnable} from "../combi";
+import {str, seq, alt} from "../combi";
 import {Target, Source} from "../expressions";
+import {IStatementRunnable} from "../statement_runnable";
 
 export class Translate implements IStatement {
 

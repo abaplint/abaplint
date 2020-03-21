@@ -1,6 +1,7 @@
 import {IStatement} from "./_statement";
-import {str, seq, opt, alt, IStatementRunnable} from "../combi";
+import {str, seq, opt, alt} from "../combi";
 import {DatabaseConnection} from "../expressions";
+import {IStatementRunnable} from "../statement_runnable";
 
 export class Commit implements IStatement {
 

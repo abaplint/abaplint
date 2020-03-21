@@ -1,4 +1,4 @@
-import {seq, alt, Expression, str, tok, IStatementRunnable} from "../combi";
+import {seq, alt, Expression, str, tok} from "../combi";
 import * as Expressions from ".";
 import {ParenLeft, ParenRightW} from "../../1_lexer/tokens";
 import {ExpressionNode} from "../../nodes";
@@ -6,6 +6,7 @@ import {CurrentScope} from "../../syntax/_current_scope";
 import {TypedIdentifier, IdentifierMeta} from "../../types/_typed_identifier";
 import {UnknownType} from "../../types/basic";
 import {BasicTypes} from "../../syntax/basic_types";
+import {IStatementRunnable} from "../statement_runnable";
 
 export class MethodParam extends Expression {
   public getRunnable(): IStatementRunnable {

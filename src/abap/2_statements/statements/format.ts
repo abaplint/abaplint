@@ -1,7 +1,8 @@
 import {IStatement} from "./_statement";
-import {verNot, str, per, alt, seq, opt, IStatementRunnable, altPrio} from "../combi";
+import {verNot, str, per, alt, seq, opt, altPrio} from "../combi";
 import {Source} from "../expressions";
 import {Version} from "../../../version";
+import {IStatementRunnable} from "../statement_runnable";
 
 export class Format implements IStatement {
 

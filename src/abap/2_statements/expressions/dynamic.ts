@@ -1,6 +1,7 @@
-import {seq, alt, tok, Expression, IStatementRunnable} from "../combi";
+import {seq, alt, tok, Expression} from "../combi";
 import {WParenLeft, ParenLeft, ParenRightW, ParenRight} from "../../1_lexer/tokens";
 import {FieldChain, Constant} from ".";
+import {IStatementRunnable} from "../statement_runnable";
 
 export class Dynamic extends Expression {
   public getRunnable(): IStatementRunnable {

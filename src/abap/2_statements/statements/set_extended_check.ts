@@ -1,6 +1,7 @@
 import {IStatement} from "./_statement";
-import {verNot, str, seq, alt, IStatementRunnable} from "../combi";
+import {verNot, str, seq, alt} from "../combi";
 import {Version} from "../../../version";
+import {IStatementRunnable} from "../statement_runnable";
 
 export class SetExtendedCheck implements IStatement {
 

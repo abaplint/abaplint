@@ -1,6 +1,7 @@
 import {IStatement} from "./_statement";
-import {str, seq, alt, opt, plus, IStatementRunnable} from "../combi";
+import {str, seq, alt, opt, plus} from "../combi";
 import {Target, Source, Dynamic, Field, TypeName} from "../expressions";
+import {IStatementRunnable} from "../statement_runnable";
 
 export class CreateData implements IStatement {
 

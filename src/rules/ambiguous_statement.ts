@@ -67,7 +67,7 @@ export class AmbiguousStatement extends ABAPRule {
   private tryMatch(st: StatementNode, reg: Registry, type1: new () => IStatement): boolean {
     const ver = reg.getConfig().getVersion();
 
-    const tokens = st.getTokens();
+    const tokens = st.getTokens().slice(0);
     tokens.pop();
 
     const match = Combi.run(new type1().getMatcher(), tokens, ver);

@@ -1,7 +1,8 @@
 import {IStatement} from "./_statement";
-import {str, seq, alt, opt, ver, IStatementRunnable} from "../combi";
+import {str, seq, alt, opt, ver} from "../combi";
 import {Version} from "../../../version";
 import {Source, Field, ParameterListS, ClassName, MessageSource} from "../expressions";
+import {IStatementRunnable} from "../statement_runnable";
 
 export class Raise implements IStatement {
 

@@ -1,8 +1,9 @@
 import {IStatement} from "./_statement";
-import {verNot, str, seq, opt, alt, per, tok, regex as reg, IStatementRunnable} from "../combi";
+import {verNot, str, seq, opt, alt, per, tok, regex as reg} from "../combi";
 import {Target, Source, Dynamic, FieldSub, FieldChain} from "../expressions";
 import {ParenLeft, ParenRightW, WParenLeft} from "../../1_lexer/tokens";
 import {Version} from "../../../version";
+import {IStatementRunnable} from "../statement_runnable";
 
 export class Write implements IStatement {
 

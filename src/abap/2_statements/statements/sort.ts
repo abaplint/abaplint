@@ -1,6 +1,7 @@
 import {IStatement} from "./_statement";
-import {str, seq, alt, per, opt, plus, IStatementRunnable, optPrio} from "../combi";
+import {str, seq, alt, per, opt, plus, optPrio} from "../combi";
 import {Target, Dynamic, ComponentChain, SourceFieldSymbol} from "../expressions";
+import {IStatementRunnable} from "../statement_runnable";
 
 export class Sort implements IStatement {
 

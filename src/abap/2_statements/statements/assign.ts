@@ -1,7 +1,8 @@
 import {IStatement} from "./_statement";
-import {str, seq, alt, opt, tok, per, IStatementRunnable} from "../combi";
+import {str, seq, alt, opt, tok, per} from "../combi";
 import {InstanceArrow, StaticArrow} from "../../1_lexer/tokens";
 import {FSTarget, Target, Source, Dynamic, Field} from "../expressions";
+import {IStatementRunnable} from "../statement_runnable";
 
 export class Assign implements IStatement {
 

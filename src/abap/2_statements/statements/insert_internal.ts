@@ -1,7 +1,8 @@
 import {IStatement} from "./_statement";
-import {str, seq, alt, opt, per, ver, IStatementRunnable} from "../combi";
+import {str, seq, alt, opt, per, ver} from "../combi";
 import {Version} from "../../../version";
 import {FSTarget, Target, Source, Dynamic, SimpleSource} from "../expressions";
+import {IStatementRunnable} from "../statement_runnable";
 
 export class InsertInternal implements IStatement {
 

@@ -1,7 +1,8 @@
 import {IStatement} from "./_statement";
-import {verNot, str, seq, opt, alt, per, IStatementRunnable} from "../combi";
+import {verNot, str, seq, opt, alt, per} from "../combi";
 import {Constant, FieldChain, FormName, Source, FunctionParameters, FunctionName, Destination, MethodName} from "../expressions";
 import {Version} from "../../../version";
+import {IStatementRunnable} from "../statement_runnable";
 
 export class CallFunction implements IStatement {
 

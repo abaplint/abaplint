@@ -1,7 +1,8 @@
-import {seq, tok, Expression, IStatementRunnable, str, plus, ver, opt, alt} from "../combi";
+import {seq, tok, Expression, str, plus, ver, opt, alt} from "../combi";
 import {WParenLeftW, WParenRightW} from "../../1_lexer/tokens";
 import {ComponentName, Source, Field} from ".";
 import {Version} from "../../../version";
+import {IStatementRunnable} from "../statement_runnable";
 
 export class CorrespondingBody extends Expression {
   public getRunnable(): IStatementRunnable {

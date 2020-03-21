@@ -1,6 +1,7 @@
-import {alt, seq, tok, str, Expression, IStatementRunnable, opt} from "../combi";
+import {alt, seq, tok, str, Expression, opt} from "../combi";
 import {ParenLeft, ParenLeftW} from "../../1_lexer/tokens";
 import {Field} from ".";
+import {IStatementRunnable} from "../statement_runnable";
 
 export class SQLAggregation extends Expression {
   public getRunnable(): IStatementRunnable {

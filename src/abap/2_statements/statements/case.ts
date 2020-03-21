@@ -1,7 +1,8 @@
 import {IStatement} from "./_statement";
-import {str, seq, opt, ver, IStatementRunnable} from "../combi";
+import {str, seq, opt, ver} from "../combi";
 import {Version} from "../../../version";
 import {Source} from "../expressions";
+import {IStatementRunnable} from "../statement_runnable";
 
 export class Case implements IStatement {
 

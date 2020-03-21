@@ -1,6 +1,7 @@
 import {IStatement} from "./_statement";
-import {str, seq, IStatementRunnable, opt} from "../combi";
+import {str, seq, opt} from "../combi";
 import {Cond, Source, Target} from "../expressions";
+import {IStatementRunnable} from "../statement_runnable";
 
 export class While implements IStatement {
 

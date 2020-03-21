@@ -1,7 +1,8 @@
 import {IStatement} from "./_statement";
-import {verNot, str, seq, alt, star, IStatementRunnable} from "../combi";
+import {verNot, str, seq, alt, star} from "../combi";
 import {Source, Constant, Field} from "../expressions";
 import {Version} from "../../../version";
+import {IStatementRunnable} from "../statement_runnable";
 
 export class CallKernel implements IStatement {
 

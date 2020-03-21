@@ -1,6 +1,7 @@
 import {IStatement} from "./_statement";
-import {str, seq, opt, IStatementRunnable} from "../combi";
+import {str, seq, opt} from "../combi";
 import {FormName, FormTables, FormUsing, FormChanging, FormRaising} from "../expressions";
+import {IStatementRunnable} from "../statement_runnable";
 
 export class Form implements IStatement {
 

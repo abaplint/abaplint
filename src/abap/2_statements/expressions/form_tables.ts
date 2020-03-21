@@ -1,5 +1,6 @@
-import {seq, str, plus, altPrio, Expression, IStatementRunnable} from "../combi";
+import {seq, str, plus, altPrio, Expression} from "../combi";
 import {SimpleName, NamespaceSimpleName, FormParam} from ".";
+import {IStatementRunnable} from "../statement_runnable";
 
 export class FormTables extends Expression {
   public getRunnable(): IStatementRunnable {

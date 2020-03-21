@@ -1,7 +1,8 @@
 import {IStatement} from "./_statement";
-import {verNot, str, IStatementRunnable, opt, seq} from "../combi";
+import {verNot, str, opt, seq} from "../combi";
 import {Version} from "../../../version";
 import {Source} from "../expressions";
+import {IStatementRunnable} from "../statement_runnable";
 
 export class SetLeft implements IStatement {
 

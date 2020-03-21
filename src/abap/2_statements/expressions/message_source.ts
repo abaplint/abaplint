@@ -1,6 +1,7 @@
-import {seq, tok, Expression, IStatementRunnable, opt, str, alt} from "../combi";
+import {seq, tok, Expression, opt, str, alt} from "../combi";
 import {ParenLeft, ParenRightW} from "../../1_lexer/tokens";
 import {MessageTypeAndNumber, MessageClass, Source} from ".";
+import {IStatementRunnable} from "../statement_runnable";
 
 export class MessageSource extends Expression {
   public getRunnable(): IStatementRunnable {

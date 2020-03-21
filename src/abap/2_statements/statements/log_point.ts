@@ -1,7 +1,8 @@
 import {IStatement} from "./_statement";
-import {verNot, str, seq, opt, plus, IStatementRunnable} from "../combi";
+import {verNot, str, seq, opt, plus} from "../combi";
 import {Source, NamespaceSimpleName} from "../expressions";
 import {Version} from "../../../version";
+import {IStatementRunnable} from "../statement_runnable";
 
 export class LogPoint implements IStatement {
 

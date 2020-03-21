@@ -1,8 +1,9 @@
 import {IStatement} from "./_statement";
-import {verNot, str, seq, opt, per, IStatementRunnable, tok} from "../combi";
+import {verNot, str, seq, opt, per, tok} from "../combi";
 import {Integer, MessageClass, Field, ReportName} from "../expressions";
 import {Version} from "../../../version";
 import {ParenLeft, ParenRightW} from "../../1_lexer/tokens";
+import {IStatementRunnable} from "../statement_runnable";
 
 export class Report implements IStatement {
 

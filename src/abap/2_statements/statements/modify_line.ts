@@ -1,7 +1,8 @@
 import {IStatement} from "./_statement";
-import {verNot, str, seq, alt, opt, per, plus, IStatementRunnable} from "../combi";
+import {verNot, str, seq, alt, opt, per, plus} from "../combi";
 import {Source} from "../expressions";
 import {Version} from "../../../version";
+import {IStatementRunnable} from "../statement_runnable";
 
 export class ModifyLine implements IStatement {
 

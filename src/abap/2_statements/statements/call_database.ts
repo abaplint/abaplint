@@ -1,7 +1,8 @@
 import {IStatement} from "./_statement";
-import {verNot, str, seq, opt, alt, IStatementRunnable} from "../combi";
+import {verNot, str, seq, opt, alt} from "../combi";
 import {Dynamic, Source, ParameterListS, ParameterListT, DatabaseConnection} from "../expressions";
 import {Version} from "../../../version";
+import {IStatementRunnable} from "../statement_runnable";
 
 export class CallDatabase implements IStatement {
 

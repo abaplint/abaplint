@@ -1,6 +1,7 @@
 import {IStatement} from "./_statement";
-import {verNot, str, seq, regex as reg, IStatementRunnable} from "../combi";
+import {verNot, str, seq, regex as reg} from "../combi";
 import {Version} from "../../../version";
+import {IStatementRunnable} from "../statement_runnable";
 
 // type pool usage
 export class TypePools implements IStatement {

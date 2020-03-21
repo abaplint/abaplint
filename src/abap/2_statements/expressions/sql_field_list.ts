@@ -1,7 +1,8 @@
-import {alt, str, plus, seq, opt, ver, tok, Expression, IStatementRunnable, optPrio} from "../combi";
+import {alt, str, plus, seq, opt, ver, tok, Expression, optPrio} from "../combi";
 import {Constant, SQLFieldName, Dynamic, Field, SQLAggregation} from ".";
 import {Version} from "../../../version";
 import {WAt} from "../../1_lexer/tokens";
+import {IStatementRunnable} from "../statement_runnable";
 
 export class SQLFieldList extends Expression {
   public getRunnable(): IStatementRunnable {

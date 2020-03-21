@@ -1,6 +1,7 @@
 import {IStatement} from "./_statement";
-import {str, seq, IStatementRunnable, opt, per} from "../combi";
+import {str, seq, opt, per} from "../combi";
 import {Field, MessageClass, Integer} from "../expressions";
+import {IStatementRunnable} from "../statement_runnable";
 
 export class FunctionPool implements IStatement {
 

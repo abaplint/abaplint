@@ -1,7 +1,8 @@
 import {IStatement} from "./_statement";
-import {verNot, str, seq, opt, per, alt, plus, IStatementRunnable, optPrio} from "../combi";
+import {verNot, str, seq, opt, per, alt, plus, optPrio} from "../combi";
 import {Source, NamespaceSimpleName, Dynamic, Field, AndReturn} from "../expressions";
 import {Version} from "../../../version";
+import {IStatementRunnable} from "../statement_runnable";
 
 export class Submit implements IStatement {
 

@@ -1,7 +1,8 @@
 import {IStatement} from "./_statement";
-import {verNot, str, seq, opt, alt, per, plus, IStatementRunnable} from "../combi";
+import {verNot, str, seq, opt, alt, per, plus} from "../combi";
 import {Target, Source, Dynamic, Field, ComponentChainSimple} from "../expressions";
 import {Version} from "../../../version";
+import {IStatementRunnable} from "../statement_runnable";
 
 export class Import implements IStatement {
 

@@ -1,7 +1,8 @@
 import {IStatement} from "./_statement";
 import {Version} from "../../../version";
-import {str, seq, opt, alt, ver, plus, IStatementRunnable} from "../combi";
+import {str, seq, opt, alt, ver, plus} from "../combi";
 import {Source, Field, InterfaceName} from "../expressions";
+import {IStatementRunnable} from "../statement_runnable";
 
 export class InterfaceDef implements IStatement {
 

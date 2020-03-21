@@ -1,5 +1,6 @@
-import {str, seq, plus, IStatementRunnable, Expression} from "../combi";
+import {str, seq, plus, Expression} from "../combi";
 import {MethodParam} from ".";
+import {IStatementRunnable} from "../statement_runnable";
 
 export class MethodDefExporting extends Expression  {
   public getRunnable(): IStatementRunnable {

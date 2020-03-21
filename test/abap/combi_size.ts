@@ -4,6 +4,7 @@ import * as Tokens from "../../src/abap/1_lexer/tokens";
 import * as Expressions from "../../src/abap/2_statements/expressions";
 import {Position} from "../../src/position";
 import {Token} from "../../src/abap/1_lexer/tokens/_token";
+import {Result} from "../../src/abap/2_statements/result";
 
 const str  = Combi.str;
 const seq  = Combi.seq;
@@ -22,7 +23,7 @@ function tok(s: string): Token[] {
 }
 
 function res(s: string) {
-  return new Combi.Result(tok(s));
+  return new Result(tok(s));
 }
 
 const resultSize = [

@@ -1,6 +1,7 @@
-import {seq, alt, tok, Expression, IStatementRunnable} from "../combi";
+import {seq, alt, tok, Expression} from "../combi";
 import {ParenLeft, ParenRightW} from "../../1_lexer/tokens";
 import {Integer, SimpleFieldChain} from ".";
+import {IStatementRunnable} from "../statement_runnable";
 
 export class ConstantFieldLength extends Expression {
   public getRunnable(): IStatementRunnable {
