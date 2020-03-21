@@ -2,7 +2,7 @@ import {Issue} from "../issue";
 import {ABAPRule} from "./_abap_rule";
 import {ABAPFile} from "../files";
 import {BasicRuleConfig} from "./_basic_rule_config";
-import {Statement, Comment, MacroContent, Empty} from "../abap/2_statements/statements/_statement";
+import {IStatement, Comment, MacroContent, Empty} from "../abap/2_statements/statements/_statement";
 import * as Statements from "../abap/2_statements/statements";
 import * as Expressions from "../abap/2_statements/expressions";
 import {StatementNode} from "../abap/nodes";
@@ -72,7 +72,7 @@ export class UnreachableCode extends ABAPRule {
     return false;
   }
 
-  private isStructure(s: Statement): boolean {
+  private isStructure(s: IStatement): boolean {
     if (s instanceof Statements.EndIf
         || s instanceof Statements.Else
         || s instanceof Statements.EndLoop

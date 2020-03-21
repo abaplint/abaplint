@@ -1,10 +1,9 @@
 import {AbstractType} from "./_abstract_type";
 
-export class ObjectReferenceType extends AbstractType {
+export class ObjectReferenceType implements AbstractType {
   private readonly name: string;
 
   public constructor(name: string) {
-    super();
     this.name = name;
   }
 

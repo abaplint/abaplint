@@ -1,4 +1,4 @@
-import {Statement} from "./_statement";
+import {IStatement} from "./_statement";
 import {verNot, str, seq, opt, alt, per, regex as reg, IStatementRunnable} from "../combi";
 import {Source, Constant, FieldChain, Dynamic, Field, FieldLength, FieldSub, RadioGroupName, Modif, TypeName} from "../expressions";
 import {Version} from "../../../version";
@@ -8,7 +8,7 @@ import {CurrentScope} from "../../syntax/_current_scope";
 import {TypedIdentifier} from "../../types/_typed_identifier";
 import {UnknownType} from "../../types/basic";
 
-export class Parameter extends Statement {
+export class Parameter implements IStatement {
 
   public getMatcher(): IStatementRunnable {
     const para = alt(str("PARAMETER"), str("PARAMETERS"));

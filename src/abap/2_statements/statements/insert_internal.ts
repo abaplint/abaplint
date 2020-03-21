@@ -1,9 +1,9 @@
-import {Statement} from "./_statement";
+import {IStatement} from "./_statement";
 import {str, seq, alt, opt, per, ver, IStatementRunnable} from "../combi";
 import {Version} from "../../../version";
 import {FSTarget, Target, Source, Dynamic, SimpleSource} from "../expressions";
 
-export class InsertInternal extends Statement {
+export class InsertInternal implements IStatement {
 
   public getMatcher(): IStatementRunnable {
     const target = alt(new Source(), new Dynamic());

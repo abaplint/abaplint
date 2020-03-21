@@ -1,9 +1,9 @@
-import {Statement} from "./_statement";
+import {IStatement} from "./_statement";
 import {verNot, str, seq, per, IStatementRunnable, opt} from "../combi";
 import {Target} from "../expressions";
 import {Version} from "../../../version";
 
-export class GetCursor extends Statement {
+export class GetCursor implements IStatement {
 
   public getMatcher(): IStatementRunnable {
     const line = seq(str("LINE"), new Target());

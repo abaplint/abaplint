@@ -1,7 +1,7 @@
 import {AbstractNode} from "./_abstract_node";
 import {IStructure} from "../3_structures/structures/_structure";
 import {StatementNode} from "./statement_node";
-import {Statement} from "../2_statements/statements/_statement";
+import {IStatement} from "../2_statements/statements/_statement";
 import {Token} from "../1_lexer/tokens/_token";
 import {Expression} from "../2_statements/combi";
 import {ExpressionNode} from "./expression_node";
@@ -36,7 +36,7 @@ export class StructureNode extends AbstractNode {
     return undefined;
   }
 
-  public findDirectStatements(type: new () => Statement): StatementNode[] {
+  public findDirectStatements(type: new () => IStatement): StatementNode[] {
     const ret: StatementNode[] = [];
     for (const child of this.getChildren()) {
       if (child instanceof StatementNode && child.get() instanceof type) {
@@ -56,7 +56,7 @@ export class StructureNode extends AbstractNode {
     return ret;
   }
 
-  public findFirstStatement(type: new () => Statement): StatementNode | undefined {
+  public findFirstStatement(type: new () => IStatement): StatementNode | undefined {
     for (const child of this.getChildren()) {
       if (child.get() instanceof type) {
         return child as StatementNode;
@@ -133,7 +133,7 @@ export class StructureNode extends AbstractNode {
     return ret;
   }
 
-  public findAllStatements(type: new () => Statement): StatementNode[] {
+  public findAllStatements(type: new () => IStatement): StatementNode[] {
     let ret: StatementNode[] = [];
     for (const child of this.getChildren()) {
       if (child.get() instanceof type) {

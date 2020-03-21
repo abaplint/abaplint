@@ -1,10 +1,10 @@
-import {Statement} from "./_statement";
+import {IStatement} from "./_statement";
 import {verNot, str, seq, tok, opt, IStatementRunnable} from "../combi";
 import {ParenLeft, ParenRightW} from "../../1_lexer/tokens";
 import {Source, SimpleName, NamespaceSimpleName} from "../expressions";
 import {Version} from "../../../version";
 
-export class DeleteCluster extends Statement {
+export class DeleteCluster implements IStatement {
 
   public getMatcher(): IStatementRunnable {
     const client = seq(str("CLIENT"), new Source());

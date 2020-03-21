@@ -1,9 +1,9 @@
-import {Statement} from "./_statement";
+import {IStatement} from "./_statement";
 import {verNot, str, seq, opt, plus, IStatementRunnable} from "../combi";
 import {Source} from "../expressions";
 import {Version} from "../../../version";
 
-export class SetTitlebar extends Statement {
+export class SetTitlebar implements IStatement {
 
   public getMatcher(): IStatementRunnable {
     const wit = seq(str("WITH"), plus(new Source()));

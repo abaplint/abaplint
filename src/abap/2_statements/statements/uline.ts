@@ -1,10 +1,10 @@
-import {Statement} from "./_statement";
+import {IStatement} from "./_statement";
 import {verNot, str, seq, opt, tok, alt, regex as reg, optPrio, IStatementRunnable} from "../combi";
 import {ParenLeft, WParenLeft, ParenRightW} from "../../1_lexer/tokens";
 import {Dynamic} from "../expressions";
 import {Version} from "../../../version";
 
-export class Uline extends Statement {
+export class Uline implements IStatement {
 
   public getMatcher(): IStatementRunnable {
     const right = tok(ParenRightW);

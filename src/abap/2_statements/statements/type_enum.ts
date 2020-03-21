@@ -1,8 +1,8 @@
-import {Statement} from "./_statement";
+import {IStatement} from "./_statement";
 import {str, seq, IStatementRunnable} from "../combi";
 import {Value, NamespaceSimpleName} from "../expressions";
 
-export class TypeEnum extends Statement {
+export class TypeEnum implements IStatement {
 
   public getMatcher(): IStatementRunnable {
 

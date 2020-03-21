@@ -1,8 +1,8 @@
-import {Statement} from "./_statement";
+import {IStatement} from "./_statement";
 import {str, seq, alt, opt, IStatementRunnable} from "../combi";
 import {Dynamic, SQLCond, DatabaseTable, SQLSourceSimple, DatabaseConnection} from "../expressions";
 
-export class DeleteDatabase extends Statement {
+export class DeleteDatabase implements IStatement {
 
   public getMatcher(): IStatementRunnable {
     const where = seq(str("WHERE"), alt(new SQLCond(), new Dynamic()));

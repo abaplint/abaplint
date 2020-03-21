@@ -1,9 +1,9 @@
-import {Statement} from "./_statement";
+import {IStatement} from "./_statement";
 import {verNot, str, seq, alt, opt, regex as reg, IStatementRunnable} from "../combi";
 import {FieldSub, Field} from "../expressions";
 import {Version} from "../../../version";
 
-export class AtSelectionScreen extends Statement {
+export class AtSelectionScreen implements IStatement {
 
   public getMatcher(): IStatementRunnable {
     const output = str("OUTPUT");

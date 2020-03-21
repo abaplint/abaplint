@@ -4,7 +4,7 @@ import {ABAPRule} from "./_abap_rule";
 import {ABAPFile} from "../files";
 import {BasicRuleConfig} from "./_basic_rule_config";
 import {StatementNode} from "../abap/nodes";
-import {Statement} from "../abap/2_statements/statements/_statement";
+import {IStatement} from "../abap/2_statements/statements/_statement";
 import {Combi} from "../abap/2_statements/combi";
 import {Registry} from "../registry";
 import {Version} from "../version";
@@ -64,7 +64,7 @@ export class AmbiguousStatement extends ABAPRule {
     return issues;
   }
 
-  private tryMatch(st: StatementNode, reg: Registry, type1: new () => Statement): boolean {
+  private tryMatch(st: StatementNode, reg: Registry, type1: new () => IStatement): boolean {
     const ver = reg.getConfig().getVersion();
 
     const tokens = st.getTokens();

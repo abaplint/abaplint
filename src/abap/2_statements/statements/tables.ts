@@ -1,4 +1,4 @@
-import {Statement} from "./_statement";
+import {IStatement} from "./_statement";
 import {verNot, str, seq, IStatementRunnable} from "../combi";
 import {Field} from "../expressions";
 import {Version} from "../../../version";
@@ -8,7 +8,7 @@ import {CurrentScope} from "../../syntax/_current_scope";
 import {TypedIdentifier} from "../../types/_typed_identifier";
 import {UnknownType} from "../../types/basic";
 
-export class Tables extends Statement {
+export class Tables implements IStatement {
 
   public getMatcher(): IStatementRunnable {
     const ret = seq(str("TABLES"), new Field());

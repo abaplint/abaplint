@@ -1,9 +1,9 @@
-import {Statement} from "./_statement";
+import {IStatement} from "./_statement";
 import {verNot, str, seq, per, opt, alt, plus, IStatementRunnable} from "../combi";
 import {Target, Source} from "../expressions";
 import {Version} from "../../../version";
 
-export class ReadLine extends Statement {
+export class ReadLine implements IStatement {
 
   public getMatcher(): IStatementRunnable {
     const val = seq(str("LINE VALUE INTO"),

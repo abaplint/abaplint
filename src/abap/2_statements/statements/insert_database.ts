@@ -1,9 +1,9 @@
-import {Statement} from "./_statement";
+import {IStatement} from "./_statement";
 import {str, seq, alt, opt, tok, IStatementRunnable} from "../combi";
 import {DatabaseTable, Dynamic, SQLSource, Select, DatabaseConnection} from "../expressions";
 import {WParenLeftW, WParenRightW} from "../../1_lexer/tokens";
 
-export class InsertDatabase extends Statement {
+export class InsertDatabase implements IStatement {
 
   public getMatcher(): IStatementRunnable {
     const target = alt(new DatabaseTable(), new Dynamic());

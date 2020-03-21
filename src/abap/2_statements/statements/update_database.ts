@@ -1,8 +1,8 @@
-import {Statement} from "./_statement";
+import {IStatement} from "./_statement";
 import {str, seq, opt, alt, IStatementRunnable, star} from "../combi";
 import {SQLSource, DatabaseTable, Dynamic, Field, SQLCond, DatabaseConnection} from "../expressions";
 
-export class UpdateDatabase extends Statement {
+export class UpdateDatabase implements IStatement {
 
   public getMatcher(): IStatementRunnable {
     const target = alt(new DatabaseTable(), new Dynamic());

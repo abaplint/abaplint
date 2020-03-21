@@ -1,9 +1,9 @@
-import {Statement} from "./_statement";
+import {IStatement} from "./_statement";
 import {verNot, str, seq, opt, alt, IStatementRunnable} from "../combi";
 import {Dynamic, Source, ParameterListS, ParameterListT, DatabaseConnection} from "../expressions";
 import {Version} from "../../../version";
 
-export class CallDatabase extends Statement {
+export class CallDatabase implements IStatement {
 
   public getMatcher(): IStatementRunnable {
     const exporting = seq(str("EXPORTING"), new ParameterListS());

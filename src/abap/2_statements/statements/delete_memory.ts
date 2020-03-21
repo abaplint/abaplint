@@ -1,9 +1,9 @@
-import {Statement} from "./_statement";
+import {IStatement} from "./_statement";
 import {verNot, str, seq, IStatementRunnable, alt} from "../combi";
 import {Source, Field} from "../expressions";
 import {Version} from "../../../version";
 
-export class DeleteMemory extends Statement {
+export class DeleteMemory implements IStatement {
 
   public getMatcher(): IStatementRunnable {
     const memory = seq(str("MEMORY ID"), new Source());

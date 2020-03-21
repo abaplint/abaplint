@@ -1,8 +1,8 @@
-import {Statement} from "./_statement";
+import {IStatement} from "./_statement";
 import {str, seq, IStatementRunnable} from "../combi";
 import {NamespaceSimpleName} from "../expressions";
 
-export class ConstantEnd extends Statement {
+export class ConstantEnd implements IStatement {
 
   public getMatcher(): IStatementRunnable {
     const ret = seq(str("CONSTANTS"), str("END"), str("OF"), new NamespaceSimpleName());

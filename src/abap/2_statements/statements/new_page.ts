@@ -1,9 +1,9 @@
-import {Statement} from "./_statement";
+import {IStatement} from "./_statement";
 import {verNot, str, seq, alt, per, opt, IStatementRunnable} from "../combi";
 import {Source} from "../expressions";
 import {Version} from "../../../version";
 
-export class NewPage extends Statement {
+export class NewPage implements IStatement {
 
   public getMatcher(): IStatementRunnable {
     const line = seq(str("LINE-SIZE"), new Source());

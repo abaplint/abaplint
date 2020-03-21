@@ -1,4 +1,4 @@
-import {Statement} from "./_statement";
+import {IStatement} from "./_statement";
 import * as Expressions from "../expressions";
 import {str, seq, alt, opt, IStatementRunnable, per} from "../combi";
 import {NamespaceSimpleName, Type, Value, Length, Decimals, ConstantFieldLength} from "../expressions";
@@ -8,7 +8,7 @@ import {BasicTypes} from "../../syntax/basic_types";
 import {TypedIdentifier, IdentifierMeta} from "../../types/_typed_identifier";
 import {UnknownType} from "../../types/basic";
 
-export class Constant extends Statement {
+export class Constant implements IStatement {
 
   public getMatcher(): IStatementRunnable {
     const def = seq(new NamespaceSimpleName(),

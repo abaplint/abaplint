@@ -1,9 +1,9 @@
-import {Statement} from "./_statement";
+import {IStatement} from "./_statement";
 import {verNot, str, seq, opt, per, IStatementRunnable} from "../combi";
 import {Source} from "../expressions";
 import {Version} from "../../../version";
 
-export class SetPFStatus extends Statement {
+export class SetPFStatus implements IStatement {
 
   public getMatcher(): IStatementRunnable {
     const program = seq(str("OF PROGRAM"), new Source());

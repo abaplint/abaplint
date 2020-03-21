@@ -1,8 +1,8 @@
-import {Statement} from "./_statement";
+import {IStatement} from "./_statement";
 import {str, seq, alt, opt, IStatementRunnable} from "../combi";
 import {Integer, NamespaceSimpleName} from "../expressions";
 
-export class StaticBegin extends Statement {
+export class StaticBegin implements IStatement {
 
   public getMatcher(): IStatementRunnable {
     const occurs = seq(str("OCCURS"), new Integer());

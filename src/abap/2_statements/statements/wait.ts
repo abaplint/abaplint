@@ -1,9 +1,9 @@
-import {Statement} from "./_statement";
+import {IStatement} from "./_statement";
 import {verNot, str, seq, opt, per, alt, ver, IStatementRunnable} from "../combi";
 import {Version} from "../../../version";
 import {Source, Cond} from "../expressions";
 
-export class Wait extends Statement {
+export class Wait implements IStatement {
 
   public getMatcher(): IStatementRunnable {
     const up = seq(str("UP TO"), new Source(), str("SECONDS"));

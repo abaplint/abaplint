@@ -1,9 +1,9 @@
-import {Statement} from "./_statement";
+import {IStatement} from "./_statement";
 import {verNot, str, seq, per, IStatementRunnable} from "../combi";
 import {Target, Source} from "../expressions";
 import {Version} from "../../../version";
 
-export class GenerateSubroutine extends Statement {
+export class GenerateSubroutine implements IStatement {
 
   public getMatcher(): IStatementRunnable {
     const name = seq(str("NAME"), new Source());

@@ -1,9 +1,9 @@
-import {Statement} from "./_statement";
+import {IStatement} from "./_statement";
 import {verNot, str, seq, alt, IStatementRunnable} from "../combi";
 import {Source, NamespaceSimpleName} from "../expressions";
 import {Version} from "../../../version";
 
-export class Controls extends Statement {
+export class Controls implements IStatement {
 
   public getMatcher(): IStatementRunnable {
     const tableview = seq(str("TABLEVIEW USING SCREEN"), new Source());

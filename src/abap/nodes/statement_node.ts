@@ -1,5 +1,5 @@
 import {AbstractNode} from "./_abstract_node";
-import {Statement} from "../2_statements/statements/_statement";
+import {IStatement} from "../2_statements/statements/_statement";
 import {INode} from "./_inode";
 import {Position} from "../../position";
 import {Token} from "../1_lexer/tokens/_token";
@@ -11,11 +11,11 @@ import {String, StringTemplate, StringTemplateBegin, StringTemplateMiddle, Strin
 import {Comment} from "../1_lexer/tokens/comment";
 
 export class StatementNode extends AbstractNode {
-  private readonly statement: Statement;
+  private readonly statement: IStatement;
   private readonly colon: Token | undefined;
   private readonly pragmas: Token[];
 
-  public constructor(statement: Statement, colon?: Token | undefined, pragmas?: Token[]) {
+  public constructor(statement: IStatement, colon?: Token | undefined, pragmas?: Token[]) {
     super();
     this.statement = statement;
     this.colon = colon;

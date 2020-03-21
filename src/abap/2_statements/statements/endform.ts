@@ -1,7 +1,7 @@
-import {Statement} from "./_statement";
+import {IStatement} from "./_statement";
 import {str, IStatementRunnable} from "../combi";
 
-export class EndForm extends Statement {
+export class EndForm implements IStatement {
 
   public getMatcher(): IStatementRunnable {
     const ret = str("ENDFORM");

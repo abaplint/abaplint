@@ -1,9 +1,9 @@
-import {Statement} from "./_statement";
+import {IStatement} from "./_statement";
 import {verNot, str, seq, regex as reg, IStatementRunnable} from "../combi";
 import {Version} from "../../../version";
 
 // type pool usage
-export class TypePools extends Statement {
+export class TypePools implements IStatement {
 
   public getMatcher(): IStatementRunnable {
     const fieldName = reg(/^\w+$/);

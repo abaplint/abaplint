@@ -1,8 +1,8 @@
-import {Statement} from "./_statement";
+import {IStatement} from "./_statement";
 import {str, seq, alt, opt, optPrio, plus, per, IStatementRunnable} from "../combi";
 import {FSTarget, Target, Field, Source, Dynamic, FieldSub, ComponentChain} from "../expressions";
 
-export class ReadTable extends Statement {
+export class ReadTable implements IStatement {
 
   public getMatcher(): IStatementRunnable {
     const comparing = seq(str("COMPARING"), alt(plus(new FieldSub()), new Dynamic()));

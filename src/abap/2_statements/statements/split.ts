@@ -1,8 +1,8 @@
-import {Statement} from "./_statement";
+import {IStatement} from "./_statement";
 import {str, seq, altPrio, plus, alt, opt, IStatementRunnable} from "../combi";
 import {Target, Source} from "../expressions";
 
-export class Split extends Statement {
+export class Split implements IStatement {
 
   public getMatcher(): IStatementRunnable {
     const mode = seq(str("IN"), alt(str("CHARACTER"), str("BYTE")), str("MODE"));

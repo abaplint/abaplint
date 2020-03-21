@@ -1,8 +1,8 @@
-import {Statement} from "./_statement";
+import {IStatement} from "./_statement";
 import {str, seq, IStatementRunnable} from "../combi";
 import {Cond} from "../expressions";
 
-export class Check extends Statement {
+export class Check implements IStatement {
 
   public getMatcher(): IStatementRunnable {
     const ret = seq(str("CHECK"), new Cond());

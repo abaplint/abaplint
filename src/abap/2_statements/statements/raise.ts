@@ -1,9 +1,9 @@
-import {Statement} from "./_statement";
+import {IStatement} from "./_statement";
 import {str, seq, alt, opt, ver, IStatementRunnable} from "../combi";
 import {Version} from "../../../version";
 import {Source, Field, ParameterListS, ClassName, MessageSource} from "../expressions";
 
-export class Raise extends Statement {
+export class Raise implements IStatement {
 
   public getMatcher(): IStatementRunnable {
     const wit  = seq(str("WITH"),

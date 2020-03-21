@@ -1,7 +1,7 @@
-import {Statement} from "./_statement";
+import {IStatement} from "./_statement";
 import {str, IStatementRunnable} from "../combi";
 
-export class Retry extends Statement {
+export class Retry implements IStatement {
 
   public getMatcher(): IStatementRunnable {
     return str("RETRY");

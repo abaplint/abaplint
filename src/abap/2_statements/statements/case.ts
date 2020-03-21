@@ -1,9 +1,9 @@
-import {Statement} from "./_statement";
+import {IStatement} from "./_statement";
 import {str, seq, opt, ver, IStatementRunnable} from "../combi";
 import {Version} from "../../../version";
 import {Source} from "../expressions";
 
-export class Case extends Statement {
+export class Case implements IStatement {
 
   public getMatcher(): IStatementRunnable {
     return seq(str("CASE"),

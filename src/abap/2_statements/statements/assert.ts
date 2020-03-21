@@ -1,8 +1,8 @@
-import {Statement} from "./_statement";
+import {IStatement} from "./_statement";
 import {str, seq, opt, plus, IStatementRunnable} from "../combi";
 import {Source, NamespaceSimpleName, Cond} from "../expressions";
 
-export class Assert extends Statement {
+export class Assert implements IStatement {
 
   public getMatcher(): IStatementRunnable {
     const fields = seq(str("FIELDS"), plus(new Source()));

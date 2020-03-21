@@ -1,9 +1,9 @@
-import {Statement} from "./_statement";
+import {IStatement} from "./_statement";
 import {verNot, str, seq, opt, plus, IStatementRunnable} from "../combi";
 import {Source, NamespaceSimpleName} from "../expressions";
 import {Version} from "../../../version";
 
-export class LogPoint extends Statement {
+export class LogPoint implements IStatement {
 
   public getMatcher(): IStatementRunnable {
     const subkey = seq(str("SUBKEY"), new Source());

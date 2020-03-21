@@ -7,7 +7,7 @@ import * as Expressions from "../../abap/2_statements/expressions";
 import * as Statements from "../../abap/2_statements/statements";
 import {StructureNode} from "../../abap/nodes";
 import {IStructure} from "../../abap/3_structures/structures/_structure";
-import {Statement} from "../../abap/2_statements/statements/_statement";
+import {IStatement} from "../../abap/2_statements/statements/_statement";
 
 /** Check BEGIN OF and END OF names match */
 export class BeginEndNamesConf extends BasicRuleConfig {
@@ -50,7 +50,7 @@ export class BeginEndNames extends ABAPRule {
     return output;
   }
 
-  private test(stru: StructureNode, type: new() => IStructure, b: new() => Statement, e: new() => Statement, file: ABAPFile): Issue[] {
+  private test(stru: StructureNode, type: new() => IStructure, b: new() => IStatement, e: new() => IStatement, file: ABAPFile): Issue[] {
     let output: Issue[] = [];
 
     for (const sub of stru.findAllStructures(type)) {

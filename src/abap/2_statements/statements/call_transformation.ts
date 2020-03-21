@@ -1,8 +1,8 @@
-import {Statement} from "./_statement";
+import {IStatement} from "./_statement";
 import {str, seq, alt, per, plus, IStatementRunnable} from "../combi";
 import {Target, Field, Source, Dynamic, NamespaceSimpleName} from "../expressions";
 
-export class CallTransformation extends Statement {
+export class CallTransformation implements IStatement {
 
   public getMatcher(): IStatementRunnable {
     const field = seq(new Field(), str("="), new Source());

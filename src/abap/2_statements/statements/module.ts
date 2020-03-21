@@ -1,9 +1,9 @@
-import {Statement} from "./_statement";
+import {IStatement} from "./_statement";
 import {verNot, str, seq, alt, opt, IStatementRunnable} from "../combi";
 import {FormName} from "../expressions";
 import {Version} from "../../../version";
 
-export class Module extends Statement {
+export class Module implements IStatement {
 
   public getMatcher(): IStatementRunnable {
     const ret = seq(str("MODULE"),

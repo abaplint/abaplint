@@ -1,9 +1,9 @@
-import {Statement} from "./_statement";
+import {IStatement} from "./_statement";
 import {str, verNot, seq, alt, IStatementRunnable, plus} from "../combi";
 import {Field, Source, Target} from "../expressions";
 import {Version} from "../../../version";
 
-export class Provide extends Statement {
+export class Provide implements IStatement {
 
   public getMatcher(): IStatementRunnable {
 

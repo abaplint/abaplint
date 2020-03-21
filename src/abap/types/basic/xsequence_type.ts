@@ -1,6 +1,6 @@
 import {AbstractType} from "./_abstract_type";
 
-export class XSequenceType extends AbstractType {
+export class XSequenceType implements AbstractType {
   public toText() {
     return "```xsequence```";
   }

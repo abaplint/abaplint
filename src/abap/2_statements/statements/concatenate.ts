@@ -1,8 +1,8 @@
-import {Statement} from "./_statement";
+import {IStatement} from "./_statement";
 import {str, opt, seq, alt, per, plus, IStatementRunnable, altPrio} from "../combi";
 import {Target, Source} from "../expressions";
 
-export class Concatenate extends Statement {
+export class Concatenate implements IStatement {
 
   public getMatcher(): IStatementRunnable {
     const mode = seq(str("IN"),

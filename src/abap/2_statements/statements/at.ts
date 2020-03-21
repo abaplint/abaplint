@@ -1,8 +1,8 @@
-import {Statement} from "./_statement";
+import {IStatement} from "./_statement";
 import {str, seq, alt, opt, IStatementRunnable, regex, altPrio} from "../combi";
 import {SourceFieldSymbol, FieldSub, Dynamic, FieldLength, FieldOffset} from "../expressions";
 
-export class At extends Statement {
+export class At implements IStatement {
 
   public getMatcher(): IStatementRunnable {
     const field = alt(seq(new FieldSub(), opt(new FieldOffset()), opt(new FieldLength())),

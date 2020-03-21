@@ -1,10 +1,10 @@
-import {Statement} from "./_statement";
+import {IStatement} from "./_statement";
 import {verNot, str, seq, opt, per, IStatementRunnable, tok} from "../combi";
 import {Integer, MessageClass, Field, ReportName} from "../expressions";
 import {Version} from "../../../version";
 import {ParenLeft, ParenRightW} from "../../1_lexer/tokens";
 
-export class Report extends Statement {
+export class Report implements IStatement {
 
   public getMatcher(): IStatementRunnable {
     const more = seq(tok(ParenLeft), new Integer(), tok(ParenRightW));

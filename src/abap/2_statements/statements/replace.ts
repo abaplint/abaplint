@@ -1,8 +1,8 @@
-import {Statement} from "./_statement";
+import {IStatement} from "./_statement";
 import {str, seq, alt, opt, per, IStatementRunnable} from "../combi";
 import {Target, Source} from "../expressions";
 
-export class Replace extends Statement {
+export class Replace implements IStatement {
 
   public getMatcher(): IStatementRunnable {
     const length = seq(str("LENGTH"), new Source());

@@ -1,8 +1,8 @@
-import {Statement} from "./_statement";
+import {IStatement} from "./_statement";
 import {str, seq, alt, opt, per, IStatementRunnable} from "../combi";
 import {Target, Source} from "../expressions";
 
-export class Shift extends Statement {
+export class Shift implements IStatement {
 
   public getMatcher(): IStatementRunnable {
     const deleting = seq(str("DELETING"), alt(str("LEADING"), str("TRAILING")), new Source());

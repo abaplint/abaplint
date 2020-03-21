@@ -1,6 +1,6 @@
 import {AbstractType} from "./_abstract_type";
 
-export class CLikeType extends AbstractType {
+export class CLikeType implements AbstractType {
   public toText() {
     return "```clike```";
   }

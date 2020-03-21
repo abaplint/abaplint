@@ -1,8 +1,8 @@
-import {Statement} from "./_statement";
+import {IStatement} from "./_statement";
 import {str, seq, IStatementRunnable} from "../combi";
 import {Field} from "../expressions";
 
-export class FunctionModule extends Statement {
+export class FunctionModule implements IStatement {
 
   public getMatcher(): IStatementRunnable {
     return seq(str("FUNCTION"), new Field());

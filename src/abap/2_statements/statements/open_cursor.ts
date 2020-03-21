@@ -1,9 +1,9 @@
-import {Statement} from "./_statement";
+import {IStatement} from "./_statement";
 import {verNot, str, seq, optPrio, IStatementRunnable} from "../combi";
 import {Select, SQLTarget, SQLHints} from "../expressions";
 import {Version} from "../../../version";
 
-export class OpenCursor extends Statement {
+export class OpenCursor implements IStatement {
 
   public getMatcher(): IStatementRunnable {
     const ret = seq(str("OPEN CURSOR"),

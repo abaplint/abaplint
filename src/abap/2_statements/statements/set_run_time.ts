@@ -1,8 +1,8 @@
-import {Statement} from "./_statement";
+import {IStatement} from "./_statement";
 import {verNot, str, seq, alt, IStatementRunnable} from "../combi";
 import {Version} from "../../../version";
 
-export class SetRunTime extends Statement {
+export class SetRunTime implements IStatement {
 
   public getMatcher(): IStatementRunnable {
     const clock = seq(str("CLOCK RESOLUTION"), alt(str("LOW"), str("HIGH")));

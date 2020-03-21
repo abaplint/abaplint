@@ -1,8 +1,8 @@
-import {Statement} from "./_statement";
+import {IStatement} from "./_statement";
 import {str, seq, IStatementRunnable} from "../combi";
 import {NamespaceSimpleName} from "../expressions";
 
-export class TypeBegin extends Statement {
+export class TypeBegin implements IStatement {
 
   public getMatcher(): IStatementRunnable {
 

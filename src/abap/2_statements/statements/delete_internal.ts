@@ -1,8 +1,8 @@
-import {Statement} from "./_statement";
+import {IStatement} from "./_statement";
 import {str, seq, alt, opt, per, plus, IStatementRunnable, altPrio} from "../combi";
 import {Target, Source, Dynamic, ComponentCompare, ComponentCond, SimpleName, Field, FieldSub} from "../expressions";
 
-export class DeleteInternal extends Statement {
+export class DeleteInternal implements IStatement {
 
   public getMatcher(): IStatementRunnable {
 // todo, is READ and DELETE similar? something can be reused?

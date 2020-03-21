@@ -1,6 +1,6 @@
 import {AbstractType} from "./_abstract_type";
 
-export class XStringType extends AbstractType {
+export class XStringType implements AbstractType {
   public toText() {
     return "```xstring```";
   }

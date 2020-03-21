@@ -1,9 +1,9 @@
-import {Statement} from "./_statement";
+import {IStatement} from "./_statement";
 import {verNot, str, seq, opt, per, optPrio, IStatementRunnable} from "../combi";
 import {Source, ReportName} from "../expressions";
 import {Version} from "../../../version";
 
-export class Program extends Statement {
+export class Program implements IStatement {
 
   public getMatcher(): IStatementRunnable {
     const message = seq(str("MESSAGE-ID"), new Source());

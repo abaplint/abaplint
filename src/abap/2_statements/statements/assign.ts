@@ -1,9 +1,9 @@
-import {Statement} from "./_statement";
+import {IStatement} from "./_statement";
 import {str, seq, alt, opt, tok, per, IStatementRunnable} from "../combi";
 import {InstanceArrow, StaticArrow} from "../../1_lexer/tokens";
 import {FSTarget, Target, Source, Dynamic, Field} from "../expressions";
 
-export class Assign extends Statement {
+export class Assign implements IStatement {
 
   public getMatcher(): IStatementRunnable {
     const component = seq(str("COMPONENT"),

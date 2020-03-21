@@ -1,8 +1,8 @@
-import {Statement} from "./_statement";
+import {IStatement} from "./_statement";
 import {str, seq, IStatementRunnable} from "../combi";
 import {Cond} from "../expressions";
 
-export class ElseIf extends Statement {
+export class ElseIf implements IStatement {
 
   public getMatcher(): IStatementRunnable {
     return seq(str("ELSEIF"), new Cond());

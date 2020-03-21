@@ -1,8 +1,8 @@
-import {Statement} from "./_statement";
+import {IStatement} from "./_statement";
 import {str, seq, opt, IStatementRunnable} from "../combi";
 import {InterfaceName} from "../expressions";
 
-export class InterfaceDeferred extends Statement {
+export class InterfaceDeferred implements IStatement {
 
   public getMatcher(): IStatementRunnable {
     return seq(str("INTERFACE"),

@@ -1,9 +1,9 @@
-import {Statement} from "./_statement";
+import {IStatement} from "./_statement";
 import {verNot, str, seq, IStatementRunnable} from "../combi";
 import {Target, Source} from "../expressions";
 import {Version} from "../../../version";
 
-export class SubtractCorresponding extends Statement {
+export class SubtractCorresponding implements IStatement {
 
   public getMatcher(): IStatementRunnable {
     const ret = seq(str("SUBTRACT-CORRESPONDING"),

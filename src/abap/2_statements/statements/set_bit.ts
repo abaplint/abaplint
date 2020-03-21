@@ -1,8 +1,8 @@
-import {Statement} from "./_statement";
+import {IStatement} from "./_statement";
 import {str, seq, opt, IStatementRunnable} from "../combi";
 import {Target, Source} from "../expressions";
 
-export class SetBit extends Statement {
+export class SetBit implements IStatement {
 
   public getMatcher(): IStatementRunnable {
     const ret = seq(str("SET BIT"),

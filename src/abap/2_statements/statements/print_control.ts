@@ -1,9 +1,9 @@
-import {Statement} from "./_statement";
+import {IStatement} from "./_statement";
 import {verNot, str, alt, seq, IStatementRunnable} from "../combi";
 import {Source} from "../expressions";
 import {Version} from "../../../version";
 
-export class PrintControl extends Statement {
+export class PrintControl implements IStatement {
 
   public getMatcher(): IStatementRunnable {
     const index = seq(str("INDEX-LINE"), new Source());

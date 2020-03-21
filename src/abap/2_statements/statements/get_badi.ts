@@ -1,9 +1,9 @@
-import {Statement} from "./_statement";
+import {IStatement} from "./_statement";
 import {verNot, str, seq, opt, IStatementRunnable} from "../combi";
 import {Target, ParameterListS, Source, Dynamic} from "../expressions";
 import {Version} from "../../../version";
 
-export class GetBadi extends Statement {
+export class GetBadi implements IStatement {
 
   public getMatcher(): IStatementRunnable {
     const filters = seq(str("FILTERS"), new ParameterListS());

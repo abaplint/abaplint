@@ -1,8 +1,8 @@
-import {Statement} from "./_statement";
+import {IStatement} from "./_statement";
 import {str, seq, opt, IStatementRunnable, alt, plus} from "../combi";
 import {ClassName} from "../expressions";
 
-export class ClassOther extends Statement {
+export class ClassOther implements IStatement {
 
   public getMatcher(): IStatementRunnable {
 

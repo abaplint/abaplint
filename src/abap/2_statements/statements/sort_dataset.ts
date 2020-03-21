@@ -1,9 +1,9 @@
-import {Statement} from "./_statement";
+import {IStatement} from "./_statement";
 import {verNot, str, seq, alt, opt, plus, optPrio, IStatementRunnable} from "../combi";
 import {SourceFieldSymbol, FieldSub, Dynamic} from "../expressions";
 import {Version} from "../../../version";
 
-export class SortDataset extends Statement {
+export class SortDataset implements IStatement {
 
   public getMatcher(): IStatementRunnable {
     const order = alt(str("ASCENDING"), str("DESCENDING"));

@@ -1,9 +1,9 @@
-import {Statement} from "./_statement";
+import {IStatement} from "./_statement";
 import {verNot, str, seq, alt, per, plus, IStatementRunnable, optPrio} from "../combi";
 import {Target, Source} from "../expressions";
 import {Version} from "../../../version";
 
-export class SyntaxCheck extends Statement {
+export class SyntaxCheck implements IStatement {
 
   public getMatcher(): IStatementRunnable {
     const program = seq(str("PROGRAM"), new Source());

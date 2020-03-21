@@ -1,8 +1,8 @@
-import {Statement} from "./_statement";
+import {IStatement} from "./_statement";
 import {str, seq, alt, per, IStatementRunnable} from "../combi";
 import {Target, Source} from "../expressions";
 
-export class Convert extends Statement {
+export class Convert implements IStatement {
 
   public getMatcher(): IStatementRunnable {
     const intoTime = seq(str("TIME"), new Target());

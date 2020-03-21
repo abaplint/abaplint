@@ -1,8 +1,8 @@
-import {Statement} from "./_statement";
+import {IStatement} from "./_statement";
 import {str, seq, opt, alt, per, IStatementRunnable} from "../combi";
 import {Dynamic, DatabaseTable, SQLSource, DatabaseConnection} from "../expressions";
 
-export class ModifyDatabase extends Statement {
+export class ModifyDatabase implements IStatement {
 
   public getMatcher(): IStatementRunnable {
 

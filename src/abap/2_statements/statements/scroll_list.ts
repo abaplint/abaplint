@@ -1,9 +1,9 @@
-import {Statement} from "./_statement";
+import {IStatement} from "./_statement";
 import {verNot, str, seq, alt, per, IStatementRunnable} from "../combi";
 import {Source} from "../expressions";
 import {Version} from "../../../version";
 
-export class ScrollList extends Statement {
+export class ScrollList implements IStatement {
 
   public getMatcher(): IStatementRunnable {
     const index = seq(str("INDEX"), new Source());

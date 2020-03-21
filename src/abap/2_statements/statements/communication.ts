@@ -1,9 +1,9 @@
-import {Statement} from "./_statement";
+import {IStatement} from "./_statement";
 import {verNot, str, seq, alt, opt, IStatementRunnable} from "../combi";
 import {Target, Source} from "../expressions";
 import {Version} from "../../../version";
 
-export class Communication extends Statement {
+export class Communication implements IStatement {
 
   public getMatcher(): IStatementRunnable {
     const length = seq(str("LENGTH"), new Target());

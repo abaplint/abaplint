@@ -1,8 +1,8 @@
-import {Statement} from "./_statement";
+import {IStatement} from "./_statement";
 import {str, seq, opt, alt, per, plus, IStatementRunnable} from "../combi";
 import {Target, Source} from "../expressions";
 
-export class Find extends Statement {
+export class Find implements IStatement {
 
   public getMatcher(): IStatementRunnable {
     const options = per(str("IGNORING CASE"),

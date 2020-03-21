@@ -1,9 +1,9 @@
-import {Statement} from "./_statement";
+import {IStatement} from "./_statement";
 import {verNot, str, seq, alt, opt, per, plus, IStatementRunnable} from "../combi";
 import {Source} from "../expressions";
 import {Version} from "../../../version";
 
-export class ModifyLine extends Statement {
+export class ModifyLine implements IStatement {
 
   public getMatcher(): IStatementRunnable {
 

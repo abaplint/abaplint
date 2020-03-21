@@ -1,10 +1,10 @@
-import {Statement} from "./_statement";
+import {IStatement} from "./_statement";
 import {verNot, str, tok, ver, seq, alt, opt, IStatementRunnable, altPrio, plus} from "../combi";
 import {Target, Source} from "../expressions";
 import {Version} from "../../../version";
 import {WPlus, WDash} from "../../1_lexer/tokens";
 
-export class Move extends Statement {
+export class Move implements IStatement {
 
   public getMatcher(): IStatementRunnable {
     const keeping = ver(Version.v740sp05, str("KEEPING TARGET LINES"));

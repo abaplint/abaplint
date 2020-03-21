@@ -1,7 +1,7 @@
 import * as Statements from "./2_statements/statements";
 import * as Expressions from "./2_statements/expressions";
 import {Combi, Expression} from "./2_statements/combi";
-import {Statement} from "./2_statements/statements/_statement";
+import {IStatement} from "./2_statements/statements/_statement";
 import * as Structures from "./3_structures/structures";
 import {IStructure} from "./3_structures/structures/_structure";
 
@@ -74,8 +74,8 @@ export class Artifacts {
     return ret;
   }
 
-  public static getStatements(): Statement[] {
-    const ret: Statement[] = [];
+  public static getStatements(): IStatement[] {
+    const ret: IStatement[] = [];
 
     const list: any = Statements;
     for (const key in Statements) {

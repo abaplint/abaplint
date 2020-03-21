@@ -1,4 +1,4 @@
-import {Statement} from "./_statement";
+import {IStatement} from "./_statement";
 import {str, seq, alt, per, opt, ver, IStatementRunnable} from "../combi";
 import {NamespaceSimpleName, ConstantFieldLength, Type as eType, TypeTable, Decimals, Length} from "../expressions";
 import * as Expressions from "../expressions";
@@ -9,7 +9,7 @@ import {BasicTypes} from "../../syntax/basic_types";
 import {TypedIdentifier} from "../../types/_typed_identifier";
 import {UnknownType} from "../../types/basic";
 
-export class Type extends Statement {
+export class Type implements IStatement {
 
   public getMatcher(): IStatementRunnable {
     const simple = per(new eType(), new Decimals(), new Length());

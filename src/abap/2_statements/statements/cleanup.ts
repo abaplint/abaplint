@@ -1,8 +1,8 @@
-import {Statement} from "./_statement";
+import {IStatement} from "./_statement";
 import {str, seq, opt, IStatementRunnable} from "../combi";
 import {Target} from "../expressions";
 
-export class Cleanup extends Statement {
+export class Cleanup implements IStatement {
 
   public getMatcher(): IStatementRunnable {
     const into = seq(str("INTO"), new Target());

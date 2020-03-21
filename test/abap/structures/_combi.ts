@@ -4,7 +4,7 @@ import * as Statements from "../../../src/abap/2_statements/statements";
 import * as Structures from "../../../src/abap/3_structures/structures";
 import {StatementNode} from "../../../src/abap/nodes/";
 import {IStructure} from "../../../src/abap/3_structures/structures/_structure";
-import {Statement} from "../../../src/abap/2_statements/statements/_statement";
+import {IStatement} from "../../../src/abap/2_statements/statements/_statement";
 import {AbstractNode} from "../../../src/abap/nodes/_abstract_node";
 import {Token} from "../../../src/abap/1_lexer/tokens/_token";
 
@@ -20,7 +20,7 @@ class DummyNode extends AbstractNode {
   }
 }
 
-function toNodes(statements: Statement[]): StatementNode[] {
+function toNodes(statements: IStatement[]): StatementNode[] {
   return statements.map((e) => { return new StatementNode(e); });
 }
 

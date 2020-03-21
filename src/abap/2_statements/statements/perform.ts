@@ -1,4 +1,4 @@
-import {Statement} from "./_statement";
+import {IStatement} from "./_statement";
 import {verNot, str, seq, opt, alt, tok, plus, IStatementRunnable} from "../combi";
 import {ParenLeft, ParenRightW} from "../../1_lexer/tokens";
 import * as Expressions from "../expressions";
@@ -6,7 +6,7 @@ import {Version} from "../../../version";
 import {StatementNode} from "../../nodes";
 import {CurrentScope} from "../../syntax/_current_scope";
 
-export class Perform extends Statement {
+export class Perform implements IStatement {
 
   public getMatcher(): IStatementRunnable {
     const using = seq(str("USING"), plus(new Expressions.Source()));

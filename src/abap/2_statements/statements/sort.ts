@@ -1,8 +1,8 @@
-import {Statement} from "./_statement";
+import {IStatement} from "./_statement";
 import {str, seq, alt, per, opt, plus, IStatementRunnable, optPrio} from "../combi";
 import {Target, Dynamic, ComponentChain, SourceFieldSymbol} from "../expressions";
 
-export class Sort extends Statement {
+export class Sort implements IStatement {
 
   public getMatcher(): IStatementRunnable {
     const order = alt(str("ASCENDING"), str("DESCENDING"));

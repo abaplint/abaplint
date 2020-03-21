@@ -1,4 +1,4 @@
-import {Statement} from "./_statement";
+import {IStatement} from "./_statement";
 import {str, seq, IStatementRunnable} from "../combi";
 import {DataDefinition} from "../expressions";
 import * as Expressions from "../expressions";
@@ -8,7 +8,7 @@ import {TypedIdentifier} from "../../types/_typed_identifier";
 import {UnknownType} from "../../types/basic";
 import {BasicTypes} from "../../syntax/basic_types";
 
-export class Data extends Statement {
+export class Data implements IStatement {
 
   public getMatcher(): IStatementRunnable {
     return seq(str("DATA"), new DataDefinition());

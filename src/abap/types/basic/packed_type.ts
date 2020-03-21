@@ -1,6 +1,6 @@
 import {AbstractType} from "./_abstract_type";
 
-export class PackedType extends AbstractType {
+export class PackedType implements AbstractType {
   private readonly length: number;
   private readonly decimals: number;
 
@@ -10,7 +10,6 @@ export class PackedType extends AbstractType {
     } else if (decimals < 0) {
       throw new Error("Bad DECIMALS");
     }
-    super();
     this.length = length;
     this.decimals = decimals;
   }

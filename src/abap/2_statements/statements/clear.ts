@@ -1,8 +1,8 @@
-import {Statement} from "./_statement";
+import {IStatement} from "./_statement";
 import {str, seq, opt, alt, IStatementRunnable} from "../combi";
 import {Target, Source} from "../expressions";
 
-export class Clear extends Statement {
+export class Clear implements IStatement {
 
   public getMatcher(): IStatementRunnable {
     const wit = seq(str("WITH"), new Source());

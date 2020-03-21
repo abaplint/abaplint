@@ -1,9 +1,9 @@
-import {Statement} from "./_statement";
+import {IStatement} from "./_statement";
 import {verNot, str, seq, alt, opt, IStatementRunnable} from "../combi";
 import {SQLTarget, SQLSource} from "../expressions";
 import {Version} from "../../../version";
 
-export class FetchNextCursor extends Statement {
+export class FetchNextCursor implements IStatement {
 
   public getMatcher(): IStatementRunnable {
     const size = seq(str("PACKAGE SIZE"), new SQLSource());

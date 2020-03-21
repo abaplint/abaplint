@@ -1,9 +1,9 @@
-import {Statement} from "./_statement";
+import {IStatement} from "./_statement";
 import {verNot, str, seq, alt, opt, IStatementRunnable} from "../combi";
 import {Source, AndReturn} from "../expressions";
 import {Version} from "../../../version";
 
-export class Leave extends Statement {
+export class Leave implements IStatement {
 
   public getMatcher(): IStatementRunnable {
     const retu = seq(new AndReturn(), str("TO SCREEN"), new Source());

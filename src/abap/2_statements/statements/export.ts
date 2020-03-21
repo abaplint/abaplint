@@ -1,9 +1,9 @@
-import {Statement} from "./_statement";
+import {IStatement} from "./_statement";
 import {str, seq, alt, altPrio, opt, per, plus, IStatementRunnable} from "../combi";
 import {Target, Source, Field, Dynamic, ParameterS, FieldSub} from "../expressions";
 
 // todo, cloud, split?
-export class Export extends Statement {
+export class Export implements IStatement {
 
   public getMatcher(): IStatementRunnable {
     const id = seq(str("ID"), new Source());

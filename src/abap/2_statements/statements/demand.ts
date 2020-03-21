@@ -1,9 +1,9 @@
-import {Statement} from "./_statement";
+import {IStatement} from "./_statement";
 import {verNot, str, seq, opt, plus, IStatementRunnable} from "../combi";
 import {Target, Field} from "../expressions";
 import {Version} from "../../../version";
 
-export class Demand extends Statement {
+export class Demand implements IStatement {
 
   public getMatcher(): IStatementRunnable {
     const field = seq(new Field(), str("="), new Target());

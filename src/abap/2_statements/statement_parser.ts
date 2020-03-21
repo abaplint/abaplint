@@ -3,7 +3,7 @@ import * as Statements from "./statements";
 import * as Expressions from "./expressions";
 import {Combi} from "./combi";
 import {TokenNode, StatementNode} from "../nodes";
-import {Unknown, Empty, Comment, MacroContent, NativeSQL, Statement, MacroCall} from "./statements/_statement";
+import {Unknown, Empty, Comment, MacroContent, NativeSQL, IStatement, MacroCall} from "./statements/_statement";
 import {Version} from "../../version";
 import {Artifacts} from "../artifacts";
 import {Token} from "../1_lexer/tokens/_token";
@@ -15,7 +15,7 @@ import {Lexer} from "../1_lexer/lexer";
 export const STATEMENT_MAX_TOKENS = 1000;
 
 class StatementMap {
-  private readonly map: {[index: string]: Statement[] };
+  private readonly map: {[index: string]: IStatement[] };
 
   public constructor() {
     this.map = {};
@@ -31,7 +31,7 @@ class StatementMap {
     }
   }
 
-  public lookup(token: Token): Statement[] {
+  public lookup(token: Token): IStatement[] {
     let res = this.map[token.getStr().toUpperCase()];
     res = res ? res.concat(this.map[""]) : this.map[""];
     return res;

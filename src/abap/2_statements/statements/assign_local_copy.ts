@@ -1,9 +1,9 @@
-import {Statement} from "./_statement";
+import {IStatement} from "./_statement";
 import {verNot, str, seq, opt, IStatementRunnable, alt} from "../combi";
 import {TargetFieldSymbol, Source, Dynamic} from "../expressions";
 import {Version} from "../../../version";
 
-export class AssignLocalCopy extends Statement {
+export class AssignLocalCopy implements IStatement {
 
   public getMatcher(): IStatementRunnable {
 

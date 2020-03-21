@@ -1,8 +1,8 @@
-import {Statement} from "./_statement";
+import {IStatement} from "./_statement";
 import {str, seq, opt, optPrio, alt, plus, regex as reg, IStatementRunnable} from "../combi";
 import {MethodName, Language} from "../expressions";
 
-export class Method extends Statement {
+export class Method implements IStatement {
 
   public getMatcher(): IStatementRunnable {
     const name = reg(/[\w~]+/);

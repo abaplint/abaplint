@@ -2,7 +2,7 @@ import {Issue} from "../issue";
 import {ABAPRule} from "./_abap_rule";
 import {ABAPFile} from "../files";
 import {StatementNode, ExpressionNode, TokenNode, TokenNodeRegex} from "../abap/nodes";
-import {Unknown, Comment, MacroContent, MacroCall, Statement} from "../abap/2_statements/statements/_statement";
+import {Unknown, Comment, MacroContent, MacroCall, IStatement} from "../abap/2_statements/statements/_statement";
 import {Identifier} from "../abap/1_lexer/tokens";
 import {IObject} from "../objects/_iobject";
 import {Registry} from "../registry";
@@ -116,7 +116,7 @@ export class KeywordCase extends ABAPRule {
     return issues;
   }
 
-  private traverse(s: StatementNode | ExpressionNode, parent: Statement): {token: Token | undefined, keyword: boolean} {
+  private traverse(s: StatementNode | ExpressionNode, parent: IStatement): {token: Token | undefined, keyword: boolean} {
 
     for (const child of s.getChildren()) {
       if (child instanceof TokenNodeRegex) {

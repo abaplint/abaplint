@@ -1,9 +1,9 @@
-import {Statement} from "./_statement";
+import {IStatement} from "./_statement";
 import {str, opt, alt, seq, ver, IStatementRunnable} from "../combi";
 import {Version} from "../../../version";
 import {FSTarget, Target, Field, Source, SimpleSource} from "../expressions";
 
-export class Append extends Statement {
+export class Append implements IStatement {
 
   public getMatcher(): IStatementRunnable {
     const assigning = seq(str("ASSIGNING"), new FSTarget());

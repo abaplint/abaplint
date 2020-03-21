@@ -1,10 +1,10 @@
-import {Statement} from "./_statement";
+import {IStatement} from "./_statement";
 import {str, seq, alt, opt, ver, optPrio, tok, plus, per, IStatementRunnable} from "../combi";
 import {FSTarget, Target, ComponentCond, Dynamic, Source, ComponentCompare, SimpleName} from "../expressions";
 import {Version} from "../../../version";
 import {WParenLeftW, WParenRightW} from "../../1_lexer/tokens";
 
-export class Loop extends Statement {
+export class Loop implements IStatement {
 
   public getMatcher(): IStatementRunnable {
     const where = seq(str("WHERE"), alt(new ComponentCond(), new Dynamic()));

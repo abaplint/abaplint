@@ -1,9 +1,9 @@
-import {Statement} from "./_statement";
+import {IStatement} from "./_statement";
 import {Version} from "../../../version";
 import {str, seq, opt, alt, ver, plus, IStatementRunnable} from "../combi";
 import {Source, Field, InterfaceName} from "../expressions";
 
-export class InterfaceDef extends Statement {
+export class InterfaceDef implements IStatement {
 
   public getMatcher(): IStatementRunnable {
     const val = seq(new Field(), str("="), new Source());

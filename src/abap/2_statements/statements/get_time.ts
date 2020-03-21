@@ -1,8 +1,8 @@
-import {Statement} from "./_statement";
+import {IStatement} from "./_statement";
 import {str, seq, alt, opt, IStatementRunnable} from "../combi";
 import {Target} from "../expressions";
 
-export class GetTime extends Statement {
+export class GetTime implements IStatement {
 
   public getMatcher(): IStatementRunnable {
     const options = seq(alt(str("STAMP FIELD"), str("FIELD")), new Target());

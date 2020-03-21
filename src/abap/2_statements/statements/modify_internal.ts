@@ -1,8 +1,8 @@
-import {Statement} from "./_statement";
+import {IStatement} from "./_statement";
 import {str, seq, opt, alt, per, plus, IStatementRunnable} from "../combi";
 import {FSTarget, Target, Source, Dynamic, ComponentCond, FieldSub, SimpleName} from "../expressions";
 
-export class ModifyInternal extends Statement {
+export class ModifyInternal implements IStatement {
 
   public getMatcher(): IStatementRunnable {
     const index = seq(str("INDEX"), new Source());

@@ -1,10 +1,10 @@
 import {Version} from "../../../version";
-import {Statement} from "./_statement";
+import {IStatement} from "./_statement";
 import {str, seq, alt, opt, tok, ver, regex as reg, plus, IStatementRunnable, optPrio} from "../combi";
 import {ParenLeft, ParenRightW} from "../../1_lexer/tokens";
 import {MethodDefChanging, MethodDefReturning, Redefinition, ClassName, MethodName, MethodDefExporting, MethodDefImporting, EventHandler, Abstract} from "../expressions";
 
-export class MethodDef extends Statement {
+export class MethodDef implements IStatement {
 
   public getMatcher(): IStatementRunnable {
     const resumable = seq(str("RESUMABLE"),

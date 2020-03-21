@@ -1,7 +1,7 @@
-import {Statement} from "./_statement";
+import {IStatement} from "./_statement";
 import {str, IStatementRunnable} from "../combi";
 
-export class EndIf extends Statement {
+export class EndIf implements IStatement {
 
   public getMatcher(): IStatementRunnable {
     return str("ENDIF");

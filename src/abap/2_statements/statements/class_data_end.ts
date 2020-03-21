@@ -1,8 +1,8 @@
-import {Statement} from "./_statement";
+import {IStatement} from "./_statement";
 import {str, seq, alt, optPrio, IStatementRunnable} from "../combi";
 import {NamespaceSimpleName} from "../expressions";
 
-export class ClassDataEnd extends Statement {
+export class ClassDataEnd implements IStatement {
 
   public getMatcher(): IStatementRunnable {
 

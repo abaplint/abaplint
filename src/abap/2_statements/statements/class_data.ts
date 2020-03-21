@@ -1,4 +1,4 @@
-import {Statement} from "./_statement";
+import {IStatement} from "./_statement";
 import {str, seq, IStatementRunnable} from "../combi";
 import {DataDefinition} from "../expressions";
 import * as Expressions from "../expressions";
@@ -7,7 +7,7 @@ import {CurrentScope} from "../../syntax/_current_scope";
 import {TypedIdentifier} from "../../types/_typed_identifier";
 import {UnknownType} from "../../types/basic";
 
-export class ClassData extends Statement {
+export class ClassData implements IStatement {
 
   public getMatcher(): IStatementRunnable {
     return seq(str("CLASS-DATA"), new DataDefinition());

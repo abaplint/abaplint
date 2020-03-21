@@ -1,4 +1,4 @@
-import {Statement} from "./_statement";
+import {IStatement} from "./_statement";
 import {verNot, str, seq, opt, alt, IStatementRunnable} from "../combi";
 import * as Expressions from "../expressions";
 import {Version} from "../../../version";
@@ -6,7 +6,7 @@ import {StatementNode} from "../../nodes";
 import {CurrentScope} from "../../syntax/_current_scope";
 import {IStructureComponent, StructureType} from "../../types/basic";
 
-export class IncludeType extends Statement {
+export class IncludeType implements IStatement {
 
   public getMatcher(): IStatementRunnable {
     const tas = seq(str("AS"), new Expressions.Field());

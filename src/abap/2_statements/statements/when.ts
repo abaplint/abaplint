@@ -1,9 +1,9 @@
-import {Statement} from "./_statement";
+import {IStatement} from "./_statement";
 import {str, seq, star, ver, IStatementRunnable, altPrio, optPrio} from "../combi";
 import {Source, InlineData, Or} from "../expressions";
 import {Version} from "../../../version";
 
-export class When extends Statement {
+export class When implements IStatement {
 
   public getMatcher(): IStatementRunnable {
     const sourc = seq(new Source(), star(new Or()));

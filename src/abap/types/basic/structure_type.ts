@@ -5,11 +5,10 @@ export interface IStructureComponent {
   type: AbstractType;
 }
 
-export class StructureType extends AbstractType {
+export class StructureType implements AbstractType {
   private readonly components: IStructureComponent[];
 
   public constructor(components: IStructureComponent[]) {
-    super();
     if (components.length === 0) {
       throw new Error("Structure does not contain any components");
     }

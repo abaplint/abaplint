@@ -1,7 +1,7 @@
 import {IStructure} from "./_structure";
 import {StructureNode, StatementNode} from "../../nodes";
 import {INode} from "../../nodes/_inode";
-import {Statement} from "../../2_statements/statements/_statement";
+import {IStatement} from "../../2_statements/statements/_statement";
 import {IStructureRunnable} from "./_structure_runnable";
 import {IMatch} from "./_match";
 
@@ -208,9 +208,9 @@ class SubStructure implements IStructureRunnable {
 }
 
 class SubStatement implements IStructureRunnable {
-  private readonly obj: new () => Statement;
+  private readonly obj: new () => IStatement;
 
-  public constructor(obj: new () => Statement) {
+  public constructor(obj: new () => IStatement) {
     this.obj = obj;
   }
 
@@ -276,7 +276,7 @@ export function star(s: IStructureRunnable): IStructureRunnable {
   return new Star(s);
 }
 
-export function sta(s: new () => Statement): IStructureRunnable {
+export function sta(s: new () => IStatement): IStructureRunnable {
   return new SubStatement(s);
 }
 

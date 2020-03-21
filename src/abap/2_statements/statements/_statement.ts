@@ -1,40 +1,40 @@
 import {IStatementRunnable} from "../combi";
 
-export abstract class Statement {
-  public abstract getMatcher(): IStatementRunnable;
+export interface IStatement {
+  getMatcher(): IStatementRunnable;
 }
 
-export class Unknown extends Statement {
+export class Unknown implements IStatement {
   public getMatcher(): IStatementRunnable {
     throw new Error("Unknown Statement, get_matcher");
   }
 }
 
-export class Comment extends Statement {
+export class Comment implements IStatement {
   public getMatcher(): IStatementRunnable {
     throw new Error("Comment Statement, get_matcher");
   }
 }
 
-export class Empty extends Statement {
+export class Empty implements IStatement {
   public getMatcher(): IStatementRunnable {
     throw new Error("Empty Statement, get_matcher");
   }
 }
 
-export class MacroCall extends Statement {
+export class MacroCall implements IStatement {
   public getMatcher(): IStatementRunnable {
     throw new Error("MacroCall Statement, get_matcher");
   }
 }
 
-export class MacroContent extends Statement {
+export class MacroContent implements IStatement {
   public getMatcher(): IStatementRunnable {
     throw new Error("MacroContent Statement, get_matcher");
   }
 }
 
-export class NativeSQL extends Statement {
+export class NativeSQL implements IStatement {
   public getMatcher(): IStatementRunnable {
     throw new Error("NativeSQL Statement, get_matcher");
   }

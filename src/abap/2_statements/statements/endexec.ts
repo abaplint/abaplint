@@ -1,8 +1,8 @@
-import {Statement} from "./_statement";
+import {IStatement} from "./_statement";
 import {str, verNot, IStatementRunnable} from "../combi";
 import {Version} from "../../../version";
 
-export class EndExec extends Statement {
+export class EndExec implements IStatement {
 
   public getMatcher(): IStatementRunnable {
     const ret = str("ENDEXEC");

@@ -1,8 +1,8 @@
-import {Statement} from "./_statement";
+import {IStatement} from "./_statement";
 import {str, opt, seq, IStatementRunnable} from "../combi";
 import {NamespaceSimpleName} from "../expressions";
 
-export class TypeEnumBegin extends Statement {
+export class TypeEnumBegin implements IStatement {
 
   public getMatcher(): IStatementRunnable {
     const structure = seq(str("STRUCTURE"), new NamespaceSimpleName());

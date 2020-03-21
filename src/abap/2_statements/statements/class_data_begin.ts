@@ -1,4 +1,4 @@
-import {Statement} from "./_statement";
+import {IStatement} from "./_statement";
 import {str, seq, opt, IStatementRunnable} from "../combi";
 import {Integer, NamespaceSimpleName} from "../expressions";
 import * as Expressions from "../expressions";
@@ -7,7 +7,7 @@ import {CurrentScope} from "../../syntax/_current_scope";
 import {TypedIdentifier} from "../../types/_typed_identifier";
 import {UnknownType} from "../../types/basic";
 
-export class ClassDataBegin extends Statement {
+export class ClassDataBegin implements IStatement {
 
   public getMatcher(): IStatementRunnable {
 

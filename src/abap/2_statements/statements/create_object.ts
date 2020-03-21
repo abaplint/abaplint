@@ -1,8 +1,8 @@
-import {Statement} from "./_statement";
+import {IStatement} from "./_statement";
 import {str, seq, opt, alt, per, IStatementRunnable} from "../combi";
 import {Target, ParameterListS, ParameterListExceptions, Source, ClassName, Dynamic} from "../expressions";
 
-export class CreateObject extends Statement {
+export class CreateObject implements IStatement {
 
   public getMatcher(): IStatementRunnable {
     const exporting = seq(str("EXPORTING"), new ParameterListS());

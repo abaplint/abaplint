@@ -1,8 +1,8 @@
-import {Statement} from "./_statement";
+import {IStatement} from "./_statement";
 import {str, seq, opt, alt, IStatementRunnable, per, altPrio} from "../combi";
 import {Target, Source, Field, MessageSource} from "../expressions";
 
-export class Message extends Statement {
+export class Message implements IStatement {
 
   public getMatcher(): IStatementRunnable {
     const like = seq(str("DISPLAY LIKE"), new Source());

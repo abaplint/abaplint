@@ -1,9 +1,9 @@
-import {Statement} from "./_statement";
+import {IStatement} from "./_statement";
 import {str, seq, alt, IStatementRunnable} from "../combi";
 import {MethodCallChain, MethodSource, MethodCallBody} from "../expressions";
 
 // method call
-export class Call extends Statement {
+export class Call implements IStatement {
 
   public getMatcher(): IStatementRunnable {
 

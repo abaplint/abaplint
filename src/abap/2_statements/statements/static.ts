@@ -1,4 +1,4 @@
-import {Statement} from "./_statement";
+import {IStatement} from "./_statement";
 import {str, seq, opt, per, alt, IStatementRunnable} from "../combi";
 import {Value, Type, ConstantFieldLength, NamespaceSimpleName, TypeTable, Length, Decimals} from "../expressions";
 import * as Expressions from "../expressions";
@@ -8,7 +8,7 @@ import {TypedIdentifier} from "../../types/_typed_identifier";
 import {BasicTypes} from "../../syntax/basic_types";
 import {UnknownType} from "../../types/basic";
 
-export class Static extends Statement {
+export class Static implements IStatement {
 
   public getMatcher(): IStatementRunnable {
     const p = opt(per(new Type(), new Value(), new Length(), new Decimals()));

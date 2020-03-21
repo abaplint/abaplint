@@ -1,8 +1,8 @@
-import {Statement} from "./_statement";
+import {IStatement} from "./_statement";
 import {str, seq, opt, IStatementRunnable} from "../combi";
 import {Target, Source, FSTarget} from "../expressions";
 
-export class Collect extends Statement {
+export class Collect implements IStatement {
 
   public getMatcher(): IStatementRunnable {
     const into = seq(str("INTO"), new Target());

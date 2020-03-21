@@ -1,8 +1,8 @@
-import {Statement} from "./_statement";
+import {IStatement} from "./_statement";
 import {verNot, str, seq, regex as reg, plus, IStatementRunnable} from "../combi";
 import {Version} from "../../../version";
 
-export class SystemCall extends Statement {
+export class SystemCall implements IStatement {
 
   public getMatcher(): IStatementRunnable {
     const anyy = reg(/^.+$/);

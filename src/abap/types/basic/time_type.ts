@@ -1,6 +1,6 @@
 import {AbstractType} from "./_abstract_type";
 
-export class TimeType extends AbstractType {
+export class TimeType implements AbstractType {
   public toText() {
     return "```t```";
   }

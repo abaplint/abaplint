@@ -1,9 +1,9 @@
-import {Statement} from "./_statement";
+import {IStatement} from "./_statement";
 import {verNot, str, seq, IStatementRunnable, star} from "../combi";
 import {Target} from "../expressions";
 import {Version} from "../../../version";
 
-export class OnChange extends Statement {
+export class OnChange implements IStatement {
 
   public getMatcher(): IStatementRunnable {
     const or = seq(str("OR"), new Target());

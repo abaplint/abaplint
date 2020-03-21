@@ -1,8 +1,8 @@
-import {Statement} from "./_statement";
+import {IStatement} from "./_statement";
 import {verNot, str, seq, opt, alt, IStatementRunnable} from "../combi";
 import {Version} from "../../../version";
 
-export class NewLine extends Statement {
+export class NewLine implements IStatement {
 
   public getMatcher(): IStatementRunnable {
     const ret = seq(str("NEW-LINE"),

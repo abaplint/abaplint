@@ -1,9 +1,9 @@
-import {Statement} from "./_statement";
+import {IStatement} from "./_statement";
 import {str, seq, opt, alt, per, plus, IStatementRunnable, ver} from "../combi";
 import {ClassName, SuperClassName, Global, ClassFinal, SimpleName} from "../expressions";
 import {Version} from "../../../version";
 
-export class ClassDefinition extends Statement {
+export class ClassDefinition implements IStatement {
 
   public getMatcher(): IStatementRunnable {
     const create = seq(str("CREATE"), alt(str("PUBLIC"), str("PROTECTED"), str("PRIVATE")));

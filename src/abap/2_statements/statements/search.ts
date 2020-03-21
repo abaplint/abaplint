@@ -1,9 +1,9 @@
-import {Statement} from "./_statement";
+import {IStatement} from "./_statement";
 import {verNot, str, seq, opt, alt, per, IStatementRunnable} from "../combi";
 import {Source} from "../expressions";
 import {Version} from "../../../version";
 
-export class Search extends Statement {
+export class Search implements IStatement {
 
   public getMatcher(): IStatementRunnable {
     const starting = seq(str("STARTING AT"), new Source());

@@ -1,8 +1,8 @@
-import {Statement} from "./_statement";
+import {IStatement} from "./_statement";
 import {str, seq, alt, optPrio, IStatementRunnable} from "../combi";
 import {NamespaceSimpleName} from "../expressions";
 
-export class DataEnd extends Statement {
+export class DataEnd implements IStatement {
 
   public getMatcher(): IStatementRunnable {
     const common = seq(str("COMMON PART"), optPrio(new NamespaceSimpleName()));

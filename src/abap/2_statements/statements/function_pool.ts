@@ -1,8 +1,8 @@
-import {Statement} from "./_statement";
+import {IStatement} from "./_statement";
 import {str, seq, IStatementRunnable, opt, per} from "../combi";
 import {Field, MessageClass, Integer} from "../expressions";
 
-export class FunctionPool extends Statement {
+export class FunctionPool implements IStatement {
 
   public getMatcher(): IStatementRunnable {
     const message = seq(str("MESSAGE-ID"), new MessageClass());

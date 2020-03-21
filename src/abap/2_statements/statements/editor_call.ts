@@ -1,9 +1,9 @@
-import {Statement} from "./_statement";
+import {IStatement} from "./_statement";
 import {verNot, str, seq, opt, per, IStatementRunnable} from "../combi";
 import {Source} from "../expressions";
 import {Version} from "../../../version";
 
-export class EditorCall extends Statement {
+export class EditorCall implements IStatement {
 
   public getMatcher(): IStatementRunnable {
     const title = seq(str("TITLE"), new Source());

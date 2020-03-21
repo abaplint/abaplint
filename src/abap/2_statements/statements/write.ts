@@ -1,10 +1,10 @@
-import {Statement} from "./_statement";
+import {IStatement} from "./_statement";
 import {verNot, str, seq, opt, alt, per, tok, regex as reg, IStatementRunnable} from "../combi";
 import {Target, Source, Dynamic, FieldSub, FieldChain} from "../expressions";
 import {ParenLeft, ParenRightW, WParenLeft} from "../../1_lexer/tokens";
 import {Version} from "../../../version";
 
-export class Write extends Statement {
+export class Write implements IStatement {
 
   public getMatcher(): IStatementRunnable {
 

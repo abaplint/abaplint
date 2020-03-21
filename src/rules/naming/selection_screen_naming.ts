@@ -3,7 +3,7 @@ import {ABAPFile} from "../../files";
 import {Issue} from "../../issue";
 import {NamingRuleConfig} from "../_naming_rule_config";
 import {Parameter, SelectOption} from "../../abap/2_statements/statements";
-import {Statement} from "../../abap/2_statements/statements/_statement";
+import {IStatement} from "../../abap/2_statements/statements/_statement";
 import {NameValidator} from "../../utils/name_validator";
 import {FieldSub, Field} from "../../abap/2_statements/expressions";
 import {StatementNode, ExpressionNode} from "../../abap/nodes";
@@ -68,7 +68,7 @@ export class SelectionScreenNaming extends ABAPRule {
     return issues;
   }
 
-  private getPatternForStatement(statement: Statement): string {
+  private getPatternForStatement(statement: IStatement): string {
     let pattern = "";
     if (statement instanceof Parameter) {
       pattern = this.conf.parameter;

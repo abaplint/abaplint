@@ -1,8 +1,8 @@
-import {Statement} from "./_statement";
+import {IStatement} from "./_statement";
 import {str, seq, alt, opt, plus, IStatementRunnable} from "../combi";
 import {Target, Source, Dynamic, Field, TypeName} from "../expressions";
 
-export class CreateData extends Statement {
+export class CreateData implements IStatement {
 
   public getMatcher(): IStatementRunnable {
 // todo, similar to DATA or TYPES?
