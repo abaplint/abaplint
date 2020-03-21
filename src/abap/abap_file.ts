@@ -1,10 +1,10 @@
-import {Pragma} from "../abap/1_lexer/tokens";
-import {Token} from "../abap/1_lexer/tokens/_token";
-import {AbstractFile} from "./_abstract_file";
-import {IFile} from "./_ifile";
-import {StructureNode, StatementNode} from "../abap/nodes/";
-import * as Structures from "../abap/3_structures/structures";
-import {ClassDefinition, ClassImplementation, InterfaceDefinition, FormDefinition} from "../abap/types";
+import {Pragma} from "./1_lexer/tokens";
+import {Token} from "./1_lexer/tokens/_token";
+import {AbstractFile} from "../files/_abstract_file";
+import {IFile} from "../files/_ifile";
+import {StructureNode, StatementNode} from "./nodes";
+import * as Structures from "./3_structures/structures";
+import {ClassDefinition, ClassImplementation, InterfaceDefinition, FormDefinition} from "./types";
 
 export class ABAPFile extends AbstractFile {
   private readonly tokens: Token[];

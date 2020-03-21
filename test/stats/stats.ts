@@ -1,7 +1,7 @@
 import {expect} from "chai";
 import {Registry} from "../../src/registry";
 import {MemoryFile} from "../../src/files";
-import {Stats} from "../../src/extras/stats/stats";
+import {Stats} from "../../src/utils/stats";
 
 describe("stats", () => {
   it("statement versions", () => {

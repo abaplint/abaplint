@@ -1,4 +1,4 @@
-import {Issue} from "../issue";
+import {Issue} from "../../issue";
 import {IFormatter} from "./_iformatter";
 
 export class Json implements IFormatter {

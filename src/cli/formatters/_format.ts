@@ -1,4 +1,4 @@
-import {Issue} from "../issue";
+import {Issue} from "../../issue";
 import * as Formatters from ".";
 
 export class Formatter {

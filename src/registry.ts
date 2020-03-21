@@ -8,7 +8,7 @@ import {ArtifactsObjects} from "./artifacts_objects";
 import {ArtifactsRules} from "./artifacts_rules";
 import {SkipLogic} from "./skip_logic";
 import {Position} from "./position";
-import {IncludeGraph} from "./include_graph";
+import {IncludeGraph} from "./utils/include_graph";
 import {IRegistry} from "./_iregistry";
 import {IProgress, NoProgress} from "./progress";
 

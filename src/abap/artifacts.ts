@@ -1,9 +1,9 @@
 import * as Statements from "./2_statements/statements";
 import * as Expressions from "./2_statements/expressions";
-import * as Structures from "./3_structures/structures";
-import {IStructure} from "./3_structures/structures/_structure";
 import {Combi, Expression} from "./2_statements/combi";
 import {Statement} from "./2_statements/statements/_statement";
+import * as Structures from "./3_structures/structures";
+import {IStructure} from "./3_structures/structures/_structure";
 
 export interface IKeyword {
   word: string;

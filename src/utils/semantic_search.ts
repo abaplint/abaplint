@@ -1,7 +1,7 @@
-import {Registry} from "../../registry";
-import {Artifacts} from "../../abap/artifacts";
-import {ExpressionNode} from "../../abap/nodes";
-import {Token} from "../../abap/1_lexer/tokens/_token";
+import {Registry} from "../registry";
+import {Artifacts} from "../abap/artifacts";
+import {ExpressionNode} from "../abap/nodes";
+import {Token} from "../abap/1_lexer/tokens/_token";
 
 export interface ICode {
   code: string;
