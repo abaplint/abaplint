@@ -19,7 +19,7 @@ describe("statement parser", () => {
     const lexerResult = Lexer.run(new MemoryFile("cl_foo.clas.abap", abap));
     const statements = new StatementParser(defaultVersion).run([lexerResult], globalMacros);
     expect(statements.length).to.equal(1);
-    expect(statements[0].getStatements()[0].get()).to.be.instanceof(MacroCall);
+    expect(statements[0].statements[0].get()).to.be.instanceof(MacroCall);
   });
 
   it("Unknown statements should be lazy, 2 statements", () => {

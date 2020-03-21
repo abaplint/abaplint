@@ -1,7 +1,7 @@
 import {IFile} from "../files/_ifile";
 import {Issue} from "../issue";
 import {ABAPFile} from "../files";
-import {Version} from "../version";
+import {Version, defaultVersion} from "../version";
 import {Lexer} from "./1_lexer/lexer";
 import {StatementParser} from "./2_statements/statement_parser";
 import {StructureParser} from "./3_structures/structure_parser";
@@ -11,24 +11,27 @@ export class ABAPParser {
   private readonly version: Version;
   private readonly globalMacros: string[];
 
-  public constructor(version: Version, globalMacros: string[]) {
-    this.version = version;
-    this.globalMacros = globalMacros;
+  public constructor(version?: Version, globalMacros?: string[]) {
+    this.version = version ? version : defaultVersion;
+    this.globalMacros = globalMacros ? globalMacros : [];
   }
 
   // files is input for a single object
   public parse(files: IFile[]): {issues: Issue[], output: ABAPFile[]} {
     let issues: Issue[] = [];
+    const output: ABAPFile[] = [];
 
 // 1: lexing
     const lexerResult: readonly ILexerResult[] = files.map(f => Lexer.run(f));
 
 // 2: statements
-    const output = new StatementParser(this.version).run(lexerResult, this.globalMacros);
+    const statementResult = new StatementParser(this.version).run(lexerResult, this.globalMacros);
 
-    for (const f of output) {
+// 3: statements
+    for (const f of statementResult) {
       const result = StructureParser.run(f);
-      f.setStructure(result.node);
+
+      output.push(new ABAPFile(f.file, f.tokens, f.statements, result.node));
       issues = issues.concat(result.issues);
     }
 

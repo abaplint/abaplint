@@ -21,9 +21,9 @@ export function getFile(abap: string): IFile[] {
   return [new MemoryFile("cl_foo.clas.abap", abap)];
 }
 
-export function getStatements(abap: string, version?: Version): StatementNode[] {
+export function getStatements(abap: string, version?: Version): readonly StatementNode[] {
   const lexerResult = Lexer.run(new MemoryFile("cl_foo.clas.abap", abap));
-  return new StatementParser(version ? version : defaultVersion).run([lexerResult], [])[0].getStatements();
+  return new StatementParser(version ? version : defaultVersion).run([lexerResult], [])[0].statements;
 }
 
 export function findIssues(abap: string) {

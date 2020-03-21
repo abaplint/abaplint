@@ -8,15 +8,16 @@ import {ClassDefinition, ClassImplementation, InterfaceDefinition, FormDefinitio
 
 export class ABAPFile extends AbstractFile {
   private readonly tokens: readonly Token[];
-  private readonly statements: StatementNode[];
-  private structure: StructureNode | undefined;
+  private readonly statements: readonly StatementNode[];
+  private readonly structure: StructureNode | undefined;
   private readonly file: IFile;
 
-  public constructor(file: IFile, tokens: readonly Token[], statements: StatementNode[]) {
+  public constructor(file: IFile, tokens: readonly Token[], statements: readonly StatementNode[], structure: StructureNode | undefined) {
     super(file.getFilename());
     this.file       = file;
     this.tokens     = tokens;
     this.statements = statements;
+    this.structure  = structure;
   }
 
   public getRaw(): string {
@@ -25,10 +26,6 @@ export class ABAPFile extends AbstractFile {
 
   public getRawRows(): string[] {
     return this.file.getRawRows();
-  }
-
-  public setStructure(node?: StructureNode) {
-    this.structure = node;
   }
 
   public getStructure(): StructureNode | undefined {
@@ -49,7 +46,7 @@ export class ABAPFile extends AbstractFile {
     }
   }
 
-  public getStatements(): StatementNode[] {
+  public getStatements(): readonly StatementNode[] {
     return this.statements;
   }
 

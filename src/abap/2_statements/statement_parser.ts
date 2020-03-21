@@ -9,8 +9,8 @@ import {Artifacts} from "../artifacts";
 import {Token} from "../1_lexer/tokens/_token";
 import {Identifier, Pragma} from "../1_lexer/tokens";
 import {IFile} from "../../files/_ifile";
-import {ABAPFile} from "../../files";
 import {ILexerResult} from "../1_lexer/lexer_result";
+import {IStatementResult} from "./statement_result";
 
 export const STATEMENT_MAX_TOKENS = 1000;
 
@@ -80,8 +80,8 @@ class WorkArea {
     this.statements.push(new StatementNode(new Unknown(), colon).setChildren(this.tokensToNodes(t)));
   }
 
-  public toFile(): ABAPFile {
-    return new ABAPFile(this.file, this.tokens, this.statements);
+  public toResult(): IStatementResult {
+    return {file: this.file, tokens: this.tokens, statements: this.statements};
   }
 
   private tokensToNodes(tokens: Token[]): TokenNode[] {
@@ -108,7 +108,7 @@ export class StatementParser {
     this.version = version;
   }
 
-  public run(input: readonly ILexerResult[], globalMacros: string[]): ABAPFile[] {
+  public run(input: readonly ILexerResult[], globalMacros: string[]): IStatementResult[] {
     this.macros = new Macros(globalMacros);
 
     const wa = input.map(i => new WorkArea(i.file, i.tokens));
@@ -125,7 +125,7 @@ export class StatementParser {
       this.nativeSQL(w);
     }
 
-    return wa.map(w => w.toFile());
+    return wa.map(w => w.toResult());
   }
 
   // todo, refactor, remove method here and only have in WorkArea class
