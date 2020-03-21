@@ -13,8 +13,8 @@ import {Lexer} from "../../src/abap/1_lexer/lexer";
 
 // utils for testing
 
-export function getTokens(abap: string): Token[] {
-  return Lexer.run(new MemoryFile("cl_foo.clas.abap", abap));
+export function getTokens(abap: string): readonly Token[] {
+  return Lexer.run(new MemoryFile("cl_foo.clas.abap", abap)).tokens;
 }
 
 export function getFile(abap: string): IFile[] {
@@ -22,7 +22,8 @@ export function getFile(abap: string): IFile[] {
 }
 
 export function getStatements(abap: string, version?: Version): StatementNode[] {
-  return new StatementParser().run(getFile(abap), version ? version : defaultVersion, [])[0].getStatements();
+  const lexerResult = Lexer.run(new MemoryFile("cl_foo.clas.abap", abap));
+  return new StatementParser(version ? version : defaultVersion).run([lexerResult], [])[0].getStatements();
 }
 
 export function findIssues(abap: string) {

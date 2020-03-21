@@ -2,6 +2,7 @@ import * as Tokens from "./tokens";
 import {IFile} from "../../files/_ifile";
 import {Position} from "../../position";
 import {Token} from "./tokens/_token";
+import {ILexerResult} from "./lexer_result";
 
 enum Mode {
   Normal,
@@ -98,12 +99,12 @@ export class Lexer {
   private static stream: Stream;
   private static buffer: Buffer;
 
-  public static run(file: IFile): Token[] {
+  public static run(file: IFile): ILexerResult {
     this.tokens = [];
     this.m = Mode.Normal;
 
     this.process(file.getRaw());
-    return this.tokens;
+    return {file, tokens: this.tokens};
   }
 
   private static add() {

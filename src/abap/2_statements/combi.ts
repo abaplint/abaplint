@@ -7,10 +7,10 @@ import {CountableNode} from "../nodes/_countable_node";
 import {INode} from "../nodes/_inode";
 
 export class Result {
-  private readonly tokens: Tokens_Token[];
+  private readonly tokens: readonly Tokens_Token[];
   private nodes: CountableNode[] | undefined;
 
-  public constructor(a: Tokens_Token[], n?: CountableNode[]) {
+  public constructor(a: readonly Tokens_Token[], n?: CountableNode[]) {
 // tokens: not yet matched
 // nodes: matched tokens
     this.tokens = a;
@@ -38,7 +38,7 @@ export class Result {
     }
   }
 
-  public getTokens(): Tokens_Token[] {
+  public getTokens(): readonly Tokens_Token[] {
     return this.tokens;
   }
 
@@ -940,7 +940,7 @@ export class Combi {
   }
 
 // assumption: no pragmas supplied in tokens input
-  public static run(runnable: IStatementRunnable, tokens: Tokens_Token[], version: Version): INode[] | undefined {
+  public static run(runnable: IStatementRunnable, tokens: readonly Tokens_Token[], version: Version): INode[] | undefined {
     this.ver = version;
 
     const input = new Result(tokens);

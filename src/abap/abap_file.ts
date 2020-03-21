@@ -7,12 +7,12 @@ import * as Structures from "./3_structures/structures";
 import {ClassDefinition, ClassImplementation, InterfaceDefinition, FormDefinition} from "./types";
 
 export class ABAPFile extends AbstractFile {
-  private readonly tokens: Token[];
+  private readonly tokens: readonly Token[];
   private readonly statements: StatementNode[];
   private structure: StructureNode | undefined;
   private readonly file: IFile;
 
-  public constructor(file: IFile, tokens: Token[], statements: StatementNode[]) {
+  public constructor(file: IFile, tokens: readonly Token[], statements: StatementNode[]) {
     super(file.getFilename());
     this.file       = file;
     this.tokens     = tokens;
@@ -35,7 +35,7 @@ export class ABAPFile extends AbstractFile {
     return this.structure;
   }
 
-  public getTokens(withPragmas = true): Token[] {
+  public getTokens(withPragmas = true): readonly Token[] {
     if (withPragmas === true) {
       return this.tokens;
     } else {

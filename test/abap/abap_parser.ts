@@ -29,7 +29,7 @@ describe("abap_parser", () => {
   END-OF-DEFINITION.
     `));
 
-    const {issues, output} = new ABAPParser().parse(files, defaultVersion, []);
+    const {issues, output} = new ABAPParser(defaultVersion, []).parse(files);
     expect(issues.length).to.equal(0);
     expect(output.length).to.equal(files.length);
 

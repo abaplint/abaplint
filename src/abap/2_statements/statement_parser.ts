@@ -10,7 +10,7 @@ import {Token} from "../1_lexer/tokens/_token";
 import {Identifier, Pragma} from "../1_lexer/tokens";
 import {IFile} from "../../files/_ifile";
 import {ABAPFile} from "../../files";
-import {Lexer} from "../1_lexer/lexer";
+import {ILexerResult} from "../1_lexer/lexer_result";
 
 export const STATEMENT_MAX_TOKENS = 1000;
 
@@ -67,10 +67,10 @@ class Macros {
 
 class WorkArea {
   private readonly file: IFile;
-  public readonly tokens: Token[];
+  public readonly tokens: readonly Token[];
   public statements: StatementNode[];
 
-  public constructor(file: IFile, tokens: Token[]) {
+  public constructor(file: IFile, tokens: readonly Token[]) {
     this.file = file;
     this.tokens = tokens;
     this.statements = [];
@@ -99,19 +99,19 @@ export class StatementParser {
   private static map: StatementMap;
 
   private macros: Macros;
-  private version: Version;
+  private readonly version: Version;
 
-  public constructor() {
+  public constructor(version: Version) {
     if (!StatementParser.map) {
       StatementParser.map = new StatementMap();
     }
+    this.version = version;
   }
 
-  public run(files: IFile[], version: Version, globalMacros: string[]): ABAPFile[] {
+  public run(input: readonly ILexerResult[], globalMacros: string[]): ABAPFile[] {
     this.macros = new Macros(globalMacros);
-    this.version = version;
 
-    const wa = files.map(f => new WorkArea(f, Lexer.run(f)));
+    const wa = input.map(i => new WorkArea(i.file, i.tokens));
 
     for (const w of wa) {
       this.process(w);
