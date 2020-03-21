@@ -7,6 +7,7 @@ import {StatementNode} from "../abap/nodes";
 import {Statement} from "../abap/statements/_statement";
 import {Combi} from "../abap/combi";
 import {Registry} from "../registry";
+import {Version} from "../version";
 
 /** Checks for ambiguity between deleting or modifying from internal and database table
  * Add "TABLE" keyword or "@" for escaping SQL variables
@@ -35,6 +36,10 @@ export class AmbiguousStatement extends ABAPRule {
 
   public runParsed(file: ABAPFile, reg: Registry) {
     const issues: Issue[] = [];
+
+    if (reg.getConfig().getVersion() < Version.v740sp05) {
+      return [];
+    }
 
     for (const statement of file.getStatements()) {
       let match = false;
