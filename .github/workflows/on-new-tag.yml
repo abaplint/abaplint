@@ -1,0 +1,29 @@
+name: On new version tag
+
+on:
+  push:
+    tags:
+      - v* # Version tags
+
+jobs:
+  npm-publish:
+    name: Publish NPM package
+    runs-on: ubuntu-latest
+    if: github.repository == 'abaplint/abaplint'
+    steps:
+      - uses: actions/checkout@v2
+      - uses: actions/setup-node@v1
+        with:
+          node-version: 12
+          registry-url: https://registry.npmjs.org/
+      - name: Prepare
+        run: npm install
+      - name: Publish
+        env:
+          NODE_AUTH_TOKEN: ${{secrets.NPM_TOKEN}}
+        run: |
+          if [ -z "${NODE_AUTH_TOKEN}" ]; then
+            echo "NODE_AUTH_TOKEN is undefined"
+            exit 1
+          fi
+          npm publish --access public
