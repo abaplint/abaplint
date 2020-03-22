@@ -1,7 +1,7 @@
 import * as Expressions from "../../2_statements/expressions";
 import * as Statements from "../../2_statements/statements";
 import {StatementNode} from "../../nodes";
-import {CurrentScope} from "../../syntax/_current_scope";
+import {CurrentScope} from "../_current_scope";
 
 export class Perform {
   public runSyntax(node: StatementNode, scope: CurrentScope, _filename: string): void {

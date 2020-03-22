@@ -1,8 +1,8 @@
 import * as Types from "../../types/basic";
 import {ExpressionNode, StatementNode} from "../../nodes";
-import {CurrentScope} from "../../syntax/_current_scope";
+import {CurrentScope} from "../_current_scope";
 import {TypedIdentifier} from "../../types/_typed_identifier";
-import {BasicTypes} from "../../syntax/basic_types";
+import {BasicTypes} from "../basic_types";
 import * as Expressions from "../../2_statements/expressions";
 
 export class TypeTable {

@@ -1,9 +1,9 @@
 import {ExpressionNode} from "../../nodes";
-import {CurrentScope} from "../../syntax/_current_scope";
+import {CurrentScope} from "../_current_scope";
 import * as Expressions from "../../2_statements/expressions";
 import {TypedIdentifier, IdentifierMeta} from "../../types/_typed_identifier";
 import {UnknownType} from "../../types/basic";
-import {BasicTypes} from "../../syntax/basic_types";
+import {BasicTypes} from "../basic_types";
 
 export class MethodDefReturning {
   public runSyntax(node: ExpressionNode, scope: CurrentScope, filename: string, meta: IdentifierMeta[]): TypedIdentifier {

@@ -1,11 +1,11 @@
 import * as Expressions from "../../2_statements/expressions";
 import * as Statements from "../../2_statements/statements";
 import {StructureNode, StatementNode} from "../../nodes";
-import {CurrentScope} from "../../syntax/_current_scope";
+import {CurrentScope} from "../_current_scope";
 import {TypedIdentifier} from "../../types/_typed_identifier";
 import {IStructureComponent} from "../../types/basic";
 import * as Basic from "../../types/basic";
-import {ClassData as ClassDataSyntax} from "../../syntax/statements/class_data";
+import {ClassData as ClassDataSyntax} from "../statements/class_data";
 
 export class ClassData {
   public runSyntax(node: StructureNode, scope: CurrentScope, filename: string): TypedIdentifier | undefined {

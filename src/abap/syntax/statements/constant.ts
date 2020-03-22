@@ -1,7 +1,7 @@
 import * as Expressions from "../../2_statements/expressions";
 import {StatementNode} from "../../nodes";
-import {CurrentScope} from "../../syntax/_current_scope";
-import {BasicTypes} from "../../syntax/basic_types";
+import {CurrentScope} from "../_current_scope";
+import {BasicTypes} from "../basic_types";
 import {TypedIdentifier, IdentifierMeta} from "../../types/_typed_identifier";
 import {UnknownType} from "../../types/basic";
 

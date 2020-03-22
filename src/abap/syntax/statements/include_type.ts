@@ -1,6 +1,6 @@
 import * as Expressions from "../../2_statements/expressions";
 import {StatementNode} from "../../nodes";
-import {CurrentScope} from "../../syntax/_current_scope";
+import {CurrentScope} from "../_current_scope";
 import {IStructureComponent, StructureType} from "../../types/basic";
 
 export class IncludeType {

@@ -1,10 +1,10 @@
-import {CurrentScope} from "../../syntax/_current_scope";
+import {CurrentScope} from "../_current_scope";
 import {StatementNode} from "../../nodes";
-import {BasicTypes} from "../../syntax/basic_types";
+import {BasicTypes} from "../basic_types";
 import {TypedIdentifier} from "../../types/_typed_identifier";
 import {UnknownType} from "../../types/basic";
 import * as Expressions from "../../2_statements/expressions";
-import {TypeTable} from "../../syntax/expressions/type_table";
+import {TypeTable} from "../expressions/type_table";
 
 export class Type {
   public runSyntax(node: StatementNode, scope: CurrentScope, filename: string): TypedIdentifier | undefined {

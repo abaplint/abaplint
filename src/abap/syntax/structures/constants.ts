@@ -2,11 +2,11 @@ import * as Expressions from "../../2_statements/expressions";
 import * as Statements from "../../2_statements/statements";
 import * as Structures from "../../3_structures/structures";
 import {StructureNode, StatementNode} from "../../nodes";
-import {CurrentScope} from "../../syntax/_current_scope";
+import {CurrentScope} from "../_current_scope";
 import {TypedIdentifier} from "../../types/_typed_identifier";
 import {IStructureComponent} from "../../types/basic";
 import * as Basic from "../../types/basic";
-import {Constant} from "../../syntax/statements/constant";
+import {Constant} from "../statements/constant";
 
 export class Constants {
   public runSyntax(node: StructureNode, scope: CurrentScope, filename: string): TypedIdentifier | undefined {

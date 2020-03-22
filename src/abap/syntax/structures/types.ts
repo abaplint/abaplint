@@ -3,9 +3,9 @@ import * as Statements from "../../2_statements/statements";
 import {StructureNode, StatementNode} from "../../nodes";
 import {TypedIdentifier} from "../../types/_typed_identifier";
 import {IStructureComponent} from "../../types/basic";
-import {CurrentScope} from "../../syntax/_current_scope";
-import {IncludeType} from "../../syntax/statements/include_type";
-import {Type} from "../../syntax/statements/type";
+import {CurrentScope} from "../_current_scope";
+import {IncludeType} from "../statements/include_type";
+import {Type} from "../statements/type";
 import * as Basic from "../../types/basic";
 
 export class Types {

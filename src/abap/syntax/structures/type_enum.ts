@@ -2,7 +2,7 @@ import * as Expressions from "../../2_statements/expressions";
 import * as Statements from "../../2_statements/statements";
 import * as Structures from "../../3_structures/structures";
 import {StructureNode} from "../../nodes";
-import {CurrentScope} from "../../syntax/_current_scope";
+import {CurrentScope} from "../_current_scope";
 import {UnknownType} from "../../types/basic";
 import {TypedIdentifier} from "../../types/_typed_identifier";
 
