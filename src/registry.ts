@@ -12,16 +12,17 @@ import {IncludeGraph} from "./utils/include_graph";
 import {IRegistry} from "./_iregistry";
 import {IProgress, NoProgress} from "./progress";
 import {IConfiguration} from "./_config";
+import {IIncludeGraph} from "./utils/_include_graph";
 
 export class Registry implements IRegistry {
   private dirty = false;
-  private conf: Config;
+  private conf: IConfiguration;
   private readonly objects: IObject[] = [];
   private issues: Issue[] = [];
   private readonly dependencies: string[] = [];
   private includeGraph: IncludeGraph | undefined;
 
-  public constructor(conf?: Config) {
+  public constructor(conf?: IConfiguration) {
     this.conf = conf ? conf : Config.getDefault();
   }
 
@@ -60,7 +61,7 @@ export class Registry implements IRegistry {
   }
 
 // assumption: Config is immutable, and can only be changed via this method
-  public setConfig(conf: Config): Registry {
+  public setConfig(conf: IConfiguration): IRegistry {
     this.setDirty();
     for (const obj of this.getObjects()) {
       obj.setDirty();
@@ -73,6 +74,8 @@ export class Registry implements IRegistry {
     const reg = new RegExp(this.getConfig().getSyntaxSetttings().errorNamespace, "i");
     return reg.test(name);
   }
+
+  /////////////////
 
   public getABAPObjects(): ABAPObject[] {
     return this.objects.filter((obj) => { return obj instanceof ABAPObject; }) as ABAPObject[];
@@ -97,19 +100,21 @@ export class Registry implements IRegistry {
     return undefined;
   }
 
-  public addFile(file: IFile): Registry {
+  /////////////////
+
+  public addFile(file: IFile): IRegistry {
     this.setDirty();
     return this.addFiles([file]);
   }
 
-  public updateFile(file: IFile): Registry {
+  public updateFile(file: IFile): IRegistry {
     this.setDirty();
     const obj = this.find(file.getObjectName(), file.getObjectType());
     obj.updateFile(file);
     return this;
   }
 
-  public removeFile(file: IFile): Registry {
+  public removeFile(file: IFile): IRegistry {
     this.setDirty();
     const obj = this.find(file.getObjectName(), file.getObjectType());
     obj.removeFile(file);
@@ -119,7 +124,7 @@ export class Registry implements IRegistry {
     return this;
   }
 
-  public addFiles(files: IFile[]): Registry {
+  public addFiles(files: IFile[]): IRegistry {
     this.setDirty();
     for (const f of files) {
       try {
@@ -138,22 +143,12 @@ export class Registry implements IRegistry {
 
 // todo: methods to add/remove deps
 // todo: add unit tests
-  public addDependencies(files: IFile[]): Registry {
+  public addDependencies(files: IFile[]): IRegistry {
     this.setDirty();
     for (const f of files) {
       this.dependencies.push(f.getFilename());
     }
     return this.addFiles(files);
-  }
-
-  public setDirty() {
-    this.dirty = true;
-    this.issues = [];
-    this.includeGraph = undefined;
-  }
-
-  public isDirty(): boolean {
-    return this.dirty;
   }
 
   // assumption: the file is already in the registry
@@ -182,7 +177,7 @@ export class Registry implements IRegistry {
     return this.runRules(undefined, iobj);
   }
 
-  public getIncludeGraph(): IncludeGraph {
+  public getIncludeGraph(): IIncludeGraph {
     if (this.isDirty() === true) {
       this.clean();
     }
@@ -219,6 +214,16 @@ export class Registry implements IRegistry {
   }
 
 //////////////////////////////////////////
+
+  private setDirty() {
+    this.dirty = true;
+    this.issues = [];
+    this.includeGraph = undefined;
+  }
+
+  private isDirty(): boolean {
+    return this.dirty;
+  }
 
   private clean() {
     this.parse();

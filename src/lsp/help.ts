@@ -1,5 +1,5 @@
 import * as LServer from "vscode-languageserver-types";
-import {Registry} from "../registry";
+import {IRegistry} from "../_iregistry";
 import {INode} from "../abap/nodes/_inode";
 import {ABAPFile} from "../files";
 import {StructureNode, StatementNode, TokenNodeRegex, ExpressionNode, TokenNode} from "../abap/nodes";
@@ -10,7 +10,7 @@ import {ABAPObject} from "../objects/_abap_object";
 import {DumpScope} from "./dump_scope";
 
 export class Help {
-  public static find(reg: Registry, textDocument: LServer.TextDocumentIdentifier, position: LServer.Position): string {
+  public static find(reg: IRegistry, textDocument: LServer.TextDocumentIdentifier, position: LServer.Position): string {
     let content = "";
 
     content = "<tt>" + textDocument.uri + " (" +
@@ -30,7 +30,7 @@ export class Help {
     return content;
   }
 
-  private static cursorInformation(reg: Registry,
+  private static cursorInformation(reg: IRegistry,
                                    textDocument: LServer.TextDocumentIdentifier,
                                    position: LServer.Position,
                                    file: ABAPFile): string {
@@ -217,7 +217,7 @@ export class Help {
     return output + "</ul>";
   }
 
-  private static dumpFiles(reg: Registry) {
+  private static dumpFiles(reg: IRegistry) {
     let output = "";
     for (const o of reg.getObjects()) {
       output = output + o.getType() + " " + o.getName() + ": ";

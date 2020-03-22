@@ -4,6 +4,7 @@ import {Unknown, Comment, Empty} from "../abap/2_statements/statements/_statemen
 import * as Statements from "../abap/2_statements/statements";
 import {MethodLengthStats} from "./method_length_stats";
 import {Config} from "../config";
+import {IRegistry} from "../_iregistry";
 
 export interface ITotals {
   statements: number;
@@ -34,9 +35,9 @@ export interface IResult {
 }
 
 export class Stats {
-  private readonly reg: Registry;
+  private readonly reg: IRegistry;
 
-  public constructor(reg: Registry) {
+  public constructor(reg: IRegistry) {
     this.reg = reg;
   }
 

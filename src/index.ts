@@ -29,6 +29,7 @@ import * as BasicTypes from "./abap/types/basic";
 import * as Types from "./abap/types";
 import * as Tokens from "./abap/1_lexer/tokens";
 import {IConfig} from "./_config";
+import {IRegistry} from "./_iregistry";
 
 // do not include this file from anywhere within abaplint
 
@@ -40,4 +41,4 @@ export {MemoryFile, Issue, Config, Version, Formatter,
   Structures, Statements, Expressions, Types, Nodes, IConfig,
   AbstractType, TypedIdentifier, BasicTypes, ScopeType, INode, Token,
   Tokens, ABAPObject, SyntaxLogic, SpaghettiScope, IdentifierMeta,
-  ABAPFile, CurrentScope};
+  ABAPFile, CurrentScope, IRegistry};

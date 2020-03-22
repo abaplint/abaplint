@@ -1,15 +1,15 @@
 import * as LServer from "vscode-languageserver-types";
-import {Registry} from "../registry";
+import {IRegistry} from "../_iregistry";
 import {ABAPFile} from "../files";
 import {Identifier} from "../abap/types/_identifier";
 import {Attributes, MethodDefinitions, MethodImplementation} from "../abap/types";
 import {CurrentScope} from "../abap/syntax/_current_scope";
 
 export class Symbols {
-  private static reg: Registry;
+  private static reg: IRegistry;
   private static scope: CurrentScope;
 
-  public static find(reg: Registry, uri: string): LServer.DocumentSymbol[] {
+  public static find(reg: IRegistry, uri: string): LServer.DocumentSymbol[] {
     const file = reg.getABAPFile(uri);
     if (file === undefined) {
       return [];

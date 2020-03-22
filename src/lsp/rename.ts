@@ -1,7 +1,7 @@
 import * as LServer from "vscode-languageserver-types";
 import {ITextDocumentPositionParams, IRenameParams} from "./_interfaces";
 import {LSPUtils} from "./_lsp_utils";
-import {Registry} from "../registry";
+import {IRegistry} from "../_iregistry";
 import * as Statements from "../abap/2_statements/statements";
 import * as Expressions from "../abap/2_statements/expressions";
 import {RenameGlobalClass} from "./rename_global_class";
@@ -11,9 +11,9 @@ export enum RenameType {
 }
 
 export class Rename {
-  private readonly reg: Registry;
+  private readonly reg: IRegistry;
 
-  public constructor(reg: Registry) {
+  public constructor(reg: IRegistry) {
     this.reg = reg;
   }
 

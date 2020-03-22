@@ -172,7 +172,7 @@ async function run() {
       } else {
         reg.addDependencies(deps);
         await reg.parseAsync(progress);
-        issues = reg.findIssues(progress);
+        issues = issues.concat(reg.findIssues(progress));
         output = Formatter.format(issues, format, loaded.length);
 
         if (argv["outformat"] && argv["outfile"]) {

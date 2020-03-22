@@ -1,6 +1,6 @@
 import * as Statements from "../abap/2_statements/statements";
 import * as Expressions from "../abap/2_statements/expressions";
-import {Registry} from "../registry";
+import {IRegistry} from "../_iregistry";
 import {Token} from "../abap/1_lexer/tokens/_token";
 import {StatementNode, TokenNode} from "../abap/nodes";
 import {Identifier} from "../abap/types/_identifier";
@@ -31,7 +31,7 @@ export class LSPUtils {
       token.getEnd().getCol() - 1);
   }
 
-  public static findCursor(reg: Registry, pos: ITextDocumentPositionParams): ICursorPosition | undefined {
+  public static findCursor(reg: IRegistry, pos: ITextDocumentPositionParams): ICursorPosition | undefined {
     const file = reg.getABAPFile(pos.textDocument.uri);
     if (file === undefined) {
       return undefined;
@@ -75,7 +75,7 @@ export class LSPUtils {
     return undefined;
   }
 
-  public static lookup(cursor: ICursorPosition, reg: Registry, obj: ABAPObject): ABAPFile | FormDefinition | Identifier | undefined {
+  public static lookup(cursor: ICursorPosition, reg: IRegistry, obj: ABAPObject): ABAPFile | FormDefinition | Identifier | undefined {
 
     const res = this.findInclude(cursor, reg);
     if (res) {
@@ -121,7 +121,7 @@ export class LSPUtils {
     return undefined;
   }
 
-  public static findInclude(found: ICursorPosition, reg: Registry): ABAPFile | undefined {
+  public static findInclude(found: ICursorPosition, reg: IRegistry): ABAPFile | undefined {
     if (!(found.snode.get() instanceof Statements.Include)) {
       return;
     }

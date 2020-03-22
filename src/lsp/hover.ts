@@ -1,5 +1,5 @@
 import * as LServer from "vscode-languageserver-types";
-import {Registry} from "../registry";
+import {IRegistry} from "../_iregistry";
 import {ABAPObject} from "../objects/_abap_object";
 import {LSPUtils} from "./_lsp_utils";
 import {FormDefinition} from "../abap/types";
@@ -9,9 +9,10 @@ import {TypedIdentifier} from "../abap/types/_typed_identifier";
 import {CurrentScope} from "../abap/syntax/_current_scope";
 import * as Tokens from "../abap/1_lexer/tokens";
 import {ITextDocumentPositionParams} from "./_interfaces";
+import {Registry} from "../registry";
 
 export class Hover {
-  public static find(reg: Registry, pos: ITextDocumentPositionParams): LServer.MarkupContent | undefined {
+  public static find(reg: IRegistry, pos: ITextDocumentPositionParams): LServer.MarkupContent | undefined {
 
     const file = reg.getABAPFile(pos.textDocument.uri);
     if (file === undefined) {

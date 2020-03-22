@@ -1,14 +1,14 @@
 import * as LServer from "vscode-languageserver-types";
-import {Registry} from "../registry";
+import {IRegistry} from "../_iregistry";
 import {ABAPObject} from "../objects/_abap_object";
 import {SpaghettiScope} from "../abap/syntax/spaghetti_scope";
 import {SyntaxLogic} from "../abap/syntax/syntax";
 import {LSPUtils} from "./_lsp_utils";
 
 export class Highlight {
-  private readonly reg: Registry;
+  private readonly reg: IRegistry;
 
-  public constructor(reg: Registry) {
+  public constructor(reg: IRegistry) {
     this.reg = reg;
   }
 

@@ -5,10 +5,11 @@ import {SyntaxLogic} from "../../../src/abap/syntax/syntax";
 import {SpaghettiScope} from "../../../src/abap/syntax/spaghetti_scope";
 import {Position} from "../../../src/position";
 import {ScopeType} from "../../../src/abap/syntax/_scope_type";
+import {IRegistry} from "../../../src/_iregistry";
 
 const filename = "zfoobar.prog.abap";
 
-function run(reg: Registry): SpaghettiScope {
+function run(reg: IRegistry): SpaghettiScope {
   const obj = reg.getABAPObjects()[0];
 
   for (const file of obj.getABAPFiles()) {

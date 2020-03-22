@@ -40,4 +40,5 @@ export interface IConfiguration {
   getVersion(): Version;
   getSyntaxSetttings(): ISyntaxSettings;
   readByRule(rule: string): any;
+  readByKey(rule: string, key: string): any;
 }

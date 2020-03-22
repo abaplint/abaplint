@@ -1,7 +1,7 @@
-import {Registry} from "../registry";
 import {Artifacts} from "../abap/artifacts";
 import {ExpressionNode} from "../abap/nodes";
 import {Token} from "../abap/1_lexer/tokens/_token";
+import {IRegistry} from "../_iregistry";
 
 export interface ICode {
   code: string;
@@ -20,9 +20,9 @@ export interface ISemanticSearchResult {
 }
 
 export class SemanticSearch {
-  private readonly reg: Registry;
+  private readonly reg: IRegistry;
 
-  public constructor(reg: Registry) {
+  public constructor(reg: IRegistry) {
     this.reg = reg;
   }
 

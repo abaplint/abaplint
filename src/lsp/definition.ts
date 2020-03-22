@@ -1,5 +1,5 @@
 import * as LServer from "vscode-languageserver-types";
-import {Registry} from "../registry";
+import {IRegistry} from "../_iregistry";
 import {Identifier} from "../abap/types/_identifier";
 import {ABAPObject} from "../objects/_abap_object";
 import {LSPUtils} from "./_lsp_utils";
@@ -7,7 +7,7 @@ import {ABAPFile} from "../files";
 
 export class Definition {
 
-  public static find(reg: Registry,
+  public static find(reg: IRegistry,
                      textDocument: LServer.TextDocumentIdentifier,
                      position: LServer.Position): LServer.Location | undefined {
 

@@ -4,8 +4,9 @@ import {Registry} from "../../../src/registry";
 import {SyntaxLogic} from "../../../src/abap/syntax/syntax";
 import {Issue} from "../../../src/issue";
 import {Config} from "../../../src/config";
+import {IRegistry} from "../../../src/_iregistry";
 
-function run(reg: Registry, globalConstants?: string[]): Issue[] {
+function run(reg: IRegistry, globalConstants?: string[]): Issue[] {
   let ret: Issue[] = [];
 
   if (globalConstants) {
@@ -42,7 +43,7 @@ function runClass(abap: string): Issue[] {
 
 function runProgram(abap: string, globalConstants?: string[]): Issue[] {
   const file = new MemoryFile("zfoobar.prog.abap", abap);
-  const reg = new Registry().addFile(file).parse();
+  const reg: IRegistry = new Registry().addFile(file).parse();
   return run(reg, globalConstants);
 }
 
