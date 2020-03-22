@@ -3,16 +3,16 @@ import {ExpressionNode, StatementNode} from "../nodes";
 import * as Expressions from "../2_statements/expressions";
 import * as Statements from "../2_statements/statements";
 import {INode} from "../nodes/_inode";
-import {Registry} from "../../registry";
+import {IRegistry} from "../../_iregistry";
 import {Table, View} from "../../objects";
 import {TypedIdentifier} from "../types/_typed_identifier";
 import {UnknownType} from "../types/basic";
 
 export class Inline {
   private readonly scope: CurrentScope;
-  private readonly reg: Registry;
+  private readonly reg: IRegistry;
 
-  public constructor(reg: Registry, scope: CurrentScope) {
+  public constructor(reg: IRegistry, scope: CurrentScope) {
     this.scope = scope;
     this.reg = reg;
   }

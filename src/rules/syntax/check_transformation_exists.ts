@@ -4,7 +4,7 @@ import {ABAPFile} from "../../files";
 import {BasicRuleConfig} from "../_basic_rule_config";
 import {CallTransformation} from "../../abap/2_statements/statements";
 import {NamespaceSimpleName} from "../../abap/2_statements/expressions";
-import {Registry} from "../../registry";
+import {IRegistry} from "../../_iregistry";
 
 /** Checks that used XSLT transformations exist. */
 export class CheckTransformationExistsConf extends BasicRuleConfig {
@@ -29,7 +29,7 @@ export class CheckTransformationExists extends ABAPRule {
     this.conf = conf;
   }
 
-  public runParsed(file: ABAPFile, reg: Registry) {
+  public runParsed(file: ABAPFile, reg: IRegistry) {
     const output: Issue[] = [];
 
     const struc = file.getStructure();

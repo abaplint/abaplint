@@ -1,6 +1,6 @@
 import {AbstractObject} from "./_abstract_object";
 import {AbstractType} from "../abap/types/basic/_abstract_type";
-import {Registry} from "../registry";
+import {IRegistry} from "../_iregistry";
 import {DDIC} from "../ddic";
 import * as Types from "../abap/types/basic";
 
@@ -17,7 +17,7 @@ export class DataElement extends AbstractObject {
     };
   }
 
-  public parseType(reg: Registry): AbstractType {
+  public parseType(reg: IRegistry): AbstractType {
     const xml = this.getXML();
     if (xml === undefined) {
       return new Types.UnknownType("unable to find xml");

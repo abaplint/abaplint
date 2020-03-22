@@ -1,7 +1,7 @@
 import {Issue} from "../issue";
 import {IRule} from "./_irule";
 import {IObject} from "../objects/_iobject";
-import {Registry} from "../registry";
+import {IRegistry} from "../_iregistry";
 import {BasicRuleConfig} from "./_basic_rule_config";
 import {ABAPObject} from "../objects/_abap_object";
 
@@ -25,7 +25,7 @@ export class IdenticalFormNames implements IRule {
     this.conf = conf;
   }
 
-  public run(obj: IObject, _reg: Registry): Issue[] {
+  public run(obj: IObject, _reg: IRegistry): Issue[] {
     if (!(obj instanceof ABAPObject)) {
       return [];
     }

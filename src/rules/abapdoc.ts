@@ -4,7 +4,7 @@ import {Issue} from "../issue";
 import {ABAPFile} from "../files";
 import {MethodDefinition} from "../abap/types";
 import {CurrentScope} from "../abap/syntax/_current_scope";
-import {Registry} from "../registry";
+import {IRegistry} from "../_iregistry";
 
 /**
  * Various checks regarding abapdoc. Base rule checks for existence of abapdoc for
@@ -32,7 +32,7 @@ export class Abapdoc extends ABAPRule {
     this.conf = conf;
   }
 
-  public runParsed(file: ABAPFile, reg: Registry) {
+  public runParsed(file: ABAPFile, reg: IRegistry) {
     const issues: Issue[] = [];
     const rows = file.getRawRows();
     const scope = CurrentScope.buildDefault(reg);

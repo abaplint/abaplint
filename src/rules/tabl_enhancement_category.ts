@@ -1,6 +1,6 @@
 import {Issue} from "../issue";
 import {BasicRuleConfig} from "./_basic_rule_config";
-import {Registry} from "../registry";
+import {IRegistry} from "../_iregistry";
 import {Table, EnhancementCategory} from "../objects";
 import {IRule} from "./_irule";
 import {IObject} from "../objects/_iobject";
@@ -29,7 +29,7 @@ export class TABLEnhancementCategory implements IRule {
     this.conf = conf;
   }
 
-  public run(obj: IObject, _reg: Registry): Issue[] {
+  public run(obj: IObject, _reg: IRegistry): Issue[] {
     if (!(obj instanceof Table)) {
       return [];
     }

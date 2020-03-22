@@ -2,7 +2,7 @@ import {IRule} from "../_irule";
 import {Issue} from "../../issue";
 import * as Objects from "../../objects";
 import {IObject} from "../../objects/_iobject";
-import {Registry} from "../../registry";
+import {IRegistry} from "../../_iregistry";
 import {BasicRuleConfig} from "../_basic_rule_config";
 import {Position} from "../../position";
 import {AbstractType} from "../../abap/types/basic/_abstract_type";
@@ -29,7 +29,7 @@ export class CheckDDIC implements IRule {
     this.conf = conf;
   }
 
-  public run(obj: IObject, reg: Registry): Issue[] {
+  public run(obj: IObject, reg: IRegistry): Issue[] {
     let found: AbstractType | undefined = undefined;
     if (obj instanceof Objects.DataElement
         || obj instanceof Objects.Domain

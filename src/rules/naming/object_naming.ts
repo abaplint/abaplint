@@ -1,6 +1,6 @@
 import {Issue} from "../../issue";
 import {NamingRuleConfig} from "../_naming_rule_config";
-import {Registry} from "../../registry";
+import {IRegistry} from "../../_iregistry";
 import {IObject} from "../../objects/_iobject";
 import {IRule} from "../_irule";
 import * as Objects from "../../objects";
@@ -61,7 +61,7 @@ export class ObjectNaming implements IRule {
     this.conf = conf;
   }
 
-  public run(obj: IObject, _reg: Registry): Issue[] {
+  public run(obj: IObject, _reg: IRegistry): Issue[] {
     let message: string | undefined = undefined;
     let pattern: string = "";
 

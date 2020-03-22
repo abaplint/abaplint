@@ -2,7 +2,7 @@ import {Issue} from "../../issue";
 import {IRule} from "../_irule";
 import {IObject} from "../../objects/_iobject";
 import {MethodDefinition} from "../../abap/types/method_definition";
-import {Registry} from "../../registry";
+import {IRegistry} from "../../_iregistry";
 import {ABAPObject} from "../../objects/_abap_object";
 import {NamingRuleConfig} from "../_naming_rule_config";
 import {NameValidator} from "../../utils/name_validator";
@@ -45,7 +45,7 @@ export class MethodParameterNames implements IRule {
     this.conf = conf;
   }
 
-  public run(obj: IObject, reg: Registry): Issue[] {
+  public run(obj: IObject, reg: IRegistry): Issue[] {
     let ret: Issue[] = [];
     if (this.conf.patternKind === undefined) {
       this.conf.patternKind = "required";

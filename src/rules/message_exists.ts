@@ -3,7 +3,7 @@ import {Issue} from "../issue";
 import {ABAPRule} from "./_abap_rule";
 import {ABAPFile} from "../files";
 import {BasicRuleConfig} from "./_basic_rule_config";
-import {Registry} from "../registry";
+import {IRegistry} from "../_iregistry";
 import {MessageClass} from "../objects";
 
 /** In message statements, check that the message class + id exist */
@@ -29,7 +29,7 @@ export class MessageExistsRule extends ABAPRule {
     this.conf = conf;
   }
 
-  public runParsed(file: ABAPFile, reg: Registry) {
+  public runParsed(file: ABAPFile, reg: IRegistry) {
     const issues: Issue[] = [];
 
     const struc = file.getStructure();

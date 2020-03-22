@@ -1,6 +1,6 @@
 import {Issue} from "../issue";
 import {BasicRuleConfig} from "./_basic_rule_config";
-import {Registry} from "../registry";
+import {IRegistry} from "../_iregistry";
 import {ICFService, Class} from "../objects";
 import {IRule} from "./_irule";
 import {IObject} from "../objects/_iobject";
@@ -25,7 +25,7 @@ export class SICFConsistency implements IRule {
     this.conf = conf;
   }
 
-  public run(obj: IObject, reg: Registry): Issue[] {
+  public run(obj: IObject, reg: IRegistry): Issue[] {
     const issues: Issue[] = [];
 
     if (!(obj instanceof ICFService)) {

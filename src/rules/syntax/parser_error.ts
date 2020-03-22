@@ -5,7 +5,7 @@ import {Unknown} from "../../abap/2_statements/statements/_statement";
 import {ABAPRule} from "../_abap_rule";
 import {ABAPFile} from "../../files";
 import {StatementNode} from "../../abap/nodes";
-import {Registry} from "../../registry";
+import {IRegistry} from "../../_iregistry";
 import {BasicRuleConfig} from "../_basic_rule_config";
 import {STATEMENT_MAX_TOKENS} from "../../abap/2_statements/statement_parser";
 
@@ -29,7 +29,7 @@ export class ParserError extends ABAPRule {
     this.conf = conf;
   }
 
-  public runParsed(file: ABAPFile, reg: Registry) {
+  public runParsed(file: ABAPFile, reg: IRegistry) {
     const issues: Issue[] = [];
 
     let start = new Position(0, 0);

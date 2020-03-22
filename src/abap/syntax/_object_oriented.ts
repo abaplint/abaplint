@@ -3,7 +3,7 @@ import * as Expressions from "../2_statements/expressions";
 import {StatementNode} from "../nodes";
 import {ClassDefinition, MethodDefinition, InterfaceDefinition} from "../types";
 import {Interface, Class} from "../../objects";
-import {Registry} from "../../registry";
+import {IRegistry} from "../../_iregistry";
 import {CurrentScope} from "./_current_scope";
 import {ScopeType} from "./_scope_type";
 import {ObjectReferenceType} from "../types/basic";
@@ -13,10 +13,10 @@ import {Position} from "../../position";
 import {BuiltIn} from "./_builtin";
 
 export class ObjectOriented {
-  private readonly reg: Registry;
+  private readonly reg: IRegistry;
   private readonly scope: CurrentScope;
 
-  public constructor(reg: Registry, scope: CurrentScope) {
+  public constructor(reg: IRegistry, scope: CurrentScope) {
     this.reg = reg;
     this.scope = scope;
   }

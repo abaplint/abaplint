@@ -2,7 +2,7 @@ import {Issue} from "../issue";
 import {ABAPRule} from "./_abap_rule";
 import {ABAPFile} from "../files";
 import {BasicRuleConfig} from "./_basic_rule_config";
-import {Registry} from "../registry";
+import {IRegistry} from "../_iregistry";
 import {CurrentScope} from "../abap/syntax/_current_scope";
 
 /**
@@ -42,7 +42,7 @@ export class CheckAbstract extends ABAPRule {
     this.conf = conf;
   }
 
-  public runParsed(file: ABAPFile, reg: Registry) {
+  public runParsed(file: ABAPFile, reg: IRegistry) {
     const issues: Issue[] = [];
     const scope = CurrentScope.buildDefault(reg);
 

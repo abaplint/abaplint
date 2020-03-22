@@ -1,6 +1,6 @@
 import {Issue} from "../issue";
 import {BasicRuleConfig} from "./_basic_rule_config";
-import {Registry} from "../registry";
+import {IRegistry} from "../_iregistry";
 import {Visibility, ClassAttribute} from "../abap/types";
 import {CurrentScope} from "../abap/syntax/_current_scope";
 import {ABAPRule} from "./_abap_rule";
@@ -39,7 +39,7 @@ export class NoPublicAttributes extends ABAPRule {
     this.conf = conf;
   }
 
-  public runParsed(file: ABAPFile, reg: Registry) {
+  public runParsed(file: ABAPFile, reg: IRegistry) {
     this.rows = file.getRawRows();
     this.scope = CurrentScope.buildDefault(reg);
     this.file = file;

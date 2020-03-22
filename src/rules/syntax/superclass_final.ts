@@ -1,7 +1,7 @@
 import {Issue} from "../../issue";
 import {ABAPRule} from "./../_abap_rule";
 import {ABAPFile} from "../../files";
-import {Registry} from "../../registry";
+import {IRegistry} from "../../_iregistry";
 import {IObject} from "../../objects/_iobject";
 import * as Objects from "../../objects";
 import {BasicRuleConfig} from "../_basic_rule_config";
@@ -31,7 +31,7 @@ export class SuperclassFinal extends ABAPRule {
     this.conf = conf;
   }
 
-  public runParsed(file: ABAPFile, reg: Registry, obj: IObject) {
+  public runParsed(file: ABAPFile, reg: IRegistry, obj: IObject) {
     const output: Issue[] = [];
 
     for (const definition of file.getClassDefinitions()) {

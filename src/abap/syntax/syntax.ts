@@ -6,7 +6,7 @@ import {INode} from "../nodes/_inode";
 import {Token} from "../1_lexer/tokens/_token";
 import {StatementNode, StructureNode} from "../nodes";
 import {ABAPFile} from "../../files";
-import {Registry} from "../../registry";
+import {IRegistry} from "../../_iregistry";
 import {ABAPObject} from "../../objects/_abap_object";
 import {CurrentScope} from "./_current_scope";
 import {ScopeType} from "./_scope_type";
@@ -25,7 +25,7 @@ export class SyntaxLogic {
   private issues: Issue[];
 
   private readonly object: ABAPObject;
-  private readonly reg: Registry;
+  private readonly reg: IRegistry;
 
   private readonly scope: CurrentScope;
 
@@ -35,7 +35,7 @@ export class SyntaxLogic {
     inline: Inline,
   };
 
-  public constructor(reg: Registry, object: ABAPObject) {
+  public constructor(reg: IRegistry, object: ABAPObject) {
     this.reg = reg;
     this.issues = [];
 

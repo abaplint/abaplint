@@ -3,16 +3,16 @@ import {IObject} from "../objects/_iobject";
 import {ABAPObject} from "../objects/_abap_object";
 import {Issue} from "../issue";
 import {ABAPFile} from "../files";
-import {Registry} from "../registry";
+import {IRegistry} from "../_iregistry";
 
 export abstract class ABAPRule implements IRule {
   public abstract getKey(): string;
   public abstract getConfig(): void;
   public abstract setConfig(conf: any): void;
 
-  public abstract runParsed(file: ABAPFile, reg: Registry, obj: ABAPObject): Issue[];
+  public abstract runParsed(file: ABAPFile, reg: IRegistry, obj: ABAPObject): Issue[];
 
-  public run(obj: IObject, reg: Registry): Issue[] {
+  public run(obj: IObject, reg: IRegistry): Issue[] {
     if (!(obj instanceof ABAPObject)) {
       return [];
     }

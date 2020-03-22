@@ -1,7 +1,7 @@
 import {Issue} from "../../issue";
 import {ABAPRule} from "./../_abap_rule";
 import {ABAPFile} from "../../files";
-import {Registry} from "../../registry";
+import {IRegistry} from "../../_iregistry";
 import {IObject} from "../../objects/_iobject";
 import * as Objects from "../../objects";
 import {BasicRuleConfig} from "../_basic_rule_config";
@@ -25,7 +25,7 @@ export class GlobalClass extends ABAPRule {
     this.conf = conf;
   }
 
-  public runParsed(file: ABAPFile, _reg: Registry, obj: IObject) {
+  public runParsed(file: ABAPFile, _reg: IRegistry, obj: IObject) {
     const output: Issue[] = [];
 
     for (const definition of file.getClassDefinitions()) {

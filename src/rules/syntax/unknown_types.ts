@@ -1,4 +1,4 @@
-import {Registry} from "../../registry";
+import {IRegistry} from "../../_iregistry";
 import {SyntaxLogic} from "../../abap/syntax/syntax";
 import {BasicRuleConfig} from "../_basic_rule_config";
 import {IObject} from "../../objects/_iobject";
@@ -27,7 +27,7 @@ export class UnknownTypes {
     this.conf = conf;
   }
 
-  public run(obj: IObject, reg: Registry): Issue[] {
+  public run(obj: IObject, reg: IRegistry): Issue[] {
     if (!(obj instanceof ABAPObject)) {
       return [];
     }
@@ -37,7 +37,7 @@ export class UnknownTypes {
     return this.traverse(spaghetti.getTop(), reg);
   }
 
-  private traverse(node: SpaghettiScopeNode, reg: Registry): Issue[] {
+  private traverse(node: SpaghettiScopeNode, reg: IRegistry): Issue[] {
     let ret: Issue[] = [];
 
     for (const v of node.getData().vars) {

@@ -1,7 +1,7 @@
 import {Issue} from "../../issue";
 import {ABAPRule} from "../_abap_rule";
 import {ABAPFile} from "../../files";
-import {Registry} from "../../registry";
+import {IRegistry} from "../../_iregistry";
 import {BasicRuleConfig} from "../_basic_rule_config";
 import {ClassDefinition, ClassImplementation, InterfaceDefinition} from "../../abap/types";
 import {ABAPObject} from "../../objects/_abap_object";
@@ -29,7 +29,7 @@ export class ImplementMethods extends ABAPRule {
     this.conf = conf;
   }
 
-  public runParsed(file: ABAPFile, reg: Registry, obj: ABAPObject) {
+  public runParsed(file: ABAPFile, reg: IRegistry, obj: ABAPObject) {
     let ret: Issue[] = [];
 
     if (file.getStructure() === undefined) {
@@ -79,7 +79,7 @@ export class ImplementMethods extends ABAPRule {
     return ret;
   }
 
-  private checkInterfaces(def: ClassDefinition, impl: ClassImplementation, file: ABAPFile, reg: Registry): Issue[] {
+  private checkInterfaces(def: ClassDefinition, impl: ClassImplementation, file: ABAPFile, reg: IRegistry): Issue[] {
     const ret: Issue[] = [];
     let idef: InterfaceDefinition | undefined = undefined;
 

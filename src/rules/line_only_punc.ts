@@ -3,7 +3,7 @@ import {Position} from "../position";
 import {ABAPRule} from "./_abap_rule";
 import {ABAPFile} from "../files";
 import {BasicRuleConfig} from "./_basic_rule_config";
-import {Registry} from "../registry";
+import {IRegistry} from "../_iregistry";
 import {IObject} from "../objects/_iobject";
 import {Class} from "../objects";
 
@@ -35,7 +35,7 @@ export class LineOnlyPunc extends ABAPRule {
     this.conf = conf;
   }
 
-  public runParsed(file: ABAPFile, _reg: Registry, obj: IObject) {
+  public runParsed(file: ABAPFile, _reg: IRegistry, obj: IObject) {
     const issues: Issue[] = [];
 
     if (obj instanceof Class) {

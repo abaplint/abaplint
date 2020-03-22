@@ -2,7 +2,7 @@ import {Issue} from "../issue";
 import {IRule} from "./_irule";
 import {IObject} from "../objects/_iobject";
 import {Class, Interface} from "../objects";
-import {Registry} from "../registry";
+import {IRegistry} from "../_iregistry";
 import {BasicRuleConfig} from "./_basic_rule_config";
 import {Position} from "../position";
 
@@ -32,7 +32,7 @@ export class DescriptionEmpty implements IRule {
     this.conf = conf;
   }
 
-  public run(obj: IObject, _reg: Registry): Issue[] {
+  public run(obj: IObject, _reg: IRegistry): Issue[] {
     const issues: Issue[] = [];
 
     if (obj instanceof Class || obj instanceof Interface) {

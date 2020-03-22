@@ -1,6 +1,6 @@
 import {Issue} from "../issue";
 import {BasicRuleConfig} from "./_basic_rule_config";
-import {Registry} from "../registry";
+import {IRegistry} from "../_iregistry";
 import {MessageClass} from "../objects";
 import {IRule} from "./_irule";
 import {IObject} from "../objects/_iobject";
@@ -29,7 +29,7 @@ export class MSAGConsistency implements IRule {
     this.conf = conf;
   }
 
-  public run(obj: IObject, _reg: Registry): Issue[] {
+  public run(obj: IObject, _reg: IRegistry): Issue[] {
     const issues: Issue[] = [];
 
     if (!(obj instanceof MessageClass)) {

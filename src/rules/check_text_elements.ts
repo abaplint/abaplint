@@ -4,7 +4,7 @@ import {BasicRuleConfig} from "./_basic_rule_config";
 import * as Expressions from "../abap/2_statements/expressions";
 import {ABAPObject, ITextElement} from "../objects/_abap_object";
 import {IObject} from "../objects/_iobject";
-import {Registry} from "../registry";
+import {IRegistry} from "../_iregistry";
 
 /** Check text elements */
 export class CheckTextElementsConf extends BasicRuleConfig {
@@ -26,7 +26,7 @@ export class CheckTextElements implements IRule {
     this.conf = conf;
   }
 
-  public run(obj: IObject, reg: Registry): Issue[] {
+  public run(obj: IObject, reg: IRegistry): Issue[] {
     if (!(obj instanceof ABAPObject)) {
       return [];
     }

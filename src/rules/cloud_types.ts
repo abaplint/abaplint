@@ -3,7 +3,7 @@ import {Issue} from "../issue";
 import {Version} from "../version";
 import * as Objects from "../objects";
 import {IObject} from "../objects/_iobject";
-import {Registry} from "../registry";
+import {IRegistry} from "../_iregistry";
 import {BasicRuleConfig} from "./_basic_rule_config";
 import {Position} from "../position";
 
@@ -31,7 +31,7 @@ export class CloudTypes implements IRule {
     this.conf = conf;
   }
 
-  public run(obj: IObject, reg: Registry): Issue[] {
+  public run(obj: IObject, reg: IRegistry): Issue[] {
     if (reg.getConfig().getVersion() !== Version.Cloud
         || obj instanceof Objects.Class
         || obj instanceof Objects.Interface

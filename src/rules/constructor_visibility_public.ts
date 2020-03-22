@@ -4,7 +4,7 @@ import {IRule} from "./_irule";
 import {IObject} from "../objects/_iobject";
 import {Class} from "../objects";
 import {Visibility} from "../abap/types";
-import {Registry} from "../registry";
+import {IRegistry} from "../_iregistry";
 import {CurrentScope} from "../abap/syntax/_current_scope";
 
 /** Constructor must be placed in the public section, even if the class is not CREATE PUBLIC.
@@ -33,7 +33,7 @@ export class ConstructorVisibilityPublic implements IRule {
     this.conf = conf;
   }
 
-  public run(obj: IObject, reg: Registry): Issue[] {
+  public run(obj: IObject, reg: IRegistry): Issue[] {
     const issues: Issue[] = [];
 
     if (!(obj instanceof Class)) {

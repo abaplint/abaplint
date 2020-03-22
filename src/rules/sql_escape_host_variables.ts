@@ -3,7 +3,7 @@ import {ABAPRule} from "./_abap_rule";
 import {ABAPFile} from "../files";
 import {BasicRuleConfig} from "./_basic_rule_config";
 import {Select} from "../abap/2_statements/statements";
-import {Registry} from "../registry";
+import {IRegistry} from "../_iregistry";
 import {Version} from "../version";
 
 /** Escape SQL host variables, from 740sp05 */
@@ -25,7 +25,7 @@ export class SQLEscapeHostVariables extends ABAPRule {
     this.conf = conf;
   }
 
-  public runParsed(file: ABAPFile, reg: Registry) {
+  public runParsed(file: ABAPFile, reg: IRegistry) {
     const issues: Issue[] = [];
 
     if (reg.getConfig().getVersion() < Version.v740sp02) {

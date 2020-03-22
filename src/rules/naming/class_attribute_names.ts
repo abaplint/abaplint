@@ -1,7 +1,7 @@
 import {Issue} from "../../issue";
 import {IObject} from "../../objects/_iobject";
 import {Class} from "../../objects";
-import {Registry} from "../../registry";
+import {IRegistry} from "../../_iregistry";
 import {Attributes} from "../../abap/types/class_attributes";
 import {ClassAttribute} from "../../abap/types/class_attribute";
 import {NamingRuleConfig} from "../_naming_rule_config";
@@ -40,7 +40,7 @@ export class ClassAttributeNames implements IRule {
     this.conf = conf;
   }
 
-  public run(obj: IObject, reg: Registry): Issue[] {
+  public run(obj: IObject, reg: IRegistry): Issue[] {
     let attr: Attributes | undefined = undefined;
     if (this.conf.patternKind === undefined) {
       this.conf.patternKind = "required";

@@ -1,6 +1,6 @@
 import {Issue} from "../issue";
 import {IObject} from "../objects/_iobject";
-import {Registry} from "../registry";
+import {IRegistry} from "../_iregistry";
 import {MethodLengthStats} from "../utils/method_length_stats";
 import {IRule} from "./_irule";
 import {BasicRuleConfig} from "./_basic_rule_config";
@@ -51,7 +51,7 @@ export class MethodLength implements IRule {
     this.conf = conf;
   }
 
-  public run(obj: IObject, _reg: Registry): Issue[] {
+  public run(obj: IObject, _reg: IRegistry): Issue[] {
     const issues: Issue[] = [];
     const stats = MethodLengthStats.run(obj);
     for (const s of stats) {

@@ -1,6 +1,5 @@
 import {ClassDefinition, InterfaceDefinition, FormDefinition} from "../types";
 import {TypedIdentifier} from "../types/_typed_identifier";
-import {Registry} from "../../registry";
 import {BuiltIn} from "./_builtin";
 import * as Objects from "../../objects";
 import {DDIC} from "../../ddic";
@@ -9,12 +8,13 @@ import {SpaghettiScope, SpaghettiScopeNode, IScopeIdentifier} from "./spaghetti_
 import {Token} from "../1_lexer/tokens/_token";
 import {Identifier} from "../types/_identifier";
 import {ScopeType} from "./_scope_type";
+import {IRegistry} from "../../_iregistry";
 
 export class CurrentScope {
-  protected readonly reg: Registry;
+  protected readonly reg: IRegistry;
   protected current: SpaghettiScopeNode | undefined;
 
-  public static buildDefault(reg: Registry): CurrentScope {
+  public static buildDefault(reg: IRegistry): CurrentScope {
     const s = new CurrentScope(reg);
 
     s.push(ScopeType.BuiltIn, ScopeType.BuiltIn, new Position(1, 1), BuiltIn.filename);
@@ -40,7 +40,7 @@ export class CurrentScope {
     return s;
   }
 
-  private static addBuiltIn(s: CurrentScope, reg: Registry) {
+  private static addBuiltIn(s: CurrentScope, reg: IRegistry) {
     const builtin = BuiltIn.get(reg.getConfig().getSyntaxSetttings().globalConstants!);
     s.addList(builtin);
     for (const t of BuiltIn.getTypes()) {
@@ -48,7 +48,7 @@ export class CurrentScope {
     }
   }
 
-  private constructor(reg: Registry) {
+  private constructor(reg: IRegistry) {
     this.current = undefined;
     this.reg = reg;
   }

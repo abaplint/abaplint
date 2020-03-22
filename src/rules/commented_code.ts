@@ -3,11 +3,12 @@ import {Position} from "../position";
 import {ABAPRule} from "./_abap_rule";
 import {ABAPFile, MemoryFile} from "../files";
 import {BasicRuleConfig} from "./_basic_rule_config";
-import {Registry} from "../registry";
+import {IRegistry} from "../_iregistry";
 import {Unknown, Empty, Comment} from "../abap/2_statements/statements/_statement";
 import {ABAPObject} from "../objects/_abap_object";
 import {FunctionGroup} from "../objects";
 import {Include} from "../abap/2_statements/statements";
+import {Registry} from "../registry";
 
 /** Detects usage of commented out code.
  * https://github.com/SAP/styleguides/blob/master/clean-abap/CleanABAP.md#delete-code-instead-of-commenting-it
@@ -36,7 +37,7 @@ export class CommentedCode extends ABAPRule {
     this.conf = conf;
   }
 
-  public runParsed(file: ABAPFile, _reg: Registry, obj: ABAPObject) {
+  public runParsed(file: ABAPFile, _reg: IRegistry, obj: ABAPObject) {
     let issues: Issue[] = [];
 
     const rows = file.getRawRows();
@@ -60,6 +61,7 @@ export class CommentedCode extends ABAPRule {
       return [];
     }
 
+// todo, call ABAPParser instead of Registry?
     const reg = new Registry().addFile(new MemoryFile("_foobar.prog.abap", code)).parse();
 
     const statementNodes = reg.getABAPFiles()[0].getStatements();

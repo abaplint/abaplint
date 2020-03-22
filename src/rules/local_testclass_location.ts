@@ -3,7 +3,7 @@ import {ABAPRule} from "./_abap_rule";
 import {ABAPFile} from "../files";
 import {BasicRuleConfig} from "./_basic_rule_config";
 import {Class} from "../objects";
-import {Registry} from "../registry";
+import {IRegistry} from "../_iregistry";
 import {IObject} from "../objects/_iobject";
 
 /** Chceks that local test classes are placed in the test include. */
@@ -30,7 +30,7 @@ export class LocalTestclassLocation extends ABAPRule {
     this.conf = conf;
   }
 
-  public runParsed(file: ABAPFile, _reg: Registry, obj: IObject) {
+  public runParsed(file: ABAPFile, _reg: IRegistry, obj: IObject) {
     const issues: Issue[] = [];
 
     if (!(obj instanceof Class)) {

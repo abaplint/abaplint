@@ -5,7 +5,7 @@ import {BasicRuleConfig} from "../_basic_rule_config";
 import * as Statements from "../../abap/2_statements/statements";
 import {Class, Interface} from "../../objects";
 import {IObject} from "../../objects/_iobject";
-import {Registry} from "../../registry";
+import {IRegistry} from "../../_iregistry";
 import {Punctuation} from "../../abap/1_lexer/tokens";
 import {Token} from "../../abap/1_lexer/tokens/_token";
 
@@ -35,7 +35,7 @@ export class SpaceBeforeDot extends ABAPRule {
     this.conf = conf;
   }
 
-  public runParsed(file: ABAPFile, _reg: Registry, obj: IObject) {
+  public runParsed(file: ABAPFile, _reg: IRegistry, obj: IObject) {
     const issues: Issue[] = [];
     let prev: Token | undefined = undefined;
     let startRow = 0;

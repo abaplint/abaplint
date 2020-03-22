@@ -4,7 +4,7 @@ import {ABAPRule} from "./_abap_rule";
 import {ABAPFile} from "../files";
 import {BasicRuleConfig} from "./_basic_rule_config";
 import {Dynamic} from "../abap/2_statements/expressions";
-import {Registry} from "../registry";
+import {IRegistry} from "../_iregistry";
 import {Version} from "../version";
 
 /** Checks for deprecated CREATE OBJECT statements. */
@@ -30,7 +30,7 @@ export class UseNew extends ABAPRule {
     this.conf = conf;
   }
 
-  public runParsed(file: ABAPFile, reg: Registry) {
+  public runParsed(file: ABAPFile, reg: IRegistry) {
     const issues: Issue[] = [];
 
     if (reg.getConfig().getVersion() < Version.v740sp02) {

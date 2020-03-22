@@ -1,6 +1,6 @@
 import {Issue} from "../issue";
 import {BasicRuleConfig} from "./_basic_rule_config";
-import {Registry} from "../registry";
+import {IRegistry} from "../_iregistry";
 import {IRule} from "./_irule";
 import {IObject} from "../objects/_iobject";
 import {SyntaxLogic} from "../abap/syntax/syntax";
@@ -29,7 +29,7 @@ export class UnusedVariables implements IRule {
     this.conf = conf;
   }
 
-  public run(obj: IObject, reg: Registry): Issue[] {
+  public run(obj: IObject, reg: IRegistry): Issue[] {
     if (!(obj instanceof ABAPObject)) {
       return [];
     } else if (obj instanceof Interface) {

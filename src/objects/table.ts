@@ -2,7 +2,7 @@ import {AbstractObject} from "./_abstract_object";
 import {xmlToArray} from "../xml_utils";
 import {AbstractType} from "../abap/types/basic/_abstract_type";
 import * as Types from "../abap/types/basic";
-import {Registry} from "../registry";
+import {IRegistry} from "../_iregistry";
 import {IStructureComponent, StructureType} from "../abap/types/basic";
 import {DDIC} from "../ddic";
 
@@ -36,7 +36,7 @@ export class Table extends AbstractObject {
     };
   }
 
-  public parseType(reg: Registry): AbstractType {
+  public parseType(reg: IRegistry): AbstractType {
     const parsed = this.parseXML();
     if (parsed === undefined) {
       return new Types.UnknownType("Table, parser error");

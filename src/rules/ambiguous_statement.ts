@@ -6,7 +6,7 @@ import {BasicRuleConfig} from "./_basic_rule_config";
 import {StatementNode} from "../abap/nodes";
 import {IStatement} from "../abap/2_statements/statements/_statement";
 import {Combi} from "../abap/2_statements/combi";
-import {Registry} from "../registry";
+import {IRegistry} from "../_iregistry";
 import {Version} from "../version";
 
 /** Checks for ambiguity between deleting or modifying from internal and database table
@@ -34,7 +34,7 @@ export class AmbiguousStatement extends ABAPRule {
     this.conf = conf;
   }
 
-  public runParsed(file: ABAPFile, reg: Registry) {
+  public runParsed(file: ABAPFile, reg: IRegistry) {
     const issues: Issue[] = [];
 
     if (reg.getConfig().getVersion() < Version.v740sp05) {
@@ -64,7 +64,7 @@ export class AmbiguousStatement extends ABAPRule {
     return issues;
   }
 
-  private tryMatch(st: StatementNode, reg: Registry, type1: new () => IStatement): boolean {
+  private tryMatch(st: StatementNode, reg: IRegistry, type1: new () => IStatement): boolean {
     const ver = reg.getConfig().getVersion();
 
     const tokens = st.getTokens().slice(0);

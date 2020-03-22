@@ -1,4 +1,4 @@
-import {Registry} from "../../registry";
+import {IRegistry} from "../../_iregistry";
 import {SyntaxLogic} from "../../abap/syntax/syntax";
 import {BasicRuleConfig} from "../_basic_rule_config";
 import {IObject} from "../../objects/_iobject";
@@ -25,7 +25,7 @@ export class CheckSyntax {
     this.conf = conf;
   }
 
-  public run(obj: IObject, reg: Registry): Issue[] {
+  public run(obj: IObject, reg: IRegistry): Issue[] {
     if (!(obj instanceof ABAPObject)) {
       return [];
     }

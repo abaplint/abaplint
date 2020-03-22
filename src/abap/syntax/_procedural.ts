@@ -7,15 +7,15 @@ import {CurrentScope} from "./_current_scope";
 import {ScopeType} from "./_scope_type";
 import {FunctionGroup} from "../../objects";
 import {ABAPFile} from "../../files";
-import {Registry} from "../../registry";
+import {IRegistry} from "../../_iregistry";
 import {TypedIdentifier} from "../types/_typed_identifier";
 import {IntegerType} from "../types/basic";
 
 export class Procedural {
   private readonly scope: CurrentScope;
-  private readonly reg: Registry;
+  private readonly reg: IRegistry;
 
-  public constructor(reg: Registry, scope: CurrentScope) {
+  public constructor(reg: IRegistry, scope: CurrentScope) {
     this.scope = scope;
     this.reg = reg;
   }

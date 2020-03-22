@@ -1,12 +1,12 @@
-import {Registry} from "./registry";
+import {IRegistry} from "./_iregistry";
 import {AbstractType} from "./abap/types/basic/_abstract_type";
 import * as Objects from "./objects";
 import * as Types from "./abap/types/basic";
 
 export class DDIC {
-  private readonly reg: Registry;
+  private readonly reg: IRegistry;
 
-  public constructor(reg: Registry) {
+  public constructor(reg: IRegistry) {
     this.reg = reg;
   }
 

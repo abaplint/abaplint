@@ -5,7 +5,7 @@ import {StatementNode, ExpressionNode, TokenNode, TokenNodeRegex} from "../abap/
 import {Unknown, Comment, MacroContent, MacroCall, IStatement} from "../abap/2_statements/statements/_statement";
 import {Identifier} from "../abap/1_lexer/tokens";
 import {IObject} from "../objects/_iobject";
-import {Registry} from "../registry";
+import {IRegistry} from "../_iregistry";
 import {Class} from "../objects";
 import {BasicRuleConfig} from "./_basic_rule_config";
 import * as Statements from "../abap/2_statements/statements";
@@ -60,7 +60,7 @@ export class KeywordCase extends ABAPRule {
     }
   }
 
-  public runParsed(file: ABAPFile, _reg: Registry, obj: IObject) {
+  public runParsed(file: ABAPFile, _reg: IRegistry, obj: IObject) {
     const issues: Issue[] = [];
     let skip = false;
 
