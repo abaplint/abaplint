@@ -2,6 +2,7 @@ import {expect} from "chai";
 import {Registry} from "../../src/registry";
 import {MemoryFile} from "../../src/files/memory_file";
 import {Program} from "../../src/objects";
+import {getABAPObjects} from "../../src/get_abap";
 
 describe("Program, isInclude", () => {
   it("no", () => {
@@ -26,7 +27,7 @@ describe("Program, isInclude", () => {
     reg.addFile(new MemoryFile("zfoobar.prog.xml", xml));
 
     reg.parse();
-    const prog = reg.getABAPObjects()[0] as Program;
+    const prog = getABAPObjects(reg)[0] as Program;
     expect(prog.isInclude()).to.equal(false);
   });
 
@@ -50,7 +51,7 @@ describe("Program, isInclude", () => {
     reg.addFile(new MemoryFile("zfoobar.prog.xml", xml));
 
     reg.parse();
-    const prog = reg.getABAPObjects()[0] as Program;
+    const prog = getABAPObjects(reg)[0] as Program;
     expect(prog.isInclude()).to.equal(true);
   });
 
@@ -59,7 +60,7 @@ describe("Program, isInclude", () => {
     const reg = new Registry().addFile(new MemoryFile("zfoobar.prog.abap", abap));
 
     reg.parse();
-    const prog = reg.getABAPObjects()[0] as Program;
+    const prog = getABAPObjects(reg)[0] as Program;
     expect(prog.isInclude()).to.equal(false);
   });
 
@@ -103,7 +104,7 @@ describe("Program, isInclude", () => {
     reg.addFile(new MemoryFile("zfoobar.prog.xml", xml));
 
     reg.parse();
-    const prog = reg.getABAPObjects()[0] as Program;
+    const prog = getABAPObjects(reg)[0] as Program;
     const texts = prog.getTexts();
     expect(texts.length).to.equal(2);
     expect(texts[0].key).to.equal("001");

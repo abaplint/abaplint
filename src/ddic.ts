@@ -1,6 +1,9 @@
 import {IRegistry} from "./_iregistry";
 import {AbstractType} from "./abap/types/basic/_abstract_type";
-import * as Objects from "./objects";
+import {Domain} from "./objects/domain";
+import {DataElement} from "./objects/data_element";
+import {Table} from "./objects/table";
+import {TableType} from "./objects/table_type";
 import * as Types from "./abap/types/basic";
 
 export class DDIC {
@@ -28,7 +31,7 @@ export class DDIC {
   }
 
   public lookupDomain(name: string): AbstractType {
-    const found = this.reg.getObject("DOMA", name) as Objects.Domain | undefined;
+    const found = this.reg.getObjectByType(Domain, name);
     if (found) {
       return found.parseType(this.reg);
     }
@@ -40,7 +43,7 @@ export class DDIC {
   }
 
   public lookupDataElement(name: string): AbstractType {
-    const found = this.reg.getObject("DTEL", name) as Objects.DataElement | undefined;
+    const found = this.reg.getObjectByType(DataElement, name);
     if (found) {
       return found.parseType(this.reg);
     }
@@ -52,7 +55,7 @@ export class DDIC {
   }
 
   public lookupTable(name: string): AbstractType {
-    const found = this.reg.getObject("TABL", name) as Objects.Table | undefined;
+    const found = this.reg.getObjectByType(Table, name);
     if (found) {
       return found.parseType(this.reg);
     }
@@ -64,7 +67,7 @@ export class DDIC {
   }
 
   public lookupTableType(name: string): AbstractType {
-    const found = this.reg.getObject("TTYP", name) as Objects.Table | undefined;
+    const found = this.reg.getObjectByType(TableType, name);
     if (found) {
       return found.parseType(this.reg);
     }

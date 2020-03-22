@@ -1,6 +1,5 @@
 import {IObject} from "./objects/_iobject";
 import {IFile} from "./files/_ifile";
-import {ABAPObject} from "./objects/_abap_object";
 import {Config} from "./config";
 import {Issue} from "./issue";
 import {ArtifactsObjects} from "./artifacts_objects";
@@ -10,6 +9,7 @@ import {Position} from "./position";
 import {IRegistry} from "./_iregistry";
 import {IProgress, NoProgress} from "./progress";
 import {IConfiguration} from "./_config";
+import {getABAPObjects} from "./get_abap";
 
 export class Registry implements IRegistry {
   private dirty = false;
@@ -51,7 +51,7 @@ export class Registry implements IRegistry {
     }
     return undefined;
   }
-/*
+
   public getObjectByType<T>(type: new (...args: any[]) => T, name: string): T | undefined {
     for (const obj of this.objects) {
 // todo, this is slow
@@ -61,7 +61,7 @@ export class Registry implements IRegistry {
     }
     return undefined;
   }
-*/
+
   public getConfig(): IConfiguration {
     return this.conf;
   }
@@ -79,10 +79,6 @@ export class Registry implements IRegistry {
   public inErrorNamespace(name: string): boolean {
     const reg = new RegExp(this.getConfig().getSyntaxSetttings().errorNamespace, "i");
     return reg.test(name);
-  }
-
-  public getABAPObjects(): ABAPObject[] {
-    return this.objects.filter((obj) => { return obj instanceof ABAPObject; }) as ABAPObject[];
   }
 
   public addFile(file: IFile): IRegistry {
@@ -165,7 +161,7 @@ export class Registry implements IRegistry {
       return this;
     }
 
-    for (const obj of this.getABAPObjects()) {
+    for (const obj of getABAPObjects(this)) {
       this.issues = this.issues.concat(obj.parse(this.getConfig()));
     }
 
@@ -176,7 +172,7 @@ export class Registry implements IRegistry {
     if (this.isDirty() === false) {
       return this;
     }
-    const objects = this.getABAPObjects();
+    const objects = getABAPObjects(this);
     progress.set(objects.length, "Lexing and parsing");
     for (const obj of objects) {
       await progress.tick("Lexing and parsing(" + this.conf.getVersion() + ") - " +  obj.getType() + " " + obj.getName());

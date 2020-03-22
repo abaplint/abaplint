@@ -5,12 +5,13 @@ import {Registry} from "../../src/registry";
 import {Indent} from "../../src/pretty_printer/indent";
 import {KeywordCaseConf, KeywordCaseStyle} from "../../src/rules";
 import {Config} from "../../src/config";
+import {getABAPObjects} from "../../src/get_abap";
 
 const testTitle = (text: string): string => {return text.split("\n")[0]; };
 
 function parse(abap: string): readonly ABAPFile[] {
   const reg = new Registry().addFile(new MemoryFile("zfoo.prog.abap", abap)).parse();
-  return reg.getABAPObjects()[0].getABAPFiles();
+  return getABAPObjects(reg)[0].getABAPFiles();
 }
 
 describe("Pretty printer, keywords upper case", () => {

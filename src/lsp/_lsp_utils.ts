@@ -13,6 +13,7 @@ import {INode} from "../abap/nodes/_inode";
 import {Position} from "../position";
 import * as LServer from "vscode-languageserver-types";
 import {SpaghettiScopeNode} from "../abap/syntax/spaghetti_scope";
+import {getABAPObjects} from "../get_abap";
 
 export interface ICursorPosition {
   token: Token;
@@ -25,7 +26,7 @@ export class LSPUtils {
 
   public static getABAPFile(reg: IRegistry, name: string): ABAPFile | undefined {
     // todo, optimize, why doesnt reg.getFileByName() work?
-    const obj = reg.getABAPObjects();
+    const obj = getABAPObjects(reg);
     for (const o of obj) {
       for (const file of o.getABAPFiles()) {
         if (file.getFilename().toUpperCase() === name.toUpperCase()) {

@@ -2,6 +2,7 @@ import {expect} from "chai";
 import {Registry} from "../../src/registry";
 import {MemoryFile} from "../../src/files/memory_file";
 import {FunctionGroup} from "../../src/objects";
+import {getABAPObjects} from "../../src/get_abap";
 
 describe("Funcion Group, parse main xml", () => {
   const xml =
@@ -40,7 +41,7 @@ describe("Funcion Group, parse main xml", () => {
 
   it("test, getModules", () => {
     const reg = new Registry().addFile(new MemoryFile("zagtest_function_group.fugr.xml", xml)).parse();
-    const fugr = reg.getABAPObjects()[0] as FunctionGroup;
+    const fugr = getABAPObjects(reg)[0] as FunctionGroup;
 
     const modules = fugr.getModules();
     expect(modules.length).to.equal(1);
@@ -50,7 +51,7 @@ describe("Funcion Group, parse main xml", () => {
 
   it("test, getIncludes", () => {
     const reg = new Registry().addFile(new MemoryFile("zagtest_function_group.fugr.xml", xml)).parse();
-    const fugr = reg.getABAPObjects()[0] as FunctionGroup;
+    const fugr = getABAPObjects(reg)[0] as FunctionGroup;
 
     const includes = fugr.getIncludes();
     expect(includes.length).to.equal(2);
@@ -63,7 +64,7 @@ describe("Funcion Group, parse main xml", () => {
     reg.addFile(new MemoryFile("zagtest_function_group.fugr.xml", xml));
     reg.addFile(new MemoryFile("zagtest_function_group.fugr.lzagtest_function_grouptop.abap", "WRITE hello."));
     reg.parse();
-    const fugr = reg.getABAPObjects()[0] as FunctionGroup;
+    const fugr = getABAPObjects(reg)[0] as FunctionGroup;
 
     const includes = fugr.getIncludeFiles();
     expect(includes.length).to.equal(1);

@@ -5,6 +5,7 @@ import {SyntaxLogic} from "../../../src/abap/syntax/syntax";
 import {Issue} from "../../../src/issue";
 import {Config} from "../../../src/config";
 import {IRegistry} from "../../../src/_iregistry";
+import {getABAPObjects} from "../../../src/get_abap";
 
 function run(reg: IRegistry, globalConstants?: string[]): Issue[] {
   let ret: Issue[] = [];
@@ -15,7 +16,7 @@ function run(reg: IRegistry, globalConstants?: string[]): Issue[] {
     reg.setConfig(new Config(JSON.stringify(config)));
   }
 
-  for (const obj of reg.getABAPObjects()) {
+  for (const obj of getABAPObjects(reg)) {
     for (const file of obj.getABAPFiles()) {
       if (file.getStructure() === undefined) {
         throw new Error("check variables test, parser error");

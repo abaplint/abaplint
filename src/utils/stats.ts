@@ -6,6 +6,7 @@ import {MethodLengthStats} from "./method_length_stats";
 import {Config} from "../config";
 import {IRegistry} from "../_iregistry";
 import {ABAPFile} from "../abap/abap_file";
+import {getABAPObjects} from "../get_abap";
 
 export interface ITotals {
   statements: number;
@@ -81,7 +82,7 @@ export class Stats {
 
   private findFiles(): ABAPFile[] {
     const ret: ABAPFile[] = [];
-    const obj = this.reg.getABAPObjects();
+    const obj = getABAPObjects(this.reg);
     for (const o of obj) {
       for (const file of o.getABAPFiles()) {
         ret.push(file);

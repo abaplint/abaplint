@@ -6,11 +6,12 @@ import {SpaghettiScope} from "../../../src/abap/syntax/spaghetti_scope";
 import {Position} from "../../../src/position";
 import {ScopeType} from "../../../src/abap/syntax/_scope_type";
 import {IRegistry} from "../../../src/_iregistry";
+import {getABAPObjects} from "../../../src/get_abap";
 
 const filename = "zfoobar.prog.abap";
 
 function run(reg: IRegistry): SpaghettiScope {
-  const obj = reg.getABAPObjects()[0];
+  const obj = getABAPObjects(reg)[0];
 
   for (const file of obj.getABAPFiles()) {
     if (file.getStructure() === undefined) {

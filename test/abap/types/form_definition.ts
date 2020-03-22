@@ -4,6 +4,7 @@ import {IRegistry} from "../../../src/_iregistry";
 import {MemoryFile} from "../../../src/files";
 import {FormDefinition} from "../../../src/abap/types";
 import {CurrentScope} from "../../../src/abap/syntax/_current_scope";
+import {getABAPObjects} from "../../../src/get_abap";
 
 let reg: IRegistry = new Registry();
 let scope: CurrentScope = CurrentScope.buildDefault(reg);
@@ -11,7 +12,7 @@ let scope: CurrentScope = CurrentScope.buildDefault(reg);
 function runProgram(abap: string): FormDefinition[] {
   reg = new Registry().addFile(new MemoryFile("zfoobar.prog.abap", abap)).parse();
   scope = CurrentScope.buildDefault(reg);
-  const file = reg.getABAPObjects()[0].getABAPFiles()[0];
+  const file = getABAPObjects(reg)[0].getABAPFiles()[0];
   return file.getFormDefinitions();
 }
 

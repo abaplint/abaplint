@@ -4,6 +4,7 @@ import {Registry} from "../../../src/registry";
 import {Class} from "../../../src/objects";
 import {Visibility} from "../../../src/abap/types/visibility";
 import {CurrentScope} from "../../../src/abap/syntax/_current_scope";
+import {getABAPObjects} from "../../../src/get_abap";
 
 describe("Types, class_definition", () => {
 
@@ -13,7 +14,7 @@ describe("Types, class_definition", () => {
       "CLASS zcl_moo IMPLEMENTATION.\n" +
       "ENDCLASS.";
     const reg = new Registry().addFile(new MemoryFile("zcl_moo.clas.abap", abap)).parse();
-    const clas = reg.getABAPObjects()[0] as Class;
+    const clas = getABAPObjects(reg)[0] as Class;
     expect(clas.getClassDefinition()).to.not.equal(undefined);
     expect(clas.getClassDefinition()!.isFinal()).to.equal(false);
   });
@@ -24,7 +25,7 @@ describe("Types, class_definition", () => {
       "CLASS zcl_moo IMPLEMENTATION.\n" +
       "ENDCLASS.";
     const reg = new Registry().addFile(new MemoryFile("zcl_moo.clas.abap", abap)).parse();
-    const clas = reg.getABAPObjects()[0] as Class;
+    const clas = getABAPObjects(reg)[0] as Class;
     expect(clas.getClassDefinition()).to.not.equal(undefined);
     expect(clas.getClassDefinition()!.isFinal()).to.equal(true);
   });
@@ -35,7 +36,7 @@ describe("Types, class_definition", () => {
       "CLASS zcl_moo IMPLEMENTATION.\n" +
       "ENDCLASS.";
     const reg = new Registry().addFile(new MemoryFile("zcl_moo.clas.abap", abap)).parse();
-    const clas = reg.getABAPObjects()[0] as Class;
+    const clas = getABAPObjects(reg)[0] as Class;
     expect(clas.getClassDefinition()).to.not.equal(undefined);
     expect(clas.getClassDefinition()!.getImplementing().length).to.equal(0);
   });
@@ -48,7 +49,7 @@ describe("Types, class_definition", () => {
       "CLASS zcl_moo IMPLEMENTATION.\n" +
       "ENDCLASS.";
     const reg = new Registry().addFile(new MemoryFile("zcl_moo.clas.abap", abap)).parse();
-    const clas = reg.getABAPObjects()[0] as Class;
+    const clas = getABAPObjects(reg)[0] as Class;
     expect(clas.getClassDefinition()).to.not.equal(undefined);
     expect(clas.getClassDefinition()!.getImplementing().length).to.equal(1);
     expect(clas.getClassDefinition()!.getImplementing()[0].name).to.equal("ZIF_MOO");
@@ -68,7 +69,7 @@ describe("Types, class_definition", () => {
       "ENDCLASS.";
     const reg = new Registry().addFile(new MemoryFile("zcl_moo.clas.abap", abap)).parse();
     const scope = CurrentScope.buildDefault(reg);
-    const clas = reg.getABAPObjects()[0] as Class;
+    const clas = getABAPObjects(reg)[0] as Class;
     expect(clas.getClassDefinition()).to.not.equal(undefined);
     expect(clas.getClassDefinition()!.getMethodDefinitions(scope)).to.not.equal(undefined);
     const pub = clas.getClassDefinition()!.getMethodDefinitions(scope)!.getPublic();
@@ -88,7 +89,7 @@ describe("Types, class_definition", () => {
       "  ENDMETHOD.\n" +
       "ENDCLASS.";
     const reg = new Registry().addFile(new MemoryFile("zcl_moo.clas.abap", abap)).parse();
-    const clas = reg.getABAPObjects()[0] as Class;
+    const clas = getABAPObjects(reg)[0] as Class;
     expect(clas.getClassDefinition()).to.not.equal(undefined);
     const aliases = clas.getClassDefinition()!.getAliases().getAll();
     expect(aliases.length).to.equal(1);
@@ -108,7 +109,7 @@ describe("Types, class_definition", () => {
       "ENDCLASS.";
     const reg = new Registry().addFile(new MemoryFile("zcl_moo.clas.abap", abap)).parse();
     const scope = CurrentScope.buildDefault(reg);
-    const clas = reg.getABAPObjects()[0] as Class;
+    const clas = getABAPObjects(reg)[0] as Class;
     expect(clas.getClassDefinition()).to.not.equal(undefined);
     expect(clas.getClassDefinition()!.getMethodDefinitions(scope)).to.not.equal(undefined);
     const pub = clas.getClassDefinition()!.getMethodDefinitions(scope)!.getPublic();

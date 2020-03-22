@@ -3,7 +3,6 @@ import {IConfiguration} from "./_config";
 import {IFile} from "./files/_ifile";
 import {IProgress} from "./progress";
 import {Issue} from "./issue";
-import {ABAPObject} from "./objects/_abap_object";
 
 export interface IRegistry {
   getConfig(): IConfiguration;
@@ -12,7 +11,7 @@ export interface IRegistry {
   getObjects(): readonly IObject[];
   getObject(type: string, name: string): IObject | undefined;
   findObjectForFile(file: IFile): IObject | undefined;
-//  getObjectByType<T>(type: new (...args: any[]) => T, name: string): T | undefined;
+  getObjectByType<T>(type: new (...args: any[]) => T, name: string): T | undefined;
 
   inErrorNamespace(name: string): boolean;
 
@@ -23,9 +22,6 @@ export interface IRegistry {
 
   findIssues(progress?: IProgress): readonly Issue[];
   findIssuesObject(iobj: IObject): readonly Issue[];
-
-  // todo, remove these?
-  getABAPObjects(): readonly ABAPObject[];
 
   // file operations
   addFile(file: IFile): IRegistry;

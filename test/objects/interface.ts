@@ -2,6 +2,7 @@ import {expect} from "chai";
 import {Registry} from "../../src/registry";
 import {MemoryFile} from "../../src/files/memory_file";
 import {Interface} from "../../src/objects";
+import {getABAPObjects} from "../../src/get_abap";
 
 describe("Objects, interface, isGeneratedProxy", () => {
   it("test, positive", () => {
@@ -29,7 +30,7 @@ describe("Objects, interface, isGeneratedProxy", () => {
     reg.addFile(new MemoryFile("zif_foobar.intf.xml", xml));
 
     reg.parse();
-    const intf = reg.getABAPObjects()[0] as Interface;
+    const intf = getABAPObjects(reg)[0] as Interface;
     expect(intf.isGeneratedProxy()).to.equal(true);
   });
 });
@@ -55,7 +56,7 @@ describe("Objects, interface, getDescription", () => {
     const reg = new Registry();
     reg.addFile(new MemoryFile("zif_foobar.intf.xml", xml));
     reg.parse();
-    const intf = reg.getABAPObjects()[0] as Interface;
+    const intf = getABAPObjects(reg)[0] as Interface;
     expect(intf.getDescription()).to.equal("Authorizations");
   });
 });

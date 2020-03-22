@@ -7,6 +7,7 @@ import {Issue} from "../issue";
 import {IFile} from "../files/_ifile";
 import {IIncludeGraph} from "./_include_graph";
 import {IRegistry} from "../_iregistry";
+import {getABAPObjects} from "../get_abap";
 
 // todo, check for cycles/circular dependencies, method findTop
 // todo, add configurable error for multiple use includes
@@ -111,7 +112,7 @@ export class IncludeGraph implements IIncludeGraph {
   private build() {
     this.addVertices();
 
-    for (const o of this.reg.getABAPObjects()) {
+    for (const o of getABAPObjects(this.reg)) {
       for (const f of o.getABAPFiles()) {
         for (const s of f.getStatements()) {
           if (s.get() instanceof Include) {
@@ -160,7 +161,7 @@ export class IncludeGraph implements IIncludeGraph {
   }
 
   private addVertices() {
-    for (const o of this.reg.getABAPObjects()) {
+    for (const o of getABAPObjects(this.reg)) {
 
       if (o instanceof Program) {
         const file = o.getMainABAPFile();

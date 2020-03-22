@@ -3,6 +3,7 @@ import {ExpressionNode} from "../abap/nodes";
 import {Token} from "../abap/1_lexer/tokens/_token";
 import {IRegistry} from "../_iregistry";
 import {ABAPFile} from "../abap/abap_file";
+import {getABAPObjects} from "../get_abap";
 
 export interface ICode {
   code: string;
@@ -29,7 +30,7 @@ export class SemanticSearch {
 
   private findFiles(): ABAPFile[] {
     const ret: ABAPFile[] = [];
-    const obj = this.reg.getABAPObjects();
+    const obj = getABAPObjects(this.reg);
     for (const o of obj) {
       for (const file of o.getABAPFiles()) {
         ret.push(file);
