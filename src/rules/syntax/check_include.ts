@@ -3,6 +3,7 @@ import {ABAPFile} from "../../files";
 import {IRegistry} from "../../_iregistry";
 import {BasicRuleConfig} from "../_basic_rule_config";
 import {ABAPObject} from "../../objects/_abap_object";
+import {IncludeGraph} from "../../utils/include_graph";
 
 /** Checks INCLUDE statements */
 export class CheckIncludeConf extends BasicRuleConfig {
@@ -25,7 +26,7 @@ export class CheckInclude extends ABAPRule {
   }
 
   public runParsed(file: ABAPFile, reg: IRegistry, _obj: ABAPObject) {
-    return reg.getIncludeGraph().getIssuesFile(file);
+    return new IncludeGraph(reg).getIssuesFile(file);
   }
 
 }

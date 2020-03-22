@@ -1,6 +1,5 @@
 import {IObject} from "./objects/_iobject";
 import {IConfiguration} from "./_config";
-import {IIncludeGraph} from "./utils/_include_graph";
 import {IFile} from "./files/_ifile";
 import {IProgress} from "./progress";
 import {Issue} from "./issue";
@@ -15,7 +14,6 @@ export interface IRegistry {
   getObject(type: string, name: string): IObject | undefined;
   findObjectForFile(file: IFile): IObject | undefined;
 
-  getIncludeGraph(): IIncludeGraph;
   inErrorNamespace(name: string): boolean;
 
   parse(): IRegistry;

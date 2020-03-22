@@ -8,11 +8,9 @@ import {ArtifactsObjects} from "./artifacts_objects";
 import {ArtifactsRules} from "./artifacts_rules";
 import {SkipLogic} from "./skip_logic";
 import {Position} from "./position";
-import {IncludeGraph} from "./utils/include_graph";
 import {IRegistry} from "./_iregistry";
 import {IProgress, NoProgress} from "./progress";
 import {IConfiguration} from "./_config";
-import {IIncludeGraph} from "./utils/_include_graph";
 
 export class Registry implements IRegistry {
   private dirty = false;
@@ -20,7 +18,6 @@ export class Registry implements IRegistry {
   private readonly objects: IObject[] = [];
   private issues: Issue[] = [];
   private readonly dependencies: string[] = [];
-  private includeGraph: IncludeGraph | undefined;
 
   public constructor(conf?: IConfiguration) {
     this.conf = conf ? conf : Config.getDefault();
@@ -177,16 +174,6 @@ export class Registry implements IRegistry {
     return this.runRules(undefined, iobj);
   }
 
-  public getIncludeGraph(): IIncludeGraph {
-    if (this.isDirty() === true) {
-      this.clean();
-    }
-    if (this.includeGraph === undefined) {
-      throw new Error("includeGraph unexpectedly undefined");
-    }
-    return this.includeGraph;
-  }
-
   public parse() {
     if (this.isDirty() === false) {
       return this;
@@ -218,7 +205,6 @@ export class Registry implements IRegistry {
   private setDirty() {
     this.dirty = true;
     this.issues = [];
-    this.includeGraph = undefined;
   }
 
   private isDirty(): boolean {
@@ -227,7 +213,6 @@ export class Registry implements IRegistry {
 
   private clean() {
     this.parse();
-    this.includeGraph = new IncludeGraph(this);
     this.dirty = false;
   }
 

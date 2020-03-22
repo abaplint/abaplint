@@ -1,4 +1,3 @@
-import {Registry} from "../registry";
 import {Include} from "../abap/2_statements/statements";
 import {IncludeName} from "../abap/2_statements/expressions";
 import {FunctionGroup, Program} from "../objects";
@@ -7,6 +6,7 @@ import {Position} from "../position";
 import {Issue} from "../issue";
 import {IFile} from "../files/_ifile";
 import {IIncludeGraph} from "./_include_graph";
+import {IRegistry} from "../_iregistry";
 
 // todo, check for cycles/circular dependencies, method findTop
 // todo, add configurable error for multiple use includes
@@ -71,11 +71,11 @@ class Graph {
 }
 
 export class IncludeGraph implements IIncludeGraph {
-  private readonly reg: Registry;
+  private readonly reg: IRegistry;
   private readonly issues: Issue[];
   private readonly graph: Graph;
 
-  public constructor(reg: Registry) {
+  public constructor(reg: IRegistry) {
     this.reg = reg;
     this.issues = [];
     this.graph = new Graph();

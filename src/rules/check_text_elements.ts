@@ -5,6 +5,7 @@ import * as Expressions from "../abap/2_statements/expressions";
 import {ABAPObject, ITextElement} from "../objects/_abap_object";
 import {IObject} from "../objects/_iobject";
 import {IRegistry} from "../_iregistry";
+import {IncludeGraph} from "../utils/include_graph";
 
 /** Check text elements */
 export class CheckTextElementsConf extends BasicRuleConfig {
@@ -41,7 +42,7 @@ export class CheckTextElements implements IRule {
 
       let texts = obj.getTexts();
 
-      const mains = reg.getIncludeGraph().listMainForInclude(file.getFilename());
+      const mains = new IncludeGraph(reg).listMainForInclude(file.getFilename());
       if (mains.length === 1) {
 // todo, this only checks the first main
         const main1 = reg.findObjectForFile(reg.getFileByName(mains[0])!)! as ABAPObject;
