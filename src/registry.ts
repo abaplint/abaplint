@@ -52,7 +52,17 @@ export class Registry implements IRegistry {
     }
     return undefined;
   }
-
+/*
+  public getObjectByType<T>(type: new (...args: any[]) => T, name: string): T | undefined {
+    for (const obj of this.objects) {
+// todo, this is slow
+      if (obj.getName().toUpperCase() === name.toUpperCase() && obj instanceof type) {
+        return obj;
+      }
+    }
+    return undefined;
+  }
+*/
   public getConfig(): IConfiguration {
     return this.conf;
   }

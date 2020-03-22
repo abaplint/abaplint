@@ -6,6 +6,7 @@ import {StructureNode, StatementNode, ExpressionNode} from "../../abap/nodes";
 import {Expression} from "../2_statements/combi";
 import {TypedIdentifier} from "./_typed_identifier";
 import {CurrentScope} from "../syntax/_current_scope";
+import {FormParam} from "../syntax/expressions/form_param";
 
 export class FormDefinition extends Identifier {
   private readonly node: StatementNode;
@@ -49,8 +50,8 @@ export class FormDefinition extends Identifier {
   private findParams(node: ExpressionNode | StatementNode, scope: CurrentScope) {
     const res: TypedIdentifier[] = [];
     for (const param of node.findAllExpressions(Expressions.FormParam)) {
-      const para = param.get() as Expressions.FormParam;
-      res.push(para.runSyntax(param, scope, this.filename));
+//      const para = param.get() as Expressions.FormParam;
+      res.push(new FormParam().runSyntax(param, scope, this.filename));
     }
     return res;
   }

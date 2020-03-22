@@ -1,6 +1,5 @@
 import {IStatement} from "./_statement";
 import {str, seq, alt, per, opt, ver} from "../combi";
-import {NamespaceSimpleName, ConstantFieldLength, Type as eType, TypeTable, Decimals, Length} from "../expressions";
 import * as Expressions from "../expressions";
 import {CurrentScope} from "../../syntax/_current_scope";
 import {StatementNode} from "../../nodes";
@@ -9,15 +8,16 @@ import {BasicTypes} from "../../syntax/basic_types";
 import {TypedIdentifier} from "../../types/_typed_identifier";
 import {UnknownType} from "../../types/basic";
 import {IStatementRunnable} from "../statement_runnable";
+import {TypeTable} from "../../syntax/expressions/type_table";
 
 export class Type implements IStatement {
 
   public getMatcher(): IStatementRunnable {
-    const simple = per(new eType(), new Decimals(), new Length());
+    const simple = per(new Expressions.Type(), new Expressions.Decimals(), new Expressions.Length());
 
-    const def = seq(new NamespaceSimpleName(),
-                    opt(new ConstantFieldLength()),
-                    opt(alt(simple, new TypeTable())));
+    const def = seq(new Expressions.NamespaceSimpleName(),
+                    opt(new Expressions.ConstantFieldLength()),
+                    opt(alt(simple, new Expressions.TypeTable())));
 
 // todo, BOXED is only allowed with structures inside structures?
     const boxed = ver(Version.v702, str("BOXED"));
@@ -28,10 +28,9 @@ export class Type implements IStatement {
   }
 
   public runSyntax(node: StatementNode, scope: CurrentScope, filename: string): TypedIdentifier | undefined {
-    const tt = node.findFirstExpression(TypeTable);
+    const tt = node.findFirstExpression(Expressions.TypeTable);
     if (tt) {
-      const tts = tt.get() as TypeTable;
-      return tts.runSyntax(node, scope, filename);
+      return new TypeTable().runSyntax(node, scope, filename);
     }
 
     const found = new BasicTypes(filename, scope).simpleType(node);

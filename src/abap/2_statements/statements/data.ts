@@ -8,6 +8,7 @@ import {TypedIdentifier} from "../../types/_typed_identifier";
 import {UnknownType} from "../../types/basic";
 import {BasicTypes} from "../../syntax/basic_types";
 import {IStatementRunnable} from "../statement_runnable";
+import {TypeTable} from "../../syntax/expressions/type_table";
 
 export class Data implements IStatement {
 
@@ -18,7 +19,7 @@ export class Data implements IStatement {
   public runSyntax(node: StatementNode, scope: CurrentScope, filename: string): TypedIdentifier | undefined {
     const tt = node.findFirstExpression(Expressions.TypeTable);
     if (tt) {
-      const ttfound = (tt.get() as Expressions.TypeTable).runSyntax(node, scope, filename);
+      const ttfound = new TypeTable().runSyntax(node, scope, filename);
       if (ttfound) {
         return ttfound;
       }

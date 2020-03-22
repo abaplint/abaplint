@@ -1,6 +1,5 @@
 import {IStatement} from "./_statement";
 import {str, seq, opt, per, alt} from "../combi";
-import {Value, Type, ConstantFieldLength, NamespaceSimpleName, TypeTable, Length, Decimals} from "../expressions";
 import * as Expressions from "../expressions";
 import {StatementNode} from "../../nodes";
 import {CurrentScope} from "../../syntax/_current_scope";
@@ -8,17 +7,18 @@ import {TypedIdentifier} from "../../types/_typed_identifier";
 import {BasicTypes} from "../../syntax/basic_types";
 import {UnknownType} from "../../types/basic";
 import {IStatementRunnable} from "../statement_runnable";
+import {TypeTable} from "../../syntax/expressions/type_table";
 
 export class Static implements IStatement {
 
   public getMatcher(): IStatementRunnable {
-    const p = opt(per(new Type(), new Value(), new Length(), new Decimals()));
+    const p = opt(per(new Expressions.Type(), new Expressions.Value(), new Expressions.Length(), new Expressions.Decimals()));
 
-    const type = seq(opt(new ConstantFieldLength()), p);
+    const type = seq(opt(new Expressions.ConstantFieldLength()), p);
 
     const ret = seq(alt(str("STATIC"), str("STATICS")),
-                    new NamespaceSimpleName(),
-                    alt(type, new TypeTable()));
+                    new Expressions.NamespaceSimpleName(),
+                    alt(type, new Expressions.TypeTable()));
 
     return ret;
   }
@@ -26,7 +26,7 @@ export class Static implements IStatement {
   public runSyntax(node: StatementNode, scope: CurrentScope, filename: string): TypedIdentifier | undefined {
     const tt = node.findFirstExpression(Expressions.TypeTable);
     if (tt) {
-      const ttfound = (tt.get() as Expressions.TypeTable).runSyntax(node, scope, filename);
+      const ttfound = new TypeTable().runSyntax(node, scope, filename);
       if (ttfound) {
         return ttfound;
       }

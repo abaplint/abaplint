@@ -1,11 +1,12 @@
 import {StatementNode} from "../../abap/nodes/statement_node";
 import {MethodDef} from "../2_statements/statements/method_def";
-import {MethodDefImporting, MethodParam, MethodDefExporting, MethodDefChanging,
-  MethodDefReturning, EventHandler, MethodParamName} from "../2_statements/expressions";
+import * as Expressions from "../2_statements/expressions";
 import {ExpressionNode}  from "../../abap/nodes";
 import {TypedIdentifier, IdentifierMeta} from "./_typed_identifier";
 import {UnknownType} from "./basic";
 import {CurrentScope} from "../syntax/_current_scope";
+import {MethodDefReturning} from "../syntax/expressions/method_def_returning";
+import {MethodParam} from "../syntax/expressions/method_param";
 
 export class MethodParameters {
   private readonly importing: TypedIdentifier[];
@@ -64,33 +65,32 @@ export class MethodParameters {
 
   private parse(node: StatementNode, scope: CurrentScope): void {
 
-    const handler = node.findFirstExpression(EventHandler);
+    const handler = node.findFirstExpression(Expressions.EventHandler);
     if (handler) {
-      for (const p of handler.findAllExpressions(MethodParamName)) {
+      for (const p of handler.findAllExpressions(Expressions.MethodParamName)) {
         const token = p.getFirstToken();
         this.importing.push(new TypedIdentifier(token, this.filename, new UnknownType("todo, method parameter, handler")));
       }
     }
 
-    const importing = node.findFirstExpression(MethodDefImporting);
+    const importing = node.findFirstExpression(Expressions.MethodDefImporting);
     if (importing) {
       this.add(this.importing, importing, scope, IdentifierMeta.MethodImporting);
     }
 
-    const exporting = node.findFirstExpression(MethodDefExporting);
+    const exporting = node.findFirstExpression(Expressions.MethodDefExporting);
     if (exporting) {
       this.add(this.exporting, exporting, scope, IdentifierMeta.MethodExporting);
     }
 
-    const changing = node.findFirstExpression(MethodDefChanging);
+    const changing = node.findFirstExpression(Expressions.MethodDefChanging);
     if (changing) {
       this.add(this.changing, changing, scope, IdentifierMeta.MethodChanging);
     }
 
-    const returning = node.findFirstExpression(MethodDefReturning);
+    const returning = node.findFirstExpression(Expressions.MethodDefReturning);
     if (returning) {
-      const found = returning.get() as MethodDefReturning;
-      this.returning = found.runSyntax(returning, scope, this.filename, [IdentifierMeta.MethodReturning]);
+      this.returning = new MethodDefReturning().runSyntax(returning, scope, this.filename, [IdentifierMeta.MethodReturning]);
     }
 
 // todo:
@@ -99,10 +99,9 @@ export class MethodParameters {
   }
 
   private add(target: TypedIdentifier[], source: ExpressionNode, scope: CurrentScope, meta: IdentifierMeta): void {
-    const params = source.findAllExpressions(MethodParam);
+    const params = source.findAllExpressions(Expressions.MethodParam);
     for (const param of params) {
-      const para = param.get() as MethodParam;
-      target.push(para.runSyntax(param, scope, this.filename, [meta]));
+      target.push(new MethodParam().runSyntax(param, scope, this.filename, [meta]));
     }
   }
 
