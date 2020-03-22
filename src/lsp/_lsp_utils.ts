@@ -13,7 +13,6 @@ import {INode} from "../abap/nodes/_inode";
 import {Position} from "../position";
 import * as LServer from "vscode-languageserver-types";
 import {SpaghettiScopeNode} from "../abap/syntax/spaghetti_scope";
-import {getABAPObjects} from "../get_abap";
 
 export interface ICursorPosition {
   token: Token;
@@ -22,10 +21,13 @@ export interface ICursorPosition {
   snode: StatementNode;
 }
 
+function getABAPObjects(reg: IRegistry): ABAPObject[] {
+  return reg.getObjects().filter((obj) => { return obj instanceof ABAPObject; }) as ABAPObject[];
+}
+
 export class LSPUtils {
 
   public static getABAPFile(reg: IRegistry, name: string): ABAPFile | undefined {
-    // todo, optimize, why doesnt reg.getFileByName() work?
     const obj = getABAPObjects(reg);
     for (const o of obj) {
       for (const file of o.getABAPFiles()) {

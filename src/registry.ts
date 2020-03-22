@@ -9,7 +9,11 @@ import {Position} from "./position";
 import {IRegistry} from "./_iregistry";
 import {IProgress, NoProgress} from "./progress";
 import {IConfiguration} from "./_config";
-import {getABAPObjects} from "./get_abap";
+import {ABAPObject} from "./objects/_abap_object";
+
+function getABAPObjects(reg: IRegistry): ABAPObject[] {
+  return reg.getObjects().filter((obj) => { return obj instanceof ABAPObject; }) as ABAPObject[];
+}
 
 export class Registry implements IRegistry {
   private dirty = false;

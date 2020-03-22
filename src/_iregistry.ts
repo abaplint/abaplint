@@ -5,23 +5,22 @@ import {IProgress} from "./progress";
 import {Issue} from "./issue";
 
 export interface IRegistry {
+  parse(): IRegistry;
+  parseAsync(progress: IProgress): Promise<IRegistry>;
+  addDependencies(files: readonly IFile[]): IRegistry;
+  findIssues(progress?: IProgress): readonly Issue[];
+  findIssuesObject(iobj: IObject): readonly Issue[];
+  inErrorNamespace(name: string): boolean;
+
+  // config operations
   getConfig(): IConfiguration;
   setConfig(conf: IConfiguration): IRegistry;
 
+  // object operations
   getObjects(): readonly IObject[];
   getObject(type: string, name: string): IObject | undefined;
   findObjectForFile(file: IFile): IObject | undefined;
   getObjectByType<T>(type: new (...args: any[]) => T, name: string): T | undefined;
-
-  inErrorNamespace(name: string): boolean;
-
-  parse(): IRegistry;
-  parseAsync(progress: IProgress): Promise<IRegistry>;
-
-  addDependencies(files: readonly IFile[]): IRegistry;
-
-  findIssues(progress?: IProgress): readonly Issue[];
-  findIssuesObject(iobj: IObject): readonly Issue[];
 
   // file operations
   addFile(file: IFile): IRegistry;

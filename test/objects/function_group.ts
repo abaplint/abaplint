@@ -2,7 +2,7 @@ import {expect} from "chai";
 import {Registry} from "../../src/registry";
 import {MemoryFile} from "../../src/files/memory_file";
 import {FunctionGroup} from "../../src/objects";
-import {getABAPObjects} from "../../src/get_abap";
+import {getABAPObjects} from "../get_abap";
 
 describe("Funcion Group, parse main xml", () => {
   const xml =

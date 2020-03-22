@@ -6,7 +6,7 @@ import {Visibility} from "../../src/abap/types/visibility";
 import * as Basic from "../../src/abap/types/basic";
 import {CurrentScope} from "../../src/abap/syntax/_current_scope";
 import {CharacterType} from "../../src/abap/types/basic";
-import {getABAPObjects} from "../../src/get_abap";
+import {getABAPObjects} from "../get_abap";
 
 // todo, most(all?) of these tests to be moved to abap/types/class_definition
 // or other file under abap/types

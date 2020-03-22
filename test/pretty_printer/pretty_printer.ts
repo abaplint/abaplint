@@ -5,7 +5,7 @@ import {Registry} from "../../src/registry";
 import {Indent} from "../../src/pretty_printer/indent";
 import {KeywordCaseConf, KeywordCaseStyle} from "../../src/rules";
 import {Config} from "../../src/config";
-import {getABAPObjects} from "../../src/get_abap";
+import {getABAPObjects} from "../get_abap";
 
 const testTitle = (text: string): string => {return text.split("\n")[0]; };
 

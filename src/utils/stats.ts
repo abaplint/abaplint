@@ -6,7 +6,11 @@ import {MethodLengthStats} from "./method_length_stats";
 import {Config} from "../config";
 import {IRegistry} from "../_iregistry";
 import {ABAPFile} from "../abap/abap_file";
-import {getABAPObjects} from "../get_abap";
+import {ABAPObject} from "../objects/_abap_object";
+
+function getABAPObjects(reg: IRegistry): ABAPObject[] {
+  return reg.getObjects().filter((obj) => { return obj instanceof ABAPObject; }) as ABAPObject[];
+}
 
 export interface ITotals {
   statements: number;

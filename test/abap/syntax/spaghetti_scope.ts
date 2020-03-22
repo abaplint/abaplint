@@ -6,7 +6,7 @@ import {SpaghettiScope} from "../../../src/abap/syntax/spaghetti_scope";
 import {Position} from "../../../src/position";
 import {ScopeType} from "../../../src/abap/syntax/_scope_type";
 import {IRegistry} from "../../../src/_iregistry";
-import {getABAPObjects} from "../../../src/get_abap";
+import {getABAPObjects} from "../../get_abap";
 
 const filename = "zfoobar.prog.abap";
 

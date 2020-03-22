@@ -5,7 +5,7 @@ import {SyntaxLogic} from "../../../src/abap/syntax/syntax";
 import {Issue} from "../../../src/issue";
 import {Config} from "../../../src/config";
 import {IRegistry} from "../../../src/_iregistry";
-import {getABAPObjects} from "../../../src/get_abap";
+import {getABAPObjects} from "../../get_abap";
 
 function run(reg: IRegistry, globalConstants?: string[]): Issue[] {
   let ret: Issue[] = [];

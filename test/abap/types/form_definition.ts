@@ -4,7 +4,7 @@ import {IRegistry} from "../../../src/_iregistry";
 import {MemoryFile} from "../../../src/files";
 import {FormDefinition} from "../../../src/abap/types";
 import {CurrentScope} from "../../../src/abap/syntax/_current_scope";
-import {getABAPObjects} from "../../../src/get_abap";
+import {getABAPObjects} from "../../get_abap";
 
 let reg: IRegistry = new Registry();
 let scope: CurrentScope = CurrentScope.buildDefault(reg);

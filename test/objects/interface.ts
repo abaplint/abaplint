@@ -2,7 +2,7 @@ import {expect} from "chai";
 import {Registry} from "../../src/registry";
 import {MemoryFile} from "../../src/files/memory_file";
 import {Interface} from "../../src/objects";
-import {getABAPObjects} from "../../src/get_abap";
+import {getABAPObjects} from "../get_abap";
 
 describe("Objects, interface, isGeneratedProxy", () => {
   it("test, positive", () => {

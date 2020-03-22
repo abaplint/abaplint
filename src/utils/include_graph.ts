@@ -7,10 +7,14 @@ import {Issue} from "../issue";
 import {IFile} from "../files/_ifile";
 import {IIncludeGraph} from "./_include_graph";
 import {IRegistry} from "../_iregistry";
-import {getABAPObjects} from "../get_abap";
+import {ABAPObject} from "../objects/_abap_object";
 
 // todo, check for cycles/circular dependencies, method findTop
 // todo, add configurable error for multiple use includes
+
+function getABAPObjects(reg: IRegistry): ABAPObject[] {
+  return reg.getObjects().filter((obj) => { return obj instanceof ABAPObject; }) as ABAPObject[];
+}
 
 interface IVertex {
   filename: string;

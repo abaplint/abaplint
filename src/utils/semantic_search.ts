@@ -3,7 +3,11 @@ import {ExpressionNode} from "../abap/nodes";
 import {Token} from "../abap/1_lexer/tokens/_token";
 import {IRegistry} from "../_iregistry";
 import {ABAPFile} from "../abap/abap_file";
-import {getABAPObjects} from "../get_abap";
+import {ABAPObject} from "../objects/_abap_object";
+
+function getABAPObjects(reg: IRegistry): ABAPObject[] {
+  return reg.getObjects().filter((obj) => { return obj instanceof ABAPObject; }) as ABAPObject[];
+}
 
 export interface ICode {
   code: string;

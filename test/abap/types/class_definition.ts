@@ -4,7 +4,7 @@ import {Registry} from "../../../src/registry";
 import {Class} from "../../../src/objects";
 import {Visibility} from "../../../src/abap/types/visibility";
 import {CurrentScope} from "../../../src/abap/syntax/_current_scope";
-import {getABAPObjects} from "../../../src/get_abap";
+import {getABAPObjects} from "../../get_abap";
 
 describe("Types, class_definition", () => {
 

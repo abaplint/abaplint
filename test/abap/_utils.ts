@@ -10,7 +10,7 @@ import {StructureNode, StatementNode} from "../../src/abap/nodes/";
 import {IFile} from "../../src/files/_ifile";
 import {Token} from "../../src/abap/1_lexer/tokens/_token";
 import {Lexer} from "../../src/abap/1_lexer/lexer";
-import {getABAPObjects} from "../../src/get_abap";
+import {getABAPObjects} from "../get_abap";
 
 // utils for testing
 
