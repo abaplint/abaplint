@@ -8,7 +8,7 @@ import {Unknown, Empty, Comment} from "../abap/2_statements/statements/_statemen
 import {ABAPObject} from "../objects/_abap_object";
 import {FunctionGroup} from "../objects";
 import {Include} from "../abap/2_statements/statements";
-import {Registry} from "../registry";
+import {ABAPParser} from "../abap/abap_parser";
 
 /** Detects usage of commented out code.
  * https://github.com/SAP/styleguides/blob/master/clean-abap/CleanABAP.md#delete-code-instead-of-commenting-it
@@ -61,17 +61,19 @@ export class CommentedCode extends ABAPRule {
       return [];
     }
 
-// todo, call ABAPParser instead of Registry?
-    const reg = new Registry().addFile(new MemoryFile("_foobar.prog.abap", code)).parse();
-
-    const statementNodes = reg.getABAPFiles()[0].getStatements();
+    const commented = new MemoryFile("_foobar.prog.abap", code);
+    const abapFile = new ABAPParser().parse([commented]).output[0];
+    const statementNodes = abapFile.getStatements();
     if (statementNodes.length === 0) {
       return [];
     }
+
     let containsStatement: boolean = false;
     for (const statementNode of statementNodes) {
       const statement = statementNode.get();
-      if (this.getConfig().allowIncludeInFugr === true && obj instanceof FunctionGroup && statement instanceof Include) {
+      if (this.getConfig().allowIncludeInFugr === true
+          && obj instanceof FunctionGroup
+          && statement instanceof Include) {
         continue;
       }
       if (!(statement instanceof Unknown
@@ -91,7 +93,7 @@ export class CommentedCode extends ABAPRule {
   }
 
   private isCommentLine(text: string): boolean {
-    return ((text.substr(0, 1) === "*")
-      || (text.trim().substr(0, 1) === "\"" && text.trim().substr(1, 1) !== "!"));
+    return (text.substr(0, 1) === "*")
+      || (text.trim().substr(0, 1) === "\"" && text.trim().substr(1, 1) !== "!");
   }
 }
