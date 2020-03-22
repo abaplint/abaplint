@@ -21,11 +21,16 @@ import {Perform} from "./statements/perform";
 import {Type} from "./statements/type";
 import {Constant} from "./statements/constant";
 import {Static} from "./statements/static";
-import {Data} from "./statements/data";
+import {Data as DataStatement} from "./statements/data";
+import {Data as DataStructure} from "./structures/data";
 import {Parameter} from "./statements/parameter";
 import {FieldSymbol} from "./statements/fieldsymbo";
 import {Tables} from "./statements/tables";
 import {SelectOption} from "./statements/selectoption";
+import {TypeEnum} from "./structures/type_enum";
+import {Types} from "./structures/types";
+import {Statics} from "./structures/statics";
+import {Constants} from "./structures/constants";
 
 // assumption: objects are parsed without parsing errors
 
@@ -178,6 +183,7 @@ export class SyntaxLogic {
 // todo, and introduce SimpleSource?
     const filename = this.currentFile.getFilename();
 
+// todo, refactor
     if (node instanceof StructureNode) {
       const stru = node.get();
       if (stru instanceof Structures.ClassDefinition) {
@@ -187,15 +193,19 @@ export class SyntaxLogic {
         this.scope.addInterfaceDefinition(new InterfaceDefinition(node, filename));
         return true;
       } else if (stru instanceof Structures.Types) {
-        this.scope.addType(stru.runSyntax(node, this.scope, filename));
+        this.scope.addType(new Types().runSyntax(node, this.scope, filename));
         return true;
-      } else if (stru instanceof Structures.Constants
-          || stru instanceof Structures.Data
-          || stru instanceof Structures.Statics) {
-        this.scope.addIdentifier(stru.runSyntax(node, this.scope, filename));
+      } else if (stru instanceof Structures.Constants) {
+        this.scope.addIdentifier(new Constants().runSyntax(node, this.scope, filename));
+        return true;
+      } else if (stru instanceof Structures.Data) {
+        this.scope.addIdentifier(new DataStructure().runSyntax(node, this.scope, filename));
+        return true;
+      } else if (stru instanceof Structures.Statics) {
+        this.scope.addIdentifier(new Statics().runSyntax(node, this.scope, filename));
         return true;
       } else if (stru instanceof Structures.TypeEnum) {
-        this.scope.addList(stru.runSyntax(node, this.scope, filename));
+        this.scope.addList(new TypeEnum().runSyntax(node, this.scope, filename));
         return true;
       }
       return false;
@@ -212,7 +222,7 @@ export class SyntaxLogic {
     } else if (s instanceof Statements.Static) {
       this.scope.addIdentifier(new Static().runSyntax(node, this.scope, filename));
     } else if (s instanceof Statements.Data) {
-      this.scope.addIdentifier(new Data().runSyntax(node, this.scope, filename));
+      this.scope.addIdentifier(new DataStatement().runSyntax(node, this.scope, filename));
     } else if (s instanceof Statements.Parameter) {
       this.scope.addIdentifier(new Parameter().runSyntax(node, this.scope, filename));
     } else if (s instanceof Statements.FieldSymbol) {

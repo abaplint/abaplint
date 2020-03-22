@@ -4,6 +4,7 @@ import * as Structures from "../3_structures/structures";
 import {CurrentScope} from "../syntax/_current_scope";
 import {TypedIdentifier} from "./_typed_identifier";
 import {Type} from "../syntax/statements/type";
+import {Types} from "../syntax/structures/types";
 
 // todo: public + protected + private
 export class TypeDefinitions {
@@ -56,7 +57,7 @@ export class TypeDefinitions {
           this.list.push(res);
         }
       } else if (c instanceof StructureNode && get instanceof Structures.Types) {
-        const res = get.runSyntax(c, scope, this.filename);
+        const res = new Types().runSyntax(c, scope, this.filename);
         if (res) {
           scope.addType(res);
           this.list.push(res);

@@ -6,9 +6,13 @@ import {StructureNode, StatementNode} from "../../abap/nodes";
 import {Visibility} from "./visibility";
 import {CurrentScope} from "../syntax/_current_scope";
 import {TypedIdentifier} from "./_typed_identifier";
-import {ClassData} from "../syntax/statements/class_data";
-import {Data} from "../syntax/statements/data";
-import {Constant} from "../syntax/statements/constant";
+import {ClassData as ClassDataStatement} from "../syntax/statements/class_data";
+import {ClassData as ClassDataStructure} from "../syntax/structures/class_data";
+import {Data as DataStatement} from "../syntax/statements/data";
+import {Constant as ConstantStatement} from "../syntax/statements/constant";
+import {Data as DataStructure} from "../syntax/structures/data";
+import {TypeEnum} from "../syntax/structures/type_enum";
+import {Constants} from "../syntax/structures/constants";
 
 export class Attributes {
   private readonly static: ClassAttribute[];
@@ -113,22 +117,22 @@ export class Attributes {
       const ctyp = c.get();
       if (c instanceof StructureNode) {
         if (ctyp instanceof Structures.Data) {
-          const found = ctyp.runSyntax(c, scope, this.filename);
+          const found = new DataStructure().runSyntax(c, scope, this.filename);
           if (found !== undefined) {
             this.instance.push(new ClassAttribute(found, visibility));
           }
         } else if (ctyp instanceof Structures.ClassData) {
-          const found = ctyp.runSyntax(c, scope, this.filename);
+          const found = new ClassDataStructure().runSyntax(c, scope, this.filename);
           if (found !== undefined) {
             this.static.push(new ClassAttribute(found, visibility));
           }
         } else if (ctyp instanceof Structures.Constants) {
-          const found = ctyp.runSyntax(c, scope, this.filename);
+          const found = new Constants().runSyntax(c, scope, this.filename);
           if (found !== undefined) {
             this.constants.push(new ClassConstant(found, visibility));
           }
         } else if (ctyp instanceof Structures.TypeEnum) {
-          const enums = ctyp.runSyntax(c, scope, this.filename);
+          const enums = new TypeEnum().runSyntax(c, scope, this.filename);
           for (const e of enums) {
           // for now add ENUM values as constants
             this.constants.push(new ClassConstant(e, visibility));
@@ -143,7 +147,7 @@ export class Attributes {
         } else if (ctyp instanceof Statements.ClassData) {
           this.static.push(this.parseAttribute(c, visibility, scope));
         } else if (ctyp instanceof Statements.Constant) {
-          const found = new Constant().runSyntax(c, scope, this.filename);
+          const found = new ConstantStatement().runSyntax(c, scope, this.filename);
           if (found) {
             this.constants.push(new ClassConstant(found, visibility));
           }
@@ -157,9 +161,9 @@ export class Attributes {
     let found: TypedIdentifier | undefined = undefined;
     const s = node.get();
     if (s instanceof Statements.Data) {
-      found = new Data().runSyntax(node, scope, this.filename);
+      found = new DataStatement().runSyntax(node, scope, this.filename);
     } else if (s instanceof Statements.ClassData) {
-      found = new ClassData().runSyntax(node, scope, this.filename);
+      found = new ClassDataStatement().runSyntax(node, scope, this.filename);
     } else {
       throw new Error("ClassAttribute, unexpected node, 1");
     }
