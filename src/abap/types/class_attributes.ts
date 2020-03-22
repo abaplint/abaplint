@@ -6,6 +6,9 @@ import {StructureNode, StatementNode} from "../../abap/nodes";
 import {Visibility} from "./visibility";
 import {CurrentScope} from "../syntax/_current_scope";
 import {TypedIdentifier} from "./_typed_identifier";
+import {ClassData} from "../syntax/statements/class_data";
+import {Data} from "../syntax/statements/data";
+import {Constant} from "../syntax/statements/constant";
 
 export class Attributes {
   private readonly static: ClassAttribute[];
@@ -140,7 +143,7 @@ export class Attributes {
         } else if (ctyp instanceof Statements.ClassData) {
           this.static.push(this.parseAttribute(c, visibility, scope));
         } else if (ctyp instanceof Statements.Constant) {
-          const found = ctyp.runSyntax(c, scope, this.filename);
+          const found = new Constant().runSyntax(c, scope, this.filename);
           if (found) {
             this.constants.push(new ClassConstant(found, visibility));
           }
@@ -154,9 +157,9 @@ export class Attributes {
     let found: TypedIdentifier | undefined = undefined;
     const s = node.get();
     if (s instanceof Statements.Data) {
-      found = s.runSyntax(node, scope, this.filename);
+      found = new Data().runSyntax(node, scope, this.filename);
     } else if (s instanceof Statements.ClassData) {
-      found = s.runSyntax(node, scope, this.filename);
+      found = new ClassData().runSyntax(node, scope, this.filename);
     } else {
       throw new Error("ClassAttribute, unexpected node, 1");
     }

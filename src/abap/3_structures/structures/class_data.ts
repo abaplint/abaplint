@@ -8,6 +8,7 @@ import {TypedIdentifier} from "../../types/_typed_identifier";
 import {IStructureComponent} from "../../types/basic";
 import * as Basic from "../../types/basic";
 import {IStructureRunnable} from "./_structure_runnable";
+import {ClassData as ClassDataSyntax} from "../../syntax/statements/class_data";
 
 export class ClassData implements IStructure {
 
@@ -24,7 +25,7 @@ export class ClassData implements IStructure {
     for (const c of node.getChildren()) {
       const ctyp = c.get();
       if (c instanceof StatementNode && ctyp instanceof Statements.ClassData) {
-        const found = ctyp.runSyntax(c, scope, filename);
+        const found = new ClassDataSyntax().runSyntax(c, scope, filename);
         if (found) {
           components.push({name: found.getName(), type: found.getType()});
         }

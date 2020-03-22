@@ -2,9 +2,6 @@ import {IStatement} from "./_statement";
 import {verNot, str, seq, opt, alt} from "../combi";
 import * as Expressions from "../expressions";
 import {Version} from "../../../version";
-import {StatementNode} from "../../nodes";
-import {CurrentScope} from "../../syntax/_current_scope";
-import {IStructureComponent, StructureType} from "../../types/basic";
 import {IStatementRunnable} from "../statement_runnable";
 
 export class IncludeType implements IStatement {
@@ -21,19 +18,6 @@ export class IncludeType implements IStatement {
                     opt(renaming));
 
     return verNot(Version.Cloud, ret);
-  }
-
-  public runSyntax(node: StatementNode, scope: CurrentScope, _filename: string): IStructureComponent[] {
-    let components: IStructureComponent[] = [];
-    const iname = node.findFirstExpression(Expressions.TypeName)!.getFirstToken()!.getStr();
-    const ityp = scope.findType(iname);
-    if (ityp) {
-      const typ = ityp.getType();
-      if (typ instanceof StructureType) {
-        components = components.concat(typ.getComponents());
-      } // todo, else exception?
-    } // todo, else exception?
-    return components;
   }
 
 }

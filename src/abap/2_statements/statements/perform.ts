@@ -3,8 +3,6 @@ import {verNot, str, seq, opt, alt, tok, plus} from "../combi";
 import {ParenLeft, ParenRightW} from "../../1_lexer/tokens";
 import * as Expressions from "../expressions";
 import {Version} from "../../../version";
-import {StatementNode} from "../../nodes";
-import {CurrentScope} from "../../syntax/_current_scope";
 import {IStatementRunnable} from "../statement_runnable";
 
 export class Perform implements IStatement {
@@ -39,32 +37,6 @@ export class Perform implements IStatement {
                     opt(commit));
 
     return ret;
-  }
-
-  public runSyntax(node: StatementNode, scope: CurrentScope, _filename: string): void {
-    if (!(node.get() instanceof Perform)) {
-      throw new Error("checkPerform unexpected node type");
-    }
-
-    if (node.findFirstExpression(Expressions.IncludeName)) {
-      return; // in external program, not checked, todo
-    }
-
-    if (node.findFirstExpression(Expressions.Dynamic)) {
-      return; // todo, maybe some parts can be checked
-    }
-
-    const expr = node.findFirstExpression(Expressions.FormName);
-    if (expr === undefined) {
-      return; // it might be a dynamic call
-    }
-
-    const name = expr.getFirstToken().getStr();
-
-// todo, also check parameters match
-    if (scope.findFormDefinition(name) === undefined) {
-      throw new Error("FORM definition \"" + name + "\" not found");
-    }
   }
 
 }

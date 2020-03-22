@@ -2,11 +2,6 @@ import {IStatement} from "./_statement";
 import {verNot, str, seq, opt, alt, per} from "../combi";
 import {Source, FieldChain, Constant, Field, Modif, Dynamic} from "../expressions";
 import {Version} from "../../../version";
-import * as Expressions from "../expressions";
-import {StatementNode} from "../../nodes";
-import {CurrentScope} from "../../syntax/_current_scope";
-import {TypedIdentifier} from "../../types/_typed_identifier";
-import {UnknownType} from "../../types/basic";
 import {IStatementRunnable} from "../statement_runnable";
 
 export class SelectOption implements IStatement {
@@ -52,15 +47,6 @@ export class SelectOption implements IStatement {
                     opt(options));
 
     return verNot(Version.Cloud, ret);
-  }
-
-  public runSyntax(node: StatementNode, _scope: CurrentScope, filename: string): TypedIdentifier | undefined {
-    const fallback = node.findFirstExpression(Expressions.Field);
-    if (fallback) {
-      return new TypedIdentifier(fallback.getFirstToken(), filename, new UnknownType("Select option, fallback"));
-    } else {
-      return undefined;
-    }
   }
 
 }

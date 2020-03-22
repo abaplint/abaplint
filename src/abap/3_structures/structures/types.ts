@@ -8,6 +8,8 @@ import {TypedIdentifier} from "../../types/_typed_identifier";
 import {IStructureComponent} from "../../types/basic";
 import {CurrentScope} from "../../syntax/_current_scope";
 import {IStructureRunnable} from "./_structure_runnable";
+import {IncludeType} from "../../syntax/statements/include_type";
+import {Type} from "../../syntax/statements/type";
 
 export class Types implements IStructure {
 
@@ -24,12 +26,12 @@ export class Types implements IStructure {
     for (const c of node.getChildren()) {
       const ctyp = c.get();
       if (c instanceof StatementNode && ctyp instanceof Statements.Type) {
-        const found = ctyp.runSyntax(c, scope, filename);
+        const found = new Type().runSyntax(c, scope, filename);
         if (found) {
           components.push({name: found.getName(), type: found.getType()});
         }
       } else if (c instanceof StatementNode && ctyp instanceof Statements.IncludeType) {
-        components = components.concat(ctyp.runSyntax(c, scope, filename));
+        components = components.concat(new IncludeType().runSyntax(c, scope, filename));
       }
       // todo, nested structures
     }

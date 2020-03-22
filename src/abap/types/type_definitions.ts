@@ -3,6 +3,7 @@ import * as Statements from "../2_statements/statements";
 import * as Structures from "../3_structures/structures";
 import {CurrentScope} from "../syntax/_current_scope";
 import {TypedIdentifier} from "./_typed_identifier";
+import {Type} from "../syntax/statements/type";
 
 // todo: public + protected + private
 export class TypeDefinitions {
@@ -49,7 +50,7 @@ export class TypeDefinitions {
     for (const c of contents.getChildren()) {
       const get = c.get();
       if (c instanceof StatementNode && get instanceof Statements.Type) {
-        const res = get.runSyntax(c, scope, this.filename);
+        const res = new Type().runSyntax(c, scope, this.filename);
         if (res) {
           scope.addType(res);
           this.list.push(res);

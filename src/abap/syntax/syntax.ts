@@ -17,6 +17,15 @@ import {Program, FunctionGroup} from "../../objects";
 import {ClassDefinition, InterfaceDefinition} from "../types";
 import {SpaghettiScope} from "./spaghetti_scope";
 import {Position} from "../../position";
+import {Perform} from "./statements/perform";
+import {Type} from "./statements/type";
+import {Constant} from "./statements/constant";
+import {Static} from "./statements/static";
+import {Data} from "./statements/data";
+import {Parameter} from "./statements/parameter";
+import {FieldSymbol} from "./statements/fieldsymbo";
+import {Tables} from "./statements/tables";
+import {SelectOption} from "./statements/selectoption";
 
 // assumption: objects are parsed without parsing errors
 
@@ -194,21 +203,28 @@ export class SyntaxLogic {
       return false;
     }
 
+// todo, refactor
     const s = node.get();
     if (s instanceof Statements.Type) {
-      this.scope.addType(s.runSyntax(node, this.scope, filename));
-    } else if (s instanceof Statements.Constant
-        || s instanceof Statements.Static
-        || s instanceof Statements.Data
-        || s instanceof Statements.Parameter
-        || s instanceof Statements.FieldSymbol
-        || s instanceof Statements.Tables
-        || s instanceof Statements.SelectOption) {
-      this.scope.addIdentifier(s.runSyntax(node, this.scope, filename));
+      this.scope.addType(new Type().runSyntax(node, this.scope, filename));
+    } else if (s instanceof Statements.Constant) {
+      this.scope.addIdentifier(new Constant().runSyntax(node, this.scope, filename));
+    } else if (s instanceof Statements.Static) {
+      this.scope.addIdentifier(new Static().runSyntax(node, this.scope, filename));
+    } else if (s instanceof Statements.Data) {
+      this.scope.addIdentifier(new Data().runSyntax(node, this.scope, filename));
+    } else if (s instanceof Statements.Parameter) {
+      this.scope.addIdentifier(new Parameter().runSyntax(node, this.scope, filename));
+    } else if (s instanceof Statements.FieldSymbol) {
+      this.scope.addIdentifier(new FieldSymbol().runSyntax(node, this.scope, filename));
+    } else if (s instanceof Statements.Tables) {
+      this.scope.addIdentifier(new Tables().runSyntax(node, this.scope, filename));
+    } else if (s instanceof Statements.SelectOption) {
+      this.scope.addIdentifier(new SelectOption().runSyntax(node, this.scope, filename));
     } else if (s instanceof Statements.Form) {
       this.helpers.proc.findFormScope(node, filename);
     } else if (s instanceof Statements.Perform) {
-      s.runSyntax(node, this.scope, filename);
+      new Perform().runSyntax(node, this.scope, filename);
     } else if (s instanceof Statements.FunctionModule) {
       this.helpers.proc.findFunctionScope(this.object, node, filename);
     } else if (s instanceof Statements.Method) {
