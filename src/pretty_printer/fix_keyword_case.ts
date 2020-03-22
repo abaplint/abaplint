@@ -1,16 +1,16 @@
 import {StatementNode, ExpressionNode, TokenNode, TokenNodeRegex} from "../abap/nodes";
 import {Identifier} from "../abap/1_lexer/tokens";
 import {Position} from "../position";
-import {Config} from "../config";
 import {KeywordCase, KeywordCaseStyle} from "../rules/keyword_case";
 import * as Tokens from "../abap/1_lexer/tokens";
+import {IConfiguration} from "../_config";
 
 export class FixCase {
   private fileContents: string;
-  private readonly config: Config;
+  private readonly config: IConfiguration;
   private readonly keywordCase: KeywordCase;
 
-  public constructor(fileContents: string, config: Config) {
+  public constructor(fileContents: string, config: IConfiguration) {
     this.keywordCase = new KeywordCase();
     this.keywordCase.setConfig(config.readByRule(this.keywordCase.getKey()));
     this.fileContents = fileContents;

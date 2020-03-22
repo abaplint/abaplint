@@ -35,7 +35,7 @@ for(const rule of abaplint.ArtifactsRules.getRules()) {
 }
 rules.sort((a, b) => { return a.key.localeCompare(b.key); });
 
-let output = "import {IGlobalConfig, IDependency, ISyntaxSettings} from \"../src/config\";\n";
+let output = "import {IGlobalConfig, IDependency, ISyntaxSettings} from \"../src/_config\";\n";
 for(const rule of rules) {
   output = output + "import {" + rule.config + "} from \"" + ruledir + findFile(rule.key) + "\";\n";
 }

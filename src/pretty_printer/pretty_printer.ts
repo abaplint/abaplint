@@ -1,18 +1,18 @@
 import {Unknown, MacroContent, MacroCall, Comment} from "../abap/2_statements/statements/_statement";
 import {ABAPFile} from "../files";
-import {Config} from "../config";
 import {FixCase} from "./fix_keyword_case";
 import {Indent as Indent} from "./indent";
 import {IIndentationOptions} from "./indentation_options";
 import {RemoveSequentialBlanks} from "./remove_sequential_blanks";
+import {IConfiguration} from "../_config";
 
 export class PrettyPrinter {
   private result: string;
   private readonly file: ABAPFile;
   private readonly options: IIndentationOptions;
-  private readonly config: Config;
+  private readonly config: IConfiguration;
 
-  public constructor(file: ABAPFile, config: Config, options?: IIndentationOptions) {
+  public constructor(file: ABAPFile, config: IConfiguration, options?: IIndentationOptions) {
     this.result = file.getRaw();
     this.file = file;
     this.options = options || {};

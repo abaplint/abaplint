@@ -1,11 +1,11 @@
-import {Config} from "../config";
 import {SequentialBlankConf, SequentialBlank} from "../rules";
 import {IFile} from "../files/_ifile";
+import {IConfiguration} from "../_config";
 
 export class RemoveSequentialBlanks {
-  private readonly config: Config;
+  private readonly config: IConfiguration;
 
-  public constructor(config: Config) {
+  public constructor(config: IConfiguration) {
     this.config = config;
   }
 

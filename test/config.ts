@@ -1,6 +1,7 @@
 import {expect} from "chai";
-import {IConfig, Config} from "../src/config";
-import {Version} from "../src";
+import {Config} from "../src/config";
+import {IConfig} from "../src/_config";
+import {Version} from "../src/version";
 
 describe("Registry", () => {
 

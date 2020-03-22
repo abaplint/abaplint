@@ -2,7 +2,7 @@ import {StructureNode, StatementNode} from "../../abap/nodes";
 import * as Statements from "../2_statements/statements";
 import * as Structures from "../3_structures/structures";
 import {CurrentScope} from "../syntax/_current_scope";
-import {TypedIdentifier} from "../..";
+import {TypedIdentifier} from "./_typed_identifier";
 
 // todo: public + protected + private
 export class TypeDefinitions {

@@ -11,6 +11,7 @@ import {Position} from "./position";
 import {IncludeGraph} from "./utils/include_graph";
 import {IRegistry} from "./_iregistry";
 import {IProgress, NoProgress} from "./progress";
+import {IConfiguration} from "./_config";
 
 export class Registry implements IRegistry {
   private dirty = false;
@@ -54,7 +55,7 @@ export class Registry implements IRegistry {
     return undefined;
   }
 
-  public getConfig() {
+  public getConfig(): IConfiguration {
     return this.conf;
   }
 

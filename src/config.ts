@@ -1,42 +1,10 @@
 import {Version, defaultVersion} from "./version";
 import {ArtifactsRules} from "./artifacts_rules";
 import {IRule} from "./rules/_irule";
-
-export interface IGlobalConfig {
-  files: string;
-  skipGeneratedGatewayClasses: boolean;
-  skipGeneratedPersistentClasses: boolean;
-  skipGeneratedFunctionGroups: boolean;
-  /** Clone and parse dependencies specified in .apack-manifest.xml if it is present */
-  useApackDependencies?: boolean;
-}
-
-export interface IDependency {
-  /** Url of a git repository */
-  url?: string;
-  /** Name of local folder with dependencies */
-  folder?: string;
-  files: string;
-}
-
-export interface ISyntaxSettings {
-  version: Version;
-  errorNamespace: string;
-  globalConstants?: string[];
-  globalMacros?: string[];
-}
-
-export interface IConfig {
-  global: IGlobalConfig;
-  /** External git dependencies used for syntax checks */
-  dependencies?: IDependency[];
-  syntax: ISyntaxSettings;
-  rules: any;
-}
+import {IConfig, IGlobalConfig, ISyntaxSettings, IConfiguration} from "./_config";
 
 // assumption: this class is immutable
-export class Config {
-
+export class Config implements IConfiguration {
   private readonly config: IConfig;
 
   public static getDefault(ver?: Version): Config {
@@ -114,7 +82,7 @@ export class Config {
     }
   }
 
-  public get() {
+  public get(): IConfig {
     return this.config;
   }
 

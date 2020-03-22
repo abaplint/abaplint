@@ -3,10 +3,9 @@ import {MethodDef} from "../2_statements/statements/method_def";
 import {MethodDefImporting, MethodParam, MethodDefExporting, MethodDefChanging,
   MethodDefReturning, EventHandler, MethodParamName} from "../2_statements/expressions";
 import {ExpressionNode}  from "../../abap/nodes";
-import {TypedIdentifier} from "./_typed_identifier";
+import {TypedIdentifier, IdentifierMeta} from "./_typed_identifier";
 import {UnknownType} from "./basic";
 import {CurrentScope} from "../syntax/_current_scope";
-import {IdentifierMeta} from "../..";
 
 export class MethodParameters {
   private readonly importing: TypedIdentifier[];

@@ -2,10 +2,11 @@ import {Registry} from "../registry";
 import {Include} from "../abap/2_statements/statements";
 import {IncludeName} from "../abap/2_statements/expressions";
 import {FunctionGroup, Program} from "../objects";
-import {ABAPFile} from "../files";
 import {CheckInclude} from "../rules/syntax/check_include";
 import {Position} from "../position";
 import {Issue} from "../issue";
+import {IFile} from "../files/_ifile";
+import {IIncludeGraph} from "./_include_graph";
 
 // todo, check for cycles/circular dependencies, method findTop
 // todo, add configurable error for multiple use includes
@@ -69,7 +70,7 @@ class Graph {
 
 }
 
-export class IncludeGraph {
+export class IncludeGraph implements IIncludeGraph {
   private readonly reg: Registry;
   private readonly issues: Issue[];
   private readonly graph: Graph;
@@ -95,7 +96,7 @@ export class IncludeGraph {
     return ret;
   }
 
-  public getIssuesFile(file: ABAPFile): Issue[] {
+  public getIssuesFile(file: IFile): Issue[] {
     const ret: Issue[] = [];
     for (const i of this.issues) {
       if (i.getFilename() === file.getFilename()) {

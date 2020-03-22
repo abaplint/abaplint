@@ -3,7 +3,8 @@ import {BasicRuleConfig} from "./_basic_rule_config";
 import {Issue} from "../issue";
 import {ABAPFile} from "../files";
 import {TokenNodeRegex, TokenNode} from "../abap/nodes";
-import {Token, INode} from "..";
+import {INode} from "../abap/nodes/_inode";
+import {Token} from "../abap/1_lexer/tokens/_token";
 
 /** Forbid use of specified identifiers, list of regex */
 export class ForbiddenIdentifierConf extends BasicRuleConfig {

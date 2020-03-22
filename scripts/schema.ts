@@ -1,4 +1,4 @@
-import {IGlobalConfig, IDependency, ISyntaxSettings} from "../src/config";
+import {IGlobalConfig, IDependency, ISyntaxSettings} from "../src/_config";
 import {SevenBitAsciiConf} from "../src/rules/7bit_ascii";
 import {AbapdocConf} from "../src/rules/abapdoc";
 import {AllowedObjectNamingConf} from "../src/rules/naming/allowed_object_naming";

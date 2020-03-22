@@ -56,46 +56,7 @@
             "plugin:import/warnings",
             "plugin:import/typescript"
         ],
-        "overrides": [
-            {
-                "files": [
-                    "src/abap/expressions/*.ts"
-                ],
-                "rules": {
-                    "no-restricted-imports": [
-                        "error",
-                        {
-                            "patterns": [
-                                "./*"
-                            ]
-                        }
-                    ]
-                }
-            },
-            {
-                "files": [
-                    "src/abap/expressions/index.ts"
-                ],
-                "rules": {
-                    "no-restricted-imports": "off"
-                }
-            },
-            {
-                "files": [
-                    "src/abap/statements/*.ts"
-                ],
-                "rules": {
-                    "no-restricted-imports": [
-                        "error",
-                        {
-                            "patterns": [
-                                "../expressions/*"
-                            ]
-                        }
-                    ]
-                }
-            }
-        ],
+        "overrides": [],
         "rules": {
             "import/no-unresolved": "off",
             "import/namespace": "off",

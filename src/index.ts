@@ -1,6 +1,6 @@
 import {MemoryFile, ABAPFile} from "./files";
 import {Issue} from "./issue";
-import {Config, IConfig} from "./config";
+import {Config} from "./config";
 import {Version} from "./version";
 import {Formatter} from "./cli/formatters/_format";
 import {Registry} from "./registry";
@@ -28,6 +28,7 @@ import * as Nodes from "./abap/nodes";
 import * as BasicTypes from "./abap/types/basic";
 import * as Types from "./abap/types";
 import * as Tokens from "./abap/1_lexer/tokens";
+import {IConfig} from "./_config";
 
 // do not include this file from anywhere within abaplint
 
