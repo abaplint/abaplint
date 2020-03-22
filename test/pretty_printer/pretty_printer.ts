@@ -1,11 +1,17 @@
 import {expect} from "chai";
 import {PrettyPrinter} from "../../src/pretty_printer/pretty_printer";
-import {MemoryFile} from "../../src/files";
+import {MemoryFile, ABAPFile} from "../../src/files";
 import {Registry} from "../../src/registry";
 import {Indent} from "../../src/pretty_printer/indent";
 import {KeywordCaseConf, KeywordCaseStyle} from "../../src/rules";
+import {Config} from "../../src/config";
 
 const testTitle = (text: string): string => {return text.split("\n")[0]; };
+
+function parse(abap: string): readonly ABAPFile[] {
+  const reg = new Registry().addFile(new MemoryFile("zfoo.prog.abap", abap)).parse();
+  return reg.getABAPObjects()[0].getABAPFiles();
+}
 
 describe("Pretty printer, keywords upper case", () => {
   const tests = [
@@ -20,10 +26,10 @@ describe("Pretty printer, keywords upper case", () => {
 
   tests.forEach((test) => {
     it(testTitle(test.input), () => {
-      const reg = new Registry().addFile(new MemoryFile("zfoo.prog.abap", test.input)).parse();
-      expect(reg.getABAPFiles().length).to.equal(1);
-      const config = reg.getConfig();
-      const result = new PrettyPrinter(reg.getABAPFiles()[0], config).run();
+      const files = parse(test.input);
+      expect(files.length).to.equal(1);
+      const config = Config.getDefault();
+      const result = new PrettyPrinter(files[0], config).run();
       expect(result).to.equals(test.expected);
     });
   });
@@ -39,10 +45,10 @@ describe("Pretty printer, indent code", () => {
 
   tests.forEach((test) => {
     it(testTitle(test.input), () => {
-      const reg = new Registry().addFile(new MemoryFile("zfoo.prog.abap", test.input)).parse();
-      expect(reg.getABAPFiles().length).to.equal(1);
-      const config = reg.getConfig();
-      const result = new PrettyPrinter(reg.getABAPFiles()[0], config).run();
+      const files = parse(test.input);
+      expect(files.length).to.equal(1);
+      const config = Config.getDefault();
+      const result = new PrettyPrinter(files[0], config).run();
       expect(result).to.equals(test.expected);
     });
   });
@@ -58,9 +64,9 @@ describe("Pretty printer, expected indentation", () => {
 
   tests.forEach((test) => {
     it(testTitle(test.input), () => {
-      const reg = new Registry().addFile(new MemoryFile("zfoo.prog.abap", test.input)).parse();
-      expect(reg.getABAPFiles().length).to.equal(1);
-      const file = reg.getABAPFiles()[0];
+      const files = parse(test.input);
+      expect(files.length).to.equal(1);
+      const file = files[0];
       const result = new Indent().getExpectedIndents(file);
       expect(result).to.deep.equal(test.expected);
     });
@@ -82,9 +88,9 @@ describe("Pretty printer with alignTryCatch", () => {
 
   tests.forEach((test) => {
     it(testTitle(test.input), () => {
-      const reg = new Registry().addFile(new MemoryFile("zfoo.prog.abap", test.input)).parse();
-      expect(reg.getABAPFiles().length).to.equal(1);
-      const file = reg.getABAPFiles()[0];
+      const files = parse(test.input);
+      expect(files.length).to.equal(1);
+      const file = files[0];
       const result = new Indent(test.options).getExpectedIndents(file);
       expect(result).to.deep.equal(test.expected);
     });
@@ -118,10 +124,10 @@ describe("Remove sequential blanks", () => {
 
   tests.forEach((test) => {
     it(testTitle(test.input), () => {
-      const reg = new Registry().addFile(new MemoryFile("zfoo.prog.abap", test.input)).parse();
-      expect(reg.getABAPFiles().length).to.equal(1);
-      const config = reg.getConfig();
-      const prettyPrinter = new PrettyPrinter(reg.getABAPFiles()[0], config);
+      const files = parse(test.input);
+      expect(files.length).to.equal(1);
+      const config = Config.getDefault();
+      const prettyPrinter = new PrettyPrinter(files[0], config);
       const result = prettyPrinter.run();
       expect(result).to.equal(test.expected);
     });
@@ -176,11 +182,11 @@ describe("Fix keyword case", () => {
 
   tests.forEach((test) => {
     it(testTitle(test.input), () => {
-      const reg = new Registry().addFile(new MemoryFile("zfoo.prog.abap", test.input)).parse();
-      expect(reg.getABAPFiles().length).to.equal(1);
-      const config = reg.getConfig() as any;
+      const files = parse(test.input);
+      expect(files.length).to.equal(1);
+      const config = Config.getDefault() as any;
       config.config.rules.keyword_case = test.config;
-      const prettyPrinter = new PrettyPrinter(reg.getABAPFiles()[0], config);
+      const prettyPrinter = new PrettyPrinter(files[0], config);
       const result = prettyPrinter.run();
       expect(result).to.equal(test.expected);
     });
@@ -198,12 +204,12 @@ describe("Remove sequential blanks, no config", () => {
 
   tests.forEach((test) => {
     it(testTitle(test.input), () => {
-      const reg = new Registry().addFile(new MemoryFile("zfoo.prog.abap", test.input)).parse();
-      expect(reg.getABAPFiles().length).to.equal(1);
-      const config = reg.getConfig() as any;
+      const files = parse(test.input);
+      expect(files.length).to.equal(1);
+      const config = Config.getDefault() as any;
       delete config.config.rules.sequential_blank;
 
-      const prettyPrinter = new PrettyPrinter(reg.getABAPFiles()[0], config);
+      const prettyPrinter = new PrettyPrinter(files[0], config);
       const result = prettyPrinter.run();
       expect(result).to.equal(test.expected);
     });
@@ -250,9 +256,9 @@ describe("Pretty printer with globalClassSkipFirst", () => {
 
   tests.forEach((test) => {
     it(testTitle(test.input), () => {
-      const reg = new Registry().addFile(new MemoryFile("zfoo.prog.abap", test.input)).parse();
-      const file = reg.getABAPFiles()[0];
-      expect(reg.getABAPFiles().length).to.equal(1);
+      const files = parse(test.input);
+      expect(files.length).to.equal(1);
+      const file = files[0];
       const result = new Indent(test.options).getExpectedIndents(file);
       expect(result).to.deep.equal(test.expected);
     });
@@ -262,12 +268,12 @@ describe("Pretty printer with globalClassSkipFirst", () => {
 describe("Config is undefined", () => {
 
   it("run without config", () => {
-    const reg = new Registry().addFile(new MemoryFile("zfoo.prog.abap", "report zbar.")).parse();
-    expect(reg.getABAPFiles().length).to.equal(1);
-    const config = reg.getConfig() as any;
+    const files = parse("report zbar.");
+    expect(files.length).to.equal(1);
+    const config = Config.getDefault() as any;
     config.config.rules.keyword_case = undefined;
     config.config.rules.sequential_blank = undefined;
-    const prettyPrinter = new PrettyPrinter(reg.getABAPFiles()[0], config);
+    const prettyPrinter = new PrettyPrinter(files[0], config);
     const result = prettyPrinter.run();
     expect(result).to.equal("REPORT zbar.");
   });

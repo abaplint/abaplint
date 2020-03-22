@@ -1,7 +1,6 @@
 import {IObject} from "./objects/_iobject";
 import {IFile} from "./files/_ifile";
 import {ABAPObject} from "./objects/_abap_object";
-import {ABAPFile} from "./files";
 import {Config} from "./config";
 import {Issue} from "./issue";
 import {ArtifactsObjects} from "./artifacts_objects";
@@ -82,22 +81,9 @@ export class Registry implements IRegistry {
     return reg.test(name);
   }
 
-  /////////////////
-
   public getABAPObjects(): ABAPObject[] {
     return this.objects.filter((obj) => { return obj instanceof ABAPObject; }) as ABAPObject[];
   }
-
-  public getABAPFiles(): ABAPFile[] {
-    if (this.isDirty()) {
-      this.clean();
-    }
-    let ret: ABAPFile[] = [];
-    this.getABAPObjects().forEach((a) => {ret = ret.concat(a.getABAPFiles()); });
-    return ret;
-  }
-
-  /////////////////
 
   public addFile(file: IFile): IRegistry {
     this.setDirty();
@@ -180,7 +166,7 @@ export class Registry implements IRegistry {
     }
 
     for (const obj of this.getABAPObjects()) {
-      this.issues = this.issues.concat(obj.parse(this));
+      this.issues = this.issues.concat(obj.parse(this.getConfig()));
     }
 
     return this;
@@ -194,7 +180,7 @@ export class Registry implements IRegistry {
     progress.set(objects.length, "Lexing and parsing");
     for (const obj of objects) {
       await progress.tick("Lexing and parsing(" + this.conf.getVersion() + ") - " +  obj.getType() + " " + obj.getName());
-      this.issues = this.issues.concat(obj.parse(this));
+      this.issues = this.issues.concat(obj.parse(this.getConfig()));
     }
 
     return this;

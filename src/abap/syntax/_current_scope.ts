@@ -124,6 +124,7 @@ export class CurrentScope {
       return ilocal;
     }
     const cglobal = this.reg.getObject("CLAS", name) as Objects.Class | undefined;
+    // const cglobal = this.reg.getObjectByType(Objects.Class, name);
     if (cglobal) {
       return cglobal.getClassDefinition();
     }

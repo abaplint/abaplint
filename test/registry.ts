@@ -6,7 +6,7 @@ describe("Registry", () => {
 
   it("Parse ABAP file", () => {
     const file = new MemoryFile("zfoobar.prog.abap", "IF moo = boo. ENDIF.");
-    const abap = new Registry().addFile(file).parse().getABAPFiles();
+    const abap = new Registry().addFile(file).parse().getABAPObjects()[0].getABAPFiles();
     expect(abap.length).to.equal(1);
     expect(abap[0].getStatements().length).to.equal(2);
     expect(abap[0].getStructure()).to.not.equal(undefined);
@@ -14,16 +14,16 @@ describe("Registry", () => {
 
   it("Add and update file",  () => {
     const first = new MemoryFile("zfoobar.prog.abap", "first");
-    const registry = new Registry().addFile(first);
-    expect(registry.getABAPFiles().length).to.equal(1);
+    const registry = new Registry().addFile(first).parse();
+    expect(registry.getABAPObjects()[0].getABAPFiles().length).to.equal(1);
     expect(registry.getObjects().length).to.equal(1);
 
     const updated = new MemoryFile("zfoobar.prog.abap", "updated");
-    registry.updateFile(updated);
-    expect(registry.getABAPFiles().length).to.equal(1);
+    registry.updateFile(updated).parse();
+    expect(registry.getABAPObjects()[0].getABAPFiles().length).to.equal(1);
     expect(registry.getObjects().length).to.equal(1);
 
-    expect(registry.getABAPFiles()[0].getRaw()).to.equal("updated");
+    expect(registry.getABAPObjects()[0].getABAPFiles()[0].getRaw()).to.equal("updated");
   });
 
   it("filename with namespace", () => {

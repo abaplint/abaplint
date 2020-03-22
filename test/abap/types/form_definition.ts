@@ -11,7 +11,7 @@ let scope: CurrentScope = CurrentScope.buildDefault(reg);
 function runProgram(abap: string): FormDefinition[] {
   reg = new Registry().addFile(new MemoryFile("zfoobar.prog.abap", abap)).parse();
   scope = CurrentScope.buildDefault(reg);
-  const file = reg.getABAPFiles()[0];
+  const file = reg.getABAPObjects()[0].getABAPFiles()[0];
   return file.getFormDefinitions();
 }
 

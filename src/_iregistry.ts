@@ -4,7 +4,6 @@ import {IFile} from "./files/_ifile";
 import {IProgress} from "./progress";
 import {Issue} from "./issue";
 import {ABAPObject} from "./objects/_abap_object";
-import {ABAPFile} from "./abap/abap_file";
 
 export interface IRegistry {
   getConfig(): IConfiguration;
@@ -27,7 +26,6 @@ export interface IRegistry {
 
   // todo, remove these?
   getABAPObjects(): readonly ABAPObject[];
-  getABAPFiles(): readonly ABAPFile[];
 
   // file operations
   addFile(file: IFile): IRegistry;

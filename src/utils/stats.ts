@@ -5,6 +5,7 @@ import * as Statements from "../abap/2_statements/statements";
 import {MethodLengthStats} from "./method_length_stats";
 import {Config} from "../config";
 import {IRegistry} from "../_iregistry";
+import {ABAPFile} from "../abap/abap_file";
 
 export interface ITotals {
   statements: number;
@@ -78,11 +79,22 @@ export class Stats {
     return ret;
   }
 
+  private findFiles(): ABAPFile[] {
+    const ret: ABAPFile[] = [];
+    const obj = this.reg.getABAPObjects();
+    for (const o of obj) {
+      for (const file of o.getABAPFiles()) {
+        ret.push(file);
+      }
+    }
+    return ret;
+  }
+
   private buildObjectOrientation(): IObjectOrientation {
     const res: IObjectOrientation = {oo: 0, non: 0};
     let oo: boolean = false;
 
-    for (const file of this.reg.getABAPFiles()) {
+    for (const file of this.findFiles()) {
       for (const stat of file.getStatements()) {
         const type = stat.get();
         if (type instanceof Comment
@@ -126,7 +138,7 @@ export class Stats {
     this.reg.setConfig(Config.getDefault(ver));
     this.reg.parse();
 
-    for (const file of this.reg.getABAPFiles()) {
+    for (const file of this.findFiles()) {
       for (const stat of file.getStatements()) {
         if (!(stat.get() instanceof Unknown)) {
           result = result + 1;
@@ -165,7 +177,7 @@ export class Stats {
 
   private countStatements(): number {
     let result = 0;
-    for (const file of this.reg.getABAPFiles()) {
+    for (const file of this.findFiles()) {
       result = result + file.getStatements().length;
     }
     return result;
@@ -173,7 +185,7 @@ export class Stats {
 
   private countTokens(): number {
     let result = 0;
-    for (const file of this.reg.getABAPFiles()) {
+    for (const file of this.findFiles()) {
       result = result + file.getTokens().length;
     }
     return result;

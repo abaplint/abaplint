@@ -24,10 +24,13 @@ export interface ICursorPosition {
 export class LSPUtils {
 
   public static getABAPFile(reg: IRegistry, name: string): ABAPFile | undefined {
-    const all = reg.getABAPFiles();
-    for (const file of all) {
-      if (file.getFilename().toUpperCase() === name.toUpperCase()) {
-        return file;
+    // todo, optimize, why doesnt reg.getFileByName() work?
+    const obj = reg.getABAPObjects();
+    for (const o of obj) {
+      for (const file of o.getABAPFiles()) {
+        if (file.getFilename().toUpperCase() === name.toUpperCase()) {
+          return file;
+        }
       }
     }
     return undefined;

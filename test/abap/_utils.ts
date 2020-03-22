@@ -33,7 +33,8 @@ export function findIssues(abap: string) {
 
 export function parse(abap: string, config?: Config) {
   const file = new MemoryFile("zfoo.prog.abap", abap);
-  return new Registry(config).addFile(file).parse().getABAPFiles()[0];
+  const reg = new Registry(config).addFile(file).parse();
+  return reg.getABAPObjects()[0].getABAPFiles()[0];
 }
 
 function run(abap: string, text: string, type: any, version?: Version | undefined) {

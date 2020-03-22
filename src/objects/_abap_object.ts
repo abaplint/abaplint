@@ -4,7 +4,7 @@ import {Issue} from "../issue";
 import {ClassImplementation, ClassDefinition} from "../abap/types";
 import {xmlToArray} from "../xml_utils";
 import {ABAPParser} from "../abap/abap_parser";
-import {IRegistry} from "../_iregistry";
+import {IConfiguration} from "../_config";
 
 export interface ITextElement {
   key: string;
@@ -29,13 +29,13 @@ export abstract class ABAPObject extends AbstractObject {
     }
   }
 
-  public parse(reg: IRegistry): readonly Issue[] {
+  public parse(config: IConfiguration): readonly Issue[] {
     if (this.shouldParse() === false) {
       return this.old;
     }
 
     const abapFiles = this.files.filter(f => f.getFilename().endsWith(".abap"));
-    const results = new ABAPParser(reg.getConfig().getVersion(), reg.getConfig().getSyntaxSetttings().globalMacros!).parse(abapFiles);
+    const results = new ABAPParser(config.getVersion(), config.getSyntaxSetttings().globalMacros).parse(abapFiles);
 
     this.parsed = results.output;
     this.old = results.issues;

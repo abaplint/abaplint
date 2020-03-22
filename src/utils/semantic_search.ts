@@ -2,6 +2,7 @@ import {Artifacts} from "../abap/artifacts";
 import {ExpressionNode} from "../abap/nodes";
 import {Token} from "../abap/1_lexer/tokens/_token";
 import {IRegistry} from "../_iregistry";
+import {ABAPFile} from "../abap/abap_file";
 
 export interface ICode {
   code: string;
@@ -26,12 +27,23 @@ export class SemanticSearch {
     this.reg = reg;
   }
 
+  private findFiles(): ABAPFile[] {
+    const ret: ABAPFile[] = [];
+    const obj = this.reg.getABAPObjects();
+    for (const o of obj) {
+      for (const file of o.getABAPFiles()) {
+        ret.push(file);
+      }
+    }
+    return ret;
+  }
+
   public run(): ISemanticSearchResult {
     const result: ISemanticSearchResult = {expressions: [], files: []};
 
     this.reg.parse();
 
-    const files = this.reg.getABAPFiles();
+    const files = this.findFiles();
     for (const file of files) {
       result.files.push(file.getFilename());
     }
