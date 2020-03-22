@@ -11,7 +11,7 @@ export class Definition {
                      textDocument: LServer.TextDocumentIdentifier,
                      position: LServer.Position): LServer.Location | undefined {
 
-    const file = reg.getABAPFile(textDocument.uri);
+    const file = LSPUtils.getABAPFile(reg, textDocument.uri);
     if (file === undefined) {
       return undefined;
     }

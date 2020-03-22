@@ -87,16 +87,6 @@ export class Registry implements IRegistry {
     return ret;
   }
 
-  public getABAPFile(name: string): ABAPFile | undefined {
-    const all = this.getABAPFiles();
-    for (const file of all) {
-      if (file.getFilename().toUpperCase() === name.toUpperCase()) {
-        return file;
-      }
-    }
-    return undefined;
-  }
-
   /////////////////
 
   public addFile(file: IFile): IRegistry {

@@ -9,6 +9,7 @@ import {Definition} from "./definition";
 import {Rename} from "./rename";
 import {Highlight} from "./highlight";
 import {ITextDocumentPositionParams, IDocumentSymbolParams, IRenameParams, ICodeActionParams} from "./_interfaces";
+import {LSPUtils} from "./_lsp_utils";
 
 // note Ranges are zero based in LSP,
 // https://github.com/microsoft/language-server-protocol/blob/master/versions/protocol-2-x.md#range
@@ -49,7 +50,7 @@ export class LanguageServer {
     options?: LServer.FormattingOptions,
   }): LServer.TextEdit[] {
 
-    const file = this.reg.getABAPFile(params.textDocument.uri);
+    const file = LSPUtils.getABAPFile(this.reg, params.textDocument.uri);
     if (file === undefined) {
       return [];
     }

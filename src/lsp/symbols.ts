@@ -4,13 +4,14 @@ import {ABAPFile} from "../files";
 import {Identifier} from "../abap/types/_identifier";
 import {Attributes, MethodDefinitions, MethodImplementation} from "../abap/types";
 import {CurrentScope} from "../abap/syntax/_current_scope";
+import {LSPUtils} from "./_lsp_utils";
 
 export class Symbols {
   private static reg: IRegistry;
   private static scope: CurrentScope;
 
   public static find(reg: IRegistry, uri: string): LServer.DocumentSymbol[] {
-    const file = reg.getABAPFile(uri);
+    const file = LSPUtils.getABAPFile(reg, uri);
     if (file === undefined) {
       return [];
     }

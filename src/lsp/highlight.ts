@@ -65,7 +65,7 @@ export class Highlight {
   }
 
   private findObject(textDocument: LServer.TextDocumentIdentifier): ABAPObject | undefined {
-    const file = this.reg.getABAPFile(textDocument.uri);
+    const file = LSPUtils.getABAPFile(this.reg, textDocument.uri);
     if (file === undefined) {
       return undefined;
     }

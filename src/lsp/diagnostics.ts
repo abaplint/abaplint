@@ -1,11 +1,12 @@
 import * as LServer from "vscode-languageserver-types";
 import {IRegistry} from "../_iregistry";
+import {LSPUtils} from "./_lsp_utils";
 
 export class Diagnostics {
 
   public static find(reg: IRegistry, textDocument: LServer.TextDocumentIdentifier): LServer.Diagnostic[] {
 
-    const file = reg.getABAPFile(textDocument.uri); // todo, this sould also run for xml files
+    const file = LSPUtils.getABAPFile(reg, textDocument.uri); // todo, this sould also run for xml files
     if (file === undefined) {
       return [];
     }

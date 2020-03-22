@@ -14,7 +14,7 @@ import {Registry} from "../registry";
 export class Hover {
   public static find(reg: IRegistry, pos: ITextDocumentPositionParams): LServer.MarkupContent | undefined {
 
-    const file = reg.getABAPFile(pos.textDocument.uri);
+    const file = LSPUtils.getABAPFile(reg, pos.textDocument.uri);
     if (file === undefined) {
       return undefined;
     }

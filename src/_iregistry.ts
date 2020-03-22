@@ -27,7 +27,6 @@ export interface IRegistry {
   // todo, remove these?
   getABAPObjects(): readonly ABAPObject[];
   getABAPFiles(): readonly ABAPFile[];
-  getABAPFile(name: string): ABAPFile | undefined
 
   // file operations
   addFile(file: IFile): IRegistry;

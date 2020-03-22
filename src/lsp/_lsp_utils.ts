@@ -23,6 +23,16 @@ export interface ICursorPosition {
 
 export class LSPUtils {
 
+  public static getABAPFile(reg: IRegistry, name: string): ABAPFile | undefined {
+    const all = reg.getABAPFiles();
+    for (const file of all) {
+      if (file.getFilename().toUpperCase() === name.toUpperCase()) {
+        return file;
+      }
+    }
+    return undefined;
+  }
+
   public static tokenToRange(token: Token): LServer.Range {
     return LServer.Range.create(
       token.getStart().getRow() - 1,
@@ -32,7 +42,7 @@ export class LSPUtils {
   }
 
   public static findCursor(reg: IRegistry, pos: ITextDocumentPositionParams): ICursorPosition | undefined {
-    const file = reg.getABAPFile(pos.textDocument.uri);
+    const file = LSPUtils.getABAPFile(reg, pos.textDocument.uri);
     if (file === undefined) {
       return undefined;
     }

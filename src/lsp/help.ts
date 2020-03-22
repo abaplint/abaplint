@@ -16,7 +16,7 @@ export class Help {
     content = "<tt>" + textDocument.uri + " (" +
       (position.line + 1) + ", " +
       (position.character + 1) + ")</tt>";
-    const file = reg.getABAPFile(textDocument.uri);
+    const file = LSPUtils.getABAPFile(reg, textDocument.uri);
     if (file === undefined) {
       return content + "file not found";
     }
