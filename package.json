@@ -230,7 +230,7 @@
         "@types/glob": "^7.1.1",
         "@types/minimist": "^1.2.0",
         "@types/mocha": "^7.0.2",
-        "@types/node": "^13.9.2",
+        "@types/node": "^13.9.3",
         "@types/progress": "^2.0.3",
         "@typescript-eslint/eslint-plugin": "^2.24.0",
         "@typescript-eslint/parser": "^2.24.0",

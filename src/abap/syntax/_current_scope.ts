@@ -1,7 +1,6 @@
 import {ClassDefinition, InterfaceDefinition, FormDefinition} from "../types";
 import {TypedIdentifier} from "../types/_typed_identifier";
 import {BuiltIn} from "./_builtin";
-import * as Objects from "../../objects";
 import {DDIC} from "../../ddic";
 import {Position} from "../../position";
 import {SpaghettiScope, SpaghettiScopeNode, IScopeIdentifier} from "./spaghetti_scope";
@@ -114,25 +113,25 @@ export class CurrentScope {
 
 ///////////////////////////
 
-  public findObjectReference(name: string): ClassDefinition | InterfaceDefinition | undefined {
+  public findObjectReference(name: string): boolean {
     const clocal = this.findClassDefinition(name);
     if (clocal) {
-      return clocal;
+      return true;
     }
     const ilocal = this.findInterfaceDefinition(name);
     if (ilocal) {
-      return ilocal;
+      return true;
     }
-    const cglobal = this.reg.getObject("CLAS", name) as Objects.Class | undefined;
-    // const cglobal = this.reg.getObjectByType(Objects.Class, name);
+    const cglobal = this.reg.getObject("CLAS", name);
     if (cglobal) {
-      return cglobal.getClassDefinition();
+      return true;
     }
-    const iglobal = this.reg.getObject("INTF", name) as Objects.Interface | undefined;
+    const iglobal = this.reg.getObject("INTF", name);
     if (iglobal) {
-      return iglobal.getDefinition();
+      return true;
     }
-    return undefined;
+
+    return false;
   }
 
 ///////////////////////////
