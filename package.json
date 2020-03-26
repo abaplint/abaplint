@@ -232,8 +232,8 @@
         "@types/mocha": "^7.0.2",
         "@types/node": "^13.9.3",
         "@types/progress": "^2.0.3",
-        "@typescript-eslint/eslint-plugin": "^2.24.0",
-        "@typescript-eslint/parser": "^2.24.0",
+        "@typescript-eslint/eslint-plugin": "^2.25.0",
+        "@typescript-eslint/parser": "^2.25.0",
         "chai": "^4.2.0",
         "eslint": "^6.8.0",
         "eslint-plugin-import": "^2.20.1",
@@ -244,7 +244,7 @@
         "source-map-support": "^0.5.16",
         "ts-json-schema-generator": "^0.65.0",
         "typescript": "^3.8.3",
-        "webpack": "^4.42.0",
+        "webpack": "^4.42.1",
         "webpack-cli": "^3.3.11"
     },
     "dependencies": {
