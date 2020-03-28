@@ -5,12 +5,9 @@
     "description": "Linter for ABAP",
     "scripts": {
         "postinstall": "cd packages/core/ && npm install && cd ../../ && cd ./packages/cli/ && npm install && cd ../../ ",
-        "test": "cd packages/core/ && npm test && cd ../../ && cd ./packages/cli/ && npm test && cd ../../ && npm run schema",
+        "test": "cd packages/core/ && npm test && cd ../../ && cd ./packages/cli/ && npm test && cd ../../",
         "web.playground": "cd web/playground && npm install && npm test && npm run build && cd ../../",
-        "web.syntax": "sh web/syntax.sh",
-        "preschema": "node scripts/schema.js > scripts/schema.ts",
-        "schema": "ts-json-schema-generator --jsDoc extended --path scripts/schema.ts > scripts/schema.json",
-        "postschema": "node scripts/schema_post.js"
+        "web.syntax": "sh web/syntax.sh"
     },
     "author": "Lars Hvam Petersen",
     "license": "MIT",
@@ -20,7 +17,6 @@
         "@typescript-eslint/parser": "^2.25.0",
         "eslint-plugin-import": "^2.20.1",
         "typescript": "^3.8.3",
-        "ts-json-schema-generator": "^0.65.0",
         "eslint": "^6.8.0"
     }
 }

@@ -41,7 +41,7 @@ for(const rule of rules) {
 }
 
 // todo, take this part automatically from the typescript code
-output = output + `export interface IConfig {
+output = output + `\nexport interface IConfig {
   global: IGlobalConfig;
   /** External git dependencies used for syntax checks */
   dependencies?: IDependency[];

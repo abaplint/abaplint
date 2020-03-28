@@ -13,11 +13,14 @@
         "postcompile": "sh scripts/version.sh",
         "pretest": "npm run compile",
         "test": "mocha",
-        "posttest": "npm run lint",
+        "posttest": "npm run lint && npm run schema",
         "prepublishOnly": "rm -rf build && npm run test",
         "precoverage": "npm run compile",
         "coverage": "nyc mocha",
-        "postcoverage": "nyc report --reporter=json"
+        "postcoverage": "nyc report --reporter=json",
+        "preschema": "node scripts/schema.js > scripts/schema.ts",
+        "schema": "ts-json-schema-generator --jsDoc extended --path scripts/schema.ts > scripts/schema.json",
+        "postschema": "node scripts/schema_post.js"
     },
     "mocha": {
         "recursive": true,
@@ -52,6 +55,7 @@
     "devDependencies": {
         "@types/chai": "^4.2.11",
         "@types/mocha": "^7.0.2",
+        "@types/node": "^13.9.5",
         "chai": "^4.2.0",
         "eslint": "^6.8.0",
         "madge": "^3.8.0",
@@ -59,6 +63,7 @@
         "nyc": "^15.0.0",
         "railroad-diagrams": "git+https://github.com/tabatkins/railroad-diagrams#gh-pages",
         "source-map-support": "^0.5.16",
+        "ts-json-schema-generator": "^0.65.0",
         "typescript": "^3.8.3"
     },
     "dependencies": {

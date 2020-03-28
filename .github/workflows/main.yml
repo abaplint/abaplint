@@ -32,7 +32,7 @@ jobs:
         git config --global user.name "Actions CI"
         git clone https://github.com/abaplint/schema.abaplint.org.git
         ls
-        cp abaplint/abaplint/scripts/schema.json schema.abaplint.org/schema.json
+        cp abaplint/abaplint/packages/core/scripts/schema.json schema.abaplint.org/schema.json
         cd schema.abaplint.org
         git add -A
         git status
