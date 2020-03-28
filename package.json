@@ -2,9 +2,6 @@
     "name": "abaplint",
     "version": "2.29.0",
     "description": "Linter for ABAP",
-    "bin": {
-        "abaplint": "./abaplint"
-    },
     "main": "build/src/index.js",
     "typings": "build/src/index.d.ts",
     "directories": {

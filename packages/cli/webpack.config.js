@@ -1,4 +1,6 @@
-const path = require('path');
+/* eslint-disable @typescript-eslint/no-require-imports */
+/* eslint-disable @typescript-eslint/no-var-requires */
+const path = require("path");
 
 module.exports = {
   entry: "./build/src/cli.js",

@@ -49,13 +49,13 @@
         "@types/progress": "^2.0.3",
         "abaplint": "^2.29.0",
         "eslint": "^6.8.0",
+        "glob": "^7.1.6",
+        "minimist": "^1.2.5",
         "mocha": "^7.1.1",
+        "progress": "^2.0.3",
         "typescript": "^3.8.3",
         "webpack": "^4.42.1",
         "webpack-cli": "^3.3.11",
-        "glob": "^7.1.6",
-        "minimist": "^1.2.5",
-        "progress": "^2.0.3",
         "xml-js": "^1.6.11"
     }
 }
