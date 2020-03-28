@@ -4,6 +4,8 @@
     "version": "0.0.0",
     "description": "Linter for ABAP",
     "scripts": {
+        "postinstall": "cd packages/core/ && npm install && cd ../../ && cd ./packages/cli/ && npm install && cd ../../ ",
+        "test": "cd packages/core/ && npm test && cd ../../ && cd ./packages/cli/ && npm test && cd ../../ && npm run schema",
         "web.playground": "cd web/playground && npm install && npm test && npm run build && cd ../../",
         "web.syntax": "sh web/syntax.sh",
         "preschema": "node scripts/schema.js > scripts/schema.ts",
@@ -14,20 +16,11 @@
     "license": "MIT",
     "homepage": "https://abaplint.org",
     "devDependencies": {
-        "@types/chai": "^4.2.11",
-        "@types/mocha": "^7.0.2",
-        "@types/node": "^13.9.5",
         "@typescript-eslint/eslint-plugin": "^2.25.0",
         "@typescript-eslint/parser": "^2.25.0",
-        "chai": "^4.2.0",
-        "eslint": "^6.8.0",
         "eslint-plugin-import": "^2.20.1",
-        "madge": "^3.8.0",
-        "mocha": "^7.1.1",
-        "nyc": "^15.0.0",
-        "railroad-diagrams": "git+https://github.com/tabatkins/railroad-diagrams#gh-pages",
-        "source-map-support": "^0.5.16",
+        "typescript": "^3.8.3",
         "ts-json-schema-generator": "^0.65.0",
-        "typescript": "^3.8.3"
+        "eslint": "^6.8.0"
     }
 }

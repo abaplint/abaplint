@@ -1,6 +1,6 @@
 {
     "name": "@abaplint/core",
-    "version": "2.29.0",
+    "version": "0.1.0",
     "description": "Linter for ABAP",
     "main": "build/src/index.js",
     "typings": "build/src/index.d.ts",
@@ -55,18 +55,13 @@
     "devDependencies": {
         "@types/chai": "^4.2.11",
         "@types/mocha": "^7.0.2",
-        "@types/node": "^13.9.5",
-        "@typescript-eslint/eslint-plugin": "^2.25.0",
-        "@typescript-eslint/parser": "^2.25.0",
         "chai": "^4.2.0",
         "eslint": "^6.8.0",
-        "eslint-plugin-import": "^2.20.1",
         "madge": "^3.8.0",
         "mocha": "^7.1.1",
         "nyc": "^15.0.0",
         "railroad-diagrams": "git+https://github.com/tabatkins/railroad-diagrams#gh-pages",
         "source-map-support": "^0.5.16",
-        "ts-json-schema-generator": "^0.65.0",
         "typescript": "^3.8.3"
     },
     "dependencies": {

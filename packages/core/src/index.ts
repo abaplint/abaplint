@@ -1,4 +1,4 @@
-import {MemoryFile, ABAPFile, CompressedFile} from "./files";
+import {MemoryFile, ABAPFile} from "./files";
 import {Issue} from "./issue";
 import {Config} from "./config";
 import {Version} from "./version";
@@ -31,6 +31,7 @@ import {IConfig, IDependency} from "./_config";
 import {IRegistry} from "./_iregistry";
 import {IFile} from "./files/_ifile";
 import {Position} from "./position";
+import {AbstractFile} from "./files/_abstract_file";
 
 // do not include this file from anywhere within abaplint
 
@@ -40,6 +41,6 @@ export {MemoryFile, Issue, Config, Version,
   SemanticSearch, ArtifactsObjects, ArtifactsRules, Objects, IFile,
   Structures, Statements, Expressions, Types, Nodes, IConfig,
   AbstractType, TypedIdentifier, BasicTypes, ScopeType, INode, Token,
-  IDependency,
+  IDependency, AbstractFile,
   Tokens, ABAPObject, SyntaxLogic, SpaghettiScope, IdentifierMeta,
-  ABAPFile, CurrentScope, IRegistry, CompressedFile, Position};
+  ABAPFile, CurrentScope, IRegistry, Position};

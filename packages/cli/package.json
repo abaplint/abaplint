@@ -44,6 +44,10 @@
     },
     "homepage": "https://abaplint.org",
     "devDependencies": {
+        "@types/chai": "^4.2.11",
+        "@types/mocha": "^7.0.2",
+        "@types/node": "^13.9.5",
+        "chai": "^4.2.0",
         "@types/glob": "^7.1.1",
         "@types/minimist": "^1.2.0",
         "@types/progress": "^2.0.3",
