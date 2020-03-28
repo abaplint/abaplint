@@ -1,7 +1,7 @@
 {
     "name": "@abaplint/cli",
     "version": "0.1.0",
-    "description": "Linter for ABAP",
+    "description": "Command Line Interface",
     "bin": {
         "abaplint": "./abaplint"
     },
