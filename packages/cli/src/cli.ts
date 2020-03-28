@@ -4,7 +4,7 @@ import * as path from "path";
 import * as minimist from "minimist";
 import * as ProgressBar from "progress";
 import * as childProcess from "child_process";
-import {Issue, Stats, IProgress, IFile, Position, SemanticSearch, Config, Registry} from "abaplint";
+import {Issue, Stats, IProgress, IFile, Position, SemanticSearch, Config, Registry} from "@abaplint/core";
 import {Formatter} from "./formatters/_format";
 import {FileOperations} from "./file_operations";
 import {ApackDependencyProvider} from "./apack_dependency_provider";

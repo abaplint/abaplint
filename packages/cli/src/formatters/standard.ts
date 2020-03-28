@@ -1,4 +1,4 @@
-import {Issue} from "abaplint";
+import {Issue} from "@abaplint/core";
 import {Total} from "./total";
 import {IFormatter} from "./_iformatter";
 

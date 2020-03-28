@@ -4,9 +4,6 @@
     "description": "Linter for ABAP",
     "main": "build/src/index.js",
     "typings": "build/src/index.d.ts",
-    "directories": {
-        "test": "test"
-    },
     "scripts": {
         "madge.orphans": "madge --extensions ts --ts-config tsconfig.json --orphans src/",
         "madge.svg": "madge --extensions ts --ts-config tsconfig.json  --image graph.svg src/",
