@@ -12,7 +12,7 @@ import {ArtifactsRules} from "./artifacts_rules";
 import {IProgress} from "./progress";
 import {ABAPObject} from "./objects/_abap_object";
 import {SyntaxLogic} from "./abap/syntax/syntax";
-import {SpaghettiScope} from "./abap/syntax/spaghetti_scope";
+import {SpaghettiScope, SpaghettiScopeNode} from "./abap/syntax/spaghetti_scope";
 import {IdentifierMeta, TypedIdentifier} from "./abap/types/_typed_identifier";
 import {AbstractType} from "./abap/types/basic/_abstract_type";
 import {ScopeType} from "./abap/syntax/_scope_type";
@@ -41,6 +41,6 @@ export {MemoryFile, Issue, Config, Version,
   SemanticSearch, ArtifactsObjects, ArtifactsRules, Objects, IFile,
   Structures, Statements, Expressions, Types, Nodes, IConfig,
   AbstractType, TypedIdentifier, BasicTypes, ScopeType, INode, Token,
-  IDependency, AbstractFile,
+  IDependency, AbstractFile, SpaghettiScopeNode,
   Tokens, ABAPObject, SyntaxLogic, SpaghettiScope, IdentifierMeta,
   ABAPFile, CurrentScope, IRegistry, Position};
