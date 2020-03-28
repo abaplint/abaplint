@@ -1,29 +1,16 @@
-import * as Combi from "../abap/2_statements/combi";
-import * as fs from "fs";
-import {Artifacts} from "../abap/artifacts";
-import {IStatementRunnable} from "../abap/2_statements/statement_runnable";
+/* eslint-disable @typescript-eslint/no-require-imports */
+/* eslint-disable @typescript-eslint/no-var-requires */
+/* eslint-disable @typescript-eslint/explicit-member-accessibility */
+const fs = require("fs");
+const Combi = require("../packages/core/build/src//abap/2_statements/combi");
+const Artifacts = require("../packages/core/build/src/abap/artifacts").Artifacts;
 
-// todo, move this method to somewhere under web/syntax?
-
-function sort(data: string[]): string[] {
+function sort(data) {
   const unique = data.filter((v, i, a) => { return a.indexOf(v) === i; });
   return unique.sort();
 }
 
-interface IData {
-  name: string;
-  railroad: string;
-  type: string;
-  using: string[];
-}
-
-interface ICollection {
-  expressions: IData[];
-  statements: IData[];
-  structures: IData[];
-}
-
-function compareString(a: IData, b: IData): number {
+function compareString(a, b) {
   if (a.name < b.name) { return -1; }
   if (a.name > b.name) { return 1; }
   return 0;
@@ -31,12 +18,12 @@ function compareString(a: IData, b: IData): number {
 
 class Graph {
 
-  public static run(): void {
+  static run() {
     this.writeFile(this.buildData());
   }
 
-  private static buildData(): ICollection {
-    const res: ICollection = {expressions: [], statements: [], structures: []};
+  static buildData() {
+    const res = {expressions: [], statements: [], structures: []};
 
     for (const expr of Artifacts.getExpressions()) {
       res.expressions.push(this.buildRunnable(new expr().constructor.name, "expression", new expr().getRunnable(), true));
@@ -64,7 +51,7 @@ class Graph {
     return res;
   }
 
-  private static buildRunnable(name: string, type: string, runnable: IStatementRunnable, complex: boolean): IData {
+  static buildRunnable(name, type, runnable, complex) {
     return {
       name: name,
       type: type,
@@ -72,7 +59,7 @@ class Graph {
       using: sort(runnable.getUsing())};
   }
 
-  private static writeFile(data: any) {
+  static writeFile(data) {
     fs.writeFileSync("./syntax/generated.json", JSON.stringify(data, undefined, 2), "utf8");
   }
 

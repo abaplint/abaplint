@@ -5,7 +5,7 @@ set +x #echo off
 rm -f ./syntax/*.json
 rm -f ./syntax/*.svg
 set -x #echo on
-node ../build/src/utils/graphs.js
+node ./graphs.js
 node ./generate.js
 set +x #echo off
 rm -f ./syntax/*.json

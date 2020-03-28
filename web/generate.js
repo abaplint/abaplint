@@ -1,14 +1,17 @@
+/* eslint-disable no-eval */
+/* eslint-disable @typescript-eslint/no-require-imports */
+/* eslint-disable @typescript-eslint/no-var-requires */
 "use strict";
 
 // used for generating "syntax"
 
-var Railroad = require("railroad-diagrams");
-var fs = require("fs");
+const Railroad = require("railroad-diagrams");
+const fs = require("fs");
 
-let folder = "./syntax/";
+const folder = "./syntax/";
 
 function generateSVG(input) {
-  let css = "<defs>\n" +
+  const css = "<defs>\n" +
   "<style type=\"text/css\"><![CDATA[\n" +
   "path {\n" +
   "stroke-width: 3;\n" +
@@ -52,26 +55,26 @@ function generateSVG(input) {
   result = result.replace(/<svg /, "<svg xmlns=\"http://www.w3.org/2000/svg\" xmlns:xlink=\"http://www.w3.org/1999/xlink\" ");
   result = result.replace(/<g transform/, css + "<g transform");
 
-  let target = folder + input.type + "_" + input.name + ".svg";
+  const target = folder + input.type + "_" + input.name + ".svg";
   fs.writeFileSync(target, result, "utf8");
 
   return result;
 }
 
 function findUsedBy(object, file) {
-  let ret = [];
-  let search = object.type + "/" + object.name;
-  for(let obj of file.structures) {
+  const ret = [];
+  const search = object.type + "/" + object.name;
+  for(const obj of file.structures) {
     if (obj.using.indexOf(search) >= 0) {
       ret.push(obj.type + "/" + obj.name);
     }
   }
-  for(let obj of file.expressions) {
+  for(const obj of file.expressions) {
     if (obj.using.indexOf(search) >= 0) {
       ret.push(obj.type + "/" + obj.name);
     }
   }
-  for(let obj of file.statements) {
+  for(const obj of file.statements) {
     if (obj.using.indexOf(search) >= 0) {
       ret.push(obj.type + "/" + obj.name);
     }
@@ -85,19 +88,19 @@ function filename(name) {
 
 function run() {
 
-  let file = JSON.parse(fs.readFileSync(folder + "generated.json", "utf8"));
+  const file = JSON.parse(fs.readFileSync(folder + "generated.json", "utf8"));
 
-  for (let index in file.structures) {
+  for (const index in file.structures) {
     file.structures[index].svg = generateSVG(file.structures[index]);
     file.structures[index].used_by = findUsedBy(file.structures[index], file);
     file.structures[index].filename = filename(file.structures[index].name);
   }
-  for (let index in file.statements) {
+  for (const index in file.statements) {
     file.statements[index].svg = generateSVG(file.statements[index]);
     file.statements[index].used_by = findUsedBy(file.statements[index], file);
     file.statements[index].filename = filename(file.statements[index].name);
   }
-  for (let index in file.expressions) {
+  for (const index in file.expressions) {
     file.expressions[index].svg = generateSVG(file.expressions[index]);
     file.expressions[index].used_by = findUsedBy(file.expressions[index], file);
     file.expressions[index].filename = filename(file.expressions[index].name);
@@ -107,7 +110,7 @@ function run() {
 }
 
 function generate() {
-  let json = run();
+  const json = run();
   fs.writeFileSync(folder + "data.json.js", "data = " + JSON.stringify(json, null, 2) + ";", "utf8");
 }
 

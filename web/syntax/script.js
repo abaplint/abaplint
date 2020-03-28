@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/explicit-member-accessibility */
 let json = {};
 
 function focusFilter() {
@@ -5,17 +6,17 @@ function focusFilter() {
 }
 
 function inputChanged() {
-  renderRight(document.getElementById('filter').value);
-  const value = document.getElementById('filter').value;
+  renderRight(document.getElementById("filter").value);
+  const value = document.getElementById("filter").value;
   let newUrl = window.location.pathname;
   if (value !== "") {
-    newUrl = newUrl + "?filter=" + document.getElementById('filter').value;
+    newUrl = newUrl + "?filter=" + document.getElementById("filter").value;
   }
   window.history.replaceState(null, document.title, newUrl);
 }
 
 function setFilter(filter) {
-  document.getElementById('filter').value = filter;
+  document.getElementById("filter").value = filter;
   renderRight(filter);
 }
 
@@ -91,7 +92,8 @@ function renderSyntax(type, name) {
   if (next) {
     html = html + "<b>Next</b>: <a href=\"#/" + type + "/" + next.name + "\">" + next.name + "</a><br>\n";
   }
-  html = html + "<a href=\"https://github.com/abaplint/abaplint/blob/master/src/abap/" + found.type + "s/" + found.filename + "\">Source</a><br>";
+
+// html = html + "<a href=\"https://github.com/abaplint/abaplint/blob/master/src/packages/core/abap/" + found.type + "s/" + found.filename + "\">Source</a><br>";
 
   const use = found.using.map((e) => { return "<a href=\"#/" + e + "\">" + e + "</a>"; });
   const by = found.used_by.map((e) => { return "<a href=\"#/" + e + "\">" + e + "</a>"; });
@@ -115,7 +117,7 @@ class Router {
 }
 
 function onRightClick() {
-  document.getElementById('filter').value = "";
+  document.getElementById("filter").value = "";
   inputChanged();
   window.event.returnValue = false;
 }
