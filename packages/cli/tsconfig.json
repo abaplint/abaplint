@@ -14,7 +14,9 @@
         "strictFunctionTypes": true,
         "alwaysStrict": true,
         "target": "es2017",
-        "sourceMap": true
+        "sourceMap": true,
+        "baseUrl": ".",
+        "paths": {"abaplint": ["../../build/src/"]},
         },
     "filesGlob": [
         "./**/*.ts"
@@ -22,7 +24,6 @@
     "exclude": [
         "node_modules",
         "web",
-        "packages",
         "docs",
         "build"
     ]

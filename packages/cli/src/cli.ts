@@ -4,17 +4,10 @@ import * as path from "path";
 import * as minimist from "minimist";
 import * as ProgressBar from "progress";
 import * as childProcess from "child_process";
-import {Issue} from "../issue";
-import {Config} from "../config";
+import {Issue, Stats, IProgress, IFile, Position, SemanticSearch, Config, Registry} from "abaplint";
 import {Formatter} from "./formatters/_format";
-import {Registry} from "../registry";
-import {IFile} from "../files/_ifile";
-import {Stats} from "../utils/stats";
-import {SemanticSearch} from "../utils/semantic_search";
 import {FileOperations} from "./file_operations";
-import {Position} from "../position";
 import {ApackDependencyProvider} from "./apack_dependency_provider";
-import {IProgress} from "../progress";
 
 class Progress implements IProgress {
   private bar: ProgressBar;

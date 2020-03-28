@@ -1,4 +1,4 @@
-import {ApackDependencyProvider} from "../../src/cli/apack_dependency_provider";
+import {ApackDependencyProvider} from "../src/apack_dependency_provider";
 import {expect} from "chai";
 
 describe("apack dependency provider", () => {

@@ -1,0 +1,61 @@
+{
+    "name": "@abaplint/cli",
+    "version": "0.1.0",
+    "description": "Command Line Interface",
+    "bin": {
+        "abaplint": "./abaplint"
+    },
+    "main": "build/src/index.js",
+    "typings": "build/src/index.d.ts",
+    "directories": {
+        "test": "test"
+    },
+    "scripts": {
+        "lint": "eslint src/**/*.ts --format unix",
+        "compile": "tsc",
+        "pretest": "npm run compile",
+        "test": "mocha",
+        "posttest": "npm run lint && npm run webpack",
+        "webpack": "webpack --progress --display=minimal",
+        "prepublishOnly": "rm -rf build && npm run test"
+    },
+    "mocha": {
+        "recursive": true,
+        "reporter": "progress",
+        "spec": "./build/test/*.js",
+        "require": "source-map-support/register"
+    },
+    "repository": {
+        "type": "git",
+        "url": "git+https://github.com/abaplint/abaplint.git"
+    },
+    "engines": {
+        "node": ">=10.5.0",
+        "npm": ">= 6.0.0"
+    },
+    "keywords": [
+        "ABAP",
+        "lint"
+    ],
+    "author": "Lars Hvam Petersen",
+    "license": "MIT",
+    "bugs": {
+        "url": "https://github.com/abaplint/abaplint/issues"
+    },
+    "homepage": "https://abaplint.org",
+    "devDependencies": {
+        "@types/glob": "^7.1.1",
+        "@types/minimist": "^1.2.0",
+        "@types/progress": "^2.0.3",
+        "abaplint": "^2.29.0",
+        "eslint": "^6.8.0",
+        "glob": "^7.1.6",
+        "minimist": "^1.2.5",
+        "mocha": "^7.1.1",
+        "progress": "^2.0.3",
+        "typescript": "^3.8.3",
+        "webpack": "^4.42.1",
+        "webpack-cli": "^3.3.11",
+        "xml-js": "^1.6.11"
+    }
+}
