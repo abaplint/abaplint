@@ -5,6 +5,7 @@ docs/*
 web/*
 src/*
 build/test/*
+build/src/*
 build/scripts/*
 test/*
 zcl_foo.clas.abap
@@ -13,6 +14,7 @@ tsconfig.json
 tslint.json
 .github/
 .vscode/
+webpack.config.js
 build/*.tsbuildinfo
 dump.json
 foo.prog.abap

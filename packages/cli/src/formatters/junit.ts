@@ -1,4 +1,4 @@
-import {Issue} from "../../../../src/issue";
+import {Issue} from "abaplint";
 import {IFormatter} from "./_iformatter";
 import {js2xml} from "xml-js";
 

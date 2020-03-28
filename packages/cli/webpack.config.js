@@ -1,7 +1,7 @@
 const path = require('path');
 
 module.exports = {
-  entry: "./build/src/cli/cli.js",
+  entry: "./build/src/cli.js",
   mode: "development",
   target: "node",
   output: {

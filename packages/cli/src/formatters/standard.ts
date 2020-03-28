@@ -1,4 +1,4 @@
-import {Issue} from "../../../../src/issue";
+import {Issue} from "abaplint";
 import {Total} from "./total";
 import {IFormatter} from "./_iformatter";
 
