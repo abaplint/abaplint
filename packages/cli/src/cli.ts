@@ -4,17 +4,17 @@ import * as path from "path";
 import * as minimist from "minimist";
 import * as ProgressBar from "progress";
 import * as childProcess from "child_process";
-import {Issue} from "../issue";
-import {Config} from "../config";
+import {Issue} from "../../../src/issue";
+import {Config} from "../../../src/config";
 import {Formatter} from "./formatters/_format";
-import {Registry} from "../registry";
-import {IFile} from "../files/_ifile";
-import {Stats} from "../utils/stats";
-import {SemanticSearch} from "../utils/semantic_search";
+import {Registry} from "../../../src/registry";
+import {IFile} from "../../../src/files/_ifile";
+import {Stats} from "../../../src/utils/stats";
+import {SemanticSearch} from "../../../src/utils/semantic_search";
 import {FileOperations} from "./file_operations";
-import {Position} from "../position";
+import {Position} from "../../../src/position";
 import {ApackDependencyProvider} from "./apack_dependency_provider";
-import {IProgress} from "../progress";
+import {IProgress} from "../../../src/progress";
 
 class Progress implements IProgress {
   private bar: ProgressBar;

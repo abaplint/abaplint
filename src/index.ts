@@ -2,7 +2,7 @@ import {MemoryFile, ABAPFile} from "./files";
 import {Issue} from "./issue";
 import {Config} from "./config";
 import {Version} from "./version";
-import {Formatter} from "./cli/formatters/_format";
+import {Formatter} from "../packages/cli/src/formatters/_format";
 import {Registry} from "./registry";
 import {Stats} from "./utils/stats";
 import {MethodLengthStats} from "./utils/method_length_stats";

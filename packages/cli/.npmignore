@@ -7,10 +7,8 @@ src/*
 build/test/*
 build/scripts/*
 test/*
-travis.sh
 zcl_foo.clas.abap
 scripts/*
-.travis.yml
 tsconfig.json
 tslint.json
 .github/

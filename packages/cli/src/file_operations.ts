@@ -2,9 +2,9 @@ import * as fs from "fs";
 import * as path from "path";
 import * as zlib from "zlib";
 import * as glob from "glob";
-import {CompressedFile, MemoryFile} from "../files";
-import {IFile} from "../files/_ifile";
-import {IProgress} from "../progress";
+import {CompressedFile, MemoryFile} from "../../../src/files";
+import {IFile} from "../../../src/files/_ifile";
+import {IProgress} from "../../../src/progress";
 
 export class FileOperations {
 

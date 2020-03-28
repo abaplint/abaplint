@@ -1,4 +1,4 @@
-import {IDependency} from "../_config";
+import {IDependency} from "../../../src/_config";
 import {xml2js} from "xml-js";
 
 export class ApackDependencyProvider {
