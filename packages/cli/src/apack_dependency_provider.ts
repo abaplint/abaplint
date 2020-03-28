@@ -1,4 +1,4 @@
-import {IDependency} from "abaplint";
+import {IDependency} from "@abaplint/core";
 import {xml2js} from "xml-js";
 
 export class ApackDependencyProvider {

@@ -5,11 +5,6 @@
     "bin": {
         "abaplint": "./abaplint"
     },
-    "main": "build/src/index.js",
-    "typings": "build/src/index.d.ts",
-    "directories": {
-        "test": "test"
-    },
     "scripts": {
         "lint": "eslint src/**/*.ts --format unix",
         "compile": "tsc",
@@ -44,10 +39,14 @@
     },
     "homepage": "https://abaplint.org",
     "devDependencies": {
+        "@abaplint/core": "^0.1.0",
+        "@types/chai": "^4.2.11",
         "@types/glob": "^7.1.1",
         "@types/minimist": "^1.2.0",
+        "@types/mocha": "^7.0.2",
+        "@types/node": "^13.9.5",
         "@types/progress": "^2.0.3",
-        "abaplint": "^2.29.0",
+        "chai": "^4.2.0",
         "eslint": "^6.8.0",
         "glob": "^7.1.6",
         "minimist": "^1.2.5",

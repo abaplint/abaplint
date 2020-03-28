@@ -1,4 +1,4 @@
-import {AbstractFile} from "./_abstract_file";
+import {AbstractFile} from "@abaplint/core";
 import * as zlib from "zlib";
 
 export class CompressedFile extends AbstractFile {

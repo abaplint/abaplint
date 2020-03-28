@@ -1,4 +1,4 @@
-import {Issue} from "abaplint";
+import {Issue} from "@abaplint/core";
 import {IFormatter} from "./_iformatter";
 import {js2xml} from "xml-js";
 

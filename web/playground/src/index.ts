@@ -2,7 +2,7 @@ import "../node_modules/@phosphor/default-theme/style/index.css";
 import "./index.less";
 import "../public/img/favicon-16x16.png";
 import "../public/img/favicon-32x32.png";
-import schema from "../../../scripts/schema.json";
+import schema from "../../../packages/core/scripts/schema.json";
 import * as monaco from "monaco-editor";
 import {CommandRegistry} from "@phosphor/commands";
 import {BoxPanel, DockPanel, Menu, MenuBar, Widget} from "@phosphor/widgets";

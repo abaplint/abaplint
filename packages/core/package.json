@@ -1,0 +1,72 @@
+{
+    "name": "@abaplint/core",
+    "version": "0.1.0",
+    "description": "Linter for ABAP",
+    "main": "build/src/index.js",
+    "typings": "build/src/index.d.ts",
+    "scripts": {
+        "madge.orphans": "madge --extensions ts --ts-config tsconfig.json --orphans src/",
+        "madge.svg": "madge --extensions ts --ts-config tsconfig.json  --image graph.svg src/",
+        "madge.circular": "madge --extensions ts --ts-config tsconfig.json --circular src/",
+        "lint": "eslint src/**/*.ts test/**/*.ts --format unix",
+        "compile": "tsc",
+        "postcompile": "sh scripts/version.sh",
+        "pretest": "npm run compile",
+        "test": "mocha",
+        "posttest": "npm run lint && npm run schema",
+        "prepublishOnly": "rm -rf build && npm run test",
+        "precoverage": "npm run compile",
+        "coverage": "nyc mocha",
+        "postcoverage": "nyc report --reporter=json",
+        "preschema": "node scripts/schema.js > scripts/schema.ts",
+        "schema": "ts-json-schema-generator --jsDoc extended --path scripts/schema.ts > scripts/schema.json",
+        "postschema": "node scripts/schema_post.js"
+    },
+    "mocha": {
+        "recursive": true,
+        "reporter": "progress",
+        "spec": "build/test/**/*.js",
+        "require": "source-map-support/register"
+    },
+    "nyc": {
+        "include": [
+            "build/src/**/*.js"
+        ],
+        "exclude-after-remap": false
+    },
+    "repository": {
+        "type": "git",
+        "url": "git+https://github.com/abaplint/abaplint.git"
+    },
+    "engines": {
+        "node": ">=10.5.0",
+        "npm": ">= 6.0.0"
+    },
+    "keywords": [
+        "ABAP",
+        "lint"
+    ],
+    "author": "Lars Hvam Petersen",
+    "license": "MIT",
+    "bugs": {
+        "url": "https://github.com/abaplint/abaplint/issues"
+    },
+    "homepage": "https://abaplint.org",
+    "devDependencies": {
+        "@types/chai": "^4.2.11",
+        "@types/mocha": "^7.0.2",
+        "@types/node": "^13.9.5",
+        "chai": "^4.2.0",
+        "eslint": "^6.8.0",
+        "madge": "^3.8.0",
+        "mocha": "^7.1.1",
+        "nyc": "^15.0.0",
+        "source-map-support": "^0.5.16",
+        "ts-json-schema-generator": "^0.65.0",
+        "typescript": "^3.8.3"
+    },
+    "dependencies": {
+        "vscode-languageserver-types": "^3.15.1",
+        "xml-js": "^1.6.11"
+    }
+}

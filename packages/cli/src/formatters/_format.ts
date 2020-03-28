@@ -1,4 +1,4 @@
-import {Issue} from "abaplint";
+import {Issue} from "@abaplint/core";
 import * as Formatters from ".";
 
 export class Formatter {
