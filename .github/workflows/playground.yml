@@ -5,16 +5,13 @@ on: [push, pull_request]
 jobs:
   playground:
     runs-on: ubuntu-latest
-    strategy:
-      matrix:
-        node-version: [12.x]
     steps:
     - uses: actions/checkout@v1
       with:
         fetch-depth: 1
     - uses: actions/setup-node@v1
       with:
-        node-version: ${{ matrix.node-version }}
+        node-version: '12.x'
     - name: npm install
       run: npm install
     - name: npm test
