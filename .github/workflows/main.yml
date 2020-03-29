@@ -17,7 +17,9 @@ jobs:
     - name: npm test
       run: npm test
     - name: abaplint --version
-      run: ./packages/cli/abaplint --version
+      run: |
+        ls
+        ./packages/cli/abaplint --version
     - name: npm run web.syntax
       run: npm run web.syntax
     - name: deploy schema.abaplint.org
