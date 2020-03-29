@@ -6,7 +6,7 @@
         "abaplint": "./abaplint"
     },
     "scripts": {
-        "lint": "eslint src/**/*.ts --format unix",
+        "lint": "eslint src/**/*.ts test/**/*.ts --format unix",
         "compile": "tsc",
         "pretest": "npm run compile",
         "test": "mocha",
@@ -39,7 +39,7 @@
     },
     "homepage": "https://abaplint.org",
     "devDependencies": {
-        "@abaplint/core": "^0.1.0",
+        "@abaplint/core": "^2.30.0",
         "@types/chai": "^4.2.11",
         "@types/glob": "^7.1.1",
         "@types/minimist": "^1.2.0",
