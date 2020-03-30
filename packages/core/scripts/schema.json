@@ -2651,6 +2651,14 @@
           "description": "An explanation for why the rule is enforced",
           "type": "string"
         },
+        "ssfo": {
+          "description": "The pattern for smartform names",
+          "type": "string"
+        },
+        "ssst": {
+          "description": "The pattern for smartstyle names",
+          "type": "string"
+        },
         "tabl": {
           "description": "The pattern for DDIC table names",
           "type": "string"
@@ -2683,7 +2691,9 @@
         "auth",
         "pinf",
         "idoc",
-        "xslt"
+        "xslt",
+        "ssfo",
+        "ssst"
       ],
       "type": "object"
     },

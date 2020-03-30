@@ -38,6 +38,10 @@ export class ObjectNamingConf extends NamingRuleConfig {
   public idoc: string = "^Z";
   /** The pattern for transformation names */
   public xslt: string = "^Z";
+  /** The pattern for smartform names */
+  public ssfo: string = "^Z";
+  /** The pattern for smartstyle names */
+  public ssst: string = "^Z";
 }
 
 export class ObjectNaming implements IRule {
@@ -99,6 +103,10 @@ export class ObjectNaming implements IRule {
       pattern = this.getConfig().idoc;
     } else if (obj instanceof Objects.Transformation) {
       pattern = this.getConfig().xslt;
+    } else if (obj instanceof Objects.SmartForm) {
+      pattern = this.getConfig().ssfo;
+    } else if (obj instanceof Objects.SmartStyle) {
+      pattern = this.getConfig().ssst;
     }
 
     if (pattern === "") {
@@ -116,11 +124,5 @@ export class ObjectNaming implements IRule {
     }
 
     return [];
-  }
-
-  public nameViolatesRule(name: string, pattern: RegExp): boolean {
-    return this.conf.patternKind === "required" ?
-      pattern.test(name) === false :
-      pattern.test(name) === true;
   }
 }
