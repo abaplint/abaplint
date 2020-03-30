@@ -122,7 +122,7 @@ describe("Rule: Object naming (required pattern)", () => {
 
   it("msag", () => {
     const config = new ObjectNamingConf();
-    config.doma = "^Z.*$";
+    config.msag = "^Z.*$";
 
     config.patternKind = "required";
     findIssues("ztest.msag.xml", 0, config);
@@ -200,7 +200,7 @@ describe("Rule: Object naming (required pattern)", () => {
 
   it("xslt", () => {
     const config = new ObjectNamingConf();
-    config.idoc = "^Z.*$";
+    config.xslt = "^Z.*$";
 
     config.patternKind = "required";
     findIssues("ztest.xslt.xml", 0, config);
@@ -209,6 +209,32 @@ describe("Rule: Object naming (required pattern)", () => {
     config.patternKind = "forbidden";
     findIssues("ztest.xslt.xml", 1, config);
     findIssues("test.xslt.xml", 0, config);
+  });
+
+  it("ssfo", () => {
+    const config = new ObjectNamingConf();
+    config.ssfo = "^Z.*$";
+
+    config.patternKind = "required";
+    findIssues("ztest.ssfo.xml", 0, config);
+    findIssues("test.ssfo.xml", 1, config);
+
+    config.patternKind = "forbidden";
+    findIssues("ztest.ssfo.xml", 1, config);
+    findIssues("test.ssfo.xml", 0, config);
+  });
+
+  it("ssst", () => {
+    const config = new ObjectNamingConf();
+    config.ssst = "^Z.*$";
+
+    config.patternKind = "required";
+    findIssues("ztest.ssst.xml", 0, config);
+    findIssues("test.ssst.xml", 1, config);
+
+    config.patternKind = "forbidden";
+    findIssues("ztest.ssst.xml", 1, config);
+    findIssues("test.ssst.xml", 0, config);
   });
 
   it("Config, patternKind not set", () => {
