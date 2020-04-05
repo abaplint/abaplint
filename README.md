@@ -29,7 +29,8 @@ Also see [abapOpenChecks](https://github.com/larshp/abapOpenChecks).
 
 ### Example configs
 
-[abaplint-clean-code](https://github.com/FreHu/abaplint-clean-code) contains rule documentation as well as abaplint.json definitions which attempt to align abaplint with the official [Clean ABAP](https://github.com/SAP/styleguides/blob/master/clean-abap/CleanABAP.md) styleguide.
+- [abaplint-clean-code](https://github.com/FreHu/abaplint-clean-code) contains rule documentation as well as abaplint.json definitions which attempt to align abaplint with the official [Clean ABAP](https://github.com/SAP/styleguides/blob/master/clean-abap/CleanABAP.md) styleguide.
+- More CI examples with gitlab, github actions and travis can be found in [docs/using-abaplint-in-ci.md](docs/using-abaplint-in-ci.md)
 
 ### Requirements
 Node.js 10
