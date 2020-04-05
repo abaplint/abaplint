@@ -22,9 +22,9 @@
   },
   "devDependencies": {
     "css-loader": "^3.4.2",
-    "cypress": "^4.2.0",
+    "cypress": "^4.3.0",
     "file-loader": "^6.0.0",
-    "html-webpack-plugin": "^4.0.2",
+    "html-webpack-plugin": "^4.0.4",
     "less": "^3.11.1",
     "less-loader": "^5.0.0",
     "rimraf": "^3.0.2",
