@@ -1,0 +1,12 @@
+language: node_js
+node_js:
+  - "12"
+branches:
+  only: 
+    - master
+notifications:
+  # in real case you probably want to remove it or set to true
+  email: false
+script:
+  - npm install -g @abaplint/cli
+  - abaplint
