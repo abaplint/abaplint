@@ -1,0 +1,8 @@
+# abaplint on pure nodejs image
+run_abaplint:
+    image: node:12
+    # only:
+    #     - master
+    script:
+        - npm install -g @abaplint/cli
+        - abaplint

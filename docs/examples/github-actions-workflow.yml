@@ -1,0 +1,20 @@
+name: Run abaplint
+on:
+  push:
+    branches:
+      - master
+  pull_request:
+    branches:
+      - master
+
+jobs:
+  abaplint:
+    name: abaplint
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/setup-node@v1
+      - uses: actions/checkout@v2
+      - name: Run abaplint
+        run: |
+          npm -g install @abaplint/cli
+          abaplint
