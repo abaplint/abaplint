@@ -5,7 +5,7 @@ import {IRegistry} from "../../_iregistry";
 import {IObject} from "../../objects/_iobject";
 import * as Objects from "../../objects";
 import {BasicRuleConfig} from "../_basic_rule_config";
-import {ClassDefinition} from "../../abap/types";
+import {IClassDefinition} from "../../abap/types/_class_definition";
 import {Class} from "../../objects";
 
 /** Checks that classes which are inherited from are not declared as FINAL. */
@@ -43,7 +43,7 @@ export class SuperclassFinal extends ABAPRule {
       if (obj instanceof Objects.Class && file.getFilename().match(/\.clas\.abap$/)) {
         localLookup = false;
       }
-      let found: ClassDefinition | undefined = undefined;
+      let found: IClassDefinition | undefined = undefined;
       if (localLookup) {
 // todo, this should look inside the object instead of the file?
         found = file.getInfo().getClassDefinition(sup);

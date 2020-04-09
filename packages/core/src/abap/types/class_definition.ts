@@ -9,8 +9,9 @@ import {Identifier} from "./_identifier";
 import {Aliases} from "./aliases";
 import {CurrentScope} from "../syntax/_current_scope";
 import {TypeDefinitions} from ".";
+import {IClassDefinition} from "./_class_definition";
 
-export class ClassDefinition extends Identifier {
+export class ClassDefinition extends Identifier implements IClassDefinition {
   private readonly node: StructureNode;
   private readonly methodDefs: MethodDefinitions;
   private readonly types: TypeDefinitions;

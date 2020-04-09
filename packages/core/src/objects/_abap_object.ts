@@ -1,10 +1,11 @@
 import {AbstractObject} from "./_abstract_object";
 import {ABAPFile} from "../files";
 import {Issue} from "../issue";
-import {ClassImplementation, ClassDefinition} from "../abap/types";
+import {ClassImplementation} from "../abap/types";
 import {xmlToArray} from "../xml_utils";
 import {ABAPParser} from "../abap/abap_parser";
 import {IConfiguration} from "../_config";
+import {IClassDefinition} from "../abap/types/_class_definition";
 
 export interface ITextElement {
   key: string;
@@ -75,15 +76,15 @@ export abstract class ABAPObject extends AbstractObject {
     return ret;
   }
 
-  public getClassDefinitions(): readonly ClassDefinition[] {
-    let ret: ClassDefinition[] = [];
+  public getClassDefinitions(): readonly IClassDefinition[] {
+    let ret: IClassDefinition[] = [];
     for (const file of this.getABAPFiles()) {
       ret = ret.concat(file.getInfo().getClassDefinitions());
     }
     return ret;
   }
 
-  public getClassDefinition(name: string): ClassDefinition | undefined {
+  public getClassDefinition(name: string): IClassDefinition | undefined {
     for (const impl of this.getClassDefinitions()) {
       if (impl.getName().toUpperCase() === name.toUpperCase()) {
         return impl;

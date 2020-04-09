@@ -1,8 +1,9 @@
 import {Position} from "../../position";
 import {TypedIdentifier} from "../types/_typed_identifier";
-import {InterfaceDefinition, FormDefinition, ClassDefinition} from "../types";
+import {InterfaceDefinition, FormDefinition} from "../types";
 import {ScopeType} from "./_scope_type";
 import {Identifier} from "../types/_identifier";
+import {IClassDefinition} from "../types/_class_definition";
 
 export interface IScopeIdentifier {
   stype: ScopeType;
@@ -18,7 +19,7 @@ export interface IScopeVariable {
 
 export interface IScopeData {
   vars: IScopeVariable[];
-  cdefs: ClassDefinition[];
+  cdefs: IClassDefinition[];
   idefs: InterfaceDefinition[];
   forms: FormDefinition[];
   types: TypedIdentifier[];
@@ -108,7 +109,7 @@ export class SpaghettiScopeNode extends ScopeData {
     return {start: this.identifier.start, end};
   }
 
-  public findClassDefinition(name: string): ClassDefinition | undefined {
+  public findClassDefinition(name: string): IClassDefinition | undefined {
     let search: SpaghettiScopeNode | undefined = this;
 
     while (search !== undefined) {

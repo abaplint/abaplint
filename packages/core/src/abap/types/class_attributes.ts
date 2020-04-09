@@ -13,8 +13,9 @@ import {Constant as ConstantStatement} from "../syntax/statements/constant";
 import {Data as DataStructure} from "../syntax/structures/data";
 import {TypeEnum} from "../syntax/structures/type_enum";
 import {Constants} from "../syntax/structures/constants";
+import {IAttributes} from "./_class_attributes";
 
-export class Attributes {
+export class Attributes implements IAttributes {
   private readonly static: ClassAttribute[];
   private readonly instance: ClassAttribute[];
   private readonly constants: ClassConstant[];

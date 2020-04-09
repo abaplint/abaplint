@@ -8,6 +8,7 @@ import {Token} from "../1_lexer/tokens/_token";
 import {Identifier} from "../types/_identifier";
 import {ScopeType} from "./_scope_type";
 import {IRegistry} from "../../_iregistry";
+import {IClassDefinition} from "../types/_class_definition";
 
 export class CurrentScope {
   protected readonly reg: IRegistry | undefined;
@@ -104,13 +105,13 @@ export class CurrentScope {
     this.current?.getData().vars.push({name: identifier.getName(), identifier});
   }
 
-  public addListPrefix(identifiers: TypedIdentifier[], prefix: string) {
+  public addListPrefix(identifiers: readonly TypedIdentifier[], prefix: string) {
     for (const id of identifiers) {
       this.addNamedIdentifier(prefix + id.getName(), id);
     }
   }
 
-  public addList(identifiers: TypedIdentifier[]) {
+  public addList(identifiers: readonly TypedIdentifier[]) {
     for (const id of identifiers) {
       this.addIdentifier(id);
     }
@@ -153,7 +154,7 @@ export class CurrentScope {
 
 ///////////////////////////
 
-  public findClassDefinition(name: string): ClassDefinition | undefined {
+  public findClassDefinition(name: string): IClassDefinition | undefined {
     return this.current?.findClassDefinition(name);
   }
 

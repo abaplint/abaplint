@@ -4,7 +4,7 @@ import {AbstractFile} from "../files/_abstract_file";
 import {IFile} from "../files/_ifile";
 import {StructureNode, StatementNode} from "./nodes";
 import * as Structures from "./3_structures/structures";
-import {ClassImplementation, InterfaceDefinition, FormDefinition} from "./types";
+import {ClassImplementation, FormDefinition} from "./types";
 import {IABAPFileInformation} from "./4_object_information/_abap_file_information";
 
 export class ABAPFile extends AbstractFile {
@@ -63,26 +63,6 @@ export class ABAPFile extends AbstractFile {
   }
 
 // **************************
-
-  public getInterfaceDefinitions(): InterfaceDefinition[] {
-    if (this.structure === undefined) {
-      return [];
-    }
-    const ret: InterfaceDefinition[] = [];
-    for (const found of this.structure.findAllStructures(Structures.Interface)) {
-      ret.push(new InterfaceDefinition(found, this.getFilename()));
-    }
-    return ret;
-  }
-
-  public getInterfaceDefinition(name: string): InterfaceDefinition | undefined {
-    for (const def of this.getInterfaceDefinitions()) {
-      if (def.getName().toUpperCase() === name.toUpperCase()) {
-        return def;
-      }
-    }
-    return undefined;
-  }
 
   public getClassImplementation(name: string): ClassImplementation | undefined {
     for (const impl of this.getClassImplementations()) {

@@ -2,7 +2,7 @@ import {Issue} from "../../issue";
 import {IObject} from "../../objects/_iobject";
 import {Class} from "../../objects";
 import {IRegistry} from "../../_iregistry";
-import {Attributes} from "../../abap/types/class_attributes";
+import {IAttributes} from "../../abap/types/_class_attributes";
 import {ClassAttribute} from "../../abap/types/class_attribute";
 import {NamingRuleConfig} from "../_naming_rule_config";
 import {IRule} from "../_irule";
@@ -40,7 +40,7 @@ export class ClassAttributeNames implements IRule {
   }
 
   public run(obj: IObject, _reg: IRegistry): Issue[] {
-    let attr: Attributes | undefined = undefined;
+    let attr: IAttributes | undefined = undefined;
     if (this.conf.patternKind === undefined) {
       this.conf.patternKind = "required";
     }
@@ -67,7 +67,7 @@ export class ClassAttributeNames implements IRule {
     return this.checkAttributes(attr);
   }
 
-  private checkAttributes(attr: Attributes | undefined): Issue[] {
+  private checkAttributes(attr: IAttributes | undefined): Issue[] {
     if (!attr) { return []; }
     let ret: Issue[] = [];
 

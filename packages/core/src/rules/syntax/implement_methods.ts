@@ -3,10 +3,12 @@ import {ABAPRule} from "../_abap_rule";
 import {ABAPFile} from "../../files";
 import {IRegistry} from "../../_iregistry";
 import {BasicRuleConfig} from "../_basic_rule_config";
-import {ClassDefinition, ClassImplementation, InterfaceDefinition} from "../../abap/types";
+import {ClassImplementation} from "../../abap/types";
 import {ABAPObject} from "../../objects/_abap_object";
 import {Interface} from "../../objects";
 import {CurrentScope} from "../../abap/syntax/_current_scope";
+import {IClassDefinition} from "../../abap/types/_class_definition";
+import {IInterfaceDefinition} from "../../abap/types/_interface_definition";
 
 // todo: abstract methods from superclass parents(might be multiple), if class is not abstract
 
@@ -54,7 +56,7 @@ export class ImplementMethods extends ABAPRule {
     return ret;
   }
 
-  private checkClass(def: ClassDefinition, impl: ClassImplementation): Issue[] {
+  private checkClass(def: IClassDefinition, impl: ClassImplementation): Issue[] {
     const ret: Issue[] = [];
 
     for (const md of def.getMethodDefinitions().getAll()) {
@@ -77,14 +79,14 @@ export class ImplementMethods extends ABAPRule {
     return ret;
   }
 
-  private checkInterfaces(def: ClassDefinition, impl: ClassImplementation, file: ABAPFile, reg: IRegistry): Issue[] {
+  private checkInterfaces(def: IClassDefinition, impl: ClassImplementation, file: ABAPFile, reg: IRegistry): Issue[] {
     const ret: Issue[] = [];
-    let idef: InterfaceDefinition | undefined = undefined;
+    let idef: IInterfaceDefinition | undefined = undefined;
 
     for (const interfaceName of def.getImplementing()) {
       const intf = reg.getObject("INTF", interfaceName.name) as Interface | undefined;
       if (intf === undefined) {
-        idef = file.getInterfaceDefinition(interfaceName.name);
+        idef = file.getInfo().getInterfaceDefinition(interfaceName.name);
         if (idef === undefined) {
           const issue = Issue.atIdentifier(def, "Implemented interface \"" + interfaceName.name + "\" not found", this.getKey());
           ret.push(issue);

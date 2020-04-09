@@ -7,8 +7,9 @@ import {UnknownType} from "./basic";
 import {CurrentScope} from "../syntax/_current_scope";
 import {MethodDefReturning} from "../syntax/expressions/method_def_returning";
 import {MethodParam} from "../syntax/expressions/method_param";
+import {IMethodParameters} from "./_method_parameters";
 
-export class MethodParameters {
+export class MethodParameters implements IMethodParameters{
   private readonly importing: TypedIdentifier[];
   private readonly exporting: TypedIdentifier[];
   private readonly changing: TypedIdentifier[];
@@ -62,6 +63,8 @@ export class MethodParameters {
   public getExceptions() {
     return this.exceptions;
   }
+
+///////////////////
 
   private parse(node: StatementNode, scope: CurrentScope): void {
 

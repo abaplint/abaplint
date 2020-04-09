@@ -5,9 +5,10 @@ import {CurrentScope} from "../syntax/_current_scope";
 import {TypedIdentifier} from "./_typed_identifier";
 import {Type} from "../syntax/statements/type";
 import {Types} from "../syntax/structures/types";
+import {ITypeDefinitions} from "./_type_definitions";
 
 // todo: public + protected + private
-export class TypeDefinitions {
+export class TypeDefinitions implements ITypeDefinitions {
   private readonly list: TypedIdentifier[];
   private readonly filename: string;
 
@@ -17,9 +18,11 @@ export class TypeDefinitions {
     this.parse(node, scope);
   }
 
-  public getAll(): TypedIdentifier[] {
+  public getAll(): readonly TypedIdentifier[] {
     return this.list;
   }
+
+/////////////////
 
   private parse(node: StructureNode, scope: CurrentScope) {
 // todo,   this.parseDirect(node, scope); // for interfaces

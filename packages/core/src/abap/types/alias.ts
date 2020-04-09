@@ -1,6 +1,6 @@
 import {Identifier} from "./_identifier";
-import {Visibility} from ".";
 import {Token} from "../1_lexer/tokens/_token";
+import {Visibility} from "./visibility";
 
 export class Alias extends Identifier {
   private readonly visibility: Visibility;

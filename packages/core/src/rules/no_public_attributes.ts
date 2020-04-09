@@ -70,7 +70,7 @@ export class NoPublicAttributes extends ABAPRule {
 
   private getAllPublicInterfaceAttributes(): ClassAttribute[] {
     let attributes: ClassAttribute[] = [];
-    for (const interfaceDef of this.file.getInterfaceDefinitions()) {
+    for (const interfaceDef of this.file.getInfo().getInterfaceDefinitions()) {
       const attr = interfaceDef.getAttributes(this.scope);
       if (attr) {
         attributes = attributes.concat(attr.getInstancesByVisibility(Visibility.Public));

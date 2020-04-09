@@ -4,6 +4,8 @@ import {CurrentScope} from "../_current_scope";
 import {TypedIdentifier} from "../../types/_typed_identifier";
 import {UnknownType} from "../../types/basic";
 
+// todo, this file is not in use?
+
 export class ClassDataBegin {
   public runSyntax(node: StatementNode, _scope: CurrentScope, filename: string): TypedIdentifier | undefined {
     // todo

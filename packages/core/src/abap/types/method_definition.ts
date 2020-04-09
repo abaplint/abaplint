@@ -5,8 +5,9 @@ import {MethodParameters} from "./method_parameters";
 import {Visibility} from "./visibility";
 import {Identifier} from "./_identifier";
 import {CurrentScope} from "../syntax/_current_scope";
+import {IMethodDefinition} from "./_method_definition";
 
-export class MethodDefinition extends Identifier {
+export class MethodDefinition extends Identifier implements IMethodDefinition {
   private readonly visibility: Visibility;
   private readonly parameters: MethodParameters;
   private readonly redefinition: boolean;
@@ -50,7 +51,7 @@ export class MethodDefinition extends Identifier {
     this.parameters = new MethodParameters(node, this.filename, scope);
   }
 
-  public getVisibility() {
+  public getVisibility(): Visibility {
     return this.visibility;
   }
 
@@ -70,7 +71,7 @@ export class MethodDefinition extends Identifier {
     return this.eventHandler;
   }
 
-  public getParameters() {
+  public getParameters(): MethodParameters {
     return this.parameters;
   }
 

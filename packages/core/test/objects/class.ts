@@ -230,7 +230,7 @@ describe("Objects, class, getAttributes", () => {
     expect(attr.getInstance().length).to.equal(0);
   });
 
-  it.only("test, constant", () => {
+  it("test, constant", () => {
     const abap = "CLASS zcl_foobar DEFINITION PUBLIC CREATE PUBLIC.\n" +
     "  PUBLIC SECTION.\n" +
     "    CONSTANTS c_false TYPE c VALUE space.\n" +

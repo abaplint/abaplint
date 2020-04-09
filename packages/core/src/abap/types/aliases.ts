@@ -4,8 +4,9 @@ import * as Structures from "../3_structures/structures";
 import * as Statements from "../2_statements/statements";
 import * as Expressions from "../2_statements/expressions";
 import {Visibility} from "./visibility";
+import {IAliases} from "./_aliases";
 
-export class Aliases {
+export class Aliases implements IAliases {
   private readonly aliases: Alias[];
   private readonly filename: string;
 
@@ -15,7 +16,7 @@ export class Aliases {
     this.parse(node);
   }
 
-  public getAll(): Alias[] {
+  public getAll(): readonly Alias[] {
     return this.aliases;
   }
 

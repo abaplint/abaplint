@@ -2,8 +2,10 @@ import * as LServer from "vscode-languageserver-types";
 import {IRegistry} from "../_iregistry";
 import {ABAPFile} from "../files";
 import {Identifier} from "../abap/types/_identifier";
-import {Attributes, MethodDefinitions, MethodImplementation} from "../abap/types";
+import {MethodImplementation} from "../abap/types";
 import {LSPUtils} from "./_lsp_utils";
+import {IAttributes} from "../abap/types/_class_attributes";
+import {IMethodDefinitions} from "../abap/types/_method_definitions";
 
 export class Symbols {
 
@@ -82,7 +84,7 @@ export class Symbols {
     return ret;
   }
 
-  private static outputClassAttributes(attr: Attributes | undefined): LServer.DocumentSymbol[] {
+  private static outputClassAttributes(attr: IAttributes | undefined): LServer.DocumentSymbol[] {
     if (attr === undefined) {
       return [];
     }
@@ -103,7 +105,7 @@ export class Symbols {
     return ret;
   }
 
-  private static outputMethodDefinitions(methods: MethodDefinitions | undefined): LServer.DocumentSymbol[] {
+  private static outputMethodDefinitions(methods: IMethodDefinitions | undefined): LServer.DocumentSymbol[] {
     if (methods === undefined) {
       return [];
     }

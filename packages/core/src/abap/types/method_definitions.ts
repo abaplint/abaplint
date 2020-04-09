@@ -5,8 +5,9 @@ import * as Structures from "../3_structures/structures";
 import {MethodDef} from "../2_statements/statements";
 import {Visibility} from "./visibility";
 import {CurrentScope} from "../syntax/_current_scope";
+import {IMethodDefinitions} from "./_method_definitions";
 
-export class MethodDefinitions {
+export class MethodDefinitions implements IMethodDefinitions {
   private readonly pri: MethodDefinition[];
   private readonly pub: MethodDefinition[];
   private readonly pro: MethodDefinition[];
@@ -35,6 +36,8 @@ export class MethodDefinitions {
   public getAll(): MethodDefinition[] {
     return this.pub.concat(this.pro).concat(this.pri);
   }
+
+///////////////////////
 
   private parse(node: StructureNode, scope: CurrentScope) {
     const cdef = node.findFirstStructure(ClassDefinition);

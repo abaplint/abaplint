@@ -5,8 +5,9 @@ import * as Statements from "../2_statements/statements";
 import * as Expressions from "../2_statements/expressions";
 import {MethodDefinition, Visibility, Attributes, TypeDefinitions} from ".";
 import {CurrentScope} from "../syntax/_current_scope";
+import {IInterfaceDefinition} from "./_interface_definition";
 
-export class InterfaceDefinition extends Identifier {
+export class InterfaceDefinition extends Identifier implements IInterfaceDefinition {
   private readonly node: StructureNode;
 
   public constructor(node: StructureNode, filename: string) {

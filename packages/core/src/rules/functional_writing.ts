@@ -6,7 +6,7 @@ import {BasicRuleConfig} from "./_basic_rule_config";
 import {IRegistry} from "../_iregistry";
 import {IObject} from "../objects/_iobject";
 import {Class} from "../objects";
-import {ClassDefinition} from "../abap/types";
+import {IClassDefinition} from "../abap/types/_class_definition";
 
 /** Detects usage of call method when functional style calls can be used.
  * https://github.com/SAP/styleguides/blob/master/clean-abap/CleanABAP.md#prefer-functional-to-procedural-calls
@@ -40,7 +40,7 @@ export class FunctionalWriting extends ABAPRule {
     const issues: Issue[] = [];
     let exception = false;
 
-    let definition: ClassDefinition | undefined = undefined;
+    let definition: IClassDefinition | undefined = undefined;
     if (obj instanceof Class) {
       definition = obj.getClassDefinition();
     }

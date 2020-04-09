@@ -1,13 +1,13 @@
 import {Issue} from "../../issue";
 import {IRule} from "../_irule";
 import {IObject} from "../../objects/_iobject";
-import {MethodDefinition} from "../../abap/types/method_definition";
 import {IRegistry} from "../../_iregistry";
 import {ABAPObject} from "../../objects/_abap_object";
 import {NamingRuleConfig} from "../_naming_rule_config";
 import {NameValidator} from "../../utils/name_validator";
 import {TypedIdentifier} from "../../abap/types/_typed_identifier";
 import {CurrentScope} from "../../abap/syntax/_current_scope";
+import {IMethodDefinition} from "../../abap/types/_method_definition";
 
 /** Allows you to enforce a pattern, such as a prefix, for method parameter names */
 export class MethodParameterNamesConf extends NamingRuleConfig {
@@ -58,7 +58,7 @@ export class MethodParameterNames implements IRule {
     const scope = CurrentScope.buildDefault(reg);
 
     for (const file of obj.getABAPFiles()) {
-      for (const def of file.getInterfaceDefinitions()) {
+      for (const def of file.getInfo().getInterfaceDefinitions()) {
         for (const method of def.getMethodDefinitions(scope)) {
           ret = ret.concat(this.checkMethod(method));
         }
@@ -83,7 +83,7 @@ export class MethodParameterNames implements IRule {
     return ret;
   }
 
-  private checkMethod(method: MethodDefinition): Issue[] {
+  private checkMethod(method: IMethodDefinition): Issue[] {
     let ret: Issue[] = [];
 
     const parameters = method.getParameters();

@@ -2,9 +2,9 @@ import {ABAPRule} from "./_abap_rule";
 import {BasicRuleConfig} from "./_basic_rule_config";
 import {Issue} from "../issue";
 import {ABAPFile} from "../files";
-import {MethodDefinition} from "../abap/types";
 import {CurrentScope} from "../abap/syntax/_current_scope";
 import {IRegistry} from "../_iregistry";
+import {IMethodDefinition} from "../abap/types/_method_definition";
 
 /**
  * Various checks regarding abapdoc. Base rule checks for existence of abapdoc for
@@ -36,7 +36,7 @@ export class Abapdoc extends ABAPRule {
     const issues: Issue[] = [];
     const rows = file.getRawRows();
     const scope = CurrentScope.buildDefault(reg);
-    let methods: MethodDefinition[] = [];
+    let methods: IMethodDefinition[] = [];
 
     for (const classDef of file.getInfo().getClassDefinitions()) {
       if (this.conf.checkLocal === false && classDef.isLocal() === true) {
@@ -45,7 +45,7 @@ export class Abapdoc extends ABAPRule {
       methods = methods.concat(classDef.getMethodDefinitions().getPublic());
     }
 
-    for (const interfaceDef of file.getInterfaceDefinitions()) {
+    for (const interfaceDef of file.getInfo().getInterfaceDefinitions()) {
       if (this.conf.checkLocal === false && interfaceDef.isLocal() === true) {
         continue;
       }

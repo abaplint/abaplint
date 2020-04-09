@@ -1,6 +1,9 @@
-import {ClassDefinition} from "../types/class_definition";
+import {IClassDefinition} from "../types/_class_definition";
+import {IInterfaceDefinition} from "../types/_interface_definition";
 
 export interface IABAPFileInformation {
-  getClassDefinitions(): readonly ClassDefinition[];
-  getClassDefinition(name: string): ClassDefinition | undefined;
+  getClassDefinitions(): readonly IClassDefinition[];
+  getClassDefinition(name: string): IClassDefinition | undefined;
+  getInterfaceDefinitions(): readonly IInterfaceDefinition[];
+  getInterfaceDefinition(name: string): IInterfaceDefinition | undefined;
 }

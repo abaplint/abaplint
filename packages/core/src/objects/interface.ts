@@ -1,5 +1,5 @@
 import {ABAPObject} from "./_abap_object";
-import {InterfaceDefinition} from "../abap/types";
+import {IInterfaceDefinition} from "../abap/types/_interface_definition";
 
 export class Interface extends ABAPObject {
 
@@ -14,12 +14,12 @@ export class Interface extends ABAPObject {
     };
   }
 
-  public getDefinition(): InterfaceDefinition | undefined {
+  public getDefinition(): IInterfaceDefinition | undefined {
     const main = this.getMainABAPFile();
     if (!main) {
       return undefined;
     }
-    const definitions = main.getInterfaceDefinitions();
+    const definitions = main.getInfo().getInterfaceDefinitions();
     if (definitions.length === 0) {
       return undefined;
     }

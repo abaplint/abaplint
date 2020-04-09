@@ -5,9 +5,9 @@ import * as Objects from "../objects";
 import {IObject} from "../objects/_iobject";
 import {BasicRuleConfig} from "./_basic_rule_config";
 import {xmlToArray} from "../xml_utils";
-import {ClassDefinition} from "../abap/types";
 import {IFile} from "../files/_ifile";
 import {Position} from "../position";
+import {IClassDefinition} from "../abap/types/_class_definition";
 
 /** Ensures you have no descriptions in metadata of methods, parameters, etc. For class descriptions, see rule description_empty. */
 export class RemoveDescriptionsConf extends BasicRuleConfig {
@@ -37,7 +37,7 @@ export class RemoveDescriptions implements IRule {
   public run(obj: IObject): Issue[] {
 // plan is omitting knowledge about descriptions in abaplint, so this rule must parse the XML
     if (obj instanceof Objects.Class) {
-      let def: ClassDefinition | undefined;
+      let def: IClassDefinition | undefined;
       try {
         def = obj.getClassDefinition();
       } catch {
