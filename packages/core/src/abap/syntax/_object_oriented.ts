@@ -44,7 +44,7 @@ export class ObjectOriented {
 
     const classDefinition = this.findClassDefinition(className);
 
-    const classAttributes = classDefinition.getAttributes(this.scope);
+    const classAttributes = classDefinition.getAttributes();
 
     this.addAliasedAttributes(classDefinition); // todo, this is not correct, take care of instance vs static
 
@@ -114,7 +114,7 @@ export class ObjectOriented {
     this.scope.push(ScopeType.Method, methodName, node.getFirstToken().getStart(), filename);
 
     const classDefinition = this.findClassDefinition(className);
-    classDefinition.getTypeDefinitions(this.scope).getAll().map((t) => this.scope.addType(t));
+    classDefinition.getTypeDefinitions().getAll().map((t) => this.scope.addType(t));
 
     const sup = classDefinition.getSuperClass();
     if (sup) {
@@ -183,7 +183,7 @@ export class ObjectOriented {
   }
 
   private findMethod(classDefinition: ClassDefinition, methodName: string): MethodDefinition | undefined {
-    for (const method of classDefinition.getMethodDefinitions(this.scope)!.getAll()) {
+    for (const method of classDefinition.getMethodDefinitions()!.getAll()) {
       if (method.getName().toUpperCase() === methodName.toUpperCase()) {
         if (method.isRedefinition()) {
           return this.findMethodInSuper(classDefinition, methodName);
@@ -235,7 +235,7 @@ export class ObjectOriented {
     }
     const cdef = this.findSuperDefinition(sup);
 
-    const attr = cdef.getAttributes(this.scope);
+    const attr = cdef.getAttributes();
 
     this.scope.addList(attr.getConstants()); // todo, handle scope and instance vs static
     this.scope.addList(attr.getInstance()); // todo, handle scope and instance vs static

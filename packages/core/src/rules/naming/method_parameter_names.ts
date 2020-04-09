@@ -63,11 +63,11 @@ export class MethodParameterNames implements IRule {
           ret = ret.concat(this.checkMethod(method));
         }
       }
-      for (const def of file.getClassDefinitions()) {
+      for (const def of file.getInfo().getClassDefinitions()) {
         if (this.conf.ignoreExceptions && def.isException()) {
           continue;
         }
-        const definitions = def.getMethodDefinitions(scope);
+        const definitions = def.getMethodDefinitions();
         if (definitions === undefined) {
           continue;
         }

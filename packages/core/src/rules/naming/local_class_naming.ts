@@ -42,7 +42,7 @@ export class LocalClassNaming extends ABAPRule {
       this.conf.patternKind = "required";
     }
 
-    for (const classDef of file.getClassDefinitions()) {
+    for (const classDef of file.getInfo().getClassDefinitions()) {
       if (classDef.isGlobal()) {
         continue;
       }

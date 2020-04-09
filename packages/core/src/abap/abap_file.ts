@@ -4,24 +4,36 @@ import {AbstractFile} from "../files/_abstract_file";
 import {IFile} from "../files/_ifile";
 import {StructureNode, StatementNode} from "./nodes";
 import * as Structures from "./3_structures/structures";
-import {ClassDefinition, ClassImplementation, InterfaceDefinition, FormDefinition} from "./types";
+import {ClassImplementation, InterfaceDefinition, FormDefinition} from "./types";
+import {IABAPFileInformation} from "./4_object_information/_abap_file_information";
 
 export class ABAPFile extends AbstractFile {
   private readonly tokens: readonly Token[];
   private readonly statements: readonly StatementNode[];
   private readonly structure: StructureNode | undefined;
   private readonly file: IFile;
+  private readonly info: IABAPFileInformation;
 
-  public constructor(file: IFile, tokens: readonly Token[], statements: readonly StatementNode[], structure: StructureNode | undefined) {
+  public constructor(file: IFile,
+                     tokens: readonly Token[],
+                     statements: readonly StatementNode[],
+                     structure: StructureNode | undefined,
+                     info: IABAPFileInformation) {
+
     super(file.getFilename());
     this.file       = file;
     this.tokens     = tokens;
     this.statements = statements;
     this.structure  = structure;
+    this.info       = info;
   }
 
   public getRaw(): string {
     return this.file.getRaw();
+  }
+
+  public getInfo(): IABAPFileInformation {
+    return this.info;
   }
 
   public getRawRows(): string[] {
@@ -65,26 +77,6 @@ export class ABAPFile extends AbstractFile {
 
   public getInterfaceDefinition(name: string): InterfaceDefinition | undefined {
     for (const def of this.getInterfaceDefinitions()) {
-      if (def.getName().toUpperCase() === name.toUpperCase()) {
-        return def;
-      }
-    }
-    return undefined;
-  }
-
-  public getClassDefinitions(): ClassDefinition[] {
-    if (this.structure === undefined) {
-      return [];
-    }
-    const ret: ClassDefinition[] = [];
-    for (const found of this.structure.findAllStructures(Structures.ClassDefinition)) {
-      ret.push(new ClassDefinition(found, this.getFilename()));
-    }
-    return ret;
-  }
-
-  public getClassDefinition(name: string): ClassDefinition | undefined {
-    for (const def of this.getClassDefinitions()) {
       if (def.getName().toUpperCase() === name.toUpperCase()) {
         return def;
       }

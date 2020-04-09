@@ -78,7 +78,7 @@ export abstract class ABAPObject extends AbstractObject {
   public getClassDefinitions(): readonly ClassDefinition[] {
     let ret: ClassDefinition[] = [];
     for (const file of this.getABAPFiles()) {
-      ret = ret.concat(file.getClassDefinitions());
+      ret = ret.concat(file.getInfo().getClassDefinitions());
     }
     return ret;
   }

@@ -6,6 +6,7 @@ import {Lexer} from "./1_lexer/lexer";
 import {StatementParser} from "./2_statements/statement_parser";
 import {StructureParser} from "./3_structures/structure_parser";
 import {ILexerResult} from "./1_lexer/lexer_result";
+import {ABAPFileInformation} from "./4_object_information/abap_file_information";
 
 export class ABAPParser {
   private readonly version: Version;
@@ -31,7 +32,10 @@ export class ABAPParser {
     for (const f of statementResult) {
       const result = StructureParser.run(f);
 
-      output.push(new ABAPFile(f.file, f.tokens, f.statements, result.node));
+// 4: object information
+      const info = new ABAPFileInformation(result.node, f.file.getFilename());
+
+      output.push(new ABAPFile(f.file, f.tokens, f.statements, result.node, info));
       issues = issues.concat(result.issues);
     }
 

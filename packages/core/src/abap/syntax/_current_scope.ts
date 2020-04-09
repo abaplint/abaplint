@@ -10,14 +10,14 @@ import {ScopeType} from "./_scope_type";
 import {IRegistry} from "../../_iregistry";
 
 export class CurrentScope {
-  protected readonly reg: IRegistry;
+  protected readonly reg: IRegistry | undefined;
   protected current: SpaghettiScopeNode | undefined;
 
   public static buildDefault(reg: IRegistry): CurrentScope {
     const s = new CurrentScope(reg);
 
     s.push(ScopeType.BuiltIn, ScopeType.BuiltIn, new Position(1, 1), BuiltIn.filename);
-    this.addBuiltIn(s, reg);
+    this.addBuiltIn(s, reg.getConfig().getSyntaxSetttings().globalConstants!);
 
     s.push(ScopeType.Global, ScopeType.Global, new Position(1, 1), ScopeType.Global);
 
@@ -39,15 +39,32 @@ export class CurrentScope {
     return s;
   }
 
-  private static addBuiltIn(s: CurrentScope, reg: IRegistry) {
-    const builtin = BuiltIn.get(reg.getConfig().getSyntaxSetttings().globalConstants!);
+  public static buildEmpty(): CurrentScope {
+    const s = new CurrentScope();
+
+    const identifier: IScopeIdentifier = {
+      stype: ScopeType.Dummy,
+      sname: ScopeType.Dummy,
+      start: new Position(1, 1),
+      filename: "dummy"};
+
+    s.current = new SpaghettiScopeNode(identifier, undefined);
+
+    s.push(ScopeType.BuiltIn, ScopeType.BuiltIn, new Position(1, 1), BuiltIn.filename);
+    this.addBuiltIn(s, []);
+
+    return s;
+  }
+
+  private static addBuiltIn(s: CurrentScope, extras: string[]) {
+    const builtin = BuiltIn.get(extras);
     s.addList(builtin);
     for (const t of BuiltIn.getTypes()) {
       s.addType(t);
     }
   }
 
-  private constructor(reg: IRegistry) {
+  private constructor(reg?: IRegistry) {
     this.current = undefined;
     this.reg = reg;
   }
@@ -122,11 +139,11 @@ export class CurrentScope {
     if (ilocal) {
       return true;
     }
-    const cglobal = this.reg.getObject("CLAS", name);
+    const cglobal = this.reg?.getObject("CLAS", name);
     if (cglobal) {
       return true;
     }
-    const iglobal = this.reg.getObject("INTF", name);
+    const iglobal = this.reg?.getObject("INTF", name);
     if (iglobal) {
       return true;
     }
@@ -158,7 +175,10 @@ export class CurrentScope {
 
 ///////////////////////////
 
-  public getDDIC(): DDIC {
+  public getDDIC(): DDIC | undefined {
+    if (this.reg === undefined) {
+      return undefined;
+    }
     return new DDIC(this.reg);
   }
 

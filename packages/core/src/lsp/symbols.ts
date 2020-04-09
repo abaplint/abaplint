@@ -3,20 +3,15 @@ import {IRegistry} from "../_iregistry";
 import {ABAPFile} from "../files";
 import {Identifier} from "../abap/types/_identifier";
 import {Attributes, MethodDefinitions, MethodImplementation} from "../abap/types";
-import {CurrentScope} from "../abap/syntax/_current_scope";
 import {LSPUtils} from "./_lsp_utils";
 
 export class Symbols {
-  private static reg: IRegistry;
-  private static scope: CurrentScope;
 
   public static find(reg: IRegistry, uri: string): LServer.DocumentSymbol[] {
     const file = LSPUtils.getABAPFile(reg, uri);
     if (file === undefined) {
       return [];
     }
-    this.reg = reg;
-    this.scope = CurrentScope.buildDefault(this.reg);
 
     let ret: LServer.DocumentSymbol[] = [];
     ret = ret.concat(this.outputClasses(file));
@@ -60,10 +55,10 @@ export class Symbols {
   private static outputClasses(file: ABAPFile): LServer.DocumentSymbol[] {
     const ret: LServer.DocumentSymbol[] = [];
 
-    for (const cla of file.getClassDefinitions()) {
+    for (const cla of file.getInfo().getClassDefinitions()) {
       let children: LServer.DocumentSymbol[] = [];
-      children = children.concat(this.outputClassAttributes(cla.getAttributes(this.scope)));
-      children = children.concat(this.outputMethodDefinitions(cla.getMethodDefinitions(this.scope)));
+      children = children.concat(this.outputClassAttributes(cla.getAttributes()));
+      children = children.concat(this.outputMethodDefinitions(cla.getMethodDefinitions()));
       const symbol = this.newSymbol(cla, LServer.SymbolKind.Class, children);
       ret.push(symbol);
     }

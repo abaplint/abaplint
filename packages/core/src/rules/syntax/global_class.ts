@@ -28,7 +28,7 @@ export class GlobalClass extends ABAPRule {
   public runParsed(file: ABAPFile, _reg: IRegistry, obj: IObject) {
     const output: Issue[] = [];
 
-    for (const definition of file.getClassDefinitions()) {
+    for (const definition of file.getInfo().getClassDefinitions()) {
       if (definition.isLocal() && obj instanceof Objects.Class && file.getFilename().match(/\.clas\.abap$/)) {
         const issue = Issue.atIdentifier(definition, "Global classes must be global", this.getKey());
         output.push(issue);

@@ -57,11 +57,11 @@ export class NoPublicAttributes extends ABAPRule {
 
   private getAllPublicClassAttributes(): ClassAttribute[] {
     let attributes: ClassAttribute[] = [];
-    for (const classDef of this.file.getClassDefinitions()) {
+    for (const classDef of this.file.getInfo().getClassDefinitions()) {
       if (classDef.isException()) {
         continue;
       }
-      const attr = classDef.getAttributes(this.scope);
+      const attr = classDef.getAttributes();
       attributes = attributes.concat(attr.getInstancesByVisibility(Visibility.Public));
       attributes = attributes.concat(attr.getStaticsByVisibility(Visibility.Public));
     }

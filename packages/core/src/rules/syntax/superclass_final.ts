@@ -34,7 +34,7 @@ export class SuperclassFinal extends ABAPRule {
   public runParsed(file: ABAPFile, reg: IRegistry, obj: IObject) {
     const output: Issue[] = [];
 
-    for (const definition of file.getClassDefinitions()) {
+    for (const definition of file.getInfo().getClassDefinitions()) {
       const sup = definition.getSuperClass();
       if (sup === undefined) {
         continue;
@@ -46,7 +46,7 @@ export class SuperclassFinal extends ABAPRule {
       let found: ClassDefinition | undefined = undefined;
       if (localLookup) {
 // todo, this should look inside the object instead of the file?
-        found = file.getClassDefinition(sup);
+        found = file.getInfo().getClassDefinition(sup);
       }
       if (found === undefined) {
         const clas = reg.getObject("CLAS", sup) as Class;

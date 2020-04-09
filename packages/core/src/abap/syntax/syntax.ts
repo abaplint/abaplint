@@ -187,7 +187,7 @@ export class SyntaxLogic {
     if (node instanceof StructureNode) {
       const stru = node.get();
       if (stru instanceof Structures.ClassDefinition) {
-        this.scope.addClassDefinition(new ClassDefinition(node, filename));
+        this.scope.addClassDefinition(new ClassDefinition(node, filename, this.scope));
         return true;
       } else if (stru instanceof Structures.Interface) {
         this.scope.addInterfaceDefinition(new InterfaceDefinition(node, filename));

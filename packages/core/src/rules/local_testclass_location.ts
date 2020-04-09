@@ -37,7 +37,7 @@ export class LocalTestclassLocation extends ABAPRule {
       return [];
     }
 
-    for (const c of file.getClassDefinitions()) {
+    for (const c of file.getInfo().getClassDefinitions()) {
       if (c.isLocal() && c.isForTesting() && !file.getFilename().includes(".testclasses.abap")) {
         const issue = Issue.atIdentifier(c, this.getDescription(c.getName()), this.getKey());
         issues.push(issue);

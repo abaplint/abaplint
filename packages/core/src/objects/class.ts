@@ -29,7 +29,7 @@ export class Class extends ABAPObject {
     if (!main) {
       return undefined;
     }
-    const definitions = main.getClassDefinitions();
+    const definitions = main.getInfo().getClassDefinitions();
     if (definitions.length === 0) {
       return undefined;
     }

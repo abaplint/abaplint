@@ -12,8 +12,11 @@ import {TypeDefinitions} from ".";
 
 export class ClassDefinition extends Identifier {
   private readonly node: StructureNode;
+  private readonly methodDefs: MethodDefinitions;
+  private readonly types: TypeDefinitions;
+  private readonly attributes: Attributes;
 
-  public constructor(node: StructureNode, filename: string) {
+  public constructor(node: StructureNode, filename: string, scope: CurrentScope) {
     if (!(node.get() instanceof Structures.ClassDefinition)) {
       throw new Error("ClassDefinition, unexpected node type");
     }
@@ -22,14 +25,19 @@ export class ClassDefinition extends Identifier {
     super(name, filename);
 
     this.node = node;
+
+    // todo, handle the sequence of types and attributes
+    this.methodDefs = new MethodDefinitions(this.node, this.filename, scope);
+    this.types = new TypeDefinitions(this.node, this.filename, scope);
+    this.attributes = new Attributes(this.node, this.filename, scope);
   }
 
-  public getMethodDefinitions(scope: CurrentScope): MethodDefinitions {
-    return new MethodDefinitions(this.node, this.filename, scope);
+  public getMethodDefinitions(): MethodDefinitions {
+    return this.methodDefs;
   }
 
-  public getTypeDefinitions(scope: CurrentScope): TypeDefinitions {
-    return new TypeDefinitions(this.node, this.filename, scope);
+  public getTypeDefinitions(): TypeDefinitions {
+    return this.types;
   }
 
   public getSuperClass(): string | undefined {
@@ -38,8 +46,8 @@ export class ClassDefinition extends Identifier {
     return token ? token.getFirstToken().getStr() : undefined;
   }
 
-  public getAttributes(scope: CurrentScope): Attributes {
-    return new Attributes(this.node, this.filename, scope);
+  public getAttributes(): Attributes {
+    return this.attributes;
   }
 
   public isException(): boolean {

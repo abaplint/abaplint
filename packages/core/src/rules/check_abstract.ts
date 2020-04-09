@@ -3,7 +3,6 @@ import {ABAPRule} from "./_abap_rule";
 import {ABAPFile} from "../files";
 import {BasicRuleConfig} from "./_basic_rule_config";
 import {IRegistry} from "../_iregistry";
-import {CurrentScope} from "../abap/syntax/_current_scope";
 
 /**
  * Checks abstract methods and classes:
@@ -42,11 +41,10 @@ export class CheckAbstract extends ABAPRule {
     this.conf = conf;
   }
 
-  public runParsed(file: ABAPFile, reg: IRegistry) {
+  public runParsed(file: ABAPFile, _reg: IRegistry) {
     const issues: Issue[] = [];
-    const scope = CurrentScope.buildDefault(reg);
 
-    for (const classDef of file.getClassDefinitions()) {
+    for (const classDef of file.getInfo().getClassDefinitions()) {
       if (classDef.isAbstract()) {
         if (classDef.isFinal()) {
           issues.push(Issue.atIdentifier(
@@ -54,7 +52,7 @@ export class CheckAbstract extends ABAPRule {
         }
         continue;
       }
-      for (const methodDef of classDef.getMethodDefinitions(scope).getAll()) {
+      for (const methodDef of classDef.getMethodDefinitions().getAll()) {
         if (methodDef.isAbstract()) {
           issues.push(Issue.atIdentifier(
             methodDef, this.getDescription(IssueType.NotAbstractClass, methodDef.getName()), this.getKey()));

@@ -7,7 +7,6 @@ import {ClassAttribute} from "../../abap/types/class_attribute";
 import {NamingRuleConfig} from "../_naming_rule_config";
 import {IRule} from "../_irule";
 import {NameValidator} from "../../utils/name_validator";
-import {CurrentScope} from "../../abap/syntax/_current_scope";
 
 /** Allows you to enforce a pattern, such as a prefix, for class variable names. */
 export class ClassAttributeNamesConf extends NamingRuleConfig {
@@ -40,7 +39,7 @@ export class ClassAttributeNames implements IRule {
     this.conf = conf;
   }
 
-  public run(obj: IObject, reg: IRegistry): Issue[] {
+  public run(obj: IObject, _reg: IRegistry): Issue[] {
     let attr: Attributes | undefined = undefined;
     if (this.conf.patternKind === undefined) {
       this.conf.patternKind = "required";
@@ -55,7 +54,7 @@ export class ClassAttributeNames implements IRule {
       if (this.conf.ignoreExceptions && definition.isException()) {
         return [];
       }
-      attr = definition.getAttributes(CurrentScope.buildDefault(reg));
+      attr = definition.getAttributes();
       if (attr === undefined) {
         return [];
       }

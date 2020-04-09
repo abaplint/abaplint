@@ -38,11 +38,11 @@ export class Abapdoc extends ABAPRule {
     const scope = CurrentScope.buildDefault(reg);
     let methods: MethodDefinition[] = [];
 
-    for (const classDef of file.getClassDefinitions()) {
+    for (const classDef of file.getInfo().getClassDefinitions()) {
       if (this.conf.checkLocal === false && classDef.isLocal() === true) {
         continue;
       }
-      methods = methods.concat(classDef.getMethodDefinitions(scope).getPublic());
+      methods = methods.concat(classDef.getMethodDefinitions().getPublic());
     }
 
     for (const interfaceDef of file.getInterfaceDefinitions()) {

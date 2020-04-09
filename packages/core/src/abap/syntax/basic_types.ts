@@ -67,7 +67,7 @@ export class BasicTypes {
       return typ.getType();
     }
 
-    const ddic = this.scope.getDDIC().lookup(chainText);
+    const ddic = this.scope.getDDIC()?.lookup(chainText);
     if (ddic) {
       return ddic;
     }

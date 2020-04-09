@@ -5,7 +5,6 @@ import {IObject} from "../objects/_iobject";
 import {Class} from "../objects";
 import {Visibility} from "../abap/types";
 import {IRegistry} from "../_iregistry";
-import {CurrentScope} from "../abap/syntax/_current_scope";
 
 /** Constructor must be placed in the public section, even if the class is not CREATE PUBLIC.
  * https://github.com/SAP/styleguides/blob/master/clean-abap/CleanABAP.md#if-your-global-class-is-create-private-leave-the-constructor-public
@@ -33,7 +32,7 @@ export class ConstructorVisibilityPublic implements IRule {
     this.conf = conf;
   }
 
-  public run(obj: IObject, reg: IRegistry): Issue[] {
+  public run(obj: IObject, _reg: IRegistry): Issue[] {
     const issues: Issue[] = [];
 
     if (!(obj instanceof Class)) {
@@ -45,8 +44,7 @@ export class ConstructorVisibilityPublic implements IRule {
       return [];
     }
 
-    const scope = CurrentScope.buildDefault(reg);
-    const methods = def.getMethodDefinitions(scope);
+    const methods = def.getMethodDefinitions();
     if (methods === undefined) {
       return [];
     }

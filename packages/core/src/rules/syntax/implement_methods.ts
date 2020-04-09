@@ -36,9 +36,7 @@ export class ImplementMethods extends ABAPRule {
       return [];
     }
 
-    const scope = CurrentScope.buildDefault(reg);
-
-    for (const def of file.getClassDefinitions()) {
+    for (const def of file.getInfo().getClassDefinitions()) {
       let impl = file.getClassImplementation(def.getName());
       if (impl === undefined) {
         impl = obj.getClassImplementation(def.getName());
@@ -49,17 +47,17 @@ export class ImplementMethods extends ABAPRule {
         continue;
       }
 
-      ret = ret.concat(this.checkClass(def, impl, scope));
+      ret = ret.concat(this.checkClass(def, impl));
       ret = ret.concat(this.checkInterfaces(def, impl, file, reg));
     }
 
     return ret;
   }
 
-  private checkClass(def: ClassDefinition, impl: ClassImplementation, scope: CurrentScope): Issue[] {
+  private checkClass(def: ClassDefinition, impl: ClassImplementation): Issue[] {
     const ret: Issue[] = [];
 
-    for (const md of def.getMethodDefinitions(scope).getAll()) {
+    for (const md of def.getMethodDefinitions().getAll()) {
       const found = impl.getMethodImplementation(md.getName());
 
       if (md.isAbstract()) {
