@@ -93,7 +93,7 @@ export class ABAPFileInformation implements IABAPFileInformation {
       }
 
       for (const found of structure.findAllStructures(Structures.Form)) {
-        this.formDefinitions.push(new FormDefinition(found, filename));
+        this.formDefinitions.push(new FormDefinition(found, filename, scope));
       }
     }
   }

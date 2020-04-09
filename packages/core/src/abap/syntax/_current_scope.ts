@@ -9,7 +9,7 @@ import {ScopeType} from "./_scope_type";
 import {IRegistry} from "../../_iregistry";
 import {IClassDefinition} from "../types/_class_definition";
 import {IInterfaceDefinition} from "../types/_interface_definition";
-import {FormDefinition} from "../types/form_definition";
+import {IFormDefinition} from "../types/_form_definition";
 
 export class CurrentScope {
   protected readonly reg: IRegistry | undefined;
@@ -84,7 +84,7 @@ export class CurrentScope {
     this.current?.getData().cdefs.push(c);
   }
 
-  public addFormDefinitions(f: readonly FormDefinition[]) {
+  public addFormDefinitions(f: readonly IFormDefinition[]) {
     if (this.current === undefined) {
       return;
     }
@@ -159,7 +159,7 @@ export class CurrentScope {
     return this.current?.findClassDefinition(name);
   }
 
-  public findFormDefinition(name: string): FormDefinition | undefined {
+  public findFormDefinition(name: string): IFormDefinition | undefined {
     return this.current?.findFormDefinition(name);
   }
 

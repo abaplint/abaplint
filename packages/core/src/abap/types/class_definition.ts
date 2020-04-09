@@ -8,8 +8,8 @@ import {Attributes} from "./class_attributes";
 import {Identifier} from "./_identifier";
 import {Aliases} from "./aliases";
 import {CurrentScope} from "../syntax/_current_scope";
-import {TypeDefinitions} from ".";
 import {IClassDefinition} from "./_class_definition";
+import {TypeDefinitions} from "./type_definitions";
 
 export class ClassDefinition extends Identifier implements IClassDefinition {
   private readonly node: StructureNode;

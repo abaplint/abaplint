@@ -4,7 +4,6 @@ import {IRegistry} from "../_iregistry";
 import {Token} from "../abap/1_lexer/tokens/_token";
 import {StatementNode, TokenNode} from "../abap/nodes";
 import {Identifier} from "../abap/types/_identifier";
-import {FormDefinition} from "../abap/types";
 import {ABAPFile} from "../files";
 import {ABAPObject} from "../objects/_abap_object";
 import {SyntaxLogic} from "../abap/syntax/syntax";
@@ -13,6 +12,7 @@ import {INode} from "../abap/nodes/_inode";
 import {Position} from "../position";
 import * as LServer from "vscode-languageserver-types";
 import {SpaghettiScopeNode} from "../abap/syntax/spaghetti_scope";
+import {IFormDefinition} from "../abap/types/_form_definition";
 
 export interface ICursorPosition {
   token: Token;
@@ -91,7 +91,7 @@ export class LSPUtils {
     return undefined;
   }
 
-  public static lookup(cursor: ICursorPosition, reg: IRegistry, obj: ABAPObject): ABAPFile | FormDefinition | Identifier | undefined {
+  public static lookup(cursor: ICursorPosition, reg: IRegistry, obj: ABAPObject): ABAPFile | IFormDefinition | Identifier | undefined {
 
     const res = this.findInclude(cursor, reg);
     if (res) {
@@ -112,7 +112,7 @@ export class LSPUtils {
     return scope.findVariable(cursor.token.getStr());
   }
 
-  public static findForm(found: ICursorPosition, scope: SpaghettiScopeNode): FormDefinition | undefined {
+  public static findForm(found: ICursorPosition, scope: SpaghettiScopeNode): IFormDefinition | undefined {
     if (!(found.snode.get() instanceof Statements.Perform)) {
       return undefined;
     }

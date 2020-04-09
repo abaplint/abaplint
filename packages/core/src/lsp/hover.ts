@@ -6,10 +6,9 @@ import {FormDefinition} from "../abap/types";
 import {ABAPFile} from "../files";
 import {Identifier} from "../abap/types/_identifier";
 import {TypedIdentifier} from "../abap/types/_typed_identifier";
-import {CurrentScope} from "../abap/syntax/_current_scope";
 import * as Tokens from "../abap/1_lexer/tokens";
 import {ITextDocumentPositionParams} from "./_interfaces";
-import {Registry} from "../registry";
+
 
 export class Hover {
   public static find(reg: IRegistry, pos: ITextDocumentPositionParams): LServer.MarkupContent | undefined {
@@ -62,8 +61,7 @@ export class Hover {
   private static hoverFormDefinition(def: FormDefinition): string {
 // todo, list parameters properly in hover information
 // todo, properly handling scope
-    const scope = CurrentScope.buildDefault(new Registry());
-    return "FORM info, todo, parameter count: " + def.getParameters(scope).length;
+    return "FORM info, todo, parameter count: " + def.getParameters().length;
   }
 
 }

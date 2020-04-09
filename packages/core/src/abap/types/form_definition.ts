@@ -7,11 +7,16 @@ import {Expression} from "../2_statements/combi";
 import {TypedIdentifier} from "./_typed_identifier";
 import {CurrentScope} from "../syntax/_current_scope";
 import {FormParam} from "../syntax/expressions/form_param";
+import {IFormDefinition} from "./_form_definition";
 
-export class FormDefinition extends Identifier {
+export class FormDefinition extends Identifier implements IFormDefinition {
   private readonly node: StatementNode;
+  private readonly parameters: TypedIdentifier[];
+  private readonly tableParameters: TypedIdentifier[];
+  private readonly usingParameters: TypedIdentifier[];
+  private readonly changingParameters: TypedIdentifier[];
 
-  public constructor(node: StructureNode | StatementNode, filename: string) {
+  public constructor(node: StructureNode | StatementNode, filename: string, scope: CurrentScope) {
     const st = node instanceof StructureNode ? node.findFirstStatement(Statements.Form)! : node;
 
     // FORMs can contain a dash in the name
@@ -21,23 +26,30 @@ export class FormDefinition extends Identifier {
 
     super(nameToken, filename);
     this.node = st;
+
+    this.parameters = this.findParams(this.node, scope);
+    this.tableParameters = this.findType(Expressions.FormTables, scope);
+    this.usingParameters = this.findType(Expressions.FormUsing, scope);
+    this.changingParameters = this.findType(Expressions.FormChanging, scope);
   }
 
-  public getParameters(scope: CurrentScope): TypedIdentifier[] {
-    return this.findParams(this.node, scope);
+  public getParameters(): TypedIdentifier[] {
+    return this.parameters;
   }
 
-  public getTablesParameters(scope: CurrentScope): TypedIdentifier[] {
-    return this.findType(Expressions.FormTables, scope);
+  public getTablesParameters(): TypedIdentifier[] {
+    return this.tableParameters;
   }
 
-  public getUsingParameters(scope: CurrentScope): TypedIdentifier[] {
-    return this.findType(Expressions.FormUsing, scope);
+  public getUsingParameters(): TypedIdentifier[] {
+    return this.usingParameters;
   }
 
-  public getChangingParameters(scope: CurrentScope): TypedIdentifier[] {
-    return this.findType(Expressions.FormChanging, scope);
+  public getChangingParameters(): TypedIdentifier[] {
+    return this.changingParameters;
   }
+
+///////////////
 
   private findType(type: new () => Expression, scope: CurrentScope): TypedIdentifier[] {
     const found = this.node.findFirstExpression(type);

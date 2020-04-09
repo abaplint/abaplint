@@ -3,11 +3,14 @@ import {StructureNode} from "../nodes";
 import * as Structures from "../3_structures/structures";
 import * as Statements from "../2_statements/statements";
 import * as Expressions from "../2_statements/expressions";
-import {MethodDefinition, Visibility, Attributes, TypeDefinitions} from ".";
 import {CurrentScope} from "../syntax/_current_scope";
 import {IInterfaceDefinition} from "./_interface_definition";
 import {IAttributes}  from "./_class_attributes";
 import {ITypeDefinitions} from "./_type_definitions";
+import {MethodDefinition} from "./method_definition";
+import {Attributes} from "./class_attributes";
+import {TypeDefinitions} from "./type_definitions";
+import {Visibility} from "./visibility";
 
 export class InterfaceDefinition extends Identifier implements IInterfaceDefinition {
   private readonly node: StructureNode;
