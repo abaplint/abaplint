@@ -14,7 +14,6 @@ import {ObjectOriented} from "./_object_oriented";
 import {Procedural} from "./_procedural";
 import {Inline} from "./_inline";
 import {Program, FunctionGroup} from "../../objects";
-import {ClassDefinition, InterfaceDefinition} from "../types";
 import {SpaghettiScope} from "./spaghetti_scope";
 import {Position} from "../../position";
 import {Perform} from "./statements/perform";
@@ -31,6 +30,8 @@ import {TypeEnum} from "./structures/type_enum";
 import {Types} from "./structures/types";
 import {Statics} from "./structures/statics";
 import {Constants} from "./structures/constants";
+import {ClassDefinition} from "../types/class_definition";
+import {InterfaceDefinition} from "../types/interface_definition";
 
 // assumption: objects are parsed without parsing errors
 
@@ -190,7 +191,7 @@ export class SyntaxLogic {
         this.scope.addClassDefinition(new ClassDefinition(node, filename, this.scope));
         return true;
       } else if (stru instanceof Structures.Interface) {
-        this.scope.addInterfaceDefinition(new InterfaceDefinition(node, filename));
+        this.scope.addInterfaceDefinition(new InterfaceDefinition(node, filename, this.scope));
         return true;
       } else if (stru instanceof Structures.Types) {
         this.scope.addType(new Types().runSyntax(node, this.scope, filename));

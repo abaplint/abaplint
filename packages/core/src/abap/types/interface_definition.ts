@@ -6,11 +6,16 @@ import * as Expressions from "../2_statements/expressions";
 import {MethodDefinition, Visibility, Attributes, TypeDefinitions} from ".";
 import {CurrentScope} from "../syntax/_current_scope";
 import {IInterfaceDefinition} from "./_interface_definition";
+import {IAttributes}  from "./_class_attributes";
+import {ITypeDefinitions} from "./_type_definitions";
 
 export class InterfaceDefinition extends Identifier implements IInterfaceDefinition {
   private readonly node: StructureNode;
+  private attributes: IAttributes | undefined;
+  private typeDefinitions: ITypeDefinitions;
+  private methodDefinitions: MethodDefinition[];
 
-  public constructor(node: StructureNode, filename: string) {
+  public constructor(node: StructureNode, filename: string, scope: CurrentScope) {
     if (!(node.get() instanceof Structures.Interface)) {
       throw new Error("InterfaceDefinition, unexpected node type");
     }
@@ -19,15 +24,16 @@ export class InterfaceDefinition extends Identifier implements IInterfaceDefinit
     super(name, filename);
 
     this.node = node;
+
+    this.parse(scope);
   }
 
-  public getAttributes(scope: CurrentScope): Attributes | undefined {
-    if (!this.node) { return undefined; }
-    return new Attributes(this.node, this.filename, scope);
+  public getAttributes() {
+    return this.attributes;
   }
 
-  public getTypeDefinitions(scope: CurrentScope): TypeDefinitions {
-    return new TypeDefinitions(this.node, this.filename, scope);
+  public getTypeDefinitions() {
+    return this.typeDefinitions;
   }
 
   public isLocal(): boolean {
@@ -38,13 +44,27 @@ export class InterfaceDefinition extends Identifier implements IInterfaceDefinit
     return this.node.findFirstExpression(Expressions.Global) !== undefined;
   }
 
-  public getMethodDefinitions(scope: CurrentScope): MethodDefinition[] {
-    const ret = [];
+  public getMethodDefinitions(): MethodDefinition[] {
+    return this.methodDefinitions;
+  }
+
+/////////////////
+
+  private parse(scope: CurrentScope) {
+
+    if (this.node) {
+      this.attributes = new Attributes(this.node, this.filename, scope);
+    } else {
+      this.attributes = undefined;
+    }
+
+    this.typeDefinitions = new TypeDefinitions(this.node, this.filename, scope);
+
+    this.methodDefinitions = [];
     const defs = this.node.findAllStatements(Statements.MethodDef);
     for (const def of defs) {
-      ret.push(new MethodDefinition(def, Visibility.Public, this.filename, scope));
+      this.methodDefinitions.push(new MethodDefinition(def, Visibility.Public, this.filename, scope));
     }
-    return ret;
   }
 
 }

@@ -6,7 +6,6 @@ import {ABAPObject} from "../../objects/_abap_object";
 import {NamingRuleConfig} from "../_naming_rule_config";
 import {NameValidator} from "../../utils/name_validator";
 import {TypedIdentifier} from "../../abap/types/_typed_identifier";
-import {CurrentScope} from "../../abap/syntax/_current_scope";
 import {IMethodDefinition} from "../../abap/types/_method_definition";
 
 /** Allows you to enforce a pattern, such as a prefix, for method parameter names */
@@ -45,7 +44,7 @@ export class MethodParameterNames implements IRule {
     this.conf = conf;
   }
 
-  public run(obj: IObject, reg: IRegistry): Issue[] {
+  public run(obj: IObject, _reg: IRegistry): Issue[] {
     let ret: Issue[] = [];
     if (this.conf.patternKind === undefined) {
       this.conf.patternKind = "required";
@@ -55,11 +54,9 @@ export class MethodParameterNames implements IRule {
       return [];
     }
 
-    const scope = CurrentScope.buildDefault(reg);
-
     for (const file of obj.getABAPFiles()) {
       for (const def of file.getInfo().getInterfaceDefinitions()) {
-        for (const method of def.getMethodDefinitions(scope)) {
+        for (const method of def.getMethodDefinitions()) {
           ret = ret.concat(this.checkMethod(method));
         }
       }

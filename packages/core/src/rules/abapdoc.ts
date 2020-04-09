@@ -2,7 +2,6 @@ import {ABAPRule} from "./_abap_rule";
 import {BasicRuleConfig} from "./_basic_rule_config";
 import {Issue} from "../issue";
 import {ABAPFile} from "../files";
-import {CurrentScope} from "../abap/syntax/_current_scope";
 import {IRegistry} from "../_iregistry";
 import {IMethodDefinition} from "../abap/types/_method_definition";
 
@@ -32,10 +31,10 @@ export class Abapdoc extends ABAPRule {
     this.conf = conf;
   }
 
-  public runParsed(file: ABAPFile, reg: IRegistry) {
+  public runParsed(file: ABAPFile, _reg: IRegistry) {
     const issues: Issue[] = [];
     const rows = file.getRawRows();
-    const scope = CurrentScope.buildDefault(reg);
+
     let methods: IMethodDefinition[] = [];
 
     for (const classDef of file.getInfo().getClassDefinitions()) {
@@ -49,7 +48,7 @@ export class Abapdoc extends ABAPRule {
       if (this.conf.checkLocal === false && interfaceDef.isLocal() === true) {
         continue;
       }
-      methods = methods.concat(interfaceDef.getMethodDefinitions(scope));
+      methods = methods.concat(interfaceDef.getMethodDefinitions());
     }
 
     for (const method of methods) {

@@ -2,7 +2,6 @@ import {Issue} from "../issue";
 import {BasicRuleConfig} from "./_basic_rule_config";
 import {IRegistry} from "../_iregistry";
 import {Visibility, ClassAttribute} from "../abap/types";
-import {CurrentScope} from "../abap/syntax/_current_scope";
 import {ABAPRule} from "./_abap_rule";
 import {ABAPFile} from "../files";
 
@@ -21,7 +20,6 @@ export class NoPublicAttributes extends ABAPRule {
   private rows: string[] = [];
 
   private file: ABAPFile;
-  private scope: CurrentScope;
 
   public getKey(): string {
     return "no_public_attributes";
@@ -39,9 +37,8 @@ export class NoPublicAttributes extends ABAPRule {
     this.conf = conf;
   }
 
-  public runParsed(file: ABAPFile, reg: IRegistry) {
+  public runParsed(file: ABAPFile, _reg: IRegistry) {
     this.rows = file.getRawRows();
-    this.scope = CurrentScope.buildDefault(reg);
     this.file = file;
 
     const attributes = this.getAllPublicAttributes();
@@ -71,7 +68,7 @@ export class NoPublicAttributes extends ABAPRule {
   private getAllPublicInterfaceAttributes(): ClassAttribute[] {
     let attributes: ClassAttribute[] = [];
     for (const interfaceDef of this.file.getInfo().getInterfaceDefinitions()) {
-      const attr = interfaceDef.getAttributes(this.scope);
+      const attr = interfaceDef.getAttributes();
       if (attr) {
         attributes = attributes.concat(attr.getInstancesByVisibility(Visibility.Public));
         attributes = attributes.concat(attr.getStaticsByVisibility(Visibility.Public));

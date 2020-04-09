@@ -1,4 +1,3 @@
-import {ClassDefinition, InterfaceDefinition, FormDefinition} from "../types";
 import {TypedIdentifier} from "../types/_typed_identifier";
 import {BuiltIn} from "./_builtin";
 import {DDIC} from "../../ddic";
@@ -9,6 +8,8 @@ import {Identifier} from "../types/_identifier";
 import {ScopeType} from "./_scope_type";
 import {IRegistry} from "../../_iregistry";
 import {IClassDefinition} from "../types/_class_definition";
+import {IInterfaceDefinition} from "../types/_interface_definition";
+import {FormDefinition} from "../types/form_definition";
 
 export class CurrentScope {
   protected readonly reg: IRegistry | undefined;
@@ -79,18 +80,18 @@ export class CurrentScope {
     this.current?.getData().types.push(type);
   }
 
-  public addClassDefinition(c: ClassDefinition) {
+  public addClassDefinition(c: IClassDefinition) {
     this.current?.getData().cdefs.push(c);
   }
 
-  public addFormDefinitions(f: FormDefinition[]) {
+  public addFormDefinitions(f: readonly FormDefinition[]) {
     if (this.current === undefined) {
       return;
     }
     this.current.getData().forms = this.current.getData().forms.concat(f);
   }
 
-  public addInterfaceDefinition(i: InterfaceDefinition) {
+  public addInterfaceDefinition(i: IInterfaceDefinition) {
     this.current?.getData().idefs.push(i);
   }
 
@@ -162,7 +163,7 @@ export class CurrentScope {
     return this.current?.findFormDefinition(name);
   }
 
-  public findInterfaceDefinition(name: string): InterfaceDefinition | undefined {
+  public findInterfaceDefinition(name: string): IInterfaceDefinition | undefined {
     return this.current?.findInterfaceDefinition(name);
   }
 

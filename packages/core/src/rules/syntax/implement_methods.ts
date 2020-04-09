@@ -3,12 +3,11 @@ import {ABAPRule} from "../_abap_rule";
 import {ABAPFile} from "../../files";
 import {IRegistry} from "../../_iregistry";
 import {BasicRuleConfig} from "../_basic_rule_config";
-import {ClassImplementation} from "../../abap/types";
 import {ABAPObject} from "../../objects/_abap_object";
 import {Interface} from "../../objects";
-import {CurrentScope} from "../../abap/syntax/_current_scope";
 import {IClassDefinition} from "../../abap/types/_class_definition";
 import {IInterfaceDefinition} from "../../abap/types/_interface_definition";
+import {IClassImplementation} from "../../abap/types/_class_implementation";
 
 // todo: abstract methods from superclass parents(might be multiple), if class is not abstract
 
@@ -39,7 +38,7 @@ export class ImplementMethods extends ABAPRule {
     }
 
     for (const def of file.getInfo().getClassDefinitions()) {
-      let impl = file.getClassImplementation(def.getName());
+      let impl = file.getInfo().getClassImplementation(def.getName());
       if (impl === undefined) {
         impl = obj.getClassImplementation(def.getName());
       }
@@ -56,7 +55,7 @@ export class ImplementMethods extends ABAPRule {
     return ret;
   }
 
-  private checkClass(def: IClassDefinition, impl: ClassImplementation): Issue[] {
+  private checkClass(def: IClassDefinition, impl: IClassImplementation): Issue[] {
     const ret: Issue[] = [];
 
     for (const md of def.getMethodDefinitions().getAll()) {
@@ -79,7 +78,7 @@ export class ImplementMethods extends ABAPRule {
     return ret;
   }
 
-  private checkInterfaces(def: IClassDefinition, impl: ClassImplementation, file: ABAPFile, reg: IRegistry): Issue[] {
+  private checkInterfaces(def: IClassDefinition, impl: IClassImplementation, file: ABAPFile, reg: IRegistry): Issue[] {
     const ret: Issue[] = [];
     let idef: IInterfaceDefinition | undefined = undefined;
 
@@ -100,8 +99,7 @@ export class ImplementMethods extends ABAPRule {
         continue; // ignore parser errors in interface
       }
 
-      const scope = CurrentScope.buildDefault(reg);
-      for (const method of idef.getMethodDefinitions(scope)) {
+      for (const method of idef.getMethodDefinitions()) {
         const name = interfaceName.name + "~" + method.getName();
         let found = impl.getMethodImplementation(name);
 

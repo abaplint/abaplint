@@ -4,8 +4,9 @@ import * as Structures from "../3_structures/structures";
 import * as Statements from "../2_statements/statements";
 import * as Expressions from "../2_statements/expressions";
 import {MethodImplementation} from "./method_implementation";
+import {IClassImplementation} from "./_class_implementation";
 
-export class ClassImplementation extends Identifier {
+export class ClassImplementation extends Identifier implements IClassImplementation {
   private readonly node: StructureNode;
 
   public constructor(node: StructureNode, filename: string) {

@@ -21,7 +21,7 @@ export class Procedural {
   }
 
   public addAllFormDefinitions(file: ABAPFile, obj: ABAPObject) {
-    this.scope.addFormDefinitions(file.getFormDefinitions());
+    this.scope.addFormDefinitions(file.getInfo().getFormDefinitions());
 
     const stru = file.getStructure();
     if (stru === undefined) {

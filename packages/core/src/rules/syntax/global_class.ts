@@ -45,7 +45,7 @@ export class GlobalClass extends ABAPRule {
       }
     }
 
-    for (const impl of file.getClassImplementations()) {
+    for (const impl of file.getInfo().getClassImplementations()) {
       if (file.getFilename().match(/\.clas\.abap$/)
           && obj instanceof Objects.Class
           && impl.getName().toUpperCase() !== obj.getName().toUpperCase()) {

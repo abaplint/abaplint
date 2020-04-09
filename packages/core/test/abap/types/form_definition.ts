@@ -9,11 +9,11 @@ import {getABAPObjects} from "../../get_abap";
 let reg: IRegistry = new Registry();
 let scope: CurrentScope = CurrentScope.buildDefault(reg);
 
-function runProgram(abap: string): FormDefinition[] {
+function runProgram(abap: string): readonly FormDefinition[] {
   reg = new Registry().addFile(new MemoryFile("zfoobar.prog.abap", abap)).parse();
   scope = CurrentScope.buildDefault(reg);
   const file = getABAPObjects(reg)[0].getABAPFiles()[0];
-  return file.getFormDefinitions();
+  return file.getInfo().getFormDefinitions();
 }
 
 describe("Types, FormDefinition", () => {

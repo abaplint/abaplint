@@ -76,7 +76,7 @@ export class ObjectOriented {
       const comp = alias.getComponent();
       const idef = this.findInterfaceDefinition(comp.split("~")[0]);
       if (idef) {
-        const found = idef.getAttributes(this.scope)!.findByName(comp.split("~")[1]);
+        const found = idef.getAttributes()!.findByName(comp.split("~")[1]);
         if (found) {
           this.scope.addNamedIdentifier(alias.getName(), found);
         }
@@ -87,7 +87,7 @@ export class ObjectOriented {
   private findMethodInInterface(interfaceName: string, methodName: string): IMethodDefinition | undefined {
     const idef = this.findInterfaceDefinition(interfaceName);
     if (idef) {
-      const methods = idef.getMethodDefinitions(this.scope);
+      const methods = idef.getMethodDefinitions();
       for (const method of methods) {
         if (method.getName().toUpperCase() === methodName.toUpperCase()) {
           return method;
@@ -153,10 +153,10 @@ export class ObjectOriented {
     for (const i of this.findInterfaces(classDefinition)) {
       const idef = this.findInterfaceDefinition(i.name);
       if (idef) {
-        this.scope.addListPrefix(idef.getAttributes(this.scope)!.getConstants(), i.name + "~");
-        this.scope.addListPrefix(idef.getAttributes(this.scope)!.getStatic(), i.name + "~");
+        this.scope.addListPrefix(idef.getAttributes()!.getConstants(), i.name + "~");
+        this.scope.addListPrefix(idef.getAttributes()!.getStatic(), i.name + "~");
         // todo, only add instance variables if its an instance method
-        this.scope.addListPrefix(idef.getAttributes(this.scope)!.getInstance(), i.name + "~");
+        this.scope.addListPrefix(idef.getAttributes()!.getInstance(), i.name + "~");
       }
     }
   }

@@ -47,7 +47,7 @@ export class Symbols {
 
   private static outputForms(file: ABAPFile): LServer.DocumentSymbol[] {
     const ret: LServer.DocumentSymbol[] = [];
-    for (const form of file.getFormDefinitions()) {
+    for (const form of file.getInfo().getFormDefinitions()) {
       const symbol = this.newSymbol(form, LServer.SymbolKind.Function, []);
       ret.push(symbol);
     }
@@ -65,7 +65,7 @@ export class Symbols {
       ret.push(symbol);
     }
 
-    for (const cla of file.getClassImplementations()) {
+    for (const cla of file.getInfo().getClassImplementations()) {
       let children: LServer.DocumentSymbol[] = [];
       children = children.concat(this.outputMethodImplementations(cla.getMethodImplementations()));
       const symbol = this.newSymbol(cla, LServer.SymbolKind.Class, children);

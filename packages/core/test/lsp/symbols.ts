@@ -20,7 +20,8 @@ describe("LSP, symbols", () => {
       "ENDCLASS.\n";
     const file = new MemoryFile("zfoobar.prog.abap", abap);
     const reg = new Registry().addFile(file).parse();
-    expect(reg.findIssues().length).to.equal(0);
+    const issues = reg.findIssues();
+    expect(issues.length).to.equal(0);
     const symbols = Symbols.find(reg, file.getFilename());
     expect(symbols.length).to.equal(2);
     expect(symbols[0].name).to.equal("lcl_foobar");
