@@ -21,7 +21,7 @@ export class UnknownObject extends AbstractObject {
     };
   }
 
-  public getIssues() {
+  public getParsingIssues() {
     const issue = new Issue({
       filename: this.getFiles()[0]?.getFilename(),
       message: "Unknown object type, add/change fielname eg zclass.clas.abap or zprogram.prog.abap",

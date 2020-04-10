@@ -13,12 +13,12 @@ describe("Top level artifacts", () => {
   it("Unknown object", () => {
     const obj = ArtifactsObjects.newObject("ASDF", "ASDF");
     expect(obj).to.be.instanceof(UnknownObject);
-    expect(obj.getIssues().length).to.equal(1);
+    expect(obj.getParsingIssues().length).to.equal(1);
   });
 
   it("DTEL", () => {
     const obj = ArtifactsObjects.newObject("ZDATA", "DTEL");
-    expect(obj.getIssues().length).to.equal(0);
+    expect(obj.getParsingIssues().length).to.equal(0);
   });
 
 });

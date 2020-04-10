@@ -20,7 +20,7 @@ export abstract class AbstractObject implements IObject {
     this.dirty = false;
   }
 
-  public getIssues() {
+  public getParsingIssues() {
     return this.old;
   }
 

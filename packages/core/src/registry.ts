@@ -150,7 +150,7 @@ export class Registry implements IRegistry {
 
     this.issues = [];
     for (const obj of this.objects) {
-      this.issues = this.issues.concat(obj.getIssues());
+      this.issues = this.issues.concat(obj.getParsingIssues());
     }
 
     return this;
@@ -167,7 +167,7 @@ export class Registry implements IRegistry {
     for (const o of this.objects) {
       await progress.tick("Lexing and parsing(" + this.conf.getVersion() + ") - " +  o.getType() + " " + o.getName());
       this.parsePrivate(o);
-      this.issues = this.issues.concat(o.getIssues());
+      this.issues = this.issues.concat(o.getParsingIssues());
     }
 
     return this;
