@@ -5,18 +5,12 @@ import {Issue} from "./issue";
 import {ArtifactsObjects} from "./artifacts_objects";
 import {ArtifactsRules} from "./artifacts_rules";
 import {SkipLogic} from "./skip_logic";
-import {Position} from "./position";
 import {IRegistry} from "./_iregistry";
 import {IProgress, NoProgress} from "./progress";
 import {IConfiguration} from "./_config";
 import {ABAPObject} from "./objects/_abap_object";
 
-function getABAPObjects(reg: IRegistry): ABAPObject[] {
-  return reg.getObjects().filter((obj) => { return obj instanceof ABAPObject; }) as ABAPObject[];
-}
-
 export class Registry implements IRegistry {
-  private dirty = false;
   private conf: IConfiguration;
   private readonly objects: IObject[] = [];
   private issues: Issue[] = [];
@@ -72,7 +66,6 @@ export class Registry implements IRegistry {
 
 // assumption: Config is immutable, and can only be changed via this method
   public setConfig(conf: IConfiguration): IRegistry {
-    this.setDirty();
     for (const obj of this.getObjects()) {
       obj.setDirty();
     }
@@ -86,19 +79,16 @@ export class Registry implements IRegistry {
   }
 
   public addFile(file: IFile): IRegistry {
-    this.setDirty();
     return this.addFiles([file]);
   }
 
   public updateFile(file: IFile): IRegistry {
-    this.setDirty();
     const obj = this.find(file.getObjectName(), file.getObjectType());
     obj.updateFile(file);
     return this;
   }
 
   public removeFile(file: IFile): IRegistry {
-    this.setDirty();
     const obj = this.find(file.getObjectName(), file.getObjectType());
     obj.removeFile(file);
     if (obj.getFiles().length === 0) {
@@ -108,18 +98,8 @@ export class Registry implements IRegistry {
   }
 
   public addFiles(files: IFile[]): IRegistry {
-    this.setDirty();
     for (const f of files) {
-      try {
-        this.findOrCreate(f.getObjectName(), f.getObjectType()).addFile(f);
-      } catch (error) {
-        this.issues.push(new Issue({
-          filename: f.getFilename(),
-          message: error ? error.toString() : "registry_add",
-          start: new Position(1, 1),
-          end: new Position(1, 1),
-          key: "registry_add"}));
-      }
+      this.findOrCreate(f.getObjectName(), f.getObjectType()).addFile(f);
     }
     return this;
   }
@@ -127,7 +107,6 @@ export class Registry implements IRegistry {
 // todo: methods to add/remove deps
 // todo: add unit tests
   public addDependencies(files: IFile[]): IRegistry {
-    this.setDirty();
     for (const f of files) {
       this.dependencies.push(f.getFilename());
     }
@@ -148,14 +127,14 @@ export class Registry implements IRegistry {
 
   public findIssues(progress?: IProgress): Issue[] {
     if (this.isDirty() === true) {
-      this.clean();
+      this.parse();
     }
     return this.runRules(progress);
   }
 
   public findIssuesObject(iobj: IObject): Issue[] {
     if (this.isDirty() === true) {
-      this.clean();
+      this.parse();
     }
     return this.runRules(undefined, iobj);
   }
@@ -165,8 +144,11 @@ export class Registry implements IRegistry {
       return this;
     }
 
-    for (const obj of getABAPObjects(this)) {
-      this.issues = this.issues.concat(obj.parse(this.getConfig()));
+    this.objects.map((o) => this.parsePrivate(o));
+
+    this.issues = [];
+    for (const obj of this.objects) {
+      this.issues = this.issues.concat(obj.getIssues());
     }
 
     return this;
@@ -176,30 +158,32 @@ export class Registry implements IRegistry {
     if (this.isDirty() === false) {
       return this;
     }
-    const objects = getABAPObjects(this);
-    progress.set(objects.length, "Lexing and parsing");
-    for (const obj of objects) {
-      await progress.tick("Lexing and parsing(" + this.conf.getVersion() + ") - " +  obj.getType() + " " + obj.getName());
-      this.issues = this.issues.concat(obj.parse(this.getConfig()));
-    }
+
+    progress.set(this.objects.length, "Lexing and parsing");
+
+    this.issues = [];
+    this.objects.map(async (o) => {
+      await progress.tick("Lexing and parsing(" + this.conf.getVersion() + ") - " +  o.getType() + " " + o.getName());
+      const result = this.parsePrivate(o);
+      this.issues = this.issues.concat(result.getIssues());
+      return result; }
+    );
 
     return this;
   }
 
 //////////////////////////////////////////
 
-  private setDirty() {
-    this.dirty = true;
-    this.issues = [];
+  private parsePrivate(input: IObject): IObject {
+    if (input instanceof ABAPObject) {
+      return input.parse(this.getConfig().getVersion(), this.getConfig().getSyntaxSetttings().globalMacros);
+    } else {
+      return input;
+    }
   }
 
   private isDirty(): boolean {
-    return this.dirty;
-  }
-
-  private clean() {
-    this.parse();
-    this.dirty = false;
+    return this.objects.some((o) => o.isDirty());
   }
 
   private runRules(progress?: IProgress, iobj?: IObject): Issue[] {

@@ -22,10 +22,10 @@ export class MessageClass extends AbstractObject {
     }
     const parsed = this.parseXML();
 
-    return this.parse(parsed);
+    return this.parsePrivate(parsed);
   }
 
-  private parse(data: any): Message[] {
+  private parsePrivate(data: any): Message[] {
     const ret: Message[] = [];
 
     const t100 = data.abapGit["asx:abap"]["asx:values"].T100;

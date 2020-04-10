@@ -1,5 +1,6 @@
 import {IObject} from "./objects/_iobject";
 import * as Objects from "./objects";
+import {UnknownObject} from "./objects/_unknown_object";
 
 export class ArtifactsObjects {
   private static objectMap: any;
@@ -9,13 +10,11 @@ export class ArtifactsObjects {
       this.buildObjectMap();
     }
 
-    if (type === "ABAP") {
-      throw new Error("Add type in filename, eg zclass.clas.abap or zprogram.prog.abap");
-    } else if (this.objectMap[type] === undefined) {
-      throw new Error("Unknown object type: " + type);
+    if (this.objectMap[type] === undefined) {
+      return new UnknownObject(name, type);
+    } else {
+      return new this.objectMap[type](name);
     }
-
-    return new this.objectMap[type](name);
   }
 
   private static buildObjectMap() {
@@ -23,7 +22,7 @@ export class ArtifactsObjects {
     for (const key in Objects) {
       const list: any = Objects;
       if (typeof list[key] === "function") {
-        const obj = new list[key]("ASDF");
+        const obj = new list[key]("DUMMY_NAME");
         this.objectMap[obj.getType()] = list[key];
       }
     }

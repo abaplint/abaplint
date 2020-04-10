@@ -1,11 +1,14 @@
 import {IFile} from "../files/_ifile";
 import {IObject} from "./_iobject";
 import * as xmljs from "xml-js";
+import {Issue} from "../issue";
+import {Version} from "../version";
 
 export abstract class AbstractObject implements IObject {
   protected files: IFile[];
-  private readonly name: string;
   protected dirty: boolean;
+  private readonly name: string;
+  protected old: readonly Issue[];
 
   public abstract getType(): string;
   public abstract getAllowedNaming(): {maxLength: number, allowNamespace: boolean};
@@ -14,6 +17,15 @@ export abstract class AbstractObject implements IObject {
     this.name = name;
     this.files = [];
     this.dirty = false;
+  }
+
+  public getIssues() {
+    return this.old;
+  }
+
+// todo, delete this method? it should be implemented in subclasses
+  public parse(_version?: Version, _globalMacros?: readonly string[]): IObject {
+    return this;
   }
 
   public getName(): string {

@@ -1,6 +1,7 @@
 import {expect} from "chai";
 import {ArtifactsObjects} from "../src/artifacts_objects";
 import {Class} from "../src/objects";
+import {UnknownObject} from "../src/objects/_unknown_object";
 
 describe("Top level artifacts", () => {
 
@@ -9,8 +10,10 @@ describe("Top level artifacts", () => {
     expect(obj).to.be.instanceof(Class);
   });
 
-  it("Throw error", () => {
-    expect(() => { return ArtifactsObjects.newObject("ASDF", "ASDF"); }).to.throw("Unknown object type: ASDF");
+  it("Unknown object", () => {
+    const obj = ArtifactsObjects.newObject("ASDF", "ASDF");
+    expect(obj).to.be.instanceof(UnknownObject);
+    expect(obj.getIssues().length).to.equal(1);
   });
 
 });

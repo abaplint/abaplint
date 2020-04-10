@@ -19,10 +19,10 @@ export class View extends AbstractObject {
     if (xml === undefined) {
       return [];
     }
-    return this.parse(this.parseXML());
+    return this.parsePrivate(this.parseXML());
   }
 
-  private parse(data: any): string[] {
+  private parsePrivate(data: any): string[] {
     const ret: string[] = [];
 
     const fields = data.abapGit["asx:abap"]["asx:values"].DD27P_TABLE;

@@ -1,11 +1,11 @@
 import {AbstractObject} from "./_abstract_object";
 import {ABAPFile} from "../files";
-import {Issue} from "../issue";
 import {xmlToArray} from "../xml_utils";
 import {ABAPParser} from "../abap/abap_parser";
-import {IConfiguration} from "../_config";
 import {IClassDefinition} from "../abap/types/_class_definition";
 import {IClassImplementation} from "../abap/types/_class_implementation";
+import {IObject} from "./_iobject";
+import {Version} from "../version";
 
 export interface ITextElement {
   key: string;
@@ -14,35 +14,25 @@ export interface ITextElement {
 
 export abstract class ABAPObject extends AbstractObject {
   private parsed: readonly ABAPFile[];
-  private old: readonly Issue[];
 
   public constructor(name: string) {
     super(name);
     this.parsed = [];
   }
 
-  private shouldParse(): boolean {
-  // todo, this does not handle changing of version + macros
-    if (this.parsed.length > 0 && this.isDirty() === false) {
-      return false;
-    } else {
-      return true;
-    }
-  }
-
-  public parse(config: IConfiguration): readonly Issue[] {
-    if (this.shouldParse() === false) {
-      return this.old;
+  public parse(version: Version, globalMacros: readonly string[] | undefined): IObject {
+    if (this.isDirty() === false) {
+      return this;
     }
 
     const abapFiles = this.files.filter(f => f.getFilename().endsWith(".abap"));
-    const results = new ABAPParser(config.getVersion(), config.getSyntaxSetttings().globalMacros).parse(abapFiles);
+    const results = new ABAPParser(version, globalMacros).parse(abapFiles);
 
     this.parsed = results.output;
     this.old = results.issues;
     this.dirty = false;
 
-    return results.issues;
+    return this;
   }
 
   public getABAPFiles(): readonly ABAPFile[] {

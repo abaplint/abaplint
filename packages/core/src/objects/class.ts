@@ -107,8 +107,6 @@ export class Class extends ABAPObject {
     }
   }
 
-// --------------------
-
   public getLocalsImpFile(): ABAPFile | undefined {
     for (const file of this.getABAPFiles()) {
       if (file.getFilename().endsWith(".clas.locals_imp.abap")) {
