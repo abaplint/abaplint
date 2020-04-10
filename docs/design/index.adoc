@@ -10,11 +10,84 @@ Design Document
 :numbered:
 
 == Introduction
+abaplint implements a custom ABAP parser and other language related topics like scoping and syntax check.
+
+This document describes the overall design of abaplint, and aim to persist design decisions and help new developers into the code-base.
+
+== Packages / Ecosystem
+
+
+[plantuml, packages, svg]
+....
+left to right direction
+skinparam monochrome true
+
+frame "@abaplint/abaplint" as abaplint
+
+rectangle "3rd Party Tooling" as tooling
+tooling --> abaplint
+
+rectangle "vscode-abaplint" as vscode
+vscode --> abaplint
+
+rectangle "abaplint-cloud-foundry" as cf
+cf --> abaplint
+
+frame "@abaplint/cli" as cli
+cli --> abaplint
+
+rectangle "CI Tooling" as ci
+ci --> abaplint
+ci -left-> cli
+
+frame "@abaplint/transpiler" as transpiler
+
+abaplint -down-> transpiler
+
+frame "@abaplint/runtime" as runtime
+
+transpiler --> runtime
+
+rectangle "Serverless Tooling" as serverless
+serverless -left-> transpiler
+serverless -left-> runtime
+....
+
+== Registry
+The Registry is the main entry point to abaplint, files are added to the registry which then are mapped to objects, and the registry also keeps track of the configuration.
+
+[plantuml, registry, svg]
+....
+skinparam monochrome true
+
+rectangle "Registry" as registry
+
+usecase object1
+usecase object2
+registry -down-> object1
+registry -down-> object2
+
+rectangle "Configuration" as config
+registry -down-> config
+
+usecase file1
+usecase file2
+usecase file3
+usecase file4
+
+object1 -down-> file1
+object1 -down-> file2
+
+object2 -down-> file3
+object2 -down-> file4
+....
+
+== Configuration
 todo
 
-== Overview
+== Pipeline Overview
 
-[plantuml, components, svg]
+[plantuml, pipeline, svg]
 ....
 left to right direction
 skinparam monochrome true
@@ -42,34 +115,16 @@ package "@abaplint/abaplint" as abaplint {
   statement_parser -[hidden]-> quick_fixes
   structure_parser -[hidden]-> lsp
 }
-
-rectangle "External Tooling" as tooling
-tooling --> lexer
-
-package "@abaplint/cli" {
-  rectangle "Read Files" as read_files
-}
-read_files --> lexer
-
-package "@abaplint/transpiler" as package_transpiler {
-  rectangle "Transpiler" as transpiler
-}
-
-rules -down-> transpiler
-
-package "@abaplint/runtime" as package_runtime {
-  rectangle "Runtime" as runtime
-}
-
-transpiler --> runtime
-
-rectangle "Serverless Tooling" as serverless
-serverless -left-> transpiler
-serverless -left-> runtime
-
 ....
 
-== Lexing & Parsing
+
+* immutable => possible multi-threading and structure
+
+* output of each stage is simple classes or interfaced making it simple typed, limiting cyclic dependencies
+
+* avoid cyclic dependencies, each step can use the previous, use interfaces
+
+=== Lexing & Parsing
 
 .example.abap
 [source,abap]
@@ -79,7 +134,7 @@ DO 5 TIMES.
 ENDDO.
 ----
 
-=== Lexing / Tokenization
+==== Lexing / Tokenization
 
 Based on rules, the string is split into tokens,
 
@@ -98,7 +153,7 @@ usecase "ENDDO" as token8
 usecase "." as token9
 ....
 
-=== Parsing
+==== Parsing
 
 Categorizes tokens into statements
 
@@ -134,11 +189,11 @@ token3 <-up- do
 token4 <-up- do
 ....
 
-=== Structuring
+==== Structuring
 
 Not completely correct, but the idea...
 
-[plantuml, parsing, svg]
+[plantuml, structuring, svg]
 ....
 skinparam monochrome true
 
@@ -175,5 +230,15 @@ write <-up- sdo
 enddo <-up- sdo
 ....
 
-== Pipelining
-todo, immutable
+=== Object Information
+todo
+
+no real types types, only identifiers, in some cases typed
+
+=== Syntax & Scoping
+todo
+
+adds real types and real scopes
+
+== Rules
+todo

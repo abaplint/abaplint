@@ -16,6 +16,7 @@ export abstract class AbstractObject implements IObject {
   public constructor(name: string) {
     this.name = name;
     this.files = [];
+    this.old = [];
     this.dirty = false;
   }
 

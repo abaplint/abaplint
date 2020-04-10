@@ -144,7 +144,9 @@ export class Registry implements IRegistry {
       return this;
     }
 
-    this.objects.map((o) => this.parsePrivate(o));
+    for (const o of this.objects) {
+      this.parsePrivate(o);
+    }
 
     this.issues = [];
     for (const obj of this.objects) {
@@ -162,23 +164,20 @@ export class Registry implements IRegistry {
     progress.set(this.objects.length, "Lexing and parsing");
 
     this.issues = [];
-    this.objects.map(async (o) => {
+    for (const o of this.objects) {
       await progress.tick("Lexing and parsing(" + this.conf.getVersion() + ") - " +  o.getType() + " " + o.getName());
-      const result = this.parsePrivate(o);
-      this.issues = this.issues.concat(result.getIssues());
-      return result; }
-    );
+      this.parsePrivate(o);
+      this.issues = this.issues.concat(o.getIssues());
+    }
 
     return this;
   }
 
 //////////////////////////////////////////
 
-  private parsePrivate(input: IObject): IObject {
+  private parsePrivate(input: IObject) {
     if (input instanceof ABAPObject) {
-      return input.parse(this.getConfig().getVersion(), this.getConfig().getSyntaxSetttings().globalMacros);
-    } else {
-      return input;
+      input.parse(this.getConfig().getVersion(), this.getConfig().getSyntaxSetttings().globalMacros);
     }
   }
 

@@ -1,3 +1,3 @@
 # @abaplint/core
 
-Core
+abaplint core library

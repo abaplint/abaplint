@@ -104,8 +104,8 @@ function displayHelp(): string {
     "  abaplint -h | --help             show this help\n" +
     "  abaplint -v | --version          show version\n" +
     "  abaplint -d | --default          show default configuration\n" +
-    "  abaplint -t [<abaplint.json> -c] show stats\n" +
-    "  abaplint -e [<abaplint.json> -c] show semantic search information\n" +
+    "  abaplint -t [<abaplint.json> -c] show stats (will be deprecated)\n" +
+    "  abaplint -e [<abaplint.json> -c] show semantic search information (will be deprecated)\n" +
     "\n" +
     "Options:\n" +
     "  -f, --format <format>  output format (standard, total, json, summary, junit)\n" +

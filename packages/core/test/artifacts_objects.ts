@@ -16,4 +16,9 @@ describe("Top level artifacts", () => {
     expect(obj.getIssues().length).to.equal(1);
   });
 
+  it("DTEL", () => {
+    const obj = ArtifactsObjects.newObject("ZDATA", "DTEL");
+    expect(obj.getIssues().length).to.equal(0);
+  });
+
 });
