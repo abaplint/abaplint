@@ -2,12 +2,12 @@ import {Token} from "./abap/1_lexer/tokens/_token";
 import {IFile} from "./files/_ifile";
 import {Position} from "./position";
 
-interface IRange {
+export interface IRange {
   start: Position;
   end: Position;
 }
 
-interface ITextEdit {
+export interface ITextEdit {
   range: IRange;
   newText: string;
 }

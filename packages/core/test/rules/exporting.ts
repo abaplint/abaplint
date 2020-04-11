@@ -45,7 +45,7 @@ function applyEdit(reg: IRegistry, edit: IEdit) {
 }
 
 describe("Exporting Rule", () => {
-  it.only("Test fix", () => {
+  it("Test fix", () => {
     const file = new MemoryFile("zfoo.prog.abap", "zcl_class=>methodname( EXPORTING iv_foo = '23' ).");
     const reg = new Registry().addFile(file).parse();
     let issues = new Exporting().run(reg.getObjects()[0], reg);

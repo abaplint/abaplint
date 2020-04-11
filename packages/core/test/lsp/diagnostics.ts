@@ -8,13 +8,13 @@ describe("LSP, diagnostics", () => {
   it("find issues for file", () => {
     const file = new MemoryFile("zfoobar.prog.abap", "BREAK-POINT.");
     const registry = new Registry().addFile(file).parse();
-    expect(Diagnostics.find(registry, {uri: file.getFilename()}).length).to.equal(2);
+    expect(new Diagnostics(registry).find({uri: file.getFilename()}).length).to.equal(2);
   });
 
   it("find issues for unknown file", () => {
     const file = new MemoryFile("zfoobar.prog.abap", "BREAK-POINT.");
     const registry = new Registry().parse();
-    expect(Diagnostics.find(registry, {uri: file.getFilename()}).length).to.equal(0);
+    expect(new Diagnostics(registry).find({uri: file.getFilename()}).length).to.equal(0);
   });
 
 });

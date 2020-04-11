@@ -1,38 +1,52 @@
 import * as LServer from "vscode-languageserver-types";
 import {IRegistry} from "../_iregistry";
 import {LSPUtils} from "./_lsp_utils";
+import {Issue} from "../issue";
 
 export class Diagnostics {
+  private readonly reg: IRegistry;
 
-  public static find(reg: IRegistry, textDocument: LServer.TextDocumentIdentifier): LServer.Diagnostic[] {
+  public constructor(reg: IRegistry) {
+    this.reg = reg;
+  }
 
-    const file = LSPUtils.getABAPFile(reg, textDocument.uri); // todo, this sould also run for xml files
+  public findIssues(textDocument: LServer.TextDocumentIdentifier): readonly Issue[] {
+    const file = LSPUtils.getABAPFile(this.reg, textDocument.uri); // todo, this sould also run for xml files
     if (file === undefined) {
       return [];
     }
 
-    const obj = reg.findObjectForFile(file);
+    const obj = this.reg.findObjectForFile(file);
     if (obj === undefined) {
       return [];
     }
 
-    const diagnostics: LServer.Diagnostic[] = [];
-    for (const issue of reg.findIssuesObject(obj)) {
-      if (issue.getFilename() !== file.getFilename()) {
-        continue;
-      }
-      const diagnosic: LServer.Diagnostic = {
-        severity: LServer.DiagnosticSeverity.Error,
-        range: {
-          start: {line: issue.getStart().getRow() - 1, character: issue.getStart().getCol() - 1},
-          end: {line: issue.getEnd().getRow() - 1, character: issue.getEnd().getCol() - 1},
-        },
-        code: issue.getKey(),
-        message: issue.getMessage().toString(),
-        source: "abaplint",
-      };
+    const issues = this.reg.findIssuesObject(obj);
+    issues.filter(i => i.getFilename() !== file.getFilename());
+    return issues;
+  }
 
-      diagnostics.push(diagnosic);
+  public mapDiagnostic(issue: Issue): LServer.Diagnostic {
+    const diagnosic: LServer.Diagnostic = {
+      severity: LServer.DiagnosticSeverity.Error,
+      range: {
+        start: {line: issue.getStart().getRow() - 1, character: issue.getStart().getCol() - 1},
+        end: {line: issue.getEnd().getRow() - 1, character: issue.getEnd().getCol() - 1},
+      },
+      code: issue.getKey(),
+      message: issue.getMessage().toString(),
+      source: "abaplint",
+    };
+
+    return diagnosic;
+  }
+
+  public find(textDocument: LServer.TextDocumentIdentifier): LServer.Diagnostic[] {
+    const issues = this.findIssues(textDocument);
+
+    const diagnostics: LServer.Diagnostic[] = [];
+    for (const issue of issues) {
+      diagnostics.push(this.mapDiagnostic(issue));
     }
 
     return diagnostics;

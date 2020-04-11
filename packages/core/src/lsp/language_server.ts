@@ -10,6 +10,7 @@ import {Rename} from "./rename";
 import {Highlight} from "./highlight";
 import {ITextDocumentPositionParams, IDocumentSymbolParams, IRenameParams, ICodeActionParams} from "./_interfaces";
 import {LSPUtils} from "./_lsp_utils";
+import {CodeActions} from "./code_actions";
 
 // note Ranges are zero based in LSP,
 // https://github.com/microsoft/language-server-protocol/blob/master/versions/protocol-2-x.md#range
@@ -65,7 +66,7 @@ export class LanguageServer {
 
   // https://microsoft.github.io/language-server-protocol/specifications/specification-3-14/#textDocument_publishDiagnostics
   public diagnostics(textDocument: LServer.TextDocumentIdentifier): LServer.Diagnostic[] {
-    return Diagnostics.find(this.reg, textDocument);
+    return new Diagnostics(this.reg).find(textDocument);
   }
 
   // https://microsoft.github.io/language-server-protocol/specifications/specification-3-14/#textDocument_prepareRename
@@ -79,9 +80,8 @@ export class LanguageServer {
   }
 
   // https://microsoft.github.io/language-server-protocol/specifications/specification-3-14/#textDocument_codeAction
-  public codeActions(_params: ICodeActionParams): LServer.CodeAction[] {
-    // todo, implement
-    return [];
+  public codeActions(params: ICodeActionParams): readonly LServer.CodeAction[] {
+    return new CodeActions(this.reg).find(params);
   }
 
   // https://microsoft.github.io/language-server-protocol/specifications/specification-3-14/#textDocument_documentHighlight
