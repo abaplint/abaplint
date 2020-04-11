@@ -1,10 +1,10 @@
 import {StructureNode, StatementNode} from "../../abap/nodes";
 import * as Statements from "../2_statements/statements";
 import * as Structures from "../3_structures/structures";
-import {CurrentScope} from "../syntax/_current_scope";
+import {CurrentScope} from "../5_syntax/_current_scope";
 import {TypedIdentifier} from "./_typed_identifier";
-import {Type} from "../syntax/statements/type";
-import {Types} from "../syntax/structures/types";
+import {Type} from "../5_syntax/statements/type";
+import {Types} from "../5_syntax/structures/types";
 import {ITypeDefinitions} from "./_type_definitions";
 
 // todo: public + protected + private

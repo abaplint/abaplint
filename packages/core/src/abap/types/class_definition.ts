@@ -7,7 +7,7 @@ import * as Expressions from "../2_statements/expressions";
 import {Attributes} from "./class_attributes";
 import {Identifier} from "./_identifier";
 import {Aliases} from "./aliases";
-import {CurrentScope} from "../syntax/_current_scope";
+import {CurrentScope} from "../5_syntax/_current_scope";
 import {IClassDefinition} from "./_class_definition";
 import {TypeDefinitions} from "./type_definitions";
 

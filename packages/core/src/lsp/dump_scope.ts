@@ -1,5 +1,5 @@
-import {SpaghettiScope, SpaghettiScopeNode} from "../abap/syntax/spaghetti_scope";
-import {ScopeType} from "../abap/syntax/_scope_type";
+import {SpaghettiScope, SpaghettiScopeNode} from "../abap/5_syntax/spaghetti_scope";
+import {ScopeType} from "../abap/5_syntax/_scope_type";
 
 export class DumpScope {
 

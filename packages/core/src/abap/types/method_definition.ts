@@ -4,7 +4,7 @@ import * as Expressions from "../2_statements/expressions";
 import {MethodParameters} from "./method_parameters";
 import {Visibility} from "./visibility";
 import {Identifier} from "./_identifier";
-import {CurrentScope} from "../syntax/_current_scope";
+import {CurrentScope} from "../5_syntax/_current_scope";
 import {IMethodDefinition} from "./_method_definition";
 
 export class MethodDefinition extends Identifier implements IMethodDefinition {

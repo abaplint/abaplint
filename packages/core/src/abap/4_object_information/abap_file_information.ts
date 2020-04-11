@@ -1,6 +1,6 @@
 import {ClassDefinition} from "../types/class_definition";
 import * as Structures from "../3_structures/structures";
-import {CurrentScope} from "../syntax/_current_scope";
+import {CurrentScope} from "../5_syntax/_current_scope";
 import {IABAPFileInformation} from "./_abap_file_information";
 import {StructureNode} from "../nodes";
 import {InterfaceDefinition, ClassImplementation, FormDefinition} from "../types";

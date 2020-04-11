@@ -1,8 +1,8 @@
 import * as LServer from "vscode-languageserver-types";
 import {IRegistry} from "../_iregistry";
 import {ABAPObject} from "../objects/_abap_object";
-import {SpaghettiScope} from "../abap/syntax/spaghetti_scope";
-import {SyntaxLogic} from "../abap/syntax/syntax";
+import {SpaghettiScope} from "../abap/5_syntax/spaghetti_scope";
+import {SyntaxLogic} from "../abap/5_syntax/syntax";
 import {LSPUtils} from "./_lsp_utils";
 
 export class Highlight {

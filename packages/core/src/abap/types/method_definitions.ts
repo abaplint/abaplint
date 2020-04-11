@@ -4,7 +4,7 @@ import {ClassDefinition} from "../3_structures/structures/class_definition";
 import * as Structures from "../3_structures/structures";
 import {MethodDef} from "../2_statements/statements";
 import {Visibility} from "./visibility";
-import {CurrentScope} from "../syntax/_current_scope";
+import {CurrentScope} from "../5_syntax/_current_scope";
 import {IMethodDefinitions} from "./_method_definitions";
 
 export class MethodDefinitions implements IMethodDefinitions {

@@ -5,8 +5,8 @@ import {Identifier} from "./_identifier";
 import {StructureNode, StatementNode, ExpressionNode} from "../../abap/nodes";
 import {Expression} from "../2_statements/combi";
 import {TypedIdentifier} from "./_typed_identifier";
-import {CurrentScope} from "../syntax/_current_scope";
-import {FormParam} from "../syntax/expressions/form_param";
+import {CurrentScope} from "../5_syntax/_current_scope";
+import {FormParam} from "../5_syntax/expressions/form_param";
 import {IFormDefinition} from "./_form_definition";
 
 export class FormDefinition extends Identifier implements IFormDefinition {

@@ -3,10 +3,10 @@ import {BasicRuleConfig} from "./_basic_rule_config";
 import {IRegistry} from "../_iregistry";
 import {IRule} from "./_irule";
 import {IObject} from "../objects/_iobject";
-import {SyntaxLogic} from "../abap/syntax/syntax";
+import {SyntaxLogic} from "../abap/5_syntax/syntax";
 import {ABAPObject} from "../objects/_abap_object";
-import {SpaghettiScopeNode} from "../abap/syntax/spaghetti_scope";
-import {ScopeType} from "../abap/syntax/_scope_type";
+import {SpaghettiScopeNode} from "../abap/5_syntax/spaghetti_scope";
+import {ScopeType} from "../abap/5_syntax/_scope_type";
 import {TypedIdentifier} from "../abap/types/_typed_identifier";
 import {Interface} from "../objects";
 

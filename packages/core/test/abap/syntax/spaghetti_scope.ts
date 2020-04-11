@@ -1,10 +1,10 @@
 import {expect} from "chai";
 import {MemoryFile} from "../../../src/files";
 import {Registry} from "../../../src/registry";
-import {SyntaxLogic} from "../../../src/abap/syntax/syntax";
-import {SpaghettiScope} from "../../../src/abap/syntax/spaghetti_scope";
+import {SyntaxLogic} from "../../../src/abap/5_syntax/syntax";
+import {SpaghettiScope} from "../../../src/abap/5_syntax/spaghetti_scope";
 import {Position} from "../../../src/position";
-import {ScopeType} from "../../../src/abap/syntax/_scope_type";
+import {ScopeType} from "../../../src/abap/5_syntax/_scope_type";
 import {IRegistry} from "../../../src/_iregistry";
 import {getABAPObjects} from "../../get_abap";
 

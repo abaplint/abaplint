@@ -4,9 +4,9 @@ import * as Expressions from "../2_statements/expressions";
 import {ExpressionNode}  from "../../abap/nodes";
 import {TypedIdentifier, IdentifierMeta} from "./_typed_identifier";
 import {UnknownType} from "./basic";
-import {CurrentScope} from "../syntax/_current_scope";
-import {MethodDefReturning} from "../syntax/expressions/method_def_returning";
-import {MethodParam} from "../syntax/expressions/method_param";
+import {CurrentScope} from "../5_syntax/_current_scope";
+import {MethodDefReturning} from "../5_syntax/expressions/method_def_returning";
+import {MethodParam} from "../5_syntax/expressions/method_param";
 import {IMethodParameters} from "./_method_parameters";
 
 export class MethodParameters implements IMethodParameters{

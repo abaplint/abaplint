@@ -6,12 +6,12 @@ import {StatementNode, TokenNode} from "../abap/nodes";
 import {Identifier} from "../abap/types/_identifier";
 import {ABAPFile} from "../files";
 import {ABAPObject} from "../objects/_abap_object";
-import {SyntaxLogic} from "../abap/syntax/syntax";
+import {SyntaxLogic} from "../abap/5_syntax/syntax";
 import {ITextDocumentPositionParams} from "./_interfaces";
 import {INode} from "../abap/nodes/_inode";
 import {Position} from "../position";
 import * as LServer from "vscode-languageserver-types";
-import {SpaghettiScopeNode} from "../abap/syntax/spaghetti_scope";
+import {SpaghettiScopeNode} from "../abap/5_syntax/spaghetti_scope";
 import {IFormDefinition} from "../abap/types/_form_definition";
 
 export interface ICursorPosition {

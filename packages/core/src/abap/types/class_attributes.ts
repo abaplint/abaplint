@@ -4,15 +4,15 @@ import {ClassAttribute} from "./class_attribute";
 import {ClassConstant} from "./class_constant";
 import {StructureNode, StatementNode} from "../../abap/nodes";
 import {Visibility} from "./visibility";
-import {CurrentScope} from "../syntax/_current_scope";
+import {CurrentScope} from "../5_syntax/_current_scope";
 import {TypedIdentifier} from "./_typed_identifier";
-import {ClassData as ClassDataStatement} from "../syntax/statements/class_data";
-import {ClassData as ClassDataStructure} from "../syntax/structures/class_data";
-import {Data as DataStatement} from "../syntax/statements/data";
-import {Constant as ConstantStatement} from "../syntax/statements/constant";
-import {Data as DataStructure} from "../syntax/structures/data";
-import {TypeEnum} from "../syntax/structures/type_enum";
-import {Constants} from "../syntax/structures/constants";
+import {ClassData as ClassDataStatement} from "../5_syntax/statements/class_data";
+import {ClassData as ClassDataStructure} from "../5_syntax/structures/class_data";
+import {Data as DataStatement} from "../5_syntax/statements/data";
+import {Constant as ConstantStatement} from "../5_syntax/statements/constant";
+import {Data as DataStructure} from "../5_syntax/structures/data";
+import {TypeEnum} from "../5_syntax/structures/type_enum";
+import {Constants} from "../5_syntax/structures/constants";
 import {IAttributes} from "./_class_attributes";
 
 export class Attributes implements IAttributes {

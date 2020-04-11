@@ -3,7 +3,7 @@ import * as Basic from "../../../src/abap/types/basic";
 import {MemoryFile} from "../../../src/files";
 import {Registry} from "../../../src/registry";
 import {TypedIdentifier} from "../../../src/abap/types/_typed_identifier";
-import {SyntaxLogic} from "../../../src/abap/syntax/syntax";
+import {SyntaxLogic} from "../../../src/abap/5_syntax/syntax";
 import {ABAPObject} from "../../../src/objects/_abap_object";
 import {Position} from "../../../src/position";
 

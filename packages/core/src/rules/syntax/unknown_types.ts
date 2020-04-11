@@ -1,10 +1,10 @@
 import {IRegistry} from "../../_iregistry";
-import {SyntaxLogic} from "../../abap/syntax/syntax";
+import {SyntaxLogic} from "../../abap/5_syntax/syntax";
 import {BasicRuleConfig} from "../_basic_rule_config";
 import {IObject} from "../../objects/_iobject";
 import {ABAPObject} from "../../objects/_abap_object";
 import {Issue} from "../../issue";
-import {SpaghettiScopeNode} from "../../abap/syntax/spaghetti_scope";
+import {SpaghettiScopeNode} from "../../abap/5_syntax/spaghetti_scope";
 import {UnknownType} from "../../abap/types/basic";
 
 /** Enables check for unknown types, respects errorNamespace */

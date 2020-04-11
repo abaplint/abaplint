@@ -3,7 +3,7 @@ import {StructureNode} from "../nodes";
 import * as Structures from "../3_structures/structures";
 import * as Statements from "../2_statements/statements";
 import * as Expressions from "../2_statements/expressions";
-import {CurrentScope} from "../syntax/_current_scope";
+import {CurrentScope} from "../5_syntax/_current_scope";
 import {IInterfaceDefinition} from "./_interface_definition";
 import {IAttributes}  from "./_class_attributes";
 import {ITypeDefinitions} from "./_type_definitions";
