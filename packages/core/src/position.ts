@@ -19,6 +19,10 @@ export class Position {
     return this.row > p.row || (this.row === p.row && this.col >= p.col);
   }
 
+  public equals(p: Position): boolean {
+    return this.row === p.getRow() && this.col === p.getCol();
+  }
+
   public isBefore(p: Position): boolean {
     return this.row < p.row || (this.row === p.row && this.col < p.col);
   }

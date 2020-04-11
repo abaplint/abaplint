@@ -80,7 +80,7 @@ export class LanguageServer {
   }
 
   // https://microsoft.github.io/language-server-protocol/specifications/specification-3-14/#textDocument_codeAction
-  public codeActions(params: ICodeActionParams): readonly LServer.CodeAction[] {
+  public codeActions(params: ICodeActionParams): LServer.CodeAction[] {
     return new CodeActions(this.reg).find(params);
   }
 
