@@ -75,7 +75,7 @@ export function testRuleFix(tests: {input: string, output: string}[], rule: new 
         let issues = nrule.run(reg.getObjects()[0], reg);
         expect(issues.length).to.equal(1);
         const fix = issues[0].getFix();
-        expect(fix).to.not.equal(undefined);
+        expect(fix).to.not.equal(undefined, "Fix should exist");
         applyEdit(reg, fix!);
         issues = nrule.run(reg.getObjects()[0], reg);
         expect(issues.length).to.equal(0);

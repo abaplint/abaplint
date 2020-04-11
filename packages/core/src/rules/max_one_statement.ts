@@ -3,6 +3,7 @@ import {Comment} from "../abap/2_statements/statements/_statement";
 import {ABAPRule} from "./_abap_rule";
 import {ABAPFile} from "../files";
 import {BasicRuleConfig} from "./_basic_rule_config";
+import {EditHelper} from "../edit";
 
 /** Chekcks that each line contains only a single statement.
  * https://github.com/SAP/styleguides/blob/master/clean-abap/CleanABAP.md#no-more-than-one-statement-per-line
@@ -45,7 +46,8 @@ export class MaxOneStatement extends ABAPRule {
       const pos = statement.getStart();
       const row = pos.getRow();
       if (prev === row && row !== reported) {
-        const issue = Issue.atPosition(file, pos, this.getDescription(), this.getKey());
+        const fix = EditHelper.insertAt(file, pos, "\n");
+        const issue = Issue.atPosition(file, pos, this.getDescription(), this.getKey(), fix);
         issues.push(issue);
         reported = row;
       }

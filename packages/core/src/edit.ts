@@ -28,4 +28,10 @@ export class EditHelper {
     const range: IRange = {start, end};
     return {[filename]: [{range, newText: ""}]};
   }
+
+  public static insertAt(file: IFile, pos: Position, text: string): IEdit {
+    const filename = file.getFilename();
+    const range: IRange = {start: pos, end: pos};
+    return {[filename]: [{range, newText: text}]};
+  }
 }
