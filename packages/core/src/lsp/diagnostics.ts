@@ -26,7 +26,7 @@ export class Diagnostics {
     return issues;
   }
 
-  public mapDiagnostic(issue: Issue): LServer.Diagnostic {
+  public static mapDiagnostic(issue: Issue): LServer.Diagnostic {
     const diagnosic: LServer.Diagnostic = {
       severity: LServer.DiagnosticSeverity.Error,
       range: {
@@ -46,7 +46,7 @@ export class Diagnostics {
 
     const diagnostics: LServer.Diagnostic[] = [];
     for (const issue of issues) {
-      diagnostics.push(this.mapDiagnostic(issue));
+      diagnostics.push(Diagnostics.mapDiagnostic(issue));
     }
 
     return diagnostics;

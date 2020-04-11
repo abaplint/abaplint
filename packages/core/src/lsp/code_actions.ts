@@ -16,26 +16,70 @@ export class CodeActions {
   public find(params: ICodeActionParams): LServer.CodeAction[] {
     const diag = new Diagnostics(this.reg);
     const issues = diag.findIssues(params.textDocument);
+    const totals: {[key: string]: number} = {};
+    const shown = new Set<string>();
 
     const ret: LServer.CodeAction[] = [];
     for (const i of issues) {
       const fix = i.getFix();
-      if (fix === undefined || this.inRange(i, params.range) === false)  {
+      if (fix === undefined) {
+        continue;
+      }
+
+      if (totals[i.getKey()] === undefined) {
+        totals[i.getKey()] = 1;
+      } else {
+        totals[i.getKey()]++;
+      }
+
+      if (this.inRange(i, params.range) === false)  {
         continue;
       }
 
       ret.push({
         title: "Apply fix, " + i.getKey(),
         kind: LServer.CodeActionKind.QuickFix,
-        diagnostics: [diag.mapDiagnostic(i)],
+        diagnostics: [Diagnostics.mapDiagnostic(i)],
+        isPreferred: true,
         edit: this.mapEdit(fix),
       });
+      shown.add(i.getKey());
+    }
+
+    for (const s of shown) {
+      if (totals[s] > 1) {
+        const foo = this.fixAlls(s, issues);
+        ret.push(foo);
+      }
     }
 
     return ret;
   }
 
 //////////////////////
+
+  private fixAlls(key: string, issues: readonly Issue[]): LServer.CodeAction {
+    const diagnostics: LServer.Diagnostic[] = [];
+    const fixes: IEdit[] = [];
+
+    for (const i of issues) {
+      const fix = i.getFix();
+      if (fix === undefined) {
+        continue;
+      }
+
+      fixes.push(fix);
+      diagnostics.push(Diagnostics.mapDiagnostic(i));
+    }
+
+    return {
+      title: "Fix all, " + key,
+      kind: LServer.CodeActionKind.QuickFix,
+      diagnostics,
+      isPreferred: true,
+      edit: this.mapEdits(fixes),
+    };
+  }
 
   private inRange(i: Issue, range: LServer.Range): boolean {
     const start = new Position(range.start.line + 1, range.start.character + 1);
@@ -46,6 +90,19 @@ export class CodeActions {
       || start.isBetween(i.getStart(), i.getEnd())
       || end.isBetween(i.getStart(), i.getEnd())
       || end.equals(i.getEnd());
+  }
+
+  private mapEdits(edits: IEdit[]): LServer.WorkspaceEdit {
+    const workspace: LServer.WorkspaceEdit = {changes: {}};
+    for (const edit of edits) {
+      for (const filename in edit) {
+        if (workspace.changes![filename] === undefined) {
+          workspace.changes![filename] = [];
+        }
+        workspace.changes![filename] = workspace.changes![filename].concat(this.mapText(edit[filename]));
+      }
+    }
+    return workspace;
   }
 
   private mapEdit(edit: IEdit): LServer.WorkspaceEdit {

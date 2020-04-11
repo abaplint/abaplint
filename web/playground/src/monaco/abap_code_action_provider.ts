@@ -69,16 +69,17 @@ export class ABAPCodeActionProvider implements monaco.languages.CodeActionProvid
     const edits: monaco.languages.WorkspaceTextEdit[] = [];
 
     for (const filename in input.changes) {
-      edits.push({
-        resource: monaco.Uri.parse(filename),
-        edit: this.mapText(input.changes[filename])});
+      for (const c of input.changes[filename]) {
+        edits.push({
+          resource: monaco.Uri.parse(filename),
+          edit: this.mapText(c)});
+      }
     }
-
     return {edits};
   }
 
-  private mapText(input: LServer.TextEdit[]): monaco.languages.TextEdit {
-    const i = input[0];
+  private mapText(input: LServer.TextEdit): monaco.languages.TextEdit {
+    const i = input;
 
     return {range: new monaco.Range(
       i.range.start.line + 1,
