@@ -3,6 +3,8 @@ import {Empty} from "../abap/2_statements/statements/_statement";
 import {ABAPRule} from "./_abap_rule";
 import {ABAPFile} from "../files";
 import {BasicRuleConfig} from "./_basic_rule_config";
+import {EditHelper} from "../edit";
+import {Position} from "../position";
 
 /** Checks for empty statements (an empty statement is a single dot) */
 export class EmptyStatementConf extends BasicRuleConfig {
@@ -33,11 +35,18 @@ export class EmptyStatement extends ABAPRule {
 
     const statements = file.getStatements();
 
+    let previousEnd = new Position(1, 1);
+
     for (const sta of statements) {
       if (sta.get() instanceof Empty) {
-        const issue = Issue.atStatement(file, sta, this.getDescription(), this.getKey());
+        const token = sta.getFirstToken();
+        const fix = EditHelper.deleteRange(file, previousEnd, token.getEnd());
+
+        const issue = Issue.atStatement(file, sta, this.getDescription(), this.getKey(), fix);
         issues.push(issue);
       }
+
+      previousEnd = sta.getLastToken().getEnd();
     }
 
     return issues;

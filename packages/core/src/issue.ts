@@ -32,13 +32,27 @@ export class Issue {
     });
   }
 
-  public static atStatement(file: IFile, statement: StatementNode, message: string, key: string) {
-    return this.atPosition(file, statement.getStart(), message, key);
+  public static atStatement(file: IFile, statement: StatementNode, message: string, key: string, fix?: IEdit) {
+    return this.atPosition(file, statement.getStart(), message, key, fix);
   }
 
-  public static atPosition(file: IFile, start: Position, message: string, key: string) {
+  public static atPosition(file: IFile, start: Position, message: string, key: string, fix?: IEdit) {
     const row = start.getRow();
     const end = new Position(row, file.getRawRows()[row - 1].length + 1);
+
+    return new Issue({
+      filename: file.getFilename(),
+      message,
+      key,
+      start,
+      end,
+      fix,
+    });
+  }
+
+  public static atRowRange(file: IFile, row: number, startCol: number, endCol: number, message: string, key: string) {
+    const start = new Position(row, startCol);
+    const end = new Position(row, endCol);
 
     return new Issue({
       filename: file.getFilename(),
@@ -49,16 +63,14 @@ export class Issue {
     });
   }
 
-  public static atRange(file: IFile, row: number, startCol: number, endCol: number, message: string, key: string) {
-    const start = new Position(row, startCol);
-    const end = new Position(row, endCol);
-
+  public static atRange(file: IFile, start: Position, end: Position, message: string, key: string, fix?: IEdit) {
     return new Issue({
       filename: file.getFilename(),
       message,
       key,
       start,
       end,
+      fix,
     });
   }
 

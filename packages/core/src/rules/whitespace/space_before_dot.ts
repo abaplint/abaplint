@@ -70,9 +70,9 @@ export class SpaceBeforeDot extends ABAPRule {
       }
 
       if (prev !== undefined && t instanceof Punctuation && prev.getCol() + prev.getStr().length < t.getCol()) {
-        const issue = Issue.atRange(file, t.getStart().getRow(),
-                                    prev.getEnd().getCol(), t.getStart().getCol(),
-                                    this.getDescription(), this.getKey());
+        const issue = Issue.atRowRange(file, t.getStart().getRow(),
+                                       prev.getEnd().getCol(), t.getStart().getCol(),
+                                       this.getDescription(), this.getKey());
         issues.push(issue);
       }
       prev = t;
