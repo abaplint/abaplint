@@ -23,7 +23,7 @@ export class SpaceBeforeDot extends ABAPRule {
     return "space_before_dot";
   }
 
-  private getDescription(): string {
+  private getMessage(): string {
     return "Remove space before \",\" or \".\"";
   }
 
@@ -72,7 +72,7 @@ export class SpaceBeforeDot extends ABAPRule {
       if (prev !== undefined && t instanceof Punctuation && prev.getCol() + prev.getStr().length < t.getCol()) {
         const issue = Issue.atRowRange(file, t.getStart().getRow(),
                                        prev.getEnd().getCol(), t.getStart().getCol(),
-                                       this.getDescription(), this.getKey());
+                                       this.getMessage(), this.getKey());
         issues.push(issue);
       }
       prev = t;

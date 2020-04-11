@@ -16,7 +16,7 @@ export class TryWithoutCatch extends ABAPRule {
     return "try_without_catch";
   }
 
-  private getDescription(): string {
+  private getMessage(): string {
     return "A TRY block must have a corresponding CATCH block.";
   }
 
@@ -41,7 +41,7 @@ export class TryWithoutCatch extends ABAPRule {
     for (const t of tries) {
       const c = t.findFirstStructure(Catch);
       if (c === undefined) {
-        const issue = Issue.atToken(file, t.getFirstToken(), this.getDescription(), this.getKey());
+        const issue = Issue.atToken(file, t.getFirstToken(), this.getMessage(), this.getKey());
         issues.push(issue);
       }
     }

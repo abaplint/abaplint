@@ -18,7 +18,7 @@ export class EmptyStatement extends ABAPRule {
     return "empty_statement";
   }
 
-  private getDescription(): string {
+  private getMessage(): string {
     return "Remove empty statement.";
   }
 
@@ -42,7 +42,7 @@ export class EmptyStatement extends ABAPRule {
         const token = sta.getFirstToken();
         const fix = EditHelper.deleteRange(file, previousEnd, token.getEnd());
 
-        const issue = Issue.atStatement(file, sta, this.getDescription(), this.getKey(), fix);
+        const issue = Issue.atStatement(file, sta, this.getMessage(), this.getKey(), fix);
         issues.push(issue);
       }
 

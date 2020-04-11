@@ -19,7 +19,7 @@ export class FormNoDash extends ABAPRule {
     return "form_no_dash";
   }
 
-  private getDescription(): string {
+  private getMessage(): string {
     return "No dash allowed in FORM names";
   }
 
@@ -42,7 +42,7 @@ export class FormNoDash extends ABAPRule {
       const expr = form.findFirstExpression(FormName);
       for (const token of expr!.getTokens()) {
         if (token instanceof Dash || token instanceof DashW) {
-          const issue = Issue.atToken(file, token, this.getDescription(), this.getKey());
+          const issue = Issue.atToken(file, token, this.getMessage(), this.getKey());
           issues.push(issue);
           break;
         }

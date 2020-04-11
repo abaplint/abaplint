@@ -20,7 +20,7 @@ export class ConstructorVisibilityPublic implements IRule {
     return "constructor_visibility_public";
   }
 
-  private getDescription(): string {
+  private getMessage(): string {
     return "Constructor visibility should be public";
   }
 
@@ -52,7 +52,7 @@ export class ConstructorVisibilityPublic implements IRule {
     for (const method of methods.getAll()) {
       if (method.getName().toUpperCase() === "CONSTRUCTOR"
           && method.getVisibility() !== Visibility.Public) {
-        const issue = Issue.atIdentifier(method, this.getDescription(), this.getKey());
+        const issue = Issue.atIdentifier(method, this.getMessage(), this.getKey());
         issues.push(issue);
       }
     }

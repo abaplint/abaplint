@@ -24,7 +24,7 @@ export class FunctionalWriting extends ABAPRule {
     return "functional_writing";
   }
 
-  private getDescription(): string {
+  private getMessage(): string {
     return "Use functional writing style for method calls.";
   }
 
@@ -61,7 +61,7 @@ export class FunctionalWriting extends ABAPRule {
             || this.startsWith(code, "CALL METHOD (")) {
           continue;
         }
-        const issue = Issue.atStatement(file, statement, this.getDescription(), this.getKey());
+        const issue = Issue.atStatement(file, statement, this.getMessage(), this.getKey());
         issues.push(issue);
       }
     }

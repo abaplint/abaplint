@@ -17,7 +17,7 @@ export class CheckNoHandlerPragma extends ABAPRule {
     return "check_no_handler_pragma";
   }
 
-  private getDescription(): string {
+  private getMessage(): string {
     return "NO_HANDLER pragma can be removed";
   }
 
@@ -39,7 +39,7 @@ export class CheckNoHandlerPragma extends ABAPRule {
       } else if (statement.get() instanceof Comment) {
         continue;
       } else if (noHandler === true && !(statement.get() instanceof Statements.Catch)) {
-        const issue = Issue.atStatement(file, statement, this.getDescription(), this.getKey());
+        const issue = Issue.atStatement(file, statement, this.getMessage(), this.getKey());
         issues.push(issue);
         noHandler = false;
       } else {

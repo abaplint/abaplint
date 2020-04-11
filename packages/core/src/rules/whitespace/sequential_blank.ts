@@ -23,7 +23,7 @@ export class SequentialBlank extends ABAPRule {
     return "sequential_blank";
   }
 
-  private getDescription(): string {
+  private getMessage(): string {
     return "Remove sequential blank lines";
   }
 
@@ -50,7 +50,7 @@ export class SequentialBlank extends ABAPRule {
 
       if (blanks === this.conf.lines) {
         const position = new Position(i + 1, 1);
-        const issue = Issue.atPosition(file, position, this.getDescription(), this.getKey());
+        const issue = Issue.atPosition(file, position, this.getMessage(), this.getKey());
         issues.push(issue);
       }
     }

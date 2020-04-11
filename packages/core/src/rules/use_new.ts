@@ -18,7 +18,7 @@ export class UseNew extends ABAPRule {
     return "use_new";
   }
 
-  private getDescription(): string {
+  private getMessage(): string {
     return "Use NEW #( ) to instantiate object.";
   }
 
@@ -42,7 +42,7 @@ export class UseNew extends ABAPRule {
         if (statement.findFirstExpression(Dynamic)) {
           continue;
         }
-        const issue = Issue.atPosition(file, statement.getStart(), this.getDescription(), this.getKey());
+        const issue = Issue.atPosition(file, statement.getStart(), this.getMessage(), this.getKey());
         issues.push(issue);
       }
     }

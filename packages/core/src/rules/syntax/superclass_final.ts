@@ -19,7 +19,7 @@ export class SuperclassFinal extends ABAPRule {
     return "superclass_final";
   }
 
-  private getDescription(): string {
+  private getMessage(): string {
     return "Superclasses cannot be FINAL";
   }
 
@@ -61,7 +61,7 @@ export class SuperclassFinal extends ABAPRule {
         continue;
       }
       if (found.isFinal()) {
-        const issue = Issue.atIdentifier(definition, this.getDescription(), this.getKey());
+        const issue = Issue.atIdentifier(definition, this.getMessage(), this.getKey());
         output.push(issue);
       }
     }

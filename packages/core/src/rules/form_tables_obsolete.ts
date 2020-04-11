@@ -19,7 +19,7 @@ export class FormTablesObsolete extends ABAPRule {
     return "form_tables_obsolete";
   }
 
-  private getDescription(): string {
+  private getMessage(): string {
     return "FORM TABLES parameters are obsolete";
   }
 
@@ -41,7 +41,7 @@ export class FormTablesObsolete extends ABAPRule {
 
     for (const form of stru.findAllExpressions(Expressions.FormTables)) {
       const token = form.getFirstToken();
-      const issue = Issue.atToken(file, token, this.getDescription(), this.getKey());
+      const issue = Issue.atToken(file, token, this.getMessage(), this.getKey());
       ret.push(issue);
     }
 

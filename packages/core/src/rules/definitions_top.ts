@@ -25,7 +25,7 @@ export class DefinitionsTop extends ABAPRule {
     return "definitions_top";
   }
 
-  private getDescription(): string {
+  private getMessage(): string {
     return "Reorder definitions to top of routine";
   }
 
@@ -74,7 +74,7 @@ export class DefinitionsTop extends ABAPRule {
           || statement.get() instanceof Statements.StaticEnd
           || statement.get() instanceof Statements.FieldSymbol) {
         if (mode === AFTER) {
-          issue = Issue.atStatement(file, statement, this.getDescription(), this.getKey());
+          issue = Issue.atStatement(file, statement, this.getMessage(), this.getKey());
           mode = ANY;
         }
       } else if (statement.get() instanceof Statements.Define

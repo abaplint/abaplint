@@ -23,7 +23,7 @@ export class LineOnlyPunc extends ABAPRule {
     return "line_only_punc";
   }
 
-  private getDescription(): string {
+  private getMessage(): string {
     return "A line cannot contain only \".\" or \").\"";
   }
 
@@ -54,7 +54,7 @@ export class LineOnlyPunc extends ABAPRule {
       if (reg.exec(rows[i].trim())) {
         const column = rows[i].indexOf(")") >= 0 ? rows[i].indexOf(")") + 1 : rows[i].indexOf(".") + 1;
         const position = new Position(i + 1, column);
-        const issue = Issue.atPosition(file, position, this.getDescription(), this.getKey());
+        const issue = Issue.atPosition(file, position, this.getMessage(), this.getKey());
         issues.push(issue);
       }
     }

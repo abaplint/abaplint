@@ -21,7 +21,7 @@ export class Exporting extends ABAPRule {
     return "exporting";
   }
 
-  private getDescription(): string {
+  private getMessage(): string {
     return "The EXPORTING keyword can be omitted";
   }
 
@@ -68,7 +68,7 @@ export class Exporting extends ABAPRule {
         const next = e.getAllTokens()[1];
         const fix = EditHelper.deleteRange(file, tokens[0].getStart(), next.getStart());
 
-        const issue = Issue.atToken(file, tokens[0], this.getDescription(), this.getKey(), fix);
+        const issue = Issue.atToken(file, tokens[0], this.getMessage(), this.getKey(), fix);
         return [issue];
       }
     }

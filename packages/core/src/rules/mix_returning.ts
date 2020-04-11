@@ -19,7 +19,7 @@ export class MixReturning extends ABAPRule {
     return "mix_returning";
   }
 
-  private getDescription(): string {
+  private getMessage(): string {
     return "Don't mix RETURNING and EXPORTING/CHANGING parameters in a single method.";
   }
 
@@ -45,7 +45,7 @@ export class MixReturning extends ABAPRule {
       if (def.findFirstExpression(Expressions.MethodDefExporting)
           || def.findFirstExpression(Expressions.MethodDefChanging)) {
         const token = def.getFirstToken();
-        const issue = Issue.atToken(file, token, this.getDescription(), this.getKey());
+        const issue = Issue.atToken(file, token, this.getMessage(), this.getKey());
         ret.push(issue);
       }
     }

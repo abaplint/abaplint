@@ -25,7 +25,7 @@ export class CommentedCode extends ABAPRule {
     return "commented_code";
   }
 
-  private getDescription(): string {
+  private getMessage(): string {
     return "Commented code";
   }
 
@@ -88,7 +88,7 @@ export class CommentedCode extends ABAPRule {
     }
 
     const position = new Position(row + 1, 1);
-    const issue = Issue.atPosition(file, position, this.getDescription(), this.getKey());
+    const issue = Issue.atPosition(file, position, this.getMessage(), this.getKey());
     return [issue];
   }
 

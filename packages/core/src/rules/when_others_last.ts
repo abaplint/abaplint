@@ -17,7 +17,7 @@ export class WhenOthersLast extends ABAPRule {
     return "when_others_last";
   }
 
-  private getDescription(): string {
+  private getMessage(): string {
     return "WHEN OTHERS should be the last branch in a CASE statement.";
   }
 
@@ -37,7 +37,7 @@ export class WhenOthersLast extends ABAPRule {
         for (const when of whens) {
           if (when.concatTokens() === "WHEN OTHERS.") {
             const start = when.getFirstToken().getStart();
-            const issue = Issue.atPosition(file, start, this.getDescription(), this.getKey());
+            const issue = Issue.atPosition(file, start, this.getMessage(), this.getKey());
             issues.push(issue);
           }
         }

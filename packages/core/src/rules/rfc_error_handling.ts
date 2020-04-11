@@ -18,7 +18,7 @@ export class RFCErrorHandling extends ABAPRule {
     return "rfc_error_handling";
   }
 
-  private getDescription(): string {
+  private getMessage(): string {
     return "RFC error handling: At least one unhandled exception from SYSTEM_FAILURE, COMMUNICATION_FAILURE, RESOURCE_FAILURE.";
   }
 
@@ -46,7 +46,7 @@ export class RFCErrorHandling extends ABAPRule {
 
       const list = stat.findFirstExpression(Expressions.ParameterListExceptions);
       if (list === undefined) {
-        const issue = Issue.atToken(file, token, this.getDescription(), this.getKey());
+        const issue = Issue.atToken(file, token, this.getMessage(), this.getKey());
         output.push(issue);
         continue;
       }
@@ -60,7 +60,7 @@ export class RFCErrorHandling extends ABAPRule {
       if (names.indexOf("SYSTEM_FAILURE") < 0
           || names.indexOf("COMMUNICATION_FAILURE") < 0
           || names.indexOf("RESOURCE_FAILURE") < 0) {
-        const issue = Issue.atToken(file, token, this.getDescription(), this.getKey());
+        const issue = Issue.atToken(file, token, this.getMessage(), this.getKey());
         output.push(issue);
         continue;
       }

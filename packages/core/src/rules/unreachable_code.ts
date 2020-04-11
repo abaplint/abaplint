@@ -18,7 +18,7 @@ export class UnreachableCode extends ABAPRule {
     return "unreachable_code";
   }
 
-  private getDescription(): string {
+  private getMessage(): string {
     return "Unreachable code";
   }
 
@@ -48,7 +48,7 @@ export class UnreachableCode extends ABAPRule {
       }
       if (exit === true) {
         const token = node.getFirstToken();
-        const issue = Issue.atToken(file, token, this.getDescription(), this.getKey());
+        const issue = Issue.atToken(file, token, this.getMessage(), this.getKey());
         output.push(issue);
       }
     }

@@ -16,7 +16,7 @@ export class ReleaseIdoc implements IRule {
     return "release_idoc";
   }
 
-  private getDescription(): string {
+  private getMessage(): string {
     return "Idoc type/segement status must be set to released";
   }
 
@@ -45,7 +45,7 @@ export class ReleaseIdoc implements IRule {
 
     if (file.getRaw().includes("<CLOSED>X</CLOSED>") === false) {
       const position = new Position(1, 1);
-      const issue = Issue.atPosition(obj.getFiles()[0], position, this.getDescription(), this.getKey());
+      const issue = Issue.atPosition(obj.getFiles()[0], position, this.getMessage(), this.getKey());
       return [issue];
     } else {
       return [];

@@ -16,7 +16,7 @@ export class WhitespaceEnd extends ABAPRule {
     return "whitespace_end";
   }
 
-  private getDescription(): string {
+  private getMessage(): string {
     return "Remove whitespace at end of line.";
   }
 
@@ -36,7 +36,7 @@ export class WhitespaceEnd extends ABAPRule {
     for (let i = 0; i < rows.length; i++) {
       if (rows[i].endsWith(" ")) {
         const position = new Position(i + 1, 1);
-        const issue = Issue.atPosition(file, position, this.getDescription(), this.getKey());
+        const issue = Issue.atPosition(file, position, this.getMessage(), this.getKey());
         issues.push(issue);
       }
     }

@@ -22,7 +22,7 @@ export class AmbiguousStatement extends ABAPRule {
     return "ambiguous_statement";
   }
 
-  private getDescription(): string {
+  private getMessage(): string {
     return "Ambiguous statement. Use explicit syntax.";
   }
 
@@ -55,7 +55,7 @@ export class AmbiguousStatement extends ABAPRule {
       }
 
       if (match) {
-        const issue = Issue.atStatement(file, statement, this.getDescription(), this.getKey());
+        const issue = Issue.atStatement(file, statement, this.getMessage(), this.getKey());
         issues.push(issue);
       }
 

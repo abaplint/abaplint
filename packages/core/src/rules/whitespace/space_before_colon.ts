@@ -17,7 +17,7 @@ export class SpaceBeforeColon extends ABAPRule {
     return "space_before_colon";
   }
 
-  private getDescription(): string {
+  private getMessage(): string {
     return "Remove space before colon";
   }
 
@@ -36,15 +36,15 @@ export class SpaceBeforeColon extends ABAPRule {
 
     for (const token of file.getTokens()) {
       if (token.getStr() === ":" && !prev) {
-        const issue = Issue.atToken(file, token, this.getDescription(), this.getKey());
+        const issue = Issue.atToken(file, token, this.getMessage(), this.getKey());
         issues.push(issue);
       } else if (token.getStr() === ":"
           && prev.getRow() === token.getRow()
           && prev.getCol() + prev.getStr().length < token.getCol()) {
         const issue = Issue.atRowRange(file, token.getRow(),
                                        prev.getEnd().getCol(), token.getStart().getCol(),
-                                       this.getDescription(), this.getKey());
-//        const issue = Issue.atToken(file, token, this.getDescription(), this.getKey());
+                                       this.getMessage(), this.getKey());
+//        const issue = Issue.atToken(file, token, this.getMessage(), this.getKey());
         issues.push(issue);
       }
       prev = token;

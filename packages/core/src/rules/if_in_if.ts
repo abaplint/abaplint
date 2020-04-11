@@ -16,7 +16,7 @@ export class IfInIf extends ABAPRule {
     return "if_in_if";
   }
 
-  private getDescription(): string {
+  private getMessage(): string {
     return "IF in IF. Use IF cond1 AND cond2 instead";
   }
 
@@ -68,7 +68,7 @@ export class IfInIf extends ABAPRule {
       }
 
       const token = i.getFirstToken();
-      const issue = Issue.atToken(file, token, this.getDescription(), this.getKey());
+      const issue = Issue.atToken(file, token, this.getMessage(), this.getKey());
       issues.push(issue);
     }
 

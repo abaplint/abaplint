@@ -23,7 +23,7 @@ export class ShortCase extends ABAPRule {
     return "short_case";
   }
 
-  private getDescription(): string {
+  private getMessage(): string {
     return "CASE construct too short, it must have a minimum of " + (this.conf.length + 1) + " WHEN branches";
   }
 
@@ -53,7 +53,7 @@ export class ShortCase extends ABAPRule {
         if (c.findAllExpressions(Expressions.Or).length > 0) {
           continue;
         }
-        const issue = Issue.atToken(file, c.getFirstToken(), this.getDescription(), this.getKey());
+        const issue = Issue.atToken(file, c.getFirstToken(), this.getMessage(), this.getKey());
         issues.push(issue);
       }
     }

@@ -20,7 +20,7 @@ export class BeginEndNames extends ABAPRule {
     return "begin_end_names";
   }
 
-  private getDescription(): string {
+  private getMessage(): string {
     return "BEGIN END names must match";
   }
 
@@ -64,7 +64,7 @@ export class BeginEndNames extends ABAPRule {
       const last = end.getFirstToken();
 
       if (first.getStr().toUpperCase() !== last.getStr().toUpperCase()) {
-        const issue = Issue.atToken(file, first, this.getDescription(), this.getKey());
+        const issue = Issue.atToken(file, first, this.getMessage(), this.getKey());
         output.push(issue);
       }
 

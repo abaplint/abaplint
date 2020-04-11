@@ -18,7 +18,7 @@ export class ContainsTab extends ABAPRule {
     return "contains_tab";
   }
 
-  private getDescription(): string {
+  private getMessage(): string {
     return "Code can't contain tabs.";
   }
 
@@ -37,7 +37,7 @@ export class ContainsTab extends ABAPRule {
     for (let line = 0; line < lines.length; line++) {
       const index = lines[line].indexOf("\t");
       if (index >= 0) {
-        const issue = Issue.atPosition(file, new Position(line + 1, index + 1), this.getDescription(), this.getKey());
+        const issue = Issue.atPosition(file, new Position(line + 1, index + 1), this.getMessage(), this.getKey());
         issues.push(issue);
       }
     }

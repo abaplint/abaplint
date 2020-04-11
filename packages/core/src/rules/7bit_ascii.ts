@@ -17,7 +17,7 @@ export class SevenBitAscii implements IRule {
     return "7bit_ascii";
   }
 
-  private getDescription(): string {
+  private getMessage(): string {
     return "Contains non 7 bit ascii character";
   }
 
@@ -39,7 +39,7 @@ export class SevenBitAscii implements IRule {
         for (let i = 0; i < rows.length; i++) {
           if (/^[\u0000-\u007f]*$/.test(rows[i]) === false) {
             const position = new Position(i + 1, 1);
-            const issue = Issue.atPosition(file, position, this.getDescription(), this.getKey());
+            const issue = Issue.atPosition(file, position, this.getMessage(), this.getKey());
             output.push(issue);
           }
         }

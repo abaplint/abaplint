@@ -19,7 +19,7 @@ export class EmptyLineinStatement extends ABAPRule {
     return "empty_line_in_statement";
   }
 
-  private getDescription(): string {
+  private getMessage(): string {
     return "Remove empty line in statement";
   }
 
@@ -48,7 +48,7 @@ export class EmptyLineinStatement extends ABAPRule {
       }
 
       if (prevLine && t.getRow() - prevLine >= 2) {
-        const issue = Issue.atToken(file, t, this.getDescription(), this.getKey());
+        const issue = Issue.atToken(file, t, this.getMessage(), this.getKey());
         issues.push(issue);
       }
 

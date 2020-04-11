@@ -17,7 +17,7 @@ export class ExitOrCheck extends ABAPRule {
     return "exit_or_check";
   }
 
-  private getDescription(): string {
+  private getMessage(): string {
     return "EXIT and CHECK are not allowed outside of loops.";
   }
 
@@ -48,7 +48,7 @@ export class ExitOrCheck extends ABAPRule {
       } else if ((statement.get() instanceof Statements.Check
           || statement.get() instanceof Statements.Exit)
           && stack.length === 0) {
-        const issue = Issue.atStatement(file, statement, this.getDescription(), this.getKey());
+        const issue = Issue.atStatement(file, statement, this.getMessage(), this.getKey());
         issues.push(issue);
       }
     }

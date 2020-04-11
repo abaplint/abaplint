@@ -24,7 +24,7 @@ export class InStatementIndentation extends ABAPRule {
     return "in_statement_indentation";
   }
 
-  private getDescription(): string {
+  private getMessage(): string {
     return "Fix in-statement indentation";
   }
 
@@ -78,7 +78,7 @@ export class InStatementIndentation extends ABAPRule {
           continue;
         }
         if (t.getCol() < expected) {
-          const issue = Issue.atToken(file, t, this.getDescription(), this.getKey());
+          const issue = Issue.atToken(file, t, this.getMessage(), this.getKey());
           ret.push(issue);
           break;
         }

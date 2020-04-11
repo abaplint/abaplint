@@ -20,7 +20,7 @@ export class MaxOneStatement extends ABAPRule {
     return "max_one_statement";
   }
 
-  private getDescription(): string {
+  private getMessage(): string {
     return "Only one statement is allowed per line";
   }
 
@@ -47,7 +47,7 @@ export class MaxOneStatement extends ABAPRule {
       const row = pos.getRow();
       if (prev === row && row !== reported) {
         const fix = EditHelper.insertAt(file, pos, "\n");
-        const issue = Issue.atPosition(file, pos, this.getDescription(), this.getKey(), fix);
+        const issue = Issue.atPosition(file, pos, this.getMessage(), this.getKey(), fix);
         issues.push(issue);
         reported = row;
       }
