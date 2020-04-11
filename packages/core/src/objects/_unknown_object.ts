@@ -22,13 +22,9 @@ export class UnknownObject extends AbstractObject {
   }
 
   public getParsingIssues() {
-    const issue = new Issue({
-      filename: this.getFiles()[0]?.getFilename(),
-      message: "Unknown object type, add/change fielname eg zclass.clas.abap or zprogram.prog.abap",
-      start: new Position(1, 1),
-      end: new Position(1, 1),
-      key: "registry_add"});
-
+    const pos = new Position(1, 1);
+    const message = "Unknown object type, add/change fielname eg zclass.clas.abap or zprogram.prog.abap";
+    const issue = Issue.atPosition(this.getFiles()[0]!, pos, message, "registry_add");
     return [issue];
   }
 

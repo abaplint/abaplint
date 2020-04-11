@@ -10,9 +10,9 @@ export abstract class ABAPRule implements IRule {
   public abstract getConfig(): void;
   public abstract setConfig(conf: any): void;
 
-  public abstract runParsed(file: ABAPFile, reg: IRegistry, obj: ABAPObject): Issue[];
+  public abstract runParsed(file: ABAPFile, reg: IRegistry, obj: ABAPObject): readonly Issue[];
 
-  public run(obj: IObject, reg: IRegistry): Issue[] {
+  public run(obj: IObject, reg: IRegistry): readonly Issue[] {
     if (!(obj instanceof ABAPObject)) {
       return [];
     }

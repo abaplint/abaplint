@@ -2,6 +2,7 @@ import {expect} from "chai";
 import {ArtifactsObjects} from "../src/artifacts_objects";
 import {Class} from "../src/objects";
 import {UnknownObject} from "../src/objects/_unknown_object";
+import {MemoryFile} from "../src/files/memory_file";
 
 describe("Top level artifacts", () => {
 
@@ -12,6 +13,7 @@ describe("Top level artifacts", () => {
 
   it("Unknown object", () => {
     const obj = ArtifactsObjects.newObject("ASDF", "ASDF");
+    obj.addFile(new MemoryFile("foo.asdf.xml", "sdf"));
     expect(obj).to.be.instanceof(UnknownObject);
     expect(obj.getParsingIssues().length).to.equal(1);
   });

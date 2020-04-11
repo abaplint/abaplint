@@ -3,6 +3,7 @@ import {Position} from "./position";
 import {Token} from "./abap/1_lexer/tokens/_token";
 import {Identifier} from "./abap/types/_identifier";
 import {StatementNode} from "./abap/nodes";
+import {IEdit} from "./edit";
 
 interface IIssueData {
   filename: string;
@@ -10,14 +11,11 @@ interface IIssueData {
   key: string;
   start: Position;
   end: Position;
+  fix?: IEdit;
 }
 
 export class Issue {
-  private readonly start: Position;
-  private readonly end: Position;
-  private readonly filename: string;
-  private readonly message: string;
-  private readonly key: string;
+  private readonly data: IIssueData;
 
 //////////////////////////
 
@@ -64,13 +62,14 @@ export class Issue {
     });
   }
 
-  public static atToken(file: IFile, token: Token, message: string, key: string) {
+  public static atToken(file: IFile, token: Token, message: string, key: string, fix?: IEdit) {
     return new Issue({
       filename: file.getFilename(),
       message,
       key,
       start: token.getStart(),
       end: token.getEnd(),
+      fix,
     });
   }
 
@@ -86,37 +85,37 @@ export class Issue {
 
 //////////////////////////
 
-  public constructor(data: IIssueData) {
-    this.message = data.message;
-    this.key = data.key;
-    this.start = data.start;
-    this.end = data.end;
-    this.filename = data.filename;
+  private constructor(data: IIssueData) {
+    this.data = data;
 
-    if (this.start.getCol() < 1) {
+    if (this.data.start.getCol() < 1) {
       throw new Error("issue, start col < 1");
-    } else if (this.end.getCol() < 1) {
+    } else if (this.data.end.getCol() < 1) {
       throw new Error("issue, end col < 1");
     }
   }
 
   public getMessage(): string {
-    return this.message;
+    return this.data.message;
   }
 
   public getKey(): string {
-    return this.key;
+    return this.data.key;
   }
 
   public getStart(): Position {
-    return this.start;
+    return this.data.start;
   }
 
   public getEnd(): Position {
-    return this.end;
+    return this.data.end;
   }
 
   public getFilename(): string {
-    return this.filename;
+    return this.data.filename;
+  }
+
+  public getFix() {
+    return this.data.fix;
   }
 }

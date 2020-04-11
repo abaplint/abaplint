@@ -1,16 +1,10 @@
-import {Position} from "../position";
 import {Issue} from "../issue";
 import {ABAPRule} from "./_abap_rule";
 import {ABAPFile} from "../files";
 import {BasicRuleConfig} from "./_basic_rule_config";
 import {MethodParameters, MethodCallBody, MethodCall} from "../abap/2_statements/expressions";
 import {ExpressionNode} from "../abap/nodes";
-
-export class Counter {
-  public exporting: boolean = false;
-  public other: boolean = false;
-  public pos: Position;
-}
+import {EditHelper} from "../edit";
 
 /** Detects EXPORTING statements which can be omitted.
  * https://github.com/SAP/styleguides/blob/master/clean-abap/CleanABAP.md#omit-the-optional-keyword-exporting
@@ -68,7 +62,10 @@ export class Exporting extends ABAPRule {
           && e.findDirectTokenByText("RECEIVING") === undefined
           && e.findDirectTokenByText("EXCEPTIONS") === undefined
           && e.findDirectTokenByText("CHANGING") === undefined) {
-        const issue = Issue.atToken(file, found, this.getDescription(), this.getKey());
+
+        const fix = EditHelper.deleteToken(file, found);
+
+        const issue = Issue.atToken(file, found, this.getDescription(), this.getKey(), fix);
         return [issue];
       }
     }

@@ -4,7 +4,7 @@ import {MessageExistsRule} from "../../src/rules";
 import {expect} from "chai";
 import {Issue} from "../../src/issue";
 
-function run(abap: string): Issue[] {
+function run(abap: string): readonly Issue[] {
   const xml =
     "<?xml version=\"1.0\" encoding=\"utf-8\"?>\n" +
     "<abapGit version=\"v1.0.0\" serializer=\"LCL_OBJECT_MSAG\" serializer_version=\"v1.0.0\">\n" +
