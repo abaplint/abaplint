@@ -22,3 +22,5 @@ zcl_foo.clas.abap
 worklist.txt
 .clinic/
 packages/*
+circular.txt
+graph.svg

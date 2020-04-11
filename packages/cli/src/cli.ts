@@ -4,7 +4,7 @@ import * as path from "path";
 import * as minimist from "minimist";
 import * as ProgressBar from "progress";
 import * as childProcess from "child_process";
-import {Issue, Stats, IProgress, IFile, Position, SemanticSearch, Config, Registry} from "@abaplint/core";
+import {Issue, Stats, IProgress, IFile, Position, SemanticSearch, Config, Registry, MemoryFile} from "@abaplint/core";
 import {Formatter} from "./formatters/_format";
 import {FileOperations} from "./file_operations";
 import {ApackDependencyProvider} from "./apack_dependency_provider";
@@ -147,13 +147,9 @@ async function run() {
       loaded = await FileOperations.loadFiles(compress, files, progress);
       deps = await loadDependencies(config, compress, progress, base);
     } catch (error) {
-      issues = [new Issue({
-        filename: "generic",
-        message: error,
-        start: new Position(1, 1),
-        end: new Position(1, 1),
-        key: "error",
-      })];
+      const file = new MemoryFile("generic", "dummy");
+      const issue = Issue.atPosition(file, new Position(1, 1), error, "error");
+      issues = [issue];
     }
 
     if (issues.length === 0) {
