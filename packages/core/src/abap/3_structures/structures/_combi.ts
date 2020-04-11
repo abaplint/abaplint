@@ -144,7 +144,6 @@ class Star implements IStructureRunnable {
   public run(statements: StatementNode[], parent: INode): IMatch {
     let inn = statements;
     let out: StatementNode[] = [];
-    // tslint:disable-next-line:no-constant-condition
     while (true) {
       const match = this.obj.run(inn, parent);
       if (inn.length === 0) {

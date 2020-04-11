@@ -22,4 +22,10 @@ export class EditHelper {
     const range: IRange = {start: token.getStart(), end: token.getEnd()};
     return {[filename]: [{range, newText: ""}]};
   }
+
+  public static deleteRange(file: IFile, start: Position, end: Position): IEdit {
+    const filename = file.getFilename();
+    const range: IRange = {start, end};
+    return {[filename]: [{range, newText: ""}]};
+  }
 }

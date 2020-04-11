@@ -56,16 +56,19 @@ export class Exporting extends ABAPRule {
   private check(node: ExpressionNode, file: ABAPFile): Issue[] {
 
     for (const e of node.findAllExpressions(MethodParameters)) {
-      const found = e.findDirectTokenByText("EXPORTING");
-      if (found !== undefined
-          && e.findDirectTokenByText("IMPORTING") === undefined
-          && e.findDirectTokenByText("RECEIVING") === undefined
-          && e.findDirectTokenByText("EXCEPTIONS") === undefined
-          && e.findDirectTokenByText("CHANGING") === undefined) {
+      const tokens = e.getDirectTokens();
+      const strings = tokens.map(t => t.getStr().toUpperCase());
 
-        const fix = EditHelper.deleteToken(file, found);
+      if (strings[0] === "EXPORTING"
+          && strings.includes("IMPORTING") === false
+          && strings.includes("RECEIVING") === false
+          && strings.includes("EXCEPTIONS") === false
+          && strings.includes("CHANGING") === false) {
 
-        const issue = Issue.atToken(file, found, this.getDescription(), this.getKey(), fix);
+        const next = e.getAllTokens()[1];
+        const fix = EditHelper.deleteRange(file, tokens[0].getStart(), next.getStart());
+
+        const issue = Issue.atToken(file, tokens[0], this.getDescription(), this.getKey(), fix);
         return [issue];
       }
     }

@@ -75,7 +75,7 @@ export function structureType(cas: {abap: string}[], expected: IStructure): void
 export function statementType(tests: any, description: string, type: any) {
   describe(description + " statement type", function() {
 // note that timeout() only works inside function()
-    this.timeout(200); // tslint:disable-line
+    this.timeout(200);
     tests.forEach((test: any) => {
       run(test, "\"" + test + "\" should be " + description, type);
     });
@@ -85,7 +85,7 @@ export function statementType(tests: any, description: string, type: any) {
 export function statementVersion(tests: any, description: string, type: any) {
   describe(description + " statement version,", function() {
 // note that timeout() only works inside function()
-    this.timeout(200); // tslint:disable-line
+    this.timeout(200);
     tests.forEach((test: any) => {
       run(test.abap, "\"" + test.abap + "\" should be " + description, type, test.ver);
 // should fail in previous version
@@ -101,7 +101,7 @@ export function statementVersion(tests: any, description: string, type: any) {
 export function statementVersionOk(tests: any, description: string, type: any) {
   describe(description + " statement version,", function() {
 // note that timeout() only works inside function()
-    this.timeout(200); // tslint:disable-line
+    this.timeout(200);
     tests.forEach((test: any) => {
       run(test.abap, "\"" + test.abap + "\" should be " + description, type, test.ver);
     });

@@ -128,6 +128,18 @@ export class ExpressionNode extends CountableNode {
     return ret;
   }
 
+  public getDirectTokens(): readonly Token[] {
+    const ret: Token[] = [];
+
+    for (const child of this.getChildren()) {
+      if (child instanceof TokenNode) {
+        ret.push(child.get());
+      }
+    }
+
+    return ret;
+  }
+
   public findDirectExpression(type: new () => IStatementRunnable): ExpressionNode | undefined {
     for (const child of this.getChildren()) {
       if (child instanceof ExpressionNode && child.get() instanceof type) {
