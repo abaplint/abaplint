@@ -1,0 +1,15 @@
+{
+  "name": "rules",
+  "private": true,
+  "version": "1.0.0",
+  "description": "",
+  "scripts": {
+    "test": "ts-node src/build.ts"
+  },
+  "author": "",
+  "license": "MIT",
+  "devDependencies": {
+    "@types/node": "^13.11.1",
+    "ts-node": "^8.8.2"
+  }
+}

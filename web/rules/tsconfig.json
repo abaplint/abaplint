@@ -1,0 +1,24 @@
+{
+  "compilerOptions": {
+      "module": "commonjs",
+      "outDir": "build",
+      "pretty": true,
+      "noFallthroughCasesInSwitch": true,
+      "noImplicitReturns": true,
+      "noUnusedParameters": true,
+      "noUnusedLocals": true,
+      "noImplicitAny": true,
+      "declaration": true,
+      "strictNullChecks": true,
+      "strictFunctionTypes": true,
+      "alwaysStrict": true,
+      "target": "es2017",
+      },
+  "filesGlob": [
+      "./**/*.ts"
+      ],
+  "exclude": [
+      "node_modules",
+      "build"
+  ]
+}
