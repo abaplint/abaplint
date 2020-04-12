@@ -36,6 +36,11 @@ function experimental() {
   return `&nbsp;<svg fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" viewBox="0 0 24 24" height="2ch"><title>experimental</title><path d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"></path></svg>`;
 }
 
+function findDefault(ruleKey: string) {
+  const def = abaplint.Config.getDefault();
+  return JSON.stringify(def.readByRule(ruleKey), null, 2);
+}
+
 // todo, this is slow, its called for every rule, refactor
 function findPath(ruleKey: string) {
   const base = "https://github.com/abaplint/abaplint/blob/master/packages/core/src/rules/";
@@ -86,7 +91,7 @@ function buildRule(meta: IRuleMetadata) {
   const link = findPath(meta.key);
   // https://github.com/refactoringui/heroicons/
   // eslint-disable-next-line max-len
-  html = html + `<a href="${link}"><svg fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" viewBox="0 0 24 24" height="2ch"><title>edit</title><path d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z"></path></svg></a>`;
+  html = html + `&nbsp;<a href="${link}"><svg fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" viewBox="0 0 24 24" height="2ch"><title>edit</title><path d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z"></path></svg></a>`;
   html = html + "<br><br>";
 
   html = html + "<u>Description</u><br>\n" + meta.shortDescription + "<br><br>";
@@ -95,7 +100,8 @@ function buildRule(meta: IRuleMetadata) {
     html = html + "<u>Extended Information</u><br>\n" + meta.extendedInformation + "<br><br>";
   }
 
-  html = html + "<u>Schema</u><br>\ntodo" + "<br><br>";
+  html = html + "<u>Default Configuration</u><br>\n";
+  html = html + "<pre>" + findDefault(meta.key) + "</pre>";
 
   if (meta.goodExample || meta.badExample) {
     html = html + "<u>Examples</u><br>\n";
