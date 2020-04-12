@@ -10,11 +10,8 @@ import {FunctionGroup} from "../objects";
 import {Include} from "../abap/2_statements/statements";
 import {ABAPParser} from "../abap/abap_parser";
 
-/** Detects usage of commented out code.
- * https://github.com/SAP/styleguides/blob/master/clean-abap/CleanABAP.md#delete-code-instead-of-commenting-it
- * https://docs.abapopenchecks.org/checks/14/
- */
 export class CommentedCodeConf extends BasicRuleConfig {
+  /** Allow INCLUDEs in function groups */
   public allowIncludeInFugr: boolean = true;
 }
 
@@ -22,7 +19,15 @@ export class CommentedCode extends ABAPRule {
   private conf = new CommentedCodeConf();
 
   public getMetadata() {
-    return {key: "commented_code"};
+    return {
+      key: "commented_code",
+      title: "Find commented code",
+      quickfix: false,
+      shortDescription: `Detects usage of commented out code.`,
+      extendedInformation:
+`https://github.com/SAP/styleguides/blob/master/clean-abap/CleanABAP.md#delete-code-instead-of-commenting-it
+https://docs.abapopenchecks.org/checks/14/`,
+    };
   }
 
   private getMessage(): string {

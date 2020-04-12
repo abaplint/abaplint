@@ -5,12 +5,7 @@ import {ABAPFile} from "../files";
 import {IRegistry} from "../_iregistry";
 import {IMethodDefinition} from "../abap/types/_method_definition";
 
-/**
- * Various checks regarding abapdoc. Base rule checks for existence of abapdoc for
- * public class methods and all interface methods.
- */
 export class AbapdocConf extends BasicRuleConfig {
-
   /** Check local classes and interfaces for abapdoc. */
   public checkLocal: boolean = false;
 }
@@ -20,7 +15,13 @@ export class Abapdoc extends ABAPRule {
   private conf = new AbapdocConf();
 
   public getMetadata() {
-    return {key: "abapdoc"};
+    return {
+      key: "abapdoc",
+      title: "Check abapdoc",
+      quickfix: false,
+      shortDescription: `Various checks regarding abapdoc.
+Base rule checks for existence of abapdoc for public class methods and all interface methods.`,
+    };
   }
 
   public getConfig() {

@@ -5,7 +5,6 @@ import {MethodLengthStats} from "../utils/method_length_stats";
 import {IRule} from "./_irule";
 import {BasicRuleConfig} from "./_basic_rule_config";
 
-/** Checks relating to method length. */
 export class MethodLengthConf extends BasicRuleConfig {
   /** Maximum method length in statements */
   public statements: number = 100;
@@ -26,7 +25,12 @@ export class MethodLength implements IRule {
   private conf = new MethodLengthConf();
 
   public getMetadata() {
-    return {key: "method_length"};
+    return {
+      key: "method_length",
+      title: "Method Length",
+      quickfix: false,
+      shortDescription: `Checks relating to method length.`,
+    };
   }
 
   private getDescription(issueType: IssueType, actual: string): string {

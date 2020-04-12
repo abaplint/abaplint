@@ -4,7 +4,6 @@
   "definitions": {
     "AbapdocConf": {
       "additionalProperties": false,
-      "description": "Various checks regarding abapdoc. Base rule checks for existence of abapdoc for\r\npublic class methods and all interface methods.",
       "properties": {
         "checkLocal": {
           "description": "Check local classes and interfaces for abapdoc.",
@@ -47,9 +46,9 @@
     },
     "AllowedObjectTypesConf": {
       "additionalProperties": false,
-      "description": "Restricts the set of allowed object types.",
       "properties": {
         "allowed": {
+          "description": "List of allowed object types, example: [\"CLAS\", \"INTF\"]",
           "items": {
             "type": "string"
           },
@@ -74,7 +73,6 @@
     },
     "AmbiguousStatementConf": {
       "additionalProperties": false,
-      "description": "Checks for ambiguity between deleting or modifying from internal and database table\r\nAdd \"TABLE\" keyword or \"@\" for escaping SQL variables",
       "properties": {
         "exclude": {
           "description": "List of file regex patterns to exclude",
@@ -92,7 +90,6 @@
     },
     "AvoidUseConf": {
       "additionalProperties": false,
-      "description": "Detects usage of certain statements.",
       "properties": {
         "break": {
           "description": "Detects BREAK and BREAK-POINTS",
@@ -175,7 +172,6 @@
     },
     "ChainMainlyDeclarationsConf": {
       "additionalProperties": false,
-      "description": "Chain mainly declarations\r\nhttps://docs.abapopenchecks.org/checks/23/",
       "properties": {
         "exclude": {
           "description": "List of file regex patterns to exclude",
@@ -193,7 +189,6 @@
     },
     "CheckAbstractConf": {
       "additionalProperties": false,
-      "description": "Checks abstract methods and classes:\r\n- class defined as abstract and final,\r\n- non-abstract class contains abstract methods",
       "properties": {
         "exclude": {
           "description": "List of file regex patterns to exclude",
@@ -211,7 +206,6 @@
     },
     "CheckCommentsConf": {
       "additionalProperties": false,
-      "description": "Various checks for comment usage.",
       "properties": {
         "allowEndOfLine": {
           "description": "Allows the use of end-of-line comments.",
@@ -272,7 +266,6 @@
     },
     "CheckNoHandlerPragmaConf": {
       "additionalProperties": false,
-      "description": "Checks NO_HANDLER pragmas that can be removed",
       "properties": {
         "exclude": {
           "description": "List of file regex patterns to exclude",
@@ -308,7 +301,6 @@
     },
     "CheckTextElementsConf": {
       "additionalProperties": false,
-      "description": "Check text elements",
       "properties": {
         "exclude": {
           "description": "List of file regex patterns to exclude",
@@ -396,7 +388,6 @@
     },
     "CloudTypesConf": {
       "additionalProperties": false,
-      "description": "Checks that the package does not contain any object types unsupported in cloud ABAP.",
       "properties": {
         "exclude": {
           "description": "List of file regex patterns to exclude",
@@ -432,9 +423,9 @@
     },
     "CommentedCodeConf": {
       "additionalProperties": false,
-      "description": "Detects usage of commented out code.\r\nhttps://github.com/SAP/styleguides/blob/master/clean-abap/CleanABAP.md#delete-code-instead-of-commenting-it\r\nhttps://docs.abapopenchecks.org/checks/14/",
       "properties": {
         "allowIncludeInFugr": {
+          "description": "Allow INCLUDEs in function groups",
           "type": "boolean"
         },
         "exclude": {
@@ -456,7 +447,6 @@
     },
     "ConstructorVisibilityPublicConf": {
       "additionalProperties": false,
-      "description": "Constructor must be placed in the public section, even if the class is not CREATE PUBLIC.\r\nhttps://github.com/SAP/styleguides/blob/master/clean-abap/CleanABAP.md#if-your-global-class-is-create-private-leave-the-constructor-public\r\nhttps://help.sap.com/doc/abapdocu_751_index_htm/7.51/en-US/abeninstance_constructor_guidl.htm",
       "properties": {
         "exclude": {
           "description": "List of file regex patterns to exclude",
@@ -492,7 +482,6 @@
     },
     "DefinitionsTopConf": {
       "additionalProperties": false,
-      "description": "Checks that definitions are placed at the beginning of methods.\r\nhttps://docs.abapopenchecks.org/checks/17/",
       "properties": {
         "exclude": {
           "description": "List of file regex patterns to exclude",
@@ -510,7 +499,6 @@
     },
     "DescriptionEmptyConf": {
       "additionalProperties": false,
-      "description": "Ensures descriptions in class metadata exist.",
       "properties": {
         "exclude": {
           "description": "List of file regex patterns to exclude",
@@ -568,7 +556,6 @@
     },
     "EmptyLineinStatementConf": {
       "additionalProperties": false,
-      "description": "Checks that statements do not contain empty lines.\r\nhttps://docs.abapopenchecks.org/checks/41/",
       "properties": {
         "allowChained": {
           "type": "boolean"
@@ -592,7 +579,6 @@
     },
     "EmptyStatementConf": {
       "additionalProperties": false,
-      "description": "Checks for empty statements (an empty statement is a single dot)",
       "properties": {
         "exclude": {
           "description": "List of file regex patterns to exclude",
@@ -610,7 +596,6 @@
     },
     "EmptyStructureConf": {
       "additionalProperties": false,
-      "description": "Checks that the code does not contain empty blocks.",
       "properties": {
         "at": {
           "description": "Checks for empty at blocks",
@@ -665,7 +650,6 @@
     },
     "ExitOrCheckConf": {
       "additionalProperties": false,
-      "description": "Detects usages of EXIT or CHECK statements outside of loops.",
       "properties": {
         "exclude": {
           "description": "List of file regex patterns to exclude",
@@ -700,7 +684,6 @@
     },
     "ForbiddenIdentifierConf": {
       "additionalProperties": false,
-      "description": "Forbid use of specified identifiers, list of regex",
       "properties": {
         "check": {
           "items": {
@@ -727,7 +710,6 @@
     },
     "FormNoDashConf": {
       "additionalProperties": false,
-      "description": "Checks for a Dash in form names.",
       "properties": {
         "exclude": {
           "description": "List of file regex patterns to exclude",
@@ -745,7 +727,6 @@
     },
     "FormTablesObsoleteConf": {
       "additionalProperties": false,
-      "description": "Checks for TABLES parameters in forms.",
       "properties": {
         "exclude": {
           "description": "List of file regex patterns to exclude",
@@ -763,7 +744,6 @@
     },
     "FullyTypeConsantsConf": {
       "additionalProperties": false,
-      "description": "Checks constants for full typing - no implicit typing allowed.",
       "properties": {
         "checkData": {
           "description": "Add check for implicit data definition, require full typing.",
@@ -788,7 +768,6 @@
     },
     "FunctionalWritingConf": {
       "additionalProperties": false,
-      "description": "Detects usage of call method when functional style calls can be used.\r\nhttps://github.com/SAP/styleguides/blob/master/clean-abap/CleanABAP.md#prefer-functional-to-procedural-calls\r\nhttps://docs.abapopenchecks.org/checks/07/",
       "properties": {
         "exclude": {
           "description": "List of file regex patterns to exclude",
@@ -853,7 +832,7 @@
                   "type": "boolean"
                 }
               ],
-              "description": "Only allow characters from the 7bit ASCII set.\r\nhttps://docs.abapopenchecks.org/checks/05/\nhttps://rules.abaplint.org/7bit_ascii"
+              "description": "Only allow characters from the 7bit ASCII set.\nhttps://rules.abaplint.org/7bit_ascii"
             },
             "abapdoc": {
               "anyOf": [
@@ -864,7 +843,7 @@
                   "type": "boolean"
                 }
               ],
-              "description": "Various checks regarding abapdoc. Base rule checks for existence of abapdoc for\r\npublic class methods and all interface methods.\nhttps://rules.abaplint.org/abapdoc"
+              "description": "Various checks regarding abapdoc.\nBase rule checks for existence of abapdoc for public class methods and all interface methods.\nhttps://rules.abaplint.org/abapdoc"
             },
             "allowed_object_naming": {
               "anyOf": [
@@ -897,7 +876,7 @@
                   "type": "boolean"
                 }
               ],
-              "description": "Checks for ambiguity between deleting or modifying from internal and database table\r\nAdd \"TABLE\" keyword or \"@\" for escaping SQL variables\nhttps://rules.abaplint.org/ambiguous_statement"
+              "description": "Checks for ambiguity between deleting or modifying from internal and database table\nAdd \"TABLE\" keyword or \"@\" for escaping SQL variables\nhttps://rules.abaplint.org/ambiguous_statement"
             },
             "avoid_use": {
               "anyOf": [
@@ -930,7 +909,7 @@
                   "type": "boolean"
                 }
               ],
-              "description": "Chain mainly declarations\r\nhttps://docs.abapopenchecks.org/checks/23/\nhttps://rules.abaplint.org/chain_mainly_declarations"
+              "description": "Chain mainly declarations\nhttps://rules.abaplint.org/chain_mainly_declarations"
             },
             "check_abstract": {
               "anyOf": [
@@ -941,7 +920,7 @@
                   "type": "boolean"
                 }
               ],
-              "description": "Checks abstract methods and classes:\r\n- class defined as abstract and final,\r\n- non-abstract class contains abstract methods\nhttps://rules.abaplint.org/check_abstract"
+              "description": "Checks abstract methods and classes:\n- class defined as abstract and final,\n- non-abstract class contains abstract methods\nhttps://rules.abaplint.org/check_abstract"
             },
             "check_comments": {
               "anyOf": [
@@ -1007,7 +986,7 @@
                   "type": "boolean"
                 }
               ],
-              "description": "Check text elements\nhttps://rules.abaplint.org/check_text_elements"
+              "description": "Check text elements exists or matches code\nhttps://rules.abaplint.org/check_text_elements"
             },
             "check_transformation_exists": {
               "anyOf": [
@@ -1062,7 +1041,7 @@
                   "type": "boolean"
                 }
               ],
-              "description": "Detects usage of commented out code.\r\nhttps://github.com/SAP/styleguides/blob/master/clean-abap/CleanABAP.md#delete-code-instead-of-commenting-it\r\nhttps://docs.abapopenchecks.org/checks/14/\nhttps://rules.abaplint.org/commented_code"
+              "description": "Detects usage of commented out code.\nhttps://rules.abaplint.org/commented_code"
             },
             "constructor_visibility_public": {
               "anyOf": [
@@ -1073,7 +1052,7 @@
                   "type": "boolean"
                 }
               ],
-              "description": "Constructor must be placed in the public section, even if the class is not CREATE PUBLIC.\r\nhttps://github.com/SAP/styleguides/blob/master/clean-abap/CleanABAP.md#if-your-global-class-is-create-private-leave-the-constructor-public\r\nhttps://help.sap.com/doc/abapdocu_751_index_htm/7.51/en-US/abeninstance_constructor_guidl.htm\nhttps://rules.abaplint.org/constructor_visibility_public"
+              "description": "Constructor must be placed in the public section, even if the class is not CREATE PUBLIC.\nhttps://rules.abaplint.org/constructor_visibility_public"
             },
             "contains_tab": {
               "anyOf": [
@@ -1095,7 +1074,7 @@
                   "type": "boolean"
                 }
               ],
-              "description": "Checks that definitions are placed at the beginning of methods.\r\nhttps://docs.abapopenchecks.org/checks/17/\nhttps://rules.abaplint.org/definitions_top"
+              "description": "Checks that definitions are placed at the beginning of methods.\nhttps://rules.abaplint.org/definitions_top"
             },
             "description_empty": {
               "anyOf": [
@@ -1128,7 +1107,7 @@
                   "type": "boolean"
                 }
               ],
-              "description": "Checks that statements do not contain empty lines.\r\nhttps://docs.abapopenchecks.org/checks/41/\nhttps://rules.abaplint.org/empty_line_in_statement"
+              "description": "Checks that statements do not contain empty lines.\nhttps://rules.abaplint.org/empty_line_in_statement"
             },
             "empty_statement": {
               "anyOf": [
@@ -1194,7 +1173,7 @@
                   "type": "boolean"
                 }
               ],
-              "description": "Checks for a Dash in form names.\nhttps://rules.abaplint.org/form_no_dash"
+              "description": "Checks for a Dash in form names\nhttps://rules.abaplint.org/form_no_dash"
             },
             "form_tables_obsolete": {
               "anyOf": [
@@ -1227,7 +1206,7 @@
                   "type": "boolean"
                 }
               ],
-              "description": "Detects usage of call method when functional style calls can be used.\r\nhttps://github.com/SAP/styleguides/blob/master/clean-abap/CleanABAP.md#prefer-functional-to-procedural-calls\r\nhttps://docs.abapopenchecks.org/checks/07/\nhttps://rules.abaplint.org/functional_writing"
+              "description": "Detects usage of call method when functional style calls can be used.\nhttps://rules.abaplint.org/functional_writing"
             },
             "global_class": {
               "anyOf": [
@@ -1337,7 +1316,7 @@
                   "type": "boolean"
                 }
               ],
-              "description": "Detects lines exceeding the provided maximum length.\r\nhttps://github.com/SAP/styleguides/blob/master/clean-abap/CleanABAP.md#stick-to-a-reasonable-line-length\r\nhttps://docs.abapopenchecks.org/checks/04/\nhttps://rules.abaplint.org/line_length"
+              "description": "Detects lines exceeding the provided maximum length.\nhttps://rules.abaplint.org/line_length"
             },
             "line_only_punc": {
               "anyOf": [
@@ -1348,7 +1327,7 @@
                   "type": "boolean"
                 }
               ],
-              "description": "Detects lines containing only punctuation.\r\nhttps://github.com/SAP/styleguides/blob/master/clean-abap/CleanABAP.md#close-brackets-at-line-end\r\nhttps://docs.abapopenchecks.org/checks/16/\nhttps://rules.abaplint.org/line_only_punc"
+              "description": "Detects lines containing only punctuation.\nhttps://rules.abaplint.org/line_only_punc"
             },
             "local_class_naming": {
               "anyOf": [
@@ -1370,7 +1349,7 @@
                   "type": "boolean"
                 }
               ],
-              "description": "Chceks that local test classes are placed in the test include.\nhttps://rules.abaplint.org/local_testclass_location"
+              "description": "Checks that local test classes are placed in the test include.\nhttps://rules.abaplint.org/local_testclass_location"
             },
             "local_variable_names": {
               "anyOf": [
@@ -1403,7 +1382,7 @@
                   "type": "boolean"
                 }
               ],
-              "description": "Chekcks that each line contains only a single statement.\r\nhttps://github.com/SAP/styleguides/blob/master/clean-abap/CleanABAP.md#no-more-than-one-statement-per-line\r\nhttps://docs.abapopenchecks.org/checks/11/\nhttps://rules.abaplint.org/max_one_statement"
+              "description": "Checks that each line contains only a single statement.\nhttps://rules.abaplint.org/max_one_statement"
             },
             "message_exists": {
               "anyOf": [
@@ -1447,7 +1426,7 @@
                   "type": "boolean"
                 }
               ],
-              "description": "Checks that methods don't have a mixture of returning and exporting/changing parameters\r\nhttps://github.com/SAP/styleguides/blob/master/clean-abap/CleanABAP.md#use-either-returning-or-exporting-or-changing-but-not-a-combination\nhttps://rules.abaplint.org/mix_returning"
+              "description": "Checks that methods don't have a mixture of returning and exporting/changing parameters\nhttps://rules.abaplint.org/mix_returning"
             },
             "msag_consistency": {
               "anyOf": [
@@ -1915,7 +1894,6 @@
     },
     "IdenticalFormNamesConf": {
       "additionalProperties": false,
-      "description": "Detects identically named FORMs",
       "properties": {
         "exclude": {
           "description": "List of file regex patterns to exclude",
@@ -1933,7 +1911,6 @@
     },
     "IfInIfConf": {
       "additionalProperties": false,
-      "description": "Detects nested ifs which can be refactored to a single condition using AND.",
       "properties": {
         "exclude": {
           "description": "List of file regex patterns to exclude",
@@ -2075,7 +2052,6 @@
     },
     "KeywordCaseConf": {
       "additionalProperties": false,
-      "description": "Checks that keywords have the same case. Non-keywords must be lower case.",
       "properties": {
         "exclude": {
           "description": "List of file regex patterns to exclude",
@@ -2127,7 +2103,6 @@
     },
     "LineLengthConf": {
       "additionalProperties": false,
-      "description": "Detects lines exceeding the provided maximum length.\r\nhttps://github.com/SAP/styleguides/blob/master/clean-abap/CleanABAP.md#stick-to-a-reasonable-line-length\r\nhttps://docs.abapopenchecks.org/checks/04/",
       "properties": {
         "exclude": {
           "description": "List of file regex patterns to exclude",
@@ -2137,7 +2112,7 @@
           "type": "array"
         },
         "length": {
-          "description": "Maximum line length in characters",
+          "description": "Maximum line length in characters, trailing whitespace ignored",
           "type": "number"
         },
         "reason": {
@@ -2152,7 +2127,6 @@
     },
     "LineOnlyPuncConf": {
       "additionalProperties": false,
-      "description": "Detects lines containing only punctuation.\r\nhttps://github.com/SAP/styleguides/blob/master/clean-abap/CleanABAP.md#close-brackets-at-line-end\r\nhttps://docs.abapopenchecks.org/checks/16/",
       "properties": {
         "exclude": {
           "description": "List of file regex patterns to exclude",
@@ -2229,7 +2203,6 @@
     },
     "LocalTestclassLocationConf": {
       "additionalProperties": false,
-      "description": "Chceks that local test classes are placed in the test include.",
       "properties": {
         "exclude": {
           "description": "List of file regex patterns to exclude",
@@ -2318,7 +2291,6 @@
     },
     "MainFileContentsConf": {
       "additionalProperties": false,
-      "description": "Checks related to report declarations.",
       "properties": {
         "exclude": {
           "description": "List of file regex patterns to exclude",
@@ -2336,7 +2308,6 @@
     },
     "MaxOneStatementConf": {
       "additionalProperties": false,
-      "description": "Chekcks that each line contains only a single statement.\r\nhttps://github.com/SAP/styleguides/blob/master/clean-abap/CleanABAP.md#no-more-than-one-statement-per-line\r\nhttps://docs.abapopenchecks.org/checks/11/",
       "properties": {
         "exclude": {
           "description": "List of file regex patterns to exclude",
@@ -2354,7 +2325,6 @@
     },
     "MessageExistsConf": {
       "additionalProperties": false,
-      "description": "In message statements, check that the message class + id exist",
       "properties": {
         "exclude": {
           "description": "List of file regex patterns to exclude",
@@ -2372,7 +2342,6 @@
     },
     "MethodLengthConf": {
       "additionalProperties": false,
-      "description": "Checks relating to method length.",
       "properties": {
         "errorWhenEmpty": {
           "description": "Checks for empty methods.",
@@ -2470,7 +2439,6 @@
     },
     "MixReturningConf": {
       "additionalProperties": false,
-      "description": "Checks that methods don't have a mixture of returning and exporting/changing parameters\r\nhttps://github.com/SAP/styleguides/blob/master/clean-abap/CleanABAP.md#use-either-returning-or-exporting-or-changing-but-not-a-combination",
       "properties": {
         "exclude": {
           "description": "List of file regex patterns to exclude",
@@ -3026,7 +2994,6 @@
     },
     "SevenBitAsciiConf": {
       "additionalProperties": false,
-      "description": "Only allow characters from the 7bit ASCII set.\r\nhttps://docs.abapopenchecks.org/checks/05/",
       "properties": {
         "exclude": {
           "description": "List of file regex patterns to exclude",

@@ -8,7 +8,6 @@ import {Position} from "../position";
 
 // standard class CL_OO_CLASS assumes classes have descriptions
 
-/** Ensures descriptions in class metadata exist. */
 export class DescriptionEmptyConf extends BasicRuleConfig {
 }
 
@@ -17,7 +16,12 @@ export class DescriptionEmpty implements IRule {
   private conf = new DescriptionEmptyConf();
 
   public getMetadata() {
-    return {key: "description_empty"};
+    return {
+      key: "description_empty",
+      title: "Description in class must exist",
+      quickfix: false,
+      shortDescription: `Ensures descriptions in class metadata exist.`,
+    };
   }
 
   private getDescription(name: string): string {

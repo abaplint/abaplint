@@ -7,7 +7,6 @@ import {IObject} from "../objects/_iobject";
 import {IRegistry} from "../_iregistry";
 import {IncludeGraph} from "../utils/include_graph";
 
-/** Check text elements */
 export class CheckTextElementsConf extends BasicRuleConfig {
 }
 
@@ -16,7 +15,12 @@ export class CheckTextElements implements IRule {
   private conf = new CheckTextElementsConf();
 
   public getMetadata() {
-    return {key: "check_text_elements"};
+    return {
+      key: "check_text_elements",
+      title: "Check text elements",
+      quickfix: false,
+      shortDescription: `Check text elements exists or matches code`,
+    };
   }
 
   public getConfig() {

@@ -6,7 +6,6 @@ import {Class} from "../objects";
 import {IRegistry} from "../_iregistry";
 import {IObject} from "../objects/_iobject";
 
-/** Chceks that local test classes are placed in the test include. */
 export class LocalTestclassLocationConf extends BasicRuleConfig {
 }
 
@@ -15,7 +14,12 @@ export class LocalTestclassLocation extends ABAPRule {
   private conf = new LocalTestclassLocationConf();
 
   public getMetadata() {
-    return {key: "local_testclass_location"};
+    return {
+      key: "local_testclass_location",
+      title: "Local testclass location",
+      quickfix: false,
+      shortDescription: `Checks that local test classes are placed in the test include.`,
+    };
   }
 
   private getDescription(className: string): string {

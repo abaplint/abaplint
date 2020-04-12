@@ -19,11 +19,12 @@ export class Exporting extends ABAPRule {
       key: "exporting",
       title: "EXPORTING can be omitted",
       quickfix: true,
+      shortDescription: `Detects EXPORTING statements which can be omitted.`,
       badExample: `call_method( EXPORTING foo = bar ).`,
       goodExample: `call_method( foo = bar ).`,
-      shortDescription: `Detects EXPORTING statements which can be omitted.`,
-      extendedInformation: `https://github.com/SAP/styleguides/blob/master/clean-abap/CleanABAP.md#omit-the-optional-keyword-exporting
-      https://docs.abapopenchecks.org/checks/30/`,
+      extendedInformation:
+`https://github.com/SAP/styleguides/blob/master/clean-abap/CleanABAP.md#omit-the-optional-keyword-exporting
+https://docs.abapopenchecks.org/checks/30/`,
     };
   }
 

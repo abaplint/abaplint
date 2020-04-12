@@ -10,7 +10,6 @@ import * as Expressions from "../abap/2_statements/expressions";
 import {Position} from "../position";
 import {Comment} from "../abap/2_statements/statements/_statement";
 
-/** Checks related to report declarations. */
 export class MainFileContentsConf extends BasicRuleConfig {
 }
 
@@ -18,7 +17,12 @@ export class MainFileContents implements IRule {
   private conf = new MainFileContentsConf();
 
   public getMetadata() {
-    return {key: "main_file_contents"};
+    return {
+      key: "main_file_contents",
+      title: "Main file contents",
+      quickfix: false,
+      shortDescription: `Checks related to report declarations.`,
+    };
   }
 
   private getDescription(details: string): string {

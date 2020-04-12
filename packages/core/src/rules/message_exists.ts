@@ -6,7 +6,6 @@ import {BasicRuleConfig} from "./_basic_rule_config";
 import {IRegistry} from "../_iregistry";
 import {MessageClass} from "../objects";
 
-/** In message statements, check that the message class + id exist */
 export class MessageExistsConf extends BasicRuleConfig {
 }
 
@@ -14,7 +13,12 @@ export class MessageExistsRule extends ABAPRule {
   private conf = new MessageExistsConf();
 
   public getMetadata() {
-    return {key: "message_exists"};
+    return {
+      key: "message_exists",
+      title: "Check MESSAGE exists",
+      quickfix: false,
+      shortDescription: `In message statements, check that the message class + id exist`,
+    };
   }
 
   private getDescription(reason: string): string {

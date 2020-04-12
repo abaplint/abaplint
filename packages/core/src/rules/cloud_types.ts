@@ -7,7 +7,6 @@ import {IRegistry} from "../_iregistry";
 import {BasicRuleConfig} from "./_basic_rule_config";
 import {Position} from "../position";
 
-/** Checks that the package does not contain any object types unsupported in cloud ABAP. */
 export class CloudTypesConf extends BasicRuleConfig {
 }
 
@@ -16,7 +15,12 @@ export class CloudTypes implements IRule {
   private conf = new CloudTypesConf();
 
   public getMetadata() {
-    return {key: "cloud_types"};
+    return {
+      key: "cloud_types",
+      title: "Check cloud types",
+      quickfix: false,
+      shortDescription: `Checks that the package does not contain any object types unsupported in cloud ABAP.`,
+    };
   }
 
   private getDescription(objectType: string): string {

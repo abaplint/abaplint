@@ -4,9 +4,6 @@ import {ABAPFile} from "../files";
 import {BasicRuleConfig} from "./_basic_rule_config";
 import {Punctuation, Comment} from "../abap/1_lexer/tokens";
 
-/** Checks that statements do not contain empty lines.
- * https://docs.abapopenchecks.org/checks/41/
- */
 export class EmptyLineinStatementConf extends BasicRuleConfig {
   public allowChained: boolean = false;
 }
@@ -16,7 +13,13 @@ export class EmptyLineinStatement extends ABAPRule {
   private conf = new EmptyLineinStatementConf();
 
   public getMetadata() {
-    return {key: "empty_line_in_statement"};
+    return {
+      key: "empty_line_in_statement",
+      title: "Find empty lines in statements",
+      quickfix: false,
+      shortDescription: `Checks that statements do not contain empty lines.`,
+      extendedInformation: `https://docs.abapopenchecks.org/checks/41/`,
+    };
   }
 
   private getMessage(): string {

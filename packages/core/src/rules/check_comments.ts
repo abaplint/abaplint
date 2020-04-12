@@ -4,7 +4,6 @@ import {BasicRuleConfig} from "./_basic_rule_config";
 import {ABAPRule} from "./_abap_rule";
 import {ABAPFile} from "../files";
 
-/** Various checks for comment usage. */
 export class CheckCommentsConf extends BasicRuleConfig {
   /** Allows the use of end-of-line comments. */
   public allowEndOfLine: boolean = false;
@@ -17,7 +16,12 @@ export class CheckComments extends ABAPRule {
   private conf = new CheckCommentsConf();
 
   public getMetadata() {
-    return {key: "check_comments"};
+    return {
+      key: "check_comments",
+      title: "Check Comments",
+      quickfix: false,
+      shortDescription: `Various checks for comment usage.`,
+    };
   }
 
   private getDescription(issueType: IssueType): string {

@@ -4,11 +4,6 @@ import {ABAPFile} from "../files";
 import {BasicRuleConfig} from "./_basic_rule_config";
 import {IRegistry} from "../_iregistry";
 
-/**
- * Checks abstract methods and classes:
- * - class defined as abstract and final,
- * - non-abstract class contains abstract methods
- */
 export class CheckAbstractConf extends BasicRuleConfig {
 }
 
@@ -17,12 +12,20 @@ enum IssueType {
   NotAbstractClass,
   AbstractAndFinal,
 }
+
 export class CheckAbstract extends ABAPRule {
 
   private conf = new CheckAbstractConf();
 
   public getMetadata() {
-    return {key: "check_abstract"};
+    return {
+      key: "check_abstract",
+      title: "Check abstract methods and classes",
+      quickfix: false,
+      shortDescription: `Checks abstract methods and classes:
+- class defined as abstract and final,
+- non-abstract class contains abstract methods`,
+    };
   }
 
   private getDescription(issueType: IssueType, name: string): string {

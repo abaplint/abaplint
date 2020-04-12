@@ -17,7 +17,6 @@ export enum KeywordCaseStyle {
   Lower = "lower",
 }
 
-/** Checks that keywords have the same case. Non-keywords must be lower case. */
 export class KeywordCaseConf extends BasicRuleConfig {
   public style: KeywordCaseStyle = KeywordCaseStyle.Upper;
   /** Ignore global exception classes */
@@ -32,7 +31,12 @@ export class KeywordCase extends ABAPRule {
   private conf = new KeywordCaseConf();
 
   public getMetadata() {
-    return {key: "keyword_case"};
+    return {
+      key: "keyword_case",
+      title: "Keyword case",
+      quickfix: false,
+      shortDescription: `Checks that keywords have the same case. Non-keywords must be lower case.`,
+    };
   }
 
   private getDescription(tokenValue: string, keyword: boolean): string {

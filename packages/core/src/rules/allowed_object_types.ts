@@ -4,8 +4,8 @@ import {IObject} from "../objects/_iobject";
 import {BasicRuleConfig} from "./_basic_rule_config";
 import {Position} from "../position";
 
-/** Restricts the set of allowed object types. */
 export class AllowedObjectTypesConf extends BasicRuleConfig {
+  /** List of allowed object types, example: ["CLAS", "INTF"] */
   public allowed: string[] = [];
 }
 
@@ -14,7 +14,12 @@ export class AllowedObjectTypes implements IRule {
   private conf = new AllowedObjectTypesConf();
 
   public getMetadata() {
-    return {key: "allowed_object_types"};
+    return {
+      key: "allowed_object_types",
+      title: "Check allowed object types",
+      quickfix: false,
+      shortDescription: `Restricts the set of allowed object types.`,
+    };
   }
 
   private getDescription(objectType: string): string {

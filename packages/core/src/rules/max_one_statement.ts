@@ -5,10 +5,6 @@ import {ABAPFile} from "../files";
 import {BasicRuleConfig} from "./_basic_rule_config";
 import {EditHelper} from "../edit";
 
-/** Chekcks that each line contains only a single statement.
- * https://github.com/SAP/styleguides/blob/master/clean-abap/CleanABAP.md#no-more-than-one-statement-per-line
- * https://docs.abapopenchecks.org/checks/11/
- */
 export class MaxOneStatementConf extends BasicRuleConfig {
 }
 
@@ -17,7 +13,15 @@ export class MaxOneStatement extends ABAPRule {
   private conf = new MaxOneStatementConf();
 
   public getMetadata() {
-    return {key: "max_one_statement"};
+    return {
+      key: "max_one_statement",
+      title: "Max one statement per line",
+      quickfix: true,
+      shortDescription: `Checks that each line contains only a single statement.`,
+      extendedInformation:
+`https://github.com/SAP/styleguides/blob/master/clean-abap/CleanABAP.md#no-more-than-one-statement-per-line
+https://docs.abapopenchecks.org/checks/11/`,
+    };
   }
 
   private getMessage(): string {

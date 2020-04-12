@@ -7,10 +7,6 @@ import {IRegistry} from "../_iregistry";
 import {IObject} from "../objects/_iobject";
 import {Class} from "../objects";
 
-/** Detects lines containing only punctuation.
- * https://github.com/SAP/styleguides/blob/master/clean-abap/CleanABAP.md#close-brackets-at-line-end
- * https://docs.abapopenchecks.org/checks/16/
- */
 export class LineOnlyPuncConf extends BasicRuleConfig {
   public ignoreExceptions: boolean = true;
 }
@@ -20,7 +16,14 @@ export class LineOnlyPunc extends ABAPRule {
   private conf = new LineOnlyPuncConf();
 
   public getMetadata() {
-    return {key: "line_only_punc"};
+    return {
+      key: "line_only_punc",
+      title: "Line containing only punctuation",
+      quickfix: false,
+      shortDescription: `Detects lines containing only punctuation.`,
+      extendedInformation: `https://github.com/SAP/styleguides/blob/master/clean-abap/CleanABAP.md#close-brackets-at-line-end
+https://docs.abapopenchecks.org/checks/16/`,
+    };
   }
 
   private getMessage(): string {

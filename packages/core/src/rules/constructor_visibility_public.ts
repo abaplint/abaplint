@@ -6,10 +6,6 @@ import {Class} from "../objects";
 import {Visibility} from "../abap/types";
 import {IRegistry} from "../_iregistry";
 
-/** Constructor must be placed in the public section, even if the class is not CREATE PUBLIC.
- * https://github.com/SAP/styleguides/blob/master/clean-abap/CleanABAP.md#if-your-global-class-is-create-private-leave-the-constructor-public
- * https://help.sap.com/doc/abapdocu_751_index_htm/7.51/en-US/abeninstance_constructor_guidl.htm
- */
 export class ConstructorVisibilityPublicConf extends BasicRuleConfig {
 }
 
@@ -17,7 +13,15 @@ export class ConstructorVisibilityPublic implements IRule {
   private conf = new ConstructorVisibilityPublicConf();
 
   public getMetadata() {
-    return {key: "constructor_visibility_public"};
+    return {
+      key: "constructor_visibility_public",
+      title: "Check constructor visibility is public",
+      quickfix: false,
+      shortDescription: `Constructor must be placed in the public section, even if the class is not CREATE PUBLIC.`,
+      extendedInformation:
+`https://github.com/SAP/styleguides/blob/master/clean-abap/CleanABAP.md#if-your-global-class-is-create-private-leave-the-constructor-public
+https://help.sap.com/doc/abapdocu_751_index_htm/7.51/en-US/abeninstance_constructor_guidl.htm`,
+    };
   }
 
   private getMessage(): string {

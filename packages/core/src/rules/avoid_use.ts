@@ -5,7 +5,6 @@ import {ABAPFile} from "../files";
 import {BasicRuleConfig} from "./_basic_rule_config";
 import {TypeTable} from "../abap/2_statements/expressions";
 
-/** Detects usage of certain statements. */
 export class AvoidUseConf extends BasicRuleConfig {
   /** Detects define (macro definitions)
    * https://help.sap.com/doc/abapdocu_752_index_htm/7.52/en-US/abenmacros_guidl.htm
@@ -34,7 +33,12 @@ export class AvoidUse extends ABAPRule {
   private conf = new AvoidUseConf();
 
   public getMetadata() {
-    return {key: "avoid_use"};
+    return {
+      key: "avoid_use",
+      title: "Avoid use of certain statements",
+      quickfix: false,
+      shortDescription: `Detects usage of certain statements.`,
+    };
   }
 
   private getDescription(statement: string): string {

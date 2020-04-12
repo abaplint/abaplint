@@ -5,7 +5,6 @@ import {ABAPFile} from "../files";
 import {StatementNode} from "../abap/nodes/";
 import {BasicRuleConfig} from "./_basic_rule_config";
 
-/** Detects usages of EXIT or CHECK statements outside of loops. */
 export class ExitOrCheckConf extends BasicRuleConfig {
 }
 
@@ -14,7 +13,12 @@ export class ExitOrCheck extends ABAPRule {
   private conf = new ExitOrCheckConf();
 
   public getMetadata() {
-    return {key: "exit_or_check"};
+    return {
+      key: "exit_or_check",
+      title: "Find EXIT or CHECK outside loops",
+      quickfix: false,
+      shortDescription: `Detects usages of EXIT or CHECK statements outside of loops.`,
+    };
   }
 
   private getMessage(): string {

@@ -5,7 +5,6 @@ import {ABAPFile} from "../files";
 import {BasicRuleConfig} from "./_basic_rule_config";
 import {StructureNode} from "../abap/nodes";
 
-/** Checks that the code does not contain empty blocks. */
 export class EmptyStructureConf extends BasicRuleConfig {
   /** Checks for empty loop blocks */
   public loop: boolean = true;
@@ -29,7 +28,12 @@ export class EmptyStructure extends ABAPRule {
   private conf = new EmptyStructureConf();
 
   public getMetadata() {
-    return {key: "empty_structure"};
+    return {
+      key: "empty_structure",
+      title: "Find empty blocks",
+      quickfix: false,
+      shortDescription: `Checks that the code does not contain empty blocks.`,
+    };
   }
 
   private getDescription(name: string): string {

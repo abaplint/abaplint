@@ -5,9 +5,6 @@ import {ABAPRule} from "./_abap_rule";
 import {ABAPFile} from "../files";
 import {BasicRuleConfig} from "./_basic_rule_config";
 
-/** Checks that definitions are placed at the beginning of methods.
- * https://docs.abapopenchecks.org/checks/17/
- */
 export class DefinitionsTopConf extends BasicRuleConfig {
 }
 
@@ -22,7 +19,13 @@ export class DefinitionsTop extends ABAPRule {
   private conf = new DefinitionsTopConf();
 
   public getMetadata() {
-    return {key: "definitions_top"};
+    return {
+      key: "definitions_top",
+      title: "Place definitions in top of routine",
+      quickfix: false,
+      shortDescription: `Checks that definitions are placed at the beginning of methods.`,
+      extendedInformation: `https://docs.abapopenchecks.org/checks/17/`,
+    };
   }
 
   private getMessage(): string {

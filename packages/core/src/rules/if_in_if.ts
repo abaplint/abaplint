@@ -4,7 +4,6 @@ import {ABAPRule} from "./_abap_rule";
 import {ABAPFile} from "../files";
 import {BasicRuleConfig} from "./_basic_rule_config";
 
-/** Detects nested ifs which can be refactored to a single condition using AND. */
 export class IfInIfConf extends BasicRuleConfig {
 }
 
@@ -13,7 +12,12 @@ export class IfInIf extends ABAPRule {
   private conf = new IfInIfConf();
 
   public getMetadata() {
-    return {key: "if_in_if"};
+    return {
+      key: "if_in_if",
+      title: "IF in IF",
+      quickfix: false,
+      shortDescription: `Detects nested ifs which can be refactored to a single condition using AND.`,
+    };
   }
 
   private getMessage(): string {

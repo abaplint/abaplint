@@ -6,7 +6,6 @@ import {TokenNodeRegex, TokenNode} from "../abap/nodes";
 import {INode} from "../abap/nodes/_inode";
 import {Token} from "../abap/1_lexer/tokens/_token";
 
-/** Forbid use of specified identifiers, list of regex */
 export class ForbiddenIdentifierConf extends BasicRuleConfig {
   public check: string[] = [];
 }
@@ -16,7 +15,12 @@ export class ForbiddenIdentifier extends ABAPRule {
   private conf = new ForbiddenIdentifierConf();
 
   public getMetadata() {
-    return {key: "forbidden_identifier"};
+    return {
+      key: "forbidden_identifier",
+      title: "Forbidden Identifier",
+      quickfix: false,
+      shortDescription: `Forbid use of specified identifiers, list of regex`,
+    };
   }
 
   public getConfig() {

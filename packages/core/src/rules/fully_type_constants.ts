@@ -6,7 +6,6 @@ import * as Statements from "../abap/2_statements/statements";
 import {StatementNode} from "../abap/nodes/statement_node";
 import {Type, TypeTable, NamespaceSimpleName} from "../abap/2_statements/expressions";
 
-/** Checks constants for full typing - no implicit typing allowed. */
 export class FullyTypeConsantsConf extends BasicRuleConfig {
   /** Add check for implicit data definition, require full typing. */
   public checkData: boolean = true;
@@ -16,7 +15,12 @@ export class FullyTypeConstants extends ABAPRule {
   private conf = new FullyTypeConsantsConf();
 
   public getMetadata() {
-    return {key: "fully_type_constants"};
+    return {
+      key: "fully_type_constants",
+      title: "Fully type constants",
+      quickfix: false,
+      shortDescription: `Checks constants for full typing - no implicit typing allowed.`,
+    };
   }
 
   public getDescription(type: string): string {

@@ -12,12 +12,12 @@ export interface IRuleMetadata {
   title?: string;
   /** Does the rule implement quickfixes? */
   quickfix?: boolean;
+  /** Short description in markdown, can be shown in editors */
+  shortDescription?: string;
   /** ABAP code with bad example, shown on rules.abaplint.org */
   badExample?: string;
   /** ABAP code with good example, shown on rules.abaplint.org */
   goodExample?: string;
-  /** Short description in markdown, can be shown in editors */
-  shortDescription?: string;
   /** Extended information, markdown, only shown on rules.abaplint.org */
   extendedInformation?: string;
 }

@@ -5,7 +5,6 @@ import {IRegistry} from "../_iregistry";
 import {BasicRuleConfig} from "./_basic_rule_config";
 import {ABAPObject} from "../objects/_abap_object";
 
-/** Detects identically named FORMs */
 export class IdenticalFormNamesConf extends BasicRuleConfig {
 }
 
@@ -14,7 +13,12 @@ export class IdenticalFormNames implements IRule {
   private conf = new IdenticalFormNamesConf();
 
   public getMetadata() {
-    return {key: "identical_form_names"};
+    return {
+      key: "identical_form_names",
+      title: "Identical FORM names",
+      quickfix: false,
+      shortDescription: `Detects identically named FORMs`,
+    };
   }
 
   public getConfig() {

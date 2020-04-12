@@ -6,7 +6,6 @@ import {BasicRuleConfig} from "./_basic_rule_config";
 import {StatementNode} from "../abap/nodes";
 import {Comment} from "../abap/2_statements/statements/_statement";
 
-/** Checks NO_HANDLER pragmas that can be removed */
 export class CheckNoHandlerPragmaConf extends BasicRuleConfig {
 }
 
@@ -14,7 +13,12 @@ export class CheckNoHandlerPragma extends ABAPRule {
   private conf = new CheckNoHandlerPragmaConf();
 
   public getMetadata() {
-    return {key: "check_no_handler_pragma"};
+    return {
+      key: "check_no_handler_pragma",
+      title: "Check if NO_HANDLER can be removed",
+      quickfix: false,
+      shortDescription: `Checks NO_HANDLER pragmas that can be removed`,
+    };
   }
 
   private getMessage(): string {

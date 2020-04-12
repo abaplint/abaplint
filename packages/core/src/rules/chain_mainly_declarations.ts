@@ -4,9 +4,6 @@ import {ABAPFile} from "../files";
 import {BasicRuleConfig} from "./_basic_rule_config";
 import * as Statements from "../abap/2_statements/statements";
 
-/** Chain mainly declarations
- * https://docs.abapopenchecks.org/checks/23/
- */
 export class ChainMainlyDeclarationsConf extends BasicRuleConfig {
 }
 
@@ -15,7 +12,13 @@ export class ChainMainlyDeclarations extends ABAPRule {
   private conf = new ChainMainlyDeclarationsConf();
 
   public getMetadata() {
-    return {key: "chain_mainly_declarations"};
+    return {
+      key: "chain_mainly_declarations",
+      title: "Chain mainly declarations",
+      quickfix: false,
+      shortDescription: `Chain mainly declarations`,
+      extendedInformation: `https://docs.abapopenchecks.org/checks/23/`,
+    };
   }
 
   public getConfig() {

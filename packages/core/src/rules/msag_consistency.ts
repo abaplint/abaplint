@@ -6,7 +6,6 @@ import {IRule} from "./_irule";
 import {IObject} from "../objects/_iobject";
 import {Position} from "../position";
 
-/** Checks the validity of messages in message classes */
 export class MSAGConsistencyConf extends BasicRuleConfig {
 }
 
@@ -14,7 +13,12 @@ export class MSAGConsistency implements IRule {
   private conf = new MSAGConsistencyConf();
 
   public getMetadata() {
-    return {key: "msag_consistency"};
+    return {
+      key: "msag_consistency",
+      title: "MSAG consistency check",
+      quickfix: false,
+      shortDescription: `Checks the validity of messages in message classes`,
+    };
   }
 
   private getDescription(reason: string): string {

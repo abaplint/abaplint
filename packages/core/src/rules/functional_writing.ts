@@ -8,10 +8,6 @@ import {IObject} from "../objects/_iobject";
 import {Class} from "../objects";
 import {IClassDefinition} from "../abap/types/_class_definition";
 
-/** Detects usage of call method when functional style calls can be used.
- * https://github.com/SAP/styleguides/blob/master/clean-abap/CleanABAP.md#prefer-functional-to-procedural-calls
- * https://docs.abapopenchecks.org/checks/07/
- */
 export class FunctionalWritingConf extends BasicRuleConfig {
   public ignoreExceptions: boolean = true;
 }
@@ -21,7 +17,14 @@ export class FunctionalWriting extends ABAPRule {
   private conf = new FunctionalWritingConf();
 
   public getMetadata() {
-    return {key: "functional_writing"};
+    return {
+      key: "functional_writing",
+      title: "Use functional writing",
+      quickfix: false,
+      shortDescription: `Detects usage of call method when functional style calls can be used.`,
+      extendedInformation: `https://github.com/SAP/styleguides/blob/master/clean-abap/CleanABAP.md#prefer-functional-to-procedural-calls
+https://docs.abapopenchecks.org/checks/07/`,
+    };
   }
 
   private getMessage(): string {

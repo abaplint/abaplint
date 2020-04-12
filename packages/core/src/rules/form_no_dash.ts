@@ -6,7 +6,6 @@ import * as Statements from "../abap/2_statements/statements";
 import {Dash, DashW} from "../abap/1_lexer/tokens";
 import {FormName} from "../abap/2_statements/expressions";
 
-/** Checks for a Dash in form names. */
 export class FormNoDashConf extends BasicRuleConfig {
 }
 
@@ -16,7 +15,12 @@ export class FormNoDash extends ABAPRule {
   private conf = new FormNoDashConf();
 
   public getMetadata() {
-    return {key: "form_no_dash"};
+    return {
+      key: "form_no_dash",
+      title: "No dashes in FORM names",
+      quickfix: false,
+      shortDescription: `Checks for a Dash in form names`,
+    };
   }
 
   private getMessage(): string {

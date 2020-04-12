@@ -7,7 +7,6 @@ import {IRegistry} from "../_iregistry";
 import * as Expressions from "../abap/2_statements/expressions";
 import {ABAPObject} from "../objects/_abap_object";
 
-/** Checks for TABLES parameters in forms. */
 export class FormTablesObsoleteConf extends BasicRuleConfig {
 }
 
@@ -16,7 +15,12 @@ export class FormTablesObsolete extends ABAPRule {
   private conf = new FormTablesObsoleteConf();
 
   public getMetadata() {
-    return {key: "form_tables_obsolete"};
+    return {
+      key: "form_tables_obsolete",
+      title: "TABLES parameters are obsolete",
+      quickfix: false,
+      shortDescription: `Checks for TABLES parameters in forms.`,
+    };
   }
 
   private getMessage(): string {
