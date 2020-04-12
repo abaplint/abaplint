@@ -8,7 +8,7 @@
 const Railroad = require("railroad-diagrams");
 const fs = require("fs");
 
-const folder = "./syntax/";
+const folder = "./build/";
 
 function generateSVG(input) {
   const css = "<defs>\n" +

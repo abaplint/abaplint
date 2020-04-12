@@ -2,8 +2,8 @@
 /* eslint-disable @typescript-eslint/no-var-requires */
 /* eslint-disable @typescript-eslint/explicit-member-accessibility */
 const fs = require("fs");
-const Combi = require("../packages/core/build/src//abap/2_statements/combi");
-const Artifacts = require("../packages/core/build/src/abap/artifacts").Artifacts;
+const Combi = require("../../packages/core/build/src/abap/2_statements/combi");
+const Artifacts = require("../../packages/core/build/src/abap/artifacts").Artifacts;
 
 function sort(data) {
   const unique = data.filter((v, i, a) => { return a.indexOf(v) === i; });
@@ -60,7 +60,7 @@ class Graph {
   }
 
   static writeFile(data) {
-    fs.writeFileSync("./syntax/generated.json", JSON.stringify(data, undefined, 2), "utf8");
+    fs.writeFileSync("./build/generated.json", JSON.stringify(data, undefined, 2), "utf8");
   }
 
 }

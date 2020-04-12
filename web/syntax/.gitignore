@@ -2,3 +2,4 @@
 **/*.txt
 **/*.svg
 data.json.js
+build

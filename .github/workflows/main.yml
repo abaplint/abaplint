@@ -48,7 +48,7 @@ jobs:
         git config --global user.name "Actions CI"
         git clone https://github.com/abaplint/syntax.abaplint.org.git
         ls
-        cp abaplint/abaplint/web/syntax/* syntax.abaplint.org/
+        cp abaplint/abaplint/web/syntax/build/* syntax.abaplint.org/
         cd syntax.abaplint.org
         git add -A
         git status
