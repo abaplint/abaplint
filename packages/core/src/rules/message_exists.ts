@@ -13,8 +13,8 @@ export class MessageExistsConf extends BasicRuleConfig {
 export class MessageExistsRule extends ABAPRule {
   private conf = new MessageExistsConf();
 
-  public getKey(): string {
-    return "message_exists";
+  public getMetadata() {
+    return {key: "message_exists"};
   }
 
   private getDescription(reason: string): string {
@@ -41,7 +41,7 @@ export class MessageExistsRule extends ABAPRule {
       const token = node.getFirstToken();
       if (reg.getObject("MSAG", token.getStr()) === undefined) {
         const message = this.getDescription("Message class \"" + token.getStr() + "\" not found");
-        const issue = Issue.atToken(file, token, message, this.getKey());
+        const issue = Issue.atToken(file, token, message, this.getMetadata().key);
         issues.push(issue);
       }
     }
@@ -65,7 +65,7 @@ export class MessageExistsRule extends ABAPRule {
       const num = numberToken.getStr().substr(1);
       if (msag.getByNumber(num) === undefined) {
         const message = this.getDescription("Message number \"" + num + "\" not found in class \"" + name + "\"");
-        const issue = Issue.atToken(file, numberToken, message, this.getKey());
+        const issue = Issue.atToken(file, numberToken, message, this.getMetadata().key);
         issues.push(issue);
       }
     }

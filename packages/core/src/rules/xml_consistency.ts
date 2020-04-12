@@ -13,8 +13,8 @@ export class XMLConsistency implements IRule {
 
   private conf = new XMLConsistencyConf();
 
-  public getKey(): string {
-    return "xml_consistency";
+  public getMetadata() {
+    return {key: "xml_consistency"};
   }
 
   public getConfig() {
@@ -38,9 +38,9 @@ export class XMLConsistency implements IRule {
     if (obj instanceof Objects.Class) {
       const name = obj.getNameFromXML();
       if (name === undefined) {
-        issues.push(Issue.atRow(file, 1, "Name undefined in XML", this.getKey()));
+        issues.push(Issue.atRow(file, 1, "Name undefined in XML", this.getMetadata().key));
       } else if (name !== obj.getName().toUpperCase()) {
-        issues.push(Issue.atRow(file, 1, "Name in XML does not match object", this.getKey()));
+        issues.push(Issue.atRow(file, 1, "Name in XML does not match object", this.getMetadata().key));
       }
     }
     // todo, add more object types here

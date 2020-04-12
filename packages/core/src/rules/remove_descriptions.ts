@@ -18,8 +18,8 @@ export class RemoveDescriptions implements IRule {
 
   private conf = new RemoveDescriptionsConf();
 
-  public getKey(): string {
-    return "remove_descriptions";
+  public getMetadata() {
+    return {key: "remove_descriptions"};
   }
 
   private getDescription(name: string): string {
@@ -96,7 +96,7 @@ export class RemoveDescriptions implements IRule {
     for (const d of xmlToArray(desc.SEOCOMPOTX)) {
       const message = this.getDescription(d.CMPNAME._text);
       const position = new Position(1, 1);
-      const issue = Issue.atPosition(file, position, message, this.getKey());
+      const issue = Issue.atPosition(file, position, message, this.getMetadata().key);
       ret.push(issue);
     }
     return ret;

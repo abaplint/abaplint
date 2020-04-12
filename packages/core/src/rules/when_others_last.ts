@@ -13,8 +13,8 @@ export class WhenOthersLast extends ABAPRule {
 
   private conf = new WhenOthersLastConf();
 
-  public getKey(): string {
-    return "when_others_last";
+  public getMetadata() {
+    return {key: "when_others_last"};
   }
 
   private getMessage(): string {
@@ -37,7 +37,7 @@ export class WhenOthersLast extends ABAPRule {
         for (const when of whens) {
           if (when.concatTokens() === "WHEN OTHERS.") {
             const start = when.getFirstToken().getStart();
-            const issue = Issue.atPosition(file, start, this.getMessage(), this.getKey());
+            const issue = Issue.atPosition(file, start, this.getMessage(), this.getMetadata().key);
             issues.push(issue);
           }
         }

@@ -15,8 +15,8 @@ export class CloudTypes implements IRule {
 
   private conf = new CloudTypesConf();
 
-  public getKey(): string {
-    return "cloud_types";
+  public getMetadata() {
+    return {key: "cloud_types"};
   }
 
   private getDescription(objectType: string): string {
@@ -50,7 +50,7 @@ export class CloudTypes implements IRule {
     }
 
     const position = new Position(1, 1);
-    const issue = Issue.atPosition(obj.getFiles()[0], position, this.getDescription(obj.getType()), this.getKey());
+    const issue = Issue.atPosition(obj.getFiles()[0], position, this.getDescription(obj.getType()), this.getMetadata().key);
     return [issue];
   }
 

@@ -19,8 +19,8 @@ export class SpaceBeforeDot extends ABAPRule {
 
   private conf = new SpaceBeforeDotConf();
 
-  public getKey(): string {
-    return "space_before_dot";
+  public getMetadata() {
+    return {key: "space_before_dot"};
   }
 
   private getMessage(): string {
@@ -72,7 +72,7 @@ export class SpaceBeforeDot extends ABAPRule {
       if (prev !== undefined && t instanceof Punctuation && prev.getCol() + prev.getStr().length < t.getCol()) {
         const issue = Issue.atRowRange(file, t.getStart().getRow(),
                                        prev.getEnd().getCol(), t.getStart().getCol(),
-                                       this.getMessage(), this.getKey());
+                                       this.getMessage(), this.getMetadata().key);
         issues.push(issue);
       }
       prev = t;

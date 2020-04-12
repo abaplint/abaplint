@@ -13,8 +13,8 @@ export class CheckSyntax {
 
   private conf = new CheckSyntaxConf();
 
-  public getKey(): string {
-    return "check_syntax";
+  public getMetadata() {
+    return {key: "check_syntax"};
   }
 
   public getConfig() {

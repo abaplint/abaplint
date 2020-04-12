@@ -25,8 +25,8 @@ export class NewlineBetweenMethodsConf extends BasicRuleConfig {
 export class NewlineBetweenMethods extends ABAPRule {
   private conf = new NewlineBetweenMethodsConf();
 
-  public getKey(): string {
-    return "newline_between_methods";
+  public getMetadata() {
+    return {key: "newline_between_methods"};
   }
 
   private getMessage(): string {
@@ -68,7 +68,7 @@ export class NewlineBetweenMethods extends ABAPRule {
           file,
           statement,
           this.getMessage(),
-          this.getKey()));
+          this.getMetadata().key));
       }
     }
     return issues;

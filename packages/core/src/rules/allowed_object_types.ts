@@ -13,8 +13,8 @@ export class AllowedObjectTypes implements IRule {
 
   private conf = new AllowedObjectTypesConf();
 
-  public getKey(): string {
-    return "allowed_object_types";
+  public getMetadata() {
+    return {key: "allowed_object_types"};
   }
 
   private getDescription(objectType: string): string {
@@ -38,7 +38,7 @@ export class AllowedObjectTypes implements IRule {
     const objectType = obj.getType();
     if (allowed.indexOf(objectType) < 0) {
       const position = new Position(1, 1);
-      const issue = Issue.atPosition(obj.getFiles()[0], position, this.getDescription(objectType), this.getKey());
+      const issue = Issue.atPosition(obj.getFiles()[0], position, this.getDescription(objectType), this.getMetadata().key);
       return [issue];
     }
 

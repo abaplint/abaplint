@@ -1,4 +1,4 @@
-import {IRule} from "./_irule";
+import {IRule, IRuleMetadata} from "./_irule";
 import {IObject} from "../objects/_iobject";
 import {ABAPObject} from "../objects/_abap_object";
 import {Issue} from "../issue";
@@ -6,7 +6,7 @@ import {ABAPFile} from "../files";
 import {IRegistry} from "../_iregistry";
 
 export abstract class ABAPRule implements IRule {
-  public abstract getKey(): string;
+  public abstract getMetadata(): IRuleMetadata;
   public abstract getConfig(): void;
   public abstract setConfig(conf: any): void;
 

@@ -25,8 +25,8 @@ export class MethodLength implements IRule {
 
   private conf = new MethodLengthConf();
 
-  public getKey(): string {
-    return "method_length";
+  public getMetadata() {
+    return {key: "method_length"};
   }
 
   private getDescription(issueType: IssueType, actual: string): string {
@@ -60,12 +60,13 @@ export class MethodLength implements IRule {
         continue;
       }
       if (s.count === 0 && this.conf.errorWhenEmpty === true) {
-        const issue = Issue.atPosition(s.file, s.pos, this.getDescription(IssueType.EmptyMethod, "0"), this.getKey());
+        const issue = Issue.atPosition(s.file, s.pos, this.getDescription(IssueType.EmptyMethod, "0"), this.getMetadata().key);
         issues.push(issue);
         continue;
       }
       if (s.count > this.conf.statements) {
-        const issue = Issue.atPosition(s.file, s.pos, this.getDescription(IssueType.MaxStatements, s.count.toString()), this.getKey());
+        const message = this.getDescription(IssueType.MaxStatements, s.count.toString());
+        const issue = Issue.atPosition(s.file, s.pos, message, this.getMetadata().key);
         issues.push(issue);
       }
     }

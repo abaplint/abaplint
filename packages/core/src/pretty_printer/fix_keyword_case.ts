@@ -12,7 +12,7 @@ export class FixCase {
 
   public constructor(fileContents: string, config: IConfiguration) {
     this.keywordCase = new KeywordCase();
-    this.keywordCase.setConfig(config.readByRule(this.keywordCase.getKey()));
+    this.keywordCase.setConfig(config.readByRule(this.keywordCase.getMetadata().key));
     this.fileContents = fileContents;
     this.config = config;
   }
@@ -47,7 +47,7 @@ export class FixCase {
   }
 
   private formatKeyword(keyword: string): string {
-    const ruleKey = this.keywordCase.getKey();
+    const ruleKey = this.keywordCase.getMetadata().key;
     const rule = this.config.readByRule(ruleKey);
     const style: KeywordCaseStyle = rule ? rule["style"] : KeywordCaseStyle.Upper;
     return style === KeywordCaseStyle.Lower ? keyword.toLowerCase() : keyword.toUpperCase();

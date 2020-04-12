@@ -15,8 +15,8 @@ export class UnknownTypes {
 
   private conf = new UnknownTypesConf();
 
-  public getKey(): string {
-    return "unknown_types";
+  public getMetadata() {
+    return {key: "unknown_types"};
   }
 
   public getConfig() {
@@ -43,7 +43,7 @@ export class UnknownTypes {
     for (const v of node.getData().vars) {
       const type = v.identifier.getType();
       if (type instanceof UnknownType) {
-        ret.push(Issue.atIdentifier(v.identifier, type.toText(), this.getKey()));
+        ret.push(Issue.atIdentifier(v.identifier, type.toText(), this.getMetadata().key));
       }
     }
 

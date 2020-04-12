@@ -12,8 +12,8 @@ export class IfInIf extends ABAPRule {
 
   private conf = new IfInIfConf();
 
-  public getKey(): string {
-    return "if_in_if";
+  public getMetadata() {
+    return {key: "if_in_if"};
   }
 
   private getMessage(): string {
@@ -68,7 +68,7 @@ export class IfInIf extends ABAPRule {
       }
 
       const token = i.getFirstToken();
-      const issue = Issue.atToken(file, token, this.getMessage(), this.getKey());
+      const issue = Issue.atToken(file, token, this.getMessage(), this.getMetadata().key);
       issues.push(issue);
     }
 

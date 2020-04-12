@@ -53,6 +53,6 @@ export class RemoveSequentialBlanks {
   }
 
   private getSequentialBlankConfig(): SequentialBlankConf | undefined {
-    return this.config.readByRule(new SequentialBlank().getKey());
+    return this.config.readByRule(new SequentialBlank().getMetadata().key);
   }
 }

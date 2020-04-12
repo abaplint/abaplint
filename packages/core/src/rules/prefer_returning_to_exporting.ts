@@ -16,8 +16,8 @@ export class PreferReturningToExporting extends ABAPRule {
 
   private conf = new PreferReturningToExportingConf();
 
-  public getKey(): string {
-    return "prefer_returning_to_exporting";
+  public getMetadata() {
+    return {key: "prefer_returning_to_exporting"};
   }
 
   public getConfig() {
@@ -61,7 +61,7 @@ export class PreferReturningToExporting extends ABAPRule {
       }
 
       const token = params[0].getFirstToken();
-      const issue = Issue.atToken(file, token, "Prefer RETURNING to EXPORTING", this.getKey());
+      const issue = Issue.atToken(file, token, "Prefer RETURNING to EXPORTING", this.getMetadata().key);
       ret.push(issue);
     }
 

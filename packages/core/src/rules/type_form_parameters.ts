@@ -15,8 +15,8 @@ export class TypeFormParameters extends ABAPRule {
 
   private conf = new TypeFormParametersConf();
 
-  public getKey(): string {
-    return "type_form_parameters";
+  public getMetadata() {
+    return {key: "type_form_parameters"};
   }
 
   private getDescription(parameterName: string): string {
@@ -42,7 +42,7 @@ export class TypeFormParameters extends ABAPRule {
     for (const formparam of stru.findAllExpressions(Expressions.FormParam)) {
       if (formparam.findFirstExpression(Expressions.FormParamType) === undefined) {
         const token = formparam.getFirstToken();
-        const issue = Issue.atToken(file, token, this.getDescription(token.getStr()), this.getKey());
+        const issue = Issue.atToken(file, token, this.getDescription(token.getStr()), this.getMetadata().key);
         ret.push(issue);
       }
     }

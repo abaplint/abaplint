@@ -15,8 +15,8 @@ export class FormTablesObsolete extends ABAPRule {
 
   private conf = new FormTablesObsoleteConf();
 
-  public getKey(): string {
-    return "form_tables_obsolete";
+  public getMetadata() {
+    return {key: "form_tables_obsolete"};
   }
 
   private getMessage(): string {
@@ -41,7 +41,7 @@ export class FormTablesObsolete extends ABAPRule {
 
     for (const form of stru.findAllExpressions(Expressions.FormTables)) {
       const token = form.getFirstToken();
-      const issue = Issue.atToken(file, token, this.getMessage(), this.getKey());
+      const issue = Issue.atToken(file, token, this.getMessage(), this.getMetadata().key);
       ret.push(issue);
     }
 

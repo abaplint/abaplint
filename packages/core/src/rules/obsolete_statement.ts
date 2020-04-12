@@ -27,8 +27,8 @@ export class ObsoleteStatement extends ABAPRule {
 
   private conf = new ObsoleteStatementConf();
 
-  public getKey(): string {
-    return "obsolete_statement";
+  public getMetadata() {
+    return {key: "obsolete_statement"};
   }
 
   private getMessage(): string {
@@ -61,14 +61,14 @@ export class ObsoleteStatement extends ABAPRule {
           && sta.getTokens()[1].getStr() !== "EXACT")
           || (sta.get() instanceof Statements.Divide && this.conf.divide)) {
         if (prev === undefined || sta.getStart().getCol() !== prev.getCol() || sta.getStart().getRow() !== prev.getRow()) {
-          const issue = Issue.atStatement(file, sta, this.getMessage(), this.getKey());
+          const issue = Issue.atStatement(file, sta, this.getMessage(), this.getMetadata().key);
           issues.push(issue);
         }
         prev = sta.getStart();
       }
 
       if (this.conf.setExtended && sta.get() instanceof Statements.SetExtendedCheck) {
-        const issue = Issue.atStatement(file, sta, "SET EXTENDED CHECK is obsolete", this.getKey());
+        const issue = Issue.atStatement(file, sta, "SET EXTENDED CHECK is obsolete", this.getMetadata().key);
         issues.push(issue);
       }
 
@@ -76,7 +76,7 @@ export class ObsoleteStatement extends ABAPRule {
         for (const compare of sta.findAllExpressions(Compare)) {
           const token = compare.findDirectTokenByText("REQUESTED");
           if (token) {
-            const issue = Issue.atToken(file, token, "IS REQUESTED is obsolete", this.getKey());
+            const issue = Issue.atToken(file, token, "IS REQUESTED is obsolete", this.getMetadata().key);
             issues.push(issue);
           }
         }
@@ -86,7 +86,7 @@ export class ObsoleteStatement extends ABAPRule {
           || (sta.get() instanceof Statements.Ranges)) {
           const token = sta.findDirectTokenByText("OCCURS");
           if (token) {
-            const issue = Issue.atToken(file, token, "OCCURS is obsolete", this.getKey());
+            const issue = Issue.atToken(file, token, "OCCURS is obsolete", this.getMetadata().key);
             issues.push(issue);
           }
         }
@@ -94,7 +94,7 @@ export class ObsoleteStatement extends ABAPRule {
         for (const dataDef of sta.findAllExpressions(DataDefinition)) {
           const token = dataDef.findDirectTokenByText("OCCURS");
           if (token) {
-            const issue = Issue.atToken(file, token, "OCCURS is obsolete", this.getKey());
+            const issue = Issue.atToken(file, token, "OCCURS is obsolete", this.getMetadata().key);
             issues.push(issue);
           }
         }

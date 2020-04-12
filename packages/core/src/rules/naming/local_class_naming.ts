@@ -18,8 +18,8 @@ export class LocalClassNaming extends ABAPRule {
 
   private conf = new LocalClassNamingConf();
 
-  public getKey(): string {
-    return "local_class_naming";
+  public getMetadata() {
+    return {key: "local_class_naming"};
   }
 
   private getDescription(expected: string, actual: string): string {
@@ -67,7 +67,7 @@ export class LocalClassNaming extends ABAPRule {
           Issue.atIdentifier(
             classDef,
             this.getDescription(expected, className),
-            this.getKey()));
+            this.getMetadata().key));
       }
     }
     return issues;

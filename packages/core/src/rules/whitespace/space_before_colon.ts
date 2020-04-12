@@ -13,8 +13,8 @@ export class SpaceBeforeColon extends ABAPRule {
 
   private conf = new SpaceBeforeColonConf();
 
-  public getKey(): string {
-    return "space_before_colon";
+  public getMetadata() {
+    return {key: "space_before_colon"};
   }
 
   private getMessage(): string {
@@ -36,15 +36,15 @@ export class SpaceBeforeColon extends ABAPRule {
 
     for (const token of file.getTokens()) {
       if (token.getStr() === ":" && !prev) {
-        const issue = Issue.atToken(file, token, this.getMessage(), this.getKey());
+        const issue = Issue.atToken(file, token, this.getMessage(), this.getMetadata().key);
         issues.push(issue);
       } else if (token.getStr() === ":"
           && prev.getRow() === token.getRow()
           && prev.getCol() + prev.getStr().length < token.getCol()) {
         const issue = Issue.atRowRange(file, token.getRow(),
                                        prev.getEnd().getCol(), token.getStart().getCol(),
-                                       this.getMessage(), this.getKey());
-//        const issue = Issue.atToken(file, token, this.getMessage(), this.getKey());
+                                       this.getMessage(), this.getMetadata().key);
+//        const issue = Issue.atToken(file, token, this.getMessage(), this.getMetadata().key);
         issues.push(issue);
       }
       prev = token;

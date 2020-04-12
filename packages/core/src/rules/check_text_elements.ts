@@ -15,8 +15,8 @@ export class CheckTextElements implements IRule {
 
   private conf = new CheckTextElementsConf();
 
-  public getKey(): string {
-    return "check_text_elements";
+  public getMetadata() {
+    return {key: "check_text_elements"};
   }
 
   public getConfig() {
@@ -53,7 +53,7 @@ export class CheckTextElements implements IRule {
         const token = e.findFirstExpression(Expressions.TextElementKey)!.getFirstToken();
         const key = token.getStr();
         if (this.findKey(key, texts) === undefined) {
-          output.push(Issue.atToken(file, token, "Text element not found", this.getKey()));
+          output.push(Issue.atToken(file, token, "Text element not found", this.getMetadata().key));
         }
       }
 
@@ -66,10 +66,10 @@ export class CheckTextElements implements IRule {
           found = found.replace(/'/g, "''");
         }
         if (found === undefined) {
-          output.push(Issue.atToken(file, token, "Text element not found", this.getKey()));
+          output.push(Issue.atToken(file, token, "Text element not found", this.getMetadata().key));
         } else if (code !== "'" + found + "'"
             && code !== "`" + found + "`") {
-          output.push(Issue.atToken(file, token, "Text does not match text element", this.getKey()));
+          output.push(Issue.atToken(file, token, "Text does not match text element", this.getMetadata().key));
         }
       }
     }

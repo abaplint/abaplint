@@ -10,7 +10,7 @@ export class ArtifactsRules {
       if (typeof list[key] === "function") {
         const rule: IRule = new list[key]();
 // note that configuration is also exported from rules
-        if (rule.getKey !== undefined) {
+        if (rule.getMetadata !== undefined) {
           ret.push(rule);
         }
       }

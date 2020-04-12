@@ -28,8 +28,8 @@ export class EmptyStructure extends ABAPRule {
 
   private conf = new EmptyStructureConf();
 
-  public getKey(): string {
-    return "empty_structure";
+  public getMetadata() {
+    return {key: "empty_structure"};
   }
 
   private getDescription(name: string): string {
@@ -78,7 +78,7 @@ export class EmptyStructure extends ABAPRule {
     for (const l of candidates) {
       if (l.getChildren().length === 2) {
         const token = l.getFirstToken();
-        const issue = Issue.atToken(file, token, this.getDescription(l.get().constructor.name), this.getKey());
+        const issue = Issue.atToken(file, token, this.getDescription(l.get().constructor.name), this.getMetadata().key);
         issues.push(issue);
       }
     }

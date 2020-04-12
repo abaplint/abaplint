@@ -13,8 +13,8 @@ export class InlineDataOldVersionsConf extends BasicRuleConfig {
 export class InlineDataOldVersions extends ABAPRule {
   private conf = new InlineDataOldVersionsConf();
 
-  public getKey(): string {
-    return "inline_data_old_versions";
+  public getMetadata() {
+    return {key: "inline_data_old_versions"};
   }
 
   public getConfig() {
@@ -50,7 +50,7 @@ export class InlineDataOldVersions extends ABAPRule {
         }
 
         const message = "Inline DATA not possible in " + reg.getConfig().getVersion();
-        const issue = Issue.atToken(file, tokens[0], message, this.getKey());
+        const issue = Issue.atToken(file, tokens[0], message, this.getMetadata().key);
         issues.push(issue);
       }
     }

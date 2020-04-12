@@ -217,7 +217,7 @@ export class Registry implements IRegistry {
 // exclude issues, as now we know both the filename and issue key
 // todo, add unit tests for this feature
     for (const rule of ArtifactsRules.getRules()) {
-      const key = rule.getKey();
+      const key = rule.getMetadata().key;
       const exclude = this.conf.readByKey(key, "exclude");
       if (exclude === undefined || exclude.length === 0) {
         continue;

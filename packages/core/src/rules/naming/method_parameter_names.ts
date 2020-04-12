@@ -26,8 +26,8 @@ export class MethodParameterNames implements IRule {
 
   private conf = new MethodParameterNamesConf();
 
-  public getKey(): string {
-    return "method_parameter_names";
+  public getMetadata() {
+    return {key: "method_parameter_names"};
   }
 
   private getDescription(expected: string, actual: string): string {
@@ -107,7 +107,7 @@ export class MethodParameterNames implements IRule {
     const name = param.getName();
     if (NameValidator.violatesRule(name, regex, this.conf)) {
       const message = this.getDescription(expected, name);
-      const issue = Issue.atIdentifier(param, message, this.getKey());
+      const issue = Issue.atIdentifier(param, message, this.getMetadata().key);
       ret.push(issue);
     }
 

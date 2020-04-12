@@ -13,8 +13,8 @@ export class SICFConsistencyConf extends BasicRuleConfig {
 export class SICFConsistency implements IRule {
   private conf = new SICFConsistencyConf();
 
-  public getKey(): string {
-    return "sicf_consistency";
+  public getMetadata() {
+    return {key: "sicf_consistency"};
   }
 
   public getConfig() {
@@ -43,7 +43,7 @@ export class SICFConsistency implements IRule {
         const pattern = new RegExp(reg.getConfig().getSyntaxSetttings().errorNamespace, "i");
         if (pattern.test(h) === true) {
           const message = "Handler class " + h + " not found";
-          const issue = Issue.atPosition(obj.getFiles()[0], new Position(1, 1), message, this.getKey());
+          const issue = Issue.atPosition(obj.getFiles()[0], new Position(1, 1), message, this.getMetadata().key);
           issues.push(issue);
         }
         continue;
@@ -52,7 +52,7 @@ export class SICFConsistency implements IRule {
       const def = clas.getClassDefinition();
       if (def === undefined) {
         const message = "Syntax error in class " + h;
-        const issue = Issue.atPosition(obj.getFiles()[0], new Position(1, 1), message, this.getKey());
+        const issue = Issue.atPosition(obj.getFiles()[0], new Position(1, 1), message, this.getMetadata().key);
         issues.push(issue);
         continue;
       }
@@ -60,7 +60,7 @@ export class SICFConsistency implements IRule {
       const implementing = def.getImplementing();
       if (implementing.findIndex((i) => { return i.name === "IF_HTTP_EXTENSION"; }) < 0) {
         const message = "Handler class " + h + " must implement IF_HTTP_EXTENSION";
-        const issue = Issue.atPosition(obj.getFiles()[0], new Position(1, 1), message, this.getKey());
+        const issue = Issue.atPosition(obj.getFiles()[0], new Position(1, 1), message, this.getMetadata().key);
         issues.push(issue);
         continue;
       }

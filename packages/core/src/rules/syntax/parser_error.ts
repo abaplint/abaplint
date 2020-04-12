@@ -17,8 +17,8 @@ export class ParserError extends ABAPRule {
 
   private conf = new ParserErrorConf();
 
-  public getKey(): string {
-    return "parser_error";
+  public getMetadata() {
+    return {key: "parser_error"};
   }
 
   public getConfig() {
@@ -42,16 +42,16 @@ export class ParserError extends ABAPRule {
         if (missing) {
           const message = "Missing space between string or character literal and parentheses, Parser error";
           start = missing;
-          const issue = Issue.atPosition(file, start, message, this.getKey());
+          const issue = Issue.atPosition(file, start, message, this.getMetadata().key);
           issues.push(issue);
         } else if (statement.getTokens().length > STATEMENT_MAX_TOKENS) {
           const message = "Statement too long, refactor statement";
-          const issue = Issue.atToken(file, statement.getTokens()[0], message, this.getKey());
+          const issue = Issue.atToken(file, statement.getTokens()[0], message, this.getMetadata().key);
           issues.push(issue);
         } else {
           const tok = statement.getFirstToken();
           const message = "Statement does not exist in ABAP" + reg.getConfig().getVersion() + "(or a parser error), \"" + tok.getStr() + "\"";
-          const issue = Issue.atStatement(file, statement, message, this.getKey());
+          const issue = Issue.atStatement(file, statement, message, this.getMetadata().key);
           issues.push(issue);
         }
 

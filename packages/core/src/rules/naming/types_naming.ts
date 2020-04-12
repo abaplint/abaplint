@@ -16,8 +16,8 @@ export class TypesNaming extends ABAPRule {
 
   private conf = new TypesNamingConf();
 
-  public getKey(): string {
-    return "types_naming";
+  public getMetadata() {
+    return {key: "types_naming"};
   }
 
   public getConfig(): TypesNamingConf {
@@ -60,7 +60,7 @@ export class TypesNaming extends ABAPRule {
         continue;
       } else {
         const message = "Bad TYPES naming, expected \"" + this.conf.pattern + "\", got \"" + token.getStr() + "\"";
-        const issue = Issue.atToken(file, token, message, this.getKey());
+        const issue = Issue.atToken(file, token, message, this.getMetadata().key);
         issues.push(issue);
       }
 

@@ -16,8 +16,8 @@ export class ConstructorVisibilityPublicConf extends BasicRuleConfig {
 export class ConstructorVisibilityPublic implements IRule {
   private conf = new ConstructorVisibilityPublicConf();
 
-  public getKey(): string {
-    return "constructor_visibility_public";
+  public getMetadata() {
+    return {key: "constructor_visibility_public"};
   }
 
   private getMessage(): string {
@@ -52,7 +52,7 @@ export class ConstructorVisibilityPublic implements IRule {
     for (const method of methods.getAll()) {
       if (method.getName().toUpperCase() === "CONSTRUCTOR"
           && method.getVisibility() !== Visibility.Public) {
-        const issue = Issue.atIdentifier(method, this.getMessage(), this.getKey());
+        const issue = Issue.atIdentifier(method, this.getMessage(), this.getMetadata().key);
         issues.push(issue);
       }
     }

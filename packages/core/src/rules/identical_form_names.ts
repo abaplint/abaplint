@@ -13,8 +13,8 @@ export class IdenticalFormNames implements IRule {
 
   private conf = new IdenticalFormNamesConf();
 
-  public getKey(): string {
-    return "identical_form_names";
+  public getMetadata() {
+    return {key: "identical_form_names"};
   }
 
   public getConfig() {
@@ -38,7 +38,7 @@ export class IdenticalFormNames implements IRule {
         const name = form.getName().toUpperCase();
         if (found.indexOf(name) >= 0) {
           const message = "Identical FORM Names: \"" + name + "\"";
-          const issue = Issue.atIdentifier(form, message, this.getKey());
+          const issue = Issue.atIdentifier(form, message, this.getMetadata().key);
           ret.push(issue);
         } else {
           found.push(name);

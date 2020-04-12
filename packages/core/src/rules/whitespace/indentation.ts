@@ -22,8 +22,8 @@ export class IndentationConf extends BasicRuleConfig {
 export class Indentation extends ABAPRule {
   private conf = new IndentationConf();
 
-  public getKey(): string {
-    return "indentation";
+  public getMetadata() {
+    return {key: "indentation"};
   }
 
   public getConfig() {
@@ -91,7 +91,7 @@ export class Indentation extends ABAPRule {
 
       if (indent && indent > 0 && indent !== position.getCol()) {
         const message = "Indentation problem, expected " + (indent - 1) + " spaces";
-        const issue = Issue.atPosition(file, position, message, this.getKey());
+        const issue = Issue.atPosition(file, position, message, this.getMetadata().key);
         return [issue]; // only one finding per include
       }
     }

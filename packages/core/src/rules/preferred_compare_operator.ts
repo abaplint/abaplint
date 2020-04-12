@@ -14,8 +14,8 @@ export class PreferredCompareOperator extends ABAPRule {
 
   private conf = new PreferredCompareOperatorConf();
 
-  public getKey(): string {
-    return "preferred_compare_operator";
+  public getMetadata() {
+    return {key: "preferred_compare_operator"};
   }
 
   private getDescription(operator: string): string {
@@ -36,7 +36,7 @@ export class PreferredCompareOperator extends ABAPRule {
       const token = op.getLastToken();
       if (this.conf.badOperators.indexOf(token.getStr()) >= 0) {
         const message = this.getDescription(token.getStr());
-        const issue = Issue.atToken(file, token, message, this.getKey());
+        const issue = Issue.atToken(file, token, message, this.getMetadata().key);
         issues.push(issue);
       }
     }

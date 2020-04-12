@@ -23,8 +23,8 @@ export class LocalVariableNames extends ABAPRule {
 
   private conf = new LocalVariableNamesConf();
 
-  public getKey(): string {
-    return "local_variable_names";
+  public getMetadata() {
+    return {key: "local_variable_names"};
   }
 
   private getDescription(expected: string, actual: string): string {
@@ -127,7 +127,7 @@ export class LocalVariableNames extends ABAPRule {
     const name = token.getStr();
     if (NameValidator.violatesRule(name, regex, this.conf)) {
       const message = this.getDescription(expected, name);
-      const issue = Issue.atToken(file, token, message, this.getKey());
+      const issue = Issue.atToken(file, token, message, this.getMetadata().key);
       ret.push(issue);
     }
     return ret;

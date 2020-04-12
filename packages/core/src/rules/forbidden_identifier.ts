@@ -15,8 +15,8 @@ export class ForbiddenIdentifier extends ABAPRule {
 
   private conf = new ForbiddenIdentifierConf();
 
-  public getKey(): string {
-    return "forbidden_identifier";
+  public getMetadata() {
+    return {key: "forbidden_identifier"};
   }
 
   public getConfig() {
@@ -65,7 +65,7 @@ export class ForbiddenIdentifier extends ABAPRule {
     for (const c of this.conf.check) {
       const reg = new RegExp(c, "i");
       if (reg.exec(str)) {
-        ret.push(Issue.atToken(file, token, "Identifer not allowed", this.getKey()));
+        ret.push(Issue.atToken(file, token, "Identifer not allowed", this.getMetadata().key));
       }
     }
     return ret;

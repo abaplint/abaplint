@@ -21,8 +21,8 @@ export class CommentedCodeConf extends BasicRuleConfig {
 export class CommentedCode extends ABAPRule {
   private conf = new CommentedCodeConf();
 
-  public getKey(): string {
-    return "commented_code";
+  public getMetadata() {
+    return {key: "commented_code"};
   }
 
   private getMessage(): string {
@@ -88,7 +88,7 @@ export class CommentedCode extends ABAPRule {
     }
 
     const position = new Position(row + 1, 1);
-    const issue = Issue.atPosition(file, position, this.getMessage(), this.getKey());
+    const issue = Issue.atPosition(file, position, this.getMessage(), this.getMetadata().key);
     return [issue];
   }
 

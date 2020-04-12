@@ -10,9 +10,9 @@ export class Config implements IConfiguration {
   public static getDefault(ver?: Version): Config {
     const rules: any = {};
 
-    const sorted = ArtifactsRules.getRules().sort((a, b) => {return a.getKey().localeCompare(b.getKey()); });
+    const sorted = ArtifactsRules.getRules().sort((a, b) => {return a.getMetadata().key.localeCompare(b.getMetadata().key); });
     for (const rule of sorted) {
-      rules[rule.getKey()] = rule.getConfig();
+      rules[rule.getMetadata().key] = rule.getConfig();
     }
 
     let version = defaultVersion;
@@ -47,7 +47,7 @@ export class Config implements IConfiguration {
   public getEnabledRules(): IRule[] {
     const rules: IRule[] = [];
     for (const rule of ArtifactsRules.getRules()) {
-      const ruleConfig = this.config["rules"][rule.getKey()];
+      const ruleConfig = this.config["rules"][rule.getMetadata().key];
       const ruleExists = ruleConfig !== undefined;
 
       if (ruleExists) {

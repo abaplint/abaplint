@@ -17,8 +17,8 @@ export class LineLength extends ABAPRule {
 
   private conf = new LineLengthConf();
 
-  public getKey(): string {
-    return "line_length";
+  public getMetadata() {
+    return {key: "line_length"};
   }
 
   private getDescription(max: string, actual: string): string {
@@ -42,7 +42,7 @@ export class LineLength extends ABAPRule {
       if (lines[line].length > this.conf.length) {
         const message = this.getDescription(this.conf.length.toString(), lines[line].length.toString());
         const position = new Position(line + 1, 1);
-        const issue = Issue.atPosition(file, position, message, this.getKey());
+        const issue = Issue.atPosition(file, position, message, this.getMetadata().key);
         issues.push(issue);
       }
     }

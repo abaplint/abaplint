@@ -47,8 +47,8 @@ export class ObjectNamingConf extends NamingRuleConfig {
 export class ObjectNaming implements IRule {
   private conf = new ObjectNamingConf();
 
-  public getKey(): string {
-    return "object_naming";
+  public getMetadata() {
+    return {key: "object_naming"};
   }
 
   private getDescription(expected: string, actual: string): string {
@@ -120,7 +120,7 @@ export class ObjectNaming implements IRule {
     }
 
     if (message) {
-      return [Issue.atRow(obj.getFiles()[0], 1, message, this.getKey())];
+      return [Issue.atRow(obj.getFiles()[0], 1, message, this.getMetadata().key)];
     }
 
     return [];

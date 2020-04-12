@@ -12,8 +12,8 @@ export class ReleaseIdocConf extends BasicRuleConfig {
 export class ReleaseIdoc implements IRule {
   private conf = new ReleaseIdocConf();
 
-  public getKey(): string {
-    return "release_idoc";
+  public getMetadata() {
+    return {key: "release_idoc"};
   }
 
   private getMessage(): string {
@@ -45,7 +45,7 @@ export class ReleaseIdoc implements IRule {
 
     if (file.getRaw().includes("<CLOSED>X</CLOSED>") === false) {
       const position = new Position(1, 1);
-      const issue = Issue.atPosition(obj.getFiles()[0], position, this.getMessage(), this.getKey());
+      const issue = Issue.atPosition(obj.getFiles()[0], position, this.getMessage(), this.getMetadata().key);
       return [issue];
     } else {
       return [];

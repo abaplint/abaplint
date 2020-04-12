@@ -16,8 +16,8 @@ export class BeginEndNamesConf extends BasicRuleConfig {
 export class BeginEndNames extends ABAPRule {
   private conf = new BeginEndNamesConf();
 
-  public getKey(): string {
-    return "begin_end_names";
+  public getMetadata() {
+    return {key: "begin_end_names"};
   }
 
   private getMessage(): string {
@@ -64,7 +64,7 @@ export class BeginEndNames extends ABAPRule {
       const last = end.getFirstToken();
 
       if (first.getStr().toUpperCase() !== last.getStr().toUpperCase()) {
-        const issue = Issue.atToken(file, first, this.getMessage(), this.getKey());
+        const issue = Issue.atToken(file, first, this.getMessage(), this.getMetadata().key);
         output.push(issue);
       }
 

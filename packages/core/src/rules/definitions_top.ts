@@ -21,8 +21,8 @@ export class DefinitionsTop extends ABAPRule {
 
   private conf = new DefinitionsTopConf();
 
-  public getKey(): string {
-    return "definitions_top";
+  public getMetadata() {
+    return {key: "definitions_top"};
   }
 
   private getMessage(): string {
@@ -74,7 +74,7 @@ export class DefinitionsTop extends ABAPRule {
           || statement.get() instanceof Statements.StaticEnd
           || statement.get() instanceof Statements.FieldSymbol) {
         if (mode === AFTER) {
-          issue = Issue.atStatement(file, statement, this.getMessage(), this.getKey());
+          issue = Issue.atStatement(file, statement, this.getMessage(), this.getMetadata().key);
           mode = ANY;
         }
       } else if (statement.get() instanceof Statements.Define

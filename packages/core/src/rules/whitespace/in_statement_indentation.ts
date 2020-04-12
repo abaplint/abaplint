@@ -20,8 +20,8 @@ export class InStatementIndentation extends ABAPRule {
 
   private conf = new InStatementIndentationConf();
 
-  public getKey(): string {
-    return "in_statement_indentation";
+  public getMetadata() {
+    return {key: "in_statement_indentation"};
   }
 
   private getMessage(): string {
@@ -78,7 +78,7 @@ export class InStatementIndentation extends ABAPRule {
           continue;
         }
         if (t.getCol() < expected) {
-          const issue = Issue.atToken(file, t, this.getMessage(), this.getKey());
+          const issue = Issue.atToken(file, t, this.getMessage(), this.getMetadata().key);
           ret.push(issue);
           break;
         }

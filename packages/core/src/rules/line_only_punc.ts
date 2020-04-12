@@ -19,8 +19,8 @@ export class LineOnlyPunc extends ABAPRule {
 
   private conf = new LineOnlyPuncConf();
 
-  public getKey(): string {
-    return "line_only_punc";
+  public getMetadata() {
+    return {key: "line_only_punc"};
   }
 
   private getMessage(): string {
@@ -54,7 +54,7 @@ export class LineOnlyPunc extends ABAPRule {
       if (reg.exec(rows[i].trim())) {
         const column = rows[i].indexOf(")") >= 0 ? rows[i].indexOf(")") + 1 : rows[i].indexOf(".") + 1;
         const position = new Position(i + 1, column);
-        const issue = Issue.atPosition(file, position, this.getMessage(), this.getKey());
+        const issue = Issue.atPosition(file, position, this.getMessage(), this.getMetadata().key);
         issues.push(issue);
       }
     }

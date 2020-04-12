@@ -25,8 +25,8 @@ export class DoubleSpace extends ABAPRule {
 
   private conf = new DoubleSpaceConf();
 
-  public getKey(): string {
-    return "double_space";
+  public getMetadata() {
+    return {key: "double_space"};
   }
 
   private getMessage(): string {
@@ -53,7 +53,7 @@ export class DoubleSpace extends ABAPRule {
           && !(s.get() instanceof MacroContent)) {
         const f = this.checkKeywords(s);
         if (f !== undefined) {
-          const issue = Issue.atToken(file, f, this.getMessage(), this.getKey());
+          const issue = Issue.atToken(file, f, this.getMessage(), this.getMetadata().key);
           issues.push(issue);
         }
       }
@@ -93,7 +93,7 @@ export class DoubleSpace extends ABAPRule {
         }
 
         if (t.getCol() > cPosition.getCol() + 2) {
-          const issue = Issue.atToken(file, colon, this.getMessage(), this.getKey());
+          const issue = Issue.atToken(file, colon, this.getMessage(), this.getMetadata().key);
           issues.push(issue);
         }
 
@@ -120,7 +120,7 @@ export class DoubleSpace extends ABAPRule {
           && !(t instanceof Comment)
           && !(t instanceof StringTemplate)  // tempoary workaround, see #427
           && prev.getEnd().getCol() + 1 < t.getCol()) {
-        const issue = Issue.atToken(file, prev, this.getMessage(), this.getKey());
+        const issue = Issue.atToken(file, prev, this.getMessage(), this.getMetadata().key);
         issues.push(issue);
       }
 
@@ -128,7 +128,7 @@ export class DoubleSpace extends ABAPRule {
           && prev.getRow() === t.getRow()
           && (t instanceof WParenRightW || t instanceof WParenRight)
           && prev.getEnd().getCol() + 1 < t.getCol()) {
-        const issue = Issue.atToken(file, prev, this.getMessage(), this.getKey());
+        const issue = Issue.atToken(file, prev, this.getMessage(), this.getMetadata().key);
         issues.push(issue);
       }
 

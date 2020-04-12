@@ -11,8 +11,8 @@ export class ColonMissingSpace extends ABAPRule {
 
   private conf = new ColonMissingSpaceConf();
 
-  public getKey(): string {
-    return "colon_missing_space";
+  public getMetadata() {
+    return {key: "colon_missing_space"};
   }
 
   private getMessage(): string {
@@ -38,7 +38,7 @@ export class ColonMissingSpace extends ABAPRule {
           && tokens[i + 1] !== undefined
           && tokens[i + 1].getRow() === token.getRow()
           && tokens[i + 1].getCol() === token.getCol() + 1) {
-        const issue = Issue.atPosition(file, token.getStart(), this.getMessage(), this.getKey());
+        const issue = Issue.atPosition(file, token.getStart(), this.getMessage(), this.getMetadata().key);
         issues.push(issue);
       }
     }

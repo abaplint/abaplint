@@ -13,8 +13,8 @@ export class TypeBeginSingleType extends ABAPRule {
 
   private conf = new TypeBeginSingleTypeConf();
 
-  public getKey(): string {
-    return "type_begin_single_include";
+  public getMetadata() {
+    return {key: "type_begin_single_include"};
   }
 
   public getConfig() {
@@ -40,7 +40,7 @@ export class TypeBeginSingleType extends ABAPRule {
       if (t.findFirstStatement(Statements.IncludeType)) {
         const token = t.getFirstToken();
         const message = "TYPE BEGIN with single INCLUDE TYPE";
-        const issue = Issue.atToken(file, token, message, this.getKey());
+        const issue = Issue.atToken(file, token, message, this.getMetadata().key);
         issues.push(issue);
       }
     }

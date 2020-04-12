@@ -13,8 +13,8 @@ export class ExitOrCheck extends ABAPRule {
 
   private conf = new ExitOrCheckConf();
 
-  public getKey(): string {
-    return "exit_or_check";
+  public getMetadata() {
+    return {key: "exit_or_check"};
   }
 
   private getMessage(): string {
@@ -48,7 +48,7 @@ export class ExitOrCheck extends ABAPRule {
       } else if ((statement.get() instanceof Statements.Check
           || statement.get() instanceof Statements.Exit)
           && stack.length === 0) {
-        const issue = Issue.atStatement(file, statement, this.getMessage(), this.getKey());
+        const issue = Issue.atStatement(file, statement, this.getMessage(), this.getMetadata().key);
         issues.push(issue);
       }
     }

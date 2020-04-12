@@ -15,8 +15,8 @@ export class FullyTypeConsantsConf extends BasicRuleConfig {
 export class FullyTypeConstants extends ABAPRule {
   private conf = new FullyTypeConsantsConf();
 
-  public getKey(): string {
-    return "fully_type_constants";
+  public getMetadata() {
+    return {key: "fully_type_constants"};
   }
 
   public getDescription(type: string): string {
@@ -50,7 +50,7 @@ export class FullyTypeConstants extends ABAPRule {
             file,
             token,
             this.getDescription(type),
-            this.getKey()));
+            this.getMetadata().key));
       }
     }
     return issues;

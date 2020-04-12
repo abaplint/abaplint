@@ -31,7 +31,7 @@ function findFile(key) {
 
 const rules = [];
 for(const rule of abaplint.ArtifactsRules.getRules()) {
-  rules.push({key: rule.getKey(), config: rule.getConfig().constructor.name});
+  rules.push({key: rule.getMetadata().key, config: rule.getConfig().constructor.name});
 }
 rules.sort((a, b) => { return a.key.localeCompare(b.key); });
 

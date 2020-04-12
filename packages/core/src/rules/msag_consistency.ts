@@ -13,8 +13,8 @@ export class MSAGConsistencyConf extends BasicRuleConfig {
 export class MSAGConsistency implements IRule {
   private conf = new MSAGConsistencyConf();
 
-  public getKey(): string {
-    return "msag_consistency";
+  public getMetadata() {
+    return {key: "msag_consistency"};
   }
 
   private getDescription(reason: string): string {
@@ -41,13 +41,13 @@ export class MSAGConsistency implements IRule {
       if (!message.getNumber().match(/\d\d\d/)) {
         const text = this.getDescription("Message number must be 3 digits: message " + message.getNumber());
         const position = new Position(1, 1);
-        const issue = Issue.atPosition(obj.getFiles()[0], position, text, this.getKey());
+        const issue = Issue.atPosition(obj.getFiles()[0], position, text, this.getMetadata().key);
         issues.push(issue);
       }
       if (message.getMessage() === "") {
         const text = "Message text empty: message " + message.getNumber();
         const position = new Position(1, 1);
-        const issue = Issue.atPosition(obj.getFiles()[0], position, text, this.getKey());
+        const issue = Issue.atPosition(obj.getFiles()[0], position, text, this.getMetadata().key);
         issues.push(issue);
       }
     }

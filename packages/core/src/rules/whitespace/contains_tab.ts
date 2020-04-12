@@ -14,8 +14,8 @@ export class ContainsTab extends ABAPRule {
 
   private conf = new ContainsTabConf();
 
-  public getKey(): string {
-    return "contains_tab";
+  public getMetadata() {
+    return {key: "contains_tab"};
   }
 
   private getMessage(): string {
@@ -37,7 +37,7 @@ export class ContainsTab extends ABAPRule {
     for (let line = 0; line < lines.length; line++) {
       const index = lines[line].indexOf("\t");
       if (index >= 0) {
-        const issue = Issue.atPosition(file, new Position(line + 1, index + 1), this.getMessage(), this.getKey());
+        const issue = Issue.atPosition(file, new Position(line + 1, index + 1), this.getMessage(), this.getMetadata().key);
         issues.push(issue);
       }
     }

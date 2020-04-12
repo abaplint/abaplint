@@ -16,8 +16,8 @@ export class MaxOneStatement extends ABAPRule {
 
   private conf = new MaxOneStatementConf();
 
-  public getKey(): string {
-    return "max_one_statement";
+  public getMetadata() {
+    return {key: "max_one_statement"};
   }
 
   private getMessage(): string {
@@ -47,7 +47,7 @@ export class MaxOneStatement extends ABAPRule {
       const row = pos.getRow();
       if (prev === row && row !== reported) {
         const fix = EditHelper.insertAt(file, pos, "\n");
-        const issue = Issue.atPosition(file, pos, this.getMessage(), this.getKey(), fix);
+        const issue = Issue.atPosition(file, pos, this.getMessage(), this.getMetadata().key, fix);
         issues.push(issue);
         reported = row;
       }

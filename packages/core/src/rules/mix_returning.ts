@@ -15,8 +15,8 @@ export class MixReturning extends ABAPRule {
 
   private conf = new MixReturningConf();
 
-  public getKey(): string {
-    return "mix_returning";
+  public getMetadata() {
+    return {key: "mix_returning"};
   }
 
   private getMessage(): string {
@@ -45,7 +45,7 @@ export class MixReturning extends ABAPRule {
       if (def.findFirstExpression(Expressions.MethodDefExporting)
           || def.findFirstExpression(Expressions.MethodDefChanging)) {
         const token = def.getFirstToken();
-        const issue = Issue.atToken(file, token, this.getMessage(), this.getKey());
+        const issue = Issue.atToken(file, token, this.getMessage(), this.getMetadata().key);
         ret.push(issue);
       }
     }

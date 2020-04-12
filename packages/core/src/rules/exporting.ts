@@ -17,8 +17,8 @@ export class Exporting extends ABAPRule {
 
   private conf = new ExportingConf();
 
-  public getKey(): string {
-    return "exporting";
+  public getMetadata() {
+    return {key: "exporting"};
   }
 
   private getMessage(): string {
@@ -68,7 +68,7 @@ export class Exporting extends ABAPRule {
         const next = e.getAllTokens()[1];
         const fix = EditHelper.deleteRange(file, tokens[0].getStart(), next.getStart());
 
-        const issue = Issue.atToken(file, tokens[0], this.getMessage(), this.getKey(), fix);
+        const issue = Issue.atToken(file, tokens[0], this.getMessage(), this.getMetadata().key, fix);
         return [issue];
       }
     }

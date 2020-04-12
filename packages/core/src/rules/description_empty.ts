@@ -16,8 +16,8 @@ export class DescriptionEmpty implements IRule {
 
   private conf = new DescriptionEmptyConf();
 
-  public getKey(): string {
-    return "description_empty";
+  public getMetadata() {
+    return {key: "description_empty"};
   }
 
   private getDescription(name: string): string {
@@ -45,7 +45,7 @@ export class DescriptionEmpty implements IRule {
       }
       if (message) {
         const position = new Position(1, 1);
-        const issue = Issue.atPosition(obj.getFiles()[0], position, message, this.getKey());
+        const issue = Issue.atPosition(obj.getFiles()[0], position, message, this.getMetadata().key);
         issues.push(issue);
       }
     }

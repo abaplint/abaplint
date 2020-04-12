@@ -14,8 +14,8 @@ export class RFCErrorHandlingConf extends BasicRuleConfig {
 export class RFCErrorHandling extends ABAPRule {
   private conf = new RFCErrorHandlingConf();
 
-  public getKey(): string {
-    return "rfc_error_handling";
+  public getMetadata() {
+    return {key: "rfc_error_handling"};
   }
 
   private getMessage(): string {
@@ -46,7 +46,7 @@ export class RFCErrorHandling extends ABAPRule {
 
       const list = stat.findFirstExpression(Expressions.ParameterListExceptions);
       if (list === undefined) {
-        const issue = Issue.atToken(file, token, this.getMessage(), this.getKey());
+        const issue = Issue.atToken(file, token, this.getMessage(), this.getMetadata().key);
         output.push(issue);
         continue;
       }
@@ -60,7 +60,7 @@ export class RFCErrorHandling extends ABAPRule {
       if (names.indexOf("SYSTEM_FAILURE") < 0
           || names.indexOf("COMMUNICATION_FAILURE") < 0
           || names.indexOf("RESOURCE_FAILURE") < 0) {
-        const issue = Issue.atToken(file, token, this.getMessage(), this.getKey());
+        const issue = Issue.atToken(file, token, this.getMessage(), this.getMetadata().key);
         output.push(issue);
         continue;
       }

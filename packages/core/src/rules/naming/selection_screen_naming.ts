@@ -19,8 +19,8 @@ export class SelectionScreenNaming extends ABAPRule {
 
   private conf = new SelectionScreenNamingConf();
 
-  public getKey(): string {
-    return "selection_screen_naming";
+  public getMetadata() {
+    return {key: "selection_screen_naming"};
   }
 
   private getDescription(expected: string, actual: string): string {
@@ -61,7 +61,7 @@ export class SelectionScreenNaming extends ABAPRule {
             file,
             fieldNode.getFirstToken(),
             this.getDescription(this.getPatternForStatement(stat.get()), fieldNode.getFirstToken().getStr()),
-            this.getKey()));
+            this.getMetadata().key));
         }
       }
     }

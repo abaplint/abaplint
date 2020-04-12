@@ -13,8 +13,8 @@ export class CheckTransformationExistsConf extends BasicRuleConfig {
 export class CheckTransformationExists extends ABAPRule {
   private conf = new CheckTransformationExistsConf();
 
-  public getKey(): string {
-    return "check_transformation_exists";
+  public getMetadata() {
+    return {key: "check_transformation_exists"};
   }
 
   private getDescription(name: string): string {
@@ -45,7 +45,7 @@ export class CheckTransformationExists extends ABAPRule {
         }
         const tok = name.getFirstToken();
         if (reg.getObject("XSLT", tok.getStr()) === undefined) {
-          const issue = Issue.atToken(file, tok, this.getDescription(tok.getStr()), this.getKey());
+          const issue = Issue.atToken(file, tok, this.getDescription(tok.getStr()), this.getMetadata().key);
           output.push(issue);
         }
       }

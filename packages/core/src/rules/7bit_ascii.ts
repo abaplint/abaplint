@@ -13,8 +13,8 @@ export class SevenBitAsciiConf extends BasicRuleConfig {
 export class SevenBitAscii implements IRule {
   private conf = new SevenBitAsciiConf();
 
-  public getKey(): string {
-    return "7bit_ascii";
+  public getMetadata() {
+    return {key: "7bit_ascii"};
   }
 
   private getMessage(): string {
@@ -39,7 +39,7 @@ export class SevenBitAscii implements IRule {
         for (let i = 0; i < rows.length; i++) {
           if (/^[\u0000-\u007f]*$/.test(rows[i]) === false) {
             const position = new Position(i + 1, 1);
-            const issue = Issue.atPosition(file, position, this.getMessage(), this.getKey());
+            const issue = Issue.atPosition(file, position, this.getMessage(), this.getMetadata().key);
             output.push(issue);
           }
         }

@@ -12,8 +12,8 @@ export class WhitespaceEnd extends ABAPRule {
 
   private conf = new WhitespaceEndConf();
 
-  public getKey(): string {
-    return "whitespace_end";
+  public getMetadata() {
+    return {key: "whitespace_end"};
   }
 
   private getMessage(): string {
@@ -36,7 +36,7 @@ export class WhitespaceEnd extends ABAPRule {
     for (let i = 0; i < rows.length; i++) {
       if (rows[i].endsWith(" ")) {
         const position = new Position(i + 1, 1);
-        const issue = Issue.atPosition(file, position, this.getMessage(), this.getKey());
+        const issue = Issue.atPosition(file, position, this.getMessage(), this.getMetadata().key);
         issues.push(issue);
       }
     }

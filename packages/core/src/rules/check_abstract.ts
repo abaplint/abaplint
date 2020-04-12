@@ -21,8 +21,8 @@ export class CheckAbstract extends ABAPRule {
 
   private conf = new CheckAbstractConf();
 
-  public getKey(): string {
-    return "check_abstract";
+  public getMetadata() {
+    return {key: "check_abstract"};
   }
 
   private getDescription(issueType: IssueType, name: string): string {
@@ -48,14 +48,14 @@ export class CheckAbstract extends ABAPRule {
       if (classDef.isAbstract()) {
         if (classDef.isFinal()) {
           issues.push(Issue.atIdentifier(
-            classDef, this.getDescription(IssueType.AbstractAndFinal, classDef.getName()), this.getKey()));
+            classDef, this.getDescription(IssueType.AbstractAndFinal, classDef.getName()), this.getMetadata().key));
         }
         continue;
       }
       for (const methodDef of classDef.getMethodDefinitions().getAll()) {
         if (methodDef.isAbstract()) {
           issues.push(Issue.atIdentifier(
-            methodDef, this.getDescription(IssueType.NotAbstractClass, methodDef.getName()), this.getKey()));
+            methodDef, this.getDescription(IssueType.NotAbstractClass, methodDef.getName()), this.getMetadata().key));
         }
       }
     }

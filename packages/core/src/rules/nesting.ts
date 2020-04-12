@@ -17,8 +17,8 @@ export class Nesting extends ABAPRule {
 
   private conf = new NestingConf();
 
-  public getKey(): string {
-    return "nesting";
+  public getMetadata() {
+    return {key: "nesting"};
   }
 
   private getDescription(max: string): string {
@@ -61,7 +61,7 @@ export class Nesting extends ABAPRule {
 
       if (depth > this.conf.depth) {
         const pos = statement.getFirstToken().getStart();
-        const issue = Issue.atPosition(file, pos, this.getDescription(this.conf.depth.toString()), this.getKey());
+        const issue = Issue.atPosition(file, pos, this.getDescription(this.conf.depth.toString()), this.getMetadata().key);
         issues.push(issue);
         break; // only one finding per file
       }

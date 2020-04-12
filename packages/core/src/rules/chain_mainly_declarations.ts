@@ -14,8 +14,8 @@ export class ChainMainlyDeclarations extends ABAPRule {
 
   private conf = new ChainMainlyDeclarationsConf();
 
-  public getKey(): string {
-    return "chain_mainly_declarations";
+  public getMetadata() {
+    return {key: "chain_mainly_declarations"};
   }
 
   public getConfig() {
@@ -78,7 +78,7 @@ export class ChainMainlyDeclarations extends ABAPRule {
       }
 
       const message = "Chain mainly declarations";
-      issues.push(Issue.atToken(file, n.getFirstToken(), message, this.getKey()));
+      issues.push(Issue.atToken(file, n.getFirstToken(), message, this.getMetadata().key));
 
       previousRow = n.getColon()!.getStart().getRow();
     }

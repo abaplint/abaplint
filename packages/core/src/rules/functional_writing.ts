@@ -20,8 +20,8 @@ export class FunctionalWriting extends ABAPRule {
 
   private conf = new FunctionalWritingConf();
 
-  public getKey(): string {
-    return "functional_writing";
+  public getMetadata() {
+    return {key: "functional_writing"};
   }
 
   private getMessage(): string {
@@ -61,7 +61,7 @@ export class FunctionalWriting extends ABAPRule {
             || this.startsWith(code, "CALL METHOD (")) {
           continue;
         }
-        const issue = Issue.atStatement(file, statement, this.getMessage(), this.getKey());
+        const issue = Issue.atStatement(file, statement, this.getMessage(), this.getMetadata().key);
         issues.push(issue);
       }
     }

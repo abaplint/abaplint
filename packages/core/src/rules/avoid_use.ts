@@ -33,8 +33,8 @@ export class AvoidUse extends ABAPRule {
 
   private conf = new AvoidUseConf();
 
-  public getKey(): string {
-    return "avoid_use";
+  public getMetadata() {
+    return {key: "avoid_use"};
   }
 
   private getDescription(statement: string): string {
@@ -82,7 +82,7 @@ export class AvoidUse extends ABAPRule {
         message = "DEFAULT KEY";
       }
       if (message) {
-        const issue = Issue.atStatement(file, statementNode, this.getDescription(message), this.getKey());
+        const issue = Issue.atStatement(file, statementNode, this.getDescription(message), this.getMetadata().key);
         issues.push(issue);
       }
     }

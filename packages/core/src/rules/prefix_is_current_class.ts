@@ -18,8 +18,8 @@ export class PrefixIsCurrentClassConf extends BasicRuleConfig {
 export class PrefixIsCurrentClass extends ABAPRule {
   private conf = new PrefixIsCurrentClassConf();
 
-  public getKey(): string {
-    return "prefix_is_current_class";
+  public getMetadata() {
+    return {key: "prefix_is_current_class"};
   }
 
   public getConfig() {
@@ -53,7 +53,7 @@ export class PrefixIsCurrentClass extends ABAPRule {
               file,
               tokenPos,
               "Reference to current class can be omitted: \"" + staticAccess + "\"",
-              this.getKey()));
+              this.getMetadata().key));
           }
         } else if (this.conf.omitMeInstanceCalls === true
             && s.concatTokensWithoutStringsAndComments().toUpperCase().includes(meAccess)
@@ -64,7 +64,7 @@ export class PrefixIsCurrentClass extends ABAPRule {
               file,
               tokenPos,
               "Omit 'me->' in instance calls",
-              this.getKey()));
+              this.getMetadata().key));
           }
         }
       }

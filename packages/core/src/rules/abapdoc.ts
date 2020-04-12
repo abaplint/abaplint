@@ -19,8 +19,8 @@ export class Abapdoc extends ABAPRule {
 
   private conf = new AbapdocConf();
 
-  public getKey(): string {
-    return "abapdoc";
+  public getMetadata() {
+    return {key: "abapdoc"};
   }
 
   public getConfig() {
@@ -57,7 +57,7 @@ export class Abapdoc extends ABAPRule {
       }
       const previousRow = method.getStart().getRow() - 2;
       if (!(rows[previousRow].trim().substring(0, 2) === "\"!")) {
-        const issue = Issue.atIdentifier(method, "Missing ABAP Doc for method " + method.getName(), this.getKey());
+        const issue = Issue.atIdentifier(method, "Missing ABAP Doc for method " + method.getName(), this.getMetadata().key);
         issues.push(issue);
       }
     }

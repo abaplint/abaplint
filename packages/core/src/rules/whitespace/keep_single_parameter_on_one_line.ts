@@ -15,8 +15,8 @@ export class KeepSingleParameterCallsOnOneLineConf extends BasicRuleConfig {
 export class KeepSingleParameterCallsOnOneLine extends ABAPRule {
   private conf = new KeepSingleParameterCallsOnOneLineConf();
 
-  public getKey(): string {
-    return "keep_single_parameter_on_one_line";
+  public getMetadata() {
+    return {key: "keep_single_parameter_on_one_line"};
   }
 
   public getConfig() {
@@ -71,7 +71,7 @@ export class KeepSingleParameterCallsOnOneLine extends ABAPRule {
       }
 
       const message = "Keep single parameter on one line";
-      return [Issue.atToken(file, c.getFirstToken(), message, this.getKey())];
+      return [Issue.atToken(file, c.getFirstToken(), message, this.getMetadata().key)];
     }
     return [];
   }

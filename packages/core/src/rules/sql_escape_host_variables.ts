@@ -13,8 +13,8 @@ export class SQLEscapeHostVariablesConf extends BasicRuleConfig {
 export class SQLEscapeHostVariables extends ABAPRule {
   private conf = new SQLEscapeHostVariablesConf();
 
-  public getKey(): string {
-    return "sql_escape_host_variables";
+  public getMetadata() {
+    return {key: "sql_escape_host_variables"};
   }
 
   public getConfig() {
@@ -50,7 +50,7 @@ export class SQLEscapeHostVariables extends ABAPRule {
         continue;
       } else {
         const message = "Escape SQL host variables";
-        const issue = Issue.atToken(file, s.getFirstToken(), message, this.getKey());
+        const issue = Issue.atToken(file, s.getFirstToken(), message, this.getMetadata().key);
         issues.push(issue);
       }
     }

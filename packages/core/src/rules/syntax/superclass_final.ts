@@ -15,8 +15,8 @@ export class SuperclassFinalConf extends BasicRuleConfig {
 export class SuperclassFinal extends ABAPRule {
   private conf = new SuperclassFinalConf();
 
-  public getKey(): string {
-    return "superclass_final";
+  public getMetadata() {
+    return {key: "superclass_final"};
   }
 
   private getMessage(): string {
@@ -56,12 +56,12 @@ export class SuperclassFinal extends ABAPRule {
       }
       if (found === undefined) {
         const message = "Super class \"" + sup + "\" not found";
-        const issue = Issue.atIdentifier(definition, message, this.getKey());
+        const issue = Issue.atIdentifier(definition, message, this.getMetadata().key);
         output.push(issue);
         continue;
       }
       if (found.isFinal()) {
-        const issue = Issue.atIdentifier(definition, this.getMessage(), this.getKey());
+        const issue = Issue.atIdentifier(definition, this.getMessage(), this.getMetadata().key);
         output.push(issue);
       }
     }

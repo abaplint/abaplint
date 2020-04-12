@@ -15,8 +15,8 @@ export class FormNoDash extends ABAPRule {
 
   private conf = new FormNoDashConf();
 
-  public getKey(): string {
-    return "form_no_dash";
+  public getMetadata() {
+    return {key: "form_no_dash"};
   }
 
   private getMessage(): string {
@@ -42,7 +42,7 @@ export class FormNoDash extends ABAPRule {
       const expr = form.findFirstExpression(FormName);
       for (const token of expr!.getTokens()) {
         if (token instanceof Dash || token instanceof DashW) {
-          const issue = Issue.atToken(file, token, this.getMessage(), this.getKey());
+          const issue = Issue.atToken(file, token, this.getMessage(), this.getMetadata().key);
           issues.push(issue);
           break;
         }

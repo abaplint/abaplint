@@ -13,8 +13,8 @@ export class GlobalClassConf extends BasicRuleConfig {
 export class GlobalClass extends ABAPRule {
   private conf = new GlobalClassConf();
 
-  public getKey(): string {
-    return "global_class";
+  public getMetadata() {
+    return {key: "global_class"};
   }
 
   public getConfig() {
@@ -30,17 +30,17 @@ export class GlobalClass extends ABAPRule {
 
     for (const definition of file.getInfo().getClassDefinitions()) {
       if (definition.isLocal() && obj instanceof Objects.Class && file.getFilename().match(/\.clas\.abap$/)) {
-        const issue = Issue.atIdentifier(definition, "Global classes must be global", this.getKey());
+        const issue = Issue.atIdentifier(definition, "Global classes must be global", this.getMetadata().key);
         output.push(issue);
       }
 
       if (definition.isGlobal() && obj instanceof Objects.Class && definition.getName().toUpperCase() !== obj.getName().toUpperCase()) {
-        const issue = Issue.atIdentifier(definition, "Class name must match filename", this.getKey());
+        const issue = Issue.atIdentifier(definition, "Class name must match filename", this.getMetadata().key);
         output.push(issue);
       }
 
       if (definition.isGlobal() && !(obj instanceof Objects.Class)) {
-        const issue = Issue.atIdentifier(definition, "Class must be local", this.getKey());
+        const issue = Issue.atIdentifier(definition, "Class must be local", this.getMetadata().key);
         output.push(issue);
       }
     }
@@ -49,7 +49,7 @@ export class GlobalClass extends ABAPRule {
       if (file.getFilename().match(/\.clas\.abap$/)
           && obj instanceof Objects.Class
           && impl.getName().toUpperCase() !== obj.getName().toUpperCase()) {
-        const issue = Issue.atIdentifier(impl, "Class name must match filename", this.getKey());
+        const issue = Issue.atIdentifier(impl, "Class name must match filename", this.getMetadata().key);
         output.push(issue);
       }
     }

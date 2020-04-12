@@ -10,7 +10,7 @@ export function testRule(tests: {abap: string, cnt: number}[], rule: new () => I
   if (config) {
     nrule.setConfig(config);
   }
-  testTitle = testTitle || `test ${nrule.getKey()} rule`;
+  testTitle = testTitle || `test ${nrule.getMetadata().key} rule`;
   describe(testTitle, function () {
     // note that timeout() only works inside function()
     this.timeout(200);
@@ -65,7 +65,7 @@ export function testRuleFix(tests: {input: string, output: string}[], rule: new 
   if (config) {
     nrule.setConfig(config);
   }
-  testTitle = testTitle || `test ${nrule.getKey()} rule fixes`;
+  testTitle = testTitle || `test ${nrule.getMetadata().key} rule fixes`;
   describe(testTitle, function () {
     // note that timeout() only works inside function()
     this.timeout(200);
@@ -88,7 +88,7 @@ export function testRuleFix(tests: {input: string, output: string}[], rule: new 
 
 export function testRuleWithVariableConfig(tests: any, rule: new () => IRule, testTitle?: string) {
   const nrule = new rule();
-  testTitle = testTitle || `test ${nrule.getKey()} rule`;
+  testTitle = testTitle || `test ${nrule.getMetadata().key} rule`;
   describe(testTitle, function () {
     this.timeout(200);
     tests.forEach((test: any) => {

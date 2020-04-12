@@ -14,8 +14,8 @@ export class LocalTestclassLocation extends ABAPRule {
 
   private conf = new LocalTestclassLocationConf();
 
-  public getKey(): string {
-    return "local_testclass_location";
+  public getMetadata() {
+    return {key: "local_testclass_location"};
   }
 
   private getDescription(className: string): string {
@@ -39,7 +39,7 @@ export class LocalTestclassLocation extends ABAPRule {
 
     for (const c of file.getInfo().getClassDefinitions()) {
       if (c.isLocal() && c.isForTesting() && !file.getFilename().includes(".testclasses.abap")) {
-        const issue = Issue.atIdentifier(c, this.getDescription(c.getName()), this.getKey());
+        const issue = Issue.atIdentifier(c, this.getDescription(c.getName()), this.getMetadata().key);
         issues.push(issue);
       }
     }

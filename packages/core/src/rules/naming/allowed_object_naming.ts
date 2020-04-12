@@ -10,8 +10,8 @@ export class AllowedObjectNamingConf extends BasicRuleConfig {
 export class AllowedObjectNaming implements IRule {
   private conf = new AllowedObjectNamingConf();
 
-  public getKey(): string {
-    return "allowed_object_naming";
+  public getMetadata() {
+    return {key: "allowed_object_naming"};
   }
 
   public getConfig(): AllowedObjectNamingConf {
@@ -35,7 +35,7 @@ export class AllowedObjectNaming implements IRule {
     }
 
     if (message.length > 0) {
-      return [Issue.atRow(obj.getFiles()[0], 1, message, this.getKey())];
+      return [Issue.atRow(obj.getFiles()[0], 1, message, this.getMetadata().key)];
     }
 
     return [];

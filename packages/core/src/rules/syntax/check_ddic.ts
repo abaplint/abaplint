@@ -17,8 +17,8 @@ export class CheckDDIC implements IRule {
 
   private conf = new CheckDDICConf();
 
-  public getKey(): string {
-    return "check_ddic";
+  public getMetadata() {
+    return {key: "check_ddic"};
   }
 
   public getConfig() {
@@ -49,7 +49,7 @@ export class CheckDDIC implements IRule {
     if (found instanceof UnknownType) {
       const position = new Position(1, 1);
       const message = "Unknown/un-resolveable type in " + obj.getName() + ": " + found.getError();
-      ret.push(Issue.atPosition(obj.getFiles()[0], position, message, this.getKey()));
+      ret.push(Issue.atPosition(obj.getFiles()[0], position, message, this.getMetadata().key));
     } else if (found instanceof StructureType) {
 // assumption: no circular types
       for (const c of found.getComponents()) {

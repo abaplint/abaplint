@@ -132,11 +132,11 @@ export class IncludeGraph implements IIncludeGraph {
             const found = this.graph.findInclude(name);
             if (found === undefined) {
               if (ifFound === false) {
-                const issue = Issue.atStatement(f, s, "Include " + name + " not found", new CheckInclude().getKey());
+                const issue = Issue.atStatement(f, s, "Include " + name + " not found", new CheckInclude().getMetadata().key);
                 this.issues.push(issue);
               }
             } else if (found.include === false) {
-              const issue = Issue.atStatement(f, s, "Not possible to INCLUDE a main program", new CheckInclude().getKey());
+              const issue = Issue.atStatement(f, s, "Not possible to INCLUDE a main program", new CheckInclude().getMetadata().key);
               this.issues.push(issue);
             } else {
               this.graph.addEdge(found, f.getFilename());
@@ -157,7 +157,7 @@ export class IncludeGraph implements IIncludeGraph {
           if (f === undefined) {
             throw new Error("findUnusedIncludes internal error");
           }
-          const issue = Issue.atPosition(f, new Position(1, 1), "INCLUDE not used anywhere", new CheckInclude().getKey());
+          const issue = Issue.atPosition(f, new Position(1, 1), "INCLUDE not used anywhere", new CheckInclude().getMetadata().key);
           this.issues.push(issue);
         }
       }

@@ -15,8 +15,8 @@ export class EmptyLineinStatement extends ABAPRule {
 
   private conf = new EmptyLineinStatementConf();
 
-  public getKey(): string {
-    return "empty_line_in_statement";
+  public getMetadata() {
+    return {key: "empty_line_in_statement"};
   }
 
   private getMessage(): string {
@@ -48,7 +48,7 @@ export class EmptyLineinStatement extends ABAPRule {
       }
 
       if (prevLine && t.getRow() - prevLine >= 2) {
-        const issue = Issue.atToken(file, t, this.getMessage(), this.getKey());
+        const issue = Issue.atToken(file, t, this.getMessage(), this.getMetadata().key);
         issues.push(issue);
       }
 

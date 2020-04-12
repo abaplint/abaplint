@@ -12,8 +12,8 @@ export class TryWithoutCatchConf extends BasicRuleConfig {
 export class TryWithoutCatch extends ABAPRule {
   private conf = new TryWithoutCatchConf();
 
-  public getKey(): string {
-    return "try_without_catch";
+  public getMetadata() {
+    return {key: "try_without_catch"};
   }
 
   private getMessage(): string {
@@ -41,7 +41,7 @@ export class TryWithoutCatch extends ABAPRule {
     for (const t of tries) {
       const c = t.findFirstStructure(Catch);
       if (c === undefined) {
-        const issue = Issue.atToken(file, t.getFirstToken(), this.getMessage(), this.getKey());
+        const issue = Issue.atToken(file, t.getFirstToken(), this.getMessage(), this.getMetadata().key);
         issues.push(issue);
       }
     }

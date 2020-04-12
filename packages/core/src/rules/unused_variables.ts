@@ -17,8 +17,8 @@ export class UnusedVariablesConf extends BasicRuleConfig {
 export class UnusedVariables implements IRule {
   private conf = new UnusedVariablesConf();
 
-  public getKey(): string {
-    return "unused_variables";
+  public getMetadata() {
+    return {key: "unused_variables"};
   }
 
   public getConfig() {
@@ -63,7 +63,7 @@ export class UnusedVariables implements IRule {
       if (this.isUsed(node, v.identifier) === false
           && obj.containsFile(v.identifier.getFilename())) {
         const message = "Variable \"" + v.identifier.getName() + "\" not used";
-        ret.push(Issue.atIdentifier(v.identifier, message, this.getKey()));
+        ret.push(Issue.atIdentifier(v.identifier, message, this.getMetadata().key));
       }
     }
 

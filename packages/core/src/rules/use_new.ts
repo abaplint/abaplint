@@ -14,8 +14,8 @@ export class UseNewConf extends BasicRuleConfig {
 export class UseNew extends ABAPRule {
   private conf = new UseNewConf();
 
-  public getKey(): string {
-    return "use_new";
+  public getMetadata() {
+    return {key: "use_new"};
   }
 
   private getMessage(): string {
@@ -42,7 +42,7 @@ export class UseNew extends ABAPRule {
         if (statement.findFirstExpression(Dynamic)) {
           continue;
         }
-        const issue = Issue.atPosition(file, statement.getStart(), this.getMessage(), this.getKey());
+        const issue = Issue.atPosition(file, statement.getStart(), this.getMessage(), this.getMetadata().key);
         issues.push(issue);
       }
     }

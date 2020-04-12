@@ -13,8 +13,8 @@ export class CheckInclude extends ABAPRule {
 
   private conf = new CheckIncludeConf();
 
-  public getKey(): string {
-    return "check_include";
+  public getMetadata() {
+    return {key: "check_include"};
   }
 
   public getConfig() {

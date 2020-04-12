@@ -16,8 +16,8 @@ enum IssueType {
 export class CheckComments extends ABAPRule {
   private conf = new CheckCommentsConf();
 
-  public getKey(): string {
-    return "check_comments";
+  public getMetadata() {
+    return {key: "check_comments"};
   }
 
   private getDescription(issueType: IssueType): string {
@@ -60,7 +60,7 @@ export class CheckComments extends ABAPRule {
             file,
             statement,
             this.getDescription(IssueType.EndOfLine),
-            this.getKey()));
+            this.getMetadata().key));
       }
     }
     return issues;

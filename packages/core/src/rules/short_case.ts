@@ -19,8 +19,8 @@ export class ShortCaseConf extends BasicRuleConfig {
 export class ShortCase extends ABAPRule {
   private conf = new ShortCaseConf();
 
-  public getKey(): string {
-    return "short_case";
+  public getMetadata() {
+    return {key: "short_case"};
   }
 
   private getMessage(): string {
@@ -53,7 +53,7 @@ export class ShortCase extends ABAPRule {
         if (c.findAllExpressions(Expressions.Or).length > 0) {
           continue;
         }
-        const issue = Issue.atToken(file, c.getFirstToken(), this.getMessage(), this.getKey());
+        const issue = Issue.atToken(file, c.getFirstToken(), this.getMessage(), this.getMetadata().key);
         issues.push(issue);
       }
     }

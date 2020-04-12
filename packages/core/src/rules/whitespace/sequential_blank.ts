@@ -19,8 +19,8 @@ export class SequentialBlank extends ABAPRule {
   }
   private conf = new SequentialBlankConf();
 
-  public getKey(): string {
-    return "sequential_blank";
+  public getMetadata() {
+    return {key: "sequential_blank"};
   }
 
   private getMessage(): string {
@@ -50,7 +50,7 @@ export class SequentialBlank extends ABAPRule {
 
       if (blanks === this.conf.lines) {
         const position = new Position(i + 1, 1);
-        const issue = Issue.atPosition(file, position, this.getMessage(), this.getKey());
+        const issue = Issue.atPosition(file, position, this.getMessage(), this.getMetadata().key);
         issues.push(issue);
       }
     }

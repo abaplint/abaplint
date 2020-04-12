@@ -13,8 +13,8 @@ export class TABLEnhancementCategoryConf extends BasicRuleConfig {
 export class TABLEnhancementCategory implements IRule {
   private conf = new TABLEnhancementCategoryConf();
 
-  public getKey(): string {
-    return "tabl_enhancement_category";
+  public getMetadata() {
+    return {key: "tabl_enhancement_category"};
   }
 
   private getDescription(name: string): string {
@@ -36,7 +36,7 @@ export class TABLEnhancementCategory implements IRule {
 
     if (obj.getEnhancementCategory() === EnhancementCategory.NotClassified) {
       const position = new Position(1, 1);
-      const issue = Issue.atPosition(obj.getFiles()[0], position, this.getDescription(obj.getName()), this.getKey());
+      const issue = Issue.atPosition(obj.getFiles()[0], position, this.getDescription(obj.getName()), this.getMetadata().key);
       return [issue];
     }
 

@@ -31,8 +31,8 @@ export class KeywordCaseConf extends BasicRuleConfig {
 export class KeywordCase extends ABAPRule {
   private conf = new KeywordCaseConf();
 
-  public getKey(): string {
-    return "keyword_case";
+  public getMetadata() {
+    return {key: "keyword_case"};
   }
 
   private getDescription(tokenValue: string, keyword: boolean): string {
@@ -107,7 +107,7 @@ export class KeywordCase extends ABAPRule {
 
       const result = this.traverse(statement, statement.get());
       if (result.token) {
-        const issue = Issue.atToken(file, result.token, this.getDescription(result.token.getStr(), result.keyword), this.getKey());
+        const issue = Issue.atToken(file, result.token, this.getDescription(result.token.getStr(), result.keyword), this.getMetadata().key);
         issues.push(issue);
         break; // one issue per file
       }

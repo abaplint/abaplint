@@ -21,8 +21,8 @@ export class ClassAttributeNames implements IRule {
 
   private conf = new ClassAttributeNamesConf();
 
-  public getKey(): string {
-    return "class_attribute_names";
+  public getMetadata() {
+    return {key: "class_attribute_names"};
   }
 
   private getDescription(expected: string, actual: string): string {
@@ -87,7 +87,7 @@ export class ClassAttributeNames implements IRule {
     const regex = new RegExp(expected, "i");
     const name = attr.getName();
     if (NameValidator.violatesRule(name, regex, this.conf)) {
-      const issue = Issue.atIdentifier(attr, this.getDescription(name, expected), this.getKey());
+      const issue = Issue.atIdentifier(attr, this.getDescription(name, expected), this.getMetadata().key);
       ret.push(issue);
     }
 

@@ -13,8 +13,8 @@ export class CheckNoHandlerPragmaConf extends BasicRuleConfig {
 export class CheckNoHandlerPragma extends ABAPRule {
   private conf = new CheckNoHandlerPragmaConf();
 
-  public getKey(): string {
-    return "check_no_handler_pragma";
+  public getMetadata() {
+    return {key: "check_no_handler_pragma"};
   }
 
   private getMessage(): string {
@@ -39,7 +39,7 @@ export class CheckNoHandlerPragma extends ABAPRule {
       } else if (statement.get() instanceof Comment) {
         continue;
       } else if (noHandler === true && !(statement.get() instanceof Statements.Catch)) {
-        const issue = Issue.atStatement(file, statement, this.getMessage(), this.getKey());
+        const issue = Issue.atStatement(file, statement, this.getMessage(), this.getMetadata().key);
         issues.push(issue);
         noHandler = false;
       } else {

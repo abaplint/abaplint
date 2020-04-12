@@ -21,8 +21,8 @@ export class NoPublicAttributes extends ABAPRule {
 
   private file: ABAPFile;
 
-  public getKey(): string {
-    return "no_public_attributes";
+  public getMetadata() {
+    return {key: "no_public_attributes"};
   }
 
   public getDescription(name: string): string {
@@ -83,7 +83,7 @@ export class NoPublicAttributes extends ABAPRule {
       if ((this.conf.allowReadOnly === true) && this.isAttributeReadOnly(attr)) {
         continue;
       }
-      const issue = Issue.atIdentifier(attr, this.getDescription(attr.getName()), this.getKey());
+      const issue = Issue.atIdentifier(attr, this.getDescription(attr.getName()), this.getMetadata().key);
       issues.push(issue);
     }
     return issues;

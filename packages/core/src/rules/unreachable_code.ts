@@ -14,8 +14,8 @@ export class UnreachableCodeConf extends BasicRuleConfig {
 export class UnreachableCode extends ABAPRule {
   private conf = new UnreachableCodeConf();
 
-  public getKey(): string {
-    return "unreachable_code";
+  public getMetadata() {
+    return {key: "unreachable_code"};
   }
 
   private getMessage(): string {
@@ -48,7 +48,7 @@ export class UnreachableCode extends ABAPRule {
       }
       if (exit === true) {
         const token = node.getFirstToken();
-        const issue = Issue.atToken(file, token, this.getMessage(), this.getKey());
+        const issue = Issue.atToken(file, token, this.getMessage(), this.getMetadata().key);
         output.push(issue);
       }
     }

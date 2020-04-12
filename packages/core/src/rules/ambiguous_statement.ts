@@ -18,8 +18,8 @@ export class AmbiguousStatementConf extends BasicRuleConfig {
 export class AmbiguousStatement extends ABAPRule {
   private conf = new AmbiguousStatementConf();
 
-  public getKey(): string {
-    return "ambiguous_statement";
+  public getMetadata() {
+    return {key: "ambiguous_statement"};
   }
 
   private getMessage(): string {
@@ -55,7 +55,7 @@ export class AmbiguousStatement extends ABAPRule {
       }
 
       if (match) {
-        const issue = Issue.atStatement(file, statement, this.getMessage(), this.getKey());
+        const issue = Issue.atStatement(file, statement, this.getMessage(), this.getMetadata().key);
         issues.push(issue);
       }
 

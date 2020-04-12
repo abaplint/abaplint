@@ -18,8 +18,8 @@ export class ImplementMethodsConf extends BasicRuleConfig {
 export class ImplementMethods extends ABAPRule {
   private conf = new ImplementMethodsConf();
 
-  public getKey(): string {
-    return "implement_methods";
+  public getMetadata() {
+    return {key: "implement_methods"};
   }
 
   public getConfig() {
@@ -43,7 +43,7 @@ export class ImplementMethods extends ABAPRule {
         impl = obj.getClassImplementation(def.getName());
       }
       if (impl === undefined) {
-        const issue = Issue.atIdentifier(def, "Class implementation for \"" + def.getName() + "\" not found", this.getKey());
+        const issue = Issue.atIdentifier(def, "Class implementation for \"" + def.getName() + "\" not found", this.getMetadata().key);
         ret.push(issue);
         continue;
       }
@@ -63,14 +63,14 @@ export class ImplementMethods extends ABAPRule {
 
       if (md.isAbstract()) {
         if (found !== undefined) {
-          const issue = Issue.atIdentifier(found, "Do not implement abstract method \"" + md.getName() + "\"", this.getKey());
+          const issue = Issue.atIdentifier(found, "Do not implement abstract method \"" + md.getName() + "\"", this.getMetadata().key);
           ret.push(issue);
         }
         continue;
       }
 
       if (found === undefined) {
-        const issue = Issue.atIdentifier(impl, "Implement method \"" + md.getName() + "\"", this.getKey());
+        const issue = Issue.atIdentifier(impl, "Implement method \"" + md.getName() + "\"", this.getMetadata().key);
         ret.push(issue);
       }
     }
@@ -87,7 +87,7 @@ export class ImplementMethods extends ABAPRule {
       if (intf === undefined) {
         idef = file.getInfo().getInterfaceDefinition(interfaceName.name);
         if (idef === undefined) {
-          const issue = Issue.atIdentifier(def, "Implemented interface \"" + interfaceName.name + "\" not found", this.getKey());
+          const issue = Issue.atIdentifier(def, "Implemented interface \"" + interfaceName.name + "\" not found", this.getMetadata().key);
           ret.push(issue);
           continue;
         }
@@ -115,7 +115,7 @@ export class ImplementMethods extends ABAPRule {
 
         if (found === undefined) {
           const message = "Implement method \"" + method.getName() + "\" from interface \"" + interfaceName.name + "\"";
-          const issue = Issue.atIdentifier(impl, message, this.getKey());
+          const issue = Issue.atIdentifier(impl, message, this.getMetadata().key);
           ret.push(issue);
         }
       }
