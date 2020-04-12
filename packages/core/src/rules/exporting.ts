@@ -1,4 +1,5 @@
 import {Issue} from "../issue";
+import {IRuleMetadata} from "./_irule";
 import {ABAPRule} from "./_abap_rule";
 import {ABAPFile} from "../files";
 import {BasicRuleConfig} from "./_basic_rule_config";
@@ -6,10 +7,6 @@ import {MethodParameters, MethodCallBody, MethodCall} from "../abap/2_statements
 import {ExpressionNode} from "../abap/nodes";
 import {EditHelper} from "../edit";
 
-/** Detects EXPORTING statements which can be omitted.
- * https://github.com/SAP/styleguides/blob/master/clean-abap/CleanABAP.md#omit-the-optional-keyword-exporting
- * https://docs.abapopenchecks.org/checks/30/
- */
 export class ExportingConf extends BasicRuleConfig {
 }
 
@@ -17,8 +14,18 @@ export class Exporting extends ABAPRule {
 
   private conf = new ExportingConf();
 
-  public getMetadata() {
-    return {key: "exporting"};
+  public getMetadata(): IRuleMetadata {
+    return {
+      key: "exporting",
+      title: "EXPORTING can be omitted",
+      quickfix: true,
+      badExample: `call_method( EXPORTING foo = bar ).`,
+      goodExample: `call_method( foo = bar ).`,
+      shortDescription:
+`Detects EXPORTING statements which can be omitted.
+https://github.com/SAP/styleguides/blob/master/clean-abap/CleanABAP.md#omit-the-optional-keyword-exporting
+https://docs.abapopenchecks.org/checks/30/`,
+    };
   }
 
   private getMessage(): string {

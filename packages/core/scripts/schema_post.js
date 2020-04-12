@@ -1,5 +1,6 @@
 const fs = require("fs");
 const path = require("path");
+const abaplint = require("../build/src/index");
 
 // adds the description on top level, so boolean configs also have descriptions
 function run() {
@@ -10,18 +11,28 @@ function run() {
   const descriptions = {};
   for (const d in schema.definitions) {
     const description = schema.definitions[d].description;
-    if (d.endsWith("Conf") && description === undefined) {
-      console.log("Missing jsdoc description: " + d);
-      process.exit(1);
-    } else if (description !== undefined) {
+    if (description !== undefined) {
       descriptions[d] = description;
+    }
+  }
+
+  for(const rule of abaplint.ArtifactsRules.getRules()) {
+    const meta = rule.getMetadata();
+    if (meta.shortDescription !== undefined) {
+      descriptions[meta.key] = meta.shortDescription;
     }
   }
 
   const rules = schema.definitions.IConfig.properties.rules.properties;
   for (const rule in rules) {
     const name = rules[rule].anyOf[0]["$ref"].split("/")[2];
-    rules[rule].description = descriptions[name];
+
+    const description = descriptions[name] ? descriptions[name] : descriptions[rule];
+    if (description === undefined) {
+      console.log("Missing jsdoc/rule description: " + name);
+      process.exit(1);
+    }
+    rules[rule].description = description;
   }
 
   fs.writeFileSync(filename, JSON.stringify(schema, null, 2));

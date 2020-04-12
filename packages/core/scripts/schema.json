@@ -683,7 +683,6 @@
     },
     "ExportingConf": {
       "additionalProperties": false,
-      "description": "Detects EXPORTING statements which can be omitted.\r\nhttps://github.com/SAP/styleguides/blob/master/clean-abap/CleanABAP.md#omit-the-optional-keyword-exporting\r\nhttps://docs.abapopenchecks.org/checks/30/",
       "properties": {
         "exclude": {
           "description": "List of file regex patterns to exclude",
@@ -1173,7 +1172,7 @@
                   "type": "boolean"
                 }
               ],
-              "description": "Detects EXPORTING statements which can be omitted.\r\nhttps://github.com/SAP/styleguides/blob/master/clean-abap/CleanABAP.md#omit-the-optional-keyword-exporting\r\nhttps://docs.abapopenchecks.org/checks/30/"
+              "description": "Detects EXPORTING statements which can be omitted.\nhttps://github.com/SAP/styleguides/blob/master/clean-abap/CleanABAP.md#omit-the-optional-keyword-exporting\nhttps://docs.abapopenchecks.org/checks/30/"
             },
             "forbidden_identifier": {
               "anyOf": [
