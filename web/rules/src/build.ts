@@ -79,6 +79,11 @@ function buildIndex() {
   fs.writeFileSync("build/index.html", preamble() + html + postamble);
 }
 
+function render(str: string) {
+  const exp_match = /(\b(https?|):\/\/[-A-Z0-9+&@#\/%?=~_|!:,.;]*[-A-Z0-9+&@#\/%=~_|])/ig;
+  return str.replace(exp_match, "<a href='$1'>$1</a>").replace(/\n/g, "<br>");
+}
+
 function buildRule(meta: IRuleMetadata) {
   let html = "<h1>" + meta.key + " - " + meta.title + "</h1>\n";
 
@@ -97,7 +102,7 @@ function buildRule(meta: IRuleMetadata) {
   html = html + "<u>Description</u><br>\n" + meta.shortDescription + "<br><br>";
 
   if (meta.extendedInformation !== undefined && meta.extendedInformation !== "") {
-    html = html + "<u>Extended Information</u><br>\n" + meta.extendedInformation + "<br><br>";
+    html = html + "<u>Extended Information</u><br>\n" + render(meta.extendedInformation) + "<br><br>";
   }
 
   html = html + "<u>Default Configuration</u><br>\n";
