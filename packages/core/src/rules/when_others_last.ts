@@ -5,7 +5,6 @@ import {BasicRuleConfig} from "./_basic_rule_config";
 import * as Statements from "../abap/2_statements/statements";
 import * as Structures from "../abap/3_structures/structures";
 
-/** Checks that WHEN OTHERS is placed the last within a CASE statement. */
 export class WhenOthersLastConf extends BasicRuleConfig {
 }
 
@@ -14,7 +13,12 @@ export class WhenOthersLast extends ABAPRule {
   private conf = new WhenOthersLastConf();
 
   public getMetadata() {
-    return {key: "when_others_last"};
+    return {
+      key: "when_others_last",
+      title: "WHEN OTHERS last",
+      quickfix: false,
+      shortDescription: `Checks that WHEN OTHERS is placed the last within a CASE statement.`,
+    };
   }
 
   private getMessage(): string {

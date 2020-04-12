@@ -5,7 +5,6 @@ import {IRule} from "./_irule";
 import * as Objects from "../objects";
 import {Position} from "../position";
 
-/** Checks idoc types and segments are set to status released */
 export class ReleaseIdocConf extends BasicRuleConfig {
 }
 
@@ -13,7 +12,12 @@ export class ReleaseIdoc implements IRule {
   private conf = new ReleaseIdocConf();
 
   public getMetadata() {
-    return {key: "release_idoc"};
+    return {
+      key: "release_idoc",
+      title: "Release iDoc",
+      quickfix: false,
+      shortDescription: `Checks idoc types and segments are set to status released`,
+    };
   }
 
   private getMessage(): string {

@@ -8,7 +8,6 @@ import {Position} from "../../position";
 import {AbstractType} from "../../abap/types/basic/_abstract_type";
 import {UnknownType, StructureType, TableType} from "../../abap/types/basic";
 
-/** Checks the types of DDIC objects can be resolved, the namespace of the development/errors can be configured in "errorNamespace" */
 export class CheckDDICConf extends BasicRuleConfig {
 // todo, add option to not allow any void types?
 }
@@ -18,7 +17,13 @@ export class CheckDDIC implements IRule {
   private conf = new CheckDDICConf();
 
   public getMetadata() {
-    return {key: "check_ddic"};
+    return {
+      key: "check_ddic",
+      title: "Check DDIC",
+      quickfix: false,
+      // eslint-disable-next-line max-len
+      shortDescription: `Checks the types of DDIC objects can be resolved, the namespace of the development/errors can be configured in "errorNamespace" `,
+    };
   }
 
   public getConfig() {

@@ -6,7 +6,6 @@ import {IRule} from "./_irule";
 import {IObject} from "../objects/_iobject";
 import {Position} from "../position";
 
-/** Checks the validity of ICF services */
 export class SICFConsistencyConf extends BasicRuleConfig {
 }
 
@@ -14,7 +13,12 @@ export class SICFConsistency implements IRule {
   private conf = new SICFConsistencyConf();
 
   public getMetadata() {
-    return {key: "sicf_consistency"};
+    return {
+      key: "sicf_consistency",
+      title: "SICF consistency",
+      quickfix: false,
+      shortDescription: `Checks the validity of ICF services`,
+    };
   }
 
   public getConfig() {

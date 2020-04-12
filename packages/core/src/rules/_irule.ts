@@ -2,6 +2,11 @@ import {IObject} from "../objects/_iobject";
 import {Issue} from "../issue";
 import {IRegistry} from "../_iregistry";
 
+export enum RuleTag {
+  Experimental,
+  DeprecationCandidate,
+}
+
 /** Rule Metadata */
 export interface IRuleMetadata {
   /** Rule key, no whitespace allowed, always lower case, words separated by underscore
@@ -9,17 +14,19 @@ export interface IRuleMetadata {
    */
   key: string;
   /** Rule title */
-  title?: string;
+  title: string;
   /** Does the rule implement quickfixes? */
-  quickfix?: boolean;
+  quickfix: boolean;
   /** Short description in markdown, can be shown in editors */
-  shortDescription?: string;
+  shortDescription: string;
   /** ABAP code with bad example, shown on rules.abaplint.org */
   badExample?: string;
   /** ABAP code with good example, shown on rules.abaplint.org */
   goodExample?: string;
   /** Extended information, markdown, only shown on rules.abaplint.org */
   extendedInformation?: string;
+  /** Various tags with additional usage information */
+  tags?: RuleTag[];
 }
 
 /** Rule Interface */

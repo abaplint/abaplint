@@ -4,8 +4,8 @@ import {BasicRuleConfig} from "../_basic_rule_config";
 import {IObject} from "../../objects/_iobject";
 import {ABAPObject} from "../../objects/_abap_object";
 import {Issue} from "../../issue";
+import {RuleTag, IRuleMetadata} from "../_irule";
 
-/** Enables syntax check and variable resolution */
 export class CheckSyntaxConf extends BasicRuleConfig {
 }
 
@@ -13,8 +13,14 @@ export class CheckSyntax {
 
   private conf = new CheckSyntaxConf();
 
-  public getMetadata() {
-    return {key: "check_syntax"};
+  public getMetadata(): IRuleMetadata {
+    return {
+      key: "check_syntax",
+      title: "Check syntax",
+      quickfix: false,
+      shortDescription: `Enables syntax check and variable resolution`,
+      tags: [RuleTag.Experimental],
+    };
   }
 
   public getConfig() {

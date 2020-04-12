@@ -28,7 +28,6 @@
     },
     "AllowedObjectNamingConf": {
       "additionalProperties": false,
-      "description": "Enforces basic name length and namespace restrictions",
       "properties": {
         "exclude": {
           "description": "List of file regex patterns to exclude",
@@ -154,7 +153,6 @@
     },
     "BeginEndNamesConf": {
       "additionalProperties": false,
-      "description": "Check BEGIN OF and END OF names match",
       "properties": {
         "exclude": {
           "description": "List of file regex patterns to exclude",
@@ -230,7 +228,6 @@
     },
     "CheckDDICConf": {
       "additionalProperties": false,
-      "description": "Checks the types of DDIC objects can be resolved, the namespace of the development/errors can be configured in \"errorNamespace\"",
       "properties": {
         "exclude": {
           "description": "List of file regex patterns to exclude",
@@ -248,7 +245,6 @@
     },
     "CheckIncludeConf": {
       "additionalProperties": false,
-      "description": "Checks INCLUDE statements",
       "properties": {
         "exclude": {
           "description": "List of file regex patterns to exclude",
@@ -283,7 +279,6 @@
     },
     "CheckSyntaxConf": {
       "additionalProperties": false,
-      "description": "Enables syntax check and variable resolution",
       "properties": {
         "exclude": {
           "description": "List of file regex patterns to exclude",
@@ -318,7 +313,6 @@
     },
     "CheckTransformationExistsConf": {
       "additionalProperties": false,
-      "description": "Checks that used XSLT transformations exist.",
       "properties": {
         "exclude": {
           "description": "List of file regex patterns to exclude",
@@ -336,7 +330,6 @@
     },
     "ClassAttributeNamesConf": {
       "additionalProperties": false,
-      "description": "Allows you to enforce a pattern, such as a prefix, for class variable names.",
       "properties": {
         "exclude": {
           "description": "List of file regex patterns to exclude",
@@ -405,7 +398,6 @@
     },
     "ColonMissingSpaceConf": {
       "additionalProperties": false,
-      "description": "Checks for missing spaces after colons in chained statements.",
       "properties": {
         "exclude": {
           "description": "List of file regex patterns to exclude",
@@ -464,7 +456,6 @@
     },
     "ContainsTabConf": {
       "additionalProperties": false,
-      "description": "Checks for usage of tabs (enable to enforce spaces)\r\nhttps://docs.abapopenchecks.org/checks/09/",
       "properties": {
         "exclude": {
           "description": "List of file regex patterns to exclude",
@@ -516,7 +507,6 @@
     },
     "DoubleSpaceConf": {
       "additionalProperties": false,
-      "description": "Checks that only a single space follows certain common statements.",
       "properties": {
         "afterColon": {
           "description": "Check for double space after colon/chaining operator",
@@ -791,7 +781,6 @@
     },
     "GlobalClassConf": {
       "additionalProperties": false,
-      "description": "Checks related to names of global classes. For the name pattern, see rule object_naming",
       "properties": {
         "exclude": {
           "description": "List of file regex patterns to exclude",
@@ -942,7 +931,7 @@
                   "type": "boolean"
                 }
               ],
-              "description": "Checks the types of DDIC objects can be resolved, the namespace of the development/errors can be configured in \"errorNamespace\"\nhttps://rules.abaplint.org/check_ddic"
+              "description": "Checks the types of DDIC objects can be resolved, the namespace of the development/errors can be configured in \"errorNamespace\" \nhttps://rules.abaplint.org/check_ddic"
             },
             "check_include": {
               "anyOf": [
@@ -1063,7 +1052,7 @@
                   "type": "boolean"
                 }
               ],
-              "description": "Checks for usage of tabs (enable to enforce spaces)\r\nhttps://docs.abapopenchecks.org/checks/09/\nhttps://rules.abaplint.org/contains_tab"
+              "description": "Checks for usage of tabs (enable to enforce spaces)\nhttps://rules.abaplint.org/contains_tab"
             },
             "definitions_top": {
               "anyOf": [
@@ -1261,7 +1250,7 @@
                   "type": "boolean"
                 }
               ],
-              "description": "Checks alignment within block statement declarations which span multiple lines, such as multiple conditions in IF statements.\r\nExample:\r\nIF 1 = 1 AND\r\n  2 = 2.\nhttps://rules.abaplint.org/in_statement_indentation"
+              "description": "Checks alignment within block statement declarations which span multiple lines, such as multiple conditions in IF statements.\nExample:\nIF 1 = 1 AND\n   2 = 2.\nhttps://rules.abaplint.org/in_statement_indentation"
             },
             "indentation": {
               "anyOf": [
@@ -1283,7 +1272,7 @@
                   "type": "boolean"
                 }
               ],
-              "description": "Checks for inline data declarations in older releases.\nhttps://rules.abaplint.org/inline_data_old_versions"
+              "description": "Checks for inline data declarations in older releases. Only active for versions less than v740sp02\nhttps://rules.abaplint.org/inline_data_old_versions"
             },
             "keep_single_parameter_on_one_line": {
               "anyOf": [
@@ -1294,7 +1283,7 @@
                   "type": "boolean"
                 }
               ],
-              "description": "Keep single parameter calls on one line\r\nhttps://github.com/SAP/styleguides/blob/master/clean-abap/CleanABAP.md#keep-single-parameter-calls-on-one-line\nhttps://rules.abaplint.org/keep_single_parameter_on_one_line"
+              "description": "Keep single parameter calls on one line\nhttps://rules.abaplint.org/keep_single_parameter_on_one_line"
             },
             "keyword_case": {
               "anyOf": [
@@ -1448,7 +1437,7 @@
                   "type": "boolean"
                 }
               ],
-              "description": "Checks for methods exceeding a maximum nesting depth\r\nhttps://github.com/SAP/styleguides/blob/master/clean-abap/CleanABAP.md#keep-the-nesting-depth-low\r\nhttps://docs.abapopenchecks.org/checks/74/\nhttps://rules.abaplint.org/nesting"
+              "description": "Checks for methods exceeding a maximum nesting depth\nhttps://rules.abaplint.org/nesting"
             },
             "newline_between_methods": {
               "anyOf": [
@@ -1470,7 +1459,7 @@
                   "type": "boolean"
                 }
               ],
-              "description": "Checks that classes and interfaces don't contain any public attributes.\r\nExceptions are excluded from this rule.\nhttps://rules.abaplint.org/no_public_attributes"
+              "description": "Checks that classes and interfaces don't contain any public attributes.\nExceptions are excluded from this rule.\nhttps://rules.abaplint.org/no_public_attributes"
             },
             "object_naming": {
               "anyOf": [
@@ -1514,7 +1503,7 @@
                   "type": "boolean"
                 }
               ],
-              "description": "Prefer RETURNING to EXPORTING\r\nhttps://github.com/SAP/styleguides/blob/master/clean-abap/CleanABAP.md#prefer-returning-to-exporting\r\nhttps://docs.abapopenchecks.org/checks/44/\nhttps://rules.abaplint.org/prefer_returning_to_exporting"
+              "description": "Prefer RETURNING to EXPORTING\nhttps://rules.abaplint.org/prefer_returning_to_exporting"
             },
             "preferred_compare_operator": {
               "anyOf": [
@@ -1536,7 +1525,7 @@
                   "type": "boolean"
                 }
               ],
-              "description": "Reports errors if the current class references itself with \"current_class=>\"\r\nhttps://github.com/SAP/styleguides/blob/master/clean-abap/CleanABAP.md#omit-the-self-reference-me-when-calling-an-instance-method\nhttps://rules.abaplint.org/prefix_is_current_class"
+              "description": "Reports errors if the current class references itself with \"current_class=>\"\nhttps://rules.abaplint.org/prefix_is_current_class"
             },
             "release_idoc": {
               "anyOf": [
@@ -1569,7 +1558,7 @@
                   "type": "boolean"
                 }
               ],
-              "description": "Checks that exceptions 'system_failure' and 'communication_failure' are handled in RFC calls\r\nhttps://help.sap.com/doc/abapdocu_750_index_htm/7.50/en-US/abenrfc_exception.htm\nhttps://rules.abaplint.org/rfc_error_handling"
+              "description": "Checks that exceptions 'system_failure' and 'communication_failure' are handled in RFC calls\nhttps://rules.abaplint.org/rfc_error_handling"
             },
             "selection_screen_naming": {
               "anyOf": [
@@ -1624,7 +1613,7 @@
                   "type": "boolean"
                 }
               ],
-              "description": "Checks that there are no spaces in front of colons in chained statements.\r\nhttps://docs.abapopenchecks.org/checks/80/\nhttps://rules.abaplint.org/space_before_colon"
+              "description": "Checks that there are no spaces in front of colons in chained statements.\nhttps://rules.abaplint.org/space_before_colon"
             },
             "space_before_dot": {
               "anyOf": [
@@ -1635,7 +1624,7 @@
                   "type": "boolean"
                 }
               ],
-              "description": "Checks for extra spaces before dots at the ends of statements .\nhttps://rules.abaplint.org/space_before_dot"
+              "description": "Checks for extra spaces before dots at the ends of statements\nhttps://rules.abaplint.org/space_before_dot"
             },
             "sql_escape_host_variables": {
               "anyOf": [
@@ -1646,7 +1635,7 @@
                   "type": "boolean"
                 }
               ],
-              "description": "Escape SQL host variables, from 740sp05\nhttps://rules.abaplint.org/sql_escape_host_variables"
+              "description": "Escape SQL host variables, from 740sp05 \nhttps://rules.abaplint.org/sql_escape_host_variables"
             },
             "start_at_tab": {
               "anyOf": [
@@ -1734,7 +1723,7 @@
                   "type": "boolean"
                 }
               ],
-              "description": "Enables check for unknown types, respects errorNamespace\nhttps://rules.abaplint.org/unknown_types"
+              "description": "Enables check for unknown data types, respects errorNamespace\nhttps://rules.abaplint.org/unknown_types"
             },
             "unreachable_code": {
               "anyOf": [
@@ -1928,7 +1917,6 @@
     },
     "ImplementMethodsConf": {
       "additionalProperties": false,
-      "description": "Chekcs for abstract methods which need implementing.",
       "properties": {
         "exclude": {
           "description": "List of file regex patterns to exclude",
@@ -1946,7 +1934,6 @@
     },
     "InStatementIndentationConf": {
       "additionalProperties": false,
-      "description": "Checks alignment within block statement declarations which span multiple lines, such as multiple conditions in IF statements.\r\nExample:\r\nIF 1 = 1 AND\r\n  2 = 2.",
       "properties": {
         "exclude": {
           "description": "List of file regex patterns to exclude",
@@ -1970,7 +1957,6 @@
     },
     "IndentationConf": {
       "additionalProperties": false,
-      "description": "Checks indentation",
       "properties": {
         "alignTryCatch": {
           "type": "boolean"
@@ -2010,7 +1996,6 @@
     },
     "InlineDataOldVersionsConf": {
       "additionalProperties": false,
-      "description": "Checks for inline data declarations in older releases.",
       "properties": {
         "exclude": {
           "description": "List of file regex patterns to exclude",
@@ -2028,7 +2013,6 @@
     },
     "KeepSingleParameterCallsOnOneLineConf": {
       "additionalProperties": false,
-      "description": "Keep single parameter calls on one line\r\nhttps://github.com/SAP/styleguides/blob/master/clean-abap/CleanABAP.md#keep-single-parameter-calls-on-one-line",
       "properties": {
         "exclude": {
           "description": "List of file regex patterns to exclude",
@@ -2150,7 +2134,6 @@
     },
     "LocalClassNamingConf": {
       "additionalProperties": false,
-      "description": "Allows you to enforce a pattern, such as a prefix, for local class names.",
       "properties": {
         "exception": {
           "description": "The pattern for local exception names",
@@ -2220,7 +2203,6 @@
     },
     "LocalVariableNamesConf": {
       "additionalProperties": false,
-      "description": "Allows you to enforce a pattern, such as a prefix, for local variables, constants and field symbols.",
       "properties": {
         "exclude": {
           "description": "List of file regex patterns to exclude",
@@ -2273,7 +2255,6 @@
     },
     "MSAGConsistencyConf": {
       "additionalProperties": false,
-      "description": "Checks the validity of messages in message classes",
       "properties": {
         "exclude": {
           "description": "List of file regex patterns to exclude",
@@ -2376,7 +2357,6 @@
     },
     "MethodParameterNamesConf": {
       "additionalProperties": false,
-      "description": "Allows you to enforce a pattern, such as a prefix, for method parameter names",
       "properties": {
         "changing": {
           "description": "The pattern for changing parameters",
@@ -2456,7 +2436,6 @@
     },
     "NestingConf": {
       "additionalProperties": false,
-      "description": "Checks for methods exceeding a maximum nesting depth\r\nhttps://github.com/SAP/styleguides/blob/master/clean-abap/CleanABAP.md#keep-the-nesting-depth-low\r\nhttps://docs.abapopenchecks.org/checks/74/",
       "properties": {
         "depth": {
           "description": "Maximum allowed nesting depth",
@@ -2481,7 +2460,6 @@
     },
     "NewlineBetweenMethodsConf": {
       "additionalProperties": false,
-      "description": "Checks for newlines between method implementations.",
       "properties": {
         "count": {
           "description": "Amount of newlines, works in conjunction with \"newlineLogic\"",
@@ -2518,7 +2496,6 @@
     },
     "NoPublicAttributesConf": {
       "additionalProperties": false,
-      "description": "Checks that classes and interfaces don't contain any public attributes.\r\nExceptions are excluded from this rule.",
       "properties": {
         "allowReadOnly": {
           "description": "Allows public attributes, if they are declared as READ-ONLY.",
@@ -2543,7 +2520,6 @@
     },
     "ObjectNamingConf": {
       "additionalProperties": false,
-      "description": "Allows you to enforce a pattern, such as a prefix, for object names",
       "properties": {
         "auth": {
           "description": "The pattern for authorization object names",
@@ -2666,7 +2642,6 @@
     },
     "ObsoleteStatementConf": {
       "additionalProperties": false,
-      "description": "Checks for usages of certain obsolete statements",
       "properties": {
         "add": {
           "type": "boolean"
@@ -2729,7 +2704,6 @@
     },
     "ParserErrorConf": {
       "additionalProperties": false,
-      "description": "Checks for syntax unrecognized by abaplint",
       "properties": {
         "exclude": {
           "description": "List of file regex patterns to exclude",
@@ -2754,7 +2728,6 @@
     },
     "PreferReturningToExportingConf": {
       "additionalProperties": false,
-      "description": "Prefer RETURNING to EXPORTING\r\nhttps://github.com/SAP/styleguides/blob/master/clean-abap/CleanABAP.md#prefer-returning-to-exporting\r\nhttps://docs.abapopenchecks.org/checks/44/",
       "properties": {
         "exclude": {
           "description": "List of file regex patterns to exclude",
@@ -2772,7 +2745,6 @@
     },
     "PreferredCompareOperatorConf": {
       "additionalProperties": false,
-      "description": "Configure undesired operator variants",
       "properties": {
         "badOperators": {
           "description": "Operators which are not allowed",
@@ -2800,7 +2772,6 @@
     },
     "PrefixIsCurrentClassConf": {
       "additionalProperties": false,
-      "description": "Reports errors if the current class references itself with \"current_class=>\"\r\nhttps://github.com/SAP/styleguides/blob/master/clean-abap/CleanABAP.md#omit-the-self-reference-me-when-calling-an-instance-method",
       "properties": {
         "exclude": {
           "description": "List of file regex patterns to exclude",
@@ -2825,7 +2796,6 @@
     },
     "RFCErrorHandlingConf": {
       "additionalProperties": false,
-      "description": "Checks that exceptions 'system_failure' and 'communication_failure' are handled in RFC calls\r\nhttps://help.sap.com/doc/abapdocu_750_index_htm/7.50/en-US/abenrfc_exception.htm",
       "properties": {
         "exclude": {
           "description": "List of file regex patterns to exclude",
@@ -2843,7 +2813,6 @@
     },
     "ReleaseIdocConf": {
       "additionalProperties": false,
-      "description": "Checks idoc types and segments are set to status released",
       "properties": {
         "exclude": {
           "description": "List of file regex patterns to exclude",
@@ -2861,7 +2830,6 @@
     },
     "RemoveDescriptionsConf": {
       "additionalProperties": false,
-      "description": "Ensures you have no descriptions in metadata of methods, parameters, etc. For class descriptions, see rule description_empty.",
       "properties": {
         "exclude": {
           "description": "List of file regex patterns to exclude",
@@ -2885,7 +2853,6 @@
     },
     "SICFConsistencyConf": {
       "additionalProperties": false,
-      "description": "Checks the validity of ICF services",
       "properties": {
         "exclude": {
           "description": "List of file regex patterns to exclude",
@@ -2903,7 +2870,6 @@
     },
     "SQLEscapeHostVariablesConf": {
       "additionalProperties": false,
-      "description": "Escape SQL host variables, from 740sp05",
       "properties": {
         "exclude": {
           "description": "List of file regex patterns to exclude",
@@ -2921,7 +2887,6 @@
     },
     "SelectionScreenNamingConf": {
       "additionalProperties": false,
-      "description": "Allows you to enforce a pattern, such as a prefix, for selection-screen variable names.",
       "properties": {
         "exclude": {
           "description": "List of file regex patterns to exclude",
@@ -2969,7 +2934,6 @@
     },
     "SequentialBlankConf": {
       "additionalProperties": false,
-      "description": "Checks that code does not contain more than the configured number of blank lines in a row.",
       "properties": {
         "exclude": {
           "description": "List of file regex patterns to exclude",
@@ -3011,7 +2975,6 @@
     },
     "ShortCaseConf": {
       "additionalProperties": false,
-      "description": "Checks for CASE statements which have fewer than the specified number of branches",
       "properties": {
         "allow": {
           "items": {
@@ -3043,7 +3006,6 @@
     },
     "SpaceBeforeColonConf": {
       "additionalProperties": false,
-      "description": "Checks that there are no spaces in front of colons in chained statements.\r\nhttps://docs.abapopenchecks.org/checks/80/",
       "properties": {
         "exclude": {
           "description": "List of file regex patterns to exclude",
@@ -3061,7 +3023,6 @@
     },
     "SpaceBeforeDotConf": {
       "additionalProperties": false,
-      "description": "Checks for extra spaces before dots at the ends of statements .",
       "properties": {
         "exclude": {
           "description": "List of file regex patterns to exclude",
@@ -3089,7 +3050,6 @@
     },
     "StartAtTabConf": {
       "additionalProperties": false,
-      "description": "Checks that statements start at tabstops.",
       "properties": {
         "exclude": {
           "description": "List of file regex patterns to exclude",
@@ -3107,7 +3067,6 @@
     },
     "SuperclassFinalConf": {
       "additionalProperties": false,
-      "description": "Checks that classes which are inherited from are not declared as FINAL.",
       "properties": {
         "exclude": {
           "description": "List of file regex patterns to exclude",
@@ -3125,7 +3084,6 @@
     },
     "TABLEnhancementCategoryConf": {
       "additionalProperties": false,
-      "description": "Checks that tables do not have the enhancement category 'not classified'",
       "properties": {
         "exclude": {
           "description": "List of file regex patterns to exclude",
@@ -3143,7 +3101,6 @@
     },
     "TryWithoutCatchConf": {
       "additionalProperties": false,
-      "description": "Checks for TRY blocks without a CATCH block",
       "properties": {
         "exclude": {
           "description": "List of file regex patterns to exclude",
@@ -3161,7 +3118,6 @@
     },
     "TypeBeginSingleTypeConf": {
       "additionalProperties": false,
-      "description": "Finds TYPE BEGIN with just one INCLUDE TYPE",
       "properties": {
         "exclude": {
           "description": "List of file regex patterns to exclude",
@@ -3179,7 +3135,6 @@
     },
     "TypeFormParametersConf": {
       "additionalProperties": false,
-      "description": "Checks for untyped FORM parameters",
       "properties": {
         "exclude": {
           "description": "List of file regex patterns to exclude",
@@ -3197,7 +3152,6 @@
     },
     "TypesNamingConf": {
       "additionalProperties": false,
-      "description": "Allows you to enforce a pattern for TYPES definitions",
       "properties": {
         "exclude": {
           "description": "List of file regex patterns to exclude",
@@ -3222,7 +3176,6 @@
     },
     "UnknownTypesConf": {
       "additionalProperties": false,
-      "description": "Enables check for unknown types, respects errorNamespace",
       "properties": {
         "exclude": {
           "description": "List of file regex patterns to exclude",
@@ -3240,7 +3193,6 @@
     },
     "UnreachableCodeConf": {
       "additionalProperties": false,
-      "description": "Checks for unreachable code.",
       "properties": {
         "exclude": {
           "description": "List of file regex patterns to exclude",
@@ -3258,7 +3210,6 @@
     },
     "UnusedVariablesConf": {
       "additionalProperties": false,
-      "description": "Checks for unused variables",
       "properties": {
         "exclude": {
           "description": "List of file regex patterns to exclude",
@@ -3276,7 +3227,6 @@
     },
     "UseNewConf": {
       "additionalProperties": false,
-      "description": "Checks for deprecated CREATE OBJECT statements.",
       "properties": {
         "exclude": {
           "description": "List of file regex patterns to exclude",
@@ -3311,7 +3261,6 @@
     },
     "WhenOthersLastConf": {
       "additionalProperties": false,
-      "description": "Checks that WHEN OTHERS is placed the last within a CASE statement.",
       "properties": {
         "exclude": {
           "description": "List of file regex patterns to exclude",
@@ -3329,7 +3278,6 @@
     },
     "WhitespaceEndConf": {
       "additionalProperties": false,
-      "description": "Checks for redundant whitespace at the end of each line.",
       "properties": {
         "exclude": {
           "description": "List of file regex patterns to exclude",
@@ -3347,7 +3295,6 @@
     },
     "XMLConsistencyConf": {
       "additionalProperties": false,
-      "description": "Checks the consistency of main XML files, eg. naming",
       "properties": {
         "exclude": {
           "description": "List of file regex patterns to exclude",

@@ -4,7 +4,6 @@ import {ABAPRule} from "../_abap_rule";
 import {ABAPFile} from "../../files";
 import {BasicRuleConfig} from "../_basic_rule_config";
 
-/** Checks for redundant whitespace at the end of each line. */
 export class WhitespaceEndConf extends BasicRuleConfig {
 }
 
@@ -13,7 +12,12 @@ export class WhitespaceEnd extends ABAPRule {
   private conf = new WhitespaceEndConf();
 
   public getMetadata() {
-    return {key: "whitespace_end"};
+    return {
+      key: "whitespace_end",
+      title: "Whitespace at end of line",
+      quickfix: false,
+      shortDescription: `Checks for redundant whitespace at the end of each line.`,
+    };
   }
 
   private getMessage(): string {

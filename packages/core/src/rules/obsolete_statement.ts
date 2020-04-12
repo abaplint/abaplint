@@ -6,7 +6,6 @@ import {Compare, DataDefinition} from "../abap/2_statements/expressions";
 import {BasicRuleConfig} from "./_basic_rule_config";
 import {Position} from "../position";
 
-/** Checks for usages of certain obsolete statements */
 export class ObsoleteStatementConf extends BasicRuleConfig {
   public refresh: boolean = true;
   public compute: boolean = true;
@@ -28,7 +27,12 @@ export class ObsoleteStatement extends ABAPRule {
   private conf = new ObsoleteStatementConf();
 
   public getMetadata() {
-    return {key: "obsolete_statement"};
+    return {
+      key: "obsolete_statement",
+      title: "Obsolete statements",
+      quickfix: false,
+      shortDescription: `Checks for usages of certain obsolete statements`,
+    };
   }
 
   private getMessage(): string {

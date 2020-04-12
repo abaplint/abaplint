@@ -5,10 +5,6 @@ import {Visibility, ClassAttribute} from "../abap/types";
 import {ABAPRule} from "./_abap_rule";
 import {ABAPFile} from "../files";
 
-/**
- * Checks that classes and interfaces don't contain any public attributes.
- * Exceptions are excluded from this rule.
- */
 export class NoPublicAttributesConf extends BasicRuleConfig {
   /** Allows public attributes, if they are declared as READ-ONLY. */
   public allowReadOnly: boolean = false;
@@ -22,7 +18,13 @@ export class NoPublicAttributes extends ABAPRule {
   private file: ABAPFile;
 
   public getMetadata() {
-    return {key: "no_public_attributes"};
+    return {
+      key: "no_public_attributes",
+      title: "No public attributes",
+      quickfix: false,
+      shortDescription: `Checks that classes and interfaces don't contain any public attributes.
+Exceptions are excluded from this rule.`,
+    };
   }
 
   public getDescription(name: string): string {

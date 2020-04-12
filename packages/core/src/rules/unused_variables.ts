@@ -1,7 +1,7 @@
 import {Issue} from "../issue";
 import {BasicRuleConfig} from "./_basic_rule_config";
 import {IRegistry} from "../_iregistry";
-import {IRule} from "./_irule";
+import {IRule, IRuleMetadata, RuleTag} from "./_irule";
 import {IObject} from "../objects/_iobject";
 import {SyntaxLogic} from "../abap/5_syntax/syntax";
 import {ABAPObject} from "../objects/_abap_object";
@@ -10,15 +10,20 @@ import {ScopeType} from "../abap/5_syntax/_scope_type";
 import {TypedIdentifier} from "../abap/types/_typed_identifier";
 import {Interface} from "../objects";
 
-/** Checks for unused variables */
 export class UnusedVariablesConf extends BasicRuleConfig {
 }
 
 export class UnusedVariables implements IRule {
   private conf = new UnusedVariablesConf();
 
-  public getMetadata() {
-    return {key: "unused_variables"};
+  public getMetadata(): IRuleMetadata {
+    return {
+      key: "unused_variables",
+      title: "Unused variables",
+      quickfix: false,
+      shortDescription: `Checks for unused variables`,
+      tags: [RuleTag.Experimental],
+    };
   }
 
   public getConfig() {

@@ -5,7 +5,6 @@ import {BasicRuleConfig} from "./_basic_rule_config";
 import * as Statements from "../abap/2_statements/statements";
 import * as Structures from "../abap/3_structures/structures";
 
-/** Finds TYPE BEGIN with just one INCLUDE TYPE */
 export class TypeBeginSingleTypeConf extends BasicRuleConfig {
 }
 
@@ -14,7 +13,12 @@ export class TypeBeginSingleType extends ABAPRule {
   private conf = new TypeBeginSingleTypeConf();
 
   public getMetadata() {
-    return {key: "type_begin_single_include"};
+    return {
+      key: "type_begin_single_include",
+      title: "TYPE BEGIN contains single field",
+      quickfix: false,
+      shortDescription: `Finds TYPE BEGIN with just one INCLUDE TYPE`,
+    };
   }
 
   public getConfig() {

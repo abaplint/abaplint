@@ -5,7 +5,6 @@ import * as Objects from "../objects";
 import {IRegistry} from "../_iregistry";
 import {BasicRuleConfig} from "./_basic_rule_config";
 
-/** Checks the consistency of main XML files, eg. naming */
 export class XMLConsistencyConf extends BasicRuleConfig {
 }
 
@@ -14,7 +13,12 @@ export class XMLConsistency implements IRule {
   private conf = new XMLConsistencyConf();
 
   public getMetadata() {
-    return {key: "xml_consistency"};
+    return {
+      key: "xml_consistency",
+      title: "XML consistency",
+      quickfix: false,
+      shortDescription: `Checks the consistency of main XML files, eg. naming`,
+    };
   }
 
   public getConfig() {

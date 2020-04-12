@@ -6,7 +6,6 @@ import {CallTransformation} from "../../abap/2_statements/statements";
 import {NamespaceSimpleName} from "../../abap/2_statements/expressions";
 import {IRegistry} from "../../_iregistry";
 
-/** Checks that used XSLT transformations exist. */
 export class CheckTransformationExistsConf extends BasicRuleConfig {
 }
 
@@ -14,7 +13,12 @@ export class CheckTransformationExists extends ABAPRule {
   private conf = new CheckTransformationExistsConf();
 
   public getMetadata() {
-    return {key: "check_transformation_exists"};
+    return {
+      key: "check_transformation_exists",
+      title: "Check transformation exists",
+      quickfix: false,
+      shortDescription: `Checks that used XSLT transformations exist.`,
+    };
   }
 
   private getDescription(name: string): string {

@@ -5,9 +5,6 @@ import {ABAPFile} from "../../files";
 import {ExpressionNode, StatementNode} from "../../abap/nodes";
 import * as Expressions from "../../abap/2_statements/expressions";
 
-/** Keep single parameter calls on one line
- * https://github.com/SAP/styleguides/blob/master/clean-abap/CleanABAP.md#keep-single-parameter-calls-on-one-line
-*/
 export class KeepSingleParameterCallsOnOneLineConf extends BasicRuleConfig {
   public length: number = 120;
 }
@@ -16,7 +13,13 @@ export class KeepSingleParameterCallsOnOneLine extends ABAPRule {
   private conf = new KeepSingleParameterCallsOnOneLineConf();
 
   public getMetadata() {
-    return {key: "keep_single_parameter_on_one_line"};
+    return {
+      key: "keep_single_parameter_on_one_line",
+      title: "Keep single parameters on one line",
+      quickfix: false,
+      shortDescription: `Keep single parameter calls on one line`,
+      extendedInformation: `https://github.com/SAP/styleguides/blob/master/clean-abap/CleanABAP.md#keep-single-parameter-calls-on-one-line`,
+    };
   }
 
   public getConfig() {

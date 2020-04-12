@@ -9,7 +9,6 @@ import {StructureNode} from "../../abap/nodes";
 import {IStructure} from "../../abap/3_structures/structures/_structure";
 import {IStatement} from "../../abap/2_statements/statements/_statement";
 
-/** Check BEGIN OF and END OF names match */
 export class BeginEndNamesConf extends BasicRuleConfig {
 }
 
@@ -17,7 +16,12 @@ export class BeginEndNames extends ABAPRule {
   private conf = new BeginEndNamesConf();
 
   public getMetadata() {
-    return {key: "begin_end_names"};
+    return {
+      key: "begin_end_names",
+      title: "Check BEGIN END names",
+      quickfix: false,
+      shortDescription: `Check BEGIN OF and END OF names match`,
+    };
   }
 
   private getMessage(): string {

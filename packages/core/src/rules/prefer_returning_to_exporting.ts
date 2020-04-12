@@ -5,10 +5,6 @@ import * as Statements from "../abap/2_statements/statements";
 import * as Expressions from "../abap/2_statements/expressions";
 import {BasicRuleConfig} from "./_basic_rule_config";
 
-/** Prefer RETURNING to EXPORTING
- * https://github.com/SAP/styleguides/blob/master/clean-abap/CleanABAP.md#prefer-returning-to-exporting
- * https://docs.abapopenchecks.org/checks/44/
- */
 export class PreferReturningToExportingConf extends BasicRuleConfig {
 }
 
@@ -17,7 +13,14 @@ export class PreferReturningToExporting extends ABAPRule {
   private conf = new PreferReturningToExportingConf();
 
   public getMetadata() {
-    return {key: "prefer_returning_to_exporting"};
+    return {
+      key: "prefer_returning_to_exporting",
+      title: "Prefer RETURNING to EXPORTING",
+      quickfix: false,
+      shortDescription: `Prefer RETURNING to EXPORTING`,
+      extendedInformation: `https://github.com/SAP/styleguides/blob/master/clean-abap/CleanABAP.md#prefer-returning-to-exporting
+https://docs.abapopenchecks.org/checks/44/`,
+    };
   }
 
   public getConfig() {

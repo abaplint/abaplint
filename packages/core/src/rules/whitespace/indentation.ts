@@ -10,7 +10,6 @@ import {Indent} from "../../pretty_printer/indent";
 import * as Statements from "../../abap/2_statements/statements";
 import * as Expressions from "../../abap/2_statements/expressions";
 
-/** Checks indentation */
 export class IndentationConf extends BasicRuleConfig {
   public ignoreExceptions: boolean = true;
   public alignTryCatch: boolean = false;
@@ -23,7 +22,12 @@ export class Indentation extends ABAPRule {
   private conf = new IndentationConf();
 
   public getMetadata() {
-    return {key: "indentation"};
+    return {
+      key: "indentation",
+      title: "Indentation",
+      quickfix: false,
+      shortDescription: `Checks indentation`,
+    };
   }
 
   public getConfig() {

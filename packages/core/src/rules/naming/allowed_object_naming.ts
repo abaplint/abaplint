@@ -3,7 +3,6 @@ import {IObject} from "../../objects/_iobject";
 import {IRule} from "../_irule";
 import {BasicRuleConfig} from "../_basic_rule_config";
 
-/** Enforces basic name length and namespace restrictions */
 export class AllowedObjectNamingConf extends BasicRuleConfig {
 }
 
@@ -11,7 +10,12 @@ export class AllowedObjectNaming implements IRule {
   private conf = new AllowedObjectNamingConf();
 
   public getMetadata() {
-    return {key: "allowed_object_naming"};
+    return {
+      key: "allowed_object_naming",
+      title: "Allowed object naming",
+      quickfix: false,
+      shortDescription: `Enforces basic name length and namespace restrictions`,
+    };
   }
 
   public getConfig(): AllowedObjectNamingConf {

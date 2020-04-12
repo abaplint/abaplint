@@ -5,7 +5,6 @@ import {IRegistry} from "../_iregistry";
 import {Try, Catch} from "../abap/3_structures/structures";
 import {BasicRuleConfig} from "./_basic_rule_config";
 
-/** Checks for TRY blocks without a CATCH block */
 export class TryWithoutCatchConf extends BasicRuleConfig {
 }
 
@@ -13,7 +12,12 @@ export class TryWithoutCatch extends ABAPRule {
   private conf = new TryWithoutCatchConf();
 
   public getMetadata() {
-    return {key: "try_without_catch"};
+    return {
+      key: "try_without_catch",
+      title: "TRY without CATCH",
+      quickfix: false,
+      shortDescription: `Checks for TRY blocks without a CATCH block`,
+    };
   }
 
   private getMessage(): string {

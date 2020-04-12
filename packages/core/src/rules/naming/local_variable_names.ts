@@ -9,7 +9,6 @@ import {Token} from "../../abap/1_lexer/tokens/_token";
 import {NamingRuleConfig} from "../_naming_rule_config";
 import {NameValidator} from "../../utils/name_validator";
 
-/** Allows you to enforce a pattern, such as a prefix, for local variables, constants and field symbols. */
 export class LocalVariableNamesConf extends NamingRuleConfig {
   /** The pattern for local variable names */
   public expectedData: string = "^L._.+$";
@@ -24,7 +23,12 @@ export class LocalVariableNames extends ABAPRule {
   private conf = new LocalVariableNamesConf();
 
   public getMetadata() {
-    return {key: "local_variable_names"};
+    return {
+      key: "local_variable_names",
+      title: "Local variable naming conventions",
+      quickfix: false,
+      shortDescription: `Allows you to enforce a pattern, such as a prefix, for local variables, constants and field symbols.`,
+    };
   }
 
   private getDescription(expected: string, actual: string): string {

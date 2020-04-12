@@ -9,7 +9,6 @@ import {IRegistry} from "../../_iregistry";
 import {Punctuation} from "../../abap/1_lexer/tokens";
 import {Token} from "../../abap/1_lexer/tokens/_token";
 
-/** Checks for extra spaces before dots at the ends of statements . */
 export class SpaceBeforeDotConf extends BasicRuleConfig {
   public ignoreGlobalDefinition: boolean = true;
   public ignoreExceptions: boolean = true;
@@ -20,7 +19,12 @@ export class SpaceBeforeDot extends ABAPRule {
   private conf = new SpaceBeforeDotConf();
 
   public getMetadata() {
-    return {key: "space_before_dot"};
+    return {
+      key: "space_before_dot",
+      title: "Space before dot",
+      quickfix: false,
+      shortDescription: `Checks for extra spaces before dots at the ends of statements`,
+    };
   }
 
   private getMessage(): string {

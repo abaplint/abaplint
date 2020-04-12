@@ -8,7 +8,6 @@ import {NameValidator} from "../../utils/name_validator";
 import {FieldSub, Field} from "../../abap/2_statements/expressions";
 import {StatementNode, ExpressionNode} from "../../abap/nodes";
 
-/** Allows you to enforce a pattern, such as a prefix, for selection-screen variable names. */
 export class SelectionScreenNamingConf extends NamingRuleConfig {
   /** The pattern for selection-screen parameters */
   public parameter: string = "^P_.+$";
@@ -20,7 +19,12 @@ export class SelectionScreenNaming extends ABAPRule {
   private conf = new SelectionScreenNamingConf();
 
   public getMetadata() {
-    return {key: "selection_screen_naming"};
+    return {
+      key: "selection_screen_naming",
+      title: "Selection screen naming conventions",
+      quickfix: false,
+      shortDescription: `Allows you to enforce a pattern, such as a prefix, for selection-screen variable names.`,
+    };
   }
 
   private getDescription(expected: string, actual: string): string {

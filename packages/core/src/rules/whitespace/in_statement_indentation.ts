@@ -7,11 +7,7 @@ import {IRegistry} from "../../_iregistry";
 import {BasicRuleConfig} from "../_basic_rule_config";
 import * as Statements from "../../abap/2_statements/statements";
 
-/** Checks alignment within block statement declarations which span multiple lines, such as multiple conditions in IF statements.
- * Example:
- * IF 1 = 1 AND
- *    2 = 2.
- */
+
 export class InStatementIndentationConf extends BasicRuleConfig {
   public ignoreExceptions: boolean = true;
 }
@@ -21,7 +17,16 @@ export class InStatementIndentation extends ABAPRule {
   private conf = new InStatementIndentationConf();
 
   public getMetadata() {
-    return {key: "in_statement_indentation"};
+    return {
+      key: "in_statement_indentation",
+      title: "In-statement indentation",
+      quickfix: false,
+      // eslint-disable-next-line max-len
+      shortDescription: `Checks alignment within block statement declarations which span multiple lines, such as multiple conditions in IF statements.
+Example:
+IF 1 = 1 AND
+   2 = 2.`,
+    };
   }
 
   private getMessage(): string {

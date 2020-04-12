@@ -9,7 +9,6 @@ import {IRegistry} from "../../_iregistry";
 import {BasicRuleConfig} from "../_basic_rule_config";
 import {STATEMENT_MAX_TOKENS} from "../../abap/2_statements/statement_parser";
 
-/** Checks for syntax unrecognized by abaplint */
 export class ParserErrorConf extends BasicRuleConfig {
 }
 
@@ -18,7 +17,12 @@ export class ParserError extends ABAPRule {
   private conf = new ParserErrorConf();
 
   public getMetadata() {
-    return {key: "parser_error"};
+    return {
+      key: "parser_error",
+      title: "Parser error",
+      quickfix: false,
+      shortDescription: `Checks for syntax unrecognized by abaplint`,
+    };
   }
 
   public getConfig() {

@@ -7,7 +7,6 @@ import {Issue} from "../../issue";
 import {SpaghettiScopeNode} from "../../abap/5_syntax/spaghetti_scope";
 import {UnknownType} from "../../abap/types/basic";
 
-/** Enables check for unknown types, respects errorNamespace */
 export class UnknownTypesConf extends BasicRuleConfig {
 }
 
@@ -16,7 +15,12 @@ export class UnknownTypes {
   private conf = new UnknownTypesConf();
 
   public getMetadata() {
-    return {key: "unknown_types"};
+    return {
+      key: "unknown_types",
+      title: "Unknown types",
+      quickfix: false,
+      shortDescription: `Enables check for unknown data types, respects errorNamespace`,
+    };
   }
 
   public getConfig() {

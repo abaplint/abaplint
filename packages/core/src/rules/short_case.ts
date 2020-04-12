@@ -6,7 +6,6 @@ import * as Expressions from "../abap/2_statements/expressions";
 import * as Structures from "../abap/3_structures/structures";
 import {BasicRuleConfig} from "./_basic_rule_config";
 
-/** Checks for CASE statements which have fewer than the specified number of branches */
 export class ShortCaseConf extends BasicRuleConfig {
   /** The smallest number of WHEN branches which will trigger a violation.
    * Example: if length = 1, at least 2 branches are required
@@ -20,7 +19,12 @@ export class ShortCase extends ABAPRule {
   private conf = new ShortCaseConf();
 
   public getMetadata() {
-    return {key: "short_case"};
+    return {
+      key: "short_case",
+      title: "Short CASE",
+      quickfix: false,
+      shortDescription: `Checks for CASE statements which have fewer than the specified number of branches`,
+    };
   }
 
   private getMessage(): string {

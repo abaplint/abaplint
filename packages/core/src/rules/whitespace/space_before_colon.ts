@@ -3,9 +3,6 @@ import {ABAPRule} from "../_abap_rule";
 import {ABAPFile} from "../../files";
 import {BasicRuleConfig} from "../_basic_rule_config";
 
-/** Checks that there are no spaces in front of colons in chained statements.
- * https://docs.abapopenchecks.org/checks/80/
- */
 export class SpaceBeforeColonConf extends BasicRuleConfig {
 }
 
@@ -14,7 +11,13 @@ export class SpaceBeforeColon extends ABAPRule {
   private conf = new SpaceBeforeColonConf();
 
   public getMetadata() {
-    return {key: "space_before_colon"};
+    return {
+      key: "space_before_colon",
+      title: "Space before colon",
+      quickfix: false,
+      shortDescription: `Checks that there are no spaces in front of colons in chained statements.`,
+      extendedInformation: `https://docs.abapopenchecks.org/checks/80/`,
+    };
   }
 
   private getMessage(): string {

@@ -6,7 +6,6 @@ import {Version} from "../../version";
 import {Target} from "../../abap/2_statements/expressions";
 import {BasicRuleConfig} from "../_basic_rule_config";
 
-/** Checks for inline data declarations in older releases. */
 export class InlineDataOldVersionsConf extends BasicRuleConfig {
 }
 
@@ -14,7 +13,12 @@ export class InlineDataOldVersions extends ABAPRule {
   private conf = new InlineDataOldVersionsConf();
 
   public getMetadata() {
-    return {key: "inline_data_old_versions"};
+    return {
+      key: "inline_data_old_versions",
+      title: "Inline data, old versions",
+      quickfix: false,
+      shortDescription: `Checks for inline data declarations in older releases. Only active for versions less than v740sp02`,
+    };
   }
 
   public getConfig() {

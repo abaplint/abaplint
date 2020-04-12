@@ -8,7 +8,6 @@ import {NameValidator} from "../../utils/name_validator";
 import {TypedIdentifier} from "../../abap/types/_typed_identifier";
 import {IMethodDefinition} from "../../abap/types/_method_definition";
 
-/** Allows you to enforce a pattern, such as a prefix, for method parameter names */
 export class MethodParameterNamesConf extends NamingRuleConfig {
   /** Ignore parameters in methods of exception classes */
   public ignoreExceptions: boolean = true;
@@ -27,7 +26,12 @@ export class MethodParameterNames implements IRule {
   private conf = new MethodParameterNamesConf();
 
   public getMetadata() {
-    return {key: "method_parameter_names"};
+    return {
+      key: "method_parameter_names",
+      title: "Method parameter naming conventions",
+      quickfix: false,
+      shortDescription: `Allows you to enforce a pattern, such as a prefix, for method parameter names`,
+    };
   }
 
   private getDescription(expected: string, actual: string): string {

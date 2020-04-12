@@ -4,7 +4,6 @@ import {ABAPRule} from "../_abap_rule";
 import {ABAPFile} from "../../files";
 import {BasicRuleConfig} from "../_basic_rule_config";
 
-/** Checks that code does not contain more than the configured number of blank lines in a row. */
 export class SequentialBlankConf extends BasicRuleConfig {
   /** An equal or higher number of sequential blank lines will trigger a violation.
    * Example: if lines = 3, a maximum of 2 is allowed.
@@ -20,7 +19,12 @@ export class SequentialBlank extends ABAPRule {
   private conf = new SequentialBlankConf();
 
   public getMetadata() {
-    return {key: "sequential_blank"};
+    return {
+      key: "sequential_blank",
+      title: "Sequential blank lines",
+      quickfix: false,
+      shortDescription: `Checks that code does not contain more than the configured number of blank lines in a row.`,
+    };
   }
 
   private getMessage(): string {

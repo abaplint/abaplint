@@ -8,7 +8,6 @@ import {NamingRuleConfig} from "../_naming_rule_config";
 import {IRule} from "../_irule";
 import {NameValidator} from "../../utils/name_validator";
 
-/** Allows you to enforce a pattern, such as a prefix, for class variable names. */
 export class ClassAttributeNamesConf extends NamingRuleConfig {
   public ignoreExceptions: boolean = true;
   /** The pattern for static variable names */
@@ -22,7 +21,12 @@ export class ClassAttributeNames implements IRule {
   private conf = new ClassAttributeNamesConf();
 
   public getMetadata() {
-    return {key: "class_attribute_names"};
+    return {
+      key: "class_attribute_names",
+      title: "Class attributes naming",
+      quickfix: false,
+      shortDescription: `Allows you to enforce a pattern, such as a prefix, for class variable names.`,
+    };
   }
 
   private getDescription(expected: string, actual: string): string {

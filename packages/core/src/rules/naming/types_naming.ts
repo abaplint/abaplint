@@ -6,7 +6,6 @@ import * as Expressions from "../../abap/2_statements/expressions";
 import {BasicRuleConfig} from "../_basic_rule_config";
 import {ExpressionNode} from "../../abap/nodes";
 
-/** Allows you to enforce a pattern for TYPES definitions */
 export class TypesNamingConf extends BasicRuleConfig {
   /** The pattern for TYPES */
   public pattern: string = "^TY_.+$";
@@ -17,7 +16,12 @@ export class TypesNaming extends ABAPRule {
   private conf = new TypesNamingConf();
 
   public getMetadata() {
-    return {key: "types_naming"};
+    return {
+      key: "types_naming",
+      title: "TYPES naming conventions",
+      quickfix: false,
+      shortDescription: `Allows you to enforce a pattern for TYPES definitions`,
+    };
   }
 
   public getConfig(): TypesNamingConf {

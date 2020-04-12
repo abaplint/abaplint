@@ -4,7 +4,6 @@ import {ABAPFile} from "../../files";
 import {NamingRuleConfig} from "../_naming_rule_config";
 import {NameValidator} from "../../utils/name_validator";
 
-/** Allows you to enforce a pattern, such as a prefix, for local class names. */
 export class LocalClassNamingConf extends NamingRuleConfig {
   /** The pattern for local class names */
   public local: string = "^LCL_.+$";
@@ -19,7 +18,12 @@ export class LocalClassNaming extends ABAPRule {
   private conf = new LocalClassNamingConf();
 
   public getMetadata() {
-    return {key: "local_class_naming"};
+    return {
+      key: "local_class_naming",
+      title: "Local class naming conventions",
+      quickfix: false,
+      shortDescription: `Allows you to enforce a pattern, such as a prefix, for local class names.`,
+    };
   }
 
   private getDescription(expected: string, actual: string): string {

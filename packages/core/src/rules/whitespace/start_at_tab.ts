@@ -6,7 +6,6 @@ import {ABAPRule} from "../_abap_rule";
 import {ABAPFile} from "../../files";
 import {BasicRuleConfig} from "../_basic_rule_config";
 
-/** Checks that statements start at tabstops. */
 export class StartAtTabConf extends BasicRuleConfig {
 }
 
@@ -15,7 +14,12 @@ export class StartAtTab extends ABAPRule {
   private conf = new StartAtTabConf();
 
   public getMetadata() {
-    return {key: "start_at_tab"};
+    return {
+      key: "start_at_tab",
+      title: "Start at tab",
+      quickfix: false,
+      shortDescription: `Checks that statements start at tabstops.`,
+    };
   }
 
   private getMessage(): string {

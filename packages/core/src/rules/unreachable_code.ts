@@ -7,7 +7,6 @@ import * as Statements from "../abap/2_statements/statements";
 import * as Expressions from "../abap/2_statements/expressions";
 import {StatementNode} from "../abap/nodes";
 
-/** Checks for unreachable code. */
 export class UnreachableCodeConf extends BasicRuleConfig {
 }
 
@@ -15,7 +14,12 @@ export class UnreachableCode extends ABAPRule {
   private conf = new UnreachableCodeConf();
 
   public getMetadata() {
-    return {key: "unreachable_code"};
+    return {
+      key: "unreachable_code",
+      title: "Unreachable code",
+      quickfix: false,
+      shortDescription: `Checks for unreachable code.`,
+    };
   }
 
   private getMessage(): string {

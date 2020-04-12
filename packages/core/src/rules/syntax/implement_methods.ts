@@ -11,7 +11,6 @@ import {IClassImplementation} from "../../abap/types/_class_implementation";
 
 // todo: abstract methods from superclass parents(might be multiple), if class is not abstract
 
-/** Chekcs for abstract methods which need implementing. */
 export class ImplementMethodsConf extends BasicRuleConfig {
 }
 
@@ -19,7 +18,12 @@ export class ImplementMethods extends ABAPRule {
   private conf = new ImplementMethodsConf();
 
   public getMetadata() {
-    return {key: "implement_methods"};
+    return {
+      key: "implement_methods",
+      title: "Implement methods",
+      quickfix: false,
+      shortDescription: `Chekcs for abstract methods which need implementing.`,
+    };
   }
 
   public getConfig() {

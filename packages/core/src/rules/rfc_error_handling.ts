@@ -5,9 +5,6 @@ import {BasicRuleConfig} from "./_basic_rule_config";
 import * as Statements from "../abap/2_statements/statements";
 import * as Expressions from "../abap/2_statements/expressions";
 
-/** Checks that exceptions 'system_failure' and 'communication_failure' are handled in RFC calls
- * https://help.sap.com/doc/abapdocu_750_index_htm/7.50/en-US/abenrfc_exception.htm
-*/
 export class RFCErrorHandlingConf extends BasicRuleConfig {
 }
 
@@ -15,7 +12,13 @@ export class RFCErrorHandling extends ABAPRule {
   private conf = new RFCErrorHandlingConf();
 
   public getMetadata() {
-    return {key: "rfc_error_handling"};
+    return {
+      key: "rfc_error_handling",
+      title: "RFC error handling",
+      quickfix: false,
+      shortDescription: `Checks that exceptions 'system_failure' and 'communication_failure' are handled in RFC calls`,
+      extendedInformation: `https://help.sap.com/doc/abapdocu_750_index_htm/7.50/en-US/abenrfc_exception.htm`,
+    };
   }
 
   private getMessage(): string {

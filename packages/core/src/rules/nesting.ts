@@ -4,10 +4,6 @@ import {ABAPRule} from "./_abap_rule";
 import {ABAPFile} from "../files";
 import {BasicRuleConfig} from "./_basic_rule_config";
 
-/** Checks for methods exceeding a maximum nesting depth
- * https://github.com/SAP/styleguides/blob/master/clean-abap/CleanABAP.md#keep-the-nesting-depth-low
- * https://docs.abapopenchecks.org/checks/74/
- */
 export class NestingConf extends BasicRuleConfig {
   /** Maximum allowed nesting depth */
   public depth: number = 5;
@@ -18,7 +14,14 @@ export class Nesting extends ABAPRule {
   private conf = new NestingConf();
 
   public getMetadata() {
-    return {key: "nesting"};
+    return {
+      key: "nesting",
+      title: "Check nesting depth",
+      quickfix: false,
+      shortDescription: `Checks for methods exceeding a maximum nesting depth`,
+      extendedInformation: `https://github.com/SAP/styleguides/blob/master/clean-abap/CleanABAP.md#keep-the-nesting-depth-low
+https://docs.abapopenchecks.org/checks/74/`,
+    };
   }
 
   private getDescription(max: string): string {

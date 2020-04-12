@@ -8,7 +8,6 @@ import {BasicRuleConfig} from "../_basic_rule_config";
 import {IClassDefinition} from "../../abap/types/_class_definition";
 import {Class} from "../../objects";
 
-/** Checks that classes which are inherited from are not declared as FINAL. */
 export class SuperclassFinalConf extends BasicRuleConfig {
 }
 
@@ -16,7 +15,12 @@ export class SuperclassFinal extends ABAPRule {
   private conf = new SuperclassFinalConf();
 
   public getMetadata() {
-    return {key: "superclass_final"};
+    return {
+      key: "superclass_final",
+      title: "Super class final",
+      quickfix: false,
+      shortDescription: `Checks that classes which are inherited from are not declared as FINAL.`,
+    };
   }
 
   private getMessage(): string {

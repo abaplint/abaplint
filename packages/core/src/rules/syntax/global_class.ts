@@ -6,7 +6,6 @@ import {IObject} from "../../objects/_iobject";
 import * as Objects from "../../objects";
 import {BasicRuleConfig} from "../_basic_rule_config";
 
-/** Checks related to names of global classes. For the name pattern, see rule object_naming */
 export class GlobalClassConf extends BasicRuleConfig {
 }
 
@@ -14,7 +13,12 @@ export class GlobalClass extends ABAPRule {
   private conf = new GlobalClassConf();
 
   public getMetadata() {
-    return {key: "global_class"};
+    return {
+      key: "global_class",
+      title: "Global class checks",
+      quickfix: false,
+      shortDescription: `Checks related to names of global classes. For the name pattern, see rule object_naming`,
+    };
   }
 
   public getConfig() {

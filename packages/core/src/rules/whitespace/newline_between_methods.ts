@@ -10,7 +10,6 @@ export enum NewlineLogic {
   Less = "less",
 }
 
-/** Checks for newlines between method implementations. */
 export class NewlineBetweenMethodsConf extends BasicRuleConfig {
   /** Amount of newlines, works in conjunction with "newlineLogic" */
   public count: number = 3;
@@ -26,7 +25,12 @@ export class NewlineBetweenMethods extends ABAPRule {
   private conf = new NewlineBetweenMethodsConf();
 
   public getMetadata() {
-    return {key: "newline_between_methods"};
+    return {
+      key: "newline_between_methods",
+      title: "New line between methods",
+      quickfix: false,
+      shortDescription: `Checks for newlines between method implementations.`,
+    };
   }
 
   private getMessage(): string {

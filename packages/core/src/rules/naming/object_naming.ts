@@ -6,7 +6,6 @@ import {IRule} from "../_irule";
 import * as Objects from "../../objects";
 import {NameValidator} from "../../utils/name_validator";
 
-/** Allows you to enforce a pattern, such as a prefix, for object names */
 export class ObjectNamingConf extends NamingRuleConfig {
   /** The pattern for global class names */
   public clas: string = "^ZC(L|X)\\_";
@@ -48,7 +47,12 @@ export class ObjectNaming implements IRule {
   private conf = new ObjectNamingConf();
 
   public getMetadata() {
-    return {key: "object_naming"};
+    return {
+      key: "object_naming",
+      title: "Object naming conventions",
+      quickfix: false,
+      shortDescription: `Allows you to enforce a pattern, such as a prefix, for object names`,
+    };
   }
 
   private getDescription(expected: string, actual: string): string {

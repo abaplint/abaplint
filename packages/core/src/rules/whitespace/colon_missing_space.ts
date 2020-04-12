@@ -3,7 +3,6 @@ import {ABAPRule} from "../_abap_rule";
 import {ABAPFile} from "../../files";
 import {BasicRuleConfig} from "../_basic_rule_config";
 
-/** Checks for missing spaces after colons in chained statements. */
 export class ColonMissingSpaceConf extends BasicRuleConfig {
 }
 
@@ -12,7 +11,12 @@ export class ColonMissingSpace extends ABAPRule {
   private conf = new ColonMissingSpaceConf();
 
   public getMetadata() {
-    return {key: "colon_missing_space"};
+    return {
+      key: "colon_missing_space",
+      title: "Colon missing space",
+      quickfix: false,
+      shortDescription: `Checks for missing spaces after colons in chained statements.`,
+    };
   }
 
   private getMessage(): string {

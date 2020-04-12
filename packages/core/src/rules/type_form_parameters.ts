@@ -7,7 +7,6 @@ import {IRegistry} from "../_iregistry";
 import * as Expressions from "../abap/2_statements/expressions";
 import {ABAPObject} from "../objects/_abap_object";
 
-/** Checks for untyped FORM parameters */
 export class TypeFormParametersConf extends BasicRuleConfig {
 }
 
@@ -16,7 +15,12 @@ export class TypeFormParameters extends ABAPRule {
   private conf = new TypeFormParametersConf();
 
   public getMetadata() {
-    return {key: "type_form_parameters"};
+    return {
+      key: "type_form_parameters",
+      title: "Type FORM parameters",
+      quickfix: false,
+      shortDescription: `Checks for untyped FORM parameters`,
+    };
   }
 
   private getDescription(parameterName: string): string {

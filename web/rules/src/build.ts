@@ -1,6 +1,6 @@
 import * as fs from "fs";
 import * as abaplint from "../../../packages/core/build/src/index";
-import {IRuleMetadata} from "../../../packages/core/build/src/rules/_irule";
+import {IRuleMetadata, RuleTag} from "../../../packages/core/build/src/rules/_irule";
 
 // quick'n dirty, optimizes for search engine indexing
 // also works on localhost without running web server
@@ -30,6 +30,12 @@ function quickfix() {
   return `&nbsp;<svg fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" viewBox="0 0 24 24" height="2ch"><title>quick fix</title><path d="M13 10V3L4 14h7v7l9-11h-7z"></path></svg>`;
 }
 
+function experimental() {
+  // https://github.com/refactoringui/heroicons/
+  // eslint-disable-next-line max-len
+  return `&nbsp;<svg fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" viewBox="0 0 24 24" height="2ch"><title>experimental</title><path d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"></path></svg>`;
+}
+
 // todo, this is slow, its called for every rule, refactor
 function findPath(ruleKey: string) {
   const base = "https://github.com/abaplint/abaplint/blob/master/packages/core/src/rules/";
@@ -56,6 +62,9 @@ function buildIndex() {
     if (meta.quickfix === true) {
       html = html + quickfix();
     }
+    if (meta.tags?.includes(RuleTag.Experimental)) {
+      html = html + experimental();
+    }
     html = html + "<br>" + meta.shortDescription + "<br><br>\n";
 
 
@@ -70,6 +79,9 @@ function buildRule(meta: IRuleMetadata) {
 
   if (meta.quickfix === true) {
     html = html + quickfix();
+  }
+  if (meta.tags?.includes(RuleTag.Experimental)) {
+    html = html + experimental();
   }
   const link = findPath(meta.key);
   // https://github.com/refactoringui/heroicons/

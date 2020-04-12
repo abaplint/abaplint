@@ -9,7 +9,6 @@ import {IFile} from "../files/_ifile";
 import {Position} from "../position";
 import {IClassDefinition} from "../abap/types/_class_definition";
 
-/** Ensures you have no descriptions in metadata of methods, parameters, etc. For class descriptions, see rule description_empty. */
 export class RemoveDescriptionsConf extends BasicRuleConfig {
   public ignoreExceptions: boolean = false;
 }
@@ -19,7 +18,13 @@ export class RemoveDescriptions implements IRule {
   private conf = new RemoveDescriptionsConf();
 
   public getMetadata() {
-    return {key: "remove_descriptions"};
+    return {
+      key: "remove_descriptions",
+      title: "Remove descriptions",
+      quickfix: false,
+      // eslint-disable-next-line max-len
+      shortDescription: `Ensures you have no descriptions in metadata of methods, parameters, etc. For class descriptions, see rule description_empty.`,
+    };
   }
 
   private getDescription(name: string): string {

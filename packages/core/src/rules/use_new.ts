@@ -7,7 +7,6 @@ import {Dynamic} from "../abap/2_statements/expressions";
 import {IRegistry} from "../_iregistry";
 import {Version} from "../version";
 
-/** Checks for deprecated CREATE OBJECT statements. */
 export class UseNewConf extends BasicRuleConfig {
 }
 
@@ -15,7 +14,12 @@ export class UseNew extends ABAPRule {
   private conf = new UseNewConf();
 
   public getMetadata() {
-    return {key: "use_new"};
+    return {
+      key: "use_new",
+      title: "Use NEW",
+      quickfix: false,
+      shortDescription: `Checks for deprecated CREATE OBJECT statements.`,
+    };
   }
 
   private getMessage(): string {

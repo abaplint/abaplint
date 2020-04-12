@@ -4,9 +4,6 @@ import {ABAPRule} from "../_abap_rule";
 import {ABAPFile} from "../../files";
 import {BasicRuleConfig} from "../_basic_rule_config";
 
-/** Checks for usage of tabs (enable to enforce spaces)
- * https://docs.abapopenchecks.org/checks/09/
- */
 export class ContainsTabConf extends BasicRuleConfig {
 }
 
@@ -15,7 +12,13 @@ export class ContainsTab extends ABAPRule {
   private conf = new ContainsTabConf();
 
   public getMetadata() {
-    return {key: "contains_tab"};
+    return {
+      key: "contains_tab",
+      title: "Code contains tab",
+      quickfix: false,
+      shortDescription: `Checks for usage of tabs (enable to enforce spaces)`,
+      extendedInformation: `https://docs.abapopenchecks.org/checks/09/`,
+    };
   }
 
   private getMessage(): string {

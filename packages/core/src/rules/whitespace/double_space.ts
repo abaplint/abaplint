@@ -9,7 +9,6 @@ import {Unknown, MacroContent, MacroCall} from "../../abap/2_statements/statemen
 import {MethodDef} from "../../abap/2_statements/statements";
 import {Position} from "../../position";
 
-/** Checks that only a single space follows certain common statements. */
 export class DoubleSpaceConf extends BasicRuleConfig {
   /** Check for double space after keywords */
   public keywords: boolean = true;
@@ -26,7 +25,12 @@ export class DoubleSpace extends ABAPRule {
   private conf = new DoubleSpaceConf();
 
   public getMetadata() {
-    return {key: "double_space"};
+    return {
+      key: "double_space",
+      title: "Double space",
+      quickfix: false,
+      shortDescription: `Checks that only a single space follows certain common statements.`,
+    };
   }
 
   private getMessage(): string {
