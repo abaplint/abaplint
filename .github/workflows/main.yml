@@ -67,7 +67,7 @@ jobs:
         git config --global user.name "Actions CI"
         git clone https://github.com/abaplint/rules.abaplint.org.git
         ls
-        cp abaplint/abaplint/web/rules/build/* rules.abaplint.org/
+        cp -r abaplint/abaplint/web/rules/build/* rules.abaplint.org/
         cd rules.abaplint.org
         git add -A
         git status
