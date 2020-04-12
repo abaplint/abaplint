@@ -32,7 +32,7 @@ function run() {
       console.log("Missing jsdoc/rule description: " + name);
       process.exit(1);
     }
-    rules[rule].description = description;
+    rules[rule].description = description + "\nhttps://rules.abaplint.org/" + rule;
   }
 
   fs.writeFileSync(filename, JSON.stringify(schema, null, 2));

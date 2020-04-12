@@ -853,7 +853,7 @@
                   "type": "boolean"
                 }
               ],
-              "description": "Only allow characters from the 7bit ASCII set.\r\nhttps://docs.abapopenchecks.org/checks/05/"
+              "description": "Only allow characters from the 7bit ASCII set.\r\nhttps://docs.abapopenchecks.org/checks/05/\nhttps://rules.abaplint.org/7bit_ascii"
             },
             "abapdoc": {
               "anyOf": [
@@ -864,7 +864,7 @@
                   "type": "boolean"
                 }
               ],
-              "description": "Various checks regarding abapdoc. Base rule checks for existence of abapdoc for\r\npublic class methods and all interface methods."
+              "description": "Various checks regarding abapdoc. Base rule checks for existence of abapdoc for\r\npublic class methods and all interface methods.\nhttps://rules.abaplint.org/abapdoc"
             },
             "allowed_object_naming": {
               "anyOf": [
@@ -875,7 +875,7 @@
                   "type": "boolean"
                 }
               ],
-              "description": "Enforces basic name length and namespace restrictions"
+              "description": "Enforces basic name length and namespace restrictions\nhttps://rules.abaplint.org/allowed_object_naming"
             },
             "allowed_object_types": {
               "anyOf": [
@@ -886,7 +886,7 @@
                   "type": "boolean"
                 }
               ],
-              "description": "Restricts the set of allowed object types."
+              "description": "Restricts the set of allowed object types.\nhttps://rules.abaplint.org/allowed_object_types"
             },
             "ambiguous_statement": {
               "anyOf": [
@@ -897,7 +897,7 @@
                   "type": "boolean"
                 }
               ],
-              "description": "Checks for ambiguity between deleting or modifying from internal and database table\r\nAdd \"TABLE\" keyword or \"@\" for escaping SQL variables"
+              "description": "Checks for ambiguity between deleting or modifying from internal and database table\r\nAdd \"TABLE\" keyword or \"@\" for escaping SQL variables\nhttps://rules.abaplint.org/ambiguous_statement"
             },
             "avoid_use": {
               "anyOf": [
@@ -908,7 +908,7 @@
                   "type": "boolean"
                 }
               ],
-              "description": "Detects usage of certain statements."
+              "description": "Detects usage of certain statements.\nhttps://rules.abaplint.org/avoid_use"
             },
             "begin_end_names": {
               "anyOf": [
@@ -919,7 +919,7 @@
                   "type": "boolean"
                 }
               ],
-              "description": "Check BEGIN OF and END OF names match"
+              "description": "Check BEGIN OF and END OF names match\nhttps://rules.abaplint.org/begin_end_names"
             },
             "chain_mainly_declarations": {
               "anyOf": [
@@ -930,7 +930,7 @@
                   "type": "boolean"
                 }
               ],
-              "description": "Chain mainly declarations\r\nhttps://docs.abapopenchecks.org/checks/23/"
+              "description": "Chain mainly declarations\r\nhttps://docs.abapopenchecks.org/checks/23/\nhttps://rules.abaplint.org/chain_mainly_declarations"
             },
             "check_abstract": {
               "anyOf": [
@@ -941,7 +941,7 @@
                   "type": "boolean"
                 }
               ],
-              "description": "Checks abstract methods and classes:\r\n- class defined as abstract and final,\r\n- non-abstract class contains abstract methods"
+              "description": "Checks abstract methods and classes:\r\n- class defined as abstract and final,\r\n- non-abstract class contains abstract methods\nhttps://rules.abaplint.org/check_abstract"
             },
             "check_comments": {
               "anyOf": [
@@ -952,7 +952,7 @@
                   "type": "boolean"
                 }
               ],
-              "description": "Various checks for comment usage."
+              "description": "Various checks for comment usage.\nhttps://rules.abaplint.org/check_comments"
             },
             "check_ddic": {
               "anyOf": [
@@ -963,7 +963,7 @@
                   "type": "boolean"
                 }
               ],
-              "description": "Checks the types of DDIC objects can be resolved, the namespace of the development/errors can be configured in \"errorNamespace\""
+              "description": "Checks the types of DDIC objects can be resolved, the namespace of the development/errors can be configured in \"errorNamespace\"\nhttps://rules.abaplint.org/check_ddic"
             },
             "check_include": {
               "anyOf": [
@@ -974,7 +974,7 @@
                   "type": "boolean"
                 }
               ],
-              "description": "Checks INCLUDE statements"
+              "description": "Checks INCLUDE statements\nhttps://rules.abaplint.org/check_include"
             },
             "check_no_handler_pragma": {
               "anyOf": [
@@ -985,7 +985,7 @@
                   "type": "boolean"
                 }
               ],
-              "description": "Checks NO_HANDLER pragmas that can be removed"
+              "description": "Checks NO_HANDLER pragmas that can be removed\nhttps://rules.abaplint.org/check_no_handler_pragma"
             },
             "check_syntax": {
               "anyOf": [
@@ -996,7 +996,7 @@
                   "type": "boolean"
                 }
               ],
-              "description": "Enables syntax check and variable resolution"
+              "description": "Enables syntax check and variable resolution\nhttps://rules.abaplint.org/check_syntax"
             },
             "check_text_elements": {
               "anyOf": [
@@ -1007,7 +1007,7 @@
                   "type": "boolean"
                 }
               ],
-              "description": "Check text elements"
+              "description": "Check text elements\nhttps://rules.abaplint.org/check_text_elements"
             },
             "check_transformation_exists": {
               "anyOf": [
@@ -1018,7 +1018,7 @@
                   "type": "boolean"
                 }
               ],
-              "description": "Checks that used XSLT transformations exist."
+              "description": "Checks that used XSLT transformations exist.\nhttps://rules.abaplint.org/check_transformation_exists"
             },
             "class_attribute_names": {
               "anyOf": [
@@ -1029,7 +1029,7 @@
                   "type": "boolean"
                 }
               ],
-              "description": "Allows you to enforce a pattern, such as a prefix, for class variable names."
+              "description": "Allows you to enforce a pattern, such as a prefix, for class variable names.\nhttps://rules.abaplint.org/class_attribute_names"
             },
             "cloud_types": {
               "anyOf": [
@@ -1040,7 +1040,7 @@
                   "type": "boolean"
                 }
               ],
-              "description": "Checks that the package does not contain any object types unsupported in cloud ABAP."
+              "description": "Checks that the package does not contain any object types unsupported in cloud ABAP.\nhttps://rules.abaplint.org/cloud_types"
             },
             "colon_missing_space": {
               "anyOf": [
@@ -1051,7 +1051,7 @@
                   "type": "boolean"
                 }
               ],
-              "description": "Checks for missing spaces after colons in chained statements."
+              "description": "Checks for missing spaces after colons in chained statements.\nhttps://rules.abaplint.org/colon_missing_space"
             },
             "commented_code": {
               "anyOf": [
@@ -1062,7 +1062,7 @@
                   "type": "boolean"
                 }
               ],
-              "description": "Detects usage of commented out code.\r\nhttps://github.com/SAP/styleguides/blob/master/clean-abap/CleanABAP.md#delete-code-instead-of-commenting-it\r\nhttps://docs.abapopenchecks.org/checks/14/"
+              "description": "Detects usage of commented out code.\r\nhttps://github.com/SAP/styleguides/blob/master/clean-abap/CleanABAP.md#delete-code-instead-of-commenting-it\r\nhttps://docs.abapopenchecks.org/checks/14/\nhttps://rules.abaplint.org/commented_code"
             },
             "constructor_visibility_public": {
               "anyOf": [
@@ -1073,7 +1073,7 @@
                   "type": "boolean"
                 }
               ],
-              "description": "Constructor must be placed in the public section, even if the class is not CREATE PUBLIC.\r\nhttps://github.com/SAP/styleguides/blob/master/clean-abap/CleanABAP.md#if-your-global-class-is-create-private-leave-the-constructor-public\r\nhttps://help.sap.com/doc/abapdocu_751_index_htm/7.51/en-US/abeninstance_constructor_guidl.htm"
+              "description": "Constructor must be placed in the public section, even if the class is not CREATE PUBLIC.\r\nhttps://github.com/SAP/styleguides/blob/master/clean-abap/CleanABAP.md#if-your-global-class-is-create-private-leave-the-constructor-public\r\nhttps://help.sap.com/doc/abapdocu_751_index_htm/7.51/en-US/abeninstance_constructor_guidl.htm\nhttps://rules.abaplint.org/constructor_visibility_public"
             },
             "contains_tab": {
               "anyOf": [
@@ -1084,7 +1084,7 @@
                   "type": "boolean"
                 }
               ],
-              "description": "Checks for usage of tabs (enable to enforce spaces)\r\nhttps://docs.abapopenchecks.org/checks/09/"
+              "description": "Checks for usage of tabs (enable to enforce spaces)\r\nhttps://docs.abapopenchecks.org/checks/09/\nhttps://rules.abaplint.org/contains_tab"
             },
             "definitions_top": {
               "anyOf": [
@@ -1095,7 +1095,7 @@
                   "type": "boolean"
                 }
               ],
-              "description": "Checks that definitions are placed at the beginning of methods.\r\nhttps://docs.abapopenchecks.org/checks/17/"
+              "description": "Checks that definitions are placed at the beginning of methods.\r\nhttps://docs.abapopenchecks.org/checks/17/\nhttps://rules.abaplint.org/definitions_top"
             },
             "description_empty": {
               "anyOf": [
@@ -1106,7 +1106,7 @@
                   "type": "boolean"
                 }
               ],
-              "description": "Ensures descriptions in class metadata exist."
+              "description": "Ensures descriptions in class metadata exist.\nhttps://rules.abaplint.org/description_empty"
             },
             "double_space": {
               "anyOf": [
@@ -1117,7 +1117,7 @@
                   "type": "boolean"
                 }
               ],
-              "description": "Checks that only a single space follows certain common statements."
+              "description": "Checks that only a single space follows certain common statements.\nhttps://rules.abaplint.org/double_space"
             },
             "empty_line_in_statement": {
               "anyOf": [
@@ -1128,7 +1128,7 @@
                   "type": "boolean"
                 }
               ],
-              "description": "Checks that statements do not contain empty lines.\r\nhttps://docs.abapopenchecks.org/checks/41/"
+              "description": "Checks that statements do not contain empty lines.\r\nhttps://docs.abapopenchecks.org/checks/41/\nhttps://rules.abaplint.org/empty_line_in_statement"
             },
             "empty_statement": {
               "anyOf": [
@@ -1139,7 +1139,7 @@
                   "type": "boolean"
                 }
               ],
-              "description": "Checks for empty statements (an empty statement is a single dot)"
+              "description": "Checks for empty statements (an empty statement is a single dot)\nhttps://rules.abaplint.org/empty_statement"
             },
             "empty_structure": {
               "anyOf": [
@@ -1150,7 +1150,7 @@
                   "type": "boolean"
                 }
               ],
-              "description": "Checks that the code does not contain empty blocks."
+              "description": "Checks that the code does not contain empty blocks.\nhttps://rules.abaplint.org/empty_structure"
             },
             "exit_or_check": {
               "anyOf": [
@@ -1161,7 +1161,7 @@
                   "type": "boolean"
                 }
               ],
-              "description": "Detects usages of EXIT or CHECK statements outside of loops."
+              "description": "Detects usages of EXIT or CHECK statements outside of loops.\nhttps://rules.abaplint.org/exit_or_check"
             },
             "exporting": {
               "anyOf": [
@@ -1172,7 +1172,7 @@
                   "type": "boolean"
                 }
               ],
-              "description": "Detects EXPORTING statements which can be omitted.\nhttps://github.com/SAP/styleguides/blob/master/clean-abap/CleanABAP.md#omit-the-optional-keyword-exporting\nhttps://docs.abapopenchecks.org/checks/30/"
+              "description": "Detects EXPORTING statements which can be omitted.\nhttps://rules.abaplint.org/exporting"
             },
             "forbidden_identifier": {
               "anyOf": [
@@ -1183,7 +1183,7 @@
                   "type": "boolean"
                 }
               ],
-              "description": "Forbid use of specified identifiers, list of regex"
+              "description": "Forbid use of specified identifiers, list of regex\nhttps://rules.abaplint.org/forbidden_identifier"
             },
             "form_no_dash": {
               "anyOf": [
@@ -1194,7 +1194,7 @@
                   "type": "boolean"
                 }
               ],
-              "description": "Checks for a Dash in form names."
+              "description": "Checks for a Dash in form names.\nhttps://rules.abaplint.org/form_no_dash"
             },
             "form_tables_obsolete": {
               "anyOf": [
@@ -1205,7 +1205,7 @@
                   "type": "boolean"
                 }
               ],
-              "description": "Checks for TABLES parameters in forms."
+              "description": "Checks for TABLES parameters in forms.\nhttps://rules.abaplint.org/form_tables_obsolete"
             },
             "fully_type_constants": {
               "anyOf": [
@@ -1216,7 +1216,7 @@
                   "type": "boolean"
                 }
               ],
-              "description": "Checks constants for full typing - no implicit typing allowed."
+              "description": "Checks constants for full typing - no implicit typing allowed.\nhttps://rules.abaplint.org/fully_type_constants"
             },
             "functional_writing": {
               "anyOf": [
@@ -1227,7 +1227,7 @@
                   "type": "boolean"
                 }
               ],
-              "description": "Detects usage of call method when functional style calls can be used.\r\nhttps://github.com/SAP/styleguides/blob/master/clean-abap/CleanABAP.md#prefer-functional-to-procedural-calls\r\nhttps://docs.abapopenchecks.org/checks/07/"
+              "description": "Detects usage of call method when functional style calls can be used.\r\nhttps://github.com/SAP/styleguides/blob/master/clean-abap/CleanABAP.md#prefer-functional-to-procedural-calls\r\nhttps://docs.abapopenchecks.org/checks/07/\nhttps://rules.abaplint.org/functional_writing"
             },
             "global_class": {
               "anyOf": [
@@ -1238,7 +1238,7 @@
                   "type": "boolean"
                 }
               ],
-              "description": "Checks related to names of global classes. For the name pattern, see rule object_naming"
+              "description": "Checks related to names of global classes. For the name pattern, see rule object_naming\nhttps://rules.abaplint.org/global_class"
             },
             "identical_form_names": {
               "anyOf": [
@@ -1249,7 +1249,7 @@
                   "type": "boolean"
                 }
               ],
-              "description": "Detects identically named FORMs"
+              "description": "Detects identically named FORMs\nhttps://rules.abaplint.org/identical_form_names"
             },
             "if_in_if": {
               "anyOf": [
@@ -1260,7 +1260,7 @@
                   "type": "boolean"
                 }
               ],
-              "description": "Detects nested ifs which can be refactored to a single condition using AND."
+              "description": "Detects nested ifs which can be refactored to a single condition using AND.\nhttps://rules.abaplint.org/if_in_if"
             },
             "implement_methods": {
               "anyOf": [
@@ -1271,7 +1271,7 @@
                   "type": "boolean"
                 }
               ],
-              "description": "Chekcs for abstract methods which need implementing."
+              "description": "Chekcs for abstract methods which need implementing.\nhttps://rules.abaplint.org/implement_methods"
             },
             "in_statement_indentation": {
               "anyOf": [
@@ -1282,7 +1282,7 @@
                   "type": "boolean"
                 }
               ],
-              "description": "Checks alignment within block statement declarations which span multiple lines, such as multiple conditions in IF statements.\r\nExample:\r\nIF 1 = 1 AND\r\n  2 = 2."
+              "description": "Checks alignment within block statement declarations which span multiple lines, such as multiple conditions in IF statements.\r\nExample:\r\nIF 1 = 1 AND\r\n  2 = 2.\nhttps://rules.abaplint.org/in_statement_indentation"
             },
             "indentation": {
               "anyOf": [
@@ -1293,7 +1293,7 @@
                   "type": "boolean"
                 }
               ],
-              "description": "Checks indentation"
+              "description": "Checks indentation\nhttps://rules.abaplint.org/indentation"
             },
             "inline_data_old_versions": {
               "anyOf": [
@@ -1304,7 +1304,7 @@
                   "type": "boolean"
                 }
               ],
-              "description": "Checks for inline data declarations in older releases."
+              "description": "Checks for inline data declarations in older releases.\nhttps://rules.abaplint.org/inline_data_old_versions"
             },
             "keep_single_parameter_on_one_line": {
               "anyOf": [
@@ -1315,7 +1315,7 @@
                   "type": "boolean"
                 }
               ],
-              "description": "Keep single parameter calls on one line\r\nhttps://github.com/SAP/styleguides/blob/master/clean-abap/CleanABAP.md#keep-single-parameter-calls-on-one-line"
+              "description": "Keep single parameter calls on one line\r\nhttps://github.com/SAP/styleguides/blob/master/clean-abap/CleanABAP.md#keep-single-parameter-calls-on-one-line\nhttps://rules.abaplint.org/keep_single_parameter_on_one_line"
             },
             "keyword_case": {
               "anyOf": [
@@ -1326,7 +1326,7 @@
                   "type": "boolean"
                 }
               ],
-              "description": "Checks that keywords have the same case. Non-keywords must be lower case."
+              "description": "Checks that keywords have the same case. Non-keywords must be lower case.\nhttps://rules.abaplint.org/keyword_case"
             },
             "line_length": {
               "anyOf": [
@@ -1337,7 +1337,7 @@
                   "type": "boolean"
                 }
               ],
-              "description": "Detects lines exceeding the provided maximum length.\r\nhttps://github.com/SAP/styleguides/blob/master/clean-abap/CleanABAP.md#stick-to-a-reasonable-line-length\r\nhttps://docs.abapopenchecks.org/checks/04/"
+              "description": "Detects lines exceeding the provided maximum length.\r\nhttps://github.com/SAP/styleguides/blob/master/clean-abap/CleanABAP.md#stick-to-a-reasonable-line-length\r\nhttps://docs.abapopenchecks.org/checks/04/\nhttps://rules.abaplint.org/line_length"
             },
             "line_only_punc": {
               "anyOf": [
@@ -1348,7 +1348,7 @@
                   "type": "boolean"
                 }
               ],
-              "description": "Detects lines containing only punctuation.\r\nhttps://github.com/SAP/styleguides/blob/master/clean-abap/CleanABAP.md#close-brackets-at-line-end\r\nhttps://docs.abapopenchecks.org/checks/16/"
+              "description": "Detects lines containing only punctuation.\r\nhttps://github.com/SAP/styleguides/blob/master/clean-abap/CleanABAP.md#close-brackets-at-line-end\r\nhttps://docs.abapopenchecks.org/checks/16/\nhttps://rules.abaplint.org/line_only_punc"
             },
             "local_class_naming": {
               "anyOf": [
@@ -1359,7 +1359,7 @@
                   "type": "boolean"
                 }
               ],
-              "description": "Allows you to enforce a pattern, such as a prefix, for local class names."
+              "description": "Allows you to enforce a pattern, such as a prefix, for local class names.\nhttps://rules.abaplint.org/local_class_naming"
             },
             "local_testclass_location": {
               "anyOf": [
@@ -1370,7 +1370,7 @@
                   "type": "boolean"
                 }
               ],
-              "description": "Chceks that local test classes are placed in the test include."
+              "description": "Chceks that local test classes are placed in the test include.\nhttps://rules.abaplint.org/local_testclass_location"
             },
             "local_variable_names": {
               "anyOf": [
@@ -1381,7 +1381,7 @@
                   "type": "boolean"
                 }
               ],
-              "description": "Allows you to enforce a pattern, such as a prefix, for local variables, constants and field symbols."
+              "description": "Allows you to enforce a pattern, such as a prefix, for local variables, constants and field symbols.\nhttps://rules.abaplint.org/local_variable_names"
             },
             "main_file_contents": {
               "anyOf": [
@@ -1392,7 +1392,7 @@
                   "type": "boolean"
                 }
               ],
-              "description": "Checks related to report declarations."
+              "description": "Checks related to report declarations.\nhttps://rules.abaplint.org/main_file_contents"
             },
             "max_one_statement": {
               "anyOf": [
@@ -1403,7 +1403,7 @@
                   "type": "boolean"
                 }
               ],
-              "description": "Chekcks that each line contains only a single statement.\r\nhttps://github.com/SAP/styleguides/blob/master/clean-abap/CleanABAP.md#no-more-than-one-statement-per-line\r\nhttps://docs.abapopenchecks.org/checks/11/"
+              "description": "Chekcks that each line contains only a single statement.\r\nhttps://github.com/SAP/styleguides/blob/master/clean-abap/CleanABAP.md#no-more-than-one-statement-per-line\r\nhttps://docs.abapopenchecks.org/checks/11/\nhttps://rules.abaplint.org/max_one_statement"
             },
             "message_exists": {
               "anyOf": [
@@ -1414,7 +1414,7 @@
                   "type": "boolean"
                 }
               ],
-              "description": "In message statements, check that the message class + id exist"
+              "description": "In message statements, check that the message class + id exist\nhttps://rules.abaplint.org/message_exists"
             },
             "method_length": {
               "anyOf": [
@@ -1425,7 +1425,7 @@
                   "type": "boolean"
                 }
               ],
-              "description": "Checks relating to method length."
+              "description": "Checks relating to method length.\nhttps://rules.abaplint.org/method_length"
             },
             "method_parameter_names": {
               "anyOf": [
@@ -1436,7 +1436,7 @@
                   "type": "boolean"
                 }
               ],
-              "description": "Allows you to enforce a pattern, such as a prefix, for method parameter names"
+              "description": "Allows you to enforce a pattern, such as a prefix, for method parameter names\nhttps://rules.abaplint.org/method_parameter_names"
             },
             "mix_returning": {
               "anyOf": [
@@ -1447,7 +1447,7 @@
                   "type": "boolean"
                 }
               ],
-              "description": "Checks that methods don't have a mixture of returning and exporting/changing parameters\r\nhttps://github.com/SAP/styleguides/blob/master/clean-abap/CleanABAP.md#use-either-returning-or-exporting-or-changing-but-not-a-combination"
+              "description": "Checks that methods don't have a mixture of returning and exporting/changing parameters\r\nhttps://github.com/SAP/styleguides/blob/master/clean-abap/CleanABAP.md#use-either-returning-or-exporting-or-changing-but-not-a-combination\nhttps://rules.abaplint.org/mix_returning"
             },
             "msag_consistency": {
               "anyOf": [
@@ -1458,7 +1458,7 @@
                   "type": "boolean"
                 }
               ],
-              "description": "Checks the validity of messages in message classes"
+              "description": "Checks the validity of messages in message classes\nhttps://rules.abaplint.org/msag_consistency"
             },
             "nesting": {
               "anyOf": [
@@ -1469,7 +1469,7 @@
                   "type": "boolean"
                 }
               ],
-              "description": "Checks for methods exceeding a maximum nesting depth\r\nhttps://github.com/SAP/styleguides/blob/master/clean-abap/CleanABAP.md#keep-the-nesting-depth-low\r\nhttps://docs.abapopenchecks.org/checks/74/"
+              "description": "Checks for methods exceeding a maximum nesting depth\r\nhttps://github.com/SAP/styleguides/blob/master/clean-abap/CleanABAP.md#keep-the-nesting-depth-low\r\nhttps://docs.abapopenchecks.org/checks/74/\nhttps://rules.abaplint.org/nesting"
             },
             "newline_between_methods": {
               "anyOf": [
@@ -1480,7 +1480,7 @@
                   "type": "boolean"
                 }
               ],
-              "description": "Checks for newlines between method implementations."
+              "description": "Checks for newlines between method implementations.\nhttps://rules.abaplint.org/newline_between_methods"
             },
             "no_public_attributes": {
               "anyOf": [
@@ -1491,7 +1491,7 @@
                   "type": "boolean"
                 }
               ],
-              "description": "Checks that classes and interfaces don't contain any public attributes.\r\nExceptions are excluded from this rule."
+              "description": "Checks that classes and interfaces don't contain any public attributes.\r\nExceptions are excluded from this rule.\nhttps://rules.abaplint.org/no_public_attributes"
             },
             "object_naming": {
               "anyOf": [
@@ -1502,7 +1502,7 @@
                   "type": "boolean"
                 }
               ],
-              "description": "Allows you to enforce a pattern, such as a prefix, for object names"
+              "description": "Allows you to enforce a pattern, such as a prefix, for object names\nhttps://rules.abaplint.org/object_naming"
             },
             "obsolete_statement": {
               "anyOf": [
@@ -1513,7 +1513,7 @@
                   "type": "boolean"
                 }
               ],
-              "description": "Checks for usages of certain obsolete statements"
+              "description": "Checks for usages of certain obsolete statements\nhttps://rules.abaplint.org/obsolete_statement"
             },
             "parser_error": {
               "anyOf": [
@@ -1524,7 +1524,7 @@
                   "type": "boolean"
                 }
               ],
-              "description": "Checks for syntax unrecognized by abaplint"
+              "description": "Checks for syntax unrecognized by abaplint\nhttps://rules.abaplint.org/parser_error"
             },
             "prefer_returning_to_exporting": {
               "anyOf": [
@@ -1535,7 +1535,7 @@
                   "type": "boolean"
                 }
               ],
-              "description": "Prefer RETURNING to EXPORTING\r\nhttps://github.com/SAP/styleguides/blob/master/clean-abap/CleanABAP.md#prefer-returning-to-exporting\r\nhttps://docs.abapopenchecks.org/checks/44/"
+              "description": "Prefer RETURNING to EXPORTING\r\nhttps://github.com/SAP/styleguides/blob/master/clean-abap/CleanABAP.md#prefer-returning-to-exporting\r\nhttps://docs.abapopenchecks.org/checks/44/\nhttps://rules.abaplint.org/prefer_returning_to_exporting"
             },
             "preferred_compare_operator": {
               "anyOf": [
@@ -1546,7 +1546,7 @@
                   "type": "boolean"
                 }
               ],
-              "description": "Configure undesired operator variants"
+              "description": "Configure undesired operator variants\nhttps://rules.abaplint.org/preferred_compare_operator"
             },
             "prefix_is_current_class": {
               "anyOf": [
@@ -1557,7 +1557,7 @@
                   "type": "boolean"
                 }
               ],
-              "description": "Reports errors if the current class references itself with \"current_class=>\"\r\nhttps://github.com/SAP/styleguides/blob/master/clean-abap/CleanABAP.md#omit-the-self-reference-me-when-calling-an-instance-method"
+              "description": "Reports errors if the current class references itself with \"current_class=>\"\r\nhttps://github.com/SAP/styleguides/blob/master/clean-abap/CleanABAP.md#omit-the-self-reference-me-when-calling-an-instance-method\nhttps://rules.abaplint.org/prefix_is_current_class"
             },
             "release_idoc": {
               "anyOf": [
@@ -1568,7 +1568,7 @@
                   "type": "boolean"
                 }
               ],
-              "description": "Checks idoc types and segments are set to status released"
+              "description": "Checks idoc types and segments are set to status released\nhttps://rules.abaplint.org/release_idoc"
             },
             "remove_descriptions": {
               "anyOf": [
@@ -1579,7 +1579,7 @@
                   "type": "boolean"
                 }
               ],
-              "description": "Ensures you have no descriptions in metadata of methods, parameters, etc. For class descriptions, see rule description_empty."
+              "description": "Ensures you have no descriptions in metadata of methods, parameters, etc. For class descriptions, see rule description_empty.\nhttps://rules.abaplint.org/remove_descriptions"
             },
             "rfc_error_handling": {
               "anyOf": [
@@ -1590,7 +1590,7 @@
                   "type": "boolean"
                 }
               ],
-              "description": "Checks that exceptions 'system_failure' and 'communication_failure' are handled in RFC calls\r\nhttps://help.sap.com/doc/abapdocu_750_index_htm/7.50/en-US/abenrfc_exception.htm"
+              "description": "Checks that exceptions 'system_failure' and 'communication_failure' are handled in RFC calls\r\nhttps://help.sap.com/doc/abapdocu_750_index_htm/7.50/en-US/abenrfc_exception.htm\nhttps://rules.abaplint.org/rfc_error_handling"
             },
             "selection_screen_naming": {
               "anyOf": [
@@ -1601,7 +1601,7 @@
                   "type": "boolean"
                 }
               ],
-              "description": "Allows you to enforce a pattern, such as a prefix, for selection-screen variable names."
+              "description": "Allows you to enforce a pattern, such as a prefix, for selection-screen variable names.\nhttps://rules.abaplint.org/selection_screen_naming"
             },
             "sequential_blank": {
               "anyOf": [
@@ -1612,7 +1612,7 @@
                   "type": "boolean"
                 }
               ],
-              "description": "Checks that code does not contain more than the configured number of blank lines in a row."
+              "description": "Checks that code does not contain more than the configured number of blank lines in a row.\nhttps://rules.abaplint.org/sequential_blank"
             },
             "short_case": {
               "anyOf": [
@@ -1623,7 +1623,7 @@
                   "type": "boolean"
                 }
               ],
-              "description": "Checks for CASE statements which have fewer than the specified number of branches"
+              "description": "Checks for CASE statements which have fewer than the specified number of branches\nhttps://rules.abaplint.org/short_case"
             },
             "sicf_consistency": {
               "anyOf": [
@@ -1634,7 +1634,7 @@
                   "type": "boolean"
                 }
               ],
-              "description": "Checks the validity of ICF services"
+              "description": "Checks the validity of ICF services\nhttps://rules.abaplint.org/sicf_consistency"
             },
             "space_before_colon": {
               "anyOf": [
@@ -1645,7 +1645,7 @@
                   "type": "boolean"
                 }
               ],
-              "description": "Checks that there are no spaces in front of colons in chained statements.\r\nhttps://docs.abapopenchecks.org/checks/80/"
+              "description": "Checks that there are no spaces in front of colons in chained statements.\r\nhttps://docs.abapopenchecks.org/checks/80/\nhttps://rules.abaplint.org/space_before_colon"
             },
             "space_before_dot": {
               "anyOf": [
@@ -1656,7 +1656,7 @@
                   "type": "boolean"
                 }
               ],
-              "description": "Checks for extra spaces before dots at the ends of statements ."
+              "description": "Checks for extra spaces before dots at the ends of statements .\nhttps://rules.abaplint.org/space_before_dot"
             },
             "sql_escape_host_variables": {
               "anyOf": [
@@ -1667,7 +1667,7 @@
                   "type": "boolean"
                 }
               ],
-              "description": "Escape SQL host variables, from 740sp05"
+              "description": "Escape SQL host variables, from 740sp05\nhttps://rules.abaplint.org/sql_escape_host_variables"
             },
             "start_at_tab": {
               "anyOf": [
@@ -1678,7 +1678,7 @@
                   "type": "boolean"
                 }
               ],
-              "description": "Checks that statements start at tabstops."
+              "description": "Checks that statements start at tabstops.\nhttps://rules.abaplint.org/start_at_tab"
             },
             "superclass_final": {
               "anyOf": [
@@ -1689,7 +1689,7 @@
                   "type": "boolean"
                 }
               ],
-              "description": "Checks that classes which are inherited from are not declared as FINAL."
+              "description": "Checks that classes which are inherited from are not declared as FINAL.\nhttps://rules.abaplint.org/superclass_final"
             },
             "tabl_enhancement_category": {
               "anyOf": [
@@ -1700,7 +1700,7 @@
                   "type": "boolean"
                 }
               ],
-              "description": "Checks that tables do not have the enhancement category 'not classified'"
+              "description": "Checks that tables do not have the enhancement category 'not classified'\nhttps://rules.abaplint.org/tabl_enhancement_category"
             },
             "try_without_catch": {
               "anyOf": [
@@ -1711,7 +1711,7 @@
                   "type": "boolean"
                 }
               ],
-              "description": "Checks for TRY blocks without a CATCH block"
+              "description": "Checks for TRY blocks without a CATCH block\nhttps://rules.abaplint.org/try_without_catch"
             },
             "type_begin_single_include": {
               "anyOf": [
@@ -1722,7 +1722,7 @@
                   "type": "boolean"
                 }
               ],
-              "description": "Finds TYPE BEGIN with just one INCLUDE TYPE"
+              "description": "Finds TYPE BEGIN with just one INCLUDE TYPE\nhttps://rules.abaplint.org/type_begin_single_include"
             },
             "type_form_parameters": {
               "anyOf": [
@@ -1733,7 +1733,7 @@
                   "type": "boolean"
                 }
               ],
-              "description": "Checks for untyped FORM parameters"
+              "description": "Checks for untyped FORM parameters\nhttps://rules.abaplint.org/type_form_parameters"
             },
             "types_naming": {
               "anyOf": [
@@ -1744,7 +1744,7 @@
                   "type": "boolean"
                 }
               ],
-              "description": "Allows you to enforce a pattern for TYPES definitions"
+              "description": "Allows you to enforce a pattern for TYPES definitions\nhttps://rules.abaplint.org/types_naming"
             },
             "unknown_types": {
               "anyOf": [
@@ -1755,7 +1755,7 @@
                   "type": "boolean"
                 }
               ],
-              "description": "Enables check for unknown types, respects errorNamespace"
+              "description": "Enables check for unknown types, respects errorNamespace\nhttps://rules.abaplint.org/unknown_types"
             },
             "unreachable_code": {
               "anyOf": [
@@ -1766,7 +1766,7 @@
                   "type": "boolean"
                 }
               ],
-              "description": "Checks for unreachable code."
+              "description": "Checks for unreachable code.\nhttps://rules.abaplint.org/unreachable_code"
             },
             "unused_variables": {
               "anyOf": [
@@ -1777,7 +1777,7 @@
                   "type": "boolean"
                 }
               ],
-              "description": "Checks for unused variables"
+              "description": "Checks for unused variables\nhttps://rules.abaplint.org/unused_variables"
             },
             "use_new": {
               "anyOf": [
@@ -1788,7 +1788,7 @@
                   "type": "boolean"
                 }
               ],
-              "description": "Checks for deprecated CREATE OBJECT statements."
+              "description": "Checks for deprecated CREATE OBJECT statements.\nhttps://rules.abaplint.org/use_new"
             },
             "when_others_last": {
               "anyOf": [
@@ -1799,7 +1799,7 @@
                   "type": "boolean"
                 }
               ],
-              "description": "Checks that WHEN OTHERS is placed the last within a CASE statement."
+              "description": "Checks that WHEN OTHERS is placed the last within a CASE statement.\nhttps://rules.abaplint.org/when_others_last"
             },
             "whitespace_end": {
               "anyOf": [
@@ -1810,7 +1810,7 @@
                   "type": "boolean"
                 }
               ],
-              "description": "Checks for redundant whitespace at the end of each line."
+              "description": "Checks for redundant whitespace at the end of each line.\nhttps://rules.abaplint.org/whitespace_end"
             },
             "xml_consistency": {
               "anyOf": [
@@ -1821,7 +1821,7 @@
                   "type": "boolean"
                 }
               ],
-              "description": "Checks the consistency of main XML files, eg. naming"
+              "description": "Checks the consistency of main XML files, eg. naming\nhttps://rules.abaplint.org/xml_consistency"
             }
           },
           "type": "object"

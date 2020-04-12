@@ -4,7 +4,7 @@
   "version": "1.0.0",
   "description": "",
   "scripts": {
-    "test": "ts-node src/build.ts"
+    "test": "ts-node src/build.ts && cp public/* build"
   },
   "author": "",
   "license": "MIT",
