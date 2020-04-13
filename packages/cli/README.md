@@ -1,6 +1,6 @@
 # @abaplint/cli
 
-abaplint command line interface
+[abaplint](https://abaplint.org) command line interface
 
 ```
 Usage:
@@ -17,3 +17,6 @@ Options:
   --outfile <file>       output issues to file in format
   -c                     compress files in memory
 ```
+
+## Requirements
+Node.js 10

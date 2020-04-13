@@ -7,3 +7,12 @@ There are several ways to enable automated linting of your code in popular cloud
 - Github actions: example workflow can be seen in [github-actions-workflow.yml](github-actions-workflow.yml). See working repo example at [abaplinted_sample gitHUB](https://github.com/sbcgua/abaplinted_sample)
 
 ![workflow example](workflow-example.png)
+
+## Additional links
+
+* [GitHub App](https://github.com/apps/abaplint)
+* [GitHub Actions](https://github.com/abaplint/actions-abaplint)
+* [GitLab Pipelines](https://gitlab.com/sbu-absw/abaplint-example)
+* [Bitbucket Pipelines](https://bitbucket.org/larshp/abaplint_pipeline)
+* [Azure Pipelines](https://github.com/abaplint/azure-devops-example)
+* [Travis CI](https://blogs.sap.com/2018/12/25/automatic-checking-of-your-abap-code-in-githubgitlab-with-ci-and-abaplint/)

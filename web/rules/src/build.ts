@@ -58,7 +58,15 @@ function findPath(ruleKey: string) {
 }
 
 function buildIndex() {
-  let html = "<h1>abaplint rules documentation</h1>";
+  let html = `<h1>abaplint rules documentation</h1>
+Get default configuration by running <tt>abaplint -d > abaplint.json</tt>
+<br><br>
+<a href="https://github.com/FreHu/abaplint-clean-code">abaplint-clean-code</a> contains rule
+documentation as well as abaplint.json definitions which attempt to align abaplint with the official
+<a href="https://github.com/SAP/styleguides/blob/master/clean-abap/CleanABAP.md">Clean ABAP styleguide</a>.
+
+<h2>Rules</h2>
+`;
 
   const sorted = abaplint.ArtifactsRules.getRules().sort((a, b) => {
     return a.getMetadata().key.localeCompare(b.getMetadata().key); });
