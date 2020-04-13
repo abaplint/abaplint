@@ -22,6 +22,6 @@ Versioning: semantic versioning is currently not followed, recommend fixing usag
 
 ## Development
 
-[Syntax Diagrams](https://syntax.abaplint.org)
+[Syntax diagrams](https://syntax.abaplint.org)
 
-[Design Documentation](https://docs.abaplint.org/todo.pdf)
+[Design documentation](https://docs.abaplint.org/todo.pdf)

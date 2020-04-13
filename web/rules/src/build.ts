@@ -4,8 +4,6 @@ import {IRuleMetadata, RuleTag} from "../../../packages/core/build/src/rules/_ir
 
 // quick'n dirty, optimizes for search engine indexing
 
-// todo: also link to unit test file from documentation?
-
 const rawSchema = fs.readFileSync("../../packages/core/scripts/schema.json");
 
 function preamble(dir = "") {
@@ -59,6 +57,9 @@ function findPath(ruleKey: string) {
 
 function buildIndex() {
   let html = `<h1>abaplint rules documentation</h1>
+abaplint can be configured by placing a <tt>abaplint.json</tt> file in the root of the git repository.
+If no configuration file is found, the default configuration will be used, which contains have all rules enabled.
+<br><br>
 Get default configuration by running <tt>abaplint -d > abaplint.json</tt>
 <br><br>
 <a href="https://github.com/FreHu/abaplint-clean-code">abaplint-clean-code</a> contains rule
