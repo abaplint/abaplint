@@ -21,7 +21,7 @@
     "vscode-languageserver-types": "^3.15.1"
   },
   "devDependencies": {
-    "css-loader": "^3.5.1",
+    "css-loader": "^3.5.2",
     "cypress": "^4.3.0",
     "file-loader": "^6.0.0",
     "html-webpack-plugin": "^4.2.0",
