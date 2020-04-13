@@ -17,7 +17,7 @@
           "type": "array"
         },
         "reason": {
-          "description": "An explanation for why the rule is enforced",
+          "description": "An explanation for why the rule is enforced, information only",
           "type": "string"
         }
       },
@@ -37,7 +37,7 @@
           "type": "array"
         },
         "reason": {
-          "description": "An explanation for why the rule is enforced",
+          "description": "An explanation for why the rule is enforced, information only",
           "type": "string"
         }
       },
@@ -61,7 +61,7 @@
           "type": "array"
         },
         "reason": {
-          "description": "An explanation for why the rule is enforced",
+          "description": "An explanation for why the rule is enforced, information only",
           "type": "string"
         }
       },
@@ -81,7 +81,7 @@
           "type": "array"
         },
         "reason": {
-          "description": "An explanation for why the rule is enforced",
+          "description": "An explanation for why the rule is enforced, information only",
           "type": "string"
         }
       },
@@ -126,7 +126,7 @@
           "type": "boolean"
         },
         "reason": {
-          "description": "An explanation for why the rule is enforced",
+          "description": "An explanation for why the rule is enforced, information only",
           "type": "string"
         },
         "statics": {
@@ -162,7 +162,7 @@
           "type": "array"
         },
         "reason": {
-          "description": "An explanation for why the rule is enforced",
+          "description": "An explanation for why the rule is enforced, information only",
           "type": "string"
         }
       },
@@ -179,7 +179,7 @@
           "type": "array"
         },
         "reason": {
-          "description": "An explanation for why the rule is enforced",
+          "description": "An explanation for why the rule is enforced, information only",
           "type": "string"
         }
       },
@@ -196,7 +196,7 @@
           "type": "array"
         },
         "reason": {
-          "description": "An explanation for why the rule is enforced",
+          "description": "An explanation for why the rule is enforced, information only",
           "type": "string"
         }
       },
@@ -217,7 +217,7 @@
           "type": "array"
         },
         "reason": {
-          "description": "An explanation for why the rule is enforced",
+          "description": "An explanation for why the rule is enforced, information only",
           "type": "string"
         }
       },
@@ -237,7 +237,7 @@
           "type": "array"
         },
         "reason": {
-          "description": "An explanation for why the rule is enforced",
+          "description": "An explanation for why the rule is enforced, information only",
           "type": "string"
         }
       },
@@ -254,7 +254,7 @@
           "type": "array"
         },
         "reason": {
-          "description": "An explanation for why the rule is enforced",
+          "description": "An explanation for why the rule is enforced, information only",
           "type": "string"
         }
       },
@@ -271,7 +271,7 @@
           "type": "array"
         },
         "reason": {
-          "description": "An explanation for why the rule is enforced",
+          "description": "An explanation for why the rule is enforced, information only",
           "type": "string"
         }
       },
@@ -288,7 +288,7 @@
           "type": "array"
         },
         "reason": {
-          "description": "An explanation for why the rule is enforced",
+          "description": "An explanation for why the rule is enforced, information only",
           "type": "string"
         }
       },
@@ -305,7 +305,7 @@
           "type": "array"
         },
         "reason": {
-          "description": "An explanation for why the rule is enforced",
+          "description": "An explanation for why the rule is enforced, information only",
           "type": "string"
         }
       },
@@ -322,7 +322,7 @@
           "type": "array"
         },
         "reason": {
-          "description": "An explanation for why the rule is enforced",
+          "description": "An explanation for why the rule is enforced, information only",
           "type": "string"
         }
       },
@@ -339,6 +339,7 @@
           "type": "array"
         },
         "ignoreExceptions": {
+          "description": "Ignore global exception classes",
           "type": "boolean"
         },
         "ignoreNames": {
@@ -364,7 +365,7 @@
           "description": "Specifies whether the pattern is forbidden (violation if name matches) or required (violation if name does not match)."
         },
         "reason": {
-          "description": "An explanation for why the rule is enforced",
+          "description": "An explanation for why the rule is enforced, information only",
           "type": "string"
         },
         "statics": {
@@ -390,7 +391,7 @@
           "type": "array"
         },
         "reason": {
-          "description": "An explanation for why the rule is enforced",
+          "description": "An explanation for why the rule is enforced, information only",
           "type": "string"
         }
       },
@@ -407,7 +408,7 @@
           "type": "array"
         },
         "reason": {
-          "description": "An explanation for why the rule is enforced",
+          "description": "An explanation for why the rule is enforced, information only",
           "type": "string"
         }
       },
@@ -428,7 +429,7 @@
           "type": "array"
         },
         "reason": {
-          "description": "An explanation for why the rule is enforced",
+          "description": "An explanation for why the rule is enforced, information only",
           "type": "string"
         }
       },
@@ -448,7 +449,7 @@
           "type": "array"
         },
         "reason": {
-          "description": "An explanation for why the rule is enforced",
+          "description": "An explanation for why the rule is enforced, information only",
           "type": "string"
         }
       },
@@ -465,7 +466,7 @@
           "type": "array"
         },
         "reason": {
-          "description": "An explanation for why the rule is enforced",
+          "description": "An explanation for why the rule is enforced, information only",
           "type": "string"
         }
       },
@@ -482,7 +483,7 @@
           "type": "array"
         },
         "reason": {
-          "description": "An explanation for why the rule is enforced",
+          "description": "An explanation for why the rule is enforced, information only",
           "type": "string"
         }
       },
@@ -499,7 +500,7 @@
           "type": "array"
         },
         "reason": {
-          "description": "An explanation for why the rule is enforced",
+          "description": "An explanation for why the rule is enforced, information only",
           "type": "string"
         }
       },
@@ -528,7 +529,7 @@
           "type": "boolean"
         },
         "reason": {
-          "description": "An explanation for why the rule is enforced",
+          "description": "An explanation for why the rule is enforced, information only",
           "type": "string"
         },
         "startParen": {
@@ -548,6 +549,7 @@
       "additionalProperties": false,
       "properties": {
         "allowChained": {
+          "description": "Allow changed empty lines in chanined statements",
           "type": "boolean"
         },
         "exclude": {
@@ -558,7 +560,7 @@
           "type": "array"
         },
         "reason": {
-          "description": "An explanation for why the rule is enforced",
+          "description": "An explanation for why the rule is enforced, information only",
           "type": "string"
         }
       },
@@ -578,7 +580,7 @@
           "type": "array"
         },
         "reason": {
-          "description": "An explanation for why the rule is enforced",
+          "description": "An explanation for why the rule is enforced, information only",
           "type": "string"
         }
       },
@@ -615,7 +617,7 @@
           "type": "boolean"
         },
         "reason": {
-          "description": "An explanation for why the rule is enforced",
+          "description": "An explanation for why the rule is enforced, information only",
           "type": "string"
         },
         "select": {
@@ -649,7 +651,7 @@
           "type": "array"
         },
         "reason": {
-          "description": "An explanation for why the rule is enforced",
+          "description": "An explanation for why the rule is enforced, information only",
           "type": "string"
         }
       },
@@ -666,7 +668,7 @@
           "type": "array"
         },
         "reason": {
-          "description": "An explanation for why the rule is enforced",
+          "description": "An explanation for why the rule is enforced, information only",
           "type": "string"
         }
       },
@@ -676,6 +678,7 @@
       "additionalProperties": false,
       "properties": {
         "check": {
+          "description": "List of forbideen identifiers, string array",
           "items": {
             "type": "string"
           },
@@ -689,7 +692,7 @@
           "type": "array"
         },
         "reason": {
-          "description": "An explanation for why the rule is enforced",
+          "description": "An explanation for why the rule is enforced, information only",
           "type": "string"
         }
       },
@@ -709,7 +712,7 @@
           "type": "array"
         },
         "reason": {
-          "description": "An explanation for why the rule is enforced",
+          "description": "An explanation for why the rule is enforced, information only",
           "type": "string"
         }
       },
@@ -726,7 +729,7 @@
           "type": "array"
         },
         "reason": {
-          "description": "An explanation for why the rule is enforced",
+          "description": "An explanation for why the rule is enforced, information only",
           "type": "string"
         }
       },
@@ -747,7 +750,7 @@
           "type": "array"
         },
         "reason": {
-          "description": "An explanation for why the rule is enforced",
+          "description": "An explanation for why the rule is enforced, information only",
           "type": "string"
         }
       },
@@ -767,10 +770,11 @@
           "type": "array"
         },
         "ignoreExceptions": {
+          "description": "Ignore functional writing in exception classes, local + global",
           "type": "boolean"
         },
         "reason": {
-          "description": "An explanation for why the rule is enforced",
+          "description": "An explanation for why the rule is enforced, information only",
           "type": "string"
         }
       },
@@ -790,7 +794,7 @@
           "type": "array"
         },
         "reason": {
-          "description": "An explanation for why the rule is enforced",
+          "description": "An explanation for why the rule is enforced, information only",
           "type": "string"
         }
       },
@@ -1892,7 +1896,7 @@
           "type": "array"
         },
         "reason": {
-          "description": "An explanation for why the rule is enforced",
+          "description": "An explanation for why the rule is enforced, information only",
           "type": "string"
         }
       },
@@ -1909,7 +1913,7 @@
           "type": "array"
         },
         "reason": {
-          "description": "An explanation for why the rule is enforced",
+          "description": "An explanation for why the rule is enforced, information only",
           "type": "string"
         }
       },
@@ -1926,7 +1930,7 @@
           "type": "array"
         },
         "reason": {
-          "description": "An explanation for why the rule is enforced",
+          "description": "An explanation for why the rule is enforced, information only",
           "type": "string"
         }
       },
@@ -1943,10 +1947,11 @@
           "type": "array"
         },
         "ignoreExceptions": {
+          "description": "Ignore global exception classes",
           "type": "boolean"
         },
         "reason": {
-          "description": "An explanation for why the rule is enforced",
+          "description": "An explanation for why the rule is enforced, information only",
           "type": "string"
         }
       },
@@ -1972,6 +1977,7 @@
           "type": "boolean"
         },
         "ignoreExceptions": {
+          "description": "Ignore global exception classes",
           "type": "boolean"
         },
         "ignoreGlobalClassDefinition": {
@@ -1981,7 +1987,7 @@
           "type": "boolean"
         },
         "reason": {
-          "description": "An explanation for why the rule is enforced",
+          "description": "An explanation for why the rule is enforced, information only",
           "type": "string"
         }
       },
@@ -2005,7 +2011,7 @@
           "type": "array"
         },
         "reason": {
-          "description": "An explanation for why the rule is enforced",
+          "description": "An explanation for why the rule is enforced, information only",
           "type": "string"
         }
       },
@@ -2022,10 +2028,11 @@
           "type": "array"
         },
         "length": {
+          "description": "Max line length, in characters",
           "type": "number"
         },
         "reason": {
-          "description": "An explanation for why the rule is enforced",
+          "description": "An explanation for why the rule is enforced, information only",
           "type": "string"
         }
       },
@@ -2061,7 +2068,7 @@
           "type": "boolean"
         },
         "reason": {
-          "description": "An explanation for why the rule is enforced",
+          "description": "An explanation for why the rule is enforced, information only",
           "type": "string"
         },
         "style": {
@@ -2100,7 +2107,7 @@
           "type": "number"
         },
         "reason": {
-          "description": "An explanation for why the rule is enforced",
+          "description": "An explanation for why the rule is enforced, information only",
           "type": "string"
         }
       },
@@ -2120,10 +2127,11 @@
           "type": "array"
         },
         "ignoreExceptions": {
+          "description": "Ignore lines with only puncutation in global exception classes",
           "type": "boolean"
         },
         "reason": {
-          "description": "An explanation for why the rule is enforced",
+          "description": "An explanation for why the rule is enforced, information only",
           "type": "string"
         }
       },
@@ -2169,7 +2177,7 @@
           "description": "Specifies whether the pattern is forbidden (violation if name matches) or required (violation if name does not match)."
         },
         "reason": {
-          "description": "An explanation for why the rule is enforced",
+          "description": "An explanation for why the rule is enforced, information only",
           "type": "string"
         },
         "test": {
@@ -2195,7 +2203,7 @@
           "type": "array"
         },
         "reason": {
-          "description": "An explanation for why the rule is enforced",
+          "description": "An explanation for why the rule is enforced, information only",
           "type": "string"
         }
       },
@@ -2242,7 +2250,7 @@
           "description": "Specifies whether the pattern is forbidden (violation if name matches) or required (violation if name does not match)."
         },
         "reason": {
-          "description": "An explanation for why the rule is enforced",
+          "description": "An explanation for why the rule is enforced, information only",
           "type": "string"
         }
       },
@@ -2264,7 +2272,7 @@
           "type": "array"
         },
         "reason": {
-          "description": "An explanation for why the rule is enforced",
+          "description": "An explanation for why the rule is enforced, information only",
           "type": "string"
         }
       },
@@ -2281,7 +2289,7 @@
           "type": "array"
         },
         "reason": {
-          "description": "An explanation for why the rule is enforced",
+          "description": "An explanation for why the rule is enforced, information only",
           "type": "string"
         }
       },
@@ -2298,7 +2306,7 @@
           "type": "array"
         },
         "reason": {
-          "description": "An explanation for why the rule is enforced",
+          "description": "An explanation for why the rule is enforced, information only",
           "type": "string"
         }
       },
@@ -2315,7 +2323,7 @@
           "type": "array"
         },
         "reason": {
-          "description": "An explanation for why the rule is enforced",
+          "description": "An explanation for why the rule is enforced, information only",
           "type": "string"
         }
       },
@@ -2340,7 +2348,7 @@
           "type": "boolean"
         },
         "reason": {
-          "description": "An explanation for why the rule is enforced",
+          "description": "An explanation for why the rule is enforced, information only",
           "type": "string"
         },
         "statements": {
@@ -2400,7 +2408,7 @@
           "description": "Specifies whether the pattern is forbidden (violation if name matches) or required (violation if name does not match)."
         },
         "reason": {
-          "description": "An explanation for why the rule is enforced",
+          "description": "An explanation for why the rule is enforced, information only",
           "type": "string"
         },
         "returning": {
@@ -2428,7 +2436,7 @@
           "type": "array"
         },
         "reason": {
-          "description": "An explanation for why the rule is enforced",
+          "description": "An explanation for why the rule is enforced, information only",
           "type": "string"
         }
       },
@@ -2449,7 +2457,7 @@
           "type": "array"
         },
         "reason": {
-          "description": "An explanation for why the rule is enforced",
+          "description": "An explanation for why the rule is enforced, information only",
           "type": "string"
         }
       },
@@ -2477,7 +2485,7 @@
           "description": "Exact: the exact number of required newlines between methods is defined by \"newlineAmount\"\r\n\r\nLess: the required number of newlines has to be less than \"newlineAmount\""
         },
         "reason": {
-          "description": "An explanation for why the rule is enforced",
+          "description": "An explanation for why the rule is enforced, information only",
           "type": "string"
         }
       },
@@ -2509,7 +2517,7 @@
           "type": "array"
         },
         "reason": {
-          "description": "An explanation for why the rule is enforced",
+          "description": "An explanation for why the rule is enforced, information only",
           "type": "string"
         }
       },
@@ -2591,7 +2599,7 @@
           "type": "string"
         },
         "reason": {
-          "description": "An explanation for why the rule is enforced",
+          "description": "An explanation for why the rule is enforced, information only",
           "type": "string"
         },
         "ssfo": {
@@ -2644,12 +2652,15 @@
       "additionalProperties": false,
       "properties": {
         "add": {
+          "description": "Check for ADD statement",
           "type": "boolean"
         },
         "compute": {
+          "description": "Check for COMPUTE statement",
           "type": "boolean"
         },
         "divide": {
+          "description": "Check for DIVIDE statement",
           "type": "boolean"
         },
         "exclude": {
@@ -2660,9 +2671,11 @@
           "type": "array"
         },
         "move": {
+          "description": "Check for MOVE statement",
           "type": "boolean"
         },
         "multiply": {
+          "description": "Check for MULTIPLY statement",
           "type": "boolean"
         },
         "occurs": {
@@ -2670,10 +2683,11 @@
           "type": "boolean"
         },
         "reason": {
-          "description": "An explanation for why the rule is enforced",
+          "description": "An explanation for why the rule is enforced, information only",
           "type": "string"
         },
         "refresh": {
+          "description": "Check for REFRESH statement",
           "type": "boolean"
         },
         "requested": {
@@ -2685,6 +2699,7 @@
           "type": "boolean"
         },
         "subtract": {
+          "description": "Check for SUBTRACT statement",
           "type": "boolean"
         }
       },
@@ -2713,7 +2728,7 @@
           "type": "array"
         },
         "reason": {
-          "description": "An explanation for why the rule is enforced",
+          "description": "An explanation for why the rule is enforced, information only",
           "type": "string"
         }
       },
@@ -2737,7 +2752,7 @@
           "type": "array"
         },
         "reason": {
-          "description": "An explanation for why the rule is enforced",
+          "description": "An explanation for why the rule is enforced, information only",
           "type": "string"
         }
       },
@@ -2761,7 +2776,7 @@
           "type": "array"
         },
         "reason": {
-          "description": "An explanation for why the rule is enforced",
+          "description": "An explanation for why the rule is enforced, information only",
           "type": "string"
         }
       },
@@ -2785,7 +2800,7 @@
           "type": "boolean"
         },
         "reason": {
-          "description": "An explanation for why the rule is enforced",
+          "description": "An explanation for why the rule is enforced, information only",
           "type": "string"
         }
       },
@@ -2805,7 +2820,7 @@
           "type": "array"
         },
         "reason": {
-          "description": "An explanation for why the rule is enforced",
+          "description": "An explanation for why the rule is enforced, information only",
           "type": "string"
         }
       },
@@ -2822,7 +2837,7 @@
           "type": "array"
         },
         "reason": {
-          "description": "An explanation for why the rule is enforced",
+          "description": "An explanation for why the rule is enforced, information only",
           "type": "string"
         }
       },
@@ -2839,10 +2854,11 @@
           "type": "array"
         },
         "ignoreExceptions": {
+          "description": "Ignore global exception classes",
           "type": "boolean"
         },
         "reason": {
-          "description": "An explanation for why the rule is enforced",
+          "description": "An explanation for why the rule is enforced, information only",
           "type": "string"
         }
       },
@@ -2862,7 +2878,7 @@
           "type": "array"
         },
         "reason": {
-          "description": "An explanation for why the rule is enforced",
+          "description": "An explanation for why the rule is enforced, information only",
           "type": "string"
         }
       },
@@ -2879,7 +2895,7 @@
           "type": "array"
         },
         "reason": {
-          "description": "An explanation for why the rule is enforced",
+          "description": "An explanation for why the rule is enforced, information only",
           "type": "string"
         }
       },
@@ -2918,7 +2934,7 @@
           "description": "Specifies whether the pattern is forbidden (violation if name matches) or required (violation if name does not match)."
         },
         "reason": {
-          "description": "An explanation for why the rule is enforced",
+          "description": "An explanation for why the rule is enforced, information only",
           "type": "string"
         },
         "selectOption": {
@@ -2947,7 +2963,7 @@
           "type": "number"
         },
         "reason": {
-          "description": "An explanation for why the rule is enforced",
+          "description": "An explanation for why the rule is enforced, information only",
           "type": "string"
         }
       },
@@ -2967,7 +2983,7 @@
           "type": "array"
         },
         "reason": {
-          "description": "An explanation for why the rule is enforced",
+          "description": "An explanation for why the rule is enforced, information only",
           "type": "string"
         }
       },
@@ -2977,6 +2993,7 @@
       "additionalProperties": false,
       "properties": {
         "allow": {
+          "description": "List of inputs for CASE which are allowed",
           "items": {
             "type": "string"
           },
@@ -2994,7 +3011,7 @@
           "type": "number"
         },
         "reason": {
-          "description": "An explanation for why the rule is enforced",
+          "description": "An explanation for why the rule is enforced, information only",
           "type": "string"
         }
       },
@@ -3015,7 +3032,7 @@
           "type": "array"
         },
         "reason": {
-          "description": "An explanation for why the rule is enforced",
+          "description": "An explanation for why the rule is enforced, information only",
           "type": "string"
         }
       },
@@ -3038,7 +3055,7 @@
           "type": "boolean"
         },
         "reason": {
-          "description": "An explanation for why the rule is enforced",
+          "description": "An explanation for why the rule is enforced, information only",
           "type": "string"
         }
       },
@@ -3059,7 +3076,7 @@
           "type": "array"
         },
         "reason": {
-          "description": "An explanation for why the rule is enforced",
+          "description": "An explanation for why the rule is enforced, information only",
           "type": "string"
         }
       },
@@ -3076,7 +3093,7 @@
           "type": "array"
         },
         "reason": {
-          "description": "An explanation for why the rule is enforced",
+          "description": "An explanation for why the rule is enforced, information only",
           "type": "string"
         }
       },
@@ -3093,7 +3110,7 @@
           "type": "array"
         },
         "reason": {
-          "description": "An explanation for why the rule is enforced",
+          "description": "An explanation for why the rule is enforced, information only",
           "type": "string"
         }
       },
@@ -3110,7 +3127,7 @@
           "type": "array"
         },
         "reason": {
-          "description": "An explanation for why the rule is enforced",
+          "description": "An explanation for why the rule is enforced, information only",
           "type": "string"
         }
       },
@@ -3127,7 +3144,7 @@
           "type": "array"
         },
         "reason": {
-          "description": "An explanation for why the rule is enforced",
+          "description": "An explanation for why the rule is enforced, information only",
           "type": "string"
         }
       },
@@ -3144,7 +3161,7 @@
           "type": "array"
         },
         "reason": {
-          "description": "An explanation for why the rule is enforced",
+          "description": "An explanation for why the rule is enforced, information only",
           "type": "string"
         }
       },
@@ -3165,7 +3182,7 @@
           "type": "string"
         },
         "reason": {
-          "description": "An explanation for why the rule is enforced",
+          "description": "An explanation for why the rule is enforced, information only",
           "type": "string"
         }
       },
@@ -3185,7 +3202,7 @@
           "type": "array"
         },
         "reason": {
-          "description": "An explanation for why the rule is enforced",
+          "description": "An explanation for why the rule is enforced, information only",
           "type": "string"
         }
       },
@@ -3202,7 +3219,7 @@
           "type": "array"
         },
         "reason": {
-          "description": "An explanation for why the rule is enforced",
+          "description": "An explanation for why the rule is enforced, information only",
           "type": "string"
         }
       },
@@ -3219,7 +3236,7 @@
           "type": "array"
         },
         "reason": {
-          "description": "An explanation for why the rule is enforced",
+          "description": "An explanation for why the rule is enforced, information only",
           "type": "string"
         }
       },
@@ -3236,7 +3253,7 @@
           "type": "array"
         },
         "reason": {
-          "description": "An explanation for why the rule is enforced",
+          "description": "An explanation for why the rule is enforced, information only",
           "type": "string"
         }
       },
@@ -3270,7 +3287,7 @@
           "type": "array"
         },
         "reason": {
-          "description": "An explanation for why the rule is enforced",
+          "description": "An explanation for why the rule is enforced, information only",
           "type": "string"
         }
       },
@@ -3287,7 +3304,7 @@
           "type": "array"
         },
         "reason": {
-          "description": "An explanation for why the rule is enforced",
+          "description": "An explanation for why the rule is enforced, information only",
           "type": "string"
         }
       },
@@ -3304,7 +3321,7 @@
           "type": "array"
         },
         "reason": {
-          "description": "An explanation for why the rule is enforced",
+          "description": "An explanation for why the rule is enforced, information only",
           "type": "string"
         }
       },

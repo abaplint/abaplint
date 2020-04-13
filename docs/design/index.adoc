@@ -242,3 +242,15 @@ adds real types and real scopes
 
 == Rules
 todo
+
+== Parsing vs standard ABAP
+* Spaces required after string literals and before right parenthesis
+* CALL FUNCTION EXCEPTIONS must be well formed
+* Only single chaining
+* Macros are only scoped to current file
+
+== Development
+....
+npm install
+npm test
+....

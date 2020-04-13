@@ -34,15 +34,3 @@ Also see [abapOpenChecks](https://github.com/larshp/abapOpenChecks).
 
 ### Requirements
 Node.js 10
-
-### Building
-```
-npm install
-npm test
-```
-
-### Parsing vs standard ABAP
-* Spaces required after string literals and before right parenthesis
-* CALL FUNCTION EXCEPTIONS must be well formed
-* Only single chaining
-* Macros are only scoped to current file

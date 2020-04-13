@@ -9,6 +9,7 @@ import {Class} from "../objects";
 import {IClassDefinition} from "../abap/types/_class_definition";
 
 export class FunctionalWritingConf extends BasicRuleConfig {
+  /** Ignore functional writing in exception classes, local + global */
   public ignoreExceptions: boolean = true;
 }
 

@@ -7,8 +7,8 @@ import {IRegistry} from "../../_iregistry";
 import {BasicRuleConfig} from "../_basic_rule_config";
 import * as Statements from "../../abap/2_statements/statements";
 
-
 export class InStatementIndentationConf extends BasicRuleConfig {
+  /** Ignore global exception classes */
   public ignoreExceptions: boolean = true;
 }
 

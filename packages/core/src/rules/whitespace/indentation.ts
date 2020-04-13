@@ -11,6 +11,7 @@ import * as Statements from "../../abap/2_statements/statements";
 import * as Expressions from "../../abap/2_statements/expressions";
 
 export class IndentationConf extends BasicRuleConfig {
+  /** Ignore global exception classes */
   public ignoreExceptions: boolean = true;
   public alignTryCatch: boolean = false;
   public globalClassSkipFirst: boolean = false;
@@ -59,6 +60,7 @@ export class Indentation extends ABAPRule {
       alignTryCatch: this.conf.alignTryCatch,
       globalClassSkipFirst: this.conf.globalClassSkipFirst,
     };
+
     const indentOperation = new Indent(indentOpts);
     const expected = indentOperation.getExpectedIndents(file);
 

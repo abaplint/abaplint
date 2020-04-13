@@ -9,6 +9,7 @@ import {IRule} from "../_irule";
 import {NameValidator} from "../../utils/name_validator";
 
 export class ClassAttributeNamesConf extends NamingRuleConfig {
+  /** Ignore global exception classes */
   public ignoreExceptions: boolean = true;
   /** The pattern for static variable names */
   public statics: string = "^G._.+$";

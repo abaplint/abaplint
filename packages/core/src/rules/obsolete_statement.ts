@@ -7,12 +7,19 @@ import {BasicRuleConfig} from "./_basic_rule_config";
 import {Position} from "../position";
 
 export class ObsoleteStatementConf extends BasicRuleConfig {
+  /** Check for REFRESH statement */
   public refresh: boolean = true;
+  /** Check for COMPUTE statement */
   public compute: boolean = true;
+  /** Check for ADD statement */
   public add: boolean = true;
+  /** Check for SUBTRACT statement */
   public subtract: boolean = true;
+  /** Check for MULTIPLY statement */
   public multiply: boolean = true;
+  /** Check for MOVE statement */
   public move: boolean = true;
+  /** Check for DIVIDE statement */
   public divide: boolean = true;
   /** Checks for usages of IS REQUESTED */
   public requested: boolean = true;

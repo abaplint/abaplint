@@ -3,7 +3,6 @@ import * as abaplint from "../../../packages/core/build/src/index";
 import {IRuleMetadata, RuleTag} from "../../../packages/core/build/src/rules/_irule";
 
 // quick'n dirty, optimizes for search engine indexing
-// also works on localhost without running web server
 
 // todo: also link to unit test file from documentation?
 
@@ -14,6 +13,7 @@ function preamble(dir = "") {
 <html>
 <head>
   <meta charset="UTF-8">
+  <meta name="keywords" content="ABAP,Open Source,abaplint,lint,linter,SAP,static analysis" />
   <title>rules.abaplint.org</title>
   <link rel="stylesheet" type="text/css" href="${dir}style.css">
 </head>
@@ -27,15 +27,14 @@ const postamble = `</div>
 
 function quickfix() {
   // https://github.com/refactoringui/heroicons/blob/master/dist/outline-md/md-lightning-bolt.svg
-
   // eslint-disable-next-line max-len
-  return `&nbsp;<svg fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" viewBox="0 0 24 24" height="2ch"><title>quick fix</title><path d="M13 10V3L4 14h7v7l9-11h-7z"></path></svg>`;
+  return `&nbsp;<a href="/quick_fix.html"><svg fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" viewBox="0 0 24 24" height="2ch"><title>quick fix</title><path d="M13 10V3L4 14h7v7l9-11h-7z"></path></svg></a>`;
 }
 
 function experimental() {
   // https://github.com/refactoringui/heroicons/
   // eslint-disable-next-line max-len
-  return `&nbsp;<svg fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" viewBox="0 0 24 24" height="2ch"><title>experimental</title><path d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"></path></svg>`;
+  return `&nbsp;<a href="/experimental.html"><svg fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" viewBox="0 0 24 24" height="2ch"><title>experimental</title><path d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"></path></svg></a>`;
 }
 
 function findDefault(ruleKey: string) {

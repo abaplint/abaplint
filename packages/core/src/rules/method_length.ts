@@ -10,7 +10,6 @@ export class MethodLengthConf extends BasicRuleConfig {
   public statements: number = 100;
   /** Checks for empty methods. */
   public errorWhenEmpty: boolean = true;
-
   /** Option to ignore test classes for this check.  */
   public ignoreTestClasses: boolean = false;
 }

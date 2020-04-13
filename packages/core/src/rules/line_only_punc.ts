@@ -8,6 +8,7 @@ import {IObject} from "../objects/_iobject";
 import {Class} from "../objects";
 
 export class LineOnlyPuncConf extends BasicRuleConfig {
+  /** Ignore lines with only puncutation in global exception classes */
   public ignoreExceptions: boolean = true;
 }
 

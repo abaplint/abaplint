@@ -10,6 +10,7 @@ import {Position} from "../position";
 import {IClassDefinition} from "../abap/types/_class_definition";
 
 export class RemoveDescriptionsConf extends BasicRuleConfig {
+  /** Ignore global exception classes */
   public ignoreExceptions: boolean = false;
 }
 

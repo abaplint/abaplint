@@ -7,6 +7,7 @@ import {INode} from "../abap/nodes/_inode";
 import {Token} from "../abap/1_lexer/tokens/_token";
 
 export class ForbiddenIdentifierConf extends BasicRuleConfig {
+  /** List of forbideen identifiers, string array */
   public check: string[] = [];
 }
 

@@ -6,6 +6,7 @@ import {ExpressionNode, StatementNode} from "../../abap/nodes";
 import * as Expressions from "../../abap/2_statements/expressions";
 
 export class KeepSingleParameterCallsOnOneLineConf extends BasicRuleConfig {
+  /** Max line length, in characters */
   public length: number = 120;
 }
 

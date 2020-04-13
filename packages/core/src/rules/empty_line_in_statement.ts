@@ -5,6 +5,7 @@ import {BasicRuleConfig} from "./_basic_rule_config";
 import {Punctuation, Comment} from "../abap/1_lexer/tokens";
 
 export class EmptyLineinStatementConf extends BasicRuleConfig {
+  /** Allow changed empty lines in chanined statements */
   public allowChained: boolean = false;
 }
 
