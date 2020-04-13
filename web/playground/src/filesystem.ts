@@ -1,22 +1,20 @@
-import {TreeWidget, ProblemsWidget, EditorWidget} from "./widgets";
+import {ProblemsWidget, EditorWidget} from "./widgets";
 import {Registry} from "abaplint/registry";
 import {Config} from "abaplint/config";
 import {MemoryFile} from "abaplint/files";
 import {DockPanel} from "@phosphor/widgets";
 import {IFile} from "abaplint/files/_ifile";
 
-// magic god class
+// magic God class
 export class FileSystem {
   private static files: MemoryFile[];
   private static reg: Registry;
-  private static tree: TreeWidget;
   private static problems: ProblemsWidget;
   private static dock: DockPanel;
 
-  public static setup(tree: TreeWidget, problems: ProblemsWidget, dock: DockPanel) {
+  public static setup(problems: ProblemsWidget, dock: DockPanel) {
     this.files = [];
     this.reg = new Registry();
-    this.tree = tree;
     this.dock = dock;
     this.problems = problems;
 
@@ -42,7 +40,14 @@ ENDFORM.`);
   private static updateConfig(contents: string) {
     try {
       const conf = new Config(contents);
-      this.reg.setConfig(conf);
+      this.reg.setConfig(conf).parse();
+
+      for (const f of this.files) {
+        if (f.getFilename().endsWith(".abap")) {
+          const editor = this.findEditor(f);
+          editor?.updateMarkers();
+        }
+      }
     } catch {
       return;
     }
@@ -87,7 +92,7 @@ ENDFORM.`);
   }
 
   public static updateFile(filename: string, contents: string) {
-    if (filename === "abaplint.json") {
+    if (filename === "file:///abaplint.json") {
       this.updateConfig(contents);
     } else {
       const file = new MemoryFile(filename, contents);
@@ -98,7 +103,7 @@ ENDFORM.`);
 
   public static addFile(filename: string, contents: string) {
     const file = new MemoryFile("file:///" + filename, contents);
-    if (filename === "abaplint.json") {
+    if (file.getFilename() === "file:///abaplint.json") {
       this.updateConfig(contents);
     } else {
       this.reg.addFile(file);
@@ -131,7 +136,6 @@ ENDFORM.`);
   }
 
   private static update() {
-    this.tree.update();
     this.problems.updateIt();
   }
 

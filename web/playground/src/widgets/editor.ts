@@ -19,7 +19,7 @@ export class EditorWidget extends Widget {
     this.setFlag(Widget.Flag.DisallowLayout);
     this.addClass("editor");
     this.title.label = monaco.Uri.parse(filename).path;
-    this.title.closable = true;
+    this.title.closable = false;
     this.title.caption = this.title.label;
 
     this.model = monaco.editor.createModel(
@@ -61,15 +61,11 @@ export class EditorWidget extends Widget {
   }
 
   protected changed(e: any) {
-    if (this.model.uri.toString() === "file:///abaplint.json") {
-      return;
-    }
-
     FileSystem.updateFile(this.model.uri.toString(), this.editor!.getValue());
     this.updateMarkers();
   }
 
-  protected updateMarkers() {
+  public updateMarkers() {
 // see https://github.com/microsoft/monaco-editor/issues/1604
 
     const ls = new LanguageServer(FileSystem.getRegistry());
