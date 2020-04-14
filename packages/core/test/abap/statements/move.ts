@@ -114,6 +114,7 @@ const tests = [
   "<timezone>-datetime = |{ tstamp TIMESTAMP = USER }|. ",
 
   "lv_number = |{ lv_number DECIMALS = 2 NUMBER = RAW SIGN = LEFT }|.",
+  "lv_number = |{ lv_number DECIMALS = lv_dec NUMBER = RAW SIGN = LEFT }|.",
   "lv_number = |{ lv_number NUMBER = RAW SIGN = LEFT }|.",
   "lv_number = |{ lv_number SIGN = LEFT }|.",
 
