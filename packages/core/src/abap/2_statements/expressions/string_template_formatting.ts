@@ -1,5 +1,5 @@
 import {str, seq, per, alt, opt, Expression} from "../combi";
-import {Integer, Source} from ".";
+import {Source} from ".";
 import {IStatementRunnable} from "../statement_runnable";
 
 export class StringTemplateFormatting extends Expression {
@@ -59,9 +59,6 @@ export class StringTemplateFormatting extends Expression {
                              str("ENGINEERING "),
                              new Source());
 
-    const decimalOptions = alt(new Integer(),
-                               new Source());
-
     const width = seq(str("WIDTH"), str("="), new Source());
     const align = seq(str("ALIGN"), str("="), alignOptions);
     const timezone = seq(str("TIMEZONE"), str("="), new Source());
@@ -69,7 +66,7 @@ export class StringTemplateFormatting extends Expression {
     const pad = seq(str("PAD"), str("="), new Source());
     const number = seq(str("NUMBER"), str("="), numberOptions);
     const sign = seq(str("SIGN"), str("="), signOptions);
-    const decimals = seq(str("DECIMALS"), str("="), decimalOptions);
+    const decimals = seq(str("DECIMALS"), str("="), new Source());
 
     const formatting = alt(seq(str("ALPHA"), str("="), alphaOptions),
                            seq(str("TIME"), str("="), dateTimeOptions),
