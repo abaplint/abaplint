@@ -1,6 +1,5 @@
 import {LanguageServer} from "abaplint/lsp/language_server";
 import {IRegistry} from "abaplint/_iregistry";
-import * as monaco from "monaco-editor";
 
 export class ABAPRenameProvider implements monaco.languages.RenameProvider {
   private readonly reg: IRegistry;

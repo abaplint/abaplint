@@ -23,6 +23,7 @@ module.exports = ({mode} = {mode: "development"}) => ({
     extensions: [".js", ".ts", ".tsx"],
     alias: {
       "abaplint": path.resolve(__dirname, "../../packages/core/build/src/"),
+      "monaco-abap": path.resolve(__dirname, "../../packages/monaco/build/"),
     },
   },
   module: {

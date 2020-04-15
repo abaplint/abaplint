@@ -1,5 +1,4 @@
 import * as LServer from "vscode-languageserver-types";
-import * as monaco from "monaco-editor";
 import {LanguageServer} from "abaplint/lsp/language_server";
 import {IRegistry} from "abaplint/_iregistry";
 

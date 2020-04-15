@@ -5,7 +5,7 @@
   "main": "build/src/index.js",
   "typings": "build/src/index.d.ts",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "tsc"
   },
   "author": "Lars Hvam Petersen",
   "license": "MIT",
@@ -13,13 +13,9 @@
     "url": "https://github.com/abaplint/abaplint/issues"
   },
   "homepage": "https://abaplint.org",
-  "peerDependencies": {
-    "monaco-editor": "^0.20.0"
-  },
   "devDependencies": {
+    "typescript": "^3.8.3",
+    "monaco-editor-core": "^0.20.0",
     "vscode-languageserver-types": "^3.15.1"
-  },
-  "dependencies": {
-    "monaco-editor": "^0.20.0"
   }
 }

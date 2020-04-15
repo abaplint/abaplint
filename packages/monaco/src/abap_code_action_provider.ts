@@ -1,4 +1,3 @@
-import * as monaco from "monaco-editor";
 import * as LServer from "vscode-languageserver-types";
 import {LanguageServer} from "abaplint/lsp/language_server";
 import {ICodeActionParams} from "abaplint/lsp/_interfaces";

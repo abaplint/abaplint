@@ -1,6 +1,5 @@
 {
   "compilerOptions": {
-    "declaration": false,
     "noImplicitAny": true,
     "noEmitOnError": true,
     "noUnusedLocals": true,
@@ -10,13 +9,17 @@
     "moduleResolution": "node",
     "resolveJsonModule": true,
     "esModuleInterop": true,
+    "declaration": true,
     "target": "es2017",
     "outDir": "./build",
     "baseUrl": ".",
     "paths": {
-      "abaplint/*": ["../../packages/core/build/src/*"]
+      "abaplint/*": ["../core/build/src/*"]
     },
     "types": []
   },
-  "include": ["src/*", "src/widgets/*.ts", "src/monaco/*.ts"]
+  "include": ["src/*"],
+  "files": [
+    "./node_modules/monaco-editor-core/monaco.d.ts"
+  ]
 }

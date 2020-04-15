@@ -4,7 +4,7 @@ import {Widget} from "@phosphor/widgets";
 import {FileSystem} from "../filesystem";
 import {HelpWidget} from "./help";
 import {HighlightActions} from "../highlight_actions";
-import {updateMarkers} from "../monaco/abap";
+import {updateMarkers} from "monaco-abap";
 
 export class EditorWidget extends Widget {
   private editor: monaco.editor.IStandaloneCodeEditor | undefined = undefined;

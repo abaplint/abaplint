@@ -14,7 +14,8 @@
     "outDir": "./build",
     "baseUrl": ".",
     "paths": {
-      "abaplint/*": ["../../packages/core/build/src/*"]
+      "abaplint/*": ["../../packages/core/build/src/*"],
+      "monaco-abap": ["../../packages/monaco/build/"]
     },
     "types": []
   },

@@ -1,5 +1,4 @@
 import {LanguageServer} from "abaplint/lsp/language_server";
-import * as monaco from "monaco-editor";
 import {IRegistry} from "abaplint/_iregistry";
 
 export class ABAPImplementationProvider implements monaco.languages.ImplementationProvider {

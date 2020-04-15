@@ -8,7 +8,7 @@ import {BoxPanel, DockPanel, Widget} from "@phosphor/widgets";
 import {WelcomeWidget, ProblemsWidget} from "./widgets/";
 import {FileSystem} from "./filesystem";
 import {IRegistry} from "abaplint/_iregistry";
-import {registerABAP} from "./monaco/abap";
+import * as monacoABAP from "monaco-abap";
 
 function main(): void {
   const problems = new ProblemsWidget();
@@ -40,7 +40,7 @@ function main(): void {
 }
 
 function registerMonacoSettings(reg: IRegistry) {
-  registerABAP(reg);
+  monacoABAP.registerABAP(reg);
 
   monaco.languages.json.jsonDefaults.setDiagnosticsOptions({
     validate: true,
