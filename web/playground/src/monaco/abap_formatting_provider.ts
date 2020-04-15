@@ -1,15 +1,20 @@
 import * as monaco from "monaco-editor";
-import {FileSystem} from "../filesystem";
 import {LanguageServer} from "abaplint/lsp/language_server";
+import {IRegistry} from "abaplint/_iregistry";
 
 export class ABAPFormattingProvider implements monaco.languages.DocumentFormattingEditProvider {
+  private readonly reg: IRegistry;
+
+  public constructor(reg: IRegistry) {
+    this.reg = reg;
+  }
 
   public provideDocumentFormattingEdits(
     model: monaco.editor.ITextModel,
     options: monaco.languages.FormattingOptions,
     token: monaco.CancellationToken): monaco.languages.ProviderResult<monaco.languages.TextEdit[]> {
 
-    const ls = new LanguageServer(FileSystem.getRegistry());
+    const ls = new LanguageServer(this.reg);
     const edit = ls.documentFormatting({
       textDocument: {uri: model.uri.toString()},
     });

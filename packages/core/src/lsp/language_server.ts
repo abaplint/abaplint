@@ -1,5 +1,4 @@
 import * as LServer from "vscode-languageserver-types";
-import {Registry} from "../registry";
 import {Symbols} from "./symbols";
 import {Hover} from "./hover";
 import {Diagnostics} from "./diagnostics";
@@ -11,6 +10,7 @@ import {Highlight} from "./highlight";
 import {ITextDocumentPositionParams, IDocumentSymbolParams, IRenameParams, ICodeActionParams} from "./_interfaces";
 import {LSPUtils} from "./_lsp_utils";
 import {CodeActions} from "./code_actions";
+import {IRegistry} from "../_iregistry";
 
 // note Ranges are zero based in LSP,
 // https://github.com/microsoft/language-server-protocol/blob/master/versions/protocol-2-x.md#range
@@ -20,9 +20,9 @@ import {CodeActions} from "./code_actions";
 // see https://github.com/microsoft/vscode-languageserver-node/issues/354
 
 export class LanguageServer {
-  private readonly reg: Registry;
+  private readonly reg: IRegistry;
 
-  public constructor(reg: Registry) {
+  public constructor(reg: IRegistry) {
     this.reg = reg;
   }
 

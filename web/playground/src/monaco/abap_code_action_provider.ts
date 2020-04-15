@@ -1,10 +1,15 @@
 import * as monaco from "monaco-editor";
 import * as LServer from "vscode-languageserver-types";
-import {FileSystem} from "../filesystem";
 import {LanguageServer} from "abaplint/lsp/language_server";
 import {ICodeActionParams} from "abaplint/lsp/_interfaces";
+import {IRegistry} from "abaplint/_iregistry";
 
 export class ABAPCodeActionProvider implements monaco.languages.CodeActionProvider {
+  private readonly reg: IRegistry;
+
+  public constructor(reg: IRegistry) {
+    this.reg = reg;
+  }
 
   public provideCodeActions(model: monaco.editor.ITextModel,
                             range: monaco.Range,
@@ -12,7 +17,7 @@ export class ABAPCodeActionProvider implements monaco.languages.CodeActionProvid
                             token: monaco.CancellationToken):
     monaco.languages.CodeActionList | Promise<monaco.languages.CodeActionList> {
 
-    const ls = new LanguageServer(FileSystem.getRegistry());
+    const ls = new LanguageServer(this.reg);
 
     const r: LServer.Range = {
       start: {line: range.startLineNumber - 1, character: range.startColumn - 1},

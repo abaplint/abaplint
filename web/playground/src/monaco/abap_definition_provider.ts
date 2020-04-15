@@ -1,14 +1,19 @@
 import * as monaco from "monaco-editor";
-import {FileSystem} from "../filesystem";
 import {LanguageServer} from "abaplint/lsp/language_server";
+import {IRegistry} from "abaplint/_iregistry";
 
 export class ABAPDefinitionProvider implements monaco.languages.DefinitionProvider {
+  private readonly reg: IRegistry;
+
+  public constructor(reg: IRegistry) {
+    this.reg = reg;
+  }
 
   public provideDefinition(model: monaco.editor.ITextModel,
                            position: monaco.Position,
                            token: monaco.CancellationToken): monaco.languages.ProviderResult<monaco.languages.Definition> {
 
-    const ls = new LanguageServer(FileSystem.getRegistry());
+    const ls = new LanguageServer(this.reg);
     const def = ls.gotoDefinition({
       textDocument: {uri: model.uri.toString()},
       position: {line: position.lineNumber - 1, character: position.column - 1}});

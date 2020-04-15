@@ -1,15 +1,20 @@
 import {LanguageServer} from "abaplint/lsp/language_server";
-import {FileSystem} from "../filesystem";
 import * as monaco from "monaco-editor";
+import {IRegistry} from "abaplint/_iregistry";
 
 export class ABAPImplementationProvider implements monaco.languages.ImplementationProvider {
+  private readonly reg: IRegistry;
+
+  public constructor(reg: IRegistry) {
+    this.reg = reg;
+  }
 
   public provideImplementation(
     model: monaco.editor.ITextModel,
     position: monaco.Position,
     _token: monaco.CancellationToken): monaco.languages.ProviderResult<monaco.languages.Location[]> {
 
-    const ls = new LanguageServer(FileSystem.getRegistry());
+    const ls = new LanguageServer(this.reg);
 
     const pos = {
       textDocument: {uri: model.uri.toString()},

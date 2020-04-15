@@ -3,6 +3,7 @@ import * as monaco from "monaco-editor";
 export class ABAPSnippetProvider implements monaco.languages.CompletionItemProvider {
   public triggerCharacters?: string[] | undefined;
 
+
   public provideCompletionItems(
     model: monaco.editor.ITextModel,
     position: monaco.Position,

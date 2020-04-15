@@ -3,8 +3,8 @@ import {Message} from "@phosphor/messaging";
 import {Widget} from "@phosphor/widgets";
 import {FileSystem} from "../filesystem";
 import {HelpWidget} from "./help";
-import {LanguageServer} from "abaplint/lsp/language_server";
 import {HighlightActions} from "../highlight_actions";
+import {updateMarkers} from "../monaco/abap";
 
 export class EditorWidget extends Widget {
   private editor: monaco.editor.IStandaloneCodeEditor | undefined = undefined;
@@ -62,28 +62,7 @@ export class EditorWidget extends Widget {
 
   protected changed(e: any) {
     FileSystem.updateFile(this.model.uri.toString(), this.editor!.getValue());
-    this.updateMarkers();
-  }
-
-  public updateMarkers() {
-// see https://github.com/microsoft/monaco-editor/issues/1604
-
-    const ls = new LanguageServer(FileSystem.getRegistry());
-    const diagnostics = ls.diagnostics({uri: this.model.uri.toString()});
-
-    const markers: monaco.editor.IMarkerData[] = [];
-    for (const diagnostic of diagnostics) {
-      markers.push({
-        severity: monaco.MarkerSeverity.Error,
-        message: diagnostic.message,
-        startLineNumber: diagnostic.range.start.line + 1,
-        startColumn: diagnostic.range.start.character + 1,
-        endLineNumber: diagnostic.range.end.line + 1,
-        endColumn: diagnostic.range.end.character + 1,
-      });
-    }
-
-    monaco.editor.setModelMarkers(this.editor!.getModel()!, "abaplint", markers);
+    updateMarkers(FileSystem.getRegistry(), this.model);
   }
 
   protected openHelp() {
@@ -134,15 +113,11 @@ export class EditorWidget extends Widget {
         run: () => { this.editor!.trigger("", "editor.action.quickCommand", ""); },
       });
 
-/* todo, action.quickOpen
-https://github.com/microsoft/monaco-editor/issues?utf8=%E2%9C%93&q=is%3Aissue+is%3Aopen+quickopen
-*/
-
 // override Chrome default shortcuts
       this.editor.addCommand(monaco.KeyMod.CtrlCmd + monaco.KeyCode.KEY_S, () => { return undefined; });
       this.editor.addCommand(monaco.KeyMod.CtrlCmd + monaco.KeyCode.KEY_P, () => { return undefined; });
 
-      this.updateMarkers();
+      updateMarkers(FileSystem.getRegistry(), this.model);
       this.activate();
     }
   }

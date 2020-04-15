@@ -1,14 +1,19 @@
 import * as monaco from "monaco-editor";
-import {FileSystem} from "../filesystem";
 import {LanguageServer} from "abaplint/lsp/language_server";
+import {IRegistry} from "abaplint/_iregistry";
 
 export class ABAPSymbolProvider implements monaco.languages.DocumentSymbolProvider {
+  private readonly reg: IRegistry;
+
+  public constructor(reg: IRegistry) {
+    this.reg = reg;
+  }
 
   public provideDocumentSymbols(
     model: monaco.editor.ITextModel,
     token: monaco.CancellationToken): monaco.languages.ProviderResult<monaco.languages.DocumentSymbol[]> {
 
-    const ls = new LanguageServer(FileSystem.getRegistry());
+    const ls = new LanguageServer(this.reg);
     const symbols = ls.documentSymbol({
       textDocument: {uri: model.uri.toString()},
     });

@@ -35,6 +35,8 @@ ENDLOOP.
 FORM foo.
   DATA boo TYPE i.
 ENDFORM.`);
+
+    return this.reg;
   }
 
   private static updateConfig(contents: string) {
@@ -45,7 +47,10 @@ ENDFORM.`);
       for (const f of this.files) {
         if (f.getFilename().endsWith(".abap")) {
           const editor = this.findEditor(f);
-          editor?.updateMarkers();
+          if (editor) {
+            // force update to update diagnostics
+            editor.getModel()?.setValue(editor.getModel()?.getValue());
+          }
         }
       }
     } catch {

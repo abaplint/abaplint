@@ -1,0 +1,5 @@
+build
+build_tsc
+node_modules
+cypress/screenshots
+cypress/videos

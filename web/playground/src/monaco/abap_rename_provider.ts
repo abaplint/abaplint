@@ -1,8 +1,13 @@
 import {LanguageServer} from "abaplint/lsp/language_server";
-import {FileSystem} from "../filesystem";
+import {IRegistry} from "abaplint/_iregistry";
 import * as monaco from "monaco-editor";
 
 export class ABAPRenameProvider implements monaco.languages.RenameProvider {
+  private readonly reg: IRegistry;
+
+  public constructor(reg: IRegistry) {
+    this.reg = reg;
+  }
 
   public provideRenameEdits(model: monaco.editor.ITextModel, position: monaco.Position, newName: string, token: monaco.CancellationToken):
   monaco.languages.ProviderResult<monaco.languages.WorkspaceEdit & monaco.languages.Rejection> {
@@ -14,7 +19,7 @@ export class ABAPRenameProvider implements monaco.languages.RenameProvider {
   public resolveRenameLocation(model: monaco.editor.ITextModel, position: monaco.Position, token: monaco.CancellationToken):
   monaco.languages.ProviderResult<monaco.languages.RenameLocation & monaco.languages.Rejection> {
 
-    const ls = new LanguageServer(FileSystem.getRegistry());
+    const ls = new LanguageServer(this.reg);
 
     const rename = ls.prepareRename({
       textDocument: {uri: model.uri.toString()},
