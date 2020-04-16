@@ -1,9 +1,9 @@
 {
   "name": "@abaplint/monaco",
-  "version": "2.32.2",
+  "version": "2.32.3",
   "description": "ABAP language support for Monaco Editor",
-  "main": "build/src/index.js",
-  "typings": "build/src/index.d.ts",
+  "main": "build/index.js",
+  "typings": "build/index.d.ts",
   "scripts": {
     "test": "tsc",
     "prepublishOnly": "rm -rf build && npm run test"
