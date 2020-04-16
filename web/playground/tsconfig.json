@@ -13,10 +13,6 @@
     "target": "es2017",
     "outDir": "./build",
     "baseUrl": ".",
-    "paths": {
-      "abaplint/*": ["../../packages/core/build/src/*"],
-      "monaco-abap": ["../../packages/monaco/build/"]
-    },
     "types": []
   },
   "include": ["src/*", "src/widgets/*.ts", "src/monaco/*.ts"]

@@ -1,7 +1,7 @@
 import * as monaco from "monaco-editor";
 import {Widget, DockPanel} from "@phosphor/widgets";
 import {FileSystem} from "../filesystem";
-import {LanguageServer} from "abaplint/lsp/language_server";
+import {LanguageServer} from "@abaplint/core";
 import * as LServer from "vscode-languageserver-types";
 import {EditorWidget} from ".";
 

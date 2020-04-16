@@ -7,8 +7,8 @@ import * as monaco from "monaco-editor";
 import {BoxPanel, DockPanel, Widget} from "@phosphor/widgets";
 import {WelcomeWidget, ProblemsWidget} from "./widgets/";
 import {FileSystem} from "./filesystem";
-import {IRegistry} from "abaplint/_iregistry";
-import * as monacoABAP from "monaco-abap";
+import {IRegistry} from "@abaplint/core";
+import * as monacoABAP from "@abaplint/monaco";
 
 function main(): void {
   const problems = new ProblemsWidget();
@@ -40,7 +40,6 @@ function main(): void {
 }
 
 function registerMonacoSettings(reg: IRegistry) {
-  // @ts-ignore
   monacoABAP.registerABAP(reg);
 
   monaco.languages.json.jsonDefaults.setDiagnosticsOptions({

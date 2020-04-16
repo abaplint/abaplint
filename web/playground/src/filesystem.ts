@@ -1,10 +1,6 @@
 import {ProblemsWidget, EditorWidget} from "./widgets";
-import {Registry} from "abaplint/registry";
-import {IRegistry} from "abaplint/_iregistry";
-import {Config} from "abaplint/config";
-import {MemoryFile} from "abaplint/files";
+import {Registry, IRegistry, Config, MemoryFile, IFile} from "@abaplint/core";
 import {DockPanel} from "@phosphor/widgets";
-import {IFile} from "abaplint/files/_ifile";
 
 // magic God class
 export class FileSystem {

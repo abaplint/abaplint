@@ -4,7 +4,7 @@ import {Widget} from "@phosphor/widgets";
 import {FileSystem} from "../filesystem";
 import {HelpWidget} from "./help";
 import {HighlightActions} from "../highlight_actions";
-import {updateMarkers} from "monaco-abap";
+import {updateMarkers} from "@abaplint/monaco";
 
 export class EditorWidget extends Widget {
   private editor: monaco.editor.IStandaloneCodeEditor | undefined = undefined;
@@ -62,7 +62,6 @@ export class EditorWidget extends Widget {
 
   protected changed(e: any) {
     FileSystem.updateFile(this.model.uri.toString(), this.editor!.getValue());
-    // @ts-ignore
     updateMarkers(FileSystem.getRegistry(), this.model);
   }
 
@@ -118,7 +117,6 @@ export class EditorWidget extends Widget {
       this.editor.addCommand(monaco.KeyMod.CtrlCmd + monaco.KeyCode.KEY_S, () => { return undefined; });
       this.editor.addCommand(monaco.KeyMod.CtrlCmd + monaco.KeyCode.KEY_P, () => { return undefined; });
 
-      // @ts-ignore
       updateMarkers(FileSystem.getRegistry(), this.model);
       this.activate();
     }

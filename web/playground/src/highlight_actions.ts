@@ -1,5 +1,5 @@
 import * as monaco from "monaco-editor";
-import {LanguageServer} from "abaplint/lsp/language_server";
+import {LanguageServer} from "@abaplint/core";
 import {FileSystem} from "./filesystem";
 import {Range} from "vscode-languageserver-types";
 
