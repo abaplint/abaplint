@@ -23,7 +23,7 @@ export function registerABAP(reg: IRegistry) {
 
 export function updateMarkers(reg: IRegistry, model: monaco.editor.ITextModel) {
 // see https://github.com/microsoft/monaco-editor/issues/1604
-  console.dir(model.uri.toString() + "sdfsdf");
+  reg.parse();
   const ls = new LanguageServer(reg);
   const diagnostics = ls.diagnostics({uri: model.uri.toString()});
 

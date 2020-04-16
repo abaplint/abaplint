@@ -1,5 +1,6 @@
 import {ProblemsWidget, EditorWidget} from "./widgets";
 import {Registry} from "abaplint/registry";
+import {IRegistry} from "abaplint/_iregistry";
 import {Config} from "abaplint/config";
 import {MemoryFile} from "abaplint/files";
 import {DockPanel} from "@phosphor/widgets";
@@ -8,7 +9,7 @@ import {IFile} from "abaplint/files/_ifile";
 // magic God class
 export class FileSystem {
   private static files: MemoryFile[];
-  private static reg: Registry;
+  private static reg: IRegistry;
   private static problems: ProblemsWidget;
   private static dock: DockPanel;
 
@@ -121,7 +122,7 @@ ENDFORM.`);
     return this.files;
   }
 
-  public static getRegistry(): Registry {
+  public static getRegistry(): IRegistry {
     return this.reg;
   }
 

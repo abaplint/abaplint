@@ -40,6 +40,7 @@ function main(): void {
 }
 
 function registerMonacoSettings(reg: IRegistry) {
+  // @ts-ignore
   monacoABAP.registerABAP(reg);
 
   monaco.languages.json.jsonDefaults.setDiagnosticsOptions({
