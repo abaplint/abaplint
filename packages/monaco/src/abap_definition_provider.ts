@@ -1,5 +1,4 @@
-import {LanguageServer} from "abaplint/lsp/language_server";
-import {IRegistry} from "abaplint/_iregistry";
+import {IRegistry, LanguageServer} from "@abaplint/core";
 
 export class ABAPDefinitionProvider implements monaco.languages.DefinitionProvider {
   private readonly reg: IRegistry;

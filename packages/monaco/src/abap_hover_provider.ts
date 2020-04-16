@@ -1,6 +1,5 @@
 import * as LServer from "vscode-languageserver-types";
-import {LanguageServer} from "abaplint/lsp/language_server";
-import {IRegistry} from "abaplint/_iregistry";
+import {IRegistry, LanguageServer} from "@abaplint/core";
 
 export class ABAPHoverProvider implements monaco.languages.HoverProvider {
   private readonly reg: IRegistry;

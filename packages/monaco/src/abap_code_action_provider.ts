@@ -1,7 +1,5 @@
 import * as LServer from "vscode-languageserver-types";
-import {LanguageServer} from "abaplint/lsp/language_server";
-import {ICodeActionParams} from "abaplint/lsp/_interfaces";
-import {IRegistry} from "abaplint/_iregistry";
+import {LanguageServer, IRegistry} from "@abaplint/core";
 
 export class ABAPCodeActionProvider implements monaco.languages.CodeActionProvider {
   private readonly reg: IRegistry;
@@ -22,7 +20,7 @@ export class ABAPCodeActionProvider implements monaco.languages.CodeActionProvid
       start: {line: range.startLineNumber - 1, character: range.startColumn - 1},
       end: {line: range.endLineNumber - 1, character: range.endColumn - 1}};
 
-    const param: ICodeActionParams = {
+    const param = {
       textDocument: {uri: model.uri.toString()},
       range: r,
       context: {diagnostics: []},

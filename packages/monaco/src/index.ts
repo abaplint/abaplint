@@ -1,4 +1,4 @@
-import {IRegistry} from "abaplint/_iregistry";
+import {LanguageServer, IRegistry} from "@abaplint/core";
 import {ABAPSnippetProvider} from "./abap_snippet_provider";
 import {ABAPRenameProvider} from "./abap_rename_provider";
 import {ABAPHoverProvider} from "./abap_hover_provider";
@@ -8,9 +8,6 @@ import {ABAPDefinitionProvider} from "./abap_definition_provider";
 import {ABAPDocumentHighlightProvider} from "./abap_document_highlight_provider";
 import {ABAPCodeActionProvider} from "./abap_code_action_provider";
 import {ABAPImplementationProvider} from "./abap_implementation_provider";
-import {LanguageServer} from "abaplint/lsp/language_server";
-
-export {ABAPHoverProvider};
 
 export function registerABAP(reg: IRegistry) {
   monaco.languages.registerCompletionItemProvider("abap", new ABAPSnippetProvider());

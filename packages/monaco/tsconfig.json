@@ -13,9 +13,6 @@
     "target": "es2017",
     "outDir": "./build",
     "baseUrl": ".",
-    "paths": {
-      "abaplint/*": ["../core/build/src/*"]
-    },
     "types": []
   },
   "include": ["src/*"],
