@@ -1,16 +1,21 @@
 {
   "name": "@abaplint/monaco",
-  "version": "2.32.1",
+  "version": "2.32.2",
   "description": "ABAP language support for Monaco Editor",
   "main": "build/src/index.js",
   "typings": "build/src/index.d.ts",
   "scripts": {
-    "test": "tsc"
+    "test": "tsc",
+    "prepublishOnly": "rm -rf build && npm run test"
   },
   "author": "Lars Hvam Petersen",
   "license": "MIT",
   "bugs": {
     "url": "https://github.com/abaplint/abaplint/issues"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/abaplint/abaplint.git"
   },
   "homepage": "https://abaplint.org",
   "devDependencies": {
@@ -19,6 +24,6 @@
     "vscode-languageserver-types": "^3.15.1"
   },
   "dependencies": {
-    "@abaplint/core": "^2.32.1"
+    "@abaplint/core": "^2.32.2"
   }
 }
