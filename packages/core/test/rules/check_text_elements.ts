@@ -86,6 +86,16 @@ describe("Rule: check_text_elements", () => {
     expect(issues.length).to.equal(0);
   });
 
+  it("test 4, lower case", () => {
+    const abap = "WRITE text-abc.";
+    const reg = new Registry();
+    reg.addFile(new MemoryFile("zfoobar.prog.abap", abap));
+    reg.addFile(new MemoryFile("zfoobar.prog.xml", xml));
+    reg.parse();
+    const issues = new CheckTextElements().run(reg.getObjects()[0], reg);
+    expect(issues.length).to.equal(0);
+  });
+
   it("test 5", () => {
     const abap = "WRITE 'sdfsd'(003).";
     const reg = new Registry();

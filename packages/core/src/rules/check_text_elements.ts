@@ -57,7 +57,8 @@ export class CheckTextElements implements IRule {
         const token = e.findFirstExpression(Expressions.TextElementKey)!.getFirstToken();
         const key = token.getStr();
         if (this.findKey(key, texts) === undefined) {
-          output.push(Issue.atToken(file, token, "Text element not found", this.getMetadata().key));
+          const message = `Text element "${key}" not found`;
+          output.push(Issue.atToken(file, token, message, this.getMetadata().key));
         }
       }
 
