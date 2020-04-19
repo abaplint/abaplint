@@ -3,6 +3,7 @@ import * as Structures from "../abap/3_structures/structures";
 import {ABAPRule} from "./_abap_rule";
 import {ABAPFile} from "../files";
 import {BasicRuleConfig} from "./_basic_rule_config";
+import {IRuleMetadata} from "./_irule";
 
 export class IfInIfConf extends BasicRuleConfig {
 }
@@ -11,12 +12,22 @@ export class IfInIf extends ABAPRule {
 
   private conf = new IfInIfConf();
 
-  public getMetadata() {
+  public getMetadata(): IRuleMetadata {
     return {
       key: "if_in_if",
       title: "IF in IF",
       quickfix: false,
       shortDescription: `Detects nested ifs which can be refactored to a single condition using AND.`,
+      extendedInformation: `https://docs.abapopenchecks.org/checks/01/
+https://github.com/SAP/styleguides/blob/master/clean-abap/CleanABAP.md#keep-the-nesting-depth-low`,
+      badExample: `IF condition1.
+  IF condition2.
+    ...
+  ENDIF.
+ENDIF.`,
+      goodExample: `IF ( condition1 ) AND ( condition2 ).
+  ...
+ENDIF.`,
     };
   }
 

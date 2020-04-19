@@ -35,6 +35,13 @@ function experimental() {
   return `&nbsp;<a href="/experimental.html"><svg fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" viewBox="0 0 24 24" height="2ch"><title>experimental</title><path d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"></path></svg></a>`;
 }
 
+function home() {
+  // https://github.com/refactoringui/heroicons/
+  // eslint-disable-next-line max-len
+  return `&nbsp;<a href="/"><svg fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" viewBox="0 0 24 24" height="2ch"><title>home</title><path d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6"></path></svg></a>`;
+}
+
+
 function findDefault(ruleKey: string) {
   const def = abaplint.Config.getDefault();
   return JSON.stringify(def.readByRule(ruleKey), null, 2);
@@ -137,6 +144,7 @@ function editor(json: string, schema: string) {
 function buildRule(meta: IRuleMetadata) {
   let html = "<h1>" + meta.key + " - " + meta.title + "</h1>\n";
 
+  html = html + home();
   if (meta.quickfix === true) {
     html = html + quickfix();
   }
@@ -161,10 +169,10 @@ function buildRule(meta: IRuleMetadata) {
   if (meta.goodExample || meta.badExample) {
     html = html + "<h2>Examples</h2>\n";
     if (meta.badExample) {
-      html = html + "Bad example: <tt>" + meta.badExample + "</tt><br>";
+      html = html + "Bad example: <pre>" + meta.badExample + "</pre><br>";
     }
     if (meta.goodExample) {
-      html = html + "Good example: <tt>" + meta.goodExample + "</tt>";
+      html = html + "Good example: <pre>" + meta.goodExample + "</pre>";
     }
     html = html + "<br><br>";
   }

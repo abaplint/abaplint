@@ -17,7 +17,10 @@ export class GlobalClass extends ABAPRule {
       key: "global_class",
       title: "Global class checks",
       quickfix: false,
-      shortDescription: `Checks related to names of global classes. For the name pattern, see rule object_naming`,
+      shortDescription: `Checks related to global classes.
+* global classes must be in own files
+* file names must match class name
+* global classes must be global definitions`,
     };
   }
 
