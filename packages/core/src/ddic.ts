@@ -100,6 +100,11 @@ export class DDIC {
         return new Types.HexType(parseInt(length, 10));
       case "TIMS":
         return new Types.TimeType();
+      case "FLTP":
+        if (length === undefined) {
+          return new Types.UnknownType(text + " unknown length");
+        }
+        return new Types.FloatingPointType(parseInt(length, 10));
       case "DATS":
         return new Types.DateType();
       case "INT1":
