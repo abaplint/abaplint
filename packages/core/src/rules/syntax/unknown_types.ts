@@ -6,6 +6,7 @@ import {ABAPObject} from "../../objects/_abap_object";
 import {Issue} from "../../issue";
 import {SpaghettiScopeNode} from "../../abap/5_syntax/spaghetti_scope";
 import {UnknownType} from "../../abap/types/basic";
+import {IRuleMetadata, RuleTag} from "../_irule";
 
 export class UnknownTypesConf extends BasicRuleConfig {
 }
@@ -14,12 +15,13 @@ export class UnknownTypes {
 
   private conf = new UnknownTypesConf();
 
-  public getMetadata() {
+  public getMetadata(): IRuleMetadata {
     return {
       key: "unknown_types",
       title: "Unknown types",
       quickfix: false,
       shortDescription: `Enables check for unknown data types, respects errorNamespace`,
+      tags: [RuleTag.Experimental],
     };
   }
 
