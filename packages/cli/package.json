@@ -1,6 +1,6 @@
 {
     "name": "@abaplint/cli",
-    "version": "2.32.1",
+    "version": "2.32.4",
     "description": "Command Line Interface",
     "bin": {
         "abaplint": "./abaplint"
@@ -39,12 +39,12 @@
     },
     "homepage": "https://abaplint.org",
     "devDependencies": {
-        "@abaplint/core": "^2.32.2",
+        "@abaplint/core": "^2.32.4",
         "@types/chai": "^4.2.11",
         "@types/glob": "^7.1.1",
         "@types/minimist": "^1.2.0",
         "@types/mocha": "^7.0.2",
-        "@types/node": "^13.13.1",
+        "@types/node": "^13.13.2",
         "@types/progress": "^2.0.3",
         "chai": "^4.2.0",
         "eslint": "^6.8.0",
@@ -53,7 +53,7 @@
         "mocha": "^7.1.1",
         "progress": "^2.0.3",
         "typescript": "^3.8.3",
-        "webpack": "^4.42.1",
+        "webpack": "^4.43.0",
         "webpack-cli": "^3.3.11",
         "xml-js": "^1.6.11"
     }
