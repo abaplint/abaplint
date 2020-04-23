@@ -71,7 +71,7 @@ export class CheckTextElements implements IRule {
           found = found.replace(/'/g, "''");
         }
         if (found === undefined) {
-          output.push(Issue.atToken(file, token, "Text element not found", this.getMetadata().key));
+          output.push(Issue.atToken(file, token, `Text element "${key}" not found`, this.getMetadata().key));
         } else if (code !== "'" + found + "'"
             && code !== "`" + found + "`") {
           output.push(Issue.atToken(file, token, "Text does not match text element", this.getMetadata().key));

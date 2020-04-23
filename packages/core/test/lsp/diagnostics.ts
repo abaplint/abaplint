@@ -17,4 +17,20 @@ describe("LSP, diagnostics", () => {
     expect(new Diagnostics(registry).find({uri: file.getFilename()}).length).to.equal(0);
   });
 
+  it("trigger skip logic, generated gateway class", () => {
+    const file = new MemoryFile("zcl_fiori_moni_mpc.clas.abap", `
+class ZCL_FIORI_MONI_MPC definition public inheriting from /IWBEP/CL_MGW_PUSH_ABS_MODELA create public.
+  PUBLIC SECTION.
+    METHODS moo.
+ENDCLASS.
+CLASS ZCL_FIORI_MONI_MPC IMPLEMENTATION.
+  method moo.
+    DATA bar type i.
+    ADD 2 to bar.
+  endmethod.
+endclass.`);
+    const registry = new Registry().addFile(file);
+    expect(new Diagnostics(registry).find({uri: file.getFilename()}).length).to.equal(0);
+  });
+
 });

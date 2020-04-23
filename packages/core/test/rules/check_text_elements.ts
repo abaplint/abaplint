@@ -146,4 +146,17 @@ describe("Rule: check_text_elements", () => {
     expect(issues.length).to.equal(0);
   });
 
+  it("test 10", () => {
+    const abap = `
+SELECTION-SCREEN BEGIN OF BLOCK cls WITH FRAME TITLE text-abc.
+SELECTION-SCREEN END OF BLOCK cls.
+    `;
+    const reg = new Registry();
+    reg.addFile(new MemoryFile("zfoobar.prog.abap", abap));
+    reg.addFile(new MemoryFile("zfoobar.prog.xml", xml));
+    reg.parse();
+    const issues = new CheckTextElements().run(reg.getObjects()[0], reg);
+    expect(issues.length).to.equal(0);
+  });
+
 });
