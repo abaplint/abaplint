@@ -129,6 +129,8 @@ const tests = [
   `DATA(lr_sdf) = REF #( foobar OPTIONAL ).`,
   `rv_amount = - abs( foo-bar ).`,
   `ls_struct-amount = - ( iv_amount1 / ls_struct2-amount2 ) * ls_struct2-amount3.`,
+  `DATA(lt_tab) = VALUE lty_bar( FOR d IN tab INDEX INTO i ( id = lv_id number = i ) ).`,
+  `et_errors = CORRESPONDING #( lt_errors MAPPING company_code = doc-bukrs fiscal_year = doc-gjahr ).`,
 ];
 
 statementType(tests, "MOVE", Statements.Move);

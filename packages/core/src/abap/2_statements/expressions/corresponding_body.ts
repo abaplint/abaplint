@@ -3,10 +3,11 @@ import {WParenLeftW, WParenRightW} from "../../1_lexer/tokens";
 import {ComponentName, Source, Field} from ".";
 import {Version} from "../../../version";
 import {IStatementRunnable} from "../statement_runnable";
+import {ComponentChain} from "./component_chain";
 
 export class CorrespondingBody extends Expression {
   public getRunnable(): IStatementRunnable {
-    const mapping = seq(str("MAPPING"), plus(seq(new ComponentName(), str("="), new ComponentName())));
+    const mapping = seq(str("MAPPING"), plus(seq(new ComponentName(), str("="), new ComponentChain())));
 
     const baseParen = seq(str("BASE"), tok(WParenLeftW), new Source(), tok(WParenRightW));
 
