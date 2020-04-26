@@ -273,10 +273,10 @@ class OptionalPriority implements IStatementRunnable {
       } else {
         result.push(input);
       }
-/*
-      console.dir(res);
-      console.dir(result);
-*/
+
+//      console.dir(res);
+//      console.dir(result);
+
     }
 
     return result;

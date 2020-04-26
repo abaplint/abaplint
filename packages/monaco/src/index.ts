@@ -38,6 +38,5 @@ export function updateMarkers(reg: IRegistry, model: monaco.editor.ITextModel) {
       endColumn: diagnostic.range.end.character + 1,
     });
   }
-  console.dir(markers);
   monaco.editor.setModelMarkers(model, "abaplint", markers);
 }
