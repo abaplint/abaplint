@@ -10,7 +10,7 @@ export class ArtifactsObjects {
       this.buildObjectMap();
     }
 
-    if (this.objectMap[type] === undefined) {
+    if (type === undefined || this.objectMap[type] === undefined) {
       return new UnknownObject(name, type);
     } else {
       return new this.objectMap[type](name);

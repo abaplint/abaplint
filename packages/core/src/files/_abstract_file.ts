@@ -11,10 +11,10 @@ export abstract class AbstractFile implements IFile {
     return this.filename;
   }
 
-  public getObjectType(): string {
+  public getObjectType(): string | undefined {
     const base = this.getFilename().split("/").reverse()[0];
     const split = base.split(".");
-    return split[1].toUpperCase();
+    return split[1]?.toUpperCase();
   }
 
   public getObjectName(): string {

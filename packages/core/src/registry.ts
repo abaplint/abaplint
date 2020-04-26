@@ -40,7 +40,10 @@ export class Registry implements IRegistry {
     return undefined;
   }
 
-  public getObject(type: string, name: string): IObject | undefined {
+  public getObject(type: string | undefined, name: string): IObject | undefined {
+    if (type === undefined) {
+      return undefined;
+    }
     for (const obj of this.objects) {
 // todo, this is slow
       if (obj.getType() === type && obj.getName().toUpperCase() === name.toUpperCase()) {
@@ -242,7 +245,10 @@ export class Registry implements IRegistry {
     return ret;
   }
 
-  private findOrCreate(name: string, type: string): IObject {
+  private findOrCreate(name: string, type?: string): IObject {
+    if (type === undefined) {
+      throw new Error("findOrCreate: type undefined");
+    }
     try {
       return this.find(name, type);
     } catch {
@@ -266,7 +272,10 @@ export class Registry implements IRegistry {
     throw new Error("removeObject: object not found");
   }
 
-  private find(name: string, type: string): IObject {
+  private find(name: string, type?: string): IObject {
+    if (type === undefined) {
+      throw new Error("find: type undefined");
+    }
     for (const obj of this.objects) { // todo, this is slow
       if (obj.getType() === type && obj.getName() === name) {
         return obj;

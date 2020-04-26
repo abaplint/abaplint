@@ -18,7 +18,7 @@ export interface IRegistry {
 
   // object operations
   getObjects(): readonly IObject[];
-  getObject(type: string, name: string): IObject | undefined;
+  getObject(type: string | undefined, name: string): IObject | undefined;
   findObjectForFile(file: IFile): IObject | undefined;
   getObjectByType<T>(type: new (...args: any[]) => T, name: string): T | undefined;
 
