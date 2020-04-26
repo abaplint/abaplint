@@ -74,6 +74,7 @@ export class Source extends Expression {
                                            new TypeNameOrInfer(),
                                            tok(ParenLeftW),
                                            new Source(),
+                                           opt(str("OPTIONAL")),
                                            rparen));
 
     const exact = ver(Version.v740sp02, seq(str("EXACT"),
