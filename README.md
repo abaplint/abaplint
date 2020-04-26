@@ -14,9 +14,9 @@ Versioning: semantic versioning is currently not followed, recommend fixing usag
 
 [Configuration and rule documentation](https://rules.abaplint.org)
 
-[Continuous integration setup](docs/using-abaplint-in-ci.md)
+[Continuous Integration setup](docs/ci/README.md)
 
-[SAP Code inspector setup](https://github.com/abaplint/abaplint-cloud-foundry)
+[SAP Code Inspector/ATC setup](https://github.com/abaplint/abaplint-cloud-foundry)
 
 [Visual Studio Code extension](https://marketplace.visualstudio.com/items?itemName=larshp.vscode-abaplint)
 
