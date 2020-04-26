@@ -46,4 +46,9 @@ describe("Rule: allowed_object_naming", () => {
     expect(issues.length).to.equal(0);
   });
 
+  it("SHI3, okay", () => {
+    const issues = findIssues("22ecde72dc0b1ed99b99bb9fa4e48dd7.shi3.xml");
+    expect(issues.length).to.equal(0);
+  });
+
 });
