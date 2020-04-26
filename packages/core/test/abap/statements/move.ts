@@ -127,6 +127,8 @@ const tests = [
     NEXT x = x + <i>-kwert ).`,
 
   `DATA(lr_sdf) = REF #( foobar OPTIONAL ).`,
+  `rv_amount = - abs( foo-bar ).`,
+  `ls_struct-amount = - ( iv_amount1 / ls_struct2-amount2 ) * ls_struct2-amount3.`,
 ];
 
 statementType(tests, "MOVE", Statements.Move);

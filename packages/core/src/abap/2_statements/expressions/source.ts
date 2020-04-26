@@ -33,9 +33,7 @@ export class Source extends Expression {
     const old = seq(altPrio(new Constant(),
                             new StringTemplate(),
                             bool,
-                            method,
-                            seq(optPrio(prefix), new FieldChain()),
-                            paren),
+                            seq(optPrio(prefix), altPrio(method, new FieldChain(), paren))),
                     optPrio(altPrio(ref, after, new TableBody())));
 
     const corr = ver(Version.v740sp05, seq(str("CORRESPONDING"),
