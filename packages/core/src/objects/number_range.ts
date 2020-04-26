@@ -9,7 +9,7 @@ export class NumberRange extends AbstractObject {
   public getAllowedNaming() {
     return {
       maxLength: 10,
-      allowNamespace: false,
+      allowNamespace: true,
     };
   }
 }

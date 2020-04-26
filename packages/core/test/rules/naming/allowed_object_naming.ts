@@ -51,4 +51,14 @@ describe("Rule: allowed_object_naming", () => {
     expect(issues.length).to.equal(0);
   });
 
+  it("NROB, okay", () => {
+    const issues = findIssues("#abc#defg.nrob.xml");
+    expect(issues.length).to.equal(0);
+  });
+
+  it("SUSO, okay", () => {
+    const issues = findIssues("#abc#defg.suso.xml");
+    expect(issues.length).to.equal(0);
+  });
+
 });
