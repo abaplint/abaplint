@@ -1,5 +1,5 @@
 import {IStatement} from "./_statement";
-import {verNot, str, seq, opt, alt, per, tok, regex as reg} from "../combi";
+import {verNot, str, seq, opt, alt, per, tok, regex as reg, altPrio} from "../combi";
 import {Target, Source, Dynamic, FieldSub, FieldChain} from "../expressions";
 import {ParenLeft, ParenRightW, WParenLeft} from "../../1_lexer/tokens";
 import {Version} from "../../../version";
@@ -68,7 +68,7 @@ export class Write implements IStatement {
 
     const ret = seq(str("WRITE"),
                     opt(at),
-                    opt(alt(new Source(), new Dynamic())),
+                    altPrio(new Source(), new Dynamic(), str("/")),
                     opt(options));
 
     return verNot(Version.Cloud, ret);

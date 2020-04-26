@@ -20,6 +20,7 @@ const tests = [
   {abap: "ro_alv->get_columns(:\n" +
     ")->get_column( 'TIMESTAMP' )->set_visible( abap_false ),\n" +
     ")->get_column( 'USERNAME' )->set_visible( abap_false ).", cnt: 0},
+  {abap: "WRITE.", cnt: 1},
 ];
 
 testRule(tests, ParserError);
