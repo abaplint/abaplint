@@ -1,4 +1,4 @@
-import {str, seq, per, alt, opt, Expression} from "../combi";
+import {str, seq, per, alt, Expression} from "../combi";
 import {Source} from ".";
 import {IStatementRunnable} from "../statement_runnable";
 
@@ -80,7 +80,7 @@ export class StringTemplateFormatting extends Expression {
                            seq(str("COUNTRY"), str("="), new Source()),
                            per(sign, number, decimals),
                            per(timezone, timestamp),
-                           per(seq(width, opt(pad)), align));
+                           per(per(width, pad), align));
 
     return formatting;
   }

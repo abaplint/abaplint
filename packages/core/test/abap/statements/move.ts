@@ -125,6 +125,8 @@ const tests = [
     FOR <i> IN invoices
     WHERE ( vtweg = '20' )
     NEXT x = x + <i>-kwert ).`,
+
+  `DATA(lr_sdf) = REF #( foobar OPTIONAL ).`,
 ];
 
 statementType(tests, "MOVE", Statements.Move);
