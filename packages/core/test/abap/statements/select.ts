@@ -164,6 +164,15 @@ const tests = [
   "SELECT SINGLE * FROM ztable WHERE lower( host ) = @lv_host INTO @DATA(ls_config).",
   "SELECT field FROM table INTO TABLE @DATA(lt_tab) OFFSET 22.",
   "SELECT bname, bcode FROM usr02 GROUP BY bname, bcode INTO TABLE @DATA(result).",
+
+  `SELECT *
+FROM /abc/def_c_clearing_history(
+  p_language     = @sy-langu,
+  p_company_code = @ms_document-company_code
+)
+INTO CORRESPONDING FIELDS OF TABLE @mt_journal
+ORDER BY PRIMARY KEY ##DB_FEATURE_MODE[VIEWS_WITH_PARAMETERS].`,
+
 ];
 
 statementType(tests, "SELECT", Statements.Select);
