@@ -246,13 +246,10 @@ export class Registry implements IRegistry {
   }
 
   private findOrCreate(name: string, type?: string): IObject {
-    if (type === undefined) {
-      throw new Error("findOrCreate: type undefined");
-    }
     try {
       return this.find(name, type);
     } catch {
-      const add = ArtifactsObjects.newObject(name, type);
+      const add = ArtifactsObjects.newObject(name, type ? type : "UNKNOWN");
       this.objects.push(add);
       return add;
     }
@@ -273,11 +270,10 @@ export class Registry implements IRegistry {
   }
 
   private find(name: string, type?: string): IObject {
-    if (type === undefined) {
-      throw new Error("find: type undefined");
-    }
     for (const obj of this.objects) { // todo, this is slow
       if (obj.getType() === type && obj.getName() === name) {
+        return obj;
+      } else if (type === undefined && obj.getType() === "UNKONWN" && obj.getName() === name) {
         return obj;
       }
     }

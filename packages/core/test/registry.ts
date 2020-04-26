@@ -35,6 +35,24 @@ describe("Registry", () => {
     expect(reg.getObject("CLAS", "/namesp/cl_foobar")).to.not.equal(undefined);
   });
 
+  it("readme.md", () => {
+    const reg = new Registry().addFile(new MemoryFile("readme.md", "something"));
+    expect(reg.getObjects().length).to.equal(1);
+    expect(reg.getObjects()[0].getType()).to.equal("MD");
+  });
+
+  it("foo.bar.", () => {
+    const reg = new Registry().addFile(new MemoryFile("foo.bar.", "something"));
+    expect(reg.getObjects().length).to.equal(1);
+    expect(reg.getObjects()[0].getType()).to.equal("BAR");
+  });
+
+  it("filename = `LICENSE`", () => {
+    const reg = new Registry().addFile(new MemoryFile("LICENSE", "something"));
+    expect(reg.getObjects().length).to.equal(1);
+    expect(reg.getObjects()[0].getType()).to.equal("UNKNOWN");
+  });
+
   it("filename with namespace, url encoded", () => {
     const reg = new Registry().addFile(new MemoryFile("%23namesp%23cl_foobar.clas.abap", "parser error"));
     expect(reg.getObjects().length).to.equal(1);
