@@ -80,4 +80,17 @@ ENDCLASS.`;
     expect(issues.length).to.equal(0);
   });
 
+  it("ok, already have RETURNING", () => {
+    const abap = `
+CLASS zcl_moo DEFINITION.
+  PUBLIC SECTION.
+  METHODS:
+      bin_to_bin_tab IMPORTING iv_xstring        TYPE xsequence
+                     EXPORTING ev_length         TYPE i
+                     RETURNING VALUE(rt_bin_tab) TYPE gty_bin_tab.
+ENDCLASS.`;
+    const issues = findIssues(abap);
+    expect(issues.length).to.equal(0);
+  });
+
 });

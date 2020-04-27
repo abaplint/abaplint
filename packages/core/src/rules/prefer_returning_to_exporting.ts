@@ -49,6 +49,11 @@ https://docs.abapopenchecks.org/checks/44/`,
         continue;
       }
 
+      const returning = def.findFirstExpression(Expressions.MethodDefReturning);
+      if (returning !== undefined) {
+        continue;
+      }
+
       const params = exporting.findDirectExpressions(Expressions.MethodParam);
       if (params.length !== 1) {
         continue;
