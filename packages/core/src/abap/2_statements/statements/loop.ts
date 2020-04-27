@@ -1,6 +1,6 @@
 import {IStatement} from "./_statement";
-import {str, seq, alt, opt, ver, optPrio, tok, plus, per} from "../combi";
-import {FSTarget, Target, ComponentCond, Dynamic, Source, ComponentCompare, SimpleName} from "../expressions";
+import {str, seq, alt, opt, ver, optPrio, tok, per, plus} from "../combi";
+import {FSTarget, Target, ComponentCond, Dynamic, Source, ComponentCompare, SimpleName, ComponentName} from "../expressions";
 import {Version} from "../../../version";
 import {WParenLeftW, WParenRightW} from "../../1_lexer/tokens";
 import {IStatementRunnable} from "../statement_runnable";
@@ -10,13 +10,20 @@ export class Loop implements IStatement {
   public getMatcher(): IStatementRunnable {
     const where = seq(str("WHERE"), alt(new ComponentCond(), new Dynamic()));
 
-    const components = seq(tok(WParenLeftW), plus(new ComponentCompare()), tok(WParenRightW));
+    const groupSize = seq(new ComponentName(), str("="), str("GROUP SIZE"));
 
-    const into = seq(str("INTO"), new Target());
+    const components = seq(tok(WParenLeftW), plus(alt(new ComponentCompare(), groupSize)), tok(WParenRightW));
+
+    const into = seq(opt(str("REFERENCE")), str("INTO"), new Target());
 
     const assigning = seq(str("ASSIGNING"), new FSTarget());
 
-    const group = ver(Version.v740sp08, seq(str("GROUP BY"), alt(new Source(), components), optPrio(str("ASCENDING")), optPrio(alt(into, assigning))));
+    const group = ver(Version.v740sp08,
+                      seq(str("GROUP BY"),
+                          alt(new Source(), components),
+                          optPrio(str("ASCENDING")),
+                          optPrio(str("WITHOUT MEMBERS")),
+                          optPrio(alt(into, assigning))));
 
     const rinto = seq(opt(str("REFERENCE")), into);
 

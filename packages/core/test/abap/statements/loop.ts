@@ -25,6 +25,8 @@ const tests = [
   "LOOP AT list INTO DATA(item) GROUP BY item-type INTO DATA(type).",
   "LOOP AT lt_tab INTO DATA(dat) GROUP BY ( model = bar ) ASSIGNING FIELD-SYMBOL(<fs>).",
   "loop at table assigning field-symbol(<fs>) group by field ascending assigning field-symbol(<tar>).",
+  "LOOP AT mt_data ASSIGNING <ls_dummy> GROUP BY <ls_dummy>-abc WITHOUT MEMBERS INTO lv_def.",
+  "LOOP AT mt_out ASSIGNING FIELD-SYMBOL(<ls_out>) GROUP BY ( d = <ls_out>-d group_size = GROUP SIZE ) REFERENCE INTO DATA(lr_group).",
 ];
 
 statementType(tests, "LOOP", Statements.Loop);
