@@ -126,7 +126,7 @@ export class IncludeGraph implements IIncludeGraph {
               throw new Error("unexpected Include node");
             }
             const name = iexp.getFirstToken().getStr().toUpperCase();
-            if (name.match(/^L.+XX$/)) { // function module XX include
+            if (name.match(/^(\/\w+\/)?L.+XX$/)) { // function module XX includes, possibily namespaced
               continue;
             }
             const found = this.graph.findInclude(name);
@@ -189,15 +189,6 @@ export class IncludeGraph implements IIncludeGraph {
             includeName: o.getName(),
             include: false});
         }
-/*
-      } else {
-        for (const f of o.getABAPFiles()) {
-          this.graph.addVertex({
-            filename: f.getFilename(),
-            includeName: f.getFilename(),
-            include: true});
-        }
-*/
       }
     }
   }

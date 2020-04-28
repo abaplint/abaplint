@@ -32,7 +32,12 @@ export class FunctionGroup extends ABAPObject {
     const includes = this.getIncludes();
     for (const f of this.getABAPFiles()) {
       for (const i of includes) {
-        if (i.startsWith("L") && f.getFilename().includes(i.toLowerCase())) {
+        const namespaced = i.startsWith("/") && i.includes("/L");
+        let search = i;
+        if (namespaced) {
+          search = search.replace(/\//g, "#");
+        }
+        if ((i.startsWith("L") || namespaced) && f.getFilename().includes(search.toLowerCase())) {
           ret.push({
             file: f,
             name: i});
