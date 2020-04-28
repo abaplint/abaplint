@@ -50,6 +50,7 @@ export class SQLEscapeHostVariables extends ABAPRule {
           || str.includes(" INTO CORRESPONDING FIELDS OF @")
           || str.includes(" INTO CORRESPONDING FIELDS OF TABLE @")
           || str.includes(" APPENDING TABLE @")
+          || ( str.includes(" APPENDING ") === false && str.includes(" INTO ") === false )
           || str.includes(" APPENDING CORRESPONDING FIELDS OF TABLE @")) {
         continue;
       } else {

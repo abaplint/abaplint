@@ -13,6 +13,7 @@ const tests = [
   {abap: "SELECT * FROM usr02 APPENDING CORRESPONDING FIELDS OF TABLE @lt_data.", cnt: 0},
   {abap: "SELECT * FROM usr02 APPENDING TABLE @lt_data.", cnt: 0},
   {abap: "SELECT SINGLE bname FROM usr02 INTO (@lv_bname).", cnt: 0},
+  {abap: "SELECT COUNT(*) FROM usr01 WHERE bname = @iv_user_name.", cnt: 0},
 ];
 
 testRule(tests, SQLEscapeHostVariables);
