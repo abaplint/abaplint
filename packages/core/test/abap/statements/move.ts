@@ -108,6 +108,7 @@ const tests = [
   // string templates
   "lv_str = | { zif_bar=>and ALIGN = RIGHT WIDTH = 5 } |.",
   "lv_str = | { zif_bar=>and ALIGN = RIGHT WIDTH = 5  PAD = '_' } |.",
+  "lv_str = |{ k WIDTH = 78 ALIGN = LEFT PAD = space }*|. ",
   "<timezone>-datetime = |{ tstamp TIMEZONE = <timezone>-tzone TIMESTAMP = USER }|. ",
   "<timezone>-datetime = |{ tstamp TIMESTAMP = USER TIMEZONE = <timezone>-tzone }|. ",
   "<timezone>-datetime = |{ tstamp TIMEZONE = <timezone>-tzone }|. ",

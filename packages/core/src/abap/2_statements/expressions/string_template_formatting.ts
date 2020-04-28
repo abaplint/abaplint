@@ -80,7 +80,7 @@ export class StringTemplateFormatting extends Expression {
                            seq(str("COUNTRY"), str("="), new Source()),
                            per(sign, number, decimals),
                            per(timezone, timestamp),
-                           per(per(width, pad), align));
+                           per(width, pad, align));
 
     return formatting;
   }
