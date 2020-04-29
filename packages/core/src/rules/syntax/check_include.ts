@@ -1,14 +1,15 @@
-import {ABAPRule} from "../_abap_rule";
-import {ABAPFile} from "../../files";
 import {IRegistry} from "../../_iregistry";
 import {BasicRuleConfig} from "../_basic_rule_config";
 import {ABAPObject} from "../../objects/_abap_object";
 import {IncludeGraph} from "../../utils/include_graph";
+import {IRule} from "../_irule";
+import {Issue} from "../../issue";
+import {IObject} from "../../objects/_iobject";
 
 export class CheckIncludeConf extends BasicRuleConfig {
 }
 
-export class CheckInclude extends ABAPRule {
+export class CheckInclude implements IRule {
 
   private conf = new CheckIncludeConf();
 
@@ -29,8 +30,17 @@ export class CheckInclude extends ABAPRule {
     this.conf = conf;
   }
 
-  public runParsed(file: ABAPFile, reg: IRegistry, _obj: ABAPObject) {
-    return new IncludeGraph(reg).getIssuesFile(file);
+  public run(obj: IObject, reg: IRegistry): readonly Issue[] {
+    if (!(obj instanceof ABAPObject)) {
+      return [];
+    }
+
+    let ret: Issue[] = [];
+    const graph = new IncludeGraph(reg);
+    for (const file of obj.getABAPFiles()) {
+      ret = ret.concat(graph.getIssuesFile(file));
+    }
+    return ret;
   }
 
 }
