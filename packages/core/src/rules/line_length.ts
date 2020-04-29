@@ -37,6 +37,7 @@ https://docs.abapopenchecks.org/checks/04/`,
     const maxLineLength: number = 255;
 
     file.getRawRows().forEach((row, rowIndex) => {
+      row = row.replace("\r", "");
       let message = "";
       if (row.length > maxLineLength) {
         message = `Maximum allowed line length of ${maxLineLength} exceeded, currently  ${row.length}`;
