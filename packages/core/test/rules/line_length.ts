@@ -1,8 +1,10 @@
-import {LineLength} from "../../src/rules/line_length";
+import {LineLength, LineLengthConf} from "../../src/rules/line_length";
 import {testRule} from "./_utils";
 
 const tests = [
+  // length: 269
   {abap: "hello hello hello hello hello hello hello hello hello " +
+         "hello hello hello hello hello hello hello hello hello " +
          "hello hello hello hello hello hello hello hello hello " +
          "hello hello hello hello hello hello hello hello hello " +
          "hello hello hello hello hello hello hello hello hello", cnt: 1},
@@ -10,3 +12,6 @@ const tests = [
 ];
 
 testRule(tests, LineLength);
+
+// test maximum allowed line length
+testRule(tests, LineLength, new LineLengthConf().length = 400);
