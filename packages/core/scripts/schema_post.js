@@ -19,7 +19,8 @@ function run() {
   for(const rule of abaplint.ArtifactsRules.getRules()) {
     const meta = rule.getMetadata();
     if (meta.shortDescription !== undefined) {
-      descriptions[meta.key] = meta.shortDescription;
+      const extra = meta.tags ? "\nTags: " + meta.tags.join(", ") : "";
+      descriptions[meta.key] = meta.shortDescription + extra;
     }
   }
 

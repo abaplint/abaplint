@@ -3,8 +3,8 @@ import {Issue} from "../issue";
 import {IRegistry} from "../_iregistry";
 
 export enum RuleTag {
-  Experimental,
-  DeprecationCandidate,
+  Experimental = "Experimental",
+  DeprecationCandidate = "DeprecationCandidate",
 }
 
 /** Rule Metadata */

@@ -968,7 +968,7 @@
                   "type": "boolean"
                 }
               ],
-              "description": "Enables syntax check and variable resolution\nhttps://rules.abaplint.org/check_syntax"
+              "description": "Enables syntax check and variable resolution\nTags: Experimental\nhttps://rules.abaplint.org/check_syntax"
             },
             "check_text_elements": {
               "anyOf": [
@@ -1727,7 +1727,7 @@
                   "type": "boolean"
                 }
               ],
-              "description": "Enables check for unknown data types, respects errorNamespace\nhttps://rules.abaplint.org/unknown_types"
+              "description": "Enables check for unknown data types, respects errorNamespace\nTags: Experimental\nhttps://rules.abaplint.org/unknown_types"
             },
             "unreachable_code": {
               "anyOf": [
@@ -1749,7 +1749,7 @@
                   "type": "boolean"
                 }
               ],
-              "description": "Checks for unused variables\nhttps://rules.abaplint.org/unused_variables"
+              "description": "Checks for unused variables\nTags: Experimental\nhttps://rules.abaplint.org/unused_variables"
             },
             "use_new": {
               "anyOf": [
