@@ -24,7 +24,7 @@ interface IVertex {
 
 class Graph {
   public readonly vertices: IVertex[];
-  private readonly edges: {from: string, to: string}[];
+  public readonly edges: {from: string, to: string}[];
 
   public constructor() {
     this.vertices = [];

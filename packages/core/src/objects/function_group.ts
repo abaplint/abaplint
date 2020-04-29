@@ -62,10 +62,11 @@ export class FunctionGroup extends ABAPObject {
 
   }
 */
+
   public getMainABAPFile(): ABAPFile | undefined {
-    const search = this.getName() + ".fugr.sapl";
+    const regex = new RegExp(/\.fugr\.(#\w+#)?sapl/, "i");
     for (const f of this.getABAPFiles()) {
-      if (f.getFilename().includes(search.toLowerCase())) {
+      if (regex.test(f.getFilename())) {
         return f;
       }
     }
