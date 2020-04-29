@@ -1,5 +1,4 @@
 import {Issue} from "../issue";
-import {Position} from "../position";
 import {ABAPRule} from "./_abap_rule";
 import {ABAPFile} from "../files";
 import {BasicRuleConfig} from "./_basic_rule_config";
@@ -24,10 +23,6 @@ https://docs.abapopenchecks.org/checks/04/`,
     };
   }
 
-  private getDescription(max: string, actual: string): string {
-    return "Reduce line length to max " + max + ", currently " + actual;
-  }
-
   public getConfig() {
     return this.conf;
   }
@@ -38,18 +33,20 @@ https://docs.abapopenchecks.org/checks/04/`,
 
   public runParsed(file: ABAPFile) {
     const issues: Issue[] = [];
+    // maximum line length in abap files
+    const maxLineLength: number = 255;
 
-    const lines = file.getRaw().split("\n");
-    for (let line = 0; line < lines.length; line++) {
-      lines[line] = lines[line].replace("\r", ""); // remove carriage returns
-      if (lines[line].length > this.conf.length) {
-        const message = this.getDescription(this.conf.length.toString(), lines[line].length.toString());
-        const position = new Position(line + 1, 1);
-        const issue = Issue.atPosition(file, position, message, this.getMetadata().key);
-        issues.push(issue);
+    file.getRawRows().forEach((row, rowIndex) => {
+      let message = "";
+      if (row.length > maxLineLength) {
+        message = `Maximum allowed line length of ${maxLineLength} exceeded, currently  ${row.length}`;
+      } else if (row.length > this.conf.length) {
+        message = `Reduce line length to max ${this.conf.length}, currently ${row.length}`;
+      } else {
+        return;
       }
-    }
-
+      issues.push(Issue.atRow(file, rowIndex + 1, message, this.getMetadata().key));
+    });
     return issues;
   }
 
