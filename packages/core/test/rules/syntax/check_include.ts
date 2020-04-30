@@ -87,7 +87,7 @@ FUNCTION-POOL ZABAPGIT_UNIT_TEST.`},
     expect(issues.length).to.equals(0);
   });
 
-  it.skip("Function group, namespaced", () => {
+  it("Function group, namespaced", () => {
     const xml = `<?xml version="1.0" encoding="utf-8"?>
 <abapGit version="v1.0.0" serializer="LCL_OBJECT_FUGR" serializer_version="v1.0.0">
  <asx:abap xmlns:asx="http://www.sap.com/abapxml" version="1.0">
