@@ -17,7 +17,7 @@ export class PreferReturningToExporting extends ABAPRule {
       key: "prefer_returning_to_exporting",
       title: "Prefer RETURNING to EXPORTING",
       quickfix: false,
-      shortDescription: `Prefer RETURNING to EXPORTING`,
+      shortDescription: `Prefer RETURNING to EXPORTING. Generic types cannot be RETURNING.`,
       extendedInformation: `https://github.com/SAP/styleguides/blob/master/clean-abap/CleanABAP.md#prefer-returning-to-exporting
 https://docs.abapopenchecks.org/checks/44/`,
     };
@@ -60,11 +60,26 @@ https://docs.abapopenchecks.org/checks/44/`,
       }
 
       const concat = params[0].concatTokens().toUpperCase();
-      if (concat.includes("TYPE ANY")
-          || concat.includes("TYPE DATA")
-          || concat.includes("TYPE ANY TABLE")
-          || concat.includes("TYPE INDEX TABLE")
-          || concat.includes("TYPE STANDARD TABLE")) {
+
+      if (concat.endsWith("TYPE ANY")
+          || concat.endsWith("TYPE ANY TABLE")
+          || concat.endsWith("TYPE C")
+          || concat.endsWith("TYPE CLIKE")
+          || concat.endsWith("TYPE CSEQUENCE")
+          || concat.endsWith("TYPE DATA")
+          || concat.endsWith("TYPE DECFLOAT")
+          || concat.endsWith("TYPE HASHED TABLE")
+          || concat.endsWith("TYPE INDEX TABLE")
+          || concat.endsWith("TYPE N")
+          || concat.endsWith("TYPE NUMERIC")
+          || concat.endsWith("TYPE OBJECT")
+          || concat.endsWith("TYPE P")
+          || concat.endsWith("TYPE SIMPLE")
+          || concat.endsWith("TYPE SORTED TABLE")
+          || concat.endsWith("TYPE STANDARD TABLE")
+          || concat.endsWith("TYPE TABLE")
+          || concat.endsWith("TYPE X")
+          || concat.endsWith("TYPE XSEQUENCE")) {
         continue;
       }
 

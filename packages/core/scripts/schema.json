@@ -1507,7 +1507,7 @@
                   "type": "boolean"
                 }
               ],
-              "description": "Prefer RETURNING to EXPORTING\nhttps://rules.abaplint.org/prefer_returning_to_exporting"
+              "description": "Prefer RETURNING to EXPORTING. Generic types cannot be RETURNING.\nhttps://rules.abaplint.org/prefer_returning_to_exporting"
             },
             "preferred_compare_operator": {
               "anyOf": [

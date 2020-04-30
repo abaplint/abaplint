@@ -93,4 +93,18 @@ ENDCLASS.`;
     expect(issues.length).to.equal(0);
   });
 
+  it("ok, generic", () => {
+    const abap = `
+    CLASS zcl_moo DEFINITION.
+    PUBLIC SECTION.
+  METHODS:
+    get_next_single IMPORTING iv_number_range TYPE nrnr
+                              iv_subobject    TYPE nrsobj OPTIONAL
+                    EXPORTING eg_number       TYPE  clike
+                    RAISING   /abc/cx_some_exception_class.
+                    ENDCLASS.`;
+    const issues = findIssues(abap);
+    expect(issues.length).to.equal(0);
+  });
+
 });
