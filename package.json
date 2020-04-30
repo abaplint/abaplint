@@ -8,7 +8,15 @@
         "test": "cd packages/core/ && npm test && cd ../../ && cd ./packages/cli/ && npm test && cd ../../ && cd ./packages/monaco/ && npm test && cd ../../",
         "web.playground": "cd web/playground && npm install && npm test && npm run build && cd ../../",
         "web.rules": "cd web/rules && npm install && npm test && cd ../../",
-        "web.syntax": "sh web/syntax/syntax.sh"
+        "web.syntax": "sh web/syntax/syntax.sh",
+        "link-local": "npm run link:core && npm run link:monaco && npm run link:core-into-cli && npm run link:core-into-monaco && npm run link:core-into-playground && npm run link:monaco-into-playground",
+        "link:core": "cd packages/core && npm link",
+        "link:core-into-cli": "cd packages/cli && npm link @abaplint/core",
+        "link:core-into-monaco": "cd packages/monaco && npm link @abaplint/core",
+        "link:core-into-playground": "cd web/playground && npm link @abaplint/core",
+        "link:monaco": "cd packages/monaco && npm link",
+        "link:monaco-into-playground": "cd web/playground && npm link @abaplint/monaco",
+        "unlink-local": "cd web/playground && npm unlink --no-save @abaplint/monaco && npm unlink --no-save @abaplint/core && npm install && cd ../../packages/cli && npm unlink --no-save @abaplint/core && npm install && cd ../monaco && npm unlink --no-save @abaplint/core && npm install"
     },
     "author": "Lars Hvam Petersen",
     "license": "MIT",
