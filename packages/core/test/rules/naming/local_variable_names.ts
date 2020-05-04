@@ -77,6 +77,98 @@ ENDCLASS.`;
     expect(findIssues(abap, config).length).to.equal(0);
   });
 
+  it("local nested structure with prefix inside METHOD", () => {
+    const abap = `
+    CLASS lcl_abapgit_object_ddlx DEFINITION.
+    PUBLIC SECTION.
+      METHODS clear_fields.
+  ENDCLASS.
+  
+  
+  CLASS lcl_abapgit_object_ddlx IMPLEMENTATION.
+  
+    METHOD clear_fields.
+  
+      DATA:
+        BEGIN OF ls_fields_to_clear,
+          BEGIN OF metadata,
+            created_at    TYPE c,
+            created_by    TYPE c,
+            changed_at    TYPE c,
+            changed_by    TYPE c,
+            responsible   TYPE c,
+            BEGIN OF package_ref,
+              name TYPE c,
+            END OF package_ref,
+            BEGIN OF container_ref,
+              package_name TYPE c,
+            END OF container_ref,
+            version       TYPE c,
+            master_system TYPE c,
+          END OF metadata,
+        END OF ls_fields_to_clear.
+  
+      CLEAR ls_fields_to_clear.
+  
+    ENDMETHOD.
+  ENDCLASS.`;
+
+    const config = new LocalVariableNamesConf();
+    config.expectedData = anyUpToThreeLetterPrefix;
+
+    config.patternKind = "required";
+    expect(findIssues(abap, config).length).to.equal(0);
+
+    config.patternKind = "forbidden";
+    expect(findIssues(abap, config).length).to.equal(1);
+  });
+
+  it("local nested structure without prefix inside METHOD", () => {
+    const abap = `
+    CLASS lcl_abapgit_object_ddlx DEFINITION.
+    PUBLIC SECTION.
+      METHODS clear_fields.
+  ENDCLASS.
+  
+  
+  CLASS lcl_abapgit_object_ddlx IMPLEMENTATION.
+  
+    METHOD clear_fields.
+  
+      DATA:
+        BEGIN OF fields_to_clear,
+          BEGIN OF metadata,
+            created_at    TYPE c,
+            created_by    TYPE c,
+            changed_at    TYPE c,
+            changed_by    TYPE c,
+            responsible   TYPE c,
+            BEGIN OF package_ref,
+              name TYPE c,
+            END OF package_ref,
+            BEGIN OF container_ref,
+              package_name TYPE c,
+            END OF container_ref,
+            version       TYPE c,
+            master_system TYPE c,
+          END OF metadata,
+        END OF fields_to_clear.
+  
+      CLEAR ls_fields_to_clear.
+  
+    ENDMETHOD.
+  ENDCLASS.`;
+
+    const config = new LocalVariableNamesConf();
+    config.expectedData = anyUpToThreeLetterPrefix;
+
+    config.patternKind = "required";
+    expect(findIssues(abap, config).length).to.equal(1);
+
+    config.patternKind = "forbidden";
+    expect(findIssues(abap, config).length).to.equal(0);
+  });
+
   it("local variable without prefix inside Function Module", () => {
     const abap = `
 FUNCTION foo.
