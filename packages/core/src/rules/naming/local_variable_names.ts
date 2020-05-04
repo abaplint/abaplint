@@ -34,7 +34,7 @@ export class LocalVariableNames extends ABAPRule {
   private getDescription(expected: string, actual: string): string {
     return this.conf.patternKind === "required" ?
       "Local variable name does not match pattern " + expected + ": " + actual :
-      "Local variable name must not match pattern " + expected + ": " + actual ;
+      "Local variable name must not match pattern " + expected + ": " + actual;
   }
 
   public getConfig() {
@@ -56,7 +56,7 @@ export class LocalVariableNames extends ABAPRule {
       return [];
     }
 
-// inside METHOD, FORM, FUNCTION MODULE
+    // inside METHOD, FORM, FUNCTION MODULE
     for (const node of stru.findAllStructures(Structures.Form)) {
       ret = ret.concat(this.checkLocals(node, file));
     }
@@ -73,8 +73,7 @@ export class LocalVariableNames extends ABAPRule {
   private checkLocals(structure: StructureNode, file: ABAPFile): Issue[] {
     let ret: Issue[] = [];
 
-// data, field symbols
-
+    // data, field symbols
     const data = structure.findAllStatements(Statements.Data);
     for (const dat of data) {
       const parent = structure.findParent(dat);
@@ -88,9 +87,12 @@ export class LocalVariableNames extends ABAPRule {
       }
     }
 
-    const datab = structure.findAllStatements(Statements.DataBegin);
-    for (const dat of datab) {
-      const found = dat.findFirstExpression(Expressions.NamespaceSimpleName);
+    // data structures, data begin of, first level
+    const dataStructures = structure.findAllStructures(Structures.Data);
+    for (const struc of dataStructures) {
+      // ignore nested DATA BEGIN
+      const stat = struc.findFirstStatement(Statements.DataBegin);
+      const found = stat?.findFirstExpression(Expressions.NamespaceSimpleName);
       if (found) {
         const token = found.getFirstToken();
         ret = ret.concat(this.checkName(token, file, this.conf.expectedData));
@@ -118,10 +120,7 @@ export class LocalVariableNames extends ABAPRule {
         ret = ret.concat(this.checkName(token, file, this.conf.expectedConstant));
       }
     }
-
-// todo: inline data, inline field symbols
-// todo: DATA BEGIN OF
-
+    // todo: inline data, inline field symbols
     return ret;
   }
 
