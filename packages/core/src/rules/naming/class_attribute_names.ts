@@ -66,34 +66,6 @@ export class ClassAttributeNames extends ABAPRule {
     return issues;
   }
 
-  //   public run(obj: IObject, _reg: IRegistry): Issue[] {
-  //     let attr: IAttributes | undefined = undefined;
-  //     if (this.conf.patternKind === undefined) {
-  //       this.conf.patternKind = "required";
-  //     }
-  // // todo, consider local classes(PROG, FUGR, CLAS)
-
-  //     if (obj instanceof Class) {
-  //       const definition = obj.getClassDefinition();
-  //       if (definition === undefined) {
-  //         return [];
-  //       }
-  //       if (this.conf.ignoreExceptions && definition.isException()) {
-  //         return [];
-  //       }
-  //       attr = definition.getAttributes();
-  //       if (attr === undefined) {
-  //         return [];
-  //       }
-  // // todo, INTF
-  // //    } else if (obj instanceof Interface) {
-  // //      methods = obj();
-  //     }
-
-
-  //     return this.checkAttributes(attr);
-  //   }
-
   private checkAttributes(attr: IAttributes | undefined): Issue[] {
     if (!attr) {return [];}
     let ret: Issue[] = [];
