@@ -3,7 +3,7 @@ import {IAttributes} from "../../abap/types/_class_attributes";
 import {NamingRuleConfig} from "../_naming_rule_config";
 import {NameValidator} from "../../utils/name_validator";
 import {ABAPRule} from "../_abap_rule";
-import {ABAPFile} from "../..";
+import {ABAPFile} from "../../files";
 import {Identifier} from "../../abap/types/_identifier";
 
 export class ClassAttributeNamesConf extends NamingRuleConfig {
