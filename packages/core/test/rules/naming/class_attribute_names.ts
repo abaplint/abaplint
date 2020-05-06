@@ -95,7 +95,7 @@ CLASS zcl_foobar DEFINITION PUBLIC.
 ENDCLASS.
 CLASS zcl_foobar IMPLEMENTATION. ENDCLASS.`;
     const config = new ClassAttributeNamesConf();
-    config.statics = anyUpToThreeLetterPrefix;
+    config.constants = "^C_.+$";
 
     config.patternKind = "required";
     expect(findIssues(abap, config).length).to.equal(0);
@@ -115,7 +115,7 @@ CLASS zcl_foobar DEFINITION PUBLIC.
 ENDCLASS.
 CLASS zcl_foobar IMPLEMENTATION. ENDCLASS.`;
     const config = new ClassAttributeNamesConf();
-    config.statics = anyUpToThreeLetterPrefix;
+    config.constants = "^C_.+$";
 
     config.patternKind = "required";
     expect(findIssues(abap, config).length).to.equal(1);
@@ -135,7 +135,7 @@ CLASS lcl_foobar DEFINITION.
 ENDCLASS.
 CLASS lcl_foobar IMPLEMENTATION. ENDCLASS.`;
     const config = new ClassAttributeNamesConf();
-    config.statics = anyUpToThreeLetterPrefix;
+    config.constants = "^C_.+$";
 
     config.patternKind = "required";
     expect(findIssues(abap, config).length).to.equal(0);
@@ -156,7 +156,7 @@ ENDCLASS.
 CLASS lcl_foobar IMPLEMENTATION. ENDCLASS.`;
     const config = new ClassAttributeNamesConf();
     config.ignoreLocal = false;
-    config.statics = anyUpToThreeLetterPrefix;
+    config.constants = "^C_.+$";
 
     config.patternKind = "required";
     expect(findIssues(abap, config).length).to.equal(1);
@@ -168,7 +168,29 @@ CLASS lcl_foobar IMPLEMENTATION. ENDCLASS.`;
     expect(findIssues(abap, config).length).to.equal(1);
   });
 
-  it("8: end position", () => {
+  it("8: local class, not ignored, any naming allowed", () => {
+    const abap = `
+CLASS lcl_foobar DEFINITION.
+  PUBLIC SECTION.
+    CONSTANTS foo TYPE i VALUE 1.
+ENDCLASS.
+CLASS lcl_foobar IMPLEMENTATION. ENDCLASS.`;
+    const config = new ClassAttributeNamesConf();
+    config.ignoreLocal = false;
+    config.constants = "";
+
+    config.patternKind = "required";
+    expect(findIssues(abap, config).length).to.equal(0);
+
+    // always an error
+    config.patternKind = "forbidden";
+    expect(findIssues(abap, config).length).to.equal(1);
+
+    config.patternKind = undefined;
+    expect(findIssues(abap, config).length).to.equal(0);
+  });
+
+  it("9: end position", () => {
     const abap = `
               CLASS zcl_foobar DEFINITION PUBLIC.
                 PUBLIC SECTION.

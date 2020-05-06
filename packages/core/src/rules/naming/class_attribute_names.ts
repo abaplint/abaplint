@@ -16,7 +16,7 @@ export class ClassAttributeNamesConf extends NamingRuleConfig {
   /** The pattern for instance variable names */
   public instance: string = "^M._.+$";
   /** The pattern for constant variable names */
-  public constants: string = "^C_.+$";
+  public constants: string = "";
 }
 
 export class ClassAttributeNames extends ABAPRule {
