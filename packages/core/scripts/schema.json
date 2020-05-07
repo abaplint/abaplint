@@ -331,6 +331,10 @@
     "ClassAttributeNamesConf": {
       "additionalProperties": false,
       "properties": {
+        "constants": {
+          "description": "The pattern for constant variable names",
+          "type": "string"
+        },
         "exclude": {
           "description": "List of file regex patterns to exclude",
           "items": {
@@ -340,6 +344,10 @@
         },
         "ignoreExceptions": {
           "description": "Ignore global exception classes",
+          "type": "boolean"
+        },
+        "ignoreLocal": {
+          "description": "Ignore local classes",
           "type": "boolean"
         },
         "ignoreNames": {
@@ -375,8 +383,10 @@
       },
       "required": [
         "ignoreExceptions",
+        "ignoreLocal",
         "statics",
-        "instance"
+        "instance",
+        "constants"
       ],
       "type": "object"
     },
