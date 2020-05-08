@@ -7,7 +7,6 @@ import {IClassImplementation} from "../abap/types/_class_implementation";
 import {IObject} from "./_iobject";
 import {Version} from "../version";
 
-const tag = Symbol("ABAPObject");
 export interface ITextElement {
   key: string;
   text: string;
@@ -15,17 +14,14 @@ export interface ITextElement {
 
 export abstract class ABAPObject extends AbstractObject {
   private parsed: readonly ABAPFile[];
-  private [tag] = true;
 
   public constructor(name: string) {
     super(name);
     this.parsed = [];
   }
 
-  public static is(x:any):x is ABAPObject // silly overload to remove unused warning
-  // eslint-disable-next-line no-dupe-class-members
-  public static is(x:ABAPObject):x is ABAPObject{
-    return !!x?.[tag];
+  public static is(x:any):x is ABAPObject{
+    return !!x && x instanceof ABAPObject;
   }
 
   public parse(version: Version, globalMacros: readonly string[] | undefined): IObject {
