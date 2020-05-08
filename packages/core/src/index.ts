@@ -32,7 +32,7 @@ import {IRegistry} from "./_iregistry";
 import {IFile} from "./files/_ifile";
 import {Position} from "./position";
 import {AbstractFile} from "./files/_abstract_file";
-import { PrettyPrinter } from "./pretty_printer/pretty_printer";
+import {PrettyPrinter} from "./pretty_printer/pretty_printer";
 
 // do not include this file from anywhere within abaplint
 
@@ -44,4 +44,4 @@ export {MemoryFile, Issue, Config, Version,
   AbstractType, TypedIdentifier, BasicTypes, ScopeType, INode, Token,
   IDependency, AbstractFile, SpaghettiScopeNode,
   Tokens, ABAPObject, SyntaxLogic, SpaghettiScope, IdentifierMeta,
-  ABAPFile, CurrentScope, IRegistry, Position,PrettyPrinter};
+  ABAPFile, CurrentScope, IRegistry, Position, PrettyPrinter};
