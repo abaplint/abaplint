@@ -33,7 +33,7 @@ endclass.`);
     expect(new Diagnostics(registry).find({uri: file.getFilename()}).length).to.equal(0);
   });
 
-  it.only("Unknown object type, multi files", () => {
+  it("Unknown object type, multi files", () => {
     const file1 = new MemoryFile("LICENSE", "moo");
     const file2 = new MemoryFile("src/zprog.prog.abap", "REPORT zprog.");
     const registry = new Registry().addFile(file1).addFile(file2);

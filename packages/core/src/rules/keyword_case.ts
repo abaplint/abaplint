@@ -57,7 +57,7 @@ export class KeywordCase extends ABAPRule {
       this.conf = new KeywordCaseConf();
     }
     if (this.conf.style === undefined) {
-      this.conf.style = new KeywordCaseConf().style;
+      this.conf = new KeywordCaseConf();
     }
     if (this.conf.ignoreExceptions === undefined) {
       this.conf.ignoreExceptions = new KeywordCaseConf().ignoreExceptions;
