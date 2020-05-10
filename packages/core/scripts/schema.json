@@ -1143,7 +1143,7 @@
                   "type": "boolean"
                 }
               ],
-              "description": "Detects usages of EXIT or CHECK statements outside of loops.\nhttps://rules.abaplint.org/exit_or_check"
+              "description": "Detects usages of EXIT or CHECK statements outside of loops.\nUse RETURN to leave procesing blocks instead.\nhttps://rules.abaplint.org/exit_or_check"
             },
             "exporting": {
               "anyOf": [
