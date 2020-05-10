@@ -19,7 +19,7 @@ describe("LSP, diagnostics", () => {
 
   it("trigger skip logic, generated gateway class", () => {
     const file = new MemoryFile("zcl_fiori_moni_mpc.clas.abap", `
-class ZCL_FIORI_MONI_MPC definition public inheriting from /IWBEP/CL_MGW_PUSH_ABS_MODELA create public.
+class ZCL_FIORI_MONI_MPC definition public inheriting from /IWBEP/CL_MGW_PUSH_ABS_MODEL create public.
   PUBLIC SECTION.
     METHODS moo.
 ENDCLASS.
@@ -39,6 +39,17 @@ endclass.`);
     const registry = new Registry().addFile(file1).addFile(file2);
 
     expect(new Diagnostics(registry).find({uri: file2.getFilename()}).length).to.equal(0);
+  });
+
+  it("two files, same object", () => {
+    const file1 = new MemoryFile("zcl_foobar.clas.testclasses.abap", "something_testclass");
+    const file2 = new MemoryFile("zcl_foobar.clas.abap", "boo");
+    const registry = new Registry().addFile(file1).addFile(file2);
+
+    const issues = new Diagnostics(registry).find({uri: file2.getFilename()});
+    for (const i of issues) {
+      expect(i.message).to.not.contain("something_testclass");
+    }
   });
 
 });

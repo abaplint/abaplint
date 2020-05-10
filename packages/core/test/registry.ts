@@ -141,7 +141,7 @@ describe("Registry, object types", () => {
     const file1 = new MemoryFile("LICENSE", "moo");
     const registry = new Registry().addFile(file1).addFile(file2);
     const issues = registry.findIssues();
-    console.dir(issues);
+
     expect(issues.length).to.equal(1);
     expect(issues[0].getKey()).to.equal("registry_add");
     expect(issues[0].getFilename()).to.equal("LICENSE");
