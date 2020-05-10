@@ -33,6 +33,7 @@ export class Class extends ABAPObject {
     if (definitions.length === 0) {
       return undefined;
     }
+// todo, this should get the global class definition with name = this.getName(); ?
     return definitions[0];
   }
 

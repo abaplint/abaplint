@@ -41,7 +41,7 @@ CLASS lcl_foobar IMPLEMENTATION.
   METHOD moo.
   ENDMETHOD.
 ENDCLASS.`, cnt: 0},
-
 ];
 
 testRule(tests, UnknownTypes);
+
