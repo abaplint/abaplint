@@ -267,7 +267,6 @@ describe("Pretty printer with globalClassSkipFirst", () => {
 });
 
 describe("Config is undefined", () => {
-
   it("run without config", () => {
     const files = parse("report zbar.");
     expect(files.length).to.equal(1);
@@ -278,5 +277,17 @@ describe("Config is undefined", () => {
     const result = prettyPrinter.run();
     expect(result).to.equal("REPORT zbar.");
   });
+});
 
+describe("Config is default/true", () => {
+  it("run with rules set to true", () => {
+    const files = parse("report zbar.");
+    expect(files.length).to.equal(1);
+    const config = Config.getDefault() as any;
+    config.config.rules.keyword_case = true;
+    config.config.rules.sequential_blank = true;
+    const prettyPrinter = new PrettyPrinter(files[0], config);
+    const result = prettyPrinter.run();
+    expect(result).to.equal("REPORT zbar.");
+  });
 });

@@ -136,6 +136,17 @@ describe("Registry, object types", () => {
     expect(issues[0].getKey()).to.equal("registry_add");
   });
 
+  it("Unknown object type, multi files", () => {
+    const file2 = new MemoryFile("src/zprog.prog.abap", "REPORT zprog.");
+    const file1 = new MemoryFile("LICENSE", "moo");
+    const registry = new Registry().addFile(file1).addFile(file2);
+    const issues = registry.findIssues();
+    console.dir(issues);
+    expect(issues.length).to.equal(1);
+    expect(issues[0].getKey()).to.equal("registry_add");
+    expect(issues[0].getFilename()).to.equal("LICENSE");
+  });
+
   it("Object type = PROG", () => {
     const file = new MemoryFile("zfoobar.prog.abap", "BREAK-POINT.");
     const registry = new Registry().addFile(file);
