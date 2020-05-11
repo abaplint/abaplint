@@ -28,8 +28,11 @@ export class ClassDefinition extends Identifier implements IClassDefinition {
     this.node = node;
 
     // todo, handle the sequence of types and attributes
-    this.methodDefs = new MethodDefinitions(this.node, this.filename, scope);
     this.types = new TypeDefinitions(this.node, this.filename, scope);
+    for (const t of this.types.getAll()) { // todo, this is workaround, must respect visibility and sequence properly
+      scope.addType(t);
+    }
+    this.methodDefs = new MethodDefinitions(this.node, this.filename, scope);
     this.attributes = new Attributes(this.node, this.filename, scope);
   }
 

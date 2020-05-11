@@ -4,6 +4,7 @@ import {Registry} from "../../../src/registry";
 import {Class} from "../../../src/objects";
 import {Visibility} from "../../../src/abap/types/visibility";
 import {getABAPObjects} from "../../get_abap";
+import {UnknownType} from "../../../src/abap/types/basic";
 
 describe("Types, class_definition", () => {
 
@@ -112,6 +113,40 @@ describe("Types, class_definition", () => {
     const pub = clas.getClassDefinition()!.getMethodDefinitions()!.getPublic();
     expect(pub.length).to.equal(1);
     expect(pub[0].isStatic()).to.equal(true);
+  });
+
+  it("method, local defined type", () => {
+    const abap = `
+CLASS zcl_moo DEFINITION.
+  PUBLIC SECTION.
+    TYPES: BEGIN OF ty_header,
+             field TYPE string,
+             value TYPE string,
+           END OF ty_header.
+
+    TYPES ty_headers TYPE STANDARD TABLE OF ty_header WITH DEFAULT KEY.
+
+    TYPES: BEGIN OF ty_http,
+             headers TYPE ty_headers,
+             body    TYPE string,
+           END OF ty_http.
+
+    METHODS: moo
+      IMPORTING foo TYPE ty_http.
+ENDCLASS.
+CLASS zcl_moo IMPLEMENTATION.
+  METHOD moo.
+  ENDMETHOD.
+ENDCLASS.`;
+    const reg = new Registry().addFile(new MemoryFile("zcl_moo.clas.abap", abap)).parse();
+    const clas = getABAPObjects(reg)[0] as Class;
+    expect(clas.getClassDefinition()).to.not.equal(undefined);
+    expect(clas.getClassDefinition()!.getMethodDefinitions()).to.not.equal(undefined);
+    const pub = clas.getClassDefinition()!.getMethodDefinitions()!.getPublic();
+    expect(pub.length).to.equal(1);
+    const importing = pub[0].getParameters().getImporting();
+    expect(importing.length).to.equal(1);
+    expect(importing[0].getType()).to.not.be.instanceof(UnknownType);
   });
 
 });

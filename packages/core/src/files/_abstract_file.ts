@@ -11,15 +11,19 @@ export abstract class AbstractFile implements IFile {
     return this.filename;
   }
 
+  private baseName(): string {
+    const base1 = this.getFilename().split("\\").reverse()[0];
+    const base2 = base1.split("/").reverse()[0];
+    return base2;
+  }
+
   public getObjectType(): string | undefined {
-    const base = this.getFilename().split("/").reverse()[0];
-    const split = base.split(".");
+    const split = this.baseName().split(".");
     return split[1]?.toUpperCase();
   }
 
   public getObjectName(): string {
-    const base = this.getFilename().split("/").reverse()[0];
-    const split = base.split(".");
+    const split = this.baseName().split(".");
 // handle url escaped namespace
     split[0] = split[0].replace(/^%23(\w+)%23(.+)$/g, "/$1/$2");
 // handle namespace

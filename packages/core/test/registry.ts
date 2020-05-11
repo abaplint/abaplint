@@ -2,6 +2,7 @@ import {Registry} from "../src/registry";
 import {MemoryFile} from "../src/files";
 import {expect} from "chai";
 import {getABAPObjects} from "./get_abap";
+import {ABAPObject} from "../src/objects/_abap_object";
 
 describe("Registry", () => {
 
@@ -124,6 +125,16 @@ describe("Registry", () => {
     expect(registry.findIssues().length).to.equal(expected);
   });
 
+  it("full windows path, main file", () => {
+    const file = new MemoryFile("C:\\Users\\foobar\\git\\transpiler\\packages\\abap-loader\\build\\test\\zprogram.prog.abap", "BREAK-POINT.");
+    const registry = new Registry().addFile(file).parse();
+    const objects = registry.getObjects();
+    expect(objects.length).to.equal(1);
+    const abap = objects[0] as ABAPObject;
+    expect(abap.getName()).to.equal("ZPROGRAM");
+    expect(abap.getMainABAPFile()).to.not.equal(undefined);
+  });
+
 });
 
 describe("Registry, object types", () => {
@@ -141,7 +152,7 @@ describe("Registry, object types", () => {
     const file1 = new MemoryFile("LICENSE", "moo");
     const registry = new Registry().addFile(file1).addFile(file2);
     const issues = registry.findIssues();
-    console.dir(issues);
+
     expect(issues.length).to.equal(1);
     expect(issues[0].getKey()).to.equal("registry_add");
     expect(issues[0].getFilename()).to.equal("LICENSE");
