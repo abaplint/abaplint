@@ -20,6 +20,10 @@ export abstract class ABAPObject extends AbstractObject {
     this.parsed = [];
   }
 
+  public static is(x:any):x is ABAPObject{
+    return !!x && x instanceof ABAPObject;
+  }
+
   public parse(version: Version, globalMacros: readonly string[] | undefined): IObject {
     if (this.isDirty() === false) {
       return this;
