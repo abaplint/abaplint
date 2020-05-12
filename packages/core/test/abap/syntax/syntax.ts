@@ -31,8 +31,9 @@ function runMulti(objects: {filename: string, contents: string}[]): Issue[] {
   const reg = new Registry();
   for (const obj of objects) {
     const file = new MemoryFile(obj.filename, obj.contents);
-    reg.addFile(file).parse();
+    reg.addFile(file);
   }
+  reg.parse();
   return run(reg);
 }
 

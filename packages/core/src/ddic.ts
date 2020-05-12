@@ -13,29 +13,32 @@ export class DDIC {
     this.reg = reg;
   }
 
-  public lookup(name: string): AbstractType | undefined {
+  public lookup(name: string): AbstractType {
     const dtel = this.lookupDataElement(name);
-    if (dtel) {
+    if (!(dtel instanceof Types.VoidType) && !(dtel instanceof Types.UnknownType)) {
       return dtel;
     }
     const tabl = this.lookupTable(name);
-    if (tabl) {
+    if (!(tabl instanceof Types.VoidType) && !(tabl instanceof Types.UnknownType)) {
       return tabl;
     }
     const ttyp = this.lookupTableType(name);
-    if (ttyp) {
+    if (!(ttyp instanceof Types.VoidType) && !(ttyp instanceof Types.UnknownType)) {
       return ttyp;
     }
 
-    return undefined;
+    if (this.reg.inErrorNamespace(name)) {
+      return new Types.UnknownType(name + " not found");
+    } else {
+      return new Types.VoidType();
+    }
   }
 
   public lookupDomain(name: string): AbstractType {
     const found = this.reg.getObjectByType(Domain, name);
     if (found) {
       return found.parseType(this.reg);
-    }
-    if (this.reg.inErrorNamespace(name)) {
+    } else if (this.reg.inErrorNamespace(name)) {
       return new Types.UnknownType(name + " not found");
     } else {
       return new Types.VoidType();
@@ -46,8 +49,7 @@ export class DDIC {
     const found = this.reg.getObjectByType(DataElement, name);
     if (found) {
       return found.parseType(this.reg);
-    }
-    if (this.reg.inErrorNamespace(name)) {
+    } else if (this.reg.inErrorNamespace(name)) {
       return new Types.UnknownType(name + " not found");
     } else {
       return new Types.VoidType();
@@ -58,8 +60,7 @@ export class DDIC {
     const found = this.reg.getObjectByType(Table, name);
     if (found) {
       return found.parseType(this.reg);
-    }
-    if (this.reg.inErrorNamespace(name)) {
+    } else if (this.reg.inErrorNamespace(name)) {
       return new Types.UnknownType(name + " not found");
     } else {
       return new Types.VoidType();
@@ -70,8 +71,7 @@ export class DDIC {
     const found = this.reg.getObjectByType(TableType, name);
     if (found) {
       return found.parseType(this.reg);
-    }
-    if (this.reg.inErrorNamespace(name)) {
+    } else if (this.reg.inErrorNamespace(name)) {
       return new Types.UnknownType(name + " not found");
     } else {
       return new Types.VoidType();

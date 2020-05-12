@@ -4,6 +4,16 @@ import {MemoryFile} from "../../src/files/memory_file";
 import {IRule} from "../../src/rules/_irule";
 import {IRegistry} from "../../src/_iregistry";
 import {IEdit} from "../../src/edit";
+import {Issue} from "../../src/issue";
+
+export function runMulti(files: {filename: string, contents: string}[]): readonly Issue[] {
+  const reg = new Registry();
+  for (const obj of files) {
+    const file = new MemoryFile(obj.filename, obj.contents);
+    reg.addFile(file);
+  }
+  return reg.parse().findIssues();
+}
 
 export function testRule(tests: {abap: string, cnt: number}[], rule: new () => IRule, config?: any, testTitle?: string) {
   const nrule = new rule();
