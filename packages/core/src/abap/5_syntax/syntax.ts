@@ -23,7 +23,7 @@ import {Static} from "./statements/static";
 import {Data as DataStatement} from "./statements/data";
 import {Data as DataStructure} from "./structures/data";
 import {Parameter} from "./statements/parameter";
-import {FieldSymbol} from "./statements/fieldsymbo";
+import {FieldSymbol} from "./statements/fieldsymbol";
 import {Tables} from "./statements/tables";
 import {SelectOption} from "./statements/selectoption";
 import {TypeEnum} from "./structures/type_enum";

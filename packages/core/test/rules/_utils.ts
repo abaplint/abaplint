@@ -25,9 +25,9 @@ export function testRule(tests: {abap: string, cnt: number}[], rule: new () => I
     // note that timeout() only works inside function()
     this.timeout(200);
     tests.forEach((test) => {
-      const reg = new Registry().addFile(new MemoryFile("zfoo.prog.abap", test.abap)).parse();
-      const issues = nrule.run(reg.getObjects()[0], reg);
       it("\"" + test.abap + "\" should have " + test.cnt + " issue(s)", () => {
+        const reg = new Registry().addFile(new MemoryFile("zfoo.prog.abap", test.abap)).parse();
+        const issues = nrule.run(reg.getObjects()[0], reg);
         expect(issues.length).to.equals(test.cnt);
       });
     });

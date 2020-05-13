@@ -416,4 +416,10 @@ DATA: lv_i TYPE i,
     expect(identifier?.getType()).to.be.instanceof(Basic.UnknownType);
   });
 
+  it("basic field symbol", () => {
+    const abap = `FIELD-SYMBOLS <foo> TYPE i.`;
+    const identifier = resolveVariable(abap, "<foo>");
+    expect(identifier?.getType()).to.be.instanceof(Basic.IntegerType);
+  });
+
 });
