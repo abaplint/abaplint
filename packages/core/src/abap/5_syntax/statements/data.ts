@@ -3,12 +3,18 @@ import {StatementNode} from "../../nodes";
 import {CurrentScope} from "../_current_scope";
 import {TypedIdentifier} from "../../types/_typed_identifier";
 import {DataDefinition} from "../expressions/data_definition";
+import {UnknownType} from "../../types/basic/unknown_type";
 
 export class Data {
   public runSyntax(node: StatementNode, scope: CurrentScope, filename: string): TypedIdentifier | undefined {
     const dd = node.findFirstExpression(Expressions.DataDefinition);
     if (dd) {
       return new DataDefinition().runSyntax(dd, scope, filename);
+    }
+
+    const name = node.findFirstExpression(Expressions.NamespaceSimpleName);
+    if (name) {
+      return new TypedIdentifier(name.getFirstToken(), filename, new UnknownType("data, fallback"));
     }
 
     return undefined;
