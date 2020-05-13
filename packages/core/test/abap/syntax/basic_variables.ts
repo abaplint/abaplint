@@ -37,6 +37,11 @@ function expectString(identifier: TypedIdentifier | undefined) {
   expect(identifier!.getType()).to.be.instanceof(Basic.StringType);
 }
 
+function expectVoid(identifier: TypedIdentifier | undefined) {
+  expect(identifier).to.not.equals(undefined);
+  expect(identifier!.getType()).to.be.instanceof(Basic.VoidType);
+}
+
 function expectTable(identifier: TypedIdentifier | undefined) {
   expect(identifier).to.not.equals(undefined);
   expect(identifier!.getType()).to.be.instanceof(Basic.TableType);
@@ -365,6 +370,20 @@ describe("Syntax - Basic Types", () => {
     const components = expectStructure(identifier);
     expect(components.length).to.equal(1);
     expect(components[0].name).to.equal("bar");
+  });
+
+  it("Basic void", () => {
+    const abap = "DATA foo TYPE void_type.";
+    const identifier = resolveVariable(abap, "foo");
+    expectVoid(identifier);
+  });
+
+  it.skip("Basic void, LIKE LINE OF", () => {
+    const abap = `
+DATA: lt_keys TYPE void_something,
+      ls_key  LIKE LINE OF lt_keys.`;
+    const identifier = resolveVariable(abap, "ls_key");
+    expectVoid(identifier);
   });
 
 });
