@@ -166,11 +166,11 @@ export class Attributes implements IAttributes {
     } else if (s instanceof Statements.ClassData) {
       found = new ClassDataStatement().runSyntax(node, scope, this.filename);
     } else {
-      throw new Error("ClassAttribute, unexpected node, 1");
+      throw new Error("ClassAttribute, unexpected node, 1, " + this.filename);
     }
 
     if (found === undefined) {
-      throw new Error("ClassAttribute, unexpected node");
+      throw new Error("ClassAttribute, unexpected node, " + this.filename);
     }
 
     return new ClassAttribute(found, visibility);

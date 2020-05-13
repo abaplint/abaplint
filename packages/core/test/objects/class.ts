@@ -230,6 +230,22 @@ describe("Objects, class, getAttributes", () => {
     expect(attr.getInstance().length).to.equal(0);
   });
 
+  it("test, no exceptions", () => {
+    const abap = `CLASS zcl_foobar DEFINITION PUBLIC CREATE PUBLIC.
+      PUBLIC SECTION.
+      PROTECTED SECTION.
+      PRIVATE SECTION.
+        CLASS-DATA:
+        gt_registered_authenticators TYPE HASHED TABLE OF REF TO zif_abapgit_2fa_authenticator
+                                          WITH UNIQUE KEY table_line.
+    ENDCLASS.
+    CLASS zcl_foobar IMPLEMENTATION.
+    ENDCLASS.`;
+
+    new Registry().addFile(new MemoryFile("zcl_foobar.clas.abap", abap)).parse();
+    // just check no exceptions
+  });
+
   it("test, constant", () => {
     const abap = "CLASS zcl_foobar DEFINITION PUBLIC CREATE PUBLIC.\n" +
     "  PUBLIC SECTION.\n" +

@@ -4,6 +4,7 @@ import {CurrentScope} from "../_current_scope";
 import {TypedIdentifier} from "../../types/_typed_identifier";
 import {BasicTypes} from "../basic_types";
 import * as Expressions from "../../2_statements/expressions";
+import {UnknownType} from "../../types/basic";
 
 export class TypeTable {
   public runSyntax(node: ExpressionNode | StatementNode, scope: CurrentScope, filename: string): TypedIdentifier | undefined {
@@ -21,7 +22,7 @@ export class TypeTable {
 
     const row = new BasicTypes(filename, scope).resolveTypeName(node, node.findFirstExpression(Expressions.TypeName));
     if (row === undefined) {
-      return undefined;
+      return new TypedIdentifier(name, filename, new UnknownType("TableType, fallback"));
     }
 
     return new TypedIdentifier(name, filename, new Types.TableType(row));
