@@ -378,12 +378,42 @@ describe("Syntax - Basic Types", () => {
     expectVoid(identifier);
   });
 
-  it.skip("Basic void, LIKE LINE OF", () => {
+  it("Basic void, LIKE LINE OF", () => {
     const abap = `
 DATA: lt_keys TYPE void_something,
       ls_key  LIKE LINE OF lt_keys.`;
     const identifier = resolveVariable(abap, "ls_key");
     expectVoid(identifier);
+  });
+
+  it("LIKE LINE OF, error", () => {
+    const abap = `
+DATA: lt_keys TYPE i,
+      ls_key  LIKE LINE OF lt_keys.`;  // "i" not a table type
+    const identifier = resolveVariable(abap, "ls_key");
+    expect(identifier?.getType()).to.be.instanceof(Basic.UnknownType);
+  });
+
+  it("LIKE LINE OF, i", () => {
+    const abap = `
+DATA: lt_keys TYPE STANDARD TABLE OF i,
+      ls_key  LIKE LINE OF lt_keys.`;
+    const identifier = resolveVariable(abap, "ls_key");
+    expect(identifier?.getType()).to.be.instanceof(Basic.IntegerType);
+  });
+
+  it("LIKE, i", () => {
+    const abap = `
+DATA: lv_i TYPE i,
+      lv_foo LIKE lv_i.`;
+    const identifier = resolveVariable(abap, "lv_foo");
+    expect(identifier?.getType()).to.be.instanceof(Basic.IntegerType);
+  });
+
+  it("LIKE, error", () => {
+    const abap = `DATA: lv_foo LIKE lv_sdfsdsdfsdf.`;
+    const identifier = resolveVariable(abap, "lv_foo");
+    expect(identifier?.getType()).to.be.instanceof(Basic.UnknownType);
   });
 
 });

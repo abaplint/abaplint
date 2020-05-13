@@ -75,7 +75,7 @@ export class BasicTypes {
     return undefined;
   }
 
-  public simpleType(node: StatementNode): TypedIdentifier | undefined {
+  public simpleType(node: StatementNode | ExpressionNode): TypedIdentifier | undefined {
     const nameExpr = node.findFirstExpression(Expressions.NamespaceSimpleName);
     if (nameExpr === undefined) {
       return undefined;
@@ -99,13 +99,28 @@ export class BasicTypes {
 
     let found: AbstractType | undefined = undefined;
     if (text.startsWith("LIKE LINE OF")) {
-      return undefined;
+      const name = node.findFirstExpression(Expressions.FieldChain)?.concatTokens();
+      const type = this.scope.findVariable(name)?.getType();
+      if (type === undefined) {
+        return new Types.UnknownType("Type error, could not resolve " + name);
+      } else if (type instanceof Types.TableType) {
+        return type.getRowType();
+      } else if (type instanceof Types.VoidType) {
+        return new Types.VoidType();
+      } else {
+        return new Types.UnknownType("Type error, not a table type " + name);
+      }
     } else if (text.startsWith("LIKE REF TO")) {
-      return undefined;
+      return undefined; // todo
     } else if (text.startsWith("LIKE")) {
-      return undefined;
+      const name = node.findFirstExpression(Expressions.FieldChain)?.concatTokens();
+      const type = this.scope.findVariable(name)?.getType();
+      if (type === undefined) {
+        return new Types.UnknownType("Type error, could not resolve " + name);
+      }
+      return type;
     } else if (text.startsWith("TYPE LINE OF")) {
-      return undefined;
+      return undefined; // todo
     } else if (text.startsWith("TYPE REF TO")) {
       found = this.resolveTypeRef(typename);
     } else if (text.startsWith("TYPE")) {

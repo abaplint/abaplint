@@ -171,7 +171,10 @@ export class CurrentScope {
     return this.current?.findType(name);
   }
 
-  public findVariable(name: string): TypedIdentifier | undefined {
+  public findVariable(name: string | undefined): TypedIdentifier | undefined {
+    if (name === undefined) {
+      return undefined;
+    }
     return this.current?.findVariable(name);
   }
 
