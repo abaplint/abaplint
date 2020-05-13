@@ -44,7 +44,7 @@
         "@types/glob": "^7.1.1",
         "@types/minimist": "^1.2.0",
         "@types/mocha": "^7.0.2",
-        "@types/node": "^13.13.5",
+        "@types/node": "^14.0.1",
         "@types/progress": "^2.0.3",
         "chai": "^4.2.0",
         "eslint": "^7.0.0",
@@ -52,7 +52,7 @@
         "minimist": "^1.2.5",
         "mocha": "^7.1.2",
         "progress": "^2.0.3",
-        "typescript": "^3.8.3",
+        "typescript": "^3.9.2",
         "webpack": "^4.43.0",
         "webpack-cli": "^3.3.11",
         "xml-js": "^1.6.11"
