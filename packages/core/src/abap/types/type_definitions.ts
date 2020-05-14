@@ -22,6 +22,15 @@ export class TypeDefinitions implements ITypeDefinitions {
     return this.list;
   }
 
+  public getByName(name: string): TypedIdentifier | undefined {
+    for (const t of this.getAll()) {
+      if (t.getName().toUpperCase() === name.toUpperCase()) {
+        return t;
+      }
+    }
+    return undefined;
+  }
+
 /////////////////
 
   private parse(node: StructureNode, scope: CurrentScope) {

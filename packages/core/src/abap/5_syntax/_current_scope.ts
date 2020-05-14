@@ -10,6 +10,7 @@ import {IRegistry} from "../../_iregistry";
 import {IClassDefinition} from "../types/_class_definition";
 import {IInterfaceDefinition} from "../types/_interface_definition";
 import {IFormDefinition} from "../types/_form_definition";
+import {Class, Interface} from "../../objects";
 
 export class CurrentScope {
   protected readonly reg: IRegistry | undefined;
@@ -132,25 +133,25 @@ export class CurrentScope {
 
 ///////////////////////////
 
-  public findObjectReference(name: string): boolean {
+  public findObjectReference(name: string): IClassDefinition | IInterfaceDefinition | undefined {
     const clocal = this.findClassDefinition(name);
     if (clocal) {
-      return true;
+      return clocal;
     }
     const ilocal = this.findInterfaceDefinition(name);
     if (ilocal) {
-      return true;
+      return ilocal;
     }
     const cglobal = this.reg?.getObject("CLAS", name);
     if (cglobal) {
-      return true;
+      return (cglobal as Class).getClassDefinition();
     }
     const iglobal = this.reg?.getObject("INTF", name);
     if (iglobal) {
-      return true;
+      return (iglobal as Interface).getDefinition();
     }
 
-    return false;
+    return undefined;
   }
 
 ///////////////////////////

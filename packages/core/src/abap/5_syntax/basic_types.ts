@@ -22,6 +22,16 @@ export class BasicTypes {
     }
 
     const chainText = expr.concatTokens().toUpperCase();
+
+    if (chainText.includes("=>")) {
+      const split = chainText.split("=>");
+      const ref = this.scope.findObjectReference(split[0]);
+      if (ref) {
+        return ref.getTypeDefinitions().getByName(split[1])?.getType();
+      }
+      return undefined;
+    }
+
     if (chainText === "STRING") {
       return new Types.StringType();
     } else if (chainText === "XSTRING") {

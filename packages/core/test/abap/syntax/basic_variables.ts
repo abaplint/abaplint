@@ -435,4 +435,23 @@ ENDFORM.`;
     expect(identifier?.getType()).to.be.instanceof(Basic.IntegerType);
   });
 
+  it("reference type defined in local class", () => {
+    const abap = `CLASS lcl_foo DEFINITION.
+  PUBLIC SECTION.
+    TYPES: ty_foo TYPE i.
+ENDCLASS.
+DATA foobar TYPE lcl_foo=>ty_foo.`;
+    const identifier = resolveVariable(abap, "foobar");
+    expect(identifier?.getType()).to.be.instanceof(Basic.IntegerType);
+  });
+
+  it.skip("reference type defined in local interface", () => {
+    const abap = `INTERFACE lif_foo.
+  TYPES: ty_foo TYPE i.
+ENDINTERFACE.
+DATA foobar TYPE lif_foo=>ty_foo.`;
+    const identifier = resolveVariable(abap, "foobar");
+    expect(identifier?.getType()).to.be.instanceof(Basic.IntegerType);
+  });
+
 });

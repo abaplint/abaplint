@@ -34,7 +34,7 @@ export class Config implements IConfiguration {
       }],
       syntax: {
         version,
-        errorNamespace: "^(Z|Y)",
+        errorNamespace: "^(Z|Y|LCL\_|TY\_|LIF\_)",
         globalConstants: [],
         globalMacros: [],
       },
