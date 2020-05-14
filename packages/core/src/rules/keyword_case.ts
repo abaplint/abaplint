@@ -11,7 +11,6 @@ import {BasicRuleConfig} from "./_basic_rule_config";
 import * as Statements from "../abap/2_statements/statements";
 import * as Expressions from "../abap/2_statements/expressions";
 import {Token} from "../abap/1_lexer/tokens/_token";
-import {TextElement} from "../abap/2_statements/expressions";
 
 export enum KeywordCaseStyle {
   Upper = "upper",
@@ -26,6 +25,9 @@ export class KeywordCaseConf extends BasicRuleConfig {
   public ignoreGlobalClassDefinition: boolean = false;
   public ignoreGlobalInterface: boolean = false;
   public ignoreFunctionModuleName: boolean = false;
+
+  /** A list of keywords to be ignored */
+  public ignoreKeywords: string[] = [];
 }
 
 export class KeywordCase extends ABAPRule {
@@ -158,10 +160,6 @@ export class KeywordCase extends ABAPRule {
           return {token: child.get(), keyword: true};
         }
       } else if (child instanceof ExpressionNode) {
-        // special case: formatting of 'TEXT' in TextElement is not unified throughout releases, ignore
-        if (parent instanceof Statements.SelectionScreen && child.get() instanceof TextElement) {
-          continue;
-        }
         const tok = this.traverse(child, parent);
         if (tok.token !== undefined) {
           return tok;
@@ -175,6 +173,9 @@ export class KeywordCase extends ABAPRule {
   }
 
   public violatesRule(keyword: string): boolean {
+    if (this.conf.ignoreKeywords && this.conf.ignoreKeywords.map(k => {return k.toUpperCase();}).includes(keyword.toUpperCase())){
+      return false;
+    }
     if (this.conf.style === KeywordCaseStyle.Lower) {
       return keyword !== keyword.toLowerCase();
     } else if (this.conf.style === KeywordCaseStyle.Upper) {

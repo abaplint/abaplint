@@ -2074,6 +2074,13 @@
         "ignoreGlobalInterface": {
           "type": "boolean"
         },
+        "ignoreKeywords": {
+          "description": "A list of keywords to be ignored",
+          "items": {
+            "type": "string"
+          },
+          "type": "array"
+        },
         "ignoreLowerClassImplmentationStatement": {
           "type": "boolean"
         },
@@ -2091,7 +2098,8 @@
         "ignoreLowerClassImplmentationStatement",
         "ignoreGlobalClassDefinition",
         "ignoreGlobalInterface",
-        "ignoreFunctionModuleName"
+        "ignoreFunctionModuleName",
+        "ignoreKeywords"
       ],
       "type": "object"
     },

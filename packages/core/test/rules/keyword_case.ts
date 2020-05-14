@@ -25,7 +25,6 @@ const tests = [
   {abap: "SELECT devclass FROM tdevc INTO TABLE lt_list WHERE parentcl = mv_package ORDER BY PRIMARY KEY.", cnt: 0},
   {abap: "SELECT DISTINCT sprsl AS langu INTO TABLE lt_i18n_langs FROM t100t.", cnt: 0},
   {abap: "SELECTION-SCREEN BEGIN OF BLOCK b1 WITH FRAME TITLE TEXT-001.", cnt: 0},
-  {abap: "SELECTION-SCREEN BEGIN OF BLOCK b1 WITH FRAME TITLE text-001.", cnt: 0}, //special case: "text", both allowed
   {abap: "FUNCTION ZFOOBAR.\n", cnt: 1},
   {abap: "SELECT foo UP TO @bar ROWS INTO CORRESPONDING FIELDS OF TABLE @boo FROM loo.", cnt: 0},
   {abap: "SORT rt_list BY repo-name AS TEXT ASCENDING.", cnt: 0},
@@ -98,3 +97,23 @@ const tests4 = [
 
 testRule(tests4, KeywordCase, config4);
 
+// Test ignoreKeywords
+const config5 = new KeywordCaseConf();
+config5.ignoreKeywords = ["TEXT", "WRITE"];
+config5.style = KeywordCaseStyle.Upper;
+
+const tests5 = [
+  {abap: "IF a = b.", cnt: 0},
+  {abap: "LOOP at screen.", cnt: 1},
+  {abap: "write 'foo'.", cnt: 0},
+  {abap: "WRITE 'foo'.", cnt: 0},
+  {abap: "WriTE 'foo'.", cnt: 0},
+  {abap: "SELECTION-SCREEN BEGIN OF BLOCK b1 WITH FRAME TITLE TEXT-001.", cnt: 0},
+  {abap: "SELECTION-SCREEN BEGIN OF BLOCK b1 WITH FRAME TITLE text-001.", cnt: 0},
+];
+
+testRule(tests5, KeywordCase, config5);
+
+// test inconsistent case in ignored keyword list
+config5.ignoreKeywords = ["texT", "WrItE"];
+testRule(tests5, KeywordCase, config5);
