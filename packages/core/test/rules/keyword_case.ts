@@ -97,3 +97,23 @@ const tests4 = [
 
 testRule(tests4, KeywordCase, config4);
 
+// Test ignoreKeywords
+const config5 = new KeywordCaseConf();
+config5.ignoreKeywords = ["TEXT", "WRITE"];
+config5.style = KeywordCaseStyle.Upper;
+
+const tests5 = [
+  {abap: "IF a = b.", cnt: 0},
+  {abap: "LOOP at screen.", cnt: 1},
+  {abap: "write 'foo'.", cnt: 0},
+  {abap: "WRITE 'foo'.", cnt: 0},
+  {abap: "WriTE 'foo'.", cnt: 0},
+  {abap: "SELECTION-SCREEN BEGIN OF BLOCK b1 WITH FRAME TITLE TEXT-001.", cnt: 0},
+  {abap: "SELECTION-SCREEN BEGIN OF BLOCK b1 WITH FRAME TITLE text-001.", cnt: 0},
+];
+
+testRule(tests5, KeywordCase, config5);
+
+// test inconsistent case in ignored keyword list
+config5.ignoreKeywords = ["texT", "WrItE"];
+testRule(tests5, KeywordCase, config5);

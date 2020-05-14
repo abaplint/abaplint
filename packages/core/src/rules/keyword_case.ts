@@ -25,6 +25,9 @@ export class KeywordCaseConf extends BasicRuleConfig {
   public ignoreGlobalClassDefinition: boolean = false;
   public ignoreGlobalInterface: boolean = false;
   public ignoreFunctionModuleName: boolean = false;
+
+  /** A list of keywords to be ignored */
+  public ignoreKeywords: string[] = [];
 }
 
 export class KeywordCase extends ABAPRule {
@@ -120,7 +123,7 @@ export class KeywordCase extends ABAPRule {
     return issues;
   }
 
-  private traverse(s: StatementNode | ExpressionNode, parent: IStatement): {token: Token | undefined, keyword: boolean} {
+  private traverse(s: StatementNode | ExpressionNode, parent: IStatement): {token: Token | undefined, keyword: boolean;} {
 
     for (const child of s.getChildren()) {
       if (child instanceof TokenNodeRegex) {
@@ -170,6 +173,9 @@ export class KeywordCase extends ABAPRule {
   }
 
   public violatesRule(keyword: string): boolean {
+    if (this.conf.ignoreKeywords && this.conf.ignoreKeywords.map(k => {return k.toUpperCase();}).includes(keyword.toUpperCase())){
+      return false;
+    }
     if (this.conf.style === KeywordCaseStyle.Lower) {
       return keyword !== keyword.toLowerCase();
     } else if (this.conf.style === KeywordCaseStyle.Upper) {
