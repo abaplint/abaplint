@@ -11,6 +11,7 @@ import {BasicRuleConfig} from "./_basic_rule_config";
 import * as Statements from "../abap/2_statements/statements";
 import * as Expressions from "../abap/2_statements/expressions";
 import {Token} from "../abap/1_lexer/tokens/_token";
+import {TextElement} from "../abap/2_statements/expressions";
 
 export enum KeywordCaseStyle {
   Upper = "upper",
@@ -120,7 +121,7 @@ export class KeywordCase extends ABAPRule {
     return issues;
   }
 
-  private traverse(s: StatementNode | ExpressionNode, parent: IStatement): {token: Token | undefined, keyword: boolean} {
+  private traverse(s: StatementNode | ExpressionNode, parent: IStatement): {token: Token | undefined, keyword: boolean;} {
 
     for (const child of s.getChildren()) {
       if (child instanceof TokenNodeRegex) {
@@ -157,6 +158,10 @@ export class KeywordCase extends ABAPRule {
           return {token: child.get(), keyword: true};
         }
       } else if (child instanceof ExpressionNode) {
+        // special case: formatting of 'TEXT' in TextElement is not unified throughout releases, ignore
+        if (parent instanceof Statements.SelectionScreen && child.get() instanceof TextElement) {
+          continue;
+        }
         const tok = this.traverse(child, parent);
         if (tok.token !== undefined) {
           return tok;

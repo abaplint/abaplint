@@ -25,6 +25,7 @@ const tests = [
   {abap: "SELECT devclass FROM tdevc INTO TABLE lt_list WHERE parentcl = mv_package ORDER BY PRIMARY KEY.", cnt: 0},
   {abap: "SELECT DISTINCT sprsl AS langu INTO TABLE lt_i18n_langs FROM t100t.", cnt: 0},
   {abap: "SELECTION-SCREEN BEGIN OF BLOCK b1 WITH FRAME TITLE TEXT-001.", cnt: 0},
+  {abap: "SELECTION-SCREEN BEGIN OF BLOCK b1 WITH FRAME TITLE text-001.", cnt: 0}, //special case: "text", both allowed
   {abap: "FUNCTION ZFOOBAR.\n", cnt: 1},
   {abap: "SELECT foo UP TO @bar ROWS INTO CORRESPONDING FIELDS OF TABLE @boo FROM loo.", cnt: 0},
   {abap: "SORT rt_list BY repo-name AS TEXT ASCENDING.", cnt: 0},
