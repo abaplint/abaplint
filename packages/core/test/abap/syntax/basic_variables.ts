@@ -422,4 +422,17 @@ DATA: lv_i TYPE i,
     expect(identifier?.getType()).to.be.instanceof(Basic.IntegerType);
   });
 
+  it("basic PARAMETER", () => {
+    const abap = `PARAMETERS p_max TYPE i OBLIGATORY DEFAULT 100.`;
+    const identifier = resolveVariable(abap, "p_max");
+    expect(identifier?.getType()).to.be.instanceof(Basic.IntegerType);
+  });
+
+  it("basic FORM", () => {
+    const abap = `FORM select CHANGING import TYPE i.
+ENDFORM.`;
+    const identifier = resolveVariable(abap, "import");
+    expect(identifier?.getType()).to.be.instanceof(Basic.IntegerType);
+  });
+
 });
