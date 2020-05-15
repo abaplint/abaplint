@@ -34,7 +34,10 @@ export class TypeDefinitions implements ITypeDefinitions {
 /////////////////
 
   private parse(node: StructureNode, scope: CurrentScope) {
-// todo,   this.parseDirect(node, scope); // for interfaces
+    this.parseDirect(node, scope); // for interfaces
+    if (this.list.length > 0) {
+      return;
+    }
 
     const dummy = CurrentScope.buildDummy(scope);
 

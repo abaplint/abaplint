@@ -445,7 +445,7 @@ DATA foobar TYPE lcl_foo=>ty_foo.`;
     expect(identifier?.getType()).to.be.instanceof(Basic.IntegerType);
   });
 
-  it.skip("reference type defined in local interface", () => {
+  it("reference type defined in local interface", () => {
     const abap = `INTERFACE lif_foo.
   TYPES: ty_foo TYPE i.
 ENDINTERFACE.
