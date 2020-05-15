@@ -466,4 +466,22 @@ DATA foobar TYPE lif_foo=>ty_foo.`;
     expect(identifier?.getType()).to.be.instanceof(Basic.VoidType);
   });
 
+  it.skip("reference like defined in local class", () => {
+    const abap = `CLASS lcl_foo DEFINITION.
+  PUBLIC SECTION.
+    DATA: foo TYPE i.
+ENDCLASS.
+DATA foobar LIKE lcl_foo=>foo.`;
+    const identifier = resolveVariable(abap, "foobar");
+    expect(identifier?.getType()).to.be.instanceof(Basic.IntegerType);
+  });
+
+  it("data type table of void structure", () => {
+    const abap = `
+      TYPES ty_structures_tt TYPE STANDARD TABLE OF sstruc WITH NON-UNIQUE DEFAULT KEY.
+      DATA foo TYPE ty_structures_tt.`;
+    const identifier = resolveVariable(abap, "foo");
+    expect(identifier?.getType()).to.be.instanceof(Basic.TableType);
+  });
+
 });
