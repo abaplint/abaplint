@@ -20,6 +20,15 @@ export class StructureType implements AbstractType {
     return this.components;
   }
 
+  public getComponentByName(name: string): AbstractType | undefined {
+    for (const c of this.getComponents()) {
+      if (c.name.toUpperCase() === name.toUpperCase()) {
+        return c.type;
+      }
+    }
+    return undefined;
+  }
+
   public toText() {
     const compo: string[] = [];
     for (const c of this.components) {

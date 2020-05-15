@@ -22,10 +22,30 @@ export class BasicTypes {
     }
 
     const fullName = node.findFirstExpression(Expressions.FieldChain)?.concatTokens();
-    const name = node.getFirstChild()?.getFirstToken().getStr();
-// todo, this only looks up the first varaible name, but should also look into sub fields
+    const children = node.findFirstExpression(Expressions.FieldChain)?.getChildren();
 
+    if (children === undefined) {
+      return new Types.UnknownType("Type error, could not resolve " + fullName);
+    }
+
+    const name = children[0].getFirstToken().getStr();
     const type = this.scope.findVariable(name)?.getType();
+
+  // todo, this only looks up one level
+    if (children[1] && children[2] && children[1].getFirstToken().getStr() === "-") {
+      if (type instanceof Types.StructureType) {
+        const sub = type.getComponentByName(children[2].getFirstToken().getStr());
+        if (sub) {
+          return sub;
+        }
+        return new Types.UnknownType("Type error, field not part of structure " + fullName);
+      } else if (type instanceof Types.VoidType) {
+        return type;
+      } else {
+        return new Types.UnknownType("Type error, not a structure type " + fullName);
+      }
+    }
+
     if (type) {
       return type;
     }
@@ -146,7 +166,8 @@ export class BasicTypes {
     let found: AbstractType | undefined = undefined;
     if (text.startsWith("LIKE LINE OF")) {
       const name = node.findFirstExpression(Expressions.FieldChain)?.concatTokens();
-      const type = this.scope.findVariable(name)?.getType();
+      const type = this.resolveLikeName(node.findFirstExpression(Expressions.Type));
+
       if (type === undefined) {
         return new Types.UnknownType("Type error, could not resolve " + name);
       } else if (type instanceof Types.TableType) {

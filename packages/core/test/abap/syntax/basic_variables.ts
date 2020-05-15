@@ -507,4 +507,16 @@ SELECT-OPTIONS s_dyn FOR rsdswhere-line.`;
     expect(rowType).to.be.instanceof(Basic.VoidType);
   });
 
+  it("LIKE LINE OF sub field", () => {
+    const abap = `
+TYPES: BEGIN OF ty_struc,
+         piecelist TYPE STANDARD TABLE OF i WITH DEFAULT KEY,
+       END OF ty_struc.
+DATA: ls_struc TYPE ty_struc,
+      lv_bar   LIKE LINE OF ls_struc-piecelist.`;
+    const identifier = resolveVariable(abap, "lv_bar");
+    expect(identifier).to.not.equal(undefined);
+    expect(identifier?.getType()).to.be.instanceof(Basic.IntegerType);
+  });
+
 });
