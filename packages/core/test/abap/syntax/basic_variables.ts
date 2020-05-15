@@ -460,4 +460,10 @@ DATA foobar TYPE lif_foo=>ty_foo.`;
     expect(identifier?.getType()).to.be.instanceof(Basic.VoidType);
   });
 
+  it("void object reference", () => {
+    const abap = `DATA lo_table TYPE REF TO cl_abap_tabledescr.`;
+    const identifier = resolveVariable(abap, "lo_table");
+    expect(identifier?.getType()).to.be.instanceof(Basic.VoidType);
+  });
+
 });

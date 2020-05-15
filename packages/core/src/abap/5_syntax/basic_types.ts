@@ -115,8 +115,13 @@ export class BasicTypes {
   public parseType(node: ExpressionNode | StatementNode): AbstractType | undefined {
     const typename = node.findFirstExpression(Expressions.TypeName);
 
-    const type = node.findFirstExpression(Expressions.Type);
-    const text = type ? type.concatTokens().toUpperCase() : "TYPE";
+    let text = node.findFirstExpression(Expressions.Type)?.concatTokens().toUpperCase();
+    if (text === undefined) {
+      text = node.findFirstExpression(Expressions.TypeParam)?.concatTokens().toUpperCase();
+    }
+    if (text === undefined) {
+      text = "TYPE";
+    }
 
     let found: AbstractType | undefined = undefined;
     if (text.startsWith("LIKE LINE OF")) {
@@ -162,10 +167,13 @@ export class BasicTypes {
     }
 
     const name = chain.getFirstToken().getStr();
-
     const found = this.scope.findObjectReference(name);
     if (found) {
       return new Types.ObjectReferenceType(name);
+    }
+
+    if (this.scope.getDDIC()?.inErrorNamespace(name) === false) {
+      return new VoidType();
     }
 
     return undefined;

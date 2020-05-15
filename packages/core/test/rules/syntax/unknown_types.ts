@@ -140,4 +140,21 @@ DATA ls_tadir TYPE ztadir.`;
     expect(issues.length).to.equal(0);
   });
 
+  it("check CLAS can use itself", () => {
+    const abap = `CLASS zcl_foobar DEFINITION PUBLIC CREATE PROTECTED.
+  PUBLIC SECTION.
+    CLASS-METHODS new
+      RETURNING
+        VALUE(ro_foobar) TYPE REF TO zcl_foobar.
+ENDCLASS.
+
+CLASS zcl_foobar IMPLEMENTATION.
+  METHOD new.
+  ENDMETHOD.
+ENDCLASS.`;
+    let issues = runMulti([{filename: "zcl_foobar.clas.abap", contents: abap}]);
+    issues = issues.filter(i => i.getKey() === key);
+    expect(issues.length).to.equal(0);
+  });
+
 });
