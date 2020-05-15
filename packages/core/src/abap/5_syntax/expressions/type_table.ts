@@ -1,4 +1,3 @@
-import * as Types from "../../types/basic";
 import {ExpressionNode, StatementNode} from "../../nodes";
 import {CurrentScope} from "../_current_scope";
 import {TypedIdentifier} from "../../types/_typed_identifier";
@@ -14,17 +13,10 @@ export class TypeTable {
       return undefined;
     }
     const name = nameExpr.getFirstToken();
-
-    const tab = node.findFirstExpression(Expressions.TypeTable);
-    if (tab === undefined) {
-      return undefined;
-    }
-
-    const row = new BasicTypes(filename, scope).resolveTypeName(node, node.findFirstExpression(Expressions.TypeName));
-    if (row === undefined) {
+    const type = new BasicTypes(filename, scope).parseType(node);
+    if (type === undefined) {
       return new TypedIdentifier(name, filename, new UnknownType("TableType, fallback"));
     }
-
-    return new TypedIdentifier(name, filename, new Types.TableType(row));
+    return new TypedIdentifier(name, filename, type);
   }
 }

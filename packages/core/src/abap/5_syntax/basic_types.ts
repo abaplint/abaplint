@@ -120,6 +120,9 @@ export class BasicTypes {
       text = node.findFirstExpression(Expressions.TypeParam)?.concatTokens().toUpperCase();
     }
     if (text === undefined) {
+      text = node.findFirstExpression(Expressions.TypeTable)?.concatTokens().toUpperCase();
+    }
+    if (text === undefined) {
       text = "TYPE";
     }
 
@@ -138,6 +141,16 @@ export class BasicTypes {
       }
     } else if (text.startsWith("LIKE REF TO")) {
       return undefined; // todo
+    } else if (text.startsWith("TYPE TABLE OF REF TO")) {
+      found = this.resolveTypeRef(typename);
+      if (found) {
+        return new Types.TableType(found);
+      }
+    } else if (text.startsWith("TYPE TABLE OF") || text.startsWith("TYPE STANDARD TABLE OF")) {
+      found = this.resolveTypeName(node, typename);
+      if (found) {
+        return new Types.TableType(found);
+      }
     } else if (text.startsWith("LIKE")) {
       const name = node.findFirstExpression(Expressions.FieldChain)?.concatTokens();
       const type = this.scope.findVariable(name)?.getType();

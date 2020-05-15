@@ -212,7 +212,7 @@ describe("Syntax - Basic Types", () => {
     expect(rowType).to.be.instanceOf(Basic.StringType);
   });
 
-  it("table, integer.", () => {
+  it("table, integer", () => {
     const abap = "DATA tab TYPE STANDARD TABLE OF i.";
     const identifier = resolveVariable(abap, "tab");
     const rowType = expectTable(identifier);
@@ -482,6 +482,18 @@ DATA foobar LIKE lcl_foo=>foo.`;
       DATA foo TYPE ty_structures_tt.`;
     const identifier = resolveVariable(abap, "foo");
     expect(identifier?.getType()).to.be.instanceof(Basic.TableType);
+  });
+
+  it("TYPE TABLE OF REF TO", () => {
+    const abap = `
+CLASS lcl_foo DEFINITION.
+ENDCLASS.
+CLASS lcl_foo IMPLEMENTATION.
+ENDCLASS.
+DATA lt_nodes TYPE TABLE OF REF TO lcl_foo.`;
+    const identifier = resolveVariable(abap, "lt_nodes");
+    expect(identifier).to.not.equal(undefined);
+    expect(identifier!.getType()).to.be.instanceof(Basic.TableType);
   });
 
 });
