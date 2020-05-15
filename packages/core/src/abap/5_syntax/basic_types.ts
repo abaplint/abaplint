@@ -5,7 +5,7 @@ import * as Types from "../types/basic";
 import {CurrentScope} from "./_current_scope";
 import {AbstractType} from "../types/basic/_abstract_type";
 import {Chaining} from "./chaining";
-import {UnknownType} from "../types/basic";
+import {UnknownType, VoidType} from "../types/basic";
 
 export class BasicTypes {
   private readonly filename: string;
@@ -26,7 +26,8 @@ export class BasicTypes {
 
     if (chainText.includes("=>")) {
       const split = chainText.split("=>");
-      const ref = this.scope.findObjectReference(split[0]);
+      const className = split[0];
+      const ref = this.scope.findObjectReference(className);
       if (ref) {
         const found = ref.getTypeDefinitions().getByName(split[1])?.getType();
         if (found) {
@@ -34,6 +35,11 @@ export class BasicTypes {
         }
         return new UnknownType("Could not resolve " + chainText);
       }
+
+      if (this.scope.getDDIC()?.inErrorNamespace(className) === false) {
+        return new VoidType();
+      }
+
       return undefined;
     }
 

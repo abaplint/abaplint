@@ -454,4 +454,10 @@ DATA foobar TYPE lif_foo=>ty_foo.`;
     expect(identifier?.getType()).to.be.instanceof(Basic.IntegerType);
   });
 
+  it("Something sub of void should be void", () => {
+    const abap = `DATA lt_components TYPE cl_abap_structdescr=>component_table.`;
+    const identifier = resolveVariable(abap, "lt_components");
+    expect(identifier?.getType()).to.be.instanceof(Basic.VoidType);
+  });
+
 });

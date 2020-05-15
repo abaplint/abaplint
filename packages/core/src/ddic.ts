@@ -13,6 +13,10 @@ export class DDIC {
     this.reg = reg;
   }
 
+  public inErrorNamespace(name: string): boolean {
+    return this.reg.inErrorNamespace(name);
+  }
+
   public lookup(name: string): AbstractType {
     const dtel = this.lookupDataElement(name);
     if (!(dtel instanceof Types.VoidType) && !(dtel instanceof Types.UnknownType)) {
