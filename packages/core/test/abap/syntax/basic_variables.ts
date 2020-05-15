@@ -496,4 +496,15 @@ DATA lt_nodes TYPE TABLE OF REF TO lcl_foo.`;
     expect(identifier!.getType()).to.be.instanceof(Basic.TableType);
   });
 
+  it("basic SELECT-OPTIONS", () => {
+    const abap = `
+TABLES: rsdswhere.
+SELECT-OPTIONS s_dyn FOR rsdswhere-line.`;
+    const identifier = resolveVariable(abap, "s_dyn");
+    expect(identifier).to.not.equal(undefined);
+    expect(identifier!.getType()).to.be.instanceof(Basic.TableType);
+    const rowType = (identifier!.getType() as Basic.TableType).getRowType();
+    expect(rowType).to.be.instanceof(Basic.VoidType);
+  });
+
 });

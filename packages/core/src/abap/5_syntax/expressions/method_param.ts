@@ -17,9 +17,7 @@ export class MethodParam {
       throw new Error("method_parameter.ts, unexpected structure");
     }
 
-    const basic = new BasicTypes(filename, scope);
-
-    const found = basic.parseType(type);
+    const found = new BasicTypes(filename, scope).parseType(type);
     if (found) {
       return new TypedIdentifier(name.getFirstToken(), filename, found, meta);
     } else {

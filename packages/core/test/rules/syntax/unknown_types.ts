@@ -157,4 +157,26 @@ ENDCLASS.`;
     expect(issues.length).to.equal(0);
   });
 
+  it("protected and private attribute", () => {
+    const abap = `CLASS zcl_foobar DEFINITION PUBLIC CREATE PROTECTED.
+  PROTECTED SECTION.
+    DATA mv_errty TYPE sci_errty.
+  PRIVATE SECTION.
+    TYPES:
+      BEGIN OF ty_source,
+        name TYPE level_name,
+        code TYPE string_table,
+      END OF ty_source .
+    TYPES:
+      ty_source_tt TYPE SORTED TABLE OF ty_source WITH UNIQUE KEY name .
+
+    DATA mt_source TYPE ty_source_tt .
+ENDCLASS.
+CLASS zcl_foobar IMPLEMENTATION.
+ENDCLASS.`;
+    let issues = runMulti([{filename: "zcl_foobar.clas.abap", contents: abap}]);
+    issues = issues.filter(i => i.getKey() === key);
+    expect(issues.length).to.equal(0);
+  });
+
 });

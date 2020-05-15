@@ -16,6 +16,23 @@ export class BasicTypes {
     this.scope = scope;
   }
 
+  public resolveLikeName(node: ExpressionNode | StatementNode | undefined): AbstractType | undefined {
+    if (node === undefined) {
+      return undefined;
+    }
+
+    const fullName = node.findFirstExpression(Expressions.FieldChain)?.concatTokens();
+    const name = node.getFirstChild()?.getFirstToken().getStr();
+// todo, this only looks up the first varaible name, but should also look into sub fields
+
+    const type = this.scope.findVariable(name)?.getType();
+    if (type) {
+      return type;
+    }
+
+    return new Types.UnknownType("Type error, could not resolve " + fullName);
+  }
+
   public resolveTypeName(stat: StatementNode | ExpressionNode, expr: ExpressionNode | undefined): AbstractType | undefined {
 // todo, move this to the expresssion, and perhaps rename/add another expression for types
     if (expr === undefined) {
@@ -146,18 +163,17 @@ export class BasicTypes {
       if (found) {
         return new Types.TableType(found);
       }
-    } else if (text.startsWith("TYPE TABLE OF") || text.startsWith("TYPE STANDARD TABLE OF")) {
+    } else if (text.startsWith("TYPE TABLE OF")
+        || text.startsWith("TYPE STANDARD TABLE OF")
+        || text.startsWith("TYPE SORTED TABLE OF")
+        || text.startsWith("TYPE HASHED TABLE OF")) {
       found = this.resolveTypeName(node, typename);
       if (found) {
         return new Types.TableType(found);
       }
     } else if (text.startsWith("LIKE")) {
-      const name = node.findFirstExpression(Expressions.FieldChain)?.concatTokens();
-      const type = this.scope.findVariable(name)?.getType();
-      if (type === undefined) {
-        return new Types.UnknownType("Type error, could not resolve " + name);
-      }
-      return type;
+      const sub = node.findFirstExpression(Expressions.FieldChain);
+      return this.resolveLikeName(sub);
     } else if (text.startsWith("TYPE LINE OF")) {
       return undefined; // todo
     } else if (text.startsWith("TYPE REF TO")) {
