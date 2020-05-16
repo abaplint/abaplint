@@ -70,14 +70,14 @@ export class BasicTypes {
         if (found) {
           return found;
         }
-        return new UnknownType("Could not resolve " + chainText);
+        return new UnknownType("Could not resolve type " + chainText);
       }
 
       if (this.scope.getDDIC()?.inErrorNamespace(className) === false) {
         return new VoidType();
       }
 
-      return undefined;
+      return new UnknownType("Could not resolve top " + chainText);
     }
 
     if (chainText === "STRING") {
@@ -226,7 +226,7 @@ export class BasicTypes {
       return new VoidType();
     }
 
-    return undefined;
+    return new UnknownType("REF, unable to resolve " + name);
   }
 
   public findValue(node: StatementNode): string | undefined {

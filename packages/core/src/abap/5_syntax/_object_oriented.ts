@@ -59,8 +59,11 @@ export class ObjectOriented {
 
   private findInterfaceDefinition(name: string): IInterfaceDefinition | undefined {
     const intf = this.reg.getObject("INTF", name) as Interface;
-    if (intf && intf.getDefinition()) {
-      return intf.getDefinition();
+    if (intf) {
+      const globalFound = intf.getDefinition();
+      if (globalFound) {
+        return globalFound;
+      }
     }
 
     const found = this.scope.findInterfaceDefinition(name);

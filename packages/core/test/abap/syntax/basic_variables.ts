@@ -435,6 +435,13 @@ ENDFORM.`;
     expect(identifier?.getType()).to.be.instanceof(Basic.IntegerType);
   });
 
+  it("FORM, ref to unknown", () => {
+    const abap = `FORM output_integer USING io_value TYPE REF TO zcl_abappgp_integer.
+ENDFORM.`;
+    const identifier = resolveVariable(abap, "io_value");
+    expect(identifier?.getType()).to.be.instanceof(Basic.UnknownType);
+  });
+
   it("reference type defined in local class", () => {
     const abap = `CLASS lcl_foo DEFINITION.
   PUBLIC SECTION.
@@ -464,6 +471,12 @@ DATA foobar TYPE lif_foo=>ty_foo.`;
     const abap = `DATA lo_table TYPE REF TO cl_abap_tabledescr.`;
     const identifier = resolveVariable(abap, "lo_table");
     expect(identifier?.getType()).to.be.instanceof(Basic.VoidType);
+  });
+
+  it("object reference, interface, error expected", () => {
+    const abap = `DATA: mi_ixml TYPE REF TO zif_ixml.`;
+    const identifier = resolveVariable(abap, "mi_ixml");
+    expect(identifier?.getType()).to.be.instanceof(Basic.UnknownType);
   });
 
   it.skip("reference like defined in local class", () => {
@@ -517,6 +530,13 @@ DATA: ls_struc TYPE ty_struc,
     const identifier = resolveVariable(abap, "lv_bar");
     expect(identifier).to.not.equal(undefined);
     expect(identifier?.getType()).to.be.instanceof(Basic.IntegerType);
+  });
+
+  it("ms_metadata", () => {
+    const abap = `DATA ms_metadata TYPE zif_abapgit_definitions=>ty_metadata.`;
+    const identifier = resolveVariable(abap, "ms_metadata");
+    expect(identifier).to.not.equal(undefined);
+    expect(identifier?.getType()).to.be.instanceof(Basic.UnknownType);
   });
 
 });

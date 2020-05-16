@@ -179,4 +179,145 @@ ENDCLASS.`;
     expect(issues.length).to.equal(0);
   });
 
+  it("ms_metadata could not be resolved, expect error", () => {
+    const abap = `
+CLASS zcl_abapgit_xml DEFINITION PUBLIC CREATE PUBLIC.
+  PUBLIC SECTION.
+    DATA ms_metadata TYPE zif_abapgit_definitions=>ty_metadata.
+ENDCLASS.
+
+CLASS zcl_abapgit_xml IMPLEMENTATION.
+ENDCLASS.`;
+    let issues = runMulti([{filename: "zcl_abapgit_xml.clas.abap", contents: abap}]);
+    issues = issues.filter(i => i.getKey() === key);
+    expect(issues.length).to.equal(1);
+    expect(issues[0].getMessage()).to.not.contain("fallback");
+  });
+
+  it("mi_ixml should be void", () => {
+    const abap1 = `
+CLASS zcl_abapgit_xml DEFINITION PUBLIC CREATE PUBLIC.
+  PUBLIC SECTION.
+  DATA: mi_ixml TYPE REF TO if_ixml.
+ENDCLASS.
+
+CLASS zcl_abapgit_xml IMPLEMENTATION.
+ENDCLASS.`;
+    const abap2 = `DATA foo TYPE REF TO zcl_abapgit_xml.`;
+    let issues = runMulti([
+      {filename: "zcl_abapgit_xml.clas.abap", contents: abap1},
+      {filename: "zfoobar.prog.abap", contents: abap2},
+    ]);
+    issues = issues.filter(i => i.getKey() === key);
+    expect(issues.length).to.equal(0);
+  });
+
+  it("mi_ixml should be void", () => {
+    const abap1 = `
+CLASS zcl_abapgit_xml DEFINITION PUBLIC CREATE PUBLIC.
+  PUBLIC SECTION.
+  DATA: mi_ixml TYPE REF TO if_ixml.
+ENDCLASS.
+
+CLASS zcl_abapgit_xml IMPLEMENTATION.
+ENDCLASS.`;
+    const abap2 = `DATA foo TYPE REF TO zcl_abapgit_xml.`;
+    let issues = runMulti([
+      {filename: "zcl_abapgit_xml.clas.abap", contents: abap1},
+      {filename: "zfoobar.prog.abap", contents: abap2},
+    ]);
+    issues = issues.filter(i => i.getKey() === key);
+    expect(issues.length).to.equal(0);
+  });
+
+  it("reference type in interface", () => {
+    const abap1 = `
+CLASS zcl_abapgit_xml DEFINITION PUBLIC CREATE PUBLIC.
+  PROTECTED SECTION.
+    DATA: foo TYPE i,
+          ms_metadata TYPE zif_abapgit_definitions=>ty_metadata.
+ENDCLASS.
+
+CLASS zcl_abapgit_xml IMPLEMENTATION.
+ENDCLASS.`;
+    const abap2 = `
+INTERFACE zif_abapgit_definitions PUBLIC .
+  TYPES:
+    BEGIN OF ty_metadata,
+      foo TYPE REF TO if_something,
+      ddic TYPE abap_bool,
+    END OF ty_metadata.
+ENDINTERFACE.`;
+    let issues = runMulti([
+      {filename: "zcl_abapgit_xml.clas.abap", contents: abap1},
+      {filename: "zif_abapgit_definitions.intf.abap", contents: abap2},
+    ]);
+    issues = issues.filter(i => i.getKey() === key);
+    expect(issues.length).to.equal(0);
+  });
+
+  it("two classes", () => {
+    const abap1 = `
+CLASS zcl_class1 DEFINITION PUBLIC CREATE PUBLIC.
+  PUBLIC SECTION.
+    DATA bar TYPE REF TO if_something.
+    DATA moo TYPE zcl_class2=>foo.
+ENDCLASS.
+
+CLASS zcl_class1 IMPLEMENTATION.
+ENDCLASS.`;
+    const abap2 = `
+CLASS zcl_class2 DEFINITION PUBLIC CREATE PUBLIC.
+  PUBLIC SECTION.
+    DATA bar TYPE REF TO if_something.
+    TYPES foo TYPE i.
+ENDCLASS.
+
+CLASS zcl_class2 IMPLEMENTATION.
+ENDCLASS.`;
+    let issues = runMulti([
+      {filename: "zcl_class1.clas.abap", contents: abap1},
+      {filename: "zcl_class2.clas.abap", contents: abap2},
+    ]);
+    issues = issues.filter(i => i.getKey() === key);
+    expect(issues.length).to.equal(0);
+  });
+
+  it.skip("swag typing", () => {
+    const abap1 = `
+INTERFACE zif_swag_handler PUBLIC.
+  METHODS meta
+    RETURNING
+      VALUE(rt_meta) TYPE zcl_swag=>ty_meta_tt.
+ENDINTERFACE.`;
+
+    const abap2 = `
+CLASS zcl_swag DEFINITION PUBLIC CREATE PUBLIC .
+  PUBLIC SECTION.
+    TYPES: ty_meta_tt TYPE STANDARD TABLE OF i WITH DEFAULT KEY.
+ENDCLASS.
+
+CLASS ZCL_SWAG IMPLEMENTATION.
+ENDCLASS.`;
+
+    const abap3 = `
+CLASS zcl_swag_example_handler DEFINITION PUBLIC CREATE PUBLIC.
+  PUBLIC SECTION.
+    INTERFACES zif_swag_handler.
+ENDCLASS.
+
+CLASS ZCL_SWAG_EXAMPLE_HANDLER IMPLEMENTATION.
+  METHOD zif_swag_handler~meta.
+  ENDMETHOD.
+ENDCLASS.`;
+    let issues = runMulti([
+      {filename: "zif_swag_handler.intf.abap", contents: abap1},
+      {filename: "zcl_swag.clas.abap", contents: abap2},
+      {filename: "zcl_swag_example_handler.clas.abap", contents: abap3},
+    ]);
+    issues = issues.filter(i => i.getKey() === key);
+    console.dir(issues);
+    expect(issues.length).to.equal(0);
+  });
+
 });
