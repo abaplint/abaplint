@@ -100,7 +100,7 @@ export class Registry implements IRegistry {
     return this;
   }
 
-  public addFiles(files: IFile[]): IRegistry {
+  public addFiles(files: readonly IFile[]): IRegistry {
     for (const f of files) {
       this.findOrCreate(f.getObjectName(), f.getObjectType()).addFile(f);
     }
@@ -109,11 +109,20 @@ export class Registry implements IRegistry {
 
 // todo: methods to add/remove deps
 // todo: add unit tests
-  public addDependencies(files: IFile[]): IRegistry {
+  public addDependencies(files: readonly IFile[]): IRegistry {
     for (const f of files) {
       this.dependencies.push(f.getFilename());
     }
     return this.addFiles(files);
+  }
+
+  public isDependency(filename: string): boolean {
+    for (const d of this.dependencies) {
+      if (d.toUpperCase() === filename.toUpperCase()) {
+        return true;
+      }
+    }
+    return false;
   }
 
   // assumption: the file is already in the registry
