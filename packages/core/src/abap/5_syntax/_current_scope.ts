@@ -4,6 +4,7 @@ import {DDIC} from "../../ddic";
 import {Position} from "../../position";
 import {SpaghettiScope, SpaghettiScopeNode, IScopeIdentifier} from "./spaghetti_scope";
 import {Token} from "../1_lexer/tokens/_token";
+import * as Structures from "../3_structures/structures";
 import {Identifier} from "../4_object_information/_identifier";
 import {ScopeType} from "./_scope_type";
 import {IRegistry} from "../../_iregistry";
@@ -13,6 +14,7 @@ import {IFormDefinition} from "../types/_form_definition";
 import {Class} from "../../objects/class";
 import {Interface} from "../../objects/interface";
 import {InterfaceDefinition} from "../types/interface_definition";
+import {ClassDefinition} from "../types/class_definition";
 
 export class CurrentScope {
   protected readonly reg: IRegistry | undefined;
@@ -156,23 +158,17 @@ export class CurrentScope {
     }
 
     const cglobal = this.reg?.getObject("CLAS", name);
-    if (cglobal) {
-      return (cglobal as Class).getClassDefinition();
+    if (cglobal && this.reg) {
+      const file = (cglobal as Class).getMainABAPFile();
+      const struc = file?.getStructure()?.findFirstStructure(Structures.ClassDefinition);
+      if (struc && file) {
+        // todo, this should not be an empty scope
+        const foo = new ClassDefinition(struc, file.getFilename(), CurrentScope.buildEmpty());
+        return foo;
+      }
     }
 
     return undefined;
-  }
-
-  public findFormDefinition(name: string): IFormDefinition | undefined {
-    return this.current?.findFormDefinition(name);
-  }
-
-  public listFormDefinitions(): IFormDefinition[] {
-    const ret = this.current?.listFormDefinitions();
-    if (ret === undefined) {
-      return [];
-    }
-    return ret;
   }
 
   public findInterfaceDefinition(name: string): IInterfaceDefinition | undefined {
@@ -192,6 +188,18 @@ export class CurrentScope {
     }
 
     return undefined;
+  }
+
+  public findFormDefinition(name: string): IFormDefinition | undefined {
+    return this.current?.findFormDefinition(name);
+  }
+
+  public listFormDefinitions(): IFormDefinition[] {
+    const ret = this.current?.listFormDefinitions();
+    if (ret === undefined) {
+      return [];
+    }
+    return ret;
   }
 
   public findType(name: string): TypedIdentifier | undefined {

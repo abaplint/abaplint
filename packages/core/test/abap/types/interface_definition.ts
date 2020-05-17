@@ -10,10 +10,9 @@ import {SyntaxLogic} from "../../../src/abap/5_syntax/syntax";
 
 function run(reg: IRegistry): IInterfaceDefinition | undefined {
   const intf = getABAPObjects(reg)[0] as Interface;
-
   const s = new SyntaxLogic(reg, intf).run().spaghetti;
   const scope = s.getTop().getFirstChild();
-  return scope?.findInterfaceDefinition("zif_foobar");
+  return scope?.findInterfaceDefinition(intf.getName());
 }
 
 describe("Types, interface_definition, getMethodDefinitions", () => {

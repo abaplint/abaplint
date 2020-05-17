@@ -1,50 +1,86 @@
-import {IClassDefinition} from "../types/_class_definition";
-import {IInterfaceDefinition} from "../types/_interface_definition";
 import {Identifier} from "./_identifier";
 import {Visibility} from "./visibility";
 
-// TODO: Only helper functions to get data from single file, no type information
+// Only helper functions to get data from single file, no type information
 
-export interface InfoAttribute {
-  name: Identifier,
-  static: boolean,
-  readOnly: boolean,
-  visibility: Visibility;
+export enum AttributeType {
+  Instance,
+  Static,
+  Constant,
 }
 
-export interface InfoMethodDefinition {
-  name: Identifier,
-  isRedefinition: boolean,
+export enum MethodParameterType {
+  Importing,
+  Exporting,
+  Changing,
+  Returning,
+}
+
+export interface InfoAttribute {
+  name: string,
+  identifier: Identifier,
+  type: AttributeType,
+  readOnly: boolean,
   visibility: Visibility,
 }
 
-export interface InfoObjectDefinition {
-  name: Identifier;
+export interface InfoMethodParameter {
+  name: string,
+  identifier: Identifier,
+  type: MethodParameterType,
+}
+
+export interface InfoMethodDefinition {
+  name: string,
+  identifier: Identifier,
+// todo, type, Instance or Static
+  isRedefinition: boolean,
+  isEventHandler: boolean,
+  isAbstract: boolean,
+  visibility: Visibility,
+  parameters: InfoMethodParameter[],
+  exceptions: string[],
+}
+
+export interface InfoInterfaceDefinition {
+  name: string,
+  identifier: Identifier;
   isLocal: boolean;
-  isFinal: boolean;
+  isGlobal: boolean;
   methods: readonly InfoMethodDefinition[];
+// todo, constants
+// todo, types
   attributes: readonly InfoAttribute[];
 }
 
+export interface InfoAlias {
+  name: string,
+  identifier: Identifier;
+  visibility: Visibility,
+  component: string
+}
+
+export interface InfoClassDefinition extends InfoInterfaceDefinition {
+  superClassName: string | undefined;
+  isAbstract: boolean;
+  isFinal: boolean;
+  interfaces: readonly {name: string, partial: boolean}[];
+  isForTesting: boolean;
+  isException: boolean;
+  aliases: readonly InfoAlias[],
+}
+
 export interface InfoClassImplementation {
-  name: Identifier;
+  name: string,
+  identifier: Identifier;
   methods: readonly Identifier[];
 }
 
 export interface IABAPFileInformation {
-  // TODO, remove these
-  getClassDefinitions(): readonly IClassDefinition[];
-  getClassDefinition(name: string): IClassDefinition | undefined;
-  getInterfaceDefinitions(): readonly IInterfaceDefinition[];
-  getInterfaceDefinition(name: string): IInterfaceDefinition | undefined;
-
-  // WIP
-  listInterfaceDefinitions(): readonly InfoObjectDefinition[];
-  getInterfaceDefinitionByName(name: string): InfoObjectDefinition | undefined;
-  listClassDefinitions(): readonly InfoObjectDefinition[];
-  getClassDefinitionByName(name: string): InfoObjectDefinition | undefined;
-
-  // OK
+  listInterfaceDefinitions(): readonly InfoInterfaceDefinition[];
+  getInterfaceDefinitionByName(name: string): InfoInterfaceDefinition | undefined;
+  listClassDefinitions(): readonly InfoClassDefinition[];
+  getClassDefinitionByName(name: string): InfoClassDefinition | undefined;
   listFormDefinitions(): readonly Identifier[];
   listClassImplementations(): readonly InfoClassImplementation[];
   getClassImplementationByName(name: string): InfoClassImplementation | undefined;

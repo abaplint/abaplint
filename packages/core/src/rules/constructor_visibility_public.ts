@@ -43,20 +43,15 @@ https://help.sap.com/doc/abapdocu_751_index_htm/7.51/en-US/abeninstance_construc
       return [];
     }
 
-    const def = obj.getClassDefinition();
+    const def = obj.getClassDefinition2();
     if (def === undefined) {
       return [];
     }
 
-    const methods = def.getMethodDefinitions();
-    if (methods === undefined) {
-      return [];
-    }
-
-    for (const method of methods.getAll()) {
-      if (method.getName().toUpperCase() === "CONSTRUCTOR"
-          && method.getVisibility() !== Visibility.Public) {
-        const issue = Issue.atIdentifier(method, this.getMessage(), this.getMetadata().key);
+    for (const method of def.methods) {
+      if (method.name.toUpperCase() === "CONSTRUCTOR"
+          && method.visibility !== Visibility.Public) {
+        const issue = Issue.atIdentifier(method.identifier, this.getMessage(), this.getMetadata().key);
         issues.push(issue);
       }
     }

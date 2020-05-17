@@ -47,18 +47,18 @@ export class CheckAbstract extends ABAPRule {
   public runParsed(file: ABAPFile, _reg: IRegistry) {
     const issues: Issue[] = [];
 
-    for (const classDef of file.getInfo().getClassDefinitions()) {
-      if (classDef.isAbstract()) {
-        if (classDef.isFinal()) {
+    for (const classDef of file.getInfo().listClassDefinitions()) {
+      if (classDef.isAbstract === true) {
+        if (classDef.isFinal === true) {
           issues.push(Issue.atIdentifier(
-            classDef, this.getDescription(IssueType.AbstractAndFinal, classDef.getName()), this.getMetadata().key));
+            classDef.identifier, this.getDescription(IssueType.AbstractAndFinal, classDef.name), this.getMetadata().key));
         }
         continue;
       }
-      for (const methodDef of classDef.getMethodDefinitions().getAll()) {
-        if (methodDef.isAbstract()) {
+      for (const methodDef of classDef.methods) {
+        if (methodDef.isAbstract === true) {
           issues.push(Issue.atIdentifier(
-            methodDef, this.getDescription(IssueType.NotAbstractClass, methodDef.getName()), this.getMetadata().key));
+            methodDef.identifier, this.getDescription(IssueType.NotAbstractClass, methodDef.name), this.getMetadata().key));
         }
       }
     }

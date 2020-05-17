@@ -1,7 +1,6 @@
 import {testRule} from "./_utils";
 import {Abapdoc, AbapdocConf} from "../../src/rules/abapdoc";
 
-
 const defaultConfigTests = [
   // all public methods have abapdoc
   {
@@ -117,11 +116,11 @@ testRule(defaultConfigTests, Abapdoc);
 const localCheckActiveTests = [
   // local class, check active, missing abapdoc
   {
-    abap: ` CLASS lcl_foo DEFINITION.
+    abap: ` CLASS lcl_foo_local DEFINITION.
               PUBLIC SECTION.
                 METHODS:
-                  foobar RETURNING VALUE(rv_string) TYPE string,
-                  moobar RETURNING VALUE(rv_string) TYPE string.
+                  foobar_loc RETURNING VALUE(rv_string) TYPE string,
+                  moobar_loc RETURNING VALUE(rv_string) TYPE string.
               PROTECTED SECTION.
                 METHODS:
                   coobar RETURNING VALUE(rv_string) TYPE string,
@@ -131,7 +130,7 @@ const localCheckActiveTests = [
 
   // local class, check active, required abapdoc provided
   {
-    abap: ` CLASS zcl_foo DEFINITION PUBLIC.
+    abap: ` CLASS zcl_foo_local DEFINITION PUBLIC.
               PUBLIC SECTION.
               METHODS:
                 "! doc
@@ -140,6 +139,7 @@ const localCheckActiveTests = [
                 moobar RETURNING VALUE(rv_string) TYPE string.
           ENDCLASS.`, cnt: 0,
   },
+
 ];
 
 const localCheckConfig = new AbapdocConf();

@@ -56,8 +56,8 @@ export class SpaceBeforeDot extends ABAPRule {
         if (endclass !== undefined) {
           startRow = endclass.getFirstToken().getRow();
         }
-        const definition = obj.getClassDefinition();
-        if (definition !== undefined && this.conf.ignoreExceptions && definition.isException()) {
+        const definition = obj.getClassDefinition2();
+        if (definition !== undefined && this.conf.ignoreExceptions && definition.isException) {
           return [];
         }
       } else if (obj instanceof Interface && structure !== undefined) {

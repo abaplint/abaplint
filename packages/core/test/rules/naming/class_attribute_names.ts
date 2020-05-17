@@ -20,6 +20,21 @@ describe("Rule: class attribute names (general)", () => {
     expect(issues.length).to.equal(0);
   });
 
+  it("2: class data begin of", () => {
+    const abap = `
+CLASS l_foobar DEFINITION PUBLIC.
+  PUBLIC SECTION.
+    CLASS-DATA: wrong1 TYPE i.
+    CLASS-DATA: BEGIN OF gs_german_umlaut_as_char,
+      lower_case_ae TYPE string,
+      END OF gs_german_umlaut_as_char.
+ENDCLASS.
+CLASS l_foobar IMPLEMENTATION.
+ENDCLASS.`;
+    const issues = findIssues(abap);
+    expect(issues.length).to.equal(1);
+  });
+
 });
 
 describe("Rule: class attribute names", () => {

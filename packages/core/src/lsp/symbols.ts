@@ -3,8 +3,7 @@ import {IRegistry} from "../_iregistry";
 import {ABAPFile} from "../files";
 import {Identifier} from "../abap/4_object_information/_identifier";
 import {LSPUtils} from "./_lsp_utils";
-import {IAttributes} from "../abap/types/_class_attributes";
-import {IMethodDefinitions} from "../abap/types/_method_definitions";
+import {InfoAttribute, InfoMethodDefinition} from "../abap/4_object_information/_abap_file_information";
 
 export class Symbols {
 
@@ -56,18 +55,18 @@ export class Symbols {
   private static outputClasses(file: ABAPFile): LServer.DocumentSymbol[] {
     const ret: LServer.DocumentSymbol[] = [];
 
-    for (const cla of file.getInfo().getClassDefinitions()) {
+    for (const cla of file.getInfo().listClassDefinitions()) {
       let children: LServer.DocumentSymbol[] = [];
-      children = children.concat(this.outputClassAttributes(cla.getAttributes()));
-      children = children.concat(this.outputMethodDefinitions(cla.getMethodDefinitions()));
-      const symbol = this.newSymbol(cla, LServer.SymbolKind.Class, children);
+      children = children.concat(this.outputClassAttributes(cla.attributes));
+      children = children.concat(this.outputMethodDefinitions(cla.methods));
+      const symbol = this.newSymbol(cla.identifier, LServer.SymbolKind.Class, children);
       ret.push(symbol);
     }
 
     for (const cla of file.getInfo().listClassImplementations()) {
       let children: LServer.DocumentSymbol[] = [];
       children = children.concat(this.outputMethodImplementations(cla.methods));
-      const symbol = this.newSymbol(cla.name, LServer.SymbolKind.Class, children);
+      const symbol = this.newSymbol(cla.identifier, LServer.SymbolKind.Class, children);
       ret.push(symbol);
     }
 
@@ -83,28 +82,21 @@ export class Symbols {
     return ret;
   }
 
-  private static outputClassAttributes(attr: IAttributes | undefined): LServer.DocumentSymbol[] {
+  private static outputClassAttributes(attr: readonly InfoAttribute[]): LServer.DocumentSymbol[] {
     if (attr === undefined) {
       return [];
     }
     const ret: LServer.DocumentSymbol[] = [];
 
-    for (const id of attr.getStatic()) {
-      ret.push(this.newSymbol(id, LServer.SymbolKind.Property, []));
+    for (const id of attr) {
+      ret.push(this.newSymbol(id.identifier, LServer.SymbolKind.Property, []));
     }
-    for (const id of attr.getInstance()) {
-      ret.push(this.newSymbol(id, LServer.SymbolKind.Property, []));
-    }
-    /* todo
-    for (const id of attr.getConstants()) {
-      ret.push(this.newSymbol(id, LServer.SymbolKind.Constant, []));
-    }
-    */
+    // todo, also add constants
 
     return ret;
   }
 
-  private static outputMethodDefinitions(methods: IMethodDefinitions | undefined): LServer.DocumentSymbol[] {
+  private static outputMethodDefinitions(methods: readonly InfoMethodDefinition[]): LServer.DocumentSymbol[] {
     if (methods === undefined) {
       return [];
     }

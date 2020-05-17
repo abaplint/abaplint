@@ -46,17 +46,17 @@ export class LocalClassNaming extends ABAPRule {
       this.conf.patternKind = "required";
     }
 
-    for (const classDef of file.getInfo().getClassDefinitions()) {
-      if (classDef.isGlobal()) {
+    for (const classDef of file.getInfo().listClassDefinitions()) {
+      if (classDef.isGlobal) {
         continue;
       }
 
-      const className = classDef.getName();
+      const className = classDef.name;
       let expected = "";
 
-      if (classDef.isForTesting()) {
+      if (classDef.isForTesting) {
         expected = this.conf.test;
-      } else if (classDef.isException()) {
+      } else if (classDef.isException) {
         expected = this.conf.exception;
       } else {
         expected = this.conf.local;
@@ -69,7 +69,7 @@ export class LocalClassNaming extends ABAPRule {
       if (NameValidator.violatesRule(className, regex, this.conf)) {
         issues.push(
           Issue.atIdentifier(
-            classDef,
+            classDef.identifier,
             this.getDescription(expected, className),
             this.getMetadata().key));
       }

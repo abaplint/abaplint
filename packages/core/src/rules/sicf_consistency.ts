@@ -53,7 +53,7 @@ export class SICFConsistency implements IRule {
         continue;
       }
 
-      const def = clas.getClassDefinition();
+      const def = clas.getClassDefinition2();
       if (def === undefined) {
         const message = "Syntax error in class " + h;
         const issue = Issue.atPosition(obj.getFiles()[0], new Position(1, 1), message, this.getMetadata().key);
@@ -61,8 +61,8 @@ export class SICFConsistency implements IRule {
         continue;
       }
 
-      const implementing = def.getImplementing();
-      if (implementing.findIndex((i) => { return i.name === "IF_HTTP_EXTENSION"; }) < 0) {
+      const implementing = def.interfaces;
+      if (implementing.findIndex((i) => { return i.name.toUpperCase() === "IF_HTTP_EXTENSION"; }) < 0) {
         const message = "Handler class " + h + " must implement IF_HTTP_EXTENSION";
         const issue = Issue.atPosition(obj.getFiles()[0], new Position(1, 1), message, this.getMetadata().key);
         issues.push(issue);

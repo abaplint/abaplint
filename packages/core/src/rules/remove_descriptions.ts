@@ -7,7 +7,7 @@ import {BasicRuleConfig} from "./_basic_rule_config";
 import {xmlToArray} from "../xml_utils";
 import {IFile} from "../files/_ifile";
 import {Position} from "../position";
-import {IClassDefinition} from "../abap/types/_class_definition";
+import {InfoClassDefinition} from "../abap/4_object_information/_abap_file_information";
 
 export class RemoveDescriptionsConf extends BasicRuleConfig {
   /** Ignore global exception classes */
@@ -43,15 +43,15 @@ export class RemoveDescriptions implements IRule {
   public run(obj: IObject): Issue[] {
 // plan is omitting knowledge about descriptions in abaplint, so this rule must parse the XML
     if (obj instanceof Objects.Class) {
-      let def: IClassDefinition | undefined;
+      let def: InfoClassDefinition | undefined;
       try {
-        def = obj.getClassDefinition();
+        def = obj.getClassDefinition2();
       } catch {
         return [];
       }
       if (def === undefined) {
         return [];
-      } else if (this.conf.ignoreExceptions && def.isException()) {
+      } else if (this.conf.ignoreExceptions && def.isException) {
         return [];
       }
       return this.checkClass(obj);

@@ -6,7 +6,7 @@ import {IObject} from "../../objects/_iobject";
 import * as Objects from "../../objects";
 import {BasicRuleConfig} from "../_basic_rule_config";
 import {Class} from "../../objects";
-import {InfoObjectDefinition} from "../../abap/4_object_information/_abap_file_information";
+import {InfoClassDefinition} from "../../abap/4_object_information/_abap_file_information";
 
 export class SuperclassFinalConf extends BasicRuleConfig {
 }
@@ -38,8 +38,8 @@ export class SuperclassFinal extends ABAPRule {
   public runParsed(file: ABAPFile, reg: IRegistry, obj: IObject) {
     const output: Issue[] = [];
 
-    for (const definition of file.getInfo().getClassDefinitions()) {
-      const sup = definition.getSuperClass();
+    for (const definition of file.getInfo().listClassDefinitions()) {
+      const sup = definition.superClassName;
       if (sup === undefined) {
         continue;
       }
@@ -47,7 +47,7 @@ export class SuperclassFinal extends ABAPRule {
       if (obj instanceof Objects.Class && file.getFilename().match(/\.clas\.abap$/)) {
         localLookup = false;
       }
-      let found: InfoObjectDefinition | undefined = undefined;
+      let found: InfoClassDefinition | undefined = undefined;
       if (localLookup) {
 // todo, this should look inside the object instead of the file?
         found = file.getInfo().getClassDefinitionByName(sup);
@@ -60,12 +60,12 @@ export class SuperclassFinal extends ABAPRule {
       }
       if (found === undefined) {
         const message = "Super class \"" + sup + "\" not found";
-        const issue = Issue.atIdentifier(definition, message, this.getMetadata().key);
+        const issue = Issue.atIdentifier(definition.identifier, message, this.getMetadata().key);
         output.push(issue);
         continue;
       }
       if (found.isFinal === true) {
-        const issue = Issue.atIdentifier(definition, this.getMessage(), this.getMetadata().key);
+        const issue = Issue.atIdentifier(definition.identifier, this.getMessage(), this.getMetadata().key);
         output.push(issue);
       }
     }

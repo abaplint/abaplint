@@ -1,10 +1,10 @@
 import {Issue} from "../../issue";
-import {IAttributes} from "../../abap/types/_class_attributes";
 import {NamingRuleConfig} from "../_naming_rule_config";
 import {NameValidator} from "../../utils/name_validator";
 import {ABAPRule} from "../_abap_rule";
 import {ABAPFile} from "../../files";
 import {Identifier} from "../../abap/4_object_information/_identifier";
+import {InfoAttribute, AttributeType} from "../../abap/4_object_information/_abap_file_information";
 
 export class ClassAttributeNamesConf extends NamingRuleConfig {
   /** Ignore global exception classes */
@@ -51,37 +51,42 @@ export class ClassAttributeNames extends ABAPRule {
     if (this.conf.patternKind === undefined) {
       this.conf.patternKind = "required";
     }
-    let attributes: IAttributes[] = [];
-    for (const classDef of file.getInfo().getClassDefinitions()) {
-      if ((classDef.isLocal() && this.conf.ignoreLocal)
-        || (classDef.isException() && this.conf.ignoreExceptions)) {
+    let attributes: InfoAttribute[] = [];
+    for (const classDef of file.getInfo().listClassDefinitions()) {
+      if ((classDef.isLocal && this.conf.ignoreLocal)
+        || (classDef.isException && this.conf.ignoreExceptions)) {
         continue;
       }
-      attributes = attributes.concat(classDef.getAttributes());
+      attributes = attributes.concat(classDef.attributes);
     }
 
-    for (const attribute of attributes) {
-      issues = issues.concat(this.checkAttributes(attribute));
-    }
+
+    issues = this.checkAttributes(attributes);
+
     return issues;
   }
 
-  private checkAttributes(attr: IAttributes | undefined): Issue[] {
-    if (!attr) {return [];}
+  private checkAttributes(attr: InfoAttribute[] | undefined): Issue[] {
+    if (attr === undefined) {
+      return [];
+    }
+
     let ret: Issue[] = [];
-
-    for (const ins of attr.getInstance()) {
-      ret = ret.concat(this.checkName(ins, this.conf.instance));
+    for (const a of attr) {
+      switch (a.type) {
+        case AttributeType.Instance:
+          ret = ret.concat(this.checkName(a.identifier, this.conf.instance));
+          break;
+        case AttributeType.Static:
+          ret = ret.concat(this.checkName(a.identifier, this.conf.statics));
+          break;
+        case AttributeType.Constant:
+          ret = ret.concat(this.checkName(a.identifier, this.conf.constants));
+          break;
+        default:
+          break;
+      }
     }
-
-    for (const sta of attr.getStatic()) {
-      ret = ret.concat(this.checkName(sta, this.conf.statics));
-    }
-
-    for (const con of attr.getConstants()) {
-      ret = ret.concat(this.checkName(con, this.conf.constants));
-    }
-
     return ret;
   }
 

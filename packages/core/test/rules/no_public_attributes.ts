@@ -49,7 +49,7 @@ const testsReadOnlyAllowed = [
             PRIVATE SECTION.
                 DATA oof TYPE i.
           ENDCLASS.`, cnt: 1},
-  {abap: `CLASS lcl_abc DEFINITION.
+  {abap: `CLASS lcl_abc_fm DEFINITION.
             PUBLIC SECTION.
                 DATA counter TYPE i READ-ONLY.
                 DATA abc TYPE i
