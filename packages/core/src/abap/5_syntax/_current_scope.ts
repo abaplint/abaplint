@@ -13,6 +13,7 @@ import {IFormDefinition} from "../types/_form_definition";
 import {Class} from "../../objects/class";
 import {Interface} from "../../objects/interface";
 import {InterfaceDefinition} from "../types/interface_definition";
+// import {ClassDefinition} from "../types";
 
 export class CurrentScope {
   protected readonly reg: IRegistry | undefined;
@@ -157,9 +158,25 @@ export class CurrentScope {
 
     const cglobal = this.reg?.getObject("CLAS", name);
     if (cglobal) {
-      return (cglobal as Class).getClassDefinition();
+      const file = (cglobal as Class).getMainABAPFile();
+      const definitions = file?.getInfo().getClassDefinitions();
+      if (definitions === undefined || definitions.length === 0) {
+        return undefined;
+      }
+  // todo, this should get the global class definition with name = this.getName(); ?
+      return definitions[0];
     }
-
+/*
+    const cglobal = this.reg?.getObject("CLAS", name);
+    if (cglobal && this.reg) {
+      const file = (cglobal as Class).getMainABAPFile();
+      const struc = file?.getStructure();
+      if (struc && file) {
+        // todo, this should not be an empty scope
+        return new ClassDefinition(struc, file.getFilename(), CurrentScope.buildEmpty());
+      }
+    }
+*/
     return undefined;
   }
 

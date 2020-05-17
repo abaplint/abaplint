@@ -32,6 +32,13 @@ export interface InfoInterfaceDefinition {
   attributes: readonly InfoAttribute[];
 }
 
+export interface InfoAlias {
+  name: string,
+  identifier: Identifier;
+  visibility: Visibility,
+  component: string
+}
+
 export interface InfoClassDefinition extends InfoInterfaceDefinition {
   superClassName: string | undefined;
   isAbstract: boolean;
@@ -39,6 +46,7 @@ export interface InfoClassDefinition extends InfoInterfaceDefinition {
   interfaces: readonly {name: string, partial: boolean}[];
   isForTesting: boolean;
   isException: boolean;
+  aliases: readonly InfoAlias[],
 }
 
 export interface InfoClassImplementation {

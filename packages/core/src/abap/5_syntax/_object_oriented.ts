@@ -1,7 +1,6 @@
 import * as Statements from "../2_statements/statements";
 import * as Expressions from "../2_statements/expressions";
 import {StatementNode} from "../nodes";
-import {Class} from "../../objects";
 import {IRegistry} from "../../_iregistry";
 import {CurrentScope} from "./_current_scope";
 import {ScopeType} from "./_scope_type";
@@ -14,11 +13,9 @@ import {IClassDefinition} from "../types/_class_definition";
 import {IMethodDefinition} from "../types/_method_definition";
 
 export class ObjectOriented {
-  private readonly reg: IRegistry;
   private readonly scope: CurrentScope;
 
-  public constructor(reg: IRegistry, scope: CurrentScope) {
-    this.reg = reg;
+  public constructor(_reg: IRegistry, scope: CurrentScope) {
     this.scope = scope;
   }
 
@@ -194,22 +191,11 @@ export class ObjectOriented {
   }
 
   private findSuperDefinition(name: string): IClassDefinition {
-    const csup = this.reg.getObject("CLAS", name) as Class | undefined;
+    const csup = this.scope.findClassDefinition(name);
     if (csup === undefined) {
-      const found = this.scope.findClassDefinition(name);
-      if (found) {
-        return found;
-      }
+      throw new Error("super class \"" + name + "\" not found or contains errors");
     }
-    if (csup === undefined) {
-      throw new Error("super class \"" + name + "\" not found");
-    }
-
-    const cdef = csup.getClassDefinition();
-    if (cdef === undefined) {
-      throw new Error("super class \"" + name + "\" contains errors");
-    }
-    return cdef;
+    return csup;
   }
 
   private fromSuperClass(child: IClassDefinition) {

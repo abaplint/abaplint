@@ -3,7 +3,7 @@ import * as Structures from "../3_structures/structures";
 import * as Expressions from "../2_statements/expressions";
 import * as Statements from "../2_statements/statements";
 import {CurrentScope} from "../5_syntax/_current_scope";
-import {IABAPFileInformation, InfoClassImplementation, InfoClassDefinition, InfoMethodDefinition, InfoInterfaceDefinition, InfoAttribute} from "./_abap_file_information";
+import {IABAPFileInformation, InfoClassImplementation, InfoClassDefinition, InfoMethodDefinition, InfoInterfaceDefinition, InfoAttribute, InfoAlias} from "./_abap_file_information";
 import {StructureNode} from "../nodes";
 import {InterfaceDefinition} from "../types";
 import {IClassDefinition} from "../types/_class_definition";
@@ -165,6 +165,10 @@ export class ABAPFileInformation implements IABAPFileInformation {
       attributes = attributes.concat(this.parseAttributes(found.findFirstStructure(Structures.ProtectedSection), Visibility.Protected));
       attributes = attributes.concat(this.parseAttributes(found.findFirstStructure(Structures.PrivateSection), Visibility.Private));
 
+      let aliases = this.parseAliases(found.findFirstStructure(Structures.PublicSection), Visibility.Public);
+      aliases = aliases.concat(this.parseAliases(found.findFirstStructure(Structures.ProtectedSection), Visibility.Protected));
+      aliases = aliases.concat(this.parseAliases(found.findFirstStructure(Structures.PrivateSection), Visibility.Private));
+
       const superClassName = found.findFirstExpression(Expressions.SuperClassName)?.getFirstToken().getStr();
       const isException = (superClassName?.match(/^.?cx_.*$/i) || superClassName?.match(/^\/.+\/cx_.*$/i)) ? true : false;
 
@@ -180,6 +184,7 @@ export class ABAPFileInformation implements IABAPFileInformation {
         isForTesting: found.findFirstStatement(Statements.ClassDefinition)!.concatTokens().toUpperCase().includes(" FOR TESTING"),
         isAbstract: found.findFirstStatement(Statements.ClassDefinition)!.concatTokens().toUpperCase().includes(" ABSTRACT"),
         isFinal: found.findFirstExpression(Expressions.ClassFinal) !== undefined,
+        aliases,
         attributes,
       });
     }
@@ -194,6 +199,27 @@ export class ABAPFileInformation implements IABAPFileInformation {
       const name = node.findFirstExpression(Expressions.InterfaceName)!.getFirstToken().getStr().toUpperCase();
       ret.push({name, partial});
     }
+    return ret;
+  }
+
+  private parseAliases(node: StructureNode | undefined, visibility: Visibility): InfoAlias[] {
+    if (node === undefined) {
+      return [];
+    }
+
+    const ret: InfoAlias[] = [];
+    for (const a of node.findAllStatements(Statements.Aliases)) {
+      const name = a.findFirstExpression(Expressions.SimpleName)!.getFirstToken();
+      const comp = a.findFirstExpression(Expressions.Field)!.getFirstToken();
+
+      ret.push({
+        name: name.getStr(),
+        identifier: new Identifier(name, this.filename),
+        visibility,
+        component: comp.getStr(),
+      });
+    }
+
     return ret;
   }
 
