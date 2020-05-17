@@ -43,10 +43,10 @@ https://docs.abapopenchecks.org/checks/16/`,
     const issues: Issue[] = [];
 
     if (obj instanceof Class) {
-      const definition = obj.getClassDefinition();
+      const definition = obj.getClassDefinition2();
       if (definition === undefined) {
         return [];
-      } else if (this.conf.ignoreExceptions && definition.isException()) {
+      } else if (this.conf.ignoreExceptions && definition.isException) {
         return [];
       }
     }

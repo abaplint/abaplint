@@ -180,6 +180,7 @@ export class ABAPFileInformation implements IABAPFileInformation {
         methods,
         superClassName,
         isException,
+        isForTesting: found.findFirstStatement(Statements.ClassDefinition)!.concatTokens().toUpperCase().includes(" FOR TESTING"),
         isAbstract: found.findFirstStatement(Statements.ClassDefinition)!.concatTokens().toUpperCase().includes(" ABSTRACT"),
         isFinal: found.findFirstExpression(Expressions.ClassFinal) !== undefined,
         attributes: [], // todo

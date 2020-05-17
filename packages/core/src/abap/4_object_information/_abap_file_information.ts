@@ -36,6 +36,7 @@ export interface InfoClassDefinition extends InfoInterfaceDefinition {
   superClassName: string | undefined;
   isAbstract: boolean;
   isFinal: boolean;
+  isForTesting: boolean;
   isException: boolean;
 }
 
