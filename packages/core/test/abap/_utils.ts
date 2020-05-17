@@ -39,15 +39,15 @@ export function parse(abap: string, config?: Config) {
 }
 
 function run(abap: string, text: string, type: any, version?: Version | undefined) {
-  const config = Config.getDefault(version);
-  const file = parse(abap, config);
-  const slist = file.getStatements();
-
-  if (version === undefined) {
-    version = Config.getDefault().getVersion();
-  }
-
   it(text, () => {
+    const config = Config.getDefault(version);
+    const file = parse(abap, config);
+    const slist = file.getStatements();
+
+    if (version === undefined) {
+      version = Config.getDefault().getVersion();
+    }
+
     expect(slist[0].get()).to.be.instanceof(type);
 // assumption: no colons in input
     expect(slist[0].getTokens().length).to.equal(file.getTokens(false).length);

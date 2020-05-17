@@ -3,7 +3,7 @@ import {IInterfaceDefinition} from "../types/_interface_definition";
 import {Identifier} from "./_identifier";
 import {Visibility} from "./visibility";
 
-// TODO: Only helper functions to get data from single file, no typing
+// TODO: Only helper functions to get data from single file, no type information
 
 export interface InfoAttribute {
   name: Identifier,
@@ -21,13 +21,14 @@ export interface InfoMethodDefinition {
 export interface InfoObjectDefinition {
   name: Identifier;
   isLocal: boolean;
-  methods: InfoMethodDefinition[];
-  attributes: InfoAttribute[];
+  isFinal: boolean;
+  methods: readonly InfoMethodDefinition[];
+  attributes: readonly InfoAttribute[];
 }
 
 export interface InfoClassImplementation {
   name: Identifier;
-  methods: Identifier[];
+  methods: readonly Identifier[];
 }
 
 export interface IABAPFileInformation {

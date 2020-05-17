@@ -74,7 +74,7 @@ export class Symbols {
     return ret;
   }
 
-  private static outputMethodImplementations(methods: Identifier[]): LServer.DocumentSymbol[] {
+  private static outputMethodImplementations(methods: readonly Identifier[]): LServer.DocumentSymbol[] {
     const ret: LServer.DocumentSymbol[] = [];
     for (const method of methods) {
       const symbol = this.newSymbol(method, LServer.SymbolKind.Method, []);

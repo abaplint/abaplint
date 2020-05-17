@@ -1,6 +1,7 @@
 import {ABAPObject} from "./_abap_object";
 import {IClassDefinition} from "../abap/types/_class_definition";
 import {ABAPFile} from "../files";
+import {InfoObjectDefinition} from "../abap/4_object_information/_abap_file_information";
 
 export enum ClassCategory {
   Test = "05",
@@ -24,6 +25,20 @@ export class Class extends ABAPObject {
     };
   }
 
+  public getClassDefinition2(): InfoObjectDefinition | undefined {
+    const main = this.getMainABAPFile();
+    if (!main) {
+      return undefined;
+    }
+    const definitions = main.getInfo().listClassDefinitions();
+    if (definitions.length === 0) {
+      return undefined;
+    }
+// todo, this should get the global class definition with name = this.getName(); ?
+    return definitions[0];
+  }
+
+  // TODO, to be removed
   public getClassDefinition(): IClassDefinition | undefined {
     const main = this.getMainABAPFile();
     if (!main) {
@@ -36,22 +51,6 @@ export class Class extends ABAPObject {
 // todo, this should get the global class definition with name = this.getName(); ?
     return definitions[0];
   }
-
-  /*
-  public getLocalClasses(): ClassDefinition[] {
-    const ret: ClassDefinition[] = [];
-    for (const file of this.getParsedFiles()) {
-      const stru = file.getStructure();
-      if (stru) {
-        const nodes = stru.findAllStructures(Structures.ClassDefinition);
-        for (const node of nodes) {
-          ret.push(new ClassDefinition(node));
-        }
-      }
-    }
-    return ret;
-  }
- */
 
 // -------------------
 

@@ -37,12 +37,13 @@ ENDCLASS.
 CLASS ZCL_ABAPGIT_PERSIST_SETTINGS IMPLEMENTATION.
 ENDCLASS.`;
 
-  const reg = new Registry().addFile(new MemoryFile("zcl_abapgit_persist_settings.clas.xml", xml));
-  reg.addFile(new MemoryFile("zcl_abapgit_persist_settings.clas.abap", abap));
-  reg.parse();
-  const rule = new RemoveDescriptions();
-  const issues = rule.run(reg.getObjects()[0]);
   it("remove_descriptions test", () => {
+    const reg = new Registry().addFile(new MemoryFile("zcl_abapgit_persist_settings.clas.xml", xml));
+    reg.addFile(new MemoryFile("zcl_abapgit_persist_settings.clas.abap", abap));
+    reg.parse();
+    const rule = new RemoveDescriptions();
+    const issues = rule.run(reg.getObjects()[0]);
+
     expect(issues.length).to.equals(1);
   });
 });
@@ -73,12 +74,13 @@ ENDCLASS.
 CLASS ZCL_ABAPGIT_PERSIST_SETTINGS IMPLEMENTATION.
 ENDCLASS.`;
 
-  const reg = new Registry().addFile(new MemoryFile("zcl_abapgit_persist_settings.clas.xml", xml));
-  reg.addFile(new MemoryFile("zcl_abapgit_persist_settings.clas.abap", abap));
-  reg.parse();
-  const rule = new RemoveDescriptions();
-  const issues = rule.run(reg.getObjects()[0]);
   it("remove_descriptions test", () => {
+    const reg = new Registry().addFile(new MemoryFile("zcl_abapgit_persist_settings.clas.xml", xml));
+    reg.addFile(new MemoryFile("zcl_abapgit_persist_settings.clas.abap", abap));
+    reg.parse();
+    const rule = new RemoveDescriptions();
+    const issues = rule.run(reg.getObjects()[0]);
+
     expect(issues.length).to.equals(0);
   });
 });
@@ -121,12 +123,13 @@ describe("rule, remove_descriptions, 2 errors", () => {
     CLASS ZCL_ABAPGIT_PERSIST_SETTINGS IMPLEMENTATION.
     ENDCLASS.`;
 
-  const reg = new Registry().addFile(new MemoryFile("zcl_abapgit_persist_settings.clas.xml", xml));
-  reg.addFile(new MemoryFile("zcl_abapgit_persist_settings.clas.abap", abap));
-  reg.parse();
-  const rule = new RemoveDescriptions();
-  const issues = rule.run(reg.getObjects()[0]);
   it("remove_descriptions test", () => {
+    const reg = new Registry().addFile(new MemoryFile("zcl_abapgit_persist_settings.clas.xml", xml));
+    reg.addFile(new MemoryFile("zcl_abapgit_persist_settings.clas.abap", abap));
+    reg.parse();
+    const rule = new RemoveDescriptions();
+    const issues = rule.run(reg.getObjects()[0]);
+
     expect(issues.length).to.equals(2);
   });
 });

@@ -13,8 +13,8 @@ import * as Tokens from "../1_lexer/tokens";
 import {Visibility} from "./visibility";
 
 export class ABAPFileInformation implements IABAPFileInformation {
-  private readonly classDefinitions: IClassDefinition[];
-  private readonly interfaceDefinitions: IInterfaceDefinition[];
+  private readonly classDefinitions: IClassDefinition[]; // todo, remove
+  private readonly interfaceDefinitions: IInterfaceDefinition[]; // todo, remove
 
   private readonly interfaces: InfoObjectDefinition[];
   private readonly classes: InfoObjectDefinition[];
@@ -23,8 +23,8 @@ export class ABAPFileInformation implements IABAPFileInformation {
   private readonly filename: string;
 
   public constructor(structure: StructureNode | undefined, filename: string) {
-    this.classDefinitions = [];
-    this.interfaceDefinitions = [];
+    this.classDefinitions = []; // todo, remove
+    this.interfaceDefinitions = []; // todo, remove
 
     this.forms = [];
     this.implementations = [];
@@ -46,9 +46,9 @@ export class ABAPFileInformation implements IABAPFileInformation {
     return this.interfaces;
   }
 
-  public getInterfaceDefinitionByName(_name: string): InfoObjectDefinition | undefined {
+  public getInterfaceDefinitionByName(name: string): InfoObjectDefinition | undefined {
     for (const i of this.listInterfaceDefinitions()) {
-      if (i.name.getName().toUpperCase() === name) {
+      if (i.name.getName().toUpperCase() === name.toUpperCase()) {
         return i;
       }
     }
@@ -61,7 +61,7 @@ export class ABAPFileInformation implements IABAPFileInformation {
 
   public getClassDefinitionByName(name: string): InfoObjectDefinition | undefined {
     for (const d of this.listClassDefinitions()) {
-      if (d.name.getName().toUpperCase() === name) {
+      if (d.name.getName().toUpperCase() === name.toUpperCase()) {
         return d;
       }
     }
@@ -145,25 +145,13 @@ export class ABAPFileInformation implements IABAPFileInformation {
   private parseInterfaces(structure: StructureNode) {
     for (const found of structure.findAllStructures(Structures.Interface)) {
       const interfaceName = found.findFirstStatement(Statements.Interface)!.findFirstExpression(Expressions.InterfaceName)!.getFirstToken();
-
-      const methods: InfoMethodDefinition[] = [];
-      for (const def of found.findAllStatements(Statements.MethodDef)) {
-        const methodName = def.findFirstExpression(Expressions.MethodName)?.getFirstToken();
-        if (methodName === undefined) {
-          continue;
-        }
-
-        methods.push({
-          name: new Identifier(methodName, this.filename),
-          isRedefinition: false,
-          visibility: Visibility.Public,
-        });
-      }
+      const methods = this.parseMethodDefinition(found, Visibility.Public);
 
       this.interfaces.push({
         name: new Identifier(interfaceName, this.filename),
         isLocal: found.findFirstExpression(Expressions.Global) !== undefined,
-        methods: methods,
+        isFinal: false,
+        methods,
         attributes: [], // todo
       });
     }
@@ -173,13 +161,38 @@ export class ABAPFileInformation implements IABAPFileInformation {
     for (const found of structure.findAllStructures(Structures.ClassDefinition)) {
       const className = found.findFirstStatement(Statements.ClassDefinition)!.findFirstExpression(Expressions.ClassName)!.getFirstToken();
 
+      let methods = this.parseMethodDefinition(found.findFirstStructure(Structures.PrivateSection), Visibility.Public);
+      methods = methods.concat(this.parseMethodDefinition(found.findFirstStructure(Structures.ProtectedSection), Visibility.Protected));
+      methods = methods.concat(this.parseMethodDefinition(found.findFirstStructure(Structures.PrivateSection), Visibility.Private));
+
       this.classes.push({
         name: new Identifier(className, this.filename),
         isLocal: found.findFirstExpression(Expressions.Global) !== undefined,
-        methods: [], // todo
+        methods,
+        isFinal: found.findFirstExpression(Expressions.ClassFinal) !== undefined,
         attributes: [], // todo
       });
     }
+  }
+
+  private parseMethodDefinition(node: StructureNode | undefined, visibility: Visibility): InfoMethodDefinition[] {
+    if (node === undefined) {
+      return [];
+    }
+
+    const methods: InfoMethodDefinition[] = [];
+    for (const def of node.findAllStatements(Statements.MethodDef)) {
+      const methodName = def.findFirstExpression(Expressions.MethodName)?.getFirstToken();
+      if (methodName === undefined) {
+        continue;
+      }
+      methods.push({
+        name: new Identifier(methodName, this.filename),
+        isRedefinition: false, // todo
+        visibility,
+      });
+    }
+    return methods;
   }
 
 }

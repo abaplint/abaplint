@@ -4,10 +4,11 @@ import {SICFConsistency} from "../../src/rules";
 import {expect} from "chai";
 
 describe("rule, sicf_consistency, error", () => {
-  const reg = new Registry().addFile(new MemoryFile("zabapgitserver 9def6c78d0beedf8d5b04ba6c.sicf.xml", `blah`));
-  const rule = new SICFConsistency();
-  const issues = rule.run(reg.getObjects()[0], reg);
   it("test", () => {
+    const reg = new Registry().addFile(new MemoryFile("zabapgitserver 9def6c78d0beedf8d5b04ba6c.sicf.xml", `blah`));
+    const rule = new SICFConsistency();
+    const issues = rule.run(reg.getObjects()[0], reg);
+
     expect(issues.length).to.equals(0);
   });
 });
@@ -40,10 +41,10 @@ const xml = `<?xml version="1.0" encoding="utf-8"?>
 </abapGit>`;
 
 describe("rule, sicf_consistency, handler not found", () => {
-  const reg = new Registry().addFile(new MemoryFile("zabapgitserver 9def6c78d0beedf8d5b04ba6c.sicf.xml", xml));
-  const rule = new SICFConsistency();
-  const issues = rule.run(reg.getObjects()[0], reg);
   it("test", () => {
+    const reg = new Registry().addFile(new MemoryFile("zabapgitserver 9def6c78d0beedf8d5b04ba6c.sicf.xml", xml));
+    const rule = new SICFConsistency();
+    const issues = rule.run(reg.getObjects()[0], reg);
     expect(issues.length).to.equals(1);
   });
 });
@@ -60,14 +61,15 @@ CLASS ZCL_AGS_SICF IMPLEMENTATION.
 ENDCLASS.`;
 
 describe("rule, sicf_consistency, handler ok", () => {
-  const reg = new Registry();
-  reg.addFile(new MemoryFile("zabapgitserver 9def6c78d0beedf8d5b04ba6c.sicf.xml", xml));
-  reg.addFile(new MemoryFile("zcl_ags_sicf.clas.abap", abap));
-  reg.parse();
-
-  const rule = new SICFConsistency();
-  const issues = rule.run(reg.getObjects()[0], reg);
   it("test", () => {
+    const reg = new Registry();
+    reg.addFile(new MemoryFile("zabapgitserver 9def6c78d0beedf8d5b04ba6c.sicf.xml", xml));
+    reg.addFile(new MemoryFile("zcl_ags_sicf.clas.abap", abap));
+    reg.parse();
+
+    const rule = new SICFConsistency();
+    const issues = rule.run(reg.getObjects()[0], reg);
+
     expect(issues.length).to.equals(0);
   });
 });

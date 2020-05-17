@@ -102,10 +102,10 @@ export function testRuleWithVariableConfig(tests: any, rule: new () => IRule, te
   describe(testTitle, function () {
     this.timeout(200);
     tests.forEach((test: any) => {
-      const reg = new Registry().addFile(new MemoryFile("zfoo.prog.abap", test.abap)).parse();
-      nrule.setConfig(test.config);
-      const issues = nrule.run(reg.getObjects()[0], reg);
       it(test.description, () => {
+        const reg = new Registry().addFile(new MemoryFile("zfoo.prog.abap", test.abap)).parse();
+        nrule.setConfig(test.config);
+        const issues = nrule.run(reg.getObjects()[0], reg);
         expect(issues.length).to.equals(test.issueLength);
       });
     });

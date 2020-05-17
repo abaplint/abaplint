@@ -5,8 +5,8 @@ import {IRegistry} from "../../_iregistry";
 import {IObject} from "../../objects/_iobject";
 import * as Objects from "../../objects";
 import {BasicRuleConfig} from "../_basic_rule_config";
-import {IClassDefinition} from "../../abap/types/_class_definition";
 import {Class} from "../../objects";
+import {InfoObjectDefinition} from "../../abap/4_object_information/_abap_file_information";
 
 export class SuperclassFinalConf extends BasicRuleConfig {
 }
@@ -47,15 +47,15 @@ export class SuperclassFinal extends ABAPRule {
       if (obj instanceof Objects.Class && file.getFilename().match(/\.clas\.abap$/)) {
         localLookup = false;
       }
-      let found: IClassDefinition | undefined = undefined;
+      let found: InfoObjectDefinition | undefined = undefined;
       if (localLookup) {
 // todo, this should look inside the object instead of the file?
-        found = file.getInfo().getClassDefinition(sup);
+        found = file.getInfo().getClassDefinitionByName(sup);
       }
       if (found === undefined) {
         const clas = reg.getObject("CLAS", sup) as Class;
         if (clas) {
-          found = clas.getClassDefinition();
+          found = clas.getClassDefinition2();
         }
       }
       if (found === undefined) {
@@ -64,7 +64,7 @@ export class SuperclassFinal extends ABAPRule {
         output.push(issue);
         continue;
       }
-      if (found.isFinal()) {
+      if (found.isFinal === true) {
         const issue = Issue.atIdentifier(definition, this.getMessage(), this.getMetadata().key);
         output.push(issue);
       }
