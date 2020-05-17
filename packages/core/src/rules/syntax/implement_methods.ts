@@ -5,8 +5,7 @@ import {IRegistry} from "../../_iregistry";
 import {BasicRuleConfig} from "../_basic_rule_config";
 import {ABAPObject} from "../../objects/_abap_object";
 import {Interface} from "../../objects";
-import {IInterfaceDefinition} from "../../abap/types/_interface_definition";
-import {InfoClassImplementation, InfoClassDefinition} from "../../abap/4_object_information/_abap_file_information";
+import {InfoClassImplementation, InfoClassDefinition, InfoInterfaceDefinition} from "../../abap/4_object_information/_abap_file_information";
 
 // todo: abstract methods from superclass parents(might be multiple), if class is not abstract
 
@@ -95,28 +94,28 @@ export class ImplementMethods extends ABAPRule {
 
   private checkInterfaces(def: InfoClassDefinition, impl: InfoClassImplementation, file: ABAPFile, reg: IRegistry): Issue[] {
     const ret: Issue[] = [];
-    let idef: IInterfaceDefinition | undefined = undefined;
+    let idef: InfoInterfaceDefinition | undefined = undefined;
 
     for (const interfaceName of def.interfaces) {
       const intf = reg.getObject("INTF", interfaceName.name) as Interface | undefined;
       if (intf === undefined) {
         // lookup in localfile
-        idef = file.getInfo().getInterfaceDefinition(interfaceName.name);
+        idef = file.getInfo().getInterfaceDefinitionByName(interfaceName.name);
         if (idef === undefined) {
           const issue = Issue.atIdentifier(def.identifier, "Implemented interface \"" + interfaceName.name + "\" not found", this.getMetadata().key);
           ret.push(issue);
           continue;
         }
       } else {
-        idef = intf.getMainABAPFile()?.getInfo().getInterfaceDefinitions()[0];
+        idef = intf.getMainABAPFile()?.getInfo().listInterfaceDefinitions()[0];
       }
 
       if (idef === undefined || interfaceName.partial === true) {
         continue; // ignore parser errors in interface
       }
 
-      for (const method of idef.getMethodDefinitions()) {
-        const name = interfaceName.name + "~" + method.getName();
+      for (const method of idef.methods) {
+        const name = interfaceName.name + "~" + method.name;
         let found = impl.methods.find(m => m.getName().toUpperCase() === name.toUpperCase());
 
         if (found === undefined) {
@@ -130,7 +129,7 @@ export class ImplementMethods extends ABAPRule {
         }
 
         if (found === undefined) {
-          const message = "Implement method \"" + method.getName() + "\" from interface \"" + interfaceName.name + "\"";
+          const message = "Implement method \"" + method.name + "\" from interface \"" + interfaceName.name + "\"";
           const issue = Issue.atIdentifier(impl.identifier, message, this.getMetadata().key);
           ret.push(issue);
         }

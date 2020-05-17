@@ -5,10 +5,16 @@ import {Visibility} from "./visibility";
 
 // TODO: Only helper functions to get data from single file, no type information
 
+export enum AttributeType {
+  Instance,
+  Static,
+  Constant,
+}
+
 export interface InfoAttribute {
   name: string,
   identifier: Identifier,
-  isStatic: boolean,
+  type: AttributeType,
   readOnly: boolean,
   visibility: Visibility,
 }
@@ -59,15 +65,12 @@ export interface IABAPFileInformation {
   // TODO, remove these
   getClassDefinitions(): readonly IClassDefinition[];
   getInterfaceDefinitions(): readonly IInterfaceDefinition[];
-  getInterfaceDefinition(name: string): IInterfaceDefinition | undefined;
+  // ^END TODO
 
-  // WIP
   listInterfaceDefinitions(): readonly InfoInterfaceDefinition[];
   getInterfaceDefinitionByName(name: string): InfoInterfaceDefinition | undefined;
   listClassDefinitions(): readonly InfoClassDefinition[];
   getClassDefinitionByName(name: string): InfoClassDefinition | undefined;
-
-  // OK
   listFormDefinitions(): readonly Identifier[];
   listClassImplementations(): readonly InfoClassImplementation[];
   getClassImplementationByName(name: string): InfoClassImplementation | undefined;

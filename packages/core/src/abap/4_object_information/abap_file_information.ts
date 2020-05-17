@@ -3,7 +3,7 @@ import * as Structures from "../3_structures/structures";
 import * as Expressions from "../2_statements/expressions";
 import * as Statements from "../2_statements/statements";
 import {CurrentScope} from "../5_syntax/_current_scope";
-import {IABAPFileInformation, InfoClassImplementation, InfoClassDefinition, InfoMethodDefinition, InfoInterfaceDefinition, InfoAttribute, InfoAlias} from "./_abap_file_information";
+import {IABAPFileInformation, InfoClassImplementation, InfoClassDefinition, InfoMethodDefinition, InfoInterfaceDefinition, InfoAttribute, InfoAlias, AttributeType} from "./_abap_file_information";
 import {StructureNode} from "../nodes";
 import {InterfaceDefinition} from "../types";
 import {IClassDefinition} from "../types/_class_definition";
@@ -34,8 +34,13 @@ export class ABAPFileInformation implements IABAPFileInformation {
     this.parse(structure);
   }
 
+  // TODO, DELETE
   public getClassDefinitions() {
     return this.classDefinitions;
+  }
+  // TODO, DELETE
+  public getInterfaceDefinitions() {
+    return this.interfaceDefinitions;
   }
 
   public listClassImplementations(): readonly InfoClassImplementation[] {
@@ -72,19 +77,6 @@ export class ABAPFileInformation implements IABAPFileInformation {
     for (const impl of this.listClassImplementations()) {
       if (impl.identifier.getName().toUpperCase() === name.toUpperCase()) {
         return impl;
-      }
-    }
-    return undefined;
-  }
-
-  public getInterfaceDefinitions() {
-    return this.interfaceDefinitions;
-  }
-
-  public getInterfaceDefinition(name: string) {
-    for (const def of this.getInterfaceDefinitions()) {
-      if (def.getName().toUpperCase() === name.toUpperCase()) {
-        return def;
       }
     }
     return undefined;
@@ -234,7 +226,7 @@ export class ABAPFileInformation implements IABAPFileInformation {
       ret.push({
         name: name.getStr(),
         identifier: new Identifier(name, this.filename),
-        isStatic: false,
+        type: AttributeType.Instance,
         readOnly: d.concatTokens().toUpperCase().includes(" READ-ONLY"),
         visibility,
       });
@@ -244,8 +236,18 @@ export class ABAPFileInformation implements IABAPFileInformation {
       ret.push({
         name: name.getStr(),
         identifier: new Identifier(name, this.filename),
-        isStatic: true,
+        type: AttributeType.Static,
         readOnly: d.concatTokens().toUpperCase().includes(" READ-ONLY"),
+        visibility,
+      });
+    }
+    for (const d of node.findAllStatements(Statements.Constant)) {
+      const name = d.findFirstExpression(Expressions.NamespaceSimpleName)!.getFirstToken();
+      ret.push({
+        name: name.getStr(),
+        identifier: new Identifier(name, this.filename),
+        type: AttributeType.Constant,
+        readOnly: true,
         visibility,
       });
     }
