@@ -1,4 +1,4 @@
-import {Identifier} from "./_identifier";
+import {Identifier} from "../4_object_information/_identifier";
 import {StructureNode} from "../nodes";
 import * as Structures from "../3_structures/structures";
 import * as Statements from "../2_statements/statements";

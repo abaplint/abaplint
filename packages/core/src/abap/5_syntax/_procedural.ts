@@ -1,5 +1,6 @@
 import * as Expressions from "../2_statements/expressions";
 import * as Statements from "../2_statements/statements";
+import * as Structures from "../3_structures/structures";
 import {StatementNode} from "../nodes";
 import {ABAPObject} from "../../objects/_abap_object";
 import {FormDefinition} from "../types";
@@ -21,7 +22,12 @@ export class Procedural {
   }
 
   public addAllFormDefinitions(file: ABAPFile, obj: ABAPObject) {
-    this.scope.addFormDefinitions(file.getInfo().getFormDefinitions());
+    const structure = file.getStructure();
+    if (structure) {
+      for (const found of structure.findAllStructures(Structures.Form)) {
+        this.scope.addFormDefinitions([new FormDefinition(found, file.getFilename(), this.scope)]);
+      }
+    }
 
     const stru = file.getStructure();
     if (stru === undefined) {

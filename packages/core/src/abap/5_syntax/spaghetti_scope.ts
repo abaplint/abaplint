@@ -1,7 +1,7 @@
 import {Position} from "../../position";
 import {TypedIdentifier} from "../types/_typed_identifier";
 import {ScopeType} from "./_scope_type";
-import {Identifier} from "../types/_identifier";
+import {Identifier} from "../4_object_information/_identifier";
 import {IClassDefinition} from "../types/_class_definition";
 import {IInterfaceDefinition} from "../types/_interface_definition";
 import {IFormDefinition} from "../types/_form_definition";
@@ -138,6 +138,20 @@ export class SpaghettiScopeNode extends ScopeData {
     }
 
     return undefined;
+  }
+
+  public listFormDefinitions(): IFormDefinition[] {
+    let search: SpaghettiScopeNode | undefined = this;
+    const ret: IFormDefinition[] = [];
+
+    while (search !== undefined) {
+      for (const form of search.getData().forms) {
+        ret.push(form);
+      }
+      search = search.getParent();
+    }
+
+    return ret;
   }
 
   public findInterfaceDefinition(name: string): IInterfaceDefinition | undefined {

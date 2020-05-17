@@ -1,24 +1,27 @@
 import {ClassDefinition} from "../types/class_definition";
 import * as Structures from "../3_structures/structures";
+import * as Expressions from "../2_statements/expressions";
 import {CurrentScope} from "../5_syntax/_current_scope";
 import {IABAPFileInformation} from "./_abap_file_information";
 import {StructureNode} from "../nodes";
-import {InterfaceDefinition, ClassImplementation, FormDefinition} from "../types";
+import {InterfaceDefinition, ClassImplementation} from "../types";
 import {IClassDefinition} from "../types/_class_definition";
 import {IInterfaceDefinition} from "../types/_interface_definition";
 import {IClassImplementation} from "../types/_class_implementation";
+import {Identifier} from "./_identifier";
+import * as Tokens from "../1_lexer/tokens";
 
 export class ABAPFileInformation implements IABAPFileInformation {
   private readonly classDefinitions: IClassDefinition[];
   private readonly interfaceDefinitions: IInterfaceDefinition[];
   private readonly classImplementations: IClassImplementation[];
-  private readonly formDefinitions: FormDefinition[];
+  private readonly forms: Identifier[];
 
   public constructor(structure: StructureNode | undefined, filename: string) {
     this.classDefinitions = [];
     this.interfaceDefinitions = [];
     this.classImplementations = [];
-    this.formDefinitions = [];
+    this.forms = [];
     this.parse(structure, filename);
   }
 
@@ -61,17 +64,8 @@ export class ABAPFileInformation implements IABAPFileInformation {
     return this.classImplementations;
   }
 
-  public getFormDefinitions(): FormDefinition[] {
-    return this.formDefinitions;
-  }
-
-  public getFormDefinition(name: string): FormDefinition | undefined {
-    for (const def of this.getFormDefinitions()) {
-      if (def.getName().toUpperCase() === name.toUpperCase()) {
-        return def;
-      }
-    }
-    return undefined;
+  public listFormDefinitions(): Identifier[] {
+    return this.forms;
   }
 
 ///////////////////////
@@ -92,8 +86,12 @@ export class ABAPFileInformation implements IABAPFileInformation {
         this.classImplementations.push(new ClassImplementation(found, filename));
       }
 
-      for (const found of structure.findAllStructures(Structures.Form)) {
-        this.formDefinitions.push(new FormDefinition(found, filename, scope));
+      for (const statement of structure.findAllStructures(Structures.Form)) {
+        // FORMs can contain a dash in the name
+        const pos = statement.findFirstExpression(Expressions.FormName)!.getFirstToken().getStart();
+        const name = statement.findFirstExpression(Expressions.FormName)!.concatTokens();
+        const nameToken = new Tokens.Identifier(pos, name);
+        this.forms.push(new Identifier(nameToken, filename));
       }
     }
   }

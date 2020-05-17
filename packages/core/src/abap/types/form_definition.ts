@@ -1,7 +1,7 @@
 import * as Statements from "../2_statements/statements";
 import * as Expressions from "../2_statements/expressions";
 import * as Tokens from "../1_lexer/tokens";
-import {Identifier} from "./_identifier";
+import {Identifier} from "../4_object_information/_identifier";
 import {StructureNode, StatementNode, ExpressionNode} from "../../abap/nodes";
 import {Expression} from "../2_statements/combi";
 import {TypedIdentifier} from "./_typed_identifier";

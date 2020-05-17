@@ -1,6 +1,6 @@
 import * as LServer from "vscode-languageserver-types";
 import {IRegistry} from "../_iregistry";
-import {Identifier} from "../abap/types/_identifier";
+import {Identifier} from "../abap/4_object_information/_identifier";
 import {ABAPObject} from "../objects/_abap_object";
 import {LSPUtils} from "./_lsp_utils";
 import {ABAPFile} from "../files";

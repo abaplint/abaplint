@@ -3,7 +3,7 @@ import {MethodDef} from "../2_statements/statements";
 import * as Expressions from "../2_statements/expressions";
 import {MethodParameters} from "./method_parameters";
 import {Visibility} from "./visibility";
-import {Identifier} from "./_identifier";
+import {Identifier} from "../4_object_information/_identifier";
 import {CurrentScope} from "../5_syntax/_current_scope";
 import {IMethodDefinition} from "./_method_definition";
 

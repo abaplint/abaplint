@@ -1,7 +1,7 @@
 import * as LServer from "vscode-languageserver-types";
 import {IRegistry} from "../_iregistry";
 import {ABAPFile} from "../files";
-import {Identifier} from "../abap/types/_identifier";
+import {Identifier} from "../abap/4_object_information/_identifier";
 import {MethodImplementation} from "../abap/types";
 import {LSPUtils} from "./_lsp_utils";
 import {IAttributes} from "../abap/types/_class_attributes";
@@ -47,7 +47,7 @@ export class Symbols {
 
   private static outputForms(file: ABAPFile): LServer.DocumentSymbol[] {
     const ret: LServer.DocumentSymbol[] = [];
-    for (const form of file.getInfo().getFormDefinitions()) {
+    for (const form of file.getInfo().listFormDefinitions()) {
       const symbol = this.newSymbol(form, LServer.SymbolKind.Function, []);
       ret.push(symbol);
     }

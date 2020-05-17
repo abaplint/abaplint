@@ -4,7 +4,7 @@ import {NamingRuleConfig} from "../_naming_rule_config";
 import {NameValidator} from "../../utils/name_validator";
 import {ABAPRule} from "../_abap_rule";
 import {ABAPFile} from "../../files";
-import {Identifier} from "../../abap/types/_identifier";
+import {Identifier} from "../../abap/4_object_information/_identifier";
 
 export class ClassAttributeNamesConf extends NamingRuleConfig {
   /** Ignore global exception classes */

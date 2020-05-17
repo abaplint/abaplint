@@ -38,7 +38,7 @@ export class IdenticalFormNames implements IRule {
     const found: string[] = [];
 
     for (const file of obj.getABAPFiles()) {
-      for (const form of file.getInfo().getFormDefinitions()) {
+      for (const form of file.getInfo().listFormDefinitions()) {
         const name = form.getName().toUpperCase();
         if (found.indexOf(name) >= 0) {
           const message = "Identical FORM Names: \"" + name + "\"";

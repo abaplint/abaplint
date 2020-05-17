@@ -1,5 +1,5 @@
 import {StructureNode} from "../../abap/nodes";
-import {Identifier} from "./_identifier";
+import {Identifier} from "../4_object_information/_identifier";
 import * as Structures from "../3_structures/structures";
 import * as Expressions from "../2_statements/expressions";
 

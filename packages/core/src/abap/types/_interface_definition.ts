@@ -1,4 +1,4 @@
-import {Identifier} from "./_identifier";
+import {Identifier} from "../4_object_information/_identifier";
 import {IAttributes} from "./_class_attributes";
 import {ITypeDefinitions} from "./_type_definitions";
 import {IMethodDefinition} from "./_method_definition";

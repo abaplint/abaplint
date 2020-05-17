@@ -4,7 +4,7 @@ import {DDIC} from "../../ddic";
 import {Position} from "../../position";
 import {SpaghettiScope, SpaghettiScopeNode, IScopeIdentifier} from "./spaghetti_scope";
 import {Token} from "../1_lexer/tokens/_token";
-import {Identifier} from "../types/_identifier";
+import {Identifier} from "../4_object_information/_identifier";
 import {ScopeType} from "./_scope_type";
 import {IRegistry} from "../../_iregistry";
 import {IClassDefinition} from "../types/_class_definition";
@@ -163,6 +163,14 @@ export class CurrentScope {
 
   public findFormDefinition(name: string): IFormDefinition | undefined {
     return this.current?.findFormDefinition(name);
+  }
+
+  public listFormDefinitions(): IFormDefinition[] {
+    const ret = this.current?.listFormDefinitions();
+    if (ret === undefined) {
+      return [];
+    }
+    return ret;
   }
 
   public findInterfaceDefinition(name: string): IInterfaceDefinition | undefined {

@@ -1,4 +1,4 @@
-import {Identifier} from "./_identifier";
+import {Identifier} from "../4_object_information/_identifier";
 import {Token} from "../1_lexer/tokens/_token";
 import {Visibility} from "./visibility";
 
