@@ -5,8 +5,7 @@ import {IRegistry} from "../../_iregistry";
 import {ABAPObject} from "../../objects/_abap_object";
 import {NamingRuleConfig} from "../_naming_rule_config";
 import {NameValidator} from "../../utils/name_validator";
-import {TypedIdentifier} from "../../abap/types/_typed_identifier";
-import {IMethodDefinition} from "../../abap/types/_method_definition";
+import {InfoMethodDefinition, MethodParameterType, InfoMethodParameter} from "../../abap/4_object_information/_abap_file_information";
 
 export class MethodParameterNamesConf extends NamingRuleConfig {
   /** Ignore parameters in methods of exception classes */
@@ -59,21 +58,17 @@ export class MethodParameterNames implements IRule {
     }
 
     for (const file of obj.getABAPFiles()) {
-      for (const def of file.getInfo().getInterfaceDefinitions()) {
-        for (const method of def.getMethodDefinitions()) {
+      for (const def of file.getInfo().listInterfaceDefinitions()) {
+        for (const method of def.methods) {
           ret = ret.concat(this.checkMethod(method));
         }
       }
-      for (const def of file.getInfo().getClassDefinitions()) {
-        if (this.conf.ignoreExceptions && def.isException()) {
+      for (const def of file.getInfo().listClassDefinitions()) {
+        if (this.conf.ignoreExceptions && def.isException) {
           continue;
         }
-        const definitions = def.getMethodDefinitions();
-        if (definitions === undefined) {
-          continue;
-        }
-        for (const method of definitions.getAll()) {
-          if (method.isEventHandler()) {
+        for (const method of def.methods) {
+          if (method.isEventHandler) {
             continue;
           }
           ret = ret.concat(this.checkMethod(method));
@@ -84,34 +79,38 @@ export class MethodParameterNames implements IRule {
     return ret;
   }
 
-  private checkMethod(method: IMethodDefinition): Issue[] {
+  private checkMethod(method: InfoMethodDefinition): Issue[] {
     let ret: Issue[] = [];
 
-    const parameters = method.getParameters();
-    for (const param of parameters.getImporting()) {
-      ret = ret.concat(this.checkParameter(param, this.conf.importing));
-    }
-    for (const param of parameters.getExporting()) {
-      ret = ret.concat(this.checkParameter(param, this.conf.exporting));
-    }
-    for (const param of parameters.getChanging()) {
-      ret = ret.concat(this.checkParameter(param, this.conf.changing));
-    }
-    const returning = parameters.getReturning();
-    if (returning) {
-      ret = ret.concat(this.checkParameter(returning, this.conf.returning));
+    for (const p of method.parameters) {
+      switch (p.type) {
+        case MethodParameterType.Importing:
+          ret = ret.concat(this.checkParameter(p, this.conf.importing));
+          break;
+        case MethodParameterType.Exporting:
+          ret = ret.concat(this.checkParameter(p, this.conf.exporting));
+          break;
+        case MethodParameterType.Changing:
+          ret = ret.concat(this.checkParameter(p, this.conf.changing));
+          break;
+        case MethodParameterType.Returning:
+          ret = ret.concat(this.checkParameter(p, this.conf.returning));
+          break;
+        default:
+          break;
+      }
     }
 
     return ret;
   }
 
-  private checkParameter(param: TypedIdentifier, expected: string): Issue[] {
+  private checkParameter(param: InfoMethodParameter, expected: string): Issue[] {
     const ret: Issue[] = [];
     const regex = new RegExp(expected, "i");
-    const name = param.getName();
+    const name = param.name;
     if (NameValidator.violatesRule(name, regex, this.conf)) {
       const message = this.getDescription(expected, name);
-      const issue = Issue.atIdentifier(param, message, this.getMetadata().key);
+      const issue = Issue.atIdentifier(param.identifier, message, this.getMetadata().key);
       ret.push(issue);
     }
 

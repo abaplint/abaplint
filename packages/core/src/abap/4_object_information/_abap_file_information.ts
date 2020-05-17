@@ -1,14 +1,19 @@
-import {IClassDefinition} from "../types/_class_definition";
-import {IInterfaceDefinition} from "../types/_interface_definition";
 import {Identifier} from "./_identifier";
 import {Visibility} from "./visibility";
 
-// TODO: Only helper functions to get data from single file, no type information
+// Only helper functions to get data from single file, no type information
 
 export enum AttributeType {
   Instance,
   Static,
   Constant,
+}
+
+export enum MethodParameterType {
+  Importing,
+  Exporting,
+  Changing,
+  Returning,
 }
 
 export interface InfoAttribute {
@@ -19,12 +24,22 @@ export interface InfoAttribute {
   visibility: Visibility,
 }
 
+export interface InfoMethodParameter {
+  name: string,
+  identifier: Identifier,
+  type: MethodParameterType,
+}
+
 export interface InfoMethodDefinition {
   name: string,
   identifier: Identifier,
+// todo, type, Instance or Static
   isRedefinition: boolean,
+  isEventHandler: boolean,
   isAbstract: boolean,
   visibility: Visibility,
+  parameters: InfoMethodParameter[],
+  exceptions: string[],
 }
 
 export interface InfoInterfaceDefinition {
@@ -62,11 +77,6 @@ export interface InfoClassImplementation {
 }
 
 export interface IABAPFileInformation {
-  // TODO, remove these
-  getClassDefinitions(): readonly IClassDefinition[];
-  getInterfaceDefinitions(): readonly IInterfaceDefinition[];
-  // ^END TODO
-
   listInterfaceDefinitions(): readonly InfoInterfaceDefinition[];
   getInterfaceDefinitionByName(name: string): InfoInterfaceDefinition | undefined;
   listClassDefinitions(): readonly InfoClassDefinition[];

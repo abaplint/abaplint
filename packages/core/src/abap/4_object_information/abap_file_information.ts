@@ -1,21 +1,13 @@
-import {ClassDefinition} from "../types/class_definition";
 import * as Structures from "../3_structures/structures";
 import * as Expressions from "../2_statements/expressions";
 import * as Statements from "../2_statements/statements";
-import {CurrentScope} from "../5_syntax/_current_scope";
-import {IABAPFileInformation, InfoClassImplementation, InfoClassDefinition, InfoMethodDefinition, InfoInterfaceDefinition, InfoAttribute, InfoAlias, AttributeType} from "./_abap_file_information";
-import {StructureNode} from "../nodes";
-import {InterfaceDefinition} from "../types";
-import {IClassDefinition} from "../types/_class_definition";
-import {IInterfaceDefinition} from "../types/_interface_definition";
+import {IABAPFileInformation, InfoClassImplementation, InfoClassDefinition, InfoMethodDefinition, InfoInterfaceDefinition, InfoAttribute, InfoAlias, AttributeType, InfoMethodParameter, MethodParameterType} from "./_abap_file_information";
+import {StructureNode, StatementNode} from "../nodes";
 import {Identifier} from "./_identifier";
 import * as Tokens from "../1_lexer/tokens";
 import {Visibility} from "./visibility";
 
 export class ABAPFileInformation implements IABAPFileInformation {
-  private readonly classDefinitions: IClassDefinition[]; // todo, remove
-  private readonly interfaceDefinitions: IInterfaceDefinition[]; // todo, remove
-
   private readonly interfaces: InfoInterfaceDefinition[];
   private readonly classes: InfoClassDefinition[];
   private readonly forms: Identifier[];
@@ -23,24 +15,12 @@ export class ABAPFileInformation implements IABAPFileInformation {
   private readonly filename: string;
 
   public constructor(structure: StructureNode | undefined, filename: string) {
-    this.classDefinitions = []; // todo, remove
-    this.interfaceDefinitions = []; // todo, remove
-
     this.forms = [];
     this.implementations = [];
     this.interfaces = [];
     this.classes = [];
     this.filename = filename;
     this.parse(structure);
-  }
-
-  // TODO, DELETE
-  public getClassDefinitions() {
-    return this.classDefinitions;
-  }
-  // TODO, DELETE
-  public getInterfaceDefinitions() {
-    return this.interfaceDefinitions;
   }
 
   public listClassImplementations(): readonly InfoClassImplementation[] {
@@ -89,42 +69,35 @@ export class ABAPFileInformation implements IABAPFileInformation {
 ///////////////////////
 
   private parse(structure: StructureNode | undefined): void {
-    const scope = CurrentScope.buildEmpty();
+    if (structure === undefined) {
+      return;
+    }
 
-    if (structure !== undefined) {
-      for (const found of structure.findAllStructures(Structures.ClassDefinition)) {
-        this.classDefinitions.push(new ClassDefinition(found, this.filename, scope));
-      }
-      this.parseClasses(structure);
+    this.parseClasses(structure);
+    this.parseInterfaces(structure);
 
-      for (const found of structure.findAllStructures(Structures.Interface)) {
-        this.interfaceDefinitions.push(new InterfaceDefinition(found, this.filename, scope));
-      }
-      this.parseInterfaces(structure);
-
-      for (const found of structure.findAllStructures(Structures.ClassImplementation)) {
-        const methods = [];
-        for (const method of found.findAllStructures(Structures.Method)) {
-          const methodName = method.findFirstExpression(Expressions.MethodName)?.getFirstToken();
-          if (methodName) {
-            methods.push(new Identifier(methodName, this.filename));
-          }
+    for (const found of structure.findAllStructures(Structures.ClassImplementation)) {
+      const methods = [];
+      for (const method of found.findAllStructures(Structures.Method)) {
+        const methodName = method.findFirstExpression(Expressions.MethodName)?.getFirstToken();
+        if (methodName) {
+          methods.push(new Identifier(methodName, this.filename));
         }
-
-        const name = found.findFirstStatement(Statements.ClassImplementation)!.findFirstExpression(Expressions.ClassName)!.getFirstToken();
-        this.implementations.push({
-          name: name.getStr(),
-          identifier: new Identifier(name, this.filename),
-          methods});
       }
 
-      for (const statement of structure.findAllStructures(Structures.Form)) {
+      const name = found.findFirstStatement(Statements.ClassImplementation)!.findFirstExpression(Expressions.ClassName)!.getFirstToken();
+      this.implementations.push({
+        name: name.getStr(),
+        identifier: new Identifier(name, this.filename),
+        methods});
+    }
+
+    for (const statement of structure.findAllStructures(Structures.Form)) {
         // FORMs can contain a dash in the name
-        const pos = statement.findFirstExpression(Expressions.FormName)!.getFirstToken().getStart();
-        const name = statement.findFirstExpression(Expressions.FormName)!.concatTokens();
-        const nameToken = new Tokens.Identifier(pos, name);
-        this.forms.push(new Identifier(nameToken, this.filename));
-      }
+      const pos = statement.findFirstExpression(Expressions.FormName)!.getFirstToken().getStart();
+      const name = statement.findFirstExpression(Expressions.FormName)!.concatTokens();
+      const nameToken = new Tokens.Identifier(pos, name);
+      this.forms.push(new Identifier(nameToken, this.filename));
     }
   }
 
@@ -271,15 +244,82 @@ export class ABAPFileInformation implements IABAPFileInformation {
       if (methodName === undefined) {
         continue;
       }
+
+      const parameters = this.parseMethodParameters(def);
+
       methods.push({
         name: methodName.getStr(),
         identifier: new Identifier(methodName, this.filename),
         isRedefinition: def.findFirstExpression(Expressions.Redefinition) !== undefined,
         isAbstract: def.findFirstExpression(Expressions.Abstract) !== undefined,
+        isEventHandler: node.findFirstExpression(Expressions.EventHandler) !== undefined,
         visibility,
+        parameters,
+        exceptions: [], // todo
       });
     }
     return methods;
+  }
+
+  // todo, refactor this method, it is too long
+  private parseMethodParameters(node: StatementNode): InfoMethodParameter[] {
+    const ret: InfoMethodParameter[] = [];
+
+    const importing = node.findFirstExpression(Expressions.MethodDefImporting);
+    if (importing) {
+      for (const param of importing.findAllExpressions(Expressions.MethodParam)) {
+        const name = param.findDirectExpression(Expressions.MethodParamName)?.getFirstToken();
+        if (name) {
+          ret.push({
+            name: name.getStr().replace("!", ""),
+            identifier: new Identifier(name, this.filename),
+            type: MethodParameterType.Importing,
+          });
+        }
+      }
+    }
+
+    const exporting = node.findFirstExpression(Expressions.MethodDefExporting);
+    if (exporting) {
+      for (const param of exporting.findAllExpressions(Expressions.MethodParam)) {
+        const name = param.findDirectExpression(Expressions.MethodParamName)?.getFirstToken();
+        if (name) {
+          ret.push({
+            name: name.getStr().replace("!", ""),
+            identifier: new Identifier(name, this.filename),
+            type: MethodParameterType.Exporting,
+          });
+        }
+      }
+    }
+
+    const changing = node.findFirstExpression(Expressions.MethodDefChanging);
+    if (changing) {
+      for (const param of changing.findAllExpressions(Expressions.MethodParam)) {
+        const name = param.findDirectExpression(Expressions.MethodParamName)?.getFirstToken();
+        if (name) {
+          ret.push({
+            name: name.getStr().replace("!", ""),
+            identifier: new Identifier(name, this.filename),
+            type: MethodParameterType.Changing,
+          });
+        }
+      }
+    }
+
+    const returning = node.findFirstExpression(Expressions.MethodDefReturning);
+    if (returning) {
+      const name = returning.findDirectExpression(Expressions.MethodParamName)?.getFirstToken();
+      if (name) {
+        ret.push({
+          name: name.getStr().replace("!", ""),
+          identifier: new Identifier(name, this.filename),
+          type: MethodParameterType.Returning,
+        });
+      }
+    }
+
+    return ret;
   }
 
 }
