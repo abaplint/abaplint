@@ -1,7 +1,7 @@
 import * as Structures from "../3_structures/structures";
 import * as Expressions from "../2_statements/expressions";
 import * as Statements from "../2_statements/statements";
-import {IABAPFileInformation, InfoClassImplementation, InfoClassDefinition, InfoMethodDefinition, InfoInterfaceDefinition, InfoAttribute, InfoAlias, AttributeType, InfoMethodParameter, MethodParameterType} from "./_abap_file_information";
+import {IABAPFileInformation, InfoClassImplementation, InfoClassDefinition, InfoMethodDefinition, InfoInterfaceDefinition, InfoAttribute, InfoAlias, AttributeType, InfoMethodParameter, MethodParameterType, InfoFormDefinition} from "./_abap_file_information";
 import {StructureNode, StatementNode} from "../nodes";
 import {Identifier} from "./_identifier";
 import * as Tokens from "../1_lexer/tokens";
@@ -10,7 +10,7 @@ import {Visibility} from "./visibility";
 export class ABAPFileInformation implements IABAPFileInformation {
   private readonly interfaces: InfoInterfaceDefinition[];
   private readonly classes: InfoClassDefinition[];
-  private readonly forms: Identifier[];
+  private readonly forms: InfoFormDefinition[];
   private readonly implementations: InfoClassImplementation[];
   private readonly filename: string;
 
@@ -62,7 +62,7 @@ export class ABAPFileInformation implements IABAPFileInformation {
     return undefined;
   }
 
-  public listFormDefinitions(): Identifier[] {
+  public listFormDefinitions(): InfoFormDefinition[] {
     return this.forms;
   }
 
@@ -97,7 +97,10 @@ export class ABAPFileInformation implements IABAPFileInformation {
       const pos = statement.findFirstExpression(Expressions.FormName)!.getFirstToken().getStart();
       const name = statement.findFirstExpression(Expressions.FormName)!.concatTokens();
       const nameToken = new Tokens.Identifier(pos, name);
-      this.forms.push(new Identifier(nameToken, this.filename));
+      this.forms.push({
+        name: nameToken.getStr(),
+        identifier: new Identifier(nameToken, this.filename),
+      });
     }
   }
 

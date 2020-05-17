@@ -76,12 +76,17 @@ export interface InfoClassImplementation {
   methods: readonly Identifier[];
 }
 
+export interface InfoFormDefinition {
+  name: string,
+  identifier: Identifier;
+}
+
 export interface IABAPFileInformation {
   listInterfaceDefinitions(): readonly InfoInterfaceDefinition[];
   getInterfaceDefinitionByName(name: string): InfoInterfaceDefinition | undefined;
   listClassDefinitions(): readonly InfoClassDefinition[];
   getClassDefinitionByName(name: string): InfoClassDefinition | undefined;
-  listFormDefinitions(): readonly Identifier[];
+  listFormDefinitions(): readonly InfoFormDefinition[];
   listClassImplementations(): readonly InfoClassImplementation[];
   getClassImplementationByName(name: string): InfoClassImplementation | undefined;
 }

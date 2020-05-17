@@ -46,7 +46,7 @@ export class Symbols {
   private static outputForms(file: ABAPFile): LServer.DocumentSymbol[] {
     const ret: LServer.DocumentSymbol[] = [];
     for (const form of file.getInfo().listFormDefinitions()) {
-      const symbol = this.newSymbol(form, LServer.SymbolKind.Function, []);
+      const symbol = this.newSymbol(form.identifier, LServer.SymbolKind.Function, []);
       ret.push(symbol);
     }
     return ret;

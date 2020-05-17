@@ -44,7 +44,11 @@ export class Help {
       forms: info.listFormDefinitions(),
     };
 
-    return "<pre>" + JSON.stringify(dump, null, 2) + "</pre>";
+    let text = JSON.stringify(dump, null, 2);
+    // dont be too chatty about the identifiers
+    text = text.replace(/ {2}"identifier": {[\S\s]*?"filename": .+\s+}\s*/g, "");
+
+    return "<pre>" + text + "</pre>";
   }
 
   private static cursorInformation(reg: IRegistry,
@@ -235,15 +239,15 @@ export class Help {
   }
 
   private static dumpFiles(reg: IRegistry) {
-    let output = "";
+    let output = "<table>\n";
     for (const o of reg.getObjects()) {
-      output = output + o.getType() + " " + o.getName() + ": ";
+      output = output + "<tr><td>" + o.getType() + " " + o.getName() + "</td><td>";
       for (const f of o.getFiles()) {
-        output = output + f.getFilename() + " ";
+        output = output + f.getFilename() + "<br>";
       }
-      output = output + "<br>";
+      output = output + "</td></tr>\n";
     }
-    return output;
+    return output + "</table>\n";
   }
 
 }
