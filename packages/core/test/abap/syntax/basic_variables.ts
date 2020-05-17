@@ -539,4 +539,12 @@ DATA: ls_struc TYPE ty_struc,
     expect(identifier?.getType()).to.be.instanceof(Basic.UnknownType);
   });
 
+  it.skip("TYPE any", () => {
+    const abap = `DATA properties TYPE any.`;
+    const identifier = resolveVariable(abap, "properties");
+    expect(identifier).to.not.equal(undefined);
+    expect(identifier?.getType()).to.not.be.instanceof(Basic.UnknownType);
+    expect(identifier?.getType()).to.not.be.instanceof(Basic.VoidType);
+  });
+
 });

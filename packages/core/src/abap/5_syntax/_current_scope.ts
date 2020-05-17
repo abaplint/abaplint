@@ -10,7 +10,8 @@ import {IRegistry} from "../../_iregistry";
 import {IClassDefinition} from "../types/_class_definition";
 import {IInterfaceDefinition} from "../types/_interface_definition";
 import {IFormDefinition} from "../types/_form_definition";
-import {Class, Interface} from "../../objects";
+import {Class} from "../../objects/class";
+import {Interface} from "../../objects/interface";
 
 export class CurrentScope {
   protected readonly reg: IRegistry | undefined;

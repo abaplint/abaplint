@@ -316,7 +316,7 @@ ENDCLASS.`;
       {filename: "zcl_swag_example_handler.clas.abap", contents: abap3},
     ]);
     issues = issues.filter(i => i.getKey() === key);
-    console.dir(issues);
+    console.dir(issues);  //////////////////////////////////////////////////////
     expect(issues.length).to.equal(0);
   });
 

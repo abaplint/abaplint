@@ -78,7 +78,7 @@ export abstract class ABAPObject extends AbstractObject {
     return ret;
   }
 
-  public getClassDefinition(name: string): IClassDefinition | undefined {
+  public getClassDefinitionByName(name: string): IClassDefinition | undefined {
     for (const impl of this.getClassDefinitions()) {
       if (impl.getName().toUpperCase() === name.toUpperCase()) {
         return impl;
