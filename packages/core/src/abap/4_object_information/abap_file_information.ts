@@ -220,8 +220,13 @@ export class ABAPFileInformation implements IABAPFileInformation {
       return [];
     }
 
+    const contents = node.findFirstStructure(Structures.SectionContents);
+    if (contents === undefined) {
+      return [];
+    }
+
     const ret: InfoAttribute[] = [];
-    for (const d of node.findAllStatements(Statements.Data)) {
+    for (const d of contents.findDirectStatements(Statements.Data)) {
       const name = d.findFirstExpression(Expressions.NamespaceSimpleName)!.getFirstToken();
       ret.push({
         name: name.getStr(),
@@ -231,7 +236,7 @@ export class ABAPFileInformation implements IABAPFileInformation {
         visibility,
       });
     }
-    for (const d of node.findAllStatements(Statements.ClassData)) {
+    for (const d of contents.findDirectStatements(Statements.ClassData)) {
       const name = d.findFirstExpression(Expressions.NamespaceSimpleName)!.getFirstToken();
       ret.push({
         name: name.getStr(),
@@ -241,7 +246,7 @@ export class ABAPFileInformation implements IABAPFileInformation {
         visibility,
       });
     }
-    for (const d of node.findAllStatements(Statements.Constant)) {
+    for (const d of contents.findDirectStatements(Statements.Constant)) {
       const name = d.findFirstExpression(Expressions.NamespaceSimpleName)!.getFirstToken();
       ret.push({
         name: name.getStr(),
