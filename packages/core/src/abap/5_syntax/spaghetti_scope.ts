@@ -73,6 +73,10 @@ export class SpaghettiScopeNode extends ScopeData {
     return this.children;
   }
 
+  public getFirstChild(): SpaghettiScopeNode | undefined {
+    return this.children[0];
+  }
+
   public getIdentifier(): IScopeIdentifier {
     return this.identifier;
   }

@@ -108,8 +108,12 @@ export class SyntaxLogic {
       const structure = this.currentFile.getStructure();
       if (structure === undefined) {
         return this.scope;
+      } else if (structure.get() instanceof Structures.Interface) {
+        // special case for global interfaces
+        this.updateScope(structure);
+      } else {
+        this.traverse(structure);
       }
-      this.traverse(structure);
     }
 
     return this.scope;
@@ -153,6 +157,7 @@ export class SyntaxLogic {
         }
       }
     }
+
     for (const child of node.getChildren()) {
       try {
         const gotoNext = this.updateScope(child);

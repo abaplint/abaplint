@@ -4,6 +4,17 @@ import {Registry} from "../../../src/registry";
 import {Interface} from "../../../src/objects";
 import {Visibility} from "../../../src/abap/types/visibility";
 import {getABAPObjects} from "../../get_abap";
+import {IInterfaceDefinition} from "../../../src/abap/types/_interface_definition";
+import {IRegistry} from "../../../src/_iregistry";
+import {SyntaxLogic} from "../../../src/abap/5_syntax/syntax";
+
+function run(reg: IRegistry): IInterfaceDefinition | undefined {
+  const intf = getABAPObjects(reg)[0] as Interface;
+
+  const s = new SyntaxLogic(reg, intf).run().spaghetti;
+  const scope = s.getTop().getFirstChild();
+  return scope?.findInterfaceDefinition("zif_foobar");
+}
 
 describe("Types, interface_definition, getMethodDefinitions", () => {
   it("test, positive", () => {
@@ -12,8 +23,7 @@ describe("Types, interface_definition, getMethodDefinitions", () => {
       "ENDINTERFACE.";
 
     const reg = new Registry().addFile(new MemoryFile("zif_foobar.intf.abap", abap)).parse();
-    const intf = getABAPObjects(reg)[0] as Interface;
-    const def = intf.getDefinition();
+    const def = run(reg);
     expect(def).to.not.equal(undefined);
     expect(def!.getMethodDefinitions().length).to.equal(1);
     expect(def!.getMethodDefinitions()[0].getName()).to.equal("method1");
@@ -22,8 +32,8 @@ describe("Types, interface_definition, getMethodDefinitions", () => {
 
   it("test, parser error", () => {
     const reg = new Registry().addFile(new MemoryFile("zif_foobar.intf.abap", "parser error")).parse();
-    const intf = getABAPObjects(reg)[0] as Interface;
-    expect(intf.getDefinition()).to.equal(undefined);
+    const def = run(reg);
+    expect(def).to.equal(undefined);
   });
 });
 
@@ -34,10 +44,10 @@ describe("Types, interface_definition, getMethodDefinitions", () => {
       "ENDINTERFACE.";
 
     const reg = new Registry().addFile(new MemoryFile("zif_foobar.intf.abap", abap)).parse();
-    const intf = getABAPObjects(reg)[0] as Interface;
-    expect(intf.getDefinition()!.getMethodDefinitions().length).to.equal(1);
-    expect(intf.getDefinition()!.getMethodDefinitions()[0].getParameters().getImporting().length).to.equal(1);
-    expect(intf.getDefinition()!.getMethodDefinitions()[0].getParameters().getImporting()[0].getName()).to.equal("foo");
+    const def = run(reg);
+    expect(def!.getMethodDefinitions().length).to.equal(1);
+    expect(def!.getMethodDefinitions()[0].getParameters().getImporting().length).to.equal(1);
+    expect(def!.getMethodDefinitions()[0].getParameters().getImporting()[0].getName()).to.equal("foo");
   });
 
   it("test, returning", () => {
@@ -46,9 +56,9 @@ describe("Types, interface_definition, getMethodDefinitions", () => {
       "ENDINTERFACE.";
 
     const reg = new Registry().addFile(new MemoryFile("zif_foobar.intf.abap", abap)).parse();
-    const intf = getABAPObjects(reg)[0] as Interface;
-    expect(intf.getDefinition()!.getMethodDefinitions().length).to.equal(1);
-    const returning = intf.getDefinition()!.getMethodDefinitions()[0].getParameters().getReturning();
+    const def = run(reg);
+    expect(def!.getMethodDefinitions().length).to.equal(1);
+    const returning = def!.getMethodDefinitions()[0].getParameters().getReturning();
     expect(returning).to.not.equal(undefined);
     if (returning) {
       expect(returning.getName()).to.equal("rv_foo");
@@ -63,8 +73,8 @@ describe("Types, interface_definition, getAttributes", () => {
       "ENDINTERFACE.";
 
     const reg = new Registry().addFile(new MemoryFile("zif_foobar.intf.abap", abap)).parse();
-    const intf = getABAPObjects(reg)[0] as Interface;
-    const instance = intf.getDefinition()!.getAttributes()!.getInstance();
+    const def = run(reg);
+    const instance = def!.getAttributes()!.getInstance();
     expect(instance.length).to.equal(1);
     expect(instance[0].getName()).to.equal("moo");
     expect(instance[0].getVisibility()).to.equal(Visibility.Public);

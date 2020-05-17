@@ -3,7 +3,7 @@ import * as Structures from "../3_structures/structures";
 import * as Expressions from "../2_statements/expressions";
 import * as Statements from "../2_statements/statements";
 import {CurrentScope} from "../5_syntax/_current_scope";
-import {IABAPFileInformation, IClassAndMethods} from "./_abap_file_information";
+import {IABAPFileInformation, InfoClassImplementation} from "./_abap_file_information";
 import {StructureNode} from "../nodes";
 import {InterfaceDefinition} from "../types";
 import {IClassDefinition} from "../types/_class_definition";
@@ -14,9 +14,8 @@ import * as Tokens from "../1_lexer/tokens";
 export class ABAPFileInformation implements IABAPFileInformation {
   private readonly classDefinitions: IClassDefinition[];
   private readonly interfaceDefinitions: IInterfaceDefinition[];
-//  private readonly classImplementations: IClassImplementation[];
   private readonly forms: Identifier[];
-  private readonly implementations: IClassAndMethods[];
+  private readonly implementations: InfoClassImplementation[];
 
   public constructor(structure: StructureNode | undefined, filename: string) {
     this.classDefinitions = [];
@@ -30,11 +29,11 @@ export class ABAPFileInformation implements IABAPFileInformation {
     return this.classDefinitions;
   }
 
-  public listClassImplementations(): readonly IClassAndMethods[] {
+  public listClassImplementations(): readonly InfoClassImplementation[] {
     return this.implementations;
   }
 
-  public getClassImplementationByName(name: string): IClassAndMethods | undefined {
+  public getClassImplementationByName(name: string): InfoClassImplementation | undefined {
     for (const impl of this.listClassImplementations()) {
       if (impl.name.getName().toUpperCase() === name.toUpperCase()) {
         return impl;

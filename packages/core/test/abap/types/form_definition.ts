@@ -4,16 +4,14 @@ import {IRegistry} from "../../../src/_iregistry";
 import {MemoryFile} from "../../../src/files";
 import {getABAPObjects} from "../../get_abap";
 import {SyntaxLogic} from "../../../src/abap/5_syntax/syntax";
-import {Position} from "../../../src/position";
 
 let reg: IRegistry = new Registry();
 
 function runProgram(abap: string) {
-  const filename = "zfoobar.prog.abap";
-  reg = new Registry().addFile(new MemoryFile(filename, abap)).parse();
+  reg = new Registry().addFile(new MemoryFile("zfoobar.prog.abap", abap)).parse();
   const obj = getABAPObjects(reg)[0];
 
-  const scope = new SyntaxLogic(reg, obj).run().spaghetti.lookupPosition(new Position(1, 1), filename);
+  const scope = new SyntaxLogic(reg, obj).run().spaghetti.getTop().getFirstChild();
   if (scope === undefined) {
     return [];
   }

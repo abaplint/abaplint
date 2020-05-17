@@ -7,7 +7,7 @@ import {ABAPObject} from "../../objects/_abap_object";
 import {Interface} from "../../objects";
 import {IClassDefinition} from "../../abap/types/_class_definition";
 import {IInterfaceDefinition} from "../../abap/types/_interface_definition";
-import {IClassAndMethods} from "../../abap/4_object_information/_abap_file_information";
+import {InfoClassImplementation} from "../../abap/4_object_information/_abap_file_information";
 
 // todo: abstract methods from superclass parents(might be multiple), if class is not abstract
 
@@ -71,7 +71,7 @@ export class ImplementMethods extends ABAPRule {
     return undefined;
   }
 
-  private checkClass(def: IClassDefinition, impl: IClassAndMethods): Issue[] {
+  private checkClass(def: IClassDefinition, impl: InfoClassImplementation): Issue[] {
     const ret: Issue[] = [];
 
     for (const md of def.getMethodDefinitions().getAll()) {
@@ -94,7 +94,7 @@ export class ImplementMethods extends ABAPRule {
     return ret;
   }
 
-  private checkInterfaces(def: IClassDefinition, impl: IClassAndMethods, file: ABAPFile, reg: IRegistry): Issue[] {
+  private checkInterfaces(def: IClassDefinition, impl: InfoClassImplementation, file: ABAPFile, reg: IRegistry): Issue[] {
     const ret: Issue[] = [];
     let idef: IInterfaceDefinition | undefined = undefined;
 
