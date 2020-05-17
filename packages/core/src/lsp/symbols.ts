@@ -67,7 +67,7 @@ export class Symbols {
     for (const cla of file.getInfo().listClassImplementations()) {
       let children: LServer.DocumentSymbol[] = [];
       children = children.concat(this.outputMethodImplementations(cla.methods));
-      const symbol = this.newSymbol(cla.name, LServer.SymbolKind.Class, children);
+      const symbol = this.newSymbol(cla.identifier, LServer.SymbolKind.Class, children);
       ret.push(symbol);
     }
 
@@ -95,11 +95,7 @@ export class Symbols {
     for (const id of attr.getInstance()) {
       ret.push(this.newSymbol(id, LServer.SymbolKind.Property, []));
     }
-    /* todo
-    for (const id of attr.getConstants()) {
-      ret.push(this.newSymbol(id, LServer.SymbolKind.Constant, []));
-    }
-    */
+    // todo, also add constants
 
     return ret;
   }

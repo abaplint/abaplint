@@ -6,43 +6,57 @@ import {Visibility} from "./visibility";
 // TODO: Only helper functions to get data from single file, no type information
 
 export interface InfoAttribute {
-  name: Identifier,
-  static: boolean,
+  name: string,
+  identifier: Identifier,
+  isStatic: boolean,
   readOnly: boolean,
   visibility: Visibility;
 }
 
 export interface InfoMethodDefinition {
-  name: Identifier,
+  name: string,
+  identifier: Identifier,
   isRedefinition: boolean,
+  isAbstract: boolean,
   visibility: Visibility,
 }
 
-export interface InfoObjectDefinition {
-  name: Identifier;
+export interface InfoInterfaceDefinition {
+  name: string,
+  identifier: Identifier;
   isLocal: boolean;
-  isFinal: boolean;
+  isGlobal: boolean;
   methods: readonly InfoMethodDefinition[];
+// todo, constants
+// todo, types
   attributes: readonly InfoAttribute[];
 }
 
+export interface InfoClassDefinition extends InfoInterfaceDefinition {
+  superClassName: string | undefined;
+  isAbstract: boolean;
+  isFinal: boolean;
+  isException: boolean;
+}
+
 export interface InfoClassImplementation {
-  name: Identifier;
+  name: string,
+  identifier: Identifier;
   methods: readonly Identifier[];
 }
 
 export interface IABAPFileInformation {
   // TODO, remove these
   getClassDefinitions(): readonly IClassDefinition[];
-  getClassDefinition(name: string): IClassDefinition | undefined;
+//  getClassDefinition(name: string): IClassDefinition | undefined;
   getInterfaceDefinitions(): readonly IInterfaceDefinition[];
   getInterfaceDefinition(name: string): IInterfaceDefinition | undefined;
 
   // WIP
-  listInterfaceDefinitions(): readonly InfoObjectDefinition[];
-  getInterfaceDefinitionByName(name: string): InfoObjectDefinition | undefined;
-  listClassDefinitions(): readonly InfoObjectDefinition[];
-  getClassDefinitionByName(name: string): InfoObjectDefinition | undefined;
+  listInterfaceDefinitions(): readonly InfoInterfaceDefinition[];
+  getInterfaceDefinitionByName(name: string): InfoInterfaceDefinition | undefined;
+  listClassDefinitions(): readonly InfoClassDefinition[];
+  getClassDefinitionByName(name: string): InfoClassDefinition | undefined;
 
   // OK
   listFormDefinitions(): readonly Identifier[];

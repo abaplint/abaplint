@@ -86,7 +86,7 @@ export class ImplementMethods extends ABAPRule {
       }
 
       if (found === undefined) {
-        const issue = Issue.atIdentifier(impl.name, "Implement method \"" + md.getName() + "\"", this.getMetadata().key);
+        const issue = Issue.atIdentifier(impl.identifier, "Implement method \"" + md.getName() + "\"", this.getMetadata().key);
         ret.push(issue);
       }
     }
@@ -132,7 +132,7 @@ export class ImplementMethods extends ABAPRule {
 
         if (found === undefined) {
           const message = "Implement method \"" + method.getName() + "\" from interface \"" + interfaceName.name + "\"";
-          const issue = Issue.atIdentifier(impl.name, message, this.getMetadata().key);
+          const issue = Issue.atIdentifier(impl.identifier, message, this.getMetadata().key);
           ret.push(issue);
         }
       }

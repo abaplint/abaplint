@@ -3,7 +3,8 @@ import {BasicRuleConfig} from "./_basic_rule_config";
 import {Issue} from "../issue";
 import {ABAPFile} from "../files";
 import {IRegistry} from "../_iregistry";
-import {IMethodDefinition} from "../abap/types/_method_definition";
+import {Visibility} from "../abap/4_object_information/visibility";
+import {InfoMethodDefinition} from "../abap/4_object_information/_abap_file_information";
 
 export class AbapdocConf extends BasicRuleConfig {
   /** Check local classes and interfaces for abapdoc. */
@@ -36,29 +37,29 @@ Base rule checks for existence of abapdoc for public class methods and all inter
     const issues: Issue[] = [];
     const rows = file.getRawRows();
 
-    let methods: IMethodDefinition[] = [];
+    let methods: InfoMethodDefinition[] = [];
 
-    for (const classDef of file.getInfo().getClassDefinitions()) {
-      if (this.conf.checkLocal === false && classDef.isLocal() === true) {
+    for (const classDef of file.getInfo().listClassDefinitions()) {
+      if (this.conf.checkLocal === false && classDef.isLocal === true) {
         continue;
       }
-      methods = methods.concat(classDef.getMethodDefinitions().getPublic());
+      methods = methods.concat(classDef.methods.filter(m => m.visibility === Visibility.Public));
     }
 
-    for (const interfaceDef of file.getInfo().getInterfaceDefinitions()) {
-      if (this.conf.checkLocal === false && interfaceDef.isLocal() === true) {
+    for (const interfaceDef of file.getInfo().listInterfaceDefinitions()) {
+      if (this.conf.checkLocal === false && interfaceDef.isLocal === true) {
         continue;
       }
-      methods = methods.concat(interfaceDef.getMethodDefinitions());
+      methods = methods.concat(interfaceDef.methods);
     }
-
     for (const method of methods) {
-      if (method.isRedefinition()) {
+      if (method.isRedefinition === true) {
         continue;
       }
-      const previousRow = method.getStart().getRow() - 2;
+      const previousRow = method.identifier.getStart().getRow() - 2;
       if (!(rows[previousRow].trim().substring(0, 2) === "\"!")) {
-        const issue = Issue.atIdentifier(method, "Missing ABAP Doc for method " + method.getName(), this.getMetadata().key);
+        const message = "Missing ABAP Doc for method " + method.identifier.getToken().getStr();
+        const issue = Issue.atIdentifier(method.identifier, message, this.getMetadata().key);
         issues.push(issue);
       }
     }

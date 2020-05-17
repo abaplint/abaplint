@@ -1,7 +1,7 @@
 import {ABAPObject} from "./_abap_object";
 import {IClassDefinition} from "../abap/types/_class_definition";
 import {ABAPFile} from "../files";
-import {InfoObjectDefinition} from "../abap/4_object_information/_abap_file_information";
+import {InfoClassDefinition} from "../abap/4_object_information/_abap_file_information";
 
 export enum ClassCategory {
   Test = "05",
@@ -25,7 +25,7 @@ export class Class extends ABAPObject {
     };
   }
 
-  public getClassDefinition2(): InfoObjectDefinition | undefined {
+  public getClassDefinition2(): InfoClassDefinition | undefined {
     const main = this.getMainABAPFile();
     if (!main) {
       return undefined;

@@ -35,19 +35,19 @@ export class GlobalClass extends ABAPRule {
   public runParsed(file: ABAPFile, _reg: IRegistry, obj: IObject) {
     const output: Issue[] = [];
 
-    for (const definition of file.getInfo().getClassDefinitions()) {
-      if (definition.isLocal() && obj instanceof Objects.Class && file.getFilename().match(/\.clas\.abap$/)) {
-        const issue = Issue.atIdentifier(definition, "Global classes must be global", this.getMetadata().key);
+    for (const definition of file.getInfo().listClassDefinitions()) {
+      if (definition.isLocal && obj instanceof Objects.Class && file.getFilename().match(/\.clas\.abap$/)) {
+        const issue = Issue.atIdentifier(definition.identifier, "Global classes must be global", this.getMetadata().key);
         output.push(issue);
       }
 
-      if (definition.isGlobal() && obj instanceof Objects.Class && definition.getName().toUpperCase() !== obj.getName().toUpperCase()) {
-        const issue = Issue.atIdentifier(definition, "Class name must match filename", this.getMetadata().key);
+      if (definition.isGlobal && obj instanceof Objects.Class && definition.name.toUpperCase() !== obj.getName().toUpperCase()) {
+        const issue = Issue.atIdentifier(definition.identifier, "Class name must match filename", this.getMetadata().key);
         output.push(issue);
       }
 
-      if (definition.isGlobal() && !(obj instanceof Objects.Class)) {
-        const issue = Issue.atIdentifier(definition, "Class must be local", this.getMetadata().key);
+      if (definition.isGlobal && !(obj instanceof Objects.Class)) {
+        const issue = Issue.atIdentifier(definition.identifier, "Class must be local", this.getMetadata().key);
         output.push(issue);
       }
     }
@@ -55,8 +55,8 @@ export class GlobalClass extends ABAPRule {
     for (const impl of file.getInfo().listClassImplementations()) {
       if (file.getFilename().match(/\.clas\.abap$/)
           && obj instanceof Objects.Class
-          && impl.name.getName().toUpperCase() !== obj.getName().toUpperCase()) {
-        const issue = Issue.atIdentifier(impl.name, "Class name must match filename", this.getMetadata().key);
+          && impl.identifier.getName().toUpperCase() !== obj.getName().toUpperCase()) {
+        const issue = Issue.atIdentifier(impl.identifier, "Class name must match filename", this.getMetadata().key);
         output.push(issue);
       }
     }
