@@ -5,6 +5,16 @@ import {Class} from "../../../src/objects";
 import {Visibility} from "../../../src/abap/4_object_information/visibility";
 import {getABAPObjects} from "../../get_abap";
 import {UnknownType} from "../../../src/abap/types/basic";
+import {IClassDefinition} from "../../../src/abap/types/_class_definition";
+import {SyntaxLogic} from "../../../src/abap/5_syntax/syntax";
+import {IRegistry} from "../../../src/_iregistry";
+
+function run(reg: IRegistry): IClassDefinition | undefined {
+  const clas = getABAPObjects(reg)[0] as Class;
+  const s = new SyntaxLogic(reg, clas).run().spaghetti;
+  const scope = s.getTop().getFirstChild();
+  return scope?.findClassDefinition(clas.getName());
+}
 
 describe("Types, class_definition", () => {
 
@@ -14,9 +24,9 @@ describe("Types, class_definition", () => {
       "CLASS zcl_moo IMPLEMENTATION.\n" +
       "ENDCLASS.";
     const reg = new Registry().addFile(new MemoryFile("zcl_moo.clas.abap", abap)).parse();
-    const clas = getABAPObjects(reg)[0] as Class;
-    expect(clas.getClassDefinition()).to.not.equal(undefined);
-    expect(clas.getClassDefinition()!.isFinal()).to.equal(false);
+    const def = run(reg);
+    expect(def).to.not.equal(undefined);
+    expect(def?.isFinal()).to.equal(false);
   });
 
   it("isFinal, positive", () => {
@@ -25,9 +35,9 @@ describe("Types, class_definition", () => {
       "CLASS zcl_moo IMPLEMENTATION.\n" +
       "ENDCLASS.";
     const reg = new Registry().addFile(new MemoryFile("zcl_moo.clas.abap", abap)).parse();
-    const clas = getABAPObjects(reg)[0] as Class;
-    expect(clas.getClassDefinition()).to.not.equal(undefined);
-    expect(clas.getClassDefinition()!.isFinal()).to.equal(true);
+    const def = run(reg);
+    expect(def).to.not.equal(undefined);
+    expect(def!.isFinal()).to.equal(true);
   });
 
   it("getImplementing, empty", () => {
@@ -36,9 +46,9 @@ describe("Types, class_definition", () => {
       "CLASS zcl_moo IMPLEMENTATION.\n" +
       "ENDCLASS.";
     const reg = new Registry().addFile(new MemoryFile("zcl_moo.clas.abap", abap)).parse();
-    const clas = getABAPObjects(reg)[0] as Class;
-    expect(clas.getClassDefinition()).to.not.equal(undefined);
-    expect(clas.getClassDefinition()!.getImplementing().length).to.equal(0);
+    const def = run(reg);
+    expect(def).to.not.equal(undefined);
+    expect(def!.getImplementing().length).to.equal(0);
   });
 
   it("getImplementing, single interface", () => {
@@ -49,11 +59,11 @@ describe("Types, class_definition", () => {
       "CLASS zcl_moo IMPLEMENTATION.\n" +
       "ENDCLASS.";
     const reg = new Registry().addFile(new MemoryFile("zcl_moo.clas.abap", abap)).parse();
-    const clas = getABAPObjects(reg)[0] as Class;
-    expect(clas.getClassDefinition()).to.not.equal(undefined);
-    expect(clas.getClassDefinition()!.getImplementing().length).to.equal(1);
-    expect(clas.getClassDefinition()!.getImplementing()[0].name).to.equal("ZIF_MOO");
-    expect(clas.getClassDefinition()!.getImplementing()[0].partial).to.equal(false);
+    const def = run(reg);
+    expect(def).to.not.equal(undefined);
+    expect(def!.getImplementing().length).to.equal(1);
+    expect(def!.getImplementing()[0].name).to.equal("ZIF_MOO");
+    expect(def!.getImplementing()[0].partial).to.equal(false);
   });
 
   it("method, event handler", () => {
@@ -68,10 +78,10 @@ describe("Types, class_definition", () => {
       "  ENDMETHOD.\n" +
       "ENDCLASS.";
     const reg = new Registry().addFile(new MemoryFile("zcl_moo.clas.abap", abap)).parse();
-    const clas = getABAPObjects(reg)[0] as Class;
-    expect(clas.getClassDefinition()).to.not.equal(undefined);
-    expect(clas.getClassDefinition()!.getMethodDefinitions()).to.not.equal(undefined);
-    const pub = clas.getClassDefinition()!.getMethodDefinitions()!.getPublic();
+    const def = run(reg);
+    expect(def).to.not.equal(undefined);
+    expect(def!.getMethodDefinitions()).to.not.equal(undefined);
+    const pub = def!.getMethodDefinitions()!.getPublic();
     expect(pub.length).to.equal(1);
     expect(pub[0].isEventHandler()).to.equal(true);
     expect(pub[0]!.getParameters().getAll().length).to.equal(2);
@@ -88,9 +98,9 @@ describe("Types, class_definition", () => {
       "  ENDMETHOD.\n" +
       "ENDCLASS.";
     const reg = new Registry().addFile(new MemoryFile("zcl_moo.clas.abap", abap)).parse();
-    const clas = getABAPObjects(reg)[0] as Class;
-    expect(clas.getClassDefinition()).to.not.equal(undefined);
-    const aliases = clas.getClassDefinition()!.getAliases().getAll();
+    const def = run(reg);
+    expect(def).to.not.equal(undefined);
+    const aliases = def!.getAliases().getAll();
     expect(aliases.length).to.equal(1);
     expect(aliases[0].getName()).to.equal("cache_asset");
     expect(aliases[0].getVisibility()).to.equal(Visibility.Public);
@@ -107,10 +117,10 @@ describe("Types, class_definition", () => {
       "  ENDMETHOD.\n" +
       "ENDCLASS.";
     const reg = new Registry().addFile(new MemoryFile("zcl_moo.clas.abap", abap)).parse();
-    const clas = getABAPObjects(reg)[0] as Class;
-    expect(clas.getClassDefinition()).to.not.equal(undefined);
-    expect(clas.getClassDefinition()!.getMethodDefinitions()).to.not.equal(undefined);
-    const pub = clas.getClassDefinition()!.getMethodDefinitions()!.getPublic();
+    const def = run(reg);
+    expect(def).to.not.equal(undefined);
+    expect(def!.getMethodDefinitions()).to.not.equal(undefined);
+    const pub = def!.getMethodDefinitions()!.getPublic();
     expect(pub.length).to.equal(1);
     expect(pub[0].isStatic()).to.equal(true);
   });
@@ -139,10 +149,10 @@ CLASS zcl_moo IMPLEMENTATION.
   ENDMETHOD.
 ENDCLASS.`;
     const reg = new Registry().addFile(new MemoryFile("zcl_moo.clas.abap", abap)).parse();
-    const clas = getABAPObjects(reg)[0] as Class;
-    expect(clas.getClassDefinition()).to.not.equal(undefined);
-    expect(clas.getClassDefinition()!.getMethodDefinitions()).to.not.equal(undefined);
-    const pub = clas.getClassDefinition()!.getMethodDefinitions()!.getPublic();
+    const def = run(reg);
+    expect(def).to.not.equal(undefined);
+    expect(def!.getMethodDefinitions()).to.not.equal(undefined);
+    const pub = def!.getMethodDefinitions()!.getPublic();
     expect(pub.length).to.equal(1);
     const importing = pub[0].getParameters().getImporting();
     expect(importing.length).to.equal(1);

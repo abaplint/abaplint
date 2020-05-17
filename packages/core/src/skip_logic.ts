@@ -49,9 +49,9 @@ export class SkipLogic {
   public isGeneratedGatewayClass(obj: Class): boolean {
     let sup = undefined;
 
-    const definition = obj.getClassDefinition();
+    const definition = obj.getClassDefinition2();
     if (definition) {
-      sup = definition.getSuperClass();
+      sup = definition.superClassName;
     }
 
     if (obj.getName().match(/_MPC$/i) && sup === "/IWBEP/CL_MGW_PUSH_ABS_MODEL") {
@@ -71,9 +71,9 @@ export class SkipLogic {
       return true;
     }
 
-    const main = obj.getClassDefinition();
+    const main = obj.getClassDefinition2();
     if (main) {
-      const sup = main.getSuperClass();
+      const sup = main.superClassName;
       if (sup) {
         const sclass = this.reg.getObject("CLAS", sup.toUpperCase());
         if (sclass && (sclass as Class).getCategory() === ClassCategory.PersistentFactory) {

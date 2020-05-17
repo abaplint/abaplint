@@ -3,7 +3,7 @@ import * as Structures from "../3_structures/structures";
 import * as Expressions from "../2_statements/expressions";
 import * as Statements from "../2_statements/statements";
 import {CurrentScope} from "../5_syntax/_current_scope";
-import {IABAPFileInformation, InfoClassImplementation, InfoClassDefinition, InfoMethodDefinition, InfoInterfaceDefinition} from "./_abap_file_information";
+import {IABAPFileInformation, InfoClassImplementation, InfoClassDefinition, InfoMethodDefinition, InfoInterfaceDefinition, InfoAttribute} from "./_abap_file_information";
 import {StructureNode} from "../nodes";
 import {InterfaceDefinition} from "../types";
 import {IClassDefinition} from "../types/_class_definition";
@@ -76,16 +76,7 @@ export class ABAPFileInformation implements IABAPFileInformation {
     }
     return undefined;
   }
-/*
-  public getClassDefinition(name: string) {
-    for (const def of this.getClassDefinitions()) {
-      if (def.getName().toUpperCase() === name.toUpperCase()) {
-        return def;
-      }
-    }
-    return undefined;
-  }
-*/
+
   public getInterfaceDefinitions() {
     return this.interfaceDefinitions;
   }
@@ -149,6 +140,7 @@ export class ABAPFileInformation implements IABAPFileInformation {
     for (const found of structure.findAllStructures(Structures.Interface)) {
       const interfaceName = found.findFirstStatement(Statements.Interface)!.findFirstExpression(Expressions.InterfaceName)!.getFirstToken();
       const methods = this.parseMethodDefinition(found, Visibility.Public);
+      const attributes = this.parseAttributes(found, Visibility.Public);
 
       this.interfaces.push({
         name: interfaceName.getStr(),
@@ -156,7 +148,7 @@ export class ABAPFileInformation implements IABAPFileInformation {
         isLocal: found.findFirstExpression(Expressions.Global) === undefined,
         isGlobal: found.findFirstExpression(Expressions.Global) !== undefined,
         methods,
-        attributes: [], // todo
+        attributes,
       });
     }
   }
@@ -169,6 +161,10 @@ export class ABAPFileInformation implements IABAPFileInformation {
       methods = methods.concat(this.parseMethodDefinition(found.findFirstStructure(Structures.ProtectedSection), Visibility.Protected));
       methods = methods.concat(this.parseMethodDefinition(found.findFirstStructure(Structures.PrivateSection), Visibility.Private));
 
+      let attributes = this.parseAttributes(found.findFirstStructure(Structures.PublicSection), Visibility.Public);
+      attributes = attributes.concat(this.parseAttributes(found.findFirstStructure(Structures.ProtectedSection), Visibility.Protected));
+      attributes = attributes.concat(this.parseAttributes(found.findFirstStructure(Structures.PrivateSection), Visibility.Private));
+
       const superClassName = found.findFirstExpression(Expressions.SuperClassName)?.getFirstToken().getStr();
       const isException = (superClassName?.match(/^.?cx_.*$/i) || superClassName?.match(/^\/.+\/cx_.*$/i)) ? true : false;
 
@@ -179,13 +175,56 @@ export class ABAPFileInformation implements IABAPFileInformation {
         isGlobal: found.findFirstExpression(Expressions.Global) !== undefined,
         methods,
         superClassName,
+        interfaces: this.getImplementing(found),
         isException,
         isForTesting: found.findFirstStatement(Statements.ClassDefinition)!.concatTokens().toUpperCase().includes(" FOR TESTING"),
         isAbstract: found.findFirstStatement(Statements.ClassDefinition)!.concatTokens().toUpperCase().includes(" ABSTRACT"),
         isFinal: found.findFirstExpression(Expressions.ClassFinal) !== undefined,
-        attributes: [], // todo
+        attributes,
       });
     }
+  }
+
+///////////////////
+
+  private getImplementing(input: StructureNode): {name: string, partial: boolean}[] {
+    const ret: {name: string, partial: boolean}[] = [];
+    for (const node of input.findAllStatements(Statements.InterfaceDef)) {
+      const partial = node.concatTokens().toUpperCase().includes("PARTIALLY IMPLEMENTED");
+      const name = node.findFirstExpression(Expressions.InterfaceName)!.getFirstToken().getStr().toUpperCase();
+      ret.push({name, partial});
+    }
+    return ret;
+  }
+
+  private parseAttributes(node: StructureNode | undefined, visibility: Visibility): InfoAttribute[] {
+    if (node === undefined) {
+      return [];
+    }
+
+    const ret: InfoAttribute[] = [];
+    for (const d of node.findAllStatements(Statements.Data)) {
+      const name = d.findFirstExpression(Expressions.NamespaceSimpleName)!.getFirstToken();
+      ret.push({
+        name: name.getStr(),
+        identifier: new Identifier(name, this.filename),
+        isStatic: false,
+        readOnly: d.concatTokens().toUpperCase().includes(" READ-ONLY"),
+        visibility,
+      });
+    }
+    for (const d of node.findAllStatements(Statements.ClassData)) {
+      const name = d.findFirstExpression(Expressions.NamespaceSimpleName)!.getFirstToken();
+      ret.push({
+        name: name.getStr(),
+        identifier: new Identifier(name, this.filename),
+        isStatic: true,
+        readOnly: d.concatTokens().toUpperCase().includes(" READ-ONLY"),
+        visibility,
+      });
+    }
+
+    return ret;
   }
 
   private parseMethodDefinition(node: StructureNode | undefined, visibility: Visibility): InfoMethodDefinition[] {

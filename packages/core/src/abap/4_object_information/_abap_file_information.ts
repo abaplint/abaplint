@@ -10,7 +10,7 @@ export interface InfoAttribute {
   identifier: Identifier,
   isStatic: boolean,
   readOnly: boolean,
-  visibility: Visibility;
+  visibility: Visibility,
 }
 
 export interface InfoMethodDefinition {
@@ -36,6 +36,7 @@ export interface InfoClassDefinition extends InfoInterfaceDefinition {
   superClassName: string | undefined;
   isAbstract: boolean;
   isFinal: boolean;
+  interfaces: readonly {name: string, partial: boolean}[];
   isForTesting: boolean;
   isException: boolean;
 }
@@ -49,7 +50,6 @@ export interface InfoClassImplementation {
 export interface IABAPFileInformation {
   // TODO, remove these
   getClassDefinitions(): readonly IClassDefinition[];
-//  getClassDefinition(name: string): IClassDefinition | undefined;
   getInterfaceDefinitions(): readonly IInterfaceDefinition[];
   getInterfaceDefinition(name: string): IInterfaceDefinition | undefined;
 
