@@ -26,8 +26,25 @@ export class Help {
     content = content + this.fileInformation(file);
     content = content + "<hr>";
     content = content + this.dumpFiles(reg);
+    content = content + "<hr>";
+    content = content + this.dumpInfo(file);
 
     return content;
+  }
+
+/////////////////////////////////////////////////
+
+  private static dumpInfo(file: ABAPFile): string {
+    const info = file.getInfo();
+
+    const dump = {
+      classDefinitions: info.listClassDefinitions(),
+      classImplementations: info.listClassImplementations(),
+      interfaceDefinitions: info.listInterfaceDefinitions(),
+      forms: info.listFormDefinitions(),
+    };
+
+    return "<pre>" + JSON.stringify(dump, null, 2) + "</pre>";
   }
 
   private static cursorInformation(reg: IRegistry,

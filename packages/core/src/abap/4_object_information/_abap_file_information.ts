@@ -4,16 +4,16 @@ import {Visibility} from "./visibility";
 // Only helper functions to get data from single file, no type information
 
 export enum AttributeType {
-  Instance,
-  Static,
-  Constant,
+  Instance = "instance",
+  Static = "static",
+  Constant = "constant",
 }
 
 export enum MethodParameterType {
-  Importing,
-  Exporting,
-  Changing,
-  Returning,
+  Importing = "importing",
+  Exporting = "exporting",
+  Changing = "changing",
+  Returning = "returning",
 }
 
 export interface InfoAttribute {
