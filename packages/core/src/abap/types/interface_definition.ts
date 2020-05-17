@@ -10,7 +10,7 @@ import {ITypeDefinitions} from "./_type_definitions";
 import {MethodDefinition} from "./method_definition";
 import {Attributes} from "./class_attributes";
 import {TypeDefinitions} from "./type_definitions";
-import {Visibility} from "./visibility";
+import {Visibility} from "../4_object_information/visibility";
 
 export class InterfaceDefinition extends Identifier implements IInterfaceDefinition {
   private readonly node: StructureNode;

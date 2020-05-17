@@ -2,10 +2,10 @@ import {expect} from "chai";
 import {Registry} from "../../src/registry";
 import {MemoryFile} from "../../src/files/memory_file";
 import {Class, ClassCategory} from "../../src/objects";
-import {Visibility} from "../../src/abap/types/visibility";
 import * as Basic from "../../src/abap/types/basic";
 import {CharacterType} from "../../src/abap/types/basic";
 import {getABAPObjects} from "../get_abap";
+import {Visibility} from "../../src/abap/4_object_information/visibility";
 
 // todo, most(all?) of these tests to be moved to abap/types/class_definition
 // or other file under abap/types

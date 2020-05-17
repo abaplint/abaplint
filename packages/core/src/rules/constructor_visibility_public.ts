@@ -3,8 +3,8 @@ import {BasicRuleConfig} from "./_basic_rule_config";
 import {IRule} from "./_irule";
 import {IObject} from "../objects/_iobject";
 import {Class} from "../objects";
-import {Visibility} from "../abap/types";
 import {IRegistry} from "../_iregistry";
+import {Visibility} from "../abap/4_object_information/visibility";
 
 export class ConstructorVisibilityPublicConf extends BasicRuleConfig {
 }

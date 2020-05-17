@@ -1,7 +1,7 @@
 import * as Statements from "../2_statements/statements";
 import * as Expressions from "../2_statements/expressions";
 import {StatementNode} from "../nodes";
-import {Interface, Class} from "../../objects";
+import {Class} from "../../objects";
 import {IRegistry} from "../../_iregistry";
 import {CurrentScope} from "./_current_scope";
 import {ScopeType} from "./_scope_type";
@@ -12,7 +12,6 @@ import {Position} from "../../position";
 import {BuiltIn} from "./_builtin";
 import {IClassDefinition} from "../types/_class_definition";
 import {IMethodDefinition} from "../types/_method_definition";
-import {IInterfaceDefinition} from "../types/_interface_definition";
 
 export class ObjectOriented {
   private readonly reg: IRegistry;
@@ -44,8 +43,10 @@ export class ObjectOriented {
     const className = this.findClassName(node);
     this.scope.push(ScopeType.ClassImplementation, className, node.getFirstToken().getStart(), filename);
 
-    const classDefinition = this.findClassDefinition(className);
-
+    const classDefinition = this.scope.findClassDefinition(className);
+    if (classDefinition === undefined) {
+      throw new Error("Class definition for \"" + className + "\" not found");
+    }
     const classAttributes = classDefinition.getAttributes();
 
     this.addAliasedAttributes(classDefinition); // todo, this is not correct, take care of instance vs static
@@ -57,27 +58,10 @@ export class ObjectOriented {
     this.fromSuperClass(classDefinition);
   }
 
-  private findInterfaceDefinition(name: string): IInterfaceDefinition | undefined {
-    const intf = this.reg.getObject("INTF", name) as Interface;
-    if (intf) {
-      const globalFound = intf.getDefinition();
-      if (globalFound) {
-        return globalFound;
-      }
-    }
-
-    const found = this.scope.findInterfaceDefinition(name);
-    if (found) {
-      return found;
-    }
-
-    return undefined;
-  }
-
   private addAliasedAttributes(classDefinition: IClassDefinition): void {
     for (const alias of classDefinition.getAliases().getAll()) {
       const comp = alias.getComponent();
-      const idef = this.findInterfaceDefinition(comp.split("~")[0]);
+      const idef = this.scope.findInterfaceDefinition(comp.split("~")[0]);
       if (idef) {
         const found = idef.getAttributes()!.findByName(comp.split("~")[1]);
         if (found) {
@@ -88,7 +72,7 @@ export class ObjectOriented {
   }
 
   private findMethodInInterface(interfaceName: string, methodName: string): IMethodDefinition | undefined {
-    const idef = this.findInterfaceDefinition(interfaceName);
+    const idef = this.scope.findInterfaceDefinition(interfaceName);
     if (idef) {
       const methods = idef.getMethodDefinitions();
       for (const method of methods) {
@@ -118,7 +102,10 @@ export class ObjectOriented {
     let methodName = node.findFirstExpression(Expressions.MethodName)!.getFirstToken().getStr();
     this.scope.push(ScopeType.Method, methodName, node.getFirstToken().getStart(), filename);
 
-    const classDefinition = this.findClassDefinition(className);
+    const classDefinition = this.scope.findClassDefinition(className);
+    if (classDefinition === undefined) {
+      throw new Error("Class definition for \"" + className + "\" not found");
+    }
     classDefinition.getTypeDefinitions().getAll().map((t) => this.scope.addType(t));
 
     const sup = classDefinition.getSuperClass();
@@ -154,7 +141,7 @@ export class ObjectOriented {
     this.scope.addList(methodDefinition.getParameters().getAll());
 
     for (const i of this.findInterfaces(classDefinition)) {
-      const idef = this.findInterfaceDefinition(i.name);
+      const idef = this.scope.findInterfaceDefinition(i.name);
       if (idef) {
         this.scope.addListPrefix(idef.getAttributes()!.getConstants(), i.name + "~");
         this.scope.addListPrefix(idef.getAttributes()!.getStatic(), i.name + "~");
@@ -177,14 +164,6 @@ export class ObjectOriented {
     }
 
     return ret;
-  }
-
-  private findClassDefinition(name: string): IClassDefinition {
-    const found = this.scope.findClassDefinition(name);
-    if (found) {
-      return found;
-    }
-    throw new Error("Class definition for \"" + name + "\" not found");
   }
 
   private findMethod(classDefinition: IClassDefinition, methodName: string): IMethodDefinition | undefined {
@@ -217,7 +196,7 @@ export class ObjectOriented {
   private findSuperDefinition(name: string): IClassDefinition {
     const csup = this.reg.getObject("CLAS", name) as Class | undefined;
     if (csup === undefined) {
-      const found = this.findClassDefinition(name);
+      const found = this.scope.findClassDefinition(name);
       if (found) {
         return found;
       }

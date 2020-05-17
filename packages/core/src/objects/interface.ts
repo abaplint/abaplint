@@ -1,5 +1,4 @@
 import {ABAPObject} from "./_abap_object";
-import {IInterfaceDefinition} from "../abap/types/_interface_definition";
 
 export class Interface extends ABAPObject {
 
@@ -12,18 +11,6 @@ export class Interface extends ABAPObject {
       maxLength: 30,
       allowNamespace: true,
     };
-  }
-
-  public getDefinition(): IInterfaceDefinition | undefined {
-    const main = this.getMainABAPFile();
-    if (!main) {
-      return undefined;
-    }
-    const definitions = main.getInfo().getInterfaceDefinitions();
-    if (definitions.length === 0) {
-      return undefined;
-    }
-    return definitions[0];
   }
 
   public getDescription(): string | undefined {

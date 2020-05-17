@@ -1,4 +1,4 @@
-import {Visibility} from "./visibility";
+import {Visibility} from "../4_object_information/visibility";
 import {Identifier} from "../4_object_information/_identifier";
 import {IMethodParameters} from "./_method_parameters";
 

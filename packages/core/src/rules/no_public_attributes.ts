@@ -1,9 +1,10 @@
 import {Issue} from "../issue";
 import {BasicRuleConfig} from "./_basic_rule_config";
 import {IRegistry} from "../_iregistry";
-import {Visibility, ClassAttribute} from "../abap/types";
+import {ClassAttribute} from "../abap/types";
 import {ABAPRule} from "./_abap_rule";
 import {ABAPFile} from "../files";
+import {Visibility} from "../abap/4_object_information/visibility";
 
 export class NoPublicAttributesConf extends BasicRuleConfig {
   /** Allows public attributes, if they are declared as READ-ONLY. */

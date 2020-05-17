@@ -3,7 +3,7 @@ import {Alias} from "./alias";
 import * as Structures from "../3_structures/structures";
 import * as Statements from "../2_statements/statements";
 import * as Expressions from "../2_statements/expressions";
-import {Visibility} from "./visibility";
+import {Visibility} from "../4_object_information/visibility";
 import {IAliases} from "./_aliases";
 
 export class Aliases implements IAliases {

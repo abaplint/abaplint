@@ -101,6 +101,7 @@ export class ImplementMethods extends ABAPRule {
     for (const interfaceName of def.getImplementing()) {
       const intf = reg.getObject("INTF", interfaceName.name) as Interface | undefined;
       if (intf === undefined) {
+        // lookup in localfile
         idef = file.getInfo().getInterfaceDefinition(interfaceName.name);
         if (idef === undefined) {
           const issue = Issue.atIdentifier(def, "Implemented interface \"" + interfaceName.name + "\" not found", this.getMetadata().key);
@@ -108,7 +109,7 @@ export class ImplementMethods extends ABAPRule {
           continue;
         }
       } else {
-        idef = intf.getDefinition();
+        idef = intf.getMainABAPFile()?.getInfo().getInterfaceDefinitions()[0];
       }
 
       if (idef === undefined || interfaceName.partial === true) {

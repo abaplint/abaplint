@@ -12,6 +12,7 @@ import {IInterfaceDefinition} from "../types/_interface_definition";
 import {IFormDefinition} from "../types/_form_definition";
 import {Class} from "../../objects/class";
 import {Interface} from "../../objects/interface";
+import {InterfaceDefinition} from "../types/interface_definition";
 
 export class CurrentScope {
   protected readonly reg: IRegistry | undefined;
@@ -135,30 +136,31 @@ export class CurrentScope {
 ///////////////////////////
 
   public findObjectReference(name: string): IClassDefinition | IInterfaceDefinition | undefined {
-    const clocal = this.findClassDefinition(name);
-    if (clocal) {
-      return clocal;
+    const clas = this.findClassDefinition(name);
+    if (clas) {
+      return clas;
     }
-    const ilocal = this.findInterfaceDefinition(name);
-    if (ilocal) {
-      return ilocal;
+    const intf = this.findInterfaceDefinition(name);
+    if (intf) {
+      return intf;
     }
-    const cglobal = this.reg?.getObject("CLAS", name);
-    if (cglobal) {
-      return (cglobal as Class).getClassDefinition();
-    }
-    const iglobal = this.reg?.getObject("INTF", name);
-    if (iglobal) {
-      return (iglobal as Interface).getDefinition();
-    }
-
     return undefined;
   }
 
 ///////////////////////////
 
   public findClassDefinition(name: string): IClassDefinition | undefined {
-    return this.current?.findClassDefinition(name);
+    const clocal = this.current?.findClassDefinition(name);
+    if (clocal) {
+      return clocal;
+    }
+
+    const cglobal = this.reg?.getObject("CLAS", name);
+    if (cglobal) {
+      return (cglobal as Class).getClassDefinition();
+    }
+
+    return undefined;
   }
 
   public findFormDefinition(name: string): IFormDefinition | undefined {
@@ -174,7 +176,22 @@ export class CurrentScope {
   }
 
   public findInterfaceDefinition(name: string): IInterfaceDefinition | undefined {
-    return this.current?.findInterfaceDefinition(name);
+    const ilocal = this.current?.findInterfaceDefinition(name);
+    if (ilocal) {
+      return ilocal;
+    }
+
+    const iglobal = this.reg?.getObject("INTF", name);
+    if (iglobal && this.reg) {
+      const file = (iglobal as Interface).getMainABAPFile();
+      const struc = file?.getStructure();
+      if (struc && file) {
+        // todo, this should not be an empty scope
+        return new InterfaceDefinition(struc, file.getFilename(), CurrentScope.buildEmpty());
+      }
+    }
+
+    return undefined;
   }
 
   public findType(name: string): TypedIdentifier | undefined {

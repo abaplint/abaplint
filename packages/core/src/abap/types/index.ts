@@ -11,4 +11,3 @@ export * from "./method_definitions";
 export * from "./method_implementation";
 export * from "./method_parameters";
 export * from "./type_definitions";
-export * from "./visibility";
