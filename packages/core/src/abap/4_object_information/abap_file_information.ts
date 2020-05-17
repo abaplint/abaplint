@@ -1,32 +1,46 @@
 import {ClassDefinition} from "../types/class_definition";
 import * as Structures from "../3_structures/structures";
 import * as Expressions from "../2_statements/expressions";
+import * as Statements from "../2_statements/statements";
 import {CurrentScope} from "../5_syntax/_current_scope";
-import {IABAPFileInformation} from "./_abap_file_information";
+import {IABAPFileInformation, IClassAndMethods} from "./_abap_file_information";
 import {StructureNode} from "../nodes";
-import {InterfaceDefinition, ClassImplementation} from "../types";
+import {InterfaceDefinition} from "../types";
 import {IClassDefinition} from "../types/_class_definition";
 import {IInterfaceDefinition} from "../types/_interface_definition";
-import {IClassImplementation} from "../types/_class_implementation";
 import {Identifier} from "./_identifier";
 import * as Tokens from "../1_lexer/tokens";
 
 export class ABAPFileInformation implements IABAPFileInformation {
   private readonly classDefinitions: IClassDefinition[];
   private readonly interfaceDefinitions: IInterfaceDefinition[];
-  private readonly classImplementations: IClassImplementation[];
+//  private readonly classImplementations: IClassImplementation[];
   private readonly forms: Identifier[];
+  private readonly implementations: IClassAndMethods[];
 
   public constructor(structure: StructureNode | undefined, filename: string) {
     this.classDefinitions = [];
     this.interfaceDefinitions = [];
-    this.classImplementations = [];
     this.forms = [];
+    this.implementations = [];
     this.parse(structure, filename);
   }
 
   public getClassDefinitions() {
     return this.classDefinitions;
+  }
+
+  public listClassImplementations(): readonly IClassAndMethods[] {
+    return this.implementations;
+  }
+
+  public getClassImplementationByName(name: string): IClassAndMethods | undefined {
+    for (const impl of this.listClassImplementations()) {
+      if (impl.name.getName().toUpperCase() === name.toUpperCase()) {
+        return impl;
+      }
+    }
+    return undefined;
   }
 
   public getClassDefinition(name: string) {
@@ -51,19 +65,6 @@ export class ABAPFileInformation implements IABAPFileInformation {
     return undefined;
   }
 
-  public getClassImplementation(name: string) {
-    for (const impl of this.getClassImplementations()) {
-      if (impl.getName().toUpperCase() === name.toUpperCase()) {
-        return impl;
-      }
-    }
-    return undefined;
-  }
-
-  public getClassImplementations() {
-    return this.classImplementations;
-  }
-
   public listFormDefinitions(): Identifier[] {
     return this.forms;
   }
@@ -83,7 +84,16 @@ export class ABAPFileInformation implements IABAPFileInformation {
       }
 
       for (const found of structure.findAllStructures(Structures.ClassImplementation)) {
-        this.classImplementations.push(new ClassImplementation(found, filename));
+        const methods = [];
+        for (const method of found.findAllStructures(Structures.Method)) {
+          const methodName = method.findFirstExpression(Expressions.MethodName)?.getFirstToken();
+          if (methodName) {
+            methods.push(new Identifier(methodName, filename));
+          }
+        }
+
+        const name = found.findFirstStatement(Statements.ClassImplementation)!.findFirstExpression(Expressions.ClassName)!.getFirstToken();
+        this.implementations.push({name: new Identifier(name, filename), methods});
       }
 
       for (const statement of structure.findAllStructures(Structures.Form)) {

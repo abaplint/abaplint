@@ -52,11 +52,11 @@ export class GlobalClass extends ABAPRule {
       }
     }
 
-    for (const impl of file.getInfo().getClassImplementations()) {
+    for (const impl of file.getInfo().listClassImplementations()) {
       if (file.getFilename().match(/\.clas\.abap$/)
           && obj instanceof Objects.Class
-          && impl.getName().toUpperCase() !== obj.getName().toUpperCase()) {
-        const issue = Issue.atIdentifier(impl, "Class name must match filename", this.getMetadata().key);
+          && impl.name.getName().toUpperCase() !== obj.getName().toUpperCase()) {
+        const issue = Issue.atIdentifier(impl.name, "Class name must match filename", this.getMetadata().key);
         output.push(issue);
       }
     }

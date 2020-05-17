@@ -3,7 +3,6 @@ import {ABAPFile} from "../files";
 import {xmlToArray} from "../xml_utils";
 import {ABAPParser} from "../abap/abap_parser";
 import {IClassDefinition} from "../abap/types/_class_definition";
-import {IClassImplementation} from "../abap/types/_class_implementation";
 import {IObject} from "./_iobject";
 import {Version} from "../version";
 
@@ -51,23 +50,6 @@ export abstract class ABAPObject extends AbstractObject {
       }
     }
     return undefined;
-  }
-
-  public getClassImplementation(name: string): IClassImplementation | undefined {
-    for (const impl of this.getClassImplementations()) {
-      if (impl.getName().toUpperCase() === name.toUpperCase()) {
-        return impl;
-      }
-    }
-    return undefined;
-  }
-
-  public getClassImplementations(): readonly IClassImplementation[] {
-    let ret: IClassImplementation[] = [];
-    for (const file of this.getABAPFiles()) {
-      ret = ret.concat(file.getInfo().getClassImplementations());
-    }
-    return ret;
   }
 
   public getClassDefinitions(): readonly IClassDefinition[] {

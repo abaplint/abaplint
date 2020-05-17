@@ -7,7 +7,7 @@ import {ABAPObject} from "../../objects/_abap_object";
 import {Interface} from "../../objects";
 import {IClassDefinition} from "../../abap/types/_class_definition";
 import {IInterfaceDefinition} from "../../abap/types/_interface_definition";
-import {IClassImplementation} from "../../abap/types/_class_implementation";
+import {IClassAndMethods} from "../../abap/4_object_information/_abap_file_information";
 
 // todo: abstract methods from superclass parents(might be multiple), if class is not abstract
 
@@ -42,10 +42,12 @@ export class ImplementMethods extends ABAPRule {
     }
 
     for (const def of file.getInfo().getClassDefinitions()) {
-      let impl = file.getInfo().getClassImplementation(def.getName());
+      let impl = file.getInfo().getClassImplementationByName(def.getName());
+
       if (impl === undefined) {
-        impl = obj.getClassImplementation(def.getName());
+        impl = this.lookupInObject(def.getName(), obj);
       }
+
       if (impl === undefined) {
         const issue = Issue.atIdentifier(def, "Class implementation for \"" + def.getName() + "\" not found", this.getMetadata().key);
         ret.push(issue);
@@ -59,11 +61,21 @@ export class ImplementMethods extends ABAPRule {
     return ret;
   }
 
-  private checkClass(def: IClassDefinition, impl: IClassImplementation): Issue[] {
+  private lookupInObject(name: string, obj: ABAPObject) {
+    for (const sub of obj.getABAPFiles()) {
+      const impl = sub.getInfo().getClassImplementationByName(name);
+      if (impl !== undefined) {
+        return impl;
+      }
+    }
+    return undefined;
+  }
+
+  private checkClass(def: IClassDefinition, impl: IClassAndMethods): Issue[] {
     const ret: Issue[] = [];
 
     for (const md of def.getMethodDefinitions().getAll()) {
-      const found = impl.getMethodImplementation(md.getName());
+      const found = impl.methods.find(m => m.getName().toUpperCase() === md.getName().toUpperCase());
 
       if (md.isAbstract()) {
         if (found !== undefined) {
@@ -74,7 +86,7 @@ export class ImplementMethods extends ABAPRule {
       }
 
       if (found === undefined) {
-        const issue = Issue.atIdentifier(impl, "Implement method \"" + md.getName() + "\"", this.getMetadata().key);
+        const issue = Issue.atIdentifier(impl.name, "Implement method \"" + md.getName() + "\"", this.getMetadata().key);
         ret.push(issue);
       }
     }
@@ -82,7 +94,7 @@ export class ImplementMethods extends ABAPRule {
     return ret;
   }
 
-  private checkInterfaces(def: IClassDefinition, impl: IClassImplementation, file: ABAPFile, reg: IRegistry): Issue[] {
+  private checkInterfaces(def: IClassDefinition, impl: IClassAndMethods, file: ABAPFile, reg: IRegistry): Issue[] {
     const ret: Issue[] = [];
     let idef: IInterfaceDefinition | undefined = undefined;
 
@@ -105,13 +117,13 @@ export class ImplementMethods extends ABAPRule {
 
       for (const method of idef.getMethodDefinitions()) {
         const name = interfaceName.name + "~" + method.getName();
-        let found = impl.getMethodImplementation(name);
+        let found = impl.methods.find(m => m.getName().toUpperCase() === name.toUpperCase());
 
         if (found === undefined) {
           // try looking for ALIASes
           for (const alias of def.getAliases().getAll()) {
             if (alias.getComponent().toUpperCase() === name.toUpperCase()) {
-              found = impl.getMethodImplementation(alias.getName());
+              found = impl.methods.find(m => m.getName().toUpperCase() === alias.getName().toUpperCase());
               break;
             }
           }
@@ -119,7 +131,7 @@ export class ImplementMethods extends ABAPRule {
 
         if (found === undefined) {
           const message = "Implement method \"" + method.getName() + "\" from interface \"" + interfaceName.name + "\"";
-          const issue = Issue.atIdentifier(impl, message, this.getMetadata().key);
+          const issue = Issue.atIdentifier(impl.name, message, this.getMetadata().key);
           ret.push(issue);
         }
       }

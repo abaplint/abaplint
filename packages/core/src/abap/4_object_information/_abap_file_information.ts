@@ -1,9 +1,13 @@
 import {IClassDefinition} from "../types/_class_definition";
 import {IInterfaceDefinition} from "../types/_interface_definition";
-import {IClassImplementation} from "../types/_class_implementation";
 import {Identifier} from "./_identifier";
 
 // TODO: Only helper functions to get data from single file, no typing
+
+export interface IClassAndMethods {
+  name: Identifier;
+  methods: Identifier[];
+}
 
 export interface IABAPFileInformation {
   // TODO
@@ -11,9 +15,9 @@ export interface IABAPFileInformation {
   getClassDefinition(name: string): IClassDefinition | undefined;
   getInterfaceDefinitions(): readonly IInterfaceDefinition[];
   getInterfaceDefinition(name: string): IInterfaceDefinition | undefined;
-  getClassImplementation(name: string): IClassImplementation | undefined;
-  getClassImplementations(): readonly IClassImplementation[];
 
   // OK
-  listFormDefinitions(): Identifier[];
+  listFormDefinitions(): readonly Identifier[];
+  listClassImplementations(): readonly IClassAndMethods[];
+  getClassImplementationByName(name: string): IClassAndMethods | undefined;
 }

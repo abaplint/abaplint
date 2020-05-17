@@ -2,7 +2,6 @@ import * as LServer from "vscode-languageserver-types";
 import {IRegistry} from "../_iregistry";
 import {ABAPFile} from "../files";
 import {Identifier} from "../abap/4_object_information/_identifier";
-import {MethodImplementation} from "../abap/types";
 import {LSPUtils} from "./_lsp_utils";
 import {IAttributes} from "../abap/types/_class_attributes";
 import {IMethodDefinitions} from "../abap/types/_method_definitions";
@@ -65,17 +64,17 @@ export class Symbols {
       ret.push(symbol);
     }
 
-    for (const cla of file.getInfo().getClassImplementations()) {
+    for (const cla of file.getInfo().listClassImplementations()) {
       let children: LServer.DocumentSymbol[] = [];
-      children = children.concat(this.outputMethodImplementations(cla.getMethodImplementations()));
-      const symbol = this.newSymbol(cla, LServer.SymbolKind.Class, children);
+      children = children.concat(this.outputMethodImplementations(cla.methods));
+      const symbol = this.newSymbol(cla.name, LServer.SymbolKind.Class, children);
       ret.push(symbol);
     }
 
     return ret;
   }
 
-  private static outputMethodImplementations(methods: MethodImplementation[]): LServer.DocumentSymbol[] {
+  private static outputMethodImplementations(methods: Identifier[]): LServer.DocumentSymbol[] {
     const ret: LServer.DocumentSymbol[] = [];
     for (const method of methods) {
       const symbol = this.newSymbol(method, LServer.SymbolKind.Method, []);
