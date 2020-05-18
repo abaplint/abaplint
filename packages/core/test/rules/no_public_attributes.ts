@@ -30,6 +30,10 @@ const tests = [
             PUBLIC SECTION.
               DATA foo TYPE i.
           ENDCLASS.`, cnt: 0},
+  {abap: `CLASS lcl_bar DEFINITION.
+            PUBLIC SECTION.
+              CONSTANTS foo TYPE i.
+          ENDCLASS.`, cnt: 0},
 ];
 
 testRule(tests, NoPublicAttributes);
