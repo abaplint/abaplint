@@ -149,6 +149,20 @@ export class CurrentScope {
     return undefined;
   }
 
+  public existsObjectReference(name: string): boolean {
+    if (this.current?.findClassDefinition(name)) {
+      return true;
+    } else if (this.reg?.getObject("CLAS", name)) {
+      return true;
+    } else if (this.current?.findInterfaceDefinition(name)) {
+      return true;
+    } else if (this.reg?.getObject("INTF", name)) {
+      return true;
+    }
+
+    return false;
+  }
+
 ///////////////////////////
 
   public findClassDefinition(name: string): IClassDefinition | undefined {

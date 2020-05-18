@@ -13,7 +13,15 @@ export class Help {
   public static find(reg: IRegistry, textDocument: LServer.TextDocumentIdentifier, position: LServer.Position): string {
     let content = "";
 
-    content = "<tt>" + textDocument.uri + " (" +
+    content = `
+    <a href="#tokens" rel="no-refresh">Tokens</a> |
+    <a href="#statements" rel="no-refresh">Statements</a> |
+    <a href="#structure" rel="no-refresh">Structure</a> |
+    <a href="#files" rel="no-refresh">Files</a> |
+    <a href="#info" rel="no-refresh">Info dump</a>
+    <hr>
+    ` +
+      "<tt>" + textDocument.uri + " (" +
       (position.line + 1) + ", " +
       (position.character + 1) + ")</tt>";
     const file = LSPUtils.getABAPFile(reg, textDocument.uri);
@@ -25,9 +33,9 @@ export class Help {
     content = content + this.cursorInformation(reg, textDocument, position, file);
     content = content + this.fileInformation(file);
     content = content + "<hr>";
-    content = content + this.dumpFiles(reg);
+    content = content + `<a name="files"></a>` + this.dumpFiles(reg);
     content = content + "<hr>";
-    content = content + this.dumpInfo(file);
+    content = content + `<a name="info"></a>` + this.dumpInfo(file);
 
     return content;
   }
@@ -44,9 +52,7 @@ export class Help {
       forms: info.listFormDefinitions(),
     };
 
-    let text = JSON.stringify(dump, null, 2);
-    // dont be too chatty about the identifiers
-    text = text.replace(/ {2}"identifier": {[\S\s]*?"filename": .+\s+}\s*/g, "");
+    const text = JSON.stringify(dump, null, 2);
 
     return "<pre>" + text + "</pre>";
   }
@@ -139,11 +145,11 @@ export class Help {
   private static fileInformation(file: ABAPFile): string {
     let content = "";
 
-    content = content + "<hr>Tokens:<br><br>\n";
+    content = content + `<hr><a name="tokens">Tokens:<br><br>\n`;
     content = content + this.tokens(file);
-    content = content + "<hr>Statements:<br><br>\n";
+    content = content + `<hr><a name="statements">Statements:<br><br>\n`;
     content = content + this.buildStatements(file);
-    content = content + "<hr>Structure:<br><br>\n";
+    content = content + `<hr><a name="structure"></a>Structure:<br><br>\n`;
 
     const structure = file.getStructure();
     if (structure !== undefined) {

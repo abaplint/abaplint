@@ -92,6 +92,8 @@ export class BasicTypes {
       return new Types.XSequenceType();
     } else if (chainText === "CLIKE") {
       return new Types.CLikeType();
+    } else if (chainText === "ANY") {
+      return new Types.AnyType();
     } else if (chainText === "I") {
       return new Types.IntegerType();
     } else if (chainText === "F") {
@@ -217,8 +219,7 @@ export class BasicTypes {
     }
 
     const name = chain.getFirstToken().getStr();
-    const found = this.scope.findObjectReference(name);
-    if (found) {
+    if (this.scope.existsObjectReference(name)) {
       return new Types.ObjectReferenceType(name);
     }
 
