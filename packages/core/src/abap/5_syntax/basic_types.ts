@@ -121,7 +121,6 @@ export class BasicTypes {
       }
     }
 
-    // todo, this only handles simple names
     const typ = this.scope.findType(chainText);
     if (typ) {
       return typ.getType();

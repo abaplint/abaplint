@@ -176,7 +176,7 @@ export class CurrentScope {
       const file = (cglobal as Class).getMainABAPFile();
       const struc = file?.getStructure()?.findFirstStructure(Structures.ClassDefinition);
       if (struc && file) {
-        // todo, this should not be an empty scope
+        // todo, this should not be an empty scope, CurrentScope.buildDefault(this.reg)
         const foo = new ClassDefinition(struc, file.getFilename(), CurrentScope.buildEmpty());
         return foo;
       }
@@ -196,7 +196,7 @@ export class CurrentScope {
       const file = (iglobal as Interface).getMainABAPFile();
       const struc = file?.getStructure();
       if (struc && file) {
-        // todo, this should not be an empty scope
+        // todo, this should not be an empty scope, CurrentScope.buildDefault(this.reg)
         return new InterfaceDefinition(struc, file.getFilename(), CurrentScope.buildEmpty());
       }
     }

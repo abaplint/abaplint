@@ -145,9 +145,9 @@ export class Help {
   private static fileInformation(file: ABAPFile): string {
     let content = "";
 
-    content = content + `<hr><a name="tokens">Tokens:<br><br>\n`;
+    content = content + `<hr><a name="tokens"></a>Tokens:<br><br>\n`;
     content = content + this.tokens(file);
-    content = content + `<hr><a name="statements">Statements:<br><br>\n`;
+    content = content + `<hr><a name="statements"></a>Statements:<br><br>\n`;
     content = content + this.buildStatements(file);
     content = content + `<hr><a name="structure"></a>Structure:<br><br>\n`;
 

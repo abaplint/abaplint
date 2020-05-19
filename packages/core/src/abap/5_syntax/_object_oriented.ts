@@ -19,7 +19,7 @@ export class ObjectOriented {
     this.scope = scope;
   }
 
-  public findClassName(node: StatementNode): string {
+  private findClassName(node: StatementNode): string {
     if (!(node.get() instanceof Statements.ClassImplementation
         || node.get() instanceof Statements.ClassDefinition)) {
       throw new Error("findClassName, unexpected node type");
@@ -33,7 +33,6 @@ export class ObjectOriented {
 
   public classDefinition(node: StatementNode, filename: string) {
     this.scope.push(ScopeType.ClassDefinition, this.findClassName(node), node.getFirstToken().getStart(), filename);
-// todo
   }
 
   public classImplementation(node: StatementNode, filename: string) {

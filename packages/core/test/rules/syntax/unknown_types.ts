@@ -283,6 +283,27 @@ ENDCLASS.`;
     expect(issues.length).to.equal(0);
   });
 
+  it.skip("data reference to itself", () => {
+    const abap1 = `
+CLASS zcx_root DEFINITION ABSTRACT PUBLIC.
+  PUBLIC SECTION.
+    DATA previous TYPE REF TO zcx_root.
+ENDCLASS.
+CLASS zcx_root IMPLEMENTATION.
+ENDCLASS.`;
+    const abap2 = `
+CLASS zcx_static_check DEFINITION PUBLIC INHERITING FROM zcx_root CREATE PUBLIC ABSTRACT.
+ENDCLASS.
+CLASS zcx_static_check IMPLEMENTATION.
+ENDCLASS.`;
+    let issues = runMulti([
+      {filename: "zcx_root.clas.abap", contents: abap1},
+      {filename: "zcx_static_check.clas.abap", contents: abap2},
+    ]);
+    issues = issues.filter(i => i.getKey() === key);
+    expect(issues.length).to.equal(0);
+  });
+
   it.skip("swag typing", () => {
     const abap1 = `
 INTERFACE zif_swag_handler PUBLIC.
@@ -316,7 +337,66 @@ ENDCLASS.`;
       {filename: "zcl_swag_example_handler.clas.abap", contents: abap3},
     ]);
     issues = issues.filter(i => i.getKey() === key);
-    console.dir(issues);  //////////////////////////////////////////////////////
+    expect(issues.length).to.equal(0);
+  });
+
+  it("cyclic referencing classes via types", () => {
+    const abap1 = `
+CLASS zcl_class1 DEFINITION PUBLIC CREATE PUBLIC.
+  PUBLIC SECTION.
+    TYPES type TYPE i.
+    TYPES type2 TYPE zcl_class2=>type.
+    DATA data TYPE zcl_class2=>type.
+ENDCLASS.
+CLASS zcl_class1 IMPLEMENTATION.
+ENDCLASS.`;
+    const abap2 = `
+CLASS zcl_class2 DEFINITION PUBLIC CREATE PUBLIC.
+  PUBLIC SECTION.
+    TYPES type TYPE i.
+    TYPES type2 TYPE zcl_class1=>type.
+    DATA data TYPE zcl_class1=>type.
+ENDCLASS.
+CLASS zcl_class2 IMPLEMENTATION.
+ENDCLASS.`;
+    let issues = runMulti([
+      {filename: "zcl_class1.clas.abap", contents: abap1},
+      {filename: "zcl_class2.clas.abap", contents: abap2},
+    ]);
+    issues = issues.filter(i => i.getKey() === key);
+    expect(issues.length).to.equal(0);
+  });
+
+  it.skip("should not be able to find interface type without prefix", () => {
+    const abap1 = `
+INTERFACE foo.
+  TYPES foo TYPE i.
+ENDINTERFACE.
+DATA moo TYPE foo.`;
+    let issues = runMulti([
+      {filename: "zreport.prog.abap", contents: abap1},
+    ]);
+    issues = issues.filter(i => i.getKey() === key);
+    expect(issues.length).to.equal(1);
+  });
+
+  it.skip("TYPE reference itself via prefix", () => {
+    const abap1 = `
+INTERFACE zif_abapgit_definitions PUBLIC.
+  TYPES:
+    ty_sha1 TYPE c LENGTH 40 .
+  TYPES:
+    ty_itself TYPE zif_abapgit_definitions=>ty_sha1.
+ENDINTERFACE.`;
+    const abap2 = `
+REPORT zfoobar.
+DATA foo TYPE zif_abapgit_definitions=>ty_itself.`;
+    let issues = runMulti([
+      {filename: "zif_abapgit_definitions.intf.abap", contents: abap1},
+      {filename: "zfoobar.prog.abap", contents: abap2},
+    ]);
+    console.dir(issues);
+    issues = issues.filter(i => i.getKey() === key);
     expect(issues.length).to.equal(0);
   });
 
