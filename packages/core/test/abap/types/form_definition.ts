@@ -18,7 +18,7 @@ function runProgram(abap: string) {
   return scope.listFormDefinitions();
 }
 
-describe.skip("Types, FormDefinition", () => {
+describe("Types, FormDefinition", () => {
 
   it("negative, parser error", () => {
     const defs = runProgram("moo boo");
