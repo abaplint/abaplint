@@ -10,6 +10,7 @@ import {Aliases} from "./aliases";
 import {CurrentScope} from "../5_syntax/_current_scope";
 import {IClassDefinition} from "./_class_definition";
 import {TypeDefinitions} from "./type_definitions";
+import {ScopeType} from "../5_syntax/_scope_type";
 
 export class ClassDefinition extends Identifier implements IClassDefinition {
   private readonly node: StructureNode;
@@ -27,6 +28,7 @@ export class ClassDefinition extends Identifier implements IClassDefinition {
 
     this.node = node;
 
+    scope.push(ScopeType.ClassDefinition, name.getStr(), name.getStart(), filename);
     // todo, handle the sequence of types and attributes
     this.types = new TypeDefinitions(this.node, this.filename, scope);
     for (const t of this.types.getAll()) { // todo, this is workaround, must respect visibility and sequence properly
@@ -34,6 +36,7 @@ export class ClassDefinition extends Identifier implements IClassDefinition {
     }
     this.methodDefs = new MethodDefinitions(this.node, this.filename, scope);
     this.attributes = new Attributes(this.node, this.filename, scope);
+    scope.pop();
   }
 
   public getMethodDefinitions(): MethodDefinitions {

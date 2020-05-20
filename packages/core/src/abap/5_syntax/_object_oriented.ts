@@ -31,10 +31,6 @@ export class ObjectOriented {
     return blah.getFirstToken().getStr();
   }
 
-  public classDefinition(node: StatementNode, filename: string) {
-    this.scope.push(ScopeType.ClassDefinition, this.findClassName(node), node.getFirstToken().getStart(), filename);
-  }
-
   public classImplementation(node: StatementNode, filename: string) {
     const className = this.findClassName(node);
     this.scope.push(ScopeType.ClassImplementation, className, node.getFirstToken().getStart(), filename);

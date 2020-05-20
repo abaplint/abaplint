@@ -245,8 +245,6 @@ export class SyntaxLogic {
       this.helpers.proc.findFunctionScope(this.object, node, filename);
     } else if (s instanceof Statements.Method) {
       this.helpers.oooc.methodImplementation(node, filename);
-    } else if (s instanceof Statements.ClassDefinition) {
-      this.helpers.oooc.classDefinition(node, filename);
     } else if (s instanceof Statements.ClassImplementation) {
       this.helpers.oooc.classImplementation(node, filename);
     } else if (s instanceof Statements.EndMethod) {

@@ -6,6 +6,7 @@ import {CurrentScope} from "./_current_scope";
 import {AbstractType} from "../types/basic/_abstract_type";
 import {Chaining} from "./chaining";
 import {UnknownType, VoidType} from "../types/basic";
+import {ScopeType} from "./_scope_type";
 
 export class BasicTypes {
   private readonly filename: string;
@@ -64,6 +65,19 @@ export class BasicTypes {
     if (chainText.includes("=>")) {
       const split = chainText.split("=>");
       const className = split[0];
+
+      // the prefix might be itself
+      if ((this.scope.getType() === ScopeType.Interface
+          || this.scope.getType() === ScopeType.ClassDefinition)
+          && this.scope.getName().toUpperCase() === className.toUpperCase()) {
+        const typ = this.scope.findType(split[1]);
+        if (typ) {
+          return typ.getType();
+        }
+        return new UnknownType("Could not resolve type " + chainText);
+      }
+
+      // lookup in local and global scope
       const ref = this.scope.findObjectReference(className);
       if (ref) {
         const found = ref.getTypeDefinitions().getByName(split[1])?.getType();

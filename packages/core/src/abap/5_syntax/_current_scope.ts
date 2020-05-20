@@ -236,11 +236,18 @@ export class CurrentScope {
     return new DDIC(this.reg);
   }
 
-  public getName(): string { // todo, investigate if this method can be removed
+  public getName(): string {
     if (this.current === undefined) {
       throw new Error("error, getName");
     }
     return this.current.getIdentifier().sname;
+  }
+
+  public getType(): ScopeType {
+    if (this.current === undefined) {
+      throw new Error("error, getType");
+    }
+    return this.current.getIdentifier().stype;
   }
 
   public push(stype: ScopeType, sname: string, start: Position, filename: string): void {

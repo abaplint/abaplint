@@ -367,12 +367,12 @@ ENDCLASS.`;
     expect(issues.length).to.equal(0);
   });
 
-  it.skip("should not be able to find interface type without prefix", () => {
+  it("should not be able to find interface type without prefix", () => {
     const abap1 = `
-INTERFACE foo.
-  TYPES foo TYPE i.
+INTERFACE lif_foo.
+  TYPES ty_foo TYPE i.
 ENDINTERFACE.
-DATA moo TYPE foo.`;
+DATA moo TYPE ty_foo.`;
     let issues = runMulti([
       {filename: "zreport.prog.abap", contents: abap1},
     ]);
@@ -396,6 +396,37 @@ DATA foo TYPE zif_abapgit_definitions=>ty_itself.`;
       {filename: "zfoobar.prog.abap", contents: abap2},
     ]);
     console.dir(issues);
+    issues = issues.filter(i => i.getKey() === key);
+    expect(issues.length).to.equal(0);
+  });
+
+  it("local interface prefix is current", () => {
+    const abap1 = `
+INTERFACE lif_foo.
+  TYPES ty_foo TYPE i.
+  TYPES ty_moo TYPE lif_foo=>ty_foo.
+ENDINTERFACE.
+DATA moo TYPE lif_foo=>ty_moo.`;
+    let issues = runMulti([
+      {filename: "zreport.prog.abap", contents: abap1},
+    ]);
+    issues = issues.filter(i => i.getKey() === key);
+    expect(issues.length).to.equal(0);
+  });
+
+  it("local class prefix is current", () => {
+    const abap1 = `
+CLASS lcl_foo DEFINITION.
+  PUBLIC SECTION.
+    TYPES ty_foo TYPE i.
+    TYPES ty_moo TYPE lcl_foo=>ty_foo.
+ENDCLASS.
+CLASS lcl_foo IMPLEMENTATION.
+ENDCLASS.
+DATA moo TYPE lcl_foo=>ty_moo.`;
+    let issues = runMulti([
+      {filename: "zreport.prog.abap", contents: abap1},
+    ]);
     issues = issues.filter(i => i.getKey() === key);
     expect(issues.length).to.equal(0);
   });

@@ -11,6 +11,7 @@ import {MethodDefinition} from "./method_definition";
 import {Attributes} from "./class_attributes";
 import {TypeDefinitions} from "./type_definitions";
 import {Visibility} from "../4_object_information/visibility";
+import {ScopeType} from "../5_syntax/_scope_type";
 
 export class InterfaceDefinition extends Identifier implements IInterfaceDefinition {
   private readonly node: StructureNode;
@@ -28,7 +29,9 @@ export class InterfaceDefinition extends Identifier implements IInterfaceDefinit
 
     this.node = node;
 
+    scope.push(ScopeType.Interface, name.getStr(), name.getStart(), filename);
     this.parse(scope);
+    scope.pop();
   }
 
   public getAttributes() {
