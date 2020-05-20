@@ -29,12 +29,13 @@ export class StructureType implements AbstractType {
     return undefined;
   }
 
-  public toText() {
+  public toText(level: number) {
     const compo: string[] = [];
     for (const c of this.components) {
-      compo.push(c.name + " TYPE " + c.type.toText());
+      compo.push(c.name + " TYPE " + c.type.toText(level + 1));
     }
-    return "Structure: {\n\n" + compo.join(",\n\n") + "}";
+    const spaces = "  ".repeat(level);
+    return "Structure\n" + spaces + "* " + compo.join("\n" + spaces + "* ");
   }
 
   public isGeneric() {

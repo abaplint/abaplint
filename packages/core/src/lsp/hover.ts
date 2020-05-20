@@ -43,7 +43,7 @@ export class Hover {
       return {kind: LServer.MarkupKind.Markdown, value: this.hoverFormDefinition(lookup)};
     } else if (lookup instanceof TypedIdentifier) {
       let value = "Resolved, Typed\n\n" +
-        "Type:\n\n" + lookup.getType().toText();
+        "Type: " + lookup.getType().toText(0);
       if (lookup.getValue()) {
         value = value + "Value:\n\n```" + lookup.getValue() + "```";
       }

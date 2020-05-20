@@ -1,4 +1,4 @@
 export interface AbstractType {
-  toText(): string;
+  toText(level: number): string;
   isGeneric(): boolean;
 }

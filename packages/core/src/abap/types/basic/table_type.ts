@@ -13,8 +13,8 @@ export class TableType implements AbstractType {
     return this.rowType;
   }
 
-  public toText() {
-    return "Table of: " + this.rowType.toText();
+  public toText(level: number) {
+    return "Table of " + this.rowType.toText(level + 1);
   }
 
   public isGeneric() {

@@ -56,7 +56,7 @@ export class DumpScope {
       ret = ret + sident + "<tt>" + this.escape(t.getName()) + "</tt>";
       const pos = t.getStart();
       ret = ret + "(" + pos.getRow().toString() + ", " + pos.getCol().toString() + ") ";
-      ret = ret + t.getType().toText();
+      ret = ret + t.getType().toText(0);
       ret = ret + "<br>";
     }
 
@@ -70,7 +70,7 @@ export class DumpScope {
       ret = ret + sident + "<tt>" + this.escape(v.name.toLowerCase()) + "</tt>";
       const pos = v.identifier.getStart();
       ret = ret + "(" + pos.getRow().toString() + ", " + pos.getCol().toString() + ") ";
-      ret = ret + v.identifier.getType().toText();
+      ret = ret + v.identifier.getType().toText(0);
       const meta = v.identifier.getMeta();
       if (meta) {
         ret = ret + ", " + meta;
