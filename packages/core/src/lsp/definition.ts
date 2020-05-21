@@ -1,10 +1,10 @@
 import * as LServer from "vscode-languageserver-types";
 import {IRegistry} from "../_iregistry";
-import {Identifier} from "../abap/4_file_information/_identifier";
 import {ABAPObject} from "../objects/_abap_object";
 import {LSPUtils} from "./_lsp_utils";
-import {ABAPFile} from "../files";
+import {LSPLookup} from "./_lookup";
 
+// go to definition
 export class Definition {
 
   public static find(reg: IRegistry,
@@ -25,29 +25,7 @@ export class Definition {
       return undefined;
     }
 
-    const lookup = LSPUtils.lookup(found, reg, obj);
-    if (lookup instanceof ABAPFile) {
-      return this.ABAPFileResult(lookup);
-    } else if (lookup instanceof Identifier) {
-      return this.buildResult(lookup);
-    }
-
-    return undefined;
-  }
-
-  private static buildResult(resolved: Identifier): LServer.Location {
-    const pos = resolved.getStart();
-    return {
-      uri: resolved.getFilename(),
-      range: LServer.Range.create(pos.getRow() - 1, pos.getCol() - 1, pos.getRow() - 1, pos.getCol() - 1),
-    };
-  }
-
-  private static ABAPFileResult(abap: ABAPFile): LServer.Location {
-    return {
-      uri: abap.getFilename(),
-      range: LServer.Range.create(0, 0, 0, 0),
-    };
+    return LSPLookup.lookup(found, reg, obj)?.definition;
   }
 
 }

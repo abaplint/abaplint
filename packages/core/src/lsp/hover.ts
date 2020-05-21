@@ -2,12 +2,9 @@ import * as LServer from "vscode-languageserver-types";
 import {IRegistry} from "../_iregistry";
 import {ABAPObject} from "../objects/_abap_object";
 import {LSPUtils} from "./_lsp_utils";
-import {FormDefinition} from "../abap/types";
-import {ABAPFile} from "../files";
-import {Identifier} from "../abap/4_file_information/_identifier";
-import {TypedIdentifier} from "../abap/types/_typed_identifier";
 import * as Tokens from "../abap/1_lexer/tokens";
 import {ITextDocumentPositionParams} from "./_interfaces";
+import {LSPLookup} from "./_lookup";
 
 
 export class Hover {
@@ -36,32 +33,12 @@ export class Hover {
       return {kind: LServer.MarkupKind.Markdown, value: "Comment"};
     }
 
-    const lookup = LSPUtils.lookup(found, reg, obj);
-    if (lookup instanceof ABAPFile) {
-      return {kind: LServer.MarkupKind.Markdown, value: "File"};
-    } else if (lookup instanceof FormDefinition) {
-      return {kind: LServer.MarkupKind.Markdown, value: this.hoverFormDefinition(lookup)};
-    } else if (lookup instanceof TypedIdentifier) {
-      let value = "Resolved, Typed\n\n" +
-        "Type: " + lookup.getType().toText(0);
-      if (lookup.getValue()) {
-        value = value + "Value:\n\n```" + lookup.getValue() + "```";
-      }
-      if (lookup.getMeta().length > 0) {
-        value = value + "Meta: " + lookup.getMeta().join(", ");
-      }
-      return {kind: LServer.MarkupKind.Markdown, value};
-    } else if (lookup instanceof Identifier) {
-      return {kind: LServer.MarkupKind.Markdown, value: "Resolved"};
-    } else {
-      return {kind: LServer.MarkupKind.Markdown, value: "Unknown"};
+    const lookup = LSPLookup.lookup(found, reg, obj);
+    if (lookup?.hover) {
+      return {kind: LServer.MarkupKind.Markdown, value: lookup.hover};
     }
-  }
 
-  private static hoverFormDefinition(def: FormDefinition): string {
-// todo, list parameters properly in hover information
-// todo, properly handling scope
-    return "FORM info, todo, parameter count: " + def.getParameters().length;
+    return undefined;
   }
 
 }

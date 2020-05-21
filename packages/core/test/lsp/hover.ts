@@ -63,5 +63,11 @@ describe("LSP, hover", () => {
     expect(hover!.value).to.contain("String Template");
   });
 
+  it.skip("keyword", () => {
+    const file = new MemoryFile("foobar.prog.abap", "WRITE foobar.");
+    const reg = new Registry().addFile(file).parse();
+    const hover = Hover.find(reg, buildPosition(file, 0 , 3));
+    expect(hover).to.equal(undefined);
+  });
 
 });
