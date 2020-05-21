@@ -3,13 +3,13 @@ import {Visibility} from "./visibility";
 
 // Only helper functions to get data from single file, no type information
 
-export enum AttributeType {
+export enum AttributeLevel {
   Instance = "instance",
   Static = "static",
   Constant = "constant",
 }
 
-export enum MethodParameterType {
+export enum MethodParameterDirection {
   Importing = "importing",
   Exporting = "exporting",
   Changing = "changing",
@@ -19,7 +19,7 @@ export enum MethodParameterType {
 export interface InfoAttribute {
   name: string,
   identifier: Identifier,
-  type: AttributeType,
+  level: AttributeLevel,
   readOnly: boolean,
   visibility: Visibility,
 }
@@ -27,13 +27,13 @@ export interface InfoAttribute {
 export interface InfoMethodParameter {
   name: string,
   identifier: Identifier,
-  type: MethodParameterType,
+  direction: MethodParameterDirection,
 }
 
 export interface InfoMethodDefinition {
   name: string,
   identifier: Identifier,
-// todo, type, Instance or Static
+// todo, level, Instance or Static
   isRedefinition: boolean,
   isEventHandler: boolean,
   isAbstract: boolean,

@@ -2,15 +2,15 @@ import {expect} from "chai";
 import {MemoryFile} from "../../../src/files";
 import {Registry} from "../../../src/registry";
 import {SyntaxLogic} from "../../../src/abap/5_syntax/syntax";
-import {SpaghettiScope} from "../../../src/abap/5_syntax/spaghetti_scope";
 import {Position} from "../../../src/position";
 import {ScopeType} from "../../../src/abap/5_syntax/_scope_type";
 import {IRegistry} from "../../../src/_iregistry";
 import {getABAPObjects} from "../../get_abap";
+import {ISpaghettiScope} from "../../../src/abap/5_syntax/_spaghetti_scope";
 
 const filename = "zfoobar.prog.abap";
 
-function run(reg: IRegistry): SpaghettiScope {
+function run(reg: IRegistry): ISpaghettiScope {
   const obj = getABAPObjects(reg)[0];
 
   for (const file of obj.getABAPFiles()) {
@@ -22,7 +22,7 @@ function run(reg: IRegistry): SpaghettiScope {
   return new SyntaxLogic(reg, obj).run().spaghetti;
 }
 
-function runProgram(abap: string): SpaghettiScope {
+function runProgram(abap: string): ISpaghettiScope {
   const file = new MemoryFile(filename, abap);
   const reg = new Registry().addFile(file).parse();
   return run(reg);

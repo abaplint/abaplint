@@ -1,9 +1,9 @@
 import * as LServer from "vscode-languageserver-types";
 import {IRegistry} from "../_iregistry";
 import {ABAPObject} from "../objects/_abap_object";
-import {SpaghettiScope} from "../abap/5_syntax/spaghetti_scope";
 import {SyntaxLogic} from "../abap/5_syntax/syntax";
 import {LSPUtils} from "./_lsp_utils";
+import {ISpaghettiScope} from "../abap/5_syntax/_spaghetti_scope";
 
 export class Highlight {
   private readonly reg: IRegistry;
@@ -56,7 +56,7 @@ export class Highlight {
 
 ////////////////////////
 
-  private runSyntax(textDocument: LServer.TextDocumentIdentifier): SpaghettiScope | undefined {
+  private runSyntax(textDocument: LServer.TextDocumentIdentifier): ISpaghettiScope | undefined {
     const obj = this.findObject(textDocument);
     if (obj === undefined) {
       return undefined;

@@ -1,33 +1,10 @@
 import {Position} from "../../position";
 import {TypedIdentifier} from "../types/_typed_identifier";
-import {ScopeType} from "./_scope_type";
 import {Identifier} from "../4_file_information/_identifier";
 import {IClassDefinition} from "../types/_class_definition";
 import {IInterfaceDefinition} from "../types/_interface_definition";
 import {IFormDefinition} from "../types/_form_definition";
-
-export interface IScopeIdentifier {
-  stype: ScopeType;
-  sname: string;
-  filename: string;
-  start: Position; // stop position is implicit in the Spaghetti structure, ie start of the next child
-}
-
-export interface IScopeVariable {
-  name: string;
-  identifier: TypedIdentifier;
-}
-
-export interface IScopeData {
-  vars: IScopeVariable[];
-  cdefs: IClassDefinition[];
-  idefs: IInterfaceDefinition[];
-  forms: IFormDefinition[];
-  types: TypedIdentifier[];
-
-  reads: {position: Identifier, resolved: TypedIdentifier}[];
-  writes: {position: Identifier, resolved: TypedIdentifier}[];
-}
+import {IScopeData, IScopeIdentifier, IScopeVariable, ISpaghettiScopeNode, ISpaghettiScope} from "./_spaghetti_scope";
 
 abstract class ScopeData {
   private readonly data: IScopeData;
@@ -49,7 +26,7 @@ abstract class ScopeData {
   }
 }
 
-export class SpaghettiScopeNode extends ScopeData {
+export class SpaghettiScopeNode extends ScopeData implements ISpaghettiScopeNode {
   private readonly identifier: IScopeIdentifier;
   private readonly children: SpaghettiScopeNode[];
   private readonly parent: SpaghettiScopeNode | undefined;
@@ -220,7 +197,7 @@ export class SpaghettiScopeNode extends ScopeData {
 
 }
 
-export class SpaghettiScope {
+export class SpaghettiScope implements ISpaghettiScope {
   private readonly node: SpaghettiScopeNode;
 
   public constructor(top: SpaghettiScopeNode) {

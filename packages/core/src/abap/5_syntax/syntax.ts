@@ -14,7 +14,6 @@ import {ObjectOriented} from "./_object_oriented";
 import {Procedural} from "./_procedural";
 import {Inline} from "./_inline";
 import {Program, FunctionGroup} from "../../objects";
-import {SpaghettiScope} from "./spaghetti_scope";
 import {Position} from "../../position";
 import {Perform} from "./statements/perform";
 import {Type} from "./statements/type";
@@ -32,6 +31,7 @@ import {Statics} from "./structures/statics";
 import {Constants} from "./structures/constants";
 import {ClassDefinition} from "../types/class_definition";
 import {InterfaceDefinition} from "../types/interface_definition";
+import {ISyntaxResult} from "./syntax_result";
 
 // assumption: objects are parsed without parsing errors
 
@@ -64,7 +64,7 @@ export class SyntaxLogic {
     };
   }
 
-  public run(): {readonly issues: Issue[], readonly spaghetti: SpaghettiScope} {
+  public run(): ISyntaxResult {
     this.issues = [];
 
     if (this.object instanceof Program && this.object.isInclude()) {

@@ -5,10 +5,10 @@ import {IRule, IRuleMetadata, RuleTag} from "./_irule";
 import {IObject} from "../objects/_iobject";
 import {SyntaxLogic} from "../abap/5_syntax/syntax";
 import {ABAPObject} from "../objects/_abap_object";
-import {SpaghettiScopeNode} from "../abap/5_syntax/spaghetti_scope";
 import {ScopeType} from "../abap/5_syntax/_scope_type";
 import {TypedIdentifier} from "../abap/types/_typed_identifier";
 import {Interface} from "../objects";
+import {ISpaghettiScopeNode} from "../abap/5_syntax/_spaghetti_scope";
 
 export class UnusedVariablesConf extends BasicRuleConfig {
 }
@@ -44,7 +44,7 @@ export class UnusedVariables implements IRule {
     return this.traverse(new SyntaxLogic(reg, obj).run().spaghetti.getTop(), obj);
   }
 
-  private traverse(node: SpaghettiScopeNode, obj: ABAPObject): Issue[] {
+  private traverse(node: ISpaghettiScopeNode, obj: ABAPObject): Issue[] {
     let ret: Issue[] = [];
 
     if (node.getIdentifier().stype !== ScopeType.BuiltIn) {
@@ -58,7 +58,7 @@ export class UnusedVariables implements IRule {
     return ret;
   }
 
-  private checkNode(node: SpaghettiScopeNode, obj: ABAPObject): Issue[] {
+  private checkNode(node: ISpaghettiScopeNode, obj: ABAPObject): Issue[] {
     const ret: Issue[] = [];
 
     for (const v of node.getData().vars) {
@@ -75,7 +75,7 @@ export class UnusedVariables implements IRule {
     return ret;
   }
 
-  private isUsed(node: SpaghettiScopeNode, id: TypedIdentifier): boolean {
+  private isUsed(node: ISpaghettiScopeNode, id: TypedIdentifier): boolean {
     const usages = node.getData().reads.concat(node.getData().writes);
 
     for (const u of usages) {

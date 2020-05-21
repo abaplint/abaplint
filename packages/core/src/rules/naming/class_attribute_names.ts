@@ -4,7 +4,7 @@ import {NameValidator} from "../../utils/name_validator";
 import {ABAPRule} from "../_abap_rule";
 import {ABAPFile} from "../../files";
 import {Identifier} from "../../abap/4_file_information/_identifier";
-import {InfoAttribute, AttributeType} from "../../abap/4_file_information/_abap_file_information";
+import {InfoAttribute, AttributeLevel} from "../../abap/4_file_information/_abap_file_information";
 
 export class ClassAttributeNamesConf extends NamingRuleConfig {
   /** Ignore global exception classes */
@@ -73,14 +73,14 @@ export class ClassAttributeNames extends ABAPRule {
 
     let ret: Issue[] = [];
     for (const a of attr) {
-      switch (a.type) {
-        case AttributeType.Instance:
+      switch (a.level) {
+        case AttributeLevel.Instance:
           ret = ret.concat(this.checkName(a.identifier, this.conf.instance));
           break;
-        case AttributeType.Static:
+        case AttributeLevel.Static:
           ret = ret.concat(this.checkName(a.identifier, this.conf.statics));
           break;
-        case AttributeType.Constant:
+        case AttributeLevel.Constant:
           ret = ret.concat(this.checkName(a.identifier, this.conf.constants));
           break;
         default:

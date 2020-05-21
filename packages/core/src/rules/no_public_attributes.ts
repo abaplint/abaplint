@@ -4,7 +4,7 @@ import {IRegistry} from "../_iregistry";
 import {ABAPRule} from "./_abap_rule";
 import {ABAPFile} from "../files";
 import {Visibility} from "../abap/4_file_information/visibility";
-import {InfoAttribute, AttributeType} from "../abap/4_file_information/_abap_file_information";
+import {InfoAttribute, AttributeLevel} from "../abap/4_file_information/_abap_file_information";
 
 export class NoPublicAttributesConf extends BasicRuleConfig {
   /** Allows public attributes, if they are declared as READ-ONLY. */
@@ -75,7 +75,7 @@ Exceptions are excluded from this rule.`,
     for (const attr of attributes) {
       if (this.conf.allowReadOnly === true && attr.readOnly) {
         continue;
-      } else if (attr.type === AttributeType.Constant) {
+      } else if (attr.level === AttributeLevel.Constant) {
         continue;
       }
       const issue = Issue.atIdentifier(attr.identifier, this.getDescription(attr.name), this.getMetadata().key);

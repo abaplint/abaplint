@@ -1,15 +1,15 @@
-import {SpaghettiScope, SpaghettiScopeNode} from "../abap/5_syntax/spaghetti_scope";
 import {ScopeType} from "../abap/5_syntax/_scope_type";
+import {ISpaghettiScope, ISpaghettiScopeNode} from "../abap/5_syntax/_spaghetti_scope";
 
 export class DumpScope {
 
-  public static dump(spaghetti: SpaghettiScope): string {
+  public static dump(spaghetti: ISpaghettiScope): string {
     let ret = "<hr>Spaghetti Scope:<br><br>\n";
     ret = ret + this.traverseSpaghetti(spaghetti.getTop(), 0);
     return ret;
   }
 
-  private static traverseSpaghetti(node: SpaghettiScopeNode, indent: number): string {
+  private static traverseSpaghetti(node: ISpaghettiScopeNode, indent: number): string {
     const identifier = node.getIdentifier();
     const coverage = node.calcCoverage();
 
@@ -42,7 +42,7 @@ export class DumpScope {
     return ret;
   }
 
-  private static dumpNode(node: SpaghettiScopeNode, indent: number): string {
+  private static dumpNode(node: ISpaghettiScopeNode, indent: number): string {
     let ret = "";
     const sident = "&nbsp".repeat(indent * 2);
 

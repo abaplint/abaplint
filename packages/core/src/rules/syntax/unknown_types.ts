@@ -4,9 +4,9 @@ import {BasicRuleConfig} from "../_basic_rule_config";
 import {IObject} from "../../objects/_iobject";
 import {ABAPObject} from "../../objects/_abap_object";
 import {Issue} from "../../issue";
-import {SpaghettiScopeNode} from "../../abap/5_syntax/spaghetti_scope";
 import {UnknownType} from "../../abap/types/basic";
 import {IRuleMetadata, RuleTag} from "../_irule";
+import {ISpaghettiScopeNode} from "../../abap/5_syntax/_spaghetti_scope";
 
 export class UnknownTypesConf extends BasicRuleConfig {
 }
@@ -43,7 +43,7 @@ export class UnknownTypes {
     return this.traverse(spaghetti.getTop(), reg);
   }
 
-  private traverse(node: SpaghettiScopeNode, reg: IRegistry): Issue[] {
+  private traverse(node: ISpaghettiScopeNode, reg: IRegistry): Issue[] {
     let ret: Issue[] = [];
 
     for (const v of node.getData().vars) {

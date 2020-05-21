@@ -1,7 +1,7 @@
 import * as Structures from "../3_structures/structures";
 import * as Expressions from "../2_statements/expressions";
 import * as Statements from "../2_statements/statements";
-import {IABAPFileInformation, InfoClassImplementation, InfoClassDefinition, InfoMethodDefinition, InfoInterfaceDefinition, InfoAttribute, InfoAlias, AttributeType, InfoMethodParameter, MethodParameterType, InfoFormDefinition} from "./_abap_file_information";
+import {IABAPFileInformation, InfoClassImplementation, InfoClassDefinition, InfoMethodDefinition, InfoInterfaceDefinition, InfoAttribute, InfoAlias, AttributeLevel, InfoMethodParameter, MethodParameterDirection, InfoFormDefinition} from "./_abap_file_information";
 import {StructureNode, StatementNode} from "../nodes";
 import {Identifier} from "./_identifier";
 import * as Tokens from "../1_lexer/tokens";
@@ -207,7 +207,7 @@ export class ABAPFileInformation implements IABAPFileInformation {
       ret.push({
         name: name.getStr(),
         identifier: new Identifier(name, this.filename),
-        type: AttributeType.Instance,
+        level: AttributeLevel.Instance,
         readOnly: d.concatTokens().toUpperCase().includes(" READ-ONLY"),
         visibility,
       });
@@ -217,7 +217,7 @@ export class ABAPFileInformation implements IABAPFileInformation {
       ret.push({
         name: name.getStr(),
         identifier: new Identifier(name, this.filename),
-        type: AttributeType.Static,
+        level: AttributeLevel.Static,
         readOnly: d.concatTokens().toUpperCase().includes(" READ-ONLY"),
         visibility,
       });
@@ -227,7 +227,7 @@ export class ABAPFileInformation implements IABAPFileInformation {
       ret.push({
         name: name.getStr(),
         identifier: new Identifier(name, this.filename),
-        type: AttributeType.Constant,
+        level: AttributeLevel.Constant,
         readOnly: true,
         visibility,
       });
@@ -276,7 +276,7 @@ export class ABAPFileInformation implements IABAPFileInformation {
           ret.push({
             name: name.getStr().replace("!", ""),
             identifier: new Identifier(name, this.filename),
-            type: MethodParameterType.Importing,
+            direction: MethodParameterDirection.Importing,
           });
         }
       }
@@ -290,7 +290,7 @@ export class ABAPFileInformation implements IABAPFileInformation {
           ret.push({
             name: name.getStr().replace("!", ""),
             identifier: new Identifier(name, this.filename),
-            type: MethodParameterType.Exporting,
+            direction: MethodParameterDirection.Exporting,
           });
         }
       }
@@ -304,7 +304,7 @@ export class ABAPFileInformation implements IABAPFileInformation {
           ret.push({
             name: name.getStr().replace("!", ""),
             identifier: new Identifier(name, this.filename),
-            type: MethodParameterType.Changing,
+            direction: MethodParameterDirection.Changing,
           });
         }
       }
@@ -317,7 +317,7 @@ export class ABAPFileInformation implements IABAPFileInformation {
         ret.push({
           name: name.getStr().replace("!", ""),
           identifier: new Identifier(name, this.filename),
-          type: MethodParameterType.Returning,
+          direction: MethodParameterDirection.Returning,
         });
       }
     }

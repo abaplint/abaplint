@@ -2,7 +2,7 @@ import {TypedIdentifier} from "../types/_typed_identifier";
 import {BuiltIn} from "./_builtin";
 import {DDIC} from "../../ddic";
 import {Position} from "../../position";
-import {SpaghettiScope, SpaghettiScopeNode, IScopeIdentifier} from "./spaghetti_scope";
+import {SpaghettiScope, SpaghettiScopeNode} from "./spaghetti_scope";
 import {Token} from "../1_lexer/tokens/_token";
 import * as Structures from "../3_structures/structures";
 import {Identifier} from "../4_file_information/_identifier";
@@ -15,6 +15,7 @@ import {Class} from "../../objects/class";
 import {Interface} from "../../objects/interface";
 import {InterfaceDefinition} from "../types/interface_definition";
 import {ClassDefinition} from "../types/class_definition";
+import {IScopeIdentifier} from "./_spaghetti_scope";
 
 export class CurrentScope {
   protected readonly reg: IRegistry | undefined;

@@ -11,8 +11,8 @@ import {ITextDocumentPositionParams} from "./_interfaces";
 import {INode} from "../abap/nodes/_inode";
 import {Position} from "../position";
 import * as LServer from "vscode-languageserver-types";
-import {SpaghettiScopeNode} from "../abap/5_syntax/spaghetti_scope";
 import {IFormDefinition} from "../abap/types/_form_definition";
+import {ISpaghettiScopeNode} from "../abap/5_syntax/_spaghetti_scope";
 
 export interface ICursorPosition {
   token: Token;
@@ -112,7 +112,7 @@ export class LSPUtils {
     return scope.findVariable(cursor.token.getStr());
   }
 
-  public static findForm(found: ICursorPosition, scope: SpaghettiScopeNode): IFormDefinition | undefined {
+  public static findForm(found: ICursorPosition, scope: ISpaghettiScopeNode): IFormDefinition | undefined {
     if (!(found.snode.get() instanceof Statements.Perform)) {
       return undefined;
     }

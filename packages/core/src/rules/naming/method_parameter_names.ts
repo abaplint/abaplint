@@ -5,7 +5,7 @@ import {IRegistry} from "../../_iregistry";
 import {ABAPObject} from "../../objects/_abap_object";
 import {NamingRuleConfig} from "../_naming_rule_config";
 import {NameValidator} from "../../utils/name_validator";
-import {InfoMethodDefinition, MethodParameterType, InfoMethodParameter} from "../../abap/4_file_information/_abap_file_information";
+import {InfoMethodDefinition, MethodParameterDirection, InfoMethodParameter} from "../../abap/4_file_information/_abap_file_information";
 
 export class MethodParameterNamesConf extends NamingRuleConfig {
   /** Ignore parameters in methods of exception classes */
@@ -83,17 +83,17 @@ export class MethodParameterNames implements IRule {
     let ret: Issue[] = [];
 
     for (const p of method.parameters) {
-      switch (p.type) {
-        case MethodParameterType.Importing:
+      switch (p.direction) {
+        case MethodParameterDirection.Importing:
           ret = ret.concat(this.checkParameter(p, this.conf.importing));
           break;
-        case MethodParameterType.Exporting:
+        case MethodParameterDirection.Exporting:
           ret = ret.concat(this.checkParameter(p, this.conf.exporting));
           break;
-        case MethodParameterType.Changing:
+        case MethodParameterDirection.Changing:
           ret = ret.concat(this.checkParameter(p, this.conf.changing));
           break;
-        case MethodParameterType.Returning:
+        case MethodParameterDirection.Returning:
           ret = ret.concat(this.checkParameter(p, this.conf.returning));
           break;
         default:
