@@ -9,7 +9,6 @@ import {IFormDefinition} from "../abap/types/_form_definition";
 import {ISpaghettiScopeNode} from "../abap/5_syntax/_spaghetti_scope";
 import {ICursorPosition} from "./_lsp_utils";
 import {Identifier} from "../abap/4_file_information/_identifier";
-import {FormDefinition} from "../abap/types";
 import {TypedIdentifier} from "../abap/types/_typed_identifier";
 
 export interface LSPLookupResult {
@@ -20,7 +19,6 @@ export interface LSPLookupResult {
 export class LSPLookup {
 
   public static lookup(cursor: ICursorPosition, reg: IRegistry, obj: ABAPObject): LSPLookupResult | undefined {
-
     const inc = this.findInclude(cursor, reg);
     if (inc) {
       return {hover: "File", definition: this.ABAPFileResult(inc)};
@@ -36,22 +34,25 @@ export class LSPLookup {
       return {hover: "Call FORM", definition: this.buildResult(form)};
     }
 
-    const lookup = scope.findVariable(cursor.token.getStr());
-
-    if (lookup instanceof FormDefinition) {
-      return {hover: "FORM definition", definition: undefined};
-    } else if (lookup instanceof TypedIdentifier) {
-      let value = "Resolved, Typed\n\nType: " + lookup.getType().toText(0);
-      if (lookup.getValue()) {
-        value = value + "Value:\n\n```" + lookup.getValue() + "```";
+    const variable = scope.findVariable(cursor.token.getStr());
+    if (variable instanceof TypedIdentifier) {
+      let value = "Resolved variable, Typed\n\nType: " + variable.getType().toText(0);
+      if (variable.getValue()) {
+        value = value + "Value:\n\n```" + variable.getValue() + "```";
       }
-      if (lookup.getMeta().length > 0) {
-        value = value + "Meta: " + lookup.getMeta().join(", ");
+      if (variable.getMeta().length > 0) {
+        value = value + "Meta: " + variable.getMeta().join(", ");
       }
-      return {hover: value, definition: this.buildResult(lookup)};
-    } else {
-      return {hover: "Unknown", definition: undefined};
+      return {hover: value, definition: this.buildResult(variable)};
     }
+
+    const type = scope.findType(cursor.token.getStr());
+    if (type instanceof TypedIdentifier) {
+      const value = "Resolved type";
+      return {hover: value, definition: undefined};
+    }
+
+    return undefined;
   }
 
 ////////////////////////////////////////////
