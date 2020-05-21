@@ -12,4 +12,5 @@ export interface IAttributes {
   findByName(name: string): ClassAttribute | ClassConstant | undefined;
 
   getConstants(): readonly ClassConstant[];
+  getAll(): readonly ClassAttribute[];
 }

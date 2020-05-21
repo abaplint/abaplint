@@ -33,6 +33,13 @@ export class Attributes implements IAttributes {
     return this.static;
   }
 
+  public getAll(): readonly ClassAttribute[] {
+    let res: ClassAttribute[] = [];
+    res = res.concat(this.static);
+    res = res.concat(this.instance);
+    return res;
+  }
+
   public getStaticsByVisibility(visibility: Visibility): ClassAttribute[] {
     const attributes: ClassAttribute[] = [];
     for (const attr of this.static) {

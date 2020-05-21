@@ -17,6 +17,8 @@ export class FindGlobalDefinitions {
   }
 
   public run() {
+    this.clearAll();
+
     const MAX_PASSES = 3;
     let lastPass = Number.MAX_SAFE_INTEGER;
 
@@ -43,26 +45,32 @@ export class FindGlobalDefinitions {
 
 /////////////////////////////
 
+  private clearAll() {
+    for (const o of this.reg.getObjects()) {
+      if (o instanceof Interface || o instanceof Class) {
+        o.setDefinition(undefined);
+      }
+    }
+  }
+
   private countUntyped(obj: Interface | Class): number {
     const def = obj.getDefinition();
     if (def === undefined) {
       return 1;
     }
 
+    // todo, count constants
     let count = 0;
     for (const t of def.getTypeDefinitions().getAll()) {
       if (t.getType() instanceof UnknownType || t.getType() instanceof VoidType) {
         count = count + 1;
       }
     }
-    // todo, count attributes
-/*
     for (const a of def.getAttributes().getAll()) {
-      if (a.getType() instanceof UnknownType) {
+      if (a.getType() instanceof UnknownType || a.getType() instanceof VoidType) {
         count = count + 1;
       }
     }
-*/
     let methods: readonly IMethodDefinition[] = [];
     if (obj instanceof Interface) {
       methods = obj.getDefinition()!.getMethodDefinitions();
