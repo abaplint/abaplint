@@ -15,7 +15,7 @@ import {ScopeType} from "../5_syntax/_scope_type";
 
 export class InterfaceDefinition extends Identifier implements IInterfaceDefinition {
   private readonly node: StructureNode;
-  private attributes: IAttributes | undefined;
+  private attributes: IAttributes;
   private typeDefinitions: ITypeDefinitions;
   private methodDefinitions: MethodDefinition[];
 
@@ -57,13 +57,7 @@ export class InterfaceDefinition extends Identifier implements IInterfaceDefinit
 /////////////////
 
   private parse(scope: CurrentScope) {
-
-    if (this.node) {
-      this.attributes = new Attributes(this.node, this.filename, scope);
-    } else {
-      this.attributes = undefined;
-    }
-
+    this.attributes = new Attributes(this.node, this.filename, scope);
     this.typeDefinitions = new TypeDefinitions(this.node, this.filename, scope);
 
     this.methodDefinitions = [];

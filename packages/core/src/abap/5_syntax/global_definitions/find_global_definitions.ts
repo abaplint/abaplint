@@ -1,11 +1,12 @@
 import {IRegistry} from "../../../_iregistry";
-import {ABAPObject} from "../../../objects/_abap_object";
 import {InterfaceDefinition} from "../../types/interface_definition";
 import {ClassDefinition} from "../../types/class_definition";
 import {CurrentScope} from "../_current_scope";
 import * as Structures from "../../3_structures/structures";
 import {Interface} from "../../../objects/interface";
 import {Class} from "../../../objects/class";
+import {UnknownType, VoidType} from "../../types/basic";
+import {IMethodDefinition} from "../../types/_method_definition";
 
 // this makes sure to cache global interface and class definitions in the corresponding object
 export class FindGlobalDefinitions {
@@ -16,17 +17,70 @@ export class FindGlobalDefinitions {
   }
 
   public run() {
-// todo, do proper counting in a incremental/multi-pass typing, in case of cross references
-    for (let i = 0; i < 3; i++) {
+    const MAX_PASSES = 3;
+    let lastPass = Number.MAX_SAFE_INTEGER;
+
+    for (let i = 0; i < MAX_PASSES; i++) {
+      let thisPass = 0;
       for (const o of this.reg.getObjects()) {
-        if (o instanceof ABAPObject) {
-          this.runPrivate(o);
+        if (!(o instanceof Interface) && !(o instanceof Class)) {
+          continue;
         }
+        if (this.countUntyped(o) === 0) {
+          continue;
+        }
+        this.update(o);
+
+        thisPass = thisPass + this.countUntyped(o);
       }
+
+      if (lastPass === thisPass || thisPass === 0) {
+        break;
+      }
+      lastPass = thisPass;
     }
   }
 
-  private runPrivate(obj: ABAPObject) {
+/////////////////////////////
+
+  private countUntyped(obj: Interface | Class): number {
+    const def = obj.getDefinition();
+    if (def === undefined) {
+      return 1;
+    }
+
+    let count = 0;
+    for (const t of def.getTypeDefinitions().getAll()) {
+      if (t.getType() instanceof UnknownType || t.getType() instanceof VoidType) {
+        count = count + 1;
+      }
+    }
+    // todo, count attributes
+/*
+    for (const a of def.getAttributes().getAll()) {
+      if (a.getType() instanceof UnknownType) {
+        count = count + 1;
+      }
+    }
+*/
+    let methods: readonly IMethodDefinition[] = [];
+    if (obj instanceof Interface) {
+      methods = obj.getDefinition()!.getMethodDefinitions();
+    } else {
+      methods = obj.getDefinition()!.getMethodDefinitions().getAll();
+    }
+    for (const m of methods) {
+      for (const p of m.getParameters().getAll()) {
+        if (p.getType() instanceof UnknownType || p.getType() instanceof VoidType) {
+          count = count + 1;
+        }
+      }
+    }
+
+    return count;
+  }
+
+  private update(obj: Interface | Class) {
     const file = obj.getMainABAPFile();
     const struc = file?.getStructure();
 
