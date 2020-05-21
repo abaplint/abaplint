@@ -160,6 +160,8 @@ export class Registry implements IRegistry {
     for (const o of this.objects) {
       this.parsePrivate(o);
     }
+    new FindGlobalDefinitions(this).run();
+
 
     this.issues = [];
     for (const obj of this.objects) {
@@ -182,17 +184,17 @@ export class Registry implements IRegistry {
       this.parsePrivate(o);
       this.issues = this.issues.concat(o.getParsingIssues());
     }
+    new FindGlobalDefinitions(this).run();
 
     return this;
   }
 
 //////////////////////////////////////////
 
+  // todo, refactor, this is a mess, see where-used, a lot of the code should be in this method instead
   private parsePrivate(input: IObject) {
     if (input instanceof ABAPObject) {
       input.parse(this.getConfig().getVersion(), this.getConfig().getSyntaxSetttings().globalMacros);
-
-      new FindGlobalDefinitions(this).run(input);
     }
   }
 

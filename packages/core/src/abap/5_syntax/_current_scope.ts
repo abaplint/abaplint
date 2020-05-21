@@ -13,7 +13,6 @@ import {IFormDefinition} from "../types/_form_definition";
 import {Class} from "../../objects/class";
 import {Interface} from "../../objects/interface";
 import {IScopeIdentifier} from "./_spaghetti_scope";
-import {FindGlobalDefinitions} from "./global_definitions/find_global_definitions";
 
 export class CurrentScope {
   protected readonly reg: IRegistry;
@@ -155,12 +154,6 @@ export class CurrentScope {
 
     const cglobal = this.reg.getObject("CLAS", name) as Class | undefined;
     if (cglobal) {
-      const def = cglobal.getDefinition();
-      if (def) {
-        return def;
-      }
-      // the definition might not be cached yet, the sequence is defined by input
-      new FindGlobalDefinitions(this.reg).run(cglobal);
       return cglobal.getDefinition();
     }
 
@@ -175,12 +168,6 @@ export class CurrentScope {
 
     const iglobal = this.reg.getObject("INTF", name) as Interface | undefined;
     if (iglobal) {
-      const def = iglobal.getDefinition();
-      if (def) {
-        return def;
-      }
-      // the definition might not be cached yet, the sequence is defined by input
-      new FindGlobalDefinitions(this.reg).run(iglobal);
       return iglobal.getDefinition();
     }
 

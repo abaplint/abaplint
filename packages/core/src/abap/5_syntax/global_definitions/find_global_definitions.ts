@@ -15,7 +15,18 @@ export class FindGlobalDefinitions {
     this.reg = reg;
   }
 
-  public run(obj: ABAPObject) {
+  public run() {
+// todo, do proper counting in a incremental/multi-pass typing, in case of cross references
+    for (let i = 0; i < 3; i++) {
+      for (const o of this.reg.getObjects()) {
+        if (o instanceof ABAPObject) {
+          this.runPrivate(o);
+        }
+      }
+    }
+  }
+
+  private runPrivate(obj: ABAPObject) {
     const file = obj.getMainABAPFile();
     const struc = file?.getStructure();
 

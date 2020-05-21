@@ -304,7 +304,7 @@ ENDCLASS.`;
     expect(issues.length).to.equal(0);
   });
 
-  it.skip("swag typing", () => {
+  it("swag typing", () => {
     const abap1 = `
 INTERFACE zif_swag_handler PUBLIC.
   METHODS meta
@@ -337,7 +337,6 @@ ENDCLASS.`;
       {filename: "zcl_swag_example_handler.clas.abap", contents: abap3},
     ]);
     issues = issues.filter(i => i.getKey() === key);
-    console.dir(issues);
     expect(issues.length).to.equal(0);
   });
 
