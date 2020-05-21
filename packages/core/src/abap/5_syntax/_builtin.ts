@@ -20,7 +20,6 @@ export class BuiltIn {
     const ret: TypedIdentifier[] = [];
 
     ret.push(this.buildSY());
-    ret.push(this.buildVariable("syst")); // todo, remove this?
     ret.push(this.buildVariable("screen")); // todo, add structure, or alternatively make native Statements
     ret.push(this.buildVariable("text")); // todo, this should be parsed to text elements? and this var removed
 
@@ -77,6 +76,7 @@ export class BuiltIn {
     components.push({name: "msgv2", type: new CharacterType(50)});
     components.push({name: "msgv3", type: new CharacterType(50)});
     components.push({name: "msgv4", type: new CharacterType(50)});
+    components.push({name: "repid", type: new CharacterType(1)});
     const type = new StructureType(components);
     const id = new Identifier(new Position(1, 1), "sy");
     return new TypedIdentifier(id, this.filename, type, [IdentifierMeta.ReadOnly]);

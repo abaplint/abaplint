@@ -54,7 +54,7 @@ export class BasicTypes {
     return new Types.UnknownType("Type error, could not resolve " + fullName);
   }
 
-  public resolveTypeName(stat: StatementNode | ExpressionNode, expr: ExpressionNode | undefined): AbstractType | undefined {
+  private resolveTypeName(stat: StatementNode | ExpressionNode, expr: ExpressionNode | undefined): AbstractType | undefined {
 // todo, move this to the expresssion, and perhaps rename/add another expression for types
     if (expr === undefined) {
       return undefined;
@@ -192,17 +192,20 @@ export class BasicTypes {
       } else {
         return new Types.UnknownType("Type error, not a table type " + name);
       }
-    } else if (text.startsWith("LIKE REF TO")) {
+    } else if (text.startsWith("LIKE REF TO ")) {
       return undefined; // todo
-    } else if (text.startsWith("TYPE TABLE OF REF TO")) {
+    } else if (text.startsWith("TYPE TABLE OF REF TO ")
+        || text.startsWith("TYPE STANDARD TABLE OF REF TO ")
+        || text.startsWith("TYPE SORTED TABLE OF REF TO ")
+        || text.startsWith("TYPE HASHED TABLE OF REF TO ")) {
       found = this.resolveTypeRef(typename);
       if (found) {
         return new Types.TableType(found);
       }
-    } else if (text.startsWith("TYPE TABLE OF")
-        || text.startsWith("TYPE STANDARD TABLE OF")
-        || text.startsWith("TYPE SORTED TABLE OF")
-        || text.startsWith("TYPE HASHED TABLE OF")) {
+    } else if (text.startsWith("TYPE TABLE OF ")
+        || text.startsWith("TYPE STANDARD TABLE OF ")
+        || text.startsWith("TYPE SORTED TABLE OF ")
+        || text.startsWith("TYPE HASHED TABLE OF ")) {
       found = this.resolveTypeName(node, typename);
       if (found) {
         return new Types.TableType(found);
