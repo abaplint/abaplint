@@ -73,4 +73,8 @@ describe("LSP, definition", () => {
     expect(def!.uri).to.equal(prog1.getFilename());
   });
 
+// todo
+// INHERITING FROM zcl_jump_here
+// INTERFACES zif_jump_here
+
 });

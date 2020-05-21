@@ -1,5 +1,5 @@
 import {TypedIdentifier, IdentifierMeta} from "../types/_typed_identifier";
-import {VoidType, CharacterType} from "../types/basic";
+import {VoidType, CharacterType, StructureType, IStructureComponent, IntegerType, NumericType} from "../types/basic";
 import {Identifier} from "../1_lexer/tokens";
 import {Position} from "../../position";
 import {AbstractType} from "../types/basic/_abstract_type";
@@ -19,8 +19,8 @@ export class BuiltIn {
   public static get(extras: string[]): TypedIdentifier[] {
     const ret: TypedIdentifier[] = [];
 
-    ret.push(this.buildVariable("sy")); // todo, add structure
-    ret.push(this.buildVariable("syst")); // todo, add structure
+    ret.push(this.buildSY());
+    ret.push(this.buildVariable("syst")); // todo, remove this?
     ret.push(this.buildVariable("screen")); // todo, add structure, or alternatively make native Statements
     ret.push(this.buildVariable("text")); // todo, this should be parsed to text elements? and this var removed
 
@@ -57,7 +57,32 @@ export class BuiltIn {
     return ret;
   }
 
-  private static buildConstant(name: string, type?: AbstractType, value?: string) {
+/////////////////////////////
+
+  private static buildSY(): TypedIdentifier {
+    const components: IStructureComponent[] = [];
+    components.push({name: "subrc", type: new IntegerType()});
+    components.push({name: "uname", type: new CharacterType(12)});
+    components.push({name: "batch", type: new CharacterType(1)});
+    components.push({name: "ucomm", type: new CharacterType(70)});
+    components.push({name: "pfkey", type: new CharacterType(20)});
+    components.push({name: "cprog", type: new CharacterType(40)});
+    components.push({name: "dynnr", type: new CharacterType(4)});
+    components.push({name: "langu", type: new CharacterType(1)});
+    components.push({name: "tabix", type: new IntegerType()});
+    components.push({name: "index", type: new IntegerType()});
+    components.push({name: "msgid", type: new CharacterType(20)});
+    components.push({name: "msgno", type: new NumericType(3)});
+    components.push({name: "msgv1", type: new CharacterType(50)});
+    components.push({name: "msgv2", type: new CharacterType(50)});
+    components.push({name: "msgv3", type: new CharacterType(50)});
+    components.push({name: "msgv4", type: new CharacterType(50)});
+    const type = new StructureType(components);
+    const id = new Identifier(new Position(1, 1), "sy");
+    return new TypedIdentifier(id, this.filename, type, [IdentifierMeta.ReadOnly]);
+  }
+
+  private static buildConstant(name: string, type?: AbstractType, value?: string): TypedIdentifier {
     const id = new Identifier(new Position(1, 1), name);
     if (type === undefined) {
       type = new VoidType();

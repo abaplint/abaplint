@@ -546,4 +546,11 @@ DATA: ls_struc TYPE ty_struc,
     expect(identifier?.getType()).to.be.instanceof(Basic.AnyType);
   });
 
+  it("LIKE sy", () => {
+    const abap = `DATA sdf LIKE sy.`;
+    const identifier = resolveVariable(abap, "sdf");
+    expect(identifier).to.not.equal(undefined);
+    expect(identifier?.getType()).to.be.instanceof(Basic.StructureType);
+  });
+
 });
