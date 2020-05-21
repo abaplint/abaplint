@@ -5,8 +5,9 @@ import {CurrentScope} from "../_current_scope";
 import * as Structures from "../../3_structures/structures";
 import {Interface} from "../../../objects/interface";
 import {Class} from "../../../objects/class";
-import {UnknownType, VoidType} from "../../types/basic";
+import * as BasicTypes from "../../types/basic";
 import {IMethodDefinition} from "../../types/_method_definition";
+import {AbstractType} from "../../types/basic/_abstract_type";
 
 // this makes sure to cache global interface and class definitions in the corresponding object
 export class FindGlobalDefinitions {
@@ -62,14 +63,10 @@ export class FindGlobalDefinitions {
     // todo, count constants
     let count = 0;
     for (const t of def.getTypeDefinitions().getAll()) {
-      if (t.getType() instanceof UnknownType || t.getType() instanceof VoidType) {
-        count = count + 1;
-      }
+      count = count + this.count(t.getType());
     }
     for (const a of def.getAttributes().getAll()) {
-      if (a.getType() instanceof UnknownType || a.getType() instanceof VoidType) {
-        count = count + 1;
-      }
+      count = count + this.count(a.getType());
     }
     let methods: readonly IMethodDefinition[] = [];
     if (obj instanceof Interface) {
@@ -79,13 +76,26 @@ export class FindGlobalDefinitions {
     }
     for (const m of methods) {
       for (const p of m.getParameters().getAll()) {
-        if (p.getType() instanceof UnknownType || p.getType() instanceof VoidType) {
-          count = count + 1;
-        }
+        count = count + this.count(p.getType());
       }
     }
 
     return count;
+  }
+
+  private count(type: AbstractType): number {
+    if (type instanceof BasicTypes.UnknownType || type instanceof BasicTypes.VoidType) {
+      return 1;
+    } else if (type instanceof BasicTypes.TableType) {
+      return this.count(type.getRowType());
+    } else if (type instanceof BasicTypes.StructureType) {
+      let count = 0;
+      for (const c of type.getComponents()) {
+        count = count + this.count(c.type);
+      }
+      return count;
+    }
+    return 0;
   }
 
   private update(obj: Interface | Class) {

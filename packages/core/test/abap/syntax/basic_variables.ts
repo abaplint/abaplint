@@ -546,4 +546,62 @@ DATA: ls_struc TYPE ty_struc,
     expect(identifier?.getType()).to.be.instanceof(Basic.AnyType);
   });
 
+  it("LIKE sy", () => {
+    const abap = `DATA sdf LIKE sy.`;
+    const identifier = resolveVariable(abap, "sdf");
+    expect(identifier).to.not.equal(undefined);
+    expect(identifier?.getType()).to.be.instanceof(Basic.StructureType);
+  });
+
+  it("nested", () => {
+    const abap = `TYPES: BEGIN OF ty_type1,
+  type1 TYPE i,
+END OF ty_type1.
+TYPES: BEGIN OF ty_type2,
+  type2 TYPE ty_type1,
+END OF ty_type2.
+DATA foo TYPE ty_type2-type2-type1.`;
+    const identifier = resolveVariable(abap, "foo");
+    expect(identifier).to.not.equal(undefined);
+    expect(identifier?.getType()).to.be.instanceof(Basic.IntegerType);
+  });
+
+  it("nested, with interface", () => {
+    const abap = `INTERFACE lif_interface.
+  TYPES: BEGIN OF ty_type1,
+           type1 TYPE i,
+         END OF ty_type1.
+  TYPES: BEGIN OF ty_type2,
+           type2 TYPE ty_type1,
+         END OF ty_type2.
+ENDINTERFACE.
+DATA foo TYPE lif_interface=>ty_type2-type2-type1.`;
+    const identifier = resolveVariable(abap, "foo");
+    expect(identifier).to.not.equal(undefined);
+    expect(identifier?.getType()).to.be.instanceof(Basic.IntegerType);
+  });
+
+  it("expect void", () => {
+    const abap = `DATA lv_button1 TYPE svalbutton-buttontext.`;
+    const identifier = resolveVariable(abap, "lv_button1");
+    expect(identifier).to.not.equal(undefined);
+    expect(identifier?.getType()).to.be.instanceof(Basic.VoidType);
+  });
+
+  it("LIKE STANDARD TABLE", () => {
+    const abap = `
+      DATA boo TYPE i.
+      DATA foo LIKE STANDARD TABLE OF boo.`;
+    const identifier = resolveVariable(abap, "foo");
+    expect(identifier).to.not.equal(undefined);
+    expect(identifier?.getType()).to.be.instanceof(Basic.TableType);
+  });
+
+  it("TYPE RANGE OF", () => {
+    const abap = `DATA lt_range TYPE RANGE OF devclass.`;
+    const identifier = resolveVariable(abap, "lt_range");
+    expect(identifier).to.not.equal(undefined);
+    expect(identifier?.getType()).to.be.instanceof(Basic.TableType);
+  });
+
 });

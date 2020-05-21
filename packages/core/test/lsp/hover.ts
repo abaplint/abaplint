@@ -19,8 +19,7 @@ describe("LSP, hover", () => {
     const file = new MemoryFile("foobar.prog.abap", "WRITE foobar.");
     const reg = new Registry().addFile(file).parse();
     const hover = Hover.find(reg, buildPosition(file, 0 , 7));
-    expect(hover).to.not.equal(undefined);
-    expect(hover!.value).to.contain("Unknown");
+    expect(hover).to.equal(undefined);
   });
 
   it("resolved, local", () => {
@@ -31,12 +30,20 @@ describe("LSP, hover", () => {
     expect(hover!.value).to.contain("Resolved");
   });
 
+  it("resolved, local type", () => {
+    const file = new MemoryFile("foobar.prog.abap", "TYPES foobar TYPE i.");
+    const reg = new Registry().addFile(file).parse();
+    const hover = Hover.find(reg, buildPosition(file, 0 , 10));
+    expect(hover).to.not.equal(undefined);
+    expect(hover!.value).to.contain("Resolved");
+  });
+
   it("resolved, typed", () => {
     const file = new MemoryFile("foobar.prog.abap", "DATA foobar TYPE string.\nWRITE foobar.");
     const reg = new Registry().addFile(file).parse();
     const hover = Hover.find(reg, buildPosition(file, 1 , 7));
     expect(hover).to.not.equal(undefined);
-    expect(hover!.value).to.contain("Resolved, Typed");
+    expect(hover!.value).to.contain("Resolved");
   });
 
   it("String", () => {
@@ -63,5 +70,18 @@ describe("LSP, hover", () => {
     expect(hover!.value).to.contain("String Template");
   });
 
+  it("keyword", () => {
+    const file = new MemoryFile("foobar.prog.abap", "WRITE foobar.");
+    const reg = new Registry().addFile(file).parse();
+    const hover = Hover.find(reg, buildPosition(file, 0 , 3));
+    expect(hover).to.equal(undefined);
+  });
+
+  it.skip("keyworld should not resolve", () => {
+    const file = new MemoryFile("foobar.prog.abap", "DATA write TYPE i.\nWRITE write.");
+    const reg = new Registry().addFile(file).parse();
+    const hover = Hover.find(reg, buildPosition(file, 1 , 3));
+    expect(hover).to.equal(undefined);
+  });
 
 });

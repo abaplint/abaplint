@@ -14,11 +14,11 @@ export class Help {
     let content = "";
 
     content = `
-    <a href="#tokens" rel="no-refresh">Tokens</a> |
-    <a href="#statements" rel="no-refresh">Statements</a> |
-    <a href="#structure" rel="no-refresh">Structure</a> |
-    <a href="#files" rel="no-refresh">Files</a> |
-    <a href="#info" rel="no-refresh">Info dump</a>
+    <a href="./#tokens" rel="no-refresh">Tokens</a> |
+    <a href="./#statements" rel="no-refresh">Statements</a> |
+    <a href="./#structure" rel="no-refresh">Structure</a> |
+    <a href="./#files" rel="no-refresh">Files</a> |
+    <a href="./#info" rel="no-refresh">Info dump</a>
     <hr>
     ` +
       "<tt>" + textDocument.uri + " (" +
