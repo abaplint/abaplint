@@ -4,9 +4,9 @@ import {ITypeDefinitions} from "./_type_definitions";
 import {IMethodDefinition} from "./_method_definition";
 
 export interface IInterfaceDefinition extends Identifier {
-  getAttributes(): IAttributes | undefined;
+  getAttributes(): IAttributes;
   getTypeDefinitions(): ITypeDefinitions;
-  getMethodDefinitions(): IMethodDefinition[];
+  getMethodDefinitions(): readonly IMethodDefinition[];
   isLocal(): boolean;
   isGlobal(): boolean;
 }

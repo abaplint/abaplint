@@ -5,6 +5,7 @@ import {IClassDefinition} from "../types/_class_definition";
 import {IInterfaceDefinition} from "../types/_interface_definition";
 import {IFormDefinition} from "../types/_form_definition";
 import {Position} from "../../position";
+import {Issue} from "../../issue";
 
 export interface IScopeIdentifier {
   stype: ScopeType;
@@ -53,4 +54,9 @@ export interface ISpaghettiScope {
   listWritePositions(filename: string): Identifier[];
   lookupPosition(p: Position, filename: string): ISpaghettiScopeNode | undefined;
   getTop(): ISpaghettiScopeNode;
+}
+
+export interface ISyntaxResult {
+  readonly issues: Issue[];
+  readonly spaghetti: ISpaghettiScope;
 }

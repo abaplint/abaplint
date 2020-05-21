@@ -283,7 +283,7 @@ ENDCLASS.`;
     expect(issues.length).to.equal(0);
   });
 
-  it.skip("data reference to itself", () => {
+  it("data reference to itself", () => {
     const abap1 = `
 CLASS zcx_root DEFINITION ABSTRACT PUBLIC.
   PUBLIC SECTION.
@@ -304,7 +304,7 @@ ENDCLASS.`;
     expect(issues.length).to.equal(0);
   });
 
-  it.skip("swag typing", () => {
+  it("swag typing", () => {
     const abap1 = `
 INTERFACE zif_swag_handler PUBLIC.
   METHODS meta
@@ -380,7 +380,7 @@ DATA moo TYPE ty_foo.`;
     expect(issues.length).to.equal(1);
   });
 
-  it.skip("TYPE reference itself via prefix", () => {
+  it("TYPE reference itself via prefix", () => {
     const abap1 = `
 INTERFACE zif_abapgit_definitions PUBLIC.
   TYPES:
@@ -395,7 +395,6 @@ DATA foo TYPE zif_abapgit_definitions=>ty_itself.`;
       {filename: "zif_abapgit_definitions.intf.abap", contents: abap1},
       {filename: "zfoobar.prog.abap", contents: abap2},
     ]);
-    console.dir(issues);
     issues = issues.filter(i => i.getKey() === key);
     expect(issues.length).to.equal(0);
   });

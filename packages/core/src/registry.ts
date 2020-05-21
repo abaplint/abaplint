@@ -9,6 +9,7 @@ import {IRegistry} from "./_iregistry";
 import {IProgress, NoProgress} from "./progress";
 import {IConfiguration} from "./_config";
 import {ABAPObject} from "./objects/_abap_object";
+import {FindGlobalDefinitions} from "./abap/5_syntax/global_definitions/find_global_definitions";
 
 export class Registry implements IRegistry {
   private conf: IConfiguration;
@@ -159,6 +160,8 @@ export class Registry implements IRegistry {
     for (const o of this.objects) {
       this.parsePrivate(o);
     }
+    new FindGlobalDefinitions(this).run();
+
 
     this.issues = [];
     for (const obj of this.objects) {
@@ -181,12 +184,14 @@ export class Registry implements IRegistry {
       this.parsePrivate(o);
       this.issues = this.issues.concat(o.getParsingIssues());
     }
+    new FindGlobalDefinitions(this).run();
 
     return this;
   }
 
 //////////////////////////////////////////
 
+  // todo, refactor, this is a mess, see where-used, a lot of the code should be in this method instead
   private parsePrivate(input: IObject) {
     if (input instanceof ABAPObject) {
       input.parse(this.getConfig().getVersion(), this.getConfig().getSyntaxSetttings().globalMacros);

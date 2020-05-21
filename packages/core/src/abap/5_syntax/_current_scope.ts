@@ -4,7 +4,6 @@ import {DDIC} from "../../ddic";
 import {Position} from "../../position";
 import {SpaghettiScope, SpaghettiScopeNode} from "./spaghetti_scope";
 import {Token} from "../1_lexer/tokens/_token";
-import * as Structures from "../3_structures/structures";
 import {Identifier} from "../4_file_information/_identifier";
 import {ScopeType} from "./_scope_type";
 import {IRegistry} from "../../_iregistry";
@@ -13,12 +12,10 @@ import {IInterfaceDefinition} from "../types/_interface_definition";
 import {IFormDefinition} from "../types/_form_definition";
 import {Class} from "../../objects/class";
 import {Interface} from "../../objects/interface";
-import {InterfaceDefinition} from "../types/interface_definition";
-import {ClassDefinition} from "../types/class_definition";
 import {IScopeIdentifier} from "./_spaghetti_scope";
 
 export class CurrentScope {
-  protected readonly reg: IRegistry | undefined;
+  protected readonly reg: IRegistry;
   protected current: SpaghettiScopeNode | undefined;
 
   public static buildDefault(reg: IRegistry): CurrentScope {
@@ -47,23 +44,6 @@ export class CurrentScope {
     return s;
   }
 
-  public static buildEmpty(): CurrentScope {
-    const s = new CurrentScope();
-
-    const identifier: IScopeIdentifier = {
-      stype: ScopeType.Dummy,
-      sname: ScopeType.Dummy,
-      start: new Position(1, 1),
-      filename: "dummy"};
-
-    s.current = new SpaghettiScopeNode(identifier, undefined);
-
-    s.push(ScopeType.BuiltIn, ScopeType.BuiltIn, new Position(1, 1), BuiltIn.filename);
-    this.addBuiltIn(s, []);
-
-    return s;
-  }
-
   private static addBuiltIn(s: CurrentScope, extras: string[]) {
     const builtin = BuiltIn.get(extras);
     s.addList(builtin);
@@ -72,7 +52,7 @@ export class CurrentScope {
     }
   }
 
-  private constructor(reg?: IRegistry) {
+  private constructor(reg: IRegistry) {
     this.current = undefined;
     this.reg = reg;
   }
@@ -153,11 +133,11 @@ export class CurrentScope {
   public existsObjectReference(name: string): boolean {
     if (this.current?.findClassDefinition(name)) {
       return true;
-    } else if (this.reg?.getObject("CLAS", name)) {
+    } else if (this.reg.getObject("CLAS", name)) {
       return true;
     } else if (this.current?.findInterfaceDefinition(name)) {
       return true;
-    } else if (this.reg?.getObject("INTF", name)) {
+    } else if (this.reg.getObject("INTF", name)) {
       return true;
     }
 
@@ -172,15 +152,9 @@ export class CurrentScope {
       return clocal;
     }
 
-    const cglobal = this.reg?.getObject("CLAS", name);
-    if (cglobal && this.reg) {
-      const file = (cglobal as Class).getMainABAPFile();
-      const struc = file?.getStructure()?.findFirstStructure(Structures.ClassDefinition);
-      if (struc && file) {
-        // todo, this should not be an empty scope, CurrentScope.buildDefault(this.reg)
-        const foo = new ClassDefinition(struc, file.getFilename(), CurrentScope.buildEmpty());
-        return foo;
-      }
+    const cglobal = this.reg.getObject("CLAS", name) as Class | undefined;
+    if (cglobal) {
+      return cglobal.getDefinition();
     }
 
     return undefined;
@@ -192,14 +166,9 @@ export class CurrentScope {
       return ilocal;
     }
 
-    const iglobal = this.reg?.getObject("INTF", name);
-    if (iglobal && this.reg) {
-      const file = (iglobal as Interface).getMainABAPFile();
-      const struc = file?.getStructure();
-      if (struc && file) {
-        // todo, this should not be an empty scope, CurrentScope.buildDefault(this.reg)
-        return new InterfaceDefinition(struc, file.getFilename(), CurrentScope.buildEmpty());
-      }
+    const iglobal = this.reg.getObject("INTF", name) as Interface | undefined;
+    if (iglobal) {
+      return iglobal.getDefinition();
     }
 
     return undefined;
@@ -230,10 +199,7 @@ export class CurrentScope {
 
 ///////////////////////////
 
-  public getDDIC(): DDIC | undefined {
-    if (this.reg === undefined) {
-      return undefined;
-    }
+  public getDDIC(): DDIC {
     return new DDIC(this.reg);
   }
 
