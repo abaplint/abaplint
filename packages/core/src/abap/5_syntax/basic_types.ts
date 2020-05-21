@@ -6,7 +6,6 @@ import {CurrentScope} from "./_current_scope";
 import {AbstractType} from "../types/basic/_abstract_type";
 import {Chaining} from "./chaining";
 import {UnknownType, VoidType} from "../types/basic";
-import {ScopeType} from "./_scope_type";
 
 export class BasicTypes {
   private readonly filename: string;
@@ -54,46 +53,18 @@ export class BasicTypes {
     return new Types.UnknownType("Type error, could not resolve " + fullName);
   }
 
-  private resolveTypeName(stat: StatementNode | ExpressionNode, expr: ExpressionNode | undefined): AbstractType | undefined {
+  private resolveTypeName(typename: ExpressionNode | undefined, length?: number): AbstractType | undefined {
 // todo, move this to the expresssion, and perhaps rename/add another expression for types
-    if (expr === undefined) {
+    if (typename === undefined) {
       return undefined;
     }
 
-    const chainText = expr.concatTokens().toUpperCase();
-
-    if (chainText.includes("=>")) {
-      const split = chainText.split("=>");
-      const className = split[0];
-
-      // the prefix might be itself
-      if ((this.scope.getType() === ScopeType.Interface
-          || this.scope.getType() === ScopeType.ClassDefinition)
-          && this.scope.getName().toUpperCase() === className.toUpperCase()) {
-        const typ = this.scope.findType(split[1]);
-        if (typ) {
-          return typ.getType();
-        }
-        return new UnknownType("Could not resolve type " + chainText);
-      }
-
-      // lookup in local and global scope
-      const ref = this.scope.findObjectReference(className);
-      if (ref) {
-        const found = ref.getTypeDefinitions().getByName(split[1])?.getType();
-        if (found) {
-          return found;
-        }
-        return new UnknownType("Could not resolve type " + chainText);
-      }
-
-      if (this.scope.getDDIC()?.inErrorNamespace(className) === false) {
-        return new VoidType();
-      }
-
-      return new UnknownType("Could not resolve top " + chainText);
+    const chain = new Chaining(this.scope).resolveTypeChain(typename);
+    if (chain) {
+      return chain;
     }
 
+    const chainText = typename.concatTokens().toUpperCase();
     if (chainText === "STRING") {
       return new Types.StringType();
     } else if (chainText === "XSTRING") {
@@ -113,23 +84,20 @@ export class BasicTypes {
     } else if (chainText === "F") {
       return new Types.FloatType();
     } else if (chainText === "C") {
-      const len = this.findLength(stat);
-      if (len) {
-        return new Types.CharacterType(len);
+      if (length) {
+        return new Types.CharacterType(length);
       } else {
         return new Types.UnknownType("C, unable to parse length");
       }
     } else if (chainText === "X") {
-      const len = this.findLength(stat);
-      if (len) {
-        return new Types.HexType(len);
+      if (length) {
+        return new Types.HexType(length);
       } else {
         return new Types.UnknownType("X, unable to parse length");
       }
     } else if (chainText === "N") {
-      const len = this.findLength(stat);
-      if (len) {
-        return new Types.NumericType(len);
+      if (length) {
+        return new Types.NumericType(length);
       } else {
         return new Types.UnknownType("N, unable to parse length");
       }
@@ -206,7 +174,7 @@ export class BasicTypes {
         || text.startsWith("TYPE STANDARD TABLE OF ")
         || text.startsWith("TYPE SORTED TABLE OF ")
         || text.startsWith("TYPE HASHED TABLE OF ")) {
-      found = this.resolveTypeName(node, typename);
+      found = this.resolveTypeName(typename);
       if (found) {
         return new Types.TableType(found);
       }
@@ -218,7 +186,7 @@ export class BasicTypes {
     } else if (text.startsWith("TYPE REF TO")) {
       found = this.resolveTypeRef(typename);
     } else if (text.startsWith("TYPE")) {
-      found = this.resolveTypeName(node, typename);
+      found = this.resolveTypeName(typename, this.findLength(node));
       if (found === undefined && typename === undefined) {
         found = new Types.CharacterType(1);
       }
