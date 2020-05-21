@@ -588,4 +588,13 @@ DATA foo TYPE lif_interface=>ty_type2-type2-type1.`;
     expect(identifier?.getType()).to.be.instanceof(Basic.VoidType);
   });
 
+  it("LIKE STANDARD TABLE", () => {
+    const abap = `
+      DATA boo TYPE i.
+      DATA foo LIKE STANDARD TABLE OF boo.`;
+    const identifier = resolveVariable(abap, "foo");
+    expect(identifier).to.not.equal(undefined);
+    expect(identifier?.getType()).to.be.instanceof(Basic.TableType);
+  });
+
 });

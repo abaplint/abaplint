@@ -178,6 +178,15 @@ export class BasicTypes {
       if (found) {
         return new Types.TableType(found);
       }
+    } else if (text.startsWith("LIKE TABLE OF ")
+        || text.startsWith("LIKE STANDARD TABLE OF ")
+        || text.startsWith("LIKE SORTED TABLE OF ")
+        || text.startsWith("LIKE HASHED TABLE OF ")) {
+      const sub = node.findFirstExpression(Expressions.TypeName);
+      found = this.resolveLikeName(sub);
+      if (found) {
+        return new Types.TableType(found);
+      }
     } else if (text.startsWith("LIKE")) {
       const sub = node.findFirstExpression(Expressions.FieldChain);
       return this.resolveLikeName(sub);
