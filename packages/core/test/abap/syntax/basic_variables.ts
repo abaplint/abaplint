@@ -597,4 +597,11 @@ DATA foo TYPE lif_interface=>ty_type2-type2-type1.`;
     expect(identifier?.getType()).to.be.instanceof(Basic.TableType);
   });
 
+  it("TYPE RANGE OF", () => {
+    const abap = `DATA lt_range TYPE RANGE OF devclass.`;
+    const identifier = resolveVariable(abap, "lt_range");
+    expect(identifier).to.not.equal(undefined);
+    expect(identifier?.getType()).to.be.instanceof(Basic.TableType);
+  });
+
 });

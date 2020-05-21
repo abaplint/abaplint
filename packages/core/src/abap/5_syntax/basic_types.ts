@@ -5,7 +5,7 @@ import * as Types from "../types/basic";
 import {CurrentScope} from "./_current_scope";
 import {AbstractType} from "../types/basic/_abstract_type";
 import {Chaining} from "./chaining";
-import {UnknownType, VoidType} from "../types/basic";
+import {UnknownType, VoidType, StructureType, CharacterType} from "../types/basic";
 
 export class BasicTypes {
   private readonly filename: string;
@@ -187,6 +187,19 @@ export class BasicTypes {
       if (found) {
         return new Types.TableType(found);
       }
+    } else if (text.startsWith("TYPE RANGE OF ")) {
+      const sub = node.findFirstExpression(Expressions.TypeName);
+      found = this.resolveTypeName(sub);
+      if (found === undefined) {
+        return new Types.UnknownType("TYPE RANGE OF, could not resolve type");
+      }
+      const structure = new StructureType([
+        {name: "sign", type: new CharacterType(1)},
+        {name: "option", type: new CharacterType(2)},
+        {name: "low", type: found},
+        {name: "high", type: found},
+      ]);
+      return new Types.TableType(structure);
     } else if (text.startsWith("LIKE")) {
       const sub = node.findFirstExpression(Expressions.FieldChain);
       return this.resolveLikeName(sub);
