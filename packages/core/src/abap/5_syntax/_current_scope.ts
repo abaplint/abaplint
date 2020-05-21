@@ -5,7 +5,7 @@ import {Position} from "../../position";
 import {SpaghettiScope, SpaghettiScopeNode, IScopeIdentifier} from "./spaghetti_scope";
 import {Token} from "../1_lexer/tokens/_token";
 import * as Structures from "../3_structures/structures";
-import {Identifier} from "../4_object_information/_identifier";
+import {Identifier} from "../4_file_information/_identifier";
 import {ScopeType} from "./_scope_type";
 import {IRegistry} from "../../_iregistry";
 import {IClassDefinition} from "../types/_class_definition";

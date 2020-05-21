@@ -7,7 +7,7 @@ import {BasicRuleConfig} from "./_basic_rule_config";
 import {xmlToArray} from "../xml_utils";
 import {IFile} from "../files/_ifile";
 import {Position} from "../position";
-import {InfoClassDefinition} from "../abap/4_object_information/_abap_file_information";
+import {InfoClassDefinition} from "../abap/4_file_information/_abap_file_information";
 
 export class RemoveDescriptionsConf extends BasicRuleConfig {
   /** Ignore global exception classes */

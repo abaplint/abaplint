@@ -1,5 +1,5 @@
-import {Visibility} from "../4_object_information/visibility";
-import {Identifier} from "../4_object_information/_identifier";
+import {Visibility} from "../4_file_information/visibility";
+import {Identifier} from "../4_file_information/_identifier";
 import {IMethodParameters} from "./_method_parameters";
 
 export interface IMethodDefinition extends Identifier {

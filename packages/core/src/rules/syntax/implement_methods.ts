@@ -5,7 +5,7 @@ import {IRegistry} from "../../_iregistry";
 import {BasicRuleConfig} from "../_basic_rule_config";
 import {ABAPObject} from "../../objects/_abap_object";
 import {Interface} from "../../objects";
-import {InfoClassImplementation, InfoClassDefinition, InfoInterfaceDefinition} from "../../abap/4_object_information/_abap_file_information";
+import {InfoClassImplementation, InfoClassDefinition, InfoInterfaceDefinition} from "../../abap/4_file_information/_abap_file_information";
 
 // todo: abstract methods from superclass parents(might be multiple), if class is not abstract
 

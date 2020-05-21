@@ -2,7 +2,7 @@ import {expect} from "chai";
 import {MemoryFile} from "../../../src/files";
 import {Registry} from "../../../src/registry";
 import {Class} from "../../../src/objects";
-import {Visibility} from "../../../src/abap/4_object_information/visibility";
+import {Visibility} from "../../../src/abap/4_file_information/visibility";
 import {getABAPObjects} from "../../get_abap";
 import {UnknownType} from "../../../src/abap/types/basic";
 import {IClassDefinition} from "../../../src/abap/types/_class_definition";

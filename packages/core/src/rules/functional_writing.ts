@@ -6,7 +6,7 @@ import {BasicRuleConfig} from "./_basic_rule_config";
 import {IRegistry} from "../_iregistry";
 import {IObject} from "../objects/_iobject";
 import {Class} from "../objects";
-import {InfoClassDefinition} from "../abap/4_object_information/_abap_file_information";
+import {InfoClassDefinition} from "../abap/4_file_information/_abap_file_information";
 
 export class FunctionalWritingConf extends BasicRuleConfig {
   /** Ignore functional writing in exception classes, local + global */

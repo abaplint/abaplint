@@ -3,7 +3,7 @@ import {Token} from "./1_lexer/tokens/_token";
 import {AbstractFile} from "../files/_abstract_file";
 import {IFile} from "../files/_ifile";
 import {StructureNode, StatementNode} from "./nodes";
-import {IABAPFileInformation} from "./4_object_information/_abap_file_information";
+import {IABAPFileInformation} from "./4_file_information/_abap_file_information";
 
 export class ABAPFile extends AbstractFile {
   private readonly tokens: readonly Token[];

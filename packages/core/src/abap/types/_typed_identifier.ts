@@ -1,5 +1,5 @@
 import {Token} from "../1_lexer/tokens/_token";
-import {Identifier} from "../4_object_information/_identifier";
+import {Identifier} from "../4_file_information/_identifier";
 import {AbstractType} from "./basic/_abstract_type";
 
 export const enum IdentifierMeta {

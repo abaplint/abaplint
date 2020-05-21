@@ -4,7 +4,7 @@ import {IRule} from "./_irule";
 import {IObject} from "../objects/_iobject";
 import {Class} from "../objects";
 import {IRegistry} from "../_iregistry";
-import {Visibility} from "../abap/4_object_information/visibility";
+import {Visibility} from "../abap/4_file_information/visibility";
 
 export class ConstructorVisibilityPublicConf extends BasicRuleConfig {
 }

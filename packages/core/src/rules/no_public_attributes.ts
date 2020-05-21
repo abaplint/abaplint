@@ -3,8 +3,8 @@ import {BasicRuleConfig} from "./_basic_rule_config";
 import {IRegistry} from "../_iregistry";
 import {ABAPRule} from "./_abap_rule";
 import {ABAPFile} from "../files";
-import {Visibility} from "../abap/4_object_information/visibility";
-import {InfoAttribute, AttributeType} from "../abap/4_object_information/_abap_file_information";
+import {Visibility} from "../abap/4_file_information/visibility";
+import {InfoAttribute, AttributeType} from "../abap/4_file_information/_abap_file_information";
 
 export class NoPublicAttributesConf extends BasicRuleConfig {
   /** Allows public attributes, if they are declared as READ-ONLY. */

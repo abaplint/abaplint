@@ -5,7 +5,7 @@ import {Class, ClassCategory} from "../../src/objects";
 import * as Basic from "../../src/abap/types/basic";
 import {CharacterType} from "../../src/abap/types/basic";
 import {getABAPObjects} from "../get_abap";
-import {Visibility} from "../../src/abap/4_object_information/visibility";
+import {Visibility} from "../../src/abap/4_file_information/visibility";
 import {IRegistry} from "../../src/_iregistry";
 import {IClassDefinition} from "../../src/abap/types/_class_definition";
 import {SyntaxLogic} from "../../src/abap/5_syntax/syntax";

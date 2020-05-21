@@ -6,7 +6,7 @@ import {IObject} from "../../objects/_iobject";
 import * as Objects from "../../objects";
 import {BasicRuleConfig} from "../_basic_rule_config";
 import {Class} from "../../objects";
-import {InfoClassDefinition} from "../../abap/4_object_information/_abap_file_information";
+import {InfoClassDefinition} from "../../abap/4_file_information/_abap_file_information";
 
 export class SuperclassFinalConf extends BasicRuleConfig {
 }

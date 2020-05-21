@@ -3,7 +3,7 @@ import * as Expressions from "../abap/2_statements/expressions";
 import {IRegistry} from "../_iregistry";
 import {Token} from "../abap/1_lexer/tokens/_token";
 import {StatementNode, TokenNode} from "../abap/nodes";
-import {Identifier} from "../abap/4_object_information/_identifier";
+import {Identifier} from "../abap/4_file_information/_identifier";
 import {ABAPFile} from "../files";
 import {ABAPObject} from "../objects/_abap_object";
 import {SyntaxLogic} from "../abap/5_syntax/syntax";

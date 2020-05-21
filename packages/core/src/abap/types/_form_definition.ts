@@ -1,4 +1,4 @@
-import {Identifier} from "../4_object_information/_identifier";
+import {Identifier} from "../4_file_information/_identifier";
 import {TypedIdentifier} from "./_typed_identifier";
 
 export interface IFormDefinition extends Identifier {

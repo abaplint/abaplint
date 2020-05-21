@@ -3,7 +3,7 @@ import * as Statements from "../2_statements/statements";
 import {ClassAttribute} from "./class_attribute";
 import {ClassConstant} from "./class_constant";
 import {StructureNode, StatementNode} from "../../abap/nodes";
-import {Visibility} from "../4_object_information/visibility";
+import {Visibility} from "../4_file_information/visibility";
 import {CurrentScope} from "../5_syntax/_current_scope";
 import {TypedIdentifier} from "./_typed_identifier";
 import {ClassData as ClassDataStatement} from "../5_syntax/statements/class_data";

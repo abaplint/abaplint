@@ -1,9 +1,9 @@
 import * as LServer from "vscode-languageserver-types";
 import {IRegistry} from "../_iregistry";
 import {ABAPFile} from "../files";
-import {Identifier} from "../abap/4_object_information/_identifier";
+import {Identifier} from "../abap/4_file_information/_identifier";
 import {LSPUtils} from "./_lsp_utils";
-import {InfoAttribute, InfoMethodDefinition} from "../abap/4_object_information/_abap_file_information";
+import {InfoAttribute, InfoMethodDefinition} from "../abap/4_file_information/_abap_file_information";
 
 export class Symbols {
 

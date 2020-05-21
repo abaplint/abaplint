@@ -3,8 +3,8 @@ import {BasicRuleConfig} from "./_basic_rule_config";
 import {Issue} from "../issue";
 import {ABAPFile} from "../files";
 import {IRegistry} from "../_iregistry";
-import {Visibility} from "../abap/4_object_information/visibility";
-import {InfoMethodDefinition} from "../abap/4_object_information/_abap_file_information";
+import {Visibility} from "../abap/4_file_information/visibility";
+import {InfoMethodDefinition} from "../abap/4_file_information/_abap_file_information";
 
 export class AbapdocConf extends BasicRuleConfig {
   /** Check local classes and interfaces for abapdoc. */

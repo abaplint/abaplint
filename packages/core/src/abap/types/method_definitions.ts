@@ -3,7 +3,7 @@ import {StructureNode} from "../../abap/nodes";
 import {ClassDefinition} from "../3_structures/structures/class_definition";
 import * as Structures from "../3_structures/structures";
 import {MethodDef} from "../2_statements/statements";
-import {Visibility} from "../4_object_information/visibility";
+import {Visibility} from "../4_file_information/visibility";
 import {CurrentScope} from "../5_syntax/_current_scope";
 import {IMethodDefinitions} from "./_method_definitions";
 

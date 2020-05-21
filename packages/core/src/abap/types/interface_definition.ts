@@ -1,4 +1,4 @@
-import {Identifier} from "../4_object_information/_identifier";
+import {Identifier} from "../4_file_information/_identifier";
 import {StructureNode} from "../nodes";
 import * as Structures from "../3_structures/structures";
 import * as Statements from "../2_statements/statements";
@@ -10,7 +10,7 @@ import {ITypeDefinitions} from "./_type_definitions";
 import {MethodDefinition} from "./method_definition";
 import {Attributes} from "./class_attributes";
 import {TypeDefinitions} from "./type_definitions";
-import {Visibility} from "../4_object_information/visibility";
+import {Visibility} from "../4_file_information/visibility";
 import {ScopeType} from "../5_syntax/_scope_type";
 
 export class InterfaceDefinition extends Identifier implements IInterfaceDefinition {

@@ -5,7 +5,7 @@ import {IRegistry} from "../../_iregistry";
 import {ABAPObject} from "../../objects/_abap_object";
 import {NamingRuleConfig} from "../_naming_rule_config";
 import {NameValidator} from "../../utils/name_validator";
-import {InfoMethodDefinition, MethodParameterType, InfoMethodParameter} from "../../abap/4_object_information/_abap_file_information";
+import {InfoMethodDefinition, MethodParameterType, InfoMethodParameter} from "../../abap/4_file_information/_abap_file_information";
 
 export class MethodParameterNamesConf extends NamingRuleConfig {
   /** Ignore parameters in methods of exception classes */

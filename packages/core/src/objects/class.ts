@@ -1,6 +1,6 @@
 import {ABAPObject} from "./_abap_object";
 import {ABAPFile} from "../files";
-import {InfoClassDefinition} from "../abap/4_object_information/_abap_file_information";
+import {InfoClassDefinition} from "../abap/4_file_information/_abap_file_information";
 
 export enum ClassCategory {
   Test = "05",

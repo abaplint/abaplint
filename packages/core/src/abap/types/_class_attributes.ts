@@ -1,7 +1,7 @@
 import {ClassAttribute} from "./class_attribute";
 import {ClassConstant} from "./class_constant";
 
-import {Visibility} from "../4_object_information/visibility";
+import {Visibility} from "../4_file_information/visibility";
 
 export interface IAttributes {
 

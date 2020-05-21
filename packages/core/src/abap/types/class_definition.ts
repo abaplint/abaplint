@@ -5,7 +5,7 @@ import * as Statements from "../2_statements/statements";
 import * as Structures from "../3_structures/structures";
 import * as Expressions from "../2_statements/expressions";
 import {Attributes} from "./class_attributes";
-import {Identifier} from "../4_object_information/_identifier";
+import {Identifier} from "../4_file_information/_identifier";
 import {Aliases} from "./aliases";
 import {CurrentScope} from "../5_syntax/_current_scope";
 import {IClassDefinition} from "./_class_definition";

@@ -1,5 +1,5 @@
 import {IAttributes} from "./_class_attributes";
-import {Identifier} from "../4_object_information/_identifier";
+import {Identifier} from "../4_file_information/_identifier";
 import {IAliases} from "./_aliases";
 import {ITypeDefinitions} from "./_type_definitions";
 import {IMethodDefinitions} from "./_method_definitions";

@@ -4,7 +4,7 @@ import {ABAPObject} from "../objects/_abap_object";
 import {LSPUtils} from "./_lsp_utils";
 import {FormDefinition} from "../abap/types";
 import {ABAPFile} from "../files";
-import {Identifier} from "../abap/4_object_information/_identifier";
+import {Identifier} from "../abap/4_file_information/_identifier";
 import {TypedIdentifier} from "../abap/types/_typed_identifier";
 import * as Tokens from "../abap/1_lexer/tokens";
 import {ITextDocumentPositionParams} from "./_interfaces";
