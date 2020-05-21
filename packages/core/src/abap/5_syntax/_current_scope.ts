@@ -4,7 +4,6 @@ import {DDIC} from "../../ddic";
 import {Position} from "../../position";
 import {SpaghettiScope, SpaghettiScopeNode} from "./spaghetti_scope";
 import {Token} from "../1_lexer/tokens/_token";
-import * as Structures from "../3_structures/structures";
 import {Identifier} from "../4_file_information/_identifier";
 import {ScopeType} from "./_scope_type";
 import {IRegistry} from "../../_iregistry";
@@ -13,9 +12,8 @@ import {IInterfaceDefinition} from "../types/_interface_definition";
 import {IFormDefinition} from "../types/_form_definition";
 import {Class} from "../../objects/class";
 import {Interface} from "../../objects/interface";
-import {InterfaceDefinition} from "../types/interface_definition";
-import {ClassDefinition} from "../types/class_definition";
 import {IScopeIdentifier} from "./_spaghetti_scope";
+import {FindGlobalDefinitions} from "./global_definitions/find_global_definitions";
 
 export class CurrentScope {
   protected readonly reg: IRegistry | undefined;
@@ -172,15 +170,15 @@ export class CurrentScope {
       return clocal;
     }
 
-    const cglobal = this.reg?.getObject("CLAS", name);
+    const cglobal = this.reg?.getObject("CLAS", name) as Class | undefined;
     if (cglobal && this.reg) {
-      const file = (cglobal as Class).getMainABAPFile();
-      const struc = file?.getStructure()?.findFirstStructure(Structures.ClassDefinition);
-      if (struc && file) {
-        // todo, this should not be an empty scope, CurrentScope.buildDefault(this.reg)
-        const foo = new ClassDefinition(struc, file.getFilename(), CurrentScope.buildEmpty());
-        return foo;
+      const def = cglobal.getDefinition();
+      if (def) {
+        return def;
       }
+      // the definition might not be cached yet, the sequence is defined by input
+      new FindGlobalDefinitions(this.reg).run(cglobal);
+      return cglobal.getDefinition();
     }
 
     return undefined;
@@ -192,14 +190,15 @@ export class CurrentScope {
       return ilocal;
     }
 
-    const iglobal = this.reg?.getObject("INTF", name);
+    const iglobal = this.reg?.getObject("INTF", name) as Interface | undefined;
     if (iglobal && this.reg) {
-      const file = (iglobal as Interface).getMainABAPFile();
-      const struc = file?.getStructure();
-      if (struc && file) {
-        // todo, this should not be an empty scope, CurrentScope.buildDefault(this.reg)
-        return new InterfaceDefinition(struc, file.getFilename(), CurrentScope.buildEmpty());
+      const def = iglobal.getDefinition();
+      if (def) {
+        return def;
       }
+      // the definition might not be cached yet, the sequence is defined by input
+      new FindGlobalDefinitions(this.reg).run(iglobal);
+      return iglobal.getDefinition();
     }
 
     return undefined;

@@ -1,9 +1,19 @@
 import {ABAPObject} from "./_abap_object";
+import {IInterfaceDefinition} from "../abap/types/_interface_definition";
 
 export class Interface extends ABAPObject {
+  private def: IInterfaceDefinition | undefined;
 
   public getType(): string {
     return "INTF";
+  }
+
+  public setDefinition(def: IInterfaceDefinition | undefined): void {
+    this.def = def;
+  }
+
+  public getDefinition(): IInterfaceDefinition | undefined {
+    return this.def;
   }
 
   public getAllowedNaming() {

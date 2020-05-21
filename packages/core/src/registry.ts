@@ -9,6 +9,7 @@ import {IRegistry} from "./_iregistry";
 import {IProgress, NoProgress} from "./progress";
 import {IConfiguration} from "./_config";
 import {ABAPObject} from "./objects/_abap_object";
+import {FindGlobalDefinitions} from "./abap/5_syntax/global_definitions/find_global_definitions";
 
 export class Registry implements IRegistry {
   private conf: IConfiguration;
@@ -190,6 +191,8 @@ export class Registry implements IRegistry {
   private parsePrivate(input: IObject) {
     if (input instanceof ABAPObject) {
       input.parse(this.getConfig().getVersion(), this.getConfig().getSyntaxSetttings().globalMacros);
+
+      new FindGlobalDefinitions(this).run(input);
     }
   }
 
