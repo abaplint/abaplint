@@ -16,7 +16,7 @@ import {IScopeIdentifier} from "./_spaghetti_scope";
 import {FindGlobalDefinitions} from "./global_definitions/find_global_definitions";
 
 export class CurrentScope {
-  protected readonly reg: IRegistry | undefined;
+  protected readonly reg: IRegistry;
   protected current: SpaghettiScopeNode | undefined;
 
   public static buildDefault(reg: IRegistry): CurrentScope {
@@ -45,23 +45,6 @@ export class CurrentScope {
     return s;
   }
 
-  public static buildEmpty(): CurrentScope {
-    const s = new CurrentScope();
-
-    const identifier: IScopeIdentifier = {
-      stype: ScopeType.Dummy,
-      sname: ScopeType.Dummy,
-      start: new Position(1, 1),
-      filename: "dummy"};
-
-    s.current = new SpaghettiScopeNode(identifier, undefined);
-
-    s.push(ScopeType.BuiltIn, ScopeType.BuiltIn, new Position(1, 1), BuiltIn.filename);
-    this.addBuiltIn(s, []);
-
-    return s;
-  }
-
   private static addBuiltIn(s: CurrentScope, extras: string[]) {
     const builtin = BuiltIn.get(extras);
     s.addList(builtin);
@@ -70,7 +53,7 @@ export class CurrentScope {
     }
   }
 
-  private constructor(reg?: IRegistry) {
+  private constructor(reg: IRegistry) {
     this.current = undefined;
     this.reg = reg;
   }
@@ -151,11 +134,11 @@ export class CurrentScope {
   public existsObjectReference(name: string): boolean {
     if (this.current?.findClassDefinition(name)) {
       return true;
-    } else if (this.reg?.getObject("CLAS", name)) {
+    } else if (this.reg.getObject("CLAS", name)) {
       return true;
     } else if (this.current?.findInterfaceDefinition(name)) {
       return true;
-    } else if (this.reg?.getObject("INTF", name)) {
+    } else if (this.reg.getObject("INTF", name)) {
       return true;
     }
 
@@ -170,8 +153,8 @@ export class CurrentScope {
       return clocal;
     }
 
-    const cglobal = this.reg?.getObject("CLAS", name) as Class | undefined;
-    if (cglobal && this.reg) {
+    const cglobal = this.reg.getObject("CLAS", name) as Class | undefined;
+    if (cglobal) {
       const def = cglobal.getDefinition();
       if (def) {
         return def;
@@ -190,8 +173,8 @@ export class CurrentScope {
       return ilocal;
     }
 
-    const iglobal = this.reg?.getObject("INTF", name) as Interface | undefined;
-    if (iglobal && this.reg) {
+    const iglobal = this.reg.getObject("INTF", name) as Interface | undefined;
+    if (iglobal) {
       const def = iglobal.getDefinition();
       if (def) {
         return def;
@@ -229,10 +212,7 @@ export class CurrentScope {
 
 ///////////////////////////
 
-  public getDDIC(): DDIC | undefined {
-    if (this.reg === undefined) {
-      return undefined;
-    }
+  public getDDIC(): DDIC {
     return new DDIC(this.reg);
   }
 
