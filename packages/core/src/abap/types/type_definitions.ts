@@ -34,8 +34,8 @@ export class TypeDefinitions implements ITypeDefinitions {
 /////////////////
 
   private parse(node: StructureNode, scope: CurrentScope) {
-    this.parseDirect(node, scope); // for interfaces
-    if (this.list.length > 0) {
+    if (node.get() instanceof Structures.Interface) {
+      this.parseDirect(node, scope); // for interfaces
       return;
     }
 

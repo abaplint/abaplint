@@ -43,7 +43,7 @@ export class BasicTypes {
     } else {
       type = this.scope.findVariable(name)?.getType();
 
-  // todo, this only looks up one level
+      // todo, this only looks up one level
       if (children[1] && children[2] && children[1].getFirstToken().getStr() === "-") {
         if (type instanceof Types.StructureType) {
           const sub = type.getComponentByName(children[2].getFirstToken().getStr());

@@ -413,7 +413,7 @@ DATA moo TYPE lif_foo=>ty_moo.`;
     expect(issues.length).to.equal(0);
   });
 
-  it("local class prefix is current", () => {
+  it.skip("local class prefix is current", () => {
     const abap1 = `
 CLASS lcl_foo DEFINITION.
   PUBLIC SECTION.
@@ -451,6 +451,33 @@ CLASS lcl_handler IMPLEMENTATION.
 ENDCLASS.`;
     let issues = runMulti([
       {filename: "zreport.prog.abap", contents: abap1},
+    ]);
+    issues = issues.filter(i => i.getKey() === key);
+    expect(issues.length).to.equal(0);
+  });
+
+  it("types, zcl_zlib", () => {
+    const abap1 = `
+CLASS zcl_zlib DEFINITION PUBLIC.
+  PUBLIC SECTION.
+    TYPES: public_type type i.
+  PRIVATE SECTION.
+    TYPES: BEGIN OF ty_pair,
+             length   TYPE i,
+             distance TYPE i,
+           END OF ty_pair.
+    CLASS-METHODS:
+      copy_out
+        IMPORTING is_pair TYPE ty_pair.
+ENDCLASS.
+
+CLASS zcl_zlib IMPLEMENTATION.
+  METHOD copy_out.
+    WRITE is_pair-length.
+  ENDMETHOD.
+ENDCLASS.`;
+    let issues = runMulti([
+      {filename: "zcl_zlib.clas.abap", contents: abap1},
     ]);
     issues = issues.filter(i => i.getKey() === key);
     expect(issues.length).to.equal(0);

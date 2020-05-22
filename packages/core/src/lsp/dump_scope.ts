@@ -15,7 +15,7 @@ export class DumpScope {
 
     const sident = "&nbsp".repeat(indent * 2);
 
-    let ret: string = sident + "<u>" + identifier.stype + ", <tt>" + identifier.sname + "</tt>, " + identifier.filename;
+    let ret: string = sident + "<u>" + identifier.stype + ", <tt>" + identifier.sname + "</tt>";
 
     ret = ret + ", (" + coverage.start.getRow() + ", " + coverage.start.getCol() + ")";
     if (coverage.end.getRow() === Number.MAX_SAFE_INTEGER
