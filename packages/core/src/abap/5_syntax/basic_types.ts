@@ -28,29 +28,41 @@ export class BasicTypes {
       return new Types.UnknownType("Type error, could not resolve " + fullName);
     }
 
+    let type: AbstractType | undefined = undefined;
     const name = children[0].getFirstToken().getStr();
-    const type = this.scope.findVariable(name)?.getType();
+    if (children[1].getFirstToken().getStr() === "=>") {
+      const obj = this.scope.findObjectReference(name);
+      if (obj === undefined && this.scope.getDDIC()?.inErrorNamespace(name) === false) {
+        return new VoidType();
+      } else if (obj === undefined) {
+        return new UnknownType("Could not resolve top " + name);
+      }
+      type = obj.getAttributes().findByName(children[2].getFirstToken().getStr())?.getType();
+
+    } else {
+      type = this.scope.findVariable(name)?.getType();
 
   // todo, this only looks up one level
-    if (children[1] && children[2] && children[1].getFirstToken().getStr() === "-") {
-      if (type instanceof Types.StructureType) {
-        const sub = type.getComponentByName(children[2].getFirstToken().getStr());
-        if (sub) {
-          return sub;
+      if (children[1] && children[2] && children[1].getFirstToken().getStr() === "-") {
+        if (type instanceof Types.StructureType) {
+          const sub = type.getComponentByName(children[2].getFirstToken().getStr());
+          if (sub) {
+            return sub;
+          }
+          return new Types.UnknownType("Type error, field not part of structure " + fullName);
+        } else if (type instanceof Types.VoidType) {
+          return type;
+        } else {
+          return new Types.UnknownType("Type error, not a structure type " + fullName);
         }
-        return new Types.UnknownType("Type error, field not part of structure " + fullName);
-      } else if (type instanceof Types.VoidType) {
-        return type;
-      } else {
-        return new Types.UnknownType("Type error, not a structure type " + fullName);
       }
     }
 
-    if (type) {
-      return type;
+    if (!type) {
+      return new Types.UnknownType("Type error, could not resolve " + fullName);
     }
 
-    return new Types.UnknownType("Type error, could not resolve " + fullName);
+    return type;
   }
 
   private resolveTypeName(typename: ExpressionNode | undefined, length?: number): AbstractType | undefined {

@@ -479,7 +479,7 @@ DATA foobar TYPE lif_foo=>ty_foo.`;
     expect(identifier?.getType()).to.be.instanceof(Basic.UnknownType);
   });
 
-  it.skip("reference like defined in local class", () => {
+  it("reference like defined in local class", () => {
     const abap = `CLASS lcl_foo DEFINITION.
   PUBLIC SECTION.
     DATA: foo TYPE i.
