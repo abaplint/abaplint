@@ -24,11 +24,11 @@ export class ObjectOriented {
         || node.get() instanceof Statements.ClassDefinition)) {
       throw new Error("findClassName, unexpected node type");
     }
-    const blah = node.findFirstExpression(Expressions.ClassName);
-    if (blah === undefined) {
+    const className = node.findFirstExpression(Expressions.ClassName);
+    if (className === undefined) {
       throw new Error("findClassName, unexpected node type");
     }
-    return blah.getFirstToken().getStr();
+    return className.getFirstToken().getStr();
   }
 
   public classImplementation(node: StatementNode, filename: string) {
@@ -40,6 +40,14 @@ export class ObjectOriented {
       throw new Error("Class definition for \"" + className + "\" not found");
     }
     const classAttributes = classDefinition.getAttributes();
+
+    classDefinition.getTypeDefinitions().getAll().map((t) => this.scope.addType(t));
+
+    const sup = classDefinition.getSuperClass();
+    if (sup) {
+      this.scope.addIdentifier(new TypedIdentifier(new Identifier(new Position(1, 1), "super"), BuiltIn.filename, new ObjectReferenceType(sup)));
+    }
+    this.scope.addIdentifier(new TypedIdentifier(new Identifier(new Position(1, 1), "me"), BuiltIn.filename, new ObjectReferenceType(className)));
 
     this.addAliasedAttributes(classDefinition); // todo, this is not correct, take care of instance vs static
 
@@ -98,13 +106,6 @@ export class ObjectOriented {
     if (classDefinition === undefined) {
       throw new Error("Class definition for \"" + className + "\" not found");
     }
-    classDefinition.getTypeDefinitions().getAll().map((t) => this.scope.addType(t));
-
-    const sup = classDefinition.getSuperClass();
-    if (sup) {
-      this.scope.addIdentifier(new TypedIdentifier(new Identifier(new Position(1, 1), "super"), BuiltIn.filename, new ObjectReferenceType(sup)));
-    }
-    this.scope.addIdentifier(new TypedIdentifier(new Identifier(new Position(1, 1), "me"), BuiltIn.filename, new ObjectReferenceType(className)));
 
     let methodDefinition = this.findMethod(classDefinition, methodName);
 

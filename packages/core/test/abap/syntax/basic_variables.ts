@@ -479,7 +479,7 @@ DATA foobar TYPE lif_foo=>ty_foo.`;
     expect(identifier?.getType()).to.be.instanceof(Basic.UnknownType);
   });
 
-  it.skip("reference like defined in local class", () => {
+  it("reference like defined in local class", () => {
     const abap = `CLASS lcl_foo DEFINITION.
   PUBLIC SECTION.
     DATA: foo TYPE i.
@@ -602,6 +602,15 @@ DATA foo TYPE lif_interface=>ty_type2-type2-type1.`;
     const identifier = resolveVariable(abap, "lt_range");
     expect(identifier).to.not.equal(undefined);
     expect(identifier?.getType()).to.be.instanceof(Basic.TableType);
+  });
+
+  it("Field symbol TYPE LINE OF", () => {
+    const abap = `
+    TYPES: ty_foo TYPE STANDARD TABLE OF i.
+    FIELD-SYMBOLS <bar> TYPE LINE OF ty_foo.`;
+    const identifier = resolveVariable(abap, "<bar>");
+    expect(identifier).to.not.equal(undefined);
+    expect(identifier?.getType()).to.be.instanceof(Basic.IntegerType);
   });
 
 });

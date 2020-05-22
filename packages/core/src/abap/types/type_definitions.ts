@@ -34,24 +34,22 @@ export class TypeDefinitions implements ITypeDefinitions {
 /////////////////
 
   private parse(node: StructureNode, scope: CurrentScope) {
-    this.parseDirect(node, scope); // for interfaces
-    if (this.list.length > 0) {
+    if (node.get() instanceof Structures.Interface) {
+      this.parseDirect(node, scope); // for interfaces
       return;
     }
 
-    const dummy = CurrentScope.buildDummy(scope);
-
     const pub = node.findFirstStructure(Structures.PublicSection);
     if (pub) {
-      this.parseDirect(pub, dummy);
+      this.parseDirect(pub, scope);
     }
     const pro = node.findFirstStructure(Structures.ProtectedSection);
     if (pro) {
-      this.parseDirect(pro, dummy);
+      this.parseDirect(pro, scope);
     }
     const pri = node.findFirstStructure(Structures.PrivateSection);
     if (pri) {
-      this.parseDirect(pri, dummy);
+      this.parseDirect(pri, scope);
     }
   }
 
