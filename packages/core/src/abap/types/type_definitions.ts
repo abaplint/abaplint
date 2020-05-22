@@ -39,19 +39,17 @@ export class TypeDefinitions implements ITypeDefinitions {
       return;
     }
 
-    const dummy = CurrentScope.buildDummy(scope);
-
     const pub = node.findFirstStructure(Structures.PublicSection);
     if (pub) {
-      this.parseDirect(pub, dummy);
+      this.parseDirect(pub, scope);
     }
     const pro = node.findFirstStructure(Structures.ProtectedSection);
     if (pro) {
-      this.parseDirect(pro, dummy);
+      this.parseDirect(pro, scope);
     }
     const pri = node.findFirstStructure(Structures.PrivateSection);
     if (pri) {
-      this.parseDirect(pri, dummy);
+      this.parseDirect(pri, scope);
     }
   }
 

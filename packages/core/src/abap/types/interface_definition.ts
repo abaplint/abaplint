@@ -58,6 +58,7 @@ export class InterfaceDefinition extends Identifier implements IInterfaceDefinit
 
   private parse(scope: CurrentScope) {
     this.attributes = new Attributes(this.node, this.filename, scope);
+
     this.typeDefinitions = new TypeDefinitions(this.node, this.filename, scope);
 
     this.methodDefinitions = [];

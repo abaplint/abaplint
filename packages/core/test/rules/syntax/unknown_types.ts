@@ -413,7 +413,7 @@ DATA moo TYPE lif_foo=>ty_moo.`;
     expect(issues.length).to.equal(0);
   });
 
-  it.skip("local class prefix is current", () => {
+  it("local class prefix is current", () => {
     const abap1 = `
 CLASS lcl_foo DEFINITION.
   PUBLIC SECTION.
