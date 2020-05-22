@@ -90,11 +90,14 @@ export class SyntaxLogic {
     let traversal = this.object.getABAPFiles();
 
     if (this.object instanceof Program) {
-      this.helpers.proc.addAllFormDefinitions(this.object.getABAPFiles()[0], this.object);
-      this.scope.push(ScopeType.Program,
-                      this.object.getName(),
-                      new Position(1, 1),
-                      this.object.getMainABAPFile()!.getFilename());
+      const main = this.object.getMainABAPFile();
+      if (main !== undefined) {
+        this.helpers.proc.addAllFormDefinitions(main, this.object);
+        this.scope.push(ScopeType.Program,
+                        this.object.getName(),
+                        new Position(1, 1),
+                        main.getFilename());
+      }
     } else if (this.object instanceof FunctionGroup) {
       const main = this.object.getMainABAPFile();
       if (main !== undefined) {

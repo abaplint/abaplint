@@ -15,6 +15,12 @@ describe("Registry", () => {
     expect(abap[0].getStructure()).to.not.equal(undefined);
   });
 
+  it("Parse PROG without main", () => {
+    const file = new MemoryFile("zfoobar.prog.xml", "<foo></foo>");
+    const reg = new Registry().addFile(file).parse();
+    expect(reg).to.not.equal(undefined);
+  });
+
   it("Add and update file",  () => {
     const first = new MemoryFile("zfoobar.prog.abap", "first");
     const registry = new Registry().addFile(first).parse();
