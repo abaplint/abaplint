@@ -604,4 +604,13 @@ DATA foo TYPE lif_interface=>ty_type2-type2-type1.`;
     expect(identifier?.getType()).to.be.instanceof(Basic.TableType);
   });
 
+  it("Field symbol TYPE LINE OF", () => {
+    const abap = `
+    TYPES: ty_foo TYPE STANDARD TABLE OF i.
+    FIELD-SYMBOLS <bar> TYPE LINE OF ty_foo.`;
+    const identifier = resolveVariable(abap, "<bar>");
+    expect(identifier).to.not.equal(undefined);
+    expect(identifier?.getType()).to.be.instanceof(Basic.IntegerType);
+  });
+
 });

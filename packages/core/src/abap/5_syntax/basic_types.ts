@@ -204,7 +204,15 @@ export class BasicTypes {
       const sub = node.findFirstExpression(Expressions.FieldChain);
       return this.resolveLikeName(sub);
     } else if (text.startsWith("TYPE LINE OF")) {
-      return undefined; // todo
+      const sub = node.findFirstExpression(Expressions.TypeName);
+      found = this.resolveTypeName(sub);
+      if (found instanceof Types.TableType) {
+        return found.getRowType();
+      } else if (found instanceof Types.VoidType) {
+        return new Types.VoidType();
+      } else {
+        return new Types.UnknownType("TYPE LINE OF, could not resolve type");
+      }
     } else if (text.startsWith("TYPE REF TO")) {
       found = this.resolveTypeRef(typename);
     } else if (text.startsWith("TYPE")) {
