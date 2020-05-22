@@ -30,13 +30,14 @@ export class BasicTypes {
 
     let type: AbstractType | undefined = undefined;
     const name = children[0].getFirstToken().getStr();
-    if (children[1].getFirstToken().getStr() === "=>") {
+    if (children[1] && children[1].getFirstToken().getStr() === "=>") {
       const obj = this.scope.findObjectReference(name);
       if (obj === undefined && this.scope.getDDIC()?.inErrorNamespace(name) === false) {
         return new VoidType();
       } else if (obj === undefined) {
         return new UnknownType("Could not resolve top " + name);
       }
+      // todo, this does not respect visibility
       type = obj.getAttributes().findByName(children[2].getFirstToken().getStr())?.getType();
 
     } else {
