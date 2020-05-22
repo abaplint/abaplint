@@ -1,6 +1,6 @@
 {
     "name": "@abaplint/cli",
-    "version": "2.32.27",
+    "version": "2.32.28",
     "description": "Command Line Interface",
     "bin": {
         "abaplint": "./abaplint"
@@ -39,7 +39,7 @@
     },
     "homepage": "https://abaplint.org",
     "devDependencies": {
-        "@abaplint/core": "^2.32.27",
+        "@abaplint/core": "^2.32.28",
         "@types/chai": "^4.2.11",
         "@types/glob": "^7.1.1",
         "@types/minimist": "^1.2.0",

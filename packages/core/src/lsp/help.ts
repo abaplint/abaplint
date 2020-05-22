@@ -14,11 +14,11 @@ export class Help {
     let content = "";
 
     content = `
-    <a href="./#tokens" rel="no-refresh">Tokens</a> |
-    <a href="./#statements" rel="no-refresh">Statements</a> |
-    <a href="./#structure" rel="no-refresh">Structure</a> |
-    <a href="./#files" rel="no-refresh">Files</a> |
-    <a href="./#info" rel="no-refresh">Info dump</a>
+    <a href="#_tokens" rel="no-refresh">Tokens</a> |
+    <a href="#_statements" rel="no-refresh">Statements</a> |
+    <a href="#_structure" rel="no-refresh">Structure</a> |
+    <a href="#_files" rel="no-refresh">Files</a> |
+    <a href="#_info" rel="no-refresh">Info Dump</a>
     <hr>
     ` +
       "<tt>" + textDocument.uri + " (" +
@@ -33,9 +33,9 @@ export class Help {
     content = content + this.cursorInformation(reg, textDocument, position, file);
     content = content + this.fileInformation(file);
     content = content + "<hr>";
-    content = content + `<a name="files"></a>` + this.dumpFiles(reg);
+    content = content + this.dumpFiles(reg);
     content = content + "<hr>";
-    content = content + `<a name="info"></a>` + this.dumpInfo(file);
+    content = content + this.dumpInfo(file);
 
     return content;
   }
@@ -54,7 +54,7 @@ export class Help {
 
     const text = JSON.stringify(dump, null, 2);
 
-    return "<pre>" + text + "</pre>";
+    return `<h3 id="_info">Info Dump</h3><pre>` + text + "</pre>";
   }
 
   private static cursorInformation(reg: IRegistry,
@@ -145,11 +145,11 @@ export class Help {
   private static fileInformation(file: ABAPFile): string {
     let content = "";
 
-    content = content + `<hr><a name="tokens"></a>Tokens:<br><br>\n`;
+    content = content + `<hr><h3 id="_tokens">Tokens</h3>\n`;
     content = content + this.tokens(file);
-    content = content + `<hr><a name="statements"></a>Statements:<br><br>\n`;
+    content = content + `<hr><h3 id="_statements">Statements</h3>\n`;
     content = content + this.buildStatements(file);
-    content = content + `<hr><a name="structure"></a>Structure:<br><br>\n`;
+    content = content + `<hr><h3 id="_structure">Structure</h3>\n`;
 
     const structure = file.getStructure();
     if (structure !== undefined) {
@@ -245,7 +245,7 @@ export class Help {
   }
 
   private static dumpFiles(reg: IRegistry) {
-    let output = "<table>\n";
+    let output = `<h3 id="_files">Files</h3><table>\n`;
     for (const o of reg.getObjects()) {
       output = output + "<tr><td>" + o.getType() + " " + o.getName() + "</td><td>";
       for (const f of o.getFiles()) {
