@@ -508,4 +508,29 @@ ENDCLASS.`;
     expect(issues.length).to.equal(0);
   });
 
+  it("global class with local class", () => {
+    const abap1 = `
+CLASS zcl_local_minimal DEFINITION PUBLIC FINAL CREATE PUBLIC.
+  PRIVATE SECTION.
+    METHODS methodname.
+ENDCLASS.
+
+CLASS zcl_local_minimal IMPLEMENTATION.
+  METHOD methodname.
+    DATA foo TYPE REF TO lcl_local.
+  ENDMETHOD.
+ENDCLASS.`;
+    const abap2 = `
+CLASS lcl_local DEFINITION.
+ENDCLASS.
+CLASS lcl_local IMPLEMENTATION.
+ENDCLASS.`;
+    let issues = runMulti([
+      {filename: "zcl_local_minimal.clas.abap", contents: abap1},
+      {filename: "zcl_local_minimal.clas.locals_imp.abap", contents: abap2},
+    ]);
+    issues = issues.filter(i => i.getKey() === key);
+    expect(issues.length).to.equal(0);
+  });
+
 });
