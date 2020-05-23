@@ -5,7 +5,7 @@ const tests = [
   "INCLUDE zabapgit_gui_pages_userexit IF FOUND.",
   "INCLUDE <OBJECT>.",
   "INCLUDE <%_bar>.",
-  "INCLUDE ZFOO-BAR.", // yes, this is allowed, but not for new programsr
+  "INCLUDE ZFOOOO-BAR.", // yes, this is allowed, but not for new programs
   "INCLUDE zabapgit_gui_router.",
 ];
 

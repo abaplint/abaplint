@@ -71,20 +71,21 @@ export class MethodParameters implements IMethodParameters{
     const handler = node.findFirstExpression(Expressions.EventHandler);
     if (handler) {
       const className = node.findFirstExpression(Expressions.ClassName)?.getFirstToken().getStr();
-      const def = scope.findObjectReference(className);
+      const def = scope.findObjectDefinition(className);
       const doVoid = def ? false : !scope.getDDIC().inErrorNamespace(className);
 
       const eventName = node.findFirstExpression(Expressions.Field)?.getFirstToken().getStr();
       const event = def?.getEvents().find(e => e.getName().toUpperCase() === eventName?.toUpperCase());
       for (const p of handler.findAllExpressions(Expressions.MethodParamName)) {
         const token = p.getFirstToken();
-        const found = event?.getParameters().find(p => p.getName().toUpperCase() === token.getStr().toUpperCase());
+        const search = token.getStr().toUpperCase().replace("!", "");
+        const found = event?.getParameters().find(p => p.getName().toUpperCase() === search);
         if (found) {
           this.importing.push(new TypedIdentifier(token, this.filename, found.getType()));
         } else if (doVoid) {
           this.importing.push(new TypedIdentifier(token, this.filename, new VoidType()));
         } else {
-          const type = new UnknownType(`handler parameter not found "${token.getStr()}"`);
+          const type = new UnknownType(`handler parameter not found "${search}"`);
           this.importing.push(new TypedIdentifier(token, this.filename, type));
         }
       }

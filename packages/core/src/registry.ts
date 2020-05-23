@@ -6,7 +6,7 @@ import {ArtifactsObjects} from "./artifacts_objects";
 import {ArtifactsRules} from "./artifacts_rules";
 import {SkipLogic} from "./skip_logic";
 import {IRegistry} from "./_iregistry";
-import {IProgress, NoProgress} from "./progress";
+import {IProgress} from "./progress";
 import {IConfiguration} from "./_config";
 import {ABAPObject} from "./objects/_abap_object";
 import {FindGlobalDefinitions} from "./abap/5_syntax/global_definitions/find_global_definitions";
@@ -138,49 +138,48 @@ export class Registry implements IRegistry {
     return undefined;
   }
 
-  public findIssues(progress?: IProgress): Issue[] {
+  // todo, this will be changed to async sometime
+  public findIssues(progress?: IProgress): readonly Issue[] {
     if (this.isDirty() === true) {
       this.parse();
     }
     return this.runRules(progress);
   }
 
-  public findIssuesObject(iobj: IObject): Issue[] {
+  // todo, this will be changed to async sometime
+  public findIssuesObject(iobj: IObject): readonly Issue[] {
     if (this.isDirty() === true) {
       this.parse();
     }
     return this.runRules(undefined, iobj);
   }
 
+  // todo, this will be changed to async sometime
   public parse() {
     if (this.isDirty() === false) {
       return this;
     }
 
+    this.issues = [];
     for (const o of this.objects) {
       this.parsePrivate(o);
+      this.issues = this.issues.concat(o.getParsingIssues());
     }
     new FindGlobalDefinitions(this).run();
-
-
-    this.issues = [];
-    for (const obj of this.objects) {
-      this.issues = this.issues.concat(obj.getParsingIssues());
-    }
 
     return this;
   }
 
-  public async parseAsync(progress: IProgress) {
+  public async parseAsync(progress?: IProgress) {
     if (this.isDirty() === false) {
       return this;
     }
 
-    progress.set(this.objects.length, "Lexing and parsing");
+    progress?.set(this.objects.length, "Lexing and parsing");
 
     this.issues = [];
     for (const o of this.objects) {
-      await progress.tick("Lexing and parsing(" + this.conf.getVersion() + ") - " +  o.getType() + " " + o.getName());
+      await progress?.tick("Lexing and parsing(" + this.conf.getVersion() + ") - " +  o.getType() + " " + o.getName());
       this.parsePrivate(o);
       this.issues = this.issues.concat(o.getParsingIssues());
     }
@@ -202,18 +201,16 @@ export class Registry implements IRegistry {
     return this.objects.some((o) => o.isDirty());
   }
 
-  private runRules(progress?: IProgress, iobj?: IObject): Issue[] {
-    progress = progress ? progress : new NoProgress();
-
+  private runRules(progress?: IProgress, iobj?: IObject): readonly Issue[] {
     let issues = this.issues.slice(0);
 
     const objects = iobj ? [iobj] : this.getObjects();
     const rules = this.conf.getEnabledRules();
     const skipLogic = new SkipLogic(this);
 
-    progress.set(objects.length, "Finding Issues");
+    progress?.set(objects.length, "Finding Issues");
     for (const obj of objects) {
-      progress.tick("Finding Issues - " + obj.getType() + " " + obj.getName());
+      progress?.tick("Finding Issues - " + obj.getType() + " " + obj.getName());
 
       if (skipLogic.skip(obj) || this.dependencies.includes(obj.getFiles()[0].getFilename())) {
         continue;

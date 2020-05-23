@@ -65,6 +65,10 @@ export class SyntaxLogic {
   }
 
   public run(): ISyntaxResult {
+    if (this.object.syntaxResult !== undefined) {
+      return this.object.syntaxResult;
+    }
+
     this.issues = [];
 
     if (this.object instanceof Program && this.object.isInclude()) {
@@ -77,7 +81,9 @@ export class SyntaxLogic {
     for (;;) {
       const spaghetti = this.scope.pop(); // pop built-in scopes
       if (spaghetti.getTop().getIdentifier().stype === ScopeType.BuiltIn) {
-        return {issues: this.issues, spaghetti};
+        const result: ISyntaxResult = {issues: this.issues, spaghetti};
+        this.object.syntaxResult = result;
+        return result;
       }
     }
 

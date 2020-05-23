@@ -456,6 +456,32 @@ ENDCLASS.`;
     expect(issues.length).to.equal(0);
   });
 
+  it("events, exclamation mark", () => {
+    const abap1 = `
+CLASS lcl_eventer DEFINITION.
+  PUBLIC SECTION.
+    EVENTS event EXPORTING VALUE(action) TYPE string.
+ENDCLASS.
+CLASS lcl_eventer IMPLEMENTATION.
+ENDCLASS.
+
+CLASS lcl_handler DEFINITION.
+  PUBLIC SECTION.
+    METHODS on_event FOR EVENT event OF lcl_eventer IMPORTING !action.
+ENDCLASS.
+
+CLASS lcl_handler IMPLEMENTATION.
+  METHOD on_event.
+    WRITE action.
+  ENDMETHOD.
+ENDCLASS.`;
+    let issues = runMulti([
+      {filename: "zreport.prog.abap", contents: abap1},
+    ]);
+    issues = issues.filter(i => i.getKey() === key);
+    expect(issues.length).to.equal(0);
+  });
+
   it("types, zcl_zlib", () => {
     const abap1 = `
 CLASS zcl_zlib DEFINITION PUBLIC.

@@ -724,4 +724,28 @@ DATA lr_collection TYPE REF TO ty_named_collection.`;
     expect(identifier?.getType()).to.be.instanceof(Basic.CharacterType);
   });
 
+  it("LIKE LINE OF lo_node->", () => {
+    const abap = `
+CLASS lcl_node DEFINITION.
+  PUBLIC SECTION.
+    DATA: mt_edges TYPE STANDARD TABLE OF i.
+ENDCLASS.
+CLASS lcl_node IMPLEMENTATION.
+ENDCLASS.
+DATA: lo_node TYPE REF TO lcl_node,
+      lv_edge LIKE LINE OF lo_node->mt_edges.`;
+    const identifier = resolveVariable(abap, "lv_edge");
+    expect(identifier).to.not.equal(undefined);
+    expect(identifier?.getType()).to.be.instanceof(Basic.IntegerType);
+  });
+
+  it("LIKE LINE OF lo_node->, but void", () => {
+    const abap = `
+DATA: lo_node TYPE REF TO cl_void,
+      lv_edge LIKE LINE OF lo_node->mt_edges.`;
+    const identifier = resolveVariable(abap, "lv_edge");
+    expect(identifier).to.not.equal(undefined);
+    expect(identifier?.getType()).to.be.instanceof(Basic.VoidType);
+  });
+
 });

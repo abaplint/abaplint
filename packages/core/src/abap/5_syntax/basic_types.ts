@@ -4,7 +4,6 @@ import * as Expressions from "../2_statements/expressions";
 import * as Types from "../types/basic";
 import {CurrentScope} from "./_current_scope";
 import {AbstractType} from "../types/basic/_abstract_type";
-import {UnknownType, VoidType, StructureType, CharacterType, DataReference} from "../types/basic";
 import {ScopeType} from "./_scope_type";
 
 export class BasicTypes {
@@ -35,15 +34,33 @@ export class BasicTypes {
     let type: AbstractType | undefined = undefined;
     const name = children[0].getFirstToken().getStr();
     if (children[1] && children[1].getFirstToken().getStr() === "=>") {
-      const obj = this.scope.findObjectReference(name);
+      const obj = this.scope.findObjectDefinition(name);
       if (obj === undefined && this.scope.getDDIC()?.inErrorNamespace(name) === false) {
-        return new VoidType();
+        return new Types.VoidType();
       } else if (obj === undefined) {
-        return new UnknownType("Could not resolve top " + name);
+        return new Types.UnknownType("Could not resolve top " + name);
       }
       // todo, this does not respect visibility
       type = obj.getAttributes().findByName(children[2].getFirstToken().getStr())?.getType();
 
+    } else if (children[1] && children[2] && children[1].getFirstToken().getStr() === "->") {
+      type = this.scope.findVariable(name)?.getType();
+      if (type instanceof Types.VoidType) {
+        return new Types.VoidType();
+      } else if (!(type instanceof Types.ObjectReferenceType)) {
+        return new Types.UnknownType("Type error, not a object reference " + name);
+      }
+      const def = this.scope.findObjectDefinition(type.getName());
+      if (def === undefined && this.scope.getDDIC().inErrorNamespace(type.getName()) === false) {
+        return new Types.VoidType();
+      } else if (def === undefined) {
+        return new Types.UnknownType("Type error, could not find object definition");
+      }
+      const attr = def.getAttributes().findByName(children[2].getFirstToken().getStr());
+      if (attr === undefined) {
+        return new Types.UnknownType("Type error, not defined in object " + children[2]);
+      }
+      return attr.getType();
     } else {
       type = this.scope.findVariable(name)?.getType();
 
@@ -209,9 +226,9 @@ export class BasicTypes {
       if (found === undefined) {
         return new Types.UnknownType("TYPE RANGE OF, could not resolve type");
       }
-      const structure = new StructureType([
-        {name: "sign", type: new CharacterType(1)},
-        {name: "option", type: new CharacterType(2)},
+      const structure = new Types.StructureType([
+        {name: "sign", type: new Types.CharacterType(1)},
+        {name: "option", type: new Types.CharacterType(2)},
         {name: "low", type: found},
         {name: "high", type: found},
       ]);
@@ -270,35 +287,35 @@ export class BasicTypes {
           && this.scope.getName().toUpperCase() === className.toUpperCase()) {
         found = this.scope.findType(subs[0])?.getType();
         if (found === undefined) {
-          return new UnknownType("Could not resolve type " + chainText);
+          return new Types.UnknownType("Could not resolve type " + chainText);
         }
       } else {
     // lookup in local and global scope
-        const obj = this.scope.findObjectReference(className);
+        const obj = this.scope.findObjectDefinition(className);
         if (obj === undefined && this.scope.getDDIC()?.inErrorNamespace(className) === false) {
-          return new VoidType();
+          return new Types.VoidType();
         } else if (obj === undefined) {
-          return new UnknownType("Could not resolve top " + chainText);
+          return new Types.UnknownType("Could not resolve top " + chainText);
         }
 
         found = obj.getTypeDefinitions().getByName(subs[0])?.getType();
         if (found === undefined) {
-          return new UnknownType(subs[0] + " not found in class or interface");
+          return new Types.UnknownType(subs[0] + " not found in class or interface");
         }
       }
     } else {
       found = this.scope.findType(subs[0])?.getType();
       if (found === undefined && this.scope.getDDIC()?.inErrorNamespace(subs[0]) === false) {
-        return new VoidType();
+        return new Types.VoidType();
       } else if (found === undefined) {
-        return new UnknownType("Unknown type " + subs[0]);
+        return new Types.UnknownType("Unknown type " + subs[0]);
       }
     }
 
     subs.shift();
     while (subs.length > 0) {
-      if (!(found instanceof StructureType)) {
-        return new UnknownType("Not a structured type");
+      if (!(found instanceof Types.StructureType)) {
+        return new Types.UnknownType("Not a structured type");
       }
       found = found.getComponentByName(subs[0]);
       subs.shift();
@@ -330,20 +347,20 @@ export class BasicTypes {
     }
 
     const name = chain.getFirstToken().getStr();
-    if (this.scope.existsObjectReference(name)) {
+    if (this.scope.existsObject(name)) {
       return new Types.ObjectReferenceType(name);
     }
 
     const found = this.resolveTypeName(chain);
-    if (found && !(found instanceof UnknownType) && !(found instanceof VoidType)) {
-      return new DataReference(found);
+    if (found && !(found instanceof Types.UnknownType) && !(found instanceof Types.VoidType)) {
+      return new Types.DataReference(found);
     }
 
     if (this.scope.getDDIC()?.inErrorNamespace(name) === false) {
-      return new VoidType();
+      return new Types.VoidType();
     }
 
-    return new UnknownType("REF, unable to resolve " + name);
+    return new Types.UnknownType("REF, unable to resolve " + name);
   }
 
   public findValue(node: StatementNode): string | undefined {

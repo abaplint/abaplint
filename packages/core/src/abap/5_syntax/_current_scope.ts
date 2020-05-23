@@ -125,7 +125,7 @@ export class CurrentScope {
 
 ///////////////////////////
 
-  public findObjectReference(name: string | undefined): IClassDefinition | IInterfaceDefinition | undefined {
+  public findObjectDefinition(name: string | undefined): IClassDefinition | IInterfaceDefinition | undefined {
     if (name === undefined) {
       return undefined;
     }
@@ -140,7 +140,7 @@ export class CurrentScope {
     return undefined;
   }
 
-  public existsObjectReference(name: string): boolean {
+  public existsObject(name: string): boolean {
     if (name.toUpperCase() === this.getName().toLocaleUpperCase()
         && this.getType() === ScopeType.ClassDefinition) {
       return true;
