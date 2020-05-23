@@ -1,5 +1,6 @@
 // do not include statement.ts in this file.
 // this file only contains "real" statements
+// sequence of exports is optimized for parsing
 // see statement.ts for Unknown, Empty, Macro and Comment statements
 export * from "./data";
 export * from "./report";
@@ -61,6 +62,7 @@ export * from "./create_object";
 export * from "./select";
 export * from "./call";
 export * from "./class_other";
+export * from "./class_deferred";
 export * from "./fieldsymbol";
 export * from "./class_definition";
 export * from "./class_implementation";

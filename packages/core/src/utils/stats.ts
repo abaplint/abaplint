@@ -116,6 +116,7 @@ export class Stats {
           res.oo = res.oo + 1;
         } else if (type instanceof Statements.ClassDefinitionLoad
             || type instanceof Statements.ClassOther
+            || type instanceof Statements.ClassDeferred
             || type instanceof Statements.InterfaceDeferred) {
           res.oo = res.oo + 1;
         } else if (oo) {
