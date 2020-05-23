@@ -50,7 +50,7 @@ export class BuiltIn {
 
     for (const e of extras) {
       const id = new Identifier(new Position(1, 1), e);
-      ret.push(new TypedIdentifier(id, this.filename, new VoidType(), [IdentifierMeta.ReadOnly], "'?'"));
+      ret.push(new TypedIdentifier(id, this.filename, new VoidType(e), [IdentifierMeta.ReadOnly], "'?'"));
     }
 
     return ret;
@@ -85,7 +85,7 @@ export class BuiltIn {
   private static buildConstant(name: string, type?: AbstractType, value?: string): TypedIdentifier {
     const id = new Identifier(new Position(1, 1), name);
     if (type === undefined) {
-      type = new VoidType();
+      type = new VoidType(name);
     }
     if (value === undefined) {
       value = "'?'";
@@ -95,7 +95,7 @@ export class BuiltIn {
 
   private static buildVariable(name: string) {
     const id = new Identifier(new Position(1, 1), name);
-    return new TypedIdentifier(id, this.filename, new VoidType());
+    return new TypedIdentifier(id, this.filename, new VoidType(name));
   }
 
 }
