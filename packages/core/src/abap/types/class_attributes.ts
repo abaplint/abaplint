@@ -117,9 +117,10 @@ export class Attributes implements IAttributes {
     throw new Error("MethodDefinition, expected ClassDefinition or InterfaceDefinition");
   }
 
-  // todo: should this part be refactored into the general syntax logic somewhere?
   private parseSection(node: StructureNode | undefined, visibility: Visibility, scope: CurrentScope): void {
-    if (node === undefined) { return; }
+    if (node === undefined) {
+      return;
+    }
 
     for (const c of node.getChildren()) {
       const ctyp = c.get();
@@ -165,7 +166,6 @@ export class Attributes implements IAttributes {
   }
 
   private parseAttribute(node: StatementNode, visibility: Visibility, scope: CurrentScope): ClassAttribute {
-// todo: remove this method
     let found: TypedIdentifier | undefined = undefined;
     const s = node.get();
     if (s instanceof Statements.Data) {
@@ -179,6 +179,8 @@ export class Attributes implements IAttributes {
     if (found === undefined) {
       throw new Error("ClassAttribute, unexpected node, " + this.filename);
     }
+
+    scope.addIdentifier(found);
 
     return new ClassAttribute(found, visibility);
   }

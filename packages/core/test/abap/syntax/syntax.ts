@@ -673,6 +673,13 @@ describe("Check Variables", () => {
   });
 
   it("protected attribute from super class", () => {
+    const sup = `
+      CLASS zcl_super DEFINITION PUBLIC CREATE PUBLIC.
+        PROTECTED SECTION.
+          DATA foobar TYPE i.
+      ENDCLASS.
+      CLASS ZCL_SUPER IMPLEMENTATION.
+      ENDCLASS.`;
     const clas =
       "CLASS zcl_foobar DEFINITION PUBLIC INHERITING FROM zcl_super FINAL CREATE PUBLIC.\n" +
       "  PUBLIC SECTION.\n" +
@@ -683,13 +690,6 @@ describe("Check Variables", () => {
       "    WRITE foobar.\n" +
       "  ENDMETHOD.\n" +
       "ENDCLASS.\n";
-    const sup =
-      "CLASS zcl_super DEFINITION PUBLIC CREATE PUBLIC.\n" +
-      "  PROTECTED SECTION.\n" +
-      "    DATA foobar TYPE i .\n" +
-      "ENDCLASS.\n" +
-      "CLASS ZCL_SUPER IMPLEMENTATION.\n" +
-      "ENDCLASS.";
     const issues = runMulti([
       {filename: "zcl_foobar.clas.abap", contents: clas},
       {filename: "zcl_super.clas.abap", contents: sup}]);

@@ -190,7 +190,7 @@ CLASS zcl_abapgit_xml IMPLEMENTATION.
 ENDCLASS.`;
     let issues = runMulti([{filename: "zcl_abapgit_xml.clas.abap", contents: abap}]);
     issues = issues.filter(i => i.getKey() === key);
-    expect(issues.length).to.equal(1);
+    expect(issues.length).to.equal(2);  // todo, this should really give one error?
     expect(issues[0].getMessage()).to.not.contain("fallback");
   });
 

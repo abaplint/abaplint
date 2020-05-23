@@ -146,7 +146,11 @@ export class CurrentScope {
 
 ///////////////////////////
 
-  public findClassDefinition(name: string): IClassDefinition | undefined {
+  public findClassDefinition(name: string | undefined): IClassDefinition | undefined {
+    if (name === undefined) {
+      return undefined;
+    }
+
     const clocal = this.current?.findClassDefinition(name);
     if (clocal) {
       return clocal;

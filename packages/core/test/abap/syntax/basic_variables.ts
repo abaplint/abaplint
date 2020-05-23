@@ -613,4 +613,64 @@ DATA foo TYPE lif_interface=>ty_type2-type2-type1.`;
     expect(identifier?.getType()).to.be.instanceof(Basic.IntegerType);
   });
 
+  it("LIKE from super class", () => {
+    const abap = `
+CLASS lcl_super DEFINITION.
+  PUBLIC SECTION.
+    DATA: foo TYPE i.
+ENDCLASS.
+CLASS lcl_super IMPLEMENTATION.
+ENDCLASS.
+
+CLASS lcl_sub DEFINITION INHERITING FROM lcl_super.
+  PUBLIC SECTION.
+    DATA: bar LIKE foo.
+ENDCLASS.
+CLASS lcl_sub IMPLEMENTATION.
+ENDCLASS.
+
+DATA moo LIKE lcl_sub=>bar.`;
+    const identifier = resolveVariable(abap, "moo");
+    expect(identifier).to.not.equal(undefined);
+    expect(identifier?.getType()).to.be.instanceof(Basic.IntegerType);
+  });
+
+  it("LIKE, internal class definition", () => {
+    const abap = `
+CLASS lcl_sub DEFINITION.
+  PUBLIC SECTION.
+    DATA foo TYPE i.
+    DATA bar LIKE foo.
+ENDCLASS.
+CLASS lcl_sub IMPLEMENTATION.
+ENDCLASS.
+
+DATA moo LIKE lcl_sub=>bar.`;
+    const identifier = resolveVariable(abap, "moo");
+    expect(identifier).to.not.equal(undefined);
+    expect(identifier?.getType()).to.be.instanceof(Basic.IntegerType);
+  });
+
+  it("TYPE from super class", () => {
+    const abap = `
+  CLASS lcl_super DEFINITION.
+    PUBLIC SECTION.
+      TYPES: ty_foo TYPE i.
+  ENDCLASS.
+  CLASS lcl_super IMPLEMENTATION.
+  ENDCLASS.
+
+  CLASS lcl_sub DEFINITION INHERITING FROM lcl_super.
+    PUBLIC SECTION.
+      DATA: bar TYPE ty_foo.
+  ENDCLASS.
+  CLASS lcl_sub IMPLEMENTATION.
+  ENDCLASS.
+
+  DATA moo LIKE lcl_sub=>bar.`;
+    const identifier = resolveVariable(abap, "moo");
+    expect(identifier).to.not.equal(undefined);
+    expect(identifier?.getType()).to.be.instanceof(Basic.IntegerType);
+  });
+
 });
