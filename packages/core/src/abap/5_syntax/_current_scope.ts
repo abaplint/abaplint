@@ -134,7 +134,10 @@ export class CurrentScope {
   }
 
   public existsObjectReference(name: string): boolean {
-    if (this.current?.findClassDefinition(name)) {
+    if (name.toUpperCase() === this.getName().toLocaleUpperCase()
+        && this.getType() === ScopeType.ClassDefinition) {
+      return true;
+    } else if (this.current?.findClassDefinition(name)) {
       return true;
     } else if (this.reg.getObject("CLAS", name)) {
       return true;

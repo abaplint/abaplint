@@ -553,4 +553,25 @@ ENDCLASS.`;
     expect(issues.length).to.equal(0);
   });
 
+  it("factory, reference itself locally", () => {
+    const abap1 = `
+CLASS lcl_gui_services_dummy DEFINITION FINAL.
+  PUBLIC SECTION.
+    CLASS-METHODS create
+      RETURNING
+        VALUE(ro_instance) TYPE REF TO lcl_gui_services_dummy.
+ENDCLASS.
+
+CLASS lcl_gui_services_dummy IMPLEMENTATION.
+  METHOD create.
+    CREATE OBJECT ro_instance.
+  ENDMETHOD.
+ENDCLASS.`;
+    let issues = runMulti([
+      {filename: "zreport.prog.abap", contents: abap1},
+    ]);
+    issues = issues.filter(i => i.getKey() === key);
+    expect(issues.length).to.equal(0);
+  });
+
 });
