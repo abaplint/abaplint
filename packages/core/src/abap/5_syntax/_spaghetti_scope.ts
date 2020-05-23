@@ -21,10 +21,11 @@ export interface IScopeVariable {
 
 export interface IScopeData {
   vars: IScopeVariable[];
+  types: IScopeVariable[];
+
   cdefs: IClassDefinition[];
   idefs: IInterfaceDefinition[];
   forms: IFormDefinition[];
-  types: TypedIdentifier[];
 
   reads: {position: Identifier, resolved: TypedIdentifier}[];
   writes: {position: Identifier, resolved: TypedIdentifier}[];

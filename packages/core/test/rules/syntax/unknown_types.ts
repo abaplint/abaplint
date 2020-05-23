@@ -574,4 +574,50 @@ ENDCLASS.`;
     expect(issues.length).to.equal(0);
   });
 
+  it("interface tilde typing name, implementation", () => {
+    const abap1 = `
+INTERFACE lif_intf.
+  TYPES ty_foo TYPE i.
+ENDINTERFACE.
+
+CLASS lcl_clas DEFINITION.
+  PUBLIC SECTION.
+    INTERFACES: lif_intf.
+    METHODS name.
+ENDCLASS.
+
+CLASS lcl_clas IMPLEMENTATION.
+  METHOD name.
+    DATA foo TYPE lif_intf~ty_foo.
+  ENDMETHOD.
+ENDCLASS.`;
+    let issues = runMulti([
+      {filename: "zreport.prog.abap", contents: abap1},
+    ]);
+    issues = issues.filter(i => i.getKey() === key);
+    expect(issues.length).to.equal(0);
+  });
+
+  it("interface tilde typing name, definition", () => {
+    const abap1 = `
+INTERFACE lif_intf.
+  TYPES ty_foo TYPE i.
+ENDINTERFACE.
+
+CLASS lcl_clas DEFINITION.
+  PUBLIC SECTION.
+    INTERFACES: lif_intf.
+    DATA foo TYPE lif_intf~ty_foo.
+ENDCLASS.
+
+CLASS lcl_clas IMPLEMENTATION.
+
+ENDCLASS.`;
+    let issues = runMulti([
+      {filename: "zreport.prog.abap", contents: abap1},
+    ]);
+    issues = issues.filter(i => i.getKey() === key);
+    expect(issues.length).to.equal(0);
+  });
+
 });

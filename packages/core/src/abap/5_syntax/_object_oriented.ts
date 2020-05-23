@@ -56,6 +56,21 @@ export class ObjectOriented {
     this.scope.addList(classAttributes.getStatic()); // todo, this is not correct, take care of instance vs static
 
     this.fromSuperClass(classDefinition);
+    this.fromInterfaces(classDefinition);
+  }
+
+  private fromInterfaces(classDefinition: IClassDefinition): void {
+    for (const i of classDefinition.getImplementing()) {
+      const idef = this.scope.findInterfaceDefinition(i.name);
+      if (idef === undefined) {
+        continue;
+      }
+
+      for (const t of idef.getTypeDefinitions().getAll()) {
+        const name = i.name + "~" + t.getName();
+        this.scope.addTypeNamed(name, t);
+      }
+    }
   }
 
   private addAliasedAttributes(classDefinition: IClassDefinition): void {

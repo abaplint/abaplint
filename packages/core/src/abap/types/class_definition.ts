@@ -35,6 +35,7 @@ export class ClassDefinition extends Identifier implements IClassDefinition {
 
     scope.push(ScopeType.ClassDefinition, name.getStr(), name.getStart(), filename);
 
+    this.fromInterfaces(scope);
     this.fillScopeWithSuper(scope);
 
     // todo, handle the sequence of types and attributes
@@ -123,7 +124,7 @@ export class ClassDefinition extends Identifier implements IClassDefinition {
   }
 */
 
-  private fillScopeWithSuper(scope: CurrentScope) {
+  private fillScopeWithSuper(scope: CurrentScope): void {
     let sup = scope.findClassDefinition(this.getSuperClass());
     while (sup !== undefined) {
       scope.addList(sup.getAttributes().getAll());
@@ -132,6 +133,20 @@ export class ClassDefinition extends Identifier implements IClassDefinition {
         scope.addType(t);
       }
       sup = scope.findClassDefinition(sup.getSuperClass());
+    }
+  }
+
+  private fromInterfaces(scope: CurrentScope): void {
+    for (const i of this.getImplementing()) {
+      const idef = scope.findInterfaceDefinition(i.name);
+      if (idef === undefined) {
+        continue;
+      }
+
+      for (const t of idef.getTypeDefinitions().getAll()) {
+        const name = i.name + "~" + t.getName();
+        scope.addTypeNamed(name, t);
+      }
     }
   }
 

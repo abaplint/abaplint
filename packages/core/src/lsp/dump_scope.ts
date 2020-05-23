@@ -53,10 +53,10 @@ export class DumpScope {
     }
 
     for (const t of node.getData().types) {
-      ret = ret + sident + "<tt>" + this.escape(t.getName()) + "</tt>";
-      const pos = t.getStart();
+      ret = ret + sident + "<tt>" + this.escape(t.name) + "</tt>";
+      const pos = t.identifier.getStart();
       ret = ret + "(" + pos.getRow().toString() + ", " + pos.getCol().toString() + ") ";
-      ret = ret + t.getType().toText(0);
+      ret = ret + t.identifier.getType().toText(0);
       ret = ret + "<br>";
     }
 

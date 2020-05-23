@@ -155,8 +155,8 @@ export class SpaghettiScopeNode extends ScopeData implements ISpaghettiScopeNode
 
     while (search !== undefined) {
       for (const local of search.getData().types) {
-        if (local.getName().toUpperCase() === name.toUpperCase()) {
-          return local;
+        if (local.name.toUpperCase() === name.toUpperCase()) {
+          return local.identifier;
         }
       }
       search = search.getParent();
