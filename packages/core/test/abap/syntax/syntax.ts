@@ -1287,6 +1287,28 @@ describe("Check Variables", () => {
     expect(issues.length).to.equals(1);
   });
 
+  it("constant from super class", () => {
+    const abap = `
+CLASS lcl_super DEFINITION.
+  PUBLIC SECTION.
+    CONSTANTS const TYPE i VALUE 1.
+ENDCLASS.
+CLASS lcl_super IMPLEMENTATION.
+ENDCLASS.
+
+CLASS lcl_sub DEFINITION INHERITING FROM lcl_super.
+  PUBLIC SECTION.
+    METHODS moo.
+ENDCLASS.
+CLASS lcl_sub IMPLEMENTATION.
+  METHOD moo.
+    WRITE const.
+  ENDMETHOD.
+ENDCLASS.`;
+    const issues = runProgram(abap);
+    expect(issues.length).to.equals(0);
+  });
+
 // todo, static method cannot access instance attributes
 // todo, can a private method access protected attributes?
 // todo, readonly fields(constants + enums + attributes flagged read-only)

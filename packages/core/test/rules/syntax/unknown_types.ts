@@ -483,4 +483,29 @@ ENDCLASS.`;
     expect(issues.length).to.equal(0);
   });
 
+  it("type from super class in implementation", () => {
+    const abap1 = `
+CLASS lcl_super DEFINITION.
+  PUBLIC SECTION.
+    TYPES: ty_foo TYPE i.
+ENDCLASS.
+CLASS lcl_super IMPLEMENTATION.
+ENDCLASS.
+
+CLASS lcl_sub DEFINITION INHERITING FROM lcl_super.
+  PUBLIC SECTION.
+    METHODS bar.
+ENDCLASS.
+CLASS lcl_sub IMPLEMENTATION.
+  METHOD bar.
+    DATA foo TYPE ty_foo.
+  ENDMETHOD.
+ENDCLASS.`;
+    let issues = runMulti([
+      {filename: "zprog.prog.abap", contents: abap1},
+    ]);
+    issues = issues.filter(i => i.getKey() === key);
+    expect(issues.length).to.equal(0);
+  });
+
 });

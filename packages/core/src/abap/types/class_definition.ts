@@ -43,6 +43,7 @@ export class ClassDefinition extends Identifier implements IClassDefinition {
     let sup = scope.findClassDefinition(this.getSuperClass());
     while (sup !== undefined) {
       scope.addList(sup.getAttributes().getAll());
+      scope.addList(sup.getAttributes().getConstants());
       for (const t of sup.getTypeDefinitions().getAll()) {
         scope.addType(t);
       }

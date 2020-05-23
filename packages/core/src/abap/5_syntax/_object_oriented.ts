@@ -173,17 +173,16 @@ export class ObjectOriented {
   }
 
   private findMethodInSuper(child: IClassDefinition, methodName: string): IMethodDefinition | undefined {
-    const sup = child.getSuperClass();
-    if (sup === undefined) {
-      return;
+    let sup = child.getSuperClass();
+    while (sup !== undefined) {
+      const cdef = this.findSuperDefinition(sup);
+      const found = this.findMethod(cdef, methodName);
+      if (found) {
+        return found;
+      }
+      sup = cdef.getSuperClass();
     }
-    const cdef = this.findSuperDefinition(sup);
-    const found = this.findMethod(cdef, methodName);
-    if (found) {
-      return found;
-    }
-
-    return this.findMethodInSuper(cdef, methodName);
+    return undefined;
   }
 
   private findSuperDefinition(name: string): IClassDefinition {
@@ -199,6 +198,10 @@ export class ObjectOriented {
     while (sup !== undefined) {
       const cdef = this.findSuperDefinition(sup);
       this.scope.addList(cdef.getAttributes().getAll()); // todo, handle scope and instance vs static
+      this.scope.addList(cdef.getAttributes().getConstants());
+      for (const t of cdef.getTypeDefinitions().getAll()) {
+        this.scope.addType(t);
+      }
       sup = cdef.getSuperClass();
     }
   }
