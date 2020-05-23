@@ -71,7 +71,7 @@ export class MethodParameters implements IMethodParameters{
     const handler = node.findFirstExpression(Expressions.EventHandler);
     if (handler) {
       const className = node.findFirstExpression(Expressions.ClassName)?.getFirstToken().getStr();
-      const def = scope.findObjectReference(className);
+      const def = scope.findObjectDefinition(className);
       const doVoid = def ? false : !scope.getDDIC().inErrorNamespace(className);
 
       const eventName = node.findFirstExpression(Expressions.Field)?.getFirstToken().getStr();

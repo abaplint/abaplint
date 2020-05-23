@@ -35,7 +35,7 @@ export class BasicTypes {
     let type: AbstractType | undefined = undefined;
     const name = children[0].getFirstToken().getStr();
     if (children[1] && children[1].getFirstToken().getStr() === "=>") {
-      const obj = this.scope.findObjectReference(name);
+      const obj = this.scope.findObjectDefinition(name);
       if (obj === undefined && this.scope.getDDIC()?.inErrorNamespace(name) === false) {
         return new VoidType();
       } else if (obj === undefined) {
@@ -274,7 +274,7 @@ export class BasicTypes {
         }
       } else {
     // lookup in local and global scope
-        const obj = this.scope.findObjectReference(className);
+        const obj = this.scope.findObjectDefinition(className);
         if (obj === undefined && this.scope.getDDIC()?.inErrorNamespace(className) === false) {
           return new VoidType();
         } else if (obj === undefined) {
@@ -330,7 +330,7 @@ export class BasicTypes {
     }
 
     const name = chain.getFirstToken().getStr();
-    if (this.scope.existsObjectReference(name)) {
+    if (this.scope.existsObject(name)) {
       return new Types.ObjectReferenceType(name);
     }
 
