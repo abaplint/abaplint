@@ -673,4 +673,31 @@ DATA moo LIKE lcl_sub=>bar.`;
     expect(identifier?.getType()).to.be.instanceof(Basic.IntegerType);
   });
 
+  it("TYPE from super super class", () => {
+    const abap = `
+CLASS lcl_supersuper DEFINITION.
+  PUBLIC SECTION.
+    TYPES: ty_foo TYPE i.
+ENDCLASS.
+CLASS lcl_supersuper IMPLEMENTATION.
+ENDCLASS.
+
+CLASS lcl_super DEFINITION INHERITING FROM lcl_supersuper.
+ENDCLASS.
+CLASS lcl_super IMPLEMENTATION.
+ENDCLASS.
+
+CLASS lcl_sub DEFINITION INHERITING FROM lcl_super.
+  PUBLIC SECTION.
+    DATA: bar TYPE ty_foo.
+ENDCLASS.
+CLASS lcl_sub IMPLEMENTATION.
+ENDCLASS.
+
+DATA moo LIKE lcl_sub=>bar.`;
+    const identifier = resolveVariable(abap, "moo");
+    expect(identifier).to.not.equal(undefined);
+    expect(identifier?.getType()).to.be.instanceof(Basic.IntegerType);
+  });
+
 });

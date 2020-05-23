@@ -195,20 +195,12 @@ export class ObjectOriented {
   }
 
   private fromSuperClass(child: IClassDefinition) {
-    const sup = child.getSuperClass();
-    if (sup === undefined) {
-      return;
+    let sup = child.getSuperClass();
+    while (sup !== undefined) {
+      const cdef = this.findSuperDefinition(sup);
+      this.scope.addList(cdef.getAttributes().getAll()); // todo, handle scope and instance vs static
+      sup = cdef.getSuperClass();
     }
-    const cdef = this.findSuperDefinition(sup);
-
-    const attr = cdef.getAttributes();
-
-    this.scope.addList(attr.getConstants()); // todo, handle scope and instance vs static
-    this.scope.addList(attr.getInstance()); // todo, handle scope and instance vs static
-    this.scope.addList(attr.getStatic()); // todo, handle scope and instance vs static
-
-    this.fromSuperClass(cdef);
   }
-
 
 }

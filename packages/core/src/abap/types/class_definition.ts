@@ -30,19 +30,24 @@ export class ClassDefinition extends Identifier implements IClassDefinition {
 
     scope.push(ScopeType.ClassDefinition, name.getStr(), name.getStart(), filename);
 
-    const sup = scope.findClassDefinition(this.getSuperClass());
-    if (sup) {
-      scope.addList(sup.getAttributes().getAll());
-      for (const t of sup.getTypeDefinitions().getAll()) {
-        scope.addType(t);
-      }
-    }
+    this.fillScopeWithSuper(scope);
 
     // todo, handle the sequence of types and attributes
     this.types = new TypeDefinitions(this.node, this.filename, scope);
     this.attributes = new Attributes(this.node, this.filename, scope);
     this.methodDefs = new MethodDefinitions(this.node, this.filename, scope);
     scope.pop();
+  }
+
+  private fillScopeWithSuper(scope: CurrentScope) {
+    let sup = scope.findClassDefinition(this.getSuperClass());
+    while (sup !== undefined) {
+      scope.addList(sup.getAttributes().getAll());
+      for (const t of sup.getTypeDefinitions().getAll()) {
+        scope.addType(t);
+      }
+      sup = scope.findClassDefinition(sup.getSuperClass());
+    }
   }
 
   public getMethodDefinitions(): MethodDefinitions {
