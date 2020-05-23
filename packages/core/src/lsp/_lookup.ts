@@ -41,7 +41,7 @@ export class LSPLookup {
         value = value + "Value:\n\n```" + variable.getValue() + "```";
       }
       if (variable.getMeta().length > 0) {
-        value = value + "Meta: " + variable.getMeta().join(", ");
+        value = value + "\n\nMeta: " + variable.getMeta().join(", ");
       }
       return {hover: value, definition: this.buildResult(variable)};
     }
