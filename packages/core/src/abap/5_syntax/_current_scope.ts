@@ -106,19 +106,6 @@ export class CurrentScope {
     this.current?.getData().deferred.push({name, type});
   }
 
-  private findDeferred(name: string): DeferredType | undefined {
-    if (this.current === undefined) {
-      return undefined;
-    }
-    // only need to look at the current level, DEFERRED are not nested
-    for (const d of this.current.getData().deferred) {
-      if (d.name.toUpperCase() === name.toUpperCase()) {
-        return d.type;
-      }
-    }
-    return undefined;
-  }
-
   public addListPrefix(identifiers: readonly TypedIdentifier[], prefix: string) {
     for (const id of identifiers) {
       this.addNamedIdentifier(prefix + id.getName(), id);
@@ -165,7 +152,7 @@ export class CurrentScope {
     if (name.toUpperCase() === this.getName().toLocaleUpperCase()
         && this.getType() === ScopeType.ClassDefinition) {
       return true;
-    } else if (this.findDeferred(name) !== undefined) {
+    } else if (this.current?.findDeferred(name) !== undefined) {
       return true;
     } else if (this.current?.findClassDefinition(name)) {
       return true;
