@@ -620,4 +620,33 @@ ENDCLASS.`;
     expect(issues.length).to.equal(0);
   });
 
+  it("testclass referencing local class in global class", () => {
+    const abap1 = `
+CLASS zcl_local_minimal DEFINITION PUBLIC FINAL CREATE PUBLIC.
+ENDCLASS.
+
+CLASS zcl_local_minimal IMPLEMENTATION.
+ENDCLASS.`;
+    const abap2 = `
+CLASS lcl_local DEFINITION.
+ENDCLASS.
+CLASS lcl_local IMPLEMENTATION.
+ENDCLASS.`;
+    const abap3 = `
+CLASS ltcl_foobar DEFINITION FOR TESTING DURATION SHORT RISK LEVEL HARMLESS.
+  PRIVATE SECTION.
+    DATA foo TYPE REF TO lcl_local.
+ENDCLASS.
+CLASS ltcl_foobar IMPLEMENTATION.
+ENDCLASS.
+`;
+    let issues = runMulti([
+      {filename: "zcl_local_minimal.clas.abap", contents: abap1},
+      {filename: "zcl_local_minimal.clas.locals_imp.abap", contents: abap2},
+      {filename: "zcl_local_minimal.clas.testclasses.abap", contents: abap3},
+    ]);
+    issues = issues.filter(i => i.getKey() === key);
+    expect(issues.length).to.equal(0);
+  });
+
 });

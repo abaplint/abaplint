@@ -105,7 +105,7 @@ export class SyntaxLogic {
         traversal = [main];
       }
     } else if (this.object instanceof Class) {
-      const sequence = [".clas.locals_def.abap", ".clas.locals_imp.abap", ".clas.abap", ".testclasses.clas.abap"];
+      const sequence = [".clas.locals_def.abap", ".clas.locals_imp.abap", ".clas.abap", ".clas.testclasses.abap"];
       const copy = traversal.slice().sort((a, b) => {
         const aValue = sequence.findIndex((s) => a.getFilename().endsWith(s));
         const bValue = sequence.findIndex((s) => b.getFilename().endsWith(s));
