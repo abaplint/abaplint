@@ -46,7 +46,7 @@ const tests = [
 
   {abap: "AT SELECTION-SCREEN ON EXIT-COMMAND.\n" +
   "  PERFORM exit.\n" +
-  "INCLUDE zfoo.\n", cnt: 0},
+  "INCLUDE zfsdfoo.\n", cnt: 0},
 
   {abap: `
 IF foo = bar.
