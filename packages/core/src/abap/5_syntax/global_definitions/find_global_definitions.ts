@@ -88,6 +88,8 @@ export class FindGlobalDefinitions {
       return 1;
     } else if (type instanceof BasicTypes.TableType) {
       return this.count(type.getRowType());
+    } else if (type instanceof BasicTypes.DataReference) {
+      return this.count(type.getType());
     } else if (type instanceof BasicTypes.StructureType) {
       let count = 0;
       for (const c of type.getComponents()) {

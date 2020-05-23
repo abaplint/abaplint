@@ -702,4 +702,16 @@ DATA moo LIKE lcl_sub=>bar.`;
     expect(identifier?.getType()).to.be.instanceof(Basic.IntegerType);
   });
 
+  it("TYPE REF TO data", () => {
+    const abap = `
+TYPES:
+  BEGIN OF ty_named_collection,
+    name TYPE string,
+  END OF ty_named_collection.
+DATA lr_collection TYPE REF TO ty_named_collection.`;
+    const identifier = resolveVariable(abap, "lr_collection");
+    expect(identifier).to.not.equal(undefined);
+    expect(identifier?.getType()).to.be.instanceof(Basic.DataReference);
+  });
+
 });

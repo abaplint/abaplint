@@ -4,7 +4,7 @@ import * as Expressions from "../2_statements/expressions";
 import * as Types from "../types/basic";
 import {CurrentScope} from "./_current_scope";
 import {AbstractType} from "../types/basic/_abstract_type";
-import {UnknownType, VoidType, StructureType, CharacterType} from "../types/basic";
+import {UnknownType, VoidType, StructureType, CharacterType, DataReference} from "../types/basic";
 import {ScopeType} from "./_scope_type";
 
 export class BasicTypes {
@@ -332,6 +332,11 @@ export class BasicTypes {
     const name = chain.getFirstToken().getStr();
     if (this.scope.existsObjectReference(name)) {
       return new Types.ObjectReferenceType(name);
+    }
+
+    const found = this.resolveTypeName(chain);
+    if (found && !(found instanceof UnknownType) && !(found instanceof VoidType)) {
+      return new DataReference(found);
     }
 
     if (this.scope.getDDIC()?.inErrorNamespace(name) === false) {
