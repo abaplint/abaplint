@@ -595,6 +595,8 @@ DATA foo TYPE lif_interface=>ty_type2-type2-type1.`;
     const identifier = resolveVariable(abap, "foo");
     expect(identifier).to.not.equal(undefined);
     expect(identifier?.getType()).to.be.instanceof(Basic.TableType);
+    const row = (identifier!.getType() as Basic.TableType).getRowType();
+    expect(row).to.be.instanceof(Basic.IntegerType);
   });
 
   it("TYPE RANGE OF", () => {

@@ -21,8 +21,12 @@ export class BasicTypes {
       return undefined;
     }
 
-    const fullName = node.findFirstExpression(Expressions.FieldChain)?.concatTokens();
-    const children = node.findFirstExpression(Expressions.FieldChain)?.getChildren();
+    let chain = node.findFirstExpression(Expressions.FieldChain);
+    if (chain === undefined) {
+      chain = node.findFirstExpression(Expressions.TypeName);
+    }
+    const fullName = chain?.concatTokens();
+    const children = chain?.getChildren();
 
     if (children === undefined) {
       return new Types.UnknownType("Type error, could not resolve " + fullName);
@@ -159,7 +163,7 @@ export class BasicTypes {
     }
 
     let found: AbstractType | undefined = undefined;
-    if (text.startsWith("LIKE LINE OF")) {
+    if (text.startsWith("LIKE LINE OF ")) {
       const name = node.findFirstExpression(Expressions.FieldChain)?.concatTokens();
       const type = this.resolveLikeName(node.findFirstExpression(Expressions.Type));
 
