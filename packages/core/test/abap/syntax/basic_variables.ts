@@ -714,4 +714,14 @@ DATA lr_collection TYPE REF TO ty_named_collection.`;
     expect(identifier?.getType()).to.be.instanceof(Basic.DataReference);
   });
 
+  it("SELECTION-SCREEN TITLE", () => {
+    const abap = `
+  SELECTION-SCREEN BEGIN OF SCREEN 1002 TITLE s_title.
+  SELECTION-SCREEN END OF SCREEN 1002.
+  s_title = 'abc'.`;
+    const identifier = resolveVariable(abap, "s_title");
+    expect(identifier).to.not.equal(undefined);
+    expect(identifier?.getType()).to.be.instanceof(Basic.CharacterType);
+  });
+
 });
