@@ -3,7 +3,7 @@ import {MethodDef} from "../2_statements/statements/method_def";
 import * as Expressions from "../2_statements/expressions";
 import {ExpressionNode}  from "../../abap/nodes";
 import {TypedIdentifier, IdentifierMeta} from "./_typed_identifier";
-import {UnknownType} from "./basic";
+import {UnknownType, VoidType} from "./basic";
 import {CurrentScope} from "../5_syntax/_current_scope";
 import {MethodDefReturning} from "../5_syntax/expressions/method_def_returning";
 import {MethodParam} from "../5_syntax/expressions/method_param";
@@ -70,9 +70,23 @@ export class MethodParameters implements IMethodParameters{
 
     const handler = node.findFirstExpression(Expressions.EventHandler);
     if (handler) {
+      const className = node.findFirstExpression(Expressions.ClassName)?.getFirstToken().getStr();
+      const def = scope.findObjectReference(className);
+      const doVoid = def ? false : !scope.getDDIC().inErrorNamespace(className);
+
+      const eventName = node.findFirstExpression(Expressions.Field)?.getFirstToken().getStr();
+      const event = def?.getEvents().find(e => e.getName().toUpperCase() === eventName?.toUpperCase());
       for (const p of handler.findAllExpressions(Expressions.MethodParamName)) {
         const token = p.getFirstToken();
-        this.importing.push(new TypedIdentifier(token, this.filename, new UnknownType("todo, method parameter, handler")));
+        const found = event?.getParameters().find(p => p.getName().toUpperCase() === token.getStr().toUpperCase());
+        if (found) {
+          this.importing.push(new TypedIdentifier(token, this.filename, found.getType()));
+        } else if (doVoid) {
+          this.importing.push(new TypedIdentifier(token, this.filename, new VoidType()));
+        } else {
+          const type = new UnknownType(`handler parameter not found "${token.getStr()}"`);
+          this.importing.push(new TypedIdentifier(token, this.filename, type));
+        }
       }
     }
 

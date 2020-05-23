@@ -12,12 +12,16 @@ import {Attributes} from "./class_attributes";
 import {TypeDefinitions} from "./type_definitions";
 import {Visibility} from "../4_file_information/visibility";
 import {ScopeType} from "../5_syntax/_scope_type";
+import {IMethodDefinition} from "./_method_definition";
+import {IEventDefinition} from "./_event_definition";
+import {EventDefinition} from "./event_definition";
 
 export class InterfaceDefinition extends Identifier implements IInterfaceDefinition {
   private readonly node: StructureNode;
   private attributes: IAttributes;
   private typeDefinitions: ITypeDefinitions;
-  private methodDefinitions: MethodDefinition[];
+  private methodDefinitions: IMethodDefinition[];
+  private readonly events: IEventDefinition[];
 
   public constructor(node: StructureNode, filename: string, scope: CurrentScope) {
     if (!(node.get() instanceof Structures.Interface)) {
@@ -28,10 +32,15 @@ export class InterfaceDefinition extends Identifier implements IInterfaceDefinit
     super(name, filename);
 
     this.node = node;
+    this.events = [];
 
     scope.push(ScopeType.Interface, name.getStr(), name.getStart(), filename);
     this.parse(scope);
     scope.pop();
+  }
+
+  public getEvents() {
+    return this.events;
   }
 
   public getAttributes() {
@@ -50,7 +59,7 @@ export class InterfaceDefinition extends Identifier implements IInterfaceDefinit
     return this.node.findFirstExpression(Expressions.Global) !== undefined;
   }
 
-  public getMethodDefinitions(): MethodDefinition[] {
+  public getMethodDefinitions(): IMethodDefinition[] {
     return this.methodDefinitions;
   }
 
@@ -65,6 +74,11 @@ export class InterfaceDefinition extends Identifier implements IInterfaceDefinit
     const defs = this.node.findAllStatements(Statements.MethodDef);
     for (const def of defs) {
       this.methodDefinitions.push(new MethodDefinition(def, Visibility.Public, this.filename, scope));
+    }
+
+    const events = this.node.findAllStatements(Statements.Events);
+    for (const e of events) {
+      this.events.push(new EventDefinition(e, Visibility.Public, this.filename, scope));
     }
   }
 

@@ -430,7 +430,7 @@ DATA moo TYPE lcl_foo=>ty_moo.`;
     expect(issues.length).to.equal(0);
   });
 
-  it.skip("events", () => {
+  it("events", () => {
     const abap1 = `
 CLASS lcl_eventer DEFINITION.
   PUBLIC SECTION.
@@ -528,6 +528,26 @@ ENDCLASS.`;
     let issues = runMulti([
       {filename: "zcl_local_minimal.clas.abap", contents: abap1},
       {filename: "zcl_local_minimal.clas.locals_imp.abap", contents: abap2},
+    ]);
+    issues = issues.filter(i => i.getKey() === key);
+    expect(issues.length).to.equal(0);
+  });
+
+  it("events, void class name", () => {
+    const abap1 = `
+CLASS lcl_handler DEFINITION.
+  PUBLIC SECTION.
+    METHODS on_event FOR EVENT sapevent OF cl_gui_html_viewer
+      IMPORTING action frame.
+ENDCLASS.
+
+CLASS lcl_handler IMPLEMENTATION.
+  METHOD on_event.
+    WRITE action.
+  ENDMETHOD.
+ENDCLASS.`;
+    let issues = runMulti([
+      {filename: "zreport.prog.abap", contents: abap1},
     ]);
     issues = issues.filter(i => i.getKey() === key);
     expect(issues.length).to.equal(0);

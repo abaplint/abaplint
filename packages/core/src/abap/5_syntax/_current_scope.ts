@@ -118,7 +118,10 @@ export class CurrentScope {
 
 ///////////////////////////
 
-  public findObjectReference(name: string): IClassDefinition | IInterfaceDefinition | undefined {
+  public findObjectReference(name: string | undefined): IClassDefinition | IInterfaceDefinition | undefined {
+    if (name === undefined) {
+      return undefined;
+    }
     const clas = this.findClassDefinition(name);
     if (clas) {
       return clas;

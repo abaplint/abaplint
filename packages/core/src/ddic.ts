@@ -13,7 +13,10 @@ export class DDIC {
     this.reg = reg;
   }
 
-  public inErrorNamespace(name: string): boolean {
+  public inErrorNamespace(name: string | undefined): boolean {
+    if (name === undefined) {
+      return true;
+    }
     return this.reg.inErrorNamespace(name);
   }
 
