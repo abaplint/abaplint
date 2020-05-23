@@ -4,6 +4,7 @@ import {xmlToArray} from "../xml_utils";
 import {ABAPParser} from "../abap/abap_parser";
 import {IObject} from "./_iobject";
 import {Version} from "../version";
+import {ISyntaxResult} from "../abap/5_syntax/_spaghetti_scope";
 
 export interface ITextElement {
   key: string;
@@ -12,6 +13,7 @@ export interface ITextElement {
 
 export abstract class ABAPObject extends AbstractObject {
   private parsed: readonly ABAPFile[];
+  public syntaxResult: ISyntaxResult | undefined; // do not use this outside of SyntaxLogic class, todo: refactor
 
   public constructor(name: string) {
     super(name);
@@ -35,6 +37,11 @@ export abstract class ABAPObject extends AbstractObject {
     this.dirty = false;
 
     return this;
+  }
+
+  public setDirty(): void {
+    this.syntaxResult = undefined;
+    super.setDirty();
   }
 
   public getABAPFiles(): readonly ABAPFile[] {
