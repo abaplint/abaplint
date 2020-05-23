@@ -16,6 +16,7 @@ abstract class ScopeData {
       idefs: [],
       forms: [],
       types: [],
+      deferred: [],
       reads: [],
       writes: [],
     };
