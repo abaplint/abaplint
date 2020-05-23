@@ -759,7 +759,7 @@ ENDINTERFACE.`;
     expect(identifier?.getType()).to.be.instanceof(Basic.ObjectReferenceType);
   });
 
-  it.skip("CLASS DEFERRED", () => {
+  it("CLASS DEFERRED", () => {
     const abap = `
 CLASS lcl_bar DEFINITION DEFERRED.
 DATA bar TYPE REF TO lcl_bar.
@@ -767,9 +767,9 @@ CLASS lcl_bar DEFINITION.
 ENDCLASS.
 CLASS lcl_bar IMPLEMENTATION.
 ENDCLASS.`;
-    const identifier = resolveVariable(abap, "lv_edge");
+    const identifier = resolveVariable(abap, "bar");
     expect(identifier).to.not.equal(undefined);
-    expect(identifier?.getType()).to.be.instanceof(Basic.VoidType);
+    expect(identifier?.getType()).to.be.instanceof(Basic.ObjectReferenceType);
   });
 
 });
