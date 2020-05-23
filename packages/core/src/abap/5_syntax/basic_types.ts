@@ -4,7 +4,7 @@ import * as Expressions from "../2_statements/expressions";
 import * as Types from "../types/basic";
 import {CurrentScope} from "./_current_scope";
 import {AbstractType} from "../types/basic/_abstract_type";
-import {UnknownType, VoidType, StructureType, CharacterType} from "../types/basic";
+import {UnknownType, VoidType, StructureType, CharacterType, DataReference} from "../types/basic";
 import {ScopeType} from "./_scope_type";
 
 export class BasicTypes {
@@ -21,8 +21,12 @@ export class BasicTypes {
       return undefined;
     }
 
-    const fullName = node.findFirstExpression(Expressions.FieldChain)?.concatTokens();
-    const children = node.findFirstExpression(Expressions.FieldChain)?.getChildren();
+    let chain = node.findFirstExpression(Expressions.FieldChain);
+    if (chain === undefined) {
+      chain = node.findFirstExpression(Expressions.TypeName);
+    }
+    const fullName = chain?.concatTokens();
+    const children = chain?.getChildren();
 
     if (children === undefined) {
       return new Types.UnknownType("Type error, could not resolve " + fullName);
@@ -159,7 +163,7 @@ export class BasicTypes {
     }
 
     let found: AbstractType | undefined = undefined;
-    if (text.startsWith("LIKE LINE OF")) {
+    if (text.startsWith("LIKE LINE OF ")) {
       const name = node.findFirstExpression(Expressions.FieldChain)?.concatTokens();
       const type = this.resolveLikeName(node.findFirstExpression(Expressions.Type));
 
@@ -328,6 +332,11 @@ export class BasicTypes {
     const name = chain.getFirstToken().getStr();
     if (this.scope.existsObjectReference(name)) {
       return new Types.ObjectReferenceType(name);
+    }
+
+    const found = this.resolveTypeName(chain);
+    if (found && !(found instanceof UnknownType) && !(found instanceof VoidType)) {
+      return new DataReference(found);
     }
 
     if (this.scope.getDDIC()?.inErrorNamespace(name) === false) {

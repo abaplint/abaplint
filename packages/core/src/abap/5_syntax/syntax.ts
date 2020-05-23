@@ -13,7 +13,7 @@ import {ScopeType} from "./_scope_type";
 import {ObjectOriented} from "./_object_oriented";
 import {Procedural} from "./_procedural";
 import {Inline} from "./_inline";
-import {Program, FunctionGroup} from "../../objects";
+import {Program, FunctionGroup, Class} from "../../objects";
 import {Position} from "../../position";
 import {Perform} from "./statements/perform";
 import {Type} from "./statements/type";
@@ -104,6 +104,14 @@ export class SyntaxLogic {
         this.helpers.proc.addAllFormDefinitions(main, this.object);
         traversal = [main];
       }
+    } else if (this.object instanceof Class) {
+      const sequence = [".clas.locals_def.abap", ".clas.locals_imp.abap", ".clas.abap", ".clas.testclasses.abap"];
+      const copy = traversal.slice().sort((a, b) => {
+        const aValue = sequence.findIndex((s) => a.getFilename().endsWith(s));
+        const bValue = sequence.findIndex((s) => b.getFilename().endsWith(s));
+        return aValue - bValue;
+      });
+      traversal = copy;
     }
 
     for (const file of traversal) {

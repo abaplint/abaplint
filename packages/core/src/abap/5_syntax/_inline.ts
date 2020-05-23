@@ -7,6 +7,7 @@ import {IRegistry} from "../../_iregistry";
 import {Table, View} from "../../objects";
 import {TypedIdentifier} from "../types/_typed_identifier";
 import {UnknownType} from "../types/basic";
+import {SelectionScreen} from "./statements/selection_screen";
 
 export class Inline {
   private readonly scope: CurrentScope;
@@ -26,6 +27,11 @@ export class Inline {
 
   public update(node: INode, filename: string): boolean {
     if (node instanceof StatementNode) {
+
+      if (node.get() instanceof Statements.SelectionScreen) {
+        this.scope.addIdentifier(new SelectionScreen().runSyntax(node, this.scope, filename));
+        return false;
+      }
 
       for (const inline of node.findAllExpressions(Expressions.InlineData)) {
         const field = inline.findFirstExpression(Expressions.TargetField);

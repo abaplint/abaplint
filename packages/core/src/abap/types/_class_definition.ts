@@ -3,6 +3,7 @@ import {Identifier} from "../4_file_information/_identifier";
 import {IAliases} from "./_aliases";
 import {ITypeDefinitions} from "./_type_definitions";
 import {IMethodDefinitions} from "./_method_definitions";
+import {IEventDefinition} from "./_event_definition";
 
 export interface IClassDefinition extends Identifier {
   getMethodDefinitions(): IMethodDefinitions;
@@ -17,4 +18,5 @@ export interface IClassDefinition extends Identifier {
   getAliases(): IAliases;
   isForTesting(): boolean;
   isAbstract(): boolean;
+  getEvents(): readonly IEventDefinition[];
 }

@@ -595,6 +595,8 @@ DATA foo TYPE lif_interface=>ty_type2-type2-type1.`;
     const identifier = resolveVariable(abap, "foo");
     expect(identifier).to.not.equal(undefined);
     expect(identifier?.getType()).to.be.instanceof(Basic.TableType);
+    const row = (identifier!.getType() as Basic.TableType).getRowType();
+    expect(row).to.be.instanceof(Basic.IntegerType);
   });
 
   it("TYPE RANGE OF", () => {
@@ -611,6 +613,115 @@ DATA foo TYPE lif_interface=>ty_type2-type2-type1.`;
     const identifier = resolveVariable(abap, "<bar>");
     expect(identifier).to.not.equal(undefined);
     expect(identifier?.getType()).to.be.instanceof(Basic.IntegerType);
+  });
+
+  it("LIKE from super class", () => {
+    const abap = `
+CLASS lcl_super DEFINITION.
+  PUBLIC SECTION.
+    DATA: foo TYPE i.
+ENDCLASS.
+CLASS lcl_super IMPLEMENTATION.
+ENDCLASS.
+
+CLASS lcl_sub DEFINITION INHERITING FROM lcl_super.
+  PUBLIC SECTION.
+    DATA: bar LIKE foo.
+ENDCLASS.
+CLASS lcl_sub IMPLEMENTATION.
+ENDCLASS.
+
+DATA moo LIKE lcl_sub=>bar.`;
+    const identifier = resolveVariable(abap, "moo");
+    expect(identifier).to.not.equal(undefined);
+    expect(identifier?.getType()).to.be.instanceof(Basic.IntegerType);
+  });
+
+  it("LIKE, internal class definition", () => {
+    const abap = `
+CLASS lcl_sub DEFINITION.
+  PUBLIC SECTION.
+    DATA foo TYPE i.
+    DATA bar LIKE foo.
+ENDCLASS.
+CLASS lcl_sub IMPLEMENTATION.
+ENDCLASS.
+
+DATA moo LIKE lcl_sub=>bar.`;
+    const identifier = resolveVariable(abap, "moo");
+    expect(identifier).to.not.equal(undefined);
+    expect(identifier?.getType()).to.be.instanceof(Basic.IntegerType);
+  });
+
+  it("TYPE from super class", () => {
+    const abap = `
+  CLASS lcl_super DEFINITION.
+    PUBLIC SECTION.
+      TYPES: ty_foo TYPE i.
+  ENDCLASS.
+  CLASS lcl_super IMPLEMENTATION.
+  ENDCLASS.
+
+  CLASS lcl_sub DEFINITION INHERITING FROM lcl_super.
+    PUBLIC SECTION.
+      DATA: bar TYPE ty_foo.
+  ENDCLASS.
+  CLASS lcl_sub IMPLEMENTATION.
+  ENDCLASS.
+
+  DATA moo LIKE lcl_sub=>bar.`;
+    const identifier = resolveVariable(abap, "moo");
+    expect(identifier).to.not.equal(undefined);
+    expect(identifier?.getType()).to.be.instanceof(Basic.IntegerType);
+  });
+
+  it("TYPE from super super class", () => {
+    const abap = `
+CLASS lcl_supersuper DEFINITION.
+  PUBLIC SECTION.
+    TYPES: ty_foo TYPE i.
+ENDCLASS.
+CLASS lcl_supersuper IMPLEMENTATION.
+ENDCLASS.
+
+CLASS lcl_super DEFINITION INHERITING FROM lcl_supersuper.
+ENDCLASS.
+CLASS lcl_super IMPLEMENTATION.
+ENDCLASS.
+
+CLASS lcl_sub DEFINITION INHERITING FROM lcl_super.
+  PUBLIC SECTION.
+    DATA: bar TYPE ty_foo.
+ENDCLASS.
+CLASS lcl_sub IMPLEMENTATION.
+ENDCLASS.
+
+DATA moo LIKE lcl_sub=>bar.`;
+    const identifier = resolveVariable(abap, "moo");
+    expect(identifier).to.not.equal(undefined);
+    expect(identifier?.getType()).to.be.instanceof(Basic.IntegerType);
+  });
+
+  it("TYPE REF TO data", () => {
+    const abap = `
+TYPES:
+  BEGIN OF ty_named_collection,
+    name TYPE string,
+  END OF ty_named_collection.
+DATA lr_collection TYPE REF TO ty_named_collection.`;
+    const identifier = resolveVariable(abap, "lr_collection");
+    expect(identifier).to.not.equal(undefined);
+    expect(identifier?.getType()).to.be.instanceof(Basic.DataReference);
+  });
+
+  it("SELECTION-SCREEN TITLE", () => {
+    const abap = `
+  SELECTION-SCREEN BEGIN OF SCREEN 1002 TITLE s_title.
+  SELECTION-SCREEN END OF SCREEN 1002.
+  s_title = 'abc'.`;
+    const identifier = resolveVariable(abap, "s_title");
+    expect(identifier).to.not.equal(undefined);
+    expect(identifier?.getType()).to.be.instanceof(Basic.CharacterType);
   });
 
 });

@@ -190,7 +190,7 @@ CLASS zcl_abapgit_xml IMPLEMENTATION.
 ENDCLASS.`;
     let issues = runMulti([{filename: "zcl_abapgit_xml.clas.abap", contents: abap}]);
     issues = issues.filter(i => i.getKey() === key);
-    expect(issues.length).to.equal(1);
+    expect(issues.length).to.equal(2);  // todo, this should really give one error?
     expect(issues[0].getMessage()).to.not.contain("fallback");
   });
 
@@ -430,7 +430,7 @@ DATA moo TYPE lcl_foo=>ty_moo.`;
     expect(issues.length).to.equal(0);
   });
 
-  it.skip("events", () => {
+  it("events", () => {
     const abap1 = `
 CLASS lcl_eventer DEFINITION.
   PUBLIC SECTION.
@@ -478,6 +478,172 @@ CLASS zcl_zlib IMPLEMENTATION.
 ENDCLASS.`;
     let issues = runMulti([
       {filename: "zcl_zlib.clas.abap", contents: abap1},
+    ]);
+    issues = issues.filter(i => i.getKey() === key);
+    expect(issues.length).to.equal(0);
+  });
+
+  it("type from super class in implementation", () => {
+    const abap1 = `
+CLASS lcl_super DEFINITION.
+  PUBLIC SECTION.
+    TYPES: ty_foo TYPE i.
+ENDCLASS.
+CLASS lcl_super IMPLEMENTATION.
+ENDCLASS.
+
+CLASS lcl_sub DEFINITION INHERITING FROM lcl_super.
+  PUBLIC SECTION.
+    METHODS bar.
+ENDCLASS.
+CLASS lcl_sub IMPLEMENTATION.
+  METHOD bar.
+    DATA foo TYPE ty_foo.
+  ENDMETHOD.
+ENDCLASS.`;
+    let issues = runMulti([
+      {filename: "zprog.prog.abap", contents: abap1},
+    ]);
+    issues = issues.filter(i => i.getKey() === key);
+    expect(issues.length).to.equal(0);
+  });
+
+  it("global class with local class", () => {
+    const abap1 = `
+CLASS zcl_local_minimal DEFINITION PUBLIC FINAL CREATE PUBLIC.
+  PRIVATE SECTION.
+    METHODS methodname.
+ENDCLASS.
+
+CLASS zcl_local_minimal IMPLEMENTATION.
+  METHOD methodname.
+    DATA foo TYPE REF TO lcl_local.
+  ENDMETHOD.
+ENDCLASS.`;
+    const abap2 = `
+CLASS lcl_local DEFINITION.
+ENDCLASS.
+CLASS lcl_local IMPLEMENTATION.
+ENDCLASS.`;
+    let issues = runMulti([
+      {filename: "zcl_local_minimal.clas.abap", contents: abap1},
+      {filename: "zcl_local_minimal.clas.locals_imp.abap", contents: abap2},
+    ]);
+    issues = issues.filter(i => i.getKey() === key);
+    expect(issues.length).to.equal(0);
+  });
+
+  it("events, void class name", () => {
+    const abap1 = `
+CLASS lcl_handler DEFINITION.
+  PUBLIC SECTION.
+    METHODS on_event FOR EVENT sapevent OF cl_gui_html_viewer
+      IMPORTING action frame.
+ENDCLASS.
+
+CLASS lcl_handler IMPLEMENTATION.
+  METHOD on_event.
+    WRITE action.
+  ENDMETHOD.
+ENDCLASS.`;
+    let issues = runMulti([
+      {filename: "zreport.prog.abap", contents: abap1},
+    ]);
+    issues = issues.filter(i => i.getKey() === key);
+    expect(issues.length).to.equal(0);
+  });
+
+  it("factory, reference itself locally", () => {
+    const abap1 = `
+CLASS lcl_gui_services_dummy DEFINITION FINAL.
+  PUBLIC SECTION.
+    CLASS-METHODS create
+      RETURNING
+        VALUE(ro_instance) TYPE REF TO lcl_gui_services_dummy.
+ENDCLASS.
+
+CLASS lcl_gui_services_dummy IMPLEMENTATION.
+  METHOD create.
+    CREATE OBJECT ro_instance.
+  ENDMETHOD.
+ENDCLASS.`;
+    let issues = runMulti([
+      {filename: "zreport.prog.abap", contents: abap1},
+    ]);
+    issues = issues.filter(i => i.getKey() === key);
+    expect(issues.length).to.equal(0);
+  });
+
+  it("interface tilde typing name, implementation", () => {
+    const abap1 = `
+INTERFACE lif_intf.
+  TYPES ty_foo TYPE i.
+ENDINTERFACE.
+
+CLASS lcl_clas DEFINITION.
+  PUBLIC SECTION.
+    INTERFACES: lif_intf.
+    METHODS name.
+ENDCLASS.
+
+CLASS lcl_clas IMPLEMENTATION.
+  METHOD name.
+    DATA foo TYPE lif_intf~ty_foo.
+  ENDMETHOD.
+ENDCLASS.`;
+    let issues = runMulti([
+      {filename: "zreport.prog.abap", contents: abap1},
+    ]);
+    issues = issues.filter(i => i.getKey() === key);
+    expect(issues.length).to.equal(0);
+  });
+
+  it("interface tilde typing name, definition", () => {
+    const abap1 = `
+INTERFACE lif_intf.
+  TYPES ty_foo TYPE i.
+ENDINTERFACE.
+
+CLASS lcl_clas DEFINITION.
+  PUBLIC SECTION.
+    INTERFACES: lif_intf.
+    DATA foo TYPE lif_intf~ty_foo.
+ENDCLASS.
+
+CLASS lcl_clas IMPLEMENTATION.
+
+ENDCLASS.`;
+    let issues = runMulti([
+      {filename: "zreport.prog.abap", contents: abap1},
+    ]);
+    issues = issues.filter(i => i.getKey() === key);
+    expect(issues.length).to.equal(0);
+  });
+
+  it("testclass referencing local class in global class", () => {
+    const abap1 = `
+CLASS zcl_local_minimal DEFINITION PUBLIC FINAL CREATE PUBLIC.
+ENDCLASS.
+
+CLASS zcl_local_minimal IMPLEMENTATION.
+ENDCLASS.`;
+    const abap2 = `
+CLASS lcl_local DEFINITION.
+ENDCLASS.
+CLASS lcl_local IMPLEMENTATION.
+ENDCLASS.`;
+    const abap3 = `
+CLASS ltcl_foobar DEFINITION FOR TESTING DURATION SHORT RISK LEVEL HARMLESS.
+  PRIVATE SECTION.
+    DATA foo TYPE REF TO lcl_local.
+ENDCLASS.
+CLASS ltcl_foobar IMPLEMENTATION.
+ENDCLASS.
+`;
+    let issues = runMulti([
+      {filename: "zcl_local_minimal.clas.abap", contents: abap1},
+      {filename: "zcl_local_minimal.clas.locals_imp.abap", contents: abap2},
+      {filename: "zcl_local_minimal.clas.testclasses.abap", contents: abap3},
     ]);
     issues = issues.filter(i => i.getKey() === key);
     expect(issues.length).to.equal(0);

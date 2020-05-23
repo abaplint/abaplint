@@ -63,7 +63,14 @@ export class CurrentScope {
     if (type === undefined) {
       return;
     }
-    this.current?.getData().types.push(type);
+    this.current?.getData().types.push({name: type.getName(), identifier: type});
+  }
+
+  public addTypeNamed(name: string, type: TypedIdentifier | undefined) {
+    if (type === undefined) {
+      return;
+    }
+    this.current?.getData().types.push({name, identifier: type});
   }
 
   public addClassDefinition(c: IClassDefinition) {
@@ -118,7 +125,10 @@ export class CurrentScope {
 
 ///////////////////////////
 
-  public findObjectReference(name: string): IClassDefinition | IInterfaceDefinition | undefined {
+  public findObjectReference(name: string | undefined): IClassDefinition | IInterfaceDefinition | undefined {
+    if (name === undefined) {
+      return undefined;
+    }
     const clas = this.findClassDefinition(name);
     if (clas) {
       return clas;
@@ -131,7 +141,10 @@ export class CurrentScope {
   }
 
   public existsObjectReference(name: string): boolean {
-    if (this.current?.findClassDefinition(name)) {
+    if (name.toUpperCase() === this.getName().toLocaleUpperCase()
+        && this.getType() === ScopeType.ClassDefinition) {
+      return true;
+    } else if (this.current?.findClassDefinition(name)) {
       return true;
     } else if (this.reg.getObject("CLAS", name)) {
       return true;
@@ -146,7 +159,11 @@ export class CurrentScope {
 
 ///////////////////////////
 
-  public findClassDefinition(name: string): IClassDefinition | undefined {
+  public findClassDefinition(name: string | undefined): IClassDefinition | undefined {
+    if (name === undefined) {
+      return undefined;
+    }
+
     const clocal = this.current?.findClassDefinition(name);
     if (clocal) {
       return clocal;

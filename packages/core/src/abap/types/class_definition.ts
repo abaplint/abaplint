@@ -11,12 +11,16 @@ import {CurrentScope} from "../5_syntax/_current_scope";
 import {IClassDefinition} from "./_class_definition";
 import {TypeDefinitions} from "./type_definitions";
 import {ScopeType} from "../5_syntax/_scope_type";
+import {EventDefinition} from "./event_definition";
+import {Visibility} from "../4_file_information/visibility";
+import {IEventDefinition} from "./_event_definition";
 
 export class ClassDefinition extends Identifier implements IClassDefinition {
   private readonly node: StructureNode;
   private readonly methodDefs: MethodDefinitions;
   private readonly types: TypeDefinitions;
   private readonly attributes: Attributes;
+  private readonly events: IEventDefinition[];
 
   public constructor(node: StructureNode, filename: string, scope: CurrentScope) {
     if (!(node.get() instanceof Structures.ClassDefinition)) {
@@ -27,13 +31,27 @@ export class ClassDefinition extends Identifier implements IClassDefinition {
     super(name, filename);
 
     this.node = node;
+    this.events = [];
 
     scope.push(ScopeType.ClassDefinition, name.getStr(), name.getStart(), filename);
+
+    this.fromInterfaces(scope);
+    this.fillScopeWithSuper(scope);
+
     // todo, handle the sequence of types and attributes
     this.types = new TypeDefinitions(this.node, this.filename, scope);
     this.attributes = new Attributes(this.node, this.filename, scope);
     this.methodDefs = new MethodDefinitions(this.node, this.filename, scope);
+    const events = this.node.findAllStatements(Statements.Events);
+    for (const e of events) {
+      // todo, all these are not Public
+      this.events.push(new EventDefinition(e, Visibility.Public, this.filename, scope));
+    }
     scope.pop();
+  }
+
+  public getEvents() {
+    return this.events;
   }
 
   public getMethodDefinitions(): MethodDefinitions {
@@ -105,5 +123,31 @@ export class ClassDefinition extends Identifier implements IClassDefinition {
   public getEvents() {
   }
 */
+
+  private fillScopeWithSuper(scope: CurrentScope): void {
+    let sup = scope.findClassDefinition(this.getSuperClass());
+    while (sup !== undefined) {
+      scope.addList(sup.getAttributes().getAll());
+      scope.addList(sup.getAttributes().getConstants());
+      for (const t of sup.getTypeDefinitions().getAll()) {
+        scope.addType(t);
+      }
+      sup = scope.findClassDefinition(sup.getSuperClass());
+    }
+  }
+
+  private fromInterfaces(scope: CurrentScope): void {
+    for (const i of this.getImplementing()) {
+      const idef = scope.findInterfaceDefinition(i.name);
+      if (idef === undefined) {
+        continue;
+      }
+
+      for (const t of idef.getTypeDefinitions().getAll()) {
+        const name = i.name + "~" + t.getName();
+        scope.addTypeNamed(name, t);
+      }
+    }
+  }
 
 }

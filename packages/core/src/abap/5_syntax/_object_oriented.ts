@@ -56,6 +56,21 @@ export class ObjectOriented {
     this.scope.addList(classAttributes.getStatic()); // todo, this is not correct, take care of instance vs static
 
     this.fromSuperClass(classDefinition);
+    this.fromInterfaces(classDefinition);
+  }
+
+  private fromInterfaces(classDefinition: IClassDefinition): void {
+    for (const i of classDefinition.getImplementing()) {
+      const idef = this.scope.findInterfaceDefinition(i.name);
+      if (idef === undefined) {
+        continue;
+      }
+
+      for (const t of idef.getTypeDefinitions().getAll()) {
+        const name = i.name + "~" + t.getName();
+        this.scope.addTypeNamed(name, t);
+      }
+    }
   }
 
   private addAliasedAttributes(classDefinition: IClassDefinition): void {
@@ -173,17 +188,16 @@ export class ObjectOriented {
   }
 
   private findMethodInSuper(child: IClassDefinition, methodName: string): IMethodDefinition | undefined {
-    const sup = child.getSuperClass();
-    if (sup === undefined) {
-      return;
+    let sup = child.getSuperClass();
+    while (sup !== undefined) {
+      const cdef = this.findSuperDefinition(sup);
+      const found = this.findMethod(cdef, methodName);
+      if (found) {
+        return found;
+      }
+      sup = cdef.getSuperClass();
     }
-    const cdef = this.findSuperDefinition(sup);
-    const found = this.findMethod(cdef, methodName);
-    if (found) {
-      return found;
-    }
-
-    return this.findMethodInSuper(cdef, methodName);
+    return undefined;
   }
 
   private findSuperDefinition(name: string): IClassDefinition {
@@ -195,19 +209,16 @@ export class ObjectOriented {
   }
 
   private fromSuperClass(child: IClassDefinition) {
-    const sup = child.getSuperClass();
-    if (sup === undefined) {
-      return;
+    let sup = child.getSuperClass();
+    while (sup !== undefined) {
+      const cdef = this.findSuperDefinition(sup);
+      this.scope.addList(cdef.getAttributes().getAll()); // todo, handle scope and instance vs static
+      this.scope.addList(cdef.getAttributes().getConstants());
+      for (const t of cdef.getTypeDefinitions().getAll()) {
+        this.scope.addType(t);
+      }
+      sup = cdef.getSuperClass();
     }
-    const cdef = this.findSuperDefinition(sup);
-
-    const attr = cdef.getAttributes();
-
-    this.scope.addList(attr.getConstants()); // todo, handle scope and instance vs static
-    this.scope.addList(attr.getInstance()); // todo, handle scope and instance vs static
-    this.scope.addList(attr.getStatic()); // todo, handle scope and instance vs static
-
-    this.fromSuperClass(cdef);
   }
 
 }
