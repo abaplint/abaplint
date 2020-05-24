@@ -133,6 +133,24 @@ describe("prefix is current class, default Config", () => {
     expect(issues).to.equal(0);
   });
 
+  it("interface prefix, error", async () => {
+    const abap = `INTERFACE lif_foo.
+    TYPES: foo TYPE i.
+    TYPES boo TYPE lif_foo=>foo.
+  ENDINTERFACE.`;
+    const issues = run(abap);
+    expect(issues).to.equal(1);
+  });
+
+  it("interface prefix, ok", async () => {
+    const abap = `INTERFACE lif_foo.
+    TYPES: foo TYPE i.
+    TYPES boo TYPE foo.
+  ENDINTERFACE.`;
+    const issues = run(abap);
+    expect(issues).to.equal(0);
+  });
+
 });
 
 
