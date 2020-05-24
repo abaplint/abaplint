@@ -21,10 +21,6 @@ export class DDIC {
   }
 
   public lookup(name: string): AbstractType {
-    const dtel = this.lookupDataElement(name);
-    if (!(dtel instanceof Types.VoidType) && !(dtel instanceof Types.UnknownType)) {
-      return dtel;
-    }
     const tabl = this.lookupTable(name);
     if (!(tabl instanceof Types.VoidType) && !(tabl instanceof Types.UnknownType)) {
       return tabl;
@@ -33,12 +29,7 @@ export class DDIC {
     if (!(ttyp instanceof Types.VoidType) && !(ttyp instanceof Types.UnknownType)) {
       return ttyp;
     }
-
-    if (this.reg.inErrorNamespace(name)) {
-      return new Types.UnknownType(name + " not found");
-    } else {
-      return new Types.VoidType(name);
-    }
+    return this.lookupDataElement(name);
   }
 
   public lookupDomain(name: string): AbstractType {

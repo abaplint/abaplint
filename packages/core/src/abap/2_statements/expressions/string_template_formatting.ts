@@ -67,9 +67,9 @@ export class StringTemplateFormatting extends Expression {
     const number = seq(str("NUMBER"), str("="), numberOptions);
     const sign = seq(str("SIGN"), str("="), signOptions);
     const decimals = seq(str("DECIMALS"), str("="), new Source());
+    const alpha = seq(str("ALPHA"), str("="), alphaOptions);
 
-    const formatting = alt(seq(str("ALPHA"), str("="), alphaOptions),
-                           seq(str("TIME"), str("="), dateTimeOptions),
+    const formatting = alt(seq(str("TIME"), str("="), dateTimeOptions),
                            seq(str("DATE"), str("="), dateTimeOptions),
                            seq(str("CASE"), str("="), caseOptions),
                            seq(str("EXPONENT"), new Source()),
@@ -80,7 +80,7 @@ export class StringTemplateFormatting extends Expression {
                            seq(str("COUNTRY"), str("="), new Source()),
                            per(sign, number, decimals),
                            per(timezone, timestamp),
-                           per(width, pad, align));
+                           per(width, pad, alpha, align));
 
     return formatting;
   }

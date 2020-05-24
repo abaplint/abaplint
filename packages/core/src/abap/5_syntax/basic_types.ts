@@ -141,7 +141,7 @@ export class BasicTypes {
       return typ.getType();
     }
 
-    const ddic = this.scope.getDDIC()?.lookup(chainText);
+    const ddic = this.scope.getDDIC().lookup(chainText);
     if (ddic) {
       return ddic;
     }
@@ -292,7 +292,7 @@ export class BasicTypes {
       } else {
     // lookup in local and global scope
         const obj = this.scope.findObjectDefinition(className);
-        if (obj === undefined && this.scope.getDDIC()?.inErrorNamespace(className) === false) {
+        if (obj === undefined && this.scope.getDDIC().inErrorNamespace(className) === false) {
           return new Types.VoidType(className);
         } else if (obj === undefined) {
           return new Types.UnknownType("Could not resolve top " + chainText);
@@ -305,8 +305,13 @@ export class BasicTypes {
       }
     } else {
       found = this.scope.findType(subs[0])?.getType();
-      if (found === undefined && this.scope.getDDIC()?.inErrorNamespace(subs[0]) === false) {
+      if (found === undefined) {
+        found = this.scope.getDDIC().lookupTable(subs[0]);
+      }
+      if (found === undefined && this.scope.getDDIC().inErrorNamespace(subs[0]) === false) {
         return new Types.VoidType(subs[0]);
+      } else if (found instanceof Types.VoidType) {
+        return found;
       } else if (found === undefined) {
         return new Types.UnknownType("Unknown type " + subs[0]);
       }

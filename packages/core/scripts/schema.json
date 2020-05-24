@@ -1577,7 +1577,7 @@
                   "type": "boolean"
                 }
               ],
-              "description": "Reports errors if the current class references itself with \"current_class=>\"\nhttps://rules.abaplint.org/prefix_is_current_class"
+              "description": "Reports errors if the current class or interface references itself with \"current_class=>\"\nhttps://rules.abaplint.org/prefix_is_current_class"
             },
             "release_idoc": {
               "anyOf": [
@@ -1731,7 +1731,7 @@
                   "type": "boolean"
                 }
               ],
-              "description": "Checks for TRY blocks without a CATCH block\nhttps://rules.abaplint.org/try_without_catch"
+              "description": "Checks for TRY blocks without a CATCH and CLEANUP block\nhttps://rules.abaplint.org/try_without_catch"
             },
             "type_begin_single_include": {
               "anyOf": [
@@ -1861,6 +1861,7 @@
       "additionalProperties": false,
       "properties": {
         "files": {
+          "description": "File search, glob pattern",
           "type": "string"
         },
         "folder": {
@@ -1881,6 +1882,7 @@
       "additionalProperties": false,
       "properties": {
         "files": {
+          "description": "input files, glob format",
           "type": "string"
         },
         "skipGeneratedFunctionGroups": {
@@ -1909,22 +1911,26 @@
       "additionalProperties": false,
       "properties": {
         "errorNamespace": {
+          "description": "Report error for objects in this regex namespace. Types not in namespace will be void",
           "type": "string"
         },
         "globalConstants": {
+          "description": "List of full named global constants",
           "items": {
             "type": "string"
           },
           "type": "array"
         },
         "globalMacros": {
+          "description": "List of full named global macros",
           "items": {
             "type": "string"
           },
           "type": "array"
         },
         "version": {
-          "$ref": "#/definitions/Version"
+          "$ref": "#/definitions/Version",
+          "description": "ABAP language version"
         }
       },
       "required": [

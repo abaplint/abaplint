@@ -2,6 +2,7 @@ import {Version} from "./version";
 import {IRule} from "./rules/_irule";
 
 export interface IGlobalConfig {
+  /** input files, glob format */
   files: string;
   skipGeneratedGatewayClasses: boolean;
   skipGeneratedPersistentClasses: boolean;
@@ -15,13 +16,18 @@ export interface IDependency {
   url?: string;
   /** Name of local folder with dependencies */
   folder?: string;
+  /** File search, glob pattern */
   files: string;
 }
 
 export interface ISyntaxSettings {
+  /** ABAP language version */
   version: Version;
+  /** Report error for objects in this regex namespace. Types not in namespace will be void */
   errorNamespace: string;
+  /** List of full named global constants */
   globalConstants?: string[];
+  /** List of full named global macros */
   globalMacros?: string[];
 }
 

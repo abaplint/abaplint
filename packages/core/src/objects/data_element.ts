@@ -30,7 +30,8 @@ export class DataElement extends AbstractObject {
 
       if (dd04v.REFKIND && dd04v.REFKIND._text === "D") {
         const name = dd04v.DOMNAME._text;
-        return ddic.lookupDomain(name);
+        const lookup = ddic.lookupDomain(name);
+        return lookup;
       }
 
       const datatype = dd04v.DATATYPE._text;
