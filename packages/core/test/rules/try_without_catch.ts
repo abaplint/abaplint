@@ -25,4 +25,15 @@ describe("Rule: try without catch", () => {
   it("parser error", () => {
     expect(findIssues("kjlsfklsdfj sdf").length).to.equal(0);
   });
+
+  it("TRY with CLEANUP", () => {
+    const abap = `
+    TRY.
+        ls_vseoclass = mi_object_oriented_object_fct->get_class_properties( ls_clskey ).
+      CLEANUP.
+        zcl_abapgit_language=>restore_login_language( ).
+    ENDTRY.
+    `;
+    expect(findIssues(abap).length).to.equal(0);
+  });
 });
