@@ -22,7 +22,10 @@ export class DDIC {
 
   public lookup(name: string): AbstractType {
     const dtel = this.lookupDataElement(name);
-    if (!(dtel instanceof Types.VoidType) && !(dtel instanceof Types.UnknownType)) {
+    const exists = this.reg.getObjectByType(DataElement, name);
+    if (exists) {
+      return dtel;
+    } else if (!(dtel instanceof Types.VoidType) && !(dtel instanceof Types.UnknownType)) {
       return dtel;
     }
     const tabl = this.lookupTable(name);
