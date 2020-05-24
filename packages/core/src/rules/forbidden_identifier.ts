@@ -20,7 +20,8 @@ export class ForbiddenIdentifier extends ABAPRule {
       key: "forbidden_identifier",
       title: "Forbidden Identifier",
       quickfix: false,
-      shortDescription: `Forbid use of specified identifiers, list of regex`,
+      shortDescription: `Forbid use of specified identifiers, list of regex.
+Used in the transpiler to find javascript keywords, https://github.com/abaplint/transpiler/blob/bda94b8b56e2b7f2f87be2168f12361aa530220e/packages/transpiler/src/validation.ts#L44`,
     };
   }
 
