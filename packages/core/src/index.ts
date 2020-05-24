@@ -33,6 +33,7 @@ import {IFile} from "./files/_ifile";
 import {Position} from "./position";
 import {AbstractFile} from "./files/_abstract_file";
 import {PrettyPrinter} from "./pretty_printer/pretty_printer";
+import {ISpaghettiScope, ISpaghettiScopeNode} from "./abap/5_syntax/_spaghetti_scope";
 
 // do not include this file from anywhere within abaplint
 
@@ -41,6 +42,7 @@ export {MemoryFile, Issue, Config, Version,
   Registry, Stats, LanguageServer, MethodLengthStats, IProgress,
   SemanticSearch, ArtifactsObjects, ArtifactsRules, Objects, IFile,
   Structures, Statements, Expressions, Types, Nodes, IConfig,
+  ISpaghettiScope, ISpaghettiScopeNode,
   AbstractType, TypedIdentifier, BasicTypes, ScopeType, INode, Token,
   IDependency, AbstractFile, SpaghettiScopeNode,
   Tokens, ABAPObject, SyntaxLogic, SpaghettiScope, IdentifierMeta,
