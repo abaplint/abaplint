@@ -19,9 +19,16 @@ export interface IScopeVariable {
   identifier: TypedIdentifier;
 }
 
+export enum DeferredType {
+  Class,
+  Interface,
+}
+
 export interface IScopeData {
   vars: IScopeVariable[];
   types: IScopeVariable[];
+
+  deferred: {name: string, type: DeferredType}[];
 
   cdefs: IClassDefinition[];
   idefs: IInterfaceDefinition[];

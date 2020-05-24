@@ -688,7 +688,34 @@
       "additionalProperties": false,
       "properties": {
         "check": {
-          "description": "List of forbideen identifiers, string array",
+          "description": "List of forbideen identifiers, array of string regex",
+          "items": {
+            "type": "string"
+          },
+          "type": "array"
+        },
+        "exclude": {
+          "description": "List of file regex patterns to exclude",
+          "items": {
+            "type": "string"
+          },
+          "type": "array"
+        },
+        "reason": {
+          "description": "An explanation for why the rule is enforced, information only",
+          "type": "string"
+        }
+      },
+      "required": [
+        "check"
+      ],
+      "type": "object"
+    },
+    "ForbiddenVoidTypeConf": {
+      "additionalProperties": false,
+      "properties": {
+        "check": {
+          "description": "List of forbideen void types, array of string regex",
           "items": {
             "type": "string"
           },
@@ -1165,7 +1192,18 @@
                   "type": "boolean"
                 }
               ],
-              "description": "Forbid use of specified identifiers, list of regex\nhttps://rules.abaplint.org/forbidden_identifier"
+              "description": "Forbid use of specified identifiers, list of regex.\nUsed in the transpiler to find javascript keywords in ABAP identifiers,\nhttps://github.com/abaplint/transpiler/blob/bda94b8b56e2b7f2f87be2168f12361aa530220e/packages/transpiler/src/validation.ts#L44\nhttps://rules.abaplint.org/forbidden_identifier"
+            },
+            "forbidden_void_type": {
+              "anyOf": [
+                {
+                  "$ref": "#/definitions/ForbiddenVoidTypeConf"
+                },
+                {
+                  "type": "boolean"
+                }
+              ],
+              "description": "Forbid use of specified void types.\n\nInspiration:\nBOOLEAN, BOOLE_D, CHAR01, CHAR1, CHAR10, CHAR12, CHAR128, CHAR2, CHAR20, CHAR4, CHAR70,\nDATS, TIMS, DATUM, FLAG, INT4, NUMC3, NUMC4, SAP_BOOL, TEXT25, TEXT80, X255, XFELD\nhttps://rules.abaplint.org/forbidden_void_type"
             },
             "form_no_dash": {
               "anyOf": [

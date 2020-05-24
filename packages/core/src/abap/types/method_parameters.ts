@@ -83,7 +83,7 @@ export class MethodParameters implements IMethodParameters{
         if (found) {
           this.importing.push(new TypedIdentifier(token, this.filename, found.getType()));
         } else if (doVoid) {
-          this.importing.push(new TypedIdentifier(token, this.filename, new VoidType()));
+          this.importing.push(new TypedIdentifier(token, this.filename, new VoidType(className)));
         } else {
           const type = new UnknownType(`handler parameter not found "${search}"`);
           this.importing.push(new TypedIdentifier(token, this.filename, type));

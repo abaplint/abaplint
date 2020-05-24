@@ -748,4 +748,28 @@ DATA: lo_node TYPE REF TO cl_void,
     expect(identifier?.getType()).to.be.instanceof(Basic.VoidType);
   });
 
+  it("INTERFACE DEFERRED", () => {
+    const abap = `
+INTERFACE lif_foo DEFERRED.
+DATA foo TYPE REF TO lif_foo.
+INTERFACE lif_foo.
+ENDINTERFACE.`;
+    const identifier = resolveVariable(abap, "foo");
+    expect(identifier).to.not.equal(undefined);
+    expect(identifier?.getType()).to.be.instanceof(Basic.ObjectReferenceType);
+  });
+
+  it("CLASS DEFERRED", () => {
+    const abap = `
+CLASS lcl_bar DEFINITION DEFERRED.
+DATA bar TYPE REF TO lcl_bar.
+CLASS lcl_bar DEFINITION.
+ENDCLASS.
+CLASS lcl_bar IMPLEMENTATION.
+ENDCLASS.`;
+    const identifier = resolveVariable(abap, "bar");
+    expect(identifier).to.not.equal(undefined);
+    expect(identifier?.getType()).to.be.instanceof(Basic.ObjectReferenceType);
+  });
+
 });

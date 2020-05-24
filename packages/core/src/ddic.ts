@@ -37,7 +37,7 @@ export class DDIC {
     if (this.reg.inErrorNamespace(name)) {
       return new Types.UnknownType(name + " not found");
     } else {
-      return new Types.VoidType();
+      return new Types.VoidType(name);
     }
   }
 
@@ -48,7 +48,7 @@ export class DDIC {
     } else if (this.reg.inErrorNamespace(name)) {
       return new Types.UnknownType(name + " not found");
     } else {
-      return new Types.VoidType();
+      return new Types.VoidType(name);
     }
   }
 
@@ -59,7 +59,7 @@ export class DDIC {
     } else if (this.reg.inErrorNamespace(name)) {
       return new Types.UnknownType(name + " not found");
     } else {
-      return new Types.VoidType();
+      return new Types.VoidType(name);
     }
   }
 
@@ -70,7 +70,7 @@ export class DDIC {
     } else if (this.reg.inErrorNamespace(name)) {
       return new Types.UnknownType(name + " not found");
     } else {
-      return new Types.VoidType();
+      return new Types.VoidType(name);
     }
   }
 
@@ -81,7 +81,7 @@ export class DDIC {
     } else if (this.reg.inErrorNamespace(name)) {
       return new Types.UnknownType(name + " not found");
     } else {
-      return new Types.VoidType();
+      return new Types.VoidType(name);
     }
   }
 

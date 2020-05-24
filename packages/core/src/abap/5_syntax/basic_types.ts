@@ -36,7 +36,7 @@ export class BasicTypes {
     if (children[1] && children[1].getFirstToken().getStr() === "=>") {
       const obj = this.scope.findObjectDefinition(name);
       if (obj === undefined && this.scope.getDDIC()?.inErrorNamespace(name) === false) {
-        return new Types.VoidType();
+        return new Types.VoidType(name);
       } else if (obj === undefined) {
         return new Types.UnknownType("Could not resolve top " + name);
       }
@@ -46,13 +46,13 @@ export class BasicTypes {
     } else if (children[1] && children[2] && children[1].getFirstToken().getStr() === "->") {
       type = this.scope.findVariable(name)?.getType();
       if (type instanceof Types.VoidType) {
-        return new Types.VoidType();
+        return new Types.VoidType(name);
       } else if (!(type instanceof Types.ObjectReferenceType)) {
         return new Types.UnknownType("Type error, not a object reference " + name);
       }
       const def = this.scope.findObjectDefinition(type.getName());
       if (def === undefined && this.scope.getDDIC().inErrorNamespace(type.getName()) === false) {
-        return new Types.VoidType();
+        return new Types.VoidType(type.getName());
       } else if (def === undefined) {
         return new Types.UnknownType("Type error, could not find object definition");
       }
@@ -189,7 +189,7 @@ export class BasicTypes {
       } else if (type instanceof Types.TableType) {
         return type.getRowType();
       } else if (type instanceof Types.VoidType) {
-        return new Types.VoidType();
+        return new Types.VoidType(name);
       } else {
         return new Types.UnknownType("Type error, not a table type " + name);
       }
@@ -242,7 +242,7 @@ export class BasicTypes {
       if (found instanceof Types.TableType) {
         return found.getRowType();
       } else if (found instanceof Types.VoidType) {
-        return new Types.VoidType();
+        return new Types.VoidType(typename?.getFirstToken().getStr());
       } else {
         return new Types.UnknownType("TYPE LINE OF, could not resolve type");
       }
@@ -293,7 +293,7 @@ export class BasicTypes {
     // lookup in local and global scope
         const obj = this.scope.findObjectDefinition(className);
         if (obj === undefined && this.scope.getDDIC()?.inErrorNamespace(className) === false) {
-          return new Types.VoidType();
+          return new Types.VoidType(className);
         } else if (obj === undefined) {
           return new Types.UnknownType("Could not resolve top " + chainText);
         }
@@ -306,7 +306,7 @@ export class BasicTypes {
     } else {
       found = this.scope.findType(subs[0])?.getType();
       if (found === undefined && this.scope.getDDIC()?.inErrorNamespace(subs[0]) === false) {
-        return new Types.VoidType();
+        return new Types.VoidType(subs[0]);
       } else if (found === undefined) {
         return new Types.UnknownType("Unknown type " + subs[0]);
       }
@@ -357,7 +357,7 @@ export class BasicTypes {
     }
 
     if (this.scope.getDDIC()?.inErrorNamespace(name) === false) {
-      return new Types.VoidType();
+      return new Types.VoidType(name);
     }
 
     return new Types.UnknownType("REF, unable to resolve " + name);

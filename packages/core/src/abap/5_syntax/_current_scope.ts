@@ -12,7 +12,7 @@ import {IInterfaceDefinition} from "../types/_interface_definition";
 import {IFormDefinition} from "../types/_form_definition";
 import {Class} from "../../objects/class";
 import {Interface} from "../../objects/interface";
-import {IScopeIdentifier} from "./_spaghetti_scope";
+import {IScopeIdentifier, DeferredType} from "./_spaghetti_scope";
 
 export class CurrentScope {
   protected readonly reg: IRegistry;
@@ -99,6 +99,13 @@ export class CurrentScope {
     this.current?.getData().vars.push({name: identifier.getName(), identifier});
   }
 
+  public addDeferred(name: string | undefined, type: DeferredType) {
+    if (name === undefined) {
+      return;
+    }
+    this.current?.getData().deferred.push({name, type});
+  }
+
   public addListPrefix(identifiers: readonly TypedIdentifier[], prefix: string) {
     for (const id of identifiers) {
       this.addNamedIdentifier(prefix + id.getName(), id);
@@ -141,8 +148,11 @@ export class CurrentScope {
   }
 
   public existsObject(name: string): boolean {
+
     if (name.toUpperCase() === this.getName().toLocaleUpperCase()
         && this.getType() === ScopeType.ClassDefinition) {
+      return true;
+    } else if (this.current?.findDeferred(name) !== undefined) {
       return true;
     } else if (this.current?.findClassDefinition(name)) {
       return true;

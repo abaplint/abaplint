@@ -32,6 +32,8 @@ import {Constants} from "./structures/constants";
 import {ClassDefinition} from "../types/class_definition";
 import {InterfaceDefinition} from "../types/interface_definition";
 import {ISyntaxResult} from "./_spaghetti_scope";
+import {InterfaceDeferred} from "./statements/interface_deferred";
+import {ClassDeferred} from "./statements/class_deferred";
 
 // assumption: objects are parsed without parsing errors
 
@@ -254,6 +256,10 @@ export class SyntaxLogic {
       this.scope.addIdentifier(new Tables().runSyntax(node, this.scope, filename));
     } else if (s instanceof Statements.SelectOption) {
       this.scope.addIdentifier(new SelectOption().runSyntax(node, this.scope, filename));
+    } else if (s instanceof Statements.InterfaceDeferred) {
+      new InterfaceDeferred().runSyntax(node, this.scope, filename);
+    } else if (s instanceof Statements.ClassDeferred) {
+      new ClassDeferred().runSyntax(node, this.scope, filename);
     } else if (s instanceof Statements.Form) {
       this.helpers.proc.findFormScope(node, filename);
     } else if (s instanceof Statements.Perform) {
