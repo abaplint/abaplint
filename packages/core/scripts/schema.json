@@ -1165,7 +1165,7 @@
                   "type": "boolean"
                 }
               ],
-              "description": "Forbid use of specified identifiers, list of regex\nhttps://rules.abaplint.org/forbidden_identifier"
+              "description": "Forbid use of specified identifiers, list of regex.\nUsed in the transpiler to find javascript keywords, https://github.com/abaplint/transpiler/blob/bda94b8b56e2b7f2f87be2168f12361aa530220e/packages/transpiler/src/validation.ts#L44\nhttps://rules.abaplint.org/forbidden_identifier"
             },
             "form_no_dash": {
               "anyOf": [

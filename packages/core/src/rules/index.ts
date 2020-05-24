@@ -50,6 +50,7 @@ export * from "./preferred_compare_operator";
 export * from "./prefix_is_current_class";
 export * from "./release_idoc";
 export * from "./forbidden_identifier";
+export * from "./forbidden_void_type";
 export * from "./remove_descriptions";
 export * from "./rfc_error_handling";
 export * from "./short_case";
