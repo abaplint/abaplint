@@ -55,11 +55,7 @@ export class DoubleSpace extends ABAPRule {
           && !(s.get() instanceof MethodDef)
           && !(s.get() instanceof MacroCall)
           && !(s.get() instanceof MacroContent)) {
-        const f = this.checkKeywords(s);
-        if (f !== undefined) {
-          const issuePos = new Position(f.getEnd().getRow(), f.getEnd().getCol() + 1 );
-          issues.push(Issue.atPosition(file, issuePos, this.getMessage(), this.getMetadata().key));
-        }
+        issues = issues.concat(this.checkKeywords(s, file));
       }
 
       issues = issues.concat(this.checkParen(s, file));
@@ -97,8 +93,9 @@ export class DoubleSpace extends ABAPRule {
         }
 
         if (t.getCol() > cPosition.getCol() + 2) {
-          const issuePos = new Position(cPosition.getRow(), cPosition.getCol() + 2);
-          issues.push(Issue.atPosition(file, issuePos, this.getMessage(), this.getMetadata().key));
+          const issueStartPos = new Position(cPosition.getRow(), cPosition.getCol() + 2);
+          const issueEndPos = new Position(t.getRow(), t.getCol());
+          issues.push(Issue.atRange( file, issueStartPos, issueEndPos, this.getMessage(), this.getMetadata().key));
         }
 
         break;
@@ -123,8 +120,9 @@ export class DoubleSpace extends ABAPRule {
           && prev instanceof ParenLeftW
           && !(t instanceof Comment)
           && prev.getEnd().getCol() + 1 < t.getCol()) {
-        const issuePos = new Position(prev.getRow(), prev.getCol() + 2);
-        issues.push(Issue.atPosition( file, issuePos, this.getMessage(), this.getMetadata().key));
+        const issueStartPos = new Position(prev.getRow(), prev.getCol() + 2);
+        const issueEndPos = new Position(t.getRow(), t.getCol());
+        issues.push(Issue.atRange( file, issueStartPos, issueEndPos, this.getMessage(), this.getMetadata().key));
       }
 
       if (this.getConfig().endParen === true
@@ -132,8 +130,9 @@ export class DoubleSpace extends ABAPRule {
           && !(prev instanceof ParenLeftW)
           && (t instanceof WParenRightW || t instanceof WParenRight)
           && prev.getEnd().getCol() + 1 < t.getCol()) {
-        const issuePos = new Position(prev.getEnd().getRow(), prev.getEnd().getCol() + 1);
-        issues.push(Issue.atPosition(file, issuePos, this.getMessage(), this.getMetadata().key));
+        const issueStartPos = new Position(prev.getEnd().getRow(), prev.getEnd().getCol() + 1);
+        const issueEndPos = new Position(t.getRow(), t.getCol());
+        issues.push(Issue.atRange( file, issueStartPos, issueEndPos, this.getMessage(), this.getMetadata().key));
       }
 
       prev = t;
@@ -142,12 +141,13 @@ export class DoubleSpace extends ABAPRule {
     return issues;
   }
 
-  private checkKeywords(s: StatementNode): Token | undefined {
+  private checkKeywords(s: StatementNode, file: ABAPFile): Issue[] {
+    const issues: Issue[] = [];
     let prev: TokenNode | undefined = undefined;
 
     if (s.getColon() !== undefined || s.getPragmas().length > 0) {
       // for chained statments just give up
-      return undefined;
+      return [];
     }
 
     for (const n of s.getTokenNodes()) {
@@ -168,13 +168,15 @@ export class DoubleSpace extends ABAPRule {
 
       if (prev.get().getStart().getRow() === n.get().getStart().getRow()
           && prev.get().getEnd().getCol() + 1 < n.get().getStart().getCol()) {
-        return prev.get();
+        const issueStartPos = new Position(prev.get().getEnd().getRow(), prev.get().getEnd().getCol() + 1 );
+        const issueEndPos = new Position(n.get().getRow(), n.get().getCol());
+        issues.push(Issue.atRange( file, issueStartPos, issueEndPos, this.getMessage(), this.getMetadata().key));
+        return issues;
       }
 
       prev = n;
     }
-
-    return undefined;
+    return [];
   }
 
 }
