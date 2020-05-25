@@ -19,6 +19,7 @@ const tests = [
   {abap: "call(  \"comment\n).", cnt: 0},
   {abap: "foo = |  )|.", cnt: 0},
   {abap: "call( |hello| ).", cnt: 0},
+  {abap: "call(  ).", cnt: 1}, // call with empty parameters should only report once
   {abap: "call( |moo {\nvar }bar| ).", cnt: 0},
   {abap: "CLASS zsdfsdf DEFINITION PUBLIC  ABSTRACT FINAL CREATE PUBLIC.", cnt: 1},
   {abap: "CLASS-METHODS class_includes RETURNING VALUE(rt_programs)     TYPE scit_program.", cnt: 0},
