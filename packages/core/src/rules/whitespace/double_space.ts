@@ -3,7 +3,7 @@ import {ABAPRule} from "../_abap_rule";
 import {ABAPFile} from "../../files";
 import {BasicRuleConfig} from "../_basic_rule_config";
 import {Token} from "../../abap/1_lexer/tokens/_token";
-import {ParenLeftW, Comment, WParenRightW, WParenRight, StringTemplate} from "../../abap/1_lexer/tokens";
+import {ParenLeftW, Comment, WParenRightW, WParenRight} from "../../abap/1_lexer/tokens";
 import {TokenNode, StatementNode, TokenNodeRegex} from "../../abap/nodes";
 import {Unknown, MacroContent, MacroCall} from "../../abap/2_statements/statements/_statement";
 import {MethodDef} from "../../abap/2_statements/statements";
@@ -57,8 +57,8 @@ export class DoubleSpace extends ABAPRule {
           && !(s.get() instanceof MacroContent)) {
         const f = this.checkKeywords(s);
         if (f !== undefined) {
-          const issue = Issue.atToken(file, f, this.getMessage(), this.getMetadata().key);
-          issues.push(issue);
+          const issuePos = new Position(f.getEnd().getRow(), f.getEnd().getCol() + 1 );
+          issues.push(Issue.atPosition(file, issuePos, this.getMessage(), this.getMetadata().key));
         }
       }
 
@@ -97,8 +97,8 @@ export class DoubleSpace extends ABAPRule {
         }
 
         if (t.getCol() > cPosition.getCol() + 2) {
-          const issue = Issue.atToken(file, colon, this.getMessage(), this.getMetadata().key);
-          issues.push(issue);
+          const issuePos = new Position(cPosition.getRow(), cPosition.getCol() + 2);
+          issues.push(Issue.atPosition(file, issuePos, this.getMessage(), this.getMetadata().key));
         }
 
         break;
@@ -122,18 +122,18 @@ export class DoubleSpace extends ABAPRule {
           && prev.getRow() === t.getRow()
           && prev instanceof ParenLeftW
           && !(t instanceof Comment)
-          && !(t instanceof StringTemplate)  // tempoary workaround, see #427
           && prev.getEnd().getCol() + 1 < t.getCol()) {
-        const issue = Issue.atToken(file, prev, this.getMessage(), this.getMetadata().key);
-        issues.push(issue);
+        const issuePos = new Position(prev.getRow(), prev.getCol() + 2);
+        issues.push(Issue.atPosition( file, issuePos, this.getMessage(), this.getMetadata().key));
       }
 
       if (this.getConfig().endParen === true
           && prev.getRow() === t.getRow()
+          && !(prev instanceof ParenLeftW)
           && (t instanceof WParenRightW || t instanceof WParenRight)
           && prev.getEnd().getCol() + 1 < t.getCol()) {
-        const issue = Issue.atToken(file, prev, this.getMessage(), this.getMetadata().key);
-        issues.push(issue);
+        const issuePos = new Position(prev.getEnd().getRow(), prev.getEnd().getCol() + 1);
+        issues.push(Issue.atPosition(file, issuePos, this.getMessage(), this.getMetadata().key));
       }
 
       prev = t;
@@ -146,7 +146,7 @@ export class DoubleSpace extends ABAPRule {
     let prev: TokenNode | undefined = undefined;
 
     if (s.getColon() !== undefined || s.getPragmas().length > 0) {
-// for chained statments just give up
+      // for chained statments just give up
       return undefined;
     }
 
@@ -160,8 +160,7 @@ export class DoubleSpace extends ABAPRule {
           || prev.get().getStr() === "("
           || prev.get().getStr().toUpperCase() === "CHANGING"
           || prev.get().getStr().toUpperCase() === "EXPORTING"
-          || prev.get().getStr().toUpperCase() === "OTHERS"
-          || n.get() instanceof StringTemplate) { // tempoary workaround, see #427
+          || prev.get().getStr().toUpperCase() === "OTHERS") {
         // not a keyword, continue
         prev = n;
         continue;
