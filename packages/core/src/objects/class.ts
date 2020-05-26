@@ -12,7 +12,7 @@ export enum ClassCategory {
 }
 
 export class Class extends ABAPObject {
-  private def: IClassDefinition | undefined;
+  private def: IClassDefinition | undefined = undefined;
 
   public getType(): string {
     return "CLAS";
@@ -31,6 +31,11 @@ export class Class extends ABAPObject {
       maxLength: 30,
       allowNamespace: true,
     };
+  }
+
+  public setDirty(): void {
+    this.def = undefined;
+    super.setDirty();
   }
 
   // todo, rename

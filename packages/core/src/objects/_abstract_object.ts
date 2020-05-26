@@ -24,9 +24,8 @@ export abstract class AbstractObject implements IObject {
     return this.old;
   }
 
-// todo, delete this method? it should be implemented in subclasses
-  public parse(_version?: Version, _globalMacros?: readonly string[]): IObject {
-    return this;
+  public parse(_version?: Version, _globalMacros?: readonly string[]): boolean {
+    return false;
   }
 
   public getName(): string {

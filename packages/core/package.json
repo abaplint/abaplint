@@ -62,7 +62,7 @@
         "mocha": "^7.2.0",
         "nyc": "^15.0.1",
         "source-map-support": "^0.5.19",
-        "ts-json-schema-generator": "^0.68.0",
+        "ts-json-schema-generator": "^0.68.1",
         "typescript": "^3.9.3"
     },
     "dependencies": {
