@@ -8,6 +8,7 @@ import {TokenNode, StatementNode, TokenNodeRegex} from "../../abap/nodes";
 import {Unknown, MacroContent, MacroCall} from "../../abap/2_statements/statements/_statement";
 import {MethodDef} from "../../abap/2_statements/statements";
 import {Position} from "../../position";
+import {EditHelper} from "../../edit";
 
 export class DoubleSpaceConf extends BasicRuleConfig {
   /** Check for double space after keywords */
@@ -28,7 +29,7 @@ export class DoubleSpace extends ABAPRule {
     return {
       key: "double_space",
       title: "Double space",
-      quickfix: false,
+      quickfix: true,
       shortDescription: `Checks that only a single space follows certain common statements.`,
     };
   }
@@ -95,7 +96,8 @@ export class DoubleSpace extends ABAPRule {
         if (t.getCol() > cPosition.getCol() + 2) {
           const issueStartPos = new Position(cPosition.getRow(), cPosition.getCol() + 2);
           const issueEndPos = new Position(t.getRow(), t.getCol());
-          issues.push(Issue.atRange( file, issueStartPos, issueEndPos, this.getMessage(), this.getMetadata().key));
+          const fix = EditHelper.deleteRange(file, issueStartPos, issueEndPos);
+          issues.push(Issue.atRange( file, issueStartPos, issueEndPos, this.getMessage(), this.getMetadata().key, fix));
         }
 
         break;
@@ -122,7 +124,8 @@ export class DoubleSpace extends ABAPRule {
           && prev.getEnd().getCol() + 1 < t.getCol()) {
         const issueStartPos = new Position(prev.getRow(), prev.getCol() + 2);
         const issueEndPos = new Position(t.getRow(), t.getCol());
-        issues.push(Issue.atRange( file, issueStartPos, issueEndPos, this.getMessage(), this.getMetadata().key));
+        const fix = EditHelper.deleteRange(file, issueStartPos, issueEndPos);
+        issues.push(Issue.atRange( file, issueStartPos, issueEndPos, this.getMessage(), this.getMetadata().key, fix));
       }
 
       if (this.getConfig().endParen === true
@@ -132,7 +135,8 @@ export class DoubleSpace extends ABAPRule {
           && prev.getEnd().getCol() + 1 < t.getCol()) {
         const issueStartPos = new Position(prev.getEnd().getRow(), prev.getEnd().getCol() + 1);
         const issueEndPos = new Position(t.getRow(), t.getCol());
-        issues.push(Issue.atRange( file, issueStartPos, issueEndPos, this.getMessage(), this.getMetadata().key));
+        const fix = EditHelper.deleteRange(file, issueStartPos, issueEndPos);
+        issues.push(Issue.atRange( file, issueStartPos, issueEndPos, this.getMessage(), this.getMetadata().key, fix));
       }
 
       prev = t;
@@ -170,7 +174,8 @@ export class DoubleSpace extends ABAPRule {
           && prev.get().getEnd().getCol() + 1 < n.get().getStart().getCol()) {
         const issueStartPos = new Position(prev.get().getEnd().getRow(), prev.get().getEnd().getCol() + 1 );
         const issueEndPos = new Position(n.get().getRow(), n.get().getCol());
-        issues.push(Issue.atRange( file, issueStartPos, issueEndPos, this.getMessage(), this.getMetadata().key));
+        const fix = EditHelper.deleteRange(file, issueStartPos, issueEndPos);
+        issues.push(Issue.atRange( file, issueStartPos, issueEndPos, this.getMessage(), this.getMetadata().key, fix));
         return issues;
       }
 
