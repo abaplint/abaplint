@@ -1,4 +1,4 @@
-import {testRule} from "../_utils";
+import {testRule, testRuleFix} from "../_utils";
 import {DoubleSpace} from "../../../src/rules";
 
 const tests = [
@@ -36,7 +36,20 @@ const tests = [
     "                       IMPORTING et_commit_sha1s = lt_parents\n" +
     "                                 es_1st_commit   = ls_next_commit\n" +
     "                       CHANGING  ct_commits      = ct_commits ).", cnt: 0},
-//  {abap: "call(  |moo {\nvar }bar| ).", cnt: 1},
+  {abap: "call(  |moo {\nvar }bar| ).", cnt: 1},
 ];
 
 testRule(tests, DoubleSpace);
+
+const fixes = [
+  // after colon
+  {input: "DATA:  foo TYPE c.", output: "DATA: foo TYPE c."},
+  // left of parenthesis
+  {input: "call( var     ).", output: "call( var )."},
+  // right of parenthesis
+  {input: "call(     var ).", output: "call( var )."},
+  // after keyword
+  {input: "REPORT     zfoobar.", output: "REPORT zfoobar."},
+];
+
+testRuleFix(fixes, DoubleSpace);
