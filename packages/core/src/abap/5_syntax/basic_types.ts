@@ -191,7 +191,7 @@ export class BasicTypes {
       } else if (type instanceof Types.TableType) {
         return type.getRowType();
       } else if (type instanceof Types.VoidType) {
-        return new Types.VoidType(name);
+        return new Types.VoidType(type.getVoided());
       } else {
         return new Types.UnknownType("Type error, not a table type " + name);
       }
