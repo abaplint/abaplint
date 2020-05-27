@@ -14,6 +14,7 @@ export * from "./string_type";
 export * from "./structure_type";
 export * from "./table_type";
 export * from "./time_type";
+export * from "./numeric_generic_type";
 export * from "./unknown_type";
 export * from "./void_type";
 export * from "./xsequence_type";

@@ -112,6 +112,8 @@ export class BasicTypes {
       return new Types.CLikeType();
     } else if (chainText === "ANY") {
       return new Types.AnyType();
+    } else if (chainText === "NUMERIC") {
+      return new Types.NumericGenericType();
     } else if (chainText === "I") {
       return new Types.IntegerType();
     } else if (chainText === "F") {
