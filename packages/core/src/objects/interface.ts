@@ -2,7 +2,7 @@ import {ABAPObject} from "./_abap_object";
 import {IInterfaceDefinition} from "../abap/types/_interface_definition";
 
 export class Interface extends ABAPObject {
-  private def: IInterfaceDefinition | undefined;
+  private def: IInterfaceDefinition | undefined = undefined;
 
   public getType(): string {
     return "INTF";
@@ -21,6 +21,11 @@ export class Interface extends ABAPObject {
       maxLength: 30,
       allowNamespace: true,
     };
+  }
+
+  public setDirty(): void {
+    this.def = undefined;
+    super.setDirty();
   }
 
   public getDescription(): string | undefined {

@@ -18,14 +18,17 @@ export class FindGlobalDefinitions {
   }
 
   public run() {
-    this.clearAll();
-
     const MAX_PASSES = 3;
     let lastPass = Number.MAX_SAFE_INTEGER;
 
+    // the setDirty method in the objects clears the definitions
+    const candidates = this.reg.getObjects().filter((o) => {
+      return (o instanceof Interface || o instanceof Class) && o.getDefinition() === undefined;
+    });
+
     for (let i = 0; i < MAX_PASSES; i++) {
       let thisPass = 0;
-      for (const o of this.reg.getObjects()) {
+      for (const o of candidates) {
         if (!(o instanceof Interface) && !(o instanceof Class)) {
           continue;
         }
@@ -45,14 +48,6 @@ export class FindGlobalDefinitions {
   }
 
 /////////////////////////////
-
-  private clearAll() {
-    for (const o of this.reg.getObjects()) {
-      if (o instanceof Interface || o instanceof Class) {
-        o.setDefinition(undefined);
-      }
-    }
-  }
 
   private countUntyped(obj: Interface | Class): number {
     const def = obj.getDefinition();

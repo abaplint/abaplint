@@ -2,7 +2,6 @@ import {AbstractObject} from "./_abstract_object";
 import {ABAPFile} from "../files";
 import {xmlToArray} from "../xml_utils";
 import {ABAPParser} from "../abap/abap_parser";
-import {IObject} from "./_iobject";
 import {Version} from "../version";
 import {ISyntaxResult} from "../abap/5_syntax/_spaghetti_scope";
 
@@ -24,9 +23,9 @@ export abstract class ABAPObject extends AbstractObject {
     return !!x && x instanceof ABAPObject;
   }
 
-  public parse(version: Version, globalMacros: readonly string[] | undefined): IObject {
+  public parse(version: Version, globalMacros: readonly string[] | undefined): boolean {
     if (this.isDirty() === false) {
-      return this;
+      return false;
     }
 
     const abapFiles = this.files.filter(f => f.getFilename().endsWith(".abap"));
@@ -36,7 +35,7 @@ export abstract class ABAPObject extends AbstractObject {
     this.old = results.issues;
     this.dirty = false;
 
-    return this;
+    return true;
   }
 
   public setDirty(): void {
