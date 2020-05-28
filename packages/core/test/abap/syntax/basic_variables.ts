@@ -772,7 +772,7 @@ ENDCLASS.`;
     expect(identifier?.getType()).to.be.instanceof(Basic.ObjectReferenceType);
   });
 
-  it("LIKE LINE OF should inherit the void name", () => {
+  it("LIKE LINE OF should inherit the void name, 1", () => {
     const abap = `
     DATA lt_stab TYPE abap_trans_srcbind_tab.
     FIELD-SYMBOLS <ls_stab> LIKE LINE OF lt_stab.`;
@@ -781,6 +781,17 @@ ENDCLASS.`;
     const type = identifier?.getType();
     expect(type).to.be.instanceof(Basic.VoidType);
     expect((type as Basic.VoidType).getVoided()?.toLowerCase()).to.equal("abap_trans_srcbind_tab");
+  });
+
+  it("LIKE LINE OF should inherit the void name, 2", () => {
+    const abap = `
+    DATA lo_zip TYPE REF TO cl_abap_zip.
+    FIELD-SYMBOLS <ls_zipfile> LIKE LINE OF lo_zip->files.`;
+    const identifier = resolveVariable(abap, "<ls_zipfile>");
+    expect(identifier).to.not.equal(undefined);
+    const type = identifier?.getType();
+    expect(type).to.be.instanceof(Basic.VoidType);
+    expect((type as Basic.VoidType).getVoided()?.toLowerCase()).to.equal("cl_abap_zip");
   });
 
 });
