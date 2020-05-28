@@ -803,4 +803,13 @@ ENDCLASS.`;
     expect(type).to.be.instanceof(Basic.PackedType);
   });
 
+  it("TYPE sy-index", () => {
+    const abap = `
+    DATA foo TYPE sy-index.`;
+    const identifier = resolveVariable(abap, "foo");
+    expect(identifier).to.not.equal(undefined);
+    const type = identifier?.getType();
+    expect(type).to.be.instanceof(Basic.IntegerType);
+  });
+
 });
