@@ -1203,7 +1203,7 @@
                   "type": "boolean"
                 }
               ],
-              "description": "Forbid use of specified void types.\n\nInspiration:\nBOOLEAN, BOOLE_D, CHAR01, CHAR1, CHAR10, CHAR12, CHAR128, CHAR2, CHAR20, CHAR4, CHAR70,\nDATS, TIMS, DATUM, FLAG, INT4, NUMC3, NUMC4, SAP_BOOL, TEXT25, TEXT80, X255, XFELD\nhttps://rules.abaplint.org/forbidden_void_type"
+              "description": "Forbid use of specified void types.\nhttps://rules.abaplint.org/forbidden_void_type"
             },
             "form_no_dash": {
               "anyOf": [

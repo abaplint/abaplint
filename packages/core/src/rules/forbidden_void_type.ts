@@ -9,6 +9,7 @@ import {VoidType} from "../abap/types/basic/void_type";
 import {ScopeType} from "../abap/5_syntax/_scope_type";
 import {AbstractType} from "../abap/types/basic/_abstract_type";
 import {StructureType} from "../abap/types/basic";
+import {IRuleMetadata} from "./_irule";
 
 export class ForbiddenVoidTypeConf extends BasicRuleConfig {
   /** List of forbideen void types, array of string regex */
@@ -19,14 +20,13 @@ export class ForbiddenVoidType extends BasicRuleConfig {
 
   private conf = new ForbiddenVoidTypeConf();
 
-  public getMetadata() {
+  public getMetadata(): IRuleMetadata {
     return {
       key: "forbidden_void_type",
       title: "Forbidden Void Type",
       quickfix: false,
-      shortDescription: `Forbid use of specified void types.
-
-Inspiration:
+      shortDescription: `Forbid use of specified void types.`,
+      extendedInformation: `Inspiration:
 BOOLEAN, BOOLE_D, CHAR01, CHAR1, CHAR10, CHAR12, CHAR128, CHAR2, CHAR20, CHAR4, CHAR70,
 DATS, TIMS, DATUM, FLAG, INT4, NUMC3, NUMC4, SAP_BOOL, TEXT25, TEXT80, X255, XFELD`,
     };

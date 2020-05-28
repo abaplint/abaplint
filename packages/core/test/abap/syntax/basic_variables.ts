@@ -772,4 +772,15 @@ ENDCLASS.`;
     expect(identifier?.getType()).to.be.instanceof(Basic.ObjectReferenceType);
   });
 
+  it("LIKE LINE OF should inherit the void name", () => {
+    const abap = `
+    DATA lt_stab TYPE abap_trans_srcbind_tab.
+    FIELD-SYMBOLS <ls_stab> LIKE LINE OF lt_stab.`;
+    const identifier = resolveVariable(abap, "<ls_stab>");
+    expect(identifier).to.not.equal(undefined);
+    const type = identifier?.getType();
+    expect(type).to.be.instanceof(Basic.VoidType);
+    expect((type as Basic.VoidType).getVoided()?.toLowerCase()).to.equal("abap_trans_srcbind_tab");
+  });
+
 });

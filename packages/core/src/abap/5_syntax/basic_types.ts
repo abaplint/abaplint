@@ -112,6 +112,8 @@ export class BasicTypes {
       return new Types.CLikeType();
     } else if (chainText === "ANY") {
       return new Types.AnyType();
+    } else if (chainText === "NUMERIC") {
+      return new Types.NumericGenericType();
     } else if (chainText === "I") {
       return new Types.IntegerType();
     } else if (chainText === "F") {
@@ -189,7 +191,7 @@ export class BasicTypes {
       } else if (type instanceof Types.TableType) {
         return type.getRowType();
       } else if (type instanceof Types.VoidType) {
-        return new Types.VoidType(name);
+        return new Types.VoidType(type.getVoided());
       } else {
         return new Types.UnknownType("Type error, not a table type " + name);
       }

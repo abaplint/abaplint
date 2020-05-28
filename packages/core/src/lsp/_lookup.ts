@@ -38,7 +38,7 @@ export class LSPLookup {
     if (variable instanceof TypedIdentifier) {
       let value = "Resolved variable, Typed\n\nType: " + variable.getType().toText(0);
       if (variable.getValue()) {
-        value = value + "Value:\n\n```" + variable.getValue() + "```";
+        value = value + "\n\nValue: ```" + variable.getValue() + "```";
       }
       if (variable.getMeta().length > 0) {
         value = value + "\n\nMeta: " + variable.getMeta().join(", ");
