@@ -6,6 +6,7 @@ export * from "./date_type";
 export * from "./float_type";
 export * from "./floating_point_type";
 export * from "./hex_type";
+export * from "./csequence_type";
 export * from "./integer_type";
 export * from "./numeric_type";
 export * from "./object_reference_type";

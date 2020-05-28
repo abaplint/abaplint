@@ -114,6 +114,8 @@ export class BasicTypes {
       return new Types.AnyType();
     } else if (chainText === "NUMERIC") {
       return new Types.NumericGenericType();
+    } else if (chainText === "CSEQUENCE") {
+      return new Types.CSequenceType();
     } else if (chainText === "I") {
       return new Types.IntegerType();
     } else if (chainText === "F") {
