@@ -365,6 +365,8 @@ export class BasicTypes {
     const found = this.resolveTypeName(chain);
     if (found && !(found instanceof Types.UnknownType) && !(found instanceof Types.VoidType)) {
       return new Types.DataReference(found);
+    } else if (chain.concatTokens().toUpperCase() === "DATA") {
+      return new Types.DataReference(new Types.AnyType());
     }
 
     if (this.scope.getDDIC()?.inErrorNamespace(name) === false) {

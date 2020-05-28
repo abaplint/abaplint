@@ -812,4 +812,22 @@ ENDCLASS.`;
     expect(type).to.be.instanceof(Basic.IntegerType);
   });
 
+  it("DATA foo TYPE REF TO object.", () => {
+    const abap = `
+    DATA foo TYPE REF TO object.`;
+    const identifier = resolveVariable(abap, "foo");
+    expect(identifier).to.not.equal(undefined);
+    const type = identifier?.getType();
+    expect(type).to.be.instanceof(Basic.ObjectReferenceType);
+  });
+
+  it("DATA foo TYPE REF TO data.", () => {
+    const abap = `
+    DATA foo TYPE REF TO data.`;
+    const identifier = resolveVariable(abap, "foo");
+    expect(identifier).to.not.equal(undefined);
+    const type = identifier?.getType();
+    expect(type).to.be.instanceof(Basic.DataReference);
+  });
+
 });
