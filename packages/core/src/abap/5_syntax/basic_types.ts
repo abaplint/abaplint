@@ -120,6 +120,8 @@ export class BasicTypes {
       return new Types.IntegerType();
     } else if (chainText === "F") {
       return new Types.FloatType();
+    } else if (chainText === "P") {
+      return new Types.PackedType(1, 1); // todo, length and decimals
     } else if (chainText === "C") {
       if (length) {
         return new Types.CharacterType(length);

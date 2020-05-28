@@ -794,4 +794,13 @@ ENDCLASS.`;
     expect((type as Basic.VoidType).getVoided()?.toLowerCase()).to.equal("cl_abap_zip");
   });
 
+  it("Packed", () => {
+    const abap = `
+    DATA foo TYPE p.`;
+    const identifier = resolveVariable(abap, "foo");
+    expect(identifier).to.not.equal(undefined);
+    const type = identifier?.getType();
+    expect(type).to.be.instanceof(Basic.PackedType);
+  });
+
 });
