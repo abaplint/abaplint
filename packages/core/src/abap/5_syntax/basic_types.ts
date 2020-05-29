@@ -36,7 +36,7 @@ export class BasicTypes {
     if (children[1] && children[1].getFirstToken().getStr() === "=>") {
       const obj = this.scope.findObjectDefinition(name);
       if (obj === undefined && this.scope.getDDIC()?.inErrorNamespace(name) === false) {
-        return new Types.VoidType(name);
+        return type;
       } else if (obj === undefined) {
         return new Types.UnknownType("Could not resolve top " + name);
       }
@@ -46,7 +46,7 @@ export class BasicTypes {
     } else if (children[1] && children[2] && children[1].getFirstToken().getStr() === "->") {
       type = this.scope.findVariable(name)?.getType();
       if (type instanceof Types.VoidType) {
-        return new Types.VoidType(name);
+        return type;
       } else if (!(type instanceof Types.ObjectReferenceType)) {
         return new Types.UnknownType("Type error, not a object reference " + name);
       }
@@ -114,10 +114,14 @@ export class BasicTypes {
       return new Types.AnyType();
     } else if (chainText === "NUMERIC") {
       return new Types.NumericGenericType();
+    } else if (chainText === "CSEQUENCE") {
+      return new Types.CSequenceType();
     } else if (chainText === "I") {
       return new Types.IntegerType();
     } else if (chainText === "F") {
       return new Types.FloatType();
+    } else if (chainText === "P") {
+      return new Types.PackedType(1, 1); // todo, length and decimals
     } else if (chainText === "C") {
       if (length) {
         return new Types.CharacterType(length);
@@ -191,7 +195,7 @@ export class BasicTypes {
       } else if (type instanceof Types.TableType) {
         return type.getRowType();
       } else if (type instanceof Types.VoidType) {
-        return new Types.VoidType(type.getVoided());
+        return type;
       } else {
         return new Types.UnknownType("Type error, not a table type " + name);
       }
@@ -244,7 +248,7 @@ export class BasicTypes {
       if (found instanceof Types.TableType) {
         return found.getRowType();
       } else if (found instanceof Types.VoidType) {
-        return new Types.VoidType(typename?.getFirstToken().getStr());
+        return found;
       } else {
         return new Types.UnknownType("TYPE LINE OF, could not resolve type");
       }
@@ -361,6 +365,8 @@ export class BasicTypes {
     const found = this.resolveTypeName(chain);
     if (found && !(found instanceof Types.UnknownType) && !(found instanceof Types.VoidType)) {
       return new Types.DataReference(found);
+    } else if (chain.concatTokens().toUpperCase() === "DATA") {
+      return new Types.DataReference(new Types.AnyType());
     }
 
     if (this.scope.getDDIC()?.inErrorNamespace(name) === false) {

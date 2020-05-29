@@ -148,8 +148,9 @@ export class CurrentScope {
   }
 
   public existsObject(name: string): boolean {
-
-    if (name.toUpperCase() === this.getName().toLocaleUpperCase()
+    if (name.toUpperCase() === "OBJECT") {
+      return true;
+    } else if (name.toUpperCase() === this.getName().toLocaleUpperCase()
         && this.getType() === ScopeType.ClassDefinition) {
       return true;
     } else if (this.current?.findDeferred(name) !== undefined) {

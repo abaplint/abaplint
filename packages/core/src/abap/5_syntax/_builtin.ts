@@ -13,6 +13,8 @@ export class BuiltIn {
     const id = new Identifier(new Position(1, 1), "abap_bool");
     ret.push(new TypedIdentifier(id, this.filename, new CharacterType(1)));
 
+    ret.push(this.buildSY());
+
     return ret;
   }
 
