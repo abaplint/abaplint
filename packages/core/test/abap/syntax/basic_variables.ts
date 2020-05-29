@@ -830,4 +830,22 @@ ENDCLASS.`;
     expect(type).to.be.instanceof(Basic.DataReference);
   });
 
+  it("sy-datum", () => {
+    const abap = `
+    DATA foo TYPE sy-datum.`;
+    const identifier = resolveVariable(abap, "foo");
+    expect(identifier).to.not.equal(undefined);
+    const type = identifier?.getType();
+    expect(type).to.be.instanceof(Basic.DateType);
+  });
+
+  it("sy-uzeit", () => {
+    const abap = `
+    DATA foo TYPE sy-uzeit.`;
+    const identifier = resolveVariable(abap, "foo");
+    expect(identifier).to.not.equal(undefined);
+    const type = identifier?.getType();
+    expect(type).to.be.instanceof(Basic.TimeType);
+  });
+
 });
