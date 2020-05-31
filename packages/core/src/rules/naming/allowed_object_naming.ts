@@ -1,6 +1,6 @@
 import {Issue} from "../../issue";
 import {IObject} from "../../objects/_iobject";
-import {IRule} from "../_irule";
+import {IRule, IRuleMetadata} from "../_irule";
 import {BasicRuleConfig} from "../_basic_rule_config";
 
 // see note 104010
@@ -11,7 +11,7 @@ export class AllowedObjectNamingConf extends BasicRuleConfig {
 export class AllowedObjectNaming implements IRule {
   private conf = new AllowedObjectNamingConf();
 
-  public getMetadata() {
+  public getMetadata(): IRuleMetadata {
     return {
       key: "allowed_object_naming",
       title: "Allowed object naming",
