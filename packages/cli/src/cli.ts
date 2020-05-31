@@ -112,6 +112,15 @@ function displayHelp(): string {
     "  -c                     compress files in memory\n";
 }
 
+function out(issues: Issue[], format: string, length: number, argv: minimist.ParsedArgs): string {
+  const output = Formatter.format(issues, format, length);
+  if (argv["outformat"] && argv["outfile"]) {
+    const fileContents = Formatter.format(issues, argv["outformat"], length);
+    fs.writeFileSync(argv["outfile"], fileContents, "utf-8");
+  }
+  return output;
+}
+
 async function run() {
 
   const argv = minimist(process.argv.slice(2), {boolean: ["c", "u", "t", "e"]});
@@ -144,31 +153,18 @@ async function run() {
       const files = FileOperations.loadFileNames(base + config.get().global.files);
       loaded = await FileOperations.loadFiles(compress, files, progress);
       deps = await loadDependencies(config, compress, progress, base);
+
+      const reg = new Registry(config).addFiles(loaded);
+      reg.addDependencies(deps);
+      await reg.parseAsync(progress);
+      issues = issues.concat(reg.findIssues(progress));
     } catch (error) {
       const file = new MemoryFile("generic", "dummy");
       const issue = Issue.atPosition(file, new Position(1, 1), error, "error");
       issues = [issue];
     }
 
-    if (issues.length === 0) {
-      const reg = new Registry(config).addFiles(loaded);
-      reg.addDependencies(deps);
-      await reg.parseAsync(progress);
-      issues = issues.concat(reg.findIssues(progress));
-      output = Formatter.format(issues, format, loaded.length);
-
-      if (argv["outformat"] && argv["outfile"]) {
-        const fileContents = Formatter.format(issues, argv["outformat"], loaded.length);
-        fs.writeFileSync(argv["outfile"], fileContents, "utf-8");
-      }
-    } else {
-      output = Formatter.format(issues, format, loaded.length);
-      if (argv["outformat"] && argv["outfile"]) {
-        const fileContents = Formatter.format(issues, argv["outformat"], loaded.length);
-        fs.writeFileSync(argv["outfile"], fileContents, "utf-8");
-      }
-    }
-
+    output = out(issues, format, loaded.length, argv);
   }
 
   return {output, issues};
