@@ -20,7 +20,7 @@ export class ImplementMethods extends ABAPRule {
       key: "implement_methods",
       title: "Implement methods",
       quickfix: false,
-      shortDescription: `Chekcs for abstract methods which need implementing.`,
+      shortDescription: `Chekcs for abstract methods and methods from interfaces which need implementing.`,
     };
   }
 
