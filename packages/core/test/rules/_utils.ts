@@ -3,7 +3,7 @@ import {Registry} from "../../src/registry";
 import {MemoryFile} from "../../src/files/memory_file";
 import {IRule} from "../../src/rules/_irule";
 import {IRegistry} from "../../src/_iregistry";
-import {IEdit} from "../../src/edit";
+import {IEdit} from "../../src/edit_helper";
 import {Issue} from "../../src/issue";
 
 export function runMulti(files: {filename: string, contents: string}[]): readonly Issue[] {

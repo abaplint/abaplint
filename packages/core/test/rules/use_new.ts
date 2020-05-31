@@ -1,4 +1,4 @@
-import {testRule} from "./_utils";
+import {testRule, testRuleFix} from "./_utils";
 import {UseNew} from "../../src/rules";
 
 const tests = [
@@ -9,3 +9,11 @@ const tests = [
 ];
 
 testRule(tests, UseNew);
+
+const fixes = [
+  {input: "CREATE OBJECT foobar.", output: "foobar = NEW #( )."},
+  {input: "CREATE OBJECT foobar EXPORTING foo = bar.", output: "foobar = NEW #( foo = bar )."},
+  {input: "CREATE OBJECT foobar EXPORTING foo = bar boo = moo.", output: "foobar = NEW #( foo = bar boo = moo )."},
+];
+
+testRuleFix(fixes, UseNew);

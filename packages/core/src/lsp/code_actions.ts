@@ -2,7 +2,7 @@ import * as LServer from "vscode-languageserver-types";
 import {IRegistry} from "../_iregistry";
 import {ICodeActionParams} from "./_interfaces";
 import {Diagnostics} from "./diagnostics";
-import {IEdit, ITextEdit} from "../edit";
+import {IEdit, ITextEdit} from "../edit_helper";
 import {Issue} from "../issue";
 import {Position} from "../position";
 

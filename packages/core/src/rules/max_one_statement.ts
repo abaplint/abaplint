@@ -3,7 +3,7 @@ import {Comment} from "../abap/2_statements/statements/_statement";
 import {ABAPRule} from "./_abap_rule";
 import {ABAPFile} from "../files";
 import {BasicRuleConfig} from "./_basic_rule_config";
-import {EditHelper} from "../edit";
+import {EditHelper} from "../edit_helper";
 
 export class MaxOneStatementConf extends BasicRuleConfig {
 }

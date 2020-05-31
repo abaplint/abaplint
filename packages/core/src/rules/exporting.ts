@@ -5,7 +5,7 @@ import {ABAPFile} from "../files";
 import {BasicRuleConfig} from "./_basic_rule_config";
 import {MethodParameters, MethodCallBody, MethodCall} from "../abap/2_statements/expressions";
 import {ExpressionNode} from "../abap/nodes";
-import {EditHelper} from "../edit";
+import {EditHelper} from "../edit_helper";
 
 export class ExportingConf extends BasicRuleConfig {
 }
