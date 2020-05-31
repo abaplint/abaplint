@@ -6,6 +6,7 @@ import {BasicRuleConfig} from "./_basic_rule_config";
 import {Dynamic} from "../abap/2_statements/expressions";
 import {IRegistry} from "../_iregistry";
 import {Version} from "../version";
+import {IRuleMetadata, RuleTag} from "./_irule";
 
 export class UseNewConf extends BasicRuleConfig {
 }
@@ -13,12 +14,13 @@ export class UseNewConf extends BasicRuleConfig {
 export class UseNew extends ABAPRule {
   private conf = new UseNewConf();
 
-  public getMetadata() {
+  public getMetadata(): IRuleMetadata {
     return {
       key: "use_new",
       title: "Use NEW",
       quickfix: false,
       shortDescription: `Checks for deprecated CREATE OBJECT statements.`,
+      tags: [RuleTag.Upport],
     };
   }
 

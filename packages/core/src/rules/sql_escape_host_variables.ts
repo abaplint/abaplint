@@ -5,6 +5,7 @@ import {BasicRuleConfig} from "./_basic_rule_config";
 import {Select} from "../abap/2_statements/statements";
 import {IRegistry} from "../_iregistry";
 import {Version} from "../version";
+import {RuleTag} from "./_irule";
 
 export class SQLEscapeHostVariablesConf extends BasicRuleConfig {
 }
@@ -17,7 +18,8 @@ export class SQLEscapeHostVariables extends ABAPRule {
       key: "sql_escape_host_variables",
       title: "Escape SQL host variables",
       quickfix: false,
-      shortDescription: `Escape SQL host variables, from 740sp05 `,
+      shortDescription: `Escape SQL host variables, from 740sp05`,
+      tags: [RuleTag.Upport],
     };
   }
 
