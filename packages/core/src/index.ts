@@ -3,10 +3,9 @@ import {Issue} from "./issue";
 import {Config} from "./config";
 import {Version} from "./version";
 import {Registry} from "./registry";
-import {Stats} from "./utils/stats";
 import {MethodLengthStats} from "./utils/method_length_stats";
 import {LanguageServer} from "./lsp/language_server";
-import {SemanticSearch} from "./utils/semantic_search";
+import {Artifacts} from "./abap/artifacts";
 import {ArtifactsObjects} from "./artifacts_objects";
 import {ArtifactsRules} from "./artifacts_rules";
 import {IProgress} from "./progress";
@@ -34,15 +33,16 @@ import {Position} from "./position";
 import {AbstractFile} from "./files/_abstract_file";
 import {PrettyPrinter} from "./pretty_printer/pretty_printer";
 import {ISpaghettiScope, ISpaghettiScopeNode} from "./abap/5_syntax/_spaghetti_scope";
+import {Empty, Unknown} from "./abap/2_statements/statements/_statement";
 
 // do not include this file from anywhere within abaplint
 
 // file used to build typings, index.d.ts
 export {MemoryFile, Issue, Config, Version,
-  Registry, Stats, LanguageServer, MethodLengthStats, IProgress,
-  SemanticSearch, ArtifactsObjects, ArtifactsRules, Objects, IFile,
+  Registry, LanguageServer, MethodLengthStats, IProgress,
+  Artifacts, ArtifactsObjects, ArtifactsRules, Objects, IFile,
   Structures, Statements, Expressions, Types, Nodes, IConfig,
-  ISpaghettiScope, ISpaghettiScopeNode,
+  ISpaghettiScope, ISpaghettiScopeNode, Empty, Unknown,
   AbstractType, TypedIdentifier, BasicTypes, ScopeType, INode, Token,
   IDependency, AbstractFile, SpaghettiScopeNode,
   Tokens, ABAPObject, SyntaxLogic, SpaghettiScope, IdentifierMeta,

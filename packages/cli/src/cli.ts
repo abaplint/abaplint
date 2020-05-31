@@ -4,7 +4,7 @@ import * as path from "path";
 import * as minimist from "minimist";
 import * as ProgressBar from "progress";
 import * as childProcess from "child_process";
-import {Issue, Stats, IProgress, IFile, Position, SemanticSearch, Config, Registry, MemoryFile} from "@abaplint/core";
+import {Issue, IProgress, IFile, Position, Config, Registry, MemoryFile} from "@abaplint/core";
 import {Formatter} from "./formatters/_format";
 import {FileOperations} from "./file_operations";
 import {ApackDependencyProvider} from "./apack_dependency_provider";
@@ -104,8 +104,6 @@ function displayHelp(): string {
     "  abaplint -h | --help             show this help\n" +
     "  abaplint -v | --version          show version\n" +
     "  abaplint -d | --default          show default configuration\n" +
-    "  abaplint -t [<abaplint.json> -c] show stats (will be deprecated)\n" +
-    "  abaplint -e [<abaplint.json> -c] show semantic search information (will be deprecated)\n" +
     "\n" +
     "Options:\n" +
     "  -f, --format <format>  output format (standard, total, json, summary, junit)\n" +
@@ -154,20 +152,14 @@ async function run() {
 
     if (issues.length === 0) {
       const reg = new Registry(config).addFiles(loaded);
-      if (argv["t"]) {
-        output = JSON.stringify(new Stats(reg).run(), undefined, 2);
-      } else if (argv["e"]) {
-        output = JSON.stringify(new SemanticSearch(reg).run(), undefined, 1);
-      } else {
-        reg.addDependencies(deps);
-        await reg.parseAsync(progress);
-        issues = issues.concat(reg.findIssues(progress));
-        output = Formatter.format(issues, format, loaded.length);
+      reg.addDependencies(deps);
+      await reg.parseAsync(progress);
+      issues = issues.concat(reg.findIssues(progress));
+      output = Formatter.format(issues, format, loaded.length);
 
-        if (argv["outformat"] && argv["outfile"]) {
-          const fileContents = Formatter.format(issues, argv["outformat"], loaded.length);
-          fs.writeFileSync(argv["outfile"], fileContents, "utf-8");
-        }
+      if (argv["outformat"] && argv["outfile"]) {
+        const fileContents = Formatter.format(issues, argv["outformat"], loaded.length);
+        fs.writeFileSync(argv["outfile"], fileContents, "utf-8");
       }
     } else {
       output = Formatter.format(issues, format, loaded.length);
