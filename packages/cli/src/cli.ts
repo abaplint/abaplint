@@ -8,6 +8,7 @@ import {Issue, IProgress, IFile, Position, Config, Registry, MemoryFile} from "@
 import {Formatter} from "./formatters/_format";
 import {FileOperations} from "./file_operations";
 import {ApackDependencyProvider} from "./apack_dependency_provider";
+import {applyFixes} from "./fixes";
 
 class Progress implements IProgress {
   private bar: ProgressBar;
@@ -100,15 +101,16 @@ async function loadDependencies(config: Config, compress: boolean, bar: IProgres
 function displayHelp(): string {
   // follow docopt.org conventions,
   return "Usage:\n" +
-    "  abaplint [<abaplint.json> -f <format> -c --outformat <format> --outfile <file>] \n" +
-    "  abaplint -h | --help             show this help\n" +
-    "  abaplint -v | --version          show version\n" +
-    "  abaplint -d | --default          show default configuration\n" +
+    "  abaplint [<abaplint.json> -f <format> -c --outformat <format> --outfile <file> --fix] \n" +
+    "  abaplint -h | --help      show this help\n" +
+    "  abaplint -v | --version   show version\n" +
+    "  abaplint -d | --default   show default configuration\n" +
     "\n" +
     "Options:\n" +
     "  -f, --format <format>  output format (standard, total, json, summary, junit)\n" +
     "  --outformat <format>   output format, use in combination with outfile\n" +
     "  --outfile <file>       output issues to file in format\n" +
+    "  --fix                  apply quick fixes to files\n" +
     "  -c                     compress files in memory\n";
 }
 
@@ -123,7 +125,7 @@ function out(issues: Issue[], format: string, length: number, argv: minimist.Par
 
 async function run() {
 
-  const argv = minimist(process.argv.slice(2), {boolean: ["c", "u", "t", "e"]});
+  const argv = minimist(process.argv.slice(2), {boolean: ["c", "fix"]});
   let format = "standard";
   let output = "";
   let issues: Issue[] = [];
@@ -165,6 +167,11 @@ async function run() {
     }
 
     output = out(issues, format, loaded.length, argv);
+
+    if (argv["fix"]) {
+      // @ts-ignore
+      applyFixes(issues, fs);
+    }
   }
 
   return {output, issues};
