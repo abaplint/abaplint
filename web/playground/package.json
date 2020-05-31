@@ -19,7 +19,7 @@
     "vscode-languageserver-types": "^3.15.1"
   },
   "devDependencies": {
-    "@abaplint/monaco": "^2.33.5",
+    "@abaplint/monaco": "^2.34.0",
     "css-loader": "^3.5.3",
     "file-loader": "^6.0.0",
     "html-webpack-plugin": "^4.3.0",

@@ -1,5 +1,6 @@
 import {Issue} from "../issue";
 import * as Statements from "../abap/2_statements/statements";
+import * as Expressions from "../abap/2_statements/expressions";
 import {ABAPRule} from "./_abap_rule";
 import {ABAPFile} from "../files";
 import {BasicRuleConfig} from "./_basic_rule_config";
@@ -7,6 +8,8 @@ import {Dynamic} from "../abap/2_statements/expressions";
 import {IRegistry} from "../_iregistry";
 import {Version} from "../version";
 import {IRuleMetadata, RuleTag} from "./_irule";
+import {EditHelper, IEdit} from "../edit_helper";
+import {StatementNode} from "../abap/nodes";
 
 export class UseNewConf extends BasicRuleConfig {
 }
@@ -18,7 +21,7 @@ export class UseNew extends ABAPRule {
     return {
       key: "use_new",
       title: "Use NEW",
-      quickfix: false,
+      quickfix: true,
       shortDescription: `Checks for deprecated CREATE OBJECT statements.`,
       tags: [RuleTag.Upport],
     };
@@ -48,11 +51,25 @@ export class UseNew extends ABAPRule {
         if (statement.findFirstExpression(Dynamic)) {
           continue;
         }
-        const issue = Issue.atPosition(file, statement.getStart(), this.getMessage(), this.getMetadata().key);
+        const fix = this.buildFix(file, statement);
+        const issue = Issue.atPosition(file, statement.getStart(), this.getMessage(), this.getMetadata().key, fix);
         issues.push(issue);
       }
     }
 
     return issues;
+  }
+
+  private buildFix(file: ABAPFile, statement: StatementNode): IEdit | undefined {
+    const target = statement.findDirectExpression(Expressions.Target)?.concatTokens();
+    if (target === undefined) {
+      return undefined;
+    }
+    const parameters = statement.findDirectExpression(Expressions.ParameterListS);
+    const param = parameters ? parameters.concatTokens() + " " : "";
+
+    const string = `${target} = NEW #( ${param}).`;
+
+    return EditHelper.replaceRange(file, statement.getStart(), statement.getEnd(), string);
   }
 }

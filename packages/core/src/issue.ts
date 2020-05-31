@@ -3,7 +3,7 @@ import {Position} from "./position";
 import {Token} from "./abap/1_lexer/tokens/_token";
 import {Identifier} from "./abap/4_file_information/_identifier";
 import {StatementNode} from "./abap/nodes";
-import {IEdit} from "./edit";
+import {IEdit} from "./edit_helper";
 
 interface IIssueData {
   filename: string;

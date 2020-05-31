@@ -8,7 +8,7 @@ import {TokenNode, StatementNode, TokenNodeRegex} from "../../abap/nodes";
 import {Unknown, MacroContent, MacroCall} from "../../abap/2_statements/statements/_statement";
 import {MethodDef} from "../../abap/2_statements/statements";
 import {Position} from "../../position";
-import {EditHelper} from "../../edit";
+import {EditHelper} from "../../edit_helper";
 
 export class DoubleSpaceConf extends BasicRuleConfig {
   /** Check for double space after keywords */
