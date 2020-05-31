@@ -5,6 +5,8 @@ import {IRegistry} from "../_iregistry";
 export enum RuleTag {
   Experimental = "Experimental",
   DeprecationCandidate = "DeprecationCandidate",
+  Upport = "Upport",
+  Downport = "Downport",
 }
 
 /** Rule Metadata */

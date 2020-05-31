@@ -1291,7 +1291,7 @@
                   "type": "boolean"
                 }
               ],
-              "description": "Chekcs for abstract methods which need implementing.\nhttps://rules.abaplint.org/implement_methods"
+              "description": "Chekcs for abstract methods and methods from interfaces which need implementing.\nhttps://rules.abaplint.org/implement_methods"
             },
             "in_statement_indentation": {
               "anyOf": [
@@ -1687,7 +1687,7 @@
                   "type": "boolean"
                 }
               ],
-              "description": "Escape SQL host variables, from 740sp05 \nhttps://rules.abaplint.org/sql_escape_host_variables"
+              "description": "Escape SQL host variables, from 740sp05\nTags: Upport\nhttps://rules.abaplint.org/sql_escape_host_variables"
             },
             "start_at_tab": {
               "anyOf": [
@@ -1808,7 +1808,7 @@
                   "type": "boolean"
                 }
               ],
-              "description": "Checks for deprecated CREATE OBJECT statements.\nhttps://rules.abaplint.org/use_new"
+              "description": "Checks for deprecated CREATE OBJECT statements.\nTags: Upport\nhttps://rules.abaplint.org/use_new"
             },
             "when_others_last": {
               "anyOf": [

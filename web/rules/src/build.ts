@@ -35,6 +35,18 @@ function experimental() {
   return `&nbsp;<a href="/experimental.html"><svg fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" viewBox="0 0 24 24" height="2ch"><title>experimental</title><path d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"></path></svg></a>`;
 }
 
+function upport() {
+  // https://github.com/refactoringui/heroicons/
+  // eslint-disable-next-line max-len
+  return `&nbsp;<a href="/upport.html"><svg fill="none" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" viewBox="0 0 24 24" stroke="currentColor" height="2ch"><title>upport</title><path d="M5 10l7-7m0 0l7 7m-7-7v18"></path></svg></a>`;
+}
+
+function downport() {
+  // https://github.com/refactoringui/heroicons/
+  // eslint-disable-next-line max-len
+  return `&nbsp;<a href="/downport.html"><svg fill="none" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" viewBox="0 0 24 24" stroke="currentColor" height="2ch"><title>downport</title><path d="M19 14l-7 7m0 0l-7-7m7 7V3"></path></svg></a>`;
+}
+
 function home() {
   // https://github.com/refactoringui/heroicons/
   // eslint-disable-next-line max-len
@@ -62,6 +74,23 @@ function findPath(ruleKey: string) {
   throw new Error("not found: " + ruleKey);
 }
 
+function renderIcons(meta: IRuleMetadata): string {
+  let html = "";
+  if (meta.quickfix === true) {
+    html = html + quickfix();
+  }
+  if (meta.tags?.includes(RuleTag.Experimental)) {
+    html = html + experimental();
+  }
+  if (meta.tags?.includes(RuleTag.Downport)) {
+    html = html + downport();
+  }
+  if (meta.tags?.includes(RuleTag.Upport)) {
+    html = html + upport();
+  }
+  return html;
+}
+
 function buildIndex() {
   let html = `<h1>abaplint rules documentation</h1>
 abaplint can be configured by placing a <tt>abaplint.json</tt> file in the root of the git repository.
@@ -81,14 +110,8 @@ documentation as well as abaplint.json definitions which attempt to align abapli
   for (const r of sorted) {
     const meta = r.getMetadata();
     html = html + "<a href='./" + meta.key + "/'><tt>" + meta.key + "</tt> - " + meta.title + "</a>";
-    if (meta.quickfix === true) {
-      html = html + quickfix();
-    }
-    if (meta.tags?.includes(RuleTag.Experimental)) {
-      html = html + experimental();
-    }
+    html = html + renderIcons(meta);
     html = html + "<br>" + meta.shortDescription + "<br><br>\n";
-
 
     buildRule(meta);
   }
@@ -145,12 +168,7 @@ function buildRule(meta: IRuleMetadata) {
   let html = "<h1>" + meta.key + " - " + meta.title + "</h1>\n";
 
   html = html + home();
-  if (meta.quickfix === true) {
-    html = html + quickfix();
-  }
-  if (meta.tags?.includes(RuleTag.Experimental)) {
-    html = html + experimental();
-  }
+  html = html + renderIcons(meta);
   const link = findPath(meta.key);
   // https://github.com/refactoringui/heroicons/
   // eslint-disable-next-line max-len

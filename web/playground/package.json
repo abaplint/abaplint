@@ -6,9 +6,7 @@
     "build": "webpack",
     "dev": "webpack-dev-server --mode development --open --hot",
     "web.start": "webpack-dev-server --mode development",
-    "cypress.run": "cypress run",
     "test": "ls",
-    "test_disabled": "start-server-and-test web.start http-get://localhost:8080 cypress.run",
     "clean": "rimraf build"
   },
   "dependencies": {
@@ -21,9 +19,8 @@
     "vscode-languageserver-types": "^3.15.1"
   },
   "devDependencies": {
-    "@abaplint/monaco": "^2.33.4",
+    "@abaplint/monaco": "^2.33.5",
     "css-loader": "^3.5.3",
-    "cypress": "^4.6.0",
     "file-loader": "^6.0.0",
     "html-webpack-plugin": "^4.3.0",
     "less": "^3.11.1",

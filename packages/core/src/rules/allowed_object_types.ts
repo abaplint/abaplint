@@ -1,4 +1,4 @@
-import {IRule} from "./_irule";
+import {IRule, IRuleMetadata} from "./_irule";
 import {Issue} from "../issue";
 import {IObject} from "../objects/_iobject";
 import {BasicRuleConfig} from "./_basic_rule_config";
@@ -13,12 +13,13 @@ export class AllowedObjectTypes implements IRule {
 
   private conf = new AllowedObjectTypesConf();
 
-  public getMetadata() {
+  public getMetadata(): IRuleMetadata {
     return {
       key: "allowed_object_types",
       title: "Check allowed object types",
       quickfix: false,
       shortDescription: `Restricts the set of allowed object types.`,
+      extendedInformation: `allowed is a list of 4 character object types, example: ["CLAS", "INTF"]`,
     };
   }
 

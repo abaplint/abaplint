@@ -1,5 +1,5 @@
 import {TypedIdentifier, IdentifierMeta} from "../types/_typed_identifier";
-import {VoidType, CharacterType, StructureType, IStructureComponent, IntegerType, NumericType} from "../types/basic";
+import {VoidType, CharacterType, StructureType, IStructureComponent, IntegerType, NumericType, DateType, TimeType} from "../types/basic";
 import {Identifier} from "../1_lexer/tokens";
 import {Position} from "../../position";
 import {AbstractType} from "../types/basic/_abstract_type";
@@ -71,6 +71,8 @@ export class BuiltIn {
     components.push({name: "dynnr", type: new CharacterType(4)});
     components.push({name: "langu", type: new CharacterType(1)});
     components.push({name: "tabix", type: new IntegerType()});
+    components.push({name: "datum", type: new DateType()});
+    components.push({name: "uzeit", type: new TimeType()});
     components.push({name: "index", type: new IntegerType()});
     components.push({name: "msgid", type: new CharacterType(20)});
     components.push({name: "msgno", type: new NumericType(3)});
