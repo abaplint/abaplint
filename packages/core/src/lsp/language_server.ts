@@ -96,6 +96,12 @@ export class LanguageServer {
     return [];
   }
 
+  // https://microsoft.github.io/language-server-protocol/specifications/specification-3-14/#textDocument_references
+  public references(_params: ITextDocumentPositionParams): LServer.Location[] {
+    // todo, implement
+    return [];
+  }
+
 ////////////////////////////////////////
 //  ______      _
 // |  ____|    | |

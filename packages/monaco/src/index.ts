@@ -8,6 +8,7 @@ import {ABAPDefinitionProvider} from "./abap_definition_provider";
 import {ABAPDocumentHighlightProvider} from "./abap_document_highlight_provider";
 import {ABAPCodeActionProvider} from "./abap_code_action_provider";
 import {ABAPImplementationProvider} from "./abap_implementation_provider";
+import {ABAPReferencesProvider} from "./abap_references_provider";
 
 export function registerABAP(reg: IRegistry) {
   monaco.languages.registerCompletionItemProvider("abap", new ABAPSnippetProvider());
@@ -19,6 +20,7 @@ export function registerABAP(reg: IRegistry) {
   monaco.languages.registerDocumentHighlightProvider("abap", new ABAPDocumentHighlightProvider(reg));
   monaco.languages.registerCodeActionProvider("abap", new ABAPCodeActionProvider(reg));
   monaco.languages.registerImplementationProvider("abap", new ABAPImplementationProvider(reg));
+  monaco.languages.registerReferenceProvider("abap", new ABAPReferencesProvider(reg));
 }
 
 export function updateMarkers(reg: IRegistry, model: monaco.editor.ITextModel) {
