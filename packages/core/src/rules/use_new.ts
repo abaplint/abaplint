@@ -4,7 +4,7 @@ import * as Expressions from "../abap/2_statements/expressions";
 import {ABAPRule} from "./_abap_rule";
 import {ABAPFile} from "../files";
 import {BasicRuleConfig} from "./_basic_rule_config";
-import {Dynamic} from "../abap/2_statements/expressions";
+import {Dynamic, ParameterListExceptions} from "../abap/2_statements/expressions";
 import {IRegistry} from "../_iregistry";
 import {Version} from "../version";
 import {IRuleMetadata, RuleTag} from "./_irule";
@@ -49,6 +49,8 @@ export class UseNew extends ABAPRule {
     for (const statement of file.getStatements()) {
       if (statement.get() instanceof Statements.CreateObject) {
         if (statement.findFirstExpression(Dynamic)) {
+          continue;
+        } else if (statement.findDirectExpression(ParameterListExceptions)) {
           continue;
         }
         const fix = this.buildFix(file, statement);

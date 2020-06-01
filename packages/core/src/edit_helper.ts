@@ -3,7 +3,6 @@ import {IFile} from "./files/_ifile";
 import {Position} from "./position";
 import {IRegistry} from "./_iregistry";
 import {MemoryFile} from "./files/memory_file";
-import {IProgress} from "./progress";
 
 export interface IRange {
   start: Position;
@@ -78,7 +77,7 @@ export function applyEditSingle(reg: IRegistry, edit: IEdit) {
 }
 
 /** returns list of filenames which were changed */
-export function applyEditList(reg: IRegistry, edits: IEdit[], bar?: IProgress): string[] {
+export function applyEditList(reg: IRegistry, edits: IEdit[]): string[] {
   const ret: string[] = [];
   let length = 0;
 
@@ -93,10 +92,7 @@ export function applyEditList(reg: IRegistry, edits: IEdit[], bar?: IProgress): 
     }
   }
 
-  bar?.set(length, "Applying fixes");
   for (const f in merged) {
-    bar?.tick("Applying fixes");
-
     const singleFile: IEdit = {};
     // sort, start with the last position first
     singleFile[f] = merged[f].sort((a, b) => b.range.start.getRow() - a.range.start.getRow());

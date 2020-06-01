@@ -1,8 +1,8 @@
 import * as memfs from "memfs";
-import {Issue, IRegistry, applyEditList, IProgress} from "@abaplint/core";
+import {Issue, IRegistry, applyEditList} from "@abaplint/core";
 import {IEdit} from "@abaplint/core/build/src/edit_helper";
 
-export function applyFixes(issues: readonly Issue[], reg: IRegistry, fs: memfs.IFs, bar?: IProgress): void {
+export function applyFixes(issues: readonly Issue[], reg: IRegistry, fs: memfs.IFs): void {
 
   const edits: IEdit[] = [];
 
@@ -13,7 +13,7 @@ export function applyFixes(issues: readonly Issue[], reg: IRegistry, fs: memfs.I
     }
   }
 
-  const changed = applyEditList(reg, edits, bar);
+  const changed = applyEditList(reg, edits);
 
   for (const filename of changed) {
     const file = reg.getFileByName(filename);

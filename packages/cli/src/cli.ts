@@ -171,7 +171,7 @@ async function run() {
 
     if (argv["fix"] && reg) {
       // @ts-ignore
-      applyFixes(issues, reg, fs, progress);
+      applyFixes(issues, reg, fs);
     }
   }
 

@@ -6,6 +6,13 @@ const tests = [
   {abap: "CREATE OBJECT foobar.", cnt: 1},
   {abap: "foobar = NEW #( ).", cnt: 0},
   {abap: "CREATE OBJECT ref TYPE ('ZCL_CLASS').", cnt: 0},
+  {abap: `
+CREATE OBJECT lo_source
+  EXPORTING
+    clskey             = is_clskey
+  EXCEPTIONS
+    class_not_existing = 1
+    OTHERS             = 2.`, cnt: 0},
 ];
 
 testRule(tests, UseNew);
