@@ -43,16 +43,34 @@ export class References {
 
   private searchEverything(identifier: Identifier): Identifier[] {
     let ret: Identifier[] = [];
+    // todo, take scope into account
     for (const o of this.reg.getObjects()) {
       if (o instanceof ABAPObject) {
         ret = ret.concat(this.traverse(new SyntaxLogic(this.reg, o).run().spaghetti.getTop(), identifier));
       }
     }
-    return ret;
+    // remove duplicates, might be a changing(read and write) position
+    return this.removeDuplicates(ret);
+  }
+
+  private removeDuplicates(arr: Identifier[]): Identifier[] {
+    const values: any = {};
+    return arr.filter(item => {
+      const val = item.getStart().getCol() + "_" + item.getStart().getRow() + "_" + item.getFilename();
+      const exists = values[val];
+      values[val] = true;
+      return !exists;
+    });
   }
 
   private traverse(node: ISpaghettiScopeNode, identifier: Identifier): Identifier[] {
     let ret: Identifier[] = [];
+
+    for (const v of node.getData().vars) {
+      if (v.identifier.equals(identifier)) {
+        ret.push(v.identifier);
+      }
+    }
 
     for (const r of node.getData().reads) {
       if (r.resolved.equals(identifier)) {
@@ -60,7 +78,7 @@ export class References {
       }
     }
 
-    for (const w of node.getData().reads) {
+    for (const w of node.getData().writes) {
       if (w.resolved.equals(identifier)) {
         ret.push(w.position);
       }
