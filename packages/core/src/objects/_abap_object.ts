@@ -14,6 +14,8 @@ export abstract class ABAPObject extends AbstractObject {
   private parsed: readonly ABAPFile[];
   public syntaxResult: ISyntaxResult | undefined; // do not use this outside of SyntaxLogic class, todo: refactor
 
+  abstract getSequencedFiles(): readonly ABAPFile[];
+
   public constructor(name: string) {
     super(name);
     this.parsed = [];

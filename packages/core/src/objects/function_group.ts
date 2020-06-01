@@ -17,6 +17,14 @@ export class FunctionGroup extends ABAPObject {
     };
   }
 
+  public getSequencedFiles(): readonly ABAPFile[] {
+    const main = this.getMainABAPFile();
+    if (main === undefined) {
+      return [];
+    }
+    return [main];
+  }
+
   public getModules(): FunctionModuleDefinition[] {
     const xml = this.getXML();
     if (xml === undefined) {

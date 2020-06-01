@@ -848,4 +848,12 @@ ENDCLASS.`;
     expect(type).to.be.instanceof(Basic.TimeType);
   });
 
+  it("TYPE STANDARD TABLE", () => {
+    const abap = `FIELD-SYMBOLS: <lt_itab> TYPE STANDARD TABLE.`;
+    const identifier = resolveVariable(abap, "<lt_itab>");
+    expect(identifier).to.not.equal(undefined);
+    const type = identifier?.getType();
+    expect(type).to.be.instanceof(Basic.TableType);
+  });
+
 });

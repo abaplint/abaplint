@@ -7,8 +7,7 @@ import {ABAPObject} from "../objects/_abap_object";
 import {SyntaxLogic} from "../abap/5_syntax/syntax";
 import {IFormDefinition} from "../abap/types/_form_definition";
 import {ISpaghettiScopeNode} from "../abap/5_syntax/_spaghetti_scope";
-import {ICursorPosition} from "./_lsp_utils";
-import {Identifier} from "../abap/4_file_information/_identifier";
+import {ICursorData, LSPUtils} from "./_lsp_utils";
 import {TypedIdentifier} from "../abap/types/_typed_identifier";
 
 export interface LSPLookupResult {
@@ -18,7 +17,7 @@ export interface LSPLookupResult {
 
 export class LSPLookup {
 
-  public static lookup(cursor: ICursorPosition, reg: IRegistry, obj: ABAPObject): LSPLookupResult | undefined {
+  public static lookup(cursor: ICursorData, reg: IRegistry, obj: ABAPObject): LSPLookupResult | undefined {
     const inc = this.findInclude(cursor, reg);
     if (inc) {
       return {hover: "File", definition: this.ABAPFileResult(inc)};
@@ -31,7 +30,7 @@ export class LSPLookup {
 
     const form = this.findForm(cursor, scope);
     if (form) {
-      return {hover: "Call FORM", definition: this.buildResult(form)};
+      return {hover: "Call FORM", definition: LSPUtils.identiferToLocation(form)};
     }
 
     const variable = scope.findVariable(cursor.token.getStr());
@@ -43,7 +42,7 @@ export class LSPLookup {
       if (variable.getMeta().length > 0) {
         value = value + "\n\nMeta: " + variable.getMeta().join(", ");
       }
-      return {hover: value, definition: this.buildResult(variable)};
+      return {hover: value, definition: LSPUtils.identiferToLocation(variable)};
     }
 
     const type = scope.findType(cursor.token.getStr());
@@ -57,14 +56,6 @@ export class LSPLookup {
 
 ////////////////////////////////////////////
 
-  private static buildResult(resolved: Identifier): LServer.Location {
-    const pos = resolved.getStart();
-    return {
-      uri: resolved.getFilename(),
-      range: LServer.Range.create(pos.getRow() - 1, pos.getCol() - 1, pos.getRow() - 1, pos.getCol() - 1),
-    };
-  }
-
   private static ABAPFileResult(abap: ABAPFile): LServer.Location {
     return {
       uri: abap.getFilename(),
@@ -72,7 +63,7 @@ export class LSPLookup {
     };
   }
 
-  private static findForm(found: ICursorPosition, scope: ISpaghettiScopeNode): IFormDefinition | undefined {
+  private static findForm(found: ICursorData, scope: ISpaghettiScopeNode): IFormDefinition | undefined {
     if (!(found.snode.get() instanceof Statements.Perform)) {
       return undefined;
     }
@@ -97,7 +88,7 @@ export class LSPLookup {
     return undefined;
   }
 
-  private static findInclude(found: ICursorPosition, reg: IRegistry): ABAPFile | undefined {
+  private static findInclude(found: ICursorData, reg: IRegistry): ABAPFile | undefined {
     if (!(found.snode.get() instanceof Statements.Include)) {
       return;
     }

@@ -8,6 +8,8 @@ import {IObject} from "../../objects/_iobject";
 import {IRegistry} from "../../_iregistry";
 import {Punctuation} from "../../abap/1_lexer/tokens";
 import {Token} from "../../abap/1_lexer/tokens/_token";
+import {Position} from "../../position";
+import {EditHelper} from "../../edit_helper";
 
 export class SpaceBeforeDotConf extends BasicRuleConfig {
   public ignoreGlobalDefinition: boolean = true;
@@ -22,7 +24,7 @@ export class SpaceBeforeDot extends ABAPRule {
     return {
       key: "space_before_dot",
       title: "Space before dot",
-      quickfix: false,
+      quickfix: true,
       shortDescription: `Checks for extra spaces before dots at the ends of statements`,
     };
   }
@@ -74,9 +76,10 @@ export class SpaceBeforeDot extends ABAPRule {
       }
 
       if (prev !== undefined && t instanceof Punctuation && prev.getCol() + prev.getStr().length < t.getCol()) {
-        const issue = Issue.atRowRange(file, t.getStart().getRow(),
-                                       prev.getEnd().getCol(), t.getStart().getCol(),
-                                       this.getMessage(), this.getMetadata().key);
+        const start = new Position(t.getStart().getRow(), prev.getEnd().getCol());
+        const end = new Position(t.getStart().getRow(), t.getStart().getCol());
+        const fix = EditHelper.deleteRange(file, start, end);
+        const issue = Issue.atRange(file, start, end, this.getMessage(), this.getMetadata().key, fix);
         issues.push(issue);
       }
       prev = t;

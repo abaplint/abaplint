@@ -8,18 +8,24 @@ import {LSPLookup} from "./_lookup";
 
 
 export class Hover {
-  public static find(reg: IRegistry, pos: ITextDocumentPositionParams): LServer.MarkupContent | undefined {
+  private readonly reg: IRegistry;
 
-    const file = LSPUtils.getABAPFile(reg, pos.textDocument.uri);
+  public constructor(reg: IRegistry) {
+    this.reg = reg;
+  }
+
+  public find(pos: ITextDocumentPositionParams): LServer.MarkupContent | undefined {
+
+    const file = LSPUtils.getABAPFile(this.reg, pos.textDocument.uri);
     if (file === undefined) {
       return undefined;
     }
-    const obj = reg.getObject(file.getObjectType(), file.getObjectName());
+    const obj = this.reg.getObject(file.getObjectType(), file.getObjectName());
     if (!(obj instanceof ABAPObject)) {
       return undefined;
     }
 
-    const found = LSPUtils.findCursor(reg, pos);
+    const found = LSPUtils.findCursor(this.reg, pos);
     if (found === undefined) {
       return undefined;
     } else if (found.token instanceof Tokens.String) {
@@ -33,7 +39,7 @@ export class Hover {
       return {kind: LServer.MarkupKind.Markdown, value: "Comment"};
     }
 
-    const lookup = LSPLookup.lookup(found, reg, obj);
+    const lookup = LSPLookup.lookup(found, this.reg, obj);
     if (lookup?.hover) {
       return {kind: LServer.MarkupKind.Markdown, value: lookup.hover};
     }

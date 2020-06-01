@@ -6,26 +6,30 @@ import {LSPLookup} from "./_lookup";
 
 // go to definition
 export class Definition {
+  private readonly reg: IRegistry;
 
-  public static find(reg: IRegistry,
-                     textDocument: LServer.TextDocumentIdentifier,
-                     position: LServer.Position): LServer.Location | undefined {
+  public constructor(reg: IRegistry) {
+    this.reg = reg;
+  }
 
-    const file = LSPUtils.getABAPFile(reg, textDocument.uri);
+  public find(textDocument: LServer.TextDocumentIdentifier,
+              position: LServer.Position): LServer.Location | undefined {
+
+    const file = LSPUtils.getABAPFile(this.reg, textDocument.uri);
     if (file === undefined) {
       return undefined;
     }
-    const obj = reg.getObject(file.getObjectType(), file.getObjectName());
+    const obj = this.reg.getObject(file.getObjectType(), file.getObjectName());
     if (!(obj instanceof ABAPObject)) {
       return undefined;
     }
 
-    const found = LSPUtils.findCursor(reg, {textDocument, position});
+    const found = LSPUtils.findCursor(this.reg, {textDocument, position});
     if (found === undefined) {
       return undefined;
     }
 
-    return LSPLookup.lookup(found, reg, obj)?.definition;
+    return LSPLookup.lookup(found, this.reg, obj)?.definition;
   }
 
 }

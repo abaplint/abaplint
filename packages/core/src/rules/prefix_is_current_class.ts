@@ -4,6 +4,8 @@ import {ABAPFile} from "../files";
 import * as Structures from "../abap/3_structures/structures";
 import {BasicRuleConfig} from "./_basic_rule_config";
 import {ClassName, MethodCall, InterfaceName, TypeName} from "../abap/2_statements/expressions";
+import {Position} from "../position";
+import {EditHelper} from "../edit_helper";
 
 export class PrefixIsCurrentClassConf extends BasicRuleConfig {
   /**
@@ -19,7 +21,7 @@ export class PrefixIsCurrentClass extends ABAPRule {
     return {
       key: "prefix_is_current_class",
       title: "Prefix is current class",
-      quickfix: false,
+      quickfix: true,
       shortDescription: `Reports errors if the current class or interface references itself with "current_class=>"`,
       // eslint-disable-next-line max-len
       extendedInformation: `https://github.com/SAP/styleguides/blob/master/clean-abap/CleanABAP.md#omit-the-self-reference-me-when-calling-an-instance-method`,
@@ -86,22 +88,26 @@ export class PrefixIsCurrentClass extends ABAPRule {
         if (s.concatTokensWithoutStringsAndComments().toUpperCase().includes(staticAccess)) {
           const tokenPos = s.findTokenSequencePosition(className, "=>");
           if (tokenPos) {
-            issues.push(Issue.atPosition(
+            const end = new Position(tokenPos.getRow(), tokenPos.getCol() + className.length + 2);
+            const fix = EditHelper.deleteRange(file, tokenPos, end);
+            issues.push(Issue.atRange(
               file,
-              tokenPos,
+              tokenPos, end,
               "Reference to current class can be omitted: \"" + staticAccess + "\"",
-              this.getMetadata().key));
+              this.getMetadata().key, fix));
           }
         } else if (this.conf.omitMeInstanceCalls === true
             && s.concatTokensWithoutStringsAndComments().toUpperCase().includes(meAccess)
             && s.findFirstExpression(MethodCall)) {
           const tokenPos = s.findTokenSequencePosition("me", "->");
           if (tokenPos) {
-            issues.push(Issue.atPosition(
+            const end = new Position(tokenPos.getRow(), tokenPos.getCol() + 4);
+            const fix = EditHelper.deleteRange(file, tokenPos, end);
+            issues.push(Issue.atRange(
               file,
-              tokenPos,
+              tokenPos, end,
               "Omit 'me->' in instance calls",
-              this.getMetadata().key));
+              this.getMetadata().key, fix));
           }
         }
       }

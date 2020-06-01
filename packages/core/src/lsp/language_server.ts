@@ -11,6 +11,7 @@ import {ITextDocumentPositionParams, IDocumentSymbolParams, IRenameParams, ICode
 import {LSPUtils} from "./_lsp_utils";
 import {CodeActions} from "./code_actions";
 import {IRegistry} from "../_iregistry";
+import {References} from "./references";
 
 // note Ranges are zero based in LSP,
 // https://github.com/microsoft/language-server-protocol/blob/master/versions/protocol-2-x.md#range
@@ -28,12 +29,12 @@ export class LanguageServer {
 
   // https://microsoft.github.io/language-server-protocol/specifications/specification-3-14/#textDocument_documentSymbol
   public documentSymbol(params: IDocumentSymbolParams): LServer.DocumentSymbol[] {
-    return Symbols.find(this.reg, params.textDocument.uri);
+    return new Symbols(this.reg).find(params.textDocument.uri);
   }
 
   // https://microsoft.github.io/language-server-protocol/specifications/specification-3-14/#textDocument_hover
   public hover(params: ITextDocumentPositionParams): LServer.Hover | undefined {
-    const hover = Hover.find(this.reg, params);
+    const hover = new Hover(this.reg).find(params);
     if (hover) {
       return {contents: hover};
     }
@@ -42,7 +43,7 @@ export class LanguageServer {
 
   // https://microsoft.github.io/language-server-protocol/specifications/specification-3-14/#textDocument_definition
   public gotoDefinition(params: ITextDocumentPositionParams): LServer.Location | undefined {
-    return Definition.find(this.reg, params.textDocument, params.position);
+    return new Definition(this.reg).find(params.textDocument, params.position);
   }
 
   // https://microsoft.github.io/language-server-protocol/specifications/specification-3-14/#textDocument_formatting
@@ -94,6 +95,11 @@ export class LanguageServer {
   public implementation(_params: ITextDocumentPositionParams): LServer.Location[] {
     // todo, implement
     return [];
+  }
+
+  // https://microsoft.github.io/language-server-protocol/specifications/specification-3-14/#textDocument_references
+  public references(params: ITextDocumentPositionParams): LServer.Location[] {
+    return new References(this.reg).references(params);
   }
 
 ////////////////////////////////////////
