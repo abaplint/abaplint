@@ -6,6 +6,7 @@ import {LSPUtils} from "./_lsp_utils";
 import {Identifier} from "../abap/4_file_information/_identifier";
 import {SyntaxLogic} from "../abap/5_syntax/syntax";
 import {ISpaghettiScopeNode} from "../abap/5_syntax/_spaghetti_scope";
+import {LSPLookup} from "./_lookup";
 
 export class References {
   private readonly reg: IRegistry;
@@ -29,7 +30,12 @@ export class References {
       return [];
     }
 
-    const locs = this.searchEverything(found.identifier);
+    const lookup = LSPLookup.lookup(found, this.reg, obj);
+    if (lookup?.definitionId === undefined) {
+      return [];
+    }
+
+    const locs = this.searchEverything(lookup.definitionId);
     return locs.map(LSPUtils.identiferToLocation);
   }
 

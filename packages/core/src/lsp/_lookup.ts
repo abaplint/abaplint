@@ -9,10 +9,12 @@ import {IFormDefinition} from "../abap/types/_form_definition";
 import {ISpaghettiScopeNode} from "../abap/5_syntax/_spaghetti_scope";
 import {ICursorData, LSPUtils} from "./_lsp_utils";
 import {TypedIdentifier} from "../abap/types/_typed_identifier";
+import {Identifier} from "../abap/4_file_information/_identifier";
 
 export interface LSPLookupResult {
-  hover: string | undefined;         // in markdown
+  hover: string | undefined;               // in markdown
   definition: LServer.Location | undefined // used for go to definition
+  definitionId?: Identifier
 }
 
 export class LSPLookup {
@@ -42,7 +44,8 @@ export class LSPLookup {
       if (variable.getMeta().length > 0) {
         value = value + "\n\nMeta: " + variable.getMeta().join(", ");
       }
-      return {hover: value, definition: LSPUtils.identiferToLocation(variable)};
+      const location = LSPUtils.identiferToLocation(variable);
+      return {hover: value, definition: location, definitionId: variable};
     }
 
     const type = scope.findType(cursor.token.getStr());
