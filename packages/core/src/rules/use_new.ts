@@ -4,7 +4,7 @@ import * as Expressions from "../abap/2_statements/expressions";
 import {ABAPRule} from "./_abap_rule";
 import {ABAPFile} from "../files";
 import {BasicRuleConfig} from "./_basic_rule_config";
-import {Dynamic} from "../abap/2_statements/expressions";
+import {Dynamic, ParameterListExceptions} from "../abap/2_statements/expressions";
 import {IRegistry} from "../_iregistry";
 import {Version} from "../version";
 import {IRuleMetadata, RuleTag} from "./_irule";
@@ -50,6 +50,8 @@ export class UseNew extends ABAPRule {
       if (statement.get() instanceof Statements.CreateObject) {
         if (statement.findFirstExpression(Dynamic)) {
           continue;
+        } else if (statement.findDirectExpression(ParameterListExceptions)) {
+          continue;
         }
         const fix = this.buildFix(file, statement);
         const issue = Issue.atPosition(file, statement.getStart(), this.getMessage(), this.getMetadata().key, fix);
@@ -68,7 +70,12 @@ export class UseNew extends ABAPRule {
     const parameters = statement.findDirectExpression(Expressions.ParameterListS);
     const param = parameters ? parameters.concatTokens() + " " : "";
 
-    const string = `${target} = NEW #( ${param}).`;
+    let type = statement.findDirectExpression(Expressions.ClassName)?.getFirstToken().getStr();
+    if (type === undefined) {
+      type = "#";
+    }
+
+    const string = `${target} = NEW ${type}( ${param}).`;
 
     return EditHelper.replaceRange(file, statement.getStart(), statement.getEnd(), string);
   }

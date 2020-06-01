@@ -44,7 +44,7 @@ export class EditHelper {
   }
 }
 
-export function applyEdit(reg: IRegistry, edit: IEdit) {
+export function applyEditSingle(reg: IRegistry, edit: IEdit) {
   for (const filename in edit) {
     let rows = reg.getFileByName(filename)?.getRawRows();
     if (rows === undefined) {
@@ -74,6 +74,33 @@ export function applyEdit(reg: IRegistry, edit: IEdit) {
 
     reg.updateFile(result);
   }
+}
 
-  reg.parse();
+/** returns list of filenames which were changed */
+export function applyEditList(reg: IRegistry, edits: IEdit[]): string[] {
+  const ret: string[] = [];
+  let length = 0;
+
+  const merged: IEdit = {};
+  for (const e of edits) {
+    for (const f in e) {
+      if (merged[f] === undefined) {
+        merged[f] = [];
+        length = length + 1;
+      }
+      merged[f] = merged[f].concat(e[f]);
+    }
+  }
+
+  for (const f in merged) {
+    const singleFile: IEdit = {};
+    // sort, start with the last position first
+    singleFile[f] = merged[f].sort((a, b) => b.range.start.getRow() - a.range.start.getRow());
+
+    applyEditSingle(reg, singleFile);
+
+    ret.push(f);
+  }
+
+  return ret;
 }

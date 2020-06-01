@@ -4,7 +4,7 @@ import * as path from "path";
 import * as minimist from "minimist";
 import * as ProgressBar from "progress";
 import * as childProcess from "child_process";
-import {Issue, IProgress, IFile, Position, Config, Registry, MemoryFile} from "@abaplint/core";
+import {Issue, IProgress, IFile, Position, Config, Registry, MemoryFile, IRegistry} from "@abaplint/core";
 import {Formatter} from "./formatters/_format";
 import {FileOperations} from "./file_operations";
 import {ApackDependencyProvider} from "./apack_dependency_provider";
@@ -147,6 +147,7 @@ async function run() {
 
     let loaded: IFile[] = [];
     let deps: IFile[] = [];
+    let reg: IRegistry | undefined = undefined;
     const {config, base} = loadConfig(argv._[0]);
     try {
       if (config.get().global.files === undefined) {
@@ -156,7 +157,7 @@ async function run() {
       loaded = await FileOperations.loadFiles(compress, files, progress);
       deps = await loadDependencies(config, compress, progress, base);
 
-      const reg = new Registry(config).addFiles(loaded);
+      reg = new Registry(config).addFiles(loaded);
       reg.addDependencies(deps);
       await reg.parseAsync(progress);
       issues = issues.concat(reg.findIssues(progress));
@@ -168,9 +169,9 @@ async function run() {
 
     output = out(issues, format, loaded.length, argv);
 
-    if (argv["fix"]) {
+    if (argv["fix"] && reg) {
       // @ts-ignore
-      applyFixes(issues, fs);
+      applyFixes(issues, reg, fs);
     }
   }
 
