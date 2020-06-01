@@ -6,9 +6,14 @@ import {LSPUtils} from "./_lsp_utils";
 import {InfoAttribute, InfoMethodDefinition} from "../abap/4_file_information/_abap_file_information";
 
 export class Symbols {
+  private readonly reg: IRegistry;
 
-  public static find(reg: IRegistry, uri: string): LServer.DocumentSymbol[] {
-    const file = LSPUtils.getABAPFile(reg, uri);
+  public constructor(reg: IRegistry) {
+    this.reg = reg;
+  }
+
+  public find(uri: string): LServer.DocumentSymbol[] {
+    const file = LSPUtils.getABAPFile(this.reg, uri);
     if (file === undefined) {
       return [];
     }
@@ -19,19 +24,19 @@ export class Symbols {
     return ret;
   }
 
-  private static selectionRange(identifier: Identifier): LServer.Range {
+  private selectionRange(identifier: Identifier): LServer.Range {
     const pos = identifier.getStart();
     const str = identifier.getName();
     return LServer.Range.create(pos.getRow() - 1, pos.getCol() - 1, pos.getRow() - 1, pos.getCol() - 1 + str.length);
   }
 
-  private static range(identifer: Identifier): LServer.Range {
+  private range(identifer: Identifier): LServer.Range {
     const start = identifer.getStart();
     const end = identifer.getEnd();
     return LServer.Range.create(start.getRow() - 1, start.getCol() - 1, end.getRow() - 1, end.getCol() - 1);
   }
 
-  private static newSymbol(identifier: Identifier, kind: LServer.SymbolKind, children: LServer.DocumentSymbol[]): LServer.DocumentSymbol {
+  private newSymbol(identifier: Identifier, kind: LServer.SymbolKind, children: LServer.DocumentSymbol[]): LServer.DocumentSymbol {
     const symbol: LServer.DocumentSymbol = {
       name: identifier.getName(),
       kind: kind,
@@ -43,7 +48,7 @@ export class Symbols {
     return symbol;
   }
 
-  private static outputForms(file: ABAPFile): LServer.DocumentSymbol[] {
+  private outputForms(file: ABAPFile): LServer.DocumentSymbol[] {
     const ret: LServer.DocumentSymbol[] = [];
     for (const form of file.getInfo().listFormDefinitions()) {
       const symbol = this.newSymbol(form.identifier, LServer.SymbolKind.Function, []);
@@ -52,7 +57,7 @@ export class Symbols {
     return ret;
   }
 
-  private static outputClasses(file: ABAPFile): LServer.DocumentSymbol[] {
+  private outputClasses(file: ABAPFile): LServer.DocumentSymbol[] {
     const ret: LServer.DocumentSymbol[] = [];
 
     for (const cla of file.getInfo().listClassDefinitions()) {
@@ -73,7 +78,7 @@ export class Symbols {
     return ret;
   }
 
-  private static outputMethodImplementations(methods: readonly Identifier[]): LServer.DocumentSymbol[] {
+  private outputMethodImplementations(methods: readonly Identifier[]): LServer.DocumentSymbol[] {
     const ret: LServer.DocumentSymbol[] = [];
     for (const method of methods) {
       const symbol = this.newSymbol(method, LServer.SymbolKind.Method, []);
@@ -82,7 +87,7 @@ export class Symbols {
     return ret;
   }
 
-  private static outputClassAttributes(attr: readonly InfoAttribute[]): LServer.DocumentSymbol[] {
+  private outputClassAttributes(attr: readonly InfoAttribute[]): LServer.DocumentSymbol[] {
     if (attr === undefined) {
       return [];
     }
@@ -96,7 +101,7 @@ export class Symbols {
     return ret;
   }
 
-  private static outputMethodDefinitions(methods: readonly InfoMethodDefinition[]): LServer.DocumentSymbol[] {
+  private outputMethodDefinitions(methods: readonly InfoMethodDefinition[]): LServer.DocumentSymbol[] {
     if (methods === undefined) {
       return [];
     }
