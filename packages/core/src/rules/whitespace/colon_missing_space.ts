@@ -2,6 +2,8 @@ import {Issue} from "../../issue";
 import {ABAPRule} from "../_abap_rule";
 import {ABAPFile} from "../../files";
 import {BasicRuleConfig} from "../_basic_rule_config";
+import {Position} from "../../position";
+import {EditHelper} from "../../edit_helper";
 
 export class ColonMissingSpaceConf extends BasicRuleConfig {
 }
@@ -14,7 +16,7 @@ export class ColonMissingSpace extends ABAPRule {
     return {
       key: "colon_missing_space",
       title: "Colon missing space",
-      quickfix: false,
+      quickfix: true,
       shortDescription: `Checks for missing spaces after colons in chained statements.`,
     };
   }
@@ -42,7 +44,10 @@ export class ColonMissingSpace extends ABAPRule {
           && tokens[i + 1] !== undefined
           && tokens[i + 1].getRow() === token.getRow()
           && tokens[i + 1].getCol() === token.getCol() + 1) {
-        const issue = Issue.atPosition(file, token.getStart(), this.getMessage(), this.getMetadata().key);
+        const start = token.getStart();
+        const end = new Position(start.getRow(), start.getCol() + 1);
+        const fix = EditHelper.insertAt(file, end, " ");
+        const issue = Issue.atRange(file, start, end, this.getMessage(), this.getMetadata().key, fix);
         issues.push(issue);
       }
     }
