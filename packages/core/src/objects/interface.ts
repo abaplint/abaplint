@@ -1,5 +1,6 @@
 import {ABAPObject} from "./_abap_object";
 import {IInterfaceDefinition} from "../abap/types/_interface_definition";
+import {ABAPFile} from "../abap/abap_file";
 
 export class Interface extends ABAPObject {
   private def: IInterfaceDefinition | undefined = undefined;
@@ -10,6 +11,14 @@ export class Interface extends ABAPObject {
 
   public setDefinition(def: IInterfaceDefinition | undefined): void {
     this.def = def;
+  }
+
+  public getSequencedFiles(): readonly ABAPFile[] {
+    const main = this.getMainABAPFile();
+    if (main === undefined) {
+      return [];
+    }
+    return [main];
   }
 
   public getDefinition(): IInterfaceDefinition | undefined {

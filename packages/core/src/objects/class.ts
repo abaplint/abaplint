@@ -18,6 +18,16 @@ export class Class extends ABAPObject {
     return "CLAS";
   }
 
+  public getSequencedFiles(): readonly ABAPFile[] {
+    const sequence = [".clas.locals_def.abap", ".clas.locals_imp.abap", ".clas.abap", ".clas.testclasses.abap"];
+    const copy = this.getABAPFiles().slice().sort((a, b) => {
+      const aValue = sequence.findIndex((s) => a.getFilename().endsWith(s));
+      const bValue = sequence.findIndex((s) => b.getFilename().endsWith(s));
+      return aValue - bValue;
+    });
+    return copy;
+  }
+
   public setDefinition(def: IClassDefinition | undefined): void {
     this.def = def;
   }

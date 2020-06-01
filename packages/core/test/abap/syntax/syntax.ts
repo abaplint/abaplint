@@ -713,7 +713,8 @@ describe("Check Variables", () => {
     expect(issues.length).to.equals(1);
   });
 
-  it("function module definition not found", () => {
+  // skipped for now, the object is inconsistent, missing main ABAP file
+  it.skip("function module definition not found", () => {
     const code = "FUNCTION zagtest_function_module.\n" +
       "ENDFUNCTION.";
 
