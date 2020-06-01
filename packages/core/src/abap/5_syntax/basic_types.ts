@@ -226,6 +226,8 @@ export class BasicTypes {
       if (found) {
         return new Types.TableType(found);
       }
+    } else if (text === "TYPE STANDARD TABLE") {
+      return new Types.TableType(new Types.AnyType());
     } else if (text.startsWith("TYPE RANGE OF ")) {
       const sub = node.findFirstExpression(Expressions.TypeName);
       found = this.resolveTypeName(sub);
