@@ -1,27 +1,26 @@
 import * as memfs from "memfs";
-import {Issue, IRegistry, applyEdit, IProgress} from "@abaplint/core";
+import {Issue, IRegistry, applyEditList, IProgress} from "@abaplint/core";
+import {IEdit} from "@abaplint/core/build/src/edit_helper";
 
 export function applyFixes(issues: readonly Issue[], reg: IRegistry, fs: memfs.IFs, bar?: IProgress): void {
-  bar?.set(issues.length, "Applying fixes");
+
+  const edits: IEdit[] = [];
 
   for (const i of issues) {
-    bar?.tick("Applying fixes - " + i.getFilename());
-
     const edit = i.getFix();
-    if (edit === undefined) {
+    if (edit !== undefined) {
+      edits.push(edit);
+    }
+  }
+
+  const changed = applyEditList(reg, edits, bar);
+
+  for (const filename of changed) {
+    const file = reg.getFileByName(filename);
+    if (file === undefined) {
       continue;
     }
-
-    applyEdit(reg, edit);
-
-    // if the file is changed multiple times, it is written to FS multiple times
-    for (const filename in edit) {
-      const file = reg.getFileByName(filename);
-      if (file === undefined) {
-        continue;
-      }
-      fs.writeFileSync(file.getFilename(), file.getRaw());
-    }
+    fs.writeFileSync(file.getFilename(), file.getRaw());
   }
 
 }

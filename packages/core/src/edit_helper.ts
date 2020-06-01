@@ -3,6 +3,7 @@ import {IFile} from "./files/_ifile";
 import {Position} from "./position";
 import {IRegistry} from "./_iregistry";
 import {MemoryFile} from "./files/memory_file";
+import {IProgress} from "./progress";
 
 export interface IRange {
   start: Position;
@@ -44,7 +45,7 @@ export class EditHelper {
   }
 }
 
-export function applyEdit(reg: IRegistry, edit: IEdit) {
+export function applyEditSingle(reg: IRegistry, edit: IEdit) {
   for (const filename in edit) {
     let rows = reg.getFileByName(filename)?.getRawRows();
     if (rows === undefined) {
@@ -74,6 +75,36 @@ export function applyEdit(reg: IRegistry, edit: IEdit) {
 
     reg.updateFile(result);
   }
+}
 
-  reg.parse();
+/** returns list of filenames which were changed */
+export function applyEditList(reg: IRegistry, edits: IEdit[], bar?: IProgress): string[] {
+  const ret: string[] = [];
+  let length = 0;
+
+  const merged: IEdit = {};
+  for (const e of edits) {
+    for (const f in e) {
+      if (merged[f] === undefined) {
+        merged[f] = [];
+        length = length + 1;
+      }
+      merged[f] = merged[f].concat(e[f]);
+    }
+  }
+
+  bar?.set(length, "Applying fixes");
+  for (const f in merged) {
+    bar?.tick("Applying fixes");
+
+    const singleFile: IEdit = {};
+    // sort, start with the last position first
+    singleFile[f] = merged[f].sort((a, b) => b.range.start.getRow() - a.range.start.getRow());
+
+    applyEditSingle(reg, singleFile);
+
+    ret.push(f);
+  }
+
+  return ret;
 }

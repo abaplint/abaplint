@@ -2,7 +2,7 @@ import {expect} from "chai";
 import {Registry} from "../../src/registry";
 import {MemoryFile} from "../../src/files/memory_file";
 import {IRule} from "../../src/rules/_irule";
-import {applyEdit} from "../../src/edit_helper";
+import {applyEditSingle} from "../../src/edit_helper";
 import {Issue} from "../../src/issue";
 
 export function runMulti(files: {filename: string, contents: string}[]): readonly Issue[] {
@@ -47,9 +47,12 @@ export function testRuleFix(tests: {input: string, output: string}[], rule: new 
         const reg = new Registry().addFile(new MemoryFile("zfoo.prog.abap", test.input)).parse();
         let issues = nrule.run(reg.getObjects()[0], reg);
         expect(issues.length).to.equal(1);
+
         const fix = issues[0].getFix();
         expect(fix).to.not.equal(undefined, "Fix should exist");
-        applyEdit(reg, fix!);
+        applyEditSingle(reg, fix!);
+
+        reg.parse();
         issues = nrule.run(reg.getObjects()[0], reg);
         expect(issues.length).to.equal(0);
         const output = reg.getObjects()[0].getFiles()[0];
