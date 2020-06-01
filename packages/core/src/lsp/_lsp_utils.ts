@@ -9,7 +9,7 @@ import {INode} from "../abap/nodes/_inode";
 import {Position} from "../position";
 import * as LServer from "vscode-languageserver-types";
 
-export interface ICursorPosition {
+export interface ICursorData {
   token: Token;
   identifier: Identifier;
   stack: INode[];
@@ -42,7 +42,15 @@ export class LSPUtils {
       token.getEnd().getCol() - 1);
   }
 
-  public static findCursor(reg: IRegistry, pos: ITextDocumentPositionParams): ICursorPosition | undefined {
+  public static identiferToLocation(identifier: Identifier): LServer.Location {
+    const pos = identifier.getStart();
+    return {
+      uri: identifier.getFilename(),
+      range: LServer.Range.create(pos.getRow() - 1, pos.getCol() - 1, pos.getRow() - 1, pos.getCol() - 1),
+    };
+  }
+
+  public static findCursor(reg: IRegistry, pos: ITextDocumentPositionParams): ICursorData | undefined {
     const file = LSPUtils.getABAPFile(reg, pos.textDocument.uri);
     if (file === undefined) {
       return undefined;
