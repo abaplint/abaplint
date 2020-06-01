@@ -70,7 +70,12 @@ export class UseNew extends ABAPRule {
     const parameters = statement.findDirectExpression(Expressions.ParameterListS);
     const param = parameters ? parameters.concatTokens() + " " : "";
 
-    const string = `${target} = NEW #( ${param}).`;
+    let type = statement.findDirectExpression(Expressions.ClassName)?.getFirstToken().getStr();
+    if (type === undefined) {
+      type = "#";
+    }
+
+    const string = `${target} = NEW ${type}( ${param}).`;
 
     return EditHelper.replaceRange(file, statement.getStart(), statement.getEnd(), string);
   }

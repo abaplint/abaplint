@@ -19,6 +19,7 @@ testRule(tests, UseNew);
 
 const fixes = [
   {input: "CREATE OBJECT foobar.", output: "foobar = NEW #( )."},
+  {input: "CREATE OBJECT ro_upload TYPE zcl_abapgit_ecatt_val_obj_upl.", output: "ro_upload = NEW zcl_abapgit_ecatt_val_obj_upl( )."},
   {input: "CREATE OBJECT foobar EXPORTING foo = bar.", output: "foobar = NEW #( foo = bar )."},
   {input: "CREATE OBJECT foobar EXPORTING foo = bar boo = moo.", output: "foobar = NEW #( foo = bar boo = moo )."},
 ];
