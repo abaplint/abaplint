@@ -43,10 +43,9 @@ export class LSPUtils {
   }
 
   public static identiferToLocation(identifier: Identifier): LServer.Location {
-    const pos = identifier.getStart();
     return {
       uri: identifier.getFilename(),
-      range: LServer.Range.create(pos.getRow() - 1, pos.getCol() - 1, pos.getRow() - 1, pos.getCol() - 1),
+      range: LSPUtils.tokenToRange(identifier.getToken()),
     };
   }
 

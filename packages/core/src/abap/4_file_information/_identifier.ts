@@ -23,7 +23,7 @@ export class Identifier {
 
   public equals(id: Identifier): boolean {
     const col = id.getStart().getCol() === this.getStart().getCol();
-    const row = id.getStart().getCol() === this.getStart().getCol();
+    const row = id.getStart().getRow() === this.getStart().getRow();
     const file = id.getFilename() === this.getFilename();
     return col && row && file;
   }
