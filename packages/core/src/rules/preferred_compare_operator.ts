@@ -68,6 +68,13 @@ export class PreferredCompareOperator extends ABAPRule {
       this.operatorMapping.set("GT", ">");
       this.operatorMapping.set("LT", "<");
       this.operatorMapping.set("LE", "<=");
+
+      this.operatorMapping.set("=", "EQ");
+      this.operatorMapping.set("<>", "NE");
+      this.operatorMapping.set(">=", "GE");
+      this.operatorMapping.set(">", "GT");
+      this.operatorMapping.set("<", "LT");
+      this.operatorMapping.set("<=", "LE");
     }
   }
 
