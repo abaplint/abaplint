@@ -84,4 +84,23 @@ describe("LSP, hover", () => {
     expect(hover).to.equal(undefined);
   });
 
+  it.skip("hover method parameter", async () => {
+    const abap = `CLASS lcl_abapgit_zlib_stream DEFINITION.
+  PUBLIC SECTION.
+    METHODS take_int
+      IMPORTING
+        !iv_length TYPE i.
+ENDCLASS.
+
+CLASS lcl_abapgit_zlib_stream IMPLEMENTATION.
+  METHOD take_int.
+  ENDMETHOD.
+ENDCLASS.`;
+    const file = new MemoryFile("foobar.prog.abap", abap);
+    const reg = new Registry().addFile(file).parse();
+    const hover = new Hover(reg).find(buildPosition(file, 4 , 12));
+    expect(hover).to.not.equal(undefined);
+    expect(hover!.value).to.contain("Resolved");
+  });
+
 });
