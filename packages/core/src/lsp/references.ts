@@ -7,6 +7,7 @@ import {Identifier} from "../abap/4_file_information/_identifier";
 import {SyntaxLogic} from "../abap/5_syntax/syntax";
 import {ISpaghettiScopeNode} from "../abap/5_syntax/_spaghetti_scope";
 import {LSPLookup} from "./_lookup";
+import {ScopeType} from "../abap/5_syntax/_scope_type";
 
 export class References {
   private readonly reg: IRegistry;
@@ -66,21 +67,23 @@ export class References {
   private traverse(node: ISpaghettiScopeNode, identifier: Identifier): Identifier[] {
     let ret: Identifier[] = [];
 
-    for (const v of node.getData().vars) {
-      if (v.identifier.equals(identifier)) {
-        ret.push(v.identifier);
+    if (node.getIdentifier().stype !== ScopeType.BuiltIn) {
+      for (const v of node.getData().vars) {
+        if (v.identifier.equals(identifier)) {
+          ret.push(v.identifier);
+        }
       }
-    }
 
-    for (const r of node.getData().reads) {
-      if (r.resolved.equals(identifier)) {
-        ret.push(r.position);
+      for (const r of node.getData().reads) {
+        if (r.resolved.equals(identifier)) {
+          ret.push(r.position);
+        }
       }
-    }
 
-    for (const w of node.getData().writes) {
-      if (w.resolved.equals(identifier)) {
-        ret.push(w.position);
+      for (const w of node.getData().writes) {
+        if (w.resolved.equals(identifier)) {
+          ret.push(w.position);
+        }
       }
     }
 
