@@ -40,9 +40,7 @@ export class References {
     return locs.map(LSPUtils.identiferToLocation);
   }
 
-////////////////////////////////////////////
-
-  private searchEverything(identifier: Identifier): Identifier[] {
+  public searchEverything(identifier: Identifier): Identifier[] {
     let ret: Identifier[] = [];
     // todo, take scope into account
     for (const o of this.reg.getObjects()) {
@@ -53,6 +51,8 @@ export class References {
     // remove duplicates, might be a changing(read and write) position
     return this.removeDuplicates(ret);
   }
+
+////////////////////////////////////////////
 
   private removeDuplicates(arr: Identifier[]): Identifier[] {
     const values: any = {};
