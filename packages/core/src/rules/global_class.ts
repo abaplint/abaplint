@@ -1,10 +1,11 @@
-import {Issue} from "../../issue";
-import {ABAPRule} from "./../_abap_rule";
-import {ABAPFile} from "../../files";
-import {IRegistry} from "../../_iregistry";
-import {IObject} from "../../objects/_iobject";
-import * as Objects from "../../objects";
-import {BasicRuleConfig} from "../_basic_rule_config";
+import {Issue} from "../issue";
+import {ABAPRule} from "./_abap_rule";
+import {ABAPFile} from "../files";
+import {IRegistry} from "../_iregistry";
+import {IObject} from "../objects/_iobject";
+import * as Objects from "../objects";
+import {BasicRuleConfig} from "./_basic_rule_config";
+import {RuleTag} from "./_irule";
 
 export class GlobalClassConf extends BasicRuleConfig {
 }
@@ -21,6 +22,7 @@ export class GlobalClass extends ABAPRule {
 * global classes must be in own files
 * file names must match class name
 * global classes must be global definitions`,
+      tags: [RuleTag.Syntax],
     };
   }
 

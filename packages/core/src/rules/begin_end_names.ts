@@ -1,13 +1,14 @@
-import {Issue} from "../../issue";
-import {ABAPRule} from "./../_abap_rule";
-import {ABAPFile} from "../../files";
-import {BasicRuleConfig} from "../_basic_rule_config";
-import * as Structures from "../../abap/3_structures/structures";
-import * as Expressions from "../../abap/2_statements/expressions";
-import * as Statements from "../../abap/2_statements/statements";
-import {StructureNode} from "../../abap/nodes";
-import {IStructure} from "../../abap/3_structures/structures/_structure";
-import {IStatement} from "../../abap/2_statements/statements/_statement";
+import {Issue} from "../issue";
+import {ABAPRule} from "./_abap_rule";
+import {ABAPFile} from "../files";
+import {BasicRuleConfig} from "./_basic_rule_config";
+import * as Structures from "../abap/3_structures/structures";
+import * as Expressions from "../abap/2_statements/expressions";
+import * as Statements from "../abap/2_statements/statements";
+import {StructureNode} from "../abap/nodes";
+import {IStructure} from "../abap/3_structures/structures/_structure";
+import {IStatement} from "../abap/2_statements/statements/_statement";
+import {RuleTag} from "./_irule";
 
 export class BeginEndNamesConf extends BasicRuleConfig {
 }
@@ -21,6 +22,7 @@ export class BeginEndNames extends ABAPRule {
       title: "Check BEGIN END names",
       quickfix: false,
       shortDescription: `Check BEGIN OF and END OF names match`,
+      tags: [RuleTag.Syntax],
     };
   }
 

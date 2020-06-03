@@ -1,10 +1,11 @@
-import {Issue} from "../../issue";
-import {ABAPRule} from "./../_abap_rule";
-import {ABAPFile} from "../../files";
-import {BasicRuleConfig} from "../_basic_rule_config";
-import {CallTransformation} from "../../abap/2_statements/statements";
-import {NamespaceSimpleName} from "../../abap/2_statements/expressions";
-import {IRegistry} from "../../_iregistry";
+import {Issue} from "../issue";
+import {ABAPRule} from "./_abap_rule";
+import {ABAPFile} from "../files";
+import {BasicRuleConfig} from "./_basic_rule_config";
+import {CallTransformation} from "../abap/2_statements/statements";
+import {NamespaceSimpleName} from "../abap/2_statements/expressions";
+import {IRegistry} from "../_iregistry";
+import {RuleTag} from "./_irule";
 
 export class CheckTransformationExistsConf extends BasicRuleConfig {
 }
@@ -18,6 +19,7 @@ export class CheckTransformationExists extends ABAPRule {
       title: "Check transformation exists",
       quickfix: false,
       shortDescription: `Checks that used XSLT transformations exist.`,
+      tags: [RuleTag.Syntax],
     };
   }
 

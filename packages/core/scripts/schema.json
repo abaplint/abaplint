@@ -928,7 +928,7 @@
                   "type": "boolean"
                 }
               ],
-              "description": "Check BEGIN OF and END OF names match\nhttps://rules.abaplint.org/begin_end_names"
+              "description": "Check BEGIN OF and END OF names match\nTags: Syntax\nhttps://rules.abaplint.org/begin_end_names"
             },
             "chain_mainly_declarations": {
               "anyOf": [
@@ -972,7 +972,7 @@
                   "type": "boolean"
                 }
               ],
-              "description": "Checks the types of DDIC objects can be resolved, the namespace of the development/errors can be configured in \"errorNamespace\" \nhttps://rules.abaplint.org/check_ddic"
+              "description": "Checks the types of DDIC objects can be resolved, the namespace of the development/errors can be configured in \"errorNamespace\" \nTags: Syntax\nhttps://rules.abaplint.org/check_ddic"
             },
             "check_include": {
               "anyOf": [
@@ -983,7 +983,7 @@
                   "type": "boolean"
                 }
               ],
-              "description": "Checks INCLUDE statements\nhttps://rules.abaplint.org/check_include"
+              "description": "Checks INCLUDE statements\nTags: Syntax\nhttps://rules.abaplint.org/check_include"
             },
             "check_no_handler_pragma": {
               "anyOf": [
@@ -1005,7 +1005,7 @@
                   "type": "boolean"
                 }
               ],
-              "description": "Enables syntax check and variable resolution\nTags: Experimental\nhttps://rules.abaplint.org/check_syntax"
+              "description": "Enables syntax check and variable resolution\nTags: Experimental, Syntax\nhttps://rules.abaplint.org/check_syntax"
             },
             "check_text_elements": {
               "anyOf": [
@@ -1027,7 +1027,7 @@
                   "type": "boolean"
                 }
               ],
-              "description": "Checks that used XSLT transformations exist.\nhttps://rules.abaplint.org/check_transformation_exists"
+              "description": "Checks that used XSLT transformations exist.\nTags: Syntax\nhttps://rules.abaplint.org/check_transformation_exists"
             },
             "class_attribute_names": {
               "anyOf": [
@@ -1258,7 +1258,7 @@
                   "type": "boolean"
                 }
               ],
-              "description": "Checks related to global classes.\n* global classes must be in own files\n* file names must match class name\n* global classes must be global definitions\nhttps://rules.abaplint.org/global_class"
+              "description": "Checks related to global classes.\n* global classes must be in own files\n* file names must match class name\n* global classes must be global definitions\nTags: Syntax\nhttps://rules.abaplint.org/global_class"
             },
             "identical_form_names": {
               "anyOf": [
@@ -1291,7 +1291,7 @@
                   "type": "boolean"
                 }
               ],
-              "description": "Chekcs for abstract methods and methods from interfaces which need implementing.\nhttps://rules.abaplint.org/implement_methods"
+              "description": "Chekcs for abstract methods and methods from interfaces which need implementing.\nTags: Syntax\nhttps://rules.abaplint.org/implement_methods"
             },
             "in_statement_indentation": {
               "anyOf": [
@@ -1324,7 +1324,7 @@
                   "type": "boolean"
                 }
               ],
-              "description": "Checks for inline data declarations in older releases. Only active for versions less than v740sp02\nhttps://rules.abaplint.org/inline_data_old_versions"
+              "description": "Checks for inline data declarations in older releases. Only active for versions less than v740sp02\nTags: Syntax\nhttps://rules.abaplint.org/inline_data_old_versions"
             },
             "keep_single_parameter_on_one_line": {
               "anyOf": [
@@ -1544,7 +1544,7 @@
                   "type": "boolean"
                 }
               ],
-              "description": "Checks for syntax unrecognized by abaplint\nhttps://rules.abaplint.org/parser_error"
+              "description": "Checks for syntax unrecognized by abaplint\nTags: Syntax\nhttps://rules.abaplint.org/parser_error"
             },
             "prefer_returning_to_exporting": {
               "anyOf": [
@@ -1709,7 +1709,7 @@
                   "type": "boolean"
                 }
               ],
-              "description": "Checks that classes which are inherited from are not declared as FINAL.\nhttps://rules.abaplint.org/superclass_final"
+              "description": "Checks that classes which are inherited from are not declared as FINAL.\nTags: Syntax\nhttps://rules.abaplint.org/superclass_final"
             },
             "tabl_enhancement_category": {
               "anyOf": [
@@ -1775,7 +1775,7 @@
                   "type": "boolean"
                 }
               ],
-              "description": "Enables check for unknown data types, respects errorNamespace\nTags: Experimental\nhttps://rules.abaplint.org/unknown_types"
+              "description": "Enables check for unknown data types, respects errorNamespace\nTags: Experimental, Syntax\nhttps://rules.abaplint.org/unknown_types"
             },
             "unreachable_code": {
               "anyOf": [

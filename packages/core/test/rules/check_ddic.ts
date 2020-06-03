@@ -1,7 +1,7 @@
 import {expect} from "chai";
-import {CheckDDIC} from "../../../src/rules/syntax/check_ddic";
-import {Registry} from "../../../src/registry";
-import {MemoryFile} from "../../../src/files";
+import {CheckDDIC} from "../../src/rules/check_ddic";
+import {Registry} from "../../src/registry";
+import {MemoryFile} from "../../src/files";
 
 describe("Rule: no_unknown_ddic", () => {
 

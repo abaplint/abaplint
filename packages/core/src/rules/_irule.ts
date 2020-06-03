@@ -9,6 +9,7 @@ export enum RuleTag {
   Downport = "Downport",
   Whitespace = "Whitespace",
   Naming = "Naming",
+  Syntax = "Syntax",
 }
 
 /** Rule Metadata */

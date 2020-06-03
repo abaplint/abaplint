@@ -1,8 +1,8 @@
 import {expect} from "chai";
-import {CheckInclude} from "../../../src/rules";
-import {Registry} from "../../../src/registry";
-import {MemoryFile} from "../../../src/files";
-import {Issue} from "../../../src/issue";
+import {CheckInclude} from "../../src/rules";
+import {Registry} from "../../src/registry";
+import {MemoryFile} from "../../src/files";
+import {Issue} from "../../src/issue";
 
 function runMulti(files: {filename: string, contents: string}[]): Issue[] {
   const reg = new Registry();

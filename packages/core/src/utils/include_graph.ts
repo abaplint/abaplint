@@ -1,7 +1,7 @@
 import {Include} from "../abap/2_statements/statements";
 import {IncludeName} from "../abap/2_statements/expressions";
 import {FunctionGroup, Program} from "../objects";
-import {CheckInclude} from "../rules/syntax/check_include";
+import {CheckInclude} from "../rules/check_include";
 import {Position} from "../position";
 import {Issue} from "../issue";
 import {IFile} from "../files/_ifile";

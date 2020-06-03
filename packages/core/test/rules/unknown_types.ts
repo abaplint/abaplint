@@ -1,5 +1,5 @@
-import {runMulti, testRule} from "../_utils";
-import {UnknownTypes} from "../../../src/rules";
+import {runMulti, testRule} from "./_utils";
+import {UnknownTypes} from "../../src/rules";
 import {expect} from "chai";
 
 // note that the errorNamespace is respected

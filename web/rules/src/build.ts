@@ -59,6 +59,12 @@ function naming() {
   return `&nbsp;<a href="/naming.html"><svg fill="none" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" viewBox="0 0 24 24" stroke="currentColor" height="2ch"><title>naming</title><path d="M3 5h12M9 3v2m1.048 9.5A18.022 18.022 0 016.412 9m6.088 9h7M11 21l5-10 5 10M12.751 5C11.783 10.77 8.07 15.61 3 18.129"></path></svg></a>`;
 }
 
+function syntax() {
+  // https://github.com/refactoringui/heroicons/
+  // eslint-disable-next-line max-len
+  return `&nbsp;<a href="/syntax.html"><svg fill="none" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" viewBox="0 0 24 24" stroke="currentColor" height="2ch"><title>syntax</title><path d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z"></path></svg></a>`;
+}
+
 function home() {
   // https://github.com/refactoringui/heroicons/
   // eslint-disable-next-line max-len
@@ -71,19 +77,9 @@ function findDefault(ruleKey: string) {
   return JSON.stringify(def.readByRule(ruleKey), null, 2);
 }
 
-// todo, this is slow, its called for every rule, refactor
 function findPath(ruleKey: string) {
   const base = "https://github.com/abaplint/abaplint/blob/master/packages/core/src/rules/";
-  const test = ["", "syntax/"]; // todo, refactor
-  for (const t of test) {
-    const files = fs.readdirSync("../../packages/core/src/rules/" + t);
-    for (const f of files) {
-      if (f === ruleKey + ".ts") {
-        return base + t + f;
-      }
-    }
-  }
-  throw new Error("not found: " + ruleKey);
+  return base + ruleKey + ".ts";
 }
 
 function renderIcons(meta: IRuleMetadata): string {
@@ -105,6 +101,9 @@ function renderIcons(meta: IRuleMetadata): string {
   }
   if (meta.tags?.includes(RuleTag.Naming)) {
     html = html + naming();
+  }
+  if (meta.tags?.includes(RuleTag.Syntax)) {
+    html = html + syntax();
   }
   return html;
 }

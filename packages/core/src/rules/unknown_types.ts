@@ -1,12 +1,12 @@
-import {IRegistry} from "../../_iregistry";
-import {SyntaxLogic} from "../../abap/5_syntax/syntax";
-import {BasicRuleConfig} from "../_basic_rule_config";
-import {IObject} from "../../objects/_iobject";
-import {ABAPObject} from "../../objects/_abap_object";
-import {Issue} from "../../issue";
-import {UnknownType} from "../../abap/types/basic";
-import {IRuleMetadata, RuleTag} from "../_irule";
-import {ISpaghettiScopeNode} from "../../abap/5_syntax/_spaghetti_scope";
+import {IRegistry} from "../_iregistry";
+import {SyntaxLogic} from "../abap/5_syntax/syntax";
+import {BasicRuleConfig} from "./_basic_rule_config";
+import {IObject} from "../objects/_iobject";
+import {ABAPObject} from "../objects/_abap_object";
+import {Issue} from "../issue";
+import {UnknownType} from "../abap/types/basic";
+import {IRuleMetadata, RuleTag} from "./_irule";
+import {ISpaghettiScopeNode} from "../abap/5_syntax/_spaghetti_scope";
 
 export class UnknownTypesConf extends BasicRuleConfig {
 }
@@ -21,7 +21,7 @@ export class UnknownTypes {
       title: "Unknown types",
       quickfix: false,
       shortDescription: `Enables check for unknown data types, respects errorNamespace`,
-      tags: [RuleTag.Experimental],
+      tags: [RuleTag.Experimental, RuleTag.Syntax],
     };
   }
 

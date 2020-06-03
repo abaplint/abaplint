@@ -1,5 +1,5 @@
-import {BeginEndNames} from "../../../src/rules/syntax/begin_end_names";
-import {testRule} from "../_utils";
+import {BeginEndNames} from "../../src/rules/begin_end_names";
+import {testRule} from "./_utils";
 
 const tests = [
   {abap: "parser error", cnt: 0},

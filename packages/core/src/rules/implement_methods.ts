@@ -1,11 +1,12 @@
-import {Issue} from "../../issue";
-import {ABAPRule} from "../_abap_rule";
-import {ABAPFile} from "../../files";
-import {IRegistry} from "../../_iregistry";
-import {BasicRuleConfig} from "../_basic_rule_config";
-import {ABAPObject} from "../../objects/_abap_object";
-import {Interface} from "../../objects";
-import {InfoClassImplementation, InfoClassDefinition, InfoInterfaceDefinition} from "../../abap/4_file_information/_abap_file_information";
+import {Issue} from "../issue";
+import {ABAPRule} from "./_abap_rule";
+import {ABAPFile} from "../files";
+import {IRegistry} from "../_iregistry";
+import {BasicRuleConfig} from "./_basic_rule_config";
+import {ABAPObject} from "../objects/_abap_object";
+import {Interface} from "../objects";
+import {InfoClassImplementation, InfoClassDefinition, InfoInterfaceDefinition} from "../abap/4_file_information/_abap_file_information";
+import {RuleTag} from "./_irule";
 
 // todo: abstract methods from superclass parents(might be multiple), if class is not abstract
 
@@ -21,6 +22,7 @@ export class ImplementMethods extends ABAPRule {
       title: "Implement methods",
       quickfix: false,
       shortDescription: `Chekcs for abstract methods and methods from interfaces which need implementing.`,
+      tags: [RuleTag.Syntax],
     };
   }
 

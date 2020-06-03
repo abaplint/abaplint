@@ -1,12 +1,13 @@
-import {Issue} from "../../issue";
-import {ABAPRule} from "./../_abap_rule";
-import {ABAPFile} from "../../files";
-import {IRegistry} from "../../_iregistry";
-import {IObject} from "../../objects/_iobject";
-import * as Objects from "../../objects";
-import {BasicRuleConfig} from "../_basic_rule_config";
-import {Class} from "../../objects";
-import {InfoClassDefinition} from "../../abap/4_file_information/_abap_file_information";
+import {Issue} from "../issue";
+import {ABAPRule} from "./_abap_rule";
+import {ABAPFile} from "../files";
+import {IRegistry} from "../_iregistry";
+import {IObject} from "../objects/_iobject";
+import * as Objects from "../objects";
+import {BasicRuleConfig} from "./_basic_rule_config";
+import {Class} from "../objects";
+import {InfoClassDefinition} from "../abap/4_file_information/_abap_file_information";
+import {RuleTag} from "./_irule";
 
 export class SuperclassFinalConf extends BasicRuleConfig {
 }
@@ -20,6 +21,7 @@ export class SuperclassFinal extends ABAPRule {
       title: "Super class final",
       quickfix: false,
       shortDescription: `Checks that classes which are inherited from are not declared as FINAL.`,
+      tags: [RuleTag.Syntax],
     };
   }
 

@@ -1,13 +1,14 @@
-import {Issue} from "../../issue";
-import {Position} from "../../position";
-import * as Tokens from "../../abap/1_lexer/tokens";
-import {Unknown} from "../../abap/2_statements/statements/_statement";
-import {ABAPRule} from "../_abap_rule";
-import {ABAPFile} from "../../files";
-import {StatementNode} from "../../abap/nodes";
-import {IRegistry} from "../../_iregistry";
-import {BasicRuleConfig} from "../_basic_rule_config";
-import {STATEMENT_MAX_TOKENS} from "../../abap/2_statements/statement_parser";
+import {Issue} from "../issue";
+import {Position} from "../position";
+import * as Tokens from "../abap/1_lexer/tokens";
+import {Unknown} from "../abap/2_statements/statements/_statement";
+import {ABAPRule} from "./_abap_rule";
+import {ABAPFile} from "../files";
+import {StatementNode} from "../abap/nodes";
+import {IRegistry} from "../_iregistry";
+import {BasicRuleConfig} from "./_basic_rule_config";
+import {STATEMENT_MAX_TOKENS} from "../abap/2_statements/statement_parser";
+import {RuleTag} from "./_irule";
 
 export class ParserErrorConf extends BasicRuleConfig {
 }
@@ -22,6 +23,7 @@ export class ParserError extends ABAPRule {
       title: "Parser error",
       quickfix: false,
       shortDescription: `Checks for syntax unrecognized by abaplint`,
+      tags: [RuleTag.Syntax],
     };
   }
 

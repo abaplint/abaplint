@@ -1,12 +1,12 @@
-import {IRule} from "../_irule";
-import {Issue} from "../../issue";
-import * as Objects from "../../objects";
-import {IObject} from "../../objects/_iobject";
-import {IRegistry} from "../../_iregistry";
-import {BasicRuleConfig} from "../_basic_rule_config";
-import {Position} from "../../position";
-import {AbstractType} from "../../abap/types/basic/_abstract_type";
-import {UnknownType, StructureType, TableType} from "../../abap/types/basic";
+import {IRule, RuleTag} from "./_irule";
+import {Issue} from "../issue";
+import * as Objects from "../objects";
+import {IObject} from "../objects/_iobject";
+import {IRegistry} from "../_iregistry";
+import {BasicRuleConfig} from "./_basic_rule_config";
+import {Position} from "../position";
+import {AbstractType} from "../abap/types/basic/_abstract_type";
+import {UnknownType, StructureType, TableType} from "../abap/types/basic";
 
 export class CheckDDICConf extends BasicRuleConfig {
 // todo, add option to not allow any void types?
@@ -23,6 +23,7 @@ export class CheckDDIC implements IRule {
       quickfix: false,
       // eslint-disable-next-line max-len
       shortDescription: `Checks the types of DDIC objects can be resolved, the namespace of the development/errors can be configured in "errorNamespace" `,
+      tags: [RuleTag.Syntax],
     };
   }
 
