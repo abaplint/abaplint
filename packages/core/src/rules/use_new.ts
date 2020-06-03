@@ -23,7 +23,8 @@ export class UseNew extends ABAPRule {
       title: "Use NEW",
       quickfix: true,
       shortDescription: `Checks for deprecated CREATE OBJECT statements.`,
-      tags: [RuleTag.Upport],
+      extendedInformation: `https://github.com/SAP/styleguides/blob/master/clean-abap/CleanABAP.md#prefer-new-to-create-object`,
+      tags: [RuleTag.Upport, RuleTag.Styleguide],
     };
   }
 

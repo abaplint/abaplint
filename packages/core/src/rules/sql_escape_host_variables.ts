@@ -5,7 +5,7 @@ import {BasicRuleConfig} from "./_basic_rule_config";
 import {Select} from "../abap/2_statements/statements";
 import {IRegistry} from "../_iregistry";
 import {Version} from "../version";
-import {RuleTag} from "./_irule";
+import {RuleTag, IRuleMetadata} from "./_irule";
 
 export class SQLEscapeHostVariablesConf extends BasicRuleConfig {
 }
@@ -13,13 +13,14 @@ export class SQLEscapeHostVariablesConf extends BasicRuleConfig {
 export class SQLEscapeHostVariables extends ABAPRule {
   private conf = new SQLEscapeHostVariablesConf();
 
-  public getMetadata() {
+  public getMetadata(): IRuleMetadata {
     return {
       key: "sql_escape_host_variables",
       title: "Escape SQL host variables",
       quickfix: false,
       shortDescription: `Escape SQL host variables, from 740sp05`,
-      tags: [RuleTag.Upport],
+      extendedInformation: `https://github.com/SAP/styleguides/blob/master/clean-abap/CleanABAP.md#avoid-obsolete-language-elements`,
+      tags: [RuleTag.Upport, RuleTag.Styleguide],
     };
   }
 

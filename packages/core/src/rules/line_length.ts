@@ -2,6 +2,7 @@ import {Issue} from "../issue";
 import {ABAPRule} from "./_abap_rule";
 import {ABAPFile} from "../files";
 import {BasicRuleConfig} from "./_basic_rule_config";
+import {RuleTag} from "./_irule";
 
 export class LineLengthConf extends BasicRuleConfig {
   /** Maximum line length in characters, trailing whitespace ignored */
@@ -20,6 +21,7 @@ export class LineLength extends ABAPRule {
       shortDescription: `Detects lines exceeding the provided maximum length.`,
       extendedInformation: `https://github.com/SAP/styleguides/blob/master/clean-abap/CleanABAP.md#stick-to-a-reasonable-line-length
 https://docs.abapopenchecks.org/checks/04/`,
+      tags: [RuleTag.Styleguide],
     };
   }
 

@@ -10,6 +10,7 @@ export enum RuleTag {
   Whitespace = "Whitespace",
   Naming = "Naming",
   Syntax = "Syntax",
+  Styleguide = "Styleguide",
 }
 
 /** Rule Metadata */

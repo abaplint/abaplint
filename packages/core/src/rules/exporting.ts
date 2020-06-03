@@ -1,5 +1,5 @@
 import {Issue} from "../issue";
-import {IRuleMetadata} from "./_irule";
+import {IRuleMetadata, RuleTag} from "./_irule";
 import {ABAPRule} from "./_abap_rule";
 import {ABAPFile} from "../files";
 import {BasicRuleConfig} from "./_basic_rule_config";
@@ -25,6 +25,7 @@ export class Exporting extends ABAPRule {
       extendedInformation:
 `https://github.com/SAP/styleguides/blob/master/clean-abap/CleanABAP.md#omit-the-optional-keyword-exporting
 https://docs.abapopenchecks.org/checks/30/`,
+      tags: [RuleTag.Styleguide],
     };
   }
 
