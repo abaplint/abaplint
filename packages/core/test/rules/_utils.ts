@@ -46,7 +46,7 @@ export function testRuleFix(tests: {input: string, output: string}[], rule: new 
       it("Fix \"" + test.input + "\"", () => {
         const reg = new Registry().addFile(new MemoryFile("zfoo.prog.abap", test.input)).parse();
         let issues = nrule.run(reg.getObjects()[0], reg);
-        expect(issues.length).to.equal(1);
+        expect(issues.length).to.equal(1, "single issue expected");
 
         const fix = issues[0].getFix();
         expect(fix).to.not.equal(undefined, "Fix should exist");
