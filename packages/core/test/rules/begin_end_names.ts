@@ -1,5 +1,5 @@
 import {BeginEndNames} from "../../src/rules/begin_end_names";
-import {testRule} from "./_utils";
+import {testRule, testRuleFix} from "./_utils";
 
 const tests = [
   {abap: "parser error", cnt: 0},
@@ -45,3 +45,26 @@ const tests = [
 ];
 
 testRule(tests, BeginEndNames);
+
+const fixTests = [
+  {
+    input: "TYPES: BEGIN OF moo, dsf TYPE string, END OF bar.",
+    output: "TYPES: BEGIN OF moo, dsf TYPE string, END OF moo.",
+  },
+  {
+    input: "TYPES: BEGIN OF ENUM moo, blah, END OF ENUM bar.",
+    output: "TYPES: BEGIN OF ENUM moo, blah, END OF ENUM moo.",
+  },
+  // difference in inner type
+  {
+    input: "DATA: BEGIN OF foo, BEGIN OF bar2, f TYPE string, END OF bar1, END OF foo.",
+    output: "DATA: BEGIN OF foo, BEGIN OF bar2, f TYPE string, END OF bar2, END OF foo.",
+  },
+  // difference in outer type
+  {
+    input: "DATA: BEGIN OF foo, BEGIN OF bar2, f TYPE string, END OF bar2, END OF fooaaa.",
+    output: "DATA: BEGIN OF foo, BEGIN OF bar2, f TYPE string, END OF bar2, END OF foo.",
+  },
+];
+
+testRuleFix(fixTests, BeginEndNames);
