@@ -3,7 +3,7 @@ import * as Structures from "../abap/3_structures/structures";
 import {ABAPRule} from "./_abap_rule";
 import {ABAPFile} from "../files";
 import {BasicRuleConfig} from "./_basic_rule_config";
-import {IRuleMetadata} from "./_irule";
+import {IRuleMetadata, RuleTag} from "./_irule";
 
 export class IfInIfConf extends BasicRuleConfig {
 }
@@ -28,6 +28,7 @@ ENDIF.`,
       goodExample: `IF ( condition1 ) AND ( condition2 ).
   ...
 ENDIF.`,
+      tags: [RuleTag.Styleguide],
     };
   }
 

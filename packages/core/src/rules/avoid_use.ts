@@ -4,7 +4,7 @@ import {ABAPRule} from "./_abap_rule";
 import {ABAPFile} from "../files";
 import {BasicRuleConfig} from "./_basic_rule_config";
 import {TypeTable} from "../abap/2_statements/expressions";
-import {IRuleMetadata} from "./_irule";
+import {IRuleMetadata, RuleTag} from "./_irule";
 
 export class AvoidUseConf extends BasicRuleConfig {
   /** Detects define (macro definitions)
@@ -40,6 +40,7 @@ export class AvoidUse extends ABAPRule {
       quickfix: false,
       shortDescription: `Detects usage of certain statements.`,
       extendedInformation: `DEFAULT KEY: https://github.com/SAP/styleguides/blob/master/clean-abap/CleanABAP.md#avoid-default-key`,
+      tags: [RuleTag.Styleguide],
     };
   }
 

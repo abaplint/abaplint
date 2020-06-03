@@ -20,7 +20,7 @@ export class SQLEscapeHostVariables extends ABAPRule {
       quickfix: false,
       shortDescription: `Escape SQL host variables, from 740sp05`,
       extendedInformation: `https://github.com/SAP/styleguides/blob/master/clean-abap/CleanABAP.md#avoid-obsolete-language-elements`,
-      tags: [RuleTag.Upport],
+      tags: [RuleTag.Upport, RuleTag.Styleguide],
     };
   }
 

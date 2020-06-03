@@ -6,6 +6,7 @@ import {BasicRuleConfig} from "./_basic_rule_config";
 import {IRegistry} from "../_iregistry";
 import {IObject} from "../objects/_iobject";
 import {Class} from "../objects";
+import {RuleTag} from "./_irule";
 
 export class LineOnlyPuncConf extends BasicRuleConfig {
   /** Ignore lines with only puncutation in global exception classes */
@@ -24,6 +25,7 @@ export class LineOnlyPunc extends ABAPRule {
       shortDescription: `Detects lines containing only punctuation.`,
       extendedInformation: `https://github.com/SAP/styleguides/blob/master/clean-abap/CleanABAP.md#close-brackets-at-line-end
 https://docs.abapopenchecks.org/checks/16/`,
+      tags: [RuleTag.Styleguide],
     };
   }
 

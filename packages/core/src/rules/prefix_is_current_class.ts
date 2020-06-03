@@ -6,6 +6,7 @@ import {BasicRuleConfig} from "./_basic_rule_config";
 import {ClassName, MethodCall, InterfaceName, TypeName} from "../abap/2_statements/expressions";
 import {Position} from "../position";
 import {EditHelper} from "../edit_helper";
+import {RuleTag} from "./_irule";
 
 export class PrefixIsCurrentClassConf extends BasicRuleConfig {
   /**
@@ -25,6 +26,7 @@ export class PrefixIsCurrentClass extends ABAPRule {
       shortDescription: `Reports errors if the current class or interface references itself with "current_class=>"`,
       // eslint-disable-next-line max-len
       extendedInformation: `https://github.com/SAP/styleguides/blob/master/clean-abap/CleanABAP.md#omit-the-self-reference-me-when-calling-an-instance-method`,
+      tags: [RuleTag.Styleguide],
     };
   }
 

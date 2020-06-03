@@ -922,7 +922,7 @@
                   "type": "boolean"
                 }
               ],
-              "description": "Detects usage of certain statements.\nhttps://rules.abaplint.org/avoid_use"
+              "description": "Detects usage of certain statements.\nTags: Styleguide\nhttps://rules.abaplint.org/avoid_use"
             },
             "begin_end_names": {
               "anyOf": [
@@ -1076,7 +1076,7 @@
                   "type": "boolean"
                 }
               ],
-              "description": "Detects usage of commented out code.\nhttps://rules.abaplint.org/commented_code"
+              "description": "Detects usage of commented out code.\nTags: Styleguide\nhttps://rules.abaplint.org/commented_code"
             },
             "constructor_visibility_public": {
               "anyOf": [
@@ -1087,7 +1087,7 @@
                   "type": "boolean"
                 }
               ],
-              "description": "Constructor must be placed in the public section, even if the class is not CREATE PUBLIC.\nhttps://rules.abaplint.org/constructor_visibility_public"
+              "description": "Constructor must be placed in the public section, even if the class is not CREATE PUBLIC.\nTags: Styleguide\nhttps://rules.abaplint.org/constructor_visibility_public"
             },
             "contains_tab": {
               "anyOf": [
@@ -1164,7 +1164,7 @@
                   "type": "boolean"
                 }
               ],
-              "description": "Checks that the code does not contain empty blocks.\nhttps://rules.abaplint.org/empty_structure"
+              "description": "Checks that the code does not contain empty blocks.\nTags: Styleguide\nhttps://rules.abaplint.org/empty_structure"
             },
             "exit_or_check": {
               "anyOf": [
@@ -1175,7 +1175,7 @@
                   "type": "boolean"
                 }
               ],
-              "description": "Detects usages of EXIT or CHECK statements outside of loops.\nUse RETURN to leave procesing blocks instead.\nhttps://rules.abaplint.org/exit_or_check"
+              "description": "Detects usages of EXIT or CHECK statements outside of loops.\nUse RETURN to leave procesing blocks instead.\nTags: Styleguide\nhttps://rules.abaplint.org/exit_or_check"
             },
             "exporting": {
               "anyOf": [
@@ -1186,7 +1186,7 @@
                   "type": "boolean"
                 }
               ],
-              "description": "Detects EXPORTING statements which can be omitted.\nhttps://rules.abaplint.org/exporting"
+              "description": "Detects EXPORTING statements which can be omitted.\nTags: Styleguide\nhttps://rules.abaplint.org/exporting"
             },
             "forbidden_identifier": {
               "anyOf": [
@@ -1252,7 +1252,7 @@
                   "type": "boolean"
                 }
               ],
-              "description": "Detects usage of call method when functional style calls can be used.\nhttps://rules.abaplint.org/functional_writing"
+              "description": "Detects usage of call method when functional style calls can be used.\nTags: Styleguide\nhttps://rules.abaplint.org/functional_writing"
             },
             "global_class": {
               "anyOf": [
@@ -1285,7 +1285,7 @@
                   "type": "boolean"
                 }
               ],
-              "description": "Detects nested ifs which can be refactored to a single condition using AND.\nhttps://rules.abaplint.org/if_in_if"
+              "description": "Detects nested ifs which can be refactored to a single condition using AND.\nTags: Styleguide\nhttps://rules.abaplint.org/if_in_if"
             },
             "implement_methods": {
               "anyOf": [
@@ -1340,7 +1340,7 @@
                   "type": "boolean"
                 }
               ],
-              "description": "Keep single parameter calls on one line\nTags: Whitespace\nhttps://rules.abaplint.org/keep_single_parameter_on_one_line"
+              "description": "Keep single parameter calls on one line\nTags: Whitespace, Styleguide\nhttps://rules.abaplint.org/keep_single_parameter_on_one_line"
             },
             "keyword_case": {
               "anyOf": [
@@ -1351,7 +1351,7 @@
                   "type": "boolean"
                 }
               ],
-              "description": "Checks that keywords have the same case. Non-keywords must be lower case.\nhttps://rules.abaplint.org/keyword_case"
+              "description": "Checks that keywords have the same case. Non-keywords must be lower case.\nTags: Styleguide\nhttps://rules.abaplint.org/keyword_case"
             },
             "line_break_multiple_parameters": {
               "anyOf": [
@@ -1362,7 +1362,7 @@
                   "type": "boolean"
                 }
               ],
-              "description": "Line break multiple parameters\nTags: Whitespace\nhttps://rules.abaplint.org/line_break_multiple_parameters"
+              "description": "Line break multiple parameters\nTags: Whitespace, Styleguide\nhttps://rules.abaplint.org/line_break_multiple_parameters"
             },
             "line_length": {
               "anyOf": [
@@ -1373,7 +1373,7 @@
                   "type": "boolean"
                 }
               ],
-              "description": "Detects lines exceeding the provided maximum length.\nhttps://rules.abaplint.org/line_length"
+              "description": "Detects lines exceeding the provided maximum length.\nTags: Styleguide\nhttps://rules.abaplint.org/line_length"
             },
             "line_only_punc": {
               "anyOf": [
@@ -1384,7 +1384,7 @@
                   "type": "boolean"
                 }
               ],
-              "description": "Detects lines containing only punctuation.\nhttps://rules.abaplint.org/line_only_punc"
+              "description": "Detects lines containing only punctuation.\nTags: Styleguide\nhttps://rules.abaplint.org/line_only_punc"
             },
             "local_class_naming": {
               "anyOf": [
@@ -1439,7 +1439,7 @@
                   "type": "boolean"
                 }
               ],
-              "description": "Checks that each line contains only a single statement.\nhttps://rules.abaplint.org/max_one_statement"
+              "description": "Checks that each line contains only a single statement.\nTags: Styleguide\nhttps://rules.abaplint.org/max_one_statement"
             },
             "message_exists": {
               "anyOf": [
@@ -1483,7 +1483,7 @@
                   "type": "boolean"
                 }
               ],
-              "description": "Checks that methods don't have a mixture of returning and exporting/changing parameters\nhttps://rules.abaplint.org/mix_returning"
+              "description": "Checks that methods don't have a mixture of returning and exporting/changing parameters\nTags: Styleguide\nhttps://rules.abaplint.org/mix_returning"
             },
             "msag_consistency": {
               "anyOf": [
@@ -1505,7 +1505,7 @@
                   "type": "boolean"
                 }
               ],
-              "description": "Checks for methods exceeding a maximum nesting depth\nhttps://rules.abaplint.org/nesting"
+              "description": "Checks for methods exceeding a maximum nesting depth\nTags: Styleguide\nhttps://rules.abaplint.org/nesting"
             },
             "newline_between_methods": {
               "anyOf": [
@@ -1571,7 +1571,7 @@
                   "type": "boolean"
                 }
               ],
-              "description": "Prefer RETURNING to EXPORTING. Generic types cannot be RETURNING.\nhttps://rules.abaplint.org/prefer_returning_to_exporting"
+              "description": "Prefer RETURNING to EXPORTING. Generic types cannot be RETURNING.\nTags: Styleguide\nhttps://rules.abaplint.org/prefer_returning_to_exporting"
             },
             "preferred_compare_operator": {
               "anyOf": [
@@ -1593,7 +1593,7 @@
                   "type": "boolean"
                 }
               ],
-              "description": "Reports errors if the current class or interface references itself with \"current_class=>\"\nhttps://rules.abaplint.org/prefix_is_current_class"
+              "description": "Reports errors if the current class or interface references itself with \"current_class=>\"\nTags: Styleguide\nhttps://rules.abaplint.org/prefix_is_current_class"
             },
             "release_idoc": {
               "anyOf": [
@@ -1703,7 +1703,7 @@
                   "type": "boolean"
                 }
               ],
-              "description": "Escape SQL host variables, from 740sp05\nTags: Upport\nhttps://rules.abaplint.org/sql_escape_host_variables"
+              "description": "Escape SQL host variables, from 740sp05\nTags: Upport, Styleguide\nhttps://rules.abaplint.org/sql_escape_host_variables"
             },
             "start_at_tab": {
               "anyOf": [
@@ -1714,7 +1714,7 @@
                   "type": "boolean"
                 }
               ],
-              "description": "Checks that statements start at tabstops.\nTags: Whitespace\nhttps://rules.abaplint.org/start_at_tab"
+              "description": "Checks that statements start at tabstops.\nTags: Whitespace, Styleguide\nhttps://rules.abaplint.org/start_at_tab"
             },
             "superclass_final": {
               "anyOf": [
@@ -1824,7 +1824,7 @@
                   "type": "boolean"
                 }
               ],
-              "description": "Checks for deprecated CREATE OBJECT statements.\nTags: Upport\nhttps://rules.abaplint.org/use_new"
+              "description": "Checks for deprecated CREATE OBJECT statements.\nTags: Upport, Styleguide\nhttps://rules.abaplint.org/use_new"
             },
             "when_others_last": {
               "anyOf": [

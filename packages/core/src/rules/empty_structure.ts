@@ -4,7 +4,7 @@ import {ABAPRule} from "./_abap_rule";
 import {ABAPFile} from "../files";
 import {BasicRuleConfig} from "./_basic_rule_config";
 import {StructureNode} from "../abap/nodes";
-import {IRuleMetadata} from "./_irule";
+import {IRuleMetadata, RuleTag} from "./_irule";
 
 export class EmptyStructureConf extends BasicRuleConfig {
   /** Checks for empty loop blocks */
@@ -35,6 +35,7 @@ export class EmptyStructure extends ABAPRule {
       quickfix: false,
       shortDescription: `Checks that the code does not contain empty blocks.`,
       extendedInformation: `https://github.com/SAP/styleguides/blob/master/clean-abap/CleanABAP.md#no-empty-if-branches`,
+      tags: [RuleTag.Styleguide],
     };
   }
 
