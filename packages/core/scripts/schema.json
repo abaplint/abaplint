@@ -347,7 +347,7 @@
           "type": "boolean"
         },
         "ignoreInterfaces": {
-          "description": "Ignore local classes",
+          "description": "Ignore interfaces",
           "type": "boolean"
         },
         "ignoreLocal": {

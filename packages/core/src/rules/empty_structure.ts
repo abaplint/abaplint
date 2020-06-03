@@ -4,7 +4,7 @@ import {ABAPRule} from "./_abap_rule";
 import {ABAPFile} from "../files";
 import {BasicRuleConfig} from "./_basic_rule_config";
 import {StructureNode} from "../abap/nodes";
-import { IRuleMetadata } from "./_irule";
+import {IRuleMetadata} from "./_irule";
 
 export class EmptyStructureConf extends BasicRuleConfig {
   /** Checks for empty loop blocks */
