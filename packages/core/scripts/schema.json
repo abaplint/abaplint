@@ -1348,6 +1348,17 @@
               ],
               "description": "Checks that keywords have the same case. Non-keywords must be lower case.\nhttps://rules.abaplint.org/keyword_case"
             },
+            "line_break_multiple_parameters": {
+              "anyOf": [
+                {
+                  "$ref": "#/definitions/LineBreakMultipleParametersConf"
+                },
+                {
+                  "type": "boolean"
+                }
+              ],
+              "description": "Line break multiple parameters\nTags: Whitespace\nhttps://rules.abaplint.org/line_break_multiple_parameters"
+            },
             "line_length": {
               "anyOf": [
                 {
@@ -2153,6 +2164,23 @@
         "lower"
       ],
       "type": "string"
+    },
+    "LineBreakMultipleParametersConf": {
+      "additionalProperties": false,
+      "properties": {
+        "exclude": {
+          "description": "List of file regex patterns to exclude",
+          "items": {
+            "type": "string"
+          },
+          "type": "array"
+        },
+        "reason": {
+          "description": "An explanation for why the rule is enforced, information only",
+          "type": "string"
+        }
+      },
+      "type": "object"
     },
     "LineLengthConf": {
       "additionalProperties": false,

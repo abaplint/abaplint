@@ -44,6 +44,7 @@ import {IndentationConf} from "../src/rules/indentation";
 import {InlineDataOldVersionsConf} from "../src/rules/inline_data_old_versions";
 import {KeepSingleParameterCallsOnOneLineConf} from "../src/rules/keep_single_parameter_on_one_line";
 import {KeywordCaseConf} from "../src/rules/keyword_case";
+import {LineBreakMultipleParametersConf} from "../src/rules/line_break_multiple_parameters";
 import {LineLengthConf} from "../src/rules/line_length";
 import {LineOnlyPuncConf} from "../src/rules/line_only_punc";
 import {LocalClassNamingConf} from "../src/rules/local_class_naming";
@@ -141,6 +142,7 @@ export interface IConfig {
     "inline_data_old_versions"?: InlineDataOldVersionsConf | boolean,
     "keep_single_parameter_on_one_line"?: KeepSingleParameterCallsOnOneLineConf | boolean,
     "keyword_case"?: KeywordCaseConf | boolean,
+    "line_break_multiple_parameters"?: LineBreakMultipleParametersConf | boolean,
     "line_length"?: LineLengthConf | boolean,
     "line_only_punc"?: LineOnlyPuncConf | boolean,
     "local_class_naming"?: LocalClassNamingConf | boolean,
