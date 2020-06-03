@@ -1,7 +1,7 @@
-import {MemoryFile} from "../../../src/files/memory_file";
-import {Registry} from "../../../src/registry";
+import {MemoryFile} from "../../src/files/memory_file";
+import {Registry} from "../../src/registry";
 import {expect} from "chai";
-import {LocalVariableNames, LocalVariableNamesConf} from "../../../src/rules";
+import {LocalVariableNames, LocalVariableNamesConf} from "../../src/rules";
 
 function findIssues(abap: string, config?: LocalVariableNamesConf) {
   const reg = new Registry().addFile(new MemoryFile("zfoobar.prog.abap", abap)).parse();
@@ -83,12 +83,12 @@ ENDCLASS.`;
     PUBLIC SECTION.
       METHODS clear_fields.
   ENDCLASS.
-  
-  
+
+
   CLASS lcl_abapgit_object_ddlx IMPLEMENTATION.
-  
+
     METHOD clear_fields.
-  
+
       DATA:
         BEGIN OF ls_fields_to_clear,
           BEGIN OF metadata,
@@ -107,9 +107,9 @@ ENDCLASS.`;
             master_system TYPE c,
           END OF metadata,
         END OF ls_fields_to_clear.
-  
+
       CLEAR ls_fields_to_clear.
-  
+
     ENDMETHOD.
   ENDCLASS.`;
 
@@ -129,12 +129,12 @@ ENDCLASS.`;
     PUBLIC SECTION.
       METHODS clear_fields.
   ENDCLASS.
-  
-  
+
+
   CLASS lcl_abapgit_object_ddlx IMPLEMENTATION.
-  
+
     METHOD clear_fields.
-  
+
       DATA:
         BEGIN OF fields_to_clear,
           BEGIN OF metadata,
@@ -153,9 +153,9 @@ ENDCLASS.`;
             master_system TYPE c,
           END OF metadata,
         END OF fields_to_clear.
-  
+
       CLEAR ls_fields_to_clear.
-  
+
     ENDMETHOD.
   ENDCLASS.`;
 

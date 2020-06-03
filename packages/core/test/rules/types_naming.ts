@@ -1,5 +1,5 @@
-import {TypesNaming} from "../../../src/rules/naming/types_naming";
-import {testRule} from "../_utils";
+import {TypesNaming} from "../../src/rules/types_naming";
+import {testRule} from "./_utils";
 
 const tests = [
   {abap: "parser error", cnt: 0},

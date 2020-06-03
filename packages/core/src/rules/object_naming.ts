@@ -1,10 +1,10 @@
-import {Issue} from "../../issue";
-import {NamingRuleConfig} from "../_naming_rule_config";
-import {IRegistry} from "../../_iregistry";
-import {IObject} from "../../objects/_iobject";
-import {IRule} from "../_irule";
-import * as Objects from "../../objects";
-import {NameValidator} from "../../utils/name_validator";
+import {Issue} from "../issue";
+import {NamingRuleConfig} from "./_naming_rule_config";
+import {IRegistry} from "../_iregistry";
+import {IObject} from "../objects/_iobject";
+import {IRule, RuleTag} from "./_irule";
+import * as Objects from "../objects";
+import {NameValidator} from "../utils/name_validator";
 
 export class ObjectNamingConf extends NamingRuleConfig {
   /** The pattern for global class names */
@@ -52,6 +52,7 @@ export class ObjectNaming implements IRule {
       title: "Object naming conventions",
       quickfix: false,
       shortDescription: `Allows you to enforce a pattern, such as a prefix, for object names`,
+      tags: [RuleTag.Naming],
     };
   }
 

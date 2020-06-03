@@ -8,6 +8,7 @@ export enum RuleTag {
   Upport = "Upport",
   Downport = "Downport",
   Whitespace = "Whitespace",
+  Naming = "Naming",
 }
 
 /** Rule Metadata */

@@ -1,5 +1,5 @@
-import {SequentialBlank} from "../../../src/rules/sequential_blank";
-import {testRule} from "../_utils";
+import {SequentialBlank} from "../../src/rules/sequential_blank";
+import {testRule} from "./_utils";
 import {expect} from "chai";
 
 const tests = [

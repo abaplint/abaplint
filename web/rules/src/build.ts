@@ -53,6 +53,12 @@ function whitespace() {
   return `&nbsp;<a href="/whitespace.html"><svg fill="none" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" viewBox="0 0 24 24" stroke="currentColor" height="2ch"><title>whitespace</title><path d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1"></path></svg></a>`;
 }
 
+function naming() {
+  // https://github.com/refactoringui/heroicons/
+  // eslint-disable-next-line max-len
+  return `&nbsp;<a href="/naming.html"><svg fill="none" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" viewBox="0 0 24 24" stroke="currentColor" height="2ch"><title>naming</title><path d="M3 5h12M9 3v2m1.048 9.5A18.022 18.022 0 016.412 9m6.088 9h7M11 21l5-10 5 10M12.751 5C11.783 10.77 8.07 15.61 3 18.129"></path></svg></a>`;
+}
+
 function home() {
   // https://github.com/refactoringui/heroicons/
   // eslint-disable-next-line max-len
@@ -68,7 +74,7 @@ function findDefault(ruleKey: string) {
 // todo, this is slow, its called for every rule, refactor
 function findPath(ruleKey: string) {
   const base = "https://github.com/abaplint/abaplint/blob/master/packages/core/src/rules/";
-  const test = ["", "naming/", "syntax/", "whitespace/"]; // todo, refactor
+  const test = ["", "syntax/"]; // todo, refactor
   for (const t of test) {
     const files = fs.readdirSync("../../packages/core/src/rules/" + t);
     for (const f of files) {
@@ -96,6 +102,9 @@ function renderIcons(meta: IRuleMetadata): string {
   }
   if (meta.tags?.includes(RuleTag.Whitespace)) {
     html = html + whitespace();
+  }
+  if (meta.tags?.includes(RuleTag.Naming)) {
+    html = html + naming();
   }
   return html;
 }

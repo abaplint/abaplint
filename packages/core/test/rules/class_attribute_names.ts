@@ -1,7 +1,7 @@
-import {MemoryFile} from "../../../src/files/memory_file";
-import {Registry} from "../../../src/registry";
+import {MemoryFile} from "../../src/files/memory_file";
+import {Registry} from "../../src/registry";
 import {expect} from "chai";
-import {ClassAttributeNames, ClassAttributeNamesConf} from "../../../src/rules/naming/class_attribute_names";
+import {ClassAttributeNames, ClassAttributeNamesConf} from "../../src/rules/class_attribute_names";
 
 function findIssues(abap: string, config?: ClassAttributeNamesConf) {
   const reg = new Registry().addFile(new MemoryFile("cl_foobar.clas.abap", abap)).parse();

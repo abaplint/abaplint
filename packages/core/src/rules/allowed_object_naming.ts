@@ -1,7 +1,7 @@
-import {Issue} from "../../issue";
-import {IObject} from "../../objects/_iobject";
-import {IRule, IRuleMetadata} from "../_irule";
-import {BasicRuleConfig} from "../_basic_rule_config";
+import {Issue} from "../issue";
+import {IObject} from "../objects/_iobject";
+import {IRule, IRuleMetadata, RuleTag} from "./_irule";
+import {BasicRuleConfig} from "./_basic_rule_config";
 
 // see note 104010
 
@@ -17,6 +17,7 @@ export class AllowedObjectNaming implements IRule {
       title: "Allowed object naming",
       quickfix: false,
       shortDescription: `Enforces basic name length and namespace restrictions`,
+      tags: [RuleTag.Naming],
     };
   }
 

@@ -1,5 +1,5 @@
-import {testRule} from "../_utils";
-import {SpaceBeforeDot} from "../../../src/rules";
+import {testRule} from "./_utils";
+import {SpaceBeforeDot} from "../../src/rules";
 
 const tests = [
   {abap: "parser error", cnt: 0},

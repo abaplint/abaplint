@@ -1,8 +1,9 @@
-import {Issue} from "../../issue";
-import {ABAPRule} from "../_abap_rule";
-import {ABAPFile} from "../../files";
-import {NamingRuleConfig} from "../_naming_rule_config";
-import {NameValidator} from "../../utils/name_validator";
+import {Issue} from "../issue";
+import {ABAPRule} from "./_abap_rule";
+import {ABAPFile} from "../files";
+import {NamingRuleConfig} from "./_naming_rule_config";
+import {NameValidator} from "../utils/name_validator";
+import {RuleTag} from "./_irule";
 
 export class LocalClassNamingConf extends NamingRuleConfig {
   /** The pattern for local class names */
@@ -23,6 +24,7 @@ export class LocalClassNaming extends ABAPRule {
       title: "Local class naming conventions",
       quickfix: false,
       shortDescription: `Allows you to enforce a pattern, such as a prefix, for local class names.`,
+      tags: [RuleTag.Naming],
     };
   }
 

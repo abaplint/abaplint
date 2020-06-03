@@ -1,6 +1,6 @@
-import {MemoryFile} from "../../../src/files/memory_file";
-import {Registry} from "../../../src/registry";
-import {MethodParameterNames, MethodParameterNamesConf} from "../../../src/rules/naming/method_parameter_names";
+import {MemoryFile} from "../../src/files/memory_file";
+import {Registry} from "../../src/registry";
+import {MethodParameterNames, MethodParameterNamesConf} from "../../src/rules/method_parameter_names";
 import {expect} from "chai";
 
 function findIssues(abap: string, filename: string, config?: MethodParameterNamesConf) {

@@ -1,5 +1,5 @@
-import {StartAtTab} from "../../../src/rules/start_at_tab";
-import {testRule} from "../_utils";
+import {StartAtTab} from "../../src/rules/start_at_tab";
+import {testRule} from "./_utils";
 
 const tests = [
   {abap: " WRITE 'foobar'.", cnt: 1},

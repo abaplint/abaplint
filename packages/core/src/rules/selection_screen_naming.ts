@@ -1,12 +1,13 @@
-import {ABAPRule} from "./../_abap_rule";
-import {ABAPFile} from "../../files";
-import {Issue} from "../../issue";
-import {NamingRuleConfig} from "../_naming_rule_config";
-import {Parameter, SelectOption} from "../../abap/2_statements/statements";
-import {IStatement} from "../../abap/2_statements/statements/_statement";
-import {NameValidator} from "../../utils/name_validator";
-import {FieldSub, Field} from "../../abap/2_statements/expressions";
-import {StatementNode, ExpressionNode} from "../../abap/nodes";
+import {ABAPRule} from "./_abap_rule";
+import {ABAPFile} from "../files";
+import {Issue} from "../issue";
+import {NamingRuleConfig} from "./_naming_rule_config";
+import {Parameter, SelectOption} from "../abap/2_statements/statements";
+import {IStatement} from "../abap/2_statements/statements/_statement";
+import {NameValidator} from "../utils/name_validator";
+import {FieldSub, Field} from "../abap/2_statements/expressions";
+import {StatementNode, ExpressionNode} from "../abap/nodes";
+import {RuleTag} from "./_irule";
 
 export class SelectionScreenNamingConf extends NamingRuleConfig {
   /** The pattern for selection-screen parameters */
@@ -24,6 +25,7 @@ export class SelectionScreenNaming extends ABAPRule {
       title: "Selection screen naming conventions",
       quickfix: false,
       shortDescription: `Allows you to enforce a pattern, such as a prefix, for selection-screen variable names.`,
+      tags: [RuleTag.Naming],
     };
   }
 

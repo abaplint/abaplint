@@ -1,10 +1,11 @@
-import {Issue} from "../../issue";
-import {NamingRuleConfig} from "../_naming_rule_config";
-import {NameValidator} from "../../utils/name_validator";
-import {ABAPRule} from "../_abap_rule";
-import {ABAPFile} from "../../files";
-import {Identifier} from "../../abap/4_file_information/_identifier";
-import {InfoAttribute, AttributeLevel} from "../../abap/4_file_information/_abap_file_information";
+import {Issue} from "../issue";
+import {NamingRuleConfig} from "./_naming_rule_config";
+import {NameValidator} from "../utils/name_validator";
+import {ABAPRule} from "./_abap_rule";
+import {ABAPFile} from "../files";
+import {Identifier} from "../abap/4_file_information/_identifier";
+import {InfoAttribute, AttributeLevel} from "../abap/4_file_information/_abap_file_information";
+import {RuleTag} from "./_irule";
 
 export class ClassAttributeNamesConf extends NamingRuleConfig {
   /** Ignore global exception classes */
@@ -29,6 +30,7 @@ export class ClassAttributeNames extends ABAPRule {
       title: "Class attributes naming",
       quickfix: false,
       shortDescription: `Allows you to enforce a pattern, such as a prefix, for class variable names.`,
+      tags: [RuleTag.Naming],
     };
   }
 

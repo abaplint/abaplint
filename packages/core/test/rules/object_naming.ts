@@ -1,8 +1,8 @@
-import {ObjectNaming, ObjectNamingConf} from "../../../src/rules";
-import {Registry} from "../../../src/registry";
-import {MemoryFile} from "../../../src/files";
+import {ObjectNaming, ObjectNamingConf} from "../../src/rules";
+import {Registry} from "../../src/registry";
+import {MemoryFile} from "../../src/files";
 import {expect} from "chai";
-import {Issue} from "../../../src";
+import {Issue} from "../../src";
 
 function findIssues(filename: string, expectedIssueCount: number, config?: ObjectNamingConf): Issue[] {
   const reg = new Registry().addFile(new MemoryFile(filename, "")).parse();

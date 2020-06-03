@@ -884,7 +884,7 @@
                   "type": "boolean"
                 }
               ],
-              "description": "Enforces basic name length and namespace restrictions\nhttps://rules.abaplint.org/allowed_object_naming"
+              "description": "Enforces basic name length and namespace restrictions\nTags: Naming\nhttps://rules.abaplint.org/allowed_object_naming"
             },
             "allowed_object_types": {
               "anyOf": [
@@ -1038,7 +1038,7 @@
                   "type": "boolean"
                 }
               ],
-              "description": "Allows you to enforce a pattern, such as a prefix, for class variable names.\nhttps://rules.abaplint.org/class_attribute_names"
+              "description": "Allows you to enforce a pattern, such as a prefix, for class variable names.\nTags: Naming\nhttps://rules.abaplint.org/class_attribute_names"
             },
             "cloud_types": {
               "anyOf": [
@@ -1379,7 +1379,7 @@
                   "type": "boolean"
                 }
               ],
-              "description": "Allows you to enforce a pattern, such as a prefix, for local class names.\nhttps://rules.abaplint.org/local_class_naming"
+              "description": "Allows you to enforce a pattern, such as a prefix, for local class names.\nTags: Naming\nhttps://rules.abaplint.org/local_class_naming"
             },
             "local_testclass_location": {
               "anyOf": [
@@ -1401,7 +1401,7 @@
                   "type": "boolean"
                 }
               ],
-              "description": "Allows you to enforce a pattern, such as a prefix, for local variables, constants and field symbols.\nhttps://rules.abaplint.org/local_variable_names"
+              "description": "Allows you to enforce a pattern, such as a prefix, for local variables, constants and field symbols.\nTags: Naming\nhttps://rules.abaplint.org/local_variable_names"
             },
             "main_file_contents": {
               "anyOf": [
@@ -1456,7 +1456,7 @@
                   "type": "boolean"
                 }
               ],
-              "description": "Allows you to enforce a pattern, such as a prefix, for method parameter names\nhttps://rules.abaplint.org/method_parameter_names"
+              "description": "Allows you to enforce a pattern, such as a prefix, for method parameter names\nTags: Naming\nhttps://rules.abaplint.org/method_parameter_names"
             },
             "mix_returning": {
               "anyOf": [
@@ -1522,7 +1522,7 @@
                   "type": "boolean"
                 }
               ],
-              "description": "Allows you to enforce a pattern, such as a prefix, for object names\nhttps://rules.abaplint.org/object_naming"
+              "description": "Allows you to enforce a pattern, such as a prefix, for object names\nTags: Naming\nhttps://rules.abaplint.org/object_naming"
             },
             "obsolete_statement": {
               "anyOf": [
@@ -1621,7 +1621,7 @@
                   "type": "boolean"
                 }
               ],
-              "description": "Allows you to enforce a pattern, such as a prefix, for selection-screen variable names.\nhttps://rules.abaplint.org/selection_screen_naming"
+              "description": "Allows you to enforce a pattern, such as a prefix, for selection-screen variable names.\nTags: Naming\nhttps://rules.abaplint.org/selection_screen_naming"
             },
             "sequential_blank": {
               "anyOf": [
@@ -1764,7 +1764,7 @@
                   "type": "boolean"
                 }
               ],
-              "description": "Allows you to enforce a pattern for TYPES definitions\nhttps://rules.abaplint.org/types_naming"
+              "description": "Allows you to enforce a pattern for TYPES definitions\nTags: Naming\nhttps://rules.abaplint.org/types_naming"
             },
             "unknown_types": {
               "anyOf": [

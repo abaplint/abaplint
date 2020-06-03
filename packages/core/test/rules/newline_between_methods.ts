@@ -1,5 +1,5 @@
-import {NewlineBetweenMethods, NewlineBetweenMethodsConf, NewlineLogic} from "../../../src/rules/newline_between_methods";
-import {testRuleWithVariableConfig} from "../_utils";
+import {NewlineBetweenMethods, NewlineBetweenMethodsConf, NewlineLogic} from "../../src/rules/newline_between_methods";
+import {testRuleWithVariableConfig} from "./_utils";
 
 const configNewlineLess = new NewlineBetweenMethodsConf();
 configNewlineLess.count = 2;

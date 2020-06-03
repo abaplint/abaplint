@@ -1,13 +1,14 @@
-import {Issue} from "../../issue";
-import {ABAPRule} from "../_abap_rule";
-import {ABAPFile} from "../../files";
-import * as Structures from "../../abap/3_structures/structures";
-import * as Statements from "../../abap/2_statements/statements";
-import * as Expressions from "../../abap/2_statements/expressions";
-import {StructureNode} from "../../abap/nodes";
-import {Token} from "../../abap/1_lexer/tokens/_token";
-import {NamingRuleConfig} from "../_naming_rule_config";
-import {NameValidator} from "../../utils/name_validator";
+import {Issue} from "../issue";
+import {ABAPRule} from "./_abap_rule";
+import {ABAPFile} from "../files";
+import * as Structures from "../abap/3_structures/structures";
+import * as Statements from "../abap/2_statements/statements";
+import * as Expressions from "../abap/2_statements/expressions";
+import {StructureNode} from "../abap/nodes";
+import {Token} from "../abap/1_lexer/tokens/_token";
+import {NamingRuleConfig} from "./_naming_rule_config";
+import {NameValidator} from "../utils/name_validator";
+import {RuleTag} from "./_irule";
 
 export class LocalVariableNamesConf extends NamingRuleConfig {
   /** The pattern for local variable names */
@@ -28,6 +29,7 @@ export class LocalVariableNames extends ABAPRule {
       title: "Local variable naming conventions",
       quickfix: false,
       shortDescription: `Allows you to enforce a pattern, such as a prefix, for local variables, constants and field symbols.`,
+      tags: [RuleTag.Naming],
     };
   }
 

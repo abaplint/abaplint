@@ -1,7 +1,7 @@
 import {expect} from "chai";
-import {MemoryFile} from "../../../src/files/memory_file";
-import {Registry} from "../../../src/registry";
-import {AllowedObjectNaming} from "../../../src/rules";
+import {MemoryFile} from "../../src/files/memory_file";
+import {Registry} from "../../src/registry";
+import {AllowedObjectNaming} from "../../src/rules";
 
 function findIssues(filename: string) {
   const reg = new Registry().addFile(new MemoryFile(filename, "")).parse();

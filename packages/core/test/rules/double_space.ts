@@ -1,5 +1,5 @@
-import {testRule, testRuleFix} from "../_utils";
-import {DoubleSpace} from "../../../src/rules";
+import {testRule, testRuleFix} from "./_utils";
+import {DoubleSpace} from "../../src/rules";
 
 const tests = [
   {abap: "parser error", cnt: 0},

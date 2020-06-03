@@ -1,11 +1,11 @@
-import {Issue} from "../../issue";
-import {IRule} from "../_irule";
-import {IObject} from "../../objects/_iobject";
-import {IRegistry} from "../../_iregistry";
-import {ABAPObject} from "../../objects/_abap_object";
-import {NamingRuleConfig} from "../_naming_rule_config";
-import {NameValidator} from "../../utils/name_validator";
-import {InfoMethodDefinition, MethodParameterDirection, InfoMethodParameter} from "../../abap/4_file_information/_abap_file_information";
+import {Issue} from "../issue";
+import {IRule, RuleTag} from "./_irule";
+import {IObject} from "../objects/_iobject";
+import {IRegistry} from "../_iregistry";
+import {ABAPObject} from "../objects/_abap_object";
+import {NamingRuleConfig} from "./_naming_rule_config";
+import {NameValidator} from "../utils/name_validator";
+import {InfoMethodDefinition, MethodParameterDirection, InfoMethodParameter} from "../abap/4_file_information/_abap_file_information";
 
 export class MethodParameterNamesConf extends NamingRuleConfig {
   /** Ignore parameters in methods of exception classes */
@@ -30,6 +30,7 @@ export class MethodParameterNames implements IRule {
       title: "Method parameter naming conventions",
       quickfix: false,
       shortDescription: `Allows you to enforce a pattern, such as a prefix, for method parameter names`,
+      tags: [RuleTag.Naming],
     };
   }
 

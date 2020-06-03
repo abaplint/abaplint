@@ -1,5 +1,5 @@
-import {testRule} from "../_utils";
-import {SelectionScreenNaming, SelectionScreenNamingConf} from "../../../src/rules/naming/selection_screen_naming";
+import {testRule} from "./_utils";
+import {SelectionScreenNaming, SelectionScreenNamingConf} from "../../src/rules/selection_screen_naming";
 
 
 const requiredPatternTests = [
