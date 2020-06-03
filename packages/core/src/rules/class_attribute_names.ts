@@ -12,7 +12,7 @@ export class ClassAttributeNamesConf extends NamingRuleConfig {
   public ignoreExceptions: boolean = true;
   /** Ignore local classes */
   public ignoreLocal: boolean = true;
-  /** Ignore local classes */
+  /** Ignore interfaces */
   public ignoreInterfaces: boolean = false;
   /** The pattern for static variable names */
   public statics: string = "^G._.+$";
