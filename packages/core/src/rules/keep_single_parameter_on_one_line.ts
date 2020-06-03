@@ -1,9 +1,10 @@
-import {Issue} from "../../issue";
-import {BasicRuleConfig} from "../_basic_rule_config";
-import {ABAPRule} from "../_abap_rule";
-import {ABAPFile} from "../../files";
-import {ExpressionNode, StatementNode} from "../../abap/nodes";
-import * as Expressions from "../../abap/2_statements/expressions";
+import {Issue} from "../issue";
+import {BasicRuleConfig} from "./_basic_rule_config";
+import {ABAPRule} from "./_abap_rule";
+import {ABAPFile} from "../files";
+import {ExpressionNode, StatementNode} from "../abap/nodes";
+import * as Expressions from "../abap/2_statements/expressions";
+import {IRuleMetadata, RuleTag} from "./_irule";
 
 export class KeepSingleParameterCallsOnOneLineConf extends BasicRuleConfig {
   /** Max line length, in characters */
@@ -13,13 +14,14 @@ export class KeepSingleParameterCallsOnOneLineConf extends BasicRuleConfig {
 export class KeepSingleParameterCallsOnOneLine extends ABAPRule {
   private conf = new KeepSingleParameterCallsOnOneLineConf();
 
-  public getMetadata() {
+  public getMetadata(): IRuleMetadata {
     return {
       key: "keep_single_parameter_on_one_line",
       title: "Keep single parameters on one line",
       quickfix: false,
       shortDescription: `Keep single parameter calls on one line`,
       extendedInformation: `https://github.com/SAP/styleguides/blob/master/clean-abap/CleanABAP.md#keep-single-parameter-calls-on-one-line`,
+      tags: [RuleTag.Whitespace],
     };
   }
 

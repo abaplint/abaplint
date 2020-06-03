@@ -1,7 +1,8 @@
-import {Issue} from "../../issue";
-import {ABAPRule} from "../_abap_rule";
-import {ABAPFile} from "../../files";
-import {BasicRuleConfig} from "../_basic_rule_config";
+import {Issue} from "../issue";
+import {ABAPRule} from "./_abap_rule";
+import {ABAPFile} from "../files";
+import {BasicRuleConfig} from "./_basic_rule_config";
+import {IRuleMetadata, RuleTag} from "./_irule";
 
 export class SpaceBeforeColonConf extends BasicRuleConfig {
 }
@@ -10,13 +11,14 @@ export class SpaceBeforeColon extends ABAPRule {
 
   private conf = new SpaceBeforeColonConf();
 
-  public getMetadata() {
+  public getMetadata(): IRuleMetadata {
     return {
       key: "space_before_colon",
       title: "Space before colon",
       quickfix: false,
       shortDescription: `Checks that there are no spaces in front of colons in chained statements.`,
       extendedInformation: `https://docs.abapopenchecks.org/checks/80/`,
+      tags: [RuleTag.Whitespace],
     };
   }
 

@@ -1,14 +1,15 @@
-import {Issue} from "../../issue";
-import {ABAPRule} from "../_abap_rule";
-import {ABAPFile} from "../../files";
-import {BasicRuleConfig} from "../_basic_rule_config";
-import {Token} from "../../abap/1_lexer/tokens/_token";
-import {ParenLeftW, Comment, WParenRightW, WParenRight} from "../../abap/1_lexer/tokens";
-import {TokenNode, StatementNode, TokenNodeRegex} from "../../abap/nodes";
-import {Unknown, MacroContent, MacroCall} from "../../abap/2_statements/statements/_statement";
-import {MethodDef} from "../../abap/2_statements/statements";
-import {Position} from "../../position";
-import {EditHelper} from "../../edit_helper";
+import {Issue} from "../issue";
+import {ABAPRule} from "./_abap_rule";
+import {ABAPFile} from "../files";
+import {BasicRuleConfig} from "./_basic_rule_config";
+import {Token} from "../abap/1_lexer/tokens/_token";
+import {ParenLeftW, Comment, WParenRightW, WParenRight} from "../abap/1_lexer/tokens";
+import {TokenNode, StatementNode, TokenNodeRegex} from "../abap/nodes";
+import {Unknown, MacroContent, MacroCall} from "../abap/2_statements/statements/_statement";
+import {MethodDef} from "../abap/2_statements/statements";
+import {Position} from "../position";
+import {EditHelper} from "../edit_helper";
+import {IRuleMetadata, RuleTag} from "./_irule";
 
 export class DoubleSpaceConf extends BasicRuleConfig {
   /** Check for double space after keywords */
@@ -25,12 +26,13 @@ export class DoubleSpace extends ABAPRule {
 
   private conf = new DoubleSpaceConf();
 
-  public getMetadata() {
+  public getMetadata(): IRuleMetadata {
     return {
       key: "double_space",
       title: "Double space",
       quickfix: true,
       shortDescription: `Checks that only a single space follows certain common statements.`,
+      tags: [RuleTag.Whitespace],
     };
   }
 

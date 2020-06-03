@@ -1,9 +1,10 @@
-import {Issue} from "../../issue";
-import {ABAPRule} from "../_abap_rule";
-import {ABAPFile} from "../../files";
-import {BasicRuleConfig} from "../_basic_rule_config";
-import {Position} from "../../position";
-import {EditHelper} from "../../edit_helper";
+import {Issue} from "../issue";
+import {ABAPRule} from "./_abap_rule";
+import {ABAPFile} from "../files";
+import {BasicRuleConfig} from "./_basic_rule_config";
+import {Position} from "../position";
+import {EditHelper} from "../edit_helper";
+import {IRuleMetadata, RuleTag} from "./_irule";
 
 export class ColonMissingSpaceConf extends BasicRuleConfig {
 }
@@ -12,12 +13,13 @@ export class ColonMissingSpace extends ABAPRule {
 
   private conf = new ColonMissingSpaceConf();
 
-  public getMetadata() {
+  public getMetadata(): IRuleMetadata {
     return {
       key: "colon_missing_space",
       title: "Colon missing space",
       quickfix: true,
       shortDescription: `Checks for missing spaces after colons in chained statements.`,
+      tags: [RuleTag.Whitespace],
     };
   }
 

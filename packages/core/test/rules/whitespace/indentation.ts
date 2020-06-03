@@ -1,5 +1,5 @@
 import {testRule} from "../_utils";
-import {Indentation, IndentationConf} from "../../../src/rules/whitespace/indentation";
+import {Indentation, IndentationConf} from "../../../src/rules/indentation";
 
 const tests = [
   {abap: "add 2 to lv_foo.", cnt: 0},

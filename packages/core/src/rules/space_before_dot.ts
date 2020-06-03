@@ -1,15 +1,16 @@
-import {Issue} from "../../issue";
-import {ABAPRule} from "../_abap_rule";
-import {ABAPFile} from "../../files";
-import {BasicRuleConfig} from "../_basic_rule_config";
-import * as Statements from "../../abap/2_statements/statements";
-import {Class, Interface} from "../../objects";
-import {IObject} from "../../objects/_iobject";
-import {IRegistry} from "../../_iregistry";
-import {Punctuation} from "../../abap/1_lexer/tokens";
-import {Token} from "../../abap/1_lexer/tokens/_token";
-import {Position} from "../../position";
-import {EditHelper} from "../../edit_helper";
+import {Issue} from "../issue";
+import {ABAPRule} from "./_abap_rule";
+import {ABAPFile} from "../files";
+import {BasicRuleConfig} from "./_basic_rule_config";
+import * as Statements from "../abap/2_statements/statements";
+import {Class, Interface} from "../objects";
+import {IObject} from "../objects/_iobject";
+import {IRegistry} from "../_iregistry";
+import {Punctuation} from "../abap/1_lexer/tokens";
+import {Token} from "../abap/1_lexer/tokens/_token";
+import {Position} from "../position";
+import {EditHelper} from "../edit_helper";
+import {IRuleMetadata, RuleTag} from "./_irule";
 
 export class SpaceBeforeDotConf extends BasicRuleConfig {
   public ignoreGlobalDefinition: boolean = true;
@@ -20,12 +21,13 @@ export class SpaceBeforeDot extends ABAPRule {
 
   private conf = new SpaceBeforeDotConf();
 
-  public getMetadata() {
+  public getMetadata(): IRuleMetadata {
     return {
       key: "space_before_dot",
       title: "Space before dot",
       quickfix: true,
       shortDescription: `Checks for extra spaces before dots at the ends of statements`,
+      tags: [RuleTag.Whitespace],
     };
   }
 

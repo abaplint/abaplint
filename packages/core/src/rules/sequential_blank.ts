@@ -1,8 +1,9 @@
-import {Issue} from "../../issue";
-import {Position} from "../../position";
-import {ABAPRule} from "../_abap_rule";
-import {ABAPFile} from "../../files";
-import {BasicRuleConfig} from "../_basic_rule_config";
+import {Issue} from "../issue";
+import {Position} from "../position";
+import {ABAPRule} from "./_abap_rule";
+import {ABAPFile} from "../files";
+import {BasicRuleConfig} from "./_basic_rule_config";
+import {IRuleMetadata, RuleTag} from "./_irule";
 
 export class SequentialBlankConf extends BasicRuleConfig {
   /** An equal or higher number of sequential blank lines will trigger a violation.
@@ -18,12 +19,13 @@ export class SequentialBlank extends ABAPRule {
   }
   private conf = new SequentialBlankConf();
 
-  public getMetadata() {
+  public getMetadata(): IRuleMetadata {
     return {
       key: "sequential_blank",
       title: "Sequential blank lines",
       quickfix: false,
       shortDescription: `Checks that code does not contain more than the configured number of blank lines in a row.`,
+      tags: [RuleTag.Whitespace],
     };
   }
 

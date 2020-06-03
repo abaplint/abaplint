@@ -1,8 +1,9 @@
-import {Issue} from "../../issue";
-import {Position} from "../../position";
-import {ABAPRule} from "../_abap_rule";
-import {ABAPFile} from "../../files";
-import {BasicRuleConfig} from "../_basic_rule_config";
+import {Issue} from "../issue";
+import {Position} from "../position";
+import {ABAPRule} from "./_abap_rule";
+import {ABAPFile} from "../files";
+import {BasicRuleConfig} from "./_basic_rule_config";
+import {IRuleMetadata, RuleTag} from "./_irule";
 
 export class ContainsTabConf extends BasicRuleConfig {
 }
@@ -11,13 +12,14 @@ export class ContainsTab extends ABAPRule {
 
   private conf = new ContainsTabConf();
 
-  public getMetadata() {
+  public getMetadata(): IRuleMetadata {
     return {
       key: "contains_tab",
       title: "Code contains tab",
       quickfix: false,
       shortDescription: `Checks for usage of tabs (enable to enforce spaces)`,
       extendedInformation: `https://docs.abapopenchecks.org/checks/09/`,
+      tags: [RuleTag.Whitespace],
     };
   }
 

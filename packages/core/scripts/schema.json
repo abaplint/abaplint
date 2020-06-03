@@ -1060,7 +1060,7 @@
                   "type": "boolean"
                 }
               ],
-              "description": "Checks for missing spaces after colons in chained statements.\nhttps://rules.abaplint.org/colon_missing_space"
+              "description": "Checks for missing spaces after colons in chained statements.\nTags: Whitespace\nhttps://rules.abaplint.org/colon_missing_space"
             },
             "commented_code": {
               "anyOf": [
@@ -1093,7 +1093,7 @@
                   "type": "boolean"
                 }
               ],
-              "description": "Checks for usage of tabs (enable to enforce spaces)\nhttps://rules.abaplint.org/contains_tab"
+              "description": "Checks for usage of tabs (enable to enforce spaces)\nTags: Whitespace\nhttps://rules.abaplint.org/contains_tab"
             },
             "definitions_top": {
               "anyOf": [
@@ -1126,7 +1126,7 @@
                   "type": "boolean"
                 }
               ],
-              "description": "Checks that only a single space follows certain common statements.\nhttps://rules.abaplint.org/double_space"
+              "description": "Checks that only a single space follows certain common statements.\nTags: Whitespace\nhttps://rules.abaplint.org/double_space"
             },
             "empty_line_in_statement": {
               "anyOf": [
@@ -1302,7 +1302,7 @@
                   "type": "boolean"
                 }
               ],
-              "description": "Checks alignment within block statement declarations which span multiple lines, such as multiple conditions in IF statements.\nExample:\nIF 1 = 1 AND\n   2 = 2.\nhttps://rules.abaplint.org/in_statement_indentation"
+              "description": "Checks alignment within block statement declarations which span multiple lines, such as multiple conditions in IF statements.\nExample:\nIF 1 = 1 AND\n   2 = 2.\nTags: Whitespace\nhttps://rules.abaplint.org/in_statement_indentation"
             },
             "indentation": {
               "anyOf": [
@@ -1313,7 +1313,7 @@
                   "type": "boolean"
                 }
               ],
-              "description": "Checks indentation\nhttps://rules.abaplint.org/indentation"
+              "description": "Checks indentation\nTags: Whitespace\nhttps://rules.abaplint.org/indentation"
             },
             "inline_data_old_versions": {
               "anyOf": [
@@ -1335,7 +1335,7 @@
                   "type": "boolean"
                 }
               ],
-              "description": "Keep single parameter calls on one line\nhttps://rules.abaplint.org/keep_single_parameter_on_one_line"
+              "description": "Keep single parameter calls on one line\nTags: Whitespace\nhttps://rules.abaplint.org/keep_single_parameter_on_one_line"
             },
             "keyword_case": {
               "anyOf": [
@@ -1500,7 +1500,7 @@
                   "type": "boolean"
                 }
               ],
-              "description": "Checks for newlines between method implementations.\nhttps://rules.abaplint.org/newline_between_methods"
+              "description": "Checks for newlines between method implementations.\nTags: Whitespace\nhttps://rules.abaplint.org/newline_between_methods"
             },
             "no_public_attributes": {
               "anyOf": [
@@ -1632,7 +1632,7 @@
                   "type": "boolean"
                 }
               ],
-              "description": "Checks that code does not contain more than the configured number of blank lines in a row.\nhttps://rules.abaplint.org/sequential_blank"
+              "description": "Checks that code does not contain more than the configured number of blank lines in a row.\nTags: Whitespace\nhttps://rules.abaplint.org/sequential_blank"
             },
             "short_case": {
               "anyOf": [
@@ -1665,7 +1665,7 @@
                   "type": "boolean"
                 }
               ],
-              "description": "Checks that there are no spaces in front of colons in chained statements.\nhttps://rules.abaplint.org/space_before_colon"
+              "description": "Checks that there are no spaces in front of colons in chained statements.\nTags: Whitespace\nhttps://rules.abaplint.org/space_before_colon"
             },
             "space_before_dot": {
               "anyOf": [
@@ -1676,7 +1676,7 @@
                   "type": "boolean"
                 }
               ],
-              "description": "Checks for extra spaces before dots at the ends of statements\nhttps://rules.abaplint.org/space_before_dot"
+              "description": "Checks for extra spaces before dots at the ends of statements\nTags: Whitespace\nhttps://rules.abaplint.org/space_before_dot"
             },
             "sql_escape_host_variables": {
               "anyOf": [
@@ -1698,7 +1698,7 @@
                   "type": "boolean"
                 }
               ],
-              "description": "Checks that statements start at tabstops.\nhttps://rules.abaplint.org/start_at_tab"
+              "description": "Checks that statements start at tabstops.\nTags: Whitespace\nhttps://rules.abaplint.org/start_at_tab"
             },
             "superclass_final": {
               "anyOf": [
@@ -1830,7 +1830,7 @@
                   "type": "boolean"
                 }
               ],
-              "description": "Checks for redundant whitespace at the end of each line.\nhttps://rules.abaplint.org/whitespace_end"
+              "description": "Checks for redundant whitespace at the end of each line.\nTags: Whitespace\nhttps://rules.abaplint.org/whitespace_end"
             },
             "xml_consistency": {
               "anyOf": [

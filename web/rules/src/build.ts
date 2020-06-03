@@ -47,6 +47,12 @@ function downport() {
   return `&nbsp;<a href="/downport.html"><svg fill="none" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" viewBox="0 0 24 24" stroke="currentColor" height="2ch"><title>downport</title><path d="M19 14l-7 7m0 0l-7-7m7 7V3"></path></svg></a>`;
 }
 
+function whitespace() {
+  // https://github.com/refactoringui/heroicons/
+  // eslint-disable-next-line max-len
+  return `&nbsp;<a href="/whitespace.html"><svg fill="none" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" viewBox="0 0 24 24" stroke="currentColor" height="2ch"><title>whitespace</title><path d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1"></path></svg></a>`;
+}
+
 function home() {
   // https://github.com/refactoringui/heroicons/
   // eslint-disable-next-line max-len
@@ -87,6 +93,9 @@ function renderIcons(meta: IRuleMetadata): string {
   }
   if (meta.tags?.includes(RuleTag.Upport)) {
     html = html + upport();
+  }
+  if (meta.tags?.includes(RuleTag.Whitespace)) {
+    html = html + whitespace();
   }
   return html;
 }

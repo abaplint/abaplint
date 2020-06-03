@@ -1,4 +1,4 @@
-import {StartAtTab} from "../../../src/rules/whitespace/start_at_tab";
+import {StartAtTab} from "../../../src/rules/start_at_tab";
 import {testRule} from "../_utils";
 
 const tests = [

@@ -7,6 +7,7 @@ export enum RuleTag {
   DeprecationCandidate = "DeprecationCandidate",
   Upport = "Upport",
   Downport = "Downport",
+  Whitespace = "Whitespace",
 }
 
 /** Rule Metadata */

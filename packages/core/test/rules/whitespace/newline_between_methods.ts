@@ -1,4 +1,4 @@
-import {NewlineBetweenMethods, NewlineBetweenMethodsConf, NewlineLogic} from "../../../src/rules/whitespace/newline_between_methods";
+import {NewlineBetweenMethods, NewlineBetweenMethodsConf, NewlineLogic} from "../../../src/rules/newline_between_methods";
 import {testRuleWithVariableConfig} from "../_utils";
 
 const configNewlineLess = new NewlineBetweenMethodsConf();

@@ -1,4 +1,4 @@
-import {SpaceBeforeColon} from "../../../src/rules/whitespace/space_before_colon";
+import {SpaceBeforeColon} from "../../../src/rules/space_before_colon";
 import {testRule} from "../_utils";
 
 const tests = [

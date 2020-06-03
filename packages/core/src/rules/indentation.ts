@@ -1,14 +1,15 @@
-import {Issue} from "../../issue";
-import {ABAPRule} from "../_abap_rule";
-import {ABAPFile} from "../../files";
-import {IObject} from "../../objects/_iobject";
-import {Class} from "../../objects";
-import {IRegistry} from "../../_iregistry";
-import {BasicRuleConfig} from "../_basic_rule_config";
-import {IIndentationOptions} from "../../pretty_printer/indentation_options";
-import {Indent} from "../../pretty_printer/indent";
-import * as Statements from "../../abap/2_statements/statements";
-import * as Expressions from "../../abap/2_statements/expressions";
+import {Issue} from "../issue";
+import {ABAPRule} from "./_abap_rule";
+import {ABAPFile} from "../files";
+import {IObject} from "../objects/_iobject";
+import {Class} from "../objects";
+import {IRegistry} from "../_iregistry";
+import {BasicRuleConfig} from "./_basic_rule_config";
+import {IIndentationOptions} from "../pretty_printer/indentation_options";
+import {Indent} from "../pretty_printer/indent";
+import * as Statements from "../abap/2_statements/statements";
+import * as Expressions from "../abap/2_statements/expressions";
+import {IRuleMetadata, RuleTag} from "./_irule";
 
 export class IndentationConf extends BasicRuleConfig {
   /** Ignore global exception classes */
@@ -22,12 +23,13 @@ export class IndentationConf extends BasicRuleConfig {
 export class Indentation extends ABAPRule {
   private conf = new IndentationConf();
 
-  public getMetadata() {
+  public getMetadata(): IRuleMetadata {
     return {
       key: "indentation",
       title: "Indentation",
       quickfix: false,
       shortDescription: `Checks indentation`,
+      tags: [RuleTag.Whitespace],
     };
   }
 

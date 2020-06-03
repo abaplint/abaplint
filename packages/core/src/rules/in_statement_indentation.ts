@@ -1,11 +1,12 @@
-import {Issue} from "../../issue";
-import {ABAPRule} from "../_abap_rule";
-import {ABAPFile} from "../../files";
-import {IObject} from "../../objects/_iobject";
-import {Class} from "../../objects";
-import {IRegistry} from "../../_iregistry";
-import {BasicRuleConfig} from "../_basic_rule_config";
-import * as Statements from "../../abap/2_statements/statements";
+import {Issue} from "../issue";
+import {ABAPRule} from "./_abap_rule";
+import {ABAPFile} from "../files";
+import {IObject} from "../objects/_iobject";
+import {Class} from "../objects";
+import {IRegistry} from "../_iregistry";
+import {BasicRuleConfig} from "./_basic_rule_config";
+import * as Statements from "../abap/2_statements/statements";
+import {IRuleMetadata, RuleTag} from "./_irule";
 
 export class InStatementIndentationConf extends BasicRuleConfig {
   /** Ignore global exception classes */
@@ -16,7 +17,7 @@ export class InStatementIndentation extends ABAPRule {
 
   private conf = new InStatementIndentationConf();
 
-  public getMetadata() {
+  public getMetadata(): IRuleMetadata {
     return {
       key: "in_statement_indentation",
       title: "In-statement indentation",
@@ -26,6 +27,7 @@ export class InStatementIndentation extends ABAPRule {
 Example:
 IF 1 = 1 AND
    2 = 2.`,
+      tags: [RuleTag.Whitespace],
     };
   }
 

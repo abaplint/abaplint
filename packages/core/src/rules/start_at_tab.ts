@@ -1,10 +1,11 @@
-import {Issue} from "../../issue";
-import {Position} from "../../position";
-import {Comment} from "../../abap/2_statements/statements/_statement";
-import {TypeBegin, TypeEnd} from "../../abap/2_statements/statements";
-import {ABAPRule} from "../_abap_rule";
-import {ABAPFile} from "../../files";
-import {BasicRuleConfig} from "../_basic_rule_config";
+import {Issue} from "../issue";
+import {Position} from "../position";
+import {Comment} from "../abap/2_statements/statements/_statement";
+import {TypeBegin, TypeEnd} from "../abap/2_statements/statements";
+import {ABAPRule} from "./_abap_rule";
+import {ABAPFile} from "../files";
+import {BasicRuleConfig} from "./_basic_rule_config";
+import {IRuleMetadata, RuleTag} from "./_irule";
 
 export class StartAtTabConf extends BasicRuleConfig {
 }
@@ -13,12 +14,13 @@ export class StartAtTab extends ABAPRule {
 
   private conf = new StartAtTabConf();
 
-  public getMetadata() {
+  public getMetadata(): IRuleMetadata {
     return {
       key: "start_at_tab",
       title: "Start at tab",
       quickfix: false,
       shortDescription: `Checks that statements start at tabstops.`,
+      tags: [RuleTag.Whitespace],
     };
   }
 

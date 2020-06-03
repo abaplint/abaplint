@@ -1,4 +1,4 @@
-import {ColonMissingSpace} from "../../../src/rules/whitespace/colon_missing_space";
+import {ColonMissingSpace} from "../../../src/rules/colon_missing_space";
 import {testRule} from "../_utils";
 
 const tests = [

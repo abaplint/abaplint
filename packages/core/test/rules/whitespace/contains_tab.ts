@@ -1,4 +1,4 @@
-import {ContainsTab} from "../../../src/rules/whitespace/contains_tab";
+import {ContainsTab} from "../../../src/rules/contains_tab";
 import {testRule} from "../_utils";
 
 const tests = [
