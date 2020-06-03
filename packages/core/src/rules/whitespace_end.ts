@@ -24,7 +24,7 @@ export class WhitespaceEnd extends ABAPRule {
   }
 
   private getMessage(): string {
-    return "Remove whitespace at end of line.";
+    return "Remove whitespace at end of line";
   }
 
   public getConfig() {
