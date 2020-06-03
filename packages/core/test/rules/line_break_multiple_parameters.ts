@@ -13,9 +13,5 @@ testRule(tests, LineBreakMultipleParameters);
 const fixTests = [
   {input: `method( para1 = value para2 = value ).`,
     output: "method( para1 = value \n        para2 = value )."},
-    /*
-  {input: `method( para1 = value para2 = value para3 = value ).`,
-    output: "method( para1 = value \n        para2 = value \n        para3 = value )."},
-    */
 ];
 testRuleFix(fixTests, LineBreakMultipleParameters);

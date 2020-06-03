@@ -31,7 +31,7 @@ line7`);
     expect(raw).to.not.contain("line4");
   });
 
-  it.skip("multiple edits, same line", async () => {
+  it("multiple edits, same line", async () => {
     const filename = "filename.prog.abap";
     const file = new MemoryFile(filename, `line1line2line3`);
     const reg = new Registry().addFile(file);

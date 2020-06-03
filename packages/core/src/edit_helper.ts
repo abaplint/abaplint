@@ -95,7 +95,13 @@ export function applyEditList(reg: IRegistry, edits: IEdit[]): string[] {
   for (const f in merged) {
     const singleFile: IEdit = {};
     // sort, start with the last position first
-    singleFile[f] = merged[f].sort((a, b) => b.range.start.getRow() - a.range.start.getRow());
+    singleFile[f] = merged[f].sort((a, b) => {
+      let val = b.range.start.getRow() - a.range.start.getRow();
+      if (val === 0) {
+        val = b.range.start.getCol() - a.range.start.getCol();
+      }
+      return val;
+    });
 
     applyEditSingle(reg, singleFile);
 
