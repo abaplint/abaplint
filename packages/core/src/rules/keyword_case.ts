@@ -11,6 +11,7 @@ import {BasicRuleConfig} from "./_basic_rule_config";
 import * as Statements from "../abap/2_statements/statements";
 import * as Expressions from "../abap/2_statements/expressions";
 import {Token} from "../abap/1_lexer/tokens/_token";
+import {IRuleMetadata} from "./_irule";
 
 export enum KeywordCaseStyle {
   Upper = "upper",
@@ -33,12 +34,13 @@ export class KeywordCaseConf extends BasicRuleConfig {
 export class KeywordCase extends ABAPRule {
   private conf = new KeywordCaseConf();
 
-  public getMetadata() {
+  public getMetadata(): IRuleMetadata {
     return {
       key: "keyword_case",
       title: "Keyword case",
       quickfix: false,
       shortDescription: `Checks that keywords have the same case. Non-keywords must be lower case.`,
+      extendedInformation: `https://github.com/SAP/styleguides/blob/master/clean-abap/CleanABAP.md#use-your-pretty-printer-team-settings`,
     };
   }
 
