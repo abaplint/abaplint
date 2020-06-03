@@ -45,9 +45,10 @@ export class CurrentScope {
   }
 
   private static addBuiltIn(s: CurrentScope, extras: string[]) {
-    const builtin = BuiltIn.get(extras);
+    const b = new BuiltIn();
+    const builtin = b.get(extras);
     s.addList(builtin);
-    for (const t of BuiltIn.getTypes()) {
+    for (const t of b.getTypes()) {
       s.addType(t);
     }
   }

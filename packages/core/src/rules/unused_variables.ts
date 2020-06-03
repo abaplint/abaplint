@@ -9,6 +9,7 @@ import {ScopeType} from "../abap/5_syntax/_scope_type";
 import {TypedIdentifier} from "../abap/types/_typed_identifier";
 import {Interface} from "../objects";
 import {ISpaghettiScopeNode} from "../abap/5_syntax/_spaghetti_scope";
+import {References} from "../lsp/references";
 
 export class UnusedVariablesConf extends BasicRuleConfig {
 }
@@ -22,6 +23,8 @@ export class UnusedVariables implements IRule {
       title: "Unused variables",
       quickfix: false,
       shortDescription: `Checks for unused variables`,
+      extendedInformation: `WARNING: slow!
+Doesnt currently work for public attributes and class prefixed attribute usage`,
       tags: [RuleTag.Experimental],
     };
   }
@@ -41,31 +44,31 @@ export class UnusedVariables implements IRule {
       return [];
     }
 
-    return this.traverse(new SyntaxLogic(reg, obj).run().spaghetti.getTop(), obj);
+    return this.traverse(new SyntaxLogic(reg, obj).run().spaghetti.getTop(), obj, reg);
   }
 
-  private traverse(node: ISpaghettiScopeNode, obj: ABAPObject): Issue[] {
+  private traverse(node: ISpaghettiScopeNode, obj: ABAPObject, reg: IRegistry): Issue[] {
     let ret: Issue[] = [];
 
     if (node.getIdentifier().stype !== ScopeType.BuiltIn) {
-      ret = ret.concat(this.checkNode(node, obj));
+      ret = ret.concat(this.checkNode(node, obj, reg));
     }
 
     for (const c of node.getChildren()) {
-      ret = ret.concat(this.traverse(c, obj));
+      ret = ret.concat(this.traverse(c, obj, reg));
     }
 
     return ret;
   }
 
-  private checkNode(node: ISpaghettiScopeNode, obj: ABAPObject): Issue[] {
+  private checkNode(node: ISpaghettiScopeNode, obj: ABAPObject, reg: IRegistry): Issue[] {
     const ret: Issue[] = [];
 
     for (const v of node.getData().vars) {
       if (v.name === "me" || v.name === "super") {
         continue; // todo, this is a workaround
       }
-      if (this.isUsed(node, v.identifier) === false
+      if (this.isUsed(v.identifier, reg) === false
           && obj.containsFile(v.identifier.getFilename())) {
         const message = "Variable \"" + v.identifier.getName() + "\" not used";
         ret.push(Issue.atIdentifier(v.identifier, message, this.getMetadata().key));
@@ -75,24 +78,9 @@ export class UnusedVariables implements IRule {
     return ret;
   }
 
-  private isUsed(node: ISpaghettiScopeNode, id: TypedIdentifier): boolean {
-    const usages = node.getData().reads.concat(node.getData().writes);
-
-    for (const u of usages) {
-      if (u.resolved.getFilename() === id.getFilename()
-          && u.resolved.getStart().getCol() === id.getStart().getCol()
-          && u.resolved.getStart().getRow() === id.getStart().getRow()) {
-        return true;
-      }
-    }
-
-    for (const c of node.getChildren()) {
-      const res = this.isUsed(c, id);
-      if (res === true) {
-        return true;
-      }
-    }
-
-    return false;
+  private isUsed(id: TypedIdentifier, reg: IRegistry): boolean {
+    // todo, this is slow, but less false positives than the previous implementation
+    const found = new References(reg).searchEverything(id);
+    return found.length > 1;
   }
 }

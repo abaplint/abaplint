@@ -6,19 +6,20 @@ import {AbstractType} from "../types/basic/_abstract_type";
 
 export class BuiltIn {
   public static readonly filename = "_builtin.prog.abap";
+  private row = 1;
 
-  public static getTypes(): TypedIdentifier[] {
+  public getTypes(): TypedIdentifier[] {
     const ret: TypedIdentifier[] = [];
 
     const id = new Identifier(new Position(1, 1), "abap_bool");
-    ret.push(new TypedIdentifier(id, this.filename, new CharacterType(1)));
+    ret.push(new TypedIdentifier(id, BuiltIn.filename, new CharacterType(1)));
 
     ret.push(this.buildSY());
 
     return ret;
   }
 
-  public static get(extras: string[]): TypedIdentifier[] {
+  public get(extras: string[]): TypedIdentifier[] {
     const ret: TypedIdentifier[] = [];
 
     ret.push(this.buildSY());
@@ -51,8 +52,8 @@ export class BuiltIn {
     ret.push(this.buildConstant("space"));
 
     for (const e of extras) {
-      const id = new Identifier(new Position(1, 1), e);
-      ret.push(new TypedIdentifier(id, this.filename, new VoidType(e), [IdentifierMeta.ReadOnly], "'?'"));
+      const id = new Identifier(new Position(this.row++, 1), e);
+      ret.push(new TypedIdentifier(id, BuiltIn.filename, new VoidType(e), [IdentifierMeta.ReadOnly], "'?'"));
     }
 
     return ret;
@@ -60,7 +61,7 @@ export class BuiltIn {
 
 /////////////////////////////
 
-  private static buildSY(): TypedIdentifier {
+  private buildSY(): TypedIdentifier {
     const components: IStructureComponent[] = [];
     components.push({name: "subrc", type: new IntegerType()});
     components.push({name: "uname", type: new CharacterType(12)});
@@ -82,24 +83,24 @@ export class BuiltIn {
     components.push({name: "msgv4", type: new CharacterType(50)});
     components.push({name: "repid", type: new CharacterType(1)});
     const type = new StructureType(components);
-    const id = new Identifier(new Position(1, 1), "sy");
-    return new TypedIdentifier(id, this.filename, type, [IdentifierMeta.ReadOnly]);
+    const id = new Identifier(new Position(this.row++, 1), "sy");
+    return new TypedIdentifier(id, BuiltIn.filename, type, [IdentifierMeta.ReadOnly]);
   }
 
-  private static buildConstant(name: string, type?: AbstractType, value?: string): TypedIdentifier {
-    const id = new Identifier(new Position(1, 1), name);
+  private buildConstant(name: string, type?: AbstractType, value?: string): TypedIdentifier {
+    const id = new Identifier(new Position(this.row++, 1), name);
     if (type === undefined) {
       type = new VoidType(name);
     }
     if (value === undefined) {
       value = "'?'";
     }
-    return new TypedIdentifier(id, this.filename, type, [IdentifierMeta.ReadOnly], value);
+    return new TypedIdentifier(id, BuiltIn.filename, type, [IdentifierMeta.ReadOnly], value);
   }
 
-  private static buildVariable(name: string) {
-    const id = new Identifier(new Position(1, 1), name);
-    return new TypedIdentifier(id, this.filename, new VoidType(name));
+  private buildVariable(name: string) {
+    const id = new Identifier(new Position(this.row++, 1), name);
+    return new TypedIdentifier(id, BuiltIn.filename, new VoidType(name));
   }
 
 }

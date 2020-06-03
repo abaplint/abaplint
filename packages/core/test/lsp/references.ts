@@ -41,4 +41,14 @@ WRITE loo.`);
     expect(found.length).to.equal(2);
   });
 
+  it("for built-in", () => {
+    const file = new MemoryFile("foobar.prog.abap", `WRITE abap_true.
+WRITE abap_false.
+WRITE abap_true.
+WRITE abap_false.`);
+    const reg = new Registry().addFile(file).parse();
+    const found = new References(reg).references(buildPosition(file, 0 , 7));
+    expect(found.length).to.equal(2);
+  });
+
 });

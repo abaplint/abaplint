@@ -884,7 +884,7 @@
                   "type": "boolean"
                 }
               ],
-              "description": "Enforces basic name length and namespace restrictions\nhttps://rules.abaplint.org/allowed_object_naming"
+              "description": "Enforces basic name length and namespace restrictions\nTags: Naming\nhttps://rules.abaplint.org/allowed_object_naming"
             },
             "allowed_object_types": {
               "anyOf": [
@@ -928,7 +928,7 @@
                   "type": "boolean"
                 }
               ],
-              "description": "Check BEGIN OF and END OF names match\nhttps://rules.abaplint.org/begin_end_names"
+              "description": "Check BEGIN OF and END OF names match\nTags: Syntax\nhttps://rules.abaplint.org/begin_end_names"
             },
             "chain_mainly_declarations": {
               "anyOf": [
@@ -972,7 +972,7 @@
                   "type": "boolean"
                 }
               ],
-              "description": "Checks the types of DDIC objects can be resolved, the namespace of the development/errors can be configured in \"errorNamespace\" \nhttps://rules.abaplint.org/check_ddic"
+              "description": "Checks the types of DDIC objects can be resolved, the namespace of the development/errors can be configured in \"errorNamespace\" \nTags: Syntax\nhttps://rules.abaplint.org/check_ddic"
             },
             "check_include": {
               "anyOf": [
@@ -983,7 +983,7 @@
                   "type": "boolean"
                 }
               ],
-              "description": "Checks INCLUDE statements\nhttps://rules.abaplint.org/check_include"
+              "description": "Checks INCLUDE statements\nTags: Syntax\nhttps://rules.abaplint.org/check_include"
             },
             "check_no_handler_pragma": {
               "anyOf": [
@@ -1005,7 +1005,7 @@
                   "type": "boolean"
                 }
               ],
-              "description": "Enables syntax check and variable resolution\nTags: Experimental\nhttps://rules.abaplint.org/check_syntax"
+              "description": "Enables syntax check and variable resolution\nTags: Experimental, Syntax\nhttps://rules.abaplint.org/check_syntax"
             },
             "check_text_elements": {
               "anyOf": [
@@ -1027,7 +1027,7 @@
                   "type": "boolean"
                 }
               ],
-              "description": "Checks that used XSLT transformations exist.\nhttps://rules.abaplint.org/check_transformation_exists"
+              "description": "Checks that used XSLT transformations exist.\nTags: Syntax\nhttps://rules.abaplint.org/check_transformation_exists"
             },
             "class_attribute_names": {
               "anyOf": [
@@ -1038,7 +1038,7 @@
                   "type": "boolean"
                 }
               ],
-              "description": "Allows you to enforce a pattern, such as a prefix, for class variable names.\nhttps://rules.abaplint.org/class_attribute_names"
+              "description": "Allows you to enforce a pattern, such as a prefix, for class variable names.\nTags: Naming\nhttps://rules.abaplint.org/class_attribute_names"
             },
             "cloud_types": {
               "anyOf": [
@@ -1060,7 +1060,7 @@
                   "type": "boolean"
                 }
               ],
-              "description": "Checks for missing spaces after colons in chained statements.\nhttps://rules.abaplint.org/colon_missing_space"
+              "description": "Checks for missing spaces after colons in chained statements.\nTags: Whitespace\nhttps://rules.abaplint.org/colon_missing_space"
             },
             "commented_code": {
               "anyOf": [
@@ -1093,7 +1093,7 @@
                   "type": "boolean"
                 }
               ],
-              "description": "Checks for usage of tabs (enable to enforce spaces)\nhttps://rules.abaplint.org/contains_tab"
+              "description": "Checks for usage of tabs (enable to enforce spaces)\nTags: Whitespace\nhttps://rules.abaplint.org/contains_tab"
             },
             "definitions_top": {
               "anyOf": [
@@ -1126,7 +1126,7 @@
                   "type": "boolean"
                 }
               ],
-              "description": "Checks that only a single space follows certain common statements.\nhttps://rules.abaplint.org/double_space"
+              "description": "Checks that only a single space follows certain common statements.\nTags: Whitespace\nhttps://rules.abaplint.org/double_space"
             },
             "empty_line_in_statement": {
               "anyOf": [
@@ -1258,7 +1258,7 @@
                   "type": "boolean"
                 }
               ],
-              "description": "Checks related to global classes.\n* global classes must be in own files\n* file names must match class name\n* global classes must be global definitions\nhttps://rules.abaplint.org/global_class"
+              "description": "Checks related to global classes.\n* global classes must be in own files\n* file names must match class name\n* global classes must be global definitions\nTags: Syntax\nhttps://rules.abaplint.org/global_class"
             },
             "identical_form_names": {
               "anyOf": [
@@ -1291,7 +1291,7 @@
                   "type": "boolean"
                 }
               ],
-              "description": "Chekcs for abstract methods and methods from interfaces which need implementing.\nhttps://rules.abaplint.org/implement_methods"
+              "description": "Chekcs for abstract methods and methods from interfaces which need implementing.\nTags: Syntax\nhttps://rules.abaplint.org/implement_methods"
             },
             "in_statement_indentation": {
               "anyOf": [
@@ -1302,7 +1302,7 @@
                   "type": "boolean"
                 }
               ],
-              "description": "Checks alignment within block statement declarations which span multiple lines, such as multiple conditions in IF statements.\nExample:\nIF 1 = 1 AND\n   2 = 2.\nhttps://rules.abaplint.org/in_statement_indentation"
+              "description": "Checks alignment within block statement declarations which span multiple lines, such as multiple conditions in IF statements.\nExample:\nIF 1 = 1 AND\n   2 = 2.\nTags: Whitespace\nhttps://rules.abaplint.org/in_statement_indentation"
             },
             "indentation": {
               "anyOf": [
@@ -1313,7 +1313,7 @@
                   "type": "boolean"
                 }
               ],
-              "description": "Checks indentation\nhttps://rules.abaplint.org/indentation"
+              "description": "Checks indentation\nTags: Whitespace\nhttps://rules.abaplint.org/indentation"
             },
             "inline_data_old_versions": {
               "anyOf": [
@@ -1324,7 +1324,7 @@
                   "type": "boolean"
                 }
               ],
-              "description": "Checks for inline data declarations in older releases. Only active for versions less than v740sp02\nhttps://rules.abaplint.org/inline_data_old_versions"
+              "description": "Checks for inline data declarations in older releases. Only active for versions less than v740sp02\nTags: Syntax\nhttps://rules.abaplint.org/inline_data_old_versions"
             },
             "keep_single_parameter_on_one_line": {
               "anyOf": [
@@ -1335,7 +1335,7 @@
                   "type": "boolean"
                 }
               ],
-              "description": "Keep single parameter calls on one line\nhttps://rules.abaplint.org/keep_single_parameter_on_one_line"
+              "description": "Keep single parameter calls on one line\nTags: Whitespace\nhttps://rules.abaplint.org/keep_single_parameter_on_one_line"
             },
             "keyword_case": {
               "anyOf": [
@@ -1379,7 +1379,7 @@
                   "type": "boolean"
                 }
               ],
-              "description": "Allows you to enforce a pattern, such as a prefix, for local class names.\nhttps://rules.abaplint.org/local_class_naming"
+              "description": "Allows you to enforce a pattern, such as a prefix, for local class names.\nTags: Naming\nhttps://rules.abaplint.org/local_class_naming"
             },
             "local_testclass_location": {
               "anyOf": [
@@ -1401,7 +1401,7 @@
                   "type": "boolean"
                 }
               ],
-              "description": "Allows you to enforce a pattern, such as a prefix, for local variables, constants and field symbols.\nhttps://rules.abaplint.org/local_variable_names"
+              "description": "Allows you to enforce a pattern, such as a prefix, for local variables, constants and field symbols.\nTags: Naming\nhttps://rules.abaplint.org/local_variable_names"
             },
             "main_file_contents": {
               "anyOf": [
@@ -1456,7 +1456,7 @@
                   "type": "boolean"
                 }
               ],
-              "description": "Allows you to enforce a pattern, such as a prefix, for method parameter names\nhttps://rules.abaplint.org/method_parameter_names"
+              "description": "Allows you to enforce a pattern, such as a prefix, for method parameter names\nTags: Naming\nhttps://rules.abaplint.org/method_parameter_names"
             },
             "mix_returning": {
               "anyOf": [
@@ -1500,7 +1500,7 @@
                   "type": "boolean"
                 }
               ],
-              "description": "Checks for newlines between method implementations.\nhttps://rules.abaplint.org/newline_between_methods"
+              "description": "Checks for newlines between method implementations.\nTags: Whitespace\nhttps://rules.abaplint.org/newline_between_methods"
             },
             "no_public_attributes": {
               "anyOf": [
@@ -1522,7 +1522,7 @@
                   "type": "boolean"
                 }
               ],
-              "description": "Allows you to enforce a pattern, such as a prefix, for object names\nhttps://rules.abaplint.org/object_naming"
+              "description": "Allows you to enforce a pattern, such as a prefix, for object names\nTags: Naming\nhttps://rules.abaplint.org/object_naming"
             },
             "obsolete_statement": {
               "anyOf": [
@@ -1544,7 +1544,7 @@
                   "type": "boolean"
                 }
               ],
-              "description": "Checks for syntax unrecognized by abaplint\nhttps://rules.abaplint.org/parser_error"
+              "description": "Checks for syntax unrecognized by abaplint\nTags: Syntax\nhttps://rules.abaplint.org/parser_error"
             },
             "prefer_returning_to_exporting": {
               "anyOf": [
@@ -1621,7 +1621,7 @@
                   "type": "boolean"
                 }
               ],
-              "description": "Allows you to enforce a pattern, such as a prefix, for selection-screen variable names.\nhttps://rules.abaplint.org/selection_screen_naming"
+              "description": "Allows you to enforce a pattern, such as a prefix, for selection-screen variable names.\nTags: Naming\nhttps://rules.abaplint.org/selection_screen_naming"
             },
             "sequential_blank": {
               "anyOf": [
@@ -1632,7 +1632,7 @@
                   "type": "boolean"
                 }
               ],
-              "description": "Checks that code does not contain more than the configured number of blank lines in a row.\nhttps://rules.abaplint.org/sequential_blank"
+              "description": "Checks that code does not contain more than the configured number of blank lines in a row.\nTags: Whitespace\nhttps://rules.abaplint.org/sequential_blank"
             },
             "short_case": {
               "anyOf": [
@@ -1665,7 +1665,7 @@
                   "type": "boolean"
                 }
               ],
-              "description": "Checks that there are no spaces in front of colons in chained statements.\nhttps://rules.abaplint.org/space_before_colon"
+              "description": "Checks that there are no spaces in front of colons in chained statements.\nTags: Whitespace\nhttps://rules.abaplint.org/space_before_colon"
             },
             "space_before_dot": {
               "anyOf": [
@@ -1676,7 +1676,7 @@
                   "type": "boolean"
                 }
               ],
-              "description": "Checks for extra spaces before dots at the ends of statements\nhttps://rules.abaplint.org/space_before_dot"
+              "description": "Checks for extra spaces before dots at the ends of statements\nTags: Whitespace\nhttps://rules.abaplint.org/space_before_dot"
             },
             "sql_escape_host_variables": {
               "anyOf": [
@@ -1698,7 +1698,7 @@
                   "type": "boolean"
                 }
               ],
-              "description": "Checks that statements start at tabstops.\nhttps://rules.abaplint.org/start_at_tab"
+              "description": "Checks that statements start at tabstops.\nTags: Whitespace\nhttps://rules.abaplint.org/start_at_tab"
             },
             "superclass_final": {
               "anyOf": [
@@ -1709,7 +1709,7 @@
                   "type": "boolean"
                 }
               ],
-              "description": "Checks that classes which are inherited from are not declared as FINAL.\nhttps://rules.abaplint.org/superclass_final"
+              "description": "Checks that classes which are inherited from are not declared as FINAL.\nTags: Syntax\nhttps://rules.abaplint.org/superclass_final"
             },
             "tabl_enhancement_category": {
               "anyOf": [
@@ -1764,7 +1764,7 @@
                   "type": "boolean"
                 }
               ],
-              "description": "Allows you to enforce a pattern for TYPES definitions\nhttps://rules.abaplint.org/types_naming"
+              "description": "Allows you to enforce a pattern for TYPES definitions\nTags: Naming\nhttps://rules.abaplint.org/types_naming"
             },
             "unknown_types": {
               "anyOf": [
@@ -1775,7 +1775,7 @@
                   "type": "boolean"
                 }
               ],
-              "description": "Enables check for unknown data types, respects errorNamespace\nTags: Experimental\nhttps://rules.abaplint.org/unknown_types"
+              "description": "Enables check for unknown data types, respects errorNamespace\nTags: Experimental, Syntax\nhttps://rules.abaplint.org/unknown_types"
             },
             "unreachable_code": {
               "anyOf": [
@@ -1830,7 +1830,7 @@
                   "type": "boolean"
                 }
               ],
-              "description": "Checks for redundant whitespace at the end of each line.\nhttps://rules.abaplint.org/whitespace_end"
+              "description": "Checks for redundant whitespace at the end of each line.\nTags: Whitespace\nhttps://rules.abaplint.org/whitespace_end"
             },
             "xml_consistency": {
               "anyOf": [

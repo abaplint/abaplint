@@ -36,7 +36,7 @@ describe("Rule: unused_variables, single file", () => {
     expect(runSingle(abap).length).to.equal(0);
   });
 
-  it.skip("class with attribute", async () => {
+  it("class with attribute", async () => {
     const abap =
 `CLASS lcl_foo DEFINITION.
   PRIVATE SECTION.
@@ -47,6 +47,25 @@ ENDCLASS.
 CLASS lcl_foo IMPLEMENTATION.
   METHOD bar.
     mv_bits = '123'.
+  ENDMETHOD.
+ENDCLASS.`;
+    expect(runSingle(abap).length).to.equal(0);
+  });
+
+  it("class with method", async () => {
+    const abap = `
+CLASS lcl_abapgit_zlib_stream DEFINITION.
+  PUBLIC SECTION.
+    METHODS take_int
+      IMPORTING
+        !iv_length    TYPE i
+      RETURNING
+        VALUE(rv_int) TYPE i.
+ENDCLASS.
+
+CLASS lcl_abapgit_zlib_stream IMPLEMENTATION.
+  METHOD take_int.
+    WRITE iv_length TO rv_int.
   ENDMETHOD.
 ENDCLASS.`;
     expect(runSingle(abap).length).to.equal(0);
