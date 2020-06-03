@@ -3,8 +3,11 @@ import {Registry} from "../../src/registry";
 import {expect} from "chai";
 import {ClassAttributeNames, ClassAttributeNamesConf} from "../../src/rules/class_attribute_names";
 
-function findIssues(abap: string, config?: ClassAttributeNamesConf) {
-  const reg = new Registry().addFile(new MemoryFile("cl_foobar.clas.abap", abap)).parse();
+function findIssues(abap: string, config?: ClassAttributeNamesConf, filename?: string) {
+  if (!filename) {
+    filename = "cl_foobar.clas.abap";
+  }
+  const reg = new Registry().addFile(new MemoryFile(filename, abap)).parse();
   const rule = new ClassAttributeNames();
   if (config) {
     rule.setConfig(config);
@@ -228,6 +231,144 @@ CLASS lcl_foobar IMPLEMENTATION. ENDCLASS.`;
     const issuesFromUndefinedPattern = findIssues(abap, config);
     expect(issuesFromUndefinedPattern.length).to.equal(1);
     expect(issuesFromUndefinedPattern[0].getEnd().getCol()).to.equal(33);
+  });
+});
+
+describe("Rule: class attribute names (interfaces)", () => {
+  const fileProgram = "zfoobar.prog.abap";
+  it("2: local interface member, ignore local", () => {
+    const abap = `
+INTERFACE lif_foo.
+    DATA: foo TYPE i.
+ENDINTERFACE.`;
+    const config = new ClassAttributeNamesConf();
+    config.ignoreLocal = true;
+    config.ignoreInterfaces = false;
+    config.patternKind = "required";
+    config.instance = "^M._.+$";
+    expect(findIssues(abap, config, fileProgram).length).to.equal(0);
+
+    config.patternKind = "forbidden";
+    expect(findIssues(abap, config, fileProgram).length).to.equal(0);
+
+    config.patternKind = undefined;
+    expect(findIssues(abap, config, fileProgram).length).to.equal(0);
+  });
+
+  it("3: local interface member, ignore interface", () => {
+    const abap = `
+INTERFACE lif_foo.
+    DATA: foo TYPE i.
+ENDINTERFACE.`;
+    const config = new ClassAttributeNamesConf();
+    config.ignoreLocal = false;
+    config.ignoreInterfaces = true;
+    config.patternKind = "required";
+    expect(findIssues(abap, config, fileProgram).length).to.equal(0);
+
+    config.patternKind = "forbidden";
+    expect(findIssues(abap, config, fileProgram).length).to.equal(0);
+
+    config.patternKind = undefined;
+    expect(findIssues(abap, config, fileProgram).length).to.equal(0);
+  });
+
+  it("4: local interface member, prefix not supplied", () => {
+    const abap = `
+INTERFACE lif_foo.
+    DATA: foo TYPE i.
+ENDINTERFACE.`;
+    const config = new ClassAttributeNamesConf();
+    config.ignoreLocal = false;
+    config.ignoreInterfaces = false;
+    config.patternKind = "required";
+    config.instance = "^M._.+$";
+    expect(findIssues(abap, config, fileProgram).length).to.equal(1);
+
+    config.patternKind = "forbidden";
+    expect(findIssues(abap, config, fileProgram).length).to.equal(0);
+
+    config.patternKind = undefined;
+    expect(findIssues(abap, config, fileProgram).length).to.equal(1);
+  });
+
+  it("5: local interface member, prefix supplied", () => {
+    const abap = `
+INTERFACE lif_foo.
+    DATA: mv_foo TYPE i.
+ENDINTERFACE.`;
+    const config = new ClassAttributeNamesConf();
+    config.ignoreLocal = false;
+    config.ignoreInterfaces = false;
+    config.patternKind = "required";
+    expect(findIssues(abap, config, fileProgram).length).to.equal(0);
+
+    config.patternKind = "forbidden";
+    expect(findIssues(abap, config, fileProgram).length).to.equal(1);
+
+    config.patternKind = undefined;
+    expect(findIssues(abap, config, fileProgram).length).to.equal(0);
+  });
+
+  it("6: local interface constant, prefix supplied", () => {
+    const abap = `
+INTERFACE lif_foo.
+    CONSTANTS: c_foo TYPE i VALUE 1.
+ENDINTERFACE.`;
+    const config = new ClassAttributeNamesConf();
+    config.ignoreLocal = false;
+    config.ignoreInterfaces = false;
+    config.patternKind = "required";
+    config.constants = "C_.+$";
+    expect(findIssues(abap, config, fileProgram).length).to.equal(0);
+
+    config.patternKind = "forbidden";
+    expect(findIssues(abap, config, fileProgram).length).to.equal(1);
+
+    config.patternKind = undefined;
+    expect(findIssues(abap, config, fileProgram).length).to.equal(0);
+  });
+
+  it("7: local interface constant, prefix not supplied", () => {
+    const abap = `
+INTERFACE lif_foo.
+    CONSTANTS: foo TYPE i VALUE 1.
+ENDINTERFACE.`;
+    const config = new ClassAttributeNamesConf();
+    config.ignoreLocal = false;
+    config.ignoreInterfaces = false;
+    config.patternKind = "required";
+    config.constants = "C_.+$";
+    expect(findIssues(abap, config, fileProgram).length).to.equal(1);
+
+    config.patternKind = "forbidden";
+    expect(findIssues(abap, config, fileProgram).length).to.equal(0);
+
+    config.patternKind = undefined;
+    expect(findIssues(abap, config, fileProgram).length).to.equal(1);
+  });
+
+  it("8: global interface all variants, mixed", () => {
+    const abap = `
+REPORT zfoobar.
+INTERFACE zif_foo PUBLIC.
+  DATA: bar TYPE i.
+  CONSTANTS: foo TYPE i VALUE 1.
+  CLASS-DATA: gv_foobar TYPE i.
+ENDINTERFACE.`;
+    const config = new ClassAttributeNamesConf();
+    config.ignoreLocal = true;
+    config.ignoreInterfaces = false;
+    config.patternKind = "required";
+    config.constants = "^C_.+$";
+
+    expect(findIssues(abap, config, fileProgram).length).to.equal(2);
+
+    config.patternKind = "forbidden";
+    expect(findIssues(abap, config, fileProgram).length).to.equal(1);
+
+    config.patternKind = undefined;
+    expect(findIssues(abap, config, fileProgram).length).to.equal(2);
   });
 
 });
