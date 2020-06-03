@@ -12,6 +12,8 @@ export class ClassAttributeNamesConf extends NamingRuleConfig {
   public ignoreExceptions: boolean = true;
   /** Ignore local classes */
   public ignoreLocal: boolean = true;
+  /** Ignore local classes */
+  public ignoreInterfaces: boolean = false;
   /** The pattern for static variable names */
   public statics: string = "^G._.+$";
   /** The pattern for instance variable names */
@@ -62,9 +64,16 @@ export class ClassAttributeNames extends ABAPRule {
       attributes = attributes.concat(classDef.attributes);
     }
 
+    if (this.conf.ignoreInterfaces === false) {
+      for (const intfDef of file.getInfo().listInterfaceDefinitions()) {
+        if (intfDef.isLocal && this.conf.ignoreLocal) {
+          continue;
+        }
+        attributes = attributes.concat(intfDef.attributes);
+      }
+    }
 
     issues = this.checkAttributes(attributes);
-
     return issues;
   }
 
