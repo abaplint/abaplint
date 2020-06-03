@@ -21,7 +21,7 @@ export class Junit implements IFormatter {
             errors: 0,
             skipped: 0,
           },
-          testcase: [] as {}[],
+          testcase: [] as any,
         },
       },
     };
