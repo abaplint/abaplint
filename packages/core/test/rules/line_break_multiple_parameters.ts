@@ -1,5 +1,5 @@
 import {LineBreakMultipleParameters} from "../../src/rules";
-import {testRule} from "./_utils";
+import {testRule, testRuleFix} from "./_utils";
 
 const tests = [
   {abap: `parser error`, cnt: 0},
@@ -9,3 +9,9 @@ const tests = [
 ];
 
 testRule(tests, LineBreakMultipleParameters);
+
+const fixTests = [
+  {input: `method( para1 = value para2 = value ).`,
+    output: "method( para1 = value \n        para2 = value )."},
+];
+testRuleFix(fixTests, LineBreakMultipleParameters);

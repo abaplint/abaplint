@@ -31,4 +31,21 @@ line7`);
     expect(raw).to.not.contain("line4");
   });
 
+  it("multiple edits, same line", async () => {
+    const filename = "filename.prog.abap";
+    const file = new MemoryFile(filename, `line1line2line3`);
+    const reg = new Registry().addFile(file);
+
+    const edit1 = EditHelper.insertAt(file, new Position(1, 6), "\n    ");
+    const edit2 = EditHelper.insertAt(file, new Position(1, 11), "\n    ");
+
+    const changed = applyEditList(reg, [edit1, edit2]);
+    expect(changed.length).to.equal(1);
+
+    const raw = reg.getFileByName(filename)?.getRaw();
+    expect(raw).to.equal(`line1
+    line2
+    line3`);
+  });
+
 });
