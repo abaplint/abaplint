@@ -34,7 +34,7 @@ import {AbstractFile} from "./files/_abstract_file";
 import {PrettyPrinter} from "./pretty_printer/pretty_printer";
 import {ISpaghettiScope, ISpaghettiScopeNode} from "./abap/5_syntax/_spaghetti_scope";
 import {Empty, Unknown, Comment} from "./abap/2_statements/statements/_statement";
-import {applyEditSingle, applyEditList} from "./edit_helper";
+import {applyEditSingle, applyEditList, IEdit} from "./edit_helper";
 
 // do not include this file from anywhere within abaplint
 
@@ -44,7 +44,7 @@ export {MemoryFile, Issue, Config, Version,
   Artifacts, ArtifactsObjects, ArtifactsRules, Objects, IFile,
   Structures, Statements, Expressions, Types, Nodes, IConfig,
   ISpaghettiScope, ISpaghettiScopeNode, Empty, Unknown, Comment,
-  AbstractType, TypedIdentifier, BasicTypes, ScopeType, INode, Token,
+  AbstractType, TypedIdentifier, BasicTypes, ScopeType, INode, Token, IEdit,
   IDependency, AbstractFile, SpaghettiScopeNode, applyEditSingle, applyEditList,
   Tokens, ABAPObject, SyntaxLogic, SpaghettiScope, IdentifierMeta,
   ABAPFile, CurrentScope, IRegistry, Position, PrettyPrinter};
