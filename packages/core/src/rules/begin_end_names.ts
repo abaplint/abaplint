@@ -9,6 +9,7 @@ import {StructureNode} from "../abap/nodes";
 import {IStructure} from "../abap/3_structures/structures/_structure";
 import {IStatement} from "../abap/2_statements/statements/_statement";
 import {RuleTag} from "./_irule";
+import {EditHelper} from "../edit_helper";
 
 export class BeginEndNamesConf extends BasicRuleConfig {
 }
@@ -20,7 +21,7 @@ export class BeginEndNames extends ABAPRule {
     return {
       key: "begin_end_names",
       title: "Check BEGIN END names",
-      quickfix: false,
+      quickfix: true,
       shortDescription: `Check BEGIN OF and END OF names match`,
       tags: [RuleTag.Syntax],
     };
@@ -70,7 +71,8 @@ export class BeginEndNames extends ABAPRule {
       const last = end.getFirstToken();
 
       if (first.getStr().toUpperCase() !== last.getStr().toUpperCase()) {
-        const issue = Issue.atToken(file, first, this.getMessage(), this.getMetadata().key);
+        const fix = EditHelper.replaceRange(file, last.getStart(), last.getEnd(), first.getStr());
+        const issue = Issue.atToken(file, first, this.getMessage(), this.getMetadata().key, fix);
         output.push(issue);
       }
 
