@@ -560,6 +560,23 @@
       ],
       "type": "object"
     },
+    "DownportConf": {
+      "additionalProperties": false,
+      "properties": {
+        "exclude": {
+          "description": "List of file regex patterns to exclude",
+          "items": {
+            "type": "string"
+          },
+          "type": "array"
+        },
+        "reason": {
+          "description": "An explanation for why the rule is enforced, information only",
+          "type": "string"
+        }
+      },
+      "type": "object"
+    },
     "EmptyLineinStatementConf": {
       "additionalProperties": false,
       "properties": {
@@ -1132,6 +1149,17 @@
                 }
               ],
               "description": "Checks that only a single space follows certain common statements.\nTags: Whitespace\nhttps://rules.abaplint.org/double_space"
+            },
+            "downport": {
+              "anyOf": [
+                {
+                  "$ref": "#/definitions/DownportConf"
+                },
+                {
+                  "type": "boolean"
+                }
+              ],
+              "description": "Experimental downport functionality\nTags: Experimental, Downport\nhttps://rules.abaplint.org/downport"
             },
             "empty_line_in_statement": {
               "anyOf": [

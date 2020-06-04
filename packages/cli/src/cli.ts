@@ -169,11 +169,10 @@ async function run() {
 
     if (argv["fix"] && reg) {
       // @ts-ignore
-      applyFixes(issues, reg, fs);
-      output = `Fixes applied`;
-    } else {
-      output = out(issues, format, loaded.length, argv);
+      issues = applyFixes(issues, reg, fs);
     }
+
+    output = out(issues, format, loaded.length, argv);
   }
 
   return {output, issues};

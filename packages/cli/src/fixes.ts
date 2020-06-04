@@ -1,7 +1,7 @@
 import * as memfs from "memfs";
 import {Issue, IRegistry, applyEditList, IEdit} from "@abaplint/core";
 
-export function applyFixes(inputIssues: readonly Issue[], reg: IRegistry, fs: memfs.IFs): void {
+export function applyFixes(inputIssues: readonly Issue[], reg: IRegistry, fs: memfs.IFs): readonly Issue[] {
   let changed: string[] = [];
   let iterations = 0;
   let issues = inputIssues;
@@ -16,6 +16,7 @@ export function applyFixes(inputIssues: readonly Issue[], reg: IRegistry, fs: me
     issues = reg.parse().findIssues();
   }
 
+  return issues;
 }
 
 function applyList(issues: readonly Issue[], reg: IRegistry, fs: memfs.IFs): string[] {
