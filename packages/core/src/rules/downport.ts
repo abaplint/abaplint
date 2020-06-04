@@ -71,7 +71,7 @@ a higher level language version. If successful, various rules are applied to dow
     if (node.get() instanceof Statements.Move) {
       const found = node.findDirectExpression(Expressions.Source)?.findFirstExpression(Expressions.NewObject);
       if(found) {
-        return Issue.atToken(file, found.getFirstToken(), "Use CREATE OBJECT instead of NEW", this.getMetadata().key);
+        return Issue.atToken(file, s.getFirstToken(), "Use CREATE OBJECT instead of NEW", this.getMetadata().key);
       }
     }
 

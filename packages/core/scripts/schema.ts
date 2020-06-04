@@ -24,6 +24,7 @@ import {ContainsTabConf} from "../src/rules/contains_tab";
 import {DefinitionsTopConf} from "../src/rules/definitions_top";
 import {DescriptionEmptyConf} from "../src/rules/description_empty";
 import {DoubleSpaceConf} from "../src/rules/double_space";
+import {DownportConf} from "../src/rules/downport";
 import {EmptyLineinStatementConf} from "../src/rules/empty_line_in_statement";
 import {EmptyStatementConf} from "../src/rules/empty_statement";
 import {EmptyStructureConf} from "../src/rules/empty_structure";
@@ -122,6 +123,7 @@ export interface IConfig {
     "definitions_top"?: DefinitionsTopConf | boolean,
     "description_empty"?: DescriptionEmptyConf | boolean,
     "double_space"?: DoubleSpaceConf | boolean,
+    "downport"?: DownportConf | boolean,
     "empty_line_in_statement"?: EmptyLineinStatementConf | boolean,
     "empty_statement"?: EmptyStatementConf | boolean,
     "empty_structure"?: EmptyStructureConf | boolean,
