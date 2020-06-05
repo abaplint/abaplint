@@ -115,7 +115,7 @@ a higher level language version. If successful, various rules are applied to dow
         fix = EditHelper.replaceRange(file, node.getFirstToken().getStart(), node.getLastToken().getEnd(), abap);
       }
 
-      if(found) {
+      if (found) {
         return Issue.atToken(file, node.getFirstToken(), "Use CREATE OBJECT instead of NEW", this.getMetadata().key, fix);
       }
     }
