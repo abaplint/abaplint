@@ -17,8 +17,10 @@ documentation as well as abaplint.json definitions which attempt to align abapli
 <a href="https://github.com/SAP/styleguides/blob/master/clean-abap/CleanABAP.md">Clean ABAP styleguide</a>.
 
 <h2>Rules</h2>
+<div id="rules">
 `;
 
+  const json: any = [];
   const sorted = abaplint.ArtifactsRules.getRules().sort((a, b) => {
     return a.getMetadata().key.localeCompare(b.getMetadata().key); });
   for (const r of sorted) {
@@ -28,8 +30,16 @@ documentation as well as abaplint.json definitions which attempt to align abapli
     html = html + "<br>" + meta.shortDescription + "<br><br>\n";
 
     buildRule(meta);
-  }
 
+    json.push({
+      key: meta.key,
+      title: meta.title,
+      description: meta.shortDescription,
+      tags: meta.tags ? meta.tags : []});
+  }
+  html = html + "</div>";
+
+  fs.writeFileSync("build/rules.json", JSON.stringify(json, null, 2));
   fs.writeFileSync("build/index.html", preamble() + html + postamble);
 }
 
