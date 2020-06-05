@@ -950,7 +950,7 @@
                   "type": "boolean"
                 }
               ],
-              "description": "Check BEGIN OF and END OF names match\nTags: Syntax\nhttps://rules.abaplint.org/begin_end_names"
+              "description": "Check BEGIN OF and END OF names match\nTags: Syntax, Quickfix\nhttps://rules.abaplint.org/begin_end_names"
             },
             "chain_mainly_declarations": {
               "anyOf": [
@@ -1082,7 +1082,7 @@
                   "type": "boolean"
                 }
               ],
-              "description": "Checks for missing spaces after colons in chained statements.\nTags: Whitespace\nhttps://rules.abaplint.org/colon_missing_space"
+              "description": "Checks for missing spaces after colons in chained statements.\nTags: Whitespace, Quickfix\nhttps://rules.abaplint.org/colon_missing_space"
             },
             "commented_code": {
               "anyOf": [
@@ -1148,7 +1148,7 @@
                   "type": "boolean"
                 }
               ],
-              "description": "Checks that only a single space follows certain common statements.\nTags: Whitespace\nhttps://rules.abaplint.org/double_space"
+              "description": "Checks that only a single space follows certain common statements.\nTags: Whitespace, Quickfix\nhttps://rules.abaplint.org/double_space"
             },
             "downport": {
               "anyOf": [
@@ -1159,7 +1159,7 @@
                   "type": "boolean"
                 }
               ],
-              "description": "Experimental downport functionality\nTags: Experimental, Downport\nhttps://rules.abaplint.org/downport"
+              "description": "Experimental downport functionality\nTags: Experimental, Downport, Quickfix\nhttps://rules.abaplint.org/downport"
             },
             "empty_line_in_statement": {
               "anyOf": [
@@ -1181,7 +1181,7 @@
                   "type": "boolean"
                 }
               ],
-              "description": "Checks for empty statements (an empty statement is a single dot)\nhttps://rules.abaplint.org/empty_statement"
+              "description": "Checks for empty statements (an empty statement is a single dot)\nTags: Quickfix\nhttps://rules.abaplint.org/empty_statement"
             },
             "empty_structure": {
               "anyOf": [
@@ -1214,7 +1214,7 @@
                   "type": "boolean"
                 }
               ],
-              "description": "Detects EXPORTING statements which can be omitted.\nTags: Styleguide\nhttps://rules.abaplint.org/exporting"
+              "description": "Detects EXPORTING statements which can be omitted.\nTags: Styleguide, Quickfix\nhttps://rules.abaplint.org/exporting"
             },
             "forbidden_identifier": {
               "anyOf": [
@@ -1390,7 +1390,7 @@
                   "type": "boolean"
                 }
               ],
-              "description": "Line break multiple parameters\nTags: Whitespace, Styleguide\nhttps://rules.abaplint.org/line_break_multiple_parameters"
+              "description": "Line break multiple parameters\nTags: Whitespace, Styleguide, Quickfix\nhttps://rules.abaplint.org/line_break_multiple_parameters"
             },
             "line_length": {
               "anyOf": [
@@ -1467,7 +1467,7 @@
                   "type": "boolean"
                 }
               ],
-              "description": "Checks that each line contains only a single statement.\nTags: Styleguide\nhttps://rules.abaplint.org/max_one_statement"
+              "description": "Checks that each line contains only a single statement.\nTags: Styleguide, Quickfix\nhttps://rules.abaplint.org/max_one_statement"
             },
             "message_exists": {
               "anyOf": [
@@ -1621,7 +1621,7 @@
                   "type": "boolean"
                 }
               ],
-              "description": "Reports errors if the current class or interface references itself with \"current_class=>\"\nTags: Styleguide\nhttps://rules.abaplint.org/prefix_is_current_class"
+              "description": "Reports errors if the current class or interface references itself with \"current_class=>\"\nTags: Styleguide, Quickfix\nhttps://rules.abaplint.org/prefix_is_current_class"
             },
             "release_idoc": {
               "anyOf": [
@@ -1720,7 +1720,7 @@
                   "type": "boolean"
                 }
               ],
-              "description": "Checks for extra spaces before dots at the ends of statements\nTags: Whitespace\nhttps://rules.abaplint.org/space_before_dot"
+              "description": "Checks for extra spaces before dots at the ends of statements\nTags: Whitespace, Quickfix\nhttps://rules.abaplint.org/space_before_dot"
             },
             "sql_escape_host_variables": {
               "anyOf": [
@@ -1852,7 +1852,7 @@
                   "type": "boolean"
                 }
               ],
-              "description": "Checks for deprecated CREATE OBJECT statements.\nTags: Upport, Styleguide\nhttps://rules.abaplint.org/use_new"
+              "description": "Checks for deprecated CREATE OBJECT statements.\nTags: Upport, Styleguide, Quickfix\nhttps://rules.abaplint.org/use_new"
             },
             "when_others_last": {
               "anyOf": [
@@ -1874,7 +1874,7 @@
                   "type": "boolean"
                 }
               ],
-              "description": "Checks for redundant whitespace at the end of each line.\nTags: Whitespace\nhttps://rules.abaplint.org/whitespace_end"
+              "description": "Checks for redundant whitespace at the end of each line.\nTags: Whitespace, Quickfix\nhttps://rules.abaplint.org/whitespace_end"
             },
             "xml_consistency": {
               "anyOf": [

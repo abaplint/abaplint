@@ -16,7 +16,6 @@ export class ContainsTab extends ABAPRule {
     return {
       key: "contains_tab",
       title: "Code contains tab",
-      quickfix: false,
       shortDescription: `Checks for usage of tabs (enable to enforce spaces)`,
       extendedInformation: `https://docs.abapopenchecks.org/checks/09/`,
       tags: [RuleTag.Whitespace],

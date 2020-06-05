@@ -16,7 +16,6 @@ export class TryWithoutCatch extends ABAPRule {
     return {
       key: "try_without_catch",
       title: "TRY without CATCH",
-      quickfix: false,
       shortDescription: `Checks for TRY blocks without a CATCH and CLEANUP block`,
     };
   }

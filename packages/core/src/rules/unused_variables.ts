@@ -21,7 +21,6 @@ export class UnusedVariables implements IRule {
     return {
       key: "unused_variables",
       title: "Unused variables",
-      quickfix: false,
       shortDescription: `Checks for unused variables`,
       extendedInformation: `WARNING: slow!
 Doesnt currently work for public attributes and class prefixed attribute usage`,

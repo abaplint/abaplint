@@ -23,7 +23,6 @@ export class SelectionScreenNaming extends ABAPRule {
     return {
       key: "selection_screen_naming",
       title: "Selection screen naming conventions",
-      quickfix: false,
       shortDescription: `Allows you to enforce a pattern, such as a prefix, for selection-screen variable names.`,
       tags: [RuleTag.Naming],
     };

@@ -27,7 +27,6 @@ export class Indentation extends ABAPRule {
     return {
       key: "indentation",
       title: "Indentation",
-      quickfix: false,
       shortDescription: `Checks indentation`,
       tags: [RuleTag.Whitespace],
     };

@@ -19,7 +19,6 @@ export class DescriptionEmpty implements IRule {
     return {
       key: "description_empty",
       title: "Description in class must exist",
-      quickfix: false,
       shortDescription: `Ensures descriptions in class metadata exist.`,
     };
   }

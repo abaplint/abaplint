@@ -23,7 +23,6 @@ export class CommentedCode extends ABAPRule {
     return {
       key: "commented_code",
       title: "Find commented code",
-      quickfix: false,
       shortDescription: `Detects usage of commented out code.`,
       extendedInformation:
 `https://github.com/SAP/styleguides/blob/master/clean-abap/CleanABAP.md#delete-code-instead-of-commenting-it

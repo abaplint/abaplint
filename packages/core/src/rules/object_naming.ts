@@ -50,7 +50,6 @@ export class ObjectNaming implements IRule {
     return {
       key: "object_naming",
       title: "Object naming conventions",
-      quickfix: false,
       shortDescription: `Allows you to enforce a pattern, such as a prefix, for object names`,
       tags: [RuleTag.Naming],
     };

@@ -17,9 +17,8 @@ export class WhitespaceEnd extends ABAPRule {
     return {
       key: "whitespace_end",
       title: "Whitespace at end of line",
-      quickfix: true,
       shortDescription: `Checks for redundant whitespace at the end of each line.`,
-      tags: [RuleTag.Whitespace],
+      tags: [RuleTag.Whitespace, RuleTag.Quickfix],
     };
   }
 

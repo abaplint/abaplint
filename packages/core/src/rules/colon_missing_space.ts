@@ -17,9 +17,8 @@ export class ColonMissingSpace extends ABAPRule {
     return {
       key: "colon_missing_space",
       title: "Colon missing space",
-      quickfix: true,
       shortDescription: `Checks for missing spaces after colons in chained statements.`,
-      tags: [RuleTag.Whitespace],
+      tags: [RuleTag.Whitespace, RuleTag.Quickfix],
     };
   }
 

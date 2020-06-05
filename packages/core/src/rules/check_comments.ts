@@ -19,7 +19,6 @@ export class CheckComments extends ABAPRule {
     return {
       key: "check_comments",
       title: "Check Comments",
-      quickfix: false,
       shortDescription: `Various checks for comment usage.`,
     };
   }

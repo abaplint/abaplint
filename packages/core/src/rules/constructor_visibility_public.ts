@@ -16,7 +16,6 @@ export class ConstructorVisibilityPublic implements IRule {
     return {
       key: "constructor_visibility_public",
       title: "Check constructor visibility is public",
-      quickfix: false,
       shortDescription: `Constructor must be placed in the public section, even if the class is not CREATE PUBLIC.`,
       extendedInformation:
 `https://github.com/SAP/styleguides/blob/master/clean-abap/CleanABAP.md#if-your-global-class-is-create-private-leave-the-constructor-public

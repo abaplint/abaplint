@@ -22,7 +22,6 @@ export class DefinitionsTop extends ABAPRule {
     return {
       key: "definitions_top",
       title: "Place definitions in top of routine",
-      quickfix: false,
       shortDescription: `Checks that definitions are placed at the beginning of methods.`,
       extendedInformation: `https://docs.abapopenchecks.org/checks/17/`,
     };

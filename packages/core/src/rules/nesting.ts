@@ -18,7 +18,6 @@ export class Nesting extends ABAPRule {
     return {
       key: "nesting",
       title: "Check nesting depth",
-      quickfix: false,
       shortDescription: `Checks for methods exceeding a maximum nesting depth`,
       extendedInformation: `https://github.com/SAP/styleguides/blob/master/clean-abap/CleanABAP.md#keep-the-nesting-depth-low
 https://docs.abapopenchecks.org/checks/74/`,

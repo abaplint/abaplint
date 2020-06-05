@@ -20,7 +20,6 @@ export class MainFileContents implements IRule {
     return {
       key: "main_file_contents",
       title: "Main file contents",
-      quickfix: false,
       shortDescription: `Checks related to report declarations.`,
     };
   }

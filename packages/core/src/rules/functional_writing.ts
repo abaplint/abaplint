@@ -22,7 +22,6 @@ export class FunctionalWriting extends ABAPRule {
     return {
       key: "functional_writing",
       title: "Use functional writing",
-      quickfix: false,
       shortDescription: `Detects usage of call method when functional style calls can be used.`,
       extendedInformation: `https://github.com/SAP/styleguides/blob/master/clean-abap/CleanABAP.md#prefer-functional-to-procedural-calls
 https://docs.abapopenchecks.org/checks/07/`,

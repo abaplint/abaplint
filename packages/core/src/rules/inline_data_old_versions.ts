@@ -17,7 +17,6 @@ export class InlineDataOldVersions extends ABAPRule {
     return {
       key: "inline_data_old_versions",
       title: "Inline data, old versions",
-      quickfix: false,
       shortDescription: `Checks for inline data declarations in older releases. Only active for versions less than v740sp02`,
       tags: [RuleTag.Syntax],
     };

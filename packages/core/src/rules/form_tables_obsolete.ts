@@ -18,7 +18,6 @@ export class FormTablesObsolete extends ABAPRule {
     return {
       key: "form_tables_obsolete",
       title: "TABLES parameters are obsolete",
-      quickfix: false,
       shortDescription: `Checks for TABLES parameters in forms.`,
     };
   }

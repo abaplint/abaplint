@@ -5,6 +5,7 @@ import {ABAPFile} from "../files";
 import {BasicRuleConfig} from "./_basic_rule_config";
 import {EditHelper} from "../edit_helper";
 import {Position} from "../position";
+import {RuleTag} from "./_irule";
 
 export class EmptyStatementConf extends BasicRuleConfig {
 }
@@ -17,8 +18,8 @@ export class EmptyStatement extends ABAPRule {
     return {
       key: "empty_statement",
       title: "Remove emty statement",
-      quickfix: true,
       shortDescription: `Checks for empty statements (an empty statement is a single dot)`,
+      tags: [RuleTag.Quickfix],
     };
   }
 

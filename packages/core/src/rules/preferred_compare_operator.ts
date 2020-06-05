@@ -21,7 +21,6 @@ export class PreferredCompareOperator extends ABAPRule {
     return {
       key: "preferred_compare_operator",
       title: "Preferred compare operator",
-      quickfix: false,
       shortDescription: `Configure undesired operator variants`,
     };
   }

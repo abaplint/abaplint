@@ -16,7 +16,6 @@ export class IdenticalFormNames implements IRule {
     return {
       key: "identical_form_names",
       title: "Identical FORM names",
-      quickfix: false,
       shortDescription: `Detects identically named FORMs`,
     };
   }

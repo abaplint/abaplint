@@ -15,7 +15,6 @@ export class SpaceBeforeColon extends ABAPRule {
     return {
       key: "space_before_colon",
       title: "Space before colon",
-      quickfix: false,
       shortDescription: `Checks that there are no spaces in front of colons in chained statements.`,
       extendedInformation: `https://docs.abapopenchecks.org/checks/80/`,
       tags: [RuleTag.Whitespace],

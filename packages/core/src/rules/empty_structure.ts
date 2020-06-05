@@ -32,7 +32,6 @@ export class EmptyStructure extends ABAPRule {
     return {
       key: "empty_structure",
       title: "Find empty blocks",
-      quickfix: false,
       shortDescription: `Checks that the code does not contain empty blocks.`,
       extendedInformation: `https://github.com/SAP/styleguides/blob/master/clean-abap/CleanABAP.md#no-empty-if-branches`,
       tags: [RuleTag.Styleguide],

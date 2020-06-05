@@ -15,7 +15,6 @@ export class AllowedObjectNaming implements IRule {
     return {
       key: "allowed_object_naming",
       title: "Allowed object naming",
-      quickfix: false,
       shortDescription: `Enforces basic name length and namespace restrictions`,
       tags: [RuleTag.Naming],
     };

@@ -21,7 +21,6 @@ export class CheckAbstract extends ABAPRule {
     return {
       key: "check_abstract",
       title: "Check abstract methods and classes",
-      quickfix: false,
       shortDescription: `Checks abstract methods and classes:
 - class defined as abstract and final,
 - non-abstract class contains abstract methods`,

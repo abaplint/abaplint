@@ -22,7 +22,6 @@ export class ShortCase extends ABAPRule {
     return {
       key: "short_case",
       title: "Short CASE",
-      quickfix: false,
       shortDescription: `Checks for CASE statements which have fewer than the specified number of branches`,
     };
   }

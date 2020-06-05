@@ -21,7 +21,6 @@ export class InStatementIndentation extends ABAPRule {
     return {
       key: "in_statement_indentation",
       title: "In-statement indentation",
-      quickfix: false,
       // eslint-disable-next-line max-len
       shortDescription: `Checks alignment within block statement declarations which span multiple lines, such as multiple conditions in IF statements.
 Example:

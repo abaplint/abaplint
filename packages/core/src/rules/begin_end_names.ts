@@ -21,9 +21,8 @@ export class BeginEndNames extends ABAPRule {
     return {
       key: "begin_end_names",
       title: "Check BEGIN END names",
-      quickfix: true,
       shortDescription: `Check BEGIN OF and END OF names match`,
-      tags: [RuleTag.Syntax],
+      tags: [RuleTag.Syntax, RuleTag.Quickfix],
     };
   }
 

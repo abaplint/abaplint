@@ -18,7 +18,6 @@ export class CheckTextElements implements IRule {
     return {
       key: "check_text_elements",
       title: "Check text elements",
-      quickfix: false,
       shortDescription: `Check text elements exists or matches code`,
     };
   }

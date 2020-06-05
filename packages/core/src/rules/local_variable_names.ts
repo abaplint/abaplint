@@ -27,7 +27,6 @@ export class LocalVariableNames extends ABAPRule {
     return {
       key: "local_variable_names",
       title: "Local variable naming conventions",
-      quickfix: false,
       shortDescription: `Allows you to enforce a pattern, such as a prefix, for local variables, constants and field symbols.`,
       tags: [RuleTag.Naming],
     };

@@ -17,7 +17,6 @@ export class CheckInclude implements IRule {
     return {
       key: "check_include",
       title: "Check INCLUDEs",
-      quickfix: false,
       shortDescription: `Checks INCLUDE statements`,
       tags: [RuleTag.Syntax],
     };

@@ -37,7 +37,6 @@ export class ObsoleteStatement extends ABAPRule {
     return {
       key: "obsolete_statement",
       title: "Obsolete statements",
-      quickfix: false,
       shortDescription: `Checks for usages of certain obsolete statements`,
     };
   }

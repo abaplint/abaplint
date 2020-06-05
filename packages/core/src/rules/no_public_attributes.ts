@@ -20,7 +20,6 @@ export class NoPublicAttributes extends ABAPRule {
     return {
       key: "no_public_attributes",
       title: "No public attributes",
-      quickfix: false,
       shortDescription: `Checks that classes and interfaces don't contain any public attributes.
 Exceptions are excluded from this rule.`,
     };

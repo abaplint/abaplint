@@ -17,7 +17,6 @@ export class EmptyLineinStatement extends ABAPRule {
     return {
       key: "empty_line_in_statement",
       title: "Find empty lines in statements",
-      quickfix: false,
       shortDescription: `Checks that statements do not contain empty lines.`,
       extendedInformation: `https://docs.abapopenchecks.org/checks/41/`,
     };

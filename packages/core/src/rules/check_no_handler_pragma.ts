@@ -17,7 +17,6 @@ export class CheckNoHandlerPragma extends ABAPRule {
     return {
       key: "check_no_handler_pragma",
       title: "Check if NO_HANDLER can be removed",
-      quickfix: false,
       shortDescription: `Checks NO_HANDLER pragmas that can be removed`,
       badExample: `TRY.
     ...

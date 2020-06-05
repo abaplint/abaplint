@@ -9,6 +9,7 @@ export enum RuleTag {
   Downport = "Downport",
   Whitespace = "Whitespace",
   Naming = "Naming",
+  Quickfix = "Quickfix",
   Syntax = "Syntax",
   Styleguide = "Styleguide",
 }
@@ -21,8 +22,6 @@ export interface IRuleMetadata {
   key: string;
   /** Rule title */
   title: string;
-  /** Does the rule implement quickfixes? */
-  quickfix: boolean;
   /** Short description in markdown, can be shown in editors */
   shortDescription: string;
   /** ABAP code with bad example, shown on rules.abaplint.org */

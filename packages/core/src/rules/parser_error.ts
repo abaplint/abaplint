@@ -21,7 +21,6 @@ export class ParserError extends ABAPRule {
     return {
       key: "parser_error",
       title: "Parser error",
-      quickfix: false,
       shortDescription: `Checks for syntax unrecognized by abaplint`,
       tags: [RuleTag.Syntax],
     };

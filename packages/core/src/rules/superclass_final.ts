@@ -19,7 +19,6 @@ export class SuperclassFinal extends ABAPRule {
     return {
       key: "superclass_final",
       title: "Super class final",
-      quickfix: false,
       shortDescription: `Checks that classes which are inherited from are not declared as FINAL.`,
       tags: [RuleTag.Syntax],
     };

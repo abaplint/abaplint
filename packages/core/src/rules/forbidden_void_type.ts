@@ -24,7 +24,6 @@ export class ForbiddenVoidType extends BasicRuleConfig {
     return {
       key: "forbidden_void_type",
       title: "Forbidden Void Type",
-      quickfix: false,
       shortDescription: `Forbid use of specified void types.`,
       extendedInformation: `Inspiration:
 BOOLEAN, BOOLE_D, CHAR01, CHAR1, CHAR10, CHAR12, CHAR128, CHAR2, CHAR20, CHAR4, CHAR70,

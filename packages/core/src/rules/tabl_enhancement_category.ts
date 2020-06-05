@@ -16,7 +16,6 @@ export class TABLEnhancementCategory implements IRule {
     return {
       key: "tabl_enhancement_category",
       title: "TABL enhancement category must be set",
-      quickfix: false,
       shortDescription: `Checks that tables do not have the enhancement category 'not classified'`,
     };
   }

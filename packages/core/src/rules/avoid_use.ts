@@ -37,7 +37,6 @@ export class AvoidUse extends ABAPRule {
     return {
       key: "avoid_use",
       title: "Avoid use of certain statements",
-      quickfix: false,
       shortDescription: `Detects usage of certain statements.`,
       extendedInformation: `DEFAULT KEY: https://github.com/SAP/styleguides/blob/master/clean-abap/CleanABAP.md#avoid-default-key`,
       tags: [RuleTag.Styleguide],

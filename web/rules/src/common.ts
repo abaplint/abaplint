@@ -66,7 +66,7 @@ function styleguide() {
 
 export function renderIcons(meta: IRuleMetadata): string {
   let html = "";
-  if (meta.quickfix === true) {
+  if (meta.tags?.includes(RuleTag.Quickfix)) {
     html = html + quickfix();
   }
   if (meta.tags?.includes(RuleTag.Experimental)) {
