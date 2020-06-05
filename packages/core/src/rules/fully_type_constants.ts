@@ -18,7 +18,6 @@ export class FullyTypeConstants extends ABAPRule {
     return {
       key: "fully_type_constants",
       title: "Fully type constants",
-      quickfix: false,
       shortDescription: `Checks constants for full typing - no implicit typing allowed.`,
     };
   }

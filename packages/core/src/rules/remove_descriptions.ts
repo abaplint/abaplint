@@ -22,7 +22,6 @@ export class RemoveDescriptions implements IRule {
     return {
       key: "remove_descriptions",
       title: "Remove descriptions",
-      quickfix: false,
       // eslint-disable-next-line max-len
       shortDescription: `Ensures you have no descriptions in metadata of methods, parameters, etc. For class descriptions, see rule description_empty.`,
     };

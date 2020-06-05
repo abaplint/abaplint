@@ -16,7 +16,6 @@ export class XMLConsistency implements IRule {
     return {
       key: "xml_consistency",
       title: "XML consistency",
-      quickfix: false,
       shortDescription: `Checks the consistency of main XML files, eg. naming`,
     };
   }

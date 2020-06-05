@@ -16,7 +16,6 @@ export class IfInIf extends ABAPRule {
     return {
       key: "if_in_if",
       title: "IF in IF",
-      quickfix: false,
       shortDescription: `Detects nested ifs which can be refactored to a single condition using AND.`,
       extendedInformation: `https://docs.abapopenchecks.org/checks/01/
 https://github.com/SAP/styleguides/blob/master/clean-abap/CleanABAP.md#keep-the-nesting-depth-low`,

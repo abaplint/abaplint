@@ -30,9 +30,8 @@ export class DoubleSpace extends ABAPRule {
     return {
       key: "double_space",
       title: "Double space",
-      quickfix: true,
       shortDescription: `Checks that only a single space follows certain common statements.`,
-      tags: [RuleTag.Whitespace],
+      tags: [RuleTag.Whitespace, RuleTag.Quickfix],
     };
   }
 

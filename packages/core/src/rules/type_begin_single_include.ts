@@ -16,7 +16,6 @@ export class TypeBeginSingleType extends ABAPRule {
     return {
       key: "type_begin_single_include",
       title: "TYPE BEGIN contains single field",
-      quickfix: false,
       shortDescription: `Finds TYPE BEGIN with just one INCLUDE TYPE`,
     };
   }

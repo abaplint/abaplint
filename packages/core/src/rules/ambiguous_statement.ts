@@ -19,7 +19,6 @@ export class AmbiguousStatement extends ABAPRule {
     return {
       key: "ambiguous_statement",
       title: "Check for ambigious statements",
-      quickfix: false,
       shortDescription: `Checks for ambiguity between deleting or modifying from internal and database table
 Add "TABLE" keyword or "@" for escaping SQL variables`,
     };

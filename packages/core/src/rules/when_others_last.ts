@@ -16,7 +16,6 @@ export class WhenOthersLast extends ABAPRule {
     return {
       key: "when_others_last",
       title: "WHEN OTHERS last",
-      quickfix: false,
       shortDescription: `Checks that WHEN OTHERS is placed the last within a CASE statement.`,
     };
   }

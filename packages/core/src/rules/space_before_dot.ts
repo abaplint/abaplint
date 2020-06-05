@@ -25,9 +25,8 @@ export class SpaceBeforeDot extends ABAPRule {
     return {
       key: "space_before_dot",
       title: "Space before dot",
-      quickfix: true,
       shortDescription: `Checks for extra spaces before dots at the ends of statements`,
-      tags: [RuleTag.Whitespace],
+      tags: [RuleTag.Whitespace, RuleTag.Quickfix],
     };
   }
 

@@ -17,7 +17,6 @@ export class CheckTransformationExists extends ABAPRule {
     return {
       key: "check_transformation_exists",
       title: "Check transformation exists",
-      quickfix: false,
       shortDescription: `Checks that used XSLT transformations exist.`,
       tags: [RuleTag.Syntax],
     };

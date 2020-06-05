@@ -17,7 +17,6 @@ export class UnreachableCode extends ABAPRule {
     return {
       key: "unreachable_code",
       title: "Unreachable code",
-      quickfix: false,
       shortDescription: `Checks for unreachable code.`,
     };
   }

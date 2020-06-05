@@ -16,7 +16,6 @@ export class SICFConsistency implements IRule {
     return {
       key: "sicf_consistency",
       title: "SICF consistency",
-      quickfix: false,
       shortDescription: `Checks the validity of ICF services`,
     };
   }

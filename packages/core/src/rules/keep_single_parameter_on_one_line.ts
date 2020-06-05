@@ -18,7 +18,6 @@ export class KeepSingleParameterCallsOnOneLine extends ABAPRule {
     return {
       key: "keep_single_parameter_on_one_line",
       title: "Keep single parameters on one line",
-      quickfix: false,
       shortDescription: `Keep single parameter calls on one line`,
       extendedInformation: `https://github.com/SAP/styleguides/blob/master/clean-abap/CleanABAP.md#keep-single-parameter-calls-on-one-line`,
       tags: [RuleTag.Whitespace, RuleTag.Styleguide],

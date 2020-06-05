@@ -20,7 +20,6 @@ export class TypesNaming extends ABAPRule {
     return {
       key: "types_naming",
       title: "TYPES naming conventions",
-      quickfix: false,
       shortDescription: `Allows you to enforce a pattern for TYPES definitions`,
       tags: [RuleTag.Naming],
     };

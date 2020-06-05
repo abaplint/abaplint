@@ -17,7 +17,6 @@ export class LocalTestclassLocation extends ABAPRule {
     return {
       key: "local_testclass_location",
       title: "Local testclass location",
-      quickfix: false,
       shortDescription: `Checks that local test classes are placed in the test include.`,
     };
   }

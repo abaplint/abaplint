@@ -18,7 +18,6 @@ export class FormNoDash extends ABAPRule {
     return {
       key: "form_no_dash",
       title: "No dashes in FORM names",
-      quickfix: false,
       shortDescription: `Checks for a Dash in form names`,
     };
   }

@@ -19,7 +19,6 @@ export class Abapdoc extends ABAPRule {
     return {
       key: "abapdoc",
       title: "Check abapdoc",
-      quickfix: false,
       shortDescription: `Various checks regarding abapdoc.
 Base rule checks for existence of abapdoc for public class methods and all interface methods.`,
     };

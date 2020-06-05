@@ -17,7 +17,6 @@ export class CheckSyntax {
     return {
       key: "check_syntax",
       title: "Check syntax",
-      quickfix: false,
       shortDescription: `Enables syntax check and variable resolution`,
       tags: [RuleTag.Experimental, RuleTag.Syntax],
     };

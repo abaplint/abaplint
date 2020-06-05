@@ -15,7 +15,6 @@ export class ReleaseIdoc implements IRule {
     return {
       key: "release_idoc",
       title: "Release iDoc",
-      quickfix: false,
       shortDescription: `Checks idoc types and segments are set to status released`,
     };
   }

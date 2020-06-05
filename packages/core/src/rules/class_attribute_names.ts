@@ -30,7 +30,6 @@ export class ClassAttributeNames extends ABAPRule {
     return {
       key: "class_attribute_names",
       title: "Class attributes naming",
-      quickfix: false,
       shortDescription: `Allows you to enforce a pattern, such as a prefix, for class variable names.`,
       tags: [RuleTag.Naming],
     };

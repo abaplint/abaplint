@@ -17,7 +17,6 @@ export class LineLength extends ABAPRule {
     return {
       key: "line_length",
       title: "Line length",
-      quickfix: false,
       shortDescription: `Detects lines exceeding the provided maximum length.`,
       extendedInformation: `https://github.com/SAP/styleguides/blob/master/clean-abap/CleanABAP.md#stick-to-a-reasonable-line-length
 https://docs.abapopenchecks.org/checks/04/`,

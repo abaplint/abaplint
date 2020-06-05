@@ -15,7 +15,6 @@ export class ChainMainlyDeclarations extends ABAPRule {
     return {
       key: "chain_mainly_declarations",
       title: "Chain mainly declarations",
-      quickfix: false,
       shortDescription: `Chain mainly declarations`,
       extendedInformation: `https://docs.abapopenchecks.org/checks/23/`,
     };

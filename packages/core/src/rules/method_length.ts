@@ -27,7 +27,6 @@ export class MethodLength implements IRule {
     return {
       key: "method_length",
       title: "Method Length",
-      quickfix: false,
       shortDescription: `Checks relating to method length.`,
     };
   }

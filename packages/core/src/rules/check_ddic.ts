@@ -20,7 +20,6 @@ export class CheckDDIC implements IRule {
     return {
       key: "check_ddic",
       title: "Check DDIC",
-      quickfix: false,
       // eslint-disable-next-line max-len
       shortDescription: `Checks the types of DDIC objects can be resolved, the namespace of the development/errors can be configured in "errorNamespace" `,
       tags: [RuleTag.Syntax],

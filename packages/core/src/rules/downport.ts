@@ -22,12 +22,11 @@ export class Downport extends ABAPRule {
     return {
       key: "downport",
       title: "Downport statement",
-      quickfix: true,
       shortDescription: `Experimental downport functionality`,
       extendedInformation: `
 Much like the commented_code rule this rule loops through unknown statements and tries parsing with
 a higher level language version. If successful, various rules are applied to downport the statement.`,
-      tags: [RuleTag.Experimental, RuleTag.Downport],
+      tags: [RuleTag.Experimental, RuleTag.Downport, RuleTag.Quickfix],
     };
   }
 

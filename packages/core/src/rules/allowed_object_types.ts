@@ -17,7 +17,6 @@ export class AllowedObjectTypes implements IRule {
     return {
       key: "allowed_object_types",
       title: "Check allowed object types",
-      quickfix: false,
       shortDescription: `Restricts the set of allowed object types.`,
       extendedInformation: `allowed is a list of 4 character object types, example: ["CLAS", "INTF"]`,
     };

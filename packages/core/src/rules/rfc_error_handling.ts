@@ -15,7 +15,6 @@ export class RFCErrorHandling extends ABAPRule {
     return {
       key: "rfc_error_handling",
       title: "RFC error handling",
-      quickfix: false,
       shortDescription: `Checks that exceptions 'system_failure' and 'communication_failure' are handled in RFC calls`,
       extendedInformation: `https://help.sap.com/doc/abapdocu_750_index_htm/7.50/en-US/abenrfc_exception.htm`,
     };

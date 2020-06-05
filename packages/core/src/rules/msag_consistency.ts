@@ -16,7 +16,6 @@ export class MSAGConsistency implements IRule {
     return {
       key: "msag_consistency",
       title: "MSAG consistency check",
-      quickfix: false,
       shortDescription: `Checks the validity of messages in message classes`,
     };
   }

@@ -19,7 +19,6 @@ export class UnknownTypes {
     return {
       key: "unknown_types",
       title: "Unknown types",
-      quickfix: false,
       shortDescription: `Enables check for unknown data types, respects errorNamespace`,
       tags: [RuleTag.Experimental, RuleTag.Syntax],
     };

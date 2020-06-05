@@ -18,7 +18,6 @@ export class TypeFormParameters extends ABAPRule {
     return {
       key: "type_form_parameters",
       title: "Type FORM parameters",
-      quickfix: false,
       shortDescription: `Checks for untyped FORM parameters`,
     };
   }

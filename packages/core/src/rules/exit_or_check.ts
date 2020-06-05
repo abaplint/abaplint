@@ -17,7 +17,6 @@ export class ExitOrCheck extends ABAPRule {
     return {
       key: "exit_or_check",
       title: "Find EXIT or CHECK outside loops",
-      quickfix: false,
       shortDescription: `Detects usages of EXIT or CHECK statements outside of loops.
 Use RETURN to leave procesing blocks instead.`,
       extendedInformation: `

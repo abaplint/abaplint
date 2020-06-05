@@ -16,7 +16,6 @@ export class MessageExistsRule extends ABAPRule {
     return {
       key: "message_exists",
       title: "Check MESSAGE exists",
-      quickfix: false,
       shortDescription: `In message statements, check that the message class + id exist`,
     };
   }

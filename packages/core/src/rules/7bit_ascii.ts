@@ -14,7 +14,6 @@ export class SevenBitAscii implements IRule {
     return {
       key: "7bit_ascii",
       title: "Check for 7bit ascii",
-      quickfix: false,
       shortDescription: `Only allow characters from the 7bit ASCII set.`,
       extendedInformation: `https://docs.abapopenchecks.org/checks/05/`,
     };
