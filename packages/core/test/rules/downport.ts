@@ -41,8 +41,20 @@ describe("Rule: downport", () => {
     expect(issues.length).to.equal(1);
   });
 
-  it.skip("quick fix, Use CREATE OBJECT instead of NEW", () => {
-    testFix("foo = NEW #( ).", "sdf");
+  it("quick fix, Use CREATE OBJECT instead of NEW", () => {
+    testFix("foo = NEW #( ).", "CREATE OBJECT foo.");
+  });
+
+  it("test position of quick fix is second line", () => {
+    testFix("DATA foo TYPE i.\nfoo = NEW #( ).", "DATA foo TYPE i.\nCREATE OBJECT foo.");
+  });
+
+  it("quick fix, with TYPE", () => {
+    testFix("foo = NEW zcl_bar( ).", "CREATE OBJECT foo TYPE zcl_bar.");
+  });
+
+  it("with a parameter", () => {
+    testFix("foo = NEW #( foo = bar ).", "CREATE OBJECT foo EXPORTING foo = bar.");
   });
 
 });
