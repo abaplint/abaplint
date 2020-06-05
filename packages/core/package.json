@@ -55,15 +55,15 @@
     "devDependencies": {
         "@types/chai": "^4.2.11",
         "@types/mocha": "^7.0.2",
-        "@types/node": "^14.0.9",
+        "@types/node": "^14.0.11",
         "chai": "^4.2.0",
         "eslint": "^7.1.0",
         "madge": "^3.9.0",
         "mocha": "^7.2.0",
         "nyc": "^15.1.0",
         "source-map-support": "^0.5.19",
-        "ts-json-schema-generator": "^0.68.1",
-        "typescript": "^3.9.3"
+        "ts-json-schema-generator": "^0.70.1",
+        "typescript": "^3.9.5"
     },
     "dependencies": {
         "vscode-languageserver-types": "^3.15.1",
