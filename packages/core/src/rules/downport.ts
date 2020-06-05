@@ -9,8 +9,7 @@ import {Unknown} from "../abap/2_statements/statements/_statement";
 import {StatementNode} from "../abap/nodes";
 import * as Statements from "../abap/2_statements/statements";
 import * as Expressions from "../abap/2_statements/expressions";
-import {IEdit} from "..";
-import {EditHelper} from "../edit_helper";
+import {IEdit, EditHelper} from "../edit_helper";
 
 export class DownportConf extends BasicRuleConfig {
 }
