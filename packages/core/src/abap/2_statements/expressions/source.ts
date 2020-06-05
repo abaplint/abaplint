@@ -11,11 +11,12 @@ export class Source extends Expression {
   public getRunnable(): IStatementRunnable {
     const ref = seq(tok(InstanceArrow), str("*"));
 
+    // sp version is a guess
     const method = seq(new MethodCallChain(), optPrio(seq(new ArrowOrDash(), new ComponentChain())));
 
     const rparen = tok(WParenRightW);
 
-// paren used for eg. "( 2 + 1 ) * 4"
+    // paren used for eg. "( 2 + 1 ) * 4"
     const paren = seq(tok(WParenLeftW),
                       new Source(),
                       rparen);

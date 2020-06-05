@@ -34,6 +34,7 @@ statementType(tests, "LOOP", Statements.Loop);
 const versions = [
   {abap: "LOOP AT lt_packages ASSIGNING FIELD-SYMBOL(<package>).", ver: Version.v740sp02},
   {abap: "LOOP AT hierarchy ASSIGNING <h> GROUP BY ( parent = <h>-parent ).", ver: Version.v740sp08},
+  {abap: "LOOP AT lo_dot->get_data( )-ignore INTO lv_ignore.", ver: Version.v740sp02},
 ];
 
 statementVersion(versions, "LOOP", Statements.Loop);
