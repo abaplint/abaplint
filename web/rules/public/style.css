@@ -16,3 +16,48 @@ a:link {
 a:visited {
   color: #808BA0;
 }
+
+.chip{
+  display: inline-flex;
+  flex-direction: row;
+  background-color: #808BA0;
+  border: none;
+  cursor: default;
+  height: 36px;
+  outline: none;
+  padding: 0;
+  white-space: nowrap;
+  align-items: center;
+  border-radius: 18px;
+  vertical-align: middle;
+  text-decoration: none;
+  justify-content: center;
+  color: #333;
+  cursor: pointer;
+}
+.chip-head{
+  display: flex;
+  position: relative;
+  overflow: hidden;
+  background-color: #ccc;
+  font-size: 1.25rem;
+  flex-shrink: 0;
+  align-items: center;
+  user-select: none;
+  border-radius: 50%;
+  justify-content: center;
+  width: 36px;
+  height: 36px;
+  font-size: 20px;
+  margin-right: -4px;
+}
+
+.chip-content{
+  cursor: inherit;
+  display: flex;
+  align-items: center;
+  user-select: none;
+  white-space: nowrap;
+  padding-left: 12px;
+  padding-right: 12px;
+}
