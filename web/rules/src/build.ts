@@ -81,7 +81,7 @@ Get default configuration by running <tt>abaplint -d > abaplint.json</tt>
 documentation as well as abaplint.json definitions which attempt to align abaplint with the official
 <a href="https://github.com/SAP/styleguides/blob/master/clean-abap/CleanABAP.md">Clean ABAP styleguide</a>.
 
-<h2>Rules</h2>
+<h2>${json.length} Rules</h2>
 ${buildChips(json)}
 <br>
 <br>
