@@ -4,6 +4,7 @@ import {FSTarget, Target, ComponentCond, Dynamic, Source, ComponentCompare, Simp
 import {Version} from "../../../version";
 import {WParenLeftW, WParenRightW} from "../../1_lexer/tokens";
 import {IStatementRunnable} from "../statement_runnable";
+import {BasicSource} from "../expressions/basic_source";
 
 export class Loop implements IStatement {
 
@@ -42,7 +43,8 @@ export class Loop implements IStatement {
 
     const at = seq(str("AT"),
                    opt(ver(Version.v740sp08, str("GROUP"))),
-                   new Source(),
+                   alt(ver(Version.v740sp02, new Source()),
+                       opt(new BasicSource())),
                    opt(options));
 
     return seq(str("LOOP"), opt(at));
