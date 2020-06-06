@@ -33,11 +33,10 @@ function buildChips(json: any) {
       case RuleTag.Styleguide:
         icon = styleguideIcon;
         break;
-      case RuleTag.Downport:
-        icon = downportIcon;
-        break;
       case RuleTag.Quickfix:
         icon = quickfixIcon;
+        break;
+      default:
         break;
     }
 
@@ -63,14 +62,14 @@ function buildIndex() {
   const sorted = abaplint.ArtifactsRules.getRules().sort((a, b) => {
     return a.getMetadata().key.localeCompare(b.getMetadata().key); });
 
-    for (const r of sorted) {
-      const meta = r.getMetadata();
-      json.push({
-        key: meta.key,
-        title: meta.title,
-        description: meta.shortDescription,
-        tags: meta.tags ? meta.tags : []});
-    }
+  for (const r of sorted) {
+    const meta = r.getMetadata();
+    json.push({
+      key: meta.key,
+      title: meta.title,
+      description: meta.shortDescription,
+      tags: meta.tags ? meta.tags : []});
+  }
 
   fs.writeFileSync("build/rules.json", JSON.stringify(json, null, 2));
 
