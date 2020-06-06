@@ -5,7 +5,7 @@ import * as Statements from "../2_statements/statements";
 import {INode} from "../nodes/_inode";
 import {IRegistry} from "../../_iregistry";
 import {Table, View} from "../../objects";
-import {TypedIdentifier} from "../types/_typed_identifier";
+import {TypedIdentifier, IdentifierMeta} from "../types/_typed_identifier";
 import {UnknownType} from "../types/basic";
 import {SelectionScreen} from "./statements/selection_screen";
 
@@ -16,13 +16,6 @@ export class Inline {
   public constructor(reg: IRegistry, scope: CurrentScope) {
     this.scope = scope;
     this.reg = reg;
-  }
-
-  private addVariable(expr: ExpressionNode | undefined, filename: string) {
-    if (expr === undefined) { throw new Error("syntax_check, unexpected tree structure"); }
-    const token = expr.getFirstToken();
-    const identifier = new TypedIdentifier(token, filename, new UnknownType("todo, inline, addVariable"));
-    this.scope.addIdentifier(identifier);
   }
 
   public update(node: INode, filename: string): boolean {
@@ -87,6 +80,15 @@ export class Inline {
     }
 
     return false;
+  }
+
+//////////////////////////////////////////
+
+  private addVariable(expr: ExpressionNode | undefined, filename: string) {
+    if (expr === undefined) { throw new Error("syntax_check, unexpected tree structure"); }
+    const token = expr.getFirstToken();
+    const identifier = new TypedIdentifier(token, filename, new UnknownType("todo, inline, addVariable"), [IdentifierMeta.InlineDefinition]);
+    this.scope.addIdentifier(identifier);
   }
 
   private findTable(name: string): void {

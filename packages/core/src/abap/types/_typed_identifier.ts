@@ -8,6 +8,7 @@ export const enum IdentifierMeta {
   MethodChanging = "changing",
   MethodReturning = "returning",
   ReadOnly = "read_only",
+  InlineDefinition = "inline",
 // todo, MethodPreferred
 // todo, Optional
 }

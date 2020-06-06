@@ -24,6 +24,11 @@ export enum DeferredType {
   Interface,
 }
 
+export interface IVariableReference {
+  position: Identifier,
+  resolved: TypedIdentifier
+}
+
 export interface IScopeData {
   vars: IScopeVariable[];
   types: IScopeVariable[];
@@ -34,8 +39,8 @@ export interface IScopeData {
   idefs: IInterfaceDefinition[];
   forms: IFormDefinition[];
 
-  reads: {position: Identifier, resolved: TypedIdentifier}[];
-  writes: {position: Identifier, resolved: TypedIdentifier}[];
+  reads: IVariableReference[];
+  writes: IVariableReference[];
 }
 
 export interface ISpaghettiScopeNode {

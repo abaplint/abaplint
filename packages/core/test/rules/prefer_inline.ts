@@ -24,10 +24,36 @@ describe("Rule: prefer_inline", () => {
   it("Simple, data in FORM", () => {
     const issues = findIssues(`
 FORM foo.
-  DATA foo TYPE i.
-  foo = 2.
+  DATA moo TYPE i.
+  moo = 2.
 ENDFORM.`);
     expect(issues.length).to.equal(1);
+  });
+
+  it("Already inline", () => {
+    const issues = findIssues(`
+FORM foo.
+  DATA(moo) = 2.
+ENDFORM.`);
+    expect(issues.length).to.equal(0);
+  });
+
+  it("Defined outside FORM", () => {
+    const issues = findIssues(`
+DATA moo TYPE i.
+FORM foo.
+  moo = 2.
+ENDFORM.`);
+    expect(issues.length).to.equal(0);
+  });
+
+  it("Fist use is WRITE statement", () => {
+    const issues = findIssues(`
+FORM foo.
+  DATA moo TYPE i.
+  WRITE moo.
+ENDFORM.`);
+    expect(issues.length).to.equal(0);
   });
 
 });
