@@ -4,6 +4,7 @@ import {StatementNode} from "../nodes";
 import {CurrentScope} from "./_current_scope";
 import {IClassDefinition} from "../types/_class_definition";
 import {IMethodDefinition} from "../types/_method_definition";
+import {IInterfaceDefinition} from "../types/_interface_definition";
 
 export class ObjectOriented {
   private readonly scope: CurrentScope;
@@ -52,8 +53,8 @@ export class ObjectOriented {
     return undefined;
   }
 
-  public findMethodViaAlias(methodName: string, classDefinition: IClassDefinition): IMethodDefinition | undefined {
-    for (const a of classDefinition.getAliases().getAll()) {
+  public findMethodViaAlias(methodName: string, def: IClassDefinition | IInterfaceDefinition): IMethodDefinition | undefined {
+    for (const a of def.getAliases().getAll()) {
       if (a.getName().toUpperCase() === methodName.toUpperCase()) {
         const comp = a.getComponent();
         const res = this.findMethodInInterface(comp.split("~")[0], comp.split("~")[1]);
@@ -92,11 +93,31 @@ export class ObjectOriented {
     return ret;
   }
 
-  public findMethod(classDefinition: IClassDefinition, methodName: string): IMethodDefinition | undefined {
-    for (const method of classDefinition.getMethodDefinitions()!.getAll()) {
+  // search in via super class, interfaces and aliases
+  public searchMethodName(def: IClassDefinition | IInterfaceDefinition, name: string): IMethodDefinition | undefined {
+    let methodDefinition = this.findMethod(def, name);
+
+    let interfaceName: string | undefined = undefined;
+    if (name.includes("~")) {
+      interfaceName = name.split("~")[0];
+    }
+
+// todo, this is not completely correct? hmm, why? visibility?
+    if (methodDefinition === undefined && interfaceName) {
+      name = name.split("~")[1];
+      methodDefinition = this.findMethodInInterface(interfaceName, name);
+    } else if (methodDefinition === undefined) {
+      methodDefinition = this.findMethodViaAlias(name, def);
+    }
+
+    return methodDefinition;
+  }
+
+  public findMethod(def: IClassDefinition | IInterfaceDefinition, methodName: string): IMethodDefinition | undefined {
+    for (const method of def.getMethodDefinitions()!.getAll()) {
       if (method.getName().toUpperCase() === methodName.toUpperCase()) {
         if (method.isRedefinition()) {
-          return this.findMethodInSuper(classDefinition, methodName);
+          return this.findMethodInSuper(def, methodName);
         } else {
           return method;
         }
@@ -105,7 +126,7 @@ export class ObjectOriented {
     return undefined;
   }
 
-  private findMethodInSuper(child: IClassDefinition, methodName: string): IMethodDefinition | undefined {
+  private findMethodInSuper(child: IClassDefinition | IInterfaceDefinition, methodName: string): IMethodDefinition | undefined {
     let sup = child.getSuperClass();
     while (sup !== undefined) {
       const cdef = this.findSuperDefinition(sup);

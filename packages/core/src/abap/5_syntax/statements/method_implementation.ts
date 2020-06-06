@@ -9,7 +9,7 @@ export class MethodImplementation {
     const helper = new ObjectOriented(scope);
 
     const className = scope.getName();
-    let methodName = node.findFirstExpression(Expressions.MethodName)!.getFirstToken().getStr();
+    const methodName = node.findFirstExpression(Expressions.MethodName)!.getFirstToken().getStr();
     scope.push(ScopeType.Method, methodName, node.getFirstToken().getStart(), filename);
 
     const classDefinition = scope.findClassDefinition(className);
@@ -17,28 +17,10 @@ export class MethodImplementation {
       throw new Error("Class definition for \"" + className + "\" not found");
     }
 
-    let methodDefinition = helper.findMethod(classDefinition, methodName);
-
-    let interfaceName: string | undefined = undefined;
-    if (methodName.includes("~")) {
-      interfaceName = methodName.split("~")[0];
-    }
-
-// todo, this is not completely correct? hmm, why? visibility?
-    if (methodDefinition === undefined && interfaceName) {
-      methodName = methodName.split("~")[1];
-      methodDefinition = helper.findMethodInInterface(interfaceName, methodName);
-    } else if (methodDefinition === undefined) {
-      methodDefinition = helper.findMethodViaAlias(methodName, classDefinition);
-    }
-
+    const methodDefinition = helper.searchMethodName(classDefinition, methodName);
     if (methodDefinition === undefined) {
       scope.pop();
-      if (interfaceName) {
-        throw new Error("Method definition \"" + methodName + "\" in \"" + interfaceName + "\" not found");
-      } else {
-        throw new Error("Method definition \"" + methodName + "\" not found");
-      }
+      throw new Error("Method definition \"" + methodName + "\" not found");
     }
 
     scope.addList(methodDefinition.getParameters().getAll());

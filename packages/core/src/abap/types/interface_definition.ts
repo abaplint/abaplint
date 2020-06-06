@@ -15,6 +15,8 @@ import {IEventDefinition} from "./_event_definition";
 import {EventDefinition} from "./event_definition";
 import {IMethodDefinitions} from "./_method_definitions";
 import {MethodDefinitions} from "./method_definitions";
+import {IAliases} from "./_aliases";
+import {Aliases} from "./aliases";
 
 export class InterfaceDefinition extends Identifier implements IInterfaceDefinition {
   private readonly node: StructureNode;
@@ -37,6 +39,14 @@ export class InterfaceDefinition extends Identifier implements IInterfaceDefinit
     scope.push(ScopeType.Interface, name.getStr(), name.getStart(), filename);
     this.parse(scope);
     scope.pop();
+  }
+
+  public getSuperClass(): undefined {
+    return undefined;
+  }
+
+  public getAliases(): IAliases {
+    return new Aliases(this.node, this.filename);
   }
 
   public getEvents() {
