@@ -19,18 +19,6 @@ export class ObjectOriented {
     this.scope = scope;
   }
 
-  private findClassName(node: StatementNode): string {
-    if (!(node.get() instanceof Statements.ClassImplementation
-        || node.get() instanceof Statements.ClassDefinition)) {
-      throw new Error("findClassName, unexpected node type");
-    }
-    const className = node.findFirstExpression(Expressions.ClassName);
-    if (className === undefined) {
-      throw new Error("findClassName, unexpected node type");
-    }
-    return className.getFirstToken().getStr();
-  }
-
   public classImplementation(node: StatementNode, filename: string) {
     const className = this.findClassName(node);
     this.scope.push(ScopeType.ClassImplementation, className, node.getFirstToken().getStart(), filename);
@@ -58,6 +46,55 @@ export class ObjectOriented {
     this.fromSuperClass(classDefinition);
     this.fromInterfaces(classDefinition);
   }
+
+  public methodImplementation(node: StatementNode, filename: string) {
+    const className = this.scope.getName();
+    let methodName = node.findFirstExpression(Expressions.MethodName)!.getFirstToken().getStr();
+    this.scope.push(ScopeType.Method, methodName, node.getFirstToken().getStart(), filename);
+
+    const classDefinition = this.scope.findClassDefinition(className);
+    if (classDefinition === undefined) {
+      throw new Error("Class definition for \"" + className + "\" not found");
+    }
+
+    let methodDefinition = this.findMethod(classDefinition, methodName);
+
+    let interfaceName: string | undefined = undefined;
+    if (methodName.includes("~")) {
+      interfaceName = methodName.split("~")[0];
+    }
+
+// todo, this is not completely correct? hmm, why? visibility?
+    if (methodDefinition === undefined && interfaceName) {
+      methodName = methodName.split("~")[1];
+      methodDefinition = this.findMethodInInterface(interfaceName, methodName);
+    } else if (methodDefinition === undefined) {
+      methodDefinition = this.findMethodViaAlias(methodName, classDefinition);
+    }
+
+    if (methodDefinition === undefined) {
+      this.scope.pop();
+      if (interfaceName) {
+        throw new Error("Method definition \"" + methodName + "\" in \"" + interfaceName + "\" not found");
+      } else {
+        throw new Error("Method definition \"" + methodName + "\" not found");
+      }
+    }
+
+    this.scope.addList(methodDefinition.getParameters().getAll());
+
+    for (const i of this.findInterfaces(classDefinition)) {
+      const idef = this.scope.findInterfaceDefinition(i.name);
+      if (idef) {
+        this.scope.addListPrefix(idef.getAttributes()!.getConstants(), i.name + "~");
+        this.scope.addListPrefix(idef.getAttributes()!.getStatic(), i.name + "~");
+        // todo, only add instance variables if its an instance method
+        this.scope.addListPrefix(idef.getAttributes()!.getInstance(), i.name + "~");
+      }
+    }
+  }
+
+//////////////////////////
 
   private fromInterfaces(classDefinition: IClassDefinition): void {
     for (const i of classDefinition.getImplementing()) {
@@ -112,51 +149,16 @@ export class ObjectOriented {
     return undefined;
   }
 
-  public methodImplementation(node: StatementNode, filename: string) {
-    const className = this.scope.getName();
-    let methodName = node.findFirstExpression(Expressions.MethodName)!.getFirstToken().getStr();
-    this.scope.push(ScopeType.Method, methodName, node.getFirstToken().getStart(), filename);
-
-    const classDefinition = this.scope.findClassDefinition(className);
-    if (classDefinition === undefined) {
-      throw new Error("Class definition for \"" + className + "\" not found");
+  private findClassName(node: StatementNode): string {
+    if (!(node.get() instanceof Statements.ClassImplementation
+        || node.get() instanceof Statements.ClassDefinition)) {
+      throw new Error("findClassName, unexpected node type");
     }
-
-    let methodDefinition = this.findMethod(classDefinition, methodName);
-
-    let interfaceName: string | undefined = undefined;
-    if (methodName.includes("~")) {
-      interfaceName = methodName.split("~")[0];
+    const className = node.findFirstExpression(Expressions.ClassName);
+    if (className === undefined) {
+      throw new Error("findClassName, unexpected node type");
     }
-
-// todo, this is not completely correct? hmm, why? visibility?
-    if (methodDefinition === undefined && interfaceName) {
-      methodName = methodName.split("~")[1];
-      methodDefinition = this.findMethodInInterface(interfaceName, methodName);
-    } else if (methodDefinition === undefined) {
-      methodDefinition = this.findMethodViaAlias(methodName, classDefinition);
-    }
-
-    if (methodDefinition === undefined) {
-      this.scope.pop();
-      if (interfaceName) {
-        throw new Error("Method definition \"" + methodName + "\" in \"" + interfaceName + "\" not found");
-      } else {
-        throw new Error("Method definition \"" + methodName + "\" not found");
-      }
-    }
-
-    this.scope.addList(methodDefinition.getParameters().getAll());
-
-    for (const i of this.findInterfaces(classDefinition)) {
-      const idef = this.scope.findInterfaceDefinition(i.name);
-      if (idef) {
-        this.scope.addListPrefix(idef.getAttributes()!.getConstants(), i.name + "~");
-        this.scope.addListPrefix(idef.getAttributes()!.getStatic(), i.name + "~");
-        // todo, only add instance variables if its an instance method
-        this.scope.addListPrefix(idef.getAttributes()!.getInstance(), i.name + "~");
-      }
-    }
+    return className.getFirstToken().getStr();
   }
 
   private findInterfaces(cd: IClassDefinition): readonly {name: string, partial: boolean}[] {

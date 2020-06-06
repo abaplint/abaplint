@@ -22,9 +22,8 @@ export class InStatementIndentation extends ABAPRule {
       key: "in_statement_indentation",
       title: "In-statement indentation",
       // eslint-disable-next-line max-len
-      shortDescription: `Checks alignment within block statement declarations which span multiple lines, such as multiple conditions in IF statements.
-Example:
-IF 1 = 1 AND
+      shortDescription: `Checks alignment within block statement declarations which span multiple lines, such as multiple conditions in IF statements.`,
+      goodExample: `IF 1 = 1 AND
    2 = 2.`,
       tags: [RuleTag.Whitespace],
     };
