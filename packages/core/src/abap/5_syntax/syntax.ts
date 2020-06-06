@@ -1,4 +1,3 @@
-import * as Expressions from "../2_statements/expressions";
 import * as Statements from "../2_statements/statements";
 import * as Structures from "../3_structures/structures";
 import {Issue} from "../../issue";
@@ -115,7 +114,7 @@ export class SyntaxLogic {
       if (structure === undefined) {
         return this.scope;
       } else if (structure.get() instanceof Structures.Interface) {
-        // special case for global interfaces
+        // special case for global interfaces, todo, look into if the case can be removed
         this.updateScope(structure);
       } else {
         this.traverse(structure);
@@ -131,37 +130,9 @@ export class SyntaxLogic {
   }
 
   private traverse(node: INode): void {
-    try {
-      const skip = this.helpers.inline.update(node, this.currentFile.getFilename());
-      if (skip) {
-        return;
-      }
-    } catch (e) {
-      this.newIssue(node.getFirstToken(), e.message);
-    }
-
-    if (node instanceof StatementNode) {
-      const targets = node.findAllExpressions(Expressions.TargetField).concat(node.findAllExpressions(Expressions.TargetFieldSymbol));
-      for (const target of targets) {
-        const token = target.getFirstToken();
-        const resolved = this.scope.findVariable(token.getStr());
-        if (resolved === undefined) {
-          this.newIssue(token, "\"" + token.getStr() + "\" not found");
-        } else {
-          this.scope.addWrite(token, resolved, this.currentFile.getFilename());
-        }
-      }
-
-      const sources = node.findAllExpressions(Expressions.SourceField).concat(node.findAllExpressions(Expressions.SourceFieldSymbol));
-      for (const source of sources) {
-        const token = source.getFirstToken();
-        const resolved = this.scope.findVariable(token.getStr());
-        if (resolved === undefined) {
-          this.newIssue(token, "\"" + token.getStr() + "\" not found");
-        } else {
-          this.scope.addRead(token, resolved, this.currentFile.getFilename());
-        }
-      }
+    const issueMessage = this.helpers.inline.update(node, this.currentFile.getFilename());
+    if (issueMessage) {
+      this.newIssue(node.getFirstToken(), issueMessage);
     }
 
     for (const child of node.getChildren()) {

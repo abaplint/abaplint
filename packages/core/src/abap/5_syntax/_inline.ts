@@ -18,68 +18,95 @@ export class Inline {
     this.reg = reg;
   }
 
-  public update(node: INode, filename: string): boolean {
-    if (node instanceof StatementNode) {
+  // returns an optional issue description
+  public update(node: INode, filename: string): string | undefined {
+    if (!(node instanceof StatementNode)) {
+      return undefined;
+    }
 
-      if (node.get() instanceof Statements.SelectionScreen) {
-        this.scope.addIdentifier(new SelectionScreen().runSyntax(node, this.scope, filename));
-        return false;
-      }
+    if (node.get() instanceof Statements.SelectionScreen) {
+      this.scope.addIdentifier(new SelectionScreen().runSyntax(node, this.scope, filename));
+      return undefined;
+    }
 
-      for (const inline of node.findAllExpressions(Expressions.InlineData)) {
-        const field = inline.findFirstExpression(Expressions.TargetField);
-        if (field === undefined) { throw new Error("syntax_check, unexpected tree structure"); }
+    for (const inline of node.findAllExpressions(Expressions.InlineData)) {
+      const field = inline.findFirstExpression(Expressions.TargetField);
+      if (field === undefined) { return "syntax_check, unexpected tree structure"; }
+      this.addVariable(field, filename);
+    }
+
+    for (const inline of node.findAllExpressions(Expressions.InlineFS)) {
+      const field = inline.findFirstExpression(Expressions.TargetFieldSymbol);
+      if (field === undefined) { return "syntax_check, unexpected tree structure"; }
+      this.addVariable(field, filename);
+    }
+
+    for (const inline of node.findAllExpressions(Expressions.InlineFieldDefinition)) {
+      const field = inline.findFirstExpression(Expressions.Field);
+      if (field !== undefined) {
         this.addVariable(field, filename);
+// todo, these also have to be popped after the statement
       }
+    }
 
-      for (const inline of node.findAllExpressions(Expressions.InlineFS)) {
-        const field = inline.findFirstExpression(Expressions.TargetFieldSymbol);
-        if (field === undefined) { throw new Error("syntax_check, unexpected tree structure"); }
+    for (const inline of node.findAllExpressions(Expressions.InlineLoopDefinition)) {
+      const field = inline.findFirstExpression(Expressions.TargetField); // todo, this can take the field after IN
+      if (field !== undefined) {
         this.addVariable(field, filename);
-      }
-
-      for (const inline of node.findAllExpressions(Expressions.InlineFieldDefinition)) {
-        const field = inline.findFirstExpression(Expressions.Field);
-        if (field !== undefined) {
-          this.addVariable(field, filename);
 // todo, these also have to be popped after the statement
-        }
       }
-
-      for (const inline of node.findAllExpressions(Expressions.InlineLoopDefinition)) {
-        const field = inline.findFirstExpression(Expressions.TargetField); // todo, this can take the field after IN
-        if (field !== undefined) {
-          this.addVariable(field, filename);
-// todo, these also have to be popped after the statement
-        }
-        const fs = inline.findFirstExpression(Expressions.TargetFieldSymbol);
-        if (fs !== undefined) {
-          this.addVariable(fs, filename);
-        }
+      const fs = inline.findFirstExpression(Expressions.TargetFieldSymbol);
+      if (fs !== undefined) {
+        this.addVariable(fs, filename);
       }
+    }
 
-      for (const inline of node.findAllExpressions(Expressions.InlineField)) {
-        const field = inline.findFirstExpression(Expressions.Field);
-        if (field !== undefined) {
-          this.addVariable(field, filename);
+    for (const inline of node.findAllExpressions(Expressions.InlineField)) {
+      const field = inline.findFirstExpression(Expressions.Field);
+      if (field !== undefined) {
+        this.addVariable(field, filename);
 // todo, these also have to be popped after the statement?
-        }
       }
+    }
 
-      if (node.get() instanceof Statements.Select || node.get() instanceof Statements.SelectLoop) {
-        const fromList = node.findAllExpressions(Expressions.SQLFromSource);
-        for (const from of fromList) {
-          const dbtab = from.findFirstExpression(Expressions.DatabaseTable);
-          if (dbtab === undefined) {
-            continue;
-          }
-          const name = dbtab.getFirstToken().getStr();
-          this.findTable(name);
+    if (node.get() instanceof Statements.Select || node.get() instanceof Statements.SelectLoop) {
+      const fromList = node.findAllExpressions(Expressions.SQLFromSource);
+      for (const from of fromList) {
+        const dbtab = from.findFirstExpression(Expressions.DatabaseTable);
+        if (dbtab === undefined) {
+          continue;
+        }
+        const name = dbtab.getFirstToken().getStr();
+        const message = this.findTable(name);
+        if (message) {
+          return message;
         }
       }
     }
 
-    return false;
+    const targets = node.findAllExpressions(Expressions.TargetField).concat(node.findAllExpressions(Expressions.TargetFieldSymbol));
+    for (const target of targets) {
+      const token = target.getFirstToken();
+      const resolved = this.scope.findVariable(token.getStr());
+      if (resolved === undefined) {
+        return "\"" + token.getStr() + "\" not found";
+      } else {
+        this.scope.addWrite(token, resolved, filename);
+      }
+    }
+
+    const sources = node.findAllExpressions(Expressions.SourceField).concat(node.findAllExpressions(Expressions.SourceFieldSymbol));
+    for (const source of sources) {
+      const token = source.getFirstToken();
+      const resolved = this.scope.findVariable(token.getStr());
+      if (resolved === undefined) {
+        return "\"" + token.getStr() + "\" not found";
+      } else {
+        this.scope.addRead(token, resolved, filename);
+      }
+    }
+
+    return undefined;
   }
 
 //////////////////////////////////////////
@@ -91,17 +118,18 @@ export class Inline {
     this.scope.addIdentifier(identifier);
   }
 
-  private findTable(name: string): void {
+  // returns string with error or undefined
+  private findTable(name: string): string | undefined {
     const table = this.reg.getObject("TABL", name) as Table | undefined;
     if (table !== undefined) {
-      return;
+      return undefined;
     }
     const view = this.reg.getObject("VIEW", name) as View | undefined;
     if (view !== undefined) {
-      return;
+      return undefined;
     }
     if (this.reg.inErrorNamespace(name)) {
-      throw new Error("Database table or view \"" + name + "\" not found");
+      return "Database table or view \"" + name + "\" not found";
     } else {
       return;
     }
