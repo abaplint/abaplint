@@ -1,18 +1,7 @@
-import {IAttributes} from "./_class_attributes";
-import {Identifier} from "../4_file_information/_identifier";
 import {IAliases} from "./_aliases";
-import {ITypeDefinitions} from "./_type_definitions";
-import {IEventDefinition} from "./_event_definition";
-import {IMethodDefinitions} from "./_method_definitions";
+import {IInterfaceDefinition} from "./_interface_definition";
 
-export interface IClassDefinition extends Identifier {
-  getAttributes(): IAttributes;
-  getTypeDefinitions(): ITypeDefinitions;
-  getMethodDefinitions(): IMethodDefinitions;
-  getEvents(): readonly IEventDefinition[];
-  isLocal(): boolean;
-  isGlobal(): boolean;
-
+export interface IClassDefinition extends IInterfaceDefinition {
   getSuperClass(): string | undefined;
   isException(): boolean;
   isFinal(): boolean;

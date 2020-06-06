@@ -27,6 +27,8 @@ import {SelectOption} from "./statements/selectoption";
 import {InterfaceDeferred} from "./statements/interface_deferred";
 import {ClassDeferred} from "./statements/class_deferred";
 import {Call} from "./statements/call";
+import {ClassImplementation} from "./statements/class_implementation";
+import {MethodImplementation} from "./statements/method_implementation";
 
 import {Data as DataStructure} from "./structures/data";
 import {TypeEnum} from "./structures/type_enum";
@@ -37,6 +39,7 @@ import {Constants} from "./structures/constants";
 import {ClassDefinition} from "../types/class_definition";
 import {InterfaceDefinition} from "../types/interface_definition";
 import {ISyntaxResult} from "./_spaghetti_scope";
+
 
 // assumption: objects are parsed without parsing errors
 
@@ -63,7 +66,7 @@ export class SyntaxLogic {
     this.scope = CurrentScope.buildDefault(this.reg);
 
     this.helpers = {
-      oooc: new ObjectOriented(this.reg, this.scope),
+      oooc: new ObjectOriented(this.scope),
       proc: new Procedural(this.reg, this.scope),
       inline: new Inline(this.reg, this.scope),
     };
@@ -226,15 +229,17 @@ export class SyntaxLogic {
       new Perform().runSyntax(node, this.scope, filename);
     } else if (s instanceof Statements.Call) {
       new Call().runSyntax(node, this.scope, filename);
+    } else if (s instanceof Statements.ClassImplementation) {
+      new ClassImplementation().runSyntax(node, this.scope, filename);
+    } else if (s instanceof Statements.Method) {
+      new MethodImplementation().runSyntax(node, this.scope, filename);
 
     } else if (s instanceof Statements.Form) {
       this.helpers.proc.findFormScope(node, filename);
     } else if (s instanceof Statements.FunctionModule) {
       this.helpers.proc.findFunctionScope(this.object, node, filename);
-    } else if (s instanceof Statements.Method) {
-      this.helpers.oooc.methodImplementation(node, filename);
-    } else if (s instanceof Statements.ClassImplementation) {
-      this.helpers.oooc.classImplementation(node, filename);
+
+
     } else if (s instanceof Statements.EndMethod) {
       this.scope.pop();
     } else if (s instanceof Statements.EndForm

@@ -1,10 +1,10 @@
 import {ExpressionNode} from "../../nodes";
 import {CurrentScope} from "../_current_scope";
 import * as Expressions from "../../2_statements/expressions";
-import {INode} from "../../..";
 import {AbstractType} from "../../types/basic/_abstract_type";
 import {VoidType, ObjectReferenceType} from "../../types/basic";
 import {FieldChain} from "./field_chain";
+import {INode} from "../../nodes/_inode";
 
 export class MethodCallChain {
   public runSyntax(node: ExpressionNode, scope: CurrentScope, _filename: string): void {
@@ -33,7 +33,7 @@ export class MethodCallChain {
         }
 
         const methodName = current.findDirectExpression(Expressions.MethodName)?.getFirstToken().getStr();
-        const method = scope.findClassDefinition(context.getName())?.getMethodDefinitions().getByName(methodName);
+        const method = scope.findObjectDefinition(context.getName())?.getMethodDefinitions().getByName(methodName);
 
         if (method === undefined) {
           throw new Error("Method \"" + methodName + "\" not found");
