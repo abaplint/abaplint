@@ -29,4 +29,8 @@ export class PackedType implements AbstractType {
   public isGeneric() {
     return false;
   }
+
+  public containsVoid() {
+    return false;
+  }
 }

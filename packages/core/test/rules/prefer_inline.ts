@@ -56,4 +56,31 @@ ENDFORM.`);
     expect(issues.length).to.equal(0);
   });
 
+  it("No inlining for generic types", () => {
+    const issues = findIssues(`
+FORM foo.
+  FIELD-SYMBOLS <foo> TYPE any.
+  ASSIGN 2 TO <foo>.
+ENDFORM.`);
+    expect(issues.length).to.equal(0);
+  });
+
+  it("No inlining for void types", () => {
+    const issues = findIssues(`
+FORM foo.
+  DATA sdf TYPE sdfsdfsdfsd.
+  sdf = 2.
+ENDFORM.`);
+    expect(issues.length).to.equal(0);
+  });
+
+  it("First write should be full/pure", () => {
+    const issues = findIssues(`
+FORM foo.
+  DATA sdf TYPE sy.
+  sdf-tabix = 2.
+ENDFORM.`);
+    expect(issues.length).to.equal(0);
+  });
+
 });

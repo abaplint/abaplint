@@ -22,4 +22,7 @@ export class CharacterType implements AbstractType {
     return false;
   }
 
+  public containsVoid() {
+    return false;
+  }
 }

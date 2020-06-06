@@ -21,4 +21,8 @@ export class HexType implements AbstractType {
   public isGeneric() {
     return false;
   }
+
+  public containsVoid() {
+    return false;
+  }
 }

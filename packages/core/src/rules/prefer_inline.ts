@@ -9,6 +9,7 @@ import {SyntaxLogic} from "../abap/5_syntax/syntax";
 import {IScopeVariable, IVariableReference, ISpaghettiScopeNode} from "../abap/5_syntax/_spaghetti_scope";
 import {IdentifierMeta} from "../abap/types/_typed_identifier";
 import {ScopeType} from "../abap/5_syntax/_scope_type";
+import {Token} from "../abap/1_lexer/tokens/_token";
 
 export class PreferInlineConf extends BasicRuleConfig {
 
@@ -24,7 +25,9 @@ export class PreferInline implements IRule {
       title: "Prefer Inline Declarations",
       shortDescription: `Prefer inline to up-front declarations.
 Activates if language version is v740sp02 or above.
-Variables must be local(METHOD or FORM).`,
+Variables must be local(METHOD or FORM).
+No generic or void typed variables.
+First position used must be a full/pure write.`,
       extendedInformation: `https://github.com/SAP/styleguides/blob/master/clean-abap/CleanABAP.md#prefer-inline-to-up-front-declarations`,
       tags: [RuleTag.Styleguide, RuleTag.Upport, RuleTag.Experimental],
     };
@@ -50,7 +53,7 @@ Variables must be local(METHOD or FORM).`,
 
     let ret: Issue[] = [];
     for (const s of scopes) {
-      ret = ret.concat(this.analyzeScope(s));
+      ret = ret.concat(this.analyzeScope(s, obj));
     }
 
     return ret;
@@ -58,26 +61,53 @@ Variables must be local(METHOD or FORM).`,
 
 ///////////////////////////
 
-  private analyzeScope(node: ISpaghettiScopeNode): Issue[] {
+  private analyzeScope(node: ISpaghettiScopeNode, obj: ABAPObject): Issue[] {
     const ret: Issue[] = [];
 
     for (const d of node.getData().vars) {
       if (this.isLocalDefinition(node, d) === false
           || d.identifier.getMeta().includes(IdentifierMeta.InlineDefinition)) {
         continue;
-      }
-
-      if (this.firstUseIsWrite(node, d) === false) {
+      } else if (d.identifier.getType().isGeneric() === true) {
+        continue;
+      } else if (d.identifier.getType().containsVoid() === true) {
         continue;
       }
 
-      ret.push(Issue.atIdentifier(d.identifier, this.getMetadata().title, this.getMetadata().key));
+      const write = this.firstUseIsWrite(node, d);
+      if (write === undefined) {
+        continue;
+      }
+
+      const next = this.findNextToken(write, obj);
+      if (next?.getStart().equals(write.position.getEnd())) {
+        continue;
+      }
+
+      const message = this.getMetadata().title + ", " + d.name;
+      ret.push(Issue.atIdentifier(d.identifier, message, this.getMetadata().key));
     }
 
     return ret;
   }
 
-  private firstUseIsWrite(node: ISpaghettiScopeNode, v: IScopeVariable): boolean {
+  private findNextToken(ref: IVariableReference, obj: ABAPObject): Token | undefined {
+
+    const file = obj.getABAPFileByName(ref.resolved.getFilename());
+    if (file === undefined) {
+      return undefined;
+    }
+
+    for (const t of file.getTokens()) {
+      if (t.getStart().isAfter(ref.position.getEnd())) {
+        return t;
+      }
+    }
+
+    return undefined;
+  }
+
+  private firstUseIsWrite(node: ISpaghettiScopeNode, v: IScopeVariable): IVariableReference | undefined {
 // assumption: variables are local, so only the current scope must be searched
 
     let firstRead: IVariableReference | undefined = undefined;
@@ -103,12 +133,13 @@ Variables must be local(METHOD or FORM).`,
     }
 
     if (firstRead === undefined) {
-      return true;
+      return firstWrite;
     } else if (firstWrite === undefined) {
-      return false;
+      return undefined;
+    } else if (firstWrite.position.getStart().isBefore(firstRead.position.getStart())) {
+      return firstWrite;
     }
-
-    return firstWrite.position.getStart().isBefore(firstRead.position.getStart());
+    return undefined;
   }
 
   private isLocalDefinition(node: ISpaghettiScopeNode, v: IScopeVariable): boolean {

@@ -18,4 +18,8 @@ export class VoidType implements AbstractType {
   public isGeneric() {
     return false;
   }
+
+  public containsVoid() {
+    return true;
+  }
 }
