@@ -8,8 +8,10 @@ import {ABAPObject} from "../objects/_abap_object";
 import {ScopeType} from "../abap/5_syntax/_scope_type";
 import {TypedIdentifier} from "../abap/types/_typed_identifier";
 import {Interface} from "../objects";
-import {ISpaghettiScopeNode} from "../abap/5_syntax/_spaghetti_scope";
+import {ISpaghettiScopeNode, IScopeVariable} from "../abap/5_syntax/_spaghetti_scope";
 import {References} from "../lsp/references";
+import {Data} from "../abap/2_statements/statements";
+import {EditHelper, IEdit} from "../edit_helper";
 
 export class UnusedVariablesConf extends BasicRuleConfig {
 }
@@ -24,7 +26,7 @@ export class UnusedVariables implements IRule {
       shortDescription: `Checks for unused variables`,
       extendedInformation: `WARNING: slow!
 Doesnt currently work for public attributes and class prefixed attribute usage`,
-      tags: [RuleTag.Experimental],
+      tags: [RuleTag.Experimental, RuleTag.Quickfix],
     };
   }
 
@@ -70,7 +72,8 @@ Doesnt currently work for public attributes and class prefixed attribute usage`,
       if (this.isUsed(v.identifier, reg) === false
           && obj.containsFile(v.identifier.getFilename())) {
         const message = "Variable \"" + v.identifier.getName() + "\" not used";
-        ret.push(Issue.atIdentifier(v.identifier, message, this.getMetadata().key));
+        const fix = this.buildFix(v, obj);
+        ret.push(Issue.atIdentifier(v.identifier, message, this.getMetadata().key, fix));
       }
     }
 
@@ -81,5 +84,20 @@ Doesnt currently work for public attributes and class prefixed attribute usage`,
     // todo, this is slow, but less false positives than the previous implementation
     const found = new References(reg).searchEverything(id);
     return found.length > 1;
+  }
+
+  private buildFix(v: IScopeVariable, obj: ABAPObject): IEdit | undefined {
+    const file = obj.getABAPFileByName(v.identifier.getFilename());
+    if (file === undefined) {
+      return undefined;
+    }
+
+    for (const s of file.getStatements()) {
+      if (s.get() instanceof Data && s.includesToken(v.identifier.getToken())) {
+        return EditHelper.deleteRange(file, s.getFirstToken().getStart(), s.getLastToken().getEnd());
+      }
+    }
+
+    return undefined;
   }
 }
