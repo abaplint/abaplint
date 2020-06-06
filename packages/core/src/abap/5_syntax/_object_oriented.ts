@@ -94,7 +94,14 @@ export class ObjectOriented {
   }
 
   // search in via super class, interfaces and aliases
-  public searchMethodName(def: IClassDefinition | IInterfaceDefinition, name: string): IMethodDefinition | undefined {
+  public searchMethodName(
+    def: IClassDefinition | IInterfaceDefinition | undefined,
+    name: string | undefined): IMethodDefinition | undefined {
+
+    if (def === undefined || name === undefined) {
+      return undefined;
+    }
+
     let methodDefinition = this.findMethod(def, name);
 
     let interfaceName: string | undefined = undefined;
@@ -108,6 +115,10 @@ export class ObjectOriented {
       methodDefinition = this.findMethodInInterface(interfaceName, name);
     } else if (methodDefinition === undefined) {
       methodDefinition = this.findMethodViaAlias(name, def);
+    }
+
+    if (methodDefinition === undefined) {
+      methodDefinition = this.findMethodInSuper(def, name);
     }
 
     return methodDefinition;

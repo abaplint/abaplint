@@ -1382,6 +1382,67 @@ START-OF-SELECTION.
     expect(issues.length).to.equals(0);
   });
 
+  it("longer chain, ref to itself", () => {
+    const abap = `
+CLASS lcl_bar DEFINITION.
+  PUBLIC SECTION.
+    CLASS-METHODS: get_gui RETURNING VALUE(sdf) TYPE REF TO lcl_bar.
+    METHODS: go_home.
+ENDCLASS.
+CLASS lcl_bar IMPLEMENTATION.
+  METHOD get_gui.
+  ENDMETHOD.
+  METHOD go_home.
+  ENDMETHOD.
+ENDCLASS.
+
+START-OF-SELECTION.
+  lcl_bar=>get_gui( )->go_home( ).`;
+    const issues = runProgram(abap);
+    expect(issues.length).to.equals(0);
+  });
+
+  it("longer chain, with interface", () => {
+    const abap = `
+  INTERFACE lif_foo.
+    METHODS go_home.
+  ENDINTERFACE.
+  CLASS lcl_bar DEFINITION.
+    PUBLIC SECTION.
+      CLASS-METHODS: get_gui RETURNING VALUE(sdf) TYPE REF TO lif_foo.
+  ENDCLASS.
+  CLASS lcl_bar IMPLEMENTATION.
+    METHOD get_gui.
+    ENDMETHOD.
+  ENDCLASS.
+
+  START-OF-SELECTION.
+    lcl_bar=>get_gui( )->go_home( ).`;
+    const issues = runProgram(abap);
+    expect(issues.length).to.equals(0);
+  });
+
+  it("call method from super class", () => {
+    const abap = `
+CLASS lcl_foo DEFINITION.
+  PUBLIC SECTION.
+    METHODS: name.
+ENDCLASS.
+CLASS lcl_foo IMPLEMENTATION.
+  METHOD name.
+  ENDMETHOD.
+ENDCLASS.
+CLASS lcl_bar DEFINITION INHERITING FROM lcl_foo.
+ENDCLASS.
+CLASS lcl_bar IMPLEMENTATION.
+ENDCLASS.
+START-OF-SELECTION.
+  DATA bar TYPE REF TO lcl_bar.
+  bar->name( ).`;
+    const issues = runProgram(abap);
+    expect(issues.length).to.equals(0);
+  });
+
   /*
 `INTERFACE lif_bar.
   CONSTANTS moo TYPE i VALUE 1.

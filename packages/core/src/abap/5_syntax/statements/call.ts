@@ -7,7 +7,8 @@ export class Call {
   public runSyntax(node: StatementNode, scope: CurrentScope, filename: string): void {
     const chain = node.findDirectExpression(Expressions.MethodCallChain);
     if (chain) {
-      return new MethodCallChain().runSyntax(chain, scope, filename);
+      new MethodCallChain().runSyntax(chain, scope, filename);
+      return;
     }
 
     throw new Error("todo: CALL METHOD MethodSource MethodCallBody");

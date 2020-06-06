@@ -5,10 +5,11 @@ import {AbstractType} from "../../types/basic/_abstract_type";
 import {VoidType, ObjectReferenceType} from "../../types/basic";
 import {FieldChain} from "./field_chain";
 import {INode} from "../../nodes/_inode";
+import {ObjectOriented} from "../_object_oriented";
 
 export class MethodCallChain {
-  public runSyntax(node: ExpressionNode, scope: CurrentScope, _filename: string): void {
-
+  public runSyntax(node: ExpressionNode, scope: CurrentScope, _filename: string): AbstractType | undefined {
+    const helper = new ObjectOriented(scope);
     const children = node.getChildren().slice();
 
     const first = children.shift();
@@ -16,7 +17,7 @@ export class MethodCallChain {
       throw new Error("MethodCallChain, first child expected");
     }
 
-    const context: AbstractType = this.findTop(first, scope);
+    let context: AbstractType | undefined = this.findTop(first, scope);
 
     while (children.length > 0) {
       const current = children.shift();
@@ -33,14 +34,16 @@ export class MethodCallChain {
         }
 
         const methodName = current.findDirectExpression(Expressions.MethodName)?.getFirstToken().getStr();
-        const method = scope.findObjectDefinition(context.getName())?.getMethodDefinitions().getByName(methodName);
-
+        const method = helper.searchMethodName(scope.findObjectDefinition(context.getName()), methodName);
         if (method === undefined) {
           throw new Error("Method \"" + methodName + "\" not found");
         }
+
+        context = method.getParameters().getReturning()?.getType();
       }
     }
 
+    return context;
   }
 
 //////////////////////////////////////
