@@ -17,6 +17,7 @@ abstract class ScopeData {
       forms: [],
       types: [],
       deferred: [],
+      references: [],
       reads: [],
       writes: [],
     };

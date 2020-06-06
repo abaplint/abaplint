@@ -14,25 +14,28 @@ import {Procedural} from "./_procedural";
 import {Inline} from "./_inline";
 import {Program} from "../../objects";
 import {Position} from "../../position";
+
 import {Perform} from "./statements/perform";
 import {Type} from "./statements/type";
 import {Constant} from "./statements/constant";
 import {Static} from "./statements/static";
 import {Data as DataStatement} from "./statements/data";
-import {Data as DataStructure} from "./structures/data";
 import {Parameter} from "./statements/parameter";
 import {FieldSymbol} from "./statements/fieldsymbol";
 import {Tables} from "./statements/tables";
 import {SelectOption} from "./statements/selectoption";
+import {InterfaceDeferred} from "./statements/interface_deferred";
+import {ClassDeferred} from "./statements/class_deferred";
+
+import {Data as DataStructure} from "./structures/data";
 import {TypeEnum} from "./structures/type_enum";
 import {Types} from "./structures/types";
 import {Statics} from "./structures/statics";
 import {Constants} from "./structures/constants";
+
 import {ClassDefinition} from "../types/class_definition";
 import {InterfaceDefinition} from "../types/interface_definition";
 import {ISyntaxResult} from "./_spaghetti_scope";
-import {InterfaceDeferred} from "./statements/interface_deferred";
-import {ClassDeferred} from "./statements/class_deferred";
 
 // assumption: objects are parsed without parsing errors
 
@@ -213,14 +216,18 @@ export class SyntaxLogic {
       this.scope.addIdentifier(new Tables().runSyntax(node, this.scope, filename));
     } else if (s instanceof Statements.SelectOption) {
       this.scope.addIdentifier(new SelectOption().runSyntax(node, this.scope, filename));
+
     } else if (s instanceof Statements.InterfaceDeferred) {
       new InterfaceDeferred().runSyntax(node, this.scope, filename);
     } else if (s instanceof Statements.ClassDeferred) {
       new ClassDeferred().runSyntax(node, this.scope, filename);
-    } else if (s instanceof Statements.Form) {
-      this.helpers.proc.findFormScope(node, filename);
     } else if (s instanceof Statements.Perform) {
       new Perform().runSyntax(node, this.scope, filename);
+//    } else if (s instanceof Statements.Call) {
+//      new Call().runSyntax(node, this.scope, filename);
+
+    } else if (s instanceof Statements.Form) {
+      this.helpers.proc.findFormScope(node, filename);
     } else if (s instanceof Statements.FunctionModule) {
       this.helpers.proc.findFunctionScope(this.object, node, filename);
     } else if (s instanceof Statements.Method) {

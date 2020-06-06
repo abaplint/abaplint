@@ -12,7 +12,7 @@ import {IInterfaceDefinition} from "../types/_interface_definition";
 import {IFormDefinition} from "../types/_form_definition";
 import {Class} from "../../objects/class";
 import {Interface} from "../../objects/interface";
-import {IScopeIdentifier, DeferredType} from "./_spaghetti_scope";
+import {IScopeIdentifier, DeferredType, ReferenceType} from "./_spaghetti_scope";
 
 export class CurrentScope {
   protected readonly reg: IRegistry;
@@ -30,6 +30,7 @@ export class CurrentScope {
   }
 
   // dont call push() and pop() on dummy scopes
+  /*
   public static buildDummy(sup: CurrentScope): CurrentScope {
     const s = new CurrentScope(sup.reg);
 
@@ -43,6 +44,7 @@ export class CurrentScope {
 
     return s;
   }
+  */
 
   private static addBuiltIn(s: CurrentScope, extras: string[]) {
     const b = new BuiltIn();
@@ -129,6 +131,11 @@ export class CurrentScope {
   public addWrite(token: Token, resolved: TypedIdentifier, filename: string) {
     const position = new Identifier(token, filename);
     this.current?.getData().writes.push({position, resolved});
+  }
+
+  public addReference(token: Token, resolved: Identifier, type: ReferenceType, filename: string) {
+    const position = new Identifier(token, filename);
+    this.current?.getData().references.push({position, resolved, referenceType: type});
   }
 
 ///////////////////////////
