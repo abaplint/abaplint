@@ -6,8 +6,9 @@ import {Version} from "../version";
 import {IObject} from "../objects/_iobject";
 import {ABAPObject} from "../objects/_abap_object";
 import {SyntaxLogic} from "../abap/5_syntax/syntax";
-import {ISpaghettiScopeNode, ScopeType, IdentifierMeta} from "..";
-import {IScopeVariable, IVariableReference} from "../abap/5_syntax/_spaghetti_scope";
+import {IScopeVariable, IVariableReference, ISpaghettiScopeNode} from "../abap/5_syntax/_spaghetti_scope";
+import {IdentifierMeta} from "../abap/types/_typed_identifier";
+import {ScopeType} from "../abap/5_syntax/_scope_type";
 
 export class PreferInlineConf extends BasicRuleConfig {
 
