@@ -7,20 +7,20 @@ import {CurrentScope} from "../5_syntax/_current_scope";
 import {IInterfaceDefinition} from "./_interface_definition";
 import {IAttributes}  from "./_class_attributes";
 import {ITypeDefinitions} from "./_type_definitions";
-import {MethodDefinition} from "./method_definition";
 import {Attributes} from "./class_attributes";
 import {TypeDefinitions} from "./type_definitions";
 import {Visibility} from "../4_file_information/visibility";
 import {ScopeType} from "../5_syntax/_scope_type";
-import {IMethodDefinition} from "./_method_definition";
 import {IEventDefinition} from "./_event_definition";
 import {EventDefinition} from "./event_definition";
+import {IMethodDefinitions} from "./_method_definitions";
+import {MethodDefinitions} from "./method_definitions";
 
 export class InterfaceDefinition extends Identifier implements IInterfaceDefinition {
   private readonly node: StructureNode;
   private attributes: IAttributes;
   private typeDefinitions: ITypeDefinitions;
-  private methodDefinitions: IMethodDefinition[];
+  private methodDefinitions: IMethodDefinitions;
   private readonly events: IEventDefinition[];
 
   public constructor(node: StructureNode, filename: string, scope: CurrentScope) {
@@ -59,7 +59,7 @@ export class InterfaceDefinition extends Identifier implements IInterfaceDefinit
     return this.node.findFirstExpression(Expressions.Global) !== undefined;
   }
 
-  public getMethodDefinitions(): IMethodDefinition[] {
+  public getMethodDefinitions(): IMethodDefinitions {
     return this.methodDefinitions;
   }
 
@@ -70,11 +70,7 @@ export class InterfaceDefinition extends Identifier implements IInterfaceDefinit
 
     this.typeDefinitions = new TypeDefinitions(this.node, this.filename, scope);
 
-    this.methodDefinitions = [];
-    const defs = this.node.findAllStatements(Statements.MethodDef);
-    for (const def of defs) {
-      this.methodDefinitions.push(new MethodDefinition(def, Visibility.Public, this.filename, scope));
-    }
+    this.methodDefinitions = new MethodDefinitions(this.node, this.filename, scope);
 
     const events = this.node.findAllStatements(Statements.Events);
     for (const e of events) {

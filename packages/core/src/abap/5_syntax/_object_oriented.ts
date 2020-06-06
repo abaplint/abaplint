@@ -126,7 +126,7 @@ export class ObjectOriented {
   private findMethodInInterface(interfaceName: string, methodName: string): IMethodDefinition | undefined {
     const idef = this.scope.findInterfaceDefinition(interfaceName);
     if (idef) {
-      const methods = idef.getMethodDefinitions();
+      const methods = idef.getMethodDefinitions().getAll();
       for (const method of methods) {
         if (method.getName().toUpperCase() === methodName.toUpperCase()) {
           return method;

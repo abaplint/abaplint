@@ -24,9 +24,10 @@ describe("Types, interface_definition, getMethodDefinitions", () => {
     const reg = new Registry().addFile(new MemoryFile("zif_foobar.intf.abap", abap)).parse();
     const def = run(reg);
     expect(def).to.not.equal(undefined);
-    expect(def!.getMethodDefinitions().length).to.equal(1);
-    expect(def!.getMethodDefinitions()[0].getName()).to.equal("method1");
-    expect(def!.getMethodDefinitions()[0].getVisibility()).to.equal(Visibility.Public);
+    const defs = def!.getMethodDefinitions().getAll();
+    expect(defs.length).to.equal(1);
+    expect(defs[0].getName()).to.equal("method1");
+    expect(defs[0].getVisibility()).to.equal(Visibility.Public);
   });
 
   it("test, parser error", () => {
@@ -44,9 +45,10 @@ describe("Types, interface_definition, getMethodDefinitions", () => {
 
     const reg = new Registry().addFile(new MemoryFile("zif_foobar.intf.abap", abap)).parse();
     const def = run(reg);
-    expect(def!.getMethodDefinitions().length).to.equal(1);
-    expect(def!.getMethodDefinitions()[0].getParameters().getImporting().length).to.equal(1);
-    expect(def!.getMethodDefinitions()[0].getParameters().getImporting()[0].getName()).to.equal("foo");
+    const defs = def!.getMethodDefinitions().getAll();
+    expect(defs.length).to.equal(1);
+    expect(defs[0].getParameters().getImporting().length).to.equal(1);
+    expect(defs[0].getParameters().getImporting()[0].getName()).to.equal("foo");
   });
 
   it("test, returning", () => {
@@ -56,8 +58,9 @@ describe("Types, interface_definition, getMethodDefinitions", () => {
 
     const reg = new Registry().addFile(new MemoryFile("zif_foobar.intf.abap", abap)).parse();
     const def = run(reg);
-    expect(def!.getMethodDefinitions().length).to.equal(1);
-    const returning = def!.getMethodDefinitions()[0].getParameters().getReturning();
+    const defs = def!.getMethodDefinitions().getAll();
+    expect(defs.length).to.equal(1);
+    const returning = defs[0].getParameters().getReturning();
     expect(returning).to.not.equal(undefined);
     if (returning) {
       expect(returning.getName()).to.equal("rv_foo");
