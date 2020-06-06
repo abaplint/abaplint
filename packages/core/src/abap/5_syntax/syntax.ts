@@ -115,7 +115,7 @@ export class SyntaxLogic {
         return this.scope;
       } else if (structure.get() instanceof Structures.Interface) {
         // special case for global interfaces, todo, look into if the case can be removed
-        this.updateScope(structure);
+        this.updateScopeStructure(structure);
       } else {
         this.traverse(structure);
       }
@@ -137,15 +137,20 @@ export class SyntaxLogic {
 
     for (const child of node.getChildren()) {
       try {
-        const gotoNext = this.updateScope(child);
-        if (gotoNext === true) {
-          continue;
+        if (child instanceof StructureNode) {
+          const gotoNext = this.updateScopeStructure(child);
+          if (gotoNext === true) {
+            continue;
+          }
+        } else if (child instanceof StatementNode) {
+          this.updateScopeStatement(child);
         }
       } catch (e) {
         this.newIssue(child.getFirstToken(), e.message);
         break;
       }
 
+      // walk into INCLUDEs
       if (child instanceof StatementNode && child.get() instanceof Statements.Include) {
         const file = this.helpers.proc.findInclude(child, this.object);
         if (file !== undefined && file.getStructure() !== undefined) {
@@ -161,42 +166,36 @@ export class SyntaxLogic {
   }
 
   // if this returns true, then the traversal should continue with next child
-  private updateScope(node: INode): boolean {
-// todo, align statements, eg is NamespaceSimpleName a definition or is it Field, or something new?
-// todo, and introduce SimpleSource?
+  private updateScopeStructure(node: StructureNode): boolean {
     const filename = this.currentFile.getFilename();
-
-// todo, refactor
-    if (node instanceof StructureNode) {
-      const stru = node.get();
-      if (stru instanceof Structures.ClassDefinition) {
-        this.scope.addClassDefinition(new ClassDefinition(node, filename, this.scope));
-        return true;
-      } else if (stru instanceof Structures.Interface) {
-        this.scope.addInterfaceDefinition(new InterfaceDefinition(node, filename, this.scope));
-        return true;
-      } else if (stru instanceof Structures.Types) {
-        this.scope.addType(new Types().runSyntax(node, this.scope, filename));
-        return true;
-      } else if (stru instanceof Structures.Constants) {
-        this.scope.addIdentifier(new Constants().runSyntax(node, this.scope, filename));
-        return true;
-      } else if (stru instanceof Structures.Data) {
-        this.scope.addIdentifier(new DataStructure().runSyntax(node, this.scope, filename));
-        return true;
-      } else if (stru instanceof Structures.Statics) {
-        this.scope.addIdentifier(new Statics().runSyntax(node, this.scope, filename));
-        return true;
-      } else if (stru instanceof Structures.TypeEnum) {
-        this.scope.addList(new TypeEnum().runSyntax(node, this.scope, filename));
-        return true;
-      }
-      return false;
-    } else if (!(node instanceof StatementNode)) {
-      return false;
+    const stru = node.get();
+    if (stru instanceof Structures.ClassDefinition) {
+      this.scope.addClassDefinition(new ClassDefinition(node, filename, this.scope));
+      return true;
+    } else if (stru instanceof Structures.Interface) {
+      this.scope.addInterfaceDefinition(new InterfaceDefinition(node, filename, this.scope));
+      return true;
+    } else if (stru instanceof Structures.Types) {
+      this.scope.addType(new Types().runSyntax(node, this.scope, filename));
+      return true;
+    } else if (stru instanceof Structures.Constants) {
+      this.scope.addIdentifier(new Constants().runSyntax(node, this.scope, filename));
+      return true;
+    } else if (stru instanceof Structures.Data) {
+      this.scope.addIdentifier(new DataStructure().runSyntax(node, this.scope, filename));
+      return true;
+    } else if (stru instanceof Structures.Statics) {
+      this.scope.addIdentifier(new Statics().runSyntax(node, this.scope, filename));
+      return true;
+    } else if (stru instanceof Structures.TypeEnum) {
+      this.scope.addList(new TypeEnum().runSyntax(node, this.scope, filename));
+      return true;
     }
+    return false;
+  }
 
-// todo, refactor
+  private updateScopeStatement(node: StatementNode): void {
+    const filename = this.currentFile.getFilename();
     const s = node.get();
     if (s instanceof Statements.Type) {
       this.scope.addType(new Type().runSyntax(node, this.scope, filename));
@@ -235,8 +234,6 @@ export class SyntaxLogic {
         || s instanceof Statements.EndClass) {
       this.scope.pop();
     }
-
-    return false;
   }
 
 }
