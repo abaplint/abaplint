@@ -44,6 +44,12 @@ export class LSPLookup {
       if (variable.getMeta().length > 0) {
         value = value + "\n\nMeta: " + variable.getMeta().join(", ");
       }
+      if (variable.getType().containsVoid() === true) {
+        value = value + "\n\nContains void types";
+      }
+      if (variable.getType().isGeneric() === true) {
+        value = value + "\n\nIs generic type";
+      }
       const location = LSPUtils.identiferToLocation(variable);
       return {hover: value, definition: location, definitionId: variable};
     }
