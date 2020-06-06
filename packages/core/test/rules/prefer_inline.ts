@@ -83,4 +83,11 @@ ENDFORM.`);
     expect(issues.length).to.equal(0);
   });
 
+  it.skip("Types should not change when inlining", () => {
+    const issues = findIssues(`
+DATA foo TYPE c.
+foo = |abc|.`);
+    expect(issues.length).to.equal(0);
+  });
+
 });

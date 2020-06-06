@@ -16,6 +16,9 @@ export class ObjectReferenceType implements AbstractType {
   }
 
   public isGeneric() {
+    if (this.name.toUpperCase() === "OBJECT") {
+      return true;
+    }
     return false;
   }
 
