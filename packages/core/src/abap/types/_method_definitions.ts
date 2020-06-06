@@ -5,4 +5,5 @@ export interface IMethodDefinitions {
   getProtected(): readonly IMethodDefinition[];
   getPrivate(): readonly IMethodDefinition[];
   getAll(): readonly IMethodDefinition[];
+  getByName(name: string | undefined): IMethodDefinition | undefined;
 }

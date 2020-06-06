@@ -334,7 +334,7 @@ describe("Check Variables", () => {
     expect(issues.length).to.equals(0);
   });
 
-  it("program, component after call", () => {
+  it("program, component after call 1", () => {
 // todo, this code is not syntactically correct
     const abap = "DATA field TYPE string.\n" +
       "field = get_something( )-date.\n";
@@ -380,9 +380,19 @@ describe("Check Variables", () => {
     expect(issues.length).to.equals(0);
   });
 
-  it("program, component after call", () => {
-    // todo, this code is not syntactically correct
-    const abap = "run( zcl_global_class=>field ).\n";
+  it("program, component after call 2", () => {
+    const abap = `
+CLASS lcl_bar DEFINITION.
+  PUBLIC SECTION.
+    METHODS: run IMPORTING foo TYPE i.
+    CLASS-DATA: field TYPE i.
+ENDCLASS.
+CLASS lcl_bar IMPLEMENTATION.
+  METHOD run.
+    run( lcl_bar=>field ).
+  ENDMETHOD.
+ENDCLASS.
+    `;
     const issues = runProgram(abap);
     expect(issues.length).to.equals(0);
   });
@@ -586,19 +596,19 @@ describe("Check Variables", () => {
   });
 
   it("class, me, method call", () => {
-    const abap =
-      "CLASS zcl_foobar DEFINITION PUBLIC FINAL CREATE PUBLIC.\n" +
-      "  PRIVATE SECTION.\n" +
-      "    METHODS hello.\n" +
-      "    METHODS world.\n" +
-      "ENDCLASS.\n" +
-      "CLASS zcl_foobar IMPLEMENTATION.\n" +
-      "  METHOD hello.\n" +
-      "    me->world( ).\n" +
-      "  ENDMETHOD.\n" +
-      "  METHOD world.\n" +
-      "  ENDMETHOD.\n" +
-      "ENDCLASS.";
+    const abap = `
+      CLASS zcl_foobar DEFINITION PUBLIC FINAL CREATE PUBLIC.
+        PRIVATE SECTION.
+          METHODS hello.
+          METHODS world.
+      ENDCLASS.
+      CLASS zcl_foobar IMPLEMENTATION.
+        METHOD hello.
+          me->world( ).
+        ENDMETHOD.
+        METHOD world.
+        ENDMETHOD.
+      ENDCLASS.`;
     const issues = runClass(abap);
     expect(issues.length).to.equals(0);
   });
@@ -1244,7 +1254,7 @@ describe("Check Variables", () => {
     expect(issues.length).to.equals(0);
   });
 
-  it("CALL METHOD, static class and method", () => {
+  it.skip("CALL METHOD, static class and method", () => {
 // todo, actually cl_foo is unknown
     const abap = `CALL METHOD cl_foo=>bar( ).`;
     const issues = runProgram(abap);
@@ -1310,10 +1320,66 @@ ENDCLASS.`;
     expect(issues.length).to.equals(0);
   });
 
-  it.skip("static class not found", () => {
+  it("static class not found", () => {
     const abap = `zcl_bar=>method( ).`;
     const issues = runProgram(abap);
     expect(issues.length).to.equals(1);
+    expect(issues[0].getMessage()).to.include("zcl_bar");
+  });
+
+  it("static method not found", () => {
+    const abap = `
+    CLASS lcl_bar DEFINITION.
+    ENDCLASS.
+    CLASS lcl_bar IMPLEMENTATION.
+    ENDCLASS.
+    lcl_bar=>moo( ).`;
+    const issues = runProgram(abap);
+    expect(issues.length).to.equals(1);
+    expect(issues[0].getMessage()).to.include("moo");
+  });
+
+  it("static method found", () => {
+    const abap = `
+    CLASS lcl_bar DEFINITION.
+      PUBLIC SECTION.
+        CLASS-METHODS: moo.
+    ENDCLASS.
+    CLASS lcl_bar IMPLEMENTATION.
+      METHOD moo.
+      ENDMETHOD.
+    ENDCLASS.
+    lcl_bar=>moo( ).`;
+    const issues = runProgram(abap);
+    expect(issues.length).to.equals(0);
+  });
+
+  it("voided class should not give error", () => {
+    const abap = `
+  cl_foobar=>moo(
+    act = 123
+    exp = '3344' ).`;
+    const issues = runProgram(abap);
+    expect(issues.length).to.equals(0);
+  });
+
+  it("call instance method", () => {
+    const abap = `
+CLASS zcl_foobar DEFINITION.
+  PUBLIC SECTION.
+    METHODS hello.
+ENDCLASS.
+CLASS zcl_foobar IMPLEMENTATION.
+  METHOD hello.
+  ENDMETHOD.
+ENDCLASS.
+
+START-OF-SELECTION.
+  DATA foo TYPE REF TO zcl_foobar.
+  CREATE OBJECT foo.
+  foo->hello( ).`;
+    const issues = runProgram(abap);
+    expect(issues.length).to.equals(0);
   });
 
 // todo, static method cannot access instance attributes

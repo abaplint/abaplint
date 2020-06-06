@@ -26,6 +26,7 @@ import {Tables} from "./statements/tables";
 import {SelectOption} from "./statements/selectoption";
 import {InterfaceDeferred} from "./statements/interface_deferred";
 import {ClassDeferred} from "./statements/class_deferred";
+import {Call} from "./statements/call";
 
 import {Data as DataStructure} from "./structures/data";
 import {TypeEnum} from "./structures/type_enum";
@@ -223,8 +224,8 @@ export class SyntaxLogic {
       new ClassDeferred().runSyntax(node, this.scope, filename);
     } else if (s instanceof Statements.Perform) {
       new Perform().runSyntax(node, this.scope, filename);
-//    } else if (s instanceof Statements.Call) {
-//      new Call().runSyntax(node, this.scope, filename);
+    } else if (s instanceof Statements.Call) {
+      new Call().runSyntax(node, this.scope, filename);
 
     } else if (s instanceof Statements.Form) {
       this.helpers.proc.findFormScope(node, filename);

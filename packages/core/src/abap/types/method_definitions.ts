@@ -37,6 +37,19 @@ export class MethodDefinitions implements IMethodDefinitions {
     return this.pub.concat(this.pro).concat(this.pri);
   }
 
+  public getByName(name: string | undefined): MethodDefinition | undefined {
+    if (name === undefined) {
+      return undefined;
+    }
+
+    for (const m of this.getAll()) {
+      if (m.getName().toUpperCase() === name.toUpperCase()) {
+        return m;
+      }
+    }
+    return undefined;
+  }
+
 ///////////////////////
 
   private parse(node: StructureNode, scope: CurrentScope) {
