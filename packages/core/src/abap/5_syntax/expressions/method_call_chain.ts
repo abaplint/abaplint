@@ -18,6 +18,9 @@ export class MethodCallChain {
     }
 
     let context: AbstractType | undefined = this.findTop(first, scope);
+    if (first.get() instanceof Expressions.MethodCall) {
+      children.unshift(first);
+    }
 
     while (children.length > 0) {
       const current = children.shift();
@@ -35,11 +38,14 @@ export class MethodCallChain {
 
         const methodName = current.findDirectExpression(Expressions.MethodName)?.getFirstToken().getStr();
         const method = helper.searchMethodName(scope.findObjectDefinition(context.getName()), methodName);
-        if (method === undefined) {
+        if (method === undefined && methodName?.toUpperCase() === "CONSTRUCTOR") {
+          context = undefined; // todo, this is a workaround, constructors always exists
+        } else if (method === undefined) {
           throw new Error("Method \"" + methodName + "\" not found");
+        } else {
+          const ret = method.getParameters().getReturning()?.getType();
+          context = ret;
         }
-
-        context = method.getParameters().getReturning()?.getType();
       }
     }
 

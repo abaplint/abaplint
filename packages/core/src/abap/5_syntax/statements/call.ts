@@ -11,6 +11,11 @@ export class Call {
       return;
     }
 
+    const dynamic = node.findDirectExpression(Expressions.MethodSource)?.findDirectExpression(Expressions.Dynamic);
+    if (dynamic) {
+      return;
+    }
+
     throw new Error("todo: CALL METHOD MethodSource MethodCallBody");
   }
 }

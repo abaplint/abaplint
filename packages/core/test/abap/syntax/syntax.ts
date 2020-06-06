@@ -1443,6 +1443,65 @@ START-OF-SELECTION.
     expect(issues.length).to.equals(0);
   });
 
+  it("no errors from dynamic", () => {
+    const abap = `
+  DATA rv_result TYPE i.
+  CALL METHOD ('CL_APJ_SCP_TOOLS')=>('IS_RESTART_REQUIRED')
+    RECEIVING
+      restart_required = rv_result.`;
+    const issues = runProgram(abap);
+    expect(issues.length).to.equals(0);
+  });
+
+  it("no errors from dynamic", () => {
+    const abap = `
+CLASS lcl_viewer DEFINITION.
+  PUBLIC SECTION.
+    METHODS: show_callstack.
+ENDCLASS.
+CLASS lcl_viewer IMPLEMENTATION.
+  METHOD show_callstack.
+  ENDMETHOD.
+ENDCLASS.
+CLASS lcl_bar DEFINITION.
+  PUBLIC SECTION.
+    METHODS:
+      goto_callstack,
+      get_exception_viewer
+        RETURNING
+          VALUE(ro_sdf) TYPE REF TO lcl_viewer.
+ENDCLASS.
+CLASS lcl_bar IMPLEMENTATION.
+  METHOD get_exception_viewer.
+  ENDMETHOD.
+  METHOD goto_callstack.
+    get_exception_viewer( )->show_callstack( ).
+  ENDMETHOD.
+ENDCLASS.`;
+    const issues = runProgram(abap);
+    expect(issues.length).to.equals(0);
+  });
+
+  it("constructors always exists", () => {
+    const abap = `
+CLASS lcl_super DEFINITION.
+ENDCLASS.
+CLASS lcl_super IMPLEMENTATION.
+ENDCLASS.
+CLASS lcl_bar DEFINITION INHERITING FROM lcl_super .
+  PUBLIC SECTION.
+    METHODS:
+      constructor.
+ENDCLASS.
+CLASS lcl_bar IMPLEMENTATION.
+  METHOD constructor.
+    super->constructor( ).
+  ENDMETHOD.
+ENDCLASS.`;
+    const issues = runProgram(abap);
+    expect(issues.length).to.equals(0);
+  });
+
   /*
 `INTERFACE lif_bar.
   CONSTANTS moo TYPE i VALUE 1.

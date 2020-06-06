@@ -11,6 +11,6 @@ export class FieldChain {
       return found.getType();
     }
 
-    throw new Error("FieldChain, \"" + name + " \" variable not found");
+    throw new Error("FieldChain, \"" + name + "\" variable not found");
   }
 }
