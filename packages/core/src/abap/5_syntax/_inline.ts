@@ -2,7 +2,6 @@ import {CurrentScope} from "./_current_scope";
 import {ExpressionNode, StatementNode} from "../nodes";
 import * as Expressions from "../2_statements/expressions";
 import * as Statements from "../2_statements/statements";
-import {INode} from "../nodes/_inode";
 import {IRegistry} from "../../_iregistry";
 import {Table, View} from "../../objects";
 import {TypedIdentifier, IdentifierMeta} from "../types/_typed_identifier";
@@ -19,25 +18,27 @@ export class Inline {
   }
 
   // returns an optional issue description
-  public update(node: INode, filename: string): string | undefined {
-    if (!(node instanceof StatementNode)) {
-      return undefined;
-    }
-
+  public update(node: StatementNode, filename: string): string | undefined {
     if (node.get() instanceof Statements.SelectionScreen) {
       this.scope.addIdentifier(new SelectionScreen().runSyntax(node, this.scope, filename));
       return undefined;
     }
 
-    for (const inline of node.findAllExpressions(Expressions.InlineData)) {
-      const field = inline.findFirstExpression(Expressions.TargetField);
-      if (field === undefined) { return "syntax_check, unexpected tree structure"; }
-      this.addVariable(field, filename);
+    if (!(node.get() instanceof Statements.Move) && !(node.get() instanceof Statements.Catch)) {
+      for (const inline of node.findAllExpressions(Expressions.InlineData)) {
+        const field = inline.findFirstExpression(Expressions.TargetField);
+        if (field === undefined) {
+          return "syntax_check, unexpected tree structure";
+        }
+        this.addVariable(field, filename);
+      }
     }
 
     for (const inline of node.findAllExpressions(Expressions.InlineFS)) {
       const field = inline.findFirstExpression(Expressions.TargetFieldSymbol);
-      if (field === undefined) { return "syntax_check, unexpected tree structure"; }
+      if (field === undefined) {
+        return "syntax_check, unexpected tree structure";
+      }
       this.addVariable(field, filename);
     }
 
@@ -112,13 +113,16 @@ export class Inline {
 //////////////////////////////////////////
 
   private addVariable(expr: ExpressionNode | undefined, filename: string) {
-    if (expr === undefined) { throw new Error("syntax_check, unexpected tree structure"); }
+    if (expr === undefined) {
+      throw new Error("syntax_check, unexpected tree structure");
+    }
     const token = expr.getFirstToken();
     const identifier = new TypedIdentifier(token, filename, new UnknownType("todo, inline, addVariable"), [IdentifierMeta.InlineDefinition]);
     this.scope.addIdentifier(identifier);
   }
 
   // returns string with error or undefined
+  // todo: refactor to use this.scope.getDDIC()
   private findTable(name: string): string | undefined {
     const table = this.reg.getObject("TABL", name) as Table | undefined;
     if (table !== undefined) {

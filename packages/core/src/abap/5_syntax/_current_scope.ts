@@ -155,7 +155,11 @@ export class CurrentScope {
     return undefined;
   }
 
-  public existsObject(name: string): boolean {
+  public existsObject(name: string | undefined): boolean {
+    if (name === undefined) {
+      return false;
+    }
+
     if (name.toUpperCase() === "OBJECT") {
       return true;
     } else if (name.toUpperCase() === this.getName().toLocaleUpperCase()

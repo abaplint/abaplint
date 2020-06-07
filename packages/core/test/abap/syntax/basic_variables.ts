@@ -842,8 +842,7 @@ ENDCLASS.`;
   });
 
   it("sy-uzeit", () => {
-    const abap = `
-    DATA foo TYPE sy-uzeit.`;
+    const abap = `DATA foo TYPE sy-uzeit.`;
     const identifier = resolveVariable(abap, "foo");
     expect(identifier).to.not.equal(undefined);
     const type = identifier?.getType();
@@ -856,6 +855,54 @@ ENDCLASS.`;
     expect(identifier).to.not.equal(undefined);
     const type = identifier?.getType();
     expect(type).to.be.instanceof(Basic.TableType);
+  });
+
+  it("Inline DATA definition", () => {
+    const abap = `DATA(lo_instance) = cl_oo_factory=>create_instance( ).`;
+    const identifier = resolveVariable(abap, "lo_instance");
+    expect(identifier).to.not.equal(undefined);
+    const type = identifier?.getType();
+    expect(type).to.be.instanceof(Basic.VoidType);
+  });
+
+  it.skip("Inline DATA definition", () => {
+    const abap = `DATA(foobar) = 2.`;
+    const identifier = resolveVariable(abap, "foobar");
+    expect(identifier).to.not.equal(undefined);
+    const type = identifier?.getType();
+    expect(type).to.be.instanceof(Basic.IntegerType);
+  });
+
+  it("Inline object ref", () => {
+    const abap = `
+  CLASS lcl_foo DEFINITION.
+  ENDCLASS.
+  CLASS lcl_foo IMPLEMENTATION.
+  ENDCLASS.
+  DATA(lo_initial) = NEW lcl_foo( ).`;
+    const identifier = resolveVariable(abap, "lo_initial");
+    expect(identifier).to.not.equal(undefined);
+    const type = identifier?.getType();
+    expect(type).to.be.instanceof(Basic.ObjectReferenceType);
+  });
+
+  it("CAST void types", () => {
+    const abap = `DATA(li_source) = CAST if_oo_clif_source( cl_global=>bar( ) ).`;
+    const identifier = resolveVariable(abap, "li_source");
+    expect(identifier).to.not.equal(undefined);
+    const type = identifier?.getType();
+    expect(type).to.be.instanceof(Basic.VoidType);
+  });
+
+  it("CATCH into DATA", () => {
+    const abap = `
+TRY.
+  CATCH cx_static_check INTO DATA(lx_error).
+ENDTRY.`;
+    const identifier = resolveVariable(abap, "lx_error");
+    expect(identifier).to.not.equal(undefined);
+    const type = identifier?.getType();
+    expect(type).to.be.instanceof(Basic.VoidType);
   });
 
 });

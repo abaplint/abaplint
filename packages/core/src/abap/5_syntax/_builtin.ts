@@ -1,12 +1,38 @@
 import {TypedIdentifier, IdentifierMeta} from "../types/_typed_identifier";
-import {VoidType, CharacterType, StructureType, IStructureComponent, IntegerType, NumericType, DateType, TimeType} from "../types/basic";
+import {VoidType, CharacterType, StructureType, IStructureComponent, IntegerType, NumericType, DateType, TimeType, StringType} from "../types/basic";
 import {Identifier} from "../1_lexer/tokens";
 import {Position} from "../../position";
 import {AbstractType} from "../types/basic/_abstract_type";
 
+export interface IBuiltinMethod {
+  name: string;
+  returnType: AbstractType;
+}
+
 export class BuiltIn {
   public static readonly filename = "_builtin.prog.abap";
   private row = 1;
+
+  public getMethods(): IBuiltinMethod[] {
+    const ret: IBuiltinMethod[] = [];
+    ret.push({name: "CONCAT_LINES_OF", returnType: new StringType()});
+    ret.push({name: "CONDENSE", returnType: new StringType()});
+    ret.push({name: "ESCAPE", returnType: new StringType()});
+    ret.push({name: "FIND", returnType: new StringType()});
+    ret.push({name: "LINES", returnType: new IntegerType()});
+    ret.push({name: "REPEAT", returnType: new StringType()});
+    ret.push({name: "REPLACE", returnType: new StringType()});
+    ret.push({name: "REVERSE", returnType: new StringType()});
+    ret.push({name: "STRLEN", returnType: new IntegerType()});
+    ret.push({name: "SUBSTRING_AFTER", returnType: new StringType()});
+    ret.push({name: "SUBSTRING_BEFORE", returnType: new StringType()});
+    ret.push({name: "SUBSTRING", returnType: new StringType()});
+    ret.push({name: "TO_LOWER", returnType: new StringType()});
+    ret.push({name: "TO_UPPER", returnType: new StringType()});
+    ret.push({name: "TRANSLATE", returnType: new StringType()});
+    ret.push({name: "XSTRLEN", returnType: new IntegerType()});
+    return ret;
+  }
 
   public getTypes(): TypedIdentifier[] {
     const ret: TypedIdentifier[] = [];

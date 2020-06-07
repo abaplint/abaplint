@@ -983,7 +983,7 @@
                   "type": "boolean"
                 }
               ],
-              "description": "Various checks for comment usage.\nhttps://rules.abaplint.org/check_comments"
+              "description": "Various checks for comment usage.\nTags: Styleguide\nhttps://rules.abaplint.org/check_comments"
             },
             "check_ddic": {
               "anyOf": [
@@ -1335,7 +1335,7 @@
                   "type": "boolean"
                 }
               ],
-              "description": "Checks alignment within block statement declarations which span multiple lines, such as multiple conditions in IF statements.\nExample:\nIF 1 = 1 AND\n   2 = 2.\nTags: Whitespace\nhttps://rules.abaplint.org/in_statement_indentation"
+              "description": "Checks alignment within block statement declarations which span multiple lines, such as multiple conditions in IF statements.\nTags: Whitespace\nhttps://rules.abaplint.org/in_statement_indentation"
             },
             "indentation": {
               "anyOf": [
@@ -1590,6 +1590,17 @@
               ],
               "description": "Checks for syntax unrecognized by abaplint\nTags: Syntax\nhttps://rules.abaplint.org/parser_error"
             },
+            "prefer_inline": {
+              "anyOf": [
+                {
+                  "$ref": "#/definitions/PreferInlineConf"
+                },
+                {
+                  "type": "boolean"
+                }
+              ],
+              "description": "Prefer inline to up-front declarations.\nActivates if language version is v740sp02 or above.\nVariables must be local(METHOD or FORM).\nNo generic or void typed variables.\nFirst position used must be a full/pure write.\nTags: Styleguide, Upport, Experimental\nhttps://rules.abaplint.org/prefer_inline"
+            },
             "prefer_returning_to_exporting": {
               "anyOf": [
                 {
@@ -1841,7 +1852,7 @@
                   "type": "boolean"
                 }
               ],
-              "description": "Checks for unused variables\nTags: Experimental\nhttps://rules.abaplint.org/unused_variables"
+              "description": "Checks for unused variables\nTags: Experimental, Quickfix\nhttps://rules.abaplint.org/unused_variables"
             },
             "use_new": {
               "anyOf": [
@@ -2863,6 +2874,23 @@
         "forbidden"
       ],
       "type": "string"
+    },
+    "PreferInlineConf": {
+      "additionalProperties": false,
+      "properties": {
+        "exclude": {
+          "description": "List of file regex patterns to exclude",
+          "items": {
+            "type": "string"
+          },
+          "type": "array"
+        },
+        "reason": {
+          "description": "An explanation for why the rule is enforced, information only",
+          "type": "string"
+        }
+      },
+      "type": "object"
     },
     "PreferReturningToExportingConf": {
       "additionalProperties": false,

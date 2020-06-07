@@ -29,6 +29,8 @@ import {ClassDeferred} from "./statements/class_deferred";
 import {Call} from "./statements/call";
 import {ClassImplementation} from "./statements/class_implementation";
 import {MethodImplementation} from "./statements/method_implementation";
+import {Move} from "./statements/move";
+import {Catch} from "./statements/catch";
 
 import {Data as DataStructure} from "./structures/data";
 import {TypeEnum} from "./structures/type_enum";
@@ -137,9 +139,11 @@ export class SyntaxLogic {
   }
 
   private traverse(node: INode): void {
-    const issueMessage = this.helpers.inline.update(node, this.currentFile.getFilename());
-    if (issueMessage) {
-      this.newIssue(node.getFirstToken(), issueMessage);
+    if (node instanceof StatementNode) {
+      const issueMessage = this.helpers.inline.update(node, this.currentFile.getFilename());
+      if (issueMessage) {
+        this.newIssue(node.getFirstToken(), issueMessage);
+      }
     }
 
     for (const child of node.getChildren()) {
@@ -233,6 +237,10 @@ export class SyntaxLogic {
       new ClassImplementation().runSyntax(node, this.scope, filename);
     } else if (s instanceof Statements.Method) {
       new MethodImplementation().runSyntax(node, this.scope, filename);
+    } else if (node.get() instanceof Statements.Move) {
+      new Move().runSyntax(node, this.scope, filename);
+    } else if (node.get() instanceof Statements.Catch) {
+      new Catch().runSyntax(node, this.scope, filename);
 
     } else if (s instanceof Statements.Form) {
       this.helpers.proc.findFormScope(node, filename);

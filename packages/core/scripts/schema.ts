@@ -64,6 +64,7 @@ import {NoPublicAttributesConf} from "../src/rules/no_public_attributes";
 import {ObjectNamingConf} from "../src/rules/object_naming";
 import {ObsoleteStatementConf} from "../src/rules/obsolete_statement";
 import {ParserErrorConf} from "../src/rules/parser_error";
+import {PreferInlineConf} from "../src/rules/prefer_inline";
 import {PreferReturningToExportingConf} from "../src/rules/prefer_returning_to_exporting";
 import {PreferredCompareOperatorConf} from "../src/rules/preferred_compare_operator";
 import {PrefixIsCurrentClassConf} from "../src/rules/prefix_is_current_class";
@@ -163,6 +164,7 @@ export interface IConfig {
     "object_naming"?: ObjectNamingConf | boolean,
     "obsolete_statement"?: ObsoleteStatementConf | boolean,
     "parser_error"?: ParserErrorConf | boolean,
+    "prefer_inline"?: PreferInlineConf | boolean,
     "prefer_returning_to_exporting"?: PreferReturningToExportingConf | boolean,
     "preferred_compare_operator"?: PreferredCompareOperatorConf | boolean,
     "prefix_is_current_class"?: PrefixIsCurrentClassConf | boolean,

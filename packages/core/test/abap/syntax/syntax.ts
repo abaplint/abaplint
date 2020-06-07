@@ -94,10 +94,12 @@ describe("Check Variables", () => {
     expect(issues.length).to.equals(0);
   });
 
-  it("program, call method of global class", () => {
-    const abap = "DATA field TYPE i.\nfield = zcl_global_class=>method( ).";
+  it("program, call method of global class, class not found", () => {
+    const abap = `
+DATA field TYPE i.
+field = zcl_global_class=>method( ).`;
     const issues = runProgram(abap);
-    expect(issues.length).to.equals(0);
+    expect(issues.length).to.equals(1);
   });
 
   it("program, SPLIT", () => {
@@ -334,12 +336,11 @@ describe("Check Variables", () => {
     expect(issues.length).to.equals(0);
   });
 
-  it("program, component after call 1", () => {
-// todo, this code is not syntactically correct
+  it("program, component after call 1, expect error", () => {
     const abap = "DATA field TYPE string.\n" +
       "field = get_something( )-date.\n";
     const issues = runProgram(abap);
-    expect(issues.length).to.equals(0);
+    expect(issues.length).to.equals(1);
   });
 
   it("program, definition in FOR expression", () => {
@@ -866,10 +867,12 @@ ENDCLASS.
   });
 
   it("FILTER", () => {
-    const abap = "DATA cells TYPE c.\n" +
-      "DATA(result) = lines( FILTER #(\n" +
-      "  cells USING KEY key_alive\n" +
-      "  WHERE alive = abap_true ) ).\n";
+    const abap = `
+TYPES: BEGIN OF ty_bar,
+         alive TYPE abap_bool,
+       END OF ty_bar.
+DATA cells TYPE STANDARD TABLE OF ty_bar WITH NON-UNIQUE SORTED KEY key_alive COMPONENTS alive.
+DATA(result) = lines( FILTER #( cells USING KEY key_alive WHERE alive = abap_true ) ).`;
     const issues = runProgram(abap);
     expect(issues.length).to.equals(0);
   });
@@ -979,10 +982,10 @@ ENDCLASS.
   });
 
   it("REDUCE with INIT", () => {
-    const abap = "DATA it_result TYPE c.\n" +
-      "DATA(output) = REDUCE string( INIT result = ||\n" +
-      "  FOR <result> IN it_result\n" +
-      "  NEXT result = result && 'abc' ).";
+    const abap = `DATA it_result TYPE c.
+      DATA(output) = REDUCE string( INIT result = ||
+        FOR <result> IN it_result
+        NEXT result = result && 'abc' ).`;
     const issues = runProgram(abap);
     expect(issues.length).to.equals(0);
   });
@@ -1584,6 +1587,121 @@ CLASS lcl_bar IMPLEMENTATION.
   METHOD run.
     DATA ls_foo TYPE sdfsdfdfsfdsfsd.
     ls_foo-not_found->rm( ).
+  ENDMETHOD.
+ENDCLASS.`;
+    const issues = runProgram(abap);
+    expect(issues.length).to.equals(0);
+  });
+
+  it("NEW starts chain", () => {
+    const abap = `
+CLASS lcl_bar DEFINITION.
+  PUBLIC SECTION.
+    METHODS:
+      run.
+ENDCLASS.
+CLASS lcl_bar IMPLEMENTATION.
+  METHOD run.
+  ENDMETHOD.
+ENDCLASS.
+
+START-OF-SELECTION.
+  NEW lcl_bar( )->run( ).`;
+    const issues = runProgram(abap);
+    expect(issues.length).to.equals(0);
+  });
+
+  it("Voided class should not give error", () => {
+    const abap = `NEW cl_foobar( )->run( ).`;
+    const issues = runProgram(abap);
+    expect(issues.length).to.equals(0);
+  });
+
+  it("Voided class should not give error, 2", () => {
+    const abap = `DATA(lo_instance) = cl_oo_factory=>create_instance( ).`;
+    const issues = runProgram(abap);
+    expect(issues.length).to.equals(0);
+  });
+
+  it("built-in lines( )", () => {
+    const abap = `
+DATA lt_bar TYPE STANDARD TABLE OF string.
+DATA(result) = lines( lt_bar ).`;
+    const issues = runProgram(abap);
+    expect(issues.length).to.equals(0);
+  });
+
+  it("built-in to_upper", () => {
+    const abap = `
+DATA(result) = to_upper( |bar| ).`;
+    const issues = runProgram(abap);
+    expect(issues.length).to.equals(0);
+  });
+
+  it("built-in to_lower", () => {
+    const abap = `
+DATA(result) = to_lower( |bar| ).`;
+    const issues = runProgram(abap);
+    expect(issues.length).to.equals(0);
+  });
+
+  it("infer type via NEW", () => {
+    const abap = `
+  CLASS lcl_bar DEFINITION.
+  ENDCLASS.
+  CLASS lcl_bar IMPLEMENTATION.
+  ENDCLASS.
+  DATA mo_moo TYPE REF TO lcl_bar.
+  mo_moo = NEW #( ).`;
+    const issues = runProgram(abap);
+    expect(issues.length).to.equals(0);
+  });
+
+  it("attribute from super class", () => {
+    const abap = `
+CLASS lcl_foo DEFINITION.
+  PUBLIC SECTION.
+    DATA: int TYPE i.
+ENDCLASS.
+CLASS lcl_foo IMPLEMENTATION.
+ENDCLASS.
+CLASS lcl_bar DEFINITION INHERITING FROM lcl_foo.
+ENDCLASS.
+CLASS lcl_bar IMPLEMENTATION.
+ENDCLASS.
+DATA mo_moo TYPE REF TO lcl_bar.
+DATA(target) = mo_moo->int.
+`;
+    const issues = runProgram(abap);
+    expect(issues.length).to.equals(0);
+  });
+
+  it("attribute from super class 2", () => {
+    const abap = `
+CLASS lcl_abapgit_xml DEFINITION.
+  PUBLIC SECTION.
+    DATA: mi_ixml TYPE REF TO lcl_abapgit_xml.
+    METHODS run RETURNING VALUE(ref) TYPE REF TO lcl_abapgit_xml.
+ENDCLASS.
+CLASS lcl_abapgit_xml IMPLEMENTATION.
+  METHOD run.
+  ENDMETHOD.
+ENDCLASS.
+
+CLASS ltcl_xml_concrete DEFINITION INHERITING FROM lcl_abapgit_xml.
+ENDCLASS.
+CLASS ltcl_xml_concrete IMPLEMENTATION.
+ENDCLASS.
+
+CLASS ltcl_test DEFINITION.
+  PRIVATE SECTION.
+    METHODS run.
+    DATA: mo_xml TYPE REF TO ltcl_xml_concrete.
+ENDCLASS.
+CLASS ltcl_test IMPLEMENTATION.
+  METHOD run.
+    DATA li_bar TYPE REF TO lcl_abapgit_xml.
+    li_bar = mo_xml->mi_ixml->run( ).
   ENDMETHOD.
 ENDCLASS.`;
     const issues = runProgram(abap);

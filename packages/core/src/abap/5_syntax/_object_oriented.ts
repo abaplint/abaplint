@@ -7,6 +7,8 @@ import {IMethodDefinition} from "../types/_method_definition";
 import {IInterfaceDefinition} from "../types/_interface_definition";
 import {ClassAttribute} from "../types/class_attribute";
 
+// todo, think some of the public methods can be made private
+
 export class ObjectOriented {
   private readonly scope: CurrentScope;
 
@@ -109,6 +111,11 @@ export class ObjectOriented {
       }
     }
 
+    const sup = def.getSuperClass();
+    if (sup) {
+      return this.searchAttributeName(this.findSuperDefinition(sup), name);
+    }
+
     return undefined;
   }
 
@@ -136,8 +143,9 @@ export class ObjectOriented {
       methodDefinition = this.findMethodViaAlias(name, def);
     }
 
-    if (methodDefinition === undefined) {
-      methodDefinition = this.findMethodInSuper(def, name);
+    const sup = def.getSuperClass();
+    if (methodDefinition === undefined && sup) {
+      methodDefinition = this.searchMethodName(this.findSuperDefinition(sup), name);
     }
 
     return methodDefinition;
