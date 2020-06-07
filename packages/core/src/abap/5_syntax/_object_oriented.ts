@@ -109,6 +109,11 @@ export class ObjectOriented {
       }
     }
 
+    const sup = def.getSuperClass();
+    if (sup) {
+      return this.searchAttributeName(this.findSuperDefinition(sup), name);
+    }
+
     return undefined;
   }
 

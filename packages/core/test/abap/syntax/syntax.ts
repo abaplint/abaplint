@@ -1657,6 +1657,57 @@ DATA(result) = to_lower( |bar| ).`;
     expect(issues.length).to.equals(0);
   });
 
+  it("attribute from super class", () => {
+    const abap = `
+CLASS lcl_foo DEFINITION.
+  PUBLIC SECTION.
+    DATA: int TYPE i.
+ENDCLASS.
+CLASS lcl_foo IMPLEMENTATION.
+ENDCLASS.
+CLASS lcl_bar DEFINITION INHERITING FROM lcl_foo.
+ENDCLASS.
+CLASS lcl_bar IMPLEMENTATION.
+ENDCLASS.
+DATA mo_moo TYPE REF TO lcl_bar.
+DATA(target) = mo_moo->int.
+`;
+    const issues = runProgram(abap);
+    expect(issues.length).to.equals(0);
+  });
+
+  it("attribute from super class 2", () => {
+    const abap = `
+CLASS lcl_abapgit_xml DEFINITION.
+  PUBLIC SECTION.
+    DATA: mi_ixml TYPE REF TO lcl_abapgit_xml.
+    METHODS run RETURNING VALUE(ref) TYPE REF TO lcl_abapgit_xml.
+ENDCLASS.
+CLASS lcl_abapgit_xml IMPLEMENTATION.
+  METHOD run.
+  ENDMETHOD.
+ENDCLASS.
+
+CLASS ltcl_xml_concrete DEFINITION INHERITING FROM lcl_abapgit_xml.
+ENDCLASS.
+CLASS ltcl_xml_concrete IMPLEMENTATION.
+ENDCLASS.
+
+CLASS ltcl_test DEFINITION.
+  PRIVATE SECTION.
+    METHODS run.
+    DATA: mo_xml TYPE REF TO ltcl_xml_concrete.
+ENDCLASS.
+CLASS ltcl_test IMPLEMENTATION.
+  METHOD run.
+    DATA li_bar TYPE REF TO lcl_abapgit_xml.
+    li_bar = mo_xml->mi_ixml->run( ).
+  ENDMETHOD.
+ENDCLASS.`;
+    const issues = runProgram(abap);
+    expect(issues.length).to.equals(0);
+  });
+
   /*
 `INTERFACE lif_bar.
   CONSTANTS moo TYPE i VALUE 1.
