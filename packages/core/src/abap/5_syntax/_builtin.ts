@@ -10,7 +10,6 @@ import {Token} from "../1_lexer/tokens/_token";
 import {IMethodParameters} from "../types/_method_parameters";
 
 interface IBuiltinMethod {
-  row: number;
   name: string;
   importing: {name: string, type: AbstractType}[],
   returnType: AbstractType;
@@ -18,10 +17,12 @@ interface IBuiltinMethod {
 
 class BuiltInMethod extends Identifier implements IMethodDefinition, IMethodParameters {
   private readonly method: IBuiltinMethod;
+  private readonly row: number;
 
-  public constructor(token: Token, filename: string, method: IBuiltinMethod) {
+  public constructor(token: Token, filename: string, method: IBuiltinMethod, row: number) {
     super(token, filename);
     this.method = method;
+    this.row = row;
   }
 
   public getAll(): readonly TypedIdentifier[] {
@@ -37,7 +38,7 @@ class BuiltInMethod extends Identifier implements IMethodDefinition, IMethodPara
     return [];
   }
   public getReturning(): TypedIdentifier | undefined {
-    const id = new TokenIdentifier(new Position(this.method.row, 1), "ret");
+    const id = new TokenIdentifier(new Position(this.row, 1), "ret");
     return new TypedIdentifier(id, BuiltIn.filename, this.method.returnType);
   }
   public getExceptions(): readonly string[] {
@@ -67,9 +68,9 @@ export class BuiltIn {
   public static readonly filename = "_builtin.prog.abap";
   private row = 1;
 
-  private buildDefinition(method: IBuiltinMethod): IMethodDefinition {
-    const token = new TokenIdentifier(new Position(method.row, 1), method.name);
-    return new BuiltInMethod(token, BuiltIn.filename, method);
+  private buildDefinition(method: IBuiltinMethod, row: number): IMethodDefinition {
+    const token = new TokenIdentifier(new Position(row, 1), method.name);
+    return new BuiltInMethod(token, BuiltIn.filename, method, row);
   }
 
   public searchBuiltin(name: string | undefined): IMethodDefinition | undefined {
@@ -79,29 +80,35 @@ export class BuiltIn {
 
     const ret: IBuiltinMethod[] = [];
 
-    ret.push({row: 1, name: "CONCAT_LINES_OF", importing: [], returnType: new StringType()});
-    ret.push({row: 2, name: "CONDENSE", importing: [], returnType: new StringType()});
-    ret.push({row: 3, name: "ESCAPE", importing: [], returnType: new StringType()});
-    ret.push({row: 4, name: "FIND", importing: [], returnType: new StringType()});
-    ret.push({row: 5, name: "LINES", importing: [], returnType: new IntegerType()});
-    ret.push({row: 6, name: "REPEAT", importing: [], returnType: new StringType()});
-    ret.push({row: 7, name: "REPLACE", importing: [], returnType: new StringType()});
-    ret.push({row: 8, name: "REVERSE", importing: [], returnType: new StringType()});
-    ret.push({row: 9, name: "STRLEN", importing: [], returnType: new IntegerType()});
-    ret.push({row: 10, name: "SUBSTRING_AFTER", importing: [], returnType: new StringType()});
-    ret.push({row: 11, name: "SUBSTRING_BEFORE", importing: [], returnType: new StringType()});
-    ret.push({row: 12, name: "SUBSTRING", importing: [], returnType: new StringType()});
-    ret.push({row: 13, name: "TO_LOWER", importing: [], returnType: new StringType()});
-    ret.push({row: 14, name: "TO_UPPER", importing: [], returnType: new StringType()});
-    ret.push({row: 15, name: "TRANSLATE", importing: [], returnType: new StringType()});
-    ret.push({row: 16, name: "XSTRLEN", importing: [], returnType: new IntegerType()});
+    // todo, some of these are version specific
+    ret.push({name: "BOOLC", importing: [], returnType: new CharacterType(1)});
+    ret.push({name: "CONCAT_LINES_OF", importing: [], returnType: new StringType()});
+    ret.push({name: "CONDENSE", importing: [], returnType: new StringType()});
+    ret.push({name: "CONTAINS", importing: [], returnType: new CharacterType(1)});
+    ret.push({name: "ESCAPE", importing: [], returnType: new StringType()});
+    ret.push({name: "FIND", importing: [], returnType: new StringType()});
+    ret.push({name: "LINES", importing: [], returnType: new IntegerType()});
+    ret.push({name: "REPEAT", importing: [], returnType: new StringType()});
+    ret.push({name: "REPLACE", importing: [], returnType: new StringType()});
+    ret.push({name: "REVERSE", importing: [], returnType: new StringType()});
+    ret.push({name: "SHIFT_LEFT", importing: [], returnType: new StringType()});
+    ret.push({name: "SHIFT_RIGHT", importing: [], returnType: new StringType()});
+    ret.push({name: "STRLEN", importing: [], returnType: new IntegerType()});
+    ret.push({name: "SUBSTRING_AFTER", importing: [], returnType: new StringType()});
+    ret.push({name: "SUBSTRING_BEFORE", importing: [], returnType: new StringType()});
+    ret.push({name: "SUBSTRING", importing: [], returnType: new StringType()});
+    ret.push({name: "TO_LOWER", importing: [], returnType: new StringType()});
+    ret.push({name: "TO_UPPER", importing: [], returnType: new StringType()});
+    ret.push({name: "TRANSLATE", importing: [], returnType: new StringType()});
+    ret.push({name: "XSDBOOL", importing: [], returnType: new CharacterType(1)});
+    ret.push({name: "XSTRLEN", importing: [], returnType: new IntegerType()});
 
-    const found = ret.find(a => a.name === name.toUpperCase());
-    if (found === undefined) {
+    const index = ret.findIndex(a => a.name === name.toUpperCase());
+    if (index < 0) {
       return undefined;
     }
 
-    return this.buildDefinition(found);
+    return this.buildDefinition(ret[index], index);
   }
 
   public getTypes(): TypedIdentifier[] {

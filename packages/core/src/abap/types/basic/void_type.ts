@@ -1,6 +1,7 @@
 import {AbstractType} from "./_abstract_type";
 
 export class VoidType implements AbstractType {
+  // this contains the name of the type that was the original reason for the void
   private readonly voided: string | undefined;
 
   public constructor(voided: string | undefined) {

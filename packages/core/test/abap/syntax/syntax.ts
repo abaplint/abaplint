@@ -1720,7 +1720,7 @@ START-OF-SELECTION.
     expect(issues.length).to.equals(0);
   });
 
-  it.skip("Inline DATA in voided call", () => {
+  it("Inline DATA in voided call", () => {
     const abap = `
   DATA lt_list TYPE STANDARD TABLE OF string.
   cl_salv_table=>factory(
@@ -1730,7 +1730,25 @@ START-OF-SELECTION.
       t_table      = lt_list ).
   lo_alv->get_functions( )->set_all( ).`;
     const issues = runProgram(abap);
-    console.dir(issues);
+    expect(issues.length).to.equals(0);
+  });
+
+  it("method EXPORTING", () => {
+    const abap = `
+CLASS lcl_exporting DEFINITION.
+  PUBLIC SECTION.
+    CLASS-METHODS: run
+      EXPORTING ev_bar TYPE i.
+ENDCLASS.
+CLASS lcl_exporting IMPLEMENTATION.
+  METHOD run.
+  ENDMETHOD.
+ENDCLASS.
+
+START-OF-SELECTION.
+  DATA int TYPE i.
+  lcl_exporting=>run( IMPORTING ev_bar = int ).`;
+    const issues = runProgram(abap);
     expect(issues.length).to.equals(0);
   });
 
