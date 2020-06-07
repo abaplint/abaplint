@@ -35,11 +35,11 @@ export class MethodCallChain {
       if (current === undefined) {
         break;
       }
-      if (context instanceof VoidType) {
-        continue;
-      }
 
-      if (current instanceof ExpressionNode && current.get() instanceof Expressions.MethodCall) {
+      if (current instanceof ExpressionNode && current.get() instanceof Expressions.MethodCall && context instanceof VoidType) {
+//        const param = current.findDirectExpression(Expressions.MethodParameters);
+//        console.dir("void");
+      } else if (current instanceof ExpressionNode && current.get() instanceof Expressions.MethodCall) {
         // for built-in methods set className to undefined
         const className = context instanceof ObjectReferenceType ? context.getName() : undefined;
         const methodName = current.findDirectExpression(Expressions.MethodName)?.getFirstToken().getStr();

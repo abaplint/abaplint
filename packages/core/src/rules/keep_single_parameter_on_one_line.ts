@@ -46,13 +46,15 @@ export class KeepSingleParameterCallsOnOneLine extends ABAPRule {
           || this.containsNewlineTemplate(s)) {
         continue;
       }
-      for (const c of s.findAllExpressions(Expressions.MethodCall)) {
+      for (const c of s.findAllExpressions(Expressions.MethodCallParam)) {
         issues = issues.concat(this.check(c, file));
       }
     }
 
     return issues;
   }
+
+///////////////////////////////////////
 
   private containsNewlineTemplate(s: StatementNode): boolean {
     for (const st of s.findAllExpressions(Expressions.StringTemplate)) {
@@ -68,7 +70,7 @@ export class KeepSingleParameterCallsOnOneLine extends ABAPRule {
   private check(c: ExpressionNode, file: ABAPFile): Issue[] {
     if (this.isSingleParameter(c) === true && this.isMultiLine(c) === true) {
 
-      for (const sub of c.findAllExpressions(Expressions.MethodCall)) {
+      for (const sub of c.findAllExpressions(Expressions.MethodCallParam)) {
         if (this.isSingleParameter(sub) === false
             && this.isWithoutParameters(sub) === false) {
           return [];
@@ -102,7 +104,7 @@ export class KeepSingleParameterCallsOnOneLine extends ABAPRule {
   }
 
   private isWithoutParameters(c: ExpressionNode): boolean {
-    return c.getChildren().length === 3;
+    return c.getChildren().length === 2;
   }
 
   private isSingleParameter(c: ExpressionNode): boolean {

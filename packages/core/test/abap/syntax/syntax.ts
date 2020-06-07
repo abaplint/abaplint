@@ -1730,6 +1730,7 @@ START-OF-SELECTION.
       t_table      = lt_list ).
   lo_alv->get_functions( )->set_all( ).`;
     const issues = runProgram(abap);
+    console.dir(issues);
     expect(issues.length).to.equals(0);
   });
 
