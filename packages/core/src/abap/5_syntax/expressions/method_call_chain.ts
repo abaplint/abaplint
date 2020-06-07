@@ -2,12 +2,13 @@ import {ExpressionNode} from "../../nodes";
 import {CurrentScope} from "../_current_scope";
 import * as Expressions from "../../2_statements/expressions";
 import {AbstractType} from "../../types/basic/_abstract_type";
-import {VoidType, ObjectReferenceType, IntegerType, StringType} from "../../types/basic";
+import {VoidType, ObjectReferenceType} from "../../types/basic";
 import {FieldChain} from "./field_chain";
 import {INode} from "../../nodes/_inode";
 import {ObjectOriented} from "../_object_oriented";
 import {NewObject} from "./new_object";
 import {Cast} from "./cast";
+import {BuiltIn} from "../_builtin";
 
 export class MethodCallChain {
   public runSyntax(
@@ -43,16 +44,15 @@ export class MethodCallChain {
         const className = context instanceof ObjectReferenceType ? context.getName() : undefined;
         const methodName = current.findDirectExpression(Expressions.MethodName)?.getFirstToken().getStr();
         const method = helper.searchMethodName(scope.findObjectDefinition(className), methodName);
+        if (method === undefined) {
+          const builtin = new BuiltIn().getMethods().find(a => a.name === methodName?.toUpperCase());
+          if (builtin) {
+            context = builtin.returnType;
+            continue;
+          }
+        }
         if (method === undefined && methodName?.toUpperCase() === "CONSTRUCTOR") {
           context = undefined; // todo, this is a workaround, constructors always exists
-        } else if (method === undefined && methodName?.toUpperCase() === "LINES") {
-          context = new IntegerType(); // todo, this is a workaround
-        } else if (method === undefined && methodName?.toUpperCase() === "TO_UPPER") {
-          context = new StringType(); // todo, this is a workaround
-        } else if (method === undefined && methodName?.toUpperCase() === "TO_LOWER") {
-          context = new StringType(); // todo, this is a workaround
-        } else if (method === undefined && methodName?.toUpperCase() === "CONCAT_LINES_OF") {
-          context = new StringType(); // todo, this is a workaround
         } else if (method === undefined) {
           throw new Error("Method \"" + methodName + "\" not found");
         } else {
