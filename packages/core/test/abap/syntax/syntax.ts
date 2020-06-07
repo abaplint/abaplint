@@ -1573,6 +1573,23 @@ ENDCLASS.`;
     expect(issues[0].getMessage()).to.contain("not_found");
   });
 
+  it("no error for void structures", () => {
+    const abap = `
+CLASS lcl_bar DEFINITION.
+  PUBLIC SECTION.
+    METHODS:
+      run.
+ENDCLASS.
+CLASS lcl_bar IMPLEMENTATION.
+  METHOD run.
+    DATA ls_foo TYPE sdfsdfdfsfdsfsd.
+    ls_foo-not_found->rm( ).
+  ENDMETHOD.
+ENDCLASS.`;
+    const issues = runProgram(abap);
+    expect(issues.length).to.equals(0);
+  });
+
   /*
 `INTERFACE lif_bar.
   CONSTANTS moo TYPE i VALUE 1.

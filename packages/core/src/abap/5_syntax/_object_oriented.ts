@@ -5,6 +5,7 @@ import {CurrentScope} from "./_current_scope";
 import {IClassDefinition} from "../types/_class_definition";
 import {IMethodDefinition} from "../types/_method_definition";
 import {IInterfaceDefinition} from "../types/_interface_definition";
+import {ClassAttribute} from "../types/class_attribute";
 
 export class ObjectOriented {
   private readonly scope: CurrentScope;
@@ -91,6 +92,24 @@ export class ObjectOriented {
     }
 
     return ret;
+  }
+
+  // search in via super class, interfaces and aliases
+  public searchAttributeName(
+    def: IClassDefinition | IInterfaceDefinition | undefined,
+    name: string | undefined): ClassAttribute | undefined {
+
+    if (def === undefined || name === undefined) {
+      return undefined;
+    }
+
+    for (const a of def.getAttributes().getAll()) {
+      if (a.getName().toUpperCase() === name.toUpperCase()) {
+        return a;
+      }
+    }
+
+    return undefined;
   }
 
   // search in via super class, interfaces and aliases
