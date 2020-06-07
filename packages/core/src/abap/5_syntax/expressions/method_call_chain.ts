@@ -43,13 +43,9 @@ export class MethodCallChain {
         // for built-in methods set className to undefined
         const className = context instanceof ObjectReferenceType ? context.getName() : undefined;
         const methodName = current.findDirectExpression(Expressions.MethodName)?.getFirstToken().getStr();
-        const method = helper.searchMethodName(scope.findObjectDefinition(className), methodName);
+        let method = helper.searchMethodName(scope.findObjectDefinition(className), methodName);
         if (method === undefined) {
-          const builtin = new BuiltIn().getMethods().find(a => a.name === methodName?.toUpperCase());
-          if (builtin) {
-            context = builtin.returnType;
-            continue;
-          }
+          method = new BuiltIn().searchBuiltin(methodName?.toUpperCase());
         }
         if (method === undefined && methodName?.toUpperCase() === "CONSTRUCTOR") {
           context = undefined; // todo, this is a workaround, constructors always exists

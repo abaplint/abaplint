@@ -1,43 +1,113 @@
 import {TypedIdentifier, IdentifierMeta} from "../types/_typed_identifier";
 import {VoidType, CharacterType, StructureType, IStructureComponent, IntegerType, NumericType, DateType, TimeType, StringType} from "../types/basic";
-import {Identifier} from "../1_lexer/tokens";
+import {Identifier as TokenIdentifier} from "../1_lexer/tokens";
 import {Position} from "../../position";
 import {AbstractType} from "../types/basic/_abstract_type";
+import {IMethodDefinition} from "../types/_method_definition";
+import {Visibility} from "../4_file_information/visibility";
+import {Identifier} from "../4_file_information/_identifier";
+import {Token} from "../1_lexer/tokens/_token";
+import {IMethodParameters} from "../types/_method_parameters";
 
-export interface IBuiltinMethod {
+interface IBuiltinMethod {
+  row: number;
   name: string;
+  importing: {name: string, type: AbstractType}[],
   returnType: AbstractType;
+}
+
+class BuiltInMethod extends Identifier implements IMethodDefinition, IMethodParameters {
+  private readonly method: IBuiltinMethod;
+
+  public constructor(token: Token, filename: string, method: IBuiltinMethod) {
+    super(token, filename);
+    this.method = method;
+  }
+
+  public getAll(): readonly TypedIdentifier[] {
+    throw new Error("BuiltInMethod->getAll, Method not implemented.");
+  }
+  public getImporting(): readonly TypedIdentifier[] {
+    throw new Error("BuiltInMethod->getImporting, Method not implemented.");
+  }
+  public getExporting(): readonly TypedIdentifier[] {
+    return [];
+  }
+  public getChanging(): readonly TypedIdentifier[] {
+    return [];
+  }
+  public getReturning(): TypedIdentifier | undefined {
+    const id = new TokenIdentifier(new Position(this.method.row, 1), "ret");
+    return new TypedIdentifier(id, BuiltIn.filename, this.method.returnType);
+  }
+  public getExceptions(): readonly string[] {
+    return [];
+  }
+  public getVisibility(): Visibility {
+    return Visibility.Public;
+  }
+  public isRedefinition(): boolean {
+    return false;
+  }
+  public isAbstract(): boolean {
+    return false;
+  }
+  public isStatic(): boolean {
+    return false;
+  }
+  public isEventHandler(): boolean {
+    return false;
+  }
+  public getParameters(): IMethodParameters {
+    return this;
+  }
 }
 
 export class BuiltIn {
   public static readonly filename = "_builtin.prog.abap";
   private row = 1;
 
-  public getMethods(): IBuiltinMethod[] {
+  private buildDefinition(method: IBuiltinMethod): IMethodDefinition {
+    const token = new TokenIdentifier(new Position(method.row, 1), method.name);
+    return new BuiltInMethod(token, BuiltIn.filename, method);
+  }
+
+  public searchBuiltin(name: string | undefined): IMethodDefinition | undefined {
+    if (name === undefined) {
+      return undefined;
+    }
+
     const ret: IBuiltinMethod[] = [];
-    ret.push({name: "CONCAT_LINES_OF", returnType: new StringType()});
-    ret.push({name: "CONDENSE", returnType: new StringType()});
-    ret.push({name: "ESCAPE", returnType: new StringType()});
-    ret.push({name: "FIND", returnType: new StringType()});
-    ret.push({name: "LINES", returnType: new IntegerType()});
-    ret.push({name: "REPEAT", returnType: new StringType()});
-    ret.push({name: "REPLACE", returnType: new StringType()});
-    ret.push({name: "REVERSE", returnType: new StringType()});
-    ret.push({name: "STRLEN", returnType: new IntegerType()});
-    ret.push({name: "SUBSTRING_AFTER", returnType: new StringType()});
-    ret.push({name: "SUBSTRING_BEFORE", returnType: new StringType()});
-    ret.push({name: "SUBSTRING", returnType: new StringType()});
-    ret.push({name: "TO_LOWER", returnType: new StringType()});
-    ret.push({name: "TO_UPPER", returnType: new StringType()});
-    ret.push({name: "TRANSLATE", returnType: new StringType()});
-    ret.push({name: "XSTRLEN", returnType: new IntegerType()});
-    return ret;
+
+    ret.push({row: 1, name: "CONCAT_LINES_OF", importing: [], returnType: new StringType()});
+    ret.push({row: 2, name: "CONDENSE", importing: [], returnType: new StringType()});
+    ret.push({row: 3, name: "ESCAPE", importing: [], returnType: new StringType()});
+    ret.push({row: 4, name: "FIND", importing: [], returnType: new StringType()});
+    ret.push({row: 5, name: "LINES", importing: [], returnType: new IntegerType()});
+    ret.push({row: 6, name: "REPEAT", importing: [], returnType: new StringType()});
+    ret.push({row: 7, name: "REPLACE", importing: [], returnType: new StringType()});
+    ret.push({row: 8, name: "REVERSE", importing: [], returnType: new StringType()});
+    ret.push({row: 9, name: "STRLEN", importing: [], returnType: new IntegerType()});
+    ret.push({row: 10, name: "SUBSTRING_AFTER", importing: [], returnType: new StringType()});
+    ret.push({row: 11, name: "SUBSTRING_BEFORE", importing: [], returnType: new StringType()});
+    ret.push({row: 12, name: "SUBSTRING", importing: [], returnType: new StringType()});
+    ret.push({row: 13, name: "TO_LOWER", importing: [], returnType: new StringType()});
+    ret.push({row: 14, name: "TO_UPPER", importing: [], returnType: new StringType()});
+    ret.push({row: 15, name: "TRANSLATE", importing: [], returnType: new StringType()});
+    ret.push({row: 16, name: "XSTRLEN", importing: [], returnType: new IntegerType()});
+
+    const found = ret.find(a => a.name === name.toUpperCase());
+    if (found === undefined) {
+      return undefined;
+    }
+
+    return this.buildDefinition(found);
   }
 
   public getTypes(): TypedIdentifier[] {
     const ret: TypedIdentifier[] = [];
 
-    const id = new Identifier(new Position(1, 1), "abap_bool");
+    const id = new TokenIdentifier(new Position(1, 1), "abap_bool");
     ret.push(new TypedIdentifier(id, BuiltIn.filename, new CharacterType(1)));
 
     ret.push(this.buildSY());
@@ -78,7 +148,7 @@ export class BuiltIn {
     ret.push(this.buildConstant("space"));
 
     for (const e of extras) {
-      const id = new Identifier(new Position(this.row++, 1), e);
+      const id = new TokenIdentifier(new Position(this.row++, 1), e);
       ret.push(new TypedIdentifier(id, BuiltIn.filename, new VoidType(e), [IdentifierMeta.ReadOnly], "'?'"));
     }
 
@@ -109,12 +179,12 @@ export class BuiltIn {
     components.push({name: "msgv4", type: new CharacterType(50)});
     components.push({name: "repid", type: new CharacterType(1)});
     const type = new StructureType(components);
-    const id = new Identifier(new Position(this.row++, 1), "sy");
+    const id = new TokenIdentifier(new Position(this.row++, 1), "sy");
     return new TypedIdentifier(id, BuiltIn.filename, type, [IdentifierMeta.ReadOnly]);
   }
 
   private buildConstant(name: string, type?: AbstractType, value?: string): TypedIdentifier {
-    const id = new Identifier(new Position(this.row++, 1), name);
+    const id = new TokenIdentifier(new Position(this.row++, 1), name);
     if (type === undefined) {
       type = new VoidType(name);
     }
@@ -125,7 +195,7 @@ export class BuiltIn {
   }
 
   private buildVariable(name: string) {
-    const id = new Identifier(new Position(this.row++, 1), name);
+    const id = new TokenIdentifier(new Position(this.row++, 1), name);
     return new TypedIdentifier(id, BuiltIn.filename, new VoidType(name));
   }
 

@@ -1708,14 +1708,30 @@ ENDCLASS.`;
     expect(issues.length).to.equals(0);
   });
 
-  /*
-`INTERFACE lif_bar.
+  it("Constant from interface", () => {
+    const abap = `
+INTERFACE lif_bar.
   CONSTANTS moo TYPE i VALUE 1.
 ENDINTERFACE.
 
 START-OF-SELECTION.
-  WRITE lif_bar=>moo.`
-*/
+  WRITE lif_bar=>moo.`;
+    const issues = runProgram(abap);
+    expect(issues.length).to.equals(0);
+  });
+
+  it.skip("Inline DATA in voided call", () => {
+    const abap = `
+  DATA lt_list TYPE STANDARD TABLE OF string.
+  cl_salv_table=>factory(
+    IMPORTING
+      r_salv_table = DATA(lo_alv)
+    CHANGING
+      t_table      = lt_list ).
+  lo_alv->get_functions( )->set_all( ).`;
+    const issues = runProgram(abap);
+    expect(issues.length).to.equals(0);
+  });
 
 // todo, static method cannot access instance attributes
 // todo, can a private method access protected attributes?
