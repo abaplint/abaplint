@@ -5,9 +5,8 @@ export enum ScopeType {
   ClassImplementation = "class_implementation",
   Dummy = "_dummy",
   Form = "form",
-  Function = "function",
+  FunctionModule = "function",
   Global = "_global",
-  Locals = "locals",
   Method = "method",
   Program = "_program",
 }

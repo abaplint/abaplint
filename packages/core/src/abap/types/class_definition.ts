@@ -14,6 +14,8 @@ import {ScopeType} from "../5_syntax/_scope_type";
 import {EventDefinition} from "./event_definition";
 import {Visibility} from "../4_file_information/visibility";
 import {IEventDefinition} from "./_event_definition";
+import {IMethodDefinitions} from "./_method_definitions";
+import {IAliases} from "./_aliases";
 
 export class ClassDefinition extends Identifier implements IClassDefinition {
   private readonly node: StructureNode;
@@ -54,7 +56,7 @@ export class ClassDefinition extends Identifier implements IClassDefinition {
     return this.events;
   }
 
-  public getMethodDefinitions(): MethodDefinitions {
+  public getMethodDefinitions(): IMethodDefinitions {
     return this.methodDefs;
   }
 
@@ -104,7 +106,7 @@ export class ClassDefinition extends Identifier implements IClassDefinition {
     return ret;
   }
 
-  public getAliases(): Aliases {
+  public getAliases(): IAliases {
     return new Aliases(this.node, this.filename);
   }
 

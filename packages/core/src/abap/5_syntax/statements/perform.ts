@@ -2,9 +2,10 @@ import * as Expressions from "../../2_statements/expressions";
 import * as Statements from "../../2_statements/statements";
 import {StatementNode} from "../../nodes";
 import {CurrentScope} from "../_current_scope";
+import {ReferenceType} from "../_spaghetti_scope";
 
 export class Perform {
-  public runSyntax(node: StatementNode, scope: CurrentScope, _filename: string): void {
+  public runSyntax(node: StatementNode, scope: CurrentScope, filename: string): void {
     if (!(node.get() instanceof Statements.Perform)) {
       throw new Error("checkPerform unexpected node type");
     }
@@ -24,9 +25,13 @@ export class Perform {
 
     const name = expr.getFirstToken().getStr();
 
-// todo, also check parameters match
-    if (scope.findFormDefinition(name) === undefined) {
+    const found = scope.findFormDefinition(name);
+    if (found === undefined) {
       throw new Error("FORM definition \"" + name + "\" not found");
     }
+
+    scope.addReference(expr.getFirstToken(), found, ReferenceType.Form, filename);
+
+    // todo, also check parameters match
   }
 }

@@ -9,14 +9,14 @@ import {VoidType} from "../abap/types/basic/void_type";
 import {ScopeType} from "../abap/5_syntax/_scope_type";
 import {AbstractType} from "../abap/types/basic/_abstract_type";
 import {StructureType} from "../abap/types/basic";
-import {IRuleMetadata} from "./_irule";
+import {IRuleMetadata, IRule} from "./_irule";
 
 export class ForbiddenVoidTypeConf extends BasicRuleConfig {
   /** List of forbideen void types, array of string regex */
   public check: string[] = [];
 }
 
-export class ForbiddenVoidType extends BasicRuleConfig {
+export class ForbiddenVoidType implements IRule {
 
   private conf = new ForbiddenVoidTypeConf();
 

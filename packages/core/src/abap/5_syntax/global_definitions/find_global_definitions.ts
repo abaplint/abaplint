@@ -6,7 +6,6 @@ import * as Structures from "../../3_structures/structures";
 import {Interface} from "../../../objects/interface";
 import {Class} from "../../../objects/class";
 import * as BasicTypes from "../../types/basic";
-import {IMethodDefinition} from "../../types/_method_definition";
 import {AbstractType} from "../../types/basic/_abstract_type";
 
 // this makes sure to cache global interface and class definitions in the corresponding object
@@ -63,12 +62,16 @@ export class FindGlobalDefinitions {
     for (const a of def.getAttributes().getAll()) {
       count = count + this.count(a.getType());
     }
+    /*
     let methods: readonly IMethodDefinition[] = [];
     if (obj instanceof Interface) {
-      methods = obj.getDefinition()!.getMethodDefinitions();
+      methods = obj.getDefinition()!.getMethodDefinitions().getAll();
     } else {
       methods = obj.getDefinition()!.getMethodDefinitions().getAll();
     }
+    */
+    const methods = obj.getDefinition()!.getMethodDefinitions().getAll();
+
     for (const m of methods) {
       for (const p of m.getParameters().getAll()) {
         count = count + this.count(p.getType());

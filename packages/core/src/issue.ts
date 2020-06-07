@@ -85,13 +85,14 @@ export class Issue {
     });
   }
 
-  public static atIdentifier(identifier: Identifier, message: string, key: string) {
+  public static atIdentifier(identifier: Identifier, message: string, key: string, fix?: IEdit) {
     return new Issue({
       filename: identifier.getFilename(),
       message,
       key,
       start: identifier.getStart(),
       end: identifier.getEnd(),
+      fix,
     });
   }
 

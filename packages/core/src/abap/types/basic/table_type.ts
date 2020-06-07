@@ -20,4 +20,8 @@ export class TableType implements AbstractType {
   public isGeneric() {
     return false;
   }
+
+  public containsVoid() {
+    return this.rowType.containsVoid();
+  }
 }

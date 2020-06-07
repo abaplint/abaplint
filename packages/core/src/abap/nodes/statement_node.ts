@@ -73,6 +73,15 @@ export class StatementNode extends AbstractNode {
     return tokens;
   }
 
+  public includesToken(search: Token): boolean {
+    for (const t of this.getTokens()) {
+      if (t.getStart().equals(search.getStart())) {
+        return true;
+      }
+    }
+    return false;
+  }
+
   public getTokenNodes(): readonly TokenNode[] {
     let tokens: TokenNode[] = [];
 

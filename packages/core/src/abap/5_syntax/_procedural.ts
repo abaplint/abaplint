@@ -69,7 +69,7 @@ export class Procedural {
   public findFunctionScope(obj: ABAPObject, node: StatementNode, filename: string) {
     const nameToken = node.findFirstExpression(Expressions.Field)!.getFirstToken();
     const name = nameToken.getStr();
-    this.scope.push(ScopeType.Function, name, node.getFirstToken().getStart(), filename);
+    this.scope.push(ScopeType.FunctionModule, name, node.getFirstToken().getStart(), filename);
 
     const definition = (obj as FunctionGroup).getModule(name);
     if (definition === undefined) {

@@ -8,4 +8,8 @@ export class XSequenceType implements AbstractType {
   public isGeneric() {
     return true;
   }
+
+  public containsVoid() {
+    return false;
+  }
 }
