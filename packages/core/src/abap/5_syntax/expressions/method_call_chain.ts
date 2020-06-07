@@ -54,7 +54,7 @@ export class MethodCallChain {
 
 //////////////////////////////////////
 
-  private findTop(first: INode, scope: CurrentScope): AbstractType {
+  private findTop(first: INode, scope: CurrentScope): AbstractType | undefined {
     if (first.get() instanceof Expressions.ClassName) {
       const className = first.getFirstToken().getStr();
       const classDefinition = scope.findObjectDefinition(className);

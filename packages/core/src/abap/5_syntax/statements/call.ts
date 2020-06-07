@@ -2,6 +2,7 @@ import * as Expressions from "../../2_statements/expressions";
 import {StatementNode} from "../../nodes";
 import {CurrentScope} from "../_current_scope";
 import {MethodCallChain} from "../expressions/method_call_chain";
+import {MethodSource} from "../expressions/method_source";
 
 export class Call {
   public runSyntax(node: StatementNode, scope: CurrentScope, filename: string): void {
@@ -16,6 +17,11 @@ export class Call {
       return;
     }
 
-    throw new Error("todo: CALL METHOD MethodSource MethodCallBody");
+    const methodSource = node.findDirectExpression(Expressions.MethodSource);
+    if (methodSource === undefined) {
+      throw new Error("Call, child MethodSource not found");
+    }
+    new MethodSource().runSyntax(methodSource, scope, filename);
+
   }
 }

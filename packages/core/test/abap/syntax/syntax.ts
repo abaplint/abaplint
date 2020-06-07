@@ -1502,6 +1502,77 @@ ENDCLASS.`;
     expect(issues.length).to.equals(0);
   });
 
+  it("constructor via CALL METHOD, typical for exception classes", () => {
+    const abap = `
+CLASS lcl_super DEFINITION.
+ENDCLASS.
+CLASS lcl_super IMPLEMENTATION.
+ENDCLASS.
+CLASS lcl_bar DEFINITION INHERITING FROM lcl_super .
+  PUBLIC SECTION.
+    METHODS:
+      constructor.
+ENDCLASS.
+CLASS lcl_bar IMPLEMENTATION.
+  METHOD constructor.
+    CALL METHOD SUPER->CONSTRUCTOR.
+  ENDMETHOD.
+ENDCLASS.`;
+    const issues = runProgram(abap);
+    expect(issues.length).to.equals(0);
+  });
+
+  it("chained call, ls_foo-stage->rm( )", () => {
+    const abap = `
+CLASS lcl_foo DEFINITION.
+  PUBLIC SECTION.
+    METHODS: rm.
+ENDCLASS.
+CLASS lcl_foo IMPLEMENTATION.
+  METHOD rm.
+  ENDMETHOD.
+ENDCLASS.
+CLASS lcl_bar DEFINITION.
+  PUBLIC SECTION.
+    METHODS:
+      run.
+ENDCLASS.
+CLASS lcl_bar IMPLEMENTATION.
+  METHOD run.
+    TYPES: BEGIN OF ty_foo,
+             stage TYPE REF TO lcl_foo,
+           END OF ty_foo.
+    DATA ls_foo TYPE ty_foo.
+
+    ls_foo-stage->rm( ).
+  ENDMETHOD.
+ENDCLASS.`;
+    const issues = runProgram(abap);
+    expect(issues.length).to.equals(0);
+  });
+
+  it("chained call, component not found", () => {
+    const abap = `
+CLASS lcl_bar DEFINITION.
+  PUBLIC SECTION.
+    METHODS:
+      run.
+ENDCLASS.
+CLASS lcl_bar IMPLEMENTATION.
+  METHOD run.
+    TYPES: BEGIN OF ty_foo,
+             stage TYPE i,
+           END OF ty_foo.
+    DATA ls_foo TYPE ty_foo.
+
+    ls_foo-not_found->rm( ).
+  ENDMETHOD.
+ENDCLASS.`;
+    const issues = runProgram(abap);
+    expect(issues.length).to.equals(1);
+    expect(issues[0].getMessage()).to.contain("not_found");
+  });
+
   /*
 `INTERFACE lif_bar.
   CONSTANTS moo TYPE i VALUE 1.
