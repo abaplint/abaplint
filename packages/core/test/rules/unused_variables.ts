@@ -3,6 +3,11 @@ import {UnusedVariables} from "../../src/rules";
 import {Registry} from "../../src/registry";
 import {MemoryFile} from "../../src/files/memory_file";
 import {Issue} from "../../src/issue";
+import {testRuleFixSingle} from "./_utils";
+
+function testFix(input: string, expected: string) {
+  testRuleFixSingle(input, expected, new UnusedVariables());
+}
 
 function runSingle(abap: string): Issue[] {
   const reg = new Registry().addFile(new MemoryFile("zfoo.prog.abap", abap)).parse();
@@ -69,6 +74,30 @@ CLASS lcl_abapgit_zlib_stream IMPLEMENTATION.
   ENDMETHOD.
 ENDCLASS.`;
     expect(runSingle(abap).length).to.equal(0);
+  });
+
+  it("test, quickfix simple", async () => {
+    testFix("DATA foo.", "");
+  });
+
+  it("test, quickfix with TYPE", async () => {
+    testFix("DATA foo TYPE i.", "");
+  });
+
+  it.skip("test, quickfix, chained first", async () => {
+    testFix(`DATA: foo, bar.
+WRITE bar.`, `DATA: bar.
+WRITE bar.`);
+  });
+
+  it.skip("test, quickfix, chained last", async () => {
+    testFix(`DATA: bar, foo.
+WRITE bar.`, `DATA: bar.
+WRITE bar.`);
+  });
+
+  it.skip("test, quickfix, only one fix per scope per time", async () => {
+    testFix(`DATA: foo, bar.`, `DATA: bar.`);
   });
 
 });

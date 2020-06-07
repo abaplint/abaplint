@@ -49,6 +49,15 @@ export abstract class ABAPObject extends AbstractObject {
     return this.parsed;
   }
 
+  public getABAPFileByName(filename: string): ABAPFile | undefined {
+    for (const p of this.parsed) {
+      if (p.getFilename() === filename) {
+        return p;
+      }
+    }
+    return undefined;
+  }
+
   public getMainABAPFile(): ABAPFile | undefined {
     const search = this.getName().replace(/\//g, "#").toLowerCase() + "." + this.getType().toLowerCase() + ".abap";
     for (const file of this.getABAPFiles()) {

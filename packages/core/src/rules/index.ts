@@ -63,6 +63,7 @@ export * from "./no_public_attributes";
 export * from "./object_naming";
 export * from "./obsolete_statement";
 export * from "./parser_error";
+export * from "./prefer_inline";
 export * from "./prefer_returning_to_exporting";
 export * from "./preferred_compare_operator";
 export * from "./prefix_is_current_class";

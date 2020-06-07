@@ -16,6 +16,10 @@ export class DataReference implements AbstractType {
   }
 
   public isGeneric() {
-    return false;
+    return this.type.isGeneric();
+  }
+
+  public containsVoid() {
+    return this.type.containsVoid();
   }
 }

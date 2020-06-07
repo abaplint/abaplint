@@ -819,6 +819,7 @@ ENDCLASS.`;
     expect(identifier).to.not.equal(undefined);
     const type = identifier?.getType();
     expect(type).to.be.instanceof(Basic.ObjectReferenceType);
+    expect(type?.isGeneric()).to.equal(true);
   });
 
   it("DATA foo TYPE REF TO data.", () => {
@@ -828,6 +829,7 @@ ENDCLASS.`;
     expect(identifier).to.not.equal(undefined);
     const type = identifier?.getType();
     expect(type).to.be.instanceof(Basic.DataReference);
+    expect(type?.isGeneric()).to.equal(true);
   });
 
   it("sy-datum", () => {

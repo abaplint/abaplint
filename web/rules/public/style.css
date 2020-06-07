@@ -33,8 +33,8 @@ a:visited {
   text-decoration: none;
   justify-content: center;
   color: #333;
-  cursor: pointer;
 }
+
 .chip-head{
   display: flex;
   position: relative;

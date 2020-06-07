@@ -334,7 +334,7 @@ describe("Check Variables", () => {
     expect(issues.length).to.equals(0);
   });
 
-  it("program, component after call", () => {
+  it("program, component after call 1", () => {
 // todo, this code is not syntactically correct
     const abap = "DATA field TYPE string.\n" +
       "field = get_something( )-date.\n";
@@ -380,9 +380,19 @@ describe("Check Variables", () => {
     expect(issues.length).to.equals(0);
   });
 
-  it("program, component after call", () => {
-    // todo, this code is not syntactically correct
-    const abap = "run( zcl_global_class=>field ).\n";
+  it("program, component after call 2", () => {
+    const abap = `
+CLASS lcl_bar DEFINITION.
+  PUBLIC SECTION.
+    METHODS: run IMPORTING foo TYPE i.
+    CLASS-DATA: field TYPE i.
+ENDCLASS.
+CLASS lcl_bar IMPLEMENTATION.
+  METHOD run.
+    run( lcl_bar=>field ).
+  ENDMETHOD.
+ENDCLASS.
+    `;
     const issues = runProgram(abap);
     expect(issues.length).to.equals(0);
   });
@@ -586,19 +596,19 @@ describe("Check Variables", () => {
   });
 
   it("class, me, method call", () => {
-    const abap =
-      "CLASS zcl_foobar DEFINITION PUBLIC FINAL CREATE PUBLIC.\n" +
-      "  PRIVATE SECTION.\n" +
-      "    METHODS hello.\n" +
-      "    METHODS world.\n" +
-      "ENDCLASS.\n" +
-      "CLASS zcl_foobar IMPLEMENTATION.\n" +
-      "  METHOD hello.\n" +
-      "    me->world( ).\n" +
-      "  ENDMETHOD.\n" +
-      "  METHOD world.\n" +
-      "  ENDMETHOD.\n" +
-      "ENDCLASS.";
+    const abap = `
+      CLASS zcl_foobar DEFINITION PUBLIC FINAL CREATE PUBLIC.
+        PRIVATE SECTION.
+          METHODS hello.
+          METHODS world.
+      ENDCLASS.
+      CLASS zcl_foobar IMPLEMENTATION.
+        METHOD hello.
+          me->world( ).
+        ENDMETHOD.
+        METHOD world.
+        ENDMETHOD.
+      ENDCLASS.`;
     const issues = runClass(abap);
     expect(issues.length).to.equals(0);
   });
@@ -1244,7 +1254,7 @@ describe("Check Variables", () => {
     expect(issues.length).to.equals(0);
   });
 
-  it("CALL METHOD, static class and method", () => {
+  it.skip("CALL METHOD, static class and method", () => {
 // todo, actually cl_foo is unknown
     const abap = `CALL METHOD cl_foo=>bar( ).`;
     const issues = runProgram(abap);
@@ -1309,6 +1319,285 @@ ENDCLASS.`;
     const issues = runProgram(abap);
     expect(issues.length).to.equals(0);
   });
+
+  it("static class not found", () => {
+    const abap = `zcl_bar=>method( ).`;
+    const issues = runProgram(abap);
+    expect(issues.length).to.equals(1);
+    expect(issues[0].getMessage()).to.include("zcl_bar");
+  });
+
+  it("static method not found", () => {
+    const abap = `
+    CLASS lcl_bar DEFINITION.
+    ENDCLASS.
+    CLASS lcl_bar IMPLEMENTATION.
+    ENDCLASS.
+    lcl_bar=>moo( ).`;
+    const issues = runProgram(abap);
+    expect(issues.length).to.equals(1);
+    expect(issues[0].getMessage()).to.include("moo");
+  });
+
+  it("static method found", () => {
+    const abap = `
+    CLASS lcl_bar DEFINITION.
+      PUBLIC SECTION.
+        CLASS-METHODS: moo.
+    ENDCLASS.
+    CLASS lcl_bar IMPLEMENTATION.
+      METHOD moo.
+      ENDMETHOD.
+    ENDCLASS.
+    lcl_bar=>moo( ).`;
+    const issues = runProgram(abap);
+    expect(issues.length).to.equals(0);
+  });
+
+  it("voided class should not give error", () => {
+    const abap = `
+  cl_foobar=>moo(
+    act = 123
+    exp = '3344' ).`;
+    const issues = runProgram(abap);
+    expect(issues.length).to.equals(0);
+  });
+
+  it("call instance method", () => {
+    const abap = `
+CLASS zcl_foobar DEFINITION.
+  PUBLIC SECTION.
+    METHODS hello.
+ENDCLASS.
+CLASS zcl_foobar IMPLEMENTATION.
+  METHOD hello.
+  ENDMETHOD.
+ENDCLASS.
+
+START-OF-SELECTION.
+  DATA foo TYPE REF TO zcl_foobar.
+  CREATE OBJECT foo.
+  foo->hello( ).`;
+    const issues = runProgram(abap);
+    expect(issues.length).to.equals(0);
+  });
+
+  it("longer chain, ref to itself", () => {
+    const abap = `
+CLASS lcl_bar DEFINITION.
+  PUBLIC SECTION.
+    CLASS-METHODS: get_gui RETURNING VALUE(sdf) TYPE REF TO lcl_bar.
+    METHODS: go_home.
+ENDCLASS.
+CLASS lcl_bar IMPLEMENTATION.
+  METHOD get_gui.
+  ENDMETHOD.
+  METHOD go_home.
+  ENDMETHOD.
+ENDCLASS.
+
+START-OF-SELECTION.
+  lcl_bar=>get_gui( )->go_home( ).`;
+    const issues = runProgram(abap);
+    expect(issues.length).to.equals(0);
+  });
+
+  it("longer chain, with interface", () => {
+    const abap = `
+  INTERFACE lif_foo.
+    METHODS go_home.
+  ENDINTERFACE.
+  CLASS lcl_bar DEFINITION.
+    PUBLIC SECTION.
+      CLASS-METHODS: get_gui RETURNING VALUE(sdf) TYPE REF TO lif_foo.
+  ENDCLASS.
+  CLASS lcl_bar IMPLEMENTATION.
+    METHOD get_gui.
+    ENDMETHOD.
+  ENDCLASS.
+
+  START-OF-SELECTION.
+    lcl_bar=>get_gui( )->go_home( ).`;
+    const issues = runProgram(abap);
+    expect(issues.length).to.equals(0);
+  });
+
+  it("call method from super class", () => {
+    const abap = `
+CLASS lcl_foo DEFINITION.
+  PUBLIC SECTION.
+    METHODS: name.
+ENDCLASS.
+CLASS lcl_foo IMPLEMENTATION.
+  METHOD name.
+  ENDMETHOD.
+ENDCLASS.
+CLASS lcl_bar DEFINITION INHERITING FROM lcl_foo.
+ENDCLASS.
+CLASS lcl_bar IMPLEMENTATION.
+ENDCLASS.
+START-OF-SELECTION.
+  DATA bar TYPE REF TO lcl_bar.
+  bar->name( ).`;
+    const issues = runProgram(abap);
+    expect(issues.length).to.equals(0);
+  });
+
+  it("no errors from dynamic", () => {
+    const abap = `
+  DATA rv_result TYPE i.
+  CALL METHOD ('CL_APJ_SCP_TOOLS')=>('IS_RESTART_REQUIRED')
+    RECEIVING
+      restart_required = rv_result.`;
+    const issues = runProgram(abap);
+    expect(issues.length).to.equals(0);
+  });
+
+  it("no errors from dynamic", () => {
+    const abap = `
+CLASS lcl_viewer DEFINITION.
+  PUBLIC SECTION.
+    METHODS: show_callstack.
+ENDCLASS.
+CLASS lcl_viewer IMPLEMENTATION.
+  METHOD show_callstack.
+  ENDMETHOD.
+ENDCLASS.
+CLASS lcl_bar DEFINITION.
+  PUBLIC SECTION.
+    METHODS:
+      goto_callstack,
+      get_exception_viewer
+        RETURNING
+          VALUE(ro_sdf) TYPE REF TO lcl_viewer.
+ENDCLASS.
+CLASS lcl_bar IMPLEMENTATION.
+  METHOD get_exception_viewer.
+  ENDMETHOD.
+  METHOD goto_callstack.
+    get_exception_viewer( )->show_callstack( ).
+  ENDMETHOD.
+ENDCLASS.`;
+    const issues = runProgram(abap);
+    expect(issues.length).to.equals(0);
+  });
+
+  it("constructors always exists", () => {
+    const abap = `
+CLASS lcl_super DEFINITION.
+ENDCLASS.
+CLASS lcl_super IMPLEMENTATION.
+ENDCLASS.
+CLASS lcl_bar DEFINITION INHERITING FROM lcl_super .
+  PUBLIC SECTION.
+    METHODS:
+      constructor.
+ENDCLASS.
+CLASS lcl_bar IMPLEMENTATION.
+  METHOD constructor.
+    super->constructor( ).
+  ENDMETHOD.
+ENDCLASS.`;
+    const issues = runProgram(abap);
+    expect(issues.length).to.equals(0);
+  });
+
+  it("constructor via CALL METHOD, typical for exception classes", () => {
+    const abap = `
+CLASS lcl_super DEFINITION.
+ENDCLASS.
+CLASS lcl_super IMPLEMENTATION.
+ENDCLASS.
+CLASS lcl_bar DEFINITION INHERITING FROM lcl_super .
+  PUBLIC SECTION.
+    METHODS:
+      constructor.
+ENDCLASS.
+CLASS lcl_bar IMPLEMENTATION.
+  METHOD constructor.
+    CALL METHOD SUPER->CONSTRUCTOR.
+  ENDMETHOD.
+ENDCLASS.`;
+    const issues = runProgram(abap);
+    expect(issues.length).to.equals(0);
+  });
+
+  it("chained call, ls_foo-stage->rm( )", () => {
+    const abap = `
+CLASS lcl_foo DEFINITION.
+  PUBLIC SECTION.
+    METHODS: rm.
+ENDCLASS.
+CLASS lcl_foo IMPLEMENTATION.
+  METHOD rm.
+  ENDMETHOD.
+ENDCLASS.
+CLASS lcl_bar DEFINITION.
+  PUBLIC SECTION.
+    METHODS:
+      run.
+ENDCLASS.
+CLASS lcl_bar IMPLEMENTATION.
+  METHOD run.
+    TYPES: BEGIN OF ty_foo,
+             stage TYPE REF TO lcl_foo,
+           END OF ty_foo.
+    DATA ls_foo TYPE ty_foo.
+
+    ls_foo-stage->rm( ).
+  ENDMETHOD.
+ENDCLASS.`;
+    const issues = runProgram(abap);
+    expect(issues.length).to.equals(0);
+  });
+
+  it("chained call, component not found", () => {
+    const abap = `
+CLASS lcl_bar DEFINITION.
+  PUBLIC SECTION.
+    METHODS:
+      run.
+ENDCLASS.
+CLASS lcl_bar IMPLEMENTATION.
+  METHOD run.
+    TYPES: BEGIN OF ty_foo,
+             stage TYPE i,
+           END OF ty_foo.
+    DATA ls_foo TYPE ty_foo.
+
+    ls_foo-not_found->rm( ).
+  ENDMETHOD.
+ENDCLASS.`;
+    const issues = runProgram(abap);
+    expect(issues.length).to.equals(1);
+    expect(issues[0].getMessage()).to.contain("not_found");
+  });
+
+  it("no error for void structures", () => {
+    const abap = `
+CLASS lcl_bar DEFINITION.
+  PUBLIC SECTION.
+    METHODS:
+      run.
+ENDCLASS.
+CLASS lcl_bar IMPLEMENTATION.
+  METHOD run.
+    DATA ls_foo TYPE sdfsdfdfsfdsfsd.
+    ls_foo-not_found->rm( ).
+  ENDMETHOD.
+ENDCLASS.`;
+    const issues = runProgram(abap);
+    expect(issues.length).to.equals(0);
+  });
+
+  /*
+`INTERFACE lif_bar.
+  CONSTANTS moo TYPE i VALUE 1.
+ENDINTERFACE.
+
+START-OF-SELECTION.
+  WRITE lif_bar=>moo.`
+*/
 
 // todo, static method cannot access instance attributes
 // todo, can a private method access protected attributes?

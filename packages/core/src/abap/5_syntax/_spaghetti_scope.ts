@@ -24,6 +24,24 @@ export enum DeferredType {
   Interface,
 }
 
+export interface IVariableReference {
+  position: Identifier,
+  resolved: TypedIdentifier
+}
+
+export enum ReferenceType {
+  Class = "Class",
+  Interface = "Interface",
+  Method = "Method",
+  Form = "Form",
+}
+
+export interface IReference {
+  position: Identifier,
+  resolved: Identifier,
+  referenceType: ReferenceType,
+}
+
 export interface IScopeData {
   vars: IScopeVariable[];
   types: IScopeVariable[];
@@ -34,8 +52,11 @@ export interface IScopeData {
   idefs: IInterfaceDefinition[];
   forms: IFormDefinition[];
 
-  reads: {position: Identifier, resolved: TypedIdentifier}[];
-  writes: {position: Identifier, resolved: TypedIdentifier}[];
+// todo, refactor "read" & "write" to "references" instead using "ReferenceType"'s
+  reads: IVariableReference[];
+  writes: IVariableReference[];
+
+  references: IReference[];
 }
 
 export interface ISpaghettiScopeNode {

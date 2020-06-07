@@ -1,16 +1,16 @@
 import {MethodDefinition} from "./method_definition";
 import {StructureNode} from "../../abap/nodes";
-import {ClassDefinition} from "../3_structures/structures/class_definition";
 import * as Structures from "../3_structures/structures";
 import {MethodDef} from "../2_statements/statements";
 import {Visibility} from "../4_file_information/visibility";
 import {CurrentScope} from "../5_syntax/_current_scope";
 import {IMethodDefinitions} from "./_method_definitions";
+import {IMethodDefinition} from "./_method_definition";
 
 export class MethodDefinitions implements IMethodDefinitions {
-  private readonly pri: MethodDefinition[];
-  private readonly pub: MethodDefinition[];
-  private readonly pro: MethodDefinition[];
+  private readonly pri: IMethodDefinition[];
+  private readonly pub: IMethodDefinition[];
+  private readonly pro: IMethodDefinition[];
   private readonly filename: string;
 
   public constructor(node: StructureNode, filename: string, scope: CurrentScope) {
@@ -21,26 +21,51 @@ export class MethodDefinitions implements IMethodDefinitions {
     this.parse(node, scope);
   }
 
-  public getPublic(): MethodDefinition[] {
+  public getPublic(): IMethodDefinition[] {
     return this.pub;
   }
 
-  public getProtected(): MethodDefinition[] {
+  public getProtected(): IMethodDefinition[] {
     return this.pro;
   }
 
-  public getPrivate(): MethodDefinition[] {
+  public getPrivate(): IMethodDefinition[] {
     return this.pri;
   }
 
-  public getAll(): MethodDefinition[] {
+  public getAll(): readonly IMethodDefinition[] {
     return this.pub.concat(this.pro).concat(this.pri);
+  }
+
+  public getByName(name: string | undefined): IMethodDefinition | undefined {
+    if (name === undefined) {
+      return undefined;
+    }
+
+    for (const m of this.getAll()) {
+      if (m.getName().toUpperCase() === name.toUpperCase()) {
+        return m;
+      }
+    }
+    return undefined;
   }
 
 ///////////////////////
 
+  private parseInterface(node: StructureNode, scope: CurrentScope) {
+    const defs = node.findAllStatements(MethodDef);
+    for (const def of defs) {
+      this.pub.push(new MethodDefinition(def, Visibility.Public, this.filename, scope));
+    }
+  }
+
   private parse(node: StructureNode, scope: CurrentScope) {
-    const cdef = node.findFirstStructure(ClassDefinition);
+    const idef = node.findFirstStructure(Structures.Interface);
+    if (idef) {
+      return this.parseInterface(node, scope);
+    }
+
+    const cdef = node.findFirstStructure(Structures.ClassDefinition);
     if (!cdef) {
       throw new Error("MethodDefinitions, expected ClassDefinition as part of input node");
     }
@@ -68,5 +93,8 @@ export class MethodDefinitions implements IMethodDefinitions {
         this.pub.push(new MethodDefinition(def, Visibility.Public, this.filename, scope));
       }
     }
+
+
   }
+
 }

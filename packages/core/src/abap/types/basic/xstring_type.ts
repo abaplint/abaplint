@@ -8,4 +8,8 @@ export class XStringType implements AbstractType {
   public isGeneric() {
     return false;
   }
+
+  public containsVoid() {
+    return false;
+  }
 }

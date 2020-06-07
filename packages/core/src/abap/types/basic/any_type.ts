@@ -8,4 +8,8 @@ export class AnyType implements AbstractType {
   public isGeneric() {
     return true;
   }
+
+  public containsVoid() {
+    return false;
+  }
 }

@@ -45,6 +45,15 @@ export abstract class AbstractObject implements IObject {
     return this.files;
   }
 
+  public getFileByName(filename: string): IFile | undefined {
+    for (const f of this.files) {
+      if (f.getFilename() === filename) {
+        return f;
+      }
+    }
+    return undefined;
+  }
+
   public containsFile(filename: string): boolean {
     for (const f of this.files) {
       if (f.getFilename() === filename) {

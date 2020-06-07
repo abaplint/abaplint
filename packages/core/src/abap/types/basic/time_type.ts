@@ -8,4 +8,8 @@ export class TimeType implements AbstractType {
   public isGeneric() {
     return false;
   }
+
+  public containsVoid() {
+    return false;
+  }
 }

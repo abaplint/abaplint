@@ -29,10 +29,17 @@ export class Aliases implements IAliases {
       this.parseSection(cdef.findFirstStructure(Structures.PrivateSection), Visibility.Private);
       this.parseSection(cdef.findFirstStructure(Structures.ProtectedSection), Visibility.Protected);
     }
+
+    const idef = node.findFirstStructure(Structures.Interface);
+    if (idef) {
+      this.parseSection(idef, Visibility.Public);
+    }
   }
 
   private parseSection(node: StructureNode | undefined, visibility: Visibility): void {
-    if (!node) { return; }
+    if (!node) {
+      return;
+    }
 
     const list = node.findAllStatements(Statements.Aliases);
     for (const a of list) {
