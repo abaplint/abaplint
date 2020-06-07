@@ -2,15 +2,10 @@ import {ExpressionNode} from "../../nodes";
 import {CurrentScope} from "../_current_scope";
 import {AbstractType} from "../../types/basic/_abstract_type";
 import * as Expressions from "../../2_statements/expressions";
-import {MethodCallChain} from "./method_call_chain";
 import {UnknownType} from "../../types/basic/unknown_type";
 
-export class Source {
-  public runSyntax(
-    node: ExpressionNode,
-    scope: CurrentScope,
-    filename: string,
-    targetType?: AbstractType): AbstractType | undefined {
+export class Target {
+  public runSyntax(node: ExpressionNode, scope: CurrentScope, _filename: string): AbstractType | undefined {
 
     const children = node.getChildren().slice();
     const first = children.shift();
@@ -18,10 +13,10 @@ export class Source {
       return undefined;
     }
 
-    if (first.get() instanceof Expressions.MethodCallChain) {
-      return new MethodCallChain().runSyntax(first, scope, filename, targetType);
+    if (first.get() instanceof Expressions.TargetField) {
+      return scope.findVariable(first.getFirstToken().getStr())?.getType();
     }
 
-    return new UnknownType("todo, Source type");
+    return new UnknownType("todo, target type");
   }
 }

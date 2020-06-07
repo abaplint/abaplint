@@ -2,14 +2,20 @@ import {ExpressionNode} from "../../nodes";
 import {CurrentScope} from "../_current_scope";
 import * as Expressions from "../../2_statements/expressions";
 import {AbstractType} from "../../types/basic/_abstract_type";
-import {VoidType, ObjectReferenceType, IntegerType} from "../../types/basic";
+import {VoidType, ObjectReferenceType, IntegerType, StringType} from "../../types/basic";
 import {FieldChain} from "./field_chain";
 import {INode} from "../../nodes/_inode";
 import {ObjectOriented} from "../_object_oriented";
 import {NewObject} from "./new_object";
+import {Cast} from "./cast";
 
 export class MethodCallChain {
-  public runSyntax(node: ExpressionNode, scope: CurrentScope, _filename: string): AbstractType | undefined {
+  public runSyntax(
+    node: ExpressionNode,
+    scope: CurrentScope,
+    _filename: string,
+    targetType?: AbstractType): AbstractType | undefined {
+
     const helper = new ObjectOriented(scope);
     const children = node.getChildren().slice();
 
@@ -18,7 +24,7 @@ export class MethodCallChain {
       throw new Error("MethodCallChain, first child expected");
     }
 
-    let context: AbstractType | undefined = this.findTop(first, scope);
+    let context: AbstractType | undefined = this.findTop(first, scope, targetType);
     if (first.get() instanceof Expressions.MethodCall) {
       children.unshift(first);
     }
@@ -40,7 +46,13 @@ export class MethodCallChain {
         if (method === undefined && methodName?.toUpperCase() === "CONSTRUCTOR") {
           context = undefined; // todo, this is a workaround, constructors always exists
         } else if (method === undefined && methodName?.toUpperCase() === "LINES") {
-          context = new IntegerType(); // todo, this is a workaround, constructors always exists
+          context = new IntegerType(); // todo, this is a workaround
+        } else if (method === undefined && methodName?.toUpperCase() === "TO_UPPER") {
+          context = new StringType(); // todo, this is a workaround
+        } else if (method === undefined && methodName?.toUpperCase() === "TO_LOWER") {
+          context = new StringType(); // todo, this is a workaround
+        } else if (method === undefined && methodName?.toUpperCase() === "CONCAT_LINES_OF") {
+          context = new StringType(); // todo, this is a workaround
         } else if (method === undefined) {
           throw new Error("Method \"" + methodName + "\" not found");
         } else {
@@ -55,7 +67,7 @@ export class MethodCallChain {
 
 //////////////////////////////////////
 
-  private findTop(first: INode, scope: CurrentScope): AbstractType | undefined {
+  private findTop(first: INode, scope: CurrentScope, targetType: AbstractType | undefined): AbstractType | undefined {
     if (first.get() instanceof Expressions.ClassName) {
       const className = first.getFirstToken().getStr();
       const classDefinition = scope.findObjectDefinition(className);
@@ -68,9 +80,9 @@ export class MethodCallChain {
     } else if (first instanceof ExpressionNode && first.get() instanceof Expressions.FieldChain) {
       return new FieldChain().runSyntax(first, scope);
     } else if (first instanceof ExpressionNode && first.get() instanceof Expressions.NewObject) {
-      return new NewObject().runSyntax(first, scope);
-    } else if (first.get() instanceof Expressions.Cast) {
-      throw new Error("MethodCallChain, todo, Cast");
+      return new NewObject().runSyntax(first, scope, targetType);
+    } else if (first instanceof ExpressionNode && first.get() instanceof Expressions.Cast) {
+      return new Cast().runSyntax(first, scope, targetType);
     } else {
       const meType = scope.findVariable("me")?.getType();
       if (meType) {

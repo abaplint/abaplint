@@ -24,7 +24,7 @@ export class Inline {
       return undefined;
     }
 
-    if (!(node.get() instanceof Statements.Move)) {
+    if (!(node.get() instanceof Statements.Move) && !(node.get() instanceof Statements.Catch)) {
       for (const inline of node.findAllExpressions(Expressions.InlineData)) {
         const field = inline.findFirstExpression(Expressions.TargetField);
         if (field === undefined) {

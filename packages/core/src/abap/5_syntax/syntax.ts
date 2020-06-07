@@ -29,6 +29,8 @@ import {ClassDeferred} from "./statements/class_deferred";
 import {Call} from "./statements/call";
 import {ClassImplementation} from "./statements/class_implementation";
 import {MethodImplementation} from "./statements/method_implementation";
+import {Move} from "./statements/move";
+import {Catch} from "./statements/catch";
 
 import {Data as DataStructure} from "./structures/data";
 import {TypeEnum} from "./structures/type_enum";
@@ -39,7 +41,6 @@ import {Constants} from "./structures/constants";
 import {ClassDefinition} from "../types/class_definition";
 import {InterfaceDefinition} from "../types/interface_definition";
 import {ISyntaxResult} from "./_spaghetti_scope";
-import {Move} from "./statements/move";
 
 
 // assumption: objects are parsed without parsing errors
@@ -238,6 +239,8 @@ export class SyntaxLogic {
       new MethodImplementation().runSyntax(node, this.scope, filename);
     } else if (node.get() instanceof Statements.Move) {
       new Move().runSyntax(node, this.scope, filename);
+    } else if (node.get() instanceof Statements.Catch) {
+      new Catch().runSyntax(node, this.scope, filename);
 
     } else if (s instanceof Statements.Form) {
       this.helpers.proc.findFormScope(node, filename);

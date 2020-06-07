@@ -1631,6 +1631,32 @@ DATA(result) = lines( lt_bar ).`;
     expect(issues.length).to.equals(0);
   });
 
+  it("built-in to_upper", () => {
+    const abap = `
+DATA(result) = to_upper( |bar| ).`;
+    const issues = runProgram(abap);
+    expect(issues.length).to.equals(0);
+  });
+
+  it("built-in to_lower", () => {
+    const abap = `
+DATA(result) = to_lower( |bar| ).`;
+    const issues = runProgram(abap);
+    expect(issues.length).to.equals(0);
+  });
+
+  it("infer type via NEW", () => {
+    const abap = `
+  CLASS lcl_bar DEFINITION.
+  ENDCLASS.
+  CLASS lcl_bar IMPLEMENTATION.
+  ENDCLASS.
+  DATA mo_moo TYPE REF TO lcl_bar.
+  mo_moo = NEW #( ).`;
+    const issues = runProgram(abap);
+    expect(issues.length).to.equals(0);
+  });
+
   /*
 `INTERFACE lif_bar.
   CONSTANTS moo TYPE i VALUE 1.
