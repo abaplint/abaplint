@@ -39,6 +39,7 @@ import {Constants} from "./structures/constants";
 import {ClassDefinition} from "../types/class_definition";
 import {InterfaceDefinition} from "../types/interface_definition";
 import {ISyntaxResult} from "./_spaghetti_scope";
+import {Move} from "./statements/move";
 
 
 // assumption: objects are parsed without parsing errors
@@ -137,9 +138,11 @@ export class SyntaxLogic {
   }
 
   private traverse(node: INode): void {
-    const issueMessage = this.helpers.inline.update(node, this.currentFile.getFilename());
-    if (issueMessage) {
-      this.newIssue(node.getFirstToken(), issueMessage);
+    if (node instanceof StatementNode) {
+      const issueMessage = this.helpers.inline.update(node, this.currentFile.getFilename());
+      if (issueMessage) {
+        this.newIssue(node.getFirstToken(), issueMessage);
+      }
     }
 
     for (const child of node.getChildren()) {
@@ -233,6 +236,8 @@ export class SyntaxLogic {
       new ClassImplementation().runSyntax(node, this.scope, filename);
     } else if (s instanceof Statements.Method) {
       new MethodImplementation().runSyntax(node, this.scope, filename);
+    } else if (node.get() instanceof Statements.Move) {
+      new Move().runSyntax(node, this.scope, filename);
 
     } else if (s instanceof Statements.Form) {
       this.helpers.proc.findFormScope(node, filename);

@@ -2,10 +2,11 @@ import {ExpressionNode} from "../../nodes";
 import {CurrentScope} from "../_current_scope";
 import * as Expressions from "../../2_statements/expressions";
 import {AbstractType} from "../../types/basic/_abstract_type";
-import {VoidType, ObjectReferenceType} from "../../types/basic";
+import {VoidType, ObjectReferenceType, IntegerType} from "../../types/basic";
 import {FieldChain} from "./field_chain";
 import {INode} from "../../nodes/_inode";
 import {ObjectOriented} from "../_object_oriented";
+import {NewObject} from "./new_object";
 
 export class MethodCallChain {
   public runSyntax(node: ExpressionNode, scope: CurrentScope, _filename: string): AbstractType | undefined {
@@ -32,14 +33,14 @@ export class MethodCallChain {
       }
 
       if (current instanceof ExpressionNode && current.get() instanceof Expressions.MethodCall) {
-        if (!(context instanceof ObjectReferenceType)) {
-          throw new Error("Not a object reference");
-        }
-
+        // for built-in methods set className to undefined
+        const className = context instanceof ObjectReferenceType ? context.getName() : undefined;
         const methodName = current.findDirectExpression(Expressions.MethodName)?.getFirstToken().getStr();
-        const method = helper.searchMethodName(scope.findObjectDefinition(context.getName()), methodName);
+        const method = helper.searchMethodName(scope.findObjectDefinition(className), methodName);
         if (method === undefined && methodName?.toUpperCase() === "CONSTRUCTOR") {
           context = undefined; // todo, this is a workaround, constructors always exists
+        } else if (method === undefined && methodName?.toUpperCase() === "LINES") {
+          context = new IntegerType(); // todo, this is a workaround, constructors always exists
         } else if (method === undefined) {
           throw new Error("Method \"" + methodName + "\" not found");
         } else {
@@ -66,8 +67,8 @@ export class MethodCallChain {
       return new ObjectReferenceType(className);
     } else if (first instanceof ExpressionNode && first.get() instanceof Expressions.FieldChain) {
       return new FieldChain().runSyntax(first, scope);
-    } else if (first.get() instanceof Expressions.NewObject) {
-      throw new Error("MethodCallChain, todo, NewObject");
+    } else if (first instanceof ExpressionNode && first.get() instanceof Expressions.NewObject) {
+      return new NewObject().runSyntax(first, scope);
     } else if (first.get() instanceof Expressions.Cast) {
       throw new Error("MethodCallChain, todo, Cast");
     } else {
@@ -75,8 +76,8 @@ export class MethodCallChain {
       if (meType) {
         return meType;
       }
-      throw new Error("Method call outside class");
     }
+    return undefined;
   }
 
 }

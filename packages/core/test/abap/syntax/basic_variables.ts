@@ -842,8 +842,7 @@ ENDCLASS.`;
   });
 
   it("sy-uzeit", () => {
-    const abap = `
-    DATA foo TYPE sy-uzeit.`;
+    const abap = `DATA foo TYPE sy-uzeit.`;
     const identifier = resolveVariable(abap, "foo");
     expect(identifier).to.not.equal(undefined);
     const type = identifier?.getType();
@@ -856,6 +855,22 @@ ENDCLASS.`;
     expect(identifier).to.not.equal(undefined);
     const type = identifier?.getType();
     expect(type).to.be.instanceof(Basic.TableType);
+  });
+
+  it("Inline DATA definition", () => {
+    const abap = `DATA(lo_instance) = cl_oo_factory=>create_instance( ).`;
+    const identifier = resolveVariable(abap, "lo_instance");
+    expect(identifier).to.not.equal(undefined);
+    const type = identifier?.getType();
+    expect(type).to.be.instanceof(Basic.VoidType);
+  });
+
+  it.skip("Inline DATA definition", () => {
+    const abap = `DATA(foobar) = 2.`;
+    const identifier = resolveVariable(abap, "foobar");
+    expect(identifier).to.not.equal(undefined);
+    const type = identifier?.getType();
+    expect(type).to.be.instanceof(Basic.IntegerType);
   });
 
 });
