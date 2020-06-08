@@ -4,7 +4,7 @@ import {CurrentScope} from "../_current_scope";
 import {TypedIdentifier} from "../../types/_typed_identifier";
 import {UnknownType} from "../../types/basic";
 import {BasicTypes} from "../basic_types";
-import {TypeTable} from "../expressions/type_table";
+import {TypeTable} from "./type_table";
 
 export class DataDefinition {
   public runSyntax(node: ExpressionNode, scope: CurrentScope, filename: string): TypedIdentifier | undefined {

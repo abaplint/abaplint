@@ -1,4 +1,4 @@
-import {StructureNode, StatementNode} from "../../abap/nodes";
+import {StructureNode, StatementNode} from "../nodes";
 import * as Statements from "../2_statements/statements";
 import * as Structures from "../3_structures/structures";
 import {CurrentScope} from "../5_syntax/_current_scope";

@@ -24,7 +24,7 @@ module.exports = {
       "import/namespace": "off",
       "import/named": "off",
       "import/no-absolute-path": "error",
-//      "import/no-useless-path-segments": ["error", {noUselessIndex: true}],
+      "import/no-useless-path-segments": ["error", {noUselessIndex: true}],
       "space-infix-ops": "error",
       "prefer-arrow-callback": "error",
       "import/export": "off",
