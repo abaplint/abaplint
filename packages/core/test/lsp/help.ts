@@ -12,12 +12,12 @@ describe("LSP, help", () => {
 
     let help = "";
     for (let i = 0; i < 2; i++) {
-      help = Help.find(reg, {uri: file.getFilename()}, LServer.Position.create(0 , i));
+      help = Help.find(reg, {uri: file.getFilename()}, LServer.Position.create(0, i));
       expect(help).to.contain("Statement: <a href=\"https://syntax.abaplint.org/#/statement/Do\" target=\"_blank\">Do</a>");
       expect(help).to.contain("Token: Identifier");
     }
 
-    help = Help.find(reg, {uri: file.getFilename()}, LServer.Position.create(0 , 2));
+    help = Help.find(reg, {uri: file.getFilename()}, LServer.Position.create(0, 2));
     expect(help).to.contain("Statement: <a href=\"https://syntax.abaplint.org/#/statement/Do\" target=\"_blank\">Do</a>");
     expect(help).to.contain("Token: Punctuation");
   });
@@ -32,7 +32,7 @@ ENDCLASS.
     const file = new MemoryFile("zcl_foobar.clas.abap", abap);
     const reg = new Registry().addFile(file).parse();
 
-    const help = Help.find(reg, {uri: file.getFilename()}, LServer.Position.create(0 , 2));
+    const help = Help.find(reg, {uri: file.getFilename()}, LServer.Position.create(0, 2));
     expect(help).to.not.equal(undefined);
   });
 

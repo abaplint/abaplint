@@ -9,14 +9,14 @@ describe("LSP, definition", () => {
   it("not found", () => {
     const file = new MemoryFile("foobar.prog.abap", "WRITE foobar.");
     const reg = new Registry().addFile(file).parse();
-    const def = new Definition(reg).find({uri: file.getFilename()}, LServer.Position.create(0 , 7));
+    const def = new Definition(reg).find({uri: file.getFilename()}, LServer.Position.create(0, 7));
     expect(def).to.equal(undefined);
   });
 
   it("resolved, local", () => {
     const file = new MemoryFile("foobar.prog.abap", "DATA(foobar) = 2.\nWRITE foobar.");
     const reg = new Registry().addFile(file).parse();
-    const def = new Definition(reg).find({uri: file.getFilename()}, LServer.Position.create(1 , 7));
+    const def = new Definition(reg).find({uri: file.getFilename()}, LServer.Position.create(1, 7));
     expect(def).to.not.equal(undefined);
     expect(def!.range.start.line).to.equal(0);
   });
@@ -38,7 +38,7 @@ describe("LSP, definition", () => {
         ENDMETHOD.
       ENDCLASS.`);
     const reg = new Registry().addFile(fileIntf).addFile(fileClas).parse();
-    const def = new Definition(reg).find({uri: fileClas.getFilename()}, LServer.Position.create(8 , 20));
+    const def = new Definition(reg).find({uri: fileClas.getFilename()}, LServer.Position.create(8, 20));
     expect(def).to.not.equal(undefined);
     expect(def!.uri).to.equal(fileIntf.getFilename());
     expect(def!.range.start.line).to.equal(2);
@@ -53,7 +53,7 @@ describe("LSP, definition", () => {
       WRITE boo.`);
 
     const reg = new Registry().addFile(prog1).addFile(prog2).parse();
-    const def = new Definition(reg).find({uri: prog1.getFilename()}, LServer.Position.create(2 , 16));
+    const def = new Definition(reg).find({uri: prog1.getFilename()}, LServer.Position.create(2, 16));
 
     expect(def).to.not.equal(undefined);
     expect(def!.uri).to.equal(prog2.getFilename());
@@ -67,7 +67,7 @@ describe("LSP, definition", () => {
         PERFORM foo.`);
 
     const reg = new Registry().addFile(prog1).parse();
-    const def = new Definition(reg).find({uri: prog1.getFilename()}, LServer.Position.create(4 , 18));
+    const def = new Definition(reg).find({uri: prog1.getFilename()}, LServer.Position.create(4, 18));
 
     expect(def).to.not.equal(undefined);
     expect(def!.uri).to.equal(prog1.getFilename());
