@@ -68,6 +68,7 @@ export * from "./message_source";
 export * from "./message_type_and_number";
 export * from "./method_call_body";
 export * from "./method_call_chain";
+export * from "./method_call_param";
 export * from "./method_call";
 export * from "./method_def_changing";
 export * from "./method_def_exporting";

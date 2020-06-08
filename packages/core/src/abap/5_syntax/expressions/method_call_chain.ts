@@ -9,12 +9,13 @@ import {ObjectOriented} from "../_object_oriented";
 import {NewObject} from "./new_object";
 import {Cast} from "./cast";
 import {BuiltIn} from "../_builtin";
+import {MethodCallParam} from "./method_call_param";
 
 export class MethodCallChain {
   public runSyntax(
     node: ExpressionNode,
     scope: CurrentScope,
-    _filename: string,
+    filename: string,
     targetType?: AbstractType): AbstractType | undefined {
 
     const helper = new ObjectOriented(scope);
@@ -35,30 +36,31 @@ export class MethodCallChain {
       if (current === undefined) {
         break;
       }
-      if (context instanceof VoidType) {
-        continue;
-      }
 
       if (current instanceof ExpressionNode && current.get() instanceof Expressions.MethodCall) {
         // for built-in methods set className to undefined
         const className = context instanceof ObjectReferenceType ? context.getName() : undefined;
         const methodName = current.findDirectExpression(Expressions.MethodName)?.getFirstToken().getStr();
-        const method = helper.searchMethodName(scope.findObjectDefinition(className), methodName);
+        let method = helper.searchMethodName(scope.findObjectDefinition(className), methodName);
         if (method === undefined) {
-          const builtin = new BuiltIn().getMethods().find(a => a.name === methodName?.toUpperCase());
-          if (builtin) {
-            context = builtin.returnType;
-            continue;
-          }
+          method = new BuiltIn().searchBuiltin(methodName?.toUpperCase());
         }
         if (method === undefined && methodName?.toUpperCase() === "CONSTRUCTOR") {
           context = undefined; // todo, this is a workaround, constructors always exists
-        } else if (method === undefined) {
+        } else if (method === undefined && !(context instanceof VoidType)) {
           throw new Error("Method \"" + methodName + "\" not found");
-        } else {
+        } else if (method) {
           const ret = method.getParameters().getReturning()?.getType();
           context = ret;
         }
+
+        const param = current.findDirectExpression(Expressions.MethodCallParam);
+        if (param && method) {
+          new MethodCallParam().runSyntax(param, scope, method, filename);
+        } else if (param && context instanceof VoidType) {
+          new MethodCallParam().runSyntax(param, scope, context, filename);
+        }
+
       }
     }
 

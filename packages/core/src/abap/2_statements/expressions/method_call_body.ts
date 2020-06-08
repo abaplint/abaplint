@@ -1,18 +1,14 @@
-import {seq, alt, opt, str, tok, Expression} from "../combi";
-import {ParenLeftW} from "../../1_lexer/tokens";
-import {Source, ParameterListS, MethodParameters} from ".";
+import {seq, alt, opt, str, Expression} from "../combi";
+import {Source, MethodParameters} from ".";
 import {IStatementRunnable} from "../statement_runnable";
+import {MethodCallParam} from "./method_call_param";
 
 export class MethodCallBody extends Expression {
   public getRunnable(): IStatementRunnable {
-    const paren = seq(tok(ParenLeftW),
-                      alt(new Source(), new ParameterListS(), new MethodParameters()),
-                      str(")"));
-
     const dynamicPar = seq(str("PARAMETER-TABLE"), new Source());
     const dynamicExc = seq(str("EXCEPTION-TABLE"), new Source());
     const dynamic = seq(dynamicPar, opt(dynamicExc));
 
-    return alt(paren, new MethodParameters(), dynamic);
+    return alt(new MethodCallParam(), new MethodParameters(), dynamic);
   }
 }
