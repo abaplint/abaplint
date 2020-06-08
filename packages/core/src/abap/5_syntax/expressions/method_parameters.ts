@@ -2,11 +2,11 @@ import {CurrentScope} from "../_current_scope";
 import {VoidType} from "../../types/basic";
 import * as Expressions from "../../2_statements/expressions";
 import {IMethodDefinition} from "../../types/_method_definition";
-import {INode} from "../../..";
 import {ExpressionNode} from "../../nodes";
 import {InlineData} from "./inline_data";
 import {Target} from "./target";
 import {AbstractType} from "../../types/basic/_abstract_type";
+import {INode} from "../../nodes/_inode";
 
 // todo, checking that all mandatory parameters are filled
 
