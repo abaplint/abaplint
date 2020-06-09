@@ -21,9 +21,14 @@ export class MessageClass extends AbstractObject {
       return [];
     }
     const parsed = this.parseXML();
+    if (parsed === undefined) {
+      return [];
+    }
 
     return this.parsePrivate(parsed);
   }
+
+/////////////////////////////////
 
   private parsePrivate(data: any): Message[] {
     const ret: Message[] = [];

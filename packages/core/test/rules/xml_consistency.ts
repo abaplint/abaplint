@@ -21,11 +21,12 @@ describe("rule, xml_consistency, error", () => {
    </asx:abap>
   </abapGit>`;
 
-  const reg = new Registry().addFile(new MemoryFile("zcl_lars.clas.xml", xml));
-
-  const rule = new XMLConsistency();
-  const issues = rule.run(reg.getObjects()[0], reg);
   it("test", () => {
+    const reg = new Registry().addFile(new MemoryFile("zcl_lars.clas.xml", xml));
+
+    const rule = new XMLConsistency();
+    const issues = rule.run(reg.getObjects()[0], reg);
+
     expect(issues.length).to.equals(1);
   });
 });
@@ -48,12 +49,20 @@ describe("rule, xml_consistency, okay", () => {
    </asx:abap>
   </abapGit>`;
 
-  const reg = new Registry().addFile(new MemoryFile("zcl_lars.clas.xml", xml));
-
-  const rule = new XMLConsistency();
-  const issues = rule.run(reg.getObjects()[0], reg);
   it("test", () => {
+    const reg = new Registry().addFile(new MemoryFile("zcl_lars.clas.xml", xml));
+
+    const rule = new XMLConsistency();
+    const issues = rule.run(reg.getObjects()[0], reg);
     expect(issues.length).to.equals(0);
   });
 });
 
+describe("xml consistency", () => {
+  it("parser error", () => {
+    const reg = new Registry().addFile(new MemoryFile("zcl_lars.msag.xml", `parser error`));
+    const rule = new XMLConsistency();
+    const issues = rule.run(reg.getObjects()[0], reg);
+    expect(issues.length).to.equals(1);
+  });
+});
