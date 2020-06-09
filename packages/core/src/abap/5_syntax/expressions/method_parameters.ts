@@ -10,6 +10,12 @@ import {INode} from "../../nodes/_inode";
 
 // todo, checking that all mandatory parameters are filled
 
+interface IListItem {
+  name: string;
+  target: ExpressionNode;
+  targetType: AbstractType | undefined;
+}
+
 export class MethodParameters {
   public runSyntax(node: INode, scope: CurrentScope, method: IMethodDefinition | VoidType, filename: string): void {
     if (!(node.get() instanceof Expressions.MethodParameters)) {
@@ -52,38 +58,62 @@ export class MethodParameters {
       throw new Error("checkImporting, unexpected node");
     }
 
-    for (const c of node.getChildren()) {
-      if (!(c.get() instanceof Expressions.ParameterT) || !(c instanceof ExpressionNode)) {
-        throw new Error("checkImporting, unexpected node, child");
-      }
-
-      const name = c.findDirectExpression(Expressions.ParameterName)?.getFirstToken().getStr().toUpperCase();
-      if (name === undefined) {
-        throw new Error("checkImporting, no name determined");
-      }
-      const target = c.findDirectExpression(Expressions.Target);
-
-      const targetType = target ? new Target().runSyntax(target, scope, filename) : undefined;
-
+    for (const item of this.parameterListT(node, scope, filename)) {
       let parameterType: AbstractType | undefined = undefined;
       if (method instanceof VoidType) {
         parameterType = method;
       } else {
-        const parameter = method.getParameters().getExporting().find(p => p.getName().toUpperCase() === name);
+        const parameter = method.getParameters().getExporting().find(p => p.getName().toUpperCase() === item.name);
         if (parameter === undefined) {
-          throw new Error("Method parameter \"" + name + "\" does not exist");
+          throw new Error("Method parameter \"" + item.name + "\" does not exist");
         }
         parameterType = parameter.getType();
       }
 
-      const inline = target?.findDirectExpression(Expressions.InlineData);
+      const inline = item.target.findDirectExpression(Expressions.InlineData);
       if (inline) {
         new InlineData().runSyntax(inline, scope, filename, parameterType);
-      } else if (targetType) {
+      } else if (item.targetType) {
 // todo, check that targetType and parameterType are compatible
       }
 
     }
+  }
+
+  private parameterListT(
+    node: INode | undefined,
+    scope: CurrentScope,
+    filename: string): IListItem[] {
+
+    if (node === undefined) {
+      return [];
+    }
+    if (!(node.get() instanceof Expressions.ParameterListT)) {
+      throw new Error("parameterListT, unexpected node");
+    }
+
+    const ret: IListItem[] = [];
+
+    for (const c of node.getChildren()) {
+      if (!(c.get() instanceof Expressions.ParameterT) || !(c instanceof ExpressionNode)) {
+        throw new Error("parameterListT, unexpected node, child");
+      }
+
+      const name = c.findDirectExpression(Expressions.ParameterName)?.getFirstToken().getStr().toUpperCase();
+      if (name === undefined) {
+        throw new Error("parameterListT, no name determined");
+      }
+      const target = c.findDirectExpression(Expressions.Target);
+      if (target === undefined) {
+        throw new Error("parameterListT, no target found");
+      }
+
+      const targetType = new Target().runSyntax(target, scope, filename);
+
+      ret.push({name, target, targetType});
+    }
+
+    return ret;
   }
 
 }

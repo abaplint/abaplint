@@ -26,7 +26,7 @@ export class MethodCallParam {
       // todo, validate that the method has only one importing, and types are compatible
       new Source().runSyntax(child, scope, filename);
     } else if (child instanceof ExpressionNode && child.get() instanceof Expressions.ParameterListS) {
-      // todo, validate importing paramters exists, and types are compatible
+      // todo, validate importing parameters exists, and types are compatible
       // console.dir("todo 2");
     } else if (child.get() instanceof Expressions.MethodParameters) {
       new MethodParameters().runSyntax(child, scope, method, filename);
