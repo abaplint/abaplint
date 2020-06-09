@@ -8,7 +8,7 @@ import {SyntaxLogic} from "../abap/5_syntax/syntax";
 import {ISpaghettiScopeNode} from "../abap/5_syntax/_spaghetti_scope";
 import {LSPLookup} from "./_lookup";
 import {ScopeType} from "../abap/5_syntax/_scope_type";
-import {ReferenceType} from "../abap/5_syntax/_reference_type";
+import {ReferenceType} from "../abap/5_syntax/_reference";
 
 export class References {
   private readonly reg: IRegistry;

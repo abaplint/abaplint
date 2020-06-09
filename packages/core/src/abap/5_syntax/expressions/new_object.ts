@@ -3,7 +3,7 @@ import {CurrentScope} from "../_current_scope";
 import {ObjectReferenceType, VoidType} from "../../types/basic";
 import {TypeNameOrInfer} from "../../2_statements/expressions";
 import {AbstractType} from "../../types/basic/_abstract_type";
-import {ReferenceType} from "../_reference_type";
+import {ReferenceType} from "../_reference";
 
 export class NewObject {
   public runSyntax(node: ExpressionNode, scope: CurrentScope, targetType: AbstractType | undefined, filename: string): AbstractType  {

@@ -10,7 +10,7 @@ import {NewObject} from "./new_object";
 import {Cast} from "./cast";
 import {BuiltIn} from "../_builtin";
 import {MethodCallParam} from "./method_call_param";
-import {ReferenceType} from "../_reference_type";
+import {ReferenceType} from "../_reference";
 
 export class MethodCallChain {
   public runSyntax(
@@ -52,7 +52,7 @@ export class MethodCallChain {
         } else if (method === undefined && !(context instanceof VoidType)) {
           throw new Error("Method \"" + methodName + "\" not found");
         } else if (method) {
-          scope.addReference(methodToken, method, ReferenceType.MethodReference, filename);
+          scope.addReference(methodToken, method, ReferenceType.MethodReference, filename, {className: className});
 
           const ret = method.getParameters().getReturning()?.getType();
           context = ret;

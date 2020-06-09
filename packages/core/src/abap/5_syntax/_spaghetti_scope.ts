@@ -6,7 +6,7 @@ import {IInterfaceDefinition} from "../types/_interface_definition";
 import {IFormDefinition} from "../types/_form_definition";
 import {Position} from "../../position";
 import {Issue} from "../../issue";
-import {ReferenceType} from "./_reference_type";
+import {IReference} from "./_reference";
 
 export interface IScopeIdentifier {
   stype: ScopeType;
@@ -23,17 +23,6 @@ export interface IScopeVariable {
 export enum DeferredType {
   Class,
   Interface,
-}
-
-export interface IVariableReference {
-  position: Identifier,
-  resolved: Identifier
-}
-
-export interface IReference {
-  position: Identifier,
-  resolved: Identifier,
-  referenceType: ReferenceType,
 }
 
 export interface IScopeData {

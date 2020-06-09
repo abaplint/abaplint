@@ -6,11 +6,13 @@ import {ABAPFile} from "../files";
 import {ABAPObject} from "../objects/_abap_object";
 import {SyntaxLogic} from "../abap/5_syntax/syntax";
 import {IFormDefinition} from "../abap/types/_form_definition";
-import {ISpaghettiScopeNode, IReference} from "../abap/5_syntax/_spaghetti_scope";
+import {ISpaghettiScopeNode} from "../abap/5_syntax/_spaghetti_scope";
 import {ICursorData, LSPUtils} from "./_lsp_utils";
 import {TypedIdentifier} from "../abap/types/_typed_identifier";
 import {Identifier} from "../abap/4_file_information/_identifier";
 import {Token} from "../abap/1_lexer/tokens/_token";
+import {IReference, ReferenceType} from "../abap/5_syntax/_reference";
+import {IClassDefinition} from "../abap/types/_class_definition";
 
 export interface LSPLookupResult {
   hover: string | undefined;               // in markdown
@@ -64,7 +66,7 @@ export class LSPLookup {
 
     const ref = this.searchReferences(bottomScope, cursor.token);
     if (ref !== undefined) {
-      const value = "Resolved Reference: " + ref.referenceType + " " + ref.resolved.getName();
+      const value = this.referenceHover(ref, bottomScope);
       return {hover: value, definition: LSPUtils.identiferToLocation(ref.resolved)};
     }
 
@@ -72,6 +74,35 @@ export class LSPLookup {
   }
 
 ////////////////////////////////////////////
+
+  private static referenceHover(ref: IReference, scope: ISpaghettiScopeNode): string {
+    let ret = "";
+    if (ref.referenceType === ReferenceType.MethodReference && ref.extra?.className) {
+      ret = ret + this.hoverMethod(ref.position.getName(), scope.findClassDefinition(ref.extra?.className));
+    }
+
+    ret = ret + "Resolved Reference: " + ref.referenceType + " " + ref.resolved.getName();
+    ret = ret + ( ref.extra ? "\n\nExtra: " + JSON.stringify(ref.extra) : "" );
+
+    return ret;
+  }
+
+  private static hoverMethod(method: string, cdef: IClassDefinition | undefined): string {
+    if (cdef === undefined) {
+      return "";
+    }
+
+    const mdef = cdef.getMethodDefinitions().getByName(method);
+    if (mdef === undefined) {
+      return "";
+    }
+
+    let ret = "";
+    for (const p of mdef.getParameters().getAll()) {
+      ret = ret + p.getName() + ": " + p.getType().toText(0);
+    }
+    return ret === "" ? ret : ret + "\n\n";
+  }
 
   private static searchReferences(scope: ISpaghettiScopeNode, token: Token): IReference | undefined {
 
