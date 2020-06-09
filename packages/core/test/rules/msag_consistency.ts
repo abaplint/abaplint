@@ -24,4 +24,13 @@ describe("Message rule", () => {
     const issues = new MSAGConsistency().run(reg.getObjects()[0], reg);
     expect(issues.length).to.equal(0);
   });
+
+  it("Parser error", () => {
+    const xml = `sdfsdfsd`;
+    const reg = new Registry();
+    reg.addFile(new MemoryFile("zagtest_empty.msag.xml", xml)).parse();
+    const issues = new MSAGConsistency().run(reg.getObjects()[0], reg);
+    expect(issues.length).to.equal(0);
+  });
+
 });

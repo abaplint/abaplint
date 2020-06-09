@@ -51,7 +51,7 @@ function runProgram(abap: string, globalConstants?: string[]): Issue[] {
 
 ////////////////////////////////////////////////////////////
 
-describe("Check Variables", () => {
+describe("syntax.ts, Check Variables", () => {
 
   it("program, variable foobar not found", () => {
     const abap = "WRITE foobar.\n";
@@ -982,15 +982,17 @@ DATA(result) = lines( FILTER #( cells USING KEY key_alive WHERE alive = abap_tru
   });
 
   it("REDUCE with INIT", () => {
-    const abap = `DATA it_result TYPE c.
-      DATA(output) = REDUCE string( INIT result = ||
-        FOR <result> IN it_result
-        NEXT result = result && 'abc' ).`;
+    const abap = `
+DATA it_result TYPE STANDARD TABLE OF string.
+DATA(output) = REDUCE string( INIT result = ||
+  FOR <result> IN it_result
+  NEXT result = result && 'abc' ).`;
     const issues = runProgram(abap);
     expect(issues.length).to.equals(0);
   });
 
   it("FOR, loop IN", () => {
+    // todo, does this syntax check?
     const abap = "DATA moo TYPE c.\n" +
       "DATA it_packages TYPE c.\n" +
       "moo = VALUE #(\n" +
@@ -1750,6 +1752,67 @@ START-OF-SELECTION.
   lcl_exporting=>run( IMPORTING ev_bar = int ).`;
     const issues = runProgram(abap);
     expect(issues.length).to.equals(0);
+  });
+
+  it("error, method parameter does not exist", () => {
+    const abap = `
+CLASS lcl_bar DEFINITION.
+  PUBLIC SECTION.
+    METHODS method.
+ENDCLASS.
+CLASS lcl_bar IMPLEMENTATION.
+  METHOD method.
+  ENDMETHOD.
+ENDCLASS.
+
+START-OF-SELECTION.
+  DATA mo_moo TYPE REF TO lcl_bar.
+  mo_moo = NEW #( ).
+  mo_moo->method( something = 'no' ).`;
+    const issues = runProgram(abap);
+    expect(issues.length).to.equals(1);
+    expect(issues[0].getMessage().toLowerCase()).to.contain("something");
+  });
+
+  it("error, no importing parameters", () => {
+    const abap = `
+CLASS lcl_bar DEFINITION.
+  PUBLIC SECTION.
+    METHODS method.
+ENDCLASS.
+CLASS lcl_bar IMPLEMENTATION.
+  METHOD method.
+  ENDMETHOD.
+ENDCLASS.
+
+START-OF-SELECTION.
+  DATA mo_moo TYPE REF TO lcl_bar.
+  mo_moo = NEW #( ).
+  mo_moo->method( 123 ).`;
+    const issues = runProgram(abap);
+    expect(issues.length).to.equals(1);
+    expect(issues[0].getMessage().toLowerCase()).to.contain("no importing parameters");
+  });
+
+  it("method must have RETURNING", () => {
+    const abap = `
+CLASS lcl_bar DEFINITION.
+  PUBLIC SECTION.
+    METHODS method.
+ENDCLASS.
+CLASS lcl_bar IMPLEMENTATION.
+  METHOD method.
+  ENDMETHOD.
+ENDCLASS.
+
+START-OF-SELECTION.
+  DATA mo_moo TYPE REF TO lcl_bar.
+  DATA int TYPE i.
+  mo_moo = NEW #( ).
+  int = mo_moo->method( ).`;
+    const issues = runProgram(abap);
+    expect(issues.length).to.equals(1);
+    expect(issues[0].getMessage().toLowerCase()).to.contain("type");
   });
 
 // todo, static method cannot access instance attributes

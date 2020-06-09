@@ -4,6 +4,7 @@ import {IObject} from "../objects/_iobject";
 import * as Objects from "../objects";
 import {IRegistry} from "../_iregistry";
 import {BasicRuleConfig} from "./_basic_rule_config";
+import * as xmljs from "xml-js";
 
 export class XMLConsistencyConf extends BasicRuleConfig {
 }
@@ -36,8 +37,16 @@ export class XMLConsistency implements IRule {
       return issues;
     }
 
-    // todo, check XML consistency, https://github.com/abaplint/abaplint/issues/667
+    const xml = obj.getXML();
+    if (xml) {
+      try {
+        xmljs.xml2js(xml, {compact: true});
+      } catch (error) {
+        issues.push(Issue.atRow(file, 1, "XML parser error: " + error.toString(), this.getMetadata().key));
+      }
+    }
 
+    // todo, have some XML validation in each object?
     if (obj instanceof Objects.Class) {
       const name = obj.getNameFromXML();
       if (name === undefined) {
@@ -46,7 +55,6 @@ export class XMLConsistency implements IRule {
         issues.push(Issue.atRow(file, 1, "Name in XML does not match object", this.getMetadata().key));
       }
     }
-    // todo, add more object types here
 
     return issues;
   }
