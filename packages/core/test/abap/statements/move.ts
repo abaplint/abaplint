@@ -133,6 +133,12 @@ const tests = [
   `DATA(lt_tab) = VALUE lty_bar( FOR d IN tab INDEX INTO i ( id = lv_id number = i ) ).`,
   `et_errors = CORRESPONDING #( lt_errors MAPPING company_code = doc-bukrs fiscal_year = doc-gjahr ).`,
   `ri_entity_object = CAST #( LET collectors = get_collectors( ) IN collectors[ type = iv_type ]-collector ).`,
+/*
+  `DATA(request_count) = REDUCE int2( INIT x = 0
+    FOR GROUPS request OF s_blame_author IN t_blame_author
+    GROUP BY s_blame_author-request
+    NEXT x = x + 1 ).`,
+    */
 ];
 
 statementType(tests, "MOVE", Statements.Move);

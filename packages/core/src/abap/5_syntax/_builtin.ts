@@ -93,6 +93,8 @@ export class BuiltIn {
     ret.push({name: "CONTAINS", importing: [{name: "val", type: new StringType()}, {name: "sub", type: new StringType()}], returnType: new CharacterType(1)});
     ret.push({name: "ESCAPE", importing: [{name: "val", type: new StringType()}, {name: "format", type: new StringType()}], returnType: new StringType()});
     ret.push({name: "FIND", importing: [{name: "val", type: new StringType()}, {name: "sub", type: new StringType()}, {name: "regex", type: new StringType()}, {name: "case", type: new CharacterType(1)}], returnType: new StringType()});
+    ret.push({name: "FROM_MIXED", importing: [{name: "val", type: new StringType()}], returnType: new StringType()});
+    ret.push({name: "LINE_INDEX", importing: [{name: "val", type: new StringType()}], returnType: new IntegerType()});
     ret.push({name: "LINES", importing: [{name: "val", type: new StringType()}], returnType: new IntegerType()});
     ret.push({name: "REPEAT", importing: [{name: "val", type: new StringType()}, {name: "occ", type: new IntegerType()}, {name: "regex", type: new IntegerType()}], returnType: new StringType()});
     ret.push({name: "REPLACE", importing: [{name: "val", type: new StringType()}, {name: "occ", type: new IntegerType()}, {name: "sub", type: new StringType()}, {name: "regex", type: new StringType()}, {name: "with", type: new StringType()}], returnType: new StringType()});
@@ -104,6 +106,7 @@ export class BuiltIn {
     ret.push({name: "SUBSTRING_BEFORE", importing: [{name: "val", type: new StringType()}, {name: "sub", type: new StringType()}, {name: "regex", type: new StringType()}], returnType: new StringType()});
     ret.push({name: "SUBSTRING", importing: [{name: "val", type: new StringType()}, {name: "len", type: new IntegerType()}, {name: "off", type: new IntegerType()}], returnType: new StringType()});
     ret.push({name: "TO_LOWER", importing: [{name: "val", type: new StringType()}], returnType: new StringType()});
+    ret.push({name: "TO_MIXED", importing: [{name: "val", type: new StringType()}], returnType: new StringType()});
     ret.push({name: "TO_UPPER", importing: [{name: "val", type: new StringType()}], returnType: new StringType()});
     ret.push({name: "TRANSLATE", importing: [{name: "val", type: new StringType()}, {name: "from", type: new StringType()}, {name: "to", type: new StringType()}], returnType: new StringType()});
     ret.push({name: "XSDBOOL", importing: [{name: "val", type: new StringType()}], returnType: new CharacterType(1)});
