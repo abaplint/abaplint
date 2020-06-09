@@ -78,6 +78,8 @@ export class DumpScope {
       ret = ret + "<br>";
     }
 
+    ret = ret + sident  + node.getData().references.length + " references<br>";
+
     return ret;
   }
 

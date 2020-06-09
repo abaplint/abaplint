@@ -27,7 +27,7 @@ export class MethodCallChain {
       throw new Error("MethodCallChain, first child expected");
     }
 
-    let context: AbstractType | undefined = this.findTop(first, scope, targetType);
+    let context: AbstractType | undefined = this.findTop(first, scope, targetType, filename);
     if (first.get() instanceof Expressions.MethodCall) {
       children.unshift(first);
     }
@@ -73,7 +73,7 @@ export class MethodCallChain {
 
 //////////////////////////////////////
 
-  private findTop(first: INode, scope: CurrentScope, targetType: AbstractType | undefined): AbstractType | undefined {
+  private findTop(first: INode, scope: CurrentScope, targetType: AbstractType | undefined, filename: string): AbstractType | undefined {
     if (first.get() instanceof Expressions.ClassName) {
       const className = first.getFirstToken().getStr();
       const classDefinition = scope.findObjectDefinition(className);
@@ -86,7 +86,7 @@ export class MethodCallChain {
     } else if (first instanceof ExpressionNode && first.get() instanceof Expressions.FieldChain) {
       return new FieldChain().runSyntax(first, scope);
     } else if (first instanceof ExpressionNode && first.get() instanceof Expressions.NewObject) {
-      return new NewObject().runSyntax(first, scope, targetType);
+      return new NewObject().runSyntax(first, scope, targetType, filename);
     } else if (first instanceof ExpressionNode && first.get() instanceof Expressions.Cast) {
       return new Cast().runSyntax(first, scope, targetType);
     } else {

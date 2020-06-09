@@ -6,10 +6,11 @@ import {ABAPFile} from "../files";
 import {ABAPObject} from "../objects/_abap_object";
 import {SyntaxLogic} from "../abap/5_syntax/syntax";
 import {IFormDefinition} from "../abap/types/_form_definition";
-import {ISpaghettiScopeNode} from "../abap/5_syntax/_spaghetti_scope";
+import {ISpaghettiScopeNode, IReference} from "../abap/5_syntax/_spaghetti_scope";
 import {ICursorData, LSPUtils} from "./_lsp_utils";
 import {TypedIdentifier} from "../abap/types/_typed_identifier";
 import {Identifier} from "../abap/4_file_information/_identifier";
+import {Token} from "../abap/1_lexer/tokens/_token";
 
 export interface LSPLookupResult {
   hover: string | undefined;               // in markdown
@@ -25,17 +26,18 @@ export class LSPLookup {
       return {hover: "File", definition: this.ABAPFileResult(inc)};
     }
 
-    const scope = new SyntaxLogic(reg, obj).run().spaghetti.lookupPosition(cursor.identifier.getStart(), cursor.identifier.getFilename());
-    if (scope === undefined) {
+    const bottomScope = new SyntaxLogic(reg, obj).run().spaghetti.lookupPosition(cursor.identifier.getStart(),
+                                                                                 cursor.identifier.getFilename());
+    if (bottomScope === undefined) {
       return undefined;
     }
 
-    const form = this.findForm(cursor, scope);
+    const form = this.findForm(cursor, bottomScope);
     if (form) {
       return {hover: "Call FORM", definition: LSPUtils.identiferToLocation(form)};
     }
 
-    const variable = scope.findVariable(cursor.token.getStr());
+    const variable = bottomScope.findVariable(cursor.token.getStr());
     if (variable instanceof TypedIdentifier) {
       let value = "Resolved variable, Typed\n\nType: " + variable.getType().toText(0);
       if (variable.getValue()) {
@@ -54,16 +56,38 @@ export class LSPLookup {
       return {hover: value, definition: location, definitionId: variable};
     }
 
-    const type = scope.findType(cursor.token.getStr());
+    const type = bottomScope.findType(cursor.token.getStr());
     if (type instanceof TypedIdentifier) {
       const value = "Resolved type";
       return {hover: value, definition: undefined};
+    }
+
+    const ref = this.searchReferences(bottomScope, cursor.token);
+    if (ref !== undefined) {
+      const value = "Resolved Reference: " + ref.referenceType + " " + ref.resolved.getName();
+      return {hover: value, definition: LSPUtils.identiferToLocation(ref.resolved)};
     }
 
     return undefined;
   }
 
 ////////////////////////////////////////////
+
+  private static searchReferences(scope: ISpaghettiScopeNode, token: Token): IReference | undefined {
+
+    for (const r of scope.getData().references) {
+      if (r.position.getStart().equals(token.getStart())) {
+        return r;
+      }
+    }
+
+    const parent = scope.getParent();
+    if (parent) {
+      return this.searchReferences(parent, token);
+    }
+
+    return undefined;
+  }
 
   private static ABAPFileResult(abap: ABAPFile): LServer.Location {
     return {
