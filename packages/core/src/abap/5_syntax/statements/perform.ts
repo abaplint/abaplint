@@ -30,7 +30,7 @@ export class Perform {
       throw new Error("FORM definition \"" + name + "\" not found");
     }
 
-    scope.addReference(expr.getFirstToken(), found, ReferenceType.Form, filename);
+    scope.addReference(expr.getFirstToken(), found, ReferenceType.FormReference, filename);
 
     // todo, also check parameters match
   }

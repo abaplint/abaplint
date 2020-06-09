@@ -26,14 +26,16 @@ export enum DeferredType {
 
 export interface IVariableReference {
   position: Identifier,
-  resolved: TypedIdentifier
+  resolved: Identifier
 }
 
 export enum ReferenceType {
-  Class = "Class",
-  Interface = "Interface",
-  Method = "Method",
-  Form = "Form",
+  ClassReference = "ClassReference",
+  InterfaceReference = "InterfaceReference",
+  MethodReference = "MethodReference",
+  FormReference = "FormReference",
+  DataReadReference = "DataReadReference",
+  DataWriteReference = "DataWriteReference",
 }
 
 export interface IReference {
