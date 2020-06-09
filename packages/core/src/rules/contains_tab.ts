@@ -19,7 +19,7 @@ export class ContainsTab extends ABAPRule {
       title: "Code contains tab",
       shortDescription: `Checks for usage of tabs (enable to enforce spaces)`,
       extendedInformation: `https://docs.abapopenchecks.org/checks/09/`,
-      tags: [RuleTag.Whitespace],
+      tags: [RuleTag.Whitespace, RuleTag.Quickfix],
     };
   }
 
