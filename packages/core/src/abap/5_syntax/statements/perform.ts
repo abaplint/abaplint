@@ -2,7 +2,7 @@ import * as Expressions from "../../2_statements/expressions";
 import * as Statements from "../../2_statements/statements";
 import {StatementNode} from "../../nodes";
 import {CurrentScope} from "../_current_scope";
-import {ReferenceType} from "../_spaghetti_scope";
+import {ReferenceType} from "../_reference_type";
 
 export class Perform {
   public runSyntax(node: StatementNode, scope: CurrentScope, filename: string): void {

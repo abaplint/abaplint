@@ -12,7 +12,8 @@ import {IInterfaceDefinition} from "../types/_interface_definition";
 import {IFormDefinition} from "../types/_form_definition";
 import {Class} from "../../objects/class";
 import {Interface} from "../../objects/interface";
-import {IScopeIdentifier, DeferredType, ReferenceType} from "./_spaghetti_scope";
+import {IScopeIdentifier, DeferredType} from "./_spaghetti_scope";
+import {ReferenceType} from "./_reference_type";
 
 export class CurrentScope {
   protected readonly reg: IRegistry;
@@ -131,7 +132,11 @@ export class CurrentScope {
     this.addReference(token, resolved, ReferenceType.DataWriteReference, filename);
   }
 
-  public addReference(token: Token, resolved: Identifier, type: ReferenceType, filename: string) {
+  public addReference(token: Token | undefined, resolved: Identifier, type: ReferenceType, filename: string) {
+    if (token === undefined) {
+      return;
+    }
+
     const position = new Identifier(token, filename);
     this.current?.getData().references.push({position, resolved, referenceType: type});
   }

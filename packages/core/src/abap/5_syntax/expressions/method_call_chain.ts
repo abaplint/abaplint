@@ -10,6 +10,7 @@ import {NewObject} from "./new_object";
 import {Cast} from "./cast";
 import {BuiltIn} from "../_builtin";
 import {MethodCallParam} from "./method_call_param";
+import {ReferenceType} from "../_reference_type";
 
 export class MethodCallChain {
   public runSyntax(
@@ -40,7 +41,8 @@ export class MethodCallChain {
       if (current instanceof ExpressionNode && current.get() instanceof Expressions.MethodCall) {
         // for built-in methods set className to undefined
         const className = context instanceof ObjectReferenceType ? context.getName() : undefined;
-        const methodName = current.findDirectExpression(Expressions.MethodName)?.getFirstToken().getStr();
+        const methodToken = current.findDirectExpression(Expressions.MethodName)?.getFirstToken();
+        const methodName = methodToken?.getStr();
         let method = helper.searchMethodName(scope.findObjectDefinition(className), methodName);
         if (method === undefined) {
           method = new BuiltIn().searchBuiltin(methodName?.toUpperCase());
@@ -50,6 +52,8 @@ export class MethodCallChain {
         } else if (method === undefined && !(context instanceof VoidType)) {
           throw new Error("Method \"" + methodName + "\" not found");
         } else if (method) {
+          scope.addReference(methodToken, method, ReferenceType.MethodReference, filename);
+
           const ret = method.getParameters().getReturning()?.getType();
           context = ret;
         }

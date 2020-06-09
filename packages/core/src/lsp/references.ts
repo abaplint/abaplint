@@ -5,9 +5,10 @@ import {ITextDocumentPositionParams} from "./_interfaces";
 import {LSPUtils} from "./_lsp_utils";
 import {Identifier} from "../abap/4_file_information/_identifier";
 import {SyntaxLogic} from "../abap/5_syntax/syntax";
-import {ISpaghettiScopeNode, ReferenceType} from "../abap/5_syntax/_spaghetti_scope";
+import {ISpaghettiScopeNode} from "../abap/5_syntax/_spaghetti_scope";
 import {LSPLookup} from "./_lookup";
 import {ScopeType} from "../abap/5_syntax/_scope_type";
+import {ReferenceType} from "../abap/5_syntax/_reference_type";
 
 export class References {
   private readonly reg: IRegistry;

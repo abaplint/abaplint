@@ -4,7 +4,8 @@ import {Identifier} from "../4_file_information/_identifier";
 import {IClassDefinition} from "../types/_class_definition";
 import {IInterfaceDefinition} from "../types/_interface_definition";
 import {IFormDefinition} from "../types/_form_definition";
-import {IScopeData, IScopeIdentifier, IScopeVariable, ISpaghettiScopeNode, ISpaghettiScope, DeferredType, ReferenceType} from "./_spaghetti_scope";
+import {IScopeData, IScopeIdentifier, IScopeVariable, ISpaghettiScopeNode, ISpaghettiScope, DeferredType} from "./_spaghetti_scope";
+import {ReferenceType} from "./_reference_type";
 
 abstract class ScopeData {
   private readonly data: IScopeData;
