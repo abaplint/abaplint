@@ -1,5 +1,5 @@
 import {MethodDefinition} from "./method_definition";
-import {StructureNode} from "../../abap/nodes";
+import {StructureNode} from "../nodes";
 import * as Structures from "../3_structures/structures";
 import {MethodDef} from "../2_statements/statements";
 import {Visibility} from "../4_file_information/visibility";

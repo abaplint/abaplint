@@ -1,5 +1,5 @@
 import {IRule} from "./rules/_irule";
-import * as Rules from "./rules/";
+import * as Rules from "./rules";
 
 export class ArtifactsRules {
 

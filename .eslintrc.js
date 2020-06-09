@@ -23,6 +23,8 @@ module.exports = {
       "import/no-unresolved": "off",
       "import/namespace": "off",
       "import/named": "off",
+      "import/no-absolute-path": "error",
+      "import/no-useless-path-segments": ["error", {noUselessIndex: true}],
       "space-infix-ops": "error",
       "prefer-arrow-callback": "error",
       "import/export": "off",
@@ -33,6 +35,8 @@ module.exports = {
           }
       ],
       "object-curly-spacing": "error",
+      "comma-spacing": "error",
+      "@typescript-eslint/comma-spacing": "error",
       "@typescript-eslint/explicit-function-return-type": "off",
       "@typescript-eslint/explicit-module-boundary-types": "off",
       "@typescript-eslint/array-type": "error",
