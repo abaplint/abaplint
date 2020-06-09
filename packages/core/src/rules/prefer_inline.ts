@@ -6,7 +6,7 @@ import {Version} from "../version";
 import {IObject} from "../objects/_iobject";
 import {ABAPObject} from "../objects/_abap_object";
 import {SyntaxLogic} from "../abap/5_syntax/syntax";
-import {IScopeVariable, IVariableReference, ISpaghettiScopeNode} from "../abap/5_syntax/_spaghetti_scope";
+import {IScopeVariable, IVariableReference, ISpaghettiScopeNode, ReferenceType} from "../abap/5_syntax/_spaghetti_scope";
 import {IdentifierMeta} from "../abap/types/_typed_identifier";
 import {ScopeType} from "../abap/5_syntax/_scope_type";
 import {Token} from "../abap/1_lexer/tokens/_token";
@@ -111,8 +111,8 @@ First position used must be a full/pure write.`,
 // assumption: variables are local, so only the current scope must be searched
 
     let firstRead: IVariableReference | undefined = undefined;
-    for (const r of node.getData().reads) {
-      if (r.resolved.getStart().equals(v.identifier.getStart()) === false) {
+    for (const r of node.getData().references) {
+      if (r.referenceType !== ReferenceType.DataReadReference || r.resolved.getStart().equals(v.identifier.getStart()) === false) {
         continue;
       }
       if (firstRead === undefined
@@ -122,8 +122,8 @@ First position used must be a full/pure write.`,
     }
 
     let firstWrite: IVariableReference | undefined = undefined;
-    for (const w of node.getData().writes) {
-      if (w.resolved.getStart().equals(v.identifier.getStart()) === false) {
+    for (const w of node.getData().references) {
+      if (w.referenceType !== ReferenceType.DataWriteReference || w.resolved.getStart().equals(v.identifier.getStart()) === false) {
         continue;
       }
       if (firstWrite === undefined

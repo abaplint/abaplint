@@ -124,13 +124,11 @@ export class CurrentScope {
 ///////////////////////////
 
   public addRead(token: Token, resolved: TypedIdentifier, filename: string) {
-    const position = new Identifier(token, filename);
-    this.current?.getData().reads.push({position, resolved});
+    this.addReference(token, resolved, ReferenceType.DataReadReference, filename);
   }
 
   public addWrite(token: Token, resolved: TypedIdentifier, filename: string) {
-    const position = new Identifier(token, filename);
-    this.current?.getData().writes.push({position, resolved});
+    this.addReference(token, resolved, ReferenceType.DataWriteReference, filename);
   }
 
   public addReference(token: Token, resolved: Identifier, type: ReferenceType, filename: string) {

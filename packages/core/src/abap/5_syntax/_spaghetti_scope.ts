@@ -54,10 +54,6 @@ export interface IScopeData {
   idefs: IInterfaceDefinition[];
   forms: IFormDefinition[];
 
-// todo, refactor "read" & "write" to "references" instead using "ReferenceType"'s
-  reads: IVariableReference[];
-  writes: IVariableReference[];
-
   references: IReference[];
 }
 

@@ -5,7 +5,7 @@ import {ITextDocumentPositionParams} from "./_interfaces";
 import {LSPUtils} from "./_lsp_utils";
 import {Identifier} from "../abap/4_file_information/_identifier";
 import {SyntaxLogic} from "../abap/5_syntax/syntax";
-import {ISpaghettiScopeNode} from "../abap/5_syntax/_spaghetti_scope";
+import {ISpaghettiScopeNode, ReferenceType} from "../abap/5_syntax/_spaghetti_scope";
 import {LSPLookup} from "./_lookup";
 import {ScopeType} from "../abap/5_syntax/_scope_type";
 
@@ -74,14 +74,14 @@ export class References {
         }
       }
 
-      for (const r of node.getData().reads) {
-        if (r.resolved.equals(identifier)) {
+      for (const r of node.getData().references) {
+        if (r.referenceType === ReferenceType.DataReadReference && r.resolved.equals(identifier)) {
           ret.push(r.position);
         }
       }
 
-      for (const w of node.getData().writes) {
-        if (w.resolved.equals(identifier)) {
+      for (const w of node.getData().references) {
+        if (w.referenceType === ReferenceType.DataWriteReference && w.resolved.equals(identifier)) {
           ret.push(w.position);
         }
       }

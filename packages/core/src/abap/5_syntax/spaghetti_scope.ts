@@ -4,7 +4,7 @@ import {Identifier} from "../4_file_information/_identifier";
 import {IClassDefinition} from "../types/_class_definition";
 import {IInterfaceDefinition} from "../types/_interface_definition";
 import {IFormDefinition} from "../types/_form_definition";
-import {IScopeData, IScopeIdentifier, IScopeVariable, ISpaghettiScopeNode, ISpaghettiScope, DeferredType} from "./_spaghetti_scope";
+import {IScopeData, IScopeIdentifier, IScopeVariable, ISpaghettiScopeNode, ISpaghettiScope, DeferredType, ReferenceType} from "./_spaghetti_scope";
 
 abstract class ScopeData {
   private readonly data: IScopeData;
@@ -18,8 +18,6 @@ abstract class ScopeData {
       types: [],
       deferred: [],
       references: [],
-      reads: [],
-      writes: [],
     };
   }
 
@@ -243,8 +241,8 @@ export class SpaghettiScope implements ISpaghettiScope {
 
     for (const n of this.allNodes()) {
       if (n.getIdentifier().filename === filename) {
-        for (const v of n.getData().reads) {
-          if (v.position.getFilename() === filename) {
+        for (const v of n.getData().references) {
+          if (v.referenceType === ReferenceType.DataReadReference && v.position.getFilename() === filename) {
             ret.push(v.position);
           }
         }
@@ -259,8 +257,8 @@ export class SpaghettiScope implements ISpaghettiScope {
 
     for (const n of this.allNodes()) {
       if (n.getIdentifier().filename === filename) {
-        for (const v of n.getData().writes) {
-          if (v.position.getFilename() === filename) {
+        for (const v of n.getData().references) {
+          if (v.referenceType === ReferenceType.DataWriteReference && v.position.getFilename() === filename) {
             ret.push(v.position);
           }
         }
