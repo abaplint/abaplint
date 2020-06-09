@@ -11,7 +11,6 @@ import {Source} from "./source";
 
 // todo, checking that all mandatory parameters are filled
 // todo, checking that types are compatible
-// todo, checking that sources return something
 
 interface IListItemT {
   name: string;
