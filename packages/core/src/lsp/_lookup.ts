@@ -99,7 +99,7 @@ export class LSPLookup {
 
     let ret = "";
     for (const p of mdef.getParameters().getAll()) {
-      ret = ret + p.getName() + ": " + p.getType().toText(0);
+      ret = ret + p.getName() + ": TYPE " + p.getType().toText(0);
     }
     return ret === "" ? ret : ret + "\n\n";
   }
