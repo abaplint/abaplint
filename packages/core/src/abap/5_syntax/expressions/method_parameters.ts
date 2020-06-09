@@ -75,6 +75,8 @@ export class MethodParameters {
       const inline = item.target.findDirectExpression(Expressions.InlineData);
       if (inline) {
         new InlineData().runSyntax(inline, scope, filename, parameterType);
+      } else if (item.targetType === undefined) {
+        throw new Error("Could not determine target type");
       } else if (item.targetType) {
 // todo, check that targetType and parameterType are compatible
       }
@@ -154,6 +156,10 @@ export class MethodParameters {
       }
 
       const sourceType = new Source().runSyntax(source, scope, filename);
+
+      if (sourceType === undefined) {
+        throw new Error("No source type determined for parameter " + name + " input");
+      }
 
       ret.push({name, source, sourceType});
     }

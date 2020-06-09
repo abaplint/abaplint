@@ -27,7 +27,11 @@ export class MethodCallParam {
       if (!(method instanceof VoidType) && method.getParameters().getImporting().length === 0) {
         throw new Error("Method \"" + method.getName() + "\" has no importing parameters");
       }
-      new Source().runSyntax(child, scope, filename);
+      const type = new Source().runSyntax(child, scope, filename);
+
+      if (type === undefined) {
+        throw new Error("No source type determined, method source");
+      }
     } else if (child instanceof ExpressionNode && child.get() instanceof Expressions.ParameterListS) {
       new MethodParameters().checkExporting(child, scope, method, filename);
     } else if (child.get() instanceof Expressions.MethodParameters) {

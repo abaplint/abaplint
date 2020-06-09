@@ -1,4 +1,4 @@
-import {ExpressionNode} from "../../nodes";
+import {ExpressionNode, TokenNode} from "../../nodes";
 import {CurrentScope} from "../_current_scope";
 import {AbstractType} from "../../types/basic/_abstract_type";
 import * as Expressions from "../../2_statements/expressions";
@@ -14,7 +14,11 @@ export class Source {
 
     const children = node.getChildren().slice();
     const first = children.shift();
-    if (first === undefined || !(first instanceof ExpressionNode)) {
+
+    if (first instanceof TokenNode) {
+      const tok = first.getFirstToken().getStr();
+      return new UnknownType("todo, Source type " + tok);
+    } else if (first === undefined || !(first instanceof ExpressionNode)) {
       return undefined;
     }
 
