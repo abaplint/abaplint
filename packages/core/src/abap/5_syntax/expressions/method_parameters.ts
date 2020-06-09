@@ -7,13 +7,21 @@ import {InlineData} from "./inline_data";
 import {Target} from "./target";
 import {AbstractType} from "../../types/basic/_abstract_type";
 import {INode} from "../../nodes/_inode";
+import {Source} from "./source";
 
 // todo, checking that all mandatory parameters are filled
+// todo, checking that types are compatible
 
-interface IListItem {
+interface IListItemT {
   name: string;
   target: ExpressionNode;
   targetType: AbstractType | undefined;
+}
+
+interface IListItemS {
+  name: string;
+  source: ExpressionNode;
+  sourceType: AbstractType | undefined;
 }
 
 export class MethodParameters {
@@ -28,19 +36,19 @@ export class MethodParameters {
       const name = children.shift()?.getFirstToken().getStr().toUpperCase();
       switch (name) {
         case "EXPORTING":
-          children.shift(); // todo
+          this.checkExporting(children.shift(), scope, method, filename);
           break;
         case "IMPORTING":
           this.checkImporting(children.shift(), scope, method, filename);
           break;
         case "CHANGING":
-          children.shift(); // todo
+          this.checkChanging(children.shift(), scope, method, filename);
           break;
         case "RECEIVING":
-          children.shift(); // todo
+          children.shift(); // todo, non functional method call
           break;
         case "EXCEPTIONS":
-          children.shift(); // todo
+          children.shift(); // todo, old style exceptions
           break;
         default:
           throw new Error("MethodParameters, unexpected token, " + name);
@@ -51,13 +59,6 @@ export class MethodParameters {
 ///////////////////////
 
   private checkImporting(node: INode | undefined, scope: CurrentScope, method: IMethodDefinition | VoidType, filename: string) {
-    if (node === undefined) {
-      return;
-    }
-    if (!(node.get() instanceof Expressions.ParameterListT)) {
-      throw new Error("checkImporting, unexpected node");
-    }
-
     for (const item of this.parameterListT(node, scope, filename)) {
       let parameterType: AbstractType | undefined = undefined;
       if (method instanceof VoidType) {
@@ -65,7 +66,7 @@ export class MethodParameters {
       } else {
         const parameter = method.getParameters().getExporting().find(p => p.getName().toUpperCase() === item.name);
         if (parameter === undefined) {
-          throw new Error("Method parameter \"" + item.name + "\" does not exist");
+          throw new Error("Method exporting parameter \"" + item.name + "\" does not exist");
         }
         parameterType = parameter.getType();
       }
@@ -76,23 +77,101 @@ export class MethodParameters {
       } else if (item.targetType) {
 // todo, check that targetType and parameterType are compatible
       }
-
     }
+  }
+
+  private checkChanging(node: INode | undefined, scope: CurrentScope, method: IMethodDefinition | VoidType, filename: string) {
+    for (const item of this.parameterListT(node, scope, filename)) {
+      let parameterType: AbstractType | undefined = undefined;
+      if (method instanceof VoidType) {
+        parameterType = method;
+      } else {
+        const parameter = method.getParameters().getChanging().find(p => p.getName().toUpperCase() === item.name);
+        if (parameter === undefined) {
+          throw new Error("Method changing parameter \"" + item.name + "\" does not exist");
+        }
+        parameterType = parameter.getType();
+      }
+
+      if (item.targetType) {
+// todo, check that targetType and parameterType are compatible
+        if (0) {
+          console.log(parameterType); // todo
+        }
+      }
+    }
+  }
+
+  private checkExporting(node: INode | undefined, scope: CurrentScope, method: IMethodDefinition | VoidType, filename: string) {
+    for (const item of this.parameterListS(node, scope, filename)) {
+      let parameterType: AbstractType | undefined = undefined;
+      if (method instanceof VoidType) {
+        parameterType = method;
+      } else {
+        const parameter = method.getParameters().getImporting().find(p => p.getName().toUpperCase() === item.name);
+        if (parameter === undefined) {
+          throw new Error("Method changing parameter \"" + item.name + "\" does not exist");
+        }
+        parameterType = parameter.getType();
+      }
+
+      if (item.sourceType) {
+// todo, check that targetType and parameterType are compatible
+        if (0) {
+          console.log(parameterType); // todo
+        }
+      }
+    }
+  }
+
+  private parameterListS(
+    node: INode | undefined,
+    scope: CurrentScope,
+    filename: string): IListItemS[] {
+
+    if (node === undefined) {
+      return [];
+    } else if (!(node.get() instanceof Expressions.ParameterListS)) {
+      throw new Error("parameterListS, unexpected node");
+    }
+
+    const ret: IListItemS[] = [];
+
+    for (const c of node.getChildren()) {
+      if (!(c.get() instanceof Expressions.ParameterS) || !(c instanceof ExpressionNode)) {
+        throw new Error("parameterListS, unexpected node, child");
+      }
+
+      const name = c.findDirectExpression(Expressions.ParameterName)?.getFirstToken().getStr().toUpperCase();
+      if (name === undefined) {
+        throw new Error("parameterListS, no name determined");
+      }
+
+      const source = c.findDirectExpression(Expressions.Source);
+      if (source === undefined) {
+        throw new Error("parameterListS, no source found");
+      }
+
+      const sourceType = new Source().runSyntax(source, scope, filename);
+
+      ret.push({name, source, sourceType});
+    }
+
+    return ret;
   }
 
   private parameterListT(
     node: INode | undefined,
     scope: CurrentScope,
-    filename: string): IListItem[] {
+    filename: string): IListItemT[] {
 
     if (node === undefined) {
       return [];
-    }
-    if (!(node.get() instanceof Expressions.ParameterListT)) {
+    } else if (!(node.get() instanceof Expressions.ParameterListT)) {
       throw new Error("parameterListT, unexpected node");
     }
 
-    const ret: IListItem[] = [];
+    const ret: IListItemT[] = [];
 
     for (const c of node.getChildren()) {
       if (!(c.get() instanceof Expressions.ParameterT) || !(c instanceof ExpressionNode)) {
@@ -103,6 +182,7 @@ export class MethodParameters {
       if (name === undefined) {
         throw new Error("parameterListT, no name determined");
       }
+
       const target = c.findDirectExpression(Expressions.Target);
       if (target === undefined) {
         throw new Error("parameterListT, no target found");
