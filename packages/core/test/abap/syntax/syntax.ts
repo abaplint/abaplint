@@ -1752,6 +1752,46 @@ START-OF-SELECTION.
     expect(issues.length).to.equals(0);
   });
 
+  it("error, method parameter does not exist", () => {
+    const abap = `
+CLASS lcl_bar DEFINITION.
+  PUBLIC SECTION.
+    METHODS method.
+ENDCLASS.
+CLASS lcl_bar IMPLEMENTATION.
+  METHOD method.
+  ENDMETHOD.
+ENDCLASS.
+
+START-OF-SELECTION.
+  DATA mo_moo TYPE REF TO lcl_bar.
+  mo_moo = NEW #( ).
+  mo_moo->method( something = 'no' ).`;
+    const issues = runProgram(abap);
+    expect(issues.length).to.equals(1);
+    expect(issues[0].getMessage().toLowerCase()).to.contain("something");
+  });
+
+  it("error, no importing parameters", () => {
+    const abap = `
+CLASS lcl_bar DEFINITION.
+  PUBLIC SECTION.
+    METHODS method.
+ENDCLASS.
+CLASS lcl_bar IMPLEMENTATION.
+  METHOD method.
+  ENDMETHOD.
+ENDCLASS.
+
+START-OF-SELECTION.
+  DATA mo_moo TYPE REF TO lcl_bar.
+  mo_moo = NEW #( ).
+  mo_moo->method( 123 ).`;
+    const issues = runProgram(abap);
+    expect(issues.length).to.equals(1);
+    expect(issues[0].getMessage().toLowerCase()).to.contain("no importing parameters");
+  });
+
 // todo, static method cannot access instance attributes
 // todo, can a private method access protected attributes?
 // todo, readonly fields(constants + enums + attributes flagged read-only)

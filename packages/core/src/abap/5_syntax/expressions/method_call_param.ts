@@ -23,11 +23,13 @@ export class MethodCallParam {
     if (child.get() instanceof WParenRight || child.get() instanceof WParenRightW) {
       return;
     } else if (child instanceof ExpressionNode && child.get() instanceof Expressions.Source) {
-      // todo, validate that the method has only one importing, and types are compatible
+      // todo, validate that the method has only one default importing, and types are compatible
+      if (!(method instanceof VoidType) && method.getParameters().getImporting().length === 0) {
+        throw new Error("Method \"" + method.getName() + "\" has no importing parameters");
+      }
       new Source().runSyntax(child, scope, filename);
     } else if (child instanceof ExpressionNode && child.get() instanceof Expressions.ParameterListS) {
-      // todo, validate importing parameters exists, and types are compatible
-      // console.dir("todo 2");
+      new MethodParameters().checkExporting(child, scope, method, filename);
     } else if (child.get() instanceof Expressions.MethodParameters) {
       new MethodParameters().runSyntax(child, scope, method, filename);
     } else {

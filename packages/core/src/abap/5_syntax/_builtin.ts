@@ -29,7 +29,12 @@ class BuiltInMethod extends Identifier implements IMethodDefinition, IMethodPara
     throw new Error("BuiltInMethod->getAll, Method not implemented.");
   }
   public getImporting(): readonly TypedIdentifier[] {
-    throw new Error("BuiltInMethod->getImporting, Method not implemented.");
+    const ret: TypedIdentifier[] = [];
+    for (const i of this.method.importing) {
+      const id = new TokenIdentifier(new Position(this.row, 1), i.name);
+      ret.push(new TypedIdentifier(id, BuiltIn.filename, i.type));
+    }
+    return ret;
   }
   public getExporting(): readonly TypedIdentifier[] {
     return [];
@@ -81,27 +86,28 @@ export class BuiltIn {
     const ret: IBuiltinMethod[] = [];
 
     // todo, some of these are version specific
-    ret.push({name: "BOOLC", importing: [], returnType: new CharacterType(1)});
-    ret.push({name: "CONCAT_LINES_OF", importing: [], returnType: new StringType()});
-    ret.push({name: "CONDENSE", importing: [], returnType: new StringType()});
-    ret.push({name: "CONTAINS", importing: [], returnType: new CharacterType(1)});
-    ret.push({name: "ESCAPE", importing: [], returnType: new StringType()});
-    ret.push({name: "FIND", importing: [], returnType: new StringType()});
-    ret.push({name: "LINES", importing: [], returnType: new IntegerType()});
-    ret.push({name: "REPEAT", importing: [], returnType: new StringType()});
-    ret.push({name: "REPLACE", importing: [], returnType: new StringType()});
-    ret.push({name: "REVERSE", importing: [], returnType: new StringType()});
-    ret.push({name: "SHIFT_LEFT", importing: [], returnType: new StringType()});
-    ret.push({name: "SHIFT_RIGHT", importing: [], returnType: new StringType()});
-    ret.push({name: "STRLEN", importing: [], returnType: new IntegerType()});
-    ret.push({name: "SUBSTRING_AFTER", importing: [], returnType: new StringType()});
-    ret.push({name: "SUBSTRING_BEFORE", importing: [], returnType: new StringType()});
-    ret.push({name: "SUBSTRING", importing: [], returnType: new StringType()});
-    ret.push({name: "TO_LOWER", importing: [], returnType: new StringType()});
-    ret.push({name: "TO_UPPER", importing: [], returnType: new StringType()});
-    ret.push({name: "TRANSLATE", importing: [], returnType: new StringType()});
-    ret.push({name: "XSDBOOL", importing: [], returnType: new CharacterType(1)});
-    ret.push({name: "XSTRLEN", importing: [], returnType: new IntegerType()});
+    // todo, make types correct, some of the string sare clike?
+    ret.push({name: "BOOLC", importing: [{name: "val", type: new StringType()}], returnType: new CharacterType(1)});
+    ret.push({name: "CONCAT_LINES_OF", importing: [{name: "table", type: new StringType()}, {name: "sep", type: new StringType()}], returnType: new StringType()});
+    ret.push({name: "CONDENSE", importing: [{name: "val", type: new StringType()}], returnType: new StringType()});
+    ret.push({name: "CONTAINS", importing: [{name: "val", type: new StringType()}, {name: "sub", type: new StringType()}], returnType: new CharacterType(1)});
+    ret.push({name: "ESCAPE", importing: [{name: "val", type: new StringType()}, {name: "format", type: new StringType()}], returnType: new StringType()});
+    ret.push({name: "FIND", importing: [{name: "val", type: new StringType()}, {name: "sub", type: new StringType()}, {name: "regex", type: new StringType()}, {name: "case", type: new CharacterType(1)}], returnType: new StringType()});
+    ret.push({name: "LINES", importing: [{name: "val", type: new StringType()}], returnType: new IntegerType()});
+    ret.push({name: "REPEAT", importing: [{name: "val", type: new StringType()}, {name: "occ", type: new IntegerType()}, {name: "regex", type: new IntegerType()}], returnType: new StringType()});
+    ret.push({name: "REPLACE", importing: [{name: "val", type: new StringType()}, {name: "occ", type: new IntegerType()}, {name: "sub", type: new StringType()}, {name: "regex", type: new StringType()}, {name: "with", type: new StringType()}], returnType: new StringType()});
+    ret.push({name: "REVERSE", importing: [{name: "val", type: new StringType()}], returnType: new StringType()});
+    ret.push({name: "SHIFT_LEFT", importing: [{name: "val", type: new StringType()}, {name: "sub", type: new StringType()}], returnType: new StringType()});
+    ret.push({name: "SHIFT_RIGHT", importing: [{name: "val", type: new StringType()}], returnType: new StringType()});
+    ret.push({name: "STRLEN", importing: [{name: "val", type: new StringType()}], returnType: new IntegerType()});
+    ret.push({name: "SUBSTRING_AFTER", importing: [{name: "val", type: new StringType()}, {name: "sub", type: new StringType()}], returnType: new StringType()});
+    ret.push({name: "SUBSTRING_BEFORE", importing: [{name: "val", type: new StringType()}, {name: "sub", type: new StringType()}, {name: "regex", type: new StringType()}], returnType: new StringType()});
+    ret.push({name: "SUBSTRING", importing: [{name: "val", type: new StringType()}, {name: "len", type: new IntegerType()}, {name: "off", type: new IntegerType()}], returnType: new StringType()});
+    ret.push({name: "TO_LOWER", importing: [{name: "val", type: new StringType()}], returnType: new StringType()});
+    ret.push({name: "TO_UPPER", importing: [{name: "val", type: new StringType()}], returnType: new StringType()});
+    ret.push({name: "TRANSLATE", importing: [{name: "val", type: new StringType()}, {name: "from", type: new StringType()}, {name: "to", type: new StringType()}], returnType: new StringType()});
+    ret.push({name: "XSDBOOL", importing: [{name: "val", type: new StringType()}], returnType: new CharacterType(1)});
+    ret.push({name: "XSTRLEN", importing: [{name: "val", type: new StringType()}], returnType: new IntegerType()});
 
     const index = ret.findIndex(a => a.name === name.toUpperCase());
     if (index < 0) {

@@ -11,6 +11,7 @@ import {Source} from "./source";
 
 // todo, checking that all mandatory parameters are filled
 // todo, checking that types are compatible
+// todo, checking that sources return something
 
 interface IListItemT {
   name: string;
@@ -102,7 +103,7 @@ export class MethodParameters {
     }
   }
 
-  private checkExporting(node: INode | undefined, scope: CurrentScope, method: IMethodDefinition | VoidType, filename: string) {
+  public checkExporting(node: INode | undefined, scope: CurrentScope, method: IMethodDefinition | VoidType, filename: string) {
     for (const item of this.parameterListS(node, scope, filename)) {
       let parameterType: AbstractType | undefined = undefined;
       if (method instanceof VoidType) {
@@ -110,7 +111,7 @@ export class MethodParameters {
       } else {
         const parameter = method.getParameters().getImporting().find(p => p.getName().toUpperCase() === item.name);
         if (parameter === undefined) {
-          throw new Error("Method changing parameter \"" + item.name + "\" does not exist");
+          throw new Error("Method importing parameter \"" + item.name + "\" does not exist");
         }
         parameterType = parameter.getType();
       }
