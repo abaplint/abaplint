@@ -61,6 +61,11 @@ IF foo = bar.
   ENDIF.
 ENDIF.`, cnt: 0},
 
+  {abap: `
+TEST-INJECTION delete_vars.
+  sy-subrc = 0.
+END-TEST-INJECTION.`, cnt: 0},
+
 ];
 
 testRule(tests, Indentation);
