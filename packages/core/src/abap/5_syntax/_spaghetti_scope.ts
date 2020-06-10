@@ -6,6 +6,7 @@ import {IInterfaceDefinition} from "../types/_interface_definition";
 import {IFormDefinition} from "../types/_form_definition";
 import {Position} from "../../position";
 import {Issue} from "../../issue";
+import {IReference} from "./_reference";
 
 export interface IScopeIdentifier {
   stype: ScopeType;
@@ -24,24 +25,6 @@ export enum DeferredType {
   Interface,
 }
 
-export interface IVariableReference {
-  position: Identifier,
-  resolved: TypedIdentifier
-}
-
-export enum ReferenceType {
-  Class = "Class",
-  Interface = "Interface",
-  Method = "Method",
-  Form = "Form",
-}
-
-export interface IReference {
-  position: Identifier,
-  resolved: Identifier,
-  referenceType: ReferenceType,
-}
-
 export interface IScopeData {
   vars: IScopeVariable[];
   types: IScopeVariable[];
@@ -51,10 +34,6 @@ export interface IScopeData {
   cdefs: IClassDefinition[];
   idefs: IInterfaceDefinition[];
   forms: IFormDefinition[];
-
-// todo, refactor "read" & "write" to "references" instead using "ReferenceType"'s
-  reads: IVariableReference[];
-  writes: IVariableReference[];
 
   references: IReference[];
 }

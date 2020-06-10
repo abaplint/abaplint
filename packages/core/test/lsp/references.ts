@@ -51,4 +51,20 @@ WRITE abap_false.`);
     expect(found.length).to.equal(2);
   });
 
+  it.skip("method references", () => {
+    const file = new MemoryFile("foobar.prog.abap", `CLASS lcl_bar DEFINITION.
+    PUBLIC SECTION.
+      METHODS: foobar IMPORTING int TYPE i.
+  ENDCLASS.
+  CLASS lcl_bar IMPLEMENTATION.
+    METHOD foobar.
+    ENDMETHOD.
+  ENDCLASS.
+  START-OF-SELECTION.
+    NEW lcl_bar( )->foobar( 1 ).`);
+    const reg = new Registry().addFile(file).parse();
+    const found = new References(reg).references(buildPosition(file, 2, 18));
+    expect(found.length).to.equal(1);
+  });
+
 });
