@@ -46,13 +46,18 @@ export class MethodCallChain {
         let method = helper.searchMethodName(scope.findObjectDefinition(className), methodName);
         if (method === undefined) {
           method = new BuiltIn().searchBuiltin(methodName?.toUpperCase());
+          if (method) {
+            scope.addReference(methodToken, method, ReferenceType.BuiltinMethodReference, filename, {className: className});
+          }
+        } else {
+          scope.addReference(methodToken, method, ReferenceType.MethodReference, filename, {className: className});
         }
         if (method === undefined && methodName?.toUpperCase() === "CONSTRUCTOR") {
           context = undefined; // todo, this is a workaround, constructors always exists
         } else if (method === undefined && !(context instanceof VoidType)) {
           throw new Error("Method \"" + methodName + "\" not found");
         } else if (method) {
-          scope.addReference(methodToken, method, ReferenceType.MethodReference, filename, {className: className});
+
 
           const ret = method.getParameters().getReturning()?.getType();
           context = ret;

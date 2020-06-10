@@ -82,7 +82,7 @@ export class LSPLookup {
     }
 
     ret = ret + "Resolved Reference: " + ref.referenceType + " " + ref.resolved.getName();
-    ret = ret + ( ref.extra ? "\n\nExtra: " + JSON.stringify(ref.extra) : "" );
+    ret = ret + ( JSON.stringify(ref.extra) !== "{}" ? "\n\nExtra: " + JSON.stringify(ref.extra) : "" );
 
     return ret;
   }
