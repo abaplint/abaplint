@@ -66,6 +66,11 @@ TEST-INJECTION delete_vars.
   sy-subrc = 0.
 END-TEST-INJECTION.`, cnt: 0},
 
+  {abap: `
+TEST-SEAM sdf.
+  sy-subrc = 0.
+END-TEST-SEAM.`, cnt: 0},
+
 ];
 
 testRule(tests, Indentation);

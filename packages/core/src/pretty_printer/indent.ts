@@ -57,6 +57,7 @@ export class Indent {
         || type instanceof Statements.EndOfDefinition
         || type instanceof Statements.EndLoop
         || type instanceof Statements.EndTestInjection
+        || type instanceof Statements.EndTestSeam
         || type instanceof Statements.EndForm
         || type instanceof Statements.ElseIf
         || type instanceof Statements.EndFunction
@@ -117,6 +118,7 @@ export class Indent {
         || type instanceof Statements.ElseIf
         || type instanceof Statements.Method
         || type instanceof Statements.TestInjection
+        || type instanceof Statements.TestSeam
         || type instanceof Statements.StartOfSelection
         || type instanceof Statements.AtSelectionScreen
         || type instanceof Statements.LoadOfProgram
