@@ -4,6 +4,7 @@ export enum ReferenceType {
   ClassReference = "ClassReference",
   InterfaceReference = "InterfaceReference",
   MethodReference = "MethodReference",
+  BuiltinMethodReference = "BuiltinMethodReference",
   FormReference = "FormReference",
   DataReadReference = "DataReadReference",
   DataWriteReference = "DataWriteReference",

@@ -103,4 +103,12 @@ ENDCLASS.`;
     expect(hover!.value).to.contain("Resolved");
   });
 
+  it("builtin method", () => {
+    const file = new MemoryFile("foobar.prog.abap", "DATA(bar) = condense( |sdfsdfsd| ).");
+    const reg = new Registry().addFile(file).parse();
+    const hover = new Hover(reg).find(buildPosition(file, 0, 16));
+    expect(hover).to.not.equal(undefined);
+    expect(hover?.value).to.contain("Builtin");
+  });
+
 });

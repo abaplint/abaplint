@@ -82,6 +82,10 @@ function renderSyntax(type, name) {
       break;
     }
   }
+  if (found.using === undefined) {
+    document.getElementById("body").innerHTML = "404";
+    return;
+  }
 
   let html = "<h1>" + type + ": " + name + "</h1>\n";
 
@@ -93,7 +97,8 @@ function renderSyntax(type, name) {
     html = html + "<b>Next</b>: <a href=\"#/" + type + "/" + next.name + "\">" + next.name + "</a><br>\n";
   }
 
-// html = html + "<a href=\"https://github.com/abaplint/abaplint/blob/master/src/packages/core/abap/" + found.type + "s/" + found.filename + "\">Source</a><br>";
+// html = html + "<a href=\"https://github.com/abaplint/abaplint/blob/master/src/packages/core/abap/" +
+// found.type + "s/" + found.filename + "\">Source</a><br>";
 
   const use = found.using.map((e) => { return "<a href=\"#/" + e + "\">" + e + "</a>"; });
   const by = found.used_by.map((e) => { return "<a href=\"#/" + e + "\">" + e + "</a>"; });
