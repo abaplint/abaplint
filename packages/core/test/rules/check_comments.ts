@@ -139,7 +139,14 @@ const checkCommentsTests = [
     config: configNoEndOfLine,
     issueLength: 0,
   },
-
+  {
+    // having pragmas like below is a workaround to not cause syntax errors on 700
+    // pragmas were introduced in 702
+    abap: `lo_obj=>method( 'sdfsdfsd'). "##NEEDED`,
+    description: "end of line allowed, pseudo pragma comment",
+    config: configNoEndOfLine,
+    issueLength: 0,
+  },
 ];
 
 testRuleWithVariableConfig(checkCommentsTests, CheckComments);
