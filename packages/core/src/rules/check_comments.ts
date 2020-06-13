@@ -59,7 +59,8 @@ export class CheckComments extends ABAPRule {
     for (let i = statements.length - 1; i >= 0; i--) {
       const statement = statements[i];
       if (statement.get() instanceof Comment && !commentRows.includes(statement.getStart().getRow() - 1)) {
-        if (statement.getFirstToken().getStr().startsWith(`"#EC`)) {
+        if (statement.getFirstToken().getStr().startsWith(`"#EC`)
+            || statement.getFirstToken().getStr().startsWith(`"##`)) {
           continue;
         }
         issues.push(

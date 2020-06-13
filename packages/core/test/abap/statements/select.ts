@@ -173,6 +173,7 @@ FROM /abc/def_c_clearing_history(
 INTO CORRESPONDING FIELDS OF TABLE @mt_journal
 ORDER BY PRIMARY KEY ##DB_FEATURE_MODE[VIEWS_WITH_PARAMETERS].`,
 
+  `SELECT SINGLE * FROM @lt_fields AS SemanticKeyAlias WHERE name = @ls_semantic_key INTO @DATA(result).`,
 ];
 
 statementType(tests, "SELECT", Statements.Select);
