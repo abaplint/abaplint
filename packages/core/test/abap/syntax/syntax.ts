@@ -1820,6 +1820,7 @@ START-OF-SELECTION.
   DATA lo_bar TYPE REF TO object.
   CASE TYPE OF lo_bar.
     WHEN TYPE zcl_foobar.
+    WHEN OTHERS.
   ENDCASE.
   `;
     const issues = runProgram(abap);

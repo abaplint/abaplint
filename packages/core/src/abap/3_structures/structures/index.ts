@@ -38,4 +38,5 @@ export * from "./try";
 export * from "./type_enum";
 export * from "./types";
 export * from "./when";
+export * from "./when_type";
 export * from "./while";
