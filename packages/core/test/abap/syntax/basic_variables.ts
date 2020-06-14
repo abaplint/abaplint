@@ -959,4 +959,24 @@ ENDTRY.`;
     expect(type).to.be.instanceof(Basic.IntegerType);
   });
 
+  it("Infer type from interface constant", () => {
+    const abap = `INTERFACE lif_def.
+  CONSTANTS foo TYPE c VALUE '1'.
+ENDINTERFACE.
+DATA(bar) = lif_def=>foo.`;
+    const identifier = resolveVariable(abap, "bar");
+    expect(identifier).to.not.equal(undefined);
+    const type = identifier?.getType();
+    expect(type).to.be.instanceof(Basic.CharacterType);
+  });
+
+  it("Voided chain", () => {
+    const abap = `DATA lo_void TYPE REF TO cl_anysomething.
+    DATA(sdf) = lo_void->method( )->attribute->method( ).`;
+    const identifier = resolveVariable(abap, "sdf");
+    expect(identifier).to.not.equal(undefined);
+    const type = identifier?.getType();
+    expect(type).to.be.instanceof(Basic.VoidType);
+  });
+
 });

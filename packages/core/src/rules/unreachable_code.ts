@@ -92,6 +92,8 @@ export class UnreachableCode extends ABAPRule {
         || s instanceof Statements.EndDo
         || s instanceof Statements.Cleanup
         || s instanceof Statements.When
+        || s instanceof Statements.WhenOthers
+        || s instanceof Statements.WhenType
         || s instanceof Statements.Catch
         || s instanceof Statements.ElseIf) {
       return true;

@@ -194,6 +194,9 @@ export class BuiltIn {
     components.push({name: "msgv3", type: new CharacterType(50)});
     components.push({name: "msgv4", type: new CharacterType(50)});
     components.push({name: "repid", type: new CharacterType(1)});
+    components.push({name: "sysid", type: new CharacterType(3)});
+    components.push({name: "mandt", type: new CharacterType(3)});
+    components.push({name: "fdpos", type: new IntegerType()});
     const type = new StructureType(components);
     const id = new TokenIdentifier(new Position(this.row++, 1), "sy");
     return new TypedIdentifier(id, BuiltIn.filename, type, [IdentifierMeta.ReadOnly]);

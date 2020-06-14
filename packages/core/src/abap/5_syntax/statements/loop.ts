@@ -1,7 +1,7 @@
 import * as Expressions from "../../2_statements/expressions";
 import {StatementNode} from "../../nodes";
 import {CurrentScope} from "../_current_scope";
-import {VoidType, TableType} from "../../types/basic";
+import {VoidType, TableType, UnknownType} from "../../types/basic";
 import {Target} from "../expressions/target";
 import {Source} from "../expressions/source";
 import {InlineData} from "../expressions/inline_data";
@@ -15,11 +15,16 @@ export class Loop {
       target = node.findDirectExpression(Expressions.FSTarget);
     }
 
-    const source = node.findDirectExpression(Expressions.Source);
+    let source = node.findDirectExpression(Expressions.BasicSource);
+    if (source === undefined) {
+      source = node.findDirectExpression(Expressions.Source);
+    }
     let sourceType = source ? new Source().runSyntax(source, scope, filename, targetType) : undefined;
 
     if (sourceType === undefined) {
       throw new Error("No source type determined");
+    } else if (sourceType instanceof UnknownType) {
+      throw new Error("Loop, not a table type, " + sourceType.getError());
     } else if (!(sourceType instanceof TableType) && !(sourceType instanceof VoidType)) {
       throw new Error("Loop, not a table type");
     }

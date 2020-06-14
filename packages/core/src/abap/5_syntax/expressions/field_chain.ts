@@ -54,7 +54,10 @@ export class FieldChain {
         const name = current.getFirstToken().getStr();
         context = helper.searchAttributeName(def, name)?.getType();
         if (context === undefined) {
-          throw new Error("Attribute \"" + name + "\" not found in \"" + def.getName() + "\"");
+          context = helper.searchConstantName(def, name)?.getType();
+        }
+        if (context === undefined) {
+          throw new Error("Attribute or constant \"" + name + "\" not found in \"" + def.getName() + "\"");
         }
       }
 

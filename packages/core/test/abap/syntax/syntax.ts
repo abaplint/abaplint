@@ -6,15 +6,20 @@ import {Issue} from "../../../src/issue";
 import {Config} from "../../../src/config";
 import {IRegistry} from "../../../src/_iregistry";
 import {getABAPObjects} from "../../get_abap";
+import {Version} from "../../../src/version";
 
-function run(reg: IRegistry, globalConstants?: string[]): Issue[] {
+function run(reg: IRegistry, globalConstants?: string[], version?: Version): Issue[] {
   let ret: Issue[] = [];
 
+  const config = reg.getConfig().get();
   if (globalConstants) {
-    const config = reg.getConfig().get();
     config.syntax.globalConstants = globalConstants;
-    reg.setConfig(new Config(JSON.stringify(config)));
   }
+  if (version) {
+    config.syntax.version = version;
+  }
+  reg.setConfig(new Config(JSON.stringify(config)));
+  reg.parse();
 
   for (const obj of getABAPObjects(reg)) {
     for (const file of obj.getABAPFiles()) {
@@ -33,20 +38,19 @@ function runMulti(objects: {filename: string, contents: string}[]): Issue[] {
     const file = new MemoryFile(obj.filename, obj.contents);
     reg.addFile(file);
   }
-  reg.parse();
   return run(reg);
 }
 
 function runClass(abap: string): Issue[] {
   const file = new MemoryFile("zcl_foobar.clas.abap", abap);
-  const reg = new Registry().addFile(file).parse();
+  const reg = new Registry().addFile(file);
   return run(reg);
 }
 
-function runProgram(abap: string, globalConstants?: string[]): Issue[] {
+function runProgram(abap: string, globalConstants?: string[], version?: Version): Issue[] {
   const file = new MemoryFile("zfoobar.prog.abap", abap);
-  const reg: IRegistry = new Registry().addFile(file).parse();
-  return run(reg, globalConstants);
+  const reg: IRegistry = new Registry().addFile(file);
+  return run(reg, globalConstants, version);
 }
 
 ////////////////////////////////////////////////////////////
@@ -1824,6 +1828,40 @@ START-OF-SELECTION.
   ENDCASE.
   `;
     const issues = runProgram(abap);
+    expect(issues.length).to.equals(0);
+  });
+
+  it("attribute with interface prefix", () => {
+    const abap = `
+INTERFACE lif_def.
+  DATA foo TYPE c.
+ENDINTERFACE.
+CLASS lcl_bar DEFINITION.
+  PUBLIC SECTION.
+    INTERFACES: lif_def.
+ENDCLASS.
+CLASS lcl_bar IMPLEMENTATION.
+ENDCLASS.
+
+DATA foo TYPE REF TO lcl_bar.
+DATA(bar) = foo->lif_def~foo.`;
+    const issues = runProgram(abap);
+    expect(issues.length).to.equals(0);
+  });
+
+  it("LOOP AT SCREEN, on 702", () => {
+    const abap = `LOOP AT SCREEN.
+    ENDLOOP.`;
+    const issues = runProgram(abap, [], Version.v702);
+    expect(issues.length).to.equals(0);
+  });
+
+  it("LOOP, 702", () => {
+    const abap = `DATA tab TYPE STANDARD TABLE OF string WITH DEFAULT KEY.
+  DATA row TYPE string.
+  LOOP AT tab INTO row FROM 3.
+  ENDLOOP.`;
+    const issues = runProgram(abap, [], Version.v702);
     expect(issues.length).to.equals(0);
   });
 
