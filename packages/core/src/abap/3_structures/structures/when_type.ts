@@ -4,10 +4,10 @@ import {star, sta, seq, sub, alt} from "./_combi";
 import {Normal} from "./normal";
 import {IStructureRunnable} from "./_structure_runnable";
 
-export class When implements IStructure {
+export class WhenType implements IStructure {
 
   public getMatcher(): IStructureRunnable {
-    const when = seq(alt(sta(Statements.When), sta(Statements.WhenOthers)), star(sub(new Normal())));
+    const when = seq(alt(sta(Statements.WhenType), sta(Statements.WhenOthers)), star(sub(new Normal())));
 
     return when;
   }

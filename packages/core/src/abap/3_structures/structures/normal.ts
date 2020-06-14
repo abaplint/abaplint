@@ -30,6 +30,7 @@ export class Normal implements IStructure {
                sta(Statements.DeleteInternal),
                sta(Statements.Concatenate),
                sub(new Structures.Case()),
+               sub(new Structures.CaseType()),
 
                sta(Statements.AddCorresponding),
                sta(Statements.Add),

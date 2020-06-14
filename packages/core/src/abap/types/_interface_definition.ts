@@ -14,4 +14,5 @@ export interface IInterfaceDefinition extends Identifier {
   isGlobal(): boolean;
   getSuperClass(): string | undefined;
   getAliases(): IAliases;
+  getImplementing(): readonly {name: string, partial: boolean}[];
 }

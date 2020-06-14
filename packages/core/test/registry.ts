@@ -118,6 +118,16 @@ describe("Registry", () => {
     expect(registry.findIssues().length).to.equal(1);
   });
 
+  it("Global interface, constant without VALUE", () => {
+    const abap = `INTERFACE if_t100_message.
+  CONSTANTS: default_textid TYPE string.
+ENDINTERFACE.`;
+    const file = new MemoryFile("if_t100_message.intf.abap", abap);
+    const registry = new Registry().addFile(file);
+    // tests that no exceptions are thrown
+    registry.findIssues();
+  });
+
   it("Double parse should give the same issues, rule", () => {
     const file = new MemoryFile("zfoobar.prog.abap", "BREAK-POINT.");
     const registry = new Registry().addFile(file);

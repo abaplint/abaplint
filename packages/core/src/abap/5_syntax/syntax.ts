@@ -31,6 +31,9 @@ import {ClassImplementation} from "./statements/class_implementation";
 import {MethodImplementation} from "./statements/method_implementation";
 import {Move} from "./statements/move";
 import {Catch} from "./statements/catch";
+import {Loop} from "./statements/loop";
+import {ReadTable} from "./statements/read_table";
+import {Select} from "./statements/select";
 
 import {Data as DataStructure} from "./structures/data";
 import {TypeEnum} from "./structures/type_enum";
@@ -41,7 +44,6 @@ import {Constants} from "./structures/constants";
 import {ClassDefinition} from "../types/class_definition";
 import {InterfaceDefinition} from "../types/interface_definition";
 import {ISyntaxResult} from "./_spaghetti_scope";
-
 
 // assumption: objects are parsed without parsing errors
 
@@ -124,7 +126,12 @@ export class SyntaxLogic {
         return this.scope;
       } else if (structure.get() instanceof Structures.Interface) {
         // special case for global interfaces, todo, look into if the case can be removed
-        this.updateScopeStructure(structure);
+        try {
+          this.updateScopeStructure(structure);
+        } catch (e) {
+          this.newIssue(structure.getFirstToken(), e.message);
+          break;
+        }
       } else {
         this.traverse(structure);
       }
@@ -241,6 +248,12 @@ export class SyntaxLogic {
       new Move().runSyntax(node, this.scope, filename);
     } else if (node.get() instanceof Statements.Catch) {
       new Catch().runSyntax(node, this.scope, filename);
+    } else if (node.get() instanceof Statements.Loop) {
+      new Loop().runSyntax(node, this.scope, filename);
+    } else if (node.get() instanceof Statements.ReadTable) {
+      new ReadTable().runSyntax(node, this.scope, filename);
+    } else if (node.get() instanceof Statements.Select) {
+      new Select().runSyntax(node, this.scope, filename);
 
     } else if (s instanceof Statements.Form) {
       this.helpers.proc.findFormScope(node, filename);

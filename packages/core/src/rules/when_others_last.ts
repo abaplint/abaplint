@@ -36,9 +36,9 @@ export class WhenOthersLast extends ABAPRule {
     for (const c of cases) {
       const whentop = c.findDirectStructures(Structures.When);
       for (let i = 0; i < whentop.length - 1; i++) {
-        const whens = whentop[i].findDirectStatements(Statements.When);
+        const whens = whentop[i].findDirectStatements(Statements.When).concat(whentop[i].findDirectStatements(Statements.WhenOthers));
         for (const when of whens) {
-          if (when.concatTokens() === "WHEN OTHERS.") {
+          if (when.get() instanceof Statements.WhenOthers) {
             const start = when.getFirstToken().getStart();
             const issue = Issue.atPosition(file, start, this.getMessage(), this.getMetadata().key);
             issues.push(issue);

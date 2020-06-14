@@ -26,9 +26,7 @@ export class Loop implements IStatement {
                           optPrio(str("WITHOUT MEMBERS")),
                           optPrio(alt(into, assigning))));
 
-    const rinto = seq(opt(str("REFERENCE")), into);
-
-    const target = alt(seq(alt(rinto, assigning),
+    const target = alt(seq(alt(into, assigning),
                            opt(group),
                            opt(str("CASTING"))),
                        str("TRANSPORTING NO FIELDS"));
@@ -43,8 +41,7 @@ export class Loop implements IStatement {
 
     const at = seq(str("AT"),
                    opt(ver(Version.v740sp08, str("GROUP"))),
-                   alt(ver(Version.v740sp02, new Source()),
-                       opt(new BasicSource())),
+                   alt(ver(Version.v740sp02, new Source()), new BasicSource()),
                    opt(options));
 
     return seq(str("LOOP"), opt(at));

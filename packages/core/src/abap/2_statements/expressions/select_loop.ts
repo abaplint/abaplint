@@ -1,6 +1,6 @@
 import {seq, per, opt, alt, tok, str, ver, star, plus, Expression} from "../combi";
 import {WParenLeftW, WAt, WParenLeft} from "../../1_lexer/tokens";
-import {SQLSource, SQLFrom, DatabaseTable, Dynamic, Target, Source, SQLCond, SQLFieldName, SQLTarget, SQLAggregation} from ".";
+import {SQLSource, SQLFrom, DatabaseTable, Dynamic, Target, Source, SQLCond, SQLFieldName, SQLAggregation, SQLTargetTable} from ".";
 import {Version} from "../../../version";
 import {IStatementRunnable} from "../statement_runnable";
 
@@ -45,16 +45,9 @@ export class SelectLoop extends Expression {
 
     const from2 = seq(str("FROM"), new DatabaseTable());
 
-// hmm, this is bad, PACKAGE SIZE is not part of the non-loop?
-    const appending = seq(str("APPENDING"),
-                          opt(str("CORRESPONDING FIELDS OF")),
-                          str("TABLE"),
-                          new SQLTarget(),
-                          alt(seq(from2, pack), seq(pack, from2)));
+    const tab = seq(new SQLTargetTable(), alt(pack, seq(from2, pack), seq(pack, from2)));
 
-    const intoTab = seq(str("INTO"), opt(str("CORRESPONDING FIELDS OF")), str("TABLE"), new SQLTarget(), pack);
-
-    const perm = per(new SQLFrom(), where, up, order, client, bypass, group, forAll, alt(appending, intoTab, into));
+    const perm = per(new SQLFrom(), where, up, order, client, bypass, group, forAll, alt(tab, into));
 
     const ret = seq(str("SELECT"),
                     fields,

@@ -2,9 +2,8 @@ import {statementType} from "../_utils";
 import * as Statements from "../../../src/abap/2_statements/statements";
 
 const tests = [
-  "WHEN 'X'.",
-  "WHEN bar.",
-  "WHEN bar OR foo.",
+  "WHEN TYPE cl_bar INTO DATA(bar).",
+  "WHEN TYPE zcl_type.",
 ];
 
-statementType(tests, "WHEN", Statements.When);
+statementType(tests, "WHEN TYPE", Statements.WhenType);
