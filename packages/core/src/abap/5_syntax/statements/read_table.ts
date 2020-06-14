@@ -12,9 +12,9 @@ export class ReadTable {
     let sourceType = source ? new Source().runSyntax(source, scope, filename) : undefined;
 
     if (sourceType === undefined) {
-      throw new Error("No source type determined");
+      throw new Error("No source type determined, read table");
     } else if (!(sourceType instanceof TableType) && !(sourceType instanceof VoidType)) {
-      throw new Error("Loop, not a table type");
+      throw new Error("Read table, not a table type");
     }
 
     if (sourceType instanceof TableType) {

@@ -1006,4 +1006,11 @@ DATA moo TYPE REF TO lif_bar=>type.`;
     expect(type!.getType()).to.be.instanceof(Basic.StringType);
   });
 
+  it.skip("SELECT from voided table to inline definition", () => {
+    const abap = `SELECT * FROM sdfsd INTO TABLE @DATA(lt_tab).`;
+    const type = resolveVariable(abap, "lt_tab");
+    expect(type).to.not.equal(undefined);
+    expect(type!.getType()).to.be.instanceof(Basic.TableType);
+  });
+
 });
