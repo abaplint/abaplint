@@ -990,9 +990,16 @@ DATA moo TYPE REF TO lif_bar=>type.`;
     expect(type!.getType()).to.be.instanceof(Basic.DataReference);
   });
 
-  it("Data reference", () => {
+  it("TYPE ANY TABLE", () => {
     const abap = `FIELD-SYMBOLS <lt_any> TYPE ANY TABLE.`;
     const type = resolveVariable(abap, "<lt_any>");
+    expect(type).to.not.equal(undefined);
+    expect(type!.getType()).to.be.instanceof(Basic.TableType);
+  });
+
+  it("TYPE INDEX TABLE", () => {
+    const abap = `FIELD-SYMBOLS <lt_index> TYPE INDEX TABLE.`;
+    const type = resolveVariable(abap, "<lt_index>");
     expect(type).to.not.equal(undefined);
     expect(type!.getType()).to.be.instanceof(Basic.TableType);
   });

@@ -229,6 +229,7 @@ export class BasicTypes {
     } else if (text === "TYPE STANDARD TABLE"
         || text === "TYPE SORTED TABLE"
         || text === "TYPE HASHED TABLE"
+        || text === "TYPE INDEX TABLE"
         || text === "TYPE ANY TABLE") {
       return new Types.TableType(new Types.AnyType());
     } else if (text.startsWith("TYPE RANGE OF ")) {
