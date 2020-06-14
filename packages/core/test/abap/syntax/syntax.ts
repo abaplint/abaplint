@@ -1574,12 +1574,12 @@ CLASS lcl_bar IMPLEMENTATION.
            END OF ty_foo.
     DATA ls_foo TYPE ty_foo.
 
-    ls_foo-not_found->rm( ).
+    ls_foo-unkown_field->rm( ).
   ENDMETHOD.
 ENDCLASS.`;
     const issues = runProgram(abap);
     expect(issues.length).to.equals(1);
-    expect(issues[0].getMessage()).to.contain("not_found");
+    expect(issues[0].getMessage()).to.contain("unkown_field", "Got: \"" + issues[0].getMessage() + "\"");
   });
 
   it("no error for void structures", () => {

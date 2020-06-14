@@ -2,15 +2,15 @@ import {ExpressionNode} from "../../nodes";
 import {CurrentScope} from "../_current_scope";
 import {AbstractType} from "../../types/basic/_abstract_type";
 import {INode} from "../../nodes/_inode";
-import {SourceField, SourceFieldSymbol, ClassName, ComponentName, AttributeName} from "../../2_statements/expressions";
+import * as Expressions from "../../2_statements/expressions";
 import {Dash, InstanceArrow} from "../../1_lexer/tokens";
 import {StructureType, ObjectReferenceType, VoidType, DataReference} from "../../types/basic";
-import {ObjectOriented} from "../_object_oriented";
+import {ComponentName} from "./component_name";
+import {AttributeName} from "./attribute_name";
 
 export class FieldChain {
 
   public runSyntax(node: ExpressionNode, scope: CurrentScope, filename: string): AbstractType | undefined {
-    const helper = new ObjectOriented(scope);
     const children = node.getChildren().slice();
     let context = this.findTop(children.shift(), scope, filename);
 
@@ -30,49 +30,10 @@ export class FieldChain {
             && !(context instanceof VoidType)) {
           throw new Error("Not a object reference");
         }
-      } else if (current.get() instanceof ComponentName) {
-        if (context instanceof VoidType) {
-          continue;
-        }
-        if (!(context instanceof StructureType)) {
-          throw new Error("Not a structure");
-        }
-        const name = current.getFirstToken().getStr();
-        context = context.getComponentByName(name);
-        if (context === undefined) {
-          throw new Error("Component \"" + name + "\" not found in structure");
-        }
-      } else if (current.get() instanceof AttributeName) {
-        if (context instanceof VoidType) {
-          continue;
-        }
-        if (context instanceof ObjectReferenceType) {
-          const def = scope.findObjectDefinition(context.getName());
-          if (def === undefined) {
-            throw new Error("Definition for \"" + context.getName() + "\" not found in scope");
-          }
-          const name = current.getFirstToken().getStr();
-          context = helper.searchAttributeName(def, name)?.getType();
-          if (context === undefined) {
-            context = helper.searchConstantName(def, name)?.getType();
-          }
-          if (context === undefined) {
-            throw new Error("Attribute or constant \"" + name + "\" not found in \"" + def.getName() + "\"");
-          }
-        } else if (context instanceof DataReference) {
-          const sub = context.getType();
-          if (!(sub instanceof StructureType)) {
-            throw new Error("Data reference not structured");
-          }
-          const name = current.getFirstToken().getStr();
-          context = sub.getComponentByName(name);
-          if (context === undefined) {
-            throw new Error("Component \"" + name + "\" not found in data reference structure");
-          }
-        } else {
-          throw new Error("Not a object reference");
-        }
-
+      } else if (current.get() instanceof Expressions.ComponentName) {
+        context = new ComponentName().runSyntax(context, current);
+      } else if (current.get() instanceof Expressions.AttributeName) {
+        context = new AttributeName().runSyntax(context, current, scope);
       }
 
     }
@@ -87,7 +48,8 @@ export class FieldChain {
       return undefined;
     }
 
-    if (node.get() instanceof SourceField || node.get() instanceof SourceFieldSymbol) {
+    if (node.get() instanceof Expressions.SourceField
+        || node.get() instanceof Expressions.SourceFieldSymbol) {
       const token = node.getFirstToken();
       const name = token.getStr();
       const found = scope.findVariable(name);
@@ -98,7 +60,7 @@ export class FieldChain {
       return found.getType();
     }
 
-    if (node.get() instanceof ClassName) {
+    if (node.get() instanceof Expressions.ClassName) {
       const classTok = node.getFirstToken();
       const classNam = classTok.getStr();
       const found = scope.existsObject(classNam);

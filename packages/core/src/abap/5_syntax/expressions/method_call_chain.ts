@@ -11,6 +11,8 @@ import {Cast} from "./cast";
 import {BuiltIn} from "../_builtin";
 import {MethodCallParam} from "./method_call_param";
 import {ReferenceType} from "../_reference";
+import {ComponentName} from "./component_name";
+import {AttributeName} from "./attribute_name";
 
 export class MethodCallChain {
   public runSyntax(
@@ -69,7 +71,10 @@ export class MethodCallChain {
         } else if (param && context instanceof VoidType) {
           new MethodCallParam().runSyntax(param, scope, context, filename);
         }
-
+      } else if (current instanceof ExpressionNode && current.get() instanceof Expressions.ComponentName) {
+        context = new ComponentName().runSyntax(context, current);
+      } else if (current instanceof ExpressionNode && current.get() instanceof Expressions.AttributeName) {
+        context = new AttributeName().runSyntax(context, current, scope);
       }
     }
 

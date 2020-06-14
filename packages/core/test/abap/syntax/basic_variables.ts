@@ -1006,11 +1006,39 @@ DATA moo TYPE REF TO lif_bar=>type.`;
     expect(type!.getType()).to.be.instanceof(Basic.StringType);
   });
 
-  it.skip("SELECT from voided table to inline definition", () => {
+  it("SELECT from voided table to inline definition", () => {
     const abap = `SELECT * FROM sdfsd INTO TABLE @DATA(lt_tab).`;
     const type = resolveVariable(abap, "lt_tab");
     expect(type).to.not.equal(undefined);
-    expect(type!.getType()).to.be.instanceof(Basic.TableType);
+    expect(type!.getType()).to.be.instanceof(Basic.VoidType);
+  });
+
+  it("SELECT SINGLE, voided", () => {
+    const abap = `SELECT SINGLE * FROM something INTO @DATA(ls_data).`;
+    const type = resolveVariable(abap, "ls_data");
+    expect(type).to.not.equal(undefined);
+    expect(type!.getType()).to.be.instanceof(Basic.VoidType);
+  });
+
+  it.skip("call chain inline integer", () => {
+    const abap = `
+CLASS lcl_bar DEFINITION.
+  PUBLIC SECTION.
+    TYPES: BEGIN OF ty_bar,
+             field TYPE i,
+           END OF ty_bar.
+    CLASS-METHODS: method RETURNING VALUE(val) TYPE ty_bar.
+ENDCLASS.
+CLASS lcl_bar IMPLEMENTATION.
+  METHOD method.
+  ENDMETHOD.
+ENDCLASS.
+
+START-OF-SELECTION.
+  DATA(bar) = lcl_bar=>method( )-field.`;
+    const type = resolveVariable(abap, "bar");
+    expect(type).to.not.equal(undefined);
+    expect(type!.getType()).to.be.instanceof(Basic.IntegerType);
   });
 
 });
