@@ -4,7 +4,7 @@ import {AbstractType} from "../../types/basic/_abstract_type";
 import {INode} from "../../nodes/_inode";
 import * as Expressions from "../../2_statements/expressions";
 import {Dash, InstanceArrow} from "../../1_lexer/tokens";
-import {StructureType, ObjectReferenceType, VoidType, DataReference} from "../../types/basic";
+import {StructureType, ObjectReferenceType, VoidType, DataReference, TableType} from "../../types/basic";
 import {ComponentName} from "./component_name";
 import {AttributeName} from "./attribute_name";
 
@@ -32,6 +32,15 @@ export class FieldChain {
         }
       } else if (current.get() instanceof Expressions.ComponentName) {
         context = new ComponentName().runSyntax(context, current);
+      } else if (current.get() instanceof Expressions.TableExpression) {
+        if (context instanceof VoidType) {
+          continue;
+        }
+        if (!(context instanceof TableType)) {
+          throw new Error("Table expression, expected table");
+        }
+        // todo, additional validations
+        context = context.getRowType();
       } else if (current.get() instanceof Expressions.AttributeName) {
         context = new AttributeName().runSyntax(context, current, scope);
       }

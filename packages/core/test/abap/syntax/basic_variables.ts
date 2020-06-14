@@ -1048,4 +1048,28 @@ START-OF-SELECTION.
     expect(type!.getType()).to.be.instanceof(Basic.IntegerType);
   });
 
+  it("field chain with table expression", () => {
+    const abap = `
+TYPES: BEGIN OF ty_bar,
+         name  TYPE string,
+         value TYPE i,
+       END OF ty_bar.
+DATA lt_params TYPE STANDARD TABLE OF ty_bar WITH EMPTY KEY.
+DATA(lv_len) = lt_params[ name = 'filesize' ]-value.`;
+    const type = resolveVariable(abap, "lv_len");
+    expect(type).to.not.equal(undefined);
+    expect(type!.getType()).to.be.instanceof(Basic.IntegerType);
+  });
+
+  it("Source type VALUE", () => {
+    const abap = `
+TYPES: BEGIN OF ty_foo,
+  bar TYPE i,
+END OF ty_foo.
+DATA(bar) = VALUE ty_foo( bar = 2 ).`;
+    const type = resolveVariable(abap, "bar");
+    expect(type).to.not.equal(undefined);
+    expect(type!.getType()).to.be.instanceof(Basic.StructureType);
+  });
+
 });

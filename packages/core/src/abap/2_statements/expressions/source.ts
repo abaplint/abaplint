@@ -7,6 +7,8 @@ import {IStatementRunnable} from "../statement_runnable";
 
 // todo, COND and SWITCH are quite similar?
 
+// this class is used quite often, so its nice to have the differentiating tokens part of it
+
 export class Source extends Expression {
   public getRunnable(): IStatementRunnable {
     const ref = seq(tok(InstanceArrow), str("*"));
