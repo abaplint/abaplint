@@ -979,4 +979,22 @@ DATA(bar) = lif_def=>foo.`;
     expect(type).to.be.instanceof(Basic.VoidType);
   });
 
+  it("Data reference", () => {
+    const abap = `
+INTERFACE lif_bar.
+  TYPES: type TYPE string.
+ENDINTERFACE.
+DATA moo TYPE REF TO lif_bar=>type.`;
+    const type = resolveVariable(abap, "moo");
+    expect(type).to.not.equal(undefined);
+    expect(type!.getType()).to.be.instanceof(Basic.DataReference);
+  });
+
+  it("Data reference", () => {
+    const abap = `FIELD-SYMBOLS <lt_any> TYPE ANY TABLE.`;
+    const type = resolveVariable(abap, "<lt_any>");
+    expect(type).to.not.equal(undefined);
+    expect(type!.getType()).to.be.instanceof(Basic.TableType);
+  });
+
 });

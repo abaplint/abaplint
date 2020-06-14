@@ -4,7 +4,7 @@ import {AbstractType} from "../../types/basic/_abstract_type";
 import {INode} from "../../nodes/_inode";
 import {SourceField, SourceFieldSymbol, ClassName, ComponentName, AttributeName} from "../../2_statements/expressions";
 import {Dash, InstanceArrow} from "../../1_lexer/tokens";
-import {StructureType, ObjectReferenceType, VoidType} from "../../types/basic";
+import {StructureType, ObjectReferenceType, VoidType, DataReference} from "../../types/basic";
 import {ObjectOriented} from "../_object_oriented";
 
 export class FieldChain {
@@ -25,7 +25,9 @@ export class FieldChain {
           throw new Error("Not a structure");
         }
       } else if (current.get() instanceof InstanceArrow) {
-        if (!(context instanceof ObjectReferenceType) && !(context instanceof VoidType)) {
+        if (!(context instanceof ObjectReferenceType)
+            && !(context instanceof DataReference)
+            && !(context instanceof VoidType)) {
           throw new Error("Not a object reference");
         }
       } else if (current.get() instanceof ComponentName) {
@@ -44,21 +46,33 @@ export class FieldChain {
         if (context instanceof VoidType) {
           continue;
         }
-        if (!(context instanceof ObjectReferenceType)) {
+        if (context instanceof ObjectReferenceType) {
+          const def = scope.findObjectDefinition(context.getName());
+          if (def === undefined) {
+            throw new Error("Definition for \"" + context.getName() + "\" not found in scope");
+          }
+          const name = current.getFirstToken().getStr();
+          context = helper.searchAttributeName(def, name)?.getType();
+          if (context === undefined) {
+            context = helper.searchConstantName(def, name)?.getType();
+          }
+          if (context === undefined) {
+            throw new Error("Attribute or constant \"" + name + "\" not found in \"" + def.getName() + "\"");
+          }
+        } else if (context instanceof DataReference) {
+          const sub = context.getType();
+          if (!(sub instanceof StructureType)) {
+            throw new Error("Data reference not structured");
+          }
+          const name = current.getFirstToken().getStr();
+          context = sub.getComponentByName(name);
+          if (context === undefined) {
+            throw new Error("Component \"" + name + "\" not found in data reference structure");
+          }
+        } else {
           throw new Error("Not a object reference");
         }
-        const def = scope.findObjectDefinition(context.getName());
-        if (def === undefined) {
-          throw new Error("Definition for \"" + context.getName() + "\" not found in scope");
-        }
-        const name = current.getFirstToken().getStr();
-        context = helper.searchAttributeName(def, name)?.getType();
-        if (context === undefined) {
-          context = helper.searchConstantName(def, name)?.getType();
-        }
-        if (context === undefined) {
-          throw new Error("Attribute or constant \"" + name + "\" not found in \"" + def.getName() + "\"");
-        }
+
       }
 
     }

@@ -2,7 +2,7 @@ import * as Expressions from "../../2_statements/expressions";
 import * as Statements from "../../2_statements/statements";
 import {StructureNode, StatementNode} from "../../nodes";
 import {TypedIdentifier} from "../../types/_typed_identifier";
-import {IStructureComponent} from "../../types/basic";
+import {IStructureComponent, VoidType} from "../../types/basic";
 import {CurrentScope} from "../_current_scope";
 import {IncludeType} from "../statements/include_type";
 import {Type} from "../statements/type";
@@ -21,7 +21,11 @@ export class Types {
           components.push({name: found.getName(), type: found.getType()});
         }
       } else if (c instanceof StatementNode && ctyp instanceof Statements.IncludeType) {
-        components = components.concat(new IncludeType().runSyntax(c, scope, filename));
+        const found = new IncludeType().runSyntax(c, scope, filename);
+        if (found instanceof VoidType) {
+          return new TypedIdentifier(name, filename, found);
+        }
+        components = components.concat(found);
       }
       // todo, nested structures
     }

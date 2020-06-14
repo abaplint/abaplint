@@ -226,7 +226,10 @@ export class BasicTypes {
       if (found) {
         return new Types.TableType(found);
       }
-    } else if (text === "TYPE STANDARD TABLE") {
+    } else if (text === "TYPE STANDARD TABLE"
+        || text === "TYPE SORTED TABLE"
+        || text === "TYPE HASHED TABLE"
+        || text === "TYPE ANY TABLE") {
       return new Types.TableType(new Types.AnyType());
     } else if (text.startsWith("TYPE RANGE OF ")) {
       const sub = node.findFirstExpression(Expressions.TypeName);
@@ -360,8 +363,10 @@ export class BasicTypes {
     }
 
     const name = chain.getFirstToken().getStr();
-    if (this.scope.existsObject(name)) {
-      return new Types.ObjectReferenceType(name);
+    if (chain.getAllTokens().length === 1) {
+      if (this.scope.existsObject(name)) {
+        return new Types.ObjectReferenceType(name);
+      }
     }
 
     const found = this.resolveTypeName(chain);

@@ -1865,6 +1865,26 @@ DATA(bar) = foo->lif_def~foo.`;
     expect(issues.length).to.equals(0);
   });
 
+  it("data reference", () => {
+    const abap = `TYPES: BEGIN OF ty_log,
+  item TYPE i,
+END OF ty_log.
+DATA lr_log TYPE REF TO ty_log.
+DATA(item) = lr_log->item.`;
+    const issues = runProgram(abap);
+    expect(issues.length).to.equals(0);
+  });
+
+  it("data reference, component not found in structure", () => {
+    const abap = `TYPES: BEGIN OF ty_log,
+  item TYPE i,
+END OF ty_log.
+DATA lr_log TYPE REF TO ty_log.
+DATA(item) = lr_log->not_found.`;
+    const issues = runProgram(abap);
+    expect(issues.length).to.equals(1);
+  });
+
 // todo, static method cannot access instance attributes
 // todo, can a private method access protected attributes?
 // todo, readonly fields(constants + enums + attributes flagged read-only)
