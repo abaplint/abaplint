@@ -84,6 +84,8 @@ export class Indent {
       } else if (type instanceof Statements.Public
         || type instanceof Statements.Protected
         || type instanceof Statements.Private
+        || type instanceof Statements.WhenType
+        || type instanceof Statements.WhenOthers
         || type instanceof Statements.When) {
         indent = stack.peek();
       } else if (type instanceof Statements.EndTry) {
@@ -111,6 +113,8 @@ export class Indent {
         || type instanceof Statements.Catch
         || type instanceof Statements.Define
         || type instanceof Statements.When
+        || type instanceof Statements.WhenType
+        || type instanceof Statements.WhenOthers
         || type instanceof Statements.Cleanup
         || type instanceof Statements.Loop
         || type instanceof Statements.Form

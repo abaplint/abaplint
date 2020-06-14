@@ -77,6 +77,13 @@ CASE TYPE OF lo_bar.
   WHEN TYPE zcl_foobar.
 ENDCASE.`, cnt: 0},
 
+  {abap: `
+DATA lo_bar TYPE REF TO object.
+CASE TYPE OF lo_bar.
+  WHEN TYPE zcl_foobar.
+    WRITE bar.
+ENDCASE.`, cnt: 0},
+
 ];
 
 testRule(tests, Indentation);
