@@ -133,6 +133,7 @@ export class Indent {
         stack.push(indent);
       } else if (type instanceof Statements.ClassDefinition
         || type instanceof Statements.Case
+        || type instanceof Statements.CaseType
         || type instanceof Statements.ClassImplementation) {
         indent = indent + (this.skipIndentForGlobalClass(statement) ? 0 : 2);
         stack.push(indent);

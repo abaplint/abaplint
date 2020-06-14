@@ -905,4 +905,22 @@ ENDTRY.`;
     expect(type).to.be.instanceof(Basic.VoidType);
   });
 
+  it("Anything from voided type should give void", () => {
+    const abap = `
+  DATA lo_void TYPE REF TO cl_voided.
+  DATA(lo_findings) = lo_void->findings.`;
+    const identifier = resolveVariable(abap, "lo_findings");
+    expect(identifier).to.not.equal(undefined);
+    const type = identifier?.getType();
+    expect(type).to.be.instanceof(Basic.VoidType);
+  });
+
+  it("Anything from voided type should give void, 2", () => {
+    const abap = `DATA(foo) = cl_voided=>field.`;
+    const identifier = resolveVariable(abap, "foo");
+    expect(identifier).to.not.equal(undefined);
+    const type = identifier?.getType();
+    expect(type).to.be.instanceof(Basic.VoidType);
+  });
+
 });

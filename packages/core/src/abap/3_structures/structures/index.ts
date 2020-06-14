@@ -2,6 +2,7 @@ export * from "./any";
 export * from "./at";
 export * from "./body";
 export * from "./case";
+export * from "./case_type";
 export * from "./catch_system_exceptions";
 export * from "./catch";
 export * from "./class_data";

@@ -80,7 +80,16 @@ export class FieldChain {
     }
 
     if (node.get() instanceof ClassName) {
-      throw new Error("todo, FieldChain, ClassName");
+      const classTok = node.getFirstToken();
+      const classNam = classTok.getStr();
+      const found = scope.existsObject(classNam);
+      if (found === true) {
+        return new ObjectReferenceType(classNam);
+      } else if (scope.getDDIC().inErrorNamespace(classNam) === false) {
+        return new VoidType(classNam);
+      } else {
+        throw new Error("Unknown class " + classNam);
+      }
     }
 
     return undefined;

@@ -1815,6 +1815,18 @@ START-OF-SELECTION.
     expect(issues[0].getMessage().toLowerCase()).to.contain("type");
   });
 
+  it.skip("WHEN TYPE", () => {
+    const abap = `
+  DATA lo_bar TYPE REF TO object.
+  CASE TYPE OF lo_bar.
+    WHEN TYPE zcl_foobar.
+  ENDCASE.
+  `;
+    const issues = runProgram(abap);
+    console.dir(issues);
+    expect(issues.length).to.equals(0);
+  });
+
 // todo, static method cannot access instance attributes
 // todo, can a private method access protected attributes?
 // todo, readonly fields(constants + enums + attributes flagged read-only)

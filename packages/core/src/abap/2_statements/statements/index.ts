@@ -131,6 +131,8 @@ export * from "./end_enhancement_section";
 export * from "./set_handler";
 export * from "./set_left";
 export * from "./pack";
+export * from "./case_type";
+export * from "./when_type";
 export * from "./exec_sql";
 export * from "./open_cursor";
 export * from "./communication";

@@ -4,6 +4,7 @@ import {AbstractType} from "../../types/basic/_abstract_type";
 import * as Expressions from "../../2_statements/expressions";
 import {MethodCallChain} from "./method_call_chain";
 import {UnknownType} from "../../types/basic/unknown_type";
+import {FieldChain} from "./field_chain";
 
 export class Source {
   public runSyntax(
@@ -24,6 +25,8 @@ export class Source {
 
     if (first.get() instanceof Expressions.MethodCallChain) {
       return new MethodCallChain().runSyntax(first, scope, filename, targetType);
+    } else if (first.get() instanceof Expressions.FieldChain) {
+      return new FieldChain().runSyntax(first, scope);
     }
 
     return new UnknownType("todo, Source type");
