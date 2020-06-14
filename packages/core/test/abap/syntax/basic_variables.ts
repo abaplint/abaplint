@@ -943,4 +943,20 @@ ENDTRY.`;
     expect(type).to.be.instanceof(Basic.StringType);
   });
 
+  it("Infer string type from string template", () => {
+    const abap = `DATA(lv_name) = |sdfsdfsd|.`;
+    const identifier = resolveVariable(abap, "lv_name");
+    expect(identifier).to.not.equal(undefined);
+    const type = identifier?.getType();
+    expect(type).to.be.instanceof(Basic.StringType);
+  });
+
+  it("Infer integer type from integer", () => {
+    const abap = `DATA(lv_name) = 123.`;
+    const identifier = resolveVariable(abap, "lv_name");
+    expect(identifier).to.not.equal(undefined);
+    const type = identifier?.getType();
+    expect(type).to.be.instanceof(Basic.IntegerType);
+  });
+
 });

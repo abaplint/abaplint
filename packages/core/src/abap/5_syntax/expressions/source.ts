@@ -5,6 +5,8 @@ import * as Expressions from "../../2_statements/expressions";
 import {MethodCallChain} from "./method_call_chain";
 import {UnknownType} from "../../types/basic/unknown_type";
 import {FieldChain} from "./field_chain";
+import {StringType} from "../../types/basic";
+import {Constant} from "./constant";
 
 export class Source {
   public runSyntax(
@@ -27,6 +29,10 @@ export class Source {
       return new MethodCallChain().runSyntax(first, scope, filename, targetType);
     } else if (first.get() instanceof Expressions.FieldChain) {
       return new FieldChain().runSyntax(first, scope, filename);
+    } else if (first.get() instanceof Expressions.StringTemplate) {
+      return new StringType();
+    } else if (first.get() instanceof Expressions.Constant) {
+      return new Constant().runSyntax(first);
     }
 
     return new UnknownType("todo, Source type");
