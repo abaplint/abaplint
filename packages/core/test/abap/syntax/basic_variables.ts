@@ -997,4 +997,13 @@ DATA moo TYPE REF TO lif_bar=>type.`;
     expect(type!.getType()).to.be.instanceof(Basic.TableType);
   });
 
+  it("READ TABLE INTO inline data", () => {
+    const abap = `
+      DATA lt_bar TYPE STANDARD TABLE OF string WITH EMPTY KEY.
+      READ TABLE lt_bar INTO DATA(lv_bar) INDEX 1.`;
+    const type = resolveVariable(abap, "lv_bar");
+    expect(type).to.not.equal(undefined);
+    expect(type!.getType()).to.be.instanceof(Basic.StringType);
+  });
+
 });

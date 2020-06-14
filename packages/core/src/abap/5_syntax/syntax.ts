@@ -32,6 +32,7 @@ import {MethodImplementation} from "./statements/method_implementation";
 import {Move} from "./statements/move";
 import {Catch} from "./statements/catch";
 import {Loop} from "./statements/loop";
+import {ReadTable} from "./statements/read_table";
 
 import {Data as DataStructure} from "./structures/data";
 import {TypeEnum} from "./structures/type_enum";
@@ -248,6 +249,8 @@ export class SyntaxLogic {
       new Catch().runSyntax(node, this.scope, filename);
     } else if (node.get() instanceof Statements.Loop) {
       new Loop().runSyntax(node, this.scope, filename);
+    } else if (node.get() instanceof Statements.ReadTable) {
+      new ReadTable().runSyntax(node, this.scope, filename);
 
     } else if (s instanceof Statements.Form) {
       this.helpers.proc.findFormScope(node, filename);

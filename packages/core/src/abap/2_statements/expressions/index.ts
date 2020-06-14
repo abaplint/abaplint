@@ -93,6 +93,7 @@ export * from "./parameter_s";
 export * from "./parameter_t";
 export * from "./pass_by_value";
 export * from "./radio_group_name";
+export * from "./read_table_target";
 export * from "./receive_parameters";
 export * from "./redefinition";
 export * from "./reduce_body";
