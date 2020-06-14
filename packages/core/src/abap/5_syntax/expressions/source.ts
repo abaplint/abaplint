@@ -26,7 +26,7 @@ export class Source {
     if (first.get() instanceof Expressions.MethodCallChain) {
       return new MethodCallChain().runSyntax(first, scope, filename, targetType);
     } else if (first.get() instanceof Expressions.FieldChain) {
-      return new FieldChain().runSyntax(first, scope);
+      return new FieldChain().runSyntax(first, scope, filename);
     }
 
     return new UnknownType("todo, Source type");

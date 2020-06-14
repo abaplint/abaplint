@@ -1040,7 +1040,7 @@ DATA(output) = REDUCE string( INIT result = ||
 
   it("program, inline FS definition", () => {
     const abap = `
-    DATA moo TYPE c.
+    DATA moo TYPE STANDARD TABLE OF string WITH EMPTY KEY.
     LOOP AT moo ASSIGNING FIELD-SYMBOL(<moo>).
       WRITE <moo>.
     ENDLOOP.`;

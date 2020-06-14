@@ -9,10 +9,10 @@ import {ObjectOriented} from "../_object_oriented";
 
 export class FieldChain {
 
-  public runSyntax(node: ExpressionNode, scope: CurrentScope): AbstractType | undefined {
+  public runSyntax(node: ExpressionNode, scope: CurrentScope, filename: string): AbstractType | undefined {
     const helper = new ObjectOriented(scope);
     const children = node.getChildren().slice();
-    let context = this.findTop(children.shift(), scope);
+    let context = this.findTop(children.shift(), scope, filename);
 
     while (children.length > 0) {
       const current = children.shift();
@@ -65,17 +65,19 @@ export class FieldChain {
 
   ////////////////
 
-  private findTop(node: INode | undefined, scope: CurrentScope): AbstractType | undefined {
+  private findTop(node: INode | undefined, scope: CurrentScope, _filename: string): AbstractType | undefined {
     if (node === undefined) {
       return undefined;
     }
 
     if (node.get() instanceof SourceField || node.get() instanceof SourceFieldSymbol) {
-      const foobar = node.getFirstToken().getStr();
-      const found = scope.findVariable(foobar);
+      const token = node.getFirstToken();
+      const name = token.getStr();
+      const found = scope.findVariable(name);
       if (found === undefined) {
-        throw new Error(foobar + " not found");
+        throw new Error(name + " not found");
       }
+//      scope.addRead(token, found, filename);
       return found.getType();
     }
 

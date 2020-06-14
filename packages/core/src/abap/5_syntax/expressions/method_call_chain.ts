@@ -89,7 +89,7 @@ export class MethodCallChain {
       }
       return new ObjectReferenceType(className);
     } else if (first instanceof ExpressionNode && first.get() instanceof Expressions.FieldChain) {
-      return new FieldChain().runSyntax(first, scope);
+      return new FieldChain().runSyntax(first, scope, filename);
     } else if (first instanceof ExpressionNode && first.get() instanceof Expressions.NewObject) {
       return new NewObject().runSyntax(first, scope, targetType, filename);
     } else if (first instanceof ExpressionNode && first.get() instanceof Expressions.Cast) {

@@ -923,4 +923,24 @@ ENDTRY.`;
     expect(type).to.be.instanceof(Basic.VoidType);
   });
 
+  it("LOOP into inline", () => {
+    const abap = `DATA tab TYPE STANDARD TABLE OF string WITH DEFAULT KEY.
+  LOOP AT tab INTO DATA(row).
+  ENDLOOP.`;
+    const identifier = resolveVariable(abap, "row");
+    expect(identifier).to.not.equal(undefined);
+    const type = identifier?.getType();
+    expect(type).to.be.instanceof(Basic.StringType);
+  });
+
+  it("LOOP into inline fieldsymbol", () => {
+    const abap = `DATA tab TYPE STANDARD TABLE OF string WITH DEFAULT KEY.
+  LOOP AT tab INTO FIELD-SYMBOL(<row>).
+  ENDLOOP.`;
+    const identifier = resolveVariable(abap, "<row>");
+    expect(identifier).to.not.equal(undefined);
+    const type = identifier?.getType();
+    expect(type).to.be.instanceof(Basic.StringType);
+  });
+
 });
