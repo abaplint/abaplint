@@ -84,6 +84,11 @@ CASE TYPE OF lo_bar.
     WRITE bar.
 ENDCASE.`, cnt: 0},
 
+  {abap: `
+EXEC SQL.
+  TRUNCATE TABLE ZPERF2;
+ENDEXEC.`, cnt: 0},
+
 ];
 
 testRule(tests, Indentation);

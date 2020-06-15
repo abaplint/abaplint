@@ -54,6 +54,7 @@ export class Indent {
         || type instanceof Statements.EndMethod
         || type instanceof Statements.EndAt
         || type instanceof Statements.Else
+        || type instanceof Statements.EndExec
         || type instanceof Statements.EndOfDefinition
         || type instanceof Statements.EndLoop
         || type instanceof Statements.EndTestInjection
@@ -110,6 +111,7 @@ export class Indent {
         || type instanceof Statements.Interface
         || type instanceof Statements.Do
         || type instanceof Statements.At
+        || type instanceof Statements.ExecSQL
         || type instanceof Statements.Catch
         || type instanceof Statements.Define
         || type instanceof Statements.When

@@ -1,5 +1,5 @@
 import {TypedIdentifier, IdentifierMeta} from "../types/_typed_identifier";
-import {VoidType, CharacterType, StructureType, IStructureComponent, IntegerType, NumericType, DateType, TimeType, StringType} from "../types/basic";
+import {VoidType, CharacterType, StructureType, IStructureComponent, IntegerType, NumericType, DateType, TimeType, StringType, FloatType} from "../types/basic";
 import {Identifier as TokenIdentifier} from "../1_lexer/tokens";
 import {Position} from "../../position";
 import {AbstractType} from "../types/basic/_abstract_type";
@@ -87,20 +87,27 @@ export class BuiltIn {
 
     // todo, some of these are version specific
     // todo, make types correct, some of the string sare clike?
+    ret.push({name: "ABS", importing: [{name: "val", type: new FloatType()}], returnType: new IntegerType()});
     ret.push({name: "BOOLC", importing: [{name: "val", type: new StringType()}], returnType: new CharacterType(1)});
+    ret.push({name: "CEIL", importing: [{name: "val", type: new FloatType()}], returnType: new IntegerType()});
     ret.push({name: "CONCAT_LINES_OF", importing: [{name: "table", type: new StringType()}, {name: "sep", type: new StringType()}], returnType: new StringType()});
     ret.push({name: "CONDENSE", importing: [{name: "val", type: new StringType()}], returnType: new StringType()});
     ret.push({name: "CONTAINS", importing: [{name: "val", type: new StringType()}, {name: "sub", type: new StringType()}], returnType: new CharacterType(1)});
     ret.push({name: "ESCAPE", importing: [{name: "val", type: new StringType()}, {name: "format", type: new StringType()}], returnType: new StringType()});
-    ret.push({name: "FIND", importing: [{name: "val", type: new StringType()}, {name: "sub", type: new StringType()}, {name: "regex", type: new StringType()}, {name: "case", type: new CharacterType(1)}], returnType: new StringType()});
+    ret.push({name: "FIND", importing: [{name: "val", type: new StringType()}, {name: "sub", type: new StringType()}, {name: "regex", type: new StringType()}, {name: "off", type: new IntegerType()}, {name: "case", type: new CharacterType(1)}], returnType: new StringType()});
+    ret.push({name: "FLOOR", importing: [{name: "val", type: new FloatType()}], returnType: new IntegerType()});
+    ret.push({name: "FRAC", importing: [{name: "val", type: new FloatType()}], returnType: new IntegerType()});
     ret.push({name: "FROM_MIXED", importing: [{name: "val", type: new StringType()}], returnType: new StringType()});
     ret.push({name: "LINE_INDEX", importing: [{name: "val", type: new StringType()}], returnType: new IntegerType()});
     ret.push({name: "LINES", importing: [{name: "val", type: new StringType()}], returnType: new IntegerType()});
     ret.push({name: "REPEAT", importing: [{name: "val", type: new StringType()}, {name: "occ", type: new IntegerType()}, {name: "regex", type: new IntegerType()}], returnType: new StringType()});
     ret.push({name: "REPLACE", importing: [{name: "val", type: new StringType()}, {name: "occ", type: new IntegerType()}, {name: "sub", type: new StringType()}, {name: "regex", type: new StringType()}, {name: "with", type: new StringType()}], returnType: new StringType()});
+    ret.push({name: "RESCALE", importing: [{name: "val", type: new FloatType()}], returnType: new FloatType()});
     ret.push({name: "REVERSE", importing: [{name: "val", type: new StringType()}], returnType: new StringType()});
+    ret.push({name: "ROUND", importing: [{name: "val", type: new FloatType()}], returnType: new IntegerType()});
     ret.push({name: "SHIFT_LEFT", importing: [{name: "val", type: new StringType()}, {name: "sub", type: new StringType()}], returnType: new StringType()});
     ret.push({name: "SHIFT_RIGHT", importing: [{name: "val", type: new StringType()}], returnType: new StringType()});
+    ret.push({name: "SIGN", importing: [{name: "val", type: new FloatType()}], returnType: new IntegerType()});
     ret.push({name: "STRLEN", importing: [{name: "val", type: new StringType()}], returnType: new IntegerType()});
     ret.push({name: "SUBSTRING_AFTER", importing: [{name: "val", type: new StringType()}, {name: "sub", type: new StringType()}], returnType: new StringType()});
     ret.push({name: "SUBSTRING_BEFORE", importing: [{name: "val", type: new StringType()}, {name: "sub", type: new StringType()}, {name: "regex", type: new StringType()}], returnType: new StringType()});
@@ -109,6 +116,7 @@ export class BuiltIn {
     ret.push({name: "TO_MIXED", importing: [{name: "val", type: new StringType()}], returnType: new StringType()});
     ret.push({name: "TO_UPPER", importing: [{name: "val", type: new StringType()}], returnType: new StringType()});
     ret.push({name: "TRANSLATE", importing: [{name: "val", type: new StringType()}, {name: "from", type: new StringType()}, {name: "to", type: new StringType()}], returnType: new StringType()});
+    ret.push({name: "TRUNC", importing: [{name: "val", type: new FloatType()}], returnType: new IntegerType()});
     ret.push({name: "XSDBOOL", importing: [{name: "val", type: new StringType()}], returnType: new CharacterType(1)});
     ret.push({name: "XSTRLEN", importing: [{name: "val", type: new StringType()}], returnType: new IntegerType()});
 
