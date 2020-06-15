@@ -1445,7 +1445,7 @@
                   "type": "boolean"
                 }
               ],
-              "description": "Allows you to enforce a pattern, such as a prefix, for local variables, constants and field symbols.\nTags: Naming\nhttps://rules.abaplint.org/local_variable_names"
+              "description": "\nAllows you to enforce a pattern, such as a prefix, for local variables, constants and field symbols.\nRegexes are case-insensitive.\nTags: Naming\nhttps://rules.abaplint.org/local_variable_names"
             },
             "main_file_contents": {
               "anyOf": [
