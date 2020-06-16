@@ -4,6 +4,7 @@ import {ABAPRule} from "./_abap_rule";
 import {ABAPFile} from "../files";
 import {BasicRuleConfig} from "./_basic_rule_config";
 import {IRuleMetadata, RuleTag} from "./_irule";
+import {EditHelper} from "../edit_helper";
 
 export class SequentialBlankConf extends BasicRuleConfig {
   /** An equal or higher number of sequential blank lines will trigger a violation.
@@ -24,7 +25,7 @@ export class SequentialBlank extends ABAPRule {
       key: "sequential_blank",
       title: "Sequential blank lines",
       shortDescription: `Checks that code does not contain more than the configured number of blank lines in a row.`,
-      tags: [RuleTag.Whitespace],
+      tags: [RuleTag.Whitespace, RuleTag.Quickfix],
     };
   }
 
@@ -54,8 +55,16 @@ export class SequentialBlank extends ABAPRule {
       }
 
       if (blanks === this.conf.lines) {
-        const position = new Position(i + 1, 1);
-        const issue = Issue.atPosition(file, position, this.getMessage(), this.getMetadata().key);
+        let blankCounter = 1;
+        while(i + blankCounter < rows.length && SequentialBlank.isBlankOrWhitespace(rows[i + blankCounter])){
+          ++blankCounter;
+        }
+        const reportPos = new Position(i + 1, 1);
+        // fix has to start at end of previous row for it to properly delete the first row
+        const startPos = new Position(i, rows[i].length + 1);
+        const endPos = new Position(i + blankCounter, rows[i + blankCounter - 1].length + 1);
+        const fix = EditHelper.deleteRange(file, startPos, endPos);
+        const issue = Issue.atPosition(file, reportPos, this.getMessage(), this.getMetadata().key, fix);
         issues.push(issue);
       }
     }
