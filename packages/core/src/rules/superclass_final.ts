@@ -56,7 +56,7 @@ export class SuperclassFinal extends ABAPRule {
       if (found === undefined) {
         const clas = reg.getObject("CLAS", sup) as Class;
         if (clas) {
-          found = clas.getClassDefinition2();
+          found = clas.getClassDefinition();
         }
       }
       if (found === undefined) {

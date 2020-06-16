@@ -44,7 +44,7 @@ https://docs.abapopenchecks.org/checks/16/`,
     const issues: Issue[] = [];
 
     if (obj instanceof Class) {
-      const definition = obj.getClassDefinition2();
+      const definition = obj.getClassDefinition();
       if (definition === undefined) {
         return [];
       } else if (this.conf.ignoreExceptions && definition.isException) {

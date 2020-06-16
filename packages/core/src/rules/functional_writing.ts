@@ -47,7 +47,7 @@ https://docs.abapopenchecks.org/checks/07/`,
 
     let definition: InfoClassDefinition | undefined = undefined;
     if (obj instanceof Class) {
-      definition = obj.getClassDefinition2();
+      definition = obj.getClassDefinition();
     }
 
     for (const statement of file.getStatements()) {

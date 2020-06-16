@@ -49,7 +49,7 @@ export class Indentation extends ABAPRule {
     }
 
     if (obj instanceof Class) {
-      const definition = obj.getClassDefinition2();
+      const definition = obj.getClassDefinition();
       if (definition === undefined) {
         return [];
       } else if (this.conf.ignoreExceptions && definition.isException) {

@@ -44,7 +44,7 @@ export class RemoveDescriptions implements IRule {
     if (obj instanceof Objects.Class) {
       let def: InfoClassDefinition | undefined;
       try {
-        def = obj.getClassDefinition2();
+        def = obj.getClassDefinition();
       } catch {
         return [];
       }
