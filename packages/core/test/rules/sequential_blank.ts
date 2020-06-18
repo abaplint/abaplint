@@ -1,10 +1,11 @@
 import {SequentialBlank} from "../../src/rules/sequential_blank";
-import {testRule} from "./_utils";
+import {testRule, testRuleFix} from "./_utils";
 import {expect} from "chai";
 
 const tests = [
   {abap: "\n\n\n\n", cnt: 1},
   {abap: "WRITE: / 'abc'.", cnt: 0},
+  {abap: "REPORT zfoo.\n\n\n\nWRITE 1.", cnt: 0},
 ];
 
 const blankTests = [
@@ -25,3 +26,14 @@ describe("blank line matching", () => {
 });
 
 testRule(tests, SequentialBlank);
+
+
+const fixTests = [
+  {input: "REPORT zfoo.\n\n\n\n", output: "REPORT zfoo.\n\n\n"},
+  {input: "REPORT zfoo.\n\n\n\n\t\t\t", output: "REPORT zfoo.\n\n\n"},
+  //3 blank lines + the carriage return on the line of the first statement
+  {input: "REPORT zfoo.\n\n\n\n\nWRITE 1.", output: "REPORT zfoo.\n\n\n\nWRITE 1."},
+  {input: "REPORT zfoo.\n\n\n\n\n\t\t\t\nWRITE 1.", output: "REPORT zfoo.\n\n\n\nWRITE 1."},
+];
+
+testRuleFix(fixTests, SequentialBlank);
