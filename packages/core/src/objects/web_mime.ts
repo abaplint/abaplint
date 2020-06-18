@@ -7,7 +7,7 @@ export class WebMIME extends AbstractObject {
   }
 
   public getAllowedNaming() {
-    return { 
+    return {
       maxLength: 40,
       allowNamespace: true,
     };
