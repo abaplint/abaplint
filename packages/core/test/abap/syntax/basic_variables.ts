@@ -1072,4 +1072,22 @@ DATA(bar) = VALUE ty_foo( bar = 2 ).`;
     expect(type!.getType()).to.be.instanceof(Basic.StructureType);
   });
 
+  it("SELECTION-SCREEN COMMENT", () => {
+    const abap = `
+SELECTION-SCREEN COMMENT /1(55) s_cmnt.
+s_cmnt = 'Comment'.`;
+    const identifier = resolveVariable(abap, "s_cmnt");
+    expect(identifier).to.not.equal(undefined);
+    expect(identifier?.getType()).to.be.instanceof(Basic.CharacterType);
+  });
+
+  it("SELECTION-SCREEN PUSHBUTTON", () => {
+    const abap = `
+SELECTION-SCREEN PUSHBUTTON /1(55) s_butt USER-COMMAND butt.
+s_butt = 'Button'.`;
+    const identifier = resolveVariable(abap, "s_butt");
+    expect(identifier).to.not.equal(undefined);
+    expect(identifier?.getType()).to.be.instanceof(Basic.CharacterType);
+  });
+
 });
