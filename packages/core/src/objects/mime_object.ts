@@ -7,9 +7,9 @@ export class MIMEObject extends AbstractObject {
   }
 
   public getAllowedNaming() {
-    return { // todo, verify
-      maxLength: 100,
-      allowNamespace: true,
+    return { 
+      maxLength: 32,
+      allowNamespace: false,
     };
   }
 }
