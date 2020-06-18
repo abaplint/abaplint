@@ -7,7 +7,7 @@ export class BusinessFunctionSetAssignment extends AbstractObject {
   }
 
   public getAllowedNaming() {
-    return { // todo, verify
+    return {
       maxLength: 30,
       allowNamespace: true,
     };

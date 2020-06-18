@@ -9,7 +9,7 @@ export class LockObject extends AbstractObject {
   public getAllowedNaming() {
     return {
       maxLength: 16,
-      allowNamespace: false,
+      allowNamespace: true,
     };
   }
 

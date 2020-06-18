@@ -8,7 +8,7 @@ export class DataControl extends AbstractObject {
 
   public getAllowedNaming() {
     return { // todo, verify
-      maxLength: 30,
+      maxLength: 40,
       allowNamespace: true,
     };
   }

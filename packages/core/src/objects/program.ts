@@ -16,8 +16,8 @@ export class Program extends ABAPObject {
   }
 
   public getAllowedNaming() {
-    return { // todo, verify
-      maxLength: 30,
+    return {
+      maxLength: 40,
       allowNamespace: true,
     };
   }

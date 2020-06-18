@@ -11,8 +11,8 @@ export class FunctionGroup extends ABAPObject {
   }
 
   public getAllowedNaming() {
-    return { // todo, verify
-      maxLength: 30,
+    return {
+      maxLength: 26,
       allowNamespace: true,
     };
   }
