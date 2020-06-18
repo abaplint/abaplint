@@ -1687,7 +1687,7 @@
                   "type": "boolean"
                 }
               ],
-              "description": "Checks that code does not contain more than the configured number of blank lines in a row.\nTags: Whitespace\nhttps://rules.abaplint.org/sequential_blank"
+              "description": "Checks that code does not contain more than the configured number of blank lines in a row.\nTags: Whitespace, Quickfix\nhttps://rules.abaplint.org/sequential_blank"
             },
             "short_case": {
               "anyOf": [
