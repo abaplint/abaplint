@@ -1412,7 +1412,7 @@
                   "type": "boolean"
                 }
               ],
-              "description": "Detects lines containing only punctuation.\nTags: Styleguide\nhttps://rules.abaplint.org/line_only_punc"
+              "description": "Detects lines containing only punctuation.\nTags: Styleguide, Quickfix\nhttps://rules.abaplint.org/line_only_punc"
             },
             "local_class_naming": {
               "anyOf": [
