@@ -45,7 +45,7 @@ export class InStatementIndentation extends ABAPRule {
     const ret: Issue[] = [];
 
     if (obj instanceof Class) {
-      const definition = obj.getClassDefinition2();
+      const definition = obj.getClassDefinition();
       if (definition === undefined) {
         return [];
       } else if (this.conf.ignoreExceptions && definition.isException) {

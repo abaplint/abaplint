@@ -49,7 +49,7 @@ export class SkipLogic {
   public isGeneratedGatewayClass(obj: Class): boolean {
     let sup = undefined;
 
-    const definition = obj.getClassDefinition2();
+    const definition = obj.getClassDefinition();
     if (definition) {
       sup = definition.superClassName;
     }
@@ -71,7 +71,7 @@ export class SkipLogic {
       return true;
     }
 
-    const main = obj.getClassDefinition2();
+    const main = obj.getClassDefinition();
     if (main) {
       const sup = main.superClassName;
       if (sup) {

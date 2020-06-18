@@ -48,8 +48,7 @@ export class Class extends ABAPObject {
     super.setDirty();
   }
 
-  // todo, rename
-  public getClassDefinition2(): InfoClassDefinition | undefined {
+  public getClassDefinition(): InfoClassDefinition | undefined {
     return this.getMainABAPFile()?.getInfo().getClassDefinitionByName(this.getName());
   }
 
