@@ -55,7 +55,7 @@ export class SelectionScreen implements IStatement {
 
     const push = seq(str("PUSHBUTTON"),
                      position,
-                     new Source(),
+                     alt(new InlineField(), new TextElement()),
                      command,
                      opt(modif),
                      opt(visible));
