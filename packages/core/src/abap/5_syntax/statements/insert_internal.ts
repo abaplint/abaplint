@@ -19,7 +19,6 @@ export class InsertInternal {
       if (inlinefs) {
         new InlineFS().runSyntax(inlinefs, scope, filename, sourceType);
       }
-
     }
 
   }

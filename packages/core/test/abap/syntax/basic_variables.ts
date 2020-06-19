@@ -1100,4 +1100,16 @@ INSERT lv_list INTO TABLE lt_list ASSIGNING FIELD-SYMBOL(<lv_list>).`;
     expect(identifier?.getType()).to.be.instanceof(Basic.StringType);
   });
 
+  it("READ TABLE ASSIGNING inline", () => {
+    const abap = `
+TYPES: BEGIN OF ty_path,
+         path TYPE string,
+       END OF ty_path.
+DATA: lt_paths TYPE STANDARD TABLE OF ty_path.
+READ TABLE lt_paths ASSIGNING FIELD-SYMBOL(<ls_path>) WITH KEY path = 'foobar'.`;
+    const identifier = resolveVariable(abap, "<ls_path>");
+    expect(identifier).to.not.equal(undefined);
+    expect(identifier?.getType()).to.be.instanceof(Basic.StructureType);
+  });
+
 });
