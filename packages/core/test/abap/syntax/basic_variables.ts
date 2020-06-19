@@ -905,4 +905,189 @@ ENDTRY.`;
     expect(type).to.be.instanceof(Basic.VoidType);
   });
 
+  it("Anything from voided type should give void", () => {
+    const abap = `
+  DATA lo_void TYPE REF TO cl_voided.
+  DATA(lo_findings) = lo_void->findings.`;
+    const identifier = resolveVariable(abap, "lo_findings");
+    expect(identifier).to.not.equal(undefined);
+    const type = identifier?.getType();
+    expect(type).to.be.instanceof(Basic.VoidType);
+  });
+
+  it("Anything from voided type should give void, 2", () => {
+    const abap = `DATA(foo) = cl_voided=>field.`;
+    const identifier = resolveVariable(abap, "foo");
+    expect(identifier).to.not.equal(undefined);
+    const type = identifier?.getType();
+    expect(type).to.be.instanceof(Basic.VoidType);
+  });
+
+  it("LOOP into inline", () => {
+    const abap = `DATA tab TYPE STANDARD TABLE OF string WITH DEFAULT KEY.
+  LOOP AT tab INTO DATA(row).
+  ENDLOOP.`;
+    const identifier = resolveVariable(abap, "row");
+    expect(identifier).to.not.equal(undefined);
+    const type = identifier?.getType();
+    expect(type).to.be.instanceof(Basic.StringType);
+  });
+
+  it("LOOP into inline fieldsymbol", () => {
+    const abap = `DATA tab TYPE STANDARD TABLE OF string WITH DEFAULT KEY.
+  LOOP AT tab INTO FIELD-SYMBOL(<row>).
+  ENDLOOP.`;
+    const identifier = resolveVariable(abap, "<row>");
+    expect(identifier).to.not.equal(undefined);
+    const type = identifier?.getType();
+    expect(type).to.be.instanceof(Basic.StringType);
+  });
+
+  it("Infer string type from string template", () => {
+    const abap = `DATA(lv_name) = |sdfsdfsd|.`;
+    const identifier = resolveVariable(abap, "lv_name");
+    expect(identifier).to.not.equal(undefined);
+    const type = identifier?.getType();
+    expect(type).to.be.instanceof(Basic.StringType);
+  });
+
+  it("Infer integer type from integer", () => {
+    const abap = `DATA(lv_name) = 123.`;
+    const identifier = resolveVariable(abap, "lv_name");
+    expect(identifier).to.not.equal(undefined);
+    const type = identifier?.getType();
+    expect(type).to.be.instanceof(Basic.IntegerType);
+  });
+
+  it("Infer type from interface constant", () => {
+    const abap = `INTERFACE lif_def.
+  CONSTANTS foo TYPE c VALUE '1'.
+ENDINTERFACE.
+DATA(bar) = lif_def=>foo.`;
+    const identifier = resolveVariable(abap, "bar");
+    expect(identifier).to.not.equal(undefined);
+    const type = identifier?.getType();
+    expect(type).to.be.instanceof(Basic.CharacterType);
+  });
+
+  it("Voided chain", () => {
+    const abap = `DATA lo_void TYPE REF TO cl_anysomething.
+    DATA(sdf) = lo_void->method( )->attribute->method( ).`;
+    const identifier = resolveVariable(abap, "sdf");
+    expect(identifier).to.not.equal(undefined);
+    const type = identifier?.getType();
+    expect(type).to.be.instanceof(Basic.VoidType);
+  });
+
+  it("Data reference", () => {
+    const abap = `
+INTERFACE lif_bar.
+  TYPES: type TYPE string.
+ENDINTERFACE.
+DATA moo TYPE REF TO lif_bar=>type.`;
+    const type = resolveVariable(abap, "moo");
+    expect(type).to.not.equal(undefined);
+    expect(type!.getType()).to.be.instanceof(Basic.DataReference);
+  });
+
+  it("TYPE ANY TABLE", () => {
+    const abap = `FIELD-SYMBOLS <lt_any> TYPE ANY TABLE.`;
+    const type = resolveVariable(abap, "<lt_any>");
+    expect(type).to.not.equal(undefined);
+    expect(type!.getType()).to.be.instanceof(Basic.TableType);
+  });
+
+  it("TYPE INDEX TABLE", () => {
+    const abap = `FIELD-SYMBOLS <lt_index> TYPE INDEX TABLE.`;
+    const type = resolveVariable(abap, "<lt_index>");
+    expect(type).to.not.equal(undefined);
+    expect(type!.getType()).to.be.instanceof(Basic.TableType);
+  });
+
+  it("READ TABLE INTO inline data", () => {
+    const abap = `
+      DATA lt_bar TYPE STANDARD TABLE OF string WITH EMPTY KEY.
+      READ TABLE lt_bar INTO DATA(lv_bar) INDEX 1.`;
+    const type = resolveVariable(abap, "lv_bar");
+    expect(type).to.not.equal(undefined);
+    expect(type!.getType()).to.be.instanceof(Basic.StringType);
+  });
+
+  it("SELECT from voided table to inline definition", () => {
+    const abap = `SELECT * FROM sdfsd INTO TABLE @DATA(lt_tab).`;
+    const type = resolveVariable(abap, "lt_tab");
+    expect(type).to.not.equal(undefined);
+    expect(type!.getType()).to.be.instanceof(Basic.VoidType);
+  });
+
+  it("SELECT SINGLE, voided", () => {
+    const abap = `SELECT SINGLE * FROM something INTO @DATA(ls_data).`;
+    const type = resolveVariable(abap, "ls_data");
+    expect(type).to.not.equal(undefined);
+    expect(type!.getType()).to.be.instanceof(Basic.VoidType);
+  });
+
+  it.skip("call chain inline integer", () => {
+    const abap = `
+CLASS lcl_bar DEFINITION.
+  PUBLIC SECTION.
+    TYPES: BEGIN OF ty_bar,
+             field TYPE i,
+           END OF ty_bar.
+    CLASS-METHODS: method RETURNING VALUE(val) TYPE ty_bar.
+ENDCLASS.
+CLASS lcl_bar IMPLEMENTATION.
+  METHOD method.
+  ENDMETHOD.
+ENDCLASS.
+
+START-OF-SELECTION.
+  DATA(bar) = lcl_bar=>method( )-field.`;
+    const type = resolveVariable(abap, "bar");
+    expect(type).to.not.equal(undefined);
+    expect(type!.getType()).to.be.instanceof(Basic.IntegerType);
+  });
+
+  it("field chain with table expression", () => {
+    const abap = `
+TYPES: BEGIN OF ty_bar,
+         name  TYPE string,
+         value TYPE i,
+       END OF ty_bar.
+DATA lt_params TYPE STANDARD TABLE OF ty_bar WITH EMPTY KEY.
+DATA(lv_len) = lt_params[ name = 'filesize' ]-value.`;
+    const type = resolveVariable(abap, "lv_len");
+    expect(type).to.not.equal(undefined);
+    expect(type!.getType()).to.be.instanceof(Basic.IntegerType);
+  });
+
+  it("Source type VALUE", () => {
+    const abap = `
+TYPES: BEGIN OF ty_foo,
+  bar TYPE i,
+END OF ty_foo.
+DATA(bar) = VALUE ty_foo( bar = 2 ).`;
+    const type = resolveVariable(abap, "bar");
+    expect(type).to.not.equal(undefined);
+    expect(type!.getType()).to.be.instanceof(Basic.StructureType);
+  });
+
+  it("SELECTION-SCREEN COMMENT", () => {
+    const abap = `
+SELECTION-SCREEN COMMENT /1(55) s_cmnt.
+s_cmnt = 'Comment'.`;
+    const identifier = resolveVariable(abap, "s_cmnt");
+    expect(identifier).to.not.equal(undefined);
+    expect(identifier?.getType()).to.be.instanceof(Basic.CharacterType);
+  });
+
+  it("SELECTION-SCREEN PUSHBUTTON", () => {
+    const abap = `
+SELECTION-SCREEN PUSHBUTTON /1(55) s_butt USER-COMMAND butt.
+s_butt = 'Button'.`;
+    const identifier = resolveVariable(abap, "s_butt");
+    expect(identifier).to.not.equal(undefined);
+    expect(identifier?.getType()).to.be.instanceof(Basic.CharacterType);
+  });
+
 });

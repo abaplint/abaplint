@@ -6,6 +6,7 @@ import {IClassDefinition} from "../types/_class_definition";
 import {IMethodDefinition} from "../types/_method_definition";
 import {IInterfaceDefinition} from "../types/_interface_definition";
 import {ClassAttribute} from "../types/class_attribute";
+import {ClassConstant} from "../types/class_constant";
 
 // todo, think some of the public methods can be made private
 
@@ -111,9 +112,39 @@ export class ObjectOriented {
       }
     }
 
+    if (name.includes("~")) {
+      const interfaceName = name.split("~")[0];
+      if (def.getImplementing().some((a) => a.name.toUpperCase() === interfaceName.toUpperCase())) {
+        return this.searchAttributeName(this.scope.findInterfaceDefinition(interfaceName), name.split("~")[1]);
+      }
+    }
+
     const sup = def.getSuperClass();
     if (sup) {
       return this.searchAttributeName(this.findSuperDefinition(sup), name);
+    }
+
+    return undefined;
+  }
+
+  // search in via super class, interfaces and aliases
+  public searchConstantName(
+    def: IClassDefinition | IInterfaceDefinition | undefined,
+    name: string | undefined): ClassConstant | undefined {
+
+    if (def === undefined || name === undefined) {
+      return undefined;
+    }
+
+    for (const a of def.getAttributes().getConstants()) {
+      if (a.getName().toUpperCase() === name.toUpperCase()) {
+        return a;
+      }
+    }
+
+    const sup = def.getSuperClass();
+    if (sup) {
+      return this.searchConstantName(this.findSuperDefinition(sup), name);
     }
 
     return undefined;

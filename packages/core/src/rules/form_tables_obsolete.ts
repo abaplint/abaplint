@@ -6,6 +6,7 @@ import {ABAPFile} from "../files";
 import {IRegistry} from "../_iregistry";
 import * as Expressions from "../abap/2_statements/expressions";
 import {ABAPObject} from "../objects/_abap_object";
+import {IRuleMetadata} from "./_irule";
 
 export class FormTablesObsoleteConf extends BasicRuleConfig {
 }
@@ -14,11 +15,12 @@ export class FormTablesObsolete extends ABAPRule {
 
   private conf = new FormTablesObsoleteConf();
 
-  public getMetadata() {
+  public getMetadata(): IRuleMetadata {
     return {
       key: "form_tables_obsolete",
       title: "TABLES parameters are obsolete",
       shortDescription: `Checks for TABLES parameters in forms.`,
+      extendedInformation: `https://help.sap.com/doc/abapdocu_751_index_htm/7.51/en-US/abapform_tables.htm`,
     };
   }
 

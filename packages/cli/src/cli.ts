@@ -163,7 +163,7 @@ async function run() {
       issues = issues.concat(reg.findIssues(progress));
     } catch (error) {
       const file = new MemoryFile("generic", "dummy");
-      const issue = Issue.atPosition(file, new Position(1, 1), error, "error");
+      const issue = Issue.atPosition(file, new Position(1, 1), error.toString(), "error");
       issues = [issue];
     }
 

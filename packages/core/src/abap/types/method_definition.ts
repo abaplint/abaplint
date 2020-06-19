@@ -1,4 +1,4 @@
-import {StatementNode} from "../../abap/nodes";
+import {StatementNode} from "../nodes";
 import {MethodDef} from "../2_statements/statements";
 import * as Expressions from "../2_statements/expressions";
 import {MethodParameters} from "./method_parameters";

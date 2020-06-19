@@ -7,6 +7,7 @@ import {IRegistry} from "../_iregistry";
 import {IObject} from "../objects/_iobject";
 import {Class} from "../objects";
 import {RuleTag} from "./_irule";
+import {EditHelper} from "../edit_helper";
 
 export class LineOnlyPuncConf extends BasicRuleConfig {
   /** Ignore lines with only puncutation in global exception classes */
@@ -24,7 +25,7 @@ export class LineOnlyPunc extends ABAPRule {
       shortDescription: `Detects lines containing only punctuation.`,
       extendedInformation: `https://github.com/SAP/styleguides/blob/master/clean-abap/CleanABAP.md#close-brackets-at-line-end
 https://docs.abapopenchecks.org/checks/16/`,
-      tags: [RuleTag.Styleguide],
+      tags: [RuleTag.Styleguide, RuleTag.Quickfix],
     };
   }
 
@@ -44,7 +45,7 @@ https://docs.abapopenchecks.org/checks/16/`,
     const issues: Issue[] = [];
 
     if (obj instanceof Class) {
-      const definition = obj.getClassDefinition2();
+      const definition = obj.getClassDefinition();
       if (definition === undefined) {
         return [];
       } else if (this.conf.ignoreExceptions && definition.isException) {
@@ -59,7 +60,18 @@ https://docs.abapopenchecks.org/checks/16/`,
       if (reg.exec(rows[i].trim())) {
         const column = rows[i].indexOf(")") >= 0 ? rows[i].indexOf(")") + 1 : rows[i].indexOf(".") + 1;
         const position = new Position(i + 1, column);
-        const issue = Issue.atPosition(file, position, this.getMessage(), this.getMetadata().key);
+
+        // merge punc into previous row
+        let rowContent = rows[i].trim();
+        // if reported row contains a paranthesis, prefix with space if needed
+        if (rowContent.length > 1 && !rows[i - 1].endsWith(" ")) {
+          rowContent = " " + rowContent;
+        }
+        const startPos = new Position(i, rows[i - 1].length + 1);
+        const endPos = new Position(i + 1, rows[i].length + 1);
+        const fix = EditHelper.replaceRange(file, startPos, endPos, rowContent);
+
+        const issue = Issue.atPosition(file, position, this.getMessage(), this.getMetadata().key, fix);
         issues.push(issue);
       }
     }

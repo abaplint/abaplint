@@ -52,7 +52,7 @@ export class SICFConsistency implements IRule {
         continue;
       }
 
-      const def = clas.getClassDefinition2();
+      const def = clas.getClassDefinition();
       if (def === undefined) {
         const message = "Syntax error in class " + h;
         const issue = Issue.atPosition(obj.getFiles()[0], new Position(1, 1), message, this.getMetadata().key);

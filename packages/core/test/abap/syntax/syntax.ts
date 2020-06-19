@@ -6,15 +6,20 @@ import {Issue} from "../../../src/issue";
 import {Config} from "../../../src/config";
 import {IRegistry} from "../../../src/_iregistry";
 import {getABAPObjects} from "../../get_abap";
+import {Version} from "../../../src/version";
 
-function run(reg: IRegistry, globalConstants?: string[]): Issue[] {
+function run(reg: IRegistry, globalConstants?: string[], version?: Version): Issue[] {
   let ret: Issue[] = [];
 
+  const config = reg.getConfig().get();
   if (globalConstants) {
-    const config = reg.getConfig().get();
     config.syntax.globalConstants = globalConstants;
-    reg.setConfig(new Config(JSON.stringify(config)));
   }
+  if (version) {
+    config.syntax.version = version;
+  }
+  reg.setConfig(new Config(JSON.stringify(config)));
+  reg.parse();
 
   for (const obj of getABAPObjects(reg)) {
     for (const file of obj.getABAPFiles()) {
@@ -33,25 +38,24 @@ function runMulti(objects: {filename: string, contents: string}[]): Issue[] {
     const file = new MemoryFile(obj.filename, obj.contents);
     reg.addFile(file);
   }
-  reg.parse();
   return run(reg);
 }
 
 function runClass(abap: string): Issue[] {
   const file = new MemoryFile("zcl_foobar.clas.abap", abap);
-  const reg = new Registry().addFile(file).parse();
+  const reg = new Registry().addFile(file);
   return run(reg);
 }
 
-function runProgram(abap: string, globalConstants?: string[]): Issue[] {
+function runProgram(abap: string, globalConstants?: string[], version?: Version): Issue[] {
   const file = new MemoryFile("zfoobar.prog.abap", abap);
-  const reg: IRegistry = new Registry().addFile(file).parse();
-  return run(reg, globalConstants);
+  const reg: IRegistry = new Registry().addFile(file);
+  return run(reg, globalConstants, version);
 }
 
 ////////////////////////////////////////////////////////////
 
-describe("Check Variables", () => {
+describe("syntax.ts, Check Variables", () => {
 
   it("program, variable foobar not found", () => {
     const abap = "WRITE foobar.\n";
@@ -982,15 +986,17 @@ DATA(result) = lines( FILTER #( cells USING KEY key_alive WHERE alive = abap_tru
   });
 
   it("REDUCE with INIT", () => {
-    const abap = `DATA it_result TYPE c.
-      DATA(output) = REDUCE string( INIT result = ||
-        FOR <result> IN it_result
-        NEXT result = result && 'abc' ).`;
+    const abap = `
+DATA it_result TYPE STANDARD TABLE OF string.
+DATA(output) = REDUCE string( INIT result = ||
+  FOR <result> IN it_result
+  NEXT result = result && 'abc' ).`;
     const issues = runProgram(abap);
     expect(issues.length).to.equals(0);
   });
 
   it("FOR, loop IN", () => {
+    // todo, does this syntax check?
     const abap = "DATA moo TYPE c.\n" +
       "DATA it_packages TYPE c.\n" +
       "moo = VALUE #(\n" +
@@ -1038,7 +1044,7 @@ DATA(result) = lines( FILTER #( cells USING KEY key_alive WHERE alive = abap_tru
 
   it("program, inline FS definition", () => {
     const abap = `
-    DATA moo TYPE c.
+    DATA moo TYPE STANDARD TABLE OF string WITH EMPTY KEY.
     LOOP AT moo ASSIGNING FIELD-SYMBOL(<moo>).
       WRITE <moo>.
     ENDLOOP.`;
@@ -1568,12 +1574,12 @@ CLASS lcl_bar IMPLEMENTATION.
            END OF ty_foo.
     DATA ls_foo TYPE ty_foo.
 
-    ls_foo-not_found->rm( ).
+    ls_foo-unkown_field->rm( ).
   ENDMETHOD.
 ENDCLASS.`;
     const issues = runProgram(abap);
     expect(issues.length).to.equals(1);
-    expect(issues[0].getMessage()).to.contain("not_found");
+    expect(issues[0].getMessage()).to.contain("unkown_field", "Got: \"" + issues[0].getMessage() + "\"");
   });
 
   it("no error for void structures", () => {
@@ -1750,6 +1756,133 @@ START-OF-SELECTION.
   lcl_exporting=>run( IMPORTING ev_bar = int ).`;
     const issues = runProgram(abap);
     expect(issues.length).to.equals(0);
+  });
+
+  it("error, method parameter does not exist", () => {
+    const abap = `
+CLASS lcl_bar DEFINITION.
+  PUBLIC SECTION.
+    METHODS method.
+ENDCLASS.
+CLASS lcl_bar IMPLEMENTATION.
+  METHOD method.
+  ENDMETHOD.
+ENDCLASS.
+
+START-OF-SELECTION.
+  DATA mo_moo TYPE REF TO lcl_bar.
+  mo_moo = NEW #( ).
+  mo_moo->method( something = 'no' ).`;
+    const issues = runProgram(abap);
+    expect(issues.length).to.equals(1);
+    expect(issues[0].getMessage().toLowerCase()).to.contain("something");
+  });
+
+  it("error, no importing parameters", () => {
+    const abap = `
+CLASS lcl_bar DEFINITION.
+  PUBLIC SECTION.
+    METHODS method.
+ENDCLASS.
+CLASS lcl_bar IMPLEMENTATION.
+  METHOD method.
+  ENDMETHOD.
+ENDCLASS.
+
+START-OF-SELECTION.
+  DATA mo_moo TYPE REF TO lcl_bar.
+  mo_moo = NEW #( ).
+  mo_moo->method( 123 ).`;
+    const issues = runProgram(abap);
+    expect(issues.length).to.equals(1);
+    expect(issues[0].getMessage().toLowerCase()).to.contain("no importing parameters");
+  });
+
+  it("method must have RETURNING", () => {
+    const abap = `
+CLASS lcl_bar DEFINITION.
+  PUBLIC SECTION.
+    METHODS method.
+ENDCLASS.
+CLASS lcl_bar IMPLEMENTATION.
+  METHOD method.
+  ENDMETHOD.
+ENDCLASS.
+
+START-OF-SELECTION.
+  DATA mo_moo TYPE REF TO lcl_bar.
+  DATA int TYPE i.
+  mo_moo = NEW #( ).
+  int = mo_moo->method( ).`;
+    const issues = runProgram(abap);
+    expect(issues.length).to.equals(1);
+    expect(issues[0].getMessage().toLowerCase()).to.contain("type");
+  });
+
+  it("WHEN TYPE", () => {
+    const abap = `
+  DATA lo_bar TYPE REF TO object.
+  CASE TYPE OF lo_bar.
+    WHEN TYPE zcl_foobar.
+    WHEN OTHERS.
+  ENDCASE.
+  `;
+    const issues = runProgram(abap);
+    expect(issues.length).to.equals(0);
+  });
+
+  it("attribute with interface prefix", () => {
+    const abap = `
+INTERFACE lif_def.
+  DATA foo TYPE c.
+ENDINTERFACE.
+CLASS lcl_bar DEFINITION.
+  PUBLIC SECTION.
+    INTERFACES: lif_def.
+ENDCLASS.
+CLASS lcl_bar IMPLEMENTATION.
+ENDCLASS.
+
+DATA foo TYPE REF TO lcl_bar.
+DATA(bar) = foo->lif_def~foo.`;
+    const issues = runProgram(abap);
+    expect(issues.length).to.equals(0);
+  });
+
+  it("LOOP AT SCREEN, on 702", () => {
+    const abap = `LOOP AT SCREEN.
+    ENDLOOP.`;
+    const issues = runProgram(abap, [], Version.v702);
+    expect(issues.length).to.equals(0);
+  });
+
+  it("LOOP, 702", () => {
+    const abap = `DATA tab TYPE STANDARD TABLE OF string WITH DEFAULT KEY.
+  DATA row TYPE string.
+  LOOP AT tab INTO row FROM 3.
+  ENDLOOP.`;
+    const issues = runProgram(abap, [], Version.v702);
+    expect(issues.length).to.equals(0);
+  });
+
+  it("data reference", () => {
+    const abap = `TYPES: BEGIN OF ty_log,
+  item TYPE i,
+END OF ty_log.
+DATA lr_log TYPE REF TO ty_log.
+DATA(item) = lr_log->item.`;
+    const issues = runProgram(abap);
+    expect(issues.length).to.equals(0);
+  });
+
+  it("data reference, component not found in structure", () => {
+    const abap = `TYPES: BEGIN OF ty_log,
+  item TYPE i,
+END OF ty_log.
+DATA lr_log TYPE REF TO ty_log.
+DATA(item) = lr_log->not_found.`;
+    const issues = runProgram(abap);
+    expect(issues.length).to.equals(1);
   });
 
 // todo, static method cannot access instance attributes

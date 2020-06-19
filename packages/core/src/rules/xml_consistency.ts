@@ -4,6 +4,7 @@ import {IObject} from "../objects/_iobject";
 import * as Objects from "../objects";
 import {IRegistry} from "../_iregistry";
 import {BasicRuleConfig} from "./_basic_rule_config";
+import * as xmljs from "xml-js";
 
 export class XMLConsistencyConf extends BasicRuleConfig {
 }
@@ -36,17 +37,38 @@ export class XMLConsistency implements IRule {
       return issues;
     }
 
-    // todo, check XML consistency, https://github.com/abaplint/abaplint/issues/667
+    const xml = obj.getXML();
+    if (xml) {
+      try {
+        xmljs.xml2js(xml, {compact: true});
+      } catch (error) {
+        issues.push(Issue.atRow(file, 1, "XML parser error: " + error.toString(), this.getMetadata().key));
+      }
+    }
 
+    // todo, have some XML validation in each object?
     if (obj instanceof Objects.Class) {
       const name = obj.getNameFromXML();
       if (name === undefined) {
         issues.push(Issue.atRow(file, 1, "Name undefined in XML", this.getMetadata().key));
       } else if (name !== obj.getName().toUpperCase()) {
         issues.push(Issue.atRow(file, 1, "Name in XML does not match object", this.getMetadata().key));
+      } else if (obj.getClassDefinition() === undefined) {
+        issues.push(Issue.atRow(file, 1, "Class matching XML name not found in ABAP file", this.getMetadata().key));
       }
     }
-    // todo, add more object types here
+
+    if (obj instanceof Objects.Interface) {
+      const name = obj.getNameFromXML();
+      if (name === undefined) {
+        issues.push(Issue.atRow(file, 1, "Name undefined in XML", this.getMetadata().key));
+      } else if (name !== obj.getName().toUpperCase()) {
+        issues.push(Issue.atRow(file, 1, "Name in XML does not match object", this.getMetadata().key));
+      } else if (obj.getDefinition() === undefined
+          || obj.getDefinition()?.getName().toUpperCase() !== name.toUpperCase()) {
+        issues.push(Issue.atRow(file, 1, "Interface matching XML name not found in ABAP file", this.getMetadata().key));
+      }
+    }
 
     return issues;
   }

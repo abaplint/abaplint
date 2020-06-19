@@ -21,6 +21,13 @@ describe("Registry", () => {
     expect(reg).to.not.equal(undefined);
   });
 
+  it("Add README.md, should skip", () => {
+    const file = new MemoryFile("README.md", "<foo></foo>");
+    const reg = new Registry().addFile(file).parse();
+    expect(reg).to.not.equal(undefined);
+    expect(reg.findIssues().length).to.equal(0);
+  });
+
   it("Add and update file",  () => {
     const first = new MemoryFile("zfoobar.prog.abap", "first");
     const registry = new Registry().addFile(first).parse();
@@ -42,22 +49,10 @@ describe("Registry", () => {
     expect(reg.getObject("CLAS", "/namesp/cl_foobar")).to.not.equal(undefined);
   });
 
-  it("readme.md", () => {
-    const reg = new Registry().addFile(new MemoryFile("readme.md", "something"));
-    expect(reg.getObjects().length).to.equal(1);
-    expect(reg.getObjects()[0].getType()).to.equal("MD");
-  });
-
   it("foo.bar.", () => {
     const reg = new Registry().addFile(new MemoryFile("foo.bar.", "something"));
     expect(reg.getObjects().length).to.equal(1);
     expect(reg.getObjects()[0].getType()).to.equal("BAR");
-  });
-
-  it("filename = `LICENSE`", () => {
-    const reg = new Registry().addFile(new MemoryFile("LICENSE", "something"));
-    expect(reg.getObjects().length).to.equal(1);
-    expect(reg.getObjects()[0].getType()).to.equal("UNKNOWN");
   });
 
   it("filename with namespace, url encoded", () => {
@@ -123,6 +118,16 @@ describe("Registry", () => {
     expect(registry.findIssues().length).to.equal(1);
   });
 
+  it("Global interface, constant without VALUE", () => {
+    const abap = `INTERFACE if_t100_message.
+  CONSTANTS: default_textid TYPE string.
+ENDINTERFACE.`;
+    const file = new MemoryFile("if_t100_message.intf.abap", abap);
+    const registry = new Registry().addFile(file);
+    // tests that no exceptions are thrown
+    registry.findIssues();
+  });
+
   it("Double parse should give the same issues, rule", () => {
     const file = new MemoryFile("zfoobar.prog.abap", "BREAK-POINT.");
     const registry = new Registry().addFile(file);
@@ -159,9 +164,7 @@ describe("Registry, object types", () => {
     const registry = new Registry().addFile(file1).addFile(file2);
     const issues = registry.findIssues();
 
-    expect(issues.length).to.equal(1);
-    expect(issues[0].getKey()).to.equal("registry_add");
-    expect(issues[0].getFilename()).to.equal("LICENSE");
+    expect(issues.length).to.equal(0);
   });
 
   it("Object type = PROG", () => {

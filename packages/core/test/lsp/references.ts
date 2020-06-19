@@ -9,7 +9,7 @@ import {References} from "../../src/lsp/references";
 function buildPosition(file: IFile, row: number, column: number): ITextDocumentPositionParams {
   return {
     textDocument: {uri: file.getFilename()},
-    position: LServer.Position.create(row , column),
+    position: LServer.Position.create(row, column),
   };
 }
 
@@ -19,7 +19,7 @@ describe("LSP, references", () => {
     const file = new MemoryFile("foobar.prog.abap", `DATA foobar TYPE c.
 WRITE foobar.`);
     const reg = new Registry().addFile(file).parse();
-    const found = new References(reg).references(buildPosition(file, 0 , 7));
+    const found = new References(reg).references(buildPosition(file, 0, 7));
     expect(found.length).to.equal(2);
   });
 
@@ -27,7 +27,7 @@ WRITE foobar.`);
     const file = new MemoryFile("foobar.prog.abap", `DATA foobar TYPE c.
 WRITE foobar.`);
     const reg = new Registry().addFile(file).parse();
-    const found = new References(reg).references(buildPosition(file, 1 , 7));
+    const found = new References(reg).references(buildPosition(file, 1, 7));
     expect(found.length).to.equal(2);
   });
 
@@ -37,7 +37,7 @@ DATA loo TYPE c.
 WRITE foobar.
 WRITE loo.`);
     const reg = new Registry().addFile(file).parse();
-    const found = new References(reg).references(buildPosition(file, 0 , 7));
+    const found = new References(reg).references(buildPosition(file, 0, 7));
     expect(found.length).to.equal(2);
   });
 
@@ -47,8 +47,24 @@ WRITE abap_false.
 WRITE abap_true.
 WRITE abap_false.`);
     const reg = new Registry().addFile(file).parse();
-    const found = new References(reg).references(buildPosition(file, 0 , 7));
+    const found = new References(reg).references(buildPosition(file, 0, 7));
     expect(found.length).to.equal(2);
+  });
+
+  it.skip("method references", () => {
+    const file = new MemoryFile("foobar.prog.abap", `CLASS lcl_bar DEFINITION.
+    PUBLIC SECTION.
+      METHODS: foobar IMPORTING int TYPE i.
+  ENDCLASS.
+  CLASS lcl_bar IMPLEMENTATION.
+    METHOD foobar.
+    ENDMETHOD.
+  ENDCLASS.
+  START-OF-SELECTION.
+    NEW lcl_bar( )->foobar( 1 ).`);
+    const reg = new Registry().addFile(file).parse();
+    const found = new References(reg).references(buildPosition(file, 2, 18));
+    expect(found.length).to.equal(1);
   });
 
 });

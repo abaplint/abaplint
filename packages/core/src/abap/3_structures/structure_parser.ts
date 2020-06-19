@@ -1,8 +1,8 @@
 import {Unknown, Empty, Comment as StatementComment} from "../2_statements/statements/_statement";
-import {IStructure} from "../3_structures/structures/_structure";
-import * as Structures from "../3_structures/structures";
+import {IStructure} from "./structures/_structure";
+import * as Structures from "./structures";
 import {Issue} from "../../issue";
-import {StructureNode, StatementNode} from "../nodes/";
+import {StructureNode, StatementNode} from "../nodes";
 import {Position} from "../../position";
 import {IStructureResult} from "./structure_result";
 import {IStatementResult} from "../2_statements/statement_result";

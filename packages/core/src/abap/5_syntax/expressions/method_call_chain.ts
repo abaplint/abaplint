@@ -10,6 +10,9 @@ import {NewObject} from "./new_object";
 import {Cast} from "./cast";
 import {BuiltIn} from "../_builtin";
 import {MethodCallParam} from "./method_call_param";
+import {ReferenceType} from "../_reference";
+import {ComponentName} from "./component_name";
+import {AttributeName} from "./attribute_name";
 
 export class MethodCallChain {
   public runSyntax(
@@ -26,7 +29,7 @@ export class MethodCallChain {
       throw new Error("MethodCallChain, first child expected");
     }
 
-    let context: AbstractType | undefined = this.findTop(first, scope, targetType);
+    let context: AbstractType | undefined = this.findTop(first, scope, targetType, filename);
     if (first.get() instanceof Expressions.MethodCall) {
       children.unshift(first);
     }
@@ -40,16 +43,24 @@ export class MethodCallChain {
       if (current instanceof ExpressionNode && current.get() instanceof Expressions.MethodCall) {
         // for built-in methods set className to undefined
         const className = context instanceof ObjectReferenceType ? context.getName() : undefined;
-        const methodName = current.findDirectExpression(Expressions.MethodName)?.getFirstToken().getStr();
+        const methodToken = current.findDirectExpression(Expressions.MethodName)?.getFirstToken();
+        const methodName = methodToken?.getStr();
         let method = helper.searchMethodName(scope.findObjectDefinition(className), methodName);
         if (method === undefined) {
           method = new BuiltIn().searchBuiltin(methodName?.toUpperCase());
+          if (method) {
+            scope.addReference(methodToken, method, ReferenceType.BuiltinMethodReference, filename, {className: className});
+          }
+        } else {
+          scope.addReference(methodToken, method, ReferenceType.MethodReference, filename, {className: className});
         }
         if (method === undefined && methodName?.toUpperCase() === "CONSTRUCTOR") {
           context = undefined; // todo, this is a workaround, constructors always exists
         } else if (method === undefined && !(context instanceof VoidType)) {
           throw new Error("Method \"" + methodName + "\" not found");
         } else if (method) {
+
+
           const ret = method.getParameters().getReturning()?.getType();
           context = ret;
         }
@@ -60,7 +71,10 @@ export class MethodCallChain {
         } else if (param && context instanceof VoidType) {
           new MethodCallParam().runSyntax(param, scope, context, filename);
         }
-
+      } else if (current instanceof ExpressionNode && current.get() instanceof Expressions.ComponentName) {
+        context = new ComponentName().runSyntax(context, current);
+      } else if (current instanceof ExpressionNode && current.get() instanceof Expressions.AttributeName) {
+        context = new AttributeName().runSyntax(context, current, scope);
       }
     }
 
@@ -69,7 +83,7 @@ export class MethodCallChain {
 
 //////////////////////////////////////
 
-  private findTop(first: INode, scope: CurrentScope, targetType: AbstractType | undefined): AbstractType | undefined {
+  private findTop(first: INode, scope: CurrentScope, targetType: AbstractType | undefined, filename: string): AbstractType | undefined {
     if (first.get() instanceof Expressions.ClassName) {
       const className = first.getFirstToken().getStr();
       const classDefinition = scope.findObjectDefinition(className);
@@ -80,9 +94,9 @@ export class MethodCallChain {
       }
       return new ObjectReferenceType(className);
     } else if (first instanceof ExpressionNode && first.get() instanceof Expressions.FieldChain) {
-      return new FieldChain().runSyntax(first, scope);
+      return new FieldChain().runSyntax(first, scope, filename);
     } else if (first instanceof ExpressionNode && first.get() instanceof Expressions.NewObject) {
-      return new NewObject().runSyntax(first, scope, targetType);
+      return new NewObject().runSyntax(first, scope, targetType, filename);
     } else if (first instanceof ExpressionNode && first.get() instanceof Expressions.Cast) {
       return new Cast().runSyntax(first, scope, targetType);
     } else {

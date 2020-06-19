@@ -98,11 +98,11 @@ describe("Spaghetti Scope, Definition + Read + Write positions", () => {
     ENDLOOP.`;
     const spaghetti = runProgram(abap);
     const defs = spaghetti.listDefinitions(filename);
-    expect(defs.length).to.equal(2);
+    expect(defs.length).to.equal(2, "definitions");
     const reads = spaghetti.listReadPositions(filename);
-    expect(reads.length).to.equal(1);
+    expect(reads.length).to.equal(1, "reads");
     const writes = spaghetti.listWritePositions(filename);
-    expect(writes.length).to.equal(1);
+    expect(writes.length).to.equal(1, "writes");
   });
 
 });

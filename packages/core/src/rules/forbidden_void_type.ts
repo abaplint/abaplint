@@ -54,17 +54,17 @@ DATS, TIMS, DATUM, FLAG, INT4, NUMC3, NUMC4, SAP_BOOL, TEXT25, TEXT80, X255, XFE
 
   private traverse(node: ISpaghettiScopeNode): readonly Issue[] {
     let ret: Issue[] = [];
-    const message = "Forbidden void type";
+    const message = "Forbidden void type: ";
 
     if (node.getIdentifier().stype !== ScopeType.BuiltIn) {
       for (const t of node.getData().types) {
         if (this.isForbidden(t.identifier.getType())) {
-          ret.push(Issue.atIdentifier(t.identifier, message, this.getMetadata().key));
+          ret.push(Issue.atIdentifier(t.identifier, message + t.identifier.getType(), this.getMetadata().key));
         }
       }
       for (const v of node.getData().vars) {
         if (this.isForbidden(v.identifier.getType())) {
-          ret.push(Issue.atIdentifier(v.identifier, message, this.getMetadata().key));
+          ret.push(Issue.atIdentifier(v.identifier, message + v.identifier.getType(), this.getMetadata().key));
         }
       }
     }

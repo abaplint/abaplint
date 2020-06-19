@@ -49,7 +49,7 @@ export class Indentation extends ABAPRule {
     }
 
     if (obj instanceof Class) {
-      const definition = obj.getClassDefinition2();
+      const definition = obj.getClassDefinition();
       if (definition === undefined) {
         return [];
       } else if (this.conf.ignoreExceptions && definition.isException) {
@@ -62,8 +62,7 @@ export class Indentation extends ABAPRule {
       globalClassSkipFirst: this.conf.globalClassSkipFirst,
     };
 
-    const indentOperation = new Indent(indentOpts);
-    const expected = indentOperation.getExpectedIndents(file);
+    const expected = new Indent(indentOpts).getExpectedIndents(file);
 
     for (const statement of file.getStatements()) {
       const indent = expected.shift();

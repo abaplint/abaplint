@@ -24,4 +24,4 @@ Versioning: semantic versioning is currently not followed, recommend fixing usag
 
 [Syntax diagrams](https://syntax.abaplint.org)
 
-[Design documentation](https://docs.abaplint.org/todo.pdf)
+[Design documentation](https://github.com/abaplint/abaplint/blob/master/docs/design/index.adoc)

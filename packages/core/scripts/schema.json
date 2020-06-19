@@ -1115,7 +1115,7 @@
                   "type": "boolean"
                 }
               ],
-              "description": "Checks for usage of tabs (enable to enforce spaces)\nTags: Whitespace\nhttps://rules.abaplint.org/contains_tab"
+              "description": "Checks for usage of tabs (enable to enforce spaces)\nTags: Whitespace, Quickfix\nhttps://rules.abaplint.org/contains_tab"
             },
             "definitions_top": {
               "anyOf": [
@@ -1412,7 +1412,7 @@
                   "type": "boolean"
                 }
               ],
-              "description": "Detects lines containing only punctuation.\nTags: Styleguide\nhttps://rules.abaplint.org/line_only_punc"
+              "description": "Detects lines containing only punctuation.\nTags: Styleguide, Quickfix\nhttps://rules.abaplint.org/line_only_punc"
             },
             "local_class_naming": {
               "anyOf": [
@@ -1445,7 +1445,7 @@
                   "type": "boolean"
                 }
               ],
-              "description": "Allows you to enforce a pattern, such as a prefix, for local variables, constants and field symbols.\nTags: Naming\nhttps://rules.abaplint.org/local_variable_names"
+              "description": "\nAllows you to enforce a pattern, such as a prefix, for local variables, constants and field symbols.\nRegexes are case-insensitive.\nTags: Naming\nhttps://rules.abaplint.org/local_variable_names"
             },
             "main_file_contents": {
               "anyOf": [
@@ -1687,7 +1687,7 @@
                   "type": "boolean"
                 }
               ],
-              "description": "Checks that code does not contain more than the configured number of blank lines in a row.\nTags: Whitespace\nhttps://rules.abaplint.org/sequential_blank"
+              "description": "Checks that code does not contain more than the configured number of blank lines in a row.\nTags: Whitespace, Quickfix\nhttps://rules.abaplint.org/sequential_blank"
             },
             "short_case": {
               "anyOf": [

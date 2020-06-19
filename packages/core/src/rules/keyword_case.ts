@@ -74,7 +74,7 @@ export class KeywordCase extends ABAPRule {
     let skip = false;
 
     if (this.conf.ignoreExceptions && obj instanceof Class) {
-      const definition = obj.getClassDefinition2();
+      const definition = obj.getClassDefinition();
       if (definition === undefined || definition.isException) {
         return [];
       }

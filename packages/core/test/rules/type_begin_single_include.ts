@@ -1,4 +1,4 @@
-import {TypeBeginSingleType} from "../../src/rules/";
+import {TypeBeginSingleType} from "../../src/rules";
 import {testRule} from "./_utils";
 
 const tests = [

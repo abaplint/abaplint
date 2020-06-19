@@ -45,6 +45,11 @@ export class InterfaceDefinition extends Identifier implements IInterfaceDefinit
     return undefined;
   }
 
+  public getImplementing() {
+    // todo
+    return [];
+  }
+
   public getAliases(): IAliases {
     return new Aliases(this.node, this.filename);
   }

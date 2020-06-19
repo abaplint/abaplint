@@ -103,6 +103,9 @@ export class Registry implements IRegistry {
 
   public addFiles(files: readonly IFile[]): IRegistry {
     for (const f of files) {
+      if (f.getFilename().split(".").length <= 2) {
+        continue; // not a abapGit file
+      }
       this.findOrCreate(f.getObjectName(), f.getObjectType()).addFile(f);
     }
     return this;

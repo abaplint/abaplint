@@ -1,4 +1,4 @@
-import {StructureNode} from "../../abap/nodes";
+import {StructureNode} from "../nodes";
 import {MethodDefinitions} from "./method_definitions";
 import {SuperClassName} from "../2_statements/expressions";
 import * as Statements from "../2_statements/statements";

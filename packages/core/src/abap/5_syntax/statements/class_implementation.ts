@@ -5,7 +5,7 @@ import {ObjectReferenceType} from "../../types/basic";
 import {Identifier} from "../../1_lexer/tokens";
 import {TypedIdentifier} from "../../types/_typed_identifier";
 import {Position} from "../../../position";
-import {BuiltIn} from "./../_builtin";
+import {BuiltIn} from "../_builtin";
 import {ScopeType} from "../_scope_type";
 
 export class ClassImplementation {

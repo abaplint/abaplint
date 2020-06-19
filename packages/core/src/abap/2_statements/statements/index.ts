@@ -1,6 +1,6 @@
 // do not include statement.ts in this file.
 // this file only contains "real" statements
-// sequence of exports is optimized for parsing
+// sequence of exports is optimized for parsing and precedence
 // see statement.ts for Unknown, Empty, Macro and Comment statements
 export * from "./data";
 export * from "./report";
@@ -71,6 +71,7 @@ export * from "./exit";
 export * from "./endcase";
 export * from "./constant_begin";
 export * from "./constant_end";
+export * from "./when_others";
 export * from "./when";
 export * from "./continue";
 export * from "./assign";
@@ -131,6 +132,8 @@ export * from "./end_enhancement_section";
 export * from "./set_handler";
 export * from "./set_left";
 export * from "./pack";
+export * from "./case_type";
+export * from "./when_type";
 export * from "./exec_sql";
 export * from "./open_cursor";
 export * from "./communication";

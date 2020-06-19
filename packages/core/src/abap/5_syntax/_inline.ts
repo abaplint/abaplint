@@ -26,6 +26,9 @@ export class Inline {
 
     if (!(node.get() instanceof Statements.Move)
         && !(node.get() instanceof Statements.Catch)
+        && !(node.get() instanceof Statements.Loop)
+        && !(node.get() instanceof Statements.Select)
+        && !(node.get() instanceof Statements.ReadTable)
         && !(node.get() instanceof Statements.Call)) {
       for (const inline of node.findAllExpressions(Expressions.InlineData)) {
         const field = inline.findFirstExpression(Expressions.TargetField);
@@ -36,12 +39,14 @@ export class Inline {
       }
     }
 
-    for (const inline of node.findAllExpressions(Expressions.InlineFS)) {
-      const field = inline.findFirstExpression(Expressions.TargetFieldSymbol);
-      if (field === undefined) {
-        return "syntax_check, unexpected tree structure";
+    if(!(node.get() instanceof Statements.Loop)) {
+      for (const inline of node.findAllExpressions(Expressions.InlineFS)) {
+        const field = inline.findFirstExpression(Expressions.TargetFieldSymbol);
+        if (field === undefined) {
+          return "syntax_check, unexpected tree structure";
+        }
+        this.addVariable(field, filename);
       }
-      this.addVariable(field, filename);
     }
 
     for (const inline of node.findAllExpressions(Expressions.InlineFieldDefinition)) {

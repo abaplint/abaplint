@@ -1,5 +1,5 @@
 import {LineOnlyPunc} from "../../src/rules/line_only_punc";
-import {testRule} from "./_utils";
+import {testRule, testRuleFix} from "./_utils";
 
 const tests = [
   {abap: "zcl_class=>method(\n).", cnt: 1},
@@ -14,3 +14,12 @@ const tests = [
 ];
 
 testRule(tests, LineOnlyPunc);
+
+const fixTests = [
+  {input: "WRITE 'hello'\n.", output: "WRITE 'hello'."},
+  {input: "WRITE 'hello'\n\t   .   ", output: "WRITE 'hello'."},
+  {input: "IF line_exists( foo[1] \n ).", output: "IF line_exists( foo[1] )."},
+  {input: "IF line_exists( foo[1]\n).", output: "IF line_exists( foo[1] )."},
+];
+
+testRuleFix(fixTests, LineOnlyPunc);

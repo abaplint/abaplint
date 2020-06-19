@@ -1,5 +1,5 @@
 import {ContainsTab} from "../../src/rules/contains_tab";
-import {testRule} from "./_utils";
+import {testRule, testRuleFix} from "./_utils";
 
 const tests = [
   {abap: "data: lt_file\ttype solix_tab.", cnt: 1},
@@ -9,3 +9,11 @@ const tests = [
 ];
 
 testRule(tests, ContainsTab);
+
+const fixTests = [
+  {input: "IF 1 = 1.\t", output: "IF 1 = 1. "},
+  {input: "data: lt_file\ttype solix_tab.", output: "data: lt_file type solix_tab."},
+  {input: "\t\t\tIF foo = bar.", output: " IF foo = bar."},
+  {input: "IF foo\t\t\t = bar.", output: "IF foo  = bar."},
+];
+testRuleFix(fixTests, ContainsTab);

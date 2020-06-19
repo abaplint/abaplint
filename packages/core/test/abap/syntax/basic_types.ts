@@ -103,4 +103,15 @@ describe("Syntax - Basic Types", () => {
     expect(type!.getType()).to.be.instanceof(Basic.UnknownType);
   });
 
+  it("TYPE with void INCLUDE TYPE", () => {
+    const abap = `
+  TYPES: BEGIN OF ty_tpool.
+      INCLUDE TYPE textpool.
+  TYPES:   split TYPE c LENGTH 8.
+  TYPES: END OF ty_tpool.`;
+    const type = resolveType(abap, "ty_tpool");
+    expect(type).to.not.equal(undefined);
+    expect(type!.getType()).to.be.instanceof(Basic.VoidType);
+  });
+
 });

@@ -6,7 +6,7 @@ import {Unknown} from "../../src/abap/2_statements/statements/_statement";
 import {IStructure} from "../../src/abap/3_structures/structures/_structure";
 import {StatementParser} from "../../src/abap/2_statements/statement_parser";
 import {Registry} from "../../src/registry";
-import {StructureNode, StatementNode} from "../../src/abap/nodes/";
+import {StructureNode, StatementNode} from "../../src/abap/nodes";
 import {IFile} from "../../src/files/_ifile";
 import {Token} from "../../src/abap/1_lexer/tokens/_token";
 import {Lexer} from "../../src/abap/1_lexer/lexer";

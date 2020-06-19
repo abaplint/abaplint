@@ -159,4 +159,28 @@ SELECTION-SCREEN END OF BLOCK cls.
     expect(issues.length).to.equal(0);
   });
 
+  it("test 11", () => {
+    const abap = `
+SELECTION-SCREEN PUSHBUTTON 60(30) text-001 USER-COMMAND btn.
+    `;
+    const reg = new Registry();
+    reg.addFile(new MemoryFile("zfoobar.prog.abap", abap));
+    reg.addFile(new MemoryFile("zfoobar.prog.xml", xml));
+    reg.parse();
+    const issues = new CheckTextElements().run(reg.getObjects()[0], reg);
+    expect(issues.length).to.equal(0);
+  });
+
+  it("test 12", () => {
+    const abap = `
+SELECTION-SCREEN PUSHBUTTON 60(30) text-003 USER-COMMAND btn.
+    `;
+    const reg = new Registry();
+    reg.addFile(new MemoryFile("zfoobar.prog.abap", abap));
+    reg.addFile(new MemoryFile("zfoobar.prog.xml", xml));
+    reg.parse();
+    const issues = new CheckTextElements().run(reg.getObjects()[0], reg);
+    expect(issues.length).to.equal(1);
+  });
+
 });

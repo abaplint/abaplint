@@ -25,6 +25,15 @@ const tests = [
 
   {abap: `LEAVE TO LIST-PROCESSING AND RETURN TO SCREEN 0.
           WRITE moo.`, cnt: 0},
+
+  {abap: `CASE sy-subrc.
+WHEN 0.
+WHEN 2.
+  RAISE EXCEPTION TYPE zcx_abapgit_cancel.
+WHEN OTHERS.
+  zcx_abapgit_exception=>raise( 'Error from COMPLEX_SELECTIONS_DIALOG' ).
+ENDCASE.`, cnt: 0},
+
 ];
 
 testRule(tests, UnreachableCode);

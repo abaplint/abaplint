@@ -4,6 +4,7 @@ import {ABAPRule} from "./_abap_rule";
 import {ABAPFile} from "../files";
 import {BasicRuleConfig} from "./_basic_rule_config";
 import {IRuleMetadata, RuleTag} from "./_irule";
+import {EditHelper} from "../edit_helper";
 
 export class ContainsTabConf extends BasicRuleConfig {
 }
@@ -18,7 +19,7 @@ export class ContainsTab extends ABAPRule {
       title: "Code contains tab",
       shortDescription: `Checks for usage of tabs (enable to enforce spaces)`,
       extendedInformation: `https://docs.abapopenchecks.org/checks/09/`,
-      tags: [RuleTag.Whitespace],
+      tags: [RuleTag.Whitespace, RuleTag.Quickfix],
     };
   }
 
@@ -38,15 +39,23 @@ export class ContainsTab extends ABAPRule {
     const issues: Issue[] = [];
 
     const lines = file.getRaw().split("\n");
-    for (let line = 0; line < lines.length; line++) {
-      const index = lines[line].indexOf("\t");
-      if (index >= 0) {
-        const issue = Issue.atPosition(file, new Position(line + 1, index + 1), this.getMessage(), this.getMetadata().key);
-        issues.push(issue);
+    lines.forEach((_, i) => {
+      const tabCol = lines[i].indexOf("\t");
+      if (tabCol >= 0) {
+        let tabAmount = 1;
+        while(lines[i].indexOf("\t", tabCol + tabAmount - 1) >= 0){
+          tabAmount++;
+        }
+        issues.push(this.createIssue(i, tabCol, tabAmount, file));
       }
-    }
-
+    });
     return issues;
   }
 
+  private createIssue(line: number, tabCol: number, tabAmount: number, file: ABAPFile) {
+    const tabStartPos = new Position(line + 1, tabCol + 1);
+    const tabEndPos = new Position(line + 1, tabCol + tabAmount);
+    const fix = EditHelper.replaceRange(file, tabStartPos, tabEndPos, " ");
+    return Issue.atRange(file, tabStartPos, tabEndPos, this.getMessage(), this.getMetadata().key, fix);
+  }
 }

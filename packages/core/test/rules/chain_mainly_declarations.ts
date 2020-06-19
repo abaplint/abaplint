@@ -1,4 +1,4 @@
-import {ChainMainlyDeclarations} from "../../src/rules/";
+import {ChainMainlyDeclarations} from "../../src/rules";
 import {testRule} from "./_utils";
 
 const tests = [

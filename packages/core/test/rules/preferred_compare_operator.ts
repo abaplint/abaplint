@@ -24,7 +24,7 @@ const fixTests = [
 testRuleFix(fixTests, PreferredCompareOperator);
 
 const letterConfig = new PreferredCompareOperatorConf();
-letterConfig.badOperators = ["=","<>","<=","<",">=",">"];
+letterConfig.badOperators = ["=", "<>", "<=", "<", ">=", ">"];
 const fixTestsLetters = [
   {output: "IF foo EQ bar. ENDIF.", input: "IF foo = bar. ENDIF."},
   {output: "IF foo NE bar. ENDIF.", input: "IF foo <> bar. ENDIF."},
