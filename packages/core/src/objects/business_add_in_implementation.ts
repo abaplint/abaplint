@@ -7,8 +7,8 @@ export class BusinessAddInImplementation extends AbstractObject {
   }
 
   public getAllowedNaming() {
-    return { // todo, verify
-      maxLength: 30,
+    return {
+      maxLength: 20,
       allowNamespace: true,
     };
   }

@@ -8,7 +8,7 @@ export class ExtensionIndex extends AbstractObject {
 
   public getAllowedNaming() {
     return { // todo, verify
-      maxLength: 30,
+      maxLength: 33,
       allowNamespace: true,
     };
   }

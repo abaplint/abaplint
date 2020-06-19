@@ -11,7 +11,7 @@ export class Domain extends AbstractObject {
   }
 
   public getAllowedNaming() {
-    return { // todo, verify
+    return {
       maxLength: 30,
       allowNamespace: true,
     };

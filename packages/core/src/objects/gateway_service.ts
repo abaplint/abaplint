@@ -7,8 +7,8 @@ export class GatewayService extends AbstractObject {
   }
 
   public getAllowedNaming() {
-    return { // todo, verify
-      maxLength: 50,
+    return {
+      maxLength: 39,
       allowNamespace: true,
     };
   }

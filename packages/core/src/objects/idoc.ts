@@ -7,9 +7,9 @@ export class Idoc extends AbstractObject {
   }
 
   public getAllowedNaming() {
-    return { // todo, verify
+    return {
       maxLength: 30,
-      allowNamespace: true,
+      allowNamespace: false,
     };
   }
 }

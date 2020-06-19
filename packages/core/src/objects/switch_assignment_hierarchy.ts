@@ -8,7 +8,7 @@ export class SwitchAssignmentHierarchy extends AbstractObject {
 
   public getAllowedNaming() {
     return { // todo, verify
-      maxLength: 30,
+      maxLength: 20,
       allowNamespace: true,
     };
   }

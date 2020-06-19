@@ -7,8 +7,8 @@ export class GatewayModelMetadata extends AbstractObject {
   }
 
   public getAllowedNaming() {
-    return { // todo, verify
-      maxLength: 50,
+    return {
+      maxLength: 40,
       allowNamespace: true,
     };
   }
