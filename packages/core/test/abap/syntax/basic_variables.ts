@@ -1090,4 +1090,14 @@ s_butt = 'Button'.`;
     expect(identifier?.getType()).to.be.instanceof(Basic.CharacterType);
   });
 
+  it("INSERT INTO TABLE ASSIGNING inline", () => {
+    const abap = `
+DATA: lt_list TYPE STANDARD TABLE OF string,
+      lv_list LIKE LINE OF lt_list.
+INSERT lv_list INTO TABLE lt_list ASSIGNING FIELD-SYMBOL(<lv_list>).`;
+    const identifier = resolveVariable(abap, "<lv_list>");
+    expect(identifier).to.not.equal(undefined);
+    expect(identifier?.getType()).to.be.instanceof(Basic.StringType);
+  });
+
 });

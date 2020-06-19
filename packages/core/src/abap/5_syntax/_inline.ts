@@ -39,7 +39,8 @@ export class Inline {
       }
     }
 
-    if(!(node.get() instanceof Statements.Loop)) {
+    if(!(node.get() instanceof Statements.Loop)
+        && !(node.get() instanceof Statements.InsertInternal)) {
       for (const inline of node.findAllExpressions(Expressions.InlineFS)) {
         const field = inline.findFirstExpression(Expressions.TargetFieldSymbol);
         if (field === undefined) {

@@ -34,6 +34,7 @@ import {Catch} from "./statements/catch";
 import {Loop} from "./statements/loop";
 import {ReadTable} from "./statements/read_table";
 import {Select} from "./statements/select";
+import {InsertInternal} from "./statements/insert_internal";
 
 import {Data as DataStructure} from "./structures/data";
 import {TypeEnum} from "./structures/type_enum";
@@ -254,6 +255,8 @@ export class SyntaxLogic {
       new ReadTable().runSyntax(node, this.scope, filename);
     } else if (node.get() instanceof Statements.Select) {
       new Select().runSyntax(node, this.scope, filename);
+    } else if (node.get() instanceof Statements.InsertInternal) {
+      new InsertInternal().runSyntax(node, this.scope, filename);
 
     } else if (s instanceof Statements.Form) {
       this.helpers.proc.findFormScope(node, filename);
