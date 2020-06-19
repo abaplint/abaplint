@@ -9,7 +9,7 @@ export class ExtensionIndex extends AbstractObject {
   public getAllowedNaming() {
     return { // todo, verify
       maxLength: 33,
-      allowNamespace: true, 
+      allowNamespace: true,
     };
   }
 }
