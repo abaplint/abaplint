@@ -7,8 +7,8 @@ export class AuthorizationGroup extends AbstractObject {
   }
 
   public getAllowedNaming() {
-    return { // todo, verify
-      maxLength: 100,
+    return {
+      maxLength: 40,
       allowNamespace: true,
     };
   }

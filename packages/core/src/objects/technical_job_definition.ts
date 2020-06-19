@@ -7,8 +7,8 @@ export class TechnicalJobDefinition extends AbstractObject {
   }
 
   public getAllowedNaming() {
-    return { // todo, verify
-      maxLength: 30,
+    return {
+      maxLength: 32,
       allowNamespace: true,
     };
   }

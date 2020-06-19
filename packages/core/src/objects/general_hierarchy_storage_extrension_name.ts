@@ -7,8 +7,8 @@ export class GeneralHierarchyStorageExtrensionName extends AbstractObject {
   }
 
   public getAllowedNaming() {
-    return { // todo, verify
-      maxLength: 30,
+    return {
+      maxLength: 15,
       allowNamespace: true,
     };
   }
