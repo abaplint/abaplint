@@ -13,6 +13,6 @@ export class SelectionScreen {
     }
 
     const name = field.getFirstToken();
-    return new TypedIdentifier(name, filename, new CharacterType(70));
+    return new TypedIdentifier(name, filename, new CharacterType(83));
   }
 }
