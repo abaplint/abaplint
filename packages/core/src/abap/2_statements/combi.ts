@@ -169,7 +169,8 @@ class Vers implements IStatementRunnable {
   }
 
   public run(r: Result[]): Result[] {
-    if (Combi.getVersion() >= this.version) {
+    if (Combi.getVersion() >= this.version
+        || Combi.getVersion() === Version.Cloud) {
       return this.runnable.run(r);
     } else {
       return [];
