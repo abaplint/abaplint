@@ -4,6 +4,7 @@ import {CurrentScope} from "../_current_scope";
 import {VoidType, TableType} from "../../types/basic";
 import {Source} from "../expressions/source";
 import {InlineData} from "../expressions/inline_data";
+import {InlineFS} from "../expressions/inline_fs";
 
 export class ReadTable {
   public runSyntax(node: StatementNode, scope: CurrentScope, filename: string): void {
@@ -26,6 +27,11 @@ export class ReadTable {
       const inline = target.findFirstExpression(Expressions.InlineData);
       if (inline) {
         new InlineData().runSyntax(inline, scope, filename, sourceType);
+        return;
+      }
+      const inlinefs = target.findFirstExpression(Expressions.InlineFS);
+      if (inlinefs) {
+        new InlineFS().runSyntax(inlinefs, scope, filename, sourceType);
       }
     }
   }

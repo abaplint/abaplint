@@ -116,15 +116,12 @@ describe("combi matching -", () => {
     it(test.n, () => {
       const input = new Result(test.t);
       const result = test.c.run([input]);
-//      console.log("final result");
-//      console.dir(result);
       let match = false;
       for (const res of result) {
         if (res.length() === 0) {
           match = true;
         }
       }
-//      let result = Combi.Combi.run(test.c, test.t);
       expect(match).to.equals(test.e);
 
       if (test["len"] !== undefined) {
@@ -133,3 +130,4 @@ describe("combi matching -", () => {
     });
   });
 });
+

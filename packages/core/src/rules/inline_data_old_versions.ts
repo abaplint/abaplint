@@ -33,7 +33,8 @@ export class InlineDataOldVersions extends ABAPRule {
   public runParsed(file: ABAPFile, reg: IRegistry) {
     const issues: Issue[] = [];
 
-    if (reg.getConfig().getVersion() >= Version.v740sp02) {
+    if (reg.getConfig().getVersion() >= Version.v740sp02
+        || reg.getConfig().getVersion() === Version.Cloud) {
       return [];
     }
 

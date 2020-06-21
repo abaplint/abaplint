@@ -20,9 +20,11 @@ export class Source {
     const first = children.shift();
 
     if (first instanceof TokenNode) {
-      const tok = first.getFirstToken().getStr();
+      const tok = first.getFirstToken().getStr().toUpperCase();
       switch (tok) {
         case "VALUE":
+          return this.value(node, scope, filename, targetType);
+        case "CONV":
           return this.value(node, scope, filename, targetType);
         default:
           return new UnknownType("todo, Source type " + tok);

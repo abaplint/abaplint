@@ -27,3 +27,4 @@ export function getPreviousVersion(v: Version): Version {
 
   return all[found - 1];
 }
+

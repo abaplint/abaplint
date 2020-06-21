@@ -2,8 +2,8 @@ import {expect} from "chai";
 import {getStatements} from "./_utils";
 import {MacroCall, Unknown} from "../../src/abap/2_statements/statements/_statement";
 import {StatementParser} from "../../src/abap/2_statements/statement_parser";
-import {Write, Data} from "../../src/abap/2_statements/statements";
-import {defaultVersion} from "../../src/version";
+import {Write, Data, InsertDatabase} from "../../src/abap/2_statements/statements";
+import {defaultVersion, Version} from "../../src/version";
 import {Lexer} from "../../src/abap/1_lexer/lexer";
 import {MemoryFile} from "../../src/files";
 
@@ -81,6 +81,14 @@ describe("statement parser", () => {
     expect(statements[0].getPragmas().length).to.equal(1);
     expect(statements[1].get()).to.be.instanceof(Data);
     expect(statements[1].getPragmas().length).to.equal(1);
+  });
+
+  it("Cloud test", () => {
+    const abap = "INSERT (tablename) FROM TABLE @<tab>.";
+
+    const statements = getStatements(abap, Version.Cloud);
+    expect(statements.length).to.equal(1);
+    expect(statements[0].get()).to.be.instanceof(InsertDatabase);
   });
 
 });
