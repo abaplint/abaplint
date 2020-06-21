@@ -20,4 +20,8 @@ describe("Rule: inline data on old versions", () => {
   it("issue", () => {
     expect(findIssues("DATA(foo) = 2.", Version.v702).length).to.equal(1);
   });
+
+  it("cloud", () => {
+    expect(findIssues("DATA(foo) = 2.", Version.Cloud).length).to.equal(0);
+  });
 });
