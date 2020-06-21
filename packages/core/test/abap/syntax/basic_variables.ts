@@ -1112,4 +1112,11 @@ READ TABLE lt_paths ASSIGNING FIELD-SYMBOL(<ls_path>) WITH KEY path = 'foobar'.`
     expect(identifier?.getType()).to.be.instanceof(Basic.StructureType);
   });
 
+  it("inline CONV xstring", () => {
+    const abap = `DATA(lv_hex) = CONV xstring( '11' ).`;
+    const identifier = resolveVariable(abap, "lv_hex");
+    expect(identifier).to.not.equal(undefined);
+    expect(identifier?.getType()).to.be.instanceof(Basic.XStringType);
+  });
+
 });
