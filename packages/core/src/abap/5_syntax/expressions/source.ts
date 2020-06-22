@@ -8,6 +8,7 @@ import {FieldChain} from "./field_chain";
 import {StringType, VoidType} from "../../types/basic";
 import {Constant} from "./constant";
 import {BasicTypes} from "../basic_types";
+import {ComponentChain} from "./component_chain";
 
 export class Source {
   public runSyntax(
@@ -17,7 +18,7 @@ export class Source {
     targetType?: AbstractType): AbstractType | undefined {
 
     const children = node.getChildren().slice();
-    const first = children.shift();
+    let first = children.shift();
 
     if (first instanceof TokenNode) {
       const tok = first.getFirstToken().getStr().toUpperCase();
@@ -33,17 +34,30 @@ export class Source {
       return undefined;
     }
 
-    if (first.get() instanceof Expressions.MethodCallChain) {
-      return new MethodCallChain().runSyntax(first, scope, filename, targetType);
-    } else if (first.get() instanceof Expressions.FieldChain) {
-      return new FieldChain().runSyntax(first, scope, filename);
-    } else if (first.get() instanceof Expressions.StringTemplate) {
-      return new StringType();
-    } else if (first.get() instanceof Expressions.Constant) {
-      return new Constant().runSyntax(first);
+    let context: AbstractType | undefined = new UnknownType("todo, Source type");
+
+    while (children.length >= 0) {
+      if (first instanceof ExpressionNode && first.get() instanceof Expressions.MethodCallChain) {
+        context = new MethodCallChain().runSyntax(first, scope, filename, targetType);
+      } else if (first instanceof ExpressionNode && first.get() instanceof Expressions.FieldChain) {
+        context = new FieldChain().runSyntax(first, scope, filename);
+      } else if (first instanceof ExpressionNode && first.get() instanceof Expressions.StringTemplate) {
+        context = new StringType();
+      } else if (first instanceof ExpressionNode && first.get() instanceof Expressions.Constant) {
+        context = new Constant().runSyntax(first);
+      } else if (first instanceof ExpressionNode && first.get() instanceof Expressions.ArrowOrDash) {
+//        console.dir("dash");
+      } else if (first instanceof ExpressionNode && first.get() instanceof Expressions.ComponentChain) {
+        context = new ComponentChain().runSyntax(context, first);
+      }
+      first = children.shift();
+      if (first === undefined) {
+        break;
+      }
     }
 
-    return new UnknownType("todo, Source type");
+
+    return context;
   }
 
 ////////////////////////////////

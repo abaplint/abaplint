@@ -1027,7 +1027,7 @@ DATA moo TYPE REF TO lif_bar=>type.`;
     expect(type!.getType()).to.be.instanceof(Basic.VoidType);
   });
 
-  it.skip("call chain inline integer", () => {
+  it("call chain inline integer", () => {
     const abap = `
 CLASS lcl_bar DEFINITION.
   PUBLIC SECTION.
