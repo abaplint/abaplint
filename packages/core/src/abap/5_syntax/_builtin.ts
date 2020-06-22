@@ -104,7 +104,7 @@ export class BuiltIn {
     ret.push({name: "REPLACE", importing: [{name: "val", type: new StringType()}, {name: "occ", type: new IntegerType()}, {name: "sub", type: new StringType()}, {name: "regex", type: new StringType()}, {name: "with", type: new StringType()}], returnType: new StringType()});
     ret.push({name: "RESCALE", importing: [{name: "val", type: new FloatType()}], returnType: new FloatType()});
     ret.push({name: "REVERSE", importing: [{name: "val", type: new StringType()}], returnType: new StringType()});
-    ret.push({name: "ROUND", importing: [{name: "val", type: new FloatType()}], returnType: new IntegerType()});
+    ret.push({name: "ROUND", importing: [{name: "val", type: new FloatType()}, {name: "dec", type: new IntegerType()}], returnType: new IntegerType()});
     ret.push({name: "SHIFT_LEFT", importing: [{name: "val", type: new StringType()}, {name: "sub", type: new StringType()}], returnType: new StringType()});
     ret.push({name: "SHIFT_RIGHT", importing: [{name: "val", type: new StringType()}], returnType: new StringType()});
     ret.push({name: "SIGN", importing: [{name: "val", type: new FloatType()}], returnType: new IntegerType()});
