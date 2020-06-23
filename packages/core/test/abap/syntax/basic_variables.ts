@@ -1119,4 +1119,12 @@ READ TABLE lt_paths ASSIGNING FIELD-SYMBOL(<ls_path>) WITH KEY path = 'foobar'.`
     expect(identifier?.getType()).to.be.instanceof(Basic.XStringType);
   });
 
+  it("SPLIT INTO TABLE inline", () => {
+    const abap = `DATA lv_field TYPE string.
+    SPLIT lv_field AT 'abc' INTO TABLE DATA(lt_field).`;
+    const identifier = resolveVariable(abap, "lt_field");
+    expect(identifier).to.not.equal(undefined);
+    expect(identifier?.getType()).to.be.instanceof(Basic.TableType);
+  });
+
 });
