@@ -1885,16 +1885,6 @@ DATA(item) = lr_log->not_found.`;
     expect(issues.length).to.equals(1);
   });
 
-  it("data reference, component not found in structure", () => {
-    const abap = `TYPES: BEGIN OF ty_log,
-  item TYPE i,
-END OF ty_log.
-DATA lr_log TYPE REF TO ty_log.
-DATA(item) = lr_log->not_found.`;
-    const issues = runProgram(abap);
-    expect(issues.length).to.equals(1);
-  });
-
   it("EXPORT DATABASE", () => {
     const abap = `DATA gt_data TYPE TABLE OF string.
 EXPORT data = gt_data TO DATABASE indx(zr) ID 'TEST'.`;
