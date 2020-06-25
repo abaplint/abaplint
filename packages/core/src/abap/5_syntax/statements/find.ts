@@ -6,11 +6,14 @@ import {StringType} from "../../types/basic";
 
 export class Find {
   public runSyntax(node: StatementNode, scope: CurrentScope, filename: string): void {
-    const found = node.findExpressionAfterToken("SUBMATCHES");
 
-    const inline = found?.findDirectExpression(Expressions.InlineData);
-    if (inline) {
-      new InlineData().runSyntax(inline, scope, filename, new StringType());
+    if (node.findDirectTokenByText("SUBMATCHES")) {
+      for (const t of node.findDirectExpressions(Expressions.Target)) {
+        const inline = t?.findDirectExpression(Expressions.InlineData);
+        if (inline) {
+          new InlineData().runSyntax(inline, scope, filename, new StringType());
+        }
+      }
     }
 
   }
