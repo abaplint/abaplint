@@ -5,6 +5,7 @@ import {ICFService, Class} from "../objects";
 import {IRule} from "./_irule";
 import {IObject} from "../objects/_iobject";
 import {Position} from "../position";
+import {InfoClassDefinition, InfoImplementing} from "../abap/4_file_information/_abap_file_information";
 
 export class SICFConsistencyConf extends BasicRuleConfig {
 }
@@ -16,7 +17,11 @@ export class SICFConsistency implements IRule {
     return {
       key: "sicf_consistency",
       title: "SICF consistency",
-      shortDescription: `Checks the validity of ICF services`,
+      shortDescription: `Checks the validity of ICF services:
+
+* Class defined in handler must exist
+* Class must not have any syntax errors
+* Class must implement interface IF_HTTP_EXTENSION`,
     };
   }
 
@@ -60,7 +65,7 @@ export class SICFConsistency implements IRule {
         continue;
       }
 
-      const implementing = def.interfaces;
+      const implementing = this.findImplementing(def, reg);
       if (implementing.findIndex((i) => { return i.name.toUpperCase() === "IF_HTTP_EXTENSION"; }) < 0) {
         const message = "Handler class " + h + " must implement IF_HTTP_EXTENSION";
         const issue = Issue.atPosition(obj.getFiles()[0], new Position(1, 1), message, this.getMetadata().key);
@@ -70,5 +75,27 @@ export class SICFConsistency implements IRule {
     }
 
     return issues;
+  }
+
+///////////////////////////
+
+  private findImplementing(def: InfoClassDefinition, reg: IRegistry): readonly InfoImplementing[] {
+    let ret = def.interfaces;
+
+    let superName = def.superClassName;
+    while (superName !== undefined) {
+      const clas = reg.getObject("CLAS", superName) as Class | undefined;
+      if (clas === undefined) {
+        break;
+      }
+      const superDef = clas.getClassDefinition();
+      if (superDef === undefined) {
+        break;
+      }
+      ret = ret.concat(superDef.interfaces);
+      superName = superDef.superClassName;
+    }
+
+    return ret;
   }
 }
