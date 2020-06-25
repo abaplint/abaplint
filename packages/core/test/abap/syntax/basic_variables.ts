@@ -865,12 +865,11 @@ ENDCLASS.`;
     expect(type).to.be.instanceof(Basic.VoidType);
   });
 
-  it.skip("Inline DATA definition", () => {
+  it("Inline DATA definition", () => {
     const abap = `DATA(foobar) = 2.`;
     const identifier = resolveVariable(abap, "foobar");
     expect(identifier).to.not.equal(undefined);
-    const type = identifier?.getType();
-    expect(type).to.be.instanceof(Basic.IntegerType);
+    expect(identifier?.getType()).to.be.instanceof(Basic.IntegerType);
   });
 
   it("Inline object ref", () => {
