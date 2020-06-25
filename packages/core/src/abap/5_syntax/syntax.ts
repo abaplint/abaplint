@@ -36,6 +36,7 @@ import {ReadTable} from "./statements/read_table";
 import {Select} from "./statements/select";
 import {InsertInternal} from "./statements/insert_internal";
 import {Split} from "./statements/split";
+import {Assign} from "./statements/assign";
 
 import {Data as DataStructure} from "./structures/data";
 import {TypeEnum} from "./structures/type_enum";
@@ -214,6 +215,7 @@ export class SyntaxLogic {
     return false;
   }
 
+// todo, yes, this will have to be refactored
   private updateScopeStatement(node: StatementNode): void {
     const filename = this.currentFile.getFilename();
     const s = node.get();
@@ -260,6 +262,8 @@ export class SyntaxLogic {
       new InsertInternal().runSyntax(node, this.scope, filename);
     } else if (node.get() instanceof Statements.Split) {
       new Split().runSyntax(node, this.scope, filename);
+    } else if (node.get() instanceof Statements.Assign) {
+      new Assign().runSyntax(node, this.scope, filename);
 
     } else if (s instanceof Statements.Form) {
       this.helpers.proc.findFormScope(node, filename);

@@ -1130,11 +1130,23 @@ READ TABLE lt_paths ASSIGNING FIELD-SYMBOL(<ls_path>) WITH KEY path = 'foobar'.`
   it("inline CORRESPONDING", () => {
     const abap = `
 TYPES: BEGIN OF ty_path,
-  path TYPE string,
-END OF ty_path.
+         path TYPE string,
+       END OF ty_path.
 DATA bar TYPE ty_path.
 DATA(foo) = CORRESPONDING ty_path( bar ).`;
     const identifier = resolveVariable(abap, "foo");
+    expect(identifier).to.not.equal(undefined);
+    expect(identifier?.getType()).to.be.instanceof(Basic.StructureType);
+  });
+
+  it("ASSIGN inline, with table expression", () => {
+    const abap = `
+TYPES: BEGIN OF ty_path,
+  path TYPE string,
+END OF ty_path.
+DATA mt_table TYPE STANDARD TABLE OF ty_path WITH EMPTY KEY.
+ASSIGN mt_table[ path = 'abc' ] TO FIELD-SYMBOL(<ls_row>).`;
+    const identifier = resolveVariable(abap, "<ls_row>");
     expect(identifier).to.not.equal(undefined);
     expect(identifier?.getType()).to.be.instanceof(Basic.StructureType);
   });
