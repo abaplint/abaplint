@@ -29,6 +29,10 @@ export class Inline {
         && !(node.get() instanceof Statements.Loop)
         && !(node.get() instanceof Statements.Select)
         && !(node.get() instanceof Statements.Split)
+        && !(node.get() instanceof Statements.Find)
+        && !(node.get() instanceof Statements.GetTime)
+        && !(node.get() instanceof Statements.GetParameter)
+        && !(node.get() instanceof Statements.Message)
         && !(node.get() instanceof Statements.ReadTable)
         && !(node.get() instanceof Statements.Call)) {
       for (const inline of node.findAllExpressions(Expressions.InlineData)) {
@@ -42,6 +46,7 @@ export class Inline {
 
     if(!(node.get() instanceof Statements.Loop)
         && !(node.get() instanceof Statements.ReadTable)
+        && !(node.get() instanceof Statements.Assign)
         && !(node.get() instanceof Statements.InsertInternal)) {
       for (const inline of node.findAllExpressions(Expressions.InlineFS)) {
         const field = inline.findFirstExpression(Expressions.TargetFieldSymbol);

@@ -23,9 +23,13 @@ export class Source {
     if (first instanceof TokenNode) {
       const tok = first.getFirstToken().getStr().toUpperCase();
       switch (tok) {
-        case "VALUE":
-          return this.value(node, scope, filename, targetType);
+        case "COND":
         case "CONV":
+        case "CORRESPONDING":
+        case "EXACT":
+        case "REDUCE":
+        case "SWITCH":
+        case "VALUE":
           return this.value(node, scope, filename, targetType);
         default:
           return new UnknownType("todo, Source type " + tok);

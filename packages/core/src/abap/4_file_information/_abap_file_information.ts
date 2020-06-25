@@ -60,11 +60,16 @@ export interface InfoAlias {
   component: string
 }
 
+export interface InfoImplementing {
+  name: string,
+  partial: boolean
+}
+
 export interface InfoClassDefinition extends InfoInterfaceDefinition {
   superClassName: string | undefined;
   isAbstract: boolean;
   isFinal: boolean;
-  interfaces: readonly {name: string, partial: boolean}[];
+  interfaces: readonly InfoImplementing[];
   isForTesting: boolean;
   isException: boolean;
   aliases: readonly InfoAlias[],

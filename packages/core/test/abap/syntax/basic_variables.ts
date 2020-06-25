@@ -865,12 +865,11 @@ ENDCLASS.`;
     expect(type).to.be.instanceof(Basic.VoidType);
   });
 
-  it.skip("Inline DATA definition", () => {
+  it("Inline DATA definition", () => {
     const abap = `DATA(foobar) = 2.`;
     const identifier = resolveVariable(abap, "foobar");
     expect(identifier).to.not.equal(undefined);
-    const type = identifier?.getType();
-    expect(type).to.be.instanceof(Basic.IntegerType);
+    expect(identifier?.getType()).to.be.instanceof(Basic.IntegerType);
   });
 
   it("Inline object ref", () => {
@@ -1125,6 +1124,106 @@ READ TABLE lt_paths ASSIGNING FIELD-SYMBOL(<ls_path>) WITH KEY path = 'foobar'.`
     const identifier = resolveVariable(abap, "lt_field");
     expect(identifier).to.not.equal(undefined);
     expect(identifier?.getType()).to.be.instanceof(Basic.TableType);
+  });
+
+  it("inline CORRESPONDING", () => {
+    const abap = `
+TYPES: BEGIN OF ty_path,
+         path TYPE string,
+       END OF ty_path.
+DATA bar TYPE ty_path.
+DATA(foo) = CORRESPONDING ty_path( bar ).`;
+    const identifier = resolveVariable(abap, "foo");
+    expect(identifier).to.not.equal(undefined);
+    expect(identifier?.getType()).to.be.instanceof(Basic.StructureType);
+  });
+
+  it("ASSIGN inline, with table expression", () => {
+    const abap = `
+TYPES: BEGIN OF ty_path,
+  path TYPE string,
+END OF ty_path.
+DATA mt_table TYPE STANDARD TABLE OF ty_path WITH EMPTY KEY.
+ASSIGN mt_table[ path = 'abc' ] TO FIELD-SYMBOL(<ls_row>).`;
+    const identifier = resolveVariable(abap, "<ls_row>");
+    expect(identifier).to.not.equal(undefined);
+    expect(identifier?.getType()).to.be.instanceof(Basic.StructureType);
+  });
+
+  it("CONVERT TIME STAMP", () => {
+    const abap = `
+DATA foo TYPE timestamp.
+CONVERT TIME STAMP foo TIME ZONE '123' INTO DATE DATA(date) TIME DATA(time).`;
+    const identifier1 = resolveVariable(abap, "date");
+    expect(identifier1).to.not.equal(undefined);
+    expect(identifier1?.getType()).to.be.instanceof(Basic.DateType);
+
+    const identifier2 = resolveVariable(abap, "time");
+    expect(identifier2).to.not.equal(undefined);
+    expect(identifier2?.getType()).to.be.instanceof(Basic.TimeType);
+  });
+
+  it("EXACT", () => {
+    const abap = `
+TYPES ty_bar TYPE c LENGTH 10.
+DATA(fsdf) = EXACT ty_bar( |sdfs| ).`;
+    const identifier = resolveVariable(abap, "fsdf");
+    expect(identifier).to.not.equal(undefined);
+    expect(identifier?.getType()).to.be.instanceof(Basic.CharacterType);
+  });
+
+  it("COND", () => {
+    const abap = `DATA(fsdf) = COND string( WHEN 1 < 2 THEN |sdf| ).`;
+    const identifier = resolveVariable(abap, "fsdf");
+    expect(identifier).to.not.equal(undefined);
+    expect(identifier?.getType()).to.be.instanceof(Basic.StringType);
+  });
+
+  it("SWITCH", () => {
+    const abap = `DATA(sdf) = SWITCH string( sy-index WHEN 1 THEN 'sdfsdf' ).`;
+    const identifier = resolveVariable(abap, "sdf");
+    expect(identifier).to.not.equal(undefined);
+    expect(identifier?.getType()).to.be.instanceof(Basic.StringType);
+  });
+
+  it("DESCRIBE TABLE inline", () => {
+    const abap = `
+DATA lt_table TYPE STANDARD TABLE OF string WITH EMPTY KEY.
+DESCRIBE TABLE lt_table LINES DATA(lv_lines).`;
+    const identifier = resolveVariable(abap, "lv_lines");
+    expect(identifier).to.not.equal(undefined);
+    expect(identifier?.getType()).to.be.instanceof(Basic.IntegerType);
+  });
+
+  it("FIND REGEX inline", () => {
+    const abap = `
+  DATA lv_path TYPE string.
+  FIND REGEX |^bar$| IN lv_path SUBMATCHES DATA(lv_match).`;
+    const identifier = resolveVariable(abap, "lv_match");
+    expect(identifier).to.not.equal(undefined);
+    expect(identifier?.getType()).to.be.instanceof(Basic.StringType);
+  });
+
+  it("MESSAGE INTO inline", () => {
+    const abap = `
+    MESSAGE ID sy-msgid TYPE 'S' NUMBER sy-msgno INTO DATA(lv_message) WITH sy-msgv1 sy-msgv2 sy-msgv3 sy-msgv4.`;
+    const identifier = resolveVariable(abap, "lv_message");
+    expect(identifier).to.not.equal(undefined);
+    expect(identifier?.getType()).to.be.instanceof(Basic.StringType);
+  });
+
+  it("GET TIME STAMP inline", () => {
+    const abap = `GET TIME STAMP FIELD DATA(lv_current).`;
+    const identifier = resolveVariable(abap, "lv_current");
+    expect(identifier).to.not.equal(undefined);
+    expect(identifier?.getType()).to.be.instanceof(Basic.PackedType);
+  });
+
+  it("GET PARAMETER inline", () => {
+    const abap = `GET PARAMETER ID 'FOOBAR' FIELD DATA(lv_foo).`;
+    const identifier = resolveVariable(abap, "lv_foo");
+    expect(identifier).to.not.equal(undefined);
+    expect(identifier?.getType()).to.be.instanceof(Basic.CharacterType);
   });
 
 });
