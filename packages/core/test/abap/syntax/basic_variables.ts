@@ -1196,4 +1196,28 @@ DESCRIBE TABLE lt_table LINES DATA(lv_lines).`;
     expect(identifier?.getType()).to.be.instanceof(Basic.IntegerType);
   });
 
+  it.skip("FIND REGEX inline", () => {
+    const abap = `
+  DATA lv_path TYPE string.
+  FIND REGEX |^bar$| IN lv_path SUBMATCHES DATA(lv_match).`;
+    const identifier = resolveVariable(abap, "lv_match");
+    expect(identifier).to.not.equal(undefined);
+    expect(identifier?.getType()).to.be.instanceof(Basic.StringType);
+  });
+
+  it.skip("MESSAGE INTO inline", () => {
+    const abap = `
+    MESSAGE ID sy-msgid TYPE 'S' NUMBER sy-msgno INTO DATA(lv_message) WITH sy-msgv1 sy-msgv2 sy-msgv3 sy-msgv4.`;
+    const identifier = resolveVariable(abap, "lv_message");
+    expect(identifier).to.not.equal(undefined);
+    expect(identifier?.getType()).to.be.instanceof(Basic.StringType);
+  });
+
+  it.skip("GET TIME STAMP inline", () => {
+    const abap = `GET TIME STAMP FIELD DATA(lv_current).`;
+    const identifier = resolveVariable(abap, "lv_current");
+    expect(identifier).to.not.equal(undefined);
+    expect(identifier?.getType()).to.be.instanceof(Basic.PackedType);
+  });
+
 });
