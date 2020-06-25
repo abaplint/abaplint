@@ -38,6 +38,7 @@ import {InsertInternal} from "./statements/insert_internal";
 import {Split} from "./statements/split";
 import {Assign} from "./statements/assign";
 import {Convert} from "./statements/convert";
+import {Describe} from "./statements/describe";
 
 import {Data as DataStructure} from "./structures/data";
 import {TypeEnum} from "./structures/type_enum";
@@ -267,6 +268,8 @@ export class SyntaxLogic {
       new Assign().runSyntax(node, this.scope, filename);
     } else if (node.get() instanceof Statements.Convert) {
       new Convert().runSyntax(node, this.scope, filename);
+    } else if (node.get() instanceof Statements.Describe) {
+      new Describe().runSyntax(node, this.scope, filename);
 
     } else if (s instanceof Statements.Form) {
       this.helpers.proc.findFormScope(node, filename);

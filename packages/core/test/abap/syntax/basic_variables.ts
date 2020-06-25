@@ -1187,4 +1187,13 @@ DATA(fsdf) = EXACT ty_bar( |sdfs| ).`;
     expect(identifier?.getType()).to.be.instanceof(Basic.StringType);
   });
 
+  it("DESCRIBE TABLE inline", () => {
+    const abap = `
+DATA lt_table TYPE STANDARD TABLE OF string WITH EMPTY KEY.
+DESCRIBE TABLE lt_table LINES DATA(lv_lines).`;
+    const identifier = resolveVariable(abap, "lv_lines");
+    expect(identifier).to.not.equal(undefined);
+    expect(identifier?.getType()).to.be.instanceof(Basic.IntegerType);
+  });
+
 });
