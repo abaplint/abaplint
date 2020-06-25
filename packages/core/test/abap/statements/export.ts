@@ -21,7 +21,7 @@ const tests = [
   "EXPORT foo-bar moo-boo TO MEMORY ID 'ABCD'.",
   "EXPORT field = field TO SHARED BUFFER INDX(AB) ID 'FOO' FROM var.",
 //  "EXPORT <wa> = <wa> TO DATABASE foobar(aa) ID me->name FROM l_wa.",
-  "EXPORT data = lt_data TO DATABASE indx(zr) FROM lv_indx CLIENT lv_clnt ID lc_id."
+  "EXPORT data = lt_data TO DATABASE indx(zr) FROM lv_indx CLIENT lv_clnt ID lc_id.",
 ];
 
 statementType(tests, "EXPORT", Statements.Export);

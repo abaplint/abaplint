@@ -1709,7 +1709,7 @@
                   "type": "boolean"
                 }
               ],
-              "description": "Checks the validity of ICF services\nhttps://rules.abaplint.org/sicf_consistency"
+              "description": "Checks the validity of ICF services:\n\n* Class defined in handler must exist\n* Class must not have any syntax errors\n* Class must implement interface IF_HTTP_EXTENSION\nhttps://rules.abaplint.org/sicf_consistency"
             },
             "space_before_colon": {
               "anyOf": [

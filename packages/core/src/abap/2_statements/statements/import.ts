@@ -46,8 +46,7 @@ export class Import implements IStatement {
                         str("ACCEPTING TRUNCATION"),
                         seq(str("REPLACEMENT CHARACTER"), new Source()),
                         seq(str("CODE PAGE INTO"), new Source()),
-                        seq(str("ENDIAN INTO"), new Source())
-                        );
+                        seq(str("ENDIAN INTO"), new Source()));
 
     const ret = seq(str("IMPORT"), target, str("FROM"), source, opt(options));
 
