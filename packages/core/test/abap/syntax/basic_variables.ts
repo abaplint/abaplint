@@ -1226,4 +1226,13 @@ DESCRIBE TABLE lt_table LINES DATA(lv_lines).`;
     expect(identifier?.getType()).to.be.instanceof(Basic.CharacterType);
   });
 
+  it("FIND REGEX inline, multiple submatches", () => {
+    const abap = `
+  DATA lv_path TYPE string.
+  FIND REGEX |^bar$| IN lv_path SUBMATCHES DATA(lv_match1) DATA(lv_match2).`;
+    const identifier = resolveVariable(abap, "lv_match2");
+    expect(identifier).to.not.equal(undefined);
+    expect(identifier?.getType()).to.be.instanceof(Basic.StringType);
+  });
+
 });
