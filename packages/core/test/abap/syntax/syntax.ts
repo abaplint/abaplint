@@ -1885,6 +1885,20 @@ DATA(item) = lr_log->not_found.`;
     expect(issues.length).to.equals(1);
   });
 
+  it("EXPORT DATABASE", () => {
+    const abap = `DATA gt_data TYPE TABLE OF string.
+EXPORT data = gt_data TO DATABASE indx(zr) ID 'TEST'.`;
+    const issues = runProgram(abap);
+    expect(issues.length).to.equals(0);
+  });
+
+  it("IMPORT DATABASE", () => {
+    const abap = `DATA gt_data TYPE TABLE OF string.
+IMPORT data = gt_data FROM DATABASE indx(zr) ID 'TEST'.`;
+    const issues = runProgram(abap);
+    expect(issues.length).to.equals(0);
+  });
+
 // todo, static method cannot access instance attributes
 // todo, can a private method access protected attributes?
 // todo, readonly fields(constants + enums + attributes flagged read-only)

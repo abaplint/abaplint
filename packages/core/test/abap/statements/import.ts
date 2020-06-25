@@ -23,6 +23,7 @@ const tests = [
   "IMPORT line TO converted FROM DATABASE foob(aa) ID id USING source IGNORING CONVERSION ERRORS.",
   "IMPORT foo-bar = foo-bar FROM DATABASE datab(aa) ID lv_id USING lv_read.",
   "IMPORT field = field FROM SHARED BUFFER INDX(AA) ID 'FOO' TO var.",
+  "IMPORT data = lt_data FROM DATABASE indx(zr) TO lv_data CLIENT lv_clnt ID lc_id."
 ];
 
 statementType(tests, "IMPORT", Statements.Import);
