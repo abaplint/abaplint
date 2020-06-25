@@ -1127,4 +1127,16 @@ READ TABLE lt_paths ASSIGNING FIELD-SYMBOL(<ls_path>) WITH KEY path = 'foobar'.`
     expect(identifier?.getType()).to.be.instanceof(Basic.TableType);
   });
 
+  it("inline CORRESPONDING", () => {
+    const abap = `
+TYPES: BEGIN OF ty_path,
+  path TYPE string,
+END OF ty_path.
+DATA bar TYPE ty_path.
+DATA(foo) = CORRESPONDING ty_path( bar ).`;
+    const identifier = resolveVariable(abap, "foo");
+    expect(identifier).to.not.equal(undefined);
+    expect(identifier?.getType()).to.be.instanceof(Basic.StructureType);
+  });
+
 });
