@@ -1220,4 +1220,11 @@ DESCRIBE TABLE lt_table LINES DATA(lv_lines).`;
     expect(identifier?.getType()).to.be.instanceof(Basic.PackedType);
   });
 
+  it.skip("GET PARAMETER inline", () => {
+    const abap = `GET PARAMETER ID 'FOOBAR' FIELD DATA(lv_foo).`;
+    const identifier = resolveVariable(abap, "lv_foo");
+    expect(identifier).to.not.equal(undefined);
+    expect(identifier?.getType()).to.be.instanceof(Basic.CharacterType);
+  });
+
 });
