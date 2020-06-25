@@ -25,6 +25,9 @@ export class Source {
       switch (tok) {
         case "VALUE":
         case "CONV":
+        case "COND":
+        case "SWITCH":
+        case "EXACT":
         case "CORRESPONDING":
         case "REDUCE":
           return this.value(node, scope, filename, targetType);

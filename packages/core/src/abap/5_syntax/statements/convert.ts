@@ -7,6 +7,8 @@ import {TimeType, DateType} from "../../types/basic";
 export class Convert {
   public runSyntax(node: StatementNode, scope: CurrentScope, filename: string): void {
 
+// todo, the source must be of a specific type
+
     const timeTarget = node.findExpressionAfterToken("TIME");
     if (timeTarget?.get() instanceof Expressions.Target) {
       const inline = timeTarget?.findDirectExpression(Expressions.InlineData);

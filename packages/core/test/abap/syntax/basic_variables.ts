@@ -1164,4 +1164,27 @@ CONVERT TIME STAMP foo TIME ZONE '123' INTO DATE DATA(date) TIME DATA(time).`;
     expect(identifier2?.getType()).to.be.instanceof(Basic.TimeType);
   });
 
+  it("EXACT", () => {
+    const abap = `
+TYPES ty_bar TYPE c LENGTH 10.
+DATA(fsdf) = EXACT ty_bar( |sdfs| ).`;
+    const identifier = resolveVariable(abap, "fsdf");
+    expect(identifier).to.not.equal(undefined);
+    expect(identifier?.getType()).to.be.instanceof(Basic.CharacterType);
+  });
+
+  it("COND", () => {
+    const abap = `DATA(fsdf) = COND string( WHEN 1 < 2 THEN |sdf| ).`;
+    const identifier = resolveVariable(abap, "fsdf");
+    expect(identifier).to.not.equal(undefined);
+    expect(identifier?.getType()).to.be.instanceof(Basic.StringType);
+  });
+
+  it("SWITCH", () => {
+    const abap = `DATA(sdf) = SWITCH string( sy-index WHEN 1 THEN 'sdfsdf' ).`;
+    const identifier = resolveVariable(abap, "sdf");
+    expect(identifier).to.not.equal(undefined);
+    expect(identifier?.getType()).to.be.instanceof(Basic.StringType);
+  });
+
 });
