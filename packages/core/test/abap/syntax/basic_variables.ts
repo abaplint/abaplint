@@ -1151,4 +1151,17 @@ ASSIGN mt_table[ path = 'abc' ] TO FIELD-SYMBOL(<ls_row>).`;
     expect(identifier?.getType()).to.be.instanceof(Basic.StructureType);
   });
 
+  it("CONVERT TIME STAMP", () => {
+    const abap = `
+DATA foo TYPE timestamp.
+CONVERT TIME STAMP foo TIME ZONE '123' INTO DATE DATA(date) TIME DATA(time).`;
+    const identifier1 = resolveVariable(abap, "date");
+    expect(identifier1).to.not.equal(undefined);
+    expect(identifier1?.getType()).to.be.instanceof(Basic.DateType);
+
+    const identifier2 = resolveVariable(abap, "time");
+    expect(identifier2).to.not.equal(undefined);
+    expect(identifier2?.getType()).to.be.instanceof(Basic.TimeType);
+  });
+
 });
