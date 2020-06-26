@@ -45,7 +45,7 @@ export class MethodParameters {
           this.checkChanging(children.shift(), scope, method, filename);
           break;
         case "RECEIVING":
-          children.shift(); // todo, non functional method call
+          this.checkReceiving(children.shift(), scope, method, filename);
           break;
         case "EXCEPTIONS":
           children.shift(); // todo, old style exceptions
@@ -57,6 +57,22 @@ export class MethodParameters {
   }
 
 ///////////////////////
+
+  private checkReceiving(node: INode | undefined, scope: CurrentScope, method: IMethodDefinition | VoidType, filename: string) {
+
+    const type = method instanceof VoidType ? method : method.getParameters().getReturning()?.getType();
+    if (type === undefined) {
+      throw new Error("Method does not have a returning parameter");
+    } else if (!(node instanceof ExpressionNode)) {
+      throw new Error("checkReceiving, not an expression node");
+    }
+
+    const inline = node.findDirectExpression(Expressions.Target)?.findDirectExpression(Expressions.InlineData);
+    if (inline) {
+      new InlineData().runSyntax(inline, scope, filename, type);
+    }
+
+  }
 
   private checkImporting(node: INode | undefined, scope: CurrentScope, method: IMethodDefinition | VoidType, filename: string) {
     for (const item of this.parameterListT(node, scope, filename)) {

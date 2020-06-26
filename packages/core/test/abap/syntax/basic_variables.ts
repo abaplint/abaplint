@@ -1235,7 +1235,7 @@ DESCRIBE TABLE lt_table LINES DATA(lv_lines).`;
     expect(identifier?.getType()).to.be.instanceof(Basic.StringType);
   });
 
-  it.skip("inline RECEIVING", () => {
+  it("inline RECEIVING", () => {
     const abap = `
 CLASS lcl_bar DEFINITION.
   PUBLIC SECTION.
