@@ -1235,4 +1235,23 @@ DESCRIBE TABLE lt_table LINES DATA(lv_lines).`;
     expect(identifier?.getType()).to.be.instanceof(Basic.StringType);
   });
 
+  it.skip("inline RECEIVING", () => {
+    const abap = `
+CLASS lcl_bar DEFINITION.
+  PUBLIC SECTION.
+    CLASS-METHODS: moo RETURNING VALUE(val) TYPE i.
+ENDCLASS.
+
+CLASS lcl_bar IMPLEMENTATION.
+  METHOD moo.
+  ENDMETHOD.
+ENDCLASS.
+
+START-OF-SELECTION.
+  lcl_bar=>moo( RECEIVING val = DATA(val) ).`;
+    const identifier = resolveVariable(abap, "val");
+    expect(identifier).to.not.equal(undefined);
+    expect(identifier?.getType()).to.be.instanceof(Basic.IntegerType);
+  });
+
 });
