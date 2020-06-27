@@ -43,6 +43,7 @@ export class KeepSingleParameterCallsOnOneLine extends ABAPRule {
     for (const s of file.getStatements()) {
       // todo, add this as configurable
       if (this.calcStatementLength(s) > this.getConfig().length
+          || this.containsNewLineValue(s)
           || this.containsNewlineTemplate(s)) {
         continue;
       }
@@ -55,6 +56,19 @@ export class KeepSingleParameterCallsOnOneLine extends ABAPRule {
   }
 
 ///////////////////////////////////////
+
+  private containsNewLineValue(s: StatementNode): boolean {
+    for (const st of s.findAllExpressions(Expressions.Source)) {
+      const first = st.getFirstToken().getStr().toUpperCase();
+      if (first === "VALUE") {
+        const tokens = st.getAllTokens();
+        if (tokens[0].getRow() !== tokens[tokens.length - 1].getRow()) {
+          return true;
+        }
+      }
+    }
+    return false;
+  }
 
   private containsNewlineTemplate(s: StatementNode): boolean {
     for (const st of s.findAllExpressions(Expressions.StringTemplate)) {

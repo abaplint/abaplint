@@ -68,6 +68,7 @@ import {PreferInlineConf} from "../src/rules/prefer_inline";
 import {PreferReturningToExportingConf} from "../src/rules/prefer_returning_to_exporting";
 import {PreferredCompareOperatorConf} from "../src/rules/preferred_compare_operator";
 import {PrefixIsCurrentClassConf} from "../src/rules/prefix_is_current_class";
+import {ReduceStringTemplatesConf} from "../src/rules/reduce_string_templates";
 import {ReleaseIdocConf} from "../src/rules/release_idoc";
 import {RemoveDescriptionsConf} from "../src/rules/remove_descriptions";
 import {RFCErrorHandlingConf} from "../src/rules/rfc_error_handling";
@@ -168,6 +169,7 @@ export interface IConfig {
     "prefer_returning_to_exporting"?: PreferReturningToExportingConf | boolean,
     "preferred_compare_operator"?: PreferredCompareOperatorConf | boolean,
     "prefix_is_current_class"?: PrefixIsCurrentClassConf | boolean,
+    "reduce_string_templates"?: ReduceStringTemplatesConf | boolean,
     "release_idoc"?: ReleaseIdocConf | boolean,
     "remove_descriptions"?: RemoveDescriptionsConf | boolean,
     "rfc_error_handling"?: RFCErrorHandlingConf | boolean,

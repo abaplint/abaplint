@@ -67,6 +67,7 @@ export * from "./prefer_inline";
 export * from "./prefer_returning_to_exporting";
 export * from "./preferred_compare_operator";
 export * from "./prefix_is_current_class";
+export * from "./reduce_string_templates";
 export * from "./release_idoc";
 export * from "./remove_descriptions";
 export * from "./rfc_error_handling";

@@ -15,6 +15,9 @@ const tests = [
                   PREVIOUS = PREVIOUS.
             endmethod.
           ENDCLASS.`, cnt: 1},
+  {abap: `CALL METHOD lo_http_utility->decode_base64
+EXPORTING
+  encoded = request->get_inner_rest_request( )->get_header_field( iv_name = 'Password' ).`, cnt: 1},
 ];
 
 testRule(tests, FunctionalWriting);
