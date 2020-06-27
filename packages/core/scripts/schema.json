@@ -1643,7 +1643,7 @@
                   "type": "boolean"
                 }
               ],
-              "description": "Checks for string templates\nTags: \nhttps://rules.abaplint.org/reduce_string_templates"
+              "description": "Checks for string templates\nhttps://rules.abaplint.org/reduce_string_templates"
             },
             "release_idoc": {
               "anyOf": [

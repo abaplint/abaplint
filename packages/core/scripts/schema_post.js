@@ -1,3 +1,5 @@
+/* eslint-disable @typescript-eslint/no-var-requires */
+/* eslint-disable @typescript-eslint/no-require-imports */
 const fs = require("fs");
 const path = require("path");
 const abaplint = require("../build/src/index");
@@ -19,7 +21,7 @@ function run() {
   for(const rule of abaplint.ArtifactsRules.getRules()) {
     const meta = rule.getMetadata();
     if (meta.shortDescription !== undefined) {
-      const extra = meta.tags ? "\nTags: " + meta.tags.join(", ") : "";
+      const extra = meta.tags && meta.tags.length > 0 ? "\nTags: " + meta.tags.join(", ") : "";
       descriptions[meta.key] = meta.shortDescription + extra;
     }
   }
