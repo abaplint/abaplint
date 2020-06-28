@@ -262,8 +262,13 @@ export class BasicTypes {
       found = this.resolveTypeRef(typename);
     } else if (text.startsWith("TYPE")) {
       found = this.resolveTypeName(typename, this.findLength(node));
+
       if (found === undefined && typename === undefined) {
         found = new Types.CharacterType(1);
+      }
+
+      if (found && node.findDirectTokenByText("OCCURS")) {
+        found = new Types.TableType(found);
       }
     }
 
