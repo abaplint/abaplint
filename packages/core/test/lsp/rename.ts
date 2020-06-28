@@ -177,7 +177,7 @@ ENDCLASS.`);
     expect(clas.getName()).to.equal("/FOO/CL_BAR");
 
     const issues = reg.findIssues();
-    expect(issues.length).to.equal(2); // todo, something is broken here?
+    expect(issues.length).to.equal(1); // gives error regarding class name
     expect(issues[0].getKey()).to.equal("object_naming");
   });
 
