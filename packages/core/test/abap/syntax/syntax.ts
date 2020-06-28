@@ -1899,6 +1899,18 @@ IMPORT data = gt_data FROM DATABASE indx(zr) ID 'TEST'.`;
     expect(issues.length).to.equals(0);
   });
 
+  it("FORM with TABLES", () => {
+    const abap = `
+DATA: BEGIN OF data_foo,
+        moo TYPE i,
+      END OF data_foo.
+FORM foo TABLES i_where STRUCTURE data_foo.
+  READ TABLE i_where INDEX 1 TRANSPORTING NO FIELDS.
+ENDFORM.`;
+    const issues = runProgram(abap);
+    expect(issues.length).to.equals(0);
+  });
+
 // todo, static method cannot access instance attributes
 // todo, can a private method access protected attributes?
 // todo, readonly fields(constants + enums + attributes flagged read-only)

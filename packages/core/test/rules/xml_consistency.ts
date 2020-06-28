@@ -11,23 +11,24 @@ function run(reg: IRegistry): Issue[] {
   return rule.initialize(reg).run(reg.getObjects()[0]);
 }
 
+const xml = `<?xml version="1.0" encoding="utf-8"?>
+<abapGit version="v1.0.0" serializer="LCL_OBJECT_CLAS" serializer_version="v1.0.0">
+ <asx:abap xmlns:asx="http://www.sap.com/abapxml" version="1.0">
+  <asx:values>
+   <VSEOCLASS>
+    <CLSNAME>ZCL_KLAUS</CLSNAME>
+    <LANGU>E</LANGU>
+    <DESCRIPT>Description</DESCRIPT>
+    <STATE>1</STATE>
+    <CLSCCINCL>X</CLSCCINCL>
+    <FIXPT>X</FIXPT>
+    <UNICODE>X</UNICODE>
+   </VSEOCLASS>
+  </asx:values>
+ </asx:abap>
+</abapGit>`;
+
 describe("rule, xml_consistency, error", () => {
-  const xml = `<?xml version="1.0" encoding="utf-8"?>
-  <abapGit version="v1.0.0" serializer="LCL_OBJECT_CLAS" serializer_version="v1.0.0">
-   <asx:abap xmlns:asx="http://www.sap.com/abapxml" version="1.0">
-    <asx:values>
-     <VSEOCLASS>
-      <CLSNAME>ZCL_KLAUS</CLSNAME>
-      <LANGU>E</LANGU>
-      <DESCRIPT>Description</DESCRIPT>
-      <STATE>1</STATE>
-      <CLSCCINCL>X</CLSCCINCL>
-      <FIXPT>X</FIXPT>
-      <UNICODE>X</UNICODE>
-     </VSEOCLASS>
-    </asx:values>
-   </asx:abap>
-  </abapGit>`;
 
   it("test", () => {
     const reg = new Registry().addFile(new MemoryFile("zcl_lars.clas.xml", xml));
@@ -132,5 +133,11 @@ describe("xml consistency", () => {
     const reg = new Registry().addFile(new MemoryFile("zcl_lars.msag.xml", `parser error`));
     const issues = run(reg);
     expect(issues.length).to.equals(1);
+  });
+
+  it("parser error, xml ok, abap not", () => {
+    const reg = new Registry().addFile(new MemoryFile("zcl_klaus.clas.xml", xml)).addFile(new MemoryFile("zcl_klaus.clas.abap", "parser error"));
+    const issues = run(reg);
+    expect(issues.length).to.equals(0);
   });
 });

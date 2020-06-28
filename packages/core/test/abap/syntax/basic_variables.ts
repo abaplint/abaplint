@@ -1254,4 +1254,11 @@ START-OF-SELECTION.
     expect(identifier?.getType()).to.be.instanceof(Basic.IntegerType);
   });
 
+  it("OCCURS 0 WITH HEADER LINE", () => {
+    const abap = `DATA tab TYPE i OCCURS 0 WITH HEADER LINE.`;
+    const identifier = resolveVariable(abap, "tab");
+    expect(identifier).to.not.equal(undefined);
+    expect(identifier?.getType()).to.be.instanceof(Basic.TableType);
+  });
+
 });
