@@ -26,13 +26,13 @@ export class Export implements IStatement {
 
     const target = alt(buffer, memory, database, table, shared);
 
-    const source = alt(plus(altPrio(new ParameterS(), new FieldSub())),
+    const source = alt(plus(altPrio(new ParameterS(), seq(new FieldSub(), from), new FieldSub())),
                        new Dynamic());
 
     const compression = seq(str("COMPRESSION"), alt(str("ON"), str("OFF")));
     const hint = seq(str("CODE PAGE HINT"), new Source());
 
-    return seq(str("EXPORT"), source, opt(from), str("TO"), target, opt(compression), opt(hint));
+    return seq(str("EXPORT"), source, str("TO"), target, opt(compression), opt(hint));
   }
 
 }
