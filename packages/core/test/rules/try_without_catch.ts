@@ -6,7 +6,7 @@ import {TryWithoutCatch} from "../../src/rules/try_without_catch";
 function findIssues(abap: string) {
   const reg = new Registry().addFile(new MemoryFile("zfoo.prog.abap", abap)).parse();
   const rule = new TryWithoutCatch();
-  return rule.run(reg.getObjects()[0], reg);
+  return rule.initialize(reg).run(reg.getObjects()[0]);
 }
 
 describe("Rule: try without catch", () => {

@@ -1,7 +1,6 @@
 import {Issue} from "../issue";
 import {ABAPRule} from "./_abap_rule";
 import {ABAPFile} from "../files";
-import {IRegistry} from "../_iregistry";
 import {Try, Catch} from "../abap/3_structures/structures";
 import {BasicRuleConfig} from "./_basic_rule_config";
 import {Cleanup} from "../abap/2_statements/statements";
@@ -32,7 +31,7 @@ export class TryWithoutCatch extends ABAPRule {
     this.conf = conf;
   }
 
-  public runParsed(file: ABAPFile, _reg: IRegistry) {
+  public runParsed(file: ABAPFile) {
     const issues: Issue[] = [];
 
     const stru = file.getStructure();

@@ -3,7 +3,6 @@ import {Position} from "../position";
 import {ABAPRule} from "./_abap_rule";
 import {ABAPFile, MemoryFile} from "../files";
 import {BasicRuleConfig} from "./_basic_rule_config";
-import {IRegistry} from "../_iregistry";
 import {Unknown, Empty, Comment} from "../abap/2_statements/statements/_statement";
 import {ABAPObject} from "../objects/_abap_object";
 import {FunctionGroup} from "../objects";
@@ -43,7 +42,7 @@ https://docs.abapopenchecks.org/checks/14/`,
     this.conf = conf;
   }
 
-  public runParsed(file: ABAPFile, _reg: IRegistry, obj: ABAPObject) {
+  public runParsed(file: ABAPFile, obj: ABAPObject) {
     let issues: Issue[] = [];
 
     const rows = file.getRawRows();

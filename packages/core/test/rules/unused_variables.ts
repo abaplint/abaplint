@@ -11,7 +11,7 @@ function testFix(input: string, expected: string) {
 
 function runSingle(abap: string): Issue[] {
   const reg = new Registry().addFile(new MemoryFile("zfoo.prog.abap", abap)).parse();
-  return new UnusedVariables().run(reg.getObjects()[0], reg);
+  return new UnusedVariables().initialize(reg).run(reg.getObjects()[0]);
 }
 
 describe("Rule: unused_variables, single file", () => {

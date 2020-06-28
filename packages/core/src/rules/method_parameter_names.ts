@@ -47,7 +47,11 @@ export class MethodParameterNames implements IRule {
     this.conf = conf;
   }
 
-  public run(obj: IObject, _reg: IRegistry): Issue[] {
+  public initialize(_reg: IRegistry) {
+    return this;
+  }
+
+  public run(obj: IObject): Issue[] {
     let ret: Issue[] = [];
     if (this.conf.patternKind === undefined) {
       this.conf.patternKind = "required";

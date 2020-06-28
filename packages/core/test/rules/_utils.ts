@@ -27,7 +27,7 @@ export function testRule(tests: {abap: string, cnt: number}[], rule: new () => I
     tests.forEach((test) => {
       it("\"" + test.abap + "\" should have " + test.cnt + " issue(s)", () => {
         const reg = new Registry().addFile(new MemoryFile("zfoo.prog.abap", test.abap)).parse();
-        const issues = nrule.run(reg.getObjects()[0], reg);
+        const issues = nrule.initialize(reg).run(reg.getObjects()[0]);
         expect(issues.length).to.equals(test.cnt);
       });
     });
@@ -53,7 +53,7 @@ export function testRuleFix(tests: {input: string, output: string}[], rule: new 
 
 export function testRuleFixSingle(input: string, expected: string, rule: IRule, conf?: IConfiguration) {
   const reg = new Registry(conf).addFile(new MemoryFile("zfoo.prog.abap", input)).parse();
-  let issues = rule.run(reg.getObjects()[0], reg);
+  let issues = rule.initialize(reg).run(reg.getObjects()[0]);
   expect(issues.length).to.equal(1, "single issue expected");
 
   const fix = issues[0].getFix();
@@ -61,7 +61,7 @@ export function testRuleFixSingle(input: string, expected: string, rule: IRule, 
   applyEditSingle(reg, fix!);
 
   reg.parse();
-  issues = rule.run(reg.getObjects()[0], reg);
+  issues = rule.initialize(reg).run(reg.getObjects()[0]);
   expect(issues.length).to.equal(0);
   const output = reg.getObjects()[0].getFiles()[0];
   expect(output.getRaw()).to.equal(expected);
@@ -76,7 +76,7 @@ export function testRuleWithVariableConfig(tests: any, rule: new () => IRule, te
       it(test.description, () => {
         const reg = new Registry().addFile(new MemoryFile("zfoo.prog.abap", test.abap)).parse();
         nrule.setConfig(test.config);
-        const issues = nrule.run(reg.getObjects()[0], reg);
+        const issues = nrule.initialize(reg).run(reg.getObjects()[0]);
         expect(issues.length).to.equals(test.issueLength);
       });
     });

@@ -212,6 +212,14 @@ export class Registry implements IRegistry {
     const skipLogic = new SkipLogic(this);
 
     progress?.set(objects.length, "Finding Issues");
+
+    for (const rule of rules) {
+      if (rule.initialize === undefined) {
+        console.dir(rule);
+      }
+      rule.initialize(this);
+    }
+
     for (const obj of objects) {
       progress?.tick("Finding Issues - " + obj.getType() + " " + obj.getName());
 
@@ -220,7 +228,7 @@ export class Registry implements IRegistry {
       }
 
       for (const rule of rules) {
-        issues = issues.concat(rule.run(obj, this));
+        issues = issues.concat(rule.run(obj));
       }
     }
 

@@ -36,10 +36,10 @@ Add "TABLE" keyword or "@" for escaping SQL variables`,
     this.conf = conf;
   }
 
-  public runParsed(file: ABAPFile, reg: IRegistry) {
+  public runParsed(file: ABAPFile) {
     const issues: Issue[] = [];
 
-    if (reg.getConfig().getVersion() < Version.v740sp05) {
+    if (this.reg.getConfig().getVersion() < Version.v740sp05) {
       return [];
     }
 
@@ -47,13 +47,13 @@ Add "TABLE" keyword or "@" for escaping SQL variables`,
       let match = false;
 
       if (statement.get() instanceof Statements.DeleteDatabase) {
-        match = this.tryMatch(statement, reg, Statements.DeleteInternal);
+        match = this.tryMatch(statement, this.reg, Statements.DeleteInternal);
       } else if (statement.get() instanceof Statements.DeleteInternal) {
-        match = this.tryMatch(statement, reg, Statements.DeleteDatabase);
+        match = this.tryMatch(statement, this.reg, Statements.DeleteDatabase);
       } else if (statement.get() instanceof Statements.ModifyInternal) {
-        match = this.tryMatch(statement, reg, Statements.ModifyDatabase);
+        match = this.tryMatch(statement, this.reg, Statements.ModifyDatabase);
       } else if (statement.get() instanceof Statements.ModifyDatabase) {
-        match = this.tryMatch(statement, reg, Statements.ModifyInternal);
+        match = this.tryMatch(statement, this.reg, Statements.ModifyInternal);
       }
 
       if (match) {

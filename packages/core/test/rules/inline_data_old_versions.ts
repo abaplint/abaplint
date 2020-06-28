@@ -9,7 +9,7 @@ function findIssues(abap: string, version?: Version) {
   const config = Config.getDefault(version);
   const reg = new Registry(config).addFile(new MemoryFile("zfoo.prog.abap", abap)).parse();
   const rule = new InlineDataOldVersions();
-  return rule.run(reg.getObjects()[0], reg);
+  return rule.initialize(reg).run(reg.getObjects()[0]);
 }
 
 describe("Rule: inline data on old versions", () => {

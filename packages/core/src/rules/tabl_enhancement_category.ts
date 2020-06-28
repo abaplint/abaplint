@@ -32,7 +32,11 @@ export class TABLEnhancementCategory implements IRule {
     this.conf = conf;
   }
 
-  public run(obj: IObject, _reg: IRegistry): Issue[] {
+  public initialize(_reg: IRegistry) {
+    return this;
+  }
+
+  public run(obj: IObject): Issue[] {
     if (!(obj instanceof Table)) {
       return [];
     }

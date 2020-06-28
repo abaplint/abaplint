@@ -4,7 +4,6 @@ import {ABAPFile} from "../files";
 import {BasicRuleConfig} from "./_basic_rule_config";
 import {CallTransformation} from "../abap/2_statements/statements";
 import {NamespaceSimpleName} from "../abap/2_statements/expressions";
-import {IRegistry} from "../_iregistry";
 import {RuleTag} from "./_irule";
 
 export class CheckTransformationExistsConf extends BasicRuleConfig {
@@ -34,7 +33,7 @@ export class CheckTransformationExists extends ABAPRule {
     this.conf = conf;
   }
 
-  public runParsed(file: ABAPFile, reg: IRegistry) {
+  public runParsed(file: ABAPFile) {
     const output: Issue[] = [];
 
     const struc = file.getStructure();
@@ -49,7 +48,7 @@ export class CheckTransformationExists extends ABAPRule {
           continue;
         }
         const tok = name.getFirstToken();
-        if (reg.getObject("XSLT", tok.getStr()) === undefined) {
+        if (this.reg.getObject("XSLT", tok.getStr()) === undefined) {
           const issue = Issue.atToken(file, tok, this.getDescription(tok.getStr()), this.getMetadata().key);
           output.push(issue);
         }

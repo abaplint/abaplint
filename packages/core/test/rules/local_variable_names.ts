@@ -9,7 +9,7 @@ function findIssues(abap: string, config?: LocalVariableNamesConf) {
   if (config) {
     rule.setConfig(config);
   }
-  return rule.run(reg.getObjects()[0], reg);
+  return rule.initialize(reg).run(reg.getObjects()[0]);
 }
 
 describe("Rule: local variable names (required pattern)", () => {

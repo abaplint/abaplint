@@ -3,7 +3,6 @@ import {Issue} from "../issue";
 import {ABAPRule} from "./_abap_rule";
 import {ABAPFile} from "../files";
 import {BasicRuleConfig} from "./_basic_rule_config";
-import {IRegistry} from "../_iregistry";
 import {MessageClass} from "../objects";
 
 export class MessageExistsConf extends BasicRuleConfig {
@@ -32,7 +31,7 @@ export class MessageExistsRule extends ABAPRule {
     this.conf = conf;
   }
 
-  public runParsed(file: ABAPFile, reg: IRegistry) {
+  public runParsed(file: ABAPFile) {
     const issues: Issue[] = [];
 
     const struc = file.getStructure();
@@ -42,7 +41,7 @@ export class MessageExistsRule extends ABAPRule {
 
     for (const node of struc.findAllExpressions(Expressions.MessageClass)) {
       const token = node.getFirstToken();
-      if (reg.getObject("MSAG", token.getStr()) === undefined) {
+      if (this.reg.getObject("MSAG", token.getStr()) === undefined) {
         const message = this.getDescription("Message class \"" + token.getStr() + "\" not found");
         const issue = Issue.atToken(file, token, message, this.getMetadata().key);
         issues.push(issue);
@@ -56,7 +55,7 @@ export class MessageExistsRule extends ABAPRule {
         continue;
       }
       const name = clas.getFirstToken().getStr();
-      const msag = reg.getObject("MSAG", name) as MessageClass;
+      const msag = this.reg.getObject("MSAG", name) as MessageClass;
       if (msag === undefined) {
         continue; // issue is issued above
       }

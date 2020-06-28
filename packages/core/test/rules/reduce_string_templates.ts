@@ -5,7 +5,7 @@ import {ReduceStringTemplates} from "../../src/rules";
 
 function run(abap: string) {
   const reg = new Registry().addFile(new MemoryFile("zfoobar.prog.abap", abap)).parse();
-  const issues = new ReduceStringTemplates().run(reg.getObjects()[0], reg);
+  const issues = new ReduceStringTemplates().initialize(reg).run(reg.getObjects()[0]);
   return issues;
 }
 

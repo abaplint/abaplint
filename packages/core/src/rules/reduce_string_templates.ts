@@ -4,7 +4,6 @@ import {ABAPRule} from "./_abap_rule";
 import {ABAPFile} from "../files";
 import {BasicRuleConfig} from "./_basic_rule_config";
 import {IObject} from "../objects/_iobject";
-import {IRegistry} from "../_iregistry";
 import {IRuleMetadata} from "./_irule";
 
 export class ReduceStringTemplatesConf extends BasicRuleConfig {
@@ -31,7 +30,7 @@ export class ReduceStringTemplates extends ABAPRule {
     this.conf = conf;
   }
 
-  public runParsed(file: ABAPFile, _reg: IRegistry, _obj: IObject) {
+  public runParsed(file: ABAPFile, _obj: IObject) {
     const issues: Issue[] = [];
 
     const structure = file.getStructure();

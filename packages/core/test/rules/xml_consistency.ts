@@ -2,6 +2,14 @@ import {Registry} from "../../src/registry";
 import {MemoryFile} from "../../src/files";
 import {XMLConsistency} from "../../src/rules";
 import {expect} from "chai";
+import {IRegistry} from "../../src/_iregistry";
+import {Issue} from "../../src/issue";
+
+function run(reg: IRegistry): Issue[] {
+  reg.parse();
+  const rule = new XMLConsistency();
+  return rule.initialize(reg).run(reg.getObjects()[0]);
+}
 
 describe("rule, xml_consistency, error", () => {
   const xml = `<?xml version="1.0" encoding="utf-8"?>
@@ -23,9 +31,7 @@ describe("rule, xml_consistency, error", () => {
 
   it("test", () => {
     const reg = new Registry().addFile(new MemoryFile("zcl_lars.clas.xml", xml));
-    reg.parse();
-    const rule = new XMLConsistency();
-    const issues = rule.run(reg.getObjects()[0], reg);
+    const issues = run(reg);
 
     expect(issues.length).to.equals(1);
   });
@@ -57,9 +63,7 @@ describe("rule, xml_consistency, okay", () => {
 
   it("test", () => {
     const reg = new Registry().addFile(new MemoryFile("zcl_lars.clas.xml", xml)).addFile(new MemoryFile("zcl_lars.clas.abap", abap));
-    reg.parse();
-    const rule = new XMLConsistency();
-    const issues = rule.run(reg.getObjects()[0], reg);
+    const issues = run(reg);
     expect(issues.length).to.equals(0);
   });
 });
@@ -90,9 +94,7 @@ describe("rule, xml_consistency, mismatch xml and abap", () => {
 
   it("test", () => {
     const reg = new Registry().addFile(new MemoryFile("zcl_lars.clas.xml", xml)).addFile(new MemoryFile("zcl_lars.clas.abap", abap));
-    reg.parse();
-    const rule = new XMLConsistency();
-    const issues = rule.run(reg.getObjects()[0], reg);
+    const issues = run(reg);
     expect(issues.length).to.equals(1);
   });
 });
@@ -120,9 +122,7 @@ ENDINTERFACE.`;
 
   it("test", () => {
     const reg = new Registry().addFile(new MemoryFile("zif_abapgit_xml_input.intf.xml", xml)).addFile(new MemoryFile("zif_abapgit_xml_input.intf.abap", abap));
-    reg.parse();
-    const rule = new XMLConsistency();
-    const issues = rule.run(reg.getObjects()[0], reg);
+    const issues = run(reg);
     expect(issues.length).to.equals(1);
   });
 });
@@ -130,9 +130,7 @@ ENDINTERFACE.`;
 describe("xml consistency", () => {
   it("parser error", () => {
     const reg = new Registry().addFile(new MemoryFile("zcl_lars.msag.xml", `parser error`));
-    reg.parse();
-    const rule = new XMLConsistency();
-    const issues = rule.run(reg.getObjects()[0], reg);
+    const issues = run(reg);
     expect(issues.length).to.equals(1);
   });
 });

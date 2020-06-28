@@ -31,7 +31,7 @@ function run(abap: string): readonly Issue[] {
   reg.addFile(new MemoryFile("zfoobar.prog.abap", abap));
   reg.addFile(new MemoryFile("zag_unit_test.msag.xml", xml));
   reg.parse();
-  return new MessageExistsRule().run(reg.getObjects()[0], reg);
+  return new MessageExistsRule().initialize(reg).run(reg.getObjects()[0]);
 }
 
 describe("Message rule", () => {

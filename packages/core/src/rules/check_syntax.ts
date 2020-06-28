@@ -4,13 +4,13 @@ import {BasicRuleConfig} from "./_basic_rule_config";
 import {IObject} from "../objects/_iobject";
 import {ABAPObject} from "../objects/_abap_object";
 import {Issue} from "../issue";
-import {RuleTag, IRuleMetadata} from "./_irule";
+import {RuleTag, IRuleMetadata, IRule} from "./_irule";
 
 export class CheckSyntaxConf extends BasicRuleConfig {
 }
 
-export class CheckSyntax {
-
+export class CheckSyntax implements IRule {
+  private reg: IRegistry;
   private conf = new CheckSyntaxConf();
 
   public getMetadata(): IRuleMetadata {
@@ -26,16 +26,21 @@ export class CheckSyntax {
     return this.conf;
   }
 
+  public initialize(reg: IRegistry) {
+    this.reg = reg;
+    return this;
+  }
+
   public setConfig(conf: CheckSyntaxConf) {
     this.conf = conf;
   }
 
-  public run(obj: IObject, reg: IRegistry): Issue[] {
+  public run(obj: IObject): Issue[] {
     if (!(obj instanceof ABAPObject)) {
       return [];
     }
 
-    return new SyntaxLogic(reg, obj).run().issues;
+    return new SyntaxLogic(this.reg, obj).run().issues;
   }
 
 }

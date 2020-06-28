@@ -39,5 +39,8 @@ export interface IRule {
   getMetadata(): IRuleMetadata;
   getConfig(): void;
   setConfig(conf: any): void;
-  run(obj: IObject, reg: IRegistry): readonly Issue[];
+  /** called one time before run() */
+  initialize(reg: IRegistry): IRule;
+  /** called for each object */
+  run(obj: IObject): readonly Issue[];
 }

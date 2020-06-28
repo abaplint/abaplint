@@ -3,7 +3,6 @@ import {ABAPRule} from "./_abap_rule";
 import {ABAPFile} from "../files";
 import {IObject} from "../objects/_iobject";
 import {Class} from "../objects";
-import {IRegistry} from "../_iregistry";
 import {BasicRuleConfig} from "./_basic_rule_config";
 import {IIndentationOptions} from "../pretty_printer/indentation_options";
 import {Indent} from "../pretty_printer/indent";
@@ -40,7 +39,7 @@ export class Indentation extends ABAPRule {
     this.conf = conf;
   }
 
-  public runParsed(file: ABAPFile, _reg: IRegistry, obj: IObject) {
+  public runParsed(file: ABAPFile, obj: IObject) {
 
     let skip = false;
 

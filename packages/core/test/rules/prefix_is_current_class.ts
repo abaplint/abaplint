@@ -9,7 +9,7 @@ function run(abap: string, config?: PrefixIsCurrentClassConf): number {
   if (config) {
     rule.setConfig(config);
   }
-  const issues = rule.run(reg.getObjects()[0], reg);
+  const issues = rule.initialize(reg).run(reg.getObjects()[0]);
   return issues.length;
 }
 

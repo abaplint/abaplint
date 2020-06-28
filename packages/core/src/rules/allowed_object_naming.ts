@@ -2,8 +2,7 @@ import {Issue} from "../issue";
 import {IObject} from "../objects/_iobject";
 import {IRule, IRuleMetadata, RuleTag} from "./_irule";
 import {BasicRuleConfig} from "./_basic_rule_config";
-
-// see note 104010
+import {IRegistry} from "../_iregistry";
 
 export class AllowedObjectNamingConf extends BasicRuleConfig {
 }
@@ -15,9 +14,13 @@ export class AllowedObjectNaming implements IRule {
     return {
       key: "allowed_object_naming",
       title: "Allowed object naming",
-      shortDescription: `Enforces basic name length and namespace restrictions`,
+      shortDescription: `Enforces basic name length and namespace restrictions, see note 104010`,
       tags: [RuleTag.Naming],
     };
+  }
+
+  public initialize(_reg: IRegistry) {
+    return this;
   }
 
   public getConfig(): AllowedObjectNamingConf {

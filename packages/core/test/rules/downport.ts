@@ -21,7 +21,7 @@ function testFix(input: string, expected: string) {
 function findIssues(abap: string) {
   const reg = new Registry(buildConfig()).addFile(new MemoryFile("zdownport.prog.abap", abap)).parse();
   const rule = new Downport();
-  return rule.run(reg.getObjects()[0], reg);
+  return rule.initialize(reg).run(reg.getObjects()[0]);
 }
 
 describe("Rule: downport, basics", () => {

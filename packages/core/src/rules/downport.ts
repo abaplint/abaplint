@@ -2,7 +2,6 @@ import {ABAPRule} from "./_abap_rule";
 import {BasicRuleConfig} from "./_basic_rule_config";
 import {Issue} from "../issue";
 import {ABAPFile, MemoryFile} from "../files";
-import {IRegistry} from "../_iregistry";
 import {IRuleMetadata, RuleTag} from "./_irule";
 import {ABAPParser} from "../abap/abap_parser";
 import {Unknown} from "../abap/2_statements/statements/_statement";
@@ -43,7 +42,7 @@ Only one transformation is applied to a statement at a time, so multiple steps m
     this.conf = conf;
   }
 
-  public runParsed(file: ABAPFile, _reg: IRegistry): readonly Issue[] {
+  public runParsed(file: ABAPFile): readonly Issue[] {
     const ret: Issue[] = [];
 
     for (const s of file.getStatements()) {

@@ -13,7 +13,7 @@ export class CheckDDICConf extends BasicRuleConfig {
 }
 
 export class CheckDDIC implements IRule {
-
+  private reg: IRegistry;
   private conf = new CheckDDICConf();
 
   public getMetadata() {
@@ -26,6 +26,11 @@ export class CheckDDIC implements IRule {
     };
   }
 
+  public initialize(reg: IRegistry) {
+    this.reg = reg;
+    return this;
+  }
+
   public getConfig() {
     return this.conf;
   }
@@ -34,14 +39,14 @@ export class CheckDDIC implements IRule {
     this.conf = conf;
   }
 
-  public run(obj: IObject, reg: IRegistry): Issue[] {
+  public run(obj: IObject): Issue[] {
     let found: AbstractType | undefined = undefined;
     if (obj instanceof Objects.DataElement
         || obj instanceof Objects.Domain
         || obj instanceof Objects.Table
 // todo,        || obj instanceof Objects.View
         || obj instanceof Objects.TableType) {
-      found = obj.parseType(reg);
+      found = obj.parseType(this.reg);
     } else {
       return [];
     }

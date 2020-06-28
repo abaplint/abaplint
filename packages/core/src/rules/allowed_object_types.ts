@@ -3,6 +3,7 @@ import {Issue} from "../issue";
 import {IObject} from "../objects/_iobject";
 import {BasicRuleConfig} from "./_basic_rule_config";
 import {Position} from "../position";
+import {IRegistry} from "../_iregistry";
 
 export class AllowedObjectTypesConf extends BasicRuleConfig {
   /** List of allowed object types, example: ["CLAS", "INTF"] */
@@ -20,6 +21,10 @@ export class AllowedObjectTypes implements IRule {
       shortDescription: `Restricts the set of allowed object types.`,
       extendedInformation: `allowed is a list of 4 character object types, example: ["CLAS", "INTF"]`,
     };
+  }
+
+  public initialize(_reg: IRegistry) {
+    return this;
   }
 
   private getDescription(objectType: string): string {

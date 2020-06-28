@@ -6,7 +6,7 @@ import {PreferInline} from "../../src/rules";
 function findIssues(abap: string) {
   const reg = new Registry().addFile(new MemoryFile("zprefer_inline.prog.abap", abap)).parse();
   const rule = new PreferInline();
-  return rule.run(reg.getObjects()[0], reg);
+  return rule.initialize(reg).run(reg.getObjects()[0]);
 }
 
 describe("Rule: prefer_inline", () => {
