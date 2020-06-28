@@ -6,13 +6,20 @@ import {ABAPFile} from "../files";
 import {IRegistry} from "../_iregistry";
 
 export abstract class ABAPRule implements IRule {
+  protected reg: IRegistry;
+
   public abstract getMetadata(): IRuleMetadata;
   public abstract getConfig(): void;
   public abstract setConfig(conf: any): void;
 
-  public abstract runParsed(file: ABAPFile, reg: IRegistry, obj: ABAPObject): readonly Issue[];
+  public abstract runParsed(file: ABAPFile, obj: ABAPObject): readonly Issue[];
 
-  public run(obj: IObject, reg: IRegistry): readonly Issue[] {
+  public initialize(reg: IRegistry) {
+    this.reg = reg;
+    return this;
+  }
+
+  public run(obj: IObject): readonly Issue[] {
     if (!(obj instanceof ABAPObject)) {
       return [];
     }
@@ -21,7 +28,7 @@ export abstract class ABAPRule implements IRule {
     let output: Issue[] = [];
 
     for (const file of abap.getABAPFiles()) {
-      output = output.concat(this.runParsed(file, reg, obj));
+      output = output.concat(this.runParsed(file, obj));
     }
 
     return output;

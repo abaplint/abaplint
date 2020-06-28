@@ -1,7 +1,6 @@
 import {Issue} from "../issue";
 import {ABAPRule} from "./_abap_rule";
 import {ABAPFile} from "../files";
-import {IRegistry} from "../_iregistry";
 import {Version} from "../version";
 import {Target} from "../abap/2_statements/expressions";
 import {BasicRuleConfig} from "./_basic_rule_config";
@@ -30,11 +29,11 @@ export class InlineDataOldVersions extends ABAPRule {
     this.conf = conf;
   }
 
-  public runParsed(file: ABAPFile, reg: IRegistry) {
+  public runParsed(file: ABAPFile) {
     const issues: Issue[] = [];
 
-    if (reg.getConfig().getVersion() >= Version.v740sp02
-        || reg.getConfig().getVersion() === Version.Cloud) {
+    if (this.reg.getConfig().getVersion() >= Version.v740sp02
+        || this.reg.getConfig().getVersion() === Version.Cloud) {
       return [];
     }
 
@@ -55,7 +54,7 @@ export class InlineDataOldVersions extends ABAPRule {
           continue;
         }
 
-        const message = "Inline DATA not possible in " + reg.getConfig().getVersion();
+        const message = "Inline DATA not possible in " + this.reg.getConfig().getVersion();
         const issue = Issue.atToken(file, tokens[0], message, this.getMetadata().key);
         issues.push(issue);
       }

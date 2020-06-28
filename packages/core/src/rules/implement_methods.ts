@@ -1,7 +1,6 @@
 import {Issue} from "../issue";
 import {ABAPRule} from "./_abap_rule";
 import {ABAPFile} from "../files";
-import {IRegistry} from "../_iregistry";
 import {BasicRuleConfig} from "./_basic_rule_config";
 import {ABAPObject} from "../objects/_abap_object";
 import {Interface} from "../objects";
@@ -33,7 +32,7 @@ export class ImplementMethods extends ABAPRule {
     this.conf = conf;
   }
 
-  public runParsed(file: ABAPFile, reg: IRegistry, obj: ABAPObject) {
+  public runParsed(file: ABAPFile, obj: ABAPObject) {
     let ret: Issue[] = [];
 
     if (file.getStructure() === undefined) {
@@ -54,7 +53,7 @@ export class ImplementMethods extends ABAPRule {
       }
 
       ret = ret.concat(this.checkClass(def, impl));
-      ret = ret.concat(this.checkInterfaces(def, impl, file, reg));
+      ret = ret.concat(this.checkInterfaces(def, impl, file));
     }
 
     return ret;
@@ -93,12 +92,12 @@ export class ImplementMethods extends ABAPRule {
     return ret;
   }
 
-  private checkInterfaces(def: InfoClassDefinition, impl: InfoClassImplementation, file: ABAPFile, reg: IRegistry): Issue[] {
+  private checkInterfaces(def: InfoClassDefinition, impl: InfoClassImplementation, file: ABAPFile): Issue[] {
     const ret: Issue[] = [];
     let idef: InfoInterfaceDefinition | undefined = undefined;
 
     for (const interfaceName of def.interfaces) {
-      const intf = reg.getObject("INTF", interfaceName.name) as Interface | undefined;
+      const intf = this.reg.getObject("INTF", interfaceName.name) as Interface | undefined;
       if (intf === undefined) {
         // lookup in localfile
         idef = file.getInfo().getInterfaceDefinitionByName(interfaceName.name);

@@ -10,7 +10,10 @@ export class Config implements IConfiguration {
   public static getDefault(ver?: Version): Config {
     const rules: any = {};
 
-    const sorted = ArtifactsRules.getRules().sort((a, b) => {return a.getMetadata().key.localeCompare(b.getMetadata().key); });
+    const sorted = ArtifactsRules.getRules().sort((a, b) => {
+      return a.getMetadata().key.localeCompare(b.getMetadata().key);
+    });
+
     for (const rule of sorted) {
       rules[rule.getMetadata().key] = rule.getConfig();
     }

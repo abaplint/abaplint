@@ -2,7 +2,6 @@ import {ABAPRule} from "./_abap_rule";
 import {BasicRuleConfig} from "./_basic_rule_config";
 import {Issue} from "../issue";
 import {ABAPFile} from "../files";
-import {IRegistry} from "../_iregistry";
 import {Visibility} from "../abap/4_file_information/visibility";
 import {InfoMethodDefinition} from "../abap/4_file_information/_abap_file_information";
 
@@ -32,7 +31,7 @@ Base rule checks for existence of abapdoc for public class methods and all inter
     this.conf = conf;
   }
 
-  public runParsed(file: ABAPFile, _reg: IRegistry) {
+  public runParsed(file: ABAPFile) {
     const issues: Issue[] = [];
     const rows = file.getRawRows();
 

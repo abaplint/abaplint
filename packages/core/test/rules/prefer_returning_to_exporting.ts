@@ -6,7 +6,7 @@ import {PreferReturningToExporting} from "../../src/rules";
 function findIssues(abap: string) {
   const reg = new Registry().addFile(new MemoryFile("zfoobar.prog.abap", abap)).parse();
   const rule = new PreferReturningToExporting();
-  return rule.run(reg.getObjects()[0], reg);
+  return rule.initialize(reg).run(reg.getObjects()[0]);
 }
 
 describe("Rule: prefer returning to exporting", () => {

@@ -4,6 +4,7 @@ import {IObject} from "../objects/_iobject";
 import {IRule} from "./_irule";
 import * as Objects from "../objects";
 import {Position} from "../position";
+import {IRegistry} from "../_iregistry";
 
 export class ReleaseIdocConf extends BasicRuleConfig {
 }
@@ -29,6 +30,10 @@ export class ReleaseIdoc implements IRule {
 
   public setConfig(conf: ReleaseIdocConf) {
     this.conf = conf;
+  }
+
+  public initialize(_reg: IRegistry) {
+    return this;
   }
 
   public run(obj: IObject): Issue[] {

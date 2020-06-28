@@ -17,7 +17,7 @@ describe("rule, constructor_visibility_public, one error", () => {
 
     const reg = new Registry().addFile(new MemoryFile("zcl_abapgit_persist_settings.clas.abap", abap)).parse();
     const rule = new ConstructorVisibilityPublic();
-    const issues = rule.run(reg.getObjects()[0], reg);
+    const issues = rule.initialize(reg).run(reg.getObjects()[0]);
 
     expect(issues.length).to.equals(1);
   });
@@ -37,7 +37,7 @@ describe("rule, constructor_visibility_public, ok", () => {
 
     const reg = new Registry().addFile(new MemoryFile("zcl_abapgit_persist_settings.clas.abap", abap)).parse();
     const rule = new ConstructorVisibilityPublic();
-    const issues = rule.run(reg.getObjects()[0], reg);
+    const issues = rule.initialize(reg).run(reg.getObjects()[0]);
 
     expect(issues.length).to.equals(0);
   });

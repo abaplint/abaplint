@@ -6,7 +6,7 @@ import {MainFileContents} from "../../src/rules";
 function findIssues(abap: string, filename: string) {
   const reg = new Registry().addFile(new MemoryFile(filename, abap)).parse();
   const rule = new MainFileContents();
-  return rule.run(reg.getObjects()[0], reg);
+  return rule.initialize(reg).run(reg.getObjects()[0]);
 }
 
 describe("Rule: main_file_contents", () => {

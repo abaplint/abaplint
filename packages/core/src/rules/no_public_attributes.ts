@@ -1,6 +1,5 @@
 import {Issue} from "../issue";
 import {BasicRuleConfig} from "./_basic_rule_config";
-import {IRegistry} from "../_iregistry";
 import {ABAPRule} from "./_abap_rule";
 import {ABAPFile} from "../files";
 import {Visibility} from "../abap/4_file_information/visibility";
@@ -37,7 +36,7 @@ Exceptions are excluded from this rule.`,
     this.conf = conf;
   }
 
-  public runParsed(file: ABAPFile, _reg: IRegistry) {
+  public runParsed(file: ABAPFile) {
     this.file = file;
     const attributes = this.getAllPublicAttributes();
     return this.findAllIssues(attributes);

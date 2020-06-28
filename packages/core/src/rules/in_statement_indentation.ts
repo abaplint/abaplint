@@ -3,7 +3,6 @@ import {ABAPRule} from "./_abap_rule";
 import {ABAPFile} from "../files";
 import {IObject} from "../objects/_iobject";
 import {Class} from "../objects";
-import {IRegistry} from "../_iregistry";
 import {BasicRuleConfig} from "./_basic_rule_config";
 import * as Statements from "../abap/2_statements/statements";
 import {IRuleMetadata, RuleTag} from "./_irule";
@@ -41,7 +40,7 @@ export class InStatementIndentation extends ABAPRule {
     this.conf = conf;
   }
 
-  public runParsed(file: ABAPFile, _reg: IRegistry, obj: IObject) {
+  public runParsed(file: ABAPFile, obj: IObject) {
     const ret: Issue[] = [];
 
     if (obj instanceof Class) {

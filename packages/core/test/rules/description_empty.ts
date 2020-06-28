@@ -22,8 +22,7 @@ describe("rule, description_empty, error", () => {
 
   const reg = new Registry().addFile(new MemoryFile("zcl_klaus.clas.xml", xml));
 
-  const rule = new DescriptionEmpty();
-  const issues = rule.run(reg.getObjects()[0], reg);
+  const issues = new DescriptionEmpty().initialize(reg).run(reg.getObjects()[0]);
   it("test", () => {
     expect(issues.length).to.equals(1);
   });
@@ -49,8 +48,7 @@ describe("rule, description_empty, okay", () => {
 
   const reg = new Registry().addFile(new MemoryFile("zcl_klaus.clas.xml", xml));
 
-  const rule = new DescriptionEmpty();
-  const issues = rule.run(reg.getObjects()[0], reg);
+  const issues = new DescriptionEmpty().initialize(reg).run(reg.getObjects()[0]);
   it("test", () => {
     expect(issues.length).to.equals(0);
   });
@@ -76,8 +74,7 @@ describe("rule, description_empty, okay, namespaced", () => {
 
   const reg = new Registry().addFile(new MemoryFile("#foo#cl_klaus.clas.xml", xml));
 
-  const rule = new DescriptionEmpty();
-  const issues = rule.run(reg.getObjects()[0], reg);
+  const issues = new DescriptionEmpty().initialize(reg).run(reg.getObjects()[0]);
   it("test", () => {
     expect(issues.length).to.equals(0);
   });

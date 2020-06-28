@@ -32,7 +32,11 @@ export class MSAGConsistency implements IRule {
     this.conf = conf;
   }
 
-  public run(obj: IObject, _reg: IRegistry): Issue[] {
+  public initialize(_reg: IRegistry) {
+    return this;
+  }
+
+  public run(obj: IObject): Issue[] {
     const issues: Issue[] = [];
 
     if (!(obj instanceof MessageClass)) {

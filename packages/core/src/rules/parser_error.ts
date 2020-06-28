@@ -5,7 +5,6 @@ import {Unknown} from "../abap/2_statements/statements/_statement";
 import {ABAPRule} from "./_abap_rule";
 import {ABAPFile} from "../files";
 import {StatementNode} from "../abap/nodes";
-import {IRegistry} from "../_iregistry";
 import {BasicRuleConfig} from "./_basic_rule_config";
 import {STATEMENT_MAX_TOKENS} from "../abap/2_statements/statement_parser";
 import {RuleTag} from "./_irule";
@@ -14,7 +13,6 @@ export class ParserErrorConf extends BasicRuleConfig {
 }
 
 export class ParserError extends ABAPRule {
-
   private conf = new ParserErrorConf();
 
   public getMetadata() {
@@ -34,7 +32,7 @@ export class ParserError extends ABAPRule {
     this.conf = conf;
   }
 
-  public runParsed(file: ABAPFile, reg: IRegistry) {
+  public runParsed(file: ABAPFile) {
     const issues: Issue[] = [];
 
     let start = new Position(0, 0);
@@ -55,7 +53,7 @@ export class ParserError extends ABAPRule {
           issues.push(issue);
         } else {
           const tok = statement.getFirstToken();
-          const message = "Statement does not exist in ABAP" + reg.getConfig().getVersion() + "(or a parser error), \"" + tok.getStr() + "\"";
+          const message = "Statement does not exist in ABAP" + this.reg.getConfig().getVersion() + "(or a parser error), \"" + tok.getStr() + "\"";
           const issue = Issue.atStatement(file, statement, message, this.getMetadata().key);
           issues.push(issue);
         }

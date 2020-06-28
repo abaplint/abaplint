@@ -2,7 +2,6 @@ import {ABAPRule} from "./_abap_rule";
 import {BasicRuleConfig} from "./_basic_rule_config";
 import {Issue} from "../issue";
 import {ABAPFile, MemoryFile} from "../files";
-import {IRegistry} from "../_iregistry";
 import {IRuleMetadata, RuleTag} from "./_irule";
 import {ABAPParser} from "../abap/abap_parser";
 import {Unknown} from "../abap/2_statements/statements/_statement";
@@ -24,8 +23,13 @@ export class Downport extends ABAPRule {
       title: "Downport statement",
       shortDescription: `Experimental downport functionality`,
       extendedInformation: `
-Much like the commented_code rule this rule loops through unknown statements and tries parsing with
-a higher level language version. If successful, various rules are applied to downport the statement.`,
+Much like the 'commented_code' rule this rule loops through unknown statements and tries parsing with
+a higher level language version. If successful, various rules are applied to downport the statement.
+
+Current rules:
+* NEW transformed to CREATE OBJECT
+
+Only one transformation is applied to a statement at a time, so multiple steps might be required to do the full downport.`,
       tags: [RuleTag.Experimental, RuleTag.Downport, RuleTag.Quickfix],
     };
   }
@@ -38,7 +42,7 @@ a higher level language version. If successful, various rules are applied to dow
     this.conf = conf;
   }
 
-  public runParsed(file: ABAPFile, _reg: IRegistry): readonly Issue[] {
+  public runParsed(file: ABAPFile): readonly Issue[] {
     const ret: Issue[] = [];
 
     for (const s of file.getStatements()) {
@@ -56,8 +60,9 @@ a higher level language version. If successful, various rules are applied to dow
 ////////////////////
 
   private checkStatement(s: StatementNode, file: ABAPFile): Issue | undefined {
-    const commented = new MemoryFile("_downport.prog.abap", this.buildCode(s));
-    const abapFile = new ABAPParser().parse([commented]).output[0];
+    const code = new MemoryFile("_downport.prog.abap", this.buildCode(s));
+    // note that this will take the default langauge vesion
+    const abapFile = new ABAPParser().parse([code]).output[0];
     const statementNodes = abapFile.getStatements();
     if (statementNodes.length !== 1 || statementNodes[0].get() instanceof Unknown) {
       return;
@@ -65,7 +70,11 @@ a higher level language version. If successful, various rules are applied to dow
 
     const node = statementNodes[0];
 
-    const found = this.newToCreateObject(node, file);
+    let found = this.newToCreateObject(node, file);
+    if (found) {
+      return found;
+    }
+    found = this.outlineData(node, file);
     if (found) {
       return found;
     }
@@ -92,6 +101,11 @@ a higher level language version. If successful, various rules are applied to dow
 
     const code = rows.join("\n");
     return code;
+  }
+
+  private outlineData(_node: StatementNode, _file: ABAPFile): Issue | undefined {
+// todo
+    return undefined;
   }
 
   private newToCreateObject(node: StatementNode, file: ABAPFile): Issue | undefined {

@@ -2,7 +2,6 @@ import {Issue} from "../issue";
 import {ABAPRule} from "./_abap_rule";
 import {ABAPFile} from "../files";
 import {BasicRuleConfig} from "./_basic_rule_config";
-import {IRegistry} from "../_iregistry";
 
 export class CheckAbstractConf extends BasicRuleConfig {
 }
@@ -43,7 +42,7 @@ export class CheckAbstract extends ABAPRule {
     this.conf = conf;
   }
 
-  public runParsed(file: ABAPFile, _reg: IRegistry) {
+  public runParsed(file: ABAPFile) {
     const issues: Issue[] = [];
 
     for (const classDef of file.getInfo().listClassDefinitions()) {

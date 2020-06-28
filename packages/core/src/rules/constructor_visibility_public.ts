@@ -3,8 +3,8 @@ import {BasicRuleConfig} from "./_basic_rule_config";
 import {IRule, RuleTag} from "./_irule";
 import {IObject} from "../objects/_iobject";
 import {Class} from "../objects";
-import {IRegistry} from "../_iregistry";
 import {Visibility} from "../abap/4_file_information/visibility";
+import {IRegistry} from "../_iregistry";
 
 export class ConstructorVisibilityPublicConf extends BasicRuleConfig {
 }
@@ -32,11 +32,15 @@ https://help.sap.com/doc/abapdocu_751_index_htm/7.51/en-US/abeninstance_construc
     return this.conf;
   }
 
+  public initialize(_reg: IRegistry) {
+    return this;
+  }
+
   public setConfig(conf: ConstructorVisibilityPublicConf) {
     this.conf = conf;
   }
 
-  public run(obj: IObject, _reg: IRegistry): Issue[] {
+  public run(obj: IObject): Issue[] {
     const issues: Issue[] = [];
 
     if (!(obj instanceof Class)) {

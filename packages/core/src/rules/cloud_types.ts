@@ -11,7 +11,7 @@ export class CloudTypesConf extends BasicRuleConfig {
 }
 
 export class CloudTypes implements IRule {
-
+  private reg: IRegistry;
   private conf = new CloudTypesConf();
 
   public getMetadata() {
@@ -34,8 +34,13 @@ export class CloudTypes implements IRule {
     this.conf = conf;
   }
 
-  public run(obj: IObject, reg: IRegistry): Issue[] {
-    if (reg.getConfig().getVersion() !== Version.Cloud
+  public initialize(reg: IRegistry) {
+    this.reg = reg;
+    return this;
+  }
+
+  public run(obj: IObject): Issue[] {
+    if (this.reg.getConfig().getVersion() !== Version.Cloud
         || obj instanceof Objects.Class
         || obj instanceof Objects.Interface
         || obj instanceof Objects.MessageClass

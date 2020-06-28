@@ -8,6 +8,7 @@ import {xmlToArray} from "../xml_utils";
 import {IFile} from "../files/_ifile";
 import {Position} from "../position";
 import {InfoClassDefinition} from "../abap/4_file_information/_abap_file_information";
+import {IRegistry} from "../_iregistry";
 
 export class RemoveDescriptionsConf extends BasicRuleConfig {
   /** Ignore global exception classes */
@@ -37,6 +38,10 @@ export class RemoveDescriptions implements IRule {
 
   public setConfig(conf: RemoveDescriptionsConf) {
     this.conf = conf;
+  }
+
+  public initialize(_reg: IRegistry) {
+    return this;
   }
 
   public run(obj: IObject): Issue[] {
