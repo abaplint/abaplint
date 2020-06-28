@@ -29,6 +29,8 @@ a higher level language version. If successful, various rules are applied to dow
 Current rules:
 * NEW transformed to CREATE OBJECT
 
+The target version is the overall target version set in the main configuration file as syntax.version
+
 Only one transformation is applied to a statement at a time, so multiple steps might be required to do the full downport.`,
       tags: [RuleTag.Experimental, RuleTag.Downport, RuleTag.Quickfix],
     };
