@@ -247,7 +247,11 @@ export class BasicTypes {
       return new Types.TableType(structure);
     } else if (text.startsWith("LIKE ")) {
       const sub = node.findFirstExpression(Expressions.FieldChain);
-      return this.resolveLikeName(sub);
+      found = this.resolveLikeName(sub);
+
+      if (found && node.findDirectTokenByText("OCCURS")) {
+        found = new Types.TableType(found);
+      }
     } else if (text.startsWith("TYPE LINE OF ")) {
       const sub = node.findFirstExpression(Expressions.TypeName);
       found = this.resolveTypeName(sub);
