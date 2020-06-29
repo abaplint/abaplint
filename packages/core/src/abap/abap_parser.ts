@@ -8,6 +8,13 @@ import {StructureParser} from "./3_structures/structure_parser";
 import {ILexerResult} from "./1_lexer/lexer_result";
 import {ABAPFileInformation} from "./4_file_information/abap_file_information";
 
+export interface IABAPParserResult {
+  issues: readonly Issue[],
+  output: readonly ABAPFile[],
+  /** runtime in milliseconds */
+  runtime: number,
+}
+
 export class ABAPParser {
   private readonly version: Version;
   private readonly globalMacros: readonly string[];
@@ -18,9 +25,11 @@ export class ABAPParser {
   }
 
   // files is input for a single object
-  public parse(files: readonly IFile[]): {issues: readonly Issue[], output: readonly ABAPFile[]} {
+  public parse(files: readonly IFile[]): IABAPParserResult {
     let issues: Issue[] = [];
     const output: ABAPFile[] = [];
+
+    const start = new Date().getMilliseconds();
 
 // 1: lexing
     const lexerResult: readonly ILexerResult[] = files.map(f => Lexer.run(f));
@@ -28,18 +37,20 @@ export class ABAPParser {
 // 2: statements
     const statementResult = new StatementParser(this.version).run(lexerResult, this.globalMacros);
 
-// 3: statements
+// 3: structures
     for (const f of statementResult) {
       const result = StructureParser.run(f);
 
-// 4: object information
+// 4: file information
       const info = new ABAPFileInformation(result.node, f.file.getFilename());
 
       output.push(new ABAPFile(f.file, f.tokens, f.statements, result.node, info));
       issues = issues.concat(result.issues);
     }
 
-    return {issues, output};
+    const end = new Date().getMilliseconds();
+
+    return {issues, output, runtime: end - start};
   }
 
 }
