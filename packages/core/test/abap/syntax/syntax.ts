@@ -192,12 +192,11 @@ field = zcl_global_class=>method( ).`;
   });
 
   it("program, line_exists", () => {
-// todo, types of below code is not correct
     const abap = "DATA lt_data TYPE i.\n" +
       "IF line_exists( lt_data[ id = '2' ] ).\n" +
       "ENDIF.\n";
     const issues = runProgram(abap);
-    expect(issues.length).to.equals(0);
+    expect(issues.length).to.equals(1);
   });
 
   it("program, different scope", () => {
@@ -1828,7 +1827,7 @@ START-OF-SELECTION.
   ENDCASE.
   `;
     const issues = runProgram(abap);
-    expect(issues.length).to.equals(0);
+    expect(issues.length).to.equals(1); // global class not found
   });
 
   it("attribute with interface prefix", () => {
@@ -1918,6 +1917,23 @@ FORM foo TABLES bar.
 ENDFORM.`;
     const issues = runProgram(abap);
     expect(issues.length).to.equals(0);
+  });
+
+  it("expect error, zsfsdfds=>lv_bar inside string template not defined", () => {
+    const abap = `DATA(lv_url) = |{ zsfsdfds=>lv_bar }|.`;
+    const issues = runProgram(abap);
+    expect(issues.length).to.equals(1);
+    expect(issues[0].getMessage()).to.include("zsfsdfds");
+  });
+
+  it("expect error, zcl=>method not defined", () => {
+    const abap = `
+IF 2 = zcl=>method( ).
+  WRITE 2.
+ENDIF.`;
+    const issues = runProgram(abap);
+    expect(issues.length).to.equals(1);
+    expect(issues[0].getMessage()).to.include("zcl");
   });
 
 // todo, static method cannot access instance attributes

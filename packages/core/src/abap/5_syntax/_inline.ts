@@ -31,6 +31,7 @@ export class Inline {
         && !(node.get() instanceof Statements.Split)
         && !(node.get() instanceof Statements.Find)
         && !(node.get() instanceof Statements.GetTime)
+        && !(node.get() instanceof Statements.WhenType)
         && !(node.get() instanceof Statements.GetParameter)
         && !(node.get() instanceof Statements.Message)
         && !(node.get() instanceof Statements.ReadTable)

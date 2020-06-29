@@ -5,10 +5,11 @@ import * as Expressions from "../../2_statements/expressions";
 import {MethodCallChain} from "./method_call_chain";
 import {UnknownType} from "../../types/basic/unknown_type";
 import {FieldChain} from "./field_chain";
-import {StringType, VoidType} from "../../types/basic";
+import {VoidType} from "../../types/basic";
 import {Constant} from "./constant";
 import {BasicTypes} from "../basic_types";
 import {ComponentChain} from "./component_chain";
+import {StringTemplate} from "./string_template";
 
 export class Source {
   public runSyntax(
@@ -46,7 +47,7 @@ export class Source {
       } else if (first instanceof ExpressionNode && first.get() instanceof Expressions.FieldChain) {
         context = new FieldChain().runSyntax(first, scope, filename);
       } else if (first instanceof ExpressionNode && first.get() instanceof Expressions.StringTemplate) {
-        context = new StringType();
+        context = new StringTemplate().runSyntax(first, scope, filename);
       } else if (first instanceof ExpressionNode && first.get() instanceof Expressions.Constant) {
         context = new Constant().runSyntax(first);
       } else if (first instanceof ExpressionNode && first.get() instanceof Expressions.ArrowOrDash) {
