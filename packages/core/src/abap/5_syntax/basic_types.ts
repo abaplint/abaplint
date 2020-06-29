@@ -20,6 +20,8 @@ export class BasicTypes {
       return undefined;
     }
 
+
+
     let chain = node.findFirstExpression(Expressions.FieldChain);
     if (chain === undefined) {
       chain = node.findFirstExpression(Expressions.TypeName);
@@ -63,6 +65,12 @@ export class BasicTypes {
       return attr.getType();
     } else {
       type = this.scope.findVariable(name)?.getType();
+      if (type === undefined) {
+        type = this.scope.getDDIC().lookup(name);
+        if (type instanceof Types.VoidType) {
+          type = undefined;
+        }
+      }
 
       // todo, this only looks up one level
       if (children[1] && children[2] && children[1].getFirstToken().getStr() === "-") {

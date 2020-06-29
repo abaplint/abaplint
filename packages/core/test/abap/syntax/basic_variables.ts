@@ -1286,7 +1286,7 @@ ENDCASE.`;
     expect(identifier?.getType()).to.be.instanceof(Basic.TableType);
   });
 
-  it.skip("LIKE DDIC structure", () => {
+  it("LIKE DDIC structure", () => {
     const xml = `
     <?xml version="1.0" encoding="utf-8"?>
     <abapGit version="v1.0.0" serializer="LCL_OBJECT_TABL" serializer_version="v1.0.0">
