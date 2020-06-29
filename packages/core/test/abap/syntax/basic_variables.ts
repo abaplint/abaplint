@@ -1261,4 +1261,19 @@ START-OF-SELECTION.
     expect(identifier?.getType()).to.be.instanceof(Basic.TableType);
   });
 
+  it("WHEN TYPE", () => {
+    const abap = `
+CLASS lcl_bar DEFINITION.
+ENDCLASS.
+CLASS lcl_bar IMPLEMENTATION.
+ENDCLASS.
+DATA lo_bar TYPE REF TO lcl_bar.
+CASE TYPE OF lo_bar.
+  WHEN TYPE lcl_bar INTO DATA(lo_foo).
+ENDCASE.`;
+    const identifier = resolveVariable(abap, "lo_foo");
+    expect(identifier).to.not.equal(undefined);
+    expect(identifier?.getType()).to.be.instanceof(Basic.ObjectReferenceType);
+  });
+
 });
