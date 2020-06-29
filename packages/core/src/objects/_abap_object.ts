@@ -4,6 +4,7 @@ import {xmlToArray} from "../xml_utils";
 import {ABAPParser} from "../abap/abap_parser";
 import {Version} from "../version";
 import {ISyntaxResult} from "../abap/5_syntax/_spaghetti_scope";
+import {IParseResult} from "./_iobject";
 
 export interface ITextElement {
   key: string;
@@ -25,19 +26,19 @@ export abstract class ABAPObject extends AbstractObject {
     return !!x && x instanceof ABAPObject;
   }
 
-  public parse(version: Version, globalMacros: readonly string[] | undefined): boolean {
+  public parse(version: Version, globalMacros: readonly string[] | undefined): IParseResult {
     if (this.isDirty() === false) {
-      return false;
+      return {updated: false, runtime: 0};
     }
 
     const abapFiles = this.files.filter(f => f.getFilename().endsWith(".abap"));
-    const results = new ABAPParser(version, globalMacros).parse(abapFiles);
+    const result = new ABAPParser(version, globalMacros).parse(abapFiles);
 
-    this.parsed = results.output;
-    this.old = results.issues;
+    this.parsed = result.output;
+    this.old = result.issues;
     this.dirty = false;
 
-    return true;
+    return {updated: true, runtime: result.runtime};
   }
 
   public setDirty(): void {

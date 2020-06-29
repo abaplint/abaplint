@@ -5,8 +5,8 @@ import {expect} from "chai";
 import {IRegistry} from "../../src/_iregistry";
 import {Issue} from "../../src/issue";
 
-function run(reg: IRegistry): Issue[] {
-  reg.parse();
+async function run(reg: IRegistry): Promise<Issue[]> {
+  await reg.parseAsync();
   const rule = new XMLConsistency();
   return rule.initialize(reg).run(reg.getObjects()[0]);
 }
@@ -28,11 +28,11 @@ const xml = `<?xml version="1.0" encoding="utf-8"?>
  </asx:abap>
 </abapGit>`;
 
-describe("rule, xml_consistency, error", () => {
+describe("rule, xml_consistency, error", async () => {
 
-  it("test", () => {
+  it("test", async () => {
     const reg = new Registry().addFile(new MemoryFile("zcl_lars.clas.xml", xml));
-    const issues = run(reg);
+    const issues = await run(reg);
 
     expect(issues.length).to.equals(1);
   });
@@ -62,9 +62,9 @@ describe("rule, xml_consistency, okay", () => {
     CLASS ZCL_LARS IMPLEMENTATION.
     ENDCLASS.`;
 
-  it("test", () => {
+  it("test", async () => {
     const reg = new Registry().addFile(new MemoryFile("zcl_lars.clas.xml", xml)).addFile(new MemoryFile("zcl_lars.clas.abap", abap));
-    const issues = run(reg);
+    const issues = await run(reg);
     expect(issues.length).to.equals(0);
   });
 });
@@ -93,9 +93,9 @@ describe("rule, xml_consistency, mismatch xml and abap", () => {
     CLASS cl_lars IMPLEMENTATION.
     ENDCLASS.`;
 
-  it("test", () => {
+  it("test", async () => {
     const reg = new Registry().addFile(new MemoryFile("zcl_lars.clas.xml", xml)).addFile(new MemoryFile("zcl_lars.clas.abap", abap));
-    const issues = run(reg);
+    const issues = await run(reg);
     expect(issues.length).to.equals(1);
   });
 });
@@ -121,23 +121,23 @@ describe("rule, xml_consistency, INTF mismatch xml and abap", () => {
 INTERFACE if_abapgit_xml_input PUBLIC.
 ENDINTERFACE.`;
 
-  it("test", () => {
+  it("test", async () => {
     const reg = new Registry().addFile(new MemoryFile("zif_abapgit_xml_input.intf.xml", xml)).addFile(new MemoryFile("zif_abapgit_xml_input.intf.abap", abap));
-    const issues = run(reg);
+    const issues = await run(reg);
     expect(issues.length).to.equals(1);
   });
 });
 
 describe("xml consistency", () => {
-  it("parser error", () => {
+  it("parser error", async () => {
     const reg = new Registry().addFile(new MemoryFile("zcl_lars.msag.xml", `parser error`));
-    const issues = run(reg);
+    const issues = await run(reg);
     expect(issues.length).to.equals(1);
   });
 
-  it("parser error, xml ok, abap not", () => {
+  it("parser error, xml ok, abap not", async () => {
     const reg = new Registry().addFile(new MemoryFile("zcl_klaus.clas.xml", xml)).addFile(new MemoryFile("zcl_klaus.clas.abap", "parser error"));
-    const issues = run(reg);
+    const issues = await run(reg);
     expect(issues.length).to.equals(0);
   });
 });
