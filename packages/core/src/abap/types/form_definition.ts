@@ -53,15 +53,23 @@ export class FormDefinition extends Identifier implements IFormDefinition {
 
 ///////////////
 
-  private findTables(scope: CurrentScope, filename: string) {
-    const ret = this.findType(Expressions.FormTables, scope);
+  private findTables(scope: CurrentScope, filename: string): TypedIdentifier[] {
+    const ret: TypedIdentifier[] = [];
 
-    const found = this.node.findFirstExpression(Expressions.FormTables);
-    if (found) {
-      for (const s of found.findDirectExpressions(Expressions.SimpleName)) {
-        const type = new TableType(new UnknownType("todo, FORM tables parameter typing"));
-        ret.push(new TypedIdentifier(s.getFirstToken(), filename, type));
-      }
+    const tables = this.node.findFirstExpression(Expressions.FormTables);
+    if (tables === undefined) {
+      return [];
+    }
+
+    for (const param of tables.findAllExpressions(Expressions.FormParam)) {
+      const p = new FormParam().runSyntax(param, scope, this.filename);
+      const type = new TableType(p.getType());
+      ret.push(new TypedIdentifier(p.getToken(), filename, type));
+    }
+
+    for (const s of tables?.findDirectExpressions(Expressions.SimpleName)) {
+      const type = new TableType(new UnknownType("todo, FORM tables parameter typing"));
+      ret.push(new TypedIdentifier(s.getFirstToken(), filename, type));
     }
 
     return ret;
