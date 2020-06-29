@@ -44,6 +44,8 @@ import {Message} from "./statements/message";
 import {GetTime} from "./statements/get_time";
 import {GetParameter} from "./statements/get_parameter";
 import {WhenType} from "./statements/when_type";
+import {If} from "./statements/if";
+import {ElseIf} from "./statements/else_if";
 
 import {Data as DataStructure} from "./structures/data";
 import {TypeEnum} from "./structures/type_enum";
@@ -285,6 +287,10 @@ export class SyntaxLogic {
       new GetParameter().runSyntax(node, this.scope, filename);
     } else if (node.get() instanceof Statements.WhenType) {
       new WhenType().runSyntax(node, this.scope, filename);
+    } else if (node.get() instanceof Statements.If) {
+      new If().runSyntax(node, this.scope, filename);
+    } else if (node.get() instanceof Statements.ElseIf) {
+      new ElseIf().runSyntax(node, this.scope, filename);
 
     } else if (s instanceof Statements.Form) {
       this.helpers.proc.findFormScope(node, filename);
