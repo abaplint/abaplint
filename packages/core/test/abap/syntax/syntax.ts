@@ -1911,6 +1911,15 @@ ENDFORM.`;
     expect(issues.length).to.equals(0);
   });
 
+  it("FORM with TABLES without structure", () => {
+    const abap = `
+FORM foo TABLES bar.
+  READ TABLE bar INDEX 1 TRANSPORTING NO FIELDS.
+ENDFORM.`;
+    const issues = runProgram(abap);
+    expect(issues.length).to.equals(0);
+  });
+
 // todo, static method cannot access instance attributes
 // todo, can a private method access protected attributes?
 // todo, readonly fields(constants + enums + attributes flagged read-only)

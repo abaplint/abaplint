@@ -44,6 +44,7 @@ export class KeepSingleParameterCallsOnOneLine extends ABAPRule {
       // todo, add this as configurable
       if (this.calcStatementLength(s) > this.getConfig().length
           || this.containsNewLineValue(s)
+          || this.containsNewLineTableExpression(s)
           || this.containsNewlineTemplate(s)) {
         continue;
       }
@@ -56,6 +57,16 @@ export class KeepSingleParameterCallsOnOneLine extends ABAPRule {
   }
 
 ///////////////////////////////////////
+
+  private containsNewLineTableExpression(s: StatementNode): boolean {
+    for (const st of s.findAllExpressions(Expressions.TableExpression)) {
+      const tokens = st.getAllTokens();
+      if (tokens[0].getRow() !== tokens[tokens.length - 1].getRow()) {
+        return true;
+      }
+    }
+    return false;
+  }
 
   private containsNewLineValue(s: StatementNode): boolean {
     for (const st of s.findAllExpressions(Expressions.Source)) {

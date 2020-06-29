@@ -31,6 +31,9 @@ const tests = [
   {abap: `lo_bar->call( VALUE #(
     foo = lv_foo
     bar = lv_bar ) ).`, cnt: 0},
+  {abap: `IF NOT line_exists( structure-sub[ foo = bar
+      boo = moo ] ).
+      ENDIF.`, cnt: 0},
 ];
 
 testRule(tests, KeepSingleParameterCallsOnOneLine);
