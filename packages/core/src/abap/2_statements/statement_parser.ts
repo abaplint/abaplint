@@ -320,10 +320,11 @@ export class StatementParser {
 
 // takes care of splitting tokens into statements, also handles chained statements
 // statements are split by "," or "."
+// additional colons/chaining after the first colon are ignored
   private process(wa: WorkArea) {
     let add: Token[] = [];
     let pre: Token[] = [];
-    let colon: Token | undefined;
+    let colon: Token | undefined = undefined;
 
     for (const token of wa.tokens) {
       if (token instanceof Tokens.Comment) {
@@ -340,11 +341,13 @@ export class StatementParser {
       } else if (token.getStr() === "," && pre.length > 0) {
         wa.addUnknown(pre.concat(add), colon);
         add = [];
-      } else if (token.getStr() === ":") {
+      } else if (token.getStr() === ":" && colon === undefined) {
         colon = token;
         add.pop(); // do not add colon token to statement
         pre = add.slice(0);
         add = [];
+      } else if (token.getStr() === ":") {
+        add.pop(); // do not add colon token to statement
       }
     }
 
