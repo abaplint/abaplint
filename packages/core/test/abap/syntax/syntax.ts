@@ -1936,6 +1936,21 @@ ENDIF.`;
     expect(issues[0].getMessage()).to.include("zcl");
   });
 
+  it("WRITE sy-tfill", () => {
+    const abap = `WRITE sy-tfill.`;
+    const issues = runProgram(abap);
+    expect(issues.length).to.equals(0);
+  });
+
+  it.skip("sy-sdfsdsdf not found", () => {
+    const abap = `
+    DATA tab TYPE STANDARD TABLE OF i.
+    DESCRIBE TABLE tab LINES sy-sdfsdsdf.`;
+    const issues = runProgram(abap);
+    expect(issues.length).to.equals(1);
+    expect(issues[0].getMessage()).to.include("sdfsdsdf");
+  });
+
 // todo, static method cannot access instance attributes
 // todo, can a private method access protected attributes?
 // todo, readonly fields(constants + enums + attributes flagged read-only)
