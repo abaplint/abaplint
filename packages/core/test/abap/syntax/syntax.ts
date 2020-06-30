@@ -1951,6 +1951,30 @@ ENDIF.`;
     expect(issues[0].getMessage()).to.include("sdfsdsdf");
   });
 
+  it.skip("APPEND, class not found", () => {
+    const abap = `
+TYPES: BEGIN OF ty_tab,
+         moo TYPE i,
+       END OF ty_tab.
+DATA tab TYPE STANDARD TABLE OF ty_tab.
+APPEND VALUE #( moo = zcl_bsdfsd=>bar ) TO tab.`;
+    const issues = runProgram(abap);
+    expect(issues.length).to.equals(1);
+    expect(issues[0].getMessage()).to.include("zcl_bsdfsd");
+  });
+
+  it.skip("INSERT, class not found", () => {
+    const abap = `
+TYPES: BEGIN OF ty_tab,
+         moo TYPE i,
+       END OF ty_tab.
+DATA tab TYPE STANDARD TABLE OF ty_tab.
+INSERT VALUE #( moo = zcl_bsdfsd=>bar ) INTO TABLE tab.`;
+    const issues = runProgram(abap);
+    expect(issues.length).to.equals(1);
+    expect(issues[0].getMessage()).to.include("zcl_bsdfsd");
+  });
+
 // todo, static method cannot access instance attributes
 // todo, can a private method access protected attributes?
 // todo, readonly fields(constants + enums + attributes flagged read-only)
