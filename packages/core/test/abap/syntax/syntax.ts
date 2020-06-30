@@ -1939,7 +1939,7 @@ ENDIF.`;
     expect(issues[0].getMessage()).to.include("sdfsdsdf");
   });
 
-  it.skip("APPEND, class not found", () => {
+  it("APPEND, expect class not found", () => {
     const abap = `
 TYPES: BEGIN OF ty_tab,
          moo TYPE i,
@@ -1951,7 +1951,7 @@ APPEND VALUE #( moo = zcl_bsdfsd=>bar ) TO tab.`;
     expect(issues[0].getMessage()).to.include("zcl_bsdfsd");
   });
 
-  it("INSERT, class not found", () => {
+  it("INSERT, expect class not found", () => {
     const abap = `
 TYPES: BEGIN OF ty_tab,
          moo TYPE i,
