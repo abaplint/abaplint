@@ -994,18 +994,6 @@ DATA(output) = REDUCE string( INIT result = ||
     expect(issues.length).to.equals(0);
   });
 
-  it("FOR, loop IN", () => {
-    // todo, does this syntax check?
-    const abap = "DATA moo TYPE c.\n" +
-      "DATA it_packages TYPE c.\n" +
-      "moo = VALUE #(\n" +
-      "  FOR lo_package IN it_packages\n" +
-      "  FOR lo_element IN get_all_elements_from_package( lo_package )\n" +
-      "  ( package = lo_package element = lo_element ) ).";
-    const issues = runProgram(abap);
-    expect(issues.length).to.equals(0);
-  });
-
   it("SELECTION-SCREEN title, b1_tit can be set", () => {
     const abap =
       "SELECTION-SCREEN BEGIN OF BLOCK b1 WITH FRAME TITLE b1_tit.\n" +
@@ -1963,7 +1951,7 @@ APPEND VALUE #( moo = zcl_bsdfsd=>bar ) TO tab.`;
     expect(issues[0].getMessage()).to.include("zcl_bsdfsd");
   });
 
-  it.skip("INSERT, class not found", () => {
+  it("INSERT, class not found", () => {
     const abap = `
 TYPES: BEGIN OF ty_tab,
          moo TYPE i,
