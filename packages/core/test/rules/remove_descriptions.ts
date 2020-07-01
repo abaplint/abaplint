@@ -37,10 +37,10 @@ ENDCLASS.
 CLASS ZCL_ABAPGIT_PERSIST_SETTINGS IMPLEMENTATION.
 ENDCLASS.`;
 
-  it("remove_descriptions test", () => {
+  it("remove_descriptions test", async () => {
     const reg = new Registry().addFile(new MemoryFile("zcl_abapgit_persist_settings.clas.xml", xml));
     reg.addFile(new MemoryFile("zcl_abapgit_persist_settings.clas.abap", abap));
-    reg.parse();
+    await reg.parseAsync();
     const rule = new RemoveDescriptions();
     const issues = rule.run(reg.getObjects()[0]);
 
@@ -74,10 +74,10 @@ ENDCLASS.
 CLASS ZCL_ABAPGIT_PERSIST_SETTINGS IMPLEMENTATION.
 ENDCLASS.`;
 
-  it("remove_descriptions test", () => {
+  it("remove_descriptions test", async () => {
     const reg = new Registry().addFile(new MemoryFile("zcl_abapgit_persist_settings.clas.xml", xml));
     reg.addFile(new MemoryFile("zcl_abapgit_persist_settings.clas.abap", abap));
-    reg.parse();
+    await reg.parseAsync();
     const rule = new RemoveDescriptions();
     const issues = rule.run(reg.getObjects()[0]);
 
@@ -123,10 +123,10 @@ describe("rule, remove_descriptions, 2 errors", () => {
     CLASS ZCL_ABAPGIT_PERSIST_SETTINGS IMPLEMENTATION.
     ENDCLASS.`;
 
-  it("remove_descriptions test", () => {
+  it("remove_descriptions test", async () => {
     const reg = new Registry().addFile(new MemoryFile("zcl_abapgit_persist_settings.clas.xml", xml));
     reg.addFile(new MemoryFile("zcl_abapgit_persist_settings.clas.abap", abap));
-    reg.parse();
+    await reg.parseAsync();
     const rule = new RemoveDescriptions();
     const issues = rule.run(reg.getObjects()[0]);
 
