@@ -34,6 +34,8 @@ export class Inline {
         && !(node.get() instanceof Statements.WhenType)
         && !(node.get() instanceof Statements.GetParameter)
         && !(node.get() instanceof Statements.Message)
+        && !(node.get() instanceof Statements.Append)
+        && !(node.get() instanceof Statements.InsertInternal)
         && !(node.get() instanceof Statements.ReadTable)
         && !(node.get() instanceof Statements.Call)) {
       for (const inline of node.findAllExpressions(Expressions.InlineData)) {

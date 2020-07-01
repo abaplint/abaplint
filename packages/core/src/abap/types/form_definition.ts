@@ -8,7 +8,7 @@ import {TypedIdentifier} from "./_typed_identifier";
 import {CurrentScope} from "../5_syntax/_current_scope";
 import {FormParam} from "../5_syntax/expressions/form_param";
 import {IFormDefinition} from "./_form_definition";
-import {UnknownType, TableType} from "./basic";
+import {TableType} from "./basic";
 
 export class FormDefinition extends Identifier implements IFormDefinition {
   private readonly node: StatementNode;
@@ -65,11 +65,6 @@ export class FormDefinition extends Identifier implements IFormDefinition {
       const p = new FormParam().runSyntax(param, scope, this.filename);
       const type = new TableType(p.getType());
       ret.push(new TypedIdentifier(p.getToken(), filename, type));
-    }
-
-    for (const s of tables?.findDirectExpressions(Expressions.SimpleName)) {
-      const type = new TableType(new UnknownType("todo, FORM tables parameter typing"));
-      ret.push(new TypedIdentifier(s.getFirstToken(), filename, type));
     }
 
     return ret;

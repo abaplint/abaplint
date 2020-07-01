@@ -9,8 +9,9 @@ function testFix(input: string, expected: string) {
   testRuleFixSingle(input, expected, new UnusedVariables());
 }
 
-function runSingle(abap: string): Issue[] {
-  const reg = new Registry().addFile(new MemoryFile("zfoo.prog.abap", abap)).parse();
+async function runSingle(abap: string): Promise<Issue[]> {
+  const reg = new Registry().addFile(new MemoryFile("zfoo.prog.abap", abap));
+  await reg.parseAsync();
   return new UnusedVariables().initialize(reg).run(reg.getObjects()[0]);
 }
 
@@ -18,27 +19,32 @@ describe("Rule: unused_variables, single file", () => {
 
   it("test", async () => {
     const abap = "parser error";
-    expect(runSingle(abap).length).to.equal(0);
+    const issues = await runSingle(abap);
+    expect(issues.length).to.equal(0);
   });
 
   it("test", async () => {
     const abap = "parser error.";
-    expect(runSingle(abap).length).to.equal(0);
+    const issues = await runSingle(abap);
+    expect(issues.length).to.equal(0);
   });
 
   it("test", async () => {
     const abap = "WRITE bar.";
-    expect(runSingle(abap).length).to.equal(0);
+    const issues = await runSingle(abap);
+    expect(issues.length).to.equal(0);
   });
 
   it("test", async () => {
     const abap = "DATA foo.";
-    expect(runSingle(abap).length).to.equal(1);
+    const issues = await runSingle(abap);
+    expect(issues.length).to.equal(1);
   });
 
   it("test", async () => {
     const abap = "DATA foo.\nWRITE foo.";
-    expect(runSingle(abap).length).to.equal(0);
+    const issues = await runSingle(abap);
+    expect(issues.length).to.equal(0);
   });
 
   it("class with attribute", async () => {
@@ -54,7 +60,8 @@ CLASS lcl_foo IMPLEMENTATION.
     mv_bits = '123'.
   ENDMETHOD.
 ENDCLASS.`;
-    expect(runSingle(abap).length).to.equal(0);
+    const issues = await runSingle(abap);
+    expect(issues.length).to.equal(0);
   });
 
   it("class with method", async () => {
@@ -73,7 +80,8 @@ CLASS lcl_abapgit_zlib_stream IMPLEMENTATION.
     WRITE iv_length TO rv_int.
   ENDMETHOD.
 ENDCLASS.`;
-    expect(runSingle(abap).length).to.equal(0);
+    const issues = await runSingle(abap);
+    expect(issues.length).to.equal(0);
   });
 
   it("test, quickfix simple", async () => {

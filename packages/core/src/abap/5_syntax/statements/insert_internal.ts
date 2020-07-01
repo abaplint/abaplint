@@ -21,5 +21,9 @@ export class InsertInternal {
       }
     }
 
+    for (const s of node.findDirectExpressions(Expressions.Source)) {
+      new Source().runSyntax(s, scope, filename);
+    }
+
   }
 }

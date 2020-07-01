@@ -10,6 +10,7 @@ import {Constant} from "./constant";
 import {BasicTypes} from "../basic_types";
 import {ComponentChain} from "./component_chain";
 import {StringTemplate} from "./string_template";
+import {ValueBody} from "./value_body";
 
 export class Source {
   public runSyntax(
@@ -30,7 +31,9 @@ export class Source {
         case "EXACT":
         case "REDUCE":
         case "SWITCH":
+          return this.value(node, scope, filename, targetType);
         case "VALUE":
+          new ValueBody().runSyntax(node.findDirectExpression(Expressions.ValueBody), scope, filename);
           return this.value(node, scope, filename, targetType);
         default:
           return new UnknownType("todo, Source type " + tok);
@@ -91,8 +94,8 @@ export class Source {
     } else if (found === undefined) {
       throw new Error("Type \"" + typeName + "\" not found in scope, VALUE");
     }
-    return found;
 
+    return found;
   }
 
 }

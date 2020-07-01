@@ -61,11 +61,11 @@ CLASS ZCL_AGS_SICF IMPLEMENTATION.
 ENDCLASS.`;
 
 describe("rule, sicf_consistency, handler ok", () => {
-  it("test", () => {
+  it("test", async () => {
     const reg = new Registry();
     reg.addFile(new MemoryFile("zabapgitserver 9def6c78d0beedf8d5b04ba6c.sicf.xml", xml));
     reg.addFile(new MemoryFile("zcl_ags_sicf.clas.abap", abap));
-    reg.parse();
+    await reg.parseAsync();
 
     const rule = new SICFConsistency();
     const issues = rule.initialize(reg).run(reg.getObjects()[0]);
