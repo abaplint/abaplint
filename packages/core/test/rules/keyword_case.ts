@@ -31,6 +31,12 @@ const tests = [
   {abap: "IF foo = bar and moo = boo.", cnt: 1},
   {abap: "WRITE lv_date TO lv_str MM/DD/YYYY.", cnt: 0},
   {abap: "DATA mt_bar TYPE SORTED TABLE OF gty_sdf WITH UNIQUE KEY key WITH UNIQUE HASHED KEY unique COMPONENTS instance.", cnt: 0},
+
+  {abap: `FORM check USING foo bar CHANGING moo return STRUCTURE bapiret2.
+  ENDFORM.`, cnt: 0},
+
+  {abap: `FORM default USING var STRUCTURE disvariant flag CHANGING return.
+  ENDFORM.`, cnt: 0},
 ];
 
 testRule(tests, KeywordCase);

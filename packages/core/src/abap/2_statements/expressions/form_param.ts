@@ -1,12 +1,15 @@
-import {seq, altPrio, optPrio, Expression} from "../combi";
-import {PassByValue, FormParamType, Field} from ".";
+import {seq, altPrio, optPrio, Expression, str} from "../combi";
+import {PassByValue, FormParamType, Field, SimpleName, NamespaceSimpleName} from ".";
 import {IStatementRunnable} from "../statement_runnable";
 
 export class FormParam extends Expression {
   public getRunnable(): IStatementRunnable {
-    const field = seq(altPrio(new PassByValue(), new Field()),
-                      optPrio(new FormParamType()));
+    const stru = seq(new SimpleName(), str("STRUCTURE"), new NamespaceSimpleName());
+    const val = seq(new PassByValue(), optPrio(new FormParamType()));
+    const field = seq(new Field(), optPrio(new FormParamType()));
 
-    return field;
+    const ret = altPrio(stru, val, field);
+
+    return ret;
   }
 }
