@@ -48,7 +48,7 @@ export class CheckTransformationExists extends ABAPRule {
           continue;
         }
         const tok = name.getFirstToken();
-        if (tok.getStr().toLowerCase() == "id") {
+        if (tok.getStr().toLowerCase() === "id") {
           continue;
         }
         if (this.reg.getObject("XSLT", tok.getStr()) === undefined) {
