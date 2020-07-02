@@ -51,7 +51,12 @@ Doesnt currently work for public attributes and class prefixed attribute usage`,
       return [];
     }
 
-    return this.traverse(new SyntaxLogic(this.reg, obj).run().spaghetti.getTop(), obj);
+    const result = new SyntaxLogic(this.reg, obj).run();
+    if (result.issues.length > 0) {
+      return [];
+    }
+
+    return this.traverse(result.spaghetti.getTop(), obj);
   }
 
   private traverse(node: ISpaghettiScopeNode, obj: ABAPObject): Issue[] {
