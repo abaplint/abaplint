@@ -4,28 +4,34 @@ import {CurrentScope} from "../_current_scope";
 import {Source} from "../expressions/source";
 import {Target} from "../expressions/target";
 import {TableType} from "../../types/basic";
+import {AbstractType} from "../../types/basic/_abstract_type";
+import {FSTarget} from "../expressions/fstarget";
 
 export class Append {
   public runSyntax(node: StatementNode, scope: CurrentScope, filename: string): void {
 
+    let targetType: AbstractType | undefined = undefined;
+
     const target = node.findDirectExpression(Expressions.Target);
-    if (target === undefined) {
-      throw new Error("Append, expected target");
-    }
-    const targetType = new Target().runSyntax(target, scope, filename);
-    if (!(targetType instanceof TableType)) {
-      throw new Error("Append, target not a table type");
+    if (target) {
+      targetType = new Target().runSyntax(target, scope, filename);
+      if (!(targetType instanceof TableType)) {
+        throw new Error("Append, target not a table type");
+      }
+    } else {
+      const fsTarget = node.findExpressionAfterToken("ASSIGNING");
+      if (fsTarget && fsTarget.get() instanceof Expressions.FSTarget) {
+        new FSTarget().runSyntax(fsTarget, scope, filename, undefined);
+      }
     }
 
     let source = node.findDirectExpression(Expressions.Source);
     if (source === undefined) {
       source = node.findDirectExpression(Expressions.SimpleSource);
     }
-    if (source === undefined) {
-      throw new Error("Append, expected soure");
+    if (source) {
+      new Source().runSyntax(source, scope, filename, targetType?.getRowType());
     }
-
-    new Source().runSyntax(source, scope, filename, targetType.getRowType());
 
     const from = node.findExpressionAfterToken("FROM");
     if (from && from.get() instanceof Expressions.Source) {

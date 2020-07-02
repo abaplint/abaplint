@@ -1976,6 +1976,26 @@ INSERT VALUE #( moo = zcl_bsdfsd=>bar ) INTO TABLE tab.`;
     expect(issues.length).to.equals(0);
   });
 
+  it("APPEND INITIAL LINE ASSIGNING", () => {
+    const abap = `
+  DATA lt_bar TYPE STANDARD TABLE OF i.
+  FIELD-SYMBOLS <lv_bar> LIKE LINE OF lt_bar.
+  APPEND INITIAL LINE TO lt_bar ASSIGNING <lv_bar>.`;
+    const issues = runProgram(abap);
+    expect(issues.length).to.equals(0);
+  });
+
+  it.skip("APPEND to field symbol", () => {
+    const abap = `
+TYPES: BEGIN OF ty_bar,
+         tab TYPE STANDARD TABLE OF i WITH EMPTY KEY,
+       END OF ty_bar.
+FIELD-SYMBOLS <foo> TYPE ty_bar.
+APPEND 2 TO <foo>-tab.`;
+    const issues = runProgram(abap);
+    expect(issues.length).to.equals(0);
+  });
+
 // todo, static method cannot access instance attributes
 // todo, can a private method access protected attributes?
 // todo, readonly fields(constants + enums + attributes flagged read-only)

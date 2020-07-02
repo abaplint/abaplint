@@ -1,7 +1,7 @@
+import * as Expressions from "../../2_statements/expressions";
 import {ExpressionNode} from "../../nodes";
 import {CurrentScope} from "../_current_scope";
 import {AbstractType} from "../../types/basic/_abstract_type";
-import * as Expressions from "../../2_statements/expressions";
 import {UnknownType} from "../../types/basic/unknown_type";
 
 export class Target {

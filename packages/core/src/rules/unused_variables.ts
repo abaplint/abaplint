@@ -51,6 +51,7 @@ Doesnt currently work for public attributes and class prefixed attribute usage`,
       return [];
     }
 
+    // dont report unused variables when there are syntax errors
     const result = new SyntaxLogic(this.reg, obj).run();
     if (result.issues.length > 0) {
       return [];
