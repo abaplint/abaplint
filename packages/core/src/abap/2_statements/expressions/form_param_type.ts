@@ -15,7 +15,9 @@ export class FormParamType extends Expression {
                     new TypeName(),
                     opt(def));
 
-    const like = seq(str("LIKE"), optPrio(str("LINE OF")), new FieldChain(), opt(new TableBody()));
+    const like = seq(str("LIKE"), optPrio(alt(str("REF TO"),str("LINE OF"))), 
+                                  new FieldChain(), 
+                                  opt(new TableBody()));
 
     return alt(seq(str("TYPE"), altPrio(tabseq, ret)), like);
   }
