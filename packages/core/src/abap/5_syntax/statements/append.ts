@@ -3,7 +3,7 @@ import {StatementNode} from "../../nodes";
 import {CurrentScope} from "../_current_scope";
 import {Source} from "../expressions/source";
 import {Target} from "../expressions/target";
-import {TableType} from "../../types/basic";
+import {TableType, VoidType} from "../../types/basic";
 import {AbstractType} from "../../types/basic/_abstract_type";
 import {FSTarget} from "../expressions/fstarget";
 
@@ -27,12 +27,16 @@ export class Append {
       source = node.findDirectExpression(Expressions.SimpleSource);
     }
     if (source) {
-      if (targetType !== undefined && !(targetType instanceof TableType)) {
+      if (targetType !== undefined
+          && !(targetType instanceof TableType)
+          && !(targetType instanceof VoidType)) {
         throw new Error("Append, target not a table type");
       }
       let rowType: AbstractType | undefined = undefined;
       if (targetType instanceof TableType) {
         rowType = targetType.getRowType();
+      } else if (targetType instanceof VoidType) {
+        rowType = targetType;
       }
       new Source().runSyntax(source, scope, filename, rowType);
     }
