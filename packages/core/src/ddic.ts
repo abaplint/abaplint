@@ -77,49 +77,74 @@ export class DDIC {
   }
 
   public textToType(text: string, length: string | undefined, decimals: string | undefined): AbstractType {
-// todo, support short strings, and length of different integers, NUMC vs CHAR
+// todo, support short strings, and length of different integers, NUMC vs CHAR, min/max length 
     switch (text) {
-      case "DEC":
-      case "CURR":
+      case "DEC":      // 1 <= len <= 31
+      case "DF16_DEC": // 1 <= len <= 31
+      case "DF34_DEC": // 1 <= len <= 31
+      case "CURR":     // 1 <= len <= 31
+      case "QUAN":     // 1 <= len <= 31
         if (length === undefined || decimals === undefined) {
           return new Types.UnknownType(text + " unknown length or decimals");
         }
         return new Types.PackedType(parseInt(length, 10), parseInt(decimals, 10));
+      case "ACCP":
+        return new Types.CharacterType(6); // YYYYMM
+      case "LANG":
+        return new Types.CharacterType(1);
       case "CLNT":
         return new Types.CharacterType(3);
       case "CUKY":
         return new Types.CharacterType(5);
-      case "NUMC":
-      case "CHAR":
-      case "LCHR":
+      case "UNIT":  // 2 <= len <= 3
+        return new Types.CharacterType(3);
+      case "UTCLONG":
+        return new Types.CharacterType(27);
+      case "NUMC": // 1 <= len <= 255
+      case "CHAR": // 1 <= len <= 30000 (1333 for table fields)
+      case "LCHR": // 256 <= len <= 32000
         if (length === undefined) {
           return new Types.UnknownType(text + " unknown length");
         }
         return new Types.CharacterType(parseInt(length, 10));
-      case "RAW":
+      case "RAW":  // 1 <= len <= 32000
+      case "LRAW": // 256 <= len <= 32000
         if (length === undefined) {
           return new Types.UnknownType(text + " unknown length");
         }
         return new Types.HexType(parseInt(length, 10));
       case "TIMS":
-        return new Types.TimeType();
-      case "FLTP":
+        return new Types.TimeType(); //HHMMSS
+      case "DECFLOAT16": // len = 16
+      case "DECFLOAT34": // len = 34
+      case "DF16_RAW":   // len = 16
+      case "DF34_RAW":   // len = 34
+      case "FLTP":       // len = 16
         if (length === undefined) {
           return new Types.UnknownType(text + " unknown length");
         }
         return new Types.FloatingPointType(parseInt(length, 10));
       case "DATS":
-        return new Types.DateType();
+        return new Types.DateType(); //YYYYMMDD
       case "INT1":
       case "INT2":
       case "INT4":
       case "INT8":
         return new Types.IntegerType();
-      case "SSTR":
-      case "STRG":
+      case "SSTR":    // 1 <= len <= 1333
+      case "SSTRING": // 1 <= len <= 1333
+      case "STRG":    // 256 <= len
+      case "STRING":  // 256 <= len
         return new Types.StringType();
-      case "RSTR":
+      case "RSTR":      // 256 <= len
+      case "RAWSTRING": // 256 <= len
+      case "GEOM_EWKB":
         return new Types.XStringType();
+      case "DF16_SCL":
+      case "DF34_SCL":
+      case "PREC":
+      case "VARC":
+        return new Types.UnknownType(text + " is an obsolete data type");
       default:
         return new Types.UnknownType(text + " unknown");
     }
