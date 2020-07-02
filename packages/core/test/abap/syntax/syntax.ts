@@ -1963,6 +1963,19 @@ INSERT VALUE #( moo = zcl_bsdfsd=>bar ) INTO TABLE tab.`;
     expect(issues[0].getMessage()).to.include("zcl_bsdfsd");
   });
 
+  it("APPEND CAST #", () => {
+    const abap = `
+  CLASS lcl_bar DEFINITION.
+  ENDCLASS.
+  CLASS lcl_bar IMPLEMENTATION.
+  ENDCLASS.
+
+  DATA lt_bar TYPE STANDARD TABLE OF REF TO lcl_bar.
+  APPEND CAST #( NEW lcl_bar( ) ) TO lt_bar.`;
+    const issues = runProgram(abap);
+    expect(issues.length).to.equals(0);
+  });
+
 // todo, static method cannot access instance attributes
 // todo, can a private method access protected attributes?
 // todo, readonly fields(constants + enums + attributes flagged read-only)
