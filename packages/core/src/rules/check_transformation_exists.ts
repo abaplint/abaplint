@@ -44,7 +44,7 @@ export class CheckTransformationExists extends ABAPRule {
     for (const s of file.getStatements()) {
       if (s.get() instanceof CallTransformation) {
         const name = s.findFirstExpression(NamespaceSimpleName);
-        if (name === undefined) {
+        if (name === undefined || name === "id") {
           continue;
         }
         const tok = name.getFirstToken();
