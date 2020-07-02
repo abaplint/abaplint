@@ -11,11 +11,11 @@ export class FormParamType extends Expression {
 
     const tabseq = seq(table, optPrio(seq(str("OF"), new TypeName())));
 
-    const ret = seq(optPrio(str("REF TO")),
+    const ret = seq(optPrio(alt(str("REF TO"),str("LINE OF"))),
                     new TypeName(),
                     opt(def));
 
-    const like = seq(str("LIKE"), new FieldChain(), opt(new TableBody()));
+    const like = seq(str("LIKE"), optPrio(str("LINE OF")), new FieldChain(), opt(new TableBody()));
 
     return alt(seq(str("TYPE"), altPrio(tabseq, ret)), like);
   }
