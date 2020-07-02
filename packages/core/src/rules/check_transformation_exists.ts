@@ -44,10 +44,13 @@ export class CheckTransformationExists extends ABAPRule {
     for (const s of file.getStatements()) {
       if (s.get() instanceof CallTransformation) {
         const name = s.findFirstExpression(NamespaceSimpleName);
-        if (name === undefined || name == "id" || name == "ID") {
+        if (name === undefined) {
           continue;
         }
         const tok = name.getFirstToken();
+        if (tok.getStr().toLowerCase() == "id") {
+          continue;
+        }
         if (this.reg.getObject("XSLT", tok.getStr()) === undefined) {
           const issue = Issue.atToken(file, tok, this.getDescription(tok.getStr()), this.getMetadata().key);
           output.push(issue);
