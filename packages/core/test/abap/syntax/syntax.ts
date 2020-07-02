@@ -1250,13 +1250,6 @@ DATA(output) = REDUCE string( INIT result = ||
     expect(issues.length).to.equals(0);
   });
 
-  it.skip("CALL METHOD, static class and method", () => {
-// todo, actually cl_foo is unknown
-    const abap = `CALL METHOD cl_foo=>bar( ).`;
-    const issues = runProgram(abap);
-    expect(issues.length).to.equals(0);
-  });
-
   it("Field offset, lv_i not specified", () => {
     const abap = `DATA rv_s TYPE string.
       rv_s+lv_i(1) = 'a'.`;
@@ -1961,6 +1954,67 @@ INSERT VALUE #( moo = zcl_bsdfsd=>bar ) INTO TABLE tab.`;
     const issues = runProgram(abap);
     expect(issues.length).to.equals(1);
     expect(issues[0].getMessage()).to.include("zcl_bsdfsd");
+  });
+
+  it("APPEND CAST #", () => {
+    const abap = `
+  CLASS lcl_bar DEFINITION.
+  ENDCLASS.
+  CLASS lcl_bar IMPLEMENTATION.
+  ENDCLASS.
+
+  DATA lt_bar TYPE STANDARD TABLE OF REF TO lcl_bar.
+  APPEND CAST #( NEW lcl_bar( ) ) TO lt_bar.`;
+    const issues = runProgram(abap);
+    expect(issues.length).to.equals(0);
+  });
+
+  it("APPEND INITIAL LINE ASSIGNING", () => {
+    const abap = `
+  DATA lt_bar TYPE STANDARD TABLE OF i.
+  FIELD-SYMBOLS <lv_bar> LIKE LINE OF lt_bar.
+  APPEND INITIAL LINE TO lt_bar ASSIGNING <lv_bar>.`;
+    const issues = runProgram(abap);
+    expect(issues.length).to.equals(0);
+  });
+
+  it("APPEND to field symbol", () => {
+    const abap = `
+TYPES: BEGIN OF ty_bar,
+         tab TYPE STANDARD TABLE OF i WITH EMPTY KEY,
+       END OF ty_bar.
+FIELD-SYMBOLS <foo> TYPE ty_bar.
+APPEND 2 TO <foo>-tab.`;
+    const issues = runProgram(abap);
+    expect(issues.length).to.equals(0);
+  });
+
+  it("APPEND void", () => {
+    const abap = `
+DATA lt_void TYPE somethingsomething.
+APPEND 2 TO lt_void.`;
+    const issues = runProgram(abap);
+    expect(issues.length).to.equals(0);
+  });
+
+  it("move to class static", () => {
+    const abap = `
+CLASS lcl_bar DEFINITION.
+  PUBLIC SECTION.
+    CLASS-DATA data TYPE i.
+ENDCLASS.
+CLASS lcl_bar IMPLEMENTATION.
+ENDCLASS.
+
+lcl_bar=>data = 2.`;
+    const issues = runProgram(abap);
+    expect(issues.length).to.equals(0);
+  });
+
+  it("move to voided", () => {
+    const abap = `cl_void=>data = 2.`;
+    const issues = runProgram(abap);
+    expect(issues.length).to.equals(0);
   });
 
 // todo, static method cannot access instance attributes

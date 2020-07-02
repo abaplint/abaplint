@@ -84,6 +84,14 @@ ENDCLASS.`;
     expect(issues.length).to.equal(0);
   });
 
+  it("dont report unused when there are syntax errors", async () => {
+    const abap = `
+    DATA lt_bar TYPE STANDARD TABLE OF i.
+    APPEND sdfsdf TO lt_bar.`;
+    const issues = await runSingle(abap);
+    expect(issues.length).to.equal(0);
+  });
+
   it("test, quickfix simple", async () => {
     testFix("DATA foo.", "");
   });

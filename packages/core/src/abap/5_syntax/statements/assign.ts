@@ -2,7 +2,7 @@ import * as Expressions from "../../2_statements/expressions";
 import {StatementNode} from "../../nodes";
 import {CurrentScope} from "../_current_scope";
 import {Source} from "../expressions/source";
-import {InlineFS} from "../expressions/inline_fs";
+import {FSTarget} from "../expressions/fstarget";
 
 export class Assign {
   public runSyntax(node: StatementNode, scope: CurrentScope, filename: string): void {
@@ -11,9 +11,8 @@ export class Assign {
     const source = node.findDirectExpression(Expressions.Source);
     const sourceType = source ? new Source().runSyntax(source, scope, filename) : undefined;
 
-    const inlinefs = target?.findDirectExpression(Expressions.InlineFS);
-    if (inlinefs) {
-      new InlineFS().runSyntax(inlinefs, scope, filename, sourceType);
+    if (target) {
+      new FSTarget().runSyntax(target, scope, filename, sourceType);
     }
 
   }
