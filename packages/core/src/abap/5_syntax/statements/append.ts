@@ -15,9 +15,6 @@ export class Append {
     const target = node.findDirectExpression(Expressions.Target);
     if (target) {
       targetType = new Target().runSyntax(target, scope, filename);
-      if (!(targetType instanceof TableType)) {
-        throw new Error("Append, target not a table type");
-      }
     } else {
       const fsTarget = node.findExpressionAfterToken("ASSIGNING");
       if (fsTarget && fsTarget.get() instanceof Expressions.FSTarget) {
@@ -30,7 +27,14 @@ export class Append {
       source = node.findDirectExpression(Expressions.SimpleSource);
     }
     if (source) {
-      new Source().runSyntax(source, scope, filename, targetType?.getRowType());
+      if (targetType !== undefined && !(targetType instanceof TableType)) {
+        throw new Error("Append, target not a table type");
+      }
+      let rowType: AbstractType | undefined = undefined;
+      if (targetType instanceof TableType) {
+        rowType = targetType.getRowType();
+      }
+      new Source().runSyntax(source, scope, filename, rowType);
     }
 
     const from = node.findExpressionAfterToken("FROM");
