@@ -7,7 +7,7 @@ describe("rule, sicf_consistency, error", () => {
   it("test", () => {
     const reg = new Registry().addFile(new MemoryFile("zabapgitserver 9def6c78d0beedf8d5b04ba6c.sicf.xml", `blah`));
     const rule = new SICFConsistency();
-    const issues = rule.run(reg.getObjects()[0], reg);
+    const issues = rule.initialize(reg).run(reg.getObjects()[0]);
 
     expect(issues.length).to.equals(0);
   });
@@ -44,7 +44,7 @@ describe("rule, sicf_consistency, handler not found", () => {
   it("test", () => {
     const reg = new Registry().addFile(new MemoryFile("zabapgitserver 9def6c78d0beedf8d5b04ba6c.sicf.xml", xml));
     const rule = new SICFConsistency();
-    const issues = rule.run(reg.getObjects()[0], reg);
+    const issues = rule.initialize(reg).run(reg.getObjects()[0]);
     expect(issues.length).to.equals(1);
   });
 });
@@ -61,14 +61,14 @@ CLASS ZCL_AGS_SICF IMPLEMENTATION.
 ENDCLASS.`;
 
 describe("rule, sicf_consistency, handler ok", () => {
-  it("test", () => {
+  it("test", async () => {
     const reg = new Registry();
     reg.addFile(new MemoryFile("zabapgitserver 9def6c78d0beedf8d5b04ba6c.sicf.xml", xml));
     reg.addFile(new MemoryFile("zcl_ags_sicf.clas.abap", abap));
-    reg.parse();
+    await reg.parseAsync();
 
     const rule = new SICFConsistency();
-    const issues = rule.run(reg.getObjects()[0], reg);
+    const issues = rule.initialize(reg).run(reg.getObjects()[0]);
 
     expect(issues.length).to.equals(0);
   });

@@ -8,6 +8,7 @@ import {TypedIdentifier} from "./_typed_identifier";
 import {CurrentScope} from "../5_syntax/_current_scope";
 import {FormParam} from "../5_syntax/expressions/form_param";
 import {IFormDefinition} from "./_form_definition";
+import {TableType} from "./basic";
 
 export class FormDefinition extends Identifier implements IFormDefinition {
   private readonly node: StatementNode;
@@ -28,11 +29,12 @@ export class FormDefinition extends Identifier implements IFormDefinition {
     this.node = st;
 
     this.parameters = this.findParams(this.node, scope);
-    this.tableParameters = this.findType(Expressions.FormTables, scope);
+    this.tableParameters = this.findTables(scope, filename);
     this.usingParameters = this.findType(Expressions.FormUsing, scope);
     this.changingParameters = this.findType(Expressions.FormChanging, scope);
   }
 
+  // todo, deprecate this method? it does not contain all table parameters
   public getParameters(): TypedIdentifier[] {
     return this.parameters;
   }
@@ -50,6 +52,23 @@ export class FormDefinition extends Identifier implements IFormDefinition {
   }
 
 ///////////////
+
+  private findTables(scope: CurrentScope, filename: string): TypedIdentifier[] {
+    const ret: TypedIdentifier[] = [];
+
+    const tables = this.node.findFirstExpression(Expressions.FormTables);
+    if (tables === undefined) {
+      return [];
+    }
+
+    for (const param of tables.findAllExpressions(Expressions.FormParam)) {
+      const p = new FormParam().runSyntax(param, scope, this.filename);
+      const type = new TableType(p.getType());
+      ret.push(new TypedIdentifier(p.getToken(), filename, type));
+    }
+
+    return ret;
+  }
 
   private findType(type: new () => Expression, scope: CurrentScope): TypedIdentifier[] {
     const found = this.node.findFirstExpression(type);

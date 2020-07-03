@@ -192,12 +192,11 @@ field = zcl_global_class=>method( ).`;
   });
 
   it("program, line_exists", () => {
-// todo, types of below code is not correct
     const abap = "DATA lt_data TYPE i.\n" +
       "IF line_exists( lt_data[ id = '2' ] ).\n" +
       "ENDIF.\n";
     const issues = runProgram(abap);
-    expect(issues.length).to.equals(0);
+    expect(issues.length).to.equals(1);
   });
 
   it("program, different scope", () => {
@@ -995,18 +994,6 @@ DATA(output) = REDUCE string( INIT result = ||
     expect(issues.length).to.equals(0);
   });
 
-  it("FOR, loop IN", () => {
-    // todo, does this syntax check?
-    const abap = "DATA moo TYPE c.\n" +
-      "DATA it_packages TYPE c.\n" +
-      "moo = VALUE #(\n" +
-      "  FOR lo_package IN it_packages\n" +
-      "  FOR lo_element IN get_all_elements_from_package( lo_package )\n" +
-      "  ( package = lo_package element = lo_element ) ).";
-    const issues = runProgram(abap);
-    expect(issues.length).to.equals(0);
-  });
-
   it("SELECTION-SCREEN title, b1_tit can be set", () => {
     const abap =
       "SELECTION-SCREEN BEGIN OF BLOCK b1 WITH FRAME TITLE b1_tit.\n" +
@@ -1259,13 +1246,6 @@ DATA(output) = REDUCE string( INIT result = ||
   it("SORT, expect 0 errors", () => {
     const abap = `DATA tab TYPE STANDARD TABLE OF i.
       SORT tab BY table_line.`;
-    const issues = runProgram(abap);
-    expect(issues.length).to.equals(0);
-  });
-
-  it.skip("CALL METHOD, static class and method", () => {
-// todo, actually cl_foo is unknown
-    const abap = `CALL METHOD cl_foo=>bar( ).`;
     const issues = runProgram(abap);
     expect(issues.length).to.equals(0);
   });
@@ -1828,7 +1808,7 @@ START-OF-SELECTION.
   ENDCASE.
   `;
     const issues = runProgram(abap);
-    expect(issues.length).to.equals(0);
+    expect(issues.length).to.equals(1); // global class not found
   });
 
   it("attribute with interface prefix", () => {
@@ -1883,6 +1863,158 @@ DATA lr_log TYPE REF TO ty_log.
 DATA(item) = lr_log->not_found.`;
     const issues = runProgram(abap);
     expect(issues.length).to.equals(1);
+  });
+
+  it("EXPORT DATABASE", () => {
+    const abap = `DATA gt_data TYPE TABLE OF string.
+EXPORT data = gt_data TO DATABASE indx(zr) ID 'TEST'.`;
+    const issues = runProgram(abap);
+    expect(issues.length).to.equals(0);
+  });
+
+  it("IMPORT DATABASE", () => {
+    const abap = `DATA gt_data TYPE TABLE OF string.
+IMPORT data = gt_data FROM DATABASE indx(zr) ID 'TEST'.`;
+    const issues = runProgram(abap);
+    expect(issues.length).to.equals(0);
+  });
+
+  it("FORM with TABLES", () => {
+    const abap = `
+DATA: BEGIN OF data_foo,
+        moo TYPE i,
+      END OF data_foo.
+FORM foo TABLES i_where STRUCTURE data_foo.
+  READ TABLE i_where INDEX 1 TRANSPORTING NO FIELDS.
+ENDFORM.`;
+    const issues = runProgram(abap);
+    expect(issues.length).to.equals(0);
+  });
+
+  it("FORM with TABLES without structure", () => {
+    const abap = `
+FORM foo TABLES bar.
+  READ TABLE bar INDEX 1 TRANSPORTING NO FIELDS.
+ENDFORM.`;
+    const issues = runProgram(abap);
+    expect(issues.length).to.equals(0);
+  });
+
+  it("expect error, zsfsdfds=>lv_bar inside string template not defined", () => {
+    const abap = `DATA(lv_url) = |{ zsfsdfds=>lv_bar }|.`;
+    const issues = runProgram(abap);
+    expect(issues.length).to.equals(1);
+    expect(issues[0].getMessage()).to.include("zsfsdfds");
+  });
+
+  it("expect error, zcl=>method not defined", () => {
+    const abap = `
+IF 2 = zcl=>method( ).
+  WRITE 2.
+ENDIF.`;
+    const issues = runProgram(abap);
+    expect(issues.length).to.equals(1);
+    expect(issues[0].getMessage()).to.include("zcl");
+  });
+
+  it("WRITE sy-tfill", () => {
+    const abap = `WRITE sy-tfill.`;
+    const issues = runProgram(abap);
+    expect(issues.length).to.equals(0);
+  });
+
+  it.skip("sy-sdfsdsdf not found", () => {
+    const abap = `
+    DATA tab TYPE STANDARD TABLE OF i.
+    DESCRIBE TABLE tab LINES sy-sdfsdsdf.`;
+    const issues = runProgram(abap);
+    expect(issues.length).to.equals(1);
+    expect(issues[0].getMessage()).to.include("sdfsdsdf");
+  });
+
+  it("APPEND, expect class not found", () => {
+    const abap = `
+TYPES: BEGIN OF ty_tab,
+         moo TYPE i,
+       END OF ty_tab.
+DATA tab TYPE STANDARD TABLE OF ty_tab.
+APPEND VALUE #( moo = zcl_bsdfsd=>bar ) TO tab.`;
+    const issues = runProgram(abap);
+    expect(issues.length).to.equals(1);
+    expect(issues[0].getMessage()).to.include("zcl_bsdfsd");
+  });
+
+  it("INSERT, expect class not found", () => {
+    const abap = `
+TYPES: BEGIN OF ty_tab,
+         moo TYPE i,
+       END OF ty_tab.
+DATA tab TYPE STANDARD TABLE OF ty_tab.
+INSERT VALUE #( moo = zcl_bsdfsd=>bar ) INTO TABLE tab.`;
+    const issues = runProgram(abap);
+    expect(issues.length).to.equals(1);
+    expect(issues[0].getMessage()).to.include("zcl_bsdfsd");
+  });
+
+  it("APPEND CAST #", () => {
+    const abap = `
+  CLASS lcl_bar DEFINITION.
+  ENDCLASS.
+  CLASS lcl_bar IMPLEMENTATION.
+  ENDCLASS.
+
+  DATA lt_bar TYPE STANDARD TABLE OF REF TO lcl_bar.
+  APPEND CAST #( NEW lcl_bar( ) ) TO lt_bar.`;
+    const issues = runProgram(abap);
+    expect(issues.length).to.equals(0);
+  });
+
+  it("APPEND INITIAL LINE ASSIGNING", () => {
+    const abap = `
+  DATA lt_bar TYPE STANDARD TABLE OF i.
+  FIELD-SYMBOLS <lv_bar> LIKE LINE OF lt_bar.
+  APPEND INITIAL LINE TO lt_bar ASSIGNING <lv_bar>.`;
+    const issues = runProgram(abap);
+    expect(issues.length).to.equals(0);
+  });
+
+  it("APPEND to field symbol", () => {
+    const abap = `
+TYPES: BEGIN OF ty_bar,
+         tab TYPE STANDARD TABLE OF i WITH EMPTY KEY,
+       END OF ty_bar.
+FIELD-SYMBOLS <foo> TYPE ty_bar.
+APPEND 2 TO <foo>-tab.`;
+    const issues = runProgram(abap);
+    expect(issues.length).to.equals(0);
+  });
+
+  it("APPEND void", () => {
+    const abap = `
+DATA lt_void TYPE somethingsomething.
+APPEND 2 TO lt_void.`;
+    const issues = runProgram(abap);
+    expect(issues.length).to.equals(0);
+  });
+
+  it("move to class static", () => {
+    const abap = `
+CLASS lcl_bar DEFINITION.
+  PUBLIC SECTION.
+    CLASS-DATA data TYPE i.
+ENDCLASS.
+CLASS lcl_bar IMPLEMENTATION.
+ENDCLASS.
+
+lcl_bar=>data = 2.`;
+    const issues = runProgram(abap);
+    expect(issues.length).to.equals(0);
+  });
+
+  it("move to voided", () => {
+    const abap = `cl_void=>data = 2.`;
+    const issues = runProgram(abap);
+    expect(issues.length).to.equals(0);
   });
 
 // todo, static method cannot access instance attributes

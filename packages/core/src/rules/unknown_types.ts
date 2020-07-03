@@ -5,14 +5,14 @@ import {IObject} from "../objects/_iobject";
 import {ABAPObject} from "../objects/_abap_object";
 import {Issue} from "../issue";
 import {UnknownType} from "../abap/types/basic";
-import {IRuleMetadata, RuleTag} from "./_irule";
+import {IRuleMetadata, RuleTag, IRule} from "./_irule";
 import {ISpaghettiScopeNode} from "../abap/5_syntax/_spaghetti_scope";
 
 export class UnknownTypesConf extends BasicRuleConfig {
 }
 
-export class UnknownTypes {
-
+export class UnknownTypes implements IRule {
+  private reg: IRegistry;
   private conf = new UnknownTypesConf();
 
   public getMetadata(): IRuleMetadata {
@@ -24,6 +24,11 @@ export class UnknownTypes {
     };
   }
 
+  public initialize(reg: IRegistry) {
+    this.reg = reg;
+    return this;
+  }
+
   public getConfig() {
     return this.conf;
   }
@@ -32,17 +37,17 @@ export class UnknownTypes {
     this.conf = conf;
   }
 
-  public run(obj: IObject, reg: IRegistry): Issue[] {
+  public run(obj: IObject): Issue[] {
     if (!(obj instanceof ABAPObject)) {
       return [];
     }
 
-    const spaghetti = new SyntaxLogic(reg, obj).run().spaghetti;
+    const spaghetti = new SyntaxLogic(this.reg, obj).run().spaghetti;
 
-    return this.traverse(spaghetti.getTop(), reg);
+    return this.traverse(spaghetti.getTop());
   }
 
-  private traverse(node: ISpaghettiScopeNode, reg: IRegistry): Issue[] {
+  private traverse(node: ISpaghettiScopeNode): Issue[] {
     let ret: Issue[] = [];
 
     for (const v of node.getData().vars) {
@@ -53,7 +58,7 @@ export class UnknownTypes {
     }
 
     for (const n of node.getChildren()) {
-      ret = ret.concat(this.traverse(n, reg));
+      ret = ret.concat(this.traverse(n));
     }
 
     return ret;

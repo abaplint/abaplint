@@ -7,13 +7,18 @@ interface IArtifact {
   getAllowedNaming(): {maxLength: number, allowNamespace: boolean};
 }
 
+export interface IParseResult {
+  updated: boolean,
+  runtime: number,
+}
+
 export interface IObject extends IArtifact {
   getName(): string;
   setDirty(): void;
   isDirty(): boolean;
 
   /** returns true if the object was parsed, false if no changes since last parse */
-  parse(version?: Version, globalMacros?: readonly string[]): boolean;
+  parse(version?: Version, globalMacros?: readonly string[]): IParseResult;
   getParsingIssues(): readonly Issue[];
 
   getFiles(): readonly IFile[];

@@ -3,7 +3,6 @@ import {Class} from "../objects";
 import {BasicRuleConfig} from "./_basic_rule_config";
 import {ABAPRule} from "./_abap_rule";
 import {ABAPFile} from "../files";
-import {IRegistry} from "../_iregistry";
 import * as Expressions from "../abap/2_statements/expressions";
 import {ABAPObject} from "../objects/_abap_object";
 
@@ -34,7 +33,7 @@ export class TypeFormParameters extends ABAPRule {
     this.conf = conf;
   }
 
-  public runParsed(file: ABAPFile, _reg: IRegistry, obj: ABAPObject) {
+  public runParsed(file: ABAPFile, obj: ABAPObject) {
     const ret: Issue[] = [];
 
     const stru = file.getStructure();

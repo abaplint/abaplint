@@ -89,6 +89,11 @@ EXEC SQL.
   TRUNCATE TABLE ZPERF2;
 ENDEXEC.`, cnt: 0},
 
+  {abap: `
+CATCH SYSTEM-EXCEPTIONS arithmetic_errors = 4 OTHERS = 8.
+  WRITE 'hello world'.
+ENDCATCH.`, cnt: 0},
+
 ];
 
 testRule(tests, Indentation);

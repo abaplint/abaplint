@@ -29,7 +29,11 @@ export class XMLConsistency implements IRule {
     this.conf = conf;
   }
 
-  public run(obj: IObject, _reg: IRegistry): Issue[] {
+  public initialize(_reg: IRegistry) {
+    return this;
+  }
+
+  public run(obj: IObject): Issue[] {
     const issues: Issue[] = [];
 
     const file = obj.getXMLFile();
@@ -53,7 +57,7 @@ export class XMLConsistency implements IRule {
         issues.push(Issue.atRow(file, 1, "Name undefined in XML", this.getMetadata().key));
       } else if (name !== obj.getName().toUpperCase()) {
         issues.push(Issue.atRow(file, 1, "Name in XML does not match object", this.getMetadata().key));
-      } else if (obj.getClassDefinition() === undefined) {
+      } else if (obj.getMainABAPFile()?.getStructure() !== undefined && obj.getClassDefinition() === undefined) {
         issues.push(Issue.atRow(file, 1, "Class matching XML name not found in ABAP file", this.getMetadata().key));
       }
     }

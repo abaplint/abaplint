@@ -2,8 +2,8 @@ import {Issue} from "../issue";
 import {ABAPRule} from "./_abap_rule";
 import {ABAPFile} from "../files";
 import * as Statements from "../abap/2_statements/statements";
+import * as Expressions from "../abap/2_statements/expressions";
 import {BasicRuleConfig} from "./_basic_rule_config";
-import {IRegistry} from "../_iregistry";
 import {IObject} from "../objects/_iobject";
 import {Class} from "../objects";
 import {InfoClassDefinition} from "../abap/4_file_information/_abap_file_information";
@@ -41,7 +41,7 @@ https://docs.abapopenchecks.org/checks/07/`,
     this.conf = conf;
   }
 
-  public runParsed(file: ABAPFile, _reg: IRegistry, obj: IObject) {
+  public runParsed(file: ABAPFile, obj: IObject) {
     const issues: Issue[] = [];
     let exception = false;
 
@@ -61,11 +61,11 @@ https://docs.abapopenchecks.org/checks/07/`,
       } else if (statement.get() instanceof Statements.EndClass) {
         exception = false;
       } else if (exception === false && this.startsWith(code, "CALL METHOD ")) {
-        if (/\)[=-]>/.test(code) === true
-            || /[=-]>\(/.test(code) === true
-            || this.startsWith(code, "CALL METHOD (")) {
+        const dynamic = statement.findDirectExpression(Expressions.MethodSource)?.findDirectExpression(Expressions.Dynamic);
+        if (dynamic !== undefined) {
           continue;
         }
+
         const issue = Issue.atStatement(file, statement, this.getMessage(), this.getMetadata().key);
         issues.push(issue);
       }

@@ -60,6 +60,7 @@ export class Indent {
         || type instanceof Statements.EndTestInjection
         || type instanceof Statements.EndTestSeam
         || type instanceof Statements.EndForm
+        || type instanceof Statements.EndCatch
         || type instanceof Statements.ElseIf
         || type instanceof Statements.EndFunction
         || type instanceof Statements.EndInterface
@@ -119,6 +120,7 @@ export class Indent {
         || type instanceof Statements.WhenOthers
         || type instanceof Statements.Cleanup
         || type instanceof Statements.Loop
+        || type instanceof Statements.CatchSystemExceptions
         || type instanceof Statements.Form
         || type instanceof Statements.Else
         || type instanceof Statements.ElseIf

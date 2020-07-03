@@ -12,7 +12,7 @@ function findIssues(abap: string, config?: ClassAttributeNamesConf, filename?: s
   if (config) {
     rule.setConfig(config);
   }
-  return rule.run(reg.getObjects()[0], reg);
+  return rule.initialize(reg).run(reg.getObjects()[0]);
 }
 
 describe("Rule: class attribute names (general)", () => {

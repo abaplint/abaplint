@@ -21,10 +21,10 @@ function testFix(input: string, expected: string) {
 function findIssues(abap: string) {
   const reg = new Registry(buildConfig()).addFile(new MemoryFile("zdownport.prog.abap", abap)).parse();
   const rule = new Downport();
-  return rule.run(reg.getObjects()[0], reg);
+  return rule.initialize(reg).run(reg.getObjects()[0]);
 }
 
-describe("Rule: downport", () => {
+describe("Rule: downport, basics", () => {
 
   it("parser error", () => {
     const issues = findIssues("parser error");
@@ -35,6 +35,10 @@ describe("Rule: downport", () => {
     const issues = findIssues("WRITE bar.");
     expect(issues.length).to.equal(0);
   });
+
+});
+
+describe("Rule: NEW", () => {
 
   it("Use CREATE OBJECT instead of NEW", () => {
     const issues = findIssues("foo = NEW #( ).");
@@ -55,6 +59,15 @@ describe("Rule: downport", () => {
 
   it("with a parameter", () => {
     testFix("foo = NEW #( foo = bar ).", "CREATE OBJECT foo EXPORTING foo = bar.");
+  });
+
+});
+
+describe("Rule: inline DATA", () => {
+
+  it.skip("Inline DATA definition", () => {
+    const issues = findIssues("DATA(foo) = 2.");
+    expect(issues.length).to.equal(1);
   });
 
 });

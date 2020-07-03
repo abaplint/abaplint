@@ -17,7 +17,7 @@ export class ForbiddenVoidTypeConf extends BasicRuleConfig {
 }
 
 export class ForbiddenVoidType implements IRule {
-
+  private reg: IRegistry;
   private conf = new ForbiddenVoidTypeConf();
 
   public getMetadata(): IRuleMetadata {
@@ -42,12 +42,17 @@ DATS, TIMS, DATUM, FLAG, INT4, NUMC3, NUMC4, SAP_BOOL, TEXT25, TEXT80, X255, XFE
     }
   }
 
-  public run(obj: IObject, reg: IRegistry): readonly Issue[] {
+  public initialize(reg: IRegistry) {
+    this.reg = reg;
+    return this;
+  }
+
+  public run(obj: IObject): readonly Issue[] {
     if (!(obj instanceof ABAPObject) || this.conf.check.length === 0) {
       return [];
     }
 
-    return this.traverse(new SyntaxLogic(reg, obj).run().spaghetti.getTop());
+    return this.traverse(new SyntaxLogic(this.reg, obj).run().spaghetti.getTop());
   }
 
 ///////////////
@@ -58,13 +63,15 @@ DATS, TIMS, DATUM, FLAG, INT4, NUMC3, NUMC4, SAP_BOOL, TEXT25, TEXT80, X255, XFE
 
     if (node.getIdentifier().stype !== ScopeType.BuiltIn) {
       for (const t of node.getData().types) {
-        if (this.isForbidden(t.identifier.getType())) {
-          ret.push(Issue.atIdentifier(t.identifier, message + t.identifier.getType(), this.getMetadata().key));
+        const typ = t.identifier.getType();
+        if (this.isForbidden(typ)) {
+          ret.push(Issue.atIdentifier(t.identifier, message + typ.toText(0), this.getMetadata().key));
         }
       }
       for (const v of node.getData().vars) {
-        if (this.isForbidden(v.identifier.getType())) {
-          ret.push(Issue.atIdentifier(v.identifier, message + v.identifier.getType(), this.getMetadata().key));
+        const typ = v.identifier.getType();
+        if (this.isForbidden(typ)) {
+          ret.push(Issue.atIdentifier(v.identifier, message + typ.toText(0), this.getMetadata().key));
         }
       }
     }

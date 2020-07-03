@@ -3,6 +3,7 @@ import {Position} from "../position";
 import {BasicRuleConfig} from "./_basic_rule_config";
 import {IObject} from "../objects/_iobject";
 import {IRule} from "./_irule";
+import {IRegistry} from "../_iregistry";
 
 export class SevenBitAsciiConf extends BasicRuleConfig {
 }
@@ -17,6 +18,10 @@ export class SevenBitAscii implements IRule {
       shortDescription: `Only allow characters from the 7bit ASCII set.`,
       extendedInformation: `https://docs.abapopenchecks.org/checks/05/`,
     };
+  }
+
+  public initialize(_reg: IRegistry) {
+    return this;
   }
 
   private getMessage(): string {

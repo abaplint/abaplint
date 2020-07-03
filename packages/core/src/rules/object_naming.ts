@@ -41,6 +41,8 @@ export class ObjectNamingConf extends NamingRuleConfig {
   public ssfo: string = "^Z";
   /** The pattern for smartstyle names */
   public ssst: string = "^Z";
+  /** The pattern for search helps */
+  public shlp: string = "^Z";
 }
 
 export class ObjectNaming implements IRule {
@@ -69,7 +71,11 @@ export class ObjectNaming implements IRule {
     this.conf = conf;
   }
 
-  public run(obj: IObject, _reg: IRegistry): Issue[] {
+  public initialize(_reg: IRegistry) {
+    return this;
+  }
+
+  public run(obj: IObject): Issue[] {
     let message: string | undefined = undefined;
     let pattern: string = "";
 
@@ -111,6 +117,8 @@ export class ObjectNaming implements IRule {
       pattern = this.getConfig().ssfo;
     } else if (obj instanceof Objects.SmartStyle) {
       pattern = this.getConfig().ssst;
+    } else if (obj instanceof Objects.SearchHelp) {
+      pattern = this.getConfig().shlp;
     }
 
     if (pattern === "") {

@@ -20,6 +20,8 @@ export class BasicTypes {
       return undefined;
     }
 
+
+
     let chain = node.findFirstExpression(Expressions.FieldChain);
     if (chain === undefined) {
       chain = node.findFirstExpression(Expressions.TypeName);
@@ -63,6 +65,12 @@ export class BasicTypes {
       return attr.getType();
     } else {
       type = this.scope.findVariable(name)?.getType();
+      if (type === undefined) {
+        type = this.scope.getDDIC().lookup(name);
+        if (type instanceof Types.VoidType) {
+          type = undefined;
+        }
+      }
 
       // todo, this only looks up one level
       if (children[1] && children[2] && children[1].getFirstToken().getStr() === "-") {
@@ -247,7 +255,11 @@ export class BasicTypes {
       return new Types.TableType(structure);
     } else if (text.startsWith("LIKE ")) {
       const sub = node.findFirstExpression(Expressions.FieldChain);
-      return this.resolveLikeName(sub);
+      found = this.resolveLikeName(sub);
+
+      if (found && node.findDirectTokenByText("OCCURS")) {
+        found = new Types.TableType(found);
+      }
     } else if (text.startsWith("TYPE LINE OF ")) {
       const sub = node.findFirstExpression(Expressions.TypeName);
       found = this.resolveTypeName(sub);
@@ -262,8 +274,13 @@ export class BasicTypes {
       found = this.resolveTypeRef(typename);
     } else if (text.startsWith("TYPE")) {
       found = this.resolveTypeName(typename, this.findLength(node));
+
       if (found === undefined && typename === undefined) {
         found = new Types.CharacterType(1);
+      }
+
+      if (found && node.findDirectTokenByText("OCCURS")) {
+        found = new Types.TableType(found);
       }
     }
 

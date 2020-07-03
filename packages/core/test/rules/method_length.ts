@@ -13,7 +13,7 @@ function testRulesWithFile(tests: any): void {
       const rule = new MethodLength();
       rule.setConfig(test.conf);
 
-      const issues = rule.run(reg.getObjects()[0], reg);
+      const issues = rule.initialize(reg).run(reg.getObjects()[0]);
       it(test.description, () => {
         expect(issues.length).to.equals(test.issueLength);
       });

@@ -10,7 +10,7 @@ function findIssues(filename: string, expectedIssueCount: number, config?: Objec
   if (config) {
     rule.setConfig(config);
   }
-  const issues = rule.run(reg.getObjects()[0], reg);
+  const issues = rule.initialize(reg).run(reg.getObjects()[0]);
   expect(issues.length).to.equal(expectedIssueCount);
   return issues;
 }

@@ -23,7 +23,7 @@ export class PreferInlineConf extends BasicRuleConfig {
 }
 
 export class PreferInline implements IRule {
-
+  private reg: IRegistry;
   private conf = new PreferInlineConf();
 
   public getMetadata(): IRuleMetadata {
@@ -44,19 +44,24 @@ First position used must be a full/pure write.`,
     return this.conf;
   }
 
+  public initialize(reg: IRegistry) {
+    this.reg = reg;
+    return this;
+  }
+
   public setConfig(conf: PreferInlineConf): void {
     this.conf = conf;
   }
 
-  public run(obj: IObject, reg: IRegistry): readonly Issue[] {
+  public run(obj: IObject): readonly Issue[] {
 
-    if (reg.getConfig().getVersion() < Version.v740sp02) {
+    if (this.reg.getConfig().getVersion() < Version.v740sp02) {
       return [];
     } else if (!(obj instanceof ABAPObject)) {
       return [];
     }
 
-    const scopes = this.findScopeCandidates(new SyntaxLogic(reg, obj).run().spaghetti.getTop());
+    const scopes = this.findScopeCandidates(new SyntaxLogic(this.reg, obj).run().spaghetti.getTop());
 
     let ret: Issue[] = [];
     for (const s of scopes) {

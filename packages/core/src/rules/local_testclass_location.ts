@@ -3,7 +3,6 @@ import {ABAPRule} from "./_abap_rule";
 import {ABAPFile} from "../files";
 import {BasicRuleConfig} from "./_basic_rule_config";
 import {Class} from "../objects";
-import {IRegistry} from "../_iregistry";
 import {IObject} from "../objects/_iobject";
 
 export class LocalTestclassLocationConf extends BasicRuleConfig {
@@ -33,7 +32,7 @@ export class LocalTestclassLocation extends ABAPRule {
     this.conf = conf;
   }
 
-  public runParsed(file: ABAPFile, _reg: IRegistry, obj: IObject) {
+  public runParsed(file: ABAPFile, obj: IObject) {
     const issues: Issue[] = [];
 
     if (!(obj instanceof Class)) {

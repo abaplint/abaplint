@@ -18,6 +18,7 @@ export class UnusedVariablesConf extends BasicRuleConfig {
 
 export class UnusedVariables implements IRule {
   private conf = new UnusedVariablesConf();
+  private reg: IRegistry;
 
   public getMetadata(): IRuleMetadata {
     return {
@@ -38,38 +39,49 @@ Doesnt currently work for public attributes and class prefixed attribute usage`,
     this.conf = conf;
   }
 
-  public run(obj: IObject, reg: IRegistry): Issue[] {
+  public initialize(reg: IRegistry) {
+    this.reg = reg;
+    return this;
+  }
+
+  public run(obj: IObject): Issue[] {
     if (!(obj instanceof ABAPObject)) {
       return [];
     } else if (obj instanceof Interface) {
       return [];
     }
 
-    return this.traverse(new SyntaxLogic(reg, obj).run().spaghetti.getTop(), obj, reg);
+    // dont report unused variables when there are syntax errors
+    const result = new SyntaxLogic(this.reg, obj).run();
+    if (result.issues.length > 0) {
+      return [];
+    }
+
+    return this.traverse(result.spaghetti.getTop(), obj);
   }
 
-  private traverse(node: ISpaghettiScopeNode, obj: ABAPObject, reg: IRegistry): Issue[] {
+  private traverse(node: ISpaghettiScopeNode, obj: ABAPObject): Issue[] {
     let ret: Issue[] = [];
 
     if (node.getIdentifier().stype !== ScopeType.BuiltIn) {
-      ret = ret.concat(this.checkNode(node, obj, reg));
+      ret = ret.concat(this.checkNode(node, obj));
     }
 
     for (const c of node.getChildren()) {
-      ret = ret.concat(this.traverse(c, obj, reg));
+      ret = ret.concat(this.traverse(c, obj));
     }
 
     return ret;
   }
 
-  private checkNode(node: ISpaghettiScopeNode, obj: ABAPObject, reg: IRegistry): Issue[] {
+  private checkNode(node: ISpaghettiScopeNode, obj: ABAPObject): Issue[] {
     const ret: Issue[] = [];
 
     for (const v of node.getData().vars) {
       if (v.name === "me" || v.name === "super") {
         continue; // todo, this is a workaround
       }
-      if (this.isUsed(v.identifier, reg) === false
+      if (this.isUsed(v.identifier) === false
           && obj.containsFile(v.identifier.getFilename())) {
         const message = "Variable \"" + v.identifier.getName() + "\" not used";
         const fix = this.buildFix(v, obj);
@@ -80,9 +92,9 @@ Doesnt currently work for public attributes and class prefixed attribute usage`,
     return ret;
   }
 
-  private isUsed(id: TypedIdentifier, reg: IRegistry): boolean {
+  private isUsed(id: TypedIdentifier): boolean {
     // todo, this is slow, but less false positives than the previous implementation
-    const found = new References(reg).searchEverything(id);
+    const found = new References(this.reg).searchEverything(id);
     return found.length > 1;
   }
 

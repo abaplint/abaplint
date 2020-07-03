@@ -22,7 +22,7 @@ describe("Rule: no_unknown_ddic", () => {
 </abapGit>`;
     const reg = new Registry().addFile(new MemoryFile("zddic.dtel.xml", xml)).parse();
 
-    const issues = new CheckDDIC().run(reg.getObjects()[0], reg);
+    const issues = new CheckDDIC().initialize(reg).run(reg.getObjects()[0]);
     expect(issues.length).to.equal(0);
   });
 
@@ -30,7 +30,7 @@ describe("Rule: no_unknown_ddic", () => {
     const xml = "sdf";
     const reg = new Registry().addFile(new MemoryFile("zddic.dtel.xml", xml)).parse();
 
-    const issues = new CheckDDIC().run(reg.getObjects()[0], reg);
+    const issues = new CheckDDIC().initialize(reg).run(reg.getObjects()[0]);
     expect(issues.length).to.equal(1);
   });
 

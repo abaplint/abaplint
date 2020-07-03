@@ -1,39 +1,28 @@
 import {IStatement} from "./_statement";
-import {verNot, str, seq, opt, alt, per, plus} from "../combi";
-import {Target, Source, Dynamic, Field, ComponentChainSimple} from "../expressions";
+import {verNot, str, seq, opt, alt, per, plus, tok} from "../combi";
+import {ParenLeft, ParenRightW} from "../../1_lexer/tokens";
+import {Target, Source, Dynamic, ComponentChainSimple, SimpleName, NamespaceSimpleName} from "../expressions";
 import {Version} from "../../../version";
 import {IStatementRunnable} from "../statement_runnable";
 
 export class Import implements IStatement {
 
   public getMatcher(): IStatementRunnable {
-    const id = seq(str("ID"), new Source());
     const dto = seq(str("TO"), new Target());
     const client = seq(str("CLIENT"), new Source());
+    const id = seq(str("ID"), new Source());
+    const using = seq(str("USING"), new Source());
 
-    const options = per(str("ACCEPTING PADDING"),
-                        str("IGNORING CONVERSION ERRORS"),
-                        str("IN CHAR-TO-HEX MODE"),
-                        str("IGNORING STRUCTURE BOUNDARIES"),
-                        str("ACCEPTING TRUNCATION"));
-
-    const shared = seq(str("SHARED"),
-                       alt(str("MEMORY"), str("BUFFER")),
-                       new Field(),
-                       str("("),
-                       new Field(),
-                       str(")"),
-                       id,
-                       opt(dto));
+    const cluster = seq(new NamespaceSimpleName(),
+                        tok(ParenLeft),
+                        new SimpleName(),
+                        tok(ParenRightW));
 
     const buffer = seq(str("DATA BUFFER"), new Source());
     const memory = seq(str("MEMORY ID"), new Source());
-    const using = seq(str("USING"), new Source());
     const table = seq(str("INTERNAL TABLE"), new Source());
-
-    const database = seq(str("DATABASE"),
-                         new Source(),
-                         per(dto, id, client, using));
+    const shared = seq(alt(str("SHARED MEMORY"), str("SHARED BUFFER")), cluster, per(dto, client, id));
+    const database = seq(str("DATABASE"), cluster, per(dto, client, id, using));
 
     const source = alt(buffer, memory, database, table, shared);
 
@@ -49,6 +38,15 @@ export class Import implements IStatement {
                        to,
                        new Dynamic(),
                        plus(new Target()));
+
+    const options = per(str("ACCEPTING PADDING"),
+                        str("IGNORING CONVERSION ERRORS"),
+                        str("IN CHAR-TO-HEX MODE"),
+                        str("IGNORING STRUCTURE BOUNDARIES"),
+                        str("ACCEPTING TRUNCATION"),
+                        seq(str("REPLACEMENT CHARACTER"), new Source()),
+                        seq(str("CODE PAGE INTO"), new Source()),
+                        seq(str("ENDIAN INTO"), new Source()));
 
     const ret = seq(str("IMPORT"), target, str("FROM"), source, opt(options));
 

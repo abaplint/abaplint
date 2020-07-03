@@ -5,7 +5,6 @@ import {ABAPRule} from "./_abap_rule";
 import {ABAPFile} from "../files";
 import {BasicRuleConfig} from "./_basic_rule_config";
 import {Dynamic, ParameterListExceptions} from "../abap/2_statements/expressions";
-import {IRegistry} from "../_iregistry";
 import {Version} from "../version";
 import {IRuleMetadata, RuleTag} from "./_irule";
 import {EditHelper, IEdit} from "../edit_helper";
@@ -39,10 +38,10 @@ export class UseNew extends ABAPRule {
     this.conf = conf;
   }
 
-  public runParsed(file: ABAPFile, reg: IRegistry) {
+  public runParsed(file: ABAPFile) {
     const issues: Issue[] = [];
 
-    if (reg.getConfig().getVersion() < Version.v740sp02) {
+    if (this.reg.getConfig().getVersion() < Version.v740sp02) {
       return [];
     }
 

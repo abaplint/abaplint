@@ -5,10 +5,12 @@ import * as Expressions from "../../2_statements/expressions";
 import {MethodCallChain} from "./method_call_chain";
 import {UnknownType} from "../../types/basic/unknown_type";
 import {FieldChain} from "./field_chain";
-import {StringType, VoidType} from "../../types/basic";
+import {VoidType} from "../../types/basic";
 import {Constant} from "./constant";
 import {BasicTypes} from "../basic_types";
 import {ComponentChain} from "./component_chain";
+import {StringTemplate} from "./string_template";
+import {ValueBody} from "./value_body";
 
 export class Source {
   public runSyntax(
@@ -23,9 +25,15 @@ export class Source {
     if (first instanceof TokenNode) {
       const tok = first.getFirstToken().getStr().toUpperCase();
       switch (tok) {
-        case "VALUE":
-          return this.value(node, scope, filename, targetType);
+        case "COND":
         case "CONV":
+        case "CORRESPONDING":
+        case "EXACT":
+        case "REDUCE":
+        case "SWITCH":
+          return this.value(node, scope, filename, targetType);
+        case "VALUE":
+          new ValueBody().runSyntax(node.findDirectExpression(Expressions.ValueBody), scope, filename);
           return this.value(node, scope, filename, targetType);
         default:
           return new UnknownType("todo, Source type " + tok);
@@ -42,7 +50,7 @@ export class Source {
       } else if (first instanceof ExpressionNode && first.get() instanceof Expressions.FieldChain) {
         context = new FieldChain().runSyntax(first, scope, filename);
       } else if (first instanceof ExpressionNode && first.get() instanceof Expressions.StringTemplate) {
-        context = new StringType();
+        context = new StringTemplate().runSyntax(first, scope, filename);
       } else if (first instanceof ExpressionNode && first.get() instanceof Expressions.Constant) {
         context = new Constant().runSyntax(first);
       } else if (first instanceof ExpressionNode && first.get() instanceof Expressions.ArrowOrDash) {
@@ -86,8 +94,8 @@ export class Source {
     } else if (found === undefined) {
       throw new Error("Type \"" + typeName + "\" not found in scope, VALUE");
     }
-    return found;
 
+    return found;
   }
 
 }

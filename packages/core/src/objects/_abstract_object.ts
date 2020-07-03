@@ -1,5 +1,5 @@
 import {IFile} from "../files/_ifile";
-import {IObject} from "./_iobject";
+import {IObject, IParseResult} from "./_iobject";
 import * as xmljs from "xml-js";
 import {Issue} from "../issue";
 import {Version} from "../version";
@@ -24,8 +24,8 @@ export abstract class AbstractObject implements IObject {
     return this.old;
   }
 
-  public parse(_version?: Version, _globalMacros?: readonly string[]): boolean {
-    return false;
+  public parse(_version?: Version, _globalMacros?: readonly string[]): IParseResult {
+    return {updated: false, runtime: 0};
   }
 
   public getName(): string {

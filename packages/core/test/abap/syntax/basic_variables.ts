@@ -294,7 +294,7 @@ describe("Syntax - Basic Types", () => {
   });
 
   it("DDIC data element", () => {
-    const clas = `
+    const dtel = `
 <?xml version="1.0" encoding="utf-8"?>
 <abapGit version="v1.0.0" serializer="LCL_OBJECT_DTEL" serializer_version="v1.0.0">
  <asx:abap xmlns:asx="http://www.sap.com/abapxml" version="1.0">
@@ -311,7 +311,7 @@ describe("Syntax - Basic Types", () => {
 </abapGit>`;
     const prog = `DATA foo TYPE zddic.`;
     const type = runMulti(
-      [{filename: "zddic.dtel.xml", contents: clas},
+      [{filename: "zddic.dtel.xml", contents: dtel},
         {filename: "zfoobar.prog.abap", contents: prog}],
       "foo");
     expectCharacter(type, 2);
@@ -865,12 +865,11 @@ ENDCLASS.`;
     expect(type).to.be.instanceof(Basic.VoidType);
   });
 
-  it.skip("Inline DATA definition", () => {
+  it("Inline DATA definition", () => {
     const abap = `DATA(foobar) = 2.`;
     const identifier = resolveVariable(abap, "foobar");
     expect(identifier).to.not.equal(undefined);
-    const type = identifier?.getType();
-    expect(type).to.be.instanceof(Basic.IntegerType);
+    expect(identifier?.getType()).to.be.instanceof(Basic.IntegerType);
   });
 
   it("Inline object ref", () => {
@@ -1125,6 +1124,204 @@ READ TABLE lt_paths ASSIGNING FIELD-SYMBOL(<ls_path>) WITH KEY path = 'foobar'.`
     const identifier = resolveVariable(abap, "lt_field");
     expect(identifier).to.not.equal(undefined);
     expect(identifier?.getType()).to.be.instanceof(Basic.TableType);
+  });
+
+  it("inline CORRESPONDING", () => {
+    const abap = `
+TYPES: BEGIN OF ty_path,
+         path TYPE string,
+       END OF ty_path.
+DATA bar TYPE ty_path.
+DATA(foo) = CORRESPONDING ty_path( bar ).`;
+    const identifier = resolveVariable(abap, "foo");
+    expect(identifier).to.not.equal(undefined);
+    expect(identifier?.getType()).to.be.instanceof(Basic.StructureType);
+  });
+
+  it("ASSIGN inline, with table expression", () => {
+    const abap = `
+TYPES: BEGIN OF ty_path,
+  path TYPE string,
+END OF ty_path.
+DATA mt_table TYPE STANDARD TABLE OF ty_path WITH EMPTY KEY.
+ASSIGN mt_table[ path = 'abc' ] TO FIELD-SYMBOL(<ls_row>).`;
+    const identifier = resolveVariable(abap, "<ls_row>");
+    expect(identifier).to.not.equal(undefined);
+    expect(identifier?.getType()).to.be.instanceof(Basic.StructureType);
+  });
+
+  it("CONVERT TIME STAMP", () => {
+    const abap = `
+DATA foo TYPE timestamp.
+CONVERT TIME STAMP foo TIME ZONE '123' INTO DATE DATA(date) TIME DATA(time).`;
+    const identifier1 = resolveVariable(abap, "date");
+    expect(identifier1).to.not.equal(undefined);
+    expect(identifier1?.getType()).to.be.instanceof(Basic.DateType);
+
+    const identifier2 = resolveVariable(abap, "time");
+    expect(identifier2).to.not.equal(undefined);
+    expect(identifier2?.getType()).to.be.instanceof(Basic.TimeType);
+  });
+
+  it("EXACT", () => {
+    const abap = `
+TYPES ty_bar TYPE c LENGTH 10.
+DATA(fsdf) = EXACT ty_bar( |sdfs| ).`;
+    const identifier = resolveVariable(abap, "fsdf");
+    expect(identifier).to.not.equal(undefined);
+    expect(identifier?.getType()).to.be.instanceof(Basic.CharacterType);
+  });
+
+  it("COND", () => {
+    const abap = `DATA(fsdf) = COND string( WHEN 1 < 2 THEN |sdf| ).`;
+    const identifier = resolveVariable(abap, "fsdf");
+    expect(identifier).to.not.equal(undefined);
+    expect(identifier?.getType()).to.be.instanceof(Basic.StringType);
+  });
+
+  it("SWITCH", () => {
+    const abap = `DATA(sdf) = SWITCH string( sy-index WHEN 1 THEN 'sdfsdf' ).`;
+    const identifier = resolveVariable(abap, "sdf");
+    expect(identifier).to.not.equal(undefined);
+    expect(identifier?.getType()).to.be.instanceof(Basic.StringType);
+  });
+
+  it("DESCRIBE TABLE inline", () => {
+    const abap = `
+DATA lt_table TYPE STANDARD TABLE OF string WITH EMPTY KEY.
+DESCRIBE TABLE lt_table LINES DATA(lv_lines).`;
+    const identifier = resolveVariable(abap, "lv_lines");
+    expect(identifier).to.not.equal(undefined);
+    expect(identifier?.getType()).to.be.instanceof(Basic.IntegerType);
+  });
+
+  it("FIND REGEX inline", () => {
+    const abap = `
+  DATA lv_path TYPE string.
+  FIND REGEX |^bar$| IN lv_path SUBMATCHES DATA(lv_match).`;
+    const identifier = resolveVariable(abap, "lv_match");
+    expect(identifier).to.not.equal(undefined);
+    expect(identifier?.getType()).to.be.instanceof(Basic.StringType);
+  });
+
+  it("MESSAGE INTO inline", () => {
+    const abap = `
+    MESSAGE ID sy-msgid TYPE 'S' NUMBER sy-msgno INTO DATA(lv_message) WITH sy-msgv1 sy-msgv2 sy-msgv3 sy-msgv4.`;
+    const identifier = resolveVariable(abap, "lv_message");
+    expect(identifier).to.not.equal(undefined);
+    expect(identifier?.getType()).to.be.instanceof(Basic.StringType);
+  });
+
+  it("GET TIME STAMP inline", () => {
+    const abap = `GET TIME STAMP FIELD DATA(lv_current).`;
+    const identifier = resolveVariable(abap, "lv_current");
+    expect(identifier).to.not.equal(undefined);
+    expect(identifier?.getType()).to.be.instanceof(Basic.PackedType);
+  });
+
+  it("GET PARAMETER inline", () => {
+    const abap = `GET PARAMETER ID 'FOOBAR' FIELD DATA(lv_foo).`;
+    const identifier = resolveVariable(abap, "lv_foo");
+    expect(identifier).to.not.equal(undefined);
+    expect(identifier?.getType()).to.be.instanceof(Basic.CharacterType);
+  });
+
+  it("FIND REGEX inline, multiple submatches", () => {
+    const abap = `
+  DATA lv_path TYPE string.
+  FIND REGEX |^bar$| IN lv_path SUBMATCHES DATA(lv_match1) DATA(lv_match2).`;
+    const identifier = resolveVariable(abap, "lv_match2");
+    expect(identifier).to.not.equal(undefined);
+    expect(identifier?.getType()).to.be.instanceof(Basic.StringType);
+  });
+
+  it("inline RECEIVING", () => {
+    const abap = `
+CLASS lcl_bar DEFINITION.
+  PUBLIC SECTION.
+    CLASS-METHODS: moo RETURNING VALUE(val) TYPE i.
+ENDCLASS.
+
+CLASS lcl_bar IMPLEMENTATION.
+  METHOD moo.
+  ENDMETHOD.
+ENDCLASS.
+
+START-OF-SELECTION.
+  lcl_bar=>moo( RECEIVING val = DATA(val) ).`;
+    const identifier = resolveVariable(abap, "val");
+    expect(identifier).to.not.equal(undefined);
+    expect(identifier?.getType()).to.be.instanceof(Basic.IntegerType);
+  });
+
+  it("OCCURS 0 WITH HEADER LINE", () => {
+    const abap = `DATA tab TYPE i OCCURS 0 WITH HEADER LINE.`;
+    const identifier = resolveVariable(abap, "tab");
+    expect(identifier).to.not.equal(undefined);
+    expect(identifier?.getType()).to.be.instanceof(Basic.TableType);
+  });
+
+  it("WHEN TYPE", () => {
+    const abap = `
+CLASS lcl_bar DEFINITION.
+ENDCLASS.
+CLASS lcl_bar IMPLEMENTATION.
+ENDCLASS.
+DATA lo_bar TYPE REF TO lcl_bar.
+CASE TYPE OF lo_bar.
+  WHEN TYPE lcl_bar INTO DATA(lo_foo).
+ENDCASE.`;
+    const identifier = resolveVariable(abap, "lo_foo");
+    expect(identifier).to.not.equal(undefined);
+    expect(identifier?.getType()).to.be.instanceof(Basic.ObjectReferenceType);
+  });
+
+  it("LIKE OCCURS 0 WITH HEADER LINE", () => {
+    const abap = `
+    DATA line TYPE i.
+    DATA tab LIKE line OCCURS 0 WITH HEADER LINE.
+    `;
+    const identifier = resolveVariable(abap, "tab");
+    expect(identifier).to.not.equal(undefined);
+    expect(identifier?.getType()).to.be.instanceof(Basic.TableType);
+  });
+
+  it("LIKE DDIC structure", () => {
+    const xml = `
+    <?xml version="1.0" encoding="utf-8"?>
+    <abapGit version="v1.0.0" serializer="LCL_OBJECT_TABL" serializer_version="v1.0.0">
+     <asx:abap xmlns:asx="http://www.sap.com/abapxml" version="1.0">
+      <asx:values>
+       <DD02V>
+        <TABNAME>ZSTRUCTURE1</TABNAME>
+        <DDLANGUAGE>E</DDLANGUAGE>
+        <TABCLASS>INTTAB</TABCLASS>
+        <DDTEXT>sdf</DDTEXT>
+        <EXCLASS>1</EXCLASS>
+       </DD02V>
+       <DD03P_TABLE>
+        <DD03P>
+         <TABNAME>ZSTRUCTURE1</TABNAME>
+         <FIELDNAME>FOOBAR</FIELDNAME>
+         <DDLANGUAGE>E</DDLANGUAGE>
+         <POSITION>0001</POSITION>
+         <ADMINFIELD>0</ADMINFIELD>
+         <INTTYPE>C</INTTYPE>
+         <INTLEN>000004</INTLEN>
+         <DATATYPE>CHAR</DATATYPE>
+         <LENG>000002</LENG>
+         <MASK>  CHAR</MASK>
+        </DD03P>
+       </DD03P_TABLE>
+      </asx:values>
+     </asx:abap>
+    </abapGit>`;
+    const prog = `DATA foo LIKE zstructure1-foobar.`;
+    const type = runMulti(
+      [{filename: "zstructure1.tabl.xml", contents: xml},
+        {filename: "zfoobar.prog.abap", contents: prog}],
+      "foo");
+    expectCharacter(type, 2);
   });
 
 });

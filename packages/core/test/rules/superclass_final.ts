@@ -4,36 +4,36 @@ import {Registry} from "../../src/registry";
 import {MemoryFile} from "../../src/files";
 import {Issue} from "../../src/issue";
 
-function runMulti(files: {filename: string, contents: string}[]): Issue[] {
+async function runMulti(files: {filename: string, contents: string}[]): Promise<Issue[]> {
   const reg = new Registry();
   for (const file of files) {
     reg.addFile(new MemoryFile(file.filename, file.contents));
   }
-  reg.parse();
+  await reg.parseAsync();
   let issues: Issue[] = [];
   for (const obj of reg.getObjects()) {
-    issues = issues.concat(new SuperclassFinal().run(obj, reg));
+    issues = issues.concat(new SuperclassFinal().initialize(reg).run(obj));
   }
   return issues;
 }
 
 describe("Rules, superclass final rule", () => {
-  it("parser error", () => {
-    const issues = runMulti([{filename: "cl_foo.clas.abap", contents: "parase error"}]);
+  it("parser error", async () => {
+    const issues = await runMulti([{filename: "cl_foo.clas.abap", contents: "parase error"}]);
     expect(issues.length).to.equals(0);
   });
 
-  it("normal class", () => {
+  it("normal class", async () => {
     const contents =
       `CLASS zcl_foobar DEFINITION PUBLIC FINAL CREATE PUBLIC.
       ENDCLASS.
       CLASS zcl_foobar IMPLEMENTATION.
       ENDCLASS.`;
-    const issues = runMulti([{filename: "cl_foo.clas.abap", contents}]);
+    const issues = await runMulti([{filename: "cl_foo.clas.abap", contents}]);
     expect(issues.length).to.equals(0);
   });
 
-  it("superclass final", () => {
+  it("superclass final", async () => {
     const clas =
       `CLASS zcl_foobar DEFINITION PUBLIC
         INHERITING FROM zcl_super FINAL CREATE PUBLIC.
@@ -45,13 +45,13 @@ describe("Rules, superclass final rule", () => {
       ENDCLASS.
       CLASS ZCL_SUPER IMPLEMENTATION.
       ENDCLASS.`;
-    const issues = runMulti([
+    const issues = await runMulti([
       {filename: "zcl_foobar.clas.abap", contents: clas},
       {filename: "zcl_super.clas.abap", contents: sup}]);
     expect(issues.length).to.equals(1);
   });
 
-  it("superclass not final", () => {
+  it("superclass not final", async () => {
     const clas =
       `CLASS zcl_foobar DEFINITION PUBLIC
         INHERITING FROM zcl_super FINAL CREATE PUBLIC.
@@ -63,13 +63,13 @@ describe("Rules, superclass final rule", () => {
       ENDCLASS.
       CLASS ZCL_SUPER IMPLEMENTATION.
       ENDCLASS.`;
-    const issues = runMulti([
+    const issues = await runMulti([
       {filename: "zcl_foobar.clas.abap", contents: clas},
       {filename: "zcl_super.clas.abap", contents: sup}]);
     expect(issues.length).to.equals(0);
   });
 
-  it("superclass, local test classes inheriting", () => {
+  it("superclass, local test classes inheriting", async () => {
     const clas =
       `CLASS zcl_foobar DEFINITION PUBLIC.
       ENDCLASS.
@@ -84,7 +84,7 @@ CLASS ltcl_single_file DEFINITION FOR TESTING RISK LEVEL HARMLESS DURATION SHORT
 ENDCLASS.
 CLASS ltcl_single_file IMPLEMENTATION.
 ENDCLASS.`;
-    const issues = runMulti([
+    const issues = await runMulti([
       {filename: "zcl_foobar.clas.abap", contents: clas},
       {filename: "zfl_foobar.clas.testclasses.abap", contents: testclasses}]);
     expect(issues.length).to.equals(0);

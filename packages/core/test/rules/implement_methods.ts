@@ -12,7 +12,7 @@ function runMulti(files: {filename: string, contents: string}[]): Issue[] {
   reg.parse();
   let issues: Issue[] = [];
   for (const obj of reg.getObjects()) {
-    issues = issues.concat(new ImplementMethods().run(obj, reg));
+    issues = issues.concat(new ImplementMethods().initialize(reg).run(obj));
   }
   return issues;
 }

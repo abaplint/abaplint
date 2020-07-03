@@ -1,9 +1,17 @@
 import {expect} from "chai";
 import {ABAPParser} from "../../src/abap/abap_parser";
-import {MemoryFile} from "../../src";
+import {MemoryFile, ABAPFile} from "../../src";
 import {IFile} from "../../src/files/_ifile";
 import {Unknown} from "../../src/abap/2_statements/statements/_statement";
 import {defaultVersion} from "../../src/version";
+
+function expectNoUnknown(output: readonly ABAPFile[]) {
+  for (const file of output) {
+    for (const statement of file.getStatements()) {
+      expect(statement.get()).to.not.be.instanceof(Unknown);
+    }
+  }
+}
 
 describe("abap_parser", () => {
   it("macro in class, no unknown expected", () => {
@@ -32,11 +40,17 @@ describe("abap_parser", () => {
     const {issues, output} = new ABAPParser(defaultVersion, []).parse(files);
     expect(issues.length).to.equal(0);
     expect(output.length).to.equal(files.length);
+    expectNoUnknown(output);
+  });
 
-    for (const file of output) {
-      for (const statement of file.getStatements()) {
-        expect(statement.get()).to.not.be.instanceof(Unknown);
-      }
-    }
+  it("double chaining", () => {
+    const files: IFile[] = [];
+
+    files.push(new MemoryFile("zcl_chaining.prog.abap", `data: : bar type c.`));
+
+    const {issues, output} = new ABAPParser(defaultVersion, []).parse(files);
+    expect(issues.length).to.equal(0);
+    expect(output.length).to.equal(files.length);
+    expectNoUnknown(output);
   });
 });

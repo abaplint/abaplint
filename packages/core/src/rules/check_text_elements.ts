@@ -11,7 +11,7 @@ export class CheckTextElementsConf extends BasicRuleConfig {
 }
 
 export class CheckTextElements implements IRule {
-
+  private reg: IRegistry;
   private conf = new CheckTextElementsConf();
 
   public getMetadata() {
@@ -30,7 +30,12 @@ export class CheckTextElements implements IRule {
     this.conf = conf;
   }
 
-  public run(obj: IObject, reg: IRegistry): Issue[] {
+  public initialize(reg: IRegistry) {
+    this.reg = reg;
+    return this;
+  }
+
+  public run(obj: IObject): Issue[] {
     if (!(obj instanceof ABAPObject)) {
       return [];
     }
@@ -45,10 +50,10 @@ export class CheckTextElements implements IRule {
 
       let texts = obj.getTexts();
 
-      const mains = new IncludeGraph(reg).listMainForInclude(file.getFilename());
+      const mains = new IncludeGraph(this.reg).listMainForInclude(file.getFilename());
       if (mains.length === 1) {
 // todo, this only checks the first main
-        const main1 = reg.findObjectForFile(reg.getFileByName(mains[0])!)! as ABAPObject;
+        const main1 = this.reg.findObjectForFile(this.reg.getFileByName(mains[0])!)! as ABAPObject;
         texts = main1.getTexts();
       }
 

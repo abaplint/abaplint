@@ -10,7 +10,7 @@ export class CheckIncludeConf extends BasicRuleConfig {
 }
 
 export class CheckInclude implements IRule {
-
+  private reg: IRegistry;
   private conf = new CheckIncludeConf();
 
   public getMetadata() {
@@ -30,13 +30,18 @@ export class CheckInclude implements IRule {
     this.conf = conf;
   }
 
-  public run(obj: IObject, reg: IRegistry): readonly Issue[] {
+  public initialize(reg: IRegistry) {
+    this.reg = reg;
+    return this;
+  }
+
+  public run(obj: IObject): readonly Issue[] {
     if (!(obj instanceof ABAPObject)) {
       return [];
     }
 
     let ret: Issue[] = [];
-    const graph = new IncludeGraph(reg);
+    const graph = new IncludeGraph(this.reg);
     for (const file of obj.getABAPFiles()) {
       ret = ret.concat(graph.getIssuesFile(file));
     }

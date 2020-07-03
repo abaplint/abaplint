@@ -2,6 +2,12 @@ import {MemoryFile} from "../../src/files/memory_file";
 import {Registry} from "../../src/registry";
 import {expect} from "chai";
 import {CheckTextElements} from "../../src/rules";
+import {IRegistry} from "../../src/_iregistry";
+
+function run(reg: IRegistry) {
+  reg.parse();
+  return new CheckTextElements().initialize(reg).run(reg.getObjects()[0]);
+}
 
 describe("Rule: check_text_elements", () => {
   const xml = `<?xml version="1.0" encoding="utf-8"?>
@@ -49,8 +55,7 @@ describe("Rule: check_text_elements", () => {
     const reg = new Registry();
     reg.addFile(new MemoryFile("zfoobar.prog.abap", abap));
     reg.addFile(new MemoryFile("zfoobar.prog.xml", xml));
-    reg.parse();
-    const issues = new CheckTextElements().run(reg.getObjects()[0], reg);
+    const issues = run(reg);
     expect(issues.length).to.equal(0);
   });
 
@@ -71,8 +76,7 @@ describe("Rule: check_text_elements", () => {
     const reg = new Registry();
     reg.addFile(new MemoryFile("zfoobar.prog.abap", abap));
     reg.addFile(new MemoryFile("zfoobar.prog.xml", xml));
-    reg.parse();
-    const issues = new CheckTextElements().run(reg.getObjects()[0], reg);
+    const issues = run(reg);
     expect(issues.length).to.equal(0);
   });
 
@@ -81,8 +85,7 @@ describe("Rule: check_text_elements", () => {
     const reg = new Registry();
     reg.addFile(new MemoryFile("zfoobar.prog.abap", abap));
     reg.addFile(new MemoryFile("zfoobar.prog.xml", xml));
-    reg.parse();
-    const issues = new CheckTextElements().run(reg.getObjects()[0], reg);
+    const issues = run(reg);
     expect(issues.length).to.equal(0);
   });
 
@@ -91,8 +94,7 @@ describe("Rule: check_text_elements", () => {
     const reg = new Registry();
     reg.addFile(new MemoryFile("zfoobar.prog.abap", abap));
     reg.addFile(new MemoryFile("zfoobar.prog.xml", xml));
-    reg.parse();
-    const issues = new CheckTextElements().run(reg.getObjects()[0], reg);
+    const issues = run(reg);
     expect(issues.length).to.equal(0);
   });
 
@@ -101,8 +103,7 @@ describe("Rule: check_text_elements", () => {
     const reg = new Registry();
     reg.addFile(new MemoryFile("zfoobar.prog.abap", abap));
     reg.addFile(new MemoryFile("zfoobar.prog.xml", xml));
-    reg.parse();
-    const issues = new CheckTextElements().run(reg.getObjects()[0], reg);
+    const issues = run(reg);
     expect(issues.length).to.equal(1);
   });
 
@@ -111,8 +112,7 @@ describe("Rule: check_text_elements", () => {
     const reg = new Registry();
     reg.addFile(new MemoryFile("zfoobar.prog.abap", abap));
     reg.addFile(new MemoryFile("zfoobar.prog.xml", xml));
-    reg.parse();
-    const issues = new CheckTextElements().run(reg.getObjects()[0], reg);
+    const issues = run(reg);
     expect(issues.length).to.equal(0);
   });
 
@@ -121,8 +121,7 @@ describe("Rule: check_text_elements", () => {
     const reg = new Registry();
     reg.addFile(new MemoryFile("zfoobar.prog.abap", abap));
     reg.addFile(new MemoryFile("zfoobar.prog.xml", xml));
-    reg.parse();
-    const issues = new CheckTextElements().run(reg.getObjects()[0], reg);
+    const issues = run(reg);
     expect(issues.length).to.equal(1);
   });
 
@@ -131,8 +130,7 @@ describe("Rule: check_text_elements", () => {
     const reg = new Registry();
     reg.addFile(new MemoryFile("zfoobar.prog.abap", abap));
     reg.addFile(new MemoryFile("zfoobar.prog.xml", xml));
-    reg.parse();
-    const issues = new CheckTextElements().run(reg.getObjects()[0], reg);
+    const issues = run(reg);
     expect(issues.length).to.equal(1);
   });
 
@@ -141,8 +139,7 @@ describe("Rule: check_text_elements", () => {
     const reg = new Registry();
     reg.addFile(new MemoryFile("zfoobar.prog.abap", abap));
     reg.addFile(new MemoryFile("zfoobar.prog.xml", xml));
-    reg.parse();
-    const issues = new CheckTextElements().run(reg.getObjects()[0], reg);
+    const issues = run(reg);
     expect(issues.length).to.equal(0);
   });
 
@@ -154,8 +151,7 @@ SELECTION-SCREEN END OF BLOCK cls.
     const reg = new Registry();
     reg.addFile(new MemoryFile("zfoobar.prog.abap", abap));
     reg.addFile(new MemoryFile("zfoobar.prog.xml", xml));
-    reg.parse();
-    const issues = new CheckTextElements().run(reg.getObjects()[0], reg);
+    const issues = run(reg);
     expect(issues.length).to.equal(0);
   });
 
@@ -166,8 +162,7 @@ SELECTION-SCREEN PUSHBUTTON 60(30) text-001 USER-COMMAND btn.
     const reg = new Registry();
     reg.addFile(new MemoryFile("zfoobar.prog.abap", abap));
     reg.addFile(new MemoryFile("zfoobar.prog.xml", xml));
-    reg.parse();
-    const issues = new CheckTextElements().run(reg.getObjects()[0], reg);
+    const issues = run(reg);
     expect(issues.length).to.equal(0);
   });
 
@@ -178,8 +173,7 @@ SELECTION-SCREEN PUSHBUTTON 60(30) text-003 USER-COMMAND btn.
     const reg = new Registry();
     reg.addFile(new MemoryFile("zfoobar.prog.abap", abap));
     reg.addFile(new MemoryFile("zfoobar.prog.xml", xml));
-    reg.parse();
-    const issues = new CheckTextElements().run(reg.getObjects()[0], reg);
+    const issues = run(reg);
     expect(issues.length).to.equal(1);
   });
 
