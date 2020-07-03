@@ -143,6 +143,11 @@ const tests = [
 
   "FORM formname USING $var $lang$sdf$ $lang$sdf.",
 
+  "FORM foobar USING p_param LIKE LINE OF gt_foo.",
+  "FORM foobar USING p_param LIKE REF TO go_foo.",
+  "FORM foobar USING p_param TYPE LINE OF tt_foo.",
+  "FORM foobar USING p_param TYPE REF TO to_foo.",
+
 //  "FORM moo USING boo-vbeln bar-vbtyp.",
 ];
 
