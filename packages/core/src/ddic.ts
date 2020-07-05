@@ -77,9 +77,11 @@ export class DDIC {
   }
 
   public textToType(text: string, length: string | undefined, decimals: string | undefined): AbstractType {
-// todo, support short strings, and length of different integers, NUMC vs CHAR, min/max length 
+// todo, support short strings, and length of different integers, NUMC vs CHAR, min/max length
     switch (text) {
       case "DEC":      // 1 <= len <= 31
+      case "D16F":     // 1 <= len <= 31
+      case "D34F":     // 1 <= len <= 31
       case "DF16_DEC": // 1 <= len <= 31
       case "DF34_DEC": // 1 <= len <= 31
       case "CURR":     // 1 <= len <= 31
@@ -117,6 +119,8 @@ export class DDIC {
         return new Types.TimeType(); //HHMMSS
       case "DECFLOAT16": // len = 16
       case "DECFLOAT34": // len = 34
+      case "D16R":       // len = 16
+      case "D34R":       // len = 34
       case "DF16_RAW":   // len = 16
       case "DF34_RAW":   // len = 34
       case "FLTP":       // len = 16
@@ -140,6 +144,8 @@ export class DDIC {
       case "RAWSTRING": // 256 <= len
       case "GEOM_EWKB":
         return new Types.XStringType();
+      case "D16S":
+      case "D34S":
       case "DF16_SCL":
       case "DF34_SCL":
       case "PREC":
