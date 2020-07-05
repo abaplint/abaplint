@@ -60,6 +60,7 @@ export class ChainMainlyDeclarations extends ABAPRule {
           || s instanceof Statements.Refresh
           || s instanceof Statements.Unassign
           || s instanceof Statements.Clear
+          || s instanceof Statements.Hide
           || s instanceof Statements.Events
           || s instanceof Statements.Free
           || s instanceof Statements.Constant
