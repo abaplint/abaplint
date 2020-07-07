@@ -97,8 +97,9 @@ export class SkipLogic {
 
     if (obj.getName().match(/_MPC$/i) && sup === "/IWBEP/CL_MGW_PUSH_ABS_MODEL") {
       return true;
-    }
-    if (obj.getName().match(/_DPC$/i) && sup === "/IWBEP/CL_MGW_PUSH_ABS_DATA") {
+    } else if (obj.getName().match(/_DPC$/i) && sup === "/IWBEP/CL_MGW_PUSH_ABS_DATA") {
+      return true;
+    } else if (sup === "CL_SADL_GTK_EXPOSURE_MPC") {
       return true;
     }
     return false;
@@ -107,8 +108,7 @@ export class SkipLogic {
   private isGeneratedPersistentClass(obj: Class): boolean {
     if (obj.getCategory() === ClassCategory.Persistent) {
       return true;
-    }
-    if (obj.getCategory() === ClassCategory.PersistentFactory) {
+    } else if (obj.getCategory() === ClassCategory.PersistentFactory) {
       return true;
     }
 

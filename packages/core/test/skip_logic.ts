@@ -77,4 +77,22 @@ ENDINTERFACE.`;
     expect(reg.getObjects().length).to.equal(1);
     expect(new SkipLogic(reg).skip(reg.getObjects()[0])).to.equal(true);
   });
+
+  it("generated DPC classes generated for a published CDS", async () => {
+    const abap = `
+    class ZCL_ZTT_C_PROJECTS definition public
+      inheriting from CL_SADL_GTK_EXPOSURE_MPC
+      final create public.
+    ENDCLASS.
+
+    CLASS ZCL_ZTT_C_PROJECTS IMPLEMENTATION.
+    ENDCLASS.
+    `;
+
+    const file = new MemoryFile("zcl_ztt_c_projects.clas.abap", abap);
+    const reg = new Registry().addFile(file);
+    await reg.parseAsync();
+    expect(reg.getObjects().length).to.equal(1);
+    expect(new SkipLogic(reg).skip(reg.getObjects()[0])).to.equal(true);
+  });
 });
