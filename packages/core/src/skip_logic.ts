@@ -27,8 +27,23 @@ export class SkipLogic {
       return true;
     } else if (obj instanceof Interface && this.isGeneratedProxyInterface(obj)) {
       return true;
+    } else if (obj instanceof Interface && this.isGeneratedBOPFInterface(obj)) {
+      return true;
     }
 
+    return false;
+  }
+
+  private isGeneratedBOPFInterface(obj: Interface): boolean {
+    const implementing = obj.getDefinition()?.getImplementing();
+    if (implementing === undefined) {
+      return false;
+    }
+    for (const i of implementing) {
+      if (i.name.toUpperCase() === "/BOBF/IF_LIB_CONSTANTS") {
+        return true;
+      }
+    }
     return false;
   }
 

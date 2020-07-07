@@ -5,6 +5,18 @@ import {SkipLogic} from "../src/skip_logic";
 
 describe("Skip logic", () => {
 
+  it("normal interface, no skip", async () => {
+    const abap = `
+INTERFACE zif_bar PUBLIC.
+ENDINTERFACE.`;
+
+    const file = new MemoryFile("zif_bar.ingf.abap", abap);
+    const reg = new Registry().addFile(file);
+    await reg.parseAsync();
+    expect(reg.getObjects().length).to.equal(1);
+    expect(new SkipLogic(reg).skip(reg.getObjects()[0])).to.equal(false);
+  });
+
   it("isGeneratedGatewayClass, true", async () => {
     const abap = "class /ABC/CL_Z_ABAPGIT_TEST_MPC definition\n" +
       "  public\n" +
@@ -48,6 +60,19 @@ describe("Skip logic", () => {
       "</abapGit>";
     reg.addFile(new MemoryFile("zif_foobar.intf.xml", xml));
 
+    await reg.parseAsync();
+    expect(reg.getObjects().length).to.equal(1);
+    expect(new SkipLogic(reg).skip(reg.getObjects()[0])).to.equal(true);
+  });
+
+  it("generated BOPF constants interface", async () => {
+    const abap = `
+INTERFACE zif_tt_i_projects_c PUBLIC.
+  INTERFACES /bobf/if_lib_constants .
+ENDINTERFACE.`;
+
+    const file = new MemoryFile("zif_tt_i_projects_c.intf.abap", abap);
+    const reg = new Registry().addFile(file);
     await reg.parseAsync();
     expect(reg.getObjects().length).to.equal(1);
     expect(new SkipLogic(reg).skip(reg.getObjects()[0])).to.equal(true);
