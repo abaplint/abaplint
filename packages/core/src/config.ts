@@ -6,7 +6,7 @@ import * as JSON5 from "json5";
 
 // assumption: this class is immutable
 export class Config implements IConfiguration {
-  readonly config: IConfig;
+  private readonly config: IConfig;
 
   public static getDefault(ver?: Version): Config {
     const rules: any = {};
