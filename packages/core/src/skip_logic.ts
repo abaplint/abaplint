@@ -23,16 +23,42 @@ export class SkipLogic {
         && obj instanceof FunctionGroup
         && this.isGeneratedFunctionGroup(obj)) {
       return true;
-    } else if (obj instanceof Class && obj.isGeneratedProxy()) {
+    } else if (obj instanceof Class && this.isGeneratedProxyClass(obj)) {
       return true;
-    } else if (obj instanceof Interface && obj.isGeneratedProxy()) {
+    } else if (obj instanceof Interface && this.isGeneratedProxyInterface(obj)) {
       return true;
     }
 
     return false;
   }
 
-  public isGeneratedFunctionGroup(group: FunctionGroup): boolean {
+  private isGeneratedProxyInterface(obj: Interface): boolean {
+    const xml = obj.getXML();
+    if (!xml) {
+      return false;
+    }
+    const result = xml.match(/<CLSPROXY>(.)<\/CLSPROXY>/);
+    if (result) {
+      return true;
+    } else {
+      return false;
+    }
+  }
+
+  private isGeneratedProxyClass(obj: Class): boolean {
+    const xml = obj.getXML();
+    if (!xml) {
+      return false;
+    }
+    const result = xml.match(/<CLSPROXY>(.)<\/CLSPROXY>/);
+    if (result) {
+      return true;
+    } else {
+      return false;
+    }
+  }
+
+  private isGeneratedFunctionGroup(group: FunctionGroup): boolean {
     this.reg.getObject("TOBJ", "");
     for (const obj of this.reg.getObjects()) {
       if (obj.getType() !== "TOBJ") {
@@ -46,7 +72,7 @@ export class SkipLogic {
     return false;
   }
 
-  public isGeneratedGatewayClass(obj: Class): boolean {
+  private isGeneratedGatewayClass(obj: Class): boolean {
     let sup = undefined;
 
     const definition = obj.getClassDefinition();
@@ -63,7 +89,7 @@ export class SkipLogic {
     return false;
   }
 
-  public isGeneratedPersistentClass(obj: Class): boolean {
+  private isGeneratedPersistentClass(obj: Class): boolean {
     if (obj.getCategory() === ClassCategory.Persistent) {
       return true;
     }

@@ -63,18 +63,4 @@ export class Interface extends ABAPObject {
     return vseo.DESCRIPT ? vseo.DESCRIPT._text : "";
   }
 
-// todo, should this method be moved to abstract class ABAPObject?
-  public isGeneratedProxy(): boolean {
-    const xml = this.getXML();
-    if (!xml) {
-      return false;
-    }
-    const result = xml.match(/<CLSPROXY>(.)<\/CLSPROXY>/);
-    if (result) {
-      return true;
-    } else {
-      return false;
-    }
-  }
-
 }
