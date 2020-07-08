@@ -4,7 +4,7 @@ import * as Structures from "../3_structures/structures";
 import * as Statements from "../2_statements/statements";
 import * as Expressions from "../2_statements/expressions";
 import {CurrentScope} from "../5_syntax/_current_scope";
-import {IInterfaceDefinition} from "./_interface_definition";
+import {IInterfaceDefinition, IImplementing} from "./_interface_definition";
 import {IAttributes}  from "./_class_attributes";
 import {ITypeDefinitions} from "./_type_definitions";
 import {Attributes} from "./class_attributes";
@@ -21,6 +21,7 @@ import {Aliases} from "./aliases";
 export class InterfaceDefinition extends Identifier implements IInterfaceDefinition {
   private readonly node: StructureNode;
   private attributes: IAttributes;
+  private readonly implementing: IImplementing[];
   private typeDefinitions: ITypeDefinitions;
   private methodDefinitions: IMethodDefinitions;
   private readonly events: IEventDefinition[];
@@ -35,6 +36,7 @@ export class InterfaceDefinition extends Identifier implements IInterfaceDefinit
 
     this.node = node;
     this.events = [];
+    this.implementing = [];
 
     scope.push(ScopeType.Interface, name.getStr(), name.getStart(), filename);
     this.parse(scope);
@@ -45,9 +47,8 @@ export class InterfaceDefinition extends Identifier implements IInterfaceDefinit
     return undefined;
   }
 
-  public getImplementing() {
-    // todo
-    return [];
+  public getImplementing(): readonly IImplementing[] {
+    return this.implementing;
   }
 
   public getAliases(): IAliases {
@@ -91,6 +92,14 @@ export class InterfaceDefinition extends Identifier implements IInterfaceDefinit
     for (const e of events) {
       this.events.push(new EventDefinition(e, Visibility.Public, this.filename, scope));
     }
+
+    for (const i of this.node.findAllStatements(Statements.InterfaceDef)) {
+      const name = i.findDirectExpression(Expressions.InterfaceName)?.getFirstToken().getStr();
+      if (name) {
+        this.implementing.push({name, partial: false});
+      }
+    }
+
   }
 
 }
