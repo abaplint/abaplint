@@ -8,7 +8,8 @@ describe("Registry", () => {
 
   it("Parse ABAP file", async () => {
     const file = new MemoryFile("zfoobar.prog.abap", "IF moo = boo. ENDIF.");
-    const reg = new Registry().addFile(file).parse();
+    const reg = new Registry().addFile(file);
+    await reg.parseAsync();
     const abap = getABAPObjects(reg)[0].getABAPFiles();
     expect(abap.length).to.equal(1);
     expect(abap[0].getStatements().length).to.equal(2);
@@ -17,29 +18,33 @@ describe("Registry", () => {
 
   it("Parse PROG without main", async () => {
     const file = new MemoryFile("zfoobar.prog.xml", "<foo></foo>");
-    const reg = new Registry().addFile(file).parse();
+    const reg = new Registry().addFile(file);
+    await reg.parseAsync();
     expect(reg).to.not.equal(undefined);
   });
 
   it("Add README.md, should skip", async () => {
     const file = new MemoryFile("README.md", "<foo></foo>");
-    const reg = new Registry().addFile(file).parse();
+    const reg = new Registry().addFile(file);
+    await reg.parseAsync();
     expect(reg).to.not.equal(undefined);
     expect(reg.findIssues().length).to.equal(0);
   });
 
   it("Add and update file", async () => {
     const first = new MemoryFile("zfoobar.prog.abap", "first");
-    const registry = new Registry().addFile(first).parse();
-    expect(getABAPObjects(registry)[0].getABAPFiles().length).to.equal(1);
-    expect(registry.getObjects().length).to.equal(1);
+    const reg = new Registry().addFile(first);
+    await reg.parseAsync();
+    expect(getABAPObjects(reg)[0].getABAPFiles().length).to.equal(1);
+    expect(reg.getObjects().length).to.equal(1);
 
     const updated = new MemoryFile("zfoobar.prog.abap", "updated");
-    registry.updateFile(updated).parse();
-    expect(getABAPObjects(registry)[0].getABAPFiles().length).to.equal(1);
-    expect(registry.getObjects().length).to.equal(1);
+    reg.updateFile(updated);
+    await reg.parseAsync();
+    expect(getABAPObjects(reg)[0].getABAPFiles().length).to.equal(1);
+    expect(reg.getObjects().length).to.equal(1);
 
-    expect(getABAPObjects(registry)[0].getABAPFiles()[0].getRaw()).to.equal("updated");
+    expect(getABAPObjects(reg)[0].getABAPFiles()[0].getRaw()).to.equal("updated");
   });
 
   it("filename with namespace", async () => {
@@ -138,8 +143,9 @@ ENDINTERFACE.`;
 
   it("full windows path, main file", async () => {
     const file = new MemoryFile("C:\\Users\\foobar\\git\\transpiler\\packages\\abap-loader\\build\\test\\zprogram.prog.abap", "BREAK-POINT.");
-    const registry = new Registry().addFile(file).parse();
-    const objects = registry.getObjects();
+    const reg = new Registry().addFile(file);
+    await reg.parseAsync();
+    const objects = reg.getObjects();
     expect(objects.length).to.equal(1);
     const abap = objects[0] as ABAPObject;
     expect(abap.getName()).to.equal("ZPROGRAM");

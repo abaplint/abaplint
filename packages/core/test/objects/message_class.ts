@@ -4,7 +4,7 @@ import {MemoryFile} from "../../src/files/memory_file";
 import {MessageClass} from "../../src/objects";
 
 describe("Message Class, parse XML", () => {
-  it("test", () => {
+  it("test", async () => {
     const xml =
       "<?xml version=\"1.0\" encoding=\"utf-8\"?>\n" +
       "<abapGit version=\"v1.0.0\" serializer=\"LCL_OBJECT_MSAG\" serializer_version=\"v1.0.0\">\n" +
@@ -27,7 +27,8 @@ describe("Message Class, parse XML", () => {
       " </asx:abap>\n" +
       "</abapGit>";
 
-    const reg = new Registry().addFile(new MemoryFile("zag_unit_test.msag.xml", xml)).parse();
+    const reg = new Registry().addFile(new MemoryFile("zag_unit_test.msag.xml", xml));
+    await reg.parseAsync();
     const msag = reg.getObjects()[0] as MessageClass;
     expect(msag.getName()).to.equal("ZAG_UNIT_TEST");
     const messages = msag.getMessages();
@@ -36,7 +37,7 @@ describe("Message Class, parse XML", () => {
     expect(messages[0].getMessage()).to.equal("hello world &");
   });
 
-  it("empty text", () => {
+  it("empty text", async () => {
     const xml =
       "<?xml version=\"1.0\" encoding=\"utf-8\"?>\n" +
       "<abapGit version=\"v1.0.0\" serializer=\"LCL_OBJECT_MSAG\" serializer_version=\"v1.0.0\">\n" +
@@ -58,7 +59,8 @@ describe("Message Class, parse XML", () => {
       " </asx:abap>\n" +
       "</abapGit>";
 
-    const reg = new Registry().addFile(new MemoryFile("zag_unit_test.msag.xml", xml)).parse();
+    const reg = new Registry().addFile(new MemoryFile("zag_unit_test.msag.xml", xml));
+    await reg.parseAsync();
     const msag = reg.getObjects()[0] as MessageClass;
     expect(msag.getName()).to.equal("ZAG_UNIT_TEST");
     const messages = msag.getMessages();

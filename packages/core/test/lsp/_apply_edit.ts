@@ -1,11 +1,12 @@
 import * as LServer from "vscode-languageserver-types";
-import {Registry, MemoryFile} from "../../src";
+import {IRegistry} from "../../src/_iregistry";
+import {MemoryFile} from "../../src/files/memory_file";
 
 // applys LServer WorkspaceEdit to abaplint Registry
 export class ApplyWorkSpaceEdit {
-  private readonly reg: Registry;
+  private readonly reg: IRegistry;
 
-  public constructor(reg: Registry) {
+  public constructor(reg: IRegistry) {
     this.reg = reg;
   }
 

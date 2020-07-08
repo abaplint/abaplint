@@ -71,8 +71,9 @@ describe("Table, parse XML", () => {
     " </asx:abap>\n" +
     "</abapGit>";
 
-  it("test 1, fields, category, enhancement category", () => {
-    const reg = new Registry().addFile(new MemoryFile("zabapgit_unit_t2.tabl.xml", xml1)).parse();
+  it("test 1, fields, category, enhancement category", async () => {
+    const reg = new Registry().addFile(new MemoryFile("zabapgit_unit_t2.tabl.xml", xml1));
+    await reg.parseAsync();
     const tabl = reg.getObjects()[0] as Table;
 
     expect(tabl.getName()).to.equal("ZABAPGIT_UNIT_T2");
@@ -86,7 +87,7 @@ describe("Table, parse XML", () => {
     expect(tabl.getEnhancementCategory()).to.equal(EnhancementCategory.CannotBeEhanced);
   });
 
-  it("test 2, empty enhancement category", () => {
+  it("test 2, empty enhancement category", async () => {
     const xml =
       "<?xml version=\"1.0\" encoding=\"utf-8\"?>\n" +
       "<abapGit version=\"v1.0.0\" serializer=\"LCL_OBJECT_TABL\" serializer_version=\"v1.0.0\">\n" +
@@ -105,14 +106,16 @@ describe("Table, parse XML", () => {
       " </asx:abap>\n" +
       "</abapGit>";
 
-    const reg = new Registry().addFile(new MemoryFile("zsyst.tabl.xml", xml)).parse();
+    const reg = new Registry().addFile(new MemoryFile("zsyst.tabl.xml", xml));
+    await reg.parseAsync();
     const tabl = reg.getObjects()[0] as Table;
 
     expect(tabl.getEnhancementCategory()).to.equal(EnhancementCategory.NotClassified);
   });
 
-  it("Call parseType", () => {
-    const reg = new Registry().addFile(new MemoryFile("zabapgit_unit_t2.tabl.xml", xml1)).parse();
+  it("Call parseType", async () => {
+    const reg = new Registry().addFile(new MemoryFile("zabapgit_unit_t2.tabl.xml", xml1));
+    await reg.parseAsync();
     const tabl = reg.getObjects()[0] as Table;
 
     const type = tabl.parseType(reg);
@@ -121,7 +124,7 @@ describe("Table, parse XML", () => {
     expect(stru.getComponents().length).to.equal(4);
   });
 
-  it("Nested structure", () => {
+  it("Nested structure", async () => {
     const structure1 = `
 <?xml version="1.0" encoding="utf-8"?>
 <abapGit version="v1.0.0" serializer="LCL_OBJECT_TABL" serializer_version="v1.0.0">
@@ -193,7 +196,7 @@ describe("Table, parse XML", () => {
     const reg = new Registry();
     reg.addFile(new MemoryFile("zstructure2.tabl.xml", structure2));
     reg.addFile(new MemoryFile("zstructure1.tabl.xml", structure1));
-    reg.parse();
+    await reg.parseAsync();
     const tabl = reg.getObjects()[0] as Table;
 
     const type = tabl.parseType(reg);
@@ -205,7 +208,7 @@ describe("Table, parse XML", () => {
     expect(components[1].type).to.be.instanceof(StructureType);
   });
 
-  it("Structure with table type", () => {
+  it("Structure with table type", async () => {
     const structure1 = `
 <?xml version="1.0" encoding="utf-8"?>
 <abapGit version="v1.0.0" serializer="LCL_OBJECT_TABL" serializer_version="v1.0.0">
@@ -256,7 +259,7 @@ describe("Table, parse XML", () => {
     const reg = new Registry();
     reg.addFile(new MemoryFile("zstructure1.tabl.xml", structure1));
     reg.addFile(new MemoryFile("ztable_type_test_ag.ttyp.xml", ttyp));
-    reg.parse();
+    await reg.parseAsync();
     const tabl = reg.getObjects()[0] as Table;
 
     const type = tabl.parseType(reg);
@@ -269,7 +272,7 @@ describe("Table, parse XML", () => {
   });
 
 
-  it("TABL, object reference", () => {
+  it("TABL, object reference", async () => {
     const structure1 = `
 <?xml version="1.0" encoding="utf-8"?>
 <abapGit version="v1.0.0" serializer="LCL_OBJECT_TABL" serializer_version="v1.0.0">
@@ -299,7 +302,8 @@ describe("Table, parse XML", () => {
  </asx:abap>
 </abapGit>`;
 
-    const reg = new Registry().addFile(new MemoryFile("zstructure1.tabl.xml", structure1)).parse();
+    const reg = new Registry().addFile(new MemoryFile("zstructure1.tabl.xml", structure1));
+    await reg.parseAsync();
     const tabl = reg.getObjects()[0] as Table;
 
     const type = tabl.parseType(reg);
