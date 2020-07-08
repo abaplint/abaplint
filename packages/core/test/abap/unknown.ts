@@ -3,7 +3,7 @@ import {Unknown} from "../../src/abap/2_statements/statements/_statement";
 import {getStatements} from "./_utils";
 
 describe("unknown statements", () => {
-  const tests =  [
+  const tests = [
     "data foo bar.",
     "asdf.",
     "asdf",

@@ -93,7 +93,7 @@ export class Help {
     return ret;
   }
 
-  private static fullPath(file: ABAPFile, token: Token): {value: string, keyword: boolean}  {
+  private static fullPath(file: ABAPFile, token: Token): {value: string, keyword: boolean} {
     const structure = file.getStructure();
 
     if (structure === undefined) {

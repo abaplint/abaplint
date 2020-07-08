@@ -2,65 +2,67 @@ import {MemoryFile} from "../../src/files/memory_file";
 import {Registry} from "../../src/registry";
 import {expect} from "chai";
 import {MainFileContents} from "../../src/rules";
+import {Issue} from "../../src/issue";
 
-function findIssues(abap: string, filename: string) {
-  const reg = new Registry().addFile(new MemoryFile(filename, abap)).parse();
+async function findIssues(abap: string, filename: string): Promise<Issue[]> {
+  const reg = new Registry().addFile(new MemoryFile(filename, abap));
+  await reg.parseAsync();
   const rule = new MainFileContents();
   return rule.initialize(reg).run(reg.getObjects()[0]);
 }
 
 describe("Rule: main_file_contents", () => {
-  it("PROG parser error should not report issues", () => {
+  it("PROG parser error should not report issues", async () => {
     const abap = "parser error";
-    const issues = findIssues(abap, "zreport.prog.abap");
+    const issues = await findIssues(abap, "zreport.prog.abap");
     expect(issues.length).to.equal(0);
   });
 
-  it("PROG should start with REPORT, issue", () => {
+  it("PROG should start with REPORT, issue", async () => {
     const abap = "WRITE hello.";
-    const issues = findIssues(abap, "zreport.prog.abap");
+    const issues = await findIssues(abap, "zreport.prog.abap");
     expect(issues.length).to.equal(1);
   });
 
-  it("PROG should start with REPORT, solved", () => {
+  it("PROG should start with REPORT, solved", async () => {
     const abap = "REPORT zreport.";
-    const issues = findIssues(abap, "zreport.prog.abap");
+    const issues = await findIssues(abap, "zreport.prog.abap");
     expect(issues.length).to.equal(0);
   });
 
-  it("PROG should start with REPORT or PROGRAM, solved", () => {
+  it("PROG should start with REPORT or PROGRAM, solved", async () => {
     const abap = "PROGRAM zreport.";
-    const issues = findIssues(abap, "zreport.prog.abap");
+    const issues = await findIssues(abap, "zreport.prog.abap");
     expect(issues.length).to.equal(0);
   });
 
-  it("PROG should start with REPORT, solved, comment ok", () => {
+  it("PROG should start with REPORT, solved, comment ok", async () => {
     const abap = "* foo\nREPORT zreport.";
-    const issues = findIssues(abap, "zreport.prog.abap");
+    const issues = await findIssues(abap, "zreport.prog.abap");
     expect(issues.length).to.equal(0);
   });
 
-  it("PROG should start with REPORT, solved, two comments", () => {
+  it("PROG should start with REPORT, solved, two comments", async () => {
     const abap = "* foo\n* bar\nREPORT zreport.";
-    const issues = findIssues(abap, "zreport.prog.abap");
+    const issues = await findIssues(abap, "zreport.prog.abap");
     expect(issues.length).to.equal(0);
   });
 
-  it("just a comment", () => {
+  it("just a comment", async () => {
     const abap = "* foo";
-    const issues = findIssues(abap, "zreport.prog.abap");
+    const issues = await findIssues(abap, "zreport.prog.abap");
     expect(issues.length).to.equal(1);
   });
 
-  it("PROG should have name", () => {
+  it("PROG should have name", async () => {
     const abap = "REPORT.";
-    const issues = findIssues(abap, "zreport.prog.abap");
+    const issues = await findIssues(abap, "zreport.prog.abap");
     expect(issues.length).to.equal(1);
   });
 
-  it("PROG report name should match filename", () => {
+  it("PROG report name should match filename", async () => {
     const abap = "REPORT zmoo.";
-    const issues = findIssues(abap, "zreport.prog.abap");
+    const issues = await findIssues(abap, "zreport.prog.abap");
     expect(issues.length).to.equal(1);
   });
 

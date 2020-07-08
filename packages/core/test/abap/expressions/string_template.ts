@@ -5,8 +5,8 @@ import {getTokens} from "../_utils";
 import {Config} from "../../../src/config";
 
 const tests = [
-  {c: "|hello|", r: new Expressions.StringTemplate(),      e: true},
-  {c: "|{ lv_minutes alpha = in width = 2 }|", r: new Expressions.StringTemplate(),      e: true},
+  {c: "|hello|", r: new Expressions.StringTemplate(), e: true},
+  {c: "|{ lv_minutes alpha = in width = 2 }|", r: new Expressions.StringTemplate(), e: true},
   {c: "|{ condense( iv_fnam ) }({ iv_index ALIGN = RIGHT PAD = '0' WIDTH = len })|", r: new Expressions.StringTemplate(), e: true},
 ];
 

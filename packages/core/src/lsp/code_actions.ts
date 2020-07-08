@@ -32,7 +32,7 @@ export class CodeActions {
         totals[i.getKey()]++;
       }
 
-      if (this.inRange(i, params.range) === false)  {
+      if (this.inRange(i, params.range) === false) {
         continue;
       }
 

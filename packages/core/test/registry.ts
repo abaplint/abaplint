@@ -6,7 +6,7 @@ import {ABAPObject} from "../src/objects/_abap_object";
 
 describe("Registry", () => {
 
-  it("Parse ABAP file", () => {
+  it("Parse ABAP file", async () => {
     const file = new MemoryFile("zfoobar.prog.abap", "IF moo = boo. ENDIF.");
     const reg = new Registry().addFile(file).parse();
     const abap = getABAPObjects(reg)[0].getABAPFiles();
@@ -15,20 +15,20 @@ describe("Registry", () => {
     expect(abap[0].getStructure()).to.not.equal(undefined);
   });
 
-  it("Parse PROG without main", () => {
+  it("Parse PROG without main", async () => {
     const file = new MemoryFile("zfoobar.prog.xml", "<foo></foo>");
     const reg = new Registry().addFile(file).parse();
     expect(reg).to.not.equal(undefined);
   });
 
-  it("Add README.md, should skip", () => {
+  it("Add README.md, should skip", async () => {
     const file = new MemoryFile("README.md", "<foo></foo>");
     const reg = new Registry().addFile(file).parse();
     expect(reg).to.not.equal(undefined);
     expect(reg.findIssues().length).to.equal(0);
   });
 
-  it("Add and update file",  () => {
+  it("Add and update file", async () => {
     const first = new MemoryFile("zfoobar.prog.abap", "first");
     const registry = new Registry().addFile(first).parse();
     expect(getABAPObjects(registry)[0].getABAPFiles().length).to.equal(1);
@@ -42,40 +42,40 @@ describe("Registry", () => {
     expect(getABAPObjects(registry)[0].getABAPFiles()[0].getRaw()).to.equal("updated");
   });
 
-  it("filename with namespace", () => {
+  it("filename with namespace", async () => {
     const reg = new Registry().addFile(new MemoryFile("#namesp#cl_foobar.clas.abap", "parser error"));
     expect(reg.getObjects().length).to.equal(1);
     expect(reg.getObjects()[0].getType()).to.equal("CLAS");
     expect(reg.getObject("CLAS", "/namesp/cl_foobar")).to.not.equal(undefined);
   });
 
-  it("foo.bar.", () => {
+  it("foo.bar.", async () => {
     const reg = new Registry().addFile(new MemoryFile("foo.bar.", "something"));
     expect(reg.getObjects().length).to.equal(1);
     expect(reg.getObjects()[0].getType()).to.equal("BAR");
   });
 
-  it("filename with namespace, url encoded", () => {
+  it("filename with namespace, url encoded", async () => {
     const reg = new Registry().addFile(new MemoryFile("%23namesp%23cl_foobar.clas.abap", "parser error"));
     expect(reg.getObjects().length).to.equal(1);
     expect(reg.getObjects()[0].getType()).to.equal("CLAS");
     expect(reg.getObject("CLAS", "/namesp/cl_foobar")).to.not.equal(undefined);
   });
 
-  it("Update unknown file, 1", () => {
+  it("Update unknown file, 1", async () => {
     const file = new MemoryFile("zfoobar.prog.abap", "IF moo = boo. ENDIF.");
     const registry = new Registry();
     expect(() => { registry.updateFile(file); }).to.throw("find: object not found");
   });
 
-  it("Update unknown file, 2", () => {
+  it("Update unknown file, 2", async () => {
     const file = new MemoryFile("zfoobar.clas.abap", "WRITE hello.");
     const registry = new Registry().addFile(file);
     const update = new MemoryFile("zfoobar.clas.testclasses.abap", "WRITE hello..");
     expect(() => { registry.updateFile(update); }).to.throw("updateFile: file not found");
   });
 
-  it("Remove files", () => {
+  it("Remove files", async () => {
     const file1 = new MemoryFile("zfoobar.clas.abap", "WRITE hello.");
     const file2 = new MemoryFile("zfoobar.clas.testclasses.abap", "WRITE hello..");
     const registry = new Registry().addFiles([file1, file2]);
@@ -94,7 +94,7 @@ describe("Registry", () => {
     expect(() => { registry.removeFile(file1); }).to.throw();
   });
 
-  it("Add and update", () => {
+  it("Add and update", async () => {
     const file = new MemoryFile("zfoobar.prog.abap", "REPORT zfoobar.\nDATA hello TYPE i.\nWRITE hello.");
     const registry = new Registry().addFile(file);
     expect(registry.findIssues().length).to.equal(0);
@@ -104,21 +104,21 @@ describe("Registry", () => {
     expect(registry.findIssues().length).to.equal(1);
   });
 
-  it("Double parse should give the same issues, structure", () => {
+  it("Double parse should give the same issues, structure", async () => {
     const file = new MemoryFile("zfoobar.prog.abap", "IF foo = bar.");
     const registry = new Registry().addFile(file);
     expect(registry.findIssues().length).to.equal(1);
     expect(registry.findIssues().length).to.equal(1);
   });
 
-  it("Double parse should give the same issues, parser errror", () => {
+  it("Double parse should give the same issues, parser errror", async () => {
     const file = new MemoryFile("zfoobar.prog.abap", "moo boo");
     const registry = new Registry().addFile(file);
     expect(registry.findIssues().length).to.equal(1);
     expect(registry.findIssues().length).to.equal(1);
   });
 
-  it("Global interface, constant without VALUE", () => {
+  it("Global interface, constant without VALUE", async () => {
     const abap = `INTERFACE if_t100_message.
   CONSTANTS: default_textid TYPE string.
 ENDINTERFACE.`;
@@ -128,7 +128,7 @@ ENDINTERFACE.`;
     registry.findIssues();
   });
 
-  it("Double parse should give the same issues, rule", () => {
+  it("Double parse should give the same issues, rule", async () => {
     const file = new MemoryFile("zfoobar.prog.abap", "BREAK-POINT.");
     const registry = new Registry().addFile(file);
     const expected = 2;
@@ -136,7 +136,7 @@ ENDINTERFACE.`;
     expect(registry.findIssues().length).to.equal(expected);
   });
 
-  it("full windows path, main file", () => {
+  it("full windows path, main file", async () => {
     const file = new MemoryFile("C:\\Users\\foobar\\git\\transpiler\\packages\\abap-loader\\build\\test\\zprogram.prog.abap", "BREAK-POINT.");
     const registry = new Registry().addFile(file).parse();
     const objects = registry.getObjects();
@@ -150,7 +150,7 @@ ENDINTERFACE.`;
 
 describe("Registry, object types", () => {
 
-  it("Unknown object type", () => {
+  it("Unknown object type", async () => {
     const file = new MemoryFile("abcd.abcd.abcd", "BREAK-POINT.");
     const registry = new Registry().addFile(file);
     const issues = registry.findIssues();
@@ -158,7 +158,7 @@ describe("Registry, object types", () => {
     expect(issues[0].getKey()).to.equal("registry_add");
   });
 
-  it("Unknown object type, multi files", () => {
+  it("Unknown object type, multi files", async () => {
     const file2 = new MemoryFile("src/zprog.prog.abap", "REPORT zprog.");
     const file1 = new MemoryFile("LICENSE", "moo");
     const registry = new Registry().addFile(file1).addFile(file2);
@@ -167,7 +167,7 @@ describe("Registry, object types", () => {
     expect(issues.length).to.equal(0);
   });
 
-  it("Object type = PROG", () => {
+  it("Object type = PROG", async () => {
     const file = new MemoryFile("zfoobar.prog.abap", "BREAK-POINT.");
     const registry = new Registry().addFile(file);
     const objects = registry.getObjects();
@@ -175,7 +175,7 @@ describe("Registry, object types", () => {
     expect(objects[0].getType()).to.equal("PROG");
   });
 
-  it("Object type = W3MI", () => {
+  it("Object type = W3MI", async () => {
     const file = new MemoryFile("background.w3mi.data.png", "moo");
     const registry = new Registry().addFile(file);
     const objects = registry.getObjects();

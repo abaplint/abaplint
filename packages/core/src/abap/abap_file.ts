@@ -19,11 +19,11 @@ export class ABAPFile extends AbstractFile {
                      info: IABAPFileInformation) {
 
     super(file.getFilename());
-    this.file       = file;
-    this.tokens     = tokens;
+    this.file = file;
+    this.tokens = tokens;
     this.statements = statements;
-    this.structure  = structure;
-    this.info       = info;
+    this.structure = structure;
+    this.info = info;
   }
 
   public getRaw(): string {

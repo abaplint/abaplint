@@ -182,7 +182,7 @@ export class Registry implements IRegistry {
 
     this.issues = [];
     for (const o of this.objects) {
-      await progress?.tick("Lexing and parsing(" + this.conf.getVersion() + ") - " +  o.getType() + " " + o.getName());
+      await progress?.tick("Lexing and parsing(" + this.conf.getVersion() + ") - " + o.getType() + " " + o.getName());
       this.parsePrivate(o);
       this.issues = this.issues.concat(o.getParsingIssues());
     }

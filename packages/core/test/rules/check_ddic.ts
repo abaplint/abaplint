@@ -5,7 +5,7 @@ import {MemoryFile} from "../../src/files";
 
 describe("Rule: no_unknown_ddic", () => {
 
-  it("ok, resolved", () => {
+  it("ok, resolved", async () => {
     const xml = `
 <?xml version="1.0" encoding="utf-8"?>
 <abapGit version="v1.0.0" serializer="LCL_OBJECT_DTEL" serializer_version="v1.0.0">
@@ -20,15 +20,17 @@ describe("Rule: no_unknown_ddic", () => {
   </asx:values>
  </asx:abap>
 </abapGit>`;
-    const reg = new Registry().addFile(new MemoryFile("zddic.dtel.xml", xml)).parse();
+    const reg = new Registry().addFile(new MemoryFile("zddic.dtel.xml", xml));
+    await reg.parseAsync();
 
     const issues = new CheckDDIC().initialize(reg).run(reg.getObjects()[0]);
     expect(issues.length).to.equal(0);
   });
 
-  it("error", () => {
+  it("error", async () => {
     const xml = "sdf";
-    const reg = new Registry().addFile(new MemoryFile("zddic.dtel.xml", xml)).parse();
+    const reg = new Registry().addFile(new MemoryFile("zddic.dtel.xml", xml));
+    await reg.parseAsync();
 
     const issues = new CheckDDIC().initialize(reg).run(reg.getObjects()[0]);
     expect(issues.length).to.equal(1);

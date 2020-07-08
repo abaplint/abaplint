@@ -138,6 +138,7 @@ module.exports = {
       "no-eval": "error",
       "no-fallthrough": "error",
       "no-invalid-this": "off",
+      "no-multi-spaces": ["error", { ignoreEOLComments: true }],
       "no-irregular-whitespace": "error",
       "no-multiple-empty-lines": "off",
       "no-new-wrappers": "error",

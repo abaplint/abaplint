@@ -1,7 +1,7 @@
 import {StatementNode} from "../nodes/statement_node";
 import {MethodDef} from "../2_statements/statements/method_def";
 import * as Expressions from "../2_statements/expressions";
-import {ExpressionNode}  from "../nodes";
+import {ExpressionNode} from "../nodes";
 import {TypedIdentifier, IdentifierMeta} from "./_typed_identifier";
 import {UnknownType, VoidType} from "./basic";
 import {CurrentScope} from "../5_syntax/_current_scope";

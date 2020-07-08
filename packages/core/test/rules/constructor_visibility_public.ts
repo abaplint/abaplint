@@ -4,7 +4,7 @@ import {ConstructorVisibilityPublic} from "../../src/rules";
 import {expect} from "chai";
 
 describe("rule, constructor_visibility_public, one error", () => {
-  it("constructor_visibility_public test", () => {
+  it("constructor_visibility_public test", async () => {
     const abap = `
     CLASS zcl_abapgit_persist_settings DEFINITION PUBLIC CREATE PRIVATE.
       PRIVATE SECTION.
@@ -15,7 +15,8 @@ describe("rule, constructor_visibility_public, one error", () => {
       ENDMETHOD.
     ENDCLASS.`;
 
-    const reg = new Registry().addFile(new MemoryFile("zcl_abapgit_persist_settings.clas.abap", abap)).parse();
+    const reg = new Registry().addFile(new MemoryFile("zcl_abapgit_persist_settings.clas.abap", abap));
+    await reg.parseAsync();
     const rule = new ConstructorVisibilityPublic();
     const issues = rule.initialize(reg).run(reg.getObjects()[0]);
 
@@ -24,7 +25,7 @@ describe("rule, constructor_visibility_public, one error", () => {
 });
 
 describe("rule, constructor_visibility_public, ok", () => {
-  it("constructor_visibility_public test", () => {
+  it("constructor_visibility_public test", async () => {
     const abap = `
     CLASS zcl_abapgit_persist_settings DEFINITION PUBLIC CREATE PRIVATE.
       PUBLIC SECTION.
@@ -35,7 +36,8 @@ describe("rule, constructor_visibility_public, ok", () => {
       ENDMETHOD.
     ENDCLASS.`;
 
-    const reg = new Registry().addFile(new MemoryFile("zcl_abapgit_persist_settings.clas.abap", abap)).parse();
+    const reg = new Registry().addFile(new MemoryFile("zcl_abapgit_persist_settings.clas.abap", abap));
+    await reg.parseAsync();
     const rule = new ConstructorVisibilityPublic();
     const issues = rule.initialize(reg).run(reg.getObjects()[0]);
 

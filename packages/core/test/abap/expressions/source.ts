@@ -1,3 +1,4 @@
+/* eslint-disable no-multi-spaces */
 import {expect} from "chai";
 import * as Combi from "../../../src/abap/2_statements/combi";
 import * as Expressions from "../../../src/abap/2_statements/expressions";
