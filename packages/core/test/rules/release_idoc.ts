@@ -2,15 +2,17 @@ import {MemoryFile} from "../../src/files/memory_file";
 import {Registry} from "../../src/registry";
 import {expect} from "chai";
 import {ReleaseIdoc} from "../../src/rules";
+import {Issue} from "../../src/issue";
 
-function findIssues(contents: string, filename: string) {
-  const reg = new Registry().addFile(new MemoryFile(filename, contents)).parse();
+async function findIssues(contents: string, filename: string): Promise<Issue[]> {
+  const reg = new Registry().addFile(new MemoryFile(filename, contents));
+  await reg.parseAsync();
   const rule = new ReleaseIdoc();
   return rule.run(reg.getObjects()[0]);
 }
 
 describe("Rule: release_idoc", () => {
-  it("TABL, error", () => {
+  it("TABL, error", async () => {
 
     const xml = `<?xml version="1.0" encoding="utf-8"?>
     <abapGit version="v1.0.0" serializer="LCL_OBJECT_TABL" serializer_version="v1.0.0">
@@ -26,11 +28,11 @@ describe("Rule: release_idoc", () => {
      </asx:abap>
     </abapGit>`;
 
-    const issues = findIssues(xml, "ztabl.tabl.xml");
+    const issues = await findIssues(xml, "ztabl.tabl.xml");
     expect(issues.length).to.equal(1);
   });
 
-  it("TABL, no error", () => {
+  it("TABL, no error", async () => {
 
     const xml = `<?xml version="1.0" encoding="utf-8"?>
     <abapGit version="v1.0.0" serializer="LCL_OBJECT_TABL" serializer_version="v1.0.0">
@@ -47,11 +49,11 @@ describe("Rule: release_idoc", () => {
      </asx:abap>
     </abapGit>`;
 
-    const issues = findIssues(xml, "ztabl.tabl.xml");
+    const issues = await findIssues(xml, "ztabl.tabl.xml");
     expect(issues.length).to.equal(0);
   });
 
-  it("IDoc, error", () => {
+  it("IDoc, error", async () => {
 
     const xml = `<?xml version="1.0" encoding="utf-8"?>
     <abapGit version="v1.0.0" serializer="LCL_OBJECT_IDOC" serializer_version="v1.0.0">
@@ -66,11 +68,11 @@ describe("Rule: release_idoc", () => {
      </asx:abap>
     </abapGit>`;
 
-    const issues = findIssues(xml, "zidoc.idoc.xml");
+    const issues = await findIssues(xml, "zidoc.idoc.xml");
     expect(issues.length).to.equal(1);
   });
 
-  it("IDoc, no error", () => {
+  it("IDoc, no error", async () => {
 
     const xml = `<?xml version="1.0" encoding="utf-8"?>
     <abapGit version="v1.0.0" serializer="LCL_OBJECT_IDOC" serializer_version="v1.0.0">
@@ -86,7 +88,7 @@ describe("Rule: release_idoc", () => {
      </asx:abap>
     </abapGit>`;
 
-    const issues = findIssues(xml, "zidoc.idoc.xml");
+    const issues = await findIssues(xml, "zidoc.idoc.xml");
     expect(issues.length).to.equal(0);
   });
 
