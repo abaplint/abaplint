@@ -2,7 +2,7 @@ import {expect} from "chai";
 import {Registry} from "../../src/registry";
 import {MemoryFile} from "../../src/files/memory_file";
 import {Table, EnhancementCategory, TableCategory} from "../../src/objects";
-import {StructureType, TableType, ObjectReferenceType} from "../../src/abap/types/basic";
+import {StructureType, TableType, ObjectReferenceType, UnknownType} from "../../src/abap/types/basic";
 
 describe("Table, parse XML", () => {
   const xml1 =
@@ -77,16 +77,12 @@ describe("Table, parse XML", () => {
 
     expect(tabl.getName()).to.equal("ZABAPGIT_UNIT_T2");
 
-    const fields = tabl.getFieldNames();
-    expect(fields.length).to.equal(4);
-    expect(fields).to.contain("MANDT");
-    expect(fields).to.contain("XUBNAME");
-    expect(fields).to.contain("NAME");
-
-    expect(tabl.getTableCategory()).to.equal("TRANSP");
+    const fields = tabl.parseType(reg);
+    if (fields instanceof UnknownType) {
+      expect.fail();
+    }
+    expect(fields.getComponents().length).to.equal(4);
     expect(tabl.getTableCategory()).to.equal(TableCategory.Transparent);
-
-    expect(tabl.getEnhancementCategory()).to.equal("1");
     expect(tabl.getEnhancementCategory()).to.equal(EnhancementCategory.CannotBeEhanced);
   });
 
