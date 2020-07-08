@@ -292,4 +292,43 @@ ENDFORM.`;
       // todo prefix - not supported by parser yet (this syntax will never report any issues)
   });
 
+  it("local variable, defined inline, expect prefix", () => {
+    const abap = `
+FORM foobar.
+  DATA(dsfs) = 2.
+ENDFORM.`;
+    const issues = findIssues(abap);
+    expect(issues.length).to.equal(1);
+  });
+
+  it("local variable, defined inline, ok", () => {
+    const abap = `
+FORM foobar.
+  DATA(lv_dsfs) = 2.
+ENDFORM.`;
+    const issues = findIssues(abap);
+    expect(issues.length).to.equal(0);
+  });
+
+  it("local fs, defined inline, expect prefix", () => {
+    const abap = `
+FORM foobar.
+  LOOP AT bar ASSIGNING FIELD-SYMBOL(<bar>).
+  ENDLOOP.
+ENDFORM.`;
+    const issues = findIssues(abap);
+    expect(issues.length).to.equal(1);
+  });
+
+  it("local fs, defined inline, ok", () => {
+    const abap = `
+FORM foobar.
+  LOOP AT bar ASSIGNING FIELD-SYMBOL(<lv_bar>).
+  ENDLOOP.
+ENDFORM.`;
+    const issues = findIssues(abap);
+    expect(issues.length).to.equal(0);
+  });
+
+
 });
