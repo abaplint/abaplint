@@ -4,12 +4,12 @@ import {Registry} from "../../src/registry";
 import {MemoryFile} from "../../src/files";
 import {Issue} from "../../src/issue";
 
-function runMulti(files: {filename: string, contents: string}[]): Issue[] {
+async function runMulti(files: {filename: string, contents: string}[]): Promise<Issue[]> {
   const reg = new Registry();
   for (const file of files) {
     reg.addFile(new MemoryFile(file.filename, file.contents));
   }
-  reg.parse();
+  await reg.parseAsync();
   let issues: Issue[] = [];
   for (const obj of reg.getObjects()) {
     issues = issues.concat(new CheckTransformationExists().initialize(reg).run(obj));
@@ -18,35 +18,35 @@ function runMulti(files: {filename: string, contents: string}[]): Issue[] {
 }
 
 describe("Rules, check_transformation_exists", () => {
-  it("parser error", () => {
-    const issues = runMulti([{filename: "cl_foo.clas.abap", contents: "parase error"}]);
+  it("parser error", async () => {
+    const issues = await runMulti([{filename: "cl_foo.clas.abap", contents: "parase error"}]);
     expect(issues.length).to.equals(0);
   });
 
-  it("not found", () => {
+  it("not found", async () => {
     const contents = `REPORT zfoo.
       CALL TRANSFORMATION id
         SOURCE (lt_stab)
         RESULT XML li_doc.`;
-    const issues = runMulti([{filename: "zfoo.prog.abap", contents}]);
+    const issues = await runMulti([{filename: "zfoo.prog.abap", contents}]);
     expect(issues.length).to.equals(1);
   });
 
-  it("dynamic, no error", () => {
+  it("dynamic, no error", async () => {
     const contents = `REPORT zfoo.
       CALL TRANSFORMATION (fsd)
         SOURCE (lt_stab)
         RESULT XML li_doc.`;
-    const issues = runMulti([{filename: "zfoo.prog.abap", contents}]);
+    const issues = await runMulti([{filename: "zfoo.prog.abap", contents}]);
     expect(issues.length).to.equals(0);
   });
 
-  it("found, ok", () => {
+  it("found, ok", async () => {
     const contents = `REPORT zfoo.
       CALL TRANSFORMATION id
         SOURCE (lt_stab)
         RESULT XML li_doc.`;
-    const issues = runMulti([
+    const issues = await runMulti([
       {filename: "zfoo.prog.abap", contents},
       {filename: "id.xslt.xml", contents: "<foo></foo>"}]);
     expect(issues.length).to.equals(0);

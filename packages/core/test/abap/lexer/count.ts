@@ -1,3 +1,4 @@
+/* eslint-disable no-multi-spaces */
 import {expect} from "chai";
 import {getTokens} from "../_utils";
 

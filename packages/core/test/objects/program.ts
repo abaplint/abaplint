@@ -5,7 +5,7 @@ import {Program} from "../../src/objects";
 import {getABAPObjects} from "../get_abap";
 
 describe("Program, isInclude", () => {
-  it("no", () => {
+  it("no", async () => {
     const abap = "WRITE hello.";
     const reg = new Registry().addFile(new MemoryFile("zfoobar.prog.abap", abap));
 
@@ -26,12 +26,12 @@ describe("Program, isInclude", () => {
       "</abapGit>";
     reg.addFile(new MemoryFile("zfoobar.prog.xml", xml));
 
-    reg.parse();
+    await reg.parseAsync();
     const prog = getABAPObjects(reg)[0] as Program;
     expect(prog.isInclude()).to.equal(false);
   });
 
-  it("yes", () => {
+  it("yes", async () => {
     const abap = "WRITE hello.";
     const reg = new Registry().addFile(new MemoryFile("zfoobar.prog.abap", abap));
 
@@ -50,21 +50,21 @@ describe("Program, isInclude", () => {
       "</abapGit>";
     reg.addFile(new MemoryFile("zfoobar.prog.xml", xml));
 
-    reg.parse();
+    await reg.parseAsync();
     const prog = getABAPObjects(reg)[0] as Program;
     expect(prog.isInclude()).to.equal(true);
   });
 
-  it("no xml, assume not include", () => {
+  it("no xml, assume not include", async () => {
     const abap = "WRITE hello.";
     const reg = new Registry().addFile(new MemoryFile("zfoobar.prog.abap", abap));
 
-    reg.parse();
+    await reg.parseAsync();
     const prog = getABAPObjects(reg)[0] as Program;
     expect(prog.isInclude()).to.equal(false);
   });
 
-  it("read textpool", () => {
+  it("read textpool", async () => {
     const abap = "WRITE hello.";
     const reg = new Registry().addFile(new MemoryFile("zfoobar.prog.abap", abap));
 
@@ -103,7 +103,7 @@ describe("Program, isInclude", () => {
 </abapGit>`;
     reg.addFile(new MemoryFile("zfoobar.prog.xml", xml));
 
-    reg.parse();
+    await reg.parseAsync();
     const prog = getABAPObjects(reg)[0] as Program;
     const texts = prog.getTexts();
     expect(texts.length).to.equal(2);

@@ -6,7 +6,7 @@ import {CharacterType, UnknownType, HexType, VoidType, StringType, PackedType} f
 
 describe("Data element, parse main xml", () => {
 
-  it("CharacterType", () => {
+  it("CharacterType", async () => {
     const xml = `
 <?xml version="1.0" encoding="utf-8"?>
 <abapGit version="v1.0.0" serializer="LCL_OBJECT_DTEL" serializer_version="v1.0.0">
@@ -21,13 +21,14 @@ describe("Data element, parse main xml", () => {
   </asx:values>
  </asx:abap>
 </abapGit>`;
-    const reg = new Registry().addFile(new MemoryFile("zddic.dtel.xml", xml)).parse();
+    const reg = new Registry().addFile(new MemoryFile("zddic.dtel.xml", xml));
+    await reg.parseAsync();
     const dtel = reg.getObjects()[0] as DataElement;
     const type = dtel.parseType(reg);
     expect(type).to.be.instanceof(CharacterType);
   });
 
-  it("HexType", () => {
+  it("HexType", async () => {
     const xml = `
 <?xml version="1.0" encoding="utf-8"?>
 <abapGit version="v1.0.0" serializer="LCL_OBJECT_DTEL" serializer_version="v1.0.0">
@@ -42,29 +43,32 @@ describe("Data element, parse main xml", () => {
   </asx:values>
  </asx:abap>
 </abapGit>`;
-    const reg = new Registry().addFile(new MemoryFile("zags_adler32.dtel.xml", xml)).parse();
+    const reg = new Registry().addFile(new MemoryFile("zags_adler32.dtel.xml", xml));
+    await reg.parseAsync();
     const dtel = reg.getObjects()[0] as DataElement;
     const type = dtel.parseType(reg);
     expect(type).to.be.instanceof(HexType);
   });
 
-  it("parser error", () => {
+  it("parser error", async () => {
     const xml = `sdfsdf`;
-    const reg = new Registry().addFile(new MemoryFile("zddic.dtel.xml", xml)).parse();
+    const reg = new Registry().addFile(new MemoryFile("zddic.dtel.xml", xml));
+    await reg.parseAsync();
     const dtel = reg.getObjects()[0] as DataElement;
     const type = dtel.parseType(reg);
     expect(type).to.be.instanceof(UnknownType);
   });
 
-  it("parser error, valid xml", () => {
+  it("parser error, valid xml", async () => {
     const xml = `<foo></bar>`;
-    const reg = new Registry().addFile(new MemoryFile("zddic.dtel.xml", xml)).parse();
+    const reg = new Registry().addFile(new MemoryFile("zddic.dtel.xml", xml));
+    await reg.parseAsync();
     const dtel = reg.getObjects()[0] as DataElement;
     const type = dtel.parseType(reg);
     expect(type).to.be.instanceof(UnknownType);
   });
 
-  it("Reference to domain", () => {
+  it("Reference to domain", async () => {
     const dtelxml = `
 <?xml version="1.0" encoding="utf-8"?>
 <abapGit version="v1.0.0" serializer="LCL_OBJECT_DTEL" serializer_version="v1.0.0">
@@ -101,13 +105,13 @@ describe("Data element, parse main xml", () => {
     reg.addFile(new MemoryFile("zdtel.dtel.xml", dtelxml));
     reg.addFile(new MemoryFile("zdoma.doma.xml", domaxml));
 
-    reg.parse();
+    await reg.parseAsync();
     const dtel = reg.getObjects()[0] as DataElement;
     const type = dtel.parseType(reg);
     expect(type).to.be.instanceof(CharacterType);
   });
 
-  it("Reference to domain, outside namespace, expect void", () => {
+  it("Reference to domain, outside namespace, expect void", async () => {
     const dtelxml = `
 <?xml version="1.0" encoding="utf-8"?>
 <abapGit version="v1.0.0" serializer="LCL_OBJECT_DTEL" serializer_version="v1.0.0">
@@ -126,13 +130,13 @@ describe("Data element, parse main xml", () => {
     const reg = new Registry();
     reg.addFile(new MemoryFile("zdtel.dtel.xml", dtelxml));
 
-    reg.parse();
+    await reg.parseAsync();
     const dtel = reg.getObjects()[0] as DataElement;
     const type = dtel.parseType(reg);
     expect(type).to.be.instanceof(VoidType);
   });
 
-  it("String", () => {
+  it("String", async () => {
     const dtelxml = `
 <?xml version="1.0" encoding="utf-8"?>
 <abapGit version="v1.0.0" serializer="LCL_OBJECT_DTEL" serializer_version="v1.0.0">
@@ -150,13 +154,13 @@ describe("Data element, parse main xml", () => {
     const reg = new Registry();
     reg.addFile(new MemoryFile("zdtel.dtel.xml", dtelxml));
 
-    reg.parse();
+    await reg.parseAsync();
     const dtel = reg.getObjects()[0] as DataElement;
     const type = dtel.parseType(reg);
     expect(type).to.be.instanceof(StringType);
   });
 
-  it("Packed", () => {
+  it("Packed", async () => {
     const dtelxml = `
 <?xml version="1.0" encoding="utf-8"?>
 <abapGit version="v1.0.0" serializer="LCL_OBJECT_DTEL" serializer_version="v1.0.0">
@@ -175,7 +179,7 @@ describe("Data element, parse main xml", () => {
     const reg = new Registry();
     reg.addFile(new MemoryFile("zdtel.dtel.xml", dtelxml));
 
-    reg.parse();
+    await reg.parseAsync();
     const dtel = reg.getObjects()[0] as DataElement;
     const type = dtel.parseType(reg);
     expect(type).to.be.instanceof(PackedType);

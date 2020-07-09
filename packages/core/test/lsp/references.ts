@@ -15,43 +15,47 @@ function buildPosition(file: IFile, row: number, column: number): ITextDocumentP
 
 describe("LSP, references", () => {
 
-  it("simple", () => {
+  it("simple", async () => {
     const file = new MemoryFile("foobar.prog.abap", `DATA foobar TYPE c.
 WRITE foobar.`);
-    const reg = new Registry().addFile(file).parse();
+    const reg = new Registry().addFile(file);
+    await reg.parseAsync();
     const found = new References(reg).references(buildPosition(file, 0, 7));
     expect(found.length).to.equal(2);
   });
 
-  it("also possible to find all references from the usage", () => {
+  it("also possible to find all references from the usage", async () => {
     const file = new MemoryFile("foobar.prog.abap", `DATA foobar TYPE c.
 WRITE foobar.`);
-    const reg = new Registry().addFile(file).parse();
+    const reg = new Registry().addFile(file);
+    await reg.parseAsync();
     const found = new References(reg).references(buildPosition(file, 1, 7));
     expect(found.length).to.equal(2);
   });
 
-  it("multiple definitions", () => {
+  it("multiple definitions", async () => {
     const file = new MemoryFile("foobar.prog.abap", `DATA foobar TYPE c.
 DATA loo TYPE c.
 WRITE foobar.
 WRITE loo.`);
-    const reg = new Registry().addFile(file).parse();
+    const reg = new Registry().addFile(file);
+    await reg.parseAsync();
     const found = new References(reg).references(buildPosition(file, 0, 7));
     expect(found.length).to.equal(2);
   });
 
-  it("for built-in", () => {
+  it("for built-in", async () => {
     const file = new MemoryFile("foobar.prog.abap", `WRITE abap_true.
 WRITE abap_false.
 WRITE abap_true.
 WRITE abap_false.`);
-    const reg = new Registry().addFile(file).parse();
+    const reg = new Registry().addFile(file);
+    await reg.parseAsync();
     const found = new References(reg).references(buildPosition(file, 0, 7));
     expect(found.length).to.equal(2);
   });
 
-  it.skip("method references", () => {
+  it.skip("method references", async () => {
     const file = new MemoryFile("foobar.prog.abap", `CLASS lcl_bar DEFINITION.
     PUBLIC SECTION.
       METHODS: foobar IMPORTING int TYPE i.
@@ -62,7 +66,8 @@ WRITE abap_false.`);
   ENDCLASS.
   START-OF-SELECTION.
     NEW lcl_bar( )->foobar( 1 ).`);
-    const reg = new Registry().addFile(file).parse();
+    const reg = new Registry().addFile(file);
+    await reg.parseAsync();
     const found = new References(reg).references(buildPosition(file, 2, 18));
     expect(found.length).to.equal(1);
   });

@@ -9,8 +9,9 @@ import {getABAPObjects} from "../get_abap";
 
 const testTitle = (text: string): string => {return text.split("\n")[0]; };
 
-function parse(abap: string): readonly ABAPFile[] {
-  const reg = new Registry().addFile(new MemoryFile("zfoo.prog.abap", abap)).parse();
+async function parse(abap: string): Promise<readonly ABAPFile[]> {
+  const reg = new Registry().addFile(new MemoryFile("zfoo.prog.abap", abap));
+  await reg.parseAsync();
   return getABAPObjects(reg)[0].getABAPFiles();
 }
 
@@ -26,8 +27,8 @@ describe("Pretty printer, keywords upper case", () => {
   ];
 
   tests.forEach((test) => {
-    it(testTitle(test.input), () => {
-      const files = parse(test.input);
+    it(testTitle(test.input), async () => {
+      const files = await parse(test.input);
       expect(files.length).to.equal(1);
       const config = Config.getDefault();
       const result = new PrettyPrinter(files[0], config).run();
@@ -45,8 +46,8 @@ describe("Pretty printer, indent code", () => {
   ];
 
   tests.forEach((test) => {
-    it(testTitle(test.input), () => {
-      const files = parse(test.input);
+    it(testTitle(test.input), async () => {
+      const files = await parse(test.input);
       expect(files.length).to.equal(1);
       const config = Config.getDefault();
       const result = new PrettyPrinter(files[0], config).run();
@@ -64,8 +65,8 @@ describe("Pretty printer, expected indentation", () => {
   ];
 
   tests.forEach((test) => {
-    it(testTitle(test.input), () => {
-      const files = parse(test.input);
+    it(testTitle(test.input), async () => {
+      const files = await parse(test.input);
       expect(files.length).to.equal(1);
       const file = files[0];
       const result = new Indent().getExpectedIndents(file);
@@ -88,8 +89,8 @@ describe("Pretty printer with alignTryCatch", () => {
   ];
 
   tests.forEach((test) => {
-    it(testTitle(test.input), () => {
-      const files = parse(test.input);
+    it(testTitle(test.input), async () => {
+      const files = await parse(test.input);
       expect(files.length).to.equal(1);
       const file = files[0];
       const result = new Indent(test.options).getExpectedIndents(file);
@@ -124,8 +125,8 @@ describe("Remove sequential blanks", () => {
   ];
 
   tests.forEach((test) => {
-    it(testTitle(test.input), () => {
-      const files = parse(test.input);
+    it(testTitle(test.input), async () => {
+      const files = await parse(test.input);
       expect(files.length).to.equal(1);
       const config = Config.getDefault();
       const prettyPrinter = new PrettyPrinter(files[0], config);
@@ -182,8 +183,8 @@ describe("Fix keyword case", () => {
   ];
 
   tests.forEach((test) => {
-    it(testTitle(test.input), () => {
-      const files = parse(test.input);
+    it(testTitle(test.input), async () => {
+      const files = await parse(test.input);
       expect(files.length).to.equal(1);
       const config = Config.getDefault() as any;
       config.config.rules.keyword_case = test.config;
@@ -204,8 +205,8 @@ describe("Remove sequential blanks, no config", () => {
   ];
 
   tests.forEach((test) => {
-    it(testTitle(test.input), () => {
-      const files = parse(test.input);
+    it(testTitle(test.input), async () => {
+      const files = await parse(test.input);
       expect(files.length).to.equal(1);
       const config = Config.getDefault() as any;
       delete config.config.rules.sequential_blank;
@@ -256,8 +257,8 @@ describe("Pretty printer with globalClassSkipFirst", () => {
   ];
 
   tests.forEach((test) => {
-    it(testTitle(test.input), () => {
-      const files = parse(test.input);
+    it(testTitle(test.input), async () => {
+      const files = await parse(test.input);
       expect(files.length).to.equal(1);
       const file = files[0];
       const result = new Indent(test.options).getExpectedIndents(file);
@@ -267,8 +268,8 @@ describe("Pretty printer with globalClassSkipFirst", () => {
 });
 
 describe("Config is undefined", () => {
-  it("run without config", () => {
-    const files = parse("report zbar.");
+  it("run without config", async () => {
+    const files = await parse("report zbar.");
     expect(files.length).to.equal(1);
     const config = Config.getDefault() as any;
     config.config.rules.keyword_case = undefined;
@@ -280,8 +281,8 @@ describe("Config is undefined", () => {
 });
 
 describe("Config is default/true", () => {
-  it("run with rules set to true", () => {
-    const files = parse("report zbar.");
+  it("run with rules set to true", async () => {
+    const files = await parse("report zbar.");
     expect(files.length).to.equal(1);
     const config = Config.getDefault() as any;
     config.config.rules.keyword_case = true;

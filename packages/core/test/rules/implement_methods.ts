@@ -4,12 +4,12 @@ import {Registry} from "../../src/registry";
 import {MemoryFile} from "../../src/files";
 import {Issue} from "../../src/issue";
 
-function runMulti(files: {filename: string, contents: string}[]): Issue[] {
+async function runMulti(files: {filename: string, contents: string}[]): Promise<Issue[]> {
   const reg = new Registry();
   for (const file of files) {
     reg.addFile(new MemoryFile(file.filename, file.contents));
   }
-  reg.parse();
+  await reg.parseAsync();
   let issues: Issue[] = [];
   for (const obj of reg.getObjects()) {
     issues = issues.concat(new ImplementMethods().initialize(reg).run(obj));
@@ -18,31 +18,31 @@ function runMulti(files: {filename: string, contents: string}[]): Issue[] {
 }
 
 describe("Rules, implement_methods", () => {
-  it("parser error", () => {
-    const issues = runMulti([{filename: "cl_foo.clas.abap", contents: "parase error"}]);
+  it("parser error", async () => {
+    const issues = await runMulti([{filename: "cl_foo.clas.abap", contents: "parase error"}]);
     expect(issues.length).to.equals(0);
   });
 
-  it("normal class, no methods", () => {
+  it("normal class, no methods", async () => {
     const contents =
     `CLASS zcl_foobar DEFINITION PUBLIC FINAL CREATE PUBLIC.
      ENDCLASS.
      CLASS zcl_foobar IMPLEMENTATION.
      ENDCLASS.`;
-    const issues = runMulti([{filename: "cl_foo.clas.abap", contents}]);
+    const issues = await runMulti([{filename: "cl_foo.clas.abap", contents}]);
     expect(issues.length).to.equals(0);
   });
 
-  it("local class, implementation part not found", () => {
+  it("local class, implementation part not found", async () => {
     const contents =
     `REPORT zrep.
      CLASS lcl_foobar DEFINITION.
      ENDCLASS.`;
-    const issues = runMulti([{filename: "zrep.prog.abap", contents}]);
+    const issues = await runMulti([{filename: "zrep.prog.abap", contents}]);
     expect(issues.length).to.equals(1);
   });
 
-  it("normal class, missing implementation", () => {
+  it("normal class, missing implementation", async () => {
     const contents =
     `CLASS zcl_foobar DEFINITION PUBLIC FINAL CREATE PUBLIC.
         PUBLIC SECTION.
@@ -50,11 +50,11 @@ describe("Rules, implement_methods", () => {
      ENDCLASS.
      CLASS zcl_foobar IMPLEMENTATION.
      ENDCLASS.`;
-    const issues = runMulti([{filename: "cl_foo.clas.abap", contents}]);
+    const issues = await runMulti([{filename: "cl_foo.clas.abap", contents}]);
     expect(issues.length).to.equals(1);
   });
 
-  it("normal class, method implemented", () => {
+  it("normal class, method implemented", async () => {
     const contents =
     `CLASS zcl_foobar DEFINITION PUBLIC FINAL CREATE PUBLIC.
        PUBLIC SECTION.
@@ -64,11 +64,11 @@ describe("Rules, implement_methods", () => {
        METHOD foobar.
        ENDMETHOD.
       ENDCLASS.`;
-    const issues = runMulti([{filename: "cl_foo.clas.abap", contents}]);
+    const issues = await runMulti([{filename: "cl_foo.clas.abap", contents}]);
     expect(issues.length).to.equals(0);
   });
 
-  it("abstract method", () => {
+  it("abstract method", async () => {
     const contents =
     `CLASS zcl_foobar DEFINITION PUBLIC FINAL CREATE PUBLIC.
       PUBLIC SECTION.
@@ -76,11 +76,11 @@ describe("Rules, implement_methods", () => {
      ENDCLASS.
      CLASS zcl_foobar IMPLEMENTATION.
      ENDCLASS.`;
-    const issues = runMulti([{filename: "cl_foo.clas.abap", contents}]);
+    const issues = await runMulti([{filename: "cl_foo.clas.abap", contents}]);
     expect(issues.length).to.equals(0);
   });
 
-  it("abstract method, do not implement", () => {
+  it("abstract method, do not implement", async () => {
     const contents = `CLASS zcl_foobar DEFINITION PUBLIC FINAL CREATE PUBLIC.
         PUBLIC SECTION.
           METHODS foobar ABSTRACT.
@@ -89,11 +89,11 @@ describe("Rules, implement_methods", () => {
         METHOD foobar.
         ENDMETHOD.
       ENDCLASS.`;
-    const issues = runMulti([{filename: "cl_foo.clas.abap", contents}]);
+    const issues = await runMulti([{filename: "cl_foo.clas.abap", contents}]);
     expect(issues.length).to.equals(1);
   });
 
-  it("global class with local classes", () => {
+  it("global class with local classes", async () => {
     const main = `CLASS zcl_foobar DEFINITION PUBLIC FINAL CREATE PUBLIC.
       ENDCLASS.
       CLASS zcl_foobar IMPLEMENTATION.
@@ -102,7 +102,7 @@ describe("Rules, implement_methods", () => {
       ENDCLASS.`;
     const def = `CLASS lcl_foo DEFINITION.
       ENDCLASS.`;
-    const issues = runMulti([
+    const issues = await runMulti([
       {filename: "zcl_foobar.clas.locals_imp.abap", contents: imp},
       {filename: "zcl_foobar.clas.locals_def.abap", contents: def},
       {filename: "zcl_foobar.clas.abap", contents: main},
@@ -110,19 +110,19 @@ describe("Rules, implement_methods", () => {
     expect(issues.length).to.equals(0);
   });
 
-  it("implemented interface not found", () => {
+  it("implemented interface not found", async () => {
     const clas = `CLASS zcl_foo DEFINITION PUBLIC FINAL CREATE PUBLIC.
         PUBLIC SECTION.
           INTERFACES: zif_bar.
       ENDCLASS.
       CLASS zcl_foo IMPLEMENTATION.
       ENDCLASS.`;
-    const issues = runMulti([
+    const issues = await runMulti([
       {filename: "zcl_foo.clas.abap", contents: clas}]);
     expect(issues.length).to.equals(1);
   });
 
-  it("implement methods from interface, error, not implemented", () => {
+  it("implement methods from interface, error, not implemented", async () => {
     const intf = `INTERFACE zif_bar PUBLIC.
         METHODS: foobar.
       ENDINTERFACE.\n`;
@@ -132,13 +132,13 @@ describe("Rules, implement_methods", () => {
       ENDCLASS.
       CLASS zcl_foo IMPLEMENTATION.
       ENDCLASS.`;
-    const issues = runMulti([
+    const issues = await runMulti([
       {filename: "zcl_foo.clas.abap", contents: clas},
       {filename: "zif_bar.intf.abap", contents: intf}]);
     expect(issues.length).to.equals(1);
   });
 
-  it("interface contains syntax error, ignore", () => {
+  it("interface contains syntax error, ignore", async () => {
     const intf = `INTERFsdffsdACE zif_bar PUBLIC.
         METHODS: foobar.
       ENDINTERFACE.\n`;
@@ -148,13 +148,13 @@ describe("Rules, implement_methods", () => {
       ENDCLASS.
       CLASS zcl_foo IMPLEMENTATION.
       ENDCLASS.`;
-    const issues = runMulti([
+    const issues = await runMulti([
       {filename: "zcl_foo.clas.abap", contents: clas},
       {filename: "zif_bar.intf.abap", contents: intf}]);
     expect(issues.length).to.equals(0);
   });
 
-  it("implement methods from interface, implemented", () => {
+  it("implement methods from interface, implemented", async () => {
     const intf = `INTERFACE zif_bar PUBLIC.
         METHODS: foobar.
       ENDINTERFACE.\n`;
@@ -166,13 +166,13 @@ describe("Rules, implement_methods", () => {
         METHOD zif_bar~foobar.
         ENDMETHOD.
       ENDCLASS.`;
-    const issues = runMulti([
+    const issues = await runMulti([
       {filename: "zcl_foo.clas.abap", contents: clas},
       {filename: "zif_bar.intf.abap", contents: intf}]);
     expect(issues.length).to.equals(0);
   });
 
-  it("implement methods from interface, implemented by ALIAS", () => {
+  it("implement methods from interface, implemented by ALIAS", async () => {
     const intf =
     `INTERFACE zif_bar PUBLIC.
         METHODS: foobar.
@@ -187,13 +187,13 @@ describe("Rules, implement_methods", () => {
         METHOD foobar.
         ENDMETHOD.
       ENDCLASS.`;
-    const issues = runMulti([
+    const issues = await runMulti([
       {filename: "zcl_foo.clas.abap", contents: clas},
       {filename: "zif_bar.intf.abap", contents: intf}]);
     expect(issues.length).to.equals(0);
   });
 
-  it("PROG, local intf and class", () => {
+  it("PROG, local intf and class", async () => {
     const prog = `
     REPORT zfoobar.
     INTERFACE zif_bar.
@@ -204,12 +204,12 @@ describe("Rules, implement_methods", () => {
     ENDCLASS.
     CLASS zcl_foo IMPLEMENTATION.
     ENDCLASS.`;
-    const issues = runMulti([
+    const issues = await runMulti([
       {filename: "zfoobar.prog.abap", contents: prog}]);
     expect(issues.length).to.equals(0);
   });
 
-  it("PROG, local intf and class, partially implemented", () => {
+  it("PROG, local intf and class, partially implemented", async () => {
     const prog = `
     INTERFACE lif_foo.
       METHODS method1.
@@ -220,7 +220,7 @@ describe("Rules, implement_methods", () => {
     ENDCLASS.
     CLASS ltcl_bar IMPLEMENTATION.
     ENDCLASS.`;
-    const issues = runMulti([
+    const issues = await runMulti([
       {filename: "zfoobar.prog.abap", contents: prog}]);
     expect(issues.length).to.equals(0);
   });

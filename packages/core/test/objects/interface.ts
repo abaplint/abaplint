@@ -5,7 +5,7 @@ import {Interface} from "../../src/objects";
 import {getABAPObjects} from "../get_abap";
 
 describe("Objects, interface, getDescription", () => {
-  it("test, positive", () => {
+  it("test, positive", async () => {
     const xml = `<?xml version="1.0" encoding="utf-8"?>
 <abapGit version="v1.0.0" serializer="LCL_OBJECT_INTF" serializer_version="v1.0.0">
  <asx:abap xmlns:asx="http://www.sap.com/abapxml" version="1.0">
@@ -24,7 +24,7 @@ describe("Objects, interface, getDescription", () => {
 
     const reg = new Registry();
     reg.addFile(new MemoryFile("zif_foobar.intf.xml", xml));
-    reg.parse();
+    await reg.parseAsync();
     const intf = getABAPObjects(reg)[0] as Interface;
     expect(intf.getDescription()).to.equal("Authorizations");
   });

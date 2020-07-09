@@ -2,12 +2,14 @@ import {MemoryFile} from "../../src/files/memory_file";
 import {Registry} from "../../src/registry";
 import {expect} from "chai";
 import {ClassAttributeNames, ClassAttributeNamesConf} from "../../src/rules/class_attribute_names";
+import {Issue} from "../../src/issue";
 
-function findIssues(abap: string, config?: ClassAttributeNamesConf, filename?: string) {
+async function findIssues(abap: string, config?: ClassAttributeNamesConf, filename?: string): Promise<readonly Issue[]> {
   if (!filename) {
     filename = "cl_foobar.clas.abap";
   }
-  const reg = new Registry().addFile(new MemoryFile(filename, abap)).parse();
+  const reg = new Registry().addFile(new MemoryFile(filename, abap));
+  await reg.parseAsync();
   const rule = new ClassAttributeNames();
   if (config) {
     rule.setConfig(config);
@@ -17,13 +19,13 @@ function findIssues(abap: string, config?: ClassAttributeNamesConf, filename?: s
 
 describe("Rule: class attribute names (general)", () => {
 
-  it("1: parser error", () => {
+  it("1: parser error", async () => {
     const abap = "sdf lksjdf lkj sdf";
-    const issues = findIssues(abap);
+    const issues = await findIssues(abap);
     expect(issues.length).to.equal(0);
   });
 
-  it("2: class data begin of", () => {
+  it("2: class data begin of", async () => {
     const abap = `
 CLASS l_foobar DEFINITION PUBLIC.
   PUBLIC SECTION.
@@ -34,7 +36,7 @@ CLASS l_foobar DEFINITION PUBLIC.
 ENDCLASS.
 CLASS l_foobar IMPLEMENTATION.
 ENDCLASS.`;
-    const issues = findIssues(abap);
+    const issues = await findIssues(abap);
     expect(issues.length).to.equal(1);
   });
 
@@ -43,7 +45,7 @@ ENDCLASS.`;
 describe("Rule: class attribute names", () => {
   const anyUpToThreeLetterPrefix = "^[a-zA-Z]{1,3}_.*$";
 
-  it("1: instance attribute without prefix, issue", () => {
+  it("1: instance attribute without prefix, issue", async () => {
     const abap = `
 CLASS zcl_foobar DEFINITION PUBLIC.
   PUBLIC SECTION.
@@ -54,17 +56,17 @@ CLASS zcl_foobar IMPLEMENTATION. ENDCLASS.`;
     config.instance = anyUpToThreeLetterPrefix;
 
     config.patternKind = "required";
-    expect(findIssues(abap, config).length).to.equal(1);
+    expect((await findIssues(abap, config)).length).to.equal(1);
 
     config.patternKind = "forbidden";
-    expect(findIssues(abap, config).length).to.equal(0);
+    expect((await findIssues(abap, config)).length).to.equal(0);
 
     // defaults to "required"
     config.patternKind = undefined;
-    expect(findIssues(abap, config).length).to.equal(1);
+    expect((await findIssues(abap, config)).length).to.equal(1);
   });
 
-  it("2: instance attribute with prefix, no issue", () => {
+  it("2: instance attribute with prefix, no issue", async () => {
     const abap = `
 CLASS zcl_foobar DEFINITION PUBLIC.
   PUBLIC SECTION.
@@ -75,17 +77,17 @@ CLASS zcl_foobar IMPLEMENTATION. ENDCLASS.`;
     config.instance = anyUpToThreeLetterPrefix;
 
     config.patternKind = "required";
-    expect(findIssues(abap, config).length).to.equal(0);
+    expect((await findIssues(abap, config)).length).to.equal(0);
 
     config.patternKind = "forbidden";
-    expect(findIssues(abap, config).length).to.equal(1);
+    expect((await findIssues(abap, config)).length).to.equal(1);
 
     // defaults to "required"
     config.patternKind = undefined;
-    expect(findIssues(abap, config).length).to.equal(0);
+    expect((await findIssues(abap, config)).length).to.equal(0);
   });
 
-  it("3: static attribute without prefix, issue", () => {
+  it("3: static attribute without prefix, issue", async () => {
     const abap = `
 CLASS zcl_foobar DEFINITION PUBLIC.
   PUBLIC SECTION.
@@ -96,16 +98,16 @@ CLASS zcl_foobar IMPLEMENTATION. ENDCLASS.`;
     config.statics = anyUpToThreeLetterPrefix;
 
     config.patternKind = "required";
-    expect(findIssues(abap, config).length).to.equal(1);
+    expect((await findIssues(abap, config)).length).to.equal(1);
 
     config.patternKind = "forbidden";
-    expect(findIssues(abap, config).length).to.equal(0);
+    expect((await findIssues(abap, config)).length).to.equal(0);
 
     config.patternKind = undefined;
-    expect(findIssues(abap, config).length).to.equal(1);
+    expect((await findIssues(abap, config)).length).to.equal(1);
   });
 
-  it("4: constant attribute with prefix, no issue", () => {
+  it("4: constant attribute with prefix, no issue", async () => {
     const abap = `
 CLASS zcl_foobar DEFINITION PUBLIC.
   PUBLIC SECTION.
@@ -116,16 +118,16 @@ CLASS zcl_foobar IMPLEMENTATION. ENDCLASS.`;
     config.constants = "^C_.+$";
 
     config.patternKind = "required";
-    expect(findIssues(abap, config).length).to.equal(0);
+    expect((await findIssues(abap, config)).length).to.equal(0);
 
     config.patternKind = "forbidden";
-    expect(findIssues(abap, config).length).to.equal(1);
+    expect((await findIssues(abap, config)).length).to.equal(1);
 
     config.patternKind = undefined;
-    expect(findIssues(abap, config).length).to.equal(0);
+    expect((await findIssues(abap, config)).length).to.equal(0);
   });
 
-  it("5: constant attribute without prefix, issue", () => {
+  it("5: constant attribute without prefix, issue", async () => {
     const abap = `
 CLASS zcl_foobar DEFINITION PUBLIC.
   PUBLIC SECTION.
@@ -136,16 +138,16 @@ CLASS zcl_foobar IMPLEMENTATION. ENDCLASS.`;
     config.constants = "^C_.+$";
 
     config.patternKind = "required";
-    expect(findIssues(abap, config).length).to.equal(1);
+    expect((await findIssues(abap, config)).length).to.equal(1);
 
     config.patternKind = "forbidden";
-    expect(findIssues(abap, config).length).to.equal(0);
+    expect((await findIssues(abap, config)).length).to.equal(0);
 
     config.patternKind = undefined;
-    expect(findIssues(abap, config).length).to.equal(1);
+    expect((await findIssues(abap, config)).length).to.equal(1);
   });
 
-  it("6: local class, ignore, no issue", () => {
+  it("6: local class, ignore, no issue", async () => {
     const abap = `
 CLASS lcl_foobar DEFINITION.
   PUBLIC SECTION.
@@ -156,16 +158,16 @@ CLASS lcl_foobar IMPLEMENTATION. ENDCLASS.`;
     config.constants = "^C_.+$";
 
     config.patternKind = "required";
-    expect(findIssues(abap, config).length).to.equal(0);
+    expect((await findIssues(abap, config)).length).to.equal(0);
 
     config.patternKind = "forbidden";
-    expect(findIssues(abap, config).length).to.equal(0);
+    expect((await findIssues(abap, config)).length).to.equal(0);
 
     config.patternKind = undefined;
-    expect(findIssues(abap, config).length).to.equal(0);
+    expect((await findIssues(abap, config)).length).to.equal(0);
   });
 
-  it("7: local class, not ignored, issue", () => {
+  it("7: local class, not ignored, issue", async () => {
     const abap = `
 CLASS lcl_foobar DEFINITION.
   PUBLIC SECTION.
@@ -177,16 +179,16 @@ CLASS lcl_foobar IMPLEMENTATION. ENDCLASS.`;
     config.constants = "^C_.+$";
 
     config.patternKind = "required";
-    expect(findIssues(abap, config).length).to.equal(1);
+    expect((await findIssues(abap, config)).length).to.equal(1);
 
     config.patternKind = "forbidden";
-    expect(findIssues(abap, config).length).to.equal(0);
+    expect((await findIssues(abap, config)).length).to.equal(0);
 
     config.patternKind = undefined;
-    expect(findIssues(abap, config).length).to.equal(1);
+    expect((await findIssues(abap, config)).length).to.equal(1);
   });
 
-  it("8: local class, not ignored, any naming allowed", () => {
+  it("8: local class, not ignored, any naming allowed", async () => {
     const abap = `
 CLASS lcl_foobar DEFINITION.
   PUBLIC SECTION.
@@ -198,17 +200,17 @@ CLASS lcl_foobar IMPLEMENTATION. ENDCLASS.`;
     config.constants = "";
 
     config.patternKind = "required";
-    expect(findIssues(abap, config).length).to.equal(0);
+    expect((await findIssues(abap, config)).length).to.equal(0);
 
     // always an error
     config.patternKind = "forbidden";
-    expect(findIssues(abap, config).length).to.equal(1);
+    expect((await findIssues(abap, config)).length).to.equal(1);
 
     config.patternKind = undefined;
-    expect(findIssues(abap, config).length).to.equal(0);
+    expect((await findIssues(abap, config)).length).to.equal(0);
   });
 
-  it("9: end position", () => {
+  it("9: end position", async () => {
     const abap = `
               CLASS zcl_foobar DEFINITION PUBLIC.
                 PUBLIC SECTION.
@@ -220,15 +222,15 @@ CLASS lcl_foobar IMPLEMENTATION. ENDCLASS.`;
     config.instance = anyUpToThreeLetterPrefix;
 
     config.patternKind = "required";
-    const issuesFromRequiredPattern = findIssues(abap, config);
+    const issuesFromRequiredPattern = await findIssues(abap, config);
     expect(issuesFromRequiredPattern.length).to.equal(1);
     expect(issuesFromRequiredPattern[0].getEnd().getCol()).to.equal(33);
 
     config.patternKind = "forbidden";
-    expect(findIssues(abap, config).length).to.equal(0);
+    expect((await findIssues(abap, config)).length).to.equal(0);
 
     config.patternKind = undefined;
-    const issuesFromUndefinedPattern = findIssues(abap, config);
+    const issuesFromUndefinedPattern = await findIssues(abap, config);
     expect(issuesFromUndefinedPattern.length).to.equal(1);
     expect(issuesFromUndefinedPattern[0].getEnd().getCol()).to.equal(33);
   });
@@ -236,7 +238,7 @@ CLASS lcl_foobar IMPLEMENTATION. ENDCLASS.`;
 
 describe("Rule: class attribute names (interfaces)", () => {
   const fileProgram = "zfoobar.prog.abap";
-  it("2: local interface member, ignore local", () => {
+  it("2: local interface member, ignore local", async () => {
     const abap = `
 INTERFACE lif_foo.
     DATA: foo TYPE i.
@@ -246,16 +248,16 @@ ENDINTERFACE.`;
     config.ignoreInterfaces = false;
     config.patternKind = "required";
     config.instance = "^M._.+$";
-    expect(findIssues(abap, config, fileProgram).length).to.equal(0);
+    expect((await findIssues(abap, config, fileProgram)).length).to.equal(0);
 
     config.patternKind = "forbidden";
-    expect(findIssues(abap, config, fileProgram).length).to.equal(0);
+    expect((await findIssues(abap, config, fileProgram)).length).to.equal(0);
 
     config.patternKind = undefined;
-    expect(findIssues(abap, config, fileProgram).length).to.equal(0);
+    expect((await findIssues(abap, config, fileProgram)).length).to.equal(0);
   });
 
-  it("3: local interface member, ignore interface", () => {
+  it("3: local interface member, ignore interface", async () => {
     const abap = `
 INTERFACE lif_foo.
     DATA: foo TYPE i.
@@ -264,16 +266,16 @@ ENDINTERFACE.`;
     config.ignoreLocal = false;
     config.ignoreInterfaces = true;
     config.patternKind = "required";
-    expect(findIssues(abap, config, fileProgram).length).to.equal(0);
+    expect((await findIssues(abap, config, fileProgram)).length).to.equal(0);
 
     config.patternKind = "forbidden";
-    expect(findIssues(abap, config, fileProgram).length).to.equal(0);
+    expect((await findIssues(abap, config, fileProgram)).length).to.equal(0);
 
     config.patternKind = undefined;
-    expect(findIssues(abap, config, fileProgram).length).to.equal(0);
+    expect((await findIssues(abap, config, fileProgram)).length).to.equal(0);
   });
 
-  it("4: local interface member, prefix not supplied", () => {
+  it("4: local interface member, prefix not supplied", async () => {
     const abap = `
 INTERFACE lif_foo.
     DATA: foo TYPE i.
@@ -283,16 +285,16 @@ ENDINTERFACE.`;
     config.ignoreInterfaces = false;
     config.patternKind = "required";
     config.instance = "^M._.+$";
-    expect(findIssues(abap, config, fileProgram).length).to.equal(1);
+    expect((await findIssues(abap, config, fileProgram)).length).to.equal(1);
 
     config.patternKind = "forbidden";
-    expect(findIssues(abap, config, fileProgram).length).to.equal(0);
+    expect((await findIssues(abap, config, fileProgram)).length).to.equal(0);
 
     config.patternKind = undefined;
-    expect(findIssues(abap, config, fileProgram).length).to.equal(1);
+    expect((await findIssues(abap, config, fileProgram)).length).to.equal(1);
   });
 
-  it("5: local interface member, prefix supplied", () => {
+  it("5: local interface member, prefix supplied", async () => {
     const abap = `
 INTERFACE lif_foo.
     DATA: mv_foo TYPE i.
@@ -301,16 +303,16 @@ ENDINTERFACE.`;
     config.ignoreLocal = false;
     config.ignoreInterfaces = false;
     config.patternKind = "required";
-    expect(findIssues(abap, config, fileProgram).length).to.equal(0);
+    expect((await findIssues(abap, config, fileProgram)).length).to.equal(0);
 
     config.patternKind = "forbidden";
-    expect(findIssues(abap, config, fileProgram).length).to.equal(1);
+    expect((await findIssues(abap, config, fileProgram)).length).to.equal(1);
 
     config.patternKind = undefined;
-    expect(findIssues(abap, config, fileProgram).length).to.equal(0);
+    expect((await findIssues(abap, config, fileProgram)).length).to.equal(0);
   });
 
-  it("6: local interface constant, prefix supplied", () => {
+  it("6: local interface constant, prefix supplied", async () => {
     const abap = `
 INTERFACE lif_foo.
     CONSTANTS: c_foo TYPE i VALUE 1.
@@ -320,16 +322,16 @@ ENDINTERFACE.`;
     config.ignoreInterfaces = false;
     config.patternKind = "required";
     config.constants = "C_.+$";
-    expect(findIssues(abap, config, fileProgram).length).to.equal(0);
+    expect((await findIssues(abap, config, fileProgram)).length).to.equal(0);
 
     config.patternKind = "forbidden";
-    expect(findIssues(abap, config, fileProgram).length).to.equal(1);
+    expect((await findIssues(abap, config, fileProgram)).length).to.equal(1);
 
     config.patternKind = undefined;
-    expect(findIssues(abap, config, fileProgram).length).to.equal(0);
+    expect((await findIssues(abap, config, fileProgram)).length).to.equal(0);
   });
 
-  it("7: local interface constant, prefix not supplied", () => {
+  it("7: local interface constant, prefix not supplied", async () => {
     const abap = `
 INTERFACE lif_foo.
     CONSTANTS: foo TYPE i VALUE 1.
@@ -339,16 +341,16 @@ ENDINTERFACE.`;
     config.ignoreInterfaces = false;
     config.patternKind = "required";
     config.constants = "C_.+$";
-    expect(findIssues(abap, config, fileProgram).length).to.equal(1);
+    expect((await findIssues(abap, config, fileProgram)).length).to.equal(1);
 
     config.patternKind = "forbidden";
-    expect(findIssues(abap, config, fileProgram).length).to.equal(0);
+    expect((await findIssues(abap, config, fileProgram)).length).to.equal(0);
 
     config.patternKind = undefined;
-    expect(findIssues(abap, config, fileProgram).length).to.equal(1);
+    expect((await findIssues(abap, config, fileProgram)).length).to.equal(1);
   });
 
-  it("8: global interface all variants, mixed", () => {
+  it("8: global interface all variants, mixed", async () => {
     const abap = `
 REPORT zfoobar.
 INTERFACE zif_foo PUBLIC.
@@ -362,13 +364,13 @@ ENDINTERFACE.`;
     config.patternKind = "required";
     config.constants = "^C_.+$";
 
-    expect(findIssues(abap, config, fileProgram).length).to.equal(2);
+    expect((await findIssues(abap, config, fileProgram)).length).to.equal(2);
 
     config.patternKind = "forbidden";
-    expect(findIssues(abap, config, fileProgram).length).to.equal(1);
+    expect((await findIssues(abap, config, fileProgram)).length).to.equal(1);
 
     config.patternKind = undefined;
-    expect(findIssues(abap, config, fileProgram).length).to.equal(2);
+    expect((await findIssues(abap, config, fileProgram)).length).to.equal(2);
   });
 
 });

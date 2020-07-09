@@ -3,8 +3,9 @@ import {PrefixIsCurrentClass, PrefixIsCurrentClassConf} from "../../src/rules";
 import {MemoryFile} from "../../src/files/memory_file";
 import {Registry} from "../../src/registry";
 
-function run(abap: string, config?: PrefixIsCurrentClassConf): number {
-  const reg = new Registry().addFile(new MemoryFile("zfoo.prog.abap", abap)).parse();
+async function run(abap: string, config?: PrefixIsCurrentClassConf): Promise<number> {
+  const reg = new Registry().addFile(new MemoryFile("zfoo.prog.abap", abap));
+  await reg.parseAsync();
   const rule = new PrefixIsCurrentClass();
   if (config) {
     rule.setConfig(config);
@@ -23,7 +24,7 @@ describe("prefix is current class, default Config", () => {
              END OF ty_foo.
       METHODS foobar RETURNING VALUE(rv_string) TYPE zcl_foo=>ty_foo.
   ENDCLASS.`;
-    const issues = run(abap);
+    const issues = await run(abap);
     expect(issues).to.equal(1);
   });
 
@@ -37,7 +38,7 @@ describe("prefix is current class, default Config", () => {
     PROTECTED SECTION.
       DATA mv_foo TYPE i.
   ENDCLASS.`;
-    const issues = run(abap);
+    const issues = await run(abap);
     expect(issues).to.equal(0);
   });
 
@@ -53,7 +54,7 @@ describe("prefix is current class, default Config", () => {
       WRITE: 'foo'. " zcl_foo=>foo( )
     ENDMETHOD.
   ENDCLASS.`;
-    const issues = run(abap);
+    const issues = await run(abap);
     expect(issues).to.equal(0);
   });
 
@@ -71,7 +72,7 @@ describe("prefix is current class, default Config", () => {
       WRITE: |lcl_moo=>mv_abc{ 2 }lcl_moo=>mv_abc{ 3 }lcl_moo=>mv_abc{ 4 }|.
     ENDMETHOD.
   ENDCLASS.`;
-    const issues = run(abap);
+    const issues = await run(abap);
     expect(issues).to.equal(1);
   });
 
@@ -92,7 +93,7 @@ describe("prefix is current class, default Config", () => {
       WRITE: '1'.
     ENDMETHOD.
   ENDCLASS.`;
-    const issues = run(abap);
+    const issues = await run(abap);
     expect(issues).to.equal(1);
   });
 
@@ -113,7 +114,7 @@ describe("prefix is current class, default Config", () => {
       WRITE: '1'.
     ENDMETHOD.
   ENDCLASS.`;
-    const issues = run(abap);
+    const issues = await run(abap);
     expect(issues).to.equal(1);
   });
 
@@ -129,7 +130,7 @@ describe("prefix is current class, default Config", () => {
       me->mv_foo = 1.
     ENDMETHOD.
   ENDCLASS.`;
-    const issues = run(abap);
+    const issues = await run(abap);
     expect(issues).to.equal(0);
   });
 
@@ -138,7 +139,7 @@ describe("prefix is current class, default Config", () => {
     TYPES: foo TYPE i.
     TYPES boo TYPE lif_foo=>foo.
   ENDINTERFACE.`;
-    const issues = run(abap);
+    const issues = await run(abap);
     expect(issues).to.equal(1);
   });
 
@@ -147,7 +148,7 @@ describe("prefix is current class, default Config", () => {
     TYPES: foo TYPE i.
     TYPES boo TYPE foo.
   ENDINTERFACE.`;
-    const issues = run(abap);
+    const issues = await run(abap);
     expect(issues).to.equal(0);
   });
 
@@ -176,7 +177,7 @@ describe("prefix is current class, meReferenceAllowedTests", () => {
       WRITE: '1'.
     ENDMETHOD.
   ENDCLASS.`;
-    const issues = run(abap, config);
+    const issues = await run(abap, config);
     expect(issues).to.equal(0);
   });
 
@@ -192,7 +193,7 @@ describe("prefix is current class, meReferenceAllowedTests", () => {
       me->mv_foo = 1.
     ENDMETHOD.
   ENDCLASS.`;
-    const issues = run(abap, config);
+    const issues = await run(abap, config);
     expect(issues).to.equal(0);
   });
 

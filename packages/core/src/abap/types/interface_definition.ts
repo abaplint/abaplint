@@ -5,7 +5,7 @@ import * as Statements from "../2_statements/statements";
 import * as Expressions from "../2_statements/expressions";
 import {CurrentScope} from "../5_syntax/_current_scope";
 import {IInterfaceDefinition, IImplementing} from "./_interface_definition";
-import {IAttributes}  from "./_class_attributes";
+import {IAttributes} from "./_class_attributes";
 import {ITypeDefinitions} from "./_type_definitions";
 import {Attributes} from "./class_attributes";
 import {TypeDefinitions} from "./type_definitions";

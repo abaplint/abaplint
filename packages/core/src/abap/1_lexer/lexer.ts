@@ -116,7 +116,7 @@ export class Lexer {
 
       let whiteBefore = false;
       const prev = this.stream.prevChar();
-      if (prev === " " || prev === "\n" || prev === ":")  {
+      if (prev === " " || prev === "\n" || prev === ":") {
         whiteBefore = true;
       }
 

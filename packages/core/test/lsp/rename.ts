@@ -8,9 +8,10 @@ import {Class} from "../../src/objects";
 
 describe("LSP, prepare rename, global class", () => {
 
-  it("bad position", () => {
+  it("bad position", async () => {
     const file = new MemoryFile("foobar.prog.abap", "DO.");
-    const reg = new Registry().addFile(file).parse();
+    const reg = new Registry().addFile(file);
+    await reg.parseAsync();
     const rename = new Rename(reg);
 
     const result = rename.prepareRename({
@@ -19,14 +20,15 @@ describe("LSP, prepare rename, global class", () => {
     expect(result).to.equal(undefined);
   });
 
-  it("class definition name", () => {
+  it("class definition name", async () => {
     const file = new MemoryFile(
       "zcl_foobar.clas.abap",
       `CLASS zcl_foobar DEFINITION PUBLIC CREATE PUBLIC.
       ENDCLASS.
       CLASS zcl_foobar IMPLEMENTATION.
       ENDCLASS.`);
-    const reg = new Registry().addFile(file).parse();
+    const reg = new Registry().addFile(file);
+    await reg.parseAsync();
 
     const rename = new Rename(reg);
 
@@ -46,9 +48,10 @@ describe("LSP, prepare rename, global class", () => {
 
 describe("LSP, actual rename, global class", () => {
 
-  it("bad position", () => {
+  it("bad position", async () => {
     const file = new MemoryFile("foobar.prog.abap", "DO.");
-    const reg = new Registry().addFile(file).parse();
+    const reg = new Registry().addFile(file);
+    await reg.parseAsync();
     const rename = new Rename(reg);
 
     const result = rename.rename({
@@ -58,14 +61,15 @@ describe("LSP, actual rename, global class", () => {
     expect(result).to.equal(undefined);
   });
 
-  it("name too long", () => {
+  it("name too long", async () => {
     const abap = new MemoryFile(
       "zcl_foobar.clas.abap",
       `CLASS zcl_foobar DEFINITION PUBLIC CREATE PUBLIC.
 ENDCLASS.
 CLASS zcl_foobar IMPLEMENTATION.
 ENDCLASS.`);
-    const reg = new Registry().addFile(abap).parse();
+    const reg = new Registry().addFile(abap);
+    await reg.parseAsync();
     const rename = new Rename(reg);
 
     const result = rename.rename({
@@ -75,7 +79,7 @@ ENDCLASS.`);
     expect(result).to.equal(undefined);
   });
 
-  it("rename global class, normal naming", () => {
+  it("rename global class, normal naming", async () => {
     const abap = new MemoryFile(
       "zcl_foobar.clas.abap",
       `CLASS zcl_foobar DEFINITION PUBLIC CREATE PUBLIC.
@@ -102,10 +106,8 @@ ENDCLASS.`);
  </asx:abap>
 </abapGit>`);
 
-    const reg = new Registry();
-    reg.addFile(abap);
-    reg.addFile(xml);
-    reg.parse();
+    const reg = new Registry().addFile(abap).addFile(xml);
+    await reg.parseAsync();
     expect(reg.findIssues().length).to.equal(0);
 
     const newName = "zcl_new";
@@ -128,7 +130,7 @@ ENDCLASS.`);
     expect(issues.length).to.equal(0);
   });
 
-  it("rename global class, add namespace", () => {
+  it("rename global class, add namespace", async () => {
     const abap = new MemoryFile(
       "zcl_foobar.clas.abap",
       `CLASS zcl_foobar DEFINITION PUBLIC CREATE PUBLIC.

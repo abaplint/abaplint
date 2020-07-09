@@ -4,7 +4,7 @@ import {MemoryFile} from "../../src/files/memory_file";
 import {View} from "../../src/objects";
 
 describe("View, parse XML", () => {
-  it("test", () => {
+  it("test", async () => {
     const xml =
       "<?xml version=\"1.0\" encoding=\"utf-8\"?>\n" +
       "<abapGit version=\"v1.0.0\" serializer=\"LCL_OBJECT_VIEW\" serializer_version=\"v1.0.0\">\n" +
@@ -81,7 +81,8 @@ describe("View, parse XML", () => {
       "</abapGit>";
 
 
-    const reg = new Registry().addFile(new MemoryFile("zag_unit_testv.view.xml", xml)).parse();
+    const reg = new Registry().addFile(new MemoryFile("zag_unit_testv.view.xml", xml));
+    await reg.parseAsync();
     const tabl = reg.getObjects()[0] as View;
     expect(tabl.getName()).to.equal("ZAG_UNIT_TESTV");
     const fields = tabl.getFields();

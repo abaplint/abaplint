@@ -15,7 +15,7 @@ const tests = [
     invalid_boo = 1
     OTHERS      = 2.`, cnt: 0},
   {abap: "LOOP AT SCREEN.", cnt: 0},
-  {abap: "MODIFY SCREEN.",  cnt: 0},
+  {abap: "MODIFY SCREEN.", cnt: 0},
   {abap: "FIELD-SYMBOLS <lv_dst> TYPE ANY.", cnt: 0}, // todo, "ANY" should be lower case
   {abap: "FIELD-SYMBOLS <ls_auth> LIKE LINE OF gt_auth.", cnt: 0}, // todo
   {abap: "SELECT SINGLE ccnocliind FROM t000 INTO lv_ind WHERE mandt = sy-mandt.", cnt: 0},
@@ -86,7 +86,7 @@ const tests4 = [
     invalid_boo = 1
     others      = 2.`, cnt: 0},
   {abap: "LOOP AT SCREEN.", cnt: 1},
-  {abap: "MODIFY SCREEN.",  cnt: 1},
+  {abap: "MODIFY SCREEN.", cnt: 1},
   {abap: "field-symbols <lv_dst> type ANY.", cnt: 0}, // todo, "ANY" should be lower case
   {abap: "field-symbols <ls_auth> like line of gt_auth.", cnt: 0}, // todo
   {abap: "select single ccnocliind from t000 into lv_ind where mandt = sy-mandt.", cnt: 0},

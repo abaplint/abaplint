@@ -4,7 +4,7 @@ import {MemoryFile} from "../../src/files/memory_file";
 import {ICFService} from "../../src/objects";
 
 describe("ICF service, parse XML", () => {
-  it("test", () => {
+  it("test", async () => {
     const xml = `<?xml version="1.0" encoding="utf-8"?>
 <abapGit version="v1.0.0" serializer="LCL_OBJECT_SICF" serializer_version="v1.0.0">
  <asx:abap xmlns:asx="http://www.sap.com/abapxml" version="1.0">
@@ -32,7 +32,8 @@ describe("ICF service, parse XML", () => {
  </asx:abap>
 </abapGit>`;
 
-    const reg = new Registry().addFile(new MemoryFile("zabapgitserver 9def6c78d0beedf8d5b04ba6c.sicf.xml", xml)).parse();
+    const reg = new Registry().addFile(new MemoryFile("zabapgitserver 9def6c78d0beedf8d5b04ba6c.sicf.xml", xml));
+    await reg.parseAsync();
     const sicf = reg.getObjects()[0] as ICFService;
 
     const handlers = sicf.getHandlerList();
