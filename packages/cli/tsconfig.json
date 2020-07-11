@@ -15,17 +15,13 @@
         "alwaysStrict": true,
         "target": "es2017",
         "lib": ["ES2017"],
-        "sourceMap": true,
-        "baseUrl": ".",
-        "paths": {"abaplint": ["../../build/src/"]},
+        "sourceMap": true
         },
     "filesGlob": [
         "./**/*.ts"
         ],
     "exclude": [
         "node_modules",
-        "web",
-        "docs",
         "build"
     ]
 }

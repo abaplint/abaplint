@@ -4,6 +4,7 @@ import * as path from "path";
 import * as minimist from "minimist";
 import * as ProgressBar from "progress";
 import * as childProcess from "child_process";
+import * as JSON5 from "json5";
 import {Issue, IProgress, IFile, Position, Config, Registry, MemoryFile, IRegistry} from "@abaplint/core";
 import {Formatter} from "./formatters/_format";
 import {FileOperations} from "./file_operations";
@@ -125,6 +126,12 @@ function out(issues: Issue[], format: string, length: number, argv: minimist.Par
 
 async function run() {
 
+  // evil hack to get JSON5 working
+  // @ts-ignore
+  JSON5.parse = JSON5.default.parse;
+  // @ts-ignore
+  JSON5.stringify = JSON5.default.stringify;
+
   const argv = minimist(process.argv.slice(2), {boolean: ["c", "fix"]});
   let format = "standard";
   let output = "";
@@ -142,7 +149,7 @@ async function run() {
   } else if (argv["v"] !== undefined || argv["version"] !== undefined) {
     output = output + Registry.abaplintVersion() + "\n";
   } else if (argv["d"] !== undefined || argv["default"] !== undefined) {
-    output = output + JSON.stringify(Config.getDefault().get(), undefined, 2) + "\n";
+    output = output + JSON5.stringify(Config.getDefault().get(), undefined, 2) + "\n";
   } else {
 
     let loaded: IFile[] = [];
