@@ -12,6 +12,7 @@ export class CheckIncludeConf extends BasicRuleConfig {
 export class CheckInclude implements IRule {
   private reg: IRegistry;
   private conf = new CheckIncludeConf();
+  private graph: IncludeGraph;
 
   public getMetadata() {
     return {
@@ -32,6 +33,7 @@ export class CheckInclude implements IRule {
 
   public initialize(reg: IRegistry) {
     this.reg = reg;
+    this.graph = new IncludeGraph(this.reg);
     return this;
   }
 
@@ -41,9 +43,8 @@ export class CheckInclude implements IRule {
     }
 
     let ret: Issue[] = [];
-    const graph = new IncludeGraph(this.reg);
     for (const file of obj.getABAPFiles()) {
-      ret = ret.concat(graph.getIssuesFile(file));
+      ret = ret.concat(this.graph.getIssuesFile(file));
     }
     return ret;
   }
