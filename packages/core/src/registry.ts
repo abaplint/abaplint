@@ -5,12 +5,12 @@ import {Issue} from "./issue";
 import {ArtifactsObjects} from "./artifacts_objects";
 import {ArtifactsRules} from "./artifacts_rules";
 import {SkipLogic} from "./skip_logic";
-import {IRegistry} from "./_iregistry";
-import {IProgress} from "./progress";
+import {IRegistry, IRunInput} from "./_iregistry";
 import {IConfiguration} from "./_config";
 import {ABAPObject} from "./objects/_abap_object";
 import {FindGlobalDefinitions} from "./abap/5_syntax/global_definitions/find_global_definitions";
 
+// todo, this should really be an instance in case there are multiple Registry'ies
 class ParsingPerformance {
   private static results: {runtime: number, name: string}[];
 
@@ -175,11 +175,11 @@ export class Registry implements IRegistry {
   }
 
   // todo, this will be changed to async sometime
-  public findIssues(progress?: IProgress): readonly Issue[] {
+  public findIssues(input?: IRunInput): readonly Issue[] {
     if (this.isDirty() === true) {
       this.parse();
     }
-    return this.runRules(progress);
+    return this.runRules(input);
   }
 
   // todo, this will be changed to async sometime
@@ -208,7 +208,7 @@ export class Registry implements IRegistry {
     return this;
   }
 
-  public async parseAsync(input?: {progress?: IProgress, outputPerformance?: boolean}) {
+  public async parseAsync(input?: IRunInput) {
     if (this.isDirty() === false) {
       return this;
     }
@@ -246,7 +246,8 @@ export class Registry implements IRegistry {
     return this.objects.some((o) => o.isDirty());
   }
 
-  private runRules(progress?: IProgress, iobj?: IObject): readonly Issue[] {
+  private runRules(input?: IRunInput, iobj?: IObject): readonly Issue[] {
+    const rulePerformance: { [index:string] : number} = {};
     let issues = this.issues.slice(0);
 
     const objects = iobj ? [iobj] : this.getObjects();
@@ -258,6 +259,7 @@ export class Registry implements IRegistry {
         throw new Error(rule.getMetadata().key + " missing initialize method");
       }
       rule.initialize(this);
+      rulePerformance[rule.getMetadata().key] = 0;
     }
 
     const check: IObject[] = [];
@@ -269,11 +271,25 @@ export class Registry implements IRegistry {
       check.push(obj);
     }
 
-    progress?.set(check.length, "Finding Issues");
+    input?.progress?.set(check.length, "Finding Issues");
     for (const obj of check) {
-      progress?.tick("Finding Issues - " + obj.getType() + " " + obj.getName());
+      input?.progress?.tick("Finding Issues - " + obj.getType() + " " + obj.getName());
       for (const rule of rules) {
+        const before = Date.now();
         issues = issues.concat(rule.run(obj));
+        const runtime = Date.now() - before;
+        rulePerformance[rule.getMetadata().key] = rulePerformance[rule.getMetadata().key] + runtime;
+      }
+    }
+
+    if (input?.outputPerformance === true) {
+      const perf: {name: string, time: number}[] = [];
+      for (const p in rulePerformance) {
+        perf.push({name: p, time: rulePerformance[p]});
+      }
+      perf.sort((a, b) => { return b.time - a.time; });
+      for (const p of perf) {
+        process.stderr.write("\t" + p.time + "ms\t" + p.name + "\n");
       }
     }
 

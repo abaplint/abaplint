@@ -112,7 +112,7 @@ function displayHelp(): string {
     "  --outformat <format>   output format, use in combination with outfile\n" +
     "  --outfile <file>       output issues to file in format\n" +
     "  --fix                  apply quick fixes to files\n" +
-    "  -p                     output parsing performance information(top 10)\n" +
+    "  -p                     output performance information\n" +
     "  -c                     compress files in memory\n";
 }
 
@@ -169,7 +169,7 @@ async function run() {
       reg = new Registry(config).addFiles(loaded);
       reg.addDependencies(deps);
       await reg.parseAsync({progress, outputPerformance: parsingPerformance});
-      issues = issues.concat(reg.findIssues(progress));
+      issues = issues.concat(reg.findIssues({progress, outputPerformance: parsingPerformance}));
     } catch (error) {
       const file = new MemoryFile("generic", "dummy");
       const issue = Issue.atPosition(file, new Position(1, 1), error.toString(), "error");
