@@ -29,7 +29,7 @@ export class CheckComments extends ABAPRule {
 
   private getDescription(issueType: IssueType): string {
     switch (issueType) {
-      case IssueType.EndOfLine: return `Do not use end of line comments - move comment to previous row instead.`;
+      case IssueType.EndOfLine: return `Do not use end of line comments - move comment to previous row instead`;
       default: return "";
     }
   }
