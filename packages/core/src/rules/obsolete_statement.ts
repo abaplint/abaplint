@@ -1,8 +1,8 @@
-import {Issue} from "../issue";
 import * as Statements from "../abap/2_statements/statements";
+import * as Expressions from "../abap/2_statements/expressions";
+import {Issue} from "../issue";
 import {ABAPRule} from "./_abap_rule";
 import {ABAPFile} from "../files";
-import {Compare, DataDefinition} from "../abap/2_statements/expressions";
 import {BasicRuleConfig} from "./_basic_rule_config";
 import {Position} from "../position";
 
@@ -82,8 +82,8 @@ export class ObsoleteStatement extends ABAPRule {
         issues.push(issue);
       }
 
-      if (this.conf.requested) {
-        for (const compare of sta.findAllExpressions(Compare)) {
+      if (this.conf.requested && sta.get() instanceof Statements.If) {
+        for (const compare of sta.findAllExpressions(Expressions.Compare)) {
           const token = compare.findDirectTokenByText("REQUESTED");
           if (token) {
             const issue = Issue.atToken(file, token, "IS REQUESTED is obsolete", this.getMetadata().key);
@@ -91,6 +91,7 @@ export class ObsoleteStatement extends ABAPRule {
           }
         }
       }
+
       if (this.conf.occurs) {
         if ((sta.get() instanceof Statements.Describe)
           || (sta.get() instanceof Statements.Ranges)) {
@@ -101,7 +102,7 @@ export class ObsoleteStatement extends ABAPRule {
           }
         }
 
-        for (const dataDef of sta.findAllExpressions(DataDefinition)) {
+        for (const dataDef of sta.findAllExpressions(Expressions.DataDefinition)) {
           const token = dataDef.findDirectTokenByText("OCCURS");
           if (token) {
             const issue = Issue.atToken(file, token, "OCCURS is obsolete", this.getMetadata().key);
