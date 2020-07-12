@@ -211,22 +211,25 @@ export class Registry implements IRegistry {
     const rules = this.conf.getEnabledRules();
     const skipLogic = new SkipLogic(this);
 
-    progress?.set(objects.length, "Finding Issues");
-
     for (const rule of rules) {
       if (rule.initialize === undefined) {
-        console.dir(rule);
+        throw new Error(rule.getMetadata().key + " missing initialize method");
       }
       rule.initialize(this);
     }
 
+    const check: IObject[] = [];
     for (const obj of objects) {
-      progress?.tick("Finding Issues - " + obj.getType() + " " + obj.getName());
-
       if (skipLogic.skip(obj) || this.dependencies.includes(obj.getFiles()[0].getFilename())) {
         continue;
       }
 
+      check.push(obj);
+    }
+
+    progress?.set(check.length, "Finding Issues");
+    for (const obj of check) {
+      progress?.tick("Finding Issues - " + obj.getType() + " " + obj.getName());
       for (const rule of rules) {
         issues = issues.concat(rule.run(obj));
       }
