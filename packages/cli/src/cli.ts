@@ -166,7 +166,7 @@ async function run() {
 
       reg = new Registry(config).addFiles(loaded);
       reg.addDependencies(deps);
-      await reg.parseAsync(progress);
+      await reg.parseAsync({progress, outputPerformance: true});
       issues = issues.concat(reg.findIssues(progress));
     } catch (error) {
       const file = new MemoryFile("generic", "dummy");
