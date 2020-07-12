@@ -26,7 +26,7 @@ const tests = [
     "    cl_abap_unit_assert=>assert_not_initial( lv_abap ).
        "cl_abap_unit_assert=>assert_char_cp(
        "   act = lv_abap
-    "      exp = '*MOO*' ).`, cnt: 1},
+    "      exp = '*FOO*' ).`, cnt: 1},
   {abap:
     // abapdoc, allowed
       `"! todo
@@ -35,7 +35,7 @@ const tests = [
       "!    cl_abap_unit_assert=>assert_not_initial( lv_abap ).
          "!cl_abap_unit_assert=>assert_char_cp(
          "!   act = lv_abap
-      "!      exp = '*MOO*' ).`, cnt: 0},
+      "!      exp = '*BOO*' ).`, cnt: 0},
   {abap:
     // mix of abapdoc and standard comments
         `" todo
@@ -44,7 +44,7 @@ const tests = [
         "    cl_abap_unit_assert=>assert_not_initial( lv_abap ).
            "!cl_abap_unit_assert=>assert_char_cp(
            "!   act = lv_abap
-        "!      exp = '*MOO*' ).`, cnt: 1},
+        "!      exp = '*BAR*' ).`, cnt: 1},
 ];
 
 testRule(tests, CommentedCode);
