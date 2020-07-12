@@ -112,6 +112,7 @@ function displayHelp(): string {
     "  --outformat <format>   output format, use in combination with outfile\n" +
     "  --outfile <file>       output issues to file in format\n" +
     "  --fix                  apply quick fixes to files\n" +
+    "  -p                     output parsing performance information(top 10)\n" +
     "  -c                     compress files in memory\n";
 }
 
@@ -132,7 +133,7 @@ async function run() {
   // @ts-ignore
   JSON5.stringify = JSON5.default.stringify;
 
-  const argv = minimist(process.argv.slice(2), {boolean: ["c", "fix"]});
+  const argv = minimist(process.argv.slice(2), {boolean: ["p", "c", "fix"]});
   let format = "standard";
   let output = "";
   let issues: Issue[] = [];
@@ -143,6 +144,7 @@ async function run() {
 
   const progress: IProgress = new Progress();
   const compress = argv["c"] ? true : false;
+  const parsingPerformance = argv["p"] ? true : false;
 
   if (argv["h"] !== undefined || argv["help"] !== undefined) {
     output = output + displayHelp();
@@ -166,7 +168,7 @@ async function run() {
 
       reg = new Registry(config).addFiles(loaded);
       reg.addDependencies(deps);
-      await reg.parseAsync(progress);
+      await reg.parseAsync({progress, outputPerformance: parsingPerformance});
       issues = issues.concat(reg.findIssues(progress));
     } catch (error) {
       const file = new MemoryFile("generic", "dummy");

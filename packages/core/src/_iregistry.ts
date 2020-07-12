@@ -6,7 +6,7 @@ import {Issue} from "./issue";
 
 export interface IRegistry {
   parse(): IRegistry;
-  parseAsync(progress?: IProgress): Promise<IRegistry>;
+  parseAsync(input?: {progress?: IProgress, outputPerformance?: boolean}): Promise<IRegistry>;
   addDependencies(files: readonly IFile[]): IRegistry;
   isDependency(filename: string): boolean;
   findIssues(progress?: IProgress): readonly Issue[];

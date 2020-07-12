@@ -70,6 +70,12 @@ export class Config implements IConfiguration {
   }
 
   public constructor(json: string) {
+    // huh, hack
+    if (JSON5.parse === undefined) {
+      // @ts-ignore
+      JSON5.parse = JSON5.default.parse;
+    }
+
     this.config = JSON5.parse(json);
 
     if (this.config.global === undefined) {
