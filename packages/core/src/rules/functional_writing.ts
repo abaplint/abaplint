@@ -51,8 +51,6 @@ https://docs.abapopenchecks.org/checks/07/`,
     }
 
     for (const statement of file.getStatements()) {
-      const code = statement.concatTokens().toUpperCase();
-
       if (statement.get() instanceof Statements.ClassImplementation
           && definition
           && definition.isException
@@ -60,7 +58,11 @@ https://docs.abapopenchecks.org/checks/07/`,
         exception = true;
       } else if (statement.get() instanceof Statements.EndClass) {
         exception = false;
-      } else if (exception === false && this.startsWith(code, "CALL METHOD ")) {
+      } else if (exception === false && statement.get() instanceof Statements.Call) {
+        if (statement.getFirstChild()?.get() instanceof Expressions.MethodCallChain) {
+          continue;
+        }
+
         const dynamic = statement.findDirectExpression(Expressions.MethodSource)?.findDirectExpression(Expressions.Dynamic);
         if (dynamic !== undefined) {
           continue;
@@ -73,9 +75,9 @@ https://docs.abapopenchecks.org/checks/07/`,
 
     return issues;
   }
-
+/*
   private startsWith(str: string, value: string): boolean {
     return str.substr(0, value.length) === value;
   }
-
+*/
 }
