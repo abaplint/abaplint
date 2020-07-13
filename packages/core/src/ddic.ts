@@ -5,12 +5,21 @@ import {DataElement} from "./objects/data_element";
 import {Table} from "./objects/table";
 import {TableType} from "./objects/table_type";
 import * as Types from "./abap/types/basic";
+import {ABAPObject} from "./objects/_abap_object";
+import {InfoClassDefinition} from "./abap/4_file_information/_abap_file_information";
 
 export class DDIC {
   private readonly reg: IRegistry;
 
   public constructor(reg: IRegistry) {
     this.reg = reg;
+  }
+
+  // the class might be local with a local super class with a global exception class as super
+  public isException(def: InfoClassDefinition, _obj: ABAPObject): boolean {
+    const superClassName = def.superClassName;
+    const isException = (superClassName?.match(/^.?cx_.*$/i) || superClassName?.match(/^\/.+\/cx_.*$/i)) ? true : false;
+    return isException;
   }
 
   public inErrorNamespace(name: string | undefined): boolean {

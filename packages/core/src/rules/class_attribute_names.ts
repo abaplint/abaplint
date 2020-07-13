@@ -6,6 +6,8 @@ import {ABAPFile} from "../files";
 import {Identifier} from "../abap/4_file_information/_identifier";
 import {InfoAttribute, AttributeLevel} from "../abap/4_file_information/_abap_file_information";
 import {RuleTag} from "./_irule";
+import {ABAPObject} from "../objects/_abap_object";
+import {DDIC} from "../ddic";
 
 export class ClassAttributeNamesConf extends NamingRuleConfig {
   /** Ignore global exception classes */
@@ -49,15 +51,16 @@ export class ClassAttributeNames extends ABAPRule {
     this.conf = conf;
   }
 
-  public runParsed(file: ABAPFile): Issue[] {
+  public runParsed(file: ABAPFile, obj: ABAPObject): Issue[] {
     let issues: Issue[] = [];
     if (this.conf.patternKind === undefined) {
       this.conf.patternKind = "required";
     }
     let attributes: InfoAttribute[] = [];
+    const ddic = new DDIC(this.reg);
     for (const classDef of file.getInfo().listClassDefinitions()) {
       if ((classDef.isLocal && this.conf.ignoreLocal)
-        || (classDef.isException && this.conf.ignoreExceptions)) {
+        || (ddic.isException(classDef, obj) && this.conf.ignoreExceptions)) {
         continue;
       }
       attributes = attributes.concat(classDef.attributes);

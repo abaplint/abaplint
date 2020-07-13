@@ -4,10 +4,10 @@ import {ABAPFile} from "../files";
 import * as Statements from "../abap/2_statements/statements";
 import * as Expressions from "../abap/2_statements/expressions";
 import {BasicRuleConfig} from "./_basic_rule_config";
-import {IObject} from "../objects/_iobject";
 import {Class} from "../objects";
 import {InfoClassDefinition} from "../abap/4_file_information/_abap_file_information";
 import {RuleTag} from "./_irule";
+import {ABAPObject} from "../objects/_abap_object";
 
 export class FunctionalWritingConf extends BasicRuleConfig {
   /** Ignore functional writing in exception classes, local + global */
@@ -41,7 +41,7 @@ https://docs.abapopenchecks.org/checks/07/`,
     this.conf = conf;
   }
 
-  public runParsed(file: ABAPFile, obj: IObject) {
+  public runParsed(file: ABAPFile, obj: ABAPObject): readonly Issue[] {
     const issues: Issue[] = [];
     let exception = false;
 
@@ -75,9 +75,5 @@ https://docs.abapopenchecks.org/checks/07/`,
 
     return issues;
   }
-/*
-  private startsWith(str: string, value: string): boolean {
-    return str.substr(0, value.length) === value;
-  }
-*/
+
 }
