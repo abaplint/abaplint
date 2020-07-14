@@ -139,6 +139,26 @@ const tests = [
     GROUP BY s_blame_author-request
     NEXT x = x + 1 ).`,
     */
+
+  `
+mock_cds_db = cl_cds_test_environment=>create_for_multiple_cds( i_for_entities = VALUE #(
+  ( VALUE #( i_for_entity = parameter_cds-fmt i_dependency_list = VALUE #( ( parameter-fmt ) ) ) )
+  ( VALUE #( i_for_entity = parameter_cds-fmttype i_dependency_list = VALUE #( ( parameter-fmttype ) ) ) )
+  ( VALUE #( i_for_entity = parameter_cds-fmttypet i_dependency_list = VALUE #( ( parameter-fmttypet ) ) ) )
+  ( VALUE #( i_for_entity = parameter_cds-fmtvers i_dependency_list = VALUE #( ( parameter-fmtvers ) ) ) )
+  ( VALUE #( i_for_entity = parameter_cds-fmtconst i_dependency_list = VALUE #( ( parameter-fmtconst ) ) ) )
+  ( VALUE #( i_for_entity = parameter_cds-fmtenum i_dependency_list = VALUE #( ( parameter-fmtenum ) ) ) )
+  ( VALUE #( i_for_entity = parameter_cds-fmtenumv i_dependency_list = VALUE #( ( parameter-fmtenumv ) ) ) )
+  ( VALUE #( i_for_entity = parameter_cds-fmtattrf i_dependency_list = VALUE #( ( parameter-fmtattrf ) ) ) )
+  ( VALUE #( i_for_entity = parameter_cds-node i_dependency_list = VALUE #( ( parameter-node ) ) ) )
+  ( VALUE #( i_for_entity = parameter_cds-nodefld i_dependency_list = VALUE #( ( parameter-nodefld ) ) ) )
+  ( VALUE #( i_for_entity = parameter_cds-nodefldg i_dependency_list = VALUE #( ( parameter-nodefldg ) ) ) )
+  ( VALUE #( i_for_entity = parameter_cds-noderec i_dependency_list = VALUE #( ( parameter-noderec ) ) ) )
+  ( VALUE #( i_for_entity = parameter_cds-noderecg i_dependency_list = VALUE #( ( parameter-noderecg ) ) ) )
+  ( VALUE #( i_for_entity = parameter_cds-nodeact i_dependency_list = VALUE #( ( parameter-nodeact ) ) ) )
+  ( VALUE #( i_for_entity = parameter_cds-nodeactparam i_dependency_list = VALUE #( ( parameter-nodeactparam ) ) ) )
+) ).`,
+
 ];
 
 statementType(tests, "MOVE", Statements.Move);
