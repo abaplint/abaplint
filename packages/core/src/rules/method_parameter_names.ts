@@ -6,6 +6,7 @@ import {ABAPObject} from "../objects/_abap_object";
 import {NamingRuleConfig} from "./_naming_rule_config";
 import {NameValidator} from "../utils/name_validator";
 import {InfoMethodDefinition, MethodParameterDirection, InfoMethodParameter} from "../abap/4_file_information/_abap_file_information";
+import {DDIC} from "../ddic";
 
 export class MethodParameterNamesConf extends NamingRuleConfig {
   /** Ignore parameters in methods of exception classes */
@@ -23,6 +24,7 @@ export class MethodParameterNamesConf extends NamingRuleConfig {
 export class MethodParameterNames implements IRule {
 
   private conf = new MethodParameterNamesConf();
+  private reg: IRegistry;
 
   public getMetadata() {
     return {
@@ -47,7 +49,8 @@ export class MethodParameterNames implements IRule {
     this.conf = conf;
   }
 
-  public initialize(_reg: IRegistry) {
+  public initialize(reg: IRegistry) {
+    this.reg = reg;
     return this;
   }
 
@@ -61,6 +64,8 @@ export class MethodParameterNames implements IRule {
       return [];
     }
 
+    const ddic = new DDIC(this.reg);
+
     for (const file of obj.getABAPFiles()) {
       for (const def of file.getInfo().listInterfaceDefinitions()) {
         for (const method of def.methods) {
@@ -68,7 +73,7 @@ export class MethodParameterNames implements IRule {
         }
       }
       for (const def of file.getInfo().listClassDefinitions()) {
-        if (this.conf.ignoreExceptions && def.isException) {
+        if (this.conf.ignoreExceptions && ddic.isException(def, obj)) {
           continue;
         }
         for (const method of def.methods) {

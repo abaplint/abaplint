@@ -9,6 +9,7 @@ import {Indent} from "../pretty_printer/indent";
 import * as Statements from "../abap/2_statements/statements";
 import * as Expressions from "../abap/2_statements/expressions";
 import {IRuleMetadata, RuleTag} from "./_irule";
+import {DDIC} from "../ddic";
 
 export class IndentationConf extends BasicRuleConfig {
   /** Ignore global exception classes */
@@ -47,11 +48,13 @@ export class Indentation extends ABAPRule {
       return []; // syntax error in file
     }
 
+    const ddic = new DDIC(this.reg);
+
     if (obj instanceof Class) {
       const definition = obj.getClassDefinition();
       if (definition === undefined) {
         return [];
-      } else if (this.conf.ignoreExceptions && definition.isException) {
+      } else if (this.conf.ignoreExceptions && ddic.isException(definition, obj)) {
         return [];
       }
     }

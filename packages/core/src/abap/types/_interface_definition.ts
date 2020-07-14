@@ -15,7 +15,6 @@ export interface IInterfaceDefinition extends Identifier {
   getTypeDefinitions(): ITypeDefinitions;
   getMethodDefinitions(): IMethodDefinitions;
   getEvents(): readonly IEventDefinition[];
-  isLocal(): boolean;
   isGlobal(): boolean;
   getSuperClass(): string | undefined;
   getAliases(): IAliases;

@@ -6,6 +6,7 @@ import {Class} from "../objects";
 import {BasicRuleConfig} from "./_basic_rule_config";
 import * as Statements from "../abap/2_statements/statements";
 import {IRuleMetadata, RuleTag} from "./_irule";
+import {DDIC} from "../ddic";
 
 export class InStatementIndentationConf extends BasicRuleConfig {
   /** Ignore global exception classes */
@@ -43,11 +44,13 @@ export class InStatementIndentation extends ABAPRule {
   public runParsed(file: ABAPFile, obj: IObject) {
     const ret: Issue[] = [];
 
+    const ddic = new DDIC(this.reg);
+
     if (obj instanceof Class) {
       const definition = obj.getClassDefinition();
       if (definition === undefined) {
         return [];
-      } else if (this.conf.ignoreExceptions && definition.isException) {
+      } else if (this.conf.ignoreExceptions && ddic.isException(definition, obj)) {
         return [];
       }
     }

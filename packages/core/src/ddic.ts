@@ -5,12 +5,50 @@ import {DataElement} from "./objects/data_element";
 import {Table} from "./objects/table";
 import {TableType} from "./objects/table_type";
 import * as Types from "./abap/types/basic";
+import {ABAPObject} from "./objects/_abap_object";
+import {InfoClassDefinition} from "./abap/4_file_information/_abap_file_information";
 
 export class DDIC {
   private readonly reg: IRegistry;
 
   public constructor(reg: IRegistry) {
     this.reg = reg;
+  }
+
+  // the class might be local with a local super class with a global exception class as super
+  // todo: returns true for both local and global exception classes
+  public isException(def: InfoClassDefinition | undefined, _obj: ABAPObject): boolean {
+    if (def === undefined) {
+      return false;
+    }
+    let superClassName = def.superClassName;
+    if (superClassName === undefined) {
+      return false;
+    }
+
+    let i = 0;
+    // max depth, make sure not to hit cyclic super class defintions
+    while (i++ < 10) {
+      const found = this.reg.getObject("CLAS", superClassName) as ABAPObject | undefined;
+      if (found === undefined) {
+        break;
+      }
+
+      const superDef = found.getMainABAPFile()?.getInfo().getClassDefinitionByName(superClassName);
+      if (superDef === undefined) {
+        break;
+      }
+
+      if (def.superClassName) {
+        superClassName = def.superClassName;
+      } else {
+        break;
+      }
+    }
+
+    // todo, this should check for "CX_ROOT"
+    const isException = (superClassName?.match(/^.?cx_.*$/i) || superClassName?.match(/^\/.+\/cx_.*$/i)) ? true : false;
+    return isException;
   }
 
   public inErrorNamespace(name: string | undefined): boolean {

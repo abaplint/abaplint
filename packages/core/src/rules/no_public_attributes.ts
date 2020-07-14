@@ -4,6 +4,8 @@ import {ABAPRule} from "./_abap_rule";
 import {ABAPFile} from "../files";
 import {Visibility} from "../abap/4_file_information/visibility";
 import {InfoAttribute, AttributeLevel} from "../abap/4_file_information/_abap_file_information";
+import {ABAPObject} from "../objects/_abap_object";
+import {DDIC} from "../ddic";
 
 export class NoPublicAttributesConf extends BasicRuleConfig {
   /** Allows public attributes, if they are declared as READ-ONLY. */
@@ -36,23 +38,24 @@ Exceptions are excluded from this rule.`,
     this.conf = conf;
   }
 
-  public runParsed(file: ABAPFile) {
+  public runParsed(file: ABAPFile, obj: ABAPObject) {
     this.file = file;
-    const attributes = this.getAllPublicAttributes();
+    const attributes = this.getAllPublicAttributes(obj);
     return this.findAllIssues(attributes);
   }
 
-  private getAllPublicAttributes(): InfoAttribute[] {
+  private getAllPublicAttributes(obj: ABAPObject): InfoAttribute[] {
     let attributes: InfoAttribute[] = [];
-    attributes = attributes.concat(this.getAllPublicClassAttributes());
+    attributes = attributes.concat(this.getAllPublicClassAttributes(obj));
     attributes = attributes.concat(this.getAllPublicInterfaceAttributes());
     return attributes;
   }
 
-  private getAllPublicClassAttributes(): InfoAttribute[] {
+  private getAllPublicClassAttributes(obj: ABAPObject): InfoAttribute[] {
     let attributes: InfoAttribute[] = [];
+    const ddic = new DDIC(this.reg);
     for (const classDef of this.file.getInfo().listClassDefinitions()) {
-      if (classDef.isException) {
+      if (ddic.isException(classDef, obj)) {
         continue;
       }
       attributes = attributes.concat(classDef.attributes.filter(a => a.visibility === Visibility.Public));

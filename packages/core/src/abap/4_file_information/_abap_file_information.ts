@@ -71,7 +71,6 @@ export interface InfoClassDefinition extends InfoInterfaceDefinition {
   isFinal: boolean;
   interfaces: readonly InfoImplementing[];
   isForTesting: boolean;
-  isException: boolean;
   aliases: readonly InfoAlias[],
 }
 
