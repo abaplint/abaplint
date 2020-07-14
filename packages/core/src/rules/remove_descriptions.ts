@@ -9,6 +9,7 @@ import {IFile} from "../files/_ifile";
 import {Position} from "../position";
 import {InfoClassDefinition} from "../abap/4_file_information/_abap_file_information";
 import {IRegistry} from "../_iregistry";
+import {DDIC} from "../ddic";
 
 export class RemoveDescriptionsConf extends BasicRuleConfig {
   /** Ignore global exception classes */
@@ -18,6 +19,7 @@ export class RemoveDescriptionsConf extends BasicRuleConfig {
 export class RemoveDescriptions implements IRule {
 
   private conf = new RemoveDescriptionsConf();
+  private reg: IRegistry;
 
   public getMetadata() {
     return {
@@ -40,12 +42,14 @@ export class RemoveDescriptions implements IRule {
     this.conf = conf;
   }
 
-  public initialize(_reg: IRegistry) {
+  public initialize(reg: IRegistry) {
+    this.reg = reg;
     return this;
   }
 
   public run(obj: IObject): Issue[] {
 // plan is omitting knowledge about descriptions in abaplint, so this rule must parse the XML
+    const ddic = new DDIC(this.reg);
     if (obj instanceof Objects.Class) {
       let def: InfoClassDefinition | undefined;
       try {
@@ -55,7 +59,7 @@ export class RemoveDescriptions implements IRule {
       }
       if (def === undefined) {
         return [];
-      } else if (this.conf.ignoreExceptions && def.isException) {
+      } else if (this.conf.ignoreExceptions && ddic.isException(def, obj)) {
         return [];
       }
       return this.checkClass(obj);

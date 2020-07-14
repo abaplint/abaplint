@@ -8,6 +8,7 @@ import {Class} from "../objects";
 import {InfoClassDefinition} from "../abap/4_file_information/_abap_file_information";
 import {RuleTag} from "./_irule";
 import {ABAPObject} from "../objects/_abap_object";
+import {DDIC} from "../ddic";
 
 export class FunctionalWritingConf extends BasicRuleConfig {
   /** Ignore functional writing in exception classes, local + global */
@@ -50,10 +51,12 @@ https://docs.abapopenchecks.org/checks/07/`,
       definition = obj.getClassDefinition();
     }
 
+    const ddic = new DDIC(this.reg);
+
     for (const statement of file.getStatements()) {
       if (statement.get() instanceof Statements.ClassImplementation
           && definition
-          && definition.isException
+          && ddic.isException(definition, obj)
           && this.conf.ignoreExceptions) {
         exception = true;
       } else if (statement.get() instanceof Statements.EndClass) {

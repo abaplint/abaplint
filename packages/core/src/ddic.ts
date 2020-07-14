@@ -16,6 +16,7 @@ export class DDIC {
   }
 
   // the class might be local with a local super class with a global exception class as super
+  // returns true for both local and global exception classes
   public isException(def: InfoClassDefinition, _obj: ABAPObject): boolean {
     const superClassName = def.superClassName;
     const isException = (superClassName?.match(/^.?cx_.*$/i) || superClassName?.match(/^\/.+\/cx_.*$/i)) ? true : false;
