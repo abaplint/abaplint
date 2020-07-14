@@ -16,9 +16,37 @@ export class DDIC {
   }
 
   // the class might be local with a local super class with a global exception class as super
-  // returns true for both local and global exception classes
-  public isException(def: InfoClassDefinition, _obj: ABAPObject): boolean {
-    const superClassName = def.superClassName;
+  // todo: returns true for both local and global exception classes
+  public isException(def: InfoClassDefinition | undefined, _obj: ABAPObject): boolean {
+    if (def === undefined) {
+      return false;
+    }
+    let superClassName = def.superClassName;
+    if (superClassName === undefined) {
+      return false;
+    }
+
+    let i = 0;
+    // max depth, make sure not to hit cyclic super class defintions
+    while (i++ < 10) {
+      const found = this.reg.getObject("CLAS", superClassName) as ABAPObject | undefined;
+      if (found === undefined) {
+        break;
+      }
+
+      const superDef = found.getMainABAPFile()?.getInfo().getClassDefinitionByName(superClassName);
+      if (superDef === undefined) {
+        break;
+      }
+
+      if (def.superClassName) {
+        superClassName = def.superClassName;
+      } else {
+        break;
+      }
+    }
+
+    // todo, this should check for "CX_ROOT"
     const isException = (superClassName?.match(/^.?cx_.*$/i) || superClassName?.match(/^\/.+\/cx_.*$/i)) ? true : false;
     return isException;
   }
