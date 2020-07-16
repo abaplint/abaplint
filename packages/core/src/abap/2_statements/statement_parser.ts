@@ -181,30 +181,31 @@ export class StatementParser {
   }
 
   private findMacros(wa: WorkArea) {
-    const result: StatementNode[] = [];
     let define = false;
 
-    for (let statement of wa.statements) {
+    for (let i = 0; i < wa.statements.length; i++) {
+      const statement = wa.statements[i];
+
       if (statement.get() instanceof Statements.Define) {
         define = true;
         // todo, will this break if first token is a pragma?
         this.macros.addMacro(statement.getTokens()[1].getStr());
-      } else if (statement.get() instanceof Statements.EndOfDefinition) {
-        define = false;
-      } else if (!(statement.get() instanceof Comment) && define === true) {
-        statement = new StatementNode(new MacroContent()).setChildren(this.tokensToNodes(statement.getTokens()));
+      } else if (define === true) {
+        if (statement.get() instanceof Statements.EndOfDefinition) {
+          define = false;
+        } else if (!(statement.get() instanceof Comment)) {
+          wa.statements[i] = new StatementNode(new MacroContent()).setChildren(this.tokensToNodes(statement.getTokens()));
+        }
       }
-
-      result.push(statement);
     }
 
-    wa.statements = result;
   }
 
   private handleMacros(wa: WorkArea) {
-    const result: StatementNode[] = [];
 
-    for (let statement of wa.statements) {
+    for (let i = 0; i < wa.statements.length; i++) {
+      const statement = wa.statements[i];
+
       if (statement.get() instanceof Unknown) {
         let macroName: string | undefined = undefined;
         for (const i of statement.getTokens()) {
@@ -218,36 +219,31 @@ export class StatementParser {
           }
         }
         if (macroName && this.macros.isMacro(macroName)) {
-          statement = new StatementNode(new MacroCall()).setChildren(this.tokensToNodes(statement.getTokens()));
+          wa.statements[i] = new StatementNode(new MacroCall()).setChildren(this.tokensToNodes(statement.getTokens()));
         }
       }
-
-      result.push(statement);
     }
 
-    wa.statements = result;
   }
 
   private nativeSQL(wa: WorkArea) {
-    const result: StatementNode[] = [];
     let sql = false;
 
-    for (let statement of wa.statements) {
+    for (let i = 0; i < wa.statements.length; i++) {
+      const statement = wa.statements[i];
       if (statement.get() instanceof Statements.ExecSQL
           || (statement.get() instanceof Statements.Method && statement.findFirstExpression(Expressions.Language))) {
         sql = true;
-      } else if (sql === true
-          && (statement.get() instanceof Statements.EndExec
-          || statement.get() instanceof Statements.EndMethod)) {
-        sql = false;
-      } else if (!(statement.get() instanceof Comment) && sql === true) {
-        statement = new StatementNode(new NativeSQL()).setChildren(this.tokensToNodes(statement.getTokens()));
+      } else if (sql === true) {
+        if (statement.get() instanceof Statements.EndExec
+            || statement.get() instanceof Statements.EndMethod) {
+          sql = false;
+        } else if (!(statement.get() instanceof Comment)) {
+          wa.statements[i] = new StatementNode(new NativeSQL()).setChildren(this.tokensToNodes(statement.getTokens()));
+        }
       }
-
-      result.push(statement);
     }
 
-    wa.statements = result;
   }
 
   private removeLast(tokens: readonly Token[]): readonly Token[] {
@@ -269,12 +265,13 @@ export class StatementParser {
   private categorizeStatement(input: StatementNode) {
     let statement = input;
 
-    const length = statement.getTokens().length;
-    const last = statement.getTokens()[length - 1];
+    const tokens = statement.getTokens();
+    const length = tokens.length;
+    const last = tokens[length - 1];
 
     if (length === 1
         && last instanceof Tokens.Punctuation) {
-      statement = new StatementNode(new Empty()).setChildren(this.tokensToNodes(statement.getTokens()));
+      statement = new StatementNode(new Empty()).setChildren(this.tokensToNodes(tokens));
 // if the statement contains more than STATEMENT_MAX_TOKENS tokens, just give up
     } else if (length > STATEMENT_MAX_TOKENS && statement.get() instanceof Unknown) {
       statement = input;
