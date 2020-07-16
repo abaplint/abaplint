@@ -151,7 +151,7 @@ async function run() {
   } else if (argv["v"] !== undefined || argv["version"] !== undefined) {
     output = output + Registry.abaplintVersion() + "\n";
   } else if (argv["d"] !== undefined || argv["default"] !== undefined) {
-    output = output + JSON5.stringify(Config.getDefault().get(), undefined, 2) + "\n";
+    output = output + JSON.stringify(Config.getDefault().get(), undefined, 2) + "\n";
   } else {
 
     let loaded: IFile[] = [];
