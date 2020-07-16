@@ -37,7 +37,7 @@ export class MethodCallParam {
     } else if (child.get() instanceof Expressions.MethodParameters) {
       new MethodParameters().runSyntax(child, scope, method, filename);
     } else {
-      console.dir(child);
+//      console.dir(child);
       throw new Error("MethodCallParam, unexpected child");
     }
   }
