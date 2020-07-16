@@ -2,7 +2,7 @@ import {expect} from "chai";
 import {Registry} from "../../src/registry";
 import {MemoryFile} from "../../src/files/memory_file";
 import {Table, EnhancementCategory, TableCategory} from "../../src/objects";
-import {StructureType, TableType, ObjectReferenceType, UnknownType} from "../../src/abap/types/basic";
+import {StructureType, TableType, ObjectReferenceType, UnknownType, VoidType} from "../../src/abap/types/basic";
 
 describe("Table, parse XML", () => {
   const xml1 =
@@ -79,7 +79,7 @@ describe("Table, parse XML", () => {
     expect(tabl.getName()).to.equal("ZABAPGIT_UNIT_T2");
 
     const fields = tabl.parseType(reg);
-    if (fields instanceof UnknownType) {
+    if (fields instanceof UnknownType || fields instanceof VoidType) {
       expect.fail();
     }
     expect(fields.getComponents().length).to.equal(4);
@@ -312,6 +312,58 @@ describe("Table, parse XML", () => {
     const components = stru.getComponents();
     expect(components.length).to.equal(1);
     expect(components[0].type).to.be.instanceof(ObjectReferenceType);
+  });
+
+  it("TABL, parseType, .INCLUDE void", async () => {
+    const xml = `<?xml version="1.0" encoding="utf-8"?>
+  <abapGit version="v1.0.0" serializer="LCL_OBJECT_TABL" serializer_version="v1.0.0">
+   <asx:abap xmlns:asx="http://www.sap.com/abapxml" version="1.0">
+    <asx:values>
+     <DD02V>
+      <TABNAME>ZLIST_ALV</TABNAME>
+      <DDLANGUAGE>E</DDLANGUAGE>
+      <TABCLASS>INTTAB</TABCLASS>
+      <LANGDEP>X</LANGDEP>
+      <DDTEXT>sdfsdf</DDTEXT>
+      <EXCLASS>1</EXCLASS>
+     </DD02V>
+     <DD03P_TABLE>
+      <DD03P>
+       <TABNAME>ZLIST_ALV</TABNAME>
+       <FIELDNAME>.INCLUDE</FIELDNAME>
+       <DDLANGUAGE>E</DDLANGUAGE>
+       <POSITION>0001</POSITION>
+       <ADMINFIELD>0</ADMINFIELD>
+       <PRECFIELD>BDCP2</PRECFIELD>
+       <MASK>      S</MASK>
+       <DDTEXT>sdfsdf</DDTEXT>
+       <COMPTYPE>S</COMPTYPE>
+      </DD03P>
+      <DD03P>
+       <TABNAME>ZLIST_ALV</TABNAME>
+       <FIELDNAME>CRE_DATE</FIELDNAME>
+       <DDLANGUAGE>E</DDLANGUAGE>
+       <POSITION>0016</POSITION>
+       <ADMINFIELD>0</ADMINFIELD>
+       <INTTYPE>D</INTTYPE>
+       <INTLEN>000016</INTLEN>
+       <DATATYPE>DATS</DATATYPE>
+       <LENG>000008</LENG>
+       <MASK>  DATS</MASK>
+       <DDTEXT>Creation date</DDTEXT>
+       <SHLPORIGIN>T</SHLPORIGIN>
+      </DD03P>
+     </DD03P_TABLE>
+    </asx:values>
+   </asx:abap>
+  </abapGit>`;
+
+    const reg = new Registry().addFile(new MemoryFile("zlist_alv.tabl.xml", xml));
+    await reg.parseAsync();
+    const tabl = reg.getObjects()[0] as Table;
+
+    const type = tabl.parseType(reg);
+    expect(type).to.be.instanceof(VoidType);
   });
 
 });
