@@ -246,12 +246,6 @@ export class StatementParser {
 
   }
 
-  private removeLast(tokens: readonly Token[]): readonly Token[] {
-    const copy = tokens.slice();
-    copy.pop();
-    return copy;
-  }
-
 // for each statement, run statement matchers to figure out which kind of statement it is
   private categorize(wa: WorkArea) {
     const result: StatementNode[] = [];
@@ -287,7 +281,9 @@ export class StatementParser {
     const result: Token[] = [];
     const pragmas: Token[] = [];
 
-    for (const t of tokens) {
+    // skip the last token as it is the punctuation
+    for (let i = 0; i < tokens.length - 1; i++) {
+      const t = tokens[i];
       if (t instanceof Tokens.Pragma) {
         pragmas.push(t);
       } else {
@@ -300,8 +296,7 @@ export class StatementParser {
 
   private match(statement: StatementNode): StatementNode {
     const tokens = statement.getTokens();
-    const last = tokens[tokens.length - 1];
-    const {tokens: filtered, pragmas} = this.removePragma(this.removeLast(tokens));
+    const {tokens: filtered, pragmas} = this.removePragma(tokens);
     if (filtered.length === 0) {
       return new StatementNode(new Empty()).setChildren(this.tokensToNodes(tokens));
     }
@@ -309,6 +304,7 @@ export class StatementParser {
     for (const st of StatementParser.map.lookup(filtered[0])) {
       const match = Combi.run(st.getMatcher(), filtered, this.version);
       if (match) {
+        const last = tokens[tokens.length - 1];
         return new StatementNode(st, statement.getColon(), pragmas).setChildren(match.concat(new TokenNode(last)));
       }
     }
