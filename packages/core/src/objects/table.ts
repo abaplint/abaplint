@@ -34,7 +34,7 @@ export class Table extends AbstractObject {
     };
   }
 
-  public parseType(reg: IRegistry): Types.StructureType | Types.UnknownType {
+  public parseType(reg: IRegistry): Types.StructureType | Types.UnknownType | Types.VoidType {
     const parsed = this.parseXML();
     if (parsed === undefined) {
       return new Types.UnknownType("Table, parser error");
@@ -57,6 +57,11 @@ export class Table extends AbstractObject {
               name: c.name,
               type: c.type});
           }
+        } else if (found instanceof Types.UnknownType) {
+          return found;
+        } else if (found instanceof Types.VoidType) {
+          // set the full structure to void
+          return found;
         } else {
           components.push({
             name: field.FIELDNAME._text,

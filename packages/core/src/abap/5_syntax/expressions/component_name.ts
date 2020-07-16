@@ -10,7 +10,7 @@ export class ComponentName {
     }
 
     if (!(context instanceof StructureType)) {
-      throw new Error("Not a structure");
+      throw new Error("Not a structure, ComponentName");
     }
 
     const name = node.getFirstToken().getStr();

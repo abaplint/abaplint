@@ -27,7 +27,8 @@ export class Target {
 
       if (current.get() instanceof Dash) {
         if (!(context instanceof StructureType) && !(context instanceof VoidType)) {
-          throw new Error("Not a structure");
+          console.dir(context);
+          throw new Error("Not a structure, target");
         }
       } else if (current.get() instanceof InstanceArrow) {
         if (!(context instanceof ObjectReferenceType)
