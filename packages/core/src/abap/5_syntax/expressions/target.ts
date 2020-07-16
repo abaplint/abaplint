@@ -75,6 +75,6 @@ export class Target {
       }
     }
 
-    return new UnknownType("todo, target type");
+    return new UnknownType("unknown target type");
   }
 }

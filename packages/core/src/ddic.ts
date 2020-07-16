@@ -28,19 +28,19 @@ export class DDIC {
 
     let i = 0;
     // max depth, make sure not to hit cyclic super class defintions
-    while (i++ < 10) {
+    while (i++ < 10 && superClassName !== undefined) {
       const found = this.reg.getObject("CLAS", superClassName) as ABAPObject | undefined;
       if (found === undefined) {
         break;
       }
 
-      const superDef = found.getMainABAPFile()?.getInfo().getClassDefinitionByName(superClassName);
+      const superDef: InfoClassDefinition | undefined = found.getMainABAPFile()?.getInfo().getClassDefinitionByName(superClassName);
       if (superDef === undefined) {
         break;
       }
 
-      if (def.superClassName) {
-        superClassName = def.superClassName;
+      if (superDef.superClassName) {
+        superClassName = superDef.superClassName;
       } else {
         break;
       }
@@ -48,6 +48,7 @@ export class DDIC {
 
     // todo, this should check for "CX_ROOT"
     const isException = (superClassName?.match(/^.?cx_.*$/i) || superClassName?.match(/^\/.+\/cx_.*$/i)) ? true : false;
+
     return isException;
   }
 
