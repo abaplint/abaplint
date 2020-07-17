@@ -23,14 +23,19 @@ class StatementMap {
     this.map = {};
 
     for (const stat of Artifacts.getStatements()) {
-      const first = stat.getMatcher().first();
-
-      if (this.map[first]) {
-        this.map[first].push(stat);
-      } else {
-        this.map[first] = [stat];
+      const f = stat.getMatcher().first();
+      if (f.length === 0) {
+        throw new Error("StatementMap, first must have contents");
+      }
+      for (const first of f) {
+        if (this.map[first]) {
+          this.map[first].push(stat);
+        } else {
+          this.map[first] = [stat];
+        }
       }
     }
+
   }
 
   public lookup(token: Token): IStatement[] {

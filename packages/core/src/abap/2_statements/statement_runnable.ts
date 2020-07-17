@@ -7,5 +7,5 @@ export interface IStatementRunnable {
   getUsing(): string[];
   listKeywords(): string[];
 // return first keyword, blank if not applicable
-  first(): string;
+  first(): string[];
 }
