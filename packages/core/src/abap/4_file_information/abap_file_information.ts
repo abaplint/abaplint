@@ -138,7 +138,6 @@ export class ABAPFileInformation implements IABAPFileInformation {
       aliases = aliases.concat(this.parseAliases(found.findFirstStructure(Structures.PrivateSection), Visibility.Private));
 
       const superClassName = found.findFirstExpression(Expressions.SuperClassName)?.getFirstToken().getStr();
-      const isException = (superClassName?.match(/^.?cx_.*$/i) || superClassName?.match(/^\/.+\/cx_.*$/i)) ? true : false;
 
       this.classes.push({
         name: className.getStr(),
@@ -148,7 +147,6 @@ export class ABAPFileInformation implements IABAPFileInformation {
         methods,
         superClassName,
         interfaces: this.getImplementing(found),
-        isException,
         isForTesting: found.findFirstStatement(Statements.ClassDefinition)!.concatTokens().toUpperCase().includes(" FOR TESTING"),
         isAbstract: found.findFirstStatement(Statements.ClassDefinition)!.concatTokens().toUpperCase().includes(" ABSTRACT"),
         isFinal: found.findFirstExpression(Expressions.ClassFinal) !== undefined,

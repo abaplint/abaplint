@@ -14,6 +14,7 @@ Options:
   --outformat <format>   output format, use in combination with outfile
   --outfile <file>       output issues to file in format
   --fix                  apply quick fixes to files
+  -p                     output performance information
   -c                     compress files in memory
 ```
 

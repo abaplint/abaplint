@@ -31,10 +31,12 @@ export class Source {
         case "EXACT":
         case "REDUCE":
         case "SWITCH":
-          return this.value(node, scope, filename, targetType);
+          return this.value(node, scope, filename, targetType, undefined);
         case "VALUE":
-          new ValueBody().runSyntax(node.findDirectExpression(Expressions.ValueBody), scope, filename);
-          return this.value(node, scope, filename, targetType);
+        {
+          const bodyType = new ValueBody().runSyntax(node.findDirectExpression(Expressions.ValueBody), scope, filename);
+          return this.value(node, scope, filename, targetType, bodyType);
+        }
         default:
           return new UnknownType("todo, Source type " + tok);
       }
@@ -73,7 +75,8 @@ export class Source {
   private value(node: ExpressionNode,
                 scope: CurrentScope,
                 filename: string,
-                targetType: AbstractType | undefined): AbstractType | undefined {
+                targetType: AbstractType | undefined,
+                bodyType: AbstractType | undefined): AbstractType | undefined {
 
     const typeExpression = node.findFirstExpression(Expressions.TypeNameOrInfer);
     const typeName = typeExpression?.getFirstToken().getStr();
@@ -81,9 +84,10 @@ export class Source {
       throw new Error("VALUE, child TypeNameOrInfer not found");
     } else if (typeName === "#" && targetType) {
       return targetType;
+    } else if (typeName === "#" && bodyType) {
+      return bodyType;
     } else if (typeName === "#") {
       return new VoidType("VALUE_todo");
-//      throw new Error("VALUE, todo, infer type");
     } else if (!(typeExpression instanceof ExpressionNode)) {
       throw new Error("VALUE, expression node expected");
     }

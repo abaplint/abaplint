@@ -5,11 +5,44 @@ import {Issue} from "./issue";
 import {ArtifactsObjects} from "./artifacts_objects";
 import {ArtifactsRules} from "./artifacts_rules";
 import {SkipLogic} from "./skip_logic";
-import {IRegistry} from "./_iregistry";
-import {IProgress} from "./progress";
+import {IRegistry, IRunInput} from "./_iregistry";
 import {IConfiguration} from "./_config";
 import {ABAPObject} from "./objects/_abap_object";
 import {FindGlobalDefinitions} from "./abap/5_syntax/global_definitions/find_global_definitions";
+
+// todo, this should really be an instance in case there are multiple Registry'ies
+class ParsingPerformance {
+  private static results: {runtime: number, name: string}[];
+
+  public static clear() {
+    this.results = [];
+  }
+
+  public static push(obj: IObject, runtime: number): void {
+    if (runtime < 100) {
+      return;
+    }
+    if (this.results === undefined) {
+      this.results = [];
+    }
+
+    this.results.push({runtime, name: obj.getType() + " " + obj.getName()});
+  }
+
+  public static output() {
+    const MAX = 10;
+
+    this.results.sort((a, b) => { return b.runtime - a.runtime; });
+
+    for (let i = 0; i < MAX; i++) {
+      const row = this.results[i];
+      if (row === undefined) {
+        break;
+      }
+      process.stderr.write("\t" + row.runtime + "ms, " + row.name + "\n");
+    }
+  }
+}
 
 export class Registry implements IRegistry {
   private conf: IConfiguration;
@@ -142,11 +175,11 @@ export class Registry implements IRegistry {
   }
 
   // todo, this will be changed to async sometime
-  public findIssues(progress?: IProgress): readonly Issue[] {
+  public findIssues(input?: IRunInput): readonly Issue[] {
     if (this.isDirty() === true) {
       this.parse();
     }
-    return this.runRules(progress);
+    return this.runRules(input);
   }
 
   // todo, this will be changed to async sometime
@@ -163,6 +196,8 @@ export class Registry implements IRegistry {
       return this;
     }
 
+    ParsingPerformance.clear();
+
     this.issues = [];
     for (const o of this.objects) {
       this.parsePrivate(o);
@@ -173,20 +208,24 @@ export class Registry implements IRegistry {
     return this;
   }
 
-  public async parseAsync(progress?: IProgress) {
+  public async parseAsync(input?: IRunInput) {
     if (this.isDirty() === false) {
       return this;
     }
 
-    progress?.set(this.objects.length, "Lexing and parsing");
+    ParsingPerformance.clear();
+    input?.progress?.set(this.objects.length, "Lexing and parsing");
 
     this.issues = [];
     for (const o of this.objects) {
-      await progress?.tick("Lexing and parsing(" + this.conf.getVersion() + ") - " +  o.getType() + " " + o.getName());
+      await input?.progress?.tick("Lexing and parsing(" + this.conf.getVersion() + ") - " + o.getType() + " " + o.getName());
       this.parsePrivate(o);
       this.issues = this.issues.concat(o.getParsingIssues());
     }
     new FindGlobalDefinitions(this).run();
+    if (input?.outputPerformance === true) {
+      ParsingPerformance.output();
+    }
 
     return this;
   }
@@ -196,7 +235,10 @@ export class Registry implements IRegistry {
   // todo, refactor, this is a mess, see where-used, a lot of the code should be in this method instead
   private parsePrivate(input: IObject) {
     if (input instanceof ABAPObject) {
+      const before = Date.now();
       input.parse(this.getConfig().getVersion(), this.getConfig().getSyntaxSetttings().globalMacros);
+      const runtime = Date.now() - before;
+      ParsingPerformance.push(input, runtime);
     }
   }
 
@@ -204,31 +246,50 @@ export class Registry implements IRegistry {
     return this.objects.some((o) => o.isDirty());
   }
 
-  private runRules(progress?: IProgress, iobj?: IObject): readonly Issue[] {
+  private runRules(input?: IRunInput, iobj?: IObject): readonly Issue[] {
+    const rulePerformance: { [index:string] : number} = {};
     let issues = this.issues.slice(0);
 
     const objects = iobj ? [iobj] : this.getObjects();
     const rules = this.conf.getEnabledRules();
     const skipLogic = new SkipLogic(this);
 
-    progress?.set(objects.length, "Finding Issues");
-
     for (const rule of rules) {
       if (rule.initialize === undefined) {
-        console.dir(rule);
+        throw new Error(rule.getMetadata().key + " missing initialize method");
       }
       rule.initialize(this);
+      rulePerformance[rule.getMetadata().key] = 0;
     }
 
+    const check: IObject[] = [];
     for (const obj of objects) {
-      progress?.tick("Finding Issues - " + obj.getType() + " " + obj.getName());
-
       if (skipLogic.skip(obj) || this.dependencies.includes(obj.getFiles()[0].getFilename())) {
         continue;
       }
 
+      check.push(obj);
+    }
+
+    input?.progress?.set(check.length, "Finding Issues");
+    for (const obj of check) {
+      input?.progress?.tick("Finding Issues - " + obj.getType() + " " + obj.getName());
       for (const rule of rules) {
+        const before = Date.now();
         issues = issues.concat(rule.run(obj));
+        const runtime = Date.now() - before;
+        rulePerformance[rule.getMetadata().key] = rulePerformance[rule.getMetadata().key] + runtime;
+      }
+    }
+
+    if (input?.outputPerformance === true) {
+      const perf: {name: string, time: number}[] = [];
+      for (const p in rulePerformance) {
+        perf.push({name: p, time: rulePerformance[p]});
+      }
+      perf.sort((a, b) => { return b.time - a.time; });
+      for (const p of perf) {
+        process.stderr.write("\t" + p.time + "ms\t" + p.name + "\n");
       }
     }
 

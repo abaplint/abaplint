@@ -23,16 +23,57 @@ export class SkipLogic {
         && obj instanceof FunctionGroup
         && this.isGeneratedFunctionGroup(obj)) {
       return true;
-    } else if (obj instanceof Class && obj.isGeneratedProxy()) {
+    } else if (obj instanceof Class && this.isGeneratedProxyClass(obj)) {
       return true;
-    } else if (obj instanceof Interface && obj.isGeneratedProxy()) {
+    } else if (obj instanceof Interface && this.isGeneratedProxyInterface(obj)) {
+      return true;
+    } else if (obj instanceof Interface && this.isGeneratedBOPFInterface(obj)) {
       return true;
     }
 
     return false;
   }
 
-  public isGeneratedFunctionGroup(group: FunctionGroup): boolean {
+  private isGeneratedBOPFInterface(obj: Interface): boolean {
+    const implementing = obj.getDefinition()?.getImplementing();
+    if (implementing === undefined) {
+      return false;
+    }
+    for (const i of implementing) {
+      if (i.name.toUpperCase() === "/BOBF/IF_LIB_CONSTANTS") {
+        return true;
+      }
+    }
+    return false;
+  }
+
+  private isGeneratedProxyInterface(obj: Interface): boolean {
+    const xml = obj.getXML();
+    if (!xml) {
+      return false;
+    }
+    const result = xml.match(/<CLSPROXY>(.)<\/CLSPROXY>/);
+    if (result) {
+      return true;
+    } else {
+      return false;
+    }
+  }
+
+  private isGeneratedProxyClass(obj: Class): boolean {
+    const xml = obj.getXML();
+    if (!xml) {
+      return false;
+    }
+    const result = xml.match(/<CLSPROXY>(.)<\/CLSPROXY>/);
+    if (result) {
+      return true;
+    } else {
+      return false;
+    }
+  }
+
+  private isGeneratedFunctionGroup(group: FunctionGroup): boolean {
     this.reg.getObject("TOBJ", "");
     for (const obj of this.reg.getObjects()) {
       if (obj.getType() !== "TOBJ") {
@@ -46,7 +87,7 @@ export class SkipLogic {
     return false;
   }
 
-  public isGeneratedGatewayClass(obj: Class): boolean {
+  private isGeneratedGatewayClass(obj: Class): boolean {
     let sup = undefined;
 
     const definition = obj.getClassDefinition();
@@ -56,18 +97,18 @@ export class SkipLogic {
 
     if (obj.getName().match(/_MPC$/i) && sup === "/IWBEP/CL_MGW_PUSH_ABS_MODEL") {
       return true;
-    }
-    if (obj.getName().match(/_DPC$/i) && sup === "/IWBEP/CL_MGW_PUSH_ABS_DATA") {
+    } else if (obj.getName().match(/_DPC$/i) && sup === "/IWBEP/CL_MGW_PUSH_ABS_DATA") {
+      return true;
+    } else if (sup === "CL_SADL_GTK_EXPOSURE_MPC") {
       return true;
     }
     return false;
   }
 
-  public isGeneratedPersistentClass(obj: Class): boolean {
+  private isGeneratedPersistentClass(obj: Class): boolean {
     if (obj.getCategory() === ClassCategory.Persistent) {
       return true;
-    }
-    if (obj.getCategory() === ClassCategory.PersistentFactory) {
+    } else if (obj.getCategory() === ClassCategory.PersistentFactory) {
       return true;
     }
 

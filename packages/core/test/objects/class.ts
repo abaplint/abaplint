@@ -28,30 +28,6 @@ describe("Objects, class, isException", () => {
     expect(def).to.equal(undefined);
   });
 
-  it("false", () => {
-    const abap = "CLASS zcl_abapgit_moo DEFINITION PUBLIC\n" +
-      "FINAL CREATE PUBLIC.\n" +
-      "ENDCLASS.\n" +
-      "CLASS zcl_abapgit_moo IMPLEMENTATION.\n" +
-      "ENDCLASS.";
-    const reg = new Registry().addFile(new MemoryFile("zcl_abapgit_moo.clas.abap", abap)).parse();
-    const def = run(reg);
-    expect(def).to.not.equal(undefined);
-    expect(def!.isException()).to.equal(false);
-  });
-
-  it("true", () => {
-    const abap = "CLASS zcx_abapgit_cancel DEFINITION PUBLIC\n" +
-      "INHERITING FROM cx_static_check FINAL CREATE PUBLIC.\n" +
-      "ENDCLASS.\n" +
-      "CLASS zcx_abapgit_cancel IMPLEMENTATION.\n" +
-      "ENDCLASS.";
-    const reg = new Registry().addFile(new MemoryFile("zcx_abapgit_cancel.clas.abap", abap)).parse();
-    const def = run(reg);
-    expect(def).to.not.equal(undefined);
-    expect(def!.isException()).to.equal(true);
-  });
-
   it("not parsed", () => {
     const reg = new Registry().addFile(new MemoryFile("zcx_foo.clas.abap", "foo bar"));
     const def = run(reg);
@@ -70,22 +46,6 @@ describe("Objects, class, getName", () => {
     const reg = new Registry().addFile(new MemoryFile("zcl_name.clas.abap", abap)).parse();
     const obj = reg.getObjects()[0];
     expect(obj.getName()).to.equal("ZCL_NAME");
-  });
-
-});
-
-describe("Objects, class, isGlobal / isLocal", () => {
-
-  it("test", () => {
-    const abap = "class zcl_name definition public create public.\n" +
-      "ENDCLASS.\n" +
-      "CLASS zcl_name IMPLEMENTATION.\n" +
-      "ENDCLASS.";
-    const reg = new Registry().addFile(new MemoryFile("zcl_name.clas.abap", abap)).parse();
-    const def = run(reg);
-    expect(def).to.not.equal(undefined);
-    expect(def!.isGlobal()).to.equal(true);
-    expect(def!.isLocal()).to.equal(false);
   });
 
 });

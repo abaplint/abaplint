@@ -39,8 +39,9 @@ describe("Funcion Group, parse main xml", () => {
     " </asx:abap>\n" +
     "</abapGit>";
 
-  it("test, getModules", () => {
-    const reg = new Registry().addFile(new MemoryFile("zagtest_function_group.fugr.xml", xml)).parse();
+  it("test, getModules", async () => {
+    const reg = new Registry().addFile(new MemoryFile("zagtest_function_group.fugr.xml", xml));
+    await reg.parseAsync();
     const fugr = getABAPObjects(reg)[0] as FunctionGroup;
 
     const modules = fugr.getModules();
@@ -49,8 +50,9 @@ describe("Funcion Group, parse main xml", () => {
     expect(modules[0].getParameters().length).to.equal(1);
   });
 
-  it("test, getIncludes", () => {
-    const reg = new Registry().addFile(new MemoryFile("zagtest_function_group.fugr.xml", xml)).parse();
+  it("test, getIncludes", async () => {
+    const reg = new Registry().addFile(new MemoryFile("zagtest_function_group.fugr.xml", xml));
+    await reg.parseAsync();
     const fugr = getABAPObjects(reg)[0] as FunctionGroup;
 
     const includes = fugr.getIncludes();
@@ -59,11 +61,11 @@ describe("Funcion Group, parse main xml", () => {
     expect(includes).to.include("SAPLZAGTEST_FUNCTION_GROUP");
   });
 
-  it("test, getIncludeFiles", () => {
+  it("test, getIncludeFiles", async () => {
     const reg = new Registry();
     reg.addFile(new MemoryFile("zagtest_function_group.fugr.xml", xml));
     reg.addFile(new MemoryFile("zagtest_function_group.fugr.lzagtest_function_grouptop.abap", "WRITE hello."));
-    reg.parse();
+    await reg.parseAsync();
     const fugr = getABAPObjects(reg)[0] as FunctionGroup;
 
     const includes = fugr.getIncludeFiles();

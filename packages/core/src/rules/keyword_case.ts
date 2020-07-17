@@ -11,6 +11,7 @@ import * as Statements from "../abap/2_statements/statements";
 import * as Expressions from "../abap/2_statements/expressions";
 import {Token} from "../abap/1_lexer/tokens/_token";
 import {IRuleMetadata, RuleTag} from "./_irule";
+import {DDIC} from "../ddic";
 
 export enum KeywordCaseStyle {
   Upper = "upper",
@@ -72,9 +73,11 @@ export class KeywordCase extends ABAPRule {
     const issues: Issue[] = [];
     let skip = false;
 
+    const ddic = new DDIC(this.reg);
+
     if (this.conf.ignoreExceptions && obj instanceof Class) {
       const definition = obj.getClassDefinition();
-      if (definition === undefined || definition.isException) {
+      if (definition === undefined || ddic.isException(definition, obj)) {
         return [];
       }
     }

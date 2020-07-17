@@ -4,6 +4,7 @@ import * as path from "path";
 import * as minimist from "minimist";
 import * as ProgressBar from "progress";
 import * as childProcess from "child_process";
+import * as JSON5 from "json5";
 import {Issue, IProgress, IFile, Position, Config, Registry, MemoryFile, IRegistry} from "@abaplint/core";
 import {Formatter} from "./formatters/_format";
 import {FileOperations} from "./file_operations";
@@ -111,6 +112,7 @@ function displayHelp(): string {
     "  --outformat <format>   output format, use in combination with outfile\n" +
     "  --outfile <file>       output issues to file in format\n" +
     "  --fix                  apply quick fixes to files\n" +
+    "  -p                     output performance information\n" +
     "  -c                     compress files in memory\n";
 }
 
@@ -125,7 +127,13 @@ function out(issues: Issue[], format: string, length: number, argv: minimist.Par
 
 async function run() {
 
-  const argv = minimist(process.argv.slice(2), {boolean: ["c", "fix"]});
+  // evil hack to get JSON5 working
+  // @ts-ignore
+  JSON5.parse = JSON5.default.parse;
+  // @ts-ignore
+  JSON5.stringify = JSON5.default.stringify;
+
+  const argv = minimist(process.argv.slice(2), {boolean: ["p", "c", "fix"]});
   let format = "standard";
   let output = "";
   let issues: Issue[] = [];
@@ -136,6 +144,7 @@ async function run() {
 
   const progress: IProgress = new Progress();
   const compress = argv["c"] ? true : false;
+  const parsingPerformance = argv["p"] ? true : false;
 
   if (argv["h"] !== undefined || argv["help"] !== undefined) {
     output = output + displayHelp();
@@ -159,8 +168,8 @@ async function run() {
 
       reg = new Registry(config).addFiles(loaded);
       reg.addDependencies(deps);
-      await reg.parseAsync(progress);
-      issues = issues.concat(reg.findIssues(progress));
+      await reg.parseAsync({progress, outputPerformance: parsingPerformance});
+      issues = issues.concat(reg.findIssues({progress, outputPerformance: parsingPerformance}));
     } catch (error) {
       const file = new MemoryFile("generic", "dummy");
       const issue = Issue.atPosition(file, new Position(1, 1), error.toString(), "error");

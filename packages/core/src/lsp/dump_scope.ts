@@ -19,7 +19,7 @@ export class DumpScope {
 
     ret = ret + ", (" + coverage.start.getRow() + ", " + coverage.start.getCol() + ")";
     if (coverage.end.getRow() === Number.MAX_SAFE_INTEGER
-        && coverage.end.getCol()  === Number.MAX_SAFE_INTEGER) {
+        && coverage.end.getCol() === Number.MAX_SAFE_INTEGER) {
       ret = ret + ", (max, max)";
     } else {
       ret = ret + ", (" + coverage.end.getRow() + ", " + coverage.end.getCol() + ")";
@@ -78,7 +78,7 @@ export class DumpScope {
       ret = ret + "<br>";
     }
 
-    ret = ret + sident  + node.getData().references.length + " references<br>";
+    ret = ret + sident + node.getData().references.length + " references<br>";
 
     return ret;
   }

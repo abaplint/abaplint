@@ -50,12 +50,11 @@ export class StatementNode extends AbstractNode {
   }
 
   public getStart(): Position {
-    return this.getTokens()[0].getStart();
+    return this.getFirstToken().getStart();
   }
 
   public getEnd(): Position {
-    const tokens = this.getTokens();
-    const last = tokens[tokens.length - 1];
+    const last = this.getLastToken();
 
     const pos = new Position(last.getStart().getRow(),
                              last.getStart().getCol() + last.getStr().length);
@@ -138,7 +137,7 @@ export class StatementNode extends AbstractNode {
   }
 
   public getTerminator(): string {
-    return this.getTokens()[this.getTokens().length - 1].getStr();
+    return this.getLastToken().getStr();
   }
 
   public getFirstToken(): Token {

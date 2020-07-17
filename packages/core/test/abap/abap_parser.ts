@@ -43,6 +43,26 @@ describe("abap_parser", () => {
     expectNoUnknown(output);
   });
 
+  it("macro in CASE, no unknown expected", () => {
+    const files: IFile[] = [];
+
+    files.push(new MemoryFile("ztest.prog.abap", `
+DEFINE _bar.
+  WHEN &1.
+END-OF-DEFINITION.
+
+DATA lv_bar.
+
+CASE lv_bar.
+  _bar 'a'.
+ENDCASE.`));
+
+    const {issues, output} = new ABAPParser(defaultVersion, []).parse(files);
+    expect(issues.length).to.equal(0);
+    expect(output.length).to.equal(files.length);
+    expectNoUnknown(output);
+  });
+
   it("double chaining", () => {
     const files: IFile[] = [];
 

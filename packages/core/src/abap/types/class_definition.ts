@@ -23,6 +23,7 @@ export class ClassDefinition extends Identifier implements IClassDefinition {
   private readonly types: TypeDefinitions;
   private readonly attributes: Attributes;
   private readonly events: IEventDefinition[];
+  private readonly superClass: string | undefined;
 
   public constructor(node: StructureNode, filename: string, scope: CurrentScope) {
     if (!(node.get() instanceof Structures.ClassDefinition)) {
@@ -36,6 +37,10 @@ export class ClassDefinition extends Identifier implements IClassDefinition {
     this.events = [];
 
     scope.push(ScopeType.ClassDefinition, name.getStr(), name.getStart(), filename);
+
+    const found = this.node.findFirstStatement(Statements.ClassDefinition);
+    const token = found ? found.findFirstExpression(SuperClassName) : undefined;
+    this.superClass = token ? token.getFirstToken().getStr() : undefined;
 
     this.fromInterfaces(scope);
     this.fillScopeWithSuper(scope);
@@ -65,27 +70,11 @@ export class ClassDefinition extends Identifier implements IClassDefinition {
   }
 
   public getSuperClass(): string | undefined {
-    const found = this.node.findFirstStatement(Statements.ClassDefinition);
-    const token = found ? found.findFirstExpression(SuperClassName) : undefined;
-    return token ? token.getFirstToken().getStr() : undefined;
+    return this.superClass;
   }
 
   public getAttributes(): Attributes {
     return this.attributes;
-  }
-
-  public isException(): boolean {
-    const superClass = this.getSuperClass();
-    // todo, this logic is not correct
-    if (superClass && (superClass.match(/^.?cx_.*$/i) || superClass.match(/^\/.+\/cx_.*$/i))) {
-      return true;
-    } else {
-      return false;
-    }
-  }
-
-  public isLocal(): boolean {
-    return !this.isGlobal();
   }
 
   public isGlobal(): boolean {

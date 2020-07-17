@@ -7,11 +7,11 @@ import {IStatementRunnable} from "../statement_runnable";
 export class Raise implements IStatement {
 
   public getMatcher(): IStatementRunnable {
-    const wit  = seq(str("WITH"),
-                     new Source(),
-                     opt(new Source()),
-                     opt(new Source()),
-                     opt(new Source()));
+    const wit = seq(str("WITH"),
+                    new Source(),
+                    opt(new Source()),
+                    opt(new Source()),
+                    opt(new Source()));
 
     const mess = seq(str("MESSAGE"),
                      new MessageSource(),

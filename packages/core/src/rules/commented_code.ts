@@ -52,17 +52,18 @@ https://docs.abapopenchecks.org/checks/14/`,
       if (this.isCommentLine(rows[i])) {
         code = code + rows[i].trim().substr(1) + "\n";
       } else if (code !== "") {
-        issues = issues.concat(this.check(code, file, i - 1, obj));
+        issues = issues.concat(this.check(code.trim(), file, i - 1, obj));
         code = "";
       }
     }
-    issues = issues.concat(this.check(code, file, rows.length - 1, obj));
+    issues = issues.concat(this.check(code.trim(), file, rows.length - 1, obj));
 
     return issues;
   }
 
   private check(code: string, file: ABAPFile, row: number, obj: ABAPObject): Issue[] {
-    if (code === "") {
+    // assumption: code must end with "." in order to be valid ABAP
+    if (code === "" || code.charAt(code.length - 1) !== ".") {
       return [];
     }
 

@@ -6,7 +6,7 @@ import {AbstractType} from "../../types/basic/_abstract_type";
 import {ReferenceType} from "../_reference";
 
 export class NewObject {
-  public runSyntax(node: ExpressionNode, scope: CurrentScope, targetType: AbstractType | undefined, filename: string): AbstractType  {
+  public runSyntax(node: ExpressionNode, scope: CurrentScope, targetType: AbstractType | undefined, filename: string): AbstractType {
     const typeToken = node.findDirectExpression(TypeNameOrInfer)?.getFirstToken();
     const typeName = typeToken?.getStr();
     if (typeName === undefined) {

@@ -3,9 +3,10 @@ import {Registry} from "../../src/registry";
 import {expect} from "chai";
 import {CheckTextElements} from "../../src/rules";
 import {IRegistry} from "../../src/_iregistry";
+import {Issue} from "../../src/issue";
 
-function run(reg: IRegistry) {
-  reg.parse();
+async function run(reg: IRegistry): Promise<Issue[]> {
+  await reg.parseAsync();
   return new CheckTextElements().initialize(reg).run(reg.getObjects()[0]);
 }
 
@@ -50,12 +51,12 @@ describe("Rule: check_text_elements", () => {
  </asx:abap>
 </abapGit>`;
 
-  it("test 1", () => {
+  it("test 1", async () => {
     const abap = "WRITE hello.";
     const reg = new Registry();
     reg.addFile(new MemoryFile("zfoobar.prog.abap", abap));
     reg.addFile(new MemoryFile("zfoobar.prog.xml", xml));
-    const issues = run(reg);
+    const issues = await run(reg);
     expect(issues.length).to.equal(0);
   });
 
@@ -71,79 +72,79 @@ describe("Rule: check_text_elements", () => {
   });
 */
 
-  it("test 3", () => {
+  it("test 3", async () => {
     const abap = "WRITE TEXT-001.";
     const reg = new Registry();
     reg.addFile(new MemoryFile("zfoobar.prog.abap", abap));
     reg.addFile(new MemoryFile("zfoobar.prog.xml", xml));
-    const issues = run(reg);
+    const issues = await run(reg);
     expect(issues.length).to.equal(0);
   });
 
-  it("test 4", () => {
+  it("test 4", async () => {
     const abap = "WRITE TEXT-ABC.";
     const reg = new Registry();
     reg.addFile(new MemoryFile("zfoobar.prog.abap", abap));
     reg.addFile(new MemoryFile("zfoobar.prog.xml", xml));
-    const issues = run(reg);
+    const issues = await run(reg);
     expect(issues.length).to.equal(0);
   });
 
-  it("test 4, lower case", () => {
+  it("test 4, lower case", async () => {
     const abap = "WRITE text-abc.";
     const reg = new Registry();
     reg.addFile(new MemoryFile("zfoobar.prog.abap", abap));
     reg.addFile(new MemoryFile("zfoobar.prog.xml", xml));
-    const issues = run(reg);
+    const issues = await run(reg);
     expect(issues.length).to.equal(0);
   });
 
-  it("test 5", () => {
+  it("test 5", async () => {
     const abap = "WRITE 'sdfsd'(003).";
     const reg = new Registry();
     reg.addFile(new MemoryFile("zfoobar.prog.abap", abap));
     reg.addFile(new MemoryFile("zfoobar.prog.xml", xml));
-    const issues = run(reg);
+    const issues = await run(reg);
     expect(issues.length).to.equal(1);
   });
 
-  it("test 6", () => {
+  it("test 6", async () => {
     const abap = "WRITE 'hello world 1'(001).";
     const reg = new Registry();
     reg.addFile(new MemoryFile("zfoobar.prog.abap", abap));
     reg.addFile(new MemoryFile("zfoobar.prog.xml", xml));
-    const issues = run(reg);
+    const issues = await run(reg);
     expect(issues.length).to.equal(0);
   });
 
-  it("test 7", () => {
+  it("test 7", async () => {
     const abap = "WRITE 'something else'(001).";
     const reg = new Registry();
     reg.addFile(new MemoryFile("zfoobar.prog.abap", abap));
     reg.addFile(new MemoryFile("zfoobar.prog.xml", xml));
-    const issues = run(reg);
+    const issues = await run(reg);
     expect(issues.length).to.equal(1);
   });
 
-  it("test 8", () => {
+  it("test 8", async () => {
     const abap = "WRITE `something else`(001).";
     const reg = new Registry();
     reg.addFile(new MemoryFile("zfoobar.prog.abap", abap));
     reg.addFile(new MemoryFile("zfoobar.prog.xml", xml));
-    const issues = run(reg);
+    const issues = await run(reg);
     expect(issues.length).to.equal(1);
   });
 
-  it("test 9", () => {
+  it("test 9", async () => {
     const abap = "WRITE '''Editor Lock'' is set.'(111).";
     const reg = new Registry();
     reg.addFile(new MemoryFile("zfoobar.prog.abap", abap));
     reg.addFile(new MemoryFile("zfoobar.prog.xml", xml));
-    const issues = run(reg);
+    const issues = await run(reg);
     expect(issues.length).to.equal(0);
   });
 
-  it("test 10", () => {
+  it("test 10", async () => {
     const abap = `
 SELECTION-SCREEN BEGIN OF BLOCK cls WITH FRAME TITLE text-abc.
 SELECTION-SCREEN END OF BLOCK cls.
@@ -151,29 +152,29 @@ SELECTION-SCREEN END OF BLOCK cls.
     const reg = new Registry();
     reg.addFile(new MemoryFile("zfoobar.prog.abap", abap));
     reg.addFile(new MemoryFile("zfoobar.prog.xml", xml));
-    const issues = run(reg);
+    const issues = await run(reg);
     expect(issues.length).to.equal(0);
   });
 
-  it("test 11", () => {
+  it("test 11", async () => {
     const abap = `
 SELECTION-SCREEN PUSHBUTTON 60(30) text-001 USER-COMMAND btn.
     `;
     const reg = new Registry();
     reg.addFile(new MemoryFile("zfoobar.prog.abap", abap));
     reg.addFile(new MemoryFile("zfoobar.prog.xml", xml));
-    const issues = run(reg);
+    const issues = await run(reg);
     expect(issues.length).to.equal(0);
   });
 
-  it("test 12", () => {
+  it("test 12", async () => {
     const abap = `
 SELECTION-SCREEN PUSHBUTTON 60(30) text-003 USER-COMMAND btn.
     `;
     const reg = new Registry();
     reg.addFile(new MemoryFile("zfoobar.prog.abap", abap));
     reg.addFile(new MemoryFile("zfoobar.prog.xml", xml));
-    const issues = run(reg);
+    const issues = await run(reg);
     expect(issues.length).to.equal(1);
   });
 

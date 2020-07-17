@@ -6,7 +6,7 @@ import * as Types from "../../src/abap/types/basic";
 
 describe("Table Type, parse XML", () => {
 
-  it("Call parseType", () => {
+  it("Call parseType", async () => {
     const xml1 = `
 <?xml version="1.0" encoding="utf-8"?>
 <abapGit version="v1.0.0" serializer="LCL_OBJECT_TTYP" serializer_version="v1.0.0">
@@ -28,7 +28,8 @@ describe("Table Type, parse XML", () => {
  </asx:abap>
 </abapGit>`;
 
-    const reg = new Registry().addFile(new MemoryFile("zags_objects_tt.ttyp.xml", xml1)).parse();
+    const reg = new Registry().addFile(new MemoryFile("zags_objects_tt.ttyp.xml", xml1));
+    await reg.parseAsync();
     const tabl = reg.getObjects()[0] as Objects.TableType;
 
     const type = tabl.parseType(reg);
@@ -37,7 +38,7 @@ describe("Table Type, parse XML", () => {
     expect(row).to.be.instanceof(Types.UnknownType);
   });
 
-  it("Call parseType, no ROWTYPE", () => {
+  it("Call parseType, no ROWTYPE", async () => {
     const xml1 = `
 <?xml version="1.0" encoding="utf-8"?>
 <abapGit version="v1.0.0" serializer="LCL_OBJECT_TTYP" serializer_version="v1.0.0">
@@ -58,7 +59,8 @@ describe("Table Type, parse XML", () => {
  </asx:abap>
 </abapGit>`;
 
-    const reg = new Registry().addFile(new MemoryFile("ztest.ttyp.xml", xml1)).parse();
+    const reg = new Registry().addFile(new MemoryFile("ztest.ttyp.xml", xml1));
+    await reg.parseAsync();
     const tabl = reg.getObjects()[0] as Objects.TableType;
 
     const type = tabl.parseType(reg);
@@ -67,7 +69,7 @@ describe("Table Type, parse XML", () => {
     expect(row).to.be.instanceof(Types.CharacterType);
   });
 
-  it("Call parseType, no ROWTYPE, no length", () => {
+  it("Call parseType, no ROWTYPE, no length", async () => {
     const xml1 = `
 <?xml version="1.0" encoding="utf-8"?>
 <abapGit version="v1.0.0" serializer="LCL_OBJECT_TTYP" serializer_version="v1.0.0">
@@ -87,7 +89,8 @@ describe("Table Type, parse XML", () => {
  </asx:abap>
 </abapGit>`;
 
-    const reg = new Registry().addFile(new MemoryFile("ztest.ttyp.xml", xml1)).parse();
+    const reg = new Registry().addFile(new MemoryFile("ztest.ttyp.xml", xml1));
+    await reg.parseAsync();
     const tabl = reg.getObjects()[0] as Objects.TableType;
 
     const type = tabl.parseType(reg);
@@ -96,7 +99,7 @@ describe("Table Type, parse XML", () => {
     expect(row).to.be.instanceof(Types.StringType);
   });
 
-  it("Call parseType, reference to object", () => {
+  it("Call parseType, reference to object", async () => {
     const xml1 = `
 <?xml version="1.0" encoding="utf-8"?>
 <abapGit version="v1.0.0" serializer="LCL_OBJECT_TTYP" serializer_version="v1.0.0">
@@ -116,7 +119,8 @@ describe("Table Type, parse XML", () => {
  </asx:abap>
 </abapGit>`;
 
-    const reg = new Registry().addFile(new MemoryFile("ztest.ttyp.xml", xml1)).parse();
+    const reg = new Registry().addFile(new MemoryFile("ztest.ttyp.xml", xml1));
+    await reg.parseAsync();
     const tabl = reg.getObjects()[0] as Objects.TableType;
 
     const type = tabl.parseType(reg);

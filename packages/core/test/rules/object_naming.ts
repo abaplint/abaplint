@@ -4,8 +4,9 @@ import {MemoryFile} from "../../src/files";
 import {expect} from "chai";
 import {Issue} from "../../src";
 
-function findIssues(filename: string, expectedIssueCount: number, config?: ObjectNamingConf): Issue[] {
-  const reg = new Registry().addFile(new MemoryFile(filename, "")).parse();
+async function findIssues(filename: string, expectedIssueCount: number, config?: ObjectNamingConf): Promise<Issue[]> {
+  const reg = new Registry().addFile(new MemoryFile(filename, ""));
+  await reg.parseAsync();
   const rule = new ObjectNaming();
   if (config) {
     rule.setConfig(config);
@@ -16,234 +17,234 @@ function findIssues(filename: string, expectedIssueCount: number, config?: Objec
 }
 
 describe("Rule: Object naming (required pattern)", () => {
-  it("clas", () => {
+  it("clas", async () => {
     const config = new ObjectNamingConf();
     config.clas = "^ZCL_.*$";
 
     config.patternKind = "required";
-    findIssues("zcl_class.clas.abap", 0, config);
-    findIssues("cl_class.clas.abap", 1, config);
+    await findIssues("zcl_class.clas.abap", 0, config);
+    await findIssues("cl_class.clas.abap", 1, config);
 
     config.patternKind = "forbidden";
-    findIssues("zcl_class.clas.abap", 1, config);
-    findIssues("cl_class.clas.abap", 0, config);
+    await findIssues("zcl_class.clas.abap", 1, config);
+    await findIssues("cl_class.clas.abap", 0, config);
   });
 
-  it("intf", () => {
+  it("intf", async () => {
     const config = new ObjectNamingConf();
     config.intf = "^ZIF_.*$";
 
     config.patternKind = "required";
-    findIssues("zif_test.intf.abap", 0, config);
-    findIssues("if_test.intf.abap", 1, config);
+    await findIssues("zif_test.intf.abap", 0, config);
+    await findIssues("if_test.intf.abap", 1, config);
 
     config.patternKind = "forbidden";
-    findIssues("zif_test.intf.abap", 1, config);
-    findIssues("if_test.intf.abap", 0, config);
+    await findIssues("zif_test.intf.abap", 1, config);
+    await findIssues("if_test.intf.abap", 0, config);
   });
 
-  it("prog", () => {
+  it("prog", async () => {
     const config = new ObjectNamingConf();
     config.prog = "^Z.*$";
 
     config.patternKind = "required";
-    findIssues("ztest.prog.abap", 0, config);
-    findIssues("test.prog.abap", 1, config);
+    await findIssues("ztest.prog.abap", 0, config);
+    await findIssues("test.prog.abap", 1, config);
 
     config.patternKind = "forbidden";
-    findIssues("ztest.prog.abap", 1, config);
-    findIssues("test.prog.abap", 0, config);
+    await findIssues("ztest.prog.abap", 1, config);
+    await findIssues("test.prog.abap", 0, config);
   });
 
-  it("fugr", () => {
+  it("fugr", async () => {
     const config = new ObjectNamingConf();
     config.fugr = "^Z.*$";
 
     config.patternKind = "required";
-    findIssues("ztest.fugr.abap", 0, config);
-    findIssues("test.fugr.abap", 1, config);
+    await findIssues("ztest.fugr.abap", 0, config);
+    await findIssues("test.fugr.abap", 1, config);
 
     config.patternKind = "forbidden";
-    findIssues("ztest.fugr.abap", 1, config);
-    findIssues("test.fugr.abap", 0, config);
+    await findIssues("ztest.fugr.abap", 1, config);
+    await findIssues("test.fugr.abap", 0, config);
   });
 
-  it("tabl", () => {
+  it("tabl", async () => {
     const config = new ObjectNamingConf();
     config.tabl = "^Z.*$";
 
     config.patternKind = "required";
-    findIssues("ztest.tabl.xml", 0, config);
-    findIssues("test.tabl.xml", 1, config);
+    await findIssues("ztest.tabl.xml", 0, config);
+    await findIssues("test.tabl.xml", 1, config);
 
     config.patternKind = "forbidden";
-    findIssues("ztest.tabl.xml", 1, config);
-    findIssues("test.tabl.xml", 0, config);
+    await findIssues("ztest.tabl.xml", 1, config);
+    await findIssues("test.tabl.xml", 0, config);
   });
 
-  it("ttyp", () => {
+  it("ttyp", async () => {
     const config = new ObjectNamingConf();
     config.ttyp = "^Z.*$";
 
     config.patternKind = "required";
-    findIssues("ztest.ttyp.xml", 0, config);
-    findIssues("test.ttyp.xml", 1, config);
+    await findIssues("ztest.ttyp.xml", 0, config);
+    await findIssues("test.ttyp.xml", 1, config);
 
     config.patternKind = "forbidden";
-    findIssues("ztest.ttyp.xml", 1, config);
-    findIssues("test.ttyp.xml", 0, config);
+    await findIssues("ztest.ttyp.xml", 1, config);
+    await findIssues("test.ttyp.xml", 0, config);
   });
 
-  it("dtel", () => {
+  it("dtel", async () => {
     const config = new ObjectNamingConf();
     config.dtel = "^Z.*$";
 
     config.patternKind = "required";
-    findIssues("ztest.dtel.xml", 0, config);
-    findIssues("test.dtel.xml", 1, config);
+    await findIssues("ztest.dtel.xml", 0, config);
+    await findIssues("test.dtel.xml", 1, config);
 
     config.patternKind = "forbidden";
-    findIssues("ztest.dtel.xml", 1, config);
-    findIssues("test.dtel.xml", 0, config);
+    await findIssues("ztest.dtel.xml", 1, config);
+    await findIssues("test.dtel.xml", 0, config);
   });
 
-  it("doma", () => {
+  it("doma", async () => {
     const config = new ObjectNamingConf();
     config.doma = "^Z.*$";
 
     config.patternKind = "required";
-    findIssues("ztest.doma.xml", 0, config);
-    findIssues("test.doma.xml", 1, config);
+    await findIssues("ztest.doma.xml", 0, config);
+    await findIssues("test.doma.xml", 1, config);
 
     config.patternKind = "forbidden";
-    findIssues("ztest.doma.xml", 1, config);
-    findIssues("test.doma.xml", 0, config);
+    await findIssues("ztest.doma.xml", 1, config);
+    await findIssues("test.doma.xml", 0, config);
   });
 
-  it("msag", () => {
+  it("msag", async () => {
     const config = new ObjectNamingConf();
     config.msag = "^Z.*$";
 
     config.patternKind = "required";
-    findIssues("ztest.msag.xml", 0, config);
-    findIssues("test.msag.xml", 1, config);
+    await findIssues("ztest.msag.xml", 0, config);
+    await findIssues("test.msag.xml", 1, config);
 
     config.patternKind = "forbidden";
-    findIssues("ztest.msag.xml", 1, config);
-    findIssues("test.msag.xml", 0, config);
+    await findIssues("ztest.msag.xml", 1, config);
+    await findIssues("test.msag.xml", 0, config);
   });
 
-  it("tran", () => {
+  it("tran", async () => {
     const config = new ObjectNamingConf();
     config.tran = "^Z.*$";
 
     config.patternKind = "required";
-    findIssues("ztest.tran.xml", 0, config);
-    findIssues("test.tran.xml", 1, config);
+    await findIssues("ztest.tran.xml", 0, config);
+    await findIssues("test.tran.xml", 1, config);
 
     config.patternKind = "forbidden";
-    findIssues("ztest.tran.xml", 1, config);
-    findIssues("test.tran.xml", 0, config);
+    await findIssues("ztest.tran.xml", 1, config);
+    await findIssues("test.tran.xml", 0, config);
   });
 
-  it("enqu", () => {
+  it("enqu", async () => {
     const config = new ObjectNamingConf();
     config.enqu = "^Z.*$";
 
     config.patternKind = "required";
-    findIssues("ztest.enqu.xml", 0, config);
-    findIssues("test.enqu.xml", 1, config);
+    await findIssues("ztest.enqu.xml", 0, config);
+    await findIssues("test.enqu.xml", 1, config);
 
     config.patternKind = "forbidden";
-    findIssues("ztest.enqu.xml", 1, config);
-    findIssues("test.enqu.xml", 0, config);
+    await findIssues("ztest.enqu.xml", 1, config);
+    await findIssues("test.enqu.xml", 0, config);
   });
 
-  it("auth", () => {
+  it("auth", async () => {
     const config = new ObjectNamingConf();
     config.auth = "^Z.*$";
 
     config.patternKind = "required";
-    findIssues("ztest.suso.xml", 0, config);
-    findIssues("test.suso.xml", 1, config);
+    await findIssues("ztest.suso.xml", 0, config);
+    await findIssues("test.suso.xml", 1, config);
 
     config.patternKind = "forbidden";
-    findIssues("ztest.suso.xml", 1, config);
-    findIssues("test.suso.xml", 0, config);
+    await findIssues("ztest.suso.xml", 1, config);
+    await findIssues("test.suso.xml", 0, config);
   });
 
-  it("pinf", () => {
+  it("pinf", async () => {
     const config = new ObjectNamingConf();
     config.pinf = "^Z.*$";
 
     config.patternKind = "required";
-    findIssues("ztest.pinf.xml", 0, config);
-    findIssues("test.pinf.xml", 1, config);
+    await findIssues("ztest.pinf.xml", 0, config);
+    await findIssues("test.pinf.xml", 1, config);
 
     config.patternKind = "forbidden";
-    findIssues("ztest.pinf.xml", 1, config);
-    findIssues("test.pinf.xml", 0, config);
+    await findIssues("ztest.pinf.xml", 1, config);
+    await findIssues("test.pinf.xml", 0, config);
   });
 
-  it("idoc", () => {
+  it("idoc", async () => {
     const config = new ObjectNamingConf();
     config.idoc = "^Z.*$";
 
     config.patternKind = "required";
-    findIssues("ztest.idoc.xml", 0, config);
-    findIssues("test.idoc.xml", 1, config);
+    await findIssues("ztest.idoc.xml", 0, config);
+    await findIssues("test.idoc.xml", 1, config);
 
     config.patternKind = "forbidden";
-    findIssues("ztest.idoc.xml", 1, config);
-    findIssues("test.idoc.xml", 0, config);
+    await findIssues("ztest.idoc.xml", 1, config);
+    await findIssues("test.idoc.xml", 0, config);
   });
 
-  it("xslt", () => {
+  it("xslt", async () => {
     const config = new ObjectNamingConf();
     config.xslt = "^Z.*$";
 
     config.patternKind = "required";
-    findIssues("ztest.xslt.xml", 0, config);
-    findIssues("test.xslt.xml", 1, config);
+    await findIssues("ztest.xslt.xml", 0, config);
+    await findIssues("test.xslt.xml", 1, config);
 
     config.patternKind = "forbidden";
-    findIssues("ztest.xslt.xml", 1, config);
-    findIssues("test.xslt.xml", 0, config);
+    await findIssues("ztest.xslt.xml", 1, config);
+    await findIssues("test.xslt.xml", 0, config);
   });
 
-  it("ssfo", () => {
+  it("ssfo", async () => {
     const config = new ObjectNamingConf();
     config.ssfo = "^Z.*$";
 
     config.patternKind = "required";
-    findIssues("ztest.ssfo.xml", 0, config);
-    findIssues("test.ssfo.xml", 1, config);
+    await findIssues("ztest.ssfo.xml", 0, config);
+    await findIssues("test.ssfo.xml", 1, config);
 
     config.patternKind = "forbidden";
-    findIssues("ztest.ssfo.xml", 1, config);
-    findIssues("test.ssfo.xml", 0, config);
+    await findIssues("ztest.ssfo.xml", 1, config);
+    await findIssues("test.ssfo.xml", 0, config);
   });
 
-  it("ssst", () => {
+  it("ssst", async () => {
     const config = new ObjectNamingConf();
     config.ssst = "^Z.*$";
 
     config.patternKind = "required";
-    findIssues("ztest.ssst.xml", 0, config);
-    findIssues("test.ssst.xml", 1, config);
+    await findIssues("ztest.ssst.xml", 0, config);
+    await findIssues("test.ssst.xml", 1, config);
 
     config.patternKind = "forbidden";
-    findIssues("ztest.ssst.xml", 1, config);
-    findIssues("test.ssst.xml", 0, config);
+    await findIssues("ztest.ssst.xml", 1, config);
+    await findIssues("test.ssst.xml", 0, config);
   });
 
-  it("Config, patternKind not set", () => {
+  it("Config, patternKind not set", async () => {
     const config = new ObjectNamingConf();
     config.clas = "^ZCL_.*$";
     config.patternKind = undefined;
 
-    findIssues("zcl_class.clas.abap", 0, config);
-    findIssues("cl_class.clas.abap", 1, config);
+    await findIssues("zcl_class.clas.abap", 0, config);
+    await findIssues("cl_class.clas.abap", 1, config);
   });
 
 });

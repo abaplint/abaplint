@@ -10,6 +10,7 @@ import {Token} from "../abap/1_lexer/tokens/_token";
 import {Position} from "../position";
 import {EditHelper} from "../edit_helper";
 import {IRuleMetadata, RuleTag} from "./_irule";
+import {DDIC} from "../ddic";
 
 export class SpaceBeforeDotConf extends BasicRuleConfig {
   public ignoreGlobalDefinition: boolean = true;
@@ -51,6 +52,8 @@ export class SpaceBeforeDot extends ABAPRule {
       return [];
     }
 
+    const ddic = new DDIC(this.reg);
+
     if (this.conf.ignoreGlobalDefinition) {
       const structure = file.getStructure();
       if (obj instanceof Class && structure !== undefined) {
@@ -59,7 +62,7 @@ export class SpaceBeforeDot extends ABAPRule {
           startRow = endclass.getFirstToken().getRow();
         }
         const definition = obj.getClassDefinition();
-        if (definition !== undefined && this.conf.ignoreExceptions && definition.isException) {
+        if (definition !== undefined && this.conf.ignoreExceptions && ddic.isException(definition, obj)) {
           return [];
         }
       } else if (obj instanceof Interface && structure !== undefined) {

@@ -43,6 +43,20 @@ describe("Registry", () => {
     expect(conf.getEnabledRules().length).to.equal(2);
   });
 
+  it("should support JSON5 (comments, trailing comma)", () => {
+    const config = getConfig({
+      "7bit_ascii": true,
+      "check_comments": true,
+      "avoid_use": true,
+    });
+
+    const confString = JSON.stringify(config, null, 2)
+      .replace("\"check_comments\"", "//\"check_comments\"")
+      .replace("\"avoid_use\": true", "\"avoid_use\": true,");
+    const conf = new Config(confString);
+    expect(conf.getEnabledRules().length).to.equal(2);
+  });
+
   it("should not do anything bad if you have an old config, old behavior for false", () => {
     const config = getConfig({}) as any;
     config.global.applyUnspecifiedRules = false;

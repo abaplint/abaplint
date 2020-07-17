@@ -63,6 +63,10 @@ https://docs.abapopenchecks.org/checks/30/`,
   private check(node: ExpressionNode, file: ABAPFile): Issue[] {
 
     for (const e of node.findAllExpressions(MethodParameters)) {
+      if (e.getFirstToken().getStr().toUpperCase() !== "EXPORTING") {
+        continue;
+      }
+
       const tokens = e.getDirectTokens();
       const strings = tokens.map(t => t.getStr().toUpperCase());
 

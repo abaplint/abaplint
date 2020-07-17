@@ -1324,4 +1324,14 @@ ENDCASE.`;
     expectCharacter(type, 2);
   });
 
+  it("Inline VALUE table comprehension", () => {
+    const abap = `
+    DATA tab TYPE STANDARD TABLE OF i WITH EMPTY KEY.
+    DATA(line) = VALUE #( tab[ 1 ] ).
+    `;
+    const identifier = resolveVariable(abap, "line");
+    expect(identifier).to.not.equal(undefined);
+    expect(identifier?.getType()).to.be.instanceof(Basic.IntegerType);
+  });
+
 });

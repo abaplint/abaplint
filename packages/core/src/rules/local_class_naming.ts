@@ -4,6 +4,8 @@ import {ABAPFile} from "../files";
 import {NamingRuleConfig} from "./_naming_rule_config";
 import {NameValidator} from "../utils/name_validator";
 import {RuleTag} from "./_irule";
+import {ABAPObject} from "../objects/_abap_object";
+import {DDIC} from "../ddic";
 
 export class LocalClassNamingConf extends NamingRuleConfig {
   /** The pattern for local class names */
@@ -41,11 +43,13 @@ export class LocalClassNaming extends ABAPRule {
     this.conf = conf;
   }
 
-  public runParsed(file: ABAPFile): Issue[] {
+  public runParsed(file: ABAPFile, obj: ABAPObject): Issue[] {
     const issues: Issue[] = [];
     if (this.conf.patternKind === undefined) {
       this.conf.patternKind = "required";
     }
+
+    const ddic = new DDIC(this.reg);
 
     for (const classDef of file.getInfo().listClassDefinitions()) {
       if (classDef.isGlobal) {
@@ -57,7 +61,7 @@ export class LocalClassNaming extends ABAPRule {
 
       if (classDef.isForTesting) {
         expected = this.conf.test;
-      } else if (classDef.isException) {
+      } else if (ddic.isException(classDef, obj) ) {
         expected = this.conf.exception;
       } else {
         expected = this.conf.local;

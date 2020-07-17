@@ -77,13 +77,21 @@ Regexes are case-insensitive.`,
     let ret: Issue[] = [];
 
     // data, field symbols
-    const data = structure.findAllStatements(Statements.Data);
-    for (const dat of data) {
+    for (const dat of structure.findAllStatements(Statements.Data)) {
       const parent = structure.findParent(dat);
       if (parent && parent.get() instanceof Structures.Data) {
         continue; // inside DATA BEGIN OF
       }
       const found = dat.findFirstExpression(Expressions.NamespaceSimpleName);
+      if (found) {
+        const token = found.getFirstToken();
+        ret = ret.concat(this.checkName(token, file, this.conf.expectedData));
+      }
+    }
+
+    // inline data
+    for (const dat of structure.findAllExpressions(Expressions.InlineData)) {
+      const found = dat.findFirstExpression(Expressions.TargetField);
       if (found) {
         const token = found.getFirstToken();
         ret = ret.concat(this.checkName(token, file, this.conf.expectedData));
@@ -102,9 +110,17 @@ Regexes are case-insensitive.`,
       }
     }
 
-    const fieldsymbols = structure.findAllStatements(Statements.FieldSymbol);
-    for (const fieldsymbol of fieldsymbols) {
+    for (const fieldsymbol of structure.findAllStatements(Statements.FieldSymbol)) {
       const found = fieldsymbol.findFirstExpression(Expressions.FieldSymbol);
+      if (found) {
+        const token = found.getFirstToken();
+        ret = ret.concat(this.checkName(token, file, this.conf.expectedFS));
+      }
+    }
+
+    // inline field symbols
+    for (const fieldsymbol of structure.findAllExpressions(Expressions.InlineFS)) {
+      const found = fieldsymbol.findFirstExpression(Expressions.TargetFieldSymbol);
       if (found) {
         const token = found.getFirstToken();
         ret = ret.concat(this.checkName(token, file, this.conf.expectedFS));
@@ -123,7 +139,7 @@ Regexes are case-insensitive.`,
         ret = ret.concat(this.checkName(token, file, this.conf.expectedConstant));
       }
     }
-    // todo: inline data, inline field symbols
+
     return ret;
   }
 

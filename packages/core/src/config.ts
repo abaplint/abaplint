@@ -2,6 +2,7 @@ import {Version, defaultVersion} from "./version";
 import {ArtifactsRules} from "./artifacts_rules";
 import {IRule} from "./rules/_irule";
 import {IConfig, IGlobalConfig, ISyntaxSettings, IConfiguration} from "./_config";
+import * as JSON5 from "json5";
 
 // assumption: this class is immutable
 export class Config implements IConfiguration {
@@ -69,7 +70,13 @@ export class Config implements IConfiguration {
   }
 
   public constructor(json: string) {
-    this.config = JSON.parse(json);
+    // huh, hack
+    if (JSON5.parse === undefined) {
+      // @ts-ignore
+      JSON5.parse = JSON5.default.parse;
+    }
+
+    this.config = JSON5.parse(json);
 
     if (this.config.global === undefined) {
       this.config.global = Config.getDefault().getGlobal();

@@ -2,9 +2,17 @@ import {Registry} from "../../src/registry";
 import {MemoryFile} from "../../src/files/memory_file";
 import {MSAGConsistency} from "../../src/rules";
 import {expect} from "chai";
+import {Issue} from "../../src/issue";
+
+async function run(file: MemoryFile): Promise<Issue[]> {
+  const reg = new Registry();
+  reg.addFile(file);
+  await reg.parseAsync();
+  return new MSAGConsistency().initialize(reg).run(reg.getObjects()[0]);
+}
 
 describe("Message rule", () => {
-  it("Empty Message class", () => {
+  it("Empty Message class", async () => {
     const xml =
 `<?xml version="1.0" encoding="utf-8"?>
 <abapGit version="v1.0.0" serializer="LCL_OBJECT_MSAG" serializer_version="v1.0.0">
@@ -19,17 +27,14 @@ describe("Message rule", () => {
  </asx:abap>
 </abapGit>`;
 
-    const reg = new Registry();
-    reg.addFile(new MemoryFile("zagtest_empty.msag.xml", xml)).parse();
-    const issues = new MSAGConsistency().initialize(reg).run(reg.getObjects()[0]);
+    const issues = await run(new MemoryFile("zagtest_empty.msag.xml", xml));
     expect(issues.length).to.equal(0);
   });
 
-  it("Parser error", () => {
+  it("Parser error", async () => {
     const xml = `sdfsdfsd`;
-    const reg = new Registry();
-    reg.addFile(new MemoryFile("zagtest_empty.msag.xml", xml)).parse();
-    const issues = new MSAGConsistency().initialize(reg).run(reg.getObjects()[0]);
+
+    const issues = await run(new MemoryFile("zagtest_empty.msag.xml", xml));
     expect(issues.length).to.equal(0);
   });
 

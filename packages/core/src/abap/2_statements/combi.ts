@@ -194,7 +194,7 @@ class Vers implements IStatementRunnable {
   }
 
   public first() {
-    return "";
+    return this.runnable.first();
   }
 }
 
@@ -237,7 +237,7 @@ class VersNot implements IStatementRunnable {
   }
 
   public first() {
-    return "";
+    return this.runnable.first();
   }
 }
 
@@ -668,7 +668,7 @@ export abstract class Expression implements IStatementRunnable {
   }
 
   public first() {
-    return "";
+    return this.getRunnable().first();
   }
 }
 

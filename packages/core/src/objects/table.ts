@@ -1,9 +1,7 @@
 import {AbstractObject} from "./_abstract_object";
 import {xmlToArray} from "../xml_utils";
-import {AbstractType} from "../abap/types/basic/_abstract_type";
 import * as Types from "../abap/types/basic";
 import {IRegistry} from "../_iregistry";
-import {IStructureComponent, StructureType} from "../abap/types/basic";
 import {DDIC} from "../ddic";
 
 export enum EnhancementCategory {
@@ -36,13 +34,13 @@ export class Table extends AbstractObject {
     };
   }
 
-  public parseType(reg: IRegistry): AbstractType {
+  public parseType(reg: IRegistry): Types.StructureType | Types.UnknownType | Types.VoidType {
     const parsed = this.parseXML();
     if (parsed === undefined) {
       return new Types.UnknownType("Table, parser error");
     }
 
-    const components: IStructureComponent[] = [];
+    const components: Types.IStructureComponent[] = [];
     const fields = parsed.abapGit["asx:abap"]["asx:values"].DD03P_TABLE;
     const ddic = new DDIC(reg);
     for (const field of xmlToArray(fields.DD03P)) {
@@ -53,12 +51,17 @@ export class Table extends AbstractObject {
           type: ddic.lookupDataElement(field.ROLLNAME._text)});
       } else if (comptype === "S" && field.FIELDNAME._text === ".INCLUDE") { // incude structure
         const found = ddic.lookupTable(field.PRECFIELD._text);
-        if (found instanceof StructureType) {
+        if (found instanceof Types.StructureType) {
           for (const c of found.getComponents()) {
             components.push({
               name: c.name,
               type: c.type});
           }
+        } else if (found instanceof Types.UnknownType) {
+          return found;
+        } else if (found instanceof Types.VoidType) {
+          // set the full structure to void
+          return found;
         } else {
           components.push({
             name: field.FIELDNAME._text,
@@ -97,15 +100,6 @@ export class Table extends AbstractObject {
     return new Types.StructureType(components);
   }
 
-  public getFieldNames(): string[] {
-    const parsed = this.parseXML();
-    if (parsed === undefined) {
-      return [];
-    }
-
-    return this.parseFields(parsed);
-  }
-
   public getTableCategory(): TableCategory | undefined {
     const parsed = this.parseXML();
     if (parsed === undefined) {
@@ -125,19 +119,6 @@ export class Table extends AbstractObject {
     }
 
     return parsed.abapGit["asx:abap"]["asx:values"].DD02V.EXCLASS._text;
-  }
-
-/////////////////////////////////
-
-  private parseFields(data: any): string[] {
-    const ret: string[] = [];
-
-    const fields = data.abapGit["asx:abap"]["asx:values"].DD03P_TABLE;
-    for (const field of xmlToArray(fields.DD03P)) {
-      ret.push(field.FIELDNAME._text);
-    }
-
-    return ret;
   }
 
 }
