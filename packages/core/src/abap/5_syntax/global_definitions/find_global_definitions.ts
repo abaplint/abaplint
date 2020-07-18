@@ -7,7 +7,7 @@ import {Interface} from "../../../objects/interface";
 import {Class} from "../../../objects/class";
 import * as BasicTypes from "../../types/basic";
 import {AbstractType} from "../../types/basic/_abstract_type";
-import {IObject} from "../../../objects/_iobject";
+import {IProgress} from "../../../progress";
 
 // this makes sure to cache global interface and class definitions in the corresponding object
 export class FindGlobalDefinitions {
@@ -17,26 +17,27 @@ export class FindGlobalDefinitions {
     this.reg = reg;
   }
 
-  public run() {
+  public run(progress?: IProgress) {
     const MAX_PASSES = 3;
     let lastPass = Number.MAX_SAFE_INTEGER;
 
     // the setDirty method in the objects clears the definitions
     let candidates = this.reg.getObjects().filter((o) => {
       return (o instanceof Interface || o instanceof Class) && o.getDefinition() === undefined;
-    });
+    }) as (Class | Interface)[];
 
-    for (let i = 0; i < MAX_PASSES; i++) {
+    for (let i = 1; i <= MAX_PASSES; i++) {
+      progress?.set(candidates.length, "Global OO types, pass " + i);
       let thisPass = 0;
-
-      const next: IObject[] = [];
+      const next: (Class | Interface)[] = [];
       for (const o of candidates) {
-        this.update(o as Class | Interface);
-        const count = this.countUntyped(o as Class | Interface);
-        if (count > 0) {
+        progress?.tickSync("Global OO types(pass " + i + "), next pass: " + next.length);
+        this.update(o);
+        const untypedCount = this.countUntyped(o);
+        if (untypedCount > 0) {
           next.push(o);
         }
-        thisPass = thisPass + count;
+        thisPass = thisPass + untypedCount;
       }
 
       candidates = next;

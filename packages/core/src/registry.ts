@@ -222,10 +222,10 @@ export class Registry implements IRegistry {
       this.parsePrivate(o);
       this.issues = this.issues.concat(o.getParsingIssues());
     }
-    new FindGlobalDefinitions(this).run();
     if (input?.outputPerformance === true) {
       ParsingPerformance.output();
     }
+    new FindGlobalDefinitions(this).run(input?.progress);
 
     return this;
   }

@@ -22,6 +22,11 @@ class Progress implements IProgress {
     this.bar.tick({text});
     this.bar.render();
   }
+
+  public tickSync(text: string) {
+    this.bar.tick({text});
+    this.bar.render();
+  }
 }
 
 function loadConfig(filename: string | undefined): {config: Config, base: string} {
