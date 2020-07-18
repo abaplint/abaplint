@@ -27,6 +27,6 @@
         "eslint": "^7.4.0",
         "eslint-plugin-import": "^2.22.0",
         "railroad-diagrams": "git+https://github.com/tabatkins/railroad-diagrams#gh-pages",
-        "typescript": "^3.9.6"
+        "typescript": "^3.9.7"
     }
 }

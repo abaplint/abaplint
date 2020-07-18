@@ -63,7 +63,7 @@
         "nyc": "^15.1.0",
         "source-map-support": "^0.5.19",
         "ts-json-schema-generator": "^0.70.2",
-        "typescript": "^3.9.6"
+        "typescript": "^3.9.7"
     },
     "dependencies": {
         "json5": "^2.1.3",
