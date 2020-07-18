@@ -45,6 +45,7 @@ class ParsingPerformance {
 }
 
 export class Registry implements IRegistry {
+//  private readonly objects2: { [index: string]: { [index: string]: IObject } } = {};
   private readonly objects: IObject[] = [];
   private readonly dependencies: string[] = [];
   private conf: IConfiguration;
@@ -247,7 +248,7 @@ export class Registry implements IRegistry {
   }
 
   private runRules(input?: IRunInput, iobj?: IObject): readonly Issue[] {
-    const rulePerformance: { [index:string] : number} = {};
+    const rulePerformance: {[index: string]: number} = {};
     let issues = this.issues.slice(0);
 
     const objects = iobj ? [iobj] : this.getObjects();

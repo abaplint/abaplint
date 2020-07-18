@@ -22,7 +22,7 @@ export abstract class ABAPObject extends AbstractObject {
     this.parsed = [];
   }
 
-  public static is(x:any):x is ABAPObject{
+  public static is(x: any): x is ABAPObject{
     return !!x && x instanceof ABAPObject;
   }
 
