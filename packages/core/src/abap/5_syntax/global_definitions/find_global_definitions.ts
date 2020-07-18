@@ -113,9 +113,7 @@ export class FindGlobalDefinitions {
       } else {
         obj.setDefinition(undefined);
       }
-    }
-
-    if (obj instanceof Class) {
+    } else if (obj instanceof Class) {
       const found = struc?.findFirstStructure(Structures.ClassDefinition);
       if (struc && file && found) {
         try {
