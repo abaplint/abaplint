@@ -14,13 +14,13 @@ function resolveVariable(abap: string, name: string): TypedIdentifier | undefine
 
 function runMulti(files: {filename: string, contents: string}[], name: string): TypedIdentifier | undefined {
   const reg = new Registry();
-  for (const file of files) {
+  for (const file of files.reverse()) {
     reg.addFile(new MemoryFile(file.filename, file.contents));
   }
   reg.parse();
 
-  const obj = reg.getObjects()[files.length - 1] as ABAPObject;
-  const filename = files[files.length - 1].filename;
+  const obj = reg.getFirstObject() as ABAPObject;
+  const filename = files[0].filename;
   const scope = new SyntaxLogic(reg, obj).run().spaghetti.lookupPosition(new Position(1, 1), filename);
   return scope?.findVariable(name);
 }
