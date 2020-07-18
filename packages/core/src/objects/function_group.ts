@@ -31,6 +31,9 @@ export class FunctionGroup extends ABAPObject {
       return [];
     }
     const parsed = this.parseXML();
+    if (parsed === undefined) {
+      return [];
+    }
 
     return this.parseModules(parsed);
   }
@@ -97,6 +100,9 @@ export class FunctionGroup extends ABAPObject {
     }
 
     const parsed = this.parseXML();
+    if (parsed === undefined) {
+      return [];
+    }
     const includes = parsed.abapGit["asx:abap"]["asx:values"].INCLUDES;
 
     const ret: string[] = [];

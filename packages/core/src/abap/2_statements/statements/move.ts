@@ -1,5 +1,5 @@
 import {IStatement} from "./_statement";
-import {verNot, str, tok, ver, seq, alt, opt, altPrio, plus} from "../combi";
+import {verNot, str, tok, ver, seq, alt, opt, altPrio, plus, optPrio} from "../combi";
 import {Target, Source} from "../expressions";
 import {Version} from "../../../version";
 import {WPlus, WDash} from "../../1_lexer/tokens";
@@ -14,7 +14,7 @@ export class Move implements IStatement {
     const mov = verNot(Version.Cloud, str("MOVE"));
 
     const move = seq(alt(mov, str("MOVE-CORRESPONDING")),
-                     opt(str("EXACT")),
+                     optPrio(str("EXACT")),
                      new Source(),
                      alt(str("TO"), str("?TO")),
                      new Target(),
@@ -36,7 +36,7 @@ export class Move implements IStatement {
 // todo, move "?=" to CAST?
     const eq = seq(plus(seq(new Target(), equals)), new Source());
 
-    return alt(move, eq);
+    return altPrio(move, eq);
   }
 
 }

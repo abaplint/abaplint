@@ -14,6 +14,6 @@ export class SQLFieldList extends Expression {
 
     return alt(str("*"),
                new Dynamic(),
-               plus(alt(seq(alt(new SQLFieldName(), abap, new Constant()), optPrio(as), comma), new SQLAggregation())));
+               plus(seq(alt(new SQLAggregation(), new SQLFieldName(), abap, new Constant()), optPrio(as), comma)));
   }
 }

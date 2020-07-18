@@ -174,6 +174,11 @@ INTO CORRESPONDING FIELDS OF TABLE @mt_journal
 ORDER BY PRIMARY KEY ##DB_FEATURE_MODE[VIEWS_WITH_PARAMETERS].`,
 
   `SELECT SINGLE * FROM @lt_fields AS SemanticKeyAlias WHERE name = @ls_semantic_key INTO @DATA(result).`,
+
+  `SELECT DISTINCT MAX( moo ) FROM ztable INTO ev_max WHERE foo = bar.`,
+
+  `select count(*) as score from sdfsd where object = @object_id-object and obj_name = @object_id-obj_name into @data(count).`,
+
 ];
 
 statementType(tests, "SELECT", Statements.Select);
