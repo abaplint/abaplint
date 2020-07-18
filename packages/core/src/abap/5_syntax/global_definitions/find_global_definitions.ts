@@ -7,6 +7,7 @@ import {Interface} from "../../../objects/interface";
 import {Class} from "../../../objects/class";
 import * as BasicTypes from "../../types/basic";
 import {AbstractType} from "../../types/basic/_abstract_type";
+import {IObject} from "../../../objects/_iobject";
 
 // this makes sure to cache global interface and class definitions in the corresponding object
 export class FindGlobalDefinitions {
@@ -21,23 +22,24 @@ export class FindGlobalDefinitions {
     let lastPass = Number.MAX_SAFE_INTEGER;
 
     // the setDirty method in the objects clears the definitions
-    const candidates = this.reg.getObjects().filter((o) => {
+    let candidates = this.reg.getObjects().filter((o) => {
       return (o instanceof Interface || o instanceof Class) && o.getDefinition() === undefined;
     });
 
     for (let i = 0; i < MAX_PASSES; i++) {
       let thisPass = 0;
-      for (const o of candidates) {
-        if (!(o instanceof Interface) && !(o instanceof Class)) {
-          continue;
-        }
-        if (this.countUntyped(o) === 0) {
-          continue;
-        }
-        this.update(o);
 
-        thisPass = thisPass + this.countUntyped(o);
+      const next: IObject[] = [];
+      for (const o of candidates) {
+        this.update(o as Class | Interface);
+        const count = this.countUntyped(o as Class | Interface);
+        if (count > 0) {
+          next.push(o);
+        }
+        thisPass = thisPass + count;
       }
+
+      candidates = next;
 
       if (lastPass === thisPass || thisPass === 0) {
         break;
