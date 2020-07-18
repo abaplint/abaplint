@@ -27,7 +27,6 @@ export interface IRegistry {
   getObjectCount(): number;
   getFirstObject(): IObject | undefined;
   getObject(type: string | undefined, name: string): IObject | undefined;
-  getObjectByType<T>(type: new (...args: any[]) => T, name: string): T | undefined;
 
   // file operations
   findObjectForFile(file: IFile): IObject | undefined;
