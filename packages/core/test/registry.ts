@@ -145,11 +145,10 @@ ENDINTERFACE.`;
     const file = new MemoryFile("C:\\Users\\foobar\\git\\transpiler\\packages\\abap-loader\\build\\test\\zprogram.prog.abap", "BREAK-POINT.");
     const reg = new Registry().addFile(file);
     await reg.parseAsync();
-    const objects = reg.getObjects();
-    expect(objects.length).to.equal(1);
-    const abap = objects[0] as ABAPObject;
-    expect(abap.getName()).to.equal("ZPROGRAM");
-    expect(abap.getMainABAPFile()).to.not.equal(undefined);
+    expect(reg.getObjectCount()).to.equal(1);
+    const abap = reg.getFirstObject() as ABAPObject | undefined;
+    expect(abap?.getName()).to.equal("ZPROGRAM");
+    expect(abap?.getMainABAPFile()).to.not.equal(undefined);
   });
 
 });
@@ -176,17 +175,29 @@ describe("Registry, object types", () => {
   it("Object type = PROG", async () => {
     const file = new MemoryFile("zfoobar.prog.abap", "BREAK-POINT.");
     const registry = new Registry().addFile(file);
-    const objects = registry.getObjects();
-    expect(objects.length).to.equal(1);
-    expect(objects[0].getType()).to.equal("PROG");
+    expect(registry.getObjectCount()).to.equal(1);
+    expect(registry.getFirstObject()!.getType()).to.equal("PROG");
   });
 
   it("Object type = W3MI", async () => {
     const file = new MemoryFile("background.w3mi.data.png", "moo");
     const registry = new Registry().addFile(file);
-    const objects = registry.getObjects();
-    expect(objects.length).to.equal(1);
-    expect(objects[0].getType()).to.equal("W3MI");
+    expect(registry.getObjectCount()).to.equal(1);
+    expect(registry.getFirstObject()!.getType()).to.equal("W3MI");
+  });
+
+  it("generator, yield", async () => {
+    const file1 = new MemoryFile("file1.w3mi.data.png", "moo");
+    const file2 = new MemoryFile("file2.w3mi.data.png", "moo");
+    const registry = new Registry().addFile(file1).addFile(file2);
+
+    expect(registry.getObjectCount()).to.equal(2);
+
+    let ret = "";
+    for (const a of registry.getObjects()) {
+      ret = ret + a.getName();
+    }
+    expect(ret).to.equal("FILE1FILE2");
   });
 
 });

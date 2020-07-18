@@ -23,7 +23,7 @@ export interface IRegistry {
   setConfig(conf: IConfiguration): IRegistry;
 
   // object operations
-  getObjects(): readonly IObject[];
+  getObjects(): Generator<IObject, void, undefined>;
   getObjectCount(): number;
   getFirstObject(): IObject | undefined;
   getObject(type: string | undefined, name: string): IObject | undefined;

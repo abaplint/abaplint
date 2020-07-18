@@ -22,9 +22,12 @@ export class FindGlobalDefinitions {
     let lastPass = Number.MAX_SAFE_INTEGER;
 
     // the setDirty method in the objects clears the definitions
-    let candidates = this.reg.getObjects().filter((o) => {
-      return (o instanceof Interface || o instanceof Class) && o.getDefinition() === undefined;
-    }) as (Class | Interface)[];
+    let candidates: (Class | Interface)[] = [];
+    for (const o of this.reg.getObjects()) {
+      if ((o instanceof Interface || o instanceof Class) && o.getDefinition() === undefined) {
+        candidates.push(o);
+      }
+    }
 
     for (let i = 1; i <= MAX_PASSES; i++) {
       progress?.set(candidates.length, "Global OO types, pass " + i);

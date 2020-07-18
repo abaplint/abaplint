@@ -59,8 +59,10 @@ export class Registry implements IRegistry {
     return "{{ VERSION }}";
   }
 
-  public getObjects(): IObject[] {
-    return this.objects;
+  public* getObjects(): Generator<IObject, void, undefined> {
+    for (const o of this.objects) {
+      yield o;
+    }
   }
 
   public getFirstObject(): IObject | undefined {
