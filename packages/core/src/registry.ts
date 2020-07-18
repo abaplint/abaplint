@@ -45,10 +45,10 @@ class ParsingPerformance {
 }
 
 export class Registry implements IRegistry {
-  private conf: IConfiguration;
   private readonly objects: IObject[] = [];
-  private issues: Issue[] = [];
   private readonly dependencies: string[] = [];
+  private conf: IConfiguration;
+  private issues: Issue[] = [];
 
   public constructor(conf?: IConfiguration) {
     this.conf = conf ? conf : Config.getDefault();
@@ -61,6 +61,14 @@ export class Registry implements IRegistry {
 
   public getObjects(): IObject[] {
     return this.objects;
+  }
+
+  public getFirstObject(): IObject | undefined {
+    return this.objects[0];
+  }
+
+  public getObjectCount(): number {
+    return this.objects.length;
   }
 
   public getFileByName(filename: string): IFile | undefined {

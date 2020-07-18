@@ -26,7 +26,7 @@ describe("Domain, parse main xml", () => {
 </abapGit>`;
     const reg = new Registry().addFile(new MemoryFile("zfoobar.doma.xml", xml));
     await reg.parseAsync();
-    const dtel = reg.getObjects()[0] as Domain;
+    const dtel = reg.getFirstObject()! as Domain;
     const type = dtel.parseType(reg);
     expect(type).to.be.instanceof(CharacterType);
   });
@@ -35,7 +35,7 @@ describe("Domain, parse main xml", () => {
     const xml = `sdfsdf`;
     const reg = new Registry().addFile(new MemoryFile("zfoobar.dtel.xml", xml));
     await reg.parseAsync();
-    const dtel = reg.getObjects()[0] as Domain;
+    const dtel = reg.getFirstObject()! as Domain;
     const type = dtel.parseType(reg);
     expect(type).to.be.instanceof(UnknownType);
   });
@@ -44,7 +44,7 @@ describe("Domain, parse main xml", () => {
     const xml = `<foo></bar>`;
     const reg = new Registry().addFile(new MemoryFile("zfoobar.dtel.xml", xml));
     await reg.parseAsync();
-    const dtel = reg.getObjects()[0] as Domain;
+    const dtel = reg.getFirstObject()! as Domain;
     const type = dtel.parseType(reg);
     expect(type).to.be.instanceof(UnknownType);
   });
@@ -67,7 +67,7 @@ describe("Domain, parse main xml", () => {
 </abapGit>`;
     const reg = new Registry().addFile(new MemoryFile("zfoobar.doma.xml", xml));
     await reg.parseAsync();
-    const dtel = reg.getObjects()[0] as Domain;
+    const dtel = reg.getFirstObject()! as Domain;
     const type = dtel.parseType(reg);
     expect(type).to.be.instanceof(StringType);
   });

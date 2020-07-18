@@ -14,7 +14,7 @@ async function findIssues(abap: string, config?: ClassAttributeNamesConf, filena
   if (config) {
     rule.setConfig(config);
   }
-  return rule.initialize(reg).run(reg.getObjects()[0]);
+  return rule.initialize(reg).run(reg.getFirstObject()!);
 }
 
 describe("Rule: class attribute names (general)", () => {

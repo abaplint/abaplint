@@ -74,7 +74,7 @@ describe("Table, parse XML", () => {
   it("test 1, fields, category, enhancement category", async () => {
     const reg = new Registry().addFile(new MemoryFile("zabapgit_unit_t2.tabl.xml", xml1));
     await reg.parseAsync();
-    const tabl = reg.getObjects()[0] as Table;
+    const tabl = reg.getFirstObject()! as Table;
 
     expect(tabl.getName()).to.equal("ZABAPGIT_UNIT_T2");
 
@@ -108,7 +108,7 @@ describe("Table, parse XML", () => {
 
     const reg = new Registry().addFile(new MemoryFile("zsyst.tabl.xml", xml));
     await reg.parseAsync();
-    const tabl = reg.getObjects()[0] as Table;
+    const tabl = reg.getFirstObject()! as Table;
 
     expect(tabl.getEnhancementCategory()).to.equal(EnhancementCategory.NotClassified);
   });
@@ -116,7 +116,7 @@ describe("Table, parse XML", () => {
   it("Call parseType", async () => {
     const reg = new Registry().addFile(new MemoryFile("zabapgit_unit_t2.tabl.xml", xml1));
     await reg.parseAsync();
-    const tabl = reg.getObjects()[0] as Table;
+    const tabl = reg.getFirstObject()! as Table;
 
     const type = tabl.parseType(reg);
     expect(type).to.be.instanceof(StructureType);
@@ -197,7 +197,7 @@ describe("Table, parse XML", () => {
     reg.addFile(new MemoryFile("zstructure2.tabl.xml", structure2));
     reg.addFile(new MemoryFile("zstructure1.tabl.xml", structure1));
     await reg.parseAsync();
-    const tabl = reg.getObjects()[0] as Table;
+    const tabl = reg.getFirstObject()! as Table;
 
     const type = tabl.parseType(reg);
     expect(type).to.be.instanceof(StructureType);
@@ -260,7 +260,7 @@ describe("Table, parse XML", () => {
     reg.addFile(new MemoryFile("zstructure1.tabl.xml", structure1));
     reg.addFile(new MemoryFile("ztable_type_test_ag.ttyp.xml", ttyp));
     await reg.parseAsync();
-    const tabl = reg.getObjects()[0] as Table;
+    const tabl = reg.getFirstObject()! as Table;
 
     const type = tabl.parseType(reg);
     expect(type).to.be.instanceof(StructureType);
@@ -304,7 +304,7 @@ describe("Table, parse XML", () => {
 
     const reg = new Registry().addFile(new MemoryFile("zstructure1.tabl.xml", structure1));
     await reg.parseAsync();
-    const tabl = reg.getObjects()[0] as Table;
+    const tabl = reg.getFirstObject()! as Table;
 
     const type = tabl.parseType(reg);
     expect(type).to.be.instanceof(StructureType);
@@ -360,7 +360,7 @@ describe("Table, parse XML", () => {
 
     const reg = new Registry().addFile(new MemoryFile("zlist_alv.tabl.xml", xml));
     await reg.parseAsync();
-    const tabl = reg.getObjects()[0] as Table;
+    const tabl = reg.getFirstObject()! as Table;
 
     const type = tabl.parseType(reg);
     expect(type).to.be.instanceof(VoidType);

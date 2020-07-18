@@ -36,34 +36,34 @@ describe("Registry", () => {
     const reg = new Registry().addFile(first);
     await reg.parseAsync();
     expect(getABAPObjects(reg)[0].getABAPFiles().length).to.equal(1);
-    expect(reg.getObjects().length).to.equal(1);
+    expect(reg.getObjectCount()).to.equal(1);
 
     const updated = new MemoryFile("zfoobar.prog.abap", "updated");
     reg.updateFile(updated);
     await reg.parseAsync();
     expect(getABAPObjects(reg)[0].getABAPFiles().length).to.equal(1);
-    expect(reg.getObjects().length).to.equal(1);
+    expect(reg.getObjectCount()).to.equal(1);
 
     expect(getABAPObjects(reg)[0].getABAPFiles()[0].getRaw()).to.equal("updated");
   });
 
   it("filename with namespace", async () => {
     const reg = new Registry().addFile(new MemoryFile("#namesp#cl_foobar.clas.abap", "parser error"));
-    expect(reg.getObjects().length).to.equal(1);
-    expect(reg.getObjects()[0].getType()).to.equal("CLAS");
+    expect(reg.getObjectCount()).to.equal(1);
+    expect(reg.getFirstObject()!.getType()).to.equal("CLAS");
     expect(reg.getObject("CLAS", "/namesp/cl_foobar")).to.not.equal(undefined);
   });
 
   it("foo.bar.", async () => {
     const reg = new Registry().addFile(new MemoryFile("foo.bar.", "something"));
-    expect(reg.getObjects().length).to.equal(1);
-    expect(reg.getObjects()[0].getType()).to.equal("BAR");
+    expect(reg.getObjectCount()).to.equal(1);
+    expect(reg.getFirstObject()!.getType()).to.equal("BAR");
   });
 
   it("filename with namespace, url encoded", async () => {
     const reg = new Registry().addFile(new MemoryFile("%23namesp%23cl_foobar.clas.abap", "parser error"));
-    expect(reg.getObjects().length).to.equal(1);
-    expect(reg.getObjects()[0].getType()).to.equal("CLAS");
+    expect(reg.getObjectCount()).to.equal(1);
+    expect(reg.getFirstObject()!.getType()).to.equal("CLAS");
     expect(reg.getObject("CLAS", "/namesp/cl_foobar")).to.not.equal(undefined);
   });
 

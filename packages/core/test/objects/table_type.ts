@@ -30,7 +30,7 @@ describe("Table Type, parse XML", () => {
 
     const reg = new Registry().addFile(new MemoryFile("zags_objects_tt.ttyp.xml", xml1));
     await reg.parseAsync();
-    const tabl = reg.getObjects()[0] as Objects.TableType;
+    const tabl = reg.getFirstObject()! as Objects.TableType;
 
     const type = tabl.parseType(reg);
     expect(type).to.be.instanceof(Types.TableType);
@@ -61,7 +61,7 @@ describe("Table Type, parse XML", () => {
 
     const reg = new Registry().addFile(new MemoryFile("ztest.ttyp.xml", xml1));
     await reg.parseAsync();
-    const tabl = reg.getObjects()[0] as Objects.TableType;
+    const tabl = reg.getFirstObject()! as Objects.TableType;
 
     const type = tabl.parseType(reg);
     expect(type).to.be.instanceof(Types.TableType);
@@ -91,7 +91,7 @@ describe("Table Type, parse XML", () => {
 
     const reg = new Registry().addFile(new MemoryFile("ztest.ttyp.xml", xml1));
     await reg.parseAsync();
-    const tabl = reg.getObjects()[0] as Objects.TableType;
+    const tabl = reg.getFirstObject()! as Objects.TableType;
 
     const type = tabl.parseType(reg);
     expect(type).to.be.instanceof(Types.TableType);
@@ -121,7 +121,7 @@ describe("Table Type, parse XML", () => {
 
     const reg = new Registry().addFile(new MemoryFile("ztest.ttyp.xml", xml1));
     await reg.parseAsync();
-    const tabl = reg.getObjects()[0] as Objects.TableType;
+    const tabl = reg.getFirstObject()! as Objects.TableType;
 
     const type = tabl.parseType(reg);
     expect(type).to.be.instanceof(Types.TableType);

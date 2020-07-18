@@ -31,7 +31,7 @@ async function run(abap: string): Promise<readonly Issue[]> {
   reg.addFile(new MemoryFile("zfoobar.prog.abap", abap));
   reg.addFile(new MemoryFile("zag_unit_test.msag.xml", xml));
   await reg.parseAsync();
-  return new MessageExistsRule().initialize(reg).run(reg.getObjects()[0]);
+  return new MessageExistsRule().initialize(reg).run(reg.getFirstObject()!);
 }
 
 describe("Message rule", () => {

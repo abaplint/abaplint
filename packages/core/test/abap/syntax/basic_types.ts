@@ -10,7 +10,7 @@ import {Position} from "../../../src/position";
 function resolveType(abap: string, name: string): TypedIdentifier | undefined {
   const filename = "zfoobar.prog.abap";
   const reg = new Registry().addFile(new MemoryFile(filename, abap)).parse();
-  const obj = reg.getObjects()[0] as ABAPObject;
+  const obj = reg.getFirstObject()! as ABAPObject;
   const scope = new SyntaxLogic(reg, obj).run().spaghetti.lookupPosition(new Position(1, 1), filename);
   return scope?.findType(name);
 }

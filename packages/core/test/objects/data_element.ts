@@ -23,7 +23,7 @@ describe("Data element, parse main xml", () => {
 </abapGit>`;
     const reg = new Registry().addFile(new MemoryFile("zddic.dtel.xml", xml));
     await reg.parseAsync();
-    const dtel = reg.getObjects()[0] as DataElement;
+    const dtel = reg.getFirstObject()! as DataElement;
     const type = dtel.parseType(reg);
     expect(type).to.be.instanceof(CharacterType);
   });
@@ -45,7 +45,7 @@ describe("Data element, parse main xml", () => {
 </abapGit>`;
     const reg = new Registry().addFile(new MemoryFile("zags_adler32.dtel.xml", xml));
     await reg.parseAsync();
-    const dtel = reg.getObjects()[0] as DataElement;
+    const dtel = reg.getFirstObject()! as DataElement;
     const type = dtel.parseType(reg);
     expect(type).to.be.instanceof(HexType);
   });
@@ -54,7 +54,7 @@ describe("Data element, parse main xml", () => {
     const xml = `sdfsdf`;
     const reg = new Registry().addFile(new MemoryFile("zddic.dtel.xml", xml));
     await reg.parseAsync();
-    const dtel = reg.getObjects()[0] as DataElement;
+    const dtel = reg.getFirstObject()! as DataElement;
     const type = dtel.parseType(reg);
     expect(type).to.be.instanceof(UnknownType);
   });
@@ -63,7 +63,7 @@ describe("Data element, parse main xml", () => {
     const xml = `<foo></bar>`;
     const reg = new Registry().addFile(new MemoryFile("zddic.dtel.xml", xml));
     await reg.parseAsync();
-    const dtel = reg.getObjects()[0] as DataElement;
+    const dtel = reg.getFirstObject()! as DataElement;
     const type = dtel.parseType(reg);
     expect(type).to.be.instanceof(UnknownType);
   });
@@ -106,7 +106,7 @@ describe("Data element, parse main xml", () => {
     reg.addFile(new MemoryFile("zdoma.doma.xml", domaxml));
 
     await reg.parseAsync();
-    const dtel = reg.getObjects()[0] as DataElement;
+    const dtel = reg.getFirstObject()! as DataElement;
     const type = dtel.parseType(reg);
     expect(type).to.be.instanceof(CharacterType);
   });
@@ -131,7 +131,7 @@ describe("Data element, parse main xml", () => {
     reg.addFile(new MemoryFile("zdtel.dtel.xml", dtelxml));
 
     await reg.parseAsync();
-    const dtel = reg.getObjects()[0] as DataElement;
+    const dtel = reg.getFirstObject()! as DataElement;
     const type = dtel.parseType(reg);
     expect(type).to.be.instanceof(VoidType);
   });
@@ -155,7 +155,7 @@ describe("Data element, parse main xml", () => {
     reg.addFile(new MemoryFile("zdtel.dtel.xml", dtelxml));
 
     await reg.parseAsync();
-    const dtel = reg.getObjects()[0] as DataElement;
+    const dtel = reg.getFirstObject()! as DataElement;
     const type = dtel.parseType(reg);
     expect(type).to.be.instanceof(StringType);
   });
@@ -180,7 +180,7 @@ describe("Data element, parse main xml", () => {
     reg.addFile(new MemoryFile("zdtel.dtel.xml", dtelxml));
 
     await reg.parseAsync();
-    const dtel = reg.getObjects()[0] as DataElement;
+    const dtel = reg.getFirstObject()! as DataElement;
     const type = dtel.parseType(reg);
     expect(type).to.be.instanceof(PackedType);
   });

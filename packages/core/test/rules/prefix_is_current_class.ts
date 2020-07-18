@@ -10,7 +10,7 @@ async function run(abap: string, config?: PrefixIsCurrentClassConf): Promise<num
   if (config) {
     rule.setConfig(config);
   }
-  const issues = rule.initialize(reg).run(reg.getObjects()[0]);
+  const issues = rule.initialize(reg).run(reg.getFirstObject()!);
   return issues.length;
 }
 

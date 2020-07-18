@@ -8,7 +8,7 @@ async function findIssues(abap: string): Promise<readonly Issue[]> {
   const reg = new Registry().addFile(new MemoryFile("zfoobar.prog.abap", abap));
   await reg.parseAsync();
   const rule = new PreferReturningToExporting();
-  return rule.initialize(reg).run(reg.getObjects()[0]);
+  return rule.initialize(reg).run(reg.getFirstObject()!);
 }
 
 describe("Rule: prefer returning to exporting", () => {

@@ -8,7 +8,7 @@ async function findIssues(abap: string, filename: string): Promise<Issue[]> {
   const reg = new Registry().addFile(new MemoryFile(filename, abap));
   await reg.parseAsync();
   const rule = new MainFileContents();
-  return rule.initialize(reg).run(reg.getObjects()[0]);
+  return rule.initialize(reg).run(reg.getFirstObject()!);
 }
 
 describe("Rule: main_file_contents", () => {

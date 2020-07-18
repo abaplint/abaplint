@@ -8,7 +8,7 @@ import {Issue} from "../../src/issue";
 async function run(reg: IRegistry): Promise<Issue[]> {
   await reg.parseAsync();
   const rule = new XMLConsistency();
-  return rule.initialize(reg).run(reg.getObjects()[0]);
+  return rule.initialize(reg).run(reg.getFirstObject()!);
 }
 
 const xml = `<?xml version="1.0" encoding="utf-8"?>

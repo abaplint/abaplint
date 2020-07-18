@@ -7,7 +7,7 @@ import {Issue} from "../../src/issue";
 
 async function run(reg: IRegistry): Promise<Issue[]> {
   await reg.parseAsync();
-  return new CheckTextElements().initialize(reg).run(reg.getObjects()[0]);
+  return new CheckTextElements().initialize(reg).run(reg.getFirstObject()!);
 }
 
 describe("Rule: check_text_elements", () => {
@@ -67,7 +67,7 @@ describe("Rule: check_text_elements", () => {
     reg.addFile(new MemoryFile("zfoobar.prog.abap", abap));
     reg.addFile(new MemoryFile("zfoobar.prog.xml", xml));
     reg.parse();
-    const issues = new CheckTextElements().run(reg.getObjects()[0]);
+    const issues = new CheckTextElements().run(reg.getFirstObject()!);
     expect(issues.length).to.equal(1);
   });
 */
