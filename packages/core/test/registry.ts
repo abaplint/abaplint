@@ -200,4 +200,23 @@ describe("Registry, object types", () => {
     expect(ret).to.equal("FILE1FILE2");
   });
 
+  it("add and remove", async () => {
+    const file = new MemoryFile("background.w3mi.data.png", "moo");
+    const registry = new Registry().addFile(file);
+    expect(registry.getObjectCount()).to.equal(1);
+    const obj = registry.getFirstObject();
+    expect(obj!.getType()).to.equal("W3MI");
+
+    registry.removeFile(file);
+    expect(registry.getObjectCount()).to.equal(0);
+  });
+
+  it("add two with same name", async () => {
+    const file1 = new MemoryFile("background.tran.xml", "moo");
+    const file2 = new MemoryFile("background.prog.xml", "moo");
+    const registry = new Registry().addFile(file1).addFile(file2);
+
+    expect(registry.getObjectCount()).to.equal(2);
+  });
+
 });
