@@ -25,6 +25,9 @@ export class DataElement extends AbstractObject {
 
     try {
       const parsed = this.parseXML();
+      if (parsed === undefined) {
+        return new Types.UnknownType("Data Element " + this.getName() + ", parser error");
+      }
       const dd04v = parsed.abapGit["asx:abap"]["asx:values"].DD04V;
       const ddic = new DDIC(reg);
 

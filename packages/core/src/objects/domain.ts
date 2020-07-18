@@ -26,6 +26,9 @@ export class Domain extends AbstractObject {
     try {
       const ddic = new DDIC(reg);
       const parsed = this.parseXML();
+      if (parsed === undefined) {
+        return new Types.UnknownType("Domain " + this.getName() + ", parser error");
+      }
       const dd01v = parsed.abapGit["asx:abap"]["asx:values"].DD01V;
       const datatype = dd01v.DATATYPE._text;
       const length = dd01v.LENG ? dd01v.LENG._text : undefined;

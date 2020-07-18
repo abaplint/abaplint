@@ -27,7 +27,7 @@ export class Interface extends ABAPObject {
       return undefined;
     }
     const parsed = this.parseXML();
-    if (parsed.abapGit["asx:abap"]["asx:values"] === undefined) {
+    if (parsed === undefined || parsed.abapGit["asx:abap"]["asx:values"] === undefined) {
       return undefined;
     }
     const vseo = parsed.abapGit["asx:abap"]["asx:values"].VSEOINTERF;
