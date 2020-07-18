@@ -30,7 +30,8 @@ export class ClassDefinition extends Identifier implements IClassDefinition {
       throw new Error("ClassDefinition, unexpected node type");
     }
 
-    const name = node.findFirstStatement(Statements.ClassDefinition)!.findFirstExpression(Expressions.ClassName)!.getFirstToken();
+    const def = node.findFirstStatement(Statements.ClassDefinition);
+    const name = def!.findDirectExpression(Expressions.ClassName)!.getFirstToken();
     super(name, filename);
 
     this.node = node;
@@ -38,9 +39,8 @@ export class ClassDefinition extends Identifier implements IClassDefinition {
 
     scope.push(ScopeType.ClassDefinition, name.getStr(), name.getStart(), filename);
 
-    const found = this.node.findFirstStatement(Statements.ClassDefinition);
-    const token = found ? found.findFirstExpression(SuperClassName) : undefined;
-    this.superClass = token ? token.getFirstToken().getStr() : undefined;
+    const token = def?.findDirectExpression(SuperClassName);
+    this.superClass = token?.getFirstToken().getStr();
 
     this.fromInterfaces(scope);
     this.fillScopeWithSuper(scope);
