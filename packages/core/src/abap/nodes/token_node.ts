@@ -1,12 +1,27 @@
 import {Token} from "../1_lexer/tokens/_token";
-import {AbstractNode} from "./_abstract_node";
+import {INode} from "./_inode";
 
-export class TokenNode extends AbstractNode {
+export class TokenNode implements INode {
   private readonly token: Token;
 
   public constructor(token: Token) {
-    super();
     this.token = token;
+  }
+
+  public addChild(_n: INode): void {
+    // todo, can this method be removed?
+    //throw new Error("Method not implemented.");
+  }
+
+  public setChildren(_children: INode[]): void {
+    // todo, can this method be removed?
+    //throw new Error("Method not implemented.");
+  }
+
+  public getChildren(): readonly INode[] {
+    return [];
+    // todo, can this method be removed?
+    //throw new Error("Method not implemented.");
   }
 
   public get(): Token {

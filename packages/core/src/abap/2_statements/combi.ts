@@ -3,7 +3,6 @@ import {Token as Tokens_Token} from "../1_lexer/tokens/_token";
 import {Position} from "../../position";
 import {TokenNode, ExpressionNode, TokenNodeRegex} from "../nodes";
 import {Version} from "../../version";
-import {INode} from "../nodes/_inode";
 import {IStatementRunnable} from "./statement_runnable";
 import {Result} from "./result";
 
@@ -880,7 +879,10 @@ export class Combi {
   }
 
 // assumption: no pragmas supplied in tokens input
-  public static run(runnable: IStatementRunnable, tokens: readonly Tokens_Token[], version: Version): INode[] | undefined {
+  public static run(
+    runnable: IStatementRunnable,
+    tokens: readonly Tokens_Token[], version: Version): (ExpressionNode | TokenNode)[] | undefined {
+
     this.ver = version;
 
     const input = new Result(tokens);

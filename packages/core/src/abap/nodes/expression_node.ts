@@ -5,7 +5,7 @@ import {Pragma, String, StringTemplate, StringTemplateBegin, StringTemplateMiddl
 import {IStatementRunnable} from "../2_statements/statement_runnable";
 import {AbstractNode} from "./_abstract_node";
 
-export class ExpressionNode extends AbstractNode {
+export class ExpressionNode extends AbstractNode<ExpressionNode | TokenNode> {
   private readonly expression: IStatementRunnable;
 
   public constructor(expression: IStatementRunnable) {

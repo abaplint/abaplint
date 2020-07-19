@@ -10,7 +10,7 @@ import {String, StringTemplate, StringTemplateBegin, StringTemplateMiddle, Strin
 import {IStatement} from "../2_statements/statements/_statement";
 import {IStatementRunnable} from "../2_statements/statement_runnable";
 
-export class StatementNode extends AbstractNode {
+export class StatementNode extends AbstractNode<ExpressionNode | TokenNode> {
   private readonly statement: IStatement;
   private readonly colon: Token | undefined;
   private readonly pragmas: readonly Token[];
@@ -39,7 +39,7 @@ export class StatementNode extends AbstractNode {
     return this.pragmas;
   }
 
-  public setChildren(children: INode[]): StatementNode {
+  public setChildren(children: (ExpressionNode | TokenNode)[]): StatementNode {
     if (children.length === 0) {
       throw "statement: zero children";
     }

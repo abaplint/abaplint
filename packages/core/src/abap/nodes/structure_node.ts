@@ -6,7 +6,7 @@ import {IStatementRunnable} from "../2_statements/statement_runnable";
 import {StatementNode} from "./statement_node";
 import {ExpressionNode} from "./expression_node";
 
-export class StructureNode extends AbstractNode {
+export class StructureNode extends AbstractNode<StructureNode | StatementNode> {
   private readonly structure: IStructure;
 
   public constructor(structure: IStructure) {
@@ -77,7 +77,8 @@ export class StructureNode extends AbstractNode {
   public findFirstExpression(type: new () => IStatementRunnable): ExpressionNode | undefined {
     for (const child of this.getChildren()) {
       if (child.get() instanceof type) {
-        return child as ExpressionNode;
+        throw new Error("sdfsdfsddsf");
+//        return child as ExpressionNode;
       } else if (child instanceof StatementNode) {
         const res = child.findFirstExpression(type);
         if (res) {
