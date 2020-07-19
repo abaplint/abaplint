@@ -14,6 +14,7 @@ export class ICFService extends AbstractObject {
     };
   }
 
+  // todo, cache parsed data
   public getHandlerList(): string[] | undefined {
     const ret: string[] = [];
 

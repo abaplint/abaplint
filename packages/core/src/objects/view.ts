@@ -14,6 +14,7 @@ export class View extends AbstractObject {
     };
   }
 
+  // todo, cache parsed data
   public getFields(): string[] {
     const xml = this.getXML();
     if (xml === undefined) {

@@ -15,6 +15,7 @@ export class MessageClass extends AbstractObject {
     };
   }
 
+  // todo, cache parsed data
   public getMessages(): Message[] {
     const xml = this.getXML();
     if (xml === undefined) {
