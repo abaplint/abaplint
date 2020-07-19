@@ -21,28 +21,29 @@ export class MethodDefinition extends Identifier implements IMethodDefinition {
     if (!(node.get() instanceof MethodDef)) {
       throw new Error("MethodDefinition, expected MethodDef as part of input node");
     }
-    const found = node.findFirstExpression(Expressions.MethodName);
+    const found = node.findDirectExpression(Expressions.MethodName);
     if (found === undefined) {
       throw new Error("MethodDefinition, expected MethodDef as part of input node");
     }
     super(found.getFirstToken(), filename);
 
     this.redefinition = false;
-    if (node.findFirstExpression(Expressions.Redefinition)) {
+    if (node.findDirectExpression(Expressions.Redefinition)) {
       this.redefinition = true;
     }
 
     this.eventHandler = false;
-    if (node.findFirstExpression(Expressions.EventHandler)) {
+    if (node.findDirectExpression(Expressions.EventHandler)) {
       this.eventHandler = true;
     }
 
     this.abstract = false;
-    if (node.findFirstExpression(Expressions.Abstract)) {
+    if (node.findDirectExpression(Expressions.Abstract)) {
       this.abstract = true;
     }
 
     this.static = false;
+    // checks for "CLASS-METHODS"
     if (node.getFirstToken().getStr().toUpperCase().startsWith("CLASS")) {
       this.static = true;
     }

@@ -2,6 +2,7 @@ import {ABAPObject} from "./_abap_object";
 import {ABAPFile} from "../abap/abap_file";
 
 export class Program extends ABAPObject {
+  private isIncludeValue: boolean | undefined = undefined;
 
   public getType(): string {
     return "PROG";
@@ -22,12 +23,18 @@ export class Program extends ABAPObject {
     };
   }
 
+  public setDirty(): void {
+    this.isIncludeValue = undefined;
+    super.setDirty();
+  }
+
   public isInclude(): boolean {
-    const file = this.getXMLFile();
-    if (file) {
-      return file.getRaw().includes("<SUBC>I</SUBC>");
+    if (this.isIncludeValue === undefined) {
+      const file = this.getXMLFile();
+      this.isIncludeValue = file ? file.getRaw().includes("<SUBC>I</SUBC>") : false;
     }
-    return false;
+
+    return this.isIncludeValue;
   }
 
 }

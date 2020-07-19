@@ -115,7 +115,7 @@ export class DDIC {
     }
   }
 
-  public textToType(text: string, length: string | undefined, decimals: string | undefined): AbstractType {
+  public textToType(text: string | undefined, length: string | undefined, decimals: string | undefined): AbstractType {
 // todo, support short strings, and length of different integers, NUMC vs CHAR, min/max length
     switch (text) {
       case "DEC":      // 1 <= len <= 31

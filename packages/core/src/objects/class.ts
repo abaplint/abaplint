@@ -13,6 +13,7 @@ export enum ClassCategory {
 
 export class Class extends ABAPObject {
   private def: IClassDefinition | undefined = undefined;
+  private parsedXML: {name?: string, description?: string, category?: string} | undefined = undefined;
 
   public getType(): string {
     return "CLAS";
@@ -45,6 +46,7 @@ export class Class extends ABAPObject {
 
   public setDirty(): void {
     this.def = undefined;
+    this.parsedXML = undefined;
     super.setDirty();
   }
 
@@ -55,43 +57,19 @@ export class Class extends ABAPObject {
 // -------------------
 
   public getDescription(): string | undefined {
-    const xml = this.getXML();
-    if (!xml) {
-      return undefined;
-    }
-    const parsed = this.parseXML();
-    if (parsed === undefined || parsed.abapGit["asx:abap"]["asx:values"] === undefined) {
-      return undefined;
-    }
-    const vseo = parsed.abapGit["asx:abap"]["asx:values"].VSEOCLASS;
-    return vseo.DESCRIPT ? vseo.DESCRIPT._text : "";
+    this.parseXML();
+    return this.parsedXML?.description;
   }
 
   public getNameFromXML(): string | undefined {
-    const xml = this.getXML();
-    if (!xml) {
-      return undefined;
-    }
-    const parsed = this.parseXML();
-    if (parsed.abapGit["asx:abap"]["asx:values"] === undefined) {
-      return undefined;
-    }
-    const vseo = parsed.abapGit["asx:abap"]["asx:values"].VSEOCLASS;
-    return vseo.CLSNAME ? vseo.CLSNAME._text : "";
+    this.parseXML();
+    return this.parsedXML?.name;
   }
 
   public getCategory(): string | undefined {
-    const xml = this.getXML();
-    if (!xml) {
-      return undefined;
-    }
-    const result = xml.match(/<CATEGORY>(\d{2})<\/CATEGORY>/);
-    if (result) {
-// https://blog.mariusschulz.com/2017/10/27/typescript-2-4-string-enums#no-reverse-mapping-for-string-valued-enum-members
-      return result[1];
-    } else {
-      return undefined;
-    }
+    this.parseXML();
+    // https://blog.mariusschulz.com/2017/10/27/typescript-2-4-string-enums#no-reverse-mapping-for-string-valued-enum-members
+    return this.parsedXML?.category;
   }
 
   public getLocalsImpFile(): ABAPFile | undefined {
@@ -101,6 +79,28 @@ export class Class extends ABAPObject {
       }
     }
     return undefined;
+  }
+
+/////////////////////////
+
+  protected parseXML() {
+    if (this.parsedXML !== undefined) {
+      return;
+    }
+
+    this.parsedXML = {};
+
+    const parsed = super.parseXML();
+    if (parsed === undefined
+        || parsed.abapGit["asx:abap"]["asx:values"] === undefined) {
+      return;
+    }
+
+    const vseo = parsed.abapGit["asx:abap"]["asx:values"].VSEOCLASS;
+
+    this.parsedXML.category = vseo.CATEGORY ? vseo.CATEGORY._text : undefined;
+    this.parsedXML.description = vseo.DESCRIPT ? vseo.DESCRIPT._text : "";
+    this.parsedXML.name = vseo.CLSNAME ? vseo.CLSNAME._text : "";
   }
 
 }
