@@ -78,6 +78,7 @@ export class Attributes implements IAttributes {
     return attributes;
   }
 
+  // todo, optimize
   public findByName(name: string): ClassAttribute | ClassConstant | undefined {
     for (const a of this.getStatic()) {
       if (a.getName().toUpperCase() === name.toUpperCase()) {

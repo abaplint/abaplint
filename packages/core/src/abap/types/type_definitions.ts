@@ -22,6 +22,7 @@ export class TypeDefinitions implements ITypeDefinitions {
     return this.list;
   }
 
+  // todo, optimize
   public getByName(name: string): TypedIdentifier | undefined {
     for (const t of this.getAll()) {
       if (t.getName().toUpperCase() === name.toUpperCase()) {
@@ -39,22 +40,22 @@ export class TypeDefinitions implements ITypeDefinitions {
       return;
     }
 
-    const pub = node.findFirstStructure(Structures.PublicSection);
+    const pub = node.findDirectStructure(Structures.PublicSection);
     if (pub) {
       this.parseDirect(pub, scope);
     }
-    const pro = node.findFirstStructure(Structures.ProtectedSection);
+    const pro = node.findDirectStructure(Structures.ProtectedSection);
     if (pro) {
       this.parseDirect(pro, scope);
     }
-    const pri = node.findFirstStructure(Structures.PrivateSection);
+    const pri = node.findDirectStructure(Structures.PrivateSection);
     if (pri) {
       this.parseDirect(pri, scope);
     }
   }
 
   private parseDirect(node: StructureNode, scope: CurrentScope) {
-    const contents = node.findFirstStructure(Structures.SectionContents);
+    const contents = node.findDirectStructure(Structures.SectionContents);
     if (contents === undefined) {
       return;
     }
