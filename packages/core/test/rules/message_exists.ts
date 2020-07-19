@@ -59,7 +59,7 @@ describe("Message rule", () => {
     expect(issues.length).to.equals(0);
   });
 
-  it("MESSAGE, not class found", async () => {
+  it("MESSAGE, class not found", async () => {
     const abap = "MESSAGE e000(zsdf).";
     const issues = await run(abap);
     expect(issues.length).to.equals(1);
