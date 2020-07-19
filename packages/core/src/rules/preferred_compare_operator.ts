@@ -50,7 +50,7 @@ export class PreferredCompareOperator extends ABAPRule {
       struc.findAllExpressions(Expressions.SQLCompareOperator));
     for (const op of operators) {
       const token = op.getLastToken();
-      if (this.conf.badOperators.indexOf(token.getStr()) >= 0) {
+      if (this.conf.badOperators.indexOf(token.getStr().toUpperCase()) >= 0) {
         issues.push(this.createIssue(token, file));
       }
     }
