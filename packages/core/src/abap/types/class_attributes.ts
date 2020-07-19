@@ -100,17 +100,17 @@ export class Attributes implements IAttributes {
 /////////////////////////////
 
   private parse(node: StructureNode, scope: CurrentScope): void {
-    const cdef = node.findFirstStructure(Structures.ClassDefinition);
+    const cdef = node.findDirectStructure(Structures.ClassDefinition);
     if (cdef) {
-      this.parseSection(cdef.findFirstStructure(Structures.PublicSection), Visibility.Public, scope);
-      this.parseSection(cdef.findFirstStructure(Structures.PrivateSection), Visibility.Private, scope);
-      this.parseSection(cdef.findFirstStructure(Structures.ProtectedSection), Visibility.Protected, scope);
+      this.parseSection(cdef.findDirectStructure(Structures.PublicSection), Visibility.Public, scope);
+      this.parseSection(cdef.findDirectStructure(Structures.PrivateSection), Visibility.Private, scope);
+      this.parseSection(cdef.findDirectStructure(Structures.ProtectedSection), Visibility.Protected, scope);
       return;
     }
 
-    const idef = node.findFirstStructure(Structures.Interface);
+    const idef = node.findDirectStructure(Structures.Interface);
     if (idef) {
-      this.parseSection(idef.findFirstStructure(Structures.SectionContents), Visibility.Public, scope);
+      this.parseSection(idef.findDirectStructure(Structures.SectionContents), Visibility.Public, scope);
       return;
     }
 
