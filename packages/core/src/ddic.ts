@@ -60,7 +60,7 @@ export class DDIC {
   }
 
   public lookup(name: string): AbstractType {
-    const found = this.reg.getObjectByType(Table, name);
+    const found = this.reg.getObject("TABL", name) as Table | undefined;
     if (found) {
       return found.parseType(this.reg);
     }
@@ -72,7 +72,7 @@ export class DDIC {
   }
 
   public lookupDomain(name: string): AbstractType {
-    const found = this.reg.getObjectByType(Domain, name);
+    const found = this.reg.getObject("DOMA", name) as Domain | undefined;
     if (found) {
       return found.parseType(this.reg);
     } else if (this.reg.inErrorNamespace(name)) {
@@ -83,7 +83,7 @@ export class DDIC {
   }
 
   public lookupDataElement(name: string): AbstractType {
-    const found = this.reg.getObjectByType(DataElement, name);
+    const found = this.reg.getObject("DTEL", name) as DataElement | undefined;
     if (found) {
       return found.parseType(this.reg);
     } else if (this.reg.inErrorNamespace(name)) {
@@ -94,7 +94,7 @@ export class DDIC {
   }
 
   public lookupTable(name: string): AbstractType {
-    const found = this.reg.getObjectByType(Table, name);
+    const found = this.reg.getObject("TABL", name) as Table | undefined;
     if (found) {
       return found.parseType(this.reg);
     } else if (this.reg.inErrorNamespace(name)) {
@@ -105,7 +105,7 @@ export class DDIC {
   }
 
   public lookupTableType(name: string): AbstractType {
-    const found = this.reg.getObjectByType(TableType, name);
+    const found = this.reg.getObject("TTYP", name) as TableType | undefined;
     if (found) {
       return found.parseType(this.reg);
     } else if (this.reg.inErrorNamespace(name)) {

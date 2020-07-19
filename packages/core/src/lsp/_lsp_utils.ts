@@ -17,7 +17,13 @@ export interface ICursorData {
 }
 
 function getABAPObjects(reg: IRegistry): ABAPObject[] {
-  return reg.getObjects().filter((obj) => { return obj instanceof ABAPObject; }) as ABAPObject[];
+  const ret: ABAPObject[] = [];
+  for (const o of reg.getObjects()) {
+    if (o instanceof ABAPObject) {
+      ret.push(o);
+    }
+  }
+  return ret;
 }
 
 export class LSPUtils {

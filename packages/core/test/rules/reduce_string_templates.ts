@@ -7,7 +7,7 @@ import {Issue} from "../../src/issue";
 async function run(abap: string): Promise<readonly Issue[]> {
   const reg = new Registry().addFile(new MemoryFile("zfoobar.prog.abap", abap));
   await reg.parseAsync();
-  return new ReduceStringTemplates().initialize(reg).run(reg.getObjects()[0]);
+  return new ReduceStringTemplates().initialize(reg).run(reg.getFirstObject()!);
 }
 
 describe("Rule: reduce_string_templates", () => {

@@ -23,7 +23,7 @@ describe("Rule: no_unknown_ddic", () => {
     const reg = new Registry().addFile(new MemoryFile("zddic.dtel.xml", xml));
     await reg.parseAsync();
 
-    const issues = new CheckDDIC().initialize(reg).run(reg.getObjects()[0]);
+    const issues = new CheckDDIC().initialize(reg).run(reg.getFirstObject()!);
     expect(issues.length).to.equal(0);
   });
 
@@ -32,7 +32,7 @@ describe("Rule: no_unknown_ddic", () => {
     const reg = new Registry().addFile(new MemoryFile("zddic.dtel.xml", xml));
     await reg.parseAsync();
 
-    const issues = new CheckDDIC().initialize(reg).run(reg.getObjects()[0]);
+    const issues = new CheckDDIC().initialize(reg).run(reg.getFirstObject()!);
     expect(issues.length).to.equal(1);
   });
 

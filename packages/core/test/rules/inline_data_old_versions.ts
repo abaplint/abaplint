@@ -11,7 +11,7 @@ async function findIssues(abap: string, version?: Version): Promise<readonly Iss
   const reg = new Registry(config).addFile(new MemoryFile("zfoo.prog.abap", abap));
   await reg.parseAsync();
   const rule = new InlineDataOldVersions();
-  return rule.initialize(reg).run(reg.getObjects()[0]);
+  return rule.initialize(reg).run(reg.getFirstObject()!);
 }
 
 describe("Rule: inline data on old versions", () => {

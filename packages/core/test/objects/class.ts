@@ -44,7 +44,7 @@ describe("Objects, class, getName", () => {
       "CLASS zcl_name IMPLEMENTATION.\n" +
       "ENDCLASS.";
     const reg = new Registry().addFile(new MemoryFile("zcl_name.clas.abap", abap)).parse();
-    const obj = reg.getObjects()[0];
+    const obj = reg.getFirstObject()!;
     expect(obj.getName()).to.equal("ZCL_NAME");
   });
 

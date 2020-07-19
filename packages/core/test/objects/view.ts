@@ -83,7 +83,7 @@ describe("View, parse XML", () => {
 
     const reg = new Registry().addFile(new MemoryFile("zag_unit_testv.view.xml", xml));
     await reg.parseAsync();
-    const tabl = reg.getObjects()[0] as View;
+    const tabl = reg.getFirstObject()! as View;
     expect(tabl.getName()).to.equal("ZAG_UNIT_TESTV");
     const fields = tabl.getFields();
     expect(fields.length).to.equal(4);

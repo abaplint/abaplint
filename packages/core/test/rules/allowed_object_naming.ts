@@ -8,7 +8,7 @@ async function findIssues(filename: string): Promise<Issue[]> {
   const reg = new Registry().addFile(new MemoryFile(filename, ""));
   await reg.parseAsync();
   const rule = new AllowedObjectNaming();
-  return rule.run(reg.getObjects()[0]);
+  return rule.run(reg.getFirstObject()!);
 }
 
 describe("Rule: allowed_object_naming", () => {

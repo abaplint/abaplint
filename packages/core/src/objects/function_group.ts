@@ -104,6 +104,9 @@ export class FunctionGroup extends ABAPObject {
       return [];
     }
     const includes = parsed.abapGit["asx:abap"]["asx:values"].INCLUDES;
+    if (includes === undefined) {
+      return [];
+    }
 
     const ret: string[] = [];
     for (const i of xmlToArray(includes.SOBJ_NAME)) {

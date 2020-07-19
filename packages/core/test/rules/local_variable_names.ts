@@ -11,7 +11,7 @@ async function findIssues(abap: string, config?: LocalVariableNamesConf): Promis
   if (config) {
     rule.setConfig(config);
   }
-  return rule.initialize(reg).run(reg.getObjects()[0]);
+  return rule.initialize(reg).run(reg.getFirstObject()!);
 }
 
 describe("Rule: local variable names (required pattern)", () => {

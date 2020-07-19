@@ -45,10 +45,10 @@ class ParsingPerformance {
 }
 
 export class Registry implements IRegistry {
-  private conf: IConfiguration;
-  private readonly objects: IObject[] = [];
-  private issues: Issue[] = [];
+  private readonly objects: { [index: string]: { [index: string]: IObject } } = {};
   private readonly dependencies: string[] = [];
+  private conf: IConfiguration;
+  private issues: Issue[] = [];
 
   public constructor(conf?: IConfiguration) {
     this.conf = conf ? conf : Config.getDefault();
@@ -59,12 +59,33 @@ export class Registry implements IRegistry {
     return "{{ VERSION }}";
   }
 
-  public getObjects(): IObject[] {
-    return this.objects;
+  public* getObjects(): Generator<IObject, void, undefined> {
+    for (const name in this.objects) {
+      for (const type in this.objects[name]) {
+        yield this.objects[name][type];
+      }
+    }
+  }
+
+  public getFirstObject(): IObject | undefined {
+    for (const name in this.objects) {
+      for (const type in this.objects[name]) {
+        return this.objects[name][type];
+      }
+    }
+    return undefined;
+  }
+
+  public getObjectCount(): number {
+    let res = 0;
+    for (const _o of this.getObjects()) {
+      res = res + 1;
+    }
+    return res;
   }
 
   public getFileByName(filename: string): IFile | undefined {
-    for (const o of this.objects) {
+    for (const o of this.getObjects()) {
       for (const f of o.getFiles()) {
         if (f.getFilename().toUpperCase() === filename.toUpperCase()) {
           return f;
@@ -78,22 +99,12 @@ export class Registry implements IRegistry {
     if (type === undefined) {
       return undefined;
     }
-    for (const obj of this.objects) {
-// todo, this is slow
-      if (obj.getType() === type && obj.getName().toUpperCase() === name.toUpperCase()) {
-        return obj;
-      }
-    }
-    return undefined;
-  }
 
-  public getObjectByType<T>(type: new (...args: any[]) => T, name: string): T | undefined {
-    for (const obj of this.objects) {
-// todo, this is slow
-      if (obj.getName().toUpperCase() === name.toUpperCase() && obj instanceof type) {
-        return obj;
-      }
+    const searchName = name.toUpperCase();
+    if (this.objects[searchName]) {
+      return this.objects[searchName][type];
     }
+
     return undefined;
   }
 
@@ -139,7 +150,9 @@ export class Registry implements IRegistry {
       if (f.getFilename().split(".").length <= 2) {
         continue; // not a abapGit file
       }
-      this.findOrCreate(f.getObjectName(), f.getObjectType()).addFile(f);
+      const found = this.findOrCreate(f.getObjectName(), f.getObjectType());
+
+      found.addFile(f);
     }
     return this;
   }
@@ -199,7 +212,7 @@ export class Registry implements IRegistry {
     ParsingPerformance.clear();
 
     this.issues = [];
-    for (const o of this.objects) {
+    for (const o of this.getObjects()) {
       this.parsePrivate(o);
       this.issues = this.issues.concat(o.getParsingIssues());
     }
@@ -214,18 +227,18 @@ export class Registry implements IRegistry {
     }
 
     ParsingPerformance.clear();
-    input?.progress?.set(this.objects.length, "Lexing and parsing");
+    input?.progress?.set(this.getObjectCount(), "Lexing and parsing");
 
     this.issues = [];
-    for (const o of this.objects) {
+    for (const o of this.getObjects()) {
       await input?.progress?.tick("Lexing and parsing(" + this.conf.getVersion() + ") - " + o.getType() + " " + o.getName());
       this.parsePrivate(o);
       this.issues = this.issues.concat(o.getParsingIssues());
     }
-    new FindGlobalDefinitions(this).run();
     if (input?.outputPerformance === true) {
       ParsingPerformance.output();
     }
+    new FindGlobalDefinitions(this).run(input?.progress);
 
     return this;
   }
@@ -243,11 +256,17 @@ export class Registry implements IRegistry {
   }
 
   private isDirty(): boolean {
-    return this.objects.some((o) => o.isDirty());
+    for (const o of this.getObjects()) {
+      const dirty = o.isDirty();
+      if (dirty === true) {
+        return true;
+      }
+    }
+    return false;
   }
 
   private runRules(input?: IRunInput, iobj?: IObject): readonly Issue[] {
-    const rulePerformance: { [index:string] : number} = {};
+    const rulePerformance: {[index: string]: number} = {};
     let issues = this.issues.slice(0);
 
     const objects = iobj ? [iobj] : this.getObjects();
@@ -332,8 +351,15 @@ export class Registry implements IRegistry {
     try {
       return this.find(name, type);
     } catch {
-      const add = ArtifactsObjects.newObject(name, type ? type : "UNKNOWN");
-      this.objects.push(add);
+      const newName = name.toUpperCase();
+      const newType = type ? type : "UNKNOWN";
+      const add = ArtifactsObjects.newObject(newName, newType);
+
+      if (this.objects[newName] === undefined) {
+        this.objects[newName] = {};
+      }
+      this.objects[newName][newType] = add;
+
       return add;
     }
   }
@@ -343,23 +369,27 @@ export class Registry implements IRegistry {
       return;
     }
 
-    for (let i = 0; i < this.objects.length; i++) {
-      if (this.objects[i] === remove) {
-        this.objects.splice(i, 1);
-        return;
-      }
+    if (this.objects[remove.getName()][remove.getType()] === undefined) {
+      throw new Error("removeObject: object not found");
     }
-    throw new Error("removeObject: object not found");
+
+    if (Object.keys(this.objects[remove.getName()]).length === 1) {
+      delete this.objects[remove.getName()];
+    } else {
+      delete this.objects[remove.getName()][remove.getType()];
+    }
+
   }
 
   private find(name: string, type?: string): IObject {
-    for (const obj of this.objects) { // todo, this is slow
-      if (obj.getType() === type && obj.getName() === name) {
-        return obj;
-      } else if (type === undefined && obj.getType() === "UNKONWN" && obj.getName() === name) {
-        return obj;
-      }
+    const searchType = type ? type : "UNKNOWN";
+    const searchName = name.toUpperCase();
+
+    if (this.objects[searchName] !== undefined
+        && this.objects[searchName][searchType]) {
+      return this.objects[searchName][searchType];
     }
+
     throw new Error("find: object not found, " + type + " " + name);
   }
 

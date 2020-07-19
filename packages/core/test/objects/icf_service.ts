@@ -34,7 +34,7 @@ describe("ICF service, parse XML", () => {
 
     const reg = new Registry().addFile(new MemoryFile("zabapgitserver 9def6c78d0beedf8d5b04ba6c.sicf.xml", xml));
     await reg.parseAsync();
-    const sicf = reg.getObjects()[0] as ICFService;
+    const sicf = reg.getFirstObject()! as ICFService;
 
     const handlers = sicf.getHandlerList();
     expect(handlers).to.not.equal(undefined);

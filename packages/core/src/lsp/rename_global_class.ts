@@ -16,8 +16,7 @@ export class RenameGlobalClass {
 
   public run(oldName: string, newName: string): WorkspaceEdit | undefined {
     let changes: (TextDocumentEdit | CreateFile | RenameFile | DeleteFile)[] = [];
-    // const clas = this.reg.getObject("CLAS", oldName) as Class | undefined;
-    const clas = this.reg.getObjectByType(Class, oldName);
+    const clas = this.reg.getObject("CLAS", oldName) as Class | undefined;
     if (clas === undefined) {
       return undefined;
     }

@@ -11,7 +11,7 @@ async function findIssues(filename: string, expectedIssueCount: number, config?:
   if (config) {
     rule.setConfig(config);
   }
-  const issues = rule.initialize(reg).run(reg.getObjects()[0]);
+  const issues = rule.initialize(reg).run(reg.getFirstObject()!);
   expect(issues.length).to.equal(expectedIssueCount);
   return issues;
 }

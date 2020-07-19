@@ -94,7 +94,7 @@ module.exports = {
           "always"
       ],
       "@typescript-eslint/triple-slash-reference": "error",
-      "@typescript-eslint/type-annotation-spacing": "off",
+      "@typescript-eslint/type-annotation-spacing": ["error", { "before": false, "after": true, overrides: { arrow: { before: true, after: true }}}],
       "@typescript-eslint/unified-signatures": "error",
       "camelcase": "off",
       "capitalized-comments": [
