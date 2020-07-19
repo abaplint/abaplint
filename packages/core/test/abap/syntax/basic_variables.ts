@@ -1334,4 +1334,18 @@ ENDCASE.`;
     expect(identifier?.getType()).to.be.instanceof(Basic.IntegerType);
   });
 
+  it("boolc inline", () => {
+    const abap = `DATA(foo) = boolc( 1 = 2 ).`;
+    const identifier = resolveVariable(abap, "foo");
+    expect(identifier).to.not.equal(undefined);
+    expect(identifier?.getType()).to.be.instanceof(Basic.StringType);
+  });
+
+  it("xsdbool inline", () => {
+    const abap = `DATA(foo) = xsdbool( 1 = 2 ).`;
+    const identifier = resolveVariable(abap, "foo");
+    expect(identifier).to.not.equal(undefined);
+    expect(identifier?.getType()).to.be.instanceof(Basic.CharacterType);
+  });
+
 });
