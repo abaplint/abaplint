@@ -18,21 +18,18 @@ export class ExpressionNode extends AbstractNode<ExpressionNode | TokenNode> {
   }
 
   public countTokens(): number {
-    // todo
-    // @ts-ignore
-    const count = this.getChildren().reduce((a, b) => { return a + b.countTokens(); }, 0);
-    return count;
+    let ret = 0;
+    for (const c of this.getChildren()) {
+      ret = ret + c.countTokens();
+    }
+    return ret;
   }
 
   public getFirstToken(): Token {
     for (const child of this.getChildren()) {
-      if (child instanceof TokenNode) {
-        return child.get();
-      } else if (child instanceof ExpressionNode) {
-        return child.getFirstToken();
-      }
+      return child.getFirstToken();
     }
-    throw new Error("getFirstToken, unexpected type");
+    throw new Error("ExpressionNode, getFirstToken, no children");
   }
 
   public concatTokens(): string {
@@ -95,6 +92,7 @@ export class ExpressionNode extends AbstractNode<ExpressionNode | TokenNode> {
 
     if (b instanceof TokenNode) {
       tokens.push(b.get());
+      return tokens;
     }
 
     for (const c of b.getChildren()) {
@@ -107,16 +105,15 @@ export class ExpressionNode extends AbstractNode<ExpressionNode | TokenNode> {
 
     return tokens;
   }
+
   public getLastToken(): Token {
     const child = this.getLastChild();
 
-    if (child instanceof TokenNode) {
-      return child.get();
-    } else if (child instanceof ExpressionNode) {
+    if (child) {
       return child.getLastToken();
     }
 
-    throw new Error("getLastToken, unexpected type");
+    throw new Error("ExpressionNode, getLastToken, no children");
   }
 
   public getAllTokens(): Token[] {
@@ -125,10 +122,8 @@ export class ExpressionNode extends AbstractNode<ExpressionNode | TokenNode> {
     for (const child of this.getChildren()) {
       if (child instanceof TokenNode) {
         ret.push(child.get());
-      } else if (child instanceof ExpressionNode) {
-        ret = ret.concat(child.getAllTokens());
       } else {
-        throw new Error("getAllTokens, unexpected type");
+        ret = ret.concat(child.getAllTokens());
       }
     }
 
@@ -168,14 +163,8 @@ export class ExpressionNode extends AbstractNode<ExpressionNode | TokenNode> {
 
   public findDirectTokenByText(text: string): Token | undefined {
     for (const child of this.getChildren()) {
-      if (child instanceof TokenNode) {
-        if (child.get().getStr().toUpperCase() === text.toUpperCase()) {
-          return child.get();
-        }
-      } else if (child instanceof ExpressionNode) {
-        continue;
-      } else {
-        throw new Error("findDirectTokenByText, unexpected type");
+      if (child instanceof TokenNode && child.get().getStr().toUpperCase() === text.toUpperCase()) {
+        return child.get();
       }
     }
     return undefined;
@@ -184,14 +173,12 @@ export class ExpressionNode extends AbstractNode<ExpressionNode | TokenNode> {
   public findAllExpressions(type: new () => IStatementRunnable): readonly ExpressionNode[] {
     let ret: ExpressionNode[] = [];
     for (const child of this.getChildren()) {
-      if (child.get() instanceof type) {
-        ret.push(child as ExpressionNode);
-      } else if (child instanceof TokenNode) {
+      if (child instanceof TokenNode) {
         continue;
-      } else if (child instanceof ExpressionNode) {
-        ret = ret.concat(child.findAllExpressions(type));
+      } else if (child.get() instanceof type) {
+        ret.push(child);
       } else {
-        throw new Error("findAllExpressions, unexpected type");
+        ret = ret.concat(child.findAllExpressions(type));
       }
     }
     return ret;
@@ -203,17 +190,15 @@ export class ExpressionNode extends AbstractNode<ExpressionNode | TokenNode> {
     }
 
     for (const child of this.getChildren()) {
-      if (child.get() instanceof type) {
-        return child as ExpressionNode;
-      } else if (child instanceof TokenNode) {
+      if (child instanceof TokenNode) {
         continue;
-      } else if (child instanceof ExpressionNode) {
+      } else if (child.get() instanceof type) {
+        return child;
+      } else {
         const res = child.findFirstExpression(type);
         if (res) {
           return res;
         }
-      } else {
-        throw new Error("findFirstExpression, unexpected type");
       }
     }
     return undefined;

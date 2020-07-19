@@ -9,19 +9,15 @@ export class TokenNode implements INode {
   }
 
   public addChild(_n: INode): void {
-    // todo, can this method be removed?
-    //throw new Error("Method not implemented.");
+    throw new Error("TokenNode, Method not implemented.");
   }
 
   public setChildren(_children: INode[]): void {
-    // todo, can this method be removed?
-    //throw new Error("Method not implemented.");
+    throw new Error("TokenNode, Method not implemented.");
   }
 
   public getChildren(): readonly INode[] {
     return [];
-    // todo, can this method be removed?
-    //throw new Error("Method not implemented.");
   }
 
   public get(): Token {
