@@ -9,6 +9,8 @@ import * as BasicTypes from "../../types/basic";
 import {AbstractType} from "../../types/basic/_abstract_type";
 import {IProgress} from "../../../progress";
 
+// todo: rewrite all of this to use a graph based deterministic approach instead
+
 // this makes sure to cache global interface and class definitions in the corresponding object
 export class FindGlobalDefinitions {
   private readonly reg: IRegistry;
@@ -18,7 +20,7 @@ export class FindGlobalDefinitions {
   }
 
   public run(progress?: IProgress) {
-    const MAX_PASSES = 3;
+    const MAX_PASSES = 5;
     let lastPass = Number.MAX_SAFE_INTEGER;
 
     // the setDirty method in the objects clears the definitions
