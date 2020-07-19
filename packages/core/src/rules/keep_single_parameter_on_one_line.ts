@@ -41,8 +41,9 @@ export class KeepSingleParameterCallsOnOneLine extends ABAPRule {
     }
 
     for (const s of file.getStatements()) {
-      // todo, add this as configurable
-      if (this.calcStatementLength(s) > this.getConfig().length
+      // todo, add length as configurable setting
+      if (this.isMultiLine(s) === false
+          || this.calcStatementLength(s) > this.getConfig().length
           || this.containsNewLineValue(s)
           || this.containsNewLineTableExpression(s)
           || this.containsNewlineTemplate(s)) {
@@ -60,8 +61,7 @@ export class KeepSingleParameterCallsOnOneLine extends ABAPRule {
 
   private containsNewLineTableExpression(s: StatementNode): boolean {
     for (const st of s.findAllExpressions(Expressions.TableExpression)) {
-      const tokens = st.getAllTokens();
-      if (tokens[0].getRow() !== tokens[tokens.length - 1].getRow()) {
+      if (st.getFirstToken().getRow() !== st.getLastToken().getRow()) {
         return true;
       }
     }
@@ -71,11 +71,8 @@ export class KeepSingleParameterCallsOnOneLine extends ABAPRule {
   private containsNewLineValue(s: StatementNode): boolean {
     for (const st of s.findAllExpressions(Expressions.Source)) {
       const first = st.getFirstToken().getStr().toUpperCase();
-      if (first === "VALUE") {
-        const tokens = st.getAllTokens();
-        if (tokens[0].getRow() !== tokens[tokens.length - 1].getRow()) {
-          return true;
-        }
+      if (first === "VALUE" && st.getFirstToken().getRow() !== st.getLastToken().getRow()) {
+        return true;
       }
     }
     return false;
@@ -120,10 +117,9 @@ export class KeepSingleParameterCallsOnOneLine extends ABAPRule {
     return length;
   }
 
-  private isMultiLine(c: ExpressionNode): boolean {
-    const tokens = c.getAllTokens();
-    const first = tokens[0];
-    const last = tokens[tokens.length - 1];
+  private isMultiLine(c: ExpressionNode | StatementNode): boolean {
+    const first = c.getFirstToken();
+    const last = c.getLastToken();
 
     return first.getStart().getRow() < last.getStart().getRow();
   }
