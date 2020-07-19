@@ -1,11 +1,11 @@
-import {CountableNode} from "./_countable_node";
 import {TokenNode} from "./token_node";
 import {Token} from "../1_lexer/tokens/_token";
 import {INode} from "./_inode";
 import {Pragma, String, StringTemplate, StringTemplateBegin, StringTemplateMiddle, StringTemplateEnd, Comment} from "../1_lexer/tokens";
 import {IStatementRunnable} from "../2_statements/statement_runnable";
+import {AbstractNode} from "./_abstract_node";
 
-export class ExpressionNode extends CountableNode {
+export class ExpressionNode extends AbstractNode {
   private readonly expression: IStatementRunnable;
 
   public constructor(expression: IStatementRunnable) {
@@ -15,6 +15,13 @@ export class ExpressionNode extends CountableNode {
 
   public get(): IStatementRunnable {
     return this.expression;
+  }
+
+  public countTokens(): number {
+    // todo
+    // @ts-ignore
+    const count = this.getChildren().reduce((a, b) => { return a + b.countTokens(); }, 0);
+    return count;
   }
 
   public getFirstToken(): Token {

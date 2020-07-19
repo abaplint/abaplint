@@ -3,7 +3,6 @@ import {Token as Tokens_Token} from "../1_lexer/tokens/_token";
 import {Position} from "../../position";
 import {TokenNode, ExpressionNode, TokenNodeRegex} from "../nodes";
 import {Version} from "../../version";
-import {CountableNode} from "../nodes/_countable_node";
 import {INode} from "../nodes/_inode";
 import {IStatementRunnable} from "./statement_runnable";
 import {Result} from "./result";
@@ -623,7 +622,7 @@ export abstract class Expression implements IStatementRunnable {
         if (consumed > 0) {
           const length = t.getNodes().length;
           const re = new ExpressionNode(this);
-          const children: CountableNode[] = [];
+          const children: (ExpressionNode | TokenNode)[] = [];
           while (consumed > 0) {
             const sub = t.popNode();
             if (sub) {

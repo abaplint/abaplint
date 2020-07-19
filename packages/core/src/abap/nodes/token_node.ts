@@ -1,7 +1,7 @@
 import {Token} from "../1_lexer/tokens/_token";
-import {CountableNode} from "./_countable_node";
+import {AbstractNode} from "./_abstract_node";
 
-export class TokenNode extends CountableNode {
+export class TokenNode extends AbstractNode {
   private readonly token: Token;
 
   public constructor(token: Token) {
@@ -14,7 +14,7 @@ export class TokenNode extends CountableNode {
   }
 
   public countTokens(): number {
-    return super.countTokens() + 1;
+    return 1;
   }
 
   public getFirstToken(): Token {
