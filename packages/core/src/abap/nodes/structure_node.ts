@@ -109,6 +109,14 @@ export class StructureNode extends AbstractNode<StructureNode | StatementNode> {
     return ret;
   }
 
+  public findAllExpressionsMulti(type: (new () => IStatementRunnable)[]): ExpressionNode[] {
+    let ret: ExpressionNode[] = [];
+    for (const child of this.getChildren()) {
+      ret = ret.concat(child.findAllExpressionsMulti(type));
+    }
+    return ret;
+  }
+
   public findAllStatements(type: new () => IStatement): StatementNode[] {
     let ret: StatementNode[] = [];
     for (const child of this.getChildren()) {

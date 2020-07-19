@@ -36,17 +36,18 @@ https://docs.abapopenchecks.org/checks/30/`,
     let issues: Issue[] = [];
 
     for (const statement of file.getStatements()) {
-      for (const b of statement.findAllExpressions(MethodCallBody)) {
-        if (b.getFirstToken().getStr() !== "(") {
-          continue;
+      const expressions = statement.findAllExpressionsMulti([MethodCallBody, MethodCall]);
+
+      for (const b of expressions) {
+        if (b.get() instanceof MethodCallBody) {
+          if (b.getFirstToken().getStr() !== "(") {
+            continue;
+          }
+          issues = issues.concat(this.check(b, file));
+        } else if (b.get() instanceof MethodCall) {
+          issues = issues.concat(this.check(b, file));
         }
-        issues = issues.concat(this.check(b, file));
       }
-
-      for (const b of statement.findAllExpressions(MethodCall)) {
-        issues = issues.concat(this.check(b, file));
-      }
-
     }
 
     return issues;
@@ -61,27 +62,29 @@ https://docs.abapopenchecks.org/checks/30/`,
   }
 
   private check(node: ExpressionNode, file: ABAPFile): Issue[] {
+    const e = node.findFirstExpression(MethodParameters);
+    if (e === undefined) {
+      return [];
+    }
 
-    for (const e of node.findAllExpressions(MethodParameters)) {
-      if (e.getFirstToken().getStr().toUpperCase() !== "EXPORTING") {
-        continue;
-      }
+    if (e.getFirstToken().getStr().toUpperCase() !== "EXPORTING") {
+      return [];
+    }
 
-      const tokens = e.getDirectTokens();
-      const strings = tokens.map(t => t.getStr().toUpperCase());
+    const tokens = e.getDirectTokens();
+    const strings = tokens.map(t => t.getStr().toUpperCase());
 
-      if (strings[0] === "EXPORTING"
+    if (strings[0] === "EXPORTING"
           && strings.includes("IMPORTING") === false
           && strings.includes("RECEIVING") === false
           && strings.includes("EXCEPTIONS") === false
           && strings.includes("CHANGING") === false) {
 
-        const next = e.getAllTokens()[1];
-        const fix = EditHelper.deleteRange(file, tokens[0].getStart(), next.getStart());
+      const next = e.getAllTokens()[1];
+      const fix = EditHelper.deleteRange(file, tokens[0].getStart(), next.getStart());
 
-        const issue = Issue.atToken(file, tokens[0], this.getMessage(), this.getMetadata().key, fix);
-        return [issue];
-      }
+      const issue = Issue.atToken(file, tokens[0], this.getMessage(), this.getMetadata().key, fix);
+      return [issue];
     }
 
     return [];

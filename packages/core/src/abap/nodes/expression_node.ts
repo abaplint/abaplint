@@ -184,6 +184,25 @@ export class ExpressionNode extends AbstractNode<ExpressionNode | TokenNode> {
     return ret;
   }
 
+  public findAllExpressionsMulti(type: (new () => IStatementRunnable)[]): ExpressionNode[] {
+    let ret: ExpressionNode[] = [];
+    for (const child of this.getChildren()) {
+      if (child instanceof TokenNode) {
+        continue;
+      }
+      const before = ret.length;
+      for (const t of type) {
+        if (child.get() instanceof t) {
+          ret.push(child);
+        }
+      }
+      if (before === ret.length) {
+        ret = ret.concat(child.findAllExpressionsMulti(type));
+      }
+    }
+    return ret;
+  }
+
   public findFirstExpression(type: new () => IStatementRunnable): ExpressionNode | undefined {
     if (this.get() instanceof type) {
       return this;

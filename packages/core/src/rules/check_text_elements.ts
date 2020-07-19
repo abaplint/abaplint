@@ -59,7 +59,13 @@ export class CheckTextElements implements IRule {
         texts = main1.getTexts();
       }
 
-      for (const e of stru.findAllExpressions(Expressions.TextElement)) {
+      const expressions = stru.findAllExpressionsMulti([Expressions.TextElement, Expressions.TextElementString]);
+
+      for (const e of expressions) {
+        if (!(e.get() instanceof Expressions.TextElement)) {
+          continue;
+        }
+
         const token = e.findFirstExpression(Expressions.TextElementKey)!.getFirstToken();
         const key = token.getStr();
         if (this.findKey(key, texts) === undefined) {
@@ -68,7 +74,11 @@ export class CheckTextElements implements IRule {
         }
       }
 
-      for (const e of stru.findAllExpressions(Expressions.TextElementString)) {
+      for (const e of expressions) {
+        if (!(e.get() instanceof Expressions.TextElementString)) {
+          continue;
+        }
+
         const token = e.findFirstExpression(Expressions.TextElementKey)!.getFirstToken();
         const code = e.getFirstToken().getStr();
         const key = token.getStr();

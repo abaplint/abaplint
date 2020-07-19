@@ -46,10 +46,10 @@ export class PreferredCompareOperator extends ABAPRule {
       return [];
     }
 
-    const operators = struc.findAllExpressions(Expressions.CompareOperator).concat(
-      struc.findAllExpressions(Expressions.SQLCompareOperator));
+    const operators = struc.findAllExpressionsMulti([Expressions.CompareOperator, Expressions.SQLCompareOperator]);
     for (const op of operators) {
       const token = op.getLastToken();
+      // todo, performance, lookup in hash map instead(JS object)
       if (this.conf.badOperators.indexOf(token.getStr().toUpperCase()) >= 0) {
         issues.push(this.createIssue(token, file));
       }

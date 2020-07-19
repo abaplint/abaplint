@@ -211,6 +211,25 @@ export class StatementNode extends AbstractNode<ExpressionNode | TokenNode> {
     return ret;
   }
 
+  public findAllExpressionsMulti(type: (new () => IStatementRunnable)[]): ExpressionNode[] {
+    let ret: ExpressionNode[] = [];
+    for (const child of this.getChildren()) {
+      if (child instanceof TokenNode) {
+        continue;
+      }
+      const before = ret.length;
+      for (const t of type) {
+        if (child.get() instanceof t) {
+          ret.push(child);
+        }
+      }
+      if (before === ret.length) {
+        ret = ret.concat(child.findAllExpressionsMulti(type));
+      }
+    }
+    return ret;
+  }
+
   /**
    * Returns the Position of the first token if the sequence is found,
    * otherwise undefined. Strings and Comments are ignored in this search.
