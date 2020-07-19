@@ -18,6 +18,7 @@ export class DataElement extends AbstractObject {
   }
 
   public parseType(reg: IRegistry): AbstractType {
+// note that this might look up in the Registry, so it cannot easily be cached?
     const xml = this.getXML();
     if (xml === undefined) {
       return new Types.UnknownType("unable to find xml");
