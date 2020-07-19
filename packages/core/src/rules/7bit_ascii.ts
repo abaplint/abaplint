@@ -44,9 +44,12 @@ export class SevenBitAscii implements IRule {
         const rows = file.getRawRows();
 
         for (let i = 0; i < rows.length; i++) {
-          if (/^[\u0000-\u007f]*$/.test(rows[i]) === false) {
-            const position = new Position(i + 1, 1);
-            const issue = Issue.atPosition(file, position, this.getMessage(), this.getMetadata().key);
+          const found = /[\u007f-\uffff]/.exec(rows[i]);
+          if (found !== null) {
+            const column = found.index + 1;
+            const start = new Position(i + 1, column);
+            const end = new Position(i + 1, column + 1);
+            const issue = Issue.atRange(file, start, end, this.getMessage(), this.getMetadata().key);
             output.push(issue);
           }
         }
