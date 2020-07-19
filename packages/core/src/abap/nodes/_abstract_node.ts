@@ -12,14 +12,12 @@ export abstract class AbstractNode implements INode {
   public abstract getFirstToken(): Token;
   public abstract getLastToken(): Token;
 
-  public addChild(n: INode): INode {
+  public addChild(n: INode) {
     this.children.push(n);
-    return this;
   }
 
-  public setChildren(children: INode[]): INode {
+  public setChildren(children: INode[]) {
     this.children = children;
-    return this;
   }
 
   public getChildren(): readonly INode[] {
