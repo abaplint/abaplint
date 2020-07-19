@@ -18,19 +18,18 @@ export class StructureNode extends AbstractNode<StructureNode | StatementNode> {
     return this.structure;
   }
 
+  // todo, remove this method, the logic should never go up in the tree
   public findParent(node: StatementNode): StructureNode | undefined {
     for (const child of this.getChildren()) {
       if (child === node) {
         return this;
       } else if (child instanceof StatementNode) {
         continue;
-      } else if (child instanceof StructureNode) {
+      } else {
         const res = child.findParent(node);
         if (res) {
           return res;
         }
-      } else {
-        throw new Error("findParent, unexpected type");
       }
     }
     return undefined;
@@ -62,13 +61,11 @@ export class StructureNode extends AbstractNode<StructureNode | StatementNode> {
         return child as StatementNode;
       } else if (child instanceof StatementNode) {
         continue;
-      } else if (child instanceof StructureNode) {
+      } else {
         const res = child.findFirstStatement(type);
         if (res) {
           return res;
         }
-      } else {
-        throw new Error("findFirstStatement, unexpected type");
       }
     }
     return undefined;
@@ -76,21 +73,9 @@ export class StructureNode extends AbstractNode<StructureNode | StatementNode> {
 
   public findFirstExpression(type: new () => IStatementRunnable): ExpressionNode | undefined {
     for (const child of this.getChildren()) {
-      if (child.get() instanceof type) {
-        throw new Error("sdfsdfsddsf");
-//        return child as ExpressionNode;
-      } else if (child instanceof StatementNode) {
-        const res = child.findFirstExpression(type);
-        if (res) {
-          return res;
-        }
-      } else if (child instanceof StructureNode) {
-        const res = child.findFirstExpression(type);
-        if (res) {
-          return res;
-        }
-      } else {
-        throw new Error("findFirstStatement, unexpected type");
+      const res = child.findFirstExpression(type);
+      if (res) {
+        return res;
       }
     }
     return undefined;
@@ -99,37 +84,27 @@ export class StructureNode extends AbstractNode<StructureNode | StatementNode> {
   public getFirstToken(): Token {
     const child = this.getFirstChild();
 
-    if (child instanceof StatementNode) {
-      return child.getFirstToken();
-    } else if (child instanceof StructureNode) {
+    if (child !== undefined) {
       return child.getFirstToken();
     }
 
-    throw new Error("getFirstToken, unexpected type");
+    throw new Error("StructureNode, getFirstToken, unexpected type");
   }
 
   public getLastToken(): Token {
     const child = this.getLastChild();
 
-    if (child instanceof StatementNode) {
-      return child.getLastToken();
-    } else if (child instanceof StructureNode) {
+    if (child !== undefined) {
       return child.getLastToken();
     }
 
-    throw new Error("getLastToken, unexpected type");
+    throw new Error("StructureNode, getLastToken, unexpected type");
   }
 
   public findAllExpressions(type: new () => IStatementRunnable): ExpressionNode[] {
     let ret: ExpressionNode[] = [];
     for (const child of this.getChildren()) {
-      if (child instanceof StatementNode) {
-        ret = ret.concat(child.findAllExpressions(type));
-      } else if (child instanceof StructureNode) {
-        ret = ret.concat(child.findAllExpressions(type));
-      } else {
-        throw new Error("findAllExpressions, unexpected type");
-      }
+      ret = ret.concat(child.findAllExpressions(type));
     }
     return ret;
   }
@@ -137,14 +112,10 @@ export class StructureNode extends AbstractNode<StructureNode | StatementNode> {
   public findAllStatements(type: new () => IStatement): StatementNode[] {
     let ret: StatementNode[] = [];
     for (const child of this.getChildren()) {
-      if (child.get() instanceof type) {
-        ret.push(child as StatementNode);
-      } else if (child instanceof StatementNode) {
-        continue;
-      } else if (child instanceof StructureNode) {
+      if (child instanceof StructureNode) {
         ret = ret.concat(child.findAllStatements(type));
-      } else {
-        throw new Error("findFirstStructure, unexpected type");
+      } else if (child.get() instanceof type) {
+        ret.push(child);
       }
     }
     return ret;
@@ -154,11 +125,9 @@ export class StructureNode extends AbstractNode<StructureNode | StatementNode> {
     let ret: StatementNode[] = [];
     for (const child of this.getChildren()) {
       if (child instanceof StatementNode) {
-        ret.push(child as StatementNode);
-      } else if (child instanceof StructureNode) {
-        ret = ret.concat(child.findAllStatementNodes());
+        ret.push(child);
       } else {
-        throw new Error("findAllStatementNodes, unexpected type");
+        ret = ret.concat(child.findAllStatementNodes());
       }
     }
     return ret;
@@ -170,14 +139,12 @@ export class StructureNode extends AbstractNode<StructureNode | StatementNode> {
       return [this];
     }
     for (const child of this.getChildren()) {
-      if (child.get() instanceof type) {
-        ret.push(child as StructureNode);
-      } else if (child instanceof StatementNode) {
+      if (child instanceof StatementNode) {
         continue;
-      } else if (child instanceof StructureNode) {
-        ret = ret.concat(child.findAllStructures(type));
+      } else if (child.get() instanceof type) {
+        ret.push(child);
       } else {
-        throw new Error("findAllStructures, unexpected type");
+        ret = ret.concat(child.findAllStructures(type));
       }
     }
     return ret;
@@ -200,17 +167,15 @@ export class StructureNode extends AbstractNode<StructureNode | StatementNode> {
       return this;
     }
     for (const child of this.getChildren()) {
-      if (child.get() instanceof type) {
-        return child as StructureNode;
-      } else if (child instanceof StatementNode) {
+      if (child instanceof StatementNode) {
         continue;
-      } else if (child instanceof StructureNode) {
+      } else if (child.get() instanceof type) {
+        return child;
+      } else {
         const res = child.findFirstStructure(type);
         if (res) {
           return res;
         }
-      } else {
-        throw new Error("findFirstStructure, unexpected type");
       }
     }
     return undefined;
