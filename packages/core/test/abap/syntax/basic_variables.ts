@@ -1348,4 +1348,11 @@ ENDCASE.`;
     expect(identifier?.getType()).to.be.instanceof(Basic.CharacterType);
   });
 
+  it("FIND RESULTS inline", () => {
+    const abap = `FIND ALL OCCURRENCES OF REGEX  'bar' IN lv_string RESULTS DATA(blanks).`;
+    const identifier = resolveVariable(abap, "blanks");
+    expect(identifier).to.not.equal(undefined);
+    expect(identifier?.getType()).to.be.instanceof(Basic.TableType);
+  });
+
 });
