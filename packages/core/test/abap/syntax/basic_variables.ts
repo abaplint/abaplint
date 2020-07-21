@@ -1355,4 +1355,14 @@ ENDCASE.`;
     expect(identifier?.getType()).to.be.instanceof(Basic.TableType);
   });
 
+  it("VALUE with FOR inline", () => {
+    const abap = `
+    TYPES ty_integers TYPE STANDARD TABLE OF i WITH EMPTY KEY.
+    DATA lt_integers TYPE ty_integers.
+    DATA(copy) = VALUE ty_integers( FOR lv_int IN lt_integers ( lv_int ) ).`;
+    const identifier = resolveVariable(abap, "copy");
+    expect(identifier).to.not.equal(undefined);
+    expect(identifier?.getType()).to.be.instanceof(Basic.TableType);
+  });
+
 });
