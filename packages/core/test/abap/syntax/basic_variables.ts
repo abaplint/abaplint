@@ -1334,4 +1334,35 @@ ENDCASE.`;
     expect(identifier?.getType()).to.be.instanceof(Basic.IntegerType);
   });
 
+  it("boolc inline", () => {
+    const abap = `DATA(foo) = boolc( 1 = 2 ).`;
+    const identifier = resolveVariable(abap, "foo");
+    expect(identifier).to.not.equal(undefined);
+    expect(identifier?.getType()).to.be.instanceof(Basic.StringType);
+  });
+
+  it("xsdbool inline", () => {
+    const abap = `DATA(foo) = xsdbool( 1 = 2 ).`;
+    const identifier = resolveVariable(abap, "foo");
+    expect(identifier).to.not.equal(undefined);
+    expect(identifier?.getType()).to.be.instanceof(Basic.CharacterType);
+  });
+
+  it("FIND RESULTS inline", () => {
+    const abap = `FIND ALL OCCURRENCES OF REGEX  'bar' IN lv_string RESULTS DATA(blanks).`;
+    const identifier = resolveVariable(abap, "blanks");
+    expect(identifier).to.not.equal(undefined);
+    expect(identifier?.getType()).to.be.instanceof(Basic.TableType);
+  });
+
+  it("VALUE with FOR inline", () => {
+    const abap = `
+    TYPES ty_integers TYPE STANDARD TABLE OF i WITH EMPTY KEY.
+    DATA lt_integers TYPE ty_integers.
+    DATA(copy) = VALUE ty_integers( FOR lv_int IN lt_integers ( lv_int ) ).`;
+    const identifier = resolveVariable(abap, "copy");
+    expect(identifier).to.not.equal(undefined);
+    expect(identifier?.getType()).to.be.instanceof(Basic.TableType);
+  });
+
 });

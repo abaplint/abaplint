@@ -17,6 +17,7 @@ export class TableType extends AbstractObject {
     };
   }
 
+  // todo, cache parsed data
   public parseType(reg: IRegistry): AbstractType {
     const parsed = this.parseXML();
     if (parsed === undefined) {

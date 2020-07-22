@@ -39,7 +39,7 @@ class ParsingPerformance {
       if (row === undefined) {
         break;
       }
-      process.stderr.write("\t" + row.runtime + "ms, " + row.name + "\n");
+      process.stderr.write("\t" + row.runtime + "ms\t" + row.name + "\n");
     }
   }
 }

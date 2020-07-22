@@ -34,6 +34,7 @@ export class Table extends AbstractObject {
     };
   }
 
+  // todo, cache parsed data
   public parseType(reg: IRegistry): Types.StructureType | Types.UnknownType | Types.VoidType {
     const parsed = this.parseXML();
     if (parsed === undefined) {

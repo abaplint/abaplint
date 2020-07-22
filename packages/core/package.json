@@ -1,6 +1,6 @@
 {
     "name": "@abaplint/core",
-    "version": "2.38.1",
+    "version": "2.38.2",
     "description": "Linter for ABAP",
     "main": "build/src/index.js",
     "typings": "build/src/index.d.ts",
@@ -55,7 +55,7 @@
     "devDependencies": {
         "@types/chai": "^4.2.11",
         "@types/mocha": "^8.0.0",
-        "@types/node": "^14.0.23",
+        "@types/node": "^14.0.24",
         "chai": "^4.2.0",
         "eslint": "^7.5.0",
         "madge": "^3.9.2",

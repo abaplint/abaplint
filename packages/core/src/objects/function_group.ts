@@ -25,6 +25,7 @@ export class FunctionGroup extends ABAPObject {
     return [main];
   }
 
+  // todo, cache parsed data
   public getModules(): FunctionModuleDefinition[] {
     const xml = this.getXML();
     if (xml === undefined) {

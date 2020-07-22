@@ -13,7 +13,7 @@ export class ValueBody {
 
     const forNode = node.findDirectExpression(Expressions.For);
     if (forNode) {
-      new For().runSyntax(node, scope, filename);
+      new For().runSyntax(forNode, scope, filename);
     }
 
     let type: AbstractType | undefined = undefined; // todo, this is only correct if there is a single source in the body
