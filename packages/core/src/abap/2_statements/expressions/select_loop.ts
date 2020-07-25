@@ -3,6 +3,7 @@ import {WParenLeftW, WAt, WParenLeft} from "../../1_lexer/tokens";
 import {SQLSource, SQLFrom, DatabaseTable, Dynamic, Target, Source, SQLCond, SQLFieldName, SQLAggregation, SQLTargetTable} from ".";
 import {Version} from "../../../version";
 import {IStatementRunnable} from "../statement_runnable";
+import {SQLOrderBy} from "./sql_order_by";
 
 export class SelectLoop extends Expression {
   public getRunnable(): IStatementRunnable {
@@ -18,10 +19,6 @@ export class SelectLoop extends Expression {
     const into = seq(str("INTO"), alt(intoList, intoSimple));
 
     const where = seq(str("WHERE"), new SQLCond());
-
-    const ding = alt(str("ASCENDING"), str("DESCENDING"));
-
-    const order = seq(str("ORDER BY"), alt(plus(seq(new SQLFieldName(), opt(ding))), str("PRIMARY KEY"), new Dynamic()));
 
     const comma = opt(ver(Version.v740sp05, str(",")));
     const someField = seq(alt(new SQLFieldName(), new SQLAggregation()), comma);
@@ -47,7 +44,7 @@ export class SelectLoop extends Expression {
 
     const tab = seq(new SQLTargetTable(), alt(pack, seq(from2, pack), seq(pack, from2)));
 
-    const perm = per(new SQLFrom(), where, up, order, client, bypass, group, forAll, alt(tab, into));
+    const perm = per(new SQLFrom(), where, up, new SQLOrderBy(), client, bypass, group, forAll, alt(tab, into));
 
     const ret = seq(str("SELECT"),
                     fields,
