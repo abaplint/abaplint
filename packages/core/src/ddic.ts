@@ -164,8 +164,10 @@ export class DDIC {
       case "DF34_DEC": // 1 <= len <= 31
       case "CURR":     // 1 <= len <= 31
       case "QUAN":     // 1 <= len <= 31
-        if (length === undefined || decimals === undefined) {
-          return new Types.UnknownType(text + " unknown length or decimals, " + parent);
+        if (length === undefined) {
+          return new Types.UnknownType(text + " unknown length, " + parent);
+        } else if (decimals === undefined) {
+          return new Types.PackedType(parseInt(length, 10), 0);
         }
         return new Types.PackedType(parseInt(length, 10), parseInt(decimals, 10));
       case "ACCP":
