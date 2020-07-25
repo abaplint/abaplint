@@ -82,7 +82,10 @@ export class DDIC {
     }
   }
 
-  public lookupDataElement(name: string): AbstractType {
+  public lookupDataElement(name: string | undefined): AbstractType {
+    if (name === undefined) {
+      return new Types.UnknownType("undefined, lookupDataElement");
+    }
     const found = this.reg.getObject("DTEL", name) as DataElement | undefined;
     if (found) {
       return found.parseType(this.reg);
@@ -93,7 +96,10 @@ export class DDIC {
     }
   }
 
-  public lookupTable(name: string): AbstractType {
+  public lookupTable(name: string | undefined): AbstractType {
+    if (name === undefined) {
+      return new Types.UnknownType("undefined, lookupTable");
+    }
     const found = this.reg.getObject("TABL", name) as Table | undefined;
     if (found) {
       return found.parseType(this.reg);
@@ -104,7 +110,10 @@ export class DDIC {
     }
   }
 
-  public lookupTableType(name: string): AbstractType {
+  public lookupTableType(name: string | undefined): AbstractType {
+    if (name === undefined) {
+      return new Types.UnknownType("undefined, lookupTableType");
+    }
     const found = this.reg.getObject("TTYP", name) as TableType | undefined;
     if (found) {
       return found.parseType(this.reg);

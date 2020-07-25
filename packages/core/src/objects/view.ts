@@ -23,6 +23,8 @@ export class View extends AbstractObject {
     return this.parsePrivate(this.parseXML());
   }
 
+/////////////////////////
+
   private parsePrivate(data: any): string[] {
     const ret: string[] = [];
 
