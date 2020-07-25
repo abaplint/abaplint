@@ -53,9 +53,9 @@
     },
     "homepage": "https://abaplint.org",
     "devDependencies": {
-        "@types/chai": "^4.2.11",
+        "@types/chai": "^4.2.12",
         "@types/mocha": "^8.0.0",
-        "@types/node": "^14.0.24",
+        "@types/node": "^14.0.26",
         "chai": "^4.2.0",
         "eslint": "^7.5.0",
         "madge": "^3.9.2",
