@@ -109,6 +109,8 @@ export class BuiltIn {
     ret.push({name: "SHIFT_RIGHT", importing: [{name: "val", type: new StringType()}], returnType: new StringType()});
     ret.push({name: "SIGN", importing: [{name: "val", type: new FloatType()}], returnType: new IntegerType()});
     ret.push({name: "STRLEN", importing: [{name: "val", type: new StringType()}], returnType: new IntegerType()});
+    ret.push({name: "CHARLEN", importing: [{name: "val", type: new StringType()}], returnType: new IntegerType()});
+    ret.push({name: "NUMOFCHAR", importing: [{name: "val", type: new StringType()}], returnType: new IntegerType()});
     ret.push({name: "SUBSTRING_AFTER", importing: [{name: "val", type: new StringType()}, {name: "sub", type: new StringType()}], returnType: new StringType()});
     ret.push({name: "SUBSTRING_BEFORE", importing: [{name: "val", type: new StringType()}, {name: "sub", type: new StringType()}, {name: "regex", type: new StringType()}], returnType: new StringType()});
     ret.push({name: "SUBSTRING", importing: [{name: "val", type: new StringType()}, {name: "len", type: new IntegerType()}, {name: "off", type: new IntegerType()}], returnType: new StringType()});
@@ -120,6 +122,7 @@ export class BuiltIn {
     ret.push({name: "XSDBOOL", importing: [{name: "val", type: new StringType()}], returnType: new CharacterType(1)});
     ret.push({name: "XSTRLEN", importing: [{name: "val", type: new StringType()}], returnType: new IntegerType()});
 
+    // todo, optimize, use hash map
     const index = ret.findIndex(a => a.name === name.toUpperCase());
     if (index < 0) {
       return undefined;
