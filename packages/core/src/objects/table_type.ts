@@ -30,7 +30,7 @@ export class TableType extends AbstractObject {
     const rowkind = dd40v.ROWKIND ? dd40v.ROWKIND._text : "";
 
     if (rowkind === "S") {
-      return new Types.TableType(ddic.lookupTable(rowtype));
+      return new Types.TableType(ddic.lookupTableOrView(rowtype));
     } else if (rowkind === "E") {
       return new Types.TableType(ddic.lookupDataElement(rowtype));
     } else if (rowkind === "R") {

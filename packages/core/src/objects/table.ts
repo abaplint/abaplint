@@ -68,7 +68,7 @@ export class Table extends AbstractObject {
           name: field.FIELDNAME,
           type: ddic.lookupDataElement(field.ROLLNAME)});
       } else if (comptype === "S" && field.FIELDNAME === ".INCLUDE") { // incude structure
-        const found = ddic.lookupTable(field.PRECFIELD);
+        const found = ddic.lookupTableOrView(field.PRECFIELD);
         if (found instanceof Types.StructureType) {
           for (const c of found.getComponents()) {
             components.push({
@@ -92,7 +92,7 @@ export class Table extends AbstractObject {
       } else if (comptype === "S") {
         components.push({
           name: field.FIELDNAME,
-          type: ddic.lookupTable(field.ROLLNAME)});
+          type: ddic.lookupTableOrView(field.ROLLNAME)});
       } else if (comptype === "R") {
         if (field.ROLLNAME === undefined) {
           throw new Error("Expected ROLLNAME");

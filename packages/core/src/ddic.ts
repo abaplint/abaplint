@@ -60,10 +60,15 @@ export class DDIC {
   }
 
   public lookup(name: string): AbstractType {
-    const found = this.reg.getObject("TABL", name) as Table | undefined;
-    if (found) {
-      return found.parseType(this.reg);
+    const foundTABL = this.reg.getObject("TABL", name) as Table | undefined;
+    if (foundTABL) {
+      return foundTABL.parseType(this.reg);
     }
+    const foundVIEW = this.reg.getObject("VIEW", name) as Table | undefined;
+    if (foundVIEW) {
+      return foundVIEW.parseType(this.reg);
+    }
+
     const ttyp = this.lookupTableType(name);
     if (!(ttyp instanceof Types.VoidType) && !(ttyp instanceof Types.UnknownType)) {
       return ttyp;
@@ -96,6 +101,17 @@ export class DDIC {
     }
   }
 
+  public lookupTableOrView(name: string | undefined): AbstractType {
+    if (name === undefined) {
+      return new Types.UnknownType("undefined, lookupTableOrView");
+    }
+    const foundTABL = this.reg.getObject("TABL", name) as Table | undefined;
+    if (foundTABL) {
+      return foundTABL.parseType(this.reg);
+    }
+    return this.lookupView(name);
+  }
+
   public lookupTable(name: string | undefined): AbstractType {
     if (name === undefined) {
       return new Types.UnknownType("undefined, lookupTable");
@@ -105,6 +121,20 @@ export class DDIC {
       return found.parseType(this.reg);
     } else if (this.reg.inErrorNamespace(name)) {
       return new Types.UnknownType(name + " not found, lookupTable");
+    } else {
+      return new Types.VoidType(name);
+    }
+  }
+
+  public lookupView(name: string | undefined): AbstractType {
+    if (name === undefined) {
+      return new Types.UnknownType("undefined, lookupView");
+    }
+    const found = this.reg.getObject("VIEW", name) as Table | undefined;
+    if (found) {
+      return found.parseType(this.reg);
+    } else if (this.reg.inErrorNamespace(name)) {
+      return new Types.UnknownType(name + " not found, lookupView");
     } else {
       return new Types.VoidType(name);
     }
