@@ -118,6 +118,7 @@ export * from "./sql_field_list";
 export * from "./sql_field_name";
 export * from "./sql_from_source";
 export * from "./sql_from";
+export * from "./sql_having";
 export * from "./sql_hints";
 export * from "./sql_join";
 export * from "./sql_order_by";
