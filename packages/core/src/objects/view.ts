@@ -2,6 +2,9 @@ import {AbstractObject} from "./_abstract_object";
 import {xmlToArray} from "../xml_utils";
 
 export class View extends AbstractObject {
+  private parsedData: {
+    fields: {
+      VIEWFIELD: string}[]} | undefined;
 
   public getType(): string {
     return "VIEW";
@@ -14,30 +17,41 @@ export class View extends AbstractObject {
     };
   }
 
-  // todo, cache parsed data
-  public getFields(): string[] {
-    const xml = this.getXML();
-    if (xml === undefined) {
-      return [];
-    }
-    return this.parsePrivate(this.parseXML());
+  public setDirty(): void {
+    this.parsedData = undefined;
+    super.setDirty();
   }
 
-/////////////////////////
-
-  private parsePrivate(data: any): string[] {
-    const ret: string[] = [];
-
-    if (data === undefined) {
+  public getFields(): string[] {
+    if (this.parsedData === undefined) {
+      this.parseXML();
+    }
+    if (this.parsedData?.fields === undefined) {
       return [];
     }
 
-    const fields = data.abapGit["asx:abap"]["asx:values"].DD27P_TABLE;
-    for (const field of xmlToArray(fields.DD27P)) {
-      ret.push(field.VIEWFIELD._text);
+    const ret: string[] = [];
+    for (const f of this.parsedData.fields) {
+      ret.push(f.VIEWFIELD);
+    }
+    return ret;
+  }
+
+///////////////
+
+  protected parseXML() {
+    const parsed = super.parseXML();
+    if (parsed === undefined) {
+      return;
     }
 
-    return ret;
+    this.parsedData = {fields: []};
+
+    const fields = parsed.abapGit["asx:abap"]["asx:values"]?.DD27P_TABLE;
+    for (const field of xmlToArray(fields?.DD27P)) {
+      this.parsedData.fields.push({
+        VIEWFIELD: field.VIEWFIELD?._text});
+    }
   }
 
 }
