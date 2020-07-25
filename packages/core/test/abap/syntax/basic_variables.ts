@@ -1372,4 +1372,43 @@ ENDCASE.`;
     expect(identifier?.getType()).to.be.instanceof(Basic.StructureType);
   });
 
+  it("DATA BEGIN OF, INCLUDE voided structure", () => {
+    const abap = `DATA BEGIN OF stru.
+    INCLUDE STRUCTURE something_void.
+    DATA END OF stru.`;
+    const identifier = resolveVariable(abap, "stru");
+    expect(identifier?.getType()).to.be.instanceof(Basic.VoidType);
+  });
+
+  it("DATA BEGIN OF, OCCURS", () => {
+    const abap = `DATA BEGIN OF tab OCCURS 10.
+    DATA too TYPE c.
+    DATA END OF tab.`;
+    const identifier = resolveVariable(abap, "tab");
+    expect(identifier?.getType()).to.be.instanceof(Basic.TableType);
+  });
+
+  it("DATA BEGIN OF OCCURS, INCLUDE voided structure", () => {
+    const abap = `DATA BEGIN OF tables_tab OCCURS 10.
+    INCLUDE STRUCTURE something_void.
+    DATA END OF tables_tab.`;
+    const identifier = resolveVariable(abap, "tables_tab");
+    expect(identifier?.getType()).to.be.instanceof(Basic.TableType);
+  });
+
+  it("DATA BEGIN OF, OCCURS", () => {
+    const abap = `
+TYPES: BEGIN OF ty_bar,
+         sdf TYPE c LENGTH 1,
+       END OF ty_bar.
+
+DATA BEGIN OF stru.
+INCLUDE TYPE ty_bar.
+DATA END OF stru.`;
+    const identifier = resolveVariable(abap, "stru");
+    expect(identifier?.getType()).to.be.instanceof(Basic.StructureType);
+    const type = identifier!.getType() as Basic.StructureType;
+    expect(type.getComponents().length).to.equal(1);
+  });
+
 });
