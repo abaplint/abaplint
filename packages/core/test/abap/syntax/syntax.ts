@@ -2017,6 +2017,28 @@ lcl_bar=>data = 2.`;
     expect(issues.length).to.equals(0);
   });
 
+  it("multi level aliases via interfaces", () => {
+    const abap = `
+INTERFACE if_toptop.
+  METHODS bar.
+ENDINTERFACE.
+
+INTERFACE if_top.
+  INTERFACES if_toptop.
+  ALIASES bar FOR if_toptop~bar.
+ENDINTERFACE.
+
+INTERFACE if_sub.
+  INTERFACES if_top.
+  ALIASES bar FOR if_top~bar.
+ENDINTERFACE.
+
+DATA moo TYPE REF TO if_sub.
+moo->bar( ).`;
+    const issues = runProgram(abap);
+    expect(issues.length).to.equals(0);
+  });
+
 // todo, static method cannot access instance attributes
 // todo, can a private method access protected attributes?
 // todo, readonly fields(constants + enums + attributes flagged read-only)
