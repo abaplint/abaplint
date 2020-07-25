@@ -33,6 +33,8 @@ export class TableType extends AbstractObject {
       return new Types.TableType(ddic.lookupTableOrView(rowtype));
     } else if (rowkind === "E") {
       return new Types.TableType(ddic.lookupDataElement(rowtype));
+    } else if (rowkind === "L") {
+      return new Types.TableType(ddic.lookupTableType(rowtype));
     } else if (rowkind === "R") {
       return new Types.TableType(new Types.ObjectReferenceType(rowtype));
     } else if (rowkind === "") {
@@ -42,7 +44,7 @@ export class TableType extends AbstractObject {
       const row = ddic.textToType(datatype, leng, decimals, this.getName());
       return new Types.TableType(row);
     } else {
-      return new Types.UnknownType("Table Type, unkown kind \"" + rowkind + "\"");
+      return new Types.UnknownType("Table Type, unknown kind \"" + rowkind + "\"" + this.getName());
     }
   }
 
