@@ -1365,4 +1365,11 @@ ENDCASE.`;
     expect(identifier?.getType()).to.be.instanceof(Basic.TableType);
   });
 
+  it("FORM, CHANGING STRUCTURE", () => {
+    const abap = `FORM foo CHANGING bar STRUCTURE sy.
+    ENDFORM.`;
+    const identifier = resolveVariable(abap, "bar");
+    expect(identifier?.getType()).to.be.instanceof(Basic.StructureType);
+  });
+
 });
