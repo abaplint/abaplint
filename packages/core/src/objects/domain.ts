@@ -43,7 +43,7 @@ export class Domain extends AbstractObject {
     const datatype = dd01v.DATATYPE?._text;
     const length = dd01v.LENG?._text;
     const decimals = dd01v.DECIMALS?._text;
-    return ddic.textToType(datatype, length, decimals);
+    return ddic.textToType(datatype, length, decimals, this.getName());
   }
 
 }

@@ -43,7 +43,7 @@ export class DataElement extends AbstractObject {
       return lookup;
     }
 
-    return ddic.textToType(this.parsedXML.datatype, this.parsedXML.leng, this.parsedXML.decimals);
+    return ddic.textToType(this.parsedXML.datatype, this.parsedXML.leng, this.parsedXML.decimals, this.getName());
   }
 
 ////////////////////

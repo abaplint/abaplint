@@ -39,7 +39,7 @@ export class TableType extends AbstractObject {
       const datatype = dd40v.DATATYPE._text;
       const leng = dd40v.LENG?._text;
       const decimals = dd40v.DECIMALS?._text;
-      const row = ddic.textToType(datatype, leng, decimals);
+      const row = ddic.textToType(datatype, leng, decimals, this.getName());
       return new Types.TableType(row);
     } else {
       return new Types.UnknownType("Table Type, unkown kind \"" + rowkind + "\"");

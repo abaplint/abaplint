@@ -110,7 +110,7 @@ export class Table extends AbstractObject {
         const decimals = field.DECIMALS ? field.DECIMALS : undefined;
         components.push({
           name: field.FIELDNAME,
-          type: ddic.textToType(datatype, length, decimals)});
+          type: ddic.textToType(datatype, length, decimals, this.getName())});
       } else {
         components.push({
           name: field.FIELDNAME,

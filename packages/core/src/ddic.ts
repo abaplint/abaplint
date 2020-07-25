@@ -154,7 +154,7 @@ export class DDIC {
     }
   }
 
-  public textToType(text: string | undefined, length: string | undefined, decimals: string | undefined): AbstractType {
+  public textToType(text: string | undefined, length: string | undefined, decimals: string | undefined, parent: string): AbstractType {
 // todo, support short strings, and length of different integers, NUMC vs CHAR, min/max length
     switch (text) {
       case "DEC":      // 1 <= len <= 31
@@ -165,7 +165,7 @@ export class DDIC {
       case "CURR":     // 1 <= len <= 31
       case "QUAN":     // 1 <= len <= 31
         if (length === undefined || decimals === undefined) {
-          return new Types.UnknownType(text + " unknown length or decimals");
+          return new Types.UnknownType(text + " unknown length or decimals, " + parent);
         }
         return new Types.PackedType(parseInt(length, 10), parseInt(decimals, 10));
       case "ACCP":
