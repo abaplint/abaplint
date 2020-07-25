@@ -41,6 +41,7 @@ const tests = [
   {abap: `WRITE foo COLOR OFF INTENSIFIED.`, cnt: 0},
   {abap: `FORMAT COLOR COL_HEADING.`, cnt: 0},
   {abap: `SELECT * FROM sdfsd ORDER BY PRIMARY KEY.`, cnt: 0},
+  {abap: `MODIFY LINE sy-index FIELD VALUE val FROM var.`, cnt: 0},
 ];
 
 testRule(tests, KeywordCase);
