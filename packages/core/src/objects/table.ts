@@ -1,6 +1,6 @@
+import * as Types from "../abap/types/basic";
 import {AbstractObject} from "./_abstract_object";
 import {xmlToArray} from "../xml_utils";
-import * as Types from "../abap/types/basic";
 import {IRegistry} from "../_iregistry";
 import {DDIC} from "../ddic";
 

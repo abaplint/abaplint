@@ -1,10 +1,16 @@
+import * as Types from "../abap/types/basic";
 import {AbstractObject} from "./_abstract_object";
 import {xmlToArray} from "../xml_utils";
+import {IRegistry} from "../_iregistry";
+import {DDIC} from "../ddic";
 
 export class View extends AbstractObject {
   private parsedData: {
     fields: {
-      VIEWFIELD: string}[]} | undefined;
+      VIEWFIELD: string,
+      TABNAME: string,
+      ROLLNAME: string,
+      FIELDNAME: string}[]} | undefined;
 
   public getType(): string {
     return "VIEW";
@@ -22,19 +28,23 @@ export class View extends AbstractObject {
     super.setDirty();
   }
 
-  public getFields(): string[] {
+  public parseType(reg: IRegistry): Types.StructureType | Types.UnknownType | Types.VoidType {
     if (this.parsedData === undefined) {
       this.parseXML();
     }
-    if (this.parsedData?.fields === undefined) {
-      return [];
+    if (this.parsedData === undefined) {
+      return new Types.UnknownType("View, parser error");
     }
 
-    const ret: string[] = [];
-    for (const f of this.parsedData.fields) {
-      ret.push(f.VIEWFIELD);
+    const components: Types.IStructureComponent[] = [];
+    const ddic = new DDIC(reg);
+    for (const field of this.parsedData.fields) {
+      components.push({
+        name: field.VIEWFIELD,
+        type: ddic.lookupDataElement(field.ROLLNAME)});
     }
-    return ret;
+
+    return new Types.StructureType(components);
   }
 
 ///////////////
@@ -50,7 +60,11 @@ export class View extends AbstractObject {
     const fields = parsed.abapGit["asx:abap"]["asx:values"]?.DD27P_TABLE;
     for (const field of xmlToArray(fields?.DD27P)) {
       this.parsedData.fields.push({
-        VIEWFIELD: field.VIEWFIELD?._text});
+        VIEWFIELD: field.VIEWFIELD?._text,
+        TABNAME: field.TABNAME?._text,
+        ROLLNAME: field.ROLLNAME?._text,
+        FIELDNAME: field.FIELDNAME?._text,
+      });
     }
   }
 

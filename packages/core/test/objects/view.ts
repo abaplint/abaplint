@@ -2,6 +2,7 @@ import {expect} from "chai";
 import {Registry} from "../../src/registry";
 import {MemoryFile} from "../../src/files/memory_file";
 import {View} from "../../src/objects";
+import {StructureType} from "../../src/abap/types/basic/structure_type";
 
 describe("View, parse XML", () => {
   it("test", async () => {
@@ -85,11 +86,9 @@ describe("View, parse XML", () => {
     await reg.parseAsync();
     const tabl = reg.getFirstObject()! as View;
     expect(tabl.getName()).to.equal("ZAG_UNIT_TESTV");
-    const fields = tabl.getFields();
-    expect(fields.length).to.equal(4);
-    expect(fields).to.contain("PGMID");
-    expect(fields).to.contain("OBJECT");
-    expect(fields).to.contain("OBJ_NAME");
-    expect(fields).to.contain("KORRNUM");
+    let structure = tabl.parseType(reg);
+    expect(structure).to.be.instanceof(StructureType);
+    structure = structure as StructureType;
+    expect(structure.getComponents().length).to.equal(4);
   });
 });
