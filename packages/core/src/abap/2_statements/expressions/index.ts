@@ -6,6 +6,7 @@ export * from "./arrow";
 export * from "./attribute_name";
 export * from "./basic_source";
 export * from "./cast";
+export * from "./color";
 export * from "./class_final";
 export * from "./class_name";
 export * from "./compare_operator";

@@ -37,6 +37,9 @@ const tests = [
 
   {abap: `FORM default USING var STRUCTURE disvariant flag CHANGING return.
   ENDFORM.`, cnt: 0},
+
+  {abap: `WRITE foo COLOR OFF INTENSIFIED.`, cnt: 0},
+  {abap: `FORMAT COLOR COL_HEADING.`, cnt: 0},
 ];
 
 testRule(tests, KeywordCase);
