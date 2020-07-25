@@ -15,7 +15,7 @@ const tests = [
   "write lv_foo no-gap.",
   "WRITE 'Hello' COLOR 6.",
   "write /(100) 'foobar'.",
-  "WRITE foo COLOR lv_color INTENSIFIED.",
+  "WRITE foo COLOR 1 INTENSIFIED.",
   "write mark as checkbox.",
   "WRITE foo INPUT ON.",
   "write line_horizontal_line as line no-gap.",
@@ -29,7 +29,7 @@ const tests = [
   "WRITE (4) lv_var NO-GAP.",
   "WRITE /.",
   "write l_x right-justified to ls_dump.",
-  "WRITE space COLOR lv_col INTENSIFIED OFF.",
+  "WRITE space COLOR 2 INTENSIFIED OFF.",
   "write lv_val to lv_res currency lv_cur round lv_round no-sign no-zero.",
   "WRITE lv_date DD/MM/YYYY.",
   "WRITE lv_time ENVIRONMENT TIME FORMAT.",
@@ -40,8 +40,8 @@ const tests = [
   "write /3(50) sdf.",
   "write at /(20) wa_str-name.",
   "WRITE 'hello' HOTSPOT COLOR 5 INVERSE ON.",
-  "write 2(50) text-003 color col intensified on.",
-  "WRITE AT (len) fill COLOR lv_col.",
+  "write 2(50) text-003 color 3 intensified on.",
+  "WRITE AT (len) fill COLOR 3.",
   "write lv_val to lv_ext style lv_style no-zero no-sign.",
   "WRITE / lv_bar INPUT.",
   "WRITE icon_tools AS ICON HOTSPOT ON COLOR COL_NORMAL.",
@@ -72,6 +72,7 @@ const tests = [
   "WRITE |{ g_name WIDTH = 30 }|.",
   "WRITE <moo>+<offs>-end-end.",
   "write at 5(ls_structure-field) 'hello world'.",
+  "WRITE foo COLOR OFF INTENSIFIED.",
 ];
 
 statementType(tests, "WRITE", Statements.Write);

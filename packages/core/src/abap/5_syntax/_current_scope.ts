@@ -229,7 +229,10 @@ export class CurrentScope {
     return ret;
   }
 
-  public findType(name: string): TypedIdentifier | undefined {
+  public findType(name: string | undefined): TypedIdentifier | undefined {
+    if (name === undefined) {
+      return undefined;
+    }
     return this.current?.findType(name);
   }
 

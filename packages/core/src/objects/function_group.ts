@@ -111,7 +111,7 @@ export class FunctionGroup extends ABAPObject {
 
     const ret: string[] = [];
     for (const i of xmlToArray(includes.SOBJ_NAME)) {
-      ret.push(i._text);
+      ret.push(i?._text);
     }
 
     return ret;

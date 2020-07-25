@@ -335,7 +335,7 @@ export class BasicTypes {
     } else {
       found = this.scope.findType(subs[0])?.getType();
       if (found === undefined) {
-        found = this.scope.getDDIC().lookupTable(subs[0]);
+        found = this.scope.getDDIC().lookupTableOrView(subs[0]);
       }
       if (found === undefined && this.scope.getDDIC().inErrorNamespace(subs[0]) === false) {
         return new Types.VoidType(subs[0]);

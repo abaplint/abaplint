@@ -1,6 +1,6 @@
+import * as Types from "../abap/types/basic";
 import {AbstractObject} from "./_abstract_object";
 import {xmlToArray} from "../xml_utils";
-import * as Types from "../abap/types/basic";
 import {IRegistry} from "../_iregistry";
 import {DDIC} from "../ddic";
 
@@ -22,6 +22,18 @@ export enum TableCategory {
 }
 
 export class Table extends AbstractObject {
+  private parsedData: {
+    tableCategory?: TableCategory | undefined,
+    enhancementCategory?: EnhancementCategory,
+    fields: {
+      FIELDNAME: string,
+      ROLLNAME?: string,
+      COMPTYPE?: string,
+      PRECFIELD?: string,
+      LENG?: string,
+      INTLEN?: string,
+      DATATYPE?: string,
+      DECIMALS?: string}[]} | undefined;
 
   public getType(): string {
     return "TABL";
@@ -34,24 +46,29 @@ export class Table extends AbstractObject {
     };
   }
 
-  // todo, cache parsed data
+  public setDirty(): void {
+    this.parsedData = undefined;
+    super.setDirty();
+  }
+
   public parseType(reg: IRegistry): Types.StructureType | Types.UnknownType | Types.VoidType {
-    const parsed = this.parseXML();
-    if (parsed === undefined) {
+    if (this.parsedData === undefined) {
+      this.parseXML();
+    }
+    if (this.parsedData === undefined) {
       return new Types.UnknownType("Table, parser error");
     }
 
     const components: Types.IStructureComponent[] = [];
-    const fields = parsed.abapGit["asx:abap"]["asx:values"].DD03P_TABLE;
     const ddic = new DDIC(reg);
-    for (const field of xmlToArray(fields.DD03P)) {
-      const comptype = field.COMPTYPE ? field.COMPTYPE._text : "";
+    for (const field of this.parsedData.fields) {
+      const comptype = field.COMPTYPE ? field.COMPTYPE : "";
       if (comptype === "E") { // data element
         components.push({
-          name: field.FIELDNAME._text,
-          type: ddic.lookupDataElement(field.ROLLNAME._text)});
-      } else if (comptype === "S" && field.FIELDNAME._text === ".INCLUDE") { // incude structure
-        const found = ddic.lookupTable(field.PRECFIELD._text);
+          name: field.FIELDNAME,
+          type: ddic.lookupDataElement(field.ROLLNAME)});
+      } else if (comptype === "S" && field.FIELDNAME === ".INCLUDE") { // incude structure
+        const found = ddic.lookupTableOrView(field.PRECFIELD);
         if (found instanceof Types.StructureType) {
           for (const c of found.getComponents()) {
             components.push({
@@ -65,35 +82,38 @@ export class Table extends AbstractObject {
           return found;
         } else {
           components.push({
-            name: field.FIELDNAME._text,
+            name: field.FIELDNAME,
             type: found});
         }
-      } else if (comptype === "S" && field.FIELDNAME._text.startsWith(".INCLU-")) {
+      } else if (comptype === "S" && field.FIELDNAME.startsWith(".INCLU-")) {
         components.push({
-          name: field.FIELDNAME._text,
+          name: field.FIELDNAME,
           type: new Types.UnknownType("Table " + this.getName() + ", todo, group named INCLUDE")});
       } else if (comptype === "S") {
         components.push({
-          name: field.FIELDNAME._text,
-          type: ddic.lookupTable(field.ROLLNAME._text)});
+          name: field.FIELDNAME,
+          type: ddic.lookupTableOrView(field.ROLLNAME)});
       } else if (comptype === "R") {
+        if (field.ROLLNAME === undefined) {
+          throw new Error("Expected ROLLNAME");
+        }
         components.push({
-          name: field.FIELDNAME._text,
-          type: new Types.ObjectReferenceType(field.ROLLNAME._text)});
+          name: field.FIELDNAME,
+          type: new Types.ObjectReferenceType(field.ROLLNAME)});
       } else if (comptype === "L") {
         components.push({
-          name: field.FIELDNAME._text,
-          type: ddic.lookupTableType(field.ROLLNAME._text)});
+          name: field.FIELDNAME,
+          type: ddic.lookupTableType(field.ROLLNAME)});
       } else if (comptype === "") { // built in
-        const datatype = field.DATATYPE._text;
-        const length = field.LENG ? field.LENG._text : field.INTLEN._text;
-        const decimals = field.DECIMALS ? field.DECIMALS._text : undefined;
+        const datatype = field.DATATYPE;
+        const length = field.LENG ? field.LENG : field.INTLEN;
+        const decimals = field.DECIMALS ? field.DECIMALS : undefined;
         components.push({
-          name: field.FIELDNAME._text,
-          type: ddic.textToType(datatype, length, decimals)});
+          name: field.FIELDNAME,
+          type: ddic.textToType(datatype, length, decimals, this.getName())});
       } else {
         components.push({
-          name: field.FIELDNAME._text,
+          name: field.FIELDNAME,
           type: new Types.UnknownType("Table " + this.getName() + ", unknown component type " + comptype)});
       }
     }
@@ -102,24 +122,57 @@ export class Table extends AbstractObject {
   }
 
   public getTableCategory(): TableCategory | undefined {
-    const parsed = this.parseXML();
-    if (parsed === undefined) {
-      return undefined;
+    if (this.parsedData === undefined) {
+      this.parseXML();
     }
 
-    return parsed.abapGit["asx:abap"]["asx:values"].DD02V.TABCLASS._text;
+    return this.parsedData?.tableCategory;
   }
 
   public getEnhancementCategory(): EnhancementCategory {
-    const parsed = this.parseXML();
-    if (parsed === undefined) {
+    if (this.parsedData === undefined) {
+      this.parseXML();
+    }
+    if (this.parsedData?.enhancementCategory === undefined) {
       return EnhancementCategory.NotClassified;
     }
-    if (parsed.abapGit["asx:abap"]["asx:values"].DD02V.EXCLASS === undefined) {
-      return EnhancementCategory.NotClassified;
+    return this.parsedData.enhancementCategory;
+  }
+
+///////////////
+
+  protected parseXML() {
+    const parsed = super.parseXML();
+    if (parsed === undefined) {
+      return;
     }
 
-    return parsed.abapGit["asx:abap"]["asx:values"].DD02V.EXCLASS._text;
+    this.parsedData = {fields: []};
+
+// enhancement category
+    if (parsed.abapGit["asx:abap"]["asx:values"]?.DD02V?.EXCLASS === undefined) {
+      this.parsedData.enhancementCategory = EnhancementCategory.NotClassified;
+    } else {
+      this.parsedData.enhancementCategory = parsed.abapGit["asx:abap"]["asx:values"]?.DD02V?.EXCLASS?._text;
+    }
+
+// table category
+    this.parsedData.tableCategory = parsed.abapGit["asx:abap"]["asx:values"]?.DD02V?.TABCLASS?._text;
+
+// fields
+    const fields = parsed.abapGit["asx:abap"]["asx:values"].DD03P_TABLE;
+    for (const field of xmlToArray(fields?.DD03P)) {
+      this.parsedData.fields.push({
+        FIELDNAME: field.FIELDNAME._text,
+        ROLLNAME: field.ROLLNAME?._text,
+        COMPTYPE: field.COMPTYPE?._text,
+        PRECFIELD: field.PRECFIELD?._text,
+        LENG: field.LENG?._text,
+        INTLEN: field.INTLEN?._text,
+        DATATYPE: field.DATATYPE?._text,
+        DECIMALS: field.DECIMALS?._text,
+      });
+    }
   }
 
 }

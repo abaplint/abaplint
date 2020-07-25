@@ -1,6 +1,6 @@
 import {IStatement} from "./_statement";
 import {verNot, str, seq, opt, alt, per, tok, regex as reg, altPrio} from "../combi";
-import {Target, Source, Dynamic, FieldSub, FieldChain} from "../expressions";
+import {Target, Source, Dynamic, FieldSub, FieldChain, Color} from "../expressions";
 import {ParenLeft, ParenRightW, WParenLeft} from "../../1_lexer/tokens";
 import {Version} from "../../../version";
 import {IStatementRunnable} from "../statement_runnable";
@@ -52,7 +52,7 @@ export class Write implements IStatement {
                         seq(str("INDEX"), new Source()),
                         seq(str("DECIMALS"), new Source()),
                         seq(str("INVERSE"), opt(onOff)),
-                        seq(str("COLOR"), opt(str("=")), new Source()),
+                        new Color(),
                         seq(str("CURRENCY"), new Source()),
                         str("NO-SIGN"));
 

@@ -30,19 +30,21 @@ export class TableType extends AbstractObject {
     const rowkind = dd40v.ROWKIND ? dd40v.ROWKIND._text : "";
 
     if (rowkind === "S") {
-      return new Types.TableType(ddic.lookupTable(rowtype));
+      return new Types.TableType(ddic.lookupTableOrView(rowtype));
     } else if (rowkind === "E") {
       return new Types.TableType(ddic.lookupDataElement(rowtype));
+    } else if (rowkind === "L") {
+      return new Types.TableType(ddic.lookupTableType(rowtype));
     } else if (rowkind === "R") {
       return new Types.TableType(new Types.ObjectReferenceType(rowtype));
     } else if (rowkind === "") {
       const datatype = dd40v.DATATYPE._text;
-      const leng = dd40v.LENG ? dd40v.LENG._text : undefined;
-      const decimals = dd40v.DECIMALS ? dd40v.DECIMALS._text : undefined;
-      const row = ddic.textToType(datatype, leng, decimals);
+      const leng = dd40v.LENG?._text;
+      const decimals = dd40v.DECIMALS?._text;
+      const row = ddic.textToType(datatype, leng, decimals, this.getName());
       return new Types.TableType(row);
     } else {
-      return new Types.UnknownType("Table Type, unkown kind \"" + rowkind + "\"");
+      return new Types.UnknownType("Table Type, unknown kind \"" + rowkind + "\"" + this.getName());
     }
   }
 
