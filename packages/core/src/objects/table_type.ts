@@ -37,8 +37,8 @@ export class TableType extends AbstractObject {
       return new Types.TableType(new Types.ObjectReferenceType(rowtype));
     } else if (rowkind === "") {
       const datatype = dd40v.DATATYPE._text;
-      const leng = dd40v.LENG ? dd40v.LENG._text : undefined;
-      const decimals = dd40v.DECIMALS ? dd40v.DECIMALS._text : undefined;
+      const leng = dd40v.LENG?._text;
+      const decimals = dd40v.DECIMALS?._text;
       const row = ddic.textToType(datatype, leng, decimals);
       return new Types.TableType(row);
     } else {

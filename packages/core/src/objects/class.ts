@@ -98,7 +98,7 @@ export class Class extends ABAPObject {
 
     const vseo = parsed.abapGit["asx:abap"]["asx:values"].VSEOCLASS;
 
-    this.parsedXML.category = vseo.CATEGORY ? vseo.CATEGORY._text : undefined;
+    this.parsedXML.category = vseo.CATEGORY?._text;
     this.parsedXML.description = vseo.DESCRIPT ? vseo.DESCRIPT._text : "";
     this.parsedXML.name = vseo.CLSNAME ? vseo.CLSNAME._text : "";
   }
