@@ -57,6 +57,7 @@ import {Constants} from "./structures/constants";
 import {ClassDefinition} from "../types/class_definition";
 import {InterfaceDefinition} from "../types/interface_definition";
 import {ISyntaxResult} from "./_spaghetti_scope";
+import {Write} from "./statements/write";
 
 // assumption: objects are parsed without parsing errors
 
@@ -294,6 +295,8 @@ export class SyntaxLogic {
       new ElseIf().runSyntax(node, this.scope, filename);
     } else if (node.get() instanceof Statements.Append) {
       new Append().runSyntax(node, this.scope, filename);
+    } else if (node.get() instanceof Statements.Write) {
+      new Write().runSyntax(node, this.scope, filename);
 
     } else if (s instanceof Statements.Form) {
       this.helpers.proc.findFormScope(node, filename);

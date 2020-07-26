@@ -61,7 +61,7 @@ describe("syntax.ts, Check Variables", () => {
     const abap = "WRITE foobar.\n";
     const issues = runProgram(abap);
     expect(issues.length).to.equals(1);
-    expect(issues[0].getMessage()).to.equal("\"foobar\" not found");
+    expect(issues[0].getMessage()).to.contain("foobar");
   });
 
   it("program, foobar found", () => {
@@ -208,7 +208,7 @@ field = zcl_global_class=>method( ).`;
       "ENDFORM.\n";
     const issues = runProgram(abap);
     expect(issues.length).to.equals(1);
-    expect(issues[0].getMessage()).to.equal("\"moo\" not found");
+    expect(issues[0].getMessage()).to.contain("moo");
   });
 
   it("program, global scope", () => {
@@ -463,7 +463,7 @@ ENDCLASS.
       "ENDCLASS.";
     const issues = runClass(abap);
     expect(issues.length).to.equals(1);
-    expect(issues[0].getMessage()).to.equal("\"foobar\" not found");
+    expect(issues[0].getMessage()).to.contain("foobar");
   });
 
   it("class, foobar, local variable", () => {
@@ -2055,6 +2055,30 @@ ENDFORM.`;
     expect(issues.length).to.equals(1);
     expect(issues[0].getMessage()).to.contain("expect_error");
   });
+
+  it("expect error", () => {
+    const abap = `WRITE zif_sdfsd=>sdfsd.`;
+
+    const issues = runProgram(abap);
+    expect(issues.length).to.equals(1);
+  });
+
+  it.skip("multi level CONSTANTS aliases via interfaces", () => {
+    const abap = `
+INTERFACE if_top.
+  CONSTANTS bar TYPE i VALUE 1.
+ENDINTERFACE.
+
+INTERFACE if_sub.
+  INTERFACES if_top.
+  ALIASES bar FOR if_top~bar.
+ENDINTERFACE.
+
+WRITE if_sub=>bar.`;
+    const issues = runProgram(abap);
+    expect(issues.length).to.equals(0);
+  });
+
 
 // todo, static method cannot access instance attributes
 // todo, can a private method access protected attributes?
