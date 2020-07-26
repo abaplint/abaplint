@@ -1411,4 +1411,17 @@ DATA END OF stru.`;
     expect(type.getComponents().length).to.equal(1);
   });
 
+  it("table with header line", () => {
+    const abap = `
+TYPES: BEGIN OF ty_structure,
+         bar TYPE string,
+       END OF ty_structure.
+DATA bar TYPE TABLE OF ty_structure WITH HEADER LINE.`;
+    const identifier = resolveVariable(abap, "bar");
+    const type = identifier?.getType();
+    expect(type).to.be.instanceof(Basic.TableType);
+    const tt = type as Basic.TableType;
+    expect(tt.isWithHeader()).to.equal(true);
+  });
+
 });

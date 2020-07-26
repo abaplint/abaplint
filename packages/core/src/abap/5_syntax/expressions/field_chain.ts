@@ -21,7 +21,10 @@ export class FieldChain {
       }
 
       if (current.get() instanceof Dash) {
-        if (!(context instanceof StructureType) && !(context instanceof VoidType)) {
+        if (!(context instanceof StructureType)
+            && !(context instanceof TableType && context.isWithHeader() && context.getRowType() instanceof StructureType)
+            && !(context instanceof TableType && context.isWithHeader() && context.getRowType() instanceof VoidType)
+            && !(context instanceof VoidType)) {
           throw new Error("Not a structure, FieldChain");
         }
       } else if (current.get() instanceof InstanceArrow) {

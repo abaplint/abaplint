@@ -7,7 +7,7 @@ import {InlineData} from "../expressions/inline_data";
 export class Split {
   public runSyntax(node: StatementNode, scope: CurrentScope, filename: string): void {
 
-    const type = node.findTokenSequencePosition("INTO", "TABLE") ? new TableType(new StringType()) : new StringType();
+    const type = node.findTokenSequencePosition("INTO", "TABLE") ? new TableType(new StringType(), false) : new StringType();
 
     for (const target of node.findAllExpressions(Expressions.Target)) {
       const inline = target.findDirectExpression(Expressions.InlineData);

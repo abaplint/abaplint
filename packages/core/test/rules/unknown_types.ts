@@ -844,4 +844,38 @@ DATA ls_tadir TYPE ztadir-object.`;
     expect(issues.length).to.equal(0);
   });
 
+  it("events via alias", () => {
+    const abap1 = `
+INTERFACE if_top.
+  EVENTS click
+    EXPORTING
+      VALUE(parm1) TYPE string
+      VALUE(parm2) TYPE string.
+ENDINTERFACE.
+
+INTERFACE if_sub.
+  INTERFACES if_top.
+  ALIASES click FOR if_top~click.
+ENDINTERFACE.
+
+CLASS lcl_sdf DEFINITION.
+  PUBLIC SECTION.
+    METHODS: on_click FOR EVENT click OF if_sub
+      IMPORTING
+          parm1 parm2.
+ENDCLASS.
+
+CLASS lcl_sdf IMPLEMENTATION.
+  METHOD on_click.
+    WRITE parm1.
+    WRITE parm2.
+  ENDMETHOD.
+ENDCLASS.`;
+    let issues = runMulti([
+      {filename: "zreport.prog.abap", contents: abap1},
+    ]);
+    issues = issues.filter(i => i.getKey() === key);
+    expect(issues.length).to.equal(0);
+  });
+
 });

@@ -22,9 +22,9 @@ export class Find {
           {name: "LINE", type: new IntegerType()},
           {name: "OFFSET", type: new IntegerType()},
           {name: "LENGTH", type: new IntegerType()},
-          {name: "SUBMATCHES", type: new TableType(new StringType())},
+          {name: "SUBMATCHES", type: new TableType(new StringType(), false)},
         ]);
-        new InlineData().runSyntax(inline, scope, filename, new TableType(type));
+        new InlineData().runSyntax(inline, scope, filename, new TableType(type, false));
       }
     }
 

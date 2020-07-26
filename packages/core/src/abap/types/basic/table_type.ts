@@ -2,11 +2,16 @@ import {AbstractType} from "./_abstract_type";
 
 export class TableType implements AbstractType {
   private readonly rowType: AbstractType;
+  private readonly withHeader: boolean;
 
-// todo: add header indicator
 // todo: add keys
-  public constructor(rowType: AbstractType) {
+  public constructor(rowType: AbstractType, withHeader: boolean) {
     this.rowType = rowType;
+    this.withHeader = withHeader;
+  }
+
+  public isWithHeader(): boolean {
+    return this.withHeader;
   }
 
   public getRowType(): AbstractType {
@@ -14,7 +19,11 @@ export class TableType implements AbstractType {
   }
 
   public toText(level: number) {
-    return "Table of " + this.rowType.toText(level + 1);
+    if (this.withHeader === true) {
+      return "Table with header of " + this.rowType.toText(level + 1);
+    } else {
+      return "Table of " + this.rowType.toText(level + 1);
+    }
   }
 
   public isGeneric() {
