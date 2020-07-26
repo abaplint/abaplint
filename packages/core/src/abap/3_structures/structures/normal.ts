@@ -32,6 +32,7 @@ export class Normal implements IStructure {
                sub(new Structures.Case()),
                sub(new Structures.CaseType()),
                sub(new Structures.Enhancement()),
+               sub(new Structures.EnhancementSection()),
 
                sta(Statements.AddCorresponding),
                sta(Statements.Add),

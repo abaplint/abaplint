@@ -16,6 +16,7 @@ export * from "./define";
 export * from "./do";
 export * from "./else";
 export * from "./elseif";
+export * from "./enhancement_section";
 export * from "./enhancement";
 export * from "./exec_sql";
 export * from "./form";

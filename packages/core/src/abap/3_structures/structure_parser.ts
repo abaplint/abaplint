@@ -13,17 +13,14 @@ export class StructureParser {
   public static run(input: IStatementResult): IStructureResult {
     const structure = this.findStructureForFile(input.file.getFilename());
 // todo, comments and empty statements will not be part of the structure
-// is this a problem?
+// is this a problem? Plus unknowns
     const statements = input.statements.slice().filter((s) => {
-      return !(s.get() instanceof StatementComment || s.get() instanceof Empty);
+      return !(s.get() instanceof StatementComment || s.get() instanceof Empty || s.get() instanceof Unknown);
     });
-    const unknowns = input.statements.slice().filter((s) => { return s.get() instanceof Unknown; });
-    if (unknowns.length > 0) {
-// do not parse structure, file contains unknown statements(parser errors)
-      return {issues: [], node: undefined};
-    }
     return this.runFile(structure, input.file, statements);
   }
+
+//////////////////
 
   private static findStructureForFile(filename: string): IStructure {
 // todo, not sure this is the right place for this logic
