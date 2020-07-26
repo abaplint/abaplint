@@ -2,23 +2,17 @@ import {Issue} from "@abaplint/core";
 import {Total} from "./total";
 import {IFormatter} from "./_iformatter";
 
-class Tuple {
-  public filename: string;
-  public description: string;
-
-  public constructor(filename: string, description: string) {
-    this.filename = filename;
-    this.description = description;
-  }
-}
+type Tuple = {filename: string, description: string};
 
 export class Standard implements IFormatter {
 
   public output(issues: Issue[], fileCount: number): string {
     const tuples: Tuple[] = [];
     for (const issue of issues) {
-      tuples.push(this.build_tuple(issue));
+      tuples.push(this.build(issue));
     }
+
+    tuples.sort((a, b) => (a.filename.localeCompare(b.filename)));
 
     const result = this.columns(tuples);
 
@@ -47,10 +41,10 @@ export class Standard implements IFormatter {
     return output + " - ";
   }
 
-  private build_tuple(issue: Issue): Tuple {
-    return new Tuple(issue.getFilename() +
-                     "[" + issue.getStart().getRow() + ", " + issue.getStart().getCol() + "]",
-                     issue.getMessage() + " (" + issue.getKey() + ")");
+  private build(issue: Issue): Tuple {
+    return {
+      filename: issue.getFilename() + "[" + issue.getStart().getRow() + ", " + issue.getStart().getCol() + "]",
+      description: issue.getMessage() + " (" + issue.getKey() + ")"};
   }
 
 }

@@ -76,13 +76,11 @@ ENDCASE.`));
 
   it("should build structure, even with Unknown statements", () => {
     const abap = `
-    INTERFACE if_foo PUBLIC.
+    INTERFACE if_foo.
       with_syntax_error
     ENDINTERFACE.`;
 
-    const files: IFile[] = [];
-
-    files.push(new MemoryFile("zcl_chaining.prog.abap", abap));
+    const files = [new MemoryFile("zsdfdsfsd.prog.abap", abap)];
 
     const {issues, output} = new ABAPParser(defaultVersion, []).parse(files);
     expect(issues.length).to.equal(0);
