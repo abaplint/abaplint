@@ -104,9 +104,10 @@ describe("Registry", () => {
     const registry = new Registry().addFile(file);
     expect(registry.findIssues().length).to.equal(0);
 
-    const updated = new MemoryFile("zfoobar.prog.abap", "moo boo");
+    const updated = new MemoryFile("zfoobar.prog.abap", "REPORT zfoobar.\nmoo boo");
     registry.updateFile(updated);
-    expect(registry.findIssues().length).to.equal(1);
+    const issues = registry.findIssues();
+    expect(issues.length).to.equal(1);
   });
 
   it("Double parse should give the same issues, structure", async () => {
@@ -119,8 +120,7 @@ describe("Registry", () => {
   it("Double parse should give the same issues, parser errror", async () => {
     const file = new MemoryFile("zfoobar.prog.abap", "moo boo");
     const registry = new Registry().addFile(file);
-    expect(registry.findIssues().length).to.equal(1);
-    expect(registry.findIssues().length).to.equal(1);
+    expect(registry.findIssues().length).to.equal(registry.findIssues().length);
   });
 
   it("Global interface, constant without VALUE", async () => {

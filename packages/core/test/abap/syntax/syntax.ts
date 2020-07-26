@@ -2039,6 +2039,23 @@ moo->bar( ).`;
     expect(issues.length).to.equals(0);
   });
 
+  it("with syntax errors", () => {
+    const abap = `
+INTERFACE lif_foo.
+  METHODS bar.
+  sfsdfsdfsfs
+ENDINTERFACE.
+
+FORM fffds.
+  DATA li_sdf TYPE REF TO lif_foo.
+  li_sdf->bar( ).
+  li_sdf->expect_error( ).
+ENDFORM.`;
+    const issues = runProgram(abap);
+    expect(issues.length).to.equals(1);
+    expect(issues[0].getMessage()).to.contain("expect_error");
+  });
+
 // todo, static method cannot access instance attributes
 // todo, can a private method access protected attributes?
 // todo, readonly fields(constants + enums + attributes flagged read-only)
