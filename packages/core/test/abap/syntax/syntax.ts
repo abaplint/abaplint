@@ -2079,6 +2079,26 @@ WRITE if_sub=>bar.`;
     expect(issues.length).to.equals(0);
   });
 
+  it("Table with header line", () => {
+    const abap = `
+TYPES: BEGIN OF ty_structure,
+         bar TYPE string,
+       END OF ty_structure.
+DATA bar TYPE TABLE OF ty_structure WITH HEADER LINE.
+WRITE bar-bar.
+`;
+    const issues = runProgram(abap);
+    expect(issues.length).to.equals(0);
+  });
+
+  it("Table with header line, voided", () => {
+    const abap = `
+DATA bar TYPE TABLE OF voided_void WITH HEADER LINE.
+WRITE bar-bar.
+`;
+    const issues = runProgram(abap);
+    expect(issues.length).to.equals(0);
+  });
 
 // todo, static method cannot access instance attributes
 // todo, can a private method access protected attributes?
