@@ -20,7 +20,7 @@ export class FindGlobalDefinitions {
   }
 
   public run(progress?: IProgress) {
-    const MAX_PASSES = 5;
+    const MAX_PASSES = 10;
     let lastPass = Number.MAX_SAFE_INTEGER;
 
     // the setDirty method in the objects clears the definitions

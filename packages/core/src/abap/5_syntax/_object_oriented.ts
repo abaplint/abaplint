@@ -53,6 +53,7 @@ export class ObjectOriented {
           return method;
         }
       }
+      return this.findMethodViaAlias(methodName, idef);
     }
     return undefined;
   }

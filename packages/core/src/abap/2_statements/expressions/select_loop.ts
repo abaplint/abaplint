@@ -4,6 +4,7 @@ import {SQLSource, SQLFrom, DatabaseTable, Dynamic, Target, Source, SQLCond, SQL
 import {Version} from "../../../version";
 import {IStatementRunnable} from "../statement_runnable";
 import {SQLOrderBy} from "./sql_order_by";
+import {SQLHaving} from "./sql_having";
 
 export class SelectLoop extends Expression {
   public getRunnable(): IStatementRunnable {
@@ -44,7 +45,7 @@ export class SelectLoop extends Expression {
 
     const tab = seq(new SQLTargetTable(), alt(pack, seq(from2, pack), seq(pack, from2)));
 
-    const perm = per(new SQLFrom(), where, up, new SQLOrderBy(), client, bypass, group, forAll, alt(tab, into));
+    const perm = per(new SQLFrom(), where, up, new SQLOrderBy(), new SQLHaving(), client, bypass, group, forAll, alt(tab, into));
 
     const ret = seq(str("SELECT"),
                     fields,
