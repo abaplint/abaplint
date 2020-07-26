@@ -2063,7 +2063,7 @@ ENDFORM.`;
     expect(issues.length).to.equals(1);
   });
 
-  it.skip("multi level CONSTANTS aliases via interfaces", () => {
+  it("multi level CONSTANTS aliases via interfaces", () => {
     const abap = `
 INTERFACE if_top.
   CONSTANTS bar TYPE i VALUE 1.

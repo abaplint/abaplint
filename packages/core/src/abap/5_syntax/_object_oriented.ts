@@ -143,6 +143,16 @@ export class ObjectOriented {
       }
     }
 
+    for (const a of def.getAliases().getAll()) {
+      if (a.getName().toUpperCase() === name.toUpperCase()) {
+        const comp = a.getComponent();
+        const res = this.searchConstantName(this.scope.findObjectDefinition(comp.split("~")[0]), comp.split("~")[1]);
+        if (res) {
+          return res;
+        }
+      }
+    }
+
     const sup = def.getSuperClass();
     if (sup) {
       return this.searchConstantName(this.findSuperDefinition(sup), name);
