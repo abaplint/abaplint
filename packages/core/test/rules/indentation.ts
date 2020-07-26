@@ -94,6 +94,11 @@ CATCH SYSTEM-EXCEPTIONS arithmetic_errors = 4 OTHERS = 8.
   WRITE 'hello world'.
 ENDCATCH.`, cnt: 0},
 
+  {abap: `
+INITIALIZATION.
+  PERFORM INIT.
+TOP-OF-PAGE.
+  PERFORM TOP.`, cnt: 0},
 ];
 
 testRule(tests, Indentation);
