@@ -19,7 +19,11 @@ export class TableType implements AbstractType {
   }
 
   public toText(level: number) {
-    return "Table of " + this.rowType.toText(level + 1);
+    if (this.withHeader === true) {
+      return "Table with header of " + this.rowType.toText(level + 1);
+    } else {
+      return "Table of " + this.rowType.toText(level + 1);
+    }
   }
 
   public isGeneric() {
