@@ -8,6 +8,7 @@ import {CurrentScope} from "../5_syntax/_current_scope";
 import {MethodDefReturning} from "../5_syntax/expressions/method_def_returning";
 import {MethodParam} from "../5_syntax/expressions/method_param";
 import {IMethodParameters} from "./_method_parameters";
+import {ObjectOriented} from "../5_syntax/_object_oriented";
 
 export class MethodParameters implements IMethodParameters{
   private readonly importing: TypedIdentifier[];
@@ -75,7 +76,7 @@ export class MethodParameters implements IMethodParameters{
       const doVoid = def ? false : !scope.getDDIC().inErrorNamespace(className);
 
       const eventName = node.findFirstExpression(Expressions.Field)?.getFirstToken().getStr();
-      const event = def?.getEvents().find(e => e.getName().toUpperCase() === eventName?.toUpperCase());
+      const event = new ObjectOriented(scope).searchEvent(def, eventName);
       for (const p of handler.findAllExpressions(Expressions.MethodParamName)) {
         const token = p.getFirstToken();
         const search = token.getStr().toUpperCase().replace("!", "");
