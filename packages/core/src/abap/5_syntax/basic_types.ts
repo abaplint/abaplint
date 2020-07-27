@@ -20,8 +20,6 @@ export class BasicTypes {
       return undefined;
     }
 
-
-
     let chain = node.findFirstExpression(Expressions.FieldChain);
     if (chain === undefined) {
       chain = node.findFirstExpression(Expressions.TypeName);
@@ -72,7 +70,7 @@ export class BasicTypes {
         }
       }
 
-      // todo, this only looks up one level
+      // todo, this only looks up one level, reuse field_chain.ts?
       if (children[1] && children[2] && children[1].getFirstToken().getStr() === "-") {
         if (type instanceof Types.StructureType) {
           const sub = type.getComponentByName(children[2].getFirstToken().getStr());
@@ -82,6 +80,20 @@ export class BasicTypes {
           return new Types.UnknownType("Type error, field not part of structure " + fullName);
         } else if (type instanceof Types.VoidType) {
           return type;
+        } else if (type instanceof Types.TableType
+            && type.isWithHeader() === true
+            && type.getRowType() instanceof Types.VoidType) {
+          return type.getRowType();
+        } else if (type instanceof Types.TableType
+            && type.isWithHeader() === true) {
+          const rowType = type.getRowType();
+          if (rowType instanceof Types.StructureType) {
+            const sub = rowType.getComponentByName(children[2].getFirstToken().getStr());
+            if (sub) {
+              return sub;
+            }
+          }
+          return new Types.UnknownType("Type error, field not part of structure " + fullName);
         } else {
           return new Types.UnknownType("Type error, not a structure type " + fullName);
         }

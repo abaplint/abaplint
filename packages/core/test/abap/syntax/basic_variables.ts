@@ -1437,4 +1437,16 @@ DATA joblog TYPE ty_log OCCURS 0 WITH HEADER LINE.`;
     expect(tt.isWithHeader()).to.equal(true);
   });
 
+  it("LIKE refering to header line typing", () => {
+    const abap = `
+TYPES: BEGIN OF ty_type,
+         foo TYPE string,
+       END OF ty_type.
+DATA tab TYPE TABLE OF ty_type WITH HEADER LINE.
+DATA moo LIKE tab-foo.`;
+    const identifier = resolveVariable(abap, "moo");
+    const type = identifier?.getType();
+    expect(type).to.be.instanceof(Basic.StringType);
+  });
+
 });
