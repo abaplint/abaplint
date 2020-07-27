@@ -19,7 +19,7 @@ export class TableType extends AbstractObject {
 
   // todo, cache parsed data
   public parseType(reg: IRegistry): AbstractType {
-    const parsed = this.parseXML();
+    const parsed = this.parseRaw();
     if (parsed === undefined) {
       return new Types.UnknownType("Table Type, parser error");
     }

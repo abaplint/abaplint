@@ -38,14 +38,14 @@ export class MessageClass extends AbstractObject {
 
 /////////////////////////////////
 
-  protected parseXML() {
+  private parseXML() {
     if (this.parsedMessages !== undefined) {
       return;
     }
 
     this.parsedMessages = [];
 
-    const parsed = super.parseXML();
+    const parsed = super.parseRaw();
     if (parsed === undefined) {
       return;
     }

@@ -69,12 +69,13 @@ export abstract class ABAPObject extends AbstractObject {
     return undefined;
   }
 
+  // todo, cache
   public getTexts(): readonly ITextElement[] {
-    const parsed = this.parseXML();
+    const parsed = this.parseRaw();
     return this.findTexts(parsed);
   }
 
-  public findTexts(parsed: any): readonly ITextElement[] {
+  protected findTexts(parsed: any): readonly ITextElement[] {
     if (parsed === undefined
         || parsed.abapGit["asx:abap"]["asx:values"] === undefined
         || parsed.abapGit["asx:abap"]["asx:values"].TPOOL === undefined

@@ -31,7 +31,7 @@ export class FunctionGroup extends ABAPObject {
     if (xml === undefined) {
       return [];
     }
-    const parsed = this.parseXML();
+    const parsed = this.parseRaw();
     if (parsed === undefined) {
       return [];
     }
@@ -100,7 +100,7 @@ export class FunctionGroup extends ABAPObject {
       return [];
     }
 
-    const parsed = this.parseXML();
+    const parsed = this.parseRaw();
     if (parsed === undefined) {
       return [];
     }
