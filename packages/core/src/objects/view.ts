@@ -49,8 +49,8 @@ export class View extends AbstractObject {
 
 ///////////////
 
-  protected parseXML() {
-    const parsed = super.parseXML();
+  private parseXML() {
+    const parsed = super.parseRaw();
     if (parsed === undefined) {
       return;
     }

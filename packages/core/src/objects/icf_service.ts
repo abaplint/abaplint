@@ -18,7 +18,7 @@ export class ICFService extends AbstractObject {
   public getHandlerList(): string[] | undefined {
     const ret: string[] = [];
 
-    const parsed = this.parseXML();
+    const parsed = this.parseRaw();
     if (parsed === undefined
         || parsed.abapGit === undefined
         || parsed.abapGit["asx:abap"]["asx:values"] === undefined) {

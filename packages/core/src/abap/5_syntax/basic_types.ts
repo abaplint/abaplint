@@ -20,8 +20,6 @@ export class BasicTypes {
       return undefined;
     }
 
-
-
     let chain = node.findFirstExpression(Expressions.FieldChain);
     if (chain === undefined) {
       chain = node.findFirstExpression(Expressions.TypeName);
@@ -72,7 +70,7 @@ export class BasicTypes {
         }
       }
 
-      // todo, this only looks up one level
+      // todo, this only looks up one level, reuse field_chain.ts?
       if (children[1] && children[2] && children[1].getFirstToken().getStr() === "-") {
         if (type instanceof Types.StructureType) {
           const sub = type.getComponentByName(children[2].getFirstToken().getStr());
@@ -82,6 +80,20 @@ export class BasicTypes {
           return new Types.UnknownType("Type error, field not part of structure " + fullName);
         } else if (type instanceof Types.VoidType) {
           return type;
+        } else if (type instanceof Types.TableType
+            && type.isWithHeader() === true
+            && type.getRowType() instanceof Types.VoidType) {
+          return type.getRowType();
+        } else if (type instanceof Types.TableType
+            && type.isWithHeader() === true) {
+          const rowType = type.getRowType();
+          if (rowType instanceof Types.StructureType) {
+            const sub = rowType.getComponentByName(children[2].getFirstToken().getStr());
+            if (sub) {
+              return sub;
+            }
+          }
+          return new Types.UnknownType("Type error, field not part of structure " + fullName);
         } else {
           return new Types.UnknownType("Type error, not a structure type " + fullName);
         }
@@ -215,7 +227,7 @@ export class BasicTypes {
         || text.startsWith("TYPE HASHED TABLE OF REF TO ")) {
       found = this.resolveTypeRef(typename);
       if (found) {
-        return new Types.TableType(found, text.includes("WITH HEADER LINE"));
+        return new Types.TableType(found, node.concatTokens().includes("WITH HEADER LINE"));
       }
     } else if (text.startsWith("TYPE TABLE OF ")
         || text.startsWith("TYPE STANDARD TABLE OF ")
@@ -223,7 +235,7 @@ export class BasicTypes {
         || text.startsWith("TYPE HASHED TABLE OF ")) {
       found = this.resolveTypeName(typename);
       if (found) {
-        return new Types.TableType(found, text.includes("WITH HEADER LINE"));
+        return new Types.TableType(found, node.concatTokens().includes("WITH HEADER LINE"));
       }
     } else if (text.startsWith("LIKE TABLE OF ")
         || text.startsWith("LIKE STANDARD TABLE OF ")
@@ -232,14 +244,14 @@ export class BasicTypes {
       const sub = node.findFirstExpression(Expressions.TypeName);
       found = this.resolveLikeName(sub);
       if (found) {
-        return new Types.TableType(found, text.includes("WITH HEADER LINE"));
+        return new Types.TableType(found, node.concatTokens().includes("WITH HEADER LINE"));
       }
     } else if (text === "TYPE STANDARD TABLE"
         || text === "TYPE SORTED TABLE"
         || text === "TYPE HASHED TABLE"
         || text === "TYPE INDEX TABLE"
         || text === "TYPE ANY TABLE") {
-      return new Types.TableType(new Types.AnyType(), text.includes("WITH HEADER LINE"));
+      return new Types.TableType(new Types.AnyType(), node.concatTokens().includes("WITH HEADER LINE"));
     } else if (text.startsWith("TYPE RANGE OF ")) {
       const sub = node.findFirstExpression(Expressions.TypeName);
       found = this.resolveTypeName(sub);
@@ -252,13 +264,13 @@ export class BasicTypes {
         {name: "low", type: found},
         {name: "high", type: found},
       ]);
-      return new Types.TableType(structure, text.includes("WITH HEADER LINE"));
+      return new Types.TableType(structure, node.concatTokens().includes("WITH HEADER LINE"));
     } else if (text.startsWith("LIKE ")) {
       const sub = node.findFirstExpression(Expressions.FieldChain);
       found = this.resolveLikeName(sub);
 
       if (found && node.findDirectTokenByText("OCCURS")) {
-        found = new Types.TableType(found, text.includes("WITH HEADER LINE"));
+        found = new Types.TableType(found, node.concatTokens().includes("WITH HEADER LINE"));
       }
     } else if (text.startsWith("TYPE LINE OF ")) {
       const sub = node.findFirstExpression(Expressions.TypeName);
@@ -280,7 +292,7 @@ export class BasicTypes {
       }
 
       if (found && node.findDirectTokenByText("OCCURS")) {
-        found = new Types.TableType(found, text.includes("WITH HEADER LINE"));
+        found = new Types.TableType(found, node.concatTokens().includes("WITH HEADER LINE"));
       }
     }
 

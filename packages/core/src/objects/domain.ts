@@ -32,8 +32,8 @@ export class Domain extends AbstractObject {
 
 ///////////////
 
-  protected parseXML(reg: IRegistry): AbstractType {
-    const parsed = super.parseXML();
+  private parseXML(reg: IRegistry): AbstractType {
+    const parsed = super.parseRaw();
     if (parsed === undefined) {
       return new Types.UnknownType("Domain " + this.getName() + "parser error");
     }

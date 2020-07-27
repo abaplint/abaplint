@@ -83,14 +83,14 @@ export class Class extends ABAPObject {
 
 /////////////////////////
 
-  protected parseXML() {
+  private parseXML() {
     if (this.parsedXML !== undefined) {
       return;
     }
 
     this.parsedXML = {};
 
-    const parsed = super.parseXML();
+    const parsed = super.parseRaw();
     if (parsed === undefined
         || parsed.abapGit["asx:abap"]["asx:values"] === undefined) {
       return;

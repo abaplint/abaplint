@@ -51,10 +51,12 @@ export class CheckTextElements implements IRule {
       }
 
       let texts = obj.getTexts();
+      let mainName: string | undefined = undefined;
 
       const mains = this.graph.listMainForInclude(file.getFilename());
       if (mains.length === 1) {
 // todo, this only checks the first main
+        mainName = mains[0];
         const main1 = this.reg.findObjectForFile(this.reg.getFileByName(mains[0])!)! as ABAPObject;
         texts = main1.getTexts();
       }
@@ -69,7 +71,7 @@ export class CheckTextElements implements IRule {
         const token = e.findFirstExpression(Expressions.TextElementKey)!.getFirstToken();
         const key = token.getStr();
         if (this.findKey(key, texts) === undefined) {
-          const message = `Text element "${key}" not found`;
+          const message = `Text element "${key}" not found` + (mainName ? ", " + mainName : "");
           output.push(Issue.atToken(file, token, message, this.getMetadata().key));
         }
       }
@@ -87,7 +89,8 @@ export class CheckTextElements implements IRule {
           found = found.replace(/'/g, "''");
         }
         if (found === undefined) {
-          output.push(Issue.atToken(file, token, `Text element "${key}" not found`, this.getMetadata().key));
+          const message = `Text element "${key}" not found` + (mainName ? ", " + mainName : "");
+          output.push(Issue.atToken(file, token, message, this.getMetadata().key));
         } else if (code !== "'" + found + "'"
             && code !== "`" + found + "`") {
           output.push(Issue.atToken(file, token, "Text does not match text element", this.getMetadata().key));
