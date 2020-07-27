@@ -1,8 +1,8 @@
-import {Issue} from "@abaplint/core";
+import {Issue, Position} from "@abaplint/core";
 import {Total} from "./total";
 import {IFormatter} from "./_iformatter";
 
-type Tuple = {filename: string, description: string};
+type Tuple = {filename: string, description: string; startPos: Position; rawFilename: string};
 
 export class Standard implements IFormatter {
 
@@ -12,7 +12,19 @@ export class Standard implements IFormatter {
       tuples.push(this.build(issue));
     }
 
-    tuples.sort((a, b) => (a.filename.localeCompare(b.filename)));
+    tuples.sort((a, b) => {
+      const nameCompare = a.rawFilename.localeCompare(b.rawFilename);
+      if (nameCompare === 0) {
+        const rowCompare = a.startPos.getRow() - b.startPos.getRow();
+        if (rowCompare === 0) {
+          return a.startPos.getCol() - b.startPos.getCol();
+        } else {
+          return rowCompare;
+        }
+      } else {
+        return nameCompare;
+      }
+    });
 
     const result = this.columns(tuples);
 
@@ -44,7 +56,10 @@ export class Standard implements IFormatter {
   private build(issue: Issue): Tuple {
     return {
       filename: issue.getFilename() + "[" + issue.getStart().getRow() + ", " + issue.getStart().getCol() + "]",
-      description: issue.getMessage() + " (" + issue.getKey() + ")"};
+      description: issue.getMessage() + " (" + issue.getKey() + ")",
+      startPos: issue.getStart(),
+      rawFilename: issue.getFilename(),
+    };
   }
 
 }
