@@ -1424,4 +1424,17 @@ DATA bar TYPE TABLE OF ty_structure WITH HEADER LINE.`;
     expect(tt.isWithHeader()).to.equal(true);
   });
 
+  it("table with header line, OCCURS", () => {
+    const abap = `
+TYPES: BEGIN OF ty_log,
+         msgv1 TYPE string,
+       END OF ty_log.
+DATA joblog TYPE ty_log OCCURS 0 WITH HEADER LINE.`;
+    const identifier = resolveVariable(abap, "joblog");
+    const type = identifier?.getType();
+    expect(type).to.be.instanceof(Basic.TableType);
+    const tt = type as Basic.TableType;
+    expect(tt.isWithHeader()).to.equal(true);
+  });
+
 });
