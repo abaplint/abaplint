@@ -5,6 +5,8 @@ import * as Types from "../types/basic";
 import {CurrentScope} from "./_current_scope";
 import {AbstractType} from "../types/basic/_abstract_type";
 import {ScopeType} from "./_scope_type";
+import {ObjectOriented} from "./_object_oriented";
+import {ClassConstant} from "../types/class_constant";
 
 export class BasicTypes {
   private readonly filename: string;
@@ -381,7 +383,20 @@ export class BasicTypes {
       const found = this.scope.findVariable(name);
       return found?.getValue();
     } else if (first.get() instanceof Expressions.ClassName) {
-      return undefined; // todo
+      const name = first.getFirstToken().getStr();
+      const obj = this.scope.findObjectDefinition(name);
+      if (obj === undefined) {
+        throw new Error("resolveConstantValue, not found: " + name);
+      }
+      const children = expr.getChildren();
+
+      const attr = children[2]?.getFirstToken().getStr();
+      const c = new ObjectOriented(this.scope).searchConstantName(obj, attr);
+      if (c instanceof ClassConstant) {
+        return c.getValue();
+      }
+      throw new Error("resolveConstantValue, constant not found " + attr);
+
     } else {
       throw new Error("resolveConstantValue, unexpected structure");
     }

@@ -69,12 +69,6 @@ export class FunctionGroup extends ABAPObject {
     return undefined;
   }
 
-/*
-  public getModuleFiles(): ABAPFile[] {
-
-  }
-*/
-
   public getMainABAPFile(): ABAPFile | undefined {
     const regex = new RegExp(/\.fugr\.(#\w+#)?sapl/, "i");
     for (const f of this.getABAPFiles()) {
@@ -85,15 +79,6 @@ export class FunctionGroup extends ABAPObject {
     return undefined;
   }
 
-/*
-  public isInclude(f: ABAPFile): boolean {
-    const search = this.getName() + ".fugr.sapl" + this.getName() + ".abap";
-    if (f.getFilename().endsWith(search.toLowerCase())) {
-      return false;
-    }
-    return true;
-  }
-*/
   public getIncludes(): string[] {
     const xml = this.getXML();
     if (xml === undefined) {
@@ -126,6 +111,22 @@ export class FunctionGroup extends ABAPObject {
     return undefined;
   }
 
+  public getTexts(): readonly ITextElement[] {
+    if (this.texts === undefined) {
+      const found = this.findTextFile();
+      if (found === undefined) {
+        return [];
+      }
+
+      const parsed = xmljs.xml2js(found.getRaw(), {compact: true});
+      this.findTexts(parsed);
+    }
+
+    return this.texts!;
+  }
+
+/////////////////////////////////
+
   private parseModules(data: any): FunctionModuleDefinition[] {
     const ret: FunctionModuleDefinition[] = [];
 
@@ -135,16 +136,6 @@ export class FunctionGroup extends ABAPObject {
     }
 
     return ret;
-  }
-
-  public getTexts(): readonly ITextElement[] {
-    const found = this.findTextFile();
-    if (found === undefined) {
-      return [];
-    }
-
-    const parsed = xmljs.xml2js(found.getRaw(), {compact: true});
-    return this.findTexts(parsed);
   }
 
   private findTextFile() {

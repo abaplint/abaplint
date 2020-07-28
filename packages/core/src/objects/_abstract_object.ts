@@ -109,7 +109,7 @@ export abstract class AbstractObject implements IObject {
     throw new Error("updateFile: file not found");
   }
 
-  protected parseRaw(_input?: any): any | undefined {
+  protected parseRaw(): any | undefined {
     const xml = this.getXML();
     if (xml === undefined) {
       return undefined;
