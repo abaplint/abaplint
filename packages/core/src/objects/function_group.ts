@@ -69,12 +69,6 @@ export class FunctionGroup extends ABAPObject {
     return undefined;
   }
 
-/*
-  public getModuleFiles(): ABAPFile[] {
-
-  }
-*/
-
   public getMainABAPFile(): ABAPFile | undefined {
     const regex = new RegExp(/\.fugr\.(#\w+#)?sapl/, "i");
     for (const f of this.getABAPFiles()) {
@@ -85,15 +79,6 @@ export class FunctionGroup extends ABAPObject {
     return undefined;
   }
 
-/*
-  public isInclude(f: ABAPFile): boolean {
-    const search = this.getName() + ".fugr.sapl" + this.getName() + ".abap";
-    if (f.getFilename().endsWith(search.toLowerCase())) {
-      return false;
-    }
-    return true;
-  }
-*/
   public getIncludes(): string[] {
     const xml = this.getXML();
     if (xml === undefined) {
