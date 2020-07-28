@@ -36,6 +36,9 @@ export class AttributeName {
         throw new Error("Data reference not structured");
       }
       const name = node.getFirstToken().getStr();
+      if (name === "*") {
+        return sub;
+      }
       ret = sub.getComponentByName(name);
       if (ret === undefined) {
         throw new Error("Component \"" + name + "\" not found in data reference structure");

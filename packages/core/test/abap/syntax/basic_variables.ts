@@ -1460,4 +1460,16 @@ CONSTANTS something TYPE c LENGTH 1 VALUE lif_bar=>sdf.`;
     expect(type).to.be.instanceof(Basic.CharacterType);
   });
 
+  it("dereference data reference via star", () => {
+    const abap = `
+TYPES: BEGIN OF ty_bar,
+         int TYPE i,
+       END OF ty_bar.
+DATA ref TYPE REF TO ty_bar.
+DATA(sdf) = ref->*-int.`;
+    const identifier = resolveVariable(abap, "sdf");
+    const type = identifier?.getType();
+    expect(type).to.be.instanceof(Basic.IntegerType);
+  });
+
 });
