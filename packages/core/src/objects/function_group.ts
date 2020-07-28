@@ -126,17 +126,6 @@ export class FunctionGroup extends ABAPObject {
     return undefined;
   }
 
-  private parseModules(data: any): FunctionModuleDefinition[] {
-    const ret: FunctionModuleDefinition[] = [];
-
-    const functions = data.abapGit["asx:abap"]["asx:values"].FUNCTIONS;
-    for (const module of xmlToArray(functions.item)) {
-      ret.push(new FunctionModuleDefinition(module));
-    }
-
-    return ret;
-  }
-
   public getTexts(): readonly ITextElement[] {
     if (this.texts === undefined) {
       const found = this.findTextFile();
@@ -149,6 +138,19 @@ export class FunctionGroup extends ABAPObject {
     }
 
     return this.texts!;
+  }
+
+/////////////////////////////////
+
+  private parseModules(data: any): FunctionModuleDefinition[] {
+    const ret: FunctionModuleDefinition[] = [];
+
+    const functions = data.abapGit["asx:abap"]["asx:values"].FUNCTIONS;
+    for (const module of xmlToArray(functions.item)) {
+      ret.push(new FunctionModuleDefinition(module));
+    }
+
+    return ret;
   }
 
   private findTextFile() {
