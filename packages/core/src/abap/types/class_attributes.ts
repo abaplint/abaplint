@@ -139,13 +139,13 @@ export class Attributes implements IAttributes {
         } else if (ctyp instanceof Structures.Constants) {
           const found = new Constants().runSyntax(c, scope, this.filename);
           if (found !== undefined) {
-            this.constants.push(new ClassConstant(found, visibility));
+            this.constants.push(new ClassConstant(found, visibility, "todo"));
           }
         } else if (ctyp instanceof Structures.TypeEnum) {
           const enums = new TypeEnum().runSyntax(c, scope, this.filename);
           for (const e of enums) {
           // for now add ENUM values as constants
-            this.constants.push(new ClassConstant(e, visibility));
+            this.constants.push(new ClassConstant(e, visibility, "todo"));
           }
         } else {
           // begin recursion
@@ -159,7 +159,7 @@ export class Attributes implements IAttributes {
         } else if (ctyp instanceof Statements.Constant) {
           const found = new ConstantStatement().runSyntax(c, scope, this.filename);
           if (found) {
-            this.constants.push(new ClassConstant(found, visibility));
+            this.constants.push(new ClassConstant(found, visibility, "todo"));
           }
         }
       }

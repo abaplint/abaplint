@@ -1449,4 +1449,15 @@ DATA moo LIKE tab-foo.`;
     expect(type).to.be.instanceof(Basic.StringType);
   });
 
+  it("constant with value from interface", () => {
+    const abap = `
+INTERFACE lif_bar.
+  CONSTANTS sdf TYPE c LENGTH 1 VALUE 'a'.
+ENDINTERFACE.
+CONSTANTS something TYPE c LENGTH 1 VALUE lif_bar=>sdf.`;
+    const identifier = resolveVariable(abap, "something");
+    const type = identifier?.getType();
+    expect(type).to.be.instanceof(Basic.CharacterType);
+  });
+
 });
