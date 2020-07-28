@@ -25,9 +25,9 @@ export class SelectLoop extends Expression {
     const someField = seq(alt(new SQLFieldName(), new SQLAggregation()), comma);
     const fieldList = seq(star(someField), new SQLFieldName(), comma, star(someField));
 
-// todo, use SQLFieldList instead
+// todo, use SQLFieldList instead?
     const fields = alt(str("*"),
-                       new Dynamic(),
+                       seq(opt(str("DISTINCT")), new Dynamic()),
                        fieldList);
 
     const client = str("CLIENT SPECIFIED");

@@ -34,7 +34,7 @@ const tests = [
   "  PACKAGE SIZE 10 FROM ztable\n" +
   "  FOR ALL ENTRIES IN lt_input \n" +
   "  WHERE field = lt_input-field.",
-/*
+
   `
   SELECT DISTINCT (sdf)
   FROM (sdf)
@@ -45,7 +45,7 @@ const tests = [
   HAVING (sdf)
   ORDER BY (sdf).
   `,
-  */
+
 ];
 
 statementType(tests, "SELECT loop", Statements.SelectLoop);
