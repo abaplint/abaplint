@@ -1,8 +1,9 @@
-import {seq, per, opt, alt, tok, str, star, plus, Expression, altPrio, optPrio, ver} from "../combi";
+import {seq, per, opt, alt, tok, str, star, Expression, altPrio, optPrio, ver} from "../combi";
 import {WParenLeftW, WParenLeft} from "../../1_lexer/tokens";
-import {SQLTarget, SQLFieldList, SQLFrom, Field, Dynamic, SQLCond, SQLSource, DatabaseConnection, SQLTargetTable, SQLOrderBy, SQLHaving} from ".";
+import {SQLTarget, SQLFieldList, SQLFrom, SQLCond, SQLSource, DatabaseConnection, SQLTargetTable, SQLOrderBy, SQLHaving} from ".";
 import {Version} from "../../../version";
 import {IStatementRunnable} from "../statement_runnable";
+import {SQLGroupBy} from "./sql_group_by";
 
 export class Select extends Expression {
   public getRunnable(): IStatementRunnable {
@@ -26,12 +27,10 @@ export class Select extends Expression {
     const client = str("CLIENT SPECIFIED");
     const bypass = str("BYPASSING BUFFER");
 
-    const group = seq(str("GROUP BY"), plus(seq(alt(new Field(), new Dynamic()), opt(str(",")))));
-
     const fields = seq(str("FIELDS"), new SQLFieldList());
 
     const perm = per(new SQLFrom(), into, forAll, where,
-                     new SQLOrderBy(), up, offset, client, new SQLHaving(), bypass, group, fields, new DatabaseConnection());
+                     new SQLOrderBy(), up, offset, client, new SQLHaving(), bypass, new SQLGroupBy(), fields, new DatabaseConnection());
 
     const ret = seq(str("SELECT"),
                     altPrio(str("DISTINCT"), optPrio(seq(str("SINGLE"), optPrio(str("FOR UPDATE"))))),
