@@ -13,7 +13,13 @@ const cases = [
   {abap: `
   DATA: BEGIN OF COMMON PART something.
   TYPE-POOLS zfsd.
-  DATA: END   OF COMMON PART something.`},
+  DATA: END OF COMMON PART something.`},
+
+  {abap: `
+  DATA: BEGIN OF COMMON PART asdf.
+  ENHANCEMENT 1  sdfsd.
+  ENDENHANCEMENT.
+  DATA: END OF COMMON PART.`},
 
 ];
 
