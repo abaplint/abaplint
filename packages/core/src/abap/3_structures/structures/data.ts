@@ -10,6 +10,7 @@ export class Data implements IStructure {
                     star(alt(sta(Statements.Data),
                              sub(new Data()),
                              sta(Statements.IncludeType),
+                             sta(Statements.TypePools),
                              sta(Statements.Enhancement),
                              sta(Statements.EnhancementPoint))),
                     sta(Statements.DataEnd));

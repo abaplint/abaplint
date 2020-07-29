@@ -10,6 +10,11 @@ const cases = [
   ENHANCEMENT-POINT sdf SPOTS sdfsdf STATIC INCLUDE BOUND.
   DATA: END OF COMMON PART.`},
 
+  {abap: `
+  DATA: BEGIN OF COMMON PART something.
+  TYPE-POOLS zfsd.
+  DATA: END   OF COMMON PART something.`},
+
 ];
 
 structureType(cases, new Data());
