@@ -204,6 +204,9 @@ export class BasicTypes {
       text = node.findFirstExpression(Expressions.TypeTable)?.concatTokens().toUpperCase();
     }
     if (text === undefined) {
+      text = node.findFirstExpression(Expressions.FormParamType)?.concatTokens().toUpperCase();
+    }
+    if (text === undefined) {
       text = "TYPE";
     }
 
