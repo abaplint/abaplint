@@ -1472,4 +1472,11 @@ DATA(sdf) = ref->*-int.`;
     expect(type).to.be.instanceof(Basic.IntegerType);
   });
 
+  it("FORM, CHANGING STRUCTURE", () => {
+    const abap = `FORM foobar CHANGING tab TYPE ANY TABLE.
+    ENDFORM.`;
+    const identifier = resolveVariable(abap, "tab");
+    expect(identifier?.getType()).to.be.instanceof(Basic.TableType);
+  });
+
 });

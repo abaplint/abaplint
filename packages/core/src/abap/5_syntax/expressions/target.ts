@@ -8,6 +8,7 @@ import {Dash, InstanceArrow} from "../../1_lexer/tokens";
 import {StructureType, ObjectReferenceType, VoidType, DataReference, TableType} from "../../types/basic";
 import {ComponentName} from "./component_name";
 import {AttributeName} from "./attribute_name";
+import {FieldOffset} from "./field_offset";
 
 export class Target {
   public runSyntax(node: ExpressionNode, scope: CurrentScope, filename: string): AbstractType | undefined {
@@ -26,7 +27,9 @@ export class Target {
       }
 
       if (current.get() instanceof Dash) {
-        if (!(context instanceof StructureType) && !(context instanceof VoidType)) {
+        if (context instanceof UnknownType) {
+          throw new Error("Not a structure, type unknown, target");
+        } else if (!(context instanceof StructureType) && !(context instanceof VoidType)) {
           throw new Error("Not a structure, target");
         }
       } else if (current.get() instanceof InstanceArrow) {
@@ -51,8 +54,15 @@ export class Target {
       }
     }
 
+    const offset = node.findDirectExpression(Expressions.FieldOffset);
+    if (offset) {
+      new FieldOffset().runSyntax(offset, scope, filename);
+    }
+
     return context;
   }
+
+/////////////////////////////////
 
   private findTop(node: INode | undefined, scope: CurrentScope, _filename: string): AbstractType | undefined {
     if (node === undefined) {

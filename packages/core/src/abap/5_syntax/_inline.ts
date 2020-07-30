@@ -108,7 +108,7 @@ export class Inline {
       const token = target.getFirstToken();
       const resolved = this.scope.findVariable(token.getStr());
       if (resolved === undefined) {
-        return "\"" + token.getStr() + "\" not found";
+        return "\"" + token.getStr() + "\" not found, target";
       } else {
         this.scope.addWrite(token, resolved, filename);
       }
@@ -119,7 +119,7 @@ export class Inline {
       const token = source.getFirstToken();
       const resolved = this.scope.findVariable(token.getStr());
       if (resolved === undefined) {
-        return "\"" + token.getStr() + "\" not found";
+//        return "\"" + token.getStr() + "\" not found, source";
       } else {
         this.scope.addRead(token, resolved, filename);
       }

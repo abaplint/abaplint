@@ -60,6 +60,13 @@ DATA ls_tadir TYPE ztadir.`;
     expect(issues.length).to.equal(1);
   });
 
+  it("SELECT-OPTIONS", () => {
+    const abap = `SELECT-OPTIONS foo FOR structure-field.`;
+    let issues = runMulti([{filename: "zfoobar.prog.abap", contents: abap}]);
+    issues = issues.filter(i => i.getKey() === key);
+    expect(issues.length).to.equal(1);
+  });
+
   it("TABL, minimal example", () => {
     const tabl = `
 <?xml version="1.0" encoding="utf-8"?>
