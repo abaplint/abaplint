@@ -66,7 +66,7 @@ export class FieldChain {
       const name = token.getStr();
       const found = scope.findVariable(name);
       if (found === undefined) {
-        throw new Error(name + " not found");
+        throw new Error(name + " not found, findTop");
       }
 //      scope.addRead(token, found, filename);
       return found.getType();

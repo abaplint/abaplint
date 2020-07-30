@@ -123,7 +123,7 @@ field = zcl_global_class=>method( ).`;
     const abap = "foobar = 2.\n";
     const issues = runProgram(abap);
     expect(issues.length).to.equals(1);
-    expect(issues[0].getMessage()).to.equal("\"foobar\" not found");
+    expect(issues[0].getMessage()).to.contain("\"foobar\" not found");
   });
 
   it("program, foobar found, target", () => {
@@ -174,12 +174,6 @@ field = zcl_global_class=>method( ).`;
       "IMPORT name = local FROM DATA BUFFER buffer.\n";
     const issues = runProgram(abap);
     expect(issues.length).to.equals(0);
-  });
-
-  it("program, SELECT-OPTIONS", () => {
-    const abap = "SELECT-OPTIONS foo FOR structure-field.\nWRITE foo.\n";
-    const issues = runProgram(abap);
-    expect(issues.length).to.equals(1);
   });
 
   it("program, STATICS", () => {
@@ -1251,10 +1245,12 @@ DATA(output) = REDUCE string( INIT result = ||
   });
 
   it("Field offset, lv_i not specified", () => {
-    const abap = `DATA rv_s TYPE string.
+    const abap = `
+      DATA rv_s TYPE string.
       rv_s+lv_i(1) = 'a'.`;
     const issues = runProgram(abap);
     expect(issues.length).to.equals(1);
+    expect(issues[0].getMessage()).to.contain("lv_i");
   });
 
   it.skip("DATA, already specified", () => {
@@ -2097,6 +2093,45 @@ DATA bar TYPE TABLE OF voided_void WITH HEADER LINE.
 WRITE bar-bar.
 `;
     const issues = runProgram(abap);
+    expect(issues.length).to.equals(0);
+  });
+
+  it("LIKE DDIC structure, 2", () => {
+    const xml = `
+    <?xml version="1.0" encoding="utf-8"?>
+    <abapGit version="v1.0.0" serializer="LCL_OBJECT_TABL" serializer_version="v1.0.0">
+     <asx:abap xmlns:asx="http://www.sap.com/abapxml" version="1.0">
+      <asx:values>
+       <DD02V>
+        <TABNAME>SDF</TABNAME>
+        <DDLANGUAGE>E</DDLANGUAGE>
+        <TABCLASS>INTTAB</TABCLASS>
+        <DDTEXT>sdf</DDTEXT>
+        <EXCLASS>1</EXCLASS>
+       </DD02V>
+       <DD03P_TABLE>
+        <DD03P>
+         <TABNAME>SDF</TABNAME>
+         <FIELDNAME>STR</FIELDNAME>
+         <DDLANGUAGE>E</DDLANGUAGE>
+         <POSITION>0001</POSITION>
+         <ADMINFIELD>0</ADMINFIELD>
+         <INTTYPE>C</INTTYPE>
+         <INTLEN>000040</INTLEN>
+         <DATATYPE>CHAR</DATATYPE>
+         <LENG>000020</LENG>
+         <MASK>  CHAR</MASK>
+        </DD03P>
+       </DD03P_TABLE>
+      </asx:values>
+     </asx:abap>
+    </abapGit>
+    `;
+    const prog = `DATA foo LIKE sdf.`;
+    const issues = runMulti([
+      {filename: "sdf.tabl.xml", contents: xml},
+      {filename: "zfoobar.prog.abap", contents: prog},
+    ]);
     expect(issues.length).to.equals(0);
   });
 
