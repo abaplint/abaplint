@@ -21,6 +21,11 @@ const cases = [
   ENDENHANCEMENT.
   DATA: END OF COMMON PART.`},
 
+  {abap: `
+  DATA: BEGIN OF COMMON PART something.
+  CONSTANTS foo TYPE c LENGTH 1 VALUE 'A'.
+  DATA: END   OF COMMON PART something.`},
+
 ];
 
 structureType(cases, new Data());
