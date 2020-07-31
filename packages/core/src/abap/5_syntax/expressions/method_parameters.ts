@@ -113,11 +113,9 @@ export class MethodParameters {
 
       if (item.targetType) {
 // todo, check that targetType and parameterType are compatible
-/*
         if (0) {
-//          console.log(parameterType); // todo
+          console.log(parameterType); // todo
         }
-        */
       }
     }
   }
@@ -137,11 +135,9 @@ export class MethodParameters {
 
       if (item.sourceType) {
 // todo, check that targetType and parameterType are compatible
-/*
         if (0) {
-//          console.log(parameterType); // todo
+          console.log(parameterType); // todo
         }
-        */
       }
     }
   }
