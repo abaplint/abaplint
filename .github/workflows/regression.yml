@@ -26,9 +26,11 @@ jobs:
       run: |
         ls -salh
         cd .. && cd ..
+        pwd
         ls -salh
         cp ./abaplint/abaplint/.github/regression/run.js .
         ls -salh
+        pwd
 
     - name: checkout larshp/abapGit
       uses: actions/checkout@v2
@@ -37,7 +39,9 @@ jobs:
         path: './abapGit'
 
     - name: npm install && npm test, after
-      run: cd abaplint/abaplint && npm install && npm test
+      run: |
+        pwd
+        cd abaplint/abaplint && npm install && npm test
     - name: abapGit now
       run: './packages/cli/abaplint ../abapGit/abaplint.json > ../abapGit_after.json'
 
