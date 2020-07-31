@@ -34,7 +34,7 @@ jobs:
         git clone https://github.com/larshp/abapGit.git
         pwd
         cd abaplint/abaplint && npm install && npm test
-        ./packages/cli/abaplint ../../abapGit/abaplint.json > ../../abapGit_after.json'
+        ./packages/cli/abaplint ../../abapGit/abaplint.json > ../../abapGit_after.json
         pwd
         ls -salh
 
