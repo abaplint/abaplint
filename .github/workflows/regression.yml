@@ -40,8 +40,12 @@ jobs:
     - name: abapGit master
       run: './packages/cli/abaplint ./regression/abapGit/abaplint.json > before.json'
 
+    - name: Check outputs
+      run: |
+        echo "mi,ber - ${{github.event.issue.number}}"
     - name: Create comment
       uses: peter-evans/create-or-update-comment@v1
+      id: create-comment
       with:
         issue-number: '${{github.event.issue.number}}'
         body: |
