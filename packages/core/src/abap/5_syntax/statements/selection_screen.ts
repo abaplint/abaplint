@@ -5,14 +5,15 @@ import {TypedIdentifier} from "../../types/_typed_identifier";
 import {CharacterType} from "../../types/basic";
 
 export class SelectionScreen {
-  public runSyntax(node: StatementNode, _scope: CurrentScope, filename: string): TypedIdentifier | undefined {
+  public runSyntax(node: StatementNode, scope: CurrentScope, filename: string) {
 
     const field = node.findFirstExpression(Expressions.InlineField);
     if (field === undefined) {
-      return undefined;
+      return;
     }
 
     const name = field.getFirstToken();
-    return new TypedIdentifier(name, filename, new CharacterType(83));
+
+    scope.addIdentifier(new TypedIdentifier(name, filename, new CharacterType(83)));
   }
 }
