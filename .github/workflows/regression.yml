@@ -1,0 +1,21 @@
+name: Regression
+
+on:
+  push:
+    branches:
+    - '!master'
+
+jobs:
+  regression:
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v2
+      with:
+        fetch-depth: 0
+    - uses: actions/setup-node@v1
+      with:
+        node-version: '12.x'
+    - name: npm install
+      run: npm install
+    - name: npm test
+      run: npm test
