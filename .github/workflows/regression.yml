@@ -24,8 +24,10 @@ jobs:
         github-token: ${{ secrets.GITHUB_TOKEN }}
     - name: mkdir regression && copy run.js
       run: |
+        ls -salh
         cd .. && mkdir regression
-        cp .github/regression/run.js regression
+        ls -salh
+        cp ./abaplint/.github/regression/run.js regression
 
     - name: checkout larshp/abapGit
       uses: actions/checkout@v2
