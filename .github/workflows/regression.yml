@@ -27,15 +27,21 @@ jobs:
         repository: 'larshp/abapGit'
         path: './regression/abapGit'
 
-    - name: npm install && npm test 1
+    - name: npm install && npm test, after
       run: npm install && npm test
     - name: abapGit now
-      run: './packages/cli/abaplint ./regression/abapGit/abaplint.json'
+      run: './packages/cli/abaplint ./regression/abapGit/abaplint.json > after.json'
 
     - name: git checkout master
       run: git checkout master
 
-    - name: npm install && npm test 2
+    - name: npm install && npm test, before
       run: npm install && npm test
     - name: abapGit master
-      run: './packages/cli/abaplint ${GITHUB_WORKSPACE}/regression/abapGit/abaplint.json'
+      run: './packages/cli/abaplint ./regression/abapGit/abaplint.json > before.json'
+
+    - name: Create comment
+      uses: peter-evans/create-or-update-comment@v1
+      with:
+        body: |
+          hello world
