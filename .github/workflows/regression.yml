@@ -18,7 +18,7 @@ jobs:
         node-version: '12.x'
 
     - name: mkdir regression
-      run: mkdir '$GITHUB_WORKSPACE/regression/'
+      run: mkdir '${GITHUB_WORKSPACE}/regression/'
 
     - uses: actions/checkout@v2
       with:
