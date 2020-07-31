@@ -16,6 +16,8 @@ jobs:
     - uses: actions/setup-node@v1
       with:
         node-version: '12.x'
+    - name: mkdir /tmp/regression
+      run: mkdir /tmp/regression
 
     - uses: actions/checkout@v2
       with:
@@ -24,7 +26,9 @@ jobs:
 
     - name: npm install && npm test
       run: npm install && npm test
+
     - name: git checkout master
       run: git checkout master
+
     - name: npm install && npm test
       run: npm install && npm test
