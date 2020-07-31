@@ -22,8 +22,8 @@ jobs:
       run: mkdir -p '${GITHUB_WORKSPACE}/regression/'
     - name: npm install && npm test
       run: npm install && npm test
-    - name: cli abapGit
-      run: ./abaplint/abaplint/packages/cli/abaplint --version
+    - name: abapGit now
+      run: ls && ./abaplint/packages/cli/abaplint --version
 
     - name: checkout larshp/abapGit
       uses: actions/checkout@v2
