@@ -25,28 +25,31 @@ jobs:
     - name: mkdir regression && copy run.js
       run: |
         ls -salh
-        cd .. && mkdir regression
+        cd .. && cd ..
         ls -salh
-        cp ./abaplint/.github/regression/run.js regression
+        cp ./abaplint/abaplint/.github/regression/run.js .
+        ls -salh
 
     - name: checkout larshp/abapGit
       uses: actions/checkout@v2
       with:
         repository: 'larshp/abapGit'
-        path: './regression/abapGit'
+        path: './abapGit'
 
     - name: npm install && npm test, after
-      run: npm install && npm test
+      run: cd abaplint/abaplint && cd abaplint && npm install && npm test
     - name: abapGit now
-      run: './packages/cli/abaplint ./regression/abapGit/abaplint.json > ./regression/abapGit_after.json'
+      run: './packages/cli/abaplint ../abapGit/abaplint.json > ../abapGit_after.json'
 
     - name: git checkout master
       run: git checkout master
 
     - name: npm install && npm test, before
       run: npm install && npm test
-    - name: abapGit master
-      run: './packages/cli/abaplint ./regression/abapGit/abaplint.json > ./regression/abapGit_before.json'
+    - name: npm install && npm test, after
+      run: cd abaplint/abaplint && cd abaplint && npm install && npm test
+    - name: abapGit now
+      run: './packages/cli/abaplint ../abapGit/abaplint.json > ../abapGit_before.json'
 
     - name: build diff
       run: |
