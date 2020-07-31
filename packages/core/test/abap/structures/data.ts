@@ -39,6 +39,11 @@ const cases = [
         END OF typea.
   DATA END OF COMMON PART.`},
 
+  {abap: `
+  DATA BEGIN OF COMMON PART part123.
+  INCLUDE zsomething.
+  DATA END OF COMMON PART.`},
+
 ];
 
 structureType(cases, new Data());
