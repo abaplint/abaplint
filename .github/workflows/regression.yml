@@ -46,7 +46,7 @@ jobs:
 
     - name: build diff
       run: |
-        ls
+        ls -salh
         'node .github/regressions/run.js'
 
     - name: Create comment
