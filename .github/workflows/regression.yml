@@ -22,8 +22,10 @@ jobs:
       id: findPr
       with:
         github-token: ${{ secrets.GITHUB_TOKEN }}
-    - name: mkdir regression
-      run: cd .. && mkdir regression
+    - name: mkdir regression && copy run.js
+      run: |
+        cd .. && mkdir regression
+        cp .github/regression/run.js regression
 
     - name: checkout larshp/abapGit
       uses: actions/checkout@v2
@@ -47,7 +49,7 @@ jobs:
     - name: build diff
       run: |
         ls -salh
-        'node .github/regressions/run.js'
+        'node ./regression/run.js'
 
     - name: Create comment
       uses: peter-evans/create-or-update-comment@v1
