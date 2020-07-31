@@ -9,7 +9,7 @@ on:
 jobs:
   regression:
     # Check if the event is not triggered by a fork, this is stupid but its github
-    if: github.event.pull_request.head.repo.full_name == github.repository
+    if: github.event.push.head.repo.full_name == github.repository
     runs-on: ubuntu-latest
     steps:
     - uses: actions/checkout@v2
