@@ -40,9 +40,11 @@ jobs:
     - name: abapGit master
       run: './packages/cli/abaplint ./regression/abapGit/abaplint.json > before.json'
 
-    - name: Check outputs
-      run: |
-        echo "test - ${{github.event}}"
+    - name: Dump event context
+      env:
+        RUNNER_CONTEXT: ${{ toJson(github.event) }}
+      run: echo "$RUNNER_CONTEXT"
+
     - name: Create comment
       uses: peter-evans/create-or-update-comment@v1
       id: create-comment
