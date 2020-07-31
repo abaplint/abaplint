@@ -13,6 +13,7 @@ export class Data implements IStructure {
                     star(alt(sta(Statements.Data),
                              sub(new Data()),
                              sta(Statements.Include),
+                             sta(Statements.Ranges),
                              sta(Statements.Constant),
                              sub(new Constants()),
                              sta(Statements.Type),

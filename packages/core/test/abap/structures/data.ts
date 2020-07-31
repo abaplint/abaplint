@@ -44,6 +44,11 @@ const cases = [
   INCLUDE zsomething.
   DATA END OF COMMON PART.`},
 
+  {abap: `
+  DATA BEGIN OF COMMON PART part123.
+  RANGES range FOR foo-bar.
+  DATA END OF COMMON PART.`},
+
 ];
 
 structureType(cases, new Data());
