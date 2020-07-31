@@ -42,7 +42,7 @@ jobs:
 
     - name: Create comment
       uses: peter-evans/create-or-update-comment@v1
-      issue-number: ${{github.event.issue.number}}
+      issue-number: '${{github.event.issue.number}}'
       with:
         body: |
           hello world
