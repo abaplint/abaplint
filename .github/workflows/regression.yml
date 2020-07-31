@@ -18,6 +18,10 @@ jobs:
     - uses: actions/setup-node@v1
       with:
         node-version: '12.x'
+    - uses: jwalton/gh-find-current-pr@v1
+      id: findPr
+      with:
+        github-token: ${{ secrets.GITHUB_TOKEN }}
     - name: mkdir regression
       run: cd .. && mkdir regression
 
@@ -26,16 +30,6 @@ jobs:
       with:
         repository: 'larshp/abapGit'
         path: './regression/abapGit'
-     # Find the PR associated with this push, if there is one.
-    - uses: jwalton/gh-find-current-pr@v1
-      id: findPr
-      with:
-        github-token: ${{ secrets.GITHUB_TOKEN }}
-      # This will echo "Your PR is 7", or be skipped if there is no current PR.
-    - run: echo "Your PR is ${PR}"
-      if: success() && steps.findPr.outputs.number
-      env:
-        PR: ${{ steps.findPr.outputs.pr }}
 
     - name: npm install && npm test, after
       run: npm install && npm test
@@ -50,15 +44,10 @@ jobs:
     - name: abapGit master
       run: './packages/cli/abaplint ./regression/abapGit/abaplint.json > before.json'
 
-    - name: Dump event context
-      env:
-        RUNNER_CONTEXT: ${{ toJson(github.event) }}
-      run: echo "$RUNNER_CONTEXT"
-
     - name: Create comment
       uses: peter-evans/create-or-update-comment@v1
       id: create-comment
       with:
-        issue-number: '${{github.event.issue.number}}'
+        issue-number: '${{steps.findPr.outputs.pr}}'
         body: |
           hello world
