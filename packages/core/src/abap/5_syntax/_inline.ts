@@ -46,7 +46,7 @@ export class Inline {
         this.addVariable(field, filename);
       }
     }
-
+/*
     if(!(node.get() instanceof Statements.Loop)
         && !(node.get() instanceof Statements.ReadTable)
         && !(node.get() instanceof Statements.Assign)
@@ -56,10 +56,11 @@ export class Inline {
         if (field === undefined) {
           return "syntax_check, unexpected tree structure";
         }
-        this.addVariable(field, filename);
+//        this.addVariable(field, filename);
       }
     }
-
+*/
+/*
     for (const inline of node.findAllExpressions(Expressions.InlineFieldDefinition)) {
       const field = inline.findFirstExpression(Expressions.Field);
       if (field !== undefined) {
@@ -67,7 +68,8 @@ export class Inline {
 // todo, these also have to be popped after the statement
       }
     }
-
+*/
+/*
     for (const inline of node.findAllExpressions(Expressions.InlineLoopDefinition)) {
       const field = inline.findFirstExpression(Expressions.TargetField); // todo, this can take the field after IN
       if (field !== undefined) {
@@ -79,7 +81,8 @@ export class Inline {
         this.addVariable(fs, filename);
       }
     }
-
+*/
+/*
     for (const inline of node.findAllExpressions(Expressions.InlineField)) {
       const field = inline.findFirstExpression(Expressions.Field);
       if (field !== undefined) {
@@ -87,7 +90,7 @@ export class Inline {
 // todo, these also have to be popped after the statement?
       }
     }
-
+*/
     if (node.get() instanceof Statements.Select || node.get() instanceof Statements.SelectLoop) {
       const fromList = node.findAllExpressions(Expressions.SQLFromSource);
       for (const from of fromList) {
@@ -110,6 +113,7 @@ export class Inline {
       if (resolved === undefined) {
         return "\"" + token.getStr() + "\" not found, target";
       } else {
+// todo, refactor "add write" should be done after or inside scope lookups
         this.scope.addWrite(token, resolved, filename);
       }
     }
@@ -121,6 +125,7 @@ export class Inline {
       if (resolved === undefined) {
 //        return "\"" + token.getStr() + "\" not found, source";
       } else {
+// todo, refactor "add reads" should be done after or inside scope lookups
         this.scope.addRead(token, resolved, filename);
       }
     }

@@ -12,6 +12,7 @@ import {ComponentChain} from "./component_chain";
 import {StringTemplate} from "./string_template";
 import {ValueBody} from "./value_body";
 import {Cond} from "./cond";
+import {ReduceBody} from "./reduce_body";
 
 export class Source {
   public runSyntax(
@@ -32,11 +33,15 @@ export class Source {
         case "XSDBOOL":
           new Cond().runSyntax(node.findDirectExpression(Expressions.Cond), scope);
           return new CharacterType(1);
+        case "REDUCE":
+        {
+          const bodyType = new ReduceBody().runSyntax(node.findDirectExpression(Expressions.ReduceBody), scope, filename);
+          return this.value(node, scope, filename, targetType, bodyType);
+        }
         case "COND":
         case "CONV":
         case "CORRESPONDING":
         case "EXACT":
-        case "REDUCE":
         case "SWITCH":
           return this.value(node, scope, filename, targetType, undefined);
         case "VALUE":
