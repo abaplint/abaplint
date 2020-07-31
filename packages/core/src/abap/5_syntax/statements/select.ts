@@ -3,6 +3,7 @@ import {StatementNode} from "../../nodes";
 import {CurrentScope} from "../_current_scope";
 import {VoidType} from "../../types/basic";
 import {InlineData} from "../expressions/inline_data";
+import {Target} from "../expressions/target";
 
 export class Select {
   public runSyntax(node: StatementNode, scope: CurrentScope, filename: string): void {
@@ -14,6 +15,10 @@ export class Select {
     if (inline) {
       // todo, for now these are voided
       new InlineData().runSyntax(inline, scope, filename, new VoidType("SELECT_todo"));
+    }
+
+    for (const t of node.findAllExpressions(Expressions.Target)) {
+      new Target().runSyntax(t, scope, filename);
     }
 
   }

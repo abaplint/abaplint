@@ -1,11 +1,9 @@
 import {CurrentScope} from "./_current_scope";
-import {ExpressionNode, StatementNode} from "../nodes";
+import {StatementNode} from "../nodes";
 import * as Expressions from "../2_statements/expressions";
 import * as Statements from "../2_statements/statements";
 import {IRegistry} from "../../_iregistry";
 import {Table, View} from "../../objects";
-import {TypedIdentifier, IdentifierMeta} from "../types/_typed_identifier";
-import {UnknownType} from "../types/basic";
 import {SelectionScreen} from "./statements/selection_screen";
 
 export class Inline {
@@ -23,7 +21,7 @@ export class Inline {
       this.scope.addIdentifier(new SelectionScreen().runSyntax(node, this.scope, filename));
       return undefined;
     }
-
+/*
     if (!(node.get() instanceof Statements.Move)
         && !(node.get() instanceof Statements.Catch)
         && !(node.get() instanceof Statements.Loop)
@@ -46,6 +44,7 @@ export class Inline {
         this.addVariable(field, filename);
       }
     }
+*/
 /*
     if(!(node.get() instanceof Statements.Loop)
         && !(node.get() instanceof Statements.ReadTable)
@@ -91,6 +90,7 @@ export class Inline {
       }
     }
 */
+
     if (node.get() instanceof Statements.Select || node.get() instanceof Statements.SelectLoop) {
       const fromList = node.findAllExpressions(Expressions.SQLFromSource);
       for (const from of fromList) {
@@ -111,7 +111,7 @@ export class Inline {
       const token = target.getFirstToken();
       const resolved = this.scope.findVariable(token.getStr());
       if (resolved === undefined) {
-        return "\"" + token.getStr() + "\" not found, target";
+//        return "\"" + token.getStr() + "\" not found, target";
       } else {
 // todo, refactor "add write" should be done after or inside scope lookups
         this.scope.addWrite(token, resolved, filename);
@@ -134,15 +134,17 @@ export class Inline {
   }
 
 //////////////////////////////////////////
-
+/*
   private addVariable(expr: ExpressionNode | undefined, filename: string) {
     if (expr === undefined) {
       throw new Error("syntax_check, unexpected tree structure");
     }
     const token = expr.getFirstToken();
-    const identifier = new TypedIdentifier(token, filename, new UnknownType("todo, inline, addVariable"), [IdentifierMeta.InlineDefinition]);
+    const identifier = new TypedIdentifier(token, filename,
+      new UnknownType("todo, inline, addVariable"), [IdentifierMeta.InlineDefinition]);
     this.scope.addIdentifier(identifier);
   }
+*/
 
   // returns string with error or undefined
   // todo: refactor to use this.scope.getDDIC()
