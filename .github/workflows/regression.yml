@@ -21,7 +21,8 @@ jobs:
     - name: mkdir regression
       run: mkdir -p '${GITHUB_WORKSPACE}/regression/'
 
-    - uses: actions/checkout@v2
+    - name: checkout larshp/abapGit
+      uses: actions/checkout@v2
       with:
         repository: 'larshp/abapGit'
         path: '$GITHUB_WORKSPACE/regression/abapGit'
