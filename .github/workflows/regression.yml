@@ -42,7 +42,7 @@ jobs:
 
     - name: Check outputs
       run: |
-        echo "mi,ber - ${{github.event.issue.number}}"
+        echo "test - ${{github.event}}"
     - name: Create comment
       uses: peter-evans/create-or-update-comment@v1
       id: create-comment
