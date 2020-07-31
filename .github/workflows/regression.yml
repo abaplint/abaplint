@@ -30,7 +30,7 @@ jobs:
     - name: npm install && npm test 1
       run: npm install && npm test
     - name: abapGit now
-      run: './packages/cli/abaplint ${GITHUB_WORKSPACE}/regression/abapGit'
+      run: './packages/cli/abaplint ${GITHUB_WORKSPACE}/regression/abapGit/abaplint.json'
 
     - name: git checkout master
       run: git checkout master
@@ -38,4 +38,4 @@ jobs:
     - name: npm install && npm test 2
       run: npm install && npm test
     - name: abapGit master
-      run: './packages/cli/abaplint ${GITHUB_WORKSPACE}/regression/abapGit'
+      run: './packages/cli/abaplint ${GITHUB_WORKSPACE}/regression/abapGit/abaplint.json'
