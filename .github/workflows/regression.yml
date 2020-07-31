@@ -44,21 +44,14 @@ jobs:
     - name: abapGit master
       run: './packages/cli/abaplint ./regression/abapGit/abaplint.json > before.json'
 
-    - name: Find Comment
-      uses: peter-evans/find-comment@v1
-      id: find-comment
-      with:
-        issue-number: '${{steps.findPr.outputs.pr}}'
-        comment-author: abaplint-regressions
-
-    - run: echo ${{ steps.find-comment.outputs.comment-id }}
+    - name: build diff
+      run: 'ls'
 
     - name: Create comment
       uses: peter-evans/create-or-update-comment@v1
       id: create-comment
       with:
         issue-number: '${{steps.findPr.outputs.pr}}'
-        comment-id: '${{steps.find-comment.outputs.comment-id}}'
         comment-author: abaplint-regressions
         body: |
           else
