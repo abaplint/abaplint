@@ -61,4 +61,4 @@ jobs:
         comment-id: '${{steps.fc.outputs.comment-id}}'
         comment-author: abaplint-regressions
         body: |
-          updated1update
+          somethingsomething
