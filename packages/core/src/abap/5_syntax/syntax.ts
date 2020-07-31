@@ -60,8 +60,6 @@ import {InterfaceDefinition} from "../types/interface_definition";
 import {ISyntaxResult} from "./_spaghetti_scope";
 import {Write} from "./statements/write";
 
-// assumption: objects are parsed without parsing errors
-
 export class SyntaxLogic {
   private currentFile: ABAPFile;
   private issues: Issue[];
