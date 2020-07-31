@@ -12,5 +12,13 @@ export class FSTarget {
       new InlineFS().runSyntax(inlinefs, scope, filename, type);
     }
 
+    const target = node?.findDirectExpression(Expressions.TargetFieldSymbol);
+    if (target) {
+      const found = scope.findVariable(target.getFirstToken().getStr());
+      if (found === undefined) {
+        throw new Error(`"${target.getFirstToken().getStr()}" not found, FSTarget`);
+      }
+    }
+
   }
 }

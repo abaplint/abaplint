@@ -11,7 +11,10 @@ export class InlineLoopDefinition {
       return;
     }
 
-    const target = node.findDirectExpression(Expressions.TargetField);
+    let target = node.findDirectExpression(Expressions.TargetField);
+    if (target === undefined) {
+      target = node.findDirectExpression(Expressions.TargetFieldSymbol);
+    }
     const source = node.findDirectExpression(Expressions.Source);
 
     if (source && target) {
@@ -23,6 +26,5 @@ export class InlineLoopDefinition {
       scope.addIdentifier(identifier);
     }
 
-    return;
   }
 }

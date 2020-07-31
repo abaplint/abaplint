@@ -26,6 +26,29 @@ const cases = [
   CONSTANTS foo TYPE c LENGTH 1 VALUE 'A'.
   DATA: END   OF COMMON PART something.`},
 
+  {abap: `
+  DATA: BEGIN OF COMMON PART something.
+  TYPES: foo TYPE c LENGTH 1.
+  DATA: END   OF COMMON PART something.`},
+
+  {abap: `
+  DATA BEGIN OF COMMON PART commonpart.
+  TYPES:
+        BEGIN OF typea,
+          bar TYPE c,
+        END OF typea.
+  DATA END OF COMMON PART.`},
+
+  {abap: `
+  DATA BEGIN OF COMMON PART part123.
+  INCLUDE zsomething.
+  DATA END OF COMMON PART.`},
+
+  {abap: `
+  DATA BEGIN OF COMMON PART part123.
+  RANGES range FOR foo-bar.
+  DATA END OF COMMON PART.`},
+
 ];
 
 structureType(cases, new Data());

@@ -89,7 +89,6 @@ export class Procedural {
     this.scope.addList(form.getUsingParameters());
     this.scope.addList(form.getChangingParameters());
     this.scope.addList(form.getTablesParameters());
-
   }
 
 }

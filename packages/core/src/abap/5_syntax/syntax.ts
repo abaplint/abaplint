@@ -47,6 +47,7 @@ import {WhenType} from "./statements/when_type";
 import {If} from "./statements/if";
 import {ElseIf} from "./statements/else_if";
 import {Append} from "./statements/append";
+import {SelectionScreen} from "./statements/selection_screen";
 
 import {Data as DataStructure} from "./structures/data";
 import {TypeEnum} from "./structures/type_enum";
@@ -58,8 +59,6 @@ import {ClassDefinition} from "../types/class_definition";
 import {InterfaceDefinition} from "../types/interface_definition";
 import {ISyntaxResult} from "./_spaghetti_scope";
 import {Write} from "./statements/write";
-
-// assumption: objects are parsed without parsing errors
 
 export class SyntaxLogic {
   private currentFile: ABAPFile;
@@ -86,7 +85,7 @@ export class SyntaxLogic {
     this.helpers = {
       oooc: new ObjectOriented(this.scope),
       proc: new Procedural(this.reg, this.scope),
-      inline: new Inline(this.reg, this.scope),
+      inline: new Inline(this.scope),
     };
   }
 
@@ -161,10 +160,7 @@ export class SyntaxLogic {
 
   private traverse(node: INode): void {
     if (node instanceof StatementNode) {
-      const issueMessage = this.helpers.inline.update(node, this.currentFile.getFilename());
-      if (issueMessage) {
-        this.newIssue(node.getFirstToken(), issueMessage);
-      }
+      this.helpers.inline.addReadWriteReferences(node, this.currentFile.getFilename());
     }
 
     for (const child of node.getChildren()) {
@@ -259,50 +255,51 @@ export class SyntaxLogic {
       new ClassImplementation().runSyntax(node, this.scope, filename);
     } else if (s instanceof Statements.Method) {
       new MethodImplementation().runSyntax(node, this.scope, filename);
-    } else if (node.get() instanceof Statements.Move) {
+    } else if (s instanceof Statements.Move) {
       new Move().runSyntax(node, this.scope, filename);
-    } else if (node.get() instanceof Statements.Catch) {
+    } else if (s instanceof Statements.Catch) {
       new Catch().runSyntax(node, this.scope, filename);
-    } else if (node.get() instanceof Statements.Loop) {
+    } else if (s instanceof Statements.Loop) {
       new Loop().runSyntax(node, this.scope, filename);
-    } else if (node.get() instanceof Statements.ReadTable) {
+    } else if (s instanceof Statements.ReadTable) {
       new ReadTable().runSyntax(node, this.scope, filename);
-    } else if (node.get() instanceof Statements.Select) {
+    } else if (s instanceof Statements.Select) {
       new Select().runSyntax(node, this.scope, filename);
-    } else if (node.get() instanceof Statements.InsertInternal) {
+    } else if (s instanceof Statements.InsertInternal) {
       new InsertInternal().runSyntax(node, this.scope, filename);
-    } else if (node.get() instanceof Statements.Split) {
+    } else if (s instanceof Statements.Split) {
       new Split().runSyntax(node, this.scope, filename);
-    } else if (node.get() instanceof Statements.Assign) {
+    } else if (s instanceof Statements.Assign) {
       new Assign().runSyntax(node, this.scope, filename);
-    } else if (node.get() instanceof Statements.Convert) {
+    } else if (s instanceof Statements.Convert) {
       new Convert().runSyntax(node, this.scope, filename);
-    } else if (node.get() instanceof Statements.Describe) {
+    } else if (s instanceof Statements.Describe) {
       new Describe().runSyntax(node, this.scope, filename);
-    } else if (node.get() instanceof Statements.Find) {
+    } else if (s instanceof Statements.Find) {
       new Find().runSyntax(node, this.scope, filename);
-    } else if (node.get() instanceof Statements.Message) {
+    } else if (s instanceof Statements.Message) {
       new Message().runSyntax(node, this.scope, filename);
-    } else if (node.get() instanceof Statements.GetTime) {
+    } else if (s instanceof Statements.GetTime) {
       new GetTime().runSyntax(node, this.scope, filename);
-    } else if (node.get() instanceof Statements.GetParameter) {
+    } else if (s instanceof Statements.GetParameter) {
       new GetParameter().runSyntax(node, this.scope, filename);
-    } else if (node.get() instanceof Statements.WhenType) {
+    } else if (s instanceof Statements.WhenType) {
       new WhenType().runSyntax(node, this.scope, filename);
-    } else if (node.get() instanceof Statements.If) {
+    } else if (s instanceof Statements.If) {
       new If().runSyntax(node, this.scope, filename);
-    } else if (node.get() instanceof Statements.ElseIf) {
+    } else if (s instanceof Statements.ElseIf) {
       new ElseIf().runSyntax(node, this.scope, filename);
-    } else if (node.get() instanceof Statements.Append) {
+    } else if (s instanceof Statements.Append) {
       new Append().runSyntax(node, this.scope, filename);
-    } else if (node.get() instanceof Statements.Write) {
+    } else if (s instanceof Statements.Write) {
       new Write().runSyntax(node, this.scope, filename);
+    } else if (s instanceof Statements.SelectionScreen) {
+      new SelectionScreen().runSyntax(node, this.scope, filename);
 
     } else if (s instanceof Statements.Form) {
       this.helpers.proc.findFormScope(node, filename);
     } else if (s instanceof Statements.FunctionModule) {
       this.helpers.proc.findFunctionScope(this.object, node, filename);
-
 
     } else if (s instanceof Statements.EndMethod) {
       this.scope.pop();

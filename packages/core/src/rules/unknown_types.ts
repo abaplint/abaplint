@@ -54,9 +54,8 @@ export class UnknownTypes implements IRule {
     let ret: Issue[] = [];
 
     for (const v of node.getData().vars) {
-      const type = v.identifier.getType();
-      if (this.containsUnknown(type)) {
-        ret.push(Issue.atIdentifier(v.identifier, type.toText(0), this.getMetadata().key));
+      if (this.containsUnknown(v.identifier.getType())) {
+        ret.push(Issue.atIdentifier(v.identifier, v.name, this.getMetadata().key));
       }
     }
 

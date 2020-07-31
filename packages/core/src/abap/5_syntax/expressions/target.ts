@@ -20,6 +20,10 @@ export class Target {
     }
 
     let context = this.findTop(first, scope, filename);
+    if (context === undefined) {
+      throw new Error(`"${first.getFirstToken().getStr()}" not found, Target`);
+    }
+
     while (children.length > 0) {
       const current = children.shift();
       if (current === undefined) {
