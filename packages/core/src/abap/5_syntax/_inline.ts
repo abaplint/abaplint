@@ -3,16 +3,13 @@ import {StatementNode} from "../nodes";
 import * as Expressions from "../2_statements/expressions";
 import * as Statements from "../2_statements/statements";
 import {IRegistry} from "../../_iregistry";
-import {Table, View} from "../../objects";
 import {SelectionScreen} from "./statements/selection_screen";
 
 export class Inline {
   private readonly scope: CurrentScope;
-  private readonly reg: IRegistry;
 
-  public constructor(reg: IRegistry, scope: CurrentScope) {
+  public constructor(_reg: IRegistry, scope: CurrentScope) {
     this.scope = scope;
-    this.reg = reg;
   }
 
   // returns an optional issue description
@@ -91,6 +88,7 @@ export class Inline {
     }
 */
 
+/*
     if (node.get() instanceof Statements.Select || node.get() instanceof Statements.SelectLoop) {
       const fromList = node.findAllExpressions(Expressions.SQLFromSource);
       for (const from of fromList) {
@@ -105,7 +103,7 @@ export class Inline {
         }
       }
     }
-
+*/
     const targets = node.findAllExpressions(Expressions.TargetField).concat(node.findAllExpressions(Expressions.TargetFieldSymbol));
     for (const target of targets) {
       const token = target.getFirstToken();
@@ -146,6 +144,7 @@ export class Inline {
   }
 */
 
+/*
   // returns string with error or undefined
   // todo: refactor to use this.scope.getDDIC()
   private findTable(name: string): string | undefined {
@@ -163,4 +162,5 @@ export class Inline {
       return;
     }
   }
+  */
 }
