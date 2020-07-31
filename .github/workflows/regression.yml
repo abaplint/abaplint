@@ -16,13 +16,14 @@ jobs:
     - uses: actions/setup-node@v1
       with:
         node-version: '12.x'
-    - name: mkdir /tmp/regression
-      run: mkdir /tmp/regression
+
+    - name: mkdir regression
+      run: mkdir '$GITHUB_WORKSPACE/regression/'
 
     - uses: actions/checkout@v2
       with:
         repository: 'larshp/abapGit'
-        path: '/tmp/regression/abapGit'
+        path: '$GITHUB_WORKSPACE/regression/abapGit'
 
     - name: npm install && npm test
       run: npm install && npm test
