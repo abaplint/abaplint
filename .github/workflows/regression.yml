@@ -16,13 +16,15 @@ jobs:
     - uses: actions/setup-node@v1
       with:
         node-version: '12.x'
-    - name: npm install
-      run: npm install
-    - name: npm test
-      run: npm test
+
+    - uses: actions/checkout@v2
+      with:
+        repository: 'larshp/abapGit'
+        path: '/tmp/regression/abapGit'
+
+    - name: npm install && npm test
+      run: npm install && npm test
     - name: git checkout master
       run: git checkout master
-    - name: npm install
-      run: npm install
-    - name: npm test
-      run: npm test
+    - name: npm install && npm test
+      run: npm install && npm test
