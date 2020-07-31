@@ -45,7 +45,9 @@ jobs:
       run: './packages/cli/abaplint ./regression/abapGit/abaplint.json > ./regression/abapGit_before.json'
 
     - name: build diff
-      run: 'node .github/regressions/run.js'
+      run: |
+        ls
+        'node .github/regressions/run.js'
 
     - name: Create comment
       uses: peter-evans/create-or-update-comment@v1
