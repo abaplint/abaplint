@@ -20,10 +20,6 @@ jobs:
         node-version: '12.x'
     - name: mkdir regression
       run: mkdir -p '${GITHUB_WORKSPACE}/regression/'
-    - name: npm install && npm test
-      run: npm install && npm test
-    - name: abapGit now
-      run: ls && ./packages/cli/abaplint --version
 
     - name: checkout larshp/abapGit
       uses: actions/checkout@v2
@@ -31,7 +27,15 @@ jobs:
         repository: 'larshp/abapGit'
         path: '$GITHUB_WORKSPACE/regression/abapGit'
 
-    - name: git checkout master
-      run: git checkout master
     - name: npm install && npm test
       run: npm install && npm test
+    - name: abapGit now
+      run: './packages/cli/abaplint '${GITHUB_WORKSPACE}/regression/abapGit'
+
+    - name: git checkout master
+      run: git checkout master
+
+    - name: npm install && npm test
+      run: npm install && npm test
+    - name: abapGit master
+      run: './packages/cli/abaplint '${GITHUB_WORKSPACE}/regression/abapGit'
