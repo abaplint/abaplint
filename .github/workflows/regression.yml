@@ -23,7 +23,7 @@ jobs:
     - name: npm install && npm test
       run: npm install && npm test
     - name: abapGit now
-      run: ls && ./abaplint/packages/cli/abaplint --version
+      run: ls && ./packages/cli/abaplint --version
 
     - name: checkout larshp/abapGit
       uses: actions/checkout@v2
