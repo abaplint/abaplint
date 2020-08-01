@@ -24,9 +24,9 @@ jobs:
         github-token: ${{ secrets.GITHUB_TOKEN }}
     - name: mkdir regression && copy run.js
       run: |
-        npm install && npm test && cp packages/cli/abaplint/build/bundle ../../abaplint_after
+        npm install && npm test && cp packages/cli/build/bundle ../../abaplint_after
         git checkout master
-        npm install && npm test && cp packages/cli/abaplintbuild/bundle ../../abaplint_before
+        npm install && npm test && cp packages/cli/build/bundle ../../abaplint_before
         pwd
         cd .. && cd ..
         pwd
