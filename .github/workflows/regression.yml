@@ -22,8 +22,9 @@ jobs:
       id: findPr
       with:
         github-token: ${{ secrets.GITHUB_TOKEN }}
-    - name: mkdir regression && copy run.js
+    - name: run
       run: |
+        cp .github/regression/run.js ../../run.js
         npm install && npm test && cp packages/cli/build/bundle.js ../../abaplint_after
         git checkout master
         npm install && npm test && cp packages/cli/build/bundle.js ../../abaplint_before
