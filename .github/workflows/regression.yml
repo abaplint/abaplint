@@ -24,15 +24,16 @@ jobs:
         github-token: ${{ secrets.GITHUB_TOKEN }}
     - name: mkdir regression && copy run.js
       run: |
-        npm install && npm test && cp packages/cli/abaplint ../../abaplint_after
+        npm install && npm test && cp packages/cli/abaplint/build/bundle ../../abaplint_after
         git checkout master
-        npm install && npm test && cp packages/cli/abaplint ../../abaplint_before
+        npm install && npm test && cp packages/cli/abaplintbuild/bundle ../../abaplint_before
         pwd
         cd .. && cd ..
         pwd
+        ls -salh
         git clone https://github.com/larshp/abapGit.git
-        ./abaplint_after abapGit/abaplint.json > abapGit_after.json
-        ./abaplint_before abapGit/abaplint.json > abapGit_before.json
+        node ./abaplint_after abapGit/abaplint.json > abapGit_after.json
+        node ./abaplint_before abapGit/abaplint.json > abapGit_before.json
 
     - name: build diff
       run: |
