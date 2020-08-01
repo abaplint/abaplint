@@ -37,6 +37,7 @@ jobs:
 
     - name: build diff
       run: |
+        cd .. && cd ..
         pwd
         ls -salh
         'node ./run.js'
