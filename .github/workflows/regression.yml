@@ -24,36 +24,21 @@ jobs:
         github-token: ${{ secrets.GITHUB_TOKEN }}
     - name: mkdir regression && copy run.js
       run: |
-        ls -salh
+        npm install && npm test && cp packages/cli/abaplint ../../abaplint_after
+        git checkout master
+        npm install && npm test && cp packages/cli/abaplint ../../abaplint_before
+        pwd
         cd .. && cd ..
         pwd
-        ls -salh
-        cp ./abaplint/abaplint/.github/regression/run.js .
-        ls -salh
-        pwd
         git clone https://github.com/larshp/abapGit.git
-        pwd
-        cd abaplint/abaplint && npm install && npm test
-        ./packages/cli/abaplint ../../abapGit/abaplint.json > ../../abapGit_after.json
-        pwd
-        ls -salh
-
-    - name: git checkout master
-      run: git checkout master
-
-    - name: npm install && npm test, before
-      run: npm install && npm test
-    - name: npm install && npm test, after
-      run: |
-        ls -salh
-        cd abaplint/abaplint && cd abaplint && npm install && npm test
-    - name: abapGit now
-      run: './packages/cli/abaplint ../abapGit/abaplint.json > ../abapGit_before.json'
+        ./abaplint_after abapGit/abaplint.json > abapGit_after.json
+        ./abaplint_before abapGit/abaplint.json > abapGit_before.json
 
     - name: build diff
       run: |
+        pwd
         ls -salh
-        'node ./regression/run.js'
+        'node ./run.js'
 
     - name: Create comment
       uses: peter-evans/create-or-update-comment@v1
