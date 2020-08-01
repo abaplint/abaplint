@@ -41,7 +41,7 @@ jobs:
         cd .. && cd ..
         pwd
         ls -salh
-        'node ./run.js'
+        node ./run.js
 
     - name: Create comment
       uses: peter-evans/create-or-update-comment@v1
