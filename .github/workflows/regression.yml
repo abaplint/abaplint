@@ -34,8 +34,8 @@ jobs:
         node ./abaplint_after abapGit/abaplint.json > abapGit#after.json
 
     - name: build diff
-      repos: |
-        [ "https://github.com/larshp/abapGit" ]
+      env:
+        REPOS: ["https://github.com/larshp/abapGit"]
       run: |
         cd .. && cd ..
         ls -salh
