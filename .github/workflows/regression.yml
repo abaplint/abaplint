@@ -49,9 +49,9 @@ jobs:
       uses: peter-evans/find-comment@v1
       id: fc
       with:
+        repository: 'abaplint/abaplint'
         issue-number: '${{steps.findPr.outputs.pr}}'
-        comment-author: github-actions
-        body-includes: Regression test results
+        body-includes: Regression
     - run: echo ${{ steps.fc.outputs.comment-id }}
 
     - id: get-comment-body
