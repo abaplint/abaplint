@@ -28,10 +28,7 @@ jobs:
         npm install && npm test && cp packages/cli/build/bundle.js ../../abaplint_after
         git checkout master
         npm install && npm test && cp packages/cli/build/bundle.js ../../abaplint_before
-        pwd
         cd .. && cd ..
-        pwd
-        ls -salh
         git clone https://github.com/larshp/abapGit.git
         node ./abaplint_after abapGit/abaplint.json > abapGit_after.json
         node ./abaplint_before abapGit/abaplint.json > abapGit_before.json
@@ -39,8 +36,6 @@ jobs:
     - name: build diff
       run: |
         cd .. && cd ..
-        pwd
-        ls -salh
         node ./run.js
 
     - name: Create comment
