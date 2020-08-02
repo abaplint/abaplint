@@ -54,10 +54,10 @@
     "homepage": "https://abaplint.org",
     "devDependencies": {
         "@types/chai": "^4.2.12",
-        "@types/mocha": "^8.0.0",
+        "@types/mocha": "^8.0.1",
         "@types/node": "^14.0.27",
         "chai": "^4.2.0",
-        "eslint": "^7.5.0",
+        "eslint": "^7.6.0",
         "madge": "^3.9.2",
         "mocha": "^8.0.1",
         "nyc": "^15.1.0",
