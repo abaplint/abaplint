@@ -13,6 +13,7 @@ export class MaintenanceAndTransportObject extends AbstractObject {
     };
   }
 
+  // todo, cache parsed data
   public getArea(): string | undefined {
     if (this.getFiles().length === 0) {
       return undefined;

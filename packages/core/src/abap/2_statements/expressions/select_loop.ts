@@ -1,8 +1,10 @@
-import {seq, per, opt, alt, tok, str, ver, star, plus, Expression} from "../combi";
+import {seq, per, opt, alt, tok, str, ver, star, Expression} from "../combi";
 import {WParenLeftW, WAt, WParenLeft} from "../../1_lexer/tokens";
-import {SQLSource, SQLFrom, DatabaseTable, Dynamic, Target, Source, SQLCond, SQLFieldName, SQLAggregation, SQLTargetTable} from ".";
+import {SQLSource, SQLFrom, DatabaseTable, Dynamic, Target, Source, SQLCond, SQLFieldName, SQLAggregation, SQLTargetTable, SQLGroupBy} from ".";
 import {Version} from "../../../version";
 import {IStatementRunnable} from "../statement_runnable";
+import {SQLOrderBy} from "./sql_order_by";
+import {SQLHaving} from "./sql_having";
 
 export class SelectLoop extends Expression {
   public getRunnable(): IStatementRunnable {
@@ -19,17 +21,13 @@ export class SelectLoop extends Expression {
 
     const where = seq(str("WHERE"), new SQLCond());
 
-    const ding = alt(str("ASCENDING"), str("DESCENDING"));
-
-    const order = seq(str("ORDER BY"), alt(plus(seq(new SQLFieldName(), opt(ding))), str("PRIMARY KEY"), new Dynamic()));
-
     const comma = opt(ver(Version.v740sp05, str(",")));
     const someField = seq(alt(new SQLFieldName(), new SQLAggregation()), comma);
     const fieldList = seq(star(someField), new SQLFieldName(), comma, star(someField));
 
-// todo, use SQLFieldList instead
+// todo, use SQLFieldList instead?
     const fields = alt(str("*"),
-                       new Dynamic(),
+                       seq(opt(str("DISTINCT")), new Dynamic()),
                        fieldList);
 
     const client = str("CLIENT SPECIFIED");
@@ -41,13 +39,11 @@ export class SelectLoop extends Expression {
 
     const forAll = seq(str("FOR ALL ENTRIES IN"), new SQLSource());
 
-    const group = seq(str("GROUP BY"), plus(alt(new SQLFieldName(), new Dynamic())));
-
     const from2 = seq(str("FROM"), new DatabaseTable());
 
     const tab = seq(new SQLTargetTable(), alt(pack, seq(from2, pack), seq(pack, from2)));
 
-    const perm = per(new SQLFrom(), where, up, order, client, bypass, group, forAll, alt(tab, into));
+    const perm = per(new SQLFrom(), where, up, new SQLOrderBy(), new SQLHaving(), client, bypass, new SQLGroupBy(), forAll, alt(tab, into));
 
     const ret = seq(str("SELECT"),
                     fields,

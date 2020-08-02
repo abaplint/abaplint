@@ -29,7 +29,7 @@ describe("Message Class, parse XML", () => {
 
     const reg = new Registry().addFile(new MemoryFile("zag_unit_test.msag.xml", xml));
     await reg.parseAsync();
-    const msag = reg.getObjects()[0] as MessageClass;
+    const msag = reg.getFirstObject()! as MessageClass;
     expect(msag.getName()).to.equal("ZAG_UNIT_TEST");
     const messages = msag.getMessages();
     expect(messages.length).to.equal(1);
@@ -61,7 +61,7 @@ describe("Message Class, parse XML", () => {
 
     const reg = new Registry().addFile(new MemoryFile("zag_unit_test.msag.xml", xml));
     await reg.parseAsync();
-    const msag = reg.getObjects()[0] as MessageClass;
+    const msag = reg.getFirstObject()! as MessageClass;
     expect(msag.getName()).to.equal("ZAG_UNIT_TEST");
     const messages = msag.getMessages();
     expect(messages.length).to.equal(1);

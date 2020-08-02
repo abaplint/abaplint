@@ -9,6 +9,7 @@ export const enum IdentifierMeta {
   MethodReturning = "returning",
   ReadOnly = "read_only",
   InlineDefinition = "inline",
+  BuiltIn = "built-in",
 // todo, MethodPreferred
 // todo, Optional
 }

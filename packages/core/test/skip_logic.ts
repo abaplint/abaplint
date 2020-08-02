@@ -13,8 +13,8 @@ ENDINTERFACE.`;
     const file = new MemoryFile("zif_bar.ingf.abap", abap);
     const reg = new Registry().addFile(file);
     await reg.parseAsync();
-    expect(reg.getObjects().length).to.equal(1);
-    expect(new SkipLogic(reg).skip(reg.getObjects()[0])).to.equal(false);
+    expect(reg.getObjectCount()).to.equal(1);
+    expect(new SkipLogic(reg).skip(reg.getFirstObject()!)).to.equal(false);
   });
 
   it("isGeneratedGatewayClass, true", async () => {
@@ -32,8 +32,8 @@ ENDINTERFACE.`;
     const file = new MemoryFile("#abc#cl_z_abapgit_test_mpc.clas.abap", abap);
     const reg = new Registry().addFile(file);
     await reg.parseAsync();
-    expect(reg.getObjects().length).to.equal(1);
-    expect(new SkipLogic(reg).skip(reg.getObjects()[0])).to.equal(true);
+    expect(reg.getObjectCount()).to.equal(1);
+    expect(new SkipLogic(reg).skip(reg.getFirstObject()!)).to.equal(true);
   });
 
   it("interface, isGeneratedProxy", async () => {
@@ -61,8 +61,8 @@ ENDINTERFACE.`;
     reg.addFile(new MemoryFile("zif_foobar.intf.xml", xml));
 
     await reg.parseAsync();
-    expect(reg.getObjects().length).to.equal(1);
-    expect(new SkipLogic(reg).skip(reg.getObjects()[0])).to.equal(true);
+    expect(reg.getObjectCount()).to.equal(1);
+    expect(new SkipLogic(reg).skip(reg.getFirstObject()!)).to.equal(true);
   });
 
   it("generated BOPF constants interface", async () => {
@@ -74,8 +74,8 @@ ENDINTERFACE.`;
     const file = new MemoryFile("zif_tt_i_projects_c.intf.abap", abap);
     const reg = new Registry().addFile(file);
     await reg.parseAsync();
-    expect(reg.getObjects().length).to.equal(1);
-    expect(new SkipLogic(reg).skip(reg.getObjects()[0])).to.equal(true);
+    expect(reg.getObjectCount()).to.equal(1);
+    expect(new SkipLogic(reg).skip(reg.getFirstObject()!)).to.equal(true);
   });
 
   it("generated DPC classes generated for a published CDS", async () => {
@@ -92,7 +92,7 @@ ENDINTERFACE.`;
     const file = new MemoryFile("zcl_ztt_c_projects.clas.abap", abap);
     const reg = new Registry().addFile(file);
     await reg.parseAsync();
-    expect(reg.getObjects().length).to.equal(1);
-    expect(new SkipLogic(reg).skip(reg.getObjects()[0])).to.equal(true);
+    expect(reg.getObjectCount()).to.equal(1);
+    expect(new SkipLogic(reg).skip(reg.getFirstObject()!)).to.equal(true);
   });
 });

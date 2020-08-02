@@ -86,7 +86,7 @@ export class BuiltIn {
     const ret: IBuiltinMethod[] = [];
 
     // todo, some of these are version specific
-    // todo, make types correct, some of the string sare clike?
+    // todo, make types correct, some of the strings are clike?
     ret.push({name: "ABS", importing: [{name: "val", type: new FloatType()}], returnType: new IntegerType()});
     ret.push({name: "BOOLC", importing: [{name: "val", type: new StringType()}], returnType: new CharacterType(1)});
     ret.push({name: "CEIL", importing: [{name: "val", type: new FloatType()}], returnType: new IntegerType()});
@@ -109,6 +109,8 @@ export class BuiltIn {
     ret.push({name: "SHIFT_RIGHT", importing: [{name: "val", type: new StringType()}], returnType: new StringType()});
     ret.push({name: "SIGN", importing: [{name: "val", type: new FloatType()}], returnType: new IntegerType()});
     ret.push({name: "STRLEN", importing: [{name: "val", type: new StringType()}], returnType: new IntegerType()});
+    ret.push({name: "CHARLEN", importing: [{name: "val", type: new StringType()}], returnType: new IntegerType()});
+    ret.push({name: "NUMOFCHAR", importing: [{name: "val", type: new StringType()}], returnType: new IntegerType()});
     ret.push({name: "SUBSTRING_AFTER", importing: [{name: "val", type: new StringType()}, {name: "sub", type: new StringType()}], returnType: new StringType()});
     ret.push({name: "SUBSTRING_BEFORE", importing: [{name: "val", type: new StringType()}, {name: "sub", type: new StringType()}, {name: "regex", type: new StringType()}], returnType: new StringType()});
     ret.push({name: "SUBSTRING", importing: [{name: "val", type: new StringType()}, {name: "len", type: new IntegerType()}, {name: "off", type: new IntegerType()}], returnType: new StringType()});
@@ -120,6 +122,7 @@ export class BuiltIn {
     ret.push({name: "XSDBOOL", importing: [{name: "val", type: new StringType()}], returnType: new CharacterType(1)});
     ret.push({name: "XSTRLEN", importing: [{name: "val", type: new StringType()}], returnType: new IntegerType()});
 
+    // todo, optimize, use hash map
     const index = ret.findIndex(a => a.name === name.toUpperCase());
     if (index < 0) {
       return undefined;
@@ -173,7 +176,7 @@ export class BuiltIn {
 
     for (const e of extras) {
       const id = new TokenIdentifier(new Position(this.row++, 1), e);
-      ret.push(new TypedIdentifier(id, BuiltIn.filename, new VoidType(e), [IdentifierMeta.ReadOnly], "'?'"));
+      ret.push(new TypedIdentifier(id, BuiltIn.filename, new VoidType(e), [IdentifierMeta.ReadOnly, IdentifierMeta.BuiltIn], "'?'"));
     }
 
     return ret;
@@ -222,7 +225,7 @@ export class BuiltIn {
     components.push({name: "zonlo", type: new CharacterType(6)});
     const type = new StructureType(components);
     const id = new TokenIdentifier(new Position(this.row++, 1), "sy");
-    return new TypedIdentifier(id, BuiltIn.filename, type, [IdentifierMeta.ReadOnly]);
+    return new TypedIdentifier(id, BuiltIn.filename, type, [IdentifierMeta.ReadOnly, IdentifierMeta.BuiltIn]);
   }
 
   private buildConstant(name: string, type?: AbstractType, value?: string): TypedIdentifier {
@@ -233,12 +236,12 @@ export class BuiltIn {
     if (value === undefined) {
       value = "'?'";
     }
-    return new TypedIdentifier(id, BuiltIn.filename, type, [IdentifierMeta.ReadOnly], value);
+    return new TypedIdentifier(id, BuiltIn.filename, type, [IdentifierMeta.ReadOnly, IdentifierMeta.BuiltIn], value);
   }
 
   private buildVariable(name: string) {
     const id = new TokenIdentifier(new Position(this.row++, 1), name);
-    return new TypedIdentifier(id, BuiltIn.filename, new VoidType(name));
+    return new TypedIdentifier(id, BuiltIn.filename, new VoidType(name), [IdentifierMeta.BuiltIn]);
   }
 
 }

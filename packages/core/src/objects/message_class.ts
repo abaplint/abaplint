@@ -3,6 +3,7 @@ import {Message} from "../abap/types/message";
 import {xmlToArray} from "../xml_utils";
 
 export class MessageClass extends AbstractObject {
+  private parsedMessages: Message[] | undefined = undefined;
 
   public getType(): string {
     return "MSAG";
@@ -15,33 +16,15 @@ export class MessageClass extends AbstractObject {
     };
   }
 
-  public getMessages(): Message[] {
-    const xml = this.getXML();
-    if (xml === undefined) {
-      return [];
-    }
-    const parsed = this.parseXML();
-    if (parsed === undefined) {
-      return [];
-    }
-
-    return this.parsePrivate(parsed);
+  public setDirty(): void {
+    this.parsedMessages = undefined;
+    super.setDirty();
   }
 
-/////////////////////////////////
-
-  private parsePrivate(data: any): Message[] {
-    const ret: Message[] = [];
-
-    const t100 = data.abapGit["asx:abap"]["asx:values"].T100;
-    if (t100 === undefined) {
-      return [];
-    }
-    for (const msg of xmlToArray(t100.T100)) {
-      ret.push(new Message(msg.MSGNR._text, msg.TEXT ? msg.TEXT._text : ""));
-    }
-
-    return ret;
+  public getMessages(): readonly Message[] {
+    this.parseXML();
+    const msg = this.parsedMessages;
+    return msg ? msg : [];
   }
 
   public getByNumber(num: string): Message | undefined {
@@ -51,6 +34,29 @@ export class MessageClass extends AbstractObject {
       }
     }
     return undefined;
+  }
+
+/////////////////////////////////
+
+  private parseXML() {
+    if (this.parsedMessages !== undefined) {
+      return;
+    }
+
+    this.parsedMessages = [];
+
+    const parsed = super.parseRaw();
+    if (parsed === undefined) {
+      return;
+    }
+
+    const t100 = parsed?.abapGit["asx:abap"]["asx:values"]?.T100;
+    if (t100 === undefined) {
+      return;
+    }
+    for (const msg of xmlToArray(t100.T100)) {
+      this.parsedMessages.push(new Message(msg.MSGNR._text, msg.TEXT ? msg.TEXT._text : ""));
+    }
   }
 
 }

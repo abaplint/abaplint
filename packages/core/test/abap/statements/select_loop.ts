@@ -34,6 +34,18 @@ const tests = [
   "  PACKAGE SIZE 10 FROM ztable\n" +
   "  FOR ALL ENTRIES IN lt_input \n" +
   "  WHERE field = lt_input-field.",
+
+  `
+  SELECT DISTINCT (sdf)
+  FROM (sdf)
+  UP TO lv_limit ROWS
+  INTO <record>
+  WHERE (sdf)
+  GROUP BY (sdf)
+  HAVING (sdf)
+  ORDER BY (sdf).
+  `,
+
 ];
 
 statementType(tests, "SELECT loop", Statements.SelectLoop);

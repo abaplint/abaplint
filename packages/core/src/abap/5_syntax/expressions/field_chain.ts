@@ -4,7 +4,7 @@ import {AbstractType} from "../../types/basic/_abstract_type";
 import {INode} from "../../nodes/_inode";
 import * as Expressions from "../../2_statements/expressions";
 import {Dash, InstanceArrow} from "../../1_lexer/tokens";
-import {StructureType, ObjectReferenceType, VoidType, DataReference, TableType} from "../../types/basic";
+import {StructureType, ObjectReferenceType, VoidType, DataReference, TableType, UnknownType} from "../../types/basic";
 import {ComponentName} from "./component_name";
 import {AttributeName} from "./attribute_name";
 
@@ -21,7 +21,12 @@ export class FieldChain {
       }
 
       if (current.get() instanceof Dash) {
-        if (!(context instanceof StructureType) && !(context instanceof VoidType)) {
+        if (context instanceof UnknownType) {
+          throw new Error("Not a structure, type unknown, FieldChain");
+        } else if (!(context instanceof StructureType)
+            && !(context instanceof TableType && context.isWithHeader() && context.getRowType() instanceof StructureType)
+            && !(context instanceof TableType && context.isWithHeader() && context.getRowType() instanceof VoidType)
+            && !(context instanceof VoidType)) {
           throw new Error("Not a structure, FieldChain");
         }
       } else if (current.get() instanceof InstanceArrow) {
@@ -63,7 +68,7 @@ export class FieldChain {
       const name = token.getStr();
       const found = scope.findVariable(name);
       if (found === undefined) {
-        throw new Error(name + " not found");
+        throw new Error(name + " not found, findTop");
       }
 //      scope.addRead(token, found, filename);
       return found.getType();

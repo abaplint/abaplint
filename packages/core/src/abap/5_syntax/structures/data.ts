@@ -11,6 +11,7 @@ import {Data as DataSyntax} from "../statements/data";
 export class Data {
   public runSyntax(node: StructureNode, scope: CurrentScope, filename: string): TypedIdentifier | undefined {
     const name = node.findFirstExpression(Expressions.NamespaceSimpleName)!.getFirstToken();
+    let table: boolean = false;
 
     const components: IStructureComponent[] = [];
     for (const c of node.getChildren()) {
@@ -25,10 +26,40 @@ export class Data {
         if (found) {
           components.push({name: found.getName(), type: found.getType()});
         }
+      } else if (c instanceof StatementNode && ctyp instanceof Statements.DataBegin) {
+        if (c.findDirectTokenByText("OCCURS")) {
+          table = true;
+        }
+      } else if (c instanceof StatementNode && ctyp instanceof Statements.IncludeType) {
+        // INCLUDES
+        const typeName = c.findFirstExpression(Expressions.TypeName)?.getFirstToken().getStr();
+        let found = scope.findType(typeName)?.getType();
+        if (found === undefined) {
+          found = scope.getDDIC().lookupTableOrView(typeName);
+        }
+        if (found instanceof Basic.VoidType) {
+          if (table === true) {
+            return new TypedIdentifier(name, filename, new Basic.TableType(found, true));
+          } else {
+            return new TypedIdentifier(name, filename, found);
+          }
+        }
+        if (found instanceof Basic.UnknownType) {
+          return new TypedIdentifier(name, filename, new Basic.UnknownType("unknown type, " + typeName));
+        }
+        if (!(found instanceof Basic.StructureType)) {
+          throw new Error("not structured, " + typeName);
+        }
+        for (const c of found.getComponents()) {
+          components.push(c);
+        }
       }
-      // todo: INCLUDES
     }
 
-    return new TypedIdentifier(name, filename, new Basic.StructureType(components));
+    if (table === true) {
+      return new TypedIdentifier(name, filename, new Basic.TableType(new Basic.StructureType(components), true));
+    } else {
+      return new TypedIdentifier(name, filename, new Basic.StructureType(components));
+    }
   }
 }

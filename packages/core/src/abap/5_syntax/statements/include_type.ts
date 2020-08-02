@@ -19,7 +19,9 @@ export class IncludeType {
       components = components.concat(ityp.getComponents());
     } else if (scope.getDDIC().inErrorNamespace(name) === false) {
       return new VoidType(name);
-    } // todo, else exception?
+    } else {
+      throw new Error("IncludeType, type not found " + iname.concatTokens());
+    }
 
     return components;
   }

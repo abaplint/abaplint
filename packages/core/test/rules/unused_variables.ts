@@ -12,7 +12,7 @@ function testFix(input: string, expected: string) {
 async function runSingle(abap: string): Promise<Issue[]> {
   const reg = new Registry().addFile(new MemoryFile("zfoo.prog.abap", abap));
   await reg.parseAsync();
-  return new UnusedVariables().initialize(reg).run(reg.getObjects()[0]);
+  return new UnusedVariables().initialize(reg).run(reg.getFirstObject()!);
 }
 
 describe("Rule: unused_variables, single file", () => {

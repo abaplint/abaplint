@@ -15,9 +15,9 @@ export class MethodCallChain extends Expression {
     const localVariable = seq(new FieldChain(), tok(InstanceArrow));
     const staticClass = seq(new ClassName(), tok(StaticArrow));
 
-    const ret = seq(alt(seq(optPrio(altPrio(localVariable, staticClass)), new MethodCall()),
-                        new NewObject(),
-                        new Cast()),
+    const ret = seq(altPrio(seq(optPrio(altPrio(localVariable, staticClass)), new MethodCall()),
+                            new NewObject(),
+                            new Cast()),
                     after);
 
     return ret;

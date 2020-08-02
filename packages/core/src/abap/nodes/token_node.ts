@@ -1,12 +1,23 @@
 import {Token} from "../1_lexer/tokens/_token";
-import {CountableNode} from "./_countable_node";
+import {INode} from "./_inode";
 
-export class TokenNode extends CountableNode {
+export class TokenNode implements INode {
   private readonly token: Token;
 
   public constructor(token: Token) {
-    super();
     this.token = token;
+  }
+
+  public addChild(_n: INode): void {
+    throw new Error("TokenNode, Method not implemented.");
+  }
+
+  public setChildren(_children: INode[]): void {
+    throw new Error("TokenNode, Method not implemented.");
+  }
+
+  public getChildren(): readonly INode[] {
+    return [];
   }
 
   public get(): Token {
@@ -14,7 +25,7 @@ export class TokenNode extends CountableNode {
   }
 
   public countTokens(): number {
-    return super.countTokens() + 1;
+    return 1;
   }
 
   public getFirstToken(): Token {

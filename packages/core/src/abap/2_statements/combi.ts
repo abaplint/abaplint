@@ -3,8 +3,6 @@ import {Token as Tokens_Token} from "../1_lexer/tokens/_token";
 import {Position} from "../../position";
 import {TokenNode, ExpressionNode, TokenNodeRegex} from "../nodes";
 import {Version} from "../../version";
-import {CountableNode} from "../nodes/_countable_node";
-import {INode} from "../nodes/_inode";
 import {IStatementRunnable} from "./statement_runnable";
 import {Result} from "./result";
 
@@ -46,7 +44,7 @@ class Regex implements IStatementRunnable {
   }
 
   public first() {
-    return "";
+    return [""];
   }
 }
 
@@ -88,7 +86,7 @@ class Word implements IStatementRunnable {
   }
 
   public first() {
-    return this.s;
+    return [this.s];
   }
 }
 
@@ -150,7 +148,7 @@ class Token implements IStatementRunnable {
   }
 
   public first() {
-    return "";
+    return [""];
   }
 }
 
@@ -292,7 +290,7 @@ class OptionalPriority implements IStatementRunnable {
   }
 
   public first() {
-    return "";
+    return [""];
   }
 }
 
@@ -333,7 +331,7 @@ class Optional implements IStatementRunnable {
   }
 
   public first() {
-    return "";
+    return [""];
   }
 }
 
@@ -381,7 +379,7 @@ class Star implements IStatementRunnable {
   }
 
   public first() {
-    return "";
+    return [""];
   }
 }
 
@@ -433,7 +431,7 @@ class StarPrioroity implements IStatementRunnable {
   }
 
   public first() {
-    return "";
+    return [""];
   }
 }
 
@@ -623,7 +621,7 @@ export abstract class Expression implements IStatementRunnable {
         if (consumed > 0) {
           const length = t.getNodes().length;
           const re = new ExpressionNode(this);
-          const children: CountableNode[] = [];
+          const children: (ExpressionNode | TokenNode)[] = [];
           while (consumed > 0) {
             const sub = t.popNode();
             if (sub) {
@@ -726,7 +724,7 @@ class Permutation implements IStatementRunnable {
   }
 
   public first() {
-    return "";
+    return [""];
   }
 }
 
@@ -777,7 +775,22 @@ class Alternative implements IStatementRunnable {
   }
 
   public first() {
-    return "";
+    if (this.list.length !== 2) {
+      return [""];
+    }
+    const f1 = this.list[0].first();
+    const f2 = this.list[1].first();
+    if (f1.length === 1 && f1[0] === "") {
+      return f1;
+    }
+    if (f2.length === 1 && f2[0] === "") {
+      return f2;
+    }
+    if (f1.length === 1 && f2.length === 1 && f1[0] === f2[0]) {
+      return f1;
+    }
+    const result = f1.concat(f2);
+    return result;
   }
 }
 
@@ -834,7 +847,7 @@ class AlternativePriority implements IStatementRunnable {
   }
 
   public first() {
-    return "";
+    return [""];
   }
 }
 
@@ -866,7 +879,10 @@ export class Combi {
   }
 
 // assumption: no pragmas supplied in tokens input
-  public static run(runnable: IStatementRunnable, tokens: readonly Tokens_Token[], version: Version): INode[] | undefined {
+  public static run(
+    runnable: IStatementRunnable,
+    tokens: readonly Tokens_Token[], version: Version): (ExpressionNode | TokenNode)[] | undefined {
+
     this.ver = version;
 
     const input = new Result(tokens);

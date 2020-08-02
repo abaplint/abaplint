@@ -78,6 +78,7 @@ export class Attributes implements IAttributes {
     return attributes;
   }
 
+  // todo, optimize
   public findByName(name: string): ClassAttribute | ClassConstant | undefined {
     for (const a of this.getStatic()) {
       if (a.getName().toUpperCase() === name.toUpperCase()) {
@@ -100,17 +101,17 @@ export class Attributes implements IAttributes {
 /////////////////////////////
 
   private parse(node: StructureNode, scope: CurrentScope): void {
-    const cdef = node.findFirstStructure(Structures.ClassDefinition);
+    const cdef = node.findDirectStructure(Structures.ClassDefinition);
     if (cdef) {
-      this.parseSection(cdef.findFirstStructure(Structures.PublicSection), Visibility.Public, scope);
-      this.parseSection(cdef.findFirstStructure(Structures.PrivateSection), Visibility.Private, scope);
-      this.parseSection(cdef.findFirstStructure(Structures.ProtectedSection), Visibility.Protected, scope);
+      this.parseSection(cdef.findDirectStructure(Structures.PublicSection), Visibility.Public, scope);
+      this.parseSection(cdef.findDirectStructure(Structures.PrivateSection), Visibility.Private, scope);
+      this.parseSection(cdef.findDirectStructure(Structures.ProtectedSection), Visibility.Protected, scope);
       return;
     }
 
-    const idef = node.findFirstStructure(Structures.Interface);
+    const idef = node.findDirectStructure(Structures.Interface);
     if (idef) {
-      this.parseSection(idef.findFirstStructure(Structures.SectionContents), Visibility.Public, scope);
+      this.parseSection(idef.findDirectStructure(Structures.SectionContents), Visibility.Public, scope);
       return;
     }
 
@@ -138,13 +139,13 @@ export class Attributes implements IAttributes {
         } else if (ctyp instanceof Structures.Constants) {
           const found = new Constants().runSyntax(c, scope, this.filename);
           if (found !== undefined) {
-            this.constants.push(new ClassConstant(found, visibility));
+            this.constants.push(new ClassConstant(found, visibility, "todo"));
           }
         } else if (ctyp instanceof Structures.TypeEnum) {
           const enums = new TypeEnum().runSyntax(c, scope, this.filename);
           for (const e of enums) {
           // for now add ENUM values as constants
-            this.constants.push(new ClassConstant(e, visibility));
+            this.constants.push(new ClassConstant(e, visibility, "todo"));
           }
         } else {
           // begin recursion
@@ -158,7 +159,7 @@ export class Attributes implements IAttributes {
         } else if (ctyp instanceof Statements.Constant) {
           const found = new ConstantStatement().runSyntax(c, scope, this.filename);
           if (found) {
-            this.constants.push(new ClassConstant(found, visibility));
+            this.constants.push(new ClassConstant(found, visibility, "todo"));
           }
         }
       }

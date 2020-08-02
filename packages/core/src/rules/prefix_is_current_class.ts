@@ -49,7 +49,7 @@ export class PrefixIsCurrentClass extends ABAPRule {
 
     const issues: Issue[] = [];
 
-    for (const s of struc.findAllStructures(Structures.Interface)) {
+    for (const s of struc.findDirectStructures(Structures.Interface)) {
       const name = s.findFirstExpression(InterfaceName)?.getFirstToken().getStr().toUpperCase();
       if (name === undefined) {
         continue;
@@ -77,8 +77,8 @@ export class PrefixIsCurrentClass extends ABAPRule {
     }
 
     const issues: Issue[] = [];
-    let classStructures = struc.findAllStructures(Structures.ClassImplementation);
-    classStructures = classStructures.concat(struc.findAllStructures(Structures.ClassDefinition));
+    let classStructures = struc.findDirectStructures(Structures.ClassImplementation);
+    classStructures = classStructures.concat(struc.findDirectStructures(Structures.ClassDefinition));
     const meAccess = "ME->";
 
     for (const c of classStructures) {

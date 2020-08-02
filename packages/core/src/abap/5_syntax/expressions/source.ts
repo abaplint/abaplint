@@ -5,12 +5,14 @@ import * as Expressions from "../../2_statements/expressions";
 import {MethodCallChain} from "./method_call_chain";
 import {UnknownType} from "../../types/basic/unknown_type";
 import {FieldChain} from "./field_chain";
-import {VoidType} from "../../types/basic";
+import {VoidType, StringType, CharacterType} from "../../types/basic";
 import {Constant} from "./constant";
 import {BasicTypes} from "../basic_types";
 import {ComponentChain} from "./component_chain";
 import {StringTemplate} from "./string_template";
 import {ValueBody} from "./value_body";
+import {Cond} from "./cond";
+import {ReduceBody} from "./reduce_body";
 
 export class Source {
   public runSyntax(
@@ -25,11 +27,21 @@ export class Source {
     if (first instanceof TokenNode) {
       const tok = first.getFirstToken().getStr().toUpperCase();
       switch (tok) {
+        case "BOOLC":
+          new Cond().runSyntax(node.findDirectExpression(Expressions.Cond), scope);
+          return new StringType();
+        case "XSDBOOL":
+          new Cond().runSyntax(node.findDirectExpression(Expressions.Cond), scope);
+          return new CharacterType(1);
+        case "REDUCE":
+        {
+          const bodyType = new ReduceBody().runSyntax(node.findDirectExpression(Expressions.ReduceBody), scope, filename);
+          return this.value(node, scope, filename, targetType, bodyType);
+        }
         case "COND":
         case "CONV":
         case "CORRESPONDING":
         case "EXACT":
-        case "REDUCE":
         case "SWITCH":
           return this.value(node, scope, filename, targetType, undefined);
         case "VALUE":

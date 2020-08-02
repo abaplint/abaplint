@@ -1,11 +1,11 @@
-import {CountableNode} from "./_countable_node";
 import {TokenNode} from "./token_node";
 import {Token} from "../1_lexer/tokens/_token";
 import {INode} from "./_inode";
 import {Pragma, String, StringTemplate, StringTemplateBegin, StringTemplateMiddle, StringTemplateEnd, Comment} from "../1_lexer/tokens";
 import {IStatementRunnable} from "../2_statements/statement_runnable";
+import {AbstractNode} from "./_abstract_node";
 
-export class ExpressionNode extends CountableNode {
+export class ExpressionNode extends AbstractNode<ExpressionNode | TokenNode> {
   private readonly expression: IStatementRunnable;
 
   public constructor(expression: IStatementRunnable) {
@@ -17,15 +17,19 @@ export class ExpressionNode extends CountableNode {
     return this.expression;
   }
 
+  public countTokens(): number {
+    let ret = 0;
+    for (const c of this.getChildren()) {
+      ret = ret + c.countTokens();
+    }
+    return ret;
+  }
+
   public getFirstToken(): Token {
     for (const child of this.getChildren()) {
-      if (child instanceof TokenNode) {
-        return child.get();
-      } else if (child instanceof ExpressionNode) {
-        return child.getFirstToken();
-      }
+      return child.getFirstToken();
     }
-    throw new Error("getFirstToken, unexpected type");
+    throw new Error("ExpressionNode, getFirstToken, no children");
   }
 
   public concatTokens(): string {
@@ -88,6 +92,7 @@ export class ExpressionNode extends CountableNode {
 
     if (b instanceof TokenNode) {
       tokens.push(b.get());
+      return tokens;
     }
 
     for (const c of b.getChildren()) {
@@ -100,16 +105,15 @@ export class ExpressionNode extends CountableNode {
 
     return tokens;
   }
+
   public getLastToken(): Token {
     const child = this.getLastChild();
 
-    if (child instanceof TokenNode) {
-      return child.get();
-    } else if (child instanceof ExpressionNode) {
+    if (child) {
       return child.getLastToken();
     }
 
-    throw new Error("getLastToken, unexpected type");
+    throw new Error("ExpressionNode, getLastToken, no children");
   }
 
   public getAllTokens(): Token[] {
@@ -118,10 +122,8 @@ export class ExpressionNode extends CountableNode {
     for (const child of this.getChildren()) {
       if (child instanceof TokenNode) {
         ret.push(child.get());
-      } else if (child instanceof ExpressionNode) {
-        ret = ret.concat(child.getAllTokens());
       } else {
-        throw new Error("getAllTokens, unexpected type");
+        ret = ret.concat(child.getAllTokens());
       }
     }
 
@@ -161,14 +163,8 @@ export class ExpressionNode extends CountableNode {
 
   public findDirectTokenByText(text: string): Token | undefined {
     for (const child of this.getChildren()) {
-      if (child instanceof TokenNode) {
-        if (child.get().getStr().toUpperCase() === text.toUpperCase()) {
-          return child.get();
-        }
-      } else if (child instanceof ExpressionNode) {
-        continue;
-      } else {
-        throw new Error("findDirectTokenByText, unexpected type");
+      if (child instanceof TokenNode && child.get().getStr().toUpperCase() === text.toUpperCase()) {
+        return child.get();
       }
     }
     return undefined;
@@ -177,14 +173,31 @@ export class ExpressionNode extends CountableNode {
   public findAllExpressions(type: new () => IStatementRunnable): readonly ExpressionNode[] {
     let ret: ExpressionNode[] = [];
     for (const child of this.getChildren()) {
-      if (child.get() instanceof type) {
-        ret.push(child as ExpressionNode);
-      } else if (child instanceof TokenNode) {
+      if (child instanceof TokenNode) {
         continue;
-      } else if (child instanceof ExpressionNode) {
-        ret = ret.concat(child.findAllExpressions(type));
+      } else if (child.get() instanceof type) {
+        ret.push(child);
       } else {
-        throw new Error("findAllExpressions, unexpected type");
+        ret = ret.concat(child.findAllExpressions(type));
+      }
+    }
+    return ret;
+  }
+
+  public findAllExpressionsMulti(type: (new () => IStatementRunnable)[]): ExpressionNode[] {
+    let ret: ExpressionNode[] = [];
+    for (const child of this.getChildren()) {
+      if (child instanceof TokenNode) {
+        continue;
+      }
+      const before = ret.length;
+      for (const t of type) {
+        if (child.get() instanceof t) {
+          ret.push(child);
+        }
+      }
+      if (before === ret.length) {
+        ret = ret.concat(child.findAllExpressionsMulti(type));
       }
     }
     return ret;
@@ -196,17 +209,15 @@ export class ExpressionNode extends CountableNode {
     }
 
     for (const child of this.getChildren()) {
-      if (child.get() instanceof type) {
-        return child as ExpressionNode;
-      } else if (child instanceof TokenNode) {
+      if (child instanceof TokenNode) {
         continue;
-      } else if (child instanceof ExpressionNode) {
+      } else if (child.get() instanceof type) {
+        return child;
+      } else {
         const res = child.findFirstExpression(type);
         if (res) {
           return res;
         }
-      } else {
-        throw new Error("findFirstExpression, unexpected type");
       }
     }
     return undefined;

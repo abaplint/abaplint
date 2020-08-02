@@ -1,9 +1,28 @@
 import {expect} from "chai";
 import {Config} from "../src/config";
 import {IConfig} from "../src/_config";
-import {Version} from "../src/version";
+import {Version, defaultVersion} from "../src/version";
 
-describe("Registry", () => {
+function getConfig(rules: any): IConfig {
+  return {
+    global: {
+      files: "/src/**/*.*",
+      skipGeneratedGatewayClasses: true,
+      skipGeneratedPersistentClasses: true,
+      skipGeneratedFunctionGroups: true,
+    },
+    dependencies: [],
+    syntax: {
+      version: Version.v702,
+      errorNamespace: "^(Z|Y)",
+      globalConstants: [],
+      globalMacros: [],
+    },
+    rules: rules,
+  };
+}
+
+describe("Config", () => {
 
   it("It should include all mentioned rules", () => {
     const config: IConfig = getConfig({
@@ -73,22 +92,14 @@ describe("Registry", () => {
     expect(conf.getEnabledRules().length).to.equal(0);
   });
 
-  function getConfig(rules: any): IConfig {
-    return {
-      global: {
-        files: "/src/**/*.*",
-        skipGeneratedGatewayClasses: true,
-        skipGeneratedPersistentClasses: true,
-        skipGeneratedFunctionGroups: true,
-      },
-      dependencies: [],
-      syntax: {
-        version: Version.v702,
-        errorNamespace: "^(Z|Y)",
-        globalConstants: [],
-        globalMacros: [],
-      },
-      rules: rules,
-    };
-  }
+  it("invalid version should fall back to default version", () => {
+    const config: IConfig = getConfig({});
+    // @ts-ignore
+    config.syntax.version = "somethingsomethign";
+
+    const conf = new Config(JSON.stringify(config));
+
+    expect(conf.getVersion()).to.equal(defaultVersion);
+  });
+
 });

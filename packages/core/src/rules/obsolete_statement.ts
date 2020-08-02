@@ -27,6 +27,8 @@ export class ObsoleteStatementConf extends BasicRuleConfig {
   public occurs: boolean = true;
   /** Checks for SET EXTENDED CHECK, https://help.sap.com/doc/abapdocu_751_index_htm/7.51/en-us/abapset_extended_check.htm */
   public setExtended: boolean = true;
+  /** Checks for WITH HEADER LINE */
+  public withHeaderLine: boolean = true;
 }
 
 export class ObsoleteStatement extends ABAPRule {
@@ -106,6 +108,16 @@ export class ObsoleteStatement extends ABAPRule {
           const token = dataDef.findDirectTokenByText("OCCURS");
           if (token) {
             const issue = Issue.atToken(file, token, "OCCURS is obsolete", this.getMetadata().key);
+            issues.push(issue);
+          }
+        }
+      }
+
+      if (this.conf.withHeaderLine === true && sta.get() instanceof Statements.Data) {
+        if (sta.concatTokens().toUpperCase().includes("WITH HEADER LINE")) {
+          const token = sta.getFirstToken();
+          if (token) {
+            const issue = Issue.atToken(file, token, "WITH HEADER LINE is obsolete", this.getMetadata().key);
             issues.push(issue);
           }
         }

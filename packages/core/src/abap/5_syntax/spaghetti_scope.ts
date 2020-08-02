@@ -151,6 +151,7 @@ export class SpaghettiScopeNode extends ScopeData implements ISpaghettiScopeNode
     return ret;
   }
 
+  // todo, optimize
   public findInterfaceDefinition(name: string): IInterfaceDefinition | undefined {
     let search: SpaghettiScopeNode | undefined = this;
 

@@ -61,7 +61,7 @@ describe("syntax.ts, Check Variables", () => {
     const abap = "WRITE foobar.\n";
     const issues = runProgram(abap);
     expect(issues.length).to.equals(1);
-    expect(issues[0].getMessage()).to.equal("\"foobar\" not found");
+    expect(issues[0].getMessage()).to.contain("foobar");
   });
 
   it("program, foobar found", () => {
@@ -123,7 +123,7 @@ field = zcl_global_class=>method( ).`;
     const abap = "foobar = 2.\n";
     const issues = runProgram(abap);
     expect(issues.length).to.equals(1);
-    expect(issues[0].getMessage()).to.equal("\"foobar\" not found");
+    expect(issues[0].getMessage()).to.contain("\"foobar\" not found");
   });
 
   it("program, foobar found, target", () => {
@@ -176,12 +176,6 @@ field = zcl_global_class=>method( ).`;
     expect(issues.length).to.equals(0);
   });
 
-  it("program, SELECT-OPTIONS", () => {
-    const abap = "SELECT-OPTIONS foo FOR structure-field.\nWRITE foo.\n";
-    const issues = runProgram(abap);
-    expect(issues.length).to.equals(1);
-  });
-
   it("program, STATICS", () => {
     const abap = "FORM foo.\n" +
       "  STATICS: foo TYPE i.\n" +
@@ -208,7 +202,7 @@ field = zcl_global_class=>method( ).`;
       "ENDFORM.\n";
     const issues = runProgram(abap);
     expect(issues.length).to.equals(1);
-    expect(issues[0].getMessage()).to.equal("\"moo\" not found");
+    expect(issues[0].getMessage()).to.contain("moo");
   });
 
   it("program, global scope", () => {
@@ -463,7 +457,7 @@ ENDCLASS.
       "ENDCLASS.";
     const issues = runClass(abap);
     expect(issues.length).to.equals(1);
-    expect(issues[0].getMessage()).to.equal("\"foobar\" not found");
+    expect(issues[0].getMessage()).to.contain("foobar");
   });
 
   it("class, foobar, local variable", () => {
@@ -1251,10 +1245,12 @@ DATA(output) = REDUCE string( INIT result = ||
   });
 
   it("Field offset, lv_i not specified", () => {
-    const abap = `DATA rv_s TYPE string.
+    const abap = `
+      DATA rv_s TYPE string.
       rv_s+lv_i(1) = 'a'.`;
     const issues = runProgram(abap);
     expect(issues.length).to.equals(1);
+    expect(issues[0].getMessage()).to.contain("lv_i");
   });
 
   it.skip("DATA, already specified", () => {
@@ -2013,6 +2009,152 @@ lcl_bar=>data = 2.`;
 
   it("move to voided", () => {
     const abap = `cl_void=>data = 2.`;
+    const issues = runProgram(abap);
+    expect(issues.length).to.equals(0);
+  });
+
+  it("multi level aliases via interfaces", () => {
+    const abap = `
+INTERFACE if_toptop.
+  METHODS bar.
+ENDINTERFACE.
+
+INTERFACE if_top.
+  INTERFACES if_toptop.
+  ALIASES bar FOR if_toptop~bar.
+ENDINTERFACE.
+
+INTERFACE if_sub.
+  INTERFACES if_top.
+  ALIASES bar FOR if_top~bar.
+ENDINTERFACE.
+
+DATA moo TYPE REF TO if_sub.
+moo->bar( ).`;
+    const issues = runProgram(abap);
+    expect(issues.length).to.equals(0);
+  });
+
+  it("with syntax errors", () => {
+    const abap = `
+INTERFACE lif_foo.
+  METHODS bar.
+  sfsdfsdfsfs
+ENDINTERFACE.
+
+FORM fffds.
+  DATA li_sdf TYPE REF TO lif_foo.
+  li_sdf->bar( ).
+  li_sdf->expect_error( ).
+ENDFORM.`;
+    const issues = runProgram(abap);
+    expect(issues.length).to.equals(1);
+    expect(issues[0].getMessage()).to.contain("expect_error");
+  });
+
+  it("expect error", () => {
+    const abap = `WRITE zif_sdfsd=>sdfsd.`;
+
+    const issues = runProgram(abap);
+    expect(issues.length).to.equals(1);
+  });
+
+  it("multi level CONSTANTS aliases via interfaces", () => {
+    const abap = `
+INTERFACE if_top.
+  CONSTANTS bar TYPE i VALUE 1.
+ENDINTERFACE.
+
+INTERFACE if_sub.
+  INTERFACES if_top.
+  ALIASES bar FOR if_top~bar.
+ENDINTERFACE.
+
+WRITE if_sub=>bar.`;
+    const issues = runProgram(abap);
+    expect(issues.length).to.equals(0);
+  });
+
+  it("Table with header line", () => {
+    const abap = `
+TYPES: BEGIN OF ty_structure,
+         bar TYPE string,
+       END OF ty_structure.
+DATA bar TYPE TABLE OF ty_structure WITH HEADER LINE.
+WRITE bar-bar.
+`;
+    const issues = runProgram(abap);
+    expect(issues.length).to.equals(0);
+  });
+
+  it("Table with header line, voided", () => {
+    const abap = `
+DATA bar TYPE TABLE OF voided_void WITH HEADER LINE.
+WRITE bar-bar.
+`;
+    const issues = runProgram(abap);
+    expect(issues.length).to.equals(0);
+  });
+
+  it("LIKE DDIC structure, 2", () => {
+    const xml = `
+    <?xml version="1.0" encoding="utf-8"?>
+    <abapGit version="v1.0.0" serializer="LCL_OBJECT_TABL" serializer_version="v1.0.0">
+     <asx:abap xmlns:asx="http://www.sap.com/abapxml" version="1.0">
+      <asx:values>
+       <DD02V>
+        <TABNAME>SDF</TABNAME>
+        <DDLANGUAGE>E</DDLANGUAGE>
+        <TABCLASS>INTTAB</TABCLASS>
+        <DDTEXT>sdf</DDTEXT>
+        <EXCLASS>1</EXCLASS>
+       </DD02V>
+       <DD03P_TABLE>
+        <DD03P>
+         <TABNAME>SDF</TABNAME>
+         <FIELDNAME>STR</FIELDNAME>
+         <DDLANGUAGE>E</DDLANGUAGE>
+         <POSITION>0001</POSITION>
+         <ADMINFIELD>0</ADMINFIELD>
+         <INTTYPE>C</INTTYPE>
+         <INTLEN>000040</INTLEN>
+         <DATATYPE>CHAR</DATATYPE>
+         <LENG>000020</LENG>
+         <MASK>  CHAR</MASK>
+        </DD03P>
+       </DD03P_TABLE>
+      </asx:values>
+     </asx:abap>
+    </abapGit>
+    `;
+    const prog = `DATA foo LIKE sdf.`;
+    const issues = runMulti([
+      {filename: "sdf.tabl.xml", contents: xml},
+      {filename: "zfoobar.prog.abap", contents: prog},
+    ]);
+    expect(issues.length).to.equals(0);
+  });
+
+  it("OCCURS in a BEGIN always gives header lines?", () => {
+    const abap = `
+TYPES: BEGIN OF bar,
+         foo TYPE c,
+       END OF bar.
+
+DATA BEGIN OF tables_tab OCCURS 10.
+INCLUDE TYPE bar.
+DATA END OF tables_tab.
+
+tables_tab-foo = 'A'.
+`;
+    const issues = runProgram(abap);
+    expect(issues.length).to.equals(0);
+  });
+
+  it("RANGES, with header line", () => {
+    const abap = `
+  RANGES foo FOR sy-mandt.
+  foo-low = '123'.`;
     const issues = runProgram(abap);
     expect(issues.length).to.equals(0);
   });

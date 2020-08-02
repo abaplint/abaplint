@@ -13,6 +13,7 @@ export interface ITextElement {
 
 export abstract class ABAPObject extends AbstractObject {
   private parsed: readonly ABAPFile[];
+  protected texts: ITextElement[] | undefined;
   public syntaxResult: ISyntaxResult | undefined; // do not use this outside of SyntaxLogic class, todo: refactor
 
   abstract getSequencedFiles(): readonly ABAPFile[];
@@ -20,9 +21,10 @@ export abstract class ABAPObject extends AbstractObject {
   public constructor(name: string) {
     super(name);
     this.parsed = [];
+    this.texts = undefined;
   }
 
-  public static is(x:any):x is ABAPObject{
+  public static is(x: any): x is ABAPObject{
     return !!x && x instanceof ABAPObject;
   }
 
@@ -43,6 +45,7 @@ export abstract class ABAPObject extends AbstractObject {
 
   public setDirty(): void {
     this.syntaxResult = undefined;
+    this.texts = undefined;
     super.setDirty();
   }
 
@@ -70,28 +73,26 @@ export abstract class ABAPObject extends AbstractObject {
   }
 
   public getTexts(): readonly ITextElement[] {
-    const parsed = this.parseXML();
-    return this.findTexts(parsed);
+    if (this.texts === undefined) {
+      this.findTexts(this.parseRaw());
+    }
+    return this.texts!;
   }
 
-  public findTexts(parsed: any): readonly ITextElement[] {
-    if (parsed === undefined
-        || parsed.abapGit["asx:abap"]["asx:values"] === undefined
-        || parsed.abapGit["asx:abap"]["asx:values"].TPOOL === undefined
-        || parsed.abapGit["asx:abap"]["asx:values"].TPOOL.item === undefined) {
-      return [];
+  protected findTexts(parsed: any) {
+    this.texts = [];
+
+    if (parsed?.abapGit["asx:abap"]["asx:values"]?.TPOOL?.item === undefined) {
+      return;
     }
 
-    const ret: ITextElement[] = [];
     for (const t of xmlToArray(parsed.abapGit["asx:abap"]["asx:values"].TPOOL.item)) {
       if (t.ID !== undefined && t.ID._text === "I") {
-        ret.push({
+        this.texts.push({
           key: t.KEY._text,
           text: t.ENTRY._text});
       }
     }
-
-    return ret;
   }
 
 }

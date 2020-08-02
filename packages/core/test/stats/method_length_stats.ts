@@ -17,7 +17,7 @@ describe("method length stats", () => {
     it(test.abap, async () => {
       const reg = new Registry().addFile(new MemoryFile("zfoo.clas.abap", test.abap));
       await reg.parseAsync();
-      const stats = MethodLengthStats.run(reg.getObjects()[0]);
+      const stats = MethodLengthStats.run(reg.getFirstObject()!);
       expect(stats.length).to.equals(test.lengths.length);
       for (let i = 0; i < stats.length; i++) {
         expect(stats[i].count).to.equals(test.lengths[i]);

@@ -1,8 +1,8 @@
 import {Token} from "../1_lexer/tokens/_token";
 
 export interface INode {
-  addChild(n: INode): INode;
-  setChildren(children: INode[]): INode;
+  addChild(n: INode): void;
+  setChildren(children: INode[]): void;
   getChildren(): readonly INode[];
   get(): any;
   getFirstToken(): Token;

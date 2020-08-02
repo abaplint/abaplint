@@ -8,14 +8,14 @@ async function findIssues(abap: string, filename: string): Promise<Issue[]> {
   const reg = new Registry().addFile(new MemoryFile(filename, abap));
   await reg.parseAsync();
   const rule = new MainFileContents();
-  return rule.initialize(reg).run(reg.getObjects()[0]);
+  return rule.initialize(reg).run(reg.getFirstObject()!);
 }
 
 describe("Rule: main_file_contents", () => {
-  it("PROG parser error should not report issues", async () => {
+  it("PROG parser error should report issues", async () => {
     const abap = "parser error";
     const issues = await findIssues(abap, "zreport.prog.abap");
-    expect(issues.length).to.equal(0);
+    expect(issues.length).to.equal(1);
   });
 
   it("PROG should start with REPORT, issue", async () => {

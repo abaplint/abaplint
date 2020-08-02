@@ -19,6 +19,7 @@ const tests = [
   "MODIFY LINE line FIELD FORMAT new INTENSIFIED OFF.",
   "MODIFY CURRENT LINE LINE FORMAT RESET COLOR 7.",
   "MODIFY CURRENT LINE LINE FORMAT INTENSIFIED.",
+  "MODIFY LINE sy-index FIELD VALUE val FROM var.",
 ];
 
 statementType(tests, "MODIFY LINE", Statements.ModifyLine);

@@ -8,7 +8,7 @@ async function run(file: MemoryFile): Promise<Issue[]> {
   const reg = new Registry();
   reg.addFile(file);
   await reg.parseAsync();
-  return new MSAGConsistency().initialize(reg).run(reg.getObjects()[0]);
+  return new MSAGConsistency().initialize(reg).run(reg.getFirstObject()!);
 }
 
 describe("Message rule", () => {

@@ -1,7 +1,16 @@
+import * as Types from "../abap/types/basic";
 import {AbstractObject} from "./_abstract_object";
 import {xmlToArray} from "../xml_utils";
+import {IRegistry} from "../_iregistry";
+import {DDIC} from "../ddic";
 
 export class View extends AbstractObject {
+  private parsedData: {
+    fields: {
+      VIEWFIELD: string,
+      TABNAME: string,
+      ROLLNAME: string,
+      FIELDNAME: string}[]} | undefined;
 
   public getType(): string {
     return "VIEW";
@@ -14,23 +23,49 @@ export class View extends AbstractObject {
     };
   }
 
-  public getFields(): string[] {
-    const xml = this.getXML();
-    if (xml === undefined) {
-      return [];
-    }
-    return this.parsePrivate(this.parseXML());
+  public setDirty(): void {
+    this.parsedData = undefined;
+    super.setDirty();
   }
 
-  private parsePrivate(data: any): string[] {
-    const ret: string[] = [];
-
-    const fields = data.abapGit["asx:abap"]["asx:values"].DD27P_TABLE;
-    for (const field of xmlToArray(fields.DD27P)) {
-      ret.push(field.VIEWFIELD._text);
+  public parseType(reg: IRegistry): Types.StructureType | Types.UnknownType | Types.VoidType {
+    if (this.parsedData === undefined) {
+      this.parseXML();
+    }
+    if (this.parsedData === undefined) {
+      return new Types.UnknownType("View, parser error");
     }
 
-    return ret;
+    const components: Types.IStructureComponent[] = [];
+    const ddic = new DDIC(reg);
+    for (const field of this.parsedData.fields) {
+      components.push({
+        name: field.VIEWFIELD,
+        type: ddic.lookupDataElement(field.ROLLNAME)});
+    }
+
+    return new Types.StructureType(components);
+  }
+
+///////////////
+
+  private parseXML() {
+    const parsed = super.parseRaw();
+    if (parsed === undefined) {
+      return;
+    }
+
+    this.parsedData = {fields: []};
+
+    const fields = parsed.abapGit["asx:abap"]["asx:values"]?.DD27P_TABLE;
+    for (const field of xmlToArray(fields?.DD27P)) {
+      this.parsedData.fields.push({
+        VIEWFIELD: field.VIEWFIELD?._text,
+        TABNAME: field.TABNAME?._text,
+        ROLLNAME: field.ROLLNAME?._text,
+        FIELDNAME: field.FIELDNAME?._text,
+      });
+    }
   }
 
 }

@@ -7,7 +7,7 @@ async function findIssues(abap: string) {
   const reg = new Registry().addFile(new MemoryFile("zfoo.prog.abap", abap));
   await reg.parseAsync();
   const rule = new TryWithoutCatch();
-  return rule.initialize(reg).run(reg.getObjects()[0]);
+  return rule.initialize(reg).run(reg.getFirstObject()!);
 }
 
 describe("Rule: try without catch", () => {

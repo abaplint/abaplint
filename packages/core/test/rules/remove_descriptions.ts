@@ -42,7 +42,7 @@ ENDCLASS.`;
     reg.addFile(new MemoryFile("zcl_abapgit_persist_settings.clas.abap", abap));
     await reg.parseAsync();
     const rule = new RemoveDescriptions();
-    const issues = rule.run(reg.getObjects()[0]);
+    const issues = rule.run(reg.getFirstObject()!);
 
     expect(issues.length).to.equals(1);
   });
@@ -79,7 +79,7 @@ ENDCLASS.`;
     reg.addFile(new MemoryFile("zcl_abapgit_persist_settings.clas.abap", abap));
     await reg.parseAsync();
     const rule = new RemoveDescriptions();
-    const issues = rule.run(reg.getObjects()[0]);
+    const issues = rule.run(reg.getFirstObject()!);
 
     expect(issues.length).to.equals(0);
   });
@@ -128,7 +128,7 @@ describe("rule, remove_descriptions, 2 errors", () => {
     reg.addFile(new MemoryFile("zcl_abapgit_persist_settings.clas.abap", abap));
     await reg.parseAsync();
     const rule = new RemoveDescriptions();
-    const issues = rule.run(reg.getObjects()[0]);
+    const issues = rule.run(reg.getFirstObject()!);
 
     expect(issues.length).to.equals(2);
   });

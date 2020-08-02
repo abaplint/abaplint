@@ -14,13 +14,13 @@ function resolveVariable(abap: string, name: string): TypedIdentifier | undefine
 
 function runMulti(files: {filename: string, contents: string}[], name: string): TypedIdentifier | undefined {
   const reg = new Registry();
-  for (const file of files) {
+  for (const file of files.reverse()) {
     reg.addFile(new MemoryFile(file.filename, file.contents));
   }
   reg.parse();
 
-  const obj = reg.getObjects()[files.length - 1] as ABAPObject;
-  const filename = files[files.length - 1].filename;
+  const obj = reg.getFirstObject() as ABAPObject;
+  const filename = files[0].filename;
   const scope = new SyntaxLogic(reg, obj).run().spaghetti.lookupPosition(new Position(1, 1), filename);
   return scope?.findVariable(name);
 }
@@ -1332,6 +1332,160 @@ ENDCASE.`;
     const identifier = resolveVariable(abap, "line");
     expect(identifier).to.not.equal(undefined);
     expect(identifier?.getType()).to.be.instanceof(Basic.IntegerType);
+  });
+
+  it("boolc inline", () => {
+    const abap = `DATA(foo) = boolc( 1 = 2 ).`;
+    const identifier = resolveVariable(abap, "foo");
+    expect(identifier).to.not.equal(undefined);
+    expect(identifier?.getType()).to.be.instanceof(Basic.StringType);
+  });
+
+  it("xsdbool inline", () => {
+    const abap = `DATA(foo) = xsdbool( 1 = 2 ).`;
+    const identifier = resolveVariable(abap, "foo");
+    expect(identifier).to.not.equal(undefined);
+    expect(identifier?.getType()).to.be.instanceof(Basic.CharacterType);
+  });
+
+  it("FIND RESULTS inline", () => {
+    const abap = `FIND ALL OCCURRENCES OF REGEX  'bar' IN lv_string RESULTS DATA(blanks).`;
+    const identifier = resolveVariable(abap, "blanks");
+    expect(identifier).to.not.equal(undefined);
+    expect(identifier?.getType()).to.be.instanceof(Basic.TableType);
+  });
+
+  it("VALUE with FOR inline", () => {
+    const abap = `
+    TYPES ty_integers TYPE STANDARD TABLE OF i WITH EMPTY KEY.
+    DATA lt_integers TYPE ty_integers.
+    DATA(copy) = VALUE ty_integers( FOR lv_int IN lt_integers ( lv_int ) ).`;
+    const identifier = resolveVariable(abap, "copy");
+    expect(identifier).to.not.equal(undefined);
+    expect(identifier?.getType()).to.be.instanceof(Basic.TableType);
+  });
+
+  it("FORM, CHANGING STRUCTURE", () => {
+    const abap = `FORM foo CHANGING bar STRUCTURE sy.
+    ENDFORM.`;
+    const identifier = resolveVariable(abap, "bar");
+    expect(identifier?.getType()).to.be.instanceof(Basic.StructureType);
+  });
+
+  it("DATA BEGIN OF, INCLUDE voided structure", () => {
+    const abap = `DATA BEGIN OF stru.
+    INCLUDE STRUCTURE something_void.
+    DATA END OF stru.`;
+    const identifier = resolveVariable(abap, "stru");
+    expect(identifier?.getType()).to.be.instanceof(Basic.VoidType);
+  });
+
+  it("DATA BEGIN OF, OCCURS", () => {
+    const abap = `DATA BEGIN OF tab OCCURS 10.
+    DATA too TYPE c.
+    DATA END OF tab.`;
+    const identifier = resolveVariable(abap, "tab");
+    expect(identifier?.getType()).to.be.instanceof(Basic.TableType);
+  });
+
+  it("DATA BEGIN OF OCCURS, INCLUDE voided structure", () => {
+    const abap = `DATA BEGIN OF tables_tab OCCURS 10.
+    INCLUDE STRUCTURE something_void.
+    DATA END OF tables_tab.`;
+    const identifier = resolveVariable(abap, "tables_tab");
+    expect(identifier?.getType()).to.be.instanceof(Basic.TableType);
+  });
+
+  it("DATA BEGIN OF, OCCURS", () => {
+    const abap = `
+TYPES: BEGIN OF ty_bar,
+         sdf TYPE c LENGTH 1,
+       END OF ty_bar.
+
+DATA BEGIN OF stru.
+INCLUDE TYPE ty_bar.
+DATA END OF stru.`;
+    const identifier = resolveVariable(abap, "stru");
+    expect(identifier?.getType()).to.be.instanceof(Basic.StructureType);
+    const type = identifier!.getType() as Basic.StructureType;
+    expect(type.getComponents().length).to.equal(1);
+  });
+
+  it("table with header line", () => {
+    const abap = `
+TYPES: BEGIN OF ty_structure,
+         bar TYPE string,
+       END OF ty_structure.
+DATA bar TYPE TABLE OF ty_structure WITH HEADER LINE.`;
+    const identifier = resolveVariable(abap, "bar");
+    const type = identifier?.getType();
+    expect(type).to.be.instanceof(Basic.TableType);
+    const tt = type as Basic.TableType;
+    expect(tt.isWithHeader()).to.equal(true);
+  });
+
+  it("table with header line, OCCURS", () => {
+    const abap = `
+TYPES: BEGIN OF ty_log,
+         msgv1 TYPE string,
+       END OF ty_log.
+DATA joblog TYPE ty_log OCCURS 0 WITH HEADER LINE.`;
+    const identifier = resolveVariable(abap, "joblog");
+    const type = identifier?.getType();
+    expect(type).to.be.instanceof(Basic.TableType);
+    const tt = type as Basic.TableType;
+    expect(tt.isWithHeader()).to.equal(true);
+  });
+
+  it("LIKE refering to header line typing", () => {
+    const abap = `
+TYPES: BEGIN OF ty_type,
+         foo TYPE string,
+       END OF ty_type.
+DATA tab TYPE TABLE OF ty_type WITH HEADER LINE.
+DATA moo LIKE tab-foo.`;
+    const identifier = resolveVariable(abap, "moo");
+    const type = identifier?.getType();
+    expect(type).to.be.instanceof(Basic.StringType);
+  });
+
+  it("constant with value from interface", () => {
+    const abap = `
+INTERFACE lif_bar.
+  CONSTANTS sdf TYPE c LENGTH 1 VALUE 'a'.
+ENDINTERFACE.
+CONSTANTS something TYPE c LENGTH 1 VALUE lif_bar=>sdf.`;
+    const identifier = resolveVariable(abap, "something");
+    const type = identifier?.getType();
+    expect(type).to.be.instanceof(Basic.CharacterType);
+  });
+
+  it("dereference data reference via star", () => {
+    const abap = `
+TYPES: BEGIN OF ty_bar,
+         int TYPE i,
+       END OF ty_bar.
+DATA ref TYPE REF TO ty_bar.
+DATA(sdf) = ref->*-int.`;
+    const identifier = resolveVariable(abap, "sdf");
+    const type = identifier?.getType();
+    expect(type).to.be.instanceof(Basic.IntegerType);
+  });
+
+  it("FORM, CHANGING STRUCTURE", () => {
+    const abap = `FORM foobar CHANGING tab TYPE ANY TABLE.
+    ENDFORM.`;
+    const identifier = resolveVariable(abap, "tab");
+    expect(identifier?.getType()).to.be.instanceof(Basic.TableType);
+  });
+
+  it("loop at ANY should give ANY", () => {
+    const abap = `
+    DATA tab TYPE ANY TABLE.
+    LOOP AT tab ASSIGNING FIELD-SYMBOL(<sdf>).
+    ENDLOOP.`;
+    const identifier = resolveVariable(abap, "<sdf>");
+    expect(identifier?.getType()).to.be.instanceof(Basic.AnyType);
   });
 
 });

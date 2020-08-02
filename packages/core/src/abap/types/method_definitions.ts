@@ -60,17 +60,17 @@ export class MethodDefinitions implements IMethodDefinitions {
   }
 
   private parse(node: StructureNode, scope: CurrentScope) {
-    const idef = node.findFirstStructure(Structures.Interface);
+    const idef = node.findDirectStructure(Structures.Interface);
     if (idef) {
       return this.parseInterface(node, scope);
     }
 
-    const cdef = node.findFirstStructure(Structures.ClassDefinition);
+    const cdef = node.findDirectStructure(Structures.ClassDefinition);
     if (!cdef) {
       throw new Error("MethodDefinitions, expected ClassDefinition as part of input node");
     }
 
-    const pri = cdef.findFirstStructure(Structures.PrivateSection);
+    const pri = cdef.findDirectStructure(Structures.PrivateSection);
     if (pri) {
       const defs = pri.findAllStatements(MethodDef);
       for (const def of defs) {
@@ -78,7 +78,7 @@ export class MethodDefinitions implements IMethodDefinitions {
       }
     }
 
-    const pro = node.findFirstStructure(Structures.ProtectedSection);
+    const pro = node.findDirectStructure(Structures.ProtectedSection);
     if (pro) {
       const defs = pro.findAllStatements(MethodDef);
       for (const def of defs) {
@@ -86,7 +86,7 @@ export class MethodDefinitions implements IMethodDefinitions {
       }
     }
 
-    const pub = node.findFirstStructure(Structures.PublicSection);
+    const pub = node.findDirectStructure(Structures.PublicSection);
     if (pub) {
       const defs = pub.findAllStatements(MethodDef);
       for (const def of defs) {

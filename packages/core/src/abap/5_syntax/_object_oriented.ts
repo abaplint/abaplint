@@ -7,6 +7,7 @@ import {IMethodDefinition} from "../types/_method_definition";
 import {IInterfaceDefinition} from "../types/_interface_definition";
 import {ClassAttribute} from "../types/class_attribute";
 import {ClassConstant} from "../types/class_constant";
+import {IEventDefinition} from "../types/_event_definition";
 
 // todo, think some of the public methods can be made private
 
@@ -53,6 +54,7 @@ export class ObjectOriented {
           return method;
         }
       }
+      return this.findMethodViaAlias(methodName, idef);
     }
     return undefined;
   }
@@ -97,6 +99,37 @@ export class ObjectOriented {
     return ret;
   }
 
+  public searchEvent(
+    def: IClassDefinition | IInterfaceDefinition | undefined,
+    name: string | undefined): IEventDefinition | undefined {
+
+    if (def === undefined || name === undefined) {
+      return undefined;
+    }
+
+    const found = def.getEvents().find(e => e.getName().toUpperCase() === name?.toUpperCase());
+    if (found) {
+      return found;
+    }
+
+    for (const a of def.getAliases().getAll()) {
+      if (a.getName().toUpperCase() === name.toUpperCase()) {
+        const comp = a.getComponent();
+        const res = this.searchEvent(this.scope.findObjectDefinition(comp.split("~")[0]), comp.split("~")[1]);
+        if (res) {
+          return res;
+        }
+      }
+    }
+
+    const sup = def.getSuperClass();
+    if (sup) {
+      return this.searchEvent(this.findSuperDefinition(sup), name);
+    }
+
+    return undefined;
+  }
+
   // search in via super class, interfaces and aliases
   public searchAttributeName(
     def: IClassDefinition | IInterfaceDefinition | undefined,
@@ -139,6 +172,16 @@ export class ObjectOriented {
     for (const a of def.getAttributes().getConstants()) {
       if (a.getName().toUpperCase() === name.toUpperCase()) {
         return a;
+      }
+    }
+
+    for (const a of def.getAliases().getAll()) {
+      if (a.getName().toUpperCase() === name.toUpperCase()) {
+        const comp = a.getComponent();
+        const res = this.searchConstantName(this.scope.findObjectDefinition(comp.split("~")[0]), comp.split("~")[1]);
+        if (res) {
+          return res;
+        }
       }
     }
 

@@ -12,7 +12,7 @@ export class SelectOption {
 
     const found = new BasicTypes(filename, scope).resolveLikeName(nameExpression);
     if (found && nameToken) {
-      return new TypedIdentifier(nameToken, filename, new TableType(found));
+      return new TypedIdentifier(nameToken, filename, new TableType(found, true));
     }
 
     if (nameToken) {

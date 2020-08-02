@@ -73,4 +73,19 @@ ENDCASE.`));
     expect(output.length).to.equal(files.length);
     expectNoUnknown(output);
   });
+
+  it("should build structure, even with Unknown statements", () => {
+    const abap = `
+    INTERFACE if_foo.
+      with_syntax_error
+    ENDINTERFACE.`;
+
+    const files = [new MemoryFile("zsdfdsfsd.prog.abap", abap)];
+
+    const {issues, output} = new ABAPParser(defaultVersion, []).parse(files);
+    expect(issues.length).to.equal(0);
+    expect(output.length).to.equal(files.length);
+    expect(output[0].getStructure()).to.not.equal(undefined);
+  });
+
 });

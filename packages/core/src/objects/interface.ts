@@ -4,6 +4,7 @@ import {ABAPFile} from "../abap/abap_file";
 
 export class Interface extends ABAPObject {
   private def: IInterfaceDefinition | undefined = undefined;
+  private parsedXML: {name?: string, description?: string} | undefined = undefined;
 
   public getType(): string {
     return "INTF";
@@ -21,19 +22,6 @@ export class Interface extends ABAPObject {
     return [main];
   }
 
-  public getNameFromXML(): string | undefined {
-    const xml = this.getXML();
-    if (!xml) {
-      return undefined;
-    }
-    const parsed = this.parseXML();
-    if (parsed.abapGit["asx:abap"]["asx:values"] === undefined) {
-      return undefined;
-    }
-    const vseo = parsed.abapGit["asx:abap"]["asx:values"].VSEOINTERF;
-    return vseo.CLSNAME ? vseo.CLSNAME._text : "";
-  }
-
   public getDefinition(): IInterfaceDefinition | undefined {
     return this.def;
   }
@@ -47,20 +35,39 @@ export class Interface extends ABAPObject {
 
   public setDirty(): void {
     this.def = undefined;
+    this.parsedXML = undefined;
     super.setDirty();
   }
 
+  public getNameFromXML(): string | undefined {
+    this.parseXML();
+    return this.parsedXML?.name;
+  }
+
   public getDescription(): string | undefined {
-    const xml = this.getXML();
-    if (!xml) {
-      return undefined;
+    this.parseXML();
+    return this.parsedXML?.description;
+  }
+
+/////////////////////////
+
+  private parseXML() {
+    if (this.parsedXML !== undefined) {
+      return;
     }
-    const parsed = this.parseXML();
-    if (parsed.abapGit["asx:abap"]["asx:values"] === undefined) {
-      return undefined;
+
+    this.parsedXML = {};
+
+    const parsed = super.parseRaw();
+    if (parsed === undefined
+        || parsed.abapGit["asx:abap"]["asx:values"] === undefined) {
+      return;
     }
+
     const vseo = parsed.abapGit["asx:abap"]["asx:values"].VSEOINTERF;
-    return vseo.DESCRIPT ? vseo.DESCRIPT._text : "";
+
+    this.parsedXML.description = vseo.DESCRIPT ? vseo.DESCRIPT._text : "";
+    this.parsedXML.name = vseo.CLSNAME ? vseo.CLSNAME._text : "";
   }
 
 }

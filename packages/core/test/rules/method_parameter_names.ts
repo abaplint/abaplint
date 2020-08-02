@@ -11,7 +11,7 @@ async function findIssues(abap: string, filename: string, config?: MethodParamet
   if (config) {
     rule.setConfig(config);
   }
-  return rule.initialize(reg).run(reg.getObjects()[0]);
+  return rule.initialize(reg).run(reg.getFirstObject()!);
 }
 
 describe(`Rule: method parameter names (general)`, () => {

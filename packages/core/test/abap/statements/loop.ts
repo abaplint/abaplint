@@ -1,4 +1,4 @@
-import {statementType, statementVersion} from "../_utils";
+import {statementType, statementVersion, statementVersionOk} from "../_utils";
 import * as Statements from "../../../src/abap/2_statements/statements";
 import {Version} from "../../../src/version";
 
@@ -38,3 +38,9 @@ const versions = [
 ];
 
 statementVersion(versions, "LOOP", Statements.Loop);
+
+const versionsOk = [
+  {abap: "LOOP AT table[] INTO bar.", ver: Version.v702},
+];
+
+statementVersionOk(versionsOk, "LOOP, 702", Statements.Loop);

@@ -7,6 +7,9 @@ import {Interface} from "../../../objects/interface";
 import {Class} from "../../../objects/class";
 import * as BasicTypes from "../../types/basic";
 import {AbstractType} from "../../types/basic/_abstract_type";
+import {IProgress} from "../../../progress";
+
+// todo: rewrite all of this to use a graph based deterministic approach instead
 
 // this makes sure to cache global interface and class definitions in the corresponding object
 export class FindGlobalDefinitions {
@@ -16,28 +19,33 @@ export class FindGlobalDefinitions {
     this.reg = reg;
   }
 
-  public run() {
-    const MAX_PASSES = 3;
+  public run(progress?: IProgress) {
+    const MAX_PASSES = 10;
     let lastPass = Number.MAX_SAFE_INTEGER;
 
     // the setDirty method in the objects clears the definitions
-    const candidates = this.reg.getObjects().filter((o) => {
-      return (o instanceof Interface || o instanceof Class) && o.getDefinition() === undefined;
-    });
-
-    for (let i = 0; i < MAX_PASSES; i++) {
-      let thisPass = 0;
-      for (const o of candidates) {
-        if (!(o instanceof Interface) && !(o instanceof Class)) {
-          continue;
-        }
-        if (this.countUntyped(o) === 0) {
-          continue;
-        }
-        this.update(o);
-
-        thisPass = thisPass + this.countUntyped(o);
+    let candidates: (Class | Interface)[] = [];
+    for (const o of this.reg.getObjects()) {
+      if ((o instanceof Interface || o instanceof Class) && o.getDefinition() === undefined) {
+        candidates.push(o);
       }
+    }
+
+    for (let i = 1; i <= MAX_PASSES; i++) {
+      progress?.set(candidates.length, "Global OO types, pass " + i);
+      let thisPass = 0;
+      const next: (Class | Interface)[] = [];
+      for (const o of candidates) {
+        progress?.tickSync("Global OO types(pass " + i + "), next pass: " + next.length);
+        this.update(o);
+        const untypedCount = this.countUntyped(o);
+        if (untypedCount > 0) {
+          next.push(o);
+        }
+        thisPass = thisPass + untypedCount;
+      }
+
+      candidates = next;
 
       if (lastPass === thisPass || thisPass === 0) {
         break;
@@ -113,9 +121,7 @@ export class FindGlobalDefinitions {
       } else {
         obj.setDefinition(undefined);
       }
-    }
-
-    if (obj instanceof Class) {
+    } else if (obj instanceof Class) {
       const found = struc?.findFirstStructure(Structures.ClassDefinition);
       if (struc && file && found) {
         try {

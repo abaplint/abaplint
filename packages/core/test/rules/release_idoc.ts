@@ -8,7 +8,7 @@ async function findIssues(contents: string, filename: string): Promise<Issue[]> 
   const reg = new Registry().addFile(new MemoryFile(filename, contents));
   await reg.parseAsync();
   const rule = new ReleaseIdoc();
-  return rule.run(reg.getObjects()[0]);
+  return rule.run(reg.getFirstObject()!);
 }
 
 describe("Rule: release_idoc", () => {

@@ -23,12 +23,13 @@ export interface IRegistry {
   setConfig(conf: IConfiguration): IRegistry;
 
   // object operations
-  getObjects(): readonly IObject[];
+  getObjects(): Generator<IObject, void, undefined>;
+  getObjectCount(): number;
+  getFirstObject(): IObject | undefined;
   getObject(type: string | undefined, name: string): IObject | undefined;
-  findObjectForFile(file: IFile): IObject | undefined;
-  getObjectByType<T>(type: new (...args: any[]) => T, name: string): T | undefined;
 
   // file operations
+  findObjectForFile(file: IFile): IObject | undefined;
   addFile(file: IFile): IRegistry;
   updateFile(file: IFile): IRegistry;
   removeFile(file: IFile): IRegistry;

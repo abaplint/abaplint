@@ -60,10 +60,15 @@ export class DDIC {
   }
 
   public lookup(name: string): AbstractType {
-    const found = this.reg.getObjectByType(Table, name);
-    if (found) {
-      return found.parseType(this.reg);
+    const foundTABL = this.reg.getObject("TABL", name) as Table | undefined;
+    if (foundTABL) {
+      return foundTABL.parseType(this.reg);
     }
+    const foundVIEW = this.reg.getObject("VIEW", name) as Table | undefined;
+    if (foundVIEW) {
+      return foundVIEW.parseType(this.reg);
+    }
+
     const ttyp = this.lookupTableType(name);
     if (!(ttyp instanceof Types.VoidType) && !(ttyp instanceof Types.UnknownType)) {
       return ttyp;
@@ -72,7 +77,7 @@ export class DDIC {
   }
 
   public lookupDomain(name: string): AbstractType {
-    const found = this.reg.getObjectByType(Domain, name);
+    const found = this.reg.getObject("DOMA", name) as Domain | undefined;
     if (found) {
       return found.parseType(this.reg);
     } else if (this.reg.inErrorNamespace(name)) {
@@ -82,8 +87,11 @@ export class DDIC {
     }
   }
 
-  public lookupDataElement(name: string): AbstractType {
-    const found = this.reg.getObjectByType(DataElement, name);
+  public lookupDataElement(name: string | undefined): AbstractType {
+    if (name === undefined) {
+      return new Types.UnknownType("undefined, lookupDataElement");
+    }
+    const found = this.reg.getObject("DTEL", name) as DataElement | undefined;
     if (found) {
       return found.parseType(this.reg);
     } else if (this.reg.inErrorNamespace(name)) {
@@ -93,8 +101,22 @@ export class DDIC {
     }
   }
 
-  public lookupTable(name: string): AbstractType {
-    const found = this.reg.getObjectByType(Table, name);
+  public lookupTableOrView(name: string | undefined): AbstractType {
+    if (name === undefined) {
+      return new Types.UnknownType("undefined, lookupTableOrView");
+    }
+    const foundTABL = this.reg.getObject("TABL", name) as Table | undefined;
+    if (foundTABL) {
+      return foundTABL.parseType(this.reg);
+    }
+    return this.lookupView(name);
+  }
+
+  public lookupTable(name: string | undefined): AbstractType {
+    if (name === undefined) {
+      return new Types.UnknownType("undefined, lookupTable");
+    }
+    const found = this.reg.getObject("TABL", name) as Table | undefined;
     if (found) {
       return found.parseType(this.reg);
     } else if (this.reg.inErrorNamespace(name)) {
@@ -104,8 +126,25 @@ export class DDIC {
     }
   }
 
-  public lookupTableType(name: string): AbstractType {
-    const found = this.reg.getObjectByType(TableType, name);
+  public lookupView(name: string | undefined): AbstractType {
+    if (name === undefined) {
+      return new Types.UnknownType("undefined, lookupView");
+    }
+    const found = this.reg.getObject("VIEW", name) as Table | undefined;
+    if (found) {
+      return found.parseType(this.reg);
+    } else if (this.reg.inErrorNamespace(name)) {
+      return new Types.UnknownType(name + " not found, lookupView");
+    } else {
+      return new Types.VoidType(name);
+    }
+  }
+
+  public lookupTableType(name: string | undefined): AbstractType {
+    if (name === undefined) {
+      return new Types.UnknownType("undefined, lookupTableType");
+    }
+    const found = this.reg.getObject("TTYP", name) as TableType | undefined;
     if (found) {
       return found.parseType(this.reg);
     } else if (this.reg.inErrorNamespace(name)) {
@@ -115,7 +154,7 @@ export class DDIC {
     }
   }
 
-  public textToType(text: string, length: string | undefined, decimals: string | undefined): AbstractType {
+  public textToType(text: string | undefined, length: string | undefined, decimals: string | undefined, parent: string): AbstractType {
 // todo, support short strings, and length of different integers, NUMC vs CHAR, min/max length
     switch (text) {
       case "DEC":      // 1 <= len <= 31
@@ -125,8 +164,10 @@ export class DDIC {
       case "DF34_DEC": // 1 <= len <= 31
       case "CURR":     // 1 <= len <= 31
       case "QUAN":     // 1 <= len <= 31
-        if (length === undefined || decimals === undefined) {
-          return new Types.UnknownType(text + " unknown length or decimals");
+        if (length === undefined) {
+          return new Types.UnknownType(text + " unknown length, " + parent);
+        } else if (decimals === undefined) {
+          return new Types.PackedType(parseInt(length, 10), 0);
         }
         return new Types.PackedType(parseInt(length, 10), parseInt(decimals, 10));
       case "ACCP":

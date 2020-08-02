@@ -10,7 +10,7 @@ import {String, StringTemplate, StringTemplateBegin, StringTemplateMiddle, Strin
 import {IStatement} from "../2_statements/statements/_statement";
 import {IStatementRunnable} from "../2_statements/statement_runnable";
 
-export class StatementNode extends AbstractNode {
+export class StatementNode extends AbstractNode<ExpressionNode | TokenNode> {
   private readonly statement: IStatement;
   private readonly colon: Token | undefined;
   private readonly pragmas: readonly Token[];
@@ -39,9 +39,9 @@ export class StatementNode extends AbstractNode {
     return this.pragmas;
   }
 
-  public setChildren(children: INode[]): StatementNode {
+  public setChildren(children: (ExpressionNode | TokenNode)[]): StatementNode {
     if (children.length === 0) {
-      throw "statement: zero children";
+      throw new Error("statement: zero children");
     }
 
     this.children = children;
@@ -55,11 +55,7 @@ export class StatementNode extends AbstractNode {
 
   public getEnd(): Position {
     const last = this.getLastToken();
-
-    const pos = new Position(last.getStart().getRow(),
-                             last.getStart().getCol() + last.getStr().length);
-
-    return pos;
+    return last.getEnd();
   }
 
   public getTokens(): readonly Token[] {
@@ -142,25 +138,19 @@ export class StatementNode extends AbstractNode {
 
   public getFirstToken(): Token {
     for (const child of this.getChildren()) {
-      if (child instanceof TokenNode) {
-        return child.get();
-      } else if (child instanceof ExpressionNode) {
-        return child.getFirstToken();
-      }
+      return child.getFirstToken();
     }
-    throw new Error("getFirstToken, unexpected type");
+    throw new Error("StatementNode, getFirstToken, no children");
   }
 
   public getLastToken(): Token {
     const child = this.getLastChild();
 
-    if (child instanceof TokenNode) {
-      return child.get();
-    } else if (child instanceof ExpressionNode) {
+    if (child !== undefined) {
       return child.getLastToken();
     }
 
-    throw new Error("getLastToken, unexpected type");
+    throw new Error("StatementNode, getLastToken, no children");
   }
 
   public findDirectExpression(type: new () => IStatementRunnable): ExpressionNode | undefined {
@@ -184,14 +174,8 @@ export class StatementNode extends AbstractNode {
 
   public findDirectTokenByText(text: string): Token | undefined {
     for (const child of this.getChildren()) {
-      if (child instanceof TokenNode) {
-        if (child.get().getStr() === text) {
-          return child.get();
-        }
-      } else if (child instanceof ExpressionNode) {
-        continue;
-      } else {
-        throw new Error("findDirectTokenByText, unexpected type");
+      if (child instanceof TokenNode && child.get().getStr() === text) {
+        return child.get();
       }
     }
     return undefined;
@@ -199,17 +183,15 @@ export class StatementNode extends AbstractNode {
 
   public findFirstExpression(type: new () => IStatementRunnable): ExpressionNode | undefined {
     for (const child of this.getChildren()) {
-      if (child.get() instanceof type) {
-        return child as ExpressionNode;
-      } else if (child instanceof TokenNode) {
+      if (child instanceof TokenNode) {
         continue;
-      } else if (child instanceof ExpressionNode) {
+      } else if (child.get() instanceof type) {
+        return child;
+      } else {
         const res = child.findFirstExpression(type);
         if (res) {
           return res;
         }
-      } else {
-        throw new Error("findFirstExpression, unexpected type");
       }
     }
     return undefined;
@@ -218,14 +200,31 @@ export class StatementNode extends AbstractNode {
   public findAllExpressions(type: new () => IStatementRunnable): readonly ExpressionNode[] {
     let ret: ExpressionNode[] = [];
     for (const child of this.getChildren()) {
-      if (child.get() instanceof type) {
-        ret.push(child as ExpressionNode);
-      } else if (child instanceof TokenNode) {
+      if (child instanceof TokenNode) {
         continue;
-      } else if (child instanceof ExpressionNode) {
-        ret = ret.concat(child.findAllExpressions(type));
+      } else if (child.get() instanceof type) {
+        ret.push(child);
       } else {
-        throw new Error("findAllExpressions, unexpected type");
+        ret = ret.concat(child.findAllExpressions(type));
+      }
+    }
+    return ret;
+  }
+
+  public findAllExpressionsMulti(type: (new () => IStatementRunnable)[]): ExpressionNode[] {
+    let ret: ExpressionNode[] = [];
+    for (const child of this.getChildren()) {
+      if (child instanceof TokenNode) {
+        continue;
+      }
+      const before = ret.length;
+      for (const t of type) {
+        if (child.get() instanceof t) {
+          ret.push(child);
+        }
+      }
+      if (before === ret.length) {
+        ret = ret.concat(child.findAllExpressionsMulti(type));
       }
     }
     return ret;
@@ -280,6 +279,7 @@ export class StatementNode extends AbstractNode {
 
     if (b instanceof TokenNode) {
       tokens.push(b.get());
+      return tokens;
     }
 
     for (const c of b.getChildren()) {
@@ -298,6 +298,7 @@ export class StatementNode extends AbstractNode {
 
     if (b instanceof TokenNode) {
       tokens.push(b);
+      return tokens;
     }
 
     for (const c of b.getChildren()) {

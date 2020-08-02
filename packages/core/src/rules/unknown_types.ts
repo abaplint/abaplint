@@ -4,9 +4,10 @@ import {BasicRuleConfig} from "./_basic_rule_config";
 import {IObject} from "../objects/_iobject";
 import {ABAPObject} from "../objects/_abap_object";
 import {Issue} from "../issue";
-import {UnknownType} from "../abap/types/basic";
+import * as BasicTypes from "../abap/types/basic";
 import {IRuleMetadata, RuleTag, IRule} from "./_irule";
 import {ISpaghettiScopeNode} from "../abap/5_syntax/_spaghetti_scope";
+import {AbstractType} from "../abap/types/basic/_abstract_type";
 
 export class UnknownTypesConf extends BasicRuleConfig {
 }
@@ -47,13 +48,14 @@ export class UnknownTypes implements IRule {
     return this.traverse(spaghetti.getTop());
   }
 
+/////////////////////
+
   private traverse(node: ISpaghettiScopeNode): Issue[] {
     let ret: Issue[] = [];
 
     for (const v of node.getData().vars) {
-      const type = v.identifier.getType();
-      if (type instanceof UnknownType) {
-        ret.push(Issue.atIdentifier(v.identifier, type.toText(), this.getMetadata().key));
+      if (this.containsUnknown(v.identifier.getType())) {
+        ret.push(Issue.atIdentifier(v.identifier, v.name, this.getMetadata().key));
       }
     }
 
@@ -62,6 +64,21 @@ export class UnknownTypes implements IRule {
     }
 
     return ret;
+  }
+
+  private containsUnknown(type: AbstractType): boolean {
+    if (type instanceof BasicTypes.UnknownType) {
+      return true;
+    } else if (type instanceof BasicTypes.StructureType) {
+      for (const c of type.getComponents()) {
+        if (this.containsUnknown(c.type)) {
+          return true;
+        }
+      }
+    } else if (type instanceof BasicTypes.TableType) {
+      return this.containsUnknown(type.getRowType());
+    }
+    return false;
   }
 
 }

@@ -1,6 +1,6 @@
 {
     "name": "@abaplint/core",
-    "version": "2.37.13",
+    "version": "2.38.14",
     "description": "Linter for ABAP",
     "main": "build/src/index.js",
     "typings": "build/src/index.d.ts",
@@ -19,7 +19,7 @@
         "coverage": "nyc mocha",
         "postcoverage": "nyc report --reporter=json",
         "preschema": "node scripts/schema.js > scripts/schema.ts",
-        "schema": "ts-json-schema-generator --jsDoc extended --path scripts/schema.ts > scripts/schema.json",
+        "schema": "ts-json-schema-generator --tsconfig tsconfig_schema.json --jsDoc extended --path scripts/schema.ts > scripts/schema.json",
         "postschema": "node scripts/schema_post.js"
     },
     "mocha": {
@@ -53,17 +53,17 @@
     },
     "homepage": "https://abaplint.org",
     "devDependencies": {
-        "@types/chai": "^4.2.11",
-        "@types/mocha": "^8.0.0",
-        "@types/node": "^14.0.23",
+        "@types/chai": "^4.2.12",
+        "@types/mocha": "^8.0.1",
+        "@types/node": "^14.0.27",
         "chai": "^4.2.0",
-        "eslint": "^7.4.0",
+        "eslint": "^7.6.0",
         "madge": "^3.9.2",
         "mocha": "^8.0.1",
         "nyc": "^15.1.0",
         "source-map-support": "^0.5.19",
         "ts-json-schema-generator": "^0.70.2",
-        "typescript": "^3.9.6"
+        "typescript": "^3.9.7"
     },
     "dependencies": {
         "json5": "^2.1.3",

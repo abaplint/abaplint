@@ -11,7 +11,7 @@ export class Tables {
       return undefined;
     }
 
-    const found = scope.getDDIC()?.lookupTable(nameToken.getStr());
+    const found = scope.getDDIC()?.lookupTableOrView(nameToken.getStr());
     if (found) {
       return new TypedIdentifier(nameToken, filename, found);
     }
