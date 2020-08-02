@@ -21,10 +21,8 @@ jobs:
       id: findPr
       with:
         github-token: ${{ secrets.GITHUB_TOKEN }}
-    - run: echo "Your PR is ${PR}"
-      if: success() && steps.findPr.outputs.number
-      env:
-        PR: ${{ steps.findPr.outputs.pr }}
+    - run: echo ${{ steps.findPr.outputs.pr }}
+
     - name: run
       run: |
         cp .github/regression/run.js ../../run.js
@@ -46,6 +44,15 @@ jobs:
         cd .. && cd ..
         ls -salh
         node ./run.js
+
+    - name: Find Comment
+      uses: peter-evans/find-comment@v1
+      id: fc
+      with:
+        issue-number: '${{steps.findPr.outputs.pr}}'
+        comment-author: github-actions
+        body-includes: Regression test results
+    - run: echo ${{ steps.fc.outputs.comment-id }}
 
     - id: get-comment-body
       run: |
