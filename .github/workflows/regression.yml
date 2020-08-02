@@ -49,6 +49,7 @@ jobs:
       uses: peter-evans/find-comment@v1
       id: fc
       with:
+        repository: 'abaplint/abaplint'
         issue-number: '${{steps.findPr.outputs.pr}}'
         comment-author: NONE
         body-includes: Regression
