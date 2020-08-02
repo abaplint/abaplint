@@ -34,7 +34,7 @@ for (let name in map) {
   } else {
     comment += "- " + name + ": fail :red_circle:";
   }
-  comment += " " + map[name].before.length + ", " + map[name].after.length + "\n";
+  comment += " " + map[name].before.length + " -> " + map[name].after.length + "\n";
 }
 comment += "\nUpdated: " + new Date().toISOString() + "\n";
 
