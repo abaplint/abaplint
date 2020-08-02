@@ -22,7 +22,7 @@ jobs:
       run: |
         cp .github/regression/run.js ../../run.js
         npm install && npm test && cp packages/cli/build/bundle.js ../../abaplint_after
-        git -f checkout master
+        git checkout -f master
         npm install && npm test && cp packages/cli/build/bundle.js ../../abaplint_before
         cd .. && cd ..
         git clone https://github.com/larshp/abapGit.git
