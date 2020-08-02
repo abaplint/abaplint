@@ -8,6 +8,7 @@ const cases = [
   {abap: "CASE moo. WHEN 2. WRITE 'foo'. ENDCASE."},
   {abap: "CASE moo. WHEN 2. WRITE 'foo'. WRITE 'bar'. ENDCASE."},
   {abap: "CASE moo. WHEN 2. WHEN 3. ENDCASE."},
+  {abap: "CASE sdfsd. INCLUDE zsdfsdf. ENDCASE."},
 ];
 
 structureType(cases, new Case());

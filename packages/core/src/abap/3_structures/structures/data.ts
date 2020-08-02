@@ -5,6 +5,7 @@ import {IStructureRunnable} from "./_structure_runnable";
 import {Enhancement} from "./enhancement";
 import {Constants} from "./constants";
 import {Types} from "./types";
+import {Define} from "./define";
 
 export class Data implements IStructure {
 
@@ -19,6 +20,7 @@ export class Data implements IStructure {
                              sta(Statements.Type),
                              sub(new Types()),
                              sub(new Enhancement()),
+                             sub(new Define()),
                              sta(Statements.IncludeType),
                              sta(Statements.TypePools),
                              sta(Statements.EnhancementPoint))),
