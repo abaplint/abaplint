@@ -27,9 +27,9 @@ for (let f of files) {
 let comment = "";
 for (let name in map) {
   if (map[name].before.length === map[name].after.length) {
-    comment += name + ": match :green_circle:";
+    comment += name + ": match :green_circle:\n";
   } else {
-    comment += name + ": fail :red_circle:";
+    comment += name + ": fail :red_circle:\n";
   }
 }
 
