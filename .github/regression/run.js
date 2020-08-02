@@ -3,10 +3,12 @@ const fs = require("fs");
 
 // todo, also output runtimes
 
+console.dir(process.env);
+
 let files = fs.readdirSync(".", {withFileTypes: true});
 files = files.filter(f => f.isFile());
 files = files.filter(f => f.name.endsWith(".json"));
-
+console.dir(files);
 let map = {};
 for (let f of files) {
   const name = f.name.split("#")[0];
