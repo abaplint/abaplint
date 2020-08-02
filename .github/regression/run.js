@@ -26,6 +26,7 @@ for (let f of files) {
 
 let comment = "Regression test results:\n";
 for (let name in map) {
+  // todo, this assumes the content is the same
   if (map[name].before.length === map[name].after.length) {
     comment += "- " + name + ": match :green_circle:\n";
   } else {
