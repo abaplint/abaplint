@@ -27,7 +27,7 @@ export class ObsoleteStatementConf extends BasicRuleConfig {
   public occurs: boolean = true;
   /** Checks for SET EXTENDED CHECK, https://help.sap.com/doc/abapdocu_751_index_htm/7.51/en-us/abapset_extended_check.htm */
   public setExtended: boolean = true;
-  /** WITH HEADER LINE */
+  /** Checks for WITH HEADER LINE */
   public withHeaderLine: boolean = true;
 }
 
