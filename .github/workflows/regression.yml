@@ -58,4 +58,4 @@ jobs:
       id: create-comment
       with:
         issue-number: '${{steps.findPr.outputs.pr}}'
-        body: '${{steps.get-issue-body.outputs.body}}'
+        body: ${{steps.get-comment-body.outputs.body}}
