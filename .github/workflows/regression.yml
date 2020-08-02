@@ -2,9 +2,8 @@ name: Regression
 
 on:
   push:
-    branches:
-    - '**'
-    - '!master'
+    branches-ignore:
+    - master
 
 jobs:
   regression:
@@ -22,6 +21,8 @@ jobs:
       id: findPr
       with:
         github-token: ${{ secrets.GITHUB_TOKEN }}
+    - run: echo ${{ steps.findPr.outputs.pr }}
+
     - name: run
       run: |
         cp .github/regression/run.js ../../run.js
@@ -44,7 +45,17 @@ jobs:
         ls -salh
         node ./run.js
 
-    - id: get-comment-body
+    - name: Find Comment
+      uses: peter-evans/find-comment@v1
+      id: fc
+      with:
+        repository: 'abaplint/abaplint'
+        issue-number: '${{steps.findPr.outputs.pr}}'
+        body-includes: Regression test results
+    - run: echo ${{ steps.fc.outputs.comment-id }}
+
+    - name: Build body from file
+      id: get-comment-body
       run: |
         cd .. && cd ..
         cat comment-body.txt
@@ -58,4 +69,6 @@ jobs:
       id: create-comment
       with:
         issue-number: '${{steps.findPr.outputs.pr}}'
+        edit-mode: replace
+        comment-id: '${{steps.fc.outputs.comment-id}}'
         body: ${{steps.get-comment-body.outputs.body}}

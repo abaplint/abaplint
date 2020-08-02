@@ -75,7 +75,6 @@ export class Config implements IConfiguration {
       // @ts-ignore
       JSON5.parse = JSON5.default.parse;
     }
-
     this.config = JSON5.parse(json);
 
     if (this.config.global === undefined) {
@@ -90,6 +89,7 @@ export class Config implements IConfiguration {
     if (this.config.syntax.globalConstants === undefined) {
       this.config.syntax.globalConstants = [];
     }
+    this.checkVersion();
   }
 
   public get(): IConfig {
@@ -117,6 +117,22 @@ export class Config implements IConfiguration {
       return defaultVersion;
     }
     return this.config.syntax.version;
+  }
+
+  private checkVersion() {
+    if (this.config.syntax.version === undefined) {
+      return; // handled in getVersion
+    }
+    let match = false;
+    for (const v in Version) {
+      if (v === this.config.syntax.version) {
+        match = true;
+        break;
+      }
+    }
+    if (match === false) {
+      this.config.syntax.version = defaultVersion;
+    }
   }
 
 }

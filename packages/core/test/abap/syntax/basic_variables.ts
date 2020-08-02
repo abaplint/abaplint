@@ -1479,4 +1479,13 @@ DATA(sdf) = ref->*-int.`;
     expect(identifier?.getType()).to.be.instanceof(Basic.TableType);
   });
 
+  it("loop at ANY should give ANY", () => {
+    const abap = `
+    DATA tab TYPE ANY TABLE.
+    LOOP AT tab ASSIGNING FIELD-SYMBOL(<sdf>).
+    ENDLOOP.`;
+    const identifier = resolveVariable(abap, "<sdf>");
+    expect(identifier?.getType()).to.be.instanceof(Basic.AnyType);
+  });
+
 });
