@@ -42,6 +42,8 @@ const tests = [
   {abap: `FORMAT COLOR COL_HEADING.`, cnt: 0},
   {abap: `SELECT * FROM sdfsd ORDER BY PRIMARY KEY.`, cnt: 0},
   {abap: `MODIFY LINE sy-index FIELD VALUE val FROM var.`, cnt: 0},
+  {abap: "INSERT LINES OF lt_founds INTO TABLE rt_founds_all.", cnt: 0},
+  {abap: "INSERT INITIAL LINE INTO lt_selection INDEX 1 ASSIGNING <ls_sel>.", cnt: 0},
 ];
 
 testRule(tests, KeywordCase);

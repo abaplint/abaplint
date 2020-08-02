@@ -26,12 +26,15 @@ for (let f of files) {
 
 let comment = "Regression test results:\n";
 for (let name in map) {
-  // todo, this assumes the content is the same
+  // todo, this assumes the array content is the same
   if (map[name].before.length === map[name].after.length) {
-    comment += "- " + name + ": match :green_circle:\n";
+    comment += "- " + name + ": match :green_circle: ";
+  } else if (map[name].before.length > map[name].after.length) {
+    comment += "- " + name + ": match :yellow_circle: ";
   } else {
-    comment += "- " + name + ": fail :red_circle:\n";
+    comment += "- " + name + ": fail :red_circle:";
   }
+  comment += " " + map[name].before.length + ", " + map[name].after.length + "\n";
 }
 comment += "\nUpdated: " + new Date().toISOString() + "\n";
 
