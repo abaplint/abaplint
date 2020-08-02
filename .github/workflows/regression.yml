@@ -47,6 +47,7 @@ jobs:
     - id: get-comment-body
       run: |
         cd .. && cd ..
+        cat comment-body.txt
         body=$(cat comment-body.txt)
         body="${body//'%'/'%25'}"
         body="${body//$'\n'/'%0A'}"
@@ -57,4 +58,4 @@ jobs:
       id: create-comment
       with:
         issue-number: '${{steps.findPr.outputs.pr}}'
-        body: ${{ steps.get-issue-body.outputs.body }}
+        body: '${{steps.get-issue-body.outputs.body}}'

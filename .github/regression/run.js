@@ -24,12 +24,12 @@ for (let f of files) {
   }
 }
 
-let comment = "";
+let comment = "Regression test results:\n";
 for (let name in map) {
   if (map[name].before.length === map[name].after.length) {
-    comment += name + ": match :green_circle:\n";
+    comment += "- " + name + ": match :green_circle:\n";
   } else {
-    comment += name + ": fail :red_circle:\n";
+    comment += "- " + name + ": fail :red_circle:\n";
   }
 }
 
