@@ -15,6 +15,7 @@ const tests = [
   "INSERT LINES OF lt_table FROM lv_from TO lv_to INTO TABLE lt_result.",
   "INSERT LINES OF lt_table FROM lv_from INTO TABLE et_merge_table.",
   "INSERT TABLE lt_foobar.",
+  "INSERT 'sdf' 'sdf' INTO header.", // this is a field group INSERT
 ];
 
 statementType(tests, "INSERT", Statements.InsertInternal);
