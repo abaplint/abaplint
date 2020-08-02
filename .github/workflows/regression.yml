@@ -35,7 +35,7 @@ jobs:
 
     - name: build diff
       env:
-        REPOS: ["https://github.com/larshp/abapGit"]
+        REPOS: '["https://github.com/larshp/abapGit"]'
       run: |
         cd .. && cd ..
         ls -salh
