@@ -30,8 +30,8 @@ jobs:
         npm install && npm test && cp packages/cli/build/bundle.js ../../abaplint_before
         cd .. && cd ..
         git clone https://github.com/larshp/abapGit.git
-        node ./abaplint_before abapGit/abaplint.json > abapGit#before.json
-        node ./abaplint_after abapGit/abaplint.json > abapGit#after.json
+        node ./abaplint_before abapGit/abaplint.json -f json > abapGit#before.json
+        node ./abaplint_after abapGit/abaplint.json -f json > abapGit#after.json
 
     - name: build diff
       env:
