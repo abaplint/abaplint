@@ -2151,6 +2151,14 @@ tables_tab-foo = 'A'.
     expect(issues.length).to.equals(0);
   });
 
+  it("RANGES, with header line", () => {
+    const abap = `
+  RANGES foo FOR sy-mandt.
+  foo-low = '123'.`;
+    const issues = runProgram(abap);
+    expect(issues.length).to.equals(0);
+  });
+
 // todo, static method cannot access instance attributes
 // todo, can a private method access protected attributes?
 // todo, readonly fields(constants + enums + attributes flagged read-only)

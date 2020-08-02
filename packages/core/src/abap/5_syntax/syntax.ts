@@ -48,6 +48,7 @@ import {If} from "./statements/if";
 import {ElseIf} from "./statements/else_if";
 import {Append} from "./statements/append";
 import {SelectionScreen} from "./statements/selection_screen";
+import {Ranges} from "./statements/ranges";
 
 import {Data as DataStructure} from "./structures/data";
 import {TypeEnum} from "./structures/type_enum";
@@ -295,6 +296,8 @@ export class SyntaxLogic {
       new Write().runSyntax(node, this.scope, filename);
     } else if (s instanceof Statements.SelectionScreen) {
       new SelectionScreen().runSyntax(node, this.scope, filename);
+    } else if (s instanceof Statements.Ranges) {
+      new Ranges().runSyntax(node, this.scope, filename);
 
     } else if (s instanceof Statements.Form) {
       this.helpers.proc.findFormScope(node, filename);
