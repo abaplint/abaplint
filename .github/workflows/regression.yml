@@ -30,19 +30,24 @@ jobs:
         npm install && npm test && cp packages/cli/build/bundle.js ../../abaplint_before
         cd .. && cd ..
         git clone https://github.com/larshp/abapGit.git
-        node ./abaplint_after abapGit/abaplint.json > abapGit_after.json
-        node ./abaplint_before abapGit/abaplint.json > abapGit_before.json
+        node ./abaplint_before abapGit/abaplint.json > abapGit#before.json
+        node ./abaplint_after abapGit/abaplint.json > abapGit#after.json
 
     - name: build diff
       run: |
         cd .. && cd ..
         node ./run.js
 
+    - id: get-comment-body
+      run: |
+        body=$(cat comment-body.txt)
+        body="${body//'%'/'%25'}"
+        body="${body//$'\n'/'%0A'}"
+        body="${body//$'\r'/'%0D'}"
+        echo ::set-output name=body::$body
     - name: Create comment
       uses: peter-evans/create-or-update-comment@v1
       id: create-comment
       with:
         issue-number: '${{steps.findPr.outputs.pr}}'
-        comment-author: abaplint-regressions
-        body: |
-          else
+        body: ${{ steps.get-issue-body.outputs.body }}
