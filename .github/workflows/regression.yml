@@ -18,19 +18,22 @@ jobs:
       with:
         node-version: '12.x'
 
-    - name: run
+    - name: compile
       run: |
         cp .github/regression/run.js ../../run.js
         npm install && npm test && cp packages/cli/build/bundle.js ../../abaplint_after
-        git checkout master
+        git checkout -f master
         npm install && npm test && cp packages/cli/build/bundle.js ../../abaplint_before
+
+    - name: run
+      run: |
         cd .. && cd ..
         git clone https://github.com/larshp/abapGit.git
-        node ./abaplint_before abapGit/abaplint.json -f json > abapGit#before.json
-        node ./abaplint_after abapGit/abaplint.json -f json > abapGit#after.json
+        node ./abaplint_before abapGit/abaplint.json -f json > abapGit#before.json || true
+        node ./abaplint_after abapGit/abaplint.json -f json > abapGit#after.json || true
         git clone https://github.com/larshp/abapOpenChecks.git
-        node ./abaplint_before abapOpenChecks/abaplint.json -f json > abapOpenChecks#before.json
-        node ./abaplint_after abapOpenChecks/abaplint.json -f json > abapOpenChecks#after.json
+        node ./abaplint_before abapOpenChecks/abaplint.json -f json > abapOpenChecks#before.json || true
+        node ./abaplint_after abapOpenChecks/abaplint.json -f json > abapOpenChecks#after.json || true
 
     - name: build diff
       env:

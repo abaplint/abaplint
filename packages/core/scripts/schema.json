@@ -2599,6 +2599,10 @@
         "subtract": {
           "description": "Check for SUBTRACT statement",
           "type": "boolean"
+        },
+        "withHeaderLine": {
+          "description": "Checks for WITH HEADER LINE",
+          "type": "boolean"
         }
       },
       "required": [
@@ -2611,7 +2615,8 @@
         "divide",
         "requested",
         "occurs",
-        "setExtended"
+        "setExtended",
+        "withHeaderLine"
       ],
       "type": "object"
     },

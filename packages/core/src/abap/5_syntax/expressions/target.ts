@@ -33,7 +33,10 @@ export class Target {
       if (current.get() instanceof Dash) {
         if (context instanceof UnknownType) {
           throw new Error("Not a structure, type unknown, target");
-        } else if (!(context instanceof StructureType) && !(context instanceof VoidType)) {
+        } else if (!(context instanceof StructureType)
+            && !(context instanceof TableType && context.isWithHeader() && context.getRowType() instanceof StructureType)
+            && !(context instanceof TableType && context.isWithHeader() && context.getRowType() instanceof VoidType)
+            && !(context instanceof VoidType)) {
           throw new Error("Not a structure, target");
         }
       } else if (current.get() instanceof InstanceArrow) {
