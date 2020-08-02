@@ -33,6 +33,7 @@ for (let name in map) {
     comment += "- " + name + ": fail :red_circle:\n";
   }
 }
+comment += "\n\nUpdated: " + new Date().toISOString();
 
 console.dir(comment);
 

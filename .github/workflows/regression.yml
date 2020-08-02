@@ -49,8 +49,8 @@ jobs:
       uses: peter-evans/find-comment@v1
       id: fc
       with:
-        repository: 'abaplint/abaplint'
         issue-number: '${{steps.findPr.outputs.pr}}'
+        comment-author: NONE
         body-includes: Regression
     - run: echo ${{ steps.fc.outputs.comment-id }}
 
@@ -68,5 +68,6 @@ jobs:
       id: create-comment
       with:
         issue-number: '${{steps.findPr.outputs.pr}}'
+        edit-mode: replace
         comment-id: '${{steps.fc.outputs.comment-id}}'
         body: ${{steps.get-comment-body.outputs.body}}
