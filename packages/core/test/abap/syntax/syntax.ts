@@ -2135,6 +2135,22 @@ WRITE bar-bar.
     expect(issues.length).to.equals(0);
   });
 
+  it("OCCURS in a BEGIN always gives header lines?", () => {
+    const abap = `
+TYPES: BEGIN OF bar,
+         foo TYPE c,
+       END OF bar.
+
+DATA BEGIN OF tables_tab OCCURS 10.
+INCLUDE TYPE bar.
+DATA END OF tables_tab.
+
+tables_tab-foo = 'A'.
+`;
+    const issues = runProgram(abap);
+    expect(issues.length).to.equals(0);
+  });
+
 // todo, static method cannot access instance attributes
 // todo, can a private method access protected attributes?
 // todo, readonly fields(constants + enums + attributes flagged read-only)
