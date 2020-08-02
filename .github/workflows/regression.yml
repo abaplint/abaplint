@@ -2,9 +2,8 @@ name: Regression
 
 on:
   push:
-    branches:
-    - '**'
-    - '!master'
+    branches-ignore:
+    - master
 
 jobs:
   regression:
