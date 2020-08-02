@@ -1,0 +1,61 @@
+name: Regression
+
+on:
+  push:
+    branches:
+    - '**'
+    - '!master'
+
+jobs:
+  regression:
+    # Check if the event is not triggered by a fork, this is stupid but its github
+    if: github.ref != 'refs/heads/master'
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v2
+      with:
+        fetch-depth: 0
+    - uses: actions/setup-node@v1
+      with:
+        node-version: '12.x'
+    - uses: jwalton/gh-find-current-pr@v1
+      id: findPr
+      with:
+        github-token: ${{ secrets.GITHUB_TOKEN }}
+    - name: run
+      run: |
+        cp .github/regression/run.js ../../run.js
+        npm install && npm test && cp packages/cli/build/bundle.js ../../abaplint_after
+        git checkout master
+        npm install && npm test && cp packages/cli/build/bundle.js ../../abaplint_before
+        cd .. && cd ..
+        git clone https://github.com/larshp/abapGit.git
+        node ./abaplint_before abapGit/abaplint.json -f json > abapGit#before.json
+        node ./abaplint_after abapGit/abaplint.json -f json > abapGit#after.json
+        git clone https://github.com/larshp/abapOpenChecks.git
+        node ./abaplint_before abapOpenChecks/abaplint.json -f json > abapOpenChecks#before.json
+        node ./abaplint_after abapOpenChecks/abaplint.json -f json > abapOpenChecks#after.json
+
+    - name: build diff
+      env:
+        REPOS: '["todo, currently not used"]'
+      run: |
+        cd .. && cd ..
+        ls -salh
+        node ./run.js
+
+    - id: get-comment-body
+      run: |
+        cd .. && cd ..
+        cat comment-body.txt
+        body=$(cat comment-body.txt)
+        body="${body//'%'/'%25'}"
+        body="${body//$'\n'/'%0A'}"
+        body="${body//$'\r'/'%0D'}"
+        echo ::set-output name=body::$body
+    - name: Create comment
+      uses: peter-evans/create-or-update-comment@v1
+      id: create-comment
+      with:
+        issue-number: '${{steps.findPr.outputs.pr}}'
+        body: ${{steps.get-comment-body.outputs.body}}
