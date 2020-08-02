@@ -17,11 +17,6 @@ jobs:
     - uses: actions/setup-node@v1
       with:
         node-version: '12.x'
-    - uses: jwalton/gh-find-current-pr@v1
-      id: findPr
-      with:
-        github-token: ${{ secrets.GITHUB_TOKEN }}
-    - run: echo ${{ steps.findPr.outputs.pr }}
 
     - name: run
       run: |
@@ -44,6 +39,12 @@ jobs:
         cd .. && cd ..
         ls -salh
         node ./run.js
+
+    - uses: jwalton/gh-find-current-pr@v1
+      id: findPr
+      with:
+        github-token: ${{ secrets.GITHUB_TOKEN }}
+    - run: echo ${{ steps.findPr.outputs.pr }}
 
     - name: Find Comment
       uses: peter-evans/find-comment@v1
