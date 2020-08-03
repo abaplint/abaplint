@@ -67,6 +67,7 @@ export class ChainMainlyDeclarations extends ABAPRule {
           || s instanceof Statements.ConstantBegin
           || s instanceof Statements.ConstantEnd
           || s instanceof Statements.Tables
+          || s instanceof Statements.Controls
           || s instanceof Statements.Parameter
           || s instanceof Statements.InterfaceDef
           || s instanceof Statements.SelectOption

@@ -63,7 +63,7 @@ export class FormDefinition extends Identifier implements IFormDefinition {
 
     for (const param of tables.findAllExpressions(Expressions.FormParam)) {
       const p = new FormParam().runSyntax(param, scope, this.filename);
-      const type = new TableType(p.getType(), false);
+      const type = new TableType(p.getType(), true);
       ret.push(new TypedIdentifier(p.getToken(), filename, type));
     }
 

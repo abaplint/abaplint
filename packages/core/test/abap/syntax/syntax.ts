@@ -2159,6 +2159,19 @@ tables_tab-foo = 'A'.
     expect(issues.length).to.equals(0);
   });
 
+  it("FORM TABLES STRUCTURE, contains header line", () => {
+    const abap = `
+DATA: BEGIN OF stru,
+        foo TYPE string,
+      END OF stru.
+FORM bar TABLES tab STRUCTURE stru.
+  WRITE tab-foo.
+ENDFORM.`;
+    const issues = runProgram(abap);
+    expect(issues.length).to.equals(0);
+  });
+
+
 // todo, static method cannot access instance attributes
 // todo, can a private method access protected attributes?
 // todo, readonly fields(constants + enums + attributes flagged read-only)
