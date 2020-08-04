@@ -136,7 +136,7 @@ testRule(tests5, KeywordCase, config5);
 const testLowerCaseGlobalClassSuite1 = [
   {
     abap: `
-      class zcl_my definition final.
+      class zcl_my definition final public.
         public section.
           methods x.
       endclass.
@@ -148,7 +148,7 @@ const testLowerCaseGlobalClassSuite1 = [
   },
   {
     abap: `
-      CLASS zcl_my definition FINAL.
+      CLASS zcl_my definition FINAL public.
         public section.
           methods x.
       ENDCLASS.
@@ -160,7 +160,7 @@ const testLowerCaseGlobalClassSuite1 = [
   },
   {
     abap: `
-      class zcl_my definition final.
+      class zcl_my definition final public.
         public section.
           METHODS x.
       endclass.
@@ -172,7 +172,7 @@ const testLowerCaseGlobalClassSuite1 = [
   },
   {
     abap: `
-      class zcl_my definition final.
+      class zcl_my definition final public.
         public section.
           methods x.
       endclass.
@@ -183,10 +183,17 @@ const testLowerCaseGlobalClassSuite1 = [
     cnt: 1,
   },
 ];
-const configLowerCaseGlobalClass1 = {...new KeywordCaseConf(), style: KeywordCaseStyle.Lower};
-testRule(testLowerCaseGlobalClassSuite1, KeywordCase, configLowerCaseGlobalClass1);
+const configLowerCaseGlobalClass1 = {
+  ...new KeywordCaseConf(),
+  style: KeywordCaseStyle.Lower,
+};
+testRule(testLowerCaseGlobalClassSuite1, KeywordCase, configLowerCaseGlobalClass1, "keywordCase: lower");
 
 // no errors in case 2 for suite 2
-const testLowerCaseGlobalClassSuite2 = testLowerCaseGlobalClassSuite1.map((c, idx) => idx === 1 ? {...c, cnd: 0} : c);
-const configLowerCaseGlobalClass2 = {...configLowerCaseGlobalClass1, ignoreGlobalClassBoundries: true};
-testRule(testLowerCaseGlobalClassSuite2, KeywordCase, configLowerCaseGlobalClass2);
+const testLowerCaseGlobalClassSuite2 = testLowerCaseGlobalClassSuite1.map((c, idx) => idx === 1 ? {...c, cnt: 0} : c);
+const configLowerCaseGlobalClass2 = {
+  ...new KeywordCaseConf(),
+  style: KeywordCaseStyle.Lower,
+  ignoreGlobalClassBoundaries: true,
+};
+testRule(testLowerCaseGlobalClassSuite2, KeywordCase, configLowerCaseGlobalClass2, "keywordCase: lower + ignore boundaries");

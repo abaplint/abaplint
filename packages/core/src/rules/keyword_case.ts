@@ -27,7 +27,7 @@ export class KeywordCaseConf extends BasicRuleConfig {
   public ignoreGlobalInterface: boolean = false;
   public ignoreFunctionModuleName: boolean = false;
   // this ignores keywords in CLASS/ENDCLASS statements of a global class (and only in them, the rest is checked)
-  public ignoreGlobalClassBoundries: boolean = false;
+  public ignoreGlobalClassBoundaries: boolean = false;
 
   /** A list of keywords to be ignored */
   public ignoreKeywords: string[] = [];
@@ -74,7 +74,7 @@ export class KeywordCase extends ABAPRule {
   public runParsed(file: ABAPFile, obj: IObject) {
     const issues: Issue[] = [];
     let skip = false;
-    // let isGlobalClass = false;
+    let isGlobalClass = false;
 
     const ddic = new DDIC(this.reg);
 
@@ -93,14 +93,16 @@ export class KeywordCase extends ABAPRule {
         continue;
       }
 
-      // if (this.conf.ignoreGlobalClassBoundries) {
-      //   if (statement.get() instanceof Statements.ClassDefinition && statement.findFirstExpression(Expressions.Global)) {
-      //     isGlobalClass = true;
-      //     continue;
-      //   } else if (isGlobalClass === true && statement.get() instanceof Statements.EndClass) {
-      //     continue;
-      //   }
-      // }
+      if (this.conf.ignoreGlobalClassBoundaries) {
+        const node = statement.get();
+        if (node instanceof Statements.ClassDefinition && statement.findFirstExpression(Expressions.Global)) {
+          isGlobalClass = true;
+          continue;
+        } else if (isGlobalClass === true
+          && (node instanceof Statements.EndClass || node instanceof Statements.ClassImplementation)) {
+          continue;
+        }
+      }
 
       if (this.conf.ignoreGlobalClassDefinition) {
         if (statement.get() instanceof Statements.ClassDefinition
