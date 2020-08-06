@@ -130,3 +130,70 @@ testRule(tests5, KeywordCase, config5);
 // test inconsistent case in ignored keyword list
 config5.ignoreKeywords = ["texT", "WrItE"];
 testRule(tests5, KeywordCase, config5);
+
+// ************************
+
+const testLowerCaseGlobalClassSuite1 = [
+  {
+    abap: `
+      class zcl_my definition final public.
+        public section.
+          methods x.
+      endclass.
+      class zcl_my implementation.
+        method x. endmethod.
+      endclass.
+      `,
+    cnt: 0,
+  },
+  {
+    abap: `
+      CLASS zcl_my definition FINAL public.
+        public section.
+          methods x.
+      ENDCLASS.
+      CLASS zcl_my IMPLEMENTATION.
+        method x. endmethod.
+      ENDCLASS.
+      `,
+    cnt: 1,
+  },
+  {
+    abap: `
+      class zcl_my definition final public.
+        public section.
+          METHODS x.
+      endclass.
+      class zcl_my implementation.
+        method x. endmethod.
+      endclass.
+      `,
+    cnt: 1,
+  },
+  {
+    abap: `
+      class zcl_my definition final public.
+        public section.
+          methods x.
+      endclass.
+      class zcl_my implementation.
+        METHOD x. endmethod.
+      endclass.
+      `,
+    cnt: 1,
+  },
+];
+const configLowerCaseGlobalClass1 = {
+  ...new KeywordCaseConf(),
+  style: KeywordCaseStyle.Lower,
+};
+testRule(testLowerCaseGlobalClassSuite1, KeywordCase, configLowerCaseGlobalClass1, "keywordCase: lower");
+
+// no errors in case 2 for suite 2
+const testLowerCaseGlobalClassSuite2 = testLowerCaseGlobalClassSuite1.map((c, idx) => idx === 1 ? {...c, cnt: 0} : c);
+const configLowerCaseGlobalClass2 = {
+  ...new KeywordCaseConf(),
+  style: KeywordCaseStyle.Lower,
+  ignoreGlobalClassBoundaries: true,
+};
+testRule(testLowerCaseGlobalClassSuite2, KeywordCase, configLowerCaseGlobalClass2, "keywordCase: lower + ignore boundaries");

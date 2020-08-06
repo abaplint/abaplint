@@ -13,6 +13,7 @@
         "postcompile": "sh scripts/version.sh",
         "pretest": "npm run compile",
         "test": "mocha",
+        "test:only": "npm run compile && mocha",
         "posttest": "npm run lint && npm run schema",
         "prepublishOnly": "rm -rf build && npm run test",
         "precoverage": "npm run compile",

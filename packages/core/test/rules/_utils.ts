@@ -15,12 +15,16 @@ export function runMulti(files: {filename: string, contents: string}[]): readonl
   return reg.parse().findIssues();
 }
 
-export function testRule(tests: {abap: string, cnt: number}[], rule: new () => IRule, config?: any, testTitle?: string) {
+export function testRule(tests: {abap: string, cnt: number, only?: boolean}[], rule: new () => IRule, config?: any, testTitle?: string) {
   const nrule = new rule();
   if (config) {
     nrule.setConfig(config);
   }
   testTitle = testTitle || `test ${nrule.getMetadata().key} rule`;
+  const hasOnly = tests.findIndex(t => t.only === true) > 0;
+  if (hasOnly) {
+    tests = tests.filter(t => t.only === true);
+  }
   describe(testTitle, function () {
     // note that timeout() only works inside function()
     this.timeout(200);
