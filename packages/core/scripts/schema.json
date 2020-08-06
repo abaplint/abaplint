@@ -2002,6 +2002,9 @@
         "ignoreFunctionModuleName": {
           "type": "boolean"
         },
+        "ignoreGlobalClassBoundaries": {
+          "type": "boolean"
+        },
         "ignoreGlobalClassDefinition": {
           "type": "boolean"
         },
@@ -2029,6 +2032,7 @@
         "ignoreGlobalClassDefinition",
         "ignoreGlobalInterface",
         "ignoreFunctionModuleName",
+        "ignoreGlobalClassBoundaries",
         "ignoreKeywords"
       ],
       "type": "object"
