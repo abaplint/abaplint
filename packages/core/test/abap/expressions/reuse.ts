@@ -61,11 +61,11 @@ const tests = [
   {c: "type index table",                 r: new Expressions.TypeTable(),       e: true},
   {c: "type index table",                 r: new Expressions.TypeTable(),       e: true},
   {c: "type range of string",             r: new Expressions.TypeTable(),       e: true},
-  {c: "%_C_POINTER",                      r: new Expressions.TypeNameOrInfer(),        e: true},
-//  {c: "<Z-BAR>",                          r: new Expressions.FieldSymbol(),     e: true},
+  {c: "%_C_POINTER",                      r: new Expressions.TypeNameOrInfer(), e: true},
+  {c: "<Z-BAR>",                          r: new Expressions.FieldSymbol(),     e: true},
 ];
 
-describe("Test expression matchers", () => {
+describe("Test expression matchers, todo: refactor", () => {
   tests.forEach((test) => {
     const not = test.e === true ? "" : "not ";
 

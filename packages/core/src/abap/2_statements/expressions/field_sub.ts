@@ -4,7 +4,7 @@ import {IStatementRunnable} from "../statement_runnable";
 
 export class FieldSub extends Expression {
   public getRunnable(): IStatementRunnable {
-    const ret = seq(reg(/^!?(\/\w+\/)?[\w%\$\*]+$/),
+    const ret = seq(reg(/^!?(\/\w+\/)?[a-zA-Z_%][\w%\$\*]*$/),
                     starPrio(seq(tok(Dash), reg(/^[\w%\$\*]+$/))));
 
     return ret;
