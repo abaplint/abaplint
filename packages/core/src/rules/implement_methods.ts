@@ -39,25 +39,28 @@ export class ImplementMethods extends ABAPRule {
       return [];
     }
 
-    for (const def of file.getInfo().listClassDefinitions()) {
-      let impl = file.getInfo().getClassImplementationByName(def.name);
+    for (const classDefinition of file.getInfo().listClassDefinitions()) {
+      let classImplementation = file.getInfo().getClassImplementationByName(classDefinition.name);
 
-      if (impl === undefined) {
-        impl = this.lookupInObject(def.name, obj);
+      if (classImplementation === undefined) {
+        classImplementation = this.lookupInObject(classDefinition.name, obj);
       }
 
-      if (impl === undefined) {
-        const issue = Issue.atIdentifier(def.identifier, "Class implementation for \"" + def.name + "\" not found", this.getMetadata().key);
+      if (classImplementation === undefined) {
+        const message = "Class implementation for \"" + classDefinition.name + "\" not found";
+        const issue = Issue.atIdentifier(classDefinition.identifier, message, this.getMetadata().key);
         ret.push(issue);
         continue;
       }
 
-      ret = ret.concat(this.checkClass(def, impl));
-      ret = ret.concat(this.checkInterfaces(def, impl, file));
+      ret = ret.concat(this.checkClass(classDefinition, classImplementation));
+      ret = ret.concat(this.checkInterfaces(classDefinition, classImplementation, file));
     }
 
     return ret;
   }
+
+/////////////////////////////////
 
   private lookupInObject(name: string, obj: ABAPObject) {
     for (const sub of obj.getABAPFiles()) {
@@ -84,7 +87,8 @@ export class ImplementMethods extends ABAPRule {
       }
 
       if (found === undefined) {
-        const issue = Issue.atIdentifier(impl.identifier, "Implement method \"" + md.name + "\"", this.getMetadata().key);
+        const message = "Implement method \"" + md.name + "\"";
+        const issue = Issue.atIdentifier(impl.identifier, message, this.getMetadata().key);
         ret.push(issue);
       }
     }
@@ -96,13 +100,14 @@ export class ImplementMethods extends ABAPRule {
     const ret: Issue[] = [];
     let idef: InfoInterfaceDefinition | undefined = undefined;
 
-    for (const interfaceName of def.interfaces) {
-      const intf = this.reg.getObject("INTF", interfaceName.name) as Interface | undefined;
+    for (const interfaceInfo of def.interfaces) {
+      const intf = this.reg.getObject("INTF", interfaceInfo.name) as Interface | undefined;
       if (intf === undefined) {
         // lookup in localfile
-        idef = file.getInfo().getInterfaceDefinitionByName(interfaceName.name);
+        idef = file.getInfo().getInterfaceDefinitionByName(interfaceInfo.name);
         if (idef === undefined) {
-          const issue = Issue.atIdentifier(def.identifier, "Implemented interface \"" + interfaceName.name + "\" not found", this.getMetadata().key);
+          const message = "Implemented interface \"" + interfaceInfo.name + "\" not found";
+          const issue = Issue.atIdentifier(def.identifier, message, this.getMetadata().key);
           ret.push(issue);
           continue;
         }
@@ -110,12 +115,16 @@ export class ImplementMethods extends ABAPRule {
         idef = intf.getMainABAPFile()?.getInfo().listInterfaceDefinitions()[0];
       }
 
-      if (idef === undefined || interfaceName.partial === true) {
+      if (idef === undefined || interfaceInfo.partial === true) {
         continue; // ignore parser errors in interface
       }
 
       for (const method of idef.methods) {
-        const name = interfaceName.name + "~" + method.name;
+        if (interfaceInfo.abstractMethods.includes(method.name.toUpperCase())) {
+          continue;
+        }
+
+        const name = interfaceInfo.name + "~" + method.name;
         let found = impl.methods.find(m => m.getName().toUpperCase() === name.toUpperCase());
 
         if (found === undefined) {
@@ -129,7 +138,7 @@ export class ImplementMethods extends ABAPRule {
         }
 
         if (found === undefined) {
-          const message = "Implement method \"" + method.name + "\" from interface \"" + interfaceName.name + "\"";
+          const message = "Implement method \"" + method.name + "\" from interface \"" + interfaceInfo.name + "\"";
           const issue = Issue.atIdentifier(impl.identifier, message, this.getMetadata().key);
           ret.push(issue);
         }

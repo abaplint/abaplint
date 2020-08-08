@@ -100,6 +100,15 @@ ENDCLASS.`;
     testFix("DATA foo TYPE i.", "");
   });
 
+  ///////////////
+
+  it.skip("DATA with dashes", async () => {
+    const abap = `DATA dummy-name TYPE i.`;
+    const issues = await runSingle(abap);
+    expect(issues.length).to.equal(1);
+    expect(issues[0].getMessage()).to.include("dummy-name");
+  });
+
   it.skip("test, quickfix, chained first", async () => {
     testFix(`DATA: foo, bar.
 WRITE bar.`, `DATA: bar.
