@@ -1,10 +1,9 @@
 'use strict';
 const fs = require("fs");
 
-// todo, also output runtimes
+// todo, also output analysis runtimes
 
 console.dir(process.env.REPOS);
-console.dir(process.env); // testing, want to include the short SHA1 in the comment
 
 let files = fs.readdirSync(".", {withFileTypes: true});
 files = files.filter(f => f.isFile());
@@ -38,6 +37,7 @@ for (let name in map) {
   comment += " " + map[name].before.length + " -> " + map[name].after.length + "\n";
 }
 comment += "\nUpdated: " + new Date().toISOString() + "\n";
+comment += "\nSHA: " + process.env.GITHUB_SHA + "\n";
 
 console.dir(comment);
 
