@@ -201,6 +201,7 @@ export class BuiltIn {
     components.push({name: "lisel", type: new CharacterType(255)});
     components.push({name: "mandt", type: new CharacterType(3)});
     components.push({name: "msgid", type: new CharacterType(20)});
+    components.push({name: "msgty", type: new CharacterType(1)});
     components.push({name: "msgno", type: new NumericType(3)});
     components.push({name: "msgv1", type: new CharacterType(50)});
     components.push({name: "msgv2", type: new CharacterType(50)});
