@@ -1,6 +1,6 @@
 import {ExpressionNode} from "../../nodes";
 import {CurrentScope} from "../_current_scope";
-import {ObjectReferenceType, VoidType} from "../../types/basic";
+import {ObjectReferenceType, VoidType, DataReference} from "../../types/basic";
 import {TypeNameOrInfer} from "../../2_statements/expressions";
 import {AbstractType} from "../../types/basic/_abstract_type";
 import {ReferenceType} from "../_reference";
@@ -17,15 +17,23 @@ export class NewObject {
       throw new Error("NewObject, todo, infer type");
     }
 
-    const found = scope.findObjectDefinition(typeName);
-    if (found === undefined && scope.getDDIC().inErrorNamespace(typeName) === false) {
+    const objDefinition = scope.findObjectDefinition(typeName);
+    if (objDefinition) {
+      scope.addReference(typeToken, objDefinition, ReferenceType.ClassReference, filename);
+      return new ObjectReferenceType(typeName);
+    }
+
+    const type = scope.findType(typeName);
+    if (type) {
+      // todo: scope.addReference
+      return new DataReference(type.getType());
+    }
+
+    if (scope.getDDIC().inErrorNamespace(typeName) === false) {
       return new VoidType(typeName);
-    } else if (found === undefined) {
+    } else {
       throw new Error("Type \"" + typeName + "\" not found in scope, NewObject");
     }
 
-    scope.addReference(typeToken, found, ReferenceType.ClassReference, filename);
-
-    return new ObjectReferenceType(typeName);
   }
 }

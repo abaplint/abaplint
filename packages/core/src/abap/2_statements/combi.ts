@@ -503,14 +503,12 @@ class PlusPriority implements IStatementRunnable {
 
 class Sequence implements IStatementRunnable {
   private readonly list: IStatementRunnable[];
-  private readonly stack: boolean;
 
-  public constructor(list: IStatementRunnable[], stack = false) {
+  public constructor(list: IStatementRunnable[]) {
     if (list.length < 2) {
       throw new Error("Sequence, length error");
     }
     this.list = list;
-    this.stack = stack;
   }
 
   public listKeywords(): string[] {
@@ -545,11 +543,7 @@ class Sequence implements IStatementRunnable {
 
   public railroad() {
     const children = this.list.map((e) => { return e.railroad(); });
-    if (this.stack === true) {
-      return "Railroad.Stack(" + children.join() + ")";
-    } else {
-      return "Railroad.Sequence(" + children.join() + ")";
-    }
+    return "Railroad.Sequence(" + children.join() + ")";
   }
 
   public toStr() {
@@ -912,20 +906,17 @@ export function str(s: string): IStatementRunnable {
     return new Word(s);
   }
 }
-export function seq(first: IStatementRunnable, ...rest: IStatementRunnable[]): IStatementRunnable {
-  return new Sequence([first].concat(rest));
+export function seq(first: IStatementRunnable, second: IStatementRunnable, ...rest: IStatementRunnable[]): IStatementRunnable {
+  return new Sequence([first, second].concat(rest));
 }
-export function seqs(first: IStatementRunnable, ...rest: IStatementRunnable[]): IStatementRunnable {
-  return new Sequence([first].concat(rest), true);
+export function alt(first: IStatementRunnable, second: IStatementRunnable, ...rest: IStatementRunnable[]): IStatementRunnable {
+  return new Alternative([first, second].concat(rest));
 }
-export function alt(first: IStatementRunnable, ...rest: IStatementRunnable[]): IStatementRunnable {
-  return new Alternative([first].concat(rest));
+export function altPrio(first: IStatementRunnable, second: IStatementRunnable, ...rest: IStatementRunnable[]): IStatementRunnable {
+  return new AlternativePriority([first, second].concat(rest));
 }
-export function altPrio(first: IStatementRunnable, ...rest: IStatementRunnable[]): IStatementRunnable {
-  return new AlternativePriority([first].concat(rest));
-}
-export function per(first: IStatementRunnable, ...rest: IStatementRunnable[]): IStatementRunnable {
-  return new Permutation([first].concat(rest));
+export function per(first: IStatementRunnable, second: IStatementRunnable, ...rest: IStatementRunnable[]): IStatementRunnable {
+  return new Permutation([first, second].concat(rest));
 }
 export function opt(first: IStatementRunnable): IStatementRunnable {
   return new Optional(first);

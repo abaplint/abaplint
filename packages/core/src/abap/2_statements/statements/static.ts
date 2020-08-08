@@ -11,7 +11,7 @@ export class Static implements IStatement {
     const type = seq(opt(new Expressions.ConstantFieldLength()), p);
 
     const ret = seq(alt(str("STATIC"), str("STATICS")),
-                    new Expressions.NamespaceSimpleName(),
+                    new Expressions.DefinitionName(),
                     alt(type, new Expressions.TypeTable()));
 
     return ret;

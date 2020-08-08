@@ -1,7 +1,7 @@
 import * as Structures from "../3_structures/structures";
 import * as Expressions from "../2_statements/expressions";
 import * as Statements from "../2_statements/statements";
-import {IABAPFileInformation, InfoClassImplementation, InfoClassDefinition, InfoMethodDefinition, InfoInterfaceDefinition, InfoAttribute, InfoAlias, AttributeLevel, InfoMethodParameter, MethodParameterDirection, InfoFormDefinition} from "./_abap_file_information";
+import {IABAPFileInformation, InfoClassImplementation, InfoClassDefinition, InfoMethodDefinition, InfoInterfaceDefinition, InfoAttribute, InfoAlias, AttributeLevel, InfoMethodParameter, MethodParameterDirection, InfoFormDefinition, InfoImplementing} from "./_abap_file_information";
 import {StructureNode, StatementNode} from "../nodes";
 import {Identifier} from "./_identifier";
 import * as Tokens from "../1_lexer/tokens";
@@ -158,12 +158,33 @@ export class ABAPFileInformation implements IABAPFileInformation {
 
 ///////////////////
 
-  private getImplementing(input: StructureNode): {name: string, partial: boolean}[] {
-    const ret: {name: string, partial: boolean}[] = [];
+  private getImplementing(input: StructureNode): InfoImplementing[] {
+    const ret: InfoImplementing[] = [];
     for (const node of input.findAllStatements(Statements.InterfaceDef)) {
+      const abstract = node.findDirectExpression(Expressions.AbstractMethods);
+      const abstractMethods: string[] = [];
+      if (abstract) {
+        for (const m of abstract.findDirectExpressions(Expressions.MethodName)) {
+          abstractMethods.push(m.concatTokens().toUpperCase());
+        }
+      }
+
+      const final = node.findDirectExpression(Expressions.FinalMethods);
+      const finalMethods: string[] = [];
+      if (final) {
+        for (const m of final.findDirectExpressions(Expressions.MethodName)) {
+          finalMethods.push(m.concatTokens().toUpperCase());
+        }
+      }
+
       const partial = node.concatTokens().toUpperCase().includes("PARTIALLY IMPLEMENTED");
       const name = node.findFirstExpression(Expressions.InterfaceName)!.getFirstToken().getStr().toUpperCase();
-      ret.push({name, partial});
+      ret.push({
+        name,
+        partial,
+        abstractMethods,
+        finalMethods,
+      });
     }
     return ret;
   }
@@ -201,7 +222,7 @@ export class ABAPFileInformation implements IABAPFileInformation {
 
     const ret: InfoAttribute[] = [];
     for (const d of contents.findDirectStatements(Statements.Data)) {
-      const name = d.findFirstExpression(Expressions.NamespaceSimpleName)!.getFirstToken();
+      const name = d.findFirstExpression(Expressions.DefinitionName)!.getFirstToken();
       ret.push({
         name: name.getStr(),
         identifier: new Identifier(name, this.filename),
@@ -211,7 +232,7 @@ export class ABAPFileInformation implements IABAPFileInformation {
       });
     }
     for (const d of contents.findDirectStatements(Statements.ClassData)) {
-      const name = d.findFirstExpression(Expressions.NamespaceSimpleName)!.getFirstToken();
+      const name = d.findFirstExpression(Expressions.DefinitionName)!.getFirstToken();
       ret.push({
         name: name.getStr(),
         identifier: new Identifier(name, this.filename),
@@ -221,7 +242,7 @@ export class ABAPFileInformation implements IABAPFileInformation {
       });
     }
     for (const d of contents.findDirectStatements(Statements.Constant)) {
-      const name = d.findFirstExpression(Expressions.NamespaceSimpleName)!.getFirstToken();
+      const name = d.findFirstExpression(Expressions.DefinitionName)!.getFirstToken();
       ret.push({
         name: name.getStr(),
         identifier: new Identifier(name, this.filename),

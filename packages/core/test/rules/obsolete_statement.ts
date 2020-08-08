@@ -24,6 +24,7 @@ const tests = [
   {abap: "DATA tab TYPE STANDARD TABLE of foobar.", cnt: 0},
   {abap: "SET EXTENDED CHECK ON.", cnt: 1},
   {abap: "DATA tab TYPE STANDARD TABLE of string WITH HEADER LINE.", cnt: 1},
+  {abap: "DATA tab TYPE STANDARD TABLE of string with header line.", cnt: 1},
 ];
 
 testRule(tests, ObsoleteStatement);

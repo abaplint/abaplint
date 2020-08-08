@@ -2171,6 +2171,20 @@ ENDFORM.`;
     expect(issues.length).to.equals(0);
   });
 
+  it("WRITE sy-msgty.", () => {
+    const abap = `WRITE sy-msgty.`;
+    const issues = runProgram(abap);
+    expect(issues.length).to.equals(0);
+  });
+
+  it("Reference to data type defined locally", () => {
+    const abap = `
+    TYPES ztype TYPE c LENGTH 1.
+    DATA sdf TYPE REF TO ztype.
+    sdf = NEW ztype( abap_true ).`;
+    const issues = runProgram(abap);
+    expect(issues.length).to.equals(0);
+  });
 
 // todo, static method cannot access instance attributes
 // todo, can a private method access protected attributes?

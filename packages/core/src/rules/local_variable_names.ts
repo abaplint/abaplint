@@ -82,7 +82,7 @@ Regexes are case-insensitive.`,
       if (parent && parent.get() instanceof Structures.Data) {
         continue; // inside DATA BEGIN OF
       }
-      const found = dat.findFirstExpression(Expressions.NamespaceSimpleName);
+      const found = dat.findFirstExpression(Expressions.DefinitionName);
       if (found) {
         const token = found.getFirstToken();
         ret = ret.concat(this.checkName(token, file, this.conf.expectedData));
@@ -103,7 +103,7 @@ Regexes are case-insensitive.`,
     for (const struc of dataStructures) {
       // ignore nested DATA BEGIN
       const stat = struc.findFirstStatement(Statements.DataBegin);
-      const found = stat?.findFirstExpression(Expressions.NamespaceSimpleName);
+      const found = stat?.findFirstExpression(Expressions.DefinitionName);
       if (found) {
         const token = found.getFirstToken();
         ret = ret.concat(this.checkName(token, file, this.conf.expectedData));
@@ -133,7 +133,7 @@ Regexes are case-insensitive.`,
       if (parent && parent.get() instanceof Structures.Constants) {
         continue; // inside DATA BEGIN OF
       }
-      const found = constant.findFirstExpression(Expressions.NamespaceSimpleName);
+      const found = constant.findFirstExpression(Expressions.DefinitionName);
       if (found) {
         const token = found.getFirstToken();
         ret = ret.concat(this.checkName(token, file, this.conf.expectedConstant));

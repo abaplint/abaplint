@@ -10,7 +10,10 @@ import {Constant} from "../statements/constant";
 
 export class Constants {
   public runSyntax(node: StructureNode, scope: CurrentScope, filename: string): TypedIdentifier | undefined {
-    const name = node.findFirstExpression(Expressions.NamespaceSimpleName)!.getFirstToken();
+    const name = node.findFirstExpression(Expressions.DefinitionName)?.getFirstToken();
+    if (name === undefined) {
+      throw new Error("Constants, structure, unexpected node");
+    }
 
     const components: IStructureComponent[] = [];
     for (const c of node.getChildren()) {

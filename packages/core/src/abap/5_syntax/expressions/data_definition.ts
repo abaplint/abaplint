@@ -18,7 +18,7 @@ export class DataDefinition {
       return bfound;
     }
 
-    const name = node.findFirstExpression(Expressions.NamespaceSimpleName);
+    const name = node.findFirstExpression(Expressions.DefinitionName);
     if (name) {
       return new TypedIdentifier(name.getFirstToken(), filename, new UnknownType("DataDefinition, fallback"));
     }

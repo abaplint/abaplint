@@ -12,6 +12,7 @@ const tests = [
   "STATICS lv_stat1 TYPE c LENGTH 1.",
   "STATICS foo TYPE p DECIMALS 2.",
   "STATICS lv_stat2 LENGTH 1 TYPE c.",
+  "STATICS foo-bar TYPE i.",
 ];
 
 statementType(tests, "STATIC", Statements.Static);

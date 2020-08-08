@@ -77,11 +77,13 @@ const tests = [
   "DATA foo TYPE c LENGTH '5'.",
   "DATA gt_tab TYPE HASHED TABLE OF f_cut->type WITH UNIQUE KEY name1 name2.",
   "DATA moo LIKE STANDARD TABLE OF bar WITH DEFAULT KEY WITH HEADER LINE.",
-
-// todo
-//  "DATA lt_tab OCCURS 10.",
-//  "DATA range TYPE RANGE OF char30 WITH HEADER LINE.",
-//  "data mepo1313-evers like ekpo-evers.",
+  "data foo-bar type string.", // yes, this works in SAP, only gives a warning, tested on 751
+  "DATA foo- TYPE string.",
+  "DATA foo-- TYPE string.",
+  "DATA /sdfs/sdfsd-sdfsd TYPE string.",
+  "data mepo1313-evers like ekpo-evers.",
+  "DATA lt_tab OCCURS 10.",
+  "DATA range TYPE RANGE OF char30 WITH HEADER LINE.",
 ];
 
 statementType(tests, "DATA", Statements.Data);

@@ -22,7 +22,10 @@ jobs:
       run: |
         cp .github/regression/run.js ../../run.js
         npm install && npm run link-local && npm test && cp packages/cli/build/bundle.js ../../abaplint_after
+        rm -rf packages/cli/build/ && rm -rf packages/core/build/
         git checkout -f master
+        git reset --hard
+        git status
         npm install && npm run link-local && npm test && cp packages/cli/build/bundle.js ../../abaplint_before
 
     - name: run

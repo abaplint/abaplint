@@ -2,6 +2,8 @@ import {seq, alt, opt, tok, regex as reg, Expression, starPrio} from "../combi";
 import {StaticArrow, Dash, InstanceArrow} from "../../1_lexer/tokens";
 import {IStatementRunnable} from "../statement_runnable";
 
+// todo, can this be replaced with one of the FieldChain expressions?
+
 export class TypeName extends Expression {
 
   public getRunnable(): IStatementRunnable {

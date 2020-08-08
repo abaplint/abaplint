@@ -1261,6 +1261,15 @@ START-OF-SELECTION.
     expect(identifier?.getType()).to.be.instanceof(Basic.TableType);
   });
 
+  it("OCCURS 0 WITH HEADER LINE, lower case", () => {
+    const abap = `DATA tab TYPE i OCCURS 0 with header line.`;
+    const identifier = resolveVariable(abap, "tab");
+    expect(identifier).to.not.equal(undefined);
+    expect(identifier?.getType()).to.be.instanceof(Basic.TableType);
+    const type = identifier!.getType() as Basic.TableType;
+    expect(type.isWithHeader()).to.equal(true);
+  });
+
   it("WHEN TYPE", () => {
     const abap = `
 CLASS lcl_bar DEFINITION.
@@ -1388,6 +1397,15 @@ ENDCASE.`;
     expect(identifier?.getType()).to.be.instanceof(Basic.TableType);
   });
 
+  it("DATA BEGIN OF, OCCURS, lower case", () => {
+    const abap = `
+    data: begin of tb_path occurs 10,
+            path TYPE string,
+          end of tb_path.`;
+    const identifier = resolveVariable(abap, "tb_path");
+    expect(identifier?.getType()).to.be.instanceof(Basic.TableType);
+  });
+
   it("DATA BEGIN OF OCCURS, INCLUDE voided structure", () => {
     const abap = `DATA BEGIN OF tables_tab OCCURS 10.
     INCLUDE STRUCTURE something_void.
@@ -1486,6 +1504,12 @@ DATA(sdf) = ref->*-int.`;
     ENDLOOP.`;
     const identifier = resolveVariable(abap, "<sdf>");
     expect(identifier?.getType()).to.be.instanceof(Basic.AnyType);
+  });
+
+  it("data reference via NEW", () => {
+    const abap = `DATA(sdf) = NEW abap_bool( abap_true ).`;
+    const identifier = resolveVariable(abap, "sdf");
+    expect(identifier?.getType()).to.be.instanceof(Basic.DataReference);
   });
 
 });

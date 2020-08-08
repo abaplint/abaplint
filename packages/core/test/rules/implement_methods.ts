@@ -225,4 +225,22 @@ describe("Rules, implement_methods", () => {
     expect(issues.length).to.equals(0);
   });
 
+  it("INTERFACES ABSTRACT METHODS", async () => {
+    const prog = `
+INTERFACE lcl_intf.
+  METHODS method_name.
+ENDINTERFACE.
+
+CLASS lcl_bar DEFINITION ABSTRACT.
+  PUBLIC SECTION.
+    INTERFACES lcl_intf ABSTRACT METHODS method_name.
+ENDCLASS.
+
+CLASS lcl_bar IMPLEMENTATION.
+ENDCLASS.`;
+    const issues = await runMulti([
+      {filename: "zfoobar.prog.abap", contents: prog}]);
+    expect(issues.length).to.equals(0);
+  });
+
 });
