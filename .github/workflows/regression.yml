@@ -24,6 +24,7 @@ jobs:
         npm install && npm run link-local && npm test && cp packages/cli/build/bundle.js ../../abaplint_after
         git checkout -f master
         git reset --hard
+        git status
         npm install && npm run link-local && npm test && cp packages/cli/build/bundle.js ../../abaplint_before
 
     - name: run
