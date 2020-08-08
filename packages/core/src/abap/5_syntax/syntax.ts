@@ -59,6 +59,8 @@ import {Ranges} from "./statements/ranges";
 import {Write} from "./statements/write";
 import {Case} from "./statements/case";
 import {CreateObject} from "./statements/create_object";
+import {Do} from "./statements/do";
+
 
 export class SyntaxLogic {
   private currentFile: ABAPFile;
@@ -267,6 +269,8 @@ export class SyntaxLogic {
       new Assign().runSyntax(node, this.scope, filename);
     } else if (s instanceof Statements.Convert) {
       new Convert().runSyntax(node, this.scope, filename);
+    } else if (s instanceof Statements.Do) {
+      new Do().runSyntax(node, this.scope, filename);
     } else if (s instanceof Statements.Describe) {
       new Describe().runSyntax(node, this.scope, filename);
     } else if (s instanceof Statements.Find) {

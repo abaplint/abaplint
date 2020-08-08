@@ -3,7 +3,7 @@ import {ExpressionNode} from "../../nodes";
 import {CurrentScope} from "../_current_scope";
 import {ReferenceType} from "../_reference";
 
-export class FieldOffset {
+export class FieldLength {
   public runSyntax(node: ExpressionNode, scope: CurrentScope, filename: string): void {
 
     const field = node.findDirectExpression(Expressions.SourceField);
@@ -11,7 +11,7 @@ export class FieldOffset {
       const token = field.getFirstToken();
       const found = scope.findVariable(token.getStr());
       if (found === undefined) {
-        throw new Error("\"" + field.getFirstToken().getStr() + "\" not found, FieldOffset");
+        throw new Error("\"" + field.getFirstToken().getStr() + "\" not found, FieldLength");
       }
       scope.addReference(token, found, ReferenceType.DataReadReference, filename);
     }
@@ -21,7 +21,7 @@ export class FieldOffset {
       const token = symbol.getFirstToken();
       const found = scope.findVariable(token.getStr());
       if (found === undefined) {
-        throw new Error("\"" + symbol.getFirstToken().getStr() + "\" not found, FieldOffset");
+        throw new Error("\"" + symbol.getFirstToken().getStr() + "\" not found, FieldLength");
       }
       scope.addReference(token, found, ReferenceType.DataReadReference, filename);
     }

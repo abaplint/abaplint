@@ -2207,6 +2207,34 @@ ENDCASE.`;
     expect(issues[0].getMessage()).to.include("something");
   });
 
+  it("DO for not defined variable", () => {
+    const abap = `
+DO something TIMES.
+  WRITE 'bar'.
+ENDDO.`;
+    const issues = runProgram(abap);
+    expect(issues.length).to.equals(1);
+    expect(issues[0].getMessage()).to.include("something");
+  });
+
+  it("substring", () => {
+    const abap = `
+    DATA mv_compressed TYPE string.
+    WRITE mv_compressed(something).`;
+    const issues = runProgram(abap);
+    expect(issues.length).to.equals(1);
+    expect(issues[0].getMessage()).to.include("something");
+  });
+
+  it("offset", () => {
+    const abap = `
+    DATA mv_compressed TYPE string.
+    WRITE mv_compressed+something.`;
+    const issues = runProgram(abap);
+    expect(issues.length).to.equals(1);
+    expect(issues[0].getMessage()).to.include("something");
+  });
+
 // todo, static method cannot access instance attributes
 // todo, can a private method access protected attributes?
 // todo, readonly fields(constants + enums + attributes flagged read-only)

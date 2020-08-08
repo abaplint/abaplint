@@ -8,6 +8,8 @@ import {StructureType, ObjectReferenceType, VoidType, DataReference, TableType, 
 import {ComponentName} from "./component_name";
 import {AttributeName} from "./attribute_name";
 import {ReferenceType} from "../_reference";
+import {FieldOffset} from "./field_offset";
+import {FieldLength} from "./field_length";
 
 export class FieldChain {
 
@@ -54,6 +56,10 @@ export class FieldChain {
         context = context.getRowType();
       } else if (current.get() instanceof Expressions.AttributeName) {
         context = new AttributeName().runSyntax(context, current, scope, filename, type);
+      } else if (current.get() instanceof Expressions.FieldOffset && current instanceof ExpressionNode) {
+        new FieldOffset().runSyntax(current, scope, filename);
+      } else if (current.get() instanceof Expressions.FieldLength && current instanceof ExpressionNode) {
+        new FieldLength().runSyntax(current, scope, filename);
       }
 
     }
