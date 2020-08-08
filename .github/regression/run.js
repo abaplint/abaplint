@@ -3,7 +3,8 @@ const fs = require("fs");
 
 // todo, also output analysis runtimes
 
-console.dir(process.env.REPOS);
+const repos = JSON.parse(process.env.REPOS);
+console.dir(repos);
 
 let files = fs.readdirSync(".", {withFileTypes: true});
 files = files.filter(f => f.isFile());

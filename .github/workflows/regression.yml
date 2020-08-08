@@ -40,7 +40,7 @@ jobs:
 
     - name: build diff
       env:
-        REPOS: '["todo, currently not used"]'
+        REPOS: '["larshp/abapGit", "larshp/abapOpenChecks"]'
       run: |
         cd .. && cd ..
         ls -salh
