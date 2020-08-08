@@ -11,7 +11,6 @@ import {CurrentScope} from "./_current_scope";
 import {ScopeType} from "./_scope_type";
 import {ObjectOriented} from "./_object_oriented";
 import {Procedural} from "./_procedural";
-import {Inline} from "./_inline";
 import {Program} from "../../objects";
 import {Position} from "../../position";
 
@@ -73,7 +72,6 @@ export class SyntaxLogic {
   private readonly helpers: {
     oooc: ObjectOriented,
     proc: Procedural,
-    inline: Inline,
   };
 
   public constructor(reg: IRegistry, object: ABAPObject) {
@@ -86,7 +84,6 @@ export class SyntaxLogic {
     this.helpers = {
       oooc: new ObjectOriented(this.scope),
       proc: new Procedural(this.reg, this.scope),
-      inline: new Inline(this.scope),
     };
   }
 
@@ -160,10 +157,6 @@ export class SyntaxLogic {
   }
 
   private traverse(node: INode): void {
-    if (node instanceof StatementNode) {
-      this.helpers.inline.addReadWriteReferences(node, this.currentFile.getFilename());
-    }
-
     for (const child of node.getChildren()) {
       try {
         if (child instanceof StructureNode) {

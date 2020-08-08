@@ -122,16 +122,6 @@ export class CurrentScope {
     }
   }
 
-///////////////////////////
-
-  public addRead(token: Token, resolved: TypedIdentifier, filename: string) {
-    this.addReference(token, resolved, ReferenceType.DataReadReference, filename);
-  }
-
-  public addWrite(token: Token, resolved: TypedIdentifier, filename: string) {
-    this.addReference(token, resolved, ReferenceType.DataWriteReference, filename);
-  }
-
   public addReference(token: Token | undefined, resolved: Identifier, type: ReferenceType, filename: string, extra?: IReferenceExtras) {
     if (token === undefined) {
       return;

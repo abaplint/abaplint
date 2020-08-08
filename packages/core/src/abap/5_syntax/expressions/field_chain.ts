@@ -7,12 +7,18 @@ import {Dash, InstanceArrow} from "../../1_lexer/tokens";
 import {StructureType, ObjectReferenceType, VoidType, DataReference, TableType, UnknownType} from "../../types/basic";
 import {ComponentName} from "./component_name";
 import {AttributeName} from "./attribute_name";
+import {ReferenceType} from "../_reference";
 
 export class FieldChain {
 
-  public runSyntax(node: ExpressionNode, scope: CurrentScope, filename: string): AbstractType | undefined {
+  public runSyntax(
+    node: ExpressionNode,
+    scope: CurrentScope,
+    filename: string,
+    type?: ReferenceType | undefined): AbstractType | undefined {
+
     const children = node.getChildren().slice();
-    let context = this.findTop(children.shift(), scope, filename);
+    let context = this.findTop(children.shift(), scope, filename, type);
 
     while (children.length > 0) {
       const current = children.shift();
@@ -57,7 +63,12 @@ export class FieldChain {
 
   ////////////////
 
-  private findTop(node: INode | undefined, scope: CurrentScope, _filename: string): AbstractType | undefined {
+  private findTop(
+    node: INode | undefined,
+    scope: CurrentScope,
+    filename: string,
+    type: ReferenceType | undefined): AbstractType | undefined {
+
     if (node === undefined) {
       return undefined;
     }
@@ -70,7 +81,9 @@ export class FieldChain {
       if (found === undefined) {
         throw new Error(name + " not found, findTop");
       }
-//      scope.addRead(token, found, filename);
+      if (type) {
+        scope.addReference(token, found, type, filename);
+      }
       return found.getType();
     }
 

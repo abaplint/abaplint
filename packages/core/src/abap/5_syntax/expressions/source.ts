@@ -13,6 +13,7 @@ import {StringTemplate} from "./string_template";
 import {ValueBody} from "./value_body";
 import {Cond} from "./cond";
 import {ReduceBody} from "./reduce_body";
+import {ReferenceType} from "../_reference";
 
 export class Source {
   public runSyntax(
@@ -62,7 +63,7 @@ export class Source {
       if (first instanceof ExpressionNode && first.get() instanceof Expressions.MethodCallChain) {
         context = new MethodCallChain().runSyntax(first, scope, filename, targetType);
       } else if (first instanceof ExpressionNode && first.get() instanceof Expressions.FieldChain) {
-        context = new FieldChain().runSyntax(first, scope, filename);
+        context = new FieldChain().runSyntax(first, scope, filename, ReferenceType.DataReadReference);
       } else if (first instanceof ExpressionNode && first.get() instanceof Expressions.StringTemplate) {
         context = new StringTemplate().runSyntax(first, scope, filename);
       } else if (first instanceof ExpressionNode && first.get() instanceof Expressions.Constant) {

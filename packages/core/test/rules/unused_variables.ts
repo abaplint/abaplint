@@ -17,31 +17,31 @@ async function runSingle(abap: string): Promise<Issue[]> {
 
 describe("Rule: unused_variables, single file", () => {
 
-  it("test", async () => {
+  it("test1", async () => {
     const abap = "parser error";
     const issues = await runSingle(abap);
     expect(issues.length).to.equal(0);
   });
 
-  it("test", async () => {
+  it("test2", async () => {
     const abap = "parser error.";
     const issues = await runSingle(abap);
     expect(issues.length).to.equal(0);
   });
 
-  it("test", async () => {
+  it("test3", async () => {
     const abap = "WRITE bar.";
     const issues = await runSingle(abap);
     expect(issues.length).to.equal(0);
   });
 
-  it("test", async () => {
+  it("test4", async () => {
     const abap = "DATA foo.";
     const issues = await runSingle(abap);
     expect(issues.length).to.equal(1);
   });
 
-  it("test", async () => {
+  it("test5", async () => {
     const abap = "DATA foo.\nWRITE foo.";
     const issues = await runSingle(abap);
     expect(issues.length).to.equal(0);
@@ -98,6 +98,23 @@ ENDCLASS.`;
 
   it("test, quickfix with TYPE", async () => {
     testFix("DATA foo TYPE i.", "");
+  });
+
+  it.skip("class attribute referenced via me->", async () => {
+    const abap = `
+CLASS lcl_bar DEFINITION.
+  PRIVATE SECTION.
+    METHODS m1.
+    DATA field TYPE string.
+ENDCLASS.
+
+CLASS lcl_bar IMPLEMENTATION.
+  METHOD m1.
+    WRITE me->field.
+  ENDMETHOD.
+ENDCLASS.`;
+    const issues = await runSingle(abap);
+    expect(issues.length).to.equal(0);
   });
 
   ///////////////
