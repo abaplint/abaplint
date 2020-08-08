@@ -1261,6 +1261,15 @@ START-OF-SELECTION.
     expect(identifier?.getType()).to.be.instanceof(Basic.TableType);
   });
 
+  it("OCCURS 0 WITH HEADER LINE, lower case", () => {
+    const abap = `DATA tab TYPE i OCCURS 0 with header line.`;
+    const identifier = resolveVariable(abap, "tab");
+    expect(identifier).to.not.equal(undefined);
+    expect(identifier?.getType()).to.be.instanceof(Basic.TableType);
+    const type = identifier!.getType() as Basic.TableType;
+    expect(type.isWithHeader()).to.equal(true);
+  });
+
   it("WHEN TYPE", () => {
     const abap = `
 CLASS lcl_bar DEFINITION.
