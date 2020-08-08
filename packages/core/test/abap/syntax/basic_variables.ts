@@ -1506,4 +1506,10 @@ DATA(sdf) = ref->*-int.`;
     expect(identifier?.getType()).to.be.instanceof(Basic.AnyType);
   });
 
+  it("data reference via NEW", () => {
+    const abap = `DATA(sdf) = NEW abap_bool( abap_true ).`;
+    const identifier = resolveVariable(abap, "sdf");
+    expect(identifier?.getType()).to.be.instanceof(Basic.DataReference);
+  });
+
 });
