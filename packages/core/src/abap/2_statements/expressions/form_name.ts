@@ -1,4 +1,4 @@
-import {seq, opt, tok, star, regex as reg, Expression} from "../combi";
+import {seq, tok, regex as reg, Expression, starPrio, optPrio} from "../combi";
 import {Dash, DashW} from "../../1_lexer/tokens";
 import {IStatementRunnable} from "../statement_runnable";
 
@@ -6,7 +6,7 @@ export class FormName extends Expression {
   public getRunnable(): IStatementRunnable {
 // todo, does not handle namespaces properly
     return seq(reg(/^[\w%$\*\/\?]+$/),
-               star(seq(tok(Dash), opt(reg(/^\w+$/)))),
-               opt(tok(DashW)));
+               starPrio(seq(tok(Dash), optPrio(reg(/^\w+$/)))),
+               optPrio(tok(DashW)));
   }
 }
