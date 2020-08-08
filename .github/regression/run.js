@@ -4,6 +4,7 @@ const fs = require("fs");
 // todo, also output runtimes
 
 console.dir(process.env.REPOS);
+console.dir(process.env); // testing, want to include the short SHA1 in the comment
 
 let files = fs.readdirSync(".", {withFileTypes: true});
 files = files.filter(f => f.isFile());
