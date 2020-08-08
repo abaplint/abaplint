@@ -112,6 +112,7 @@ Doesnt currently work for public attributes and class prefixed attribute usage`,
 
   private isUsed(id: TypedIdentifier): boolean {
     // todo, this is slow, but less false positives than the previous implementation
+    // todo, should ignore dependencies
     const found = new References(this.reg).searchEverything(id);
     return found.length > 1;
   }

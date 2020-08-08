@@ -2196,6 +2196,17 @@ ENDFORM.`;
     expect(issues[0].getMessage()).to.include("is_pair");
   });
 
+  it("CASE for not defined variable", () => {
+    const abap = `
+CASE something.
+  WHEN 'A'.
+  WHEN OTHERS.
+ENDCASE.`;
+    const issues = runProgram(abap);
+    expect(issues.length).to.equals(1);
+    expect(issues[0].getMessage()).to.include("something");
+  });
+
 // todo, static method cannot access instance attributes
 // todo, can a private method access protected attributes?
 // todo, readonly fields(constants + enums + attributes flagged read-only)

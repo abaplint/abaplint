@@ -13,6 +13,14 @@ import {ObjectOriented} from "./_object_oriented";
 import {Procedural} from "./_procedural";
 import {Program} from "../../objects";
 import {Position} from "../../position";
+import {Data as DataStructure} from "./structures/data";
+import {TypeEnum} from "./structures/type_enum";
+import {Types} from "./structures/types";
+import {Statics} from "./structures/statics";
+import {Constants} from "./structures/constants";
+import {ClassDefinition} from "../types/class_definition";
+import {InterfaceDefinition} from "../types/interface_definition";
+import {ISyntaxResult} from "./_spaghetti_scope";
 
 import {Perform} from "./statements/perform";
 import {Type} from "./statements/type";
@@ -48,17 +56,9 @@ import {ElseIf} from "./statements/else_if";
 import {Append} from "./statements/append";
 import {SelectionScreen} from "./statements/selection_screen";
 import {Ranges} from "./statements/ranges";
-
-import {Data as DataStructure} from "./structures/data";
-import {TypeEnum} from "./structures/type_enum";
-import {Types} from "./structures/types";
-import {Statics} from "./structures/statics";
-import {Constants} from "./structures/constants";
-
-import {ClassDefinition} from "../types/class_definition";
-import {InterfaceDefinition} from "../types/interface_definition";
-import {ISyntaxResult} from "./_spaghetti_scope";
 import {Write} from "./statements/write";
+import {Case} from "./statements/case";
+import {CreateObject} from "./statements/create_object";
 
 export class SyntaxLogic {
   private currentFile: ABAPFile;
@@ -283,6 +283,10 @@ export class SyntaxLogic {
       new If().runSyntax(node, this.scope, filename);
     } else if (s instanceof Statements.ElseIf) {
       new ElseIf().runSyntax(node, this.scope, filename);
+    } else if (s instanceof Statements.CreateObject) {
+      new CreateObject().runSyntax(node, this.scope, filename);
+    } else if (s instanceof Statements.Case) {
+      new Case().runSyntax(node, this.scope, filename);
     } else if (s instanceof Statements.Append) {
       new Append().runSyntax(node, this.scope, filename);
     } else if (s instanceof Statements.Write) {

@@ -133,6 +133,22 @@ ENDCLASS.`;
     expect(issues.length).to.equal(0);
   });
 
+  it("method call on object reference", async () => {
+    const abap = `
+  DATA: lo_zip TYPE REF TO cl_abap_zip.
+  lo_zip->save( ).`;
+    const issues = await runSingle(abap);
+    expect(issues.length).to.equal(0);
+  });
+
+  it("create object", async () => {
+    const abap = `
+  DATA: lo_zip TYPE REF TO cl_abap_zip.
+  CREATE OBJECT lo_zip.`;
+    const issues = await runSingle(abap);
+    expect(issues.length).to.equal(0);
+  });
+
   ///////////////
 
   it.skip("DATA with dashes", async () => {
