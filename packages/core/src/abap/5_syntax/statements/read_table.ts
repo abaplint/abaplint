@@ -23,6 +23,11 @@ export class ReadTable {
       sourceType = sourceType.getRowType();
     }
 
+    const index = node.findExpressionAfterToken("INDEX");
+    if (index) {
+      new Source().runSyntax(index, scope, filename);
+    }
+
     const target = node.findDirectExpression(Expressions.ReadTableTarget);
     if (target) {
       const inline = target.findFirstExpression(Expressions.InlineData);

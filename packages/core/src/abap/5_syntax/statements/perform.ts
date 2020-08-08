@@ -3,6 +3,7 @@ import * as Statements from "../../2_statements/statements";
 import {StatementNode} from "../../nodes";
 import {CurrentScope} from "../_current_scope";
 import {ReferenceType} from "../_reference";
+import {Source} from "../expressions/source";
 
 export class Perform {
   public runSyntax(node: StatementNode, scope: CurrentScope, filename: string): void {
@@ -31,6 +32,22 @@ export class Perform {
     }
 
     scope.addReference(expr.getFirstToken(), found, ReferenceType.FormReference, filename);
+
+    for (const c of node.findDirectExpressions(Expressions.PerformChanging)) {
+      for (const s of c.findDirectExpressions(Expressions.Source)) {
+        new Source().runSyntax(s, scope, filename);
+      }
+    }
+    for (const t of node.findDirectExpressions(Expressions.PerformTables)) {
+      for (const s of t.findDirectExpressions(Expressions.Source)) {
+        new Source().runSyntax(s, scope, filename);
+      }
+    }
+    for (const u of node.findDirectExpressions(Expressions.PerformUsing)) {
+      for (const s of u.findDirectExpressions(Expressions.Source)) {
+        new Source().runSyntax(s, scope, filename);
+      }
+    }
 
     // todo, also check parameters match
   }

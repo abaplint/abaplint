@@ -1,16 +1,14 @@
 import {IStatement} from "./_statement";
-import {verNot, str, seq, opt, alt, tok, plus} from "../combi";
+import {verNot, str, seq, opt, alt, tok} from "../combi";
 import {ParenLeft, ParenRightW} from "../../1_lexer/tokens";
 import * as Expressions from "../expressions";
 import {Version} from "../../../version";
 import {IStatementRunnable} from "../statement_runnable";
+import {PerformTables, PerformUsing, PerformChanging} from "../expressions";
 
 export class Perform implements IStatement {
 
   public getMatcher(): IStatementRunnable {
-    const using = seq(str("USING"), plus(new Expressions.Source()));
-    const tables = seq(str("TABLES"), plus(new Expressions.Source()));
-    const changing = seq(str("CHANGING"), plus(new Expressions.Source()));
     const level = seq(str("LEVEL"), new Expressions.Source());
     const commit = alt(seq(str("ON COMMIT"), opt(level)),
                        str("ON ROLLBACK"));
@@ -30,9 +28,9 @@ export class Perform implements IStatement {
     const ret = seq(str("PERFORM"),
                     alt(short, full),
                     opt(found),
-                    opt(tables),
-                    opt(using),
-                    opt(changing),
+                    opt(new PerformTables()),
+                    opt(new PerformUsing()),
+                    opt(new PerformChanging()),
                     opt(found),
                     opt(commit));
 

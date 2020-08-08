@@ -2268,7 +2268,7 @@ ENDDO.`;
     expect(issues[0].getMessage()).to.include("something");
   });
 
-  it.skip("PERFORM something", () => {
+  it("PERFORM something", () => {
     const abap = `
     FORM foo USING bar.
     ENDFORM.
@@ -2276,6 +2276,27 @@ ENDDO.`;
     const issues = runProgram(abap);
     expect(issues.length).to.equals(1);
     expect(issues[0].getMessage()).to.include("something");
+  });
+
+  it("INDEX something", () => {
+    const abap = `
+    DATA tab TYPE STANDARD TABLE OF string.
+    DATA val TYPE string.
+    READ TABLE tab INDEX something INTO val.`;
+    const issues = runProgram(abap);
+    expect(issues.length).to.equals(1);
+    expect(issues[0].getMessage()).to.include("something");
+  });
+
+  it("ASSIGNING <something>", () => {
+    const abap = `
+    DATA tab TYPE STANDARD TABLE OF string.
+    LOOP AT tab ASSIGNING <something>.
+      WRITE 'bar'.
+    ENDLOOP.`;
+    const issues = runProgram(abap);
+    expect(issues.length).to.equals(1);
+    expect(issues[0].getMessage()).to.include("<something>");
   });
 
 // todo, static method cannot access instance attributes

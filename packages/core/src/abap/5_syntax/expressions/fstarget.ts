@@ -3,6 +3,7 @@ import {ExpressionNode} from "../../nodes";
 import {CurrentScope} from "../_current_scope";
 import {AbstractType} from "../../types/basic/_abstract_type";
 import {InlineFS} from "./inline_fs";
+import {ReferenceType} from "../_reference";
 
 export class FSTarget {
   public runSyntax(node: ExpressionNode, scope: CurrentScope, filename: string, type: AbstractType | undefined): void {
@@ -14,10 +15,12 @@ export class FSTarget {
 
     const target = node?.findDirectExpression(Expressions.TargetFieldSymbol);
     if (target) {
-      const found = scope.findVariable(target.getFirstToken().getStr());
+      const token = target.getFirstToken();
+      const found = scope.findVariable(token.getStr());
       if (found === undefined) {
-        throw new Error(`"${target.getFirstToken().getStr()}" not found, FSTarget`);
+        throw new Error(`"${token.getStr()}" not found, FSTarget`);
       }
+      scope.addReference(token, found, ReferenceType.DataWriteReference, filename);
     }
 
   }

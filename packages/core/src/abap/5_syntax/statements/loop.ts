@@ -6,6 +6,7 @@ import {Target} from "../expressions/target";
 import {Source} from "../expressions/source";
 import {InlineData} from "../expressions/inline_data";
 import {InlineFS} from "../expressions/inline_fs";
+import {FSTarget} from "../expressions/fstarget";
 
 export class Loop {
   public runSyntax(node: StatementNode, scope: CurrentScope, filename: string): void {
@@ -41,6 +42,11 @@ export class Loop {
     const inlinefs = target?.findDirectExpression(Expressions.InlineFS);
     if (inlinefs) {
       new InlineFS().runSyntax(inlinefs, scope, filename, sourceType);
+    } else {
+      const fstarget = node.findDirectExpression(Expressions.FSTarget);
+      if (fstarget) {
+        new FSTarget().runSyntax(fstarget, scope, filename, sourceType);
+      }
     }
 
   }
