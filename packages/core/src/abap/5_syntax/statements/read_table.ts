@@ -10,8 +10,9 @@ import {Target} from "../expressions/target";
 export class ReadTable {
   public runSyntax(node: StatementNode, scope: CurrentScope, filename: string): void {
 
-    const source = node.findDirectExpression(Expressions.Source);
-    let sourceType = source ? new Source().runSyntax(source, scope, filename) : undefined;
+    const sources = node.findDirectExpressions(Expressions.Source);
+    const firstSource = sources[0];
+    let sourceType = firstSource ? new Source().runSyntax(firstSource, scope, filename) : undefined;
 
     if (sourceType === undefined) {
       throw new Error("No source type determined, read table");
@@ -23,9 +24,11 @@ export class ReadTable {
       sourceType = sourceType.getRowType();
     }
 
-    const index = node.findExpressionAfterToken("INDEX");
-    if (index) {
-      new Source().runSyntax(index, scope, filename);
+    for (const s of sources) {
+      if (s === firstSource) {
+        continue;
+      }
+      new Source().runSyntax(s, scope, filename);
     }
 
     const target = node.findDirectExpression(Expressions.ReadTableTarget);

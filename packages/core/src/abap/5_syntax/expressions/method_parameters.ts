@@ -67,9 +67,12 @@ export class MethodParameters {
       throw new Error("checkReceiving, not an expression node");
     }
 
-    const inline = node.findDirectExpression(Expressions.Target)?.findDirectExpression(Expressions.InlineData);
+    const target = node.findDirectExpression(Expressions.Target);
+    const inline = target?.findDirectExpression(Expressions.InlineData);
     if (inline) {
       new InlineData().runSyntax(inline, scope, filename, type);
+    } else if (target) {
+      new Target().runSyntax(target, scope, filename);
     }
 
   }
@@ -94,6 +97,7 @@ export class MethodParameters {
         throw new Error("Could not determine target type");
       } else if (item.targetType) {
 // todo, check that targetType and parameterType are compatible
+        new Target().runSyntax(item.target, scope, filename);
       }
     }
   }
@@ -113,6 +117,7 @@ export class MethodParameters {
 
       if (item.targetType) {
 // todo, check that targetType and parameterType are compatible
+        new Target().runSyntax(item.target, scope, filename);
         if (0) {
           console.log(parameterType); // todo
         }
@@ -135,6 +140,7 @@ export class MethodParameters {
 
       if (item.sourceType) {
 // todo, check that targetType and parameterType are compatible
+        new Source().runSyntax(item.source, scope, filename);
         if (0) {
           console.log(parameterType); // todo
         }

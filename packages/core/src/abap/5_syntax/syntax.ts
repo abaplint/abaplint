@@ -63,6 +63,7 @@ import {Do} from "./statements/do";
 import {Concatenate} from "./statements/concatenate";
 import {CallFunction} from "./statements/call_function";
 import {Clear} from "./statements/clear";
+import {Replace} from "./statements/replace";
 
 
 export class SyntaxLogic {
@@ -256,6 +257,8 @@ export class SyntaxLogic {
       new MethodImplementation().runSyntax(node, this.scope, filename);
     } else if (s instanceof Statements.Move) {
       new Move().runSyntax(node, this.scope, filename);
+    } else if (s instanceof Statements.Replace) {
+      new Replace().runSyntax(node, this.scope, filename);
     } else if (s instanceof Statements.Catch) {
       new Catch().runSyntax(node, this.scope, filename);
     } else if (s instanceof Statements.Loop) {

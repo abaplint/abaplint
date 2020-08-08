@@ -2268,11 +2268,22 @@ ENDDO.`;
     expect(issues[0].getMessage()).to.include("something");
   });
 
-  it("PERFORM something", () => {
+  it("PERFORM something, USING", () => {
     const abap = `
     FORM foo USING bar.
     ENDFORM.
     PERFORM foo USING something.`;
+    const issues = runProgram(abap);
+    expect(issues.length).to.equals(1);
+    expect(issues[0].getMessage()).to.include("something");
+  });
+
+  it("PERFORM something, CHANGING", () => {
+    const abap = `
+    FORM foo CHANGING bar foo.
+    ENDFORM.
+    DATA lv_bar.
+    PERFORM foo CHANGING lv_bar something.`;
     const issues = runProgram(abap);
     expect(issues.length).to.equals(1);
     expect(issues[0].getMessage()).to.include("something");
@@ -2298,6 +2309,24 @@ ENDDO.`;
     expect(issues.length).to.equals(1);
     expect(issues[0].getMessage()).to.include("<something>");
   });
+
+  it("call method, something", () => {
+    const abap = `cl_foo=>bar( RECEIVING out = something ).`;
+    const issues = runProgram(abap);
+    expect(issues.length).to.equals(1);
+    expect(issues[0].getMessage()).to.include("something");
+  });
+
+  it("CATCH INTO something", () => {
+    const abap = `
+    TRY.
+      CATCH cx_errror INTO something.
+    ENDTRY.`;
+    const issues = runProgram(abap);
+    expect(issues.length).to.equals(1);
+    expect(issues[0].getMessage()).to.include("something");
+  });
+
 
 // todo, static method cannot access instance attributes
 // todo, can a private method access protected attributes?
