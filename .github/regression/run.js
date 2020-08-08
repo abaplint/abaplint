@@ -1,11 +1,28 @@
 'use strict';
 const fs = require("fs");
+const childProcess = require("child_process");
 
 // todo, also output analysis runtimes
 
 const repos = JSON.parse(process.env.REPOS);
 console.dir(repos);
 
+let map = {};
+for (let r of repos) {
+  map[r] = {};
+
+  childProcess.execSync("git clone https://github.com/" + r + ".git");
+
+  let folder = r.split("/")[0];
+
+  childProcess.execSync("node ./abaplint_before " + folder + "/abaplint.json -f json > output.json || true");
+  map[r].before = JSON.parse(fs.readFileSync("output.json", "utf-8"));
+
+  childProcess.execSync("node ./abaplint_after " + folder + "/abaplint.json -f json > output.json || true");
+  map[r].after = JSON.parse(fs.readFileSync("output.json", "utf-8"));
+}
+
+/*
 let files = fs.readdirSync(".", {withFileTypes: true});
 files = files.filter(f => f.isFile());
 files = files.filter(f => f.name.endsWith(".json"));
@@ -24,6 +41,7 @@ for (let f of files) {
     map[name].after = JSON.parse(contents);
   }
 }
+*/
 
 let comment = "Regression test results:\n";
 for (let name in map) {
