@@ -1,6 +1,6 @@
 import {IStatement} from "./_statement";
 import {str, seq, opt} from "../combi";
-import {Integer, NamespaceSimpleName} from "../expressions";
+import {Integer, DefinitionName} from "../expressions";
 import {IStatementRunnable} from "../statement_runnable";
 
 export class DataBegin implements IStatement {
@@ -10,7 +10,7 @@ export class DataBegin implements IStatement {
 
     const structure = seq(str("BEGIN OF"),
                           opt(str("COMMON PART")),
-                          new NamespaceSimpleName(),
+                          new DefinitionName(),
                           opt(str("READ-ONLY")),
                           opt(occurs));
 

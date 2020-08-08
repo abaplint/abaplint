@@ -103,7 +103,7 @@ Regexes are case-insensitive.`,
     for (const struc of dataStructures) {
       // ignore nested DATA BEGIN
       const stat = struc.findFirstStatement(Statements.DataBegin);
-      const found = stat?.findFirstExpression(Expressions.NamespaceSimpleName);
+      const found = stat?.findFirstExpression(Expressions.DefinitionName);
       if (found) {
         const token = found.getFirstToken();
         ret = ret.concat(this.checkName(token, file, this.conf.expectedData));

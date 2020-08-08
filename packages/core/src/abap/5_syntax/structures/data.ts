@@ -10,7 +10,7 @@ import {Data as DataSyntax} from "../statements/data";
 
 export class Data {
   public runSyntax(node: StructureNode, scope: CurrentScope, filename: string): TypedIdentifier | undefined {
-    const name = node.findFirstExpression(Expressions.NamespaceSimpleName)!.getFirstToken();
+    const name = node.findFirstExpression(Expressions.DefinitionName)!.getFirstToken();
     let table: boolean = false;
 
     const components: IStructureComponent[] = [];
