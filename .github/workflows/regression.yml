@@ -29,16 +29,6 @@ jobs:
         npm install && npm run link-local && npm test && cp packages/cli/build/bundle.js ../../abaplint_before
 
     - name: run
-      run: |
-        cd .. && cd ..
-#        git clone https://github.com/larshp/abapGit.git
-#        node ./abaplint_before abapGit/abaplint.json -f json > abapGit#before.json || true
-#        node ./abaplint_after abapGit/abaplint.json -f json > abapGit#after.json || true
-#        git clone https://github.com/larshp/abapOpenChecks.git
-#        node ./abaplint_before abapOpenChecks/abaplint.json -f json > abapOpenChecks#before.json || true
-#        node ./abaplint_after abapOpenChecks/abaplint.json -f json > abapOpenChecks#after.json || true
-
-    - name: build diff
       env:
         REPOS: '["larshp/abapGit", "larshp/abapOpenChecks"]'
       run: |

@@ -22,27 +22,6 @@ for (let r of repos) {
   map[r].after = JSON.parse(fs.readFileSync("output.json", "utf-8"));
 }
 
-/*
-let files = fs.readdirSync(".", {withFileTypes: true});
-files = files.filter(f => f.isFile());
-files = files.filter(f => f.name.endsWith(".json"));
-console.dir(files);
-
-let map = {};
-for (let f of files) {
-  const name = f.name.split("#")[0];
-  if (map[name] === undefined) {
-    map[name] = {};
-  }
-  const contents = fs.readFileSync(f.name, "utf-8");
-  if (f.name.endsWith("#before.json")) {
-    map[name].before = JSON.parse(contents);
-  } else {
-    map[name].after = JSON.parse(contents);
-  }
-}
-*/
-
 let comment = "Regression test results:\n";
 for (let name in map) {
   // todo, this assumes the array content is the same
