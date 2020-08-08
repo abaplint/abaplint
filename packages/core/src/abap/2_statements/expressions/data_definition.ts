@@ -22,7 +22,7 @@ export class DataDefinition extends Expression {
                       opt(str("READ-ONLY")),
                       opt(initial));
 
-    return seq(new Expressions.NamespaceSimpleName(),
+    return seq(new Expressions.DefinitionName(),
                opt(new Expressions.ConstantFieldLength()),
                alt(simple, table));
 

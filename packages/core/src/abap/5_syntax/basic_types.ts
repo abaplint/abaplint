@@ -178,7 +178,10 @@ export class BasicTypes {
   }
 
   public simpleType(node: StatementNode | ExpressionNode): TypedIdentifier | undefined {
-    const nameExpr = node.findFirstExpression(Expressions.NamespaceSimpleName);
+    let nameExpr = node.findFirstExpression(Expressions.NamespaceSimpleName);
+    if (nameExpr === undefined) {
+      nameExpr = node.findFirstExpression(Expressions.DefinitionName);
+    }
     if (nameExpr === undefined) {
       return undefined;
     }

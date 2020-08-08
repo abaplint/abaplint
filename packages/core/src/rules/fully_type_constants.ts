@@ -4,7 +4,7 @@ import {ABAPFile} from "../files";
 import {Issue} from "../issue";
 import * as Statements from "../abap/2_statements/statements";
 import {StatementNode} from "../abap/nodes/statement_node";
-import {Type, TypeTable, NamespaceSimpleName} from "../abap/2_statements/expressions";
+import {Type, TypeTable, NamespaceSimpleName, DefinitionName} from "../abap/2_statements/expressions";
 
 export class FullyTypeConsantsConf extends BasicRuleConfig {
   /** Add check for implicit data definition, require full typing. */
@@ -43,7 +43,10 @@ export class FullyTypeConstants extends ABAPRule {
           && (!this.isTyped(stat))) {
         const type = stat.get() instanceof Statements.Constant ? "constant definition" : "data definition";
 
-        const token = stat.findFirstExpression(NamespaceSimpleName)?.getFirstToken();
+        let token = stat.findFirstExpression(NamespaceSimpleName)?.getFirstToken();
+        if (token === undefined) {
+          token = stat.findFirstExpression(DefinitionName)?.getFirstToken();
+        }
         if (token === undefined) {
           throw new Error("fully type constants, unexpected node");
         }

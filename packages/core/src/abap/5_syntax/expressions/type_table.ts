@@ -8,7 +8,10 @@ import {UnknownType} from "../../types/basic";
 export class TypeTable {
   public runSyntax(node: ExpressionNode | StatementNode, scope: CurrentScope, filename: string): TypedIdentifier | undefined {
     // todo, input is currently the statement, but should be the expression?
-    const nameExpr = node.findFirstExpression(Expressions.NamespaceSimpleName);
+    let nameExpr = node.findFirstExpression(Expressions.DefinitionName);
+    if (nameExpr === undefined) {
+      nameExpr = node.findFirstExpression(Expressions.NamespaceSimpleName);
+    }
     if (nameExpr === undefined) {
       return undefined;
     }

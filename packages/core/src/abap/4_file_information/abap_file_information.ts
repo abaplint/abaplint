@@ -201,7 +201,7 @@ export class ABAPFileInformation implements IABAPFileInformation {
 
     const ret: InfoAttribute[] = [];
     for (const d of contents.findDirectStatements(Statements.Data)) {
-      const name = d.findFirstExpression(Expressions.NamespaceSimpleName)!.getFirstToken();
+      const name = d.findFirstExpression(Expressions.DefinitionName)!.getFirstToken();
       ret.push({
         name: name.getStr(),
         identifier: new Identifier(name, this.filename),
@@ -211,7 +211,7 @@ export class ABAPFileInformation implements IABAPFileInformation {
       });
     }
     for (const d of contents.findDirectStatements(Statements.ClassData)) {
-      const name = d.findFirstExpression(Expressions.NamespaceSimpleName)!.getFirstToken();
+      const name = d.findFirstExpression(Expressions.DefinitionName)!.getFirstToken();
       ret.push({
         name: name.getStr(),
         identifier: new Identifier(name, this.filename),

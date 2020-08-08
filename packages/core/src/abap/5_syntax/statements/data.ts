@@ -12,7 +12,7 @@ export class Data {
       return new DataDefinition().runSyntax(dd, scope, filename);
     }
 
-    const name = node.findFirstExpression(Expressions.NamespaceSimpleName);
+    const name = node.findFirstExpression(Expressions.DefinitionName);
     if (name) {
       return new TypedIdentifier(name.getFirstToken(), filename, new UnknownType("data, fallback"));
     }
