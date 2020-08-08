@@ -906,17 +906,17 @@ export function str(s: string): IStatementRunnable {
     return new Word(s);
   }
 }
-export function seq(first: IStatementRunnable, ...rest: IStatementRunnable[]): IStatementRunnable {
-  return new Sequence([first].concat(rest));
+export function seq(first: IStatementRunnable, second: IStatementRunnable, ...rest: IStatementRunnable[]): IStatementRunnable {
+  return new Sequence([first, second].concat(rest));
 }
-export function alt(first: IStatementRunnable, ...rest: IStatementRunnable[]): IStatementRunnable {
-  return new Alternative([first].concat(rest));
+export function alt(first: IStatementRunnable, second: IStatementRunnable, ...rest: IStatementRunnable[]): IStatementRunnable {
+  return new Alternative([first, second].concat(rest));
 }
-export function altPrio(first: IStatementRunnable, ...rest: IStatementRunnable[]): IStatementRunnable {
-  return new AlternativePriority([first].concat(rest));
+export function altPrio(first: IStatementRunnable, second: IStatementRunnable, ...rest: IStatementRunnable[]): IStatementRunnable {
+  return new AlternativePriority([first, second].concat(rest));
 }
-export function per(first: IStatementRunnable, ...rest: IStatementRunnable[]): IStatementRunnable {
-  return new Permutation([first].concat(rest));
+export function per(first: IStatementRunnable, second: IStatementRunnable, ...rest: IStatementRunnable[]): IStatementRunnable {
+  return new Permutation([first, second].concat(rest));
 }
 export function opt(first: IStatementRunnable): IStatementRunnable {
   return new Optional(first);
