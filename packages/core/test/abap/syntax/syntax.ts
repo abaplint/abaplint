@@ -2235,6 +2235,49 @@ ENDDO.`;
     expect(issues[0].getMessage()).to.include("something");
   });
 
+  it("READ TABLE INTO something", () => {
+    const abap = `
+  DATA tab TYPE STANDARD TABLE OF string.
+  READ TABLE tab INDEX 1 INTO something.`;
+    const issues = runProgram(abap);
+    expect(issues.length).to.equals(1);
+    expect(issues[0].getMessage()).to.include("something");
+  });
+
+  it("CONCATENATE INTO something", () => {
+    const abap = `CONCATENATE 'a' 'b' INTO something.`;
+    const issues = runProgram(abap);
+    expect(issues.length).to.equals(1);
+    expect(issues[0].getMessage()).to.include("something");
+  });
+
+  it("CALL FUNCTION sometthing", () => {
+    const abap = `
+    CALL FUNCTION 'MOO'
+      EXPORTING
+        bar = something.`;
+    const issues = runProgram(abap);
+    expect(issues.length).to.equals(1);
+    expect(issues[0].getMessage()).to.include("something");
+  });
+
+  it("CLEAR something", () => {
+    const abap = `CLEAR something.`;
+    const issues = runProgram(abap);
+    expect(issues.length).to.equals(1);
+    expect(issues[0].getMessage()).to.include("something");
+  });
+
+  it.skip("PERFORM something", () => {
+    const abap = `
+    FORM foo USING bar.
+    ENDFORM.
+    PERFORM foo USING something.`;
+    const issues = runProgram(abap);
+    expect(issues.length).to.equals(1);
+    expect(issues[0].getMessage()).to.include("something");
+  });
+
 // todo, static method cannot access instance attributes
 // todo, can a private method access protected attributes?
 // todo, readonly fields(constants + enums + attributes flagged read-only)

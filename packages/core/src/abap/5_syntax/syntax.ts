@@ -60,6 +60,9 @@ import {Write} from "./statements/write";
 import {Case} from "./statements/case";
 import {CreateObject} from "./statements/create_object";
 import {Do} from "./statements/do";
+import {Concatenate} from "./statements/concatenate";
+import {CallFunction} from "./statements/call_function";
+import {Clear} from "./statements/clear";
 
 
 export class SyntaxLogic {
@@ -259,12 +262,16 @@ export class SyntaxLogic {
       new Loop().runSyntax(node, this.scope, filename);
     } else if (s instanceof Statements.ReadTable) {
       new ReadTable().runSyntax(node, this.scope, filename);
+    } else if (s instanceof Statements.Split) {
+      new Split().runSyntax(node, this.scope, filename);
+    } else if (s instanceof Statements.CallFunction) {
+      new CallFunction().runSyntax(node, this.scope, filename);
+    } else if (s instanceof Statements.Clear) {
+      new Clear().runSyntax(node, this.scope, filename);
     } else if (s instanceof Statements.Select) {
       new Select().runSyntax(node, this.scope, filename);
     } else if (s instanceof Statements.InsertInternal) {
       new InsertInternal().runSyntax(node, this.scope, filename);
-    } else if (s instanceof Statements.Split) {
-      new Split().runSyntax(node, this.scope, filename);
     } else if (s instanceof Statements.Assign) {
       new Assign().runSyntax(node, this.scope, filename);
     } else if (s instanceof Statements.Convert) {
@@ -291,6 +298,8 @@ export class SyntaxLogic {
       new CreateObject().runSyntax(node, this.scope, filename);
     } else if (s instanceof Statements.Case) {
       new Case().runSyntax(node, this.scope, filename);
+    } else if (s instanceof Statements.Concatenate) {
+      new Concatenate().runSyntax(node, this.scope, filename);
     } else if (s instanceof Statements.Append) {
       new Append().runSyntax(node, this.scope, filename);
     } else if (s instanceof Statements.Write) {
