@@ -100,7 +100,23 @@ ENDCLASS.`;
     testFix("DATA foo TYPE i.", "");
   });
 
-  it.skip("class attribute referenced via me->", async () => {
+  it("only one error per identifier", async () => {
+    const abap = `
+CLASS lcl_bar DEFINITION.
+  PRIVATE SECTION.
+    METHODS m1.
+    DATA field TYPE string.
+ENDCLASS.
+
+CLASS lcl_bar IMPLEMENTATION.
+  METHOD m1.
+  ENDMETHOD.
+ENDCLASS.`;
+    const issues = await runSingle(abap);
+    expect(issues.length).to.equal(1);
+  });
+
+  it("class attribute referenced via me->", async () => {
     const abap = `
 CLASS lcl_bar DEFINITION.
   PRIVATE SECTION.

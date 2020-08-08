@@ -53,7 +53,7 @@ export class FieldChain {
         // todo, additional validations
         context = context.getRowType();
       } else if (current.get() instanceof Expressions.AttributeName) {
-        context = new AttributeName().runSyntax(context, current, scope);
+        context = new AttributeName().runSyntax(context, current, scope, filename, type);
       }
 
     }

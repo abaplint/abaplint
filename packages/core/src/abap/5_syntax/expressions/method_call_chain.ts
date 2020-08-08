@@ -74,7 +74,7 @@ export class MethodCallChain {
       } else if (current instanceof ExpressionNode && current.get() instanceof Expressions.ComponentName) {
         context = new ComponentName().runSyntax(context, current);
       } else if (current instanceof ExpressionNode && current.get() instanceof Expressions.AttributeName) {
-        context = new AttributeName().runSyntax(context, current, scope);
+        context = new AttributeName().runSyntax(context, current, scope, filename);
       }
     }
 

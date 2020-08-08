@@ -52,12 +52,30 @@ Doesnt currently work for public attributes and class prefixed attribute usage`,
     }
 
     // dont report unused variables when there are syntax errors
-    const result = new SyntaxLogic(this.reg, obj).run();
-    if (result.issues.length > 0) {
+    const syntax = new SyntaxLogic(this.reg, obj).run();
+    if (syntax.issues.length > 0) {
       return [];
     }
 
-    return this.traverse(result.spaghetti.getTop(), obj);
+    const results = this.traverse(syntax.spaghetti.getTop(), obj);
+
+    // remove duplicates, quick and dirty
+    const deduplicated: Issue[] = [];
+    for (const result of results) {
+      let cont = false;
+      for (const d of deduplicated) {
+        if (result.getStart().equals(d.getStart())) {
+          cont = true;
+          break;
+        }
+      }
+      if (cont === true) {
+        continue;
+      }
+      deduplicated.push(result);
+    }
+
+    return deduplicated;
   }
 
   private traverse(node: ISpaghettiScopeNode, obj: ABAPObject): Issue[] {
