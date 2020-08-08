@@ -2334,6 +2334,16 @@ ENDDO.`;
     expect(issues[0].getMessage()).to.include("something");
   });
 
+  it("READ TABLE ASSIGNING ssomething", () => {
+    const abap = `
+    DATA tab TYPE STANDARD TABLE OF string.
+    READ TABLE tab ASSIGNING <something> INDEX 1.
+    `;
+    const issues = runProgram(abap);
+    expect(issues.length).to.equals(1);
+    expect(issues[0].getMessage()).to.include("<something>");
+  });
+
 // todo, static method cannot access instance attributes
 // todo, can a private method access protected attributes?
 // todo, readonly fields(constants + enums + attributes flagged read-only)

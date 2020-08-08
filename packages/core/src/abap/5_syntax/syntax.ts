@@ -65,6 +65,7 @@ import {CallFunction} from "./statements/call_function";
 import {Clear} from "./statements/clear";
 import {Replace} from "./statements/replace";
 import {GetBit} from "./statements/get_bit";
+import {Raise} from "./statements/raise";
 
 
 export class SyntaxLogic {
@@ -304,6 +305,8 @@ export class SyntaxLogic {
       new CreateObject().runSyntax(node, this.scope, filename);
     } else if (s instanceof Statements.Case) {
       new Case().runSyntax(node, this.scope, filename);
+    } else if (s instanceof Statements.Raise) {
+      new Raise().runSyntax(node, this.scope, filename);
     } else if (s instanceof Statements.Concatenate) {
       new Concatenate().runSyntax(node, this.scope, filename);
     } else if (s instanceof Statements.Append) {

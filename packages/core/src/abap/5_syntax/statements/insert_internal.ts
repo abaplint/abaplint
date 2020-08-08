@@ -3,6 +3,7 @@ import {StatementNode} from "../../nodes";
 import {CurrentScope} from "../_current_scope";
 import {InlineFS} from "../expressions/inline_fs";
 import {Source} from "../expressions/source";
+import {Target} from "../expressions/target";
 
 export class InsertInternal {
   public runSyntax(node: StatementNode, scope: CurrentScope, filename: string): void {
@@ -23,6 +24,10 @@ export class InsertInternal {
 
     for (const s of node.findDirectExpressions(Expressions.Source)) {
       new Source().runSyntax(s, scope, filename);
+    }
+
+    for (const t of node.findDirectExpressions(Expressions.Target)) {
+      new Target().runSyntax(t, scope, filename);
     }
 
   }
