@@ -13,7 +13,7 @@ for (let r of repos) {
 
   childProcess.execSync("git clone https://github.com/" + r + ".git");
 
-  let folder = r.split("/")[0];
+  let folder = r.split("/")[1];
 
   childProcess.execSync("node ./abaplint_before " + folder + "/abaplint.json -f json > output.json || true");
   map[r].before = JSON.parse(fs.readFileSync("output.json", "utf-8"));
