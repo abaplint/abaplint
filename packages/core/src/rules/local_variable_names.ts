@@ -133,7 +133,7 @@ Regexes are case-insensitive.`,
       if (parent && parent.get() instanceof Structures.Constants) {
         continue; // inside DATA BEGIN OF
       }
-      const found = constant.findFirstExpression(Expressions.NamespaceSimpleName);
+      const found = constant.findFirstExpression(Expressions.DefinitionName);
       if (found) {
         const token = found.getFirstToken();
         ret = ret.concat(this.checkName(token, file, this.conf.expectedConstant));

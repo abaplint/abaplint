@@ -221,7 +221,7 @@ export class ABAPFileInformation implements IABAPFileInformation {
       });
     }
     for (const d of contents.findDirectStatements(Statements.Constant)) {
-      const name = d.findFirstExpression(Expressions.NamespaceSimpleName)!.getFirstToken();
+      const name = d.findFirstExpression(Expressions.DefinitionName)!.getFirstToken();
       ret.push({
         name: name.getStr(),
         identifier: new Identifier(name, this.filename),

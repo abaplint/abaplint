@@ -18,7 +18,7 @@ export class Constant {
       }
     }
 
-    const fallback = node.findFirstExpression(Expressions.NamespaceSimpleName);
+    const fallback = node.findFirstExpression(Expressions.DefinitionName);
     if (fallback) {
       return new TypedIdentifier(fallback.getFirstToken(), filename, new UnknownType("constant, fallback"));
     }
