@@ -2186,6 +2186,16 @@ ENDFORM.`;
     expect(issues.length).to.equals(0);
   });
 
+  it("is_pair not defined, expect error", () => {
+    const abap = `
+    DATA: lv_distance TYPE i.
+    lv_distance = 2 - is_pair-distance.
+    `;
+    const issues = runProgram(abap);
+    expect(issues.length).to.equals(1);
+    expect(issues[0].getMessage()).to.include("is_pair");
+  });
+
 // todo, static method cannot access instance attributes
 // todo, can a private method access protected attributes?
 // todo, readonly fields(constants + enums + attributes flagged read-only)

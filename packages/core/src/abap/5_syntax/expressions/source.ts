@@ -66,6 +66,8 @@ export class Source {
         context = new FieldChain().runSyntax(first, scope, filename, ReferenceType.DataReadReference);
       } else if (first instanceof ExpressionNode && first.get() instanceof Expressions.StringTemplate) {
         context = new StringTemplate().runSyntax(first, scope, filename);
+      } else if (first instanceof ExpressionNode && first.get() instanceof Expressions.Source) {
+        context = new Source().runSyntax(first, scope, filename);
       } else if (first instanceof ExpressionNode && first.get() instanceof Expressions.Constant) {
         context = new Constant().runSyntax(first);
       } else if (first instanceof ExpressionNode && first.get() instanceof Expressions.ArrowOrDash) {

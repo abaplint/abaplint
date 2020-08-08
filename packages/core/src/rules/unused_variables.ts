@@ -97,7 +97,7 @@ Doesnt currently work for public attributes and class prefixed attribute usage`,
 
     for (const v of node.getData().vars) {
       if (v.name === "me" || v.name === "super") {
-        continue; // todo, this is a workaround
+        continue; // todo, this is a workaround, these should somehow be typed to built-in
       }
       if (this.isUsed(v.identifier) === false
           && obj.containsFile(v.identifier.getFilename())) {
