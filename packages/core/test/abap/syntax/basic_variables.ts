@@ -1388,6 +1388,15 @@ ENDCASE.`;
     expect(identifier?.getType()).to.be.instanceof(Basic.TableType);
   });
 
+  it("DATA BEGIN OF, OCCURS, lower case", () => {
+    const abap = `
+    data: begin of tb_path occurs 10,
+            path TYPE string,
+          end of tb_path.`;
+    const identifier = resolveVariable(abap, "tb_path");
+    expect(identifier?.getType()).to.be.instanceof(Basic.TableType);
+  });
+
   it("DATA BEGIN OF OCCURS, INCLUDE voided structure", () => {
     const abap = `DATA BEGIN OF tables_tab OCCURS 10.
     INCLUDE STRUCTURE something_void.
