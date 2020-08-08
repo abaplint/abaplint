@@ -11,12 +11,12 @@ export class Call {
       new MethodCallChain().runSyntax(chain, scope, filename);
       return;
     }
-
+/*
     const dynamic = node.findDirectExpression(Expressions.MethodSource)?.findDirectExpression(Expressions.Dynamic);
     if (dynamic) {
       return;
     }
-
+*/
     const methodSource = node.findDirectExpression(Expressions.MethodSource);
     if (methodSource === undefined) {
       throw new Error("Call, child MethodSource not found");

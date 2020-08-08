@@ -2327,6 +2327,12 @@ ENDDO.`;
     expect(issues[0].getMessage()).to.include("something");
   });
 
+  it("CALL METHOD something->", () => {
+    const abap = `CALL METHOD something->('BLAH').`;
+    const issues = runProgram(abap);
+    expect(issues.length).to.equals(1);
+    expect(issues[0].getMessage()).to.include("something");
+  });
 
 // todo, static method cannot access instance attributes
 // todo, can a private method access protected attributes?

@@ -35,6 +35,10 @@ for (let name in map) {
     comment += "- " + name + ": :red_circle:";
   }
   comment += " " + map[name].before.length + " -> " + map[name].after.length + "\n";
+
+  for (const i of map[name].after) {
+    comment += "`" + i.file + "`: " + i.description + "\n"
+  }
 }
 comment += "\nUpdated: " + new Date().toISOString() + "\n";
 comment += "\nSHA: " + process.env.GITHUB_SHA + "\n";

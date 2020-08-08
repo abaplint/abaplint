@@ -64,6 +64,7 @@ import {Concatenate} from "./statements/concatenate";
 import {CallFunction} from "./statements/call_function";
 import {Clear} from "./statements/clear";
 import {Replace} from "./statements/replace";
+import {GetBit} from "./statements/get_bit";
 
 
 export class SyntaxLogic {
@@ -271,6 +272,8 @@ export class SyntaxLogic {
       new CallFunction().runSyntax(node, this.scope, filename);
     } else if (s instanceof Statements.Clear) {
       new Clear().runSyntax(node, this.scope, filename);
+    } else if (s instanceof Statements.GetBit) {
+      new GetBit().runSyntax(node, this.scope, filename);
     } else if (s instanceof Statements.Select) {
       new Select().runSyntax(node, this.scope, filename);
     } else if (s instanceof Statements.InsertInternal) {
