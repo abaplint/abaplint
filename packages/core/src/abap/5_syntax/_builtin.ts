@@ -207,6 +207,7 @@ export class BuiltIn {
     components.push({name: "msgv2", type: new CharacterType(50)});
     components.push({name: "msgv3", type: new CharacterType(50)});
     components.push({name: "msgv4", type: new CharacterType(50)});
+    components.push({name: "msgli", type: new CharacterType(60)});
     components.push({name: "opsys", type: new CharacterType(10)});
     components.push({name: "pfkey", type: new CharacterType(20)});
     components.push({name: "repid", type: new CharacterType(1)});
