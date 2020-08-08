@@ -503,14 +503,12 @@ class PlusPriority implements IStatementRunnable {
 
 class Sequence implements IStatementRunnable {
   private readonly list: IStatementRunnable[];
-  private readonly stack: boolean;
 
-  public constructor(list: IStatementRunnable[], stack = false) {
+  public constructor(list: IStatementRunnable[]) {
     if (list.length < 2) {
       throw new Error("Sequence, length error");
     }
     this.list = list;
-    this.stack = stack;
   }
 
   public listKeywords(): string[] {
@@ -545,11 +543,7 @@ class Sequence implements IStatementRunnable {
 
   public railroad() {
     const children = this.list.map((e) => { return e.railroad(); });
-    if (this.stack === true) {
-      return "Railroad.Stack(" + children.join() + ")";
-    } else {
-      return "Railroad.Sequence(" + children.join() + ")";
-    }
+    return "Railroad.Sequence(" + children.join() + ")";
   }
 
   public toStr() {
@@ -914,9 +908,6 @@ export function str(s: string): IStatementRunnable {
 }
 export function seq(first: IStatementRunnable, ...rest: IStatementRunnable[]): IStatementRunnable {
   return new Sequence([first].concat(rest));
-}
-export function seqs(first: IStatementRunnable, ...rest: IStatementRunnable[]): IStatementRunnable {
-  return new Sequence([first].concat(rest), true);
 }
 export function alt(first: IStatementRunnable, ...rest: IStatementRunnable[]): IStatementRunnable {
   return new Alternative([first].concat(rest));

@@ -96,6 +96,7 @@ const tests = [
   "if not line_exists( outputs[ table_line->alv = io_alv ] ).",
   "if lv_value <> - 1.",
   "IF a = b EQUIV c = d.",
+  "IF foo- = 2.", // "foo-" is an allowed variable name
 
   // todo
 //  "IF ?alv? = ''.",
