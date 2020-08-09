@@ -10,7 +10,7 @@ const tests = [
   {c: "|{ condense( iv_fnam ) }({ iv_index ALIGN = RIGHT PAD = '0' WIDTH = len })|", r: new Expressions.StringTemplate(), e: true},
 ];
 
-describe("Test expression matchers", () => {
+describe("Test expression, StringTemplate", () => {
   tests.forEach((test) => {
     const not = test.e === true ? "" : "not ";
 

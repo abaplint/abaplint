@@ -19,14 +19,14 @@
     "vscode-languageserver-types": "^3.15.1"
   },
   "devDependencies": {
-    "@abaplint/monaco": "^2.38.17",
+    "@abaplint/monaco": "^2.38.18",
     "css-loader": "^4.2.1",
     "file-loader": "^6.0.0",
     "html-webpack-plugin": "^4.3.0",
     "less": "^3.12.2",
     "less-loader": "^6.2.0",
     "rimraf": "^3.0.2",
-    "start-server-and-test": "^1.11.2",
+    "start-server-and-test": "^1.11.3",
     "style-loader": "^1.2.1",
     "ts-loader": "^8.0.2",
     "typescript": "^3.9.7",

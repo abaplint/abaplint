@@ -33,22 +33,33 @@ export class References {
     }
 
     const lookup = LSPLookup.lookup(found, this.reg, obj);
-    if (lookup?.definitionId === undefined) {
+    if (lookup?.definitionId === undefined || lookup?.scope === undefined) {
       return [];
     }
 
-    const locs = this.searchEverything(lookup.definitionId);
+    const locs = this.search(lookup.definitionId, lookup.scope);
     return locs.map(LSPUtils.identiferToLocation);
   }
 
-  public searchEverything(identifier: Identifier): Identifier[] {
+  public search(identifier: Identifier, node: ISpaghettiScopeNode): Identifier[] {
     let ret: Identifier[] = [];
-    // todo, take scope into account
-    for (const o of this.reg.getObjects()) {
-      if (o instanceof ABAPObject) {
-        ret = ret.concat(this.traverse(new SyntaxLogic(this.reg, o).run().spaghetti.getTop(), identifier));
+
+    if (node.getIdentifier().stype === ScopeType.Method
+        || node.getIdentifier().stype === ScopeType.FunctionModule
+        || node.getIdentifier().stype === ScopeType.Form) {
+      ret = this.findReferences(node, identifier);
+    } else {
+      for (const o of this.reg.getObjects()) {
+        if (o instanceof ABAPObject) {
+          // do not search in dependencies
+          if (this.reg.isDependency(o)) {
+            continue;
+          }
+          ret = ret.concat(this.findReferences(new SyntaxLogic(this.reg, o).run().spaghetti.getTop(), identifier));
+        }
       }
     }
+
     // remove duplicates, might be a changing(read and write) position
     return this.removeDuplicates(ret);
   }
@@ -65,7 +76,7 @@ export class References {
     });
   }
 
-  private traverse(node: ISpaghettiScopeNode, identifier: Identifier): Identifier[] {
+  private findReferences(node: ISpaghettiScopeNode, identifier: Identifier): Identifier[] {
     let ret: Identifier[] = [];
 
     if (node.getIdentifier().stype !== ScopeType.BuiltIn) {
@@ -89,7 +100,7 @@ export class References {
     }
 
     for (const c of node.getChildren()) {
-      ret = ret.concat(this.traverse(c, identifier));
+      ret = ret.concat(this.findReferences(c, identifier));
     }
 
     return ret;

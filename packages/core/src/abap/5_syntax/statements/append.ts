@@ -15,11 +15,11 @@ export class Append {
     const target = node.findDirectExpression(Expressions.Target);
     if (target) {
       targetType = new Target().runSyntax(target, scope, filename);
-    } else {
-      const fsTarget = node.findExpressionAfterToken("ASSIGNING");
-      if (fsTarget && fsTarget.get() instanceof Expressions.FSTarget) {
-        new FSTarget().runSyntax(fsTarget, scope, filename, undefined);
-      }
+    }
+
+    const fsTarget = node.findExpressionAfterToken("ASSIGNING");
+    if (fsTarget && fsTarget.get() instanceof Expressions.FSTarget) {
+      new FSTarget().runSyntax(fsTarget, scope, filename, undefined);
     }
 
     let source = node.findDirectExpression(Expressions.Source);

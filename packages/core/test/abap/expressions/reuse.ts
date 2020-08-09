@@ -17,7 +17,9 @@ const tests = [
   {c: "(sy)",                             r: new Expressions.FieldLength(),     e: true},
   {c: "(42)",                             r: new Expressions.FieldLength(),     e: true},
   {c: "(sy-fdpos)",                       r: new Expressions.FieldLength(),     e: true},
+  {c: "(123-fdpos)",                      r: new Expressions.FieldLength(),     e: false},
   {c: "+sy-fdpos",                        r: new Expressions.FieldOffset(),     e: true},
+  {c: "+123-fdpos",                       r: new Expressions.FieldOffset(),     e: false},
   {c: "foobar(3)",                        r: new Expressions.Target(),          e: true},
   {c: "method( foo )-stream->rema( )",    r: new Expressions.MethodCallChain(), e: true},
   {c: "method( foo )->rema( )",           r: new Expressions.MethodCallChain(), e: true},
@@ -61,11 +63,11 @@ const tests = [
   {c: "type index table",                 r: new Expressions.TypeTable(),       e: true},
   {c: "type index table",                 r: new Expressions.TypeTable(),       e: true},
   {c: "type range of string",             r: new Expressions.TypeTable(),       e: true},
-  {c: "%_C_POINTER",                      r: new Expressions.TypeNameOrInfer(),        e: true},
-//  {c: "<Z-BAR>",                          r: new Expressions.FieldSymbol(),     e: true},
+  {c: "%_C_POINTER",                      r: new Expressions.TypeNameOrInfer(), e: true},
+  {c: "<Z-BAR>",                          r: new Expressions.FieldSymbol(),     e: true},
 ];
 
-describe("Test expression matchers", () => {
+describe("Test expression matchers, todo: refactor", () => {
   tests.forEach((test) => {
     const not = test.e === true ? "" : "not ";
 

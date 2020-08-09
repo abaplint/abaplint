@@ -1,27 +1,25 @@
 'use strict';
 const fs = require("fs");
+const childProcess = require("child_process");
 
 // todo, also output analysis runtimes
 
-console.dir(process.env.REPOS);
-
-let files = fs.readdirSync(".", {withFileTypes: true});
-files = files.filter(f => f.isFile());
-files = files.filter(f => f.name.endsWith(".json"));
-console.dir(files);
+const repos = JSON.parse(process.env.REPOS);
+console.dir(repos);
 
 let map = {};
-for (let f of files) {
-  const name = f.name.split("#")[0];
-  if (map[name] === undefined) {
-    map[name] = {};
-  }
-  const contents = fs.readFileSync(f.name, "utf-8");
-  if (f.name.endsWith("#before.json")) {
-    map[name].before = JSON.parse(contents);
-  } else {
-    map[name].after = JSON.parse(contents);
-  }
+for (let r of repos) {
+  map[r] = {};
+
+  childProcess.execSync("git clone https://github.com/" + r + ".git");
+
+  let folder = r.split("/")[1];
+
+  childProcess.execSync("node ./abaplint_before " + folder + "/abaplint.json -f json > output.json || true");
+  map[r].before = JSON.parse(fs.readFileSync("output.json", "utf-8"));
+
+  childProcess.execSync("node ./abaplint_after " + folder + "/abaplint.json -f json > output.json || true");
+  map[r].after = JSON.parse(fs.readFileSync("output.json", "utf-8"));
 }
 
 let comment = "Regression test results:\n";
@@ -35,6 +33,10 @@ for (let name in map) {
     comment += "- " + name + ": :red_circle:";
   }
   comment += " " + map[name].before.length + " -> " + map[name].after.length + "\n";
+
+  for (const i of map[name].after) {
+    comment += "`" + i.file + "`: " + i.description + ", " + i.start.row + "\n"
+  }
 }
 comment += "\nUpdated: " + new Date().toISOString() + "\n";
 comment += "\nSHA: " + process.env.GITHUB_SHA + "\n";

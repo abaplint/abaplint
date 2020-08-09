@@ -4,6 +4,7 @@ import {CurrentScope} from "../_current_scope";
 import {TypedIdentifier, IdentifierMeta} from "../../types/_typed_identifier";
 import {UnknownType} from "../../types/basic/unknown_type";
 import {ObjectReferenceType, VoidType} from "../../types/basic";
+import {Target} from "../expressions/target";
 
 export class Catch {
   public runSyntax(node: StatementNode, scope: CurrentScope, filename: string): void {
@@ -25,7 +26,9 @@ export class Catch {
         const identifier = new TypedIdentifier(token, filename, new UnknownType(message), [IdentifierMeta.InlineDefinition]);
         scope.addIdentifier(identifier);
       }
-
+    } else if (target) {
+      new Target().runSyntax(target, scope, filename);
     }
+
   }
 }

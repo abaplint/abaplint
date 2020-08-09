@@ -2186,6 +2186,314 @@ ENDFORM.`;
     expect(issues.length).to.equals(0);
   });
 
+  it("is_pair not defined, expect error", () => {
+    const abap = `
+    DATA: lv_distance TYPE i.
+    lv_distance = 2 - is_pair-distance.
+    `;
+    const issues = runProgram(abap);
+    expect(issues.length).to.equals(1);
+    expect(issues[0].getMessage()).to.include("is_pair");
+  });
+
+  it("CASE for not defined variable", () => {
+    const abap = `
+CASE something.
+  WHEN 'A'.
+  WHEN OTHERS.
+ENDCASE.`;
+    const issues = runProgram(abap);
+    expect(issues.length).to.equals(1);
+    expect(issues[0].getMessage()).to.include("something");
+  });
+
+  it("DO for not defined variable", () => {
+    const abap = `
+DO something TIMES.
+  WRITE 'bar'.
+ENDDO.`;
+    const issues = runProgram(abap);
+    expect(issues.length).to.equals(1);
+    expect(issues[0].getMessage()).to.include("something");
+  });
+
+  it("substring", () => {
+    const abap = `
+    DATA mv_compressed TYPE string.
+    WRITE mv_compressed(something).`;
+    const issues = runProgram(abap);
+    expect(issues.length).to.equals(1);
+    expect(issues[0].getMessage()).to.include("something");
+  });
+
+  it("offset", () => {
+    const abap = `
+    DATA mv_compressed TYPE string.
+    WRITE mv_compressed+something.`;
+    const issues = runProgram(abap);
+    expect(issues.length).to.equals(1);
+    expect(issues[0].getMessage()).to.include("something");
+  });
+
+  it("READ TABLE INTO something", () => {
+    const abap = `
+  DATA tab TYPE STANDARD TABLE OF string.
+  READ TABLE tab INDEX 1 INTO something.`;
+    const issues = runProgram(abap);
+    expect(issues.length).to.equals(1);
+    expect(issues[0].getMessage()).to.include("something");
+  });
+
+  it("CONCATENATE INTO something", () => {
+    const abap = `CONCATENATE 'a' 'b' INTO something.`;
+    const issues = runProgram(abap);
+    expect(issues.length).to.equals(1);
+    expect(issues[0].getMessage()).to.include("something");
+  });
+
+  it("CALL FUNCTION sometthing", () => {
+    const abap = `
+    CALL FUNCTION 'MOO'
+      EXPORTING
+        bar = something.`;
+    const issues = runProgram(abap);
+    expect(issues.length).to.equals(1);
+    expect(issues[0].getMessage()).to.include("something");
+  });
+
+  it("CLEAR something", () => {
+    const abap = `CLEAR something.`;
+    const issues = runProgram(abap);
+    expect(issues.length).to.equals(1);
+    expect(issues[0].getMessage()).to.include("something");
+  });
+
+  it("PERFORM something, USING", () => {
+    const abap = `
+    FORM foo USING bar.
+    ENDFORM.
+    PERFORM foo USING something.`;
+    const issues = runProgram(abap);
+    expect(issues.length).to.equals(1);
+    expect(issues[0].getMessage()).to.include("something");
+  });
+
+  it("PERFORM something, CHANGING", () => {
+    const abap = `
+    FORM foo CHANGING bar foo.
+    ENDFORM.
+    DATA lv_bar.
+    PERFORM foo CHANGING lv_bar something.`;
+    const issues = runProgram(abap);
+    expect(issues.length).to.equals(1);
+    expect(issues[0].getMessage()).to.include("something");
+  });
+
+  it("PERFORM something, CHANGING, dynamic", () => {
+    const abap = `
+    FORM foo CHANGING bar foo.
+    ENDFORM.
+    DATA lv_bar.
+    PERFORM ('FOO') CHANGING lv_bar something.`;
+    const issues = runProgram(abap);
+    expect(issues.length).to.equals(1);
+    expect(issues[0].getMessage()).to.include("something");
+  });
+
+  it("INDEX something", () => {
+    const abap = `
+    DATA tab TYPE STANDARD TABLE OF string.
+    DATA val TYPE string.
+    READ TABLE tab INDEX something INTO val.`;
+    const issues = runProgram(abap);
+    expect(issues.length).to.equals(1);
+    expect(issues[0].getMessage()).to.include("something");
+  });
+
+  it("ASSIGNING <something>", () => {
+    const abap = `
+    DATA tab TYPE STANDARD TABLE OF string.
+    LOOP AT tab ASSIGNING <something>.
+      WRITE 'bar'.
+    ENDLOOP.`;
+    const issues = runProgram(abap);
+    expect(issues.length).to.equals(1);
+    expect(issues[0].getMessage()).to.include("<something>");
+  });
+
+  it("call method, something", () => {
+    const abap = `cl_foo=>bar( RECEIVING out = something ).`;
+    const issues = runProgram(abap);
+    expect(issues.length).to.equals(1);
+    expect(issues[0].getMessage()).to.include("something");
+  });
+
+  it("CATCH INTO something", () => {
+    const abap = `
+    TRY.
+      CATCH cx_errror INTO something.
+    ENDTRY.`;
+    const issues = runProgram(abap);
+    expect(issues.length).to.equals(1);
+    expect(issues[0].getMessage()).to.include("something");
+  });
+
+  it("CALL METHOD something->", () => {
+    const abap = `CALL METHOD something->('BLAH').`;
+    const issues = runProgram(abap);
+    expect(issues.length).to.equals(1);
+    expect(issues[0].getMessage()).to.include("something");
+  });
+
+  it("READ TABLE ASSIGNING ssomething", () => {
+    const abap = `
+    DATA tab TYPE STANDARD TABLE OF string.
+    READ TABLE tab ASSIGNING <something> INDEX 1.
+    `;
+    const issues = runProgram(abap);
+    expect(issues.length).to.equals(1);
+    expect(issues[0].getMessage()).to.include("<something>");
+  });
+
+  it("DELETE tab something", () => {
+    const abap = `
+    DATA tab TYPE STANDARD TABLE OF string.
+    DELETE tab WHERE table_line = something.
+    `;
+    const issues = runProgram(abap);
+    expect(issues.length).to.equals(1);
+    expect(issues[0].getMessage()).to.include("something");
+  });
+
+  it("LOOP AT WHERE something", () => {
+    const abap = `
+    DATA lt_remote TYPE STANDARD TABLE OF string.
+    LOOP AT lt_remote TRANSPORTING NO FIELDS WHERE table_line = something.
+    ENDLOOP.
+    `;
+    const issues = runProgram(abap);
+    expect(issues.length).to.equals(1);
+    expect(issues[0].getMessage()).to.include("something");
+  });
+
+  it("WHEN something", () => {
+    const abap = `
+    CASE |bar|.
+      WHEN something.
+    ENDCASE.
+    `;
+    const issues = runProgram(abap);
+    expect(issues.length).to.equals(1);
+    expect(issues[0].getMessage()).to.include("something");
+  });
+
+  it("CREATE DATA something", () => {
+    const abap = `CREATE DATA something TYPE REF TO ('SFSDFS').`;
+    const issues = runProgram(abap);
+    expect(issues.length).to.equals(1);
+    expect(issues[0].getMessage()).to.include("something");
+  });
+
+  it("SPLIT INTO TABLE something", () => {
+    const abap = `SPLIT |foobar| AT |sdf| INTO TABLE something.`;
+    const issues = runProgram(abap);
+    expect(issues.length).to.equals(1);
+    expect(issues[0].getMessage()).to.include("something");
+  });
+
+  it("CALL METHOD with dynamic, expect error", () => {
+    const abap = `
+  DATA ref TYPE REF TO object.
+  CALL METHOD ref->('METHOD')
+    RECEIVING
+      result = something.`;
+    const issues = runProgram(abap);
+    expect(issues.length).to.equals(1);
+    expect(issues[0].getMessage()).to.include("something");
+  });
+
+  it("BOOLC, something", () => {
+    const abap = `WRITE boolc( something = |sdf| ).`;
+    const issues = runProgram(abap);
+    expect(issues.length).to.equals(1);
+    expect(issues[0].getMessage()).to.include("something");
+  });
+
+  it("calculation, something", () => {
+    const abap = `
+    DATA lv_f TYPE f.
+    lv_f = ( something / 2 ) * 100.`;
+    const issues = runProgram(abap);
+    expect(issues.length).to.equals(1);
+    expect(issues[0].getMessage()).to.include("something");
+  });
+
+  it("dynamic method call, something", () => {
+    const abap = `CALL METHOD (something)=>bar.`;
+    const issues = runProgram(abap);
+    expect(issues.length).to.equals(1);
+    expect(issues[0].getMessage()).to.include("something");
+  });
+
+  it("SORT something", () => {
+    const abap = `SORT something BY ('ABC').`;
+    const issues = runProgram(abap);
+    expect(issues.length).to.equals(1);
+    expect(issues[0].getMessage()).to.include("something");
+  });
+
+  it("SELECT something", () => {
+    const abap = `
+    SELECT SINGLE * FROM bar INTO @DATA(sdf) WHERE field = @something.
+    WRITE sdf.
+    `;
+    const issues = runProgram(abap);
+    expect(issues.length).to.equals(1);
+    expect(issues[0].getMessage()).to.include("something");
+  });
+
+  it("INSERT database something", () => {
+    const abap = `INSERT databasetabl FROM TABLE something.`;
+    const issues = runProgram(abap);
+    expect(issues.length).to.equals(1);
+    expect(issues[0].getMessage()).to.include("something");
+  });
+
+  it("SELECT, for all entries", () => {
+    const abap = `
+TYPES: BEGIN OF ty_type,
+         field TYPE c LENGTH 1,
+       END OF ty_type.
+DATA: lt_fae TYPE STANDARD TABLE OF ty_type.
+SELECT column FROM table INTO TABLE @DATA(lt_results)
+  FOR ALL ENTRIES IN lt_fae
+  WHERE column = @lt_fae-field.`;
+    const issues = runProgram(abap);
+    expect(issues.length).to.equals(0);
+  });
+
+  it("APPEND INITIAL LINE ASSSIGNING something", () => {
+    const abap = `'
+    DATA tab TYPE STANDARD TABLE OF string.
+    APPEND INITIAL LINE TO tab ASSIGNING <something>.
+    `;
+    const issues = runProgram(abap);
+    expect(issues.length).to.equals(1);
+    expect(issues[0].getMessage()).to.include("<something>");
+  });
+
+  it("LOOP AT FROM something", () => {
+    const abap = `'
+  DATA tab TYPE STANDARD TABLE OF string.
+  LOOP AT tab INTO DATA(row) FROM something.
+    WRITE row.
+  ENDLOOP.
+    `;
+    const issues = runProgram(abap);
+    expect(issues.length).to.equals(1);
+    expect(issues[0].getMessage()).to.include("something");
+  });
+
 // todo, static method cannot access instance attributes
 // todo, can a private method access protected attributes?
 // todo, readonly fields(constants + enums + attributes flagged read-only)

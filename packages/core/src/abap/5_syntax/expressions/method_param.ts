@@ -9,12 +9,12 @@ export class MethodParam {
   public runSyntax(node: ExpressionNode, scope: CurrentScope, filename: string, meta: IdentifierMeta[]): TypedIdentifier {
     const name = node.findDirectExpression(Expressions.MethodParamName);
     if (name === undefined) {
-      throw new Error("method_parameter.ts, todo, handle pass by value and reference");
+      throw new Error("MethodParam, todo, handle pass by value and reference");
     }
 
     const type = node.findDirectExpression(Expressions.TypeParam);
     if (type === undefined) {
-      throw new Error("method_parameter.ts, unexpected structure");
+      throw new Error("MethodParam, unexpected structure");
     }
 
     const found = new BasicTypes(filename, scope).parseType(type);

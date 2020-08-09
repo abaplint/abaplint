@@ -13,6 +13,7 @@ import {StringTemplate} from "./string_template";
 import {ValueBody} from "./value_body";
 import {Cond} from "./cond";
 import {ReduceBody} from "./reduce_body";
+import {ReferenceType} from "../_reference";
 
 export class Source {
   public runSyntax(
@@ -27,11 +28,14 @@ export class Source {
     if (first instanceof TokenNode) {
       const tok = first.getFirstToken().getStr().toUpperCase();
       switch (tok) {
+        case "(":
+        case "-":
+          break;
         case "BOOLC":
-          new Cond().runSyntax(node.findDirectExpression(Expressions.Cond), scope);
+          new Cond().runSyntax(node.findDirectExpression(Expressions.Cond), scope, filename);
           return new StringType();
         case "XSDBOOL":
-          new Cond().runSyntax(node.findDirectExpression(Expressions.Cond), scope);
+          new Cond().runSyntax(node.findDirectExpression(Expressions.Cond), scope, filename);
           return new CharacterType(1);
         case "REDUCE":
         {
@@ -62,9 +66,11 @@ export class Source {
       if (first instanceof ExpressionNode && first.get() instanceof Expressions.MethodCallChain) {
         context = new MethodCallChain().runSyntax(first, scope, filename, targetType);
       } else if (first instanceof ExpressionNode && first.get() instanceof Expressions.FieldChain) {
-        context = new FieldChain().runSyntax(first, scope, filename);
+        context = new FieldChain().runSyntax(first, scope, filename, ReferenceType.DataReadReference);
       } else if (first instanceof ExpressionNode && first.get() instanceof Expressions.StringTemplate) {
         context = new StringTemplate().runSyntax(first, scope, filename);
+      } else if (first instanceof ExpressionNode && first.get() instanceof Expressions.Source) {
+        context = new Source().runSyntax(first, scope, filename);
       } else if (first instanceof ExpressionNode && first.get() instanceof Expressions.Constant) {
         context = new Constant().runSyntax(first);
       } else if (first instanceof ExpressionNode && first.get() instanceof Expressions.ArrowOrDash) {

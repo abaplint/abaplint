@@ -933,7 +933,8 @@ ENDTRY.`;
   });
 
   it("LOOP into inline fieldsymbol", () => {
-    const abap = `DATA tab TYPE STANDARD TABLE OF string WITH DEFAULT KEY.
+    const abap = `
+  DATA tab TYPE STANDARD TABLE OF string WITH DEFAULT KEY.
   LOOP AT tab INTO FIELD-SYMBOL(<row>).
   ENDLOOP.`;
     const identifier = resolveVariable(abap, "<row>");
@@ -1358,7 +1359,9 @@ ENDCASE.`;
   });
 
   it("FIND RESULTS inline", () => {
-    const abap = `FIND ALL OCCURRENCES OF REGEX  'bar' IN lv_string RESULTS DATA(blanks).`;
+    const abap = `
+    DATA lv_string TYPE string.
+    FIND ALL OCCURRENCES OF REGEX  'bar' IN lv_string RESULTS DATA(blanks).`;
     const identifier = resolveVariable(abap, "blanks");
     expect(identifier).to.not.equal(undefined);
     expect(identifier?.getType()).to.be.instanceof(Basic.TableType);

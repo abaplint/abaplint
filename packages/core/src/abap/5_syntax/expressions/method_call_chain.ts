@@ -74,7 +74,7 @@ export class MethodCallChain {
       } else if (current instanceof ExpressionNode && current.get() instanceof Expressions.ComponentName) {
         context = new ComponentName().runSyntax(context, current);
       } else if (current instanceof ExpressionNode && current.get() instanceof Expressions.AttributeName) {
-        context = new AttributeName().runSyntax(context, current, scope);
+        context = new AttributeName().runSyntax(context, current, scope, filename);
       }
     }
 
@@ -94,7 +94,7 @@ export class MethodCallChain {
       }
       return new ObjectReferenceType(className);
     } else if (first instanceof ExpressionNode && first.get() instanceof Expressions.FieldChain) {
-      return new FieldChain().runSyntax(first, scope, filename);
+      return new FieldChain().runSyntax(first, scope, filename, ReferenceType.DataReadReference);
     } else if (first instanceof ExpressionNode && first.get() instanceof Expressions.NewObject) {
       return new NewObject().runSyntax(first, scope, targetType, filename);
     } else if (first instanceof ExpressionNode && first.get() instanceof Expressions.Cast) {

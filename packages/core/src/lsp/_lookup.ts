@@ -17,7 +17,8 @@ import {IClassDefinition} from "../abap/types/_class_definition";
 export interface LSPLookupResult {
   hover: string | undefined;               // in markdown
   definition: LServer.Location | undefined // used for go to definition
-  definitionId?: Identifier
+  definitionId?: Identifier,
+  scope?: ISpaghettiScopeNode,
 }
 
 export class LSPLookup {
@@ -36,7 +37,7 @@ export class LSPLookup {
 
     const form = this.findForm(cursor, bottomScope);
     if (form) {
-      return {hover: "Call FORM", definition: LSPUtils.identiferToLocation(form)};
+      return {hover: "Call FORM", definition: LSPUtils.identiferToLocation(form), scope: bottomScope};
     }
 
     const variable = bottomScope.findVariable(cursor.token.getStr());
@@ -55,19 +56,19 @@ export class LSPLookup {
         value = value + "\n\nIs generic type";
       }
       const location = LSPUtils.identiferToLocation(variable);
-      return {hover: value, definition: location, definitionId: variable};
+      return {hover: value, definition: location, definitionId: variable, scope: bottomScope};
     }
 
     const type = bottomScope.findType(cursor.token.getStr());
     if (type instanceof TypedIdentifier) {
       const value = "Resolved type";
-      return {hover: value, definition: undefined};
+      return {hover: value, definition: undefined, scope: bottomScope};
     }
 
     const ref = this.searchReferences(bottomScope, cursor.token);
     if (ref !== undefined) {
       const value = this.referenceHover(ref, bottomScope);
-      return {hover: value, definition: LSPUtils.identiferToLocation(ref.resolved)};
+      return {hover: value, definition: LSPUtils.identiferToLocation(ref.resolved), scope: bottomScope};
     }
 
     return undefined;

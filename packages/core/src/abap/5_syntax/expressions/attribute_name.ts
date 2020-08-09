@@ -6,9 +6,17 @@ import {ObjectReferenceType} from "../../types/basic/object_reference_type";
 import {ObjectOriented} from "../_object_oriented";
 import {CurrentScope} from "../_current_scope";
 import {DataReference} from "../../types/basic/data_reference_type";
+import {ReferenceType} from "../_reference";
+import {TypedIdentifier} from "../../types/_typed_identifier";
 
 export class AttributeName {
-  public runSyntax(context: AbstractType | undefined, node: INode, scope: CurrentScope): AbstractType | undefined {
+  public runSyntax(
+    context: AbstractType | undefined,
+    node: INode,
+    scope: CurrentScope,
+    filename: string,
+    type?: ReferenceType | undefined): AbstractType | undefined {
+
     if (context instanceof VoidType) {
       return context;
     }
@@ -22,14 +30,19 @@ export class AttributeName {
       if (def === undefined) {
         throw new Error("Definition for \"" + context.getName() + "\" not found in scope");
       }
-      const name = node.getFirstToken().getStr();
-      ret = helper.searchAttributeName(def, name)?.getType();
-      if (ret === undefined) {
-        ret = helper.searchConstantName(def, name)?.getType();
+      const token = node.getFirstToken();
+      const name = token.getStr();
+      let found: TypedIdentifier | undefined = helper.searchAttributeName(def, name);
+      if (found === undefined) {
+        found = helper.searchConstantName(def, name);
       }
-      if (ret === undefined) {
+      if (found === undefined) {
         throw new Error("Attribute or constant \"" + name + "\" not found in \"" + def.getName() + "\"");
       }
+      if (type) {
+        scope.addReference(token, found, type, filename);
+      }
+      ret = found.getType();
     } else if (context instanceof DataReference) {
       const sub = context.getType();
       if (!(sub instanceof StructureType)) {
