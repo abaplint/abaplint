@@ -5,6 +5,7 @@ import {VoidType} from "../../types/basic";
 import {InlineData} from "../expressions/inline_data";
 import {Target} from "../expressions/target";
 import {SQLFrom} from "../expressions/sql_from";
+import {Source} from "../expressions/source";
 
 export class Select {
   public runSyntax(node: StatementNode, scope: CurrentScope, filename: string): void {
@@ -26,6 +27,10 @@ export class Select {
 
     for (const t of node.findAllExpressions(Expressions.Target)) {
       new Target().runSyntax(t, scope, filename);
+    }
+
+    for (const s of node.findAllExpressions(Expressions.Source)) {
+      new Source().runSyntax(s, scope, filename);
     }
 
   }

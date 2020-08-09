@@ -2442,6 +2442,23 @@ ENDDO.`;
     expect(issues[0].getMessage()).to.include("something");
   });
 
+  it("SELECT something", () => {
+    const abap = `
+    SELECT SINGLE * FROM bar INTO @DATA(sdf) WHERE field = @something.
+    WRITE sdf.
+    `;
+    const issues = runProgram(abap);
+    expect(issues.length).to.equals(1);
+    expect(issues[0].getMessage()).to.include("something");
+  });
+
+  it("INSERT database something", () => {
+    const abap = `INSERT databasetabl FROM TABLE something.`;
+    const issues = runProgram(abap);
+    expect(issues.length).to.equals(1);
+    expect(issues[0].getMessage()).to.include("something");
+  });
+
 // todo, static method cannot access instance attributes
 // todo, can a private method access protected attributes?
 // todo, readonly fields(constants + enums + attributes flagged read-only)

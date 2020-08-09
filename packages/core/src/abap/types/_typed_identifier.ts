@@ -7,6 +7,7 @@ export const enum IdentifierMeta {
   MethodExporting = "exporting",
   MethodChanging = "changing",
   MethodReturning = "returning",
+  EventParameter = "event_parameter",
   ReadOnly = "read_only",
   InlineDefinition = "inline",
   BuiltIn = "built-in",

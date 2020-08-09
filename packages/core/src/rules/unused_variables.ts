@@ -6,7 +6,7 @@ import {IObject} from "../objects/_iobject";
 import {SyntaxLogic} from "../abap/5_syntax/syntax";
 import {ABAPObject} from "../objects/_abap_object";
 import {ScopeType} from "../abap/5_syntax/_scope_type";
-import {TypedIdentifier} from "../abap/types/_typed_identifier";
+import {TypedIdentifier, IdentifierMeta} from "../abap/types/_typed_identifier";
 import {Interface} from "../objects";
 import {ISpaghettiScopeNode, IScopeVariable} from "../abap/5_syntax/_spaghetti_scope";
 import {References} from "../lsp/references";
@@ -25,8 +25,7 @@ export class UnusedVariables implements IRule {
       key: "unused_variables",
       title: "Unused variables",
       shortDescription: `Checks for unused variables`,
-      extendedInformation: `WARNING: slow!
-Doesnt currently work for public attributes and class prefixed attribute usage`,
+      extendedInformation: `Experimental, might give false positives`,
       tags: [RuleTag.Experimental, RuleTag.Quickfix],
     };
   }
@@ -96,8 +95,10 @@ Doesnt currently work for public attributes and class prefixed attribute usage`,
     const ret: Issue[] = [];
 
     for (const v of node.getData().vars) {
-      if (v.name === "me" || v.name === "super") {
-        continue; // todo, this is a workaround, these should somehow be typed to built-in
+      if (v.name === "me"
+          || v.name === "super"
+          || v.identifier.getMeta().includes(IdentifierMeta.EventParameter)) {
+        continue; // todo, workaround for "me" and "super", these should somehow be typed to built-in
       }
       if (obj.containsFile(v.identifier.getFilename())
           && this.isUsed(v.identifier, node) === false) {

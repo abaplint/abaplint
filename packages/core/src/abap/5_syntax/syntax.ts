@@ -75,7 +75,11 @@ import {GetLocale} from "./statements/get_locale";
 import {SetLocale} from "./statements/set_locale";
 import {Sort} from "./statements/sort";
 import {ReadReport} from "./statements/read_report";
-
+import {AuthorityCheck} from "./statements/authority_check";
+import {InsertReport} from "./statements/insert_report";
+import {GetReference} from "./statements/get_reference";
+import {InsertDatabase} from "./statements/insert_database";
+import {DeleteDatabase} from "./statements/delete_database";
 
 export class SyntaxLogic {
   private currentFile: ABAPFile;
@@ -300,6 +304,10 @@ export class SyntaxLogic {
       new Convert().runSyntax(node, this.scope, filename);
     } else if (s instanceof Statements.When) {
       new When().runSyntax(node, this.scope, filename);
+    } else if (s instanceof Statements.InsertDatabase) {
+      new InsertDatabase().runSyntax(node, this.scope, filename);
+    } else if (s instanceof Statements.DeleteDatabase) {
+      new DeleteDatabase().runSyntax(node, this.scope, filename);
     } else if (s instanceof Statements.Sort) {
       new Sort().runSyntax(node, this.scope, filename);
     } else if (s instanceof Statements.ReadReport) {
@@ -325,6 +333,8 @@ export class SyntaxLogic {
       new CallTransformation().runSyntax(node, this.scope, filename);
     } else if (s instanceof Statements.GetLocale) {
       new GetLocale().runSyntax(node, this.scope, filename);
+    } else if (s instanceof Statements.GetReference) {
+      new GetReference().runSyntax(node, this.scope, filename);
     } else if (s instanceof Statements.ElseIf) {
       new ElseIf().runSyntax(node, this.scope, filename);
     } else if (s instanceof Statements.CreateObject) {
@@ -341,6 +351,10 @@ export class SyntaxLogic {
       new Append().runSyntax(node, this.scope, filename);
     } else if (s instanceof Statements.Write) {
       new Write().runSyntax(node, this.scope, filename);
+    } else if (s instanceof Statements.AuthorityCheck) {
+      new AuthorityCheck().runSyntax(node, this.scope, filename);
+    } else if (s instanceof Statements.InsertReport) {
+      new InsertReport().runSyntax(node, this.scope, filename);
     } else if (s instanceof Statements.SelectionScreen) {
       new SelectionScreen().runSyntax(node, this.scope, filename);
     } else if (s instanceof Statements.Ranges) {

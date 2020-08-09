@@ -26,6 +26,10 @@ export class InsertInternal {
       new Source().runSyntax(s, scope, filename);
     }
 
+    for (const s of node.findDirectExpressions(Expressions.SimpleSource)) {
+      new Source().runSyntax(s, scope, filename);
+    }
+
     for (const t of node.findDirectExpressions(Expressions.Target)) {
       new Target().runSyntax(t, scope, filename);
     }

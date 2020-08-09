@@ -82,12 +82,12 @@ export class MethodParameters implements IMethodParameters{
         const search = token.getStr().toUpperCase().replace("!", "");
         const found = event?.getParameters().find(p => p.getName().toUpperCase() === search);
         if (found) {
-          this.importing.push(new TypedIdentifier(token, this.filename, found.getType()));
+          this.importing.push(new TypedIdentifier(token, this.filename, found.getType(), [IdentifierMeta.EventParameter]));
         } else if (doVoid) {
-          this.importing.push(new TypedIdentifier(token, this.filename, new VoidType(className)));
+          this.importing.push(new TypedIdentifier(token, this.filename, new VoidType(className), [IdentifierMeta.EventParameter]));
         } else {
           const type = new UnknownType(`handler parameter not found "${search}"`);
-          this.importing.push(new TypedIdentifier(token, this.filename, type));
+          this.importing.push(new TypedIdentifier(token, this.filename, type, [IdentifierMeta.EventParameter]));
         }
       }
     }
