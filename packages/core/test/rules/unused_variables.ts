@@ -149,6 +149,14 @@ ENDCLASS.`;
     expect(issues.length).to.equal(0);
   });
 
+  it("CALL FUNCTION STARTING NEW TASK", async () => {
+    const abap = `
+    DATA lv_task TYPE c.
+    CALL FUNCTION 'ZFOOBAR' STARTING NEW TASK lv_task.`;
+    const issues = await runSingle(abap);
+    expect(issues.length).to.equal(0);
+  });
+
   ///////////////
 
   it.skip("DATA with dashes", async () => {

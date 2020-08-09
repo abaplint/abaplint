@@ -7,6 +7,8 @@ import {Source} from "../expressions/source";
 import {InlineData} from "../expressions/inline_data";
 import {InlineFS} from "../expressions/inline_fs";
 import {FSTarget} from "../expressions/fstarget";
+import {ComponentCompare} from "../expressions/component_compare";
+import {ComponentCond} from "../expressions/component_cond";
 
 export class Loop {
   public runSyntax(node: StatementNode, scope: CurrentScope, filename: string): void {
@@ -47,6 +49,14 @@ export class Loop {
       if (fstarget) {
         new FSTarget().runSyntax(fstarget, scope, filename, sourceType);
       }
+    }
+
+    for (const t of node.findDirectExpressions(Expressions.ComponentCompare)) {
+      new ComponentCompare().runSyntax(t, scope, filename);
+    }
+
+    for (const t of node.findDirectExpressions(Expressions.ComponentCond)) {
+      new ComponentCond().runSyntax(t, scope, filename);
     }
 
   }

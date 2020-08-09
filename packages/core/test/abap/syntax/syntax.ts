@@ -2344,6 +2344,45 @@ ENDDO.`;
     expect(issues[0].getMessage()).to.include("<something>");
   });
 
+  it("DELETE tab something", () => {
+    const abap = `
+    DATA tab TYPE STANDARD TABLE OF string.
+    DELETE tab WHERE table_line = something.
+    `;
+    const issues = runProgram(abap);
+    expect(issues.length).to.equals(1);
+    expect(issues[0].getMessage()).to.include("something");
+  });
+
+  it("LOOP AT WHERE something", () => {
+    const abap = `
+    DATA lt_remote TYPE STANDARD TABLE OF string.
+    LOOP AT lt_remote TRANSPORTING NO FIELDS WHERE table_line = something.
+    ENDLOOP.
+    `;
+    const issues = runProgram(abap);
+    expect(issues.length).to.equals(1);
+    expect(issues[0].getMessage()).to.include("something");
+  });
+
+  it("WHEN something", () => {
+    const abap = `
+    CASE |bar|.
+      WHEN something.
+    ENDCASE.
+    `;
+    const issues = runProgram(abap);
+    expect(issues.length).to.equals(1);
+    expect(issues[0].getMessage()).to.include("something");
+  });
+
+  it("CREATE DATA something", () => {
+    const abap = `CREATE DATA something TYPE REF TO ('SFSDFS').`;
+    const issues = runProgram(abap);
+    expect(issues.length).to.equals(1);
+    expect(issues[0].getMessage()).to.include("something");
+  });
+
 // todo, static method cannot access instance attributes
 // todo, can a private method access protected attributes?
 // todo, readonly fields(constants + enums + attributes flagged read-only)

@@ -66,6 +66,10 @@ import {Clear} from "./statements/clear";
 import {Replace} from "./statements/replace";
 import {GetBit} from "./statements/get_bit";
 import {Raise} from "./statements/raise";
+import {DeleteInternal} from "./statements/delete_internal";
+import {Receive} from "./statements/receive";
+import {When} from "./statements/when";
+import {CreateData} from "./statements/create_data";
 
 
 export class SyntaxLogic {
@@ -271,8 +275,12 @@ export class SyntaxLogic {
       new Split().runSyntax(node, this.scope, filename);
     } else if (s instanceof Statements.CallFunction) {
       new CallFunction().runSyntax(node, this.scope, filename);
+    } else if (s instanceof Statements.DeleteInternal) {
+      new DeleteInternal().runSyntax(node, this.scope, filename);
     } else if (s instanceof Statements.Clear) {
       new Clear().runSyntax(node, this.scope, filename);
+    } else if (s instanceof Statements.Receive) {
+      new Receive().runSyntax(node, this.scope, filename);
     } else if (s instanceof Statements.GetBit) {
       new GetBit().runSyntax(node, this.scope, filename);
     } else if (s instanceof Statements.Select) {
@@ -283,6 +291,8 @@ export class SyntaxLogic {
       new Assign().runSyntax(node, this.scope, filename);
     } else if (s instanceof Statements.Convert) {
       new Convert().runSyntax(node, this.scope, filename);
+    } else if (s instanceof Statements.When) {
+      new When().runSyntax(node, this.scope, filename);
     } else if (s instanceof Statements.Do) {
       new Do().runSyntax(node, this.scope, filename);
     } else if (s instanceof Statements.Describe) {
@@ -303,6 +313,8 @@ export class SyntaxLogic {
       new ElseIf().runSyntax(node, this.scope, filename);
     } else if (s instanceof Statements.CreateObject) {
       new CreateObject().runSyntax(node, this.scope, filename);
+    } else if (s instanceof Statements.CreateData) {
+      new CreateData().runSyntax(node, this.scope, filename);
     } else if (s instanceof Statements.Case) {
       new Case().runSyntax(node, this.scope, filename);
     } else if (s instanceof Statements.Raise) {

@@ -99,8 +99,8 @@ Doesnt currently work for public attributes and class prefixed attribute usage`,
       if (v.name === "me" || v.name === "super") {
         continue; // todo, this is a workaround, these should somehow be typed to built-in
       }
-      if (this.isUsed(v.identifier) === false
-          && obj.containsFile(v.identifier.getFilename())) {
+      if (obj.containsFile(v.identifier.getFilename())
+          && this.isUsed(v.identifier, node) === false) {
         const message = "Variable \"" + v.identifier.getName() + "\" not used";
         const fix = this.buildFix(v, obj);
         ret.push(Issue.atIdentifier(v.identifier, message, this.getMetadata().key, fix));
@@ -110,10 +110,10 @@ Doesnt currently work for public attributes and class prefixed attribute usage`,
     return ret;
   }
 
-  private isUsed(id: TypedIdentifier): boolean {
+  private isUsed(id: TypedIdentifier, node: ISpaghettiScopeNode): boolean {
     // todo, this is slow, but less false positives than the previous implementation
     // todo, should ignore dependencies
-    const found = new References(this.reg).searchEverything(id);
+    const found = new References(this.reg).search(id, node);
     return found.length > 1;
   }
 
