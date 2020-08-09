@@ -2428,6 +2428,20 @@ ENDDO.`;
     expect(issues[0].getMessage()).to.include("something");
   });
 
+  it("dynamic method call, something", () => {
+    const abap = `CALL METHOD (something)=>bar.`;
+    const issues = runProgram(abap);
+    expect(issues.length).to.equals(1);
+    expect(issues[0].getMessage()).to.include("something");
+  });
+
+  it("SORT something", () => {
+    const abap = `SORT something BY ('ABC').`;
+    const issues = runProgram(abap);
+    expect(issues.length).to.equals(1);
+    expect(issues[0].getMessage()).to.include("something");
+  });
+
 // todo, static method cannot access instance attributes
 // todo, can a private method access protected attributes?
 // todo, readonly fields(constants + enums + attributes flagged read-only)

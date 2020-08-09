@@ -73,6 +73,8 @@ import {CreateData} from "./statements/create_data";
 import {CallTransformation} from "./statements/call_transformation";
 import {GetLocale} from "./statements/get_locale";
 import {SetLocale} from "./statements/set_locale";
+import {Sort} from "./statements/sort";
+import {ReadReport} from "./statements/read_report";
 
 
 export class SyntaxLogic {
@@ -298,6 +300,10 @@ export class SyntaxLogic {
       new Convert().runSyntax(node, this.scope, filename);
     } else if (s instanceof Statements.When) {
       new When().runSyntax(node, this.scope, filename);
+    } else if (s instanceof Statements.Sort) {
+      new Sort().runSyntax(node, this.scope, filename);
+    } else if (s instanceof Statements.ReadReport) {
+      new ReadReport().runSyntax(node, this.scope, filename);
     } else if (s instanceof Statements.Do) {
       new Do().runSyntax(node, this.scope, filename);
     } else if (s instanceof Statements.Describe) {
@@ -314,6 +320,7 @@ export class SyntaxLogic {
       new WhenType().runSyntax(node, this.scope, filename);
     } else if (s instanceof Statements.If) {
       new If().runSyntax(node, this.scope, filename);
+
     } else if (s instanceof Statements.CallTransformation) {
       new CallTransformation().runSyntax(node, this.scope, filename);
     } else if (s instanceof Statements.GetLocale) {
