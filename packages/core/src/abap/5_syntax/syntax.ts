@@ -85,6 +85,9 @@ import {SyntaxCheck} from "./statements/syntax_check";
 import {Import} from "./statements/import";
 import {Export} from "./statements/export";
 import {Scan} from "./statements/scan";
+import {Submit} from "./statements/submit";
+import {OpenDataset} from "./statements/open_dataset";
+import {CloseDataset} from "./statements/close_dataset";
 
 export class SyntaxLogic {
   private currentFile: ABAPFile;
@@ -283,6 +286,8 @@ export class SyntaxLogic {
       new Catch().runSyntax(node, this.scope, filename);
     } else if (s instanceof Statements.Loop) {
       new Loop().runSyntax(node, this.scope, filename);
+    } else if (s instanceof Statements.Submit) {
+      new Submit().runSyntax(node, this.scope, filename);
     } else if (s instanceof Statements.ReadTable) {
       new ReadTable().runSyntax(node, this.scope, filename);
     } else if (s instanceof Statements.SyntaxCheck) {
@@ -323,6 +328,12 @@ export class SyntaxLogic {
       new DeleteDatabase().runSyntax(node, this.scope, filename);
     } else if (s instanceof Statements.Sort) {
       new Sort().runSyntax(node, this.scope, filename);
+
+    } else if (s instanceof Statements.OpenDataset) {
+      new OpenDataset().runSyntax(node, this.scope, filename);
+    } else if (s instanceof Statements.CloseDataset) {
+      new CloseDataset().runSyntax(node, this.scope, filename);
+
     } else if (s instanceof Statements.ReadReport) {
       new ReadReport().runSyntax(node, this.scope, filename);
     } else if (s instanceof Statements.Do) {
