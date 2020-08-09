@@ -2459,6 +2459,19 @@ ENDDO.`;
     expect(issues[0].getMessage()).to.include("something");
   });
 
+  it("SELECT, for all entries", () => {
+    const abap = `
+TYPES: BEGIN OF ty_type,
+         field TYPE c LENGTH 1,
+       END OF ty_type.
+DATA: lt_fae TYPE STANDARD TABLE OF ty_type.
+SELECT column FROM table INTO TABLE @DATA(lt_results)
+  FOR ALL ENTRIES IN lt_fae
+  WHERE column = @lt_fae-field.`;
+    const issues = runProgram(abap);
+    expect(issues.length).to.equals(0);
+  });
+
 // todo, static method cannot access instance attributes
 // todo, can a private method access protected attributes?
 // todo, readonly fields(constants + enums + attributes flagged read-only)

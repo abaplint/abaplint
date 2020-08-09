@@ -35,7 +35,7 @@ for (let name in map) {
   comment += " " + map[name].before.length + " -> " + map[name].after.length + "\n";
 
   for (const i of map[name].after) {
-    comment += "`" + i.file + "`: " + i.description + "\n"
+    comment += "`" + i.file + "`: " + i.description + ", " + i.start.row + "\n"
   }
 }
 comment += "\nUpdated: " + new Date().toISOString() + "\n";

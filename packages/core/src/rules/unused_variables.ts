@@ -25,7 +25,7 @@ export class UnusedVariables implements IRule {
       key: "unused_variables",
       title: "Unused variables",
       shortDescription: `Checks for unused variables`,
-      extendedInformation: `Experimental, might give false positives`,
+      extendedInformation: `Experimental, might give false positives. Skips event parameters`,
       tags: [RuleTag.Experimental, RuleTag.Quickfix],
     };
   }

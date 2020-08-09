@@ -8,5 +8,6 @@ export enum ScopeType {
   FunctionModule = "function",
   Global = "_global",
   Method = "method",
+  Select = "select",
   Program = "_program",
 }

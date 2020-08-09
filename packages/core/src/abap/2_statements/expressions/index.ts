@@ -123,6 +123,7 @@ export * from "./sql_compare";
 export * from "./sql_cond";
 export * from "./sql_field_list";
 export * from "./sql_field_name";
+export * from "./sql_for_all_entries";
 export * from "./sql_from_source";
 export * from "./sql_from";
 export * from "./sql_group_by";
