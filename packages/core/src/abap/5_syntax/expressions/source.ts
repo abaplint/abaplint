@@ -28,11 +28,14 @@ export class Source {
     if (first instanceof TokenNode) {
       const tok = first.getFirstToken().getStr().toUpperCase();
       switch (tok) {
+        case "(":
+        case "-":
+          break;
         case "BOOLC":
-          new Cond().runSyntax(node.findDirectExpression(Expressions.Cond), scope);
+          new Cond().runSyntax(node.findDirectExpression(Expressions.Cond), scope, filename);
           return new StringType();
         case "XSDBOOL":
-          new Cond().runSyntax(node.findDirectExpression(Expressions.Cond), scope);
+          new Cond().runSyntax(node.findDirectExpression(Expressions.Cond), scope, filename);
           return new CharacterType(1);
         case "REDUCE":
         {

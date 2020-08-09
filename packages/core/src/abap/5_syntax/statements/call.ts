@@ -3,6 +3,8 @@ import {StatementNode} from "../../nodes";
 import {CurrentScope} from "../_current_scope";
 import {MethodCallChain} from "../expressions/method_call_chain";
 import {MethodSource} from "../expressions/method_source";
+import {MethodCallBody} from "../expressions/method_call_body";
+import {VoidType} from "../../types/basic/void_type";
 
 export class Call {
   public runSyntax(node: StatementNode, scope: CurrentScope, filename: string): void {
@@ -11,17 +13,18 @@ export class Call {
       new MethodCallChain().runSyntax(chain, scope, filename);
       return;
     }
-/*
-    const dynamic = node.findDirectExpression(Expressions.MethodSource)?.findDirectExpression(Expressions.Dynamic);
-    if (dynamic) {
-      return;
-    }
-*/
+
     const methodSource = node.findDirectExpression(Expressions.MethodSource);
     if (methodSource === undefined) {
       throw new Error("Call, child MethodSource not found");
     }
     new MethodSource().runSyntax(methodSource, scope, filename);
+
+    const body = node.findDirectExpression(Expressions.MethodCallBody);
+    if (body) {
+      // todo, resove the method definition above and pass, if possible, in case of dynamic pass void
+      new MethodCallBody().runSyntax(body, scope, filename, new VoidType("CallTODO"));
+    }
 
   }
 }

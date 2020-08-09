@@ -70,6 +70,9 @@ import {DeleteInternal} from "./statements/delete_internal";
 import {Receive} from "./statements/receive";
 import {When} from "./statements/when";
 import {CreateData} from "./statements/create_data";
+import {CallTransformation} from "./statements/call_transformation";
+import {GetLocale} from "./statements/get_locale";
+import {SetLocale} from "./statements/set_locale";
 
 
 export class SyntaxLogic {
@@ -289,6 +292,8 @@ export class SyntaxLogic {
       new InsertInternal().runSyntax(node, this.scope, filename);
     } else if (s instanceof Statements.Assign) {
       new Assign().runSyntax(node, this.scope, filename);
+    } else if (s instanceof Statements.SetLocale) {
+      new SetLocale().runSyntax(node, this.scope, filename);
     } else if (s instanceof Statements.Convert) {
       new Convert().runSyntax(node, this.scope, filename);
     } else if (s instanceof Statements.When) {
@@ -309,6 +314,10 @@ export class SyntaxLogic {
       new WhenType().runSyntax(node, this.scope, filename);
     } else if (s instanceof Statements.If) {
       new If().runSyntax(node, this.scope, filename);
+    } else if (s instanceof Statements.CallTransformation) {
+      new CallTransformation().runSyntax(node, this.scope, filename);
+    } else if (s instanceof Statements.GetLocale) {
+      new GetLocale().runSyntax(node, this.scope, filename);
     } else if (s instanceof Statements.ElseIf) {
       new ElseIf().runSyntax(node, this.scope, filename);
     } else if (s instanceof Statements.CreateObject) {

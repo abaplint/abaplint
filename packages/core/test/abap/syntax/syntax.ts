@@ -2289,6 +2289,17 @@ ENDDO.`;
     expect(issues[0].getMessage()).to.include("something");
   });
 
+  it("PERFORM something, CHANGING, dynamic", () => {
+    const abap = `
+    FORM foo CHANGING bar foo.
+    ENDFORM.
+    DATA lv_bar.
+    PERFORM ('FOO') CHANGING lv_bar something.`;
+    const issues = runProgram(abap);
+    expect(issues.length).to.equals(1);
+    expect(issues[0].getMessage()).to.include("something");
+  });
+
   it("INDEX something", () => {
     const abap = `
     DATA tab TYPE STANDARD TABLE OF string.
@@ -2378,6 +2389,40 @@ ENDDO.`;
 
   it("CREATE DATA something", () => {
     const abap = `CREATE DATA something TYPE REF TO ('SFSDFS').`;
+    const issues = runProgram(abap);
+    expect(issues.length).to.equals(1);
+    expect(issues[0].getMessage()).to.include("something");
+  });
+
+  it("SPLIT INTO TABLE something", () => {
+    const abap = `SPLIT |foobar| AT |sdf| INTO TABLE something.`;
+    const issues = runProgram(abap);
+    expect(issues.length).to.equals(1);
+    expect(issues[0].getMessage()).to.include("something");
+  });
+
+  it("CALL METHOD with dynamic, expect error", () => {
+    const abap = `
+  DATA ref TYPE REF TO object.
+  CALL METHOD ref->('METHOD')
+    RECEIVING
+      result = something.`;
+    const issues = runProgram(abap);
+    expect(issues.length).to.equals(1);
+    expect(issues[0].getMessage()).to.include("something");
+  });
+
+  it("BOOLC, something", () => {
+    const abap = `WRITE boolc( something = |sdf| ).`;
+    const issues = runProgram(abap);
+    expect(issues.length).to.equals(1);
+    expect(issues[0].getMessage()).to.include("something");
+  });
+
+  it("calculation, something", () => {
+    const abap = `
+    DATA lv_f TYPE f.
+    lv_f = ( something / 2 ) * 100.`;
     const issues = runProgram(abap);
     expect(issues.length).to.equals(1);
     expect(issues[0].getMessage()).to.include("something");
