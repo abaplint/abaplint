@@ -112,8 +112,6 @@ export class UnusedVariables implements IRule {
   }
 
   private isUsed(id: TypedIdentifier, node: ISpaghettiScopeNode): boolean {
-    // todo, this is slow, but less false positives than the previous implementation
-    // todo, should ignore dependencies
     const found = new References(this.reg).search(id, node);
     return found.length > 1;
   }

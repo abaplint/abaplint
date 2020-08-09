@@ -51,6 +51,10 @@ export class References {
     } else {
       for (const o of this.reg.getObjects()) {
         if (o instanceof ABAPObject) {
+          // do not search in dependencies
+          if (this.reg.isDependency(o)) {
+            continue;
+          }
           ret = ret.concat(this.findReferences(new SyntaxLogic(this.reg, o).run().spaghetti.getTop(), identifier));
         }
       }
