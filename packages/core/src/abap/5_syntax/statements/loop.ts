@@ -9,6 +9,7 @@ import {InlineFS} from "../expressions/inline_fs";
 import {FSTarget} from "../expressions/fstarget";
 import {ComponentCompare} from "../expressions/component_compare";
 import {ComponentCond} from "../expressions/component_cond";
+import {Dynamic} from "../expressions/dynamic";
 
 export class Loop {
   public runSyntax(node: StatementNode, scope: CurrentScope, filename: string): void {
@@ -18,11 +19,12 @@ export class Loop {
       target = node.findDirectExpression(Expressions.FSTarget);
     }
 
-    let source = node.findDirectExpression(Expressions.BasicSource);
-    if (source === undefined) {
-      source = node.findDirectExpression(Expressions.Source);
+    const sources = node.findDirectExpressions(Expressions.Source);
+    let firstSource = node.findDirectExpression(Expressions.BasicSource);
+    if (firstSource === undefined) {
+      firstSource = sources[0];
     }
-    let sourceType = source ? new Source().runSyntax(source, scope, filename, targetType) : undefined;
+    let sourceType = firstSource ? new Source().runSyntax(firstSource, scope, filename, targetType) : undefined;
 
     if (sourceType === undefined) {
       throw new Error("No source type determined");
@@ -41,6 +43,13 @@ export class Loop {
       new InlineData().runSyntax(inline, scope, filename, sourceType);
     }
 
+    for (const s of sources) {
+      if (s === firstSource) {
+        continue;
+      }
+      new Source().runSyntax(s, scope, filename);
+    }
+
     const inlinefs = target?.findDirectExpression(Expressions.InlineFS);
     if (inlinefs) {
       new InlineFS().runSyntax(inlinefs, scope, filename, sourceType);
@@ -57,6 +66,10 @@ export class Loop {
 
     for (const t of node.findDirectExpressions(Expressions.ComponentCond)) {
       new ComponentCond().runSyntax(t, scope, filename);
+    }
+
+    for (const t of node.findDirectExpressions(Expressions.Dynamic)) {
+      new Dynamic().runSyntax(t, scope, filename);
     }
 
   }

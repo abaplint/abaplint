@@ -2472,6 +2472,28 @@ SELECT column FROM table INTO TABLE @DATA(lt_results)
     expect(issues.length).to.equals(0);
   });
 
+  it("APPEND INITIAL LINE ASSSIGNING something", () => {
+    const abap = `'
+    DATA tab TYPE STANDARD TABLE OF string.
+    APPEND INITIAL LINE TO tab ASSIGNING <something>.
+    `;
+    const issues = runProgram(abap);
+    expect(issues.length).to.equals(1);
+    expect(issues[0].getMessage()).to.include("<something>");
+  });
+
+  it("LOOP AT FROM something", () => {
+    const abap = `'
+  DATA tab TYPE STANDARD TABLE OF string.
+  LOOP AT tab INTO DATA(row) FROM something.
+    WRITE row.
+  ENDLOOP.
+    `;
+    const issues = runProgram(abap);
+    expect(issues.length).to.equals(1);
+    expect(issues[0].getMessage()).to.include("something");
+  });
+
 // todo, static method cannot access instance attributes
 // todo, can a private method access protected attributes?
 // todo, readonly fields(constants + enums + attributes flagged read-only)

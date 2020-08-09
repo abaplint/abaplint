@@ -80,6 +80,11 @@ import {InsertReport} from "./statements/insert_report";
 import {GetReference} from "./statements/get_reference";
 import {InsertDatabase} from "./statements/insert_database";
 import {DeleteDatabase} from "./statements/delete_database";
+import {ImportDynpro} from "./statements/import_dynpro";
+import {SyntaxCheck} from "./statements/syntax_check";
+import {Import} from "./statements/import";
+import {Export} from "./statements/export";
+import {Scan} from "./statements/scan";
 
 export class SyntaxLogic {
   private currentFile: ABAPFile;
@@ -280,6 +285,14 @@ export class SyntaxLogic {
       new Loop().runSyntax(node, this.scope, filename);
     } else if (s instanceof Statements.ReadTable) {
       new ReadTable().runSyntax(node, this.scope, filename);
+    } else if (s instanceof Statements.SyntaxCheck) {
+      new SyntaxCheck().runSyntax(node, this.scope, filename);
+    } else if (s instanceof Statements.Import) {
+      new Import().runSyntax(node, this.scope, filename);
+    } else if (s instanceof Statements.Export) {
+      new Export().runSyntax(node, this.scope, filename);
+    } else if (s instanceof Statements.Scan) {
+      new Scan().runSyntax(node, this.scope, filename);
     } else if (s instanceof Statements.Split) {
       new Split().runSyntax(node, this.scope, filename);
     } else if (s instanceof Statements.CallFunction) {
@@ -339,6 +352,8 @@ export class SyntaxLogic {
       new ElseIf().runSyntax(node, this.scope, filename);
     } else if (s instanceof Statements.CreateObject) {
       new CreateObject().runSyntax(node, this.scope, filename);
+    } else if (s instanceof Statements.ImportDynpro) {
+      new ImportDynpro().runSyntax(node, this.scope, filename);
     } else if (s instanceof Statements.CreateData) {
       new CreateData().runSyntax(node, this.scope, filename);
     } else if (s instanceof Statements.Case) {
