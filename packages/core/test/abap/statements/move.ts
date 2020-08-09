@@ -159,6 +159,9 @@ mock_cds_db = cl_cds_test_environment=>create_for_multiple_cds( i_for_entities =
   ( VALUE #( i_for_entity = parameter_cds-nodeactparam i_dependency_list = VALUE #( ( parameter-nodeactparam ) ) ) )
 ) ).`,
 
+
+  "DATA(bar) = + '11'.",
+  "DATA(bar) = +'sdf'.",
 ];
 
 statementType(tests, "MOVE", Statements.Move);
