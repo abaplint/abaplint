@@ -17,7 +17,7 @@ export class NamesNoDash extends ABAPRule {
 
   public getMetadata() {
     return {
-      key: "fnames_no_dash",
+      key: "names_no_dash",
       title: "No dashes in FORM and DATA names",
       shortDescription: `Checks for a "-" in FORM and DATA names`,
     };
