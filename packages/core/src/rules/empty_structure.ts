@@ -7,20 +7,22 @@ import {StructureNode} from "../abap/nodes";
 import {IRuleMetadata, RuleTag} from "./_irule";
 
 export class EmptyStructureConf extends BasicRuleConfig {
-  /** Checks for empty loop blocks */
+  /** Checks for empty LOOP blocks */
   public loop: boolean = true;
-  /** Checks for empty if blocks */
+  /** Checks for empty IF blocks */
   public if: boolean = true;
-  /** Checks for empty while blocks */
+  /** Checks for empty WHILE blocks */
   public while: boolean = true;
-  /** Checks for empty case blocks */
+  /** Checks for empty CASE blocks */
   public case: boolean = true;
-  /** Checks for empty select blockss */
+  /** Checks for empty SELECT blockss */
   public select: boolean = true;
-  /** Checks for empty do blocks */
+  /** Checks for empty DO blocks */
   public do: boolean = true;
-  /** Checks for empty at blocks */
+  /** Checks for empty AT blocks */
   public at: boolean = true;
+  /** Checks for empty TRY blocks */
+  public try: boolean = true;
 // todo, other category containing WHEN, ELSE
 }
 
@@ -86,6 +88,18 @@ export class EmptyStructure extends ABAPRule {
         const token = l.getFirstToken();
         const issue = Issue.atToken(file, token, this.getDescription(l.get().constructor.name), this.getMetadata().key);
         issues.push(issue);
+      }
+    }
+
+    if (this.getConfig().try === true) {
+      const tries = stru.findAllStructures(Structures.Try);
+      for (const t of tries) {
+        const normal = t.findDirectStructure(Structures.Normal);
+        if (normal === undefined) {
+          const token = t.getFirstToken();
+          const issue = Issue.atToken(file, token, this.getDescription(t.get().constructor.name), this.getMetadata().key);
+          issues.push(issue);
+        }
       }
     }
 
