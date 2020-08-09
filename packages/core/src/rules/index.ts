@@ -31,7 +31,7 @@ export * from "./exit_or_check";
 export * from "./exporting";
 export * from "./forbidden_identifier";
 export * from "./forbidden_void_type";
-export * from "./form_no_dash";
+export * from "./names_no_dash";
 export * from "./form_tables_obsolete";
 export * from "./fully_type_constants";
 export * from "./functional_writing";
