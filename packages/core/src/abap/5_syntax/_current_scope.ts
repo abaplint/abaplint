@@ -122,13 +122,13 @@ export class CurrentScope {
     }
   }
 
-  public addReference(token: Token | undefined, resolved: Identifier, type: ReferenceType, filename: string, extra?: IReferenceExtras) {
-    if (token === undefined) {
+  public addReference(usage: Token | undefined, referencing: Identifier, type: ReferenceType, filename: string, extra?: IReferenceExtras) {
+    if (usage === undefined) {
       return;
     }
 
-    const position = new Identifier(token, filename);
-    this.current?.getData().references.push({position, resolved, referenceType: type, extra});
+    const position = new Identifier(usage, filename);
+    this.current?.getData().references.push({position, resolved: referencing, referenceType: type, extra});
   }
 
 ///////////////////////////

@@ -24,13 +24,14 @@ for (let r of repos) {
 
 let comment = "Regression test results:\n";
 for (let name in map) {
+  const link = "[" + name + "](https://github.com/" + name + ")"
   // todo, this assumes the array content is the same
   if (map[name].before.length === map[name].after.length) {
-    comment += "- " + name + ": :green_circle: ";
+    comment += "- " + link + ": :green_circle: ";
   } else if (map[name].before.length > map[name].after.length) {
-    comment += "- " + name + ": :yellow_circle: ";
+    comment += "- " + link + ": :yellow_circle: ";
   } else {
-    comment += "- " + name + ": :red_circle:";
+    comment += "- " + link + ": :red_circle:";
   }
   comment += " " + map[name].before.length + " -> " + map[name].after.length + "\n";
 

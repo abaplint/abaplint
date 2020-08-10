@@ -7,6 +7,7 @@ import {AbstractType} from "../types/basic/_abstract_type";
 import {ScopeType} from "./_scope_type";
 import {ObjectOriented} from "./_object_oriented";
 import {ClassConstant} from "../types/class_constant";
+import {Identifier} from "../1_lexer/tokens/identifier";
 
 export class BasicTypes {
   private readonly filename: string;
@@ -185,7 +186,10 @@ export class BasicTypes {
     if (nameExpr === undefined) {
       return undefined;
     }
-    const name = nameExpr.getFirstToken();
+    let name = nameExpr.getFirstToken();
+    if (nameExpr.countTokens() > 1) { // workaround for names with dashes
+      name = new Identifier(name.getStart(), nameExpr.concatTokens());
+    }
 
     const found = this.parseType(node);
 

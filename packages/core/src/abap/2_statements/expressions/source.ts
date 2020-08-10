@@ -1,5 +1,5 @@
 import {ver, seq, opt, tok, str, altPrio, optPrio, regex, Expression} from "../combi";
-import {InstanceArrow, WParenLeftW, WParenRightW, WDashW, ParenLeftW} from "../../1_lexer/tokens";
+import {InstanceArrow, WParenLeftW, WParenRightW, WDashW, ParenLeftW, WPlus, WPlusW} from "../../1_lexer/tokens";
 import {CondBody, SwitchBody, ComponentChain, FieldChain, ReduceBody, TableBody, TypeNameOrInfer, ArrowOrDash,
   MethodCallChain, ArithOperator, Cond, Constant, StringTemplate, Let, CorrespondingBody, ValueBody, FilterBody} from ".";
 import {Version} from "../../../version";
@@ -30,12 +30,12 @@ export class Source extends Expression {
                      new Cond(),
                      str(")"));
 
-    const prefix = altPrio(tok(WDashW), str("BIT-NOT"));
+    const prefix = altPrio(tok(WDashW), tok(WPlus), tok(WPlusW), str("BIT-NOT"));
 
-    const old = seq(altPrio(new Constant(),
-                            new StringTemplate(),
-                            bool,
-                            seq(optPrio(prefix), altPrio(method, new FieldChain(), paren))),
+    const old = seq(optPrio(prefix), altPrio(new Constant(),
+                                             new StringTemplate(),
+                                             bool,
+                                             altPrio(method, new FieldChain(), paren)),
                     optPrio(altPrio(ref, after, new TableBody())));
 
     const corr = ver(Version.v740sp05, seq(str("CORRESPONDING"),

@@ -2494,6 +2494,15 @@ SELECT column FROM table INTO TABLE @DATA(lt_results)
     expect(issues[0].getMessage()).to.include("something");
   });
 
+  it("resolve dashed name", () => {
+    const abap = `'
+    DATA dummy-name TYPE c LENGTH 1.
+    WRITE dummy-name.
+    `;
+    const issues = runProgram(abap);
+    expect(issues.length).to.equals(0);
+  });
+
 // todo, static method cannot access instance attributes
 // todo, can a private method access protected attributes?
 // todo, readonly fields(constants + enums + attributes flagged read-only)

@@ -32,7 +32,6 @@ import {ExitOrCheckConf} from "../src/rules/exit_or_check";
 import {ExportingConf} from "../src/rules/exporting";
 import {ForbiddenIdentifierConf} from "../src/rules/forbidden_identifier";
 import {ForbiddenVoidTypeConf} from "../src/rules/forbidden_void_type";
-import {FormNoDashConf} from "../src/rules/form_no_dash";
 import {FormTablesObsoleteConf} from "../src/rules/form_tables_obsolete";
 import {FullyTypeConsantsConf} from "../src/rules/fully_type_constants";
 import {FunctionalWritingConf} from "../src/rules/functional_writing";
@@ -58,6 +57,7 @@ import {MethodLengthConf} from "../src/rules/method_length";
 import {MethodParameterNamesConf} from "../src/rules/method_parameter_names";
 import {MixReturningConf} from "../src/rules/mix_returning";
 import {MSAGConsistencyConf} from "../src/rules/msag_consistency";
+import {NamesNoDashConf} from "../src/rules/names_no_dash";
 import {NestingConf} from "../src/rules/nesting";
 import {NewlineBetweenMethodsConf} from "../src/rules/newline_between_methods";
 import {NoPublicAttributesConf} from "../src/rules/no_public_attributes";
@@ -133,7 +133,6 @@ export interface IConfig {
     "exporting"?: ExportingConf | boolean,
     "forbidden_identifier"?: ForbiddenIdentifierConf | boolean,
     "forbidden_void_type"?: ForbiddenVoidTypeConf | boolean,
-    "form_no_dash"?: FormNoDashConf | boolean,
     "form_tables_obsolete"?: FormTablesObsoleteConf | boolean,
     "fully_type_constants"?: FullyTypeConsantsConf | boolean,
     "functional_writing"?: FunctionalWritingConf | boolean,
@@ -159,6 +158,7 @@ export interface IConfig {
     "method_parameter_names"?: MethodParameterNamesConf | boolean,
     "mix_returning"?: MixReturningConf | boolean,
     "msag_consistency"?: MSAGConsistencyConf | boolean,
+    "names_no_dash"?: NamesNoDashConf | boolean,
     "nesting"?: NestingConf | boolean,
     "newline_between_methods"?: NewlineBetweenMethodsConf | boolean,
     "no_public_attributes"?: NoPublicAttributesConf | boolean,

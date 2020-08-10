@@ -514,15 +514,15 @@
       "additionalProperties": false,
       "properties": {
         "at": {
-          "description": "Checks for empty at blocks",
+          "description": "Checks for empty AT blocks",
           "type": "boolean"
         },
         "case": {
-          "description": "Checks for empty case blocks",
+          "description": "Checks for empty CASE blocks",
           "type": "boolean"
         },
         "do": {
-          "description": "Checks for empty do blocks",
+          "description": "Checks for empty DO blocks",
           "type": "boolean"
         },
         "exclude": {
@@ -533,19 +533,23 @@
           "type": "array"
         },
         "if": {
-          "description": "Checks for empty if blocks",
+          "description": "Checks for empty IF blocks",
           "type": "boolean"
         },
         "loop": {
-          "description": "Checks for empty loop blocks",
+          "description": "Checks for empty LOOP blocks",
           "type": "boolean"
         },
         "select": {
-          "description": "Checks for empty select blockss",
+          "description": "Checks for empty SELECT blockss",
+          "type": "boolean"
+        },
+        "try": {
+          "description": "Checks for empty TRY blocks",
           "type": "boolean"
         },
         "while": {
-          "description": "Checks for empty while blocks",
+          "description": "Checks for empty WHILE blocks",
           "type": "boolean"
         }
       },
@@ -556,7 +560,8 @@
         "case",
         "select",
         "do",
-        "at"
+        "at",
+        "try"
       ],
       "type": "object"
     },
@@ -630,19 +635,6 @@
       "required": [
         "check"
       ],
-      "type": "object"
-    },
-    "FormNoDashConf": {
-      "additionalProperties": false,
-      "properties": {
-        "exclude": {
-          "description": "List of file regex filename patterns to exclude",
-          "items": {
-            "type": "string"
-          },
-          "type": "array"
-        }
-      },
       "type": "object"
     },
     "FormTablesObsoleteConf": {
@@ -1090,17 +1082,6 @@
               ],
               "description": "Forbid use of specified void types.\nhttps://rules.abaplint.org/forbidden_void_type"
             },
-            "form_no_dash": {
-              "anyOf": [
-                {
-                  "$ref": "#/definitions/FormNoDashConf"
-                },
-                {
-                  "type": "boolean"
-                }
-              ],
-              "description": "Checks for a Dash in form names\nhttps://rules.abaplint.org/form_no_dash"
-            },
             "form_tables_obsolete": {
               "anyOf": [
                 {
@@ -1375,6 +1356,17 @@
                 }
               ],
               "description": "Checks the validity of messages in message classes\nhttps://rules.abaplint.org/msag_consistency"
+            },
+            "names_no_dash": {
+              "anyOf": [
+                {
+                  "$ref": "#/definitions/NamesNoDashConf"
+                },
+                {
+                  "type": "boolean"
+                }
+              ],
+              "description": "Checks for a \"-\" in FORM and DATA names\nhttps://rules.abaplint.org/names_no_dash"
             },
             "nesting": {
               "anyOf": [
@@ -2347,6 +2339,19 @@
       "type": "object"
     },
     "MixReturningConf": {
+      "additionalProperties": false,
+      "properties": {
+        "exclude": {
+          "description": "List of file regex filename patterns to exclude",
+          "items": {
+            "type": "string"
+          },
+          "type": "array"
+        }
+      },
+      "type": "object"
+    },
+    "NamesNoDashConf": {
       "additionalProperties": false,
       "properties": {
         "exclude": {
