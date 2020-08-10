@@ -18,16 +18,16 @@ export class Select {
       new SQLFrom().runSyntax(from, scope, filename);
     }
 
-    const fae = node.findDirectExpression(Expressions.SQLForAllEntries);
-    if (fae) {
-      scope.push(ScopeType.Select, "SELECT", token.getStart(), filename);
-      new SQLForAllEntries().runSyntax(fae, scope, filename);
-    }
-
     const inline = node.findFirstExpression(Expressions.InlineData);
     if (inline) {
       // todo, for now these are voided
       new InlineData().runSyntax(inline, scope, filename, new VoidType("SELECT_todo"));
+    }
+
+    const fae = node.findDirectExpression(Expressions.SQLForAllEntries);
+    if (fae) {
+      scope.push(ScopeType.Select, "SELECT", token.getStart(), filename);
+      new SQLForAllEntries().runSyntax(fae, scope, filename);
     }
 
     for (const t of node.findAllExpressions(Expressions.Target)) {
