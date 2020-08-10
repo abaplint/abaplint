@@ -2467,7 +2467,9 @@ TYPES: BEGIN OF ty_type,
 DATA: lt_fae TYPE STANDARD TABLE OF ty_type.
 SELECT column FROM table INTO TABLE @DATA(lt_results)
   FOR ALL ENTRIES IN lt_fae
-  WHERE column = @lt_fae-field.`;
+  WHERE column = @lt_fae-field.
+
+DELETE TABLE lt_results FROM 10.`;
     const issues = runProgram(abap);
     expect(issues.length).to.equals(0);
   });
