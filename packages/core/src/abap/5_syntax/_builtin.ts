@@ -36,34 +36,43 @@ class BuiltInMethod extends Identifier implements IMethodDefinition, IMethodPara
     }
     return ret;
   }
+
   public getExporting(): readonly TypedIdentifier[] {
     return [];
   }
+
   public getChanging(): readonly TypedIdentifier[] {
     return [];
   }
+
   public getReturning(): TypedIdentifier | undefined {
     const id = new TokenIdentifier(new Position(this.row, 1), "ret");
     return new TypedIdentifier(id, BuiltIn.filename, this.method.returnType);
   }
+
   public getExceptions(): readonly string[] {
     return [];
   }
   public getVisibility(): Visibility {
     return Visibility.Public;
   }
+
   public isRedefinition(): boolean {
     return false;
   }
+
   public isAbstract(): boolean {
     return false;
   }
+
   public isStatic(): boolean {
     return false;
   }
+
   public isEventHandler(): boolean {
     return false;
   }
+
   public getParameters(): IMethodParameters {
     return this;
   }

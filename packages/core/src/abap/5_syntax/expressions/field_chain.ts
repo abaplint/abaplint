@@ -17,10 +17,18 @@ export class FieldChain {
     node: ExpressionNode,
     scope: CurrentScope,
     filename: string,
-    type?: ReferenceType | undefined): AbstractType | undefined {
+    refType?: ReferenceType | undefined): AbstractType | undefined {
+
+    const found = scope.findVariable(node.concatTokens()); // workaround for names with dashes
+    if (found) {
+      if (refType) {
+        scope.addReference(node.getFirstToken(), found, refType, filename);
+      }
+      return found.getType();
+    }
 
     const children = node.getChildren().slice();
-    let context = this.findTop(children.shift(), scope, filename, type);
+    let context = this.findTop(children.shift(), scope, filename, refType);
 
     while (children.length > 0) {
       const current = children.shift();
@@ -55,7 +63,7 @@ export class FieldChain {
         // todo, additional validations
         context = context.getRowType();
       } else if (current.get() instanceof Expressions.AttributeName) {
-        context = new AttributeName().runSyntax(context, current, scope, filename, type);
+        context = new AttributeName().runSyntax(context, current, scope, filename, refType);
       } else if (current.get() instanceof Expressions.FieldOffset && current instanceof ExpressionNode) {
         new FieldOffset().runSyntax(current, scope, filename);
       } else if (current.get() instanceof Expressions.FieldLength && current instanceof ExpressionNode) {
