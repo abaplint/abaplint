@@ -25,8 +25,8 @@ for (let r of repos) {
 let issues = "";
 let comment = "Regression test results:\n";
 
-comment += "| Repository | Issues |\n";
-comment += "| --- | --- |\n";
+comment += "| Repository | Issues | Runtime |\n";
+comment += "| :--- | :--- | :--- |\n";
 for (let name in map) {
   const link = "[" + name + "](https://github.com/" + name + ")"
   // todo, this assumes the array content is the same
@@ -37,7 +37,7 @@ for (let name in map) {
   } else {
     comment += "| " + link + "| :red_circle:";
   }
-  comment += " " + map[name].before.length + " -> " + map[name].after.length + "|\n";
+  comment += " " + map[name].before.length + " -> " + map[name].after.length + "| ? |\n";
 
   for (const i of map[name].after) {
     issues += "`" + i.file + "`: " + i.description + ", " + i.start.row + "\n"
