@@ -41,7 +41,7 @@ for (let name in map) {
   } else {
     comment += "| " + link + "| :red_circle:";
   }
-  let runtimeInfo = ( map[r].before_end - map[r].before_start ) + "ms -> " + ( map[r].after_end - map[r].after_start ) + "ms";
+  let runtimeInfo = ( map[name].before_end - map[name].before_start ) + "ms -> " + ( map[name].after_end - map[name].after_start ) + "ms";
   comment += " " + map[name].before.length + " -> " + map[name].after.length + "| " + runtimeInfo + " |\n";
 
   for (const i of map[name].after) {
