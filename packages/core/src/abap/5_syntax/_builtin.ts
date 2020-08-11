@@ -96,6 +96,7 @@ export class BuiltIn {
 
     // todo, some of these are version specific
     // todo, make types correct, some of the strings are clike?
+    // todo, change paramters to objects instead of arrays
     ret.push({name: "ABS", importing: [{name: "val", type: new FloatType()}], returnType: new IntegerType()});
     ret.push({name: "BOOLC", importing: [{name: "val", type: new StringType()}], returnType: new CharacterType(1)});
     ret.push({name: "CEIL", importing: [{name: "val", type: new FloatType()}], returnType: new IntegerType()});
@@ -104,6 +105,7 @@ export class BuiltIn {
     ret.push({name: "CONTAINS", importing: [{name: "val", type: new StringType()}, {name: "sub", type: new StringType()}], returnType: new CharacterType(1)});
     ret.push({name: "ESCAPE", importing: [{name: "val", type: new StringType()}, {name: "format", type: new StringType()}], returnType: new StringType()});
     ret.push({name: "FIND", importing: [{name: "val", type: new StringType()}, {name: "sub", type: new StringType()}, {name: "regex", type: new StringType()}, {name: "off", type: new IntegerType()}, {name: "case", type: new CharacterType(1)}], returnType: new StringType()});
+    ret.push({name: "MATCH", importing: [{name: "val", type: new StringType()}, {name: "regex", type: new StringType()}], returnType: new StringType()});
     ret.push({name: "FLOOR", importing: [{name: "val", type: new FloatType()}], returnType: new IntegerType()});
     ret.push({name: "FRAC", importing: [{name: "val", type: new FloatType()}], returnType: new IntegerType()});
     ret.push({name: "FROM_MIXED", importing: [{name: "val", type: new StringType()}, {name: "case", type: new StringType()}], returnType: new StringType()});
