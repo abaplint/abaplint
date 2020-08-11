@@ -2529,6 +2529,15 @@ DELETE TABLE lt_results FROM 10.`;
     expect(issues.length).to.equals(0);
   });
 
+  it("FIND, MATCH OFFSET inline", () => {
+    const abap = `
+    FIND |sdf| IN |sdfsd| IGNORING CASE MATCH OFFSET DATA(offset).
+    WRITE offset.
+    `;
+    const issues = runProgram(abap);
+    expect(issues.length).to.equals(0);
+  });
+
 // todo, static method cannot access instance attributes
 // todo, can a private method access protected attributes?
 // todo, readonly fields(constants + enums + attributes flagged read-only)
