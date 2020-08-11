@@ -15,10 +15,14 @@ for (let r of repos) {
 
   let folder = r.split("/")[1];
 
+  map[r].before_start = new Date();
   childProcess.execSync("node ./abaplint_before " + folder + "/abaplint.json -f json > output.json || true");
+  map[r].before_end = new Date();
   map[r].before = JSON.parse(fs.readFileSync("output.json", "utf-8"));
 
+  map[r].after_start = new Date();
   childProcess.execSync("node ./abaplint_after " + folder + "/abaplint.json -f json > output.json || true");
+  map[r].after_end = new Date();
   map[r].after = JSON.parse(fs.readFileSync("output.json", "utf-8"));
 }
 
@@ -37,7 +41,8 @@ for (let name in map) {
   } else {
     comment += "| " + link + "| :red_circle:";
   }
-  comment += " " + map[name].before.length + " -> " + map[name].after.length + "| ? |\n";
+  let runtimeInfo = ( map[r].before_end - map[r].before_start ) + "ms -> " + ( map[r].after_end - map[r].after_start ) + "ms";
+  comment += " " + map[name].before.length + " -> " + map[name].after.length + "| " + runtimeInfo + " |\n";
 
   for (const i of map[name].after) {
     issues += "`" + i.file + "`: " + i.description + ", " + i.start.row + "\n"
