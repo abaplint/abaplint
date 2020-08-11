@@ -117,6 +117,7 @@ export * from "./replace";
 export * from "./condense";
 export * from "./insert_internal";
 export * from "./insert_database";
+export * from "./insert_field_group";
 export * from "./update_database";
 export * from "./modify_database";
 export * from "./modify_internal";

@@ -45,6 +45,7 @@ const tests = [
   {abap: "INSERT LINES OF lt_founds INTO TABLE rt_founds_all.", cnt: 0},
   {abap: "INSERT INITIAL LINE INTO lt_selection INDEX 1 ASSIGNING <ls_sel>.", cnt: 0},
   {abap: "DATA tab LIKE STANDARD TABLE OF bar WITH KEY foo INITIAL SIZE 2 WITH HEADER LINE.", cnt: 0},
+  {abap: "INSERT node_tmp INTO TABLE mt_json_tree REFERENCE INTO node_ref.", cnt: 0},
 ];
 
 testRule(tests, KeywordCase);
