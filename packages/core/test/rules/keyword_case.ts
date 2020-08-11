@@ -46,6 +46,7 @@ const tests = [
   {abap: "INSERT INITIAL LINE INTO lt_selection INDEX 1 ASSIGNING <ls_sel>.", cnt: 0},
   {abap: "DATA tab LIKE STANDARD TABLE OF bar WITH KEY foo INITIAL SIZE 2 WITH HEADER LINE.", cnt: 0},
   {abap: "INSERT node_tmp INTO TABLE mt_json_tree REFERENCE INTO node_ref.", cnt: 0},
+  {abap: "FIND ALL OCCURRENCES OF REGEX || IN SECTION LENGTH 42 OF || MATCH OFFSET DATA(lv_off).", cnt: 0},
 ];
 
 testRule(tests, KeywordCase);
