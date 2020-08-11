@@ -16,6 +16,7 @@ const tests = [
       pai EXPORTING VALUE(fcode) TYPE syst_ucomm,
       pbo.
 ENDCLASS.`, cnt: 0},
+  {abap: `LOCAL: foo, bar.`, cnt: 0},
 ];
 
 testRule(tests, ChainMainlyDeclarations);
