@@ -41,8 +41,8 @@ for (let name in map) {
   } else {
     comment += "| " + link + "| :red_circle:";
   }
-  let runtimeBefore = ceil( ( map[name].before_end - map[name].before_start ) / 1000);
-  let runtimeAfter = ceil( ( map[name].after_end - map[name].after_start ) / 1000);
+  let runtimeBefore = Math.ceil( ( map[name].before_end - map[name].before_start ) / 1000);
+  let runtimeAfter = Math.ceil( ( map[name].after_end - map[name].after_start ) / 1000);
   let runtimeInfo = runtimeBefore + "s -> " + runtimeAfter + "s";
   comment += " " + map[name].before.length + " -> " + map[name].after.length + "| " + runtimeInfo + " |\n";
 
