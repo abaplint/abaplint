@@ -43,7 +43,8 @@ for (let name in map) {
   }
   let runtimeBefore = Math.ceil( ( map[name].before_end - map[name].before_start ) / 1000);
   let runtimeAfter = Math.ceil( ( map[name].after_end - map[name].after_start ) / 1000);
-  let runtimeInfo = runtimeBefore + "s -> " + runtimeAfter + "s";
+  let runtimeIcon = Math.abs(runtimeBefore - runtimeAfter) > 2 ? ":yellow_circle:" : ":green_circle:";
+  let runtimeInfo = runtimeIcon + " " + runtimeBefore + "s -> " + runtimeAfter + "s";
   comment += " " + map[name].before.length + " -> " + map[name].after.length + "| " + runtimeInfo + " |\n";
 
   for (const i of map[name].after) {
