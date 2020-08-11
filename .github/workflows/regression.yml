@@ -30,7 +30,7 @@ jobs:
 
     - name: run
       env:
-        REPOS: '["larshp/abapGit", "larshp/abapOpenChecks", "Microsoft/ABAP-SDK-for-Azure", "jrodriguez-rc/abap-tasks-tracker", "sapmentors/abap2xlsx"]'
+        REPOS: '["larshp/abapGit", "larshp/abapOpenChecks", "Microsoft/ABAP-SDK-for-Azure", "jrodriguez-rc/abap-tasks-tracker", "sapmentors/abap2xlsx", "sbcgua/abap-string-map", "sbcgua/ajson"]'
       run: |
         cd .. && cd ..
         ls -salh

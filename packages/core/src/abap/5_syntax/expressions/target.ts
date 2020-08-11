@@ -14,6 +14,12 @@ import {ReferenceType} from "../_reference";
 export class Target {
   public runSyntax(node: ExpressionNode, scope: CurrentScope, filename: string): AbstractType | undefined {
 
+    const found = scope.findVariable(node.concatTokens()); // workaround for names with dashes
+    if (found) {
+      scope.addReference(node.getFirstToken(), found, ReferenceType.DataWriteReference, filename);
+      return found.getType();
+    }
+
     const children = node.getChildren().slice();
     const first = children.shift();
     if (first === undefined || !(first instanceof ExpressionNode)) {

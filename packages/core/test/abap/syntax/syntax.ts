@@ -2475,7 +2475,7 @@ DELETE TABLE lt_results FROM 10.`;
   });
 
   it("APPEND INITIAL LINE ASSSIGNING something", () => {
-    const abap = `'
+    const abap = `
     DATA tab TYPE STANDARD TABLE OF string.
     APPEND INITIAL LINE TO tab ASSIGNING <something>.
     `;
@@ -2485,7 +2485,7 @@ DELETE TABLE lt_results FROM 10.`;
   });
 
   it("LOOP AT FROM something", () => {
-    const abap = `'
+    const abap = `
   DATA tab TYPE STANDARD TABLE OF string.
   LOOP AT tab INTO DATA(row) FROM something.
     WRITE row.
@@ -2496,10 +2496,43 @@ DELETE TABLE lt_results FROM 10.`;
     expect(issues[0].getMessage()).to.include("something");
   });
 
-  it("resolve dashed name", () => {
-    const abap = `'
+  it("resolve dashed name, source", () => {
+    const abap = `
     DATA dummy-name TYPE c LENGTH 1.
     WRITE dummy-name.
+    `;
+    const issues = runProgram(abap);
+    expect(issues.length).to.equals(0);
+  });
+
+  it("dashed name, target", () => {
+    const abap = `
+    DATA: hok-code TYPE string.
+    hok-code = 'DISP'.
+    `;
+    const issues = runProgram(abap);
+    expect(issues.length).to.equals(0);
+  });
+
+  it("get runtime inline", () => {
+    const abap = `
+  GET RUN TIME FIELD DATA(stop).
+  WRITE stop.
+    `;
+    const issues = runProgram(abap);
+    expect(issues.length).to.equals(0);
+  });
+
+  it("built-in match function", () => {
+    const abap = `DATA(result) = match( val = || regex = || ).`;
+    const issues = runProgram(abap);
+    expect(issues.length).to.equals(0);
+  });
+
+  it("FIND, MATCH OFFSET inline", () => {
+    const abap = `
+    FIND |sdf| IN |sdfsd| IGNORING CASE MATCH OFFSET DATA(offset).
+    WRITE offset.
     `;
     const issues = runProgram(abap);
     expect(issues.length).to.equals(0);

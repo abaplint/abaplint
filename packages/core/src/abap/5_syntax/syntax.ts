@@ -88,6 +88,7 @@ import {Scan} from "./statements/scan";
 import {Submit} from "./statements/submit";
 import {OpenDataset} from "./statements/open_dataset";
 import {CloseDataset} from "./statements/close_dataset";
+import {GetRunTime} from "./statements/get_run_time";
 
 export class SyntaxLogic {
   private currentFile: ABAPFile;
@@ -361,6 +362,8 @@ export class SyntaxLogic {
       new GetReference().runSyntax(node, this.scope, filename);
     } else if (s instanceof Statements.ElseIf) {
       new ElseIf().runSyntax(node, this.scope, filename);
+    } else if (s instanceof Statements.GetRunTime) {
+      new GetRunTime().runSyntax(node, this.scope, filename);
     } else if (s instanceof Statements.CreateObject) {
       new CreateObject().runSyntax(node, this.scope, filename);
     } else if (s instanceof Statements.ImportDynpro) {
