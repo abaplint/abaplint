@@ -164,6 +164,15 @@ ENDCLASS.`;
     expect(issues[0].getMessage()).to.include("dummy-name");
   });
 
+  it("CALL METHOD PARAMTER-TABLE", async () => {
+    const abap = `
+  DATA obj TYPE REF TO object.
+  FIELD-SYMBOLS <tab> TYPE ANY TABLE.
+  CALL METHOD obj->('METHOD') PARAMETER-TABLE <tab>.`;
+    const issues = await runSingle(abap);
+    expect(issues.length).to.equal(0);
+  });
+
   ///////////////
 
   it.skip("test, quickfix, chained first", async () => {
