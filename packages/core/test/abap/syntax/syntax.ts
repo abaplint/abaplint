@@ -2475,7 +2475,7 @@ DELETE TABLE lt_results FROM 10.`;
   });
 
   it("APPEND INITIAL LINE ASSSIGNING something", () => {
-    const abap = `'
+    const abap = `
     DATA tab TYPE STANDARD TABLE OF string.
     APPEND INITIAL LINE TO tab ASSIGNING <something>.
     `;
@@ -2485,7 +2485,7 @@ DELETE TABLE lt_results FROM 10.`;
   });
 
   it("LOOP AT FROM something", () => {
-    const abap = `'
+    const abap = `
   DATA tab TYPE STANDARD TABLE OF string.
   LOOP AT tab INTO DATA(row) FROM something.
     WRITE row.
@@ -2497,7 +2497,7 @@ DELETE TABLE lt_results FROM 10.`;
   });
 
   it("resolve dashed name, source", () => {
-    const abap = `'
+    const abap = `
     DATA dummy-name TYPE c LENGTH 1.
     WRITE dummy-name.
     `;
@@ -2506,9 +2506,18 @@ DELETE TABLE lt_results FROM 10.`;
   });
 
   it("dashed name, target", () => {
-    const abap = `'
+    const abap = `
     DATA: hok-code TYPE string.
     hok-code = 'DISP'.
+    `;
+    const issues = runProgram(abap);
+    expect(issues.length).to.equals(0);
+  });
+
+  it("get runtime inline", () => {
+    const abap = `
+  GET RUN TIME FIELD DATA(stop).
+  WRITE stop.
     `;
     const issues = runProgram(abap);
     expect(issues.length).to.equals(0);
