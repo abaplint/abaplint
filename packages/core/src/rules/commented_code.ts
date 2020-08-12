@@ -8,7 +8,8 @@ import {ABAPObject} from "../objects/_abap_object";
 import {FunctionGroup} from "../objects";
 import {Include} from "../abap/2_statements/statements";
 import {ABAPParser} from "../abap/abap_parser";
-import {RuleTag} from "./_irule";
+import {RuleTag, IRuleMetadata} from "./_irule";
+import {EditHelper} from "../edit_helper";
 
 export class CommentedCodeConf extends BasicRuleConfig {
   /** Allow INCLUDEs in function groups */
@@ -18,7 +19,7 @@ export class CommentedCodeConf extends BasicRuleConfig {
 export class CommentedCode extends ABAPRule {
   private conf = new CommentedCodeConf();
 
-  public getMetadata() {
+  public getMetadata(): IRuleMetadata {
     return {
       key: "commented_code",
       title: "Find commented code",
@@ -26,7 +27,7 @@ export class CommentedCode extends ABAPRule {
       extendedInformation:
 `https://github.com/SAP/styleguides/blob/master/clean-abap/CleanABAP.md#delete-code-instead-of-commenting-it
 https://docs.abapopenchecks.org/checks/14/`,
-      tags: [RuleTag.Styleguide],
+      tags: [RuleTag.Styleguide, RuleTag.Quickfix],
     };
   }
 
@@ -52,7 +53,7 @@ https://docs.abapopenchecks.org/checks/14/`,
     let posStart: Position | undefined = undefined;
 
     for (let i = 0; i < rows.length; i++) {
-      posEnd = new Position(i + 1, rows[i].length);
+      posEnd = new Position(i + 1, rows[i].length + 1);
       if (this.isCommentLine(rows[i])) {
         if (code === "") {
           posStart = new Position(i + 1, 1);
@@ -103,7 +104,8 @@ https://docs.abapopenchecks.org/checks/14/`,
       return [];
     }
 
-    const issue = Issue.atRange(file, posStart, posEnd, this.getMessage(), this.getMetadata().key);
+    const fix = EditHelper.deleteRange(file, posStart, posEnd);
+    const issue = Issue.atRange(file, posStart, posEnd, this.getMessage(), this.getMetadata().key, fix);
     return [issue];
   }
 
