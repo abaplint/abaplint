@@ -3,6 +3,8 @@ import {StatementNode} from "../../nodes";
 import {CurrentScope} from "../_current_scope";
 import {Target} from "../expressions/target";
 import {Source} from "../expressions/source";
+import {XStringType} from "../../types/basic";
+import {InlineData} from "../expressions/inline_data";
 
 export class CallTransformation {
   public runSyntax(node: StatementNode, scope: CurrentScope, filename: string): void {
@@ -12,7 +14,12 @@ export class CallTransformation {
     }
 
     for (const t of node.findDirectExpressions(Expressions.Target)) {
-      new Target().runSyntax(t, scope, filename);
+      const inline = t?.findDirectExpression(Expressions.InlineData);
+      if (inline) {
+        new InlineData().runSyntax(inline, scope, filename, new XStringType());
+      } else {
+        new Target().runSyntax(t, scope, filename);
+      }
     }
 
   }
