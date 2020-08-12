@@ -48,20 +48,30 @@ https://docs.abapopenchecks.org/checks/14/`,
     const rows = file.getRawRows();
 
     let code = "";
+    let posEnd: Position | undefined = undefined;
+    let posStart: Position | undefined = undefined;
+
     for (let i = 0; i < rows.length; i++) {
+      posEnd = new Position(i + 1, rows[i].length);
       if (this.isCommentLine(rows[i])) {
+        if (code === "") {
+          posStart = new Position(i + 1, 1);
+        }
         code = code + rows[i].trim().substr(1) + "\n";
-      } else if (code !== "") {
-        issues = issues.concat(this.check(code.trim(), file, i - 1, obj));
+      } else if (code !== "" && posStart) {
+        issues = issues.concat(this.check(code.trim(), file, posStart, posEnd, obj));
         code = "";
       }
     }
-    issues = issues.concat(this.check(code.trim(), file, rows.length - 1, obj));
+
+    if (posStart && posEnd) {
+      issues = issues.concat(this.check(code.trim(), file, posStart, posEnd, obj));
+    }
 
     return issues;
   }
 
-  private check(code: string, file: ABAPFile, row: number, obj: ABAPObject): Issue[] {
+  private check(code: string, file: ABAPFile, posStart: Position, posEnd: Position, obj: ABAPObject): Issue[] {
     // assumption: code must end with "." in order to be valid ABAP
     if (code === "" || code.charAt(code.length - 1) !== ".") {
       return [];
@@ -93,8 +103,7 @@ https://docs.abapopenchecks.org/checks/14/`,
       return [];
     }
 
-    const position = new Position(row + 1, 1);
-    const issue = Issue.atPosition(file, position, this.getMessage(), this.getMetadata().key);
+    const issue = Issue.atRange(file, posStart, posEnd, this.getMessage(), this.getMetadata().key);
     return [issue];
   }
 

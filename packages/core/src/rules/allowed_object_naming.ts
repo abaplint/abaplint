@@ -14,7 +14,7 @@ export class AllowedObjectNaming implements IRule {
     return {
       key: "allowed_object_naming",
       title: "Allowed object naming",
-      shortDescription: `Enforces basic name length and namespace restrictions, see note 104010`,
+      shortDescription: `Enforces basic name length and namespace restrictions, see note SAP 104010`,
       tags: [RuleTag.Naming],
     };
   }
