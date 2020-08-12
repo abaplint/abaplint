@@ -210,6 +210,7 @@ export class BuiltIn {
     components.push({name: "index", type: new IntegerType()});
     components.push({name: "langu", type: new CharacterType(1)});
     components.push({name: "lisel", type: new CharacterType(255)});
+    components.push({name: "slset", type: new CharacterType(14)});
     components.push({name: "mandt", type: new CharacterType(3)});
     components.push({name: "msgid", type: new CharacterType(20)});
     components.push({name: "msgty", type: new CharacterType(1)});
