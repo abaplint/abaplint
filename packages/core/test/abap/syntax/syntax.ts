@@ -2538,6 +2538,15 @@ DELETE TABLE lt_results FROM 10.`;
     expect(issues.length).to.equals(0);
   });
 
+  it("CALL TRANSFORMATION with inline", () => {
+    const abap = `
+    CALL TRANSFORMATION id SOURCE data = 2 RESULT XML DATA(content).
+    WRITE content.
+    `;
+    const issues = runProgram(abap);
+    expect(issues.length).to.equals(0);
+  });
+
 // todo, static method cannot access instance attributes
 // todo, can a private method access protected attributes?
 // todo, readonly fields(constants + enums + attributes flagged read-only)

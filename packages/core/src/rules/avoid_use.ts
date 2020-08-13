@@ -82,15 +82,24 @@ export class AvoidUse extends ABAPRule {
         message = "STATICS";
       } else if (this.conf.break && statement instanceof Statements.Break) {
         message = "BREAK/BREAK-POINT";
-      } else if (this.conf.defaultKey
-          && (statement instanceof Statements.Data || statement instanceof Statements.Type)
-          && statementNode.findFirstExpression(TypeTable)?.concatTokensWithoutStringsAndComments().toUpperCase().endsWith("DEFAULT KEY")) {
-        message = "DEFAULT KEY";
       }
       if (message) {
         const issue = Issue.atStatement(file, statementNode, this.getDescription(message), this.getMetadata().key);
         issues.push(issue);
       }
+
+      if (this.conf.defaultKey
+          && (statement instanceof Statements.Data || statement instanceof Statements.Type)) {
+        const tt = statementNode.findFirstExpression(TypeTable);
+        const token = tt?.findDirectTokenByText("DEFAULT");
+        if (tt && token) {
+          tt.concatTokensWithoutStringsAndComments().toUpperCase().endsWith("DEFAULT KEY");
+          message = "DEFAULT KEY";
+          const issue = Issue.atToken(file, token, this.getDescription(message), this.getMetadata().key);
+          issues.push(issue);
+        }
+      }
+
     }
 
     return issues;

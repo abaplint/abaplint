@@ -750,7 +750,7 @@
                   "type": "boolean"
                 }
               ],
-              "description": "Enforces basic name length and namespace restrictions, see note 104010\nTags: Naming\nhttps://rules.abaplint.org/allowed_object_naming"
+              "description": "Enforces basic name length and namespace restrictions, see note SAP 104010\nTags: Naming\nhttps://rules.abaplint.org/allowed_object_naming"
             },
             "allowed_object_types": {
               "anyOf": [
@@ -937,7 +937,7 @@
                   "type": "boolean"
                 }
               ],
-              "description": "Detects usage of commented out code.\nTags: Styleguide\nhttps://rules.abaplint.org/commented_code"
+              "description": "Detects usage of commented out code.\nTags: Styleguide, Quickfix\nhttps://rules.abaplint.org/commented_code"
             },
             "constructor_visibility_public": {
               "anyOf": [
