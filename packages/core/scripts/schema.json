@@ -147,14 +147,66 @@
     "ChainMainlyDeclarationsConf": {
       "additionalProperties": false,
       "properties": {
+        "check": {
+          "description": "Allow CHECK statements to be chained",
+          "type": "boolean"
+        },
+        "clear": {
+          "description": "Allow CLEAR statements to be chained",
+          "type": "boolean"
+        },
+        "definitions": {
+          "description": "Allow definition statements to be chained",
+          "type": "boolean"
+        },
         "exclude": {
           "description": "List of file regex filename patterns to exclude",
           "items": {
             "type": "string"
           },
           "type": "array"
+        },
+        "free": {
+          "description": "Allow FREE statements to be chained",
+          "type": "boolean"
+        },
+        "hide": {
+          "description": "Allow HIDE statements to be chained",
+          "type": "boolean"
+        },
+        "include": {
+          "description": "Allow INCLUDE statements to be chained",
+          "type": "boolean"
+        },
+        "move": {
+          "description": "Allow MOVE statements to be chained",
+          "type": "boolean"
+        },
+        "refresh": {
+          "description": "Allow REFRESH statements to be chained",
+          "type": "boolean"
+        },
+        "unassign": {
+          "description": "Allow UNASSIGN statements to be chained",
+          "type": "boolean"
+        },
+        "write": {
+          "description": "Allow WRITE statements to be chained",
+          "type": "boolean"
         }
       },
+      "required": [
+        "definitions",
+        "write",
+        "move",
+        "refresh",
+        "unassign",
+        "clear",
+        "hide",
+        "free",
+        "include",
+        "check"
+      ],
       "type": "object"
     },
     "CheckAbstractConf": {
@@ -805,7 +857,7 @@
                   "type": "boolean"
                 }
               ],
-              "description": "Chain mainly declarations\nhttps://rules.abaplint.org/chain_mainly_declarations"
+              "description": "Chain mainly declarations, allows chaining for the configured statements, reports errors for other statements.\nhttps://rules.abaplint.org/chain_mainly_declarations"
             },
             "check_abstract": {
               "anyOf": [
