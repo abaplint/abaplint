@@ -97,9 +97,8 @@ const tests = [
   "if lv_value <> - 1.",
   "IF a = b EQUIV c = d.",
   "IF foo- = 2.", // "foo-" is an allowed variable name
-
-  // todo
-//  "IF ?alv? = ''.",
+  "IF ( foo = 'bar').",
+  "IF ('bar' = foo ).",
 ];
 
 statementType(tests, "IF", Statements.If);

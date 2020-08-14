@@ -147,14 +147,66 @@
     "ChainMainlyDeclarationsConf": {
       "additionalProperties": false,
       "properties": {
+        "check": {
+          "description": "Allow CHECK statements to be chained",
+          "type": "boolean"
+        },
+        "clear": {
+          "description": "Allow CLEAR statements to be chained",
+          "type": "boolean"
+        },
+        "definitions": {
+          "description": "Allow definition statements to be chained",
+          "type": "boolean"
+        },
         "exclude": {
           "description": "List of file regex filename patterns to exclude",
           "items": {
             "type": "string"
           },
           "type": "array"
+        },
+        "free": {
+          "description": "Allow FREE statements to be chained",
+          "type": "boolean"
+        },
+        "hide": {
+          "description": "Allow HIDE statements to be chained",
+          "type": "boolean"
+        },
+        "include": {
+          "description": "Allow INCLUDE statements to be chained",
+          "type": "boolean"
+        },
+        "move": {
+          "description": "Allow MOVE statements to be chained",
+          "type": "boolean"
+        },
+        "refresh": {
+          "description": "Allow REFRESH statements to be chained",
+          "type": "boolean"
+        },
+        "unassign": {
+          "description": "Allow UNASSIGN statements to be chained",
+          "type": "boolean"
+        },
+        "write": {
+          "description": "Allow WRITE statements to be chained",
+          "type": "boolean"
         }
       },
+      "required": [
+        "definitions",
+        "write",
+        "move",
+        "refresh",
+        "unassign",
+        "clear",
+        "hide",
+        "free",
+        "include",
+        "check"
+      ],
       "type": "object"
     },
     "CheckAbstractConf": {
@@ -805,7 +857,7 @@
                   "type": "boolean"
                 }
               ],
-              "description": "Chain mainly declarations\nhttps://rules.abaplint.org/chain_mainly_declarations"
+              "description": "Chain mainly declarations, allows chaining for the configured statements, reports errors for other statements.\nhttps://rules.abaplint.org/chain_mainly_declarations"
             },
             "check_abstract": {
               "anyOf": [
@@ -1432,7 +1484,18 @@
                   "type": "boolean"
                 }
               ],
-              "description": "Checks for syntax unrecognized by abaplint\nTags: Syntax\nhttps://rules.abaplint.org/parser_error"
+              "description": "Checks for syntax unrecognized by abaplint.\n\nSee recognized syntax at https://syntax.abaplint.org\nTags: Syntax\nhttps://rules.abaplint.org/parser_error"
+            },
+            "parser_missing_space": {
+              "anyOf": [
+                {
+                  "$ref": "#/definitions/ParserMissingSpaceConf"
+                },
+                {
+                  "type": "boolean"
+                }
+              ],
+              "description": "In special cases the ABAP language allows for not having spaces before or after string literals.\nThis rule makes sure the spaces are consistently required across the language.\nTags: Syntax\nhttps://rules.abaplint.org/parser_missing_space"
             },
             "prefer_inline": {
               "anyOf": [
@@ -2630,6 +2693,19 @@
       "type": "object"
     },
     "ParserErrorConf": {
+      "additionalProperties": false,
+      "properties": {
+        "exclude": {
+          "description": "List of file regex filename patterns to exclude",
+          "items": {
+            "type": "string"
+          },
+          "type": "array"
+        }
+      },
+      "type": "object"
+    },
+    "ParserMissingSpaceConf": {
       "additionalProperties": false,
       "properties": {
         "exclude": {

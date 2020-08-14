@@ -12,6 +12,7 @@ export class CreateData implements IStatement {
     const type = seq(alt(str("TYPE"),
                          str("TYPE REF TO"),
                          str("TYPE TABLE OF"),
+                         str("TYPE TABLE OF REF TO"),
                          str("TYPE SORTED TABLE OF"),
                          str("TYPE HASHED TABLE OF"),
                          str("TYPE STANDARD TABLE OF"),

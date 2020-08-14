@@ -1,13 +1,14 @@
 import {ExpressionNode} from "../../nodes";
 import {CurrentScope} from "../_current_scope";
 import {ObjectReferenceType, VoidType, DataReference} from "../../types/basic";
-import {TypeNameOrInfer} from "../../2_statements/expressions";
+import * as Expressions from "../../2_statements/expressions";
 import {AbstractType} from "../../types/basic/_abstract_type";
 import {ReferenceType} from "../_reference";
+import {Source} from "./source";
 
 export class NewObject {
   public runSyntax(node: ExpressionNode, scope: CurrentScope, targetType: AbstractType | undefined, filename: string): AbstractType {
-    const typeToken = node.findDirectExpression(TypeNameOrInfer)?.getFirstToken();
+    const typeToken = node.findDirectExpression(Expressions.TypeNameOrInfer)?.getFirstToken();
     const typeName = typeToken?.getStr();
     if (typeName === undefined) {
       throw new Error("NewObject, child TypeNameOrInfer not found");
@@ -27,6 +28,10 @@ export class NewObject {
     if (type) {
       // todo: scope.addReference
       return new DataReference(type.getType());
+    }
+
+    for (const s of node.findAllExpressions(Expressions.Source)) {
+      new Source().runSyntax(s, scope, filename);
     }
 
     if (scope.getDDIC().inErrorNamespace(typeName) === false) {

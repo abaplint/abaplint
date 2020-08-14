@@ -21,19 +21,22 @@ export function testRule(tests: {abap: string, cnt: number, only?: boolean}[], r
     nrule.setConfig(config);
   }
   testTitle = testTitle || `test ${nrule.getMetadata().key} rule`;
-  const hasOnly = tests.findIndex(t => t.only === true) > 0;
-  if (hasOnly) {
-    tests = tests.filter(t => t.only === true);
-  }
   describe(testTitle, function () {
     // note that timeout() only works inside function()
     this.timeout(200);
     tests.forEach((test) => {
-      it("\"" + test.abap + "\" should have " + test.cnt + " issue(s)", () => {
+      const title = "\"" + test.abap + "\" should have " + test.cnt + " issue(s)";
+      const callback = () => {
         const reg = new Registry().addFile(new MemoryFile("zfoo.prog.abap", test.abap)).parse();
         const issues = nrule.initialize(reg).run(reg.getFirstObject()!);
         expect(issues.length).to.equals(test.cnt);
-      });
+      };
+
+      if (test.only === true) {
+        it.only(title, callback);
+      } else {
+        it(title, callback);
+      }
     });
   });
 }
