@@ -223,6 +223,7 @@ export class BuiltIn {
     components.push({name: "repid", type: new CharacterType(1)});
     components.push({name: "saprl", type: new CharacterType(4)});
     components.push({name: "subrc", type: new IntegerType()});
+    components.push({name: "lilli", type: new IntegerType()});
     components.push({name: "sysid", type: new CharacterType(3)});
     components.push({name: "tabix", type: new IntegerType()});
     components.push({name: "tcode", type: new CharacterType(20)});
