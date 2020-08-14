@@ -64,9 +64,6 @@ export class EmptyStructure extends ABAPRule {
     if (this.getConfig().loop === true) {
       candidates = candidates.concat(stru.findAllStructures(Structures.Loop));
     }
-    if (this.getConfig().if === true) {
-      candidates = candidates.concat(stru.findAllStructures(Structures.If));
-    }
     if (this.getConfig().while === true) {
       candidates = candidates.concat(stru.findAllStructures(Structures.While));
     }
@@ -95,6 +92,20 @@ export class EmptyStructure extends ABAPRule {
       const tries = stru.findAllStructures(Structures.Try);
       for (const t of tries) {
         const normal = t.findDirectStructure(Structures.Normal);
+        if (normal === undefined) {
+          const token = t.getFirstToken();
+          const issue = Issue.atToken(file, token, this.getDescription(t.get().constructor.name), this.getMetadata().key);
+          issues.push(issue);
+        }
+      }
+    }
+
+    if (this.getConfig().if === true) {
+      const tries = stru.findAllStructures(Structures.If)
+        .concat(stru.findAllStructures(Structures.Else))
+        .concat(stru.findAllStructures(Structures.ElseIf));
+      for (const t of tries) {
+        const normal = t.findDirectStructure(Structures.Body);
         if (normal === undefined) {
           const token = t.getFirstToken();
           const issue = Issue.atToken(file, token, this.getDescription(t.get().constructor.name), this.getMetadata().key);

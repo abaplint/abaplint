@@ -21,6 +21,24 @@ TRY.
   CATCH cx_errror INTO something.
 ENDTRY.`, cnt: 0},
 
+  {abap: `
+IF sy-subrc <> 0.
+ELSE.
+  WRITE 'a'.
+ENDIF.`, cnt: 1},
+
+  {abap: `
+IF sy-subrc <> 0.
+  WRITE 'a'.
+ELSE.
+ENDIF.`, cnt: 1},
+
+  {abap: `
+IF sy-subrc <> 0.
+  WRITE 'a'.
+ELSEIF 1 = 2.
+ENDIF.`, cnt: 1},
+
 ];
 
 testRule(tests, EmptyStructure);
