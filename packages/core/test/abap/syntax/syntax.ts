@@ -2547,6 +2547,16 @@ DELETE TABLE lt_results FROM 10.`;
     expect(issues.length).to.equals(0);
   });
 
+  it("FOR IN voided", () => {
+    const abap = `
+    TYPES ty_integers TYPE STANDARD TABLE OF i WITH EMPTY KEY.
+    DATA(lt_integers) = cl_void=>method( ).
+    DATA(copy) = VALUE ty_integers( FOR lv_int IN lt_integers ( lv_int ) ).
+    `;
+    const issues = runProgram(abap);
+    expect(issues.length).to.equals(0);
+  });
+
 // todo, static method cannot access instance attributes
 // todo, can a private method access protected attributes?
 // todo, readonly fields(constants + enums + attributes flagged read-only)
