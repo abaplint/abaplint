@@ -244,10 +244,9 @@ adds real types and real scopes
 todo
 
 == Parsing vs standard ABAP
-* Spaces required after string literals and before right parenthesis
 * CALL FUNCTION EXCEPTIONS must be well formed
-* Macros are only scoped to current file
-* Dashes in identifiers(DATA, CONSTANTS, FORM names) are supported as syntax, but intentionally causes problems when they are resolved 
+* Macros are only scoped to current file, current workaround is adding the constants to `abaplint.json`
+* Dashes in identifiers(DATA, CONSTANTS, FORM names) are supported as syntax, but intentionally causes problems when they are resolved
 
 == Development
 ....
