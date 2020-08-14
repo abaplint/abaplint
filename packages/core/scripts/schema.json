@@ -1484,7 +1484,18 @@
                   "type": "boolean"
                 }
               ],
-              "description": "Checks for syntax unrecognized by abaplint\nTags: Syntax\nhttps://rules.abaplint.org/parser_error"
+              "description": "Checks for syntax unrecognized by abaplint.\n\nSee recognized syntax at https://syntax.abaplint.org\nTags: Syntax\nhttps://rules.abaplint.org/parser_error"
+            },
+            "parser_missing_space": {
+              "anyOf": [
+                {
+                  "$ref": "#/definitions/ParserMissingSpaceConf"
+                },
+                {
+                  "type": "boolean"
+                }
+              ],
+              "description": "In special cases the ABAP language allows for not having spaces before or after string literals.\nThis rule makes sure the spaces are consistently required across the language.\nTags: Syntax\nhttps://rules.abaplint.org/parser_missing_space"
             },
             "prefer_inline": {
               "anyOf": [
@@ -2682,6 +2693,19 @@
       "type": "object"
     },
     "ParserErrorConf": {
+      "additionalProperties": false,
+      "properties": {
+        "exclude": {
+          "description": "List of file regex filename patterns to exclude",
+          "items": {
+            "type": "string"
+          },
+          "type": "array"
+        }
+      },
+      "type": "object"
+    },
+    "ParserMissingSpaceConf": {
       "additionalProperties": false,
       "properties": {
         "exclude": {
