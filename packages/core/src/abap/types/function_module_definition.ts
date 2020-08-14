@@ -1,6 +1,6 @@
 import {xmlToArray} from "../../xml_utils";
 
-export enum FunctionModuleParameterType {
+export enum FunctionModuleParameterDirection {
   importing = "importing",
   exporting = "exporting",
   changing = "changing",
@@ -9,7 +9,8 @@ export enum FunctionModuleParameterType {
 
 export interface IFunctionModuleParameter {
   name: string;
-  type: FunctionModuleParameterType;
+  direction: FunctionModuleParameterDirection;
+  type: string;
 }
 
 export class FunctionModuleDefinition {
@@ -38,7 +39,8 @@ export class FunctionModuleDefinition {
       for (const param of xmlToArray(data.IMPORT.RSIMP)) {
         this.parameters.push({
           name: param.PARAMETER._text,
-          type: FunctionModuleParameterType.importing,
+          direction: FunctionModuleParameterDirection.importing,
+          type: param.TYP._text,
         });
       }
     }
@@ -47,7 +49,8 @@ export class FunctionModuleDefinition {
       for (const param of xmlToArray(data.CHANGING.RSCHA)) {
         this.parameters.push({
           name: param.PARAMETER._text,
-          type: FunctionModuleParameterType.changing,
+          direction: FunctionModuleParameterDirection.changing,
+          type: param.TYP._text,
         });
       }
     }
@@ -56,7 +59,8 @@ export class FunctionModuleDefinition {
       for (const param of xmlToArray(data.EXPORT.RSEXP)) {
         this.parameters.push({
           name: param.PARAMETER._text,
-          type: FunctionModuleParameterType.exporting,
+          direction: FunctionModuleParameterDirection.exporting,
+          type: param.TYP._text,
         });
       }
     }
@@ -65,7 +69,8 @@ export class FunctionModuleDefinition {
       for (const param of xmlToArray(data.TABLES.RSTBL)) {
         this.parameters.push({
           name: param.PARAMETER._text,
-          type: FunctionModuleParameterType.tables,
+          direction: FunctionModuleParameterDirection.tables,
+          type: param.TYP._text,
         });
       }
     }
