@@ -53,7 +53,6 @@ This rule makes sure the spaces are consistently required across the language.`,
   private missingSpace(statement: StatementNode): Position | undefined {
 
     const conds = statement.findAllExpressions(Expressions.Cond);
-
     for (const cond of conds) {
       const children = cond.getChildren();
       for (let i = 0; i < children.length; i++) {
@@ -75,7 +74,29 @@ This rule makes sure the spaces are consistently required across the language.`,
           }
         }
       }
+    }
 
+    const calls = statement.findAllExpressions(Expressions.MethodCallParam);
+    for (const call of calls) {
+      const children = call.getChildren();
+
+      {
+        const first = children[0].getFirstToken();
+        const second = children[1].getFirstToken();
+        if (first.getRow() === second.getRow()
+            && first.getCol() + 1 === second.getStart().getCol()) {
+          return second.getStart();
+        }
+      }
+
+      {
+        const first = children[children.length - 2].getLastToken();
+        const second = children[children.length - 1].getFirstToken();
+        if (first.getRow() === second.getRow()
+            && first.getEnd().getCol() === second.getStart().getCol()) {
+          return second.getStart();
+        }
+      }
     }
 
     return undefined;
