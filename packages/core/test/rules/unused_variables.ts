@@ -173,6 +173,14 @@ ENDCLASS.`;
     expect(issues.length).to.equal(0);
   });
 
+  it("Used in NEW", async () => {
+    const abap = `
+    DATA foo TYPE c LENGTH 1.
+    NEW cl_void( foo ).`;
+    const issues = await runSingle(abap);
+    expect(issues.length).to.equal(0);
+  });
+
   ///////////////
 
   it.skip("test, quickfix, chained first", async () => {
