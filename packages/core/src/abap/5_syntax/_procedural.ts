@@ -78,7 +78,7 @@ export class Procedural {
 
     for (const param of definition.getParameters()) {
       const type = new TypedIdentifier(nameToken, filename, new IntegerType()); // todo, add real type
-      this.scope.addNamedIdentifier(param, type);
+      this.scope.addNamedIdentifier(param.name, type);
     }
   }
 
