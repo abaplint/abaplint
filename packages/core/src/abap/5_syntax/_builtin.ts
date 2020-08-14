@@ -143,20 +143,17 @@ export class BuiltIn {
   }
 
   public getTypes(): TypedIdentifier[] {
-    const ret: TypedIdentifier[] = [];
+    const ret: TypedIdentifier[] = this.buildSY();
 
     const id = new TokenIdentifier(new Position(1, 1), "abap_bool");
     ret.push(new TypedIdentifier(id, BuiltIn.filename, new CharacterType(1)));
-
-    ret.push(this.buildSY());
 
     return ret;
   }
 
   public get(extras: string[]): TypedIdentifier[] {
-    const ret: TypedIdentifier[] = [];
+    const ret: TypedIdentifier[] = this.buildSY();
 
-    ret.push(this.buildSY());
     ret.push(this.buildVariable("screen")); // todo, add structure, or alternatively make native Statements
     ret.push(this.buildVariable("text")); // todo, this should be parsed to text elements? and this var removed
 
@@ -195,7 +192,7 @@ export class BuiltIn {
 
 /////////////////////////////
 
-  private buildSY(): TypedIdentifier {
+  private buildSY(): TypedIdentifier[] {
     const components: IStructureComponent[] = [];
     components.push({name: "abcde", type: new CharacterType(26)});
     components.push({name: "batch", type: new CharacterType(1)});
@@ -241,8 +238,14 @@ export class BuiltIn {
     components.push({name: "vline", type: new CharacterType(1)});
     components.push({name: "zonlo", type: new CharacterType(6)});
     const type = new StructureType(components);
-    const id = new TokenIdentifier(new Position(this.row++, 1), "sy");
-    return new TypedIdentifier(id, BuiltIn.filename, type, [IdentifierMeta.ReadOnly, IdentifierMeta.BuiltIn]);
+
+    const id1 = new TokenIdentifier(new Position(this.row++, 1), "sy");
+    const sy = new TypedIdentifier(id1, BuiltIn.filename, type, [IdentifierMeta.ReadOnly, IdentifierMeta.BuiltIn]);
+
+    const id2 = new TokenIdentifier(new Position(this.row++, 1), "syst");
+    const syst = new TypedIdentifier(id2, BuiltIn.filename, type, [IdentifierMeta.ReadOnly, IdentifierMeta.BuiltIn]);
+
+    return [sy, syst];
   }
 
   private buildConstant(name: string, type?: AbstractType, value?: string): TypedIdentifier {
