@@ -6,6 +6,7 @@ import {AllowedObjectTypesConf} from "../src/rules/allowed_object_types";
 import {AmbiguousStatementConf} from "../src/rules/ambiguous_statement";
 import {AvoidUseConf} from "../src/rules/avoid_use";
 import {BeginEndNamesConf} from "../src/rules/begin_end_names";
+import {BeginSingleIncludeConf} from "../src/rules/begin_single_include";
 import {ChainMainlyDeclarationsConf} from "../src/rules/chain_mainly_declarations";
 import {CheckAbstractConf} from "../src/rules/check_abstract";
 import {CheckCommentsConf} from "../src/rules/check_comments";
@@ -84,7 +85,6 @@ import {StartAtTabConf} from "../src/rules/start_at_tab";
 import {SuperclassFinalConf} from "../src/rules/superclass_final";
 import {TABLEnhancementCategoryConf} from "../src/rules/tabl_enhancement_category";
 import {TryWithoutCatchConf} from "../src/rules/try_without_catch";
-import {TypeBeginSingleTypeConf} from "../src/rules/type_begin_single_include";
 import {TypeFormParametersConf} from "../src/rules/type_form_parameters";
 import {TypesNamingConf} from "../src/rules/types_naming";
 import {UnknownTypesConf} from "../src/rules/unknown_types";
@@ -108,6 +108,7 @@ export interface IConfig {
     "ambiguous_statement"?: AmbiguousStatementConf | boolean,
     "avoid_use"?: AvoidUseConf | boolean,
     "begin_end_names"?: BeginEndNamesConf | boolean,
+    "begin_single_include"?: BeginSingleIncludeConf | boolean,
     "chain_mainly_declarations"?: ChainMainlyDeclarationsConf | boolean,
     "check_abstract"?: CheckAbstractConf | boolean,
     "check_comments"?: CheckCommentsConf | boolean,
@@ -186,7 +187,6 @@ export interface IConfig {
     "superclass_final"?: SuperclassFinalConf | boolean,
     "tabl_enhancement_category"?: TABLEnhancementCategoryConf | boolean,
     "try_without_catch"?: TryWithoutCatchConf | boolean,
-    "type_begin_single_include"?: TypeBeginSingleTypeConf | boolean,
     "type_form_parameters"?: TypeFormParametersConf | boolean,
     "types_naming"?: TypesNamingConf | boolean,
     "unknown_types"?: UnknownTypesConf | boolean,

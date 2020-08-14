@@ -144,6 +144,19 @@
       },
       "type": "object"
     },
+    "BeginSingleIncludeConf": {
+      "additionalProperties": false,
+      "properties": {
+        "exclude": {
+          "description": "List of file regex filename patterns to exclude",
+          "items": {
+            "type": "string"
+          },
+          "type": "array"
+        }
+      },
+      "type": "object"
+    },
     "ChainMainlyDeclarationsConf": {
       "additionalProperties": false,
       "properties": {
@@ -847,6 +860,17 @@
                 }
               ],
               "description": "Check BEGIN OF and END OF names match\nTags: Syntax, Quickfix\nhttps://rules.abaplint.org/begin_end_names"
+            },
+            "begin_single_include": {
+              "anyOf": [
+                {
+                  "$ref": "#/definitions/BeginSingleIncludeConf"
+                },
+                {
+                  "type": "boolean"
+                }
+              ],
+              "description": "Finds TYPE BEGIN with just one INCLUDE TYPE, and DATA with single INCLUDE STRUCTURE\nhttps://rules.abaplint.org/begin_single_include"
             },
             "chain_mainly_declarations": {
               "anyOf": [
@@ -1705,17 +1729,6 @@
                 }
               ],
               "description": "Checks for TRY blocks without a CATCH and CLEANUP block\nhttps://rules.abaplint.org/try_without_catch"
-            },
-            "type_begin_single_include": {
-              "anyOf": [
-                {
-                  "$ref": "#/definitions/TypeBeginSingleTypeConf"
-                },
-                {
-                  "type": "boolean"
-                }
-              ],
-              "description": "Finds TYPE BEGIN with just one INCLUDE TYPE\nhttps://rules.abaplint.org/type_begin_single_include"
             },
             "type_form_parameters": {
               "anyOf": [
@@ -3059,19 +3072,6 @@
       "type": "object"
     },
     "TryWithoutCatchConf": {
-      "additionalProperties": false,
-      "properties": {
-        "exclude": {
-          "description": "List of file regex filename patterns to exclude",
-          "items": {
-            "type": "string"
-          },
-          "type": "array"
-        }
-      },
-      "type": "object"
-    },
-    "TypeBeginSingleTypeConf": {
       "additionalProperties": false,
       "properties": {
         "exclude": {

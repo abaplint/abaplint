@@ -80,6 +80,8 @@ https://help.sap.com/doc/abapdocu_751_index_htm/7.51/en-US/abenchained_statement
           || s instanceof Statements.ClassDataBegin
           || s instanceof Statements.ClassDataEnd
           || s instanceof Statements.Static
+          || s instanceof Statements.StaticBegin
+          || s instanceof Statements.StaticEnd
           || s instanceof Statements.Local
           || s instanceof Statements.Constant
           || s instanceof Statements.ConstantBegin
