@@ -2557,6 +2557,23 @@ DELETE TABLE lt_results FROM 10.`;
     expect(issues.length).to.equals(0);
   });
 
+  it("WRITE syst-sysid.", () => {
+    const abap = `WRITE syst-sysid.`;
+    const issues = runProgram(abap);
+    expect(issues.length).to.equals(0);
+  });
+
+  it("STATICS BEGIN INCLUDE", () => {
+    const abap = `
+  STATICS BEGIN OF bar.
+  INCLUDE STRUCTURE syst.
+  STATICS END OF bar.
+
+  WRITE bar-sysid.`;
+    const issues = runProgram(abap);
+    expect(issues.length).to.equals(0);
+  });
+
 // todo, static method cannot access instance attributes
 // todo, can a private method access protected attributes?
 // todo, readonly fields(constants + enums + attributes flagged read-only)
