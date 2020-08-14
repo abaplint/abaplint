@@ -67,7 +67,8 @@ export class Table extends AbstractObject {
         components.push({
           name: field.FIELDNAME,
           type: ddic.lookupDataElement(field.ROLLNAME)});
-      } else if (comptype === "S" && field.FIELDNAME === ".INCLUDE") { // incude structure
+      } else if (comptype === "S"
+          && ( field.FIELDNAME === ".INCLUDE" || field.FIELDNAME === ".INCLU--AP")) { // incude or append structure
         const found = ddic.lookupTableOrView(field.PRECFIELD);
         if (found instanceof Types.StructureType) {
           for (const c of found.getComponents()) {
