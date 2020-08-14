@@ -232,6 +232,7 @@ export class BuiltIn {
     components.push({name: "tfill", type: new IntegerType()});
     components.push({name: "timlo", type: new TimeType()});
     components.push({name: "tzone", type: new IntegerType()});
+    components.push({name: "lsind", type: new IntegerType()});
     components.push({name: "ucomm", type: new CharacterType(70)});
     components.push({name: "uline", type: new CharacterType(255)});
     components.push({name: "uname", type: new CharacterType(12)});
