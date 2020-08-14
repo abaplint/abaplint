@@ -10,7 +10,7 @@ export enum FunctionModuleParameterDirection {
 export interface IFunctionModuleParameter {
   name: string;
   direction: FunctionModuleParameterDirection;
-  type: string;
+  type: string | undefined;
 }
 
 export class FunctionModuleDefinition {
@@ -40,7 +40,7 @@ export class FunctionModuleDefinition {
         this.parameters.push({
           name: param.PARAMETER._text,
           direction: FunctionModuleParameterDirection.importing,
-          type: param.TYP._text,
+          type: param.TYP?._text,
         });
       }
     }
@@ -50,7 +50,7 @@ export class FunctionModuleDefinition {
         this.parameters.push({
           name: param.PARAMETER._text,
           direction: FunctionModuleParameterDirection.changing,
-          type: param.TYP._text,
+          type: param.TYP?._text,
         });
       }
     }
@@ -60,7 +60,7 @@ export class FunctionModuleDefinition {
         this.parameters.push({
           name: param.PARAMETER._text,
           direction: FunctionModuleParameterDirection.exporting,
-          type: param.TYP._text,
+          type: param.TYP?._text,
         });
       }
     }
@@ -70,7 +70,7 @@ export class FunctionModuleDefinition {
         this.parameters.push({
           name: param.PARAMETER._text,
           direction: FunctionModuleParameterDirection.tables,
-          type: param.TYP._text,
+          type: param.TYP?._text,
         });
       }
     }

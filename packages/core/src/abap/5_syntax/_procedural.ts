@@ -10,8 +10,9 @@ import {FunctionGroup} from "../../objects";
 import {ABAPFile} from "../../files";
 import {IRegistry} from "../../_iregistry";
 import {TypedIdentifier} from "../types/_typed_identifier";
-import {TableType} from "../types/basic";
+import {TableType, CharacterType} from "../types/basic";
 import {DDIC} from "../../ddic";
+import {AbstractType} from "../types/basic/_abstract_type";
 
 export class Procedural {
   private readonly scope: CurrentScope;
@@ -84,7 +85,10 @@ export class Procedural {
     const ddic = new DDIC(this.reg);
 
     for (const param of definition.getParameters()) {
-      let found = ddic.lookup(param.type);
+      let found: AbstractType = new CharacterType(1); // fallback
+      if (param.type) {
+        found = ddic.lookup(param.type);
+      }
       if (param.direction === FunctionModuleParameterDirection.tables) {
         found = new TableType(found, true);
       }
