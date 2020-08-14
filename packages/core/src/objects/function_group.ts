@@ -145,7 +145,7 @@ export class FunctionGroup extends ABAPObject {
     const ret: FunctionModuleDefinition[] = [];
 
     const functions = data.abapGit["asx:abap"]["asx:values"].FUNCTIONS;
-    for (const module of xmlToArray(functions.item)) {
+    for (const module of xmlToArray(functions?.item)) {
       ret.push(new FunctionModuleDefinition(module));
     }
 
