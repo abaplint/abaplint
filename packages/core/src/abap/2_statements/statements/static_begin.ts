@@ -1,6 +1,6 @@
 import {IStatement} from "./_statement";
 import {str, seq, alt, opt} from "../combi";
-import {Integer, NamespaceSimpleName} from "../expressions";
+import {Integer, DefinitionName} from "../expressions";
 import {IStatementRunnable} from "../statement_runnable";
 
 export class StaticBegin implements IStatement {
@@ -10,7 +10,7 @@ export class StaticBegin implements IStatement {
 
     const ret = seq(alt(str("STATIC"), str("STATICS")),
                     str("BEGIN OF"),
-                    new NamespaceSimpleName(),
+                    new DefinitionName(),
                     opt(occurs));
 
     return ret;
