@@ -181,6 +181,17 @@ ENDCLASS.`;
     expect(issues.length).to.equal(0);
   });
 
+  it("SWITCH", async () => {
+    const abap = `
+  DATA val TYPE abap_bool.
+  DATA date TYPE d.
+  date = SWITCH #( val
+    WHEN abap_true  THEN sy-datum + 1
+    WHEN abap_false THEN sy-datum - 1 ).`;
+    const issues = await runSingle(abap);
+    expect(issues.length).to.equal(0);
+  });
+
   ///////////////
 
   it.skip("test, quickfix, chained first", async () => {
