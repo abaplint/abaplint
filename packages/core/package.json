@@ -40,8 +40,7 @@
         "url": "git+https://github.com/abaplint/abaplint.git"
     },
     "engines": {
-        "node": ">=10.5.0",
-        "npm": ">= 6.0.0"
+        "node": ">=12.0.0"
     },
     "keywords": [
         "ABAP",
