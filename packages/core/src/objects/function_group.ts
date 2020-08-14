@@ -22,7 +22,21 @@ export class FunctionGroup extends ABAPObject {
     if (main === undefined) {
       return [];
     }
-    return [main];
+    const sequence = [main];
+
+    for (const m of this.getModules()) {
+      const search = "." + m.getName().toLocaleLowerCase() + ".abap";
+      for (const f of this.getABAPFiles()) {
+        if (f.getFilename().toLocaleLowerCase().endsWith(search)) {
+          if (sequence.indexOf(f) < 0) {
+            sequence.push(f);
+          }
+          break;
+        }
+      }
+    }
+
+    return sequence;
   }
 
   // todo, cache parsed data
