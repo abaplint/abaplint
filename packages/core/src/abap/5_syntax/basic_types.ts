@@ -31,7 +31,7 @@ export class BasicTypes {
     const children = chain?.getChildren();
 
     if (children === undefined) {
-      return new Types.UnknownType("Type error, could not resolve " + fullName);
+      return new Types.UnknownType("Type error, could not resolve \"" + fullName + "\", resolveLikeName1");
     }
 
     let type: AbstractType | undefined = undefined;
@@ -67,10 +67,7 @@ export class BasicTypes {
     } else {
       type = this.scope.findVariable(name)?.getType();
       if (type === undefined) {
-        type = this.scope.getDDIC().lookup(name);
-        if (type instanceof Types.VoidType) {
-          type = undefined;
-        }
+        type = this.scope.getDDIC().lookupNoVoid(name);
       }
 
       // todo, this only looks up one level, reuse field_chain.ts?
@@ -104,7 +101,7 @@ export class BasicTypes {
     }
 
     if (!type) {
-      return new Types.UnknownType("Type error, could not resolve " + fullName);
+      return new Types.UnknownType("Type error, could not resolve \"" + fullName + "\", resolveLikeName2");
     }
 
     return type;
@@ -223,7 +220,7 @@ export class BasicTypes {
       const type = this.resolveLikeName(node.findFirstExpression(Expressions.Type));
 
       if (type === undefined) {
-        return new Types.UnknownType("Type error, could not resolve " + name);
+        return new Types.UnknownType("Type error, could not resolve \"" + name + "\", parseType");
       } else if (type instanceof Types.TableType) {
         return type.getRowType();
       } else if (type instanceof Types.VoidType) {
