@@ -90,6 +90,12 @@ import {OpenDataset} from "./statements/open_dataset";
 import {CloseDataset} from "./statements/close_dataset";
 import {GetRunTime} from "./statements/get_run_time";
 import {UpdateDatabase} from "./statements/update_database";
+import {Add} from "./statements/add";
+import {Subtract} from "./statements/subtract";
+import {AddCorresponding} from "./statements/add_corresponding";
+import {SubtractCorresponding} from "./statements/subtract_corresponding";
+import {Multiply} from "./statements/multiply";
+import {Divide} from "./statements/divide";
 
 export class SyntaxLogic {
   private currentFile: ABAPFile;
@@ -332,12 +338,10 @@ export class SyntaxLogic {
       new UpdateDatabase().runSyntax(node, this.scope, filename);
     } else if (s instanceof Statements.Sort) {
       new Sort().runSyntax(node, this.scope, filename);
-
     } else if (s instanceof Statements.OpenDataset) {
       new OpenDataset().runSyntax(node, this.scope, filename);
     } else if (s instanceof Statements.CloseDataset) {
       new CloseDataset().runSyntax(node, this.scope, filename);
-
     } else if (s instanceof Statements.ReadReport) {
       new ReadReport().runSyntax(node, this.scope, filename);
     } else if (s instanceof Statements.Do) {
@@ -356,7 +360,6 @@ export class SyntaxLogic {
       new WhenType().runSyntax(node, this.scope, filename);
     } else if (s instanceof Statements.If) {
       new If().runSyntax(node, this.scope, filename);
-
     } else if (s instanceof Statements.CallTransformation) {
       new CallTransformation().runSyntax(node, this.scope, filename);
     } else if (s instanceof Statements.GetLocale) {
@@ -391,6 +394,19 @@ export class SyntaxLogic {
       new SelectionScreen().runSyntax(node, this.scope, filename);
     } else if (s instanceof Statements.Ranges) {
       new Ranges().runSyntax(node, this.scope, filename);
+    } else if (s instanceof Statements.Add) {
+      new Add().runSyntax(node, this.scope, filename);
+    } else if (s instanceof Statements.Subtract) {
+      new Subtract().runSyntax(node, this.scope, filename);
+    } else if (s instanceof Statements.AddCorresponding) {
+      new AddCorresponding().runSyntax(node, this.scope, filename);
+    } else if (s instanceof Statements.SubtractCorresponding) {
+      new SubtractCorresponding().runSyntax(node, this.scope, filename);
+    } else if (s instanceof Statements.Multiply) {
+      new Multiply().runSyntax(node, this.scope, filename);
+    } else if (s instanceof Statements.Divide) {
+      new Divide().runSyntax(node, this.scope, filename);
+
 
     } else if (s instanceof Statements.Form) {
       this.helpers.proc.findFormScope(node, filename);
