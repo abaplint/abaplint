@@ -2574,6 +2574,18 @@ DELETE TABLE lt_results FROM 10.`;
     expect(issues.length).to.equals(0);
   });
 
+  it("FAE, table_line", () => {
+    const abap = `
+    TYPES ty_char40 TYPE c LENGTH 40.
+    DATA lt_sha1 TYPE STANDARD TABLE OF ty_char40 WITH EMPTY KEY.
+    SELECT * FROM ags_objects
+      INTO TABLE @DATA(rt_list)
+      FOR ALL ENTRIES IN lt_sha1
+      WHERE sha1 = lt_sha1-table_line.`;
+    const issues = runProgram(abap);
+    expect(issues.length).to.equals(0);
+  });
+
 // todo, static method cannot access instance attributes
 // todo, can a private method access protected attributes?
 // todo, readonly fields(constants + enums + attributes flagged read-only)
