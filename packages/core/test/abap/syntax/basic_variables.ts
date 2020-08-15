@@ -1296,42 +1296,52 @@ ENDCASE.`;
     expect(identifier?.getType()).to.be.instanceof(Basic.TableType);
   });
 
+  const zstructure1 = `
+  <?xml version="1.0" encoding="utf-8"?>
+  <abapGit version="v1.0.0" serializer="LCL_OBJECT_TABL" serializer_version="v1.0.0">
+   <asx:abap xmlns:asx="http://www.sap.com/abapxml" version="1.0">
+    <asx:values>
+     <DD02V>
+      <TABNAME>ZSTRUCTURE1</TABNAME>
+      <DDLANGUAGE>E</DDLANGUAGE>
+      <TABCLASS>INTTAB</TABCLASS>
+      <DDTEXT>sdf</DDTEXT>
+      <EXCLASS>1</EXCLASS>
+     </DD02V>
+     <DD03P_TABLE>
+      <DD03P>
+       <TABNAME>ZSTRUCTURE1</TABNAME>
+       <FIELDNAME>FOOBAR</FIELDNAME>
+       <DDLANGUAGE>E</DDLANGUAGE>
+       <POSITION>0001</POSITION>
+       <ADMINFIELD>0</ADMINFIELD>
+       <INTTYPE>C</INTTYPE>
+       <INTLEN>000004</INTLEN>
+       <DATATYPE>CHAR</DATATYPE>
+       <LENG>000002</LENG>
+       <MASK>  CHAR</MASK>
+      </DD03P>
+     </DD03P_TABLE>
+    </asx:values>
+   </asx:abap>
+  </abapGit>`;
+
   it("LIKE DDIC structure", () => {
-    const xml = `
-    <?xml version="1.0" encoding="utf-8"?>
-    <abapGit version="v1.0.0" serializer="LCL_OBJECT_TABL" serializer_version="v1.0.0">
-     <asx:abap xmlns:asx="http://www.sap.com/abapxml" version="1.0">
-      <asx:values>
-       <DD02V>
-        <TABNAME>ZSTRUCTURE1</TABNAME>
-        <DDLANGUAGE>E</DDLANGUAGE>
-        <TABCLASS>INTTAB</TABCLASS>
-        <DDTEXT>sdf</DDTEXT>
-        <EXCLASS>1</EXCLASS>
-       </DD02V>
-       <DD03P_TABLE>
-        <DD03P>
-         <TABNAME>ZSTRUCTURE1</TABNAME>
-         <FIELDNAME>FOOBAR</FIELDNAME>
-         <DDLANGUAGE>E</DDLANGUAGE>
-         <POSITION>0001</POSITION>
-         <ADMINFIELD>0</ADMINFIELD>
-         <INTTYPE>C</INTTYPE>
-         <INTLEN>000004</INTLEN>
-         <DATATYPE>CHAR</DATATYPE>
-         <LENG>000002</LENG>
-         <MASK>  CHAR</MASK>
-        </DD03P>
-       </DD03P_TABLE>
-      </asx:values>
-     </asx:abap>
-    </abapGit>`;
     const prog = `DATA foo LIKE zstructure1-foobar.`;
     const type = runMulti(
-      [{filename: "zstructure1.tabl.xml", contents: xml},
+      [{filename: "zstructure1.tabl.xml", contents: zstructure1},
         {filename: "zfoobar.prog.abap", contents: prog}],
       "foo");
     expectCharacter(type, 2);
+  });
+
+  it("LIKE DDIC 2", () => {
+    const prog = `DATA foo LIKE zstructure1.`;
+    const type = runMulti(
+      [{filename: "zstructure1.tabl.xml", contents: zstructure1},
+        {filename: "zfoobar.prog.abap", contents: prog}],
+      "foo");
+    expectStructure(type);
   });
 
   it("Inline VALUE table comprehension", () => {
