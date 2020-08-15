@@ -192,6 +192,15 @@ ENDCLASS.`;
     expect(issues.length).to.equal(0);
   });
 
+  it("database update", async () => {
+    const abap = `
+  DATA lv_text TYPE c LENGTH 10.
+  UPDATE voided SET areat = lv_text.
+  `;
+    const issues = await runSingle(abap);
+    expect(issues.length).to.equal(0);
+  });
+
   ///////////////
 
   it.skip("test, quickfix, chained first", async () => {
