@@ -19,7 +19,7 @@ export class SQLForAllEntries {
         throw new Error("FAE parameter must be table type");
       }
 
-      const id = new TypedIdentifier(token, filename, type.getRowType());
+      const id = new TypedIdentifier(token, filename, new TableType(type.getRowType(), true));
       scope.addIdentifier(id);
     }
   }

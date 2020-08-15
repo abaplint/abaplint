@@ -40,8 +40,7 @@ export class FieldChain {
         if (context instanceof UnknownType) {
           throw new Error("Not a structure, type unknown, FieldChain");
         } else if (!(context instanceof StructureType)
-            && !(context instanceof TableType && context.isWithHeader() && context.getRowType() instanceof StructureType)
-            && !(context instanceof TableType && context.isWithHeader() && context.getRowType() instanceof VoidType)
+            && !(context instanceof TableType && context.isWithHeader())
             && !(context instanceof VoidType)) {
           throw new Error("Not a structure, FieldChain");
         }

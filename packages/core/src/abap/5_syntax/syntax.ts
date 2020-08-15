@@ -89,6 +89,7 @@ import {Submit} from "./statements/submit";
 import {OpenDataset} from "./statements/open_dataset";
 import {CloseDataset} from "./statements/close_dataset";
 import {GetRunTime} from "./statements/get_run_time";
+import {UpdateDatabase} from "./statements/update_database";
 
 export class SyntaxLogic {
   private currentFile: ABAPFile;
@@ -327,6 +328,8 @@ export class SyntaxLogic {
       new InsertDatabase().runSyntax(node, this.scope, filename);
     } else if (s instanceof Statements.DeleteDatabase) {
       new DeleteDatabase().runSyntax(node, this.scope, filename);
+    } else if (s instanceof Statements.UpdateDatabase) {
+      new UpdateDatabase().runSyntax(node, this.scope, filename);
     } else if (s instanceof Statements.Sort) {
       new Sort().runSyntax(node, this.scope, filename);
 

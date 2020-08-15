@@ -59,21 +59,42 @@ export class DDIC {
     return this.reg.inErrorNamespace(name);
   }
 
-  public lookup(name: string): AbstractType {
+  public lookupNoVoid(name: string): AbstractType | undefined {
     const foundTABL = this.reg.getObject("TABL", name) as Table | undefined;
     if (foundTABL) {
       return foundTABL.parseType(this.reg);
     }
+
     const foundVIEW = this.reg.getObject("VIEW", name) as Table | undefined;
     if (foundVIEW) {
       return foundVIEW.parseType(this.reg);
     }
 
-    const ttyp = this.lookupTableType(name);
-    if (!(ttyp instanceof Types.VoidType) && !(ttyp instanceof Types.UnknownType)) {
-      return ttyp;
+    const foundTTYP = this.reg.getObject("TTYP", name) as TableType | undefined;
+    if (foundTTYP) {
+      return foundTTYP.parseType(this.reg);
     }
-    return this.lookupDataElement(name);
+
+    const foundDTEL = this.reg.getObject("DTEL", name) as DataElement | undefined;
+    if (foundDTEL) {
+      return foundDTEL.parseType(this.reg);
+    }
+
+    return undefined;
+  }
+
+  /** lookup with voiding and unknown types */
+  public lookup(name: string): AbstractType {
+    const found = this.lookupNoVoid(name);
+    if (found) {
+      return found;
+    }
+
+    if (this.reg.inErrorNamespace(name)) {
+      return new Types.UnknownType(name + " not found, lookup");
+    } else {
+      return new Types.VoidType(name);
+    }
   }
 
   public lookupDomain(name: string): AbstractType {
