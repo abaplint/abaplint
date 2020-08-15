@@ -3,6 +3,8 @@ import {IFile} from "./files/_ifile";
 import {Position} from "./position";
 import {IRegistry} from "./_iregistry";
 import {MemoryFile} from "./files/memory_file";
+import {StatementNode} from "./abap/nodes/statement_node";
+import {ABAPFile} from "./abap/abap_file";
 
 export interface IRange {
   start: Position;
@@ -19,6 +21,32 @@ export interface IEdit {
 }
 
 export class EditHelper {
+
+  public static merge(fix1: IEdit, fix2: IEdit): IEdit {
+    const ret: IEdit = {};
+
+    for (const k of Object.keys(fix1)) {
+      if (ret[k] === undefined) {
+        ret[k] = [];
+      }
+      ret[k] = ret[k].concat(fix1[k]);
+    }
+
+    for (const k of Object.keys(fix2)) {
+      if (ret[k] === undefined) {
+        ret[k] = [];
+      }
+      ret[k] = ret[k].concat(fix2[k]);
+    }
+
+    return ret;
+  }
+
+  public static deleteStatement(file: ABAPFile, statement: StatementNode): IEdit {
+    // todo, take care care of chaining
+    return EditHelper.deleteRange(file, statement.getFirstToken().getStart(), statement.getLastToken().getEnd());
+  }
+
   public static deleteToken(file: IFile, token: Token): IEdit {
     const filename = file.getFilename();
     const range: IRange = {start: token.getStart(), end: token.getEnd()};
