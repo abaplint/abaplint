@@ -222,9 +222,10 @@ ENDCLASS.`;
     expect(issues.length).to.equal(0);
   });
 
-  it("INCLUDE, lv_ind unused", async () => {
+  it("INCLUDE, two unused in the include", async () => {
     const abap1 = `INCLUDE zabapgit_forms.`;
     const abap2 = `
+    DATA bar TYPE c.
     FORM run.
       DATA lv_ind TYPE string.
     ENDFORM.
@@ -248,6 +249,31 @@ ENDCLASS.`;
       new MemoryFile("zabapgit_forms.prog.abap", abap2),
       new MemoryFile("zabapgit_forms.prog.xml", xml2),
     ]);
+    expect(issues.length).to.equal(2);
+  });
+
+  it("class implementing interface", async () => {
+    const intf = `
+INTERFACE zif_bar.
+  DATA moo TYPE c LENGTH 1.
+  METHODS m1 IMPORTING bar TYPE string.
+ENDINTERFACE.`;
+    const clas = `
+CLASS zcl_bar DEFINITION.
+  PRIVATE SECTION.
+    INTERFACES: zif_bar.
+    DATA foo TYPE c LENGTH 1.
+ENDCLASS.
+
+CLASS zcl_bar IMPLEMENTATION.
+  METHOD zif_bar~m1.
+  ENDMETHOD.
+ENDCLASS.`;
+    const issues = await runMulti([
+      new MemoryFile("zcl_bar.clas.abap", clas),
+      new MemoryFile("zif_bar.intf.abap", intf),
+    ]);
+    // todo, interfaces are currently ignored
     expect(issues.length).to.equal(1);
   });
 

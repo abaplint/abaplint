@@ -48,7 +48,7 @@ export class UnusedVariables implements IRule {
   public run(obj: IObject): Issue[] {
     if (!(obj instanceof ABAPObject)) {
       return [];
-    } else if (obj instanceof Interface) {
+    } else if (obj instanceof Interface) { // todo, how to handle interfaces?
       return [];
     }
 
@@ -101,7 +101,10 @@ export class UnusedVariables implements IRule {
           || v.name === "super"
           || v.identifier.getMeta().includes(IdentifierMeta.EventParameter)) {
         continue; // todo, workaround for "me" and "super", these should somehow be typed to built-in
-      } else if (this.isUsed(v.identifier, node) === false) {
+      } else if ((obj.containsFile(v.identifier.getFilename())
+            || node.getIdentifier().stype === ScopeType.Program
+            || node.getIdentifier().stype === ScopeType.Form)
+          && this.isUsed(v.identifier, node) === false) {
         const message = "Variable \"" + v.identifier.getName() + "\" not used";
         const fix = this.buildFix(v, obj);
         ret.push(Issue.atIdentifier(v.identifier, message, this.getMetadata().key, fix));
