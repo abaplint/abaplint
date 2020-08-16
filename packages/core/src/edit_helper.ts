@@ -43,8 +43,51 @@ export class EditHelper {
   }
 
   public static deleteStatement(file: ABAPFile, statement: StatementNode): IEdit {
-    // todo, take care care of chaining
-    return EditHelper.deleteRange(file, statement.getFirstToken().getStart(), statement.getLastToken().getEnd());
+    const scolon = statement.getColon();
+    if (scolon === undefined) {
+      return EditHelper.deleteRange(file, statement.getFirstToken().getStart(), statement.getLastToken().getEnd());
+    }
+
+    // find statements part of chain
+    let chainCount = 0;
+    let setPrevious = true;
+    /** previous statement in the chain */
+    let previousStatement: StatementNode | undefined = undefined;
+    for (const s of file.getStatements()) {
+      const colon = s.getColon();
+      if (colon === undefined) {
+        continue;
+      } else if (s === statement) {
+        setPrevious = false;
+        continue;
+      } else if (colon.getStart().equals(scolon.getStart())) {
+        chainCount = chainCount + 1;
+      }
+      if (setPrevious === true) {
+        previousStatement = s;
+      }
+    }
+    if (chainCount === 0) {
+      // the statement to be deleted is the only one in the chain
+      return EditHelper.deleteRange(file, statement.getFirstToken().getStart(), statement.getLastToken().getEnd());
+    }
+
+    // the start of deletion should happen for tokens after the colon
+    let startDelete = statement.getFirstToken().getStart();
+    for (const t of statement.getTokens()) {
+      if (t.getStart().isAfter(scolon.getEnd())) {
+        startDelete = t.getStart();
+        break;
+      }
+    }
+
+    if (statement.getLastToken().getStr() === "." && previousStatement) {
+      const edit1 = EditHelper.replaceToken(file, previousStatement.getLastToken(), ".");
+      const edit2 = EditHelper.deleteRange(file, startDelete, statement.getLastToken().getEnd());
+      return EditHelper.merge(edit1, edit2);
+    } else {
+      return EditHelper.deleteRange(file, startDelete, statement.getLastToken().getEnd());
+    }
   }
 
   public static deleteToken(file: IFile, token: Token): IEdit {
@@ -63,6 +106,10 @@ export class EditHelper {
     const filename = file.getFilename();
     const range: IRange = {start: pos, end: pos};
     return {[filename]: [{range, newText: text}]};
+  }
+
+  public static replaceToken(file: IFile, token: Token, text: string): IEdit {
+    return this.replaceRange(file, token.getStart(), token.getEnd(), text);
   }
 
   public static replaceRange(file: IFile, start: Position, end: Position, text: string): IEdit {

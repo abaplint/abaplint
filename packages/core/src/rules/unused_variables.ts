@@ -101,9 +101,7 @@ export class UnusedVariables implements IRule {
           || v.name === "super"
           || v.identifier.getMeta().includes(IdentifierMeta.EventParameter)) {
         continue; // todo, workaround for "me" and "super", these should somehow be typed to built-in
-      }
-      if (obj.containsFile(v.identifier.getFilename())
-          && this.isUsed(v.identifier, node) === false) {
+      } else if (this.isUsed(v.identifier, node) === false) {
         const message = "Variable \"" + v.identifier.getName() + "\" not used";
         const fix = this.buildFix(v, obj);
         ret.push(Issue.atIdentifier(v.identifier, message, this.getMetadata().key, fix));

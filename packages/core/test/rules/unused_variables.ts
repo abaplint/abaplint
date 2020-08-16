@@ -9,6 +9,17 @@ function testFix(input: string, expected: string) {
   testRuleFixSingle(input, expected, new UnusedVariables());
 }
 
+async function runMulti(files: MemoryFile[]): Promise<Issue[]> {
+  const reg = new Registry().addFiles(files);
+  await reg.parseAsync();
+  const rule = new UnusedVariables().initialize(reg);
+  let issues: Issue[] = [];
+  for (const o of reg.getObjects()) {
+    issues = issues.concat(rule.run(o));
+  }
+  return issues;
+}
+
 async function runSingle(abap: string): Promise<Issue[]> {
   const reg = new Registry().addFile(new MemoryFile("zfoo.prog.abap", abap));
   await reg.parseAsync();
@@ -211,8 +222,36 @@ ENDCLASS.`;
     expect(issues.length).to.equal(0);
   });
 
-  ///////////////
+  it("INCLUDE, lv_ind unused", async () => {
+    const abap1 = `INCLUDE zabapgit_forms.`;
+    const abap2 = `
+    FORM run.
+      DATA lv_ind TYPE string.
+    ENDFORM.
+    `;
+    const xml2 = `
+    <?xml version="1.0" encoding="utf-8"?>
+    <abapGit version="v1.0.0" serializer="LCL_OBJECT_PROG" serializer_version="v1.0.0">
+     <asx:abap xmlns:asx="http://www.sap.com/abapxml" version="1.0">
+      <asx:values>
+       <PROGDIR>
+        <NAME>ZABAPGIT_FORMS</NAME>
+        <SUBC>I</SUBC>
+        <RLOAD>E</RLOAD>
+        <UCCHECK>X</UCCHECK>
+       </PROGDIR>
+      </asx:values>
+     </asx:abap>
+    </abapGit>`;
+    const issues = await runMulti([
+      new MemoryFile("zabapgit.prog.abap", abap1),
+      new MemoryFile("zabapgit_forms.prog.abap", abap2),
+      new MemoryFile("zabapgit_forms.prog.xml", xml2),
+    ]);
+    expect(issues.length).to.equal(1);
+  });
 
+/*
   it.skip("test, quickfix, chained first", async () => {
     testFix(`DATA: foo, bar.
 WRITE bar.`, `DATA: bar.
@@ -228,5 +267,6 @@ WRITE bar.`);
   it.skip("test, quickfix, only one fix per scope per time", async () => {
     testFix(`DATA: foo, bar.`, `DATA: bar.`);
   });
+*/
 
 });
