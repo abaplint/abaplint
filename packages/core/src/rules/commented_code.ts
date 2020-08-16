@@ -53,13 +53,13 @@ https://docs.abapopenchecks.org/checks/14/`,
     let posStart: Position | undefined = undefined;
 
     for (let i = 0; i < rows.length; i++) {
-      posEnd = new Position(i + 1, rows[i].length + 1);
       if (this.isCommentLine(rows[i])) {
         if (code === "") {
           posStart = new Position(i + 1, 1);
         }
         code = code + rows[i].trim().substr(1) + "\n";
-      } else if (code !== "" && posStart) {
+        posEnd = new Position(i + 1, rows[i].length + 1);
+      } else if (code !== "" && posStart && posEnd) {
         issues = issues.concat(this.check(code.trim(), file, posStart, posEnd, obj));
         code = "";
       }

@@ -13,8 +13,6 @@ import {Token} from "../abap/1_lexer/tokens/_token";
 import {ReferenceType} from "../abap/5_syntax/_reference";
 import {Identifier} from "../abap/4_file_information/_identifier";
 import {EditHelper, IEdit} from "../edit_helper";
-import {ABAPFile} from "../files";
-import {StatementNode} from "../abap/nodes/statement_node";
 
 interface IVariableReference {
   position: Identifier,
@@ -94,17 +92,20 @@ First position used must be a full/pure write.`,
         continue;
       }
 
+      // check that it is a pure write, eg not sub component assignment
       const next = this.findNextToken(write, obj);
-      if (next?.getStart().equals(write.position.getEnd())) {
+      if (next?.getStart().equals(write.position.getEnd()) && next.getStr() !== "." && next.getStr() !== ",") {
         continue;
       }
 
       const file = obj.getABAPFileByName(d.identifier.getFilename());
-      const statement = this.findStatement(d.identifier.getToken(), file);
+      const statement = EditHelper.findStatement(d.identifier.getToken(), file);
       let fix: IEdit | undefined = undefined;
       if (file && statement) {
         const fix1 = EditHelper.deleteStatement(file, statement);
-        const fix2 = EditHelper.replaceRange(file, write.position.getStart(), write.position.getEnd(), "DATA(" + d.identifier.getName() + ")");
+        const name = d.identifier.getName();
+        const replace = name.startsWith("<") ? "FIELD-SYMBOL(" + name + ")" : "DATA(" + name + ")";
+        const fix2 = EditHelper.replaceRange(file, write.position.getStart(), write.position.getEnd(), replace);
         fix = EditHelper.merge(fix1, fix2);
       }
       const message = this.getMetadata().title + ", " + d.name;
@@ -115,18 +116,6 @@ First position used must be a full/pure write.`,
   }
 
 ////////////////////////
-
-  private findStatement(token: Token, file: ABAPFile | undefined): StatementNode | undefined {
-    if (file === undefined) {
-      return undefined;
-    }
-    for (const s of file.getStatements()) {
-      if (s.includesToken(token)) {
-        return s;
-      }
-    }
-    return undefined;
-  }
 
   private findNextToken(ref: IVariableReference, obj: ABAPObject): Token | undefined {
 
@@ -149,23 +138,25 @@ First position used must be a full/pure write.`,
 
     let firstRead: IVariableReference | undefined = undefined;
     for (const r of node.getData().references) {
-      if (r.referenceType !== ReferenceType.DataReadReference || r.resolved.getStart().equals(v.identifier.getStart()) === false) {
+      if (r.referenceType !== ReferenceType.DataReadReference
+          || r.resolved.getStart().equals(v.identifier.getStart()) === false) {
         continue;
       }
-      if (firstRead === undefined
-          || firstRead.position.getStart().isAfter(v.identifier.getStart())) {
+      if (firstRead === undefined) {
         firstRead = r;
+        break;
       }
     }
 
     let firstWrite: IVariableReference | undefined = undefined;
     for (const w of node.getData().references) {
-      if (w.referenceType !== ReferenceType.DataWriteReference || w.resolved.getStart().equals(v.identifier.getStart()) === false) {
+      if (w.referenceType !== ReferenceType.DataWriteReference
+          || w.resolved.getStart().equals(v.identifier.getStart()) === false) {
         continue;
       }
-      if (firstWrite === undefined
-          || firstWrite.position.getStart().isAfter(v.identifier.getStart())) {
+      if (firstWrite === undefined) {
         firstWrite = w;
+        break;
       }
     }
 

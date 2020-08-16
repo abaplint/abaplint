@@ -42,6 +42,18 @@ export class EditHelper {
     return ret;
   }
 
+  public static findStatement(token: Token, file: ABAPFile | undefined): StatementNode | undefined {
+    if (file === undefined) {
+      return undefined;
+    }
+    for (const s of file.getStatements()) {
+      if (s.includesToken(token)) {
+        return s;
+      }
+    }
+    return undefined;
+  }
+
   public static deleteStatement(file: ABAPFile, statement: StatementNode): IEdit {
     const scolon = statement.getColon();
     if (scolon === undefined) {

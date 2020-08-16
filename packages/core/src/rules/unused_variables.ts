@@ -10,10 +10,11 @@ import {TypedIdentifier, IdentifierMeta} from "../abap/types/_typed_identifier";
 import {Interface} from "../objects";
 import {ISpaghettiScopeNode, IScopeVariable} from "../abap/5_syntax/_spaghetti_scope";
 import {References} from "../lsp/references";
-import {Data} from "../abap/2_statements/statements";
 import {EditHelper, IEdit} from "../edit_helper";
 
 export class UnusedVariablesConf extends BasicRuleConfig {
+  /** skip specific names, case insensitive */
+  public skipNames: string[];
 }
 
 export class UnusedVariables implements IRule {
@@ -27,7 +28,9 @@ export class UnusedVariables implements IRule {
       shortDescription: `Checks for unused variables`,
       extendedInformation: `WARNING: slow
 
-      Experimental, might give false positives. Skips event parameters`,
+      Experimental, might give false positives. Skips event parameters.
+
+      Note that this currently does not work if the source code uses macros.`,
       tags: [RuleTag.Experimental, RuleTag.Quickfix],
     };
   }
@@ -38,6 +41,9 @@ export class UnusedVariables implements IRule {
 
   public setConfig(conf: UnusedVariablesConf) {
     this.conf = conf;
+    if (this.conf.skipNames === undefined) {
+      this.conf.skipNames = [];
+    }
   }
 
   public initialize(reg: IRegistry) {
@@ -48,7 +54,7 @@ export class UnusedVariables implements IRule {
   public run(obj: IObject): Issue[] {
     if (!(obj instanceof ABAPObject)) {
       return [];
-    } else if (obj instanceof Interface) {
+    } else if (obj instanceof Interface) { // todo, how to handle interfaces?
       return [];
     }
 
@@ -97,11 +103,18 @@ export class UnusedVariables implements IRule {
     const ret: Issue[] = [];
 
     for (const v of node.getData().vars) {
+      if (this.conf.skipNames?.length > 0
+          && this.conf.skipNames.some((a) => a.toUpperCase() === v.name.toUpperCase())) {
+        continue;
+      }
       if (v.name === "me"
           || v.name === "super"
           || v.identifier.getMeta().includes(IdentifierMeta.EventParameter)) {
         continue; // todo, workaround for "me" and "super", these should somehow be typed to built-in
-      } else if (this.isUsed(v.identifier, node) === false) {
+      } else if ((obj.containsFile(v.identifier.getFilename())
+            || node.getIdentifier().stype === ScopeType.Program
+            || node.getIdentifier().stype === ScopeType.Form)
+          && this.isUsed(v.identifier, node) === false) {
         const message = "Variable \"" + v.identifier.getName() + "\" not used";
         const fix = this.buildFix(v, obj);
         ret.push(Issue.atIdentifier(v.identifier, message, this.getMetadata().key, fix));
@@ -122,10 +135,9 @@ export class UnusedVariables implements IRule {
       return undefined;
     }
 
-    for (const s of file.getStatements()) {
-      if (s.get() instanceof Data && s.includesToken(v.identifier.getToken())) {
-        return EditHelper.deleteRange(file, s.getFirstToken().getStart(), s.getLastToken().getEnd());
-      }
+    const statement = EditHelper.findStatement(v.identifier.getToken(), file);
+    if (statement) {
+      return EditHelper.deleteStatement(file, statement);
     }
 
     return undefined;
