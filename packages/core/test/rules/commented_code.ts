@@ -1,5 +1,5 @@
 import {CommentedCode} from "../../src/rules/commented_code";
-import {testRule} from "./_utils";
+import {testRule, testRuleFix} from "./_utils";
 
 const tests = [
   {abap: "parser error", cnt: 0},
@@ -60,7 +60,21 @@ write bar.
 * DATA foo TYPE STANDARD TABLE OF string WITH DEFAULT KEY.
 
 `, cnt: 3},
-
 ];
 
 testRule(tests, CommentedCode);
+
+const fixTests = [
+  {
+    input: "* CONTINUE.",
+    output: "",
+  },
+  {
+    input: `" ASSERT 0 = 1.
+WRITE: / ex->get_longtext( ).`,
+    output: `
+WRITE: / ex->get_longtext( ).`,
+  },
+];
+
+testRuleFix(fixTests, CommentedCode);
