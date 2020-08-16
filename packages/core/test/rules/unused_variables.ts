@@ -222,7 +222,7 @@ ENDCLASS.`;
     expect(issues.length).to.equal(0);
   });
 
-  it.skip("INCLUDE, lv_ind unused", async () => {
+  it("INCLUDE, lv_ind unused", async () => {
     const abap1 = `INCLUDE zabapgit_forms.`;
     const abap2 = `
     FORM run.
@@ -242,8 +242,7 @@ ENDCLASS.`;
        </PROGDIR>
       </asx:values>
      </asx:abap>
-    </abapGit>
-    `;
+    </abapGit>`;
     const issues = await runMulti([
       new MemoryFile("zabapgit.prog.abap", abap1),
       new MemoryFile("zabapgit_forms.prog.abap", abap2),
