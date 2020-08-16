@@ -207,6 +207,10 @@ export class BuiltIn {
     components.push({name: "fdpos", type: new IntegerType()});
     components.push({name: "host", type: new CharacterType(32)});
     components.push({name: "index", type: new IntegerType()});
+    components.push({name: "loopc", type: new IntegerType()});
+    components.push({name: "linct", type: new IntegerType()});
+    components.push({name: "pagno", type: new IntegerType()});
+    components.push({name: "datar", type: new CharacterType(1)});
     components.push({name: "langu", type: new CharacterType(1)});
     components.push({name: "lisel", type: new CharacterType(255)});
     components.push({name: "slset", type: new CharacterType(14)});
