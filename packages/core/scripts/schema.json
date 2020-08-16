@@ -1530,7 +1530,7 @@
                   "type": "boolean"
                 }
               ],
-              "description": "Prefer inline to up-front declarations.\nActivates if language version is v740sp02 or above.\nVariables must be local(METHOD or FORM).\nNo generic or void typed variables.\nFirst position used must be a full/pure write.\nTags: Styleguide, Upport, Experimental\nhttps://rules.abaplint.org/prefer_inline"
+              "description": "Prefer inline to up-front declarations.\nActivates if language version is v740sp02 or above.\nVariables must be local(METHOD or FORM).\nNo generic or void typed variables.\nFirst position used must be a full/pure write.\nTags: Styleguide, Upport, Experimental, Quickfix\nhttps://rules.abaplint.org/prefer_inline"
             },
             "prefer_returning_to_exporting": {
               "anyOf": [
