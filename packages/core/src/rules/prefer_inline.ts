@@ -13,8 +13,6 @@ import {Token} from "../abap/1_lexer/tokens/_token";
 import {ReferenceType} from "../abap/5_syntax/_reference";
 import {Identifier} from "../abap/4_file_information/_identifier";
 import {EditHelper, IEdit} from "../edit_helper";
-import {ABAPFile} from "../files";
-import {StatementNode} from "../abap/nodes/statement_node";
 
 interface IVariableReference {
   position: Identifier,
@@ -101,7 +99,7 @@ First position used must be a full/pure write.`,
       }
 
       const file = obj.getABAPFileByName(d.identifier.getFilename());
-      const statement = this.findStatement(d.identifier.getToken(), file);
+      const statement = EditHelper.findStatement(d.identifier.getToken(), file);
       let fix: IEdit | undefined = undefined;
       if (file && statement) {
         const fix1 = EditHelper.deleteStatement(file, statement);
@@ -118,18 +116,6 @@ First position used must be a full/pure write.`,
   }
 
 ////////////////////////
-
-  private findStatement(token: Token, file: ABAPFile | undefined): StatementNode | undefined {
-    if (file === undefined) {
-      return undefined;
-    }
-    for (const s of file.getStatements()) {
-      if (s.includesToken(token)) {
-        return s;
-      }
-    }
-    return undefined;
-  }
 
   private findNextToken(ref: IVariableReference, obj: ABAPObject): Token | undefined {
 

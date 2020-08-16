@@ -10,7 +10,6 @@ import {TypedIdentifier, IdentifierMeta} from "../abap/types/_typed_identifier";
 import {Interface} from "../objects";
 import {ISpaghettiScopeNode, IScopeVariable} from "../abap/5_syntax/_spaghetti_scope";
 import {References} from "../lsp/references";
-import {Data} from "../abap/2_statements/statements";
 import {EditHelper, IEdit} from "../edit_helper";
 
 export class UnusedVariablesConf extends BasicRuleConfig {
@@ -128,17 +127,15 @@ export class UnusedVariables implements IRule {
     return found.length > 1;
   }
 
-  // todo, replace with EditHelper.deleteStatement
   private buildFix(v: IScopeVariable, obj: ABAPObject): IEdit | undefined {
     const file = obj.getABAPFileByName(v.identifier.getFilename());
     if (file === undefined) {
       return undefined;
     }
 
-    for (const s of file.getStatements()) {
-      if (s.get() instanceof Data && s.includesToken(v.identifier.getToken())) {
-        return EditHelper.deleteRange(file, s.getFirstToken().getStart(), s.getLastToken().getEnd());
-      }
+    const statement = EditHelper.findStatement(v.identifier.getToken(), file);
+    if (statement) {
+      return EditHelper.deleteStatement(file, statement);
     }
 
     return undefined;

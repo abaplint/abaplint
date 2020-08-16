@@ -277,22 +277,10 @@ ENDCLASS.`;
     expect(issues.length).to.equal(1);
   });
 
-/*
-  it.skip("test, quickfix, chained first", async () => {
+  it("test, quickfix, chained first", async () => {
     testFix(`DATA: foo, bar.
-WRITE bar.`, `DATA: bar.
+WRITE bar.`, `DATA:  bar.
 WRITE bar.`);
   });
-
-  it.skip("test, quickfix, chained last", async () => {
-    testFix(`DATA: bar, foo.
-WRITE bar.`, `DATA: bar.
-WRITE bar.`);
-  });
-
-  it.skip("test, quickfix, only one fix per scope per time", async () => {
-    testFix(`DATA: foo, bar.`, `DATA: bar.`);
-  });
-*/
 
 });
