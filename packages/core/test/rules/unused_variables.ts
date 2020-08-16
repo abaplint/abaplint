@@ -201,6 +201,16 @@ ENDCLASS.`;
     expect(issues.length).to.equal(0);
   });
 
+  it("CREATE OBJECT with dynamic", async () => {
+    const abap = `
+  DATA obj TYPE REF TO object.
+  DATA lv_clsname TYPE string.
+  CREATE OBJECT obj TYPE (lv_clsname).
+  `;
+    const issues = await runSingle(abap);
+    expect(issues.length).to.equal(0);
+  });
+
   ///////////////
 
   it.skip("test, quickfix, chained first", async () => {
