@@ -14,6 +14,8 @@ import {Data} from "../abap/2_statements/statements";
 import {EditHelper, IEdit} from "../edit_helper";
 
 export class UnusedVariablesConf extends BasicRuleConfig {
+  /** skip specific names, case insensitive */
+  public skipNames: string[];
 }
 
 export class UnusedVariables implements IRule {
@@ -38,6 +40,9 @@ export class UnusedVariables implements IRule {
 
   public setConfig(conf: UnusedVariablesConf) {
     this.conf = conf;
+    if (this.conf.skipNames === undefined) {
+      this.conf.skipNames = [];
+    }
   }
 
   public initialize(reg: IRegistry) {
@@ -97,6 +102,10 @@ export class UnusedVariables implements IRule {
     const ret: Issue[] = [];
 
     for (const v of node.getData().vars) {
+      if (this.conf.skipNames?.length > 0
+          && this.conf.skipNames.some((a) => a.toUpperCase() === v.name.toUpperCase())) {
+        continue;
+      }
       if (v.name === "me"
           || v.name === "super"
           || v.identifier.getMeta().includes(IdentifierMeta.EventParameter)) {
@@ -119,6 +128,7 @@ export class UnusedVariables implements IRule {
     return found.length > 1;
   }
 
+  // todo, replace with EditHelper.deleteStatement
   private buildFix(v: IScopeVariable, obj: ABAPObject): IEdit | undefined {
     const file = obj.getABAPFileByName(v.identifier.getFilename());
     if (file === undefined) {
