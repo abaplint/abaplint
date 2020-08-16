@@ -28,7 +28,9 @@ export class UnusedVariables implements IRule {
       shortDescription: `Checks for unused variables`,
       extendedInformation: `WARNING: slow
 
-      Experimental, might give false positives. Skips event parameters`,
+      Experimental, might give false positives. Skips event parameters.
+
+      Note that this currently does not work if the source code uses macros.`,
       tags: [RuleTag.Experimental, RuleTag.Quickfix],
     };
   }

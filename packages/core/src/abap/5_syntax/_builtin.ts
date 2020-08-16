@@ -104,6 +104,7 @@ export class BuiltIn {
     ret.push({name: "CONCAT_LINES_OF", importing: [{name: "table", type: new StringType()}, {name: "sep", type: new StringType()}], returnType: new StringType()});
     ret.push({name: "CONDENSE", importing: [{name: "val", type: new StringType()}], returnType: new StringType()});
     ret.push({name: "CONTAINS", importing: [{name: "val", type: new StringType()}, {name: "sub", type: new StringType()}], returnType: new CharacterType(1)});
+    ret.push({name: "COS", importing: [{name: "val", type: new FloatType()}], returnType: new IntegerType()});
     ret.push({name: "ESCAPE", importing: [{name: "val", type: new StringType()}, {name: "format", type: new StringType()}], returnType: new StringType()});
     ret.push({name: "FIND", importing: [{name: "val", type: new StringType()}, {name: "sub", type: new StringType()}, {name: "regex", type: new StringType()}, {name: "off", type: new IntegerType()}, {name: "case", type: new CharacterType(1)}], returnType: new StringType()});
     ret.push({name: "FLOOR", importing: [{name: "val", type: new FloatType()}], returnType: new IntegerType()});
@@ -123,6 +124,7 @@ export class BuiltIn {
     ret.push({name: "SHIFT_LEFT", importing: [{name: "val", type: new StringType()}, {name: "sub", type: new StringType()}], returnType: new StringType()});
     ret.push({name: "SHIFT_RIGHT", importing: [{name: "val", type: new StringType()}], returnType: new StringType()});
     ret.push({name: "SIGN", importing: [{name: "val", type: new FloatType()}], returnType: new IntegerType()});
+    ret.push({name: "SIN", importing: [{name: "val", type: new FloatType()}], returnType: new IntegerType()});
     ret.push({name: "STRLEN", importing: [{name: "val", type: new StringType()}], returnType: new IntegerType()});
     ret.push({name: "SUBSTRING_AFTER", importing: [{name: "val", type: new StringType()}, {name: "sub", type: new StringType()}], returnType: new StringType()});
     ret.push({name: "SUBSTRING_BEFORE", importing: [{name: "val", type: new StringType()}, {name: "sub", type: new StringType()}, {name: "regex", type: new StringType()}], returnType: new StringType()});
