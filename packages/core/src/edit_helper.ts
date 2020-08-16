@@ -72,6 +72,7 @@ export class EditHelper {
       return EditHelper.deleteRange(file, statement.getFirstToken().getStart(), statement.getLastToken().getEnd());
     }
 
+    // the start of deletion should happen for tokens after the colon
     let startDelete = statement.getFirstToken().getStart();
     for (const t of statement.getTokens()) {
       if (t.getStart().isAfter(scolon.getEnd())) {
@@ -79,6 +80,7 @@ export class EditHelper {
         break;
       }
     }
+
     if (statement.getLastToken().getStr() === "." && previousStatement) {
       const edit1 = EditHelper.replaceToken(file, previousStatement.getLastToken(), ".");
       const edit2 = EditHelper.deleteRange(file, startDelete, statement.getLastToken().getEnd());
@@ -86,7 +88,6 @@ export class EditHelper {
     } else {
       return EditHelper.deleteRange(file, startDelete, statement.getLastToken().getEnd());
     }
-
   }
 
   public static deleteToken(file: IFile, token: Token): IEdit {
