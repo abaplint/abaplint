@@ -3,12 +3,17 @@ import {MemoryFile} from "../../src/files/memory_file";
 import {Registry} from "../../src/registry";
 import {PreferInline} from "../../src/rules";
 import {Issue} from "../../src/issue";
+import {testRuleFixSingle} from "./_utils";
 
 async function findIssues(abap: string): Promise<readonly Issue[]> {
   const reg = new Registry().addFile(new MemoryFile("zprefer_inline.prog.abap", abap));
   await reg.parseAsync();
   const rule = new PreferInline();
   return rule.initialize(reg).run(reg.getFirstObject()!);
+}
+
+function testFix(input: string, expected: string) {
+  testRuleFixSingle(input, expected, new PreferInline());
 }
 
 describe("Rule: prefer_inline", () => {
@@ -83,6 +88,20 @@ FORM foo.
   sdf-tabix = 2.
 ENDFORM.`);
     expect(issues.length).to.equal(0);
+  });
+
+  it("testfix, Simple, data in FORM", async () => {
+    const input = `
+FORM foo.
+  DATA moo TYPE i.
+  moo = 2.
+ENDFORM.`;
+    const expected = `
+FORM foo.
+` + "  " + `
+  DATA(moo) = 2.
+ENDFORM.`;
+    testFix(input, expected);
   });
 
   it.skip("Types should not change when inlining", async () => {

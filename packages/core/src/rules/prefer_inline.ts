@@ -12,6 +12,9 @@ import {ScopeType} from "../abap/5_syntax/_scope_type";
 import {Token} from "../abap/1_lexer/tokens/_token";
 import {ReferenceType} from "../abap/5_syntax/_reference";
 import {Identifier} from "../abap/4_file_information/_identifier";
+import {EditHelper, IEdit} from "../edit_helper";
+import {ABAPFile} from "../files";
+import {StatementNode} from "../abap/nodes/statement_node";
 
 interface IVariableReference {
   position: Identifier,
@@ -36,7 +39,7 @@ Variables must be local(METHOD or FORM).
 No generic or void typed variables.
 First position used must be a full/pure write.`,
       extendedInformation: `https://github.com/SAP/styleguides/blob/master/clean-abap/CleanABAP.md#prefer-inline-to-up-front-declarations`,
-      tags: [RuleTag.Styleguide, RuleTag.Upport, RuleTag.Experimental],
+      tags: [RuleTag.Styleguide, RuleTag.Upport, RuleTag.Experimental, RuleTag.Quickfix],
     };
   }
 
@@ -96,11 +99,33 @@ First position used must be a full/pure write.`,
         continue;
       }
 
+      const file = obj.getABAPFileByName(d.identifier.getFilename());
+      const statement = this.findStatement(d.identifier.getToken(), file);
+      let fix: IEdit | undefined = undefined;
+      if (file && statement) {
+        const fix1 = EditHelper.deleteStatement(file, statement);
+        const fix2 = EditHelper.replaceRange(file, write.position.getStart(), write.position.getEnd(), "DATA(" + d.identifier.getName() + ")");
+        fix = EditHelper.merge(fix1, fix2);
+      }
       const message = this.getMetadata().title + ", " + d.name;
-      ret.push(Issue.atIdentifier(d.identifier, message, this.getMetadata().key));
+      ret.push(Issue.atIdentifier(d.identifier, message, this.getMetadata().key, fix));
     }
 
     return ret;
+  }
+
+////////////////////////
+
+  private findStatement(token: Token, file: ABAPFile | undefined): StatementNode | undefined {
+    if (file === undefined) {
+      return undefined;
+    }
+    for (const s of file.getStatements()) {
+      if (s.includesToken(token)) {
+        return s;
+      }
+    }
+    return undefined;
   }
 
   private findNextToken(ref: IVariableReference, obj: ABAPObject): Token | undefined {
