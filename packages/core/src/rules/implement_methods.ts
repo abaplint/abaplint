@@ -19,7 +19,7 @@ export class ImplementMethods extends ABAPRule {
     return {
       key: "implement_methods",
       title: "Implement methods",
-      shortDescription: `Chekcs for abstract methods and methods from interfaces which need implementing.`,
+      shortDescription: `Checks for abstract methods and methods from interfaces which need implementing.`,
       tags: [RuleTag.Syntax],
     };
   }
@@ -54,7 +54,7 @@ export class ImplementMethods extends ABAPRule {
       }
 
       ret = ret.concat(this.checkClass(classDefinition, classImplementation));
-      ret = ret.concat(this.checkInterfaces(classDefinition, classImplementation, file));
+      ret = ret.concat(this.checkInterfaces(classDefinition, classImplementation, obj));
     }
 
     return ret;
@@ -96,15 +96,21 @@ export class ImplementMethods extends ABAPRule {
     return ret;
   }
 
-  private checkInterfaces(def: InfoClassDefinition, impl: InfoClassImplementation, file: ABAPFile): Issue[] {
+  private checkInterfaces(def: InfoClassDefinition, impl: InfoClassImplementation, obj: ABAPObject): Issue[] {
     const ret: Issue[] = [];
     let idef: InfoInterfaceDefinition | undefined = undefined;
 
     for (const interfaceInfo of def.interfaces) {
       const intf = this.reg.getObject("INTF", interfaceInfo.name) as Interface | undefined;
       if (intf === undefined) {
-        // lookup in localfile
-        idef = file.getInfo().getInterfaceDefinitionByName(interfaceInfo.name);
+        // lookup in localfiles
+        for (const file of obj.getABAPFiles()) {
+          const found = file.getInfo().getInterfaceDefinitionByName(interfaceInfo.name);
+          if (found) {
+            idef = found;
+            break;
+          }
+        }
         if (idef === undefined) {
           const message = "Implemented interface \"" + interfaceInfo.name + "\" not found";
           const issue = Issue.atIdentifier(def.identifier, message, this.getMetadata().key);
