@@ -10,7 +10,7 @@
           "type": "boolean"
         },
         "exclude": {
-          "description": "List of file regex filename patterns to exclude",
+          "description": "List of file regex filename patterns to exclude, case insensitive",
           "items": {
             "type": "string"
           },
@@ -26,7 +26,7 @@
       "additionalProperties": false,
       "properties": {
         "exclude": {
-          "description": "List of file regex filename patterns to exclude",
+          "description": "List of file regex filename patterns to exclude, case insensitive",
           "items": {
             "type": "string"
           },
@@ -46,7 +46,7 @@
           "type": "array"
         },
         "exclude": {
-          "description": "List of file regex filename patterns to exclude",
+          "description": "List of file regex filename patterns to exclude, case insensitive",
           "items": {
             "type": "string"
           },
@@ -62,7 +62,7 @@
       "additionalProperties": false,
       "properties": {
         "exclude": {
-          "description": "List of file regex filename patterns to exclude",
+          "description": "List of file regex filename patterns to exclude, case insensitive",
           "items": {
             "type": "string"
           },
@@ -95,7 +95,7 @@
           "type": "boolean"
         },
         "exclude": {
-          "description": "List of file regex filename patterns to exclude",
+          "description": "List of file regex filename patterns to exclude, case insensitive",
           "items": {
             "type": "string"
           },
@@ -135,7 +135,7 @@
       "additionalProperties": false,
       "properties": {
         "exclude": {
-          "description": "List of file regex filename patterns to exclude",
+          "description": "List of file regex filename patterns to exclude, case insensitive",
           "items": {
             "type": "string"
           },
@@ -148,7 +148,7 @@
       "additionalProperties": false,
       "properties": {
         "exclude": {
-          "description": "List of file regex filename patterns to exclude",
+          "description": "List of file regex filename patterns to exclude, case insensitive",
           "items": {
             "type": "string"
           },
@@ -173,7 +173,7 @@
           "type": "boolean"
         },
         "exclude": {
-          "description": "List of file regex filename patterns to exclude",
+          "description": "List of file regex filename patterns to exclude, case insensitive",
           "items": {
             "type": "string"
           },
@@ -226,7 +226,7 @@
       "additionalProperties": false,
       "properties": {
         "exclude": {
-          "description": "List of file regex filename patterns to exclude",
+          "description": "List of file regex filename patterns to exclude, case insensitive",
           "items": {
             "type": "string"
           },
@@ -243,7 +243,7 @@
           "type": "boolean"
         },
         "exclude": {
-          "description": "List of file regex filename patterns to exclude",
+          "description": "List of file regex filename patterns to exclude, case insensitive",
           "items": {
             "type": "string"
           },
@@ -259,7 +259,7 @@
       "additionalProperties": false,
       "properties": {
         "exclude": {
-          "description": "List of file regex filename patterns to exclude",
+          "description": "List of file regex filename patterns to exclude, case insensitive",
           "items": {
             "type": "string"
           },
@@ -272,7 +272,7 @@
       "additionalProperties": false,
       "properties": {
         "exclude": {
-          "description": "List of file regex filename patterns to exclude",
+          "description": "List of file regex filename patterns to exclude, case insensitive",
           "items": {
             "type": "string"
           },
@@ -285,7 +285,7 @@
       "additionalProperties": false,
       "properties": {
         "exclude": {
-          "description": "List of file regex filename patterns to exclude",
+          "description": "List of file regex filename patterns to exclude, case insensitive",
           "items": {
             "type": "string"
           },
@@ -298,7 +298,7 @@
       "additionalProperties": false,
       "properties": {
         "exclude": {
-          "description": "List of file regex filename patterns to exclude",
+          "description": "List of file regex filename patterns to exclude, case insensitive",
           "items": {
             "type": "string"
           },
@@ -311,7 +311,7 @@
       "additionalProperties": false,
       "properties": {
         "exclude": {
-          "description": "List of file regex filename patterns to exclude",
+          "description": "List of file regex filename patterns to exclude, case insensitive",
           "items": {
             "type": "string"
           },
@@ -324,7 +324,7 @@
       "additionalProperties": false,
       "properties": {
         "exclude": {
-          "description": "List of file regex filename patterns to exclude",
+          "description": "List of file regex filename patterns to exclude, case insensitive",
           "items": {
             "type": "string"
           },
@@ -341,7 +341,7 @@
           "type": "string"
         },
         "exclude": {
-          "description": "List of file regex filename patterns to exclude",
+          "description": "List of file regex filename patterns to exclude, case insensitive",
           "items": {
             "type": "string"
           },
@@ -400,7 +400,7 @@
       "additionalProperties": false,
       "properties": {
         "exclude": {
-          "description": "List of file regex filename patterns to exclude",
+          "description": "List of file regex filename patterns to exclude, case insensitive",
           "items": {
             "type": "string"
           },
@@ -413,7 +413,7 @@
       "additionalProperties": false,
       "properties": {
         "exclude": {
-          "description": "List of file regex filename patterns to exclude",
+          "description": "List of file regex filename patterns to exclude, case insensitive",
           "items": {
             "type": "string"
           },
@@ -430,7 +430,7 @@
           "type": "boolean"
         },
         "exclude": {
-          "description": "List of file regex filename patterns to exclude",
+          "description": "List of file regex filename patterns to exclude, case insensitive",
           "items": {
             "type": "string"
           },
@@ -446,7 +446,7 @@
       "additionalProperties": false,
       "properties": {
         "exclude": {
-          "description": "List of file regex filename patterns to exclude",
+          "description": "List of file regex filename patterns to exclude, case insensitive",
           "items": {
             "type": "string"
           },
@@ -459,7 +459,7 @@
       "additionalProperties": false,
       "properties": {
         "exclude": {
-          "description": "List of file regex filename patterns to exclude",
+          "description": "List of file regex filename patterns to exclude, case insensitive",
           "items": {
             "type": "string"
           },
@@ -472,7 +472,7 @@
       "additionalProperties": false,
       "properties": {
         "exclude": {
-          "description": "List of file regex filename patterns to exclude",
+          "description": "List of file regex filename patterns to exclude, case insensitive",
           "items": {
             "type": "string"
           },
@@ -485,7 +485,7 @@
       "additionalProperties": false,
       "properties": {
         "exclude": {
-          "description": "List of file regex filename patterns to exclude",
+          "description": "List of file regex filename patterns to exclude, case insensitive",
           "items": {
             "type": "string"
           },
@@ -506,7 +506,7 @@
           "type": "boolean"
         },
         "exclude": {
-          "description": "List of file regex filename patterns to exclude",
+          "description": "List of file regex filename patterns to exclude, case insensitive",
           "items": {
             "type": "string"
           },
@@ -533,7 +533,7 @@
       "additionalProperties": false,
       "properties": {
         "exclude": {
-          "description": "List of file regex filename patterns to exclude",
+          "description": "List of file regex filename patterns to exclude, case insensitive",
           "items": {
             "type": "string"
           },
@@ -550,7 +550,7 @@
           "type": "boolean"
         },
         "exclude": {
-          "description": "List of file regex filename patterns to exclude",
+          "description": "List of file regex filename patterns to exclude, case insensitive",
           "items": {
             "type": "string"
           },
@@ -566,7 +566,7 @@
       "additionalProperties": false,
       "properties": {
         "exclude": {
-          "description": "List of file regex filename patterns to exclude",
+          "description": "List of file regex filename patterns to exclude, case insensitive",
           "items": {
             "type": "string"
           },
@@ -591,7 +591,7 @@
           "type": "boolean"
         },
         "exclude": {
-          "description": "List of file regex filename patterns to exclude",
+          "description": "List of file regex filename patterns to exclude, case insensitive",
           "items": {
             "type": "string"
           },
@@ -634,7 +634,7 @@
       "additionalProperties": false,
       "properties": {
         "exclude": {
-          "description": "List of file regex filename patterns to exclude",
+          "description": "List of file regex filename patterns to exclude, case insensitive",
           "items": {
             "type": "string"
           },
@@ -647,7 +647,7 @@
       "additionalProperties": false,
       "properties": {
         "exclude": {
-          "description": "List of file regex filename patterns to exclude",
+          "description": "List of file regex filename patterns to exclude, case insensitive",
           "items": {
             "type": "string"
           },
@@ -667,7 +667,7 @@
           "type": "array"
         },
         "exclude": {
-          "description": "List of file regex filename patterns to exclude",
+          "description": "List of file regex filename patterns to exclude, case insensitive",
           "items": {
             "type": "string"
           },
@@ -690,7 +690,7 @@
           "type": "array"
         },
         "exclude": {
-          "description": "List of file regex filename patterns to exclude",
+          "description": "List of file regex filename patterns to exclude, case insensitive",
           "items": {
             "type": "string"
           },
@@ -706,7 +706,7 @@
       "additionalProperties": false,
       "properties": {
         "exclude": {
-          "description": "List of file regex filename patterns to exclude",
+          "description": "List of file regex filename patterns to exclude, case insensitive",
           "items": {
             "type": "string"
           },
@@ -723,7 +723,7 @@
           "type": "boolean"
         },
         "exclude": {
-          "description": "List of file regex filename patterns to exclude",
+          "description": "List of file regex filename patterns to exclude, case insensitive",
           "items": {
             "type": "string"
           },
@@ -739,7 +739,7 @@
       "additionalProperties": false,
       "properties": {
         "exclude": {
-          "description": "List of file regex filename patterns to exclude",
+          "description": "List of file regex filename patterns to exclude, case insensitive",
           "items": {
             "type": "string"
           },
@@ -759,7 +759,7 @@
       "additionalProperties": false,
       "properties": {
         "exclude": {
-          "description": "List of file regex filename patterns to exclude",
+          "description": "List of file regex filename patterns to exclude, case insensitive",
           "items": {
             "type": "string"
           },
@@ -1233,7 +1233,7 @@
                   "type": "boolean"
                 }
               ],
-              "description": "Chekcs for abstract methods and methods from interfaces which need implementing.\nTags: Syntax\nhttps://rules.abaplint.org/implement_methods"
+              "description": "Checks for abstract methods and methods from interfaces which need implementing.\nTags: Syntax\nhttps://rules.abaplint.org/implement_methods"
             },
             "in_statement_indentation": {
               "anyOf": [
@@ -1929,7 +1929,7 @@
       "additionalProperties": false,
       "properties": {
         "exclude": {
-          "description": "List of file regex filename patterns to exclude",
+          "description": "List of file regex filename patterns to exclude, case insensitive",
           "items": {
             "type": "string"
           },
@@ -1942,7 +1942,7 @@
       "additionalProperties": false,
       "properties": {
         "exclude": {
-          "description": "List of file regex filename patterns to exclude",
+          "description": "List of file regex filename patterns to exclude, case insensitive",
           "items": {
             "type": "string"
           },
@@ -1955,7 +1955,7 @@
       "additionalProperties": false,
       "properties": {
         "exclude": {
-          "description": "List of file regex filename patterns to exclude",
+          "description": "List of file regex filename patterns to exclude, case insensitive",
           "items": {
             "type": "string"
           },
@@ -1968,7 +1968,7 @@
       "additionalProperties": false,
       "properties": {
         "exclude": {
-          "description": "List of file regex filename patterns to exclude",
+          "description": "List of file regex filename patterns to exclude, case insensitive",
           "items": {
             "type": "string"
           },
@@ -1991,7 +1991,7 @@
           "type": "boolean"
         },
         "exclude": {
-          "description": "List of file regex filename patterns to exclude",
+          "description": "List of file regex filename patterns to exclude, case insensitive",
           "items": {
             "type": "string"
           },
@@ -2024,7 +2024,7 @@
       "additionalProperties": false,
       "properties": {
         "exclude": {
-          "description": "List of file regex filename patterns to exclude",
+          "description": "List of file regex filename patterns to exclude, case insensitive",
           "items": {
             "type": "string"
           },
@@ -2037,7 +2037,7 @@
       "additionalProperties": false,
       "properties": {
         "exclude": {
-          "description": "List of file regex filename patterns to exclude",
+          "description": "List of file regex filename patterns to exclude, case insensitive",
           "items": {
             "type": "string"
           },
@@ -2057,7 +2057,7 @@
       "additionalProperties": false,
       "properties": {
         "exclude": {
-          "description": "List of file regex filename patterns to exclude",
+          "description": "List of file regex filename patterns to exclude, case insensitive",
           "items": {
             "type": "string"
           },
@@ -2116,7 +2116,7 @@
       "additionalProperties": false,
       "properties": {
         "exclude": {
-          "description": "List of file regex filename patterns to exclude",
+          "description": "List of file regex filename patterns to exclude, case insensitive",
           "items": {
             "type": "string"
           },
@@ -2129,7 +2129,7 @@
       "additionalProperties": false,
       "properties": {
         "exclude": {
-          "description": "List of file regex filename patterns to exclude",
+          "description": "List of file regex filename patterns to exclude, case insensitive",
           "items": {
             "type": "string"
           },
@@ -2149,7 +2149,7 @@
       "additionalProperties": false,
       "properties": {
         "exclude": {
-          "description": "List of file regex filename patterns to exclude",
+          "description": "List of file regex filename patterns to exclude, case insensitive",
           "items": {
             "type": "string"
           },
@@ -2173,7 +2173,7 @@
           "type": "string"
         },
         "exclude": {
-          "description": "List of file regex filename patterns to exclude",
+          "description": "List of file regex filename patterns to exclude, case insensitive",
           "items": {
             "type": "string"
           },
@@ -2217,7 +2217,7 @@
       "additionalProperties": false,
       "properties": {
         "exclude": {
-          "description": "List of file regex filename patterns to exclude",
+          "description": "List of file regex filename patterns to exclude, case insensitive",
           "items": {
             "type": "string"
           },
@@ -2230,7 +2230,7 @@
       "additionalProperties": false,
       "properties": {
         "exclude": {
-          "description": "List of file regex filename patterns to exclude",
+          "description": "List of file regex filename patterns to exclude, case insensitive",
           "items": {
             "type": "string"
           },
@@ -2278,7 +2278,7 @@
       "additionalProperties": false,
       "properties": {
         "exclude": {
-          "description": "List of file regex filename patterns to exclude",
+          "description": "List of file regex filename patterns to exclude, case insensitive",
           "items": {
             "type": "string"
           },
@@ -2291,7 +2291,7 @@
       "additionalProperties": false,
       "properties": {
         "exclude": {
-          "description": "List of file regex filename patterns to exclude",
+          "description": "List of file regex filename patterns to exclude, case insensitive",
           "items": {
             "type": "string"
           },
@@ -2304,7 +2304,7 @@
       "additionalProperties": false,
       "properties": {
         "exclude": {
-          "description": "List of file regex filename patterns to exclude",
+          "description": "List of file regex filename patterns to exclude, case insensitive",
           "items": {
             "type": "string"
           },
@@ -2317,7 +2317,7 @@
       "additionalProperties": false,
       "properties": {
         "exclude": {
-          "description": "List of file regex filename patterns to exclude",
+          "description": "List of file regex filename patterns to exclude, case insensitive",
           "items": {
             "type": "string"
           },
@@ -2334,7 +2334,7 @@
           "type": "boolean"
         },
         "exclude": {
-          "description": "List of file regex filename patterns to exclude",
+          "description": "List of file regex filename patterns to exclude, case insensitive",
           "items": {
             "type": "string"
           },
@@ -2364,7 +2364,7 @@
           "type": "string"
         },
         "exclude": {
-          "description": "List of file regex filename patterns to exclude",
+          "description": "List of file regex filename patterns to exclude, case insensitive",
           "items": {
             "type": "string"
           },
@@ -2418,7 +2418,7 @@
       "additionalProperties": false,
       "properties": {
         "exclude": {
-          "description": "List of file regex filename patterns to exclude",
+          "description": "List of file regex filename patterns to exclude, case insensitive",
           "items": {
             "type": "string"
           },
@@ -2431,7 +2431,7 @@
       "additionalProperties": false,
       "properties": {
         "exclude": {
-          "description": "List of file regex filename patterns to exclude",
+          "description": "List of file regex filename patterns to exclude, case insensitive",
           "items": {
             "type": "string"
           },
@@ -2448,7 +2448,7 @@
           "type": "number"
         },
         "exclude": {
-          "description": "List of file regex filename patterns to exclude",
+          "description": "List of file regex filename patterns to exclude, case insensitive",
           "items": {
             "type": "string"
           },
@@ -2468,7 +2468,7 @@
           "type": "number"
         },
         "exclude": {
-          "description": "List of file regex filename patterns to exclude",
+          "description": "List of file regex filename patterns to exclude, case insensitive",
           "items": {
             "type": "string"
           },
@@ -2500,7 +2500,7 @@
           "type": "boolean"
         },
         "exclude": {
-          "description": "List of file regex filename patterns to exclude",
+          "description": "List of file regex filename patterns to exclude, case insensitive",
           "items": {
             "type": "string"
           },
@@ -2536,7 +2536,7 @@
           "type": "string"
         },
         "exclude": {
-          "description": "List of file regex filename patterns to exclude",
+          "description": "List of file regex filename patterns to exclude, case insensitive",
           "items": {
             "type": "string"
           },
@@ -2651,7 +2651,7 @@
           "type": "boolean"
         },
         "exclude": {
-          "description": "List of file regex filename patterns to exclude",
+          "description": "List of file regex filename patterns to exclude, case insensitive",
           "items": {
             "type": "string"
           },
@@ -2709,7 +2709,7 @@
       "additionalProperties": false,
       "properties": {
         "exclude": {
-          "description": "List of file regex filename patterns to exclude",
+          "description": "List of file regex filename patterns to exclude, case insensitive",
           "items": {
             "type": "string"
           },
@@ -2722,7 +2722,7 @@
       "additionalProperties": false,
       "properties": {
         "exclude": {
-          "description": "List of file regex filename patterns to exclude",
+          "description": "List of file regex filename patterns to exclude, case insensitive",
           "items": {
             "type": "string"
           },
@@ -2742,7 +2742,7 @@
       "additionalProperties": false,
       "properties": {
         "exclude": {
-          "description": "List of file regex filename patterns to exclude",
+          "description": "List of file regex filename patterns to exclude, case insensitive",
           "items": {
             "type": "string"
           },
@@ -2755,7 +2755,7 @@
       "additionalProperties": false,
       "properties": {
         "exclude": {
-          "description": "List of file regex filename patterns to exclude",
+          "description": "List of file regex filename patterns to exclude, case insensitive",
           "items": {
             "type": "string"
           },
@@ -2775,7 +2775,7 @@
           "type": "array"
         },
         "exclude": {
-          "description": "List of file regex filename patterns to exclude",
+          "description": "List of file regex filename patterns to exclude, case insensitive",
           "items": {
             "type": "string"
           },
@@ -2791,7 +2791,7 @@
       "additionalProperties": false,
       "properties": {
         "exclude": {
-          "description": "List of file regex filename patterns to exclude",
+          "description": "List of file regex filename patterns to exclude, case insensitive",
           "items": {
             "type": "string"
           },
@@ -2811,7 +2811,7 @@
       "additionalProperties": false,
       "properties": {
         "exclude": {
-          "description": "List of file regex filename patterns to exclude",
+          "description": "List of file regex filename patterns to exclude, case insensitive",
           "items": {
             "type": "string"
           },
@@ -2824,7 +2824,7 @@
       "additionalProperties": false,
       "properties": {
         "exclude": {
-          "description": "List of file regex filename patterns to exclude",
+          "description": "List of file regex filename patterns to exclude, case insensitive",
           "items": {
             "type": "string"
           },
@@ -2837,7 +2837,7 @@
       "additionalProperties": false,
       "properties": {
         "exclude": {
-          "description": "List of file regex filename patterns to exclude",
+          "description": "List of file regex filename patterns to exclude, case insensitive",
           "items": {
             "type": "string"
           },
@@ -2850,7 +2850,7 @@
       "additionalProperties": false,
       "properties": {
         "exclude": {
-          "description": "List of file regex filename patterns to exclude",
+          "description": "List of file regex filename patterns to exclude, case insensitive",
           "items": {
             "type": "string"
           },
@@ -2870,7 +2870,7 @@
       "additionalProperties": false,
       "properties": {
         "exclude": {
-          "description": "List of file regex filename patterns to exclude",
+          "description": "List of file regex filename patterns to exclude, case insensitive",
           "items": {
             "type": "string"
           },
@@ -2883,7 +2883,7 @@
       "additionalProperties": false,
       "properties": {
         "exclude": {
-          "description": "List of file regex filename patterns to exclude",
+          "description": "List of file regex filename patterns to exclude, case insensitive",
           "items": {
             "type": "string"
           },
@@ -2896,7 +2896,7 @@
       "additionalProperties": false,
       "properties": {
         "exclude": {
-          "description": "List of file regex filename patterns to exclude",
+          "description": "List of file regex filename patterns to exclude, case insensitive",
           "items": {
             "type": "string"
           },
@@ -2939,7 +2939,7 @@
       "additionalProperties": false,
       "properties": {
         "exclude": {
-          "description": "List of file regex filename patterns to exclude",
+          "description": "List of file regex filename patterns to exclude, case insensitive",
           "items": {
             "type": "string"
           },
@@ -2959,7 +2959,7 @@
       "additionalProperties": false,
       "properties": {
         "exclude": {
-          "description": "List of file regex filename patterns to exclude",
+          "description": "List of file regex filename patterns to exclude, case insensitive",
           "items": {
             "type": "string"
           },
@@ -2979,7 +2979,7 @@
           "type": "array"
         },
         "exclude": {
-          "description": "List of file regex filename patterns to exclude",
+          "description": "List of file regex filename patterns to exclude, case insensitive",
           "items": {
             "type": "string"
           },
@@ -3000,7 +3000,7 @@
       "additionalProperties": false,
       "properties": {
         "exclude": {
-          "description": "List of file regex filename patterns to exclude",
+          "description": "List of file regex filename patterns to exclude, case insensitive",
           "items": {
             "type": "string"
           },
@@ -3013,7 +3013,7 @@
       "additionalProperties": false,
       "properties": {
         "exclude": {
-          "description": "List of file regex filename patterns to exclude",
+          "description": "List of file regex filename patterns to exclude, case insensitive",
           "items": {
             "type": "string"
           },
@@ -3036,7 +3036,7 @@
       "additionalProperties": false,
       "properties": {
         "exclude": {
-          "description": "List of file regex filename patterns to exclude",
+          "description": "List of file regex filename patterns to exclude, case insensitive",
           "items": {
             "type": "string"
           },
@@ -3049,7 +3049,7 @@
       "additionalProperties": false,
       "properties": {
         "exclude": {
-          "description": "List of file regex filename patterns to exclude",
+          "description": "List of file regex filename patterns to exclude, case insensitive",
           "items": {
             "type": "string"
           },
@@ -3062,7 +3062,7 @@
       "additionalProperties": false,
       "properties": {
         "exclude": {
-          "description": "List of file regex filename patterns to exclude",
+          "description": "List of file regex filename patterns to exclude, case insensitive",
           "items": {
             "type": "string"
           },
@@ -3075,7 +3075,7 @@
       "additionalProperties": false,
       "properties": {
         "exclude": {
-          "description": "List of file regex filename patterns to exclude",
+          "description": "List of file regex filename patterns to exclude, case insensitive",
           "items": {
             "type": "string"
           },
@@ -3088,7 +3088,7 @@
       "additionalProperties": false,
       "properties": {
         "exclude": {
-          "description": "List of file regex filename patterns to exclude",
+          "description": "List of file regex filename patterns to exclude, case insensitive",
           "items": {
             "type": "string"
           },
@@ -3101,7 +3101,7 @@
       "additionalProperties": false,
       "properties": {
         "exclude": {
-          "description": "List of file regex filename patterns to exclude",
+          "description": "List of file regex filename patterns to exclude, case insensitive",
           "items": {
             "type": "string"
           },
@@ -3121,7 +3121,7 @@
       "additionalProperties": false,
       "properties": {
         "exclude": {
-          "description": "List of file regex filename patterns to exclude",
+          "description": "List of file regex filename patterns to exclude, case insensitive",
           "items": {
             "type": "string"
           },
@@ -3134,7 +3134,7 @@
       "additionalProperties": false,
       "properties": {
         "exclude": {
-          "description": "List of file regex filename patterns to exclude",
+          "description": "List of file regex filename patterns to exclude, case insensitive",
           "items": {
             "type": "string"
           },
@@ -3147,20 +3147,30 @@
       "additionalProperties": false,
       "properties": {
         "exclude": {
-          "description": "List of file regex filename patterns to exclude",
+          "description": "List of file regex filename patterns to exclude, case insensitive",
+          "items": {
+            "type": "string"
+          },
+          "type": "array"
+        },
+        "skipNames": {
+          "description": "skip specific names, case insensitive",
           "items": {
             "type": "string"
           },
           "type": "array"
         }
       },
+      "required": [
+        "skipNames"
+      ],
       "type": "object"
     },
     "UseNewConf": {
       "additionalProperties": false,
       "properties": {
         "exclude": {
-          "description": "List of file regex filename patterns to exclude",
+          "description": "List of file regex filename patterns to exclude, case insensitive",
           "items": {
             "type": "string"
           },
@@ -3190,7 +3200,7 @@
       "additionalProperties": false,
       "properties": {
         "exclude": {
-          "description": "List of file regex filename patterns to exclude",
+          "description": "List of file regex filename patterns to exclude, case insensitive",
           "items": {
             "type": "string"
           },
@@ -3203,7 +3213,7 @@
       "additionalProperties": false,
       "properties": {
         "exclude": {
-          "description": "List of file regex filename patterns to exclude",
+          "description": "List of file regex filename patterns to exclude, case insensitive",
           "items": {
             "type": "string"
           },
@@ -3216,7 +3226,7 @@
       "additionalProperties": false,
       "properties": {
         "exclude": {
-          "description": "List of file regex filename patterns to exclude",
+          "description": "List of file regex filename patterns to exclude, case insensitive",
           "items": {
             "type": "string"
           },
