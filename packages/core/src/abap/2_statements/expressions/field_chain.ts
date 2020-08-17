@@ -7,7 +7,7 @@ export class FieldChain extends Expression {
   public getRunnable(): IStatementRunnable {
 
     const attr = seq(tok(InstanceArrow), alt(new AttributeName(), str("*")));
-    const comp = seq(tok(Dash), new ComponentName());
+    const comp = seq(tok(Dash), optPrio(new ComponentName()));
 
     const chain = star(altPrio(attr, comp, new TableExpression()));
 

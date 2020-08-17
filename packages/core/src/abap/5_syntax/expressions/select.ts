@@ -26,7 +26,7 @@ export class Select {
 
     const fae = node.findDirectExpression(Expressions.SQLForAllEntries);
     if (fae) {
-      scope.push(ScopeType.Select, "SELECT", token.getStart(), filename);
+      scope.push(ScopeType.OpenSQL, "SELECT", token.getStart(), filename);
       new SQLForAllEntries().runSyntax(fae, scope, filename);
     }
 
@@ -38,7 +38,7 @@ export class Select {
       new Source().runSyntax(s, scope, filename);
     }
 
-    if (scope.getType() === ScopeType.Select) {
+    if (scope.getType() === ScopeType.OpenSQL) {
       scope.pop();
     }
   }

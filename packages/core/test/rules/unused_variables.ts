@@ -283,4 +283,13 @@ WRITE bar.`, `DATA:  bar.
 WRITE bar.`);
   });
 
+  it("double MOVE", async () => {
+    const abap = `
+    DATA lv_index1 TYPE i.
+    DATA lv_index2 TYPE i.
+    lv_index1 = lv_index2 = 2.`;
+    const issues = await runSingle(abap);
+    expect(issues.length).to.equal(0);
+  });
+
 });

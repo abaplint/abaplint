@@ -2586,6 +2586,81 @@ DELETE TABLE lt_results FROM 10.`;
     expect(issues.length).to.equals(0);
   });
 
+  it("CONTROLS w_tabstrip TYPE TABSTRIP", () => {
+    const abap = `
+    CONTROLS w_tabstrip TYPE TABSTRIP.
+    w_tabstrip-activetab = 'FOO'.`;
+    const issues = runProgram(abap);
+    expect(issues.length).to.equals(0);
+  });
+
+  it("UPDATE database table with field reference", () => {
+    const xml = `
+    <?xml version="1.0" encoding="utf-8"?>
+    <abapGit version="v1.0.0" serializer="LCL_OBJECT_TABL" serializer_version="v1.0.0">
+     <asx:abap xmlns:asx="http://www.sap.com/abapxml" version="1.0">
+      <asx:values>
+       <DD02V>
+        <TABNAME>ZTAB</TABNAME>
+        <DDLANGUAGE>E</DDLANGUAGE>
+        <TABCLASS>TRANSP</TABCLASS>
+        <DDTEXT>transparent table</DDTEXT>
+        <CONTFLAG>A</CONTFLAG>
+       </DD02V>
+       <DD09L>
+        <TABNAME>ZTAB</TABNAME>
+        <AS4LOCAL>A</AS4LOCAL>
+        <TABKAT>0</TABKAT>
+        <TABART>APPL0</TABART>
+        <BUFALLOW>N</BUFALLOW>
+       </DD09L>
+       <DD03P_TABLE>
+        <DD03P>
+         <TABNAME>ZTAB</TABNAME>
+         <FIELDNAME>FIELD1</FIELDNAME>
+         <DDLANGUAGE>E</DDLANGUAGE>
+         <POSITION>0001</POSITION>
+         <KEYFLAG>X</KEYFLAG>
+         <ADMINFIELD>0</ADMINFIELD>
+         <INTTYPE>C</INTTYPE>
+         <INTLEN>000040</INTLEN>
+         <NOTNULL>X</NOTNULL>
+         <DATATYPE>CHAR</DATATYPE>
+         <LENG>000020</LENG>
+         <MASK>  CHAR</MASK>
+        </DD03P>
+        <DD03P>
+         <TABNAME>ZTAB</TABNAME>
+         <FIELDNAME>VALUE1</FIELDNAME>
+         <DDLANGUAGE>E</DDLANGUAGE>
+         <POSITION>0002</POSITION>
+         <ADMINFIELD>0</ADMINFIELD>
+         <INTTYPE>X</INTTYPE>
+         <INTLEN>000004</INTLEN>
+         <DATATYPE>INT4</DATATYPE>
+         <LENG>000010</LENG>
+         <MASK>  INT4</MASK>
+        </DD03P>
+       </DD03P_TABLE>
+      </asx:values>
+     </asx:abap>
+    </abapGit>`;
+    const prog = `UPDATE ztab SET value1 = value1 + 1 WHERE field1 = 'abc'.`;
+    const issues = runMulti([
+      {filename: "ztab.tabl.xml", contents: xml},
+      {filename: "zfoobar.prog.abap", contents: prog},
+    ]);
+    expect(issues.length).to.equals(0);
+  });
+
+  it("concat_lines_of", () => {
+    const abap = `
+    DATA tab TYPE STANDARD TABLE OF string.
+    WRITE concat_lines_of( table = tab sep = | | ).`;
+    const issues = runProgram(abap);
+    expect(issues.length).to.equals(0);
+  });
+
 // todo, static method cannot access instance attributes
 // todo, can a private method access protected attributes?
 // todo, readonly fields(constants + enums + attributes flagged read-only)

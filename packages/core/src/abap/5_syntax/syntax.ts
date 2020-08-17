@@ -97,6 +97,7 @@ import {SubtractCorresponding} from "./statements/subtract_corresponding";
 import {Multiply} from "./statements/multiply";
 import {Divide} from "./statements/divide";
 import {Condense} from "./statements/condense";
+import {Controls} from "./statements/controls";
 
 export class SyntaxLogic {
   private currentFile: ABAPFile;
@@ -329,6 +330,8 @@ export class SyntaxLogic {
       new SetLocale().runSyntax(node, this.scope, filename);
     } else if (s instanceof Statements.Convert) {
       new Convert().runSyntax(node, this.scope, filename);
+    } else if (s instanceof Statements.Controls) {
+      new Controls().runSyntax(node, this.scope, filename);
     } else if (s instanceof Statements.When) {
       new When().runSyntax(node, this.scope, filename);
     } else if (s instanceof Statements.InsertDatabase) {
