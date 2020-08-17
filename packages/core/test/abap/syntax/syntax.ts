@@ -2586,6 +2586,14 @@ DELETE TABLE lt_results FROM 10.`;
     expect(issues.length).to.equals(0);
   });
 
+  it("CONTROLS w_tabstrip TYPE TABSTRIP", () => {
+    const abap = `
+    CONTROLS w_tabstrip TYPE TABSTRIP.
+    w_tabstrip-activetab = 'FOO'.`;
+    const issues = runProgram(abap);
+    expect(issues.length).to.equals(0);
+  });
+
 // todo, static method cannot access instance attributes
 // todo, can a private method access protected attributes?
 // todo, readonly fields(constants + enums + attributes flagged read-only)
