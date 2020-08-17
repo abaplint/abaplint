@@ -1,6 +1,6 @@
 import {IStatement} from "./_statement";
 import {str, seq, opt, alt, star} from "../combi";
-import {SQLSource, DatabaseTable, Dynamic, Field, SQLCond, DatabaseConnection} from "../expressions";
+import {SQLSource, DatabaseTable, Dynamic, SQLFieldName, SQLCond, DatabaseConnection} from "../expressions";
 import {IStatementRunnable} from "../statement_runnable";
 
 export class UpdateDatabase implements IStatement {
@@ -8,7 +8,7 @@ export class UpdateDatabase implements IStatement {
   public getMatcher(): IStatementRunnable {
     const target = alt(new DatabaseTable(), new Dynamic());
 
-    const param = seq(new Field(), str("="), new SQLSource());
+    const param = seq(new SQLFieldName(), str("="), new SQLSource());
     const parameters = seq(param, star(seq(opt(str(",")), param)));
 
     const set = seq(str("SET"),
