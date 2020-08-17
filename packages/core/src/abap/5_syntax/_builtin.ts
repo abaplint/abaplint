@@ -126,8 +126,10 @@ export class BuiltIn {
     ret.push({name: "SIGN", importing: [{name: "val", type: new FloatType()}], returnType: new IntegerType()});
     ret.push({name: "SIN", importing: [{name: "val", type: new FloatType()}], returnType: new IntegerType()});
     ret.push({name: "STRLEN", importing: [{name: "val", type: new StringType()}], returnType: new IntegerType()});
-    ret.push({name: "SUBSTRING_AFTER", importing: [{name: "val", type: new StringType()}, {name: "sub", type: new StringType()}], returnType: new StringType()});
-    ret.push({name: "SUBSTRING_BEFORE", importing: [{name: "val", type: new StringType()}, {name: "sub", type: new StringType()}, {name: "regex", type: new StringType()}], returnType: new StringType()});
+    ret.push({name: "SUBSTRING_AFTER", importing: [{name: "val", type: new StringType()}, {name: "case", type: new CharacterType(1)}, {name: "sub", type: new StringType()}], returnType: new StringType()});
+    ret.push({name: "SUBSTRING_BEFORE", importing: [{name: "val", type: new StringType()}, {name: "case", type: new CharacterType(1)}, {name: "sub", type: new StringType()}, {name: "regex", type: new StringType()}], returnType: new StringType()});
+    ret.push({name: "SUBSTRING_FROM", importing: [{name: "val", type: new StringType()}, {name: "case", type: new CharacterType(1)}, {name: "sub", type: new StringType()}], returnType: new StringType()});
+    ret.push({name: "SUBSTRING_TO", importing: [{name: "val", type: new StringType()}, {name: "case", type: new CharacterType(1)}, {name: "sub", type: new StringType()}], returnType: new StringType()});
     ret.push({name: "SUBSTRING", importing: [{name: "val", type: new StringType()}, {name: "len", type: new IntegerType()}, {name: "off", type: new IntegerType()}], returnType: new StringType()});
     ret.push({name: "TO_LOWER", importing: [{name: "val", type: new StringType()}], returnType: new StringType()});
     ret.push({name: "TO_MIXED", importing: [{name: "val", type: new StringType()}, {name: "case", type: new StringType()}], returnType: new StringType()});
