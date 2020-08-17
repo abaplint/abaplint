@@ -77,7 +77,7 @@ export class LSPLookup {
 ////////////////////////////////////////////
 
   private static referenceHover(ref: IReference, scope: ISpaghettiScopeNode): string {
-    let ret = "Resolved Reference: " + ref.referenceType + " " + ref.resolved.getName();
+    let ret = "Resolved Reference: " + ref.referenceType + " " + ref.resolved.getName() + "\n\n";
 
     if (ref.referenceType === ReferenceType.MethodReference && ref.extra?.className) {
       ret = ret + this.hoverMethod(ref.position.getName(), scope.findClassDefinition(ref.extra?.className));
@@ -100,17 +100,17 @@ export class LSPLookup {
 
     let ret = "";
     for (const p of mdef.getParameters().getImporting()) {
-      ret = ret + p.getName() + ": TYPE " + p.getType().toText(0) + "\n";
+      ret = ret + p.getName() + ": TYPE " + p.getType().toText(0) + "\n\n";
     }
     for (const p of mdef.getParameters().getExporting()) {
-      ret = ret + p.getName() + ": TYPE " + p.getType().toText(0) + "\n";
+      ret = ret + p.getName() + ": TYPE " + p.getType().toText(0) + "\n\n";
     }
     for (const p of mdef.getParameters().getChanging()) {
-      ret = ret + p.getName() + ": TYPE " + p.getType().toText(0) + "\n";
+      ret = ret + p.getName() + ": TYPE " + p.getType().toText(0) + "\n\n";
     }
     const r = mdef.getParameters().getReturning();
     if (r) {
-      ret = ret + r.getName() + ": TYPE " + r.getType().toText(0) + "\n";
+      ret = ret + r.getName() + ": TYPE " + r.getType().toText(0) + "\n\n";
     }
 
     return ret === "" ? ret : ret + "\n\n";
