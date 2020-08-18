@@ -126,4 +126,23 @@ WRITE lcl_password_dialog=>c_dynnr.`;
     expect(hover?.value).to.contain("lcl_password_dialog");
   });
 
+  it("hover class reference in method call", () => {
+    const abap = `CLASS lcl_class DEFINITION.
+  PUBLIC SECTION.
+    CLASS-METHODS run.
+ENDCLASS.
+CLASS lcl_class IMPLEMENTATION.
+  METHOD run.
+  ENDMETHOD.
+ENDCLASS.
+
+START-OF-SELECTION.
+  lcl_class=>run( ).`;
+    const file = new MemoryFile("foobar.prog.abap", abap);
+    const reg = new Registry().addFile(file).parse();
+    const hover = new Hover(reg).find(buildPosition(file, 10, 5));
+    expect(hover).to.not.equal(undefined);
+    expect(hover?.value).to.contain("lcl_class");
+  });
+
 });
