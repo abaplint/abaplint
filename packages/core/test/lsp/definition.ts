@@ -73,6 +73,13 @@ describe("LSP, definition", () => {
     expect(def!.uri).to.equal(prog1.getFilename());
   });
 
+  it("resolved, built-in, expect no location", () => {
+    const file = new MemoryFile("foobar.prog.abap", "WRITE sy-sysid.");
+    const reg = new Registry().addFile(file).parse();
+    const def = new Definition(reg).find({uri: file.getFilename()}, LServer.Position.create(0, 7));
+    expect(def).to.equal(undefined);
+  });
+
 // todo
 // INHERITING FROM zcl_jump_here
 // INTERFACES zif_jump_here

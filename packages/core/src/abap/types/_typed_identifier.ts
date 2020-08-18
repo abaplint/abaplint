@@ -34,7 +34,7 @@ export class TypedIdentifier extends Identifier {
     return this.type;
   }
 
-  public getMeta() {
+  public getMeta(): IdentifierMeta[] {
     return this.meta;
   }
 

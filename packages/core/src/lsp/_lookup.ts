@@ -8,7 +8,7 @@ import {SyntaxLogic} from "../abap/5_syntax/syntax";
 import {IFormDefinition} from "../abap/types/_form_definition";
 import {ISpaghettiScopeNode} from "../abap/5_syntax/_spaghetti_scope";
 import {ICursorData, LSPUtils} from "./_lsp_utils";
-import {TypedIdentifier} from "../abap/types/_typed_identifier";
+import {TypedIdentifier, IdentifierMeta} from "../abap/types/_typed_identifier";
 import {Identifier} from "../abap/4_file_information/_identifier";
 import {Token} from "../abap/1_lexer/tokens/_token";
 import {IReference, ReferenceType} from "../abap/5_syntax/_reference";
@@ -58,7 +58,10 @@ export class LSPLookup {
       if (variable.getType().isGeneric() === true) {
         value = value + "\n\nIs generic type";
       }
-      const location = LSPUtils.identiferToLocation(variable);
+      let location = undefined;
+      if (variable.getMeta().includes(IdentifierMeta.BuiltIn) === false) {
+        location = LSPUtils.identiferToLocation(variable);
+      }
       return {hover: value, definition: location, definitionId: variable, scope: bottomScope};
     }
 
