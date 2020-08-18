@@ -73,10 +73,18 @@ describe("LSP, definition", () => {
     expect(def!.uri).to.equal(prog1.getFilename());
   });
 
-  it("resolved, built-in, expect no location", () => {
+  it("resolved, built-in variable, expect no location", () => {
     const file = new MemoryFile("foobar.prog.abap", "WRITE sy-sysid.");
     const reg = new Registry().addFile(file).parse();
     const def = new Definition(reg).find({uri: file.getFilename()}, LServer.Position.create(0, 7));
+    expect(def).to.equal(undefined);
+  });
+
+  it("resolved, built-in method, expect no location", () => {
+    const file = new MemoryFile("foobar.prog.abap", `DATA lt_lengths TYPE STANDARD TABLE OF i.
+WRITE lines( lt_lengths ).`);
+    const reg = new Registry().addFile(file).parse();
+    const def = new Definition(reg).find({uri: file.getFilename()}, LServer.Position.create(1, 7));
     expect(def).to.equal(undefined);
   });
 

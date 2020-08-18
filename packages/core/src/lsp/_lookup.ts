@@ -74,7 +74,11 @@ export class LSPLookup {
     const ref = this.searchReferences(bottomScope, cursor.token);
     if (ref !== undefined) {
       const value = this.referenceHover(ref, bottomScope);
-      return {hover: value, definition: LSPUtils.identiferToLocation(ref.resolved), scope: bottomScope};
+      let definition = undefined;
+      if (ref.referenceType !== ReferenceType.BuiltinMethodReference) {
+        definition = LSPUtils.identiferToLocation(ref.resolved);
+      }
+      return {hover: value, definition, scope: bottomScope};
     }
 
     return undefined;
