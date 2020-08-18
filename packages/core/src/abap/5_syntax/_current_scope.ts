@@ -174,7 +174,7 @@ export class CurrentScope {
 
     const globalClas = this.reg.getObject("CLAS", name);
     if (globalClas) {
-      return {found: true, type: ReferenceType.ClassReference};
+      return {found: true, id: globalClas.getIdentifier(), type: ReferenceType.ClassReference};
     }
 
     const findLocalInterface = this.current?.findInterfaceDefinition(name);
@@ -184,7 +184,7 @@ export class CurrentScope {
 
     const globalIntf = this.reg.getObject("INTF", name);
     if (globalIntf) {
-      return {found: true, type: ReferenceType.InterfaceReference};
+      return {found: true, id: globalIntf.getIdentifier(), type: ReferenceType.InterfaceReference};
     }
 
     return {found: false};
