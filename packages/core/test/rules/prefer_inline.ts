@@ -140,6 +140,23 @@ ENDFORM.`;
     testFix(input, expected);
   });
 
+  it("First write is CLEAR, not inlineable", async () => {
+    const issues = await findIssues(`
+FORM foo.
+  DATA sdf TYPE i.
+  CLEAR sdf.
+ENDFORM.`);
+    expect(issues.length).to.equal(0);
+  });
+
+  it("Dont suggest to inline FORM parameters", async () => {
+    const issues = await findIssues(`
+FORM foobar CHANGING bar TYPE i.
+  bar = 2.
+ENDFORM.`);
+    expect(issues.length).to.equal(0);
+  });
+
   /*
   it.skip("Types should not change when inlining", async () => {
     const issues = await findIssues(`

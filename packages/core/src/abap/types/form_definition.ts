@@ -4,7 +4,7 @@ import * as Tokens from "../1_lexer/tokens";
 import {Identifier} from "../4_file_information/_identifier";
 import {StructureNode, StatementNode, ExpressionNode} from "../nodes";
 import {Expression} from "../2_statements/combi";
-import {TypedIdentifier} from "./_typed_identifier";
+import {TypedIdentifier, IdentifierMeta} from "./_typed_identifier";
 import {CurrentScope} from "../5_syntax/_current_scope";
 import {FormParam} from "../5_syntax/expressions/form_param";
 import {IFormDefinition} from "./_form_definition";
@@ -64,7 +64,7 @@ export class FormDefinition extends Identifier implements IFormDefinition {
     for (const param of tables.findAllExpressions(Expressions.FormParam)) {
       const p = new FormParam().runSyntax(param, scope, this.filename);
       const type = new TableType(p.getType(), true);
-      ret.push(new TypedIdentifier(p.getToken(), filename, type));
+      ret.push(new TypedIdentifier(p.getToken(), filename, type, [IdentifierMeta.FormParameter]));
     }
 
     return ret;

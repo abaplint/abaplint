@@ -3,6 +3,9 @@ import {IObject, IParseResult} from "./_iobject";
 import * as xmljs from "xml-js";
 import {Issue} from "../issue";
 import {Version} from "../version";
+import {Identifier} from "../abap/4_file_information/_identifier";
+import {Identifier as IdentifierToken} from "../abap/1_lexer/tokens/identifier";
+import {Position} from "../position";
 
 export abstract class AbstractObject implements IObject {
   protected files: IFile[];
@@ -76,6 +79,15 @@ export abstract class AbstractObject implements IObject {
 
   public isDirty() {
     return this.dirty;
+  }
+
+  public getIdentifier(): Identifier | undefined {
+    // this method can be redefined in each object type to give a better result
+    const file = this.getXMLFile();
+    if (file === undefined) {
+      return undefined;
+    }
+    return new Identifier(new IdentifierToken(new Position(0, 0), ""), file.getFilename());
   }
 
   public getXMLFile() {

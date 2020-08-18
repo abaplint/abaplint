@@ -22,6 +22,7 @@ export * from "./concatenated_constant";
 export * from "./cond_body";
 export * from "./cond";
 export * from "./constant_field_length";
+export * from "./constant_or_field_source";
 export * from "./constant_string";
 export * from "./constant";
 export * from "./corresponding_body";

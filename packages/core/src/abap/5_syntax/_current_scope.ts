@@ -122,8 +122,13 @@ export class CurrentScope {
     }
   }
 
-  public addReference(usage: Token | undefined, referencing: Identifier, type: ReferenceType, filename: string, extra?: IReferenceExtras) {
-    if (usage === undefined) {
+  public addReference(
+    usage: Token | undefined,
+    referencing: Identifier | undefined,
+    type: ReferenceType | undefined,
+    filename: string, extra?: IReferenceExtras) {
+
+    if (usage === undefined || referencing === undefined || type === undefined) {
       return;
     }
 
@@ -148,29 +153,41 @@ export class CurrentScope {
     return undefined;
   }
 
-  public existsObject(name: string | undefined): boolean {
+  public existsObject(name: string | undefined): {found: boolean, id?: Identifier, type?: ReferenceType} {
     if (name === undefined) {
-      return false;
+      return {found: false};
     }
 
     if (name.toUpperCase() === "OBJECT") {
-      return true;
+      return {found: true};
     } else if (name.toUpperCase() === this.getName().toLocaleUpperCase()
         && this.getType() === ScopeType.ClassDefinition) {
-      return true;
+      return {found: true};
     } else if (this.current?.findDeferred(name) !== undefined) {
-      return true;
-    } else if (this.current?.findClassDefinition(name)) {
-      return true;
-    } else if (this.reg.getObject("CLAS", name)) {
-      return true;
-    } else if (this.current?.findInterfaceDefinition(name)) {
-      return true;
-    } else if (this.reg.getObject("INTF", name)) {
-      return true;
+      return {found: true};
     }
 
-    return false;
+    const findLocalClass = this.current?.findClassDefinition(name);
+    if (findLocalClass) {
+      return {found: true, id: findLocalClass, type: ReferenceType.ClassReference};
+    }
+
+    const globalClas = this.reg.getObject("CLAS", name);
+    if (globalClas) {
+      return {found: true, id: globalClas.getIdentifier(), type: ReferenceType.ClassReference};
+    }
+
+    const findLocalInterface = this.current?.findInterfaceDefinition(name);
+    if (findLocalInterface) {
+      return {found: true, id: findLocalInterface, type: ReferenceType.InterfaceReference};
+    }
+
+    const globalIntf = this.reg.getObject("INTF", name);
+    if (globalIntf) {
+      return {found: true, id: globalIntf.getIdentifier(), type: ReferenceType.InterfaceReference};
+    }
+
+    return {found: false};
   }
 
 ///////////////////////////

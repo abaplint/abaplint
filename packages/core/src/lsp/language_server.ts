@@ -12,6 +12,7 @@ import {LSPUtils} from "./_lsp_utils";
 import {CodeActions} from "./code_actions";
 import {IRegistry} from "../_iregistry";
 import {References} from "./references";
+import {Implementation} from "./implementation";
 
 // note Ranges are zero based in LSP,
 // https://github.com/microsoft/language-server-protocol/blob/master/versions/protocol-2-x.md#range
@@ -92,9 +93,8 @@ export class LanguageServer {
   }
 
   // https://microsoft.github.io/language-server-protocol/specifications/specification-3-14/#textDocument_implementation
-  public implementation(_params: ITextDocumentPositionParams): LServer.Location[] {
-    // todo, implement
-    return [];
+  public implementation(params: ITextDocumentPositionParams): LServer.Location[] {
+    return new Implementation(this.reg).find(params.textDocument, params.position);
   }
 
   // https://microsoft.github.io/language-server-protocol/specifications/specification-3-14/#textDocument_references

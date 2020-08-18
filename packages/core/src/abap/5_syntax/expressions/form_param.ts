@@ -1,6 +1,6 @@
 import {ExpressionNode} from "../../nodes";
 import {CurrentScope} from "../_current_scope";
-import {TypedIdentifier} from "../../types/_typed_identifier";
+import {TypedIdentifier, IdentifierMeta} from "../../types/_typed_identifier";
 import {UnknownType} from "../../types/basic";
 import {FormParamName, NamespaceSimpleName} from "../../2_statements/expressions";
 import {BasicTypes} from "../basic_types";
@@ -22,16 +22,16 @@ export class FormParam {
       } else {
         type = new UnknownType("todo, FORM STRUCTURES typing");
       }
-      return new TypedIdentifier(node.getFirstToken(), filename, type);
+      return new TypedIdentifier(node.getFirstToken(), filename, type, [IdentifierMeta.FormParameter]);
     }
 
     const bfound = new BasicTypes(filename, scope).parseType(node);
     if (nameToken && bfound) {
-      return new TypedIdentifier(nameToken, filename, bfound);
+      return new TypedIdentifier(nameToken, filename, bfound, [IdentifierMeta.FormParameter]);
     }
 
     if (nameToken) {
-      return new TypedIdentifier(nameToken, filename, new UnknownType("FormParam, todo"));
+      return new TypedIdentifier(nameToken, filename, new UnknownType("FormParam, todo"), [IdentifierMeta.FormParameter]);
     }
 
     throw new Error("FormParam, unexpected node");

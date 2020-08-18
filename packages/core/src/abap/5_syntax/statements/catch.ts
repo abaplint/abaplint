@@ -15,7 +15,7 @@ export class Catch {
       const token = target.findFirstExpression(Expressions.TargetField)?.getFirstToken();
 
       const found = scope.existsObject(className);
-      if (token && found && className) {
+      if (token && found.found === true && className) {
         const identifier = new TypedIdentifier(token, filename, new ObjectReferenceType(className), [IdentifierMeta.InlineDefinition]);
         scope.addIdentifier(identifier);
       } else if (token && scope.getDDIC().inErrorNamespace(className) === false) {

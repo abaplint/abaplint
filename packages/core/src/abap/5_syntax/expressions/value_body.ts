@@ -4,11 +4,17 @@ import * as Expressions from "../../2_statements/expressions";
 import {For} from "./for";
 import {Source} from "./source";
 import {AbstractType} from "../../types/basic/_abstract_type";
+import {Let} from "./let";
 
 export class ValueBody {
   public runSyntax(node: ExpressionNode | undefined, scope: CurrentScope, filename: string): AbstractType | undefined {
     if (node === undefined) {
       return;
+    }
+
+    const letNode = node.findDirectExpression(Expressions.Let);
+    if (letNode) {
+      new Let().runSyntax(letNode, scope, filename);
     }
 
     const forNode = node.findDirectExpression(Expressions.For);

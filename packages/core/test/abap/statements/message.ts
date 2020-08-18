@@ -1,5 +1,6 @@
-import {statementType} from "../_utils";
+import {statementType, statementVersionOk, statementVersionFail} from "../_utils";
 import * as Statements from "../../../src/abap/2_statements/statements";
+import {Version} from "../../../src/version";
 
 const tests = [
   "MESSAGE 'Saved' TYPE 'S'.",
@@ -34,3 +35,15 @@ const tests = [
 ];
 
 statementType(tests, "MESSAGE", Statements.Message);
+
+const testsVersionOk = [
+  {abap: `MESSAGE 'sdf' TYPE 'S'.`, ver: Version.v702},
+];
+
+statementVersionOk(testsVersionOk, "MESSAGE", Statements.Message);
+
+const testsVersionFail = [
+  {abap: `MESSAGE |sdf| TYPE 'S'.`, ver: Version.v702},
+];
+
+statementVersionFail(testsVersionFail, "MESSAGE");

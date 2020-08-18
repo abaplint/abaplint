@@ -416,7 +416,7 @@ export class BasicTypes {
 
     const name = chain.getFirstToken().getStr();
     if (chain.getAllTokens().length === 1) {
-      if (this.scope.existsObject(name)) {
+      if (this.scope.existsObject(name).found === true) {
         return new Types.ObjectReferenceType(name);
       }
     }

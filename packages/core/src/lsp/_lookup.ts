@@ -8,17 +8,18 @@ import {SyntaxLogic} from "../abap/5_syntax/syntax";
 import {IFormDefinition} from "../abap/types/_form_definition";
 import {ISpaghettiScopeNode} from "../abap/5_syntax/_spaghetti_scope";
 import {ICursorData, LSPUtils} from "./_lsp_utils";
-import {TypedIdentifier} from "../abap/types/_typed_identifier";
+import {TypedIdentifier, IdentifierMeta} from "../abap/types/_typed_identifier";
 import {Identifier} from "../abap/4_file_information/_identifier";
 import {Token} from "../abap/1_lexer/tokens/_token";
 import {IReference, ReferenceType} from "../abap/5_syntax/_reference";
 import {IClassDefinition} from "../abap/types/_class_definition";
 
 export interface LSPLookupResult {
-  hover: string | undefined;               // in markdown
-  definition: LServer.Location | undefined // used for go to definition
-  definitionId?: Identifier,
-  scope?: ISpaghettiScopeNode,
+  hover: string | undefined;                     // in markdown
+  definition?: LServer.Location | undefined;     // used for go to definition
+  implementation?: LServer.Location | undefined; // used for go to implementation
+  definitionId?: Identifier;
+  scope?: ISpaghettiScopeNode;
 }
 
 export class LSPLookup {
@@ -26,7 +27,8 @@ export class LSPLookup {
   public static lookup(cursor: ICursorData, reg: IRegistry, obj: ABAPObject): LSPLookupResult | undefined {
     const inc = this.findInclude(cursor, reg);
     if (inc) {
-      return {hover: "File", definition: this.ABAPFileResult(inc)};
+      const found = this.ABAPFileResult(inc);
+      return {hover: "Include", definition: found, implementation: found};
     }
 
     const bottomScope = new SyntaxLogic(reg, obj).run().spaghetti.lookupPosition(cursor.identifier.getStart(),
@@ -37,7 +39,8 @@ export class LSPLookup {
 
     const form = this.findForm(cursor, bottomScope);
     if (form) {
-      return {hover: "Call FORM", definition: LSPUtils.identiferToLocation(form), scope: bottomScope};
+      const found = LSPUtils.identiferToLocation(form);
+      return {hover: "Call FORM", definition: found, implementation: found, scope: bottomScope};
     }
 
     const variable = bottomScope.findVariable(cursor.token.getStr());
@@ -55,8 +58,11 @@ export class LSPLookup {
       if (variable.getType().isGeneric() === true) {
         value = value + "\n\nIs generic type";
       }
-      const location = LSPUtils.identiferToLocation(variable);
-      return {hover: value, definition: location, definitionId: variable, scope: bottomScope};
+      let location = undefined;
+      if (variable.getMeta().includes(IdentifierMeta.BuiltIn) === false) {
+        location = LSPUtils.identiferToLocation(variable);
+      }
+      return {hover: value, definition: location, implementation: location, definitionId: variable, scope: bottomScope};
     }
 
     const type = bottomScope.findType(cursor.token.getStr());
@@ -77,13 +83,15 @@ export class LSPLookup {
 ////////////////////////////////////////////
 
   private static referenceHover(ref: IReference, scope: ISpaghettiScopeNode): string {
-    let ret = "Resolved Reference: " + ref.referenceType + " " + ref.resolved.getName();
+    let ret = "Resolved Reference: " + ref.referenceType + " " + ref.resolved.getName() + "\n\n";
 
     if (ref.referenceType === ReferenceType.MethodReference && ref.extra?.className) {
       ret = ret + this.hoverMethod(ref.position.getName(), scope.findClassDefinition(ref.extra?.className));
     }
 
-    ret = ret + ( JSON.stringify(ref.extra) !== "{}" ? "\n\nExtra: " + JSON.stringify(ref.extra) : "" );
+    if (ref.extra !== undefined && Object.keys(ref.extra).length > 0) {
+      ret = ret + "\n\nExtra: " + JSON.stringify(ref.extra);
+    }
 
     return ret;
   }
@@ -100,17 +108,17 @@ export class LSPLookup {
 
     let ret = "";
     for (const p of mdef.getParameters().getImporting()) {
-      ret = ret + p.getName() + ": TYPE " + p.getType().toText(0) + "\n";
+      ret = ret + p.getName() + ": TYPE " + p.getType().toText(0) + "\n\n";
     }
     for (const p of mdef.getParameters().getExporting()) {
-      ret = ret + p.getName() + ": TYPE " + p.getType().toText(0) + "\n";
+      ret = ret + p.getName() + ": TYPE " + p.getType().toText(0) + "\n\n";
     }
     for (const p of mdef.getParameters().getChanging()) {
-      ret = ret + p.getName() + ": TYPE " + p.getType().toText(0) + "\n";
+      ret = ret + p.getName() + ": TYPE " + p.getType().toText(0) + "\n\n";
     }
     const r = mdef.getParameters().getReturning();
     if (r) {
-      ret = ret + r.getName() + ": TYPE " + r.getType().toText(0) + "\n";
+      ret = ret + r.getName() + ": TYPE " + r.getType().toText(0) + "\n\n";
     }
 
     return ret === "" ? ret : ret + "\n\n";
