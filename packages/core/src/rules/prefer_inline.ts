@@ -80,7 +80,8 @@ First position used must be a full/pure write.`,
 
     for (const d of node.getData().vars) {
       if (this.isLocalDefinition(node, d) === false
-          || d.identifier.getMeta().includes(IdentifierMeta.InlineDefinition)) {
+          || d.identifier.getMeta().includes(IdentifierMeta.InlineDefinition)
+          || d.identifier.getMeta().includes(IdentifierMeta.FormParameter)) {
         continue;
       } else if (d.identifier.getType().isGeneric() === true) {
         continue;

@@ -8,6 +8,7 @@ export const enum IdentifierMeta {
   MethodChanging = "changing",
   MethodReturning = "returning",
   EventParameter = "event_parameter",
+  FormParameter = "form_parameter",
   ReadOnly = "read_only",
   InlineDefinition = "inline",
   BuiltIn = "built-in",

@@ -149,6 +149,14 @@ ENDFORM.`);
     expect(issues.length).to.equal(0);
   });
 
+  it("Dont suggest to inline FORM parameters", async () => {
+    const issues = await findIssues(`
+FORM foobar CHANGING bar TYPE i.
+  bar = 2.
+ENDFORM.`);
+    expect(issues.length).to.equal(0);
+  });
+
   /*
   it.skip("Types should not change when inlining", async () => {
     const issues = await findIssues(`
