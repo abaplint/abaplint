@@ -15,10 +15,11 @@ import {IReference, ReferenceType} from "../abap/5_syntax/_reference";
 import {IClassDefinition} from "../abap/types/_class_definition";
 
 export interface LSPLookupResult {
-  hover: string | undefined;               // in markdown
-  definition: LServer.Location | undefined // used for go to definition
-  definitionId?: Identifier,
-  scope?: ISpaghettiScopeNode,
+  hover: string | undefined;                     // in markdown
+  definition?: LServer.Location | undefined;     // used for go to definition
+  implementation?: LServer.Location | undefined; // used for go to implementation
+  definitionId?: Identifier;
+  scope?: ISpaghettiScopeNode;
 }
 
 export class LSPLookup {
@@ -26,7 +27,8 @@ export class LSPLookup {
   public static lookup(cursor: ICursorData, reg: IRegistry, obj: ABAPObject): LSPLookupResult | undefined {
     const inc = this.findInclude(cursor, reg);
     if (inc) {
-      return {hover: "File", definition: this.ABAPFileResult(inc)};
+      const found = this.ABAPFileResult(inc);
+      return {hover: "Include", definition: found, implementation: found};
     }
 
     const bottomScope = new SyntaxLogic(reg, obj).run().spaghetti.lookupPosition(cursor.identifier.getStart(),
