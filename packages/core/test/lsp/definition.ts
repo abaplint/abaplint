@@ -88,6 +88,22 @@ WRITE lines( lt_lengths ).`);
     expect(def).to.equal(undefined);
   });
 
+  it("resolve interface used as TYPE reference", () => {
+    const abap = `INTERFACE lif_foo.
+  TYPES: ty_bar TYPE c LENGTH 1.
+ENDINTERFACE.
+DATA sdf TYPE lif_foo=>ty_bar.`;
+    const file = new MemoryFile("foobar.prog.abap", abap);
+    const reg = new Registry().addFile(file).parse();
+
+    const intf = new Definition(reg).find({uri: file.getFilename()}, LServer.Position.create(3, 16));
+    expect(intf).to.not.equal(undefined);
+
+    const type = new Definition(reg).find({uri: file.getFilename()}, LServer.Position.create(3, 25));
+    expect(type).to.not.equal(undefined);
+  });
+
+
 // todo
 // INHERITING FROM zcl_jump_here
 // INTERFACES zif_jump_here

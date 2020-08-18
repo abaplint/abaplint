@@ -123,7 +123,7 @@ WRITE lcl_password_dialog=>c_dynnr.`;
     const reg = new Registry().addFile(file).parse();
     const hover = new Hover(reg).find(buildPosition(file, 6, 10));
     expect(hover).to.not.equal(undefined);
-    expect(hover?.value).to.contain("Class");
+    expect(hover?.value).to.contain("lcl_password_dialog");
   });
 
 });

@@ -1,11 +1,12 @@
 import {Identifier} from "../4_file_information/_identifier";
 
 export enum ReferenceType {
-  ClassReference = "ClassReference",
-  InterfaceReference = "InterfaceReference",
+  /** for classes and interface references */
+  ObjectOrientedReference = "ObjectOrientedReference",
   MethodReference = "MethodReference",
   BuiltinMethodReference = "BuiltinMethodReference",
   FormReference = "FormReference",
+  TypeReference = "TypeReference",
   DataReadReference = "DataReadReference",
   DataWriteReference = "DataWriteReference",
 }

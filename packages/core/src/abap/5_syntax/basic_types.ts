@@ -8,6 +8,7 @@ import {ScopeType} from "./_scope_type";
 import {ObjectOriented} from "./_object_oriented";
 import {ClassConstant} from "../types/class_constant";
 import {Identifier} from "../1_lexer/tokens/identifier";
+import {ReferenceType} from "./_reference";
 
 export class BasicTypes {
   private readonly filename: string;
@@ -107,17 +108,17 @@ export class BasicTypes {
     return type;
   }
 
-  private resolveTypeName(typename: ExpressionNode | undefined, length?: number): AbstractType | undefined {
-    if (typename === undefined) {
+  private resolveTypeName(typeName: ExpressionNode | undefined, length?: number): AbstractType | undefined {
+    if (typeName === undefined) {
       return undefined;
     }
 
-    const chain = this.resolveTypeChain(typename);
+    const chain = this.resolveTypeChain(typeName);
     if (chain) {
       return chain;
     }
 
-    const chainText = typename.concatTokens().toUpperCase();
+    const chainText = typeName.concatTokens().toUpperCase();
     if (chainText === "STRING") {
       return new Types.StringType();
     } else if (chainText === "XSTRING") {
@@ -297,7 +298,7 @@ export class BasicTypes {
       found = this.resolveTypeName(typename, this.findLength(node));
 
       if (found === undefined && typename === undefined) {
-        found = new Types.CharacterType(1);
+        found = new Types.CharacterType(1); // fallback
       }
 
       if (found && node.findDirectTokenByText("OCCURS")) {
@@ -347,11 +348,15 @@ export class BasicTypes {
         } else if (obj === undefined) {
           return new Types.UnknownType("Could not resolve top " + chainText);
         }
+        this.scope.addReference(expr.getFirstToken(), obj, ReferenceType.ObjectOrientedReference, this.filename);
 
-        found = obj.getTypeDefinitions().getByName(subs[0])?.getType();
-        if (found === undefined) {
+        const byName = obj.getTypeDefinitions().getByName(subs[0]);
+        found = byName?.getType();
+        if (byName === undefined || found === undefined) {
           return new Types.UnknownType(subs[0] + " not found in class or interface");
         }
+        this.scope.addReference(expr.getTokens()[2], byName, ReferenceType.TypeReference, this.filename);
+
       }
     } else {
       found = this.scope.findType(subs[0])?.getType();

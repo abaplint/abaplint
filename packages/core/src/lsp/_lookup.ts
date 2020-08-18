@@ -30,7 +30,6 @@ export class LSPLookup {
       const found = this.ABAPFileResult(inc);
       return {hover: "Include", definition: found, implementation: found};
     }
-
     const bottomScope = new SyntaxLogic(reg, obj).run().spaghetti.lookupPosition(cursor.identifier.getStart(),
                                                                                  cursor.identifier.getFilename());
     if (bottomScope === undefined) {
@@ -65,12 +64,6 @@ export class LSPLookup {
       return {hover: value, definition: location, implementation: location, definitionId: variable, scope: bottomScope};
     }
 
-    const type = bottomScope.findType(cursor.token.getStr());
-    if (type instanceof TypedIdentifier) {
-      const value = "Resolved type";
-      return {hover: value, definition: undefined, scope: bottomScope};
-    }
-
     const ref = this.searchReferences(bottomScope, cursor.token);
     if (ref !== undefined) {
       const value = this.referenceHover(ref, bottomScope);
@@ -79,6 +72,13 @@ export class LSPLookup {
         definition = LSPUtils.identiferToLocation(ref.resolved);
       }
       return {hover: value, definition, scope: bottomScope};
+    }
+
+    // todo, delete this part, it should be handled via TypeReferences instead
+    const type = bottomScope.findType(cursor.token.getStr());
+    if (type instanceof TypedIdentifier) {
+      const value = "Resolved type";
+      return {hover: value, definition: undefined, scope: bottomScope};
     }
 
     return undefined;
