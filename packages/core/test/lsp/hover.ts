@@ -111,4 +111,19 @@ ENDCLASS.`;
     expect(hover?.value).to.contain("Builtin");
   });
 
+  it("hover class reference", () => {
+    const abap = `CLASS lcl_password_dialog DEFINITION.
+  PUBLIC SECTION.
+    CONSTANTS c_dynnr TYPE c LENGTH 1 VALUE '1'.
+ENDCLASS.
+CLASS lcl_password_dialog IMPLEMENTATION.
+ENDCLASS.
+WRITE lcl_password_dialog=>c_dynnr.`;
+    const file = new MemoryFile("foobar.prog.abap", abap);
+    const reg = new Registry().addFile(file).parse();
+    const hover = new Hover(reg).find(buildPosition(file, 6, 10));
+    expect(hover).to.not.equal(undefined);
+    expect(hover?.value).to.contain("Class");
+  });
+
 });

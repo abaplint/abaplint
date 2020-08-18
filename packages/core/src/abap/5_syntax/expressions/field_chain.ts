@@ -104,7 +104,8 @@ export class FieldChain {
       const classTok = node.getFirstToken();
       const classNam = classTok.getStr();
       const found = scope.existsObject(classNam);
-      if (found === true) {
+      if (found.found === true) {
+        scope.addReference(classTok, found.id, found.type, filename);
         return new ObjectReferenceType(classNam);
       } else if (scope.getDDIC().inErrorNamespace(classNam) === false) {
         return new VoidType(classNam);

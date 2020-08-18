@@ -89,7 +89,9 @@ export class LSPLookup {
       ret = ret + this.hoverMethod(ref.position.getName(), scope.findClassDefinition(ref.extra?.className));
     }
 
-    ret = ret + ( JSON.stringify(ref.extra) !== "{}" ? "\n\nExtra: " + JSON.stringify(ref.extra) : "" );
+    if (ref.extra !== undefined && Object.keys(ref.extra).length > 0) {
+      ret = ret + "\n\nExtra: " + JSON.stringify(ref.extra);
+    }
 
     return ret;
   }
