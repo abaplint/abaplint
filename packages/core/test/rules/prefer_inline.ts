@@ -140,6 +140,15 @@ ENDFORM.`;
     testFix(input, expected);
   });
 
+  it("First write is CLEAR, not inlineable", async () => {
+    const issues = await findIssues(`
+FORM foo.
+  DATA sdf TYPE i.
+  CLEAR sdf.
+ENDFORM.`);
+    expect(issues.length).to.equal(0);
+  });
+
   /*
   it.skip("Types should not change when inlining", async () => {
     const issues = await findIssues(`

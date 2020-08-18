@@ -1,3 +1,4 @@
+import * as Statements from "../abap/2_statements/statements";
 import {BasicRuleConfig} from "./_basic_rule_config";
 import {Issue} from "../issue";
 import {IRegistry} from "../_iregistry";
@@ -94,11 +95,26 @@ First position used must be a full/pure write.`,
 
       // check that it is a pure write, eg not sub component assignment
       const next = this.findNextToken(write, obj);
-      if (next?.getStart().equals(write.position.getEnd()) && next.getStr() !== "." && next.getStr() !== ",") {
+      if (next === undefined) {
+        continue;
+      } else if (next?.getStart().equals(write.position.getEnd()) && next.getStr() !== "." && next.getStr() !== ",") {
+        continue;
+      }
+      const file = obj.getABAPFileByName(d.identifier.getFilename());
+      const writeStatement = EditHelper.findStatement(next, file);
+      const statementType = writeStatement?.get();
+      if (statementType === undefined) {
         continue;
       }
 
-      const file = obj.getABAPFileByName(d.identifier.getFilename());
+      // for now only allow some specific target statements, todo refactor
+      if (!(statementType instanceof Statements.Move
+          || statementType instanceof Statements.Catch
+          || statementType instanceof Statements.ReadTable
+          || statementType instanceof Statements.Loop)) {
+        continue;
+      }
+
       const statement = EditHelper.findStatement(d.identifier.getToken(), file);
       let fix: IEdit | undefined = undefined;
       if (file && statement) {
