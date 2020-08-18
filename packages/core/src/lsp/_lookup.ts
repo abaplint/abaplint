@@ -62,7 +62,7 @@ export class LSPLookup {
       if (variable.getMeta().includes(IdentifierMeta.BuiltIn) === false) {
         location = LSPUtils.identiferToLocation(variable);
       }
-      return {hover: value, definition: location, definitionId: variable, scope: bottomScope};
+      return {hover: value, definition: location, implementation: location, definitionId: variable, scope: bottomScope};
     }
 
     const type = bottomScope.findType(cursor.token.getStr());
