@@ -421,7 +421,9 @@ export class BasicTypes {
 
     const name = chain.getFirstToken().getStr();
     if (chain.getAllTokens().length === 1) {
-      if (this.scope.existsObject(name).found === true) {
+      const search = this.scope.existsObject(name);
+      if (search.found === true) {
+        this.scope.addReference(chain.getFirstToken(), search.id, ReferenceType.ObjectOrientedReference, this.filename);
         return new Types.ObjectReferenceType(name);
       }
     }

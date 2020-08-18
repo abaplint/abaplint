@@ -103,6 +103,16 @@ DATA sdf TYPE lif_foo=>ty_bar.`;
     expect(type).to.not.equal(undefined);
   });
 
+  it("resolve interface used as TYPE REF TO", () => {
+    const abap = `INTERFACE lif_foo.
+ENDINTERFACE.
+DATA sdf TYPE REF TO lif_foo.`;
+    const file = new MemoryFile("foobar.prog.abap", abap);
+    const reg = new Registry().addFile(file).parse();
+
+    const intf = new Definition(reg).find({uri: file.getFilename()}, LServer.Position.create(2, 25));
+    expect(intf).to.not.equal(undefined);
+  });
 
 // todo
 // INHERITING FROM zcl_jump_here
