@@ -39,7 +39,8 @@ export class LSPLookup {
 
     const form = this.findForm(cursor, bottomScope);
     if (form) {
-      return {hover: "Call FORM", definition: LSPUtils.identiferToLocation(form), scope: bottomScope};
+      const found = LSPUtils.identiferToLocation(form);
+      return {hover: "Call FORM", definition: found, implementation: found, scope: bottomScope};
     }
 
     const variable = bottomScope.findVariable(cursor.token.getStr());
