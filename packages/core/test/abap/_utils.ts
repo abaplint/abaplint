@@ -54,6 +54,20 @@ function run(abap: string, text: string, type: any, version?: Version | undefine
   });
 }
 
+function runExpectFail(abap: string, text: string, version?: Version | undefined) {
+  it(text, () => {
+    const config = Config.getDefault(version);
+    const file = parse(abap, config);
+    const slist = file.getStatements();
+
+    if (version === undefined) {
+      version = Config.getDefault().getVersion();
+    }
+
+    expect(slist[0].get()).to.be.instanceof(Unknown);
+  });
+}
+
 export function structureType(cas: {abap: string}[], expected: IStructure): void {
   describe("Structure type", () => {
     cas.forEach((c: {abap: string}) => {
@@ -98,12 +112,22 @@ export function statementVersion(tests: any, description: string, type: any) {
   });
 }
 
-export function statementVersionOk(tests: any, description: string, type: any) {
+export function statementVersionOk(tests: {abap: string, ver: Version}[], description: string, type: any) {
   describe(description + " statement version,", function() {
 // note that timeout() only works inside function()
     this.timeout(200);
-    tests.forEach((test: any) => {
+    tests.forEach(test => {
       run(test.abap, "\"" + test.abap + "\" should be " + description, type, test.ver);
+    });
+  });
+}
+
+export function statementVersionFail(tests: {abap: string, ver: Version}[], description: string) {
+  describe(description + " statement version should fail,", function() {
+// note that timeout() only works inside function()
+    this.timeout(200);
+    tests.forEach(test => {
+      runExpectFail(test.abap, "\"" + test.abap + "\" should not be recognized", test.ver);
     });
   });
 }
