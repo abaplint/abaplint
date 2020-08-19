@@ -311,4 +311,13 @@ WRITE bar.`);
     expect(issues.length).to.equal(0);
   });
 
+  it("COND( )", async () => {
+    const abap = `
+    DATA rb_langa TYPE c.
+    DATA(language) = COND #( WHEN rb_langa = abap_true THEN '%' ELSE 'a' ).
+    WRITE language.`;
+    const issues = await runSingle(abap);
+    expect(issues.length).to.equal(0);
+  });
+
 });
