@@ -14,7 +14,7 @@ import {EditHelper, IEdit} from "../edit_helper";
 
 export class UnusedVariablesConf extends BasicRuleConfig {
   /** skip specific names, case insensitive */
-  public skipNames: string[];
+  public skipNames: string[] = [];
 }
 
 export class UnusedVariables implements IRule {

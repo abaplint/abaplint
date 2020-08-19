@@ -292,4 +292,32 @@ WRITE bar.`);
     expect(issues.length).to.equal(0);
   });
 
+  it("WHILE", async () => {
+    const abap = `
+  DATA lv_int1 TYPE i.
+  DATA lv_int2 TYPE i.
+  WHILE lv_int1 < lv_int2.
+  ENDWHILE.`;
+    const issues = await runSingle(abap);
+    expect(issues.length).to.equal(0);
+  });
+
+  it("SELECT-OPTIONS with dynamic", async () => {
+    const abap = `
+  DATA lv_name TYPE string VALUE 'TADIR-DEVCLASS'.
+  SELECT-OPTIONS s_devcl FOR (lv_name).
+  CLEAR s_devcl.`;
+    const issues = await runSingle(abap);
+    expect(issues.length).to.equal(0);
+  });
+
+  it("COND( )", async () => {
+    const abap = `
+    DATA rb_langa TYPE c.
+    DATA(language) = COND #( WHEN rb_langa = abap_true THEN '%' ELSE 'a' ).
+    WRITE language.`;
+    const issues = await runSingle(abap);
+    expect(issues.length).to.equal(0);
+  });
+
 });

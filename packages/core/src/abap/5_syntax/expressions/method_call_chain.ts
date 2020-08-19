@@ -92,6 +92,7 @@ export class MethodCallChain {
       } else if (classDefinition === undefined) {
         throw new Error("Class " + className + " not found");
       }
+      scope.addReference(first.getFirstToken(), classDefinition, ReferenceType.ObjectOrientedReference, filename);
       return new ObjectReferenceType(className);
     } else if (first instanceof ExpressionNode && first.get() instanceof Expressions.FieldChain) {
       return new FieldChain().runSyntax(first, scope, filename, ReferenceType.DataReadReference);

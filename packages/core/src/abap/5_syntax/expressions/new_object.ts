@@ -20,7 +20,7 @@ export class NewObject {
 
     const objDefinition = scope.findObjectDefinition(typeName);
     if (objDefinition) {
-      scope.addReference(typeToken, objDefinition, ReferenceType.ClassReference, filename);
+      scope.addReference(typeToken, objDefinition, ReferenceType.ObjectOrientedReference, filename);
       return new ObjectReferenceType(typeName);
     }
 

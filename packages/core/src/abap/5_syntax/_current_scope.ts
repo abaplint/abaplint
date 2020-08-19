@@ -169,22 +169,22 @@ export class CurrentScope {
 
     const findLocalClass = this.current?.findClassDefinition(name);
     if (findLocalClass) {
-      return {found: true, id: findLocalClass, type: ReferenceType.ClassReference};
+      return {found: true, id: findLocalClass, type: ReferenceType.ObjectOrientedReference};
     }
 
     const globalClas = this.reg.getObject("CLAS", name);
     if (globalClas) {
-      return {found: true, id: globalClas.getIdentifier(), type: ReferenceType.ClassReference};
+      return {found: true, id: globalClas.getIdentifier(), type: ReferenceType.ObjectOrientedReference};
     }
 
     const findLocalInterface = this.current?.findInterfaceDefinition(name);
     if (findLocalInterface) {
-      return {found: true, id: findLocalInterface, type: ReferenceType.InterfaceReference};
+      return {found: true, id: findLocalInterface, type: ReferenceType.ObjectOrientedReference};
     }
 
     const globalIntf = this.reg.getObject("INTF", name);
     if (globalIntf) {
-      return {found: true, id: globalIntf.getIdentifier(), type: ReferenceType.InterfaceReference};
+      return {found: true, id: globalIntf.getIdentifier(), type: ReferenceType.ObjectOrientedReference};
     }
 
     return {found: false};
