@@ -292,4 +292,14 @@ WRITE bar.`);
     expect(issues.length).to.equal(0);
   });
 
+  it("WHILE", async () => {
+    const abap = `
+  DATA lv_int1 TYPE i.
+  DATA lv_int2 TYPE i.
+  WHILE lv_int1 < lv_int2.
+  ENDWHILE.`;
+    const issues = await runSingle(abap);
+    expect(issues.length).to.equal(0);
+  });
+
 });
