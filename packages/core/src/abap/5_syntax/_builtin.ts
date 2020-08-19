@@ -131,6 +131,7 @@ export class BuiltIn {
     ret.push({name: "SHIFT_RIGHT", mandatory: {"val": new StringType()}, return: new StringType()});
     ret.push({name: "SIGN", mandatory: {"val": new FloatType()}, return: new IntegerType()});
     ret.push({name: "SIN", mandatory: {"val": new FloatType()}, return: new IntegerType()});
+    ret.push({name: "SQRT", mandatory: {"val": new FloatType()}, return: new IntegerType()});
     ret.push({name: "STRLEN", mandatory: {"val": new StringType()}, return: new IntegerType()});
     ret.push({name: "SUBSTRING_AFTER", mandatory: {"val": new StringType(), "case": new CharacterType(1), "sub": new StringType()}, return: new StringType()});
     ret.push({name: "SUBSTRING_BEFORE", mandatory: {"val": new StringType(), "case": new CharacterType(1), "sub": new StringType(), "regex": new StringType()}, return: new StringType()});
