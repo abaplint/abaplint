@@ -2671,6 +2671,15 @@ DATA(parameters) = VALUE ty_distance( LET distance = 10 IN distance = distance )
     expect(issues.length).to.equals(0);
   });
 
+  it("CONCATENATE LINES to inline", () => {
+    const abap = `
+    DATA lt_text TYPE STANDARD TABLE OF string.
+    CONCATENATE LINES OF lt_text INTO DATA(lv_querystring) SEPARATED BY space.
+    WRITE lv_querystring.`;
+    const issues = runProgram(abap);
+    expect(issues.length).to.equals(0);
+  });
+
 // todo, static method cannot access instance attributes
 // todo, can a private method access protected attributes?
 // todo, readonly fields(constants + enums + attributes flagged read-only)
