@@ -43,10 +43,6 @@ export class ObsoleteStatement extends ABAPRule {
     };
   }
 
-  private getMessage(): string {
-    return "Statement is obsolete";
-  }
-
   public getConfig() {
     return this.conf;
   }
@@ -73,7 +69,8 @@ export class ObsoleteStatement extends ABAPRule {
           && sta.getTokens()[1].getStr().toUpperCase() !== "EXACT")
           || (sta.get() instanceof Statements.Divide && this.conf.divide)) {
         if (prev === undefined || sta.getStart().getCol() !== prev.getCol() || sta.getStart().getRow() !== prev.getRow()) {
-          const issue = Issue.atStatement(file, sta, this.getMessage(), this.getMetadata().key);
+          const message = "Statement \"" + sta.getFirstToken().getStr() + "\" is obsolete";
+          const issue = Issue.atStatement(file, sta, message, this.getMetadata().key);
           issues.push(issue);
         }
         prev = sta.getStart();
