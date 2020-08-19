@@ -302,4 +302,13 @@ WRITE bar.`);
     expect(issues.length).to.equal(0);
   });
 
+  it("SELECT-OPTIONS with dynamic", async () => {
+    const abap = `
+  DATA lv_name TYPE string VALUE 'TADIR-DEVCLASS'.
+  SELECT-OPTIONS s_devcl FOR (lv_name).
+  CLEAR s_devcl.`;
+    const issues = await runSingle(abap);
+    expect(issues.length).to.equal(0);
+  });
+
 });
