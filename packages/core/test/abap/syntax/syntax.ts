@@ -2680,6 +2680,15 @@ DATA(parameters) = VALUE ty_distance( LET distance = 10 IN distance = distance )
     expect(issues.length).to.equals(0);
   });
 
+  it("line_exists(", () => {
+    const abap = `
+    DATA t_data TYPE STANDARD TABLE OF i.
+    IF line_exists( t_data[ table_line = 2 ] ).
+    ENDIF.`;
+    const issues = runProgram(abap);
+    expect(issues.length).to.equals(0);
+  });
+
 // todo, static method cannot access instance attributes
 // todo, can a private method access protected attributes?
 // todo, readonly fields(constants + enums + attributes flagged read-only)

@@ -885,4 +885,41 @@ ENDCLASS.`;
     expect(issues.length).to.equal(0);
   });
 
+  it("Two interfaces and a program", () => {
+    const repo = `
+    INTERFACE zif_repo PUBLIC.
+    ENDINTERFACE.`;
+    const definitions = `
+    INTERFACE zif_abapgit_definitions PUBLIC.
+      DATA repo TYPE REF TO zif_repo.
+
+      TYPES: BEGIN OF ty_item,
+               obj_type TYPE tadir-object,
+               obj_name TYPE tadir-obj_name,
+               devclass TYPE devclass,
+               inactive TYPE abap_bool,
+             END OF ty_item .
+    ENDINTERFACE.`;
+    const persistence = `
+    INTERFACE zif_abapgit_persistence PUBLIC.
+      TYPES: BEGIN OF ty_repo_xml,
+               item TYPE zif_abapgit_definitions=>ty_item,
+             END OF ty_repo_xml.
+
+      TYPES: BEGIN OF ty_repo,
+               key TYPE string.
+               INCLUDE TYPE ty_repo_xml.
+      TYPES: END OF ty_repo.
+    ENDINTERFACE.`;
+    const prog = `DATA: ls_data TYPE zif_abapgit_persistence=>ty_repo.`;
+    let issues = runMulti([
+      {filename: "zif_abapgit_persistence.intf.abap", contents: persistence},
+      {filename: "zif_abapgit_definitions.intf.abap", contents: definitions},
+      {filename: "zif_repo.intf.abap", contents: repo},
+      {filename: "ztwo_interfaces.prog.abap", contents: prog},
+    ]);
+    issues = issues.filter(i => i.getKey() === key);
+    expect(issues.length).to.equal(0);
+  });
+
 });

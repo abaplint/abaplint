@@ -42,7 +42,7 @@ export class BasicTypes {
       if (obj === undefined && this.scope.getDDIC()?.inErrorNamespace(name) === false) {
         return type;
       } else if (obj === undefined) {
-        return new Types.UnknownType("Could not resolve top " + name);
+        return new Types.UnknownType("Could not resolve top " + name + ", resolveLikeName");
       }
       // todo, this does not respect visibility
       type = obj.getAttributes().findByName(children[2].getFirstToken().getStr())?.getType();
@@ -346,7 +346,7 @@ export class BasicTypes {
         if (obj === undefined && this.scope.getDDIC().inErrorNamespace(className) === false) {
           return new Types.VoidType(className);
         } else if (obj === undefined) {
-          return new Types.UnknownType("Could not resolve top " + chainText);
+          return new Types.UnknownType("Could not resolve top " + className + ", resolveTypeChain");
         }
         this.scope.addReference(expr.getFirstToken(), obj, ReferenceType.ObjectOrientedReference, this.filename);
 
