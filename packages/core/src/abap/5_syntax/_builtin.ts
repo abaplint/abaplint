@@ -117,6 +117,7 @@ export class BuiltIn {
     ret.push({name: "FRAC", mandatory: {"val": new FloatType()}, return: new IntegerType()});
     ret.push({name: "FROM_MIXED", mandatory: {"val": new StringType(), "case": new StringType()}, return: new StringType()});
     ret.push({name: "LINE_INDEX", mandatory: {"val": new StringType()}, return: new IntegerType()});
+    ret.push({name: "LINE_EXISTS", mandatory: {"val": new StringType()}, return: new CharacterType(1)});
     ret.push({name: "LINES", mandatory: {"val": new StringType()}, return: new IntegerType()});
     ret.push({name: "MATCH", mandatory: {"val": new StringType(), "regex": new StringType()}, return: new StringType()});
     ret.push({name: "NMAX", mandatory: {"val1": new StringType(), "val2": new StringType()}, return: new IntegerType()});
