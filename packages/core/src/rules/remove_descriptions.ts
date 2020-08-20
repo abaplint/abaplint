@@ -108,7 +108,7 @@ export class RemoveDescriptions implements IRule {
 
     const ret: Issue[] = [];
     for (const d of xmlToArray(desc.SEOCOMPOTX)) {
-      const message = this.getDescription(d.CMPNAME._text);
+      const message = this.getDescription(d.CMPNAME?._text);
       const position = new Position(1, 1);
       const issue = Issue.atPosition(file, position, message, this.getMetadata().key);
       ret.push(issue);
