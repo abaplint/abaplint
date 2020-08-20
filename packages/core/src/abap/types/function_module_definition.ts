@@ -32,11 +32,17 @@ export class FunctionModuleDefinition {
 ///////////////
 
   private parse(data: any) {
+    if (data.FUNCNAME === undefined) {
+      throw new Error("Function module name undefined");
+    }
     this.name = data.FUNCNAME._text;
     this.parameters = [];
 
     if (data.IMPORT) {
       for (const param of xmlToArray(data.IMPORT.RSIMP)) {
+        if (data.PARAMETER === undefined) {
+          throw new Error("Function module name parameter undefined, importing");
+        }
         this.parameters.push({
           name: param.PARAMETER._text,
           direction: FunctionModuleParameterDirection.importing,
@@ -47,6 +53,9 @@ export class FunctionModuleDefinition {
 
     if (data.CHANGING) {
       for (const param of xmlToArray(data.CHANGING.RSCHA)) {
+        if (data.PARAMETER === undefined) {
+          throw new Error("Function module name parameter undefined, changing");
+        }
         this.parameters.push({
           name: param.PARAMETER._text,
           direction: FunctionModuleParameterDirection.changing,
@@ -57,6 +66,9 @@ export class FunctionModuleDefinition {
 
     if (data.EXPORT) {
       for (const param of xmlToArray(data.EXPORT.RSEXP)) {
+        if (data.PARAMETER === undefined) {
+          throw new Error("Function module name parameter undefined, exporting");
+        }
         this.parameters.push({
           name: param.PARAMETER._text,
           direction: FunctionModuleParameterDirection.exporting,
@@ -67,6 +79,9 @@ export class FunctionModuleDefinition {
 
     if (data.TABLES) {
       for (const param of xmlToArray(data.TABLES.RSTBL)) {
+        if (data.PARAMETER === undefined) {
+          throw new Error("Function module name parameter undefined, tables");
+        }
         this.parameters.push({
           name: param.PARAMETER._text,
           direction: FunctionModuleParameterDirection.tables,
