@@ -87,7 +87,10 @@ export abstract class ABAPObject extends AbstractObject {
     }
 
     for (const t of xmlToArray(parsed.abapGit["asx:abap"]["asx:values"].TPOOL.item)) {
-      if (t.ID !== undefined && t.ID._text === "I") {
+      if (t?.ID?._text === "I") {
+        if (t.KEY === undefined || t.ENTRY === undefined) {
+          throw new Error("findTexts, undefined");
+        }
         this.texts.push({
           key: t.KEY._text,
           text: t.ENTRY._text});
