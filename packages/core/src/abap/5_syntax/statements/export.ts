@@ -7,7 +7,7 @@ import {Target} from "../expressions/target";
 export class Export {
   public runSyntax(node: StatementNode, scope: CurrentScope, filename: string): void {
 
-    for (const s of node.findDirectExpressions(Expressions.Source)) {
+    for (const s of node.findAllExpressions(Expressions.Source)) {
       new Source().runSyntax(s, scope, filename);
     }
 

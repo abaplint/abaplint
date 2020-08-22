@@ -320,4 +320,16 @@ WRITE bar.`);
     expect(issues.length).to.equal(0);
   });
 
+  it("EXPORT", async () => {
+    const abap = `
+DATA:
+  lt_values TYPE TABLE OF string,
+  lv_id   TYPE c,
+  lv_test TYPE string.
+
+EXPORT values = lt_values TO DATABASE rsix(zz) FROM lv_test ID lv_id.`;
+    const issues = await runSingle(abap);
+    expect(issues.length).to.equal(0);
+  });
+
 });
