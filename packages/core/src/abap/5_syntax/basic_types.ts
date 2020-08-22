@@ -350,7 +350,7 @@ export class BasicTypes {
         }
         this.scope.addReference(expr.getFirstToken(), obj, ReferenceType.ObjectOrientedReference, this.filename);
 
-        const byName = obj.getTypeDefinitions().getByName(subs[0]);
+        const byName = new ObjectOriented(this.scope).searchTypeName(obj, subs[0]);
         found = byName?.getType();
         if (byName === undefined || found === undefined) {
           return new Types.UnknownType(subs[0] + " not found in class or interface");
