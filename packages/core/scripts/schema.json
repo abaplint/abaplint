@@ -1596,7 +1596,7 @@
                   "type": "boolean"
                 }
               ],
-              "description": "Ensures you have no descriptions in metadata of methods, parameters, etc. For class descriptions, see rule description_empty.\nhttps://rules.abaplint.org/remove_descriptions"
+              "description": "\nEnsures you have no descriptions in metadata of methods, parameters, etc.\n\nClass descriptions are required, see rule description_empty.\n\nConsider using ABAP Doc for documentation.\n\nhttps://rules.abaplint.org/remove_descriptions"
             },
             "rfc_error_handling": {
               "anyOf": [
@@ -2859,10 +2859,15 @@
         "ignoreExceptions": {
           "description": "Ignore global exception classes",
           "type": "boolean"
+        },
+        "ignoreWorkflow": {
+          "description": "Ignore global workflow classes",
+          "type": "boolean"
         }
       },
       "required": [
-        "ignoreExceptions"
+        "ignoreExceptions",
+        "ignoreWorkflow"
       ],
       "type": "object"
     },
