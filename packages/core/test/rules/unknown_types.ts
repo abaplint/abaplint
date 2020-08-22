@@ -922,4 +922,27 @@ ENDCLASS.`;
     expect(issues.length).to.equal(0);
   });
 
+  it("Type from super", () => {
+    const abap = `
+CLASS lcl_fiori_moni_mpc DEFINITION CREATE PUBLIC.
+  PUBLIC SECTION.
+    TYPES:
+      BEGIN OF ty_appinfo,
+        user_id TYPE string,
+      END OF ty_appinfo.
+ENDCLASS.
+CLASS lcl_fiori_moni_mpc IMPLEMENTATION.
+ENDCLASS.
+
+CLASS lcl_fiori_moni_mpc_ext DEFINITION INHERITING FROM lcl_fiori_moni_mpc CREATE PUBLIC.
+ENDCLASS.
+CLASS lcl_fiori_moni_mpc_ext IMPLEMENTATION.
+ENDCLASS.
+
+DATA: ls_appinfo TYPE lcl_fiori_moni_mpc_ext=>ty_appinfo.`;
+    let issues = runMulti([{filename: "zfoobar.prog.abap", contents: abap}]);
+    issues = issues.filter(i => i.getKey() === key);
+    expect(issues.length).to.equal(0);
+  });
+
 });
