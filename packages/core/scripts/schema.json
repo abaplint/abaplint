@@ -1398,7 +1398,7 @@
                   "type": "boolean"
                 }
               ],
-              "description": "Checks relating to method length.\nhttps://rules.abaplint.org/method_length"
+              "description": "Checks relating to method length.\nTags: Styleguide\nhttps://rules.abaplint.org/method_length"
             },
             "method_parameter_names": {
               "anyOf": [
@@ -1475,7 +1475,7 @@
                   "type": "boolean"
                 }
               ],
-              "description": "Checks that classes and interfaces don't contain any public attributes.\nExceptions are excluded from this rule.\nhttps://rules.abaplint.org/no_public_attributes"
+              "description": "Checks that classes and interfaces don't contain any public attributes.\nExceptions are excluded from this rule.\nTags: Styleguide\nhttps://rules.abaplint.org/no_public_attributes"
             },
             "object_naming": {
               "anyOf": [
