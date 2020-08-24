@@ -54,6 +54,10 @@ export class Class extends ABAPObject {
     return this.getMainABAPFile()?.getInfo().getClassDefinitionByName(this.getName());
   }
 
+  public getIdentifier() {
+    return this.getClassDefinition()?.identifier;
+  }
+
 // -------------------
 
   public getDescription(): string | undefined {
