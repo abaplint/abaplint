@@ -332,4 +332,13 @@ EXPORT values = lt_values TO DATABASE rsix(zz) FROM lv_test ID lv_id.`;
     expect(issues.length).to.equal(0);
   });
 
+  it("SELECT loop", async () => {
+    const abap = `
+    DATA r_result TYPE string.
+    SELECT column INTO @r_result UP TO 1 ROWS FROM voided_table.
+    ENDSELECT.`;
+    const issues = await runSingle(abap);
+    expect(issues.length).to.equal(0);
+  });
+
 });

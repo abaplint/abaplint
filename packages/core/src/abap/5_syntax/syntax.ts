@@ -99,6 +99,7 @@ import {Divide} from "./statements/divide";
 import {Condense} from "./statements/condense";
 import {Controls} from "./statements/controls";
 import {While} from "./statements/while";
+import {SelectLoop} from "./statements/select_loop";
 
 export class SyntaxLogic {
   private currentFile: ABAPFile;
@@ -393,6 +394,8 @@ export class SyntaxLogic {
       new Concatenate().runSyntax(node, this.scope, filename);
     } else if (s instanceof Statements.Append) {
       new Append().runSyntax(node, this.scope, filename);
+    } else if (s instanceof Statements.SelectLoop) {
+      new SelectLoop().runSyntax(node, this.scope, filename);
     } else if (s instanceof Statements.Write) {
       new Write().runSyntax(node, this.scope, filename);
     } else if (s instanceof Statements.AuthorityCheck) {

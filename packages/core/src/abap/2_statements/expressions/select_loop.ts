@@ -1,21 +1,20 @@
 import {seq, per, opt, alt, tok, str, ver, star, Expression} from "../combi";
-import {WParenLeftW, WAt, WParenLeft} from "../../1_lexer/tokens";
-import {SQLSource, SQLFrom, DatabaseTable, Dynamic, Target, Source, SQLCond, SQLFieldName, SQLAggregation, SQLTargetTable, SQLGroupBy, SQLForAllEntries} from ".";
+import {WParenLeftW, WParenLeft} from "../../1_lexer/tokens";
+import {SQLSource, SQLFrom, DatabaseTable, Dynamic, Source, SQLCond, SQLFieldName, SQLAggregation, SQLTargetTable, SQLGroupBy, SQLForAllEntries} from ".";
 import {Version} from "../../../version";
 import {IStatementRunnable} from "../statement_runnable";
 import {SQLOrderBy} from "./sql_order_by";
 import {SQLHaving} from "./sql_having";
+import {SQLTarget} from "./sql_target";
 
 export class SelectLoop extends Expression {
   public getRunnable(): IStatementRunnable {
 
     const intoList = seq(alt(tok(WParenLeft), tok(WParenLeftW)),
-                         star(seq(new Target(), str(","))),
-                         new Target(),
+                         star(seq(new SQLTarget(), str(","))),
+                         new SQLTarget(),
                          str(")"));
-    const intoSimple = seq(opt(str("CORRESPONDING FIELDS OF")),
-                           opt(ver(Version.v740sp05, tok(WAt))),
-                           new Target());
+    const intoSimple = seq(opt(str("CORRESPONDING FIELDS OF")), new SQLTarget());
 
     const into = seq(str("INTO"), alt(intoList, intoSimple));
 
