@@ -2,7 +2,7 @@ import {Issue} from "../issue";
 import {IObject} from "../objects/_iobject";
 import {IRegistry} from "../_iregistry";
 import {MethodLengthStats} from "../utils/method_length_stats";
-import {IRule} from "./_irule";
+import {IRule, IRuleMetadata, RuleTag} from "./_irule";
 import {BasicRuleConfig} from "./_basic_rule_config";
 
 export class MethodLengthConf extends BasicRuleConfig {
@@ -23,11 +23,13 @@ export class MethodLength implements IRule {
 
   private conf = new MethodLengthConf();
 
-  public getMetadata() {
+  public getMetadata(): IRuleMetadata {
     return {
       key: "method_length",
       title: "Method Length",
       shortDescription: `Checks relating to method length.`,
+      extendedInformation: `https://github.com/SAP/styleguides/blob/master/clean-abap/CleanABAP.md#keep-methods-small`,
+      tags: [RuleTag.Styleguide],
     };
   }
 
