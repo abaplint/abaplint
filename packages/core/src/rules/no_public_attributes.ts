@@ -6,6 +6,7 @@ import {Visibility} from "../abap/4_file_information/visibility";
 import {InfoAttribute, AttributeLevel} from "../abap/4_file_information/_abap_file_information";
 import {ABAPObject} from "../objects/_abap_object";
 import {DDIC} from "../ddic";
+import {IRuleMetadata, RuleTag} from "./_irule";
 
 export class NoPublicAttributesConf extends BasicRuleConfig {
   /** Allows public attributes, if they are declared as READ-ONLY. */
@@ -17,12 +18,15 @@ export class NoPublicAttributes extends ABAPRule {
 
   private file: ABAPFile;
 
-  public getMetadata() {
+  public getMetadata(): IRuleMetadata {
     return {
       key: "no_public_attributes",
       title: "No public attributes",
       shortDescription: `Checks that classes and interfaces don't contain any public attributes.
 Exceptions are excluded from this rule.`,
+      extendedInformation:
+        `https://github.com/SAP/styleguides/blob/master/clean-abap/CleanABAP.md#members-private-by-default-protected-only-if-needed`,
+      tags: [RuleTag.Styleguide],
     };
   }
 

@@ -95,7 +95,7 @@ export class KeywordCase extends ABAPRule {
 
       if (this.conf.ignoreGlobalClassBoundaries) {
         const node = statement.get();
-        if (node instanceof Statements.ClassDefinition && statement.findFirstExpression(Expressions.Global)) {
+        if (node instanceof Statements.ClassDefinition && statement.findFirstExpression(Expressions.ClassGlobal)) {
           isGlobalClass = true;
           continue;
         } else if (isGlobalClass === true
@@ -106,7 +106,7 @@ export class KeywordCase extends ABAPRule {
 
       if (this.conf.ignoreGlobalClassDefinition) {
         if (statement.get() instanceof Statements.ClassDefinition
-          && statement.findFirstExpression(Expressions.Global)) {
+          && statement.findFirstExpression(Expressions.ClassGlobal)) {
           skip = true;
           continue;
         } else if (skip === true && statement.get() instanceof Statements.EndClass) {
@@ -119,7 +119,7 @@ export class KeywordCase extends ABAPRule {
 
       if (this.conf.ignoreGlobalInterface) {
         if (statement.get() instanceof Statements.Interface
-          && statement.findFirstExpression(Expressions.Global)) {
+          && statement.findFirstExpression(Expressions.ClassGlobal)) {
           skip = true;
           continue;
         } else if (skip === true && statement.get() instanceof Statements.EndInterface) {

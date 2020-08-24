@@ -72,7 +72,7 @@ export class InterfaceDefinition extends Identifier implements IInterfaceDefinit
   }
 
   public isGlobal(): boolean {
-    return this.node.findFirstExpression(Expressions.Global) !== undefined;
+    return this.node.findFirstExpression(Expressions.ClassGlobal) !== undefined;
   }
 
   public getMethodDefinitions(): IMethodDefinitions {

@@ -57,7 +57,7 @@ export * from "./form_using";
 export * from "./fstarget";
 export * from "./function_name";
 export * from "./function_parameters";
-export * from "./global";
+export * from "./class_global";
 export * from "./include_name";
 export * from "./inline_field_definition";
 export * from "./inline_field";

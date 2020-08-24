@@ -39,8 +39,8 @@ export class BasicTypes {
     const name = children[0].getFirstToken().getStr();
     if (children[1] && children[1].getFirstToken().getStr() === "=>") {
       const obj = this.scope.findObjectDefinition(name);
-      if (obj === undefined && this.scope.getDDIC()?.inErrorNamespace(name) === false) {
-        return type;
+      if (obj === undefined && this.scope.getDDIC().inErrorNamespace(name) === false) {
+        return new Types.VoidType(name);
       } else if (obj === undefined) {
         return new Types.UnknownType("Could not resolve top " + name + ", resolveLikeName");
       }

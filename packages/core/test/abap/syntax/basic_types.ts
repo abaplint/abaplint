@@ -114,4 +114,11 @@ describe("Syntax - Basic Types", () => {
     expect(type!.getType()).to.be.instanceof(Basic.VoidType);
   });
 
+  it("LIKE voided class", () => {
+    const abap = `TYPES ty_x_format LIKE cl_abap_format=>e_html_text.`;
+    const type = resolveType(abap, "ty_x_format");
+    expect(type).to.not.equal(undefined);
+    expect(type!.getType()).to.be.instanceof(Basic.VoidType);
+  });
+
 });
