@@ -71,7 +71,7 @@ export class Indentation extends ABAPRule {
 
       if (this.conf.ignoreGlobalClassDefinition) {
         if (statement.get() instanceof Statements.ClassDefinition
-          && statement.findFirstExpression(Expressions.Global)) {
+          && statement.findFirstExpression(Expressions.ClassGlobal)) {
           skip = true;
           continue;
         } else if (skip === true && statement.get() instanceof Statements.EndClass) {
@@ -84,7 +84,7 @@ export class Indentation extends ABAPRule {
 
       if (this.conf.ignoreGlobalInterface) {
         if (statement.get() instanceof Statements.Interface
-          && statement.findFirstExpression(Expressions.Global)) {
+          && statement.findFirstExpression(Expressions.ClassGlobal)) {
           skip = true;
           continue;
         } else if (skip === true && statement.get() instanceof Statements.EndInterface) {

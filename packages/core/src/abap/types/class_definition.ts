@@ -78,7 +78,7 @@ export class ClassDefinition extends Identifier implements IClassDefinition {
   }
 
   public isGlobal(): boolean {
-    return this.node.findFirstExpression(Expressions.Global) !== undefined;
+    return this.node.findFirstExpression(Expressions.ClassGlobal) !== undefined;
   }
 
   public isFinal(): boolean {

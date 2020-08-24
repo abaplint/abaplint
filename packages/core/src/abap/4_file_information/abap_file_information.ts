@@ -113,8 +113,8 @@ export class ABAPFileInformation implements IABAPFileInformation {
       this.interfaces.push({
         name: interfaceName.getStr(),
         identifier: new Identifier(interfaceName, this.filename),
-        isLocal: found.findFirstExpression(Expressions.Global) === undefined,
-        isGlobal: found.findFirstExpression(Expressions.Global) !== undefined,
+        isLocal: found.findFirstExpression(Expressions.ClassGlobal) === undefined,
+        isGlobal: found.findFirstExpression(Expressions.ClassGlobal) !== undefined,
         methods,
         attributes,
       });
@@ -142,8 +142,8 @@ export class ABAPFileInformation implements IABAPFileInformation {
       this.classes.push({
         name: className.getStr(),
         identifier: new Identifier(className, this.filename),
-        isLocal: found.findFirstExpression(Expressions.Global) === undefined,
-        isGlobal: found.findFirstExpression(Expressions.Global) !== undefined,
+        isLocal: found.findFirstExpression(Expressions.ClassGlobal) === undefined,
+        isGlobal: found.findFirstExpression(Expressions.ClassGlobal) !== undefined,
         methods,
         superClassName,
         interfaces: this.getImplementing(found),
