@@ -145,4 +145,31 @@ START-OF-SELECTION.
     expect(hover?.value).to.contain("lcl_class");
   });
 
+  it("hover global class name", () => {
+    const abap = `CLASS zcl_class DEFINITION PUBLIC.
+  PUBLIC SECTION.
+    CLASS-METHODS run.
+ENDCLASS.
+CLASS zcl_class IMPLEMENTATION.
+  METHOD run.
+  ENDMETHOD.
+ENDCLASS.`;
+    const file = new MemoryFile("zcl_class.clas.abap", abap);
+    const reg = new Registry().addFile(file).parse();
+    const hover = new Hover(reg).find(buildPosition(file, 0, 10));
+    expect(hover).to.not.equal(undefined);
+    expect(hover?.value).to.contain("zcl_class");
+  });
+
+  it("hover global interface name", () => {
+    const abap = `INTERFACE zif_interface PUBLIC.
+    METHODS sdf.
+  ENDINTERFACE.`;
+    const file = new MemoryFile("zif_interface.intf.abap", abap);
+    const reg = new Registry().addFile(file).parse();
+    const hover = new Hover(reg).find(buildPosition(file, 0, 10));
+    expect(hover).to.not.equal(undefined);
+    expect(hover?.value).to.contain("zif_interface");
+  });
+
 });
