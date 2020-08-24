@@ -22,10 +22,10 @@ export class Identifier {
   }
 
   public equals(id: Identifier): boolean {
-    const col = id.getStart().getCol() === this.getStart().getCol();
-    const row = id.getStart().getRow() === this.getStart().getRow();
-    const file = id.getFilename() === this.getFilename();
-    return col && row && file;
+    // note how the boolean condition is evalulated lazily
+    return id.getStart().getCol() === this.getStart().getCol()
+      && id.getStart().getRow() === this.getStart().getRow()
+      && id.getFilename() === this.getFilename();
   }
 
   public getToken(): Token {

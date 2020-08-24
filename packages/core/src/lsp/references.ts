@@ -8,7 +8,6 @@ import {SyntaxLogic} from "../abap/5_syntax/syntax";
 import {ISpaghettiScopeNode} from "../abap/5_syntax/_spaghetti_scope";
 import {LSPLookup} from "./_lookup";
 import {ScopeType} from "../abap/5_syntax/_scope_type";
-import {ReferenceType} from "../abap/5_syntax/_reference";
 
 export class References {
   private readonly reg: IRegistry;
@@ -44,6 +43,7 @@ export class References {
   public search(identifier: Identifier, node: ISpaghettiScopeNode): Identifier[] {
     let ret: Identifier[] = [];
 
+    // todo, this first assumes that the identifier is a variable?
     if (node.getIdentifier().stype === ScopeType.Method
         || node.getIdentifier().stype === ScopeType.FunctionModule
         || node.getIdentifier().stype === ScopeType.Form) {
@@ -80,6 +80,7 @@ export class References {
     let ret: Identifier[] = [];
 
     if (node.getIdentifier().stype !== ScopeType.BuiltIn) {
+      // this is for finding the definitions?
       for (const v of node.getData().vars) {
         if (v.identifier.equals(identifier)) {
           ret.push(v.identifier);
@@ -87,14 +88,8 @@ export class References {
       }
 
       for (const r of node.getData().references) {
-        if (r.referenceType === ReferenceType.DataReadReference && r.resolved.equals(identifier)) {
+        if (r.resolved.equals(identifier)) {
           ret.push(r.position);
-        }
-      }
-
-      for (const w of node.getData().references) {
-        if (w.referenceType === ReferenceType.DataWriteReference && w.resolved.equals(identifier)) {
-          ret.push(w.position);
         }
       }
     }
