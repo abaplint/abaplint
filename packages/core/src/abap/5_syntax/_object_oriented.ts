@@ -298,6 +298,7 @@ export class ObjectOriented {
       for (const t of cdef.getTypeDefinitions().getAll()) {
         this.scope.addType(t);
       }
+      this.fromInterfaces(cdef);
       sup = cdef.getSuperClass();
     }
   }
