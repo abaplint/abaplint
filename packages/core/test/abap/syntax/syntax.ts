@@ -2689,6 +2689,21 @@ DATA(parameters) = VALUE ty_distance( LET distance = 10 IN distance = distance )
     expect(issues.length).to.equals(0);
   });
 
+  it("condense() with del parameter", () => {
+    const abap = `WRITE condense( val = |dsf| del = |\r| ).`;
+    const issues = runProgram(abap);
+    expect(issues.length).to.equals(0);
+  });
+
+  it("CONTROLS TABLEVIEW", () => {
+    const abap = `
+    CONTROLS ctrl TYPE TABLEVIEW USING SCREEN '0002'.
+    WRITE ctrl-current_line.
+    `;
+    const issues = runProgram(abap);
+    expect(issues.length).to.equals(0);
+  });
+
 // todo, static method cannot access instance attributes
 // todo, can a private method access protected attributes?
 // todo, readonly fields(constants + enums + attributes flagged read-only)

@@ -17,19 +17,19 @@ export class DumpScope {
 
     let ret: string = sident + "<u>" + identifier.stype + ", <tt>" + identifier.sname + "</tt>";
 
-    ret = ret + ", (" + coverage.start.getRow() + ", " + coverage.start.getCol() + ")";
+    ret += ", (" + coverage.start.getRow() + ", " + coverage.start.getCol() + ")";
     if (coverage.end.getRow() === Number.MAX_SAFE_INTEGER
         && coverage.end.getCol() === Number.MAX_SAFE_INTEGER) {
-      ret = ret + ", (max, max)";
+      ret += ", (max, max)";
     } else {
-      ret = ret + ", (" + coverage.end.getRow() + ", " + coverage.end.getCol() + ")";
+      ret += ", (" + coverage.end.getRow() + ", " + coverage.end.getCol() + ")";
     }
 
-    ret = ret + "</u><br>";
+    ret += "</u><br>";
 
     if (node.getIdentifier().stype === ScopeType.BuiltIn) {
-      ret = ret + sident + node.getData().types.length + " type definitions<br>";
-      ret = ret + sident + node.getData().vars.length + " data definitions<br>";
+      ret += sident + node.getData().types.length + " type definitions<br>";
+      ret += sident + node.getData().vars.length + " data definitions<br>";
     } else {
       ret = ret + this.dumpNode(node, indent);
     }
@@ -78,7 +78,10 @@ export class DumpScope {
       ret = ret + "<br>";
     }
 
-    ret = ret + sident + node.getData().references.length + " references<br>";
+    ret += sident + node.getData().cdefs.length + " class definitions<br>";
+    ret += sident + node.getData().idefs.length + " interface definitions<br>";
+    ret += sident + node.getData().forms.length + " form definitions<br>";
+    ret += sident + node.getData().references.length + " references<br>";
 
     return ret;
   }

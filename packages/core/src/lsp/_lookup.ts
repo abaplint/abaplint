@@ -36,7 +36,19 @@ export class LSPLookup {
       return undefined;
     }
 
-    const form = this.findForm(cursor, bottomScope);
+    const clas = bottomScope.findClassDefinition(cursor.token.getStr());
+    if (clas) {
+      const found = LSPUtils.identiferToLocation(clas);
+      return {hover: "Class definition, " + cursor.token.getStr(), definition: found, implementation: undefined, scope: bottomScope};
+    }
+
+    const intf = bottomScope.findInterfaceDefinition(cursor.token.getStr());
+    if (intf) {
+      const found = LSPUtils.identiferToLocation(intf);
+      return {hover: "Interface definition, " + cursor.token.getStr(), definition: found, implementation: undefined, scope: bottomScope};
+    }
+
+    const form = this.findPerform(cursor, bottomScope);
     if (form) {
       const found = LSPUtils.identiferToLocation(form);
       return {hover: "Call FORM", definition: found, implementation: found, scope: bottomScope};
@@ -151,7 +163,7 @@ export class LSPLookup {
     };
   }
 
-  private static findForm(found: ICursorData, scope: ISpaghettiScopeNode): IFormDefinition | undefined {
+  private static findPerform(found: ICursorData, scope: ISpaghettiScopeNode): IFormDefinition | undefined {
     if (!(found.snode.get() instanceof Statements.Perform)) {
       return undefined;
     }
