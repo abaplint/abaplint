@@ -100,6 +100,7 @@ import {Condense} from "./statements/condense";
 import {Controls} from "./statements/controls";
 import {While} from "./statements/while";
 import {SelectLoop} from "./statements/select_loop";
+import {Check} from "./statements/check";
 
 export class SyntaxLogic {
   private currentFile: ABAPFile;
@@ -418,6 +419,8 @@ export class SyntaxLogic {
       new Multiply().runSyntax(node, this.scope, filename);
     } else if (s instanceof Statements.Divide) {
       new Divide().runSyntax(node, this.scope, filename);
+    } else if (s instanceof Statements.Check) {
+      new Check().runSyntax(node, this.scope, filename);
 
 
     } else if (s instanceof Statements.Form) {
