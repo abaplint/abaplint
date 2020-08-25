@@ -190,7 +190,6 @@ export class BasicTypes {
     }
 
     const found = this.parseType(node);
-
     if (found) {
       return new TypedIdentifier(name, this.filename, found);
     }
