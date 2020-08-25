@@ -2704,6 +2704,17 @@ DATA(parameters) = VALUE ty_distance( LET distance = 10 IN distance = distance )
     expect(issues.length).to.equals(0);
   });
 
+  it("TABBED BLOCK", () => {
+    const abap = `
+    SELECTION-SCREEN BEGIN OF TABBED BLOCK tabb FOR 20 LINES.
+    SELECTION-SCREEN END OF BLOCK tabb.
+
+    tabb-dynnr = 110.
+    `;
+    const issues = runProgram(abap);
+    expect(issues.length).to.equals(0);
+  });
+
 // todo, static method cannot access instance attributes
 // todo, can a private method access protected attributes?
 // todo, readonly fields(constants + enums + attributes flagged read-only)

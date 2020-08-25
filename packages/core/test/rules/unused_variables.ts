@@ -341,4 +341,12 @@ EXPORT values = lt_values TO DATABASE rsix(zz) FROM lv_test ID lv_id.`;
     expect(issues.length).to.equal(0);
   });
 
+  it("CHECK", async () => {
+    const abap = `
+    DATA bar TYPE abap_bool.
+    CHECK bar = abap_false.`;
+    const issues = await runSingle(abap);
+    expect(issues.length).to.equal(0);
+  });
+
 });

@@ -945,4 +945,40 @@ DATA: ls_appinfo TYPE lcl_fiori_moni_mpc_ext=>ty_appinfo.`;
     expect(issues.length).to.equal(0);
   });
 
+  it("unknown type in interface", () => {
+    const abap = `
+INTERFACE zif_utyp PUBLIC .
+  TYPES contains_unknown TYPE zif_sdfsd=>bar.
+ENDINTERFACE.`;
+    let issues = runMulti([
+      {filename: "zif_utyp.intf.abap", contents: abap},
+    ]);
+    issues = issues.filter(i => i.getKey() === key);
+    expect(issues.length).to.equal(1);
+  });
+
+  it("Type from super via interface", () => {
+    const abap = `
+INTERFACE zif_service.
+  TYPES ty_char_top TYPE c LENGTH 1.
+ENDINTERFACE.
+
+CLASS zcl_top DEFINITION.
+  PUBLIC SECTION.
+    INTERFACES zif_service.
+ENDCLASS.
+CLASS zcl_top IMPLEMENTATION.
+ENDCLASS.
+
+CLASS zcl_class DEFINITION INHERITING FROM zcl_top.
+  PUBLIC SECTION.
+    TYPES ty_char TYPE zif_service~ty_char_top.
+ENDCLASS.
+CLASS zcl_class IMPLEMENTATION.
+ENDCLASS.`;
+    let issues = runMulti([{filename: "zfoobar.prog.abap", contents: abap}]);
+    issues = issues.filter(i => i.getKey() === key);
+    expect(issues.length).to.equal(0);
+  });
+
 });

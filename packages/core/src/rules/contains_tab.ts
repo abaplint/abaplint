@@ -24,7 +24,7 @@ export class ContainsTab extends ABAPRule {
   }
 
   private getMessage(): string {
-    return "Code can't contain tabs.";
+    return "Code can't contain tabs";
   }
 
   public getConfig() {

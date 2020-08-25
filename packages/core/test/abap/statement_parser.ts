@@ -22,6 +22,17 @@ describe("statement parser", () => {
     expect(statements[0].statements[0].get()).to.be.instanceof(MacroCall);
   });
 
+  it("Stupid macro with dashes", () => {
+    const abap = "moo-bar.";
+
+    const globalMacros = ["moo-bar"];
+
+    const lexerResult = Lexer.run(new MemoryFile("cl_foo.clas.abap", abap));
+    const statements = new StatementParser(defaultVersion).run([lexerResult], globalMacros);
+    expect(statements.length).to.equal(1);
+    expect(statements[0].statements[0].get()).to.be.instanceof(MacroCall);
+  });
+
   it("Unknown statements should be lazy, 2 statements", () => {
     const abap = "moo bar\n" +
       "WRITE bar.";

@@ -53,11 +53,18 @@ describe("Objects, class, getName", () => {
 describe("Objects, class, getSuperClass", () => {
 
   it("test, positive", () => {
+    const abap1 = `class ZCL_SUPER definition public create public.
+      ENDCLASS.
+      CLASS ZCL_SUPER IMPLEMENTATION.
+      ENDCLASS.`;
+
     const abap = "class ZCL_WITH_SUPER definition public inheriting from ZCL_SUPER final create public.\n" +
       "ENDCLASS.\n" +
       "CLASS ZCL_WITH_SUPER IMPLEMENTATION.\n" +
       "ENDCLASS.";
-    const reg = new Registry().addFile(new MemoryFile("zcl_with_super.clas.abap", abap)).parse();
+    const reg = new Registry().addFiles([
+      new MemoryFile("zcl_with_super.clas.abap", abap),
+      new MemoryFile("zcl_super.clas.abap", abap1)]).parse();
     const def = run(reg);
     expect(def).to.not.equal(undefined);
     expect(def!.getSuperClass()).to.equal("ZCL_SUPER");
