@@ -945,4 +945,16 @@ DATA: ls_appinfo TYPE lcl_fiori_moni_mpc_ext=>ty_appinfo.`;
     expect(issues.length).to.equal(0);
   });
 
+  it("unknown type in interface", () => {
+    const abap = `
+INTERFACE zif_utyp PUBLIC .
+  TYPES contains_unknown TYPE zif_sdfsd=>bar.
+ENDINTERFACE.`;
+    let issues = runMulti([
+      {filename: "zif_utyp.intf.abap", contents: abap},
+    ]);
+    issues = issues.filter(i => i.getKey() === key);
+    expect(issues.length).to.equal(1);
+  });
+
 });
