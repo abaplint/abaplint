@@ -213,15 +213,22 @@ export class StatementParser {
 
       if (statement.get() instanceof Unknown) {
         let macroName: string | undefined = undefined;
+        let previous: Token | undefined = undefined;
         for (const i of statement.getTokens()) {
-          if (i instanceof Tokens.Identifier) {
-            macroName = i.getStr();
+          if (previous && previous?.getEnd().getCol() !== i.getStart().getCol()) {
             break;
+          } else if (i instanceof Tokens.Identifier || i.getStr() === "-") {
+            if (macroName === undefined) {
+              macroName = i.getStr();
+            } else {
+              macroName += i.getStr();
+            }
           } else if (i instanceof Tokens.Pragma) {
             continue;
           } else {
             break;
           }
+          previous = i;
         }
         if (macroName && this.macros.isMacro(macroName)) {
           wa.statements[i] = new StatementNode(new MacroCall()).setChildren(this.tokensToNodes(statement.getTokens()));
