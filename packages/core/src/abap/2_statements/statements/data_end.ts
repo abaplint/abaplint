@@ -1,6 +1,6 @@
 import {IStatement} from "./_statement";
 import {str, seq, alt, optPrio} from "../combi";
-import {DefinitionName} from "../expressions";
+import {DefinitionName, ComponentName} from "../expressions";
 import {IStatementRunnable} from "../statement_runnable";
 
 export class DataEnd implements IStatement {
@@ -11,7 +11,9 @@ export class DataEnd implements IStatement {
     const structure = seq(str("END OF"),
                           alt(common, new DefinitionName()));
 
-    return seq(str("DATA"), structure);
+    const valid = seq(str("VALID BETWEEN"), new ComponentName(), str("AND"), new ComponentName());
+
+    return seq(str("DATA"), structure, optPrio(valid));
   }
 
 }
