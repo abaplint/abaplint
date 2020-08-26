@@ -247,6 +247,9 @@ export class Help {
   private static dumpFiles(reg: IRegistry) {
     let output = `<h3 id="_files">Files</h3><table>\n`;
     for (const o of reg.getObjects()) {
+      if (reg.isDependency(o) === true) {
+        continue;
+      }
       output = output + "<tr><td valign=\"top\">" + o.getType() + " " + o.getName() + "</td><td>";
       for (const f of o.getFiles()) {
         output = output + f.getFilename() + "<br>";
