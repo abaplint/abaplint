@@ -29,6 +29,8 @@ export class ObsoleteStatementConf extends BasicRuleConfig {
   public setExtended: boolean = true;
   /** Checks for WITH HEADER LINE */
   public withHeaderLine: boolean = true;
+  /** Checks for FIELD-SYMBOL ... STRUCTURE */
+  public fieldSymbolStructure: boolean = true;
 }
 
 export class ObsoleteStatement extends ABAPRule {
@@ -118,6 +120,14 @@ export class ObsoleteStatement extends ABAPRule {
             const issue = Issue.atToken(file, token, "WITH HEADER LINE is obsolete", this.getMetadata().key);
             issues.push(issue);
           }
+        }
+      }
+
+      if (this.conf.fieldSymbolStructure && sta instanceof Statements.FieldSymbol){
+        const token = staNode.findDirectTokenByText("STRUCTURE");
+        if (token) {
+          const issue = Issue.atToken(file, token, "FIELD-SYMBOL ... STRUCTURE is obsolete", this.getMetadata().key);
+          issues.push(issue);
         }
       }
     }
