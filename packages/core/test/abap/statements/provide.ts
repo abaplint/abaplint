@@ -13,6 +13,9 @@ const tests = [
     "BETWEEN p_start AND p_end.",
 
   "provide name from ztab1 name from ztab1 between name1 and name2.",
+
+  "PROVIDE * FROM lt_bar BETWEEN foo AND bar.",
+  "PROVIDE * FROM lt_bar BETWEEN foo-begda AND bar-endda.",
 ];
 
 statementType(tests, "PROVIDE", Statements.Provide);
