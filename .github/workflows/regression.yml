@@ -4,8 +4,8 @@ on:
   push:
     branches-ignore:
     - master
-  pull_request:
-
+  pull_request_target:
+    types: [opened, synchronize, reopened] #default types
 jobs:
   regression:
     # Check if the event is not triggered by a fork, this is stupid but its github
