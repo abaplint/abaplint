@@ -74,7 +74,6 @@ export class SkipLogic {
   }
 
   private isGeneratedFunctionGroup(group: FunctionGroup): boolean {
-    this.reg.getObject("TOBJ", "");
     for (const obj of this.reg.getObjects()) {
       if (obj.getType() !== "TOBJ") {
         continue;
