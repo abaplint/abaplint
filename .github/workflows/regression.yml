@@ -37,18 +37,18 @@ jobs:
         ls -salh
         node ./run.js
 
-    - uses: jwalton/gh-find-current-pr@v1
+    - uses: 8BitJonny/gh-get-current-pr@v1
       id: findPr
       with:
         github-token: ${{ secrets.GITHUB_TOKEN }}
-    - run: echo ${{ steps.findPr.outputs.pr }}
+    - run: echo ${{ steps.findPr.outputs.number }}
 
     - name: Find Comment
       uses: peter-evans/find-comment@v1
       id: fc
       with:
         repository: 'abaplint/abaplint'
-        issue-number: '${{steps.findPr.outputs.pr}}'
+        issue-number: '${{steps.findPr.outputs.number}}'
         body-includes: Regression test results
     - run: echo ${{ steps.fc.outputs.comment-id }}
 
@@ -66,7 +66,7 @@ jobs:
       uses: peter-evans/create-or-update-comment@v1
       id: create-comment
       with:
-        issue-number: '${{steps.findPr.outputs.pr}}'
+        issue-number: '${{steps.findPr.outputs.number}}'
         edit-mode: replace
         comment-id: '${{steps.fc.outputs.comment-id}}'
         body: ${{steps.get-comment-body.outputs.body}}
