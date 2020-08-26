@@ -2658,7 +2658,7 @@
           "type": "array"
         },
         "fieldSymbolStructure": {
-          "description": "Checks for FIELD-SYMBOL ... STRUCTURE",
+          "description": "Checks for FIELD-SYMBOLS ... STRUCTURE",
           "type": "boolean"
         },
         "move": {
