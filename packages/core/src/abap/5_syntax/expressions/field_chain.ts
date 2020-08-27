@@ -10,6 +10,7 @@ import {AttributeName} from "./attribute_name";
 import {ReferenceType} from "../_reference";
 import {FieldOffset} from "./field_offset";
 import {FieldLength} from "./field_length";
+import {TableExpression} from "./table_expression";
 
 export class FieldChain {
 
@@ -52,13 +53,15 @@ export class FieldChain {
         }
       } else if (current.get() instanceof Expressions.ComponentName) {
         context = new ComponentName().runSyntax(context, current);
-      } else if (current.get() instanceof Expressions.TableExpression) {
+      } else if (current instanceof ExpressionNode
+          && current.get() instanceof Expressions.TableExpression) {
         if (context instanceof VoidType) {
           continue;
         }
         if (!(context instanceof TableType)) {
           throw new Error("Table expression, expected table");
         }
+        new TableExpression().runSyntax(current, scope, filename);
         // todo, additional validations
         context = context.getRowType();
       } else if (current.get() instanceof Expressions.AttributeName) {
