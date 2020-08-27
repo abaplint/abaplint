@@ -50,7 +50,7 @@ for (let name in map) {
   for (const i of map[name].after) {
     let urlFile = i.file.split("/").splice(1).join("/");
     let url = "https://github.com/" + name + "/blob/master/" + urlFile + "#L" + i.start.row;
-    issues += "[`" + i.file + "`](" + url + "): " + i.description + ", " + i.start.row + "\n"
+    issues += "[`" + i.file + ":`](" + url + "): " + i.description + "\n"
   }
 }
 comment += "\n" + issues;
