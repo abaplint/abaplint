@@ -148,6 +148,8 @@ const tests = [
   "FORM foobar USING p_param TYPE LINE OF tt_foo.",
   "FORM foobar USING p_param TYPE REF TO to_foo.",
 
+  "FORM re549r USING &permo.",
+
 //  "FORM moo USING boo-vbeln bar-vbtyp.",
 ];
 
