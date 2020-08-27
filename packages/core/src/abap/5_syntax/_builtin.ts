@@ -222,6 +222,7 @@ export class BuiltIn {
     components.push({name: "loopc", type: new IntegerType()});
     components.push({name: "linct", type: new IntegerType()});
     components.push({name: "pagno", type: new IntegerType()});
+    components.push({name: "srows", type: new IntegerType()});
     components.push({name: "datar", type: new CharacterType(1)});
     components.push({name: "langu", type: new CharacterType(1)});
     components.push({name: "lisel", type: new CharacterType(255)});
