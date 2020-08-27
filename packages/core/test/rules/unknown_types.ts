@@ -981,4 +981,16 @@ ENDCLASS.`;
     expect(issues.length).to.equal(0);
   });
 
+  it("APPEND INITIAL LINE with inline", () => {
+    const abap = `
+    DATA tab TYPE STANDARD TABLE OF i.
+    APPEND INITIAL LINE TO tab ASSIGNING FIELD-SYMBOL(<ls_tab1>).
+    WRITE <ls_tab1>.`;
+    let issues = runMulti([
+      {filename: "zreport.prog.abap", contents: abap},
+    ]);
+    issues = issues.filter(i => i.getKey() === key);
+    expect(issues.length).to.equal(0);
+  });
+
 });
