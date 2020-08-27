@@ -19,7 +19,13 @@ export class Append {
 
     const fsTarget = node.findExpressionAfterToken("ASSIGNING");
     if (fsTarget && fsTarget.get() instanceof Expressions.FSTarget) {
-      new FSTarget().runSyntax(fsTarget, scope, filename, undefined);
+      if (!(targetType instanceof TableType) && !(targetType instanceof VoidType)) {
+        throw new Error("APPEND to non table type");
+      }
+
+      const rowType = targetType instanceof TableType ? targetType.getRowType() : targetType;
+
+      new FSTarget().runSyntax(fsTarget, scope, filename, rowType);
     }
 
     let source = node.findDirectExpression(Expressions.Source);

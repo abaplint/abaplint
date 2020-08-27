@@ -73,6 +73,7 @@ const tests = [
   "WRITE <moo>+<offs>-end-end.",
   "write at 5(ls_structure-field) 'hello world'.",
   "WRITE foo COLOR OFF INTENSIFIED.",
+  "WRITE (6)sy-sysid.",
 ];
 
 statementType(tests, "WRITE", Statements.Write);

@@ -16,6 +16,10 @@ const tests = [
 
   "PROVIDE * FROM lt_bar BETWEEN foo AND bar.",
   "PROVIDE * FROM lt_bar BETWEEN foo-begda AND bar-endda.",
+
+  "PROVIDE FIELDS sd FROM lt_sdfsd INTO ls_sdfsd VALID lv_flag BOUNDS begda AND endda BETWEEN <foo>-begda AND <bar>-endda.",
+
+  "PROVIDE field1 field2 FROM sdf BETWEEN bonus AND pn-end.",
 ];
 
 statementType(tests, "PROVIDE", Statements.Provide);
