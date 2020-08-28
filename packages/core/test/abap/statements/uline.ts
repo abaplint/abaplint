@@ -13,8 +13,8 @@ const tests = [
   "ULINE AT /(right).",
   "ULINE /10.",
   "ULINE AT /(10) NO-GAP.",
-// todo
-//  "ULINE AT column(length).",
+  "ULINE AT p_offset(131).",
+  "ULINE AT column(length).",
 ];
 
 statementType(tests, "ULINE", Statements.Uline);
