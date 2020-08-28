@@ -150,7 +150,7 @@ const tests = [
 
   "FORM re549r USING &permo.",
 
-//  "FORM moo USING boo-vbeln bar-vbtyp.",
+  "FORM moo USING boo-vbeln bar-vbtyp.",
 ];
 
 statementType(tests, "FORM", Statements.Form);
