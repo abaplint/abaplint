@@ -349,4 +349,13 @@ EXPORT values = lt_values TO DATABASE rsix(zz) FROM lv_test ID lv_id.`;
     expect(issues.length).to.equal(0);
   });
 
+  it("Table expression", async () => {
+    const abap = `
+    DATA tab TYPE STANDARD TABLE OF i.
+    DATA index TYPE i.
+    WRITE tab[ index ].`;
+    const issues = await runSingle(abap);
+    expect(issues.length).to.equal(0);
+  });
+
 });

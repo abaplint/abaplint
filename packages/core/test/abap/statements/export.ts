@@ -27,6 +27,8 @@ const tests = [
     addons FROM <h_addons>
     version FROM h_version
     TO DATABASE rfdt(kk) ID h_runkey.`,
+
+  `EXPORT $hcat1 TO MEMORY ID sy-uname.`,
 ];
 
 statementType(tests, "EXPORT", Statements.Export);
