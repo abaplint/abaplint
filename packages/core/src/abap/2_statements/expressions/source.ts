@@ -1,7 +1,7 @@
 import {ver, seq, opt, tok, str, altPrio, optPrio, regex, Expression} from "../combi";
 import {InstanceArrow, WParenLeftW, WParenRightW, WDashW, ParenLeftW, WPlus, WPlusW} from "../../1_lexer/tokens";
 import {CondBody, SwitchBody, ComponentChain, FieldChain, ReduceBody, TableBody, TypeNameOrInfer, ArrowOrDash,
-  MethodCallChain, ArithOperator, Cond, Constant, StringTemplate, Let, CorrespondingBody, ValueBody, FilterBody} from ".";
+  MethodCallChain, ArithOperator, Cond, Constant, StringTemplate, ConvBody, CorrespondingBody, ValueBody, FilterBody} from ".";
 import {Version} from "../../../version";
 import {IStatementRunnable} from "../statement_runnable";
 import {TextElement} from "./text_element";
@@ -49,8 +49,7 @@ export class Source extends Expression {
     const conv = ver(Version.v740sp02, seq(str("CONV"),
                                            new TypeNameOrInfer(),
                                            tok(ParenLeftW),
-                                           opt(new Let()),
-                                           new Source(),
+                                           new ConvBody(),
                                            rparen, opt(after)));
 
     const swit = ver(Version.v740sp02, seq(str("SWITCH"),

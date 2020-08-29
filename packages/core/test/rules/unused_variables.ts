@@ -375,4 +375,12 @@ ENDCLASS.`;
     expect(issues.length).to.equal(0);
   });
 
+  it("CONV", async () => {
+    const abap = `
+    DATA str TYPE string.
+    WRITE CONV string( str ).`;
+    const issues = await runSingle(abap);
+    expect(issues.length).to.equal(0);
+  });
+
 });

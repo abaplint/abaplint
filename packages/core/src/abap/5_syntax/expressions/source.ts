@@ -16,6 +16,7 @@ import {ReduceBody} from "./reduce_body";
 import {ReferenceType} from "../_reference";
 import {SwitchBody} from "./switch_body";
 import {CondBody} from "./cond_body";
+import {ConvBody} from "./conv_body";
 
 export class Source {
   public runSyntax(
@@ -51,6 +52,8 @@ export class Source {
           new CondBody().runSyntax(node.findDirectExpression(Expressions.CondBody), scope, filename);
           return this.value(node, scope, filename, targetType, undefined);
         case "CONV":
+          new ConvBody().runSyntax(node.findDirectExpression(Expressions.ConvBody), scope, filename);
+          return this.value(node, scope, filename, targetType, undefined);
         case "CORRESPONDING":
         case "EXACT":
           return this.value(node, scope, filename, targetType, undefined);
