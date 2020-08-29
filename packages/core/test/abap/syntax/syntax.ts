@@ -2724,6 +2724,21 @@ DATA(parameters) = VALUE ty_distance( LET distance = 10 IN distance = distance )
     expect(issues.length).to.equals(0);
   });
 
+  it("FORM, TABLES with LIKE table typing", () => {
+    const abap = `
+TYPES: BEGIN OF ty_type,
+         field TYPE string,
+       END OF ty_type.
+
+DATA tab TYPE STANDARD TABLE OF ty_type.
+
+FORM foo TABLES bar LIKE tab.
+  WRITE bar-field.
+ENDFORM.`;
+    const issues = runProgram(abap);
+    expect(issues.length).to.equals(0);
+  });
+
 // todo, static method cannot access instance attributes
 // todo, can a private method access protected attributes?
 // todo, readonly fields(constants + enums + attributes flagged read-only)
