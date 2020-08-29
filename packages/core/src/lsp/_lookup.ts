@@ -39,13 +39,21 @@ export class LSPLookup {
     const clas = bottomScope.findClassDefinition(cursor.token.getStr());
     if (clas) {
       const found = LSPUtils.identiferToLocation(clas);
-      return {hover: "Class definition, " + cursor.token.getStr(), definition: found, implementation: undefined, scope: bottomScope};
+      return {hover: "Class definition, " + cursor.token.getStr(),
+        definition: found,
+        definitionId: clas,
+        implementation: undefined,
+        scope: bottomScope};
     }
 
     const intf = bottomScope.findInterfaceDefinition(cursor.token.getStr());
     if (intf) {
       const found = LSPUtils.identiferToLocation(intf);
-      return {hover: "Interface definition, " + cursor.token.getStr(), definition: found, implementation: undefined, scope: bottomScope};
+      return {hover: "Interface definition, " + cursor.token.getStr(),
+        definition: found,
+        definitionId: intf,
+        implementation: undefined,
+        scope: bottomScope};
     }
 
     const form = this.findPerform(cursor, bottomScope);
@@ -83,7 +91,7 @@ export class LSPLookup {
       if (ref.referenceType !== ReferenceType.BuiltinMethodReference) {
         definition = LSPUtils.identiferToLocation(ref.resolved);
       }
-      return {hover: value, definition, scope: bottomScope};
+      return {hover: value, definition, definitionId: ref.resolved, scope: bottomScope};
     }
 
     // todo, delete this part, it should be handled via TypeReferences instead

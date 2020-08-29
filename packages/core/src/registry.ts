@@ -79,7 +79,10 @@ export class Registry implements IRegistry {
 
   public getObjectCount(): number {
     let res = 0;
-    for (const _o of this.getObjects()) {
+    for (const o of this.getObjects()) {
+      if (this.isDependency(o)) {
+        continue;
+      }
       res = res + 1;
     }
     return res;
