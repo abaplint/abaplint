@@ -48,7 +48,7 @@ for (let name in map) {
   comment += " " + map[name].before.length + " -> " + map[name].after.length + "| " + runtimeInfo + " |\n";
 
   for (const i of map[name].after) {
-    if (issues.lengt > 1000) {
+    if (issues.length > 1000) { // keep the comment at a reasonable size
       continue;
     }
     let urlFile = i.file.split("/").splice(1).join("/");
