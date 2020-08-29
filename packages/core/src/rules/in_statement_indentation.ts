@@ -7,6 +7,7 @@ import {BasicRuleConfig} from "./_basic_rule_config";
 import * as Statements from "../abap/2_statements/statements";
 import {IRuleMetadata, RuleTag} from "./_irule";
 import {DDIC} from "../ddic";
+import {Unknown, Comment} from "../abap/2_statements/statements/_statement";
 
 export class InStatementIndentationConf extends BasicRuleConfig {
   /** Ignore global exception classes */
@@ -56,6 +57,10 @@ export class InStatementIndentation extends ABAPRule {
     }
 
     for (const s of file.getStatements()) {
+      if (s.get() instanceof Comment || s.get() instanceof Unknown) {
+        continue;
+      }
+
       const tokens = s.getTokens();
       if (tokens.length === 0) {
         continue;

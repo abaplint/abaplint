@@ -4,6 +4,7 @@ import {CondBody, SwitchBody, ComponentChain, FieldChain, ReduceBody, TableBody,
   MethodCallChain, ArithOperator, Cond, Constant, StringTemplate, Let, CorrespondingBody, ValueBody, FilterBody} from ".";
 import {Version} from "../../../version";
 import {IStatementRunnable} from "../statement_runnable";
+import {TextElement} from "./text_element";
 
 // todo, COND and SWITCH are quite similar?
 
@@ -34,6 +35,7 @@ export class Source extends Expression {
 
     const old = seq(optPrio(prefix), altPrio(new Constant(),
                                              new StringTemplate(),
+                                             new TextElement(),
                                              bool,
                                              altPrio(method, new FieldChain(), paren)),
                     optPrio(altPrio(ref, after, new TableBody())));

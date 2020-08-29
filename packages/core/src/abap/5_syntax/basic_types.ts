@@ -9,6 +9,7 @@ import {ObjectOriented} from "./_object_oriented";
 import {ClassConstant} from "../types/class_constant";
 import {Identifier} from "../1_lexer/tokens/identifier";
 import {ReferenceType} from "./_reference";
+import {TableType} from "../types/basic";
 
 export class BasicTypes {
   private readonly filename: string;
@@ -67,7 +68,9 @@ export class BasicTypes {
       return attr.getType();
     } else {
       type = this.scope.findVariable(name)?.getType();
-      if (type === undefined) {
+      if (type instanceof TableType && type.isWithHeader()) {
+        type = type.getRowType();
+      } else if (type === undefined) {
         type = this.scope.getDDIC().lookupNoVoid(name);
       }
 

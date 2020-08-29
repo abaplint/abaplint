@@ -48,9 +48,12 @@ for (let name in map) {
   comment += " " + map[name].before.length + " -> " + map[name].after.length + "| " + runtimeInfo + " |\n";
 
   for (const i of map[name].after) {
+    if (issues.length > 2000) { // keep the comment at a reasonable size
+      continue;
+    }
     let urlFile = i.file.split("/").splice(1).join("/");
     let url = "https://github.com/" + name + "/blob/master/" + urlFile + "#L" + i.start.row;
-    issues += "[`" + i.file + ":`](" + url + "): " + i.description + "\n"
+    issues += "[`" + i.file + ":" + i.start.row + "`](" + url + "): " + i.description + "\n"
   }
 }
 comment += "\n" + issues;
