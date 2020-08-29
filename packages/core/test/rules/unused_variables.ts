@@ -358,4 +358,21 @@ EXPORT values = lt_values TO DATABASE rsix(zz) FROM lv_test ID lv_id.`;
     expect(issues.length).to.equal(0);
   });
 
+  it("Variable referenced via ME->", async () => {
+    const abap = `
+CLASS lcl_bar DEFINITION.
+  PUBLIC SECTION.
+    METHODS constructor.
+  PRIVATE SECTION.
+    DATA order TYPE string.
+ENDCLASS.
+CLASS lcl_bar IMPLEMENTATION.
+  METHOD constructor.
+    me->order = '2'.
+  ENDMETHOD.
+ENDCLASS.`;
+    const issues = await runSingle(abap);
+    expect(issues.length).to.equal(0);
+  });
+
 });
