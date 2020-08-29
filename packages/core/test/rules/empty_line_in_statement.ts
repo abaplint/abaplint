@@ -15,6 +15,10 @@ const tests = [
 
             bar.`, cnt: 1},
   {abap: "* comment\n\nWRITE bar.", cnt: 0},
+  {abap: `DATA: ls_header         TYPE rpy_dyhead,
+          lt_containers           TYPE dycatt_tab,
+          lt_fields_to_containers TYPE dyfatc_tab,
+          lt_flow_logic           TYPE swydyflow.`, cnt: 0},
 ];
 
 testRule(tests, EmptyLineinStatement);

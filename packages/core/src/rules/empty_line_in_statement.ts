@@ -47,6 +47,9 @@ export class EmptyLineinStatement extends ABAPRule {
       if (s.get() instanceof Unknown || s.get() instanceof CommentStatement) {
         continue;
       }
+      if (s.getColon() !== undefined) { // dont run for chained statements
+        continue;
+      }
 
       let prevLine: number | undefined = undefined;
       for (const t of s.getTokens()) {
