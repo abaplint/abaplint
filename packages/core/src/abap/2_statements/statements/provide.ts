@@ -8,7 +8,7 @@ export class Provide implements IStatement {
 
   public getMatcher(): IStatementRunnable {
 
-    const list = altPrio(str("*"), new Field());
+    const list = plus(altPrio(str("*"), new Field()));
 
     const fields = seq(str("FIELDS"),
                        list,
