@@ -169,7 +169,6 @@ export class BuiltIn {
     const ret: TypedIdentifier[] = this.buildSY();
 
     ret.push(this.buildVariable("screen")); // todo, add structure, or alternatively make native Statements
-    ret.push(this.buildVariable("text")); // todo, this should be parsed to text elements? and this var removed
 
     ret.push(this.buildConstant("%_BACKSPACE"));
     ret.push(this.buildConstant("%_CHARSIZE"));

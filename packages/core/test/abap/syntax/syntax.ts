@@ -2756,6 +2756,15 @@ ENDLOOP.`;
     expect(issues.length).to.equals(0);
   });
 
+  it("text elements, with text redefined", () => {
+    const abap = `
+  DATA text TYPE c LENGTH 1.
+  WRITE TEXT-abc.
+  WRITE text.`;
+    const issues = runProgram(abap);
+    expect(issues.length).to.equals(0);
+  });
+
 // todo, static method cannot access instance attributes
 // todo, can a private method access protected attributes?
 // todo, readonly fields(constants + enums + attributes flagged read-only)
