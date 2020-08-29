@@ -2,7 +2,8 @@ import {Issue} from "../issue";
 import {ABAPRule} from "./_abap_rule";
 import {ABAPFile} from "../files";
 import {BasicRuleConfig} from "./_basic_rule_config";
-import {Punctuation, Comment} from "../abap/1_lexer/tokens";
+import {Punctuation, Comment as CommentToken} from "../abap/1_lexer/tokens";
+import {Unknown, Comment as CommentStatement} from "../abap/2_statements/statements/_statement";
 
 export class EmptyLineinStatementConf extends BasicRuleConfig {
   /** Allow changed empty lines in chanined statements */
@@ -42,25 +43,31 @@ export class EmptyLineinStatement extends ABAPRule {
       return [];
     }
 
-    let prevLine: number | undefined = undefined;
-    for (const t of file.getTokens()) {
-      if (prevLine === undefined && t instanceof Comment) {
+    for (const s of file.getStatements()) {
+      if (s.get() instanceof Unknown || s.get() instanceof CommentStatement) {
         continue;
-      } else if (prevLine === undefined) {
-        prevLine = t.getRow();
       }
 
-      if (prevLine && t.getRow() - prevLine >= 2) {
-        const issue = Issue.atToken(file, t, this.getMessage(), this.getMetadata().key);
-        issues.push(issue);
-      }
+      let prevLine: number | undefined = undefined;
+      for (const t of s.getTokens()) {
+        if (prevLine === undefined && t instanceof CommentToken) {
+          continue;
+        } else if (prevLine === undefined) {
+          prevLine = t.getRow();
+        }
 
-      if (t instanceof Punctuation && t.getStr() === ".") {
-        prevLine = undefined;
-      } else if (this.conf.allowChained === true && t instanceof Punctuation && t.getStr() === ",") {
-        prevLine = undefined;
-      } else {
-        prevLine = t.getRow();
+        if (prevLine && t.getRow() - prevLine >= 2) {
+          const issue = Issue.atToken(file, t, this.getMessage(), this.getMetadata().key);
+          issues.push(issue);
+        }
+
+        if (t instanceof Punctuation && t.getStr() === ".") {
+          prevLine = undefined;
+        } else if (this.conf.allowChained === true && t instanceof Punctuation && t.getStr() === ",") {
+          prevLine = undefined;
+        } else {
+          prevLine = t.getRow();
+        }
       }
     }
 
