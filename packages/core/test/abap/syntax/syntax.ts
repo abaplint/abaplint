@@ -2794,6 +2794,21 @@ ENDLOOP.`;
     expect(issues.length).to.equals(0);
   });
 
+  it("FORM with LIKE table body", () => {
+    const abap = `
+    DATA int TYPE i.
+    RANGES foo FOR int.
+
+    FORM name USING input LIKE foo[].
+
+      LOOP AT input INTO DATA(d).
+      ENDLOOP.
+
+    ENDFORM.`;
+    const issues = runProgram(abap);
+    expect(issues.length).to.equals(0);
+  });
+
 // todo, static method cannot access instance attributes
 // todo, can a private method access protected attributes?
 // todo, readonly fields(constants + enums + attributes flagged read-only)

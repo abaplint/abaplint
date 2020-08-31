@@ -1525,4 +1525,15 @@ DATA(sdf) = ref->*-int.`;
     expect(identifier?.getType()).to.be.instanceof(Basic.DataReference);
   });
 
+  it("DATA like table body", () => {
+    const abap = `
+    DATA int TYPE i.
+    RANGES foo FOR int.
+    DATA bar LIKE foo[].`;
+    const identifier = resolveVariable(abap, "bar");
+    const type = identifier?.getType();
+    expect(type).to.be.instanceof(Basic.TableType);
+    expect((type as Basic.TableType).isWithHeader()).to.equal(false);
+  });
+
 });

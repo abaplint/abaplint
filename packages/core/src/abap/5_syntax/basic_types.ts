@@ -68,7 +68,10 @@ export class BasicTypes {
       return attr.getType();
     } else {
       type = this.scope.findVariable(name)?.getType();
-      if (type instanceof TableType && type.isWithHeader()) {
+
+      if (type instanceof TableType && node.getLastChild()?.get() instanceof Expressions.TableBody) {
+        type = new TableType(type.getRowType(), false);
+      } else if (type instanceof TableType && type.isWithHeader()) {
         type = type.getRowType();
       } else if (type === undefined) {
         type = this.scope.getDDIC().lookupNoVoid(name);
@@ -278,7 +281,10 @@ export class BasicTypes {
       ]);
       return new Types.TableType(structure, node.concatTokens().toUpperCase().includes("WITH HEADER LINE"));
     } else if (text.startsWith("LIKE ")) {
-      const sub = node.findFirstExpression(Expressions.FieldChain);
+      let sub = node.findFirstExpression(Expressions.Type);
+      if (sub === undefined) {
+        sub = node.findFirstExpression(Expressions.FormParamType);
+      }
       found = this.resolveLikeName(sub);
 
       if (found && node.findDirectTokenByText("OCCURS")) {
