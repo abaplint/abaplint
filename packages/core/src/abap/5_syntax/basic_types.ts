@@ -314,7 +314,17 @@ export class BasicTypes {
       found = this.resolveTypeName(typename, this.findLength(node));
 
       if (found === undefined && typename === undefined) {
-        found = new Types.CharacterType(1); // fallback
+        let length = 1;
+
+        const len = node.findDirectExpression(Expressions.ConstantFieldLength);
+        if (len) {
+          const int = len.findDirectExpression(Expressions.Integer);
+          if (int) {
+            length = parseInt(int.concatTokens(), 10);
+          }
+        }
+
+        found = new Types.CharacterType(length); // fallback
       }
 
       if (found && node.findDirectTokenByText("OCCURS")) {

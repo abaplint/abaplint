@@ -1536,4 +1536,12 @@ DATA(sdf) = ref->*-int.`;
     expect((type as Basic.TableType).isWithHeader()).to.equal(false);
   });
 
+  it("DATA with old style length", () => {
+    const abap = `DATA foo(15).`;
+    const identifier = resolveVariable(abap, "foo");
+    const type = identifier?.getType();
+    expect(type).to.be.instanceof(Basic.CharacterType);
+    expect((type as Basic.CharacterType).getLength()).to.equal(15);
+  });
+
 });

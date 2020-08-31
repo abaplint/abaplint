@@ -1012,4 +1012,18 @@ ENDCLASS.`;
     expect(issues.length).to.equal(0);
   });
 
+  it.skip("BEGIN with LIKE LINE OF", () => {
+    const abap = `
+DATA: BEGIN OF lt_char_file OCCURS 0,
+        zstring(72),
+      END OF lt_char_file.
+
+DATA BEGIN OF lt_file OCCURS 0.
+DATA: line LIKE LINE OF lt_char_file,
+      END OF lt_file.`;
+    let issues = runMulti([{filename: "zfoobar.prog.abap", contents: abap}]);
+    issues = issues.filter(i => i.getKey() === key);
+    expect(issues.length).to.equal(0);
+  });
+
 });
