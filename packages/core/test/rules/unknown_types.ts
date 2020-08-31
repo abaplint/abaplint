@@ -1045,4 +1045,15 @@ ENDCLASS.`;
     expect(issues.length).to.equal(0);
   });
 
+  it("INTERFACE, local type reference", () => {
+    const abap = `
+INTERFACE zif_abapgit_auth.
+  TYPES ty_authorization TYPE string.
+  DATA foo TYPE ty_authorization.
+ENDINTERFACE.`;
+    let issues = runMulti([{filename: "zfoobar.prog.abap", contents: abap}]);
+    issues = issues.filter(i => i.getKey() === key);
+    expect(issues.length).to.equal(0);
+  });
+
 });
