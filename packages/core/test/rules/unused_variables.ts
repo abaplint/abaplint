@@ -392,4 +392,13 @@ ENDCLASS.`;
     expect(issues.length).to.equal(0);
   });
 
+  it("Used in REF", async () => {
+    const abap = `
+    DATA foo TYPE c LENGTH 1.
+    DATA(ref) = REF #( foo ).
+    CLEAR ref.`;
+    const issues = await runSingle(abap);
+    expect(issues.length).to.equal(0);
+  });
+
 });
