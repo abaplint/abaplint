@@ -77,10 +77,10 @@ export class Registry implements IRegistry {
     return undefined;
   }
 
-  public getObjectCount(): number {
+  public getObjectCount(skipDependencies = true): number {
     let res = 0;
     for (const o of this.getObjects()) {
-      if (this.isDependency(o)) {
+      if (skipDependencies === true && this.isDependency(o)) {
         continue;
       }
       res = res + 1;
@@ -225,7 +225,7 @@ export class Registry implements IRegistry {
     }
 
     ParsingPerformance.clear();
-    input?.progress?.set(this.getObjectCount(), "Lexing and parsing");
+    input?.progress?.set(this.getObjectCount(false), "Lexing and parsing");
 
     this.issues = [];
     for (const o of this.getObjects()) {
