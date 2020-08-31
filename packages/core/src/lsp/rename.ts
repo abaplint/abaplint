@@ -2,12 +2,25 @@ import * as LServer from "vscode-languageserver-types";
 import {ITextDocumentPositionParams, IRenameParams} from "./_interfaces";
 import {LSPUtils} from "./_lsp_utils";
 import {IRegistry} from "../_iregistry";
-import * as Statements from "../abap/2_statements/statements";
-import * as Expressions from "../abap/2_statements/expressions";
 import {RenameGlobalClass} from "./rename_global_class";
+import {ABAPObject} from "../objects/_abap_object";
+import {LSPLookup} from "./_lookup";
+import {TypedIdentifier} from "../abap/types/_typed_identifier";
+import {ClassDefinition} from "../abap/types";
+import {References} from "./references";
+import {IFile} from "../files/_ifile";
+
 
 export enum RenameType {
   GlobalClass = 1,
+  Variable = 2,
+}
+
+export interface IPrepareResult {
+  range: LServer.Range,
+  placeholder: string,
+  type: RenameType,
+  file: IFile,
 }
 
 export class Rename {
@@ -17,7 +30,16 @@ export class Rename {
     this.reg = reg;
   }
 
-  public prepareRename(params: ITextDocumentPositionParams): {range: LServer.Range, placeholder: string, type: RenameType} | undefined {
+  public prepareRename(params: ITextDocumentPositionParams): IPrepareResult | undefined {
+    const file = LSPUtils.getABAPFile(this.reg, params.textDocument.uri);
+    if (file === undefined) {
+      return undefined;
+    }
+    const obj = this.reg.getObject(file.getObjectType(), file.getObjectName());
+    if (!(obj instanceof ABAPObject)) {
+      return undefined;
+    }
+
     const cursor = LSPUtils.findCursor(this.reg, params);
     if (cursor === undefined) {
       return undefined;
@@ -25,17 +47,13 @@ export class Rename {
 
     const start = cursor.token.getStart();
     const end = cursor.token.getEnd();
+    const range = LServer.Range.create(start.getRow() - 1, start.getCol() - 1, end.getRow() - 1, end.getCol() - 1);
 
-// todo, make this more generic, specify array for matching
-    if (cursor.stack.length === 2
-        && cursor.stack[0].get() instanceof Statements.ClassDefinition
-        && cursor.stack[1].get() instanceof Expressions.ClassName) {
-      const range = LServer.Range.create(start.getRow() - 1, start.getCol() - 1, end.getRow() - 1, end.getCol() - 1);
-      return {
-        range: range,
-        placeholder: cursor.token.getStr(),
-        type: RenameType.GlobalClass,
-      };
+    const lookup = LSPLookup.lookup(cursor, this.reg, obj);
+    if (lookup?.definitionId instanceof TypedIdentifier) {
+      return {range, placeholder: cursor.token.getStr(), type: RenameType.Variable, file};
+    } else if (lookup?.definitionId instanceof ClassDefinition) {
+      return {range, placeholder: cursor.token.getStr(), type: RenameType.GlobalClass, file};
     }
 
     return undefined;
@@ -50,6 +68,17 @@ export class Rename {
     switch (prepare.type) {
       case RenameType.GlobalClass:
         return new RenameGlobalClass(this.reg).run(prepare.placeholder, params.newName);
+      case RenameType.Variable:
+      {
+        const workspace: LServer.WorkspaceEdit = {documentChanges: []};
+        const refs = new References(this.reg).references(params);
+        for (const r of refs) {
+          const doc: LServer.VersionedTextDocumentIdentifier = {uri: r.uri, version: 1};
+          const edit = LServer.TextDocumentEdit.create(doc, [LServer.TextEdit.replace(r.range, params.newName)]);
+          workspace.documentChanges?.push(edit);
+        }
+        return workspace;
+      }
       default:
         return undefined;
     }

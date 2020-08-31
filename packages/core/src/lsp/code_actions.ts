@@ -2,9 +2,10 @@ import * as LServer from "vscode-languageserver-types";
 import {IRegistry} from "../_iregistry";
 import {ICodeActionParams} from "./_interfaces";
 import {Diagnostics} from "./diagnostics";
-import {IEdit, ITextEdit} from "../edit_helper";
+import {IEdit} from "../edit_helper";
 import {Issue} from "../issue";
 import {Position} from "../position";
+import {LSPEdit} from "./_edit";
 
 export class CodeActions {
   private readonly reg: IRegistry;
@@ -41,7 +42,7 @@ export class CodeActions {
         kind: LServer.CodeActionKind.QuickFix,
         diagnostics: [Diagnostics.mapDiagnostic(i)],
         isPreferred: true,
-        edit: this.mapEdit(fix),
+        edit: LSPEdit.mapEdit(fix),
       });
       shown.add(i.getKey());
     }
@@ -77,7 +78,7 @@ export class CodeActions {
       kind: LServer.CodeActionKind.QuickFix,
       diagnostics,
       isPreferred: true,
-      edit: this.mapEdits(fixes),
+      edit: LSPEdit.mapEdits(fixes),
     };
   }
 
@@ -90,43 +91,6 @@ export class CodeActions {
       || start.isBetween(i.getStart(), i.getEnd())
       || end.isBetween(i.getStart(), i.getEnd())
       || end.equals(i.getEnd());
-  }
-
-  private mapEdits(edits: IEdit[]): LServer.WorkspaceEdit {
-    const workspace: LServer.WorkspaceEdit = {changes: {}};
-    for (const edit of edits) {
-      for (const filename in edit) {
-        if (workspace.changes![filename] === undefined) {
-          workspace.changes![filename] = [];
-        }
-        workspace.changes![filename] = workspace.changes![filename].concat(this.mapText(edit[filename]));
-      }
-    }
-    return workspace;
-  }
-
-  private mapEdit(edit: IEdit): LServer.WorkspaceEdit {
-    const workspace: LServer.WorkspaceEdit = {changes: {}};
-    for (const filename in edit) {
-      workspace.changes![filename] = this.mapText(edit[filename]);
-    }
-    return workspace;
-  }
-
-  private mapText(edit: ITextEdit[]): LServer.TextEdit[] {
-    const result: LServer.TextEdit[] = [];
-
-    for (const e of edit) {
-      const range = LServer.Range.create(
-        e.range.start.getRow() - 1,
-        e.range.start.getCol() - 1,
-        e.range.end.getRow() - 1,
-        e.range.end.getCol() - 1);
-
-      result.push({range, newText: e.newText});
-    }
-
-    return result;
   }
 
 }

@@ -22,6 +22,19 @@ export interface IEdit {
 
 export class EditHelper {
 
+  public static mergeList(fixes: IEdit[]): IEdit {
+    const results: IEdit = {};
+    for (const f of fixes) {
+      for (const filename in f) {
+        if (results[filename] === undefined) {
+          results[filename] = [];
+        }
+        results[filename] = results[filename].concat(f[filename]);
+      }
+    }
+    return results;
+  }
+
   public static merge(fix1: IEdit, fix2: IEdit): IEdit {
     const ret: IEdit = {};
 
