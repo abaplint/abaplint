@@ -45,10 +45,7 @@ export class Rename {
       return undefined;
     }
 
-    const start = cursor.token.getStart();
-    const end = cursor.token.getEnd();
-    const range = LServer.Range.create(start.getRow() - 1, start.getCol() - 1, end.getRow() - 1, end.getCol() - 1);
-
+    const range = LSPUtils.tokenToRange(cursor.token);
     const lookup = LSPLookup.lookup(cursor, this.reg, obj);
     if (lookup?.definitionId instanceof TypedIdentifier) {
       return {range, placeholder: cursor.token.getStr(), type: RenameType.Variable, file};
