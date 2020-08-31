@@ -67,7 +67,12 @@ export class BasicTypes {
       }
       return attr.getType();
     } else {
-      type = this.scope.findVariable(name)?.getType();
+      const found = this.scope.findVariable(name);
+      type = found?.getType();
+
+      if (found) {
+        this.scope.addReference(chain?.getFirstToken(), found, ReferenceType.TypeReference, this.filename);
+      }
 
       if (type instanceof TableType && node.getLastChild()?.get() instanceof Expressions.TableBody) {
         type = new TableType(type.getRowType(), false);

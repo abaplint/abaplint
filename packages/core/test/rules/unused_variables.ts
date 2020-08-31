@@ -383,4 +383,13 @@ ENDCLASS.`;
     expect(issues.length).to.equal(0);
   });
 
+  it("Variable used via LIKE typing", async () => {
+    const abap = `
+    DATA foo TYPE i.
+    DATA bar LIKE foo.
+    WRITE bar.`;
+    const issues = await runSingle(abap);
+    expect(issues.length).to.equal(0);
+  });
+
 });
