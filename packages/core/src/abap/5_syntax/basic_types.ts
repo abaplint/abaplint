@@ -290,6 +290,9 @@ export class BasicTypes {
       if (sub === undefined) {
         sub = node.findFirstExpression(Expressions.FormParamType);
       }
+      if (sub === undefined) {
+        sub = node.findFirstExpression(Expressions.TypeParam);
+      }
       found = this.resolveLikeName(sub);
 
       if (found && node.findDirectTokenByText("OCCURS")) {

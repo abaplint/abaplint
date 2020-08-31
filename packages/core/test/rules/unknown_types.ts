@@ -993,4 +993,23 @@ ENDCLASS.`;
     expect(issues.length).to.equal(0);
   });
 
+  it("METHOD with LIKE interface variable", () => {
+    const abap = `
+INTERFACE lif_bar.
+  DATA foo TYPE i.
+ENDINTERFACE.
+CLASS lcl_bar DEFINITION.
+  PUBLIC SECTION.
+    METHODS moo IMPORTING bar LIKE lif_bar=>foo OPTIONAL.
+ENDCLASS.
+CLASS lcl_bar IMPLEMENTATION.
+  METHOD moo.
+    WRITE bar.
+  ENDMETHOD.
+ENDCLASS.`;
+    let issues = runMulti([{filename: "zfoobar.prog.abap", contents: abap}]);
+    issues = issues.filter(i => i.getKey() === key);
+    expect(issues.length).to.equal(0);
+  });
+
 });
