@@ -35,7 +35,7 @@ describe("LSP, hover", () => {
     const reg = new Registry().addFile(file).parse();
     const hover = new Hover(reg).find(buildPosition(file, 0, 10));
     expect(hover).to.not.equal(undefined);
-    expect(hover!.value).to.contain("Resolved");
+    expect(hover!.value).to.contain("Type definition");
   });
 
   it("resolved, typed", () => {
@@ -170,6 +170,27 @@ ENDCLASS.`;
     const hover = new Hover(reg).find(buildPosition(file, 0, 10));
     expect(hover).to.not.equal(undefined);
     expect(hover?.value).to.contain("zif_interface");
+  });
+
+  it("data and interface name identical", () => {
+    const abap = `INTERFACE bar.
+ENDINTERFACE.
+DATA bar.`;
+    const file = new MemoryFile("zfoo.prog.abap", abap);
+    const reg = new Registry().addFile(file).parse();
+    const hover = new Hover(reg).find(buildPosition(file, 2, 6));
+    expect(hover).to.not.equal(undefined);
+    expect(hover?.value).to.not.contain("Interface");
+  });
+
+  it("TYPES with identical DATA name", () => {
+    const abap = `TYPES bar TYPE c.
+DATA bar.`;
+    const file = new MemoryFile("zfoo.prog.abap", abap);
+    const reg = new Registry().addFile(file).parse();
+    const hover = new Hover(reg).find(buildPosition(file, 0, 7));
+    expect(hover).to.not.equal(undefined);
+    expect(hover?.value).to.contain("Type definition");
   });
 
 });
