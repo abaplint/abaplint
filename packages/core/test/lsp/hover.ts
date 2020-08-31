@@ -193,4 +193,14 @@ DATA bar.`;
     expect(hover?.value).to.contain("Type definition");
   });
 
+  it("Hover read reference", () => {
+    const abap = `DATA foo TYPE i.
+WRITE foo.`;
+    const file = new MemoryFile("zfoo.prog.abap", abap);
+    const reg = new Registry().addFile(file).parse();
+    const hover = new Hover(reg).find(buildPosition(file, 1, 7));
+    expect(hover).to.not.equal(undefined);
+    expect(hover?.value).to.contain("Type: ```i```");
+  });
+
 });

@@ -115,14 +115,18 @@ export class LSPLookup {
   }
 
   private static referenceHover(ref: IReference, scope: ISpaghettiScopeNode): string {
-    let ret = "Resolved Reference: " + ref.referenceType + " " + ref.resolved.getName() + "\n\n";
+    let ret = "Resolved Reference: " + ref.referenceType + " " + ref.resolved.getName();
 
     if (ref.referenceType === ReferenceType.MethodReference && ref.extra?.className) {
-      ret = ret + this.hoverMethod(ref.position.getName(), scope.findClassDefinition(ref.extra?.className));
+      ret += "\n\n" + this.hoverMethod(ref.position.getName(), scope.findClassDefinition(ref.extra?.className));
+    }
+
+    if (ref.resolved instanceof TypedIdentifier) {
+      ret += "\n\n" + this.dumpType(ref.resolved);
     }
 
     if (ref.extra !== undefined && Object.keys(ref.extra).length > 0) {
-      ret = ret + "\n\nExtra: " + JSON.stringify(ref.extra);
+      ret += "\n\nExtra: " + JSON.stringify(ref.extra);
     }
 
     return ret;
