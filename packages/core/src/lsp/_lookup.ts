@@ -66,19 +66,19 @@ export class LSPLookup {
 
     const type = bottomScope.findType(cursor.token.getStr());
     if (type instanceof TypedIdentifier && type.getStart().equals(cursor.token.getStart())) {
-      const value = "Type definition, " + cursor.token.getStr();
-      return {hover: value, definition: undefined, scope: bottomScope};
+      const hover = "Type definition, " + cursor.token.getStr();
+      return {hover, definition: undefined, scope: bottomScope};
     }
 
     const variable = bottomScope.findVariable(cursor.token.getStr());
     if (variable instanceof TypedIdentifier && variable.getStart().equals(cursor.token.getStart())) {
-      const value = "Variable definition\n\n" + this.dumpType(variable);
+      const hover = "Variable definition\n\n" + this.dumpType(variable);
 
       let location: LServer.Location | undefined = undefined;
       if (variable.getMeta().includes(IdentifierMeta.BuiltIn) === false) {
         location = LSPUtils.identiferToLocation(variable);
       }
-      return {hover: value, definition: location, implementation: location, definitionId: variable, scope: bottomScope};
+      return {hover, definition: location, implementation: location, definitionId: variable, scope: bottomScope};
     }
 
     const ref = this.searchReferences(bottomScope, cursor.token);
