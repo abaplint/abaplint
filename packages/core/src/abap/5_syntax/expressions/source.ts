@@ -55,6 +55,7 @@ export class Source {
           new ConvBody().runSyntax(node.findDirectExpression(Expressions.ConvBody), scope, filename);
           return this.value(node, scope, filename, targetType, undefined);
         case "CORRESPONDING":
+        case "FILTER":
         case "EXACT":
           return this.value(node, scope, filename, targetType, undefined);
         case "VALUE":
