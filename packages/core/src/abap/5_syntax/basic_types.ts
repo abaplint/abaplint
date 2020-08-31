@@ -20,7 +20,7 @@ export class BasicTypes {
     this.scope = scope;
   }
 
-  public resolveLikeName(node: ExpressionNode | StatementNode | undefined): AbstractType | undefined {
+  public resolveLikeName(node: ExpressionNode | StatementNode | undefined, headerLogic = true): AbstractType | undefined {
     if (node === undefined) {
       return undefined;
     }
@@ -76,7 +76,7 @@ export class BasicTypes {
 
       if (type instanceof TableType && node.getLastChild()?.get() instanceof Expressions.TableBody) {
         type = new TableType(type.getRowType(), false);
-      } else if (type instanceof TableType && type.isWithHeader()) {
+      } else if (type instanceof TableType && type.isWithHeader() && headerLogic === true) {
         type = type.getRowType();
       } else if (type === undefined) {
         type = this.scope.getDDIC().lookupNoVoid(name);
@@ -228,7 +228,7 @@ export class BasicTypes {
     let found: AbstractType | undefined = undefined;
     if (text.startsWith("LIKE LINE OF ")) {
       const name = node.findFirstExpression(Expressions.FieldChain)?.concatTokens();
-      const type = this.resolveLikeName(node.findFirstExpression(Expressions.Type));
+      const type = this.resolveLikeName(node.findFirstExpression(Expressions.Type), false);
 
       if (type === undefined) {
         return new Types.UnknownType("Type error, could not resolve \"" + name + "\", parseType");

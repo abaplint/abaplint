@@ -1012,7 +1012,7 @@ ENDCLASS.`;
     expect(issues.length).to.equal(0);
   });
 
-  it.skip("BEGIN with LIKE LINE OF", () => {
+  it("BEGIN with LIKE LINE OF", () => {
     const abap = `
 DATA: BEGIN OF lt_char_file OCCURS 0,
         zstring(72),
