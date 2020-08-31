@@ -2,7 +2,7 @@ import * as Expressions from "../../2_statements/expressions";
 import {StatementNode} from "../../nodes";
 import {CurrentScope} from "../_current_scope";
 import {TypedIdentifier} from "../../types/_typed_identifier";
-import {UnknownType, TableType, StructureType, CharacterType} from "../../types/basic";
+import {UnknownType, TableType, StructureType, CharacterType, VoidType} from "../../types/basic";
 import {BasicTypes} from "../basic_types";
 import {Dynamic} from "../expressions/dynamic";
 
@@ -24,7 +24,11 @@ export class SelectOption {
             length += c.type.getLength();
           }
         }
-        found = new CharacterType(length);
+        if (length === 0) {
+          found = new VoidType("Selectoption, fallback");
+        } else {
+          found = new CharacterType(length);
+        }
       }
 
       const stru = new StructureType([

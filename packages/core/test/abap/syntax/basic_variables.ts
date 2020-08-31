@@ -1544,4 +1544,14 @@ DATA(sdf) = ref->*-int.`;
     expect((type as Basic.CharacterType).getLength()).to.equal(15);
   });
 
+  it("Basic FILTER", () => {
+    const abap = `
+    TYPES ty_tab TYPE SORTED TABLE OF i WITH NON-UNIQUE DEFAULT KEY.
+    DATA table TYPE ty_tab.
+    DATA(res) = FILTER ty_tab( table WHERE table_line = 1 ).`;
+    const identifier = resolveVariable(abap, "res");
+    const type = identifier?.getType();
+    expect(type).to.be.instanceof(Basic.TableType);
+  });
+
 });

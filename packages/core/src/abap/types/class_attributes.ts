@@ -130,16 +130,19 @@ export class Attributes implements IAttributes {
           const found = new DataStructure().runSyntax(c, scope, this.filename);
           if (found !== undefined) {
             this.instance.push(new ClassAttribute(found, visibility));
+            scope.addIdentifier(found);
           }
         } else if (ctyp instanceof Structures.ClassData) {
           const found = new ClassDataStructure().runSyntax(c, scope, this.filename);
           if (found !== undefined) {
             this.static.push(new ClassAttribute(found, visibility));
+            scope.addIdentifier(found);
           }
         } else if (ctyp instanceof Structures.Constants) {
           const found = new Constants().runSyntax(c, scope, this.filename);
           if (found !== undefined) {
             this.constants.push(new ClassConstant(found, visibility, "todo"));
+            scope.addIdentifier(found);
           }
         } else if (ctyp instanceof Structures.TypeEnum) {
           const enums = new TypeEnum().runSyntax(c, scope, this.filename);

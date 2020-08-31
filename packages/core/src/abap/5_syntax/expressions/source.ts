@@ -20,10 +20,14 @@ import {ConvBody} from "./conv_body";
 
 export class Source {
   public runSyntax(
-    node: ExpressionNode,
+    node: ExpressionNode | undefined,
     scope: CurrentScope,
     filename: string,
     targetType?: AbstractType): AbstractType | undefined {
+
+    if (node === undefined) {
+      return undefined;
+    }
 
     const children = node.getChildren().slice();
     let first = children.shift();
@@ -54,7 +58,11 @@ export class Source {
         case "CONV":
           new ConvBody().runSyntax(node.findDirectExpression(Expressions.ConvBody), scope, filename);
           return this.value(node, scope, filename, targetType, undefined);
+        case "REF":
+          new Source().runSyntax(node.findDirectExpression(Expressions.Source), scope, filename);
+          return this.value(node, scope, filename, targetType, undefined);
         case "CORRESPONDING":
+        case "FILTER":
         case "EXACT":
           return this.value(node, scope, filename, targetType, undefined);
         case "VALUE":

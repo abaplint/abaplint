@@ -1026,4 +1026,34 @@ DATA: line LIKE LINE OF lt_char_file,
     expect(issues.length).to.equal(0);
   });
 
+  it("LIKE types", () => {
+    const abap = `
+CLASS lcl_bar DEFINITION.
+  PRIVATE SECTION.
+    DATA: BEGIN OF _geometry,
+            type        TYPE string,
+          END OF _geometry.
+    DATA: BEGIN OF _linestring,
+            type       TYPE string,
+            geometry   LIKE _geometry,
+          END OF _linestring.
+ENDCLASS.
+CLASS lcl_bar IMPLEMENTATION.
+ENDCLASS.`;
+    let issues = runMulti([{filename: "zfoobar.prog.abap", contents: abap}]);
+    issues = issues.filter(i => i.getKey() === key);
+    expect(issues.length).to.equal(0);
+  });
+
+  it("INTERFACE, local type reference", () => {
+    const abap = `
+INTERFACE zif_abapgit_auth.
+  TYPES ty_authorization TYPE string.
+  DATA foo TYPE ty_authorization.
+ENDINTERFACE.`;
+    let issues = runMulti([{filename: "zfoobar.prog.abap", contents: abap}]);
+    issues = issues.filter(i => i.getKey() === key);
+    expect(issues.length).to.equal(0);
+  });
+
 });

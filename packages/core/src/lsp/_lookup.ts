@@ -13,6 +13,7 @@ import {Identifier} from "../abap/4_file_information/_identifier";
 import {Token} from "../abap/1_lexer/tokens/_token";
 import {IReference, ReferenceType} from "../abap/5_syntax/_reference";
 import {IClassDefinition} from "../abap/types/_class_definition";
+import {BuiltIn} from "../abap/5_syntax/_builtin";
 
 export interface LSPLookupResult {
   hover: string | undefined;                     // in markdown
@@ -30,14 +31,15 @@ export class LSPLookup {
       const found = this.ABAPFileResult(inc);
       return {hover: "Include", definition: found, implementation: found};
     }
-    const bottomScope = new SyntaxLogic(reg, obj).run().spaghetti.lookupPosition(cursor.identifier.getStart(),
-                                                                                 cursor.identifier.getFilename());
+    const bottomScope = new SyntaxLogic(reg, obj).run().spaghetti.lookupPosition(
+      cursor.identifier.getStart(),
+      cursor.identifier.getFilename());
     if (bottomScope === undefined) {
       return undefined;
     }
 
     const clas = bottomScope.findClassDefinition(cursor.token.getStr());
-    if (clas) {
+    if (clas && clas.getStart().equals(cursor.token.getStart())) {
       const found = LSPUtils.identiferToLocation(clas);
       return {hover: "Class definition, " + cursor.token.getStr(),
         definition: found,
@@ -47,7 +49,7 @@ export class LSPLookup {
     }
 
     const intf = bottomScope.findInterfaceDefinition(cursor.token.getStr());
-    if (intf) {
+    if (intf && intf.getStart().equals(cursor.token.getStart())) {
       const found = LSPUtils.identiferToLocation(intf);
       return {hover: "Interface definition, " + cursor.token.getStr(),
         definition: found,
@@ -62,43 +64,31 @@ export class LSPLookup {
       return {hover: "Call FORM", definition: found, implementation: found, scope: bottomScope};
     }
 
+    const type = bottomScope.findType(cursor.token.getStr());
+    if (type instanceof TypedIdentifier && type.getStart().equals(cursor.token.getStart())) {
+      const hover = "Type definition, " + cursor.token.getStr();
+      return {hover, definition: undefined, scope: bottomScope};
+    }
+
     const variable = bottomScope.findVariable(cursor.token.getStr());
-    if (variable instanceof TypedIdentifier) {
-      let value = "Resolved variable, Typed\n\nType: " + variable.getType().toText(0);
-      if (variable.getValue()) {
-        value = value + "\n\nValue: ```" + variable.getValue() + "```";
-      }
-      if (variable.getMeta().length > 0) {
-        value = value + "\n\nMeta: " + variable.getMeta().join(", ");
-      }
-      if (variable.getType().containsVoid() === true) {
-        value = value + "\n\nContains void types";
-      }
-      if (variable.getType().isGeneric() === true) {
-        value = value + "\n\nIs generic type";
-      }
-      let location = undefined;
+    if (variable instanceof TypedIdentifier && variable.getStart().equals(cursor.token.getStart())) {
+      const hover = "Variable definition\n\n" + this.dumpType(variable);
+
+      let location: LServer.Location | undefined = undefined;
       if (variable.getMeta().includes(IdentifierMeta.BuiltIn) === false) {
         location = LSPUtils.identiferToLocation(variable);
       }
-      return {hover: value, definition: location, implementation: location, definitionId: variable, scope: bottomScope};
+      return {hover, definition: location, implementation: location, definitionId: variable, scope: bottomScope};
     }
 
     const ref = this.searchReferences(bottomScope, cursor.token);
     if (ref !== undefined) {
       const value = this.referenceHover(ref, bottomScope);
-      let definition = undefined;
-      if (ref.referenceType !== ReferenceType.BuiltinMethodReference) {
-        definition = LSPUtils.identiferToLocation(ref.resolved);
+      let definition: LServer.Location | undefined = LSPUtils.identiferToLocation(ref.resolved);
+      if (definition.uri === BuiltIn.filename) {
+        definition = undefined;
       }
       return {hover: value, definition, definitionId: ref.resolved, scope: bottomScope};
-    }
-
-    // todo, delete this part, it should be handled via TypeReferences instead
-    const type = bottomScope.findType(cursor.token.getStr());
-    if (type instanceof TypedIdentifier) {
-      const value = "Resolved type";
-      return {hover: value, definition: undefined, scope: bottomScope};
     }
 
     return undefined;
@@ -106,15 +96,37 @@ export class LSPLookup {
 
 ////////////////////////////////////////////
 
+  private static dumpType(variable: TypedIdentifier): string {
+    let value = "Type: " + variable.getType().toText(0);
+    if (variable.getValue()) {
+      value = value + "\n\nValue: ```" + variable.getValue() + "```";
+    }
+    if (variable.getMeta().length > 0) {
+      value = value + "\n\nMeta: " + variable.getMeta().join(", ");
+    }
+    if (variable.getType().containsVoid() === true) {
+      value = value + "\n\nContains void types";
+    }
+    if (variable.getType().isGeneric() === true) {
+      value = value + "\n\nIs generic type";
+    }
+
+    return value;
+  }
+
   private static referenceHover(ref: IReference, scope: ISpaghettiScopeNode): string {
-    let ret = "Resolved Reference: " + ref.referenceType + " " + ref.resolved.getName() + "\n\n";
+    let ret = "Resolved Reference: " + ref.referenceType + " " + ref.resolved.getName();
 
     if (ref.referenceType === ReferenceType.MethodReference && ref.extra?.className) {
-      ret = ret + this.hoverMethod(ref.position.getName(), scope.findClassDefinition(ref.extra?.className));
+      ret += "\n\n" + this.hoverMethod(ref.position.getName(), scope.findClassDefinition(ref.extra?.className));
+    }
+
+    if (ref.resolved instanceof TypedIdentifier) {
+      ret += "\n\n" + this.dumpType(ref.resolved);
     }
 
     if (ref.extra !== undefined && Object.keys(ref.extra).length > 0) {
-      ret = ret + "\n\nExtra: " + JSON.stringify(ref.extra);
+      ret += "\n\nExtra: " + JSON.stringify(ref.extra);
     }
 
     return ret;
