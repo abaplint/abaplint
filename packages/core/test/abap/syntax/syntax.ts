@@ -2765,6 +2765,35 @@ ENDLOOP.`;
     expect(issues.length).to.equals(0);
   });
 
+  it("LOOP AT simple select option", () => {
+    const abap = `
+  DATA var TYPE i.
+  SELECT-OPTIONS foo FOR var.
+
+  LOOP AT foo.
+    WRITE foo-low.
+  ENDLOOP.`;
+    const issues = runProgram(abap);
+    expect(issues.length).to.equals(0);
+  });
+
+  it("LOOP AT select option", () => {
+    const abap = `
+TYPES: BEGIN OF ty_type,
+         fieldname TYPE c LENGTH 10,
+       END OF ty_type.
+
+DATA bar TYPE STANDARD TABLE OF ty_type WITH HEADER LINE.
+
+SELECT-OPTIONS foo FOR bar NO INTERVALS LOWER CASE.
+
+LOOP AT foo.
+  WRITE foo-low.
+ENDLOOP.`;
+    const issues = runProgram(abap);
+    expect(issues.length).to.equals(0);
+  });
+
 // todo, static method cannot access instance attributes
 // todo, can a private method access protected attributes?
 // todo, readonly fields(constants + enums + attributes flagged read-only)

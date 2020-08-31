@@ -517,7 +517,7 @@ SELECT-OPTIONS s_dyn FOR rsdswhere-line.`;
     expect(identifier).to.not.equal(undefined);
     expect(identifier!.getType()).to.be.instanceof(Basic.TableType);
     const rowType = (identifier!.getType() as Basic.TableType).getRowType();
-    expect(rowType).to.be.instanceof(Basic.VoidType);
+    expect(rowType).to.be.instanceof(Basic.StructureType);
   });
 
   it("LIKE LINE OF sub field", () => {
