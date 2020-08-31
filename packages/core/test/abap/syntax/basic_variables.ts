@@ -517,7 +517,7 @@ SELECT-OPTIONS s_dyn FOR rsdswhere-line.`;
     expect(identifier).to.not.equal(undefined);
     expect(identifier!.getType()).to.be.instanceof(Basic.TableType);
     const rowType = (identifier!.getType() as Basic.TableType).getRowType();
-    expect(rowType).to.be.instanceof(Basic.VoidType);
+    expect(rowType).to.be.instanceof(Basic.StructureType);
   });
 
   it("LIKE LINE OF sub field", () => {
@@ -1523,6 +1523,25 @@ DATA(sdf) = ref->*-int.`;
     const abap = `DATA(sdf) = NEW abap_bool( abap_true ).`;
     const identifier = resolveVariable(abap, "sdf");
     expect(identifier?.getType()).to.be.instanceof(Basic.DataReference);
+  });
+
+  it("DATA like table body", () => {
+    const abap = `
+    DATA int TYPE i.
+    RANGES foo FOR int.
+    DATA bar LIKE foo[].`;
+    const identifier = resolveVariable(abap, "bar");
+    const type = identifier?.getType();
+    expect(type).to.be.instanceof(Basic.TableType);
+    expect((type as Basic.TableType).isWithHeader()).to.equal(false);
+  });
+
+  it("DATA with old style length", () => {
+    const abap = `DATA foo(15).`;
+    const identifier = resolveVariable(abap, "foo");
+    const type = identifier?.getType();
+    expect(type).to.be.instanceof(Basic.CharacterType);
+    expect((type as Basic.CharacterType).getLength()).to.equal(15);
   });
 
 });

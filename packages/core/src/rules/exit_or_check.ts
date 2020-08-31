@@ -28,10 +28,6 @@ https://github.com/SAP/styleguides/blob/master/clean-abap/CleanABAP.md#check-vs-
     };
   }
 
-  private getMessage(): string {
-    return "EXIT and CHECK are not allowed outside of loops.";
-  }
-
   public getConfig() {
     return this.conf;
   }
@@ -56,10 +52,13 @@ https://github.com/SAP/styleguides/blob/master/clean-abap/CleanABAP.md#check-vs-
           || statement.get() instanceof Statements.EndSelect
           || statement.get() instanceof Statements.EndDo) {
         stack.pop();
-      } else if ((statement.get() instanceof Statements.Check
-          || statement.get() instanceof Statements.Exit)
-          && stack.length === 0) {
-        const issue = Issue.atStatement(file, statement, this.getMessage(), this.getMetadata().key);
+      } else if (statement.get() instanceof Statements.Check && stack.length === 0) {
+        const message = "CHECK is not allowed outside of loops";
+        const issue = Issue.atStatement(file, statement, message, this.getMetadata().key);
+        issues.push(issue);
+      } else if (statement.get() instanceof Statements.Exit && stack.length === 0) {
+        const message = "EXIT is not allowed outside of loops";
+        const issue = Issue.atStatement(file, statement, message, this.getMetadata().key);
         issues.push(issue);
       }
     }

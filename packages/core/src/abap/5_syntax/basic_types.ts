@@ -20,7 +20,7 @@ export class BasicTypes {
     this.scope = scope;
   }
 
-  public resolveLikeName(node: ExpressionNode | StatementNode | undefined): AbstractType | undefined {
+  public resolveLikeName(node: ExpressionNode | StatementNode | undefined, headerLogic = true): AbstractType | undefined {
     if (node === undefined) {
       return undefined;
     }
@@ -67,8 +67,16 @@ export class BasicTypes {
       }
       return attr.getType();
     } else {
-      type = this.scope.findVariable(name)?.getType();
-      if (type instanceof TableType && type.isWithHeader()) {
+      const found = this.scope.findVariable(name);
+      type = found?.getType();
+
+      if (found) {
+        this.scope.addReference(chain?.getFirstToken(), found, ReferenceType.TypeReference, this.filename);
+      }
+
+      if (type instanceof TableType && node.getLastChild()?.get() instanceof Expressions.TableBody) {
+        type = new TableType(type.getRowType(), false);
+      } else if (type instanceof TableType && type.isWithHeader() && headerLogic === true) {
         type = type.getRowType();
       } else if (type === undefined) {
         type = this.scope.getDDIC().lookupNoVoid(name);
@@ -220,7 +228,7 @@ export class BasicTypes {
     let found: AbstractType | undefined = undefined;
     if (text.startsWith("LIKE LINE OF ")) {
       const name = node.findFirstExpression(Expressions.FieldChain)?.concatTokens();
-      const type = this.resolveLikeName(node.findFirstExpression(Expressions.Type));
+      const type = this.resolveLikeName(node.findFirstExpression(Expressions.Type), false);
 
       if (type === undefined) {
         return new Types.UnknownType("Type error, could not resolve \"" + name + "\", parseType");
@@ -278,7 +286,13 @@ export class BasicTypes {
       ]);
       return new Types.TableType(structure, node.concatTokens().toUpperCase().includes("WITH HEADER LINE"));
     } else if (text.startsWith("LIKE ")) {
-      const sub = node.findFirstExpression(Expressions.FieldChain);
+      let sub = node.findFirstExpression(Expressions.Type);
+      if (sub === undefined) {
+        sub = node.findFirstExpression(Expressions.FormParamType);
+      }
+      if (sub === undefined) {
+        sub = node.findFirstExpression(Expressions.TypeParam);
+      }
       found = this.resolveLikeName(sub);
 
       if (found && node.findDirectTokenByText("OCCURS")) {
@@ -300,7 +314,17 @@ export class BasicTypes {
       found = this.resolveTypeName(typename, this.findLength(node));
 
       if (found === undefined && typename === undefined) {
-        found = new Types.CharacterType(1); // fallback
+        let length = 1;
+
+        const len = node.findDirectExpression(Expressions.ConstantFieldLength);
+        if (len) {
+          const int = len.findDirectExpression(Expressions.Integer);
+          if (int) {
+            length = parseInt(int.concatTokens(), 10);
+          }
+        }
+
+        found = new Types.CharacterType(length); // fallback
       }
 
       if (found && node.findDirectTokenByText("OCCURS")) {
