@@ -14,9 +14,9 @@ jobs:
         node-version: '12.x'
     - name: Run npm steps
       run: |
+        npm install
         cd packages
         cd core
-        npm install
         npm run coverage
     - uses: codecov/codecov-action@v1
       if: github.ref == 'refs/heads/master' && github.repository == 'abaplint/abaplint'
