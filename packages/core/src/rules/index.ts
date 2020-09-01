@@ -31,7 +31,7 @@ export * from "./empty_structure";
 export * from "./exit_or_check";
 export * from "./exporting";
 export * from "./forbidden_identifier";
-export * from "./forbidden_pseduo_and_pragma";
+export * from "./forbidden_pseudo_and_pragma";
 export * from "./forbidden_void_type";
 export * from "./form_tables_obsolete";
 export * from "./fully_type_constants";

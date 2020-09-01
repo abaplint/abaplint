@@ -1184,7 +1184,7 @@
               ],
               "description": "Forbid use of specified identifiers, list of regex.\nhttps://rules.abaplint.org/forbidden_identifier"
             },
-            "forbidden_pseduo_and_pragma": {
+            "forbidden_pseudo_and_pragma": {
               "anyOf": [
                 {
                   "$ref": "#/definitions/ForbiddenPseudoAndPragmaConf"
@@ -1193,7 +1193,7 @@
                   "type": "boolean"
                 }
               ],
-              "description": "Checks for unwanted pseudo comments and pragma\nTags: Quickfix\nhttps://rules.abaplint.org/forbidden_pseduo_and_pragma"
+              "description": "Checks for unwanted pseudo comments and pragma\nTags: Quickfix\nhttps://rules.abaplint.org/forbidden_pseudo_and_pragma"
             },
             "forbidden_void_type": {
               "anyOf": [
