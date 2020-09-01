@@ -66,8 +66,9 @@ export class LSPLookup {
 
     const type = bottomScope.findType(cursor.token.getStr());
     if (type instanceof TypedIdentifier && type.getStart().equals(cursor.token.getStart())) {
+      const found = LSPUtils.identiferToLocation(type);
       const hover = "Type definition, " + cursor.token.getStr();
-      return {hover, definition: undefined, scope: bottomScope};
+      return {hover, definition: found, definitionId: type, scope: bottomScope};
     }
 
     const variable = bottomScope.findVariable(cursor.token.getStr());

@@ -203,4 +203,15 @@ WRITE foo.`;
     expect(hover?.value).to.contain("Type: ```i```");
   });
 
+  it("Hover constant in interface", () => {
+    const abap = `INTERFACE lif_bar.
+  CONSTANTS foo TYPE c VALUE '1'.
+ENDINTERFACE.`;
+    const file = new MemoryFile("zfoo.prog.abap", abap);
+    const reg = new Registry().addFile(file).parse();
+    const hover = new Hover(reg).find(buildPosition(file, 1, 13));
+    expect(hover).to.not.equal(undefined);
+    expect(hover?.value).to.contain("read_only");
+  });
+
 });

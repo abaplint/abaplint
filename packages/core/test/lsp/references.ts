@@ -94,4 +94,25 @@ WRITE abap_false.`);
     expect(found.length).to.equal(1);
   });
 
+  it("find references for type", async () => {
+    const file = new MemoryFile("foobar.prog.abap", `TYPES ty_type TYPE c LENGTH 6.
+    DATA foo TYPE ty_type.`);
+    const reg = new Registry().addFile(file);
+    await reg.parseAsync();
+    const found = new References(reg).references(buildPosition(file, 0, 7));
+    expect(found.length).to.equal(1);
+  });
+
+  it("find references for constant inside interface definition", async () => {
+    const file = new MemoryFile("foobar.prog.abap", `INTERFACE lif_bar.
+  CONSTANTS foo TYPE c VALUE '1'.
+ENDINTERFACE.
+DATA lv_string TYPE string.
+REPLACE ALL OCCURRENCES OF lif_bar=>foo IN lv_string WITH '2'.`);
+    const reg = new Registry().addFile(file);
+    await reg.parseAsync();
+    const found = new References(reg).references(buildPosition(file, 1, 13));
+    expect(found.length).to.equal(2);
+  });
+
 });

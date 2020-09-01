@@ -158,24 +158,25 @@ export class BasicTypes {
       if (length) {
         return new Types.CharacterType(length);
       } else {
-        return new Types.UnknownType("C, unable to parse length");
+        return new Types.CharacterType(1);
       }
     } else if (chainText === "X") {
       if (length) {
         return new Types.HexType(length);
       } else {
-        return new Types.UnknownType("X, unable to parse length");
+        return new Types.HexType(1);
       }
     } else if (chainText === "N") {
       if (length) {
         return new Types.NumericType(length);
       } else {
-        return new Types.UnknownType("N, unable to parse length");
+        return new Types.NumericType(1);
       }
     }
 
     const typ = this.scope.findType(chainText);
     if (typ) {
+      this.scope.addReference(typeName.getFirstToken(), typ, ReferenceType.TypeReference, this.filename);
       return typ.getType();
     }
 
@@ -337,6 +338,7 @@ export class BasicTypes {
 
 /////////////////////
 
+  // todo, rewrite this method
   private resolveTypeChain(expr: ExpressionNode): AbstractType | undefined {
     const chainText = expr.concatTokens().toUpperCase();
 
@@ -352,7 +354,8 @@ export class BasicTypes {
       rest = split[1];
     }
     const subs = rest.split("-");
-    let found: AbstractType | undefined = undefined;
+    let foundType: AbstractType | undefined = undefined;
+
 
     if (className) {
       const split = chainText.split("=>");
@@ -362,8 +365,8 @@ export class BasicTypes {
       if ((this.scope.getType() === ScopeType.Interface
           || this.scope.getType() === ScopeType.ClassDefinition)
           && this.scope.getName().toUpperCase() === className.toUpperCase()) {
-        found = this.scope.findType(subs[0])?.getType();
-        if (found === undefined) {
+        foundType = this.scope.findType(subs[0])?.getType();
+        if (foundType === undefined) {
           return new Types.UnknownType("Could not resolve type " + chainText);
         }
       } else {
@@ -377,37 +380,40 @@ export class BasicTypes {
         this.scope.addReference(expr.getFirstToken(), obj, ReferenceType.ObjectOrientedReference, this.filename);
 
         const byName = new ObjectOriented(this.scope).searchTypeName(obj, subs[0]);
-        found = byName?.getType();
-        if (byName === undefined || found === undefined) {
+        foundType = byName?.getType();
+        if (byName === undefined || foundType === undefined) {
           return new Types.UnknownType(subs[0] + " not found in class or interface");
         }
         this.scope.addReference(expr.getTokens()[2], byName, ReferenceType.TypeReference, this.filename);
 
       }
     } else {
-      found = this.scope.findType(subs[0])?.getType();
-      if (found === undefined) {
-        found = this.scope.getDDIC().lookupTableOrView(subs[0]);
+      const found = this.scope.findType(subs[0]);
+      foundType = found?.getType();
+      if (foundType === undefined) {
+        foundType = this.scope.getDDIC().lookupTableOrView(subs[0]);
+      } else {
+        this.scope.addReference(expr.getFirstToken(), found, ReferenceType.TypeReference, this.filename);
       }
-      if (found === undefined && this.scope.getDDIC().inErrorNamespace(subs[0]) === false) {
+      if (foundType === undefined && this.scope.getDDIC().inErrorNamespace(subs[0]) === false) {
         return new Types.VoidType(subs[0]);
-      } else if (found instanceof Types.VoidType) {
-        return found;
-      } else if (found === undefined) {
+      } else if (foundType instanceof Types.VoidType) {
+        return foundType;
+      } else if (foundType === undefined) {
         return new Types.UnknownType("Unknown type " + subs[0]);
       }
     }
 
     subs.shift();
     while (subs.length > 0) {
-      if (!(found instanceof Types.StructureType)) {
+      if (!(foundType instanceof Types.StructureType)) {
         return new Types.UnknownType("Not a structured type");
       }
-      found = found.getComponentByName(subs[0]);
+      foundType = foundType.getComponentByName(subs[0]);
       subs.shift();
     }
 
-    return found;
+    return foundType;
   }
 
   private resolveConstantValue(expr: ExpressionNode): string | undefined {

@@ -24,8 +24,8 @@ export interface IRegistry {
 
   // object operations
   getObjects(): Generator<IObject, void, undefined>;
-    /** Get number of objects in the registry, excluding dependencies */
-  getObjectCount(): number;
+    /** Get number of objects in the registry */
+  getObjectCount(skipDependencies?: boolean): number;
   getFirstObject(): IObject | undefined;
   getObject(type: string | undefined, name: string): IObject | undefined;
 

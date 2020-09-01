@@ -1,0 +1,25 @@
+name: Coverage
+
+on: [push]
+
+jobs:
+  coverage:
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v1
+      with:
+        fetch-depth: 1
+    - uses: actions/setup-node@v1
+      with:
+        node-version: '12.x'
+    - name: Run npm steps
+      run: |
+        npm install
+        cd packages
+        cd core
+        npm run coverage
+    - uses: codecov/codecov-action@v1
+      if: github.ref == 'refs/heads/master' && github.repository == 'abaplint/abaplint'
+      with:
+        token: ${{secrets.CODECOV_TOKEN}}
+        file: ./coverage/coverage-final.json

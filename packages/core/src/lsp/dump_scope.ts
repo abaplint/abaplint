@@ -44,7 +44,7 @@ export class DumpScope {
 
   private static dumpNode(node: ISpaghettiScopeNode, indent: number): string {
     let ret = "";
-    const sident = "&nbsp".repeat(indent * 2);
+    const sident = "&nbsp;".repeat(indent * 2);
 
     if (node.getData().types.length === 0) {
       ret = ret + sident + "0 type definitions<br>";
@@ -82,6 +82,9 @@ export class DumpScope {
     ret += sident + node.getData().idefs.length + " interface definitions<br>";
     ret += sident + node.getData().forms.length + " form definitions<br>";
     ret += sident + node.getData().references.length + " references<br>";
+    for (const r of node.getData().references) {
+      ret += sident + "&nbsp;&nbsp;" + r.referenceType + ", line " + r.position.getStart().getRow() + "<br>";
+    }
 
     return ret;
   }
