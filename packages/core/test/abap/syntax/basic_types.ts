@@ -121,4 +121,12 @@ describe("Syntax - Basic Types", () => {
     expect(type!.getType()).to.be.instanceof(Basic.VoidType);
   });
 
+  it("Table of 1 character hex", () => {
+    const abap = `TYPES ty_byte_t TYPE STANDARD TABLE OF x WITH EMPTY KEY.`;
+    const type = resolveType(abap, "ty_byte_t")?.getType();
+    expect(type).to.be.instanceof(Basic.TableType);
+    const tab = type as Basic.TableType;
+    expect(tab.getRowType()).to.be.instanceof(Basic.HexType);
+  });
+
 });

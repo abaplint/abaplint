@@ -158,19 +158,19 @@ export class BasicTypes {
       if (length) {
         return new Types.CharacterType(length);
       } else {
-        return new Types.UnknownType("C, unable to parse length");
+        return new Types.CharacterType(1);
       }
     } else if (chainText === "X") {
       if (length) {
         return new Types.HexType(length);
       } else {
-        return new Types.UnknownType("X, unable to parse length");
+        return new Types.HexType(1);
       }
     } else if (chainText === "N") {
       if (length) {
         return new Types.NumericType(length);
       } else {
-        return new Types.UnknownType("N, unable to parse length");
+        return new Types.NumericType(1);
       }
     }
 
