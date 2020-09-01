@@ -163,6 +163,7 @@ export class Attributes implements IAttributes {
           const found = new ConstantStatement().runSyntax(c, scope, this.filename);
           if (found) {
             this.constants.push(new ClassConstant(found, visibility, "todo"));
+            scope.addIdentifier(found);
           }
         }
       }
