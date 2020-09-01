@@ -63,4 +63,9 @@ describe("Rule: allowed_object_naming", () => {
     expect(issues.length).to.equal(0);
   });
 
+  it("MSAG, okay", async () => {
+    const issues = await findIssues("%3e6.msag.xml");
+    expect(issues.length).to.equal(0);
+  });
+
 });
