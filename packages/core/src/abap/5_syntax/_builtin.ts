@@ -109,7 +109,7 @@ export class BuiltIn {
     ret.push({name: "CHARLEN", mandatory: {"val": new StringType()}, return: new IntegerType()});
     ret.push({name: "CONCAT_LINES_OF", mandatory: {"table": new StringType()}, optional: {"sep": new StringType()}, return: new StringType()});
     ret.push({name: "CONDENSE", mandatory: {"val": new StringType()}, optional: {"del": new StringType()}, return: new StringType()});
-    ret.push({name: "CONTAINS", mandatory: {"val": new StringType(), "sub": new StringType()}, return: new CharacterType(1)});
+    ret.push({name: "CONTAINS", mandatory: {"val": new StringType()}, optional: {"sub": new StringType(), "regex": new StringType()}, return: new CharacterType(1)});
     ret.push({name: "COS", mandatory: {"val": new FloatType()}, return: new IntegerType()});
     ret.push({name: "ESCAPE", mandatory: {"val": new StringType(), "format": new StringType()}, return: new StringType()});
     ret.push({name: "FIND", mandatory: {"val": new StringType(), "sub": new StringType(), "regex": new StringType(), "off": new IntegerType(), "case": new CharacterType(1)}, return: new StringType()});

@@ -2809,6 +2809,14 @@ ENDLOOP.`;
     expect(issues.length).to.equals(0);
   });
 
+  it("contains() with regex", () => {
+    const abap = `
+    IF contains( val = 'a' regex = 'a' ).
+    ENDIF.`;
+    const issues = runProgram(abap);
+    expect(issues.length).to.equals(0);
+  });
+
 // todo, static method cannot access instance attributes
 // todo, can a private method access protected attributes?
 // todo, readonly fields(constants + enums + attributes flagged read-only)
