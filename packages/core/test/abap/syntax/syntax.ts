@@ -2798,12 +2798,9 @@ ENDLOOP.`;
     const abap = `
     DATA int TYPE i.
     RANGES foo FOR int.
-
     FORM name USING input LIKE foo[].
-
       LOOP AT input INTO DATA(d).
       ENDLOOP.
-
     ENDFORM.`;
     const issues = runProgram(abap);
     expect(issues.length).to.equals(0);
