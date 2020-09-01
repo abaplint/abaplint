@@ -32,6 +32,7 @@ import {EmptyStructureConf} from "../src/rules/empty_structure";
 import {ExitOrCheckConf} from "../src/rules/exit_or_check";
 import {ExportingConf} from "../src/rules/exporting";
 import {ForbiddenIdentifierConf} from "../src/rules/forbidden_identifier";
+import {ForbiddenPseudoAndPragmaConf} from "../src/rules/forbidden_pseduo_and_pragma";
 import {ForbiddenVoidTypeConf} from "../src/rules/forbidden_void_type";
 import {FormTablesObsoleteConf} from "../src/rules/form_tables_obsolete";
 import {FullyTypeConsantsConf} from "../src/rules/fully_type_constants";
@@ -135,6 +136,7 @@ export interface IConfig {
     "exit_or_check"?: ExitOrCheckConf | boolean,
     "exporting"?: ExportingConf | boolean,
     "forbidden_identifier"?: ForbiddenIdentifierConf | boolean,
+    "forbidden_pseduo_and_pragma"?: ForbiddenPseudoAndPragmaConf | boolean,
     "forbidden_void_type"?: ForbiddenVoidTypeConf | boolean,
     "form_tables_obsolete"?: FormTablesObsoleteConf | boolean,
     "fully_type_constants"?: FullyTypeConsantsConf | boolean,
