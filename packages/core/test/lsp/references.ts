@@ -100,7 +100,7 @@ WRITE abap_false.`);
     const reg = new Registry().addFile(file);
     await reg.parseAsync();
     const found = new References(reg).references(buildPosition(file, 0, 7));
-    expect(found.length).to.equal(1);
+    expect(found.length).to.equal(2);
   });
 
   it("find references for constant inside interface definition", async () => {

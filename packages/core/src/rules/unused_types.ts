@@ -6,29 +6,28 @@ import {IObject} from "../objects/_iobject";
 import {SyntaxLogic} from "../abap/5_syntax/syntax";
 import {ABAPObject} from "../objects/_abap_object";
 import {ScopeType} from "../abap/5_syntax/_scope_type";
-import {TypedIdentifier, IdentifierMeta} from "../abap/types/_typed_identifier";
-import {Interface} from "../objects";
+import {TypedIdentifier} from "../abap/types/_typed_identifier";
 import {ISpaghettiScopeNode, IScopeVariable} from "../abap/5_syntax/_spaghetti_scope";
 import {References} from "../lsp/references";
 import {EditHelper, IEdit} from "../edit_helper";
 
-export class UnusedVariablesConf extends BasicRuleConfig {
+export class UnusedTypesConf extends BasicRuleConfig {
   /** skip specific names, case insensitive */
   public skipNames: string[] = [];
 }
 
-export class UnusedVariables implements IRule {
-  private conf = new UnusedVariablesConf();
+export class UnusedTypes implements IRule {
+  private conf = new UnusedTypesConf();
   private reg: IRegistry;
 
   public getMetadata(): IRuleMetadata {
     return {
-      key: "unused_variables",
-      title: "Unused variables",
-      shortDescription: `Checks for unused variables and constants`,
+      key: "unused_types",
+      title: "Unused types",
+      shortDescription: `Checks for unused TYPE definitions`,
       extendedInformation: `WARNING: slow
 
-      Experimental, might give false positives. Skips event parameters.
+      Experimental, might give false positives.
 
       Note that this currently does not work if the source code uses macros.`,
       tags: [RuleTag.Experimental, RuleTag.Quickfix],
@@ -39,7 +38,7 @@ export class UnusedVariables implements IRule {
     return this.conf;
   }
 
-  public setConfig(conf: UnusedVariablesConf) {
+  public setConfig(conf: UnusedTypesConf) {
     this.conf = conf;
     if (this.conf.skipNames === undefined) {
       this.conf.skipNames = [];
@@ -53,8 +52,6 @@ export class UnusedVariables implements IRule {
 
   public run(obj: IObject): Issue[] {
     if (!(obj instanceof ABAPObject)) {
-      return [];
-    } else if (obj instanceof Interface) { // todo, how to handle interfaces?
       return [];
     }
 
@@ -102,21 +99,15 @@ export class UnusedVariables implements IRule {
   private checkNode(node: ISpaghettiScopeNode, obj: ABAPObject): Issue[] {
     const ret: Issue[] = [];
 
-    for (const v of node.getData().vars) {
+    for (const v of node.getData().types) {
       if (this.conf.skipNames?.length > 0
           && this.conf.skipNames.some((a) => a.toUpperCase() === v.name.toUpperCase())) {
-        continue;
-      }
-      if (v.name === "me"
-          || v.name === "super"
-          || v.identifier.getMeta().includes(IdentifierMeta.EventParameter)) {
-        // todo, workaround for "me" and "super", these should somehow be typed to built-in
         continue;
       } else if ((obj.containsFile(v.identifier.getFilename())
             || node.getIdentifier().stype === ScopeType.Program
             || node.getIdentifier().stype === ScopeType.Form)
           && this.isUsed(v.identifier, node) === false) {
-        const message = "Variable \"" + v.identifier.getName() + "\" not used";
+        const message = "Type \"" + v.identifier.getName() + "\" not used";
         const fix = this.buildFix(v, obj);
         ret.push(Issue.atIdentifier(v.identifier, message, this.getMetadata().key, fix));
       }

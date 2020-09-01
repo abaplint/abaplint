@@ -89,6 +89,7 @@ import {TypeFormParametersConf} from "../src/rules/type_form_parameters";
 import {TypesNamingConf} from "../src/rules/types_naming";
 import {UnknownTypesConf} from "../src/rules/unknown_types";
 import {UnreachableCodeConf} from "../src/rules/unreachable_code";
+import {UnusedTypesConf} from "../src/rules/unused_types";
 import {UnusedVariablesConf} from "../src/rules/unused_variables";
 import {UseNewConf} from "../src/rules/use_new";
 import {WhenOthersLastConf} from "../src/rules/when_others_last";
@@ -191,6 +192,7 @@ export interface IConfig {
     "types_naming"?: TypesNamingConf | boolean,
     "unknown_types"?: UnknownTypesConf | boolean,
     "unreachable_code"?: UnreachableCodeConf | boolean,
+    "unused_types"?: UnusedTypesConf | boolean,
     "unused_variables"?: UnusedVariablesConf | boolean,
     "use_new"?: UseNewConf | boolean,
     "when_others_last"?: WhenOthersLastConf | boolean,
