@@ -80,8 +80,15 @@ export class References {
     let ret: Identifier[] = [];
 
     if (node.getIdentifier().stype !== ScopeType.BuiltIn) {
-      // this is for finding the definitions?
+      // this is for finding the definitions
       for (const v of node.getData().vars) {
+        if (v.identifier.equals(identifier)) {
+          ret.push(v.identifier);
+        }
+      }
+
+      // this is for finding the definitions
+      for (const v of node.getData().types) {
         if (v.identifier.equals(identifier)) {
           ret.push(v.identifier);
         }

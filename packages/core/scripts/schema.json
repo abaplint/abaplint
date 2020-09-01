@@ -679,6 +679,43 @@
       ],
       "type": "object"
     },
+    "ForbiddenPseudoAndPragmaConf": {
+      "additionalProperties": false,
+      "properties": {
+        "exclude": {
+          "description": "List of file regex filename patterns to exclude, case insensitive",
+          "items": {
+            "type": "string"
+          },
+          "type": "array"
+        },
+        "ignoreGlobalClassDefinition": {
+          "type": "boolean"
+        },
+        "ignoreGlobalInterface": {
+          "type": "boolean"
+        },
+        "pragmas": {
+          "items": {
+            "type": "string"
+          },
+          "type": "array"
+        },
+        "pseudo": {
+          "items": {
+            "type": "string"
+          },
+          "type": "array"
+        }
+      },
+      "required": [
+        "pseudo",
+        "pragmas",
+        "ignoreGlobalClassDefinition",
+        "ignoreGlobalInterface"
+      ],
+      "type": "object"
+    },
     "ForbiddenVoidTypeConf": {
       "additionalProperties": false,
       "properties": {
@@ -1146,6 +1183,17 @@
                 }
               ],
               "description": "Forbid use of specified identifiers, list of regex.\nhttps://rules.abaplint.org/forbidden_identifier"
+            },
+            "forbidden_pseduo_and_pragma": {
+              "anyOf": [
+                {
+                  "$ref": "#/definitions/ForbiddenPseudoAndPragmaConf"
+                },
+                {
+                  "type": "boolean"
+                }
+              ],
+              "description": "Checks for unwanted pseudo comments and pragma\nTags: Quickfix\nhttps://rules.abaplint.org/forbidden_pseduo_and_pragma"
             },
             "forbidden_void_type": {
               "anyOf": [
@@ -1774,6 +1822,17 @@
               ],
               "description": "Checks for unreachable code.\nhttps://rules.abaplint.org/unreachable_code"
             },
+            "unused_types": {
+              "anyOf": [
+                {
+                  "$ref": "#/definitions/UnusedTypesConf"
+                },
+                {
+                  "type": "boolean"
+                }
+              ],
+              "description": "Checks for unused TYPE definitions\nTags: Experimental, Quickfix\nhttps://rules.abaplint.org/unused_types"
+            },
             "unused_variables": {
               "anyOf": [
                 {
@@ -1783,7 +1842,7 @@
                   "type": "boolean"
                 }
               ],
-              "description": "Checks for unused variables\nTags: Experimental, Quickfix\nhttps://rules.abaplint.org/unused_variables"
+              "description": "Checks for unused variables and constants\nTags: Experimental, Quickfix\nhttps://rules.abaplint.org/unused_variables"
             },
             "use_new": {
               "anyOf": [
@@ -3151,6 +3210,29 @@
           "type": "array"
         }
       },
+      "type": "object"
+    },
+    "UnusedTypesConf": {
+      "additionalProperties": false,
+      "properties": {
+        "exclude": {
+          "description": "List of file regex filename patterns to exclude, case insensitive",
+          "items": {
+            "type": "string"
+          },
+          "type": "array"
+        },
+        "skipNames": {
+          "description": "skip specific names, case insensitive",
+          "items": {
+            "type": "string"
+          },
+          "type": "array"
+        }
+      },
+      "required": [
+        "skipNames"
+      ],
       "type": "object"
     },
     "UnusedVariablesConf": {

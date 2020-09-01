@@ -3,7 +3,7 @@ import * as Statements from "../../2_statements/statements";
 import * as Structures from "../../3_structures/structures";
 import {StructureNode, StatementNode} from "../../nodes";
 import {CurrentScope} from "../_current_scope";
-import {TypedIdentifier} from "../../types/_typed_identifier";
+import {TypedIdentifier, IdentifierMeta} from "../../types/_typed_identifier";
 import {IStructureComponent} from "../../types/basic";
 import * as Basic from "../../types/basic";
 import {Constant} from "../statements/constant";
@@ -35,6 +35,6 @@ export class Constants {
       return undefined;
     }
 
-    return new TypedIdentifier(name, filename, new Basic.StructureType(components));
+    return new TypedIdentifier(name, filename, new Basic.StructureType(components), [IdentifierMeta.ReadOnly]);
   }
 }
