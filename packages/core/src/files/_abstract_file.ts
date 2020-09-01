@@ -26,6 +26,9 @@ export abstract class AbstractFile implements IFile {
     const split = this.baseName().split(".");
 // handle url escaped namespace
     split[0] = split[0].replace(/%23/g, "#");
+// handle additional escaping
+    split[0] = split[0].replace(/%3e/g, ">");
+    split[0] = split[0].replace(/%3c/g, "<");
 // handle namespace
     return split[0].toUpperCase().replace(/#/g, "/");
   }

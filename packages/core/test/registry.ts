@@ -165,6 +165,20 @@ ENDINTERFACE.`;
     expect(abap?.getMainABAPFile()).to.not.equal(undefined);
   });
 
+  it("Special name, character > escaped", async () => {
+    const reg = new Registry().addFile(new MemoryFile("%3e6.msag.xml", "xml"));
+    expect(reg.getObjectCount()).to.equal(1);
+    expect(reg.getFirstObject()!.getType()).to.equal("MSAG");
+    expect(reg.getObject("MSAG", ">6")).to.not.equal(undefined);
+  });
+
+  it("Special name, <icon> program", async () => {
+    const reg = new Registry().addFile(new MemoryFile("%3cicon%3e.prog.abap", "write 'hello'."));
+    expect(reg.getObjectCount()).to.equal(1);
+    expect(reg.getFirstObject()!.getType()).to.equal("PROG");
+    expect(reg.getObject("PROG", "<icon>")).to.not.equal(undefined);
+  });
+
 });
 
 describe("Registry, object types", () => {
