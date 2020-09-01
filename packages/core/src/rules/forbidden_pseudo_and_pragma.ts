@@ -21,7 +21,7 @@ export class ForbiddenPseudoAndPragma extends ABAPRule {
 
   public getMetadata(): IRuleMetadata {
     return {
-      key: "forbidden_pseduo_and_pragma",
+      key: "forbidden_pseudo_and_pragma",
       title: "Forbidden pseudo comments and pragma",
       shortDescription: `Checks for unwanted pseudo comments and pragma`,
       tags: [RuleTag.Quickfix],
