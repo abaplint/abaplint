@@ -117,4 +117,13 @@ FUNCTION-POOL ZABAPGIT_UNIT_TEST.`},
     expect(issues.length).to.equals(0);
   });
 
+  it("with special characters", async () => {
+    const issues = await runMulti([
+      {filename: "%3cicon%3e.prog.abap", contents: `WRITE 'hello world'.`},
+      {filename: "%3cicon%3e.prog.xml", contents: `<SUBC>I</SUBC>`},
+      {filename: "zfoobar.prog.abap", contents: `INCLUDE <icon>.`},
+    ]);
+    expect(issues.length).to.equals(0);
+  });
+
 });

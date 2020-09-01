@@ -91,11 +91,17 @@ export abstract class AbstractObject implements IObject {
   }
 
   public getXMLFile() {
-// todo, https://github.com/abaplint/abaplint/issues/673
+// todo, https://github.com/abaplint/abaplint/issues/673 uris
     const expected1 = this.getName().toLowerCase().replace(/\//g, "#") + "." + this.getType().toLowerCase() + ".xml";
     const expected2 = this.getName().toLowerCase().replace(/\//g, "%23") + "." + this.getType().toLowerCase() + ".xml";
     for (const file of this.getFiles()) {
       if (file.getFilename().endsWith(expected1) || file.getFilename().endsWith(expected2)) {
+        return file;
+      }
+    }
+    // uri fallback, assume there is only one xml file
+    for (const file of this.getFiles()) {
+      if (file.getFilename().endsWith(".xml")) {
         return file;
       }
     }
