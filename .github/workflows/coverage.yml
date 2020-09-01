@@ -22,4 +22,4 @@ jobs:
       if: github.ref == 'refs/heads/master' && github.repository == 'abaplint/abaplint'
       with:
         token: ${{secrets.CODECOV_TOKEN}}
-        file: ./coverage/coverage-final.json
+        file: ./packages/core/coverage/coverage-final.json
