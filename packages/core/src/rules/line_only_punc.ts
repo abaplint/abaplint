@@ -66,10 +66,14 @@ https://docs.abapopenchecks.org/checks/16/`,
         // merge punc into previous row
         let rowContent = rows[i].trim();
         // if reported row contains a paranthesis, prefix with space if needed
-        if (rowContent.length > 1 && !rows[i - 1].endsWith(" ")) {
+        if (rowContent.length > 1 && !rows[i - 1].endsWith(" ") && !rows[i - 1].endsWith(" \r")) {
           rowContent = " " + rowContent;
         }
-        const startPos = new Position(i, rows[i - 1].length + 1);
+        let offset = 0;
+        if (rows[i - 1].endsWith("\r")) {
+          offset = -1;
+        }
+        const startPos = new Position(i, rows[i - 1].length + 1 + offset);
         const endPos = new Position(i + 1, rows[i].length + 1);
         const fix = EditHelper.replaceRange(file, startPos, endPos, rowContent);
 

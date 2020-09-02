@@ -20,6 +20,8 @@ const fixTests = [
   {input: "WRITE 'hello'\n\t   .   ", output: "WRITE 'hello'."},
   {input: "IF line_exists( foo[1] \n ).", output: "IF line_exists( foo[1] )."},
   {input: "IF line_exists( foo[1]\n).", output: "IF line_exists( foo[1] )."},
+  {input: "IF line_exists( foo[1] \r\n ).", output: "IF line_exists( foo[1] )."},
+  {input: "IF line_exists( foo[1]\r\n).", output: "IF line_exists( foo[1] )."},
 ];
 
 testRuleFix(fixTests, LineOnlyPunc);
