@@ -1349,6 +1349,17 @@
               ],
               "description": "Line break multiple parameters\nTags: Whitespace, Styleguide, Quickfix\nhttps://rules.abaplint.org/line_break_multiple_parameters"
             },
+            "line_break_style": {
+              "anyOf": [
+                {
+                  "$ref": "#/definitions/LineBreakStyleConf"
+                },
+                {
+                  "type": "boolean"
+                }
+              ],
+              "description": "Enforces LF as newlines in ABAP files\n\nabapGit does not work with CRLF\nTags: Whitespace\nhttps://rules.abaplint.org/line_break_style"
+            },
             "line_length": {
               "anyOf": [
                 {
@@ -2172,6 +2183,19 @@
       "type": "string"
     },
     "LineBreakMultipleParametersConf": {
+      "additionalProperties": false,
+      "properties": {
+        "exclude": {
+          "description": "List of file regex filename patterns to exclude, case insensitive",
+          "items": {
+            "type": "string"
+          },
+          "type": "array"
+        }
+      },
+      "type": "object"
+    },
+    "LineBreakStyleConf": {
       "additionalProperties": false,
       "properties": {
         "exclude": {
