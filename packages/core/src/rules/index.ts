@@ -46,6 +46,7 @@ export * from "./inline_data_old_versions";
 export * from "./keep_single_parameter_on_one_line";
 export * from "./keyword_case";
 export * from "./line_break_multiple_parameters";
+export * from "./line_break_style";
 export * from "./line_length";
 export * from "./line_only_punc";
 export * from "./local_class_naming";

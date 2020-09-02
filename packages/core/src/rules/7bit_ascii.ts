@@ -24,10 +24,6 @@ export class SevenBitAscii implements IRule {
     return this;
   }
 
-  private getMessage(): string {
-    return "Contains non 7 bit ascii character";
-  }
-
   public getConfig() {
     return this.conf;
   }
@@ -49,9 +45,23 @@ export class SevenBitAscii implements IRule {
             const column = found.index + 1;
             const start = new Position(i + 1, column);
             const end = new Position(i + 1, column + 1);
-            const issue = Issue.atRange(file, start, end, this.getMessage(), this.getMetadata().key);
+            const message = "Contains non 7 bit ascii character";
+            const issue = Issue.atRange(file, start, end, message, this.getMetadata().key);
             output.push(issue);
           }
+
+          // method getRawRows() splits by newline, so the carraige return
+          // should always be last character if present
+          const carriage = /\r.+$/.exec(rows[i]);
+          if (carriage !== null) {
+            const column = carriage.index + 1;
+            const start = new Position(i + 1, column);
+            const end = new Position(i + 1, column + 1);
+            const message = "Dangling carriage return";
+            const issue = Issue.atRange(file, start, end, message, this.getMetadata().key);
+            output.push(issue);
+          }
+
         }
       }
     }

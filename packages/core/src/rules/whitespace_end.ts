@@ -40,8 +40,8 @@ export class WhitespaceEnd extends ABAPRule {
     const rows = file.getRawRows();
 
     for (let i = 0; i < rows.length; i++) {
-      if (rows[i].endsWith(" ")) {
-        const match = / +$/.exec(rows[i]);
+      if (rows[i].endsWith(" ") || rows[i].endsWith(" \r")) {
+        const match = / +\r?$/.exec(rows[i]);
         const start = new Position(i + 1, match!.index + 1);
         const end = new Position(i + 1, rows[i].length + 1);
         const fix = EditHelper.deleteRange(file, start, end);
