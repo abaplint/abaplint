@@ -31,10 +31,6 @@ ENDTRY.`,
     };
   }
 
-  private getMessage(): string {
-    return "NO_HANDLER pragma can be removed";
-  }
-
   public getConfig() {
     return this.conf;
   }
@@ -47,28 +43,37 @@ ENDTRY.`,
     const issues: Issue[] = [];
     let noHandler: boolean = false;
 
-    for (const statement of file.getStatements()) {
+    const statements = file.getStatements();
+    for (let i = 0; i < statements.length; i++) {
+      const statement = statements[i];
+
       if (statement.get() instanceof Statements.EndTry) {
         noHandler = false;
       } else if (statement.get() instanceof Comment) {
         continue;
       } else if (noHandler === true && !(statement.get() instanceof Statements.Catch)) {
-        const issue = Issue.atStatement(file, statement, this.getMessage(), this.getMetadata().key);
+        const message = "NO_HANDLER pragma or pseudo comment can be removed";
+        const issue = Issue.atStatement(file, statement, message, this.getMetadata().key);
         issues.push(issue);
         noHandler = false;
       } else {
-        noHandler = this.containsNoHandler(statement);
+        noHandler = this.containsNoHandler(statement, statements[i + 1]);
       }
     }
 
     return issues;
   }
 
-  private containsNoHandler(statement: StatementNode): boolean {
+  private containsNoHandler(statement: StatementNode, next: StatementNode | undefined): boolean {
     for (const t of statement.getPragmas()) {
       if (t.getStr().toUpperCase() === "##NO_HANDLER") {
         return true;
       }
+    }
+    if (next
+        && next.get() instanceof Comment
+        && next.concatTokens().toUpperCase().includes("#EC NO_HANDLER")) {
+      return true;
     }
     return false;
   }

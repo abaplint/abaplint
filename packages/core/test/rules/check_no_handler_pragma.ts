@@ -25,6 +25,18 @@ const tests = [
         handle_error( lx_exception ).
     ENDTRY.`, cnt: 0},
 
+  {abap: `
+TRY.
+CATCH zcx_abapgit_exception.                      "#EC NO_HANDLER
+  cl_abap_unit_assert=>fail( ).
+ENDTRY.`, cnt: 1},
+
+  {abap: `
+TRY.
+CATCH zcx_abapgit_exception.
+  cl_abap_unit_assert=>fail( ).
+ENDTRY.`, cnt: 0},
+
 ];
 
 testRule(tests, CheckNoHandlerPragma);
