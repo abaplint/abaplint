@@ -720,7 +720,7 @@
       "additionalProperties": false,
       "properties": {
         "check": {
-          "description": "List of forbideen void types, array of string regex",
+          "description": "List of forbidden void types, array of string regex, case in-sensitive",
           "items": {
             "type": "string"
           },
@@ -1204,7 +1204,7 @@
                   "type": "boolean"
                 }
               ],
-              "description": "Forbid use of specified void types.\nhttps://rules.abaplint.org/forbidden_void_type"
+              "description": "Avoid usage of specified void types.\nhttps://rules.abaplint.org/forbidden_void_type"
             },
             "form_tables_obsolete": {
               "anyOf": [

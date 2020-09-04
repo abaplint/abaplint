@@ -88,4 +88,21 @@ ENDCASE.`));
     expect(output[0].getStructure()).to.not.equal(undefined);
   });
 
+  it("Macro inside TYPES", () => {
+    const abap = `
+    DEFINE _macro.
+    END-OF-DEFINITION.
+    TYPES: BEGIN OF ty_type.
+      TYPES field TYPE c LENGTH 1.
+      _macro.
+    TYPES: END OF ty_type.`;
+
+    const files = [new MemoryFile("macrointype.prog.abap", abap)];
+
+    const {issues, output} = new ABAPParser(defaultVersion, []).parse(files);
+    expect(issues.length).to.equal(0);
+    expect(output.length).to.equal(files.length);
+    expect(output[0].getStructure()).to.not.equal(undefined);
+  });
+
 });
