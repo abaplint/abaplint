@@ -116,13 +116,13 @@ export class Lexer {
 
       let whiteBefore = false;
       const prev = this.stream.prevChar();
-      if (prev === " " || prev === "\n" || prev === ":") {
+      if (prev === " " || prev === "\n" || prev === "\t" || prev === ":") {
         whiteBefore = true;
       }
 
       let whiteAfter = false;
       const next = this.stream.nextChar();
-      if (next === " " || next === "\n" || next === ":" || next === "," || next === "." || next === "" || next === "\"") {
+      if (next === " " || next === "\n" || next === "\t" || next === ":" || next === "," || next === "." || next === "" || next === "\"") {
         whiteAfter = true;
       }
 
