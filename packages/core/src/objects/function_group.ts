@@ -160,7 +160,7 @@ export class FunctionGroup extends ABAPObject {
 
   private findTextFile() {
     const search = this.getName() + ".fugr.sapl" + this.getName() + ".xml";
-    for (const f of this.files) {
+    for (const f of this.getFiles()) {
       if (f.getFilename().includes(search.toLowerCase())) {
         return f;
       }
