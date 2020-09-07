@@ -6,6 +6,12 @@ const tests = [
   {abap: "WRITE 'hello'.WRITE 'world'.", cnt: 1},
   {abap: "WRITE 'hello'. .", cnt: 1},
   {abap: "WRITE 'hello'.\nWRITE 'world'.\nWRITE 'world'.", cnt: 0},
+  {abap: `
+DEFINE _foo.
+  WRITE 'a'.
+END-OF-DEFINITION.
+_foo.
+  `, cnt: 0},
 ];
 
 testRule(tests, MaxOneStatement);

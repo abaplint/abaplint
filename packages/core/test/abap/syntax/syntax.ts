@@ -2814,6 +2814,20 @@ ENDLOOP.`;
     expect(issues.length).to.equals(0);
   });
 
+  it("macro call with dashes", () => {
+    const abap = `
+TYPES: BEGIN OF ty_type,
+         field TYPE c,
+       END OF ty_type.
+DATA var TYPE ty_type.
+DEFINE _foo.
+  WRITE &1.
+END-OF-DEFINITION.
+_foo var-field.`;
+    const issues = runProgram(abap);
+    expect(issues.length).to.equals(0);
+  });
+
 // todo, static method cannot access instance attributes
 // todo, can a private method access protected attributes?
 // todo, readonly fields(constants + enums + attributes flagged read-only)

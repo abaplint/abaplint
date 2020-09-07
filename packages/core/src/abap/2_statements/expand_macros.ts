@@ -79,7 +79,7 @@ export class ExpandMacros {
         if (macroName && this.macros.isMacro(macroName)) {
           result.push(new StatementNode(new MacroCall()).setChildren(this.tokensToNodes(statement.getTokens())));
 
-          const expanded = this.expandContents(macroName, statement.getTokens());
+          const expanded = this.expandContents(macroName, statement);
           for (const e of expanded) {
             result.push(e);
           }
@@ -95,7 +95,7 @@ export class ExpandMacros {
 
   //////////////
 
-  private expandContents(name: string, tokens: readonly Token[]): readonly StatementNode[] {
+  private expandContents(name: string, statement: StatementNode): readonly StatementNode[] {
     const contents = this.macros.getContents(name);
     if (contents === undefined || contents.length === 0) {
       return [];
@@ -106,19 +106,30 @@ export class ExpandMacros {
       str += c.concatTokens() + "\n";
     }
 
-    for (let i = 1; i < tokens.length - 1; i++) {
+    const inputs = this.buildInput(statement);
+    let i = 1;
+    for (const input of inputs) {
       const search = "&" + i;
       while (str.includes(search)) {
-        str = str.replace(search, tokens[i].getStr());
+        str = str.replace(search, input);
       }
+      i++;
     }
 
     const file = new MemoryFile("expand_macros.abap.prog", str);
-    const lexerResult = Lexer.run(file, tokens[0].getStart());
+    const lexerResult = Lexer.run(file, statement.getFirstToken().getStart());
 
     const result = new StatementParser(this.version).run([lexerResult], []);
 
     return result[0].statements;
+  }
+
+  private buildInput(statement: StatementNode): string[] {
+    let concat = statement.concatTokens();
+    concat = concat.replace(/\.$/, "");
+    const result = concat.split(" ");
+    result.shift(); // removes the macro name
+    return result;
   }
 
   private findName(tokens: readonly Token[]): string | undefined {

@@ -12,6 +12,7 @@ import * as Expressions from "../abap/2_statements/expressions";
 import {Token} from "../abap/1_lexer/tokens/_token";
 import {IRuleMetadata, RuleTag} from "./_irule";
 import {DDIC} from "../ddic";
+import {VirtualPosition} from "../position";
 
 export enum KeywordCaseStyle {
   Upper = "upper",
@@ -89,6 +90,7 @@ export class KeywordCase extends ABAPRule {
       if (statement.get() instanceof Unknown
         || statement.get() instanceof MacroContent
         || statement.get() instanceof MacroCall
+        || statement.getFirstToken().getStart() instanceof VirtualPosition
         || statement.get() instanceof Comment) {
         continue;
       }
