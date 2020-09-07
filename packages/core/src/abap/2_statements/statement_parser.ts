@@ -1,15 +1,12 @@
 import {Version} from "../../version";
 import {IFile} from "../../files/_ifile";
-
 import {TokenNode, StatementNode} from "../nodes";
 import {Artifacts} from "../artifacts";
-
 import * as Statements from "./statements";
 import * as Expressions from "./expressions";
 import {Combi} from "./combi";
 import {Unknown, Empty, Comment, MacroContent, NativeSQL, IStatement, MacroCall} from "./statements/_statement";
 import {IStatementResult} from "./statement_result";
-
 import * as Tokens from "../1_lexer/tokens";
 import {Token} from "../1_lexer/tokens/_token";
 import {ILexerResult} from "../1_lexer/lexer_result";
