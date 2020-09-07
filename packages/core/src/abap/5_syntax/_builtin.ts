@@ -218,6 +218,8 @@ export class BuiltIn {
     components.push({name: "fdpos", type: new IntegerType()});
     components.push({name: "host", type: new CharacterType(32)});
     components.push({name: "index", type: new IntegerType()});
+    components.push({name: "fleng", type: new IntegerType()});
+    components.push({name: "folen", type: new IntegerType()});
     components.push({name: "loopc", type: new IntegerType()});
     components.push({name: "linct", type: new IntegerType()});
     components.push({name: "pagno", type: new IntegerType()});
