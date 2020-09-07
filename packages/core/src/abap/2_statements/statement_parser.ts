@@ -85,18 +85,18 @@ export class StatementParser {
 
   /** input is one full object */
   public run(input: readonly ILexerResult[], globalMacros: readonly string[]): IStatementResult[] {
-    const macros = new ExpandMacros(globalMacros);
+    const macros = new ExpandMacros(globalMacros, this.version);
 
     const wa = input.map(i => new WorkArea(i.file, i.tokens));
 
     for (const w of wa) {
       this.process(w);
       this.categorize(w);
-      macros.findMacros(w.statements);
+      macros.find(w.statements);
     }
 
     for (const w of wa) {
-      macros.handleMacros(w.statements);
+      w.statements = macros.handleMacros(w.statements);
       this.lazyUnknown(w);
       this.nativeSQL(w);
     }
