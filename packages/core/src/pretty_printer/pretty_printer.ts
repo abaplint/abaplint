@@ -5,6 +5,7 @@ import {Indent as Indent} from "./indent";
 import {IIndentationOptions} from "./indentation_options";
 import {RemoveSequentialBlanks} from "./remove_sequential_blanks";
 import {IConfiguration} from "../_config";
+import {VirtualPosition} from "../position";
 
 export class PrettyPrinter {
   private result: string;
@@ -25,6 +26,7 @@ export class PrettyPrinter {
       if (statement.get() instanceof Unknown
         || statement.get() instanceof MacroContent
         || statement.get() instanceof MacroCall
+        || statement.getFirstToken().getStart() instanceof VirtualPosition
         || statement.get() instanceof Comment) {
         continue;
       }
