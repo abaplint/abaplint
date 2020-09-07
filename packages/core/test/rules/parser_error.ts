@@ -17,6 +17,14 @@ const tests = [
     ")->get_column( 'TIMESTAMP' )->set_visible( abap_false ),\n" +
     ")->get_column( 'USERNAME' )->set_visible( abap_false ).", cnt: 0},
   {abap: "WRITE.", cnt: 1},
+
+  {abap: `
+  DATA rv_text TYPE string.
+  DEFINE _out.
+    rv_text = rv_text && &1 && cl_abap_char_utilities=>cr_lf.
+  END-OF-DEFINITION.
+  _out 'digraph {'.`, cnt: 0},
+
 ];
 
 testRule(tests, ParserError);

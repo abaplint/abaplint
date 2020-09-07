@@ -125,10 +125,27 @@ export class ExpandMacros {
   }
 
   private buildInput(statement: StatementNode): string[] {
-    let concat = statement.concatTokens();
-    concat = concat.replace(/\.$/, "");
-    const result = concat.split(" ");
-    result.shift(); // removes the macro name
+    const result: string[] = [];
+    const tokens = statement.getTokens();
+
+    let build = "";
+    for (let i = 1; i < tokens.length - 1; i++) {
+      const now = tokens[i];
+//      const prev = tokens[i - 1];
+      let next: Token | undefined = tokens[i + 1];
+      if (i + 2 === tokens.length) {
+        next = undefined; // dont take the punctuation
+      }
+
+      if (next && next.getStart().equals(now.getEnd())) {
+        build += now.getStr();
+      } else {
+        build += now.getStr();
+        result.push(build);
+        build = "";
+      }
+    }
+
     return result;
   }
 
