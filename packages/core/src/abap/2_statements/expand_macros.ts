@@ -103,7 +103,12 @@ export class ExpandMacros {
 
     let str = "";
     for (const c of contents) {
-      str += c.concatTokens() + "\n";
+      let concat = c.concatTokens();
+      if (c.getTerminator() === ",") {
+        // workaround for chained statements
+        concat = concat.replace(/,$/, ".");
+      }
+      str += concat + "\n";
     }
 
     const inputs = this.buildInput(statement);
@@ -131,7 +136,6 @@ export class ExpandMacros {
     let build = "";
     for (let i = 1; i < tokens.length - 1; i++) {
       const now = tokens[i];
-//      const prev = tokens[i - 1];
       let next: Token | undefined = tokens[i + 1];
       if (i + 2 === tokens.length) {
         next = undefined; // dont take the punctuation

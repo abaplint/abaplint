@@ -25,6 +25,12 @@ const tests = [
   END-OF-DEFINITION.
   _out 'digraph {'.`, cnt: 0},
 
+  {abap: `
+DEFINE encrypt_key.
+  CLEAR : lv_sas_key, lv_decoded_xstr.
+END-OF-DEFINITION.
+encrypt_key.`, cnt: 0},
+
 ];
 
 testRule(tests, ParserError);
