@@ -8,10 +8,10 @@ import {Identifier as IdentifierToken} from "../abap/1_lexer/tokens/identifier";
 import {Position} from "../position";
 
 export abstract class AbstractObject implements IObject {
-  protected files: IFile[];
-  protected dirty: boolean;
-  private readonly name: string;
   protected old: readonly Issue[];
+  protected dirty: boolean;
+  private files: IFile[];
+  private readonly name: string;
 
   public abstract getType(): string;
   public abstract getAllowedNaming(): {maxLength: number, allowNamespace: boolean};
@@ -44,7 +44,7 @@ export abstract class AbstractObject implements IObject {
     this.files.push(file);
   }
 
-  public getFiles(): IFile[] {
+  public getFiles(): readonly IFile[] {
     return this.files;
   }
 
