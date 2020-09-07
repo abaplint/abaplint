@@ -21,7 +21,6 @@ describe("method length stats", () => {
       expect(stats.length).to.equals(test.lengths.length);
       for (let i = 0; i < stats.length; i++) {
         expect(stats[i].count).to.equals(test.lengths[i]);
-
       }
     });
 
