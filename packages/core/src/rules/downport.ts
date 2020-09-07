@@ -9,6 +9,7 @@ import {StatementNode} from "../abap/nodes";
 import * as Statements from "../abap/2_statements/statements";
 import * as Expressions from "../abap/2_statements/expressions";
 import {IEdit, EditHelper} from "../edit_helper";
+import {VirtualPosition} from "../position";
 
 export class DownportConf extends BasicRuleConfig {
 }
@@ -62,6 +63,10 @@ Only one transformation is applied to a statement at a time, so multiple steps m
 ////////////////////
 
   private checkStatement(s: StatementNode, file: ABAPFile): Issue | undefined {
+    if (s.getFirstToken().getStart() instanceof VirtualPosition) {
+      return undefined;
+    }
+
     const code = new MemoryFile("_downport.prog.abap", this.buildCode(s));
     // note that this will take the default langauge vesion
     const abapFile = new ABAPParser().parse([code]).output[0];

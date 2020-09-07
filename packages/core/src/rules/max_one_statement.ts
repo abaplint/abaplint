@@ -5,6 +5,7 @@ import {ABAPFile} from "../files";
 import {BasicRuleConfig} from "./_basic_rule_config";
 import {EditHelper} from "../edit_helper";
 import {RuleTag} from "./_irule";
+import {VirtualPosition} from "../position";
 
 export class MaxOneStatementConf extends BasicRuleConfig {
 }
@@ -49,6 +50,9 @@ https://docs.abapopenchecks.org/checks/11/`,
       }
 
       const pos = statement.getStart();
+      if (pos instanceof VirtualPosition) {
+        continue;
+      }
       const row = pos.getRow();
       if (prev === row && row !== reported) {
         const fix = EditHelper.insertAt(file, pos, "\n");

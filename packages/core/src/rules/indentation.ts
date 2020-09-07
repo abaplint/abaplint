@@ -10,6 +10,7 @@ import * as Statements from "../abap/2_statements/statements";
 import * as Expressions from "../abap/2_statements/expressions";
 import {IRuleMetadata, RuleTag} from "./_irule";
 import {DDIC} from "../ddic";
+import {VirtualPosition} from "../position";
 
 export class IndentationConf extends BasicRuleConfig {
   /** Ignore global exception classes */
@@ -96,6 +97,9 @@ export class Indentation extends ABAPRule {
       }
 
       const position = statement.getFirstToken().getStart();
+      if (position instanceof VirtualPosition) {
+        continue;
+      }
 
       if (indent && indent > 0 && indent !== position.getCol()) {
         const message = "Indentation problem, expected " + (indent - 1) + " spaces";
