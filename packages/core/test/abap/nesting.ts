@@ -1,17 +1,19 @@
+import {expect} from "chai";
+import {MemoryFile} from "../../src/files/memory_file";
+import {Registry} from "../../src/registry";
+import {Class} from "../../src/objects";
 
 const tests = [
   {
     n: "one",
     code: "WRITE 'Hello'.",
     top: 1,
-    firstchildren: 0,
   },
   {
     n: "two",
     code: "WRITE 'Hello'.\n" +
           "WRITE 'Hello'.\n",
     top: 2,
-    firstchildren: 0,
   },
   {
     n: "IF",
@@ -19,7 +21,6 @@ const tests = [
           "WRITE 'Hello'.\n" +
           "ENDIF.",
     top: 1,
-    firstchildren: 1,
   },
   {
     n: "FORM",
@@ -27,7 +28,6 @@ const tests = [
           "WRITE 'Hello'.\n" +
           "ENDFORM.",
     top: 1,
-    firstchildren: 1,
   },
   {
     n: "CLASS",
@@ -37,7 +37,6 @@ const tests = [
           "ENDMETHOD.\n" +
           "ENDCLASS.",
     top: 1,
-    firstchildren: 1,
   },
   {
     n: "multiple FORM",
@@ -48,7 +47,6 @@ const tests = [
           "WRITE 'Hello'.\n" +
           "ENDFORM.",
     top: 2,
-    firstchildren: 1,
   },
   {
     n: "CASE",
@@ -57,7 +55,6 @@ const tests = [
           "WRITE 'Hello'.\n" +
           "ENDCASE.",
     top: 1,
-    firstchildren: 1,
   },
   {
     n: "CASE2",
@@ -67,7 +64,6 @@ const tests = [
           "ENDCASE.\n" +
           "WRITE foo.\n",
     top: 2,
-    firstchildren: 1,
   },
   {
     n: "DO",
@@ -75,7 +71,6 @@ const tests = [
           "WRITE 'Hello'.\n" +
           "ENDDO.",
     top: 1,
-    firstchildren: 1,
   },
   {
     n: "WHILE",
@@ -83,7 +78,6 @@ const tests = [
           "WRITE 'Hello'.\n" +
           "ENDWHILE.",
     top: 1,
-    firstchildren: 1,
   },
   {
     n: "WHEN",
@@ -91,8 +85,7 @@ const tests = [
           "  WRITE 'Hello'.\n" +
           "WHEN bar.\n" +
           "  WRITE 'Hello'.\n",
-    top: 2,
-    firstchildren: 1,
+    top: undefined,
   },
   {
     n: "ELSE",
@@ -102,7 +95,6 @@ const tests = [
           "  WRITE 'Hello'.\n" +
           "ENDIF.",
     top: 1,
-    firstchildren: 2,
   },
   {
     n: "ELSE2",
@@ -113,7 +105,6 @@ const tests = [
           "ENDIF.\n" +
           "WRITE 'foo'.\n",
     top: 2,
-    firstchildren: 2,
   },
   {
     n: "IF2",
@@ -122,28 +113,24 @@ const tests = [
           "ENDIF.\n" +
           "WRITE 'foo'.\n",
     top: 2,
-    firstchildren: 1,
   },
   {
     n: "PRIVATE SECTION",
     code: "PRIVATE SECTION.\n" +
           "  DATA foo TYPE c.\n",
-    top: 1,
-    firstchildren: 1,
+    top: undefined,
   },
   {
     n: "PROTECTED SECTION",
     code: "PROTECTED SECTION.\n" +
           "  DATA foo TYPE c.\n",
-    top: 1,
-    firstchildren: 1,
+    top: undefined,
   },
   {
     n: "PUBLIC SECTION",
     code: "PUBLIC SECTION.\n" +
           "  DATA foo TYPE c.\n",
-    top: 1,
-    firstchildren: 1,
+    top: undefined,
   },
   {
     n: "Combined SECTIONs",
@@ -151,8 +138,7 @@ const tests = [
           "  DATA foo TYPE c.\n" +
           "PUBLIC SECTION.\n" +
           "  DATA foo TYPE c.\n",
-    top: 2,
-    firstchildren: 1,
+    top: undefined,
   },
   {
     n: "DEFINE",
@@ -160,7 +146,6 @@ const tests = [
           "  DATA foo TYPE c.\n" +
           "END-OF-DEFINITION.\n",
     top: 1,
-    firstchildren: 1,
   },
   {
     n: "LOOP",
@@ -168,7 +153,6 @@ const tests = [
           "  DATA foo TYPE c.\n" +
           "ENDLOOP.\n",
     top: 1,
-    firstchildren: 1,
   },
   {
     n: "Class Sections",
@@ -176,8 +160,7 @@ const tests = [
           "  DATA mv_text TYPE string.\n" +
           "PRIVATE SECTION.\n" +
           "  DATA mx_previous TYPE REF TO cx_root.  \n",
-    top: 2,
-    firstchildren: 1,
+    top: undefined,
   },
   {
     n: "START OF SELECTION",
@@ -185,8 +168,7 @@ const tests = [
           "  PERFORM run.\n" +
           "CLASS lcl_foobar DEFINITION.\n" +
           "ENDCLASS.\n",
-    top: 2,
-    firstchildren: 1,
+    top: 3,
   },
   {
     n: "START-OF-SELECTION 2",
@@ -195,8 +177,7 @@ const tests = [
           "MODULE status_2000 OUTPUT.\n" +
           "  lcl_app=>status_2000( ).\n" +
           "ENDMODULE.\n",
-    top: 2,
-    firstchildren: 1,
+    top: 3,
   },
   {
     n: "INITIALIZATION",
@@ -204,8 +185,7 @@ const tests = [
           "  PERFORM run.\n" +
           "CLASS lcl_foobar DEFINITION.\n" +
           "ENDCLASS.\n",
-    top: 2,
-    firstchildren: 1,
+    top: 3,
   },
   {
     n: "INITIALIZATION2",
@@ -213,8 +193,7 @@ const tests = [
           "  lcl_app=>select_file( ).\n" +
           "INITIALIZATION.\n" +
           "  lcl_app=>initialization( ).\n",
-    top: 2,
-    firstchildren: 1,
+    top: 4,
   },
   {
     n: "INITIALIZATION3",
@@ -222,8 +201,7 @@ const tests = [
           "  lcl_app=>initialization( ).\n" +
           "START-OF-SELECTION.\n" +
           "  lcl_app=>run( ).\n",
-    top: 2,
-    firstchildren: 1,
+    top: 4,
   },
   {
     n: "Class with write after",
@@ -233,7 +211,6 @@ const tests = [
           "ENDCLASS.\n" +
           "WRITE 'foobar'.",
     top: 2,
-    firstchildren: 1,
   },
   {
     n: "TRY",
@@ -243,7 +220,6 @@ const tests = [
           "    ASSERT 1 = 0.\n" +
           "ENDTRY.\n",
     top: 1,
-    firstchildren: 2,
   },
   {
     n: "TRY, double CATCH",
@@ -255,7 +231,6 @@ const tests = [
           "    ASSERT 1 = 0.\n" +
           "ENDTRY.\n",
     top: 1,
-    firstchildren: 3,
   },
   {
     n: "AT NEW",
@@ -263,40 +238,22 @@ const tests = [
           "  lo_html ?= iv_chunk.\n" +
           "ENDAT.\n",
     top: 1,
-    firstchildren: 1,
   },
   {
     n: "AT SELECTION-SCREEN",
-    code: "AT SELECTION-SCREEN OUTPUT.\n" +
-          "  DATA: lt_ucomm TYPE TABLE OF sy-ucomm.\n",
-    top: 1,
-    firstchildren: 1,
+    code: `AT SELECTION-SCREEN OUTPUT.
+             DATA: lt_ucomm TYPE TABLE OF sy-ucomm.`,
+    top: 2,
   },
 ];
 
-// todo
 
-/*
 describe("count top nesting", () => {
   tests.forEach((test) => {
     it("\"" + test.n + "\" should be " + test.top + " top statements", () => {
-      let file = new Runner([new MemoryFile("cl_foo.clas.abap", test.code)]).parse()[0];
-      expect(file.getRoot().getChildren().length).to.equals(test.top);
+      const reg = new Registry().addFile(new MemoryFile("znesting.prog.abap", test.code)).parse();
+      const clas = reg.getFirstObject() as Class;
+      expect(clas.getMainABAPFile()?.getStructure()?.getChildren().length).to.equals(test.top);
     });
   });
 });
-
-describe("count first top child nesting", () => {
-  tests.forEach((test) => {
-    it("\"" + test.n + "\" should be " + test.firstchildren + " first child statements", () => {
-      let file = new Runner([new MemoryFile("cl_foo.clas.abap", test.code)]).parse()[0];
-      let count = 0;
-      if (file.getRoot().getChildren()[0] instanceof StructureNode) {
-        count = file.getRoot().getChildren()[0].getChildren().length;
-      }
-
-      expect(count).to.equals(test.firstchildren);
-    });
-  });
-});
-*/
