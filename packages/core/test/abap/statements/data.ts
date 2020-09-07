@@ -84,6 +84,7 @@ const tests = [
   "data mepo1313-evers like ekpo-evers.",
   "DATA lt_tab OCCURS 10.",
   "DATA range TYPE RANGE OF char30 WITH HEADER LINE.",
+  "DATA foo TYPE c %_PREDEFINED.",
 ];
 
 statementType(tests, "DATA", Statements.Data);
