@@ -9,6 +9,8 @@ import {StatementParser} from "./statement_parser";
 import {MemoryFile} from "../../files/memory_file";
 import {Lexer} from "../1_lexer/lexer";
 
+// todo: nested macros are not expanded
+
 class Macros {
   private readonly macros: {[index: string]: StatementNode[]};
 
@@ -28,6 +30,10 @@ class Macros {
 
   public getContents(name: string): StatementNode[] | undefined {
     return this.macros[name.toUpperCase()];
+  }
+
+  public listMacroNames(): string[] {
+    return Object.keys(this.macros);
   }
 
   public isMacro(name: string): boolean {
@@ -124,7 +130,7 @@ export class ExpandMacros {
     const file = new MemoryFile("expand_macros.abap.prog", str);
     const lexerResult = Lexer.run(file, statement.getFirstToken().getStart());
 
-    const result = new StatementParser(this.version).run([lexerResult], []);
+    const result = new StatementParser(this.version).run([lexerResult], this.macros.listMacroNames());
 
     return result[0].statements;
   }

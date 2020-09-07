@@ -31,6 +31,15 @@ DEFINE encrypt_key.
 END-OF-DEFINITION.
 encrypt_key.`, cnt: 0},
 
+  {abap: `
+DEFINE _foo.
+  WRITE 'hello'.
+END-OF-DEFINITION.
+DEFINE _bar.
+  _foo.
+END-OF-DEFINITION.
+_bar.`, cnt: 0},
+
 ];
 
 testRule(tests, ParserError);
