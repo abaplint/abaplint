@@ -38,20 +38,23 @@ export class ExpandMacros {
   }
 
   public findMacros(statements: StatementNode[]) {
-    let define = false;
+    let name: string | undefined = undefined;
+    let contents: StatementNode[] = [];
 
     for (let i = 0; i < statements.length; i++) {
       const statement = statements[i];
 
       if (statement.get() instanceof Statements.Define) {
-        define = true;
         // todo, will this break if first token is a pragma?
-        this.macros.addMacro(statement.getTokens()[1].getStr(), []);
-      } else if (define === true) {
+        name = statement.getTokens()[1].getStr();
+        contents = [];
+      } else if (name) {
         if (statement.get() instanceof Statements.EndOfDefinition) {
-          define = false;
+          this.macros.addMacro(name, contents);
+          name = undefined;
         } else if (!(statement.get() instanceof Comment)) {
           statements[i] = new StatementNode(new MacroContent()).setChildren(this.tokensToNodes(statement.getTokens()));
+          contents.push(statements[i]);
         }
       }
     }

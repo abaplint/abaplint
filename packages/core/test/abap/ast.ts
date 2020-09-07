@@ -12,8 +12,8 @@ const tests = [
 
 describe("ast count root children, statement", () => {
   tests.forEach((test) => {
-    const slist = getStatements(test.abap);
     it("\"" + test.abap + "\" should have " + test.cnt, () => {
+      const slist = getStatements(test.abap);
       expect(slist[0].getChildren().length).to.equals(test.cnt);
     });
   });
