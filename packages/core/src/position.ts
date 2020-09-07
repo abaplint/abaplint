@@ -30,5 +30,24 @@ export class Position {
   public isBetween(p1: Position, p2: Position): boolean {
     return this.isAfter(p1) && this.isBefore(p2);
   }
+}
 
+/** used for macro calls */
+export class VirtualPosition extends Position {
+  private readonly virtual: Position;
+  private readonly vrow: number;
+  private readonly vcol: number;
+
+  public constructor(virtual: Position, row: number, col: number) {
+    super(virtual.getRow(), virtual.getCol());
+    this.vrow = row;
+    this.vcol = col;
+  }
+
+  public equals(p: Position): boolean {
+    if (!(p instanceof VirtualPosition)) {
+      return false;
+    }
+    return super.equals(this.virtual) && this.vrow === p.vrow && this.vcol === p.vcol;
+  }
 }

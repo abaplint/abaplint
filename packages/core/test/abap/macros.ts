@@ -22,7 +22,7 @@ _endif.`;
 
     const lexerResult = Lexer.run(new MemoryFile("zmacros1.prog.abap", abap));
     const result = new StatementParser(defaultVersion).run([lexerResult], [])[0];
-    expect(result.statements.length).to.equal(8);
+    expect(result.statements.length).to.equal(10);
   });
 
 });

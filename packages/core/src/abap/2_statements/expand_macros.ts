@@ -6,8 +6,8 @@ import {Token} from "../1_lexer/tokens/_token";
 import {TokenNode} from "../nodes/token_node";
 import {Version} from "../../version";
 import {StatementParser} from "./statement_parser";
-import {ILexerResult} from "../1_lexer/lexer_result";
 import {MemoryFile} from "../../files/memory_file";
+import {Lexer} from "../1_lexer/lexer";
 
 class Macros {
   private readonly macros: {[index: string]: StatementNode[]};
@@ -77,9 +77,13 @@ export class ExpandMacros {
       if (statement.get() instanceof Unknown) {
         const macroName = this.findName(statement.getTokens());
         if (macroName && this.macros.isMacro(macroName)) {
-          this.expandContents(macroName);
-
           result.push(new StatementNode(new MacroCall()).setChildren(this.tokensToNodes(statement.getTokens())));
+
+          const expanded = this.expandContents(macroName, statement.getTokens());
+          for (const e of expanded) {
+            result.push(e);
+          }
+
           continue;
         }
       }
@@ -91,27 +95,29 @@ export class ExpandMacros {
 
   //////////////
 
-  private expandContents(name: string): readonly StatementNode[] {
+  private expandContents(name: string, tokens: readonly Token[]): readonly StatementNode[] {
     const contents = this.macros.getContents(name);
     if (contents === undefined || contents.length === 0) {
       return [];
     }
 
-    const tokens: Token[] = [];
+    let str = "";
     for (const c of contents) {
-      for (const t of c.getTokens()) {
-        tokens.push(t);
+      str += c.concatTokens() + "\n";
+    }
+
+    for (let i = 1; i < tokens.length - 1; i++) {
+      const search = "&" + i;
+      while (str.includes(search)) {
+        str = str.replace(search, tokens[i].getStr());
       }
     }
 
-    const lexerResult: ILexerResult = {
-      file: new MemoryFile("expand_macros.abap.prog", ""),
-      tokens,
-    };
+    const file = new MemoryFile("expand_macros.abap.prog", str);
+    const lexerResult = Lexer.run(file, tokens[0].getStart());
 
     const result = new StatementParser(this.version).run([lexerResult], []);
 
-//    console.dir(result[0].statements);
     return result[0].statements;
   }
 
