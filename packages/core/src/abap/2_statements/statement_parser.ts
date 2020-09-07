@@ -15,7 +15,7 @@ import {ExpandMacros} from "./expand_macros";
 export const STATEMENT_MAX_TOKENS = 1000;
 
 class StatementMap {
-  private readonly map: {[index: string]: IStatement[] };
+  private readonly map: {[index: string]: IStatement[]};
 
   public constructor() {
     this.map = {};
@@ -33,7 +33,6 @@ class StatementMap {
         }
       }
     }
-
   }
 
   public lookup(token: Token): IStatement[] {

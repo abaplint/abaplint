@@ -6,27 +6,25 @@ import {Token} from "../1_lexer/tokens/_token";
 import {TokenNode} from "../nodes/token_node";
 
 class Macros {
-  private readonly macros: string[];
+  private readonly macros: {[index: string]: StatementNode[]};
 
   public constructor(globalMacros: readonly string[]) {
-    this.macros = [];
+    this.macros = {};
     for (const m of globalMacros) {
-      this.macros.push(m.toUpperCase());
+      this.macros[m.toUpperCase()] = [];
     }
   }
 
-  public addMacro(name: string): void {
+  public addMacro(name: string, contents: StatementNode[]): void {
     if (this.isMacro(name)) {
       return;
     }
-    this.macros.push(name.toUpperCase());
+    this.macros[name.toUpperCase()] = contents;
   }
 
   public isMacro(name: string): boolean {
-    for (const mac of this.macros) {
-      if (mac === name.toUpperCase()) {
-        return true;
-      }
+    if (this.macros[name.toUpperCase()]) {
+      return true;
     }
     return false;
   }
@@ -48,7 +46,7 @@ export class ExpandMacros {
       if (statement.get() instanceof Statements.Define) {
         define = true;
         // todo, will this break if first token is a pragma?
-        this.macros.addMacro(statement.getTokens()[1].getStr());
+        this.macros.addMacro(statement.getTokens()[1].getStr(), []);
       } else if (define === true) {
         if (statement.get() instanceof Statements.EndOfDefinition) {
           define = false;
