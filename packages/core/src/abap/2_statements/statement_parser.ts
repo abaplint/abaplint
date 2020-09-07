@@ -1,15 +1,16 @@
+import * as Statements from "./statements";
+import * as Expressions from "./expressions";
+import * as Tokens from "../1_lexer/tokens";
 import {Version} from "../../version";
 import {IFile} from "../../files/_ifile";
 import {TokenNode, StatementNode} from "../nodes";
 import {Artifacts} from "../artifacts";
-import * as Statements from "./statements";
-import * as Expressions from "./expressions";
 import {Combi} from "./combi";
-import {Unknown, Empty, Comment, MacroContent, NativeSQL, IStatement, MacroCall} from "./statements/_statement";
+import {Unknown, Empty, Comment, NativeSQL, IStatement} from "./statements/_statement";
 import {IStatementResult} from "./statement_result";
-import * as Tokens from "../1_lexer/tokens";
 import {Token} from "../1_lexer/tokens/_token";
 import {ILexerResult} from "../1_lexer/lexer_result";
+import {ExpandMacros} from "./expand_macros";
 
 export const STATEMENT_MAX_TOKENS = 1000;
 
@@ -39,33 +40,6 @@ class StatementMap {
     let res = this.map[token.getStr().toUpperCase()];
     res = res ? res.concat(this.map[""]) : this.map[""];
     return res;
-  }
-}
-
-class Macros {
-  private readonly macros: string[];
-
-  public constructor(globalMacros: readonly string[]) {
-    this.macros = [];
-    for (const m of globalMacros) {
-      this.macros.push(m.toUpperCase());
-    }
-  }
-
-  public addMacro(name: string): void {
-    if (this.isMacro(name)) {
-      return;
-    }
-    this.macros.push(name.toUpperCase());
-  }
-
-  public isMacro(name: string): boolean {
-    for (const mac of this.macros) {
-      if (mac === name.toUpperCase()) {
-        return true;
-      }
-    }
-    return false;
   }
 }
 
@@ -101,8 +75,6 @@ class WorkArea {
 
 export class StatementParser {
   private static map: StatementMap;
-
-  private macros: Macros;
   private readonly version: Version;
 
   public constructor(version: Version) {
@@ -112,19 +84,20 @@ export class StatementParser {
     this.version = version;
   }
 
+  /** input is one full object */
   public run(input: readonly ILexerResult[], globalMacros: readonly string[]): IStatementResult[] {
-    this.macros = new Macros(globalMacros);
+    const macros = new ExpandMacros(globalMacros);
 
     const wa = input.map(i => new WorkArea(i.file, i.tokens));
 
     for (const w of wa) {
       this.process(w);
       this.categorize(w);
-      this.findMacros(w);
+      macros.findMacros(w.statements);
     }
 
     for (const w of wa) {
-      this.handleMacros(w);
+      macros.handleMacros(w.statements);
       this.lazyUnknown(w);
       this.nativeSQL(w);
     }
@@ -180,59 +153,6 @@ export class StatementParser {
     }
 
     return res;
-  }
-
-  private findMacros(wa: WorkArea) {
-    let define = false;
-
-    for (let i = 0; i < wa.statements.length; i++) {
-      const statement = wa.statements[i];
-
-      if (statement.get() instanceof Statements.Define) {
-        define = true;
-        // todo, will this break if first token is a pragma?
-        this.macros.addMacro(statement.getTokens()[1].getStr());
-      } else if (define === true) {
-        if (statement.get() instanceof Statements.EndOfDefinition) {
-          define = false;
-        } else if (!(statement.get() instanceof Comment)) {
-          wa.statements[i] = new StatementNode(new MacroContent()).setChildren(this.tokensToNodes(statement.getTokens()));
-        }
-      }
-    }
-
-  }
-
-  private handleMacros(wa: WorkArea) {
-
-    for (let i = 0; i < wa.statements.length; i++) {
-      const statement = wa.statements[i];
-
-      if (statement.get() instanceof Unknown) {
-        let macroName: string | undefined = undefined;
-        let previous: Token | undefined = undefined;
-        for (const i of statement.getTokens()) {
-          if (previous && previous?.getEnd().getCol() !== i.getStart().getCol()) {
-            break;
-          } else if (i instanceof Tokens.Identifier || i.getStr() === "-") {
-            if (macroName === undefined) {
-              macroName = i.getStr();
-            } else {
-              macroName += i.getStr();
-            }
-          } else if (i instanceof Tokens.Pragma) {
-            continue;
-          } else {
-            break;
-          }
-          previous = i;
-        }
-        if (macroName && this.macros.isMacro(macroName)) {
-          wa.statements[i] = new StatementNode(new MacroCall()).setChildren(this.tokensToNodes(statement.getTokens()));
-        }
-      }
-    }
-
   }
 
   private nativeSQL(wa: WorkArea) {
