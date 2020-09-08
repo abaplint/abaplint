@@ -101,6 +101,7 @@ import {Controls} from "./statements/controls";
 import {While} from "./statements/while";
 import {SelectLoop} from "./statements/select_loop";
 import {Check} from "./statements/check";
+import {LogPoint} from "./statements/log_point";
 
 export class SyntaxLogic {
   private currentFile: ABAPFile;
@@ -369,6 +370,8 @@ export class SyntaxLogic {
       new WhenType().runSyntax(node, this.scope, filename);
     } else if (s instanceof Statements.If) {
       new If().runSyntax(node, this.scope, filename);
+    } else if (s instanceof Statements.LogPoint) {
+      new LogPoint().runSyntax(node, this.scope, filename);
     } else if (s instanceof Statements.While) {
       new While().runSyntax(node, this.scope, filename);
     } else if (s instanceof Statements.CallTransformation) {
