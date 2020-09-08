@@ -8,7 +8,6 @@ import {SyntaxLogic} from "../abap/5_syntax/syntax";
 import {ISpaghettiScopeNode} from "../abap/5_syntax/_spaghetti_scope";
 import {LSPLookup} from "./_lookup";
 import {ScopeType} from "../abap/5_syntax/_scope_type";
-import {ReferenceType} from "../abap/5_syntax/_reference";
 
 export class References {
   private readonly reg: IRegistry;
@@ -33,22 +32,33 @@ export class References {
     }
 
     const lookup = LSPLookup.lookup(found, this.reg, obj);
-    if (lookup?.definitionId === undefined) {
+    if (lookup?.definitionId === undefined || lookup?.scope === undefined) {
       return [];
     }
 
-    const locs = this.searchEverything(lookup.definitionId);
+    const locs = this.search(lookup.definitionId, lookup.scope);
     return locs.map(LSPUtils.identiferToLocation);
   }
 
-  public searchEverything(identifier: Identifier): Identifier[] {
+  public search(identifier: Identifier, node: ISpaghettiScopeNode): Identifier[] {
     let ret: Identifier[] = [];
-    // todo, take scope into account
-    for (const o of this.reg.getObjects()) {
-      if (o instanceof ABAPObject) {
-        ret = ret.concat(this.traverse(new SyntaxLogic(this.reg, o).run().spaghetti.getTop(), identifier));
+
+    // todo, this first assumes that the identifier is a variable?
+    if (node.getIdentifier().stype === ScopeType.Method
+        || node.getIdentifier().stype === ScopeType.FunctionModule
+        || node.getIdentifier().stype === ScopeType.Form) {
+      ret = this.findReferences(node, identifier);
+    } else {
+      for (const o of this.reg.getObjects()) {
+        if (o instanceof ABAPObject) {
+          if (this.reg.isDependency(o)) {
+            continue; // do not search in dependencies
+          }
+          ret = ret.concat(this.findReferences(new SyntaxLogic(this.reg, o).run().spaghetti.getTop(), identifier));
+        }
       }
     }
+
     // remove duplicates, might be a changing(read and write) position
     return this.removeDuplicates(ret);
   }
@@ -65,31 +75,33 @@ export class References {
     });
   }
 
-  private traverse(node: ISpaghettiScopeNode, identifier: Identifier): Identifier[] {
+  private findReferences(node: ISpaghettiScopeNode, identifier: Identifier): Identifier[] {
     let ret: Identifier[] = [];
 
     if (node.getIdentifier().stype !== ScopeType.BuiltIn) {
+      // this is for finding the definitions
       for (const v of node.getData().vars) {
         if (v.identifier.equals(identifier)) {
           ret.push(v.identifier);
         }
       }
 
-      for (const r of node.getData().references) {
-        if (r.referenceType === ReferenceType.DataReadReference && r.resolved.equals(identifier)) {
-          ret.push(r.position);
+      // this is for finding the definitions
+      for (const v of node.getData().types) {
+        if (v.identifier.equals(identifier)) {
+          ret.push(v.identifier);
         }
       }
 
-      for (const w of node.getData().references) {
-        if (w.referenceType === ReferenceType.DataWriteReference && w.resolved.equals(identifier)) {
-          ret.push(w.position);
+      for (const r of node.getData().references) {
+        if (r.resolved.equals(identifier)) {
+          ret.push(r.position);
         }
       }
     }
 
     for (const c of node.getChildren()) {
-      ret = ret.concat(this.traverse(c, identifier));
+      ret = ret.concat(this.findReferences(c, identifier));
     }
 
     return ret;

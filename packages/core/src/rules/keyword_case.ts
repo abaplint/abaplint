@@ -12,6 +12,7 @@ import * as Expressions from "../abap/2_statements/expressions";
 import {Token} from "../abap/1_lexer/tokens/_token";
 import {IRuleMetadata, RuleTag} from "./_irule";
 import {DDIC} from "../ddic";
+import {VirtualPosition} from "../position";
 
 export enum KeywordCaseStyle {
   Upper = "upper",
@@ -26,6 +27,8 @@ export class KeywordCaseConf extends BasicRuleConfig {
   public ignoreGlobalClassDefinition: boolean = false;
   public ignoreGlobalInterface: boolean = false;
   public ignoreFunctionModuleName: boolean = false;
+  // this ignores keywords in CLASS/ENDCLASS statements of a global class (and only in them, the rest is checked)
+  public ignoreGlobalClassBoundaries: boolean = false;
 
   /** A list of keywords to be ignored */
   public ignoreKeywords: string[] = [];
@@ -72,6 +75,7 @@ export class KeywordCase extends ABAPRule {
   public runParsed(file: ABAPFile, obj: IObject) {
     const issues: Issue[] = [];
     let skip = false;
+    let isGlobalClass = false;
 
     const ddic = new DDIC(this.reg);
 
@@ -86,13 +90,25 @@ export class KeywordCase extends ABAPRule {
       if (statement.get() instanceof Unknown
         || statement.get() instanceof MacroContent
         || statement.get() instanceof MacroCall
+        || statement.getFirstToken().getStart() instanceof VirtualPosition
         || statement.get() instanceof Comment) {
         continue;
       }
 
+      if (this.conf.ignoreGlobalClassBoundaries) {
+        const node = statement.get();
+        if (node instanceof Statements.ClassDefinition && statement.findFirstExpression(Expressions.ClassGlobal)) {
+          isGlobalClass = true;
+          continue;
+        } else if (isGlobalClass === true
+          && (node instanceof Statements.EndClass || node instanceof Statements.ClassImplementation)) {
+          continue;
+        }
+      }
+
       if (this.conf.ignoreGlobalClassDefinition) {
         if (statement.get() instanceof Statements.ClassDefinition
-          && statement.findFirstExpression(Expressions.Global)) {
+          && statement.findFirstExpression(Expressions.ClassGlobal)) {
           skip = true;
           continue;
         } else if (skip === true && statement.get() instanceof Statements.EndClass) {
@@ -105,7 +121,7 @@ export class KeywordCase extends ABAPRule {
 
       if (this.conf.ignoreGlobalInterface) {
         if (statement.get() instanceof Statements.Interface
-          && statement.findFirstExpression(Expressions.Global)) {
+          && statement.findFirstExpression(Expressions.ClassGlobal)) {
           skip = true;
           continue;
         } else if (skip === true && statement.get() instanceof Statements.EndInterface) {

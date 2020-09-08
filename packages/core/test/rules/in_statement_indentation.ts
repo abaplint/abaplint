@@ -3,6 +3,8 @@ import {InStatementIndentation} from "../../src/rules";
 
 const tests = [
   {abap: "parser error", cnt: 0},
+  {abap: "parser\n    error", cnt: 0},
+  {abap: "parser\n\n\nerror", cnt: 0},
   {abap: "WRITE: / 'abc'.", cnt: 0},
   {abap: "WRITE: /\n'abc'.", cnt: 1},
   {abap: "WRITE: /\n  'abc'.", cnt: 0},

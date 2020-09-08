@@ -225,4 +225,46 @@ describe("Rules, implement_methods", () => {
     expect(issues.length).to.equals(0);
   });
 
+  it("INTERFACES ABSTRACT METHODS", async () => {
+    const prog = `
+INTERFACE lcl_intf.
+  METHODS method_name.
+ENDINTERFACE.
+
+CLASS lcl_bar DEFINITION ABSTRACT.
+  PUBLIC SECTION.
+    INTERFACES lcl_intf ABSTRACT METHODS method_name.
+ENDCLASS.
+
+CLASS lcl_bar IMPLEMENTATION.
+ENDCLASS.`;
+    const issues = await runMulti([
+      {filename: "zfoobar.prog.abap", contents: prog}]);
+    expect(issues.length).to.equals(0);
+  });
+
+  it("class, local interface", async () => {
+    const locals = `
+    INTERFACE lif_abapgit_provider.
+    ENDINTERFACE.`;
+    const testclasses = `
+    CLASS lcl_test DEFINITION.
+      PUBLIC SECTION.
+        INTERFACES: lif_abapgit_provider.
+    ENDCLASS.
+    CLASS lcl_test IMPLEMENTATION.
+    ENDCLASS.`;
+    const main = `
+    CLASS zcl_abapgit_res_repos DEFINITION PUBLIC FINAL CREATE PUBLIC.
+    ENDCLASS.
+    CLASS zcl_abapgit_res_repos IMPLEMENTATION.
+    ENDCLASS.`;
+    const issues = await runMulti([
+      {filename: "zcl_abapgit_res_repos.clas.locals_def.abap", contents: locals},
+      {filename: "zcl_abapgit_res_repos.clas.testclasses.abap", contents: testclasses},
+      {filename: "zcl_abapgit_res_repos.clas.abap", contents: main},
+    ]);
+    expect(issues.length).to.equals(0);
+  });
+
 });

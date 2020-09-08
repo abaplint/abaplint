@@ -4,6 +4,7 @@ import {IStatementRunnable} from "../statement_runnable";
 
 export class MacroName extends Expression {
   public getRunnable(): IStatementRunnable {
-    return seq(reg(/^[\w\*%\?$]+>?$/), star(seq(tok(Dash), reg(/^\w+$/))));
+    const r = /^[\w\*%\?$&]+>?$/;
+    return seq(reg(r), star(seq(tok(Dash), reg(r))));
   }
 }

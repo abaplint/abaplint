@@ -14,6 +14,8 @@ import {DDIC} from "../ddic";
 export class RemoveDescriptionsConf extends BasicRuleConfig {
   /** Ignore global exception classes */
   public ignoreExceptions: boolean = false;
+  /** Ignore global workflow classes */
+  public ignoreWorkflow: boolean = true;
 }
 
 export class RemoveDescriptions implements IRule {
@@ -25,8 +27,13 @@ export class RemoveDescriptions implements IRule {
     return {
       key: "remove_descriptions",
       title: "Remove descriptions",
-      // eslint-disable-next-line max-len
-      shortDescription: `Ensures you have no descriptions in metadata of methods, parameters, etc. For class descriptions, see rule description_empty.`,
+      shortDescription: `
+Ensures you have no descriptions in metadata of methods, parameters, etc.
+
+Class descriptions are required, see rule description_empty.
+
+Consider using ABAP Doc for documentation.
+`,
     };
   }
 
@@ -61,6 +68,8 @@ export class RemoveDescriptions implements IRule {
         return [];
       } else if (this.conf.ignoreExceptions && ddic.isException(def, obj)) {
         return [];
+      } else if (this.conf.ignoreWorkflow === true && def.interfaces.find(e => e.name.toUpperCase() === "IF_WORKFLOW")) {
+        return [];
       }
       return this.checkClass(obj);
     } else if (obj instanceof Objects.Interface) {
@@ -69,6 +78,8 @@ export class RemoveDescriptions implements IRule {
 
     return [];
   }
+
+//////////////
 
   private checkInterface(obj: Objects.Interface): Issue[] {
     const xml = obj.getXML();
@@ -108,7 +119,7 @@ export class RemoveDescriptions implements IRule {
 
     const ret: Issue[] = [];
     for (const d of xmlToArray(desc.SEOCOMPOTX)) {
-      const message = this.getDescription(d.CMPNAME._text);
+      const message = this.getDescription(d.CMPNAME?._text);
       const position = new Position(1, 1);
       const issue = Issue.atPosition(file, position, message, this.getMetadata().key);
       ret.push(issue);

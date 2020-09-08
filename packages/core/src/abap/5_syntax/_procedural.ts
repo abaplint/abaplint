@@ -3,14 +3,16 @@ import * as Statements from "../2_statements/statements";
 import * as Structures from "../3_structures/structures";
 import {StatementNode} from "../nodes";
 import {ABAPObject} from "../../objects/_abap_object";
-import {FormDefinition} from "../types";
+import {FormDefinition, FunctionModuleParameterDirection} from "../types";
 import {CurrentScope} from "./_current_scope";
 import {ScopeType} from "./_scope_type";
 import {FunctionGroup} from "../../objects";
 import {ABAPFile} from "../../files";
 import {IRegistry} from "../../_iregistry";
 import {TypedIdentifier} from "../types/_typed_identifier";
-import {IntegerType} from "../types/basic";
+import {TableType, CharacterType} from "../types/basic";
+import {DDIC} from "../../ddic";
+import {AbstractType} from "../types/basic/_abstract_type";
 
 export class Procedural {
   private readonly scope: CurrentScope;
@@ -67,18 +69,31 @@ export class Procedural {
   }
 
   public findFunctionScope(obj: ABAPObject, node: StatementNode, filename: string) {
+    if (!(obj instanceof FunctionGroup)) {
+      throw new Error("findFunctionScope, expected function group input");
+    }
+
     const nameToken = node.findFirstExpression(Expressions.Field)!.getFirstToken();
     const name = nameToken.getStr();
     this.scope.push(ScopeType.FunctionModule, name, node.getFirstToken().getStart(), filename);
 
-    const definition = (obj as FunctionGroup).getModule(name);
+    const definition = obj.getModule(name);
     if (definition === undefined) {
-      throw new Error("Function group definition \"" + name + "\" not found");
+      throw new Error("Function module definition \"" + name + "\" not found");
     }
 
+    const ddic = new DDIC(this.reg);
+
     for (const param of definition.getParameters()) {
-      const type = new TypedIdentifier(nameToken, filename, new IntegerType()); // todo, add real type
-      this.scope.addNamedIdentifier(param, type);
+      let found: AbstractType = new CharacterType(1); // fallback
+      if (param.type) {
+        found = ddic.lookup(param.type);
+      }
+      if (param.direction === FunctionModuleParameterDirection.tables) {
+        found = new TableType(found, true);
+      }
+      const type = new TypedIdentifier(nameToken, filename, found);
+      this.scope.addNamedIdentifier(param.name, type);
     }
   }
 

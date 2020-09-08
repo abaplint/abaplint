@@ -3,6 +3,8 @@ import {IFile} from "./files/_ifile";
 import {Position} from "./position";
 import {IRegistry} from "./_iregistry";
 import {MemoryFile} from "./files/memory_file";
+import {StatementNode} from "./abap/nodes/statement_node";
+import {ABAPFile} from "./abap/abap_file";
 
 export interface IRange {
   start: Position;
@@ -19,6 +21,100 @@ export interface IEdit {
 }
 
 export class EditHelper {
+
+  public static mergeList(fixes: IEdit[]): IEdit {
+    const results: IEdit = {};
+    for (const f of fixes) {
+      for (const filename in f) {
+        if (results[filename] === undefined) {
+          results[filename] = [];
+        }
+        results[filename] = results[filename].concat(f[filename]);
+      }
+    }
+    return results;
+  }
+
+  public static merge(fix1: IEdit, fix2: IEdit): IEdit {
+    const ret: IEdit = {};
+
+    for (const k of Object.keys(fix1)) {
+      if (ret[k] === undefined) {
+        ret[k] = [];
+      }
+      ret[k] = ret[k].concat(fix1[k]);
+    }
+
+    for (const k of Object.keys(fix2)) {
+      if (ret[k] === undefined) {
+        ret[k] = [];
+      }
+      ret[k] = ret[k].concat(fix2[k]);
+    }
+
+    return ret;
+  }
+
+  public static findStatement(token: Token, file: ABAPFile | undefined): StatementNode | undefined {
+    if (file === undefined) {
+      return undefined;
+    }
+    for (const s of file.getStatements()) {
+      if (s.includesToken(token)) {
+        return s;
+      }
+    }
+    return undefined;
+  }
+
+  public static deleteStatement(file: ABAPFile, statement: StatementNode): IEdit {
+    const scolon = statement.getColon();
+    if (scolon === undefined) {
+      return EditHelper.deleteRange(file, statement.getFirstToken().getStart(), statement.getLastToken().getEnd());
+    }
+
+    // find statements part of chain
+    let chainCount = 0;
+    let setPrevious = true;
+    /** previous statement in the chain */
+    let previousStatement: StatementNode | undefined = undefined;
+    for (const s of file.getStatements()) {
+      const colon = s.getColon();
+      if (colon === undefined) {
+        continue;
+      } else if (s === statement) {
+        setPrevious = false;
+        continue;
+      } else if (colon.getStart().equals(scolon.getStart())) {
+        chainCount = chainCount + 1;
+      }
+      if (setPrevious === true) {
+        previousStatement = s;
+      }
+    }
+    if (chainCount === 0) {
+      // the statement to be deleted is the only one in the chain
+      return EditHelper.deleteRange(file, statement.getFirstToken().getStart(), statement.getLastToken().getEnd());
+    }
+
+    // the start of deletion should happen for tokens after the colon
+    let startDelete = statement.getFirstToken().getStart();
+    for (const t of statement.getTokens()) {
+      if (t.getStart().isAfter(scolon.getEnd())) {
+        startDelete = t.getStart();
+        break;
+      }
+    }
+
+    if (statement.getLastToken().getStr() === "." && previousStatement) {
+      const edit1 = EditHelper.replaceToken(file, previousStatement.getLastToken(), ".");
+      const edit2 = EditHelper.deleteRange(file, startDelete, statement.getLastToken().getEnd());
+      return EditHelper.merge(edit1, edit2);
+    } else {
+      return EditHelper.deleteRange(file, startDelete, statement.getLastToken().getEnd());
+    }
+  }
+
   public static deleteToken(file: IFile, token: Token): IEdit {
     const filename = file.getFilename();
     const range: IRange = {start: token.getStart(), end: token.getEnd()};
@@ -35,6 +131,10 @@ export class EditHelper {
     const filename = file.getFilename();
     const range: IRange = {start: pos, end: pos};
     return {[filename]: [{range, newText: text}]};
+  }
+
+  public static replaceToken(file: IFile, token: Token, text: string): IEdit {
+    return this.replaceRange(file, token.getStart(), token.getEnd(), text);
   }
 
   public static replaceRange(file: IFile, start: Position, end: Position, text: string): IEdit {

@@ -1,6 +1,6 @@
 import * as Tokens from "./tokens";
 import {IFile} from "../../files/_ifile";
-import {Position} from "../../position";
+import {Position, VirtualPosition} from "../../position";
 import {Token} from "./tokens/_token";
 import {ILexerResult} from "./lexer_result";
 
@@ -94,12 +94,14 @@ class Stream {
 }
 
 export class Lexer {
+  private static virtual: Position | undefined;
   private static tokens: Token[];
   private static m: Mode;
   private static stream: Stream;
   private static buffer: Buffer;
 
-  public static run(file: IFile): ILexerResult {
+  public static run(file: IFile, virtual?: Position): ILexerResult {
+    this.virtual = virtual;
     this.tokens = [];
     this.m = Mode.Normal;
 
@@ -116,19 +118,22 @@ export class Lexer {
 
       let whiteBefore = false;
       const prev = this.stream.prevChar();
-      if (prev === " " || prev === "\n" || prev === ":") {
+      if (prev === " " || prev === "\n" || prev === "\t" || prev === ":") {
         whiteBefore = true;
       }
 
       let whiteAfter = false;
       const next = this.stream.nextChar();
-      if (next === " " || next === "\n" || next === ":" || next === "," || next === "." || next === "" || next === "\"") {
+      if (next === " " || next === "\n" || next === "\t" || next === ":" || next === "," || next === "." || next === "" || next === "\"") {
         whiteAfter = true;
       }
 
-      let tok: Token;
-      const pos = new Position(row, col - s.length);
+      let pos = new Position(row, col - s.length);
+      if (this.virtual) {
+        pos = new VirtualPosition(this.virtual, pos.getRow(), pos.getCol());
+      }
 
+      let tok: Token;
       if (this.m === Mode.Comment) {
         tok = new Tokens.Comment(pos, s);
       } else if (this.m === Mode.Ping || this.m === Mode.Str) {

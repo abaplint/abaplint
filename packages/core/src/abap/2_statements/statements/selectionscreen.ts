@@ -1,21 +1,19 @@
 import {IStatement} from "./_statement";
 import {verNot, str, seq, alt, opt, per, regex as reg, tok} from "../combi";
 import {ParenLeft, WParenLeft, ParenRightW, ParenRight} from "../../1_lexer/tokens";
-import {Integer, Source, Field, FieldSub, Modif, Constant, InlineField, TextElement} from "../expressions";
+import {Integer, Source, Field, Modif, Constant, InlineField, TextElement, BlockName} from "../expressions";
 import {Version} from "../../../version";
 import {IStatementRunnable} from "../statement_runnable";
 
 export class SelectionScreen implements IStatement {
 
   public getMatcher(): IStatementRunnable {
-    const blockName = new FieldSub();
-
     const beginBlock = seq(str("BEGIN OF BLOCK"),
-                           blockName,
+                           new BlockName(),
                            opt(str("WITH FRAME")),
                            opt(seq(str("TITLE"), alt(new InlineField(), new TextElement()))),
                            opt(str("NO INTERVALS")));
-    const endBlock = seq(str("END OF BLOCK"), blockName);
+    const endBlock = seq(str("END OF BLOCK"), new BlockName());
 
     const nesting = seq(str("NESTING LEVEL"), new Source());
 
@@ -85,10 +83,10 @@ export class SelectionScreen implements IStatement {
                     alt(posIntegers,
                         posSymbols));
 
-    const incl = seq(str("INCLUDE BLOCKS"), blockName);
+    const incl = seq(str("INCLUDE BLOCKS"), new BlockName());
 
     const tabbed = seq(str("BEGIN OF TABBED BLOCK"),
-                       new Field(),
+                       new InlineField(),
                        str("FOR"),
                        new Integer(),
                        str("LINES"),

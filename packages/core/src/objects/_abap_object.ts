@@ -33,7 +33,7 @@ export abstract class ABAPObject extends AbstractObject {
       return {updated: false, runtime: 0};
     }
 
-    const abapFiles = this.files.filter(f => f.getFilename().endsWith(".abap"));
+    const abapFiles = this.getFiles().filter(f => f.getFilename().endsWith(".abap"));
     const result = new ABAPParser(version, globalMacros).parse(abapFiles);
 
     this.parsed = result.output;
@@ -63,9 +63,16 @@ export abstract class ABAPObject extends AbstractObject {
   }
 
   public getMainABAPFile(): ABAPFile | undefined {
+    // todo, uris
     const search = this.getName().replace(/\//g, "#").toLowerCase() + "." + this.getType().toLowerCase() + ".abap";
     for (const file of this.getABAPFiles()) {
       if (file.getFilename().endsWith(search)) {
+        return file;
+      }
+    }
+    // uri fallback,
+    for (const file of this.getABAPFiles()) {
+      if (file.getFilename().endsWith(".abap")) {
         return file;
       }
     }
@@ -87,10 +94,13 @@ export abstract class ABAPObject extends AbstractObject {
     }
 
     for (const t of xmlToArray(parsed.abapGit["asx:abap"]["asx:values"].TPOOL.item)) {
-      if (t.ID !== undefined && t.ID._text === "I") {
+      if (t?.ID?._text === "I") {
+        if (t.KEY === undefined) {
+          throw new Error("findTexts, undefined");
+        }
         this.texts.push({
           key: t.KEY._text,
-          text: t.ENTRY._text});
+          text: t.ENTRY ? t.ENTRY._text : ""});
       }
     }
   }

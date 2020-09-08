@@ -46,6 +46,30 @@ describe("LSP, prepare rename, global class", () => {
 
 });
 
+describe("LSP, actual rename, variable", () => {
+
+  it("simple", async () => {
+    const abap = `DATA foo TYPE i.
+WRITE foo.`;
+    const file = new MemoryFile("foobar.prog.abap", abap);
+    const reg = new Registry().addFile(file);
+    await reg.parseAsync();
+
+    const result = new Rename(reg).rename({
+      textDocument: {uri: file.getFilename()},
+      position: LServer.Position.create(0, 7),
+      newName: "bar"});
+    expect(result).to.not.equal(undefined);
+    new ApplyWorkSpaceEdit(reg).apply(result!);
+    await reg.parseAsync();
+
+    const expected = `DATA bar TYPE i.
+WRITE bar.`;
+    expect(reg.getFirstObject()?.getFiles()[0]?.getRaw()).to.equal(expected);
+  });
+
+});
+
 describe("LSP, actual rename, global class", () => {
 
   it("bad position", async () => {

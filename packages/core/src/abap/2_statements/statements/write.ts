@@ -1,7 +1,7 @@
 import {IStatement} from "./_statement";
 import {verNot, str, seq, opt, alt, per, tok, regex as reg, altPrio} from "../combi";
 import {Target, Source, Dynamic, FieldSub, FieldChain, Color} from "../expressions";
-import {ParenLeft, ParenRightW, WParenLeft} from "../../1_lexer/tokens";
+import {ParenLeft, ParenRightW, WParenLeft, ParenRight} from "../../1_lexer/tokens";
 import {Version} from "../../../version";
 import {IStatementRunnable} from "../statement_runnable";
 
@@ -56,7 +56,7 @@ export class Write implements IStatement {
                         seq(str("CURRENCY"), new Source()),
                         str("NO-SIGN"));
 
-    const post = seq(alt(new FieldChain(), reg(/^[\d]+$/), reg(/^\*$/)), tok(ParenRightW));
+    const post = seq(alt(new FieldChain(), reg(/^[\d]+$/), reg(/^\*$/)), alt(tok(ParenRightW), tok(ParenRight)));
     const wlength = seq(tok(WParenLeft), post);
     const length = seq(tok(ParenLeft), post);
 

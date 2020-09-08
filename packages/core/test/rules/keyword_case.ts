@@ -44,6 +44,16 @@ const tests = [
   {abap: `MODIFY LINE sy-index FIELD VALUE val FROM var.`, cnt: 0},
   {abap: "INSERT LINES OF lt_founds INTO TABLE rt_founds_all.", cnt: 0},
   {abap: "INSERT INITIAL LINE INTO lt_selection INDEX 1 ASSIGNING <ls_sel>.", cnt: 0},
+  {abap: "DATA tab LIKE STANDARD TABLE OF bar WITH KEY foo INITIAL SIZE 2 WITH HEADER LINE.", cnt: 0},
+  {abap: "INSERT node_tmp INTO TABLE mt_json_tree REFERENCE INTO node_ref.", cnt: 0},
+  {abap: "FIND ALL OCCURRENCES OF REGEX || IN SECTION LENGTH 42 OF || MATCH OFFSET DATA(lv_off).", cnt: 0},
+
+  {abap: `
+DEFINE _bar.
+  write 'Hello World'.
+END-OF-DEFINITION.
+_bar.`, cnt: 0},
+
 ];
 
 testRule(tests, KeywordCase);
@@ -130,3 +140,70 @@ testRule(tests5, KeywordCase, config5);
 // test inconsistent case in ignored keyword list
 config5.ignoreKeywords = ["texT", "WrItE"];
 testRule(tests5, KeywordCase, config5);
+
+// ************************
+
+const testLowerCaseGlobalClassSuite1 = [
+  {
+    abap: `
+      class zcl_my definition final public.
+        public section.
+          methods x.
+      endclass.
+      class zcl_my implementation.
+        method x. endmethod.
+      endclass.
+      `,
+    cnt: 0,
+  },
+  {
+    abap: `
+      CLASS zcl_my definition FINAL public.
+        public section.
+          methods x.
+      ENDCLASS.
+      CLASS zcl_my IMPLEMENTATION.
+        method x. endmethod.
+      ENDCLASS.
+      `,
+    cnt: 1,
+  },
+  {
+    abap: `
+      class zcl_my definition final public.
+        public section.
+          METHODS x.
+      endclass.
+      class zcl_my implementation.
+        method x. endmethod.
+      endclass.
+      `,
+    cnt: 1,
+  },
+  {
+    abap: `
+      class zcl_my definition final public.
+        public section.
+          methods x.
+      endclass.
+      class zcl_my implementation.
+        METHOD x. endmethod.
+      endclass.
+      `,
+    cnt: 1,
+  },
+];
+const configLowerCaseGlobalClass1 = {
+  ...new KeywordCaseConf(),
+  style: KeywordCaseStyle.Lower,
+};
+testRule(testLowerCaseGlobalClassSuite1, KeywordCase, configLowerCaseGlobalClass1, "keywordCase: lower");
+
+// no errors in case 2 for suite 2
+const testLowerCaseGlobalClassSuite2 = testLowerCaseGlobalClassSuite1.map((c, idx) => idx === 1 ? {...c, cnt: 0} : c);
+const configLowerCaseGlobalClass2 = {
+  ...new KeywordCaseConf(),
+  style: KeywordCaseStyle.Lower,
+  ignoreGlobalClassBoundaries: true,
+};
+testRule(testLowerCaseGlobalClassSuite2, KeywordCase, configLowerCaseGlobalClass2, "keywordCase: lower + ignore boundaries");

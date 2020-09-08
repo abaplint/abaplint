@@ -15,7 +15,7 @@ export function runMulti(files: {filename: string, contents: string}[]): readonl
   return reg.parse().findIssues();
 }
 
-export function testRule(tests: {abap: string, cnt: number}[], rule: new () => IRule, config?: any, testTitle?: string) {
+export function testRule(tests: {abap: string, cnt: number, only?: boolean}[], rule: new () => IRule, config?: any, testTitle?: string) {
   const nrule = new rule();
   if (config) {
     nrule.setConfig(config);
@@ -25,11 +25,18 @@ export function testRule(tests: {abap: string, cnt: number}[], rule: new () => I
     // note that timeout() only works inside function()
     this.timeout(200);
     tests.forEach((test) => {
-      it("\"" + test.abap + "\" should have " + test.cnt + " issue(s)", () => {
+      const title = "\"" + test.abap + "\" should have " + test.cnt + " issue(s)";
+      const callback = () => {
         const reg = new Registry().addFile(new MemoryFile("zfoo.prog.abap", test.abap)).parse();
         const issues = nrule.initialize(reg).run(reg.getFirstObject()!);
         expect(issues.length).to.equals(test.cnt);
-      });
+      };
+
+      if (test.only === true) {
+        it.only(title, callback);
+      } else {
+        it(title, callback);
+      }
     });
   });
 }

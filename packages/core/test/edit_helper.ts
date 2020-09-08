@@ -1,8 +1,25 @@
 import {expect} from "chai";
-import {applyEditList, EditHelper} from "../src/edit_helper";
+import {applyEditList, EditHelper, applyEditSingle} from "../src/edit_helper";
 import {MemoryFile} from "../src/files";
 import {Registry} from "../src/registry";
 import {Position} from "../src/position";
+import {ABAPObject} from "../src/objects/_abap_object";
+
+function testDeleteStatement(abapCode: string, statementIndex: number) {
+  const filename = "filename.prog.abap";
+  const file = new MemoryFile(filename, abapCode);
+  const reg = new Registry().addFile(file).parse();
+
+  const abap = (reg.getFirstObject() as ABAPObject).getMainABAPFile();
+  expect(abap).to.not.equal(undefined);
+
+  const edit = EditHelper.deleteStatement(abap!, abap!.getStatements()[statementIndex]);
+
+  applyEditSingle(reg, edit);
+
+  const raw = reg.getFileByName(filename)?.getRaw();
+  return raw;
+}
 
 describe("Edit Helper", () => {
 
@@ -46,6 +63,44 @@ line7`);
     expect(raw).to.equal(`line1
     line2
     line3`);
+  });
+
+  it("deleteStatement, normal", async () => {
+    const result = testDeleteStatement(`DATA foo TYPE c.`, 0);
+    expect(result).to.equal(``);
+  });
+
+  it("deleteStatement, only one statement in chain", async () => {
+    const result = testDeleteStatement(`DATA: foo TYPE c.`, 0);
+    expect(result).to.equal(``);
+  });
+
+  it("deleteStatement, first statement in chain", async () => {
+    const result = testDeleteStatement(`DATA: foo TYPE c, bar TYPE c.`, 0);
+    expect(result).to.equal(`DATA:  bar TYPE c.`);
+  });
+
+  it("deleteStatement, last statement in chain", async () => {
+    const result = testDeleteStatement(`DATA: foo TYPE c, bar TYPE c.`, 1);
+    expect(result).to.equal(`DATA: foo TYPE c. `);
+  });
+
+  it("deleteStatement, first statement in chain, multi line", async () => {
+    const result = testDeleteStatement(`
+DATA: foo TYPE c,
+      bar TYPE c.`, 0);
+    expect(result).to.equal(`
+DATA: ` + `
+      bar TYPE c.`);
+  });
+
+  it("deleteStatement, last statement in chain, multi line", async () => {
+    const result = testDeleteStatement(`
+DATA: foo TYPE c,
+      bar TYPE c.`, 1);
+    expect(result).to.equal(`
+DATA: foo TYPE c.
+      `);
   });
 
 });

@@ -12,7 +12,7 @@ import {StructureType} from "../abap/types/basic";
 import {IRuleMetadata, IRule} from "./_irule";
 
 export class ForbiddenVoidTypeConf extends BasicRuleConfig {
-  /** List of forbideen void types, array of string regex */
+  /** List of forbidden void types, array of string regex, case in-sensitive */
   public check: string[] = [];
 }
 
@@ -23,8 +23,8 @@ export class ForbiddenVoidType implements IRule {
   public getMetadata(): IRuleMetadata {
     return {
       key: "forbidden_void_type",
-      title: "Forbidden Void Type",
-      shortDescription: `Forbid use of specified void types.`,
+      title: "Forbidden Void Types",
+      shortDescription: `Avoid usage of specified void types.`,
       extendedInformation: `Inspiration:
 BOOLEAN, BOOLE_D, CHAR01, CHAR1, CHAR10, CHAR12, CHAR128, CHAR2, CHAR20, CHAR4, CHAR70,
 DATS, TIMS, DATUM, FLAG, INT4, NUMC3, NUMC4, SAP_BOOL, TEXT25, TEXT80, X255, XFELD`,

@@ -517,7 +517,7 @@ SELECT-OPTIONS s_dyn FOR rsdswhere-line.`;
     expect(identifier).to.not.equal(undefined);
     expect(identifier!.getType()).to.be.instanceof(Basic.TableType);
     const rowType = (identifier!.getType() as Basic.TableType).getRowType();
-    expect(rowType).to.be.instanceof(Basic.VoidType);
+    expect(rowType).to.be.instanceof(Basic.StructureType);
   });
 
   it("LIKE LINE OF sub field", () => {
@@ -933,7 +933,8 @@ ENDTRY.`;
   });
 
   it("LOOP into inline fieldsymbol", () => {
-    const abap = `DATA tab TYPE STANDARD TABLE OF string WITH DEFAULT KEY.
+    const abap = `
+  DATA tab TYPE STANDARD TABLE OF string WITH DEFAULT KEY.
   LOOP AT tab INTO FIELD-SYMBOL(<row>).
   ENDLOOP.`;
     const identifier = resolveVariable(abap, "<row>");
@@ -1261,6 +1262,15 @@ START-OF-SELECTION.
     expect(identifier?.getType()).to.be.instanceof(Basic.TableType);
   });
 
+  it("OCCURS 0 WITH HEADER LINE, lower case", () => {
+    const abap = `DATA tab TYPE i OCCURS 0 with header line.`;
+    const identifier = resolveVariable(abap, "tab");
+    expect(identifier).to.not.equal(undefined);
+    expect(identifier?.getType()).to.be.instanceof(Basic.TableType);
+    const type = identifier!.getType() as Basic.TableType;
+    expect(type.isWithHeader()).to.equal(true);
+  });
+
   it("WHEN TYPE", () => {
     const abap = `
 CLASS lcl_bar DEFINITION.
@@ -1286,42 +1296,52 @@ ENDCASE.`;
     expect(identifier?.getType()).to.be.instanceof(Basic.TableType);
   });
 
+  const zstructure1 = `
+  <?xml version="1.0" encoding="utf-8"?>
+  <abapGit version="v1.0.0" serializer="LCL_OBJECT_TABL" serializer_version="v1.0.0">
+   <asx:abap xmlns:asx="http://www.sap.com/abapxml" version="1.0">
+    <asx:values>
+     <DD02V>
+      <TABNAME>ZSTRUCTURE1</TABNAME>
+      <DDLANGUAGE>E</DDLANGUAGE>
+      <TABCLASS>INTTAB</TABCLASS>
+      <DDTEXT>sdf</DDTEXT>
+      <EXCLASS>1</EXCLASS>
+     </DD02V>
+     <DD03P_TABLE>
+      <DD03P>
+       <TABNAME>ZSTRUCTURE1</TABNAME>
+       <FIELDNAME>FOOBAR</FIELDNAME>
+       <DDLANGUAGE>E</DDLANGUAGE>
+       <POSITION>0001</POSITION>
+       <ADMINFIELD>0</ADMINFIELD>
+       <INTTYPE>C</INTTYPE>
+       <INTLEN>000004</INTLEN>
+       <DATATYPE>CHAR</DATATYPE>
+       <LENG>000002</LENG>
+       <MASK>  CHAR</MASK>
+      </DD03P>
+     </DD03P_TABLE>
+    </asx:values>
+   </asx:abap>
+  </abapGit>`;
+
   it("LIKE DDIC structure", () => {
-    const xml = `
-    <?xml version="1.0" encoding="utf-8"?>
-    <abapGit version="v1.0.0" serializer="LCL_OBJECT_TABL" serializer_version="v1.0.0">
-     <asx:abap xmlns:asx="http://www.sap.com/abapxml" version="1.0">
-      <asx:values>
-       <DD02V>
-        <TABNAME>ZSTRUCTURE1</TABNAME>
-        <DDLANGUAGE>E</DDLANGUAGE>
-        <TABCLASS>INTTAB</TABCLASS>
-        <DDTEXT>sdf</DDTEXT>
-        <EXCLASS>1</EXCLASS>
-       </DD02V>
-       <DD03P_TABLE>
-        <DD03P>
-         <TABNAME>ZSTRUCTURE1</TABNAME>
-         <FIELDNAME>FOOBAR</FIELDNAME>
-         <DDLANGUAGE>E</DDLANGUAGE>
-         <POSITION>0001</POSITION>
-         <ADMINFIELD>0</ADMINFIELD>
-         <INTTYPE>C</INTTYPE>
-         <INTLEN>000004</INTLEN>
-         <DATATYPE>CHAR</DATATYPE>
-         <LENG>000002</LENG>
-         <MASK>  CHAR</MASK>
-        </DD03P>
-       </DD03P_TABLE>
-      </asx:values>
-     </asx:abap>
-    </abapGit>`;
     const prog = `DATA foo LIKE zstructure1-foobar.`;
     const type = runMulti(
-      [{filename: "zstructure1.tabl.xml", contents: xml},
+      [{filename: "zstructure1.tabl.xml", contents: zstructure1},
         {filename: "zfoobar.prog.abap", contents: prog}],
       "foo");
     expectCharacter(type, 2);
+  });
+
+  it("LIKE DDIC 2", () => {
+    const prog = `DATA foo LIKE zstructure1.`;
+    const type = runMulti(
+      [{filename: "zstructure1.tabl.xml", contents: zstructure1},
+        {filename: "zfoobar.prog.abap", contents: prog}],
+      "foo");
+    expectStructure(type);
   });
 
   it("Inline VALUE table comprehension", () => {
@@ -1349,7 +1369,9 @@ ENDCASE.`;
   });
 
   it("FIND RESULTS inline", () => {
-    const abap = `FIND ALL OCCURRENCES OF REGEX  'bar' IN lv_string RESULTS DATA(blanks).`;
+    const abap = `
+    DATA lv_string TYPE string.
+    FIND ALL OCCURRENCES OF REGEX  'bar' IN lv_string RESULTS DATA(blanks).`;
     const identifier = resolveVariable(abap, "blanks");
     expect(identifier).to.not.equal(undefined);
     expect(identifier?.getType()).to.be.instanceof(Basic.TableType);
@@ -1385,6 +1407,15 @@ ENDCASE.`;
     DATA too TYPE c.
     DATA END OF tab.`;
     const identifier = resolveVariable(abap, "tab");
+    expect(identifier?.getType()).to.be.instanceof(Basic.TableType);
+  });
+
+  it("DATA BEGIN OF, OCCURS, lower case", () => {
+    const abap = `
+    data: begin of tb_path occurs 10,
+            path TYPE string,
+          end of tb_path.`;
+    const identifier = resolveVariable(abap, "tb_path");
     expect(identifier?.getType()).to.be.instanceof(Basic.TableType);
   });
 
@@ -1486,6 +1517,41 @@ DATA(sdf) = ref->*-int.`;
     ENDLOOP.`;
     const identifier = resolveVariable(abap, "<sdf>");
     expect(identifier?.getType()).to.be.instanceof(Basic.AnyType);
+  });
+
+  it("data reference via NEW", () => {
+    const abap = `DATA(sdf) = NEW abap_bool( abap_true ).`;
+    const identifier = resolveVariable(abap, "sdf");
+    expect(identifier?.getType()).to.be.instanceof(Basic.DataReference);
+  });
+
+  it("DATA like table body", () => {
+    const abap = `
+    DATA int TYPE i.
+    RANGES foo FOR int.
+    DATA bar LIKE foo[].`;
+    const identifier = resolveVariable(abap, "bar");
+    const type = identifier?.getType();
+    expect(type).to.be.instanceof(Basic.TableType);
+    expect((type as Basic.TableType).isWithHeader()).to.equal(false);
+  });
+
+  it("DATA with old style length", () => {
+    const abap = `DATA foo(15).`;
+    const identifier = resolveVariable(abap, "foo");
+    const type = identifier?.getType();
+    expect(type).to.be.instanceof(Basic.CharacterType);
+    expect((type as Basic.CharacterType).getLength()).to.equal(15);
+  });
+
+  it("Basic FILTER", () => {
+    const abap = `
+    TYPES ty_tab TYPE SORTED TABLE OF i WITH NON-UNIQUE DEFAULT KEY.
+    DATA table TYPE ty_tab.
+    DATA(res) = FILTER ty_tab( table WHERE table_line = 1 ).`;
+    const identifier = resolveVariable(abap, "res");
+    const type = identifier?.getType();
+    expect(type).to.be.instanceof(Basic.TableType);
   });
 
 });

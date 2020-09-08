@@ -67,6 +67,20 @@ describe("Registry", () => {
     expect(reg.getObject("CLAS", "/namesp/cl_foobar")).to.not.equal(undefined);
   });
 
+  it("filename with namespace, url encoded, with folder", async () => {
+    const reg = new Registry().addFile(new MemoryFile("/src/%23namesp%23cl_foobar.clas.abap", "parser error"));
+    expect(reg.getObjectCount()).to.equal(1);
+    expect(reg.getFirstObject()!.getType()).to.equal("CLAS");
+    expect(reg.getObject("CLAS", "/namesp/cl_foobar")).to.not.equal(undefined);
+  });
+
+  it("filename with namespace, with dash", async () => {
+    const reg = new Registry().addFile(new MemoryFile("/src/%23name-sp%23cl_foobar.clas.abap", "parser error"));
+    expect(reg.getObjectCount()).to.equal(1);
+    expect(reg.getFirstObject()!.getType()).to.equal("CLAS");
+    expect(reg.getObject("CLAS", "/name-sp/cl_foobar")).to.not.equal(undefined);
+  });
+
   it("Update unknown file, 1", async () => {
     const file = new MemoryFile("zfoobar.prog.abap", "IF moo = boo. ENDIF.");
     const registry = new Registry();
@@ -149,6 +163,20 @@ ENDINTERFACE.`;
     const abap = reg.getFirstObject() as ABAPObject | undefined;
     expect(abap?.getName()).to.equal("ZPROGRAM");
     expect(abap?.getMainABAPFile()).to.not.equal(undefined);
+  });
+
+  it("Special name, character > escaped", async () => {
+    const reg = new Registry().addFile(new MemoryFile("%3e6.msag.xml", "xml"));
+    expect(reg.getObjectCount()).to.equal(1);
+    expect(reg.getFirstObject()!.getType()).to.equal("MSAG");
+    expect(reg.getObject("MSAG", ">6")).to.not.equal(undefined);
+  });
+
+  it("Special name, <icon> program", async () => {
+    const reg = new Registry().addFile(new MemoryFile("%3cicon%3e.prog.abap", "write 'hello'."));
+    expect(reg.getObjectCount()).to.equal(1);
+    expect(reg.getFirstObject()!.getType()).to.equal("PROG");
+    expect(reg.getObject("PROG", "<icon>")).to.not.equal(undefined);
   });
 
 });

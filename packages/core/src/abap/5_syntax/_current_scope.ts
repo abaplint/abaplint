@@ -122,23 +122,18 @@ export class CurrentScope {
     }
   }
 
-///////////////////////////
+  public addReference(
+    usage: Token | undefined,
+    referencing: Identifier | undefined,
+    type: ReferenceType | undefined,
+    filename: string, extra?: IReferenceExtras) {
 
-  public addRead(token: Token, resolved: TypedIdentifier, filename: string) {
-    this.addReference(token, resolved, ReferenceType.DataReadReference, filename);
-  }
-
-  public addWrite(token: Token, resolved: TypedIdentifier, filename: string) {
-    this.addReference(token, resolved, ReferenceType.DataWriteReference, filename);
-  }
-
-  public addReference(token: Token | undefined, resolved: Identifier, type: ReferenceType, filename: string, extra?: IReferenceExtras) {
-    if (token === undefined) {
+    if (usage === undefined || referencing === undefined || type === undefined) {
       return;
     }
 
-    const position = new Identifier(token, filename);
-    this.current?.getData().references.push({position, resolved, referenceType: type, extra});
+    const position = new Identifier(usage, filename);
+    this.current?.getData().references.push({position, resolved: referencing, referenceType: type, extra});
   }
 
 ///////////////////////////
@@ -158,29 +153,41 @@ export class CurrentScope {
     return undefined;
   }
 
-  public existsObject(name: string | undefined): boolean {
+  public existsObject(name: string | undefined): {found: boolean, id?: Identifier, type?: ReferenceType} {
     if (name === undefined) {
-      return false;
+      return {found: false};
     }
 
     if (name.toUpperCase() === "OBJECT") {
-      return true;
+      return {found: true};
     } else if (name.toUpperCase() === this.getName().toLocaleUpperCase()
         && this.getType() === ScopeType.ClassDefinition) {
-      return true;
+      return {found: true};
     } else if (this.current?.findDeferred(name) !== undefined) {
-      return true;
-    } else if (this.current?.findClassDefinition(name)) {
-      return true;
-    } else if (this.reg.getObject("CLAS", name)) {
-      return true;
-    } else if (this.current?.findInterfaceDefinition(name)) {
-      return true;
-    } else if (this.reg.getObject("INTF", name)) {
-      return true;
+      return {found: true};
     }
 
-    return false;
+    const findLocalClass = this.current?.findClassDefinition(name);
+    if (findLocalClass) {
+      return {found: true, id: findLocalClass, type: ReferenceType.ObjectOrientedReference};
+    }
+
+    const globalClas = this.reg.getObject("CLAS", name);
+    if (globalClas) {
+      return {found: true, id: globalClas.getIdentifier(), type: ReferenceType.ObjectOrientedReference};
+    }
+
+    const findLocalInterface = this.current?.findInterfaceDefinition(name);
+    if (findLocalInterface) {
+      return {found: true, id: findLocalInterface, type: ReferenceType.ObjectOrientedReference};
+    }
+
+    const globalIntf = this.reg.getObject("INTF", name);
+    if (globalIntf) {
+      return {found: true, id: globalIntf.getIdentifier(), type: ReferenceType.ObjectOrientedReference};
+    }
+
+    return {found: false};
   }
 
 ///////////////////////////
@@ -220,7 +227,7 @@ export class CurrentScope {
   public findFormDefinition(name: string): IFormDefinition | undefined {
     return this.current?.findFormDefinition(name);
   }
-
+/*
   public listFormDefinitions(): IFormDefinition[] {
     const ret = this.current?.listFormDefinitions();
     if (ret === undefined) {
@@ -229,6 +236,11 @@ export class CurrentScope {
     return ret;
   }
 
+  public listTypes() {
+    const ret = this.current?.getData().types;
+    return ret;
+  }
+*/
   public findType(name: string | undefined): TypedIdentifier | undefined {
     if (name === undefined) {
       return undefined;

@@ -60,10 +60,19 @@ export class BeginEndNames extends ABAPRule {
     let output: Issue[] = [];
 
     for (const sub of stru.findAllStructures(type)) {
-      const begin = sub.findDirectStatements(b)[0].findFirstExpression(Expressions.NamespaceSimpleName)!;
+      let begin = sub.findDirectStatements(b)[0].findFirstExpression(Expressions.NamespaceSimpleName);
+      if (begin === undefined) {
+        begin = sub.findDirectStatements(b)[0].findFirstExpression(Expressions.DefinitionName);
+      }
+      if (begin === undefined) {
+        continue;
+      }
       const first = begin.getFirstToken();
 
-      const end = sub.findDirectStatements(e)[0].findFirstExpression(Expressions.NamespaceSimpleName);
+      let end = sub.findDirectStatements(e)[0].findFirstExpression(Expressions.NamespaceSimpleName);
+      if (end === undefined) {
+        end = sub.findDirectStatements(e)[0].findFirstExpression(Expressions.DefinitionName);
+      }
       if (end === undefined) {
         continue;
       }

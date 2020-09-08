@@ -1,8 +1,8 @@
+import * as Statements from "../abap/2_statements/statements";
+import * as Expressions from "../abap/2_statements/expressions";
 import {WorkspaceEdit, TextDocumentEdit, CreateFile, RenameFile, DeleteFile, TextEdit, Range} from "vscode-languageserver-types";
 import {IRegistry} from "../_iregistry";
 import {Class} from "../objects";
-import * as Statements from "../abap/2_statements/statements";
-import * as Expressions from "../abap/2_statements/expressions";
 import {LSPUtils} from "./_lsp_utils";
 
 // todo, move this logic to somewhere else?

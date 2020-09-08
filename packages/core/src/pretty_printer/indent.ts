@@ -69,6 +69,7 @@ export class Indent {
       } else if (type instanceof Statements.StartOfSelection
         || type instanceof Statements.AtSelectionScreen
         || type instanceof Statements.Initialization
+        || type instanceof Statements.AtUserCommand
         || type instanceof Statements.TopOfPage
         || type instanceof Statements.EndOfSelection
         || type instanceof Statements.LoadOfProgram) {
@@ -132,6 +133,7 @@ export class Indent {
         || type instanceof Statements.AtSelectionScreen
         || type instanceof Statements.LoadOfProgram
         || type instanceof Statements.Initialization
+        || type instanceof Statements.AtUserCommand
         || type instanceof Statements.TopOfPage
         || type instanceof Statements.EndOfSelection
         || type instanceof Statements.Public
@@ -156,7 +158,7 @@ export class Indent {
       return false;
     }
     const type = statement.get();
-    if (type instanceof Statements.ClassDefinition && statement.findFirstExpression(Expressions.Global)) {
+    if (type instanceof Statements.ClassDefinition && statement.findFirstExpression(Expressions.ClassGlobal)) {
       const className = statement.findFirstExpression(Expressions.ClassName);
       if (className) {
         this.globalClasses.add(className.getFirstToken().getStr().toUpperCase());

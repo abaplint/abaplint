@@ -72,7 +72,7 @@ export class InterfaceDefinition extends Identifier implements IInterfaceDefinit
   }
 
   public isGlobal(): boolean {
-    return this.node.findFirstExpression(Expressions.Global) !== undefined;
+    return this.node.findFirstExpression(Expressions.ClassGlobal) !== undefined;
   }
 
   public getMethodDefinitions(): IMethodDefinitions {
@@ -82,9 +82,9 @@ export class InterfaceDefinition extends Identifier implements IInterfaceDefinit
 /////////////////
 
   private parse(scope: CurrentScope) {
-    this.attributes = new Attributes(this.node, this.filename, scope);
-
     this.typeDefinitions = new TypeDefinitions(this.node, this.filename, scope);
+
+    this.attributes = new Attributes(this.node, this.filename, scope);
 
     this.methodDefinitions = new MethodDefinitions(this.node, this.filename, scope);
 

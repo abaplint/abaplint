@@ -9,9 +9,16 @@ import {StructureType, ObjectReferenceType, VoidType, DataReference, TableType} 
 import {ComponentName} from "./component_name";
 import {AttributeName} from "./attribute_name";
 import {FieldOffset} from "./field_offset";
+import {ReferenceType} from "../_reference";
 
 export class Target {
   public runSyntax(node: ExpressionNode, scope: CurrentScope, filename: string): AbstractType | undefined {
+
+    const found = scope.findVariable(node.concatTokens()); // workaround for names with dashes
+    if (found) {
+      scope.addReference(node.getFirstToken(), found, ReferenceType.DataWriteReference, filename);
+      return found.getType();
+    }
 
     const children = node.getChildren().slice();
     const first = children.shift();
@@ -57,7 +64,8 @@ export class Target {
         // todo, additional validations
         context = context.getRowType();
       } else if (current.get() instanceof Expressions.AttributeName) {
-        context = new AttributeName().runSyntax(context, current, scope);
+        const type = children.length === 0 ? ReferenceType.DataWriteReference : ReferenceType.DataReadReference;
+        context = new AttributeName().runSyntax(context, current, scope, filename, type);
       }
     }
 
@@ -71,16 +79,21 @@ export class Target {
 
 /////////////////////////////////
 
-  private findTop(node: INode | undefined, scope: CurrentScope, _filename: string): AbstractType | undefined {
+  private findTop(node: INode | undefined, scope: CurrentScope, filename: string): AbstractType | undefined {
     if (node === undefined) {
       return undefined;
     }
 
+    const token = node.getFirstToken();
     const name = node.getFirstToken().getStr();
 
     if (node.get() instanceof Expressions.TargetField
         || node.get() instanceof Expressions.TargetFieldSymbol) {
-      return scope.findVariable(name)?.getType();
+      const found = scope.findVariable(name);
+      if (found) {
+        scope.addReference(token, found, ReferenceType.DataWriteReference, filename);
+      }
+      return found?.getType();
     } else if (node.get() instanceof Expressions.ClassName) {
       if (scope.findObjectDefinition(name)) {
         return new ObjectReferenceType(name);

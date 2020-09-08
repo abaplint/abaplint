@@ -14,7 +14,7 @@ export class AllowedObjectNaming implements IRule {
     return {
       key: "allowed_object_naming",
       title: "Allowed object naming",
-      shortDescription: `Enforces basic name length and namespace restrictions, see note 104010`,
+      shortDescription: `Enforces basic name length and namespace restrictions, see note SAP 104010`,
       tags: [RuleTag.Naming],
     };
   }
@@ -39,7 +39,7 @@ export class AllowedObjectNaming implements IRule {
       message = "Name exceeds max length";
     } else if (allowed.allowNamespace === false && obj.getName().indexOf("/") >= 0) {
       message = "Namespace not allowed for object type";
-    } else if (obj.getName().match(/^(\/[A-Z_\d]{3,8}\/)?[A-Z_\d ]+$/i) === null) {
+    } else if (obj.getName().match(/^(\/[A-Z_\d]{3,8}\/)?[A-Z_\d<> ]+$/i) === null) {
       message = "Name not allowed";
     }
 

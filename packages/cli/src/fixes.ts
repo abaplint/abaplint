@@ -19,15 +19,44 @@ export function applyFixes(inputIssues: readonly Issue[], reg: IRegistry, fs: me
   return issues;
 }
 
+function possibleOverlap(edit: IEdit, list: IEdit[]): boolean {
+  // only checks if the edits have changes in the same rows
+  for (const e of list) {
+    for (const file1 of Object.keys(e)) {
+      for (const file2 of Object.keys(edit)) {
+        if (file1 === file2) {
+          for (const list1 of e[file1]) {
+            for (const list2 of edit[file2]) {
+              if (list2.range.start.getRow() <= list1.range.start.getRow()
+                  && list2.range.end.getRow() >= list1.range.start.getRow() ) {
+                return true;
+              }
+              if (list2.range.start.getRow() <= list1.range.end.getRow()
+                  && list2.range.end.getRow() >= list1.range.end.getRow() ) {
+                return true;
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+  return false;
+}
+
 function applyList(issues: readonly Issue[], reg: IRegistry, fs: memfs.IFs): string[] {
 
   const edits: IEdit[] = [];
 
   for (const i of issues) {
     const edit = i.getFix();
-    if (edit !== undefined) {
-      edits.push(edit);
+    if (edit === undefined) {
+      continue;
+    } else if (possibleOverlap(edit, edits) === true) {
+      continue;
     }
+
+    edits.push(edit);
   }
 
   const changed = applyEditList(reg, edits);

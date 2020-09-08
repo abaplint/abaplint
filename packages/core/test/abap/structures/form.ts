@@ -7,6 +7,8 @@ const cases = [
 // check that dashes in variable names still create the structure
 // intention is not to support this, but avoid the structural errors
   {abap: "FORM foo USING bar-foo. ENDFORM."},
+  {abap: `form moo using value(bar)\ttype c.
+  endform.`},
 ];
 
 structureType(cases, new Form());

@@ -4,13 +4,15 @@ import {CurrentScope} from "../_current_scope";
 import {VoidType, TableType} from "../../types/basic";
 import {Source} from "../expressions/source";
 import {InlineData} from "../expressions/inline_data";
-import {InlineFS} from "../expressions/inline_fs";
+import {Target} from "../expressions/target";
+import {FSTarget} from "../expressions/fstarget";
 
 export class ReadTable {
   public runSyntax(node: StatementNode, scope: CurrentScope, filename: string): void {
 
-    const source = node.findDirectExpression(Expressions.Source);
-    let sourceType = source ? new Source().runSyntax(source, scope, filename) : undefined;
+    const sources = node.findDirectExpressions(Expressions.Source);
+    const firstSource = sources[0];
+    let sourceType = firstSource ? new Source().runSyntax(firstSource, scope, filename) : undefined;
 
     if (sourceType === undefined) {
       throw new Error("No source type determined, read table");
@@ -22,6 +24,13 @@ export class ReadTable {
       sourceType = sourceType.getRowType();
     }
 
+    for (const s of sources) {
+      if (s === firstSource) {
+        continue;
+      }
+      new Source().runSyntax(s, scope, filename);
+    }
+
     const target = node.findDirectExpression(Expressions.ReadTableTarget);
     if (target) {
       const inline = target.findFirstExpression(Expressions.InlineData);
@@ -29,9 +38,24 @@ export class ReadTable {
         new InlineData().runSyntax(inline, scope, filename, sourceType);
         return;
       }
+
+      const fst = target.findDirectExpression(Expressions.FSTarget);
+      if (fst) {
+        new FSTarget().runSyntax(fst, scope, filename, sourceType);
+        return;
+      }
+/*
       const inlinefs = target.findFirstExpression(Expressions.InlineFS);
       if (inlinefs) {
         new InlineFS().runSyntax(inlinefs, scope, filename, sourceType);
+        return;
+      }
+*/
+
+      const t = target.findFirstExpression(Expressions.Target);
+      if (t) {
+        new Target().runSyntax(t, scope, filename);
+        return;
       }
     }
   }

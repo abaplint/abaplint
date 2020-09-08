@@ -34,6 +34,8 @@ jobs:
         git clone https://github.com/abaplint/schema.abaplint.org.git
         ls
         cp abaplint/abaplint/packages/core/scripts/schema.json schema.abaplint.org/schema.json
+        PACKAGE_VERSION=$(node -p -e "require('./abaplint/abaplint/packages/core/package.json').version")
+        cp -n abaplint/abaplint/packages/core/scripts/schema.json schema.abaplint.org/schema-${PACKAGE_VERSION}.json
         cd schema.abaplint.org
         git add -A
         git status

@@ -114,6 +114,7 @@ export class Normal implements IStructure {
                sta(Statements.InsertDatabase),
                sta(Statements.InsertReport),
                sta(Statements.InsertTextpool),
+               sta(Statements.InsertFieldGroup),
                sta(Statements.InterfaceLoad),
                sta(Statements.Leave),
                sta(Statements.LoadReport),

@@ -1,6 +1,6 @@
 import {IStatement} from "./_statement";
 import {verNot, str, seq, opt, alt, per} from "../combi";
-import {Constant, FieldChain, FormName, Source, FunctionParameters, FunctionName, Destination, MethodName} from "../expressions";
+import {FormName, Source, FunctionParameters, FunctionName, Destination, MethodName, BasicSource} from "../expressions";
 import {Version} from "../../../version";
 import {IStatementRunnable} from "../statement_runnable";
 
@@ -9,8 +9,7 @@ export class CallFunction implements IStatement {
   public getMatcher(): IStatementRunnable {
     const method = new MethodName();
 
-    const starting = seq(str("STARTING NEW TASK"),
-                         alt(new Constant(), new FieldChain()));
+    const starting = seq(str("STARTING NEW TASK"), new BasicSource());
     const update = str("IN UPDATE TASK");
     const unit = seq(str("UNIT"), new Source());
     const background = seq(str("IN BACKGROUND"), alt(str("TASK"), unit));

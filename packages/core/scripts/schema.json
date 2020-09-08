@@ -10,7 +10,7 @@
           "type": "boolean"
         },
         "exclude": {
-          "description": "List of file regex filename patterns to exclude",
+          "description": "List of file regex filename patterns to exclude, case insensitive",
           "items": {
             "type": "string"
           },
@@ -26,7 +26,7 @@
       "additionalProperties": false,
       "properties": {
         "exclude": {
-          "description": "List of file regex filename patterns to exclude",
+          "description": "List of file regex filename patterns to exclude, case insensitive",
           "items": {
             "type": "string"
           },
@@ -46,7 +46,7 @@
           "type": "array"
         },
         "exclude": {
-          "description": "List of file regex filename patterns to exclude",
+          "description": "List of file regex filename patterns to exclude, case insensitive",
           "items": {
             "type": "string"
           },
@@ -62,7 +62,7 @@
       "additionalProperties": false,
       "properties": {
         "exclude": {
-          "description": "List of file regex filename patterns to exclude",
+          "description": "List of file regex filename patterns to exclude, case insensitive",
           "items": {
             "type": "string"
           },
@@ -95,7 +95,7 @@
           "type": "boolean"
         },
         "exclude": {
-          "description": "List of file regex filename patterns to exclude",
+          "description": "List of file regex filename patterns to exclude, case insensitive",
           "items": {
             "type": "string"
           },
@@ -135,7 +135,20 @@
       "additionalProperties": false,
       "properties": {
         "exclude": {
-          "description": "List of file regex filename patterns to exclude",
+          "description": "List of file regex filename patterns to exclude, case insensitive",
+          "items": {
+            "type": "string"
+          },
+          "type": "array"
+        }
+      },
+      "type": "object"
+    },
+    "BeginSingleIncludeConf": {
+      "additionalProperties": false,
+      "properties": {
+        "exclude": {
+          "description": "List of file regex filename patterns to exclude, case insensitive",
           "items": {
             "type": "string"
           },
@@ -147,21 +160,73 @@
     "ChainMainlyDeclarationsConf": {
       "additionalProperties": false,
       "properties": {
+        "check": {
+          "description": "Allow CHECK statements to be chained",
+          "type": "boolean"
+        },
+        "clear": {
+          "description": "Allow CLEAR statements to be chained",
+          "type": "boolean"
+        },
+        "definitions": {
+          "description": "Allow definition statements to be chained",
+          "type": "boolean"
+        },
         "exclude": {
-          "description": "List of file regex filename patterns to exclude",
+          "description": "List of file regex filename patterns to exclude, case insensitive",
           "items": {
             "type": "string"
           },
           "type": "array"
+        },
+        "free": {
+          "description": "Allow FREE statements to be chained",
+          "type": "boolean"
+        },
+        "hide": {
+          "description": "Allow HIDE statements to be chained",
+          "type": "boolean"
+        },
+        "include": {
+          "description": "Allow INCLUDE statements to be chained",
+          "type": "boolean"
+        },
+        "move": {
+          "description": "Allow MOVE statements to be chained",
+          "type": "boolean"
+        },
+        "refresh": {
+          "description": "Allow REFRESH statements to be chained",
+          "type": "boolean"
+        },
+        "unassign": {
+          "description": "Allow UNASSIGN statements to be chained",
+          "type": "boolean"
+        },
+        "write": {
+          "description": "Allow WRITE statements to be chained",
+          "type": "boolean"
         }
       },
+      "required": [
+        "definitions",
+        "write",
+        "move",
+        "refresh",
+        "unassign",
+        "clear",
+        "hide",
+        "free",
+        "include",
+        "check"
+      ],
       "type": "object"
     },
     "CheckAbstractConf": {
       "additionalProperties": false,
       "properties": {
         "exclude": {
-          "description": "List of file regex filename patterns to exclude",
+          "description": "List of file regex filename patterns to exclude, case insensitive",
           "items": {
             "type": "string"
           },
@@ -178,7 +243,7 @@
           "type": "boolean"
         },
         "exclude": {
-          "description": "List of file regex filename patterns to exclude",
+          "description": "List of file regex filename patterns to exclude, case insensitive",
           "items": {
             "type": "string"
           },
@@ -194,7 +259,7 @@
       "additionalProperties": false,
       "properties": {
         "exclude": {
-          "description": "List of file regex filename patterns to exclude",
+          "description": "List of file regex filename patterns to exclude, case insensitive",
           "items": {
             "type": "string"
           },
@@ -207,7 +272,7 @@
       "additionalProperties": false,
       "properties": {
         "exclude": {
-          "description": "List of file regex filename patterns to exclude",
+          "description": "List of file regex filename patterns to exclude, case insensitive",
           "items": {
             "type": "string"
           },
@@ -220,7 +285,7 @@
       "additionalProperties": false,
       "properties": {
         "exclude": {
-          "description": "List of file regex filename patterns to exclude",
+          "description": "List of file regex filename patterns to exclude, case insensitive",
           "items": {
             "type": "string"
           },
@@ -233,7 +298,7 @@
       "additionalProperties": false,
       "properties": {
         "exclude": {
-          "description": "List of file regex filename patterns to exclude",
+          "description": "List of file regex filename patterns to exclude, case insensitive",
           "items": {
             "type": "string"
           },
@@ -246,7 +311,7 @@
       "additionalProperties": false,
       "properties": {
         "exclude": {
-          "description": "List of file regex filename patterns to exclude",
+          "description": "List of file regex filename patterns to exclude, case insensitive",
           "items": {
             "type": "string"
           },
@@ -259,7 +324,7 @@
       "additionalProperties": false,
       "properties": {
         "exclude": {
-          "description": "List of file regex filename patterns to exclude",
+          "description": "List of file regex filename patterns to exclude, case insensitive",
           "items": {
             "type": "string"
           },
@@ -276,7 +341,7 @@
           "type": "string"
         },
         "exclude": {
-          "description": "List of file regex filename patterns to exclude",
+          "description": "List of file regex filename patterns to exclude, case insensitive",
           "items": {
             "type": "string"
           },
@@ -335,7 +400,7 @@
       "additionalProperties": false,
       "properties": {
         "exclude": {
-          "description": "List of file regex filename patterns to exclude",
+          "description": "List of file regex filename patterns to exclude, case insensitive",
           "items": {
             "type": "string"
           },
@@ -348,7 +413,7 @@
       "additionalProperties": false,
       "properties": {
         "exclude": {
-          "description": "List of file regex filename patterns to exclude",
+          "description": "List of file regex filename patterns to exclude, case insensitive",
           "items": {
             "type": "string"
           },
@@ -365,7 +430,7 @@
           "type": "boolean"
         },
         "exclude": {
-          "description": "List of file regex filename patterns to exclude",
+          "description": "List of file regex filename patterns to exclude, case insensitive",
           "items": {
             "type": "string"
           },
@@ -381,7 +446,7 @@
       "additionalProperties": false,
       "properties": {
         "exclude": {
-          "description": "List of file regex filename patterns to exclude",
+          "description": "List of file regex filename patterns to exclude, case insensitive",
           "items": {
             "type": "string"
           },
@@ -394,7 +459,7 @@
       "additionalProperties": false,
       "properties": {
         "exclude": {
-          "description": "List of file regex filename patterns to exclude",
+          "description": "List of file regex filename patterns to exclude, case insensitive",
           "items": {
             "type": "string"
           },
@@ -407,7 +472,7 @@
       "additionalProperties": false,
       "properties": {
         "exclude": {
-          "description": "List of file regex filename patterns to exclude",
+          "description": "List of file regex filename patterns to exclude, case insensitive",
           "items": {
             "type": "string"
           },
@@ -420,7 +485,7 @@
       "additionalProperties": false,
       "properties": {
         "exclude": {
-          "description": "List of file regex filename patterns to exclude",
+          "description": "List of file regex filename patterns to exclude, case insensitive",
           "items": {
             "type": "string"
           },
@@ -441,7 +506,7 @@
           "type": "boolean"
         },
         "exclude": {
-          "description": "List of file regex filename patterns to exclude",
+          "description": "List of file regex filename patterns to exclude, case insensitive",
           "items": {
             "type": "string"
           },
@@ -468,7 +533,7 @@
       "additionalProperties": false,
       "properties": {
         "exclude": {
-          "description": "List of file regex filename patterns to exclude",
+          "description": "List of file regex filename patterns to exclude, case insensitive",
           "items": {
             "type": "string"
           },
@@ -485,7 +550,7 @@
           "type": "boolean"
         },
         "exclude": {
-          "description": "List of file regex filename patterns to exclude",
+          "description": "List of file regex filename patterns to exclude, case insensitive",
           "items": {
             "type": "string"
           },
@@ -501,7 +566,7 @@
       "additionalProperties": false,
       "properties": {
         "exclude": {
-          "description": "List of file regex filename patterns to exclude",
+          "description": "List of file regex filename patterns to exclude, case insensitive",
           "items": {
             "type": "string"
           },
@@ -514,38 +579,42 @@
       "additionalProperties": false,
       "properties": {
         "at": {
-          "description": "Checks for empty at blocks",
+          "description": "Checks for empty AT blocks",
           "type": "boolean"
         },
         "case": {
-          "description": "Checks for empty case blocks",
+          "description": "Checks for empty CASE blocks",
           "type": "boolean"
         },
         "do": {
-          "description": "Checks for empty do blocks",
+          "description": "Checks for empty DO blocks",
           "type": "boolean"
         },
         "exclude": {
-          "description": "List of file regex filename patterns to exclude",
+          "description": "List of file regex filename patterns to exclude, case insensitive",
           "items": {
             "type": "string"
           },
           "type": "array"
         },
         "if": {
-          "description": "Checks for empty if blocks",
+          "description": "Checks for empty IF blocks",
           "type": "boolean"
         },
         "loop": {
-          "description": "Checks for empty loop blocks",
+          "description": "Checks for empty LOOP blocks",
           "type": "boolean"
         },
         "select": {
-          "description": "Checks for empty select blockss",
+          "description": "Checks for empty SELECT blockss",
+          "type": "boolean"
+        },
+        "try": {
+          "description": "Checks for empty TRY blocks",
           "type": "boolean"
         },
         "while": {
-          "description": "Checks for empty while blocks",
+          "description": "Checks for empty WHILE blocks",
           "type": "boolean"
         }
       },
@@ -556,7 +625,8 @@
         "case",
         "select",
         "do",
-        "at"
+        "at",
+        "try"
       ],
       "type": "object"
     },
@@ -564,7 +634,7 @@
       "additionalProperties": false,
       "properties": {
         "exclude": {
-          "description": "List of file regex filename patterns to exclude",
+          "description": "List of file regex filename patterns to exclude, case insensitive",
           "items": {
             "type": "string"
           },
@@ -577,7 +647,7 @@
       "additionalProperties": false,
       "properties": {
         "exclude": {
-          "description": "List of file regex filename patterns to exclude",
+          "description": "List of file regex filename patterns to exclude, case insensitive",
           "items": {
             "type": "string"
           },
@@ -597,7 +667,7 @@
           "type": "array"
         },
         "exclude": {
-          "description": "List of file regex filename patterns to exclude",
+          "description": "List of file regex filename patterns to exclude, case insensitive",
           "items": {
             "type": "string"
           },
@@ -606,6 +676,43 @@
       },
       "required": [
         "check"
+      ],
+      "type": "object"
+    },
+    "ForbiddenPseudoAndPragmaConf": {
+      "additionalProperties": false,
+      "properties": {
+        "exclude": {
+          "description": "List of file regex filename patterns to exclude, case insensitive",
+          "items": {
+            "type": "string"
+          },
+          "type": "array"
+        },
+        "ignoreGlobalClassDefinition": {
+          "type": "boolean"
+        },
+        "ignoreGlobalInterface": {
+          "type": "boolean"
+        },
+        "pragmas": {
+          "items": {
+            "type": "string"
+          },
+          "type": "array"
+        },
+        "pseudo": {
+          "items": {
+            "type": "string"
+          },
+          "type": "array"
+        }
+      },
+      "required": [
+        "pseudo",
+        "pragmas",
+        "ignoreGlobalClassDefinition",
+        "ignoreGlobalInterface"
       ],
       "type": "object"
     },
@@ -613,14 +720,14 @@
       "additionalProperties": false,
       "properties": {
         "check": {
-          "description": "List of forbideen void types, array of string regex",
+          "description": "List of forbidden void types, array of string regex, case in-sensitive",
           "items": {
             "type": "string"
           },
           "type": "array"
         },
         "exclude": {
-          "description": "List of file regex filename patterns to exclude",
+          "description": "List of file regex filename patterns to exclude, case insensitive",
           "items": {
             "type": "string"
           },
@@ -632,24 +739,11 @@
       ],
       "type": "object"
     },
-    "FormNoDashConf": {
-      "additionalProperties": false,
-      "properties": {
-        "exclude": {
-          "description": "List of file regex filename patterns to exclude",
-          "items": {
-            "type": "string"
-          },
-          "type": "array"
-        }
-      },
-      "type": "object"
-    },
     "FormTablesObsoleteConf": {
       "additionalProperties": false,
       "properties": {
         "exclude": {
-          "description": "List of file regex filename patterns to exclude",
+          "description": "List of file regex filename patterns to exclude, case insensitive",
           "items": {
             "type": "string"
           },
@@ -666,7 +760,7 @@
           "type": "boolean"
         },
         "exclude": {
-          "description": "List of file regex filename patterns to exclude",
+          "description": "List of file regex filename patterns to exclude, case insensitive",
           "items": {
             "type": "string"
           },
@@ -682,7 +776,7 @@
       "additionalProperties": false,
       "properties": {
         "exclude": {
-          "description": "List of file regex filename patterns to exclude",
+          "description": "List of file regex filename patterns to exclude, case insensitive",
           "items": {
             "type": "string"
           },
@@ -702,7 +796,7 @@
       "additionalProperties": false,
       "properties": {
         "exclude": {
-          "description": "List of file regex filename patterns to exclude",
+          "description": "List of file regex filename patterns to exclude, case insensitive",
           "items": {
             "type": "string"
           },
@@ -758,7 +852,7 @@
                   "type": "boolean"
                 }
               ],
-              "description": "Enforces basic name length and namespace restrictions, see note 104010\nTags: Naming\nhttps://rules.abaplint.org/allowed_object_naming"
+              "description": "Enforces basic name length and namespace restrictions, see note SAP 104010\nTags: Naming\nhttps://rules.abaplint.org/allowed_object_naming"
             },
             "allowed_object_types": {
               "anyOf": [
@@ -804,6 +898,17 @@
               ],
               "description": "Check BEGIN OF and END OF names match\nTags: Syntax, Quickfix\nhttps://rules.abaplint.org/begin_end_names"
             },
+            "begin_single_include": {
+              "anyOf": [
+                {
+                  "$ref": "#/definitions/BeginSingleIncludeConf"
+                },
+                {
+                  "type": "boolean"
+                }
+              ],
+              "description": "Finds TYPE BEGIN with just one INCLUDE TYPE, and DATA with single INCLUDE STRUCTURE\nhttps://rules.abaplint.org/begin_single_include"
+            },
             "chain_mainly_declarations": {
               "anyOf": [
                 {
@@ -813,7 +918,7 @@
                   "type": "boolean"
                 }
               ],
-              "description": "Chain mainly declarations\nhttps://rules.abaplint.org/chain_mainly_declarations"
+              "description": "Chain mainly declarations, allows chaining for the configured statements, reports errors for other statements.\nhttps://rules.abaplint.org/chain_mainly_declarations"
             },
             "check_abstract": {
               "anyOf": [
@@ -945,7 +1050,7 @@
                   "type": "boolean"
                 }
               ],
-              "description": "Detects usage of commented out code.\nTags: Styleguide\nhttps://rules.abaplint.org/commented_code"
+              "description": "Detects usage of commented out code.\nTags: Styleguide, Quickfix\nhttps://rules.abaplint.org/commented_code"
             },
             "constructor_visibility_public": {
               "anyOf": [
@@ -1079,6 +1184,17 @@
               ],
               "description": "Forbid use of specified identifiers, list of regex.\nhttps://rules.abaplint.org/forbidden_identifier"
             },
+            "forbidden_pseudo_and_pragma": {
+              "anyOf": [
+                {
+                  "$ref": "#/definitions/ForbiddenPseudoAndPragmaConf"
+                },
+                {
+                  "type": "boolean"
+                }
+              ],
+              "description": "Checks for unwanted pseudo comments and pragma\nTags: Quickfix\nhttps://rules.abaplint.org/forbidden_pseudo_and_pragma"
+            },
             "forbidden_void_type": {
               "anyOf": [
                 {
@@ -1088,18 +1204,7 @@
                   "type": "boolean"
                 }
               ],
-              "description": "Forbid use of specified void types.\nhttps://rules.abaplint.org/forbidden_void_type"
-            },
-            "form_no_dash": {
-              "anyOf": [
-                {
-                  "$ref": "#/definitions/FormNoDashConf"
-                },
-                {
-                  "type": "boolean"
-                }
-              ],
-              "description": "Checks for a Dash in form names\nhttps://rules.abaplint.org/form_no_dash"
+              "description": "Avoid usage of specified void types.\nhttps://rules.abaplint.org/forbidden_void_type"
             },
             "form_tables_obsolete": {
               "anyOf": [
@@ -1176,7 +1281,7 @@
                   "type": "boolean"
                 }
               ],
-              "description": "Chekcs for abstract methods and methods from interfaces which need implementing.\nTags: Syntax\nhttps://rules.abaplint.org/implement_methods"
+              "description": "Checks for abstract methods and methods from interfaces which need implementing.\nTags: Syntax\nhttps://rules.abaplint.org/implement_methods"
             },
             "in_statement_indentation": {
               "anyOf": [
@@ -1243,6 +1348,17 @@
                 }
               ],
               "description": "Line break multiple parameters\nTags: Whitespace, Styleguide, Quickfix\nhttps://rules.abaplint.org/line_break_multiple_parameters"
+            },
+            "line_break_style": {
+              "anyOf": [
+                {
+                  "$ref": "#/definitions/LineBreakStyleConf"
+                },
+                {
+                  "type": "boolean"
+                }
+              ],
+              "description": "Enforces LF as newlines in ABAP files\n\nabapGit does not work with CRLF\nTags: Whitespace\nhttps://rules.abaplint.org/line_break_style"
             },
             "line_length": {
               "anyOf": [
@@ -1341,7 +1457,7 @@
                   "type": "boolean"
                 }
               ],
-              "description": "Checks relating to method length.\nhttps://rules.abaplint.org/method_length"
+              "description": "Checks relating to method length.\nTags: Styleguide\nhttps://rules.abaplint.org/method_length"
             },
             "method_parameter_names": {
               "anyOf": [
@@ -1376,6 +1492,17 @@
               ],
               "description": "Checks the validity of messages in message classes\nhttps://rules.abaplint.org/msag_consistency"
             },
+            "names_no_dash": {
+              "anyOf": [
+                {
+                  "$ref": "#/definitions/NamesNoDashConf"
+                },
+                {
+                  "type": "boolean"
+                }
+              ],
+              "description": "Checks for a \"-\" in FORM and DATA names\nhttps://rules.abaplint.org/names_no_dash"
+            },
             "nesting": {
               "anyOf": [
                 {
@@ -1407,7 +1534,7 @@
                   "type": "boolean"
                 }
               ],
-              "description": "Checks that classes and interfaces don't contain any public attributes.\nExceptions are excluded from this rule.\nhttps://rules.abaplint.org/no_public_attributes"
+              "description": "Checks that classes and interfaces don't contain any public attributes.\nExceptions are excluded from this rule.\nTags: Styleguide\nhttps://rules.abaplint.org/no_public_attributes"
             },
             "object_naming": {
               "anyOf": [
@@ -1440,7 +1567,18 @@
                   "type": "boolean"
                 }
               ],
-              "description": "Checks for syntax unrecognized by abaplint\nTags: Syntax\nhttps://rules.abaplint.org/parser_error"
+              "description": "Checks for syntax unrecognized by abaplint.\n\nSee recognized syntax at https://syntax.abaplint.org\nTags: Syntax\nhttps://rules.abaplint.org/parser_error"
+            },
+            "parser_missing_space": {
+              "anyOf": [
+                {
+                  "$ref": "#/definitions/ParserMissingSpaceConf"
+                },
+                {
+                  "type": "boolean"
+                }
+              ],
+              "description": "In special cases the ABAP language allows for not having spaces before or after string literals.\nThis rule makes sure the spaces are consistently required across the language.\nTags: Syntax\nhttps://rules.abaplint.org/parser_missing_space"
             },
             "prefer_inline": {
               "anyOf": [
@@ -1451,7 +1589,7 @@
                   "type": "boolean"
                 }
               ],
-              "description": "Prefer inline to up-front declarations.\nActivates if language version is v740sp02 or above.\nVariables must be local(METHOD or FORM).\nNo generic or void typed variables.\nFirst position used must be a full/pure write.\nTags: Styleguide, Upport, Experimental\nhttps://rules.abaplint.org/prefer_inline"
+              "description": "Prefer inline to up-front declarations.\nActivates if language version is v740sp02 or above.\nVariables must be local(METHOD or FORM).\nNo generic or void typed variables.\nFirst position used must be a full/pure write.\nTags: Styleguide, Upport, Experimental, Quickfix\nhttps://rules.abaplint.org/prefer_inline"
             },
             "prefer_returning_to_exporting": {
               "anyOf": [
@@ -1517,7 +1655,7 @@
                   "type": "boolean"
                 }
               ],
-              "description": "Ensures you have no descriptions in metadata of methods, parameters, etc. For class descriptions, see rule description_empty.\nhttps://rules.abaplint.org/remove_descriptions"
+              "description": "\nEnsures you have no descriptions in metadata of methods, parameters, etc.\n\nClass descriptions are required, see rule description_empty.\n\nConsider using ABAP Doc for documentation.\n\nhttps://rules.abaplint.org/remove_descriptions"
             },
             "rfc_error_handling": {
               "anyOf": [
@@ -1651,17 +1789,6 @@
               ],
               "description": "Checks for TRY blocks without a CATCH and CLEANUP block\nhttps://rules.abaplint.org/try_without_catch"
             },
-            "type_begin_single_include": {
-              "anyOf": [
-                {
-                  "$ref": "#/definitions/TypeBeginSingleTypeConf"
-                },
-                {
-                  "type": "boolean"
-                }
-              ],
-              "description": "Finds TYPE BEGIN with just one INCLUDE TYPE\nhttps://rules.abaplint.org/type_begin_single_include"
-            },
             "type_form_parameters": {
               "anyOf": [
                 {
@@ -1706,6 +1833,17 @@
               ],
               "description": "Checks for unreachable code.\nhttps://rules.abaplint.org/unreachable_code"
             },
+            "unused_types": {
+              "anyOf": [
+                {
+                  "$ref": "#/definitions/UnusedTypesConf"
+                },
+                {
+                  "type": "boolean"
+                }
+              ],
+              "description": "Checks for unused TYPE definitions\nTags: Experimental, Quickfix\nhttps://rules.abaplint.org/unused_types"
+            },
             "unused_variables": {
               "anyOf": [
                 {
@@ -1715,7 +1853,7 @@
                   "type": "boolean"
                 }
               ],
-              "description": "Checks for unused variables\nTags: Experimental, Quickfix\nhttps://rules.abaplint.org/unused_variables"
+              "description": "Checks for unused variables and constants\nTags: Experimental, Quickfix\nhttps://rules.abaplint.org/unused_variables"
             },
             "use_new": {
               "anyOf": [
@@ -1861,7 +1999,7 @@
       "additionalProperties": false,
       "properties": {
         "exclude": {
-          "description": "List of file regex filename patterns to exclude",
+          "description": "List of file regex filename patterns to exclude, case insensitive",
           "items": {
             "type": "string"
           },
@@ -1874,7 +2012,7 @@
       "additionalProperties": false,
       "properties": {
         "exclude": {
-          "description": "List of file regex filename patterns to exclude",
+          "description": "List of file regex filename patterns to exclude, case insensitive",
           "items": {
             "type": "string"
           },
@@ -1887,7 +2025,7 @@
       "additionalProperties": false,
       "properties": {
         "exclude": {
-          "description": "List of file regex filename patterns to exclude",
+          "description": "List of file regex filename patterns to exclude, case insensitive",
           "items": {
             "type": "string"
           },
@@ -1900,7 +2038,7 @@
       "additionalProperties": false,
       "properties": {
         "exclude": {
-          "description": "List of file regex filename patterns to exclude",
+          "description": "List of file regex filename patterns to exclude, case insensitive",
           "items": {
             "type": "string"
           },
@@ -1923,7 +2061,7 @@
           "type": "boolean"
         },
         "exclude": {
-          "description": "List of file regex filename patterns to exclude",
+          "description": "List of file regex filename patterns to exclude, case insensitive",
           "items": {
             "type": "string"
           },
@@ -1956,7 +2094,7 @@
       "additionalProperties": false,
       "properties": {
         "exclude": {
-          "description": "List of file regex filename patterns to exclude",
+          "description": "List of file regex filename patterns to exclude, case insensitive",
           "items": {
             "type": "string"
           },
@@ -1969,7 +2107,7 @@
       "additionalProperties": false,
       "properties": {
         "exclude": {
-          "description": "List of file regex filename patterns to exclude",
+          "description": "List of file regex filename patterns to exclude, case insensitive",
           "items": {
             "type": "string"
           },
@@ -1989,7 +2127,7 @@
       "additionalProperties": false,
       "properties": {
         "exclude": {
-          "description": "List of file regex filename patterns to exclude",
+          "description": "List of file regex filename patterns to exclude, case insensitive",
           "items": {
             "type": "string"
           },
@@ -2000,6 +2138,9 @@
           "type": "boolean"
         },
         "ignoreFunctionModuleName": {
+          "type": "boolean"
+        },
+        "ignoreGlobalClassBoundaries": {
           "type": "boolean"
         },
         "ignoreGlobalClassDefinition": {
@@ -2029,6 +2170,7 @@
         "ignoreGlobalClassDefinition",
         "ignoreGlobalInterface",
         "ignoreFunctionModuleName",
+        "ignoreGlobalClassBoundaries",
         "ignoreKeywords"
       ],
       "type": "object"
@@ -2044,7 +2186,20 @@
       "additionalProperties": false,
       "properties": {
         "exclude": {
-          "description": "List of file regex filename patterns to exclude",
+          "description": "List of file regex filename patterns to exclude, case insensitive",
+          "items": {
+            "type": "string"
+          },
+          "type": "array"
+        }
+      },
+      "type": "object"
+    },
+    "LineBreakStyleConf": {
+      "additionalProperties": false,
+      "properties": {
+        "exclude": {
+          "description": "List of file regex filename patterns to exclude, case insensitive",
           "items": {
             "type": "string"
           },
@@ -2057,7 +2212,7 @@
       "additionalProperties": false,
       "properties": {
         "exclude": {
-          "description": "List of file regex filename patterns to exclude",
+          "description": "List of file regex filename patterns to exclude, case insensitive",
           "items": {
             "type": "string"
           },
@@ -2077,7 +2232,7 @@
       "additionalProperties": false,
       "properties": {
         "exclude": {
-          "description": "List of file regex filename patterns to exclude",
+          "description": "List of file regex filename patterns to exclude, case insensitive",
           "items": {
             "type": "string"
           },
@@ -2101,7 +2256,7 @@
           "type": "string"
         },
         "exclude": {
-          "description": "List of file regex filename patterns to exclude",
+          "description": "List of file regex filename patterns to exclude, case insensitive",
           "items": {
             "type": "string"
           },
@@ -2145,7 +2300,7 @@
       "additionalProperties": false,
       "properties": {
         "exclude": {
-          "description": "List of file regex filename patterns to exclude",
+          "description": "List of file regex filename patterns to exclude, case insensitive",
           "items": {
             "type": "string"
           },
@@ -2158,7 +2313,7 @@
       "additionalProperties": false,
       "properties": {
         "exclude": {
-          "description": "List of file regex filename patterns to exclude",
+          "description": "List of file regex filename patterns to exclude, case insensitive",
           "items": {
             "type": "string"
           },
@@ -2206,7 +2361,7 @@
       "additionalProperties": false,
       "properties": {
         "exclude": {
-          "description": "List of file regex filename patterns to exclude",
+          "description": "List of file regex filename patterns to exclude, case insensitive",
           "items": {
             "type": "string"
           },
@@ -2219,7 +2374,7 @@
       "additionalProperties": false,
       "properties": {
         "exclude": {
-          "description": "List of file regex filename patterns to exclude",
+          "description": "List of file regex filename patterns to exclude, case insensitive",
           "items": {
             "type": "string"
           },
@@ -2232,7 +2387,7 @@
       "additionalProperties": false,
       "properties": {
         "exclude": {
-          "description": "List of file regex filename patterns to exclude",
+          "description": "List of file regex filename patterns to exclude, case insensitive",
           "items": {
             "type": "string"
           },
@@ -2245,7 +2400,7 @@
       "additionalProperties": false,
       "properties": {
         "exclude": {
-          "description": "List of file regex filename patterns to exclude",
+          "description": "List of file regex filename patterns to exclude, case insensitive",
           "items": {
             "type": "string"
           },
@@ -2262,7 +2417,7 @@
           "type": "boolean"
         },
         "exclude": {
-          "description": "List of file regex filename patterns to exclude",
+          "description": "List of file regex filename patterns to exclude, case insensitive",
           "items": {
             "type": "string"
           },
@@ -2292,7 +2447,7 @@
           "type": "string"
         },
         "exclude": {
-          "description": "List of file regex filename patterns to exclude",
+          "description": "List of file regex filename patterns to exclude, case insensitive",
           "items": {
             "type": "string"
           },
@@ -2346,7 +2501,20 @@
       "additionalProperties": false,
       "properties": {
         "exclude": {
-          "description": "List of file regex filename patterns to exclude",
+          "description": "List of file regex filename patterns to exclude, case insensitive",
+          "items": {
+            "type": "string"
+          },
+          "type": "array"
+        }
+      },
+      "type": "object"
+    },
+    "NamesNoDashConf": {
+      "additionalProperties": false,
+      "properties": {
+        "exclude": {
+          "description": "List of file regex filename patterns to exclude, case insensitive",
           "items": {
             "type": "string"
           },
@@ -2363,7 +2531,7 @@
           "type": "number"
         },
         "exclude": {
-          "description": "List of file regex filename patterns to exclude",
+          "description": "List of file regex filename patterns to exclude, case insensitive",
           "items": {
             "type": "string"
           },
@@ -2383,7 +2551,7 @@
           "type": "number"
         },
         "exclude": {
-          "description": "List of file regex filename patterns to exclude",
+          "description": "List of file regex filename patterns to exclude, case insensitive",
           "items": {
             "type": "string"
           },
@@ -2415,7 +2583,7 @@
           "type": "boolean"
         },
         "exclude": {
-          "description": "List of file regex filename patterns to exclude",
+          "description": "List of file regex filename patterns to exclude, case insensitive",
           "items": {
             "type": "string"
           },
@@ -2451,7 +2619,7 @@
           "type": "string"
         },
         "exclude": {
-          "description": "List of file regex filename patterns to exclude",
+          "description": "List of file regex filename patterns to exclude, case insensitive",
           "items": {
             "type": "string"
           },
@@ -2566,11 +2734,15 @@
           "type": "boolean"
         },
         "exclude": {
-          "description": "List of file regex filename patterns to exclude",
+          "description": "List of file regex filename patterns to exclude, case insensitive",
           "items": {
             "type": "string"
           },
           "type": "array"
+        },
+        "fieldSymbolStructure": {
+          "description": "Checks for FIELD-SYMBOL ... STRUCTURE",
+          "type": "boolean"
         },
         "move": {
           "description": "Check for MOVE statement",
@@ -2616,7 +2788,8 @@
         "requested",
         "occurs",
         "setExtended",
-        "withHeaderLine"
+        "withHeaderLine",
+        "fieldSymbolStructure"
       ],
       "type": "object"
     },
@@ -2624,7 +2797,20 @@
       "additionalProperties": false,
       "properties": {
         "exclude": {
-          "description": "List of file regex filename patterns to exclude",
+          "description": "List of file regex filename patterns to exclude, case insensitive",
+          "items": {
+            "type": "string"
+          },
+          "type": "array"
+        }
+      },
+      "type": "object"
+    },
+    "ParserMissingSpaceConf": {
+      "additionalProperties": false,
+      "properties": {
+        "exclude": {
+          "description": "List of file regex filename patterns to exclude, case insensitive",
           "items": {
             "type": "string"
           },
@@ -2644,7 +2830,7 @@
       "additionalProperties": false,
       "properties": {
         "exclude": {
-          "description": "List of file regex filename patterns to exclude",
+          "description": "List of file regex filename patterns to exclude, case insensitive",
           "items": {
             "type": "string"
           },
@@ -2657,7 +2843,7 @@
       "additionalProperties": false,
       "properties": {
         "exclude": {
-          "description": "List of file regex filename patterns to exclude",
+          "description": "List of file regex filename patterns to exclude, case insensitive",
           "items": {
             "type": "string"
           },
@@ -2677,7 +2863,7 @@
           "type": "array"
         },
         "exclude": {
-          "description": "List of file regex filename patterns to exclude",
+          "description": "List of file regex filename patterns to exclude, case insensitive",
           "items": {
             "type": "string"
           },
@@ -2693,7 +2879,7 @@
       "additionalProperties": false,
       "properties": {
         "exclude": {
-          "description": "List of file regex filename patterns to exclude",
+          "description": "List of file regex filename patterns to exclude, case insensitive",
           "items": {
             "type": "string"
           },
@@ -2713,7 +2899,7 @@
       "additionalProperties": false,
       "properties": {
         "exclude": {
-          "description": "List of file regex filename patterns to exclude",
+          "description": "List of file regex filename patterns to exclude, case insensitive",
           "items": {
             "type": "string"
           },
@@ -2726,7 +2912,7 @@
       "additionalProperties": false,
       "properties": {
         "exclude": {
-          "description": "List of file regex filename patterns to exclude",
+          "description": "List of file regex filename patterns to exclude, case insensitive",
           "items": {
             "type": "string"
           },
@@ -2739,7 +2925,7 @@
       "additionalProperties": false,
       "properties": {
         "exclude": {
-          "description": "List of file regex filename patterns to exclude",
+          "description": "List of file regex filename patterns to exclude, case insensitive",
           "items": {
             "type": "string"
           },
@@ -2752,7 +2938,7 @@
       "additionalProperties": false,
       "properties": {
         "exclude": {
-          "description": "List of file regex filename patterns to exclude",
+          "description": "List of file regex filename patterns to exclude, case insensitive",
           "items": {
             "type": "string"
           },
@@ -2761,10 +2947,15 @@
         "ignoreExceptions": {
           "description": "Ignore global exception classes",
           "type": "boolean"
+        },
+        "ignoreWorkflow": {
+          "description": "Ignore global workflow classes",
+          "type": "boolean"
         }
       },
       "required": [
-        "ignoreExceptions"
+        "ignoreExceptions",
+        "ignoreWorkflow"
       ],
       "type": "object"
     },
@@ -2772,7 +2963,7 @@
       "additionalProperties": false,
       "properties": {
         "exclude": {
-          "description": "List of file regex filename patterns to exclude",
+          "description": "List of file regex filename patterns to exclude, case insensitive",
           "items": {
             "type": "string"
           },
@@ -2785,7 +2976,7 @@
       "additionalProperties": false,
       "properties": {
         "exclude": {
-          "description": "List of file regex filename patterns to exclude",
+          "description": "List of file regex filename patterns to exclude, case insensitive",
           "items": {
             "type": "string"
           },
@@ -2798,7 +2989,7 @@
       "additionalProperties": false,
       "properties": {
         "exclude": {
-          "description": "List of file regex filename patterns to exclude",
+          "description": "List of file regex filename patterns to exclude, case insensitive",
           "items": {
             "type": "string"
           },
@@ -2841,7 +3032,7 @@
       "additionalProperties": false,
       "properties": {
         "exclude": {
-          "description": "List of file regex filename patterns to exclude",
+          "description": "List of file regex filename patterns to exclude, case insensitive",
           "items": {
             "type": "string"
           },
@@ -2861,7 +3052,7 @@
       "additionalProperties": false,
       "properties": {
         "exclude": {
-          "description": "List of file regex filename patterns to exclude",
+          "description": "List of file regex filename patterns to exclude, case insensitive",
           "items": {
             "type": "string"
           },
@@ -2881,7 +3072,7 @@
           "type": "array"
         },
         "exclude": {
-          "description": "List of file regex filename patterns to exclude",
+          "description": "List of file regex filename patterns to exclude, case insensitive",
           "items": {
             "type": "string"
           },
@@ -2902,7 +3093,7 @@
       "additionalProperties": false,
       "properties": {
         "exclude": {
-          "description": "List of file regex filename patterns to exclude",
+          "description": "List of file regex filename patterns to exclude, case insensitive",
           "items": {
             "type": "string"
           },
@@ -2915,7 +3106,7 @@
       "additionalProperties": false,
       "properties": {
         "exclude": {
-          "description": "List of file regex filename patterns to exclude",
+          "description": "List of file regex filename patterns to exclude, case insensitive",
           "items": {
             "type": "string"
           },
@@ -2938,7 +3129,7 @@
       "additionalProperties": false,
       "properties": {
         "exclude": {
-          "description": "List of file regex filename patterns to exclude",
+          "description": "List of file regex filename patterns to exclude, case insensitive",
           "items": {
             "type": "string"
           },
@@ -2951,7 +3142,7 @@
       "additionalProperties": false,
       "properties": {
         "exclude": {
-          "description": "List of file regex filename patterns to exclude",
+          "description": "List of file regex filename patterns to exclude, case insensitive",
           "items": {
             "type": "string"
           },
@@ -2964,7 +3155,7 @@
       "additionalProperties": false,
       "properties": {
         "exclude": {
-          "description": "List of file regex filename patterns to exclude",
+          "description": "List of file regex filename patterns to exclude, case insensitive",
           "items": {
             "type": "string"
           },
@@ -2977,20 +3168,7 @@
       "additionalProperties": false,
       "properties": {
         "exclude": {
-          "description": "List of file regex filename patterns to exclude",
-          "items": {
-            "type": "string"
-          },
-          "type": "array"
-        }
-      },
-      "type": "object"
-    },
-    "TypeBeginSingleTypeConf": {
-      "additionalProperties": false,
-      "properties": {
-        "exclude": {
-          "description": "List of file regex filename patterns to exclude",
+          "description": "List of file regex filename patterns to exclude, case insensitive",
           "items": {
             "type": "string"
           },
@@ -3003,7 +3181,7 @@
       "additionalProperties": false,
       "properties": {
         "exclude": {
-          "description": "List of file regex filename patterns to exclude",
+          "description": "List of file regex filename patterns to exclude, case insensitive",
           "items": {
             "type": "string"
           },
@@ -3016,7 +3194,7 @@
       "additionalProperties": false,
       "properties": {
         "exclude": {
-          "description": "List of file regex filename patterns to exclude",
+          "description": "List of file regex filename patterns to exclude, case insensitive",
           "items": {
             "type": "string"
           },
@@ -3036,7 +3214,7 @@
       "additionalProperties": false,
       "properties": {
         "exclude": {
-          "description": "List of file regex filename patterns to exclude",
+          "description": "List of file regex filename patterns to exclude, case insensitive",
           "items": {
             "type": "string"
           },
@@ -3049,33 +3227,66 @@
       "additionalProperties": false,
       "properties": {
         "exclude": {
-          "description": "List of file regex filename patterns to exclude",
+          "description": "List of file regex filename patterns to exclude, case insensitive",
           "items": {
             "type": "string"
           },
           "type": "array"
         }
       },
+      "type": "object"
+    },
+    "UnusedTypesConf": {
+      "additionalProperties": false,
+      "properties": {
+        "exclude": {
+          "description": "List of file regex filename patterns to exclude, case insensitive",
+          "items": {
+            "type": "string"
+          },
+          "type": "array"
+        },
+        "skipNames": {
+          "description": "skip specific names, case insensitive",
+          "items": {
+            "type": "string"
+          },
+          "type": "array"
+        }
+      },
+      "required": [
+        "skipNames"
+      ],
       "type": "object"
     },
     "UnusedVariablesConf": {
       "additionalProperties": false,
       "properties": {
         "exclude": {
-          "description": "List of file regex filename patterns to exclude",
+          "description": "List of file regex filename patterns to exclude, case insensitive",
+          "items": {
+            "type": "string"
+          },
+          "type": "array"
+        },
+        "skipNames": {
+          "description": "skip specific names, case insensitive",
           "items": {
             "type": "string"
           },
           "type": "array"
         }
       },
+      "required": [
+        "skipNames"
+      ],
       "type": "object"
     },
     "UseNewConf": {
       "additionalProperties": false,
       "properties": {
         "exclude": {
-          "description": "List of file regex filename patterns to exclude",
+          "description": "List of file regex filename patterns to exclude, case insensitive",
           "items": {
             "type": "string"
           },
@@ -3105,7 +3316,7 @@
       "additionalProperties": false,
       "properties": {
         "exclude": {
-          "description": "List of file regex filename patterns to exclude",
+          "description": "List of file regex filename patterns to exclude, case insensitive",
           "items": {
             "type": "string"
           },
@@ -3118,7 +3329,7 @@
       "additionalProperties": false,
       "properties": {
         "exclude": {
-          "description": "List of file regex filename patterns to exclude",
+          "description": "List of file regex filename patterns to exclude, case insensitive",
           "items": {
             "type": "string"
           },
@@ -3131,7 +3342,7 @@
       "additionalProperties": false,
       "properties": {
         "exclude": {
-          "description": "List of file regex filename patterns to exclude",
+          "description": "List of file regex filename patterns to exclude, case insensitive",
           "items": {
             "type": "string"
           },

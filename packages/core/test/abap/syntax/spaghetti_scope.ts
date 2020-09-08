@@ -93,7 +93,8 @@ ENDCLASS.`;
 describe("Spaghetti Scope, Definition + Read + Write positions", () => {
 
   it("inline FIELD-SYMBOL, check definition and write position", () => {
-    const abap = `DATA lt_foo TYPE STANDARD TABLE OF i.
+    const abap = `
+    DATA lt_foo TYPE STANDARD TABLE OF i.
     LOOP AT lt_foo ASSIGNING FIELD-SYMBOL(<lv_foo>).
     ENDLOOP.`;
     const spaghetti = runProgram(abap);

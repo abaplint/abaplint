@@ -1,9 +1,10 @@
 import {ver, seq, opt, tok, str, altPrio, optPrio, regex, Expression} from "../combi";
-import {InstanceArrow, WParenLeftW, WParenRightW, WDashW, ParenLeftW} from "../../1_lexer/tokens";
+import {InstanceArrow, WParenLeftW, WParenRightW, WDashW, ParenLeftW, WPlus, WPlusW} from "../../1_lexer/tokens";
 import {CondBody, SwitchBody, ComponentChain, FieldChain, ReduceBody, TableBody, TypeNameOrInfer, ArrowOrDash,
-  MethodCallChain, ArithOperator, Cond, Constant, StringTemplate, Let, CorrespondingBody, ValueBody, FilterBody} from ".";
+  MethodCallChain, ArithOperator, Cond, Constant, StringTemplate, ConvBody, CorrespondingBody, ValueBody, FilterBody} from ".";
 import {Version} from "../../../version";
 import {IStatementRunnable} from "../statement_runnable";
+import {TextElement} from "./text_element";
 
 // todo, COND and SWITCH are quite similar?
 
@@ -30,12 +31,13 @@ export class Source extends Expression {
                      new Cond(),
                      str(")"));
 
-    const prefix = altPrio(tok(WDashW), str("BIT-NOT"));
+    const prefix = altPrio(tok(WDashW), tok(WPlus), tok(WPlusW), str("BIT-NOT"));
 
-    const old = seq(altPrio(new Constant(),
-                            new StringTemplate(),
-                            bool,
-                            seq(optPrio(prefix), altPrio(method, new FieldChain(), paren))),
+    const old = seq(optPrio(prefix), altPrio(new Constant(),
+                                             new StringTemplate(),
+                                             new TextElement(),
+                                             bool,
+                                             altPrio(method, new FieldChain(), paren)),
                     optPrio(altPrio(ref, after, new TableBody())));
 
     const corr = ver(Version.v740sp05, seq(str("CORRESPONDING"),
@@ -47,8 +49,7 @@ export class Source extends Expression {
     const conv = ver(Version.v740sp02, seq(str("CONV"),
                                            new TypeNameOrInfer(),
                                            tok(ParenLeftW),
-                                           opt(new Let()),
-                                           new Source(),
+                                           new ConvBody(),
                                            rparen, opt(after)));
 
     const swit = ver(Version.v740sp02, seq(str("SWITCH"),

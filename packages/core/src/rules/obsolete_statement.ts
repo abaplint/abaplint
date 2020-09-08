@@ -29,6 +29,8 @@ export class ObsoleteStatementConf extends BasicRuleConfig {
   public setExtended: boolean = true;
   /** Checks for WITH HEADER LINE */
   public withHeaderLine: boolean = true;
+  /** Checks for FIELD-SYMBOL ... STRUCTURE */
+  public fieldSymbolStructure: boolean = true;
 }
 
 export class ObsoleteStatement extends ABAPRule {
@@ -41,10 +43,6 @@ export class ObsoleteStatement extends ABAPRule {
       title: "Obsolete statements",
       shortDescription: `Checks for usages of certain obsolete statements`,
     };
-  }
-
-  private getMessage(): string {
-    return "Statement is obsolete";
   }
 
   public getConfig() {
@@ -61,31 +59,33 @@ export class ObsoleteStatement extends ABAPRule {
     const statements = file.getStatements();
     let prev: Position | undefined = undefined;
 
-    for (const sta of statements) {
-      if ((sta.get() instanceof Statements.Refresh && this.conf.refresh)
-          || (sta.get() instanceof Statements.Compute && this.conf.compute)
-          || (sta.get() instanceof Statements.Add && this.conf.add)
-          || (sta.get() instanceof Statements.Subtract && this.conf.subtract)
-          || (sta.get() instanceof Statements.Multiply && this.conf.multiply)
-          || (sta.get() instanceof Statements.Move && this.conf.move
-          && sta.getTokens()[0].getStr() === "MOVE"
-          && sta.getTokens()[1].getStr() !== "-"
-          && sta.getTokens()[1].getStr() !== "EXACT")
-          || (sta.get() instanceof Statements.Divide && this.conf.divide)) {
-        if (prev === undefined || sta.getStart().getCol() !== prev.getCol() || sta.getStart().getRow() !== prev.getRow()) {
-          const issue = Issue.atStatement(file, sta, this.getMessage(), this.getMetadata().key);
+    for (const staNode of statements) {
+      const sta = staNode.get();
+      if ((sta instanceof Statements.Refresh && this.conf.refresh)
+          || (sta instanceof Statements.Compute && this.conf.compute)
+          || (sta instanceof Statements.Add && this.conf.add)
+          || (sta instanceof Statements.Subtract && this.conf.subtract)
+          || (sta instanceof Statements.Multiply && this.conf.multiply)
+          || (sta instanceof Statements.Move && this.conf.move
+          && staNode.getTokens()[0].getStr().toUpperCase() === "MOVE"
+          && staNode.getTokens()[1].getStr() !== "-"
+          && staNode.getTokens()[1].getStr().toUpperCase() !== "EXACT")
+          || (sta instanceof Statements.Divide && this.conf.divide)) {
+        if (prev === undefined || staNode.getStart().getCol() !== prev.getCol() || staNode.getStart().getRow() !== prev.getRow()) {
+          const message = "Statement \"" + staNode.getFirstToken().getStr() + "\" is obsolete";
+          const issue = Issue.atStatement(file, staNode, message, this.getMetadata().key);
           issues.push(issue);
         }
-        prev = sta.getStart();
+        prev = staNode.getStart();
       }
 
-      if (this.conf.setExtended && sta.get() instanceof Statements.SetExtendedCheck) {
-        const issue = Issue.atStatement(file, sta, "SET EXTENDED CHECK is obsolete", this.getMetadata().key);
+      if (this.conf.setExtended && sta instanceof Statements.SetExtendedCheck) {
+        const issue = Issue.atStatement(file, staNode, "SET EXTENDED CHECK is obsolete", this.getMetadata().key);
         issues.push(issue);
       }
 
-      if (this.conf.requested && sta.get() instanceof Statements.If) {
-        for (const compare of sta.findAllExpressions(Expressions.Compare)) {
+      if (this.conf.requested && sta instanceof Statements.If) {
+        for (const compare of staNode.findAllExpressions(Expressions.Compare)) {
           const token = compare.findDirectTokenByText("REQUESTED");
           if (token) {
             const issue = Issue.atToken(file, token, "IS REQUESTED is obsolete", this.getMetadata().key);
@@ -95,16 +95,16 @@ export class ObsoleteStatement extends ABAPRule {
       }
 
       if (this.conf.occurs) {
-        if ((sta.get() instanceof Statements.Describe)
-          || (sta.get() instanceof Statements.Ranges)) {
-          const token = sta.findDirectTokenByText("OCCURS");
+        if ((sta instanceof Statements.Describe)
+          || (sta instanceof Statements.Ranges)) {
+          const token = staNode.findDirectTokenByText("OCCURS");
           if (token) {
             const issue = Issue.atToken(file, token, "OCCURS is obsolete", this.getMetadata().key);
             issues.push(issue);
           }
         }
 
-        for (const dataDef of sta.findAllExpressions(Expressions.DataDefinition)) {
+        for (const dataDef of staNode.findAllExpressions(Expressions.DataDefinition)) {
           const token = dataDef.findDirectTokenByText("OCCURS");
           if (token) {
             const issue = Issue.atToken(file, token, "OCCURS is obsolete", this.getMetadata().key);
@@ -113,13 +113,21 @@ export class ObsoleteStatement extends ABAPRule {
         }
       }
 
-      if (this.conf.withHeaderLine === true && sta.get() instanceof Statements.Data) {
-        if (sta.concatTokens().toUpperCase().includes("WITH HEADER LINE")) {
-          const token = sta.getFirstToken();
+      if (this.conf.withHeaderLine === true && sta instanceof Statements.Data) {
+        if (staNode.concatTokens().toUpperCase().includes("WITH HEADER LINE")) {
+          const token = staNode.getFirstToken();
           if (token) {
             const issue = Issue.atToken(file, token, "WITH HEADER LINE is obsolete", this.getMetadata().key);
             issues.push(issue);
           }
+        }
+      }
+
+      if (this.conf.fieldSymbolStructure && sta instanceof Statements.FieldSymbol){
+        const token = staNode.findDirectTokenByText("STRUCTURE");
+        if (token) {
+          const issue = Issue.atToken(file, token, "FIELD-SYMBOL ... STRUCTURE is obsolete", this.getMetadata().key);
+          issues.push(issue);
         }
       }
     }

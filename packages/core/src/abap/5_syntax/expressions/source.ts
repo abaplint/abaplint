@@ -13,13 +13,21 @@ import {StringTemplate} from "./string_template";
 import {ValueBody} from "./value_body";
 import {Cond} from "./cond";
 import {ReduceBody} from "./reduce_body";
+import {ReferenceType} from "../_reference";
+import {SwitchBody} from "./switch_body";
+import {CondBody} from "./cond_body";
+import {ConvBody} from "./conv_body";
 
 export class Source {
   public runSyntax(
-    node: ExpressionNode,
+    node: ExpressionNode | undefined,
     scope: CurrentScope,
     filename: string,
     targetType?: AbstractType): AbstractType | undefined {
+
+    if (node === undefined) {
+      return undefined;
+    }
 
     const children = node.getChildren().slice();
     let first = children.shift();
@@ -27,22 +35,35 @@ export class Source {
     if (first instanceof TokenNode) {
       const tok = first.getFirstToken().getStr().toUpperCase();
       switch (tok) {
+        case "(":
+        case "-":
+          break;
         case "BOOLC":
-          new Cond().runSyntax(node.findDirectExpression(Expressions.Cond), scope);
+          new Cond().runSyntax(node.findDirectExpression(Expressions.Cond), scope, filename);
           return new StringType();
         case "XSDBOOL":
-          new Cond().runSyntax(node.findDirectExpression(Expressions.Cond), scope);
+          new Cond().runSyntax(node.findDirectExpression(Expressions.Cond), scope, filename);
           return new CharacterType(1);
         case "REDUCE":
         {
           const bodyType = new ReduceBody().runSyntax(node.findDirectExpression(Expressions.ReduceBody), scope, filename);
           return this.value(node, scope, filename, targetType, bodyType);
         }
-        case "COND":
-        case "CONV":
-        case "CORRESPONDING":
-        case "EXACT":
         case "SWITCH":
+          new SwitchBody().runSyntax(node.findDirectExpression(Expressions.SwitchBody), scope, filename);
+          return this.value(node, scope, filename, targetType, undefined);
+        case "COND":
+          new CondBody().runSyntax(node.findDirectExpression(Expressions.CondBody), scope, filename);
+          return this.value(node, scope, filename, targetType, undefined);
+        case "CONV":
+          new ConvBody().runSyntax(node.findDirectExpression(Expressions.ConvBody), scope, filename);
+          return this.value(node, scope, filename, targetType, undefined);
+        case "REF":
+          new Source().runSyntax(node.findDirectExpression(Expressions.Source), scope, filename);
+          return this.value(node, scope, filename, targetType, undefined);
+        case "CORRESPONDING":
+        case "FILTER":
+        case "EXACT":
           return this.value(node, scope, filename, targetType, undefined);
         case "VALUE":
         {
@@ -62,9 +83,11 @@ export class Source {
       if (first instanceof ExpressionNode && first.get() instanceof Expressions.MethodCallChain) {
         context = new MethodCallChain().runSyntax(first, scope, filename, targetType);
       } else if (first instanceof ExpressionNode && first.get() instanceof Expressions.FieldChain) {
-        context = new FieldChain().runSyntax(first, scope, filename);
+        context = new FieldChain().runSyntax(first, scope, filename, ReferenceType.DataReadReference);
       } else if (first instanceof ExpressionNode && first.get() instanceof Expressions.StringTemplate) {
         context = new StringTemplate().runSyntax(first, scope, filename);
+      } else if (first instanceof ExpressionNode && first.get() instanceof Expressions.Source) {
+        context = new Source().runSyntax(first, scope, filename);
       } else if (first instanceof ExpressionNode && first.get() instanceof Expressions.Constant) {
         context = new Constant().runSyntax(first);
       } else if (first instanceof ExpressionNode && first.get() instanceof Expressions.ArrowOrDash) {

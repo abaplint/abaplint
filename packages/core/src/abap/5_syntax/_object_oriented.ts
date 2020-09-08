@@ -8,6 +8,7 @@ import {IInterfaceDefinition} from "../types/_interface_definition";
 import {ClassAttribute} from "../types/class_attribute";
 import {ClassConstant} from "../types/class_constant";
 import {IEventDefinition} from "../types/_event_definition";
+import {TypedIdentifier} from "../types/_typed_identifier";
 
 // todo, think some of the public methods can be made private
 
@@ -161,6 +162,35 @@ export class ObjectOriented {
   }
 
   // search in via super class, interfaces and aliases
+  public searchTypeName(
+    def: IClassDefinition | IInterfaceDefinition | undefined,
+    name: string | undefined): TypedIdentifier | undefined {
+
+    if (def === undefined || name === undefined) {
+      return undefined;
+    }
+
+    const search = def.getTypeDefinitions().getByName(name);
+    if (search) {
+      return search;
+    }
+
+    if (name.includes("~")) {
+      const interfaceName = name.split("~")[0];
+      if (def.getImplementing().some((a) => a.name.toUpperCase() === interfaceName.toUpperCase())) {
+        return this.searchTypeName(this.scope.findInterfaceDefinition(interfaceName), name.split("~")[1]);
+      }
+    }
+
+    const sup = def.getSuperClass();
+    if (sup) {
+      return this.searchTypeName(this.findSuperDefinition(sup), name);
+    }
+
+    return undefined;
+  }
+
+  // search in via super class, interfaces and aliases
   public searchConstantName(
     def: IClassDefinition | IInterfaceDefinition | undefined,
     name: string | undefined): ClassConstant | undefined {
@@ -268,6 +298,7 @@ export class ObjectOriented {
       for (const t of cdef.getTypeDefinitions().getAll()) {
         this.scope.addType(t);
       }
+      this.fromInterfaces(cdef);
       sup = cdef.getSuperClass();
     }
   }

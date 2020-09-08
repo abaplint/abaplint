@@ -6,14 +6,15 @@ import {IObject} from "../objects/_iobject";
 import {SyntaxLogic} from "../abap/5_syntax/syntax";
 import {ABAPObject} from "../objects/_abap_object";
 import {ScopeType} from "../abap/5_syntax/_scope_type";
-import {TypedIdentifier} from "../abap/types/_typed_identifier";
+import {TypedIdentifier, IdentifierMeta} from "../abap/types/_typed_identifier";
 import {Interface} from "../objects";
 import {ISpaghettiScopeNode, IScopeVariable} from "../abap/5_syntax/_spaghetti_scope";
 import {References} from "../lsp/references";
-import {Data} from "../abap/2_statements/statements";
 import {EditHelper, IEdit} from "../edit_helper";
 
 export class UnusedVariablesConf extends BasicRuleConfig {
+  /** skip specific names, case insensitive */
+  public skipNames: string[] = [];
 }
 
 export class UnusedVariables implements IRule {
@@ -24,9 +25,12 @@ export class UnusedVariables implements IRule {
     return {
       key: "unused_variables",
       title: "Unused variables",
-      shortDescription: `Checks for unused variables`,
-      extendedInformation: `WARNING: slow!
-Doesnt currently work for public attributes and class prefixed attribute usage`,
+      shortDescription: `Checks for unused variables and constants`,
+      extendedInformation: `WARNING: slow
+
+      Experimental, might give false positives. Skips event parameters.
+
+      Note that this currently does not work if the source code uses macros.`,
       tags: [RuleTag.Experimental, RuleTag.Quickfix],
     };
   }
@@ -37,6 +41,9 @@ Doesnt currently work for public attributes and class prefixed attribute usage`,
 
   public setConfig(conf: UnusedVariablesConf) {
     this.conf = conf;
+    if (this.conf.skipNames === undefined) {
+      this.conf.skipNames = [];
+    }
   }
 
   public initialize(reg: IRegistry) {
@@ -47,17 +54,35 @@ Doesnt currently work for public attributes and class prefixed attribute usage`,
   public run(obj: IObject): Issue[] {
     if (!(obj instanceof ABAPObject)) {
       return [];
-    } else if (obj instanceof Interface) {
+    } else if (obj instanceof Interface) { // todo, how to handle interfaces?
       return [];
     }
 
     // dont report unused variables when there are syntax errors
-    const result = new SyntaxLogic(this.reg, obj).run();
-    if (result.issues.length > 0) {
+    const syntax = new SyntaxLogic(this.reg, obj).run();
+    if (syntax.issues.length > 0) {
       return [];
     }
 
-    return this.traverse(result.spaghetti.getTop(), obj);
+    const results = this.traverse(syntax.spaghetti.getTop(), obj);
+
+    // remove duplicates, quick and dirty
+    const deduplicated: Issue[] = [];
+    for (const result of results) {
+      let cont = false;
+      for (const d of deduplicated) {
+        if (result.getStart().equals(d.getStart())) {
+          cont = true;
+          break;
+        }
+      }
+      if (cont === true) {
+        continue;
+      }
+      deduplicated.push(result);
+    }
+
+    return deduplicated;
   }
 
   private traverse(node: ISpaghettiScopeNode, obj: ABAPObject): Issue[] {
@@ -78,11 +103,19 @@ Doesnt currently work for public attributes and class prefixed attribute usage`,
     const ret: Issue[] = [];
 
     for (const v of node.getData().vars) {
-      if (v.name === "me" || v.name === "super") {
-        continue; // todo, this is a workaround
+      if (this.conf.skipNames?.length > 0
+          && this.conf.skipNames.some((a) => a.toUpperCase() === v.name.toUpperCase())) {
+        continue;
       }
-      if (this.isUsed(v.identifier) === false
-          && obj.containsFile(v.identifier.getFilename())) {
+      if (v.name === "me"
+          || v.name === "super"
+          || v.identifier.getMeta().includes(IdentifierMeta.EventParameter)) {
+        // todo, workaround for "me" and "super", these should somehow be typed to built-in
+        continue;
+      } else if ((obj.containsFile(v.identifier.getFilename())
+            || node.getIdentifier().stype === ScopeType.Program
+            || node.getIdentifier().stype === ScopeType.Form)
+          && this.isUsed(v.identifier, node) === false) {
         const message = "Variable \"" + v.identifier.getName() + "\" not used";
         const fix = this.buildFix(v, obj);
         ret.push(Issue.atIdentifier(v.identifier, message, this.getMetadata().key, fix));
@@ -92,9 +125,8 @@ Doesnt currently work for public attributes and class prefixed attribute usage`,
     return ret;
   }
 
-  private isUsed(id: TypedIdentifier): boolean {
-    // todo, this is slow, but less false positives than the previous implementation
-    const found = new References(this.reg).searchEverything(id);
+  private isUsed(id: TypedIdentifier, node: ISpaghettiScopeNode): boolean {
+    const found = new References(this.reg).search(id, node);
     return found.length > 1;
   }
 
@@ -104,10 +136,9 @@ Doesnt currently work for public attributes and class prefixed attribute usage`,
       return undefined;
     }
 
-    for (const s of file.getStatements()) {
-      if (s.get() instanceof Data && s.includesToken(v.identifier.getToken())) {
-        return EditHelper.deleteRange(file, s.getFirstToken().getStart(), s.getLastToken().getEnd());
-      }
+    const statement = EditHelper.findStatement(v.identifier.getToken(), file);
+    if (statement) {
+      return EditHelper.deleteStatement(file, statement);
     }
 
     return undefined;

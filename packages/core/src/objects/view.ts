@@ -39,6 +39,10 @@ export class View extends AbstractObject {
     const components: Types.IStructureComponent[] = [];
     const ddic = new DDIC(reg);
     for (const field of this.parsedData.fields) {
+      if (field.VIEWFIELD === "*") {
+        // ignore, this is a special case of old style .INCLUDE
+        continue;
+      }
       components.push({
         name: field.VIEWFIELD,
         type: ddic.lookupDataElement(field.ROLLNAME)});

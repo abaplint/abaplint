@@ -1,6 +1,7 @@
 import {ABAPObject} from "./_abap_object";
 import {IInterfaceDefinition} from "../abap/types/_interface_definition";
 import {ABAPFile} from "../abap/abap_file";
+import {InfoInterfaceDefinition} from "../abap/4_file_information/_abap_file_information";
 
 export class Interface extends ABAPObject {
   private def: IInterfaceDefinition | undefined = undefined;
@@ -24,6 +25,14 @@ export class Interface extends ABAPObject {
 
   public getDefinition(): IInterfaceDefinition | undefined {
     return this.def;
+  }
+
+  public getInterface(): InfoInterfaceDefinition | undefined {
+    return this.getMainABAPFile()?.getInfo().getInterfaceDefinitionByName(this.getName());
+  }
+
+  public getIdentifier() {
+    return this.getInterface()?.identifier;
   }
 
   public getAllowedNaming() {

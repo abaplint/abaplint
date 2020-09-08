@@ -885,4 +885,175 @@ ENDCLASS.`;
     expect(issues.length).to.equal(0);
   });
 
+  it("Two interfaces and a program", () => {
+    const repo = `
+    INTERFACE zif_repo PUBLIC.
+    ENDINTERFACE.`;
+    const definitions = `
+    INTERFACE zif_abapgit_definitions PUBLIC.
+      DATA repo TYPE REF TO zif_repo.
+
+      TYPES: BEGIN OF ty_item,
+               obj_type TYPE tadir-object,
+               obj_name TYPE tadir-obj_name,
+               devclass TYPE devclass,
+               inactive TYPE abap_bool,
+             END OF ty_item .
+    ENDINTERFACE.`;
+    const persistence = `
+    INTERFACE zif_abapgit_persistence PUBLIC.
+      TYPES: BEGIN OF ty_repo_xml,
+               item TYPE zif_abapgit_definitions=>ty_item,
+             END OF ty_repo_xml.
+
+      TYPES: BEGIN OF ty_repo,
+               key TYPE string.
+               INCLUDE TYPE ty_repo_xml.
+      TYPES: END OF ty_repo.
+    ENDINTERFACE.`;
+    const prog = `DATA: ls_data TYPE zif_abapgit_persistence=>ty_repo.`;
+    let issues = runMulti([
+      {filename: "zif_abapgit_persistence.intf.abap", contents: persistence},
+      {filename: "zif_abapgit_definitions.intf.abap", contents: definitions},
+      {filename: "zif_repo.intf.abap", contents: repo},
+      {filename: "ztwo_interfaces.prog.abap", contents: prog},
+    ]);
+    issues = issues.filter(i => i.getKey() === key);
+    expect(issues.length).to.equal(0);
+  });
+
+  it("Type from super", () => {
+    const abap = `
+CLASS lcl_fiori_moni_mpc DEFINITION CREATE PUBLIC.
+  PUBLIC SECTION.
+    TYPES:
+      BEGIN OF ty_appinfo,
+        user_id TYPE string,
+      END OF ty_appinfo.
+ENDCLASS.
+CLASS lcl_fiori_moni_mpc IMPLEMENTATION.
+ENDCLASS.
+
+CLASS lcl_fiori_moni_mpc_ext DEFINITION INHERITING FROM lcl_fiori_moni_mpc CREATE PUBLIC.
+ENDCLASS.
+CLASS lcl_fiori_moni_mpc_ext IMPLEMENTATION.
+ENDCLASS.
+
+DATA: ls_appinfo TYPE lcl_fiori_moni_mpc_ext=>ty_appinfo.`;
+    let issues = runMulti([{filename: "zfoobar.prog.abap", contents: abap}]);
+    issues = issues.filter(i => i.getKey() === key);
+    expect(issues.length).to.equal(0);
+  });
+
+  it("unknown type in interface", () => {
+    const abap = `
+INTERFACE zif_utyp PUBLIC .
+  TYPES contains_unknown TYPE zif_sdfsd=>bar.
+ENDINTERFACE.`;
+    let issues = runMulti([
+      {filename: "zif_utyp.intf.abap", contents: abap},
+    ]);
+    issues = issues.filter(i => i.getKey() === key);
+    expect(issues.length).to.equal(1);
+  });
+
+  it("Type from super via interface", () => {
+    const abap = `
+INTERFACE zif_service.
+  TYPES ty_char_top TYPE c LENGTH 1.
+ENDINTERFACE.
+
+CLASS zcl_top DEFINITION.
+  PUBLIC SECTION.
+    INTERFACES zif_service.
+ENDCLASS.
+CLASS zcl_top IMPLEMENTATION.
+ENDCLASS.
+
+CLASS zcl_class DEFINITION INHERITING FROM zcl_top.
+  PUBLIC SECTION.
+    TYPES ty_char TYPE zif_service~ty_char_top.
+ENDCLASS.
+CLASS zcl_class IMPLEMENTATION.
+ENDCLASS.`;
+    let issues = runMulti([{filename: "zfoobar.prog.abap", contents: abap}]);
+    issues = issues.filter(i => i.getKey() === key);
+    expect(issues.length).to.equal(0);
+  });
+
+  it("APPEND INITIAL LINE with inline", () => {
+    const abap = `
+    DATA tab TYPE STANDARD TABLE OF i.
+    APPEND INITIAL LINE TO tab ASSIGNING FIELD-SYMBOL(<ls_tab1>).
+    WRITE <ls_tab1>.`;
+    let issues = runMulti([
+      {filename: "zreport.prog.abap", contents: abap},
+    ]);
+    issues = issues.filter(i => i.getKey() === key);
+    expect(issues.length).to.equal(0);
+  });
+
+  it("METHOD with LIKE interface variable", () => {
+    const abap = `
+INTERFACE lif_bar.
+  DATA foo TYPE i.
+ENDINTERFACE.
+CLASS lcl_bar DEFINITION.
+  PUBLIC SECTION.
+    METHODS moo IMPORTING bar LIKE lif_bar=>foo OPTIONAL.
+ENDCLASS.
+CLASS lcl_bar IMPLEMENTATION.
+  METHOD moo.
+    WRITE bar.
+  ENDMETHOD.
+ENDCLASS.`;
+    let issues = runMulti([{filename: "zfoobar.prog.abap", contents: abap}]);
+    issues = issues.filter(i => i.getKey() === key);
+    expect(issues.length).to.equal(0);
+  });
+
+  it("BEGIN with LIKE LINE OF", () => {
+    const abap = `
+DATA: BEGIN OF lt_char_file OCCURS 0,
+        zstring(72),
+      END OF lt_char_file.
+
+DATA BEGIN OF lt_file OCCURS 0.
+DATA: line LIKE LINE OF lt_char_file,
+      END OF lt_file.`;
+    let issues = runMulti([{filename: "zfoobar.prog.abap", contents: abap}]);
+    issues = issues.filter(i => i.getKey() === key);
+    expect(issues.length).to.equal(0);
+  });
+
+  it("LIKE types", () => {
+    const abap = `
+CLASS lcl_bar DEFINITION.
+  PRIVATE SECTION.
+    DATA: BEGIN OF _geometry,
+            type        TYPE string,
+          END OF _geometry.
+    DATA: BEGIN OF _linestring,
+            type       TYPE string,
+            geometry   LIKE _geometry,
+          END OF _linestring.
+ENDCLASS.
+CLASS lcl_bar IMPLEMENTATION.
+ENDCLASS.`;
+    let issues = runMulti([{filename: "zfoobar.prog.abap", contents: abap}]);
+    issues = issues.filter(i => i.getKey() === key);
+    expect(issues.length).to.equal(0);
+  });
+
+  it("INTERFACE, local type reference", () => {
+    const abap = `
+INTERFACE zif_abapgit_auth.
+  TYPES ty_authorization TYPE string.
+  DATA foo TYPE ty_authorization.
+ENDINTERFACE.`;
+    let issues = runMulti([{filename: "zfoobar.prog.abap", contents: abap}]);
+    issues = issues.filter(i => i.getKey() === key);
+    expect(issues.length).to.equal(0);
+  });
+
 });

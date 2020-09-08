@@ -99,6 +99,13 @@ INITIALIZATION.
   PERFORM INIT.
 TOP-OF-PAGE.
   PERFORM TOP.`, cnt: 0},
+
+  {abap: `
+INITIALIZATION.
+  PERFORM INIT.
+AT USER-COMMAND.
+  PERFORM TOP.`, cnt: 0},
+
 ];
 
 testRule(tests, Indentation);

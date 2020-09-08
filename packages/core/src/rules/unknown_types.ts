@@ -54,8 +54,18 @@ export class UnknownTypes implements IRule {
     let ret: Issue[] = [];
 
     for (const v of node.getData().vars) {
-      if (this.containsUnknown(v.identifier.getType())) {
-        ret.push(Issue.atIdentifier(v.identifier, v.name, this.getMetadata().key));
+      const found = this.containsUnknown(v.identifier.getType());
+      if (found) {
+        const message = "Type of \"" + v.name + "\" contains unknown: " + found;
+        ret.push(Issue.atIdentifier(v.identifier, message, this.getMetadata().key));
+      }
+    }
+
+    for (const v of node.getData().types) {
+      const found = this.containsUnknown(v.identifier.getType());
+      if (found) {
+        const message = "Type of \"" + v.name + "\" contains unknown: " + found;
+        ret.push(Issue.atIdentifier(v.identifier, message, this.getMetadata().key));
       }
     }
 
@@ -66,19 +76,20 @@ export class UnknownTypes implements IRule {
     return ret;
   }
 
-  private containsUnknown(type: AbstractType): boolean {
+  private containsUnknown(type: AbstractType): string | undefined {
     if (type instanceof BasicTypes.UnknownType) {
-      return true;
+      return type.getError();
     } else if (type instanceof BasicTypes.StructureType) {
       for (const c of type.getComponents()) {
-        if (this.containsUnknown(c.type)) {
-          return true;
+        const found = this.containsUnknown(c.type);
+        if (found) {
+          return found;
         }
       }
     } else if (type instanceof BasicTypes.TableType) {
       return this.containsUnknown(type.getRowType());
     }
-    return false;
+    return undefined;
   }
 
 }

@@ -1,7 +1,8 @@
 import {IStatement} from "./_statement";
-import {str, seq, opt, alt, per, altPrio} from "../combi";
-import {Target, Source, Field, MessageSource} from "../expressions";
+import {str, seq, opt, alt, per, altPrio, ver} from "../combi";
+import {Target, Source, Field, MessageSource, ConstantOrFieldSource} from "../expressions";
 import {IStatementRunnable} from "../statement_runnable";
+import {Version} from "../../../version";
 
 export class Message implements IStatement {
 
@@ -24,7 +25,8 @@ export class Message implements IStatement {
     const mwith = seq(str("WITH"), new Source(), opt(sourc));
 
     const foo = seq(new MessageSource(), opt(options), opt(mwith));
-    const text = seq(new Source(), type, opt(like), opt(raising));
+    const s = alt(ver(Version.v740sp02, new Source()), new ConstantOrFieldSource());
+    const text = seq(s, type, opt(like), opt(raising));
 
     const ret = seq(str("MESSAGE"), alt(foo, text));
 

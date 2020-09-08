@@ -37,10 +37,10 @@ export class ClassAttributeNames extends ABAPRule {
     };
   }
 
-  private getDescription(expected: string, actual: string): string {
+  private getDescription(actual: string, expected: string): string {
     return this.conf.patternKind === "required" ?
-      "Class attribute name does not match pattern " + expected + ": " + actual :
-      "Class attribute name must not match pattern " + expected + ": " + actual;
+      "Class attribute name \"" + actual + "\" does not match pattern " + expected :
+      "Class attribute name \"" + actual + "\" must not match pattern " + expected;
   }
 
   public getConfig() {

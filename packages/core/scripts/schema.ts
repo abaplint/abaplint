@@ -6,6 +6,7 @@ import {AllowedObjectTypesConf} from "../src/rules/allowed_object_types";
 import {AmbiguousStatementConf} from "../src/rules/ambiguous_statement";
 import {AvoidUseConf} from "../src/rules/avoid_use";
 import {BeginEndNamesConf} from "../src/rules/begin_end_names";
+import {BeginSingleIncludeConf} from "../src/rules/begin_single_include";
 import {ChainMainlyDeclarationsConf} from "../src/rules/chain_mainly_declarations";
 import {CheckAbstractConf} from "../src/rules/check_abstract";
 import {CheckCommentsConf} from "../src/rules/check_comments";
@@ -31,8 +32,8 @@ import {EmptyStructureConf} from "../src/rules/empty_structure";
 import {ExitOrCheckConf} from "../src/rules/exit_or_check";
 import {ExportingConf} from "../src/rules/exporting";
 import {ForbiddenIdentifierConf} from "../src/rules/forbidden_identifier";
+import {ForbiddenPseudoAndPragmaConf} from "../src/rules/forbidden_pseudo_and_pragma";
 import {ForbiddenVoidTypeConf} from "../src/rules/forbidden_void_type";
-import {FormNoDashConf} from "../src/rules/form_no_dash";
 import {FormTablesObsoleteConf} from "../src/rules/form_tables_obsolete";
 import {FullyTypeConsantsConf} from "../src/rules/fully_type_constants";
 import {FunctionalWritingConf} from "../src/rules/functional_writing";
@@ -46,6 +47,7 @@ import {InlineDataOldVersionsConf} from "../src/rules/inline_data_old_versions";
 import {KeepSingleParameterCallsOnOneLineConf} from "../src/rules/keep_single_parameter_on_one_line";
 import {KeywordCaseConf} from "../src/rules/keyword_case";
 import {LineBreakMultipleParametersConf} from "../src/rules/line_break_multiple_parameters";
+import {LineBreakStyleConf} from "../src/rules/line_break_style";
 import {LineLengthConf} from "../src/rules/line_length";
 import {LineOnlyPuncConf} from "../src/rules/line_only_punc";
 import {LocalClassNamingConf} from "../src/rules/local_class_naming";
@@ -58,12 +60,14 @@ import {MethodLengthConf} from "../src/rules/method_length";
 import {MethodParameterNamesConf} from "../src/rules/method_parameter_names";
 import {MixReturningConf} from "../src/rules/mix_returning";
 import {MSAGConsistencyConf} from "../src/rules/msag_consistency";
+import {NamesNoDashConf} from "../src/rules/names_no_dash";
 import {NestingConf} from "../src/rules/nesting";
 import {NewlineBetweenMethodsConf} from "../src/rules/newline_between_methods";
 import {NoPublicAttributesConf} from "../src/rules/no_public_attributes";
 import {ObjectNamingConf} from "../src/rules/object_naming";
 import {ObsoleteStatementConf} from "../src/rules/obsolete_statement";
 import {ParserErrorConf} from "../src/rules/parser_error";
+import {ParserMissingSpaceConf} from "../src/rules/parser_missing_space";
 import {PreferInlineConf} from "../src/rules/prefer_inline";
 import {PreferReturningToExportingConf} from "../src/rules/prefer_returning_to_exporting";
 import {PreferredCompareOperatorConf} from "../src/rules/preferred_compare_operator";
@@ -83,11 +87,11 @@ import {StartAtTabConf} from "../src/rules/start_at_tab";
 import {SuperclassFinalConf} from "../src/rules/superclass_final";
 import {TABLEnhancementCategoryConf} from "../src/rules/tabl_enhancement_category";
 import {TryWithoutCatchConf} from "../src/rules/try_without_catch";
-import {TypeBeginSingleTypeConf} from "../src/rules/type_begin_single_include";
 import {TypeFormParametersConf} from "../src/rules/type_form_parameters";
 import {TypesNamingConf} from "../src/rules/types_naming";
 import {UnknownTypesConf} from "../src/rules/unknown_types";
 import {UnreachableCodeConf} from "../src/rules/unreachable_code";
+import {UnusedTypesConf} from "../src/rules/unused_types";
 import {UnusedVariablesConf} from "../src/rules/unused_variables";
 import {UseNewConf} from "../src/rules/use_new";
 import {WhenOthersLastConf} from "../src/rules/when_others_last";
@@ -107,6 +111,7 @@ export interface IConfig {
     "ambiguous_statement"?: AmbiguousStatementConf | boolean,
     "avoid_use"?: AvoidUseConf | boolean,
     "begin_end_names"?: BeginEndNamesConf | boolean,
+    "begin_single_include"?: BeginSingleIncludeConf | boolean,
     "chain_mainly_declarations"?: ChainMainlyDeclarationsConf | boolean,
     "check_abstract"?: CheckAbstractConf | boolean,
     "check_comments"?: CheckCommentsConf | boolean,
@@ -132,8 +137,8 @@ export interface IConfig {
     "exit_or_check"?: ExitOrCheckConf | boolean,
     "exporting"?: ExportingConf | boolean,
     "forbidden_identifier"?: ForbiddenIdentifierConf | boolean,
+    "forbidden_pseudo_and_pragma"?: ForbiddenPseudoAndPragmaConf | boolean,
     "forbidden_void_type"?: ForbiddenVoidTypeConf | boolean,
-    "form_no_dash"?: FormNoDashConf | boolean,
     "form_tables_obsolete"?: FormTablesObsoleteConf | boolean,
     "fully_type_constants"?: FullyTypeConsantsConf | boolean,
     "functional_writing"?: FunctionalWritingConf | boolean,
@@ -147,6 +152,7 @@ export interface IConfig {
     "keep_single_parameter_on_one_line"?: KeepSingleParameterCallsOnOneLineConf | boolean,
     "keyword_case"?: KeywordCaseConf | boolean,
     "line_break_multiple_parameters"?: LineBreakMultipleParametersConf | boolean,
+    "line_break_style"?: LineBreakStyleConf | boolean,
     "line_length"?: LineLengthConf | boolean,
     "line_only_punc"?: LineOnlyPuncConf | boolean,
     "local_class_naming"?: LocalClassNamingConf | boolean,
@@ -159,12 +165,14 @@ export interface IConfig {
     "method_parameter_names"?: MethodParameterNamesConf | boolean,
     "mix_returning"?: MixReturningConf | boolean,
     "msag_consistency"?: MSAGConsistencyConf | boolean,
+    "names_no_dash"?: NamesNoDashConf | boolean,
     "nesting"?: NestingConf | boolean,
     "newline_between_methods"?: NewlineBetweenMethodsConf | boolean,
     "no_public_attributes"?: NoPublicAttributesConf | boolean,
     "object_naming"?: ObjectNamingConf | boolean,
     "obsolete_statement"?: ObsoleteStatementConf | boolean,
     "parser_error"?: ParserErrorConf | boolean,
+    "parser_missing_space"?: ParserMissingSpaceConf | boolean,
     "prefer_inline"?: PreferInlineConf | boolean,
     "prefer_returning_to_exporting"?: PreferReturningToExportingConf | boolean,
     "preferred_compare_operator"?: PreferredCompareOperatorConf | boolean,
@@ -184,11 +192,11 @@ export interface IConfig {
     "superclass_final"?: SuperclassFinalConf | boolean,
     "tabl_enhancement_category"?: TABLEnhancementCategoryConf | boolean,
     "try_without_catch"?: TryWithoutCatchConf | boolean,
-    "type_begin_single_include"?: TypeBeginSingleTypeConf | boolean,
     "type_form_parameters"?: TypeFormParametersConf | boolean,
     "types_naming"?: TypesNamingConf | boolean,
     "unknown_types"?: UnknownTypesConf | boolean,
     "unreachable_code"?: UnreachableCodeConf | boolean,
+    "unused_types"?: UnusedTypesConf | boolean,
     "unused_variables"?: UnusedVariablesConf | boolean,
     "use_new"?: UseNewConf | boolean,
     "when_others_last"?: WhenOthersLastConf | boolean,

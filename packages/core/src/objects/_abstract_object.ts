@@ -3,12 +3,15 @@ import {IObject, IParseResult} from "./_iobject";
 import * as xmljs from "xml-js";
 import {Issue} from "../issue";
 import {Version} from "../version";
+import {Identifier} from "../abap/4_file_information/_identifier";
+import {Identifier as IdentifierToken} from "../abap/1_lexer/tokens/identifier";
+import {Position} from "../position";
 
 export abstract class AbstractObject implements IObject {
-  protected files: IFile[];
-  protected dirty: boolean;
-  private readonly name: string;
   protected old: readonly Issue[];
+  protected dirty: boolean;
+  private files: IFile[];
+  private readonly name: string;
 
   public abstract getType(): string;
   public abstract getAllowedNaming(): {maxLength: number, allowNamespace: boolean};
@@ -41,7 +44,7 @@ export abstract class AbstractObject implements IObject {
     this.files.push(file);
   }
 
-  public getFiles(): IFile[] {
+  public getFiles(): readonly IFile[] {
     return this.files;
   }
 
@@ -78,12 +81,27 @@ export abstract class AbstractObject implements IObject {
     return this.dirty;
   }
 
+  public getIdentifier(): Identifier | undefined {
+    // this method can be redefined in each object type to give a better result
+    const file = this.getXMLFile();
+    if (file === undefined) {
+      return undefined;
+    }
+    return new Identifier(new IdentifierToken(new Position(0, 0), ""), file.getFilename());
+  }
+
   public getXMLFile() {
-// todo, https://github.com/abaplint/abaplint/issues/673
+// todo, https://github.com/abaplint/abaplint/issues/673 uris
     const expected1 = this.getName().toLowerCase().replace(/\//g, "#") + "." + this.getType().toLowerCase() + ".xml";
     const expected2 = this.getName().toLowerCase().replace(/\//g, "%23") + "." + this.getType().toLowerCase() + ".xml";
     for (const file of this.getFiles()) {
       if (file.getFilename().endsWith(expected1) || file.getFilename().endsWith(expected2)) {
+        return file;
+      }
+    }
+    // uri fallback, assume there is only one xml file
+    for (const file of this.getFiles()) {
+      if (file.getFilename().endsWith(".xml")) {
         return file;
       }
     }

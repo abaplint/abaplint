@@ -177,7 +177,8 @@ async function run() {
       issues = issues.concat(reg.findIssues({progress, outputPerformance: parsingPerformance}));
     } catch (error) {
       const file = new MemoryFile("generic", "dummy");
-      const issue = Issue.atPosition(file, new Position(1, 1), error.toString(), "error");
+      const message = error.toString() + " " + error.stack?.split("\n")[1]?.trim();
+      const issue = Issue.atPosition(file, new Position(1, 1), message, "error");
       issues = [issue];
     }
 

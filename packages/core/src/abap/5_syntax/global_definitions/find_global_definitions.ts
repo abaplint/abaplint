@@ -30,6 +30,9 @@ export class FindGlobalDefinitions {
         candidates.push(o);
       }
     }
+    // make sure the sequence is always the same, disregarding the sequence they were added to the registry
+    // this will hopefully make it easier to debug
+    candidates.sort((a, b) => {return a.getName().localeCompare(b.getName());});
 
     for (let i = 1; i <= MAX_PASSES; i++) {
       progress?.set(candidates.length, "Global OO types, pass " + i);
@@ -70,16 +73,8 @@ export class FindGlobalDefinitions {
     for (const a of def.getAttributes().getAll()) {
       count = count + this.count(a.getType());
     }
-    /*
-    let methods: readonly IMethodDefinition[] = [];
-    if (obj instanceof Interface) {
-      methods = obj.getDefinition()!.getMethodDefinitions().getAll();
-    } else {
-      methods = obj.getDefinition()!.getMethodDefinitions().getAll();
-    }
-    */
-    const methods = obj.getDefinition()!.getMethodDefinitions().getAll();
 
+    const methods = obj.getDefinition()!.getMethodDefinitions().getAll();
     for (const m of methods) {
       for (const p of m.getParameters().getAll()) {
         count = count + this.count(p.getType());

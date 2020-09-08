@@ -1,6 +1,6 @@
 {
     "name": "@abaplint/core",
-    "version": "2.38.14",
+    "version": "2.42.1",
     "description": "Linter for ABAP",
     "main": "build/src/index.js",
     "typings": "build/src/index.d.ts",
@@ -13,6 +13,7 @@
         "postcompile": "sh scripts/version.sh",
         "pretest": "npm run compile",
         "test": "mocha",
+        "test:only": "npm run compile && mocha",
         "posttest": "npm run lint && npm run schema",
         "prepublishOnly": "rm -rf build && npm run test",
         "precoverage": "npm run compile",
@@ -39,8 +40,7 @@
         "url": "git+https://github.com/abaplint/abaplint.git"
     },
     "engines": {
-        "node": ">=10.5.0",
-        "npm": ">= 6.0.0"
+        "node": ">=12.0.0"
     },
     "keywords": [
         "ABAP",
@@ -54,16 +54,16 @@
     "homepage": "https://abaplint.org",
     "devDependencies": {
         "@types/chai": "^4.2.12",
-        "@types/mocha": "^8.0.1",
-        "@types/node": "^14.0.27",
+        "@types/mocha": "^8.0.3",
+        "@types/node": "^14.6.4",
         "chai": "^4.2.0",
-        "eslint": "^7.6.0",
+        "eslint": "^7.8.1",
         "madge": "^3.9.2",
-        "mocha": "^8.0.1",
+        "mocha": "^8.1.3",
         "nyc": "^15.1.0",
         "source-map-support": "^0.5.19",
-        "ts-json-schema-generator": "^0.70.2",
-        "typescript": "^3.9.7"
+        "ts-json-schema-generator": "^0.73.0",
+        "typescript": "^4.0.2"
     },
     "dependencies": {
         "json5": "^2.1.3",

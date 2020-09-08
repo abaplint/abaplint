@@ -22,22 +22,15 @@ jobs:
       run: |
         cp .github/regression/run.js ../../run.js
         npm install && npm run link-local && npm test && cp packages/cli/build/bundle.js ../../abaplint_after
+        rm -rf packages/cli/build/ && rm -rf packages/core/build/
         git checkout -f master
+        git reset --hard
+        git status
         npm install && npm run link-local && npm test && cp packages/cli/build/bundle.js ../../abaplint_before
 
     - name: run
-      run: |
-        cd .. && cd ..
-        git clone https://github.com/larshp/abapGit.git
-        node ./abaplint_before abapGit/abaplint.json -f json > abapGit#before.json || true
-        node ./abaplint_after abapGit/abaplint.json -f json > abapGit#after.json || true
-        git clone https://github.com/larshp/abapOpenChecks.git
-        node ./abaplint_before abapOpenChecks/abaplint.json -f json > abapOpenChecks#before.json || true
-        node ./abaplint_after abapOpenChecks/abaplint.json -f json > abapOpenChecks#after.json || true
-
-    - name: build diff
       env:
-        REPOS: '["todo, currently not used"]'
+        REPOS: '["larshp/abapGit", "larshp/abapOpenChecks", "larshp/abapGitServer", "larshp/abapPGP", "abaplint/abaplint-sci-client", "Microsoft/ABAP-SDK-for-Azure", "jrodriguez-rc/abap-tasks-tracker", "sapmentors/abap2xlsx", "sbcgua/abap-string-map", "sbcgua/ajson"]'
       run: |
         cd .. && cd ..
         ls -salh

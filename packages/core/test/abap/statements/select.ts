@@ -179,6 +179,7 @@ ORDER BY PRIMARY KEY ##DB_FEATURE_MODE[VIEWS_WITH_PARAMETERS].`,
 
   `select count(*) as score from sdfsd where object = @object_id-object and obj_name = @object_id-obj_name into @data(count).`,
 
+  `SELECT SINGLE foo FROM bar WHERE column IN (sdf, char-).`,
 ];
 
 statementType(tests, "SELECT", Statements.Select);

@@ -22,6 +22,8 @@ export class ComponentName {
       const rowType = context.getRowType();
       if (rowType instanceof Basic.VoidType) {
         return context;
+      } else if (name.toUpperCase() === "TABLE_LINE") {
+        return rowType;
       } else if (rowType instanceof Basic.StructureType) {
         const ret = rowType.getComponentByName(name);
         if (ret === undefined) {
@@ -31,7 +33,7 @@ export class ComponentName {
       }
     }
 
-    throw new Error("Not a structure, ComponentName");
+    throw new Error("Not a structure, ComponentName, \"" + name + "\"");
   }
 
 }

@@ -62,7 +62,9 @@ export interface InfoAlias {
 
 export interface InfoImplementing {
   name: string,
-  partial: boolean
+  partial: boolean,
+  abstractMethods: string[],
+  finalMethods: string[],
 }
 
 export interface InfoClassDefinition extends InfoInterfaceDefinition {

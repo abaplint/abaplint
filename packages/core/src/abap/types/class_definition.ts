@@ -16,6 +16,7 @@ import {Visibility} from "../4_file_information/visibility";
 import {IEventDefinition} from "./_event_definition";
 import {IMethodDefinitions} from "./_method_definitions";
 import {IAliases} from "./_aliases";
+import {ObjectOriented} from "../5_syntax/_object_oriented";
 
 export class ClassDefinition extends Identifier implements IClassDefinition {
   private readonly node: StructureNode;
@@ -42,8 +43,9 @@ export class ClassDefinition extends Identifier implements IClassDefinition {
     const token = def?.findDirectExpression(SuperClassName);
     this.superClass = token?.getFirstToken().getStr();
 
-    this.fromInterfaces(scope);
-    this.fillScopeWithSuper(scope);
+    const helper = new ObjectOriented(scope);
+    helper.fromSuperClass(this);
+    helper.fromInterfaces(this);
 
     // todo, handle the sequence of types and attributes
     this.types = new TypeDefinitions(this.node, this.filename, scope);
@@ -78,7 +80,7 @@ export class ClassDefinition extends Identifier implements IClassDefinition {
   }
 
   public isGlobal(): boolean {
-    return this.node.findFirstExpression(Expressions.Global) !== undefined;
+    return this.node.findFirstExpression(Expressions.ClassGlobal) !== undefined;
   }
 
   public isFinal(): boolean {
@@ -114,31 +116,5 @@ export class ClassDefinition extends Identifier implements IClassDefinition {
   public getEvents() {
   }
 */
-
-  private fillScopeWithSuper(scope: CurrentScope): void {
-    let sup = scope.findClassDefinition(this.getSuperClass());
-    while (sup !== undefined) {
-      scope.addList(sup.getAttributes().getAll());
-      scope.addList(sup.getAttributes().getConstants());
-      for (const t of sup.getTypeDefinitions().getAll()) {
-        scope.addType(t);
-      }
-      sup = scope.findClassDefinition(sup.getSuperClass());
-    }
-  }
-
-  private fromInterfaces(scope: CurrentScope): void {
-    for (const i of this.getImplementing()) {
-      const idef = scope.findInterfaceDefinition(i.name);
-      if (idef === undefined) {
-        continue;
-      }
-
-      for (const t of idef.getTypeDefinitions().getAll()) {
-        const name = i.name + "~" + t.getName();
-        scope.addTypeNamed(name, t);
-      }
-    }
-  }
 
 }

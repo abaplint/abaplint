@@ -1,6 +1,6 @@
 import {IStatement} from "./_statement";
 import {str, seq, opt, alt, per, plus, ver} from "../combi";
-import {ClassName, SuperClassName, Global, ClassFinal, SimpleName} from "../expressions";
+import {ClassName, SuperClassName, ClassGlobal, ClassFinal, SimpleName} from "../expressions";
 import {Version} from "../../../version";
 import {IStatementRunnable} from "../statement_runnable";
 
@@ -15,7 +15,7 @@ export class ClassDefinition implements IStatement {
     const time = alt(str("LONG"), str("MEDIUM"), str("SHORT"));
     const duration = seq(str("DURATION"), time);
 
-    const blah = per(new Global(),
+    const blah = per(new ClassGlobal(),
                      new ClassFinal(),
                      str("ABSTRACT"),
                      seq(str("INHERITING FROM"), new SuperClassName()),

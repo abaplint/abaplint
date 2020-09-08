@@ -55,6 +55,11 @@ const cases = [
   END-OF-DEFINITION.
   DATA END OF COMMON PART.`},
 
+  {abap: `
+  DATA BEGIN OF bar.
+  DATA foo TYPE c.
+  DATA END OF bar VALID BETWEEN foo AND foo.`},
+
 ];
 
 structureType(cases, new Data());

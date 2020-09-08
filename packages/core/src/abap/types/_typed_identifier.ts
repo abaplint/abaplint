@@ -7,6 +7,8 @@ export const enum IdentifierMeta {
   MethodExporting = "exporting",
   MethodChanging = "changing",
   MethodReturning = "returning",
+  EventParameter = "event_parameter",
+  FormParameter = "form_parameter",
   ReadOnly = "read_only",
   InlineDefinition = "inline",
   BuiltIn = "built-in",
@@ -33,7 +35,7 @@ export class TypedIdentifier extends Identifier {
     return this.type;
   }
 
-  public getMeta() {
+  public getMeta(): IdentifierMeta[] {
     return this.meta;
   }
 

@@ -3,7 +3,7 @@ import {Issue} from "./issue";
 import {Config} from "./config";
 import {Version} from "./version";
 import {Registry} from "./registry";
-import {MethodLengthStats} from "./utils/method_length_stats";
+import {MethodLengthStats, IMethodLengthResult} from "./utils/method_length_stats";
 import {LanguageServer} from "./lsp/language_server";
 import {Artifacts} from "./abap/artifacts";
 import {ArtifactsObjects} from "./artifacts_objects";
@@ -29,7 +29,7 @@ import * as Tokens from "./abap/1_lexer/tokens";
 import {IConfig, IDependency} from "./_config";
 import {IRegistry} from "./_iregistry";
 import {IFile} from "./files/_ifile";
-import {Position} from "./position";
+import {Position, VirtualPosition} from "./position";
 import {AbstractFile} from "./files/_abstract_file";
 import {PrettyPrinter} from "./pretty_printer/pretty_printer";
 import {ISpaghettiScope, ISpaghettiScopeNode} from "./abap/5_syntax/_spaghetti_scope";
@@ -45,7 +45,7 @@ export {MemoryFile, Issue, Config, Version,
   Artifacts, ArtifactsObjects, ArtifactsRules, Objects, IFile,
   Structures, Statements, Expressions, Types, Nodes, IConfig,
   ISpaghettiScope, ISpaghettiScopeNode, Empty, Unknown, Comment,
-  IClassDefinition,
+  IClassDefinition, IMethodLengthResult, VirtualPosition,
   AbstractType, TypedIdentifier, BasicTypes, ScopeType, INode, Token, IEdit,
   IDependency, AbstractFile, SpaghettiScopeNode, applyEditSingle, applyEditList,
   Tokens, ABAPObject, SyntaxLogic, SpaghettiScope, IdentifierMeta,

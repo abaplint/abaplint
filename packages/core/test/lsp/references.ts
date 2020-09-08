@@ -72,4 +72,47 @@ WRITE abap_false.`);
     expect(found.length).to.equal(1);
   });
 
+  it("class references", async () => {
+    const file = new MemoryFile("foobar.prog.abap", `CLASS lcl_bar DEFINITION.
+  ENDCLASS.
+  CLASS lcl_bar IMPLEMENTATION.
+  ENDCLASS.
+  DATA foo TYPE REF TO lcl_bar.`);
+    const reg = new Registry().addFile(file);
+    await reg.parseAsync();
+    const found = new References(reg).references(buildPosition(file, 0, 10));
+    expect(found.length).to.equal(1);
+  });
+
+  it("interface references", async () => {
+    const file = new MemoryFile("foobar.prog.abap", `INTERFACE lif_bar.
+  ENDINTERFACE.
+  DATA foo TYPE REF TO lif_bar.`);
+    const reg = new Registry().addFile(file);
+    await reg.parseAsync();
+    const found = new References(reg).references(buildPosition(file, 0, 14));
+    expect(found.length).to.equal(1);
+  });
+
+  it("find references for type", async () => {
+    const file = new MemoryFile("foobar.prog.abap", `TYPES ty_type TYPE c LENGTH 6.
+    DATA foo TYPE ty_type.`);
+    const reg = new Registry().addFile(file);
+    await reg.parseAsync();
+    const found = new References(reg).references(buildPosition(file, 0, 7));
+    expect(found.length).to.equal(2);
+  });
+
+  it("find references for constant inside interface definition", async () => {
+    const file = new MemoryFile("foobar.prog.abap", `INTERFACE lif_bar.
+  CONSTANTS foo TYPE c VALUE '1'.
+ENDINTERFACE.
+DATA lv_string TYPE string.
+REPLACE ALL OCCURRENCES OF lif_bar=>foo IN lv_string WITH '2'.`);
+    const reg = new Registry().addFile(file);
+    await reg.parseAsync();
+    const found = new References(reg).references(buildPosition(file, 1, 13));
+    expect(found.length).to.equal(2);
+  });
+
 });

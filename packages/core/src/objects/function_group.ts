@@ -22,7 +22,21 @@ export class FunctionGroup extends ABAPObject {
     if (main === undefined) {
       return [];
     }
-    return [main];
+    const sequence = [main];
+
+    for (const m of this.getModules()) {
+      const search = "." + m.getName().toLocaleLowerCase() + ".abap";
+      for (const f of this.getABAPFiles()) {
+        if (f.getFilename().toLocaleLowerCase().endsWith(search)) {
+          if (sequence.indexOf(f) < 0) {
+            sequence.push(f);
+          }
+          break;
+        }
+      }
+    }
+
+    return sequence;
   }
 
   // todo, cache parsed data
@@ -50,9 +64,15 @@ export class FunctionGroup extends ABAPObject {
           search = search.replace(/\//g, "#");
         }
         if ((i.startsWith("L") || namespaced) && f.getFilename().includes(search.toLowerCase())) {
-          ret.push({
-            file: f,
-            name: i});
+          ret.push({file: f, name: i});
+        }
+
+        // fix for URL encoded? Uris
+        if (namespaced) {
+          search = i.replace(/\//g, "%23");
+          if (f.getFilename().includes(search.toLowerCase())) {
+            ret.push({file: f, name: i});
+          }
         }
       }
     }
@@ -131,7 +151,7 @@ export class FunctionGroup extends ABAPObject {
     const ret: FunctionModuleDefinition[] = [];
 
     const functions = data.abapGit["asx:abap"]["asx:values"].FUNCTIONS;
-    for (const module of xmlToArray(functions.item)) {
+    for (const module of xmlToArray(functions?.item)) {
       ret.push(new FunctionModuleDefinition(module));
     }
 
@@ -140,7 +160,7 @@ export class FunctionGroup extends ABAPObject {
 
   private findTextFile() {
     const search = this.getName() + ".fugr.sapl" + this.getName() + ".xml";
-    for (const f of this.files) {
+    for (const f of this.getFiles()) {
       if (f.getFilename().includes(search.toLowerCase())) {
         return f;
       }

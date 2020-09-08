@@ -14,8 +14,8 @@ const tests = [
   "INSERT LINES OF lt_comp INTO TABLE components.",
   "INSERT LINES OF lt_table FROM lv_from TO lv_to INTO TABLE lt_result.",
   "INSERT LINES OF lt_table FROM lv_from INTO TABLE et_merge_table.",
+  "INSERT node_tmp INTO TABLE mt_json_tree REFERENCE INTO node_ref.",
   "INSERT TABLE lt_foobar.",
-  "INSERT 'sdf' 'sdf' INTO header.", // this is a field group INSERT
 ];
 
 statementType(tests, "INSERT", Statements.InsertInternal);

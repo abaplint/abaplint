@@ -2159,6 +2159,675 @@ tables_tab-foo = 'A'.
     expect(issues.length).to.equals(0);
   });
 
+  it("FORM TABLES STRUCTURE, contains header line", () => {
+    const abap = `
+DATA: BEGIN OF stru,
+        foo TYPE string,
+      END OF stru.
+FORM bar TABLES tab STRUCTURE stru.
+  WRITE tab-foo.
+ENDFORM.`;
+    const issues = runProgram(abap);
+    expect(issues.length).to.equals(0);
+  });
+
+  it("WRITE sy-msgty.", () => {
+    const abap = `WRITE sy-msgty.`;
+    const issues = runProgram(abap);
+    expect(issues.length).to.equals(0);
+  });
+
+  it("Reference to data type defined locally", () => {
+    const abap = `
+    TYPES ztype TYPE c LENGTH 1.
+    DATA sdf TYPE REF TO ztype.
+    sdf = NEW ztype( abap_true ).`;
+    const issues = runProgram(abap);
+    expect(issues.length).to.equals(0);
+  });
+
+  it("is_pair not defined, expect error", () => {
+    const abap = `
+    DATA: lv_distance TYPE i.
+    lv_distance = 2 - is_pair-distance.
+    `;
+    const issues = runProgram(abap);
+    expect(issues.length).to.equals(1);
+    expect(issues[0].getMessage()).to.include("is_pair");
+  });
+
+  it("CASE for not defined variable", () => {
+    const abap = `
+CASE something.
+  WHEN 'A'.
+  WHEN OTHERS.
+ENDCASE.`;
+    const issues = runProgram(abap);
+    expect(issues.length).to.equals(1);
+    expect(issues[0].getMessage()).to.include("something");
+  });
+
+  it("DO for not defined variable", () => {
+    const abap = `
+DO something TIMES.
+  WRITE 'bar'.
+ENDDO.`;
+    const issues = runProgram(abap);
+    expect(issues.length).to.equals(1);
+    expect(issues[0].getMessage()).to.include("something");
+  });
+
+  it("substring", () => {
+    const abap = `
+    DATA mv_compressed TYPE string.
+    WRITE mv_compressed(something).`;
+    const issues = runProgram(abap);
+    expect(issues.length).to.equals(1);
+    expect(issues[0].getMessage()).to.include("something");
+  });
+
+  it("offset", () => {
+    const abap = `
+    DATA mv_compressed TYPE string.
+    WRITE mv_compressed+something.`;
+    const issues = runProgram(abap);
+    expect(issues.length).to.equals(1);
+    expect(issues[0].getMessage()).to.include("something");
+  });
+
+  it("READ TABLE INTO something", () => {
+    const abap = `
+  DATA tab TYPE STANDARD TABLE OF string.
+  READ TABLE tab INDEX 1 INTO something.`;
+    const issues = runProgram(abap);
+    expect(issues.length).to.equals(1);
+    expect(issues[0].getMessage()).to.include("something");
+  });
+
+  it("CONCATENATE INTO something", () => {
+    const abap = `CONCATENATE 'a' 'b' INTO something.`;
+    const issues = runProgram(abap);
+    expect(issues.length).to.equals(1);
+    expect(issues[0].getMessage()).to.include("something");
+  });
+
+  it("CALL FUNCTION sometthing", () => {
+    const abap = `
+    CALL FUNCTION 'MOO'
+      EXPORTING
+        bar = something.`;
+    const issues = runProgram(abap);
+    expect(issues.length).to.equals(1);
+    expect(issues[0].getMessage()).to.include("something");
+  });
+
+  it("CLEAR something", () => {
+    const abap = `CLEAR something.`;
+    const issues = runProgram(abap);
+    expect(issues.length).to.equals(1);
+    expect(issues[0].getMessage()).to.include("something");
+  });
+
+  it("PERFORM something, USING", () => {
+    const abap = `
+    FORM foo USING bar.
+    ENDFORM.
+    PERFORM foo USING something.`;
+    const issues = runProgram(abap);
+    expect(issues.length).to.equals(1);
+    expect(issues[0].getMessage()).to.include("something");
+  });
+
+  it("PERFORM something, CHANGING", () => {
+    const abap = `
+    FORM foo CHANGING bar foo.
+    ENDFORM.
+    DATA lv_bar.
+    PERFORM foo CHANGING lv_bar something.`;
+    const issues = runProgram(abap);
+    expect(issues.length).to.equals(1);
+    expect(issues[0].getMessage()).to.include("something");
+  });
+
+  it("PERFORM something, CHANGING, dynamic", () => {
+    const abap = `
+    FORM foo CHANGING bar foo.
+    ENDFORM.
+    DATA lv_bar.
+    PERFORM ('FOO') CHANGING lv_bar something.`;
+    const issues = runProgram(abap);
+    expect(issues.length).to.equals(1);
+    expect(issues[0].getMessage()).to.include("something");
+  });
+
+  it("INDEX something", () => {
+    const abap = `
+    DATA tab TYPE STANDARD TABLE OF string.
+    DATA val TYPE string.
+    READ TABLE tab INDEX something INTO val.`;
+    const issues = runProgram(abap);
+    expect(issues.length).to.equals(1);
+    expect(issues[0].getMessage()).to.include("something");
+  });
+
+  it("ASSIGNING <something>", () => {
+    const abap = `
+    DATA tab TYPE STANDARD TABLE OF string.
+    LOOP AT tab ASSIGNING <something>.
+      WRITE 'bar'.
+    ENDLOOP.`;
+    const issues = runProgram(abap);
+    expect(issues.length).to.equals(1);
+    expect(issues[0].getMessage()).to.include("<something>");
+  });
+
+  it("call method, something", () => {
+    const abap = `cl_foo=>bar( RECEIVING out = something ).`;
+    const issues = runProgram(abap);
+    expect(issues.length).to.equals(1);
+    expect(issues[0].getMessage()).to.include("something");
+  });
+
+  it("CATCH INTO something", () => {
+    const abap = `
+    TRY.
+      CATCH cx_errror INTO something.
+    ENDTRY.`;
+    const issues = runProgram(abap);
+    expect(issues.length).to.equals(1);
+    expect(issues[0].getMessage()).to.include("something");
+  });
+
+  it("CALL METHOD something->", () => {
+    const abap = `CALL METHOD something->('BLAH').`;
+    const issues = runProgram(abap);
+    expect(issues.length).to.equals(1);
+    expect(issues[0].getMessage()).to.include("something");
+  });
+
+  it("READ TABLE ASSIGNING ssomething", () => {
+    const abap = `
+    DATA tab TYPE STANDARD TABLE OF string.
+    READ TABLE tab ASSIGNING <something> INDEX 1.
+    `;
+    const issues = runProgram(abap);
+    expect(issues.length).to.equals(1);
+    expect(issues[0].getMessage()).to.include("<something>");
+  });
+
+  it("DELETE tab something", () => {
+    const abap = `
+    DATA tab TYPE STANDARD TABLE OF string.
+    DELETE tab WHERE table_line = something.
+    `;
+    const issues = runProgram(abap);
+    expect(issues.length).to.equals(1);
+    expect(issues[0].getMessage()).to.include("something");
+  });
+
+  it("LOOP AT WHERE something", () => {
+    const abap = `
+    DATA lt_remote TYPE STANDARD TABLE OF string.
+    LOOP AT lt_remote TRANSPORTING NO FIELDS WHERE table_line = something.
+    ENDLOOP.
+    `;
+    const issues = runProgram(abap);
+    expect(issues.length).to.equals(1);
+    expect(issues[0].getMessage()).to.include("something");
+  });
+
+  it("WHEN something", () => {
+    const abap = `
+    CASE |bar|.
+      WHEN something.
+    ENDCASE.
+    `;
+    const issues = runProgram(abap);
+    expect(issues.length).to.equals(1);
+    expect(issues[0].getMessage()).to.include("something");
+  });
+
+  it("CREATE DATA something", () => {
+    const abap = `CREATE DATA something TYPE REF TO ('SFSDFS').`;
+    const issues = runProgram(abap);
+    expect(issues.length).to.equals(1);
+    expect(issues[0].getMessage()).to.include("something");
+  });
+
+  it("SPLIT INTO TABLE something", () => {
+    const abap = `SPLIT |foobar| AT |sdf| INTO TABLE something.`;
+    const issues = runProgram(abap);
+    expect(issues.length).to.equals(1);
+    expect(issues[0].getMessage()).to.include("something");
+  });
+
+  it("CALL METHOD with dynamic, expect error", () => {
+    const abap = `
+  DATA ref TYPE REF TO object.
+  CALL METHOD ref->('METHOD')
+    RECEIVING
+      result = something.`;
+    const issues = runProgram(abap);
+    expect(issues.length).to.equals(1);
+    expect(issues[0].getMessage()).to.include("something");
+  });
+
+  it("BOOLC, something", () => {
+    const abap = `WRITE boolc( something = |sdf| ).`;
+    const issues = runProgram(abap);
+    expect(issues.length).to.equals(1);
+    expect(issues[0].getMessage()).to.include("something");
+  });
+
+  it("calculation, something", () => {
+    const abap = `
+    DATA lv_f TYPE f.
+    lv_f = ( something / 2 ) * 100.`;
+    const issues = runProgram(abap);
+    expect(issues.length).to.equals(1);
+    expect(issues[0].getMessage()).to.include("something");
+  });
+
+  it("dynamic method call, something", () => {
+    const abap = `CALL METHOD (something)=>bar.`;
+    const issues = runProgram(abap);
+    expect(issues.length).to.equals(1);
+    expect(issues[0].getMessage()).to.include("something");
+  });
+
+  it("SORT something", () => {
+    const abap = `SORT something BY ('ABC').`;
+    const issues = runProgram(abap);
+    expect(issues.length).to.equals(1);
+    expect(issues[0].getMessage()).to.include("something");
+  });
+
+  it("SELECT something", () => {
+    const abap = `
+    SELECT SINGLE * FROM bar INTO @DATA(sdf) WHERE field = @something.
+    WRITE sdf.
+    `;
+    const issues = runProgram(abap);
+    expect(issues.length).to.equals(1);
+    expect(issues[0].getMessage()).to.include("something");
+  });
+
+  it("INSERT database something", () => {
+    const abap = `INSERT databasetabl FROM TABLE something.`;
+    const issues = runProgram(abap);
+    expect(issues.length).to.equals(1);
+    expect(issues[0].getMessage()).to.include("something");
+  });
+
+  it("SELECT, for all entries", () => {
+    const abap = `
+TYPES: BEGIN OF ty_type,
+         field TYPE c LENGTH 1,
+       END OF ty_type.
+DATA: lt_fae TYPE STANDARD TABLE OF ty_type.
+SELECT column FROM table INTO TABLE @DATA(lt_results)
+  FOR ALL ENTRIES IN lt_fae
+  WHERE column = @lt_fae-field.
+
+DELETE TABLE lt_results FROM 10.`;
+    const issues = runProgram(abap);
+    expect(issues.length).to.equals(0);
+  });
+
+  it("APPEND INITIAL LINE ASSSIGNING something", () => {
+    const abap = `
+    DATA tab TYPE STANDARD TABLE OF string.
+    APPEND INITIAL LINE TO tab ASSIGNING <something>.
+    `;
+    const issues = runProgram(abap);
+    expect(issues.length).to.equals(1);
+    expect(issues[0].getMessage()).to.include("<something>");
+  });
+
+  it("LOOP AT FROM something", () => {
+    const abap = `
+  DATA tab TYPE STANDARD TABLE OF string.
+  LOOP AT tab INTO DATA(row) FROM something.
+    WRITE row.
+  ENDLOOP.
+    `;
+    const issues = runProgram(abap);
+    expect(issues.length).to.equals(1);
+    expect(issues[0].getMessage()).to.include("something");
+  });
+
+  it("resolve dashed name, source", () => {
+    const abap = `
+    DATA dummy-name TYPE c LENGTH 1.
+    WRITE dummy-name.
+    `;
+    const issues = runProgram(abap);
+    expect(issues.length).to.equals(0);
+  });
+
+  it("dashed name, target", () => {
+    const abap = `
+    DATA: hok-code TYPE string.
+    hok-code = 'DISP'.
+    `;
+    const issues = runProgram(abap);
+    expect(issues.length).to.equals(0);
+  });
+
+  it("get runtime inline", () => {
+    const abap = `
+  GET RUN TIME FIELD DATA(stop).
+  WRITE stop.
+    `;
+    const issues = runProgram(abap);
+    expect(issues.length).to.equals(0);
+  });
+
+  it("built-in match function", () => {
+    const abap = `DATA(result) = match( val = || regex = || ).`;
+    const issues = runProgram(abap);
+    expect(issues.length).to.equals(0);
+  });
+
+  it("FIND, MATCH OFFSET inline", () => {
+    const abap = `
+    FIND |sdf| IN |sdfsd| IGNORING CASE MATCH OFFSET DATA(offset).
+    WRITE offset.
+    `;
+    const issues = runProgram(abap);
+    expect(issues.length).to.equals(0);
+  });
+
+  it("CALL TRANSFORMATION with inline", () => {
+    const abap = `
+    CALL TRANSFORMATION id SOURCE data = 2 RESULT XML DATA(content).
+    WRITE content.
+    `;
+    const issues = runProgram(abap);
+    expect(issues.length).to.equals(0);
+  });
+
+  it("FOR IN voided", () => {
+    const abap = `
+    TYPES ty_integers TYPE STANDARD TABLE OF i WITH EMPTY KEY.
+    DATA(lt_integers) = cl_void=>method( ).
+    DATA(copy) = VALUE ty_integers( FOR lv_int IN lt_integers ( lv_int ) ).
+    `;
+    const issues = runProgram(abap);
+    expect(issues.length).to.equals(0);
+  });
+
+  it("WRITE syst-sysid.", () => {
+    const abap = `WRITE syst-sysid.`;
+    const issues = runProgram(abap);
+    expect(issues.length).to.equals(0);
+  });
+
+  it("STATICS BEGIN INCLUDE", () => {
+    const abap = `
+  STATICS BEGIN OF bar.
+  INCLUDE STRUCTURE syst.
+  STATICS END OF bar.
+
+  WRITE bar-sysid.`;
+    const issues = runProgram(abap);
+    expect(issues.length).to.equals(0);
+  });
+
+  it("FAE, table_line", () => {
+    const abap = `
+    TYPES ty_char40 TYPE c LENGTH 40.
+    DATA lt_sha1 TYPE STANDARD TABLE OF ty_char40 WITH EMPTY KEY.
+    SELECT * FROM ags_objects
+      INTO TABLE @DATA(rt_list)
+      FOR ALL ENTRIES IN lt_sha1
+      WHERE sha1 = lt_sha1-table_line.`;
+    const issues = runProgram(abap);
+    expect(issues.length).to.equals(0);
+  });
+
+  it("CONTROLS w_tabstrip TYPE TABSTRIP", () => {
+    const abap = `
+    CONTROLS w_tabstrip TYPE TABSTRIP.
+    w_tabstrip-activetab = 'FOO'.`;
+    const issues = runProgram(abap);
+    expect(issues.length).to.equals(0);
+  });
+
+  it("UPDATE database table with field reference", () => {
+    const xml = `
+    <?xml version="1.0" encoding="utf-8"?>
+    <abapGit version="v1.0.0" serializer="LCL_OBJECT_TABL" serializer_version="v1.0.0">
+     <asx:abap xmlns:asx="http://www.sap.com/abapxml" version="1.0">
+      <asx:values>
+       <DD02V>
+        <TABNAME>ZTAB</TABNAME>
+        <DDLANGUAGE>E</DDLANGUAGE>
+        <TABCLASS>TRANSP</TABCLASS>
+        <DDTEXT>transparent table</DDTEXT>
+        <CONTFLAG>A</CONTFLAG>
+       </DD02V>
+       <DD09L>
+        <TABNAME>ZTAB</TABNAME>
+        <AS4LOCAL>A</AS4LOCAL>
+        <TABKAT>0</TABKAT>
+        <TABART>APPL0</TABART>
+        <BUFALLOW>N</BUFALLOW>
+       </DD09L>
+       <DD03P_TABLE>
+        <DD03P>
+         <TABNAME>ZTAB</TABNAME>
+         <FIELDNAME>FIELD1</FIELDNAME>
+         <DDLANGUAGE>E</DDLANGUAGE>
+         <POSITION>0001</POSITION>
+         <KEYFLAG>X</KEYFLAG>
+         <ADMINFIELD>0</ADMINFIELD>
+         <INTTYPE>C</INTTYPE>
+         <INTLEN>000040</INTLEN>
+         <NOTNULL>X</NOTNULL>
+         <DATATYPE>CHAR</DATATYPE>
+         <LENG>000020</LENG>
+         <MASK>  CHAR</MASK>
+        </DD03P>
+        <DD03P>
+         <TABNAME>ZTAB</TABNAME>
+         <FIELDNAME>VALUE1</FIELDNAME>
+         <DDLANGUAGE>E</DDLANGUAGE>
+         <POSITION>0002</POSITION>
+         <ADMINFIELD>0</ADMINFIELD>
+         <INTTYPE>X</INTTYPE>
+         <INTLEN>000004</INTLEN>
+         <DATATYPE>INT4</DATATYPE>
+         <LENG>000010</LENG>
+         <MASK>  INT4</MASK>
+        </DD03P>
+       </DD03P_TABLE>
+      </asx:values>
+     </asx:abap>
+    </abapGit>`;
+    const prog = `UPDATE ztab SET value1 = value1 + 1 WHERE field1 = 'abc'.`;
+    const issues = runMulti([
+      {filename: "ztab.tabl.xml", contents: xml},
+      {filename: "zfoobar.prog.abap", contents: prog},
+    ]);
+    expect(issues.length).to.equals(0);
+  });
+
+  it("concat_lines_of", () => {
+    const abap = `
+    DATA tab TYPE STANDARD TABLE OF string.
+    WRITE concat_lines_of( table = tab sep = | | ).`;
+    const issues = runProgram(abap);
+    expect(issues.length).to.equals(0);
+  });
+
+  it("LET inside VALUE", () => {
+    const abap = `
+TYPES: BEGIN OF ty_distance,
+  distance TYPE i,
+END OF ty_distance.
+DATA(parameters) = VALUE ty_distance( LET distance = 10 IN distance = distance ).`;
+    const issues = runProgram(abap);
+    expect(issues.length).to.equals(0);
+  });
+
+  it("CONCATENATE LINES to inline", () => {
+    const abap = `
+    DATA lt_text TYPE STANDARD TABLE OF string.
+    CONCATENATE LINES OF lt_text INTO DATA(lv_querystring) SEPARATED BY space.
+    WRITE lv_querystring.`;
+    const issues = runProgram(abap);
+    expect(issues.length).to.equals(0);
+  });
+
+  it("line_exists(", () => {
+    const abap = `
+    DATA t_data TYPE STANDARD TABLE OF i.
+    IF line_exists( t_data[ table_line = 2 ] ).
+    ENDIF.`;
+    const issues = runProgram(abap);
+    expect(issues.length).to.equals(0);
+  });
+
+  it("condense() with del parameter", () => {
+    const abap = `WRITE condense( val = |dsf| del = |\r| ).`;
+    const issues = runProgram(abap);
+    expect(issues.length).to.equals(0);
+  });
+
+  it("CONTROLS TABLEVIEW", () => {
+    const abap = `
+    CONTROLS ctrl TYPE TABLEVIEW USING SCREEN '0002'.
+    WRITE ctrl-current_line.
+    `;
+    const issues = runProgram(abap);
+    expect(issues.length).to.equals(0);
+  });
+
+  it("TABBED BLOCK", () => {
+    const abap = `
+    SELECTION-SCREEN BEGIN OF TABBED BLOCK tabb FOR 20 LINES.
+    SELECTION-SCREEN END OF BLOCK tabb.
+
+    tabb-dynnr = 110.
+    `;
+    const issues = runProgram(abap);
+    expect(issues.length).to.equals(0);
+  });
+
+  it("APPEND INITIAL LINE with inline, void", () => {
+    const abap = `
+    DATA tab TYPE voided.
+    APPEND INITIAL LINE TO tab ASSIGNING FIELD-SYMBOL(<ls_tab1>).
+    WRITE <ls_tab1>.`;
+    const issues = runProgram(abap);
+    expect(issues.length).to.equals(0);
+  });
+
+  it("FORM, TABLES with LIKE table typing", () => {
+    const abap = `
+TYPES: BEGIN OF ty_type,
+         field TYPE string,
+       END OF ty_type.
+
+DATA tab TYPE STANDARD TABLE OF ty_type.
+
+FORM foo TABLES bar LIKE tab.
+  WRITE bar-field.
+ENDFORM.`;
+    const issues = runProgram(abap);
+    expect(issues.length).to.equals(0);
+  });
+
+  it("LIKE typing with header lines", () => {
+    const abap = `
+TYPES: BEGIN OF ty_type,
+         field TYPE c LENGTH 1,
+       END OF ty_type.
+
+DATA tab1 TYPE ty_type OCCURS 0 WITH HEADER LINE.
+
+DATA tab2 LIKE tab1 OCCURS 0 WITH HEADER LINE.
+
+LOOP AT tab2.
+  WRITE tab2-field.
+ENDLOOP.`;
+    const issues = runProgram(abap);
+    expect(issues.length).to.equals(0);
+  });
+
+  it("text elements, with text redefined", () => {
+    const abap = `
+  DATA text TYPE c LENGTH 1.
+  WRITE TEXT-abc.
+  WRITE text.`;
+    const issues = runProgram(abap);
+    expect(issues.length).to.equals(0);
+  });
+
+  it("LOOP AT simple select option", () => {
+    const abap = `
+  DATA var TYPE i.
+  SELECT-OPTIONS foo FOR var.
+
+  LOOP AT foo.
+    WRITE foo-low.
+  ENDLOOP.`;
+    const issues = runProgram(abap);
+    expect(issues.length).to.equals(0);
+  });
+
+  it("LOOP AT select option", () => {
+    const abap = `
+TYPES: BEGIN OF ty_type,
+         fieldname TYPE c LENGTH 10,
+       END OF ty_type.
+
+DATA bar TYPE STANDARD TABLE OF ty_type WITH HEADER LINE.
+
+SELECT-OPTIONS foo FOR bar NO INTERVALS LOWER CASE.
+
+LOOP AT foo.
+  WRITE foo-low.
+ENDLOOP.`;
+    const issues = runProgram(abap);
+    expect(issues.length).to.equals(0);
+  });
+
+  it("FORM with LIKE table body", () => {
+    const abap = `
+    DATA int TYPE i.
+    RANGES foo FOR int.
+    FORM name USING input LIKE foo[].
+      LOOP AT input INTO DATA(d).
+      ENDLOOP.
+    ENDFORM.`;
+    const issues = runProgram(abap);
+    expect(issues.length).to.equals(0);
+  });
+
+  it("contains() with regex", () => {
+    const abap = `
+    IF contains( val = 'a' regex = 'a' ).
+    ENDIF.`;
+    const issues = runProgram(abap);
+    expect(issues.length).to.equals(0);
+  });
+
+  it("macro call with dashes", () => {
+    const abap = `
+TYPES: BEGIN OF ty_type,
+         field TYPE c,
+       END OF ty_type.
+DATA var TYPE ty_type.
+DEFINE _foo.
+  WRITE &1.
+END-OF-DEFINITION.
+_foo var-field.`;
+    const issues = runProgram(abap);
+    expect(issues.length).to.equals(0);
+  });
+
 // todo, static method cannot access instance attributes
 // todo, can a private method access protected attributes?
 // todo, readonly fields(constants + enums + attributes flagged read-only)

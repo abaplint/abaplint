@@ -1,6 +1,7 @@
 import {IFile} from "../files/_ifile";
 import {Issue} from "../issue";
 import {Version} from "../version";
+import {Identifier} from "../abap/4_file_information/_identifier";
 
 interface IArtifact {
   getType(): string;
@@ -14,6 +15,8 @@ export interface IParseResult {
 
 export interface IObject extends IArtifact {
   getName(): string;
+  /** the main place identifying the object, used for go-to */
+  getIdentifier(): Identifier | undefined;
   setDirty(): void;
   isDirty(): boolean;
 

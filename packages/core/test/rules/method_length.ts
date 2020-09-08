@@ -7,15 +7,17 @@ import {expect} from "chai";
 function testRulesWithFile(tests: any): void {
   describe("test files for method length", () => {
     tests.forEach((test: any) => {
-      const reg = new Registry();
-      reg.addFile(new MemoryFile(test.filename, test.abap)).parse();
+      it("method length test", () => {
+        const reg = new Registry();
+        reg.addFile(new MemoryFile(test.filename, test.abap)).parse();
 
-      const rule = new MethodLength();
-      rule.setConfig(test.conf);
+        const rule = new MethodLength();
+        rule.setConfig(test.conf);
 
-      const issues = rule.initialize(reg).run(reg.getFirstObject()!);
-      it(test.description, () => {
-        expect(issues.length).to.equals(test.issueLength);
+        const issues = rule.initialize(reg).run(reg.getFirstObject()!);
+        it(test.description, () => {
+          expect(issues.length).to.equals(test.issueLength);
+        });
       });
     });
   });
@@ -123,7 +125,7 @@ const testClassTests = [
   {abap: abapClassValidLength,
     description: "class, check, valid length",
     conf: confCheckTestClasses,
-    filename: `zcl_foo.clas.abap`,
+    filename: `zcl_foo_method_length.clas.abap`,
     issueLength: 0},
 ];
 

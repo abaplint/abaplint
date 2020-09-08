@@ -7,6 +7,9 @@ import {AbstractType} from "../types/basic/_abstract_type";
 import {ScopeType} from "./_scope_type";
 import {ObjectOriented} from "./_object_oriented";
 import {ClassConstant} from "../types/class_constant";
+import {Identifier} from "../1_lexer/tokens/identifier";
+import {ReferenceType} from "./_reference";
+import {TableType} from "../types/basic";
 
 export class BasicTypes {
   private readonly filename: string;
@@ -17,7 +20,7 @@ export class BasicTypes {
     this.scope = scope;
   }
 
-  public resolveLikeName(node: ExpressionNode | StatementNode | undefined): AbstractType | undefined {
+  public resolveLikeName(node: ExpressionNode | StatementNode | undefined, headerLogic = true): AbstractType | undefined {
     if (node === undefined) {
       return undefined;
     }
@@ -30,17 +33,17 @@ export class BasicTypes {
     const children = chain?.getChildren();
 
     if (children === undefined) {
-      return new Types.UnknownType("Type error, could not resolve " + fullName);
+      return new Types.UnknownType("Type error, could not resolve \"" + fullName + "\", resolveLikeName1");
     }
 
     let type: AbstractType | undefined = undefined;
     const name = children[0].getFirstToken().getStr();
     if (children[1] && children[1].getFirstToken().getStr() === "=>") {
       const obj = this.scope.findObjectDefinition(name);
-      if (obj === undefined && this.scope.getDDIC()?.inErrorNamespace(name) === false) {
-        return type;
+      if (obj === undefined && this.scope.getDDIC().inErrorNamespace(name) === false) {
+        return new Types.VoidType(name);
       } else if (obj === undefined) {
-        return new Types.UnknownType("Could not resolve top " + name);
+        return new Types.UnknownType("Could not resolve top " + name + ", resolveLikeName");
       }
       // todo, this does not respect visibility
       type = obj.getAttributes().findByName(children[2].getFirstToken().getStr())?.getType();
@@ -64,12 +67,19 @@ export class BasicTypes {
       }
       return attr.getType();
     } else {
-      type = this.scope.findVariable(name)?.getType();
-      if (type === undefined) {
-        type = this.scope.getDDIC().lookup(name);
-        if (type instanceof Types.VoidType) {
-          type = undefined;
-        }
+      const found = this.scope.findVariable(name);
+      type = found?.getType();
+
+      if (found) {
+        this.scope.addReference(chain?.getFirstToken(), found, ReferenceType.TypeReference, this.filename);
+      }
+
+      if (type instanceof TableType && node.getLastChild()?.get() instanceof Expressions.TableBody) {
+        type = new TableType(type.getRowType(), false);
+      } else if (type instanceof TableType && type.isWithHeader() && headerLogic === true) {
+        type = type.getRowType();
+      } else if (type === undefined) {
+        type = this.scope.getDDIC().lookupNoVoid(name);
       }
 
       // todo, this only looks up one level, reuse field_chain.ts?
@@ -103,23 +113,23 @@ export class BasicTypes {
     }
 
     if (!type) {
-      return new Types.UnknownType("Type error, could not resolve " + fullName);
+      return new Types.UnknownType("Type error, could not resolve \"" + fullName + "\", resolveLikeName2");
     }
 
     return type;
   }
 
-  private resolveTypeName(typename: ExpressionNode | undefined, length?: number): AbstractType | undefined {
-    if (typename === undefined) {
+  private resolveTypeName(typeName: ExpressionNode | undefined, length?: number): AbstractType | undefined {
+    if (typeName === undefined) {
       return undefined;
     }
 
-    const chain = this.resolveTypeChain(typename);
+    const chain = this.resolveTypeChain(typeName);
     if (chain) {
       return chain;
     }
 
-    const chainText = typename.concatTokens().toUpperCase();
+    const chainText = typeName.concatTokens().toUpperCase();
     if (chainText === "STRING") {
       return new Types.StringType();
     } else if (chainText === "XSTRING") {
@@ -148,24 +158,25 @@ export class BasicTypes {
       if (length) {
         return new Types.CharacterType(length);
       } else {
-        return new Types.UnknownType("C, unable to parse length");
+        return new Types.CharacterType(1);
       }
     } else if (chainText === "X") {
       if (length) {
         return new Types.HexType(length);
       } else {
-        return new Types.UnknownType("X, unable to parse length");
+        return new Types.HexType(1);
       }
     } else if (chainText === "N") {
       if (length) {
         return new Types.NumericType(length);
       } else {
-        return new Types.UnknownType("N, unable to parse length");
+        return new Types.NumericType(1);
       }
     }
 
     const typ = this.scope.findType(chainText);
     if (typ) {
+      this.scope.addReference(typeName.getFirstToken(), typ, ReferenceType.TypeReference, this.filename);
       return typ.getType();
     }
 
@@ -178,14 +189,19 @@ export class BasicTypes {
   }
 
   public simpleType(node: StatementNode | ExpressionNode): TypedIdentifier | undefined {
-    const nameExpr = node.findFirstExpression(Expressions.NamespaceSimpleName);
+    let nameExpr = node.findFirstExpression(Expressions.NamespaceSimpleName);
+    if (nameExpr === undefined) {
+      nameExpr = node.findFirstExpression(Expressions.DefinitionName);
+    }
     if (nameExpr === undefined) {
       return undefined;
     }
-    const name = nameExpr.getFirstToken();
+    let name = nameExpr.getFirstToken();
+    if (nameExpr.countTokens() > 1) { // workaround for names with dashes
+      name = new Identifier(name.getStart(), nameExpr.concatTokens());
+    }
 
     const found = this.parseType(node);
-
     if (found) {
       return new TypedIdentifier(name, this.filename, found);
     }
@@ -213,10 +229,10 @@ export class BasicTypes {
     let found: AbstractType | undefined = undefined;
     if (text.startsWith("LIKE LINE OF ")) {
       const name = node.findFirstExpression(Expressions.FieldChain)?.concatTokens();
-      const type = this.resolveLikeName(node.findFirstExpression(Expressions.Type));
+      const type = this.resolveLikeName(node.findFirstExpression(Expressions.Type), false);
 
       if (type === undefined) {
-        return new Types.UnknownType("Type error, could not resolve " + name);
+        return new Types.UnknownType("Type error, could not resolve \"" + name + "\", parseType");
       } else if (type instanceof Types.TableType) {
         return type.getRowType();
       } else if (type instanceof Types.VoidType) {
@@ -232,7 +248,7 @@ export class BasicTypes {
         || text.startsWith("TYPE HASHED TABLE OF REF TO ")) {
       found = this.resolveTypeRef(typename);
       if (found) {
-        return new Types.TableType(found, node.concatTokens().includes("WITH HEADER LINE"));
+        return new Types.TableType(found, node.concatTokens().toUpperCase().includes("WITH HEADER LINE"));
       }
     } else if (text.startsWith("TYPE TABLE OF ")
         || text.startsWith("TYPE STANDARD TABLE OF ")
@@ -240,7 +256,7 @@ export class BasicTypes {
         || text.startsWith("TYPE HASHED TABLE OF ")) {
       found = this.resolveTypeName(typename);
       if (found) {
-        return new Types.TableType(found, node.concatTokens().includes("WITH HEADER LINE"));
+        return new Types.TableType(found, node.concatTokens().toUpperCase().includes("WITH HEADER LINE"));
       }
     } else if (text.startsWith("LIKE TABLE OF ")
         || text.startsWith("LIKE STANDARD TABLE OF ")
@@ -249,14 +265,14 @@ export class BasicTypes {
       const sub = node.findFirstExpression(Expressions.TypeName);
       found = this.resolveLikeName(sub);
       if (found) {
-        return new Types.TableType(found, node.concatTokens().includes("WITH HEADER LINE"));
+        return new Types.TableType(found, node.concatTokens().toUpperCase().includes("WITH HEADER LINE"));
       }
     } else if (text === "TYPE STANDARD TABLE"
         || text === "TYPE SORTED TABLE"
         || text === "TYPE HASHED TABLE"
         || text === "TYPE INDEX TABLE"
         || text === "TYPE ANY TABLE") {
-      return new Types.TableType(new Types.AnyType(), node.concatTokens().includes("WITH HEADER LINE"));
+      return new Types.TableType(new Types.AnyType(), node.concatTokens().toUpperCase().includes("WITH HEADER LINE"));
     } else if (text.startsWith("TYPE RANGE OF ")) {
       const sub = node.findFirstExpression(Expressions.TypeName);
       found = this.resolveTypeName(sub);
@@ -269,13 +285,19 @@ export class BasicTypes {
         {name: "low", type: found},
         {name: "high", type: found},
       ]);
-      return new Types.TableType(structure, node.concatTokens().includes("WITH HEADER LINE"));
+      return new Types.TableType(structure, node.concatTokens().toUpperCase().includes("WITH HEADER LINE"));
     } else if (text.startsWith("LIKE ")) {
-      const sub = node.findFirstExpression(Expressions.FieldChain);
+      let sub = node.findFirstExpression(Expressions.Type);
+      if (sub === undefined) {
+        sub = node.findFirstExpression(Expressions.FormParamType);
+      }
+      if (sub === undefined) {
+        sub = node.findFirstExpression(Expressions.TypeParam);
+      }
       found = this.resolveLikeName(sub);
 
       if (found && node.findDirectTokenByText("OCCURS")) {
-        found = new Types.TableType(found, node.concatTokens().includes("WITH HEADER LINE"));
+        found = new Types.TableType(found, node.concatTokens().toUpperCase().includes("WITH HEADER LINE"));
       }
     } else if (text.startsWith("TYPE LINE OF ")) {
       const sub = node.findFirstExpression(Expressions.TypeName);
@@ -293,11 +315,21 @@ export class BasicTypes {
       found = this.resolveTypeName(typename, this.findLength(node));
 
       if (found === undefined && typename === undefined) {
-        found = new Types.CharacterType(1);
+        let length = 1;
+
+        const len = node.findDirectExpression(Expressions.ConstantFieldLength);
+        if (len) {
+          const int = len.findDirectExpression(Expressions.Integer);
+          if (int) {
+            length = parseInt(int.concatTokens(), 10);
+          }
+        }
+
+        found = new Types.CharacterType(length); // fallback
       }
 
       if (found && node.findDirectTokenByText("OCCURS")) {
-        found = new Types.TableType(found, node.concatTokens().includes("WITH HEADER LINE"));
+        found = new Types.TableType(found, node.concatTokens().toUpperCase().includes("WITH HEADER LINE"));
       }
     }
 
@@ -306,6 +338,7 @@ export class BasicTypes {
 
 /////////////////////
 
+  // todo, rewrite this method
   private resolveTypeChain(expr: ExpressionNode): AbstractType | undefined {
     const chainText = expr.concatTokens().toUpperCase();
 
@@ -321,7 +354,8 @@ export class BasicTypes {
       rest = split[1];
     }
     const subs = rest.split("-");
-    let found: AbstractType | undefined = undefined;
+    let foundType: AbstractType | undefined = undefined;
+
 
     if (className) {
       const split = chainText.split("=>");
@@ -331,8 +365,8 @@ export class BasicTypes {
       if ((this.scope.getType() === ScopeType.Interface
           || this.scope.getType() === ScopeType.ClassDefinition)
           && this.scope.getName().toUpperCase() === className.toUpperCase()) {
-        found = this.scope.findType(subs[0])?.getType();
-        if (found === undefined) {
+        foundType = this.scope.findType(subs[0])?.getType();
+        if (foundType === undefined) {
           return new Types.UnknownType("Could not resolve type " + chainText);
         }
       } else {
@@ -341,38 +375,45 @@ export class BasicTypes {
         if (obj === undefined && this.scope.getDDIC().inErrorNamespace(className) === false) {
           return new Types.VoidType(className);
         } else if (obj === undefined) {
-          return new Types.UnknownType("Could not resolve top " + chainText);
+          return new Types.UnknownType("Could not resolve top " + className + ", resolveTypeChain");
         }
+        this.scope.addReference(expr.getFirstToken(), obj, ReferenceType.ObjectOrientedReference, this.filename);
 
-        found = obj.getTypeDefinitions().getByName(subs[0])?.getType();
-        if (found === undefined) {
+        const byName = new ObjectOriented(this.scope).searchTypeName(obj, subs[0]);
+        foundType = byName?.getType();
+        if (byName === undefined || foundType === undefined) {
           return new Types.UnknownType(subs[0] + " not found in class or interface");
         }
+        this.scope.addReference(expr.getTokens()[2], byName, ReferenceType.TypeReference, this.filename);
+
       }
     } else {
-      found = this.scope.findType(subs[0])?.getType();
-      if (found === undefined) {
-        found = this.scope.getDDIC().lookupTableOrView(subs[0]);
+      const found = this.scope.findType(subs[0]);
+      foundType = found?.getType();
+      if (foundType === undefined) {
+        foundType = this.scope.getDDIC().lookupTableOrView(subs[0]);
+      } else {
+        this.scope.addReference(expr.getFirstToken(), found, ReferenceType.TypeReference, this.filename);
       }
-      if (found === undefined && this.scope.getDDIC().inErrorNamespace(subs[0]) === false) {
+      if (foundType === undefined && this.scope.getDDIC().inErrorNamespace(subs[0]) === false) {
         return new Types.VoidType(subs[0]);
-      } else if (found instanceof Types.VoidType) {
-        return found;
-      } else if (found === undefined) {
+      } else if (foundType instanceof Types.VoidType) {
+        return foundType;
+      } else if (foundType === undefined) {
         return new Types.UnknownType("Unknown type " + subs[0]);
       }
     }
 
     subs.shift();
     while (subs.length > 0) {
-      if (!(found instanceof Types.StructureType)) {
+      if (!(foundType instanceof Types.StructureType)) {
         return new Types.UnknownType("Not a structured type");
       }
-      found = found.getComponentByName(subs[0]);
+      foundType = foundType.getComponentByName(subs[0]);
       subs.shift();
     }
 
-    return found;
+    return foundType;
   }
 
   private resolveConstantValue(expr: ExpressionNode): string | undefined {
@@ -412,7 +453,9 @@ export class BasicTypes {
 
     const name = chain.getFirstToken().getStr();
     if (chain.getAllTokens().length === 1) {
-      if (this.scope.existsObject(name)) {
+      const search = this.scope.existsObject(name);
+      if (search.found === true) {
+        this.scope.addReference(chain.getFirstToken(), search.id, ReferenceType.ObjectOrientedReference, this.filename);
         return new Types.ObjectReferenceType(name);
       }
     }

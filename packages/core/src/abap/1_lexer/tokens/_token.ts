@@ -1,11 +1,11 @@
 import {Position} from "../../../position";
 
 export abstract class Token {
-  private readonly pos: Position;
+  private readonly start: Position;
   private readonly str: string;
 
-  public constructor(pos: Position, str: string) {
-    this.pos = pos;
+  public constructor(start: Position, str: string) {
+    this.start = start;
     this.str = str;
   }
 
@@ -14,18 +14,18 @@ export abstract class Token {
   }
 
   public getRow(): number {
-    return this.pos.getRow();
+    return this.start.getRow();
   }
 
   public getCol(): number {
-    return this.pos.getCol();
+    return this.start.getCol();
   }
 
   public getStart(): Position {
-    return this.pos;
+    return this.start;
   }
 
   public getEnd(): Position {
-    return new Position(this.pos.getRow(), this.pos.getCol() + this.str.length);
+    return new Position(this.start.getRow(), this.start.getCol() + this.str.length);
   }
 }

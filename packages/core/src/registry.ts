@@ -46,7 +46,8 @@ class ParsingPerformance {
 
 export class Registry implements IRegistry {
   private readonly objects: { [index: string]: { [index: string]: IObject } } = {};
-  private readonly dependencies: string[] = [];
+  /** object containing filenames of dependencies */
+  private readonly dependencies: { [index: string]: boolean } = {};
   private conf: IConfiguration;
   private issues: Issue[] = [];
 
@@ -76,9 +77,12 @@ export class Registry implements IRegistry {
     return undefined;
   }
 
-  public getObjectCount(): number {
+  public getObjectCount(skipDependencies = true): number {
     let res = 0;
-    for (const _o of this.getObjects()) {
+    for (const o of this.getObjects()) {
+      if (skipDependencies === true && this.isDependency(o)) {
+        continue;
+      }
       res = res + 1;
     }
     return res;
@@ -157,22 +161,16 @@ export class Registry implements IRegistry {
     return this;
   }
 
-// todo: methods to add/remove deps
-// todo: add unit tests
   public addDependencies(files: readonly IFile[]): IRegistry {
     for (const f of files) {
-      this.dependencies.push(f.getFilename());
+      this.dependencies[f.getFilename().toUpperCase()] = true;
     }
     return this.addFiles(files);
   }
 
-  public isDependency(filename: string): boolean {
-    for (const d of this.dependencies) {
-      if (d.toUpperCase() === filename.toUpperCase()) {
-        return true;
-      }
-    }
-    return false;
+  public isDependency(obj: IObject): boolean {
+    const filename = obj.getFiles()[0].getFilename().toUpperCase();
+    return this.dependencies[filename] === true;
   }
 
   // assumption: the file is already in the registry
@@ -227,7 +225,7 @@ export class Registry implements IRegistry {
     }
 
     ParsingPerformance.clear();
-    input?.progress?.set(this.getObjectCount(), "Lexing and parsing");
+    input?.progress?.set(this.getObjectCount(false), "Lexing and parsing");
 
     this.issues = [];
     for (const o of this.getObjects()) {
@@ -283,7 +281,7 @@ export class Registry implements IRegistry {
 
     const check: IObject[] = [];
     for (const obj of objects) {
-      if (skipLogic.skip(obj) || this.dependencies.includes(obj.getFiles()[0].getFilename())) {
+      if (skipLogic.skip(obj) || this.isDependency(obj)) {
         continue;
       }
 

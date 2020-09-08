@@ -140,15 +140,14 @@ const tests = [
   "  foo LIKE bar-moo.",
 
   "FORM alv CHANGING pi_list LIKE gi_excel[].",
-
   "FORM formname USING $var $lang$sdf$ $lang$sdf.",
-
   "FORM foobar USING p_param LIKE LINE OF gt_foo.",
   "FORM foobar USING p_param LIKE REF TO go_foo.",
   "FORM foobar USING p_param TYPE LINE OF tt_foo.",
   "FORM foobar USING p_param TYPE REF TO to_foo.",
-
-//  "FORM moo USING boo-vbeln bar-vbtyp.",
+  "FORM re549r USING &permo.",
+  "FORM moo USING boo-vbeln bar-vbtyp.",
+  "FORM sdfsd TABLES sdfs/sdf/sdfs.",
 ];
 
 statementType(tests, "FORM", Statements.Form);
