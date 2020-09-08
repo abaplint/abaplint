@@ -401,4 +401,13 @@ ENDCLASS.`;
     expect(issues.length).to.equal(0);
   });
 
+  it("LOG-POINT", async () => {
+    const abap = `
+  CONSTANTS foo TYPE c VALUE 'F'.
+  CONSTANTS bar TYPE c VALUE 'B'.
+  LOG-POINT ID zvoid SUBKEY foo FIELDS bar.`;
+    const issues = await runSingle(abap);
+    expect(issues.length).to.equal(0);
+  });
+
 });
