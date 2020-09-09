@@ -121,9 +121,8 @@ export class ExpandMacros {
     let i = 1;
     for (const input of inputs) {
       const search = "&" + i;
-      while (str.includes(search)) {
-        str = str.replace(search, input);
-      }
+      const reg = new RegExp(search, "g");
+      str = str.replace(reg, input);
       i++;
     }
 

@@ -19,10 +19,20 @@ END-OF-DEFINITION.
 
 _if.
 _endif.`;
-
     const lexerResult = Lexer.run(new MemoryFile("zmacros1.prog.abap", abap));
     const result = new StatementParser(defaultVersion).run([lexerResult], [])[0];
     expect(result.statements.length).to.equal(10);
+  });
+
+  it("no recursion please", () => {
+    const abap = `
+DEFINE _macro.
+  WRITE &1.
+END-OF-DEFINITION.
+_macro '&1'.`;
+    const lexerResult = Lexer.run(new MemoryFile("zmacros1.prog.abap", abap));
+    const result = new StatementParser(defaultVersion).run([lexerResult], [])[0];
+    expect(result.statements.length).to.equal(5);
   });
 
 });
