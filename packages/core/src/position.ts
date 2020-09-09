@@ -40,6 +40,7 @@ export class VirtualPosition extends Position {
 
   public constructor(virtual: Position, row: number, col: number) {
     super(virtual.getRow(), virtual.getCol());
+    this.virtual = virtual;
     this.vrow = row;
     this.vcol = col;
   }
