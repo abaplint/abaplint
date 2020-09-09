@@ -157,6 +157,30 @@ ENDFORM.`);
     expect(issues.length).to.equal(0);
   });
 
+  it("use in macro, not inlineable", async () => {
+    const issues = await findIssues(`
+FORM local.
+  DATA foo TYPE i.
+  DEFINE _macro.
+    foo = 2.
+  END-OF-DEFINITION.
+  _macro.
+ENDFORM.`);
+    expect(issues.length).to.equal(0);
+  });
+
+  it("data defined in macro, not inlineable", async () => {
+    const issues = await findIssues(`
+FORM local.
+  DEFINE _macro.
+    DATA foo TYPE i.
+    foo = 2.
+  END-OF-DEFINITION.
+  _macro.
+ENDFORM.`);
+    expect(issues.length).to.equal(0);
+  });
+
   /*
   it.skip("Types should not change when inlining", async () => {
     const issues = await findIssues(`
@@ -164,5 +188,6 @@ DATA foo TYPE c.
 foo = |abc|.`);
     expect(issues.length).to.equal(0);
   });
-*/
+  */
+
 });
