@@ -410,4 +410,12 @@ ENDCLASS.`;
     expect(issues.length).to.equal(0);
   });
 
+  it("dynamic function call", async () => {
+    const abap = `
+  DATA lc_func TYPE funcname VALUE 'SDFSDF'.
+  CALL FUNCTION lc_func.`;
+    const issues = await runSingle(abap);
+    expect(issues.length).to.equal(0);
+  });
+
 });
