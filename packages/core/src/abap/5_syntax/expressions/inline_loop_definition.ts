@@ -2,7 +2,7 @@ import * as Expressions from "../../2_statements/expressions";
 import {ExpressionNode} from "../../nodes";
 import {CurrentScope} from "../_current_scope";
 import {Source} from "./source";
-import {TableType, VoidType} from "../../types/basic";
+import {TableType, UnknownType, VoidType} from "../../types/basic";
 import {IdentifierMeta, TypedIdentifier} from "../../types/_typed_identifier";
 import {AbstractType} from "../../types/basic/_abstract_type";
 
@@ -25,6 +25,8 @@ export class InlineLoopDefinition {
         rowType = sourceType.getRowType();
       } else if (sourceType instanceof VoidType) {
         rowType = sourceType;
+      } else if (sourceType instanceof UnknownType) {
+        throw new Error("Unknown type, " + sourceType.getError());
       }
       if (rowType === undefined) {
         throw new Error("InlineLoopDefinition, not a table type");
