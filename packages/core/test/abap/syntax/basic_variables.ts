@@ -1335,6 +1335,24 @@ ENDCASE.`;
     expectCharacter(type, 2);
   });
 
+  it("TABLES", () => {
+    const prog = `TABLES zstructure1.`;
+    const type = runMulti(
+      [{filename: "zstructure1.tabl.xml", contents: zstructure1},
+        {filename: "zfoobar.prog.abap", contents: prog}],
+      "zstructure1");
+    expect(type?.getType()).to.be.instanceof(Basic.StructureType);
+  });
+
+  it("TABLES with star", () => {
+    const prog = `TABLES *zstructure1.`;
+    const type = runMulti(
+      [{filename: "zstructure1.tabl.xml", contents: zstructure1},
+        {filename: "zfoobar.prog.abap", contents: prog}],
+      "*zstructure1");
+    expect(type?.getType()).to.be.instanceof(Basic.StructureType);
+  });
+
   it("LIKE DDIC 2", () => {
     const prog = `DATA foo LIKE zstructure1.`;
     const type = runMulti(

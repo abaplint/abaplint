@@ -11,7 +11,12 @@ export class Tables {
       return undefined;
     }
 
-    const found = scope.getDDIC()?.lookupTableOrView(nameToken.getStr());
+    let name = nameToken.getStr();
+    if (name.startsWith("*")) {
+      name = name.substr(1);
+    }
+
+    const found = scope.getDDIC()?.lookupTableOrView(name);
     if (found) {
       return new TypedIdentifier(nameToken, filename, found);
     }
