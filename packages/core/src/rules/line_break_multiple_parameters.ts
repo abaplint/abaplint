@@ -5,6 +5,7 @@ import {BasicRuleConfig} from "./_basic_rule_config";
 import * as Expressions from "../abap/2_statements/expressions";
 import {IRuleMetadata, RuleTag} from "./_irule";
 import {EditHelper} from "../edit_helper";
+import {VirtualPosition} from "../position";
 
 export class LineBreakMultipleParametersConf extends BasicRuleConfig {
 }
@@ -38,6 +39,10 @@ export class LineBreakMultipleParameters extends ABAPRule {
 
     for (const s of file.getStatements()) {
       for (const e of s.findAllExpressions(Expressions.ParameterListS)) {
+        if (s.getFirstToken().getStart() instanceof VirtualPosition) {
+          continue; // skip macro content
+        }
+
         const parameters = e.findDirectExpressions(Expressions.ParameterS);
         if (parameters.length <= 1) {
           continue;
