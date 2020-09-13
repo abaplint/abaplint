@@ -1,12 +1,15 @@
 .clinic/
 .github/
+.nyc_output/*
 .travis.yml
 .vscode/
 *.js.map
+api-extractor.json
 build/*.tsbuildinfo
 build/scripts/*
-build/test/*
 build/src/**/*.d.ts
+build/test/*
+build/tsdoc-metadata.json
 circular.txt
 coverage/
 docs/*
@@ -19,6 +22,7 @@ scripts/*
 src/*
 test/*
 travis.sh
+tsconfig_schema.json
 tsconfig.json
 tslint.json
 web/*
