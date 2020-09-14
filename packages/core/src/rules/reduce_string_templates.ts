@@ -54,6 +54,32 @@ export class ReduceStringTemplates extends ABAPRule {
       }
     }
 
+    for (const source of structure.findAllExpressions(Expressions.Source)) {
+      const children = source.getChildren();
+      if (children.length !== 3) {
+        continue;
+      } else if (!(children[0].get() instanceof Expressions.StringTemplate)) {
+        continue;
+      } else if (children[1].getFirstToken().getStr() !== "&&") {
+        continue;
+      } else if (!(children[2].get() instanceof Expressions.Source)) {
+        continue;
+      }
+
+      const sub = children[2].getChildren();
+      if (sub.length !== 1) {
+        continue;
+      }
+
+      const start = children[0].getFirstToken().getStart();
+      const end = sub[0].getLastToken().getEnd();
+      if (start.getRow() === end.getRow()) {
+        const message = "Reduce template, remove \"&&\"";
+        issues.push(Issue.atToken(file, children[1].getFirstToken(), message, this.getMetadata().key));
+      }
+
+    }
+
     return issues;
   }
 

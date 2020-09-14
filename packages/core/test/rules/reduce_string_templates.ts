@@ -42,4 +42,10 @@ describe("Rule: reduce_string_templates", () => {
     expect(issues.length).to.equal(1);
   });
 
+  it("constant string templates on same line", async () => {
+    const abap = "WRITE |sdfsd| && |sdfds|.";
+    const issues = await run(abap);
+    expect(issues.length).to.equal(1);
+  });
+
 });
