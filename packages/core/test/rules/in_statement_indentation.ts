@@ -1,4 +1,4 @@
-import {testRule} from "./_utils";
+import {testRule, testRuleFix} from "./_utils";
 import {InStatementIndentation} from "../../src/rules";
 
 const tests = [
@@ -14,3 +14,12 @@ const tests = [
 ];
 
 testRule(tests, InStatementIndentation);
+
+const fixTests = [
+  {
+    input: "IF foo = bar\n  AND moo = loo.",
+    output: "IF foo = bar\n    AND moo = loo.",
+  },
+];
+
+testRuleFix(fixTests, InStatementIndentation);
