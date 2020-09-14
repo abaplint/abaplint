@@ -8,6 +8,8 @@ import * as Statements from "../abap/2_statements/statements";
 import {IRuleMetadata, RuleTag} from "./_irule";
 import {DDIC} from "../ddic";
 import {Unknown, Comment} from "../abap/2_statements/statements/_statement";
+import {EditHelper} from "../edit_helper";
+import {Position} from "../position";
 
 export class InStatementIndentationConf extends BasicRuleConfig {
   /** Ignore global exception classes */
@@ -24,9 +26,11 @@ export class InStatementIndentation extends ABAPRule {
       title: "In-statement indentation",
       // eslint-disable-next-line max-len
       shortDescription: `Checks alignment within block statement declarations which span multiple lines, such as multiple conditions in IF statements.`,
-      goodExample: `IF 1 = 1 AND
-    2 = 2.`,
-      tags: [RuleTag.Whitespace],
+      badExample: `IF 1 = 1
+  AND 2 = 2.`,
+      goodExample: `IF 1 = 1
+    AND 2 = 2.`,
+      tags: [RuleTag.Whitespace, RuleTag.Quickfix],
     };
   }
 
@@ -90,7 +94,8 @@ export class InStatementIndentation extends ABAPRule {
           continue;
         }
         if (t.getCol() < expected) {
-          const issue = Issue.atToken(file, t, this.getMessage(), this.getMetadata().key);
+          const fix = EditHelper.replaceRange(file, new Position(t.getRow(), 1), t.getStart(), " ".repeat(expected - 1));
+          const issue = Issue.atToken(file, t, this.getMessage(), this.getMetadata().key, fix);
           ret.push(issue);
           break;
         }

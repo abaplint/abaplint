@@ -1,5 +1,5 @@
 import * as fs from "fs";
-import * as abaplint from "../../../packages/core/build/src/index";
+import * as abaplint from "../../../packages/core/build/src";
 import {renderIcons, preamble, postamble, experimentalIcon, upportIcon, whitespaceIcon, namingIcon, syntaxIcon, styleguideIcon, downportIcon, quickfixIcon} from "./common";
 import {buildRule} from "./rule_page";
 import {RuleTag} from "../../../packages/core/build/src/rules/_irule";
@@ -47,31 +47,17 @@ function buildChips(json: any) {
       }
     }
     if (count > 0) {
-      html = html + `<div class="chip" title="${tag}">
-    <div class="chip-head">${count}</div>
-    <div class="chip-content">${icon}</div>
-  </div>\n`;
+      html += `
+<div class="chip" title="${tag}">
+  <div class="chip-head">${count}</div>
+  <div class="chip-content">${icon}</div>
+</div>\n`;
     }
   }
   return html;
 }
 
-function buildIndex() {
-
-  const json: any = [];
-  const sorted = abaplint.ArtifactsRules.getRules().sort((a, b) => {
-    return a.getMetadata().key.localeCompare(b.getMetadata().key); });
-
-  for (const r of sorted) {
-    const meta = r.getMetadata();
-    json.push({
-      key: meta.key,
-      title: meta.title,
-      description: meta.shortDescription,
-      tags: meta.tags ? meta.tags : []});
-  }
-
-  fs.writeFileSync("build/rules.json", JSON.stringify(json, null, 2));
+function buildIndex(json: any) {
 
   let html = `<h1>abaplint rules documentation</h1>
 abaplint can be configured by placing a <tt>abaplint.json</tt> file in the root of the git repository.
@@ -90,15 +76,13 @@ ${buildChips(json)}
 <div id="rules">
 `;
 
-  for (const r of sorted) {
-    const meta = r.getMetadata();
-    html = html + "<a href='./" + meta.key + "/'><tt>" + meta.key + "</tt> - " + meta.title + "</a>";
-    html = html + renderIcons(meta);
-    html = html + "<br>" + meta.shortDescription + "<br><br>\n";
-
-    buildRule(meta);
+  for (const r of json) {
+    html += `\n<div id="rule-${r.key}"><a href='./${r.key}/'><tt>${r.key}</tt> - ${r.title}</a>`;
+    html += `<div class="hidden">${(r.tags || []).join(",")}</div>`;
+    html += renderIcons(r.tags);
+    html += `<br>${r.shortDescription}<br><br></div>\n`;
   }
-  html = html + "</div>";
+  html += `</div>\n<script src="/index.js"></script>`;
 
   fs.writeFileSync("build/index.html", preamble() + html + postamble);
 }
@@ -109,10 +93,37 @@ function buildSchema() {
   fs.writeFileSync("build/schema.js", "const abaplintSchema = " + rawSchema);
 }
 
+function buildRulesJson() {
+  const json: any = [];
+
+  const sorted = abaplint.ArtifactsRules.getRules().sort((a, b) => {
+    return a.getMetadata().key.localeCompare(b.getMetadata().key); });
+
+  for (const r of sorted) {
+    const meta = r.getMetadata();
+    json.push({
+      key: meta.key,
+      title: meta.title,
+      shortDescription: meta.shortDescription,
+      tags: meta.tags ? meta.tags : []});
+  }
+  fs.writeFileSync("build/rules.json", JSON.stringify(json, null, 2));
+
+  return json;
+}
+
 function run() {
   fs.mkdirSync("build", {recursive: true});
+
   buildSchema();
-  buildIndex();
+
+  for (const r of abaplint.ArtifactsRules.getRules()) {
+    buildRule(r.getMetadata());
+  }
+
+  const rules = buildRulesJson();
+
+  buildIndex(rules);
 }
 
 run();

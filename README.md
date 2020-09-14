@@ -17,7 +17,7 @@ Versioning: semantic versioning is currently not followed, recommend fixing usag
 
 [Continuous Integration setup](docs/ci/README.md)
 
-[SAP Code Inspector/ATC setup](https://github.com/abaplint/abaplint-cloud-foundry)
+[SAP Code Inspector/ATC setup](https://github.com/abaplint/abaplint-sci-server)
 
 [Visual Studio Code extension](https://marketplace.visualstudio.com/items?itemName=larshp.vscode-abaplint)
 

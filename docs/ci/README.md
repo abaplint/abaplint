@@ -2,17 +2,17 @@
 
 There are several ways to enable automated linting of your code in popular cloud git repositories. This will allow auto-linting of commits to master branch and auto checks for upcoming pull requests from colleagues or contributors.
 
+## GitHub App
+One click install, [GitHub App](https://github.com/marketplace/abaplint)
+
+Gives annotations and suggested changes.
+
 ## Github Actions
 Add [abaplint-action](https://github.com/marketplace/actions/abaplint-action) to the action, this will give annotated errors in the actions log.
 
-Does not give annotations for pull requests via forks, ie. its good for private repositories.
+Does not give annotations for pull requests via forks.
 
-## GitHub App
-One click install, [GitHub App](https://github.com/apps/abaplint)
-
-Does not work for private repositories, but good for public repositories.
-
-## Github Actions
+## Github Actions, raw setup
 Raw setup, example workflow can be seen in [github-actions-workflow.yml](github-actions-workflow.yml). See working repo example at [abaplinted_sample gitHUB](https://github.com/sbcgua/abaplinted_sample)
 
 ## Gitlab Pipelines

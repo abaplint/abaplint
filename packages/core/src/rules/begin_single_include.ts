@@ -18,8 +18,7 @@ export class BeginSingleInclude extends ABAPRule {
       key: "begin_single_include",
       title: "BEGIN contains single INCLUDE",
       shortDescription: `Finds TYPE BEGIN with just one INCLUDE TYPE, and DATA with single INCLUDE STRUCTURE`,
-      badExample: `
-TYPES: BEGIN OF dummy1.
+      badExample: `TYPES: BEGIN OF dummy1.
   INCLUDE TYPE dselc.
 TYPES: END OF dummy1.
 
@@ -29,8 +28,10 @@ DATA END OF foo.
 
 STATICS BEGIN OF bar.
 INCLUDE STRUCTURE syst.
-STATICS END OF bar.
-`,
+STATICS END OF bar.`,
+      goodExample: `DATA BEGIN OF foo.
+INCLUDE STRUCTURE dselc.
+DATA END OF foo.`,
     };
   }
 

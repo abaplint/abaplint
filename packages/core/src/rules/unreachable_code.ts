@@ -6,6 +6,7 @@ import {IStatement, Comment, MacroContent, Empty} from "../abap/2_statements/sta
 import * as Statements from "../abap/2_statements/statements";
 import * as Expressions from "../abap/2_statements/expressions";
 import {StatementNode} from "../abap/nodes";
+import {IRuleMetadata} from "./_irule";
 
 export class UnreachableCodeConf extends BasicRuleConfig {
 }
@@ -13,11 +14,13 @@ export class UnreachableCodeConf extends BasicRuleConfig {
 export class UnreachableCode extends ABAPRule {
   private conf = new UnreachableCodeConf();
 
-  public getMetadata() {
+  public getMetadata(): IRuleMetadata {
     return {
       key: "unreachable_code",
       title: "Unreachable code",
       shortDescription: `Checks for unreachable code.`,
+      badExample: `RETURN.\nWRITE 'hello'.`,
+      goodExample: `WRITE 'hello'.\nRETURN.`,
     };
   }
 

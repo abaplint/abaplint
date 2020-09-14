@@ -21,6 +21,8 @@ export class StartAtTab extends ABAPRule {
       shortDescription: `Checks that statements start at tabstops.`,
       extendedInformation: `https://github.com/SAP/styleguides/blob/master/clean-abap/CleanABAP.md#indent-and-snap-to-tab`,
       tags: [RuleTag.Whitespace, RuleTag.Styleguide],
+      badExample: ` WRITE a.`,
+      goodExample: `  WRITE a.`,
     };
   }
 

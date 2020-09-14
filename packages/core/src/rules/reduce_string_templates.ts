@@ -19,6 +19,8 @@ export class ReduceStringTemplates extends ABAPRule {
       title: "Reduce string templates",
       shortDescription: `Checks for string templates`,
       tags: [],
+      badExample: `WRITE |{ |sdf| }|.\nWRITE |{ 'sdf' }|.`,
+      goodExample: `WRITE |sdf|.`,
     };
   }
 
