@@ -3,14 +3,14 @@ import {IRuleMetadata, RuleTag} from "../../../packages/core/build/src/rules/_ir
 
 // https://github.com/refactoringui/heroicons/
 
-export function preamble(dir = "") {
+export function preamble() {
   return `<!DOCTYPE html>
 <html>
 <head>
   <meta charset="UTF-8">
   <meta name="keywords" content="ABAP,Open Source,abaplint,lint,linter,SAP,static analysis" />
   <title>rules.abaplint.org</title>
-  <link rel="stylesheet" type="text/css" href="${dir}style.css">
+  <link rel="stylesheet" type="text/css" href="/style.css">
 </head>
 <body>
 <div class="content">`;
@@ -65,30 +65,30 @@ function styleguide() {
   return `&nbsp;${styleguideIcon}`;
 }
 
-export function renderIcons(meta: IRuleMetadata): string {
+export function renderIcons(tags: IRuleMetadata["tags"]): string {
   let html = "";
-  if (meta.tags?.includes(RuleTag.Quickfix)) {
+  if (tags?.includes(RuleTag.Quickfix)) {
     html = html + quickfix();
   }
-  if (meta.tags?.includes(RuleTag.Experimental)) {
+  if (tags?.includes(RuleTag.Experimental)) {
     html = html + experimental();
   }
-  if (meta.tags?.includes(RuleTag.Downport)) {
+  if (tags?.includes(RuleTag.Downport)) {
     html = html + downport();
   }
-  if (meta.tags?.includes(RuleTag.Upport)) {
+  if (tags?.includes(RuleTag.Upport)) {
     html = html + upport();
   }
-  if (meta.tags?.includes(RuleTag.Whitespace)) {
+  if (tags?.includes(RuleTag.Whitespace)) {
     html = html + whitespace();
   }
-  if (meta.tags?.includes(RuleTag.Naming)) {
+  if (tags?.includes(RuleTag.Naming)) {
     html = html + naming();
   }
-  if (meta.tags?.includes(RuleTag.Syntax)) {
+  if (tags?.includes(RuleTag.Syntax)) {
     html = html + syntax();
   }
-  if (meta.tags?.includes(RuleTag.Styleguide)) {
+  if (tags?.includes(RuleTag.Styleguide)) {
     html = html + styleguide();
   }
   return html;

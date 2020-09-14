@@ -17,7 +17,7 @@ a:visited {
   color: #808BA0;
 }
 
-.chip{
+.chip {
   display: inline-flex;
   flex-direction: row;
   background-color: #808BA0;
@@ -35,7 +35,7 @@ a:visited {
   color: #333;
 }
 
-.chip-head{
+.chip-head {
   display: flex;
   position: relative;
   overflow: hidden;
@@ -52,7 +52,7 @@ a:visited {
   margin-right: -4px;
 }
 
-.chip-content{
+.chip-content {
   cursor: inherit;
   display: flex;
   align-items: center;

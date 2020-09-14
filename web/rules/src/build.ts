@@ -57,22 +57,7 @@ function buildChips(json: any) {
   return html;
 }
 
-function buildIndex() {
-
-  const json: any = [];
-  const sorted = abaplint.ArtifactsRules.getRules().sort((a, b) => {
-    return a.getMetadata().key.localeCompare(b.getMetadata().key); });
-
-  for (const r of sorted) {
-    const meta = r.getMetadata();
-    json.push({
-      key: meta.key,
-      title: meta.title,
-      description: meta.shortDescription,
-      tags: meta.tags ? meta.tags : []});
-  }
-
-  fs.writeFileSync("build/rules.json", JSON.stringify(json, null, 2));
+function buildIndex(json: any) {
 
   let html = `<h1>abaplint rules documentation</h1>
 abaplint can be configured by placing a <tt>abaplint.json</tt> file in the root of the git repository.
@@ -91,13 +76,12 @@ ${buildChips(json)}
 <div id="rules">
 `;
 
-  for (const r of sorted) {
-    const meta = r.getMetadata();
-    html = html + "\n<a href='./" + meta.key + "/'><tt>" + meta.key + "</tt> - " + meta.title + "</a>";
-    html = html + renderIcons(meta);
-    html = html + "<br>" + meta.shortDescription + "<br><br>\n";
+  for (const r of json) {
+    html = html + "\n<a href='./" + r.key + "/'><tt>" + r.key + "</tt> - " + r.title + "</a>";
+    html = html + renderIcons(r.tags);
+    html = html + "<br>" + r.description + "<br><br>\n";
 
-    buildRule(meta);
+    buildRule(r);
   }
   html = html + "</div>";
 
@@ -110,10 +94,31 @@ function buildSchema() {
   fs.writeFileSync("build/schema.js", "const abaplintSchema = " + rawSchema);
 }
 
+function buildRulesJson() {
+  const json: any = [];
+
+  const sorted = abaplint.ArtifactsRules.getRules().sort((a, b) => {
+    return a.getMetadata().key.localeCompare(b.getMetadata().key); });
+
+  for (const r of sorted) {
+    const meta = r.getMetadata();
+    json.push({
+      key: meta.key,
+      title: meta.title,
+      description: meta.shortDescription,
+      tags: meta.tags ? meta.tags : []});
+  }
+  fs.writeFileSync("build/rules.json", JSON.stringify(json, null, 2));
+
+  return json;
+}
+
 function run() {
   fs.mkdirSync("build", {recursive: true});
   buildSchema();
-  buildIndex();
+  const rules = buildRulesJson();
+
+  buildIndex(rules);
 }
 
 run();

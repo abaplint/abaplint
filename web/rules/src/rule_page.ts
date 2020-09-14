@@ -84,7 +84,7 @@ export function buildRule(meta: IRuleMetadata) {
   let html = "<h1>" + meta.key + " - " + meta.title + "</h1>\n";
 
   html = html + home();
-  html = html + renderIcons(meta);
+  html = html + renderIcons(meta.tags);
   const link = findPath(meta.key);
   // https://github.com/refactoringui/heroicons/
   // eslint-disable-next-line max-len
@@ -116,5 +116,5 @@ export function buildRule(meta: IRuleMetadata) {
   }
 
   fs.mkdirSync("build/" + meta.key + "/", {recursive: true});
-  fs.writeFileSync("build/" + meta.key + "/index.html", preamble("../") + html + postamble);
+  fs.writeFileSync("build/" + meta.key + "/index.html", preamble() + html + postamble);
 }
