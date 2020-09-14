@@ -233,8 +233,8 @@ export class StatementNode extends AbstractNode<ExpressionNode | TokenNode> {
   /**
    * Returns the Position of the first token if the sequence is found,
    * otherwise undefined. Strings and Comments are ignored in this search.
-   * @param first Text of the first Token
-   * @param second Text of the second Token
+   * @param first - Text of the first Token
+   * @param second - Text of the second Token
    */
   public findTokenSequencePosition(first: string, second: string): Position | undefined {
     let prev: Token | undefined;
