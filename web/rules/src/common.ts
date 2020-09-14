@@ -1,3 +1,4 @@
+/* eslint-disable max-len */
 import {IRuleMetadata, RuleTag} from "../../../packages/core/build/src/rules/_irule";
 
 // https://github.com/refactoringui/heroicons/

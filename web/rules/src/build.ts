@@ -1,5 +1,5 @@
 import * as fs from "fs";
-import * as abaplint from "../../../packages/core/build/src/index";
+import * as abaplint from "../../../packages/core/build/src";
 import {renderIcons, preamble, postamble, experimentalIcon, upportIcon, whitespaceIcon, namingIcon, syntaxIcon, styleguideIcon, downportIcon, quickfixIcon} from "./common";
 import {buildRule} from "./rule_page";
 import {RuleTag} from "../../../packages/core/build/src/rules/_irule";

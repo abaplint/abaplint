@@ -1,5 +1,5 @@
 import * as fs from "fs";
-import * as abaplint from "../../../packages/core/build/src/index";
+import * as abaplint from "../../../packages/core/build/src";
 import {IRuleMetadata} from "../../../packages/core/build/src/rules/_irule";
 import {home, renderIcons, preamble, postamble} from "./common";
 
@@ -21,7 +21,7 @@ function findSchema(ruleKey: string): string {
   return conf;
 }
 
-function editor(json: string, schema: string) {
+function schemaEditor(json: string, schema: string) {
   const height = (json.split("\n").length + 2) * 19;
 
   return `<div id="defaultConfigEditor" style="width:700px;height:${height}px;border:1px solid grey"></div>
@@ -55,6 +55,26 @@ function editor(json: string, schema: string) {
   </script>`;
 }
 
+function examplesEditor(abap: string) {
+  const height = (abap.split("\n").length + 2) * 19;
+
+  return `<div id="examplesEditor" style="width:700px;height:${height}px;border:1px solid grey"></div>
+  <script>
+    require.config({ paths: { 'vs': '/_monaco/vs' }});
+    require(['vs/editor/editor.main'], function() {
+      var modelUri = monaco.Uri.parse("a://b/foobar.abap");
+      var model = monaco.editor.createModel(\`${abap}\`, "abap", modelUri);
+
+      var editor = monaco.editor.create(document.getElementById('examplesEditor'), {
+        model: model,
+        autoClosingBrackets: false,
+        minimap: {enabled: false},
+        theme: "vs-dark"
+      });
+    });
+  </script>`;
+}
+
 function findPath(ruleKey: string) {
   const base = "https://github.com/abaplint/abaplint/blob/master/packages/core/src/rules/";
   return base + ruleKey + ".ts";
@@ -77,18 +97,22 @@ export function buildRule(meta: IRuleMetadata) {
   }
 
   html = html + "<h2>Default Configuration</h2>\n";
-  html = html + editor(findDefault(meta.key), findSchema(meta.key));
+  html = html + schemaEditor(findDefault(meta.key), findSchema(meta.key));
   html = html + "<i>Hover to see descriptions, Ctrl+Space for suggestions</i>";
 
   if (meta.goodExample || meta.badExample) {
-    html = html + "<h2>Examples</h2>\n";
+    html += "<h2>Examples</h2>\n";
+    let abap = "";
     if (meta.badExample) {
-      html = html + "Bad example: <pre>" + meta.badExample + "</pre><br>";
+      abap += "* Bad example\n" + meta.badExample;
     }
     if (meta.goodExample) {
-      html = html + "Good example: <pre>" + meta.goodExample + "</pre>";
+      if (abap !== "") {
+        abap += "\n\n";
+      }
+      abap += "* Good example\n" + meta.goodExample;
     }
-    html = html + "<br><br>";
+    html += examplesEditor(abap) + "<br><br>";
   }
 
   fs.mkdirSync("build/" + meta.key + "/", {recursive: true});
