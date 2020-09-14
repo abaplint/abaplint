@@ -316,26 +316,36 @@ export class Registry implements IRegistry {
   private excludeIssues(issues: Issue[]): Issue[] {
 
     const ret: Issue[] = issues;
+    const globalExclude = this.conf.getGlobal().exclude ?? [];
 
-// exclude issues, as now we know both the filename and issue key
-// todo, add unit tests for this feature
+    // exclude issues, as now we know both the filename and issue key
     for (const rule of ArtifactsRules.getRules()) {
       const key = rule.getMetadata().key;
-      const exclude = this.conf.readByKey(key, "exclude");
-      if (exclude === undefined || exclude.length === 0) {
-        continue;
-      }
+      const ruleExclude: string[] = this.conf.readByKey(key, "exclude") ?? [];
+
       for (let i = ret.length - 1; i >= 0; i--) {
+
         if (ret[i].getKey() !== key) {
           continue;
         }
+
         let remove = false;
-        for (const excl of exclude) {
-          if (new RegExp(excl).exec(ret[i].getFilename())) {
+        for (const globalExcl of globalExclude) {
+          if (new RegExp(globalExcl).exec(ret[i].getFilename())) {
             remove = true;
             break;
           }
         }
+
+        if (!remove) {
+          for (const excl of ruleExclude) {
+            if (new RegExp(excl).exec(ret[i].getFilename())) {
+              remove = true;
+              break;
+            }
+          }
+        }
+
         if (remove) {
           ret.splice(i, 1);
         }

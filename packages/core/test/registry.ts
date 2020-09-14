@@ -3,6 +3,8 @@ import {MemoryFile} from "../src/files";
 import {expect} from "chai";
 import {getABAPObjects} from "./get_abap";
 import {ABAPObject} from "../src/objects/_abap_object";
+import {Version} from "../src/version";
+import {Config} from "../src/config";
 
 describe("Registry", () => {
 
@@ -245,6 +247,97 @@ describe("Registry, object types", () => {
     const registry = new Registry().addFile(file1).addFile(file2);
 
     expect(registry.getObjectCount()).to.equal(2);
+  });
+
+});
+
+
+describe("exclude list", () => {
+
+  function getConfig(rules: any): Config {
+    const conf: any = {
+      global: {
+        files: "/src/**/*.*",
+        skipGeneratedGatewayClasses: true,
+        skipGeneratedPersistentClasses: true,
+        skipGeneratedFunctionGroups: true,
+
+      },
+      dependencies: [],
+      syntax: {
+        version: Version.v702,
+        errorNamespace: "^(Z|Y)",
+        globalConstants: [],
+        globalMacros: [],
+      },
+      rules: rules,
+    };
+
+    return new Config(JSON.stringify(conf));
+  }
+
+  it("will exclude issues based on the global exclude patterns", () => {
+
+    const config = getConfig({
+      "space_before_dot": true,
+    });
+
+    const file = new MemoryFile("foo.prog.abap", "BREAK-POINT    .");
+
+    config.getGlobal().exclude = ["foo.prog.abap"];
+    let registry = new Registry(config).addFile(file);
+    expect(registry.findIssues().length).to.equal(0);
+
+    config.getGlobal().exclude = [];
+    registry = new Registry(config).addFile(file);
+    expect(registry.findIssues().length).to.equal(1);
+
+    config.getGlobal().exclude = [".*\.abap"];
+    registry = new Registry(config).addFile(file);
+    expect(registry.findIssues().length).to.equal(0);
+
+  });
+
+  it("will not crash with an undefined global exclude list", () => {
+
+    const config = getConfig({
+      "space_before_dot": true,
+    });
+
+    const file = new MemoryFile("foo.prog.abap", "BREAK-POINT    .");
+
+    delete config.getGlobal().exclude;
+    const registry = new Registry(config).addFile(file);
+    expect(registry.findIssues().length).to.equal(1);
+
+  });
+
+  it("will exclude issues based on the local exclude patterns", () => {
+
+    const config = getConfig({
+      "space_before_dot": {
+        exclude: ["foo.prog.abap"],
+      },
+    });
+
+    const file = new MemoryFile("foo.prog.abap", "BREAK-POINT    .");
+
+    const registry = new Registry(config).addFile(file);
+    expect(registry.findIssues().length).to.equal(0);
+
+  });
+
+  it("will not exclude issues which are not ignored", () => {
+
+    const config = getConfig({
+      "space_before_dot": true,
+    });
+
+    const file = new MemoryFile("foo.prog.abap", "BREAK-POINT    .");
+
+    const registry = new Registry(config).addFile(file);
+    expect(registry.findIssues().length).to.equal(1);
+
   });
 
 });
