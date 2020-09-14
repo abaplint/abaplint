@@ -1,6 +1,6 @@
 {
     "name": "@abaplint/core",
-    "version": "2.42.4",
+    "version": "2.43.0",
     "description": "Linter for ABAP",
     "main": "build/src/index.js",
     "typings": "build/abaplint.d.ts",
