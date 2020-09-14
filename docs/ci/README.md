@@ -3,7 +3,7 @@
 There are several ways to enable automated linting of your code in popular cloud git repositories. This will allow auto-linting of commits to master branch and auto checks for upcoming pull requests from colleagues or contributors.
 
 ## GitHub App
-One click install, [GitHub App](https://github.com/apps/abaplint)
+One click install, [GitHub App](https://github.com/marketplace/abaplint)
 
 Gives annotations and suggested changes.
 
