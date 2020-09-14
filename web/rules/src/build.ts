@@ -77,13 +77,12 @@ ${buildChips(json)}
 `;
 
   for (const r of json) {
-    html = html + "\n<a href='./" + r.key + "/'><tt>" + r.key + "</tt> - " + r.title + "</a>";
-    html = html + renderIcons(r.tags);
-    html = html + "<br>" + r.description + "<br><br>\n";
-
-    buildRule(r);
+    html += `\n<div id="rule-${r.key}"><a href='./${r.key}/'><tt>${r.key}</tt> - ${r.title}</a>`;
+    html += `<div class="hidden">${(r.tags || []).join(",")}</div>`;
+    html += renderIcons(r.tags);
+    html += `<br>${r.shortDescription}<br><br></div>\n`;
   }
-  html = html + "</div>";
+  html += `</div>\n<script src="/index.js"></script>`;
 
   fs.writeFileSync("build/index.html", preamble() + html + postamble);
 }
@@ -105,7 +104,7 @@ function buildRulesJson() {
     json.push({
       key: meta.key,
       title: meta.title,
-      description: meta.shortDescription,
+      shortDescription: meta.shortDescription,
       tags: meta.tags ? meta.tags : []});
   }
   fs.writeFileSync("build/rules.json", JSON.stringify(json, null, 2));
@@ -115,7 +114,13 @@ function buildRulesJson() {
 
 function run() {
   fs.mkdirSync("build", {recursive: true});
+
   buildSchema();
+
+  for (const r of abaplint.ArtifactsRules.getRules()) {
+    buildRule(r.getMetadata());
+  }
+
   const rules = buildRulesJson();
 
   buildIndex(rules);

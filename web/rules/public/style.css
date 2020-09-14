@@ -17,6 +17,10 @@ a:visited {
   color: #808BA0;
 }
 
+.hidden {
+  display: none;
+}
+
 .chip {
   display: inline-flex;
   flex-direction: row;
@@ -49,7 +53,6 @@ a:visited {
   width: 36px;
   height: 36px;
   font-size: 20px;
-  margin-right: -4px;
 }
 
 .chip-content {
