@@ -77,7 +77,6 @@ export class ReduceStringTemplates extends ABAPRule {
         const message = "Reduce template, remove \"&&\"";
         issues.push(Issue.atToken(file, children[1].getFirstToken(), message, this.getMetadata().key));
       }
-
     }
 
     return issues;
