@@ -6,7 +6,7 @@ import * as Expressions from "../abap/2_statements/expressions";
 import {BasicRuleConfig} from "./_basic_rule_config";
 import {Class} from "../objects";
 import {InfoClassDefinition} from "../abap/4_file_information/_abap_file_information";
-import {RuleTag} from "./_irule";
+import {IRuleMetadata, RuleTag} from "./_irule";
 import {ABAPObject} from "../objects/_abap_object";
 import {DDIC} from "../ddic";
 
@@ -19,7 +19,7 @@ export class FunctionalWriting extends ABAPRule {
 
   private conf = new FunctionalWritingConf();
 
-  public getMetadata() {
+  public getMetadata(): IRuleMetadata {
     return {
       key: "functional_writing",
       title: "Use functional writing",
@@ -27,6 +27,8 @@ export class FunctionalWriting extends ABAPRule {
       extendedInformation: `https://github.com/SAP/styleguides/blob/master/clean-abap/CleanABAP.md#prefer-functional-to-procedural-calls
 https://docs.abapopenchecks.org/checks/07/`,
       tags: [RuleTag.Styleguide],
+      badExample: `CALL METHOD zcl_class=>method( ).`,
+      goodExample: `zcl_class=>method( ).`,
     };
   }
 

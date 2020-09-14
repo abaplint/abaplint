@@ -5,6 +5,7 @@ import {ABAPRule} from "./_abap_rule";
 import {ABAPFile} from "../files";
 import * as Expressions from "../abap/2_statements/expressions";
 import {ABAPObject} from "../objects/_abap_object";
+import {IRuleMetadata} from "./_irule";
 
 export class TypeFormParametersConf extends BasicRuleConfig {
 }
@@ -13,11 +14,13 @@ export class TypeFormParameters extends ABAPRule {
 
   private conf = new TypeFormParametersConf();
 
-  public getMetadata() {
+  public getMetadata(): IRuleMetadata {
     return {
       key: "type_form_parameters",
       title: "Type FORM parameters",
       shortDescription: `Checks for untyped FORM parameters`,
+      badExample: `FORM foo USING bar.`,
+      goodExample: `FORM foo USING bar TYPE string.`,
     };
   }
 

@@ -18,6 +18,8 @@ export class SpaceBeforeColon extends ABAPRule {
       shortDescription: `Checks that there are no spaces in front of colons in chained statements.`,
       extendedInformation: `https://docs.abapopenchecks.org/checks/80/`,
       tags: [RuleTag.Whitespace],
+      badExample: `DATA : foo TYPE string.`,
+      goodExample: `DATA: foo TYPE string.`,
     };
   }
 

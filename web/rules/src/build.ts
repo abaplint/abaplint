@@ -47,10 +47,11 @@ function buildChips(json: any) {
       }
     }
     if (count > 0) {
-      html = html + `<div class="chip" title="${tag}">
-    <div class="chip-head">${count}</div>
-    <div class="chip-content">${icon}</div>
-  </div>\n`;
+      html += `
+<div class="chip" title="${tag}">
+  <div class="chip-head">${count}</div>
+  <div class="chip-content">${icon}</div>
+</div>\n`;
     }
   }
   return html;
@@ -92,7 +93,7 @@ ${buildChips(json)}
 
   for (const r of sorted) {
     const meta = r.getMetadata();
-    html = html + "<a href='./" + meta.key + "/'><tt>" + meta.key + "</tt> - " + meta.title + "</a>";
+    html = html + "\n<a href='./" + meta.key + "/'><tt>" + meta.key + "</tt> - " + meta.title + "</a>";
     html = html + renderIcons(meta);
     html = html + "<br>" + meta.shortDescription + "<br><br>\n";
 

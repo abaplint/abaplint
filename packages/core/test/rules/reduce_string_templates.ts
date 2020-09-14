@@ -36,4 +36,10 @@ describe("Rule: reduce_string_templates", () => {
     expect(issues.length).to.equal(1);
   });
 
+  it("constant string, ticks", async () => {
+    const abap = "WRITE |{ `sdf` }|.";
+    const issues = await run(abap);
+    expect(issues.length).to.equal(1);
+  });
+
 });

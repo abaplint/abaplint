@@ -4,7 +4,7 @@ import {ABAPRule} from "./_abap_rule";
 import {ABAPFile} from "../files";
 import {BasicRuleConfig} from "./_basic_rule_config";
 import {EditHelper} from "../edit_helper";
-import {RuleTag} from "./_irule";
+import {IRuleMetadata, RuleTag} from "./_irule";
 import {VirtualPosition} from "../position";
 
 export class MaxOneStatementConf extends BasicRuleConfig {
@@ -14,7 +14,7 @@ export class MaxOneStatement extends ABAPRule {
 
   private conf = new MaxOneStatementConf();
 
-  public getMetadata() {
+  public getMetadata(): IRuleMetadata {
     return {
       key: "max_one_statement",
       title: "Max one statement per line",
@@ -23,6 +23,8 @@ export class MaxOneStatement extends ABAPRule {
 `https://github.com/SAP/styleguides/blob/master/clean-abap/CleanABAP.md#no-more-than-one-statement-per-line
 https://docs.abapopenchecks.org/checks/11/`,
       tags: [RuleTag.Styleguide, RuleTag.Quickfix],
+      badExample: `WRITE foo. WRITE bar.`,
+      goodExample: `WRITE foo.\nWRITE bar.`,
     };
   }
 

@@ -4,6 +4,7 @@ import {ABAPFile} from "../files";
 import {Try, Catch} from "../abap/3_structures/structures";
 import {BasicRuleConfig} from "./_basic_rule_config";
 import {Cleanup} from "../abap/2_statements/statements";
+import {IRuleMetadata} from "./_irule";
 
 export class TryWithoutCatchConf extends BasicRuleConfig {
 }
@@ -11,11 +12,12 @@ export class TryWithoutCatchConf extends BasicRuleConfig {
 export class TryWithoutCatch extends ABAPRule {
   private conf = new TryWithoutCatchConf();
 
-  public getMetadata() {
+  public getMetadata(): IRuleMetadata {
     return {
       key: "try_without_catch",
       title: "TRY without CATCH",
       shortDescription: `Checks for TRY blocks without a CATCH and CLEANUP block`,
+      badExample: `TRY.\n  WRITE 'hello world'.\nENDTRY.`,
     };
   }
 
