@@ -284,7 +284,7 @@ describe("exclude list", () => {
 
     const file = new MemoryFile("foo.prog.abap", "BREAK-POINT    .");
 
-    config.getGlobal().exclude = ["foo.prog.abap"];
+    config.getGlobal().exclude = ["FOO.prog.abap"];
     let registry = new Registry(config).addFile(file);
     expect(registry.findIssues().length).to.equal(0);
 
@@ -316,7 +316,7 @@ describe("exclude list", () => {
 
     const config = getConfig({
       "space_before_dot": {
-        exclude: ["foo.prog.abap"],
+        exclude: ["FOO.prog.abap"],
       },
     });
 

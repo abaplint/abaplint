@@ -331,7 +331,7 @@ export class Registry implements IRegistry {
 
         let remove = false;
         for (const globalExcl of globalExclude) {
-          if (new RegExp(globalExcl).exec(ret[i].getFilename())) {
+          if (new RegExp(globalExcl, "i").exec(ret[i].getFilename())) {
             remove = true;
             break;
           }
@@ -339,7 +339,7 @@ export class Registry implements IRegistry {
 
         if (!remove) {
           for (const excl of ruleExclude) {
-            if (new RegExp(excl).exec(ret[i].getFilename())) {
+            if (new RegExp(excl, "i").exec(ret[i].getFilename())) {
               remove = true;
               break;
             }
