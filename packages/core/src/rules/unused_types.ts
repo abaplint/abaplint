@@ -7,9 +7,35 @@ import {SyntaxLogic} from "../abap/5_syntax/syntax";
 import {ABAPObject} from "../objects/_abap_object";
 import {ScopeType} from "../abap/5_syntax/_scope_type";
 import {TypedIdentifier} from "../abap/types/_typed_identifier";
-import {ISpaghettiScopeNode, IScopeVariable} from "../abap/5_syntax/_spaghetti_scope";
-import {References} from "../lsp/references";
+import {ISpaghettiScopeNode} from "../abap/5_syntax/_spaghetti_scope";
 import {EditHelper, IEdit} from "../edit_helper";
+import {ReferenceType} from "../abap/5_syntax/_reference";
+import {Identifier} from "../abap/4_file_information/_identifier";
+
+class WorkArea {
+  private readonly workarea: TypedIdentifier[] = [];
+
+  public push(id: TypedIdentifier) {
+    this.workarea.push(id);
+  }
+
+  public removeIfExists(id: Identifier) {
+    for (let i = 0; i < this.workarea.length; i++) {
+      if (id.equals(this.workarea[i])) {
+        this.workarea.splice(i, 1);
+        return;
+      }
+    }
+  }
+
+  public get(): readonly TypedIdentifier[] {
+    return this.workarea;
+  }
+
+  public count(): number {
+    return this.workarea.length;
+  }
+}
 
 export class UnusedTypesConf extends BasicRuleConfig {
   /** skip specific names, case insensitive */
@@ -19,18 +45,14 @@ export class UnusedTypesConf extends BasicRuleConfig {
 export class UnusedTypes implements IRule {
   private conf = new UnusedTypesConf();
   private reg: IRegistry;
+  private workarea: WorkArea;
 
   public getMetadata(): IRuleMetadata {
     return {
       key: "unused_types",
       title: "Unused types",
       shortDescription: `Checks for unused TYPE definitions`,
-      extendedInformation: `WARNING: slow
-
-      Experimental, might give false positives.
-
-      Note that this currently does not work if the source code uses macros.`,
-      tags: [RuleTag.Experimental, RuleTag.Quickfix],
+      tags: [RuleTag.Quickfix],
     };
   }
 
@@ -61,73 +83,82 @@ export class UnusedTypes implements IRule {
       return [];
     }
 
-    const results = this.traverse(syntax.spaghetti.getTop(), obj);
-
-    // remove duplicates, quick and dirty
-    const deduplicated: Issue[] = [];
-    for (const result of results) {
-      let cont = false;
-      for (const d of deduplicated) {
-        if (result.getStart().equals(d.getStart())) {
-          cont = true;
-          break;
-        }
-      }
-      if (cont === true) {
-        continue;
-      }
-      deduplicated.push(result);
+    this.workarea = new WorkArea();
+    this.traverse(syntax.spaghetti.getTop(), obj, true);
+    this.traverse(syntax.spaghetti.getTop(), obj, false);
+    if (this.workarea.count() === 0) {
+      return []; // exit early if all types are used in the current object
     }
 
-    return deduplicated;
+    for (const o of this.reg.getObjects()) {
+      if (o instanceof ABAPObject) {
+        if (this.reg.isDependency(o)) {
+          continue; // do not search in dependencies
+        }
+        const syntax = new SyntaxLogic(this.reg, o).run();
+        this.traverse(syntax.spaghetti.getTop(), o, false);
+      }
+      if (this.workarea.count() === 0) {
+        return []; // exit early if all types are used
+      }
+    }
+
+    // what is left is unused
+    const ret: Issue[] = [];
+    for (const t of this.workarea.get()) {
+      const message = "Type \"" + t.getName() + "\" not used";
+      const fix = this.buildFix(t, obj);
+      ret.push(Issue.atIdentifier(t, message, this.getMetadata().key, fix));
+    }
+    return ret;
   }
 
-  private traverse(node: ISpaghettiScopeNode, obj: ABAPObject): Issue[] {
-    let ret: Issue[] = [];
+////////////////////////////
+
+  private traverse(node: ISpaghettiScopeNode, obj: ABAPObject, add: boolean) {
 
     if (node.getIdentifier().stype !== ScopeType.BuiltIn) {
-      ret = ret.concat(this.checkNode(node, obj));
+      this.checkNode(node, obj, add);
     }
 
     for (const c of node.getChildren()) {
-      ret = ret.concat(this.traverse(c, obj));
+      this.traverse(c, obj, add);
     }
 
-    return ret;
   }
 
-  private checkNode(node: ISpaghettiScopeNode, obj: ABAPObject): Issue[] {
+  private checkNode(node: ISpaghettiScopeNode, obj: ABAPObject, add: boolean) {
     const ret: Issue[] = [];
 
-    for (const v of node.getData().types) {
-      if (this.conf.skipNames?.length > 0
-          && this.conf.skipNames.some((a) => a.toUpperCase() === v.name.toUpperCase())) {
-        continue;
-      } else if ((obj.containsFile(v.identifier.getFilename())
-            || node.getIdentifier().stype === ScopeType.Program
-            || node.getIdentifier().stype === ScopeType.Form)
-          && this.isUsed(v.identifier, node) === false) {
-        const message = "Type \"" + v.identifier.getName() + "\" not used";
-        const fix = this.buildFix(v, obj);
-        ret.push(Issue.atIdentifier(v.identifier, message, this.getMetadata().key, fix));
+    if (add === true) {
+      for (const t of node.getData().types) {
+        if (obj.containsFile(t.identifier.getFilename()) === false) {
+          continue;
+        } else if (this.conf.skipNames?.length > 0 && this.conf.skipNames.some((a) => a.toUpperCase() === t.name.toUpperCase())) {
+          continue;
+        } else if (t.name.toUpperCase() !== t.identifier.getName().toUpperCase()) {
+          continue; // may have aliases via interfaces
+        }
+        this.workarea.push(t.identifier);
+      }
+    }
+
+    for (const r of node.getData().references) {
+      if (r.referenceType === ReferenceType.TypeReference) {
+        this.workarea.removeIfExists(r.resolved);
       }
     }
 
     return ret;
   }
 
-  private isUsed(id: TypedIdentifier, node: ISpaghettiScopeNode): boolean {
-    const found = new References(this.reg).search(id, node);
-    return found.length > 1;
-  }
-
-  private buildFix(v: IScopeVariable, obj: ABAPObject): IEdit | undefined {
-    const file = obj.getABAPFileByName(v.identifier.getFilename());
+  private buildFix(v: Identifier, obj: ABAPObject): IEdit | undefined {
+    const file = obj.getABAPFileByName(v.getFilename());
     if (file === undefined) {
       return undefined;
     }
 
-    const statement = EditHelper.findStatement(v.identifier.getToken(), file);
+    const statement = EditHelper.findStatement(v.getToken(), file);
     if (statement) {
       return EditHelper.deleteStatement(file, statement);
     }

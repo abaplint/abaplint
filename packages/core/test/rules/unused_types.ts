@@ -36,10 +36,61 @@ describe("Rule: unused_types, single file", () => {
     expect(issues.length).to.equal(1);
   });
 
+  it("two unused", async () => {
+    const abap = `
+    TYPES foo TYPE c LENGTH 1.
+    TYPES bar TYPE c LENGTH 1.`;
+    const issues = await runSingle(abap);
+    expect(issues.length).to.equal(2);
+  });
+
   it("test5", async () => {
     const abap = `
     TYPES bar TYPE c LENGTH 1.
     DATA foo TYPE bar.`;
+    const issues = await runSingle(abap);
+    expect(issues.length).to.equal(0);
+  });
+
+  it("local type definition, used", async () => {
+    const abap = `
+    FORM foobar.
+      TYPES bar TYPE c LENGTH 1.
+      DATA foo TYPE bar.
+    ENDFORM.`;
+    const issues = await runSingle(abap);
+    expect(issues.length).to.equal(0);
+  });
+
+  it("local type definition, unused", async () => {
+    const abap = `
+    FORM foobar.
+      TYPES bar TYPE c LENGTH 1.
+    ENDFORM.`;
+    const issues = await runSingle(abap);
+    expect(issues.length).to.equal(1);
+  });
+
+  it("local interface", async () => {
+    const abap = `
+INTERFACE lif_package_interface_facade.
+  TYPES ty_tpak_package_interf_elem_tt TYPE STANDARD TABLE OF i WITH DEFAULT KEY.
+  METHODS:
+    get_elements
+      RETURNING
+        VALUE(rt_elements) TYPE ty_tpak_package_interf_elem_tt.
+ENDINTERFACE.
+
+CLASS lcl_package_interface_facade DEFINITION.
+  PUBLIC SECTION.
+    INTERFACES:
+      lif_package_interface_facade.
+ENDCLASS.
+
+CLASS lcl_package_interface_facade IMPLEMENTATION.
+  METHOD lif_package_interface_facade~get_elements.
+  ENDMETHOD.
+ENDCLASS.`;
     const issues = await runSingle(abap);
     expect(issues.length).to.equal(0);
   });
