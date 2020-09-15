@@ -19,7 +19,7 @@ describe.skip("Rule: identical_conditions", () => {
     expect(issues.length).to.equal(0);
   });
 
-  it("no error", async () => {
+  it("error, identical ELSEIF", async () => {
     const abap = `IF foo = bar.
     ELSEIF foo = bar.
     ENDIF.`;
@@ -27,7 +27,7 @@ describe.skip("Rule: identical_conditions", () => {
     expect(issues.length).to.equal(1);
   });
 
-  it("no error", async () => {
+  it("error, identical WHEN", async () => {
     const abap = `CASE bar.
       WHEN '1'.
       WHEN '1'.
@@ -36,7 +36,7 @@ describe.skip("Rule: identical_conditions", () => {
     expect(issues.length).to.equal(1);
   });
 
-  it("no error", async () => {
+  it("error, identical WHEN OR", async () => {
     const abap = `CASE bar.
       WHEN '1'.
       WHEN 'A' OR '1'.
@@ -45,14 +45,14 @@ describe.skip("Rule: identical_conditions", () => {
     expect(issues.length).to.equal(1);
   });
 
-  it("no error", async () => {
+  it("error, top level condition identical, IF", async () => {
     const abap = `IF foo = bar OR foo = bar.
     ENDIF.`;
     const issues = await run(abap);
     expect(issues.length).to.equal(1);
   });
 
-  it("no error", async () => {
+  it("error, top level condition identical, WHILE", async () => {
     const abap = `WHILE foo = bar AND foo = bar.
     ENDWHILE.`;
     const issues = await run(abap);
