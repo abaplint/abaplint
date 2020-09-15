@@ -148,7 +148,7 @@ export class BasicTypes {
       return new Types.NumericGenericType();
     } else if (chainText === "CSEQUENCE") {
       return new Types.CSequenceType();
-    } else if (chainText === "I") {
+    } else if (chainText === "I" || chainText === "INT8") {
       return new Types.IntegerType();
     } else if (chainText === "F") {
       return new Types.FloatType();

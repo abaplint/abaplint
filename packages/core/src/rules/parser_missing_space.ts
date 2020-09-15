@@ -52,7 +52,7 @@ This rule makes sure the spaces are consistently required across the language.`,
 
   private missingSpace(statement: StatementNode): Position | undefined {
 
-    const conds = statement.findAllExpressions(Expressions.Cond);
+    const conds = statement.findAllExpressions(Expressions.CondSub);
     for (const cond of conds) {
       const children = cond.getChildren();
       for (let i = 0; i < children.length; i++) {

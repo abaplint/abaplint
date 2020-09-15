@@ -35,6 +35,15 @@ export class StructureNode extends AbstractNode<StructureNode | StatementNode> {
     return undefined;
   }
 
+  public findDirectStatement(type: new () => IStatement): StatementNode | undefined {
+    for (const child of this.getChildren()) {
+      if (child instanceof StatementNode && child.get() instanceof type) {
+        return child;
+      }
+    }
+    return undefined;
+  }
+
   public findDirectStatements(type: new () => IStatement): StatementNode[] {
     const ret: StatementNode[] = [];
     for (const child of this.getChildren()) {

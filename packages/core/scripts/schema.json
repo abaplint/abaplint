@@ -1853,7 +1853,7 @@
                   "type": "boolean"
                 }
               ],
-              "description": "Checks for unused TYPE definitions\nTags: Experimental, Quickfix\nhttps://rules.abaplint.org/unused_types"
+              "description": "Checks for unused TYPE definitions\nTags: Quickfix\nhttps://rules.abaplint.org/unused_types"
             },
             "unused_variables": {
               "anyOf": [
