@@ -40,12 +40,18 @@ function loadConfig(filename: string | undefined): {config: Config, base: string
   if (filename === undefined) {
     f = process.cwd() + path.sep + "abaplint.json";
     if (fs.existsSync(f) === false) {
+      f = process.cwd() + path.sep + "abaplint.jsonc";
+    }
+    if (fs.existsSync(f) === false) {
+      f = process.cwd() + path.sep + "abaplint.json5";
+    }
+    if (fs.existsSync(f) === false) {
       process.stderr.write("Using default config\n");
       return {config: Config.getDefault(), base: "."};
     }
   } else {
     if (fs.existsSync(filename) === false) {
-      process.stderr.write("Specified abaplint.json does not exist, using default config\n");
+      process.stderr.write("Specified abaplint configuration file does not exist, using default config\n");
       return {config: Config.getDefault(), base: "."};
     } else if (fs.statSync(filename).isDirectory() === true) {
       process.stderr.write("Supply filename, not directory, using default config\n");
@@ -165,7 +171,7 @@ async function run() {
     const {config, base} = loadConfig(argv._[0]);
     try {
       if (config.get().global.files === undefined) {
-        throw "Error: Update abaplint.json to latest format";
+        throw "Error: Update abaplint configuration file to latest format";
       }
       const files = FileOperations.loadFileNames(base + config.get().global.files);
       loaded = await FileOperations.loadFiles(compress, files, progress);
