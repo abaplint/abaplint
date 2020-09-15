@@ -9,6 +9,7 @@ import {IRegistry, IRunInput} from "./_iregistry";
 import {IConfiguration} from "./_config";
 import {ABAPObject} from "./objects/_abap_object";
 import {FindGlobalDefinitions} from "./abap/5_syntax/global_definitions/find_global_definitions";
+import {SyntaxLogic} from "./abap/5_syntax/syntax";
 
 // todo, this should really be an instance in case there are multiple Registry'ies
 class ParsingPerformance {
@@ -271,21 +272,27 @@ export class Registry implements IRegistry {
     const rules = this.conf.getEnabledRules();
     const skipLogic = new SkipLogic(this);
 
+    input?.progress?.set(iobj ? 1 : this.getObjectCount(false), "Run Syntax");
+    const check: IObject[] = [];
+    for (const obj of objects) {
+      input?.progress?.tick("Run Syntax - " + obj.getName());
+      if (skipLogic.skip(obj) || this.isDependency(obj)) {
+        continue;
+      }
+      if (obj instanceof ABAPObject) {
+        new SyntaxLogic(this, obj).run();
+      }
+      check.push(obj);
+    }
+
+    input?.progress?.set(rules.length, "Initialize Rules");
     for (const rule of rules) {
+      input?.progress?.tick("Initialize Rules - " + rule.getMetadata().key);
       if (rule.initialize === undefined) {
         throw new Error(rule.getMetadata().key + " missing initialize method");
       }
       rule.initialize(this);
       rulePerformance[rule.getMetadata().key] = 0;
-    }
-
-    const check: IObject[] = [];
-    for (const obj of objects) {
-      if (skipLogic.skip(obj) || this.isDependency(obj)) {
-        continue;
-      }
-
-      check.push(obj);
     }
 
     input?.progress?.set(check.length, "Finding Issues");
