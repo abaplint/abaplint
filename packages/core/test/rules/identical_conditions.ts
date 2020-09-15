@@ -11,7 +11,7 @@ async function run(abap: string){
   return issues;
 }
 
-describe.skip("Rule: identical_conditions", () => {
+describe("Rule: identical_conditions", () => {
 
   it("no error", async () => {
     const abap = `WRITE hello.`;
@@ -45,14 +45,21 @@ describe.skip("Rule: identical_conditions", () => {
     expect(issues.length).to.equal(1);
   });
 
-  it("error, top level condition identical, IF", async () => {
+  it.skip("error, top level condition identical, IF", async () => {
     const abap = `IF foo = bar OR foo = bar.
     ENDIF.`;
     const issues = await run(abap);
     expect(issues.length).to.equal(1);
   });
 
-  it("error, top level condition identical, WHILE", async () => {
+  it.skip("error, top level condition identical, IF", async () => {
+    const abap = `IF foo = bar OR 1 = a OR foo = bar.
+    ENDIF.`;
+    const issues = await run(abap);
+    expect(issues.length).to.equal(1);
+  });
+
+  it.skip("error, top level condition identical, WHILE", async () => {
     const abap = `WHILE foo = bar AND foo = bar.
     ENDWHILE.`;
     const issues = await run(abap);
