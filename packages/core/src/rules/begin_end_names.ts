@@ -8,7 +8,7 @@ import * as Statements from "../abap/2_statements/statements";
 import {StructureNode} from "../abap/nodes";
 import {IStructure} from "../abap/3_structures/structures/_structure";
 import {IStatement} from "../abap/2_statements/statements/_statement";
-import {RuleTag} from "./_irule";
+import {IRuleMetadata, RuleTag} from "./_irule";
 import {EditHelper} from "../edit_helper";
 
 export class BeginEndNamesConf extends BasicRuleConfig {
@@ -17,12 +17,18 @@ export class BeginEndNamesConf extends BasicRuleConfig {
 export class BeginEndNames extends ABAPRule {
   private conf = new BeginEndNamesConf();
 
-  public getMetadata() {
+  public getMetadata(): IRuleMetadata {
     return {
       key: "begin_end_names",
       title: "Check BEGIN END names",
       shortDescription: `Check BEGIN OF and END OF names match`,
       tags: [RuleTag.Syntax, RuleTag.Quickfix],
+      badExample: `DATA: BEGIN OF stru,
+      field TYPE i,
+    END OF structure_not_the_same.`,
+      goodExample: `DATA: BEGIN OF stru,
+      field TYPE i,
+    END OF stru.`,
     };
   }
 

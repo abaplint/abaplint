@@ -39,6 +39,8 @@ No generic or void typed variables.
 First position used must be a full/pure write.`,
       extendedInformation: `https://github.com/SAP/styleguides/blob/master/clean-abap/CleanABAP.md#prefer-inline-to-up-front-declarations`,
       tags: [RuleTag.Styleguide, RuleTag.Upport, RuleTag.Experimental, RuleTag.Quickfix],
+      badExample: `DATA foo TYPE i.\nfoo = 2.`,
+      goodExample: `DATA(foo) = 2.`,
     };
   }
 
