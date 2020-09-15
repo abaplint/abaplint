@@ -21,6 +21,7 @@ export * from "./component_cond";
 export * from "./component_name";
 export * from "./concatenated_constant";
 export * from "./cond_body";
+export * from "./cond_sub";
 export * from "./cond";
 export * from "./constant_field_length";
 export * from "./constant_or_field_source";

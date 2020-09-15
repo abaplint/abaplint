@@ -45,21 +45,28 @@ describe("Rule: identical_conditions", () => {
     expect(issues.length).to.equal(1);
   });
 
-  it.skip("error, top level condition identical, IF", async () => {
+  it("error, top level condition identical, IF", async () => {
     const abap = `IF foo = bar OR foo = bar.
     ENDIF.`;
     const issues = await run(abap);
     expect(issues.length).to.equal(1);
   });
 
-  it.skip("error, top level condition identical, IF", async () => {
+  it("error, top level condition identical, IF", async () => {
     const abap = `IF foo = bar OR 1 = a OR foo = bar.
     ENDIF.`;
     const issues = await run(abap);
     expect(issues.length).to.equal(1);
   });
 
-  it.skip("error, top level condition identical, WHILE", async () => {
+  it("no error, mixed operators, IF", async () => {
+    const abap = `IF foo = bar AND loo = sdf OR 1 = a OR foo = bar.
+    ENDIF.`;
+    const issues = await run(abap);
+    expect(issues.length).to.equal(0);
+  });
+
+  it("error, top level condition identical, WHILE", async () => {
     const abap = `WHILE foo = bar AND foo = bar.
     ENDWHILE.`;
     const issues = await run(abap);

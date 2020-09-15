@@ -59,8 +59,26 @@ export class IdenticalConditions extends ABAPRule {
 
 ////////////////
 
-  private analyzeCond(_file: ABAPFile, _node: ExpressionNode): Issue[] {
-// TODO
+  private analyzeCond(file: ABAPFile, node: ExpressionNode): Issue[] {
+    const conditions: string[] = [];
+    let operator = "";
+
+    for (const c of node.getChildren()) {
+      if (c instanceof ExpressionNode) {
+        conditions.push(c.concatTokens().toUpperCase());
+      } else if (operator === "") {
+        operator = c.get().getStr().toUpperCase();
+      } else if (operator !== c.get().getStr().toUpperCase()) {
+        return [];
+      }
+    }
+
+    if (hasDuplicates(conditions)) {
+      const message = "Identical conditions";
+      const issue = Issue.atToken(file, node.getFirstToken(), message, this.getMetadata().key);
+      return [issue];
+    }
+
     return [];
   }
 
