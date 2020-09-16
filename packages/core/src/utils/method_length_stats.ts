@@ -26,7 +26,7 @@ export class MethodLengthStats {
       return [];
     }
 
-    for (const file of (obj as ABAPObject).getABAPFiles()) {
+    for (const file of obj.getABAPFiles()) {
       for (const stat of file.getStatements()) {
         const type = stat.get();
         if (type instanceof Statements.Method) {
