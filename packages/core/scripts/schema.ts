@@ -13,6 +13,7 @@ import {CheckCommentsConf} from "../src/rules/check_comments";
 import {CheckDDICConf} from "../src/rules/check_ddic";
 import {CheckIncludeConf} from "../src/rules/check_include";
 import {CheckNoHandlerPragmaConf} from "../src/rules/check_no_handler_pragma";
+import {CheckSubrcConf} from "../src/rules/check_subrc";
 import {CheckSyntaxConf} from "../src/rules/check_syntax";
 import {CheckTextElementsConf} from "../src/rules/check_text_elements";
 import {CheckTransformationExistsConf} from "../src/rules/check_transformation_exists";
@@ -94,6 +95,7 @@ import {UnknownTypesConf} from "../src/rules/unknown_types";
 import {UnreachableCodeConf} from "../src/rules/unreachable_code";
 import {UnusedTypesConf} from "../src/rules/unused_types";
 import {UnusedVariablesConf} from "../src/rules/unused_variables";
+import {UseLineExistsConf} from "../src/rules/use_line_exists";
 import {UseNewConf} from "../src/rules/use_new";
 import {WhenOthersLastConf} from "../src/rules/when_others_last";
 import {WhitespaceEndConf} from "../src/rules/whitespace_end";
@@ -119,6 +121,7 @@ export interface IConfig {
     "check_ddic"?: CheckDDICConf | boolean,
     "check_include"?: CheckIncludeConf | boolean,
     "check_no_handler_pragma"?: CheckNoHandlerPragmaConf | boolean,
+    "check_subrc"?: CheckSubrcConf | boolean,
     "check_syntax"?: CheckSyntaxConf | boolean,
     "check_text_elements"?: CheckTextElementsConf | boolean,
     "check_transformation_exists"?: CheckTransformationExistsConf | boolean,
@@ -200,6 +203,7 @@ export interface IConfig {
     "unreachable_code"?: UnreachableCodeConf | boolean,
     "unused_types"?: UnusedTypesConf | boolean,
     "unused_variables"?: UnusedVariablesConf | boolean,
+    "use_line_exists"?: UseLineExistsConf | boolean,
     "use_new"?: UseNewConf | boolean,
     "when_others_last"?: WhenOthersLastConf | boolean,
     "whitespace_end"?: WhitespaceEndConf | boolean,

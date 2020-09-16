@@ -294,6 +294,57 @@
       },
       "type": "object"
     },
+    "CheckSubrcConf": {
+      "additionalProperties": false,
+      "properties": {
+        "assign": {
+          "type": "boolean"
+        },
+        "authorityCheck": {
+          "type": "boolean"
+        },
+        "exclude": {
+          "description": "List of file regex filename patterns to exclude, case insensitive",
+          "items": {
+            "type": "string"
+          },
+          "type": "array"
+        },
+        "find": {
+          "type": "boolean"
+        },
+        "insertDatabase": {
+          "type": "boolean"
+        },
+        "modifyDatabase": {
+          "type": "boolean"
+        },
+        "openDataset": {
+          "type": "boolean"
+        },
+        "readTable": {
+          "type": "boolean"
+        },
+        "selectSingle": {
+          "type": "boolean"
+        },
+        "updateDatabase": {
+          "type": "boolean"
+        }
+      },
+      "required": [
+        "openDataset",
+        "authorityCheck",
+        "selectSingle",
+        "updateDatabase",
+        "insertDatabase",
+        "modifyDatabase",
+        "readTable",
+        "assign",
+        "find"
+      ],
+      "type": "object"
+    },
     "CheckSyntaxConf": {
       "additionalProperties": false,
       "properties": {
@@ -974,6 +1025,17 @@
                 }
               ],
               "description": "Checks NO_HANDLER pragmas that can be removed\nhttps://rules.abaplint.org/check_no_handler_pragma"
+            },
+            "check_subrc": {
+              "anyOf": [
+                {
+                  "$ref": "#/definitions/CheckSubrcConf"
+                },
+                {
+                  "type": "boolean"
+                }
+              ],
+              "description": "Check sy-subrc\nhttps://rules.abaplint.org/check_subrc"
             },
             "check_syntax": {
               "anyOf": [
@@ -1866,6 +1928,17 @@
               ],
               "description": "Checks for unused variables and constants\nTags: Experimental, Quickfix\nhttps://rules.abaplint.org/unused_variables"
             },
+            "use_line_exists": {
+              "anyOf": [
+                {
+                  "$ref": "#/definitions/UseLineExistsConf"
+                },
+                {
+                  "type": "boolean"
+                }
+              ],
+              "description": "Use line_exists, from 740sp02 and up\nTags: Upport, Styleguide\nhttps://rules.abaplint.org/use_line_exists"
+            },
             "use_new": {
               "anyOf": [
                 {
@@ -1949,6 +2022,7 @@
       "additionalProperties": false,
       "properties": {
         "exclude": {
+          "description": "list of files to exclude, case insensitive regex",
           "items": {
             "type": "string"
           },
@@ -3310,6 +3384,19 @@
       "required": [
         "skipNames"
       ],
+      "type": "object"
+    },
+    "UseLineExistsConf": {
+      "additionalProperties": false,
+      "properties": {
+        "exclude": {
+          "description": "List of file regex filename patterns to exclude, case insensitive",
+          "items": {
+            "type": "string"
+          },
+          "type": "array"
+        }
+      },
       "type": "object"
     },
     "UseNewConf": {
