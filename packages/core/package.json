@@ -56,7 +56,7 @@
         "@microsoft/api-extractor": "7.8.2-pr1796.0",
         "@types/chai": "^4.2.12",
         "@types/mocha": "^8.0.3",
-        "@types/node": "^14.10.1",
+        "@types/node": "^14.10.2",
         "chai": "^4.2.0",
         "eslint": "^7.9.0",
         "madge": "^3.10.0",

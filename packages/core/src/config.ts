@@ -27,9 +27,11 @@ export class Config implements IConfiguration {
     const config: IConfig = {
       global: {
         files: "/src/**/*.*",
+        exclude: [],
         skipGeneratedGatewayClasses: true,
         skipGeneratedPersistentClasses: true,
         skipGeneratedFunctionGroups: true,
+        useApackDependencies: false,
       },
       dependencies: [{
         url: "https://github.com/abaplint/deps",

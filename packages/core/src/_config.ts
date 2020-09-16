@@ -9,6 +9,7 @@ export interface IGlobalConfig {
   skipGeneratedFunctionGroups: boolean;
   /** Clone and parse dependencies specified in .apack-manifest.xml if it is present */
   useApackDependencies?: boolean;
+  /** list of files to exclude, case insensitive regex */
   exclude?: string[];
 }
 

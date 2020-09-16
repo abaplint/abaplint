@@ -1949,6 +1949,7 @@
       "additionalProperties": false,
       "properties": {
         "exclude": {
+          "description": "list of files to exclude, case insensitive regex",
           "items": {
             "type": "string"
           },
