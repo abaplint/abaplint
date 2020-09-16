@@ -119,6 +119,7 @@ export class BuiltIn {
     ret.push({name: "FLOOR", mandatory: {"val": new FloatType()}, return: new IntegerType()});
     ret.push({name: "FRAC", mandatory: {"val": new FloatType()}, return: new IntegerType()});
     ret.push({name: "FROM_MIXED", mandatory: {"val": new StringType(), "case": new StringType()}, return: new StringType()});
+    ret.push({name: "INSERT", mandatory: {"val": new StringType(), "sub": new StringType(), "off": new IntegerType()}, return: new IntegerType()});
     ret.push({name: "IPOW", mandatory: {"base": new FloatType(), "exp": new FloatType()}, return: new IntegerType(), version: Version.v740sp02});
     ret.push({name: "LINE_EXISTS", mandatory: {"val": new StringType()}, return: new CharacterType(1), version: Version.v740sp02});
     ret.push({name: "LINE_INDEX", mandatory: {"val": new StringType()}, return: new IntegerType(), version: Version.v740sp02});
