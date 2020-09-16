@@ -1,5 +1,11 @@
+import {Config} from "../../src/config";
+import {MemoryFile} from "../../src/files/memory_file";
+import {Issue} from "../../src/issue";
+import {Registry} from "../../src/registry";
 import {ParserError} from "../../src/rules/parser_error";
+import {Version} from "../../src/version";
 import {testRule} from "./_utils";
+import {expect} from "chai";
 
 const tests = [
   {abap: "blah blah.", cnt: 1},
@@ -43,3 +49,18 @@ _bar.`, cnt: 0},
 ];
 
 testRule(tests, ParserError);
+
+async function findIssues(abap: string, version?: Version): Promise<readonly Issue[]> {
+  const config = Config.getDefault(version);
+  const reg = new Registry(config).addFile(new MemoryFile("zparser_error.prog.abap", abap));
+  await reg.parseAsync();
+  const rule = new ParserError();
+  return rule.initialize(reg).run(reg.getFirstObject()!);
+}
+
+describe("Rule: parser_error", () => {
+  it("pragma should give error on 700", async () => {
+    const issues = await findIssues("foo = 2 ##pragma.", Version.v700);
+    expect(issues.length).to.equal(1);
+  });
+});

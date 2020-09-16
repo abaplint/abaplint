@@ -1647,7 +1647,7 @@
                   "type": "boolean"
                 }
               ],
-              "description": "Checks for syntax unrecognized by abaplint.\n\nSee recognized syntax at https://syntax.abaplint.org\nTags: Syntax\nhttps://rules.abaplint.org/parser_error"
+              "description": "Checks for syntax not recognized by abaplint.\n\nSee recognized syntax at https://syntax.abaplint.org\nTags: Syntax\nhttps://rules.abaplint.org/parser_error"
             },
             "parser_missing_space": {
               "anyOf": [
