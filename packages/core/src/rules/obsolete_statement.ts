@@ -5,6 +5,7 @@ import {ABAPRule} from "./_abap_rule";
 import {ABAPFile} from "../files";
 import {BasicRuleConfig} from "./_basic_rule_config";
 import {Position} from "../position";
+import {IRuleMetadata} from "./_irule";
 
 export class ObsoleteStatementConf extends BasicRuleConfig {
   /** Check for REFRESH statement */
@@ -37,11 +38,13 @@ export class ObsoleteStatement extends ABAPRule {
 
   private conf = new ObsoleteStatementConf();
 
-  public getMetadata() {
+  public getMetadata(): IRuleMetadata {
     return {
       key: "obsolete_statement",
       title: "Obsolete statements",
       shortDescription: `Checks for usages of certain obsolete statements`,
+      extendedInformation:
+      `https://github.com/SAP/styleguides/blob/master/clean-abap/CleanABAP.md#prefer-functional-to-procedural-language-constructs`,
     };
   }
 

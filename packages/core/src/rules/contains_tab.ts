@@ -7,6 +7,8 @@ import {IRuleMetadata, RuleTag} from "./_irule";
 import {EditHelper} from "../edit_helper";
 
 export class ContainsTabConf extends BasicRuleConfig {
+  /** quick fix replace with number of spaces */
+  public spaces: number = 1;
 }
 
 export class ContainsTab extends ABAPRule {
@@ -18,8 +20,10 @@ export class ContainsTab extends ABAPRule {
       key: "contains_tab",
       title: "Code contains tab",
       shortDescription: `Checks for usage of tabs (enable to enforce spaces)`,
-      extendedInformation: `https://docs.abapopenchecks.org/checks/09/`,
-      tags: [RuleTag.Whitespace, RuleTag.Quickfix],
+      extendedInformation: `
+https://docs.abapopenchecks.org/checks/09/
+https://github.com/SAP/styleguides/blob/master/clean-abap/CleanABAP.md#indent-and-snap-to-tab`,
+      tags: [RuleTag.Whitespace, RuleTag.Quickfix, RuleTag.Styleguide],
     };
   }
 
@@ -28,6 +32,9 @@ export class ContainsTab extends ABAPRule {
   }
 
   public getConfig() {
+    if (this.conf.spaces === undefined) {
+      this.conf.spaces = 1;
+    }
     return this.conf;
   }
 
@@ -55,7 +62,7 @@ export class ContainsTab extends ABAPRule {
   private createIssue(line: number, tabCol: number, tabAmount: number, file: ABAPFile) {
     const tabStartPos = new Position(line + 1, tabCol + 1);
     const tabEndPos = new Position(line + 1, tabCol + tabAmount);
-    const fix = EditHelper.replaceRange(file, tabStartPos, tabEndPos, " ");
+    const fix = EditHelper.replaceRange(file, tabStartPos, tabEndPos, " ".repeat(this.getConfig().spaces));
     return Issue.atRange(file, tabStartPos, tabEndPos, this.getMessage(), this.getMetadata().key, fix);
   }
 }
