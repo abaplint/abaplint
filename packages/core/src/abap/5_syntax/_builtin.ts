@@ -8,11 +8,13 @@ import {Visibility} from "../4_file_information/visibility";
 import {Identifier} from "../4_file_information/_identifier";
 import {Token} from "../1_lexer/tokens/_token";
 import {IMethodParameters} from "../types/_method_parameters";
+import {Version} from "../../version";
 
 interface IBuiltinMethod {
   name: string;
   mandatory: {[key: string]: AbstractType},
   optional?: {[key: string]: AbstractType},
+  version?: Version,
   return: AbstractType;
 }
 
@@ -104,7 +106,8 @@ export class BuiltIn {
     // todo, make types correct, some of the strings are clike?
     // todo, adjust mandatory vs optional parameters
     ret.push({name: "ABS", mandatory: {"val": new FloatType()}, return: new IntegerType()});
-    ret.push({name: "BOOLC", mandatory: {"val": new StringType()}, return: new CharacterType(1)});
+    ret.push({name: "BOOLC", mandatory: {"val": new StringType()}, return: new CharacterType(1), version: Version.v702});
+    ret.push({name: "BOOLX", mandatory: {"val": new StringType()}, return: new CharacterType(1), version: Version.v702});
     ret.push({name: "CEIL", mandatory: {"val": new FloatType()}, return: new IntegerType()});
     ret.push({name: "CHARLEN", mandatory: {"val": new StringType()}, return: new IntegerType()});
     ret.push({name: "CONCAT_LINES_OF", mandatory: {"table": new StringType()}, optional: {"sep": new StringType()}, return: new StringType()});
@@ -116,8 +119,9 @@ export class BuiltIn {
     ret.push({name: "FLOOR", mandatory: {"val": new FloatType()}, return: new IntegerType()});
     ret.push({name: "FRAC", mandatory: {"val": new FloatType()}, return: new IntegerType()});
     ret.push({name: "FROM_MIXED", mandatory: {"val": new StringType(), "case": new StringType()}, return: new StringType()});
-    ret.push({name: "LINE_INDEX", mandatory: {"val": new StringType()}, return: new IntegerType()});
-    ret.push({name: "LINE_EXISTS", mandatory: {"val": new StringType()}, return: new CharacterType(1)});
+    ret.push({name: "IPOW", mandatory: {"base": new FloatType(), "exp": new FloatType()}, return: new IntegerType(), version: Version.v740sp02});
+    ret.push({name: "LINE_EXISTS", mandatory: {"val": new StringType()}, return: new CharacterType(1), version: Version.v740sp02});
+    ret.push({name: "LINE_INDEX", mandatory: {"val": new StringType()}, return: new IntegerType(), version: Version.v740sp02});
     ret.push({name: "LINES", mandatory: {"val": new StringType()}, return: new IntegerType()});
     ret.push({name: "MATCH", mandatory: {"val": new StringType(), "regex": new StringType()}, return: new StringType()});
     ret.push({name: "NMAX", mandatory: {"val1": new StringType(), "val2": new StringType()}, return: new IntegerType()});
@@ -144,7 +148,7 @@ export class BuiltIn {
     ret.push({name: "TO_UPPER", mandatory: {"val": new StringType()}, return: new StringType()});
     ret.push({name: "TRANSLATE", mandatory: {"val": new StringType(), "from": new StringType(), "to": new StringType()}, return: new StringType()});
     ret.push({name: "TRUNC", mandatory: {"val": new FloatType()}, return: new IntegerType()});
-    ret.push({name: "XSDBOOL", mandatory: {"val": new StringType()}, return: new CharacterType(1)});
+    ret.push({name: "XSDBOOL", mandatory: {"val": new StringType()}, return: new CharacterType(1), version: Version.v740sp08});
     ret.push({name: "XSTRLEN", mandatory: {"val": new StringType()}, return: new IntegerType()});
 
     // todo, optimize, use hash map
