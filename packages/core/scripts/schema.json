@@ -526,6 +526,25 @@
       ],
       "type": "object"
     },
+    "CyclomaticComplexityConf": {
+      "additionalProperties": false,
+      "properties": {
+        "exclude": {
+          "description": "List of file regex filename patterns to exclude, case insensitive",
+          "items": {
+            "type": "string"
+          },
+          "type": "array"
+        },
+        "max": {
+          "type": "number"
+        }
+      },
+      "required": [
+        "max"
+      ],
+      "type": "object"
+    },
     "DefinitionsTopConf": {
       "additionalProperties": false,
       "properties": {
@@ -1143,6 +1162,17 @@
               ],
               "description": "Checks for usage of tabs (enable to enforce spaces)\nTags: Whitespace, Quickfix, Styleguide\nhttps://rules.abaplint.org/contains_tab"
             },
+            "cyclomatic_complexity": {
+              "anyOf": [
+                {
+                  "$ref": "#/definitions/CyclomaticComplexityConf"
+                },
+                {
+                  "type": "boolean"
+                }
+              ],
+              "description": "Cyclomatic complexity, only reported for methods\nhttps://rules.abaplint.org/cyclomatic_complexity"
+            },
             "definitions_top": {
               "anyOf": [
                 {
@@ -1647,7 +1677,7 @@
                   "type": "boolean"
                 }
               ],
-              "description": "Checks for syntax unrecognized by abaplint.\n\nSee recognized syntax at https://syntax.abaplint.org\nTags: Syntax\nhttps://rules.abaplint.org/parser_error"
+              "description": "Checks for syntax not recognized by abaplint.\n\nSee recognized syntax at https://syntax.abaplint.org\nTags: Syntax\nhttps://rules.abaplint.org/parser_error"
             },
             "parser_missing_space": {
               "anyOf": [

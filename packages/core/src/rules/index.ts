@@ -22,6 +22,7 @@ export * from "./colon_missing_space";
 export * from "./commented_code";
 export * from "./constructor_visibility_public";
 export * from "./contains_tab";
+export * from "./cyclomatic_complexity";
 export * from "./definitions_top";
 export * from "./description_empty";
 export * from "./double_space";
