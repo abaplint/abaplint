@@ -12,6 +12,7 @@ export * from "./check_comments";
 export * from "./check_ddic";
 export * from "./check_include";
 export * from "./check_no_handler_pragma";
+export * from "./check_subrc";
 export * from "./check_syntax";
 export * from "./check_text_elements";
 export * from "./check_transformation_exists";
