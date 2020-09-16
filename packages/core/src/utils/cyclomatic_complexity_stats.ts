@@ -16,6 +16,7 @@ export interface ICyclomaticComplexityResult {
 }
 
 export class CyclomaticComplexityStats {
+
   public static run(obj: IObject): ICyclomaticComplexityResult[] {
     const res: ICyclomaticComplexityResult[] = [];
 
