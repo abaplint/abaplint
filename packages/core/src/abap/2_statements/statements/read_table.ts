@@ -32,6 +32,7 @@ export class ReadTable implements IStatement {
                      using,
                      comparing,
                      str("CASTING"),
+                     str("TRANSPORTING ALL FIELDS"),
                      seq(str("TRANSPORTING"), alt(new Dynamic(), plus(new Field()))),
                      str("BINARY SEARCH"));
 

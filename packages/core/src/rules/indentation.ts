@@ -10,7 +10,8 @@ import * as Statements from "../abap/2_statements/statements";
 import * as Expressions from "../abap/2_statements/expressions";
 import {IRuleMetadata, RuleTag} from "./_irule";
 import {DDIC} from "../ddic";
-import {VirtualPosition} from "../position";
+import {Position, VirtualPosition} from "../position";
+import {EditHelper} from "../edit_helper";
 
 export class IndentationConf extends BasicRuleConfig {
   /** Ignore global exception classes */
@@ -29,7 +30,7 @@ export class Indentation extends ABAPRule {
       key: "indentation",
       title: "Indentation",
       shortDescription: `Checks indentation`,
-      tags: [RuleTag.Whitespace],
+      tags: [RuleTag.Whitespace, RuleTag.Quickfix],
     };
   }
 
@@ -102,8 +103,10 @@ export class Indentation extends ABAPRule {
       }
 
       if (indent && indent > 0 && indent !== position.getCol()) {
-        const message = "Indentation problem, expected " + (indent - 1) + " spaces";
-        const issue = Issue.atPosition(file, position, message, this.getMetadata().key);
+        const expected = indent - 1;
+        const fix = EditHelper.replaceRange(file, new Position(position.getRow(), 1), position, " ".repeat(expected));
+        const message = "Indentation problem, expected " + expected + " spaces";
+        const issue = Issue.atPosition(file, position, message, this.getMetadata().key, fix);
         return [issue]; // only one finding per include
       }
     }

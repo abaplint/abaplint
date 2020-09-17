@@ -1,5 +1,6 @@
 import {Issue} from "../issue";
 import * as Statements from "../abap/2_statements/statements";
+import * as Expressions from "../abap/2_statements/expressions";
 import {ABAPRule} from "./_abap_rule";
 import {ABAPFile} from "../files";
 import {BasicRuleConfig} from "./_basic_rule_config";
@@ -45,7 +46,7 @@ export class UseLineExists extends ABAPRule {
       const statement = statements[i];
       if (statement.get() instanceof Statements.ReadTable
           && statement.concatTokens().toUpperCase().includes("TRANSPORTING NO FIELDS")
-          && this.checksSubrc(i, statements)) {
+          && this.checksSubrc(i, statements) === true) {
         issues.push(Issue.atStatement(file, statement, "Use line_exists", this.getMetadata().key));
       }
     }
@@ -60,15 +61,13 @@ export class UseLineExists extends ABAPRule {
       const statement = statements[i];
       if (statement.get() instanceof Comment) {
         continue;
-      } else if (statement.get() instanceof Statements.If) {
-        const concat = statement.concatTokens().toUpperCase();
-        return concat === "IF SY-SUBRC = 0."
-          || concat === "IF SY-SUBRC = 4."
-          || concat === "IF SY-SUBRC IS INITIAL."
-          || concat === "IF NOT SY-SUBRC IS INITIAL."
-          || concat === "IF SY-SUBRC IS NOT INITIAL."
-          || concat === "IF SY-SUBRC <> 0."
-          || concat === "IF SY-SUBRC <> 4.";
+      }
+      for (const c of statement.findAllExpressions(Expressions.Cond)) {
+        for (const s of c.findAllExpressions(Expressions.Source)) {
+          if (s.concatTokens().toUpperCase() === "SY-SUBRC") {
+            return true;
+          }
+        }
       }
       return false;
     }

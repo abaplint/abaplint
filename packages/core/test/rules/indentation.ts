@@ -1,4 +1,4 @@
-import {testRule} from "./_utils";
+import {testRule, testRuleFixSingle} from "./_utils";
 import {Indentation, IndentationConf} from "../../src/rules/indentation";
 
 const tests = [
@@ -123,3 +123,25 @@ config.ignoreGlobalClassDefinition = true;
 config.ignoreGlobalInterface = true;
 
 testRule(tests2, Indentation, config);
+
+function testFix(input: string, expected: string) {
+  testRuleFixSingle(input, expected, new Indentation());
+}
+
+describe("Rule: indentation, test quick fix", () => {
+
+  it("top level", async () => {
+    testFix("  WRITE 'hello'.", "WRITE 'hello'.");
+  });
+
+  it("inside IF", async () => {
+    testFix(`
+IF foo = bar.
+WRITE 'hello'.
+ENDIF.`, `
+IF foo = bar.
+  WRITE 'hello'.
+ENDIF.`);
+  });
+
+});
