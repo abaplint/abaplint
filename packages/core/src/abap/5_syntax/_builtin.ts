@@ -1,5 +1,5 @@
 import {TypedIdentifier, IdentifierMeta} from "../types/_typed_identifier";
-import {VoidType, CharacterType, StructureType, IStructureComponent, IntegerType, NumericType, DateType, TimeType, StringType, FloatType} from "../types/basic";
+import {VoidType, CharacterType, StructureType, IStructureComponent, IntegerType, NumericType, DateType, TimeType, StringType, FloatType, XStringType, TableType} from "../types/basic";
 import {Identifier as TokenIdentifier} from "../1_lexer/tokens";
 import {Position} from "../../position";
 import {AbstractType} from "../types/basic/_abstract_type";
