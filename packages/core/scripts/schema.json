@@ -1413,7 +1413,7 @@
                   "type": "boolean"
                 }
               ],
-              "description": "Checks indentation\nTags: Whitespace\nhttps://rules.abaplint.org/indentation"
+              "description": "Checks indentation\nTags: Whitespace, Quickfix\nhttps://rules.abaplint.org/indentation"
             },
             "inline_data_old_versions": {
               "anyOf": [
