@@ -11,6 +11,8 @@ export function preamble() {
   <meta name="keywords" content="ABAP,Open Source,abaplint,lint,linter,SAP,static analysis" />
   <title>rules.abaplint.org</title>
   <link rel="stylesheet" type="text/css" href="/style.css">
+  <link rel="icon" type="image/png" href="/favicon-32x32.png" sizes="32x32" />
+  <link rel="icon" type="image/png" href="/favicon-16x16.png" sizes="16x16" />
 </head>
 <body>
 <div class="content">`;
