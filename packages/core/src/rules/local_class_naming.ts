@@ -76,7 +76,8 @@ export class LocalClassNaming extends ABAPRule {
           Issue.atIdentifier(
             classDef.identifier,
             this.getDescription(expected, className),
-            this.getMetadata().key));
+            this.getMetadata().key,
+            this.conf.severity));
       }
     }
     return issues;

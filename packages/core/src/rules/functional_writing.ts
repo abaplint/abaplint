@@ -73,7 +73,7 @@ https://docs.abapopenchecks.org/checks/07/`,
           continue;
         }
 
-        const issue = Issue.atStatement(file, statement, this.getMessage(), this.getMetadata().key);
+        const issue = Issue.atStatement(file, statement, this.getMessage(), this.getMetadata().key, this.conf.severity);
         issues.push(issue);
       }
     }

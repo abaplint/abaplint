@@ -42,7 +42,7 @@ abapGit does not work with CRLF`,
         for (let i = 0; i < rows.length; i++) {
           if (rows[i].endsWith("\r") === true) {
             const message = "Line contains carriage return";
-            const issue = Issue.atRow(file, i + 1, message, this.getMetadata().key);
+            const issue = Issue.atRow(file, i + 1, message, this.getMetadata().key, this.conf.severity);
             output.push(issue);
             break; // only one finding per file
           }

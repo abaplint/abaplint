@@ -75,7 +75,7 @@ export class IdenticalConditions extends ABAPRule {
 
     if (hasDuplicates(conditions)) {
       const message = "Identical conditions";
-      const issue = Issue.atToken(file, node.getFirstToken(), message, this.getMetadata().key);
+      const issue = Issue.atToken(file, node.getFirstToken(), message, this.getMetadata().key, this.conf.severity);
       return [issue];
     }
 
@@ -103,7 +103,7 @@ export class IdenticalConditions extends ABAPRule {
 
     if (hasDuplicates(conditions)) {
       const message = "Identical conditions";
-      const issue = Issue.atStatement(file, i, message, this.getMetadata().key);
+      const issue = Issue.atStatement(file, i, message, this.getMetadata().key, this.conf.severity);
       return [issue];
     }
 
@@ -134,7 +134,7 @@ export class IdenticalConditions extends ABAPRule {
 
     if (hasDuplicates(conditions)) {
       const message = "Identical conditions";
-      const issue = Issue.atStatement(file, i, message, this.getMetadata().key);
+      const issue = Issue.atStatement(file, i, message, this.getMetadata().key, this.conf.severity);
       return [issue];
     }
 

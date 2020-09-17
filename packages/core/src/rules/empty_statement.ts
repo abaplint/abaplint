@@ -47,7 +47,7 @@ export class EmptyStatement extends ABAPRule {
         const token = sta.getFirstToken();
         const fix = EditHelper.deleteRange(file, previousEnd, token.getEnd());
 
-        const issue = Issue.atStatement(file, sta, this.getMessage(), this.getMetadata().key, fix);
+        const issue = Issue.atStatement(file, sta, this.getMessage(), this.getMetadata().key, this.conf.severity, fix);
         issues.push(issue);
       }
 

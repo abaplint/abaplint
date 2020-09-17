@@ -58,7 +58,7 @@ DATA END OF foo.`,
       if (t.findFirstStatement(Statements.IncludeType)) {
         const token = t.getFirstToken();
         const message = "TYPE BEGIN with single INCLUDE";
-        const issue = Issue.atToken(file, token, message, this.getMetadata().key);
+        const issue = Issue.atToken(file, token, message, this.getMetadata().key, this.conf.severity);
         issues.push(issue);
       }
     }
@@ -70,7 +70,7 @@ DATA END OF foo.`,
       if (t.findFirstStatement(Statements.IncludeType)) {
         const token = t.getFirstToken();
         const message = "DATA BEGIN with single INCLUDE";
-        const issue = Issue.atToken(file, token, message, this.getMetadata().key);
+        const issue = Issue.atToken(file, token, message, this.getMetadata().key, this.conf.severity);
         issues.push(issue);
       }
     }
@@ -82,7 +82,7 @@ DATA END OF foo.`,
       if (t.findFirstStatement(Statements.IncludeType)) {
         const token = t.getFirstToken();
         const message = "STATICS BEGIN with single INCLUDE";
-        const issue = Issue.atToken(file, token, message, this.getMetadata().key);
+        const issue = Issue.atToken(file, token, message, this.getMetadata().key, this.conf.severity);
         issues.push(issue);
       }
     }

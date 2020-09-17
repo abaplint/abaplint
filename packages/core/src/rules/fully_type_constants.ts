@@ -59,7 +59,8 @@ export class FullyTypeConstants extends ABAPRule {
             file,
             token,
             this.getDescription(type),
-            this.getMetadata().key));
+            this.getMetadata().key,
+            this.conf.severity));
       }
     }
     return issues;

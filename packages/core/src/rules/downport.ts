@@ -136,7 +136,7 @@ Only one transformation is applied to a statement at a time, so multiple steps m
       }
 
       if (found) {
-        return Issue.atToken(file, node.getFirstToken(), "Use CREATE OBJECT instead of NEW", this.getMetadata().key, fix);
+        return Issue.atToken(file, node.getFirstToken(), "Use CREATE OBJECT instead of NEW", this.getMetadata().key, this.conf.severity, fix);
       }
     }
 

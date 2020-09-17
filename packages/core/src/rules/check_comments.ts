@@ -68,7 +68,8 @@ export class CheckComments extends ABAPRule {
             file,
             statement,
             this.getDescription(IssueType.EndOfLine),
-            this.getMetadata().key));
+            this.getMetadata().key,
+            this.conf.severity));
       }
     }
     return issues;

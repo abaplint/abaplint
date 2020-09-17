@@ -46,7 +46,7 @@ export class MessageExistsRule extends ABAPRule {
         const token = node.getFirstToken();
         if (this.reg.getObject("MSAG", token.getStr()) === undefined) {
           const message = this.getDescription("Message class \"" + token.getStr() + "\" not found");
-          const issue = Issue.atToken(file, token, message, this.getMetadata().key);
+          const issue = Issue.atToken(file, token, message, this.getMetadata().key, this.conf.severity);
           issues.push(issue);
         }
       }
@@ -64,7 +64,7 @@ export class MessageExistsRule extends ABAPRule {
         const msag = this.reg.getObject("MSAG", name) as MessageClass;
         if (msag === undefined) {
           const message = this.getDescription("Message class \"" + token.getStr() + "\" not found");
-          const issue = Issue.atToken(file, token, message, this.getMetadata().key);
+          const issue = Issue.atToken(file, token, message, this.getMetadata().key, this.conf.severity);
           issues.push(issue);
           continue;
         }
@@ -76,7 +76,7 @@ export class MessageExistsRule extends ABAPRule {
         const num = numberToken.getStr().substr(1);
         if (msag.getByNumber(num) === undefined) {
           const message = this.getDescription("Message number \"" + num + "\" not found in class \"" + name + "\"");
-          const issue = Issue.atToken(file, numberToken, message, this.getMetadata().key);
+          const issue = Issue.atToken(file, numberToken, message, this.getMetadata().key, this.conf.severity);
           issues.push(issue);
         }
       }

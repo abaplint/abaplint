@@ -82,7 +82,7 @@ export class ForbiddenPseudoAndPragma extends ABAPRule {
         if (found) {
           const fix = EditHelper.deleteToken(file, found);
           const message = "Forbidden pragma";
-          issues.push(Issue.atToken(file, found, message, this.getMetadata().key, fix));
+          issues.push(Issue.atToken(file, found, message, this.getMetadata().key, this.conf.severity, fix));
         }
       }
     }
@@ -125,7 +125,7 @@ export class ForbiddenPseudoAndPragma extends ABAPRule {
         if (s.concatTokens().toUpperCase().includes(p.toUpperCase())) {
           const fix = EditHelper.deleteStatement(file, s);
           const message = "Forbidden pseudo comment";
-          issues.push(Issue.atStatement(file, s, message, this.getMetadata().key, fix));
+          issues.push(Issue.atStatement(file, s, message, this.getMetadata().key, this.conf.severity, fix));
         }
       }
     }

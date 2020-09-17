@@ -83,11 +83,11 @@ export class PreferredCompareOperator extends ABAPRule {
     // values in badOperators can be entered by the user and may not necessarily be actual operators
     if (replacementToken) {
       const fix = EditHelper.replaceRange(file, token.getStart(), token.getEnd(), replacementToken);
-      const issue = Issue.atToken(file, token, message, this.getMetadata().key, fix);
+      const issue = Issue.atToken(file, token, message, this.getMetadata().key, this.conf.severity, fix);
       return issue;
     }
     else {
-      const issue = Issue.atToken(file, token, message, this.getMetadata().key);
+      const issue = Issue.atToken(file, token, message, this.getMetadata().key, this.conf.severity);
       return issue;
     }
   }

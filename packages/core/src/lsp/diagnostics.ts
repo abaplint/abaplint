@@ -30,7 +30,7 @@ export class Diagnostics {
 
   public static mapDiagnostic(issue: Issue): LServer.Diagnostic {
     const diagnosic: LServer.Diagnostic = {
-      severity: LServer.DiagnosticSeverity.Error,
+      severity: issue.getSeverity() as LServer.DiagnosticSeverity,
       range: {
         start: {line: issue.getStart().getRow() - 1, character: issue.getStart().getCol() - 1},
         end: {line: issue.getEnd().getRow() - 1, character: issue.getEnd().getCol() - 1},

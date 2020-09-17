@@ -48,7 +48,7 @@ export class ImplementMethods extends ABAPRule {
 
       if (classImplementation === undefined) {
         const message = "Class implementation for \"" + classDefinition.name + "\" not found";
-        const issue = Issue.atIdentifier(classDefinition.identifier, message, this.getMetadata().key);
+        const issue = Issue.atIdentifier(classDefinition.identifier, message, this.getMetadata().key, this.conf.severity);
         ret.push(issue);
         continue;
       }
@@ -80,7 +80,7 @@ export class ImplementMethods extends ABAPRule {
 
       if (md.isAbstract) {
         if (found !== undefined) {
-          const issue = Issue.atIdentifier(found, "Do not implement abstract method \"" + md.name + "\"", this.getMetadata().key);
+          const issue = Issue.atIdentifier(found, "Do not implement abstract method \"" + md.name + "\"", this.getMetadata().key, this.conf.severity);
           ret.push(issue);
         }
         continue;
@@ -88,7 +88,7 @@ export class ImplementMethods extends ABAPRule {
 
       if (found === undefined) {
         const message = "Implement method \"" + md.name + "\"";
-        const issue = Issue.atIdentifier(impl.identifier, message, this.getMetadata().key);
+        const issue = Issue.atIdentifier(impl.identifier, message, this.getMetadata().key, this.conf.severity);
         ret.push(issue);
       }
     }
@@ -113,7 +113,7 @@ export class ImplementMethods extends ABAPRule {
         }
         if (idef === undefined) {
           const message = "Implemented interface \"" + interfaceInfo.name + "\" not found";
-          const issue = Issue.atIdentifier(def.identifier, message, this.getMetadata().key);
+          const issue = Issue.atIdentifier(def.identifier, message, this.getMetadata().key, this.conf.severity);
           ret.push(issue);
           continue;
         }
@@ -145,7 +145,7 @@ export class ImplementMethods extends ABAPRule {
 
         if (found === undefined) {
           const message = "Implement method \"" + method.name + "\" from interface \"" + interfaceInfo.name + "\"";
-          const issue = Issue.atIdentifier(impl.identifier, message, this.getMetadata().key);
+          const issue = Issue.atIdentifier(impl.identifier, message, this.getMetadata().key, this.conf.severity);
           ret.push(issue);
         }
       }

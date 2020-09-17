@@ -86,7 +86,7 @@ export class BeginEndNames extends ABAPRule {
 
       if (first.getStr().toUpperCase() !== last.getStr().toUpperCase()) {
         const fix = EditHelper.replaceRange(file, last.getStart(), last.getEnd(), first.getStr());
-        const issue = Issue.atToken(file, first, this.getMessage(), this.getMetadata().key, fix);
+        const issue = Issue.atToken(file, first, this.getMessage(), this.getMetadata().key, this.conf.severity, fix);
         output.push(issue);
       }
 

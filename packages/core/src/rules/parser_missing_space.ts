@@ -42,7 +42,7 @@ This rule makes sure the spaces are consistently required across the language.`,
       if (missing) {
         const message = "Missing space between string or character literal and parentheses";
         start = missing;
-        const issue = Issue.atPosition(file, start, message, this.getMetadata().key);
+        const issue = Issue.atPosition(file, start, message, this.getMetadata().key, this.conf.severity);
         issues.push(issue);
       }
     }

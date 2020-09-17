@@ -134,7 +134,11 @@ export class KeywordCase extends ABAPRule {
 
       const result = this.traverse(statement, statement.get());
       if (result.token) {
-        const issue = Issue.atToken(file, result.token, this.getDescription(result.token.getStr(), result.keyword), this.getMetadata().key);
+        const issue = Issue.atToken(
+          file, result.token,
+          this.getDescription(result.token.getStr(), result.keyword),
+          this.getMetadata().key,
+          this.conf.severity);
         issues.push(issue);
         break; // one issue per file
       }
@@ -193,7 +197,7 @@ export class KeywordCase extends ABAPRule {
   }
 
   public violatesRule(keyword: string): boolean {
-    if (this.conf.ignoreKeywords && this.conf.ignoreKeywords.map(k => {return k.toUpperCase();}).includes(keyword.toUpperCase())){
+    if (this.conf.ignoreKeywords && this.conf.ignoreKeywords.map(k => {return k.toUpperCase();}).includes(keyword.toUpperCase())) {
       return false;
     }
     if (this.conf.style === KeywordCaseStyle.Lower) {

@@ -64,7 +64,7 @@ export class SequentialBlank extends ABAPRule {
         const startPos = new Position(i, rows[i].length + 1);
         const endPos = new Position(i + blankCounter, rows[i + blankCounter - 1].length + 1);
         const fix = EditHelper.deleteRange(file, startPos, endPos);
-        const issue = Issue.atPosition(file, reportPos, this.getMessage(), this.getMetadata().key, fix);
+        const issue = Issue.atPosition(file, reportPos, this.getMessage(), this.getMetadata().key, this.conf.severity, fix);
         issues.push(issue);
       }
     }

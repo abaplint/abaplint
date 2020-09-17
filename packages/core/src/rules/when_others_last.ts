@@ -49,7 +49,7 @@ ENDCASE.`,
         for (const when of whens) {
           if (when.get() instanceof Statements.WhenOthers) {
             const start = when.getFirstToken().getStart();
-            const issue = Issue.atPosition(file, start, this.getMessage(), this.getMetadata().key);
+            const issue = Issue.atPosition(file, start, this.getMessage(), this.getMetadata().key, this.conf.severity);
             issues.push(issue);
           }
         }

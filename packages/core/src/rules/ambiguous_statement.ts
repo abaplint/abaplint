@@ -57,7 +57,7 @@ Add "TABLE" keyword or "@" for escaping SQL variables`,
       }
 
       if (match) {
-        const issue = Issue.atStatement(file, statement, this.getMessage(), this.getMetadata().key);
+        const issue = Issue.atStatement(file, statement, this.getMessage(), this.getMetadata().key, this.conf.severity);
         issues.push(issue);
       }
 

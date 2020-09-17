@@ -102,6 +102,7 @@ import {While} from "./statements/while";
 import {SelectLoop} from "./statements/select_loop";
 import {Check} from "./statements/check";
 import {LogPoint} from "./statements/log_point";
+import {Severity} from "../../severity";
 
 export class SyntaxLogic {
   private currentFile: ABAPFile;
@@ -195,7 +196,7 @@ export class SyntaxLogic {
   }
 
   private newIssue(token: Token, message: string): void {
-    const issue = Issue.atToken(this.currentFile, token, message, "check_syntax");
+    const issue = Issue.atToken(this.currentFile, token, message, "check_syntax", Severity.Error);
     this.issues.push(issue);
   }
 

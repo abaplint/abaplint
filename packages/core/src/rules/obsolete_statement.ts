@@ -76,14 +76,14 @@ export class ObsoleteStatement extends ABAPRule {
           || (sta instanceof Statements.Divide && this.conf.divide)) {
         if (prev === undefined || staNode.getStart().getCol() !== prev.getCol() || staNode.getStart().getRow() !== prev.getRow()) {
           const message = "Statement \"" + staNode.getFirstToken().getStr() + "\" is obsolete";
-          const issue = Issue.atStatement(file, staNode, message, this.getMetadata().key);
+          const issue = Issue.atStatement(file, staNode, message, this.getMetadata().key, this.conf.severity);
           issues.push(issue);
         }
         prev = staNode.getStart();
       }
 
       if (this.conf.setExtended && sta instanceof Statements.SetExtendedCheck) {
-        const issue = Issue.atStatement(file, staNode, "SET EXTENDED CHECK is obsolete", this.getMetadata().key);
+        const issue = Issue.atStatement(file, staNode, "SET EXTENDED CHECK is obsolete", this.getMetadata().key, this.conf.severity);
         issues.push(issue);
       }
 
@@ -91,7 +91,7 @@ export class ObsoleteStatement extends ABAPRule {
         for (const compare of staNode.findAllExpressions(Expressions.Compare)) {
           const token = compare.findDirectTokenByText("REQUESTED");
           if (token) {
-            const issue = Issue.atToken(file, token, "IS REQUESTED is obsolete", this.getMetadata().key);
+            const issue = Issue.atToken(file, token, "IS REQUESTED is obsolete", this.getMetadata().key, this.conf.severity);
             issues.push(issue);
           }
         }
@@ -102,7 +102,7 @@ export class ObsoleteStatement extends ABAPRule {
           || (sta instanceof Statements.Ranges)) {
           const token = staNode.findDirectTokenByText("OCCURS");
           if (token) {
-            const issue = Issue.atToken(file, token, "OCCURS is obsolete", this.getMetadata().key);
+            const issue = Issue.atToken(file, token, "OCCURS is obsolete", this.getMetadata().key, this.conf.severity);
             issues.push(issue);
           }
         }
@@ -110,7 +110,7 @@ export class ObsoleteStatement extends ABAPRule {
         for (const dataDef of staNode.findAllExpressions(Expressions.DataDefinition)) {
           const token = dataDef.findDirectTokenByText("OCCURS");
           if (token) {
-            const issue = Issue.atToken(file, token, "OCCURS is obsolete", this.getMetadata().key);
+            const issue = Issue.atToken(file, token, "OCCURS is obsolete", this.getMetadata().key, this.conf.severity);
             issues.push(issue);
           }
         }
@@ -120,7 +120,7 @@ export class ObsoleteStatement extends ABAPRule {
         if (staNode.concatTokens().toUpperCase().includes("WITH HEADER LINE")) {
           const token = staNode.getFirstToken();
           if (token) {
-            const issue = Issue.atToken(file, token, "WITH HEADER LINE is obsolete", this.getMetadata().key);
+            const issue = Issue.atToken(file, token, "WITH HEADER LINE is obsolete", this.getMetadata().key, this.conf.severity);
             issues.push(issue);
           }
         }
@@ -129,7 +129,7 @@ export class ObsoleteStatement extends ABAPRule {
       if (this.conf.fieldSymbolStructure && sta instanceof Statements.FieldSymbol){
         const token = staNode.findDirectTokenByText("STRUCTURE");
         if (token) {
-          const issue = Issue.atToken(file, token, "FIELD-SYMBOL ... STRUCTURE is obsolete", this.getMetadata().key);
+          const issue = Issue.atToken(file, token, "FIELD-SYMBOL ... STRUCTURE is obsolete", this.getMetadata().key, this.conf.severity);
           issues.push(issue);
         }
       }

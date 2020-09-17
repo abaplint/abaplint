@@ -128,7 +128,7 @@ First position used must be a full/pure write.`,
         fix = EditHelper.merge(fix1, fix2);
       }
       const message = this.getMetadata().title + ", " + d.name;
-      ret.push(Issue.atIdentifier(d.identifier, message, this.getMetadata().key, fix));
+      ret.push(Issue.atIdentifier(d.identifier, message, this.getMetadata().key, this.conf.severity, fix));
     }
 
     return ret;

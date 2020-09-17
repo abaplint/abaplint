@@ -58,7 +58,7 @@ https://docs.abapopenchecks.org/checks/11/`,
       const row = pos.getRow();
       if (prev === row && row !== reported) {
         const fix = EditHelper.insertAt(file, pos, "\n");
-        const issue = Issue.atPosition(file, pos, this.getMessage(), this.getMetadata().key, fix);
+        const issue = Issue.atPosition(file, pos, this.getMessage(), this.getMetadata().key, this.conf.severity, fix);
         issues.push(issue);
         reported = row;
       }

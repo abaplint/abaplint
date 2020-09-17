@@ -60,12 +60,12 @@ export class SuperclassFinal extends ABAPRule {
       }
       if (found === undefined) {
         const message = "Super class \"" + sup + "\" not found";
-        const issue = Issue.atIdentifier(definition.identifier, message, this.getMetadata().key);
+        const issue = Issue.atIdentifier(definition.identifier, message, this.getMetadata().key, this.conf.severity);
         output.push(issue);
         continue;
       }
       if (found.isFinal === true) {
-        const issue = Issue.atIdentifier(definition.identifier, this.getMessage(), this.getMetadata().key);
+        const issue = Issue.atIdentifier(definition.identifier, this.getMessage(), this.getMetadata().key, this.conf.severity);
         output.push(issue);
       }
     }

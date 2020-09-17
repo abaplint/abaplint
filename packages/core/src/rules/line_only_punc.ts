@@ -77,7 +77,7 @@ https://docs.abapopenchecks.org/checks/16/`,
         const endPos = new Position(i + 1, rows[i].length + 1);
         const fix = EditHelper.replaceRange(file, startPos, endPos, rowContent);
 
-        const issue = Issue.atPosition(file, position, this.getMessage(), this.getMetadata().key, fix);
+        const issue = Issue.atPosition(file, position, this.getMessage(), this.getMetadata().key, this.conf.severity, fix);
         issues.push(issue);
       }
     }

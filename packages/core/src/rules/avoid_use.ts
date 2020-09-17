@@ -84,7 +84,7 @@ export class AvoidUse extends ABAPRule {
         message = "BREAK/BREAK-POINT";
       }
       if (message) {
-        const issue = Issue.atStatement(file, statementNode, this.getDescription(message), this.getMetadata().key);
+        const issue = Issue.atStatement(file, statementNode, this.getDescription(message), this.getMetadata().key, this.conf.severity);
         issues.push(issue);
       }
 
@@ -95,7 +95,7 @@ export class AvoidUse extends ABAPRule {
         if (tt && token) {
           tt.concatTokensWithoutStringsAndComments().toUpperCase().endsWith("DEFAULT KEY");
           message = "DEFAULT KEY";
-          const issue = Issue.atToken(file, token, this.getDescription(message), this.getMetadata().key);
+          const issue = Issue.atToken(file, token, this.getDescription(message), this.getMetadata().key, this.conf.severity);
           issues.push(issue);
         }
       }

@@ -73,7 +73,8 @@ export class NewlineBetweenMethods extends ABAPRule {
           file,
           statement,
           this.getMessage(),
-          this.getMetadata().key));
+          this.getMetadata().key,
+          this.conf.severity));
       }
     }
     return issues;

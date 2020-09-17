@@ -57,7 +57,7 @@ export class EmptyLineinStatement extends ABAPRule {
         prevLine = t.getRow();
       }
       if (prevLine && t.getRow() - prevLine >= 2) {
-        const issue = Issue.atToken(file, t, this.getMessage(), this.getMetadata().key);
+        const issue = Issue.atToken(file, t, this.getMessage(), this.getMetadata().key, this.conf.severity);
         issues.push(issue);
       }
       if (t instanceof Punctuation && t.getStr() === ".") {

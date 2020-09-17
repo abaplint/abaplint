@@ -66,7 +66,8 @@ export class SelectionScreenNaming extends ABAPRule {
             file,
             fieldNode.getFirstToken(),
             this.getDescription(this.getPatternForStatement(stat.get()), fieldNode.getFirstToken().getStr()),
-            this.getMetadata().key));
+            this.getMetadata().key,
+            this.conf.severity));
         }
       }
     }

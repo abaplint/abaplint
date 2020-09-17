@@ -53,7 +53,13 @@ export class LineBreakMultipleParameters extends ABAPRule {
           const first = current.getFirstToken();
           if (previous.getFirstToken().getRow() === first.getRow()) {
             const fix = EditHelper.insertAt(file, first.getStart(), "\n" + " ".repeat(parameters[0].getFirstToken().getStart().getCol() - 1));
-            issues.push(Issue.atToken(file, current.getFirstToken(), this.getMetadata().title, this.getMetadata().key, fix));
+            issues.push(Issue.atToken(
+              file,
+              current.getFirstToken(),
+              this.getMetadata().title,
+              this.getMetadata().key,
+              this.conf.severity,
+              fix));
           }
           previous = current;
         }

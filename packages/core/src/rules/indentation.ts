@@ -106,7 +106,7 @@ export class Indentation extends ABAPRule {
         const expected = indent - 1;
         const fix = EditHelper.replaceRange(file, new Position(position.getRow(), 1), position, " ".repeat(expected));
         const message = "Indentation problem, expected " + expected + " spaces";
-        const issue = Issue.atPosition(file, position, message, this.getMetadata().key, fix);
+        const issue = Issue.atPosition(file, position, message, this.getMetadata().key, this.conf.severity, fix);
         return [issue]; // only one finding per include
       }
     }

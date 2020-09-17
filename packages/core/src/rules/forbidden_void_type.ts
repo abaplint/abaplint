@@ -65,13 +65,13 @@ DATS, TIMS, DATUM, FLAG, INT4, NUMC3, NUMC4, SAP_BOOL, TEXT25, TEXT80, X255, XFE
       for (const t of node.getData().types) {
         const typ = t.identifier.getType();
         if (this.isForbidden(typ)) {
-          ret.push(Issue.atIdentifier(t.identifier, message + typ.toText(0), this.getMetadata().key));
+          ret.push(Issue.atIdentifier(t.identifier, message + typ.toText(0), this.getMetadata().key, this.conf.severity));
         }
       }
       for (const v of node.getData().vars) {
         const typ = v.identifier.getType();
         if (this.isForbidden(typ)) {
-          ret.push(Issue.atIdentifier(v.identifier, message + typ.toText(0), this.getMetadata().key));
+          ret.push(Issue.atIdentifier(v.identifier, message + typ.toText(0), this.getMetadata().key, this.conf.severity));
         }
       }
     }

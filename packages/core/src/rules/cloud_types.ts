@@ -58,7 +58,12 @@ export class CloudTypes implements IRule {
     }
 
     const position = new Position(1, 1);
-    const issue = Issue.atPosition(obj.getFiles()[0], position, this.getDescription(obj.getType()), this.getMetadata().key);
+    const issue = Issue.atPosition(
+      obj.getFiles()[0],
+      position,
+      this.getDescription(obj.getType()),
+      this.getMetadata().key,
+      this.conf.severity);
     return [issue];
   }
 

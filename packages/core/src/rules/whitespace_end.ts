@@ -45,7 +45,7 @@ export class WhitespaceEnd extends ABAPRule {
         const start = new Position(i + 1, match!.index + 1);
         const end = new Position(i + 1, rows[i].length + 1);
         const fix = EditHelper.deleteRange(file, start, end);
-        const issue = Issue.atRange(file, start, end, this.getMessage(), this.getMetadata().key, fix);
+        const issue = Issue.atRange(file, start, end, this.getMessage(), this.getMetadata().key, this.conf.severity, fix);
         issues.push(issue);
       }
     }

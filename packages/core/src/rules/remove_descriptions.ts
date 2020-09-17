@@ -121,7 +121,7 @@ Consider using ABAP Doc for documentation.
     for (const d of xmlToArray(desc.SEOCOMPOTX)) {
       const message = this.getDescription(d.CMPNAME?._text);
       const position = new Position(1, 1);
-      const issue = Issue.atPosition(file, position, message, this.getMetadata().key);
+      const issue = Issue.atPosition(file, position, message, this.getMetadata().key, this.conf.severity);
       ret.push(issue);
     }
     return ret;

@@ -95,7 +95,7 @@ export class InStatementIndentation extends ABAPRule {
         }
         if (t.getCol() < expected) {
           const fix = EditHelper.replaceRange(file, new Position(t.getRow(), 1), t.getStart(), " ".repeat(expected - 1));
-          const issue = Issue.atToken(file, t, this.getMessage(), this.getMetadata().key, fix);
+          const issue = Issue.atToken(file, t, this.getMessage(), this.getMetadata().key, this.conf.severity, fix);
           ret.push(issue);
           break;
         }

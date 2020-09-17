@@ -47,7 +47,7 @@ export class TryWithoutCatch extends ABAPRule {
       const clean = t.findDirectStatements(Cleanup);
       const c = t.findDirectStructures(Catch);
       if (c.length === 0 && clean.length === 0) {
-        const issue = Issue.atToken(file, t.getFirstToken(), this.getMessage(), this.getMetadata().key);
+        const issue = Issue.atToken(file, t.getFirstToken(), this.getMessage(), this.getMetadata().key, this.conf.severity);
         issues.push(issue);
       }
     }

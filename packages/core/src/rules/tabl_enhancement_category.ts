@@ -43,7 +43,12 @@ export class TABLEnhancementCategory implements IRule {
 
     if (obj.getEnhancementCategory() === EnhancementCategory.NotClassified) {
       const position = new Position(1, 1);
-      const issue = Issue.atPosition(obj.getFiles()[0], position, this.getDescription(obj.getName()), this.getMetadata().key);
+      const issue = Issue.atPosition(
+        obj.getFiles()[0],
+        position,
+        this.getDescription(obj.getName()),
+        this.getMetadata().key,
+        this.conf.severity);
       return [issue];
     }
 

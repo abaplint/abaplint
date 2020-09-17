@@ -84,7 +84,7 @@ export class SpaceBeforeDot extends ABAPRule {
         const start = new Position(t.getStart().getRow(), prev.getEnd().getCol());
         const end = new Position(t.getStart().getRow(), t.getStart().getCol());
         const fix = EditHelper.deleteRange(file, start, end);
-        const issue = Issue.atRange(file, start, end, this.getMessage(), this.getMetadata().key, fix);
+        const issue = Issue.atRange(file, start, end, this.getMessage(), this.getMetadata().key, this.conf.severity, fix);
         issues.push(issue);
       }
       prev = t;
