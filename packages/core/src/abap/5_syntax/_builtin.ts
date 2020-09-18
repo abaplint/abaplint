@@ -1,5 +1,5 @@
 import {TypedIdentifier, IdentifierMeta} from "../types/_typed_identifier";
-import {VoidType, CharacterType, StructureType, IStructureComponent, IntegerType, NumericType, DateType, TimeType, StringType, FloatType, XStringType, TableType} from "../types/basic";
+import {VoidType, CharacterType, StructureType, IStructureComponent, IntegerType, NumericType, DateType, TimeType, StringType, FloatType, XStringType, TableType, AnyType} from "../types/basic";
 import {Identifier as TokenIdentifier} from "../1_lexer/tokens";
 import {Position} from "../../position";
 import {AbstractType} from "../types/basic/_abstract_type";
@@ -114,7 +114,7 @@ export class BuiltIn {
     ret.push({name: "CHARLEN", mandatory: {"val": new StringType()}, return: new IntegerType()});
     ret.push({name: "CMAX", mandatory: {"val1": new StringType(), "val2": new StringType()}, optional: {"val3": new StringType(), "val4": new StringType(), "val5": new StringType(), "val6": new StringType(), "val7": new StringType(), "val9": new StringType()}, return: new StringType(), version: Version.v702});
     ret.push({name: "CMIN", mandatory: {"val1": new StringType(), "val2": new StringType()}, optional: {"val3": new StringType(), "val4": new StringType(), "val5": new StringType(), "val6": new StringType(), "val7": new StringType(), "val9": new StringType()}, return: new StringType(), version: Version.v702});
-    ret.push({name: "CONCAT_LINES_OF", mandatory: {"table": new TableType(new AbstractType(), false)}, optional: {"sep": new StringType()}, return: new StringType(), version: Version.v702});
+    ret.push({name: "CONCAT_LINES_OF", mandatory: {"table": new TableType(new AnyType(), false)}, optional: {"sep": new StringType()}, return: new StringType(), version: Version.v702});
     ret.push({name: "CONDENSE", mandatory: {"val": new StringType()}, optional: {"del": new StringType(), "from": new StringType(), "to": new StringType()}, return: new StringType(), version: Version.v702});
     ret.push({name: "CONTAINS", mandatory: {"val": new StringType()}, optional: {"sub": new StringType(), "start": new StringType(), "end": new StringType(), "regex": new StringType(), "case": new CharacterType(1), "off": new IntegerType(), "len": new IntegerType(), "occ": new IntegerType()}, return: new CharacterType(1), version: Version.v702});
     ret.push({name: "CONTAINS_ANY_NOT_OF", mandatory: {"val": new StringType()}, optional: {"sub": new StringType(), "start": new StringType(), "end": new StringType(), "off": new IntegerType(), "len": new IntegerType(), "occ": new IntegerType()}, return: new CharacterType(1), version: Version.v702});
@@ -137,9 +137,9 @@ export class BuiltIn {
     ret.push({name: "FROM_MIXED", mandatory: {"val": new StringType()}, optional: {"case": new CharacterType(1), "sep": new IntegerType(), "min": new IntegerType()}, return: new StringType(), version: Version.v702});
     ret.push({name: "INSERT", mandatory: {"val": new StringType(), "sub": new StringType()}, optional: {"off": new IntegerType()}, return: new StringType(), version: Version.v702});
     ret.push({name: "IPOW", mandatory: {"base": new FloatType(), "exp": new FloatType()}, return: new IntegerType(), version: Version.v740sp02});
-    ret.push({name: "LINE_EXISTS", mandatory: {"val": new TableType(new AbstractType(), false)}, return: new CharacterType(1), version: Version.v740sp02});
+    ret.push({name: "LINE_EXISTS", mandatory: {"val": new TableType(new AnyType(), false)}, return: new CharacterType(1), version: Version.v740sp02});
     ret.push({name: "LINE_INDEX", mandatory: {"val": new StringType()}, return: new IntegerType(), version: Version.v740sp02});
-    ret.push({name: "LINES", mandatory: {"val": new TableType(new AbstractType(), false)}, return: new IntegerType()});
+    ret.push({name: "LINES", mandatory: {"val": new TableType(new AnyType(), false)}, return: new IntegerType()});
     ret.push({name: "LOG", mandatory: {"val": new FloatType()}, return: new FloatType()});
     ret.push({name: "LOG10", mandatory: {"val": new FloatType()}, return: new FloatType()});
     ret.push({name: "MATCH", mandatory: {"val": new StringType(), "regex": new StringType()}, optional: {"case": new CharacterType(1), "occ": new IntegerType()}, return: new StringType(), version: Version.v702});
@@ -219,13 +219,13 @@ export class BuiltIn {
     ret.push(this.buildConstant("abap_off", new CharacterType(1), "' '"));
     ret.push(this.buildConstant("abap_on", new CharacterType(1), "'X'"));
 
-    ret.push(this.buildConstant("col_background", new IntegerType(), 0));
-    ret.push(this.buildConstant("col_heading", new IntegerType(), 1));
-    ret.push(this.buildConstant("col_key", new IntegerType(), 4));
-    ret.push(this.buildConstant("col_negative", new IntegerType(), 6));
-    ret.push(this.buildConstant("col_normal", new IntegerType(), 2));
-    ret.push(this.buildConstant("col_positive", new IntegerType(), 5));
-    ret.push(this.buildConstant("col_total", new IntegerType(), 3));
+    ret.push(this.buildConstant("col_background", new IntegerType(), "0"));
+    ret.push(this.buildConstant("col_heading", new IntegerType(), "1"));
+    ret.push(this.buildConstant("col_key", new IntegerType(), "4"));
+    ret.push(this.buildConstant("col_negative", new IntegerType(), "6"));
+    ret.push(this.buildConstant("col_normal", new IntegerType(), "2"));
+    ret.push(this.buildConstant("col_positive", new IntegerType(), "5"));
+    ret.push(this.buildConstant("col_total", new IntegerType(), "3"));
 
     ret.push(this.buildConstant("space", new CharacterType(1), "' '"));
 
