@@ -19,6 +19,7 @@ export class Json implements IFormatter {
           row: issue.getEnd().getRow(),
           col: issue.getEnd().getCol(),
         },
+        severity: issue.getSeverity(),
       };
       out.push(single);
     }

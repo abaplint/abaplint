@@ -2,12 +2,18 @@ import {Issue, Position} from "@abaplint/core";
 import {Total} from "./total";
 import {IFormatter} from "./_iformatter";
 
-type Tuple = {filename: string, description: string; startPos: Position; rawFilename: string};
+type IssueDetails = {
+  filename: string,
+  description: string;
+  startPos: Position;
+  rawFilename: string;
+  severity: string;
+};
 
 export class Standard implements IFormatter {
 
   public output(issues: Issue[], fileCount: number): string {
-    const tuples: Tuple[] = [];
+    const tuples: IssueDetails[] = [];
     for (const issue of issues) {
       tuples.push(this.build(issue));
     }
@@ -31,15 +37,16 @@ export class Standard implements IFormatter {
     return result + new Total().output(issues, fileCount);
   }
 
-  private columns(tuples: Tuple[]): string {
+  private columns(issues: IssueDetails[]): string {
     let max = 0;
-    tuples.forEach((tuple) => { if (max < tuple.filename.length) { max = tuple.filename.length; } });
+    issues.forEach((tuple) => {if (max < tuple.filename.length) {max = tuple.filename.length;} });
 
     let result = "";
-    tuples.forEach((tuple) => {
+    issues.forEach((issue) => {
       result = result +
-        this.pad(tuple.filename, max - tuple.filename.length) +
-        tuple.description + "\n";
+        this.pad(issue.filename, max - issue.filename.length) +
+        issue.description +
+        ` [${issue.severity.charAt(0)}]\n`; //E/W/I
     });
 
     return result;
@@ -53,12 +60,13 @@ export class Standard implements IFormatter {
     return output + " - ";
   }
 
-  private build(issue: Issue): Tuple {
+  private build(issue: Issue): IssueDetails {
     return {
       filename: issue.getFilename() + "[" + issue.getStart().getRow() + ", " + issue.getStart().getCol() + "]",
       description: issue.getMessage() + " (" + issue.getKey() + ")",
       startPos: issue.getStart(),
       rawFilename: issue.getFilename(),
+      severity: issue.getSeverity().toString(),
     };
   }
 
