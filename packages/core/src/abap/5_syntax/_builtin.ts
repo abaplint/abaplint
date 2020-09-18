@@ -1,5 +1,5 @@
 import {TypedIdentifier, IdentifierMeta} from "../types/_typed_identifier";
-import {VoidType, CharacterType, StructureType, IStructureComponent, IntegerType, NumericType, DateType, TimeType, StringType, FloatType} from "../types/basic";
+import {VoidType, CharacterType, StructureType, IStructureComponent, IntegerType, NumericType, DateType, TimeType, StringType, FloatType, XStringType, TableType, AnyType} from "../types/basic";
 import {Identifier as TokenIdentifier} from "../1_lexer/tokens";
 import {Position} from "../../position";
 import {AbstractType} from "../types/basic/_abstract_type";
@@ -102,55 +102,82 @@ export class BuiltIn {
 
     const ret: IBuiltinMethod[] = [];
 
-    // todo, some of these are version specific
-    // todo, make types correct, some of the strings are clike?
-    // todo, adjust mandatory vs optional parameters
     ret.push({name: "ABS", mandatory: {"val": new FloatType()}, return: new IntegerType()});
-    ret.push({name: "BOOLC", mandatory: {"val": new StringType()}, return: new CharacterType(1), version: Version.v702});
-    ret.push({name: "BOOLX", mandatory: {"val": new StringType()}, return: new CharacterType(1), version: Version.v702});
+    ret.push({name: "ACOS", mandatory: {"val": new FloatType()}, return: new FloatType()});
+    ret.push({name: "ASIN", mandatory: {"val": new FloatType()}, return: new FloatType()});
+    ret.push({name: "ATAN", mandatory: {"val": new FloatType()}, return: new FloatType()});
+    ret.push({name: "BIT-SET", mandatory: {"val": new IntegerType()}, return: new XStringType(), version: Version.v702});
+    ret.push({name: "BOOLC", mandatory: {"val": new StringType()}, return: new StringType(), version: Version.v702});
+    ret.push({name: "BOOLX", mandatory: {"bool": new StringType()}, optional: {"bit": new IntegerType()}, return: new XStringType(), version: Version.v702});
     ret.push({name: "CEIL", mandatory: {"val": new FloatType()}, return: new IntegerType()});
+    ret.push({name: "CHAR_OFF", mandatory: {"val": new StringType(), "add": new IntegerType()}, optional: {"off": new IntegerType()}, return: new IntegerType(), version: Version.v702});
     ret.push({name: "CHARLEN", mandatory: {"val": new StringType()}, return: new IntegerType()});
-    ret.push({name: "CONCAT_LINES_OF", mandatory: {"table": new StringType()}, optional: {"sep": new StringType()}, return: new StringType()});
-    ret.push({name: "CONDENSE", mandatory: {"val": new StringType()}, optional: {"del": new StringType()}, return: new StringType()});
-    ret.push({name: "CONTAINS", mandatory: {"val": new StringType()}, optional: {"sub": new StringType(), "regex": new StringType()}, return: new CharacterType(1)});
-    ret.push({name: "COS", mandatory: {"val": new FloatType()}, return: new IntegerType()});
-    ret.push({name: "ESCAPE", mandatory: {"val": new StringType(), "format": new StringType()}, return: new StringType()});
-    ret.push({name: "FIND", mandatory: {"val": new StringType(), "sub": new StringType(), "regex": new StringType(), "off": new IntegerType(), "case": new CharacterType(1)}, return: new StringType()});
+    ret.push({name: "CMAX", mandatory: {"val1": new StringType(), "val2": new StringType()}, optional: {"val3": new StringType(), "val4": new StringType(), "val5": new StringType(), "val6": new StringType(), "val7": new StringType(), "val9": new StringType()}, return: new StringType(), version: Version.v702});
+    ret.push({name: "CMIN", mandatory: {"val1": new StringType(), "val2": new StringType()}, optional: {"val3": new StringType(), "val4": new StringType(), "val5": new StringType(), "val6": new StringType(), "val7": new StringType(), "val9": new StringType()}, return: new StringType(), version: Version.v702});
+    ret.push({name: "CONCAT_LINES_OF", mandatory: {"table": new TableType(new AnyType(), false)}, optional: {"sep": new StringType()}, return: new StringType(), version: Version.v702});
+    ret.push({name: "CONDENSE", mandatory: {"val": new StringType()}, optional: {"del": new StringType(), "from": new StringType(), "to": new StringType()}, return: new StringType(), version: Version.v702});
+    ret.push({name: "CONTAINS", mandatory: {"val": new StringType()}, optional: {"sub": new StringType(), "start": new StringType(), "end": new StringType(), "regex": new StringType(), "case": new CharacterType(1), "off": new IntegerType(), "len": new IntegerType(), "occ": new IntegerType()}, return: new CharacterType(1), version: Version.v702});
+    ret.push({name: "CONTAINS_ANY_NOT_OF", mandatory: {"val": new StringType()}, optional: {"sub": new StringType(), "start": new StringType(), "end": new StringType(), "off": new IntegerType(), "len": new IntegerType(), "occ": new IntegerType()}, return: new CharacterType(1), version: Version.v702});
+    ret.push({name: "CONTAINS_ANY_OF", mandatory: {"val": new StringType()}, optional: {"sub": new StringType(), "start": new StringType(), "end": new StringType(), "off": new IntegerType(), "len": new IntegerType(), "occ": new IntegerType()}, return: new CharacterType(1), version: Version.v702});
+    ret.push({name: "COS", mandatory: {"val": new FloatType()}, return: new FloatType()});
+    ret.push({name: "COSH", mandatory: {"val": new FloatType()}, return: new FloatType()});
+    ret.push({name: "COUNT", mandatory: {"val": new StringType()}, optional: {"sub": new StringType(), "regex": new StringType(), "case": new CharacterType(1), "off": new IntegerType(), "len": new IntegerType()}, return: new StringType(), version: Version.v702});
+    ret.push({name: "COUNT_ANY_NOT_OF", mandatory: {"val": new StringType()}, optional: {"sub": new StringType(), "regex": new StringType(), "case": new CharacterType(1), "off": new IntegerType(), "len": new IntegerType()}, return: new StringType(), version: Version.v702});
+    ret.push({name: "COUNT_ANY_OF", mandatory: {"val": new StringType()}, optional: {"sub": new StringType(), "regex": new StringType(), "case": new CharacterType(1), "off": new IntegerType(), "len": new IntegerType()}, return: new StringType(), version: Version.v702});
+    ret.push({name: "DBMAXLEN", mandatory: {"val": new StringType()}, return: new IntegerType()});
+    ret.push({name: "DISTANCE", mandatory: {"val1": new StringType(), "val2": new StringType()}, return: new IntegerType(), version: Version.v702});
+    ret.push({name: "ESCAPE", mandatory: {"val": new StringType(), "format": new StringType()}, return: new StringType(), version: Version.v702});
+    ret.push({name: "EXP", mandatory: {"val": new FloatType()}, return: new FloatType()});
+    ret.push({name: "FIND", mandatory: {"val": new StringType()}, optional: {"sub": new StringType(), "regex": new StringType(), "case": new CharacterType(1), "off": new IntegerType(), "len": new IntegerType(), "occ": new IntegerType()}, return: new IntegerType(), version: Version.v702});
+    ret.push({name: "FIND_ANY_NOT_OF", mandatory: {"val": new StringType()}, optional: {"sub": new StringType(), "off": new IntegerType(), "len": new IntegerType(), "occ": new IntegerType()}, return: new IntegerType(), version: Version.v702});
+    ret.push({name: "FIND_ANY_OF", mandatory: {"val": new StringType()}, optional: {"sub": new StringType(), "off": new IntegerType(), "len": new IntegerType(), "occ": new IntegerType()}, return: new IntegerType(), version: Version.v702});
+    ret.push({name: "FIND_END", mandatory: {"val": new StringType()}, optional: {"sub": new StringType(), "regex": new StringType(), "case": new CharacterType(1), "off": new IntegerType(), "len": new IntegerType(), "occ": new IntegerType()}, return: new IntegerType(), version: Version.v702});
     ret.push({name: "FLOOR", mandatory: {"val": new FloatType()}, return: new IntegerType()});
     ret.push({name: "FRAC", mandatory: {"val": new FloatType()}, return: new IntegerType()});
-    ret.push({name: "FROM_MIXED", mandatory: {"val": new StringType(), "case": new StringType()}, return: new StringType()});
-    ret.push({name: "INSERT", mandatory: {"val": new StringType(), "sub": new StringType(), "off": new IntegerType()}, return: new IntegerType()});
+    ret.push({name: "FROM_MIXED", mandatory: {"val": new StringType()}, optional: {"case": new CharacterType(1), "sep": new IntegerType(), "min": new IntegerType()}, return: new StringType(), version: Version.v702});
+    ret.push({name: "INSERT", mandatory: {"val": new StringType(), "sub": new StringType()}, optional: {"off": new IntegerType()}, return: new StringType(), version: Version.v702});
     ret.push({name: "IPOW", mandatory: {"base": new FloatType(), "exp": new FloatType()}, return: new IntegerType(), version: Version.v740sp02});
-    ret.push({name: "LINE_EXISTS", mandatory: {"val": new StringType()}, return: new CharacterType(1), version: Version.v740sp02});
+    ret.push({name: "LINE_EXISTS", mandatory: {"val": new TableType(new AnyType(), false)}, return: new CharacterType(1), version: Version.v740sp02});
     ret.push({name: "LINE_INDEX", mandatory: {"val": new StringType()}, return: new IntegerType(), version: Version.v740sp02});
-    ret.push({name: "LINES", mandatory: {"val": new StringType()}, return: new IntegerType()});
-    ret.push({name: "MATCH", mandatory: {"val": new StringType(), "regex": new StringType()}, return: new StringType()});
-    ret.push({name: "NMAX", mandatory: {"val1": new StringType(), "val2": new StringType()}, return: new IntegerType()});
-    ret.push({name: "NMIN", mandatory: {"val1": new StringType(), "val2": new StringType()}, return: new IntegerType()});
+    ret.push({name: "LINES", mandatory: {"val": new TableType(new AnyType(), false)}, return: new IntegerType()});
+    ret.push({name: "LOG", mandatory: {"val": new FloatType()}, return: new FloatType()});
+    ret.push({name: "LOG10", mandatory: {"val": new FloatType()}, return: new FloatType()});
+    ret.push({name: "MATCH", mandatory: {"val": new StringType(), "regex": new StringType()}, optional: {"case": new CharacterType(1), "occ": new IntegerType()}, return: new StringType(), version: Version.v702});
+    ret.push({name: "MATCHES", mandatory: {"val": new StringType(), "regex": new IntegerType()}, optional: {"case": new CharacterType(1), "off": new IntegerType(), "len": new IntegerType()}, return: new CharacterType(1), version: Version.v702});
+    ret.push({name: "NMAX", mandatory: {"val1": new StringType(), "val2": new StringType()}, optional: {"val3": new StringType(), "val4": new StringType(), "val5": new StringType(), "val6": new StringType(), "val7": new StringType(), "val9": new StringType()}, return: new IntegerType(), version: Version.v702});
+    ret.push({name: "NMIN", mandatory: {"val1": new StringType(), "val2": new StringType()}, optional: {"val3": new StringType(), "val4": new StringType(), "val5": new StringType(), "val6": new StringType(), "val7": new StringType(), "val9": new StringType()}, return: new IntegerType(), version: Version.v702});
     ret.push({name: "NUMOFCHAR", mandatory: {"val": new StringType()}, return: new IntegerType()});
-    ret.push({name: "REPEAT", mandatory: {"val": new StringType(), "occ": new IntegerType(), "regex": new IntegerType()}, return: new StringType()});
-    ret.push({name: "REPLACE", mandatory: {"val": new StringType(), "occ": new IntegerType(), "sub": new StringType(), "regex": new StringType(), "with": new StringType()}, return: new StringType()});
-    ret.push({name: "RESCALE", mandatory: {"val": new FloatType()}, return: new FloatType()});
-    ret.push({name: "REVERSE", mandatory: {"val": new StringType()}, return: new StringType()});
-    ret.push({name: "ROUND", mandatory: {"val": new FloatType(), "dec": new IntegerType(), "mode": new CharacterType(1)}, return: new IntegerType()});
-    ret.push({name: "SHIFT_LEFT", mandatory: {"val": new StringType(), "sub": new StringType()}, return: new StringType()});
-    ret.push({name: "SHIFT_RIGHT", mandatory: {"val": new StringType()}, return: new StringType()});
+    ret.push({name: "REPEAT", mandatory: {"val": new StringType(), "occ": new IntegerType()}, return: new StringType(), version: Version.v702});
+    ret.push({name: "REPLACE", mandatory: {"val": new StringType(), "with": new StringType()}, optional: {"sub": new StringType(), "regex": new StringType(), "case": new CharacterType(1), "off": new IntegerType(), "len": new IntegerType(), "occ": new IntegerType()}, return: new StringType(), version: Version.v702});
+    ret.push({name: "RESCALE", mandatory: {"val": new FloatType()}, optional: {"dec": new IntegerType(), "prec": new IntegerType(), "mode": new IntegerType()}, return: new FloatType(), version: Version.v702});
+    ret.push({name: "REVERSE", mandatory: {"val": new StringType()}, return: new StringType(), version: Version.v702});
+    ret.push({name: "ROUND", mandatory: {"val": new FloatType()}, optional: {"dec": new IntegerType(), "prec": new IntegerType(), "mode": new IntegerType()}, return: new IntegerType(), version: Version.v702});
+    ret.push({name: "SEGMENT", mandatory: {"val": new StringType(), "index": new IntegerType()}, optional: {"sep": new StringType(), "space": new StringType()}, return: new StringType(), version: Version.v702});
+    ret.push({name: "SHIFT_LEFT", mandatory: {"val": new StringType()}, optional: {"sub": new StringType(), "places": new IntegerType(), "circular": new IntegerType()}, return: new StringType(), version: Version.v702});
+    ret.push({name: "SHIFT_RIGHT", mandatory: {"val": new StringType()}, optional: {"sub": new StringType(), "places": new IntegerType(), "circular": new IntegerType()}, return: new StringType(), version: Version.v702});
     ret.push({name: "SIGN", mandatory: {"val": new FloatType()}, return: new IntegerType()});
-    ret.push({name: "SIN", mandatory: {"val": new FloatType()}, return: new IntegerType()});
-    ret.push({name: "SQRT", mandatory: {"val": new FloatType()}, return: new IntegerType()});
+    ret.push({name: "SIN", mandatory: {"val": new FloatType()}, return: new FloatType()});
+    ret.push({name: "SINH", mandatory: {"val": new FloatType()}, return: new FloatType()});
+    ret.push({name: "SQRT", mandatory: {"val": new FloatType()}, return: new FloatType()});
     ret.push({name: "STRLEN", mandatory: {"val": new StringType()}, return: new IntegerType()});
-    ret.push({name: "SUBSTRING_AFTER", mandatory: {"val": new StringType(), "case": new CharacterType(1), "sub": new StringType()}, return: new StringType()});
-    ret.push({name: "SUBSTRING_BEFORE", mandatory: {"val": new StringType(), "case": new CharacterType(1), "sub": new StringType(), "regex": new StringType()}, return: new StringType()});
-    ret.push({name: "SUBSTRING_FROM", mandatory: {"val": new StringType(), "case": new CharacterType(1), "sub": new StringType()}, return: new StringType()});
-    ret.push({name: "SUBSTRING_TO", mandatory: {"val": new StringType(), "case": new CharacterType(1), "sub": new StringType()}, return: new StringType()});
-    ret.push({name: "SUBSTRING", mandatory: {"val": new StringType(), "len": new IntegerType(), "off": new IntegerType()}, return: new StringType()});
-    ret.push({name: "TO_LOWER", mandatory: {"val": new StringType()}, return: new StringType()});
-    ret.push({name: "TO_MIXED", mandatory: {"val": new StringType(), "case": new StringType()}, return: new StringType()});
-    ret.push({name: "TO_UPPER", mandatory: {"val": new StringType()}, return: new StringType()});
-    ret.push({name: "TRANSLATE", mandatory: {"val": new StringType(), "from": new StringType(), "to": new StringType()}, return: new StringType()});
+    ret.push({name: "SUBSTRING", mandatory: {"val": new StringType()}, optional: {"off": new IntegerType(), "len": new IntegerType()}, return: new StringType(), version: Version.v702});
+    ret.push({name: "SUBSTRING_AFTER", mandatory: {"val": new StringType()}, optional: {"sub": new StringType(), "regex": new StringType(), "case": new CharacterType(1), "len": new IntegerType(), "occ": new IntegerType()}, return: new StringType(), version: Version.v702});
+    ret.push({name: "SUBSTRING_BEFORE", mandatory: {"val": new StringType()}, optional: {"sub": new StringType(), "regex": new StringType(), "case": new CharacterType(1), "len": new IntegerType(), "occ": new IntegerType()}, return: new StringType(), version: Version.v702});
+    ret.push({name: "SUBSTRING_FROM", mandatory: {"val": new StringType()}, optional: {"sub": new StringType(), "regex": new StringType(), "case": new CharacterType(1), "len": new IntegerType(), "occ": new IntegerType()}, return: new StringType(), version: Version.v702});
+    ret.push({name: "SUBSTRING_TO", mandatory: {"val": new StringType()}, optional: {"sub": new StringType(), "regex": new StringType(), "case": new CharacterType(1), "len": new IntegerType(), "occ": new IntegerType()}, return: new StringType(), version: Version.v702});
+    ret.push({name: "TAN", mandatory: {"val": new FloatType()}, return: new FloatType()});
+    ret.push({name: "TANH", mandatory: {"val": new FloatType()}, return: new FloatType()});
+    ret.push({name: "TO_LOWER", mandatory: {"val": new StringType()}, return: new StringType(), version: Version.v702});
+    ret.push({name: "TO_MIXED", mandatory: {"val": new StringType()}, optional: {"case": new CharacterType(1), "sep": new IntegerType(), "min": new IntegerType()}, return: new StringType(), version: Version.v702});
+    ret.push({name: "TO_UPPER", mandatory: {"val": new StringType()}, return: new StringType(), version: Version.v702});
+    ret.push({name: "TRANSLATE", mandatory: {"val": new StringType(), "from": new StringType(), "to": new StringType()}, return: new StringType(), version: Version.v702});
     ret.push({name: "TRUNC", mandatory: {"val": new FloatType()}, return: new IntegerType()});
+    // todo, add UtclongType #1329
+    //ret.push({name: "UTCLONG_ADD", mandatory: {"val": new UtclongType()}, optional: {"days": new IntegerType(), "hour": new IntegerType(), "minutes": new IntegerType(), "seconds": new FloatType()}, return: new UtclongType(), version: Version.v754});
+    //ret.push({name: "UTCLONG_CURRENT", return: new UtclongType(), version: Version.v754});
+    //ret.push({name: "UTCLONG_DIFF", mandatory: {"high": new UtclongType(), "low": new UtclongType()}, return: new FloatType(), version: Version.v754});
     ret.push({name: "XSDBOOL", mandatory: {"val": new StringType()}, return: new CharacterType(1), version: Version.v740sp08});
-    ret.push({name: "XSTRLEN", mandatory: {"val": new StringType()}, return: new IntegerType()});
+    ret.push({name: "XSTRLEN", mandatory: {"val": new XStringType()}, return: new IntegerType()});
 
     // todo, optimize, use hash map
     const index = ret.findIndex(a => a.name === name.toUpperCase());
@@ -189,16 +216,18 @@ export class BuiltIn {
     ret.push(this.buildConstant("abap_false", new CharacterType(1), "' '"));
     ret.push(this.buildConstant("abap_true", new CharacterType(1), "'X'"));
     ret.push(this.buildConstant("abap_undefined", new CharacterType(1), "'-'"));
+    ret.push(this.buildConstant("abap_off", new CharacterType(1), "' '"));
+    ret.push(this.buildConstant("abap_on", new CharacterType(1), "'X'"));
 
-    ret.push(this.buildConstant("col_background"));
-    ret.push(this.buildConstant("col_heading"));
-    ret.push(this.buildConstant("col_key"));
-    ret.push(this.buildConstant("col_negative"));
-    ret.push(this.buildConstant("col_normal"));
-    ret.push(this.buildConstant("col_positive"));
-    ret.push(this.buildConstant("col_total"));
+    ret.push(this.buildConstant("col_background", new IntegerType(), "0"));
+    ret.push(this.buildConstant("col_heading", new IntegerType(), "1"));
+    ret.push(this.buildConstant("col_key", new IntegerType(), "4"));
+    ret.push(this.buildConstant("col_negative", new IntegerType(), "6"));
+    ret.push(this.buildConstant("col_normal", new IntegerType(), "2"));
+    ret.push(this.buildConstant("col_positive", new IntegerType(), "5"));
+    ret.push(this.buildConstant("col_total", new IntegerType(), "3"));
 
-    ret.push(this.buildConstant("space"));
+    ret.push(this.buildConstant("space", new CharacterType(1), "' '"));
 
     for (const e of extras) {
       const id = new TokenIdentifier(new Position(this.row++, 1), e);
