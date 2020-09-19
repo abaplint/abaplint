@@ -85,7 +85,7 @@ https://docs.abapopenchecks.org/checks/44/`,
       }
 
       const token = params[0].getFirstToken();
-      const issue = Issue.atToken(file, token, "Prefer RETURNING to EXPORTING", this.getMetadata().key);
+      const issue = Issue.atToken(file, token, "Prefer RETURNING to EXPORTING", this.getMetadata().key, this.conf.severity);
       ret.push(issue);
     }
 

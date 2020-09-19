@@ -47,7 +47,7 @@ https://docs.abapopenchecks.org/checks/04/`,
       } else {
         return;
       }
-      issues.push(Issue.atRow(file, rowIndex + 1, message, this.getMetadata().key));
+      issues.push(Issue.atRow(file, rowIndex + 1, message, this.getMetadata().key, this.conf.severity));
     });
     return issues;
   }

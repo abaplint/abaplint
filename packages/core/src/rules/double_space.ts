@@ -100,7 +100,7 @@ export class DoubleSpace extends ABAPRule {
           const issueStartPos = new Position(cPosition.getRow(), cPosition.getCol() + 2);
           const issueEndPos = new Position(t.getRow(), t.getCol());
           const fix = EditHelper.deleteRange(file, issueStartPos, issueEndPos);
-          issues.push(Issue.atRange( file, issueStartPos, issueEndPos, this.getMessage(), this.getMetadata().key, fix));
+          issues.push(Issue.atRange( file, issueStartPos, issueEndPos, this.getMessage(), this.getMetadata().key, this.conf.severity, fix));
         }
 
         break;
@@ -128,7 +128,7 @@ export class DoubleSpace extends ABAPRule {
         const issueStartPos = new Position(prev.getRow(), prev.getCol() + 2);
         const issueEndPos = new Position(t.getRow(), t.getCol());
         const fix = EditHelper.deleteRange(file, issueStartPos, issueEndPos);
-        issues.push(Issue.atRange( file, issueStartPos, issueEndPos, this.getMessage(), this.getMetadata().key, fix));
+        issues.push(Issue.atRange( file, issueStartPos, issueEndPos, this.getMessage(), this.getMetadata().key, this.conf.severity, fix));
       }
 
       if (this.getConfig().endParen === true
@@ -139,7 +139,7 @@ export class DoubleSpace extends ABAPRule {
         const issueStartPos = new Position(prev.getEnd().getRow(), prev.getEnd().getCol() + 1);
         const issueEndPos = new Position(t.getRow(), t.getCol());
         const fix = EditHelper.deleteRange(file, issueStartPos, issueEndPos);
-        issues.push(Issue.atRange( file, issueStartPos, issueEndPos, this.getMessage(), this.getMetadata().key, fix));
+        issues.push(Issue.atRange( file, issueStartPos, issueEndPos, this.getMessage(), this.getMetadata().key, this.conf.severity, fix));
       }
 
       prev = t;
@@ -178,7 +178,7 @@ export class DoubleSpace extends ABAPRule {
         const issueStartPos = new Position(prev.get().getEnd().getRow(), prev.get().getEnd().getCol() + 1 );
         const issueEndPos = new Position(n.get().getRow(), n.get().getCol());
         const fix = EditHelper.deleteRange(file, issueStartPos, issueEndPos);
-        issues.push(Issue.atRange( file, issueStartPos, issueEndPos, this.getMessage(), this.getMetadata().key, fix));
+        issues.push(Issue.atRange( file, issueStartPos, issueEndPos, this.getMessage(), this.getMetadata().key, this.conf.severity, fix));
         return issues;
       }
 

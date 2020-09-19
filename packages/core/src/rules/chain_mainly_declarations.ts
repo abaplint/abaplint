@@ -126,7 +126,7 @@ https://help.sap.com/doc/abapdocu_751_index_htm/7.51/en-US/abenchained_statement
       }
 
       const message = "Chain mainly declarations";
-      issues.push(Issue.atToken(file, n.getFirstToken(), message, this.getMetadata().key));
+      issues.push(Issue.atToken(file, n.getFirstToken(), message, this.getMetadata().key, this.conf.severity));
 
       previousRow = n.getColon()!.getStart().getRow();
     }

@@ -83,7 +83,7 @@ https://docs.abapopenchecks.org/checks/30/`,
       const next = e.getAllTokens()[1];
       const fix = EditHelper.deleteRange(file, tokens[0].getStart(), next.getStart());
 
-      const issue = Issue.atToken(file, tokens[0], this.getMessage(), this.getMetadata().key, fix);
+      const issue = Issue.atToken(file, tokens[0], this.getMessage(), this.getMetadata().key, this.conf.severity, fix);
       return [issue];
     }
 

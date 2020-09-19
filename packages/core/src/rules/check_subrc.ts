@@ -54,40 +54,40 @@ export class CheckSubrc extends ABAPRule {
       if (config.openDataset === true
           && statement.get() instanceof Statements.OpenDataset
           && this.isChecked(i, statements) === false) {
-        issues.push(Issue.atStatement(file, statement, message, this.getMetadata().key));
+        issues.push(Issue.atStatement(file, statement, message, this.getMetadata().key, this.conf.severity));
       } else if (config.authorityCheck === true
           && statement.get() instanceof Statements.AuthorityCheck
           && this.isChecked(i, statements) === false) {
-        issues.push(Issue.atStatement(file, statement, message, this.getMetadata().key));
+        issues.push(Issue.atStatement(file, statement, message, this.getMetadata().key, this.conf.severity));
       } else if (config.selectSingle === true
           && statement.get() instanceof Statements.Select
           && statement.concatTokens().toUpperCase().startsWith("SELECT SINGLE ")
           && this.isChecked(i, statements) === false) {
-        issues.push(Issue.atStatement(file, statement, message, this.getMetadata().key));
+        issues.push(Issue.atStatement(file, statement, message, this.getMetadata().key, this.conf.severity));
       } else if (config.updateDatabase === true
           && statement.get() instanceof Statements.UpdateDatabase
           && this.isChecked(i, statements) === false) {
-        issues.push(Issue.atStatement(file, statement, message, this.getMetadata().key));
+        issues.push(Issue.atStatement(file, statement, message, this.getMetadata().key, this.conf.severity));
       } else if (config.insertDatabase === true
           && statement.get() instanceof Statements.InsertDatabase
           && this.isChecked(i, statements) === false) {
-        issues.push(Issue.atStatement(file, statement, message, this.getMetadata().key));
+        issues.push(Issue.atStatement(file, statement, message, this.getMetadata().key, this.conf.severity));
       } else if (config.modifyDatabase === true
           && statement.get() instanceof Statements.ModifyDatabase
           && this.isChecked(i, statements) === false) {
-        issues.push(Issue.atStatement(file, statement, message, this.getMetadata().key));
+        issues.push(Issue.atStatement(file, statement, message, this.getMetadata().key, this.conf.severity));
       } else if (config.readTable === true
           && statement.get() instanceof Statements.ReadTable
           && this.isChecked(i, statements) === false) {
-        issues.push(Issue.atStatement(file, statement, message, this.getMetadata().key));
+        issues.push(Issue.atStatement(file, statement, message, this.getMetadata().key, this.conf.severity));
       } else if (config.assign === true
           && statement.get() instanceof Statements.Assign
           && this.isChecked(i, statements) === false) {
-        issues.push(Issue.atStatement(file, statement, message, this.getMetadata().key));
+        issues.push(Issue.atStatement(file, statement, message, this.getMetadata().key, this.conf.severity));
       } else if (config.find === true
           && statement.get() instanceof Statements.Find
           && this.isChecked(i, statements) === false) {
-        issues.push(Issue.atStatement(file, statement, message, this.getMetadata().key));
+        issues.push(Issue.atStatement(file, statement, message, this.getMetadata().key, this.conf.severity));
       }
     }
 

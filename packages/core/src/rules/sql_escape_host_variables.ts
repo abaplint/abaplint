@@ -58,7 +58,7 @@ export class SQLEscapeHostVariables extends ABAPRule {
         continue;
       } else {
         const message = "Escape SQL host variables";
-        const issue = Issue.atToken(file, s.getFirstToken(), message, this.getMetadata().key);
+        const issue = Issue.atToken(file, s.getFirstToken(), message, this.getMetadata().key, this.conf.severity);
         issues.push(issue);
       }
     }

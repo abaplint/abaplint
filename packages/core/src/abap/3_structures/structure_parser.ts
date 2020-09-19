@@ -7,6 +7,7 @@ import {Position} from "../../position";
 import {IStructureResult} from "./structure_result";
 import {IStatementResult} from "../2_statements/statement_result";
 import {IFile} from "../../files/_ifile";
+import {Severity} from "../../severity";
 
 export class StructureParser {
 
@@ -39,13 +40,13 @@ export class StructureParser {
     const result = structure.getMatcher().run(statements, parent);
 
     if (result.error) {
-      const issue = Issue.atPosition(file, new Position(1, 1), result.errorDescription, "structure");
+      const issue = Issue.atPosition(file, new Position(1, 1), result.errorDescription, "structure", Severity.Error);
       return {issues: [issue], node: undefined};
     }
     if (result.unmatched.length > 0) {
       const statement = result.unmatched[0];
       const descr = "Unexpected " + statement.get().constructor.name.toUpperCase();
-      const issue = Issue.atPosition(file, statement.getStart(), descr, "structure");
+      const issue = Issue.atPosition(file, statement.getStart(), descr, "structure", Severity.Error);
       return {issues: [issue], node: undefined};
     }
 

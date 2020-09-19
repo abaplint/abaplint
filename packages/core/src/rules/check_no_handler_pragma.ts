@@ -53,7 +53,7 @@ ENDTRY.`,
         continue;
       } else if (noHandler === true && !(statement.get() instanceof Statements.Catch)) {
         const message = "NO_HANDLER pragma or pseudo comment can be removed";
-        const issue = Issue.atStatement(file, statement, message, this.getMetadata().key);
+        const issue = Issue.atStatement(file, statement, message, this.getMetadata().key, this.conf.severity);
         issues.push(issue);
         noHandler = false;
       } else {

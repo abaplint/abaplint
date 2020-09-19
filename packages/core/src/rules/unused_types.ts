@@ -108,7 +108,7 @@ export class UnusedTypes implements IRule {
     for (const t of this.workarea.get()) {
       const message = "Type \"" + t.getName() + "\" not used";
       const fix = this.buildFix(t, obj);
-      ret.push(Issue.atIdentifier(t, message, this.getMetadata().key, fix));
+      ret.push(Issue.atIdentifier(t, message, this.getMetadata().key, this.conf.severity, fix));
     }
     return ret;
   }

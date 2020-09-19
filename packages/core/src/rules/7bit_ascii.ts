@@ -46,7 +46,7 @@ export class SevenBitAscii implements IRule {
             const start = new Position(i + 1, column);
             const end = new Position(i + 1, column + 1);
             const message = "Contains non 7 bit ascii character";
-            const issue = Issue.atRange(file, start, end, message, this.getMetadata().key);
+            const issue = Issue.atRange(file, start, end, message, this.getMetadata().key, this.conf.severity);
             output.push(issue);
           }
 
@@ -58,7 +58,7 @@ export class SevenBitAscii implements IRule {
             const start = new Position(i + 1, column);
             const end = new Position(i + 1, column + 1);
             const message = "Dangling carriage return";
-            const issue = Issue.atRange(file, start, end, message, this.getMetadata().key);
+            const issue = Issue.atRange(file, start, end, message, this.getMetadata().key, this.conf.severity);
             output.push(issue);
           }
 

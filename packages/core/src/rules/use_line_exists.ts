@@ -47,7 +47,7 @@ export class UseLineExists extends ABAPRule {
       if (statement.get() instanceof Statements.ReadTable
           && statement.concatTokens().toUpperCase().includes("TRANSPORTING NO FIELDS")
           && this.checksSubrc(i, statements) === true) {
-        issues.push(Issue.atStatement(file, statement, "Use line_exists", this.getMetadata().key));
+        issues.push(Issue.atStatement(file, statement, "Use line_exists", this.getMetadata().key, this.conf.severity));
       }
     }
 

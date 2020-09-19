@@ -102,7 +102,7 @@ export class KeepSingleParameterCallsOnOneLine extends ABAPRule {
       }
 
       const message = "Keep single parameter on one line";
-      return [Issue.atToken(file, c.getFirstToken(), message, this.getMetadata().key)];
+      return [Issue.atToken(file, c.getFirstToken(), message, this.getMetadata().key, this.conf.severity)];
     }
     return [];
   }

@@ -83,7 +83,7 @@ Exceptions are excluded from this rule.`,
       } else if (attr.level === AttributeLevel.Constant) {
         continue;
       }
-      const issue = Issue.atIdentifier(attr.identifier, this.getDescription(attr.name), this.getMetadata().key);
+      const issue = Issue.atIdentifier(attr.identifier, this.getDescription(attr.name), this.getMetadata().key, this.conf.severity);
       issues.push(issue);
     }
     return issues;

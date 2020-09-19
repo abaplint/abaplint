@@ -65,7 +65,7 @@ export class TypesNaming extends ABAPRule {
         continue;
       } else {
         const message = "Bad TYPES naming, expected \"" + this.conf.pattern + "\", got \"" + token.getStr() + "\"";
-        const issue = Issue.atToken(file, token, message, this.getMetadata().key);
+        const issue = Issue.atToken(file, token, message, this.getMetadata().key, this.conf.severity);
         issues.push(issue);
       }
 

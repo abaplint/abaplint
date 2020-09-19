@@ -72,7 +72,7 @@ https://github.com/abaplint/transpiler/blob/bda94b8b56e2b7f2f87be2168f12361aa530
     for (const c of this.conf.check) {
       const reg = new RegExp(c, "i");
       if (reg.exec(str)) {
-        ret.push(Issue.atToken(file, token, "Identifer not allowed", this.getMetadata().key));
+        ret.push(Issue.atToken(file, token, "Identifer not allowed", this.getMetadata().key, this.conf.severity));
       }
     }
     return ret;

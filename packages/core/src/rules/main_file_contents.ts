@@ -64,18 +64,18 @@ export class MainFileContents implements IRule {
       if (first === undefined || !(first.get() instanceof Statements.Report
           || first.get() instanceof Statements.Program)) {
         const position = new Position(1, 1);
-        const issue = Issue.atPosition(main, position, this.getDescription("Report must begin with REPORT or PROGRAM"), this.getMetadata().key);
+        const issue = Issue.atPosition(main, position, this.getDescription("Report must begin with REPORT or PROGRAM"), this.getMetadata().key, this.conf.severity);
         return [issue];
       }
       const name = first.findFirstExpression(Expressions.ReportName);
       if (name === undefined) {
         const token = first.getFirstToken();
         const issue = Issue.atToken(
-          main, token, this.getDescription("Add report name to REPORT or PROGRAM statement"), this.getMetadata().key);
+          main, token, this.getDescription("Add report name to REPORT or PROGRAM statement"), this.getMetadata().key, this.conf.severity);
         return [issue];
       } else if (name.getFirstToken().getStr().toUpperCase() !== obj.getName()) {
         const token = name.getFirstToken();
-        const issue = Issue.atToken(main, token, this.getDescription("REPORT or PROGRAM name should match filename"), this.getMetadata().key);
+        const issue = Issue.atToken(main, token, this.getDescription("REPORT or PROGRAM name should match filename"), this.getMetadata().key, this.conf.severity);
         return [issue];
       }
     }

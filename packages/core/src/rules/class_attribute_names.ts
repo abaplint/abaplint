@@ -108,7 +108,7 @@ export class ClassAttributeNames extends ABAPRule {
     const regex = new RegExp(expected, "i");
     const name = attr.getName();
     if (NameValidator.violatesRule(name, regex, this.conf)) {
-      const issue = Issue.atIdentifier(attr, this.getDescription(name, expected), this.getMetadata().key);
+      const issue = Issue.atIdentifier(attr, this.getDescription(name, expected), this.getMetadata().key, this.conf.severity);
       ret.push(issue);
     }
 

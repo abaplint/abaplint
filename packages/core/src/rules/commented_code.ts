@@ -105,7 +105,7 @@ https://docs.abapopenchecks.org/checks/14/`,
     }
 
     const fix = EditHelper.deleteRange(file, posStart, posEnd);
-    const issue = Issue.atRange(file, posStart, posEnd, this.getMessage(), this.getMetadata().key, fix);
+    const issue = Issue.atRange(file, posStart, posEnd, this.getMessage(), this.getMetadata().key, this.conf.severity, fix);
     return [issue];
   }
 

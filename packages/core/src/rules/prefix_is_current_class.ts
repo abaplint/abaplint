@@ -61,7 +61,8 @@ export class PrefixIsCurrentClass extends ABAPRule {
             file,
             e.getFirstToken(),
             "Reference to current interface can be omitted",
-            this.getMetadata().key));
+            this.getMetadata().key,
+            this.conf.severity));
         }
       }
 
@@ -95,7 +96,9 @@ export class PrefixIsCurrentClass extends ABAPRule {
               file,
               tokenPos, end,
               "Reference to current class can be omitted: \"" + staticAccess + "\"",
-              this.getMetadata().key, fix));
+              this.getMetadata().key,
+              this.conf.severity,
+              fix));
           }
         } else if (this.conf.omitMeInstanceCalls === true
             && s.concatTokensWithoutStringsAndComments().toUpperCase().includes(meAccess)
@@ -108,7 +111,7 @@ export class PrefixIsCurrentClass extends ABAPRule {
               file,
               tokenPos, end,
               "Omit 'me->' in instance calls",
-              this.getMetadata().key, fix));
+              this.getMetadata().key, this.conf.severity, fix));
           }
         }
       }

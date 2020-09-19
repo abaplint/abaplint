@@ -1,6 +1,7 @@
 import {AbstractObject} from "./_abstract_object";
 import {Issue} from "../issue";
 import {Position} from "../position";
+import {Severity} from "../severity";
 
 export class UnknownObject extends AbstractObject {
   private readonly type: string;
@@ -24,7 +25,7 @@ export class UnknownObject extends AbstractObject {
   public getParsingIssues() {
     const pos = new Position(1, 1);
     const message = "Unknown object type, add/change filename eg zclass.clas.abap or zprogram.prog.abap";
-    const issue = Issue.atPosition(this.getFiles()[0]!, pos, message, "registry_add");
+    const issue = Issue.atPosition(this.getFiles()[0]!, pos, message, "registry_add", Severity.Error);
     return [issue];
   }
 

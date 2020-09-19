@@ -57,7 +57,7 @@ Base rule checks for existence of abapdoc for public class methods and all inter
       const previousRow = method.identifier.getStart().getRow() - 2;
       if (!(rows[previousRow].trim().substring(0, 2) === "\"!")) {
         const message = "Missing ABAP Doc for method " + method.identifier.getToken().getStr();
-        const issue = Issue.atIdentifier(method.identifier, message, this.getMetadata().key);
+        const issue = Issue.atIdentifier(method.identifier, message, this.getMetadata().key, this.conf.severity);
         issues.push(issue);
       }
     }

@@ -72,7 +72,7 @@ export class CheckTextElements implements IRule {
         const key = token.getStr();
         if (this.findKey(key, texts) === undefined) {
           const message = `Text element "${key}" not found` + (mainName ? ", " + mainName : "");
-          output.push(Issue.atToken(file, token, message, this.getMetadata().key));
+          output.push(Issue.atToken(file, token, message, this.getMetadata().key, this.conf.severity));
         }
       }
 
@@ -90,10 +90,10 @@ export class CheckTextElements implements IRule {
         }
         if (found === undefined) {
           const message = `Text element "${key}" not found` + (mainName ? ", " + mainName : "");
-          output.push(Issue.atToken(file, token, message, this.getMetadata().key));
+          output.push(Issue.atToken(file, token, message, this.getMetadata().key, this.conf.severity));
         } else if (code !== "'" + found + "'"
             && code !== "`" + found + "`") {
-          output.push(Issue.atToken(file, token, "Text does not match text element", this.getMetadata().key));
+          output.push(Issue.atToken(file, token, "Text does not match text element", this.getMetadata().key, this.conf.severity));
         }
       }
     }

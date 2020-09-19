@@ -149,7 +149,7 @@ Regexes are case-insensitive.`,
     const name = token.getStr();
     if (NameValidator.violatesRule(name, regex, this.conf)) {
       const message = this.getDescription(expected, name);
-      const issue = Issue.atToken(file, token, message, this.getMetadata().key);
+      const issue = Issue.atToken(file, token, message, this.getMetadata().key, this.conf.severity);
       ret.push(issue);
     }
     return ret;

@@ -54,11 +54,11 @@ https://github.com/SAP/styleguides/blob/master/clean-abap/CleanABAP.md#check-vs-
         stack.pop();
       } else if (statement.get() instanceof Statements.Check && stack.length === 0) {
         const message = "CHECK is not allowed outside of loops";
-        const issue = Issue.atStatement(file, statement, message, this.getMetadata().key);
+        const issue = Issue.atStatement(file, statement, message, this.getMetadata().key, this.conf.severity);
         issues.push(issue);
       } else if (statement.get() instanceof Statements.Exit && stack.length === 0) {
         const message = "EXIT is not allowed outside of loops";
-        const issue = Issue.atStatement(file, statement, message, this.getMetadata().key);
+        const issue = Issue.atStatement(file, statement, message, this.getMetadata().key, this.conf.severity);
         issues.push(issue);
       }
     }

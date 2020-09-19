@@ -8,6 +8,7 @@ import {IFile} from "../files/_ifile";
 import {IIncludeGraph} from "./_include_graph";
 import {IRegistry} from "../_iregistry";
 import {ABAPObject} from "../objects/_abap_object";
+import {Severity} from "../severity";
 
 // todo, check for cycles/circular dependencies, method findTop
 // todo, add configurable error for multiple use includes
@@ -138,11 +139,11 @@ export class IncludeGraph implements IIncludeGraph {
             const found = this.graph.findInclude(name);
             if (found === undefined) {
               if (ifFound === false) {
-                const issue = Issue.atStatement(f, s, "Include " + name + " not found", new CheckInclude().getMetadata().key);
+                const issue = Issue.atStatement(f, s, "Include " + name + " not found", new CheckInclude().getMetadata().key, Severity.Error);
                 this.issues.push(issue);
               }
             } else if (found.include === false) {
-              const issue = Issue.atStatement(f, s, "Not possible to INCLUDE a main program", new CheckInclude().getMetadata().key);
+              const issue = Issue.atStatement(f, s, "Not possible to INCLUDE a main program", new CheckInclude().getMetadata().key, Severity.Error);
               this.issues.push(issue);
             } else {
               this.graph.addEdge(found, f.getFilename());
@@ -163,7 +164,7 @@ export class IncludeGraph implements IIncludeGraph {
           if (f === undefined) {
             throw new Error("findUnusedIncludes internal error");
           }
-          const issue = Issue.atPosition(f, new Position(1, 1), "INCLUDE not used anywhere", new CheckInclude().getMetadata().key);
+          const issue = Issue.atPosition(f, new Position(1, 1), "INCLUDE not used anywhere", new CheckInclude().getMetadata().key, Severity.Error);
           this.issues.push(issue);
         }
       }

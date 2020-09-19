@@ -55,7 +55,7 @@ export class UseNew extends ABAPRule {
           continue;
         }
         const fix = this.buildFix(file, statement);
-        const issue = Issue.atPosition(file, statement.getStart(), this.getMessage(), this.getMetadata().key, fix);
+        const issue = Issue.atPosition(file, statement.getStart(), this.getMessage(), this.getMetadata().key, this.conf.severity, fix);
         issues.push(issue);
       }
     }

@@ -60,7 +60,7 @@ export class CheckDDIC implements IRule {
     if (found instanceof UnknownType) {
       const position = new Position(1, 1);
       const message = "Unknown/un-resolveable type in " + obj.getName() + ": " + found.getError();
-      ret.push(Issue.atPosition(obj.getFiles()[0], position, message, this.getMetadata().key));
+      ret.push(Issue.atPosition(obj.getFiles()[0], position, message, this.getMetadata().key, this.conf.severity));
     } else if (found instanceof StructureType) {
 // assumption: no circular types
       for (const c of found.getComponents()) {

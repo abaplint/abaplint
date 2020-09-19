@@ -49,14 +49,20 @@ export class CheckAbstract extends ABAPRule {
       if (classDef.isAbstract === true) {
         if (classDef.isFinal === true) {
           issues.push(Issue.atIdentifier(
-            classDef.identifier, this.getDescription(IssueType.AbstractAndFinal, classDef.name), this.getMetadata().key));
+            classDef.identifier,
+            this.getDescription(IssueType.AbstractAndFinal, classDef.name),
+            this.getMetadata().key,
+            this.conf.severity));
         }
         continue;
       }
       for (const methodDef of classDef.methods) {
         if (methodDef.isAbstract === true) {
           issues.push(Issue.atIdentifier(
-            methodDef.identifier, this.getDescription(IssueType.NotAbstractClass, methodDef.name), this.getMetadata().key));
+            methodDef.identifier,
+            this.getDescription(IssueType.NotAbstractClass, methodDef.name),
+            this.getMetadata().key,
+            this.conf.severity));
         }
       }
     }

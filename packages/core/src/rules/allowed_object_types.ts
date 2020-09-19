@@ -48,7 +48,13 @@ export class AllowedObjectTypes implements IRule {
     const objectType = obj.getType();
     if (allowed.indexOf(objectType) < 0) {
       const position = new Position(1, 1);
-      const issue = Issue.atPosition(obj.getFiles()[0], position, this.getDescription(objectType), this.getMetadata().key);
+      const issue = Issue.atPosition(
+        obj.getFiles()[0],
+        position,
+        this.getDescription(objectType),
+        this.getMetadata().key,
+        this.conf.severity);
+
       return [issue];
     }
 

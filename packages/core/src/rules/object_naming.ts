@@ -132,7 +132,7 @@ export class ObjectNaming implements IRule {
     }
 
     if (message) {
-      return [Issue.atRow(obj.getFiles()[0], 1, message, this.getMetadata().key)];
+      return [Issue.atRow(obj.getFiles()[0], 1, message, this.getMetadata().key, this.conf.severity)];
     }
 
     return [];

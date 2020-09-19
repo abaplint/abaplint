@@ -83,7 +83,7 @@ ENDIF.`,
       }
 
       const token = i.getFirstToken();
-      const issue = Issue.atToken(file, token, this.getMessage(), this.getMetadata().key);
+      const issue = Issue.atToken(file, token, this.getMessage(), this.getMetadata().key, this.conf.severity);
       issues.push(issue);
     }
 

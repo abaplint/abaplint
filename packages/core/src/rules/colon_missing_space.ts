@@ -48,7 +48,7 @@ export class ColonMissingSpace extends ABAPRule {
         const start = token.getStart();
         const end = new Position(start.getRow(), start.getCol() + 1);
         const fix = EditHelper.insertAt(file, end, " ");
-        const issue = Issue.atRange(file, start, end, this.getMessage(), this.getMetadata().key, fix);
+        const issue = Issue.atRange(file, start, end, this.getMessage(), this.getMetadata().key, this.conf.severity, fix);
         issues.push(issue);
       }
     }

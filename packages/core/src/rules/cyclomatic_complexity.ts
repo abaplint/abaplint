@@ -41,7 +41,7 @@ export class CyclomaticComplexity implements IRule {
     for (const s of stats) {
       if (s.count > this.conf.max) {
         const message = "Max cyclomatic complexity reached, " + s.count + ", " + s.name;
-        const issue = Issue.atPosition(s.file, s.pos, message, this.getMetadata().key);
+        const issue = Issue.atPosition(s.file, s.pos, message, this.getMetadata().key, this.conf.severity);
         issues.push(issue);
       }
     }

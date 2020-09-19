@@ -68,13 +68,13 @@ export class MethodLength implements IRule {
         continue;
       }
       if (s.count === 0 && this.conf.errorWhenEmpty === true) {
-        const issue = Issue.atPosition(s.file, s.pos, this.getDescription(IssueType.EmptyMethod, "0"), this.getMetadata().key);
+        const issue = Issue.atPosition(s.file, s.pos, this.getDescription(IssueType.EmptyMethod, "0"), this.getMetadata().key, this.conf.severity);
         issues.push(issue);
         continue;
       }
       if (s.count > this.conf.statements) {
         const message = this.getDescription(IssueType.MaxStatements, s.count.toString());
-        const issue = Issue.atPosition(s.file, s.pos, message, this.getMetadata().key);
+        const issue = Issue.atPosition(s.file, s.pos, message, this.getMetadata().key, this.conf.severity);
         issues.push(issue);
       }
     }

@@ -45,7 +45,7 @@ export class FormTablesObsolete extends ABAPRule {
 
     for (const form of stru.findAllExpressions(Expressions.FormTables)) {
       const token = form.getFirstToken();
-      const issue = Issue.atToken(file, token, this.getMessage(), this.getMetadata().key);
+      const issue = Issue.atToken(file, token, this.getMessage(), this.getMetadata().key, this.conf.severity);
       ret.push(issue);
     }
 
