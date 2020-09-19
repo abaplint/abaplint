@@ -1,5 +1,5 @@
 import {expect} from "chai";
-import {Config, Version, MemoryFile, Registry} from "../src";
+import {Config, Version, MemoryFile, Registry, Issue, Position} from "../src";
 import {Severity} from "../src/severity";
 
 describe("severity", () => {
@@ -52,6 +52,31 @@ describe("severity", () => {
     const issues = registry.findIssues();
     expect(issues.length).to.equal(1);
     expect(issues[0].getSeverity()).to.equal(Severity.Error);
+
+  });
+
+  it("string values", () => {
+
+    let issue = Issue.atPosition(
+      new MemoryFile("foo.prog.abap", "REPORT test"), new Position(1, 1), "message", "rule", Severity.Info);
+
+    expect(issue.getSeverity().toString()).to.equal("Info");
+
+    issue = Issue.atPosition(
+      new MemoryFile("foo.prog.abap", "REPORT test"), new Position(1, 1), "message", "rule", Severity.Warning);
+
+    expect(issue.getSeverity().toString()).to.equal("Warning");
+
+    issue = Issue.atPosition(
+      new MemoryFile("foo.prog.abap", "REPORT test"), new Position(1, 1), "message", "rule", Severity.Error);
+
+    expect(issue.getSeverity().toString()).to.equal("Error");
+
+    // default
+    issue = Issue.atPosition(
+      new MemoryFile("foo.prog.abap", "REPORT test"), new Position(1, 1), "message", "rule");
+
+    expect(issue.getSeverity().toString()).to.equal("Error");
 
   });
 
