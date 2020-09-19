@@ -8,8 +8,24 @@ import {ABAPFile} from "../files";
 import {IRuleMetadata} from "./_irule";
 import {ExpressionNode, StructureNode} from "../abap/nodes";
 
-function hasDuplicates(arr: string[]): boolean {
-  return arr.some(x => arr.indexOf(x) !== arr.lastIndexOf(x));
+class Conditions {
+  private readonly arr: string[] = [];
+
+  public constructor() {
+    this.arr = [];
+  }
+
+  public push(e: ExpressionNode) {
+    if (e.getFirstChild()?.get() instanceof Expressions.Constant) {
+      this.arr.push(e.concatTokens());
+    } else {
+      this.arr.push(e.concatTokens().toUpperCase());
+    }
+  }
+
+  public hasDuplicates(): boolean {
+    return this.arr.some(x => this.arr.indexOf(x) !== this.arr.lastIndexOf(x));
+  }
 }
 
 
@@ -60,12 +76,12 @@ export class IdenticalConditions extends ABAPRule {
 ////////////////
 
   private analyzeCond(file: ABAPFile, node: ExpressionNode): Issue[] {
-    const conditions: string[] = [];
+    const conditions = new Conditions();
     let operator = "";
 
     for (const c of node.getChildren()) {
       if (c instanceof ExpressionNode) {
-        conditions.push(c.concatTokens().toUpperCase());
+        conditions.push(c);
       } else if (operator === "") {
         operator = c.get().getStr().toUpperCase();
       } else if (operator !== c.get().getStr().toUpperCase()) {
@@ -73,7 +89,7 @@ export class IdenticalConditions extends ABAPRule {
       }
     }
 
-    if (hasDuplicates(conditions)) {
+    if (conditions.hasDuplicates()) {
       const message = "Identical conditions";
       const issue = Issue.atToken(file, node.getFirstToken(), message, this.getMetadata().key, this.conf.severity);
       return [issue];
@@ -83,7 +99,7 @@ export class IdenticalConditions extends ABAPRule {
   }
 
   private analyzeIf(file: ABAPFile, node: StructureNode): Issue[] {
-    const conditions: string[] = [];
+    const conditions = new Conditions();
 
     const i = node.findDirectStatement(Statements.If);
     if (i === undefined) {
@@ -91,17 +107,17 @@ export class IdenticalConditions extends ABAPRule {
     }
     const c = i?.findDirectExpression(Expressions.Cond);
     if (c) {
-      conditions.push(c.concatTokens().toUpperCase());
+      conditions.push(c);
     }
 
     for (const e of node.findDirectStructures(Structures.ElseIf)) {
       const c = e.findDirectStatement(Statements.ElseIf)?.findDirectExpression(Expressions.Cond);
       if (c) {
-        conditions.push(c.concatTokens().toUpperCase());
+        conditions.push(c);
       }
     }
 
-    if (hasDuplicates(conditions)) {
+    if (conditions.hasDuplicates()) {
       const message = "Identical conditions";
       const issue = Issue.atStatement(file, i, message, this.getMetadata().key, this.conf.severity);
       return [issue];
@@ -111,15 +127,11 @@ export class IdenticalConditions extends ABAPRule {
   }
 
   private analyzeWhen(file: ABAPFile, node: StructureNode): Issue[] {
-    const conditions: string[] = [];
+    const conditions = new Conditions();
 
     const i = node.findDirectStatement(Statements.Case);
     if (i === undefined) {
       throw new Error("identical_conditions, no CASE found");
-    }
-    const c = i?.findDirectExpression(Expressions.Source);
-    if (c) {
-      conditions.push(c.concatTokens().toUpperCase());
     }
 
     for (const e of node.findDirectStructures(Structures.When)) {
@@ -128,11 +140,11 @@ export class IdenticalConditions extends ABAPRule {
         continue;
       }
       for (const s of w.findAllExpressions(Expressions.Source)) {
-        conditions.push(s.concatTokens().toUpperCase());
+        conditions.push(s);
       }
     }
 
-    if (hasDuplicates(conditions)) {
+    if (conditions.hasDuplicates()) {
       const message = "Identical conditions";
       const issue = Issue.atStatement(file, i, message, this.getMetadata().key, this.conf.severity);
       return [issue];
