@@ -37,7 +37,7 @@ export class Junit implements IFormatter {
           failure: {
             _attributes: {
               message: issue.getKey(),
-              type: issue.getSeverity().toString()
+              type: issue.getSeverity().toString(),
             },
             _cdata: `${issue.getMessage()}`,
           },
