@@ -1,3 +1,4 @@
+/* eslint-disable max-len */
 import {TypedIdentifier, IdentifierMeta} from "../types/_typed_identifier";
 import {VoidType, CharacterType, StructureType, IStructureComponent, IntegerType, NumericType, DateType, TimeType, StringType, FloatType, XStringType, TableType, AnyType} from "../types/basic";
 import {Identifier as TokenIdentifier} from "../1_lexer/tokens";
