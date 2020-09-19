@@ -2,6 +2,7 @@ import * as LServer from "vscode-languageserver-types";
 import {IRegistry} from "../_iregistry";
 import {LSPUtils} from "./_lsp_utils";
 import {Issue} from "../issue";
+import {Severity} from "../severity";
 
 export class Diagnostics {
   private readonly reg: IRegistry;
@@ -30,7 +31,7 @@ export class Diagnostics {
 
   public static mapDiagnostic(issue: Issue): LServer.Diagnostic {
     const diagnosic: LServer.Diagnostic = {
-      severity: issue.getSeverity() as LServer.DiagnosticSeverity,
+      severity: this.mapSeverity(issue.getSeverity()),
       range: {
         start: {line: issue.getStart().getRow() - 1, character: issue.getStart().getCol() - 1},
         end: {line: issue.getEnd().getRow() - 1, character: issue.getEnd().getCol() - 1},
@@ -52,6 +53,19 @@ export class Diagnostics {
     }
 
     return diagnostics;
+  }
+
+  private static mapSeverity(severity: Severity): LServer.DiagnosticSeverity {
+    switch (severity) {
+      case Severity.Error:
+        return LServer.DiagnosticSeverity.Error;
+      case Severity.Warning:
+        return LServer.DiagnosticSeverity.Warning;
+      case Severity.Info:
+        return LServer.DiagnosticSeverity.Information;
+      default:
+        return LServer.DiagnosticSeverity.Error;
+    }
   }
 
 }
