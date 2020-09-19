@@ -3,6 +3,7 @@ import {Registry} from "../../src/registry";
 import {MemoryFile} from "../../src/files/memory_file";
 import {Table, EnhancementCategory, TableCategory} from "../../src/objects";
 import {StructureType, TableType, ObjectReferenceType, UnknownType, VoidType} from "../../src/abap/types/basic";
+import {Config} from "../../src/config";
 
 describe("Table, parse XML", () => {
   const xml1 =
@@ -111,6 +112,58 @@ describe("Table, parse XML", () => {
     const tabl = reg.getFirstObject()! as Table;
 
     expect(tabl.getEnhancementCategory()).to.equal(EnhancementCategory.NotClassified);
+  });
+
+  it("parse with CI include", async () => {
+    const xml = `
+    <?xml version="1.0" encoding="utf-8"?>
+    <abapGit version="v1.0.0" serializer="LCL_OBJECT_TABL" serializer_version="v1.0.0">
+     <asx:abap xmlns:asx="http://www.sap.com/abapxml" version="1.0">
+      <asx:values>
+       <DD02V>
+        <TABNAME>ZSDFSDF</TABNAME>
+        <DDLANGUAGE>E</DDLANGUAGE>
+        <TABCLASS>INTTAB</TABCLASS>
+        <LANGDEP>X</LANGDEP>
+        <DDTEXT>sdfsdfds</DDTEXT>
+        <EXCLASS>2</EXCLASS>
+       </DD02V>
+       <DD03P_TABLE>
+        <DD03P>
+         <TABNAME>ZSDFSDF</TABNAME>
+         <FIELDNAME>ASDFDS</FIELDNAME>
+         <DDLANGUAGE>E</DDLANGUAGE>
+         <POSITION>0001</POSITION>
+         <ADMINFIELD>0</ADMINFIELD>
+         <INTTYPE>C</INTTYPE>
+         <INTLEN>000020</INTLEN>
+         <DATATYPE>CHAR</DATATYPE>
+         <LENG>000010</LENG>
+         <MASK>  CHAR</MASK>
+        </DD03P>
+        <DD03P>
+         <TABNAME>ZSDFSDF</TABNAME>
+         <FIELDNAME>.INCLUDE</FIELDNAME>
+         <POSITION>0002</POSITION>
+         <ADMINFIELD>0</ADMINFIELD>
+         <PRECFIELD>CI_FOOBAR</PRECFIELD>
+         <MASK>      N</MASK>
+        </DD03P>
+       </DD03P_TABLE>
+      </asx:values>
+     </asx:abap>
+    </abapGit>`;
+
+    const config = Config.getDefault().get();
+    config.syntax.errorNamespace = "";
+    const all = new Config(JSON.stringify(config));
+
+    const reg = new Registry(all).addFile(new MemoryFile("zsdfsdf.tabl.xml", xml));
+    await reg.parseAsync();
+    const tabl = reg.getFirstObject()! as Table;
+    expect(tabl.parseType(reg)).to.be.instanceof(StructureType);
+    const type = tabl.parseType(reg) as StructureType;
+    expect(type.getComponents().length).to.equal(1);
   });
 
   it("Call parseType", async () => {
