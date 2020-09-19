@@ -49,7 +49,7 @@ testRule(tests, UnknownTypes);
 const key = "unknown_types";
 
 
-describe("unknown_types Rule, Multiple files", () => {
+describe("unknown_types Rule", () => {
 
   it("TABL, error", () => {
     const abap = `
@@ -1051,6 +1051,26 @@ INTERFACE zif_abapgit_auth.
   TYPES ty_authorization TYPE string.
   DATA foo TYPE ty_authorization.
 ENDINTERFACE.`;
+    let issues = runMulti([{filename: "zfoobar.prog.abap", contents: abap}]);
+    issues = issues.filter(i => i.getKey() === key);
+    expect(issues.length).to.equal(0);
+  });
+
+  it("LIKE LINE OF me->worksheet->sheet_content", () => {
+    const abap = `
+CLASS foobar DEFINITION.
+  PUBLIC SECTION.
+    DATA worksheet TYPE REF TO foobar.
+    DATA sheet_content TYPE STANDARD TABLE OF i WITH DEFAULT KEY.
+    METHODS moo.
+ENDCLASS.
+
+CLASS foobar IMPLEMENTATION.
+  METHOD moo.
+    FIELD-SYMBOLS: <bar> LIKE LINE OF me->worksheet->sheet_content.
+    WRITE <bar>.
+  ENDMETHOD.
+ENDCLASS.`;
     let issues = runMulti([{filename: "zfoobar.prog.abap", contents: abap}]);
     issues = issues.filter(i => i.getKey() === key);
     expect(issues.length).to.equal(0);

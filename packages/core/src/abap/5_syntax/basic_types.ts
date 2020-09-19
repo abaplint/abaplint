@@ -10,6 +10,7 @@ import {ClassConstant} from "../types/class_constant";
 import {Identifier} from "../1_lexer/tokens/identifier";
 import {ReferenceType} from "./_reference";
 import {TableType} from "../types/basic";
+import {FieldChain} from "./expressions/field_chain";
 
 export class BasicTypes {
   private readonly filename: string;
@@ -34,39 +35,15 @@ export class BasicTypes {
 
     if (children === undefined) {
       return new Types.UnknownType("Type error, could not resolve \"" + fullName + "\", resolveLikeName1");
+    } else if (chain === undefined) {
+      throw new Error("resolveLikeName, chain undefined");
     }
 
     let type: AbstractType | undefined = undefined;
-    const name = children[0].getFirstToken().getStr();
-    if (children[1] && children[1].getFirstToken().getStr() === "=>") {
-      const obj = this.scope.findObjectDefinition(name);
-      if (obj === undefined && this.scope.getDDIC().inErrorNamespace(name) === false) {
-        return new Types.VoidType(name);
-      } else if (obj === undefined) {
-        return new Types.UnknownType("Could not resolve top " + name + ", resolveLikeName");
-      }
-      // todo, this does not respect visibility
-      type = obj.getAttributes().findByName(children[2].getFirstToken().getStr())?.getType();
-
-    } else if (children[1] && children[2] && children[1].getFirstToken().getStr() === "->") {
-      type = this.scope.findVariable(name)?.getType();
-      if (type instanceof Types.VoidType) {
-        return type;
-      } else if (!(type instanceof Types.ObjectReferenceType)) {
-        return new Types.UnknownType("Type error, not a object reference " + name);
-      }
-      const def = this.scope.findObjectDefinition(type.getName());
-      if (def === undefined && this.scope.getDDIC().inErrorNamespace(type.getName()) === false) {
-        return new Types.VoidType(type.getName());
-      } else if (def === undefined) {
-        return new Types.UnknownType("Type error, could not find object definition");
-      }
-      const attr = def.getAttributes().findByName(children[2].getFirstToken().getStr());
-      if (attr === undefined) {
-        return new Types.UnknownType("Type error, not defined in object " + children[2]);
-      }
-      return attr.getType();
+    if (children[1] && ( children[1].getFirstToken().getStr() === "=>" || children[1].getFirstToken().getStr() === "->")) {
+      type = new FieldChain().runSyntax(chain, this.scope, this.filename, ReferenceType.TypeReference);
     } else {
+      const name = children[0].getFirstToken().getStr();
       const found = this.scope.findVariable(name);
       type = found?.getType();
 
