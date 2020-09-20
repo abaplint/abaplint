@@ -21,7 +21,7 @@ export class UseBoolExpression extends ABAPRule {
     return {
       key: "use_bool_expression",
       title: "Use boolean expression",
-      shortDescription: `Use boolean expression, xsdboolc from 740sp08 and up, boolc from 702 and up`,
+      shortDescription: `Use boolean expression, xsdbool from 740sp08 and up, boolc from 702 and up`,
       extendedInformation:
         `https://github.com/SAP/styleguides/blob/master/clean-abap/CleanABAP.md#use-xsdbool-to-set-boolean-variables`,
       tags: [RuleTag.Upport, RuleTag.Styleguide],
