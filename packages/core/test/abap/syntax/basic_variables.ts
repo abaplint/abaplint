@@ -1572,11 +1572,18 @@ DATA(sdf) = ref->*-int.`;
     expect(type).to.be.instanceof(Basic.TableType);
   });
 
-  it("DATA TYPE in8", () => {
+  it("DATA TYPE int8", () => {
     const abap = "DATA foo TYPE int8.";
     const identifier = resolveVariable(abap, "foo");
     expect(identifier).to.not.equal(undefined);
     expect(identifier!.getType()).to.be.instanceof(Basic.IntegerType);
+  });
+
+  it("DATA TYPE utclong", () => {
+    const abap = "DATA foo TYPE utclong.";
+    const identifier = resolveVariable(abap, "foo");
+    expect(identifier).to.not.equal(undefined);
+    expect(identifier!.getType()).to.be.instanceof(Basic.UTCLongType);
   });
 
 });
