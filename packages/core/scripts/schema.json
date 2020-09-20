@@ -1861,6 +1861,17 @@
               ],
               "description": "Prefer inline to up-front declarations.\nActivates if language version is v740sp02 or above.\nVariables must be local(METHOD or FORM).\nNo generic or void typed variables.\nFirst position used must be a full/pure write.\nTags: Styleguide, Upport, Experimental, Quickfix\nhttps://rules.abaplint.org/prefer_inline"
             },
+            "prefer_is_not": {
+              "anyOf": [
+                {
+                  "$ref": "#/definitions/PreferIsNotConf"
+                },
+                {
+                  "type": "boolean"
+                }
+              ],
+              "description": "Prefer IS NOT to NOT IS\nTags: Styleguide\nhttps://rules.abaplint.org/prefer_is_not"
+            },
             "prefer_returning_to_exporting": {
               "anyOf": [
                 {
@@ -2124,6 +2135,17 @@
                 }
               ],
               "description": "Checks for unused variables and constants\nTags: Experimental, Quickfix\nhttps://rules.abaplint.org/unused_variables"
+            },
+            "use_bool_expression": {
+              "anyOf": [
+                {
+                  "$ref": "#/definitions/UseBoolExpressionConf"
+                },
+                {
+                  "type": "boolean"
+                }
+              ],
+              "description": "Use boolean expression, xsdbool from 740sp08 and up, boolc from 702 and up\nTags: Upport, Styleguide\nhttps://rules.abaplint.org/use_bool_expression"
             },
             "use_line_exists": {
               "anyOf": [
@@ -3268,6 +3290,23 @@
       },
       "type": "object"
     },
+    "PreferIsNotConf": {
+      "additionalProperties": false,
+      "properties": {
+        "exclude": {
+          "description": "List of file regex filename patterns to exclude, case insensitive",
+          "items": {
+            "type": "string"
+          },
+          "type": "array"
+        },
+        "severity": {
+          "$ref": "#/definitions/Severity",
+          "description": "Problem severity"
+        }
+      },
+      "type": "object"
+    },
     "PreferReturningToExportingConf": {
       "additionalProperties": false,
       "properties": {
@@ -3817,6 +3856,23 @@
       "required": [
         "skipNames"
       ],
+      "type": "object"
+    },
+    "UseBoolExpressionConf": {
+      "additionalProperties": false,
+      "properties": {
+        "exclude": {
+          "description": "List of file regex filename patterns to exclude, case insensitive",
+          "items": {
+            "type": "string"
+          },
+          "type": "array"
+        },
+        "severity": {
+          "$ref": "#/definitions/Severity",
+          "description": "Problem severity"
+        }
+      },
       "type": "object"
     },
     "UseLineExistsConf": {
