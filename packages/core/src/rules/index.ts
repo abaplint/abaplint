@@ -95,6 +95,7 @@ export * from "./unknown_types";
 export * from "./unreachable_code";
 export * from "./unused_types";
 export * from "./unused_variables";
+export * from "./use_bool_expression";
 export * from "./use_line_exists";
 export * from "./use_new";
 export * from "./when_others_last";
