@@ -12,6 +12,7 @@ const tests = [
   {abap: "IF NOT variable IS INITIAL. ENDIF.", cnt: 1},
   {abap: "IF NOT variable CP 'TODO*'. ENDIF.", cnt: 1},
   {abap: "IF NOT variable = 42. ENDIF.", cnt: 1},
+  {abap: "IF foo = bar AND NOT variable = 42. ENDIF.", cnt: 1},
   {abap: "WHILE NOT variable IS INITIAL. ENDWHILE.", cnt: 1},
   {abap: "foo = boolc( NOT variable = 42 ).", cnt: 1},
 ];
