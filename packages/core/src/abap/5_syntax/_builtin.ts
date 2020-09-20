@@ -1,6 +1,6 @@
 /* eslint-disable max-len */
 import {TypedIdentifier, IdentifierMeta} from "../types/_typed_identifier";
-import {VoidType, CharacterType, StructureType, IStructureComponent, IntegerType, NumericType, DateType, TimeType, StringType, FloatType, XStringType, TableType, AnyType} from "../types/basic";
+import {VoidType, CharacterType, StructureType, IStructureComponent, IntegerType, NumericType, DateType, TimeType, StringType, FloatType, XStringType, TableType, AnyType, UTCLongType} from "../types/basic";
 import {Identifier as TokenIdentifier} from "../1_lexer/tokens";
 import {Position} from "../../position";
 import {AbstractType} from "../types/basic/_abstract_type";
@@ -13,7 +13,7 @@ import {Version} from "../../version";
 
 interface IBuiltinMethod {
   name: string;
-  mandatory: {[key: string]: AbstractType},
+  mandatory?: {[key: string]: AbstractType},
   optional?: {[key: string]: AbstractType},
   version?: Version,
   return: AbstractType;
@@ -41,7 +41,7 @@ class BuiltInMethod extends Identifier implements IMethodDefinition, IMethodPara
     }
     for (const i in this.method.optional) {
       const id = new TokenIdentifier(new Position(this.row, 1), i);
-      ret.push(new TypedIdentifier(id, BuiltIn.filename, this.method.mandatory[i]));
+      ret.push(new TypedIdentifier(id, BuiltIn.filename, this.method.optional[i]));
     }
     return ret;
   }
@@ -173,10 +173,9 @@ export class BuiltIn {
     ret.push({name: "TO_UPPER", mandatory: {"val": new StringType()}, return: new StringType(), version: Version.v702});
     ret.push({name: "TRANSLATE", mandatory: {"val": new StringType(), "from": new StringType(), "to": new StringType()}, return: new StringType(), version: Version.v702});
     ret.push({name: "TRUNC", mandatory: {"val": new FloatType()}, return: new IntegerType()});
-    // todo, add UtclongType #1329
-    //ret.push({name: "UTCLONG_ADD", mandatory: {"val": new UtclongType()}, optional: {"days": new IntegerType(), "hour": new IntegerType(), "minutes": new IntegerType(), "seconds": new FloatType()}, return: new UtclongType(), version: Version.v754});
-    //ret.push({name: "UTCLONG_CURRENT", return: new UtclongType(), version: Version.v754});
-    //ret.push({name: "UTCLONG_DIFF", mandatory: {"high": new UtclongType(), "low": new UtclongType()}, return: new FloatType(), version: Version.v754});
+    ret.push({name: "UTCLONG_ADD", mandatory: {"val": new UTCLongType()}, optional: {"days": new IntegerType(), "hour": new IntegerType(), "minutes": new IntegerType(), "seconds": new FloatType()}, return: new UTCLongType(), version: Version.v754});
+    ret.push({name: "UTCLONG_CURRENT", return: new UTCLongType(), version: Version.v754});
+    ret.push({name: "UTCLONG_DIFF", mandatory: {"high": new UTCLongType(), "low": new UTCLongType()}, return: new FloatType(), version: Version.v754});
     ret.push({name: "XSDBOOL", mandatory: {"val": new StringType()}, return: new CharacterType(1), version: Version.v740sp08});
     ret.push({name: "XSTRLEN", mandatory: {"val": new XStringType()}, return: new IntegerType()});
 
