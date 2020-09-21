@@ -1,4 +1,4 @@
-import {testRule} from "./_utils";
+import {testRule, testRuleFix} from "./_utils";
 import {UseBoolExpression} from "../../src/rules";
 
 const tests = [
@@ -46,3 +46,28 @@ ENDIF.`, cnt: 1},
 ];
 
 testRule(tests, UseBoolExpression);
+
+const fixTests = [
+  {
+    input: `
+IF lv_state IS INITIAL.
+  rv_bool = abap_false.
+ELSE.
+  rv_bool = abap_true.
+ENDIF.`,
+    output: `
+rv_bool = xsdbool( NOT ( lv_state IS INITIAL ) ).`,
+  },
+  {
+    input: `
+IF lv_state IS INITIAL.
+  rv_bool = abap_true.
+ELSE.
+  rv_bool = abap_false.
+ENDIF.`,
+    output: `
+rv_bool = xsdbool( lv_state IS INITIAL ).`,
+  },
+];
+
+testRuleFix(fixTests, UseBoolExpression);
