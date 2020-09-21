@@ -180,6 +180,16 @@ ORDER BY PRIMARY KEY ##DB_FEATURE_MODE[VIEWS_WITH_PARAMETERS].`,
   `select count(*) as score from sdfsd where object = @object_id-object and obj_name = @object_id-obj_name into @data(count).`,
 
   `SELECT SINGLE foo FROM bar WHERE column IN (sdf, char-).`,
+
+  `SELECT DISTINCT roosourcet~oltpsource,
+  roosourcet~txtsh,
+  roosourcet~txtmd,
+  roosourcet~txtlg INTO TABLE @DATA(lt_roosourcet)
+  FROM roosourcet JOIN /xyz/ztest ON /xyz/ztest~oltpsource = roosourcet~oltpsource
+  FOR ALL ENTRIES IN @lt_active
+  WHERE roosourcet~oltpsource = @lt_active-oltpsource
+  AND roosourcet~objvers = 'A'
+  AND roosourcet~langu = 'E'.`,
 ];
 
 statementType(tests, "SELECT", Statements.Select);
