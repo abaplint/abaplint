@@ -12,6 +12,6 @@ export class MethodSource extends Expression {
 
     const part1 = seq(cname, alt(tok(InstanceArrow), tok(StaticArrow)));
 
-    return seq(opt(altPrio(stati, part1)), mname);
+    return seq(opt(altPrio(part1, stati)), mname);
   }
 }
