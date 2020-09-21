@@ -32,6 +32,7 @@ const tests = [
   "MESSAGE 'sdf' TYPE 'E' RAISING cancel.",
   "MESSAGE A600 WITH 'Moo'.",
   "message E001(0A) with 'FATAL' raising FATAL_ERROR.",
+  "MESSAGE e019 RAISING tree_not-allowed.",
 ];
 
 statementType(tests, "MESSAGE", Statements.Message);

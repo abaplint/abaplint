@@ -1,6 +1,6 @@
 import {IStatement} from "./_statement";
 import {str, seq, opt, alt, per, altPrio, ver} from "../combi";
-import {Target, Source, Field, MessageSource, ConstantOrFieldSource} from "../expressions";
+import {Target, Source, ExceptionName, MessageSource, ConstantOrFieldSource} from "../expressions";
 import {IStatementRunnable} from "../statement_runnable";
 import {Version} from "../../../version";
 
@@ -9,8 +9,7 @@ export class Message implements IStatement {
   public getMatcher(): IStatementRunnable {
     const like = seq(str("DISPLAY LIKE"), new Source());
     const into = seq(str("INTO"), new Target());
-//    const li = alt(like, into);  // todo, only this is allowed
-    const raising = seq(str("RAISING"), new Field());
+    const raising = seq(str("RAISING"), new ExceptionName());
 
     const options = per(like, into, raising);
 

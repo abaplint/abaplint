@@ -59,6 +59,15 @@ const tests = [
   "    subtotal   = if_salv_c_bool_sap=>true ).",
 
   "moo( ).",
+
+  `CALL METHOD lcl_class=>m_foo->mr_bar->get_thing
+EXPORTING
+  iv_id     = l_id
+IMPORTING
+  er_thing  = lr_thing
+EXCEPTIONS
+  not_found = 1.`,
+
 ];
 
 statementType(tests, "CALL", Statements.Call);

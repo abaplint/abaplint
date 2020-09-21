@@ -105,8 +105,10 @@ export class CheckSubrc extends ABAPRule {
         if (concat.includes("EC CI_SUBRC")) {
           return true;
         }
+      } else if (statement.get() instanceof Statements.EndIf) {
+        continue;
       } else {
-        return concat.includes("SY-SUBRC");
+        return concat.includes("SY-SUBRC") || concat.includes("CL_ABAP_UNIT_ASSERT=>ASSERT_SUBRC");
       }
     }
     return false;

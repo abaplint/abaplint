@@ -164,6 +164,7 @@ async function run() {
   } else if (argv["d"] !== undefined || argv["default"] !== undefined) {
     output = output + JSON.stringify(Config.getDefault().get(), undefined, 2) + "\n";
   } else {
+    process.stderr.write("abaplint " + Registry.abaplintVersion() + "\n");
 
     let loaded: IFile[] = [];
     let deps: IFile[] = [];
