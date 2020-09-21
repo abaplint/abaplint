@@ -7,6 +7,7 @@ import {ABAPFile} from "../files";
 import {BasicRuleConfig} from "./_basic_rule_config";
 import {Version} from "../version";
 import {IRuleMetadata, RuleTag} from "./_irule";
+import {EditHelper} from "../edit_helper";
 
 // note this rule assumes abap_true and abap_false is used for boolean variables
 // some other rule will in the future find assignments to abap_bool that are not abap_true/abap_false/abap_undefined
@@ -73,9 +74,9 @@ ENDIF.`,
         continue;
       }
 
-      const bodyTarget = bodyStatement.findFirstExpression(Expressions.Target)?.concatTokens().toUpperCase();
-      const elseTarget = elseStatement.findFirstExpression(Expressions.Target)?.concatTokens().toUpperCase();
-      if (bodyTarget !== elseTarget) {
+      const bodyTarget = bodyStatement.findFirstExpression(Expressions.Target)?.concatTokens();
+      const elseTarget = elseStatement.findFirstExpression(Expressions.Target)?.concatTokens();
+      if (bodyTarget === undefined || elseTarget === undefined || bodyTarget.toUpperCase() !== elseTarget.toUpperCase()) {
         continue;
       }
 
@@ -83,8 +84,19 @@ ENDIF.`,
       const elseSource = elseStatement.findFirstExpression(Expressions.Source)?.concatTokens().toUpperCase();
       if ((bodySource === "ABAP_TRUE" && elseSource === "ABAP_FALSE")
           || (bodySource === "ABAP_FALSE" && elseSource === "ABAP_TRUE")) {
-        const message = this.reg.getConfig().getVersion() >= Version.v740sp08 ? "Use xsdbool instead of IF" : "Use boolc instead of IF";
-        issues.push(Issue.atStatement(file, bodyStatement, message, this.getMetadata().key, this.conf.severity));
+        const func = this.reg.getConfig().getVersion() >= Version.v740sp08 ? "xsdbool" : "boolc";
+        const negate = bodySource === "ABAP_FALSE";
+        const message = `Use ${func} instead of IF` + (negate ? ", negate expression" : "");
+        const start = i.getFirstToken().getStart();
+        const end = i.getLastToken().getEnd();
+
+        const statement = bodyTarget + " = " + func + "( " +
+          (negate ? "NOT ( " : "") +
+          i.findFirstStatement(Statements.If)?.findFirstExpression(Expressions.Cond)?.concatTokens() +
+          (negate ? " )" : "") +
+          " ).";
+        const fix = EditHelper.replaceRange(file, start, end, statement);
+        issues.push(Issue.atRange(file, start, end, message, this.getMetadata().key, this.conf.severity, fix));
       }
     }
 
