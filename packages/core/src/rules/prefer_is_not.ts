@@ -42,7 +42,7 @@ IF NOT variable = 42.`,
     for (const s of file.getStatements()) {
       for (const c of s.findAllExpressions(Expressions.Compare)) {
         if (c.concatTokens().toUpperCase().startsWith("NOT ")) {
-          const message = "";
+          const message = "Prefer IS NOT to NOT IS";
           issues.push(Issue.atToken(file, c.getFirstToken(), message, this.getMetadata().key, this.conf.severity));
         }
       }
