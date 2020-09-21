@@ -15,6 +15,8 @@ const tests = [
   {abap: "IF foo = bar AND NOT variable = 42. ENDIF.", cnt: 1},
   {abap: "WHILE NOT variable IS INITIAL. ENDWHILE.", cnt: 1},
   {abap: "foo = boolc( NOT variable = 42 ).", cnt: 1},
+
+  {abap: `if not is_valid( ). endif.`, cnt: 0},
 ];
 
 testRule(tests, PreferIsNot);

@@ -4,6 +4,9 @@ import {ABAPFile} from "../files";
 import {BasicRuleConfig} from "./_basic_rule_config";
 import {Punctuation, Comment as CommentToken} from "../abap/1_lexer/tokens";
 import {Unknown} from "../abap/2_statements/statements/_statement";
+import {EditHelper} from "../edit_helper";
+import {IRuleMetadata, RuleTag} from "./_irule";
+import {Position} from "../position";
 
 export class EmptyLineinStatementConf extends BasicRuleConfig {
   /** Allow changed empty lines in chanined statements */
@@ -14,12 +17,13 @@ export class EmptyLineinStatement extends ABAPRule {
 
   private conf = new EmptyLineinStatementConf();
 
-  public getMetadata() {
+  public getMetadata(): IRuleMetadata {
     return {
       key: "empty_line_in_statement",
       title: "Find empty lines in statements",
       shortDescription: `Checks that statements do not contain empty lines.`,
       extendedInformation: `https://docs.abapopenchecks.org/checks/41/`,
+      tags: [RuleTag.Quickfix, RuleTag.Whitespace],
     };
   }
 
@@ -57,7 +61,8 @@ export class EmptyLineinStatement extends ABAPRule {
         prevLine = t.getRow();
       }
       if (prevLine && t.getRow() - prevLine >= 2) {
-        const issue = Issue.atToken(file, t, this.getMessage(), this.getMetadata().key, this.conf.severity);
+        const fix = EditHelper.deleteRange(file, new Position(prevLine + 1, 1), t.getStart());
+        const issue = Issue.atToken(file, t, this.getMessage(), this.getMetadata().key, this.conf.severity, fix);
         issues.push(issue);
       }
       if (t instanceof Punctuation && t.getStr() === ".") {

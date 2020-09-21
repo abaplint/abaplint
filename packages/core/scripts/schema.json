@@ -1386,7 +1386,7 @@
                   "type": "boolean"
                 }
               ],
-              "description": "Checks that statements do not contain empty lines.\nhttps://rules.abaplint.org/empty_line_in_statement"
+              "description": "Checks that statements do not contain empty lines.\nTags: Quickfix, Whitespace\nhttps://rules.abaplint.org/empty_line_in_statement"
             },
             "empty_statement": {
               "anyOf": [
@@ -2145,7 +2145,7 @@
                   "type": "boolean"
                 }
               ],
-              "description": "Use boolean expression, xsdbool from 740sp08 and up, boolc from 702 and up\nTags: Upport, Styleguide\nhttps://rules.abaplint.org/use_bool_expression"
+              "description": "Use boolean expression, xsdbool from 740sp08 and up, boolc from 702 and up\nTags: Upport, Styleguide, Quickfix\nhttps://rules.abaplint.org/use_bool_expression"
             },
             "use_line_exists": {
               "anyOf": [

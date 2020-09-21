@@ -1,4 +1,4 @@
-import {testRule} from "./_utils";
+import {testRule, testRuleFix} from "./_utils";
 import {EmptyLineinStatement} from "../../src/rules";
 
 const tests = [
@@ -35,3 +35,17 @@ const tests = [
 ];
 
 testRule(tests, EmptyLineinStatement);
+
+const fixTests = [
+  {
+    input: `
+WRITE
+
+bar.`,
+    output: `
+WRITE
+bar.`,
+  },
+];
+
+testRuleFix(fixTests, EmptyLineinStatement);
