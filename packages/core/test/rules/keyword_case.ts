@@ -171,6 +171,14 @@ const testLowerCaseGlobalClassSuite1 = [
   },
   {
     abap: `
+      INTERFACE zif_my PUBLIC.
+        methods x.
+      ENDINTERFACE.
+      `,
+    cnt: 1,
+  },
+  {
+    abap: `
       class zcl_my definition final public.
         public section.
           METHODS x.
@@ -201,7 +209,13 @@ const configLowerCaseGlobalClass1 = {
 testRule(testLowerCaseGlobalClassSuite1, KeywordCase, configLowerCaseGlobalClass1, "keywordCase: lower");
 
 // no errors in case 2 for suite 2
-const testLowerCaseGlobalClassSuite2 = testLowerCaseGlobalClassSuite1.map((c, idx) => idx === 1 ? {...c, cnt: 0} : c);
+const testLowerCaseGlobalClassSuite2 = testLowerCaseGlobalClassSuite1.map((c, idx) => {
+  if (idx === 1 || idx === 2) { // Case 2 and 3
+    return {...c, cnt: 0}; // clear cnt ( = no error )
+  } else {
+    return c;
+  }
+});
 const configLowerCaseGlobalClass2 = {
   ...new KeywordCaseConf(),
   style: KeywordCaseStyle.Lower,

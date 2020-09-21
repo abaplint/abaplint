@@ -76,6 +76,7 @@ export class KeywordCase extends ABAPRule {
     const issues: Issue[] = [];
     let skip = false;
     let isGlobalClass = false;
+    let isGlobalIf = false;
 
     const ddic = new DDIC(this.reg);
 
@@ -97,6 +98,12 @@ export class KeywordCase extends ABAPRule {
 
       if (this.conf.ignoreGlobalClassBoundaries) {
         const node = statement.get();
+        if (node instanceof Statements.Interface && statement.findFirstExpression(Expressions.ClassGlobal)) {
+          isGlobalIf = true;
+          continue;
+        } else if (isGlobalIf === true && node instanceof Statements.EndInterface) {
+          continue;
+        }
         if (node instanceof Statements.ClassDefinition && statement.findFirstExpression(Expressions.ClassGlobal)) {
           isGlobalClass = true;
           continue;
