@@ -1696,6 +1696,17 @@
               ],
               "description": "Checks related to report declarations.\nhttps://rules.abaplint.org/main_file_contents"
             },
+            "many_parenthesis": {
+              "anyOf": [
+                {
+                  "$ref": "#/definitions/ManyParenthesisConf"
+                },
+                {
+                  "type": "boolean"
+                }
+              ],
+              "description": "Searches for expressions where extra parenthesis can safely be removed\nhttps://rules.abaplint.org/many_parenthesis"
+            },
             "max_one_statement": {
               "anyOf": [
                 {
@@ -2762,6 +2773,23 @@
       "type": "object"
     },
     "MainFileContentsConf": {
+      "additionalProperties": false,
+      "properties": {
+        "exclude": {
+          "description": "List of file regex filename patterns to exclude, case insensitive",
+          "items": {
+            "type": "string"
+          },
+          "type": "array"
+        },
+        "severity": {
+          "$ref": "#/definitions/Severity",
+          "description": "Problem severity"
+        }
+      },
+      "type": "object"
+    },
+    "ManyParenthesisConf": {
       "additionalProperties": false,
       "properties": {
         "exclude": {
