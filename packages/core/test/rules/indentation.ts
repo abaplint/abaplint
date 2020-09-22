@@ -117,6 +117,18 @@ ENDCLASS.`, cnt: 0},
   METHOD bar. ENDMETHOD.
 ENDCLASS.`, cnt: 0},
 
+  {abap: `
+FORM bar.
+  define _macro.
+    WRITE bar.
+    IF sy-subrc <> 0.
+      CONTINUE.
+    ENDIF.
+  end-of-definition.
+  _macro.
+  _macro.
+ENDFORM.`, cnt: 0},
+
 ];
 
 testRule(tests, Indentation);

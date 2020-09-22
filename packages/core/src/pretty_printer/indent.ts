@@ -4,6 +4,7 @@ import {MacroContent, Comment, Empty} from "../abap/2_statements/statements/_sta
 import {ABAPFile} from "../files";
 import {StatementNode} from "../abap/nodes/statement_node";
 import {IIndentationOptions} from "./indentation_options";
+import {VirtualPosition} from "../position";
 
 // todo, will break if there is multiple statements per line?
 export class Indent {
@@ -17,13 +18,13 @@ export class Indent {
   public execute(original: ABAPFile, modified: string): string {
     const statements = original.getStatements();
     const expected = this.getExpectedIndents(original);
-    if (expected.length !== statements.length) {
-      throw new Error("Pretty Printer, expected lengths to match");
-    }
 
     const lines = modified.split("\n");
 
     for (const statement of statements) {
+      if (statement.getFirstToken().getStart() instanceof VirtualPosition) {
+        continue; // macro contents
+      }
       const exp = expected.shift();
       if (exp === undefined || exp < 0) {
         continue;
@@ -48,6 +49,9 @@ export class Indent {
     let previousStatement: StatementNode | undefined = undefined;
 
     for (const statement of file.getStatements()) {
+      if (statement.getFirstToken().getStart() instanceof VirtualPosition) {
+        continue; // skip macro contents
+      }
       const type = statement.get();
       if (type instanceof Statements.EndIf
         || type instanceof Statements.EndWhile
