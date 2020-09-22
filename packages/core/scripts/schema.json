@@ -1518,7 +1518,7 @@
                   "type": "boolean"
                 }
               ],
-              "description": "Find identical conditions in IF + CASE + WHILE etc\nhttps://rules.abaplint.org/identical_conditions"
+              "description": "Find identical conditions in IF + CASE + WHILE etc\n\nPrerequsites: code is pretty printed with identical cAsE\nhttps://rules.abaplint.org/identical_conditions"
             },
             "identical_form_names": {
               "anyOf": [
