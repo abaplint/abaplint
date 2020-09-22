@@ -49,13 +49,7 @@ export class Indent {
 
     for (const statement of file.getStatements()) {
       const type = statement.get();
-      if (previousStatement
-        && previousStatement.getLastToken().getEnd().getRow() === statement.getFirstToken().getStart().getRow()) {
-// any indentation allowed if there are multiple statements on the same line
-        ret.push(-1);
-        previousStatement = statement;
-        continue;
-      } else if (type instanceof Statements.EndIf
+      if (type instanceof Statements.EndIf
         || type instanceof Statements.EndWhile
         || type instanceof Statements.EndModule
         || type instanceof Statements.EndSelect
@@ -110,6 +104,13 @@ export class Indent {
         || type instanceof Statements.IncludeType
         || type instanceof Empty
         || type instanceof MacroContent) {
+        ret.push(-1);
+        previousStatement = statement;
+        continue;
+      }
+      if (previousStatement
+        && previousStatement.getLastToken().getEnd().getRow() === statement.getFirstToken().getStart().getRow()) {
+// any indentation allowed if there are multiple statements on the same line
         ret.push(-1);
         previousStatement = statement;
         continue;

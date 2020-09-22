@@ -107,6 +107,15 @@ AT USER-COMMAND.
   PERFORM TOP.`, cnt: 0},
 
   {abap: `WRITE same. WRITE line.`, cnt: 0},
+  {abap: `METHOD foo. ENDMETHOD.`, cnt: 0},
+  {abap: `CLASS foo IMPLEMENTATION. METHOD foo. ENDMETHOD. ENDCLASS.`, cnt: 0},
+  {abap: `CLASS foo IMPLEMENTATION.
+  METHOD foo. ENDMETHOD.
+ENDCLASS.`, cnt: 0},
+  {abap: `CLASS foo IMPLEMENTATION.
+  METHOD foo. ENDMETHOD.
+  METHOD bar. ENDMETHOD.
+ENDCLASS.`, cnt: 0},
 
 ];
 
