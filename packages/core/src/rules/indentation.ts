@@ -69,6 +69,11 @@ export class Indentation extends ABAPRule {
     const expected = new Indent(indentOpts).getExpectedIndents(file);
 
     for (const statement of file.getStatements()) {
+      const position = statement.getFirstToken().getStart();
+      if (position instanceof VirtualPosition) {
+        continue;
+      }
+
       const indent = expected.shift();
 
       if (this.conf.ignoreGlobalClassDefinition) {
@@ -95,11 +100,6 @@ export class Indentation extends ABAPRule {
         } else if (skip === true) {
           continue;
         }
-      }
-
-      const position = statement.getFirstToken().getStart();
-      if (position instanceof VirtualPosition) {
-        continue;
       }
 
       if (indent && indent > 0 && indent !== position.getCol()) {

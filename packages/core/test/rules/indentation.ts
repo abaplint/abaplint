@@ -129,6 +129,16 @@ FORM bar.
   _macro.
 ENDFORM.`, cnt: 0},
 
+  {abap: `
+FORM bar.
+  define _macro.
+    WRITE bar.
+  end-of-definition.
+  IF foo = bar.
+    _macro.
+  ENDIF.
+ENDFORM.`, cnt: 0},
+
 ];
 
 testRule(tests, Indentation);
