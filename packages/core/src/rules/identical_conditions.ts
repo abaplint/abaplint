@@ -16,11 +16,7 @@ class Conditions {
   }
 
   public push(e: ExpressionNode) {
-    if (e.getFirstChild()?.get() instanceof Expressions.Constant) {
-      this.arr.push(e.concatTokens());
-    } else {
-      this.arr.push(e.concatTokens().toUpperCase());
-    }
+    this.arr.push(e.concatTokens());
   }
 
   public hasDuplicates(): boolean {
@@ -39,7 +35,9 @@ export class IdenticalConditions extends ABAPRule {
     return {
       key: "identical_conditions",
       title: "Identical conditions",
-      shortDescription: `Find identical conditions in IF + CASE + WHILE etc`,
+      shortDescription: `Find identical conditions in IF + CASE + WHILE etc
+
+Prerequsites: code is pretty printed with identical cAsE`,
       tags: [],
     };
   }

@@ -73,10 +73,18 @@ describe("Rule: identical_conditions", () => {
     expect(issues.length).to.equal(1);
   });
 
-  it("not identical", async () => {
+  it("not identical, WHEN", async () => {
     const abap = `CASE bar.
       WHEN 'd' OR 'D'.
     ENDCASE.`;
+    const issues = await run(abap);
+    expect(issues.length).to.equal(0);
+  });
+
+  it("not identical, IF", async () => {
+    const abap = `
+    IF <ls_e>-line CP '#M#o#d#u#l#e*' OR <ls_e>-line CP '#m#o#d#u#l#e*'.
+    ENDIF.`;
     const issues = await run(abap);
     expect(issues.length).to.equal(0);
   });
