@@ -106,6 +106,8 @@ INITIALIZATION.
 AT USER-COMMAND.
   PERFORM TOP.`, cnt: 0},
 
+  {abap: `WRITE same. WRITE line.`, cnt: 0},
+
 ];
 
 testRule(tests, Indentation);

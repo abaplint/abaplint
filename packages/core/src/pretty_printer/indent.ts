@@ -42,12 +42,20 @@ export class Indent {
   public getExpectedIndents(file: ABAPFile): number[] {
     const ret: number[] = [];
     const init: number = 1;
+    const stack = new Stack();
     let indent: number = init;
     let parentIsEvent: boolean = false;
-    const stack = new Stack();
+    let previousStatement: StatementNode | undefined = undefined;
+
     for (const statement of file.getStatements()) {
       const type = statement.get();
-      if (type instanceof Statements.EndIf
+      if (previousStatement
+        && previousStatement.getLastToken().getEnd().getRow() === statement.getFirstToken().getStart().getRow()) {
+// any indentation allowed if there are multiple statements on the same line
+        ret.push(-1);
+        previousStatement = statement;
+        continue;
+      } else if (type instanceof Statements.EndIf
         || type instanceof Statements.EndWhile
         || type instanceof Statements.EndModule
         || type instanceof Statements.EndSelect
@@ -103,6 +111,7 @@ export class Indent {
         || type instanceof Empty
         || type instanceof MacroContent) {
         ret.push(-1);
+        previousStatement = statement;
         continue;
       }
       ret.push(indent);
@@ -150,6 +159,7 @@ export class Indent {
         indent = indent + (this.skipIndentForGlobalClass(statement) ? 0 : 2);
         stack.push(indent);
       }
+      previousStatement = statement;
     }
     return ret;
   }
