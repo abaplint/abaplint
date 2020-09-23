@@ -19,7 +19,7 @@ export class ParserMissingSpace extends ABAPRule {
       title: "Parser Error, missing space",
       shortDescription: `In special cases the ABAP language allows for not having spaces before or after string literals.
 This rule makes sure the spaces are consistently required across the language.`,
-      tags: [RuleTag.Syntax],
+      tags: [RuleTag.Syntax, RuleTag.Whitespace],
       badExample: `IF ( foo = 'bar').`,
       goodExample: `IF ( foo = 'bar' ).`,
     };
@@ -52,8 +52,7 @@ This rule makes sure the spaces are consistently required across the language.`,
 
   private missingSpace(statement: StatementNode): Position | undefined {
 
-    const conds = statement.findAllExpressions(Expressions.CondSub);
-    for (const cond of conds) {
+    for (const cond of statement.findAllExpressions(Expressions.CondSub)) {
       const children = cond.getChildren();
       for (let i = 0; i < children.length; i++) {
         if (children[i].get() instanceof Expressions.Cond) {
@@ -72,6 +71,21 @@ This rule makes sure the spaces are consistently required across the language.`,
               && next.getCol() === current.getLastToken().getEnd().getCol()) {
             return current.getLastToken().getEnd();
           }
+
+        }
+      }
+    }
+
+    for (const cond of statement.findAllExpressions(Expressions.Cond)) {
+      const children = cond.getAllTokens();
+      for (let i = 0; i < children.length - 1; i++) {
+        const current = children[i];
+        const next = children[i + 1];
+
+        if (next.getStr().startsWith("'")
+            && next.getRow() === current.getRow()
+            && next.getCol() === current.getEnd().getCol()) {
+          return current.getEnd();
         }
       }
     }
