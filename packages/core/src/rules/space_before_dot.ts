@@ -26,7 +26,10 @@ export class SpaceBeforeDot extends ABAPRule {
       key: "space_before_dot",
       title: "Space before dot",
       shortDescription: `Checks for extra spaces before dots at the ends of statements`,
-      tags: [RuleTag.Whitespace, RuleTag.Quickfix],
+      extendedInformation: `
+https://github.com/SAP/styleguides/blob/master/clean-abap/CleanABAP.md#be-consistent
+https://github.com/SAP/styleguides/blob/master/clean-abap/CleanABAP.md#condense-your-code`,
+      tags: [RuleTag.Whitespace, RuleTag.Quickfix, RuleTag.Styleguide],
       badExample: `WRITE bar .`,
       goodExample: `WRITE bar.`,
     };
