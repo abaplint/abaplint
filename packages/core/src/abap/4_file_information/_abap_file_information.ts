@@ -47,6 +47,7 @@ export interface InfoInterfaceDefinition {
   identifier: Identifier;
   isLocal: boolean;
   isGlobal: boolean;
+  interfaces: readonly InfoImplementing[];
   methods: readonly InfoMethodDefinition[];
 // todo, constants
 // todo, types

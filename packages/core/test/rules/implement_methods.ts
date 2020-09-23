@@ -267,4 +267,26 @@ ENDCLASS.`;
     expect(issues.length).to.equals(0);
   });
 
+  it("PROG, interfaced interface", async () => {
+    const prog = `
+INTERFACE lif_top.
+  METHODS moo.
+ENDINTERFACE.
+
+INTERFACE lif_sub.
+  INTERFACES lif_top.
+ENDINTERFACE.
+
+CLASS lcl_clas DEFINITION.
+  PUBLIC SECTION.
+    INTERFACES lif_sub.
+ENDCLASS.
+
+CLASS lcl_clas IMPLEMENTATION.
+ENDCLASS.`;
+    const issues = await runMulti([
+      {filename: "zfoobar.prog.abap", contents: prog}]);
+    expect(issues.length).to.equals(1);
+  });
+
 });
