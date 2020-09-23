@@ -33,7 +33,7 @@ export class TypeTable extends Expression {
                          str("TABLE OF"),
                          optPrio(str("REF TO")),
                          opt(new FieldChain()),
-                         opt(str("WITH DEFAULT KEY")),
+                         opt(key),
                          opt(header));
 
     const range = seq(str("RANGE OF"), new TypeName());

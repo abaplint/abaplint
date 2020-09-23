@@ -85,6 +85,7 @@ const tests = [
   "DATA lt_tab OCCURS 10.",
   "DATA range TYPE RANGE OF char30 WITH HEADER LINE.",
   "DATA foo TYPE c %_PREDEFINED.",
+  "DATA lt_attr_href LIKE SORTED TABLE OF ls_attr_href WITH NON-UNIQUE KEY val.",
 ];
 
 statementType(tests, "DATA", Statements.Data);
