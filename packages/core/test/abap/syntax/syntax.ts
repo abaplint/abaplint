@@ -2828,6 +2828,20 @@ _foo var-field.`;
     expect(issues.length).to.equals(0);
   });
 
+  it("LIKE TABLE OF object reference", () => {
+    const abap = `
+CLASS lcl_bar DEFINITION.
+  PUBLIC SECTION.
+    DATA foo TYPE i.
+ENDCLASS.
+CLASS lcl_bar IMPLEMENTATION.
+ENDCLASS.
+DATA man    TYPE REF TO lcl_bar.
+DATA it_lev LIKE TABLE OF man->foo.`;
+    const issues = runProgram(abap);
+    expect(issues.length).to.equals(0);
+  });
+
 // todo, static method cannot access instance attributes
 // todo, can a private method access protected attributes?
 // todo, readonly fields(constants + enums + attributes flagged read-only)

@@ -1,12 +1,11 @@
-import {seq, opt, alt, str, ver, per, Expression, altPrio, plus, plusPrio} from "../combi";
+import {seq, opt, alt, str, ver, per, Expression, altPrio, plus, plusPrio, optPrio} from "../combi";
 import {Constant, FieldSub, TypeName, Integer, Field} from ".";
 import {Version} from "../../../version";
-
 import {IStatementRunnable} from "../statement_runnable";
+import {FieldChain} from "./field_chain";
 
 export class TypeTable extends Expression {
   public getRunnable(): IStatementRunnable {
-    const likeType = alt(str("LIKE"), str("TYPE"));
     const header = str("WITH HEADER LINE");
     const initial = seq(str("INITIAL SIZE"), new Constant());
 
@@ -24,15 +23,22 @@ export class TypeTable extends Expression {
                                 alt(seq(new Field(), str("COMPONENTS"), plus(new FieldSub())),
                                     plus(new FieldSub())))));
 
-    const normal = seq(opt(alt(str("STANDARD"), str("HASHED"), str("INDEX"), str("SORTED"), str("ANY"))),
-                       str("TABLE"),
-                       opt(str("OF")),
-                       opt(str("REF TO")),
-                       opt(new TypeName()));
+    const normal1 = seq(opt(alt(str("STANDARD"), str("HASHED"), str("INDEX"), str("SORTED"), str("ANY"))),
+                        str("TABLE"),
+                        opt(str("OF")),
+                        opt(str("REF TO")),
+                        opt(new TypeName()));
+
+    const likeType = seq(opt(alt(str("STANDARD"), str("HASHED"), str("INDEX"), str("SORTED"), str("ANY"))),
+                         str("TABLE OF"),
+                         optPrio(str("REF TO")),
+                         opt(new FieldChain()),
+                         opt(key),
+                         opt(header));
 
     const range = seq(str("RANGE OF"), new TypeName());
 
-    const typetable = seq(alt(normal, range),
+    const typetable = seq(alt(normal1, range),
                           opt(per(header, initial, plusPrio(key))));
 
     const occurs = seq(str("OCCURS"), new Integer());
@@ -41,8 +47,9 @@ export class TypeTable extends Expression {
                     alt(seq(occurs, opt(header)),
                         header));
 
-    const ret = seq(likeType,
-                    alt(old, typetable));
+    const ret = altPrio(
+      seq(str("LIKE"), likeType),
+      seq(str("TYPE"), alt(old, typetable)));
 
     return ret;
   }

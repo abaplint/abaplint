@@ -115,6 +115,7 @@ export class ABAPFileInformation implements IABAPFileInformation {
         identifier: new Identifier(interfaceName, this.filename),
         isLocal: found.findFirstExpression(Expressions.ClassGlobal) === undefined,
         isGlobal: found.findFirstExpression(Expressions.ClassGlobal) !== undefined,
+        interfaces: this.getImplementing(found),
         methods,
         attributes,
       });

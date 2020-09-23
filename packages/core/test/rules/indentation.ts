@@ -107,6 +107,37 @@ AT USER-COMMAND.
   PERFORM TOP.`, cnt: 0},
 
   {abap: `WRITE same. WRITE line.`, cnt: 0},
+  {abap: `METHOD foo. ENDMETHOD.`, cnt: 0},
+  {abap: `CLASS foo IMPLEMENTATION. METHOD foo. ENDMETHOD. ENDCLASS.`, cnt: 0},
+  {abap: `CLASS foo IMPLEMENTATION.
+  METHOD foo. ENDMETHOD.
+ENDCLASS.`, cnt: 0},
+  {abap: `CLASS foo IMPLEMENTATION.
+  METHOD foo. ENDMETHOD.
+  METHOD bar. ENDMETHOD.
+ENDCLASS.`, cnt: 0},
+
+  {abap: `
+FORM bar.
+  define _macro.
+    WRITE bar.
+    IF sy-subrc <> 0.
+      CONTINUE.
+    ENDIF.
+  end-of-definition.
+  _macro.
+  _macro.
+ENDFORM.`, cnt: 0},
+
+  {abap: `
+FORM bar.
+  define _macro.
+    WRITE bar.
+  end-of-definition.
+  IF foo = bar.
+    _macro.
+  ENDIF.
+ENDFORM.`, cnt: 0},
 
 ];
 
