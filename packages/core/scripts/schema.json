@@ -1551,7 +1551,7 @@
                   "type": "boolean"
                 }
               ],
-              "description": "Checks for abstract methods and methods from interfaces which need implementing.\nTags: Syntax\nhttps://rules.abaplint.org/implement_methods"
+              "description": "Checks for abstract methods and methods from interfaces which need implementing.\n\n      Note: classes are currently skipped if they have super classes\nTags: Syntax\nhttps://rules.abaplint.org/implement_methods"
             },
             "in_statement_indentation": {
               "anyOf": [
