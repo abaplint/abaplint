@@ -20,7 +20,9 @@ export class ImplementMethods extends ABAPRule {
     return {
       key: "implement_methods",
       title: "Implement methods",
-      shortDescription: `Checks for abstract methods and methods from interfaces which need implementing.`,
+      shortDescription: `Checks for abstract methods and methods from interfaces which need implementing.
+
+      Note: classes are currently skipped if they have super classes`,
       tags: [RuleTag.Syntax],
     };
   }
@@ -75,6 +77,10 @@ export class ImplementMethods extends ABAPRule {
 
   private checkClass(def: InfoClassDefinition, impl: InfoClassImplementation): Issue[] {
     const ret: Issue[] = [];
+
+    if (def.superClassName !== undefined) {
+      return []; // todo, dont ignore these
+    }
 
     for (const md of def.methods) {
       const found = impl.methods.find(m => m.getName().toUpperCase() === md.name.toUpperCase());
