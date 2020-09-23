@@ -241,8 +241,7 @@ export class BasicTypes {
         || text.startsWith("LIKE STANDARD TABLE OF ")
         || text.startsWith("LIKE SORTED TABLE OF ")
         || text.startsWith("LIKE HASHED TABLE OF ")) {
-      const sub = node.findFirstExpression(Expressions.TypeName);
-      found = this.resolveLikeName(sub);
+      found = this.resolveLikeName(node);
       if (found) {
         return new Types.TableType(found, node.concatTokens().toUpperCase().includes("WITH HEADER LINE"));
       }
