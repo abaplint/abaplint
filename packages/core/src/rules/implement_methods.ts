@@ -56,6 +56,9 @@ export class ImplementMethods extends ABAPRule {
         continue;
       }
 
+      if (classDefinition.superClassName !== undefined) {
+        return []; // todo, dont ignore these
+      }
       ret = ret.concat(this.checkClass(classDefinition, classImplementation));
       ret = ret.concat(this.checkInterfaces(classDefinition, classImplementation, obj));
     }
@@ -77,10 +80,6 @@ export class ImplementMethods extends ABAPRule {
 
   private checkClass(def: InfoClassDefinition, impl: InfoClassImplementation): Issue[] {
     const ret: Issue[] = [];
-
-    if (def.superClassName !== undefined) {
-      return []; // todo, dont ignore these
-    }
 
     for (const md of def.methods) {
       const found = impl.methods.find(m => m.getName().toUpperCase() === md.name.toUpperCase());
