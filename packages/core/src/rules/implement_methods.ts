@@ -129,11 +129,15 @@ export class ImplementMethods extends ABAPRule {
 
   /** including implemented super interfaces */
   private findMethods(idef: InfoInterfaceDefinition, obj: ABAPObject) {
-    let methods = idef.methods;
+    const methods = idef.methods.map((m) => {
+      return {objectName: idef.name, method: m};
+    });
     for (const i of idef.interfaces) {
       const sup = this.findInterface(idef.identifier, i.name, obj);
       if (sup !== undefined && !(sup instanceof Issue)) {
-        methods = methods.concat(sup.methods);
+        sup.methods.forEach(m => {
+          methods.push({objectName: sup.name, method: m});
+        });
       }
     }
     return methods;
@@ -151,12 +155,12 @@ export class ImplementMethods extends ABAPRule {
         return [idef];
       }
 
-      for (const method of this.findMethods(idef, obj)) {
-        if (interfaceInfo.abstractMethods.includes(method.name.toUpperCase())) {
+      for (const m of this.findMethods(idef, obj)) {
+        if (interfaceInfo.abstractMethods.includes(m.method.name.toUpperCase())) {
           continue;
         }
 
-        const name = interfaceInfo.name + "~" + method.name;
+        const name = m.objectName + "~" + m.method.name;
         let found = impl.methods.find(m => m.getName().toUpperCase() === name.toUpperCase());
 
         if (found === undefined) {
@@ -170,7 +174,7 @@ export class ImplementMethods extends ABAPRule {
         }
 
         if (found === undefined) {
-          const message = "Implement method \"" + method.name + "\" from interface \"" + interfaceInfo.name + "\"";
+          const message = "Implement method \"" + m.method.name + "\" from interface \"" + m.objectName + "\"";
           const issue = Issue.atIdentifier(impl.identifier, message, this.getMetadata().key, this.conf.severity);
           ret.push(issue);
         }

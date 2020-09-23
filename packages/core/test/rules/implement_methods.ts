@@ -289,6 +289,31 @@ ENDCLASS.`;
     expect(issues.length).to.equals(1);
   });
 
+  it("PROG, interfaced interface, fixed", async () => {
+    const prog = `
+INTERFACE lif_top.
+  METHODS moo.
+ENDINTERFACE.
+
+INTERFACE lif_sub.
+  INTERFACES lif_top.
+ENDINTERFACE.
+
+CLASS lcl_clas DEFINITION.
+  PUBLIC SECTION.
+    INTERFACES lif_sub.
+ENDCLASS.
+
+CLASS lcl_clas IMPLEMENTATION.
+  METHOD lif_top~moo.
+    RETURN.
+  ENDMETHOD.
+ENDCLASS.`;
+    const issues = await runMulti([
+      {filename: "zfoobar.prog.abap", contents: prog}]);
+    expect(issues.length).to.equals(0);
+  });
+
   it.skip("PROG, no problems, interfaced interface implemented in super class", async () => {
     const prog = `
 INTERFACE lif_top.
